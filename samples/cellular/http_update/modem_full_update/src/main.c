@@ -420,6 +420,8 @@ static int update_download(void)
 {
 	int err;
 	const char *file;
+	int sec_tag = SEC_TAG;
+	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
 	const struct dfu_target_full_modem_params params = {
 		.buf = fmfu_buf,
 		.len = sizeof(fmfu_buf),
@@ -456,9 +458,10 @@ static int update_download(void)
 	}
 
 	/* Functions for getting the host and file */
-	err = fota_download_start(CONFIG_DOWNLOAD_HOST, file, SEC_TAG, 0, 0);
+	err = fota_download(CONFIG_DOWNLOAD_HOST, file, &sec_tag, sec_tag_count, 0, 0,
+			    DFU_TARGET_IMAGE_TYPE_FULL_MODEM);
 	if (err != 0) {
-		printk("fota_download_start() failed, err %d\n", err);
+		printk("fota_download() failed, err %d\n", err);
 		return err;
 	}
 

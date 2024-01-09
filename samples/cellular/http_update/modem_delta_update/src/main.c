@@ -286,6 +286,8 @@ static int update_download(void)
 {
 	int err;
 	const char *file;
+	int sec_tag = SEC_TAG;
+	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
 
 	err = modem_info_string_get(MODEM_INFO_FW_VERSION, modem_version,
 				    MAX_MODEM_VERSION_LEN);
@@ -307,9 +309,10 @@ static int update_download(void)
 	}
 
 	/* Functions for getting the host and file */
-	err = fota_download_start(CONFIG_DOWNLOAD_HOST, file, SEC_TAG, 0, 0);
+	err = fota_download(CONFIG_DOWNLOAD_HOST, file, &sec_tag, sec_tag_count, 0, 0,
+			    DFU_TARGET_IMAGE_TYPE_MODEM_DELTA);
 	if (err) {
-		printk("fota_download_start() failed, err %d\n", err);
+		printk("fota_download_any() failed, err %d\n", err);
 		return err;
 	}
 

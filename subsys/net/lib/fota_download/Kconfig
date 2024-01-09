@@ -56,6 +56,12 @@ config FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH
 	int "Size of buffer used for Resource locator"
 	default 512
 
+config FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX
+	int "Size of security tag list"
+	default 5
+	help
+	  Maximum size of the list of security tags used to store TLS credentials.
+
 module=FOTA_DOWNLOAD
 module-dep=LOG
 module-str=Firmware Over the Air Download
