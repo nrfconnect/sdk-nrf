@@ -11,13 +11,14 @@ breathe                   # |  X  |         |        |         |      |    X    
 m2r2                      # |     |         |        |         |  X   |         |      |        |
 PyYAML                    # |  X  |         |        |         |      |         |      |   X    |
 pykwalify                 # |     |         |        |         |      |         |      |   X    |
+pytest                    # |     |         |        |         |      |         |      |   X    |
 recommonmark              # |     |         |   X    |    X    |      |         |      |        |
 sphinx~=6.2               # |  X  |    X    |   X    |    X    |   X  |    X    |  X   |   X    |
 sphinx-copybutton         # |  X  |         |        |         |      |         |      |   X    |
 sphinx-ncs-theme<1.1      # |  X  |         |        |         |      |         |      |        |
 sphinx-notfound-page      # |  X  |         |        |         |      |         |      |   X    |
 sphinx-tabs>=3.4          # |  X  |         |        |         |      |         |      |   X    |
-sphinx-togglebutton       # |  X  |         |        |         |      |         |      |        |
+sphinx-togglebutton       # |  X  |         |        |         |      |         |      |   X    |
 sphinx_markdown_tables    # |     |         |   X    |         |      |         |      |        |
 sphinxcontrib-mscgen      # |  X  |         |        |         |      |    X    |      |        |
 sphinxcontrib-plantuml    # |     |         |        |         |      |         |  X   |        |
