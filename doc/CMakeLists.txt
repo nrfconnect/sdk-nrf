@@ -206,7 +206,7 @@ add_custom_target(
   COMMENT "Generating Devicetree bindings documentation..."
 )
 
-add_docset(zephyr DODGY)
+add_docset(zephyr)
 add_dependencies(zephyr zephyr-devicetree)
 add_dependencies(zephyr-all zephyr-devicetree)
 
