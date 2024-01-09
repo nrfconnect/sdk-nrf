@@ -11,7 +11,7 @@ This module implements a Simple Management Protocol (SMP) Service Client that ca
 SMP is a basic transfer encoding for use with the `mcumgr`_ management protocol.
 See `SMP over Bluetooth`_ for the service specification.
 
-The SMP Client module can be used to interact with Zephyr's :ref:`zephyr:smp_svr_sample`.
+The SMP Client module can be used to interact with Zephyr's :zephyr:code-sample:`smp-svr`.
 
 The SMP Client implements only the service.
 It does not provide any functionality to process or interpret SMP commands and responses.
@@ -49,12 +49,12 @@ Usage
 MTU negotiation
 ===============
 
-The current DFU SMP Server implementation in the :ref:`zephyr:smp_svr_sample` requires the whole command to be sent in one transfer.
+The current DFU SMP Server implementation in the :zephyr:code-sample:`smp-svr` requires the whole command to be sent in one transfer.
 For most operations, this requires a bigger MTU size than the default one.
 This requires MTU negotiation in the MTU exchange process (see :c:func:`bt_gatt_exchange_mtu`).
 Writing long characteristic values is not supported.
 
-This is a limitation of the :ref:`zephyr:smp_svr_sample`, not of the SMP Client.
+This is a limitation of the :zephyr:code-sample:`smp-svr`, not of the SMP Client.
 
 Sending a command
 =================

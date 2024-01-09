@@ -250,8 +250,8 @@ Testing the LEDs and buttons in the nRF7002 DK
 
 The following samples allow you to test if the buttons (or switches) and LEDs on the development kit are working properly with |NCS|:
 
-* :ref:`blinky-sample`
-* :ref:`button-sample`
+* :zephyr:code-sample:`blinky`
+* :zephyr:code-sample:`button`
 
 Build and flash the samples to make sure |NCS| is running correctly on your development kit.
 For the button and LED definitions, see the :file:`boards/arm/nrf7002dk_nrf5340/nrf5340_cpuapp_common.dts` file.

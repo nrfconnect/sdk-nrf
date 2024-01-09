@@ -312,8 +312,8 @@ DFU
 Zephyr
 ======
 
-* The :ref:`zephyr:alarm_sample` does not work. A fix can be found in `Pull Request #16736 <https://github.com/zephyrproject-rtos/zephyr/pull/16736>`_.
-* :ref:`zephyr:usb_mass` does not compile.
+* The :zephyr:code-sample:`alarm` does not work. A fix can be found in `Pull Request #16736 <https://github.com/zephyrproject-rtos/zephyr/pull/16736>`_.
+* :zephyr:code-sample:`usb-mass` does not compile.
 
 nrfxlib
 =======

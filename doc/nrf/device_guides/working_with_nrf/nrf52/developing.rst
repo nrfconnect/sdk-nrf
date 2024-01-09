@@ -78,7 +78,7 @@ Here is an example of how you can build for the :ref:`peripheral_lbs` sample:
     west build -b *build_target* -- -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
 
 When you connect to the device after the build has completed and the firmware has been programmed to it, the SMP Service is enabled with the ``UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84``.
-If you want to add SMP Service to advertising data, refer to the :ref:`zephyr:smp_svr_sample`.
+If you want to add SMP Service to advertising data, refer to the :zephyr:code-sample:`smp-svr`.
 
 .. fota_upgrades_over_ble_additional_information_end
 
@@ -180,11 +180,11 @@ To perform a FOTA update, complete the following steps:
 FOTA update sample
 ==================
 
-The :ref:`zephyr:smp_svr_sample` demonstrates how to set up your project to support FOTA updates.
+The :zephyr:code-sample:`smp-svr` demonstrates how to set up your project to support FOTA updates.
 
 The sample documentation is from the Zephyr project and is incompatible with the :ref:`ug_multi_image`.
 When working in the |NCS| environment, ignore the part of the sample documentation that describes the building and programming steps.
-In |NCS|, you can build and program the :ref:`zephyr:smp_svr_sample` as any other sample using the following commands:
+In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any other sample using the following commands:
 
 .. parsed-literal::
    :class: highlight

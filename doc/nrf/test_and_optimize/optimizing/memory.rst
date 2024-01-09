@@ -19,7 +19,7 @@ Complete the following actions to optimize your application:
 
 * Use the `Memory report`_ feature in the |nRFVSC| to check the size and percentage of memory that each symbol uses on your device for RAM, ROM, and partitions (when applicable).
 * Follow the guides for :ref:`optimizing Zephyr <zephyr:optimizations>`.
-  Also see the implementation of the :ref:`zephyr:minimal_sample` sample.
+  Also see the implementation of the :zephyr:code-sample:`minimal` sample.
 * Analyze stack usage in each thread of your application by using the :ref:`zephyr:thread_analyzer`.
   Reduce the stack sizes where possible.
 * Limit or disable debugging features, such as logging or asserts.

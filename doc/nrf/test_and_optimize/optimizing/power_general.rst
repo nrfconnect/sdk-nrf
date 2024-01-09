@@ -42,7 +42,7 @@ Disable serial logging
 Current measurements on devices that have the |NCS| samples or applications programmed with the default configuration, might show elevated current values, when compared to the expected current values from  Nordic ultra-low power SoCs.
 It is because most of the samples and applications in the |NCS| are configured to perform logging over serial port (associated with UART(E) peripheral) by default.
 
-As an example, the image below shows the power measurement output on Power Profiler Kit II for an nRF9160 DK with the :ref:`zephyr:blinky-sample` sample compiled for the ``nrf9160dk_nrf9160_ns`` build target without modifications in the sample configuration.
+As an example, the image below shows the power measurement output on Power Profiler Kit II for an nRF9160 DK with the :zephyr:code-sample:`blinky` sample compiled for the ``nrf9160dk_nrf9160_ns`` build target without modifications in the sample configuration.
 
 .. figure:: images/app_power_opt_blinky_serial_on.png
    :width: 100 %

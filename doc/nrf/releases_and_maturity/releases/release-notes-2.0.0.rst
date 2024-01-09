@@ -540,7 +540,7 @@ Other samples
   * Improved the calculation of the total payload size for the radio duty cycle.
   * Fast ramp-up is enabled for all radio modes.
   * The duty cycle for modulated transmission is limited to 1-90%.
-  * Improved the DFU throughput in the :ref:`smp_svr_sample` for the Bluetooth transport by optimizing Bluetooth MTU configuration and by leveraging the MCUmgr packet reassembly feature.
+  * Improved the DFU throughput in the :zephyr:code-sample:`smp-svr` for the Bluetooth transport by optimizing Bluetooth MTU configuration and by leveraging the MCUmgr packet reassembly feature.
 
 Drivers
 =======

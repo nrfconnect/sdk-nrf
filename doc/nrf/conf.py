@@ -48,6 +48,7 @@ extensions = [
     "zephyr.external_content",
     "zephyr.doxyrunner",
     "zephyr.link-roles",
+    "zephyr.domain",
     "sphinx_tabs.tabs",
     "software_maturity_table",
     "sphinx_togglebutton",

@@ -50,7 +50,7 @@ However, you can also build the sample as a stand-alone image.
 
 See :ref:`configure_application` for information about how to configure the sample.
 
-For example, you can include the Multiprotocol RPMsg sample in a multi-image build by building the :ref:`sockets-echo-server-sample` sample for the nRF5340 application core and adding the following configuration files to your build as CMake options:
+For example, you can include the Multiprotocol RPMsg sample in a multi-image build by building the :zephyr:code-sample:`sockets-echo-server` sample for the nRF5340 application core and adding the following configuration files to your build as CMake options:
 
 * :file:`overlay-802154.conf`
 * :file:`overlay-bt.conf`
@@ -69,9 +69,9 @@ Testing
 *******
 
 The testing methods for this sample depend on how it was built and programmed to the device.
-For example, if you built the sample in a multi-image build containing also the :ref:`sockets-echo-server-sample` sample, you can test it as follows:
+For example, if you built the sample in a multi-image build containing also the :zephyr:code-sample:`sockets-echo-server` sample, you can test it as follows:
 
-1. Run the IEEE 802.15.4 variant of the :ref:`sockets-echo-client-sample` on a second development kit that supports IEEE 802.15.4.
+1. Run the IEEE 802.15.4 variant of the :zephyr:code-sample:`sockets-echo-client` on a second development kit that supports IEEE 802.15.4.
 #. |connect_terminal|
    As the nRF5340 DK has multiple UART instances, you must identify the correct port.
 #. Observe that IPv6 packets are exchanged between the echo client and server over the IEEE 802.15.4 interface.

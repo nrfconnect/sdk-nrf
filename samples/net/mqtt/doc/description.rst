@@ -262,7 +262,7 @@ Emulation
 =========
 
 The sample can be run in :ref:`Native Posix <zephyr:native_posix>` that simplifies development and testing and removes the need for hardware.
-Before you can build and run Native Posix, you need to perform the steps included in this link: :ref:`networking_with_native_posix`.
+Before you can build and run Native Posix, you need to perform the steps included in this link: :ref:`networking_with_native_sim`.
 
 When the aforementioned steps are completed, you can build and run the sample by using the following commands:
 
