@@ -323,6 +323,15 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0
+
+KRKNWK-18256: The Matter over Thread device may crash during the processing of the DNS resolve response
+  The Matter core implementation handles DNS resolve responses for the Thread platform in a wrong way.
+  If the DNS resolve response contains a TXT record with data size equal to 0 (either it is not present or its Time-To-Live (TTL) is equal to 0), the Matter device's application crashes.
+  The application behavior for the responses containing a TXT record with data size not equal to 0 is correct.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: TODO).
+
 .. rst-class:: v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0
 
 KRKNWK-18221: Memory leak in the deferred attribute persister
