@@ -92,7 +92,7 @@ Notifications of user association success are sent for every subsequent connecti
 This behavior is handled by the ``NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST`` and ``NRF_CLOUD_EVT_USER_ASSOCIATED`` cases inside the :c:func:`cloud_event_handler` function.
 
 When a CoAP device attempts to connect to nRF Cloud, the connection will fail to be authenticated until the device is onboarded to an nRF Cloud account.
-See :ref:`nrf_cloud_multi_service_lte_onboarding` for details.
+See :ref:`nrf_cloud_multi_service_standard_onboarding` for details.
 
 Upon startup, the cloud connection loop also updates the `device shadow <nRF Cloud Device Shadows_>`_.
 This is performed in the :c:func:`update_shadow` function.
@@ -740,7 +740,7 @@ You can build the sample to connect over LTE as follows:
 
                west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay_coap.conf"
 
-Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_provisioning_onboarding` for instructions on how to onboard your device.
+Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
 
 .. _nrf_cloud_multi_service_building_provisioning_service:
 
@@ -802,7 +802,7 @@ This enables the Wi-Fi location tracking method automatically.
 
 See also :ref:`the paragraphs on the Wi-Fi location tracking method <nrf_cloud_multi_service_wifi_location_tracking>`.
 
-Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_lte_onboarding` for instructions on how to onboard your device.
+Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
 
 .. note::
 
@@ -816,17 +816,25 @@ Building with experimental support for Wi-Fi connectivity for nRF5340 DK with nR
 This sample :ref:`experimentally <software_maturity>` supports connecting to nRF Cloud using Wi-Fi instead of using LTE.
 
 An overlay for this is only provided for the nRF5340 DK with the nRF7002 EK shield attached.
+
 It is possible to use Wi-Fi with other hardware combinations (such as the nRF7002 DK), but you must adjust heap and stack usage accordingly.
 See the :file:`src/prj.conf` configuration file and the :file:`overlay_nrf7002ek_wifi_no_lte.conf` overlay for additional details.
 
-Connecting to nRF Cloud using Wi-Fi is currently only possible with MQTT, and only by using the experimental and insecure Kconfig option :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES`.
-See :ref:`nrf_cloud_multi_service_onboard_hardcoded` for details on setting it up.
+.. important::
+   Connecting to nRF Cloud using Wi-Fi currently requires that device credentials are used insecurely.
 
-Once it is set up, you can configure your build to use Wi-Fi connectivity on the nRF5340 DK with the nRF7002 EK shield by using the ``--board nrf5340dk_nrf5340_cpuapp`` target and the ``-DSHIELD=nrf7002ek`` and ``-DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf`` options.
+   The provided overlay for Wi-Fi connectivity uses the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` (with the PSA Protected Storage backend, see :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_PROTECTED_STORAGE`) to store credentials when not in use.
+   Even though this is more secure than :ref:`hard-coded credentials <nrf_cloud_multi_service_build_hardcoded>`, the device private key still has to be loaded into unprotected memory during TLS connections.
 
-Currently, to use Wi-Fi connectivity, you must also :ref:`build with hard-coded device credentials <nrf_cloud_multi_service_build_hardcoded>`.
+   Note also that connecting to nRF Cloud using Wi-Fi is currently only possible with MQTT.
 
-For example, for a device :ref:`onboarded <nrf_cloud_multi_service_onboard_hardcoded>` with the device ID ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
+This overlay also enables the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credential installation.
+
+If you are certain you understand the risks, you can configure your build to use Wi-Fi connectivity on the nRF5340 DK with the nRF7002 EK shield by using the ``--board nrf5340dk_nrf5340_cpuapp`` target and the ``-DSHIELD=nrf7002ek`` and ``-DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf`` options.
+
+You must also configure a (globally unique) device ID at build time by enabling the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and setting :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` to the device ID.
+
+For example, for a device with the device ID ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
 
 .. tabs::
 
@@ -834,13 +842,17 @@ For example, for a device :ref:`onboarded <nrf_cloud_multi_service_onboard_hardc
 
       .. code-block:: console
 
-        west build --board nrf5340dk_nrf5340_cpuapp -p always -- -DSHIELD=nrf7002ek -DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
+        west build --board nrf5340dk_nrf5340_cpuapp_ns -p always -- -DSHIELD=nrf7002ek -DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
 
    .. group-tab:: PowerShell
 
       .. code-block:: console
 
-         west build --board nrf5340dk_nrf5340_cpuapp -p always -- -DSHIELD=nrf7002ek "-DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf" -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+         west build --board nrf5340dk_nrf5340_cpuapp_ns -p always -- -DSHIELD=nrf7002ek "-DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf" -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+
+Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
+
+Once your device is onboarded, proceed to :ref:`nrf_cloud_multi_service_setup_wifi_cred` for instructions on configuring your device to connect to a specific access point.
 
 .. _nrf_cloud_multi_service_build_hardcoded:
 
@@ -871,7 +883,7 @@ If you are certain you understand the inherent security risks, you can use this 
 
    This is required for onboarding to succeed.
 
-   Enable the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and set the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` Kconfig option to the device ID.
+   Enable the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and set :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` to the device ID.
 
    For example, if the device ID is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
 
@@ -879,21 +891,26 @@ If you are certain you understand the inherent security risks, you can use this 
 
       .. group-tab:: Bash
 
-         .. code-block:: console
+         .. parsed-literal::
+            :class: highlight
 
-           west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
+            west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
 
       .. group-tab:: PowerShell
 
-         .. code-block:: console
+         .. parsed-literal::
+            :class: highlight
 
             west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
 
-Configuring Wi-Fi access point credentials
-==========================================
+
+.. _nrf_cloud_multi_service_setup_wifi_cred:
+
+Setting up Wi-Fi access point credentials
+=========================================
 
 This sample uses the :ref:`lib_wifi_credentials` library to manage Wi-Fi credentials.
-Before the sample can connect to a Wi-Fi network, you must configure at least one credential set.
+Before the sample can connect to a Wi-Fi network, you must add at least one credential set.
 
 Once your device has been flashed with this sample, you can add a credential by connecting to your device's UART interface and then entering the following command:
 
@@ -948,9 +965,9 @@ Provisioning and onboarding
 For your device to successfully connect to nRF Cloud, you must `onboard it <nRF Cloud Onboarding_>`_.
 The following sections outline the various onboarding methods that this sample supports.
 
-  * If you are building with :ref:`LTE connectivity <nrf_cloud_multi_service_building_lte>` (without :ref:`provisioning service support <nrf_cloud_multi_service_building_provisioning_service>`), start with :ref:`nrf_cloud_multi_service_lte_onboarding`.
-  * If you are building with :ref:`provisioning service support <nrf_cloud_multi_service_building_provisioning_service>`, start with :ref:`nrf_cloud_multi_service_provisioning_service`.
-  * If you are :ref:`building with Wi-Fi connectivity <nrf_cloud_multi_service_building_wifi_conn>`, start with :ref:`nrf_cloud_multi_service_onboard_hardcoded`.
+  * If you are building with :ref:`provisioning service support <nrf_cloud_multi_service_building_provisioning_service>`, proceed to :ref:`nrf_cloud_multi_service_provisioning_service`.
+  * If you are building with :ref:`hard-coded credentials <nrf_cloud_multi_service_build_hardcoded>`, proceed to :ref:`nrf_cloud_multi_service_onboard_hardcoded`.
+  * Otherwise, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding`.
 
 .. note::
    You only need to perform one of the above methods.
@@ -965,12 +982,12 @@ To perform many of the actions in the other sections, you will need to install t
 
 To install the repository, clone or download it and `install the required packages <nRF Cloud Utilities Prerequisites>`_.
 
-.. _nrf_cloud_multi_service_lte_onboarding:
+.. _nrf_cloud_multi_service_standard_onboarding:
 
-Onboarding an LTE device
-========================
+Onboarding a device without the nRF Cloud Provisioning Service
+==============================================================
 
-If you have :ref:`configured the sample so that it connects over LTE <nrf_cloud_multi_service_building_lte>`, you can onboard your devices as follows:
+If you are not using :ref:`provisioning service support <nrf_cloud_multi_service_building_provisioning_service>`, you can onboard your devices as follows:
 
 First, :ref:`create a self-signed CA certificate <nrf_cloud_multi_service_create_self_signed_ca>`.
 
@@ -979,31 +996,66 @@ Then, complete the following steps for each device you wish to onboard:
 1. Make sure your device is plugged in and that this sample has been flashed to it.
 #. Install the device and server credentials using the :file:`device_credentials_installer.py` Python script :ref:`you installed <nrf_cloud_multi_service_install_nrf_utils>`:
 
+   (Select the protocol (MQTT or CoAP) and connectivity technology (LTE or Wi-Fi) you built the sample for)
+
    .. tabs::
 
       .. group-tab:: MQTT
 
-            .. parsed-literal::
-               :class: highlight
+            .. tabs::
 
-               python3 device_credentials_installer.py --ca self\_\ *self_cert_serial*\ \_ca.pem --ca_key self\_\ *self_cert_serial*\ \_prv.pem --id_str nrf- --id_imei -s -d
+               .. group-tab:: LTE
 
-            Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>`.
+                  .. parsed-literal::
+                     :class: highlight
+
+                     python3 device_credentials_installer.py --ca self\_\ *self_cert_serial*\ \_ca.pem --ca_key self\_\ *self_cert_serial*\ \_prv.pem --id_str nrf- --id_imei -s -d --verify
+
+                  Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>`.
+
+                  .. note::
+                     This command assumes you have left the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` option enabled and the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` option set to ``nrf-``.
+                     See :ref:`configuration_device_id` to use other device ID formats.
+
+               .. group-tab:: Wi-Fi
+
+                  .. parsed-literal::
+                     :class: highlight
+
+                     python3 device_credentials_installer.py --ca self\_\ *self_cert_serial*\ \_ca.pem --ca_key self\_\ *self_cert_serial*\ \_prv.pem --id_str "\ *device_id*\ " -s -d --verify --local_cert --cmd_type tls_cred_shell --port *device_port*
+
+                  Where:
+
+                    * *device id* is the (globally unique) ID for your device.
+                      You must use the same device ID that you configured for the sample at build time.
+                      See :ref:`nrf_cloud_multi_service_building_wifi_conn` for details.
+                    * The :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>`.
+                    * *device port* is the serial port your device is attached to.
+
+                  The ``--cmd_type tls_cred_shell`` option indicates that the device is using the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credentials management instead of AT commands.
+
+                  The ``--local_cert`` option indicates that the device private key and certificate should be generated on the host machine, not on-device.
+                  This is necessary because the TLS Credentials Shell does not support CSR generation currently.
+                  Delete the device private key from your machine after it is installed to the device by this script.
 
       .. group-tab:: CoAP
 
-            .. parsed-literal::
-               :class: highlight
+         .. tabs::
 
-               python3 device_credentials_installer.py --ca self\_\ *self_cert_serial*\ \_ca.pem --ca_key self\_\ *self_cert_serial*\ \_prv.pem --id_str nrf- --id_imei -s -d --coap
+               .. group-tab:: LTE
 
-            Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>`.
-            The ``--coap`` option indicates that the device needs the CoAP root CA installed.
-            See below for more details.
+                  .. parsed-literal::
+                     :class: highlight
 
-   .. note::
-      This command assumes you have left the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` option enabled and the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` option set to ``nrf-``.
-      See :ref:`configuration_device_id` to use other device ID formats.
+                     python3 device_credentials_installer.py --ca self\_\ *self_cert_serial*\ \_ca.pem --ca_key self\_\ *self_cert_serial*\ \_prv.pem --id_str nrf- --id_imei -s -d --verify --coap
+
+                  Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>`.
+                  The ``--coap`` option indicates that the device needs the CoAP root CA installed.
+                  See below for more details.
+
+                  .. note::
+                     This command assumes you have left the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` option enabled and the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` option set to ``nrf-``.
+                     See :ref:`configuration_device_id` to use other device ID formats.
 
    This script generates, signs, and installs a device credential for your device.
    The private key for this credential is generated by the device itself, and stored on the modem.
@@ -1108,7 +1160,6 @@ Onboarding with hard-coded device credentials
 =============================================
 
 It is possible to onboard your devices using hard-coded device credentials.
-This is currently required for onboarding Wi-Fi devices.
 If you are certain you understand the inherent security risks, you can do so as follows:
 
 First, create a :ref:`self-signed CA certificate <nrf_cloud_multi_service_create_self_signed_ca>`.
@@ -1116,8 +1167,6 @@ First, create a :ref:`self-signed CA certificate <nrf_cloud_multi_service_create
 Next, complete the following steps for each device you wish to onboard:
 
 1. :ref:`Locally generate a device credential <nrf_cloud_multi_service_create_device_cred_locally>`
-
-#. :ref:`Manually onboard the device to nRF Cloud <nrf_cloud_multi_service_onboard_device_manually>`
 
    In addition to the arguments prescribed in that section, also include the ``-embed_save`` argument when running the :file:`create_device_credentials.py` Python script:
 
@@ -1138,6 +1187,8 @@ Next, complete the following steps for each device you wish to onboard:
    See `CA certificates for server authentication in AWS IoT Core`_ for more details.
 
    Your device needs these three credentials to connect successfully with nRF Cloud.
+
+#. :ref:`Manually onboard the device to nRF Cloud <nrf_cloud_multi_service_onboard_device_manually>`
 
 #. Follow the instructions under :ref:`nrf_cloud_multi_service_build_hardcoded`.
 
