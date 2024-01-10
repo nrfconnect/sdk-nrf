@@ -397,6 +397,7 @@ int nrf_wifi_twt_teardown_flows(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 	struct nrf_wifi_umac_config_twt_info twt_info = {0};
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	int ret = 0;
+	struct wifi_twt_params twt_params = {0};
 
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
@@ -428,6 +429,11 @@ int nrf_wifi_twt_teardown_flows(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 		}
 		/* UMAC doesn't send TWT teardown event for host initiated teardown */
 		nrf_wifi_twt_update_internal_state(vif_ctx_zep, false, flow_id);
+		/* TODO: Remove this once UMAC sends the status */
+		twt_params.operation = WIFI_TWT_TEARDOWN;
+		twt_params.flow_id = flow_id;
+		twt_params.teardown_status = WIFI_TWT_TEARDOWN_SUCCESS;
+		wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 	}
 
 out:
