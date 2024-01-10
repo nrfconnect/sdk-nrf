@@ -56,7 +56,7 @@ static void copy_event_handler(lte_lc_evt_handler_t hd)
 
 ZTEST_SUITE(lwm2m_client_utils_cellconn, NULL, NULL, NULL, NULL, NULL);
 
-ZTEST(lwm2m_client_utils_cellconn, test_init)
+ZTEST(lwm2m_client_utils_cellconn, test_init_cellconn)
 {
 	int rc;
 

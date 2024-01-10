@@ -145,7 +145,7 @@ ZTEST(lwm2m_client_utils_connmon, test_modem_info_params_init_fail)
 	zassert_equal(rc, modem_info_params_init_fake.return_val, "wrong return value");
 }
 
-ZTEST(lwm2m_client_utils_connmon, test_init)
+ZTEST(lwm2m_client_utils_connmon, test_init_connmon)
 {
 	setup();
 

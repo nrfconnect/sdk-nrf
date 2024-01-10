@@ -397,7 +397,7 @@ ZTEST(lwm2m_client_utils_security, test_init_get_buf_fails)
 	zassert_equal(rc, -4, "wrong return value");
 }
 
-ZTEST(lwm2m_client_utils_security, test_init)
+ZTEST(lwm2m_client_utils_security, test_init_security)
 {
 	/* Normal case */
 	int rc;
