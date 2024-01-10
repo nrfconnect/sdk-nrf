@@ -53,7 +53,7 @@ If you are updating from the |NCS| version earlier than v1.5.0, see the followin
 
             .. code-block:: console
 
-               wget -O gn.zip https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/latest
+               wget -O gn.zip https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/latest
                unzip gn.zip
                rm gn.zip
 
@@ -82,13 +82,13 @@ If you are updating from the |NCS| version earlier than v1.5.0, see the followin
 
             .. code-block:: console
 
-               curl -o gn.zip -L https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/mac-arm64/+/latest
+               curl -o gn.zip -L https://chrome-infra-packages.appspot.com/dl/gn/gn/mac-arm64/+/latest
 
             * On macOS running on Intel:
 
             .. code-block:: console
 
-               curl -o gn.zip -L https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/mac-amd64/+/latest
+               curl -o gn.zip -L https://chrome-infra-packages.appspot.com/dl/gn/gn/mac-amd64/+/latest
 
          #. Unzip the archive and then delete it:
 
