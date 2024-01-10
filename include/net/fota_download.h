@@ -71,6 +71,10 @@ enum fota_download_evt_id {
 enum fota_download_error_cause {
 	/** No error, used when event ID is not FOTA_DOWNLOAD_EVT_ERROR. */
 	FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR,
+	/** Connecting to the FOTA server failed. A possible reason could be wrong
+	 *  TLS credentials. A retry is unlikely to help with the same credentials.
+	 */
+	FOTA_DOWNLOAD_ERROR_CAUSE_CONNECT_FAILED,
 	/** Downloading the update failed. The download may be retried. */
 	FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED,
 	/** The update is invalid and was rejected. Retry will not help. */

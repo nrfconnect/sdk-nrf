@@ -280,6 +280,11 @@ static int download_client_callback(const struct download_client_evt *event)
 			/* Fall through and return 0 below to tell
 			 * download_client to retry
 			 */
+		} else if ((event->error == -ECONNABORTED) || (event->error == -ECONNREFUSED)) {
+			LOG_ERR("Download client failed to connect to server");
+			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_CONNECT_FAILED);
+
+			goto error_and_close;
 		} else {
 			LOG_ERR("Download client error");
 			err = dfu_target_done(false);
