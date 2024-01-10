@@ -730,7 +730,10 @@ Libraries for networking
 
 * :ref:`lib_fota_download` library:
 
-  * Added the functions :c:func:`fota_download` and :c:func:`fota_download_any` that can accept a security tag list and security tag count as arguments instead of a single security tag.
+  * Added:
+
+    * The functions :c:func:`fota_download` and :c:func:`fota_download_any` that can accept a security tag list and security tag count as arguments instead of a single security tag.
+    * :c:enumerator:`FOTA_DOWNLOAD_ERROR_CAUSE_CONNECT_FAILED` as a potential error cause in  :c:enumerator:`FOTA_DOWNLOAD_EVT_ERROR` events.
 
 Libraries for NFC
 -----------------
