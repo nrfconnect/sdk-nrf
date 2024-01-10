@@ -136,9 +136,14 @@ struct bt_mesh_light_ctrl_srv_cfg {
 	/** State-wise light levels. */
 	uint16_t light[LIGHT_CTRL_STATE_COUNT];
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	/** Target illuminance values. */
 	struct sensor_value lux[LIGHT_CTRL_STATE_COUNT];
-#endif
+#else
+	/** Target illuminance values, in centilux */
+	uint32_t centilux[LIGHT_CTRL_STATE_COUNT];
+#endif /* CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE */
+#endif /* CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG */
 };
 
 /** @brief Light Lightness Control Server instance.
@@ -154,8 +159,13 @@ struct bt_mesh_light_ctrl_srv {
 	struct {
 		/** Initial light level */
 		uint16_t initial_light;
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 		/** Initial illumination level */
 		struct sensor_value initial_lux;
+#else
+		/** Initial illumination level, in centilux */
+		uint32_t initial_centilux;
+#endif
 		/** Fade duration */
 		uint32_t duration;
 	} fade;

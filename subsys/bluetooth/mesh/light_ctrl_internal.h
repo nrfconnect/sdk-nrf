@@ -48,6 +48,7 @@ prop_format_get(enum bt_mesh_light_ctrl_prop id)
 	}
 }
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 static inline int prop_encode(struct net_buf_simple *buf,
 			      enum bt_mesh_light_ctrl_prop id,
 			      const struct sensor_value *val)
@@ -75,6 +76,7 @@ static inline int prop_decode(struct net_buf_simple *buf,
 
 	return sensor_ch_decode(buf, format, val);
 }
+#endif
 
 #ifdef __cplusplus
 }

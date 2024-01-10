@@ -225,12 +225,21 @@ enum bt_mesh_light_ctrl_coeff {
 		.accuracy = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY,        \
 	}
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 #define BT_MESH_LIGHT_CTRL_SRV_LUX_INIT                                        \
 	.lux = {                                                               \
 		{ CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY },             \
 		{ CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON },                  \
 		{ CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG }              \
 	}
+#else
+#define BT_MESH_LIGHT_CTRL_SRV_LUX_INIT                                        \
+	.centilux = {                                                          \
+		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY,                 \
+		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON,                      \
+		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG                  \
+	}
+#endif
 #else
 #define BT_MESH_LIGHT_CTRL_SRV_LUX_INIT
 #endif

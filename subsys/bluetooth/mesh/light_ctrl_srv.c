@@ -57,6 +57,7 @@ static void restart_timer(struct bt_mesh_light_ctrl_srv *srv, uint32_t delay)
 	k_work_reschedule(&srv->timer, K_MSEC(delay));
 }
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 static inline uint32_t to_centi_lux(const struct sensor_value *lux)
 {
 	return lux->val1 * 100L + lux->val2 / 10000L;
@@ -67,6 +68,7 @@ static inline void from_centi_lux(uint32_t centi_lux, struct sensor_value *lux)
 	lux->val1 = centi_lux / 100L;
 	lux->val2 = centi_lux % 10000L;
 }
+#endif
 
 static void store(struct bt_mesh_light_ctrl_srv *srv, enum flags kind)
 {
@@ -303,13 +305,34 @@ static uint16_t light_get(struct bt_mesh_light_ctrl_srv *srv)
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 static float sensor_to_float(struct sensor_value *val)
 {
 	return val->val1 + val->val2 / 1000000.0f;
 }
+#endif
 
+#ifndef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+static uint32_t centilux_get(struct bt_mesh_light_ctrl_srv *srv)
+{
+	if (!is_enabled(srv)) {
+		return 0;
+	}
+
+	if (!atomic_test_bit(&srv->flags, FLAG_TRANSITION) ||
+	    !srv->fade.duration) {
+		return srv->cfg.centilux[srv->state];
+	}
+
+	uint32_t delta = curr_fade_time(srv);
+	uint32_t init = srv->fade.initial_centilux;
+	uint32_t cfg = srv->cfg.centilux[srv->state];
+
+	return init + ((cfg - init) * delta) / srv->fade.duration;
+}
+#else
 static void lux_get(struct bt_mesh_light_ctrl_srv *srv,
-		    struct sensor_value *lux)
+		    sensor_value_type *lux)
 {
 	if (!is_enabled(srv)) {
 		memset(lux, 0, sizeof(*lux));
@@ -329,6 +352,7 @@ static void lux_get(struct bt_mesh_light_ctrl_srv *srv,
 
 	from_centi_lux(centi_lux, lux);
 }
+#endif
 
 static float lux_getf(struct bt_mesh_light_ctrl_srv *srv)
 {
@@ -336,7 +360,11 @@ static float lux_getf(struct bt_mesh_light_ctrl_srv *srv)
 		return 0.0f;
 	}
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	return to_centi_lux(&srv->cfg.lux[srv->state]) / 100.0f;
+#else
+	return srv->cfg.centilux[srv->state] / 100.0f;
+#endif
 }
 
 static void reg_updated(struct bt_mesh_light_ctrl_reg *reg, float value)
@@ -388,6 +416,11 @@ static void lux_get(struct bt_mesh_light_ctrl_srv *srv,
 	memset(lux, 0, sizeof(*lux));
 }
 
+static uint32_t centilux_get(struct bt_mesh_light_ctrl_srv *srv)
+{
+	return 0;
+}
+
 #endif
 
 static void transition_start(struct bt_mesh_light_ctrl_srv *srv,
@@ -397,7 +430,11 @@ static void transition_start(struct bt_mesh_light_ctrl_srv *srv,
 	srv->state = state;
 	srv->fade.initial_light = light_get(srv);
 	srv->fade.duration = fade_time;
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	lux_get(srv, &srv->fade.initial_lux);
+#else
+	srv->fade.initial_centilux = centilux_get(srv);
+#endif
 
 	atomic_set_bit(&srv->flags, FLAG_TRANSITION);
 	if (!IS_ENABLED(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG) ||
@@ -952,7 +989,7 @@ static int handle_sensor_status(const struct bt_mesh_model *model, struct bt_mes
 	while (buf->len >= 3) {
 		uint8_t len;
 		uint16_t id;
-		struct sensor_value value;
+		sensor_value_type value;
 
 		sensor_status_id_decode(buf, &len, &id);
 
@@ -993,7 +1030,11 @@ static int handle_sensor_status(const struct bt_mesh_model *model, struct bt_mes
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 		if (id == BT_MESH_PROP_ID_PRESENT_AMB_LIGHT_LEVEL && srv->reg) {
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 			srv->reg->measured = sensor_to_float(&value);
+#else
+			(void)bt_mesh_sensor_value_to_float(&value, &srv->reg->measured);
+#endif
 #if CONFIG_BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT
 			srv->amb_light_level_timestamp = k_uptime_get();
 #endif
@@ -1028,11 +1069,16 @@ static int handle_sensor_status(const struct bt_mesh_model *model, struct bt_mes
 		}
 
 		/* Decode entire value to float, to get actual sensor value. */
-		float val = sensor_to_float(&value);
+		float val;
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+		val = sensor_to_float(&value);
+#else
+		(void)bt_mesh_sensor_value_to_float(&value, &val);
+#endif
 
 		LOG_DBG("Checking sensor val");
 		if (id == BT_MESH_PROP_ID_TIME_SINCE_MOTION_SENSED) {
-			delayed_occupancy(srv, value.val1);
+			delayed_occupancy(srv, val);
 		} else if (val > 0) {
 			delayed_occupancy(srv, 0);
 		}
@@ -1094,6 +1140,258 @@ const struct bt_mesh_model_op _bt_mesh_light_ctrl_srv_op[] = {
 	},
 	BT_MESH_MODEL_OP_END,
 };
+
+#ifndef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+#define MICRO_PER_MILLI 1000LL
+#define MICRO_PER_UNIT 1000000LL
+#define MICRO_PER_CENTI 10000LL
+
+static int prop_get(struct net_buf_simple *buf,
+		    const struct bt_mesh_light_ctrl_srv *srv, uint16_t id)
+{
+	struct bt_mesh_sensor_value sensor_val;
+	int err;
+	int64_t micro = 0;
+	const struct bt_mesh_sensor_format *format = prop_format_get(id);
+
+	if (!format) {
+		return -ENOENT;
+	}
+
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	if (srv->reg) {
+		switch (id) {
+		case BT_MESH_LIGHT_CTRL_COEFF_KID:
+			err = bt_mesh_sensor_value_from_float(
+				format, srv->reg->cfg.ki.down, &sensor_val);
+			goto encode;
+		case BT_MESH_LIGHT_CTRL_COEFF_KIU:
+			err = bt_mesh_sensor_value_from_float(
+				format, srv->reg->cfg.ki.up, &sensor_val);
+			goto encode;
+		case BT_MESH_LIGHT_CTRL_COEFF_KPD:
+			err = bt_mesh_sensor_value_from_float(
+				format, srv->reg->cfg.kp.down, &sensor_val);
+			goto encode;
+		case BT_MESH_LIGHT_CTRL_COEFF_KPU:
+			err = bt_mesh_sensor_value_from_float(
+				format, srv->reg->cfg.kp.up, &sensor_val);
+			goto encode;
+		case BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY:
+			micro = srv->reg->cfg.accuracy * MICRO_PER_UNIT;
+			break;
+		}
+	}
+	switch (id) {
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON:
+		micro = srv->cfg.centilux[LIGHT_CTRL_STATE_ON] * MICRO_PER_CENTI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG:
+		micro = srv->cfg.centilux[LIGHT_CTRL_STATE_PROLONG] * MICRO_PER_CENTI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY:
+		micro = srv->cfg.centilux[LIGHT_CTRL_STATE_STANDBY] * MICRO_PER_CENTI;
+		break;
+#else
+	switch (id) {
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON:
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG:
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY:
+#endif
+	case BT_MESH_LIGHT_CTRL_COEFF_KID:
+	case BT_MESH_LIGHT_CTRL_COEFF_KIU:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPD:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPU:
+	case BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY:
+		break; /* Prevent returning -ENOENT */
+	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_ON:
+		micro = to_actual(srv->cfg.light[LIGHT_CTRL_STATE_ON]) * MICRO_PER_UNIT;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_PROLONG:
+		micro = to_actual(srv->cfg.light[LIGHT_CTRL_STATE_PROLONG]) * MICRO_PER_UNIT;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_STANDBY:
+		micro = to_actual(srv->cfg.light[LIGHT_CTRL_STATE_STANDBY]) * MICRO_PER_UNIT;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG:
+		micro = srv->cfg.fade_prolong * MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_ON:
+		micro = srv->cfg.fade_on * MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_AUTO:
+		micro = srv->cfg.fade_standby_auto * MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL:
+		micro = srv->cfg.fade_standby_manual * MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_OCCUPANCY_DELAY:
+		micro = srv->cfg.occupancy_delay * MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_PROLONG:
+		micro = srv->cfg.prolong * MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_ON:
+		micro = srv->cfg.on * MICRO_PER_MILLI;
+		break;
+	default:
+		return -ENOENT;
+	}
+
+	err = bt_mesh_sensor_value_from_micro(format, micro, &sensor_val);
+
+encode:
+	if (err) {
+		return err;
+	}
+
+	return sensor_ch_encode(buf, format, &sensor_val);
+}
+
+static int prop_set(struct net_buf_simple *buf,
+		    struct bt_mesh_light_ctrl_srv *srv, uint16_t id)
+{
+	struct bt_mesh_sensor_value val;
+	int err;
+	const struct bt_mesh_sensor_format *format = prop_format_get(id);
+	enum bt_mesh_sensor_value_status status;
+
+	if (!format) {
+		return -ENOENT;
+	}
+
+	err = sensor_ch_decode(buf, format, &val);
+	if (err) {
+		return err;
+	}
+
+	if (buf->len > 0) {
+		LOG_ERR("Invalid message size");
+		return -EMSGSIZE;
+	}
+
+	LOG_DBG("Set Prop: 0x%04x: %s", id, bt_mesh_sensor_ch_str(&val));
+
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	/* Regulator coefficients are raw IEEE-754 floats, pull them straight
+	 * from the buffer instead of using sensor to decode them:
+	 */
+	if (srv->reg) {
+		switch (id) {
+		case BT_MESH_LIGHT_CTRL_COEFF_KID:
+			status = bt_mesh_sensor_value_to_float(
+				&val, &srv->reg->cfg.ki.down);
+			break;
+		case BT_MESH_LIGHT_CTRL_COEFF_KIU:
+			status = bt_mesh_sensor_value_to_float(
+				&val, &srv->reg->cfg.ki.down);
+			break;
+		case BT_MESH_LIGHT_CTRL_COEFF_KPD:
+			status = bt_mesh_sensor_value_to_float(
+				&val, &srv->reg->cfg.ki.down);
+			break;
+		case BT_MESH_LIGHT_CTRL_COEFF_KPU:
+			status = bt_mesh_sensor_value_to_float(
+				&val, &srv->reg->cfg.ki.down);
+			break;
+		default:
+			return -EINVAL;
+		}
+
+		return bt_mesh_sensor_value_status_is_numeric(status) ?
+			0 : -EINVAL;
+	}
+#endif
+	int64_t micro;
+
+	status = bt_mesh_sensor_value_to_micro(&val, &micro);
+
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return -EINVAL;
+	}
+
+	switch (id) {
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	case BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY:
+		if (srv->reg) {
+			srv->reg->cfg.accuracy = micro / MICRO_PER_UNIT;
+		}
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON:
+		srv->cfg.centilux[LIGHT_CTRL_STATE_ON] = micro / MICRO_PER_CENTI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG:
+		srv->cfg.centilux[LIGHT_CTRL_STATE_PROLONG] = micro / MICRO_PER_CENTI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY:
+		srv->cfg.centilux[LIGHT_CTRL_STATE_STANDBY] = micro / MICRO_PER_CENTI;
+		break;
+#else
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON:
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG:
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY:
+	case BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY:
+#endif
+	case BT_MESH_LIGHT_CTRL_COEFF_KID:
+	case BT_MESH_LIGHT_CTRL_COEFF_KIU:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPD:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPU:
+		break; /* Prevent returning -ENOENT */
+	/* Properties are always set in light actual representation: */
+	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_ON:
+		srv->cfg.light[LIGHT_CTRL_STATE_ON] = from_actual(micro / MICRO_PER_UNIT);
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_PROLONG:
+		srv->cfg.light[LIGHT_CTRL_STATE_PROLONG] = from_actual(micro / MICRO_PER_UNIT);
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_STANDBY:
+		srv->cfg.light[LIGHT_CTRL_STATE_STANDBY] = from_actual(micro / MICRO_PER_UNIT);
+
+		/* If light is already in STANDBY, or transitioning to STANDBY,
+		 * update the target level to new value.
+		 */
+		if (srv->state == LIGHT_CTRL_STATE_STANDBY) {
+			/* Check if transition is in progress */
+			if (atomic_test_bit(&srv->flags, FLAG_TRANSITION)) {
+				uint32_t rem_time = remaining_fade_time(srv);
+
+				transition_start(srv, LIGHT_CTRL_STATE_STANDBY,
+						 rem_time);
+			} else {
+				transition_start(srv, LIGHT_CTRL_STATE_STANDBY,
+						 0);
+			}
+		}
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG:
+		srv->cfg.fade_prolong = micro / MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_ON:
+		srv->cfg.fade_on = micro / MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_AUTO:
+		srv->cfg.fade_standby_auto = micro / MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL:
+		srv->cfg.fade_standby_manual = micro / MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_OCCUPANCY_DELAY:
+		srv->cfg.occupancy_delay = micro / MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_PROLONG:
+		srv->cfg.prolong = micro / MICRO_PER_MILLI;
+		break;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_ON:
+		srv->cfg.on = micro / MICRO_PER_MILLI;
+		break;
+	default:
+		return -ENOENT;
+	}
+
+	return 0;
+}
+
+#else /* defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
 
 static void to_prop_time(uint32_t time, struct sensor_value *prop)
 {
@@ -1320,6 +1618,7 @@ static int prop_set(struct net_buf_simple *buf,
 
 	return 0;
 }
+#endif /* !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
 
 static int prop_tx(struct bt_mesh_light_ctrl_srv *srv,
 		    struct bt_mesh_msg_ctx *ctx, uint16_t id)
