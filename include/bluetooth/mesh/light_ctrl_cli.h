@@ -93,6 +93,23 @@ struct bt_mesh_light_ctrl_cli_handlers {
 			    struct bt_mesh_msg_ctx *ctx,
 			    const struct bt_mesh_onoff_status *status);
 
+#if !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) || defined(__DOXYGEN__)
+	/** @brief Light LC Property status handler.
+	 *
+	 *  The Light Lightness Control Server's properties are configuration
+	 *  parameters for its behavior. All properties are represented as a
+	 *  single sensor channel.
+	 *
+	 *  @param[in] cli   Client that received the message.
+	 *  @param[in] ctx   Context of the message.
+	 *  @param[in] id    ID of the property.
+	 *  @param[in] value Value of the property.
+	 */
+	void (*prop)(struct bt_mesh_light_ctrl_cli *cli,
+		     struct bt_mesh_msg_ctx *ctx,
+		     enum bt_mesh_light_ctrl_prop id,
+		     const struct bt_mesh_sensor_value *value);
+#else
 	/** @brief Light LC Property status handler.
 	 *
 	 *  The Light Lightness Control Server's properties are configuration
@@ -108,6 +125,7 @@ struct bt_mesh_light_ctrl_cli_handlers {
 		     struct bt_mesh_msg_ctx *ctx,
 		     enum bt_mesh_light_ctrl_prop id,
 		     const struct sensor_value *value);
+#endif
 
 	/** @brief Light LC Regulator Coefficient status handler.
 	 *
@@ -379,6 +397,90 @@ int bt_mesh_light_ctrl_cli_light_onoff_set_unack(
 	struct bt_mesh_light_ctrl_cli *cli, struct bt_mesh_msg_ctx *ctx,
 	const struct bt_mesh_onoff_set *set);
 
+#if !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) || defined(__DOXYGEN__)
+/** @brief Get a Light Lightness Control Server property value.
+ *
+ *  Properties are the configuration parameters for the Light Lightness Control
+ *  Server. Each property value is represented as a single sensor channel.
+ *
+ *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
+ *  function will return, and the response will be passed to the
+ *  @ref bt_mesh_light_ctrl_cli_handlers::prop callback.
+ *
+ *  @param[in]  cli Client model to send on.
+ *  @param[in]  ctx Message context, or NULL to use the configured publish
+ *                  parameters.
+ *  @param[in]  id  Light Lightness Control Server property to get.
+ *  @param[out] rsp Property value response buffer, or NULL to keep from
+ *                  blocking.
+ *
+ *  @retval 0              Successfully sent the message and populated the @c
+ *                         rsp buffer.
+ *  @retval -EALREADY      A blocking request is already in progress.
+ *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ *                         not configured.
+ *  @retval -EAGAIN        The device has not been provisioned.
+ *  @retval -ETIMEDOUT     The request timed out without a response.
+ */
+int bt_mesh_light_ctrl_cli_prop_get(struct bt_mesh_light_ctrl_cli *cli,
+				    struct bt_mesh_msg_ctx *ctx,
+				    enum bt_mesh_light_ctrl_prop id,
+				    struct bt_mesh_sensor_value *rsp);
+
+/** @brief Set a Light Lightness Control Server property value.
+ *
+ *  Properties are the configuration parameters for the Light Lightness Control
+ *  Server. Each property value is represented as a single sensor channel.
+ *
+ *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
+ *  function will return, and the response will be passed to the
+ *  @ref bt_mesh_light_ctrl_cli_handlers::prop callback.
+ *
+ *  @param[in]  cli Client model to send on.
+ *  @param[in]  ctx Message context, or NULL to use the configured publish
+ *                  parameters.
+ *  @param[in]  id  Light Lightness Control Server property to set.
+ *  @param[in]  val New property value.
+ *  @param[out] rsp Property value response buffer, or NULL to keep from
+ *                  blocking.
+ *
+ *  @retval 0              Successfully sent the message and populated the @c
+ *                         rsp buffer.
+ *  @retval -EALREADY      A blocking request is already in progress.
+ *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ *                         not configured.
+ *  @retval -EAGAIN        The device has not been provisioned.
+ *  @retval -ETIMEDOUT     The request timed out without a response.
+ */
+int bt_mesh_light_ctrl_cli_prop_set(struct bt_mesh_light_ctrl_cli *cli,
+				    struct bt_mesh_msg_ctx *ctx,
+				    enum bt_mesh_light_ctrl_prop id,
+				    const struct bt_mesh_sensor_value *val,
+				    struct bt_mesh_sensor_value *rsp);
+
+/** @brief Set a Light Lightness Control Server property value without
+ *         requesting a response.
+ *
+ *  Properties are the configuration parameters for the Light Lightness Control
+ *  Server. Each property value is represented as a single sensor channel.
+ *
+ *  @param[in]  cli Client model to send on.
+ *  @param[in]  ctx Message context, or NULL to use the configured publish
+ *                  parameters.
+ *  @param[in]  id  Light Lightness Control Server property to set.
+ *  @param[in]  val New property value.
+ *
+ *  @retval 0              Successfully sent the message.
+ *  @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ *                         not configured.
+ *  @retval -EAGAIN        The device has not been provisioned.
+ */
+int bt_mesh_light_ctrl_cli_prop_set_unack(
+	struct bt_mesh_light_ctrl_cli *cli,
+	struct bt_mesh_msg_ctx *ctx,
+	enum bt_mesh_light_ctrl_prop id,
+	const struct bt_mesh_sensor_value *val);
+#else
 /** @brief Get a Light Lightness Control Server property value.
  *
  *  Properties are the configuration parameters for the Light Lightness Control
@@ -460,6 +562,7 @@ int bt_mesh_light_ctrl_cli_prop_set_unack(struct bt_mesh_light_ctrl_cli *cli,
 					  struct bt_mesh_msg_ctx *ctx,
 					  enum bt_mesh_light_ctrl_prop id,
 					  const struct sensor_value *val);
+#endif
 
 /** @brief Get a Light Lightness Control Server Regulator Coefficient value.
  *
