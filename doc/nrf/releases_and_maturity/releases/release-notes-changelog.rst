@@ -558,6 +558,13 @@ Wi-Fi samples
 
 * Added the :ref:`wifi_throughput_sample` sample that demonstrates how to measure the network throughput of a Nordic Wi-Fi enabled platform under the different Wi-Fi stack configuration profiles.
 
+* :ref:`wifi_shell_sample` sample:
+
+  * Updated:
+
+    * Added ``raw_tx`` extension to the Wi-Fi command line.
+      It adds the subcommands to configure and send raw TX packets.
+
 Other samples
 -------------
 
