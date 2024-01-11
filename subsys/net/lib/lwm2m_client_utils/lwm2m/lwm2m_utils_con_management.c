@@ -57,6 +57,41 @@ static void lwm2m_utils_dtls_load(struct lwm2m_ctx *ctx)
 	dtls_stored = false;
 }
 
+static void lwm2m_utils_update_rptau(struct lwm2m_ctx *client)
+{
+	int ret;
+	uint32_t lifetime;
+	struct lte_lc_psm_cfg psm_cfg = {0};
+
+	ret = lte_lc_psm_get(&psm_cfg.tau, &psm_cfg.active_time);
+
+	if (ret) {
+		LOG_ERR("Failed to get PSM information");
+		return;
+	}
+
+	if (psm_cfg.active_time < 0) {
+		LOG_DBG("PSM deactivated");
+		return;
+	}
+
+	if (lwm2m_get_u32(&LWM2M_OBJ(1, client->srv_obj_inst, 1), &lifetime) < 0) {
+		lifetime = CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME;
+		LOG_WRN("Using default lifetime: %u", lifetime);
+	}
+
+	/* Try to match periodic TAU with lifetime*/
+	if (psm_cfg.tau != lifetime) {
+		LOG_DBG("Requesting new periodic TAU");
+		lte_lc_psm_param_set_seconds(lifetime, psm_cfg.active_time);
+
+		ret = lte_lc_psm_req(true);
+		if (ret) {
+			LOG_ERR("Failed to request new perdioc TAU");
+		}
+	}
+}
+
 void lwm2m_utils_connection_manage(struct lwm2m_ctx *client,
 				      enum lwm2m_rd_client_event *client_event)
 {
@@ -86,6 +121,9 @@ void lwm2m_utils_connection_manage(struct lwm2m_ctx *client,
 			/* Socket is closed and dtls session also */
 			dtls_stored = false;
 		}
+		break;
+	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
+		lwm2m_utils_update_rptau(client);
 		break;
 
 	default:

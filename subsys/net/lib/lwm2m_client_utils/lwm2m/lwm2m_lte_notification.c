@@ -53,10 +53,13 @@ int lwm2m_ncell_handler_register(void)
 
 void lte_notify_handler(const struct lte_lc_evt *const evt)
 {
+	int err;
+	struct lte_lc_psm_cfg psm_cfg = {0};
+
 	switch (evt->type) {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
-		int err = lwm2m_update_signal_meas_objects(&evt->cells_info);
+		err = lwm2m_update_signal_meas_objects(&evt->cells_info);
 
 		if (err == -ENODATA) {
 			LOG_DBG("No neighboring cells available");
@@ -88,6 +91,16 @@ void lte_notify_handler(const struct lte_lc_evt *const evt)
 		lwm2m_rd_client_update();
 		break;
 #endif /* CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS */
+	case LTE_LC_EVT_PSM_UPDATE:
+		err = lte_lc_psm_get(&psm_cfg.tau, &psm_cfg.active_time);
+
+		if (err) {
+			LOG_WRN("Failed to get PSM information");
+			return;
+		}
+		LOG_DBG("Tau period %d seconds", psm_cfg.tau);
+		LOG_DBG("Active time %d seconds", psm_cfg.active_time);
+		break;
 	default:
 		break;
 	}
