@@ -1,5 +1,5 @@
 python:
-  version: 3.8.18
+  version: 3.9.18
 git:
   version: 2.37.3
 cmake:
@@ -13,7 +13,7 @@ dtc:
 west:
   version: 1.2.0
 gn:
-  version: e55664a01f6ee92762210d0c01b13552f8117e11
+  version: 71305b07d708830ed7b96006dfa773a79ff313fe
 nanopb:
   version: 0.4.6
 zephyr-sdk:
