@@ -52,8 +52,20 @@ struct bt_le_audio_tx_info {
 static bool initialized;
 static struct bt_le_audio_tx_info tx_info[SRC_STREAM_COUNT];
 
+/**
+ * @brief Sends audio data over a single BAP stream.
+ *
+ * @param data		Audio data to send.
+ * @param size		Size of data.
+ * @param bap_stream	Pointer to BAP stream to use.
+ * @param tx_info	Pointer to tx_info struct.
+ * @param ts_tx		Timestamp to send. Note that for some controllers, BT_ISO_TIMESTAMP_NONE
+ *			is used. This timestamp is used to ensure that SDUs are sent in the same
+ *			connection interval.
+ * @return		0 if successful, error otherwise.
+ */
 static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_bap_stream *bap_stream,
-			   struct bt_le_audio_tx_info *tx_info)
+			   struct bt_le_audio_tx_info *tx_info, uint32_t ts_tx)
 {
 	int ret;
 	struct net_buf *buf;
@@ -93,9 +105,15 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_bap
 
 	atomic_inc(&tx_info->iso_tx_pool_alloc);
 
-	ret = bt_bap_stream_send(bap_stream, buf, tx_info->iso_tx.seq_num, BT_ISO_TIMESTAMP_NONE);
+	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
+		ret = bt_bap_stream_send(bap_stream, buf, tx_info->iso_tx.seq_num,
+					 BT_ISO_TIMESTAMP_NONE);
+	} else {
+		ret = bt_bap_stream_send(bap_stream, buf, tx_info->iso_tx.seq_num, ts_tx);
+	}
+
 	if (ret < 0) {
-		LOG_WRN("Failed to send audio data: %d", ret);
+		LOG_WRN("Failed to send audio data: %d stream %p", ret, bap_stream);
 		net_buf_unref(buf);
 		atomic_dec(&tx_info->iso_tx_pool_alloc);
 	} else {
@@ -109,9 +127,6 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 			uint8_t streams_to_tx)
 {
 	int ret;
-	uint32_t ts = 0;
-	bool any_chan_streaming = false;
-	bool got_tx_sync_ts = false;
 	size_t data_size_pr_stream = 0;
 
 	if (!initialized) {
@@ -143,65 +158,69 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 		return -EINVAL;
 	}
 
+	/* When sending data, we always send ts = 0 to the first active transmitting channel.
+	 * The controller will populate with a ts which is fetched using bt_iso_chan_get_tx_sync.
+	 * This timestamp will be submitted to all the other channels in order to place data on all
+	 * channels in the same ISO interval.
+	 */
+
+	uint32_t ts_common = 0;
+	bool ts_common_acquired = false;
+	uint32_t common_interval = 0;
+
 	for (int i = 0; i < streams_to_tx; i++) {
-		if (le_audio_ep_state_check(bap_streams[i]->ep, BT_BAP_EP_STATE_STREAMING)) {
-			any_chan_streaming = true;
+		if (!le_audio_ep_state_check(bap_streams[i]->ep, BT_BAP_EP_STATE_STREAMING)) {
+			/* This bap_stream is not streaming*/
+			continue;
+		}
 
-			if (!got_tx_sync_ts) {
-				struct bt_iso_chan *iso_chan;
+		if (common_interval != 0 && (common_interval != bap_streams[i]->qos->interval)) {
+			LOG_ERR("Not all channels have the same ISO interval");
+			return -EINVAL;
+		}
+		common_interval = bap_streams[i]->qos->interval;
 
-				iso_chan = bt_bap_stream_iso_chan_get(bap_streams[i]);
-				if (iso_chan == NULL) {
-					LOG_ERR("Unable to get iso chan");
-					continue;
-				}
+		/* Check if same audio is sent to all channels */
+		if (enc_audio.num_ch == 1) {
+			ret = iso_stream_send(enc_audio.data, data_size_pr_stream, bap_streams[i],
+					      &tx_info[i], ts_common);
+		} else {
+			ret = iso_stream_send(&enc_audio.data[data_size_pr_stream * i],
+					      data_size_pr_stream, bap_streams[i], &tx_info[i],
+					      ts_common);
+		}
 
-				ret = bt_iso_chan_get_tx_sync(iso_chan, &tx_info[i].iso_tx);
-				if (ret) {
-					continue;
-				}
-				ts = tx_info[i].iso_tx.ts;
-				got_tx_sync_ts = true;
+		if (ret) {
+			/* DBG used here as prints are handled within iso_stream_send */
+			LOG_DBG("Failed to send to idx: %d stream: %p, ret: %d ", i, bap_streams[i],
+				ret);
+			continue;
+		}
+
+		if (!ts_common_acquired) {
+			ret = bt_bap_stream_get_tx_sync(bap_streams[i], &tx_info[i].iso_tx);
+			if (ret) {
+				LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
+					bap_streams[i]);
+				return ret;
 			}
+
+			ts_common = tx_info[i].iso_tx.ts;
+			ts_common_acquired = true;
 		}
 	}
 
-	if (!any_chan_streaming) {
-		LOG_DBG("No headset in stream state");
-		return -ECANCELED;
-	}
-
-	if (ts != 0 && got_tx_sync_ts) {
+	if (ts_common_acquired) {
 		if (IS_ENABLED(CONFIG_BT_BAP_UNICAST_CLIENT) &&
 		    !IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
 			struct sdu_ref_msg msg;
 
-			msg.timestamp = ts;
+			msg.timestamp = ts_common;
 			msg.adjust = true;
 
 			ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
 			if (ret) {
 				LOG_WRN("Failed to publish timestamp: %d", ret);
-			}
-		}
-	}
-
-	for (int i = 0; i < streams_to_tx; i++) {
-		if (le_audio_ep_state_check(bap_streams[i]->ep, BT_BAP_EP_STATE_STREAMING)) {
-			/* Check if same audio is sent to all channels */
-			if (enc_audio.num_ch == 1) {
-				ret = iso_stream_send(enc_audio.data, data_size_pr_stream,
-						      bap_streams[i], &tx_info[i]);
-			} else {
-				ret = iso_stream_send(&enc_audio.data[data_size_pr_stream * i],
-						      data_size_pr_stream, bap_streams[i],
-						      &tx_info[i]);
-			}
-
-			if (ret) {
-				/* DBG used here as prints are handled within iso_stream_send */
-				LOG_DBG("Failed to send to idx: %d stream: %p, ret: %d ", i,
-					bap_streams[i], ret);
 			}
 		}
 	}
@@ -217,6 +236,7 @@ int bt_le_audio_tx_stream_stopped(uint8_t stream_idx)
 
 	atomic_clear(&tx_info[stream_idx].iso_tx_pool_alloc);
 	tx_info[stream_idx].hci_wrn_printed = false;
+
 	return 0;
 }
 
