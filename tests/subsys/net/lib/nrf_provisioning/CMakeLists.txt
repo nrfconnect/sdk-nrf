@@ -45,7 +45,7 @@ elseif(CONFIG_NRF_PROVISIONING_COAP)
     -DCONFIG_MODEM_INFO_BUFFER_SIZE=128
     -DCONFIG_COAP_CLIENT_MAX_REQUESTS=2
   )
-  cmock_handle(include/coap_client.h)
+  cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/coap_client.h)
   cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
 
 elseif(CONFIG_NRF_PROVISIONING_HTTP)
