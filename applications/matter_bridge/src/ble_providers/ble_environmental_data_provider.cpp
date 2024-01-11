@@ -16,6 +16,7 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace ::chip;
 using namespace ::chip::app;
+using namespace Nrf;
 
 static bt_uuid *sServiceUuid = BT_UUID_ESS;
 static bt_uuid *sUuidTemperature = BT_UUID_TEMPERATURE;

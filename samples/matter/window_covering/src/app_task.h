@@ -8,7 +8,7 @@
 
 #include "window_covering.h"
 
-#include "led/led_widget.h"
+#include "board/led_widget.h"
 
 #include <platform/CHIPDeviceLayer.h>
 
@@ -37,7 +37,7 @@ private:
 	static void CloseHandler(const WindowButtonAction &action);
 
 	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
-	static void ButtonEventHandler(ButtonState state, ButtonMask hasChanged);
+	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
 
 	OperationalState mMoveType{ OperationalState::MovingUpOrOpen };
 	bool mMovementTimerActive{ false };

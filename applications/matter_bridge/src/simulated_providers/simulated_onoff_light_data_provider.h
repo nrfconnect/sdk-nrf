@@ -8,9 +8,9 @@
 
 #include "bridged_device_data_provider.h"
 
-class SimulatedOnOffLightDataProvider : public BridgedDeviceDataProvider {
+class SimulatedOnOffLightDataProvider : public Nrf::BridgedDeviceDataProvider {
 public:
-	SimulatedOnOffLightDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback) {}
+	SimulatedOnOffLightDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : Nrf::BridgedDeviceDataProvider(updateCallback, commandCallback) {}
 	~SimulatedOnOffLightDataProvider()
 	{
 #ifdef CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC

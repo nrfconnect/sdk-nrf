@@ -10,6 +10,8 @@
 
 #include <zephyr/kernel.h>
 
+namespace Nrf {
+
 class LEDWidget {
 public:
 	typedef void (*LEDWidgetStateUpdateHandler)(LEDWidget &ledWidget);
@@ -36,3 +38,5 @@ private:
 	void DoSet(bool state);
 	void ScheduleStateChange();
 };
+
+} /* namespace Nrf */

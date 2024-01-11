@@ -10,9 +10,9 @@
 #include "aws_iot_integration.h"
 #endif
 
-#include "init/matter_init.h"
+#include "app/matter_init.h"
 #include "pwm/pwm_device.h"
-#include "tasks/task_executor.h"
+#include "app/task_executor.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
@@ -65,13 +65,13 @@ DeferredAttributePersistenceProvider gDeferredAttributePersister(Server::GetInst
 
 void AppTask::IdentifyStartHandler(Identify *)
 {
-	TaskExecutor::PostTask([] { GetBoard().GetLED(DeviceLeds::LED2).Blink(LedConsts::kIdentifyBlinkRate_ms); });
+	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms); });
 }
 
 void AppTask::IdentifyStopHandler(Identify *)
 {
-	TaskExecutor::PostTask([] {
-		GetBoard().GetLED(DeviceLeds::LED2).Set(false);
+	Nrf::PostTask([] {
+		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
 		Instance().mPWMDevice.ApplyLevel();
 	});
 }
@@ -82,7 +82,7 @@ void AppTask::TriggerEffectTimerTimeoutCallback(k_timer *timer)
 
 	sIsTriggerEffectActive = false;
 
-	GetBoard().GetLED(DeviceLeds::LED2).Set(false);
+	Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
 	Instance().mPWMDevice.ApplyLevel();
 }
 
@@ -103,7 +103,7 @@ void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
 		k_timer_start(&sTriggerEffectTimer, K_MSEC(kTriggerEffectTimeout), K_NO_WAIT);
 
 		Instance().mPWMDevice.SuppressOutput();
-		GetBoard().GetLED(DeviceLeds::LED2).Blink(LedConsts::kIdentifyBlinkRate_ms);
+		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms);
 
 		break;
 	case Clusters::Identify::EffectIdentifierEnum::kFinishEffect:
@@ -117,7 +117,7 @@ void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
 
 			k_timer_stop(&sTriggerEffectTimer);
 
-			GetBoard().GetLED(DeviceLeds::LED2).Set(false);
+			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
 			Instance().mPWMDevice.ApplyLevel();
 		}
 		break;
@@ -129,25 +129,25 @@ void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
 
 void AppTask::LightingActionEventHandler(const LightingEvent &event)
 {
-	PWMDevice::Action_t action = PWMDevice::INVALID_ACTION;
+	Nrf::PWMDevice::Action_t action = Nrf::PWMDevice::INVALID_ACTION;
 	int32_t actor = 0;
 	if (event.Actor == LightingActor::Remote) {
-		action = static_cast<PWMDevice::Action_t>(event.Action);
+		action = static_cast<Nrf::PWMDevice::Action_t>(event.Action);
 		actor = static_cast<int32_t>(event.Actor);
 	} else if (event.Actor == LightingActor::Button) {
-		action = Instance().mPWMDevice.IsTurnedOn() ? PWMDevice::OFF_ACTION : PWMDevice::ON_ACTION;
+		action = Instance().mPWMDevice.IsTurnedOn() ? Nrf::PWMDevice::OFF_ACTION : Nrf::PWMDevice::ON_ACTION;
 		actor = static_cast<int32_t>(event.Actor);
 	}
 
-	if (action == PWMDevice::INVALID_ACTION || !Instance().mPWMDevice.InitiateAction(action, actor, NULL)) {
+	if (action == Nrf::PWMDevice::INVALID_ACTION || !Instance().mPWMDevice.InitiateAction(action, actor, NULL)) {
 		LOG_INF("An action could not be initiated.");
 	}
 }
 
-void AppTask::ButtonEventHandler(ButtonState state, ButtonMask hasChanged)
+void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
 	if ((APPLICATION_BUTTON_MASK & hasChanged) & state) {
-		TaskExecutor::PostTask([] {
+		Nrf::PostTask([] {
 			LightingEvent event;
 			event.Actor = LightingActor::Button;
 			LightingActionEventHandler(event);
@@ -204,13 +204,13 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 		}
 #endif
 		if (ConnectivityMgr().NumBLEConnections() != 0) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceConnectedBLE);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceConnectedBLE);
 		}
 		break;
 #if defined(CONFIG_NET_L2_OPENTHREAD)
 	case DeviceEventType::kDnssdInitialized:
 #if CONFIG_CHIP_OTA_REQUESTOR
-		InitBasicOTARequestor();
+		Nrf::Matter::InitBasicOTARequestor();
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 		break;
 	case DeviceEventType::kThreadStateChange:
@@ -221,14 +221,14 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
 #if CONFIG_CHIP_OTA_REQUESTOR
 		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
-			InitBasicOTARequestor();
+			Nrf::Matter::InitBasicOTARequestor();
 		}
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 #endif
 		if (isNetworkProvisioned) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceProvisioned);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceProvisioned);
 		} else {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceDisconnected);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceDisconnected);
 		}
 		break;
 	default:
@@ -236,24 +236,24 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 	}
 }
 
-void AppTask::ActionInitiated(PWMDevice::Action_t action, int32_t actor)
+void AppTask::ActionInitiated(Nrf::PWMDevice::Action_t action, int32_t actor)
 {
-	if (action == PWMDevice::ON_ACTION) {
+	if (action == Nrf::PWMDevice::ON_ACTION) {
 		LOG_INF("Turn On Action has been initiated");
-	} else if (action == PWMDevice::OFF_ACTION) {
+	} else if (action == Nrf::PWMDevice::OFF_ACTION) {
 		LOG_INF("Turn Off Action has been initiated");
-	} else if (action == PWMDevice::LEVEL_ACTION) {
+	} else if (action == Nrf::PWMDevice::LEVEL_ACTION) {
 		LOG_INF("Level Action has been initiated");
 	}
 }
 
-void AppTask::ActionCompleted(PWMDevice::Action_t action, int32_t actor)
+void AppTask::ActionCompleted(Nrf::PWMDevice::Action_t action, int32_t actor)
 {
-	if (action == PWMDevice::ON_ACTION) {
+	if (action == Nrf::PWMDevice::ON_ACTION) {
 		LOG_INF("Turn On Action has been completed");
-	} else if (action == PWMDevice::OFF_ACTION) {
+	} else if (action == Nrf::PWMDevice::OFF_ACTION) {
 		LOG_INF("Turn Off Action has been completed");
-	} else if (action == PWMDevice::LEVEL_ACTION) {
+	} else if (action == Nrf::PWMDevice::LEVEL_ACTION) {
 		LOG_INF("Level Action has been completed");
 	}
 
@@ -285,13 +285,13 @@ void AppTask::UpdateClusterState()
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
-	ReturnErrorOnFailure(Nordic::Matter::PrepareServer(
-		MatterEventHandler, Nordic::Matter::InitData{ .mPostServerInitClbk = [] {
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(
+		MatterEventHandler, Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
 			app::SetAttributePersistenceProvider(&gDeferredAttributePersister);
 			return CHIP_NO_ERROR;
 		} }));
 
-	if (!GetBoard().Init(ButtonEventHandler)) {
+	if (!Nrf::GetBoard().Init(ButtonEventHandler)) {
 		LOG_ERR("User interface initialization failed.");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
@@ -321,7 +321,7 @@ CHIP_ERROR AppTask::Init()
 	}
 	mPWMDevice.SetCallbacks(ActionInitiated, ActionCompleted);
 
-	return Nordic::Matter::StartServer();
+	return Nrf::Matter::StartServer();
 }
 
 CHIP_ERROR AppTask::StartApp()
@@ -329,7 +329,7 @@ CHIP_ERROR AppTask::StartApp()
 	ReturnErrorOnFailure(Init());
 
 	while (true) {
-		TaskExecutor::DispatchNextTask();
+		Nrf::DispatchNextTask();
 	}
 
 	return CHIP_NO_ERROR;

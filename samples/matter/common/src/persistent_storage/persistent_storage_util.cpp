@@ -63,6 +63,8 @@ int LoadEntryCallback(const char *name, size_t entrySize, settings_read_cb readC
 }
 } /* namespace */
 
+namespace Nrf {
+
 bool PersistentStorage::Init()
 {
 	return settings_load() ? false : true;
@@ -186,3 +188,5 @@ bool PersistentStorageNode::GetKey(char *key)
 
 	return true;
 }
+
+} /* namespace Nrf */

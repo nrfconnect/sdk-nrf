@@ -26,21 +26,23 @@ constexpr uint8_t kBTUuid[] = { BT_UUID_NUS_VAL };
 } /* namespace */
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
-	.connected = NUSService::Connected,
-	.disconnected = NUSService::Disconnected,
-	.security_changed = NUSService::SecurityChanged,
+	.connected = Nrf::NUSService::Connected,
+	.disconnected = Nrf::NUSService::Disconnected,
+	.security_changed = Nrf::NUSService::SecurityChanged,
 };
-bt_conn_auth_cb NUSService::sConnAuthCallbacks = {
+bt_conn_auth_cb Nrf::NUSService::sConnAuthCallbacks = {
 	.passkey_display = AuthPasskeyDisplay,
 	.cancel = AuthCancel,
 };
-bt_conn_auth_info_cb NUSService::sConnAuthInfoCallbacks = {
+bt_conn_auth_info_cb Nrf::NUSService::sConnAuthInfoCallbacks = {
 	.pairing_complete = PairingComplete,
 	.pairing_failed = PairingFailed,
 };
-bt_nus_cb NUSService::sNusCallbacks = {
+bt_nus_cb Nrf::NUSService::sNusCallbacks = {
 	.received = RxCallback,
 };
+
+namespace Nrf {
 
 NUSService NUSService::sInstance;
 
@@ -266,3 +268,5 @@ char *NUSService::LogAddress(bt_conn *conn)
 #endif
 	return NULL;
 }
+
+} /* namespace Nrf */

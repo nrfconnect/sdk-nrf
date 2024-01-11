@@ -14,6 +14,8 @@
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
+namespace Nrf {
+
 int PWMDevice::Init(const pwm_dt_spec *aPWMDevice, uint8_t aMinLevel, uint8_t aMaxLevel, uint8_t aDefaultLevel)
 {
 	mState = kState_On;
@@ -107,3 +109,5 @@ void PWMDevice::ApplyLevel()
 	pwm_set_pulse_dt(mPwmDevice, static_cast<uint32_t>(static_cast<const uint64_t>(mPwmDevice->period) *
 							   effectiveLevel / maxEffectiveLevel));
 }
+
+} /* namespace Nrf */

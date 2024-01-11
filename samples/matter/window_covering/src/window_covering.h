@@ -31,8 +31,8 @@ public:
 		return sInstance;
 	}
 
-	PWMDevice &GetLiftIndicator() { return mLiftIndicator; }
-	PWMDevice &GetTiltIndicator() { return mTiltIndicator; }
+	Nrf::PWMDevice &GetLiftIndicator() { return mLiftIndicator; }
+	Nrf::PWMDevice &GetTiltIndicator() { return mTiltIndicator; }
 
 	void StartMove(MoveType aMoveType);
 	void SetSingleStepTarget(OperationalState aDirection);
@@ -58,8 +58,8 @@ private:
 	static void DoPostAttributeChange(intptr_t aArg);
 
 	MoveType mCurrentUIMoveType;
-	PWMDevice mLiftIndicator;
-	PWMDevice mTiltIndicator;
+	Nrf::PWMDevice mLiftIndicator;
+	Nrf::PWMDevice mTiltIndicator;
 	bool mInLiftMove{ false };
 	bool mInTiltMove{ false };
 };

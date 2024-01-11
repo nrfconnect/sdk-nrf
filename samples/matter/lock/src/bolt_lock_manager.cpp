@@ -5,7 +5,7 @@
  */
 
 #include "bolt_lock_manager.h"
-#include "tasks/task_executor.h"
+#include "app/task_executor.h"
 
 #include "app_task.h"
 
@@ -21,7 +21,7 @@ void BoltLockManager::Init(StateChangeCallback callback)
 	k_timer_user_data_set(&mActuatorTimer, this);
 
 	/* Set the default state */
-	GetBoard().GetLED(DeviceLeds::LED2).Set(IsLocked());
+	Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(IsLocked());
 }
 
 bool BoltLockManager::GetUser(uint16_t userIndex, EmberAfPluginDoorLockUserInfo &user) const
@@ -162,7 +162,7 @@ void BoltLockManager::ActuatorTimerEventHandler(k_timer *timer)
 
 	BoltLockManagerEvent event;
 	event.manager = static_cast<BoltLockManager *>(k_timer_user_data_get(timer));
-	TaskExecutor::PostTask([event] { ActuatorAppEventHandler(event); });
+	Nrf::PostTask([event] { ActuatorAppEventHandler(event); });
 }
 
 void BoltLockManager::ActuatorAppEventHandler(const BoltLockManagerEvent &event)

@@ -7,8 +7,8 @@
 #include "app_task.h"
 
 #include "board/board.h"
-#include "init/matter_init.h"
-#include "tasks/task_executor.h"
+#include "app/matter_init.h"
+#include "app/task_executor.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
@@ -31,13 +31,13 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 	switch (event->Type) {
 	case DeviceEventType::kCHIPoBLEAdvertisingChange:
 		if (ConnectivityMgr().NumBLEConnections() != 0) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceConnectedBLE);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceConnectedBLE);
 		}
 		break;
 #if defined(CONFIG_NET_L2_OPENTHREAD)
 	case DeviceEventType::kDnssdInitialized:
 #if CONFIG_CHIP_OTA_REQUESTOR
-		InitBasicOTARequestor();
+		Nrf::Matter::InitBasicOTARequestor();
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 		break;
 	case DeviceEventType::kThreadStateChange:
@@ -48,14 +48,14 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
 #if CONFIG_CHIP_OTA_REQUESTOR
 		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
-			InitBasicOTARequestor();
+			Nrf::Matter::InitBasicOTARequestor();
 		}
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 #endif
 		if (isNetworkProvisioned) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceProvisioned);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceProvisioned);
 		} else {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceDisconnected);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceDisconnected);
 		}
 		break;
 	default:
@@ -66,14 +66,14 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
-	ReturnErrorOnFailure(Nordic::Matter::PrepareServer(MatterEventHandler));
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(MatterEventHandler));
 
-	if (!GetBoard().Init()) {
+	if (!Nrf::GetBoard().Init()) {
 		LOG_ERR("User interface initialization failed.");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
 
-	return Nordic::Matter::StartServer();
+	return Nrf::Matter::StartServer();
 }
 
 CHIP_ERROR AppTask::StartApp()
@@ -81,7 +81,7 @@ CHIP_ERROR AppTask::StartApp()
 	ReturnErrorOnFailure(Init());
 
 	while (true) {
-		TaskExecutor::DispatchNextTask();
+		Nrf::DispatchNextTask();
 	}
 
 	return CHIP_NO_ERROR;

@@ -5,7 +5,7 @@
  */
 
 #include "board.h"
-#include "tasks/task_executor.h"
+#include "app/task_executor.h"
 
 #include <app/server/Server.h>
 #include <platform/CHIPDeviceLayer.h>
@@ -17,6 +17,8 @@
 #endif
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
+
+namespace Nrf {
 
 Board Board::sInstance;
 
@@ -104,7 +106,7 @@ void Board::LEDStateUpdateHandler(LEDWidget &ledWidget)
 {
 	LEDEvent event;
 	event.LedWidget = &ledWidget;
-	TaskExecutor::PostTask([event] { UpdateLedStateEventHandler(event); });
+	PostTask([event] { UpdateLedStateEventHandler(event); });
 }
 
 void Board::UpdateLedStateEventHandler(const LEDEvent &event)
@@ -176,7 +178,7 @@ void Board::StartTimer(uint32_t timeoutInMs)
 
 void Board::FunctionTimerTimeoutCallback(k_timer *timer)
 {
-	TaskExecutor::PostTask([] { FunctionTimerEventHandler(); });
+	PostTask([] { FunctionTimerEventHandler(); });
 }
 
 void Board::FunctionTimerEventHandler()
@@ -214,13 +216,13 @@ void Board::ButtonEventHandler(ButtonState buttonState, ButtonMask hasChanged)
 	if (BLUETOOTH_ADV_BUTTON_MASK & hasChanged) {
 		ButtonAction action =
 			(BLUETOOTH_ADV_BUTTON_MASK & buttonState) ? ButtonAction::Pressed : ButtonAction::Released;
-		TaskExecutor::PostTask([action] { StartBLEAdvertisementHandler(action); });
+		PostTask([action] { StartBLEAdvertisementHandler(action); });
 	}
 
 	if (FUNCTION_BUTTON_MASK & hasChanged) {
 		ButtonAction action =
 			(BLUETOOTH_ADV_BUTTON_MASK & buttonState) ? ButtonAction::Pressed : ButtonAction::Released;
-		TaskExecutor::PostTask([action] { FunctionHandler(action); });
+		PostTask([action] { FunctionHandler(action); });
 	}
 }
 
@@ -282,3 +284,5 @@ void Board::StartBLEAdvertisement()
 		LOG_ERR("OpenBasicCommissioningWindow() failed");
 	}
 }
+
+} /* namespace Nrf */

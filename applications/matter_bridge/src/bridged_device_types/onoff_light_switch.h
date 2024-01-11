@@ -8,7 +8,7 @@
 
 #include "matter_bridged_device.h"
 
-class OnOffLightSwitchDevice : public MatterBridgedDevice {
+class OnOffLightSwitchDevice : public Nrf::MatterBridgedDevice {
 public:
 	static constexpr uint16_t kOnOffClusterRevision = 4;
 	static constexpr uint32_t kOnOffFeatureMap = 1;
@@ -22,9 +22,9 @@ public:
 	uint16_t GetBindingClusterRevision() { return kBindingClusterRevision; }
 	uint32_t GetBindingFeatureMap() { return kBindingFeatureMap; }
 
-	MatterBridgedDevice::DeviceType GetDeviceType() const override
+	Nrf::MatterBridgedDevice::DeviceType GetDeviceType() const override
 	{
-		return MatterBridgedDevice::DeviceType::OnOffLightSwitch;
+		return Nrf::MatterBridgedDevice::DeviceType::OnOffLightSwitch;
 	}
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;

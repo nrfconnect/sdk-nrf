@@ -9,8 +9,8 @@
 #include "light_switch.h"
 
 #include "board/board.h"
-#include "init/matter_init.h"
-#include "tasks/task_executor.h"
+#include "app/matter_init.h"
+#include "app/task_executor.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
@@ -75,12 +75,12 @@ void AppTask::TimerEventHandler(const Timer &timerType)
 
 void AppTask::IdentifyStartHandler(Identify *)
 {
-	TaskExecutor::PostTask([] { GetBoard().GetLED(DeviceLeds::LED2).Blink(LedConsts::kIdentifyBlinkRate_ms); });
+	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms); });
 }
 
 void AppTask::IdentifyStopHandler(Identify *)
 {
-	TaskExecutor::PostTask([] { GetBoard().GetLED(DeviceLeds::LED2).Set(false); });
+	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false); });
 }
 
 void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
@@ -102,14 +102,14 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 		}
 #endif
 		if (ConnectivityMgr().NumBLEConnections() != 0) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceConnectedBLE);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceConnectedBLE);
 		}
 
 		break;
 #if defined(CONFIG_NET_L2_OPENTHREAD)
 	case DeviceEventType::kDnssdInitialized:
 #if CONFIG_CHIP_OTA_REQUESTOR
-		InitBasicOTARequestor();
+		Nrf::Matter::InitBasicOTARequestor();
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 		break;
 	case DeviceEventType::kThreadStateChange:
@@ -120,14 +120,14 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
 #if CONFIG_CHIP_OTA_REQUESTOR
 		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
-			InitBasicOTARequestor();
+			Nrf::Matter::InitBasicOTARequestor();
 		}
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 #endif
 		if (isNetworkProvisioned) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceProvisioned);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceProvisioned);
 		} else {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceDisconnected);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceDisconnected);
 		}
 		break;
 	default:
@@ -135,13 +135,13 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 	}
 }
 
-void AppTask::ButtonEventHandler(ButtonState state, ButtonMask hasChanged)
+void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
 	if ((APPLICATION_BUTTON_MASK & state & hasChanged)) {
 		LOG_INF("Button has been pressed, keep in this state for at least 500 ms to change light sensitivity of bound lighting devices.");
 		Instance().StartTimer(Timer::DimmerTrigger, kDimmerTriggeredTimeout);
 	} else if ((APPLICATION_BUTTON_MASK & hasChanged)) {
-		TaskExecutor::PostTask([] { DimmerTriggerEventHandler(); });
+		Nrf::PostTask([] { DimmerTriggerEventHandler(); });
 	}
 }
 
@@ -188,14 +188,14 @@ void AppTask::UserTimerTimeoutCallback(k_timer *timer)
 		return;
 	}
 
-	TaskExecutor::PostTask([timerType]() { TimerEventHandler(timerType); });
+	Nrf::PostTask([timerType]() { TimerEventHandler(timerType); });
 }
 
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
 	ReturnErrorOnFailure(
-		Nordic::Matter::PrepareServer(MatterEventHandler, Nordic::Matter::InitData{ .mPostServerInitClbk = [] {
+		Nrf::Matter::PrepareServer(MatterEventHandler, Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
 						      LightSwitch::GetInstance().Init(kLightSwitchEndpointId);
 						      return CHIP_NO_ERROR;
 					      } }));
@@ -204,12 +204,12 @@ CHIP_ERROR AppTask::Init()
 	k_timer_init(&sDimmerPressKeyTimer, AppTask::UserTimerTimeoutCallback, nullptr);
 	k_timer_init(&sDimmerTimer, AppTask::UserTimerTimeoutCallback, nullptr);
 
-	if (!GetBoard().Init(ButtonEventHandler)) {
+	if (!Nrf::GetBoard().Init(ButtonEventHandler)) {
 		LOG_ERR("User interface initialization failed.");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
 
-	return Nordic::Matter::StartServer();
+	return Nrf::Matter::StartServer();
 }
 
 CHIP_ERROR AppTask::StartApp()
@@ -217,7 +217,7 @@ CHIP_ERROR AppTask::StartApp()
 	ReturnErrorOnFailure(Init());
 
 	while (true) {
-		TaskExecutor::DispatchNextTask();
+		Nrf::DispatchNextTask();
 	}
 
 	return CHIP_NO_ERROR;

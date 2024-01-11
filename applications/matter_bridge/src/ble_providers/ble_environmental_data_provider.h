@@ -10,9 +10,9 @@
 #include "ble_connectivity_manager.h"
 #include "bridged_device_data_provider.h"
 
-class BleEnvironmentalDataProvider : public BLEBridgedDeviceProvider {
+class BleEnvironmentalDataProvider : public Nrf::BLEBridgedDeviceProvider {
 public:
-	explicit BleEnvironmentalDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BLEBridgedDeviceProvider(updateCallback, commandCallback) {}
+	explicit BleEnvironmentalDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : Nrf::BLEBridgedDeviceProvider(updateCallback, commandCallback) {}
 	~BleEnvironmentalDataProvider() { Unsubscribe(); }
 
 	void Init() override;

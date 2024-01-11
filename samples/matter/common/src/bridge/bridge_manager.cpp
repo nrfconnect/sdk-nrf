@@ -20,6 +20,8 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 using namespace ::chip;
 using namespace ::chip::app;
 
+namespace Nrf {
+
 CHIP_ERROR BridgeManager::Init(LoadStoredBridgedDevicesCallback loadStoredBridgedDevicesCb)
 {
 	if (!loadStoredBridgedDevicesCb) {
@@ -41,7 +43,7 @@ CHIP_ERROR BridgeManager::Init(LoadStoredBridgedDevicesCallback loadStoredBridge
 	emberAfEndpointEnableDisable(emberAfEndpointFromIndex(static_cast<uint16_t>(emberAfFixedEndpointCount() - 1)),
 				     false);
 
-	BindingHandler::Init();
+	Nrf::Matter::BindingHandler::Init();
 
 	/* Invoke the callback to load stored devices in a proper moment. */
 	CHIP_ERROR err = loadStoredBridgedDevicesCb();
@@ -403,9 +405,11 @@ void BridgeManager::HandleUpdate(BridgedDeviceDataProvider &dataProvider, Cluste
 	}
 }
 
-void BridgeManager::HandleCommand(BridgedDeviceDataProvider &dataProvider, ClusterId clusterId, CommandId commandId, BindingHandler::InvokeCommand invokeCommand)
+void BridgeManager::HandleCommand(BridgedDeviceDataProvider &dataProvider, ClusterId clusterId, CommandId commandId,
+				  Nrf::Matter::BindingHandler::InvokeCommand invokeCommand)
 {
-	BindingHandler::BindingData *bindingData = Platform::New<BindingHandler::BindingData>();
+	Nrf::Matter::BindingHandler::BindingData *bindingData =
+		Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 
 	if (!bindingData) {
 		return;
@@ -425,7 +429,7 @@ void BridgeManager::HandleCommand(BridgedDeviceDataProvider &dataProvider, Clust
 		}
 	}
 
-	BindingHandler::RunBoundClusterAction(bindingData);
+	Nrf::Matter::BindingHandler::RunBoundClusterAction(bindingData);
 }
 
 BridgedDeviceDataProvider *BridgeManager::GetProvider(EndpointId endpoint, uint16_t &deviceType)
@@ -465,3 +469,5 @@ EmberAfStatus emberAfExternalAttributeWriteCallback(EndpointId endpoint, Cluster
 		return EMBER_ZCL_STATUS_FAILURE;
 	}
 }
+
+} /* namespace Nrf */

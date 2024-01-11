@@ -10,6 +10,8 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/pwm.h>
 
+namespace Nrf {
+
 class PWMDevice {
 public:
 	enum Action_t : uint8_t {
@@ -52,3 +54,5 @@ private:
 	void Set(bool aOn);
 	void SetLevel(uint8_t aLevel);
 };
+
+} /* namespace Nrf */

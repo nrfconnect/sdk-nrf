@@ -48,19 +48,19 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 	}
 
 	bt_addr_le_t address;
-	if (BLEConnectivityManager::Instance().GetScannedDeviceAddress(&address, bleDeviceIndex) != CHIP_NO_ERROR) {
+	if (Nrf::BLEConnectivityManager::Instance().GetScannedDeviceAddress(&address, bleDeviceIndex) != CHIP_NO_ERROR) {
 		shell_fprintf(shell, SHELL_ERROR, "Invalid Bluetooth LE device index.\n");
 	} else {
 		shell_fprintf(shell, SHELL_ERROR, "Found device address\n");
 	}
 
 	uint16_t uuid;
-	if (BLEConnectivityManager::Instance().GetScannedDeviceUuid(uuid, bleDeviceIndex) != CHIP_NO_ERROR) {
+	if (Nrf::BLEConnectivityManager::Instance().GetScannedDeviceUuid(uuid, bleDeviceIndex) != CHIP_NO_ERROR) {
 		shell_fprintf(shell, SHELL_ERROR, "Invalid Bluetooth LE device index.\n");
 	}
 
 #ifdef CONFIG_BT_SMP
-	BLEConnectivityManager::ConnectionSecurityRequest request;
+	Nrf::BLEConnectivityManager::ConnectionSecurityRequest request;
 	request.mCallback = BluetoothConnectionSecurityRequest;
 	request.mContext = const_cast<struct shell *>(shell);
 	result = BleBridgedDeviceFactory::CreateDevice(uuid, address, nodeLabel, &request);
@@ -113,13 +113,13 @@ static int RemoveBridgedDeviceHandler(const struct shell *shell, size_t argc, ch
 #ifdef CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
 static int SimulatedBridgedDeviceOnOffWriteHandler(const struct shell *shell, size_t argc, char **argv)
 {
-	using DeviceType = MatterBridgedDevice::DeviceType;
+	using DeviceType = Nrf::MatterBridgedDevice::DeviceType;
 	const char *command = argv[0];
 	uint8_t value = strtoul(argv[1], nullptr, 0);
 	chip::EndpointId endpointId = strtoul(argv[2], nullptr, 0);
 
 	uint16_t deviceType{};
-	auto *provider = BridgeManager().Instance().GetProvider(endpointId, deviceType);
+	auto *provider = Nrf::BridgeManager().Instance().GetProvider(endpointId, deviceType);
 
 	if (provider) {
 		if ((0 == strcmp(command, "onoff") && deviceType != DeviceType::OnOffLight)) {
@@ -145,7 +145,7 @@ static int SimulatedBridgedDeviceOnOffWriteHandler(const struct shell *shell, si
 #if defined(CONFIG_BRIDGED_DEVICE_SIMULATED) && defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE)
 static int SimulatedBridgedDeviceOnOffLightSwitchWriteHandler(const struct shell *shell, size_t argc, char **argv)
 {
-	using DeviceType = MatterBridgedDevice::DeviceType;
+	using DeviceType = Nrf::MatterBridgedDevice::DeviceType;
 	const char *command = argv[0];
 	uint8_t value = strtoul(argv[1], nullptr, 0);
 	chip::EndpointId endpointId = strtoul(argv[2], nullptr, 0);
@@ -175,7 +175,7 @@ static int SimulatedBridgedDeviceOnOffLightSwitchWriteHandler(const struct shell
 #endif
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-static void BluetoothScanResult(BLEConnectivityManager::ScannedDevice *devices, uint8_t count, void *context)
+static void BluetoothScanResult(Nrf::BLEConnectivityManager::ScannedDevice *devices, uint8_t count, void *context)
 {
 	if (!devices || !context) {
 		return;
@@ -202,13 +202,13 @@ static int InsertBridgedDevicePincodeHandler(const struct shell *shell, size_t a
 	unsigned int pincode = strtoul(argv[1], NULL, 0);
 
 	bt_addr_le_t address;
-	if (BLEConnectivityManager::Instance().GetScannedDeviceAddress(&address, bleDeviceIndex) != CHIP_NO_ERROR) {
+	if (Nrf::BLEConnectivityManager::Instance().GetScannedDeviceAddress(&address, bleDeviceIndex) != CHIP_NO_ERROR) {
 		shell_fprintf(shell, SHELL_ERROR, "Invalid Bluetooth LE device index.\n");
 	} else {
 		shell_fprintf(shell, SHELL_ERROR, "Found device address\n");
 	}
 
-	BLEConnectivityManager::Instance().SetPincode(address, pincode);
+	Nrf::BLEConnectivityManager::Instance().SetPincode(address, pincode);
 	return 0;
 }
 #endif /* CONFIG_BT_SMP */
@@ -217,7 +217,7 @@ static int ScanBridgedDeviceHandler(const struct shell *shell, size_t argc, char
 {
 	shell_fprintf(shell, SHELL_INFO, "Scanning for 10 s ...\n");
 
-	BLEConnectivityManager::Instance().Scan(BluetoothScanResult, const_cast<struct shell *>(shell));
+	Nrf::BLEConnectivityManager::Instance().Scan(BluetoothScanResult, const_cast<struct shell *>(shell));
 
 	return 0;
 }

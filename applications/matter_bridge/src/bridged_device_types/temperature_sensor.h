@@ -8,7 +8,7 @@
 
 #include "matter_bridged_device.h"
 
-class TemperatureSensorDevice : public MatterBridgedDevice {
+class TemperatureSensorDevice : public Nrf::MatterBridgedDevice {
 public:
 	static constexpr uint16_t kTemperatureMeasurementClusterRevision = 4;
 	static constexpr uint32_t kTemperatureMeasurementFeatureMap = 0;
@@ -23,7 +23,7 @@ public:
 
 	uint16_t GetDeviceType() const override
 	{
-		return MatterBridgedDevice::DeviceType::TemperatureSensor;
+		return Nrf::MatterBridgedDevice::DeviceType::TemperatureSensor;
 	}
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;

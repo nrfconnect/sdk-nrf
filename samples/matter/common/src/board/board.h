@@ -8,8 +8,11 @@
 
 #include "board/board_config.h"
 #include "board/board_consts.h"
-#include "led/led_util.h"
-#include "led/led_widget.h"
+#include "board/led_util.h"
+#include "board/led_widget.h"
+
+namespace Nrf
+{
 
 enum class DeviceState : uint8_t { DeviceDisconnected, DeviceAdvertisingBLE, DeviceConnectedBLE, DeviceProvisioned };
 enum class DeviceLeds : uint8_t { LED1, LED2, LED3, LED4 };
@@ -21,7 +24,7 @@ using ButtonMask = uint32_t;
 using LedStateHandler = void (*)();
 
 struct LEDEvent {
-	LEDWidget *LedWidget;
+	Nrf::LEDWidget *LedWidget;
 };
 
 class Board {
@@ -53,7 +56,7 @@ public:
 	 * @param led LEDWidget an enum value of the requested led.
 	 * @return LEDWidget& a reference of the choosen LED.
 	 */
-	LEDWidget &GetLED(DeviceLeds led);
+	Nrf::LEDWidget &GetLED(DeviceLeds led);
 
 	/**
 	 * @brief Update a device state to change LED indicator
@@ -87,8 +90,8 @@ public:
 	 * for 15 minutes.
 	 * Within this time commissioning to the Matter network via Bluetooth LE can be performed.
 	 *
-	 * This method should be run from the application code if the CONFIG_NCS_SAMPLE_MATTER_CUSTOM_BLUETOOTH_ADVERTISING config
-	 * is set to "y".
+	 * This method should be run from the application code if the
+	 * CONFIG_NCS_SAMPLE_MATTER_CUSTOM_BLUETOOTH_ADVERTISING config is set to "y".
 	 *
 	 */
 	static void StartBLEAdvertisement();
@@ -100,24 +103,24 @@ private:
 
 	/* LEDs */
 	static void UpdateStatusLED();
-	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
+	static void LEDStateUpdateHandler(Nrf::LEDWidget &ledWidget);
 	static void UpdateLedStateEventHandler(const LEDEvent &event);
 	void ResetAllLeds();
 	void RestoreAllLedsState();
 
-	LEDWidget mLED1;
-	LEDWidget mLED2;
+	Nrf::LEDWidget mLED1;
+	Nrf::LEDWidget mLED2;
 	bool mLED1SavedState;
 	bool mLED2SavedState;
 	k_timer mFunctionTimer;
 	DeviceState mState = DeviceState::DeviceDisconnected;
 	LedStateHandler mLedStateHandler = UpdateStatusLED;
 #if NUMBER_OF_LEDS == 3
-	LEDWidget mLED3;
+	Nrf::LEDWidget mLED3;
 	bool mLED3SavedState;
 #elif NUMBER_OF_LEDS == 4
-	LEDWidget mLED3;
-	LEDWidget mLED4;
+	Nrf::LEDWidget mLED3;
+	Nrf::LEDWidget mLED4;
 	bool mLED3SavedState;
 	bool mLED4SavedState;
 #endif
@@ -151,3 +154,5 @@ inline Board &GetBoard()
 {
 	return Board::sInstance;
 }
+
+} /* namespace Nrf */

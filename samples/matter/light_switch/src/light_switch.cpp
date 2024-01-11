@@ -24,7 +24,7 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 void LightSwitch::Init(chip::EndpointId lightSwitchEndpoint)
 {
-	BindingHandler::Init();
+	Nrf::Matter::BindingHandler::Init();
 #ifdef CONFIG_CHIP_LIB_SHELL
 	SwitchCommands::RegisterSwitchCommands();
 #endif
@@ -33,7 +33,8 @@ void LightSwitch::Init(chip::EndpointId lightSwitchEndpoint)
 
 void LightSwitch::InitiateActionSwitch(Action action)
 {
-	BindingHandler::BindingData *data = Platform::New<BindingHandler::BindingData>();
+	Nrf::Matter::BindingHandler::BindingData *data =
+		Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 	if (data) {
 		data->EndpointId = mLightSwitchEndpoint;
 		data->ClusterId = Clusters::OnOff::Id;
@@ -52,15 +53,16 @@ void LightSwitch::InitiateActionSwitch(Action action)
 			Platform::Delete(data);
 			return;
 		}
-		data->IsGroup = BindingHandler::IsGroupBound();
-		BindingHandler::RunBoundClusterAction(data);
+		data->IsGroup = Nrf::Matter::BindingHandler::IsGroupBound();
+		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 	}
 }
 
 void LightSwitch::DimmerChangeBrightness()
 {
 	static uint16_t sBrightness;
-	BindingHandler::BindingData *data = Platform::New<BindingHandler::BindingData>();
+	Nrf::Matter::BindingHandler::BindingData *data =
+		Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 	if (data) {
 		data->EndpointId = mLightSwitchEndpoint;
 		data->CommandId = Clusters::LevelControl::Commands::MoveToLevel::Id;
@@ -72,13 +74,13 @@ void LightSwitch::DimmerChangeBrightness()
 			sBrightness = 0;
 		}
 		data->Value = (uint8_t)sBrightness;
-		data->IsGroup = BindingHandler::IsGroupBound();
-		BindingHandler::RunBoundClusterAction(data);
+		data->IsGroup = Nrf::Matter::BindingHandler::IsGroupBound();
+		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 	}
 }
 
 void LightSwitch::SwitchChangedHandler(const EmberBindingTableEntry &binding, OperationalDeviceProxy *deviceProxy,
-				       BindingHandler::BindingData &bindingData)
+				       Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
 	if (binding.type == EMBER_MULTICAST_BINDING && bindingData.IsGroup) {
 		switch (bindingData.ClusterId) {
@@ -108,17 +110,20 @@ void LightSwitch::SwitchChangedHandler(const EmberBindingTableEntry &binding, Op
 }
 
 void LightSwitch::OnOffProcessCommand(CommandId commandId, const EmberBindingTableEntry &binding,
-				      OperationalDeviceProxy *device, BindingHandler::BindingData &bindingData)
+				      OperationalDeviceProxy *device,
+				      Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;
 
-	auto onSuccess = [dataPointer = Platform::New<BindingHandler::BindingData>(bindingData)](
+	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
 				 const ConcreteCommandPath &commandPath, const StatusIB &status,
-				 const auto &dataResponse) { BindingHandler::OnInvokeCommandSucces(dataPointer); };
+				 const auto &dataResponse) {
+		Nrf::Matter::BindingHandler::OnInvokeCommandSucces(dataPointer);
+	};
 
-	auto onFailure = [dataPointer =
-				  Platform::New<BindingHandler::BindingData>(bindingData)](CHIP_ERROR aError) mutable {
-		BindingHandler::OnInvokeCommandFailure(dataPointer, aError);
+	auto onFailure = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
+				 CHIP_ERROR aError) mutable {
+		Nrf::Matter::BindingHandler::OnInvokeCommandFailure(dataPointer, aError);
 	};
 
 	if (device) {
@@ -176,15 +181,18 @@ void LightSwitch::OnOffProcessCommand(CommandId commandId, const EmberBindingTab
 }
 
 void LightSwitch::LevelControlProcessCommand(CommandId commandId, const EmberBindingTableEntry &binding,
-					     OperationalDeviceProxy *device, BindingHandler::BindingData &bindingData)
+					     OperationalDeviceProxy *device,
+					     Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
-	auto onSuccess = [dataPointer = Platform::New<BindingHandler::BindingData>(bindingData)](
+	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
 				 const ConcreteCommandPath &commandPath, const StatusIB &status,
-				 const auto &dataResponse) { BindingHandler::OnInvokeCommandSucces(dataPointer); };
+				 const auto &dataResponse) {
+		Nrf::Matter::BindingHandler::OnInvokeCommandSucces(dataPointer);
+	};
 
-	auto onFailure = [dataPointer =
-				  Platform::New<BindingHandler::BindingData>(bindingData)](CHIP_ERROR aError) mutable {
-		BindingHandler::OnInvokeCommandFailure(dataPointer, aError);
+	auto onFailure = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
+				 CHIP_ERROR aError) mutable {
+		Nrf::Matter::BindingHandler::OnInvokeCommandFailure(dataPointer, aError);
 	};
 
 	CHIP_ERROR ret = CHIP_NO_ERROR;

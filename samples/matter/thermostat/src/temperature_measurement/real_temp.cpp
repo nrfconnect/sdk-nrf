@@ -31,34 +31,35 @@ constexpr chip::EndpointId mTemperatureMeasurementEndpointId = 1;
 
 RealSensor::RealSensor()
 {
-	BindingHandler::Init();
+	Nrf::Matter::BindingHandler::Init();
 }
 
 void RealSensor::TemperatureMeasurement()
 {
-	BindingHandler::BindingData *data = Platform::New<BindingHandler::BindingData>();
+	Nrf::Matter::BindingHandler::BindingData *data =
+		Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 	data->ClusterId = Clusters::TemperatureMeasurement::Id;
 	data->EndpointId = mTemperatureMeasurementEndpointId;
-	data->IsGroup = BindingHandler::IsGroupBound();
+	data->IsGroup = Nrf::Matter::BindingHandler::IsGroupBound();
 	data->InvokeCommandFunc = TemperatureMeasurementReadHandler;
-	BindingHandler::RunBoundClusterAction(data);
+	Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 }
 
 void RealSensor::TemperatureMeasurementReadHandler(const EmberBindingTableEntry &binding,
 						   OperationalDeviceProxy *deviceProxy,
-						   BindingHandler::BindingData &bindingData)
+						   Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
-	auto onSuccess = [dataPointer = Platform::New<BindingHandler::BindingData>(bindingData)](
+	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
 				 const ConcreteDataAttributePath &attributePath, const auto &dataResponse) {
 		ChipLogProgress(NotSpecified, "Read Temperature Sensor attribute succeeded");
 
 		VerifyOrReturn(!(dataResponse.IsNull()), LOG_ERR("Device invalid");
-			       Platform::Delete<BindingHandler::BindingData>(dataPointer););
+			       Platform::Delete<Nrf::Matter::BindingHandler::BindingData>(dataPointer););
 
 		int16_t responseValue = dataResponse.Value();
 
 		TempSensorManager::Instance().SetLocalTemperature(responseValue);
-		BindingHandler::OnInvokeCommandSucces(dataPointer);
+		Nrf::Matter::BindingHandler::OnInvokeCommandSucces(dataPointer);
 	};
 
 	auto onFailure = [](const ConcreteDataAttributePath *attributePath, CHIP_ERROR error) {

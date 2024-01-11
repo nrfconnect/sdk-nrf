@@ -6,7 +6,7 @@
 
 #include "matter_init.h"
 
-#include "fabric_table_delegate.h"
+#include "app/fabric_table_delegate.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
@@ -28,21 +28,21 @@ using namespace ::chip::app;
 using namespace ::chip;
 
 /* Definitions of default Matter interface implementations from InitData aggregate. */
-CommonCaseDeviceServerInitParams Nordic::Matter::InitData::sServerInitParamsDefault{};
+CommonCaseDeviceServerInitParams Nrf::Matter::InitData::sServerInitParamsDefault{};
 
 #ifdef CONFIG_CHIP_WIFI
-Clusters::NetworkCommissioning::Instance Nordic::Matter::InitData::sWiFiCommissioningInstance{
+Clusters::NetworkCommissioning::Instance Nrf::Matter::InitData::sWiFiCommissioningInstance{
 	0, &(NetworkCommissioning::NrfWiFiDriver::Instance())
 };
 #endif
 
 #if CONFIG_CHIP_FACTORY_DATA
-FactoryDataProvider<InternalFlashFactoryData> Nordic::Matter::InitData::sDefaultFactoryDataProvider{};
+FactoryDataProvider<InternalFlashFactoryData> Nrf::Matter::InitData::sDefaultFactoryDataProvider{};
 #endif
 namespace
 {
 /* Local instance of the initialization data that is overwritten by an application. */
-Nordic::Matter::InitData sLocalInitData
+Nrf::Matter::InitData sLocalInitData
 {
 	.mNetworkingInstance = nullptr, .mServerInitParams = nullptr, .mDeviceInfoProvider = nullptr,
 #if CONFIG_CHIP_FACTORY_DATA
@@ -138,13 +138,13 @@ void DoInitChipServer(intptr_t arg)
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 	/* OTA image confirmation must be done before the factory data init. */
-	OtaConfirmNewImage();
+	Nrf::Matter::OtaConfirmNewImage();
 #endif
 
 #ifdef CONFIG_MCUMGR_TRANSPORT_BT
 	/* Initialize DFU over SMP */
-	GetDFUOverSMP().Init();
-	GetDFUOverSMP().ConfirmNewImage();
+	Nrf::GetDFUOverSMP().Init();
+	Nrf::GetDFUOverSMP().ConfirmNewImage();
 #endif
 
 	/* Initialize CHIP server */
@@ -177,7 +177,7 @@ void DoInitChipServer(intptr_t arg)
 
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
-	AppFabricTableDelegate::Init();
+	Nrf::Matter::AppFabricTableDelegate::Init();
 
 	if (sLocalInitData.mPostServerInitClbk) {
 		sInitResult = sLocalInitData.mPostServerInitClbk();
@@ -193,9 +193,7 @@ CHIP_ERROR WaitForReadiness()
 } // namespace
 
 /* Public API */
-namespace Nordic
-{
-namespace Matter
+namespace Nrf::Matter
 {
 	CHIP_ERROR PrepareServer(PlatformManager::EventHandlerFunct matterEventHandler, const InitData &initData)
 	{
@@ -226,5 +224,4 @@ namespace Matter
 	}
 #endif
 
-} // namespace Matter
-} // namespace Nordic
+} /* namespace Nrf::Matter */

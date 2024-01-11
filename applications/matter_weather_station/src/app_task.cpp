@@ -10,9 +10,9 @@
 #include "buzzer.h"
 
 #include "board/board.h"
-#include "init/matter_init.h"
-#include "led/led_widget.h"
-#include "tasks/task_executor.h"
+#include "app/matter_init.h"
+#include "board/led_widget.h"
+#include "app/task_executor.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
@@ -105,7 +105,7 @@ CommonCaseDeviceServerInitParams sServerInitParams{};
 CHIP_ERROR CustomFactoryDataInit()
 {
 	MutableByteSpan enableKey(sTestEventTriggerEnableKey);
-	auto *factoryDataProvider = Nordic::Matter::GetFactoryDataProvider();
+	auto *factoryDataProvider = Nrf::Matter::GetFactoryDataProvider();
 	VerifyOrReturnError(factoryDataProvider, CHIP_ERROR_INTERNAL);
 	CHIP_ERROR err = factoryDataProvider->GetEnableKey(enableKey);
 	if (err != CHIP_NO_ERROR) {
@@ -124,7 +124,7 @@ void AppTask::MeasurementsTimerHandler()
 
 void AppTask::OnIdentifyStart(Identify *)
 {
-	TaskExecutor::PostTask([] { GetBoard().GetLED(DeviceLeds::LED2).Blink(LedConsts::kIdentifyBlinkRate_ms); });
+	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms); });
 	k_timer_start(&sIdentifyTimer, K_MSEC(kIdentifyTimerIntervalMs), K_MSEC(kIdentifyTimerIntervalMs));
 }
 
@@ -339,17 +339,17 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 		}
 #endif
 		if (ConnectivityMgr().NumBLEConnections() != 0) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceConnectedBLE);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceConnectedBLE);
 		} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceAdvertisingBLE);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceAdvertisingBLE);
 		} else {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceDisconnected);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceDisconnected);
 		}
 		break;
 #if defined(CONFIG_NET_L2_OPENTHREAD)
 	case DeviceEventType::kDnssdInitialized:
 #if CONFIG_CHIP_OTA_REQUESTOR
-		InitBasicOTARequestor();
+		Nrf::Matter::InitBasicOTARequestor();
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 		break;
 	case DeviceEventType::kThreadStateChange:
@@ -360,12 +360,12 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
 #if CONFIG_CHIP_OTA_REQUESTOR
 		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
-			InitBasicOTARequestor();
+			Nrf::Matter::InitBasicOTARequestor();
 		}
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 #endif
 		if (isNetworkProvisioned) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceProvisioned);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceProvisioned);
 		}
 		break;
 	default:
@@ -379,23 +379,23 @@ void AppTask::UpdateLedState()
 		return;
 	}
 
-	switch (GetBoard().GetDeviceState()) {
-	case DeviceState::DeviceAdvertisingBLE:
-		Instance().mBlueLED->Blink(LedConsts::StatusLed::Disconnected::kOn_ms,
-					   LedConsts::StatusLed::Disconnected::kOff_ms);
-	case DeviceState::DeviceDisconnected:
-		Instance().mGreenLED->Blink(LedConsts::StatusLed::Disconnected::kOn_ms,
-					    LedConsts::StatusLed::Disconnected::kOff_ms);
+	switch (Nrf::GetBoard().GetDeviceState()) {
+	case Nrf::DeviceState::DeviceAdvertisingBLE:
+		Instance().mBlueLED->Blink(Nrf::LedConsts::StatusLed::Disconnected::kOn_ms,
+					   Nrf::LedConsts::StatusLed::Disconnected::kOff_ms);
+	case Nrf::DeviceState::DeviceDisconnected:
+		Instance().mGreenLED->Blink(Nrf::LedConsts::StatusLed::Disconnected::kOn_ms,
+					    Nrf::LedConsts::StatusLed::Disconnected::kOff_ms);
 		break;
-	case DeviceState::DeviceConnectedBLE:
-		Instance().mBlueLED->Blink(LedConsts::StatusLed::BleConnected::kOn_ms,
-					   LedConsts::StatusLed::BleConnected::kOff_ms);
+	case Nrf::DeviceState::DeviceConnectedBLE:
+		Instance().mBlueLED->Blink(Nrf::LedConsts::StatusLed::BleConnected::kOn_ms,
+					   Nrf::LedConsts::StatusLed::BleConnected::kOff_ms);
 		break;
-	case DeviceState::DeviceProvisioned:
-		Instance().mRedLED->Blink(LedConsts::StatusLed::Disconnected::kOn_ms,
-					  LedConsts::StatusLed::Disconnected::kOff_ms);
-		Instance().mBlueLED->Blink(LedConsts::StatusLed::Disconnected::kOn_ms,
-					   LedConsts::StatusLed::Disconnected::kOff_ms);
+	case Nrf::DeviceState::DeviceProvisioned:
+		Instance().mRedLED->Blink(Nrf::LedConsts::StatusLed::Disconnected::kOn_ms,
+					  Nrf::LedConsts::StatusLed::Disconnected::kOff_ms);
+		Instance().mBlueLED->Blink(Nrf::LedConsts::StatusLed::Disconnected::kOn_ms,
+					   Nrf::LedConsts::StatusLed::Disconnected::kOff_ms);
 		break;
 	default:
 		break;
@@ -406,18 +406,18 @@ CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
 	sServerInitParams.testEventTriggerDelegate = &sTestEventTriggerDelegate;
-	Nordic::Matter::InitData initConfig{ .mServerInitParams = &sServerInitParams };
+	Nrf::Matter::InitData initConfig{ .mServerInitParams = &sServerInitParams };
 #ifdef CONFIG_CHIP_FACTORY_DATA
 	initConfig.mPostServerInitClbk = CustomFactoryDataInit;
 #endif
-	ReturnErrorOnFailure(Nordic::Matter::PrepareServer(MatterEventHandler, initConfig));
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(MatterEventHandler, initConfig));
 
 	/* Set references for RGB LED */
-	mRedLED = &GetBoard().GetLED(DeviceLeds::LED1);
-	mGreenLED = &GetBoard().GetLED(DeviceLeds::LED2);
-	mBlueLED = &GetBoard().GetLED(DeviceLeds::LED3);
+	mRedLED = &Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED1);
+	mGreenLED = &Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2);
+	mBlueLED = &Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED3);
 
-	if (!GetBoard().Init(nullptr, UpdateLedState)) {
+	if (!Nrf::GetBoard().Init(nullptr, UpdateLedState)) {
 		LOG_ERR("User interface initialization failed.");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
@@ -453,17 +453,17 @@ CHIP_ERROR AppTask::Init()
 
 	/* Initialize timers */
 	k_timer_init(
-		&sMeasurementsTimer, [](k_timer *) { TaskExecutor::PostTask([] { MeasurementsTimerHandler(); }); },
+		&sMeasurementsTimer, [](k_timer *) { Nrf::PostTask([] { MeasurementsTimerHandler(); }); },
 		nullptr);
 	k_timer_init(
-		&sIdentifyTimer, [](k_timer *) { TaskExecutor::PostTask([] { IdentifyTimerHandler(); }); }, nullptr);
+		&sIdentifyTimer, [](k_timer *) { Nrf::PostTask([] { IdentifyTimerHandler(); }); }, nullptr);
 	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs), K_MSEC(kMeasurementsIntervalMs));
 
 #ifdef CONFIG_MCUMGR_TRANSPORT_BT
-	GetDFUOverSMP().StartServer();
+	Nrf::GetDFUOverSMP().StartServer();
 #endif
 
-	return Nordic::Matter::StartServer();
+	return Nrf::Matter::StartServer();
 }
 
 CHIP_ERROR AppTask::StartApp()
@@ -471,7 +471,7 @@ CHIP_ERROR AppTask::StartApp()
 	ReturnErrorOnFailure(Init());
 
 	while (true) {
-		TaskExecutor::DispatchNextTask();
+		Nrf::DispatchNextTask();
 	}
 
 	return CHIP_NO_ERROR;

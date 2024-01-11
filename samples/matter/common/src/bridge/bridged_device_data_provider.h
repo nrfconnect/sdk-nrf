@@ -6,10 +6,12 @@
 
 #pragma once
 
+#include "binding/binding_handler.h"
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/util/attribute-storage.h>
-#include "binding/binding_handler.h"
+
+namespace Nrf {
 
 class BridgedDeviceDataProvider {
 public:
@@ -17,7 +19,8 @@ public:
 						 chip::AttributeId attributeId, void *data, size_t dataSize);
 
 	using InvokeCommandCallback = void (*)(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
-					       chip::CommandId commandId, BindingHandler::InvokeCommand invokeCommand);
+					       chip::CommandId commandId,
+					       Nrf::Matter::BindingHandler::InvokeCommand invokeCommand);
 
 	explicit BridgedDeviceDataProvider(UpdateAttributeCallback updateCallback,
 					   InvokeCommandCallback commandCallback = nullptr)
@@ -44,3 +47,5 @@ private:
 		BridgedDeviceDataProvider *mProvider;
 	};
 };
+
+} /* namespace Nrf */

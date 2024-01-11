@@ -11,6 +11,8 @@
 #endif
 #include <zephyr/kernel.h>
 
+namespace Nrf {
+
 static LEDWidget::LEDWidgetStateUpdateHandler sStateUpdateCallback;
 
 void LEDWidget::InitGpio()
@@ -104,3 +106,5 @@ void LEDWidget::LedStateTimerHandler(k_timer *timer)
 	if (sStateUpdateCallback)
 		sStateUpdateCallback(*reinterpret_cast<LEDWidget *>(timer->user_data));
 }
+
+} /* namespace Nrf */

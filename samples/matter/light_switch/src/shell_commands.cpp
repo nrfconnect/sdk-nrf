@@ -43,7 +43,7 @@ static CHIP_ERROR SwitchCommandHandler(int argc, char **argv)
 
 static CHIP_ERROR TableCommandHelper(int argc, char **argv)
 {
-	BindingHandler::PrintBindingTable();
+	Nrf::Matter::BindingHandler::PrintBindingTable();
 	return CHIP_NO_ERROR;
 }
 
@@ -65,37 +65,40 @@ namespace Unicast
 
 	static CHIP_ERROR OnCommandHandler(int argc, char **argv)
 	{
-		BindingHandler::BindingData *data = Platform::New<BindingHandler::BindingData>();
+		Nrf::Matter::BindingHandler::BindingData *data =
+			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::On::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 
-		BindingHandler::RunBoundClusterAction(data);
+		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 
 	static CHIP_ERROR OffCommandHandler(int argc, char **argv)
 	{
-		BindingHandler::BindingData *data = Platform::New<BindingHandler::BindingData>();
+		Nrf::Matter::BindingHandler::BindingData *data =
+			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::Off::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 
-		BindingHandler::RunBoundClusterAction(data);
+		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 
 	static CHIP_ERROR ToggleCommandHandler(int argc, char **argv)
 	{
-		BindingHandler::BindingData *data = Platform::New<BindingHandler::BindingData>();
+		Nrf::Matter::BindingHandler::BindingData *data =
+			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 
-		BindingHandler::RunBoundClusterAction(data);
+		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 } /* namespace Unicast */
@@ -134,40 +137,43 @@ namespace Group
 
 	CHIP_ERROR OnCommandHandler(int argc, char **argv)
 	{
-		BindingHandler::BindingData *data = Platform::New<BindingHandler::BindingData>();
+		Nrf::Matter::BindingHandler::BindingData *data =
+			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::On::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 		data->IsGroup = true;
 
-		BindingHandler::RunBoundClusterAction(data);
+		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 
 	CHIP_ERROR OffCommandHandler(int argc, char **argv)
 	{
-		BindingHandler::BindingData *data = Platform::New<BindingHandler::BindingData>();
+		Nrf::Matter::BindingHandler::BindingData *data =
+			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::Off::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 		data->IsGroup = true;
 
-		BindingHandler::RunBoundClusterAction(data);
+		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 
 	CHIP_ERROR ToggleCommandHandler(int argc, char **argv)
 	{
-		BindingHandler::BindingData *data = Platform::New<BindingHandler::BindingData>();
+		Nrf::Matter::BindingHandler::BindingData *data =
+			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 		data->IsGroup = true;
 
-		BindingHandler::RunBoundClusterAction(data);
+		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 

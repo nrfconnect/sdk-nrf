@@ -55,9 +55,9 @@ enum mgmt_cb_return CommandHandler(uint32_t event,
 				   size_t data_size)
 {
 	if (event == MGMT_EVT_OP_CMD_RECV) {
-		GetFlashHandler().DoAction(ExternalFlashManager::Action::WAKE_UP);
+		Nrf::Matter::GetFlashHandler().DoAction(ExternalFlashManager::Action::WAKE_UP);
 	} else if (event == MGMT_EVT_OP_CMD_DONE) {
-		GetFlashHandler().DoAction(ExternalFlashManager::Action::SLEEP);
+		Nrf::Matter::GetFlashHandler().DoAction(ExternalFlashManager::Action::SLEEP);
 	}
 
 	return MGMT_CB_OK;
@@ -74,6 +74,8 @@ mgmt_callback sCommandCallback = {
 };
 
 } /* namespace */
+
+namespace Nrf {
 
 DFUOverSMP DFUOverSMP::sDFUOverSMP;
 
@@ -127,3 +129,5 @@ void DFUOverSMP::StartServer()
 	mIsStarted = true;
 	ChipLogProgress(DeviceLayer, "DFU over SMP started");
 }
+
+} /* namespace Nrf */

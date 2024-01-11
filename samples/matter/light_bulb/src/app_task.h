@@ -32,7 +32,7 @@ public:
 	CHIP_ERROR StartApp();
 
 	void UpdateClusterState();
-	PWMDevice &GetPWMDevice() { return mPWMDevice; }
+	Nrf::PWMDevice &GetPWMDevice() { return mPWMDevice; }
 
 	static void IdentifyStartHandler(Identify *);
 	static void IdentifyStopHandler(Identify *);
@@ -43,16 +43,16 @@ private:
 	CHIP_ERROR Init();
 
 	static void LightingActionEventHandler(const LightingEvent &event);
-	static void ButtonEventHandler(ButtonState state, ButtonMask hasChanged);
+	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
 
 	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 
-	static void ActionInitiated(PWMDevice::Action_t action, int32_t actor);
-	static void ActionCompleted(PWMDevice::Action_t action, int32_t actor);
+	static void ActionInitiated(Nrf::PWMDevice::Action_t action, int32_t actor);
+	static void ActionCompleted(Nrf::PWMDevice::Action_t action, int32_t actor);
 
 #ifdef CONFIG_AWS_IOT_INTEGRATION
 	static bool AWSIntegrationCallback(struct aws_iot_integration_cb_data *data);
 #endif
 
-	PWMDevice mPWMDevice;
+	Nrf::PWMDevice mPWMDevice;
 };

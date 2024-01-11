@@ -9,6 +9,8 @@
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/cbprintf.h>
 
+namespace Nrf {
+
 /**
  * @brief Class representing single settings tree node and containing information about its key.
  */
@@ -108,3 +110,5 @@ public:
 private:
 	bool LoadEntry(const char *key, void *data = nullptr, size_t dataMaxSize = 0, size_t *outSize = nullptr);
 };
+
+} /* namespace Nrf */

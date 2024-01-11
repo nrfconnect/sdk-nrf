@@ -6,10 +6,12 @@
 
 #pragma once
 
+#include "binding/binding_handler.h"
 #include "bridge_util.h"
 #include "bridged_device_data_provider.h"
 #include "matter_bridged_device.h"
-#include "binding/binding_handler.h"
+
+namespace Nrf {
 
 class BridgeManager {
 public:
@@ -113,7 +115,8 @@ public:
 	static void HandleUpdate(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
 				 chip::AttributeId attributeId, void *data, size_t dataSize);
 	static void HandleCommand(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
-				  chip::CommandId commandId, BindingHandler::InvokeCommand invokeCommand);
+				  chip::CommandId commandId,
+				  Nrf::Matter::BindingHandler::InvokeCommand invokeCommand);
 
 	static BridgeManager &Instance()
 	{
@@ -250,3 +253,5 @@ private:
 	chip::EndpointId mCurrentDynamicEndpointId;
 	bool mIsInitialized = false;
 };
+
+} /* namespace Nrf */

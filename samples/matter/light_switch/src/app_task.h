@@ -35,7 +35,7 @@ private:
 
 	static void DimmerTriggerEventHandler();
 	static void TimerEventHandler(const Timer &event);
-	static void ButtonEventHandler(ButtonState state, ButtonMask hasChanged);
+	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
 
 	static void StartTimer(Timer, uint32_t);
 	static void CancelTimer(Timer);
