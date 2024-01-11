@@ -108,7 +108,7 @@ CHIP_ERROR ConfigureThreadRole()
 #define VerifyInitResultOrReturnError(ec, msg)                                                                         \
 	VerifyOrReturnError(ec == CHIP_NO_ERROR, ec, LOG_ERR(msg " [Error: %d]", sInitResult.Format()))
 
-void DoInitChipServer(intptr_t arg)
+void DoInitChipServer(intptr_t /* unused */)
 {
 	InitGuard guard;
 	LOG_INF("Init CHIP stack");
@@ -167,7 +167,7 @@ void DoInitChipServer(intptr_t arg)
 	sInitResult = sLocalInitData.mServerInitParams->InitializeStaticResourcesBeforeServerInit();
 	VerifyInitResultOrReturn(sInitResult, "InitializeStaticResourcesBeforeServerInit() failed");
 
-	sInitResult = PlatformMgr().AddEventHandler(reinterpret_cast<PlatformManager::EventHandlerFunct>(arg), 0);
+	sInitResult = PlatformMgr().AddEventHandler(sLocalInitData.mEventHandler, 0);
 	VerifyInitResultOrReturn(sInitResult, "Cannot register CHIP event handler");
 
 	SetDeviceInfoProvider(sLocalInitData.mDeviceInfoProvider);
@@ -195,7 +195,7 @@ CHIP_ERROR WaitForReadiness()
 /* Public API */
 namespace Nrf::Matter
 {
-	CHIP_ERROR PrepareServer(PlatformManager::EventHandlerFunct matterEventHandler, const InitData &initData)
+	CHIP_ERROR PrepareServer(const InitData &initData)
 	{
 		sLocalInitData = initData;
 
@@ -207,7 +207,7 @@ namespace Nrf::Matter
 		VerifyInitResultOrReturnError(err, "PlatformMgr().InitChipStack() failed");
 
 		/* Schedule all CHIP initializations to the CHIP thread for better synchronization. */
-		return PlatformMgr().ScheduleWork(DoInitChipServer, reinterpret_cast<intptr_t>(matterEventHandler));
+		return PlatformMgr().ScheduleWork(DoInitChipServer, 0);
 	}
 
 	CHIP_ERROR StartServer()

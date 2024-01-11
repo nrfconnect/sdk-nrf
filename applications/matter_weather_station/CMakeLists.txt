@@ -48,6 +48,7 @@ target_sources(app PRIVATE
     ${COMMON_ROOT}/src/app/task_executor.cpp
     ${COMMON_ROOT}/src/board/board.cpp
     ${COMMON_ROOT}/src/app/matter_init.cpp
+    ${COMMON_ROOT}/src/app/matter_event_handler.cpp
 )
 
 if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_TRANSPORT_BT)

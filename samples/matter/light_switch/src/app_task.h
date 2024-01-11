@@ -40,6 +40,4 @@ private:
 	static void StartTimer(Timer, uint32_t);
 	static void CancelTimer(Timer);
 	static void UserTimerTimeoutCallback(k_timer *timer);
-
-	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 };

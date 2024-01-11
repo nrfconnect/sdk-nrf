@@ -21,6 +21,5 @@ public:
 private:
 	CHIP_ERROR Init();
 
-	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static CHIP_ERROR RestoreBridgedDevices();
 };

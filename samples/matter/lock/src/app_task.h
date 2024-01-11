@@ -7,8 +7,8 @@
 #pragma once
 
 #include "board/board.h"
-#include "bolt_lock_manager.h"
 #include "board/led_widget.h"
+#include "bolt_lock_manager.h"
 
 struct k_timer;
 struct Identify;
@@ -36,7 +36,6 @@ private:
 
 	static void LockActionEventHandler();
 	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
-	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static void LockStateChanged(BoltLockManager::State state, BoltLockManager::OperationSource source);
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
