@@ -16,6 +16,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/ring_buffer.h>
 
+namespace Nrf {
+
 /* Forward declarations. */
 struct BLEBridgedDevice;
 struct BLEBridgedDeviceProvider;
@@ -234,3 +236,5 @@ private:
 #endif /* CONFIG_BT_SMP */
 	Recovery mRecovery;
 };
+
+} /* namespace Nrf */

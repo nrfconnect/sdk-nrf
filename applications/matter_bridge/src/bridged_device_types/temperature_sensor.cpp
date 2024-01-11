@@ -15,6 +15,7 @@ IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs);
 
 using namespace ::chip;
 using namespace ::chip::app;
+using namespace Nrf;
 
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(tempSensorAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Id, INT16S, 2, 0),

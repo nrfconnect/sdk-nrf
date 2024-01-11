@@ -15,6 +15,7 @@ IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs);
 
 using namespace ::chip;
 using namespace ::chip::app;
+using namespace Nrf;
 
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(humiSensorAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Id, INT16U, 2, 0),

@@ -21,6 +21,7 @@ IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs);
 
 using namespace ::chip;
 using namespace ::chip::app;
+using namespace Nrf;
 
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(switchAttr)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Switch::Attributes::NumberOfPositions::Id, INT8U, 1, 0),

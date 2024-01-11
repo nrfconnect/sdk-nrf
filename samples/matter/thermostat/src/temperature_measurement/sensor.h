@@ -41,5 +41,5 @@ public:
 private:
 	static void TemperatureMeasurementReadHandler(const EmberBindingTableEntry &binding,
 						      chip::OperationalDeviceProxy *deviceProxy,
-						      BindingHandler::BindingData &bindingData);
+						      Nrf::Matter::BindingHandler::BindingData &bindingData);
 };

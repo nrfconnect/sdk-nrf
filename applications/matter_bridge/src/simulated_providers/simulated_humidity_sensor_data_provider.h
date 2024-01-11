@@ -8,9 +8,9 @@
 
 #include "bridged_device_data_provider.h"
 
-class SimulatedHumiditySensorDataProvider : public BridgedDeviceDataProvider {
+class SimulatedHumiditySensorDataProvider : public Nrf::BridgedDeviceDataProvider {
 public:
-	SimulatedHumiditySensorDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback) {}
+	SimulatedHumiditySensorDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : Nrf::BridgedDeviceDataProvider(updateCallback, commandCallback) {}
 	~SimulatedHumiditySensorDataProvider() { k_timer_stop(&mTimer); }
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,

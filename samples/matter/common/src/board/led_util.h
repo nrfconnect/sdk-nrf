@@ -14,13 +14,13 @@
 template <uint8_t size> class FactoryResetLEDsWrapper {
 public:
 	using Gpio = uint32_t;
-	using Leds = std::array<std::pair<Gpio, LEDWidget>, size>;
+	using Leds = std::array<std::pair<Gpio, Nrf::LEDWidget>, size>;
 
 	explicit FactoryResetLEDsWrapper(std::array<Gpio, size> aLeds)
 	{
 		auto idx{ 0 };
 		for (const auto &led : aLeds)
-			mLeds[idx++] = std::make_pair(led, LEDWidget());
+			mLeds[idx++] = std::make_pair(led, Nrf::LEDWidget());
 		Init();
 	}
 	void Set(bool aState)
@@ -37,7 +37,7 @@ public:
 private:
 	void Init()
 	{
-		LEDWidget::InitGpio();
+		Nrf::LEDWidget::InitGpio();
 		for (auto &led : mLeds)
 			led.second.Init(led.first);
 	}

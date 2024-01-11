@@ -50,11 +50,11 @@ target_sources(app PRIVATE
     ${COMMON_ROOT}/src/binding/binding_handler.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
-    ${COMMON_ROOT}/src/led/led_widget.cpp
-    ${COMMON_ROOT}/src/ps_storage/persistent_storage_util.cpp
-    ${COMMON_ROOT}/src/tasks/task_executor.cpp
+    ${COMMON_ROOT}/src/board/led_widget.cpp
+    ${COMMON_ROOT}/src/persistent_storage/persistent_storage_util.cpp
+    ${COMMON_ROOT}/src/app/task_executor.cpp
     ${COMMON_ROOT}/src/board/board.cpp
-    ${COMMON_ROOT}/src/init/matter_init.cpp
+    ${COMMON_ROOT}/src/app/matter_init.cpp
 )
 
 if(CONFIG_BRIDGED_DEVICE_BT)

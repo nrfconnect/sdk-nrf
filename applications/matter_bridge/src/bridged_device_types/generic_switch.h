@@ -8,13 +8,13 @@
 
 #include "matter_bridged_device.h"
 
-class GenericSwitchDevice : public MatterBridgedDevice {
+class GenericSwitchDevice : public Nrf::MatterBridgedDevice {
 public:
 	GenericSwitchDevice(const char *nodeLabel);
 
 	uint16_t GetDeviceType() const override
 	{
-		return MatterBridgedDevice::DeviceType::GenericSwitch;
+		return Nrf::MatterBridgedDevice::DeviceType::GenericSwitch;
 	}
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;

@@ -6,7 +6,7 @@
 
 #include "temp_sensor_manager.h"
 #include "app_task.h"
-#include "tasks/task_executor.h"
+#include "app/task_executor.h"
 #include "temperature_measurement/sensor.h"
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
@@ -27,7 +27,7 @@ CHIP_ERROR TempSensorManager::Init()
 
 void TempSensorManager::TimerEventHandler(k_timer *timer)
 {
-	TaskExecutor::PostTask([] { TempSensorManager::SensorTimerEventHandler(); });
+	Nrf::PostTask([] { TempSensorManager::SensorTimerEventHandler(); });
 }
 
 /*

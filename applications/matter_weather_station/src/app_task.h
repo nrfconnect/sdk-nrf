@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "led/led_widget.h"
+#include "board/led_widget.h"
 
 #include <app/clusters/identify-server/identify-server.h>
 #include <platform/CHIPDeviceLayer.h>
@@ -38,7 +38,7 @@ private:
 	static void IdentifyTimerHandler();
 	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 
-	LEDWidget *mRedLED;
-	LEDWidget *mGreenLED;
-	LEDWidget *mBlueLED;
+	Nrf::LEDWidget *mRedLED;
+	Nrf::LEDWidget *mGreenLED;
+	Nrf::LEDWidget *mBlueLED;
 };

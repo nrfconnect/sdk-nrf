@@ -8,9 +8,9 @@
 
 #include "bridged_device_data_provider.h"
 
-class SimulatedGenericSwitchDataProvider : public BridgedDeviceDataProvider {
+class SimulatedGenericSwitchDataProvider : public Nrf::BridgedDeviceDataProvider {
 public:
-	SimulatedGenericSwitchDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback) {}
+	SimulatedGenericSwitchDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : Nrf::BridgedDeviceDataProvider(updateCallback, commandCallback) {}
 	~SimulatedGenericSwitchDataProvider() { k_timer_stop(&mTimer); }
 
 	void Init() override;

@@ -14,6 +14,8 @@
 #include <platform/nrfconnect/wifi/WiFiManager.h>
 #endif
 
+namespace Nrf::Matter {
+
 class AppFabricTableDelegate : public chip::FabricTable::Delegate {
 public:
 	~AppFabricTableDelegate() { chip::Server::GetInstance().GetFabricTable().RemoveFabricDelegate(this); }
@@ -75,3 +77,5 @@ private:
 
 	inline static k_timer sFabricRemovedTimer;
 };
+
+} /* namespace Nrf::Matter */

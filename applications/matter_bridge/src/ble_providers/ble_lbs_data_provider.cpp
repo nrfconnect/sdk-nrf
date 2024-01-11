@@ -20,6 +20,7 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace ::chip;
 using namespace ::chip::app;
+using namespace Nrf;
 
 static bt_uuid *sServiceUuid = BT_UUID_LBS;
 static bt_uuid *sUuidLED = BT_UUID_LBS_LED;
@@ -27,12 +28,15 @@ static bt_uuid *sUuidButton = BT_UUID_LBS_BUTTON;
 static bt_uuid *sUuidCcc = BT_UUID_GATT_CCC;
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
-void ProcessCommand(CommandId aCommandId, const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice, void *aContext)
+void ProcessCommand(CommandId aCommandId, const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice,
+		    void *aContext)
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;
-	BindingHandler::BindingData *data = reinterpret_cast<BindingHandler::BindingData *>(aContext);
+	Nrf::Matter::BindingHandler::BindingData *data =
+		reinterpret_cast<Nrf::Matter::BindingHandler::BindingData *>(aContext);
 
-	auto onSuccess = [dataRef = data](const ConcreteCommandPath &commandPath, const StatusIB &status, const auto &dataResponse) {
+	auto onSuccess = [dataRef = data](const ConcreteCommandPath &commandPath, const StatusIB &status,
+					  const auto &dataResponse) {
 		LOG_DBG("Binding command applied successfully!");
 
 		/* If session was recovered and communication works, reset flag to the initial state. */
@@ -42,7 +46,7 @@ void ProcessCommand(CommandId aCommandId, const EmberBindingTableEntry &aBinding
 	};
 
 	auto onFailure = [dataRef = *data](CHIP_ERROR aError) mutable {
-		BindingHandler::OnInvokeCommandFailure(dataRef, aError);
+		Nrf::Matter::BindingHandler::OnInvokeCommandFailure(dataRef, aError);
 	};
 
 	if (aDevice) {

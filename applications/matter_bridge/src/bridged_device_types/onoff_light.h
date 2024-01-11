@@ -7,7 +7,8 @@
 #pragma once
 
 #include "matter_bridged_device.h"
-class OnOffLightDevice : public MatterBridgedDevice {
+
+class OnOffLightDevice : public Nrf::MatterBridgedDevice {
 public:
 	static constexpr uint16_t kOnOffClusterRevision = 4;
 	static constexpr uint32_t kOnOffFeatureMap = 1;
@@ -27,7 +28,7 @@ public:
 
 	uint16_t GetDeviceType() const override
 	{
-		return MatterBridgedDevice::DeviceType::OnOffLight;
+		return Nrf::MatterBridgedDevice::DeviceType::OnOffLight;
 	}
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;

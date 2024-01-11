@@ -12,7 +12,7 @@
 
 #include <bluetooth/services/lbs.h>
 
-class BleLBSDataProvider : public BLEBridgedDeviceProvider {
+class BleLBSDataProvider : public Nrf::BLEBridgedDeviceProvider {
 public:
 	explicit BleLBSDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback)
 		: BLEBridgedDeviceProvider(updateCallback, commandCallback)

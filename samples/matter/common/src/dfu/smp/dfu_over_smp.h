@@ -10,6 +10,8 @@
 
 #include <array>
 
+namespace Nrf {
+
 /**
  * @brief DFU over SMP helper class
  *
@@ -60,3 +62,5 @@ inline DFUOverSMP &GetDFUOverSMP()
 {
 	return DFUOverSMP::sDFUOverSMP;
 }
+
+} /* namespace Nrf */

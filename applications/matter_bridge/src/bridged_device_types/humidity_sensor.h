@@ -8,7 +8,7 @@
 
 #include "matter_bridged_device.h"
 
-class HumiditySensorDevice : public MatterBridgedDevice {
+class HumiditySensorDevice : public Nrf::MatterBridgedDevice {
 public:
 	static constexpr uint16_t kRelativeHumidityMeasurementClusterRevision = 4;
 	static constexpr uint32_t kRelativeHumidityMeasurementFeatureMap = 0;
@@ -23,7 +23,7 @@ public:
 
 	uint16_t GetDeviceType() const override
 	{
-		return MatterBridgedDevice::DeviceType::HumiditySensor;
+		return Nrf::MatterBridgedDevice::DeviceType::HumiditySensor;
 	}
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;

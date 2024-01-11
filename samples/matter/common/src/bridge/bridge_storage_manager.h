@@ -7,11 +7,13 @@
 #pragma once
 
 #include "matter_bridged_device.h"
-#include "ps_storage/persistent_storage_util.h"
+#include "persistent_storage/persistent_storage_util.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 #include <zephyr/bluetooth/addr.h>
 #endif
+
+namespace Nrf {
 
 /*
  * The class implements the following key-values storage structure:
@@ -76,7 +78,7 @@ public:
 	 * @return true if module has been initialized successfully
 	 * @return false an error occurred
 	 */
-	bool Init() { return PersistentStorage::Instance().Init(); }
+	bool Init() { return Nrf::PersistentStorage::Instance().Init(); }
 
 	/**
 	 * @brief Store bridged devices count into settings
@@ -252,15 +254,17 @@ public:
 #endif
 
 private:
-	PersistentStorageNode mBridge;
-	PersistentStorageNode mBridgedDevicesCount;
-	PersistentStorageNode mBridgedDevicesIndexes;
-	PersistentStorageNode mBridgedDevice;
-	PersistentStorageNode mBridgedDeviceEndpointId;
-	PersistentStorageNode mBridgedDeviceNodeLabel;
-	PersistentStorageNode mBridgedDeviceType;
+	Nrf::PersistentStorageNode mBridge;
+	Nrf::PersistentStorageNode mBridgedDevicesCount;
+	Nrf::PersistentStorageNode mBridgedDevicesIndexes;
+	Nrf::PersistentStorageNode mBridgedDevice;
+	Nrf::PersistentStorageNode mBridgedDeviceEndpointId;
+	Nrf::PersistentStorageNode mBridgedDeviceNodeLabel;
+	Nrf::PersistentStorageNode mBridgedDeviceType;
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-	PersistentStorageNode mBt;
-	PersistentStorageNode mBtAddress;
+	Nrf::PersistentStorageNode mBt;
+	Nrf::PersistentStorageNode mBtAddress;
 #endif
 };
+
+} /* namespace Nrf */

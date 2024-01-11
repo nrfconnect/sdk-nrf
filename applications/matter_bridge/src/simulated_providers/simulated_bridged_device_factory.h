@@ -38,11 +38,11 @@
 
 namespace SimulatedBridgedDeviceFactory
 {
-using UpdateAttributeCallback = BridgedDeviceDataProvider::UpdateAttributeCallback;
-using InvokeCommandCallback = BridgedDeviceDataProvider::InvokeCommandCallback;
+using UpdateAttributeCallback = Nrf::BridgedDeviceDataProvider::UpdateAttributeCallback;
+using InvokeCommandCallback = Nrf::BridgedDeviceDataProvider::InvokeCommandCallback;
 using DeviceType = uint16_t;
-using BridgedDeviceFactory = DeviceFactory<MatterBridgedDevice, DeviceType, const char *>;
-using SimulatedDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, DeviceType, UpdateAttributeCallback, InvokeCommandCallback>;
+using BridgedDeviceFactory = Nrf::DeviceFactory<Nrf::MatterBridgedDevice, DeviceType, const char *>;
+using SimulatedDataProviderFactory = Nrf::DeviceFactory<Nrf::BridgedDeviceDataProvider, DeviceType, UpdateAttributeCallback, InvokeCommandCallback>;
 
 BridgedDeviceFactory &GetBridgedDeviceFactory();
 SimulatedDataProviderFactory &GetDataProviderFactory();

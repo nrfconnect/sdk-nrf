@@ -12,6 +12,8 @@
 #include <functional>
 #include <map>
 
+namespace Nrf {
+
 /*
    DeviceFactory template container allows to instantiate a map which
    binds supported Matter device type identifiers (uint16_t) with corresponding
@@ -144,3 +146,5 @@ template <typename T, std::size_t N> struct FiniteMap {
 	Item mMap[N];
 	uint16_t mElementsCount{ 0 };
 };
+
+} /* namespace Nrf */

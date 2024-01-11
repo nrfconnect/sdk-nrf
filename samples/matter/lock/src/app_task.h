@@ -8,7 +8,7 @@
 
 #include "board/board.h"
 #include "bolt_lock_manager.h"
-#include "led/led_widget.h"
+#include "board/led_widget.h"
 
 struct k_timer;
 struct Identify;
@@ -35,7 +35,7 @@ private:
 	CHIP_ERROR Init();
 
 	static void LockActionEventHandler();
-	static void ButtonEventHandler(ButtonState state, ButtonMask hasChanged);
+	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
 	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static void LockStateChanged(BoltLockManager::State state, BoltLockManager::OperationSource source);
 

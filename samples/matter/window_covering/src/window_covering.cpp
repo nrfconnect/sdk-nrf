@@ -249,9 +249,9 @@ void WindowCovering::SetBrightness(MoveType aMoveType, uint16_t aPosition)
 {
 	uint8_t brightness = PositionToBrightness(aPosition, aMoveType);
 	if (aMoveType == MoveType::LIFT) {
-		mLiftIndicator.InitiateAction(PWMDevice::LEVEL_ACTION, 0, &brightness);
+		mLiftIndicator.InitiateAction(Nrf::PWMDevice::LEVEL_ACTION, 0, &brightness);
 	} else if (aMoveType == MoveType::TILT) {
-		mTiltIndicator.InitiateAction(PWMDevice::LEVEL_ACTION, 0, &brightness);
+		mTiltIndicator.InitiateAction(Nrf::PWMDevice::LEVEL_ACTION, 0, &brightness);
 	}
 }
 

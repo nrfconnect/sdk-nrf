@@ -12,6 +12,8 @@
 #include "ota_image_processor_base_impl.h"
 #include <platform/nrfconnect/OTAImageProcessorImpl.h>
 
+namespace Nrf::Matter {
+
 /**
  * Select recommended OTA image processor implementation.
  *
@@ -49,3 +51,5 @@ void OtaConfirmNewImage();
  * which can be introduced into sleep mode and woken up on demand.
  */
 chip::DeviceLayer::ExternalFlashManager &GetFlashHandler();
+
+} /* namespace Nrf::Matter */

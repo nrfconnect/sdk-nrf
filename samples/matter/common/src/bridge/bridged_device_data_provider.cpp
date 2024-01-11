@@ -10,6 +10,8 @@
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
+namespace Nrf {
+
 CHIP_ERROR BridgedDeviceDataProvider::NotifyReachableStatusChange(bool isReachable)
 {
 	auto reachableContext = chip::Platform::New<ReachableContext>();
@@ -38,3 +40,5 @@ CHIP_ERROR BridgedDeviceDataProvider::NotifyReachableStatusChange(bool isReachab
 
 	return CHIP_NO_ERROR;
 }
+
+} /* namespace Nrf */

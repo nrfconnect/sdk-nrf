@@ -49,10 +49,10 @@ target_sources(app PRIVATE
     src/zcl_callbacks.cpp
     src/zap-generated/callback-stub.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
-    ${COMMON_ROOT}/src/led/led_widget.cpp
-    ${COMMON_ROOT}/src/tasks/task_executor.cpp
+    ${COMMON_ROOT}/src/board/led_widget.cpp
+    ${COMMON_ROOT}/src/app/task_executor.cpp
     ${COMMON_ROOT}/src/board/board.cpp
-    ${COMMON_ROOT}/src/init/matter_init.cpp
+    ${COMMON_ROOT}/src/app/matter_init.cpp
 )
 
 if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_TRANSPORT_BT)

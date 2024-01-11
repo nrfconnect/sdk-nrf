@@ -12,8 +12,8 @@
 #include "thread_wifi_switch.h"
 #endif
 
-#include "init/matter_init.h"
-#include "tasks/task_executor.h"
+#include "app/matter_init.h"
+#include "app/task_executor.h"
 
 #ifdef CONFIG_CHIP_NUS
 #include "bt_nus/bt_nus_service.h"
@@ -61,25 +61,25 @@ Identify sIdentify = { kLockEndpointId, AppTask::IdentifyStartHandler, AppTask::
 
 void AppTask::IdentifyStartHandler(Identify *)
 {
-	TaskExecutor::PostTask([] { GetBoard().GetLED(DeviceLeds::LED2).Blink(LedConsts::kIdentifyBlinkRate_ms); });
+	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms); });
 }
 
 void AppTask::IdentifyStopHandler(Identify *)
 {
-	TaskExecutor::PostTask([] { GetBoard().GetLED(DeviceLeds::LED2).Set(BoltLockMgr().IsLocked()); });
+	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(BoltLockMgr().IsLocked()); });
 }
 
-void AppTask::ButtonEventHandler(ButtonState state, ButtonMask hasChanged)
+void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
 	if ((APPLICATION_BUTTON_MASK & hasChanged) & state) {
-		TaskExecutor::PostTask([] { LockActionEventHandler(); });
+		Nrf::PostTask([] { LockActionEventHandler(); });
 	}
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
 	if (SWITCHING_BUTTON_MASK & hasChanged) {
 		SwitchButtonAction action =
 			(SWITCHING_BUTTON_MASK & state) ? SwitchButtonAction::Pressed : SwitchButtonAction::Released;
-		TaskExecutor::PostTask([action] { SwitchTransportTriggerHandler(action); });
+		Nrf::PostTask([action] { SwitchTransportTriggerHandler(action); });
 	}
 #endif
 }
@@ -103,7 +103,7 @@ void AppTask::SwitchTransportEventHandler()
 
 void AppTask::SwitchTransportTimerTimeoutCallback(k_timer *timer)
 {
-	TaskExecutor::PostTask([] { SwitchTransportEventHandler(); });
+	Nrf::PostTask([] { SwitchTransportEventHandler(); });
 }
 
 void AppTask::SwitchTransportTriggerHandler(const SwitchButtonAction &action)
@@ -138,13 +138,13 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 		}
 #endif
 		if (ConnectivityMgr().NumBLEConnections() != 0) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceConnectedBLE);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceConnectedBLE);
 		}
 		break;
 #if defined(CONFIG_NET_L2_OPENTHREAD)
 	case DeviceEventType::kDnssdInitialized:
 #if CONFIG_CHIP_OTA_REQUESTOR
-		InitBasicOTARequestor();
+		Nrf::Matter::InitBasicOTARequestor();
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 		break;
 	case DeviceEventType::kThreadStateChange:
@@ -155,14 +155,14 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
 #if CONFIG_CHIP_OTA_REQUESTOR
 		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
-			InitBasicOTARequestor();
+			Nrf::Matter::InitBasicOTARequestor();
 		}
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 #endif
 		if (isNetworkProvisioned) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceProvisioned);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceProvisioned);
 		} else {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceDisconnected);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceDisconnected);
 		}
 		break;
 	default:
@@ -175,31 +175,31 @@ void AppTask::LockStateChanged(BoltLockManager::State state, BoltLockManager::Op
 	switch (state) {
 	case BoltLockManager::State::kLockingInitiated:
 		LOG_INF("Lock action initiated");
-		GetBoard().GetLED(DeviceLeds::LED2).Blink(50, 50);
+		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(50, 50);
 #ifdef CONFIG_CHIP_NUS
-		GetNUSService().SendData("locking", sizeof("locking"));
+		Nrf::GetNUSService().SendData("locking", sizeof("locking"));
 #endif
 		break;
 	case BoltLockManager::State::kLockingCompleted:
 		LOG_INF("Lock action completed");
-		GetBoard().GetLED(DeviceLeds::LED2).Set(true);
+		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(true);
 #ifdef CONFIG_CHIP_NUS
-		GetNUSService().SendData("locked", sizeof("locked"));
+		Nrf::GetNUSService().SendData("locked", sizeof("locked"));
 #endif
 		break;
 	case BoltLockManager::State::kUnlockingInitiated:
 		LOG_INF("Unlock action initiated");
-		GetBoard().GetLED(DeviceLeds::LED2).Blink(50, 50);
+		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(50, 50);
 #ifdef CONFIG_CHIP_NUS
-		GetNUSService().SendData("unlocking", sizeof("unlocking"));
+		Nrf::GetNUSService().SendData("unlocking", sizeof("unlocking"));
 #endif
 		break;
 	case BoltLockManager::State::kUnlockingCompleted:
 		LOG_INF("Unlock action completed");
 #ifdef CONFIG_CHIP_NUS
-		GetNUSService().SendData("unlocked", sizeof("unlocked"));
+		Nrf::GetNUSService().SendData("unlocked", sizeof("unlocked"));
 #endif
-		GetBoard().GetLED(DeviceLeds::LED2).Set(false);
+		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
 		break;
 	}
 
@@ -248,7 +248,7 @@ void AppTask::NUSLockCallback(void *context)
 	    BoltLockMgr().mState == BoltLockManager::State::kLockingInitiated) {
 		LOG_INF("Device is already locked");
 	} else {
-		TaskExecutor::PostTask([] { LockActionEventHandler(); });
+		Nrf::PostTask([] { LockActionEventHandler(); });
 	}
 }
 
@@ -259,7 +259,7 @@ void AppTask::NUSUnlockCallback(void *context)
 	    BoltLockMgr().mState == BoltLockManager::State::kUnlockingInitiated) {
 		LOG_INF("Device is already unlocked");
 	} else {
-		TaskExecutor::PostTask([] { LockActionEventHandler(); });
+		Nrf::PostTask([] { LockActionEventHandler(); });
 	}
 }
 #endif
@@ -272,13 +272,13 @@ CHIP_ERROR AppTask::Init()
 	   instances, so offload the initialization module from controlling that by explicitly setting the
 	   mNetworkingInstance parameter to nullptr. Otherwise, the initialization module instantiates the
 	   NetworkCommissioning object and handles it by default internally. */
-	ReturnErrorOnFailure(Nordic::Matter::PrepareServer(MatterEventHandler,
-							   Nordic::Matter::InitData{ .mNetworkingInstance = nullptr }));
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(MatterEventHandler,
+							   Nrf::Matter::InitData{ .mNetworkingInstance = nullptr }));
 #else
-	ReturnErrorOnFailure(Nordic::Matter::PrepareServer(MatterEventHandler));
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(MatterEventHandler));
 #endif
 
-	if (!GetBoard().Init(ButtonEventHandler)) {
+	if (!Nrf::GetBoard().Init(ButtonEventHandler)) {
 		LOG_ERR("User interface initialization failed.");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
@@ -295,12 +295,12 @@ CHIP_ERROR AppTask::Init()
 
 #ifdef CONFIG_CHIP_NUS
 	/* Initialize Nordic UART Service for Lock purposes */
-	if (!GetNUSService().Init(kLockNUSPriority, kAdvertisingIntervalMin, kAdvertisingIntervalMax)) {
+	if (!Nrf::GetNUSService().Init(kLockNUSPriority, kAdvertisingIntervalMin, kAdvertisingIntervalMax)) {
 		ChipLogError(Zcl, "Cannot initialize NUS service");
 	}
-	GetNUSService().RegisterCommand("Lock", sizeof("Lock"), NUSLockCallback, nullptr);
-	GetNUSService().RegisterCommand("Unlock", sizeof("Unlock"), NUSUnlockCallback, nullptr);
-	if (!GetNUSService().StartServer()) {
+	Nrf::GetNUSService().RegisterCommand("Lock", sizeof("Lock"), NUSLockCallback, nullptr);
+	Nrf::GetNUSService().RegisterCommand("Unlock", sizeof("Unlock"), NUSUnlockCallback, nullptr);
+	if (!Nrf::GetNUSService().StartServer()) {
 		LOG_ERR("GetNUSService().StartServer() failed");
 	}
 #endif
@@ -308,7 +308,7 @@ CHIP_ERROR AppTask::Init()
 	/* Initialize lock manager */
 	BoltLockMgr().Init(LockStateChanged);
 
-	return Nordic::Matter::StartServer();
+	return Nrf::Matter::StartServer();
 }
 
 CHIP_ERROR AppTask::StartApp()
@@ -316,7 +316,7 @@ CHIP_ERROR AppTask::StartApp()
 	ReturnErrorOnFailure(Init());
 
 	while (true) {
-		TaskExecutor::DispatchNextTask();
+		Nrf::DispatchNextTask();
 	}
 
 	return CHIP_NO_ERROR;

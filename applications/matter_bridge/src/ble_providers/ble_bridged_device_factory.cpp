@@ -12,6 +12,8 @@
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
+using namespace Nrf;
+
 namespace
 {
 /* Maps single Matter device type to corresponding BLE service. */

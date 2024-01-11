@@ -14,6 +14,8 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
 
+namespace Nrf {
+
 struct BLEBridgedDeviceProvider;
 
 struct BLEBridgedDevice {
@@ -77,3 +79,5 @@ public:
 protected:
 	BLEBridgedDevice mDevice = { 0 };
 };
+
+} /* namespace Nrf */

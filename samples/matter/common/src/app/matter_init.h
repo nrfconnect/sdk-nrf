@@ -23,9 +23,7 @@
 #include <platform/nrfconnect/DeviceInstanceInfoProviderImpl.h>
 #endif
 
-namespace Nordic
-{
-namespace Matter
+namespace Nrf::Matter
 {
 	using CustomInit = CHIP_ERROR (*)(void);
 
@@ -105,5 +103,4 @@ namespace Matter
 	chip::DeviceLayer::FactoryDataProviderBase *GetFactoryDataProvider();
 #endif
 
-} // namespace Matter
-} // namespace Nordic
+} /* namespace Nrf::Matter */

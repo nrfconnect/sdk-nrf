@@ -21,6 +21,7 @@ IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs);
 
 using namespace ::chip;
 using namespace ::chip::app;
+using namespace Nrf;
 
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(onOffClientAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::FeatureMap::Id, BITMAP32, 4, 0),

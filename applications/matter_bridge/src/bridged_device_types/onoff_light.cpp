@@ -21,6 +21,7 @@ IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs);
 
 using namespace ::chip;
 using namespace ::chip::app;
+using namespace Nrf;
 
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(onOffAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::OnOff::Id, BOOLEAN, 1, 0), DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();

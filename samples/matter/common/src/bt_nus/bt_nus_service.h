@@ -12,6 +12,8 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 
+namespace Nrf {
+
 class NUSService {
 public:
 	using CommandCallback = void (*)(void *context);
@@ -103,3 +105,5 @@ inline NUSService &GetNUSService()
 {
 	return NUSService::sInstance;
 }
+
+} /* namespace Nrf */

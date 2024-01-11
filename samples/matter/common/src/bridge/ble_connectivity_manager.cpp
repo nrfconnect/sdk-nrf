@@ -18,31 +18,33 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace chip;
 
-BT_SCAN_CB_INIT(scan_cb, BLEConnectivityManager::FilterMatch, NULL, NULL, NULL);
+BT_SCAN_CB_INIT(scan_cb, Nrf::BLEConnectivityManager::FilterMatch, NULL, NULL, NULL);
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
-	.connected = BLEConnectivityManager::ConnectionHandler,
-	.disconnected = BLEConnectivityManager::DisconnectionHandler,
+	.connected = Nrf::BLEConnectivityManager::ConnectionHandler,
+	.disconnected = Nrf::BLEConnectivityManager::DisconnectionHandler,
 #ifdef CONFIG_BT_SMP
-	.security_changed = BLEConnectivityManager::SecurityChangedHandler,
+	.security_changed = Nrf::BLEConnectivityManager::SecurityChangedHandler,
 #endif /* CONFIG_BT_SMP */
 };
 
 #ifdef CONFIG_BT_SMP
 static const bt_conn_auth_cb auth_callbacks = {
-	.passkey_entry = BLEConnectivityManager::PasskeyEntry,
-	.cancel = BLEConnectivityManager::AuthenticationCancel,
+	.passkey_entry = Nrf::BLEConnectivityManager::PasskeyEntry,
+	.cancel = Nrf::BLEConnectivityManager::AuthenticationCancel,
 };
 
-static bt_conn_auth_info_cb conn_auth_info_callbacks = { .pairing_complete = BLEConnectivityManager::PairingComplete,
-							 .pairing_failed = BLEConnectivityManager::PairingFailed };
+static bt_conn_auth_info_cb conn_auth_info_callbacks = { .pairing_complete = Nrf::BLEConnectivityManager::PairingComplete,
+							 .pairing_failed = Nrf::BLEConnectivityManager::PairingFailed };
 #endif /* CONFIG_BT_SMP */
 
-static const struct bt_gatt_dm_cb discovery_cb = { .completed = BLEConnectivityManager::DiscoveryCompletedHandler,
-						   .service_not_found = BLEConnectivityManager::DiscoveryNotFound,
-						   .error_found = BLEConnectivityManager::DiscoveryError };
+static const struct bt_gatt_dm_cb discovery_cb = { .completed = Nrf::BLEConnectivityManager::DiscoveryCompletedHandler,
+						   .service_not_found = Nrf::BLEConnectivityManager::DiscoveryNotFound,
+						   .error_found = Nrf::BLEConnectivityManager::DiscoveryError };
 
 static struct bt_conn_le_create_param *create_param = BT_CONN_LE_CREATE_CONN;
+
+namespace Nrf {
 
 void BLEConnectivityManager::FilterMatch(bt_scan_device_info *device_info, bt_scan_filter_match *filter_match,
 					 bool connectable)
@@ -734,3 +736,5 @@ bt_addr_le_t *BLEConnectivityManager::Recovery::GetCurrentLostDeviceAddress()
 
 	return nullptr;
 }
+
+} /* namespace Nrf */

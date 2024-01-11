@@ -46,11 +46,11 @@ namespace BleBridgedDeviceFactory
 /* The values were assigned based on BT_UUID_16(uuid)->val of a BT services. */
 enum ServiceUuid : uint16_t { LedButtonService = 0xbcd1, EnvironmentalSensorService = 0x181a };
 
-using UpdateAttributeCallback = BridgedDeviceDataProvider::UpdateAttributeCallback;
-using InvokeCommandCallback = BridgedDeviceDataProvider::InvokeCommandCallback;
+using UpdateAttributeCallback = Nrf::BridgedDeviceDataProvider::UpdateAttributeCallback;
+using InvokeCommandCallback = Nrf::BridgedDeviceDataProvider::InvokeCommandCallback;
 using DeviceType = uint16_t;
-using BridgedDeviceFactory = DeviceFactory<MatterBridgedDevice, DeviceType, const char *>;
-using BleDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, ServiceUuid, UpdateAttributeCallback, InvokeCommandCallback>;
+using BridgedDeviceFactory = Nrf::DeviceFactory<Nrf::MatterBridgedDevice, DeviceType, const char *>;
+using BleDataProviderFactory = Nrf::DeviceFactory<Nrf::BridgedDeviceDataProvider, ServiceUuid, UpdateAttributeCallback, InvokeCommandCallback>;
 
 BridgedDeviceFactory &GetBridgedDeviceFactory();
 BleDataProviderFactory &GetDataProviderFactory();
@@ -81,7 +81,7 @@ CHIP_ERROR CreateDevice(int deviceType, bt_addr_le_t btAddress, const char *node
  * @return CHIP_NO_ERROR on success
  * @return other error code on failure
  */
-CHIP_ERROR CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *nodeLabel, BLEConnectivityManager::ConnectionSecurityRequest * request = nullptr);
+CHIP_ERROR CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *nodeLabel, Nrf::BLEConnectivityManager::ConnectionSecurityRequest * request = nullptr);
 
 /**
  * @brief Remove bridged device.

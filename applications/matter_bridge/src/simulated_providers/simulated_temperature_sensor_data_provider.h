@@ -10,9 +10,9 @@
 
 #include <zephyr/kernel.h>
 
-class SimulatedTemperatureSensorDataProvider : public BridgedDeviceDataProvider {
+class SimulatedTemperatureSensorDataProvider : public Nrf::BridgedDeviceDataProvider {
 public:
-	SimulatedTemperatureSensorDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback)
+	SimulatedTemperatureSensorDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : Nrf::BridgedDeviceDataProvider(updateCallback, commandCallback)
 	{
 	}
 	~SimulatedTemperatureSensorDataProvider() { k_timer_stop(&mTimer); }

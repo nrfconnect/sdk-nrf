@@ -11,6 +11,8 @@
 using namespace ::chip;
 using namespace ::chip::app;
 
+namespace Nrf {
+
 CHIP_ERROR MatterBridgedDevice::CopyAttribute(const void *attribute, size_t attributeSize, void *buffer,
 					      uint16_t maxBufferSize)
 {
@@ -103,3 +105,5 @@ CHIP_ERROR MatterBridgedDevice::HandleReadIdentify(chip::AttributeId attributeId
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 }
+
+} /* namespace Nrf */

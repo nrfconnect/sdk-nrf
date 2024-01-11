@@ -13,6 +13,7 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace ::chip;
 using namespace ::chip::app;
+using namespace Nrf;
 
 void SimulatedOnOffLightSwitchDataProvider::Init() {}
 
@@ -25,7 +26,8 @@ void ProcessCommand(CommandId aCommandId, const EmberBindingTableEntry &aBinding
 		    void *aContext)
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;
-	BindingHandler::BindingData *data = reinterpret_cast<BindingHandler::BindingData *>(aContext);
+	Matter::BindingHandler::BindingData *data =
+		reinterpret_cast<Matter::BindingHandler::BindingData *>(aContext);
 
 	auto onSuccess = [dataRef = data](const ConcreteCommandPath &commandPath, const StatusIB &status,
 					  const auto &dataResponse) {
@@ -38,7 +40,7 @@ void ProcessCommand(CommandId aCommandId, const EmberBindingTableEntry &aBinding
 	};
 
 	auto onFailure = [dataRef = *data](CHIP_ERROR aError) mutable {
-		BindingHandler::OnInvokeCommandFailure(dataRef, aError);
+		Matter::BindingHandler::OnInvokeCommandFailure(dataRef, aError);
 	};
 
 	if (aDevice) {

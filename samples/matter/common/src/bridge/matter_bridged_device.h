@@ -11,26 +11,28 @@
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/util/attribute-storage.h>
 
+namespace Nrf {
+
 /* Definitions of  helper macros that are used across all bridged device types to create common mandatory clusters in a
  * consistent way. */
 /* Declare Descriptor cluster attributes */
 #define DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs)                                                                 \
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(descriptorAttrs)                                                          \
 	DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::DeviceTypeList::Id, ARRAY,              \
-				  MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* device list */            \
+				  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* device list */            \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::ServerList::Id, ARRAY,          \
-					  MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* server list */    \
+					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* server list */    \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::ClientList::Id, ARRAY,          \
-					  MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* client list */    \
+					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* client list */    \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::PartsList::Id, ARRAY,           \
-					  MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* parts list */     \
+					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* parts list */     \
 		DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 /* Declare Bridged Device Basic Information cluster attributes */
 #define BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs)                                   \
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(bridgedDeviceBasicAttrs)                                                  \
 	DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id,       \
-				  CHAR_STRING, MatterBridgedDevice::kNodeLabelSize, 0), /* NodeLabel */                \
+				  CHAR_STRING, Nrf::MatterBridgedDevice::kNodeLabelSize, 0), /* NodeLabel */                \
 		DECLARE_DYNAMIC_ATTRIBUTE(                                                                             \
 			chip::app::Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id, BOOLEAN, 1,     \
 			0), /* Reachable */                                                                            \
@@ -144,3 +146,5 @@ private:
 	Identify mIdentifyServer;
 	uint16_t mIdentifyTime{};
 };
+
+} /* namespace Nrf */

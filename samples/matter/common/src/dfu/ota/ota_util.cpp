@@ -31,6 +31,8 @@ chip::BDXDownloader sBDXDownloader;
 chip::DefaultOTARequestor sOTARequestor;
 } /* namespace */
 
+namespace Nrf::Matter {
+
 /* compile-time factory method */
 OTAImageProcessorImpl &GetOTAImageProcessor()
 {
@@ -86,3 +88,5 @@ ExternalFlashManager &GetFlashHandler()
 	static ExternalFlashManager sFlashHandler;
 	return sFlashHandler;
 }
+
+} /* namespace Nrf::Matter */

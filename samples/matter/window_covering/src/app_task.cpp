@@ -8,8 +8,8 @@
 
 #include "window_covering.h"
 
-#include "init/matter_init.h"
-#include "tasks/task_executor.h"
+#include "app/matter_init.h"
+#include "app/task_executor.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
@@ -37,32 +37,32 @@ Identify sIdentify = { WindowCovering::Endpoint(), AppTask::IdentifyStartHandler
 
 void AppTask::IdentifyStartHandler(Identify *)
 {
-	TaskExecutor::PostTask([] {
+	Nrf::PostTask([] {
 		WindowCovering::Instance().GetLiftIndicator().SuppressOutput();
-		GetBoard().GetLED(DeviceLeds::LED2).Blink(LedConsts::kIdentifyBlinkRate_ms);
+		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms);
 	});
 }
 
 void AppTask::IdentifyStopHandler(Identify *)
 {
-	TaskExecutor::PostTask([] {
-		GetBoard().GetLED(DeviceLeds::LED2).Set(false);
+	Nrf::PostTask([] {
+		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
 		WindowCovering::Instance().GetLiftIndicator().ApplyLevel();
 	});
 }
 
-void AppTask::ButtonEventHandler(ButtonState state, ButtonMask hasChanged)
+void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
 	if (OPEN_BUTTON_MASK & hasChanged) {
 		WindowButtonAction action =
 			(OPEN_BUTTON_MASK & state) ? WindowButtonAction::Pressed : WindowButtonAction::Released;
-		TaskExecutor::PostTask([action] { OpenHandler(action); });
+		Nrf::PostTask([action] { OpenHandler(action); });
 	}
 
 	if (CLOSE_BUTTON_MASK & hasChanged) {
 		WindowButtonAction action =
 			(CLOSE_BUTTON_MASK & state) ? WindowButtonAction::Pressed : WindowButtonAction::Released;
-		TaskExecutor::PostTask([action] { CloseHandler(action); });
+		Nrf::PostTask([action] { CloseHandler(action); });
 	}
 }
 
@@ -135,20 +135,20 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 		}
 #endif
 		if (ConnectivityMgr().NumBLEConnections() != 0) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceConnectedBLE);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceConnectedBLE);
 		}
 		break;
 	case DeviceEventType::kThreadStateChange:
 		isNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned() && ConnectivityMgr().IsThreadEnabled();
 		if (isNetworkProvisioned) {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceProvisioned);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceProvisioned);
 		} else {
-			GetBoard().UpdateDeviceState(DeviceState::DeviceDisconnected);
+			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceDisconnected);
 		}
 		break;
 	case DeviceEventType::kDnssdInitialized:
 #if CONFIG_CHIP_OTA_REQUESTOR
-		InitBasicOTARequestor();
+		Nrf::Matter::InitBasicOTARequestor();
 #endif
 		break;
 	default:
@@ -159,19 +159,19 @@ void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg *
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
-	ReturnErrorOnFailure(Nordic::Matter::PrepareServer(
-		MatterEventHandler, Nordic::Matter::InitData{ .mPostServerInitClbk = [] {
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(
+		MatterEventHandler, Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
 			WindowCovering::Instance().PositionLEDUpdate(WindowCovering::MoveType::LIFT);
 			WindowCovering::Instance().PositionLEDUpdate(WindowCovering::MoveType::TILT);
 			return CHIP_NO_ERROR;
 		} }));
 
-	if (!GetBoard().Init(ButtonEventHandler)) {
+	if (!Nrf::GetBoard().Init(ButtonEventHandler)) {
 		LOG_ERR("User interface initialization failed.");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
 
-	return Nordic::Matter::StartServer();
+	return Nrf::Matter::StartServer();
 }
 
 CHIP_ERROR AppTask::StartApp()
@@ -179,7 +179,7 @@ CHIP_ERROR AppTask::StartApp()
 	ReturnErrorOnFailure(Init());
 
 	while (true) {
-		TaskExecutor::DispatchNextTask();
+		Nrf::DispatchNextTask();
 	}
 
 	return CHIP_NO_ERROR;
