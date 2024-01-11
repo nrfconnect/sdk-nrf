@@ -10,7 +10,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <zephyr/settings/settings.h>
-#include <zephyr/drivers/i2c.h>
 #include <zephyr/drivers/sensor.h>
 
 #include "bme68x_iaq.h"
@@ -18,7 +17,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bsec, CONFIG_BME68X_IAQ_LOG_LEVEL);
 
-#define DT_DRV_COMPAT bosch_bme680
 
 #define BSEC_TOTAL_HEAT_DUR		UINT16_C(140)
 #define BSEC_INPUT_PRESENT(x, shift)	(x.process_data & (1 << (shift - 1)))
@@ -61,8 +59,12 @@ static K_THREAD_STACK_DEFINE(thread_stack, CONFIG_BME68X_IAQ_THREAD_STACK_SIZE);
 /* Used for a timeout for when BSEC's state should be saved. */
 static K_TIMER_DEFINE(bsec_save_state_timer, NULL, NULL);
 
-/* I2C spec for BME68x sensor */
+/* Bus spec for BME68x sensor */
+#if BME68x_BUS_SPI
+static struct spi_dt_spec bme68x_spi_spec;
+#elif BME68x_BUS_I2C
 static struct i2c_dt_spec bme68x_i2c_spec;
+#endif
 
 /* Semaphore to make sure output data isn't read while being updated */
 static K_SEM_DEFINE(output_sem, 1, 1);
@@ -111,18 +113,62 @@ static void state_save(const struct device *dev)
 /* I2C bus write forwarder for bme68x driver */
 static int8_t bus_write(uint8_t reg_addr, const uint8_t *reg_data_ptr, uint32_t len, void *intf_ptr)
 {
+#if BME68x_BUS_SPI
+	const struct spi_buf tx_buf[2] = {
+		{
+			.buf = &reg_addr,
+			.len = sizeof(reg_addr),
+		},
+		{
+			.buf = (uint8_t *)reg_data_ptr,
+			.len = len,
+		},
+	};
+
+	const struct spi_buf_set tx = {
+		.buffers = tx_buf,
+		.count = ARRAY_SIZE(tx_buf),
+	};
+
+	return spi_write_dt(&bme68x_spi_spec, &tx);
+
+#elif BME68x_BUS_I2C
 	uint8_t buf[len + 1];
 
 	buf[0] = reg_addr;
 	memcpy(&buf[1], reg_data_ptr, len);
 
 	return i2c_write_dt(&bme68x_i2c_spec, buf, ARRAY_SIZE(buf));
+
+#endif
 }
 
 /* I2C bus read forwarder for bme68x driver */
 static int8_t bus_read(uint8_t reg_addr, uint8_t *reg_data_ptr, uint32_t len, void *intf_ptr)
 {
+#if BME68x_BUS_SPI
+	const struct spi_buf tx_buf = {
+		.buf = &reg_addr,
+		.len = 1,
+	};
+	const struct spi_buf rx_buf[2] = {
+		{.buf = NULL, .len = 1},
+		{.buf = reg_data_ptr, .len = len},
+	};
+	const struct spi_buf_set tx = {
+		.buffers = &tx_buf,
+		.count = 1,
+	};
+	const struct spi_buf_set rx = {
+		.buffers = rx_buf,
+		.count = ARRAY_SIZE(rx_buf),
+	};
+
+	return spi_transceive_dt(&bme68x_spi_spec, &tx, &rx);
+
+#elif BME68x_BUS_I2C
 	return i2c_write_read_dt(&bme68x_i2c_spec, &reg_addr, 1, reg_data_ptr, len);
+#endif
 }
 
 /* delay function for bme68x driver */
@@ -387,8 +433,11 @@ static int bme68x_bsec_init(const struct device *dev)
 	struct bme68x_iaq_data *data = dev->data;
 	const struct bme68x_iaq_config *config = dev->config;
 
+#if BME68x_BUS_SPI
+	bme68x_spi_spec = config->spi;
+#elif BME68x_BUS_I2C
 	bme68x_i2c_spec = config->i2c;
-
+#endif
 	err = settings_subsys_init();
 	if (err) {
 		LOG_ERR("settings_subsys_init, error: %d", err);
@@ -401,12 +450,20 @@ static int bme68x_bsec_init(const struct device *dev)
 		return err;
 	}
 
+#if BME68x_BUS_SPI
+	if (!spi_is_ready_dt(&bme68x_spi_spec)) {
+		LOG_ERR("SPI device not ready");
+		return -ENODEV;
+	}
+	data->dev.intf = BME68X_SPI_INTF;
+#elif BME68x_BUS_I2C
 	if (!device_is_ready(bme68x_i2c_spec.bus)) {
 		LOG_ERR("I2C device not ready");
 		return -ENODEV;
 	}
-
 	data->dev.intf = BME68X_I2C_INTF;
+#endif
+
 	data->dev.intf_ptr = NULL;
 	data->dev.read = bus_read;
 	data->dev.write = bus_write;
@@ -512,8 +569,12 @@ static const struct sensor_driver_api bme68x_driver_api = {
 };
 
 /* there can be only one device supported here because of BSECs internal state */
-static struct bme68x_iaq_config config_0 =  {
+static struct bme68x_iaq_config config_0 = {
+#if BME68x_BUS_SPI
+	.spi = SPI_DT_SPEC_INST_GET(0, BME68x_SPI_OPERATION, 0),
+#elif BME68x_BUS_I2C
 	.i2c = I2C_DT_SPEC_INST_GET(0),
+#endif
 };
 static struct bme68x_iaq_data data_0;
 

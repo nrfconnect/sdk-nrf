@@ -7,12 +7,33 @@
 /* NCS Integration for BME68X + BSEC */
 
 #include <zephyr/kernel.h>
+#include <zephyr/devicetree.h>
+
 #include "bsec_interface.h"
 #include "bme68x.h"
 #include <drivers/bme68x_iaq.h>
 
 #ifndef ZEPHYR_DRIVERS_SENSOR_BME68X_NCS
 #define ZEPHYR_DRIVERS_SENSOR_BME68X_NCS
+
+#define DT_DRV_COMPAT bosch_bme680
+
+#define BME68x_BUS_SPI DT_ANY_INST_ON_BUS_STATUS_OKAY(spi)
+#define BME68x_BUS_I2C DT_ANY_INST_ON_BUS_STATUS_OKAY(i2c)
+
+
+#if BME68x_BUS_SPI
+	#include <zephyr/drivers/spi.h>
+#elif BME68x_BUS_I2C
+	#include <zephyr/drivers/i2c.h>
+#else
+	#error "Unsupported bus for Bsec BME68x"
+#endif
+
+#if BME68x_BUS_SPI
+#define BME68x_SPI_OPERATION \
+	(SPI_WORD_SET(8) | SPI_TRANSFER_MSB | SPI_MODE_CPOL | SPI_MODE_CPHA | SPI_OP_MODE_MASTER)
+#endif
 
 struct bme_sample_result {
 	double temperature;
@@ -22,7 +43,11 @@ struct bme_sample_result {
 };
 
 struct bme68x_iaq_config {
+#if BME68x_BUS_SPI
+	const struct spi_dt_spec spi;
+#elif BME68x_BUS_I2C
 	const struct i2c_dt_spec i2c;
+#endif
 };
 
 struct bme68x_iaq_data {
