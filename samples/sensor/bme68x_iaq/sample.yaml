@@ -1,7 +1,7 @@
 sample:
   name: BME68X Sensor Sample
 tests:
-  sample.sensor.bme68x:
+  sample.sensor.bme68x.i2c:
     depends_on: i2c
     harness: sensor
     integration_platforms:
@@ -35,3 +35,9 @@ tests:
       ordered: true
       regex:
         - "(\\d+\\.\\d+); press: (\\d+\\.\\d+); humidity: (\\d+\\.\\d+); iaq: (\\d+)"
+  sample.sensor.bme68x.spi:
+    depends_on: spi
+    harness: sensor
+    platform_allow: >-
+      nrf9160dk_nrf9160_ns
+    tags: sensors

@@ -8,7 +8,8 @@ config BME68X_IAQ
 	bool "Use Bosch BSEC library"
 	depends on !BME680
 	depends on SETTINGS && !SETTINGS_NONE
-	depends on I2C
+	select I2C if $(dt_compat_on_bus,$(DT_COMPAT_BOSCH_BME680),i2c)
+	select SPI if $(dt_compat_on_bus,$(DT_COMPAT_BOSCH_BME680),spi)
 	help
 	  Enable the use of Bosch BSEC library.
 	  This configuration depends on the BME680 Zephyr driver being disabled.
