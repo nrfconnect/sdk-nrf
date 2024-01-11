@@ -48,13 +48,15 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define MAX_FIFO_SIZE	    (FIFO_NUM_BLKS * BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ) * 2)
 
 /* Number of audio blocks given a duration */
-#define NUM_BLKS(d)	    ((d) / BLK_PERIOD_US)
+#define NUM_BLKS(d) ((d) / BLK_PERIOD_US)
 /* Single audio block size in number of samples (stereo) */
+/* clang-format off */
 #define BLK_SIZE_SAMPLES(r) (((r)*BLK_PERIOD_US) / 1000000)
+/* clang-format on */
 /* Increment sample FIFO index by one block */
-#define NEXT_IDX(i)	    (((i) < (FIFO_NUM_BLKS - 1)) ? ((i) + 1) : 0)
+#define NEXT_IDX(i) (((i) < (FIFO_NUM_BLKS - 1)) ? ((i) + 1) : 0)
 /* Decrement sample FIFO index by one block */
-#define PREV_IDX(i)	    (((i) > 0) ? ((i)-1) : (FIFO_NUM_BLKS - 1))
+#define PREV_IDX(i) (((i) > 0) ? ((i)-1) : (FIFO_NUM_BLKS - 1))
 
 #define NUM_BLKS_IN_FRAME      NUM_BLKS(CONFIG_AUDIO_FRAME_DURATION_US)
 #define BLK_MONO_NUM_SAMPS     BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ)
@@ -72,7 +74,9 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define APLL_FREQ_MIN	 36834
 #define APLL_FREQ_MAX	 42874
 /* Use nanoseconds to reduce rounding errors */
+/* clang-format off */
 #define APLL_FREQ_ADJ(t) (-((t)*1000) / 331)
+/* clang-format on */
 
 #define DRIFT_MEAS_PERIOD_US	   100000
 #define DRIFT_ERR_THRESH_LOCK	   16
@@ -80,9 +84,9 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* To get smaller corrections */
 #define DRIFT_REGULATOR_DIV_FACTOR 2
 
-/* 4000 us to allow BLE transmission and (host -> HCI -> controller) */
-#define JUST_IN_TIME_US		  (CONFIG_AUDIO_FRAME_DURATION_US - 4000)
-#define JUST_IN_TIME_THRESHOLD_US 2000
+/* To allow BLE transmission and (host -> HCI -> controller) */
+#define JUST_IN_TIME_US		  (CONFIG_AUDIO_FRAME_DURATION_US - 2500)
+#define JUST_IN_TIME_THRESHOLD_US 1500
 
 /* How often to print underrun warning */
 #define UNDERRUN_LOG_INTERVAL_BLKS 5000
@@ -785,14 +789,15 @@ static void audio_datapath_i2s_stop(void)
  */
 static void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 {
-	static int32_t count;
 	int ret;
+	static int32_t count;
 
 	uint32_t curr_frame_ts = audio_sync_timer_capture();
 	int diff = curr_frame_ts - sdu_ref_us;
 
 	if (count++ % 100 == 0) {
-		LOG_DBG("Time from last anchor: %d", diff);
+		LOG_DBG("Time from last anchor: %d us, time to next: %d us", diff,
+			CONFIG_AUDIO_FRAME_DURATION_US - diff);
 	}
 
 	if ((diff < (JUST_IN_TIME_US - JUST_IN_TIME_THRESHOLD_US)) ||
@@ -802,7 +807,7 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 			LOG_WRN("Not able to drop FIFO RX block");
 			return;
 		}
-
+		LOG_DBG("Dropped block to align with connection interval");
 		count = 0;
 	}
 }
@@ -831,9 +836,7 @@ static void audio_datapath_sdu_ref_update(const struct zbus_channel *chan)
 			ctrl_blk.previous_sdu_ref_us = sdu_ref_us;
 
 			if (adjust && sdu_ref_us != 0) {
-				if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
-					audio_datapath_just_in_time_check_and_adjust(sdu_ref_us);
-				}
+				audio_datapath_just_in_time_check_and_adjust(sdu_ref_us);
 			}
 		} else {
 			LOG_WRN("Stream not startet - Can not update sdu_ref_us");
