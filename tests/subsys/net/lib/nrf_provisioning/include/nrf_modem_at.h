@@ -39,47 +39,6 @@ extern "C" {
 typedef void (*nrf_modem_at_notif_handler_t)(const char *notif);
 
 /**
- * @brief AT response handler prototype.
- *
- * @note This handler is executed in an interrupt service routine.
- * Offload any intensive operations as necessary.
- *
- * @param resp The AT command response.
- */
-typedef void (*nrf_modem_at_resp_handler_t)(const char *resp);
-
-/** @brief AT filter callback function format
- *
- * @note This declaration is used for the callback functions
- * of AT commands in the nRF SDK.
- *
- * @param buf Buffer to receive the response into.
- * @param len Buffer length.
- * @param at_cmd AT command.
- *
- * @retval  0 On "OK" responses.
- * @returns A positive value On "ERROR", "+CME ERROR", and "+CMS ERROR" responses.
- *	    The type of error can be distinguished using @c nrf_modem_at_err_type.
- *	    The error value can be retrieved using @c nrf_modem_at_err.
- * @retval -NRF_EPERM The Modem library is not initialized.
- * @retval -NRF_EFAULT @c buf or @c fmt are @c NULL.
- * @retval -NRF_ENOMEM Not enough shared memory for this request.
- * @retval -NRF_E2BIG The response is larger than the supplied buffer @c buf.
- */
-typedef int (*nrf_modem_at_cmd_handler_t)(char *buf, size_t len, char *at_cmd);
-
-/* Struct for AT filter
- * Contains string for which the AT commands are compared
- * and a function pointer for the function to call on detection.
- */
-struct nrf_modem_at_cmd_filter {
-	const char * const cmd;
-	const nrf_modem_at_cmd_handler_t callback;
-	/** Whether filter is paused. */
-	bool paused;
-};
-
-/**
  * @brief Set a handler function for AT notifications.
  *
  * @note The callback is executed in an interrupt service routine.
@@ -107,6 +66,7 @@ int nrf_modem_at_notif_handler_set(nrf_modem_at_notif_handler_t callback);
  * @retval -NRF_EPERM The Modem library is not initialized.
  * @retval -NRF_EFAULT @c fmt is @c NULL.
  * @retval -NRF_EINVAL Bad format @c fmt.
+ * @retval -NRF_EAGAIN Timed out while waiting for another AT command to complete.
  * @retval -NRF_ENOMEM Not enough shared memory for this request.
  * @retval -NRF_ESHUTDOWN If modem was shut down.
  */
@@ -128,6 +88,7 @@ int nrf_modem_at_printf(const char *fmt, ...);
  * @retval -NRF_EPERM The Modem library is not initialized.
  * @retval -NRF_EFAULT @c cmd or @c fmt are @c NULL.
  * @retval -NRF_EBADMSG No arguments were matched.
+ * @retval -NRF_EAGAIN Timed out while waiting for another AT command to complete.
  * @retval -NRF_ENOMEM Not enough shared memory for this request.
  * @retval -NRF_ESHUTDOWN If the modem was shut down.
  */
@@ -149,11 +110,22 @@ int nrf_modem_at_scanf(const char *cmd, const char *fmt, ...);
  * @retval -NRF_EPERM The Modem library is not initialized.
  * @retval -NRF_EFAULT @c buf or @c fmt are @c NULL.
  * @retval -NRF_EINVAL Bad format @c fmt, or @c len is zero.
+ * @retval -NRF_EAGAIN Timed out while waiting for another AT command to complete.
  * @retval -NRF_ENOMEM Not enough shared memory for this request.
  * @retval -NRF_E2BIG The response is larger than the supplied buffer @c buf.
  * @retval -NRF_ESHUTDOWN If the modem was shut down.
  */
 int nrf_modem_at_cmd(void *buf, size_t len, const char *fmt, ...);
+
+/**
+ * @brief AT response handler prototype.
+ *
+ * @note This handler is executed in an interrupt service routine.
+ * Offload any intensive operations as necessary.
+ *
+ * @param resp The AT command response.
+ */
+typedef void (*nrf_modem_at_resp_handler_t)(const char *resp);
 
 /**
  * @brief Send a formatted AT command to the modem
@@ -173,11 +145,78 @@ int nrf_modem_at_cmd(void *buf, size_t len, const char *fmt, ...);
  * @retval -NRF_EPERM The Modem library is not initialized.
  * @retval -NRF_EFAULT @c callback or @c fmt are @c NULL.
  * @retval -NRF_EINVAL Bad format @c fmt.
- * @retval -NRF_EINPROGRESS An asynchrounous request is already in progress.
+ * @retval -NRF_EINPROGRESS Another AT command is executing.
  * @retval -NRF_ENOMEM Not enough shared memory for this request.
  * @retval -NRF_ESHUTDOWN If the modem was shut down.
  */
 int nrf_modem_at_cmd_async(nrf_modem_at_resp_handler_t callback, const char *fmt, ...);
+
+/** @brief AT command handler prototype.
+ *
+ * Implements a custom AT command in the application.
+ *
+ * @param buf Buffer to receive the response into.
+ * @param len Buffer length.
+ * @param at_cmd AT command.
+ *
+ * @retval  0 On "OK" responses.
+ * @returns A positive value On "ERROR", "+CME ERROR", and "+CMS ERROR" responses.
+ *	    The type of error can be distinguished using @c nrf_modem_at_err_type.
+ *	    The error value can be retrieved using @c nrf_modem_at_err.
+ * @retval -NRF_EPERM The Modem library is not initialized.
+ * @retval -NRF_EFAULT @c buf or @c fmt are @c NULL.
+ * @retval -NRF_ENOMEM Not enough shared memory for this request.
+ * @retval -NRF_E2BIG The response is larger than the supplied buffer @c buf.
+ */
+typedef int (*nrf_modem_at_cmd_custom_handler_t)(char *buf, size_t len, char *at_cmd);
+
+/**
+ * @brief Custom AT command.
+ *
+ * Application-defined AT command implementation.
+ */
+struct nrf_modem_at_cmd_custom {
+	/** The AT command to implement. */
+	const char * const cmd;
+	/** The function implementing the AT command. */
+	const nrf_modem_at_cmd_custom_handler_t callback;
+};
+
+/**
+ * @brief Set a list of custom AT commands that are implemented in the application.
+ *
+ * When a custom AT command list is set, AT commands sent via @c nrf_modem_at_cmd that match any
+ * AT command in the list, will be redirected to the custom callback function instead
+ * of being sent to the modem.
+ *
+ * @note The custom commands are disabled by passing NULL to the @c custom_commands and
+ * 0 to the @c len.
+ *
+ * @param custom_commands List of custom AT commands.
+ * @param len Custom AT command list size.
+ *
+ * @retval  0 On success.
+ * @retval -NRF_EINVAL On invalid parameters.
+ */
+int nrf_modem_at_cmd_custom_set(struct nrf_modem_at_cmd_custom *custom_commands, size_t len);
+
+/**
+ * @brief Configure how long to wait for ongoing AT commands to complete when sending AT commands.
+ *
+ * AT commands are executed one at a time. While one AT command is being executed, the other
+ * AT commands wait on a semaphore for the ongoing AT command to complete.
+ *
+ * This function configures how long @c nrf_modem_at_printf, @c nrf_modem_at_scanf and
+ * @c nrf_modem_at_cmd shall wait for ongoing AT commands to complete.
+ *
+ * By default, the timeout is infinite.
+ *
+ * @param timeout_ms Timeout in milliseconds. Use NRF_MODEM_OS_FOREVER for infinite timeout
+ *		     or NRF_MODEM_OS_NO_WAIT for no timeout.
+ *
+ * @return int Zero on success, a negative errno otherwise.
+ */
+int nrf_modem_at_sem_timeout_set(int timeout_ms);
 
 /**
  * @brief Return the error type represented by the return value of
@@ -201,29 +240,9 @@ int nrf_modem_at_err_type(int error);
  */
 int nrf_modem_at_err(int error);
 
-/**
- * @brief Set a list of AT commands to be filtered by @c nrf_modem_at_cmd.
- *
- * When a filter list is set, AT commands sent via @c nrf_modem_at_cmd that match any
- * AT command in the filter will be redirected to the filter callback function instead
- * of being sent to the modem.
- *
- * @note The filter is disabled by passing NULL to the @c filters and
- * 0 to the @c len.
- *
- * @param filters AT filter list.
- * @param len AT filter list size.
- *
- * @retval  0 On a success.
- * @retval -NRF_EINVAL On invalid parameters.
- */
-int nrf_modem_at_cmd_filter_set(struct nrf_modem_at_cmd_filter *filters,
-		size_t len);
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* NRF_MODEM_AT_H__ */
-
 /** @} */
