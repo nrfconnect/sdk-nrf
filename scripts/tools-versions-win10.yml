@@ -1,5 +1,5 @@
 python:
-  version: 3.8.10
+  version: 3.9.13
 git:
   version: 2.37.3.windows.1
 cmake:
