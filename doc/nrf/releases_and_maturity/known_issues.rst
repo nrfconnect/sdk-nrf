@@ -323,6 +323,13 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-5-1 v2-5-0
+
+KRKNWK-18315: SPAKE2+ Verifier is not regenerated when using non-default passcode
+  When building factory data with a non-default passcode, the SPAKE2+ Verifier is not generated based on the selected passcode value, but uses the default passcode value (``20202021``).
+
+  **Workaround:** Enable the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_GENERATE_SPAKE2_VERIFIER` Kconfig option to generate the SPAKE2+ Verfier based on the provided passcode.
+
 .. rst-class:: v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0
 
 KRKNWK-18256: The Matter over Thread device may crash during the processing of the DNS resolve response
