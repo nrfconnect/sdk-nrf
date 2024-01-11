@@ -153,6 +153,7 @@ config WPA_SUPP_WPA3
 	default y
 
 config WPA_SUPP_AP
+	select EXPERIMENTAL
 	bool "AP mode support"
 
 config WPA_SUPP_WPS
