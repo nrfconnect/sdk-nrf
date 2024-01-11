@@ -234,6 +234,7 @@
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 
 .. _`PSA Cryptography API 1.0.1`: https://armmbed.github.io/mbed-crypto/1.0.1/html/index.html
+.. _`PSA functions for key management`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/management.html
 
 .. ### Source: developer.nordicsemi.com
 

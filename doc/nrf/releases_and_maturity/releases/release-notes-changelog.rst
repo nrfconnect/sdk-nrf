@@ -1206,20 +1206,21 @@ Libraries for NFC
 
 * Fixed an issue with handling zero size data (when receiving empty I-blocks from poller) in the :file:`platform_internal_thread` file.
 
-nRF Security
-------------
+Security libraries
+------------------
 
-* PSA crypto is now supported on nRF54L Series devices.
-  Enable PSA crypto support with a CRACEN driver as the backend by setting the Kconfig option :kconfig:option:`CONFIG_NRF_SECURITY`.
+* Added the :ref:`trusted_storage_readme` library.
 
-* Updated the library to no longer enable RSA keys by default.
-  This reduces the code size by 30 kB for those that are not using RSA keys.
-  This will also break the configuration for those using the RSA keys without explicitly enabling an RSA key size.
-  Enable the required key size to fix the configuration, for example by setting the Kconfig option :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` if 2048-bit RSA keys are required.
+* :ref:`nrf_security` library:
 
-* The PSA config is now validated by the :file:`ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h` file.
-  Users with invalid configurations must update their PSA configuration according to the error messages that the :file:`check_crypto_config.h` file provides.
+  * Updated:
 
+    * The library no longer enables RSA keys by default, which reduces the code size by 30 kB for those that are not using RSA keys.
+      The RSA key size must be explicitly enabled to avoid breaking the configuration when using the RSA keys, for example by setting the Kconfig option :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` if 2048-bit RSA keys are required.
+    * The PSA config is now validated by the file :file:`ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h`.
+      Users with invalid configurations must update their PSA configuration according to the error messages that the file :file:`check_crypto_config.h` provides.
+    * PSA crypto is now supported on nRF54L Series devices.
+      Enable PSA crypto support with a CRACEN driver as the backend by setting the Kconfig option :kconfig:option:`CONFIG_NRF_SECURITY`.
 
 Other libraries
 ---------------
@@ -1368,6 +1369,7 @@ Documentation
 
   * :ref:`qspi_xip` user guide under :ref:`ug_nrf53`.
   * A section on :ref:`tfm_enable_share_uart` in :ref:`ug_nrf9160`.
+  * :ref:`lib_security` where libraries :ref:`trusted_storage_readme` and :ref:`nrf_security` are added.
 
 * Updated:
 
@@ -1404,6 +1406,7 @@ Documentation
     * The Getting started with nRF70 Series user guide is split into three user guides, :ref:`ug_nrf7002_gs`, :ref:`ug_nrf7002ek_gs` and :ref:`ug_nrf7002eb_gs`.
     * The Operating with a resource constrained host user guide by renaming it to :ref:`nRF70_nRF5340_constrained_host`.
       Additionally, the information about stack configuration and performance is placed into its own separate page, :ref:`ug_wifi_stack_configuration`, under :ref:`ug_wifi`.
+  * The :ref:`security` page with information about the trusted storage.
 
 * Removed the Welcome to the |NCS| page.
   This page is replaced with existing :ref:`ncs_introduction` page.

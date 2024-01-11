@@ -45,6 +45,75 @@ To enable the HUK in an application, enable the :kconfig:option:`CONFIG_HW_UNIQU
 
 For more information, see the hardware unique key :ref:`library <lib_hw_unique_key>` and :ref:`sample <hw_unique_key_usage>`.
 
+Trusted storage in the |NCS|
+****************************
+
+There are several options for storing keys and other important data persistently when developing applications with the |NCS|.
+Different storage options have different features.
+One of the options is to use the :ref:`trusted_storage_readme` library.
+
+The trusted storage library enables the users to provide features like integrity, confidentiality and authenticity of the stored data, without using the TF-M Platform Root of Trust (PRoT).
+The library implements the PSA Cerified Secure Storage API.
+It consists of PSA Internal Trusted Storage API and PSA Protected Storage API.
+
+The Internal Trusted Storage and the Protected Storage are designed to work in :ref:`environments both with and without security by separation <app_boards_spe_nspe>`.
+The two APIs used in the trusted storage library are also offered as secure services by TF-M.
+While TF-M enables security by separation, building and isolating security-critical functions in SPE and applications in NSPE, the trusted storage can be used in environments with no TF-M and separation of firmware.
+
+The table below gives an overview of the trusted storage support for the products and their features.
+
+.. list-table:: Trusted storage product support
+   :widths: auto
+   :header-rows: 1
+
+   * - Product
+     - Backend
+     - Confidentiality
+     - Integrity
+     - Authenticity
+     - Isolation
+   * - nRF52840
+     - Library
+     - ?
+     - Yes
+     - Yes
+     - No
+   * - | nRF5340 ``cpuapp`` builds
+       | (no TF-M)
+     - Library
+     - ?
+     - Yes
+     - Yes
+     - No
+   * - | nRF5340 ``ns`` builds
+       | (with TF-M)
+     - TF-M service
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+   * - | nRF9160 ``cpuapp`` builds
+       | (no TF-M)
+     - Library
+     - ?
+     - Yes
+     - Yes
+     - No
+   * - | nRF9160 ``ns`` builds
+       | (with TF-M)
+     - TF-M service
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+
+The trusted storage library addresses two of the PSA Certified Level 2 and Level 3 optional security functional requirements (SFRs):
+
+* Secure Encrypted Storage (internal storage)
+* Secure Storage (internal storage)
+
+The Secure External Storage SFR is not covered by the trusted storage library by default, but this can be realized by implementing a custom storage backend.
+
 Device firmware upgrade (DFU)
 *****************************
 
