@@ -116,60 +116,23 @@ void AppTask::ToggleMoveType()
 	mMoveTypeRecentlyChanged = true;
 }
 
-void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
-{
-	bool isNetworkProvisioned = false;
-
-	switch (event->Type) {
-	case DeviceEventType::kCHIPoBLEAdvertisingChange:
-#ifdef CONFIG_CHIP_NFC_COMMISSIONING
-		if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
-			if (NFCMgr().IsTagEmulationStarted()) {
-				LOG_INF("NFC Tag emulation is already started");
-			} else {
-				ShareQRCodeOverNFC(
-					chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
-			}
-		} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
-			NFCMgr().StopTagEmulation();
-		}
-#endif
-		if (ConnectivityMgr().NumBLEConnections() != 0) {
-			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceConnectedBLE);
-		}
-		break;
-	case DeviceEventType::kThreadStateChange:
-		isNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned() && ConnectivityMgr().IsThreadEnabled();
-		if (isNetworkProvisioned) {
-			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceProvisioned);
-		} else {
-			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceDisconnected);
-		}
-		break;
-	case DeviceEventType::kDnssdInitialized:
-#if CONFIG_CHIP_OTA_REQUESTOR
-		Nrf::Matter::InitBasicOTARequestor();
-#endif
-		break;
-	default:
-		break;
-	}
-}
-
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
-	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(
-		MatterEventHandler, Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
-			WindowCovering::Instance().PositionLEDUpdate(WindowCovering::MoveType::LIFT);
-			WindowCovering::Instance().PositionLEDUpdate(WindowCovering::MoveType::TILT);
-			return CHIP_NO_ERROR;
-		} }));
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
+		WindowCovering::Instance().PositionLEDUpdate(WindowCovering::MoveType::LIFT);
+		WindowCovering::Instance().PositionLEDUpdate(WindowCovering::MoveType::TILT);
+		return CHIP_NO_ERROR;
+	} }));
 
 	if (!Nrf::GetBoard().Init(ButtonEventHandler)) {
 		LOG_ERR("User interface initialization failed.");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
+
+	/* Register Matter event handler that controls the connectivity status LED based on the captured Matter network
+	 * state. */
+	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(Nrf::Board::DefaultMatterEventHandler, 0));
 
 	return Nrf::Matter::StartServer();
 }

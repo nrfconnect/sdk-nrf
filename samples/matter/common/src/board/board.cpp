@@ -18,7 +18,10 @@
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
-namespace Nrf {
+using namespace ::chip::DeviceLayer;
+
+namespace Nrf
+{
 
 Board Board::sInstance;
 
@@ -207,7 +210,6 @@ void Board::FunctionTimerEventHandler()
 		/* Actually trigger Factory Reset */
 		sInstance.mFunction = BoardFunctions::None;
 		chip::Server::GetInstance().ScheduleFactoryReset();
-
 	}
 }
 
@@ -282,6 +284,35 @@ void Board::StartBLEAdvertisement()
 	if (chip::Server::GetInstance().GetCommissioningWindowManager().OpenBasicCommissioningWindow() !=
 	    CHIP_NO_ERROR) {
 		LOG_ERR("OpenBasicCommissioningWindow() failed");
+	}
+}
+
+void Board::DefaultMatterEventHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
+{
+	bool isNetworkProvisioned = false;
+
+	switch (event->Type) {
+	case DeviceEventType::kCHIPoBLEAdvertisingChange:
+		if (ConnectivityMgr().NumBLEConnections() != 0) {
+			sInstance.UpdateDeviceState(DeviceState::DeviceConnectedBLE);
+		}
+		break;
+#if defined(CONFIG_NET_L2_OPENTHREAD)
+	case DeviceEventType::kThreadStateChange:
+		isNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned() && ConnectivityMgr().IsThreadEnabled();
+#elif defined(CONFIG_CHIP_WIFI)
+	case DeviceEventType::kWiFiConnectivityChange:
+		isNetworkProvisioned =
+			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
+#endif /* CONFIG_NET_L2_OPENTHREAD */
+		if (isNetworkProvisioned) {
+			sInstance.UpdateDeviceState(DeviceState::DeviceProvisioned);
+		} else {
+			sInstance.UpdateDeviceState(DeviceState::DeviceDisconnected);
+		}
+		break;
+	default:
+		break;
 	}
 }
 

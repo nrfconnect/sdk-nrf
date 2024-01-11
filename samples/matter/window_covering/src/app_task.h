@@ -36,7 +36,6 @@ private:
 	static void OpenHandler(const WindowButtonAction &action);
 	static void CloseHandler(const WindowButtonAction &action);
 
-	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
 
 	OperationalState mMoveType{ OperationalState::MovingUpOrOpen };

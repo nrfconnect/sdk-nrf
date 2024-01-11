@@ -36,7 +36,6 @@ private:
 
 	static void MeasurementsTimerHandler();
 	static void IdentifyTimerHandler();
-	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 
 	Nrf::LEDWidget *mRedLED;
 	Nrf::LEDWidget *mGreenLED;

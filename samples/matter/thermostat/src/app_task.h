@@ -30,7 +30,6 @@ public:
 private:
 	CHIP_ERROR Init();
 
-	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
 	static void ThermostatHandler(const TemperatureButtonAction &action);
 };

@@ -12,11 +12,11 @@
 #include "simulated_bridged_device_factory.h"
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
 
+#include "app/matter_init.h"
+#include "app/task_executor.h"
 #include "board/board.h"
 #include "bridge/bridge_manager.h"
 #include "bridge/bridge_storage_manager.h"
-#include "app/matter_init.h"
-#include "app/task_executor.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 #include "bridge/ble_connectivity_manager.h"
@@ -52,37 +52,6 @@ static constexpr uint8_t kUuidServicesNumber = ARRAY_SIZE(sUuidServices);
 
 } /* namespace */
 
-void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
-{
-	bool isNetworkProvisioned = false;
-
-	switch (event->Type) {
-	case DeviceEventType::kCHIPoBLEAdvertisingChange:
-		if (ConnectivityMgr().NumBLEConnections() != 0) {
-			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceConnectedBLE);
-		}
-		break;
-#if defined(CONFIG_CHIP_WIFI)
-	case DeviceEventType::kWiFiConnectivityChange:
-		isNetworkProvisioned =
-			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
-#if CONFIG_CHIP_OTA_REQUESTOR
-		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
-			Nrf::Matter::InitBasicOTARequestor();
-		}
-#endif /* CONFIG_CHIP_OTA_REQUESTOR */
-#endif
-		if (isNetworkProvisioned) {
-			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceProvisioned);
-		} else {
-			Nrf::GetBoard().UpdateDeviceState(Nrf::DeviceState::DeviceDisconnected);
-		}
-		break;
-	default:
-		break;
-	}
-}
-
 CHIP_ERROR AppTask::RestoreBridgedDevices()
 {
 	uint8_t count;
@@ -94,8 +63,8 @@ CHIP_ERROR AppTask::RestoreBridgedDevices()
 		return CHIP_NO_ERROR;
 	}
 
-	if (!Nrf::BridgeStorageManager::Instance().LoadBridgedDevicesIndexes(indexes, Nrf::BridgeManager::kMaxBridgedDevices,
-									indexesCount)) {
+	if (!Nrf::BridgeStorageManager::Instance().LoadBridgedDevicesIndexes(
+		    indexes, Nrf::BridgeManager::kMaxBridgedDevices, indexesCount)) {
 		return CHIP_NO_ERROR;
 	}
 
@@ -112,7 +81,7 @@ CHIP_ERROR AppTask::RestoreBridgedDevices()
 
 		/* Ignore an error, as node label is optional, so it may not be found. */
 		Nrf::BridgeStorageManager::Instance().LoadBridgedDeviceNodeLabel(label, sizeof(label), labelSize,
-									    indexes[i]);
+										 indexes[i]);
 
 		if (!Nrf::BridgeStorageManager::Instance().LoadBridgedDeviceType(deviceType, indexes[i])) {
 			return CHIP_ERROR_NOT_FOUND;
@@ -139,32 +108,35 @@ CHIP_ERROR AppTask::RestoreBridgedDevices()
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
-	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(
-		MatterEventHandler, Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-			/* Initialize BLE Connectivity Manager before the Bridge Manager, as it must be ready to recover
-			 * devices loaded from persistent storage during the bridge init. */
-			CHIP_ERROR bleInitError =
-				Nrf::BLEConnectivityManager::Instance().Init(sUuidServices, kUuidServicesNumber);
-			if (bleInitError != CHIP_NO_ERROR) {
-				LOG_ERR("BLEConnectivityManager initialization failed");
-				return bleInitError;
-			}
+		/* Initialize BLE Connectivity Manager before the Bridge Manager, as it must be ready to recover
+		 * devices loaded from persistent storage during the bridge init. */
+		CHIP_ERROR bleInitError =
+			Nrf::BLEConnectivityManager::Instance().Init(sUuidServices, kUuidServicesNumber);
+		if (bleInitError != CHIP_NO_ERROR) {
+			LOG_ERR("BLEConnectivityManager initialization failed");
+			return bleInitError;
+		}
 #endif
 
-			/* Initialize bridge manager */
-			CHIP_ERROR bridgeMgrInitError = Nrf::BridgeManager::Instance().Init(RestoreBridgedDevices);
-			if (bridgeMgrInitError != CHIP_NO_ERROR) {
-				LOG_ERR("BridgeManager initialization failed");
-				return bridgeMgrInitError;
-			}
-			return CHIP_NO_ERROR;
-		} }));
+		/* Initialize bridge manager */
+		CHIP_ERROR bridgeMgrInitError = Nrf::BridgeManager::Instance().Init(RestoreBridgedDevices);
+		if (bridgeMgrInitError != CHIP_NO_ERROR) {
+			LOG_ERR("BridgeManager initialization failed");
+			return bridgeMgrInitError;
+		}
+		return CHIP_NO_ERROR;
+	} }));
 
 	if (!Nrf::GetBoard().Init()) {
 		LOG_ERR("User interface initialization failed.");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
+
+	/* Register Matter event handler that controls the connectivity status LED based on the captured Matter network
+	 * state. */
+	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(Nrf::Board::DefaultMatterEventHandler, 0));
 
 	return Nrf::Matter::StartServer();
 }

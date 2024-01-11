@@ -45,8 +45,6 @@ private:
 	static void LightingActionEventHandler(const LightingEvent &event);
 	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
 
-	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
-
 	static void ActionInitiated(Nrf::PWMDevice::Action_t action, int32_t actor);
 	static void ActionCompleted(Nrf::PWMDevice::Action_t action, int32_t actor);
 
