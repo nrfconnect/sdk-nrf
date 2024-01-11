@@ -23,7 +23,6 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define AT_CONEVAL_RESULT_INDEX 1
 #define AT_CONEVAL_ENERGY_ESTIMATE_INDEX 3
 
-static struct k_work conneval_work;
 static struct k_work conneval_estimate_work;
 static struct k_work_delayable conneval_work_delayable;
 
@@ -37,7 +36,7 @@ static bool engine_paused;
 static bool resumed;
 static struct at_param_list at_list;
 
-static void pause_engine_work(struct k_work *work)
+static void pause_engine(void)
 {
 	lwm2m_engine_pause();
 	engine_paused = true;
@@ -151,7 +150,6 @@ int lwm2m_utils_enable_conneval(enum lte_lc_energy_estimate min_energy_estimate,
 
 	if (!initialized) {
 		k_work_init_delayable(&conneval_work_delayable, conneval_update_work);
-		k_work_init(&conneval_work, pause_engine_work);
 		k_work_init(&conneval_estimate_work, estimate_work);
 		ret = at_params_list_init(&at_list, AT_CONEVAL_PARAMS_MAX);
 		if (ret < 0) {
@@ -190,12 +188,7 @@ int lwm2m_utils_conneval(struct lwm2m_ctx *client, enum lwm2m_rd_client_event *c
 
 		LOG_INF("Energy estimate %d", params.energy_estimate);
 		if (params.energy_estimate < energy_estimate) {
-			ret = k_work_submit(&conneval_work);
-			if (ret < 0) {
-				LOG_ERR("Work item was not submitted to system queue, error %d",
-					ret);
-				return ret;
-			}
+			pause_engine();
 			pause_start_time = k_uptime_get();
 			ret = k_work_reschedule(&conneval_work_delayable, K_MSEC(poll_period));
 			if (ret < 0) {
