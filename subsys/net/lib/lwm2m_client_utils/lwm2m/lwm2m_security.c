@@ -713,7 +713,7 @@ static int set_socketoptions(struct lwm2m_ctx *ctx)
 
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_DTLS_CID)) {
 		/* Enable CID */
-		uint32_t dtls_cid = NRF_SO_SEC_DTLS_CID_ENABLED;
+		uint32_t dtls_cid = NRF_SO_SEC_DTLS_CID_SUPPORTED;
 
 		ret = zsock_setsockopt(ctx->sock_fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid,
 				       sizeof(dtls_cid));
