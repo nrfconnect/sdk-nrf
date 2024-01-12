@@ -337,5 +337,10 @@ int main(void)
 		printk("conn_mgr_all_if_disconnect, error: %d\n", err);
 	}
 
+	err = conn_mgr_all_if_down(true);
+	if (err) {
+		printk("conn_mgr_all_if_down, error: %d\n", err);
+	}
+
 	return 0;
 }

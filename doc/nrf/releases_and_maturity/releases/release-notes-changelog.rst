@@ -446,6 +446,10 @@ Networking samples
       The documentation is now found in the :ref:`networking_samples` section.
     * The sample to use the :ref:`coap_client_interface` library.
 
+* :ref:`https_client` sample:
+
+  * Updated the sample to gracefully bring down the network interfaces.
+
 NFC samples
 -----------
 
