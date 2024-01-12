@@ -91,10 +91,18 @@ static struct modem_param_info mdm_param;
 /* Structure to hold all cell info */
 static struct lte_lc_cells_info cell_info;
 
+/* Structure to hold configuration flags. */
+static struct nrf_cloud_location_config config = {
+	.hi_conf = IS_ENABLED(CONFIG_REST_CELL_DEFAULT_HICONF_VAL),
+	.fallback = IS_ENABLED(CONFIG_REST_CELL_DEFAULT_FALLBACK_VAL),
+	.do_reply = IS_ENABLED(CONFIG_REST_CELL_DEFAULT_DOREPLY_VAL)
+};
+
 /* REST request structure to contain cell info to be sent to nRF Cloud */
 static struct nrf_cloud_rest_location_request cell_pos_req = {
 	.cell_info = &cell_info,
-	.wifi_info = NULL
+	.wifi_info = NULL,
+	.config = &config
 };
 
 /* Flag to indicate that the device is ready to perform requests */
@@ -237,6 +245,9 @@ static void get_cell_info(void)
 
 static void process_cell_pos_type_change(void)
 {
+	static int config_mode = (IS_ENABLED(CONFIG_REST_CELL_DEFAULT_HICONF_VAL) ?  0x01 : 0x00) |
+				 (IS_ENABLED(CONFIG_REST_CELL_DEFAULT_FALLBACK_VAL) ? 0x02 : 0x00);
+
 	if (!ready) {
 		return;
 	}
@@ -257,6 +268,16 @@ static void process_cell_pos_type_change(void)
 		}
 	} else {
 		active_cell_pos_type = LOCATION_TYPE_SINGLE_CELL;
+		if (IS_ENABLED(CONFIG_REST_CELL_CHANGE_CONFIG)) {
+			/* After doing both multi and single cell requests,
+			 * modify the configuration. Eventually all 4 combinations
+			 * of config.hi_conf and config.fallback will be used.
+			 */
+			config_mode++;
+			config.hi_conf = ((config_mode & 0x01) != 0);
+			config.fallback = ((config_mode & 0x02) != 0);
+			config.do_reply = true;
+		}
 	}
 
 	rrc_idle_wait = false;
@@ -685,6 +706,14 @@ int main(void)
 			LOG_INF("Performing single-cell request");
 		}
 
+		LOG_INF("Request configuration:");
+		LOG_INF("  High confidence interval   = %s",
+			config.hi_conf ? "true" : "false");
+		LOG_INF("  Fallback to rough location = %s",
+			config.fallback ? "true" : "false");
+		LOG_INF("  Reply with result          = %s",
+			config.do_reply ? "true" : "false");
+
 		/* Perform REST call */
 		err = nrf_cloud_rest_location_get(&rest_ctx, &cell_pos_req, &cell_pos_result);
 
@@ -703,9 +732,11 @@ int main(void)
 			cell_pos_result.type == LOCATION_TYPE_MULTI_CELL ?  "multi-cell" :
 									    "unknown");
 
-		LOG_INF("Lat: %f, Lon: %f, Uncertainty: %u",
-			cell_pos_result.lat,
-			cell_pos_result.lon,
-			cell_pos_result.unc);
+		if (config.do_reply) {
+			LOG_INF("Lat: %f, Lon: %f, Uncertainty: %u",
+				cell_pos_result.lat,
+				cell_pos_result.lon,
+				cell_pos_result.unc);
+		}
 	}
 }

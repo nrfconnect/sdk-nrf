@@ -22,6 +22,25 @@ config REST_CELL_GCI_COUNT
 	range 2 15
 	default 5
 
+config REST_CELL_CHANGE_CONFIG
+	bool "Change the location request configuration on button press"
+	default y
+	help
+	  After attempting both single and multi cell location requests,
+	  try the next combination of the struct nrf_cloud_location_config
+	  hi_conf and fallback flags. The do_reply flag is not modified.
+
+config REST_CELL_DEFAULT_DOREPLY_VAL
+	bool "Default value for the do_reply configuration flag"
+	default y
+
+config REST_CELL_DEFAULT_FALLBACK_VAL
+	bool "Default value for the fallback configuration flag"
+	default y
+
+config REST_CELL_DEFAULT_HICONF_VAL
+	bool "Default value for the hi_conf configuration flag"
+
 endmenu
 
 menu "Zephyr Kernel"

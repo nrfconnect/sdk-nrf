@@ -62,6 +62,8 @@ You only need to do this once for each device.
 
 After the sample completes any requested JITP or shadow updates, pressing the **button 1** toggles between single-cell and multi-cell mode.
 
+Set the :ref:`CONFIG_REST_CELL_CHANGE_CONFIG <CONFIG_REST_CELL_CHANGE_CONFIG>` Kconfig config value to try all combinations of the :c:struct:`nrf_cloud_location_config` structure values ``hi_conf`` and ``fallback``.
+
 Configuration
 *************
 |config|
@@ -76,6 +78,27 @@ Check and configure the following Kconfig options for the sample:
 
 CONFIG_REST_CELL_LOCATION_DO_JITP - Enable prompt to perform JITP via REST
    This configuration option defines whether the application prompts the user for just-in-time provisioning on startup.
+
+.. _CONFIG_REST_CELL_CHANGE_CONFIG:
+
+CONFIG_REST_CELL_CHANGE_CONFIG - Enable changing request configuration
+   Set this to use the next combination of ``hi_conf`` and ``fallback`` flags after performing both single- and multi-cell location requests.
+
+.. _CONFIG_REST_CELL_DEFAULT_DOREPLY_VAL:
+
+CONFIG_REST_CELL_DEFAULT_DOREPLY_VAL - Enable return of location from cloud
+   If enabled, request the cloud to return the location information.
+
+.. _CONFIG_REST_CELL_DEFAULT_FALLBACK_VAL:
+
+CONFIG_REST_CELL_DEFAULT_FALLBACK_VAL - Enable fallback to coarse location
+   If enabled and the location of the cell tower or Wi-Fi access points cannot be found, return area-level location based on the cellular tracking area code.
+   Otherwise an error will be returned indicating location is not known.
+
+.. _CONFIG_REST_CELL_DEFAULT_HICONF_VAL:
+
+CONFIG_REST_CELL_DEFAULT_HICONF_VAL - Enable high confidence result
+   Enable a 95% confidence interval for the location, instead of the default 68%.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
