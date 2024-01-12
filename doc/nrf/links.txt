@@ -144,7 +144,7 @@
 
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 .. _`device_credentials_installer.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/device_credentials_installer.py
-.. _`nrf_cloud_provision.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#nrf-cloud-device-provisioning
+.. _`nrf_cloud_onboard.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#nrf-cloud-device-onboarding
 .. _`nRF Cloud Utilities Create CA Cert`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#create-ca-cert
 .. _`nRF Cloud Utilities Create Device Credentials`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#create-device-credentials
 .. _`nRF Cloud Utilities Prerequisites`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#prerequisites
