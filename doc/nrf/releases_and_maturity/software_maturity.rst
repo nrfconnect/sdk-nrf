@@ -175,25 +175,31 @@ Protocol support
 
 The following table indicates the software maturity levels of the support for each :ref:`protocol <protocols>`:
 
-.. sml-table:: top_level
-  :insert-values:
-    [
-      (
-        "Zigbee",
-        "nRF52833",
-        "Experimental"
-      ),
-      (
-        "Zigbee",
-        "nRF52840",
-        "Experimental"
-      ),
-      (
-        "Zigbee",
-        "nRF5340",
-        "Experimental"
-      )
-    ]
++---------------+-----------+-----------+-----------+-----------+--------------+---------------------+---------------------+---------------------+---------------------+
+|               | nRF52810  | nRF52811  | nRF52820  | nRF52832  | nRF5283      | nRF52840            | nRF5340             | nRF9160             | nRF9161             |
++===============+===========+===========+===========+===========+==============+=====================+=====================+=====================+=====================+
+| **Bluetooth** | Supported | Supported | Supported | Supported | Supported    | Supported           | Supported           | --                  | --                  |
++---------------+-----------+-----------+-----------+-----------+--------------+---------------------+---------------------+---------------------+---------------------+
+| **Bluetooth   | --        | --        | --        | Supported | Supported    | Supported           | Supported           | --                  | --                  |
+| Mesh**        |           |           |           |           |              |                     |                     |                     |                     |
++---------------+-----------+-----------+-----------+-----------+--------------+---------------------+---------------------+---------------------+---------------------+
+| **HomeKit**   | --        | --        | --        | --        | Supported    | Supported           | Supported           | --                  | --                  |
++---------------+-----------+-----------+-----------+-----------+--------------+---------------------+---------------------+---------------------+---------------------+
+| **LTE**       | --        | --        | --        | --        | --           | --                  | --                  | Supported           | Supported           |
++---------------+-----------+-----------+-----------+-----------+--------------+---------------------+---------------------+---------------------+---------------------+
+| **Matter**    | --        | --        | --        | --        | --           | Supported           | Supported           | --                  | --                  |
++---------------+-----------+-----------+-----------+-----------+--------------+---------------------+---------------------+---------------------+---------------------+
+| **Sidewalk**  | --        | --        | --        | --        | --           | Supported           | Supported           | --                  | --                  |
++---------------+-----------+-----------+-----------+-----------+--------------+---------------------+---------------------+---------------------+---------------------+
+| **Thread**    | --        | --        | --        | --        | Supported    | Supported           | Supported           | --                  | --                  |
++---------------+-----------+-----------+-----------+-----------+--------------+---------------------+---------------------+---------------------+---------------------+
+| **Wi-Fi**     | --        | --        | --        | --        | --           | Supported\ :sup:`1` | Supported\ :sup:`2` | Supported\ :sup:`1` | Supported\ :sup:`1` |
++---------------+-----------+-----------+-----------+-----------+--------------+---------------------+---------------------+---------------------+---------------------+
+| **Zigbee**    | --        | --        | --        | --        | Experimental | Experimental        | Experimental        | --                  | --                  |
++---------------+-----------+-----------+-----------+-----------+--------------+---------------------+---------------------+---------------------+---------------------+
+
+| [1]: Only with nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
+| [2]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode, nRF7002 EB, nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
 
 Amazon Sidewalk features support
 ********************************
@@ -220,7 +226,91 @@ The following table indicates the software maturity levels of the support for ea
 
 .. toggle::
 
-  .. sml-table:: homekit
+  .. list-table::
+   :widths: 20 10 10 10 10 10 10 10 10 10
+   :header-rows: 1
+   :align: center
+
+   * - Feature
+     - nRF52810
+     - nRF52811
+     - nRF52820
+     - nRF52832
+     - nRF52833
+     - nRF52840
+     - nRF5340
+     - nRF9160
+     - nRF9161
+   * - **HomeKit - OTA DFU over Bluetooth LE**
+     -  --
+     -  --
+     -  --
+     -  --
+     -  --
+     - Supported
+     - Supported
+     -  --
+     -  --
+   * - **HomeKit - OTA DFU over HomeKit**
+     - --
+     - --
+     - --
+     - --
+     - --
+     - Supported
+     - Supported
+     - --
+     - --
+   * - **HomeKit commissioning over Bluetooth LE with NFC**
+     - --
+     - --
+     - --
+     - --
+     - Supported
+     - Supported
+     - Supported
+     - --
+     - --
+   * - **HomeKit commissioning over Bluetooth LE with QR code**
+     - --
+     - --
+     - --
+     - --
+     - Supported
+     - Supported
+     - Supported
+     - --
+     - --
+   * - **HomeKit over Bluetooth LE**
+     - --
+     - --
+     - --
+     - --
+     - Supported
+     - Supported
+     - Supported
+     - --
+     - --
+   * - **HomeKit over Thread FTD**
+     - --
+     - --
+     - --
+     - --
+     - --
+     - Supported
+     - Supported
+     - --
+     - --
+   * - **HomeKit over Thread MTD SED**
+     - --
+     - --
+     - --
+     - --
+     - --
+     - Supported
+     - Supported
+     - --
+     - --
 
 Thread features support
 ***********************
