@@ -52,7 +52,7 @@ Requirements
 
 You must first preprovision the device on nRF Cloud as follows:
 
-1. Use the `device_credentials_installer.py`_ and `nrf_cloud_provision.py`_ scripts.
+1. Use the `device_credentials_installer.py`_ and `nrf_cloud_onboard.py`_ scripts.
 #. Specify the ``--coap`` option to ``device_credentials_installer.py`` to have the proper root CA certificates installed in the device.
 
 Call the :c:func:`nrf_cloud_coap_init` function once to initialize the library.

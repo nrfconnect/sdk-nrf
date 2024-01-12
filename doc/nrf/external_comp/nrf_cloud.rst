@@ -119,7 +119,7 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
      * It creates a device certificate and signs it with the specified CA.
      * It writes the device certificate and AWS CA certificate to the device.
 
-  #. Run the `nrf_cloud_provision.py`_ script to provision and associate the device with your nRF Cloud account.
+  #. Run the `nrf_cloud_onboard.py`_ script to onboard the device to your nRF Cloud account.
 
   For more details about the scripts, refer to the `nRF Cloud Utilities documentation`_.
 
