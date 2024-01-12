@@ -95,7 +95,7 @@
 #cmakedefine PSA_WANT_ALG_RSA_OAEP                              @PSA_WANT_ALG_RSA_OAEP@
 #cmakedefine PSA_WANT_ALG_RSA_PKCS1V15_CRYPT                    @PSA_WANT_ALG_RSA_PKCS1V15_CRYPT@
 
-/* Assymetric signature */
+/* Asymmetric signature */
 #cmakedefine PSA_WANT_ALG_DETERMINISTIC_ECDSA                   @PSA_WANT_ALG_DETERMINISTIC_ECDSA@
 #cmakedefine PSA_WANT_ALG_ECDSA                                 @PSA_WANT_ALG_ECDSA@
 #cmakedefine PSA_WANT_ALG_ECDSA_ANY                             @PSA_WANT_ALG_ECDSA_ANY@
