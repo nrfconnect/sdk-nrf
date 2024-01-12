@@ -719,6 +719,12 @@ Libraries for networking
   * Updated the library to use the :ref:`lib_mqtt_helper` library.
     This simplifies the handling of the MQTT stack.
 
+* :ref:`lib_download_client` library:
+
+  * Changed:
+
+    * IPv6 to IPv4 fallback is done when both DNS request and TCP/TLS connect fails.
+
 * :ref:`lib_nrf_cloud_coap` library:
 
   * Added:
