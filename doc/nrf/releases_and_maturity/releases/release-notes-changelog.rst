@@ -465,6 +465,8 @@ Peripheral samples
 PMIC samples
 ------------
 
+* Added :ref:`npm1300_one_button` sample that demonstrates how to support wake-up, shutdown and user interactions through a single button connected to the nPM1300.
+
 * :ref:`npm1300_fuel_gauge` sample:
 
   * Updated to accommodate API changes in the :ref:`nrfxlib:nrf_fuel_gauge`.
