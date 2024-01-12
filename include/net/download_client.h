@@ -114,6 +114,11 @@ struct download_client_cfg {
 	 * Zero is the default PDN.
 	 */
 	uint8_t pdn_id;
+	/**
+	 * Address family to be used for the download, AF_INET6 or AF_INET.
+	 * Set to AF_UNSPEC (0) to fallback to AF_INET if AF_INET6 does not work.
+	 */
+	int family;
 	/** Maximum fragment size to download. 0 indicates that values
 	 * configured using Kconfig shall be used.
 	 */
