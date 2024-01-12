@@ -468,7 +468,7 @@ int rpu_clks_on(void)
 		} \
 	} while (0)
 
-int rpu_enable(void)
+int rpu_init(void)
 {
 	int ret;
 
@@ -487,6 +487,20 @@ int rpu_enable(void)
 		goto ble_gpio_remove;
 	}
 
+	return 0;
+
+ble_gpio_remove:
+	ble_gpio_remove();
+rpu_gpio_remove:
+	rpu_gpio_remove();
+out:
+	return ret;
+}
+
+int rpu_enable(void)
+{
+	int ret;
+
 	ret = rpu_wakeup();
 	if (ret) {
 		goto rpu_pwroff;
@@ -498,14 +512,8 @@ int rpu_enable(void)
 	}
 
 	return 0;
-
 rpu_pwroff:
 	rpu_pwroff();
-ble_gpio_remove:
-	ble_gpio_remove();
-rpu_gpio_remove:
-	rpu_gpio_remove();
-out:
 	return ret;
 }
 
