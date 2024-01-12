@@ -221,6 +221,7 @@ static int callback(const struct download_client_evt *event)
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
 		(void)conn_mgr_if_disconnect(net_if);
+		(void)conn_mgr_all_if_down(true);
 		printk("Bye\n");
 		return 0;
 
@@ -230,6 +231,7 @@ static int callback(const struct download_client_evt *event)
 			/* With ECONNRESET, allow library to attempt a reconnect by returning 0 */
 		} else {
 			(void)conn_mgr_if_disconnect(net_if);
+			(void)conn_mgr_all_if_down(true);
 			/* Stop download */
 			return -1;
 		}
