@@ -5,4 +5,4 @@
 # - scenarios:
 #     - None
 - scenarios:
-    - None
+    - unity.nrf91_sockets_test
