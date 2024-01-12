@@ -578,6 +578,12 @@ static void *zep_shim_bus_qspi_dev_add(void *os_qspi_priv, void *osal_qspi_dev_c
 	int ret;
 	enum nrf_wifi_status status;
 
+	ret = rpu_init();
+	if (ret) {
+		LOG_ERR("%s: RPU init failed with error %d", __func__, ret);
+		return NULL;
+	}
+
 	status = qdev->init(qspi_defconfig());
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: QSPI device init failed", __func__);

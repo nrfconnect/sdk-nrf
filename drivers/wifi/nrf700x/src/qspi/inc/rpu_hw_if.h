@@ -49,6 +49,7 @@ int rpu_rdsr2(void);
 int rpu_rdsr1(void);
 int rpu_clks_on(void);
 
+int rpu_init(void);
 int rpu_enable(void);
 int rpu_disable(void);
 
