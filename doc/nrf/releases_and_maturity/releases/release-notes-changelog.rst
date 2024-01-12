@@ -326,12 +326,16 @@ Cellular samples
 
   * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
-  * Updated the MQTT and CoAP overlays to enable the Kconfig option :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI`.
-    The sample no longer sends a device shadow update for MQTT and CoAP builds; this is now handled by the :ref:`lib_nrf_cloud` library.
+  * Updated:
+
+    * The MQTT and CoAP overlays to enable the Kconfig option :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI`.
+      The sample no longer sends a device shadow update for MQTT and CoAP builds; this is now handled by the :ref:`lib_nrf_cloud` library.
+    * To use the new :c:struct:`nrf_cloud_location_config` structure when calling the :c:func:`nrf_cloud_location_request` function.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
   * Added:
+
     * A generic processing example for application-specific shadow data.
     * Configuration and overlay files to enable MCUboot to use the external flash on the nRF1961 DK.
 
@@ -361,8 +365,12 @@ Cellular samples
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
-  * Added credential check before connecting to network.
   * Increased the :kconfig:option:`CONFIG_AT_HOST_STACK_SIZE` and :kconfig:option:`CONFIG_AT_MONITOR_HEAP_SIZE` Kconfig options to 2048 bytes since nRF Cloud credentials are sometimes longer than 1024 bytes.
+
+  * Added:
+
+    * Credential check before connecting to network.
+    * Use of the :c:struct:`nrf_cloud_location_config` structure to modify the ground fix results.
 
 * :ref:`nrf_provisioning_sample` sample:
 
@@ -453,6 +461,7 @@ Networking samples
 * :ref:`net_coap_client_sample` sample:
 
   * Added support for Wi-Fi and LTE connectivity through the connection manager API.
+
   * Updated:
 
     * The sample is moved from the :file:`cellular/coap_client` folder to :file:`net/coap_client`.
@@ -693,6 +702,7 @@ Libraries for networking
     * Automatic selection of proprietary PSM mode when building for the SOC_NRF9161_LACA.
     * Support for bulk transfers to the :c:func:`nrf_cloud_coap_json_message_send` function.
     * Support for raw transfers to the :c:func:`nrf_cloud_coap_bytes_send` function.
+    * Optional support for ground fix configuration flags.
 
   * Updated:
 
@@ -718,12 +728,14 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA` Kconfig option to enable sending configured FOTA service info on the device's initial connection to nRF Cloud.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI` Kconfig option to enable sending configured UI service info on the device's initial connection to nRF Cloud.
     * Support for handling location request responses fulfilled by a Wi-Fi anchor.
+    * An :c:struct:`nrf_cloud_location_config` structure for specifying the desired behavior of an nRF Cloud ground fix request.
 
   * Updated:
 
     * The :c:func:`nrf_cloud_obj_object_add` function to reset the added object on success.
     * Custom shadow data is now passed to the application during shadow update events.
     * The AGNSS handling to use the AGNSS app ID string and corresponding MQTT topic instead of the older AGPS app ID string and topic.
+    * The :c:func:`nrf_cloud_obj_location_request_create` and :c:func:`nrf_cloud_location_request` functions to accept the :c:struct:`nrf_cloud_location_config` structure in place of the ``bool request_loc`` parameter.
 
 * :ref:`lib_nrf_provisioning` library:
 
@@ -748,6 +760,10 @@ Libraries for networking
 
     * The functions :c:func:`fota_download` and :c:func:`fota_download_any` that can accept a security tag list and security tag count as arguments instead of a single security tag.
     * :c:enumerator:`FOTA_DOWNLOAD_ERROR_CAUSE_CONNECT_FAILED` as a potential error cause in  :c:enumerator:`FOTA_DOWNLOAD_EVT_ERROR` events.
+
+* :ref:`lib_nrf_cloud_rest` library:
+
+  * Updated the :c:struct:`nrf_cloud_rest_location_request` structure to accept a pointer to a :c:struct:`nrf_cloud_location_config` structure in place of the single ``disable_response`` flag.
 
 Libraries for NFC
 -----------------
