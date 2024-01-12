@@ -429,15 +429,15 @@ static int client_connect(struct download_client *dl)
 		type |= SOCK_NATIVE_TLS;
 	}
 
-	/* Attempt IPv6 connection if configured, fallback to IPv4 */
-	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
+	/* Attempt IPv6 connection if configured, fallback to IPv4 on error */
+	if ((dl->config.family == AF_UNSPEC) || (dl->config.family == AF_INET6)) {
 		err = host_lookup(dl->host, AF_INET6, dl->config.pdn_id, &dl->remote_addr);
 		if (!err) {
 			err = client_socket_connect(dl, type, port);
 		}
 	}
 
-	if (err || !IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
+	if (((dl->config.family == AF_UNSPEC) && err) || (dl->config.family == AF_INET)) {
 		err = host_lookup(dl->host, AF_INET, dl->config.pdn_id, &dl->remote_addr);
 		if (!err) {
 			err = client_socket_connect(dl, type, port);

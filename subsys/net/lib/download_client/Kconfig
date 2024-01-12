@@ -135,12 +135,6 @@ config DOWNLOAD_CLIENT_RANGE_REQUESTS
 	  but also gives time to the application to process the fragments as they are
 	  downloaded, instead of having to keep up to speed while downloading the whole file.
 
-config DOWNLOAD_CLIENT_IPV6
-	bool "Use IPv6 when possible"
-	help
-	  Prefer IPv6 protocol but fallback to
-	  IPv4 when the hostname can't be resolved.
-
 config DOWNLOAD_CLIENT_CID
 	bool "Use DTLS Connection-ID"
 	help

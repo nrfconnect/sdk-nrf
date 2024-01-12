@@ -721,9 +721,19 @@ Libraries for networking
 
 * :ref:`lib_download_client` library:
 
+  * Added:
+
+    * The ``family`` parameter to the :c:struct:`download_client_cfg` structure.
+      This is used to optimize the download sequence when the device only support IPv4 or IPv6.
+
   * Changed:
 
+    * IPv6 support changed from compile time to runtime, and is default enabled.
     * IPv6 to IPv4 fallback is done when both DNS request and TCP/TLS connect fails.
+
+  * Removed:
+
+    * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_IPV6` Kconfig option is removed.
 
 * :ref:`lib_nrf_cloud_coap` library:
 
