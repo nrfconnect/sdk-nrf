@@ -449,6 +449,10 @@ Networking samples
 
   * Updated the sample to gracefully bring down the network interfaces.
 
+* :ref:`download_sample` sample:
+
+  * Updated the sample to gracefully bring down the network interfaces.
+
 NFC samples
 -----------
 
