@@ -23,7 +23,7 @@ The nRF9161 DK contains an nRF5340 Interface MCU (IMCU), which acts both as an o
 The board controller controls signal switches on the nRF9161 DK and can be used to route the nRF9161 SiP pins to different components on the DK, such as pin headers, external memory, a SIM card or eSIM.
 For a complete list of configuration options available, see the nRF9161 DK board control section in the nRF9161 DK User Guide.
 
-The nRF5340 IMCU comes preprogrammed with J-Link Segger OB and board controller firmware.
+The nRF5340 IMCU comes preprogrammed with J-Link SEGGER OB and board controller firmware.
 
 .. _nrf9161_ug_updating_cloud_certificate:
 
