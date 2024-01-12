@@ -274,23 +274,103 @@ static int host_lookup(const char *host, int family, uint8_t pdn_id,
 	return 0;
 }
 
+static int client_socket_connect(struct download_client *dl, int type, uint16_t port)
+{
+	int err;
+	socklen_t addrlen;
+
+	switch (dl->remote_addr.sa_family) {
+	case AF_INET6:
+		SIN6(&dl->remote_addr)->sin6_port = htons(port);
+		addrlen = sizeof(struct sockaddr_in6);
+		break;
+	case AF_INET:
+		SIN(&dl->remote_addr)->sin_port = htons(port);
+		addrlen = sizeof(struct sockaddr_in);
+		break;
+	default:
+		err = -EAFNOSUPPORT;
+		goto cleanup;
+	}
+
+	LOG_DBG("family: %d, type: %d, proto: %d",
+		dl->remote_addr.sa_family, type, dl->proto);
+
+	dl->fd = socket(dl->remote_addr.sa_family, type, dl->proto);
+	if (dl->fd < 0) {
+		err = -errno;
+		LOG_ERR("Failed to create socket, errno %d", -err);
+		goto cleanup;
+	}
+
+	if (dl->config.pdn_id) {
+		err = socket_pdn_id_set(dl->fd, dl->config.pdn_id);
+		if (err) {
+			goto cleanup;
+		}
+	}
+
+	if ((dl->proto == IPPROTO_TLS_1_2 || dl->proto == IPPROTO_DTLS_1_2) &&
+	    (dl->config.sec_tag_list != NULL) && (dl->config.sec_tag_count > 0)) {
+		err = socket_sectag_set(dl->fd, dl->config.sec_tag_list, dl->config.sec_tag_count);
+		if (err) {
+			goto cleanup;
+		}
+
+		if (dl->config.set_tls_hostname) {
+			err = socket_tls_hostname_set(dl->fd, dl->host);
+			if (err) {
+				err = -errno;
+				goto cleanup;
+			}
+		}
+
+		if (dl->proto == IPPROTO_DTLS_1_2 && IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_CID)) {
+			/* Enable connection ID */
+			uint32_t dtls_cid = TLS_DTLS_CID_ENABLED;
+
+			err = setsockopt(dl->fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid,
+					 sizeof(dtls_cid));
+			if (err) {
+				err = -errno;
+				LOG_ERR("Failed to enable TLS_DTLS_CID: %d", err);
+				/* Not fatal, so continue */
+			}
+		}
+	}
+
+	LOG_INF("Connecting to %s", dl->host);
+	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
+		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
+
+	err = connect(dl->fd, &dl->remote_addr, addrlen);
+	if (err) {
+		err = -errno;
+		LOG_ERR("Unable to connect, errno %d", -err);
+		/* Make sure that ECONNRESET is not returned as it has a special meaning
+		 * in the download client API
+		 */
+		if (err == -ECONNRESET) {
+			err = -ECONNREFUSED;
+		}
+	}
+
+cleanup:
+	if (err) {
+		if (dl->fd != -1) {
+			close(dl->fd);
+			dl->fd = -1;
+		}
+	}
+
+	return err;
+}
+
 static int client_connect(struct download_client *dl)
 {
 	int err;
 	int type;
 	uint16_t port;
-	socklen_t addrlen;
-
-	/* Attempt IPv6 connection if configured, fallback to IPv4 */
-	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
-		err = host_lookup(dl->host, AF_INET6, dl->config.pdn_id, &dl->remote_addr);
-	}
-	if (err || !IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
-		err = host_lookup(dl->host, AF_INET, dl->config.pdn_id, &dl->remote_addr);
-	}
-	if (err) {
-		goto cleanup;
-	}
 
 	err = url_parse_proto(dl->host, &dl->proto, &type);
 	if (err) {
@@ -344,84 +424,23 @@ static int client_connect(struct download_client *dl)
 		LOG_DBG("Port not specified, using default: %d", port);
 	}
 
-	switch (dl->remote_addr.sa_family) {
-	case AF_INET6:
-		SIN6(&dl->remote_addr)->sin6_port = htons(port);
-		addrlen = sizeof(struct sockaddr_in6);
-		break;
-	case AF_INET:
-		SIN(&dl->remote_addr)->sin_port = htons(port);
-		addrlen = sizeof(struct sockaddr_in);
-		break;
-	default:
-		err = -EAFNOSUPPORT;
-		goto cleanup;
-	}
-
 	if (dl->set_native_tls) {
 		LOG_DBG("Enabled native TLS");
 		type |= SOCK_NATIVE_TLS;
 	}
 
-	LOG_DBG("family: %d, type: %d, proto: %d",
-		dl->remote_addr.sa_family, type, dl->proto);
-
-	dl->fd = socket(dl->remote_addr.sa_family, type, dl->proto);
-	if (dl->fd < 0) {
-		LOG_ERR("Failed to create socket, err %d", errno);
-		err = -errno;
-		goto cleanup;
-	}
-
-	if (dl->config.pdn_id) {
-		err = socket_pdn_id_set(dl->fd, dl->config.pdn_id);
-		if (err) {
-			goto cleanup;
+	/* Attempt IPv6 connection if configured, fallback to IPv4 */
+	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
+		err = host_lookup(dl->host, AF_INET6, dl->config.pdn_id, &dl->remote_addr);
+		if (!err) {
+			err = client_socket_connect(dl, type, port);
 		}
 	}
 
-	if ((dl->proto == IPPROTO_TLS_1_2 || dl->proto == IPPROTO_DTLS_1_2)
-	     && (dl->config.sec_tag_list != NULL) && (dl->config.sec_tag_count > 0)) {
-		err = socket_sectag_set(dl->fd, dl->config.sec_tag_list, dl->config.sec_tag_count);
-		if (err) {
-			goto cleanup;
-		}
-
-		if (dl->config.set_tls_hostname) {
-			err = socket_tls_hostname_set(dl->fd, dl->host);
-			if (err) {
-				err = -errno;
-				goto cleanup;
-			}
-		}
-
-		if (dl->proto == IPPROTO_DTLS_1_2 && IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_CID)) {
-			/* Enable connection ID */
-			uint32_t dtls_cid = TLS_DTLS_CID_ENABLED;
-
-			err = setsockopt(dl->fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid,
-					 sizeof(dtls_cid));
-			if (err) {
-				err = -errno;
-				LOG_ERR("Failed to enable TLS_DTLS_CID: %d", err);
-				/* Not fatal, so continue */
-			}
-		}
-	}
-
-	LOG_INF("Connecting to %s", dl->host);
-	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
-		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
-
-	err = connect(dl->fd, &dl->remote_addr, addrlen);
-	if (err) {
-		err = -errno;
-		LOG_ERR("Unable to connect, errno %d", -err);
-		/* Make sure that ECONNRESET is not returned as it has a special meaning
-		 * in the download client API
-		 */
-		if (err == -ECONNRESET) {
-			err = -ECONNREFUSED;
+	if (err || !IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
+		err = host_lookup(dl->host, AF_INET, dl->config.pdn_id, &dl->remote_addr);
+		if (!err) {
+			err = client_socket_connect(dl, type, port);
 		}
 	}
 
@@ -744,8 +763,8 @@ static int handle_disconnect(struct download_client *client)
 	if (client->fd != -1) {
 		err = close(client->fd);
 		if (err) {
-			LOG_ERR("Failed to close socket, errno %d", errno);
 			err = -errno;
+			LOG_ERR("Failed to close socket, errno %d", -err);
 		}
 	}
 
