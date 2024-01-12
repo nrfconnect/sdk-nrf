@@ -173,7 +173,7 @@ To enable modem traces with RTT, enable the :kconfig:option:`CONFIG_NRF_MODEM_LI
 
 The traces can be captured using the J-Link RTT logger software.
 This produces a RAW binary trace file with a ``.log`` extension.
-The RAW binary trace file can be converted to PCAP with the :guilabel:`Convert RAW trace to PCAP` option in the Trace Collector application of `nRF Connect for Desktop`_.
+The RAW binary trace file can be converted to PCAP with the :guilabel:`Open trace file in Wireshark` option in the `Cellular Monitor`_ app of `nRF Connect for Desktop`_.
 By default, files with the ``.log`` extension are not shown.
 
 .. _adding_custom_modem_trace_backends:
