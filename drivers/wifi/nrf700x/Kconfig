@@ -497,3 +497,8 @@ config WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC
 	  that has globally unique MAC address.
 
 	  So, to save resources, this option drops such networks from the scan results.
+config WIFI_NRF700X_SCAN_DISABLE_DFS_CHANNELS
+	bool "Disables DFS channels in scan operation"
+	help
+	  This option disables inclusion of DFS channels in scan operation.
+	  This is useful to reduce the scan time, as DFS channels are seldom used.
