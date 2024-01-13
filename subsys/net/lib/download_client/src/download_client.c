@@ -14,6 +14,7 @@
 #include <zephyr/posix/netdb.h>
 #include <zephyr/posix/sys/time.h>
 #include <zephyr/posix/sys/socket.h>
+#include <arpa/inet.h>
 #else
 #include <zephyr/net/socket.h>
 #endif
@@ -339,7 +340,18 @@ static int client_socket_connect(struct download_client *dl, int type, uint16_t 
 		}
 	}
 
-	LOG_INF("Connecting to %s", dl->host);
+	if (IS_ENABLED(CONFIG_LOG)) {
+		char ip_addr_str[NET_IPV6_ADDR_LEN];
+		void *sin_addr;
+
+		if (dl->remote_addr.sa_family == AF_INET6) {
+			sin_addr = &((struct sockaddr_in6 *)&dl->remote_addr)->sin6_addr;
+		} else {
+			sin_addr = &((struct sockaddr_in *)&dl->remote_addr)->sin_addr;
+		}
+		inet_ntop(dl->remote_addr.sa_family, sin_addr, ip_addr_str, sizeof(ip_addr_str));
+		LOG_INF("Connecting to %s", ip_addr_str);
+	}
 	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
 		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
 
