@@ -34,4 +34,5 @@ Finally, we discuss topics related to Matter certification (:ref:`ug_matter_devi
    bootloader
    security
    configuring_cd
+   versioning
    last_fabric_removal_delegate
