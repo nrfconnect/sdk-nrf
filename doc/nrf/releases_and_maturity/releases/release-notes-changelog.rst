@@ -257,7 +257,8 @@ nRF Desktop
 Thingy:53: Matter weather station
 ---------------------------------
 
-|no_changes_yet_note|
+* Removed instantiation of OTATestEventTriggerDelegate, which was usable only for Matter Test Event purposes.
+* Changed the deployment of configuration files to align with other Matter applications.
 
 Matter Bridge
 -------------
