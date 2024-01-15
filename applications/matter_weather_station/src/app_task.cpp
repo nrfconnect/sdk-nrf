@@ -22,10 +22,8 @@
 #include "dfu/smp/dfu_over_smp.h"
 #endif
 
-#include <DeviceInfoProviderImpl.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-objects.h>
-#include <app/clusters/ota-requestor/OTATestEventTriggerDelegate.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
 
@@ -90,31 +88,6 @@ Identify sIdentifyHumidity = { chip::EndpointId{ kHumidityMeasurementEndpointId 
 Identify sIdentifyPressure = { chip::EndpointId{ kPressureMeasurementEndpointId }, AppTask::OnIdentifyStart,
 			       AppTask::OnIdentifyStop, Clusters::Identify::IdentifyTypeEnum::kAudibleBeep };
 
-/* NOTE! This key is for test/certification only and should not be available in production devices!
- * If CONFIG_CHIP_FACTORY_DATA is enabled, this value is read from the factory data.
- */
-uint8_t sTestEventTriggerEnableKey[TestEventTriggerDelegate::kEnableKeyLength] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55,
-										   0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb,
-										   0xcc, 0xdd, 0xee, 0xff };
-chip::DeviceLayer::DeviceInfoProviderImpl gExampleDeviceInfoProvider;
-
-OTATestEventTriggerDelegate sTestEventTriggerDelegate{ ByteSpan(sTestEventTriggerEnableKey) };
-CommonCaseDeviceServerInitParams sServerInitParams{};
-
-#ifdef CONFIG_CHIP_FACTORY_DATA
-CHIP_ERROR CustomFactoryDataInit()
-{
-	MutableByteSpan enableKey(sTestEventTriggerEnableKey);
-	auto *factoryDataProvider = Nrf::Matter::GetFactoryDataProvider();
-	VerifyOrReturnError(factoryDataProvider, CHIP_ERROR_INTERNAL);
-	CHIP_ERROR err = factoryDataProvider->GetEnableKey(enableKey);
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("FactoryDataProvider::GetEnableKey() failed. Could not delegate a test event trigger");
-		memset(sTestEventTriggerEnableKey, 0, sizeof(sTestEventTriggerEnableKey));
-	}
-	return CHIP_NO_ERROR;
-}
-#endif
 } /* namespace */
 
 void AppTask::MeasurementsTimerHandler()
@@ -353,12 +326,7 @@ void AppTask::UpdateLedState()
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
-	sServerInitParams.testEventTriggerDelegate = &sTestEventTriggerDelegate;
-	Nrf::Matter::InitData initConfig{ .mServerInitParams = &sServerInitParams };
-#ifdef CONFIG_CHIP_FACTORY_DATA
-	initConfig.mPostServerInitClbk = CustomFactoryDataInit;
-#endif
-	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(initConfig));
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer());
 
 	/* Set references for RGB LED */
 	mRedLED = &Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED1);

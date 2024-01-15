@@ -10,8 +10,6 @@
 
 #include <temp_sensor_manager.h>
 
-#include <DeviceInfoProviderImpl.h>
-
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <controller/ReadInteraction.h>
 #include <zephyr/logging/log.h>
@@ -36,8 +34,7 @@ RealSensor::RealSensor()
 
 void RealSensor::TemperatureMeasurement()
 {
-	Nrf::Matter::BindingHandler::BindingData *data =
-		Platform::New<Nrf::Matter::BindingHandler::BindingData>();
+	Nrf::Matter::BindingHandler::BindingData *data = Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 	data->ClusterId = Clusters::TemperatureMeasurement::Id;
 	data->EndpointId = mTemperatureMeasurementEndpointId;
 	data->IsGroup = Nrf::Matter::BindingHandler::IsGroupBound();
