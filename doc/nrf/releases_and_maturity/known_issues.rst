@@ -330,7 +330,7 @@ KRKNWK-18256: The Matter over Thread device may crash during the processing of t
   If the DNS resolve response contains a TXT record with data size equal to 0 (either it is not present or its Time-To-Live (TTL) is equal to 0), the Matter device's application crashes.
   The application behavior for the responses containing a TXT record with data size not equal to 0 is correct.
 
-  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: TODO).
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``4997cd70ed53735e302186e7eda1bb28a216199a``).
 
 .. rst-class:: v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0
 
