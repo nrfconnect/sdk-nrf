@@ -48,7 +48,8 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 	}
 
 	bt_addr_le_t address;
-	if (Nrf::BLEConnectivityManager::Instance().GetScannedDeviceAddress(&address, bleDeviceIndex) != CHIP_NO_ERROR) {
+	if (Nrf::BLEConnectivityManager::Instance().GetScannedDeviceAddress(&address, bleDeviceIndex) !=
+	    CHIP_NO_ERROR) {
 		shell_fprintf(shell, SHELL_ERROR, "Invalid Bluetooth LE device index.\n");
 	} else {
 		shell_fprintf(shell, SHELL_ERROR, "Found device address\n");
@@ -84,6 +85,8 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 
 	if (result == CHIP_NO_ERROR) {
 		shell_fprintf(shell, SHELL_INFO, "Done\n");
+	} else if (result == CHIP_ERROR_INCORRECT_STATE) {
+		shell_fprintf(shell, SHELL_INFO, "Device is already added\n");
 	} else {
 		shell_fprintf(shell, SHELL_ERROR, "Device add failed\n");
 	}
@@ -202,7 +205,8 @@ static int InsertBridgedDevicePincodeHandler(const struct shell *shell, size_t a
 	unsigned int pincode = strtoul(argv[1], NULL, 0);
 
 	bt_addr_le_t address;
-	if (Nrf::BLEConnectivityManager::Instance().GetScannedDeviceAddress(&address, bleDeviceIndex) != CHIP_NO_ERROR) {
+	if (Nrf::BLEConnectivityManager::Instance().GetScannedDeviceAddress(&address, bleDeviceIndex) !=
+	    CHIP_NO_ERROR) {
 		shell_fprintf(shell, SHELL_ERROR, "Invalid Bluetooth LE device index.\n");
 	} else {
 		shell_fprintf(shell, SHELL_ERROR, "Found device address\n");

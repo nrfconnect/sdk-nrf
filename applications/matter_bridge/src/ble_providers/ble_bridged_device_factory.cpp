@@ -283,14 +283,18 @@ BleBridgedDeviceFactory::BleDataProviderFactory &BleBridgedDeviceFactory::GetDat
 {
 	static BleDataProviderFactory sDeviceDataProvider
 	{
-#if defined(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE) && (defined(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE) || defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE))
+#if defined(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE) && (defined(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE) ||      \
+							  defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE))
 		{ ServiceUuid::LedButtonService,
-		  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) { return chip::Platform::New<BleLBSDataProvider>(updateClb, commandClb); } },
+		  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
+			  return chip::Platform::New<BleLBSDataProvider>(updateClb, commandClb);
+		  } },
 #endif
 #if defined(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE) && defined(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
-			{ ServiceUuid::EnvironmentalSensorService, [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
-				 return chip::Platform::New<BleEnvironmentalDataProvider>(updateClb, commandClb);
-			 } },
+			{ ServiceUuid::EnvironmentalSensorService,
+			  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
+				  return chip::Platform::New<BleEnvironmentalDataProvider>(updateClb, commandClb);
+			  } },
 #endif
 	};
 	return sDeviceDataProvider;
@@ -315,8 +319,8 @@ CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(int deviceType, bt_addr_le_t bt
 	err = MatterDeviceTypeToBleService(static_cast<MatterBridgedDevice::DeviceType>(deviceType), providerType);
 	VerifyOrExit(err == CHIP_NO_ERROR, );
 
-	provider = static_cast<BLEBridgedDeviceProvider *>(
-		BleBridgedDeviceFactory::GetDataProviderFactory().Create(providerType, BridgeManager::HandleUpdate, BridgeManager::HandleCommand));
+	provider = static_cast<BLEBridgedDeviceProvider *>(BleBridgedDeviceFactory::GetDataProviderFactory().Create(
+		providerType, BridgeManager::HandleUpdate, BridgeManager::HandleCommand));
 	if (!provider) {
 		return CHIP_ERROR_NO_MEMORY;
 	}
@@ -340,11 +344,19 @@ exit:
 	return err;
 }
 
-CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *nodeLabel, BLEConnectivityManager::ConnectionSecurityRequest * request)
+CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *nodeLabel,
+						 BLEConnectivityManager::ConnectionSecurityRequest *request)
 {
-	BLEBridgedDeviceProvider *provider =
-		static_cast<BLEBridgedDeviceProvider *>(BleBridgedDeviceFactory::GetDataProviderFactory().Create(
-			static_cast<ServiceUuid>(uuid), BridgeManager::HandleUpdate, BridgeManager::HandleCommand));
+	/* Check if there is already existing provider for given address.
+	 * In case it is, the provider was either connected or recovered before.
+	 */
+	BLEBridgedDeviceProvider *provider = BLEConnectivityManager::Instance().FindBLEProvider(btAddress);
+	if (provider) {
+		return CHIP_ERROR_INCORRECT_STATE;
+	}
+
+	provider = static_cast<BLEBridgedDeviceProvider *>(BleBridgedDeviceFactory::GetDataProviderFactory().Create(
+		static_cast<ServiceUuid>(uuid), BridgeManager::HandleUpdate, BridgeManager::HandleCommand));
 	if (!provider) {
 		return CHIP_ERROR_NO_MEMORY;
 	}
