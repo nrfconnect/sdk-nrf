@@ -105,6 +105,8 @@ Matter
   * A Kconfig option for disabling or enabling :ref:`ug_matter_configuring_read_client`.
   * Support for PSA Crypto API for devices that use Matter over Thread.
     It is enabled by default and can be disabled by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``.
+  * :file:`VERSION` file implementation to manage versioning for DFU over SMP as well as also Matter OTA.
+    Backward compatibility is maintained for users who use the :file:`prj.conf` file for versioning.
   * Migration of the Device Attestation Certificate (DAC) private key from the factory data set to the PSA ITS secure storage.
 
     The DAC private key can be removed from the factory data set after the migration.
