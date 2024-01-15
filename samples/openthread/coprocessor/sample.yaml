@@ -4,7 +4,7 @@ sample:
 tests:
   sample.openthread.coprocessor:
     build_only: true
-    extra_args: SNIPPET="logging;vendor_hook"
+    extra_args: SNIPPET="ci;logging;vendor_hook"
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52840dongle_nrf52840
@@ -15,7 +15,7 @@ tests:
     tags: ci_build
   sample.openthread.coprocessor.usb:
     build_only: true
-    extra_args: SNIPPET=usb
+    extra_args: SNIPPET="ci;usb"
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
@@ -25,7 +25,7 @@ tests:
     tags: ci_build
   sample.openthread.coprocessor.hci:
     build_only: true
-    extra_args: SNIPPET="hci"
+    extra_args: SNIPPET="ci;hci"
     integration_platforms:
       - nrf52840dk_nrf52840
     platform_allow: nrf52840dk_nrf52840

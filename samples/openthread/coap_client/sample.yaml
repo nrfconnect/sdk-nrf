@@ -4,6 +4,7 @@ sample:
 tests:
   sample.openthread.coap_client:
     build_only: true
+    extra_args: SNIPPET=ci
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
@@ -14,7 +15,7 @@ tests:
     tags: ci_build
   sample.openthread.coap_client.mtd.multiprotocol_ble:
     build_only: true
-    extra_args: SNIPPET="mtd;multiprotocol_ble"
+    extra_args: SNIPPET="ci;mtd;multiprotocol_ble"
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns

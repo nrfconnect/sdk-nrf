@@ -4,6 +4,7 @@ sample:
 tests:
   sample.openthread.coap_server:
     build_only: true
+    extra_args: SNIPPET=ci
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
