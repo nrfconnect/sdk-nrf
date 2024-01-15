@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys_clock.h>
+#include <zephyr/sys/ring_buffer.h>
 #include <date_time.h>
 #include <nrf_modem_gnss.h>
 
@@ -30,6 +31,7 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event);
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_gnss.h"
+#include "slm_uart_handler.h"
 
 LOG_MODULE_REGISTER(slm_gnss, CONFIG_SLM_LOG_LEVEL);
 
@@ -90,6 +92,10 @@ static uint16_t gnss_cloud_assistance;
  * this is to remember that A/P-GPS data was requested if cloud assistance gets enabled.
  */
 static bool gnss_gps_req_to_send;
+
+/* Handling for NMEA messages received in ISR.*/
+RING_BUF_DECLARE(nmea_rb, 1024);
+static struct k_work gnss_nmea_notifier;
 
 static bool is_gnss_activated(void)
 {
@@ -235,8 +241,7 @@ static int gnss_startup(void)
 #endif /* CONFIG_SLM_NRF_CLOUD */
 
 
-#if defined(CONFIG_SLM_LOG_LEVEL_DBG)
-	/* Subscribe to NMEA messages for debugging fix acquisition. */
+	/* Subscribe to NMEA messages for information about fix acquisition. */
 	nrf_modem_gnss_qzss_nmea_mode_set(NRF_MODEM_GNSS_QZSS_NMEA_MODE_CUSTOM);
 	ret = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_GGA_MASK |
 						NRF_MODEM_GNSS_NMEA_GLL_MASK |
@@ -247,7 +252,6 @@ static int gnss_startup(void)
 		LOG_ERR("Failed to set NMEA mask (%d).", ret);
 		return ret;
 	}
-#endif
 
 	ret = nrf_modem_gnss_start();
 	if (ret) {
@@ -401,16 +405,67 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 
 #endif /* CONFIG_SLM_NRF_CLOUD */
 
-#if defined(CONFIG_SLM_LOG_LEVEL_DBG)
-static void on_gnss_evt_nmea(void)
+static void gnss_nmea_notifier_wk(struct k_work *work)
 {
-	struct nrf_modem_gnss_nmea_data_frame nmea;
+	ARG_UNUSED(work);
 
-	if (nrf_modem_gnss_read((void *)&nmea, sizeof(nmea), NRF_MODEM_GNSS_DATA_NMEA) == 0) {
-		LOG_DBG("%s", nmea.nmea_str);
-	}
+	int ret;
+	uint8_t *data = NULL;
+	uint32_t len;
+
+	do {
+		len = ring_buf_get_claim(&nmea_rb, &data, ring_buf_capacity_get(&nmea_rb));
+		if (len) {
+			ret = slm_uart_tx_write(data, len, true, false);
+			if (ret) {
+				LOG_ERR("slm_uart_tx_write failed: %d", ret);
+				break;
+			}
+			ret = ring_buf_get_finish(&nmea_rb, len);
+			if (ret) {
+				LOG_ERR("ring_buf_get_finish failed: %d", ret);
+				break;
+			}
+		}
+
+	} while (len);
 }
 
+/* Utilizing ring buffer in ISR as there is only one writer. */
+static void write_nmea_buf(const uint8_t *buf, size_t len)
+{
+	size_t ret;
+	size_t index = 0;
+
+	while (index < len) {
+		ret = ring_buf_put(&nmea_rb, buf + index, len - index);
+		if (ret) {
+			index += ret;
+		} else {
+			LOG_ERR("NMEA buffer overflow. Dropped: %d", len - index);
+			break;
+		}
+	}
+
+	k_work_submit_to_queue(&slm_work_q, &gnss_nmea_notifier);
+}
+
+static void on_gnss_evt_nmea(void)
+{
+	int ret = 0;
+	struct nrf_modem_gnss_nmea_data_frame nmea;
+
+	ret = nrf_modem_gnss_read((void *)&nmea, sizeof(nmea), NRF_MODEM_GNSS_DATA_NMEA);
+	if (ret) {
+		LOG_ERR("Failed nrf_modem_gnss_read: %d", ret);
+		return;
+	}
+
+	write_nmea_buf("\r\n", sizeof("\r\n"));
+	write_nmea_buf(nmea.nmea_str, strlen(nmea.nmea_str));
+}
+
+#if defined(CONFIG_SLM_LOG_LEVEL_DBG)
 static void on_gnss_evt_pvt(void)
 {
 	struct nrf_modem_gnss_pvt_data_frame pvt;
@@ -563,10 +618,10 @@ static void gnss_event_handler(int event)
 	case NRF_MODEM_GNSS_EVT_PVT:
 		on_gnss_evt_pvt();
 		break;
+#endif
 	case NRF_MODEM_GNSS_EVT_NMEA:
 		on_gnss_evt_nmea();
 		break;
-#endif
 	case NRF_MODEM_GNSS_EVT_FIX:
 		LOG_INF("GNSS_EVT_FIX");
 		on_gnss_evt_fix();
@@ -780,6 +835,8 @@ int slm_at_gnss_init(void)
 #endif
 #endif /* CONFIG_SLM_NRF_CLOUD */
 	k_work_init(&fix_rep, fix_rep_wk);
+
+	k_work_init(&gnss_nmea_notifier, gnss_nmea_notifier_wk);
 
 	return err;
 }
