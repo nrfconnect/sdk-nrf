@@ -11,7 +11,7 @@ Follow the steps in `How to create devicetree files`_ and use one of the followi
 * `Devicetree language support`_
 
 The following guides provide information about configuring specific aspects of hardware support related to devicetree.
-Read them together with Zephyr's :ref:`zephyr:hardware_support` and :ref:`zephyr:dt-guide` guides.
+Read them together with Zephyr's :ref:`zephyr:hardware_support` and :ref:`zephyr:dt-guide` guides, and the official `Devicetree Specification`_.
 
 .. toctree::
    :maxdepth: 1

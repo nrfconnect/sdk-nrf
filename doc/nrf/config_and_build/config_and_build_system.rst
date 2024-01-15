@@ -38,7 +38,8 @@ The build and configuration system in Zephyr and the |NCS| uses the following bu
      - :file:`Kconfig`, :file:`prj.conf`, :file:`.config`
      - Software configuration system also used in the Linux kernel.
      - `Kconfig GUI <Configuring with nRF Kconfig_>`_, :ref:`menuconfig and guiconfig <zephyr:menuconfig>`
-     - Kconfig GUI is part of the |nRFVSC|.
+     - | Kconfig GUI is part of the |nRFVSC|.
+       | The :ref:`Kconfig Reference <configuration_options>` provides the documentation for each configuration option.
    * - :ref:`partition_manager`
      - :file:`pm.yml`, :file:`pm_static.yml`
      - Memory layout configuration system.
@@ -49,10 +50,15 @@ Each of these systems comes with a specialized syntax and purpose.
 See the following sections for more information.
 To read more about Zephyr's configuration system and its role in the application development, see :ref:`zephyr:build_overview` and :ref:`zephyr:application` in the Zephyr documentation.
 
-When you :ref:`create_application`, the configuration files for each of these systems are created in the :ref:`application directory <create_application_structure>`: :file:`CMakeLists.txt` for CMake, :file:`app.overlay` for Devicetree, :file:`prj.conf` for Kconfig, and :file:`partitions.yml` for Partition Manager (if enabled).
-You can then edit them according to your needs (see :ref:`modifying`).
+When you :ref:`create_application`, the configuration files for each of these systems are created in the :ref:`application directory <create_application_structure>`: :file:`CMakeLists.txt` for CMake, :file:`app.overlay` for devicetree, :file:`prj.conf` for Kconfig, and :file:`partitions.yml` for Partition Manager (if enabled).
+You can then edit them according to your needs (see :ref:`building`).
 
 When you start building, a CMake build is executed in two stages: configuration phase and building phase.
+
+.. figure:: ../images/ncs-toolchain.svg
+   :alt: nRF Connect SDK tools and configuration
+
+   |NCS| tools and configuration methods
 
 .. _configuration_system_overview_config:
 
@@ -114,6 +120,7 @@ The :file:`.config` file in the :file:`<build_dir>/zephyr/` directory describes 
 Some subsystems can use their own configuration files.
 
 For more information, see :ref:`configure_application` and Zephyr's :ref:`zephyr:application-kconfig`.
+The :ref:`Kconfig Reference <configuration_options>` provides the documentation for each configuration option in the |NCS|.
 
 Memory layout configuration
 ---------------------------
@@ -149,8 +156,9 @@ Building phase
 ==============
 
 During this phase, the final build scripts are executed.
-The build phase begins when the user invokes ``make`` or ``ninja``.
-You can customize this stage by :ref:`cmake_options`.
+The build phase begins when the user invokes ``make`` or `ninja <Ninja documentation_>`_.
+The compiler (for example, `GCC compiler`_) then creates object files used to create the final executables.
+You can customize this stage by :ref:`cmake_options` and using :ref:`compiler_settings`.
 
 The result of this process is a complete application in a format suitable for flashing on the desired target board.
 See :ref:`output build files <app_build_output_files>` for details.

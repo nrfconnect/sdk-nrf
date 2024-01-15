@@ -17,4 +17,4 @@ If you want to flash only one core, you have to add the ``--domain`` argument:
    west flash --domain hello_world
 
 To build the sample with |VSC|, follow the steps listed on the `How to build an application`_ page in the |nRFVSC| documentation.
-See :ref:`programming` for other building and programming scenarios and :ref:`testing` for general information about testing and debugging in the |NCS|.
+See :ref:`building` for other building scenarios, :ref:`programming` for programming steps, and :ref:`testing` for general information about testing and debugging in the |NCS|.

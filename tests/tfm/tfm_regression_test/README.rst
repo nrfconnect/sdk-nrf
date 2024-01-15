@@ -40,11 +40,13 @@ Tests for both the secure and non-secure area are enabled by default, but can be
 Building and running
 ********************
 
-Do not flash with ``--erase``, ``--recover``, or similar, as this will erase the PSA platform security parameters.
-
 .. |test path| replace:: :file:`tests/tfm/tfm_regression_test/`
 
 .. include:: /includes/build_and_run_test.txt
+
+.. note::
+    For programming, use the :ref:`programming command without --erase <programming_params_no_erase>`.
+    Programming with ``--erase`` or ``--recover`` (or similar parameters) will erase the PSA platform security parameters.
 
 Output
 ======

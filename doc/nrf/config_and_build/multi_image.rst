@@ -341,6 +341,10 @@ The listing below describes how to leverage this functionality, where ``ACI_NAME
     :start-at: It is possible for a sample to use a custom set of Kconfig fragments for a
     :end-before: set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
 
+When you are :ref:`modifying_build_types` and the build type has been inferred, the child image Kconfig overlay file is searched at :file:`child_image/<ACI_NAME>_<buildtype>.conf`.
+Alternatively, the child image Kconfig configuration file can be introduced as :file:`child_image/<ACI_NAME>/prj.conf` and follow the same pattern as the parent Kconfig.
+For example, :file:`child_image/mcuboot/prj_release.conf` can be used to define ``release`` build type for ``mcuboot`` child image.
+
 Child image targets
 ===================
 

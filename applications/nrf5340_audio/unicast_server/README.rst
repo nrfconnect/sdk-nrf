@@ -63,7 +63,7 @@ Configuration
 
 See :ref:`nrf53_audio_app_configuration` and :ref:`nrf53_audio_app_fota` for configuration options common to all nRF5340 Audio applications.
 
-For information about how to configure applications in the |NCS|, see :ref:`modifying`.
+For information about how to configure applications in the |NCS|, see :ref:`configure_application`.
 
 .. _nrf53_audio_unicast_server_app_building:
 

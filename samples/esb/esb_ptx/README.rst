@@ -48,7 +48,7 @@ Building and running
 
 The Transmitter sample can be found under :file:`samples/esb/esb_ptx` in the |NCS| folder structure.
 
-See :ref:`programming` for information about how to build and program the application.
+See :ref:`building` and :ref:`programming` for information about how to build and program the application, respectively.
 
 FEM support
 ===========

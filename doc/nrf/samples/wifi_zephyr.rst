@@ -47,7 +47,7 @@ Building and running
 ********************
 
 To build the sample with |VSC|, follow the steps listed on the `How to build an application`_ page in the |nRFVSC| documentation.
-See :ref:`programming` for other building and programming scenarios and :ref:`testing` for general information about testing and debugging in the |NCS|.
+See :ref:`building` for other building scenarios, :ref:`programming` for programming steps, and :ref:`testing` for general information about testing and debugging in the |NCS|.
 
 An overlay file, ``overlay-nrf700x.conf`` is provided to all Zephyr samples, which configures the sample to run with the Wi-Fi driver.
 

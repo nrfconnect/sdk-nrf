@@ -46,11 +46,13 @@ The following Kconfig options can be used to choose a test suite:
 Building and running
 ********************
 
-Do not flash with ``--erase``, ``--recover``, or similar, as this will erase the PSA platform security parameters.
-
 .. |test path| replace:: :file:`tests/tfm/tfm_psa_test/`
 
 .. include:: /includes/build_and_run_test.txt
+
+.. note::
+    For programming, use the :ref:`programming command without --erase <programming_params_no_erase>`.
+    Programming with ``--erase`` or ``--recover`` (or similar parameters) will erase the PSA platform security parameters.
 
 You can indicate the desired test suite by using a configuration flag when building (replace ``<build_target>`` with your board name, for example ``nrf5340dk_nrf5340_cpuapp_ns``):
 

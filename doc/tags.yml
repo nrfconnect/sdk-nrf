@@ -40,10 +40,9 @@ mapping_topics:
                                   "npm1100", "npm1300", "npm6001"]
   - nrf/config_and_build/configuring_app/*.html: ["applications", "samples", "development-kits",
                                                   "evaluation-kits", "prototyping-platforms",
-                                                  "nrf-connect-vsc"]
+                                                  "kconfig", "nrf-connect-vsc"]
   - nrf/config_and_build/programming.html: ["applications", "samples", "development-kits",
                                             "evaluation-kits", "prototyping-platforms"]
-  - nrf/config_and_build/modifying.html: ["applications", "samples", "kconfig", "nrf-connect-vsc"]
   - nrf/config_and_build/multi_image.html: ["applications", "samples", "kconfig"]
   - nrf/config_and_build/bootloaders_and_dfu/*.html: ["applications"]
   - nrf/config_and_build/bootloaders_and_dfu/bootloader_adding.html: ["kconfig"]

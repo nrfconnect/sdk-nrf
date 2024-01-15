@@ -517,9 +517,7 @@ See the following instructions.
 
    .. group-tab:: west
 
-      Enter the following command to recover both cores::
-
-        west flash --recover
+      Use the ``--recover`` parameter with ``west flash``, as described in :ref:`programming_params`.
 
    .. group-tab:: nrfjprog
 

@@ -20,6 +20,7 @@ Board controller
 
 The nRF9160 DK contains an nRF52840 SoC that is used to route some of the nRF9160 SiP pins to different components on the DK, such as LEDs and buttons, and to specific pins of the nRF52840 SoC itself.
 For a complete list of all the routing options available, see the `nRF9160 DK board control section in the nRF9160 DK User Guide`_.
+Make sure to select the correct controller before you program the application to your development kit.
 
 The nRF52840 SoC on the DK comes preprogrammed with a firmware.
 If you need to restore the original firmware at some point, download the nRF9160 DK board controller firmware from the `nRF9160 DK downloads`_ page.
@@ -230,7 +231,7 @@ Modem firmware
 
 .. tip::
    For a more compact nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
-   See :ref:`gs_programming` for details on building a firmware sample application.
+   See :ref:`building` for details on building a firmware sample application.
 
 The :file:`CONTENTS.txt` file in the extracted folder contains the location and names of the different firmware images.
 
@@ -358,7 +359,7 @@ Building and programming
 You can program applications and samples on the nRF9160 DK after obtaining the corresponding firmware images.
 
 .. note::
-   When you update the application firmware on an nRF9160 DK, make sure the modem firmware and application firmware are compatible versions.
+   When you update the application firmware on an nRF9160 DK, make sure that the modem firmware and application firmware are compatible versions.
 
 To program applications using the Programmer app from `nRF Connect for Desktop`_, follow the instructions in :ref:`nrf9160_updating_fw_application`.
 
@@ -507,7 +508,7 @@ Enable the following Kconfig options by setting it to ``y`` in your project conf
 * :kconfig:option:`CONFIG_SPI_NOR_SFDP_DEVICETREE`
 * :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK`
 
-To automatically include the devicetree overlay with the external flash, specify the board revision parameter when :ref:`gs_programming`.
+To automatically include the devicetree overlay with the external flash, specify the board revision parameter when :ref:`building`.
 The board revision is printed on the label of your DK, just below the PCA number.
 
 Then add the following relevant devicetree blocks to the application`s devicetree overlay file, depending on your application`s needs:
