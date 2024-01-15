@@ -26,7 +26,7 @@
 .. _`Customizing the bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader_config.html
 .. _`Firmware updates`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_fw_update.html
 .. _`Multi-image builds`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_multi_image.html
-.. _`MCUboot output build files`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/app_build_system.html#mcuboot-output-build-files
+.. _`MCUboot output build files`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/output_build_files.html#mcuboot-output-build-files
 
 .. ### Source: other
 
