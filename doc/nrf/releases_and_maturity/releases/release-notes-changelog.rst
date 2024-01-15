@@ -56,6 +56,11 @@ Working with nRF91 Series
 * Added new partition layout configuration options for Thingy:91.
   See :ref:`thingy91_partition_layout` for more details.
 
+Working with nRF70 Series
+=========================
+
+* Added a new page :ref:`nRF70_soft_ap_mode` about `Software-enabled Access Point (SAP)` mode.
+
 Working with nRF52 Series
 =========================
 
