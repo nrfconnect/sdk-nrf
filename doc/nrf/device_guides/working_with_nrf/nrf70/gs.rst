@@ -229,12 +229,12 @@ SPU configuration must be applied before jumping to the application in NSPE.
 Building application without CMSE
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Build the |NCS| application as described in :ref:`gs_programming`, using the ``nrf7002dk_nrf5340_cpuapp`` build target for the firmware running on the nRF5340 application core and the ``nrf7002dk_nrf5340_cpunet`` build target for the firmware running on the nRF5340 network core.
+Build the |NCS| application as described in :ref:`building`, using the ``nrf7002dk_nrf5340_cpuapp`` build target for the firmware running on the nRF5340 application core and the ``nrf7002dk_nrf5340_cpunet`` build target for the firmware running on the nRF5340 network core.
 
 Programming the firmware to the DK
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Follow the instructions in the :ref:`gs_programming` page to build and flash applications.
+Follow the instructions in the :ref:`building` page to build and the :ref:`programming` page to program applications.
 
 .. note::
    To flash and debug applications on the nRF7002 DK, you must use the `nRF Command Line Tools`_ version 10.12.0 or above.

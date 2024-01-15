@@ -202,15 +202,20 @@
 .. _`How to build an application`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/build_app_ncs.html
 .. _`Migrating IDE`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#open-an-existing-application
 .. _`How to change SDK and toolchain versions`: https://nrfconnect.github.io/vscode-nrf-connect/guides/extension_migrate_sdk.html
+.. _`How to flash an application`:
 .. _`How to debug an application`:
 .. _`How to connect to the terminal`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/quick_debug.html
 .. _`Debugging overview`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_concepts.html
 .. _`How to debug`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_use.html
 .. _`How to debug applications for a multi-core System on Chip`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_use.html#how-to-debug-applications-for-a-multi-core-system-on-chip
+.. _`source control with west`: https://nrfconnect.github.io/vscode-nrf-connect/guides/west_about.html
 .. _`west module management`: https://nrfconnect.github.io/vscode-nrf-connect/guides/west_module_management.html
 .. _`Custom launch and debug configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_advanced.html#custom-launch-and-debug-configurations
+.. _`Binding custom tasks to actions`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_bind_tasks.html
 .. _`Application-specific flash options`: https://nrfconnect.github.io/vscode-nrf-connect/guides/bd_work_with_boards.html#how-to-flash-boards
+.. _`CMake build system`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_overview.html#cmake-build-system
 .. _`How to work with build configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_config.html
+.. _`Details View`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_details.html
 .. _`Memory report`: https://nrfconnect.github.io/vscode-nrf-connect/guides/memory_overview.html
 .. _`Kconfig action in the Actions View`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_actions.html
 .. _`Create a new application`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#create-a-new-application
@@ -981,6 +986,7 @@
 .. ### Source: cmake.org
 
 .. _`CMake documentation`: https://cmake.org/cmake/help/latest/
+.. _`CMake Tutorial`: https://cmake.org/cmake/help/latest/guide/tutorial/index.html#guide:CMake%20Tutorial
 .. _`VERBOSE`: https://cmake.org/cmake/help/latest/envvar/VERBOSE.html
 .. _`CMAKE_BUILD_PARALLEL_LEVEL`: https://cmake.org/cmake/help/latest/envvar/CMAKE_BUILD_PARALLEL_LEVEL.html
 .. _`CMAKE_BUILD_TYPE`: https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
@@ -1381,6 +1387,8 @@
 .. _`Community Best Practice for Copyright Notice`: https://www.linuxfoundation.org/blog/copyright-notices-in-open-source-software-projects/
 
 .. _`HTTPie`: https://httpie.io/
+
+.. _`Devicetree Specification`: https://www.devicetree.org/
 
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 

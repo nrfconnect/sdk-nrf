@@ -167,7 +167,7 @@ Building and running
 ********************
 
 This application can be found under :file:`applications/asset_tracker_v2` in the |NCS| folder structure.
-See :ref:`programming` for information about how to build and program the application.
+See :ref:`building` for information about how to build the application and :ref:`programming` for information about how to program it.
 
 Testing
 =======

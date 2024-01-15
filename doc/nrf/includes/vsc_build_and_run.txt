@@ -1,5 +1,2 @@
-1. Open |VSC|.
-
-   If you installed the |NCS| using the :ref:`auto_installation` steps, you can click the :guilabel:`Open VS Code` button next to the version you installed.
-
+1. Open the |nRFVSC|.
 #. Complete the steps listed on the `How to build an application`_ page in the |nRFVSC| documentation.
