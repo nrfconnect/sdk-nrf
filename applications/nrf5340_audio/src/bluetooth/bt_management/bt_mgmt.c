@@ -249,10 +249,11 @@ static int bonding_clear_check(void)
 		ret = bt_mgmt_bonding_clear();
 		return ret;
 	}
+
 	return 0;
 }
 
-static int random_static_addr_cfg(void)
+static int ficr_static_addr_set(void)
 {
 	int ret;
 	static bt_addr_le_t addr;
@@ -284,6 +285,27 @@ static int random_static_addr_cfg(void)
 	 * FICR), then a random address is created
 	 */
 	LOG_WRN("Unable to read from FICR");
+
+	return 0;
+}
+
+/* This function generates a random address for bonding testing */
+static int random_static_addr_set(void)
+{
+	int ret;
+	static bt_addr_le_t addr;
+
+	ret = bt_addr_le_create_static(&addr);
+	if (ret < 0) {
+		LOG_ERR("Failed to create address %d", ret);
+		return ret;
+	}
+
+	ret = bt_id_create(&addr, NULL);
+	if (ret < 0) {
+		LOG_ERR("Failed to create ID %d", ret);
+		return ret;
+	}
 
 	return 0;
 }
@@ -369,7 +391,7 @@ int bt_mgmt_init(void)
 	int ret;
 
 	if (!IS_ENABLED(CONFIG_BT_PRIVACY)) {
-		ret = random_static_addr_cfg();
+		ret = ficr_static_addr_set();
 		if (ret) {
 			return ret;
 		}
@@ -386,6 +408,13 @@ int bt_mgmt_init(void)
 		return ret;
 	}
 
+	if (IS_ENABLED(CONFIG_TESTING_BLE_ADDRESS_RANDOM)) {
+		ret = random_static_addr_set();
+		if (ret) {
+			return ret;
+		}
+	}
+
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		ret = settings_load();
 		if (ret) {
@@ -395,6 +424,13 @@ int bt_mgmt_init(void)
 		ret = bonding_clear_check();
 		if (ret) {
 			return ret;
+		}
+
+		if (IS_ENABLED(CONFIG_TESTING_BLE_ADDRESS_RANDOM)) {
+			ret = bt_mgmt_bonding_clear();
+			if (ret) {
+				return ret;
+			}
 		}
 	}
 
@@ -415,6 +451,7 @@ int bt_mgmt_init(void)
 		bt_mgmt_dfu_start();
 	}
 #endif
+
 	ret = bt_mgmt_ctlr_cfg_init(IS_ENABLED(CONFIG_WDT_CTLR));
 	if (ret) {
 		return ret;
