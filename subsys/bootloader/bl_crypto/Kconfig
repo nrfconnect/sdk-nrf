@@ -7,6 +7,7 @@
 menuconfig SECURE_BOOT_CRYPTO
 	bool
 	prompt "Secure Boot Crypto"
+	depends on IS_SECURE_BOOTLOADER || MCUBOOT || ZTEST
 	select FW_INFO
 	select NRF_OBERON
 
