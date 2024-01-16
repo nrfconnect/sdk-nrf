@@ -30,13 +30,13 @@ LOG_MODULE_REGISTER(nrf_provisioning_codec, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define CDC_OPKT_SZ_PTR(ctx) (&(ctx)->opkt_sz)
 
 #define CDC_IFMT_DATA_PTR(ctx) ((struct cdc_in_fmt_data *)(ctx)->i_data)
-#define CDC_IFMT_CMD_I_GET(ctx, i) (&(CDC_IFMT_DATA_PTR(ctx))->cmds._commands__command[(i)])
+#define CDC_IFMT_CMD_I_GET(ctx, i) (&(CDC_IFMT_DATA_PTR(ctx))->cmds.commands_command_m[(i)])
 
 #define CDC_OFMT_DATA_PTR(ctx) ((struct cdc_out_fmt_data *)(ctx)->o_data)
 #define CDC_OFMT_RESPONSES_GET(ctx) (&CDC_OFMT_DATA_PTR(ctx)->rsps)
 
 #define CDC_OFMT_RESPONSE_CONSUME(ofd) \
-	(&((ofd)->rsps._responses__response[(ofd)->rsps._responses__response_count++]))
+	(&((ofd)->rsps.responses_response_m[(ofd)->rsps.responses_response_m_count++]))
 
 #define AT_RESP_MAX_SIZE 4096
 
@@ -105,7 +105,7 @@ int nrf_provisioning_codec_teardown(void)
 
 static int fmt_range_check(struct cdc_out_fmt_data *fd)
 {
-	if (fd->rsps._responses__response_count >= CONFIG_NRF_PROVISIONING_CBOR_RECORDS) {
+	if (fd->rsps.responses_response_m_count >= CONFIG_NRF_PROVISIONING_CBOR_RECORDS) {
 		LOG_ERR("CONFIG_NRF_PROVISIONING_CBOR_RECORDS too small");
 		return -ENOMEM;
 	}
@@ -123,8 +123,8 @@ static int put_finished_resp(struct command *cmd_req, struct cdc_out_fmt_data *o
 
 	struct response *rsp = CDC_OFMT_RESPONSE_CONSUME(out);
 
-	rsp->_response_union_choice = _response_union__finished_ack;
-	rsp->_response__correlation = cmd_req->_command__correlation;
+	rsp->response_union_choice = response_union_finished_ack_m_c;
+	rsp->response_correlation_m = cmd_req->command_correlation_m;
 
 	return 0;
 }
@@ -139,10 +139,10 @@ static int put_at_resp(struct command *cmd_req, struct cdc_out_fmt_data *out, co
 
 	struct response *rsp = CDC_OFMT_RESPONSE_CONSUME(out);
 
-	rsp->_response__correlation = cmd_req->_command__correlation;
-	rsp->_response_union_choice = _response_union__at_response;
-	rsp->_response_union__at_response._at_response_message.value = msg;
-	rsp->_response_union__at_response._at_response_message.len = strlen(msg);
+	rsp->response_correlation_m = cmd_req->command_correlation_m;
+	rsp->response_union_choice = response_union_at_response_m_c;
+	rsp->response_union_at_response_m.at_response_message.value = msg;
+	rsp->response_union_at_response_m.at_response_message.len = strlen(msg);
 
 	return 0;
 }
@@ -157,8 +157,8 @@ static int put_config_resp(struct command *cmd_req, struct cdc_out_fmt_data *out
 
 	struct response *rsp = CDC_OFMT_RESPONSE_CONSUME(out);
 
-	rsp->_response__correlation = cmd_req->_command__correlation;
-	rsp->_response_union_choice = _response_union__config_ack;
+	rsp->response_correlation_m = cmd_req->command_correlation_m;
+	rsp->response_union_choice = response_union_config_ack_m_c;
 
 	return 0;
 }
@@ -177,11 +177,11 @@ static int put_err_resp(struct command *cmd_req, struct cdc_out_fmt_data *out,
 
 	struct response *rsp = CDC_OFMT_RESPONSE_CONSUME(out);
 
-	rsp->_response__correlation = cmd_req->_command__correlation;
-	rsp->_response_union_choice = _response_union__error_response;
-	rsp->_response_union__error_response._error_response_cme_error = cme_error;
-	rsp->_response_union__error_response._error_response_message.value = msg;
-	rsp->_response_union__error_response._error_response_message.len = strlen(msg);
+	rsp->response_correlation_m = cmd_req->command_correlation_m;
+	rsp->response_union_choice = response_union_error_response_m_c;
+	rsp->response_union_error_response_m.error_response_cme_error = cme_error;
+	rsp->response_union_error_response_m.error_response_message.value = msg;
+	rsp->response_union_error_response_m.error_response_message.len = strlen(msg);
 
 	return 0;
 }
@@ -220,7 +220,7 @@ static int form_at_str(struct command *cmd_req, char *cmd, size_t cmd_sz)
 	slen += ret;
 
 	ret = charseq2cstr(cmd + slen,
-		&cmd_req->_command_union__at_command._at_command_set_command,
+		&cmd_req->command_union_at_command_m.at_command_set_command,
 		cmd_sz - slen);
 	if (ret < 0) {
 		goto out;
@@ -235,7 +235,7 @@ static int form_at_str(struct command *cmd_req, char *cmd, size_t cmd_sz)
 	slen += ret;
 
 	ret = charseq2cstr(cmd + strlen(cmd),
-		&cmd_req->_command_union__at_command._at_command_parameters,
+		&cmd_req->command_union_at_command_m.at_command_parameters,
 		cmd_sz - slen);
 	if (ret < 0) {
 		goto out;
@@ -254,10 +254,10 @@ int filter_cme_error(struct command *cmd, int cme_error)
 {
 	bool filtered = false;
 
-	struct at_command *at_cmd = &cmd->_command_union__at_command;
+	struct at_command *at_cmd = &cmd->command_union_at_command_m;
 
-	for (int i = 0;	i < at_cmd->_at_command_ignore_cme_errors_uint_count; i++) {
-		if (at_cmd->_at_command_ignore_cme_errors_uint[i] == cme_error) {
+	for (int i = 0;	i < at_cmd->at_command_ignore_cme_errors_uint_count; i++) {
+		if (at_cmd->at_command_ignore_cme_errors_uint[i] == cme_error) {
 			LOG_DBG("Filtered CME error %d", cme_error);
 			filtered = true;
 		}
@@ -348,7 +348,7 @@ out:
 
 static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 {
-	struct config *aconf = &cmd_req->_command_union__config;
+	struct config *aconf = &cmd_req->command_union_config_m;
 	int max_key_sz = 1;
 	int max_value_sz = 1;
 	struct properties_tstrtstr *pair;
@@ -360,11 +360,11 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 	size_t resp_sz = CONFIG_NRF_PROVISIONING_CODEC_RX_SZ_START;
 
 	/* Figure out the max key and value legths */
-	for (int i = 0; i < aconf->_properties_tstrtstr_count; i++) {
-		pair = &aconf->_properties_tstrtstr[i];
+	for (int i = 0; i < aconf->properties_tstrtstr_count; i++) {
+		pair = &aconf->properties_tstrtstr[i];
 
-		max_key_sz = MAX(max_key_sz, pair->_config_properties_tstrtstr_key.len + 1);
-		max_value_sz = MAX(max_value_sz, pair->_properties_tstrtstr.len + 1);
+		max_key_sz = MAX(max_key_sz, pair->config_properties_tstrtstr_key.len + 1);
+		max_value_sz = MAX(max_value_sz, pair->properties_tstrtstr.len + 1);
 	}
 
 	key = k_malloc(max_key_sz);
@@ -385,19 +385,19 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 		goto exit;
 	}
 
-	LOG_DBG("Storing %d key-value pair/s", aconf->_properties_tstrtstr_count);
+	LOG_DBG("Storing %d key-value pair/s", aconf->properties_tstrtstr_count);
 
-	for (int i = 0; i < aconf->_properties_tstrtstr_count; i++) {
-		pair = &aconf->_properties_tstrtstr[i];
+	for (int i = 0; i < aconf->properties_tstrtstr_count; i++) {
+		pair = &aconf->properties_tstrtstr[i];
 
-		ret = charseq2cstr(key, &pair->_config_properties_tstrtstr_key, max_key_sz);
+		ret = charseq2cstr(key, &pair->config_properties_tstrtstr_key, max_key_sz);
 		if (ret < 0) {
 			LOG_WRN("Unable to store key: %s; err: %d", key, ret);
 			snprintk(resp, resp_sz, "key [%d](0-indexed) too big", i);
 			goto exit;
 		}
 
-		ret = charseq2cstr(value, &pair->_properties_tstrtstr, max_value_sz);
+		ret = charseq2cstr(value, &pair->properties_tstrtstr, max_value_sz);
 		if (ret < 0) {
 			LOG_WRN("Unable to store value: %s; err: %d", value, ret);
 			snprintk(resp, resp_sz, "value [%d](0-indexed) too big", i);
@@ -485,21 +485,21 @@ int nrf_provisioning_codec_process_commands(void)
 
 	cmee_orig = nrf_provisioning_at_cmee_enable();
 
-	LOG_DBG("Received %d commands, size %d", ifd->cmds._commands__command_count,
+	LOG_DBG("Received %d commands, size %d", ifd->cmds.commands_command_m_count,
 		cctx->i_data_sz);
 
-	for (int i = 0; i < ifd->cmds._commands__command_count; i++) {
+	for (int i = 0; i < ifd->cmds.commands_command_m_count; i++) {
 
 		/* Stop immediately processing if any command has failed */
 		if (ofd->errors) {
 			goto stop_provisioning;
 		}
 
-		switch (CDC_IFMT_CMD_I_GET(cctx, i)->_command_union_choice) {
-		case _command_union__finished:
+		switch (CDC_IFMT_CMD_I_GET(cctx, i)->command_union_choice) {
+		case command_union_finished_m_c:
 			fpos = i; /* Defer writing FINISHED until we know if we have errors */
 			break;
-		case _command_union__at_command:
+		case command_union_at_command_m_c:
 			mret = mm.cb(LTE_LC_FUNC_MODE_OFFLINE, mm.user_data);
 			if (mret < 0) {
 				goto stop_provisioning;
@@ -510,7 +510,7 @@ int nrf_provisioning_codec_process_commands(void)
 				goto stop_provisioning;
 			}
 			break;
-		case _command_union__config:
+		case command_union_config_m_c:
 			ret = write_config(CDC_IFMT_CMD_I_GET(cctx, i), cctx->o_data);
 			if (ret < 0) {
 				goto stop_provisioning;
@@ -524,10 +524,10 @@ int nrf_provisioning_codec_process_commands(void)
 
 		/* Mark as the latest successful provisioning command */
 		memcpy(nrf_provisioning_latest_corr_id,
-			CDC_IFMT_CMD_I_GET(cctx, i)->_command__correlation.value,
-			CDC_IFMT_CMD_I_GET(cctx, i)->_command__correlation.len);
+			CDC_IFMT_CMD_I_GET(cctx, i)->command_correlation_m.value,
+			CDC_IFMT_CMD_I_GET(cctx, i)->command_correlation_m.len);
 		nrf_provisioning_latest_corr_id[
-			CDC_IFMT_CMD_I_GET(cctx, i)->_command__correlation.len] = '\0';
+			CDC_IFMT_CMD_I_GET(cctx, i)->command_correlation_m.len] = '\0';
 	}
 
 stop_provisioning:
