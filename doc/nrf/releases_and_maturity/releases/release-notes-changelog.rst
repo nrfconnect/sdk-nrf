@@ -910,6 +910,8 @@ Libraries for networking
 
       This parameter determines whether CoAP CON or NON messages are used.
 
+    * Regenerated cbor code with zcbor 0.8.1 and adapted to API changes in zcbor 0.8.x.
+
 * :ref:`lib_nrf_cloud_log` library:
 
   * Added:
