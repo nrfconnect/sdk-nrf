@@ -59,14 +59,16 @@ else()
    COMMAND ${CLANG_FORMAT} -i "${decode_c};${decode_h};${types_h}")
 endif()
 
+string(TIMESTAMP NOW_YEAR "%Y")
+
 add_custom_command(
   OUTPUT ${decode_c} ${decode_h} ${types_h}
   COMMAND
   ${PYTHON_EXECUTABLE}
   ${ZEPHYR_ZCBOR_MODULE_DIR}/zcbor/zcbor.py
+  code
   -c ${cddl_file}
   --default-max-qty 128 # TNSW-33521
-  code
   --oc ${decode_c}
   --oh ${decode_h}
   --oht ${types_h}

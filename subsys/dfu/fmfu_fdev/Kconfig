@@ -9,12 +9,14 @@ menuconfig FMFU_FDEV
 	depends on ZCBOR
 	depends on NRF_MODEM_LIB
 	depends on MBEDTLS_SHA256_C
+	depends on ZCBOR_CANONICAL
 
 
 if (FMFU_FDEV)
 
 config FMFU_CDDL_DECODER_GENERATE
 	bool
+	default y
 	help
 	  Nordic internal, see cddl/CMakeLists.txt
 
