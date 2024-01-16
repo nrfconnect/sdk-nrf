@@ -151,6 +151,8 @@ The following list summarizes the most important changes inherited from the upst
    * Renamed the ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
    * Renamed the ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
 
+   * zcbor 0.7.0 to 0.8.1.
+
 Thread
 ------
 
@@ -1095,7 +1097,15 @@ Additions specific to |NCS|
 zcbor
 =====
 
-|no_changes_yet_note|
+zcbor has been updated from 0.7.0 to 0.8.1.
+For more information see the `zcbor 0.8.0 release notes`_ and the `zcbor 0.8.1 release notes`_.
+
+* Added:
+
+  * Support for unordered maps.
+  * Performance improvements.
+  * Naming improvements for generated code.
+  * Bugfixes.
 
 Trusted Firmware-M
 ==================
