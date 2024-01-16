@@ -98,6 +98,9 @@ Bluetooth Mesh
 Matter
 ------
 
+* For devices that use Matter over Thread, the default cryptography backend is now Arm PSA Crypto API instead of Mbed TLS, which was used in earlier versions.
+  You can still build all examples with deprecated Mbed TLS support by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``, but you must build the Thread libraries from sources.
+  To :ref:`inherit Thread certification <ug_matter_device_certification_reqs_dependent>` from Nordic Semiconductor, you must use the PSA Crypto API backend.
 * Updated the page about :ref:`ug_matter_device_low_power_configuration` with the information about Intermittently Connected Devices (ICD) configuration.
 
 * Added:
@@ -115,6 +118,14 @@ Matter
     By default, the thermostat sample generates simulated temperature measurements.
     The generated measurements simulate local temperature changes.
     Additionally, you can enable periodic outdoor temperature measurements by binding the thermostat with an external temperature sensor device.
+
+  * Migration of the Node Operational Key Pair (NOK) from the generic Matter persistent storage to the PSA ITS secure storage.
+    All existing NOKs for all Matter fabrics will be migrated to the PSA ITS secure storage at boot.
+    After the migration, generic Matter persistent storage entries in the settings storage will be removed and no longer available.
+    To enable operational keys migration, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS` Kconfig option to ``y``.
+
+    In |NCS| Matter samples, the default reaction to migration failure is a factory reset of the device.
+    To change the default reaction, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE` Kconfig option to ``n``.
 
 Matter fork
 +++++++++++

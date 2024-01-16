@@ -63,6 +63,10 @@ if(CONFIG_MCUMGR_TRANSPORT_BT)
     target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu/smp/dfu_over_smp.cpp)
 endif()
 
+if(CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS)
+    target_sources(app PRIVATE ${COMMON_ROOT}/src/migration/migration_manager.cpp)
+endif()
+
 chip_configure_data_model(app
     INCLUDE_SERVER
     BYPASS_IDL

@@ -33,11 +33,21 @@ The following changes are mandatory to make your application work in the same wa
       * The ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
       * The ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
 
-* For Matter over Thread samples, starting from this release, the cryptography backend enabled by default is PSA Crypto API instead of mbedTLS.
+* For Matter over Thread samples, starting from this release, the cryptography backend enabled by default is PSA Crypto API instead of Mbed TLS.
   Be aware of the change and consider the following when migrating to |NCS| v2.6.0:
 
-  * You can keep using mbedTLS API as the cryptography backend by disabling PSA Crypto API.
+  * You can keep using Mbed TLS API as the cryptography backend by disabling PSA Crypto API.
     You can disable it by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``.
+  * Thread libraries will be built with PSA Crypto API enabled without Mbed TLS support.
+    This means that if you set the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``, you must also build the Thread libraries from sources.
+
+    To :ref:`inherit Thread certification <ug_matter_device_certification_reqs_dependent>` from Nordic Semiconductor, you must use the PSA Crypto API backend.
+  * The device can automatically migrate all operational keys from the Matter's generic persistent storage to the PSA ITS secure storage.
+    This means that all keys needed to establish the secure connection between Matter nodes will be moved to the PSA ITS secure storage.
+    To enable operational keys migration, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS` Kconfig option to ``y``.
+
+    The default reaction to migration failure in |NCS| Matter samples is a factory reset of the device.
+    To change the default reaction, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE` Kconfig option to ``n`` and implement the reaction in your Matter event handler.
   * When the Device Attestation Certificate (DAC) private key exists in the factory data set, it can migrate to the PSA ITS secure storage.
 
     You can also have the DAC private key replaced by zeros in the factory data partition by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY` Kconfig option to ``y``.
