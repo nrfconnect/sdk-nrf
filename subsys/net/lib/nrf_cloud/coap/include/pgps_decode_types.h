@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Generated using zcbor version 0.7.0
+ * Generated using zcbor version 0.8.0
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 10
  */
@@ -29,8 +29,8 @@ extern "C" {
 #define DEFAULT_MAX_QTY 10
 
 struct pgps_resp {
-	struct zcbor_string _pgps_resp_host;
-	struct zcbor_string _pgps_resp_path;
+	struct zcbor_string pgps_resp_host;
+	struct zcbor_string pgps_resp_path;
 };
 
 #ifdef __cplusplus

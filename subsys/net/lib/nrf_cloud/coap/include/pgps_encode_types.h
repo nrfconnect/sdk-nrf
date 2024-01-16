@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Generated using zcbor version 0.7.0
+ * Generated using zcbor version 0.8.0
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 10
  */
@@ -28,10 +28,10 @@ extern "C" {
 #define DEFAULT_MAX_QTY 10
 
 struct pgps_req {
-	uint32_t _pgps_req_predictionCount;
-	uint32_t _pgps_req_predictionIntervalMinutes;
-	uint32_t _pgps_req_startGPSDay;
-	uint32_t _pgps_req_startGPSTimeOfDaySeconds;
+	uint32_t pgps_req_predictionCount;
+	uint32_t pgps_req_predictionIntervalMinutes;
+	uint32_t pgps_req_startGPSDay;
+	uint32_t pgps_req_startGPSTimeOfDaySeconds;
 };
 
 #ifdef __cplusplus

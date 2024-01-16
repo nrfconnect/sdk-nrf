@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Generated using zcbor version 0.7.0
+ * Generated using zcbor version 0.8.0
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 10
  */
@@ -29,17 +29,17 @@ extern "C" {
 #define DEFAULT_MAX_QTY 10
 
 struct ground_fix_resp {
-	double _ground_fix_resp_lat;
-	double _ground_fix_resp_lon;
+	double ground_fix_resp_lat;
+	double ground_fix_resp_lon;
 	union {
-		int32_t _ground_fix_resp_uncertainty_int;
-		double _ground_fix_resp_uncertainty_float;
+		int32_t ground_fix_resp_uncertainty_int;
+		double ground_fix_resp_uncertainty_float;
 	};
 	enum {
-		_ground_fix_resp_uncertainty_int,
-		_ground_fix_resp_uncertainty_float,
-	} _ground_fix_resp_uncertainty_choice;
-	struct zcbor_string _ground_fix_resp_fulfilledWith;
+		ground_fix_resp_uncertainty_int_c,
+		ground_fix_resp_uncertainty_float_c,
+	} ground_fix_resp_uncertainty_choice;
+	struct zcbor_string ground_fix_resp_fulfilledWith;
 };
 
 #ifdef __cplusplus

@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Generated using zcbor version 0.7.0
+ * Generated using zcbor version 0.8.0
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 10
  */
@@ -29,49 +29,49 @@ extern "C" {
 #define DEFAULT_MAX_QTY 10
 
 struct pvt_spd {
-	double _pvt_spd;
+	double pvt_spd;
 };
 
 struct pvt_hdg {
-	double _pvt_hdg;
+	double pvt_hdg;
 };
 
 struct pvt_alt {
-	double _pvt_alt;
+	double pvt_alt;
 };
 
 struct pvt {
-	double _pvt_lat;
-	double _pvt_lng;
-	double _pvt_acc;
-	struct pvt_spd _pvt_spd;
-	bool _pvt_spd_present;
-	struct pvt_hdg _pvt_hdg;
-	bool _pvt_hdg_present;
-	struct pvt_alt _pvt_alt;
-	bool _pvt_alt_present;
+	double pvt_lat;
+	double pvt_lng;
+	double pvt_acc;
+	struct pvt_spd pvt_spd;
+	bool pvt_spd_present;
+	struct pvt_hdg pvt_hdg;
+	bool pvt_hdg_present;
+	struct pvt_alt pvt_alt;
+	bool pvt_alt_present;
 };
 
 struct message_out_ts {
-	uint64_t _message_out_ts;
+	uint64_t message_out_ts;
 };
 
 struct message_out {
-	struct zcbor_string _message_out_appId;
+	struct zcbor_string message_out_appId;
 	union {
-		struct zcbor_string _message_out_data_tstr;
-		double _message_out_data_float;
-		int32_t _message_out_data_int;
-		struct pvt _message_out_data__pvt;
+		struct zcbor_string message_out_data_tstr;
+		double message_out_data_float;
+		int32_t message_out_data_int;
+		struct pvt message_out_data_pvt_m;
 	};
 	enum {
-		_message_out_data_tstr,
-		_message_out_data_float,
-		_message_out_data_int,
-		_message_out_data__pvt,
-	} _message_out_data_choice;
-	struct message_out_ts _message_out_ts;
-	bool _message_out_ts_present;
+		message_out_data_tstr_c,
+		message_out_data_float_c,
+		message_out_data_int_c,
+		message_out_data_pvt_m_c,
+	} message_out_data_choice;
+	struct message_out_ts message_out_ts;
+	bool message_out_ts_present;
 };
 
 #ifdef __cplusplus
