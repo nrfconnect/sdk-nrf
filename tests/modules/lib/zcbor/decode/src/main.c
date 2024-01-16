@@ -20,13 +20,13 @@ ZTEST(lib_zcbor_test1, test_decode)
 	int int_res;
 
 	/* Initialize struct to ensure test isn't checking uninitialized pointers */
-	test._Test_name_tstr[0] = (struct zcbor_string){NULL, 0};
-	test._Test_name_tstr[1] = (struct zcbor_string){NULL, 0};
+	test.Test_name_tstr[0] = (struct zcbor_string){NULL, 0};
+	test.Test_name_tstr[1] = (struct zcbor_string){NULL, 0};
 
 	res = zcbor_list_start_encode(states, 3);
 	res |= zcbor_list_start_encode(states, 2);
-	res |= zcbor_tstr_put_term(states, "Foo");
-	res |= zcbor_tstr_put_term(states, "Bar");
+	res |= zcbor_tstr_put_lit(states, "Foo");
+	res |= zcbor_tstr_put_lit(states, "Bar");
 	res |= zcbor_list_end_encode(states, 0);
 	res |= zcbor_bstr_put_arr(states, time);
 	res |= zcbor_int32_put(states, 2);
@@ -39,8 +39,8 @@ ZTEST(lib_zcbor_test1, test_decode)
 
 	zassert_equal(ZCBOR_SUCCESS, int_res, "Decoding should have been successful\n");
 
-	zassert_mem_equal(test._Test_name_tstr[0].value, "Foo", test._Test_name_tstr[0].len, NULL);
-	zassert_mem_equal(test._Test_name_tstr[1].value, "Bar", test._Test_name_tstr[1].len, NULL);
+	zassert_mem_equal(test.Test_name_tstr[0].value, "Foo", test.Test_name_tstr[0].len, NULL);
+	zassert_mem_equal(test.Test_name_tstr[1].value, "Bar", test.Test_name_tstr[1].len, NULL);
 }
 
 ZTEST_SUITE(lib_zcbor_test1, NULL, NULL, NULL, NULL, NULL);
