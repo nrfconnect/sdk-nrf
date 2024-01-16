@@ -938,9 +938,13 @@ Libraries for networking
 * :ref:`lib_nrf_provisioning` library:
 
   * Renamed nRF Device provisioning to :ref:`lib_nrf_provisioning`.
-  * Updated the device mode callback to send an event when the provisioning state changes.
-  * Fixed file descriptor handling by setting the :c:struct:`coap_client` structure's ``fd`` field to ``-1`` when closing the socket.
   * Added the :kconfig:option:`CONFIG_NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN` option to enable printing the attestation token when the device is not yet claimed.
+  * Updated:
+
+    * The device mode callback sends an event when the provisioning state changes.
+    * Regenerated cbor code with zcbor 0.8.1 and adapted to API changes in zcbor 0.8.x.
+
+  * Fixed file descriptor handling by setting the :c:struct:`coap_client` structure's ``fd`` field to ``-1`` when closing the socket.
 
 * :ref:`lib_nrf_cloud_fota` library:
 
