@@ -720,6 +720,7 @@ Modem libraries
   * Updated by renaming ``lte_connectivity`` module to ``lte_net_if``.
     All related Kconfig options have been renamed accordingly.
   * Changed the default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
+  * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM_RETRIES` Kconfig option to choose the number of times the modem fault handler will attempt to initialize the modem after a fault.
 
   * Fixed:
 

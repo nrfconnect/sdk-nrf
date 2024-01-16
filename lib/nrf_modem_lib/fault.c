@@ -13,6 +13,21 @@ LOG_MODULE_DECLARE(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
 #ifdef CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
 static K_SEM_DEFINE(fault_sem, 0, 1);
+/* Init fault counter. This is to prevent the application from looping modem initialization
+ * indefinitely if a fault occurs at every modem initialization.
+ */
+static int retry_counter;
+
+NRF_MODEM_LIB_ON_INIT(modem_fault_init_hook, on_modem_lib_init, NULL);
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	if (ret) {
+		return;
+	}
+
+	retry_counter = 0;
+}
 #endif
 
 #if CONFIG_NRF_MODEM_LIB_FAULT_STRERROR
@@ -69,6 +84,8 @@ void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault)
 #ifdef CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
 static void restart_on_fault(void *p1, void *p2, void *p3)
 {
+	int err;
+
 	while (true) {
 		k_sem_take(&fault_sem, K_FOREVER);
 		LOG_INF("Modem has crashed, re-initializing");
@@ -81,7 +98,20 @@ static void restart_on_fault(void *p1, void *p2, void *p3)
 		 */
 		k_yield();
 
-		(void)nrf_modem_lib_init();
+		if (retry_counter >= CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM_RETRIES) {
+			LOG_ERR("Fault reset limit (%d) reached. Modem will not be re-initialized",
+				CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM_RETRIES);
+			continue;
+		}
+
+		err = nrf_modem_lib_init();
+		if (err) {
+			retry_counter++;
+			if (err == -NRF_ETIMEDOUT || err == -NRF_EAGAIN) {
+				/* Retry the initialization. */
+				k_sem_give(&fault_sem);
+			}
+		}
 	}
 }
 

@@ -217,6 +217,17 @@ config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
 
 endchoice # NRF_MODEM_LIB_ON_FAULT
 
+if NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
+
+config NRF_MODEM_LIB_ON_FAULT_RESET_MODEM_RETRIES
+	int "Retry limit"
+	default 3
+	help
+	  The number of times the fault handler will attempt to initialize the modem if unsuccessful.
+	  The retry counter is cleared on a successful initialization.
+
+endif # NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
+
 config NRF_MODEM_LIB_FAULT_STRERROR
 	bool "Compile fault reason table"
 	help
