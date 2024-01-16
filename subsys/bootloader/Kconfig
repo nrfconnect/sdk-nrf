@@ -197,8 +197,8 @@ config PM_PARTITION_SIZE_B0_IMAGE
 
 menuconfig IS_SECURE_BOOTLOADER
 	bool "Current app is bootloader"
-	depends on SECURE_BOOT_VALIDATION
-	depends on SECURE_BOOT_STORAGE
+	select SECURE_BOOT_VALIDATION
+	select SECURE_BOOT_STORAGE
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
 	select NRFX_NVMC
 	help
