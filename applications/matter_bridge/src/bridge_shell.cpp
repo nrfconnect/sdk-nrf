@@ -202,7 +202,7 @@ static void BluetoothScanResult(Nrf::BLEConnectivityManager::ScannedDevice *devi
 static int InsertBridgedDevicePincodeHandler(const struct shell *shell, size_t argc, char **argv)
 {
 	int bleDeviceIndex = strtoul(argv[0], NULL, 0);
-	unsigned int pincode = strtoul(argv[1], NULL, 0);
+	unsigned int pincode = strtoul(argv[1], NULL, 10);
 
 	bt_addr_le_t address;
 	if (Nrf::BLEConnectivityManager::Instance().GetScannedDeviceAddress(&address, bleDeviceIndex) !=
