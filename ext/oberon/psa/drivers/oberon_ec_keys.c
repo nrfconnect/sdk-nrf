@@ -387,7 +387,7 @@ psa_status_t oberon_generate_ec_key(
     const psa_key_attributes_t *attributes,
     uint8_t *key, size_t key_size, size_t *key_length)
 {
-    int res;
+    int res = 0;
     psa_status_t status;
     size_t bits = psa_get_key_bits(attributes);
     psa_key_type_t type = psa_get_key_type(attributes);
