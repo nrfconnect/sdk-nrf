@@ -47,47 +47,47 @@ static int encode_message(struct nrf_cloud_obj_coap_cbor *msg, uint8_t *buf, siz
 		size_t out_len;
 
 		memset(&input, 0, sizeof(struct message_out));
-		input._message_out_appId.value = msg->app_id;
-		input._message_out_appId.len = strlen(msg->app_id);
+		input.message_out_appId.value = msg->app_id;
+		input.message_out_appId.len = strlen(msg->app_id);
 
 		switch (msg->type) {
 		case NRF_CLOUD_DATA_TYPE_NONE:
 			LOG_ERR("Cannot encode unknown type.");
 			return -EINVAL;
 		case NRF_CLOUD_DATA_TYPE_STR:
-			input._message_out_data_choice = _message_out_data_tstr;
-			input._message_out_data_tstr.value = msg->str_val;
-			input._message_out_data_tstr.len = strlen(msg->str_val);
+			input.message_out_data_choice = message_out_data_tstr_c;
+			input.message_out_data_tstr.value = msg->str_val;
+			input.message_out_data_tstr.len = strlen(msg->str_val);
 			break;
 		case NRF_CLOUD_DATA_TYPE_PVT:
-			input._message_out_data_choice = _message_out_data__pvt;
-			input._message_out_data__pvt._pvt_lat = msg->pvt->lat;
-			input._message_out_data__pvt._pvt_lng = msg->pvt->lon;
-			input._message_out_data__pvt._pvt_acc = msg->pvt->accuracy;
+			input.message_out_data_choice = message_out_data_pvt_m_c;
+			input.message_out_data_pvt_m.pvt_lat = msg->pvt->lat;
+			input.message_out_data_pvt_m.pvt_lng = msg->pvt->lon;
+			input.message_out_data_pvt_m.pvt_acc = msg->pvt->accuracy;
 			if (msg->pvt->has_speed) {
-				input._message_out_data__pvt._pvt_spd._pvt_spd = msg->pvt->speed;
-				input._message_out_data__pvt._pvt_spd_present = true;
+				input.message_out_data_pvt_m.pvt_spd.pvt_spd = msg->pvt->speed;
+				input.message_out_data_pvt_m.pvt_spd_present = true;
 			}
 			if (msg->pvt->has_heading) {
-				input._message_out_data__pvt._pvt_hdg._pvt_hdg = msg->pvt->heading;
-				input._message_out_data__pvt._pvt_hdg_present = true;
+				input.message_out_data_pvt_m.pvt_hdg.pvt_hdg = msg->pvt->heading;
+				input.message_out_data_pvt_m.pvt_hdg_present = true;
 			}
 			if (msg->pvt->has_alt) {
-				input._message_out_data__pvt._pvt_alt._pvt_alt = msg->pvt->alt;
-				input._message_out_data__pvt._pvt_alt_present = true;
+				input.message_out_data_pvt_m.pvt_alt.pvt_alt = msg->pvt->alt;
+				input.message_out_data_pvt_m.pvt_alt_present = true;
 			}
 			break;
 		case NRF_CLOUD_DATA_TYPE_INT:
-			input._message_out_data_choice = _message_out_data_int;
-			input._message_out_data_int = msg->int_val;
+			input.message_out_data_choice = message_out_data_int_c;
+			input.message_out_data_int = msg->int_val;
 			break;
 		case NRF_CLOUD_DATA_TYPE_DOUBLE:
-			input._message_out_data_choice = _message_out_data_float;
-			input._message_out_data_float = msg->double_val;
+			input.message_out_data_choice = message_out_data_float_c;
+			input.message_out_data_float = msg->double_val;
 			break;
 		}
-		input._message_out_ts._message_out_ts = msg->ts;
-		input._message_out_ts_present = true;
+		input.message_out_ts.message_out_ts = msg->ts;
+		input.message_out_ts_present = true;
 		err = cbor_encode_message_out(buf, *len, &input, &out_len);
 		if (err) {
 			LOG_ERR("Error %d encoding message", err);
@@ -167,48 +167,48 @@ int coap_codec_pvt_encode(const char *app_id, const struct nrf_cloud_gnss_pvt *p
 
 static void copy_cell(struct cell *dst, struct lte_lc_cell const *const src)
 {
-	dst->_cell_mcc = src->mcc;
-	dst->_cell_mnc = src->mnc;
-	dst->_cell_eci = src->id;
-	dst->_cell_tac = src->tac;
+	dst->cell_mcc = src->mcc;
+	dst->cell_mnc = src->mnc;
+	dst->cell_eci = src->id;
+	dst->cell_tac = src->tac;
 
-	dst->_cell_earfcn._cell_earfcn = src->earfcn;
-	dst->_cell_earfcn_present = (src->earfcn != NRF_CLOUD_LOCATION_CELL_OMIT_EARFCN);
+	dst->cell_earfcn.cell_earfcn = src->earfcn;
+	dst->cell_earfcn_present = (src->earfcn != NRF_CLOUD_LOCATION_CELL_OMIT_EARFCN);
 
-	dst->_cell_adv._cell_adv = MIN(src->timing_advance, NRF_CLOUD_LOCATION_CELL_TIME_ADV_MAX);
-	dst->_cell_adv_present = (src->timing_advance != NRF_CLOUD_LOCATION_CELL_OMIT_TIME_ADV);
+	dst->cell_adv.cell_adv = MIN(src->timing_advance, NRF_CLOUD_LOCATION_CELL_TIME_ADV_MAX);
+	dst->cell_adv_present = (src->timing_advance != NRF_CLOUD_LOCATION_CELL_OMIT_TIME_ADV);
 
-	dst->_cell_rsrp._cell_rsrp = RSRP_IDX_TO_DBM(src->rsrp);
-	dst->_cell_rsrp_present = (src->rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP);
+	dst->cell_rsrp.cell_rsrp = RSRP_IDX_TO_DBM(src->rsrp);
+	dst->cell_rsrp_present = (src->rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP);
 
-	dst->_cell_rsrq._cell_rsrq_float32 = RSRQ_IDX_TO_DB(src->rsrq);
-	dst->_cell_rsrq._cell_rsrq_choice = _cell_rsrq_float32;
-	dst->_cell_rsrq_present = (src->rsrq != NRF_CLOUD_LOCATION_CELL_OMIT_RSRQ);
+	dst->cell_rsrq.cell_rsrq_float32 = RSRQ_IDX_TO_DB(src->rsrq);
+	dst->cell_rsrq.cell_rsrq_choice = cell_rsrq_float32_c;
+	dst->cell_rsrq_present = (src->rsrq != NRF_CLOUD_LOCATION_CELL_OMIT_RSRQ);
 }
 
 static void copy_ncells(struct ncell *dst, int num, struct lte_lc_ncell *src)
 {
 	for (int i = 0; i < num; i++) {
-		dst->_ncell_earfcn = src->earfcn;
-		dst->_ncell_pci = src->phys_cell_id;
+		dst->ncell_earfcn = src->earfcn;
+		dst->ncell_pci = src->phys_cell_id;
 		if (src->rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP) {
-			dst->_ncell_rsrp._ncell_rsrp = RSRP_IDX_TO_DBM(src->rsrp);
-			dst->_ncell_rsrp_present = true;
+			dst->ncell_rsrp.ncell_rsrp = RSRP_IDX_TO_DBM(src->rsrp);
+			dst->ncell_rsrp_present = true;
 		} else {
-			dst->_ncell_rsrp_present = false;
+			dst->ncell_rsrp_present = false;
 		}
 		if (src->rsrq != NRF_CLOUD_LOCATION_CELL_OMIT_RSRQ) {
-			dst->_ncell_rsrq._ncell_rsrq_float32 = RSRQ_IDX_TO_DB(src->rsrq);
-			dst->_ncell_rsrq._ncell_rsrq_choice = _ncell_rsrq_float32;
-			dst->_ncell_rsrq_present = true;
+			dst->ncell_rsrq.ncell_rsrq_float32 = RSRQ_IDX_TO_DB(src->rsrq);
+			dst->ncell_rsrq.ncell_rsrq_choice = ncell_rsrq_float32_c;
+			dst->ncell_rsrq_present = true;
 		} else {
-			dst->_ncell_rsrq_present = false;
+			dst->ncell_rsrq_present = false;
 		}
 		if (src->time_diff != LTE_LC_CELL_TIME_DIFF_INVALID) {
-			dst->_ncell_timeDiff._ncell_timeDiff = src->time_diff;
-			dst->_ncell_timeDiff_present = true;
+			dst->ncell_timeDiff.ncell_timeDiff = src->time_diff;
+			dst->ncell_timeDiff_present = true;
 		} else {
-			dst->_ncell_timeDiff_present = false;
+			dst->ncell_timeDiff_present = false;
 		}
 		src++;
 		dst++;
@@ -222,10 +222,10 @@ static void copy_cell_info(struct lte_ar *lte_encode,
 		return;
 	}
 
-	const size_t max_cells = ARRAY_SIZE(lte_encode->_lte_ar__cell);
+	const size_t max_cells = ARRAY_SIZE(lte_encode->lte_ar_cell_m);
 	size_t cnt = 0;
 	size_t nmrs;
-	struct cell *enc_cell = lte_encode->_lte_ar__cell;
+	struct cell *enc_cell = lte_encode->lte_ar_cell_m;
 
 	if (cell_info->current_cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
 
@@ -233,16 +233,16 @@ static void copy_cell_info(struct lte_ar *lte_encode,
 		copy_cell(enc_cell, &cell_info->current_cell);
 
 		/* Copy neighbor cell(s) */
-		nmrs = MIN(ARRAY_SIZE(enc_cell->_cell_nmr._cell_nmr_ncells),
+		nmrs = MIN(ARRAY_SIZE(enc_cell->cell_nmr.cell_nmr_ncells),
 			   cell_info->ncells_count);
 		if (nmrs) {
-			copy_ncells(enc_cell->_cell_nmr._cell_nmr_ncells,
+			copy_ncells(enc_cell->cell_nmr.cell_nmr_ncells,
 				    nmrs,
 				    cell_info->neighbor_cells);
 		}
 
-		enc_cell->_cell_nmr._cell_nmr_ncells_count = nmrs;
-		enc_cell->_cell_nmr_present = (nmrs > 0);
+		enc_cell->cell_nmr.cell_nmr_ncells_count = nmrs;
+		enc_cell->cell_nmr_present = (nmrs > 0);
 
 		LOG_DBG("Copied serving cell and %zd neighbor cells", nmrs);
 
@@ -261,34 +261,34 @@ static void copy_cell_info(struct lte_ar *lte_encode,
 		LOG_DBG("Copied %u GCI cells", cell_info->gci_cells_count);
 	}
 
-	lte_encode->_lte_ar__cell_count = cnt;
+	lte_encode->lte_ar_cell_m_count = cnt;
 }
 
 static void copy_wifi_info(struct wifi_ob *wifi_encode,
 			   struct wifi_scan_info const *const wifi_info)
 {
-	struct ap *dst = wifi_encode->_wifi_ob_accessPoints__ap;
+	struct ap *dst = wifi_encode->wifi_ob_accessPoints_ap_m;
 	struct wifi_scan_result *src = wifi_info->ap_info;
-	size_t num_aps = MIN(ARRAY_SIZE(wifi_encode->_wifi_ob_accessPoints__ap), wifi_info->cnt);
+	size_t num_aps = MIN(ARRAY_SIZE(wifi_encode->wifi_ob_accessPoints_ap_m), wifi_info->cnt);
 
-	wifi_encode->_wifi_ob_accessPoints__ap_count = num_aps;
+	wifi_encode->wifi_ob_accessPoints_ap_m_count = num_aps;
 
 	for (int i = 0; i < num_aps; i++, src++, dst++) {
-		dst->_ap_macAddress.value = src->mac;
-		dst->_ap_macAddress.len = src->mac_length;
-		dst->_ap_age_present = false;
+		dst->ap_macAddress.value = src->mac;
+		dst->ap_macAddress.len = src->mac_length;
+		dst->ap_age_present = false;
 
-		dst->_ap_signalStrength._ap_signalStrength = src->rssi;
-		dst->_ap_signalStrength_present = (src->rssi != NRF_CLOUD_LOCATION_WIFI_OMIT_RSSI);
+		dst->ap_signalStrength.ap_signalStrength = src->rssi;
+		dst->ap_signalStrength_present = (src->rssi != NRF_CLOUD_LOCATION_WIFI_OMIT_RSSI);
 
-		dst->_ap_channel._ap_channel = src->channel;
-		dst->_ap_channel_present = (src->channel != NRF_CLOUD_LOCATION_WIFI_OMIT_CHAN);
+		dst->ap_channel.ap_channel = src->channel;
+		dst->ap_channel_present = (src->channel != NRF_CLOUD_LOCATION_WIFI_OMIT_CHAN);
 
-		dst->_ap_frequency_present = false;
-		dst->_ap_ssid_present = (IS_ENABLED(CONFIG_NRF_CLOUD_COAP_SEND_SSIDS) &&
+		dst->ap_frequency_present = false;
+		dst->ap_ssid_present = (IS_ENABLED(CONFIG_NRF_CLOUD_COAP_SEND_SSIDS) &&
 					 (src->ssid_length && src->ssid[0]));
-		dst->_ap_ssid._ap_ssid.value = src->ssid;
-		dst->_ap_ssid._ap_ssid.len = src->ssid_length;
+		dst->ap_ssid.ap_ssid.value = src->ssid;
+		dst->ap_ssid.ap_ssid.len = src->ssid_length;
 	}
 }
 
@@ -310,13 +310,13 @@ int coap_codec_ground_fix_req_encode(struct lte_lc_cells_info const *const cell_
 	size_t out_len;
 
 	memset(&input, 0, sizeof(struct ground_fix_req));
-	input._ground_fix_req_lte_present = (cell_info != NULL);
+	input.ground_fix_req_lte_present = (cell_info != NULL);
 	if (cell_info) {
-		copy_cell_info(&input._ground_fix_req_lte._ground_fix_req_lte, cell_info);
+		copy_cell_info(&input.ground_fix_req_lte.ground_fix_req_lte, cell_info);
 	}
-	input._ground_fix_req_wifi_present = (wifi_info != NULL);
+	input.ground_fix_req_wifi_present = (wifi_info != NULL);
 	if (wifi_info) {
-		copy_wifi_info(&input._ground_fix_req_wifi._ground_fix_req_wifi, wifi_info);
+		copy_wifi_info(&input.ground_fix_req_wifi.ground_fix_req_wifi, wifi_info);
 	}
 	err = cbor_encode_ground_fix_req(buf, *len, &input, &out_len);
 	if (err) {
@@ -366,8 +366,8 @@ int coap_codec_ground_fix_resp_decode(struct nrf_cloud_location_result *result,
 		return err;
 	}
 
-	const char *with = res._ground_fix_resp_fulfilledWith.value;
-	int rlen = res._ground_fix_resp_fulfilledWith.len;
+	const char *with = res.ground_fix_resp_fulfilledWith.value;
+	int rlen = res.ground_fix_resp_fulfilledWith.len;
 
 	if (strncmp(with, NRF_CLOUD_LOCATION_TYPE_VAL_MCELL, rlen) == 0) {
 		result->type = LOCATION_TYPE_MULTI_CELL;
@@ -380,13 +380,13 @@ int coap_codec_ground_fix_resp_decode(struct nrf_cloud_location_result *result,
 		LOG_WRN("Unhandled location type: %*s", rlen, with);
 	}
 
-	result->lat = res._ground_fix_resp_lat;
-	result->lon = res._ground_fix_resp_lon;
+	result->lat = res.ground_fix_resp_lat;
+	result->lon = res.ground_fix_resp_lon;
 
-	if (res._ground_fix_resp_uncertainty_choice == _ground_fix_resp_uncertainty_int) {
-		result->unc = res._ground_fix_resp_uncertainty_int;
+	if (res.ground_fix_resp_uncertainty_choice == ground_fix_resp_uncertainty_int_c) {
+		result->unc = res.ground_fix_resp_uncertainty_int;
 	} else {
-		result->unc = (uint32_t)lround(res._ground_fix_resp_uncertainty_float);
+		result->unc = (uint32_t)lround(res.ground_fix_resp_uncertainty_float);
 	}
 	return err;
 }
@@ -406,40 +406,40 @@ int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const req
 
 	int ret;
 	struct agnss_req input;
-	struct agnss_req_types_ *t = &input._agnss_req_types;
+	struct agnss_req_types_r *t = &input.agnss_req_types;
 	size_t out_len;
-	enum nrf_cloud_agnss_type types[ARRAY_SIZE(t->_agnss_req_types_int)];
+	enum nrf_cloud_agnss_type types[ARRAY_SIZE(t->agnss_req_types_int)];
 	int cnt;
 
 	memset(&input, 0, sizeof(struct agnss_req));
-	input._agnss_req_eci = request->net_info->current_cell.id;
-	input._agnss_req_mcc = request->net_info->current_cell.mcc;
-	input._agnss_req_mnc = request->net_info->current_cell.mnc;
-	input._agnss_req_tac = request->net_info->current_cell.tac;
+	input.agnss_req_eci = request->net_info->current_cell.id;
+	input.agnss_req_mcc = request->net_info->current_cell.mcc;
+	input.agnss_req_mnc = request->net_info->current_cell.mnc;
+	input.agnss_req_tac = request->net_info->current_cell.tac;
 	if (request->type == NRF_CLOUD_REST_AGNSS_REQ_CUSTOM) {
 		cnt = nrf_cloud_agnss_type_array_get(request->agnss_req, types, ARRAY_SIZE(types));
-		t->_agnss_req_types_int_count = cnt;
-		input._agnss_req_types_present = true;
+		t->agnss_req_types_int_count = cnt;
+		input.agnss_req_types_present = true;
 		LOG_DBG("num elements: %d", cnt);
 		for (int i = 0; i < cnt; i++) {
 			LOG_DBG("  %d: %d", i, types[i]);
-			t->_agnss_req_types_int[i] = (int)types[i];
+			t->agnss_req_types_int[i] = (int)types[i];
 		}
 	} else {
 		LOG_ERR("Invalid request type: %d", request->type);
 		return -ENOTSUP;
 	}
 	if (request->filtered) {
-		input._agnss_req_filtered_present = true;
-		input._agnss_req_filtered._agnss_req_filtered = true;
+		input.agnss_req_filtered_present = true;
+		input.agnss_req_filtered.agnss_req_filtered = true;
 		if (request->mask_angle != DEFAULT_MASK_ANGLE) {
-			input._agnss_req_mask_present = true;
-			input._agnss_req_mask._agnss_req_mask = request->mask_angle;
+			input.agnss_req_mask_present = true;
+			input.agnss_req_mask.agnss_req_mask = request->mask_angle;
 		}
 	}
 	if (request->net_info->current_cell.rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP) {
-		input._agnss_req_rsrp._agnss_req_rsrp = request->net_info->current_cell.rsrp;
-		input._agnss_req_rsrp_present = true;
+		input.agnss_req_rsrp.agnss_req_rsrp = request->net_info->current_cell.rsrp;
+		input.agnss_req_rsrp_present = true;
 	}
 	ret = cbor_encode_agnss_req(buf, *len, &input, &out_len);
 	if (ret) {
@@ -511,10 +511,10 @@ int coap_codec_pgps_encode(struct nrf_cloud_rest_pgps_request const *const reque
 
 	memset(&input, 0, sizeof(input));
 
-	input._pgps_req_predictionCount = request->pgps_req->prediction_count;
-	input._pgps_req_predictionIntervalMinutes = request->pgps_req->prediction_period_min;
-	input._pgps_req_startGPSDay = request->pgps_req->gps_day;
-	input._pgps_req_startGPSTimeOfDaySeconds = request->pgps_req->gps_time_of_day;
+	input.pgps_req_predictionCount = request->pgps_req->prediction_count;
+	input.pgps_req_predictionIntervalMinutes = request->pgps_req->prediction_period_min;
+	input.pgps_req_startGPSDay = request->pgps_req->gps_day;
+	input.pgps_req_startGPSTimeOfDaySeconds = request->pgps_req->gps_time_of_day;
 
 	ret = cbor_encode_pgps_req(buf, *len, &input, &out_len);
 	if (ret) {
@@ -558,16 +558,16 @@ int coap_codec_pgps_resp_decode(struct nrf_cloud_pgps_result *result,
 
 	err = cbor_decode_pgps_resp(buf, len, &resp, &resp_len);
 	if (!err) {
-		strncpy(result->host, resp._pgps_resp_host.value, result->host_sz);
-		if (result->host_sz > resp._pgps_resp_host.len) {
-			result->host[resp._pgps_resp_host.len] = '\0';
+		strncpy(result->host, resp.pgps_resp_host.value, result->host_sz);
+		if (result->host_sz > resp.pgps_resp_host.len) {
+			result->host[resp.pgps_resp_host.len] = '\0';
 		}
-		result->host_sz = resp._pgps_resp_host.len;
-		strncpy(result->path, resp._pgps_resp_path.value, result->path_sz);
-		if (result->path_sz > resp._pgps_resp_path.len) {
-			result->path[resp._pgps_resp_path.len] = '\0';
+		result->host_sz = resp.pgps_resp_host.len;
+		strncpy(result->path, resp.pgps_resp_path.value, result->path_sz);
+		if (result->path_sz > resp.pgps_resp_path.len) {
+			result->path[resp.pgps_resp_path.len] = '\0';
 		}
-		result->path_sz = resp._pgps_resp_path.len;
+		result->path_sz = resp.pgps_resp_path.len;
 	}
 	return err;
 }
