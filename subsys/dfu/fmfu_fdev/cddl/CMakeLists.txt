@@ -54,9 +54,6 @@ find_program(
 if(NOT CLANG_FORMAT)
   message(WARNING
     "'clang-format' not found, generated code will not be formatted")
-else()
-  set(CLANG_FORMAT_COMMAND
-   COMMAND ${CLANG_FORMAT} -i "${decode_c};${decode_h};${types_h}")
 endif()
 
 add_custom_command(
@@ -64,9 +61,9 @@ add_custom_command(
   COMMAND
   ${PYTHON_EXECUTABLE}
   ${ZEPHYR_ZCBOR_MODULE_DIR}/zcbor/zcbor.py
+  code
   -c ${cddl_file}
   --default-max-qty 128 # TNSW-33521
-  code
   --oc ${decode_c}
   --oh ${decode_h}
   --oht ${types_h}
@@ -74,7 +71,6 @@ add_custom_command(
   -d # Decode
   COMMAND
   ${CMAKE_COMMAND} -DFILES="${decode_c}\;${decode_h}\;${types_h}" -P ${license}
-  ${CLANG_FORMAT_COMMAND}
   COMMENT
   "Generating files based on ${cddl_file}"
   DEPENDS ${license} ${cddl_file}
@@ -86,11 +82,14 @@ zephyr_include_directories(${include_out})
 
 # Create install target which allows the user to 'install' the generated
 # parser files into the working tree.
+# Run clang format here in case the build folder is outside the nrf tree,
+# in which case clang-format doesn't find the config file.
 add_custom_target(
   fmfu_cddl_modem_update_install
   COMMAND ${CMAKE_COMMAND} -E copy ${decode_c} ${src_install_dir}/${decode_c_name}
   COMMAND ${CMAKE_COMMAND} -E copy ${decode_h} ${include_install_dir}/${decode_h_name}
   COMMAND ${CMAKE_COMMAND} -E copy ${types_h}  ${include_install_dir}/${types_h_name}
+  COMMAND ${CLANG_FORMAT} -i ${src_install_dir}/${decode_c_name} ${include_install_dir}/${decode_h_name} ${include_install_dir}/${types_h_name}
   DEPENDS
   ${decode_c} ${decode_h} ${types_h}
   COMMENT

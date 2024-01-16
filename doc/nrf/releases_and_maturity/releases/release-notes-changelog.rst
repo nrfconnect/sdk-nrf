@@ -761,6 +761,12 @@ DFU libraries
     * The :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION` Kconfig option to be automatically enabled when ``nordic,pm-ext-flash`` is chosen in the devicetree.
       See :ref:`partition_manager` for details.
 
+* :ref:`lib_fmfu_fdev` library:
+
+  * Updated:
+
+    * Regenerated cbor code with zcbor 0.8.1 and adapted to API changes in zcbor 0.8.x.
+
 Modem libraries
 ---------------
 

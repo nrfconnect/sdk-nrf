@@ -19,9 +19,8 @@ LOG_MODULE_REGISTER(fmfu_fdev, CONFIG_FMFU_FDEV_LOG_LEVEL);
 
 static uint8_t meta_buf[MAX_META_LEN];
 
-static int get_hash_from_flash(const struct device *fdev, size_t offset,
-			       size_t data_len, uint8_t *hash, uint8_t *buffer,
-			       size_t buffer_len)
+static int get_hash_from_flash(const struct device *fdev, size_t offset, size_t data_len,
+			       uint8_t *hash, uint8_t *buffer, size_t buffer_len)
 {
 	int err;
 	mbedtls_sha256_context sha256_ctx;
@@ -56,8 +55,7 @@ static int get_hash_from_flash(const struct device *fdev, size_t offset,
 	return 0;
 }
 
-static int write_chunk(uint8_t *buf, size_t buf_len, uint32_t address,
-		       bool is_bootloader)
+static int write_chunk(uint8_t *buf, size_t buf_len, uint32_t address, bool is_bootloader)
 {
 	int err;
 
@@ -78,9 +76,8 @@ static int write_chunk(uint8_t *buf, size_t buf_len, uint32_t address,
 	return 0;
 }
 
-static int load_segment(const struct device *fdev, size_t seg_size,
-			uint32_t seg_target_addr, uint32_t seg_offset,
-			uint8_t *buf, size_t buf_len, bool is_bootloader)
+static int load_segment(const struct device *fdev, size_t seg_size, uint32_t seg_target_addr,
+			uint32_t seg_offset, uint8_t *buf, size_t buf_len, bool is_bootloader)
 {
 	int err;
 	uint32_t read_addr = seg_offset;
@@ -95,15 +92,14 @@ static int load_segment(const struct device *fdev, size_t seg_size,
 			return err;
 		}
 
-		err = write_chunk(buf, read_len, seg_target_addr,
-				  is_bootloader);
+		err = write_chunk(buf, read_len, seg_target_addr, is_bootloader);
 		if (err != 0) {
 			LOG_ERR("write_chunk failed: %d", err);
 			return err;
 		}
 
-		LOG_DBG("Wrote chunk: offset 0x%x target addr 0x%x size 0x%x",
-			read_addr, seg_target_addr, read_len);
+		LOG_DBG("Wrote chunk: offset 0x%x target addr 0x%x size 0x%x", read_addr,
+			seg_target_addr, read_len);
 
 		seg_target_addr += read_len;
 		bytes_left -= read_len;
@@ -124,26 +120,24 @@ static int load_segment(const struct device *fdev, size_t seg_size,
 	return 0;
 }
 
-static int load_segments(const struct device *fdev, uint8_t *meta_buf,
-			 size_t wrapper_len, const struct Segments *seg,
-			 size_t blob_offset, uint8_t *buf, size_t buf_len)
+static int load_segments(const struct device *fdev, uint8_t *meta_buf, size_t wrapper_len,
+			 const struct Segments *seg, size_t blob_offset, uint8_t *buf,
+			 size_t buf_len)
 {
 	int err;
 	size_t prev_segments_len = 0;
 
-	for (int i = 0; i < seg->_Segments__Segment_count; i++) {
-		size_t seg_size = seg->_Segments__Segment[i]._Segment_len;
-		uint32_t seg_addr =
-			seg->_Segments__Segment[i]._Segment_target_addr;
+	for (int i = 0; i < seg->Segments_Segment_m_count; i++) {
+		size_t seg_size = seg->Segments_Segment_m[i].Segment_len;
+		uint32_t seg_addr = seg->Segments_Segment_m[i].Segment_target_addr;
 		uint32_t read_addr = blob_offset + prev_segments_len;
 		bool is_bootloader = i == 0;
 
-		LOG_INF("Writing segment %d/%d, Target addr: 0x%x, size: 0%x",
-			i + 1, seg->_Segments__Segment_count, seg_addr,
-			seg_size);
+		LOG_INF("Writing segment %d/%d, Target addr: 0x%x, size: 0%x", i + 1,
+			seg->Segments_Segment_m_count, seg_addr, seg_size);
 
-		err = load_segment(fdev, seg_size, seg_addr, read_addr, buf,
-				   buf_len, is_bootloader);
+		err = load_segment(fdev, seg_size, seg_addr, read_addr, buf, buf_len,
+				   is_bootloader);
 		if (err != 0) {
 			LOG_ERR("load_segment failed: %d", err);
 			return err;
@@ -179,8 +173,7 @@ static int load_segments(const struct device *fdev, uint8_t *meta_buf,
 	return 0;
 }
 
-int fmfu_fdev_load(uint8_t *buf, size_t buf_len, const struct device *fdev,
-		   size_t offset)
+int fmfu_fdev_load(uint8_t *buf, size_t buf_len, const struct device *fdev, size_t offset)
 {
 	const struct zcbor_string *segments_string;
 	struct COSE_Sign1_Manifest wrapper;
@@ -204,8 +197,7 @@ int fmfu_fdev_load(uint8_t *buf, size_t buf_len, const struct device *fdev,
 		return err;
 	}
 
-	if (cbor_decode_Wrapper(meta_buf, MAX_META_LEN, &wrapper,
-				&wrapper_len) != ZCBOR_SUCCESS) {
+	if (cbor_decode_Wrapper(meta_buf, MAX_META_LEN, &wrapper, &wrapper_len) != ZCBOR_SUCCESS) {
 		LOG_ERR("Unable to decode wrapper");
 		return -EINVAL;
 	}
@@ -218,36 +210,31 @@ int fmfu_fdev_load(uint8_t *buf, size_t buf_len, const struct device *fdev,
 	/* Get a pointer to, and decode,  the segments as this is a cbor encoded
 	 * structure in itself.
 	 */
-	segments_string =
-		&wrapper._COSE_Sign1_Manifest_payload_cbor._Manifest_segments;
-	if (cbor_decode_Segments(segments_string->value, segments_string->len,
-				 &segments, NULL) != ZCBOR_SUCCESS) {
+	segments_string = &wrapper.COSE_Sign1_Manifest_payload_cbor.Manifest_segments;
+	if (cbor_decode_Segments(segments_string->value, segments_string->len, &segments, NULL) !=
+	    ZCBOR_SUCCESS) {
 		LOG_ERR("Unable to decode segments");
 		return -EINVAL;
 	}
 
 	/* Extract the expected hash from the manifest */
-	memcpy(expected_hash,
-	       wrapper._COSE_Sign1_Manifest_payload_cbor._Manifest_blob_hash
-		       .value,
+	memcpy(expected_hash, wrapper.COSE_Sign1_Manifest_payload_cbor.Manifest_blob_hash.value,
 	       sizeof(expected_hash));
 
 	/* Calculate total length of all segments */
 	blob_len = 0;
-	for (int i = 0; i < segments._Segments__Segment_count; i++) {
-		blob_len += segments._Segments__Segment[i]._Segment_len;
+	for (int i = 0; i < segments.Segments_Segment_m_count; i++) {
+		blob_len += segments.Segments_Segment_m[i].Segment_len;
 	}
 
-	if (sizeof(hash) ==
-	    wrapper._COSE_Sign1_Manifest_payload_cbor._Manifest_blob_hash.len) {
+	if (sizeof(hash) == wrapper.COSE_Sign1_Manifest_payload_cbor.Manifest_blob_hash.len) {
 		hash_len_valid = true;
 	} else {
 		LOG_ERR("Invalid hash length");
 		return -EINVAL;
 	}
 
-	err = get_hash_from_flash(fdev, blob_offset, blob_len, hash, buf,
-				  buf_len);
+	err = get_hash_from_flash(fdev, blob_offset, blob_len, hash, buf, buf_len);
 	if (err != 0) {
 		return err;
 	}
@@ -261,8 +248,7 @@ int fmfu_fdev_load(uint8_t *buf, size_t buf_len, const struct device *fdev,
 
 	if (hash_len_valid && hash_valid) {
 		return load_segments(fdev, meta_buf, wrapper_len,
-				     (const struct Segments *)&segments,
-				     blob_offset, buf, buf_len);
+				     (const struct Segments *)&segments, blob_offset, buf, buf_len);
 	} else {
 		return -EINVAL;
 	}

@@ -14,7 +14,7 @@ menuconfig FMFU_FDEV
 if (FMFU_FDEV)
 
 config FMFU_CDDL_DECODER_GENERATE
-	bool
+	bool "Regenerate FMFU CBOR code from cddl using zcbor, for internal use."
 	help
 	  Nordic internal, see cddl/CMakeLists.txt
 
