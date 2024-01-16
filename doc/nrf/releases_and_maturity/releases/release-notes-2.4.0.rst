@@ -387,7 +387,7 @@ nRF5340 Audio
 -------------
 
 * Added Kconfig options for setting periodic and extended advertising intervals.
-  For more information on the options, see :ref:`nrf53_audio_app_options` (all options prefixed with ``CONFIG_BLE_ACL_PER_ADV_INT_`` and ``CONFIG_BLE_ACL_EXT_ADV_INT_``).
+  For more information on the options, see all options prefixed with ``CONFIG_BLE_ACL_PER_ADV_INT_`` and ``CONFIG_BLE_ACL_EXT_ADV_INT_``.
 * Updated:
 
   * LE Audio controller for the network core has been moved to the standalone :ref:`lib_bt_ll_acs_nrf53_readme` library.

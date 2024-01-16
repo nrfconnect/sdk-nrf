@@ -7,50 +7,47 @@ nRF5340 Audio overview and firmware architecture
    :local:
    :depth: 2
 
-The application can work as a gateway or a headset.
-The gateway receives the audio data from external sources (USB or I2S) and forwards it to one or more headsets.
-The headset is a receiver device that plays back the audio it gets from the gateway.
-It is also possible to enable a bidirectional mode where one gateway can send and receive audio to and from one or two headsets at the same time.
+Each nRF5340 Audio application corresponds to one specific LE Audio role: unicast client (gateway), unicast server (headset), broadcast source (gateway), or broadcast sink (headset).
+The gateway receives the audio data from external sources (USB or line input/I2S) and forwards it to one or more headsets.
+The headset is a receiver device that plays back the audio it gets from the gateway, and will act as earbuds, headphones, a speaker, hearing aids, or similar.
 
-Both device types use the same code base, but different firmware, and you need both types of devices for testing the application.
-Gateways and headsets can both run in one of the available application modes, either the *connected isochronous stream* (CIS) mode or in the *broadcast isochronous stream* (BIS) mode.
-The CIS mode is the default mode of the application.
+Each nRF5340 Audio application is configured for one specific LE Audio mode: the *connected isochronous stream* (CIS, unicast) mode or in the *broadcast isochronous stream* (BIS) mode.
+See :ref:`nrf53_audio_app_overview_modes` for more information.
 
-Changing configuration related to the device type and the application modes requires rebuilding the firmware and reprogramming the development kits.
+The applications use the same code base, but use different :file:`main.c` files and include different modules and libraries depending on the configuration.
 
-Regardless of the configuration, the application handles the audio data in the following manner:
+You might need to configure and program two applications for testing the interoperability, depending on your use case.
+See the testing steps for each of the application for more information.
 
-1. The gateway receives audio data from the audio source over USB or I2S.
-#. The gateway processes the audio data in its application core, which channels the data through the application layers:
+.. _nrf53_audio_app_overview_differences:
 
-   a. Audio data is sent to the synchronization module (I2S-based firmware) or directly to the software codec (USB-based firmware).
-   #. Audio data is encoded by the software codec.
-   #. Encoded audio data is sent to the Bluetooth LE Host.
+Differences between apps
+************************
 
-#. The host sends the encoded audio data to the LE Audio Controller Subsystem for nRF53 on the network core.
-#. The subsystem forwards the audio data to the hardware radio and sends it to the headset devices, as per the LE Audio specifications.
-#. The headsets receive the encoded audio data on their hardware radio on the network core side.
-#. The LE Audio Controller Subsystem for nRF53 running on each of the headsets sends the encoded audio data to the Bluetooth LE Host on the headsets' application core.
-#. The headsets process the audio data in their application cores, which channel the data through the application layers:
+The following table summarizes the differences between the available nRF5340 Audio applications.
 
-   a. Audio data is sent to the stream control module and placed in a FIFO buffer.
-   #. Audio data is sent from the FIFO buffer to the synchronization module (headsets only use I2S-based firmware).
-   #. Audio data is decoded by the software codec.
+.. list-table:: Differences between nRF5340 Audio applications
+   :header-rows: 1
 
-#. Decoded audio data is sent to the hardware audio output over I2S.
-
-In the `I2S-based firmware for gateway and headsets`_, sending the audio data through the application layers includes a mandatory synchronization step using the synchronization module.
-This proprietary module ensures that the audio is played at the same time with the correct speed.
-For more information, see `Synchronization module overview`_.
+   * - Application
+     - LE Audio mode and role
+   * - :ref:`Unicast client<nrf53_audio_unicast_client_app>`
+     - CIS gateway
+   * - :ref:`Unicast server<nrf53_audio_unicast_server_app>`
+     - CIS headset
+   * - :ref:`Broadcast sink<nrf53_audio_broadcast_sink_app>`
+     - BIS gateway
+   * - :ref:`Broadcast source<nrf53_audio_broadcast_source_app>`
+     - BIS headset
 
 .. _nrf53_audio_app_overview_modes:
 
 Application modes
 *****************
 
-The application can work either in the *connected isochronous stream* (CIS) mode or in the *broadcast isochronous stream* (BIS) mode, depending on the chosen firmware configuration.
+Each application works either in the *connected isochronous stream* (CIS) mode or in the *broadcast isochronous stream* (BIS) mode.
 
-.. figure:: /images/octave_application_topologies.svg
+.. figure:: /images/nrf5340_audio_application_topologies.png
    :alt: CIS and BIS mode overview
 
    CIS and BIS mode overview
@@ -59,10 +56,10 @@ Connected Isochronous Stream (CIS)
   CIS is a bidirectional communication protocol that allows for sending separate connected audio streams from a source device to one or more receivers.
   The gateway can send the audio data using both the left and the right ISO channels at the same time, allowing for stereophonic sound reproduction with synchronized playback.
 
-  This is the default configuration of the nRF5340 Audio application.
-  In this configuration, you can use the nRF5340 Audio development kit in the role of the gateway, the left headset, or the right headset.
+  This is the mode available for the unicast applications (:ref:`unicast client<nrf53_audio_unicast_client_app>` and :ref:`unicast server<nrf53_audio_unicast_server_app>`).
+  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway, the left headset, or the right headset.
 
-  In the current version of the nRF5340 Audio application, the CIS mode offers both unidirectional and bidirectional communication.
+  In the current version of the nRF5340 Audio unicast client, the application offers both unidirectional and bidirectional communication.
   In the bidirectional communication, the headset device will send audio from the on-board PDM microphone.
   See :ref:`nrf53_audio_app_configuration_select_bidirectional` in the application description for more information.
 
@@ -73,7 +70,8 @@ Connected Isochronous Stream (CIS)
 Broadcast Isochronous Stream (BIS)
   BIS is a unidirectional communication protocol that allows for broadcasting one or more audio streams from a source device to an unlimited number of receivers that are not connected to the source.
 
-  In this configuration, you can use the nRF5340 Audio development kit in the role of the gateway or as one of the headsets.
+  This is the mode available for the broadcast applications (:ref:`broadcast source<nrf53_audio_broadcast_source_app>` for headset and :ref:`broadcast sink<nrf53_audio_broadcast_sink_app>` for gateway).
+  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway or as one of the headsets.
   Use multiple nRF5340 Audio development kits to test BIS having multiple receiving headsets.
 
   .. note::
@@ -88,7 +86,7 @@ Firmware architecture
 
 The following figure illustrates the software layout for the nRF5340 Audio application:
 
-.. figure:: /images/octave_application_structure_generic.svg
+.. figure:: /images/nrf5340_audio_structure_generic.svg
    :alt: nRF5340 Audio high-level design (overview)
 
    nRF5340 Audio high-level design (overview)
@@ -120,73 +118,86 @@ These modules include the following major ones:
   * Renderer - This module handles rendering, such as volume up and down.
   * Content Control - This module handles content control, such as play and pause.
 
-* Application-specific custom modules:
+* Application-specific custom modules, including the synchronization module (part of `I2S-based firmware for gateway and headsets`_) - See `Synchronization module overview`_ for more information.
 
-  * Stream Control - This module handles events from the Bluetooth modules and buttons, receives audio from one module, and forwards the audio data to the next module.
-
-    * Currently, each of the four main device types uses a separate stream control file:
-
-      *  CIS gateway (unicast client) - :file:`streamctrl_unicast_client.c`
-      *  CIS headset (unicast server) - :file:`streamctrl_unicast_server.c`
-      *  BIS gateway (broadcast source) - :file:`streamctrl_broadcast_source.c`
-      *  BIS headset (broadcast sink) - :file:`streamctrl_broadcast_sink.c`
-
-  * FIFO buffers
-  * Synchronization module (part of `I2S-based firmware for gateway and headsets`_) - See `Synchronization module overview`_ for more information.
-
-Since the application architecture is uniform and the firmware code is shared, the set of audio modules in use depends on the chosen stream mode (BIS or CIS), the chosen audio inputs and outputs (USB or analog jack), and if the gateway or the headset configuration is selected.
+Since the application architecture is the same for all applications and the code before compilation is shared to a significant degree, the set of modules in use depends on the chosen audio inputs and outputs (USB or analog jack).
 
 .. note::
-   In the current version of the application, the bootloader is disabled by default.
+   In the current versions of the applications, the bootloader is disabled by default.
    Device Firmware Update (DFU) can only be enabled when :ref:`nrf53_audio_app_building_script`.
    See :ref:`nrf53_audio_app_configuration_configure_fota` for details.
 
-Communications between modules
-==============================
+Communication between modules
+=============================
 
-Communication between modules is primarily done through Zephyr's :ref:`zephyr:zbus` to make sure that there are as few dependencies as possible. Each of the buses used by the application has their message structures described in :file:`nrf5340_audio_common.h`.
-
-The application uses the following buses:
-
-  * ``le_audio_chan`` - For handling LE Audio events from the Bluetooth stream modules, specifically :file:`unicast_client.c`, :file:`unicast_server.c`, :file:`broadcast_source.c`, and :file:`broadcast_sink.c`.
-  * ``button_chan`` - For handling button events from :file:`button_handler.c`.
-  * ``bt_mgmt_chan`` - For handling ACL events from :file:`bt_mgmt.c`.
-  * ``volume_chan`` - For handling volume events from :file:`bt_rend.c`.
-  * ``cont_media_chan`` - For handling media events from :file:`content_ctrl.c`.
-
-The consumer functions for each of these buses are residing, for the most part, in the stream control files.
-``volume_chan`` is an exception, with its consumer functions residing directly in :file:`hw_codec.c`.
-The linking of producers and consumers is done in the stream control files.
+Communication between modules is primarily done through Zephyr's :ref:`zephyr:zbus` to make sure that there are as few dependencies as possible. Each of the buses used by the applications has their message structures described in :file:`nrf5340_audio_common.h`.
 
 .. _nrf53_audio_app_overview_architecture_usb:
 
 USB-based firmware for gateway
 ==============================
 
-The following figure shows an overview of the modules currently included in the firmware that uses USB:
-
-.. figure:: /images/octave_application_structure_gateway.svg
-   :alt: nRF5340 Audio modules on the gateway using USB
-
-   nRF5340 Audio modules on the gateway using USB
+The following figures show an overview of the modules currently included in the firmware of applications that use USB.
 
 In this firmware design, no synchronization module is used after decoding the incoming frames or before encoding the outgoing ones.
 The Bluetooth LE RX FIFO is mainly used to make decoding run in a separate thread.
+
+Broadcast source USB-based firmware
+-----------------------------------
+
+.. figure:: /images/nrf5340_audio_broadcast_source_USB_structure.svg
+   :alt: nRF5340 Audio modules for the broadcast source using USB
+
+   nRF5340 Audio modules for the broadcast source using USB
+
+Unicast client USB-based firmware
+---------------------------------
+
+.. figure:: /images/nrf5340_audio_unicast_client_USB_structure.svg
+   :alt: nRF5340 Audio modules for the unicast client using USB
+
+   nRF5340 Audio modules for the unicast client using USB
 
 .. _nrf53_audio_app_overview_architecture_i2s:
 
 I2S-based firmware for gateway and headsets
 ===========================================
 
-The following figure shows an overview of the modules currently included in the firmware that uses I2S:
-
-.. figure:: /images/octave_application_structure.svg
-   :alt: nRF5340 Audio modules on the gateway and the headsets using I2S
-
-   nRF5340 Audio modules on the gateway and the headsets using I2S
+The following figure shows an overview of the modules currently included in the firmware of applications that use I2S.
 
 The Bluetooth LE RX FIFO is mainly used to make :file:`audio_datapath.c` (synchronization module) run in a separate thread.
-After encoding the audio data received from I2S, the frames are sent by the encoder thread using a function located in :file:`streamctrl_unicast_client.c`, :file:`streamctrl_unicast_server.c`, :file:`streamctrl_broadcast_source.c`, or :file:`streamctrl_broadcast_sink.c`.
+
+Broadcast source I2S-based firmware
+-----------------------------------
+
+.. figure:: /images/nrf5340_audio_broadcast_source_I2S_structure.svg
+   :alt: nRF5340 Audio modules for the broadcast source using I2S
+
+   nRF5340 Audio modules for the broadcast source using I2S
+
+Broadcast sink I2S-based firmware
+---------------------------------
+
+.. figure:: /images/nrf5340_audio_broadcast_sink_I2S_structure.svg
+   :alt: nRF5340 Audio modules for the broadcast sink using I2S
+
+   nRF5340 Audio modules for the broadcast sink using I2S
+
+Unicast client I2S-based firmware
+---------------------------------
+
+.. figure:: /images/nrf5340_audio_unicast_client_I2S_structure.svg
+   :alt: nRF5340 Audio modules for the unicast client using I2S
+
+   nRF5340 Audio modules for the unicast client using I2S
+
+Unicast server I2S-based firmware
+---------------------------------
+
+.. figure:: /images/nrf5340_audio_unicast_server_I2S_structure.svg
+   :alt: nRF5340 Audio modules for the unicast server using I2S
+
+   nRF5340 Audio modules for the unicast server using I2S
 
 .. _nrf53_audio_app_overview_architecture_sync_module:
 
@@ -213,7 +224,7 @@ This prevents I2S overruns or underruns, both in the CIS mode and the BIS mode.
 
 See the following figure for an overview of the synchronization module.
 
-.. figure:: /images/octave_application_structure_sync_module.svg
+.. figure:: /images/nrf5340_audio_structure_sync_module.svg
    :alt: nRF5340 Audio synchronization module overview
 
    nRF5340 Audio synchronization module overview
@@ -238,7 +249,7 @@ These blocks are then continuously being fed to I2S, block by block.
 
 See the following figure for the details of the compensation methods of the synchronization module.
 
-.. figure:: /images/octave_application_sync_module_states.svg
+.. figure:: /images/nrf5340_audio_sync_module_states.svg
    :alt: nRF5340 Audio's state machine for compensation mechanisms
 
    nRF5340 Audio's state machine for compensation mechanisms
