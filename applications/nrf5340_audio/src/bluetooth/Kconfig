@@ -71,4 +71,18 @@ module-str = ble
 source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # Log levels
+
+#----------------------------------------------------------------------------#
+menu "Testing"
+
+config TESTING_BLE_ADDRESS_RANDOM
+	bool "Random address and bonding clear on every restart [EXPERIMENTAL]"
+	default n
+	select EXPERIMENTAL
+	help
+	  If enabled the system will generate a new address on every
+	  restart (i.e. reset, re-flash). Any bonding information will
+	  be cleared. This is only for testing purposes.
+
+endmenu # Testing
 endmenu # Bluetooth
