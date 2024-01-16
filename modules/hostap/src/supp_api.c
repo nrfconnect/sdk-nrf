@@ -319,6 +319,12 @@ static int wpas_add_and_config_network(struct wpa_supplicant *wpa_s,
 	}
 
 	if (params->security != WIFI_SECURITY_TYPE_NONE) {
+		/* Except for WPA-PSK, rest all are under WPA2 */
+		if (params->security != WIFI_SECURITY_TYPE_WPA_PSK) {
+			_wpa_cli_cmd_v("set_network %d proto RSN",
+				resp.network_id);
+		}
+
 		if (params->security == WIFI_SECURITY_TYPE_SAE) {
 			if (params->sae_password) {
 				_wpa_cli_cmd_v("set_network %d sae_password \"%s\"",
@@ -342,9 +348,6 @@ static int wpas_add_and_config_network(struct wpa_supplicant *wpa_s,
 				resp.network_id);
 			if (params->security == WIFI_SECURITY_TYPE_WPA_PSK) {
 				_wpa_cli_cmd_v("set_network %d proto WPA",
-					resp.network_id);
-			} else {
-				_wpa_cli_cmd_v("set_network %d proto RSN",
 					resp.network_id);
 			}
 		} else {
