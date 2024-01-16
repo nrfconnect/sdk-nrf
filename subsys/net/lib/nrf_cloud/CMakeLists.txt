@@ -50,8 +50,7 @@ zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_REST
 	src/nrf_cloud_rest.c)
 zephyr_compile_definitions_ifdef(
-	CONFIG_NRF_CLOUD_COAP
-	CDDL_CBOR_CANONICAL)
+	CONFIG_NRF_CLOUD_COAP)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_COAP
 	coap/src/agnss_encode.c

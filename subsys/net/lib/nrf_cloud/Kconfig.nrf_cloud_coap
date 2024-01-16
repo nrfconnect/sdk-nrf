@@ -7,6 +7,7 @@ menuconfig NRF_CLOUD_COAP
 	bool "nRF Cloud COAP"
 	select CJSON_LIB
 	select ZCBOR
+	select ZCBOR_CANONICAL
 	select COAP
 	select COAP_EXTENDED_OPTIONS_LEN
 	select COAP_CLIENT

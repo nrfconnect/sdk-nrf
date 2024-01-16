@@ -2,8 +2,10 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+string(TIMESTAMP NOW_YEAR "%Y")
+
 export HDR="
-Copyright (c) 2023 Nordic Semiconductor ASA
+Copyright (c) ${NOW_YEAR} Nordic Semiconductor ASA
 SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 "
 
