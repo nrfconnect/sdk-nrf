@@ -7,6 +7,7 @@
 #include "matter_init.h"
 
 #include "app/fabric_table_delegate.h"
+#include "migration/migration_manager.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
@@ -16,6 +17,7 @@
 #include "dfu/smp/dfu_over_smp.h"
 #endif
 
+#include <app/InteractionModelEngine.h>
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
@@ -34,6 +36,10 @@ CommonCaseDeviceServerInitParams Nrf::Matter::InitData::sServerInitParamsDefault
 Clusters::NetworkCommissioning::Instance Nrf::Matter::InitData::sWiFiCommissioningInstance{
 	0, &(NetworkCommissioning::NrfWiFiDriver::Instance())
 };
+#endif
+
+#ifdef CONFIG_CHIP_CRYPTO_PSA
+chip::Crypto::PSAOperationalKeystore Nrf::Matter::InitData::sPSAOperationalKeystore{};
 #endif
 
 #if CONFIG_CHIP_FACTORY_DATA
@@ -163,6 +169,10 @@ void DoInitChipServer(intptr_t /* unused */)
 	/* The default CommissionableDataProvider is set internally in the GenericConfigurationManagerImpl::Init(). */
 #endif
 
+#ifdef CONFIG_CHIP_CRYPTO_PSA
+	sLocalInitData.mServerInitParams->operationalKeystore = &Nrf::Matter::InitData::sPSAOperationalKeystore;
+#endif
+
 	VerifyOrReturn(sLocalInitData.mServerInitParams, LOG_ERR("No valid server initialization parameters"));
 	sInitResult = sLocalInitData.mServerInitParams->InitializeStaticResourcesBeforeServerInit();
 	VerifyInitResultOrReturn(sInitResult, "InitializeStaticResourcesBeforeServerInit() failed");
@@ -174,6 +184,13 @@ void DoInitChipServer(intptr_t /* unused */)
 
 	sInitResult = Server::GetInstance().Init(*sLocalInitData.mServerInitParams);
 	VerifyInitResultOrReturn(sInitResult, "Server::Init() failed");
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS
+	sInitResult = Nrf::Matter::Migration::MoveOperationalKeysFromKvsToIts(
+		sLocalInitData.mServerInitParams->persistentStorageDelegate,
+		sLocalInitData.mServerInitParams->operationalKeystore);
+	VerifyInitResultOrReturn(sInitResult, "MoveOperationalKeysFromKvsToIts() failed");
+#endif
 
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
@@ -195,33 +212,33 @@ CHIP_ERROR WaitForReadiness()
 /* Public API */
 namespace Nrf::Matter
 {
-	CHIP_ERROR PrepareServer(const InitData &initData)
-	{
-		sLocalInitData = initData;
+CHIP_ERROR PrepareServer(const InitData &initData)
+{
+	sLocalInitData = initData;
 
-		/* Before we schedule anything to execute in the CHIP thread, the platform memory
-		   and the stack itself must be initialized first. */
-		CHIP_ERROR err = Platform::MemoryInit();
-		VerifyInitResultOrReturnError(err, "Platform::MemoryInit() failed");
-		err = PlatformMgr().InitChipStack();
-		VerifyInitResultOrReturnError(err, "PlatformMgr().InitChipStack() failed");
+	/* Before we schedule anything to execute in the CHIP thread, the platform memory
+	   and the stack itself must be initialized first. */
+	CHIP_ERROR err = Platform::MemoryInit();
+	VerifyInitResultOrReturnError(err, "Platform::MemoryInit() failed");
+	err = PlatformMgr().InitChipStack();
+	VerifyInitResultOrReturnError(err, "PlatformMgr().InitChipStack() failed");
 
-		/* Schedule all CHIP initializations to the CHIP thread for better synchronization. */
-		return PlatformMgr().ScheduleWork(DoInitChipServer, 0);
-	}
+	/* Schedule all CHIP initializations to the CHIP thread for better synchronization. */
+	return PlatformMgr().ScheduleWork(DoInitChipServer, 0);
+}
 
-	CHIP_ERROR StartServer()
-	{
-		CHIP_ERROR err = PlatformMgr().StartEventLoopTask();
-		VerifyInitResultOrReturnError(err, "PlatformMgr().StartEventLoopTask() failed");
-		return WaitForReadiness();
-	}
+CHIP_ERROR StartServer()
+{
+	CHIP_ERROR err = PlatformMgr().StartEventLoopTask();
+	VerifyInitResultOrReturnError(err, "PlatformMgr().StartEventLoopTask() failed");
+	return WaitForReadiness();
+}
 
 #if CONFIG_CHIP_FACTORY_DATA
-	FactoryDataProviderBase *GetFactoryDataProvider()
-	{
-		return sLocalInitData.mFactoryDataProvider;
-	}
+FactoryDataProviderBase *GetFactoryDataProvider()
+{
+	return sLocalInitData.mFactoryDataProvider;
+}
 #endif
 
 } /* namespace Nrf::Matter */

@@ -19,7 +19,11 @@
 #include <platform/nrfconnect/wifi/NrfWiFiDriver.h>
 #endif
 
-#if CONFIG_CHIP_FACTORY_DATA
+#ifdef CONFIG_CHIP_CRYPTO_PSA
+#include <crypto/PSAOperationalKeystore.h>
+#endif
+
+#ifdef CONFIG_CHIP_FACTORY_DATA
 #include <platform/nrfconnect/FactoryDataProvider.h>
 #else
 #include <platform/nrfconnect/DeviceInstanceInfoProviderImpl.h>
@@ -47,7 +51,7 @@ struct InitData {
 	chip::CommonCaseDeviceServerInitParams *mServerInitParams{ &sServerInitParamsDefault };
 	/** @brief Pointer to the user provided custom device info provider implementation. */
 	chip::DeviceLayer::DeviceInfoProviderImpl *mDeviceInfoProvider{ nullptr };
-#if CONFIG_CHIP_FACTORY_DATA
+#ifdef CONFIG_CHIP_FACTORY_DATA
 	/** @brief Pointer to the user provided FactoryDataProvider implementation. */
 	chip::DeviceLayer::FactoryDataProviderBase *mFactoryDataProvider{ &sDefaultFactoryDataProvider };
 #endif
@@ -62,9 +66,12 @@ struct InitData {
 	static chip::app::Clusters::NetworkCommissioning::Instance sWiFiCommissioningInstance;
 #endif
 	static chip::CommonCaseDeviceServerInitParams sServerInitParamsDefault;
-#if CONFIG_CHIP_FACTORY_DATA
+#ifdef CONFIG_CHIP_FACTORY_DATA
 	static chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData>
 		sDefaultFactoryDataProvider;
+#endif
+#ifdef CONFIG_CHIP_CRYPTO_PSA
+	static chip::Crypto::PSAOperationalKeystore sPSAOperationalKeystore;
 #endif
 };
 
@@ -94,7 +101,7 @@ CHIP_ERROR PrepareServer(const InitData &initData = InitData{});
  */
 CHIP_ERROR StartServer();
 
-#if CONFIG_CHIP_FACTORY_DATA
+#ifdef CONFIG_CHIP_FACTORY_DATA
 /**
  * @brief Get the currently set FactoryDataProvider.
  *

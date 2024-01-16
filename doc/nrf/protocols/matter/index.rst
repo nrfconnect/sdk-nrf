@@ -45,6 +45,11 @@ The |NCS| allows you to develop applications with different versions of Matter, 
    The Matter SDK version is taken as the base for the `dedicated Matter fork`_, which can then include additional changes for each |NCS| release.
    These changes are listed in the Matter fork section of the |NCS| :ref:`release_notes`.
 
+.. important::
+   For Matter over Thread samples, starting with |NCS| v2.6.0, the default cryptography backend is Arm PSA Crypto API instead of Mbed TLS, which was used in earlier versions.
+   To :ref:`inherit Thread certification <ug_matter_device_certification_reqs_dependent>` from Nordic Semiconductor, you must use the PSA Crypto API backend.
+   See the :ref:`migration guide <migration_2.6>` to learn about all changes if you are migrating from an earlier version of the |NCS|.
+
 For more information about Matter compatibility, see :ref:`ug_matter_overview_dev_model_support` and :ref:`supported Matter features per SoC <software_maturity_protocol_matter>`.
 
 See :ref:`matter_samples` for the list of available samples, :ref:`Matter Weather Station <matter_weather_station_app>` or :ref:`Matter bridge <matter_bridge_app>` for specific Matter application.

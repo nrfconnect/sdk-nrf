@@ -23,3 +23,19 @@ config NCS_SAMPLE_MATTER_CUSTOM_BLUETOOTH_ADVERTISING
 	help
 	  Disable the default Bluetooth advertising start which is defined in the board.cpp file and
 	  allow to use the custom one.
+
+config NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS
+	bool "Enable operational keys migration feature"
+	depends on CHIP_CRYPTO_PSA
+	help
+	  Enables migration of the operational keys stored in the persistent storage to the PSA ITS secure storage.
+	  Enable this feature while updating the firmware of in-field devices that run Mbed TLS cryptography backend
+	  to the firmware based on PSA Crypto API.
+
+config NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE
+	bool "Perform factory reset if the operational key migration failed"
+	default y
+	depends on NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS
+	help
+	  Allow device to perform factory reset if the operational key for Fabric has not been migrated
+	  properly to PSA ITS storage.
