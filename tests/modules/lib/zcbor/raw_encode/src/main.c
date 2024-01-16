@@ -16,8 +16,8 @@ ZTEST(lib_zcbor_test3, test_raw_encode)
 
 	res = zcbor_list_start_encode(states, 3);
 	res |= zcbor_list_start_encode(states, 2);
-	res |= zcbor_tstr_put_term(states, "Foo");
-	res |= zcbor_tstr_put_term(states, "Bar");
+	res |= zcbor_tstr_put_lit(states, "Foo");
+	res |= zcbor_tstr_put_lit(states, "Bar");
 	res |= zcbor_list_end_encode(states, 0);
 	res |= zcbor_bstr_put_arr(states, time);
 	res |= zcbor_int32_put(states, 2);
