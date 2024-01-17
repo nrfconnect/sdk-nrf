@@ -128,7 +128,7 @@ Matter weather station build types
 
 The Matter weather station application does not use a single :file:`prj.conf` file.
 Configuration files are provided for different build types, and they are located in the :file:`configuration/thingy53_nrf5340_cpuapp` directory.
-Before you start testing the application, you can select one of the build types supported by the application, depending on the building method.
+Before you start testing the application, you can select one of the build types supported by the application.
 
 See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
 
@@ -142,18 +142,16 @@ The application supports the following build types:
      - File name
      - Supported board
      - Description
-   * - Debug
+   * - Debug (default)
      - :file:`prj.conf`
      - All from `Requirements`_
-     - | Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
-       | Used by default if no build type is explicitly selected.
+     - Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
    * - Release
      - :file:`prj_release.conf`
      - All from `Requirements`_
      - | Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
        |
-       | .. note::
-       |     Currently, this application supports only the release build type when `Building for the nRF7002 Wi-Fi expansion board`_.
+       | Currently, this application supports only the release build type when `Building for the nRF7002 Wi-Fi expansion board`_.
 
 .. _matter_weather_station_app_build_configuration_overlays:
 
@@ -182,7 +180,7 @@ Building and running
 Selecting a build type
 ======================
 
-Before you start testing the application, you can select one of the :ref:`matter_weather_station_app_build_types`, depending on your building method.
+Before you start testing the application, you can select one of the :ref:`matter_weather_station_app_build_types`.
 See :ref:`modifying_build_types` for detailed steps how to select a build type.
 
 Building for the nRF7002 Wi-Fi expansion board

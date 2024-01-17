@@ -136,29 +136,38 @@ Matter door lock build types
 
 .. matter_door_lock_sample_configuration_file_types_start
 
-The sample uses different configuration files depending on the supported features.
-Configuration files are provided for different build types and they are located in the application root directory.
+The sample does not use a single :file:`prj.conf` file.
+Configuration files are provided for different build types, and they are located in the sample root directory.
+Before you start testing the application, you can select one of the build types supported by the application.
 
-The :file:`prj.conf` file represents a ``debug`` build type.
-Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
-For example, the ``release`` build type file name is :file:`prj_release.conf`.
-If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
+See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
 
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_overview_start
-   :end-before: build_types_overview_end
+The sample supports the following build types:
 
-Before you start testing the application, you can select one of the build types supported by the sample.
-This sample supports the following build types, depending on the selected board:
+.. list-table:: Sample build types
+   :widths: auto
+   :header-rows: 1
 
-* ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
-* ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
-* ``thread_wifi_switched`` -- Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_wifi_thread_switching>` in the field - can be used for the nRF5340 DK with the nRF7002 EK shield attached.
-* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK, nRF7002 DK, and nRF21540 DK.
-
-.. note::
-    `Selecting a build type`_ is optional.
-    The ``debug`` build type is used by default if no build type is explicitly selected.
+   * - Build type
+     - File name
+     - Supported board
+     - Description
+   * - Debug (default)
+     - :file:`prj.conf`
+     - All from `Requirements`_
+     - Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
+   * - Release
+     - :file:`prj_release.conf`
+     - All from `Requirements`_
+     - Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
+   * - Switched Thread and Wi-Fi
+     - :file:`prj_thread_wifi_switched.conf`
+     - nRF5340 DK with the nRF7002 EK shield attached
+     - Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_wifi_thread_switching>` in the field.
+   * - No DFU
+     - :file:`prj_no_dfu.conf`
+     - nRF52840 DK, nRF5340 DK, nRF7002 DK, and nRF21540 DK
+     - Debug version of the application without Device Firmware Upgrade feature support.
 
 .. matter_door_lock_sample_configuration_file_types_end
 
@@ -333,38 +342,8 @@ See `Configuration`_ for information about building the sample with the DFU supp
 Selecting a build type
 ======================
 
-Before you start testing the application, you can select one of the `Matter door lock build types`_, depending on your building method.
-
-Selecting a build type in |VSC|
--------------------------------
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_selection_vsc_start
-   :end-before: build_types_selection_vsc_end
-
-Selecting a build type from command line
-----------------------------------------
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_selection_cmd_start
-   :end-before: For example, you can replace the
-
-For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``nrf52840dk_nrf52840`` by running the following command in the project directory:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b nrf52840dk_nrf52840 -d build_nrf52840dk_nrf52840 -- -DCONF_FILE=prj_release.conf
-
-The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for the build files.
-
-.. note::
-   If the selected board does not support the selected build type, the build is interrupted.
-   For example, if the ``shell`` build type is not supported by the selected board, the following notification appears:
-
-   .. code-block:: console
-
-      File not found: ./ncs/nrf/samples/matter/lock/configuration/nrf52840dk_nrf52840/prj_shell.conf
+Before you start testing the application, you can select one of the :ref:`matter_lock_sample_configuration_build_types`.
+See :ref:`modifying_build_types` for detailed steps how to select a build type.
 
 Testing
 =======

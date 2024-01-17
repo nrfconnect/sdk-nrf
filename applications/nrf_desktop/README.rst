@@ -377,7 +377,7 @@ nRF Desktop build types
 =======================
 
 The nRF Desktop application does not use a single :file:`prj.conf` file.
-Before you start testing the application, you can select one of the build types supported by the application, depending on your development kit and the building method.
+Before you start testing the application, you can select one of the build types supported by the application.
 Not every board supports all of the mentioned build types.
 
 See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
@@ -392,11 +392,10 @@ The application supports the following build types:
      - File name
      - Supported board
      - Description
-   * - Debug
+   * - Debug (default)
      - :file:`prj.conf`
      - All from `Requirements`_
-     - | Debug version of the application; the same as the release build type, but with debug options enabled.
-       | Used by default if no build type is explicitly selected.
+     - Debug version of the application; the same as the release build type, but with debug options enabled.
    * - Release
      - :file:`prj_release.conf`
      - All from `Requirements`_
@@ -899,7 +898,7 @@ The nRF Desktop application is built the same way to any other |NCS| application
 Selecting a build type
 ======================
 
-Before you start testing the application, you can select one of the :ref:`nrf_desktop_requirements_build_types`, depending on your development kit and building method.
+Before you start testing the application, you can select one of the :ref:`nrf_desktop_requirements_build_types`, depending on your development kit.
 See :ref:`modifying_build_types` for detailed steps how to select a build type.
 
 .. note::

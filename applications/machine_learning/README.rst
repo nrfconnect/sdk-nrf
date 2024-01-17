@@ -322,7 +322,7 @@ nRF Machine Learning build types
 ================================
 
 The nRF Machine Learning application does not use a single :file:`prj.conf` file.
-Before you start testing the application, you can select one of the build types supported by the application, depending on your development kit and the building method.
+Before you start testing the application, you can select one of the build types supported by the application.
 Not every board supports both mentioned build types.
 
 See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
@@ -337,11 +337,10 @@ The application supports the following build types:
      - File name
      - Supported board
      - Description
-   * - Debug
+   * - Debug (default)
      - :file:`prj.conf`
      - All from `Requirements`_
-     - | Debug version of the application; can be used to verify if the application works correctly.
-       | Used by default if no build type is explicitly selected.
+     - Debug version of the application; can be used to verify if the application works correctly.
    * - Release
      - :file:`prj_release.conf`
      - ``nrf52840dk_nrf52840``
@@ -368,7 +367,7 @@ Building the default configurations requires an Internet connection, because the
 Selecting a build type
 ======================
 
-Before you start testing the application, you can select one of the :ref:`nrf_machine_learning_app_requirements_build_types`, depending on your development kit and building method.
+Before you start testing the application, you can select one of the :ref:`nrf_machine_learning_app_requirements_build_types`.
 See :ref:`modifying_build_types` for detailed steps how to select a build type.
 
 Providing API key

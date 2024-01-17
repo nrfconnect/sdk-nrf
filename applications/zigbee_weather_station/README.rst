@@ -136,7 +136,7 @@ Zigbee weather station build types
 
 The Zigbee weather station application does not use a single :file:`prj.conf` file.
 Configuration files are provided for different build types, and they are located in the :file:`configuration/thingy53_nrf5340_cpuapp` directory.
-Before you start testing the application, you can select one of the build types supported by the application, depending on the building method.
+Before you start testing the application, you can select one of the build types supported by the application.
 
 See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
 
@@ -150,11 +150,10 @@ The application supports the following build types:
      - File name
      - Supported board
      - Description
-   * - Debug
+   * - Debug (default)
      - :file:`prj.conf`
      - All from `Requirements`_
-     - | Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs.
-       | Used by default if no build type is explicitly selected.
+     - Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs.
    * - Release
      - :file:`prj_release.conf`
      - All from `Requirements`_
@@ -192,7 +191,7 @@ Building and running
 Selecting a build type
 ======================
 
-Before you start testing the application, you can select one of the :ref:`zigbee_weather_station_app_build_types`, depending on your building method.
+Before you start testing the application, you can select one of the :ref:`zigbee_weather_station_app_build_types`.
 See :ref:`modifying_build_types` for detailed steps how to select a build type.
 
 .. _zigbee_weather_station_app_testing:
