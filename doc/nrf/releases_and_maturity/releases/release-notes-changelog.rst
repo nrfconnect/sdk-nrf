@@ -386,8 +386,14 @@ Cellular samples
 
 * :ref:`lwm2m_client` sample:
 
-  * Added a workaround for ground fix location assistance queries in AVSystem Coiote by using fixed Connectivity Monitor object version.
-    This is enabled in the :file:`overlay-assist-cell.conf` configuration overlay.
+  * Added:
+
+    * A workaround for ground fix location assistance queries in AVSystem Coiote by using fixed Connectivity Monitor object version.
+      This is enabled in the :file:`overlay-assist-cell.conf` configuration overlay.
+    * Release Assistance Indication (RAI) feature.
+      This helps to save power by releasing the network connection faster on a network that supports it.
+
+  * Updated the eDRX cycle to 10.24s for both LTE-M and Nb-IOT.
 
 Cryptography samples
 --------------------
@@ -749,6 +755,10 @@ Libraries for networking
 * :ref:`lib_mqtt_helper` library:
 
   * Added support for using a password when connecting to a broker.
+
+* :ref:`lib_lwm2m_client_utils` library:
+
+  * Updated the Release Assistance Indication (RAI) support to follow socket state changes from LwM2M engine, and modify RAI values based on the state.
 
 * :ref:`lib_lwm2m_location_assistance` library:
 
