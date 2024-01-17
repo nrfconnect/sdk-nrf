@@ -339,7 +339,7 @@ int main(void)
 		/* Set a local MAC address with Nordic OUI */
 		if (net_if_is_admin_up(iface)) {
 			ret = net_if_down(iface);
-			if (ret) {
+			if (ret < 0 && ret != -EALREADY) {
 				LOG_ERR("Cannot bring down iface (%d)", ret);
 				return ret;
 			}
@@ -357,7 +357,7 @@ int main(void)
 			 &params, sizeof(params));
 
 		ret = net_if_up(iface);
-		if (ret) {
+		if (ret < 0 && ret != -EALREADY) {
 			LOG_ERR("Cannot bring up iface (%d)", ret);
 			return ret;
 		}
