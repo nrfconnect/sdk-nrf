@@ -10,6 +10,8 @@ Download client
 The Download client sample demonstrates how to download a file from an HTTP or a CoAP server, with optional TLS or DTLS.
 It uses the :ref:`lib_download_client` library.
 
+.. include:: /includes/net_connection_manager.txt
+
 Requirements
 ************
 

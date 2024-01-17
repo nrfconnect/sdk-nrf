@@ -9,9 +9,8 @@ CoAP Client
    :depth: 2
 
 The CoAP Client sample demonstrates the communication between a public CoAP server and a CoAP client application that is running on a Nordic SoC that enables IP networking through cellular or Wi-Fi connectivity.
-Cellular connectivity is supported on the nRF91 Series SiPs, while Wi-Fi connectivity is supported on the nRF52 or nRF53 Series SoCs hosting the nRF70 Series Wi-Fi companion ICs.
 
-The sample uses the :ref:`connection manager <zephyr:conn_mgr_overview>` that provides a common connectivity API for LTE and Wi-Fi stacks.
+.. include:: /includes/net_connection_manager.txt
 
 Requirements
 ************
@@ -128,4 +127,4 @@ This sample uses the following Zephyr libraries:
 * :ref:`net_mgmt_interface`
 * :ref:`CoAP client <zephyr:coap_client_interface>`
 * :ref:`CoAP <zephyr:coap_sock_interface>`
-* :ref:`Connection manager <zephyr:conn_mgr_overview>`
+* :ref:`Connection Manager <zephyr:conn_mgr_overview>`

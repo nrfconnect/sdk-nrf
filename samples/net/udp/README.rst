@@ -10,6 +10,8 @@ UDP
 The UDP sample demonstrates how to perform sequential transmissions of UDP packets to a server using an IP-connected device.
 The sample connects to an LTE network using an nRF91 Series DK or Thingy:91, or to Wi-Fi using the nRF7002 DK.
 
+.. include:: /includes/net_connection_manager.txt
+
 Requirements
 ************
 

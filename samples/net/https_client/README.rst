@@ -9,7 +9,8 @@ HTTPS Client
 
 The HTTPS Client sample demonstrates a minimal implementation of HTTP communication.
 It shows how to set up a TLS session towards an HTTPS server and how to send an HTTP request.
-The sample connects to an LTE network using an nRF91 Series DK or to Wi-Fi using the nRF7002 DK through the connection manager API.
+
+.. include:: /includes/net_connection_manager.txt
 
 Requirements
 ************

@@ -10,6 +10,7 @@ Azure IoT Hub
 The Azure IoT Hub sample shows the communication of an Internet-connected device with an `Azure IoT Hub`_ instance.
 This sample uses the :ref:`lib_azure_iot_hub` library to communicate with the IoT hub and the :ref:`lib_azure_fota` library to provide firmware over-the-air (FOTA) functionality.
 
+.. include:: /includes/net_connection_manager.txt
 
 Requirements
 ************
