@@ -245,8 +245,13 @@ static void handle_wifi_twt_event(struct net_mgmt_event_callback *cb)
 		(const struct wifi_twt_params *)cb->info;
 
 	if (resp->operation == WIFI_TWT_TEARDOWN) {
-		LOG_INF("TWT teardown received for flow ID %d\n",
-		      resp->flow_id);
+		if (resp->teardown_status == WIFI_TWT_TEARDOWN_SUCCESS) {
+			LOG_INF("TWT teardown success received for flow ID %d\n",
+				resp->flow_id);
+		} else {
+			LOG_INF("TWT teardown failed for flow ID %d\n",
+				resp->flow_id);
+		}
 		return;
 	}
 
