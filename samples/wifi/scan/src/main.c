@@ -337,7 +337,7 @@ int main(void)
 		struct ethernet_req_params params;
 
 		/* Set a local MAC address with Nordic OUI */
-		if (net_if_is_up(iface)) {
+		if (net_if_is_admin_up(iface)) {
 			ret = net_if_down(iface);
 			if (ret) {
 				LOG_ERR("Cannot bring down iface (%d)", ret);
