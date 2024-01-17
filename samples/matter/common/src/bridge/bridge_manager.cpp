@@ -443,6 +443,8 @@ BridgedDeviceDataProvider *BridgeManager::GetProvider(EndpointId endpoint, uint1
 	return nullptr;
 }
 
+} /* namespace Nrf */
+
 EmberAfStatus emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterId clusterId,
 						   const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
 						   uint16_t maxReadLength)
@@ -450,7 +452,7 @@ EmberAfStatus emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterI
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 
 	if (CHIP_NO_ERROR ==
-	    BridgeManager::Instance().HandleRead(endpointIndex, clusterId, attributeMetadata, buffer, maxReadLength)) {
+	    Nrf::BridgeManager::Instance().HandleRead(endpointIndex, clusterId, attributeMetadata, buffer, maxReadLength)) {
 		return EMBER_ZCL_STATUS_SUCCESS;
 	} else {
 		return EMBER_ZCL_STATUS_FAILURE;
@@ -463,11 +465,9 @@ EmberAfStatus emberAfExternalAttributeWriteCallback(EndpointId endpoint, Cluster
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 
 	if (CHIP_NO_ERROR ==
-	    BridgeManager::Instance().HandleWrite(endpointIndex, clusterId, attributeMetadata, buffer)) {
+	    Nrf::BridgeManager::Instance().HandleWrite(endpointIndex, clusterId, attributeMetadata, buffer)) {
 		return EMBER_ZCL_STATUS_SUCCESS;
 	} else {
 		return EMBER_ZCL_STATUS_FAILURE;
 	}
 }
-
-} /* namespace Nrf */
