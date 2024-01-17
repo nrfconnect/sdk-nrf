@@ -98,7 +98,6 @@ manifest:
           - nrf_hw_models
           - open-amp
           - picolibc
-          - psa-arch-tests
           - segger
           - tinycrypt
           - tf-m-tests
@@ -148,6 +147,10 @@ manifest:
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
       revision: eaf90ec9d9e42a0a47c65ed34e79705e136f7a1d
+    - name: psa-arch-tests
+      repo-path: sdk-psa-arch-tests
+      path: modules/tee/tf-m/psa-arch-tests
+      revision: 2102e16a0108cd903c8ac6b91e1d72f23b06479f
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
