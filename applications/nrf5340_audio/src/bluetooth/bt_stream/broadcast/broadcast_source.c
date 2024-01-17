@@ -67,10 +67,6 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 #error Unsupported LC3 codec preset for broadcast
 #endif /* CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE */
 
-#define STANDARD_QUALITY_16KHZ 16000
-#define STANDARD_QUALITY_24KHZ 24000
-#define HIGH_QUALITY_48KHZ     48000
-
 static struct bt_cap_broadcast_source *broadcast_source;
 static struct bt_cap_stream cap_streams[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 static struct bt_bap_lc3_preset lc3_preset = BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO;
@@ -182,9 +178,10 @@ static void public_broadcast_features_set(uint8_t *features)
 		*features |= 0x01;
 	}
 
-	if (freq == STANDARD_QUALITY_16KHZ || freq == STANDARD_QUALITY_24KHZ) {
+	if (freq == BT_AUDIO_CODEC_CONFIG_LC3_FREQ_16KHZ ||
+	    freq == BT_AUDIO_CODEC_CONFIG_LC3_FREQ_24KHZ) {
 		*features |= 0x02;
-	} else if (freq == HIGH_QUALITY_48KHZ) {
+	} else if (freq == BT_AUDIO_CODEC_CONFIG_LC3_FREQ_48KHZ) {
 		*features |= 0x04;
 	} else {
 		LOG_WRN("%dkHz is not compatible with Auracast, choose 16kHz, 24kHz or 48kHz",

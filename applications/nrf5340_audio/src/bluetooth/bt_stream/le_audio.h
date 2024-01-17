@@ -63,12 +63,53 @@ struct le_audio_encoded_audio {
  *		If the endpoint is NULL, it is not in the
  *		given state, and this function returns false.
  *
- * @param[in]	ep	The endpoint to check.
- * @param[in]	state	The state to check for.
+ * @param[in]	ep       The endpoint to check.
+ * @param[in]	state    The state to check for.
  *
  * @retval	true	The endpoint is in the given state.
  * @retval	false	Otherwise.
  */
 bool le_audio_ep_state_check(struct bt_bap_ep *ep, enum bt_bap_ep_state state);
+
+/**
+ * @brief	Decode the audio sampling frequency in the codec configuration.
+ *
+ * @param[in]	codec		The audio codec structure.
+ * @param[out]	freq_hz		Pointer to the sampling frequency in Hz.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int le_audio_freq_hz_get(const struct bt_audio_codec_cfg *codec, int *freq_hz);
+
+/**
+ * @brief	Decode the audio frame duration in us in the codec configuration.
+ *
+ * @param[in]	codec			The audio codec structure.
+ * @param[out]	frame_dur_us	Pointer to the frame duration in us.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int le_audio_duration_us_get(const struct bt_audio_codec_cfg *codec, int *frame_dur_us);
+
+/**
+ * @brief	Decode the number of octets per frame in the codec configuration.
+ *
+ * @param[in]	codec			The audio codec structure.
+ * @param[out]	octets_per_sdu	Pointer to the number of octets per SDU.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int le_audio_octets_per_frame_get(const struct bt_audio_codec_cfg *codec, uint32_t *octets_per_sdu);
+
+/**
+ * @brief	Decode the number of frame blocks per SDU in the codec configuration.
+ *
+ * @param[in]	codec				The audio codec structure.
+ * @param[out]	frame_blks_per_sdu	Pointer to the number of frame blocks per SDU.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int le_audio_frame_blocks_per_sdu_get(const struct bt_audio_codec_cfg *codec,
+				      uint32_t *frame_blks_per_sdu);
 
 #endif /* _LE_AUDIO_H_ */
