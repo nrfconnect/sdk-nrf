@@ -59,8 +59,8 @@ Installing the required software
 On your computer, install `nRF Connect for Desktop`_.
 After installing and starting the application, install the Programmer app.
 
-You must also install a terminal emulator, such as :ref:`PuTTY <putty>` or the nRF Terminal, which is part of the `nRF Connect for Visual Studio Code`_ extension.
-The steps detailed in :ref:`nrf52_gs_connecting` use PuTTY, but any terminal emulator will work.
+You must also install a terminal emulator, such as `nRF Connect Serial Terminal`_, the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension), or PuTTY.
+nRF Connect Serial Terminal is the recommended method for :ref:`nrf52_gs_connecting`.
 
 On your mobile device, install the `nRF Connect for Mobile`_ application from the corresponding application store.
 
@@ -134,64 +134,11 @@ This is different from communication through the Nordic UART Service (NUS) over 
 
 If you have problems connecting to the sample, restart the DK and start over.
 
-To connect using CDC-UART, complete the following steps:
-
-1. Connect the |DK| to the computer with a micro-USB cable, and then turn on the DK.
-
-   **LED1** starts blinking.
-
-#. Open a terminal emulator; this guide uses PuTTY.
-
-   The **PuTTY Configuration** window opens and the **Session** category is chosen in the category selection tree on the left.
-
-#. Select **Serial** as the **Connection type** under **Basic options for your PuTTY session**.
-
-   The text fields above the selection change to **Serial line** and **Speed**.
-
-#. Click the **Terminal** category in the category selection tree to see options controlling the terminal.
-#. Enable the following options:
-
-   * Implicit CR in every LF
-   * Implicit LF in every CR
-   * Local echo: Force on
-   * Local line editing: Force on
-
-   .. figure:: ../../../test_and_optimize/images/putty.svg
-      :alt: PuTTY configuration for sending commands through UART
-
-      PuTTY configuration for sending commands through UART
-
-#. Click the **Serial** category under the **Connection** category in the category selection tree to see options controlling the local serial line.
-#. Type the COM port corresponding to your DK in the **Serial line to connect to** field.
-
-   Depending on what devices you have connected to your computer, you might have several choices.
-   To find the correct port (in Windows):
-
-   a. Right-click on the Windows Start menu, and select **Device Manager**.
-   #. In the **Device Manager** window, scroll down and expand **Ports (COM & LPT)**.
-   #. Find the port named *JLink CDC UART Port* and note down the number in parentheses.
-
-      If you have more than one J-Link UART Port, unplug the one that you want to use, plug it back in, and observe which one appeared last.
-
-      Your DK can show up as two consecutive COM ports.
-      If this is the case, you need to test which COM port is the correct one.
-
-#. Configure the following settings in the **Configure the serial line** section:
-
-   * **Speed (baud):** 115200
-   * **Data bits:** 8
-   * **Stop bits:** 1
-   * **Parity:** None
-   * **Flow control:** RTS/CTS
-
-#. Click :guilabel:`Open`.
-
-   The terminal window opens.
+To connect using CDC-UART, complete the steps listed on the :ref:`test_and_optimize` page for the chosen terminal emulator.
 
 .. uart_dk_connect_end
 
-The connection has now been established.
-If you test the sample now, you can go directly to Step 2 of :ref:`nrf52_gs_testing`.
+Once the connection has been established, you can test the sample from Step 2 of :ref:`nrf52_gs_testing`.
 
 .. _nrf52_gs_testing:
 

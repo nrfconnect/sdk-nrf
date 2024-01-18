@@ -110,8 +110,8 @@ After building the sample and programming it to your development kit, complete t
 Running OpenThread CLI commands
 -------------------------------
 
-You can connect to any of the Simple CoAP Server or Simple CoAP Client nodes with a terminal emulator |ANSI|.
-For more details, see :ref:`putty`.
+You can connect to any of the Simple CoAP Server or Simple CoAP Client nodes with a terminal emulator |ANSI| (for example, nRF Connect Serial Terminal).
+See :ref:`test_and_optimize` for the required settings and steps.
 
 Once the serial connection is ready, you can run OpenThread CLI commands.
 For complete CLI documentation, refer to `OpenThread CLI Reference`_.

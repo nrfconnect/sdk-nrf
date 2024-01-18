@@ -173,4 +173,4 @@ Due to a collision of USB PID:VID with another vendor, Nordic devices are not au
 This is valid only for Nordic Semiconductor development kits with a J-Link virtual COM port.
 
 To add an nRF52840 DK, drag the nRF52840 DK and drop it on the test bed configuration page.
-After that, the device is configured and the proper baud rate (115200) and COM port are set.
+After that, the device is configured and the :ref:`proper baud rate (115200) <test_and_optimize>` and COM port are set.

@@ -967,6 +967,8 @@ Documentation
     * New reference page :ref:`app_build_output_files` gathers information previously listed on several other pages.
     * :ref:`app_dfu` and :ref:`app_bootloaders` are now separate sections, with the DFU section summarizing the available DFU methods in a table.
 
+  * The :ref:`test_and_optimize` section by separating information about debugging into its own :ref:`gs_debugging` page.
+    The basic information about the default serial port settings and the different connection methods and terminals is now on the main :ref:`test_and_optimize` page.
   * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages so that instructions in the :ref:`nrf9160_gs_connecting_dk_to_cloud` and :ref:`thingy91_connect_to_cloud` sections, respectively, match the updated nRF Cloud workflow.
   * The :ref:`ug_nrf9160_gs` by replacing the Updating the DK firmware section with a new :ref:`nrf9160_gs_installing_software` section.
     This new section includes steps for using Quick Start, a new application in `nRF Connect for Desktop`_ that streamlines the getting started process with the nRF91 Series DKs.

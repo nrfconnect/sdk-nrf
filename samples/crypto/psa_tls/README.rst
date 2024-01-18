@@ -134,14 +134,8 @@ After programming the sample to your development kit, complete the following ste
 
    .. tab:: Test the sample as a server
 
-      1. Start a terminal emulator like PuTTY and connect to the used COM port with the following UART settings:
-
-         * Baud rate: 115.200
-         * 8 data bits
-         * 1 stop bit
-         * No parity
-         * HW flow control: None
-
+      1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
+         See :ref:`test_and_optimize` for more information.
       #. Observe the logs from the application using the terminal emulator.
       #. Start the ``eth_rtt_link`` executable as superuser with your development kit's segger-id and the following IPv4 address as parameters:
 
@@ -176,14 +170,8 @@ After programming the sample to your development kit, complete the following ste
 
    .. tab:: Test the sample as a client
 
-      1. Start a terminal emulator like PuTTY and connect to the used COM port with the following UART settings:
-
-         * Baud rate: 115.200
-         * 8 data bits
-         * 1 stop bit
-         * No parity
-         * HW flow control: None
-
+      1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
+         See :ref:`test_and_optimize` for more information.
       #. Observe the logs from the application using the terminal emulator.
       #. Start the ``eth_rtt_link`` executable as superuser with your development kit's segger-id and the following IPv4 address as parameters:
 

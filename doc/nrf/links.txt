@@ -495,13 +495,20 @@
 
 .. _`nRF Edge Impulse mobile app`: https://cm.nordicsemi.com/Products/Development-tools/nrf-edge-impulse
 
+.. ### Source: docs.nordicsemi.com
+
+.. _`nRF Connect Board Configurator`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
+
+.. _`nRF Connect Serial Terminal`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
+.. _`Connecting using Serial Terminal`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/connecting.html
+.. _`Serial Terminal configuration`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/configuration.html
+
+.. _`Cellular Monitor`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
+.. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
+
 .. ### Source: infocenter.nordicsemi.com
 
 .. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
-
-.. _`nRF Connect Serial Terminal`: https://infocenter.nordicsemi.com/topic/ug_serial_terminal/UG/serial_terminal/intro.html
-.. _`Cellular Monitor`: https://infocenter.nordicsemi.com/topic/ug_cellular_monitor/UG/cellular_monitor/intro.html
-.. _`Managing credentials`: https://infocenter.nordicsemi.com/topic/ug_cellular_monitor/UG/cellular_monitor/cellular_mon_cert_manager.html
 
 .. _`nRF Connect Programmer`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_introduction.html
 .. _`Programming the nRF52840 Dongle`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_programming_dongle.html
@@ -1372,8 +1379,6 @@
 .. _`Setting up the SDK for Amazon Sidewalk`: https://nrfconnect.github.io/sdk-sidewalk/setting_up_sidewalk_environment/setting_up_sdk.html
 
 .. _`Community Best Practice for Copyright Notice`: https://www.linuxfoundation.org/blog/copyright-notices-in-open-source-software-projects/
-
-.. _`nRF Connect Board Configurator`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
 
 .. _`HTTPie`: https://httpie.io/
 

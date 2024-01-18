@@ -1137,7 +1137,8 @@ After programming the development kit, test it in the Linux environment by perfo
 1. Connect the development kit to the computer using a USB cable.
    The development kit is assigned a ttyACM device (Linux).
 
-#. Open a serial connection to the development kit (/dev/ttyACM2) with a terminal |ANSI| (for example PuTTY).
+#. Open a serial connection to the development kit (/dev/ttyACM2) with a terminal |ANSI| (for example, nRF Connect Serial Terminal).
+   See :ref:`test_and_optimize` for the required settings and steps.
 
 #. Reset the development kit.
 

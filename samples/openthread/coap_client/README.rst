@@ -237,8 +237,8 @@ When you have set up nRF Toolbox, complete the following steps after the standar
 Sample output
 =============
 
-You can observe the sample logging output with a terminal emulator |ANSI|.
-For more details, see :ref:`putty`.
+You can observe the sample logging output with a terminal emulator |ANSI| (for example, nRF Connect Serial Terminal).
+See :ref:`test_and_optimize` for the required settings and steps.
 
 Dependencies
 ************

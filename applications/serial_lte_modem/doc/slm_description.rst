@@ -366,13 +366,7 @@ To connect to an nRF91 Series DK with a PC:
    Using the Cellular Monitor app in combination with the nRF Connect Serial Terminal shows how the modem responds to the different modem commands.
    You can then use this connection to send or receive AT commands over UART, and to see the log output of the development kit.
 
-   Alternatively, you can use a terminal emulator like `Termite`_, `Teraterm`_, or PuTTY to establish a terminal connection to the development kit, using the following settings:
-
-   * Baud rate: 115200
-   * 8 data bits
-   * 1 stop bit
-   * No parity
-   * HW flow control: None
+   Alternatively, you can use a terminal emulator like `Termite`_, `Teraterm`_, or PuTTY to establish a terminal connection to the development kit, using the :ref:`default serial port connection settings <test_and_optimize>`.
 
    .. note::
 

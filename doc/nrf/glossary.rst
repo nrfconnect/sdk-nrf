@@ -269,6 +269,7 @@ Glossary
    Hardware Flow Control (HWFC)
       A handshaking mechanism used to prevent an overflow of bytes in modems.
       It uses two dedicated pins on the RS-232 connector, :term:`Request to Send (RTS)` and :term:`Clear to Send (CTS)`.
+      The :ref:`default serial port connection settings <test_and_optimize>` in the |NCS| use HWFC set to ``None``.
 
    Host Controller Interface (HCI)
       Standardized communication between the host stack (for example, a PC or mobile phone OS) and the controller (the Bluetooth IC).
