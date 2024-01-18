@@ -4,5 +4,5 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-include(platform/ext/target/nordic_nrf/common/nrf5340/preload.cmake)
+include(platform/ext/target/nordic_nrf/common/nrf9160/cpuarch.cmake)
 add_compile_definitions(__NRF_TFM__)
