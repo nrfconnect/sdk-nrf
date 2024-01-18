@@ -210,6 +210,15 @@ set_property(TARGET zephyr_property_target
     -DPYTHON_PREFER=${Python3_EXECUTABLE}
 )
 
+# CONN_HANDLE_MAX_NUM is only needed if IPC mode is used
+# The maximal number of secure services that are connected or requested at the same time
+if (CONFIG_TFM_CONN_HANDLE_MAX_NUM)
+  set_property(TARGET zephyr_property_target
+  APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DCONFIG_TFM_DOORBELL_API=${CONFIG_TFM_CONN_HANDLE_MAX_NUM}
+  )
+endif()
+
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/tfm)
 
 # Default values from config_base.h in TF-M.
@@ -254,7 +263,6 @@ set(PS_VALIDATE_METADATA_FROM_FLASH        ${CONFIG_TFM_PS_VALIDATE_METADATA_FRO
 set(PS_MAX_ASSET_SIZE                      ${CONFIG_TFM_PS_MAX_ASSET_SIZE})
 set(PS_NUM_ASSETS                          ${CONFIG_TFM_PS_NUM_ASSETS})
 set(PS_STACK_SIZE                          ${CONFIG_TFM_PS_STACK_SIZE})
-set(CONFIG_TFM_CONN_HANDLE_MAX_NUM         ${CONFIG_TFM_CONN_HANDLE_MAX_NUM})
 set(CONFIG_TFM_DOORBELL_API                ${CONFIG_TFM_DOORBELL_API})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tfm_config.h.in
