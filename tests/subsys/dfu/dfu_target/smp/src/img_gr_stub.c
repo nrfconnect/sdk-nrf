@@ -247,7 +247,8 @@ void img_upload_init_verify(struct net_buf *nb)
 		ZCBOR_MAP_DECODE_KEY_DECODER("sha", zcbor_bstr_decode, &sha)
 		};
 
-	zcbor_new_decode_state(zsd, ARRAY_SIZE(zsd), nb->data + sizeof(struct smp_hdr), nb->len, 1);
+	zcbor_new_decode_state(zsd, ARRAY_SIZE(zsd), nb->data + sizeof(struct smp_hdr), nb->len, 1,
+				NULL, 0);
 
 	decoded = 0;
 	/* Init buffer values */
