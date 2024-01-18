@@ -155,11 +155,6 @@
 /* The stack size of the Protected Storage Secure Partition */
 #cmakedefine PS_STACK_SIZE @PS_STACK_SIZE@
 
-/* SPM Partition Configs */
-
-/* The maximal number of secure services that are connected or requested at the same time */
-#cmakedefine CONFIG_TFM_CONN_HANDLE_MAX_NUM @CONFIG_TFM_CONN_HANDLE_MAX_NUM@
-
 /* Enable/Disable the doorbell APIs */
 #cmakedefine01 CONFIG_TFM_DOORBELL_API
 
