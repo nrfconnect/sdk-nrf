@@ -17,7 +17,7 @@ For certification status of the released versions, see `Mobile network operator 
 liblwm2m_carrier 3.4.0
 **********************
 
-Release for modem firmware version 1.3.5 and 2.0.0.
+Release for modem firmware version 1.3.5, 1.3.6, 2.0.0, and 2.0.1.
 
 Size
 ====
@@ -37,7 +37,18 @@ See :ref:`lwm2m_lib_size` for an explanation of the library size in different sc
 Changes
 =======
 
-*
+* Removed AT&T support. The LwM2M carrier library is no longer required to certify with AT&T.
+
+* Added preliminary support for Bell Canada subscriber ID.
+  This carrier can be disabled or enabled with the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_BELL_CA`.
+
+* Changed the default string of the Device Type resource to say "Module" instead of "Smart Device".
+  This can be changed to other strings using :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_TYPE`.
+
+* Added a timeout to abort Push FOTA operations :kconfig:option:`CONFIG_LWM2M_CARRIER_FIRMWARE_DOWNLOAD_TIMEOUT`.
+  By default (0) the timer is disabled for unknown Subscriber IDs, and set to 30 minutes by for the SoftBank Subscriber ID.
+
+* Removed :kconfig:option:`LWM2M_CARRIER_THREAD_STACK_SIZE`, and the corresponding thread from the glue layer.
 
 liblwm2m_carrier 3.3.3
 **********************

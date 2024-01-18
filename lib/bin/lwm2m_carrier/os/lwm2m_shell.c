@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <stdint.h>
 #include <strings.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -32,10 +33,10 @@ static const struct {
 } carriers_enabled_map[] = {
 	{ LWM2M_CARRIER_GENERIC, "Generic" },
 	{ LWM2M_CARRIER_VERIZON, "Verizon" },
-	{ LWM2M_CARRIER_ATT, "AT&T" },
 	{ LWM2M_CARRIER_LG_UPLUS, "LG U+" },
 	{ LWM2M_CARRIER_T_MOBILE, "T-Mobile" },
-	{ LWM2M_CARRIER_SOFTBANK, "SoftBank" }
+	{ LWM2M_CARRIER_SOFTBANK, "SoftBank" },
+	{ LWM2M_CARRIER_BELL_CA, "Bell Canada" }
 };
 
 static int cmd_device_time_read(const struct shell *shell, size_t argc, char **argv)
@@ -911,7 +912,7 @@ static int cmd_carriers_set(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc < 2) {
 		shell_print(shell, "%s all", argv[0]);
-		shell_print(shell, "  All carriers except AT&T");
+		shell_print(shell, "  All carriers");
 		shell_print(shell, "%s <id1> <id2> ...", argv[0]);
 		for (int i = 0; i < ARRAY_SIZE(carriers_enabled_map); i++) {
 			shell_print(shell, "  %d = %s", i, carriers_enabled_map[i].name);
@@ -1100,6 +1101,27 @@ static int cmd_coap_confirmable_interval(const struct shell *shell, size_t argc,
 	return 0;
 }
 
+static int cmd_firmware_download_timeout_set(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc != 2) {
+		shell_print(shell, "%s <minutes>", argv[0]);
+		return 0;
+	}
+
+	int32_t firmware_download_timeout = atoi(argv[1]);
+
+	if (firmware_download_timeout < 0 || firmware_download_timeout > UINT16_MAX) {
+		shell_print(shell, "invalid value, must be between 0 and 65535");
+		return 0;
+	}
+
+	lwm2m_settings_firmware_download_timeout_set(firmware_download_timeout);
+
+	shell_print(shell, "Set firmware download timeout: %d min", firmware_download_timeout);
+
+	return 0;
+}
+
 static int cmd_sec_tag_set(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc != 2) {
@@ -1120,7 +1142,7 @@ static int cmd_sec_tag_set(const struct shell *shell, size_t argc, char **argv)
 	shell_print(shell, "Set security tag: %u", server_sec_tag);
 
 	if (!provisioned && server_sec_tag != 0) {
-		shell_print(shell, "Warning: a PSK does not exist in sec_tag %u.", server_sec_tag);
+		shell_print(shell, "Warning: a PSK does not exist in sec_tag %u", server_sec_tag);
 		shell_print(shell, "This can be written using AT%%CMNG=0,%u,3,\"PSK\"",
 			    server_sec_tag);
 	}
@@ -1452,6 +1474,9 @@ static int cmd_settings_print(const struct shell *shell, size_t argc, char **arg
 			lwm2m_settings_service_code_get());
 	shell_print(shell, "  Device Serial Number type      %d",
 			lwm2m_settings_device_serial_no_type_get());
+	shell_print(shell, "  Firmware download timeout      %d %s",
+			lwm2m_settings_firmware_download_timeout_get(),
+			lwm2m_settings_firmware_download_timeout_get() ? "min" : "(disabled)");
 	shell_print(shell, "");
 	shell_print(shell, "Custom carrier server settings   %s",
 			lwm2m_settings_enable_custom_server_config_get() ?
@@ -1603,6 +1628,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_config,
 			  cmd_device_serial_no_type_set),
 		SHELL_CMD(session_idle_timeout, NULL, "Session timeout time",
 			  cmd_session_idle_timeout_set),
+		SHELL_CMD(firmware_download_timeout, NULL, "Firmware download timeout",
+			  cmd_firmware_download_timeout_set),
 		SHELL_SUBCMD_SET_END
 );
 

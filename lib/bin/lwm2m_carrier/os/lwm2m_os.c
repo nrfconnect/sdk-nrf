@@ -48,10 +48,6 @@ K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS,
 			    CONFIG_LWM2M_CARRIER_WORKQ_STACK_SIZE);
 static struct k_work_q lwm2m_os_work_qs[LWM2M_OS_MAX_WORK_QS];
 
-K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_thread_stack, LWM2M_OS_MAX_THREAD_COUNT,
-			    CONFIG_LWM2M_CARRIER_THREAD_STACK_SIZE);
-static struct k_thread lwm2m_os_threads[LWM2M_OS_MAX_THREAD_COUNT];
-
 static struct k_sem lwm2m_os_sems[LWM2M_OS_MAX_SEM_COUNT];
 static uint8_t lwm2m_os_sems_used;
 
@@ -339,34 +335,6 @@ bool lwm2m_os_timer_is_pending(lwm2m_os_timer_t *timer)
 	}
 
 	return k_work_delayable_is_pending(&work->work_item);
-}
-
-/* Thread functions */
-
-int lwm2m_os_thread_start(int index, lwm2m_os_thread_entry_t entry, const char *name)
-{
-	__ASSERT(index < LWM2M_OS_MAX_THREAD_COUNT, "Not enough threads in glue layer");
-
-	if (index >= LWM2M_OS_MAX_THREAD_COUNT) {
-		return -EINVAL;
-	}
-
-	k_tid_t thread = k_thread_create(&lwm2m_os_threads[index], lwm2m_os_thread_stack[index],
-					 K_THREAD_STACK_SIZEOF(lwm2m_os_thread_stack[index]),
-					 entry, NULL, NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO,
-					 0, K_NO_WAIT);
-
-	k_thread_name_set(thread, name);
-	k_thread_start(thread);
-
-	return 0;
-}
-
-void lwm2m_os_thread_resume(int index)
-{
-	__ASSERT(index < LWM2M_OS_MAX_THREAD_COUNT, "Invalid thread index");
-
-	k_thread_resume(&lwm2m_os_threads[index]);
 }
 
 int lwm2m_os_sleep(int ms)

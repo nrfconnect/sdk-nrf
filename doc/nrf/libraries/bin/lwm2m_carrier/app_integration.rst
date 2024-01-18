@@ -104,7 +104,7 @@ Following are some of the general Kconfig options that you can configure:
   * The default value is ``IPV4V6``.
   * If :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` is not set, this configuration is ignored.
 
-* :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`, :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON`, :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT`, :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`, :kconfig:option:`CONFIG_LWM2M_CARRIER_T_MOBILE`, :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK`:
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`, :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON`, :kconfig:option:`CONFIG_LWM2M_CARRIER_BELL_CA`, :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`, :kconfig:option:`CONFIG_LWM2M_CARRIER_T_MOBILE`, :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK`:
 
   * These configurations allow you to choose the networks in which the carrier library will apply.
   * For example, if you are deploying a product in several networks but only need to enable the carrier library within Verizon, you must set :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON` to ``y`` and all the others to ``n``.
@@ -122,6 +122,12 @@ Following are some of the general Kconfig options that you can configure:
 
   .. note::
      Application DFU is needed to enable LG U+ functionality.
+
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_FIRMWARE_DOWNLOAD_TIMEOUT`:
+
+  * This configuration specifies the number of minutes allowed for a single firmware image download. If the download is not completed by the time the specified number of minutes elapses, the download shall be aborted.
+  * This configuration is only supported for Push delivery method of firmware images.
+  * Leaving this configuration empty (``0``) will disable the timer for unknown Subscriber IDs, and set it to 30 minutes by for the SoftBank subscriber ID.
 
 .. _server_options_lwm2m:
 

@@ -29,6 +29,7 @@ LOG_MODULE_REGISTER(lwm2m_settings, CONFIG_LOG_DEFAULT_LEVEL);
 #define PDN_TYPE_SETTINGS_KEY				"pdn_type"
 #define SERVICE_CODE_SETTINGS_KEY			"service_code"
 #define DEVICE_SERIAL_NO_TYPE_SETTINGS_KEY              "device_serial_no_type"
+#define FIRMWARE_DOWNLOAD_TIMEOUT_SETTINGS_KEY          "firmware_download_timeout"
 
 #define ENABLE_CUSTOM_SERVER_SETTINGS_KEY		"enable_custom_server_settings"
 #define IS_BOOTSTRAP_SERVER_SETTINGS_KEY		"is_bootstrap_server"
@@ -57,6 +58,7 @@ static char apn[64];
 static uint32_t pdn_type;
 static char service_code[6];
 static uint8_t device_serial_no_type;
+static uint16_t firmware_download_timeout;
 
 static bool enable_custom_server_config;
 static bool is_bootstrap_server;
@@ -98,6 +100,8 @@ static int settings_load_cb(const char *key, size_t len, settings_read_cb read_c
 		sz = read_cb(cb_arg, service_code, sizeof(service_code));
 	} else if (strcmp(key, DEVICE_SERIAL_NO_TYPE_SETTINGS_KEY) == 0) {
 		sz = read_cb(cb_arg, &device_serial_no_type, sizeof(device_serial_no_type));
+	} else if (strcmp(key, FIRMWARE_DOWNLOAD_TIMEOUT_SETTINGS_KEY) == 0) {
+		sz = read_cb(cb_arg, &firmware_download_timeout, sizeof(firmware_download_timeout));
 	} else if (strcmp(key, ENABLE_CUSTOM_SERVER_SETTINGS_KEY) == 0) {
 		sz = read_cb(cb_arg, &enable_custom_server_config,
 			     sizeof(enable_custom_server_config));
@@ -143,6 +147,7 @@ static void settings_enable_custom_config(lwm2m_carrier_config_t *config)
 	config->coap_con_interval = coap_con_interval;
 	config->apn = apn;
 	config->pdn_type = pdn_type;
+	config->firmware_download_timeout = firmware_download_timeout;
 	config->lg_uplus.service_code = service_code;
 	config->lg_uplus.device_serial_no_type = device_serial_no_type;
 }
@@ -767,6 +772,25 @@ int lwm2m_settings_device_serial_no_type_set(bool new_device_serial_no_type)
 				    &device_serial_no_type, sizeof(device_serial_no_type));
 	if (err) {
 		LOG_ERR("Save " DEVICE_SERIAL_NO_TYPE_SETTINGS_KEY " failed: %d", err);
+	}
+
+	return err;
+}
+
+uint16_t lwm2m_settings_firmware_download_timeout_get(void)
+{
+	return firmware_download_timeout;
+}
+
+int lwm2m_settings_firmware_download_timeout_set(const uint16_t new_firmware_download_timeout)
+{
+	firmware_download_timeout = new_firmware_download_timeout;
+
+	int err = settings_save_one(LWM2M_SETTINGS_SUBTREE_NAME "/"
+				    FIRMWARE_DOWNLOAD_TIMEOUT_SETTINGS_KEY,
+				    &firmware_download_timeout, sizeof(firmware_download_timeout));
+	if (err) {
+		LOG_ERR("Save " FIRMWARE_DOWNLOAD_TIMEOUT_SETTINGS_KEY " failed: %d", err);
 	}
 
 	return err;

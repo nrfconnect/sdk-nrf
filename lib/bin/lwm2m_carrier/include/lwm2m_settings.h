@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef LWM2M_SETTINGS_H__
+#define LWM2M_SETTINGS_H__
+
 /**
  * @file lwm2m_settings.h
  *
  * @defgroup lwm2m_carrier_settings LwM2M custom init settings
  * @{
  */
-
-#ifndef LWM2M_SETTINGS_H__
-#define LWM2M_SETTINGS_H__
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -41,7 +41,7 @@ int lwm2m_settings_auto_startup_set(bool new_auto_startup);
 bool lwm2m_settings_enable_custom_config_get(void);
 
 /**
- * Enable or disable the LwM2M custom settings.
+ * @brief Enable or disable the LwM2M custom settings.
  *
  * @param new_enable_custom_config Whether to enable LwM2M custom settings or not.
  *
@@ -57,7 +57,7 @@ int lwm2m_settings_enable_custom_config_set(bool new_enable_custom_config);
 uint32_t lwm2m_settings_carriers_enabled_get(void);
 
 /**
- * Set enabled carriers.
+ * @brief Set enabled carriers.
  *
  * @param new_carriers_enabled Bitmask corresponding to carrier oper_id values.
  *
@@ -90,7 +90,7 @@ int lwm2m_settings_bootstrap_from_smartcard_set(bool new_bootstrap_from_smartcar
 bool lwm2m_settings_enable_custom_server_config_get(void);
 
 /**
- * Enable or disable the LwM2M server custom settings.
+ * @brief Enable or disable the LwM2M server custom settings.
  *
  * @param new_enable_custom_server_config Whether to enable LwM2M custom server settings or not.
  *
@@ -199,7 +199,7 @@ int lwm2m_settings_coap_con_interval_set(const int32_t new_coap_con_interval);
 /**
  * @brief Retrieve the security tag from the custom LwM2M settings.
  *
- * @retval The security tag
+ * @retval The security tag.
  */
 uint32_t lwm2m_settings_server_sec_tag_get(void);
 
@@ -252,7 +252,7 @@ int lwm2m_settings_pdn_type_set(uint32_t new_pdn_type);
 bool lwm2m_settings_enable_custom_device_config_get(void);
 
 /**
- * Enable or disable the LwM2M device custom settings.
+ * @brief Enable or disable the LwM2M device custom settings.
  *
  * @param new_enable_custom_device_config Whether to enable LwM2M custom device settings or not.
  *
@@ -371,6 +371,22 @@ bool lwm2m_settings_device_serial_no_type_get(void);
  * @retval 0 on success, non-zero on failure.
  */
 int lwm2m_settings_device_serial_no_type_set(bool new_device_serial_no_type);
+
+/**
+ * @brief Retrieve the firmware download timeout from the custom LwM2M settings.
+ *
+ * @retval The firmware download timeout (in minutes).
+ */
+uint16_t lwm2m_settings_firmware_download_timeout_get(void);
+
+/**
+ * @brief Set or update the firmware download timeout in the custom LwM2M settings.
+ *
+ * @param[in] new_firmware_download_timeout Timeout (in minutes).
+ *
+ * @retval 0 on success, non-zero on failure.
+ */
+int lwm2m_settings_firmware_download_timeout_set(const uint16_t new_firmware_download_timeout);
 
 /** @} */
 

@@ -30,17 +30,10 @@ extern "C" {
 /**
  * @brief Maximum number of timers that the system must support.
  */
-#define LWM2M_OS_MAX_TIMER_COUNT (5 + (LWM2M_OS_MAX_WORK_QS * 4))
+#define LWM2M_OS_MAX_TIMER_COUNT (4 + (LWM2M_OS_MAX_WORK_QS * 4))
 
 typedef int lwm2m_os_work_q_t;
 typedef int lwm2m_os_timer_t;
-
-/**
- * @brief Maximum number of threads that the system must support.
- */
-#define LWM2M_OS_MAX_THREAD_COUNT 1
-
-typedef void (*lwm2m_os_thread_entry_t)(void *p1, void *p2, void *p3);
 
 /**
  * @brief Maximum number of semaphores that the system must support.
@@ -437,25 +430,6 @@ int64_t lwm2m_os_timer_remaining(lwm2m_os_timer_t *timer);
  * @retval  true  If a timer task is pending.
  */
 bool lwm2m_os_timer_is_pending(lwm2m_os_timer_t *timer);
-
-/**
- * @brief Create and start a new thread.
- *
- * @param index Number of the thread.
- * @param entry Thread entry function.
- * @param name  Name of the thread.
- *
- * @retval  0      Thread created and started.
- * @retval -EINVAL Thread index not valid.
- */
-int lwm2m_os_thread_start(int index, lwm2m_os_thread_entry_t entry, const char *name);
-
-/**
- * @brief Resume a suspended thread. If the thread is not suspended, this function shall do nothing.
- *
- * @param index Number of the thread.
- */
-void lwm2m_os_thread_resume(int index);
 
 /**
  * @brief Initialize AT command driver.

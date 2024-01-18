@@ -329,17 +329,17 @@ typedef struct {
  */
 #define LWM2M_CARRIER_GENERIC		0x00000001
 #define LWM2M_CARRIER_VERIZON		0x00000002
-#define LWM2M_CARRIER_ATT		0x00000004  /* AT&T specific support is deprecated. */
 #define LWM2M_CARRIER_LG_UPLUS		0x00000008
 #define LWM2M_CARRIER_T_MOBILE		0x00000010
 #define LWM2M_CARRIER_SOFTBANK		0x00000020
+#define LWM2M_CARRIER_BELL_CA		0x00000040
 /** @} */
 
 /**
  * @brief Structure holding LwM2M carrier library initialization parameters.
  */
 typedef struct {
-	/** Configure enabled carriers. All carriers except AT&T are enabled when no bits are set
+	/** Configure enabled carriers. All carriers are enabled when no bits are set
 	 *  or if all bits are set.
 	 */
 	uint32_t carriers_enabled;
@@ -359,6 +359,8 @@ typedef struct {
 	int32_t session_idle_timeout;
 	/** How often to send CON instead of NON in CoAP observables (in seconds). */
 	int32_t coap_con_interval;
+	/** Optional firmware download timeout (in minutes). Only applicable to PUSH delivery. */
+	uint16_t firmware_download_timeout;
 	/** Optional custom APN. Null-terminated string of max 63 characters. */
 	const char *apn;
 	/** Optional PDN type for custom APN. */
