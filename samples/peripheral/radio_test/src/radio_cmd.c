@@ -10,7 +10,9 @@
 #include <zephyr/init.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/types.h>
+#if !defined(CONFIG_SOC_SERIES_NRF54HX)
 #include <hal/nrf_power.h>
+#endif /* !defined(CONFIG_SOC_SERIES_NRF54HX) */
 
 #if CONFIG_FEM
 #include "fem_al/fem_al.h"
@@ -420,6 +422,23 @@ static int cmd_print(const struct shell *shell, size_t argc, char **argv)
 		break;
 
 #endif /* defined(RADIO_MODE_MODE_Nrf_250Kbit) */
+
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5)
+	case NRF_RADIO_MODE_NRF_4MBIT_H_0_5:
+		shell_print(shell,
+			    "Data rate: %s",
+			    STRINGIFY(NRF_RADIO_MODE_NRF_4MBIT_H_0_5));
+		break;
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) */
+
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_25)
+	case NRF_RADIO_MODE_NRF_4MBIT_H_0_25:
+		shell_print(shell,
+			    "Data rate: %s",
+			    STRINGIFY(NRF_RADIO_MODE_NRF_4MBIT_H_0_25));
+		break;
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_25) */
+
 	case NRF_RADIO_MODE_NRF_1MBIT:
 		shell_print(shell,
 			    "Data rate: %s",
@@ -582,6 +601,22 @@ static int cmd_rx_start(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
+#if defined(RADIO_TXPOWER_TXPOWER_Pos10dBm)
+static void cmd_pos10dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = 10;
+	shell_print(shell, "TX power: %d", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos10dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos9dBm)
+static void cmd_pos9dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = 9;
+	shell_print(shell, "TX power: %d", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos9dBm) */
+
 #if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm)
 static void cmd_pos8dbm(const struct shell *shell, size_t argc, char **argv)
 {
@@ -637,6 +672,14 @@ static void cmd_pos2dbm(const struct shell *shell, size_t argc, char **argv)
 	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos1dBm)
+static void cmd_pos1dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = 1;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos1dBm) */
 
 static void cmd_pos0dbm(const struct shell *shell, size_t argc, char **argv)
 {
@@ -704,11 +747,35 @@ static void cmd_neg8dbm(const struct shell *shell, size_t argc, char **argv)
 	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 
+#if defined(RADIO_TXPOWER_TXPOWER_Neg9dBm)
+static void cmd_neg9dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = -9;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg9dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg10dBm)
+static void cmd_neg10dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = -10;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg10dBm) */
+
 static void cmd_neg12dbm(const struct shell *shell, size_t argc, char **argv)
 {
 	config.txpower = -12;
 	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg14dBm)
+static void cmd_neg14dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = -14;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg14dBm) */
 
 static void cmd_neg16dbm(const struct shell *shell, size_t argc, char **argv)
 {
@@ -722,17 +789,43 @@ static void cmd_neg20dbm(const struct shell *shell, size_t argc, char **argv)
 	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 
+#if defined(RADIO_TXPOWER_TXPOWER_Neg26dBm)
+static void cmd_neg26dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = -26;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg26dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg30dBm)
 static void cmd_neg30dbm(const struct shell *shell, size_t argc, char **argv)
 {
 	config.txpower = -30;
 	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg30dBm) */
 
 static void cmd_neg40dbm(const struct shell *shell, size_t argc, char **argv)
 {
 	config.txpower = -40;
 	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg46dBm)
+static void cmd_neg46dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = -46;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg46dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg70dBm)
+static void cmd_neg70dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = -70;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg70dBm) */
 
 static int cmd_nrf_1mbit(const struct shell *shell, size_t argc, char **argv)
 {
@@ -763,6 +856,30 @@ static int cmd_nrf_250kbit(const struct shell *shell, size_t argc,
 	return 0;
 }
 #endif /* defined(RADIO_MODE_MODE_Nrf_250Kbit) */
+
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5)
+static int cmd_nrf_4mbit_h_0_5(const struct shell *shell, size_t argc,
+			       char **argv)
+{
+	config.mode = NRF_RADIO_MODE_NRF_4MBIT_H_0_5;
+	shell_print(shell, "Data rate: %s",
+		    STRINGIFY(NRF_RADIO_MODE_NRF_4MBIT_H_0_5));
+
+	return 0;
+}
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) */
+
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_25)
+static int cmd_nrf_4mbit_h_0_25(const struct shell *shell, size_t argc,
+				char **argv)
+{
+	config.mode = NRF_RADIO_MODE_NRF_4MBIT_H_0_25;
+	shell_print(shell, "Data rate: %s",
+		    STRINGIFY(NRF_RADIO_MODE_NRF_4MBIT_H_0_25));
+
+	return 0;
+}
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_25) */
 
 static int cmd_ble_1mbit(const struct shell *shell, size_t argc, char **argv)
 {
@@ -859,6 +976,18 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_data_rate,
 		  "250 kbit/s Nordic proprietary radio mode",
 		  cmd_nrf_250kbit),
 #endif /* defined(RADIO_MODE_MODE_Nrf_250Kbit) */
+
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5)
+	SHELL_CMD(nrf_4Mbit0_5, NULL,
+		  "4 Mbit/s Nordic proprietary radio mode (BT=0.5/h=0.5)",
+		  cmd_nrf_4mbit_h_0_5),
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) */
+
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_25)
+	SHELL_CMD(nrf_4Mbit0_25, NULL,
+		  "4 Mbit/s Nordic proprietary radio mode (BT=0.5/h=0.25)",
+		  cmd_nrf_4mbit_h_0_25),
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_25) */
 
 	SHELL_CMD(ble_1Mbit, NULL, "1 Mbit/s Bluetooth Low Energy",
 		  cmd_ble_1mbit),
@@ -1009,6 +1138,12 @@ static int cmd_fem_ramp_up_set(const struct shell *shell, size_t argc, char **ar
 #endif /* CONFIG_FEM */
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_output_power,
+#if defined(RADIO_TXPOWER_TXPOWER_Pos10dBm)
+	SHELL_CMD(pos10dBm, NULL, "TX power: +10 dBm", cmd_pos10dbm),
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos10dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Pos9dBm)
+	SHELL_CMD(pos9dBm, NULL, "TX power: +9 dBm", cmd_pos9dbm),
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos9dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm)
 	SHELL_CMD(pos8dBm, NULL, "TX power: +8 dBm", cmd_pos8dbm),
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos8dBm) */
@@ -1030,6 +1165,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_output_power,
 #if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm)
 	SHELL_CMD(pos2dBm, NULL, "TX power: +2 dBm", cmd_pos2dbm),
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Pos1dBm)
+	SHELL_CMD(pos1dBm, NULL, "TX power: +1 dBm", cmd_pos1dbm),
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos1dBm) */
 	SHELL_CMD(pos0dBm, NULL, "TX power: 0 dBm", cmd_pos0dbm),
 #if defined(RADIO_TXPOWER_TXPOWER_Neg1dBm)
 	SHELL_CMD(neg1dBm, NULL, "TX power: -1 dBm", cmd_neg1dbm),
@@ -1051,11 +1189,31 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_output_power,
 	SHELL_CMD(neg7dBm, NULL, "TX power: -7 dBm", cmd_neg7dbm),
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg7dBm) */
 	SHELL_CMD(neg8dBm, NULL, "TX power: -8 dBm", cmd_neg8dbm),
+#if defined(RADIO_TXPOWER_TXPOWER_Neg9dBm)
+	SHELL_CMD(neg9dBm, NULL, "TX power: -9 dBm", cmd_neg9dbm),
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg9dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Neg10dBm)
+	SHELL_CMD(neg10dBm, NULL, "TX power: -10 dBm", cmd_neg10dbm),
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg10dBm) */
 	SHELL_CMD(neg12dBm, NULL, "TX power: -12 dBm", cmd_neg12dbm),
+#if defined(RADIO_TXPOWER_TXPOWER_Neg14dBm)
+	SHELL_CMD(neg14dBm, NULL, "TX power: -14 dBm", cmd_neg14dbm),
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg14dBm) */
 	SHELL_CMD(neg16dBm, NULL, "TX power: -16 dBm", cmd_neg16dbm),
 	SHELL_CMD(neg20dBm, NULL, "TX power: -20 dBm", cmd_neg20dbm),
+#if defined(RADIO_TXPOWER_TXPOWER_Neg26dBm)
+	SHELL_CMD(neg26dBm, NULL, "TX power: -26 dBm", cmd_neg26dbm),
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg26dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Neg30dBm)
 	SHELL_CMD(neg30dBm, NULL, "TX power: -30 dBm", cmd_neg30dbm),
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg30dBm) */
 	SHELL_CMD(neg40dBm, NULL, "TX power: -40 dBm", cmd_neg40dbm),
+#if defined(RADIO_TXPOWER_TXPOWER_Neg46dBm)
+	SHELL_CMD(neg46dBm, NULL, "TX power: -46 dBm", cmd_neg46dbm),
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg46dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Neg70dBm)
+	SHELL_CMD(neg70dBm, NULL, "TX power: -70 dBm", cmd_neg70dbm),
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg70dBm) */
 	SHELL_SUBCMD_SET_END
 );
 

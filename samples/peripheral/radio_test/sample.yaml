@@ -9,8 +9,10 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpunet
       - nrf7002dk_nrf5340_cpunet
+      - nrf54l15pdk_nrf54l15_cpuapp
     platform_allow: >
       nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpunet nrf7002dk_nrf5340_cpunet
+      nrf54l15pdk_nrf54l15_cpuapp
     tags: ci_build
   sample.peripheral.radio_test.nrf5340_nrf21540:
     build_only: true

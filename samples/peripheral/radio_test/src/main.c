@@ -5,9 +5,13 @@
  */
 
 #include <zephyr/sys/printk.h>
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
 
+
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 static void clock_init(void)
 {
 	int err;
@@ -39,12 +43,15 @@ static void clock_init(void)
 
 	printk("Clock has started\n");
 }
+#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 int main(void)
 {
 	printk("Starting Radio Test example\n");
 
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	clock_init();
+#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 	return 0;
 }
