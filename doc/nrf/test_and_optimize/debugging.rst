@@ -1,119 +1,12 @@
-.. _gs_testing:
-.. _testing:
-
-Testing and debugging an application
-####################################
-
-.. contents::
-   :local:
-   :depth: 2
-
-|application_sample_definition|
-
-Follow the instructions in the testing section of the application's documentation to make sure that the application runs as expected.
-
-Information about the current state of the application is usually provided through the LEDs or through UART, or through both.
-See the user interface section of the application's documentation for description of the LED states or available UART commands.
-
-.. _testing_vscode:
-
-How to connect with |nRFVSC|
-****************************
-
-The |nRFVSC| includes an integrated serial port and RTT terminal, which you can use to connect to your board.
-For detailed instructions, see `How to connect to the terminal`_ on the `nRF Connect for Visual Studio Code`_ documentation site.
-
-.. _putty:
-
-How to connect with PuTTY
-*************************
-
-To see the UART output, connect to the development kit (DK) with a terminal emulator, for example, PuTTY.
-
-Connect with the following settings:
-
- * Baud rate: 115200
- * 8 data bits
- * 1 stop bit
- * No parity
- * HW flow control: None
-
-If you want to send commands through UART, make sure to configure the required line endings and turn on local echo and local line editing:
-
-.. figure:: images/putty.svg
-   :alt: PuTTY configuration for sending commands through UART
-
-UART can also be used for logging purposes as one of the :ref:`logging backends <ug_logging_backends>`.
-
-.. _testing_rtt:
-
-How to use RTT
-**************
-
-To view the logging output using Real Time Transfer (RTT), modify the configuration settings of the application to override the default UART console:
-
- .. code-block:: none
-
-    CONFIG_USE_SEGGER_RTT=y
-    CONFIG_RTT_CONSOLE=y
-    CONFIG_UART_CONSOLE=n
-
-SEGGER's J-Link RTT can also be used for logging purposes as one of the :ref:`logging backends <ug_logging_backends>`.
-
-.. note::
-
-   SEGGER's J-Link RTT is part of the `J-Link Software and Documentation Pack`_.
-   You must have this software installed on your platform to use RTT.
-
-.. _testing_rtt_connect:
-
-Connecting using RTT
-====================
-
-To run RTT on your platform, complete the following steps:
-
-1. From the J-Link installation directory, open the J-Link RTT Viewer application:
-
-   * On Windows, the executable is called :file:`JLinkRTTViewer.exe`.
-   * On Linux, the executable is called :file:`JLinkRTTViewerExe`.
-
-#. Select the following options to configure your connection:
-
-   * Connection to J-Link: USB
-   * Target Device: Select your IC from the list
-   * Target Interface and Speed: SWD, 4000 KHz
-   * RTT Control Block: Auto Detection
-
-   .. figure:: images/rtt_viewer_configuration.png
-      :alt: Example of RTT Viewer configuration
-
-#. Click :guilabel:`OK` to view the logging output from the device.
-
-.. _serial_terminal_connect:
-
-How to connect with Serial Terminal
-***********************************
-
-You can also use the `nRF Connect Serial Terminal`_ app, which is part of `nRF Connect for Desktop`_ to send commands through UART.
-
-The nRF Connect Serial Terminal app is also used to establish LTE communication with the cellular modem through AT commands, and it also displays the UART output.
-To connect to an nRF91 Series DK with Serial Terminal, perform the following steps:
-
-1. Launch the Serial Terminal app.
-#. Connect an nRF91 Series DK to the PC with a USB cable.
-#. Power on the DK.
-#. Click :guilabel:`Select Device` and select the particular kit entry from the drop-down list in the Serial Terminal.
-#. Observe that the Serial Terminal app starts AT communication with the modem of the nRF91 Series DK and shows the status of the communication in the display terminal.
-   The app also displays any information that is logged on UART.
-
-   .. note::
-      In the case of the nRF9160 DK, the reset button must be pressed to restart the device and start the application.
-
 .. _gs_debugging:
 .. _debugging:
 
 Debugging an application
-************************
+########################
+
+.. contents::
+   :local:
+   :depth: 2
 
 To debug an application, set up the debug session as described in the `How to debug an application`_ section in the |nRFVSC| documentation.
 nRF Debug is the default debugger for |nRFVSC|.
@@ -138,7 +31,7 @@ For more information about debugging in the |nRFVSC|, for example testing and de
 .. _debugging_spe_nspe:
 
 Debugging secure and non-secure firmware
-========================================
+****************************************
 
 When using a build target with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` (``_ns``), by default you can only debug firmware in the non-secure environment of the application core firmware.
 
@@ -148,7 +41,7 @@ To build Trusted Firmware-M with debug symbols, set the :kconfig:option:`CONFIG_
 nRF Debug in the |nRFVSC| automatically loads the Trusted Firmware-M debug symbols.
 
 Enabling non-halting debugging with Cortex-M Debug Monitor
-==========================================================
+**********************************************************
 
 The debugging process can run in two modes.
 The halt-mode debugging stops the CPU when a debug request occurs.
@@ -168,7 +61,7 @@ Use the following steps to enable monitor-mode debugging in the |NCS|:
 For more information about monitor-mode debugging, see Zephyr's :ref:`zephyr:debugmon` documentation and SEGGER's `Monitor-mode Debugging <Monitor-mode Debugging_>`_ documentation.
 
 Debug configuration
-===================
+*******************
 
 When you are following the `How to debug an application`_ process in the |nRFVSC| and select the :guilabel:`Enable debug options` checkbox in the **Add Build Configuration** page, the following Kconfig options are set to ``y`` when you add the configuration:
 
@@ -181,13 +74,13 @@ There are many more Kconfig options for debugging that are specific to different
 For details, see the respective documentation pages of the modules.
 
 Debug build types
------------------
+=================
 
 Some applications and samples provide a specific build type that enables additional debug functionalities.
 You can select build types when you are :ref:`configuring the build settings <modifying_build_types>`.
 
 Debug logging
--------------
+=============
 
 You can use logging system to get more information about the state of your application.
 Logs are integrated to many various modules and subsystems in the |NCS| and Zephyr.
@@ -197,7 +90,7 @@ You can also configure log level per logger module, for example to get more info
 See :ref:`ug_logging` for details on how to enable and configure logs.
 
 Debug libraries
----------------
+===============
 
 The |NCS| also provides several libraries and drivers for debugging different components.
 For example:
@@ -214,7 +107,7 @@ For example:
 * The Zigbee protocol implementation offers :ref:`lib_zigbee_osif` and :ref:`lib_zigbee_shell` with custom Kconfig options that you can set for debugging.
 
 Debugging stack overflows
--------------------------
+=========================
 
 One of the potential root causes of fatal errors in an application are stack overflows.
 Read the Stack Overflows section on the :ref:`zephyr:fatal` page in the Zephyr documentation to learn about stack overflows and how to debug them.
@@ -223,7 +116,7 @@ You can also use a separate module to make sure that the stack sizes used by you
 One of such modules is for example Zephyr's :ref:`zephyr:thread_analyzer`.
 
 Debug tools
-===========
+***********
 
 The main recommended tool for debugging in the |NCS| is `nRF Debug <Debugging overview_>`_ of the |nRFVSC|.
 The tool uses `Microsoft's debug adaptor`_ and integrates custom debugging features specific for the |NCS|.

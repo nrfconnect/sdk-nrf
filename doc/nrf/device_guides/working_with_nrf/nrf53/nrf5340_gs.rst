@@ -54,8 +54,8 @@ Installing the required software
 On your computer, install `nRF Connect for Desktop`_.
 After installing and starting the application, install the Programmer app.
 
-You must also install a terminal emulator, such as :ref:`PuTTY <putty>` or the nRF Terminal, which is part of the `nRF Connect for Visual Studio Code`_ extension.
-The steps detailed in :ref:`nrf5340_gs_connecting` use PuTTY, but any terminal emulator will work.
+You must also install a terminal emulator, such as `nRF Connect Serial Terminal`_, the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension), or PuTTY.
+nRF Connect Serial Terminal is the recommended method for :ref:`nrf5340_gs_connecting`.
 
 On your mobile device, install the `nRF Connect for Mobile`_ application from the corresponding application store.
 
@@ -88,8 +88,7 @@ Connecting to the sample
    :start-after: uart_dk_connect_start
    :end-before: uart_dk_connect_end
 
-The connection has now been established.
-If you test the sample now, you can go directly to Step 2 of :ref:`nrf5340_gs_testing`.
+Once the connection has been established, you can test the sample from Step 2 of :ref:`nrf5340_gs_testing`.
 
 .. _nrf5340_gs_testing:
 

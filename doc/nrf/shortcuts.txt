@@ -20,26 +20,26 @@
 .. |connect_kit| replace:: Connect the kit to the computer using a USB cable.
    The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 
-.. |connect_terminal_generic| replace:: Connect to the device with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+.. |connect_terminal_generic| replace:: Connect to the device with a terminal emulator (for example, nRF Connect Serial Terminal).
+   See :ref:`test_and_optimize` for the required settings and steps.
 
-.. |connect_terminal| replace:: Connect to the kit with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+.. |connect_terminal| replace:: Connect to the kit with a terminal emulator (for example, nRF Connect Serial Terminal).
+   See :ref:`test_and_optimize` for the required settings and steps.
 
-.. |connect_terminal_specific| replace:: Connect to the kit that runs this sample with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+.. |connect_terminal_specific| replace:: Connect to the kit that runs this sample with a terminal emulator (for example, nRF Connect Serial Terminal).
+   See :ref:`test_and_optimize` for the required settings and steps.
 
-.. |connect_terminal_both| replace:: Connect to both kits with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+.. |connect_terminal_both| replace:: Connect to both kits with a terminal emulator (for example, nRF Connect Serial Terminal).
+   See :ref:`test_and_optimize` for the required settings and steps.
 
-.. |connect_terminal_ANSI| replace:: Open a serial port connection to the kit using a terminal emulator that supports VT100/ANSI escape characters (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+.. |connect_terminal_ANSI| replace:: Open a serial port connection to the kit using a terminal emulator that supports VT100/ANSI escape characters (for example, nRF Connect Serial Terminal).
+   See :ref:`test_and_optimize` for the required settings and steps.
 
-.. |connect_terminal_specific_ANSI| replace:: Connect to the kit that runs this sample with a terminal emulator that supports VT100/ANSI escape characters (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+.. |connect_terminal_specific_ANSI| replace:: Connect to the kit that runs this sample with a terminal emulator that supports VT100/ANSI escape characters (for example, nRF Connect Serial Terminal).
+   See :ref:`test_and_optimize` for the required settings and steps.
 
-.. |connect_terminal_both_ANSI| replace:: Connect to both kits with a terminal emulator that supports VT100/ANSI escape characters (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+.. |connect_terminal_both_ANSI| replace:: Connect to both kits with a terminal emulator that supports VT100/ANSI escape characters (for example, nRF Connect Serial Terminal).
+   See :ref:`test_and_optimize` for the required settings and steps.
 
 .. |ANSI| replace:: that supports VT100/ANSI escape characters
 

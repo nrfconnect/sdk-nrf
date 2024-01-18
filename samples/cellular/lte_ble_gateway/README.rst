@@ -111,8 +111,8 @@ Program the board controller as follows:
          west build --board nrf9160dk_nrf52840@1.1.0
 
 #. Verify that the programming was successful.
-   Use a terminal emulator, like PuTTY, to connect to the second serial port and check the output.
-   See :ref:`putty` for the required settings.
+   Use a terminal emulator, like nRF Connect Serial Terminal, to connect to the second serial port and check the output.
+   See :ref:`test_and_optimize` for the required settings and steps.
 
 After programming the board controller, you must program the main controller with the LTE Sensor Gateway sample.
 Program the main controller as follows:
@@ -131,8 +131,8 @@ Program the main controller as follows:
          west build --board nrf9160dk_nrf9160_ns@1.1.0
 
 #. Verify that the programming was successful.
-   To do so, use a terminal emulator, like PuTTY, to connect to the first serial port and check the output.
-   See :ref:`putty` for the required settings.
+   To do so, use a terminal emulator, like nRF Connect Serial Terminal, to connect to the first serial port and check the output.
+   See :ref:`test_and_optimize` for the required settings and steps.
 
 Testing
 =======

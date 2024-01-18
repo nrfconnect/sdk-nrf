@@ -97,8 +97,8 @@ Testing
 
 After programming the sample to both development kits, test it by performing the following steps:
 
-1. Connect to both kits with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+1. Connect to both kits with a terminal emulator (for example, nRF Connect Serial Terminal).
+   See :ref:`test_and_optimize` for the required settings and steps.
 #. Reset both kits.
 #. In one of the terminal emulators, type "c" to start the application on the connected board in the central (tester) role.
 #. In the other terminal emulator, type "p" to start the application in the peripheral (peer) role.
