@@ -36,10 +36,20 @@
 #endif
 
 struct bme_sample_result {
-	double temperature;
-	double humidity;
-	double pressure;
+	float temperature;
+	float humidity;
+	float pressure;
 	uint16_t air_quality;
+
+	float co2;
+	float voc;
+
+	enum bme68x_accuracy iaq_accuracy;
+	enum bme68x_accuracy co2_accuracy;
+	enum bme68x_accuracy voc_accuracy;
+
+	bool gas_run_in_status;
+	bool gas_stabilizasion_status;
 };
 
 struct bme68x_iaq_config {

@@ -66,6 +66,11 @@ config BME68X_IAQ_SAMPLE_RATE_CONTINUOUS
 	  This is a particularly power-hungry sample mode that should only be considered for
 	  testing purposes.
 
+config BME68X_IAQ_SAMPLE_RATE_QUICK_ULTRA_LOW_POWER
+	bool "BSEC quick ultra low power mode"
+	help
+	  Sample Gas data every 300 seconds and Temperature, Pressure and Humidity every 3 seconds.
+
 endchoice # BME68X_IAQ_SAMPLE_RATE
 
 module = BME68X_IAQ
