@@ -314,7 +314,7 @@ static int dfu_target_smp_recovery_enable(void)
 {
 	int rc;
 
-	rc = os_mgmt_client_echo(&os_gr_client, dfu_smp_echo_str);
+	rc = os_mgmt_client_echo(&os_gr_client, dfu_smp_echo_str, sizeof(dfu_smp_echo_str));
 	LOG_DBG("Recovery activate status %d", rc);
 
 	return rc;
