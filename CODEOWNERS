@@ -63,7 +63,7 @@ Kconfig*                                  @tejlmand
 /doc/nrfxlib/                             @gmarull
 /doc/versions.json                        @carlescufi
 /doc/custom.properties                    @gmarull
-/doc/tags.yml                             @gmarull
+/doc/tags.yml                             @gmarull @umapraseeda @b-gent
 /doc/requirements.txt                     @gmarull
 # General top-level docs
 /doc/nrf/config_and_build/                @greg-fer
