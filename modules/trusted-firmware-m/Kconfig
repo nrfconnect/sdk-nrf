@@ -267,6 +267,7 @@ menu "TF-M SPM component configs"
 config TFM_CONN_HANDLE_MAX_NUM
 	int "Maximal number of handling secure services"
 	default 8
+	depends on TFM_IPC
 	help
 	  The maximal number of secure services that are connected or requested at
 	  the same time
