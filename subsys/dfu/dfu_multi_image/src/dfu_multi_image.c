@@ -74,7 +74,7 @@ static int parse_cbor_header(void)
 	uint_fast32_t image_count;
 
 	ZCBOR_STATE_D(states, CBOR_HEADER_NESTING_LEVEL, ctx.buffer + FIXED_HEADER_SIZE,
-		      ctx.cur_item_size - FIXED_HEADER_SIZE, 1);
+		      ctx.cur_item_size - FIXED_HEADER_SIZE, 1, 0);
 
 	res = zcbor_map_start_decode(states);
 	res = res && zcbor_tstr_expect_lit(states, "img");
