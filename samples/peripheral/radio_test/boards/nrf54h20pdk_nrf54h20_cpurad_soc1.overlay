@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <common/nordic_nrf_next/nrfx_ram3x_dma.dtsi>
+
+/{
+	chosen {
+		zephyr,console = &uart136;
+		zephyr,shell-uart = &uart136;
+	};
+};
+
+&ram3x_cpurad {
+	status = "okay";
+};
+
+&uart136 {
+	status = "okay";
+	memory-regions = <&ram3x_cpurad>;
+};
+
+&dppic020 {
+	status = "okay";
+	source-channels = < 0 1 >;
+	sink-channels = < 2 3 >;
+};
+
+/* To suppress the nrfx_interconnect_ipct warning. */
+&ipct130 {
+	status = "okay";
+	owned-channels = < 0 1 >;
+};
