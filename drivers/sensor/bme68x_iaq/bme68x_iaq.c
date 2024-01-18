@@ -28,11 +28,30 @@ static const float temp_offset = (CONFIG_BME68X_IAQ_TEMPERATURE_OFFSET / (float)
  * The order is not important, but output_ready needs to be updated if different types
  * of sensor values are requested.
  */
-static const bsec_sensor_configuration_t bsec_requested_virtual_sensors[4] = {
+static const bsec_sensor_configuration_t bsec_requested_virtual_sensors[] = {
+	/* Gas Measurements */
 	{
 		.sensor_id   = BSEC_OUTPUT_IAQ,
-		.sample_rate = BSEC_SAMPLE_RATE,
+		.sample_rate = BSEC_GAS_SAMPLE_RATE,
 	},
+	{
+		.sensor_id   = BSEC_OUTPUT_CO2_EQUIVALENT,
+		.sample_rate = BSEC_GAS_SAMPLE_RATE,
+	},
+	{
+		.sensor_id   = BSEC_OUTPUT_BREATH_VOC_EQUIVALENT,
+		.sample_rate = BSEC_GAS_SAMPLE_RATE,
+	},
+	{
+		.sensor_id   = BSEC_OUTPUT_STABILIZATION_STATUS,
+		.sample_rate = BSEC_GAS_SAMPLE_RATE,
+	},
+	{
+		.sensor_id   = BSEC_OUTPUT_RUN_IN_STATUS,
+		.sample_rate = BSEC_GAS_SAMPLE_RATE,
+	},
+
+	/* Temperature, Pressure, Humidity */
 	{
 		.sensor_id   = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
 		.sample_rate = BSEC_SAMPLE_RATE,
@@ -187,18 +206,37 @@ static void output_ready(const struct device *dev, const bsec_output_t *outputs,
 		switch (outputs[i].sensor_id) {
 		case BSEC_OUTPUT_IAQ:
 			data->latest.air_quality = (uint16_t) outputs[i].signal;
+			data->latest.iaq_accuracy = (enum bme68x_accuracy) outputs[i].accuracy;
 			LOG_DBG("IAQ: %d", data->latest.air_quality);
 			break;
+		case BSEC_OUTPUT_CO2_EQUIVALENT:
+			data->latest.co2 = (float) outputs[i].signal;
+			data->latest.co2_accuracy = (enum bme68x_accuracy) outputs[i].accuracy;
+			LOG_DBG("CO2: %.2f ppm", data->latest.co2);
+			break;
+		case BSEC_OUTPUT_BREATH_VOC_EQUIVALENT:
+			data->latest.voc = (float) outputs[i].signal;
+			data->latest.voc_accuracy = (enum bme68x_accuracy) outputs[i].accuracy;
+			LOG_DBG("VOC: %.2f ppm", data->latest.voc);
+			break;
+		case BSEC_OUTPUT_STABILIZATION_STATUS:
+			data->latest.gas_stabilizasion_status = (bool)(outputs[i].signal != 0.0f);
+			LOG_DBG("Gas Stabilization: %d", data->latest.gas_stabilizasion_status);
+			break;
+		case BSEC_OUTPUT_RUN_IN_STATUS:
+			data->latest.gas_run_in_status = (bool)(outputs[i].signal != 0.0f);
+			LOG_DBG("Gas Run-in: %d", data->latest.gas_run_in_status);
+			break;
 		case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
-			data->latest.temperature = (double) outputs[i].signal;
+			data->latest.temperature = (float) outputs[i].signal;
 			LOG_DBG("Temp: %.2f C", data->latest.temperature);
 			break;
 		case BSEC_OUTPUT_RAW_PRESSURE:
-			data->latest.pressure = (double) outputs[i].signal;
+			data->latest.pressure = (float) outputs[i].signal;
 			LOG_DBG("Press: %.2f Pa", data->latest.pressure);
 			break;
 		case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
-			data->latest.humidity = (double) outputs[i].signal;
+			data->latest.humidity = (float) outputs[i].signal;
 			LOG_DBG("Hum: %.2f %%", data->latest.humidity);
 			break;
 		default:
@@ -512,7 +550,7 @@ static int bme68x_trigger_set(const struct device *dev,
 {
 	struct bme68x_iaq_data *data = dev->data;
 
-	if (trig->type != SENSOR_TRIG_TIMER) {
+	if (trig->type != SENSOR_TRIG_TIMER && trig->type != SENSOR_TRIG_DATA_READY) {
 		LOG_ERR("Unsupported sensor channel");
 		return -ENOTSUP;
 	}
@@ -521,6 +559,8 @@ static int bme68x_trigger_set(const struct device *dev,
 	    || (trig->chan == SENSOR_CHAN_HUMIDITY)
 	    || (trig->chan == SENSOR_CHAN_AMBIENT_TEMP)
 	    || (trig->chan == SENSOR_CHAN_PRESS)
+	    || (trig->chan == SENSOR_CHAN_CO2)
+	    || (trig->chan == SENSOR_CHAN_VOC)
 	    || (trig->chan == SENSOR_CHAN_IAQ)) {
 		data->trigger = trig;
 		data->trg_handler = handler;
@@ -546,13 +586,32 @@ static int bme68x_channel_get(const struct device *dev,
 
 	k_sem_take(&output_sem, K_FOREVER);
 	if (chan == SENSOR_CHAN_HUMIDITY) {
-		sensor_value_from_double(val, data->latest.humidity);
+		sensor_value_from_float(val, data->latest.humidity);
 	} else if (chan == SENSOR_CHAN_AMBIENT_TEMP) {
-		sensor_value_from_double(val, data->latest.temperature);
+		sensor_value_from_float(val, data->latest.temperature);
 	} else if (chan == SENSOR_CHAN_PRESS) {
-		sensor_value_from_double(val, data->latest.pressure);
+		sensor_value_from_float(val, data->latest.pressure);
 	} else if (chan == SENSOR_CHAN_IAQ) {
 		val->val1 = data->latest.air_quality;
+		val->val2 = 0;
+	} else if (chan == SENSOR_CHAN_CO2) {
+		sensor_value_from_float(val, data->latest.co2);
+	} else if (chan == SENSOR_CHAN_VOC) {
+		sensor_value_from_float(val, data->latest.voc);
+	} else if (chan == SENSOR_CHAN_IAQ_ACC) {
+		val->val1 = data->latest.iaq_accuracy;
+		val->val2 = 0;
+	} else if (chan == SENSOR_CHAN_CO2_ACC) {
+		val->val1 = data->latest.co2_accuracy;
+		val->val2 = 0;
+	} else if (chan == SENSOR_CHAN_VOC_ACC) {
+		val->val1 = data->latest.voc_accuracy;
+		val->val2 = 0;
+	} else if (chan == SENSOR_CHAN_GAS_RUN_IN) {
+		val->val1 = data->latest.gas_run_in_status;
+		val->val2 = 0;
+	} else if (chan == SENSOR_CHAN_GAS_STAB) {
+		val->val1 = data->latest.gas_stabilizasion_status;
 		val->val2 = 0;
 	} else {
 		LOG_ERR("Unsupported sensor channel");

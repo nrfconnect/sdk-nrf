@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
@@ -21,20 +20,22 @@ const struct sensor_trigger trig = {
 	.type = SENSOR_TRIG_TIMER,
 };
 
-static void trigger_handler(const struct device *dev,
-			    const struct sensor_trigger *trig)
+static void trigger_handler(const struct device *dev, const struct sensor_trigger *trig)
 {
-	struct sensor_value temp, press, humidity, iaq;
+	struct sensor_value temp, press, humidity, iaq, co2, voc;
 
 	sensor_sample_fetch(dev);
 	sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &temp);
 	sensor_channel_get(dev, SENSOR_CHAN_PRESS, &press);
 	sensor_channel_get(dev, SENSOR_CHAN_HUMIDITY, &humidity);
+	sensor_channel_get(dev, SENSOR_CHAN_CO2, &co2);
+	sensor_channel_get(dev, SENSOR_CHAN_VOC, &voc);
 	sensor_channel_get(dev, SENSOR_CHAN_IAQ, &iaq);
 
-	LOG_INF("temp: %d.%06d; press: %d.%06d; humidity: %d.%06d; iaq: %d",
-		temp.val1, temp.val2, press.val1, press.val2,
-		humidity.val1, humidity.val2, iaq.val1);
+	LOG_INF("temp: %d.%06d; press: %d.%06d; humidity: %d.%06d; iaq: %d; CO2: %d.%06d; VOC: "
+		"%d.%06d",
+		temp.val1, temp.val2, press.val1, press.val2, humidity.val1, humidity.val2,
+		iaq.val1, co2.val1, co2.val2, voc.val1, voc.val2);
 };
 #endif /* defined(CONFIG_APP_TRIGGER) */
 
@@ -64,17 +65,20 @@ int main(void)
 	}
 #else
 	while (1) {
-		struct sensor_value temp, press, humidity, iaq;
+		struct sensor_value temp, press, humidity, iaq, co2, voc;
 
 		sensor_sample_fetch(dev);
 		sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &temp);
 		sensor_channel_get(dev, SENSOR_CHAN_PRESS, &press);
 		sensor_channel_get(dev, SENSOR_CHAN_HUMIDITY, &humidity);
 		sensor_channel_get(dev, SENSOR_CHAN_IAQ, &iaq);
+		sensor_channel_get(dev, SENSOR_CHAN_CO2, &co2);
+		sensor_channel_get(dev, SENSOR_CHAN_VOC, &voc);
 
-		LOG_INF("temp: %d.%06d; press: %d.%06d; humidity: %d.%06d; iaq: %d",
-			temp.val1, temp.val2, press.val1, press.val2,
-			humidity.val1, humidity.val2, iaq.val1);
+		LOG_INF("temp: %d.%06d; press: %d.%06d; humidity: %d.%06d; iaq: %d; CO2: %d.%06d; "
+			"VOC: %d.%06d",
+			temp.val1, temp.val2, press.val1, press.val2, humidity.val1, humidity.val2,
+			iaq.val1, co2.val1, co2.val2, voc.val1, voc.val2);
 		k_sleep(K_MSEC(1000));
 	}
 #endif /* defined(CONFIG_APP_TRIGGER) */
