@@ -77,13 +77,11 @@ void TemperatureManager::AttributeChangeHandler(EndpointId endpointId, Attribute
 						uint16_t size)
 {
 	switch (attributeId) {
-	case Thermostat::Attributes::LocalTemperature::Id: {
+	case Thermostat::Attributes::LocalTemperature::Id:
+	case Thermostat::Attributes::OutdoorTemperature::Id:
 		Thermostat::Attributes::LocalTemperature::Get(kThermostatEndpoint, mLocalTempCelsius);
-	} break;
-
-	case Thermostat::Attributes::OutdoorTemperature::Id: {
 		Thermostat::Attributes::OutdoorTemperature::Get(kThermostatEndpoint, mOutdoorTempCelsius);
-	} break;
+		break;
 
 	case Thermostat::Attributes::OccupiedCoolingSetpoint::Id: {
 		mCoolingCelsiusSetPoint = *reinterpret_cast<int16_t *>(value);

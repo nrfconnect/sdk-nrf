@@ -19,6 +19,7 @@
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
+#include <binding/binding_handler.h>
 
 #include <zephyr/logging/log.h>
 
@@ -89,6 +90,11 @@ CHIP_ERROR AppTask::Init()
 	/* Register Matter event handler that controls the connectivity status LED based on the captured Matter network
 	 * state. */
 	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(Nrf::Board::DefaultMatterEventHandler, 0));
+
+	/* Register Matter binding release handler with thermostat method responsible for clearing value of unbound
+	 * device */
+	Nrf::Matter::BindingHandler::Instance().RegisterBindingEventHandler(
+		TempSensorManager::Instance().ClearOutdoorTemperature);
 
 	return Nrf::Matter::StartServer();
 }
