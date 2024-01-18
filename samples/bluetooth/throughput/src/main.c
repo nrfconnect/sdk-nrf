@@ -502,24 +502,6 @@ static int connection_configuration_set(const struct shell *shell,
 		return err;
 	}
 
-	if (info.le.data_len->tx_max_len != data_len->tx_max_len) {
-		data_length_req = true;
-
-		err = bt_conn_le_data_len_update(default_conn, data_len);
-		if (err) {
-			shell_error(shell, "LE data length update failed: %d",
-				    err);
-			return err;
-		}
-
-		shell_print(shell, "LE Data length update pending");
-		err = k_sem_take(&throughput_sem, THROUGHPUT_CONFIG_TIMEOUT);
-		if (err) {
-			shell_error(shell, "LE Data Length update timeout");
-			return err;
-		}
-	}
-
 	if (info.le.interval != conn_param->interval_max) {
 		err = bt_conn_le_param_update(default_conn, conn_param);
 		if (err) {
@@ -534,6 +516,24 @@ static int connection_configuration_set(const struct shell *shell,
 		if (err) {
 			shell_error(shell,
 				    "Connection parameters update timeout");
+			return err;
+		}
+	}
+
+	if (info.le.data_len->tx_max_len != data_len->tx_max_len) {
+		data_length_req = true;
+
+		err = bt_conn_le_data_len_update(default_conn, data_len);
+		if (err) {
+			shell_error(shell, "LE data length update failed: %d",
+				    err);
+			return err;
+		}
+
+		shell_print(shell, "LE Data length update pending");
+		err = k_sem_take(&throughput_sem, THROUGHPUT_CONFIG_TIMEOUT);
+		if (err) {
+			shell_error(shell, "LE Data Length update timeout");
 			return err;
 		}
 	}
