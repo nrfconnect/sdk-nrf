@@ -28,6 +28,16 @@ config DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH
 	  Location of configuration file that holds information about LEDs
 	  associated with HID keyboard LEDs report.
 
+config DESKTOP_HID_STATE_SUBSCRIBER_COUNT
+	int "Number of supported subscribers"
+	range 1 255
+	default 1
+	help
+	  The data structures representing subscribers are statically allocated.
+	  The number of allocated structures (specified by this Kconfig option)
+	  must be greater than or equal to the maximum number of simultaneously
+	  active subscribers.
+
 config DESKTOP_HID_STATE_PM_ENABLE
 	bool "Enable HID power manager integration"
 	depends on CAF_POWER_MANAGER

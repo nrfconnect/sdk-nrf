@@ -38,6 +38,13 @@ To send boot reports, enable the respective Kconfig option:
 * :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>` - This option enables sending keyboard boot reports.
 * :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>` - This option enables sending mouse boot reports.
 
+Number of supported HID data subscribers
+========================================
+
+If your application configuration supports more than one HID data subscriber, you must align the maximum number of HID data subscribers that can be supported simultaneously (:ref:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT <config_desktop_app_options>`).
+For example, to use a configuration that allows to simultaneously subscribe for HID reports from HID over GATT (BLE) and a single USB HID instance, set the value of this Kconfig option to ``2``.
+See the `Tracking state of transports`_ section for more details about HID subscribers.
+
 HID keymap
 ==========
 
@@ -128,7 +135,7 @@ The |hid_state| provides a routing mechanism between sources of input data and t
 This can be associated with:
 
 * Receiving input events from :ref:`caf_buttons`, :ref:`nrf_desktop_wheel`, and :ref:`nrf_desktop_motion`.
-* Sending out HID reports to :ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state`.
+* Sending out HID reports to HID transports, for example, :ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state`.
 
 For the routing mechanism to work, the module performs the following operations:
 
@@ -226,15 +233,14 @@ Once connection is established, the elements of the queue are replayed one after
 Tracking state of transports
 ============================
 
-The |hid_state| refers collectively to all transports as _subscribers_.
-
-The module tracks the state of the connected Bluetooth® LE peers and the state of USB by listening to :c:struct:`hid_report_subscriber_event`.
+The |hid_state| tracks the state of modules that forward the HID data to a HID host (HID transports) by listening to :c:struct:`hid_report_subscriber_event`.
+The |hid_state| refers collectively to all transports as *subscribers*.
 When the connection to the host is indicated by this event, the |hid_state| will create a subscriber associated with the transport.
-
 Each subscriber reports its priority as part of the :c:struct:`hid_report_subscriber_event`.
 The subscriber priority must be unique, that mean two or more subscriber cannot share the same priority value.
+
 By default, the subscriber that is associated with USB has priority over any Bluetooth LE peer subscriber.
-As a result, when the device connects to the host through USB, all HID reports will be routed to USB.
+As a result, when the host connected through the USB subscribes for a HID report, the HID report will be routed to the USB.
 
 Tracking state of HID report notifications
 ==========================================

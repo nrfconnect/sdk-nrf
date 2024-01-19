@@ -270,6 +270,12 @@ nRF Desktop
   * The MCUboot, B0, and HCI RPMsg child images release configurations to explicitly enable the :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR` Kconfig option.
     Enabling this Kconfig option improves the reliability of the firmware.
 
+* Added the :ref:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT <config_desktop_app_options>` Kconfig option to the :ref:`nrf_desktop_hid_state`.
+  The option allows to configure a maximum number of simultaneously supported HID data subscribers.
+  By default, the value of this Kconfig option is set to ``1``.
+  Make sure to align the value in your application configuration.
+  For example, to allow subscribing for HID reports simultaneously from :ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state` (a single USB HID instance), you must set the value of this Kconfig option to ``2``.
+
 Thingy:53: Matter weather station
 ---------------------------------
 
