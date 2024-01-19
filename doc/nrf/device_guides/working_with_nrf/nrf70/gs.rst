@@ -1,26 +1,28 @@
 .. _nrf7002dk_nrf5340:
+.. _ug_nrf7002_gs:
 
-Getting started with nRF70 Series
-#################################
+Getting started with nRF7002 DK
+###############################
 
 .. contents::
    :local:
    :depth: 4
 
-This page gets you started with your nRF70 Series devices using the |NCS|.
+This page gets you started with your nRF7002 :term:`Development Kit (DK)` using the |NCS|.
+It tells you how to install the :ref:`wifi_scan_sample` sample and perform a quick test of your DK.
+
+If you have already set up your nRF7002 DK and want to learn more, see the following documentation:
+
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
+* :ref:`ug_nrf70_developing` documentation for more advanced topics related to the nRF70 Series.
+* :ref:`ug_wifi` documentation for information related to Wi-Fi protocol and Wi-Fi modes of operation.
 
 If you want to go through an online training course to familiarize yourself with Wi-Fi® and the development of Wi-Fi applications, enroll in the `Wi-Fi Fundamentals course`_ in the `Nordic Developer Academy`_.
 
-Supported development boards
-****************************
-
-nRF7002 DK
-==========
+Overview
+********
 
 The nRF7002 DK (PCA10143) is a single-board development kit for evaluation and development on the nRF7002, a Wi-Fi companion :term:`Integrated Circuit (IC)` to Nordic Semiconductor's nRF5340 System-on-Chip (SoC) host processor.
-
-Overview
---------
 
 The nRF7002 is an IEEE 802.11ax (Wi-Fi 6) compliant solution that implements the Wi-Fi physical layer and Medium Access Control (MAC) layer protocols.
 It implements the Wi-Fi driver software on the nRF5340 host processor communicating over the QSPI bus.
@@ -39,17 +41,24 @@ The ``nrf7002dk_nrf5340_cpunet`` build target provides support for the network c
 
    nRF7002 DK
 
+Minimum requirements
+********************
+
+Make sure you have all the required hardware and that your computer and mobile device both have one of the supported operating systems.
 
 Hardware
---------
+========
 
-The nRF7002 DK has two external oscillators:
+* nRF7002 DK:
+  The nRF7002 DK has two external oscillators.
 
-   * The frequency of the slow clock is 32.768 kHz.
-   * The frequency of the main clock is 32 MHz.
+  * The frequency of the slow clock is 32.768 kHz.
+  * The frequency of the main clock is 32 MHz.
+
+* Micro-USB 2.0 cable
 
 Supported features
-^^^^^^^^^^^^^^^^^^
+------------------
 
 The ``nrf7002dk_nrf5340_cpuapp`` board configuration supports the following hardware features:
 
@@ -127,25 +136,25 @@ The ``nrf7002dk_nrf5340_cpunet`` board configuration supports the following hard
 Other hardware features are not supported by the |NCS| kernel.
 
 Connections and IOs
-^^^^^^^^^^^^^^^^^^^
+-------------------
 
 The connections and IOs supported by the development kit are listed in this section.
 
 LED
-"""
+^^^
 
 * LED1 (green) = P1.06
 * LED2 (green) = P1.07
 
 Push buttons
-""""""""""""
+^^^^^^^^^^^^
 
 * BUTTON1 = SW1 = P1.08
 * BUTTON2 = SW2 = P1.09
 * BOOT = SW5 = boot/reset
 
 Wi-Fi control
-"""""""""""""
+^^^^^^^^^^^^^
 
 * BUCKEN = P0.12
 * IOVDD CONTROL = P0.31
@@ -156,7 +165,7 @@ Wi-Fi control
 * COEX_GRANT = P0.24
 
 Security components
-^^^^^^^^^^^^^^^^^^^
+-------------------
 
 The following security components are available:
 
@@ -167,8 +176,109 @@ The following security components are available:
 
 * Secure boot.
 
-Programming and debugging
--------------------------
+Software
+========
+
+On your computer, one of the following operating systems:
+
+* Microsoft Windows
+* macOS
+* Ubuntu Linux
+
+|Supported OS|
+
+On your mobile device, one of the following operating systems:
+
+* Android
+* iOS
+
+Installing the required software
+********************************
+
+On your computer, install `nRF Connect for Desktop`_.
+After installing and starting the application, install the Programmer app.
+
+You must also install a terminal emulator, such as `nRF Connect Serial Terminal`_, the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension), or PuTTY.
+nRF Connect Serial Terminal is the recommended method for :ref:`nrf70_gs_connecting`.
+
+On your mobile device, install the `nRF Connect for Mobile`_ application from the corresponding application store.
+
+.. _nrf70_gs_installing_sample:
+
+
+Programming the sample
+**********************
+
+You must program and run a precompiled version of the :ref:`wifi_scan_sample` sample on your development kit to test the functions.
+Download the precompiled version of the sample from the nRF7002 DK Downloads page.
+
+After downloading the zip archive, extract it to a folder of your choice.
+The archive contains the HEX file used to program the sample to your DK.
+
+To program the precompiled sample to your development kit, complete the following steps:
+
+1. Open the Programmer app.
+#. Connect the nRF7002 DK to the computer with a micro-USB cable and turn on the DK.
+
+   **LED5** starts blinking.
+
+#. Click **SELECT DEVICE** and select the DK from the drop-down list.
+
+   .. figure:: ../nrf70/images/nRF7002_programmer_select_device.png
+      :alt: Programmer - Select Device
+
+      Programmer - Select Device
+
+   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
+   The **Device Memory Layout** section also changes its name to the device name, and indicates that the device is connected.
+   If the **Auto read memory** option is selected in the **DEVICE** section of the side panel, the memory layout will update.
+   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section of the side panel.
+
+#. Click :guilabel:`Add file` in the **FILE** section, and select **Browse**.
+#. Navigate to where you extracted the HEX file and select it.
+#. Click the :guilabel:`Erase & write` button in the **DEVICE** section to program the DK.
+
+   Do not unplug or turn off the DK during this process.
+
+.. note::
+   If you experience any problems during the process, press ``Ctrl+R`` (``command+R`` on macOS) to restart the Programmer app, and try again.
+
+After you have programmed the sample to the DK, you can connect to it and test the functions.
+
+.. _nrf70_gs_connecting:
+
+Connecting to the sample
+************************
+
+You can connect to the sample on the nRF7002 DK with a terminal emulator on your computer using :term:`Universal Asynchronous Receiver/Transmitter (UART)`.
+This allows you to see the logging information the sample outputs.
+
+You can use an external UART to USB bridge.
+UART communication through the UART to USB CDC ACM bridge is referred to as CDC-UART.
+
+If you have problems connecting to the sample, restart the DK and start over.
+
+To connect using CDC-UART, complete the steps listed on the :ref:`test_and_optimize` page for the chosen terminal emulator.
+
+Once the connection has been established, you can test the sample.
+
+.. _nrf70_gs_testing:
+
+Testing the sample
+******************
+
+You can test the :ref:`wifi_scan_sample` sample on your DK.
+The test requires that you have :ref:`connected to the sample <nrf70_gs_connecting>` and have the connected terminal emulator open.
+
+After successful programming of the sample onto the nRF7002 DK, scan results output will be shown in the terminal emulator connected to the sample through CDC-UART.
+
+.. figure:: ../nrf70/images/nRF7002_scan_sample_output.png
+      :alt: Scan sample output
+
+      Scan sample output
+
+Building and debugging
+**********************
 
 The nRF5340 application core supports the Armv8-M Security Extension.
 Applications built for the ``nrf7002dk_nrf5340_cpuapp`` board boot by default in the secure state.
@@ -178,7 +288,7 @@ nRF5340 IDAU can configure bus accesses by the nRF5340 network core to have the 
 This allows to build and run secure-only applications on the nRF5340 SoC.
 
 Building |NCS| applications with Arm TrustZone
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+==============================================
 
 Applications on nRF5340 can use Cortex-M Security Extensions (CMSE) and separate firmware for the application core between Secure Processing Environment (SPE) and Non-Secure Processing Environment (NSPE).
 You can build SPE using either |NCS| or `Trusted Firmware M`_ (TF-M).
@@ -190,7 +300,7 @@ For information about Cortex-M Security Extensions (CMSE) and the difference bet
    By default, SPE for the nRF5340 application core is built using TF-M.
 
 Building the firmware with TF-M
-"""""""""""""""""""""""""""""""
+-------------------------------
 
 If you want to use |NCS| to build the firmware image separated in SPE with TF-M and NSPE, complete the following steps:
 
@@ -212,7 +322,7 @@ If you want to use |NCS| to build the firmware image separated in SPE with TF-M 
 
 
 Building the secure firmware using |NCS|
-""""""""""""""""""""""""""""""""""""""""
+----------------------------------------
 
 If you want to use |NCS| to build the firmware images with CMSE enabled, but without TF-M, complete the following steps:
 
@@ -227,12 +337,12 @@ When building application with SPE and NSPE for the nRF5340 application core, th
 SPU configuration must be applied before jumping to the application in NSPE.
 
 Building application without CMSE
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=================================
 
 Build the |NCS| application as described in :ref:`building`, using the ``nrf7002dk_nrf5340_cpuapp`` build target for the firmware running on the nRF5340 application core and the ``nrf7002dk_nrf5340_cpunet`` build target for the firmware running on the nRF5340 network core.
 
 Programming the firmware to the DK
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+==================================
 
 Follow the instructions in the :ref:`building` page to build and the :ref:`programming` page to program applications.
 
@@ -240,281 +350,15 @@ Follow the instructions in the :ref:`building` page to build and the :ref:`progr
    To flash and debug applications on the nRF7002 DK, you must use the `nRF Command Line Tools`_ version 10.12.0 or above.
 
 Debugging
-^^^^^^^^^
+=========
 
 See the :ref:`testing` page for information about debugging.
 
+Next steps
+**********
 
-Testing the LEDs and buttons in the nRF7002 DK
-----------------------------------------------
+You have now completed getting started with the nRF7002 DK.
+See the following links for where to go next:
 
-The following samples allow you to test if the buttons (or switches) and LEDs on the development kit are working properly with |NCS|:
-
-* :zephyr:code-sample:`blinky`
-* :zephyr:code-sample:`button`
-
-Build and flash the samples to make sure |NCS| is running correctly on your development kit.
-For the button and LED definitions, see the :file:`boards/arm/nrf7002dk_nrf5340/nrf5340_cpuapp_common.dts` file.
-
-.. _nrf70_gs_shields_expansion_boards:
-
-Shields and expansion boards
-****************************
-
-Shields and expansion boards are add-on hardware that can be attached to a development kit or prototyping platform to extend their features and functionalities.
-
-.. _nrf70_gs_shields_evaluation_kit_nrf7002ek:
-
-nRF7002 EK
-==========
-
-The nRF7002 :term:`Evaluation Kit (EK)` is a versatile evaluation kit in the form of an Arduino shield.
-The kit can be used to provide Wi-Fi connectivity and Wi-Fi-based locationing to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
-
-The nRF7002 EK features the nRF7002 companion IC.
-In addition, the shield may be used to emulate the nRF7001 and nRF7000 companion IC variants.
-
-Overview
---------
-
-The nRF7002 EK (PCA63556) is designed to provide Wi-Fi connectivity and Wi-Fi (SSID) scanning capabilities via the nRF7002 companion IC to a compatible host development board.
-
-The nRF7002 EK features an Arduino shield form factor and interface connector that allows it to be used with Arduino compatible boards, such as the `nRF52840 DK <nRF52840 DK product page_>`_, `nRF5340 DK <nRF5340 DK product page_>`_, `nRF9160 DK <nRF9160 DK product page_>`_, or `nRF9161 DK <Nordic nRF9161 DK_>`_.
-This interface is used to connect the nRF7002 companion device to a host :term:`System on Chip (SoC)`, Microprocessor Unit (MPU), or :term:`Microcontroller Unit (MCU)`.
-
-.. figure:: images/nRF7002ek.png
-   :alt: nRF7002 EK
-
-   nRF7002 EK
-
-Pin assignment for Arduino interface connector
-----------------------------------------------
-
-The Arduino interface of the nRF7002 EK is compatible with the nRF52840 DK, the nRF5340 DK, and an nRF91 Series DK.
-The interface connectors are described in the following table:
-
-+------------------+-----------------------+----------------------------------+
-| Arduino pin name | nRF7002 Signal        | Function                         |
-+==================+=======================+==================================+
-| D0               | IOVDD_EN              | Enable power to I/O interface    |
-+------------------+-----------------------+----------------------------------+
-| D1               | BUCK_EN               | Enable power to nRF7002          |
-+------------------+-----------------------+----------------------------------+
-| D2               | COEX_STATUS0          | Coexistence status 0             |
-+------------------+-----------------------+----------------------------------+
-| D3               | COEX_REQ              | Coexistence request from host    |
-+------------------+-----------------------+----------------------------------+
-| D4               | COEX_GRANT            | Coexistence grant to host        |
-+------------------+-----------------------+----------------------------------+
-| D5               | SW_CTRL0              | Switch control 0                 |
-+------------------+-----------------------+----------------------------------+
-| D6               | COEX_STATUS1          | Coexistence status 1             |
-+------------------+-----------------------+----------------------------------+
-| D7               | HOST_IRQ              | Interrupt request to host        |
-+------------------+-----------------------+----------------------------------+
-| D8               | DATA2                 | QSPI data line 2                 |
-+------------------+-----------------------+----------------------------------+
-| D9               | DATA3                 | QSPI data line 3                 |
-+------------------+-----------------------+----------------------------------+
-| D10              | SS                    | Slave select                     |
-+------------------+-----------------------+----------------------------------+
-| D11              | MISO/DATA1            | QSPI/SPI Data line 1/ Slave Out  |
-+------------------+-----------------------+----------------------------------+
-| D12              | MOSI/DATA0            | QSPI/SPI Data line 0/ Slave In   |
-+------------------+-----------------------+----------------------------------+
-| D13              | CLK                   | QSPI/SPI Clock                   |
-+------------------+-----------------------+----------------------------------+
-| GND              | GND                   | Ground                           |
-+------------------+-----------------------+----------------------------------+
-| AREF             | N.C.                  | Not used                         |
-+------------------+-----------------------+----------------------------------+
-| SDA              | N.C.                  | Not used                         |
-+------------------+-----------------------+----------------------------------+
-| SCL              | N.C.                  | Not used                         |
-+------------------+-----------------------+----------------------------------+
-
-Programming
------------
-
-To add support for the nRF7002 EK on an application running on a compatible host development board, the ``SHIELD`` setting must be specified.
-
-To add support for the nRF7002 EK and the nRF7002 IC, set ``-DSHIELD=nrf7002ek`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
-To emulate support for the nRF7001 or nRF7000 ICs, specify ``-DSHIELD=nrf7002ek_nrf7001`` or ``-DSHIELD=nrf7002ek_nrf7000``, respectively.
-
-Alternatively, add the shield in the project's :file:`CMakeLists.txt` file, specifying the below settings, depending on which IC is to be used:
-
-.. code-block:: console
-
-   set(SHIELD nrf7002ek)
-
-.. code-block:: console
-
-   set(SHIELD nrf7002ek_nrf7001)
-
-.. code-block:: console
-
-   set(SHIELD nrf7002ek_nrf7000)
-
-To build with the |nRFVSC|, specify ``-DSHIELD=nrf7002ek`` in the **Extra CMake arguments** field.
-See :ref:`cmake_options` for instructions on how to provide CMake options.
-
-To build for the nRF7002 EK and the nRF7002 IC with nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the CMake ``SHIELD`` variable set to ``nrf7002ek``.
-For example, you can use the following command when building on the command line:
-
-.. code-block:: console
-
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek
-
-To build for the nRF7002 EK and the nRF7001 or nRF7000 ICs, you can use the corresponding shield name in the above command.
-
-.. _nrf70_gs_shields_expansion_boards_nrf7002eb:
-
-nRF7002 EB
-==========
-
-The nRF7002 :term:`Expansion Board (EB)` can be used to provide Wi-Fi connectivity to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
-
-The nRF7002 EB has a :term:`Printed Circuit Board (PCB)` edge connector that can be used with a compatible development board such as the Nordic Thingy:53, an IoT prototyping platform from Nordic Semiconductor.
-There are also castellated holes on the side of the board that allow the EB to be used as a breakout board that can be soldered to other PCB assemblies.
-
-Overview
---------
-
-The nRF7002 EB (PCA63561) features a PCB edge connector and castellated holes to provide Wi-Fi connectivity through the nRF7002 companion IC.
-
-The PCB edge connector is used to provide Wi-Fi connectivity to a development board with a compatible connector such as the Nordic Thingy:53, where it connects nRF7002 to nRF5340, which acts as a host.
-The EB can also be used to provide Wi-Fi capabilities to develop Wi-Fi applications with another System on Chip (SoC), MPU, or MCU host by using the castellated edge holes on the sides of the board.
-
-.. figure:: images/nRF7002eb.png
-   :alt: nRF7002 EB
-
-   nRF7002 EB
-
-Pin assignment for PCB edge connector
--------------------------------------
-
-The pinout of the PCB edge connector is shown in the following table.
-
-+------------------+-----------------------+-----------------------------------------------+
-| Pin number       | Signal                | Function                                      |
-+==================+=======================+===============================================+
-| 1                | N.C.                  | Not used                                      |
-+------------------+-----------------------+-----------------------------------------------+
-| 2                | N.C.                  | Not used                                      |
-+------------------+-----------------------+-----------------------------------------------+
-| 3                | VIO                   | IO supply voltage                             |
-+------------------+-----------------------+-----------------------------------------------+
-| 4                | N.C.                  | Not used                                      |
-+------------------+-----------------------+-----------------------------------------------+
-| 5                | ST0                   | Coexistence Interface Status/Priority signal  |
-+------------------+-----------------------+-----------------------------------------------+
-| 6                | REQ                   | Coexistence Interface Request signal          |
-+------------------+-----------------------+-----------------------------------------------+
-| 7                | N.C.                  | Not used                                      |
-+------------------+-----------------------+-----------------------------------------------+
-| 8                | CLK                   | SPI Clock signal                              |
-+------------------+-----------------------+-----------------------------------------------+
-| 9                | EN                    | Power Enable signal                           |
-+------------------+-----------------------+-----------------------------------------------+
-| 10               | N.C.                  | Not used                                      |
-+------------------+-----------------------+-----------------------------------------------+
-| 11               | N.C.                  | Not used                                      |
-+------------------+-----------------------+-----------------------------------------------+
-| 12               | N.C.                  | Not used                                      |
-+------------------+-----------------------+-----------------------------------------------+
-| 13               | N.C.                  | Not used                                      |
-+------------------+-----------------------+-----------------------------------------------+
-| 14               | VBAT                  | Supply voltage                                |
-+------------------+-----------------------+-----------------------------------------------+
-| 15               | GRT                   | Coexistence Interface Grant signal            |
-+------------------+-----------------------+-----------------------------------------------+
-| 16               | D0                    | SPI MOSI signal                               |
-+------------------+-----------------------+-----------------------------------------------+
-| 17               | D1                    | SPI MISO signal                               |
-+------------------+-----------------------+-----------------------------------------------+
-| 18               | CS                    | SPI Chip Select signal                        |
-+------------------+-----------------------+-----------------------------------------------+
-| 19               | IRQ                   | Host Interrupt signal                         |
-+------------------+-----------------------+-----------------------------------------------+
-| 20               | GND                   | Ground                                        |
-+------------------+-----------------------+-----------------------------------------------+
-
-Castellated edge holes
---------------------------
-
-Castellated edge holes on the sides of the board connects the nRF7002 EB to the nRF7002 companion IC.
-The following figure and table show the pinout for the nRF7002 EB.
-
-.. figure:: images/nRF7002eb_Castellated_edge.png
-   :alt: Castellated edge hole numbering
-
-   Castellated edge hole numbering
-
-+------------------+-----------------------+------------------------------------------------+
-| Pin number       | Signal                | Function                                       |
-+==================+=======================+================================================+
-| 1                | CLK                   | QSPI Clock/SPI Clock signal                    |
-+------------------+-----------------------+------------------------------------------------+
-| 2                | SS                    | QSPI Slave Select/SPI Chip Select signal       |
-+------------------+-----------------------+------------------------------------------------+
-| 3                | D0                    | QSPI DATA0/SPI_MOSI signal                     |
-+------------------+-----------------------+------------------------------------------------+
-| 4                | D1                    | QSPI DATA1/ SPI_MISO signal                    |
-+------------------+-----------------------+------------------------------------------------+
-| 5                | D2                    | QSPI DATA2 signal                              |
-+------------------+-----------------------+------------------------------------------------+
-| 6                | D3                    | QSPI DATA3 signal                              |
-+------------------+-----------------------+------------------------------------------------+
-| 7                | CT0                   | SW_CTRL0 (not supported on the nRF7002 EB)     |
-+------------------+-----------------------+------------------------------------------------+
-| 8                | ST1                   | SW_CTRL1                                       |
-+------------------+-----------------------+------------------------------------------------+
-| 9                | GND                   | Ground                                         |
-+------------------+-----------------------+------------------------------------------------+
-| 10               | VBAT                  | Supply voltage                                 |
-+------------------+-----------------------+------------------------------------------------+
-| 11               | GND                   | Ground                                         |
-+------------------+-----------------------+------------------------------------------------+
-| 12               | VIO                   | IO supply voltage                              |
-+------------------+-----------------------+------------------------------------------------+
-| 13               | ST0                   | Coexistence Interface Status/Priority signal   |
-+------------------+-----------------------+------------------------------------------------+
-| 14               | EN                    | Power Enable signal                            |
-+------------------+-----------------------+------------------------------------------------+
-| 15               | REQ                   | Coexistence Interface Request signal           |
-+------------------+-----------------------+------------------------------------------------+
-| 16               | GRT                   | Coexistence Interface Grant signal             |
-+------------------+-----------------------+------------------------------------------------+
-| 17               | IRQ                   | Host Interrupt signal                          |
-+------------------+-----------------------+------------------------------------------------+
-| 18               | GND                   | Ground                                         |
-+------------------+-----------------------+------------------------------------------------+
-
-Building
---------
-
-To build for the nRF7002 EB with Thingy:53, use the ``thingy53_nrf5340_cpuapp`` build target with the CMake ``SHIELD`` variable set to ``nrf7002eb``.
-For example, you can use the following command when building on the command line:
-
-.. code-block:: console
-
-   west build -b thingy53_nrf5340_cpuapp -- -DSHIELD=nrf7002eb
-
-To build for a custom target, set ``-DSHIELD=nrf7002eb`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
-
-Alternatively, add the shield in the project's :file:`CMakeLists.txt` file by using the following command:
-
-.. code-block:: console
-
-   set(SHIELD nrf7002eb)
-
-To build with the |nRFVSC|, specify ``-DSHIELD=nrf7002eb`` in the **Extra Cmake arguments** field.
-See :ref:`cmake_options` for instructions on how to provide CMake options.
-
-References
-==========
-
-* `nRF70 Series product page`_
-* `nRF70 Series hardware documentation`_
-* `nRF7002 Product Specification`_
-* `nRF7001 Product Specification`_
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
+* :ref:`ug_nrf70_developing` documentation for more advanced topics related to the nRF70 Series.
