@@ -22,9 +22,9 @@ config BRIDGE_AGGREGATOR_ENDPOINT_ID
 
 if BRIDGED_DEVICE_BT
 
-config BRIDGE_BT_RECOVERY_INTERVAL_MS
-	int "Time (in ms) between recovery attempts when the BLE connection to the bridged device is lost"
-	default 1000
+config BRIDGE_BT_RECOVERY_MAX_INTERVAL
+	int "Maximum time (in s) between recovery attempts when the BLE connection to the bridged device is lost"
+	default 300
 
 config BRIDGE_BT_RECOVERY_SCAN_TIMEOUT_MS
 	int "Time (in ms) within which the Bridge will try to re-establish a connection to the lost BT LE device"

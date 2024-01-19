@@ -14,7 +14,8 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
 
-namespace Nrf {
+namespace Nrf
+{
 
 struct BLEBridgedDeviceProvider;
 
@@ -66,7 +67,7 @@ public:
 	bool IsInitiallyConnected() { return mDevice.mInitiallyConnected; }
 
 	/**
-	 * @brief Confirm that the @ref mFirstConnectionCallback has been already called .
+	 * @brief Confirm that the @ref mFirstConnectionCallback has been already called.
 	 *
 	 * This method informs the bridged device that the @ref mFirstConnectionCallback has been called
 	 * and connection has been established successfully.
@@ -76,8 +77,35 @@ public:
 
 	bt_addr_le_t GetBtAddress() { return mDevice.mAddr; }
 
+	/**
+	 * @brief Get a number of failed recovery attempts for this provider.
+	 */
+	uint16_t GetFailedRecoveryAttempts() { return mFailedRecoveryAttempts; }
+
+	/**
+	 * @brief Inform provider that recovery attempt for it failed.
+	 *
+	 * This method increments the number of failed recovery attempts.
+	 *
+	 */
+	void NotifyFailedRecovery()
+	{
+		if (mFailedRecoveryAttempts < UINT16_MAX) {
+			mFailedRecoveryAttempts++;
+		}
+	}
+
+	/**
+	 * @brief Inform provider that recovery attempt for it succeeded.
+	 *
+	 * This method resets the number of failed recovery attempts.
+	 *
+	 */
+	void NotifySuccessfulRecovery() { mFailedRecoveryAttempts = 0; }
+
 protected:
 	BLEBridgedDevice mDevice = { 0 };
+	uint16_t mFailedRecoveryAttempts = 0;
 };
 
 } /* namespace Nrf */

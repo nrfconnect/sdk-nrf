@@ -15,8 +15,10 @@
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/ring_buffer.h>
+#include <zephyr/sys/slist.h>
 
-namespace Nrf {
+namespace Nrf
+{
 
 /* Forward declarations. */
 struct BLEBridgedDevice;
@@ -36,11 +38,24 @@ public:
 		uint16_t mUuid;
 	};
 
+	struct ScanResult {
+		ScannedDevice * mDevices = nullptr;
+		uint8_t mCount = 0;
+	};
+
 private:
 	class Recovery {
 		friend class BLEConnectivityManager;
-		constexpr static auto kRecoveryIntervalMs = CONFIG_BRIDGE_BT_RECOVERY_INTERVAL_MS;
+
+		/* Recovery intervals in seconds. */
+		constexpr static auto kRecoveryIntervalSec = 1;
+		constexpr static auto kRecoveryMaxIntervalSec = CONFIG_BRIDGE_BT_RECOVERY_MAX_INTERVAL;
+
 		constexpr static auto kRecoveryScanTimeoutMs = CONFIG_BRIDGE_BT_RECOVERY_SCAN_TIMEOUT_MS;
+
+		struct ListItem : public sys_snode_t {
+			BLEBridgedDeviceProvider *mProvider = nullptr;
+		};
 
 	public:
 		Recovery();
@@ -48,27 +63,24 @@ private:
 		void NotifyProviderToRecover(BLEBridgedDeviceProvider *provider);
 
 	private:
-		BLEBridgedDeviceProvider *GetProvider();
-		bool PutProvider(BLEBridgedDeviceProvider *provider);
-		bool IsNeeded() { return !ring_buf_is_empty(&mRingBuf); }
-		bt_addr_le_t *GetCurrentLostDeviceAddress();
-		void StartTimer() { k_timer_start(&mRecoveryTimer, K_MSEC(kRecoveryIntervalMs), K_NO_WAIT); }
+		BLEBridgedDeviceProvider *GetProvider(sys_slist_t *list);
+		bool PutProvider(BLEBridgedDeviceProvider *provider, sys_slist_t *list);
+		bool IsNeeded() { return !sys_slist_is_empty(&mListToRecover); }
+		void StartTimer();
 		void CancelTimer() { k_timer_stop(&mRecoveryTimer); }
-		size_t GetCurrentAmount() { return ring_buf_size_get(&mRingBuf) / sizeof(BLEBridgedDeviceProvider *); }
+		void RemoveRecovered(BLEBridgedDeviceProvider *provider);
+		uint16_t GetFailedRecoveryAttempts();
 
 		static void TimerTimeoutCallback(k_timer *timer);
 
-		BLEBridgedDeviceProvider *mProvidersToRecover[BLEConnectivityManager::kMaxConnectedDevices];
-		ScannedDevice mScannedDevice;
-		bool mAddressMatched = false;
-		ring_buf mRingBuf;
-		bt_addr_le_t mCurrentAddr;
+		sys_slist_t mListToRecover;
+		sys_slist_t mListToReconnect;
 		k_timer mRecoveryTimer;
 	};
 
 public:
 	using DeviceConnectedCallback = void (*)(bool discoverySucceeded, void *context);
-	using ScanDoneCallback = void (*)(ScannedDevice *devices, uint8_t count, void *context);
+	using ScanDoneCallback = void (*)(ScanResult & result, void *context);
 	using ConnectionSecurityRequestCallback = void (*)(void *context);
 
 	struct ConnectionSecurityRequest {
@@ -111,12 +123,12 @@ public:
 	 * necessary to first add the provider to the manager's list using @ref AddBLEProvider method.
 	 *
 	 * @param provider address of a valid provider object
-	 * @param request address of connection request object for handling additional security information requiered by the connection.
-	 *				  Can be nullptr, if connection does not use security.
+	 * @param request address of connection request object for handling additional security information requiered by
+	 *the connection. Can be nullptr, if connection does not use security.
 	 * @return CHIP_NO_ERROR on success
 	 * @return other error code on failure
 	 */
-	CHIP_ERROR Connect(BLEBridgedDeviceProvider *provider, ConnectionSecurityRequest * request = nullptr);
+	CHIP_ERROR Connect(BLEBridgedDeviceProvider *provider, ConnectionSecurityRequest *request = nullptr);
 
 	/**
 	 * @brief Create connection to the first Bluetooth LE device on the @ref mProvidersToRecover recovery list.
@@ -216,7 +228,7 @@ public:
 		static BLEConnectivityManager sInstance;
 		return sInstance;
 	}
-	static void ReScanCallback(ScannedDevice *devices, uint8_t count, void *context);
+	static void ReScanCallback(ScanResult & result, void *context);
 
 private:
 	bt_le_conn_param *GetScannedDeviceConnParams(bt_addr_le_t address);
@@ -226,6 +238,7 @@ private:
 	uint8_t mScannedDevicesCounter;
 	uint8_t mConnectedProvidersCounter;
 	ScannedDevice mScannedDevices[kMaxScannedDevices];
+	ScanResult mScanResult;
 	BLEBridgedDeviceProvider *mConnectedProviders[kMaxConnectedDevices];
 	bt_uuid *mServicesUuid[kMaxServiceUuids];
 	uint8_t mServicesUuidCount;
