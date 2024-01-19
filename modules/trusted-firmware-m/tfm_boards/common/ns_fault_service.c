@@ -54,12 +54,6 @@
  * that is triggered by events external to the CPU, such as an EasyDMA access.
  */
 
-#define EXCEPTION_TYPE_SECUREFAULT (NVIC_USER_IRQ_OFFSET + SecureFault_IRQn)
-#define EXCEPTION_TYPE_MEMFAULT    (NVIC_USER_IRQ_OFFSET + MemoryManagement_IRQn)
-#define EXCEPTION_TYPE_HARDFAULT   (NVIC_USER_IRQ_OFFSET + HardFault_IRQn)
-#define EXCEPTION_TYPE_BUSFAULT    (NVIC_USER_IRQ_OFFSET + BusFault_IRQn)
-#define EXCEPTION_TYPE_USAGEFAULT  (NVIC_USER_IRQ_OFFSET + UsageFault_IRQn)
-
 #define EXCEPTION_TYPE_SPUFAULT    (NVIC_USER_IRQ_OFFSET + SPU_IRQn)
 
 typedef void (*ns_funcptr) (void) __attribute__((cmse_nonsecure_call));
