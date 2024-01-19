@@ -72,6 +72,7 @@ void Board::UpdateDeviceState(DeviceState state)
 {
 	if (mState != state) {
 		mState = state;
+		ResetAllLeds();
 		mLedStateHandler();
 	}
 }
@@ -293,8 +294,12 @@ void Board::DefaultMatterEventHandler(const ChipDeviceEvent *event, intptr_t /* 
 
 	switch (event->Type) {
 	case DeviceEventType::kCHIPoBLEAdvertisingChange:
-		if (ConnectivityMgr().NumBLEConnections() != 0) {
+		if (isNetworkProvisioned) {
+			sInstance.UpdateDeviceState(DeviceState::DeviceProvisioned);
+		} else if (ConnectivityMgr().NumBLEConnections() != 0) {
 			sInstance.UpdateDeviceState(DeviceState::DeviceConnectedBLE);
+		} else {
+			sInstance.UpdateDeviceState(DeviceState::DeviceAdvertisingBLE);
 		}
 		break;
 #if defined(CONFIG_NET_L2_OPENTHREAD)
