@@ -323,6 +323,14 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2
+
+KRKNWK-18371: The GlobalSceneControl attribute from the OnOff cluster does not change in a way compatible with the Matter specification
+  The GlobalSceneControl attribute from the OnOff cluster is not set to ``false`` after receiving the ``OffWithEffect`` command.
+  This behavior is not compatible with the Matter specification.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``836390ed636ca36126dbcbe763d0f127626cba8d``).
+
 .. rst-class:: v2-5-1 v2-5-0
 
 KRKNWK-18315: SPAKE2+ Verifier is not regenerated when using non-default passcode
