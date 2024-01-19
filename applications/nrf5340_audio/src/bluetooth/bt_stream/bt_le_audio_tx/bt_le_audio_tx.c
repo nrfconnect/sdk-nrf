@@ -111,7 +111,7 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 	int ret;
 	uint32_t ts = 0;
 	bool any_chan_streaming = false;
-	static bool got_tx_sync_ts;
+	bool got_tx_sync_ts = false;
 	size_t data_size_pr_stream = 0;
 
 	if (!initialized) {
