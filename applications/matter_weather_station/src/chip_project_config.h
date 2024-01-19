@@ -38,16 +38,4 @@
 	  0x39, 0xa0, 0xf7, 0xb4, 0x86, 0x10, 0x32, 0x33, 0x01, 0xc2, 0xe4, 0x0f,		\
 	  0xe0, 0x4b, 0x9c, 0x2d, 0x4d, 0x41, 0x13, 0xfd, 0xc3, 0x11, 0xe1, 0x00,		\
 	  0x34, 0xa4, 0xe1, 0x7c, 0x09, 0x27, 0x45, 0x7b };
-#else
-/* Use a default pairing code if one hasn't been provisioned in flash. */
-#define CHIP_DEVICE_CONFIG_USE_TEST_SETUP_PIN_CODE 20202021
-#define CHIP_DEVICE_CONFIG_USE_TEST_SETUP_DISCRIMINATOR 0xF00
-
-/* Configure device configuration with exemplary data */
-#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_NAME "Nordic"
-#define CHIP_DEVICE_CONFIG_DEVICE_PRODUCT_NAME "WeatherStation"
-#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_PRODUCT_REVISION_STRING "Prerelease weather station device"
-#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_PRODUCT_REVISION 1
-#define CHIP_DEVICE_CONFIG_DEVICE_FIRMWARE_REVISION_STRING "Prerelease weather station firmware"
-#define CHIP_DEVICE_CONFIG_DEVICE_FIRMWARE_REVISION 1
 #endif

@@ -304,6 +304,7 @@ void AppTask::UpdateLedState()
 	case Nrf::DeviceState::DeviceAdvertisingBLE:
 		Instance().mBlueLED->Blink(Nrf::LedConsts::StatusLed::Disconnected::kOn_ms,
 					   Nrf::LedConsts::StatusLed::Disconnected::kOff_ms);
+		break;
 	case Nrf::DeviceState::DeviceDisconnected:
 		Instance().mGreenLED->Blink(Nrf::LedConsts::StatusLed::Disconnected::kOn_ms,
 					    Nrf::LedConsts::StatusLed::Disconnected::kOff_ms);
