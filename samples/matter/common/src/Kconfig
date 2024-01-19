@@ -11,6 +11,13 @@ config NCS_SAMPLE_MATTER_APP_TASK_QUEUE_SIZE
 	  Define the maximum size of the queue dedicated for application tasks that
 	  have to be run in the application thread context.
 
+config NCS_SAMPLE_MATTER_APP_TASK_MAX_SIZE
+	int "Maximum size of application task in bytes"
+	default 16
+	help
+	  Defines the maximum size of a functor that can be put in the application
+	  thread's task queue.
+
 config NCS_SAMPLE_MATTER_CUSTOM_BLUETOOTH_ADVERTISING
 	bool "Define the custom behavior of the Bluetooth advertisement in the application code"
 	help
