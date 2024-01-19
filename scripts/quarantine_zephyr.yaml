@@ -122,3 +122,10 @@
     - nrf5340dk_nrf5340_cpuapp_ns
     - nrf9160dk_nrf9160_ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-22771"
+
+- scenarios:
+    - sample.bindesc
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp_ns
+    - nrf9160dk_nrf9160_ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-25551"
