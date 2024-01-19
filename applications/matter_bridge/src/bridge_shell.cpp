@@ -178,9 +178,9 @@ static int SimulatedBridgedDeviceOnOffLightSwitchWriteHandler(const struct shell
 #endif
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-static void BluetoothScanResult(Nrf::BLEConnectivityManager::ScannedDevice *devices, uint8_t count, void *context)
+static void BluetoothScanResult(Nrf::BLEConnectivityManager::ScanResult & result, void *context)
 {
-	if (!devices || !context) {
+	if (!result.mDevices || !context) {
 		return;
 	}
 
@@ -190,11 +190,11 @@ static void BluetoothScanResult(Nrf::BLEConnectivityManager::ScannedDevice *devi
 	shell_fprintf(shell, SHELL_INFO, "---------------------------------------------------------------------\n");
 	shell_fprintf(shell, SHELL_INFO, "| Index |      Address      |                   UUID                 \n");
 	shell_fprintf(shell, SHELL_INFO, "---------------------------------------------------------------------\n");
-	for (int i = 0; i < count; i++) {
+	for (int i = 0; i < result.mCount; i++) {
 		shell_fprintf(shell, SHELL_INFO, "| %d     | %02x:%02x:%02x:%02x:%02x:%02x | 0x%04x (%s)\n", i,
-			      devices[i].mAddr.a.val[5], devices[i].mAddr.a.val[4], devices[i].mAddr.a.val[3],
-			      devices[i].mAddr.a.val[2], devices[i].mAddr.a.val[1], devices[i].mAddr.a.val[0],
-			      devices[i].mUuid, BleBridgedDeviceFactory::GetUuidString(devices[i].mUuid));
+			      result.mDevices[i].mAddr.a.val[5], result.mDevices[i].mAddr.a.val[4], result.mDevices[i].mAddr.a.val[3],
+			      result.mDevices[i].mAddr.a.val[2], result.mDevices[i].mAddr.a.val[1], result.mDevices[i].mAddr.a.val[0],
+			      result.mDevices[i].mUuid, BleBridgedDeviceFactory::GetUuidString(result.mDevices[i].mUuid));
 	}
 }
 
