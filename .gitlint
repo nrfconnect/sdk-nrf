@@ -58,3 +58,6 @@ ignore-merge-commits=false
 # By specifying this rule, developers can only change the file when they explicitly reference
 # it in the commit message.
 #files=gitlint/rules.py,README.md
+
+[body-match-regex]
+regex=(Fixes|Implements) [A-Z][A-Z0-9_]+-[1-9][0-9]*
