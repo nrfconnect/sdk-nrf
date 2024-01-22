@@ -11,6 +11,7 @@
 #include <zephyr/net/tls_credentials.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
+#include "slm_at_socket.h"
 #include "slm_at_udp_proxy.h"
 
 LOG_MODULE_REGISTER(slm_udp, CONFIG_SLM_LOG_LEVEL);
@@ -70,56 +71,13 @@ static int do_udp_server_start(uint16_t port)
 		LOG_ERR("socket() failed: %d", -errno);
 		return -errno;
 	}
-
 	proxy.sock = ret;
+
 	/* Bind to local port */
-	if (proxy.family == AF_INET) {
-		char ipv4_addr[INET_ADDRSTRLEN];
-
-		util_get_ip_addr(0, ipv4_addr, NULL);
-		if (!*ipv4_addr) {
-			LOG_ERR("Unable to obtain local IPv4 address");
-			close(proxy.sock);
-			return -EAGAIN;
-		}
-
-		struct sockaddr_in local = {
-			.sin_family = AF_INET,
-			.sin_port = htons(port)
-		};
-
-		if (inet_pton(AF_INET, ipv4_addr, &local.sin_addr) != 1) {
-			LOG_ERR("Parse local IPv4 address failed: %d", -errno);
-			close(proxy.sock);
-			return -EINVAL;
-		}
-		ret = bind(proxy.sock, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
-	} else {
-		char ipv6_addr[INET6_ADDRSTRLEN];
-
-		util_get_ip_addr(0, NULL, ipv6_addr);
-		if (!*ipv6_addr) {
-			LOG_ERR("Unable to obtain local IPv6 address");
-			close(proxy.sock);
-			return -EAGAIN;
-		}
-
-		struct sockaddr_in6 local = {
-			.sin6_family = AF_INET6,
-			.sin6_port = htons(port)
-		};
-
-		if (inet_pton(AF_INET6, ipv6_addr, &local.sin6_addr) != 1) {
-			LOG_ERR("Parse local IPv6 address failed: %d", -errno);
-			close(proxy.sock);
-			return -EINVAL;
-		}
-		ret = bind(proxy.sock, (struct sockaddr *)&local, sizeof(struct sockaddr_in6));
-	}
+	ret = slm_bind_to_local_addr(proxy.sock, proxy.family, port);
 	if (ret) {
-		LOG_ERR("bind() failed: %d", -errno);
 		close(proxy.sock);
-		return -errno;
+		return ret;
 	}
 
 	udp_thread_id = k_thread_create(&udp_thread, udp_thread_stack,
