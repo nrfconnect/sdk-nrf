@@ -34,7 +34,19 @@ config GAZELL_PAIRING_HOST
 	bool "Host"
 	depends on ENTROPY_GENERATOR
 
-endchoice
+endchoice # GAZELL_PAIRING_ROLE
+
+config GAZELL_PAIRING_USER_CONFIG_ENABLE
+	bool "Use application-specific Gazell Pairing configuration file"
+
+if GAZELL_PAIRING_USER_CONFIG_ENABLE
+config GAZELL_PAIRING_USER_CONFIG_FILE
+	string "Gazell Pairing configuration file name"
+	default "gzp_user_config.h"
+	help
+	  Modify the file name to use an application-specific Gazell Pairing configuration file.
+
+endif # GAZELL_PAIRING_USER_CONFIG_ENABLE
 
 if GAZELL_PAIRING_DEVICE
 
