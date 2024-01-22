@@ -5,21 +5,21 @@
 #   - Only specify version information if strictly required
 #   - Keep nrf/installation/recommended_versions.rst up to date
 
-# Extension                 | NCS | Kconfig | Matter | MCUboot | nrfx | nrfxlib | TF-M | Zephyr |
-azure-storage-blob        # |  X  |         |        |         |      |         |      |        |
-breathe                   # |  X  |         |        |         |      |    X    |      |   X    |
-m2r2                      # |     |         |        |         |  X   |         |      |        |
-PyYAML                    # |  X  |         |        |         |      |         |      |   X    |
-pykwalify                 # |     |         |        |         |      |         |      |   X    |
-pytest                    # |     |         |        |         |      |         |      |   X    |
-recommonmark              # |     |         |   X    |    X    |      |         |      |        |
-sphinx~=6.2               # |  X  |    X    |   X    |    X    |   X  |    X    |  X   |   X    |
-sphinx-copybutton         # |  X  |         |        |         |      |         |      |   X    |
-sphinx-ncs-theme<1.1      # |  X  |         |        |         |      |         |      |        |
-sphinx-notfound-page      # |  X  |         |        |         |      |         |      |   X    |
-sphinx-tabs>=3.4          # |  X  |         |        |         |      |         |      |   X    |
-sphinx-togglebutton       # |  X  |         |        |         |      |         |      |   X    |
-sphinx_markdown_tables    # |     |         |   X    |         |      |         |      |        |
-sphinxcontrib-mscgen      # |  X  |         |        |         |      |    X    |      |        |
-sphinxcontrib-plantuml    # |     |         |        |         |      |         |  X   |        |
-west>=1.0.0               # |     |         |        |         |      |         |      |   X    |
+# Extension                       | NCS | Kconfig | Matter | MCUboot | nrfx | nrfxlib | TF-M | Zephyr |
+azure-storage-blob              # |  X  |         |        |         |      |         |      |        |
+breathe                         # |  X  |         |        |         |      |    X    |      |   X    |
+m2r2                            # |     |         |        |         |  X   |         |      |        |
+PyYAML                          # |  X  |         |        |         |      |         |      |   X    |
+pykwalify                       # |     |         |        |         |      |         |      |   X    |
+pytest                          # |     |         |        |         |      |         |      |   X    |
+recommonmark                    # |     |         |   X    |    X    |      |         |      |        |
+sphinx~=6.2                     # |  X  |    X    |   X    |    X    |   X  |    X    |  X   |   X    |
+sphinx-copybutton               # |  X  |         |        |         |      |         |      |   X    |
+sphinx-ncs-theme<1.1            # |  X  |         |        |         |      |         |      |        |
+sphinx-notfound-page            # |  X  |         |        |         |      |         |      |   X    |
+sphinx-tabs>=3.4                # |  X  |         |        |         |      |         |      |   X    |
+sphinx-togglebutton             # |  X  |         |        |         |      |         |      |   X    |
+sphinx_markdown_tables          # |     |         |   X    |         |      |         |      |        |
+sphinxcontrib-mscgen            # |  X  |         |        |         |      |    X    |      |        |
+sphinxcontrib-plantuml>=0.27    # |     |         |        |         |      |         |  X   |        |
+west>=1.0.0                     # |     |         |        |         |      |         |      |   X    |
