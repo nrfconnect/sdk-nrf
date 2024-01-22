@@ -155,8 +155,7 @@ static unsigned char cbor_cmds2_valid[] = {
 	0x36, 0x38, 0x34, 0x32, 0x37, 0x35, 0x33, 0x2c, 0x32, 0x2c, 0x31, 0x80};
 
 static int coap_client_auth_cb(struct coap_client *client, int sock, const struct sockaddr *addr,
-			       struct coap_client_request *req,
-			       struct coap_transmission_parameters *params, int cmock_num_calls)
+			       struct coap_client_request *req, int retries, int cmock_num_calls)
 {
 	char path[] = "p/auth-jwt?mver=" VER_NMB "&cver=1";
 
@@ -173,8 +172,7 @@ static int coap_client_auth_cb(struct coap_client *client, int sock, const struc
 
 static int coap_client_auth_failed_cb(struct coap_client *client, int sock,
 				      const struct sockaddr *addr, struct coap_client_request *req,
-				      struct coap_transmission_parameters *params,
-				      int cmock_num_calls)
+				      int retries, int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
 		req->cb(COAP_RESPONSE_CODE_FORBIDDEN, 0, NULL, 0, true, req->user_data);
@@ -185,8 +183,7 @@ static int coap_client_auth_failed_cb(struct coap_client *client, int sock,
 
 static int coap_client_auth_server_error_cb(struct coap_client *client, int sock,
 					    const struct sockaddr *addr,
-					    struct coap_client_request *req,
-					    struct coap_transmission_parameters *params,
+					    struct coap_client_request *req, int retries,
 					    int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
@@ -198,8 +195,7 @@ static int coap_client_auth_server_error_cb(struct coap_client *client, int sock
 
 static int coap_client_auth_unsupported_code_cb(struct coap_client *client, int sock,
 						const struct sockaddr *addr,
-						struct coap_client_request *req,
-						struct coap_transmission_parameters *params,
+						struct coap_client_request *req, int retries,
 						int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
@@ -211,8 +207,7 @@ static int coap_client_auth_unsupported_code_cb(struct coap_client *client, int 
 
 static int coap_client_cmds_bad_request_cb(struct coap_client *client, int sock,
 					   const struct sockaddr *addr,
-					   struct coap_client_request *req,
-					   struct coap_transmission_parameters *params,
+					   struct coap_client_request *req, int retries,
 					   int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
@@ -226,8 +221,7 @@ static int coap_client_cmds_bad_request_cb(struct coap_client *client, int sock,
 
 static int coap_client_cmds_server_error_cb(struct coap_client *client, int sock,
 					    const struct sockaddr *addr,
-					    struct coap_client_request *req,
-					    struct coap_transmission_parameters *params,
+					    struct coap_client_request *req, int retries,
 					    int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
@@ -241,8 +235,7 @@ static int coap_client_cmds_server_error_cb(struct coap_client *client, int sock
 
 static int coap_client_cmds_unsupported_code_cb(struct coap_client *client, int sock,
 						const struct sockaddr *addr,
-						struct coap_client_request *req,
-						struct coap_transmission_parameters *params,
+						struct coap_client_request *req, int retries,
 						int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
@@ -256,8 +249,7 @@ static int coap_client_cmds_unsupported_code_cb(struct coap_client *client, int 
 
 static int coap_client_cmds_valid_path_cb(struct coap_client *client, int sock,
 					  const struct sockaddr *addr,
-					  struct coap_client_request *req,
-					  struct coap_transmission_parameters *params,
+					  struct coap_client_request *req, int retries,
 					  int cmock_num_calls)
 {
 	char path[] = "p/cmd?after=&rxMaxSize=" STRINGIFY(CONFIG_NRF_PROVISIONING_RX_BUF_SZ)
@@ -275,8 +267,7 @@ static int coap_client_cmds_valid_path_cb(struct coap_client *client, int sock,
 
 static int coap_client_no_commands_cb(struct coap_client *client, int sock,
 				      const struct sockaddr *addr, struct coap_client_request *req,
-				      struct coap_transmission_parameters *params,
-				      int cmock_num_calls)
+				      int retries, int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
 		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
@@ -289,8 +280,7 @@ static int coap_client_no_commands_cb(struct coap_client *client, int sock,
 
 static int coap_client_rsp_bad_request_cb(struct coap_client *client, int sock,
 					  const struct sockaddr *addr,
-					  struct coap_client_request *req,
-					  struct coap_transmission_parameters *params,
+					  struct coap_client_request *req, int retries,
 					  int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
@@ -309,8 +299,7 @@ static int coap_client_rsp_bad_request_cb(struct coap_client *client, int sock,
 
 static int coap_client_rsp_server_error_cb(struct coap_client *client, int sock,
 					   const struct sockaddr *addr,
-					   struct coap_client_request *req,
-					   struct coap_transmission_parameters *params,
+					   struct coap_client_request *req, int retries,
 					   int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
@@ -329,8 +318,7 @@ static int coap_client_rsp_server_error_cb(struct coap_client *client, int sock,
 
 static int coap_client_rsp_unsupported_code_cb(struct coap_client *client, int sock,
 					       const struct sockaddr *addr,
-					       struct coap_client_request *req,
-					       struct coap_transmission_parameters *params,
+					       struct coap_client_request *req, int retries,
 					       int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
@@ -348,8 +336,7 @@ static int coap_client_rsp_unsupported_code_cb(struct coap_client *client, int s
 }
 
 static int coap_client_ok_cb(struct coap_client *client, int sock, const struct sockaddr *addr,
-			     struct coap_client_request *req,
-			     struct coap_transmission_parameters *params, int cmock_num_calls)
+			     struct coap_client_request *req, int retries, int cmock_num_calls)
 {
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
 		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
@@ -367,7 +354,7 @@ static int coap_client_ok_cb(struct coap_client *client, int sock, const struct 
 
 static int coap_client_commands_cb(struct coap_client *client, int sock,
 				   const struct sockaddr *addr, struct coap_client_request *req,
-				   struct coap_transmission_parameters *params, int cmock_num_calls)
+				   int retries, int cmock_num_calls)
 {
 	if (cmock_num_calls < 4) {
 		if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
