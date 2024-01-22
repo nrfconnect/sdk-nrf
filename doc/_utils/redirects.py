@@ -239,4 +239,5 @@ NRF = [
     ("working_with_nrf/nrf91/thingy91_gsg","device_guides/working_with_nrf/nrf91/thingy91_gsg"),
     ("known_issues","releases_and_maturity/known_issues"),
     ("libraries/networking/nrf_cloud_agps","libraries/networking/nrf_cloud_agnss"),
+    ("applications/nrf5340_audio/README","applications/nrf5340_audio/index"),
 ]
