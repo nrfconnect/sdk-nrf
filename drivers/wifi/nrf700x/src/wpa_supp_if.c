@@ -2298,68 +2298,6 @@ out:
 	return ret;
 }
 
-int nrf_wifi_wpa_supp_sta_deauth(void *if_priv, const u8 *own_addr, const u8 *addr,
-			int reason_code)
-{
-	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct nrf_wifi_umac_del_sta_info del_sta = {0};
-	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	int ret = -1;
-
-	if (!if_priv || !own_addr || !addr) {
-		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
-	}
-
-	vif_ctx_zep = if_priv;
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-	memcpy(del_sta.mac_addr, addr, sizeof(del_sta.mac_addr));
-	del_sta.mgmt_subtype = IEEE80211_STYPE_DEAUTH >> 4;
-	del_sta.reason_code = reason_code;
-
-	status = nrf_wifi_fmac_del_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &del_sta);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_del_sta failed", __func__);
-		goto out;
-	}
-
-	ret = 0;
-out:
-	return ret;
-}
-
-int nrf_wifi_wpa_supp_sta_disassoc(void *if_priv, const u8 *own_addr, const u8 *addr,
-			int reason_code)
-{
-	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct nrf_wifi_umac_del_sta_info del_sta = {0};
-	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	int ret = -1;
-
-	if (!if_priv || !own_addr || !addr) {
-		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
-	}
-
-	vif_ctx_zep = if_priv;
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-	memcpy(del_sta.mac_addr, addr, sizeof(del_sta.mac_addr));
-	del_sta.mgmt_subtype = IEEE80211_STYPE_DISASSOC >> 4;
-	del_sta.reason_code = reason_code;
-
-	status = nrf_wifi_fmac_del_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &del_sta);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_del_sta failed", __func__);
-		goto out;
-	}
-
-	ret = 0;
-out:
-	return ret;
-}
-
 int nrf_wifi_wpa_supp_sta_remove(void *if_priv, const u8 *addr)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;

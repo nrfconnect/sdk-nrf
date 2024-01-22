@@ -131,10 +131,6 @@ int nrf_wifi_wpa_supp_change_beacon(void *if_priv, struct wpa_driver_ap_params *
 int nrf_wifi_wpa_supp_stop_ap(void *if_priv);
 int nrf_wifi_wpa_supp_deinit_ap(void *if_priv);
 int nrf_wifi_wpa_supp_sta_add(void *if_priv, struct hostapd_sta_add_params *params);
-int nrf_wifi_wpa_supp_sta_deauth(void *if_priv, const u8 *own_addr, const u8 *addr,
-			int reason_code);
-int nrf_wifi_wpa_supp_sta_disassoc(void *if_priv, const u8 *own_addr, const u8 *addr,
-			int reason_code);
 int nrf_wifi_wpa_supp_sta_remove(void *if_priv, const u8 *addr);
 int nrf_wifi_supp_register_mgmt_frame(void *if_priv,
 	u16 frame_type, size_t match_len, const u8 *match);
