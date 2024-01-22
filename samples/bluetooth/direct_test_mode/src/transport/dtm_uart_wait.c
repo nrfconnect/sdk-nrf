@@ -14,7 +14,14 @@
 LOG_MODULE_REGISTER(dtm_wait, CONFIG_DTM_TRANSPORT_LOG_LEVEL);
 
 /* Timer used for measuring UART poll cycle wait time. */
-#define WAIT_TIMER_INSTANCE        1
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	#define WAIT_TIMER_INSTANCE        021
+#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+	#define WAIT_TIMER_INSTANCE        20
+#else
+	#define WAIT_TIMER_INSTANCE        1
+#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
+
 #define WAIT_TIMER_IRQ             NRFX_CONCAT_3(TIMER,			 \
 						 WAIT_TIMER_INSTANCE,    \
 						 _IRQn)
@@ -59,7 +66,7 @@ int dtm_uart_wait_init(void)
 	nrfx_err_t err;
 	nrfx_timer_config_t timer_cfg = {
 		.frequency = NRFX_MHZ_TO_HZ(1),
-		.mode = NRF_TIMER_MODE_TIMER,
+		.mode      = NRF_TIMER_MODE_TIMER,
 		.bit_width = NRF_TIMER_BIT_WIDTH_16,
 	};
 

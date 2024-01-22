@@ -9,59 +9,86 @@
 #include "dtm_hw.h"
 #include "dtm_hw_config.h"
 
-const uint32_t nrf_power_value[] = {
+/* All valid power levels (in dBm) supported by the SoC. */
+const int8_t nrf_power_value[] = {
+#if defined(RADIO_TXPOWER_TXPOWER_Neg70dBm)
+	-70,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg70dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Neg46dBm)
+	-46,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg46dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Neg40dBm)
-	RADIO_TXPOWER_TXPOWER_Neg40dBm,
+	-40,
 #endif /* RADIO_TXPOWER_TXPOWER_Neg40dBm */
-	RADIO_TXPOWER_TXPOWER_Neg30dBm,
-	RADIO_TXPOWER_TXPOWER_Neg20dBm,
-	RADIO_TXPOWER_TXPOWER_Neg16dBm,
-	RADIO_TXPOWER_TXPOWER_Neg12dBm,
-	RADIO_TXPOWER_TXPOWER_Neg8dBm,
+#if defined(RADIO_TXPOWER_TXPOWER_Neg30dBm)
+	-30,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg30dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Neg26dBm)
+	-26,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg26dBm) */
+	-20,
+	-16,
+#if defined(RADIO_TXPOWER_TXPOWER_Neg14dBm)
+	-14,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg14dBm) */
+	-12,
+#if defined(RADIO_TXPOWER_TXPOWER_Neg10dBm)
+	-10,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg10dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Neg9dBm)
+	-9,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg9dBm) */
+	-8,
 #if defined(RADIO_TXPOWER_TXPOWER_Neg7dBm)
-	RADIO_TXPOWER_TXPOWER_Neg7dBm,
+	-7,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg7dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Neg6dBm)
-	RADIO_TXPOWER_TXPOWER_Neg6dBm,
+	-6,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg6dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Neg5dBm)
-	RADIO_TXPOWER_TXPOWER_Neg5dBm,
+	-5,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg5dBm) */
-	RADIO_TXPOWER_TXPOWER_Neg4dBm,
+	-4,
 #if defined(RADIO_TXPOWER_TXPOWER_Neg3dBm)
-	RADIO_TXPOWER_TXPOWER_Neg3dBm,
+	-3,
 #endif /* defined (RADIO_TXPOWER_TXPOWER_Neg3dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Neg2dBm)
-	RADIO_TXPOWER_TXPOWER_Neg2dBm,
+	-2,
 #endif /* defined (RADIO_TXPOWER_TXPOWER_Neg2dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Neg1dBm)
-	RADIO_TXPOWER_TXPOWER_Neg1dBm,
+	-1,
 #endif /* defined (RADIO_TXPOWER_TXPOWER_Neg1dBm) */
-	RADIO_TXPOWER_TXPOWER_0dBm,
+	0,
 #if defined(RADIO_TXPOWER_TXPOWER_Pos1dBm)
-	RADIO_TXPOWER_TXPOWER_Pos1dBm,
+	1,
 #endif /* RADIO_TXPOWER_TXPOWER_Pos1dBm */
 #if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm)
-	RADIO_TXPOWER_TXPOWER_Pos2dBm,
+	2,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm)
-	RADIO_TXPOWER_TXPOWER_Pos3dBm,
+	3,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos3dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Pos4dBm)
-	RADIO_TXPOWER_TXPOWER_Pos4dBm,
+	4,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos4dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Pos5dBm)
-	RADIO_TXPOWER_TXPOWER_Pos5dBm,
+	5,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos5dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Pos6dBm)
-	RADIO_TXPOWER_TXPOWER_Pos6dBm,
+	6,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos6dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Pos7dBm)
-	RADIO_TXPOWER_TXPOWER_Pos7dBm,
+	7,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos7dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm)
-	RADIO_TXPOWER_TXPOWER_Pos8dBm
+	8,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos8dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Pos9dBm)
+	9,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos9dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Pos10dBm)
+	10
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos10dBm) */
 };
 
 #if DIRECTION_FINDING_SUPPORTED
@@ -148,7 +175,7 @@ static const struct dtm_ant_cfg {
 };
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
-bool dtm_hw_radio_validate(nrf_radio_txpower_t tx_power,
+bool dtm_hw_radio_validate(int8_t tx_power,
 			   nrf_radio_mode_t radio_mode)
 {
 	/* Initializing code below is quite generic - for BLE, the values are
@@ -207,7 +234,7 @@ size_t dtm_hw_radio_power_array_size_get(void)
 	return ARRAY_SIZE(nrf_power_value);
 }
 
-const uint32_t *dtm_hw_radio_power_array_get(void)
+const int8_t *dtm_hw_radio_power_array_get(void)
 {
 	return nrf_power_value;
 }
