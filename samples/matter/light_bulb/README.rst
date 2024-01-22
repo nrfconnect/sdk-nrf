@@ -164,6 +164,9 @@ To set up an AWS IoT instance and configure the sample, complete the following s
 1. Complete the setup and configuration described in the :ref:`lib_aws_iot` documentation to get the host name, device ID, and certificates used in the connection.
 #. Set the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` and :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` Kconfig options in the :file:`overlay-aws-iot-integration.conf` file.
 #. Import the certificates to the :file:`light_bulb/src/aws_iot_integration/certs` folder.
+
+   The certificates will vary in size depending on the method you chose when generating the certificates.
+   Due to this, you might need to increase the value of the :kconfig:option:`CONFIG_MBEDTLS_SSL_OUT_CONTENT_LEN` option to be able to establish a connection.
 #. Build the sample using the following command:
 
    .. code-block:: console
