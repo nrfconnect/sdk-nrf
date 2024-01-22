@@ -184,9 +184,6 @@ config TFM_ITS_VALIDATE_METADATA_FROM_FLASH
 	help
 	  Validate filesystem metadata every time it is read from flash
 
-config TFM_ITS_MAX_ASSET_SIZE_OVERRIDE
-	default y
-
 config TFM_ITS_MAX_ASSET_SIZE
 	default 512
 
