@@ -27,13 +27,13 @@ extern "C" {
 					RADIO_PSEL_DFEGPIO_CONNECT_Pos)
 
 /**@brief Function for validating tx power and radio mode settings.
- * @param[in] tx_power    TX power for transmission test.
+ * @param[in] tx_power    TX power for transmission test in dBm.
  * @param[in] radio_mode  Radio mode value.
  *
  * @retval true  If validation was successful
  * @retval false Otherwise
  */
-bool dtm_hw_radio_validate(nrf_radio_txpower_t tx_power,
+bool dtm_hw_radio_validate(int8_t tx_power,
 			   nrf_radio_mode_t radio_mode);
 
 /**@brief Function for checking if Radio operates in Long Range mode.
@@ -70,7 +70,7 @@ size_t dtm_hw_radio_power_array_size_get(void);
  *
  * @retval Size of the tx power array.
  */
-const uint32_t *dtm_hw_radio_power_array_get(void);
+const int8_t *dtm_hw_radio_power_array_get(void);
 
 /**@brief Function for getting antenna pins array. This array contains
  *        all antenna pins data.

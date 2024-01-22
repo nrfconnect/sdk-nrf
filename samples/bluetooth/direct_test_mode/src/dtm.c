@@ -16,12 +16,16 @@
 #endif /* CONFIG_FEM */
 
 #include <zephyr/kernel.h>
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
 #include <zephyr/sys/__assert.h>
+#if !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX))
+#include <hal/nrf_nvmc.h>
+#endif /* !defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX) */
 
 #include <hal/nrf_egu.h>
-#include <hal/nrf_nvmc.h>
 #include <hal/nrf_radio.h>
 
 #ifdef NRF53_SERIES
@@ -32,8 +36,27 @@
 #include <nrfx_timer.h>
 #include <nrf_erratas.h>
 
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	#define DEFAULT_TIMER_INSTANCE            020
+	#define RADIO_IRQn                        RADIO_0_IRQn
+	#define DTM_EGU                           NRF_EGU020
+	#define DTM_RADIO_SHORT_READY_START_MASK  NRF_RADIO_SHORT_READY_START_MASK
+	#define DTM_RADIO_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
+#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+	#define DEFAULT_TIMER_INSTANCE            10
+	#define RADIO_IRQn                        RADIO_0_IRQn
+	#define DTM_EGU                           NRF_EGU10
+	#define DTM_RADIO_SHORT_READY_START_MASK  NRF_RADIO_SHORT_READY_START_MASK
+	#define DTM_RADIO_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
+#else
+	#define DEFAULT_TIMER_INSTANCE            0
+	#define RADIO_IRQn                        RADIO_IRQn
+	#define DTM_EGU                           NRF_EGU0
+	#define DTM_RADIO_SHORT_READY_START_MASK  NRF_RADIO_SHORT_READY_START_MASK
+	#define DTM_RADIO_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_END_DISABLE_MASK
+#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
+
 /* Default timer used for timing. */
-#define DEFAULT_TIMER_INSTANCE     0
 #define DEFAULT_TIMER_IRQ          NRFX_CONCAT_3(TIMER,			 \
 						 DEFAULT_TIMER_INSTANCE, \
 						 _IRQn)
@@ -66,9 +89,13 @@ BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 	     "Anomaly DTM timer needs additional KConfig configuration");
 #endif /* NRF52_ERRATA_172_PRESENT */
 
-#define DTM_EGU       NRF_EGU0
 #define DTM_EGU_EVENT NRF_EGU_EVENT_TRIGGERED0
 #define DTM_EGU_TASK  NRF_EGU_TASK_TRIGGER0
+
+#define ENDPOINT_EGU_RADIO_TX    BIT(1)
+#define ENDPOINT_EGU_RADIO_RX    BIT(2)
+#define ENDPOINT_TIMER_RADIO_TX  BIT(3)
+#define ENDPOINT_FORK_EGU_TIMER  BIT(4)
 
 /* Values that for now are "constants" - they could be configured by a function
  * setting them, but most of these are set by the BLE DTM standard, so changing
@@ -381,7 +408,7 @@ static struct dtm_instance {
 	nrf_radio_mode_t radio_mode;
 
 	/* Radio output power. */
-	nrf_radio_txpower_t txpower;
+	int8_t txpower;
 
 	/* Constant Tone Extension configuration. */
 	struct dtm_cte_info cte_info;
@@ -393,6 +420,9 @@ static struct dtm_instance {
 
 	/* Radio Enable PPI channel. */
 	uint8_t ppi_radio_start;
+
+	/* PPI endpoint status.*/
+	atomic_t endpoint_state;
 } dtm_inst = {
 	.state = STATE_UNINITIALIZED,
 	.packet_hdr_plen = NRF_RADIO_PREAMBLE_LENGTH_8BIT,
@@ -402,7 +432,7 @@ static struct dtm_instance {
 	.anomaly_timer = NRFX_TIMER_INSTANCE(ANOMALY_172_TIMER_INSTANCE),
 #endif /* NRF52_ERRATA_172_PRESENT */
 	.radio_mode = NRF_RADIO_MODE_BLE_1MBIT,
-	.txpower = NRF_RADIO_TXPOWER_0DBM,
+	.txpower = 0,
 #if CONFIG_FEM
 	.fem.tx_power_control = FEM_USE_DEFAULT_TX_POWER_CONTROL,
 #endif
@@ -507,7 +537,7 @@ static const struct dtm_supp_features supported_features = {
 
 static void radio_gpio_pattern_clear(void)
 {
-	NRF_RADIO->CLEARPATTERN = RADIO_CLEARPATTERN_CLEARPATTERN_Clear;
+	nrf_radio_dfe_pattern_clear(NRF_RADIO);
 }
 
 static void antenna_radio_pin_config(void)
@@ -604,6 +634,7 @@ static void anomaly_timer_handler(nrf_timer_event_t event_type, void *context);
 static void dtm_timer_handler(nrf_timer_event_t event_type, void *context);
 static void radio_handler(const void *context);
 
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 static int clock_init(void)
 {
 	int err;
@@ -635,13 +666,14 @@ static int clock_init(void)
 
 	return err;
 }
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 static int timer_init(void)
 {
 	nrfx_err_t err;
 	nrfx_timer_config_t timer_cfg = {
 		.frequency = NRFX_MHZ_TO_HZ(1),
-		.mode = NRF_TIMER_MODE_TIMER,
+		.mode      = NRF_TIMER_MODE_TIMER,
 		.bit_width = NRF_TIMER_BIT_WIDTH_16,
 	};
 
@@ -663,7 +695,7 @@ static int anomaly_timer_init(void)
 	nrfx_err_t err;
 	nrfx_timer_config_t timer_cfg = {
 		.frequency = NRFX_KHZ_TO_HZ(125),
-		.mode = NRF_TIMER_MODE_TIMER,
+		.mode      = NRF_TIMER_MODE_TIMER,
 		.bit_width = NRF_TIMER_BIT_WIDTH_16,
 	};
 
@@ -700,6 +732,156 @@ static int gppi_init(void)
 	}
 
 	return 0;
+}
+
+static nrf_radio_txpower_t dbm_to_nrf_radio_txpower(int8_t tx_power)
+{
+
+	/* The tx_power is in dBm units and is converted
+	 * to the appropriate radio register enumerator.
+	 */
+	switch (tx_power) {
+#if defined(RADIO_TXPOWER_TXPOWER_Neg70dBm)
+	case -70:
+		return RADIO_TXPOWER_TXPOWER_Neg70dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg70dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg46dBm)
+	case -46:
+		return RADIO_TXPOWER_TXPOWER_Neg46dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg46dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg40dBm)
+	case -40:
+		return RADIO_TXPOWER_TXPOWER_Neg40dBm;
+#endif /* RADIO_TXPOWER_TXPOWER_Neg40dBm */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg30dBm)
+	case -30:
+		return RADIO_TXPOWER_TXPOWER_Neg30dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg30dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg26dBm)
+	case -26:
+		return RADIO_TXPOWER_TXPOWER_Neg26dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg26dBm) */
+
+	case -20:
+		return RADIO_TXPOWER_TXPOWER_Neg20dBm;
+
+	case -16:
+		return RADIO_TXPOWER_TXPOWER_Neg16dBm;
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg14dBm)
+	case -14:
+		return RADIO_TXPOWER_TXPOWER_Neg14dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg14dBm) */
+
+	case -12:
+		return RADIO_TXPOWER_TXPOWER_Neg12dBm;
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg10dBm)
+	case -10:
+		return RADIO_TXPOWER_TXPOWER_Neg10dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg10dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg9dBm)
+	case -9:
+		return RADIO_TXPOWER_TXPOWER_Neg9dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg9dBm) */
+
+	case -8:
+		return RADIO_TXPOWER_TXPOWER_Neg8dBm;
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg7dBm)
+	case -7:
+		return RADIO_TXPOWER_TXPOWER_Neg7dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg7dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg6dBm)
+	case -6:
+		return RADIO_TXPOWER_TXPOWER_Neg6dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg6dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg5dBm)
+	case -5:
+		return RADIO_TXPOWER_TXPOWER_Neg5dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg5dBm) */
+
+	case -4:
+		return RADIO_TXPOWER_TXPOWER_Neg4dBm;
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg3dBm)
+	case -3:
+		return RADIO_TXPOWER_TXPOWER_Neg3dBm;
+#endif /* defined (RADIO_TXPOWER_TXPOWER_Neg3dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg2dBm)
+	case -2:
+		return RADIO_TXPOWER_TXPOWER_Neg2dBm;
+#endif /* defined (RADIO_TXPOWER_TXPOWER_Neg2dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg1dBm)
+
+	case -1:
+		return RADIO_TXPOWER_TXPOWER_Neg1dBm;
+#endif /* defined (RADIO_TXPOWER_TXPOWER_Neg1dBm) */
+
+	case 0:
+		return RADIO_TXPOWER_TXPOWER_0dBm;
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos1dBm)
+	case 1:
+		return RADIO_TXPOWER_TXPOWER_Pos1dBm;
+#endif /* RADIO_TXPOWER_TXPOWER_Pos1dBm */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm)
+	case 2:
+		return RADIO_TXPOWER_TXPOWER_Pos2dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm)
+	case 3:
+		return RADIO_TXPOWER_TXPOWER_Pos3dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos3dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos4dBm)
+	case 4:
+		return RADIO_TXPOWER_TXPOWER_Pos4dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos4dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos5dBm)
+	case 5:
+		return RADIO_TXPOWER_TXPOWER_Pos5dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos5dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos6dBm)
+	case 6:
+		return RADIO_TXPOWER_TXPOWER_Pos6dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos6dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos7dBm)
+	case 7:
+		return RADIO_TXPOWER_TXPOWER_Pos7dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos7dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm)
+	case 8:
+		return RADIO_TXPOWER_TXPOWER_Pos8dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos8dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos9dBm)
+	case 9:
+		return RADIO_TXPOWER_TXPOWER_Pos9dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos9dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos10dBm)
+	case 10:
+		return RADIO_TXPOWER_TXPOWER_Pos10dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos10dBm) */
+	default:
+		__ASSERT_NO_MSG(0);
+	}
 }
 
 #if CONFIG_DTM_POWER_CONTROL_AUTOMATIC
@@ -744,7 +926,7 @@ static int8_t dtm_radio_nearest_power_get(int8_t tx_power, uint16_t frequency)
 {
 	int8_t output_power = INT8_MAX;
 	const size_t size = dtm_hw_radio_power_array_size_get();
-	const uint32_t *power = dtm_hw_radio_power_array_get();
+	const int8_t *power = dtm_hw_radio_power_array_get();
 
 	ARG_UNUSED(frequency);
 
@@ -811,11 +993,15 @@ static void radio_tx_power_set(uint8_t channel, int8_t tx_power)
 	nrf_vreqctrl_radio_high_voltage_set(NRF_VREQCTRL, high_voltage_enable);
 #endif /* NRF53_SERIES */
 
-	nrf_radio_txpower_set(NRF_RADIO, (nrf_radio_txpower_t)radio_power);
+	nrf_radio_txpower_set(NRF_RADIO, dbm_to_nrf_radio_txpower(radio_power));
 }
 
 static void radio_reset(void)
 {
+	if (nrfx_gppi_channel_check(dtm_inst.ppi_radio_start)) {
+		nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
+	}
+
 	nrf_radio_shorts_set(NRF_RADIO, 0);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 
@@ -896,10 +1082,12 @@ int dtm_init(dtm_iq_report_callback_t callback)
 {
 	int err;
 
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	err = clock_init();
 	if (err) {
 		return err;
 	}
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 	err = timer_init();
 	if (err) {
@@ -962,7 +1150,9 @@ static void report_iq(void)
 	iq_data.channel = dtm_inst.phys_ch;
 	iq_data.rssi = -nrf_radio_rssi_sample_get(NRF_RADIO);
 
+#if defined(RADIO_EVENTS_RSSIEND_EVENTS_RSSIEND_Msk)
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_RSSIEND);
+#endif
 
 	iq_data.rssi_ant = dtm_hw_radio_pdu_antenna_get();
 
@@ -1223,27 +1413,42 @@ static void errata_191_handle(bool enable)
 	}
 }
 
+static void endpoints_clear(void)
+{
+	if (atomic_test_and_clear_bit(&dtm_inst.endpoint_state, ENDPOINT_FORK_EGU_TIMER)) {
+		nrfx_gppi_fork_endpoint_clear(dtm_inst.ppi_radio_start,
+			nrf_timer_task_address_get(dtm_inst.timer.p_reg, NRF_TIMER_TASK_START));
+	}
+	if (atomic_test_and_clear_bit(&dtm_inst.endpoint_state, ENDPOINT_EGU_RADIO_TX)) {
+		nrfx_gppi_channel_endpoints_clear(
+			dtm_inst.ppi_radio_start,
+			nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT),
+			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+	}
+	if (atomic_test_and_clear_bit(&dtm_inst.endpoint_state, ENDPOINT_EGU_RADIO_RX)) {
+		nrfx_gppi_channel_endpoints_clear(
+			dtm_inst.ppi_radio_start,
+			nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT),
+			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_RXEN));
+	}
+	if (atomic_test_and_clear_bit(&dtm_inst.endpoint_state, ENDPOINT_TIMER_RADIO_TX)) {
+		nrfx_gppi_channel_endpoints_clear(
+			dtm_inst.ppi_radio_start,
+			nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0),
+			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+	}
+}
+
 static void radio_ppi_clear(void)
 {
-	nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
+	if (nrfx_gppi_channel_check(dtm_inst.ppi_radio_start)) {
+		nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
+	}
+
 	nrf_egu_event_clear(DTM_EGU, DTM_EGU_EVENT);
 
 	/* Break connection from timer to radio to stop transmit loop */
-	nrfx_gppi_event_endpoint_clear(dtm_inst.ppi_radio_start,
-		nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0));
-
-	if (dtm_inst.state == STATE_TRANSMITTER_TEST) {
-		nrfx_gppi_task_endpoint_clear(dtm_inst.ppi_radio_start,
-				nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
-	} else if (dtm_inst.state == STATE_RECEIVER_TEST) {
-		nrfx_gppi_task_endpoint_clear(dtm_inst.ppi_radio_start,
-				nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_RXEN));
-	}
-
-	nrfx_gppi_event_endpoint_clear(dtm_inst.ppi_radio_start,
-			nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
-	nrfx_gppi_fork_endpoint_clear(dtm_inst.ppi_radio_start,
-			nrf_timer_task_address_get(dtm_inst.timer.p_reg, NRF_TIMER_TASK_START));
+	endpoints_clear();
 }
 
 static void radio_ppi_configure(bool rx, uint32_t timer_short_mask)
@@ -1253,8 +1458,13 @@ static void radio_ppi_configure(bool rx, uint32_t timer_short_mask)
 		nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT),
 		nrf_radio_task_address_get(NRF_RADIO,
 					   rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN));
+	atomic_set_bit(&dtm_inst.endpoint_state,
+		       (rx ? ENDPOINT_EGU_RADIO_RX : ENDPOINT_EGU_RADIO_TX));
+
 	nrfx_gppi_fork_endpoint_setup(dtm_inst.ppi_radio_start,
 		nrf_timer_task_address_get(dtm_inst.timer.p_reg, NRF_TIMER_TASK_START));
+	atomic_set_bit(&dtm_inst.endpoint_state, ENDPOINT_FORK_EGU_TIMER);
+
 	nrfx_gppi_channels_enable(BIT(dtm_inst.ppi_radio_start));
 
 	if (timer_short_mask) {
@@ -1264,18 +1474,17 @@ static void radio_ppi_configure(bool rx, uint32_t timer_short_mask)
 
 static void radio_tx_ppi_reconfigure(void)
 {
-	nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
-	nrfx_gppi_fork_endpoint_clear(dtm_inst.ppi_radio_start,
-		nrf_timer_task_address_get(dtm_inst.timer.p_reg, NRF_TIMER_TASK_START));
-	nrfx_gppi_event_endpoint_clear(dtm_inst.ppi_radio_start,
-		nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
-	nrfx_gppi_event_endpoint_setup(dtm_inst.ppi_radio_start,
-		nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0));
+	if (nrfx_gppi_channel_check(dtm_inst.ppi_radio_start)) {
+		nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
+	}
+
+	endpoints_clear();
 
 	nrfx_gppi_channel_endpoints_setup(
 		dtm_inst.ppi_radio_start,
 		nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0),
 		nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+	atomic_set_bit(&dtm_inst.endpoint_state, ENDPOINT_TIMER_RADIO_TX);
 	nrfx_gppi_channels_enable(BIT(dtm_inst.ppi_radio_start));
 }
 
@@ -1344,13 +1553,14 @@ static void radio_prepare(bool rx)
 		(dtm_inst.cte_info.iq_rep_cb ?
 		 NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK : 0) |
 		(dtm_inst.cte_info.mode == DTM_CTE_MODE_OFF ?
-		 NRF_RADIO_SHORT_END_DISABLE_MASK :
+		 DTM_RADIO_SHORT_END_DISABLE_MASK :
 		 NRF_RADIO_SHORT_PHYEND_DISABLE_MASK));
 #else
 	nrf_radio_shorts_set(NRF_RADIO,
-			     NRF_RADIO_SHORT_READY_START_MASK |
-			     NRF_RADIO_SHORT_END_DISABLE_MASK);
+			     DTM_RADIO_SHORT_READY_START_MASK |
+			     DTM_RADIO_SHORT_END_DISABLE_MASK);
 #endif /* DIRECTION_FINDING_SUPPORTED */
+
 
 
 #if CONFIG_FEM
@@ -1368,7 +1578,9 @@ static void radio_prepare(bool rx)
 	nrf_radio_int_enable(NRF_RADIO,
 			NRF_RADIO_INT_READY_MASK |
 			NRF_RADIO_INT_ADDRESS_MASK |
+#if defined(RADIO_EVENTS_RSSIEND_EVENTS_RSSIEND_Msk)
 			NRF_RADIO_INT_RSSIEND_MASK |
+#endif
 			NRF_RADIO_INT_END_MASK);
 
 	if (rx) {
@@ -1414,7 +1626,7 @@ static bool dtm_set_txpower(uint32_t new_tx_power)
 	/* radio->TXPOWER register is 32 bits, low octet a tx power value,
 	 * upper 24 bits zeroed.
 	 */
-	uint8_t new_power8 = (uint8_t) (new_tx_power & 0xFF);
+	int8_t new_power8 = (int8_t)(new_tx_power & 0xFF);
 
 	/* The two most significant bits are not sent in the 6 bit field of
 	 * the DTM command. These two bits are 1's if and only if the tx_power
@@ -1452,9 +1664,7 @@ static int dtm_vendor_specific_pkt(uint32_t vendor_cmd, uint32_t vendor_option)
 		 * carrier signal should be transmitted by the radio.
 		 */
 		radio_prepare(TX_MODE);
-
-		nrf_radio_modecnf0_set(NRF_RADIO, IS_ENABLED(CONFIG_DTM_FAST_RAMP_UP),
-				       RADIO_MODECNF0_DTX_Center);
+		nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, IS_ENABLED(CONFIG_DTM_FAST_RAMP_UP));
 
 		/* Shortcut between READY event and START task */
 		nrf_radio_shorts_set(NRF_RADIO,
@@ -2222,9 +2432,12 @@ static void radio_handler(const void *context)
 #endif /* NRF52_ERRATA_172_PRESENT */
 	}
 
+#if defined(RADIO_EVENTS_RSSIEND_EVENTS_RSSIEND_Msk)
 	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_RSSIEND)) {
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_RSSIEND);
 	}
+#endif
+
 }
 
 static void dtm_timer_handler(nrf_timer_event_t event_type, void *context)
