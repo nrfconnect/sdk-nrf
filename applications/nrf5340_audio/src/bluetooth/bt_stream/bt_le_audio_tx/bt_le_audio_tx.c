@@ -172,7 +172,8 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 	}
 
 	if (ts != 0 && got_tx_sync_ts) {
-		if (!IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+		if (IS_ENABLED(CONFIG_BT_BAP_UNICAST_CLIENT) &&
+		    !IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
 			struct sdu_ref_msg msg;
 
 			msg.timestamp = ts;
