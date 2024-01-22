@@ -171,6 +171,14 @@ Zigbee
 
 |no_changes_yet_note|
 
+Gazell
+------
+
+* Added:
+
+  * :kconfig:option:`CONFIG_GAZELL_PAIRING_USER_CONFIG_ENABLE` and :kconfig:option:`CONFIG_GAZELL_PAIRING_USER_CONFIG_FILE`.
+    The options allow to use user-specific file as Gazell pairing configuration header to override the pairing configuration.
+
 Enhanced ShockBurst (ESB)
 -------------------------
 

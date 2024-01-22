@@ -15,7 +15,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <nrf_gzll.h>
+#if defined(CONFIG_GAZELL_PAIRING_USER_CONFIG_ENABLE)
+#include CONFIG_GAZELL_PAIRING_USER_CONFIG_FILE
+#else
 #include "gzp_config.h"
+#endif /* CONFIG_GAZELL_PAIRING_USER_CONFIG_ENABLE */
 
 #ifdef __cplusplus
 extern "C" {
