@@ -179,6 +179,10 @@ Gazell
   * :kconfig:option:`CONFIG_GAZELL_PAIRING_USER_CONFIG_ENABLE` and :kconfig:option:`CONFIG_GAZELL_PAIRING_USER_CONFIG_FILE`.
     The options allow to use user-specific file as Gazell pairing configuration header to override the pairing configuration.
 
+* Fixed:
+
+  * Clear system address and host id in RAM when :c:func:`gzp_erase_pairing_data` is called.
+
 Enhanced ShockBurst (ESB)
 -------------------------
 

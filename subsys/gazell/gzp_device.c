@@ -513,11 +513,25 @@ SETTINGS_STATIC_HANDLER_DEFINE(nrf_gzp_device, GZP_DEVICE_DB_NAME, NULL, setting
 
 #endif
 
+#ifdef CONFIG_GAZELL_PAIRING_CRYPT
+
+static void gzp_clear_host_id(void)
+{
+	memset(gzp_host_id, 0xff, GZP_HOST_ID_LENGTH);
+}
+
+#endif
+
+static void gzp_clear_sys_addr(void)
+{
+	memset(gzp_system_address, 0xff, GZP_SYSTEM_ADDRESS_WIDTH);
+}
+
 void gzp_init(void)
 {
-	memset(gzp_system_address, 0xFF, sizeof(gzp_system_address));
+	gzp_clear_sys_addr();
 #ifdef CONFIG_GAZELL_PAIRING_CRYPT
-	memset(gzp_host_id, 0xFF, sizeof(gzp_host_id));
+	gzp_clear_host_id();
 #endif
 
 	gzp_init_internal();
@@ -530,15 +544,18 @@ void gzp_init(void)
 	(void)gzp_update_radio_params(gzp_system_address);
 }
 
-
 void gzp_erase_pairing_data(void)
 {
 #ifdef CONFIG_GAZELL_PAIRING_SETTINGS
 	settings_delete(db_key_sys_addr);
 #ifdef CONFIG_GAZELL_PAIRING_CRYPT
 	settings_delete(db_key_host_id);
-#endif
-#endif
+#endif /* CONFIG_GAZELL_PAIRING_CRYPT */
+#endif /* CONFIG_GAZELL_PAIRING_SETTINGS */
+	gzp_clear_sys_addr();
+#ifdef CONFIG_GAZELL_PAIRING_CRYPT
+	gzp_clear_host_id();
+#endif /* CONFIG_GAZELL_PAIRING_CRYPT */
 }
 
 /* Set user callback context.
