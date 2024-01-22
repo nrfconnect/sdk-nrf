@@ -237,7 +237,13 @@ int main(void)
 
 	__ASSERT(mosh_shell != NULL, "Failed to get shell backend");
 
-	mosh_print_reset_reason();
+	/* Reset reason can only be read once, because the register needs to be cleared after
+	 * reading. Memfault implementation reads the reset reason before modem_shell, so the
+	 * register would always be empty.
+	 */
+	if (!IS_ENABLED(CONFIG_MEMFAULT)) {
+		mosh_print_reset_reason();
+	}
 
 	mosh_print_version_info();
 
