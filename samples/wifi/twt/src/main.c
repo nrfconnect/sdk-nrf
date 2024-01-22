@@ -341,6 +341,12 @@ static int __wifi_args_to_params(struct wifi_connect_req_params *params)
 		params->timeout = SYS_FOREVER_MS;
 	}
 
+	/* Defaults */
+	params->band = WIFI_FREQ_BAND_UNKNOWN;
+	params->channel = WIFI_CHANNEL_ANY;
+	params->security = WIFI_SECURITY_TYPE_NONE;
+	params->mfp = WIFI_MFP_OPTIONAL;
+
 	/* SSID */
 	params->ssid = CONFIG_TWT_SAMPLE_SSID;
 	params->ssid_length = strlen(params->ssid);
@@ -359,10 +365,6 @@ static int __wifi_args_to_params(struct wifi_connect_req_params *params)
 	params->psk = CONFIG_TWT_SAMPLE_PASSWORD;
 	params->psk_length = strlen(params->psk);
 #endif
-	params->channel = WIFI_CHANNEL_ANY;
-
-	/* MFP (optional) */
-	params->mfp = WIFI_MFP_OPTIONAL;
 
 	return 0;
 }
