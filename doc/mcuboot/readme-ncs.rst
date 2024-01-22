@@ -9,7 +9,7 @@ You can use MCUboot in the |NCS| in one of the following roles:
 
 * As an `Immutable first-stage bootloader`_ that can perform device firmware updates to the application.
   Enable :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` to use it in this role.
-* As an `Upgradable second-stage bootloader`_ that can perform device firmware updates to both itself and the application.
+* As an `Second-stage upgradable bootloader`_ that can perform device firmware updates to both itself and the application.
   Enable both :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` and :kconfig:option:`CONFIG_SECURE_BOOT` to use it in this role.
 
 See the following user guides for more information on adding, configuring, and testing MCUboot for your application build in the |NCS|:
@@ -19,7 +19,7 @@ See the following user guides for more information on adding, configuring, and t
 * `Testing the bootloader chain`_
 * `Using external memory partitions`_
 * `Customizing the bootloader`_
-* `Firmware updates`_
+* `Signature keys`_
 
 When you add MCUboot to your application build, the files that can be used for firmware over-the-air (FOTA) upgrades are automatically generated.
 See the `MCUboot output build files`_ page for a list of all these files.

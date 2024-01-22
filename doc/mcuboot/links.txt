@@ -17,15 +17,15 @@
 
 .. ### Source:  https://developer.nordicsemi.com/
 
-.. _`Immutable first-stage bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader.html#first-stage-immutable-bootloader
-.. _`Upgradable second-stage bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader.html#second-stage-upgradable-bootloader
-.. _`Secure bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader.html
-.. _`Adding a bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader_adding.html
-.. _`Testing the bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader_testing.html
-.. _`Using external memory partitions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader_external_flash.html
-.. _`Customizing the bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_bootloader_config.html
-.. _`Firmware updates`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_fw_update.html
-.. _`Multi-image builds`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/ug_multi_image.html
+.. _`Immutable first-stage bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader.html#immutable-bootloader
+.. _`Second-stage upgradable bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader.html#upgradable-bootloader
+.. _`Secure bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader.html
+.. _`Adding a bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader_adding.html
+.. _`Testing the bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader_testing.html
+.. _`Using external memory partitions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader_external_flash.html
+.. _`Customizing the bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader_config.html
+.. _`Signature keys`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader_signature_keys.html
+.. _`Multi-image builds`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/multi_image.html
 .. _`MCUboot output build files`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/output_build_files.html#mcuboot-output-build-files
 
 .. ### Source: other
