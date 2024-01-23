@@ -132,6 +132,7 @@ void Board::UpdateStatusLED()
 
 	switch (sInstance.mState) {
 	case DeviceState::DeviceDisconnected:
+	case DeviceState::DeviceAdvertisingBLE:
 		sInstance.mLED1.Blink(LedConsts::StatusLed::Disconnected::kOn_ms,
 				      LedConsts::StatusLed::Disconnected::kOff_ms);
 
