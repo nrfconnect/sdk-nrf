@@ -35,7 +35,9 @@ Obtaining a certificate
 =======================
 
 The sample connects to ``www.example.com``, which requires an X.509 certificate.
-This certificate is provided in the :file:`samples/cellular/https_client/cert` folder.
+This certificate is provided in the :file:`samples/cellular/ciphersuites/cert` folder.
+It is automatically converted to a hex file in :file:`CMakeLists.txt`.
+This hex file is included in :file:`main.c`, where it is provisioned to the modem.
 
 To connect to other servers, you might need to provision a different certificate.
 See :ref:`cert_dwload` for more information.

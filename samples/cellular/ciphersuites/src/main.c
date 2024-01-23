@@ -21,7 +21,7 @@
 
 /* Certificate for `example.com` */
 static const char cert[] = {
-#include "../cert/DigiCertGlobalRootCA.pem"
+#include "DigiCertGlobalRootCA.pem.inc"
 };
 
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
@@ -73,7 +73,7 @@ int cert_provision(void)
 
 	if (exists) {
 		mismatch = modem_key_mgmt_cmp(TLS_SEC_TAG, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert,
-					      strlen(cert));
+					      sizeof(cert));
 		if (!mismatch) {
 			printk("Certificate match\n");
 			return 0;

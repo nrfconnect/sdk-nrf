@@ -11,7 +11,7 @@ config SAMPLE_SEC_TAG
 
 config SAMPLE_CERT_FILE
 	string "Certificate file name"
-	default "../cert/file-example.pem"
+	default "cert/file-example.pem"
 endif
 
 choice SAMPLE_FILE

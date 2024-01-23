@@ -38,7 +38,7 @@ static char recv_buf[RECV_BUF_SIZE];
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
 /* Certificate for `example.com` */
 static const char cert[] = {
-#include "../cert/DigiCertGlobalRootCA.pem"
+#include "DigiCertGlobalRootCA.pem.inc"
 };
 
 /* Zephyr NET management event callback structures. */
@@ -71,7 +71,7 @@ int cert_provision(void)
 
 	if (exists) {
 		mismatch = modem_key_mgmt_cmp(TLS_SEC_TAG, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert,
-					      strlen(cert));
+					      sizeof(cert));
 		if (!mismatch) {
 			printk("Certificate match\n");
 			return 0;

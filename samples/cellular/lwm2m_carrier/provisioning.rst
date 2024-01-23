@@ -33,7 +33,11 @@ To pre-program the certificates, use one of the following methods:
 
 * Build and flash the :ref:`at_client_sample` sample and provision the certificates using AT commands and the `Cellular Monitor`_ application.
   See `Managing credentials`_ for more information.
-* Build and flash the LwM2M carrier sample, while making sure that the appropriate certificates (:file:`*.pem`) are included in the :file:`certs` folder and referenced in :file:`carrier_certs.c`.
+* Build and flash the LwM2M carrier sample, while making sure that:
+
+  * The appropriate certificates (:file:`*.pem`) are included in the :file:`certs` folder.
+  * The :file:`*.pem`` files are converted to hex files in :file:`CMakeLists.txt`.
+  * The converted hex files are referenced in :file:`carrier_certs.c`.
 
 Other samples and applications like :ref:`asset_tracker_v2` and :ref:`modem_shell_application` with the carrier library integration do not write any certificates in the application.
 
