@@ -219,6 +219,7 @@
 .. _`Memory report`: https://nrfconnect.github.io/vscode-nrf-connect/guides/memory_overview.html
 .. _`Kconfig action in the Actions View`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_actions.html
 .. _`Create a new application`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#create-a-new-application
+.. _`Browse samples`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#browse-samples
 
 .. _`SPAKE2+ Python Tool page`: https://project-chip.github.io/connectedhomeip-doc/scripts/tools/spake2p/README.html
 
