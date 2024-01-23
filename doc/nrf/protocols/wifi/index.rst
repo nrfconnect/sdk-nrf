@@ -31,3 +31,9 @@ If you want to go through an online training course to familiarize yourself with
 
    wifi.rst
    mem_requirements.rst
+   powersave
+   regulatory_support
+   scan_operation
+   debugging
+   raw_tx_operation
+   sap
