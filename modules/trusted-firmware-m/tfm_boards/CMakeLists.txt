@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021 - 2023, Nordic Semiconductor ASA.
+# Copyright (c) 2021 - 2024, Nordic Semiconductor ASA.
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -166,3 +166,17 @@ if(LOG_MEMORY_PROTECTION)
 	src/log_memory_protection.c
 	)
 endif()
+
+#======================= Non Secure image ===========================
+
+install(FILES       ns/CMakeLists.txt
+        DESTINATION ${INSTALL_PLATFORM_NS_DIR})
+
+if(TFM_PARTITION_PLATFORM)
+  file(COPY board/device_cfg.h
+            board/RTE_Device.h
+       DESTINATION ${INSTALL_INTERFACE_INC_DIR})
+endif()
+
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/common
+     DESTINATION ${INSTALL_PLATFORM_NS_DIR})
