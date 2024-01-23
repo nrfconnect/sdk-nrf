@@ -959,7 +959,8 @@
 .. _`PRD and DPD`: https://www.bluetooth.com/download/prd_dpd_resolutions/
 .. _`Create a subset of a design`: https://qualification.support.bluetooth.com/hc/en-us/articles/27694580618637-Create-a-Subset-of-a-Design
 
-.. _`Bluetooth Mesh model specification`:
+.. _`Bluetooth Mesh model specification`: https://www.bluetooth.com/specifications/specs/mesh-model-1-1/
+.. _`Bluetooth Mesh protocol specification`: https://www.bluetooth.com/specifications/specs/mesh-protocol/
 .. _`Bluetooth Mesh profile specification`: https://www.bluetooth.com/specifications/specs/
 .. _`Bluetooth NLC profile specifications`: https://www.bluetooth.com/specifications/specs/
 

@@ -303,12 +303,15 @@ NRF = [
     ("protocols/bt/ble/radio_notification_conn_cb", "libraries/bluetooth_services/radio_notification_conn_cb"),
     ("ug_bt_mesh", "protocols/bt/bt_mesh/index"), # Bluetooth Mesh (landing)
     ("protocols/bt_mesh/index", "protocols/bt/bt_mesh/index"),
-    ("ug_bt_mesh_supported_features", "protocols/bt/bt_mesh/supported_features"), # Supported Bluetooth Mesh features
-    ("protocols/bt_mesh/supported_features", "protocols/bt/bt_mesh/supported_features"),
-    ("ug_bt_mesh_concepts", "protocols/bt/bt_mesh/concepts"), # Bluetooth Mesh concepts
-    ("protocols/bt_mesh/concepts", "protocols/bt/bt_mesh/concepts"),
-    ("ug_bt_mesh_architecture", "protocols/bt/bt_mesh/architecture"), # Bluetooth Mesh stack architecture
-    ("protocols/bt_mesh/architecture", "protocols/bt/bt_mesh/architecture"),
+    ("ug_bt_mesh_supported_features", "protocols/bt/bt_mesh/overview/index"), # Supported Bluetooth Mesh features (file removed; part of the overview index page now)
+    ("protocols/bt_mesh/supported_features", "protocols/bt/bt_mesh/overview/index"),
+    ("protocols/bt/bt_mesh/supported_features", "protocols/bt/bt_mesh/overview/index"),
+    ("ug_bt_mesh_concepts", "protocols/bt/bt_mesh/overview/topology"), # Bluetooth Mesh concepts
+    ("protocols/bt_mesh/concepts", "protocols/bt/bt_mesh/overview/topology"),
+    ("protocols/bt/bt_mesh/concepts", "protocols/bt/bt_mesh/overview/topology"),
+    ("ug_bt_mesh_architecture", "protocols/bt/bt_mesh/overview/architecture"), # Bluetooth Mesh stack architecture
+    ("protocols/bt_mesh/architecture", "protocols/bt/bt_mesh/overview/architecture"),
+    ("protocols/bt/bt_mesh/architecture", "protocols/bt/bt_mesh/overview/architecture"),
     ("ug_bt_mesh_configuring", "protocols/bt/bt_mesh/configuring"), # Configuring Bluetooth Mesh in nRF Connect SDK
     ("protocols/bt_mesh/configuring", "protocols/bt/bt_mesh/configuring"),
     ("ug_bt_mesh_model_config_app", "protocols/bt/bt_mesh/model_config_app"), # Configuring mesh models using the nRF Mesh mobile app
@@ -319,12 +322,15 @@ NRF = [
     ("protocols/bt_mesh/node_removal", "protocols/bt/bt_mesh/node_removal"),
     ("ug_bt_mesh_vendor_model", "protocols/bt/bt_mesh/vendor_model/index"), # Creating a new model (landing)
     ("protocols/bt_mesh/vendor_model/index", "protocols/bt/bt_mesh/vendor_model/index"),
-    ("ug_bt_mesh_vendor_model_dev_overview", "protocols/bt/bt_mesh/vendor_model/index"), # Vendor model development overview
-    ("protocols/bt_mesh/vendor_model/dev_overview", "protocols/bt/bt_mesh/vendor_model/index"),
+    ("ug_bt_mesh_vendor_model_dev_overview", "protocols/bt/bt_mesh/vendor_model/dev_overview"), # Vendor model development overview
+    ("protocols/bt_mesh/vendor_model/dev_overview", "protocols/bt/bt_mesh/vendor_model/dev_overview"),
     ("ug_bt_mesh_vendor_model_chat_sample_walk_through", "protocols/bt/bt_mesh/vendor_model/chat_sample_walk_through"), # Chat sample walk-through
     ("protocols/bt_mesh/vendor_model/chat_sample_walk_through", "protocols/bt/bt_mesh/vendor_model/chat_sample_walk_through"),
-    ("ug_bt_mesh_reserved_ids", "protocols/bt/bt_mesh/reserved_ids"), # Reserved vendor model IDs and opcodes
-    ("protocols/bt_mesh/reserved_ids", "protocols/bt/bt_mesh/reserved_ids"),
+    ("ug_bt_mesh_reserved_ids", "protocols/bt/bt_mesh/overview/reserved_ids"), # Reserved vendor model IDs and opcodes
+    ("protocols/bt_mesh/reserved_ids", "protocols/bt/bt_mesh/overview/reserved_ids"),
+    ("protocols/bt/bt_mesh/reserved_ids", "protocols/bt/bt_mesh/overview/reserved_ids"),
+    ("ug_bt_mesh_nlc", "protocols/bt/bt_mesh/overview/nlc"), # Networked Lighting Control profiles
+    ("protocols/bt/bt_mesh/nlc", "protocols/bt/bt_mesh/overview/nlc"),
     ("ug_esb", "protocols/esb/index"), # Enhanced ShockBurst (ESB) (landing)
     ("ug_gz", "protocols/gazell/index"), # Gazell (landing)
     ("ug_gzll", "protocols/gazell/gzll"), # Gazell Link Layer

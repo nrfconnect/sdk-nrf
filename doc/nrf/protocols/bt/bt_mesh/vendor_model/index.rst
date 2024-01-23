@@ -1,7 +1,7 @@
 .. _ug_bt_mesh_vendor_model:
 
-Creating a new model
-####################
+Creating a new Bluetooth Mesh model
+###################################
 
 You may create your own vendor-specific models for Bluetooth® Mesh.
 These will enable your devices to provide custom behavior not covered by the already defined standard models.

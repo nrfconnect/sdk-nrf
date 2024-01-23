@@ -1,7 +1,7 @@
 .. _ug_bt_mesh_node_removal:
 
-Removing a node from a mesh network
-###################################
+Removing a node from a Bluetooth Mesh network
+#############################################
 
 .. contents::
    :local:

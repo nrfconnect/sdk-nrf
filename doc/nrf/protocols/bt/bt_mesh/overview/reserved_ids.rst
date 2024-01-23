@@ -1,7 +1,7 @@
 .. _bt_mesh_ug_reserved_ids:
 
-Reserved vendor model IDs and opcodes
-#####################################
+Reserved vendor Bluetooth Mesh model IDs and opcodes
+####################################################
 
 .. contents::
    :local:

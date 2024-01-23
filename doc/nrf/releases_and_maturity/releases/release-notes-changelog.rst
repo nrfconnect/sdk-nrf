@@ -960,6 +960,7 @@ Documentation
 * Restructured the :ref:`app_bootloaders` documentation and combined the DFU and bootloader articles.
   Additionally, created a new bootloader :ref:`bootloader_quick_start`.
 * Separated the instructions about building from :ref:`configure_application` and moved it to a standalone :ref:`building` page.
+* Restructured the :ref:`ug_bt_mesh` documentation for clearer distinction between concepts or overview topics and how-to topics, thus moved some information from the Bluetooth Mesh library sections.
 
 * Removed:
 
