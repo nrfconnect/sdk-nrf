@@ -265,7 +265,7 @@ int nrf_cloud_log_send(int log_level, const char *fmt, ...)
 		LOG_INF("Failed to take semaphore");
 		return err; /* Caller should try again; busy or other error */
 	}
-	err = nrf_cloud_coap_json_message_send(output.data.ptr, false);
+	err = nrf_cloud_coap_json_message_send(output.data.ptr, false, true);
 	k_sem_give(&ncl_active);
 	nrf_cloud_free((void *)output.data.ptr);
 

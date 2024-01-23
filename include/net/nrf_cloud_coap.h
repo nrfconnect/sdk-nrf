@@ -125,22 +125,28 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const 
 /**
  * @brief Send a sensor value to nRF Cloud.
  *
- *  The CoAP message is sent as a non-confirmable CoAP message.
+ *  The sensor message is sent either as a non-confirmable or confirmable CoAP message.
+ *  Use non-confirmable when sending low priority information for which some data loss is
+ *  acceptable.
  *
- * @param[in]     app_id The app_id identifying the type of data. See the values in nrf_cloud_defs.h
- *                       that begin with  NRF_CLOUD_JSON_APPID_. You may also use custom names.
+ * @param[in]     app_id The app ID identifying the type of data. See the values
+ *                       that begin with NRF_CLOUD_JSON_APPID_ in nrf_cloud_defs.h. You may
+ *                       also use custom names.
  * @param[in]     value  Sensor reading.
  * @param[in]     ts_ms  Timestamp the data was measured, or NRF_CLOUD_NO_TIMESTAMP.
+ * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms);
+int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms, bool confirmable);
 
 /**
- * @brief Send a message string to nRF Cloud.
+ * @brief Send a message to nRF Cloud.
  *
- *  The CoAP message is sent as a non-confirmable CoAP message.
+ *  The JSON or CBOR message is sent either as a non-confirmable or confirmable CoAP message.
+ *  Use non-confirmable when sending low priority information for which some data loss is
+ *  acceptable.
  *
  * @param[in]     app_id     The app_id identifying the type of data. See the values in
  *                           nrf_cloud_defs.h that begin with  NRF_CLOUD_JSON_APPID_.
@@ -148,39 +154,45 @@ int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms);
  * @param[in]     message    The string to send.
  * @param[in]     json       Set true if the data should be sent in JSON format, otherwise CBOR.
  * @param[in]     ts_ms      Timestamp the data was measured, or NRF_CLOUD_NO_TIMESTAMP.
+ * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool json, int64_t ts_ms);
+int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool json, int64_t ts_ms,
+				bool confirmable);
 
 /**
  * @brief Send a preencoded JSON message to nRF Cloud.
  *
- *  The CoAP message is sent as a non-confirmable CoAP message.
+ *  The JSON message is sent either as a non-confirmable or confirmable CoAP message.
+ *  Use non-confirmable when sending low priority information for which some data loss is
+ *  acceptable.
  *
  * @param[in]     message    The string to send.
  * @param[in]     bulk       Set true if message is an array of JSON messages
  *                           to be sent to the bulk topic.
+ * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_coap_json_message_send(const char *message, bool bulk);
+int nrf_cloud_coap_json_message_send(const char *message, bool bulk, bool confirmable);
 
 /**
  * @brief Send the device location in the @ref nrf_cloud_gnss_data PVT field to nRF Cloud.
  *
- *  The CoAP message is sent as a non-confirmable CoAP message. Only
+ *  The location message is sent as either a non-confirmable or confirmable CoAP message. Only
  *  @ref NRF_CLOUD_GNSS_TYPE_PVT is supported.
  *
  * @param[in]     gnss A pointer to an @ref nrf_cloud_gnss_data struct indicating the device
  *                     location, usually as determined by the GNSS unit.
+ * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data * const gnss);
+int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data * const gnss, bool confirmable);
 
 /**
  * @brief Request device location from nRF Cloud.
@@ -302,10 +314,11 @@ int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data,
  *
  * @param[in]     buf buffer with binary string.
  * @param[in]     buf_len  length of buf in bytes.
+ * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len);
+int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len, bool confirmable);
 
 /**
  * @brief Send an nRF Cloud object
@@ -317,11 +330,12 @@ int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len);
  *
  * @param[in]     obj An nRF Cloud object. Will be encoded first if obj->enc_src is
  * NRF_CLOUD_ENC_SRC_NONE.
+ * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  *
  * @return 0 if the request succeeded, a positive value indicating a CoAP result code,
  * or a negative error number.
  */
-int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj);
+int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj, bool confirmable);
 
 /** @} */
 

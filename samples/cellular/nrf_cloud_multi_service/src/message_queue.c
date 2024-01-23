@@ -136,7 +136,7 @@ static int consume_device_message(void)
 	ret = nrf_cloud_send(&mqtt_msg);
 
 #elif defined(CONFIG_NRF_CLOUD_COAP)
-	ret = nrf_cloud_coap_obj_send(queued_msg);
+	ret = nrf_cloud_coap_obj_send(queued_msg, IS_ENABLED(CONFIG_COAP_SEND_CONFIRMABLE));
 
 #endif /* CONFIG_NRF_CLOUD_COAP */
 

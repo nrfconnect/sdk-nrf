@@ -761,12 +761,16 @@ int nrf_cloud_obj_gnss_msg_create(struct nrf_cloud_obj *const obj,
 	}
 
 	int ret;
+	const char *msg_type;
 
 	NRF_CLOUD_OBJ_DEFINE(pvt_obj, obj->type);
 
 	/* Add the app ID, message type, and timestamp */
-	ret = nrf_cloud_obj_msg_init(obj, NRF_CLOUD_JSON_APPID_VAL_GNSS,
-				     NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
+	msg_type = (IS_ENABLED(CONFIG_NRF_CLOUD_COAP) &&
+		    (obj->type == NRF_CLOUD_OBJ_TYPE_COAP_CBOR)) ?
+			NULL : NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA;
+
+	ret = nrf_cloud_obj_msg_init(obj, NRF_CLOUD_JSON_APPID_VAL_GNSS, msg_type);
 	if (ret) {
 		goto cleanup;
 	}
