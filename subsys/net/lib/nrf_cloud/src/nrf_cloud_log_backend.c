@@ -401,7 +401,7 @@ static int send_ring_buffer(void)
 			}
 		} while (err == -EBUSY);
 	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
-		err = nrf_cloud_coap_json_message_send(output.data.ptr, true);
+		err = nrf_cloud_coap_json_message_send(output.data.ptr, true, true);
 	} else {
 		err = -ENODEV;
 	}

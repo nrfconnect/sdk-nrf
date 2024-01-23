@@ -285,6 +285,12 @@ config COAP_SHADOW_THREAD_STACK_SIZE
 
 endif
 
+config COAP_SEND_CONFIRMABLE
+	bool "Send device messages as confirmable"
+	help
+	  Ensures all CoAP transfers, even for often less important messages such
+	  as sensor data, are sent as confirmable messages.
+
 endif
 
 endmenu

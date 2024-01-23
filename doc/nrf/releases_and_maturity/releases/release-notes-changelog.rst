@@ -355,6 +355,7 @@ Cellular samples
 
     * A generic processing example for application-specific shadow data.
     * Configuration and overlay files to enable MCUboot to use the external flash on the nRF1961 DK.
+    * A :kconfig:option:`CONFIG_COAP_ALWAYS_CONFIRM` Kconfig option to select CON or NON CoAP transfers for functions that previously used NON transfers only.
 
   * Fixed:
 
@@ -757,6 +758,16 @@ Libraries for networking
     * The :c:func:`nrf_cloud_coap_shadow_delta_process` function to include a parameter for application-specific shadow data.
     * The :c:func:`nrf_cloud_coap_shadow_delta_process` function to process default shadow data added by nRF Cloud, which is not used by CoAP.
     * The CDDL file for AGNSS to align with cloud changes and regenerated the AGNSS encoder accordingly.
+    * The following functions to accept a ``confirmable`` parameter:
+
+      * :c:func:`nrf_cloud_coap_bytes_send`
+      * :c:func:`nrf_cloud_coap_obj_send`
+      * :c:func:`nrf_cloud_coap_sensor_send`
+      * :c:func:`nrf_cloud_coap_message_send`
+      * :c:func:`nrf_cloud_coap_json_message_send`
+      * :c:func:`nrf_cloud_coap_location_send`
+
+      This parameter determines whether CoAP CON or NON messages are used.
 
 * :ref:`lib_nrf_cloud_log` library:
 

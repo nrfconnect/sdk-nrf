@@ -214,7 +214,7 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const 
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
 
-int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len)
+int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len, bool confirmable)
 {
 	int err = 0;
 
@@ -223,7 +223,7 @@ int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len)
 	}
 
 	err = nrf_cloud_coap_post(COAP_D2C_RAW_RSC, NULL, buf, buf_len,
-				  COAP_CONTENT_FORMAT_APP_OCTET_STREAM, false, NULL, NULL);
+				  COAP_CONTENT_FORMAT_APP_OCTET_STREAM, confirmable, NULL, NULL);
 	if (err) {
 		LOG_ERR("Failed to send POST request: %d", err);
 	}
@@ -231,7 +231,7 @@ int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len)
 }
 
 
-int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj)
+int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj, bool confirmable)
 {
 	if (!nrf_cloud_coap_is_connected()) {
 		return -EACCES;
@@ -275,7 +275,7 @@ int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj)
 				  obj->encoded_data.ptr, obj->encoded_data.len,
 				  (obj->type == NRF_CLOUD_OBJ_TYPE_COAP_CBOR) ?
 				   COAP_CONTENT_FORMAT_APP_CBOR : COAP_CONTENT_FORMAT_APP_JSON,
-				  false, NULL, NULL);
+				  confirmable, NULL, NULL);
 	if (err) {
 		LOG_ERR("Failed to send POST request: %d", err);
 	}
@@ -287,7 +287,7 @@ int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj)
 	return err;
 }
 
-int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms)
+int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms, bool confirmable)
 {
 	__ASSERT_NO_MSG(app_id != NULL);
 	if (!nrf_cloud_coap_is_connected()) {
@@ -305,7 +305,7 @@ int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms)
 		return err;
 	}
 	err = nrf_cloud_coap_post(COAP_D2C_RSC, NULL, buffer, len,
-				  COAP_CONTENT_FORMAT_APP_CBOR, false, NULL, NULL);
+				  COAP_CONTENT_FORMAT_APP_CBOR, confirmable, NULL, NULL);
 	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
 	} else if (err > 0) {
@@ -314,7 +314,8 @@ int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms)
 	return err;
 }
 
-int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool json, int64_t ts_ms)
+int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool json, int64_t ts_ms,
+				bool confirmable)
 {
 	if (!nrf_cloud_coap_is_connected()) {
 		return -EACCES;
@@ -340,7 +341,7 @@ int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool js
 	err = nrf_cloud_coap_post(COAP_D2C_RSC, NULL, buffer, len,
 				  json ? COAP_CONTENT_FORMAT_APP_JSON :
 					 COAP_CONTENT_FORMAT_APP_CBOR,
-				  false, NULL, NULL);
+				  confirmable, NULL, NULL);
 	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
 	} else if (err > 0) {
@@ -349,7 +350,7 @@ int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool js
 	return err;
 }
 
-int nrf_cloud_coap_json_message_send(const char *message, bool bulk)
+int nrf_cloud_coap_json_message_send(const char *message, bool bulk, bool confirmable)
 {
 	if (!nrf_cloud_coap_is_connected()) {
 		return -EACCES;
@@ -364,7 +365,7 @@ int nrf_cloud_coap_json_message_send(const char *message, bool bulk)
 	err = nrf_cloud_coap_post(resource,
 				  NULL, message, len,
 				  COAP_CONTENT_FORMAT_APP_JSON,
-				  false, NULL, NULL);
+				  confirmable, NULL, NULL);
 	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
 	} else if (err > 0) {
@@ -373,7 +374,7 @@ int nrf_cloud_coap_json_message_send(const char *message, bool bulk)
 	return err;
 }
 
-int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data *gnss)
+int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data *gnss, bool confirmable)
 {
 	__ASSERT_NO_MSG(gnss != NULL);
 	if (!nrf_cloud_coap_is_connected()) {
@@ -395,7 +396,7 @@ int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data *gnss)
 		return err;
 	}
 	err = nrf_cloud_coap_post(COAP_D2C_RSC, NULL, buffer, len,
-				  COAP_CONTENT_FORMAT_APP_CBOR, false, NULL, NULL);
+				  COAP_CONTENT_FORMAT_APP_CBOR, confirmable, NULL, NULL);
 	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
 	} else if (err > 0) {
