@@ -20,11 +20,11 @@
 
 static const char ca411[] = {
 	/* VzW and Motive, AT&T */
-	#include "../certs/DigiCertGlobalRootG2.pem"
+	#include "DigiCertGlobalRootG2.pem.inc"
 };
 static const char ca412[] = {
 	/* VzW and Motive, AT&T */
-	#include "../certs/DigiCertGlobalRootCA.pem"
+	#include "DigiCertGlobalRootCA.pem.inc"
 };
 
 BUILD_ASSERT(sizeof(ca411) < KB(4), "Cert is too large");
@@ -33,14 +33,17 @@ BUILD_ASSERT(sizeof(ca412) < KB(4), "Cert is too large");
 static const struct {
 	uint16_t tag;
 	const char *data;
+	size_t len;
 } certs[] = {
 	{
 		.tag = 411,
 		.data = ca411,
+		.len = sizeof(ca411),
 	},
 	{
 		.tag = 412,
 		.data = ca412,
+		.len = sizeof(ca412),
 	}
 };
 
@@ -61,7 +64,7 @@ int carrier_cert_provision(void)
 		if (provisioned) {
 			err = modem_key_mgmt_cmp(
 				certs[i].tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				certs[i].data, strlen(certs[i].data));
+				certs[i].data, certs[i].len);
 
 			/* 0 on match, 1 otherwise; like memcmp() */
 			mismatch = err;
@@ -77,7 +80,7 @@ int carrier_cert_provision(void)
 			/* overwrite the certificate */
 			err = modem_key_mgmt_write(
 				certs[i].tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				certs[i].data, strlen(certs[i].data));
+				certs[i].data, certs[i].len);
 			if (err) {
 				printk(ORANGE "ERROR: " NORMAL
 				  "Unable to provision certificate, err: %d\n", err);

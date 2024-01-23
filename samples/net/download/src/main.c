@@ -37,7 +37,7 @@ static K_SEM_DEFINE(network_connected_sem, 0, 1);
 
 #if CONFIG_SAMPLE_SECURE_SOCKET
 static const char cert[] = {
-	#include CONFIG_SAMPLE_CERT_FILE
+	#include SAMPLE_CERT_FILE_INC
 };
 static int sec_tag_list[] = { SEC_TAG };
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
@@ -82,7 +82,7 @@ static int cert_provision(void)
 		/* Let's compare the existing credential */
 		err = modem_key_mgmt_cmp(SEC_TAG,
 					 MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-					 cert, sizeof(cert) - 1);
+					 cert, sizeof(cert));
 
 		printk("%s\n", err ? "mismatch" : "match");
 
@@ -94,7 +94,7 @@ static int cert_provision(void)
 	/*  Provision certificate to the modem */
 	err = modem_key_mgmt_write(SEC_TAG,
 				   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				   cert, sizeof(cert) - 1);
+				   cert, sizeof(cert));
 	if (err) {
 		printk("Failed to provision certificate, err %d\n", err);
 		return err;

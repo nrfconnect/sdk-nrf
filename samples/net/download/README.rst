@@ -49,6 +49,9 @@ The certificate file name is indicated by the :ref:`CONFIG_SAMPLE_CERT_FILE <CON
 This certificate will work for the default test files.
 If you are using a custom download test file, you must provision the correct certificate for the servers from which the certificates will be downloaded.
 
+The certificate is automatically converted to a hex file in :file:`CMakeLists.txt`.
+This hex file is included in :file:`main.c`, where it is provisioned to the modem.
+
 See :ref:`cert_dwload` for more information.
 
 Configuration

@@ -367,6 +367,13 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
+* :ref:`ciphersuites` sample:
+
+  * Updated:
+
+    * The format of the :file:`.pem` file to the pem format.
+    * The sample to automatically convert the :file:`.pem` file to hex format so it can be included.
+
 * :ref:`location_sample` sample:
 
   * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
@@ -448,6 +455,13 @@ Cellular samples
 * :ref:`udp` sample:
 
   * Added the :ref:`CONFIG_UDP_DATA_UPLOAD_ITERATIONS <CONFIG_UDP_DATA_UPLOAD_ITERATIONS>` Kconfig option for configuring the number of data transmissions to the server.
+
+* :ref:`lwm2m_carrier` sample:
+
+  * Updated:
+
+    * The format of the :file:`.pem` files to the pem format.
+    * The sample to automatically convert the :file:`.pem` files to hex format so they can be included.
 
 * :ref:`lwm2m_client` sample:
 
@@ -549,11 +563,19 @@ Networking samples
 
 * :ref:`https_client` sample:
 
-  * Updated the sample to gracefully bring down the network interfaces.
+  * Updated:
+
+    * The format of the :file:`.pem` file to the pem format.
+    * The sample to automatically convert the :file:`.pem` file to hex format so it can be included.
+    * The sample to gracefully bring down the network interfaces.
 
 * :ref:`download_sample` sample:
 
-  * Updated the sample to gracefully bring down the network interfaces.
+  * Updated:
+
+    * The format of the :file:`.pem` file to the pem format.
+    * The sample to automatically convert the :file:`.pem` file to hex format so it can be included.
+    * The sample to gracefully bring down the network interfaces.
 
 NFC samples
 -----------
