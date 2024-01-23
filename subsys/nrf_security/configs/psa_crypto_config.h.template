@@ -409,7 +409,10 @@
 #define MBEDTLS_CIPHER_MODE_CBC
 #endif
 
+/* Only needed for the secure image */
+#ifdef MBEDTLS_PSA_CRYPTO_SPM
 #include <psa/core_unsupported_ciphers_check.h>
+#endif
 
 #include <check_crypto_config.h>
 
