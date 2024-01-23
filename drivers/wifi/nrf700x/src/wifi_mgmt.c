@@ -685,7 +685,7 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 	}
 }
 
-#ifdef CONFIG_NRF700X_RAW_DATA_TX
+#ifdef CONFIG_NRF700X_SYSTEM_MODE
 int nrf_wifi_mode(const struct device *dev,
 		  struct wifi_mode_info *mode)
 {
@@ -744,7 +744,9 @@ int nrf_wifi_mode(const struct device *dev,
 out:
 	return ret;
 }
+#endif
 
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
 int nrf_wifi_channel(const struct device *dev,
 		     struct wifi_channel_info *channel)
 {
