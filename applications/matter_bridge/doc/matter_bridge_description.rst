@@ -280,14 +280,14 @@ Adding a Bluetooth LE bridged device to the Matter bridge
 
    .. code-block:: console
 
-      ---------------------------------------------------------------------
-      | Bridged Bluetooth LE device authentication                        |
-      |                                                                   |
-      | Insert pin code displayed by the Bluetooth LE peripheral device   |
-      | to authenticate the pairing operation.                            |
-      |                                                                   |
-      | To do that, use matter_bridge pincode <pincode> shell command.    |
-      ---------------------------------------------------------------------
+      ----------------------------------------------------------------------------------------
+      | Bridged Bluetooth LE device authentication                                           |
+      |                                                                                      |
+      | Insert pin code displayed by the Bluetooth LE peripheral device                      |
+      | to authenticate the pairing operation.                                               |
+      |                                                                                      |
+      | To do that, use matter_bridge pincode <ble_device_index> <pincode> shell command.    |
+      ----------------------------------------------------------------------------------------
 
    To complete the adding process, you must use the ``pincode`` command to insert the authentication pincode displayed by the bridged device.
 
@@ -297,15 +297,18 @@ Inserting a Bluetooth LE authentication pincode
    .. parsed-literal::
       :class: highlight
 
-      matter_bridge pincode *<ble_pincode>*
+      matter_bridge pincode *<ble_device_index>* *<ble_pincode>*
 
-   In this command, *<ble_pincode>* is the Bluetooth LE authentication pincode of the bridged device to be paired.
+   In this command:
+
+   * *<ble_device_index>* is the Bluetooth LE device index on the list returned by the ``scan`` command.
+   * *<ble_pincode>* is the Bluetooth LE authentication pincode of the bridged device to be paired.
 
    Example command:
 
    .. code-block:: console
 
-      uart:~$ matter_bridge pincode 305051
+      uart:~$ matter_bridge pincode 0 305051
 
    The terminal output is similar to the following one:
 
@@ -558,14 +561,14 @@ After building the sample and programming it to your development kit, complete t
                :class: highlight
 
                I: Connected: C7:44:0F:3E:BB:F0 (random)
-               ---------------------------------------------------------------------
-               | Bridged Bluetooth LE device authentication                        |
-               |                                                                   |
-               | Insert pin code displayed by the Bluetooth LE peripheral device   |
-               | to authenticate the pairing operation.                            |
-               |                                                                   |
-               | To do that, use matter_bridge pincode <pincode> shell command.    |
-               ---------------------------------------------------------------------
+               ----------------------------------------------------------------------------------------
+               | Bridged Bluetooth LE device authentication                                           |
+               |                                                                                      |
+               | Insert pin code displayed by the Bluetooth LE peripheral device                      |
+               | to authenticate the pairing operation.                                               |
+               |                                                                                      |
+               | To do that, use matter_bridge pincode <ble_device_index> <pincode> shell command.    |
+               ----------------------------------------------------------------------------------------
 
          #. Write down the authentication pincode value from the Bluetooth LE bridged device terminal.
             The terminal output is similar to the following one:
@@ -583,13 +586,13 @@ After building the sample and programming it to your development kit, complete t
             .. parsed-literal::
                :class: highlight
 
-               uart:~$ matter_bridge pincode *<bluetooth_authentication_pincode>*
+               uart:~$ matter_bridge pincode *<bluetooth_device_index>* *<bluetooth_authentication_pincode>*
 
-            For example, if you want to add a new Bluetooth LE bridged device with pincode ``350501``, use the following command:
+            For example, if you want to add a new Bluetooth LE bridged device with index ``1`` and pincode ``350501``, use the following command:
 
             .. code-block:: console
 
-               uart:~$ matter_bridge pincode 350501
+               uart:~$ matter_bridge pincode 1 350501
 
             The terminal output is similar to the following one:
 
