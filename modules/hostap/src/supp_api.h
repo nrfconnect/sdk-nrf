@@ -158,5 +158,14 @@ int z_wpa_supplicant_ap_enable(const struct device *dev,
  * @return 0 for OK; -1 for ERROR
  */
 int z_wpa_supplicant_ap_disable(const struct device *dev);
+
+/**
+ * @brief Set Wi-Fi AP STA disconnect
+ * @param dev Wi-Fi interface name to use
+ * @param mac_addr MAC address of the station to disconnect
+ * @return 0 for OK; -1 for ERROR
+ */
+int z_wpa_supplicant_ap_sta_disconnect(const struct device *dev,
+				       const uint8_t *mac_addr);
 #endif /* CONFIG_AP */
 #endif /* ZEPHYR_SUPP_MGMT_H */
