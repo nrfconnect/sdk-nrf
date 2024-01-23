@@ -180,6 +180,7 @@ static int sec_mode(int sec_obj_inst)
 	if (ret < 0) {
 		return ret;
 	}
+	LOG_DBG("0/%d/mode = %d", sec_obj_inst, (int)mode);
 	return mode;
 }
 
@@ -196,6 +197,7 @@ static bool sec_obj_has_credentials(int sec_obj_inst)
 		return false;
 	}
 	if (mode != SEC_MODE_CERTIFICATE && mode != SEC_MODE_PSK) {
+		LOG_DBG("sec obj 0/%d is not CERT or PSK", sec_obj_inst);
 		return false;
 	}
 
@@ -205,6 +207,7 @@ static bool sec_obj_has_credentials(int sec_obj_inst)
 		goto fail;
 	}
 	if (cred_len == 0) {
+		LOG_DBG("0/%d/3 is empty", sec_obj_inst);
 		return false;
 	}
 
@@ -214,6 +217,9 @@ static bool sec_obj_has_credentials(int sec_obj_inst)
 		goto fail;
 	}
 
+	if (cred_len == 0) {
+		LOG_DBG("0/%d/5 is empty", sec_obj_inst);
+	}
 	return cred_len != 0;
 fail:
 	LOG_ERR("Unable to get resource data for '%d/%d/%d', rc = %d", path.obj_id,
@@ -260,6 +266,7 @@ static bool modem_has_credentials(int sec_tag, int mode)
 	} else {
 		return false;
 	}
+	LOG_DBG("sec_tag %d: mode: %d exist: %d", sec_tag, mode, (int) exist);
 	return exist;
 }
 
