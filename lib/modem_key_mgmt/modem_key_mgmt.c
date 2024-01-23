@@ -271,6 +271,7 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 	if (err) {
 		return translate_error(err);
 	}
+	LOG_INF("AT%%CMNG=1,%u,%d\n%s", sec_tag, cred_type, scratch_buf);
 
 	if (strlen(scratch_buf) > strlen("OK\r\n")) {
 		*exists = true;
