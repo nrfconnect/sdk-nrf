@@ -90,10 +90,7 @@ mapping_topics:
   - nrf/device_guides/working_with_nrf/nrf70/*.html: ["nrf70-series", "nrf7002", "nrf7001",
                                                       "nrf7000", "evaluation-kits",
                                                       "development-kits"]
-  - nrf/device_guides/working_with_nrf/nrf70/developing/powersave.html: ["power-profiler-kit"]
   - nrf/device_guides/working_with_nrf/nrf70/developing/constrained.html: ["kconfig"]
-  - nrf/device_guides/working_with_nrf/nrf70/developing/regulatory_support.html: ["kconfig"]
-  - nrf/device_guides/working_with_nrf/nrf70/developing/scan_operation.html: ["kconfig"]
   - nrf/device_guides/nrf53.html: ["nrf53-series", "nrf5340", "thingy53", "development-kits",
                                    "prototyping-platforms"]
   - nrf/device_guides/working_with_nrf/nrf53/*.html: ["nrf53-series", "development-kits",
@@ -157,8 +154,9 @@ mapping_topics:
   - nrf/protocols/zigbee/configuring_zboss_traces.html: ["kconfig"]
   - nrf/protocols/zigbee/other_ecosystems.html: ["kconfig"]
   - nrf/protocols/wifi/index.html: ["nrf70-series", "nrf7002", "nrf7001", "nrf7000", "wifi"]
-  - nrf/protocols/wifi/*.html: ["wifi", "nrf70-series", "nrf7002", "nrf7001", "nrf7000", "wifi"]
+  - nrf/protocols/wifi/*.html: ["wifi", "nrf70-series", "nrf7002", "nrf7001", "nrf7000"]
   - nrf/protocols/wifi/wifi.html: ["certifications"]
+  - nrf/protocols/wifi/powersave.html: ["power-profiler-kit"]
   - nrf/applications.html: ["nrf91-series", "nrf70-series", "nrf53-series", "nrf52-series",
                             "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91", "nrf9161",
                             "nrf5340", "thingy53", "nrf52840", "nrf52833", "nrf52832", "nrf52820",
