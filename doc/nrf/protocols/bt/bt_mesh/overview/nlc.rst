@@ -1,7 +1,7 @@
 .. _ug_bt_mesh_nlc:
 
-Networked Lighting Control profiles
-###################################
+Bluetooth Networked Lighting Control profiles
+#############################################
 
 Bluetooth® Networked Lighting Control (NLC) profiles are a set of device profiles built on top of the Bluetooth Mesh protocol, specified by the Bluetooth Special Interest Group (SIG) in the `Bluetooth NLC profile specifications`_.
 The NLC profiles can be used to implement interoperable network controlled lighting setups, including sensors, light fixtures, energy monitoring, scene selectors and dimmer controls.

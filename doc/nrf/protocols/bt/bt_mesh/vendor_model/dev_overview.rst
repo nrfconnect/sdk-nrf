@@ -15,7 +15,7 @@ Defining a model identifier
 Models define basic functionality of a node in the Bluetooth Mesh network.
 Once it is decided on what functionality the model will define, its identifier must be specified to be able to recognize it among the other models in the mesh network.
 
-As defined by the `Bluetooth Mesh profile specification`_, the vendor model identifiers are composed of two unique 16-bit values specifying a company identifier (Company ID), and a vendor-assigned model identifier (Model ID) tied to this Company ID.
+As defined by the `Bluetooth Mesh protocol specification`_, the vendor model identifiers are composed of two unique 16-bit values specifying a company identifier (Company ID), and a vendor-assigned model identifier (Model ID) tied to this Company ID.
 
 .. code-block:: c
 
@@ -75,7 +75,7 @@ Defining opcodes for the messages
 The communication between the nodes within a mesh network is done by means of message exchange.
 Therefore, if you want to implement your own node behavior, you need to define your own set of messages that will be associated with this behavior.
 To do that, you need to define vendor-specific opcodes for new messages, using the :c:macro:`BT_MESH_MODEL_OP_3` macro.
-This macro encodes an opcode into the special format defined by the `Bluetooth Mesh profile specification`_.
+This macro encodes an opcode into the special format defined by the `Bluetooth Mesh protocol specification`_.
 Each vendor-specific message must be tied with a Company ID, passed as a second parameter to the macro:
 
 .. code-block:: c

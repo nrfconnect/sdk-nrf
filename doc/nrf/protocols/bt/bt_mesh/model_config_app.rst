@@ -1,7 +1,7 @@
 .. _ug_bt_mesh_model_config_app:
 
-Configuring mesh models using the nRF Mesh mobile app
-#####################################################
+Configuring Bluetooth Mesh models using the nRF Mesh mobile app
+###############################################################
 
 .. contents::
    :local:
