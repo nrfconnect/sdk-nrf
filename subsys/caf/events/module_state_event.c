@@ -15,6 +15,7 @@ static const char * const state_name[] = {
 	[MODULE_STATE_READY] = "READY",
 	[MODULE_STATE_OFF] = "OFF",
 	[MODULE_STATE_STANDBY] = "STANDBY",
+	[MODULE_STATE_SUSPENDED] = "SUSPENDED",
 	[MODULE_STATE_ERROR] = "ERROR",
 };
 

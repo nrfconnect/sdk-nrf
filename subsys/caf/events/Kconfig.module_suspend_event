@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CAF_MODULE_SUSPEND_EVENTS
+	bool "Module suspend/resume request events"
+	depends on CAF_MODULE_STATE_EVENTS
+	help
+	  Enable support for module suspend/resume request events.
+
+config CAF_INIT_LOG_MODULE_SUSPEND_EVENTS
+	bool "Log module suspend/resume request events"
+	depends on CAF_MODULE_SUSPEND_EVENTS
+	depends on LOG
+	default y
