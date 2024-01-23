@@ -294,7 +294,7 @@ if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
   )
 
   # Copy an empty user-config to help with legacy build
-  configure_file(${NRF_SECURITY_ROOT}/configs/nrf-config-user-empty.h
+  configure_file(${NRF_SECURITY_ROOT}/configs/psa_crypto_config.h.template
     ${generated_include_path}/${CONFIG_MBEDTLS_USER_CONFIG_FILE}
   )
 endif()
