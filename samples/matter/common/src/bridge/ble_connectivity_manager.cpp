@@ -34,7 +34,8 @@ static const bt_conn_auth_cb auth_callbacks = {
 	.cancel = Nrf::BLEConnectivityManager::AuthenticationCancel,
 };
 
-static bt_conn_auth_info_cb conn_auth_info_callbacks = { .pairing_complete = Nrf::BLEConnectivityManager::PairingComplete,
+static bt_conn_auth_info_cb conn_auth_info_callbacks = { .pairing_complete =
+								 Nrf::BLEConnectivityManager::PairingComplete,
 							 .pairing_failed = Nrf::BLEConnectivityManager::PairingFailed };
 #endif /* CONFIG_BT_SMP */
 
@@ -44,7 +45,8 @@ static const struct bt_gatt_dm_cb discovery_cb = { .completed = Nrf::BLEConnecti
 
 static struct bt_conn_le_create_param *create_param = BT_CONN_LE_CREATE_CONN;
 
-namespace Nrf {
+namespace Nrf
+{
 
 void BLEConnectivityManager::FilterMatch(bt_scan_device_info *device_info, bt_scan_filter_match *filter_match,
 					 bool connectable)
@@ -615,6 +617,9 @@ CHIP_ERROR BLEConnectivityManager::RemoveBLEProvider(bt_addr_le_t address)
 		return CHIP_ERROR_INTERNAL;
 	}
 
+#ifdef CONFIG_BT_SMP
+	bt_unpair(BT_ID_DEFAULT, bt_conn_get_dst(provider->GetBLEBridgedDevice().mConn));
+#endif
 	bt_conn_disconnect(provider->GetBLEBridgedDevice().mConn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 	bt_conn_unref(provider->GetBLEBridgedDevice().mConn);
 
