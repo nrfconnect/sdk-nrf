@@ -38,12 +38,14 @@ choice NRF700X_OPER_MODES
 
 config NRF700X_SYSTEM_MODE
 	bool "Enable nRF700X system mode"
+	select NET_L2_WIFI_MGMT
 	depends on WPA_SUPP
 	help
 	  Select this option to enable system mode of the nRF700x driver
 
 config NRF700X_SCAN_ONLY
 	bool "Enable nRF700X scan only mode"
+	select NET_L2_WIFI_MGMT
 	help
 	  Select this option to enable scan only mode of the nRF700x driver
 

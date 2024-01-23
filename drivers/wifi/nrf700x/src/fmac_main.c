@@ -31,6 +31,7 @@
 #include <wifi_mgmt.h>
 #include <wpa_supp_if.h>
 #else
+#include <wifi_mgmt.h>
 #include <wifi_mgmt_scan.h>
 #endif /* CONFIG_WPA_SPP */
 #include <zephyr/net/conn_mgr_connectivity.h>
@@ -725,8 +726,10 @@ static struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 	.reg_domain = nrf_wifi_reg_domain,
 	.get_power_save_config = nrf_wifi_get_power_save_config,
 #endif /* CONFIG_NRF700X_STA_MODE */
-#ifdef CONFIG_NRF700X_RAW_DATA_TX
+#ifdef CONFIG_NRF700X_SYSTEM_MODE
 	.mode = nrf_wifi_mode,
+#endif
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
 	.channel = nrf_wifi_channel,
 #endif /* CONFIG_NRF700X_RAW_DATA_TX */
 };
