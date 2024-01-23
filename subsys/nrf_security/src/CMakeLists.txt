@@ -49,6 +49,9 @@ set(generated_include_path ${CMAKE_CURRENT_BINARY_DIR}/include/generated)
 # Empty out previous versions of config-files
 file(REMOVE_RECURSE ${generated_include_path})
 
+# Generate PSA WANT configurations
+include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_want_config.cmake)
+
 # Generate mbed TLS configurations
 if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR NOT COMPILE_PSA_APIS)
   include(${NRF_SECURITY_ROOT}/cmake/legacy_crypto_config.cmake)
