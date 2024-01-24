@@ -64,6 +64,7 @@ extern "C" {
 /* Required for OPENTHREAD_NRF_SECURITY_PSA_CHOICE (KRKNWK-18015) */
 #if defined(PSA_WANT_ALG_CMAC)
 #define MBEDTLS_CMAC_C
+#define MBEDTLS_CIPHER_C
 #define MBEDTLS_AES_C
 #endif
 
