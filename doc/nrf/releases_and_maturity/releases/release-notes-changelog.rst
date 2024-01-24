@@ -452,6 +452,7 @@ Cellular samples
     * Support for the :ref:`lib_nrf_provisioning` library.
     * Two overlay files :file:`overlay-http_nrf_provisioning.conf` and :file:`overlay-coap_nrf_provisioning.conf` to enable the :ref:`lib_nrf_provisioning` library with HTTP and CoAP connectivity respectively.
       Both overlays specify UUID-style device IDs (not 'nrf-\ *IMEI*\ '-style) for compatibility with nRF Cloud auto-onboarding.
+    * An overlay file :file:`overlay_nrf7002ek_wifi_coap_no_lte.conf` for experimental CoAP over Wi-Fi support.
 
   * Fixed:
 
