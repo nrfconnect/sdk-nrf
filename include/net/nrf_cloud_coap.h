@@ -16,8 +16,12 @@ extern "C" {
 #endif
 
 #include <net/nrf_cloud_rest.h>
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
+#endif
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
+#endif
 #include <net/nrf_cloud_codec.h>
 
 /**

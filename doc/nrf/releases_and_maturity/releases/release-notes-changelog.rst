@@ -929,6 +929,8 @@ Libraries for networking
     * Support for bulk transfers to the :c:func:`nrf_cloud_coap_json_message_send` function.
     * Support for raw transfers to the :c:func:`nrf_cloud_coap_bytes_send` function.
     * Optional support for ground fix configuration flags.
+    * Support for non-modem build.
+    * Support for credentials provisioning.
 
   * Updated:
 
@@ -968,6 +970,15 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI` Kconfig option to enable sending configured UI service info on the device's initial connection to nRF Cloud.
     * Support for handling location request responses fulfilled by a Wi-Fi anchor.
     * An :c:struct:`nrf_cloud_location_config` structure for specifying the desired behavior of an nRF Cloud ground fix request.
+    * Support for custom JWT creation by selecting the :kconfig:option:`CONFIG_NRF_CLOUD_JWT_SOURCE_CUSTOM` Kconfig option.
+    * Support for specific credentials provisioning using the following Kconfig options:
+
+      * :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CA_CERT`
+      * :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CLIENT_CERT`
+      * :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_PRV_KEY`
+
+    * Support for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` by selecting the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED` Kconfig option.
+      This is applicable to the :kconfig:option:`CONFIG_NRF_CLOUD_CHECK_CREDENTIALS` and :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig options.
 
   * Updated:
 

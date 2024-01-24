@@ -45,10 +45,6 @@ config NRF_CLOUD_SEC_TAG
 	int "Security tag to use for nRF Cloud connection"
 	default 16842753
 
-config NRF_CLOUD_CHECK_CREDENTIALS
-	bool "Enable the ability to check if nRF Cloud credentials are present"
-	select MODEM_KEY_MGMT if NRF_MODEM_LIB
-
 config NRF_CLOUD_DEVICE_STATUS_ENCODE_VOLTAGE
 	bool "Include the (battery) voltage when encoding device status"
 	depends on MODEM_INFO
@@ -76,7 +72,80 @@ config NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_ALL
 		It also increases the amount of data sent to nRF Cloud.
 endchoice
 
-endif
+config NRF_CLOUD_PROVISION_CERTIFICATES
+	bool "Install credentials for nRF Cloud connection"
+	select EXPERIMENTAL
+	default y if BOARD_QEMU_X86
+	imply MBEDTLS_PEM_CERTIFICATE_FORMAT if MBEDTLS
+	help
+	  Enable run-time provisioning of certificates from the
+	  certificates header file selected by using NRF_CLOUD_CERTIFICATES_FILE
+	  Please note that this option stores your device's private key in unprotected memory.
+	  It is not secure, and for testing purposes only.
+
+if NRF_CLOUD_PROVISION_CERTIFICATES
+
+config NRF_CLOUD_PROVISION_CA_CERT
+	bool "Install the CA certificate"
+	default y
+
+config NRF_CLOUD_PROVISION_CLIENT_CERT
+	bool "Install the client certificate"
+	default y
+
+config NRF_CLOUD_PROVISION_PRV_KEY
+	bool "Install the private key"
+	default y
+
+config NRF_CLOUD_CERTIFICATES_FILE
+	string "nRF Cloud certificates"
+	default "../include/nrf_cloud-certs.h"
+	help
+	  The default path for a header file that contains definitions for certificates that are
+	  used during run-time provisioning of TLS credentials.
+	  By default, the library expects the credentials to be in
+	  Privacy Enhanced Mail (PEM) format. See "nrf_cloud-certs.h" for a template.
+
+endif # NRF_CLOUD_PROVISION_CERTIFICATES
+
+config NRF_CLOUD_CHECK_CREDENTIALS
+	bool "Enable the ability to check if nRF Cloud credentials are present"
+
+choice NRF_CLOUD_CREDENTIALS_MGMT
+	prompt "Select how credentials are managed"
+	depends on NRF_CLOUD_CHECK_CREDENTIALS || NRF_CLOUD_PROVISION_CERTIFICATES
+	default NRF_CLOUD_CREDENTIALS_MGMT_MODEM if NRF_MODEM_LIB
+	default NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED if !NRF_MODEM_LIB
+
+config NRF_CLOUD_CREDENTIALS_MGMT_MODEM
+	depends on NRF_MODEM_LIB
+	select MODEM_KEY_MGMT
+	bool "Credentials are managed by the modem"
+
+config NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED
+	bool "Credentials are managed by the TLS credentials module"
+	select TLS_CREDENTIALS
+endchoice
+
+config NRF_CLOUD_JWT_SOURCE_CUSTOM
+	bool "Custom JWT creation and signing"
+	select EXPERIMENTAL
+	select TLS_CREDENTIALS
+	select BASE64
+	select TINYCRYPT
+	select TINYCRYPT_SHA256
+	select TINYCRYPT_ECC_DSA
+	select TINYCRYPT_CTR_PRNG
+	select TINYCRYPT_AES
+	select CJSON_LIB
+	depends on NEWLIB_LIBC
+	depends on NEWLIB_LIBC_FLOAT_PRINTF
+	depends on DATE_TIME
+	help
+	  JWTs are created and signed by the nRF Cloud library, not the modem.
+	  The signing key is obtained from the TLS credentials module.
+
+endif # NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
 
 if NRF_CLOUD_AGNSS || NRF_CLOUD_PGPS
 

@@ -13,8 +13,12 @@
 #include <dk_buttons_and_leds.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
+#endif
+#if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
+#endif
 #include <net/nrf_cloud_coap.h>
 #include "nrf_cloud_coap_transport.h"
 #include "nrf_cloud_codec_internal.h"

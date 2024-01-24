@@ -47,7 +47,7 @@ config NRF_CLOUD_COAP_SEND_SSIDS
 	  require the access point MAC addresses. By not including SSIDs
 	  the amount of data sent to the cloud is greatly reduced.
 
-endif
+endif # WIFI
 
 module = NRF_CLOUD_COAP
 module-str = nRF Cloud COAP
