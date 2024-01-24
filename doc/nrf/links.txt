@@ -1433,6 +1433,19 @@
 
 .. _`10.23.3_ec macOS, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-osx.zip
 
+
+.. _`10.22.3_cs3 64-bit Windows, executable`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nRF-Command-Line-Tools-10.23.3-x64.exe
+.. _`10.22.3_cs3 macOS, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-osx.zip
+
+.. _`10.22.3_cs3 x86 system, deb format`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools_10.23.3_amd64.deb
+.. _`10.22.3_cs3 x86 system, RPM`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-1.x86_64.rpm
+.. _`10.22.3_cs3 x86 system, tar archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3_Linux-amd64.tar.gz
+.. _`10.22.3_cs3 ARM64 system, deb format`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools_10.23.3_arm64.deb
+.. _`10.22.3_cs3 ARM64 system, RPM`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-1.arm64.rpm
+.. _`10.22.3_cs3 ARM64 system, tar archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3_Linux-arm64.tar.gz
+
+.. _`10.22.3_cs3 ARMHF system, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-armhf-linux.zip
+
 .. _`nRF Sniffer for Bluetooth LE`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_sniffer_ble%2FUG%2Fsniffer_ble%2Fintro.html
 .. _`Git for Windows`: https://git-scm.com/download/win
 .. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html

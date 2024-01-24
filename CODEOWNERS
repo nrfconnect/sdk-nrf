@@ -58,6 +58,7 @@ Kconfig*                                  @tejlmand
 /doc/kconfig/                             @gmarull
 /doc/nrf/                                 @carlescufi
 /doc/nrf/device_guides/working_with_nrf/nrf54h/  @FrancescoSer
+/doc/nrf/device_guides/working_with_nrf/nrf54l/ @annwoj
 /doc/nrfx/                                @gmarull
 /doc/matter/                              @gmarull
 /doc/mcuboot/                             @carlescufi
