@@ -69,17 +69,36 @@ The following table lists the available triggers and their activation codes:
     - Block the Matter thread for specific amount of time.
       You can use this event trigger to check the :ref:`Matter Watchdog <ug_matter_device_watchdog>` functionality.
     - ``0xFFFFFFFF20000000`` - ``0xFFFFFFFF2000FFFF``
-    - The range of ``0x0000`` - ``0xFFFF`` represents the time in ms to block the Matter thread.
-      The maximum time is UINT16_MAX ms.
+    - The range of ``0x0000`` - ``0xFFFF`` represents the time in s to block the Matter thread.
+      The maximum time is UINT16_MAX s.
       The value is provided in HEX format.
   * - Block the Main thread
     - :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` = ``y``, and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT` = ``y``
     - Block the Main thread for specific amount of time.
       You can use this event trigger to check the :ref:`Matter Watchdog <ug_matter_device_watchdog>` functionality.
     - ``0xFFFFFFFF30000000`` - ``0xFFFFFFFF3000FFFF``
-    - The range of ``0x0000`` - ``0xFFFF`` represents the time in ms to block the Main thread.
-      The maximum time is UINT16_MAX ms.
+    - The range of ``0x0000`` - ``0xFFFF`` represents the time in s to block the Main thread.
+      The maximum time is UINT16_MAX s.
       The value is provided in HEX format.
+  * - Diagnostic Logs User Data
+    - :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST` = ``y``, and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y``, and enabled ``Diagnostic Logs`` cluster.
+    - Trigger writing a specific amount of ``u`` characters to the user diagnostics logs.
+      The amount of characters is determined by the value at the end of the event trigger value.
+      The current supported maximum is 1023 bytes for single trigger call, and 4096 bytes of total data written.
+    - ``0xFFFFFFFF40000000`` - ``0xFFFFFFFF40000400``
+    - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
+  * - Diagnostic Logs Network Data
+    - :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST` = ``y``, and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y``, and enabled ``Diagnostic Logs`` cluster.
+    - Trigger writing a specific amount of ``n`` characters to the network diagnostics logs.
+      The amount of characters is determined by the value at the end of the event trigger value.
+      The current supported maximum is 1023 bytes for single trigger call, and 4096 bytes of total data written.
+    - ``0xFFFFFFFF50000000`` - ``0xFFFFFFFF50000400``
+    - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
+  * - Diagnostic Crash Logs
+    - Either the snippet `diagnostic-logs` attached (``-S diagnostic-logs``) or both :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y`` and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS` = ``y``, and enabled ``Diagnostic Logs`` cluster.
+    - Trigger a simple crash that relies on execution of the undefined instruction attempt.
+    - ``0xFFFFFFFF60000000``
+    - No additional value supported.
   * - OTA query
     - :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` = ``y``
     - Trigger an OTA firmware update.

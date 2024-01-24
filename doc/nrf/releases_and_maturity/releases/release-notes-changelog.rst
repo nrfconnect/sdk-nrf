@@ -113,6 +113,9 @@ Matter
   * Watchdog timer implementation for creating multiple :ref:`ug_matter_device_watchdog` sources and monitoring the time of executing specific parts of the code.
   * Clearing SRP host services on factory reset.
     This resolves the known issue related to the :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START` (KRKNWK-18916).
+  * Diagnostic logs provider that collects the diagnostic logs and sends them to the Matter controller.
+    To learn more about the diagnostic logs module, see :ref:`ug_matter_configuration_diagnostic_logs`.
+  * :ref:`ug_matter_diagnostic_logs_snippet` to add support for all features of the diagnostic log provider.
 
 * Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
 * Increased the number of available packet buffers in the Matter stack to avoid packet allocation issues.
