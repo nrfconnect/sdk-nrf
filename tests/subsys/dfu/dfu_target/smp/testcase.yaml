@@ -4,3 +4,9 @@ tests:
     integration_platforms:
       - native_posix
     tags: dfu smp
+  dfu.dfu_target.smp.sysbuild:
+    sysbuild: true
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    tags: dfu smp sysbuild

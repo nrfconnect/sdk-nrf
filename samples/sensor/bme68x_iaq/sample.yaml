@@ -15,7 +15,7 @@ tests:
       thingy53_nrf5340_cpuapp
       thingy53_nrf5340_cpuapp_ns
     tags: sensors
-  sample.sensor.bme68x.sysbuild:
+  sample.sensor.bme68x.i2c.sysbuild:
     sysbuild: true
     depends_on: i2c
     harness: sensor

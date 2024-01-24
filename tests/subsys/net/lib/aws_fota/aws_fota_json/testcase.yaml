@@ -7,3 +7,12 @@ tests:
       - nrf9160dk_nrf9160
       - qemu_cortex_m3
     tags: aws fota json
+  net.lib.aws_fota.aws_fota_json.sysbuild:
+    sysbuild: true
+    platform_allow: native_posix nrf52840dk_nrf52840 nrf9160dk_nrf9160 qemu_cortex_m3
+    integration_platforms:
+      - native_posix
+      - nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160
+      - qemu_cortex_m3
+    tags: aws fota json sysbuild

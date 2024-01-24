@@ -13,3 +13,15 @@ tests:
       nrf52dk_nrf52832 nrf52840dk_nrf52840 thingy53_nrf5340_cpuapp
       nrf21540dk_nrf52840
     tags: bluetooth ci_build
+  sample.bluetooth.mesh.sensor_server.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+      - thingy53_nrf5340_cpuapp
+      - nrf21540dk_nrf52840
+    platform_allow: >
+      nrf52dk_nrf52832 nrf52840dk_nrf52840 thingy53_nrf5340_cpuapp
+      nrf21540dk_nrf52840
+    tags: bluetooth ci_build sysbuild

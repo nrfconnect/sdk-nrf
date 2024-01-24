@@ -7,6 +7,13 @@ tests:
       - nrf52840dk_nrf52840
     platform_allow: nrf52840dk_nrf52840
     tags: bluetooth ci_build
+  sample.bluetooth.mesh_dfu_distributor.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840
+    tags: bluetooth ci_build sysbuild
   sample.bluetooth.mesh_dfu_distributor.smp_bt_auth:
     build_only: true
     integration_platforms:
@@ -14,3 +21,11 @@ tests:
     platform_allow: nrf52840dk_nrf52840
     extra_args: OVERLAY_CONFIG=overlay-smp-bt-auth.conf
     tags: bluetooth ci_build
+  sample.bluetooth.mesh_dfu_distributor.smp_bt_auth.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840
+    extra_args: OVERLAY_CONFIG=overlay-smp-bt-auth.conf
+    tags: bluetooth ci_build sysbuild

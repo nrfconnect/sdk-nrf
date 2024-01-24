@@ -12,3 +12,14 @@ tests:
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns
     tags: bluetooth ci_build
+  sample.bluetooth.multiple_adv_sets.build.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      nrf5340dk_nrf5340_cpuapp_ns
+    tags: bluetooth ci_build sysbuild

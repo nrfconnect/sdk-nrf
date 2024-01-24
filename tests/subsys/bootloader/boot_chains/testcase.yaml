@@ -14,12 +14,25 @@ tests:
   boot_chains.secure_boot:
     extra_args:
       CONFIG_SECURE_BOOT=y
+  boot_chains.secure_boot.sysbuild:
+    sysbuild: true
+    extra_args:
+      CONFIG_SECURE_BOOT=y
+    tags: sysbuild
   boot_chains.bootloader_mcuboot:
     extra_args:
       CONFIG_BOOTLOADER_MCUBOOT=y
     platform_allow:
       nrf5340dk_nrf5340_cpuapp_ns
       nrf9160dk_nrf9160_ns
+  boot_chains.bootloader_mcuboot.sysbuild:
+    sysbuild: true
+    extra_args:
+      CONFIG_BOOTLOADER_MCUBOOT=y
+    platform_allow:
+      nrf5340dk_nrf5340_cpuapp_ns
+      nrf9160dk_nrf9160_ns
+    tags: sysbuild
   boot_chains.secure_boot_and_bootloader_mcuboot:
     extra_args:
       CONFIG_SECURE_BOOT=y
@@ -27,7 +40,22 @@ tests:
     platform_allow:
       nrf5340dk_nrf5340_cpuapp_ns
       nrf9160dk_nrf9160_ns
+  boot_chains.secure_boot_and_bootloader_mcuboot.sysbuild:
+    sysbuild: true
+    extra_args:
+      CONFIG_SECURE_BOOT=y
+      CONFIG_BOOTLOADER_MCUBOOT=y
+    platform_allow:
+      nrf5340dk_nrf5340_cpuapp_ns
+      nrf9160dk_nrf9160_ns
+    tags: sysbuild
   boot_chains.bootloader_mcuboot_and_nv_counters:
     extra_args:
       CONFIG_BOOTLOADER_MCUBOOT=y
       CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y
+  boot_chains.bootloader_mcuboot_and_nv_counters.sysbuild:
+    sysbuild: true
+    extra_args:
+      CONFIG_BOOTLOADER_MCUBOOT=y
+      CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y
+    tags: sysbuild

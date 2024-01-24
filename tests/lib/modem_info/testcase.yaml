@@ -4,3 +4,9 @@ tests:
     platform_allow: native_posix
     integration_platforms:
       - native_posix
+  modem_info.unit_test.sysbuild:
+    sysbuild: true
+    tags: modem_info sysbuild
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix

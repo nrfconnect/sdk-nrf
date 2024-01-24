@@ -5,3 +5,10 @@ tests:
       - native_posix
     integration_platforms:
       - native_posix
+  unity.wrap_test.sysbuild:
+    sysbuild: true
+    tags: wrap_test sysbuild
+    platform_allow:
+      - native_posix
+    integration_platforms:
+      - native_posix

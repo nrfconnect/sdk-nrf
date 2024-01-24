@@ -4,3 +4,9 @@ tests:
     tags: nrf_modem_lib
     integration_platforms:
       - native_posix
+  unity.nrf91_sockets_test.sysbuild:
+    sysbuild: true
+    platform_allow: native_posix
+    tags: nrf_modem_lib sysbuild
+    integration_platforms:
+      - native_posix

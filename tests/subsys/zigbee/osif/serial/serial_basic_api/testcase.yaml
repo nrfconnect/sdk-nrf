@@ -6,3 +6,11 @@ tests:
     harness: ztest
     harness_config:
       fixture: gpio_loopback
+  zigbee.osif.serial.basic.sysbuild:
+    sysbuild: true
+    depends_on: gpio
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
+    tags: osif_serial sysbuild
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback

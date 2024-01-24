@@ -4,3 +4,9 @@ tests:
     tags: emds
     integration_platforms:
       - nrf52840dk_nrf52840
+  emds.flash.sysbuild:
+    sysbuild: true
+    platform_allow: nrf52840dk_nrf52840
+    tags: emds sysbuild
+    integration_platforms:
+      - nrf52840dk_nrf52840

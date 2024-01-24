@@ -5,3 +5,10 @@ tests:
       - native_posix
       - nrf52840dk_nrf52840
     tags: discovery_manager
+  bluetooth.gatt_dm.sysbuild:
+    sysbuild: true
+    platform_allow: native_posix nrf52840dk_nrf52840
+    integration_platforms:
+      - native_posix
+      - nrf52840dk_nrf52840
+    tags: discovery_manager sysbuild

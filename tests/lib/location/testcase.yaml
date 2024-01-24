@@ -4,6 +4,12 @@ tests:
     platform_allow: native_posix
     integration_platforms:
       - native_posix
+  unity.location_test.sysbuild:
+    sysbuild: true
+    tags: location sysbuild
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
   unity.location_test.no_agnss:
     tags: location_no_agnss
     platform_allow: native_posix
@@ -11,8 +17,24 @@ tests:
       - native_posix
     extra_configs:
       - CONFIG_LOCATION_TEST_AGNSS=n
+  unity.location_test.no_agnss.sysbuild:
+    sysbuild: true
+    tags: location_no_agnss sysbuild
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    extra_configs:
+      - CONFIG_LOCATION_TEST_AGNSS=n
   unity.location_test.no_wifi:
     tags: location_no_wifi
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    extra_configs:
+      - CONFIG_LOCATION_METHOD_WIFI=n
+  unity.location_test.no_wifi.sysbuild:
+    sysbuild: true
+    tags: location_no_wifi sysbuild
     platform_allow: native_posix
     integration_platforms:
       - native_posix
@@ -27,8 +49,26 @@ tests:
       - CONFIG_LOCATION_SERVICE_EXTERNAL=y
       - CONFIG_LOCATION_SERVICE_HERE=n
       - CONFIG_LOCATION_SERVICE_HERE_API_KEY=""
+  unity.location_test.service_external.sysbuild:
+    sysbuild: true
+    tags: location_service_external sysbuild
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    extra_configs:
+      - CONFIG_LOCATION_SERVICE_EXTERNAL=y
+      - CONFIG_LOCATION_SERVICE_HERE=n
+      - CONFIG_LOCATION_SERVICE_HERE_API_KEY=""
   unity.location_test.data_details:
     tags: location_data_details
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    extra_configs:
+      - CONFIG_LOCATION_DATA_DETAILS=y
+  unity.location_test.data_details.sysbuild:
+    sysbuild: true
+    tags: location_data_details sysbuild
     platform_allow: native_posix
     integration_platforms:
       - native_posix

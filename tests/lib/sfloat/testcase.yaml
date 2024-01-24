@@ -7,3 +7,12 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
     tags: sfloat
+  lib.sfloat.sysbuild:
+    sysbuild: true
+    platform_allow:
+      nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    tags: sfloat sysbuild

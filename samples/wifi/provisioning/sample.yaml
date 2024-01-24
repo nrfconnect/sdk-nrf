@@ -44,8 +44,7 @@ tests:
     extra_args: SHIELD=nrf7002ek
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-      - nrf52840dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build sysbuild
   sample.nrf7001_eks.provisioning:
     build_only: true
@@ -60,8 +59,7 @@ tests:
     extra_args: SHIELD=nrf7002ek_nrf7001
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-      - nrf52840dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build sysbuild
   sample.nrf7002_eb.thingy53.provisioning:
     build_only: true

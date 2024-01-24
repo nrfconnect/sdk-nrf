@@ -3,3 +3,9 @@ tests:
     platform_allow: native_posix
     integration_platforms:
       - native_posix
+  net.lib.wifi_credentials_backend_settings.sysbuild:
+    sysbuild: true
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    tags: sysbuild

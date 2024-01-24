@@ -4,3 +4,9 @@ tests:
     platform_allow: native_posix
     integration_platforms:
       - native_posix
+  modules.lib.zcbor.encode.sysbuild:
+    sysbuild: true
+    tags: zcbor sysbuild
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix

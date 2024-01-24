@@ -4,3 +4,9 @@ tests:
     integration_platforms:
       - native_posix
     tags: azure_iot_hub_dps
+  net.lib.azure_iot_hub_dps.sysbuild:
+    sysbuild: true
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    tags: azure_iot_hub_dps sysbuild
