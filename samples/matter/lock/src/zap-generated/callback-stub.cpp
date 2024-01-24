@@ -40,6 +40,9 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::Descriptor::Id:
 		emberAfDescriptorClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::DiagnosticLogs::Id:
+		emberAfDiagnosticLogsClusterInitCallback(endpoint);
+		break;
 	case app::Clusters::DoorLock::Id:
 		emberAfDoorLockClusterInitCallback(endpoint);
 		break;
@@ -101,6 +104,11 @@ void __attribute__((weak)) emberAfBasicInformationClusterInitCallback(EndpointId
 	(void)endpoint;
 }
 void __attribute__((weak)) emberAfDescriptorClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
+void __attribute__((weak)) emberAfDiagnosticLogsClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;

@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
+	bool "Enable diagnostics logs support"
+	select CHIP_ENABLE_BDX_LOG_TRANSFER
+	help
+	  Provides support for diagnostics logs. Diagnostics logs allow the Matter controller to read end-user,
+	  network and crash logs from the Matter device.
+	  Diagnostic logs are usable only if the DiagnosticCluster is available and active on the device's root endpoint.
+	  Otherwise the compilation error occurs.
+
+if NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
+
+config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_MAX_SIMULTANEOUS_SESSIONS
+	int "Define maximum simultaneous sessions"
+	default 20
+	help
+	  The maximum simultaneous sessions, which is the capability for sending diagnostic logs
+	  to Matter controller using multiple sessions at the same time for different diagnostic
+	  intents. When a session finishes, it releases its slot for a new one.
+
+config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
+	bool "Crash logs support"
+	select RETAINED_MEM
+	select RETENTION
+	select RETENTION_MUTEX_FORCE_DISABLE
+	select RETAINED_MEM_MUTEX_FORCE_DISABLE
+	help
+	  Enables support for storing crash logs when the crash occurs.
+
+if NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
+
+config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ
+	bool "Remove the last crash data after read"
+	help
+	  Removes the last crash data after reading it by Matter controller.
+	  Disable this option to read the last crash multiple times.
+
+config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS
+	bool "Save crash logs to settings storage"
+	select NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
+	help
+	  Saves crash logs to settings storage at the boot time if there is an entry in the retention memory.
+	  If this option is disabled crash logs will be saved only in the retention memory and can be lost
+	  during physical power down.
+
+endif # NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
+
+config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
+	bool "Testing module for Diagnostic logs cluster"
+	help
+	  Enables testing module for diagnostic logs cluster.
+
+endif # NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS

@@ -28,6 +28,14 @@ enum Ids : TestEventTrigger::EventTriggerId {
 	BlockMatterThread = 0xFFFF'FFFF'2000'0000,
 	BlockMainThread = 0xFFFF'FFFF'3000'0000,
 #endif
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
+	DiagnosticLogsUserData = 0xFFFF'FFFF'4000'0000,
+	DiagnosticLogsNetworkData = 0xFFFF'FFFF'5000'0000,
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
+	DiagnosticLogsCrash = 0xFFFF'FFFF'6000'0000,
+#endif
+#endif
 };
 
 enum ValueMasks : TestEventTrigger::TriggerValueMask {
@@ -38,6 +46,10 @@ enum ValueMasks : TestEventTrigger::TriggerValueMask {
 #ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_EVENT_TRIGGERS
 	/* Watchdog */
 	BlockingTimeMs = 0xFFFF,
+#endif
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
+	NumberOfBytes = 0x7FF,
 #endif
 };
 

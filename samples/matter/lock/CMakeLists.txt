@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 3.20.0)
 set(mcuboot_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.mcuboot.root")
 set(multiprotocol_rpmsg_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.multiprotocol_rpmsg.root")
 set(hci_ipc_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.hci_ipc.root")
+list(APPEND SNIPPET_ROOT "../common")
 
 # For prj.conf the CONF_FILE is empty. In other cases extract the exact file name from the path string.
 if(CONF_FILE)
