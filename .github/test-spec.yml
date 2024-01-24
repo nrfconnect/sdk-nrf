@@ -121,7 +121,7 @@
   - "include/modem/at_params.h"
   - "include/modem/modem_key_mgmt.h"
 
-"CI-boot-dfu-test":
+"CI-dfu-test":
   - "include/bl*"
   - "include/fprotect.h"
   - "include/fw_info.*"
@@ -149,6 +149,27 @@
   - "subsys/net/lib/download_client/**/*"
   - "tests/subsys/bootloader/**/*"
   - "tests/subsys/dfu/**/*"
+
+"CI-boot-test":
+  - "include/bl*"
+  - "include/fprotect.h"
+  - "include/fw_info.*"
+  - "include/mgmt/*"
+  - "include/net/**/*"
+  - "cmake/*"
+  - "lib/lte_link_control/**/*"
+  - "modules/mcuboot/**/*"
+  - "modules/trusted-firmware-m/*"
+  - "samples/nrf5340/netboot/*"
+  - "samples/bootloader/**/*"
+  - "scripts/bootloader/**/*"
+  - "subsys/bootloader/**/*"
+  - "subsys/nonsecure/*"
+  - "subsys/partition_manager/*"
+  - "subsys/fw_info/**/*"
+  - "subsys/mgmt/**/*"
+  - "subsys/pcd/*"
+  - "tests/subsys/bootloader/**/*"
 
 "CI-all-test":
   - "**/*partition_manager*/**/*"
