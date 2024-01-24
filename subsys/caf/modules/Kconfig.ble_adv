@@ -27,6 +27,15 @@ config CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15
 	  (Remote Device Terminated due to Power Off). The module instantly
 	  stops Bluetooth LE advertising and submits a force_power_down event.
 
+config CAF_BLE_ADV_MODULE_SUSPEND_EVENTS
+	bool "Module suspend/resume request events support"
+	depends on CAF_MODULE_SUSPEND_EVENTS
+	default y
+
+config CAF_BLE_ADV_SUSPEND_ON_READY
+	bool "Automatically suspend module right after initialization"
+	depends on CAF_BLE_ADV_MODULE_SUSPEND_EVENTS
+
 config CAF_BLE_ADV_DIRECT_ADV
 	bool "Advertise to bonded peer directly"
 	depends on SETTINGS

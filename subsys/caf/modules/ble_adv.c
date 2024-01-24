@@ -16,6 +16,7 @@
 
 #define MODULE ble_adv
 #include <caf/events/module_state_event.h>
+#include <caf/events/module_suspend_event.h>
 #include <caf/events/ble_common_event.h>
 #include <caf/events/force_power_down_event.h>
 #include <caf/events/power_event.h>
@@ -29,7 +30,11 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_ADV_LOG_LEVEL);
 enum state {
 	STATE_DISABLED,
 	STATE_DISABLED_OFF,
+	STATE_DISABLED_SUSPENDED,
+	STATE_DISABLED_SUSPENDED_OFF,
+	STATE_SUSPENDED,
 	STATE_OFF,
+	STATE_SUSPENDED_OFF,
 	STATE_IDLE,
 	STATE_ACTIVE,
 	STATE_DELAYED_ACTIVE,
@@ -37,7 +42,8 @@ enum state {
 	STATE_ERROR,
 };
 
-static enum state state;
+static enum state state = IS_ENABLED(CONFIG_CAF_BLE_ADV_SUSPEND_ON_READY) ?
+			  STATE_DISABLED_SUSPENDED : STATE_DISABLED;
 static size_t grace_period_s;
 static bool direct_adv;
 static bool fast_adv;
@@ -452,7 +458,8 @@ static void ble_adv_data_update(void)
 
 static void ble_adv_stop(void)
 {
-	__ASSERT_NO_MSG((state == STATE_OFF) || (state == STATE_IDLE) || (state == STATE_ERROR));
+	__ASSERT_NO_MSG((state == STATE_SUSPENDED) || (state == STATE_SUSPENDED_OFF) ||
+			(state == STATE_OFF) || (state == STATE_IDLE) || (state == STATE_ERROR));
 
 	int err = bt_le_adv_stop();
 
@@ -467,12 +474,20 @@ static void ble_adv_stop(void)
 
 static bool is_module_state_disabled(enum state state)
 {
-	return ((state == STATE_DISABLED) || (state == STATE_DISABLED_OFF));
+	return ((state == STATE_DISABLED) || (state == STATE_DISABLED_OFF) ||
+		(state == STATE_DISABLED_SUSPENDED) || (state == STATE_DISABLED_SUSPENDED_OFF));
 }
 
 static bool is_module_state_off(enum state state)
 {
-	return ((state == STATE_DISABLED_OFF) || (state == STATE_OFF));
+	return ((state == STATE_DISABLED_OFF) || (state == STATE_DISABLED_SUSPENDED_OFF) ||
+		(state == STATE_OFF) || (state == STATE_SUSPENDED_OFF));
+}
+
+static bool is_module_state_suspended(enum state state)
+{
+	return ((state == STATE_DISABLED_SUSPENDED) || (state == STATE_DISABLED_SUSPENDED_OFF) ||
+		(state == STATE_SUSPENDED) || (state == STATE_SUSPENDED_OFF));
 }
 
 static void broadcast_module_state(enum state prev_state, enum state new_state)
@@ -483,6 +498,7 @@ static void broadcast_module_state(enum state prev_state, enum state new_state)
 	}
 
 	bool submit_ready = false;
+	bool submit_suspended = false;
 	bool submit_off = false;
 
 	__ASSERT_NO_MSG(is_module_state_disabled(prev_state) ||
@@ -492,11 +508,24 @@ static void broadcast_module_state(enum state prev_state, enum state new_state)
 		if (!is_module_state_disabled(new_state)) {
 			submit_ready = true;
 
-			if (is_module_state_off(new_state)) {
+			if (is_module_state_suspended(new_state)) {
+				submit_suspended = true;
+			} else if (is_module_state_off(new_state)) {
 				submit_off = true;
 			}
 		}
-	} else {
+	} else if (is_module_state_suspended(prev_state) &&
+		   !is_module_state_suspended(new_state)) {
+		if (is_module_state_off(new_state)) {
+			submit_off = true;
+		} else {
+			submit_ready = true;
+		}
+	} else if (!is_module_state_suspended(prev_state) &&
+		   is_module_state_suspended(new_state)) {
+		submit_suspended = true;
+	} else if (!is_module_state_suspended(prev_state) &&
+		   !is_module_state_suspended(new_state)) {
 		if (is_module_state_off(prev_state) && !is_module_state_off(new_state)) {
 			submit_ready = true;
 		}
@@ -512,6 +541,10 @@ static void broadcast_module_state(enum state prev_state, enum state new_state)
 
 	if (submit_off) {
 		module_set_state(MODULE_STATE_OFF);
+	}
+
+	if (submit_suspended) {
+		module_set_state(MODULE_STATE_SUSPENDED);
 	}
 
 	if (req_wakeup) {
@@ -531,8 +564,20 @@ static const char *state2str(enum state s)
 	case STATE_DISABLED_OFF:
 		return "DISABLED_OFF";
 
+	case STATE_DISABLED_SUSPENDED:
+		return "DISABLED_SUSPENDED";
+
+	case STATE_DISABLED_SUSPENDED_OFF:
+		return "DISABLED_SUSPENDED_OFF";
+
+	case STATE_SUSPENDED:
+		return "SUSPENDED";
+
 	case STATE_OFF:
 		return "OFF";
+
+	case STATE_SUSPENDED_OFF:
+		return "SUSPENDED_OFF";
 
 	case STATE_IDLE:
 		return "IDLE";
@@ -616,9 +661,13 @@ static void notify_ble_stack(void)
 	switch (state) {
 	case STATE_DISABLED:
 	case STATE_DISABLED_OFF:
+	case STATE_DISABLED_SUSPENDED:
+	case STATE_DISABLED_SUSPENDED_OFF:
 		break;
 
+	case STATE_SUSPENDED:
 	case STATE_OFF:
+	case STATE_SUSPENDED_OFF:
 	case STATE_IDLE:
 	case STATE_ERROR:
 		ble_adv_stop();
@@ -740,7 +789,7 @@ static void init(void)
 	}
 }
 
-static void update_peer_is_rpa(enum peer_rpa new_peer_rpa)
+static void store_peer_is_rpa(enum peer_rpa new_peer_rpa)
 {
 	if (IS_ENABLED(CONFIG_SETTINGS) &&
 	    IS_ENABLED(CONFIG_CAF_BLE_ADV_DIRECT_ADV)) {
@@ -796,6 +845,14 @@ static void ble_ready(void)
 
 	case STATE_DISABLED_OFF:
 		update_state(STATE_OFF);
+		break;
+
+	case STATE_DISABLED_SUSPENDED:
+		update_state(STATE_SUSPENDED);
+		break;
+
+	case STATE_DISABLED_SUSPENDED_OFF:
+		update_state(STATE_SUSPENDED_OFF);
 		break;
 
 	default:
@@ -856,8 +913,30 @@ static bool handle_module_state_event(const struct module_state_event *event)
 	return false;
 }
 
+static void update_peer_is_rpa(const struct bt_conn *conn)
+{
+	if (peer_is_rpa[cur_identity] == PEER_RPA_ERASED) {
+		if (bt_addr_le_is_rpa(bt_conn_get_dst(conn))) {
+			store_peer_is_rpa(PEER_RPA_YES);
+		} else {
+			store_peer_is_rpa(PEER_RPA_NO);
+		}
+	}
+}
+
 static bool handle_ble_peer_event(const struct ble_peer_event *event)
 {
+	if (is_module_state_suspended(state)) {
+		if (event->state == PEER_STATE_CONNECTED) {
+			disconnect_peer(event->id);
+		} else if (event->state == PEER_STATE_SECURED) {
+			update_peer_is_rpa(event->id);
+			disconnect_peer(event->id);
+		}
+
+		return false;
+	}
+
 	switch (event->state) {
 	case PEER_STATE_CONNECTED:
 		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_GRACE_PERIOD) && (state == STATE_GRACE_PERIOD)) {
@@ -868,13 +947,7 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 		break;
 
 	case PEER_STATE_SECURED:
-		if (peer_is_rpa[cur_identity] == PEER_RPA_ERASED) {
-			if (bt_addr_le_is_rpa(bt_conn_get_dst(event->id))) {
-				update_peer_is_rpa(PEER_RPA_YES);
-			} else {
-				update_peer_is_rpa(PEER_RPA_NO);
-			}
-		}
+		update_peer_is_rpa(event->id);
 		break;
 
 	case PEER_STATE_DISCONNECTED:
@@ -940,8 +1013,15 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 		cur_identity = event->bt_stack_id;
 		__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
 
-		if ((state == STATE_OFF) || (state == STATE_DISABLED) ||
-		    (state == STATE_DISABLED_OFF) || (state == STATE_ERROR)) {
+		if (is_module_state_disabled(state) || (state == STATE_ERROR)) {
+			break;
+		}
+
+		if (event->op == PEER_OPERATION_ERASE_ADV) {
+			store_peer_is_rpa(PEER_RPA_ERASED);
+		}
+
+		if (is_module_state_off(state) || is_module_state_suspended(state)) {
 			break;
 		}
 
@@ -969,9 +1049,6 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 			update_state(STATE_ACTIVE);
 		}
 
-		if (event->op == PEER_OPERATION_ERASE_ADV) {
-			update_peer_is_rpa(PEER_RPA_ERASED);
-		}
 		break;
 
 	case PEER_OPERATION_ERASED:
@@ -1013,9 +1090,19 @@ static bool handle_power_down_event(const struct power_down_event *event)
 		update_state(STATE_DISABLED_OFF);
 		break;
 
+	case STATE_DISABLED_SUSPENDED:
+		update_state(STATE_DISABLED_SUSPENDED_OFF);
+		break;
+
+	case STATE_SUSPENDED:
+		update_state(STATE_SUSPENDED_OFF);
+		break;
+
 	case STATE_OFF:
 	case STATE_GRACE_PERIOD:
 	case STATE_DISABLED_OFF:
+	case STATE_DISABLED_SUSPENDED_OFF:
+	case STATE_SUSPENDED_OFF:
 	case STATE_ERROR:
 		/* No action */
 		break;
@@ -1025,6 +1112,8 @@ static bool handle_power_down_event(const struct power_down_event *event)
 		__ASSERT_NO_MSG(false);
 		break;
 	}
+
+	__ASSERT_NO_MSG(!is_module_state_suspended(state) || is_module_state_off(state));
 
 	return !is_module_state_off(state);
 }
@@ -1043,12 +1132,116 @@ static bool handle_wake_up_event(const struct wake_up_event *event)
 		update_state(STATE_DISABLED);
 		break;
 
+	case STATE_SUSPENDED_OFF:
+		update_state(STATE_SUSPENDED);
+		break;
+
+	case STATE_DISABLED_SUSPENDED_OFF:
+		update_state(STATE_DISABLED_SUSPENDED);
+		break;
+
 	case STATE_IDLE:
 	case STATE_ACTIVE:
 	case STATE_DELAYED_ACTIVE:
 	case STATE_DISABLED:
+	case STATE_DISABLED_SUSPENDED:
+	case STATE_SUSPENDED:
 	case STATE_ERROR:
 		/* No action */
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	return false;
+}
+
+static bool handle_module_suspend_req_event(const struct module_suspend_req_event *event)
+{
+	if (event->sink_module_id != MODULE_ID(MODULE)) {
+		/* Not us. */
+		return false;
+	}
+
+	switch (state) {
+	case STATE_DISABLED:
+		update_state(STATE_DISABLED_SUSPENDED);
+		break;
+
+	case STATE_DISABLED_OFF:
+		update_state(STATE_DISABLED_SUSPENDED_OFF);
+		break;
+
+	case STATE_OFF:
+		update_state(STATE_SUSPENDED_OFF);
+		break;
+
+	case STATE_IDLE:
+	case STATE_ACTIVE:
+	case STATE_DELAYED_ACTIVE:
+	case STATE_GRACE_PERIOD:
+		update_state(STATE_SUSPENDED);
+		break;
+
+	case STATE_ERROR:
+	case STATE_SUSPENDED:
+	case STATE_SUSPENDED_OFF:
+	case STATE_DISABLED_SUSPENDED:
+	case STATE_DISABLED_SUSPENDED_OFF:
+		/* No action. */
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	struct bt_conn *conn = conn_get();
+
+	if (conn) {
+		disconnect_peer(conn);
+	}
+
+	return false;
+}
+
+static bool handle_module_resume_req_event(const struct module_resume_req_event *event)
+{
+	if (event->sink_module_id != MODULE_ID(MODULE)) {
+		/* Not us. */
+		return false;
+	}
+
+	switch (state) {
+	case STATE_SUSPENDED:
+		req_new_adv_session = true;
+		req_fast_adv = true;
+		update_state(STATE_DELAYED_ACTIVE);
+		break;
+
+	case STATE_SUSPENDED_OFF:
+		update_state(STATE_OFF);
+		break;
+
+	case STATE_DISABLED_SUSPENDED:
+		update_state(STATE_DISABLED);
+		break;
+
+	case STATE_DISABLED_SUSPENDED_OFF:
+		update_state(STATE_DISABLED_OFF);
+		break;
+
+	case STATE_DISABLED:
+	case STATE_DISABLED_OFF:
+	case STATE_OFF:
+	case STATE_IDLE:
+	case STATE_ACTIVE:
+	case STATE_DELAYED_ACTIVE:
+	case STATE_GRACE_PERIOD:
+	case STATE_ERROR:
+		/* No action. */
 		break;
 
 	default:
@@ -1088,11 +1281,22 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return handle_wake_up_event(cast_wake_up_event(aeh));
 	}
 
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_MODULE_SUSPEND_EVENTS) &&
+	    is_module_suspend_req_event(aeh)) {
+		return handle_module_suspend_req_event(cast_module_suspend_req_event(aeh));
+	}
+
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_MODULE_SUSPEND_EVENTS) &&
+	    is_module_resume_req_event(aeh)) {
+		return handle_module_resume_req_event(cast_module_resume_req_event(aeh));
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
 	return false;
 }
+
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
@@ -1104,3 +1308,7 @@ APP_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
 APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif /* CONFIG_CAF_BLE_ADV_PM_EVENTS */
+#if CONFIG_CAF_BLE_ADV_MODULE_SUSPEND_EVENTS
+APP_EVENT_SUBSCRIBE(MODULE, module_suspend_req_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_resume_req_event);
+#endif /* CONFIG_CAF_BLE_ADV_MODULE_SUSPEND_EVENTS */
