@@ -2827,6 +2827,14 @@ Crypto
 
 The issues in this section are related to :ref:`nrfxlib:crypto`.
 
+.. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0
+
+NCSDK-25144: Enabling Kconfig option :kconfig:option:`CONFIG_SECURE_BOOT_CRYPTO` links ``nrf_cc310_bl`` into the main application
+  Configuring secure boot with Kconfig option :kconfig:option:`CONFIG_SECURE_BOOT_CRYPTO` links the bootloader library ``nrf_cc310_bl`` into the main application, which is invalid.
+  This makes crypto operations, such as ECDSA, fail.
+
+  **Workaround:** Make sure the Kconfig option :kconfig:option:`CONFIG_SECURE_BOOT_CRYPTO` is only set when building the ``b0`` image.
+
 .. rst-class:: v2-4-2 v2-4-1 v2-4-0
 
 NCSDK-22091: Selecting both :kconfig:option:`NORDIC_SECURITY_BACKEND` and :kconfig:option:`PSA_CORE_BUILTIN` causes a build failure
