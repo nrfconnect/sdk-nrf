@@ -711,17 +711,6 @@ static int set_socketoptions(struct lwm2m_ctx *ctx)
 		purge_sessions = false;
 	}
 
-	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_DTLS_CID)) {
-		/* Enable CID */
-		uint32_t dtls_cid = NRF_SO_SEC_DTLS_CID_SUPPORTED;
-
-		ret = zsock_setsockopt(ctx->sock_fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid,
-				       sizeof(dtls_cid));
-		if (ret) {
-			ret = -errno;
-			LOG_ERR("Failed to enable TLS_DTLS_CID: %d", ret);
-		}
-	}
 	return lwm2m_set_default_sockopt(ctx);
 }
 

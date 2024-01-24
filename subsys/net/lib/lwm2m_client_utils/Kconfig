@@ -266,13 +266,12 @@ config LWM2M_CLIENT_UTILS_LTE_CONNEVAL
 	  started.
 
 config LWM2M_CLIENT_UTILS_DTLS_CID
-	bool "Enable DTLS Connection Identifier"
+	bool "[Deprecated] Enable DTLS Connection Identifier"
+	select LWM2M_DTLS_CID
 	help
-	  Enable DTLS connection Identifier negitiation.
-	  Requires either LWM2M_RD_CLIENT_STOP_POLLING_AT_IDLE or LWM2M_RD_CLIENT_LISTEN_AT_IDLE to be useful.
-	  This requires modem firmware v1.3.5 or newer.
+	  Deprecated. Use CONFIG_LWM2M_DTLS_CID instead.
 
-if LWM2M_CLIENT_UTILS_DTLS_CID
+if LWM2M_DTLS_CID
 
 config LWM2M_CLIENT_UTILS_DTLS_CON_MANAGEMENT
 	bool "Enable DTLS connection save and load"
@@ -281,7 +280,7 @@ config LWM2M_CLIENT_UTILS_DTLS_CON_MANAGEMENT
 	  Enable DTLS connection identifier save at idle and load exit from idle.
 	  This requires modem firmware v1.3.5 or newer.
 
-endif #LWM2M_CLIENT_UTILS_DTLS_CID
+endif #LWM2M_DTLS_CID
 
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
