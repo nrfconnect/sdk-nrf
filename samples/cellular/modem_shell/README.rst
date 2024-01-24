@@ -716,6 +716,8 @@ Examples
 Sleep
 =====
 
+MoSh command: ``sleep``
+
 When pipelining commands using ``th pipeline``, you can use the ``sleep`` command to pause the execution for a given period to allow previous command to return before executing next one.
 See :ref:`pipelining_commands` for usage.
 
@@ -784,6 +786,8 @@ Examples
 UART
 ====
 
+MoSh command: ``uart``
+
 Disable UARTs for power measurement purposes.
 
 * Disable UARTs for 30 seconds:
@@ -803,7 +807,9 @@ Disable UARTs for power measurement purposes.
 Heap usage statistics
 =====================
 
-You can use the ``heap`` command to print kernel and system heap usage statistics.
+MoSh command: ``heap``
+
+You can use the command to print kernel and system heap usage statistics.
 
   .. code-block:: console
 
@@ -818,6 +824,33 @@ You can use the ``heap`` command to print kernel and system heap usage statistic
      size:              248
      free:              160
      allocated:          88
+
+----
+
+GPIO pin pulse counter
+======================
+
+MoSh command: ``gpio_count``
+
+You can use the command to count pulses on a given GPIO pin.
+A rising edge of the signal is counted as a pulse.
+Pulse counting can be enabled only for a single pin at a time.
+When pulse counting is enabled, **LED 2** on the nRF91 Series DKs shows the state of the pin input.
+
+.. note::
+
+   The ``gpio_count enable`` command configures the GPIO pin as input and enables pull down.
+
+.. code-block:: console
+
+   mosh:~$ gpio_count get
+   Number of pulses: 0
+   mosh:~$ gpio_count enable 10
+   mosh:~$ gpio_count get
+   Number of pulses: 42
+   mosh:~$ gpio_count disable
+   mosh:~$ gpio_count get
+   Number of pulses: 42
 
 Configuration
 *************
@@ -899,6 +932,11 @@ CONFIG_MOSH_CLOUD_MQTT
 CONFIG_MOSH_AT_CMD_MODE
    Enable AT command mode feature in modem shell.
 
+.. _CONFIG_MOSH_GPIO_COUNT:
+
+CONFIG_MOSH_GPIO_COUNT
+   Enable GPIO pin pulse counter feature in modem shell.
+
 .. note::
    You may not be able to use all features at the same time due to memory restrictions.
    To see which features are enabled simultaneously, check the configuration files and overlays.
@@ -943,6 +981,8 @@ The LEDs have the following functions:
 
 LED 1 (nRF91 Series DKs)/Purple LED (Thingy:91):
    Lit for five seconds when the current location has been successfully retrieved by using the ``location get`` command.
+LED 2 (nRF91 Series DKs):
+   Indicates the state of the GPIO pin when pulse counting has been enabled using the ``gpio_count enable`` command.
 LED 3 (nRF91 Series DKs)/Blue LED (Thingy:91):
    Indicates the LTE registration status.
 

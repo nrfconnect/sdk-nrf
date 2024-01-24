@@ -115,6 +115,13 @@ config MOSH_AT_CMD_MODE
 	bool "Specific AT command mode"
 	default y
 
+config MOSH_GPIO_COUNT
+	bool "GPIO pin pulse counter"
+	default n if BOARD_THINGY91_NRF9160_NS
+	default y
+	help
+	  Tool for counting the number of pulses on a GPIO pin.
+
 config MOSH_PRINT_BUFFER_SIZE
 	int "Buffer size used when printing modem shell output"
 	default 1024
