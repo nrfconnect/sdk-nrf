@@ -17,7 +17,7 @@ DEFINE_FFF_GLOBALS;
 int poll(struct zsock_pollfd *fds, int nfds, int timeout);
 
 /* Fake functions declaration */
-FAKE_VALUE_FUNC(int, nct_init, const char *);
+FAKE_VALUE_FUNC(int, nct_initialize, const char *);
 FAKE_VALUE_FUNC(int, nfsm_init);
 FAKE_VALUE_FUNC(int, nrf_cloud_codec_init, struct nrf_cloud_os_mem_hooks *);
 FAKE_VOID_FUNC(nrf_cloud_set_app_version, const char *const);
@@ -47,13 +47,13 @@ FAKE_VALUE_FUNC(int, nrf_cloud_obj_cloud_encode, struct nrf_cloud_obj *const);
 FAKE_VALUE_FUNC(int, nrf_cloud_obj_cloud_encoded_free, struct nrf_cloud_obj *const);
 
 /* Custom fakes implementation */
-int fake_nct_init__succeeds(const char *const client_id)
+int fake_nct_initialize__succeeds(const char *const client_id)
 {
 	ARG_UNUSED(client_id);
 	return 0;
 }
 
-int fake_nct_init__fails(const char *const client_id)
+int fake_nct_initialize__fails(const char *const client_id)
 {
 	ARG_UNUSED(client_id);
 	return -ENODEV;

@@ -106,7 +106,7 @@ const struct nrf_cloud_sensor_data sensor_param = {
 void init_cloud_success(void)
 {
 	/* Init the cloud with all fakes */
-	nct_init_fake.custom_fake = fake_nct_init__succeeds;
+	nct_initialize_fake.custom_fake = fake_nct_initialize__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
 	(void)nrf_cloud_init(&init_param);
@@ -193,7 +193,7 @@ void connect_cloud_dc_success(void)
 static void run_before(void *fixture)
 {
 	ARG_UNUSED(fixture);
-	RESET_FAKE(nct_init);
+	RESET_FAKE(nct_initialize);
 	RESET_FAKE(nfsm_init);
 	RESET_FAKE(nrf_cloud_codec_init);
 	RESET_FAKE(nrf_cloud_fota_fmfu_dev_set);
@@ -252,7 +252,7 @@ ZTEST(nrf_cloud_test, test_init_not_idle)
 	 * being successful and check if the second one
 	 * will fail since the state will not be idle
 	 */
-	nct_init_fake.custom_fake = fake_nct_init__succeeds;
+	nct_initialize_fake.custom_fake = fake_nct_initialize__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
 	(void)nrf_cloud_init(&init_param);
@@ -311,7 +311,7 @@ ZTEST(nrf_cloud_test, test_init_success)
 		"nrf_cloud lib should be in the idle state (uninitialized) at the start of test");
 
 	/* Fake internal initialization success */
-	nct_init_fake.custom_fake = fake_nct_init__succeeds;
+	nct_initialize_fake.custom_fake = fake_nct_initialize__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
 
@@ -328,7 +328,7 @@ ZTEST(nrf_cloud_test, test_init_success)
 ZTEST(nrf_cloud_test, test_init_cloud_transport_fail)
 {
 	/* Fake transport initialization failure */
-	nct_init_fake.custom_fake = fake_nct_init__fails;
+	nct_initialize_fake.custom_fake = fake_nct_initialize__fails;
 
 	/* Fake success for the rest of initialization */
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
@@ -367,7 +367,7 @@ ZTEST(nrf_cloud_test, test_init_fmfu_init_failed)
 	nrf_cloud_fota_fmfu_dev_set_fake.custom_fake = fake_nrf_cloud_fota_fmfu_dev_set__fails;
 
 	/* Fake success for the rest of initialization */
-	nct_init_fake.custom_fake = fake_nct_init__succeeds;
+	nct_initialize_fake.custom_fake = fake_nct_initialize__succeeds;
 	nfsm_init_fake.custom_fake = fake_nfsm_init__succeeds;
 	nrf_cloud_codec_init_fake.custom_fake = fake_nrf_cloud_codec_init__succeeds;
 

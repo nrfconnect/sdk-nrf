@@ -1031,7 +1031,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	}
 }
 
-int nct_init(const char * const client_id)
+int nct_initialize(const char * const client_id)
 {
 	int err;
 
