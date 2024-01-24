@@ -129,7 +129,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 #endif
 
 	/* Initialize the transport. */
-	err = nct_init(param->client_id);
+	err = nct_initialize(param->client_id);
 	if (err) {
 		return err;
 	}

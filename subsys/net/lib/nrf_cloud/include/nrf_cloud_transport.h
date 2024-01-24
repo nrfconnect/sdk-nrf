@@ -67,7 +67,7 @@ struct nct_evt {
 int nct_socket_get(void);
 
 /** @brief Initialization routine for the transport. */
-int nct_init(const char * const client_id);
+int nct_initialize(const char * const client_id);
 
 /** @brief Unintialize the transport; reset state and free allocated memory */
 void nct_uninit(void);
