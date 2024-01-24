@@ -424,7 +424,7 @@ Cellular samples
     * Release Assistance Indication (RAI) feature.
       This helps to save power by releasing the network connection faster on a network that supports it.
 
-  * Updated the eDRX cycle to 10.24s for both LTE-M and Nb-IOT.
+  * Updated the eDRX cycle to 5.12s for both LTE-M and Nb-IOT.
 
 Cryptography samples
 --------------------
