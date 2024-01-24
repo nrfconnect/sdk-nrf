@@ -339,9 +339,10 @@ defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP)
 	/* Initialize values which are other than 0 */
 	conf_params->op_mode = RPU_OP_MODE_RADIO_TEST;
 
-	status = nrf_wifi_fmac_rf_params_get(ctx->rpu_ctx,
-					     conf_params->rf_params,
-					     &tx_pwr_ceil_params);
+	status = nrf_wifi_fmac_rf_params_get(
+			ctx->rpu_ctx,
+			(struct nrf_wifi_phy_rf_params *)conf_params->rf_params,
+			&tx_pwr_ceil_params);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		goto out;
@@ -833,41 +834,6 @@ static int nrf_wifi_radio_test_set_tx_pkt_num(const struct shell *shell,
 	return 0;
 }
 
-void nrf_wifi_radio_test_get_max_tx_power_params(void)
-{
-	/*Max TX power is represented in 0.25dB resolution
-	 *So,multiply 4 to MAX_TX_PWR_RADIO_TEST and
-	 *configure the RF params corresponding to Max TX power
-	 */
-	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR2G] =
-	(MAX_TX_PWR_RADIO_TEST << 2);
-
-	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR2GM0M7] =
-	(MAX_TX_PWR_RADIO_TEST << 2);
-
-	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR2GM0M7+1] =
-	(MAX_TX_PWR_RADIO_TEST << 2);
-
-	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM7] =
-	(MAX_TX_PWR_RADIO_TEST << 2);
-
-	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM7+1] =
-	(MAX_TX_PWR_RADIO_TEST << 2);
-
-	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM7+2] =
-	(MAX_TX_PWR_RADIO_TEST << 2);
-
-	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM0] =
-	(MAX_TX_PWR_RADIO_TEST << 2);
-
-	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM0+1] =
-	(MAX_TX_PWR_RADIO_TEST << 2);
-
-	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM0+2] =
-	(MAX_TX_PWR_RADIO_TEST << 2);
-
-}
-
 static int nrf_wifi_radio_test_set_tx_pkt_len(const struct shell *shell,
 					      size_t argc,
 					      const char *argv[])
@@ -1349,15 +1315,21 @@ static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
 			return -ENOEXEC;
 		}
 
-		/*Max TX power values differ based on the test being performed.
-		 *For TX EVM Vs Power, Max TX power required is
-		 *"MAX_TX_PWR_RADIO_TEST" (24dB) whereas for testing the
-		 *Max TX power for which both EVM and spectrum mask are passing
-		 *for specific band and MCS/rate, TX power values will be read from
-		 *RF params string
+		/** Max TX power values differ based on the test being performed.
+		 * For TX EVM Vs Power, Max TX power required is
+		 * "MAX_TX_PWR_RADIO_TEST" (24dB) whereas for testing the
+		 * Max TX power for which both EVM and spectrum mask are passing
+		 * for specific band and MCS/rate, TX power values will be read from
+		 * RF params string.
 		 */
 		if (ctx->conf_params.tx_power != MAX_TX_PWR_SYS_TEST) {
-			nrf_wifi_radio_test_get_max_tx_power_params();
+			/** Max TX power is represented in 0.25dB resolution
+			 * So,multiply 4 to MAX_TX_PWR_RADIO_TEST and
+			 * configure the RF params corresponding to Max TX power.
+			 */
+			memset(&ctx->conf_params.rf_params[NRF_WIFI_TX_PWR_CEIL_BYTE_OFFSET],
+			(MAX_TX_PWR_RADIO_TEST << 2),
+			sizeof(struct nrf_wifi_tx_pwr_ceil));
 		}
 	}
 
@@ -1771,7 +1743,7 @@ static int nrf_wifi_radio_set_xo_val(const struct shell *shell,
 		goto out;
 	}
 
-	ctx->conf_params.rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_X0] = val;
+	ctx->conf_params.rf_params[NRF_WIFI_XO_FREQ_BYTE_OFFSET] = val;
 
 	ret = 0;
 out:
@@ -1922,7 +1894,7 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 	shell_fprintf(shell,
 		      SHELL_INFO,
 		      "xo_val = %d\n",
-		      conf_params->rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_X0]);
+		      conf_params->rf_params[NRF_WIFI_XO_FREQ_BYTE_OFFSET]);
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
