@@ -102,6 +102,7 @@ DECLARE_FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd_async, nrf_modem_at_resp_ha
 			       const char *, ...);
 DECLARE_FAKE_VALUE_FUNC(int, at_params_list_init, struct at_param_list *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, z_impl_zsock_setsockopt, int, int, int, const void *, socklen_t);
+DECLARE_FAKE_VOID_FUNC(lwm2m_utils_rai_event_cb, struct lwm2m_ctx *, enum lwm2m_rd_client_event *)
 
 /* List of fakes used by this unit tester */
 #define DO_FOREACH_FAKE(FUNC) do { \
@@ -173,6 +174,7 @@ DECLARE_FAKE_VALUE_FUNC(int, z_impl_zsock_setsockopt, int, int, int, const void 
 	FUNC(nrf_modem_at_cmd_async)                    \
 	FUNC(at_params_list_init)                       \
 	FUNC(z_impl_zsock_setsockopt)                   \
+	FUNC(lwm2m_utils_rai_event_cb)                  \
 	} while (0)
 
 #endif

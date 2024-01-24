@@ -270,6 +270,14 @@ static int load_credentials_to_modem(struct lwm2m_ctx *ctx)
 	bool has_credentials;
 	int mode;
 
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
+		/* Inform RAI helper, that we are starting a new session, so it disables
+		 * RAI indications until we are properly registered again.
+		 */
+		lwm2m_utils_rai_event_cb(ctx,
+					 &(enum lwm2m_rd_client_event){LWM2M_RD_CLIENT_EVENT_NONE});
+	}
+
 	if (ctx->bootstrap_mode) {
 		ctx->tls_tag = CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG;
 		purge_sessions = true;

@@ -68,23 +68,31 @@ void lwm2m_utils_rai_event_cb(struct lwm2m_ctx *client,
 {
 	switch (*client_event) {
 	case LWM2M_RD_CLIENT_EVENT_QUEUE_MODE_RX_OFF:
+	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE:
+	case LWM2M_RD_CLIENT_EVENT_ENGINE_SUSPENDED:
+	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE:
+	case LWM2M_RD_CLIENT_EVENT_SERVER_DISABLED:
 		/* RAI can be enabled as we are now registered and server have refreshed all the
 		 * data
 		 */
-		client->set_socket_state = lwm2m_set_socket_state;
-		activate_rai = true;
+		if (!activate_rai) {
+			LOG_INF("RAI enabled");
+			client->set_socket_state = lwm2m_set_socket_state;
+			activate_rai = true;
+		}
 		break;
 
-	case LWM2M_RD_CLIENT_EVENT_DISCONNECT:
-	case LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE:
+
+	default:
 		/* Stop RAI hints until we have properly registered and server have
 		 * refreshed all the data
 		 */
-		activate_rai = false;
-		client->set_socket_state = NULL;
-		break;
-
-	default:
+		if (activate_rai) {
+			LOG_INF("RAI disabled");
+			activate_rai = false;
+			client->set_socket_state = NULL;
+			lwm2m_set_socket_state(client->sock_fd, LWM2M_SOCKET_STATE_ONGOING);
+		}
 		break;
 	}
 }
@@ -100,7 +108,7 @@ static void lwm2m_set_socket_state(int sock_fd, enum lwm2m_socket_states state)
 		"NO_DATA",
 	};
 
-	if (!activate_rai) {
+	if (!activate_rai || sock_fd < 0) {
 		return;
 	}
 	switch (state) {
@@ -118,7 +126,7 @@ static void lwm2m_set_socket_state(int sock_fd, enum lwm2m_socket_states state)
 		break;
 	}
 
-	LOG_WRN("Set socket option SO_RAI_%s\n", opt_names[state]);
+	LOG_DBG("Set socket option SO_RAI_%s\n", opt_names[state]);
 	ret = setsockopt(sock_fd, SOL_SOCKET, opt, NULL, 0);
 
 	if (ret < 0) {
