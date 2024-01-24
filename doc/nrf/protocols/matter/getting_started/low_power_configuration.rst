@@ -82,11 +82,11 @@ Short idle time and long idle time devices
 ==========================================
 
 The Matter v1.2 specification divides ICD into short idle time (SIT) and long idle time (LIT) devices.
-The division is based on the idle mode duration parameter: equal to or shorter than 15 seconds for SIT, and longer than 15 seconds for LIT.
+The division is based on the Slow Polling Interval parameter: equal to or shorter than 15 seconds for SIT, and longer than 15 seconds for LIT.
 
-The SIT device behavior is aligned with what was called SED in Matter v.1.1 specification.
-The LIT device implementation requires multiple new features,  such as Check-In protocol support and ICD client registration.
-The division of ICD types and related features were not finalized for Matter v.1.2 and they are marked as provisional, so it is not recommended to use them, though you can find some of the LIT implementation in the Matter SDK and Matter specification.
+The SIT device behavior is aligned with what was called SED in Matter v1.1 specification.
+The LIT device implementation requires multiple new features, such as Check-In protocol support and ICD client registration.
+The division of ICD types and related features were not finalized for Matter v1.2 and they are marked as provisional, so it is not recommended to use them, though you can find some of the LIT implementation in the Matter SDK and Matter specification.
 
 Enable low power mode for the selected networking technology
 ************************************************************
