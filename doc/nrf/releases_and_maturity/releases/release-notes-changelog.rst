@@ -746,6 +746,10 @@ Modem libraries
   * Added the :kconfig:option:`CONFIG_AT_HOST_STACK_SIZE` Kconfig option.
     This option allows the stack size of the AT host workqueue thread to be adjusted.
 
+* :ref:`modem_key_mgmt` library:
+
+  * Fixed a potential race condition, where two threads might corrupt a shared response buffer.
+
 Libraries for networking
 ------------------------
 

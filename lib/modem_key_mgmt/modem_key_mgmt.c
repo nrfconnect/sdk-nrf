@@ -17,6 +17,8 @@
 
 LOG_MODULE_REGISTER(modem_key_mgmt, CONFIG_MODEM_KEY_MGMT_LOG_LEVEL);
 
+/* Protect the shared scratch_buf with a mutex. */
+static K_MUTEX_DEFINE(key_mgmt_mutex);
 static char scratch_buf[4096];
 
 static bool cmee_is_active(void)
@@ -154,32 +156,38 @@ int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
 		return -EINVAL;
 	}
 
+	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
 	err = key_fetch(sec_tag, cred_type);
 	if (err) {
-		return err;
+		goto end;
 	}
 
 	begin = scratch_buf;
 	for (size_t i = 0; i < 3; i++) {
 		begin = strchr(begin, '\"');
 		if (!begin) {
-			return -ENOENT;
+			err = -ENOENT;
+			goto end;
 		}
 		begin++;
 	}
 
 	end = strchr(begin, '\"');
 	if (!end) {
-		return -ENOENT;
+		err = -ENOENT;
+		goto end;
 	}
 
 	if (end - begin > *len) {
-		return -ENOMEM;
+		err = -ENOMEM;
+		goto end;
 	}
 
 	memcpy(buf, begin, end - begin);
 	*len = end - begin;
 
+end:
+	k_mutex_unlock(&key_mgmt_mutex);
 	return err;
 }
 
@@ -194,36 +202,45 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 		return -EINVAL;
 	}
 
+	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
+
 	err = key_fetch(sec_tag, cred_type);
 	if (err) {
-		return err;
+		goto out;
 	}
 
 	begin = scratch_buf;
 	for (size_t i = 0; i < 3; i++) {
 		begin = strchr(begin, '\"');
 		if (!begin) {
-			return -ENOENT;
+			err = -ENOENT;
+			goto out;
 		}
 		begin++;
 	}
 
 	end = strchr(begin, '\"');
 	if (!end) {
-		return -ENOENT;
+		err = -ENOENT;
+		goto out;
 	}
 
 	if (end - begin != len) {
 		LOG_DBG("Credential length mismatch");
-		return 1;
+		err = 1;
+		goto out;
 	}
 
 	if (memcmp(begin, buf, len)) {
 		LOG_DBG("Credential data mismatch");
-		return 1;
+		err = 1;
+		goto out;
 	}
 
-	return 0;
+out:
+	k_mutex_unlock(&key_mgmt_mutex);
+
+	return err;
 }
 
 int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
@@ -258,6 +275,8 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 		return -EINVAL;
 	}
 
+	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
+
 	cmee_enable(&cmee_was_active);
 
 	scratch_buf[0] = '\0';
@@ -269,7 +288,8 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 	}
 
 	if (err) {
-		return translate_error(err);
+		err = translate_error(err);
+		goto out;
 	}
 
 	if (strlen(scratch_buf) > strlen("OK\r\n")) {
@@ -278,5 +298,7 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 		*exists = false;
 	}
 
+out:
+	k_mutex_unlock(&key_mgmt_mutex);
 	return 0;
 }
