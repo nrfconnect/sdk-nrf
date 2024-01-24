@@ -711,7 +711,7 @@ int main(void)
 
 		case BOOTSTRAP:
 			state_set_and_unlock(BOOTSTRAP);
-			LOG_INF("LwM2M is boosttrapping");
+			LOG_INF("LwM2M is bootstrapping");
 			break;
 
 		case CONNECTING:
