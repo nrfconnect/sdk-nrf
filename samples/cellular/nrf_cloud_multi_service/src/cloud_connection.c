@@ -599,6 +599,14 @@ void cloud_connection_thread_fn(void)
 			(void)await_provisioning_idle(K_FOREVER);
 		}
 
+		/* Obtain time before connecting to the cloud,
+		 * otherwise NTP query will fail.
+		 */
+		if (IS_ENABLED(CONFIG_WIFI)) {
+			LOG_INF("Waiting to obtain date/time");
+			(void)await_date_time_known(K_FOREVER);
+		}
+
 		/* Attempt to connect to nRF Cloud. */
 		if (connect_cloud()) {
 			LOG_DBG("Awaiting disconnection from nRF Cloud");
