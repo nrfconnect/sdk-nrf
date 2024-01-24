@@ -314,7 +314,7 @@
 
 .. _`TF-M documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/index.html
 .. _`TF-M secure partition integration guide`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/integration_guide/services/tfm_secure_partition_addition.html
-.. _`TF-M ITS`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/technical_references/design_docs/tfm_its_service.html
+.. _`TF-M ITS`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/integration_guide/services/tfm_its_integration_guide.html
 
 .. _`nRF socket options`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/sockets.html#socket-options
 
