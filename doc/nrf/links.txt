@@ -1376,3 +1376,58 @@
 .. _`nRF Connect Board Configurator`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
 
 .. _`HTTPie`: https://httpie.io/
+
+.. ### Temp: nRF54H and nRF54L related links, repositories, and documents
+
+.. _`nrf-regtool`: https://github.com/nrfconnect/nrf-regtool/
+.. _`UICR overlay`: https://github.com/nrfconnect/sdk-nrf-next/tree/haltium-ncs/applications/machine_learning/configuration/nrf54h20dk_nrf54h20_cpuapp%40soc1/uicr
+.. _`nRF54H20 common SoC files`: https://github.com/nrfconnect/sdk-ic-next/tree/haltium/soc
+.. _`ARM cores configuration files`: https://github.com/nrfconnect/sdk-ic-next/tree/haltium/boards/arm/nrf54h20dk_nrf54h20
+.. _`Risc-V cores configuration files`: https://github.com/nrfconnect/sdk-ic-next/tree/haltium/boards/riscv/nrf54h20dk_nrf54h20
+.. _`nRF54H20 Objective Product Specification 0.3`: https://res.developer.nordicsemi.com/res/nrf54H20/OPS/nRF54H20_OPS_v0.3.pdf
+.. _`nRF54H20 Objective Product Specification 0.3.1`: https://res.developer.nordicsemi.com/res/nrf54H20/OPS/nRF54H20_OPS_v0.3.1.pdf
+
+.. _`Introduction to nRF54H20`: https://res.developer.nordicsemi.com/res/nrf54H20/intro/Introduction%20to%20nRF54H20%20v1_0_1.pdf
+.. _`nRF54H20 prototype difference`: https://res.developer.nordicsemi.com/res/nrf54H20/other/nRF54H20_proto_diff.pdf
+
+.. _`nRF54L15 PDK schematic and PCB 0.2`: https://res.developer.nordicsemi.com/res/nRF54L15/schematics/pca10156_schematic_and_pcb.pdf
+.. _`nRF54L15 PDK schematic and PCB 0.2.1`: https://res.developer.nordicsemi.com/res/nRF54L15/schematics/pca10156_schematic_and_pcb_0.2.1_2023_09_28.pdf
+
+.. _`nRF54L15 Objective Product Specification 0.5b`: https://res.developer.nordicsemi.com/res/nRF54L15/OPS/nRF54L15_OPS_v0.5b_Confidential.pdf
+.. _`nRF54L15 prototype difference`: https://res.developer.nordicsemi.com/res/nRF54L15/protodiff/nRF54L15_prototype_differences_v1.0_nwp_051.pdf
+
+.. _`BICR register's PDF file`: https://res.developer.nordicsemi.com/res/nrf54H20/BICR/nRF54H20_BICR_0_11_0.pdf
+.. _`nRF Command Line Tools 10.22.1`: https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools/download
+
+.. _`documentation page on Github Authentication`: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github
+.. _`documentation page on authentication methods`: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github
+.. _`ssh-agent`: https://www.ssh.com/ssh/agent
+.. _`Connecting to GitHub with SSH`: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
+.. _`SSH-based authentication`: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+.. _`git-credential-store`: https://git-scm.com/docs/git-credential-store#_examples
+.. _`git-credential-cache`: https://git-scm.com/docs/git-credential-cache
+.. _`personal access token`: https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token
+.. _`Git Credential Manager`: https://github.com/git-ecosystem/git-credential-manager
+.. _`Personal Access Token (PAT)`: https://github.com/settings/tokens
+.. _`Homebrew`: https://brew.sh/
+.. _`sdk-find-my-next repository`: https://github.com/nrfconnect/sdk-find-my-next
+
+.. _`Serial Terminal from nRF Connect for Desktop`: https://infocenter.nordicsemi.com/topic/ug_serial_terminal/UG/serial_terminal/intro.html
+
+.. _`10.23.3_ec 64-bit Windows, executable`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nRF-Command-Line-Tools-10.23.3-x64.exe
+
+.. _`10.23.3_ec x86 system, deb format`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools_10.23.3_amd64.deb
+.. _`10.23.3_ec x86 system, RPM`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-1.x86_64.rpm
+.. _`10.23.3_ec x86 system, tar archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3_Linux-amd64.tar.gz
+
+.. _`10.23.3_ec ARM64 system, deb format`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools_10.23.3_arm64.deb
+.. _`10.23.3_ec ARM64 system, RPM`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-1.arm64.rpm
+.. _`10.23.3_ec ARM64 system, tar archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3_Linux-arm64.tar.gz
+
+.. _`10.23.3_ec ARMHF system, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-armhf-linux.zip
+
+.. _`10.23.3_ec macOS, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-osx.zip
+
+.. _`nRF Sniffer for Bluetooth LE`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_sniffer_ble%2FUG%2Fsniffer_ble%2Fintro.html
+.. _`Git for Windows`: https://git-scm.com/download/win
+.. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html
