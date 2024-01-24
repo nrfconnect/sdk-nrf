@@ -633,6 +633,8 @@ The following changes are recommended for your application to work optimally aft
               ${COMMON_ROOT}/src/app/matter_event_handler.cpp
           )
 
+* For LwM2M applications, replace the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DTLS_CID` Kconfig option with :kconfig:option:`CONFIG_LWM2M_DTLS_CID`.
+
 .. HOWTO
 
    Add changes in the following format:
