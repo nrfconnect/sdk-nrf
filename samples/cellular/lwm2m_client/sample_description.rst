@@ -422,7 +422,7 @@ LwM2M configuration:
 * Protocol version: 1.0
 * Binding mode: Queue
 * Device Management server: Leshan Demo server
-* Security: Enabled with PSK and DTLS session caching
+* Security: Enabled with PSK, DTLS Connection Identifier, and DTLS session caching
 * Registration life time: 12 hours
 * Coap ACK initial timeout: 4 seconds
 * Enable LwM2M tickless mode power optimization
@@ -435,15 +435,6 @@ Modem configurations:
 * Paging window: LTE 1.28 seconds and NB-IoT 2.56 seconds
 * eDRX: Enabled, with request of 10.24 seconds on LTE and 20.48 seconds on NB-IoT.
 * TAU pre-warning enabled, notification triggers registration update and TAU will be sent with the update which decreases power consumption.
-
-DTLS Connection Identifier
---------------------------
-
-Add :file:`overlay-dtls-cid.conf` to activate DTLS Connection Identifier.
-It is recommended to enable the Connection Identifier, because it reduces DTLS reconnection data traffic and also solves the network NAT timeout problems from client to server side.
-
-.. note::
-   This requires modem firmware version 1.3.5 or newer.
 
 Modem proprietary PSM
 ---------------------
@@ -590,10 +581,6 @@ Location assistance:
 * :file:`overlay-assist-pgps.conf` - Enables P-GPS assistance in the sample.
 
 Location service requires `Coiote Device Management`_ server and LwM2M v1.1.
-
-DTLS optimizations:
-
-* :file:`overlay-dtls-cid.conf` - Enables DTLS Connection Identifier.
 
 Power savings:
 
