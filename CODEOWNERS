@@ -57,6 +57,7 @@ Kconfig*                                  @tejlmand
 /doc/**/conf.py                           @carlescufi
 /doc/kconfig/                             @gmarull
 /doc/nrf/                                 @carlescufi
+/doc/nrf/device_guides/working_with_nrf/nrf54h/  @FrancescoSer
 /doc/nrfx/                                @gmarull
 /doc/matter/                              @gmarull
 /doc/mcuboot/                             @carlescufi
