@@ -21,8 +21,10 @@
 #endif
 #include <modem/lte_lc.h>
 #include <zephyr/random/random.h>
+#if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_socket.h>
 #include <nrf_modem_at.h>
+#endif
 #include <date_time.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
@@ -34,6 +36,7 @@
 #include "coap_codec.h"
 #include "nrf_cloud_coap_transport.h"
 #include "nrf_cloud_mem.h"
+#include "nrf_cloud_credentials.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
@@ -145,6 +148,16 @@ static int server_resolve(struct sockaddr_in *server4)
 	return 0;
 }
 
+static int add_creds(void)
+{
+	int err = 0;
+
+#if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
+	err = nrf_cloud_credentials_provision();
+#endif
+	return err;
+}
+
 /**@brief Initialize the CoAP client */
 int nrf_cloud_coap_init(void)
 {
@@ -154,6 +167,11 @@ int nrf_cloud_coap_init(void)
 	authenticated = false;
 
 	if (!initialized) {
+		err = add_creds();
+		if (err) {
+			return err;
+		}
+
 		/* Only initialize one time; not idempotent. */
 		LOG_DBG("Initializing async CoAP client");
 		coap_client.fd = sock;
@@ -359,14 +377,14 @@ static int nrf_cloud_coap_authenticate(void)
 #endif
 
 	LOG_DBG("Generate JWT");
-	jwt = k_malloc(JWT_BUF_SZ);
+	jwt = nrf_cloud_malloc(JWT_BUF_SZ);
 	if (!jwt) {
 		return -ENOMEM;
 	}
 	err = nrf_cloud_jwt_generate(NRF_CLOUD_JWT_VALID_TIME_S_MAX, jwt, JWT_BUF_SZ);
 	if (err) {
 		LOG_ERR("Error generating JWT with modem: %d", err);
-		k_free(jwt);
+		nrf_cloud_free(jwt);
 		return err;
 	}
 
@@ -374,7 +392,7 @@ static int nrf_cloud_coap_authenticate(void)
 	err = nrf_cloud_coap_post("auth/jwt", err ? NULL : ver_string,
 				 (uint8_t *)jwt, strlen(jwt),
 				 COAP_CONTENT_FORMAT_TEXT_PLAIN, true, auth_cb, NULL);
-	k_free(jwt);
+	nrf_cloud_free(jwt);
 
 	if (err) {
 		return err;

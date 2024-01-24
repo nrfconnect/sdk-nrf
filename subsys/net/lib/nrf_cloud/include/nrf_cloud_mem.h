@@ -42,4 +42,4 @@ void nrf_cloud_free(void *memory);
 }
 #endif
 
-#endif /* NRF_CLOUD_OS_H_ */
+#endif /* NRF_CLOUD_MEM_H_ */

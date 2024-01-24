@@ -7,6 +7,7 @@
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_mem.h"
 #include "nrf_cloud_client_id.h"
+#include "nrf_cloud_credentials.h"
 #if defined(CONFIG_NRF_CLOUD_FOTA)
 #include "nrf_cloud_fota.h"
 #endif
@@ -28,13 +29,6 @@
 #endif /* defined(CONFIG_POSIX_API) */
 
 LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
-
-#if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
-#include CONFIG_NRF_CLOUD_CERTIFICATES_FILE
-#if defined(CONFIG_MODEM_KEY_MGMT)
-#include <modem/modem_key_mgmt.h>
-#endif
-#endif /* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) */
 
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
 BUILD_ASSERT((sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1) <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
@@ -507,6 +501,7 @@ err_cleanup:
 static int nct_provision(void)
 {
 	static sec_tag_t sec_tag_list[] = { CONFIG_NRF_CLOUD_SEC_TAG };
+	int err = 0;
 
 	nct.tls_config.peer_verify = 2;
 	nct.tls_config.cipher_count = 0;
@@ -516,91 +511,14 @@ static int nct_provision(void)
 	nct.tls_config.hostname = NRF_CLOUD_HOSTNAME;
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
-	LOG_WRN("CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES is not secure and should be used only for "
-		"testing purposes");
+		err = nrf_cloud_credentials_provision();
 
-#if defined(CONFIG_NRF_MODEM_LIB)
-	{
-		int err;
-
-		/* Delete certificates */
-		nrf_sec_tag_t sec_tag = CONFIG_NRF_CLOUD_SEC_TAG;
-
-		for (enum modem_key_mgmt_cred_type type = 0; type < 5;
-		     type++) {
-			err = modem_key_mgmt_delete(sec_tag, type);
-			LOG_DBG("modem_key_mgmt_delete(%u, %d) => result = %d",
-				sec_tag, type, err);
-		}
-
-		/* Provision CA Certificate. */
-		err = modem_key_mgmt_write(CONFIG_NRF_CLOUD_SEC_TAG,
-					   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-					   ca_certificate,
-					   strlen(ca_certificate));
 		if (err) {
-			LOG_ERR("ca_certificate err: %d", err);
 			return err;
 		}
+#endif
 
-		/* Provision Private Certificate. */
-		err = modem_key_mgmt_write(
-			CONFIG_NRF_CLOUD_SEC_TAG,
-			MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
-			private_key,
-			strlen(private_key));
-		if (err) {
-			LOG_ERR("private_key err: %d", err);
-			return err;
-		}
-
-		/* Provision Public Certificate. */
-		err = modem_key_mgmt_write(
-			CONFIG_NRF_CLOUD_SEC_TAG,
-			MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
-			device_certificate,
-			strlen(device_certificate));
-		if (err) {
-			LOG_ERR("device_certificate err: %d",
-				err);
-			return err;
-		}
-	}
-#else
-	{
-		int err;
-
-		err = tls_credential_add(CONFIG_NRF_CLOUD_SEC_TAG,
-					 TLS_CREDENTIAL_CA_CERTIFICATE,
-					 ca_certificate,
-					 sizeof(ca_certificate));
-		if (err < 0) {
-			LOG_ERR("Failed to register ca certificate: %d", err);
-			return err;
-		}
-		err = tls_credential_add(CONFIG_NRF_CLOUD_SEC_TAG,
-					 TLS_CREDENTIAL_PRIVATE_KEY,
-					 private_key,
-					 sizeof(private_key));
-		if (err < 0) {
-			LOG_ERR("Failed to register private key: %d", err);
-			return err;
-		}
-		err = tls_credential_add(
-			CONFIG_NRF_CLOUD_SEC_TAG,
-			TLS_CREDENTIAL_SERVER_CERTIFICATE,
-			device_certificate,
-			sizeof(device_certificate));
-		if (err < 0) {
-			LOG_ERR("Failed to register public certificate: %d",
-				err);
-			return err;
-		}
-	}
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
-#endif /* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) */
-
-	return 0;
+	return err;
 }
 
 static int nct_settings_set(const char *key, size_t len_rd,
