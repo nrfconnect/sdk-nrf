@@ -859,7 +859,11 @@ Libraries for NFC
 nRF Security
 ------------
 
-|no_changes_yet_note|
+* Updated the library to no longer enable RSA keys by default.
+  This reduces the code size by 30 kB for those that are not using RSA keys.
+  This will also break the configuration for those using the RSA keys without explicitly enabling an RSA key size.
+  Enable the required key size to fix the configuration, for example by setting the Kconfig option :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` if 2048-bit RSA keys are required.
+
 
 Other libraries
 ---------------

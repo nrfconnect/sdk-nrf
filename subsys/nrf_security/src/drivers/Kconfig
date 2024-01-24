@@ -160,7 +160,6 @@ menu "RSA key size configuration"
 config PSA_WANT_RSA_KEY_SIZE_1024
 	prompt "RSA 1024 bits key (weak)"
 	bool
-	default y
 	help
 	  RSA with 1024 bit keys are not recommended for new designs.
 	  Please see https://www.keylength.com/
