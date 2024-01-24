@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_BLE_ADV_CTRL_ENABLE
+	bool "Bluetooth LE advertising control module"
+	depends on CAF_BLE_ADV
+	select CAF_MODULE_SUSPEND_EVENTS
+	help
+	  The module controls suspend/resume of CAF Bluetooth LE advertising
+	  module.
+
+if DESKTOP_BLE_ADV_CTRL_ENABLE
+
+config DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB
+	bool "Suspend Bluetooth LE adverising when USB is connected"
+	depends on DESKTOP_USB_ENABLE
+	help
+	  Suspend CAF Bluetooth LE advertising module while HID USB is active.
+
+module = DESKTOP_BLE_ADV_CTRL
+module-str = BLE advertising control
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_BLE_ADV_CTRL_ENABLE
