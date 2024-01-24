@@ -17,6 +17,7 @@
 
 #include <autoconf.h>
 #include "tfm_sp_log.h"
+#include "utilities.h"
 
 #ifdef CONFIG_ASSERT
 /* Use same print mode as non-secure. */
