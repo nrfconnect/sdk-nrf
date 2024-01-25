@@ -788,7 +788,7 @@ UART
 
 MoSh command: ``uart``
 
-Disable UARTs for power measurement purposes.
+Disable UARTs for power measurement purposes or change shell UART baudrate.
 
 * Disable UARTs for 30 seconds:
 
@@ -801,6 +801,12 @@ Disable UARTs for power measurement purposes.
   .. code-block:: console
 
      uart during_sleep disable
+
+* Change shell UART baudrate to 921600:
+
+  .. code-block:: console
+
+     uart baudrate 921600
 
 ----
 
