@@ -29,7 +29,7 @@ jobs:
           pip3 install zcbor==0.5.1
 
       - name: Install sonar-scanner and build-wrapper
-        uses: sonarsource/sonarcloud-github-c-cpp@v1.3.2
+        uses: sonarsource/sonarcloud-github-c-cpp@v2.0.2
 
       # The docker image comes pre-initialized with west dependencies. We want to do west update ourselves to to be sure that we get the latest changes in all repos.
       # The docker image is built nightly. So it may contain slightly out of date repos.
