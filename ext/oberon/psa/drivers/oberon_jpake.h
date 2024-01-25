@@ -1,10 +1,12 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+//
+// This file is based on the Arm PSA Crypto Driver API.
 
 #ifndef OBERON_JPAKE_H
 #define OBERON_JPAKE_H
@@ -32,29 +34,15 @@ typedef struct {
     uint8_t         P[3][64]; // peer keys
     uint8_t         V[64]; // ZKP public key
     uint8_t         r[32]; // ZKP signature
-    psa_pake_role_t role;
 } oberon_jpake_operation_t;
 
 
 psa_status_t oberon_jpake_setup(
     oberon_jpake_operation_t *operation,
-    const psa_pake_cipher_suite_t *cipher_suite);
-
-psa_status_t oberon_jpake_set_password_key(
-    oberon_jpake_operation_t *operation,
-    const psa_key_attributes_t *attributes,
-    const uint8_t *password, size_t password_length);
-
-psa_status_t oberon_jpake_set_user(
-    oberon_jpake_operation_t *operation,
-    const uint8_t *user_id, size_t user_id_len);
-
-psa_status_t oberon_jpake_set_peer(
-    oberon_jpake_operation_t *operation,
-    const uint8_t *peer_id, size_t peer_id_len);
-
-psa_status_t oberon_jpake_set_role(
-    oberon_jpake_operation_t *operation,
+    const psa_pake_cipher_suite_t *cipher_suite,
+    const uint8_t *password, size_t password_length,
+    const uint8_t *user_id, size_t user_id_length,
+    const uint8_t *peer_id, size_t peer_id_length,
     psa_pake_role_t role);
 
 psa_status_t oberon_jpake_output(

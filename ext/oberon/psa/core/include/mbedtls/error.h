@@ -73,6 +73,7 @@
  * SHA1      1                  0x0035-0x0035 0x0073-0x0073
  * SHA256    1                  0x0037-0x0037 0x0074-0x0074
  * SHA512    1                  0x0039-0x0039 0x0075-0x0075
+ * SHA-3     1                  0x0076-0x0076
  * CHACHA20  3                  0x0051-0x0055
  * POLY1305  3                  0x0057-0x005B
  * CHACHAPOLY 2 0x0054-0x0056
@@ -121,15 +122,15 @@ extern "C" {
  *        Wrapper macro for mbedtls_error_add(). See that function for
  *        more details.
  */
-#define MBEDTLS_ERROR_ADD( high, low ) \
-        mbedtls_error_add( high, low, __FILE__, __LINE__ )
+#define MBEDTLS_ERROR_ADD(high, low) \
+    mbedtls_error_add(high, low, __FILE__, __LINE__)
 
 #if defined(MBEDTLS_TEST_HOOKS)
 /**
  * \brief Testing hook called before adding/combining two error codes together.
  *        Only used when invasive testing is enabled via MBEDTLS_TEST_HOOKS.
  */
-extern void (*mbedtls_test_hook_error_add)( int, int, const char *, int );
+extern void (*mbedtls_test_hook_error_add)(int, int, const char *, int);
 #endif
 
 /**
@@ -150,29 +151,30 @@ extern void (*mbedtls_test_hook_error_add)( int, int, const char *, int );
  * \param file      file where this error code addition occurred.
  * \param line      line where this error code addition occurred.
  */
-static inline int mbedtls_error_add( int high, int low,
-                                     const char *file, int line )
+static inline int mbedtls_error_add(int high, int low,
+                                    const char *file, int line)
 {
 #if defined(MBEDTLS_TEST_HOOKS)
-    if( *mbedtls_test_hook_error_add != NULL )
-        ( *mbedtls_test_hook_error_add )( high, low, file, line );
+    if (*mbedtls_test_hook_error_add != NULL) {
+        (*mbedtls_test_hook_error_add)(high, low, file, line);
+    }
 #endif
-    (void)file;
-    (void)line;
+    (void) file;
+    (void) line;
 
-    return( high + low );
+    return high + low;
 }
 
 /**
- * \brief Translate a mbed TLS error code into a string representation,
- *        Result is truncated if necessary and always includes a terminating
- *        null byte.
+ * \brief Translate an Mbed TLS error code into a string representation.
+ *        The result is truncated if necessary and always includes a
+ *        terminating null byte.
  *
  * \param errnum    error code
  * \param buffer    buffer to place representation in
  * \param buflen    length of the buffer
  */
-void mbedtls_strerror( int errnum, char *buffer, size_t buflen );
+void mbedtls_strerror(int errnum, char *buffer, size_t buflen);
 
 /**
  * \brief Translate the high-level part of an Mbed TLS error code into a string
@@ -187,7 +189,7 @@ void mbedtls_strerror( int errnum, char *buffer, size_t buflen );
  * \return The string representation of the error code, or \c NULL if the error
  *         code is unknown.
  */
-const char * mbedtls_high_level_strerr( int error_code );
+const char *mbedtls_high_level_strerr(int error_code);
 
 /**
  * \brief Translate the low-level part of an Mbed TLS error code into a string
@@ -202,7 +204,7 @@ const char * mbedtls_high_level_strerr( int error_code );
  * \return The string representation of the error code, or \c NULL if the error
  *         code is unknown.
  */
-const char * mbedtls_low_level_strerr( int error_code );
+const char *mbedtls_low_level_strerr(int error_code);
 
 #ifdef __cplusplus
 }
