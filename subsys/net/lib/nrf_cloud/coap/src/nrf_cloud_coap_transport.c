@@ -156,6 +156,7 @@ int nrf_cloud_coap_init(void)
 	if (!initialized) {
 		/* Only initialize one time; not idempotent. */
 		LOG_DBG("Initializing async CoAP client");
+		coap_client.fd = sock;
 		err = coap_client_init(&coap_client, NULL);
 		if (err) {
 			LOG_ERR("Failed to initialize CoAP client: %d", err);
