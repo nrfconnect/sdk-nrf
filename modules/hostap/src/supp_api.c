@@ -75,11 +75,13 @@ static inline struct wpa_supplicant *get_wpa_s_handle(const struct device *dev)
 	return z_wpas_get_handle_by_ifname(dev->name);
 }
 
+#define WPA_SUPP_STATE_POLLING_MS 10
 static int wait_for_disconnect_complete(const struct device *dev)
 {
 	int ret = 0;
-	int timeout = 0;
+	int attempts = 0;
 	struct wpa_supplicant *wpa_s = get_wpa_s_handle(dev);
+	unsigned int max_attempts = DISCONNECT_TIMEOUT_MS / WPA_SUPP_STATE_POLLING_MS;
 
 	if (!wpa_s) {
 		ret = -ENODEV;
@@ -88,13 +90,12 @@ static int wait_for_disconnect_complete(const struct device *dev)
 	}
 
 	while (wpa_s->wpa_state != WPA_DISCONNECTED) {
-		if (timeout > DISCONNECT_TIMEOUT_MS) {
+		if (attempts++ > max_attempts) {
 			ret = -ETIMEDOUT;
 			wpa_printf(MSG_WARNING, "Failed to disconnect from network");
 			break;
 		}
-		k_sleep(K_MSEC(10));
-		timeout++;
+		k_sleep(K_MSEC(WPA_SUPP_STATE_POLLING_MS));
 	}
 out:
 	return ret;
