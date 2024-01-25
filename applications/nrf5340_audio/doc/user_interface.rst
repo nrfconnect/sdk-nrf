@@ -102,8 +102,9 @@ To indicate the tasks performed, the application uses the LED behavior described
 |                          | Blinking blue on the BIS gateway: Kit has started broadcasting audio.                                     | :ref:`nrf53_audio_broadcast_source_app`     |
 +--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
 | **LED2**                 | Off - Sync not achieved.                                                                                  | All                                         |
-|                          +-----------------------------------------------------------------------------------------------------------+                                             |
-|                          | Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).       |                                             |
+|                          +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|                          | Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).       | * :ref:`nrf53_audio_broadcast_sink_app`     |
+|                          |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
 +--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
 | **LED3**                 | Blinking green - The nRF5340 Audio DK application core is running.                                        | All                                         |
 +--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+

@@ -56,12 +56,12 @@ Configurations and calls are handled through standard HCI and VSC.
 Samples using the library
 *************************
 
-The :ref:`nrf53_audio_app` application uses the controller.
+The :ref:`nrf53_audio_app` use the controller.
 
 Files
 *****
 
-The network core for both gateway and headsets of the :ref:`nrf53_audio_app` is programmed with the precompiled Bluetooth Low Energy Controller binary file :file:`ble5-ctr-rpmsg_<XYZ>.hex`, where *<XYZ>* corresponds to the controller version, for example :file:`ble5-ctr-rpmsg_3216.hex`.
+The network core for both gateway and headset versions of :ref:`nrf53_audio_app` is programmed with the precompiled Bluetooth Low Energy Controller binary file :file:`ble5-ctr-rpmsg_<XYZ>.hex`, where *<XYZ>* corresponds to the controller version, for example :file:`ble5-ctr-rpmsg_3216.hex`.
 This file includes the LE Audio Controller Subsystem for nRF53.
 If :ref:`DFU is enabled <nrf53_audio_app_configuration_configure_fota>`, the subsystem's binary file will be generated in the :file:`build/zephyr/` directory and will be called :file:`net_core_app_signed.hex`.
 
@@ -77,10 +77,10 @@ Limitations
 
 The controller is marked as :ref:`experimental <software_maturity>`.
 
-This controller and the LE Audio Controller Subsystem for nRF5340 it includes has been tested and works in configurations used by the :ref:`nrf53_audio_app` application (for example, 2 concurrent CIS, or BIS).
+This controller and the LE Audio Controller Subsystem for nRF5340 it includes has been tested and works in configurations used by the :ref:`nrf53_audio_app` (for example, 2 concurrent CIS, or BIS).
 No other configurations than the ones used in the referenced application have been tested or documented for this library.
 
-When you :ref:`build the nRF5340 Audio application with the nRF21540 FEM support <nrf53_audio_app_adding_FEM_support>`, the LE Audio controller for nRF5340 does not support the +20 dBm setting.
+When you :ref:`build an nRF5340 Audio application with the nRF21540 FEM support <nrf53_audio_app_adding_FEM_support>`, the LE Audio controller for nRF5340 does not support the +20 dBm setting.
 This is because of a power class restriction in the controller's QDID.
 
 Dependencies

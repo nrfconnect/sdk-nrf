@@ -50,7 +50,7 @@ nRF5340 Audio development kit support
    When programming an application for the nRF5340 Audio DK, the application core image is built from a combination of different configuration files.
    The network core image is programmed with an application-specific precompiled Bluetooth Low Energy Controller binary file that contains the LE Audio Controller Subsystem for nRF53.
 
-   See the :ref:`nrf53_audio_app` application documentation for more information.
+   See the documentation for :ref:`nrf53_audio_app` for more information.
 
 .. _ug_multi_image_default_config:
 
