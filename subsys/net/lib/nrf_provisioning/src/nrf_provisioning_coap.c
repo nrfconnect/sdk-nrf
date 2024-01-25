@@ -70,6 +70,7 @@ int nrf_provisioning_coap_init(struct nrf_provisioning_mm_change *mmode)
 	}
 
 	LOG_INF("Init CoAP client");
+	client.fd = -1;
 	ret = coap_client_init(&client, NULL);
 	if (ret) {
 		LOG_ERR("Failed to initialize CoAP client, error: %d", ret);
@@ -224,11 +225,13 @@ static int socket_close(int *const fd)
 	int ret;
 
 	if (*fd > -1) {
-		ret = zsock_close(*fd);
+		int temp = *fd;
+
+		*fd = client.fd = -1;
+		ret = zsock_close(temp);
 		if (ret) {
 			LOG_WRN("Failed to close socket, error: %d", errno);
 		}
-		*fd = -1;
 	}
 
 	return 0;
