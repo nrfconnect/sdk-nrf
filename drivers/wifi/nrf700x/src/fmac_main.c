@@ -110,7 +110,7 @@ struct nrf_wifi_vif_ctx_zep *nrf_wifi_get_vif_ctx(struct net_if *iface)
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 
-	if (!iface || !rpu_ctx) {
+	if (!iface || !rpu_ctx || !rpu_ctx->rpu_ctx) {
 		return NULL;
 	}
 
