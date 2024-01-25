@@ -9,61 +9,10 @@ Introduction to SUIT
    :local:
    :depth: 2
 
-This document explains why the SUIT procedure was selected, gives an overview of SUIT and its characteristics, and gives a comparison to the MCUboot DFU procedure.
+This documentives an overview of SUIT and its characteristics.
 See the ``nrf54h_suit_sample`` if you want to try using the SUIT procedure on the nRF54H20 SoC.
 
-Why SUIT was selected as a DFU procedure
-****************************************
-
-The nRF54H Series contains multiple CPU cores and images as opposed to other products by Nordic Semiconductor, such as the nRF52 Series.
-Multiple CPU cores add more possibilities for development and complexity for operations such as performing a DFU.
-This requires a DFU procedure that can address the needs of a single device containing multiple cores and multiple images.
-
-Therefore, the SUIT procedure was selected due to its features:
-
-* Script-based systems that allow you to customize the instructions for installation and invocation
-
-* Dependency management between multiple executable images
-
-* Support for multiple signing authorities that will be required for each dependency
-
-* Customization for the allocation of upgradeable elements
-
-.. note::
-
-   The term "invocation" is used in this document to mean "booting procedure".
-
-
-Script-based systems
-====================
-
-SUIT features a script-based system.
-This contains high-level instructions collected into *command sequences*.
-SUIT's command sequences allow you to express certain sequences for installation and invocation in an imperative way.
-This offers flexibility in cases where, for example, you want to minimize the size of a download within the DFU lifecycle to increase flash efficiency.
-
-This allows for extensive management of dependencies between components, meaning you can execute different logic on different groups of components.
-For example, the location of a slot or component does not have to be static and can be changed within the manifest.
-
-The script-based system also allows you to direct the manifest to download only the necessary, specified data.
-You can do this, for example, by checking what is already in the device receiving the DFU or by checking the version number of the existing firmware.
-This saves on both transfer cost and memory on the device.
-
-SUIT topology
-=============
-
-SUIT features a topology which allows for dependency management between multiple executable images.
-Additionally, the SUIT topology allows you to provide multiple signing authorities that will be required for each dependency.
-
-For information on the SUIT topology used by Nordic Semiconductor's implementation of SUIT, see the :ref:`ug_nrf54h20_suit_hierarchical_manifests` page.
-
-Allocation of components
-========================
-
-SUIT itself does not decide the component allocation, rather it can be defined in the manifest.
-This is because their location is flexible and there are some options available to change the location of a specific image within the manifest.
-
-See the :ref:`mcuboot_comparison` section for further information on why SUIT was selected for DFU procedures for the nRF54H Series of SoC.
+.. _ug_suit_overview:
 
 SUIT overview
 *************
@@ -73,7 +22,7 @@ The SUIT procedure features a flexible, script-based system that allows the DFU 
 
 It also features a root manifest that contains the main instructions of the SUIT procedure, as well as local manifests for each of its required dependencies.
 The SUIT manifests control the invocation procedure at the same level of detail as the update procedure.
-See :ref:`ug_how_suit_manifest_works` to read more about the contents of the manifests.
+See the :ref:`ug_nrf54h20_suit_manifest_overview` page to read more about the contents of the manifests.
 
 The nRF54H Series contains multiple CPUs with one dedicated CPU for the Secure Domain.
 The Secure Domain CPU firmware is validated and started by the Secure Domain ROM.
@@ -82,7 +31,7 @@ The local domain CPU firmware images are validated and started by the Secure Dom
 
 Once the invocation process is complete, the SDFW is still active and may serve specific requests from specified domains.
 Therefore, unlike in MCUboot, the Application Core and other cores may use the SDFW services.
-(See the :ref:`mcuboot_comparison` section for more details and further comparison of the two DFU procedures.)
+(See the :ref:`ug_nrf54h20_suit_compare_other_dfu` page for more details and further comparison of SUIT with other DFU and bootloader procedures.)
 The bootloader SDFW image provided by Nordic Semiconductor is offered in binary form.
 Along with this, you can compose a final image with your own application image that is signed by your own keys.
 
@@ -95,6 +44,8 @@ SUIT-specific concepts
 **********************
 
 Below is a description of SUIT-specific concepts.
+
+.. _ug_suit_dfu_component_def:
 
 Component
 =========
@@ -151,7 +102,7 @@ Manifest
 A bundle of metadata describing one or more pieces of code or data payloads.
 This includes instructions on how to obtain those payloads, as well as how to install, verify, and invoke them.
 These instructions are encoded in the manifest in the form of command sequences.
-See the :ref:`ug_how_suit_manifest_works` for more details about the contents of a manifest.
+See the :ref:`ug_nrf54h20_suit_manifest_overview` page for more details about the contents of a manifest.
 Each manifest, either the root or dependency manifest, is encased in its own envelope.
 
 .. note::
@@ -179,7 +130,6 @@ Integrated dependencies
 
 Integrated dependencies contain the manifests needed for any required dependencies and are encased in their own SUIT envelope structure.
 These are optional for SUIT envelopes and only necessary if there are dependencies needed for the DFU.
-
 
 .. _ug_suit_dfu_suit_procedure:
 
@@ -274,37 +224,3 @@ They are as follows:
 * ``load`` - is used in special cases when the firmware needs to be moved before invoking it.
 
 * ``invoke`` - hands over execution to the firmware.
-
-.. _mcuboot_comparison:
-
-MCUboot and SUIT comparison
-***************************
-
-The Nordic Semiconductor implementation of the SUIT procedure provides a more flexible and tailored DFU experience compared to the MCUboot procedure to better fit the needs of the SoC's multiple cores and transports.
-See the diagram and comparison table below for further comparison.
-
-.. figure:: images/nrf54h20_suit_mcuboot_comparison.png
-   :alt: MCUboot and SUIT architecture comparison
-
-   MCUboot and SUIT architecture comparison
-
-+----------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| Action               |  MCUboot characteristics                                                                                                                              | SUIT characteristics                                                                                                                      |
-+======================+=======================================================================================================================================================+===========================================================================================================================================+
-| Customization        | Built by users, where partitions are customized using Kconfig in the source code and becomes static.                                                  | SDFW built by Nordic Semiconductor and will be delivered in binary form.                                                                  |
-|                      |                                                                                                                                                       | SDFW behavior can be customized by users by using configuration data written to the IC register (xICR) and logic in the SUIT manifest(s). |
-+----------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| Slot management      | Follows a "symmetrical" primary and secondary slot style, where there is a secondary slot for each update candidate and a corresponding primary slot. | Contains a single DFU partition, where components act as slots and the DFU partition copies images to the designated component(s).        |
-|                      | The DFU is copied and swapped between the slots accordingly:                                                                                          | Additionally:                                                                                                                             |
-|                      |                                                                                                                                                       |                                                                                                                                           |
-|                      | * Primary slot is where the system is executed from.                                                                                                  | * The DFU partition size can be located anywhere in the non-volatile memory, accessible in the application core                           |
-|                      | * Secondary slot is the destination for the DFU.                                                                                                      | * Information about location of the DFU is thus not hardcoded in the SDFW and can be changed between updates in the system                |
-|                      |                                                                                                                                                       | * The DFU partition is where the update candidate is stored for the purpose of a system update                                            |
-+----------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| Slot characteristics | Has the same amount and size of primary and secondary slots (a one-to-one match).                                                                     | Has a single DFU partition and multiple components where their sizes can be customized.                                                   |
-|                      | This leads to high non-volatile memory overhead due to the secondary slots.                                                                           | This allows for non-volatile memory overhead to be minimized (especially for multi-component devices, such as IP-connected devices).      |
-+----------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| Slot definition      | Definition of slots (their location and size) is statically compiled into MCUboot, making it difficult to change for devices deployed to the field.   | There is a technical possibility to change the definition of components (the location and size) between each update.                      |
-+----------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| Invocation process   | Behavior of the invocation process instrumentation abilities are limited through the image's metadata.                                                | Behavior of the invocation process can be relatively deeply instrumented within the manifest.                                             |
-+----------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
