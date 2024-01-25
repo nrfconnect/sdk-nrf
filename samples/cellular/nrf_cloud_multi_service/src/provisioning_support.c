@@ -78,6 +78,7 @@ static void mark_provisioning_idle_work_fn(struct k_work *work)
 	LOG_INF("Provisioning is idle.");
 	k_event_post(&prov_events, PROVISIONING_IDLE);
 }
+
 static K_WORK_DELAYABLE_DEFINE(provisioning_idle_work, mark_provisioning_idle_work_fn);
 
 /* Called by the provisioning library when each provisioning attempt starts, stops, or finishes
@@ -125,10 +126,12 @@ static void device_mode_cb(enum nrf_provisioning_event event, void *user_data)
 static struct nrf_provisioning_mm_change mmode = { .cb = modem_mode_cb };
 static struct nrf_provisioning_dm_change dmode = { .cb = device_mode_cb };
 
-/* Initialize the provisioning library and start checking for provisioning commands.
+/* Work item to initialize the provisioning library and start checking for provisioning commands.
  * Called automatically the first time network connectivity is established.
+ * Needs to be a work item since nrf_provisioning_init may attempt to install certs in a blocking
+ * fashion.
  */
-static void start_provisioning(void)
+static void start_provisioning_work_fn(struct k_work *work)
 {
 	LOG_INF("Initializing the nRF Provisioning library...");
 
@@ -139,8 +142,11 @@ static void start_provisioning(void)
 	}
 }
 
+static K_WORK_DEFINE(start_provisioning_work, start_provisioning_work_fn);
+
 /* Callback to track network connectivity */
 static struct net_mgmt_event_callback l4_callback;
+
 static void l4_event_handler(struct net_mgmt_event_callback *cb,
 			     uint32_t event, struct net_if *iface)
 {
@@ -149,9 +155,13 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 		k_event_clear(&prov_events, NETWORK_DOWN);
 		k_event_post(&prov_events, NETWORK_UP);
 
-		/* Start the provisioning library after network readiness is first established. */
+		/* Start the provisioning library after network readiness is first established.
+		 * We offload this to a workqueue item to avoid a deadlock.
+		 * (nrf_provisioning_init might attempt to install certs, and in the process,
+		 * trigger a blocking wait for L4_DOWN, which cannot fire until this handler exits.)
+		 */
 		if (!provisioning_started) {
-			start_provisioning();
+			k_work_submit(&start_provisioning_work);
 			provisioning_started = true;
 		}
 	} else if (event == NET_EVENT_L4_DISCONNECTED) {
