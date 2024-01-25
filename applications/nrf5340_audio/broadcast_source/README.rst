@@ -49,7 +49,9 @@ This application uses specific mapping for the following user interface elements
 Configuration
 *************
 
-See :ref:`nrf53_audio_app_configuration` and :ref:`nrf53_audio_app_fota` for configuration options common to all nRF5340 Audio applications.
+The application requires the ``CONFIG_TRANSPORT_BIS`` Kconfig option to be set to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file for `Building and running`_ to succeed.
+
+For other configuration options, see :ref:`nrf53_audio_app_configuration` and :ref:`nrf53_audio_app_fota`.
 
 For information about how to configure applications in the |NCS|, see :ref:`configure_application`.
 
@@ -58,12 +60,18 @@ For information about how to configure applications in the |NCS|, see :ref:`conf
 Building and running
 ********************
 
-This application can be found under :file:`applications/nrf5340_audio/broadcast_source` in the nRF Connect SDK folder structure.
+This application can be found under :file:`applications/nrf5340_audio/broadcast_source` in the nRF Connect SDK folder structure, but it uses :file:`.conf` files at :file:`applications/nrf5340_audio/`.
 
 The nRF5340 Audio DK comes preprogrammed with basic firmware that indicates if the kit is functional.
 See :ref:`nrf53_audio_app_dk_testing_out_of_the_box` for more information.
 
-To build the application, see :ref:`nrf53_audio_app_building`.
+To build the application, complete the following steps:
+
+1. Select the BIS mode by setting the ``CONFIG_TRANSPORT_BIS`` Kconfig option to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file for the debug version and in the :file:`applications/nrf5340_audio/prj_release.conf` file for the release version.
+#. Complete the steps for building and programming common to all audio applications using one of the following methods:
+
+   * :ref:`nrf53_audio_app_building_script`
+   * :ref:`nrf53_audio_app_building_standard`
 
 After programming, the broadcast source automatically starts broadcasting the default 48-kHz audio stream.
 

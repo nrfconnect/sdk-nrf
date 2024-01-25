@@ -60,7 +60,7 @@ Before using the script, make sure to update this file with the following inform
 * ``nrf5340_audio_dk_snr`` -- This field lists the SEGGER serial number.
   You can check this number on the sticker on the nRF5340 Audio development kit.
   Alternatively, connect the development kit to your PC and run ``nrfjprog -i`` in a command window to print the SEGGER serial number of the kit.
-* ``nrf5340_audio_dk_dev`` -- This field assigns the specific nRF5340 Audio development kit to be a headset or a gateway.
+* ``nrf5340_audio_dk_dev`` -- This field assigns the specific nRF5340 Audio development kit to be ``headset`` or ``gateway``.
 * ``channel`` -- This field is valid only for headsets.
   It sets the channels on which the headset is meant to work.
   When no channel is set, the headset is programmed as a left channel one.
@@ -215,14 +215,14 @@ Complete the following steps to build the application:
    #. Choose the application version by using one of the following options:
 
       * For the debug version: No build flag needed.
-      * For the release version: ``-DCONF_FILE=prj_release.conf``
+      * For the release version: ``-DCONF_FILE="prj_release.conf"``
 
 #. Build the application using the standard :ref:`build steps <programming_cmd>` for the command line.
-   For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command:
+   For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command from the :file:`applications/nrf5340_audio/` directory:
 
    .. code-block:: console
 
-      west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DCONF_FILE=prj_release.conf
+      west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DCONF_FILE="prj_release.conf"
 
    Unlike when :ref:`nrf53_audio_app_building_script`, this command creates the build files directly in the :file:`build` directory.
    This means that you first need to program the headset development kits before you build and program gateway development kits.

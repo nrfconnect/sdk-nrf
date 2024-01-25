@@ -56,7 +56,10 @@ This application uses specific mapping for the following user interface elements
 Configuration
 *************
 
-See :ref:`nrf53_audio_app_configuration` and :ref:`nrf53_audio_app_fota` for configuration options common to all nRF5340 Audio applications.
+By default, if you have not made any changes to :file:`.conf` files at :file:`applications/nrf5340_audio/`, the nRF5340 build script tries to build the CIS applications in the CIS unidirectional mode.
+To switch to the bidirectional mode, see :ref:`nrf53_audio_app_configuration_select_bidirectional`.
+
+For other configuration options, see :ref:`nrf53_audio_app_configuration` and :ref:`nrf53_audio_app_fota`.
 
 For information about how to configure applications in the |NCS|, see :ref:`configure_application`.
 
@@ -65,7 +68,7 @@ For information about how to configure applications in the |NCS|, see :ref:`conf
 Building and running
 ********************
 
-This application can be found under :file:`applications/nrf5340_audio/unicast_client` in the nRF Connect SDK folder structure.
+This application can be found under :file:`applications/nrf5340_audio/unicast_client` in the nRF Connect SDK folder structure, but it uses :file:`.conf` files at :file:`applications/nrf5340_audio/`.
 
 The nRF5340 Audio DK comes preprogrammed with basic firmware that indicates if the kit is functional.
 See :ref:`nrf53_audio_app_dk_testing_out_of_the_box` for more information.
