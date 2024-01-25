@@ -74,5 +74,12 @@ typedef union {
 
 } psa_driver_aead_context_t;
 
+/* These contexts are used by psa_crypto.c and we need to define
+ * them in order to avoid building errors. We don't use these at all
+ * in the Oberon PSA core, the int type was chosen arbitrarily.
+ */
+typedef int psa_driver_sign_hash_interruptible_context_t;
+typedef int psa_driver_verify_hash_interruptible_context_t;
+
 #endif /* PSA_CRYPTO_DRIVER_CONTEXTS_COMPOSITES_H */
 /* End of automatically generated file. */
