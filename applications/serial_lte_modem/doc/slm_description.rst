@@ -79,7 +79,7 @@ CONFIG_SLM_NATIVE_TLS_CREDENTIAL_BUFFER_COUNT - Number of buffers for loading cr
 CONFIG_SLM_EXTERNAL_XTAL - Use external XTAL for UARTE
    This option configures the application to use an external XTAL for UARTE.
    For the nRF9160 DK, see the `nRF9160 Product Specification`_ (section 6.19 UARTE) for more information.
-   For the nRF9161 DK, see the `nRF9161 Objective Product Specification`_ (section 6.19 UARTE) for more information.
+   For the nRF9161 DK, see the `nRF9161 Product Specification`_ (section 6.19 UARTE) for more information.
 
 .. _CONFIG_SLM_START_SLEEP:
 

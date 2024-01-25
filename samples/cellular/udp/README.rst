@@ -24,7 +24,7 @@ Overview
 
 The sample acts directly on socket level abstraction.
 It configures a UDP socket and continuously transmits data over the socket to the modem's TCP/IP stack, where the data eventually gets transmitted to a server specified by an IP address and a port number.
-To control the LTE link, it uses the :ref:`lte_lc_readme` library and requests Power Saving Mode (PSM), :term:`extended Discontinuous Reception (eDRX)` mode and `Release Assistance Indication (RAI)`_ parameters.
+To control the LTE link, it uses the :ref:`lte_lc_readme` library and requests Power Saving Mode (PSM), :term:`extended Discontinuous Reception (eDRX)` mode and :term:`Release Assistance Indication (RAI)` parameters.
 These parameters can be set through the sample configuration file :file:`prj.conf`.
 
 You can configure the frequency with which the packets are transmitted and the size of the UDP payload through the Kconfig system.
@@ -39,7 +39,8 @@ This is due to the simple UDP/IP behavior demonstrated by the sample, which make
 Measuring current
 =================
 
-For measuring current on an nRF9160 DK, it must first be prepared as described in `Measuring Current on nRF9160 DK`_.
+For measuring current on an nRF9161 DK, it must first be prepared as described in `Measuring Current on nRF9161 DK`_.
+For measuring current on an nRF9160 DK, see `Measuring Current on nRF9160 DK`_.
 If you are measuring current on a Thingy:91, see `Measuring Current on Thingy:91`_.
 
 Configuration
@@ -129,7 +130,7 @@ The following configurations are recommended for low power behavior:
    before the device enters PSM.
 
 PSM and eDRX timers are set with binary strings that signify a time duration in seconds.
-For a conversion chart of these timer values, see the `Power saving mode setting`_ section in the nRF9160 AT Commands Reference Guide or the same section in the `nRF91x1 AT Commands Reference Guide`_ depending on the SiP you are using.
+For a conversion chart of these timer values, see the `Power saving mode setting`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 Power saving mode setting_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
 
 .. note::
    The availability of power saving features or timers is entirely dependent on the cellular network.

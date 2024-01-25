@@ -39,7 +39,7 @@ To provision the credentials, complete the following steps:
       AT%CMNG=3,<TAG>,3
       AT%CMNG=3,<TAG>,4
 
-   See the `Credential storage management %CMNG`_ section in the nRF9160 AT Commands Reference Guide or the same section in the `nRF91x1 AT Commands Reference Guide`_ depending on the SiP you are using.
+   See the `Credential storage management %CMNG`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 credential storage management %CMNG_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
 
 #. Identify the device IMEI by issuing the command ``AT+CGSN``:
 

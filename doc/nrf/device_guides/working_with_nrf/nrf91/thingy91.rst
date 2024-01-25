@@ -93,7 +93,7 @@ LTE Band Lock
 *************
 
 The modem within Thingy:91 can be configured to use specific LTE bands by using the band lock AT command.
-See :ref:`nrf91_ug_band_lock` and the `band lock section in the AT Commands reference document`_ for additional information.
+See :ref:`nrf91_ug_band_lock` and the `band lock section in the nRF9160 AT Commands Reference Guide`_ for additional information.
 The preprogrammed firmware configures the modem to use the bands currently certified on the Thingy:91 hardware.
 When building the firmware, you can configure which bands must be enabled.
 

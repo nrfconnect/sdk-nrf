@@ -8,9 +8,11 @@ This sample uses the `nRF Cloud REST API`_, which requires that your device has 
 
 If you are using nRF9160 DK, modem version v1.3.x or later is required.
 Your nRF9160 DK may ship with modem firmware older than v1.3.x, so verify that you have the latest installed.
+For an nRF9161 DK, modem version v2.0.0 or later is required.
 
 For instructions on updating your device's modem firmware, see the following documents:
 
+  * :ref:`Updating modem firmware on nRF9161 DK <nrf9161_updating_fw_modem>`
   * :ref:`Updating modem firmware on nRF9160 DK <nrf9160_gs_updating_fw_modem>`
   * :ref:`Updating modem firmware on Thingy:91 <programming_thingy>`
 

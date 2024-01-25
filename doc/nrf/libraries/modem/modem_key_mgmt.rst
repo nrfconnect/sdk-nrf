@@ -9,7 +9,7 @@ Modem key management
 
 The modem key management library provides functions to manage the credentials stored in the nRF91 Series LTE modem.
 The library uses credential storage management to add, update, and delete credentials using the ``%CMNG`` command.
-See the `Credential storage management %CMNG`_ section in the nRF9160 AT Commands Reference Guide or the same section in the `nRF91x1 AT Commands Reference Guide`_ depending on the SiP you are using.
+See the `Credential storage management %CMNG`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 credential storage management %CMNG_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
 
 Each set of keys and certificates that is stored in the modem is identified by a security tag (``sec_tag``).
 You specify this tag when adding the credentials and use it when you update or delete them.
