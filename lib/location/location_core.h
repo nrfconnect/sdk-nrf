@@ -58,7 +58,6 @@ struct location_method_api {
 };
 
 int location_core_init(void);
-int location_core_event_handler_set(location_event_handler_t handler);
 int location_core_validate_params(const struct location_config *config);
 int location_core_location_get(const struct location_config *config);
 int location_core_cancel(void);

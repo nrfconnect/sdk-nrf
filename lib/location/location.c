@@ -16,6 +16,7 @@
 #endif
 
 #include "location_core.h"
+#include "location_utils.h"
 
 LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 
@@ -87,11 +88,26 @@ static const char LOCATION_METHOD_WIFI_STR[] = "Wi-Fi";
 static const char LOCATION_METHOD_INTERNAL_WIFI_CELLULAR_STR[] = "Wi-Fi + Cellular";
 static const char LOCATION_METHOD_UNKNOWN_STR[] = "Unknown";
 
+int location_handler_register(location_event_handler_t handler)
+{
+	if (handler == NULL) {
+		LOG_ERR("NULL as a handler received");
+		return -EINVAL;
+	}
+
+	return location_utils_event_handler_append(handler);
+}
+
+int location_handler_deregister(location_event_handler_t handler)
+{
+	return location_utils_event_handler_remove(handler);
+}
+
 int location_init(location_event_handler_t handler)
 {
 	int err;
 
-	err = location_core_event_handler_set(handler);
+	err = location_handler_register(handler);
 	if (err) {
 		return err;
 	}

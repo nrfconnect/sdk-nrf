@@ -509,19 +509,44 @@ struct location_config {
 typedef void (*location_event_handler_t)(const struct location_event_data *event_data);
 
 /**
+ * Register handler for location events.
+ *
+ * This function is not needed for clients that call location_init() and pass event handler into it.
+ *
+ * Multiple event handlers can be registered.
+ *
+ * @param[in] handler Event handler.
+ *
+ * @return 0 on success, or negative error code on failure.
+ * @retval -EINVAL The handler was a @c NULL pointer.
+ * @retval -ENOMEM Out of memory.
+ */
+int location_handler_register(location_event_handler_t handler);
+
+/**
+ * Deregister handler for location events.
+ *
+ * @param[in] handler Event handler.
+ *
+ * @return 0 on success, or negative error code on failure.
+ * @retval -EINVAL The handler was not found or it was a @c NULL pointer.
+ */
+int location_handler_deregister(location_event_handler_t handler);
+
+/**
  * @brief Initializes the library.
  *
  * @details Initializes the library and sets the event handler function.
  * The first call to this function must be called before going to LTE normal mode.
  * This can be called multiple times, which sets the event handler again.
  *
- * @param[in] event_handler Event handler function.
+ * @param[in] handler Event handler function.
  *
  * @return 0 on success, or negative error code on failure.
  * @retval -EINVAL Given event_handler is NULL.
  * @retval -EFAULT Failed to obtain Wi-Fi interface.
  */
-int location_init(location_event_handler_t event_handler);
+int location_init(location_event_handler_t handler);
 
 /**
  * @brief Requests the current position or starts periodic position updates.

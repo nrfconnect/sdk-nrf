@@ -11,6 +11,7 @@
 #include <modem/location.h>
 
 #include "location_core.h"
+#include "location_utils.h"
 #if defined(CONFIG_LOCATION_METHOD_GNSS)
 #include "method_gnss.h"
 #endif
@@ -25,9 +26,6 @@
 #endif
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
-
-/** Event handler. */
-static location_event_handler_t event_handler;
 
 /***** Variables for storing information on currently handled location request *****/
 
@@ -233,18 +231,6 @@ static const char *location_core_service_str(enum location_service service)
 
 #endif
 
-int location_core_event_handler_set(location_event_handler_t handler)
-{
-	if (handler == NULL) {
-		LOG_ERR("No event handler given");
-		return -EINVAL;
-	}
-
-	event_handler = handler;
-
-	return 0;
-}
-
 int location_core_init(void)
 {
 	int err;
@@ -392,7 +378,7 @@ static int location_core_location_get_pos(void)
 			.method = requested_method
 		};
 
-		event_handler(&request_started);
+		location_utils_event_dispatch(&request_started);
 	}
 
 	if (loc_req_info.config.timeout != SYS_FOREVER_MS &&
@@ -531,7 +517,7 @@ void location_core_event_cb_agnss_request(const struct nrf_modem_gnss_agnss_data
 	};
 
 	LOG_DBG("Request A-GNSS data from application");
-	event_handler(&agnss_request_event_data);
+	location_utils_event_dispatch(&agnss_request_event_data);
 }
 #endif
 
@@ -551,7 +537,7 @@ void location_core_event_cb_pgps_request(const struct gps_pgps_request *request)
 		request->gps_day,
 		request->gps_time_of_day);
 
-	event_handler(&pgps_request_event_data);
+	location_utils_event_dispatch(&pgps_request_event_data);
 }
 #endif
 
@@ -577,7 +563,7 @@ void location_core_event_cb_cloud_location_request(struct location_data_cloud *r
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 	cloud_location_request_event_data.cloud_location_request.wifi_data = request->wifi_data;
 #endif
-	event_handler(&cloud_location_request_event_data);
+	location_utils_event_dispatch(&cloud_location_request_event_data);
 }
 
 void location_core_cloud_location_ext_result_set(
@@ -722,7 +708,7 @@ static void location_core_event_cb_fn(struct k_work *work)
 					(char *)location_method_api_get(
 						requested_method)->method_string);
 
-				event_handler(&loc_req_info.current_event_data);
+				location_utils_event_dispatch(&loc_req_info.current_event_data);
 
 				/* Run next method on the list */
 				location_core_current_event_data_init(requested_method);
@@ -754,7 +740,7 @@ static void location_core_event_cb_fn(struct k_work *work)
 				/* In ALL mode, events are sent for all methods and thus
 				 * also for failure events
 				 */
-				event_handler(&loc_req_info.current_event_data);
+				location_utils_event_dispatch(&loc_req_info.current_event_data);
 			}
 
 			location_core_current_event_data_init(requested_method);
@@ -769,7 +755,7 @@ static void location_core_event_cb_fn(struct k_work *work)
 		}
 	}
 
-	event_handler(&loc_req_info.current_event_data);
+	location_utils_event_dispatch(&loc_req_info.current_event_data);
 
 	k_work_cancel_delayable(&location_core_timeout_work);
 
