@@ -15,7 +15,7 @@
 #include "psa_crypto_driver_wrappers.h"
 #include <string.h>
 
-#include "mbedtls/platform.h"
+#include "mbedtls/platform_util.h"
 
 #if defined(MBEDTLS_PSA_CRYPTO_C)
 
@@ -1916,12 +1916,19 @@ psa_status_t psa_driver_wrapper_key_agreement(const psa_key_attributes_t *attrib
  * These APIs are not standardized and should be considered experimental.
  */
 psa_status_t psa_driver_wrapper_pake_setup(psa_pake_operation_t *operation,
-					   const psa_pake_cipher_suite_t *cipher_suite)
+					   const psa_pake_cipher_suite_t *cipher_suite,
+					   const psa_key_attributes_t *attributes,
+					   const uint8_t *password, size_t password_length,
+					   const uint8_t *user_id, size_t user_id_length,
+					   const uint8_t *peer_id, size_t peer_id_length,
+					   psa_pake_role_t role)
 {
 	psa_status_t status;
 
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
-	status = oberon_pake_setup(&operation->ctx.oberon_pake_ctx, cipher_suite);
+	status = oberon_pake_setup(&operation->ctx.oberon_pake_ctx, cipher_suite, attributes,
+				   password, password_length, user_id, user_id_length, peer_id,
+				   peer_id_length, role);
 	if (status == PSA_SUCCESS) {
 		operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 	}
@@ -1932,72 +1939,6 @@ psa_status_t psa_driver_wrapper_pake_setup(psa_pake_operation_t *operation,
 	(void)operation;
 	(void)cipher_suite;
 	return PSA_ERROR_NOT_SUPPORTED;
-}
-
-psa_status_t psa_driver_wrapper_pake_set_password_key(psa_pake_operation_t *operation,
-						      const psa_key_attributes_t *attributes,
-						      const uint8_t *password,
-						      size_t password_length)
-{
-	switch (operation->id) {
-#ifdef PSA_NEED_OBERON_PAKE_DRIVER
-	case PSA_CRYPTO_OBERON_DRIVER_ID:
-		return oberon_pake_set_password_key(&operation->ctx.oberon_pake_ctx, attributes,
-						    password, password_length);
-#endif /* PSA_NEED_OBERON_PAKE_DRIVER */
-
-	default:
-		(void)attributes;
-		(void)password;
-		(void)password_length;
-		return PSA_ERROR_BAD_STATE;
-	}
-}
-
-psa_status_t psa_driver_wrapper_pake_set_user(psa_pake_operation_t *operation,
-					      const uint8_t *user_id, size_t user_id_len)
-{
-	switch (operation->id) {
-#ifdef PSA_NEED_OBERON_PAKE_DRIVER
-	case PSA_CRYPTO_OBERON_DRIVER_ID:
-		return oberon_pake_set_user(&operation->ctx.oberon_pake_ctx, user_id, user_id_len);
-#endif /* PSA_NEED_OBERON_PAKE_DRIVER */
-
-	default:
-		(void)user_id;
-		(void)user_id_len;
-		return PSA_ERROR_BAD_STATE;
-	}
-}
-
-psa_status_t psa_driver_wrapper_pake_set_peer(psa_pake_operation_t *operation,
-					      const uint8_t *peer_id, size_t peer_id_len)
-{
-	switch (operation->id) {
-#ifdef PSA_NEED_OBERON_PAKE_DRIVER
-	case PSA_CRYPTO_OBERON_DRIVER_ID:
-		return oberon_pake_set_peer(&operation->ctx.oberon_pake_ctx, peer_id, peer_id_len);
-#endif /* PSA_NEED_OBERON_PAKE_DRIVER */
-
-	default:
-		(void)peer_id;
-		(void)peer_id_len;
-		return PSA_ERROR_BAD_STATE;
-	}
-}
-
-psa_status_t psa_driver_wrapper_pake_set_role(psa_pake_operation_t *operation, psa_pake_role_t role)
-{
-	switch (operation->id) {
-#ifdef PSA_NEED_OBERON_PAKE_DRIVER
-	case PSA_CRYPTO_OBERON_DRIVER_ID:
-		return oberon_pake_set_role(&operation->ctx.oberon_pake_ctx, role);
-#endif /* PSA_NEED_OBERON_PAKE_DRIVER */
-
-	default:
-		(void)role;
-		return PSA_ERROR_BAD_STATE;
-	}
 }
 
 psa_status_t psa_driver_wrapper_pake_output(psa_pake_operation_t *operation, psa_pake_step_t step,
