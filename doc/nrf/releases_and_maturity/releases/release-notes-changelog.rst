@@ -354,6 +354,7 @@ Cellular samples
     * Printing of the last reset reason when the sample starts.
     * Support for printing the sample version information using the ``version`` command.
     * Support for counting pulses from a GPIO pin using the ``gpio_count`` command.
+    * Support for changing shell UART baudrate using the ``uart baudrate`` command.
 
   * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
