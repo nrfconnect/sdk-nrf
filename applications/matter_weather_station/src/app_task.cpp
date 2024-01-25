@@ -300,6 +300,10 @@ void AppTask::UpdateLedState()
 		return;
 	}
 
+	Instance().mGreenLED->Set(false);
+	Instance().mBlueLED->Set(false);
+	Instance().mRedLED->Set(false);
+
 	switch (Nrf::GetBoard().GetDeviceState()) {
 	case Nrf::DeviceState::DeviceAdvertisingBLE:
 		Instance().mBlueLED->Blink(Nrf::LedConsts::StatusLed::Disconnected::kOn_ms,
