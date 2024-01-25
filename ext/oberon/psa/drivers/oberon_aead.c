@@ -1,10 +1,12 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+//
+// This file implements functions from the PSA Crypto Driver API.
 
 #include <string.h>
 
