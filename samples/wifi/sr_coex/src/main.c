@@ -224,7 +224,7 @@ static int __wifi_args_to_params(struct wifi_connect_req_params *params)
 static int wifi_connect(void)
 {
 	struct net_if *iface = net_if_get_default();
-	static struct wifi_connect_req_params cnx_params;
+	static struct wifi_connect_req_params cnx_params = { 0 };
 
 	__wifi_args_to_params(&cnx_params);
 
