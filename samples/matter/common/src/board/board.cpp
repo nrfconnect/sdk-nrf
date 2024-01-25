@@ -72,7 +72,6 @@ void Board::UpdateDeviceState(DeviceState state)
 {
 	if (mState != state) {
 		mState = state;
-		ResetAllLeds();
 		mLedStateHandler();
 	}
 }
