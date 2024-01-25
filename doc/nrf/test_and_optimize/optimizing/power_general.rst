@@ -181,10 +181,41 @@ Bluetooth Mesh
 
 The Bluetooth Mesh protocol offers the :ref:`ug_bt_mesh_configuring_lpn` feature for optimizing the power consumption of the Bluetooth Mesh devices.
 
+Gazell
+======
+
+Gazell is an asymmetrical protocol where the Device role is power-optimized.
+A Gazell Device attains the lowest current consumption during idle times.
+The :ref:`Gazell Link Layer API <nrfxlib:gzll_api>` provides functions for setting protocol parameters, including those that affect current consumption.
+From the power optimization point of view, the most important functions are:
+
+* :c:func:`nrf_gzll_set_tx_power`.
+* :c:func:`nrf_gzll_set_sync_lifetime` - Adapt this parameter based on how often the application sends data to Host.
+
+  When the link is synchronized, packets are transmitted faster, but an additional timer is running, consuming more current.
+  However, when the link is out of sync, sending a single packet may require multiple transmissions until Device and Host find each other on the same channel at the same time.
+
+* :c:func:`nrf_gzll_set_max_tx_attempts` - In poor RF conditions, retransmissions of each packet may be required, thus increasing the current consumption.
+
+  Setting the value zero means unlimited retransmissions until a packet gets acknowledged.
+
 Matter
 ======
 
 To optimize the power consumption of your Matter application, complete the actions listed on the :ref:`ug_matter_device_low_power_configuration` page.
+
+NFC
+===
+
+The |NCS| provides implementations of two NFC libraries, :ref:`nrfxlib:type_2_tag` and :ref:`nrfxlib:type_4_tag`.
+
+If you want to implement a read-only NFC tag with a short NDEF payload, use the :ref:`nrfxlib:type_2_tag` library that implements a more lightweight protocol and therefore consumes less energy than the :ref:`nrfxlib:type_4_tag` library.
+For larger payloads, the :ref:`nrfxlib:type_4_tag` library may be more power-efficient, as it allows exchanging longer frames, which can shorten the overall data exchange.
+
+These recommendations are very generic because the actual performance depends on the capabilities of the NFC polling device that reads the tag, so each specific use case needs a separate analysis.
+
+The NFC libraries do not provide any configuration options that have a significant impact on current consumption.
+NFC can wake your application up from system off mode, so using this mode and NFC as a wakeup source can be a way to reduce current consumption.
 
 Thread
 ======
