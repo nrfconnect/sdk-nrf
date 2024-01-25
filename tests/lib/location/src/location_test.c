@@ -75,8 +75,11 @@ static struct rest_client_req_context rest_req_ctx = { 0 };
 static struct rest_client_resp_context rest_resp_ctx = { 0 };
 static int location_callback_called_occurred;
 static int location_callback_called_expected;
+static int location_callback_called_occurred_2;
+static int location_callback_called_expected_2;
 
 K_SEM_DEFINE(event_handler_called_sem, 0, 1);
+K_SEM_DEFINE(event_handler_called_sem_2, 0, 1);
 
 /* Strings for GNSS positioning */
 #if !defined(CONFIG_LOCATION_TEST_AGNSS)
@@ -192,7 +195,10 @@ void setUp(void)
 	helper_location_data_clear();
 	location_callback_called_occurred = 0;
 	location_callback_called_expected = 0;
+	location_callback_called_occurred_2 = 0;
+	location_callback_called_expected_2 = 0;
 	k_sem_reset(&event_handler_called_sem);
+	k_sem_reset(&event_handler_called_sem_2);
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 	net_mgmt_NET_REQUEST_WIFI_SCAN_retval = -1;
@@ -214,6 +220,15 @@ void tearDown(void)
 		TEST_ASSERT_EQUAL(0, err);
 	}
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
+
+	if (location_callback_called_expected_2 != location_callback_called_occurred_2) {
+		/* Wait for location_event_handler_2 call for 3 seconds.
+		 * If it doesn't happen, next assert will fail the test.
+		 */
+		err = k_sem_take(&event_handler_called_sem_2, K_SECONDS(3));
+		TEST_ASSERT_EQUAL(0, err);
+	}
+	TEST_ASSERT_EQUAL(location_callback_called_expected_2, location_callback_called_occurred_2);
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 	TEST_ASSERT_EQUAL(net_mgmt_NET_REQUEST_WIFI_SCAN_expected,
 		net_mgmt_NET_REQUEST_WIFI_SCAN_occurred);
@@ -275,11 +290,86 @@ static void location_event_handler(const struct location_event_data *event_data)
 	k_sem_give(&event_handler_called_sem);
 }
 
+/* 2nd event handler to test multiple event handlers. */
+static void location_event_handler_2(const struct location_event_data *event_data)
+{
+	location_callback_called_occurred_2++;
+
+	TEST_ASSERT_EQUAL(test_location_event_data.id, event_data->id);
+
+	switch (event_data->id) {
+	case LOCATION_EVT_LOCATION:
+		TEST_ASSERT_EQUAL(test_location_event_data.location.latitude,
+			event_data->location.latitude);
+		TEST_ASSERT_EQUAL(test_location_event_data.location.longitude,
+			event_data->location.longitude);
+		TEST_ASSERT_EQUAL(test_location_event_data.location.accuracy,
+			event_data->location.accuracy);
+		TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.valid,
+			event_data->location.datetime.valid);
+
+		/* Datetime verification is skipped if it's not valid.
+		 * Cellular timestamps will be set but it's marked invalid because
+		 * CONFIG_DATE_TIME=n. We cannot verify it anyway because it's read at runtime.
+		 */
+		if (event_data->location.datetime.valid) {
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.year,
+				event_data->location.datetime.year);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.month,
+				event_data->location.datetime.month);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.day,
+				event_data->location.datetime.day);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.hour,
+				event_data->location.datetime.hour);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.minute,
+				event_data->location.datetime.minute);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.second,
+				event_data->location.datetime.second);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.ms,
+				event_data->location.datetime.ms);
+		}
+		break;
+	default:
+		break;
+	}
+
+	k_sleep(K_MSEC(1));
+	k_sem_give(&event_handler_called_sem_2);
+}
+
 /********* LOCATION INIT TESTS ***********************/
 
 /* We need to test first init failures as initialization procedure cannot be made again
  * with different conditions once it's complete because there is no uninitialization function.
  */
+
+/* Test event handler registration:
+ * - Register NULL handler
+ * - Deregister NULL handler
+ * - Deregistration before handler is registered
+ * - Register two handlers
+ * - Deregister two handlers
+ */
+void test_location_handler_register(void)
+{
+	int ret;
+
+	ret = location_handler_register(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+	ret = location_handler_deregister(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = location_handler_deregister(location_event_handler);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+	ret = location_handler_register(location_event_handler);
+	TEST_ASSERT_EQUAL(0, ret);
+	ret = location_handler_register(location_event_handler_2);
+	TEST_ASSERT_EQUAL(0, ret);
+	ret = location_handler_deregister(location_event_handler);
+	TEST_ASSERT_EQUAL(0, ret);
+	ret = location_handler_deregister(location_event_handler_2);
+	TEST_ASSERT_EQUAL(0, ret);
+}
 
 /* Test failure in setting gnss event handler. */
 void test_location_init_fail_gnss_event_handler_set(void)
@@ -1295,6 +1385,11 @@ void test_location_request_mode_all_cellular_gnss(void)
 
 	location_callback_called_expected = 2;
 
+	/* Add 2nd event handler to test that it receives the events too */
+	location_callback_called_expected_2 = 2;
+	err = location_handler_register(location_event_handler_2);
+	TEST_ASSERT_EQUAL(0, err);
+
 	/***** First cellular positioning *****/
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
@@ -1325,6 +1420,9 @@ void test_location_request_mode_all_cellular_gnss(void)
 	 * If it doesn't happen, next assert will fail the test.
 	 */
 	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
+
+	err = k_sem_take(&event_handler_called_sem_2, K_SECONDS(3));
 	TEST_ASSERT_EQUAL(0, err);
 
 	/***** Then GNSS positioning *****/
@@ -1425,6 +1523,11 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 	test_location_event_data.id = LOCATION_EVT_ERROR;
 
 	location_callback_called_expected = 2;
+
+	/* Deregister 2nd event handler used in previous test.
+	 * Ignoring return value as in some configurations it hasn't been registered
+	 */
+	(void)location_handler_deregister(location_event_handler_2);
 
 	/***** First cellular positioning *****/
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", -EFAULT);

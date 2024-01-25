@@ -109,3 +109,113 @@ void location_utils_systime_to_location_datetime(struct location_datetime *datet
 	datetime->second = ltm.tm_sec;
 	datetime->ms = tp.tv_nsec / 1000000;
 }
+
+static K_MUTEX_DEFINE(list_mtx);
+
+/**@brief List element for event handler list. */
+struct event_handler {
+	sys_snode_t node;
+	location_event_handler_t handler;
+};
+
+static sys_slist_t handler_list;
+
+/**
+ * @brief Find the handler from the event handler list.
+ *
+ * @return The node or NULL if not found and its previous node in @p prev_out.
+ */
+static struct event_handler *location_utils_event_handler_find(
+	struct event_handler **prev_out,
+	location_event_handler_t handler)
+{
+	struct event_handler *curr;
+	struct event_handler *prev = NULL;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&handler_list, curr, node) {
+		if (curr->handler == handler) {
+			*prev_out = prev;
+			return curr;
+		}
+		prev = curr;
+	}
+	return NULL;
+}
+
+bool location_utils_event_handler_list_is_empty(void)
+{
+	return sys_slist_is_empty(&handler_list);
+}
+
+int location_utils_event_handler_append(location_event_handler_t handler)
+{
+	struct event_handler *to_ins;
+
+	k_mutex_lock(&list_mtx, K_FOREVER);
+
+	/* Check if handler is already registered. */
+	if (location_utils_event_handler_find(&to_ins, handler) != NULL) {
+		LOG_DBG("Handler already registered. Nothing to do");
+		k_mutex_unlock(&list_mtx);
+		return 0;
+	}
+
+	/* Allocate memory and fill. */
+	to_ins = (struct event_handler *)k_malloc(sizeof(struct event_handler));
+	if (to_ins == NULL) {
+		k_mutex_unlock(&list_mtx);
+		return -ENOMEM;
+	}
+	memset(to_ins, 0, sizeof(struct event_handler));
+	to_ins->handler = handler;
+
+	/* Insert handler in the list. */
+	sys_slist_append(&handler_list, &to_ins->node);
+	k_mutex_unlock(&list_mtx);
+	return 0;
+}
+
+int location_utils_event_handler_remove(location_event_handler_t handler)
+{
+	struct event_handler *curr;
+	struct event_handler *prev = NULL;
+
+	k_mutex_lock(&list_mtx, K_FOREVER);
+
+	/* Check if the handler is registered before removing it. */
+	curr = location_utils_event_handler_find(&prev, handler);
+	if (curr == NULL) {
+		LOG_WRN("Handler not registered. Nothing to do");
+		k_mutex_unlock(&list_mtx);
+		return -EINVAL;
+	}
+
+	/* Remove the handler from the list. */
+	sys_slist_remove(&handler_list, &prev->node, &curr->node);
+	k_free(curr);
+
+	k_mutex_unlock(&list_mtx);
+	return 0;
+}
+
+void location_utils_event_dispatch(const struct location_event_data *const event_data)
+{
+	struct event_handler *curr;
+	struct event_handler *tmp;
+
+	if (location_utils_event_handler_list_is_empty()) {
+		return;
+	}
+
+	k_mutex_lock(&list_mtx, K_FOREVER);
+
+	/* Dispatch events to all registered handlers */
+	LOG_DBG("Dispatching event: type=%d", event_data->id);
+	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&handler_list, curr, tmp, node) {
+		LOG_DBG(" - handler=0x%08X", (uint32_t)curr->handler);
+		curr->handler(event_data);
+	}
+	LOG_DBG("Done");
+
+	k_mutex_unlock(&list_mtx);
+}
