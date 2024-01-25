@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -261,8 +261,15 @@ static psa_status_t oberon_read_confirm(
 
 psa_status_t oberon_srp_setup(
     oberon_srp_operation_t *operation,
-    const psa_pake_cipher_suite_t *cipher_suite)
+    const psa_pake_cipher_suite_t *cipher_suite,
+    const uint8_t *password, size_t password_length,
+    const uint8_t *user_id, size_t user_id_length,
+    const uint8_t *peer_id, size_t peer_id_length,
+    psa_pake_role_t role)
 {
+    (void)peer_id;
+    (void)peer_id_length;
+
     if (cipher_suite->algorithm != PSA_ALG_SRP_6 ||
         cipher_suite->type != PSA_PAKE_PRIMITIVE_TYPE_DH ||
         cipher_suite->family != PSA_DH_FAMILY_RFC3526 ||
@@ -272,35 +279,12 @@ psa_status_t oberon_srp_setup(
 
     operation->hash_alg = cipher_suite->hash;
     operation->hash_len = PSA_HASH_LENGTH(cipher_suite->hash);
-    return PSA_SUCCESS;
-}
-
-psa_status_t oberon_srp_set_role(
-    oberon_srp_operation_t *operation,
-    psa_pake_role_t role)
-{
-    if (role != PSA_PAKE_ROLE_CLIENT && role != PSA_PAKE_ROLE_SERVER) {
-        return PSA_ERROR_NOT_SUPPORTED;
-    }
     operation->role = role;
-    return PSA_SUCCESS;
-}
 
-psa_status_t oberon_srp_set_user(
-    oberon_srp_operation_t *operation,
-    const uint8_t *user_id, size_t user_id_len)
-{
-    if (user_id_len > sizeof operation->user) return PSA_ERROR_NOT_SUPPORTED;
-    memcpy(operation->user, user_id, user_id_len);
-    operation->user_len = user_id_len;
-    return PSA_SUCCESS;
-}
+    if (user_id_length > sizeof operation->user) return PSA_ERROR_NOT_SUPPORTED;
+    memcpy(operation->user, user_id, user_id_length);
+    operation->user_len = user_id_length;
 
-psa_status_t oberon_srp_set_password_key(
-    oberon_srp_operation_t *operation,
-    const psa_key_attributes_t *attributes,
-    const uint8_t *password, size_t password_length)
-{
     if (operation->role == PSA_PAKE_ROLE_CLIENT) {
         // password hash
         if (password_length != operation->hash_len) return PSA_ERROR_INVALID_ARGUMENT;
@@ -311,7 +295,6 @@ psa_status_t oberon_srp_set_password_key(
         memcpy(operation->password, password, SRP_FIELD_SIZE);
     }
 
-    (void)attributes;
     return PSA_SUCCESS;
 }
 

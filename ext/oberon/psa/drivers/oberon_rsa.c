@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -559,6 +559,26 @@ static const uint8_t DIGEST_INFO_SHA512[] = {
     0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01,
     0x65, 0x03, 0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40};
 #endif
+#ifdef PSA_WANT_ALG_SHA3_224
+static const uint8_t DIGEST_INFO_SHA3_224[] = {
+    0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01,
+    0x65, 0x03, 0x04, 0x02, 0x07, 0x05, 0x00, 0x04, 0x1c};
+#endif
+#ifdef PSA_WANT_ALG_SHA3_256
+static const uint8_t DIGEST_INFO_SHA3_256[] = {
+    0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01,
+    0x65, 0x03, 0x04, 0x02, 0x08, 0x05, 0x00, 0x04, 0x20};
+#endif
+#ifdef PSA_WANT_ALG_SHA3_384
+static const uint8_t DIGEST_INFO_SHA3_384[] = {
+    0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01,
+    0x65, 0x03, 0x04, 0x02, 0x09, 0x05, 0x00, 0x04, 0x30};
+#endif
+#ifdef PSA_WANT_ALG_SHA3_512
+static const uint8_t DIGEST_INFO_SHA3_512[] = {
+    0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01,
+    0x65, 0x03, 0x04, 0x02, 0x0A, 0x05, 0x00, 0x04, 0x40};
+#endif
 
 static psa_status_t emsa_pkcs1_v15_get_digest(
     psa_algorithm_t hash_alg,
@@ -593,6 +613,30 @@ static psa_status_t emsa_pkcs1_v15_get_digest(
     case PSA_ALG_SHA_512:
         *digest = DIGEST_INFO_SHA512;
         *d_len = sizeof DIGEST_INFO_SHA512;
+        return PSA_SUCCESS;
+#endif
+#ifdef PSA_WANT_ALG_SHA3_224
+    case PSA_ALG_SHA3_224:
+        *digest = DIGEST_INFO_SHA3_224;
+        *d_len = sizeof DIGEST_INFO_SHA3_224;
+        return PSA_SUCCESS;
+#endif
+#ifdef PSA_WANT_ALG_SHA3_256
+    case PSA_ALG_SHA3_256:
+        *digest = DIGEST_INFO_SHA3_256;
+        *d_len = sizeof DIGEST_INFO_SHA3_256;
+        return PSA_SUCCESS;
+#endif
+#ifdef PSA_WANT_ALG_SHA3_384
+    case PSA_ALG_SHA3_384:
+        *digest = DIGEST_INFO_SHA3_384;
+        *d_len = sizeof DIGEST_INFO_SHA3_384;
+        return PSA_SUCCESS;
+#endif
+#ifdef PSA_WANT_ALG_SHA3_512
+    case PSA_ALG_SHA3_512:
+        *digest = DIGEST_INFO_SHA3_512;
+        *d_len = sizeof DIGEST_INFO_SHA3_512;
         return PSA_SUCCESS;
 #endif
     default:
