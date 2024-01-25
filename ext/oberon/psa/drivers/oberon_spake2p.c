@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -57,21 +57,6 @@ exit:
     return status;
 }
 
-static psa_status_t oberon_update_ids(
-    oberon_spake2p_operation_t *op)
-{
-    psa_status_t status;
-
-    // add prover, verifier, M, and N to TT
-    status = oberon_update_hash_with_prefix(&op->hash_op, op->prover, op->prover_len);
-    if (status) return status;
-    status = oberon_update_hash_with_prefix(&op->hash_op, op->verifier, op->verifier_len);
-    if (status) return status;
-    status = oberon_update_hash_with_prefix(&op->hash_op, M, sizeof M);
-    if (status) return status;
-    return oberon_update_hash_with_prefix(&op->hash_op, N, sizeof N);
-}
-
 static psa_status_t oberon_write_key_share(
     oberon_spake2p_operation_t *op,
     uint8_t *output, size_t output_size, size_t *output_length)
@@ -92,10 +77,6 @@ static psa_status_t oberon_write_key_share(
     memcpy(output, op->XY, P256_POINT_SIZE);
     *output_length = P256_POINT_SIZE;
 
-    if (op->role == PSA_PAKE_ROLE_CLIENT) {
-        oberon_update_ids(op);
-    }
-
     // add share to TT
     return oberon_update_hash_with_prefix(&op->hash_op, op->XY, P256_POINT_SIZE);
 }
@@ -106,10 +87,6 @@ static psa_status_t oberon_read_key_share(
 {
     if (input_length != P256_POINT_SIZE || input[0] != 0x04) return PSA_ERROR_INVALID_ARGUMENT;
     memcpy(op->YX, input, P256_POINT_SIZE);
-
-    if (op->role != PSA_PAKE_ROLE_CLIENT) {
-        oberon_update_ids(op);
-    }
 
     // add share to TT
     return oberon_update_hash_with_prefix(&op->hash_op, op->YX, P256_POINT_SIZE);
@@ -244,8 +221,15 @@ static psa_status_t oberon_read_confirm(
 
 psa_status_t oberon_spake2p_setup(
     oberon_spake2p_operation_t *operation,
-    const psa_pake_cipher_suite_t *cipher_suite)
+    const psa_pake_cipher_suite_t *cipher_suite,
+    const uint8_t *password, size_t password_length,
+    const uint8_t *user_id, size_t user_id_length,
+    const uint8_t *peer_id, size_t peer_id_length,
+    psa_pake_role_t role)
 {
+    psa_status_t status;
+    int res;
+
     if (cipher_suite->algorithm != PSA_ALG_SPAKE2P ||
         cipher_suite->type != PSA_PAKE_PRIMITIVE_TYPE_ECC ||
         cipher_suite->family != PSA_ECC_FAMILY_SECP_R1 ||
@@ -255,87 +239,37 @@ psa_status_t oberon_spake2p_setup(
 
     // prepare TT calculation
     operation->hash_alg = cipher_suite->hash;
-    return psa_driver_wrapper_hash_setup(&operation->hash_op, cipher_suite->hash);
-}
+    operation->role = role;
+    status = psa_driver_wrapper_hash_setup(&operation->hash_op, cipher_suite->hash);
+    if (status) return status;
 
-psa_status_t oberon_spake2p_set_role(
-    oberon_spake2p_operation_t *operation,
-    psa_pake_role_t role)
-{
     if (role == PSA_PAKE_ROLE_CLIENT) {
         operation->MN = M;
         operation->NM = N;
-    } else if (role == PSA_PAKE_ROLE_SERVER) {
-        operation->MN = N;
-        operation->NM = M;
-    } else {
-        return PSA_ERROR_NOT_SUPPORTED;
-    }
-    operation->role = role;
-    return PSA_SUCCESS;
-}
-
-psa_status_t oberon_spake2p_set_user(
-    oberon_spake2p_operation_t *operation,
-    const uint8_t *user_id, size_t user_id_len)
-{
-    if (operation->role == PSA_PAKE_ROLE_CLIENT) {
-        // prover = user
-        if (user_id_len > sizeof operation->prover) return PSA_ERROR_INSUFFICIENT_MEMORY;
-        if (user_id_len) {
-            memcpy(operation->prover, user_id, user_id_len);
+        // prover = user; verifier = peer
+        if (user_id_length > sizeof operation->prover || peer_id_length > sizeof operation->verifier) {
+            return PSA_ERROR_INSUFFICIENT_MEMORY;
         }
-        operation->prover_len = (uint8_t)user_id_len;
-    } else {
-        // verifier = user
-        if (user_id_len > sizeof operation->verifier) return PSA_ERROR_INSUFFICIENT_MEMORY;
-        if (user_id_len) {
-            memcpy(operation->verifier, user_id, user_id_len);
-        }
-        operation->verifier_len = (uint8_t)user_id_len;
-    }
-
-    return PSA_SUCCESS;
-}
-
-psa_status_t oberon_spake2p_set_peer(
-    oberon_spake2p_operation_t *operation,
-    const uint8_t *peer_id, size_t peer_id_len)
-{
-    if (operation->role == PSA_PAKE_ROLE_CLIENT) {
-        // verifier = peer
-        if (peer_id_len > sizeof operation->verifier) return PSA_ERROR_INSUFFICIENT_MEMORY;
-        if (peer_id_len) {
-            memcpy(operation->verifier, peer_id, peer_id_len);
-        }
-        operation->verifier_len = (uint8_t)peer_id_len;
-    } else {
-        // prover = peer
-        if (peer_id_len > sizeof operation->prover) return PSA_ERROR_INSUFFICIENT_MEMORY;
-        if (peer_id_len) {
-            memcpy(operation->prover, peer_id, peer_id_len);
-        }
-        operation->prover_len = (uint8_t)peer_id_len;
-    }
-
-    return PSA_SUCCESS;
-}
-
-psa_status_t oberon_spake2p_set_password_key(
-    oberon_spake2p_operation_t *operation,
-    const psa_key_attributes_t *attributes,
-    const uint8_t *password, size_t password_length)
-{
-    int res;
-    (void)attributes;
-
-    if (operation->role == PSA_PAKE_ROLE_CLIENT) {
+        memcpy(operation->prover, user_id, user_id_length);
+        operation->prover_len = (uint8_t)user_id_length;
+        memcpy(operation->verifier, peer_id, peer_id_length);
+        operation->verifier_len = (uint8_t)peer_id_length;
         // password = w0s:w1s
         if (password_length < 2 * P256_KEY_SIZE) return PSA_ERROR_INVALID_ARGUMENT;
         ocrypto_spake2p_p256_reduce(operation->w0, password, password_length >> 1);
         password += password_length >> 1;
         ocrypto_spake2p_p256_reduce(operation->w1, password, password_length >> 1);
     } else { /* role == PSA_PAKE_ROLE_SERVER */
+        operation->MN = N;
+        operation->NM = M;
+        // prover = peer; verifier = user
+        if (peer_id_length > sizeof operation->prover || user_id_length > sizeof operation->verifier) {
+            return PSA_ERROR_INSUFFICIENT_MEMORY;
+        }
+        memcpy(operation->prover, peer_id, peer_id_length);
+        operation->prover_len = (uint8_t)peer_id_length;
+        memcpy(operation->verifier, user_id, user_id_length);
+        operation->verifier_len = (uint8_t)user_id_length;
         // password = w0s:L
         if (password_length < P256_KEY_SIZE + P256_POINT_SIZE) return PSA_ERROR_INVALID_ARGUMENT;
         ocrypto_spake2p_p256_reduce(operation->w0, password, password_length - P256_POINT_SIZE);
@@ -344,9 +278,9 @@ psa_status_t oberon_spake2p_set_password_key(
         if (res) return PSA_ERROR_INVALID_ARGUMENT;
         memcpy(operation->L, password, P256_POINT_SIZE);
     }
-
     return PSA_SUCCESS;
 }
+
 psa_status_t oberon_spake2p_output(
     oberon_spake2p_operation_t *operation,
     psa_pake_step_t step,
@@ -374,7 +308,9 @@ psa_status_t oberon_spake2p_input(
     switch (step) {
     case PSA_PAKE_STEP_CONTEXT:
         // add context to TT
-        return oberon_update_hash_with_prefix(&operation->hash_op, input, input_length);
+        return oberon_update_hash_with_prefix(
+            &operation->hash_op,
+            input, sizeof input_length);
     case PSA_PAKE_STEP_KEY_SHARE:
         return oberon_read_key_share(
             operation,

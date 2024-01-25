@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -14,7 +14,12 @@
 
 psa_status_t oberon_pake_setup(
     oberon_pake_operation_t *operation,
-    const psa_pake_cipher_suite_t *cipher_suite)
+    const psa_pake_cipher_suite_t *cipher_suite,
+    const psa_key_attributes_t *attributes,
+    const uint8_t *password, size_t password_length,
+    const uint8_t *user_id, size_t user_id_length,
+    const uint8_t *peer_id, size_t peer_id_length,
+    psa_pake_role_t role)
 {
     operation->alg = cipher_suite->algorithm;
 
@@ -22,129 +27,40 @@ psa_status_t oberon_pake_setup(
 #ifdef PSA_NEED_OBERON_JPAKE
     case PSA_ALG_JPAKE:
         return oberon_jpake_setup(
-            &operation->ctx.oberon_jpake_ctx, cipher_suite);
+            &operation->ctx.oberon_jpake_ctx, cipher_suite,
+            password, password_length,
+            user_id, user_id_length,
+            peer_id, peer_id_length,
+            role);
 #endif /* PSA_NEED_OBERON_JPAKE */
 #ifdef PSA_NEED_OBERON_SPAKE2P
     case PSA_ALG_SPAKE2P:
         return oberon_spake2p_setup(
-            &operation->ctx.oberon_spake2p_ctx, cipher_suite);
+            &operation->ctx.oberon_spake2p_ctx, cipher_suite,
+            password, password_length,
+            user_id, user_id_length,
+            peer_id, peer_id_length,
+            role);
 #endif /* PSA_NEED_OBERON_SPAKE2P */
 #ifdef PSA_NEED_OBERON_SRP_6
     case PSA_ALG_SRP_6:
         return oberon_srp_setup(
-            &operation->ctx.oberon_srp_ctx, cipher_suite);
-#endif /* PSA_NEED_OBERON_SRP_6 */
-    default:
-        (void)cipher_suite;
-        return PSA_ERROR_NOT_SUPPORTED;
-    }
-}
-
-psa_status_t oberon_pake_set_password_key(
-    oberon_pake_operation_t *operation,
-    const psa_key_attributes_t *attributes,
-    const uint8_t *password, size_t password_length)
-{
-    switch (operation->alg) {
-#ifdef PSA_NEED_OBERON_JPAKE
-    case PSA_ALG_JPAKE:
-        return oberon_jpake_set_password_key(
-            &operation->ctx.oberon_jpake_ctx, attributes, password, password_length);
-#endif /* PSA_NEED_OBERON_JPAKE */
-#ifdef PSA_NEED_OBERON_SPAKE2P
-    case PSA_ALG_SPAKE2P:
-        return oberon_spake2p_set_password_key(
-            &operation->ctx.oberon_spake2p_ctx, attributes, password, password_length);
-#endif /* PSA_NEED_OBERON_SPAKE2P */
-#ifdef PSA_NEED_OBERON_SRP_6
-    case PSA_ALG_SRP_6:
-        return oberon_srp_set_password_key(
-            &operation->ctx.oberon_srp_ctx, attributes, password, password_length);
+            &operation->ctx.oberon_srp_ctx, cipher_suite,
+            password, password_length,
+            user_id, user_id_length,
+            peer_id, peer_id_length,
+            role);
 #endif /* PSA_NEED_OBERON_SRP_6 */
     default:
         (void)attributes;
         (void)password;
         (void)password_length;
-        return PSA_ERROR_BAD_STATE;
-    }
-}
-
-psa_status_t oberon_pake_set_user(
-    oberon_pake_operation_t *operation,
-    const uint8_t *user_id, size_t user_id_len)
-{
-    switch (operation->alg) {
-#ifdef PSA_NEED_OBERON_JPAKE
-    case PSA_ALG_JPAKE:
-        return oberon_jpake_set_user(
-            &operation->ctx.oberon_jpake_ctx, user_id, user_id_len);
-#endif /* PSA_NEED_OBERON_JPAKE */
-#ifdef PSA_NEED_OBERON_SPAKE2P
-    case PSA_ALG_SPAKE2P:
-        return oberon_spake2p_set_user(
-            &operation->ctx.oberon_spake2p_ctx, user_id, user_id_len);
-#endif /* PSA_NEED_OBERON_SPAKE2P */
-#ifdef PSA_NEED_OBERON_SRP_6
-    case PSA_ALG_SRP_6:
-        return oberon_srp_set_user(
-            &operation->ctx.oberon_srp_ctx, user_id, user_id_len);
-#endif /* PSA_NEED_OBERON_SRP_6 */
-    default:
         (void)user_id;
-        (void)user_id_len;
-        return PSA_ERROR_BAD_STATE;
-    }
-}
-
-psa_status_t oberon_pake_set_peer(
-    oberon_pake_operation_t *operation,
-    const uint8_t *peer_id, size_t peer_id_len)
-{
-    switch (operation->alg) {
-#ifdef PSA_NEED_OBERON_JPAKE
-    case PSA_ALG_JPAKE:
-        return oberon_jpake_set_peer(
-            &operation->ctx.oberon_jpake_ctx,  peer_id, peer_id_len);
-#endif /* PSA_NEED_OBERON_JPAKE */
-#ifdef PSA_NEED_OBERON_SPAKE2P
-    case PSA_ALG_SPAKE2P:
-        return oberon_spake2p_set_peer(
-            &operation->ctx.oberon_spake2p_ctx, peer_id, peer_id_len);
-#endif /* PSA_NEED_OBERON_SPAKE2P */
-#ifdef PSA_NEED_OBERON_SRP_6
-    case PSA_ALG_SRP_6:
-        return PSA_ERROR_NOT_SUPPORTED;  // no peer id in SRP
-#endif /* PSA_NEED_OBERON_SRP_6 */
-    default:
+        (void)user_id_length;
         (void)peer_id;
-        (void)peer_id_len;
-        return PSA_ERROR_BAD_STATE;
-    }
-}
-
-psa_status_t oberon_pake_set_role(
-    oberon_pake_operation_t *operation,
-    psa_pake_role_t role)
-{
-    switch (operation->alg) {
-#ifdef PSA_NEED_OBERON_JPAKE
-    case PSA_ALG_JPAKE:
-        return oberon_jpake_set_role(
-            &operation->ctx.oberon_jpake_ctx, role);
-#endif /* PSA_NEED_OBERON_JPAKE */
-#ifdef PSA_NEED_OBERON_SPAKE2P
-    case PSA_ALG_SPAKE2P:
-        return oberon_spake2p_set_role(
-            &operation->ctx.oberon_spake2p_ctx, role);
-#endif /* PSA_NEED_OBERON_SPAKE2P */
-#ifdef PSA_NEED_OBERON_SRP_6
-    case PSA_ALG_SRP_6:
-        return oberon_srp_set_role(
-            &operation->ctx.oberon_srp_ctx, role);
-#endif /* PSA_NEED_OBERON_SRP_6 */
-    default:
+        (void)peer_id_length;
         (void)role;
-        return PSA_ERROR_BAD_STATE;
+        return PSA_ERROR_NOT_SUPPORTED;
     }
 }
 

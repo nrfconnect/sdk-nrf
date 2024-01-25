@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -25,6 +25,12 @@
 #endif
 #ifdef PSA_NEED_OBERON_SHA_512
 #include "ocrypto_sha512.h"
+#endif
+#ifdef PSA_NEED_OBERON_SHA3
+#include "ocrypto_sha3.h"
+#endif
+#ifdef PSA_NEED_OBERON_SHAKE
+#include "ocrypto_shake.h"
 #endif
 
 
@@ -61,6 +67,21 @@ psa_status_t oberon_hash_setup(
     _Static_assert(sizeof operation->ctx >= sizeof(ocrypto_sha512_ctx), "oberon_hash_operation_t.ctx too small");
     case PSA_ALG_SHA_512:
         ocrypto_sha512_init((ocrypto_sha512_ctx*)operation->ctx);
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3
+    _Static_assert(sizeof operation->ctx >= sizeof(ocrypto_sha3_ctx), "oberon_hash_operation_t.ctx too small");
+    case PSA_ALG_SHA3_224:
+    case PSA_ALG_SHA3_256:
+    case PSA_ALG_SHA3_384:
+    case PSA_ALG_SHA3_512:
+        ocrypto_sha3_init((ocrypto_sha3_ctx*)operation->ctx);
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHAKE
+    _Static_assert(sizeof operation->ctx >= sizeof(ocrypto_shake_ctx), "oberon_hash_operation_t.ctx too small");
+    case PSA_ALG_SHAKE256_512:
+        ocrypto_shake_init((ocrypto_shake_ctx*)operation->ctx);
         break;
 #endif
     default:
@@ -107,6 +128,31 @@ psa_status_t oberon_hash_update(
 #ifdef PSA_NEED_OBERON_SHA_512
     case PSA_ALG_SHA_512:
         ocrypto_sha512_update((ocrypto_sha512_ctx*)operation->ctx, input, input_length);
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_224
+    case PSA_ALG_SHA3_224:
+        ocrypto_sha3_224_update((ocrypto_sha3_ctx*)operation->ctx, input, input_length);
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_256
+    case PSA_ALG_SHA3_256:
+        ocrypto_sha3_256_update((ocrypto_sha3_ctx*)operation->ctx, input, input_length);
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_384
+    case PSA_ALG_SHA3_384:
+        ocrypto_sha3_384_update((ocrypto_sha3_ctx*)operation->ctx, input, input_length);
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_512
+    case PSA_ALG_SHA3_512:
+        ocrypto_sha3_512_update((ocrypto_sha3_ctx*)operation->ctx, input, input_length);
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHAKE256_512
+    case PSA_ALG_SHAKE256_512:
+        ocrypto_shake256_update((ocrypto_shake_ctx*)operation->ctx, input, input_length);
         break;
 #endif
     default:
@@ -156,6 +202,41 @@ psa_status_t oberon_hash_finish(
         if (hash_size < ocrypto_sha512_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
         ocrypto_sha512_final((ocrypto_sha512_ctx*)operation->ctx, hash);
         *hash_length = ocrypto_sha512_BYTES;
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_224
+    case PSA_ALG_SHA3_224:
+        if (hash_size < ocrypto_sha3_224_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_sha3_224_final((ocrypto_sha3_ctx*)operation->ctx, hash);
+        *hash_length = ocrypto_sha3_224_BYTES;
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_256
+    case PSA_ALG_SHA3_256:
+        if (hash_size < ocrypto_sha3_256_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_sha3_256_final((ocrypto_sha3_ctx*)operation->ctx, hash);
+        *hash_length = ocrypto_sha3_256_BYTES;
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_384
+    case PSA_ALG_SHA3_384:
+        if (hash_size < ocrypto_sha3_384_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_sha3_384_final((ocrypto_sha3_ctx*)operation->ctx, hash);
+        *hash_length = ocrypto_sha3_384_BYTES;
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_512
+    case PSA_ALG_SHA3_512:
+        if (hash_size < ocrypto_sha3_512_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_sha3_512_final((ocrypto_sha3_ctx*)operation->ctx, hash);
+        *hash_length = ocrypto_sha3_512_BYTES;
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHAKE256_512
+    case PSA_ALG_SHAKE256_512:
+        if (hash_size < PSA_BITS_TO_BYTES(512)) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_shake256_final((ocrypto_shake_ctx*)operation->ctx, hash, PSA_BITS_TO_BYTES(512));
+        *hash_length = PSA_BITS_TO_BYTES(512);
         break;
 #endif
     default:
@@ -216,6 +297,41 @@ psa_status_t oberon_hash_compute(
         if (hash_size < ocrypto_sha512_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
         ocrypto_sha512(hash, input, input_length);
         *hash_length = ocrypto_sha512_BYTES;
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_224
+    case PSA_ALG_SHA3_224:
+        if (hash_size < ocrypto_sha3_224_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_sha3_224(hash, input, input_length);
+        *hash_length = ocrypto_sha3_224_BYTES;
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_256
+    case PSA_ALG_SHA3_256:
+        if (hash_size < ocrypto_sha3_256_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_sha3_256(hash, input, input_length);
+        *hash_length = ocrypto_sha3_256_BYTES;
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_384
+    case PSA_ALG_SHA3_384:
+        if (hash_size < ocrypto_sha3_384_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_sha3_384(hash, input, input_length);
+        *hash_length = ocrypto_sha3_384_BYTES;
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHA3_512
+    case PSA_ALG_SHA3_512:
+        if (hash_size < ocrypto_sha3_512_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_sha3_512(hash, input, input_length);
+        *hash_length = ocrypto_sha3_512_BYTES;
+        break;
+#endif
+#ifdef PSA_NEED_OBERON_SHAKE256_512
+    case PSA_ALG_SHAKE256_512:
+        if (hash_size < PSA_BITS_TO_BYTES(512)) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_shake256(hash, PSA_BITS_TO_BYTES(512), input, input_length);
+        *hash_length = PSA_BITS_TO_BYTES(512);
         break;
 #endif
     default:
