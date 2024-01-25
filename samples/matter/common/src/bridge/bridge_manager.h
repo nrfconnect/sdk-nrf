@@ -8,6 +8,7 @@
 
 #include "binding/binding_handler.h"
 #include "bridge_util.h"
+#include "util/finite_map.h"
 #include "bridged_device_data_provider.h"
 #include "matter_bridged_device.h"
 
@@ -177,7 +178,7 @@ private:
 
 	static constexpr uint8_t kMaxDataProviders = CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER;
 
-	using DeviceMap = FiniteMap<BridgedDevicePair, kMaxBridgedDevices>;
+	using DeviceMap = FiniteMap<uint16_t, BridgedDevicePair, kMaxBridgedDevices>;
 
 	/**
 	 * @brief Add pair of single bridged device and its data provider using optional index and endpoint id.
