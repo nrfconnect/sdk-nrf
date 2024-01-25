@@ -478,6 +478,12 @@ Matter samples
 
   * Added support for `AWS IoT Core`_.
 
+* :ref:`matter_template_sample` sample:
+
+  * Added support for DFU over Bluetooth LE SMP.
+    The functionality is disabled by default.
+    To enable it, set the :kconfig:option:`CONFIG_CHIP_DFU_OVER_BT_SMP` Kconfig option to ``y``.
+
 * :ref:`matter_lock_sample` sample:
 
   * Fixed an issue that prevented nRF Toolbox for iOS in version 5.0.9 from controlling the sample using :ref:`nus_service_readme`.
