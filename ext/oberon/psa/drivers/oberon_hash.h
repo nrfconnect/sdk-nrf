@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -18,7 +18,13 @@ extern "C" {
 
 
 typedef struct {
+#if defined(PSA_NEED_OBERON_SHA_384) || defined(PSA_NEED_OBERON_SHA_512)
     uint64_t ctx[52];
+#elif defined(PSA_NEED_OBERON_SHA_1)
+    uint64_t ctx[44];
+#else
+    uint64_t ctx[27];
+#endif
     psa_algorithm_t alg;
 } oberon_hash_operation_t;
 
