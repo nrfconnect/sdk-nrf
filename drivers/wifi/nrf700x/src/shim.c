@@ -208,6 +208,7 @@ struct nwb {
 	void *cleanup_ctx;
 	void (*cleanup_cb)();
 	unsigned char priority;
+	bool chksum_done;
 };
 
 static void *zep_shim_nbuf_alloc(unsigned int size)
@@ -310,6 +311,20 @@ static unsigned char zep_shim_nbuf_get_priority(void *nbuf)
 	return nwb->priority;
 }
 
+static unsigned char zep_shim_nbuf_get_chksum_done(void *nbuf)
+{
+	struct nwb *nwb = (struct nwb *)nbuf;
+
+	return nwb->chksum_done;
+}
+
+static void zep_shim_nbuf_set_chksum_done(void *nbuf, unsigned char chksum_done)
+{
+	struct nwb *nwb = (struct nwb *)nbuf;
+
+	nwb->chksum_done = (bool)chksum_done;
+}
+
 #include <zephyr/net/ethernet.h>
 #include <zephyr/net/net_core.h>
 
@@ -334,6 +349,7 @@ void *net_pkt_to_nbuf(struct net_pkt *pkt)
 	net_pkt_read(pkt, data, len);
 
 	nwb->priority = net_pkt_priority(pkt);
+	nwb->chksum_done = (bool)net_pkt_is_chksum_done(pkt);
 
 	return nwb;
 }
@@ -903,6 +919,8 @@ static const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
 	.nbuf_data_push = zep_shim_nbuf_data_push,
 	.nbuf_data_pull = zep_shim_nbuf_data_pull,
 	.nbuf_get_priority = zep_shim_nbuf_get_priority,
+	.nbuf_get_chksum_done = zep_shim_nbuf_get_chksum_done,
+	.nbuf_set_chksum_done = zep_shim_nbuf_set_chksum_done,
 
 	.tasklet_alloc = zep_shim_work_alloc,
 	.tasklet_free = zep_shim_work_free,
