@@ -1003,6 +1003,7 @@ Documentation
   * A page on :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission` in the :ref:`ug_nrf70_developing` user guide.
   * :ref:`contributions_ncs` page in a new :ref:`contributions` section that also includes the development model pages, previously listed under :ref:`releases_and_maturity`.
   * :ref:`ug_lte` user guide under :ref:`protocols`.
+  * Gazell and NFC sections in the :ref:`app_power_opt_recommendations` user guide.
 
 * Updated:
 
