@@ -61,6 +61,8 @@
 #define PSA_WANT_ALG_PBKDF2_HMAC                1
 #define PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128    1
 #define PSA_WANT_ALG_PURE_EDDSA                 1
+#define PSA_WANT_ALG_ED25519PH                  1
+#define PSA_WANT_ALG_ED448PH                    1
 #define PSA_WANT_ALG_RSA_OAEP                   1
 #define PSA_WANT_ALG_RSA_PKCS1V15_CRYPT         1
 #define PSA_WANT_ALG_RSA_PKCS1V15_SIGN          1
@@ -70,28 +72,48 @@
 #define PSA_WANT_ALG_SHA_256                    1
 #define PSA_WANT_ALG_SHA_384                    1
 #define PSA_WANT_ALG_SHA_512                    1
+#define PSA_WANT_ALG_SHA3_224                   1
+#define PSA_WANT_ALG_SHA3_256                   1
+#define PSA_WANT_ALG_SHA3_384                   1
+#define PSA_WANT_ALG_SHA3_512                   1
+#define PSA_WANT_ALG_SHAKE256_512               1
 #define PSA_WANT_ALG_SPAKE2P                    1
 #define PSA_WANT_ALG_SRP_6                      1
 #define PSA_WANT_ALG_STREAM_CIPHER              1
+#define PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS       1
 #define PSA_WANT_ALG_TLS12_PRF                  1
 #define PSA_WANT_ALG_TLS12_PSK_TO_MS            1
-#define PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS       1
 
 #define PSA_WANT_ECC_MONTGOMERY_255             1
+#define PSA_WANT_ECC_MONTGOMERY_448             1
 #define PSA_WANT_ECC_TWISTED_EDWARDS_255        1
+#define PSA_WANT_ECC_TWISTED_EDWARDS_448        1
 #define PSA_WANT_ECC_SECP_R1_224                1
 #define PSA_WANT_ECC_SECP_R1_256                1
 #define PSA_WANT_ECC_SECP_R1_384                1
+#define PSA_WANT_ECC_SECP_R1_521                1
 
 #define PSA_WANT_KEY_TYPE_DERIVE                1
+#define PSA_WANT_KEY_TYPE_PASSWORD              1
+#define PSA_WANT_KEY_TYPE_PASSWORD_HASH         1
 #define PSA_WANT_KEY_TYPE_HMAC                  1
 #define PSA_WANT_KEY_TYPE_AES                   1
 #define PSA_WANT_KEY_TYPE_CHACHA20              1
-#define PSA_WANT_KEY_TYPE_ECC_KEY_PAIR          1
+//#define PSA_WANT_KEY_TYPE_ECC_KEY_PAIR          1 /* Deprecated */
 #define PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY        1
 #define PSA_WANT_KEY_TYPE_RAW_DATA              1
-#define PSA_WANT_KEY_TYPE_RSA_KEY_PAIR          1
+//#define PSA_WANT_KEY_TYPE_RSA_KEY_PAIR          1 /* Deprecated */
 #define PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY        1
+
+#define PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_BASIC    1
+#define PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT   1
+#define PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT   1
+#define PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE 1
+#define PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE   1
+
+#define PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_BASIC    1
+#define PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT   1
+#define PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT   1
 
 // Additional AES key size option
 #define PSA_WANT_AES_KEY_SIZE_128               1

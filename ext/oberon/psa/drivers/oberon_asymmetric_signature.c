@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -9,12 +9,8 @@
 #include "psa/crypto.h"
 #include "oberon_asymmetric_signature.h"
 
-#ifdef PSA_NEED_OBERON_ECDSA_SIGN
 #include "oberon_ecdsa.h"
-#endif
-#ifdef PSA_NEED_OBERON_RSA_ANY_SIGN
 #include "oberon_rsa.h"
-#endif
 
 
 psa_status_t oberon_sign_hash(
@@ -102,7 +98,7 @@ psa_status_t oberon_verify_hash(
 {
     psa_key_type_t type = psa_get_key_type(attributes);
 
-#ifdef PSA_NEED_OBERON_ECDSA_SIGN
+#ifdef PSA_NEED_OBERON_ECDSA_VERIFY
     if (PSA_KEY_TYPE_IS_ECC(type)) {
         return oberon_ecdsa_verify_hash(
             attributes, key, key_length,
@@ -110,9 +106,9 @@ psa_status_t oberon_verify_hash(
             hash, hash_length,
             signature, signature_length);
     } else
-#endif /* PSA_NEED_OBERON_ECDSA_SIGN */
+#endif /* PSA_NEED_OBERON_ECDSA_VERIFY */
 
-#ifdef PSA_NEED_OBERON_RSA_ANY_SIGN
+#ifdef PSA_NEED_OBERON_RSA_ANY_VERIFY
     if (PSA_KEY_TYPE_IS_RSA(type)) {
         return oberon_rsa_verify_hash(
             attributes, key, key_length,
@@ -120,7 +116,7 @@ psa_status_t oberon_verify_hash(
             hash, hash_length,
             signature, signature_length);
     } else
-#endif /* PSA_NEED_OBERON_RSA_ANY_SIGN */
+#endif /* PSA_NEED_OBERON_RSA_ANY_VERIFY */
 
     {
         (void)key;
@@ -144,7 +140,7 @@ psa_status_t oberon_verify_message(
 {
     psa_key_type_t type = psa_get_key_type(attributes);
 
-#ifdef PSA_NEED_OBERON_ECDSA_SIGN
+#ifdef PSA_NEED_OBERON_ECDSA_VERIFY
     if (PSA_KEY_TYPE_IS_ECC(type)) {
         return oberon_ecdsa_verify_message(
             attributes, key, key_length,
@@ -152,7 +148,7 @@ psa_status_t oberon_verify_message(
             input, input_length,
             signature, signature_length);
     } else
-#endif /* PSA_NEED_OBERON_ECDSA_SIGN */
+#endif /* PSA_NEED_OBERON_ECDSA_VERIFY */
 
     {
         (void)key;

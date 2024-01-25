@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -8,13 +8,8 @@
 
 #include "psa/crypto.h"
 #include "oberon_key_management.h"
-
-#ifdef PSA_NEED_OBERON_KEY_MANAGEMENT_ECC
 #include "oberon_ec_keys.h"
-#endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_ECC */
-#ifdef PSA_NEED_OBERON_KEY_MANAGEMENT_RSA
 #include "oberon_rsa.h"
-#endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_RSA */
 
 
 psa_status_t oberon_export_public_key(
@@ -24,21 +19,21 @@ psa_status_t oberon_export_public_key(
 {
     psa_key_type_t type = psa_get_key_type(attributes);
 
-#ifdef PSA_NEED_OBERON_KEY_MANAGEMENT_ECC
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_EXPORT
     if (PSA_KEY_TYPE_IS_ECC(type)) {
         return oberon_export_ec_public_key(
             attributes, key, key_length,
             data, data_size, data_length);
     } else
-#endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_ECC */
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_EXPORT */
 
-#ifdef PSA_NEED_OBERON_KEY_MANAGEMENT_RSA
+#ifdef PSA_NEED_OBERON_KEY_TYPE_RSA_KEY_PAIR_EXPORT
     if (PSA_KEY_TYPE_IS_RSA(type)) {
         return oberon_export_rsa_public_key(
             attributes, key, key_length,
             data, data_size, data_length);
     } else
-#endif /* PSA_NEED_OBERON_RSAC_KEY_PAIR */
+#endif /* PSA_NEED_OBERON_KEY_TYPE_RSA_KEY_PAIR_EXPORT */
 
     {
         (void)key;
@@ -59,21 +54,21 @@ psa_status_t oberon_import_key(
 {
     psa_key_type_t type = psa_get_key_type(attributes);
 
-#ifdef PSA_NEED_OBERON_KEY_MANAGEMENT_ECC
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_IMPORT
     if (PSA_KEY_TYPE_IS_ECC(type)) {
         return oberon_import_ec_key(
             attributes, data, data_length,
             key, key_size, key_length, key_bits);
     } else
-#endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_ECC */
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_IMPORT */
 
-#ifdef PSA_NEED_OBERON_KEY_MANAGEMENT_RSA
+#ifdef PSA_NEED_OBERON_KEY_TYPE_RSA_KEY_PAIR_IMPORT
     if (PSA_KEY_TYPE_IS_RSA(type)) {
         return oberon_import_rsa_key(
             attributes, data, data_length,
             key, key_size, key_length, key_bits);
     } else
-#endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_RSA */
+#endif /* PSA_NEED_OBERON_KEY_TYPE_RSA_KEY_PAIR_IMPORT */
 
     {
         (void)data;
@@ -93,13 +88,13 @@ psa_status_t oberon_generate_key(
 {
     psa_key_type_t type = psa_get_key_type(attributes);
 
-#ifdef PSA_NEED_OBERON_KEY_MANAGEMENT_ECC
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE
     if (PSA_KEY_TYPE_IS_ECC(type)) {
         return oberon_generate_ec_key(
             attributes,
             key, key_size, key_length);
     } else
-#endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_ECC */
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE */
 
     {
         (void)key;

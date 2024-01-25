@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2024 Nordic Semiconductor ASA
  * Copyright (c) since 2020 Oberon microsystems AG
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -21,9 +21,21 @@
 #ifdef PSA_NEED_OBERON_ECDSA_SECP_R1_384
 #include "ocrypto_ecdsa_p384.h"
 #endif /* PSA_NEED_OBERON_ECDSA_SECP_R1_384 */
+#ifdef PSA_NEED_OBERON_ECDSA_SECP_R1_521
+#include "ocrypto_ecdsa_p521.h"
+#endif /* PSA_NEED_OBERON_ECDSA_SECP_R1_521 */
 #ifdef PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255
 #include "ocrypto_ed25519.h"
 #endif /* PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255 */
+#ifdef PSA_NEED_OBERON_ED25519PH
+#include "ocrypto_ed25519ph.h"
+#endif /* PSA_NEED_OBERON_ED25519PH */
+#ifdef PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448
+#include "ocrypto_ed448.h"
+#endif /* PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448 */
+#ifdef PSA_NEED_OBERON_ED448PH
+#include "ocrypto_ed448ph.h"
+#endif /* PSA_NEED_OBERON_ED448PH */
 
 
 #ifdef PSA_NEED_OBERON_ECDSA_SIGN
@@ -51,6 +63,11 @@ static int ecdsa_sign_hash(
         res = ocrypto_ecdsa_p384_sign_hash(signature, hash, key, ek);
         break;
 #endif /* PSA_NEED_OBERON_ECDSA_SECP_R1_384 */
+#ifdef PSA_NEED_OBERON_ECDSA_SECP_R1_521
+    case PSA_BITS_TO_BYTES(521):
+        res = ocrypto_ecdsa_p521_sign_hash(signature, hash, key, ek);
+        break;
+#endif /* PSA_NEED_OBERON_ECDSA_SECP_R1_521 */
     default:
         (void)key;
         (void)hash;
@@ -174,53 +191,86 @@ psa_status_t oberon_ecdsa_sign_hash(
     int res;
     psa_status_t status;
     uint8_t ek[PSA_BITS_TO_BYTES(PSA_VENDOR_ECC_MAX_CURVE_BITS)];
+#if defined(PSA_NEED_OBERON_ECDSA_RANDOMIZED) || defined(PSA_NEED_OBERON_ECDSA_DETERMINISTIC)
     uint8_t ext_hash[PSA_BITS_TO_BYTES(PSA_VENDOR_ECC_MAX_CURVE_BITS)];
     size_t bits = psa_get_key_bits(attributes);
+#endif
 
-    if (psa_get_key_type(attributes) != PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
-        return PSA_ERROR_NOT_SUPPORTED;
-    }
-    if (hash_length == 0 || key_length != PSA_BITS_TO_BYTES(bits)) return PSA_ERROR_INVALID_ARGUMENT;
-    if (signature_size < key_length * 2) return PSA_ERROR_BUFFER_TOO_SMALL;
-    *signature_length = key_length * 2;
+    switch (psa_get_key_type(attributes)) {
+#if defined(PSA_NEED_OBERON_ECDSA_RANDOMIZED) || defined(PSA_NEED_OBERON_ECDSA_DETERMINISTIC)
+    case PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
+        if (hash_length == 0 || key_length != PSA_BITS_TO_BYTES(bits)) return PSA_ERROR_INVALID_ARGUMENT;
+        if (signature_size < key_length * 2) return PSA_ERROR_BUFFER_TOO_SMALL;
+        *signature_length = key_length * 2;
 
-    if (hash_length < key_length) {
-        if (key_length > sizeof ext_hash) return PSA_ERROR_INSUFFICIENT_MEMORY;
-        // add most significant zero bits
-        memset(ext_hash, 0, key_length - hash_length);
-        memcpy(ext_hash + key_length - hash_length, hash, hash_length);
-        hash = ext_hash;
-    }
+        if (hash_length < key_length) {
+            if (key_length > sizeof ext_hash) return PSA_ERROR_INSUFFICIENT_MEMORY;
+            // add most significant zero bits
+            memset(ext_hash, 0, key_length - hash_length);
+            memcpy(ext_hash + key_length - hash_length, hash, hash_length);
+            hash = ext_hash;
+        }
 
 #ifdef PSA_NEED_OBERON_ECDSA_RANDOMIZED
-    if (PSA_ALG_IS_RANDOMIZED_ECDSA(alg)) {
-        do {
-            status = psa_generate_random(ek, key_length); // ephemeral key
-            if (status != PSA_SUCCESS) return status;
-            res = ecdsa_sign_hash(key, key_length, hash, ek, signature);
-            if (res > 0) return PSA_ERROR_NOT_SUPPORTED;
-        } while (res != 0);
-    } else
+        if (PSA_ALG_IS_RANDOMIZED_ECDSA(alg)) {
+            do {
+                status = psa_generate_random(ek, key_length); // ephemeral key
+                if (status != PSA_SUCCESS) return status;
+                res = ecdsa_sign_hash(key, key_length, hash, ek, signature);
+                if (res > 0) return PSA_ERROR_NOT_SUPPORTED;
+            } while (res != 0);
+        } else
 #endif /* PSA_NEED_OBERON_ECDSA_RANDOMIZED */
-
 #ifdef PSA_NEED_OBERON_ECDSA_DETERMINISTIC
-    if (PSA_ALG_IS_DETERMINISTIC_ECDSA(alg)) {
-        psa_algorithm_t hash_alg = PSA_ALG_SIGN_GET_HASH(alg);
-        return deterministic_ecdsa_sign_hash(hash_alg, hash, key, key_length, ek, signature);
-    } else
+        if (PSA_ALG_IS_DETERMINISTIC_ECDSA(alg)) {
+            psa_algorithm_t hash_alg = PSA_ALG_SIGN_GET_HASH(alg);
+            return deterministic_ecdsa_sign_hash(hash_alg, hash, key, key_length, ek, signature);
+        } else
 #endif /* PSA_NEED_OBERON_ECDSA_DETERMINISTIC */
+        {
+            return PSA_ERROR_INVALID_ARGUMENT; //  PSA_ERROR_NOT_SUPPORTED;
+        }
+        return PSA_SUCCESS;
+#endif /* PSA_NEED_OBERON_ECDSA_RANDOMIZED || PSA_NEED_OBERON_ECDSA_DETERMINISTIC */
 
-    {
+#if defined(PSA_NEED_OBERON_ED25519PH) || defined(PSA_NEED_OBERON_ED448PH)
+    case PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS):
+        switch (psa_get_key_bits(attributes)) {
+#ifdef PSA_NEED_OBERON_ED25519PH
+        case 255:
+            if (hash_length != ocrypto_ed25519ph_HASH_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (key_length != ocrypto_ed25519ph_SECRET_KEY_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (signature_size < ocrypto_ed25519ph_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+            *signature_length = ocrypto_ed25519ph_BYTES;
+            ocrypto_ed25519ph_public_key(ek, key); // calculate public key
+            ocrypto_ed25519ph_sign(signature, hash, key, ek);
+            break;
+#endif /* PSA_NEED_OBERON_ED25519PH */
+#ifdef PSA_NEED_OBERON_ED448PH
+        case 448:
+            if (hash_length != ocrypto_ed448ph_HASH_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (key_length != ocrypto_ed448ph_SECRET_KEY_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (signature_size < ocrypto_ed448ph_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+            *signature_length = ocrypto_ed448ph_BYTES;
+            ocrypto_ed448ph_public_key(ek, key); // calculate public key
+            ocrypto_ed448ph_sign(signature, hash, key, ek);
+            break;
+#endif /* PSA_NEED_OBERON_ED448PH */
+        default:
+            return PSA_ERROR_NOT_SUPPORTED;
+        }
+        return PSA_SUCCESS;
+#endif /* PSA_NEED_OBERON_ED25519PH || PSA_NEED_OBERON_ED448PH */
+
+    default:
         (void)key;
         (void)alg;
         (void)signature;
         (void)ek;
         (void)status;
         (void)res;
-        return PSA_ERROR_INVALID_ARGUMENT; //  PSA_ERROR_NOT_SUPPORTED;
+        return PSA_ERROR_NOT_SUPPORTED;
     }
-
-    return PSA_SUCCESS;
 }
 
 psa_status_t oberon_ecdsa_sign_message(
@@ -231,24 +281,40 @@ psa_status_t oberon_ecdsa_sign_message(
     uint8_t *signature, size_t signature_size, size_t *signature_length)
 {
 #if defined(PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448)
-    uint8_t pub_key[56];
+    uint8_t pub_key[57];
 #elif defined(PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255)
     uint8_t pub_key[32];
 #endif
     psa_key_type_t type = psa_get_key_type(attributes);
 
     switch (type) {
-#ifdef PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255
+#if defined(PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255) || defined(PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448)
     case PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS):
         // EDDSA is only available in sign_message
-        if (psa_get_key_bits(attributes) != 255) return PSA_ERROR_NOT_SUPPORTED;
-        if (key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
-        if (signature_size < 64) return PSA_ERROR_BUFFER_TOO_SMALL;
-        *signature_length = 64;
-        ocrypto_ed25519_public_key(pub_key, key); // calculate public key
-        ocrypto_ed25519_sign(signature, input, input_length, key, pub_key);
+        switch (psa_get_key_bits(attributes)) {
+#ifdef PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255
+        case 255:
+            if (key_length != ocrypto_ed25519_SECRET_KEY_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (signature_size < ocrypto_ed25519_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+            *signature_length = ocrypto_ed25519_BYTES;
+            ocrypto_ed25519_public_key(pub_key, key); // calculate public key
+            ocrypto_ed25519_sign(signature, input, input_length, key, pub_key);
+            break;
+#endif
+#ifdef PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448
+        case 448:
+            if (key_length != ocrypto_ed448_SECRET_KEY_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (signature_size < ocrypto_ed448_BYTES) return PSA_ERROR_BUFFER_TOO_SMALL;
+            *signature_length = ocrypto_ed448_BYTES;
+            ocrypto_ed448_public_key(pub_key, key); // calculate public key
+            ocrypto_ed448_sign(signature, input, input_length, key, pub_key);
+            break;
+#endif
+        default:
+            return PSA_ERROR_NOT_SUPPORTED;
+        }
         return PSA_SUCCESS;
-#endif /* PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255 */
+#endif /* PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255 || PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448 */
     default:
         (void)key;
         (void)key_length;
@@ -270,68 +336,128 @@ psa_status_t oberon_ecdsa_verify_hash(
     const uint8_t *signature, size_t signature_length)
 {
     int res;
-    uint8_t ext_hash[PSA_BITS_TO_BYTES(PSA_VENDOR_ECC_MAX_CURVE_BITS)];
     uint8_t key_buf[2 * PSA_BITS_TO_BYTES(PSA_VENDOR_ECC_MAX_CURVE_BITS)];
+#if defined(PSA_NEED_OBERON_ECDSA_RANDOMIZED) || defined(PSA_NEED_OBERON_ECDSA_DETERMINISTIC)
+    uint8_t ext_hash[PSA_BITS_TO_BYTES(PSA_VENDOR_ECC_MAX_CURVE_BITS)];
     const uint8_t *pub_key;
-    psa_key_type_t type = psa_get_key_type(attributes);
     size_t bits = psa_get_key_bits(attributes);
     size_t length = PSA_BITS_TO_BYTES(bits);
+#endif
+    psa_key_type_t type = psa_get_key_type(attributes);
 
-    if (hash_length == 0) return PSA_ERROR_INVALID_ARGUMENT;
-    if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
-        if (key_length != length) return PSA_ERROR_INVALID_ARGUMENT;
-        pub_key = key_buf;
-    } else if (type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
-        if (key_length != length * 2 + 1 || key[0] != 0x04) return PSA_ERROR_INVALID_ARGUMENT;
-        pub_key = &key[1];
-    } else {
-        return PSA_ERROR_NOT_SUPPORTED;
-    }
+    switch (type) {
+#if defined(PSA_NEED_OBERON_ECDSA_RANDOMIZED) || defined(PSA_NEED_OBERON_ECDSA_DETERMINISTIC)
+    case PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
+    case PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1):
+        if (hash_length == 0) return PSA_ERROR_INVALID_ARGUMENT;
+        if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
+            if (key_length != length) return PSA_ERROR_INVALID_ARGUMENT;
+            pub_key = key_buf;
+        } else {
+            if (key_length != length * 2 + 1 || key[0] != 0x04) return PSA_ERROR_INVALID_ARGUMENT;
+            pub_key = &key[1];
+        }
 
-    if (hash_length < length) {
-        if (length > sizeof ext_hash) return PSA_ERROR_INSUFFICIENT_MEMORY;
-        memset(ext_hash, 0, length - hash_length);
-        memcpy(ext_hash + length - hash_length, hash, hash_length);
-        hash = ext_hash;
-    }
+        if (hash_length < length) {
+            if (length > sizeof ext_hash) return PSA_ERROR_INSUFFICIENT_MEMORY;
+            memset(ext_hash, 0, length - hash_length);
+            memcpy(ext_hash + length - hash_length, hash, hash_length);
+            hash = ext_hash;
+        }
 
-    if (PSA_ALG_IS_ECDSA(alg)) {
-        if (signature_length != 2 * length) return PSA_ERROR_INVALID_SIGNATURE;
-        switch (length) {
+        if (PSA_ALG_IS_ECDSA(alg)) {
+            if (signature_length != 2 * length) return PSA_ERROR_INVALID_SIGNATURE;
+            switch (length) {
 #ifdef PSA_NEED_OBERON_ECDSA_SECP_R1_224
-        case 28:
-            if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
-                ocrypto_ecdsa_p224_public_key(key_buf, key);
-            }
-            res = ocrypto_ecdsa_p224_verify_hash(signature, hash, pub_key);
-            break;
+            case PSA_BITS_TO_BYTES(224):
+                if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
+                    ocrypto_ecdsa_p224_public_key(key_buf, key);
+                }
+                res = ocrypto_ecdsa_p224_verify_hash(signature, hash, pub_key);
+                break;
 #endif /* PSA_NEED_OBERON_ECDSA_SECP_R1_224 */
 #ifdef PSA_NEED_OBERON_ECDSA_SECP_R1_256
-        case 32:
-            if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
-                ocrypto_ecdsa_p256_public_key(key_buf, key);
-            }
-            res = ocrypto_ecdsa_p256_verify_hash(signature, hash, pub_key);
-            break;
+            case PSA_BITS_TO_BYTES(256):
+                if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
+                    ocrypto_ecdsa_p256_public_key(key_buf, key);
+                }
+                res = ocrypto_ecdsa_p256_verify_hash(signature, hash, pub_key);
+                break;
 #endif /* PSA_NEED_OBERON_ECDSA_SECP_R1_256 */
 #ifdef PSA_NEED_OBERON_ECDSA_SECP_R1_384
-        case 48:
-            if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
-                ocrypto_ecdsa_p384_public_key(key_buf, key);
-            }
-            res = ocrypto_ecdsa_p384_verify_hash(signature, hash, pub_key);
-            break;
+            case PSA_BITS_TO_BYTES(384):
+                if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
+                    ocrypto_ecdsa_p384_public_key(key_buf, key);
+                }
+                res = ocrypto_ecdsa_p384_verify_hash(signature, hash, pub_key);
+                break;
 #endif /* PSA_NEED_OBERON_ECDSA_SECP_R1_384 */
+#ifdef PSA_NEED_OBERON_ECDSA_SECP_R1_521
+            case PSA_BITS_TO_BYTES(521):
+                if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
+                    ocrypto_ecdsa_p521_public_key(key_buf, key);
+                }
+                res = ocrypto_ecdsa_p521_verify_hash(signature, hash, pub_key);
+                break;
+#endif /* PSA_NEED_OBERON_ECDSA_SECP_R1_521 */
+            default:
+                (void)signature;
+                return PSA_ERROR_NOT_SUPPORTED;
+            }
+        } else {
+            return PSA_ERROR_INVALID_ARGUMENT; //  PSA_ERROR_NOT_SUPPORTED;
+        }
+        if (res != 0) return PSA_ERROR_INVALID_SIGNATURE;
+        return PSA_SUCCESS;
+#endif /* PSA_NEED_OBERON_ECDSA_RANDOMIZED || PSA_NEED_OBERON_ECDSA_DETERMINISTIC */
+
+#if defined(PSA_NEED_OBERON_ED25519PH) || defined(PSA_NEED_OBERON_ED448PH)
+    case PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS):
+    case PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS):
+        switch (psa_get_key_bits(attributes)) {
+#ifdef PSA_NEED_OBERON_ED25519PH
+        case 255:
+            if (key_length != ocrypto_ed25519ph_PUBLIC_KEY_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (hash_length != ocrypto_ed25519ph_HASH_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (signature_length != ocrypto_ed25519ph_BYTES) return PSA_ERROR_INVALID_SIGNATURE;
+            if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS)) {
+                ocrypto_ed25519ph_public_key(key_buf, key);
+                key = key_buf;
+            }
+            res = ocrypto_ed25519ph_verify(signature, hash, key);
+            break;
+#endif /* PSA_NEED_OBERON_ED25519PH */
+#ifdef PSA_NEED_OBERON_ED448PH
+        case 448:
+            if (key_length != ocrypto_ed448ph_PUBLIC_KEY_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (hash_length != ocrypto_ed448ph_HASH_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (signature_length != ocrypto_ed448ph_BYTES) return PSA_ERROR_INVALID_SIGNATURE;
+            if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS)) {
+                ocrypto_ed448ph_public_key(key_buf, key);
+                key = key_buf;
+            }
+            res = ocrypto_ed448ph_verify(signature, hash, key);
+            break;
+#endif /* PSA_NEED_OBERON_ED448PH */
         default:
-            (void)signature;
             return PSA_ERROR_NOT_SUPPORTED;
         }
-    } else {
-        return PSA_ERROR_INVALID_ARGUMENT; //  PSA_ERROR_NOT_SUPPORTED;
-    }
-    if (res != 0) return PSA_ERROR_INVALID_SIGNATURE;
+        if (res) return PSA_ERROR_INVALID_SIGNATURE;
+        return PSA_SUCCESS;
+#endif /* PSA_NEED_OBERON_ED25519PH || PSA_NEED_OBERON_ED448PH */
 
-    return PSA_SUCCESS;
+    default:
+        (void)key;
+        (void)key_length;
+        (void)alg;
+        (void)hash;
+        (void)hash_length;
+        (void)signature;
+        (void)signature_length;
+        (void)res;
+        (void)key_buf;
+        return PSA_ERROR_NOT_SUPPORTED;
+    }
 }
 
 psa_status_t oberon_ecdsa_verify_message(
@@ -343,28 +469,46 @@ psa_status_t oberon_ecdsa_verify_message(
 {
     int res;
 #if defined(PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448)
-    uint8_t pub_key[56];
+    uint8_t pub_key[57];
 #elif defined(PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255)
     uint8_t pub_key[32];
 #endif
     psa_key_type_t type = psa_get_key_type(attributes);
 
     switch (type) {
-#ifdef PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255
+#if defined(PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255) || defined(PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448)
     case PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS):
     case PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS):
         // EDDSA is only available in verify_message
-        if (psa_get_key_bits(attributes) != 255) return PSA_ERROR_NOT_SUPPORTED;
-        if (key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
-        if (signature_length != 64) return PSA_ERROR_INVALID_SIGNATURE;
-        if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS)) {
-            ocrypto_ed25519_public_key(pub_key, key);
-            key = pub_key;
+        switch (psa_get_key_bits(attributes)) {
+#ifdef PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255
+        case 255:
+            if (key_length != ocrypto_ed25519_PUBLIC_KEY_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (signature_length != ocrypto_ed25519_BYTES) return PSA_ERROR_INVALID_SIGNATURE;
+            if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS)) {
+                ocrypto_ed25519_public_key(pub_key, key);
+                key = pub_key;
+            }
+            res = ocrypto_ed25519_verify(signature, input, input_length, key);
+            break;
+#endif /* PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255 */
+#ifdef PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448
+        case 448:
+            if (key_length != ocrypto_ed448_PUBLIC_KEY_BYTES) return PSA_ERROR_INVALID_ARGUMENT;
+            if (signature_length != ocrypto_ed448_BYTES) return PSA_ERROR_INVALID_SIGNATURE;
+            if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS)) {
+                ocrypto_ed448_public_key(pub_key, key);
+                key = pub_key;
+            }
+            res = ocrypto_ed448_verify(signature, input, input_length, key);
+            break;
+#endif /* PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448 */
+        default:
+            return PSA_ERROR_NOT_SUPPORTED;
         }
-        res = ocrypto_ed25519_verify(signature, input, input_length, key);
         if (res) return PSA_ERROR_INVALID_SIGNATURE;
         return PSA_SUCCESS;
-#endif /* PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255 */
+#endif /* PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_255 || PSA_NEED_OBERON_PURE_EDDSA_TWISTED_EDWARDS_448 */
     default:
         (void)key;
         (void)key_length;
