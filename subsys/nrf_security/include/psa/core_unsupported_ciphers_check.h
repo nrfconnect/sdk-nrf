@@ -17,21 +17,6 @@
 #if defined(CONFIG_PSA_WANT_ALG_SHA_512_256) && !defined(CONFIG_PSA_ACCEL_SHA_512_256)
 #error "No crypto implementation for SHA-512-256"
 #endif
-#if defined(CONFIG_PSA_WANT_ALG_SHA3_224) && !defined(CONFIG_PSA_ACCEL_SHA3_224)
-#error "No crypto implementation for SHA3-224"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_SHA3_256) && !defined(CONFIG_PSA_ACCEL_SHA3_256)
-#error "No crypto implementation for SHA3-256"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_SHA3_384) && !defined(CONFIG_PSA_ACCEL_SHA3_384)
-#error "No crypto implementation for SHA3-384"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_SHA3_512) && !defined(CONFIG_PSA_ACCEL_SHA3_512)
-#error "No crypto implementation for SHA3-512"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_SHAKE256_512) && !defined(CONFIG_PSA_ACCEL_SHAKE256_512)
-#error "No crypto implementation for SHAKE-256"
-#endif
 #if defined(CONFIG_PSA_WANT_ALG_MD5) && !defined(CONFIG_PSA_ACCEL_MD5)
 #error "No crypto implementation for MD5"
 #endif
@@ -84,21 +69,6 @@
 #endif
 #endif
 
-#if defined(CONFIG_PSA_WANT_ALG_ECDH) && defined(CONFIG_PSA_WANT_ECC_MONTGOMERY_448) &&            \
-	!defined(CONFIG_PSA_ACCEL_ECDH_MONTGOMERY_448)
-#error "No crypto implementation for X448"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_PURE_EDDSA) && defined(CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448) && \
-	!defined(CONFIG_PSA_ACCEL_PURE_EDDSA_TWISTED_EDWARDS_448)
-#error "No crypto implementation for ED448"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_ED25519PH) && !defined(CONFIG_PSA_ACCEL_ED25519PH)
-#error "No crypto implementation for pre-hashed ED25519"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_ED448PH) && !defined(CONFIG_PSA_ACCEL_ED448PH)
-#error "No crypto implementation for pre-hashed ED448"
-#endif
-
 #if defined(CONFIG_PSA_WANT_ALG_FFDH)
 #if defined(CONFIG_PSA_WANT_DH_KEY_SIZE_2048) && !defined(CONFIG_PSA_ACCEL_FFDH_2048)
 #error "No crypto implementation for 2048 bit FFDH"
@@ -118,99 +88,161 @@
 #endif
 
 #if defined(CONFIG_PSA_WANT_ECC_SECP_K1_192) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECP_K1_192)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECP_K1_192) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECP_K1_192) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECP_K1_192) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECP_K1_192))
 #error "No crypto implementation for secp-k1-192"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECP_K1_224) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECP_K1_224)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECP_K1_224) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECP_K1_224) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECP_K1_224) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECP_K1_224))
 #error "No crypto implementation for secp-k1-224"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECP_K1_256) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECP_K1_256)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECP_K1_256) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECP_K1_256) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECP_K1_256) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECP_K1_256))
 #error "No crypto implementation for secp-k1-256"
 #endif
 
 #if defined(CONFIG_PSA_WANT_ECC_SECP_R1_192) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECP_R1_192)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECP_R1_192) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECP_R1_192) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECP_R1_192) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECP_R1_192))
 #error "No crypto implementation for secp-r1-192"
-#endif
-#if defined(CONFIG_PSA_WANT_ECC_SECP_R1_521) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECP_R1_521)
-#error "No crypto implementation for secp-r1-521"
 #endif
 
 #if defined(CONFIG_PSA_WANT_ECC_SECT_K1_163) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_K1_163)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_K1_163) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_K1_163) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_K1_163) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_K1_163))
 #error "No crypto implementation for sect-k1-163"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECT_K1_233) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_K1_233)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_K1_233) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_K1_233) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_K1_233) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_K1_233))
 #error "No crypto implementation for sect-k1-233"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECT_K1_239) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_K1_239)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_K1_239) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_K1_239) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_K1_239) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_K1_239))
 #error "No crypto implementation for sect-k1-239"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECT_K1_283) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_K1_283)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_K1_283) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_K1_283) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_K1_283) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_K1_283))
 #error "No crypto implementation for sect-k1-283"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECT_K1_409) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_K1_409)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_K1_409) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_K1_409) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_K1_409) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_K1_409))
 #error "No crypto implementation for sect-k1-409"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECT_K1_571) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_K1_571)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_K1_571) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_K1_571) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_K1_571) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_K1_571))
 #error "No crypto implementation for sect-k1-571"
 #endif
 
 #if defined(CONFIG_PSA_WANT_ECC_SECT_R1_163) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_R1_163)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_R1_163) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_R1_163) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_R1_163) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_R1_163))
 #error "No crypto implementation for sect-r1-163"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECT_R1_233) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_R1_233)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_R1_233) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_R1_233) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_R1_233) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_R1_233))
 #error "No crypto implementation for sect-r1-233"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECT_R1_283) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_R1_283)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_R1_283) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_R1_283) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_R1_283) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_R1_283))
 #error "No crypto implementation for sect-r1-283"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECT_R1_409) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_R1_409)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_R1_409) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_R1_409) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_R1_409) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_R1_409))
 #error "No crypto implementation for sect-r1-409"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_SECT_R1_571) &&                                                    \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_SECT_R1_571)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_SECT_R1_571) ||                         \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_SECT_R1_571) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECT_R1_571) ||                    \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECT_R1_571))
 #error "No crypto implementation for sect-r1-571"
 #endif
 
 #if defined(CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_160) &&                                             \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_BRAINPOOL_P_R1_160)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_BRAINPOOL_P_R1_160) ||                  \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_BRAINPOOL_P_R1_160) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_BRAINPOOL_P_R1_160) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_BRAINPOOL_P_R1_160))
 #error "No crypto implementation for brainpoolP160r1"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192) &&                                             \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_BRAINPOOL_P_R1_192)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_BRAINPOOL_P_R1_192) ||                  \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_BRAINPOOL_P_R1_192) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_BRAINPOOL_P_R1_192) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_BRAINPOOL_P_R1_192))
 #error "No crypto implementation for brainpoolP192r1"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224) &&                                             \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_BRAINPOOL_P_R1_224)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_BRAINPOOL_P_R1_224) ||                  \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_BRAINPOOL_P_R1_224) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_BRAINPOOL_P_R1_224) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_BRAINPOOL_P_R1_224))
 #error "No crypto implementation for brainpoolP224r1"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_256) &&                                             \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_BRAINPOOL_P_R1_256)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_BRAINPOOL_P_R1_256) ||                  \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_BRAINPOOL_P_R1_256) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_BRAINPOOL_P_R1_256) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_BRAINPOOL_P_R1_256))
 #error "No crypto implementation for brainpoolP256r1"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_320) &&                                             \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_BRAINPOOL_P_R1_320)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_BRAINPOOL_P_R1_320) ||                  \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_BRAINPOOL_P_R1_320) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_BRAINPOOL_P_R1_320) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_BRAINPOOL_P_R1_320))
 #error "No crypto implementation for brainpoolP320r1"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_384) &&                                             \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_BRAINPOOL_P_R1_384)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_BRAINPOOL_P_R1_384) ||                  \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_BRAINPOOL_P_R1_384) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_BRAINPOOL_P_R1_384) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_BRAINPOOL_P_R1_384))
 #error "No crypto implementation for brainpoolP384r1"
 #endif
 #if defined(CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_512) &&                                             \
-	!defined(CONFIG_PSA_ACCEL_KEY_MANAGEMENT_BRAINPOOL_P_R1_512)
+	!(defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY_BRAINPOOL_P_R1_512) ||                  \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_IMPORT_BRAINPOOL_P_R1_512) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_EXPORT_BRAINPOOL_P_R1_512) ||             \
+	  defined(CONFIG_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR_GENERATE_BRAINPOOL_P_R1_512))
 #error "No crypto implementation for brainpoolP512r1"
 #endif
 
