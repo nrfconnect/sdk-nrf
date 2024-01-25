@@ -32,9 +32,13 @@
 
 | :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk_nrf52840 <nrf9160dk_nrf52840>` | ``nrf9160dk_nrf52840`` |
 
+.. nrf9161dk_nrf9161
+
+| :ref:`nRF9161 DK <ug_nrf9161>` | PCA10153 | :ref:`nrf9161dk_nrf9161 <zephyr:nrf9161dk_nrf9161>` | ``nrf9161dk_nrf9161``  |
+
 .. nrf9161dk_nrf9161_ns
 
-| nRF9161 DK |  | ``nrf9161dk_nrf9161`` | ``nrf9161dk_nrf9161_ns`` |
+| :ref:`nRF9161 DK <ug_nrf9161>` | PCA10153 | :ref:`nrf9161dk_nrf9161 <zephyr:nrf9161dk_nrf9161>` | ``nrf9161dk_nrf9161_ns`` |
 
 .. nrf9131ek_nrf9131
 

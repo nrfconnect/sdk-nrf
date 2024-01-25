@@ -13,7 +13,7 @@ The library issues AT commands to perform the following actions:
 
 * Retrieve the battery voltage measured by the modem.
 * Set the battery voltage low level for the modem using the ``%XVBATLOWLVL`` command.
-  See the `Battery voltage low level %XVBATLOWLVL`_  section in the nRF9160 AT Commands Reference Guide or the same section in the `nRF91x1 AT Commands Reference Guide`_ depending on the SiP you are using.
+  See the `Battery voltage low level %XVBATLOWLVL`_  section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 battery voltage low level %XVBATLOWLVL_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
 * Subscribe to or unsubscribe from unsolicited notifications on modem battery voltage low level.
 * Configure the power-off warnings from the modem (possible with modem firmware v1.3.1 and higher).
 

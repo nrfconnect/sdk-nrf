@@ -430,8 +430,6 @@
 .. _`Cellular IoT unique features`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Unique-Features?lang=en#infotabs
 .. _`Cellular IoT SiPs`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Products?lang=en#infotabs
 
-.. _`nRF9161 Objective Product Specification`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/SiP/nRF91x1-SiP/nRF9161_OPS_v0.7.pdf
-
 .. _`nRF52840 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/Download#infotabs
 .. _`nRF52840 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/
 
@@ -534,8 +532,9 @@
 .. _`nRF pynrfjprog`: https://infocenter.nordicsemi.com/topic/ug_pynrfjprog/UG/pynrfjprog/pynrfjprog_lpage.html
 
 .. _`nRF9160 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/nRF9160_html5_keyfeatures.html
-.. _`nRF9160 GPS receiver specification`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf9160%2Fgps.html&cp=2_0_0_7
+.. _`nRF9160 GPS receiver specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/gps.html
 .. _`nRF9160 SiP pin configuration`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
+.. _`Measuring current on nRF9160 DK`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/hw_measure_current.html
 
 .. _`nRF9160 DK GPS`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/gps.html
 
@@ -548,25 +547,40 @@
 .. _`Device programming section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/mcu_device_programming.html
 .. _`VDD supply rail section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/power_sources_vdd.html
 
-.. _`nRF9161 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/nRF9160_html5_keyfeatures.html
+.. _`nRF9161 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9161/nRF9161_html5_keyfeatures.html
+.. _`nRF9161 GPS receiver specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9161/gps.html
 
-.. _`nRF9161 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/intro.html
+.. _`nRF9161 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf9161_dk/UG/nrf91_DK/intro.html
+.. _`Measuring current on nRF9161 DK`: https://infocenter.nordicsemi.com/topic/ug_nrf9161_dk/UG/nrf91_DK/measuring_current/hw_measure_current.html
 
 .. _`AT Commands Reference Guide`:
 .. _`nRF9160 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/intro_nrf9160.html
-.. _`band lock section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
-.. _`system mode section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
+.. _`band lock section in the AT Commands reference document`:
+.. _`band lock section in the nRF9160 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
+.. _`system mode section in the AT Commands reference document`:
+.. _`system mode section in the nRF9160 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
 .. _`Credential storage management %CMNG`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/security/cmng.html
-.. _`Packet Domain AT commands`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/packet_domain/packet_domain.html?cp=2_1_6
-.. _`3GPP Release 14 features AT command`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fref_at_commands%2FREF%2Fat_commands%2Fnw_service%2Frel14feat_read.html&cp=2_1_7_16_1
+.. _`Packet Domain AT commands`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/packet_domain/packet_domain.html
+.. _`3GPP Release 14 features AT command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/rel14feat_read.html
 .. _`AT+CNEC set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mobile_termination_errors/cnec_set.html
 .. _`AT+CGEREP set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/packet_domain/cgerep_set.html
 .. _`AT%CONEVAL`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/coneval.html
-.. _`Modem trace AT command documentation`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
+.. _`Modem trace AT command documentation`:
+.. _`modem trace activation %XMODEMTRACE`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
 .. _`Battery voltage low level %XVBATLOWLVL`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xvbatlowlvl.html
-.. _`Debugging nRF5340 with SES`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs/UG/gsg/debug.html?cp=1_1_0_7
+.. _`Power saving mode setting`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/cpsms.html
+.. _`Release Assistance Indication (RAI)`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/xrai.html
 
 .. _`nRF91x1 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/intro_nrf91x1.html
+.. _`band lock section in the nRF91x1 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
+.. _`system mode section in the nRF91x1 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
+.. _`nRF91x1 battery voltage low level %XVBATLOWLVL`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mob_termination_ctrl_status/xvbatlowlvl.html
+.. _`nRF91x1 credential storage management %CMNG`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/security/cmng.html
+.. _`nRF91x1 AT+CGEREP set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/packet_domain/cgerep_set.html
+.. _`nRF91x1 packet Domain AT commands`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/packet_domain/packet_domain.html
+.. _`nRF91x1 AT+CNEC set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mobile_termination_errors/cnec_set.html
+.. _`nRF91x1 Power saving mode setting`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/nw_service/cpsms.html
+.. _`nRF91x1 modem trace activation %XMODEMTRACE`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
 
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
 .. _`nRF5340 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_dk/UG/dk/intro.html
@@ -634,6 +648,7 @@
 .. _`nPM1300`: https://infocenter.nordicsemi.com/topic/struct_pmic/struct/npm1300.html
 .. _`nPM1300 EK User Guide`: https://infocenter.nordicsemi.com/topic/ug_npm1300_ek/UG/nPM1300_EK/intro.html
 
+.. _`AP-Protect for nRF9161`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf9161%2Fdif.html&anchor=ariaid-title3
 .. _`Debugger access protection for nRF9160`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/dif.html#debugger_access
 .. _`AP-Protect for nRF5340`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/debugandtrace.html#access_port_protection
 .. _`AP-Protect for nRF52840`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/dif.html#concept_udr_mns_1s
@@ -646,10 +661,6 @@
 
 .. _`Mobile network operator certifications`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_operator_certifications.html
 .. _`Modem firmware compatibility matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_modem_fw.html
-
-.. _`Power saving mode setting`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/cpsms.html
-.. _`Measuring current on nRF9160 DK`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/hw_measure_current.html
-.. _`Release Assistance Indication (RAI)`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/xrai.html
 
 .. _`Electrical specification of nRF9160`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/_tmp/alta.nRF9160/autodita/CURRENT/parameters.frontpage.html#
 
