@@ -91,7 +91,7 @@ static bool is_finished(struct download_client *client)
 	bool ret;
 
 	k_mutex_lock(&client->mutex, K_FOREVER);
-	ret = client->state == DOWNLOAD_CLIENT_FINNISHED;
+	ret = client->state == DOWNLOAD_CLIENT_FINISHED;
 	k_mutex_unlock(&client->mutex);
 	return ret;
 }
@@ -890,7 +890,7 @@ void download_thread(void *client, void *a, void *b)
 			if (dl->close_when_done) {
 				set_state(dl, DOWNLOAD_CLIENT_CLOSING);
 			} else {
-				set_state(dl, DOWNLOAD_CLIENT_FINNISHED);
+				set_state(dl, DOWNLOAD_CLIENT_FINISHED);
 			}
 		}
 
