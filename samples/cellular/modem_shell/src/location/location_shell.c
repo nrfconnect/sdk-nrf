@@ -327,6 +327,9 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 	case LOCATION_EVT_RESULT_UNKNOWN:
 		mosh_print("Location request completed, but the result is not known");
 		break;
+	case LOCATION_EVT_STARTED:
+		mosh_print("Location request has been started");
+		break;
 	default:
 		mosh_warn("Unknown event from location library, id %d", event_data->id);
 		break;

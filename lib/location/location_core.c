@@ -382,16 +382,27 @@ static int location_core_location_get_pos(void)
 	location_core_current_event_data_init(requested_method);
 
 	err = location_method_api_get(requested_method)->location_get(&loc_req_info);
+	if (err != 0) {
+		return err;
+	}
 
-	if (err == 0 &&
-	    loc_req_info.config.timeout != SYS_FOREVER_MS &&
+	if (IS_ENABLED(CONFIG_LOCATION_DATA_DETAILS)) {
+		struct location_event_data request_started = {
+			.id = LOCATION_EVT_STARTED,
+			.method = requested_method
+		};
+
+		event_handler(&request_started);
+	}
+
+	if (loc_req_info.config.timeout != SYS_FOREVER_MS &&
 	    loc_req_info.config.timeout > 0) {
 		LOG_DBG("Starting request timer with timeout=%d", loc_req_info.config.timeout);
 
 		k_work_schedule(&location_core_timeout_work, K_MSEC(loc_req_info.config.timeout));
 	}
 
-	return err;
+	return 0;
 }
 
 static void location_request_info_create(const struct location_config *config)
@@ -513,13 +524,13 @@ void location_core_event_cb_timeout(void)
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)
 void location_core_event_cb_agnss_request(const struct nrf_modem_gnss_agnss_data_frame *request)
 {
-	struct location_event_data agnss_request_event_data;
+	struct location_event_data agnss_request_event_data = {
+		.id = LOCATION_EVT_GNSS_ASSISTANCE_REQUEST,
+		.method = LOCATION_METHOD_GNSS,
+		.agnss_request = *request
+	};
 
 	LOG_DBG("Request A-GNSS data from application");
-
-	agnss_request_event_data.id = LOCATION_EVT_GNSS_ASSISTANCE_REQUEST;
-	agnss_request_event_data.method = LOCATION_METHOD_GNSS;
-	agnss_request_event_data.agnss_request = *request;
 	event_handler(&agnss_request_event_data);
 }
 #endif
@@ -527,7 +538,11 @@ void location_core_event_cb_agnss_request(const struct nrf_modem_gnss_agnss_data
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 void location_core_event_cb_pgps_request(const struct gps_pgps_request *request)
 {
-	struct location_event_data pgps_request_event_data;
+	struct location_event_data pgps_request_event_data = {
+		.id = LOCATION_EVT_GNSS_PREDICTION_REQUEST,
+		.method = LOCATION_METHOD_GNSS,
+		.pgps_request = *request
+	};
 
 	LOG_DBG("Request P-GPS data from application: "
 		"prediction_count %d, prediction_period_min %d, gps_day %d, time_of_day %d",
@@ -536,9 +551,6 @@ void location_core_event_cb_pgps_request(const struct gps_pgps_request *request)
 		request->gps_day,
 		request->gps_time_of_day);
 
-	pgps_request_event_data.id = LOCATION_EVT_GNSS_PREDICTION_REQUEST;
-	pgps_request_event_data.method = LOCATION_METHOD_GNSS;
-	pgps_request_event_data.pgps_request = *request;
 	event_handler(&pgps_request_event_data);
 }
 #endif

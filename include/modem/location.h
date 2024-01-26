@@ -64,25 +64,36 @@ enum location_event_id {
 	/**
 	 * Application has indicated that getting location has been completed,
 	 * the result is not known, and the Location library does not need to care about it.
+	 *
 	 * This event can occur only if @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is set.
 	 */
 	LOCATION_EVT_RESULT_UNKNOWN,
 	/**
-	 * GNSS is requesting A-GNSS data. Application should obtain the data and send it to
-	 * location_agnss_data_process().
+	 * GNSS is requesting A-GNSS data.
+	 *
+	 * Application should obtain the data and send it to location_agnss_data_process().
 	 */
 	LOCATION_EVT_GNSS_ASSISTANCE_REQUEST,
 	/**
-	 * GNSS is requesting P-GPS data. Application should obtain the data and send it to
-	 * location_pgps_data_process().
+	 * GNSS is requesting P-GPS data.
+	 *
+	 * Application should obtain the data and send it to location_pgps_data_process().
 	 */
 	LOCATION_EVT_GNSS_PREDICTION_REQUEST,
 	/**
 	 * Cloud location request with neighbor cell and/or Wi-Fi access point information
-	 * is available. The application should send the information to cloud services and
-	 * then call location_cloud_location_ext_result_set().
+	 * is available.
+	 *
+	 * The application should send the information to cloud services and then call
+	 * location_cloud_location_ext_result_set().
 	 */
-	LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST
+	LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST,
+	/**
+	 * Location request has been started.
+	 *
+	 * This event is only sent if @kconfig{CONFIG_LOCATION_DATA_DETAILS} is set.
+	 */
+	LOCATION_EVT_STARTED,
 };
 
 /** Result of the external cloud location request. */
@@ -90,8 +101,10 @@ enum location_ext_result {
 	/** Cloud location request was successful. */
 	LOCATION_EXT_RESULT_SUCCESS,
 	/**
-	 * The result of the cloud location request is unknown. From the fallback functionality
-	 * perspective, this is handled similarly to @ref LOCATION_EXT_RESULT_ERROR.
+	 * The result of the cloud location request is unknown.
+	 *
+	 * From the fallback functionality perspective, this is handled similarly to
+	 * @ref LOCATION_EXT_RESULT_ERROR.
 	 */
 	LOCATION_EXT_RESULT_UNKNOWN,
 	/** Cloud location request failed. */
@@ -112,6 +125,7 @@ enum location_accuracy {
 enum location_service {
 	/**
 	 * Use any location service that has been configured to be available.
+	 *
 	 * This is useful when only one service is configured but can also be used
 	 * even if several services are available.
 	 */

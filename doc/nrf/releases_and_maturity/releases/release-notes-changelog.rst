@@ -666,6 +666,9 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
+  * Added the :c:enumerator:`LOCATION_EVT_STARTED` event to indicate that location request has been started.
+    This is for metrics collection purposes and sent only if the :kconfig:option:`CONFIG_LOCATION_DATA_DETAILS` Kconfig option is set.
+
   * Updated:
 
     * The use of neighbor cell measurements for cellular positioning.
