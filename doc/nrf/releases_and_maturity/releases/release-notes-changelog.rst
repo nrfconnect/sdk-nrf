@@ -819,6 +819,7 @@ Libraries for networking
 
   * Renamed nRF Device provisioning to :ref:`lib_nrf_provisioning`.
   * Updated the device mode callback to send an event when the provisioning state changes.
+  * Fixed file descriptor handling by setting the :c:struct:`coap_client` structure's ``fd`` field to ``-1`` when closing the socket.
 
 * :ref:`lib_nrf_cloud_fota` library:
 
