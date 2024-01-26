@@ -877,6 +877,9 @@ nRF Security
   This will also break the configuration for those using the RSA keys without explicitly enabling an RSA key size.
   Enable the required key size to fix the configuration, for example by setting the Kconfig option :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` if 2048-bit RSA keys are required.
 
+* The PSA config is now validated by ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h.
+  Users with invalid configurations must update their PSA configuration according to the error messages that check_crypto_config.h provides.
+
 
 Other libraries
 ---------------

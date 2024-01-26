@@ -411,4 +411,6 @@
 
 #include <psa/core_unsupported_ciphers_check.h>
 
+#include <check_crypto_config.h>
+
 #endif /* PSA_CRYPTO_CONFIG_H */
