@@ -14,6 +14,7 @@
 
 #include <bluetooth/mesh/light_ctrl.h>
 #include <bluetooth/mesh/sensor.h>
+#include <bluetooth/mesh/sensor_types.h>
 #include <bluetooth/mesh/properties.h>
 #include "sensor.h"
 
