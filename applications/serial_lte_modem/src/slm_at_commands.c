@@ -30,7 +30,6 @@
 #include "slm_at_icmp.h"
 #include "slm_at_sms.h"
 #include "slm_at_fota.h"
-#include "slm_uart_handler.h"
 #if defined(CONFIG_SLM_NATIVE_TLS)
 #include "slm_at_cmng.h"
 #endif
@@ -69,9 +68,6 @@
 #endif
 
 LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
-
-/* This delay is necessary for at_host to send response message in low baud rate. */
-#define SLM_UART_RESPONSE_DELAY 50
 
 /** @brief Shutdown modes. */
 enum sleep_modes {
@@ -144,7 +140,7 @@ static void go_sleep_wk(struct k_work *work)
 	ARG_UNUSED(work);
 
 	if (slm_work.data == SLEEP_MODE_IDLE) {
-		if (slm_uart_power_off() == 0) {
+		if (slm_at_host_power_off() == 0) {
 			enter_idle();
 		} else {
 			LOG_ERR("failed to power off UART");
@@ -158,6 +154,7 @@ static void go_sleep_wk(struct k_work *work)
 		if (!is_modem_functional_mode(LTE_LC_FUNC_MODE_OFFLINE)) {
 			modem_power_off();
 		}
+		LOG_PANIC();
 		enter_sleep();
 	}
 }
@@ -185,37 +182,49 @@ static int handle_at_sleep(enum at_cmd_type type)
 	return ret;
 }
 
+static void final_call(void (*func)(void))
+{
+	/* Delegate the final call to a worker so that the "OK" response is properly sent. */
+	static struct k_work_delayable worker;
+
+	k_work_init_delayable(&worker, (k_work_handler_t)func);
+	k_work_schedule(&worker, SLM_UART_RESPONSE_DELAY);
+}
+
+static void slm_shutdown(void)
+{
+	slm_at_host_uninit();
+	modem_power_off();
+	LOG_PANIC();
+	enter_shutdown();
+}
+
 /* Handles AT#XSHUTDOWN command. */
 static int handle_at_shutdown(enum at_cmd_type type)
 {
-	int ret = -EINVAL;
-
-	if (type == AT_CMD_TYPE_SET_COMMAND) {
-		rsp_send_ok();
-		k_sleep(K_MSEC(SLM_UART_RESPONSE_DELAY));
-		slm_at_host_uninit();
-		modem_power_off();
-		enter_shutdown();
+	if (type != AT_CMD_TYPE_SET_COMMAND) {
+		return -EINVAL;
 	}
+	final_call(slm_shutdown);
+	return 0;
+}
 
-	return ret;
+FUNC_NORETURN void slm_reset(void)
+{
+	slm_at_host_uninit();
+	modem_power_off();
+	LOG_PANIC();
+	sys_reboot(SYS_REBOOT_COLD);
 }
 
 /* Handles AT#XRESET command. */
 static int handle_at_reset(enum at_cmd_type type)
 {
-	int ret = -EINVAL;
-
-	if (type == AT_CMD_TYPE_SET_COMMAND) {
-		rsp_send_ok();
-		k_sleep(K_MSEC(SLM_UART_RESPONSE_DELAY));
-		slm_at_host_uninit();
-		modem_power_off();
-		LOG_PANIC();
-		sys_reboot(SYS_REBOOT_COLD);
+	if (type != AT_CMD_TYPE_SET_COMMAND) {
+		return -EINVAL;
 	}
-
-	return ret;
+	final_call(slm_reset);
+	return 0;
 }
 
 /* Handles AT#XMODEMRESET command. */

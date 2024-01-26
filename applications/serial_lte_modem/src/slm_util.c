@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <assert.h>
-#include <stdlib.h>
-#include <string.h>
+#include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <nrf_errno.h>
+#include <nrf_modem_at.h>
 #include "slm_util.h"
-#include "slm_at_host.h"
 
 LOG_MODULE_REGISTER(slm_util, CONFIG_SLM_LOG_LEVEL);
 

@@ -12,14 +12,19 @@
  * @brief Utility functions for serial LTE modem
  * @{
  */
+#include "slm_trap_macros.h"
 #include <zephyr/logging/log.h>
-#include <zephyr/types.h>
-#include <ctype.h>
 #include <stdbool.h>
 #include <zephyr/net/socket.h>
 #include <modem/at_cmd_parser.h>
 
 extern struct k_work_q slm_work_q; /* SLM's work queue. */
+
+/** @brief Performs a reset of the SiP. */
+FUNC_NORETURN void slm_reset(void);
+
+/** @brief Temporarily sets the indicate pin high. */
+int slm_indicate(void);
 
 /** Replacement for @c nrf_modem_at_printf() that cannot be
  *  used so that the AT command interception works properly.
