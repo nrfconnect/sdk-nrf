@@ -36,6 +36,29 @@ extern "C" {
 /** String length for representing a single sensor channel. */
 #define BT_MESH_SENSOR_CH_STR_LEN 23
 
+#if !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) || defined(__DOXYGEN__)
+/** @def BT_MESH_SENSOR_VALUE_IN_RANGE
+ *
+ *  @brief Returns whether or not encoded sensor value _value is in the range
+ *         [_start, _end], inclusive.
+ *
+ *  @param[in] _value The value to check.
+ *  @param[in] _start Start point of the range to check, inclusive.
+ *  @param[in] _end End point of the range to check, inclusive.
+ */
+#define BT_MESH_SENSOR_VALUE_IN_RANGE(_value, _start, _end) (                  \
+		(_value)->format->cb->compare((_value), (_start)) >= 0 &&      \
+		(_value)->format->cb->compare((_end), (_value)) >= 0)
+#else
+#define BT_MESH_SENSOR_VALUE_IN_RANGE(_value, _start, _end) (                  \
+		((_value)->val1 > (_start)->val1 ||                            \
+		 ((_value)->val1 == (_start)->val1 &&                          \
+		  (_value)->val2 >= (_start)->val2)) &&                        \
+		((_value)->val1 < (_end)->val1 ||                              \
+		 ((_value)->val1 == (_end)->val1 &&                            \
+		  (_value)->val2 <= (_end)->val2)))
+#endif
+
 /** Sensor sampling type.
  *
  *  Represents the sampling function used to produce the presented sensor value.
@@ -153,6 +176,14 @@ struct bt_mesh_sensor_value {
 	uint8_t raw[CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX];
 };
 
+/** @def BT_MESH_SENSOR_TOLERANCE_ENCODE
+ *
+ *  @brief Encode a sensor tolerance percentage.
+ *
+ *  @param[in] _percent The sensor tolerance to encode, in percent.
+ */
+#define BT_MESH_SENSOR_TOLERANCE_ENCODE(_percent) ((_percent) * 4095) / 100
+
 /** Sensor descriptor representing various static metadata for the sensor. */
 struct bt_mesh_sensor_descriptor {
 	/** Sensor measurement tolerance specification. */
@@ -228,6 +259,20 @@ struct bt_mesh_sensor_threshold {
 		 */
 		struct bt_mesh_sensor_value high;
 	} range;
+};
+
+/** Single sensor series data column.
+ *
+ *  The series data columns represent a range for specific measurement values,
+ *  inside which a set of sensor measurements were made. The range is
+ *  interpreted as a half-open interval (i.e. start <= value < start + width).
+ *
+ */
+struct bt_mesh_sensor_column {
+	/** Start of the column (inclusive). */
+	struct bt_mesh_sensor_value start;
+	/** Width of the column. */
+	struct bt_mesh_sensor_value width;
 };
 
 /** Sensor format callbacks. */
@@ -366,6 +411,35 @@ struct bt_mesh_sensor_format_cb {
 	 */
 	int (*const to_string)(const struct bt_mesh_sensor_value *sensor_val,
 			       char *str, size_t len);
+
+	/** @brief Check if a @ref bt_mesh_sensor_value lies within a
+	 *         @ref bt_mesh_sensor_column.
+	 *
+	 *  @c sensor_val, @c col->start and @c col->width must all have the
+	 *  same format.
+	 *
+	 *  If @c sensor_val, @c col->start or @c col->width represent a
+	 *  non-numeric value, this will return @c false.
+	 *
+	 *  A value is considered to be in a column if
+	 *
+	 *  @b start <= @b value <= @b start + @b width
+	 *
+	 *  where @b start is the value represented by @c col->start, @b value
+	 *  is the value represented by @c sensor_val, and @b width is the value
+	 *  represented by @c col->width.
+	 *
+	 *  @param[in] sensor_val The @ref bt_mesh_sensor_value to check.
+	 *  @param[in] col        The @ref bt_mesh_sensor_column to check
+	 *                        against.
+	 *
+	 *  @return @c true if @c sensor_val, @c col->start and @c col->width
+	 *          represent numeric values and @c sensor_val is inside the
+	 *          range specified by @c col, inclusive. @c false otherwise.
+	 */
+	bool (*const value_in_column)(
+		const struct bt_mesh_sensor_value *sensor_val,
+		const struct bt_mesh_sensor_column *col);
 };
 
 /** Sensor channel value format. */
@@ -431,20 +505,6 @@ struct bt_mesh_sensor_setting {
 		const struct bt_mesh_sensor_setting *setting,
 		struct bt_mesh_msg_ctx *ctx,
 		const struct bt_mesh_sensor_value *value);
-};
-
-/** Single sensor series data column.
- *
- *  The series data columns represent a range for specific measurement values,
- *  inside which a set of sensor measurements were made. The range is
- *  interpreted as a half-open interval (i.e. start <= value < start + width).
- *
- */
-struct bt_mesh_sensor_column {
-	/** Start of the column (inclusive). */
-	struct bt_mesh_sensor_value start;
-	/** Width of the column. */
-	struct bt_mesh_sensor_value width;
 };
 
 /** Sensor series specification. */
@@ -750,6 +810,16 @@ int bt_mesh_sensor_value_from_special_status(
 	const struct bt_mesh_sensor_format *format,
 	enum bt_mesh_sensor_value_status status,
 	struct bt_mesh_sensor_value *sensor_val);
+
+/** @brief Check whether a single channel sensor value lies within a column.
+ *
+ *  @param[in] value Value to check. Only the first channel is considered.
+ *  @param[in] col   Sensor column.
+ *
+ *  @return true if the value belongs in the column, false otherwise.
+ */
+bool bt_mesh_sensor_value_in_column(const struct bt_mesh_sensor_value *value,
+				    const struct bt_mesh_sensor_column *col);
 
 /** @brief Get a human readable representation of a single sensor channel.
  *

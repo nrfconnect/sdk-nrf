@@ -714,7 +714,7 @@ scalar_to_float(const struct bt_mesh_sensor_value *sensor_val, float *val)
 static int scalar_from_float(const struct bt_mesh_sensor_format *format,
 			     float val, struct bt_mesh_sensor_value *sensor_val)
 {
-	const struct scalar_repr *repr = sensor_val->format->user_data;
+	const struct scalar_repr *repr = format->user_data;
 	float raw = DIV_SCALAR(val, repr);
 
 	return scalar_from_raw(format, CLAMP(raw, INT64_MIN, INT64_MAX), sensor_val);
@@ -729,7 +729,7 @@ scalar_to_micro(const struct bt_mesh_sensor_value *sensor_val, int64_t *val)
 	if (val && bt_mesh_sensor_value_status_is_numeric(status)) {
 		const struct scalar_repr *repr = sensor_val->format->user_data;
 
-		return MUL_SCALAR(raw * 1000000LL, repr);
+		*val = MUL_SCALAR(raw * 1000000LL, repr);
 	}
 
 	return status;
@@ -739,7 +739,7 @@ static int scalar_from_micro(const struct bt_mesh_sensor_format *format,
 			     int64_t val,
 			     struct bt_mesh_sensor_value *sensor_val)
 {
-	const struct scalar_repr *repr = sensor_val->format->user_data;
+	const struct scalar_repr *repr = format->user_data;
 	int64_t raw = DIV_SCALAR(val / 1000000, repr) +
 		      DIV_SCALAR(val % 1000000, repr) / 1000000LL;
 
@@ -751,7 +751,7 @@ static int scalar_from_special_status(
 	enum bt_mesh_sensor_value_status status,
 	struct bt_mesh_sensor_value *sensor_val)
 {
-	const struct scalar_repr *repr = sensor_val->format->user_data;
+	const struct scalar_repr *repr = format->user_data;
 	int64_t raw;
 
 	switch (status) {
@@ -781,7 +781,33 @@ static int scalar_from_special_status(
 		return -ERANGE;
 	}
 
-	return scalar_from_raw(format, raw, sensor_val);
+	sensor_val->format = format;
+	return scalar_encode_raw(format, raw, sensor_val->raw);
+}
+
+static bool scalar_value_in_column(
+	const struct bt_mesh_sensor_value *sensor_val,
+	const struct bt_mesh_sensor_column *col)
+{
+	enum bt_mesh_sensor_value_status status;
+	int64_t val_raw, start_raw, width_raw;
+
+	status = scalar_to_raw(sensor_val, &val_raw);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return false;
+	}
+
+	status = scalar_to_raw(&col->start, &start_raw);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return false;
+	}
+
+	status = scalar_to_raw(&col->width, &width_raw);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return false;
+	}
+
+	return (val_raw >= start_raw) && (val_raw <= (start_raw + width_raw));
 }
 
 static struct bt_mesh_sensor_format_cb scalar_cb = {
@@ -791,7 +817,8 @@ static struct bt_mesh_sensor_format_cb scalar_cb = {
 	.from_float = scalar_from_float,
 	.to_micro = scalar_to_micro,
 	.from_micro = scalar_from_micro,
-	.from_special_status = scalar_from_special_status
+	.from_special_status = scalar_from_special_status,
+	.value_in_column = scalar_value_in_column,
 };
 
 static int boolean_compare(const struct bt_mesh_sensor_value *op1,
@@ -887,6 +914,17 @@ static int boolean_to_string(const struct bt_mesh_sensor_value *sensor_val,
 	return snprintk(str, len, "%s", "True");
 }
 
+static bool boolean_value_in_column(
+	const struct bt_mesh_sensor_value *sensor_val,
+	const struct bt_mesh_sensor_column *col)
+{
+	uint8_t val_raw = *(sensor_val->raw);
+	uint8_t start_raw = *(col->start.raw);
+	uint8_t end_raw = start_raw + *(col->width.raw);
+
+	return val_raw >= start_raw && val_raw <= end_raw;
+}
+
 static struct bt_mesh_sensor_format_cb boolean_cb = {
 	.compare = boolean_compare,
 	.delta_check = boolean_delta_check,
@@ -895,6 +933,7 @@ static struct bt_mesh_sensor_format_cb boolean_cb = {
 	.to_micro = boolean_to_micro,
 	.from_micro = boolean_from_micro,
 	.to_string = boolean_to_string,
+	.value_in_column = boolean_value_in_column,
 };
 
 /* This is the negative of the ceiling of the function d_1.1(-(i+1)), where d_1.1

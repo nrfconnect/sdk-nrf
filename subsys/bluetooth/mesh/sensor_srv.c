@@ -434,7 +434,7 @@ static int handle_series_get(const struct bt_mesh_model *model, struct bt_mesh_m
 			&sensor->series.columns[i];
 
 		if (ranged &&
-		    !SENSOR_VALUE_IN_RANGE(&col->start, &range_start, &range_end)) {
+		    !BT_MESH_SENSOR_VALUE_IN_RANGE(&col->start, &range_start, &range_end)) {
 			continue;
 		}
 

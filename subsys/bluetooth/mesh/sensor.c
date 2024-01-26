@@ -5,6 +5,7 @@
  */
 
 #include "sensor.h"
+#include <bluetooth/mesh/sensor_types.h>
 #include <bluetooth/mesh/properties.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,7 +64,7 @@ sensor_cadence(const struct bt_mesh_sensor_threshold *threshold,
 		return BT_MESH_SENSOR_CADENCE_NORMAL;
 	}
 
-	bool in_range = SENSOR_VALUE_IN_RANGE(curr, low, high);
+	bool in_range = BT_MESH_SENSOR_VALUE_IN_RANGE(curr, low, high);
 #endif
 	return in_range ? threshold->range.cadence : !threshold->range.cadence;
 }
@@ -728,6 +729,41 @@ bool bt_mesh_sensor_value_in_column(const struct sensor_value *value,
 	       (value->val1 < col->end.val1 ||
 		(value->val1 == col->end.val1 && value->val2 <= col->end.val2));
 }
+#else
+bool bt_mesh_sensor_value_in_column(const struct bt_mesh_sensor_value *value,
+				    const struct bt_mesh_sensor_column *col)
+{
+	if (value->format == col->start.format &&
+	    value->format == col->width.format &&
+	    value->format->cb->value_in_column) {
+		return value->format->cb->value_in_column(value, col);
+	}
+
+	if (bt_mesh_sensor_value_compare(&col->start, value) > 0) {
+		return false;
+	}
+
+	/* Fall back to comparing end using float */
+	float widthf, startf, valuef;
+	enum bt_mesh_sensor_value_status status;
+
+	status = bt_mesh_sensor_value_to_float(&col->width, &widthf);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return false;
+	}
+
+	status = bt_mesh_sensor_value_to_float(&col->start, &startf);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return false;
+	}
+
+	status = bt_mesh_sensor_value_to_float(value, &valuef);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return false;
+	}
+
+	return valuef <= (startf + widthf);
+}
 #endif
 
 void sensor_cadence_update(struct bt_mesh_sensor *sensor,
@@ -828,6 +864,10 @@ enum bt_mesh_sensor_value_status
 bt_mesh_sensor_value_to_float(const struct bt_mesh_sensor_value *sensor_val,
 			      float *val)
 {
+	if (!sensor_val->format) {
+		return BT_MESH_SENSOR_VALUE_CONVERSION_ERROR;
+	}
+
 	return sensor_val->format->cb->to_float(sensor_val, val);
 }
 
@@ -843,6 +883,10 @@ bt_mesh_sensor_value_to_micro(
 	const struct bt_mesh_sensor_value *sensor_val,
 	int64_t *val)
 {
+	if (!sensor_val->format) {
+		return BT_MESH_SENSOR_VALUE_CONVERSION_ERROR;
+	}
+
 	if (sensor_val->format->cb->to_micro) {
 		return sensor_val->format->cb->to_micro(sensor_val, val);
 	}
@@ -862,7 +906,7 @@ int bt_mesh_sensor_value_from_micro(
 	int64_t val,
 	struct bt_mesh_sensor_value *sensor_val)
 {
-	if (sensor_val->format->cb->from_micro) {
+	if (format->cb->from_micro) {
 		return format->cb->from_micro(format, val, sensor_val);
 	}
 

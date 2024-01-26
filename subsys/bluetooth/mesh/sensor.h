@@ -21,81 +21,6 @@ extern "C" {
 #endif
 
 /**
- * @defgroup BT_MESH_SENSOR_FORMATS Sensor channel formats
- * @brief All available sensor channel formats in the mesh device properties
- * Specification.
- * @{
- */
-
-/* Percentage formats */
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_percentage_8;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_percentage_16;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_percentage_delta_trigger;
-
-/* Environmental formats */
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_temp_8;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_temp;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_co2_concentration;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_noise;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_voc_concentration;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_wind_speed;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_temp_8_wide;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_gust_factor;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_magnetic_flux_density;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_pollen_concentration;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_pressure;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_rainfall;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_uv_index;
-
-/* Time formats */
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_decihour_8;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_hour_24;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_second_16;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_time_millisecond_24;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_exp_8;
-
-/* Electrical formats */
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_electric_current;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_voltage;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_energy;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_energy32;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_power;
-
-/* Lighting formats */
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_chromatic_distance;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_chromaticity_coordinate;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_correlated_color_temp;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_illuminance;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_luminous_efficacy;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_luminous_energy;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_luminous_exposure;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_luminous_flux;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_perceived_lightness;
-
-/* Miscellaneous formats */
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_direction_16;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_count_16;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_gen_lvl;
-extern const struct bt_mesh_sensor_format
-	bt_mesh_sensor_format_cos_of_the_angle;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_boolean;
-extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_coefficient;
-
-/** @} */
-
-/**
  * @defgroup BT_MESH_SENSOR_UNITS Sensor value units
  * @brief All available sensor value units in the mesh device properties
  * specification.
@@ -141,19 +66,7 @@ typedef struct sensor_value sensor_value_type;
 typedef struct bt_mesh_sensor_value sensor_value_type;
 #endif
 
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-#define SENSOR_VALUE_IN_RANGE(_value, _start, _end) (                          \
-		((_value)->val1 > (_start)->val1 ||                            \
-		 ((_value)->val1 == (_start)->val1 &&                          \
-		  (_value)->val2 >= (_start)->val2)) &&                        \
-		((_value)->val1 < (_end)->val1 ||                              \
-		 ((_value)->val1 == (_end)->val1 &&                            \
-		  (_value)->val2 <= (_end)->val2)))
-#else
-#define SENSOR_VALUE_IN_RANGE(_value, _start, _end) (                          \
-		(_value)->format->cb->compare((_value), (_start)) >= 0 &&      \
-		(_value)->format->cb->compare((_end), (_value)) >= 0)
-
+#ifndef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 /** @brief Check if a value change breaks the delta threshold.
  *
  *  Sensors should publish their value if the measured sample is outside the
