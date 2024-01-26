@@ -30,6 +30,7 @@
 enum sock_shell_command {
 	SOCK_CMD_CONNECT = 0,
 	SOCK_CMD_CLOSE,
+	SOCK_CMD_GETADDRINFO,
 	SOCK_CMD_SEND,
 	SOCK_CMD_RECV,
 	SOCK_CMD_RAI
@@ -62,6 +63,19 @@ static const char sock_close_usage_str[] =
 	"Options:\n"
 	"  -i, --id, [int]           Socket id. Use 'sock list' command to see open\n"
 	"                            sockets.\n"
+	"  -h, --help,               Shows this help information";
+
+static const char sock_getaddrinfo_usage_str[] =
+	"Usage: sock getaddrinfo -H <hostname>\n"
+	"       [-f <family>] [-t <type>] [-I <cid>]\n"
+	"Options:\n"
+	"  -H, --hostname, [str]     Hostname to lookup\n"
+	"  -f, --family, [str]       Address family: 'unspec' (default),\n"
+	"                            'inet' (ipv4) or 'inet6' (ipv6)\n"
+	"  -t, --type, [str]         Address type: 'any' (default),\n"
+	"                            'stream (tcp)' or 'dgram' (udp)\n"
+	"  -I, --cid, [int]          Use this option to lookup using a specific\n"
+	"                            PDN CID. See link command for available CIDs.\n"
 	"  -h, --help,               Shows this help information";
 
 static const char sock_send_usage_str[] =
@@ -198,6 +212,9 @@ static void sock_print_usage(enum sock_shell_command command)
 	case SOCK_CMD_CLOSE:
 		mosh_print_no_format(sock_close_usage_str);
 		break;
+	case SOCK_CMD_GETADDRINFO:
+		mosh_print_no_format(sock_getaddrinfo_usage_str);
+		break;
 	case SOCK_CMD_SEND:
 		mosh_print_no_format(sock_send_usage_str);
 		break;
@@ -210,6 +227,102 @@ static void sock_print_usage(enum sock_shell_command command)
 	default:
 		break;
 	}
+}
+
+static int cmd_sock_getaddrinfo(const struct shell *shell, size_t argc, char **argv)
+{
+	int err = 0;
+
+	if (argc < 2) {
+		goto show_usage;
+	}
+
+	/* Variables for command line arguments */
+	int arg_family = AF_UNSPEC;
+	int arg_type = 0;
+	char arg_hostname[SOCK_MAX_ADDR_LEN + 1];
+	int arg_pdn_cid = 0;
+
+	memset(arg_hostname, 0, SOCK_MAX_ADDR_LEN + 1);
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+		int addr_len = 0;
+
+		switch (opt) {
+		case 'H': /* Hostname */
+			addr_len = strlen(optarg);
+			if (addr_len > SOCK_MAX_ADDR_LEN) {
+				mosh_error(
+					"Hostname length %d exceeded. Maximum is %d.",
+					addr_len, SOCK_MAX_ADDR_LEN);
+				return -EINVAL;
+			}
+			memcpy(arg_hostname, optarg, addr_len);
+			break;
+		case 'f': /* Address family */
+			if (strcmp(optarg, "unspec") == 0) {
+				arg_family = AF_UNSPEC;
+			} else if (strcmp(optarg, "inet") == 0) {
+				arg_family = AF_INET;
+			} else if (!strcmp(optarg, "inet6")) {
+				arg_family = AF_INET6;
+			} else {
+				mosh_error(
+					"Unsupported address family=%s. Supported values are: "
+					"'unspec', 'inet' (ipv4) or 'inet6' (ipv6)",
+					optarg);
+				return -EINVAL;
+			}
+			break;
+		case 't': /* Socket type */
+			if (strcmp(optarg, "any") == 0) {
+				arg_type = 0;
+			} else if (strcmp(optarg, "stream") == 0) {
+				arg_type = SOCK_STREAM;
+			} else if (strcmp(optarg, "dgram") == 0) {
+				arg_type = SOCK_DGRAM;
+			} else {
+				mosh_error(
+					"Unsupported address type=%s. Supported values are: "
+					"'any', 'stream' (tcp) or 'dgram' (udp)",
+					optarg);
+				return -EINVAL;
+			}
+			break;
+		case 'I': /* PDN CID */
+			arg_pdn_cid = atoi(optarg);
+			if (arg_pdn_cid < 0) {
+				mosh_error(
+					"PDN CID (%d) must be non-negative integer.",
+					arg_pdn_cid);
+				return -EINVAL;
+			}
+			break;
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	err = sock_getaddrinfo(arg_family, arg_type, arg_hostname, arg_pdn_cid);
+
+	return err;
+
+show_usage:
+	sock_print_usage(SOCK_CMD_GETADDRINFO);
+	return err;
 }
 
 static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
@@ -246,8 +359,10 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 		switch (opt) {
 		case 'I': /* PDN CID */
 			arg_pdn_cid = atoi(optarg);
-			if (arg_pdn_cid <= 0) {
-				mosh_error("PDN CID (%d) must be positive integer.", arg_pdn_cid);
+			if (arg_pdn_cid < 0) {
+				mosh_error(
+					"PDN CID (%d) must be non-negative integer.",
+					arg_pdn_cid);
 				return -EINVAL;
 			}
 			break;
@@ -735,6 +850,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		close, NULL,
 		"Close socket connection.",
 		cmd_sock_close, 0, 10),
+	SHELL_CMD_ARG(
+		getaddrinfo, NULL,
+		"DNS query using getaddrinfo.",
+		cmd_sock_getaddrinfo, 0, 10),
 	SHELL_CMD_ARG(
 		send, NULL,
 		"Send data.",
