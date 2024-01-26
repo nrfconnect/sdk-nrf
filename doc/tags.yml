@@ -47,12 +47,17 @@ mapping_topics:
   - nrf/config_and_build/bootloaders_and_dfu/*.html: ["applications"]
   - nrf/config_and_build/bootloaders_and_dfu/bootloader_adding.html: ["kconfig"]
   - nrf/config_and_build/bootloaders_and_dfu/bootloader_config.html: ["kconfig"]
+  - nrf/test_and_optimize.html: ["nrf91-series", "nrf70-series", "nrf53-series", "nrf52-series",
+                                 "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
+                                 "nrf9161", "nrf5340", "thingy53", "nrf52840", "nrf52833",
+                                 "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805",
+                                 "nrf21540", "npm1100", "npm1300", "npm6001", "applications",
+                                 "samples"]
   - nrf/test_and_optimize/*.html: ["nrf91-series", "nrf70-series", "nrf53-series", "nrf52-series",
                                    "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
                                    "nrf9161", "nrf5340", "thingy53", "nrf52840", "nrf52833",
                                    "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805",
                                    "nrf21540", "npm1100", "npm1300", "npm6001"]
-  - nrf/test_and_optimize/testing.html: ["applications", "samples"]
   - nrf/test_and_optimize/optimizing/*.html: ["applications", "protocols"]
   - nrf/test_and_optimize/optimizing/memory.html: ["kconfig", "protocols", "ble", "blemesh",
                                                    "gazell", "matter", "nfc", "thread", "zigbee",
