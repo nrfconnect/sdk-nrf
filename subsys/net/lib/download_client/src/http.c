@@ -265,8 +265,8 @@ int http_parse(struct download_client *client, size_t len)
 			 */
 			LOG_DBG("Copying %u payload bytes",
 				client->offset - hdr_len);
-			memcpy(client->buf, client->buf + hdr_len,
-			       client->offset - hdr_len);
+			memmove(client->buf, client->buf + hdr_len,
+				client->offset - hdr_len);
 
 			client->offset -= hdr_len;
 		} else {
