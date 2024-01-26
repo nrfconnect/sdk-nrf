@@ -23,3 +23,7 @@ install(FILES       config.cmake
 
 install(FILES       ../common/config.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}/../common/)
+
+install(DIRECTORY   ${Trusted\ Firmware\ M_SOURCE_DIR}/platform/ext/target/nordic_nrf/nrf9160dk_nrf9160/tests
+        DESTINATION ${INSTALL_PLATFORM_NS_DIR}
+)
