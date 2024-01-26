@@ -115,11 +115,15 @@ Supported CLI commands
        | [-h, --help] : Print out the help for the scan command.
    * - connect
      - | Connect to a Wi-Fi AP with the following parameters:
-       | <SSID>
-       | <Channel number> (optional: 0 means all)
-       | <PSK> (optional: valid only for secured SSIDs)
-       | <Security type> (optional: 0-None, 1-PSK, 2-PSK-256, 3-SAE)
-       | <MFP> (optional: 0-Disable, 1-Optional, 2-Required)
+       | "<SSID>"
+       | [channel number/band: > 0:Channel, 0:any channel,
+       | < 0:band (-2:2.4GHz, -5:5GHz, -6:6GHz]
+       | [PSK: valid only for secure SSIDs]
+       | [Security type: valid only for secure SSIDs]
+       | 0:None, 1:WPA2-PSK, 2:WPA2-PSK-256, 3:SAE, 4:WAPI, 5:EAP, 6:WEP, 7:
+       | WPA-PSK
+       | [MFP (optional: needs security type to be specified)]
+       | : 0:Disable, 1:Optional, 2:Required.
    * - disconnect
      - Disconnect from the Wi-Fi AP
    * - status
@@ -133,8 +137,14 @@ Supported CLI commands
        | <SSID length>
        | <channel> [optional]
        | <psk> [optional]
+       |
        | disable - Disable Access Point mode
        | (Note that the Access Point mode is presently not supported.)
+       |
+       | stations  : List stations connected to the AP
+       |
+       | disconnect - Disconnect a station from the AP
+       | <MAC address of the station>
    * - ps
      - | Configure power save
        | No argument - Prints current configuration
@@ -147,19 +157,22 @@ Supported CLI commands
    * - twt
      - | Manage Target Wake Time (TWT) flows with below subcommands:
        |
-       | setup - Start a TWT flow:
-       | <negotiation_type: 0 - Individual, 1 - Broadcast, 2 - Wake TBTT>
-       | <setup_cmd: 0 - Request, 1 - Suggest, 2 - Demand>
-       | <dialog_token: 1-255> <flow_id: 0-7> <responder: 0/1> <trigger: 0/1>
-       | <implicit: 0/1> <announce: 0/1> <twt_wake_interval: 1-262144 µs>
-       | <twt_interval: 1µs-2^31µs>
+       | quick_setup   : Start a TWT flow with defaults:
+       |  <twt_wake_interval: 1-262144us> <twt_interval: 1us-2^31us>.
        |
-       | teardown - Teardown a TWT flow:
-       | <negotiation_type: 0 - Individual, 1 - Broadcast, 2 - Wake TBTT>
-       | <setup_cmd: 0 - Request, 1 - Suggest, 2 - Demand>
-       | <dialog_token: 1-255> <flow_id: 0-7>
+       | setup         : Start a TWT flow:
+       |  <negotiation_type, 0: Individual, 1: Broadcast, 2: Wake TBTT>
+       |  <setup_cmd: 0: Request, 1: Suggest, 2: Demand>
+       |  <dialog_token: 1-255> <flow_id: 0-7> <responder: 0/1> <trigger:
+       |  0/1> <implicit:0/1> <announce: 0/1> <twt_wake_interval:
+       |  1-262144us> <twt_interval: 1us-2^31us>.
        |
-       | teardown_all - Teardown all TWT flows
+       | teardown      : Teardown a TWT flow:
+       |  <negotiation_type, 0: Individual, 1: Broadcast, 2: Wake TBTT>
+       |  <setup_cmd: 0: Request, 1: Suggest, 2: Demand>
+       |  <dialog_token: 1-255> <flow_id: 0-7>.
+       |
+       | teardown_all  : Teardown all TWT flows.
    * - reg_domain
      - | Set or get Wi-Fi regulatory domain
        |
@@ -192,6 +205,29 @@ Supported CLI commands
        | wifi mode -g -i1
        | Set operation example for interface index 1 - set station+promiscuous
        | wifi mode -i1 -sp
+   * - packet_filter
+     - | This command is used to set packet filter setting when
+       | monitor, TX-Injection and promiscuous mode is enabled
+       | The different packet filter modes are control,
+       | management, data and enable all filters
+       | [-i, --if-index <idx>] : Interface index
+       | [-a, --all] : Enable all packet filter modes
+       | [-m, --mgmt] : Enable management packets to allowed up
+       | the stack
+       | [-c, --ctrl] : Enable control packets to be allowed up
+       | the stack
+       | [-d, --data] : Enable Data packets to be allowed up the
+       | stack
+       | [-g, --get] : Get current filter settings for a specific
+       | interface index
+       | [-b, --capture-len <len>] : Capture length buffer size
+       | for each packet to be captured
+       | [-h, --help] : Help
+       | Usage: Get operation example for interface index 1
+       | wifi packet_filter -g -i1
+       | Set operation example for interface index 1 - set
+       | data+management frame filter
+       | wifi packet_filter -i1 -md
    * - channel
      - | This command is used to set the channel when monitor or TX-Injection mode is enabled
        | Currently 20 MHz is only supported and no BW parameter is provided
