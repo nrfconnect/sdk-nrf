@@ -17,11 +17,16 @@ static void descriptor_print(const struct shell *shell, int err,
 {
 	if (!err) {
 		shell_print(shell, "{");
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 		shell_fprintf(shell, SHELL_NORMAL, "\ttolerance: { positive: ");
 		shell_model_print_sensorval(shell, &rsp->tolerance.positive);
 		shell_fprintf(shell, SHELL_NORMAL, ", negative: ");
 		shell_model_print_sensorval(shell, &rsp->tolerance.negative);
 		shell_print(shell, " }");
+#else
+		shell_print(shell, "\ttolerance: { positive: %d, negative: %d }",
+			    rsp->tolerance.positive, rsp->tolerance.negative);
+#endif
 		shell_print(shell, "\tsampling type: %d", rsp->sampling_type);
 		shell_print(shell, "\tperiod: %lld", rsp->period);
 		shell_print(shell, "\tupdate interval: %lld", rsp->update_interval);
@@ -86,11 +91,21 @@ static void cadence_print(const struct shell *shell, int err,
 	if (!err) {
 		shell_print(shell, "fast period div: %d\nmin interval: %d", rsp->fast_period_div,
 			    rsp->min_int);
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 		shell_fprintf(shell, SHELL_NORMAL, "delta threshold: { type: %d, up: ",
 			      rsp->threshold.delta.type);
 		shell_model_print_sensorval(shell, &rsp->threshold.delta.up);
 		shell_fprintf(shell, SHELL_NORMAL, ", down: ");
 		shell_model_print_sensorval(shell, &rsp->threshold.delta.down);
+#else
+		int delta_type = rsp->threshold.deltas.up.format ==
+			&bt_mesh_sensor_format_percentage_delta_trigger;
+		shell_fprintf(shell, SHELL_NORMAL, "delta threshold: { type: %d, up: ",
+			      delta_type);
+		shell_model_print_sensorval(shell, &rsp->threshold.deltas.up);
+		shell_fprintf(shell, SHELL_NORMAL, ", down: ");
+		shell_model_print_sensorval(shell, &rsp->threshold.deltas.down);
+#endif
 		shell_fprintf(shell, SHELL_NORMAL,
 			      " }\nfast cadence range: { cadence inside: %d, lower boundary: ",
 			      rsp->threshold.range.cadence);
@@ -133,15 +148,37 @@ static int cadence_set(const struct shell *shell, size_t argc, char *argv[], boo
 	int err = 0;
 
 	uint32_t sensor_id = shell_strtoul(argv[1], 0, &err);
+	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
+
+	if (sensor_type == NULL) {
+		return -ENOENT;
+	}
+
+	const struct bt_mesh_sensor_format *delta_format = shell_strtol(argv[4], 0, &err) ?
+		&bt_mesh_sensor_format_percentage_delta_trigger :
+		sensor_type->channels[0].format;
+
 	struct bt_mesh_sensor_cadence_status cadence = {
 		.fast_period_div = shell_strtoul(argv[2], 0, &err),
 		.min_int = shell_strtoul(argv[3], 0, &err),
-		.threshold = { .delta = { .type = shell_strtol(argv[4], 0, &err),
-					  .up = shell_model_strtosensorval(argv[5], &err),
-					  .down = shell_model_strtosensorval(argv[6], &err) },
-			       .range = { .cadence = shell_strtol(argv[7], 0, &err),
-					  .low = shell_model_strtosensorval(argv[8], &err),
-					  .high = shell_model_strtosensorval(argv[9], &err) } }
+		.threshold = {
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+			.delta = {
+				.type = shell_strtol(argv[4], 0, &err),
+#else
+			.deltas = {
+#endif
+				.up = shell_model_strtosensorval(delta_format, argv[5], &err),
+				.down = shell_model_strtosensorval(delta_format, argv[6], &err)
+			},
+			.range = {
+				.cadence = shell_strtol(argv[7], 0, &err),
+				.low = shell_model_strtosensorval(sensor_type->channels[0].format,
+								  argv[8], &err),
+				.high = shell_model_strtosensorval(sensor_type->channels[0].format,
+								   argv[9], &err)
+			}
+		}
 	};
 
 	if (err) {
@@ -154,11 +191,6 @@ static int cadence_set(const struct shell *shell, size_t argc, char *argv[], boo
 	}
 
 	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
-	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
-
-	if (sensor_type == NULL) {
-		return -ENOENT;
-	}
 
 	if (acked) {
 		struct bt_mesh_sensor_cadence_status rsp;
@@ -221,7 +253,7 @@ static int cmd_settings_get(const struct shell *shell, size_t argc, char *argv[]
 	return err;
 }
 
-static void values_print(const struct shell *shell, int err, struct sensor_value *values,
+static void values_print(const struct shell *shell, int err, sensor_value_type *values,
 			 const struct bt_mesh_sensor_type *sensor_type)
 {
 	if (!err) {
@@ -275,7 +307,16 @@ static int setting_set(const struct shell *shell, size_t argc, char *argv[], boo
 	int err = 0;
 	uint32_t sensor_id = shell_strtoul(argv[1], 0, &err);
 	uint32_t setting_id = shell_strtoul(argv[2], 0, &err);
-	struct sensor_value value = shell_model_strtosensorval(argv[3], &err);
+	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
+	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
+	const struct bt_mesh_sensor_type *setting_type = bt_mesh_sensor_type_get(setting_id);
+
+	if (sensor_type == NULL || setting_type == NULL) {
+		return -ENOENT;
+	}
+
+	sensor_value_type value = shell_model_strtosensorval(setting_type->channels[0].format,
+							     argv[3], &err);
 
 	if (err) {
 		shell_warn(shell, "Unable to parse input string arg");
@@ -284,14 +325,6 @@ static int setting_set(const struct shell *shell, size_t argc, char *argv[], boo
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_SENSOR_CLI, &mod)) {
 		return -ENODEV;
-	}
-
-	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
-	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
-	const struct bt_mesh_sensor_type *setting_type = bt_mesh_sensor_type_get(setting_id);
-
-	if (sensor_type == NULL || setting_type == NULL) {
-		return -ENOENT;
 	}
 
 	if (acked) {
@@ -356,7 +389,7 @@ static int cmd_get(const struct shell *shell, size_t argc, char *argv[])
 		return err;
 	}
 
-	struct sensor_value rsp[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	sensor_value_type rsp[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
 	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
 
 	if (sensor_type == NULL) {
@@ -376,8 +409,13 @@ static void series_entry_print(const struct shell *shell, int err,
 	if (!err) {
 		shell_fprintf(shell, SHELL_NORMAL, "[");
 		shell_model_print_sensorval(shell, &entry->column.start);
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 		shell_fprintf(shell, SHELL_NORMAL, " to ");
 		shell_model_print_sensorval(shell, &entry->column.end);
+#else
+		shell_fprintf(shell, SHELL_NORMAL, ", width ");
+		shell_model_print_sensorval(shell, &entry->column.width);
+#endif
 		shell_fprintf(shell, SHELL_NORMAL, "]: ");
 		values_print(shell, err, entry->value, sensor_type);
 	}
@@ -387,7 +425,26 @@ static int cmd_series_entry_get(const struct shell *shell, size_t argc, char *ar
 {
 	int err = 0;
 	uint32_t sensor_id = shell_strtoul(argv[1], 0, &err);
-	struct bt_mesh_sensor_column column = {.start = shell_model_strtosensorval(argv[2], &err)};
+	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
+
+	if (sensor_type == NULL) {
+		return -ENOENT;
+	}
+
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+	struct bt_mesh_sensor_column column = {
+		.start = shell_model_strtosensorval(NULL, argv[2], &err)
+	};
+#else
+	union bt_mesh_sensor_column_key column;
+
+	if (sensor_type->channel_count == 3) {
+		column.sensor_value = shell_model_strtosensorval(sensor_type->channels[1].format,
+								 argv[2], &err);
+	} else {
+		column.index = shell_strtoul(argv[2], 0, &err);
+	}
+#endif
 
 	if (err) {
 		shell_warn(shell, "Unable to parse input string arg");
@@ -399,11 +456,6 @@ static int cmd_series_entry_get(const struct shell *shell, size_t argc, char *ar
 	}
 
 	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
-	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
-
-	if (sensor_type == NULL) {
-		return -ENOENT;
-	}
 
 	struct bt_mesh_sensor_series_entry rsp;
 
@@ -449,21 +501,43 @@ static int cmd_series_entries_get(const struct shell *shell, size_t argc, char *
 	uint32_t count = CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_COLUMNS;
 
 	if (argc == 4) {
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 		struct bt_mesh_sensor_column range = {
-			.start = shell_model_strtosensorval(argv[2], &err),
-			.end = shell_model_strtosensorval(argv[3], &err)
+			.start = shell_model_strtosensorval(NULL, argv[2], &err),
+			.end = shell_model_strtosensorval(NULL, argv[3], &err)
 		};
+#else
+		union bt_mesh_sensor_column_key range_start, range_end;
+
+		if (sensor_type->channel_count == 3) {
+			range_start.sensor_value = shell_model_strtosensorval(
+				sensor_type->channels[1].format, argv[2], &err);
+			range_end.sensor_value = shell_model_strtosensorval(
+				sensor_type->channels[1].format, argv[3], &err);
+		} else {
+			range_start.index = shell_strtoul(argv[2], 0, &err);
+			range_end.index = shell_strtoul(argv[3], 0, &err);
+		}
+#endif
 
 		if (err) {
 			shell_warn(shell, "Unable to parse input string arg");
 			return err;
 		}
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 		err = bt_mesh_sensor_cli_series_entries_get(cli, NULL, sensor_type, &range, rsp,
 							    &count);
 	} else if (argc == 2) {
 		err = bt_mesh_sensor_cli_series_entries_get(cli, NULL, sensor_type, NULL, rsp,
 							    &count);
+#else
+		err = bt_mesh_sensor_cli_series_entries_get(cli, NULL, sensor_type, &range_start,
+							    &range_end, rsp, &count);
+	} else if (argc == 2) {
+		err = bt_mesh_sensor_cli_series_entries_get(cli, NULL, sensor_type, NULL, NULL, rsp,
+							    &count);
+#endif
 	} else {
 		return -ENOEXEC;
 	}
