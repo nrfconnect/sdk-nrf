@@ -19,10 +19,11 @@ struct shell_model_instance {
 	uint8_t elem_idx;
 };
 
-struct sensor_value shell_model_strtosensorval(const char *str, int *err)
+sensor_value_type shell_model_strtosensorval(
+	const struct bt_mesh_sensor_format *format, const char *str, int *err)
 {
 	int temp_err = 0;
-	struct sensor_value out = { 0 };
+	sensor_value_type out = { 0 };
 
 	double val = shell_model_strtodbl(str, &temp_err);
 
@@ -31,14 +32,22 @@ struct sensor_value shell_model_strtosensorval(const char *str, int *err)
 		return out;
 	}
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	out.val1 = (int)val;
 	out.val2 = (val - out.val1) * 1000000;
-
+#else
+	temp_err = bt_mesh_sensor_value_from_float(format, val, &out);
+	/* Ignore ERANGE to let the value be clamped to the format range. */
+	if (temp_err && temp_err != -ERANGE) {
+		*err = temp_err;
+	}
+#endif
 	return out;
 }
 
-void shell_model_print_sensorval(const struct shell *shell, struct sensor_value *value)
+void shell_model_print_sensorval(const struct shell *shell, sensor_value_type *value)
 {
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	shell_fprintf(shell, SHELL_NORMAL, "%s%d", (value->val1 < 0 || value->val2 < 0) ? "-" : "",
 		      abs(value->val1));
 	if (value->val2) {
@@ -51,6 +60,9 @@ void shell_model_print_sensorval(const struct shell *shell, struct sensor_value 
 		}
 		shell_fprintf(shell, SHELL_NORMAL, ".%0*d", digits, val);
 	}
+#else
+	shell_fprintf(shell, SHELL_NORMAL, "%s", bt_mesh_sensor_ch_str(value));
+#endif
 }
 
 static size_t whitespace_trim(char *out, size_t len, const char *str)

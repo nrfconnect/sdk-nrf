@@ -144,7 +144,7 @@ mesh models sensor series-entry get <SensorID> <Column>
    Get the value of a column for a sensor on the server.
 
    * ``SensorID`` - Selects the sensor for which to get the entry value.
-   * ``Column`` - Start value of the column for which to get the entry value.
+   * ``Column`` - For sensors with three channels: Start value of the column for which to get the entry value. For other sensors: Index of the column for which to get the entry value.
 
 
 mesh models sensor series-entries-get <SensorID> [<RngStart> <RngEnd>]

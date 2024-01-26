@@ -6,10 +6,12 @@
 
 #include <stdint.h>
 #include <zephyr/shell/shell.h>
+#include "../sensor.h"
 
-struct sensor_value shell_model_strtosensorval(const char *str, int *err);
+sensor_value_type shell_model_strtosensorval(const struct bt_mesh_sensor_format *format,
+					     const char *str, int *err);
 
-void shell_model_print_sensorval(const struct shell *shell, struct sensor_value *value);
+void shell_model_print_sensorval(const struct shell *shell, sensor_value_type *value);
 
 double shell_model_strtodbl(const char *str, int *err);
 
