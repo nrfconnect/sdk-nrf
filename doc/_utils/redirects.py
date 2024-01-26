@@ -106,6 +106,7 @@ NRF = [
     ("getting_started/recommended_versions", "installation/recommended_versions"),
     ("gs_testing", "test_and_optimize/testing"),
     ("getting_started/testing", "test_and_optimize/testing"),
+    ("test_and_optimize/testing", "test_and_optimize"),
     ("gs_updating", "installation/updating"),
     ("getting_started/updating", "installation/updating"),
     ("ug_nrf52", "device_guides/nrf52"),

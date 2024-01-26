@@ -200,7 +200,7 @@ Use the following steps depending on the application type:
          .. parsed-literal::
             :class: highlight
 
-            west init -m https:\ //github.com/*your-name/your-application* *your-app-worskpace*
+            west init -m https:\ //github.com/*your-name/your-application* *your-app-workspace*
 
       #. Go to the *your-app-workspace* directory using the following command pattern:
 
