@@ -26,35 +26,51 @@
 #error "Unsupported board!"
 #endif
 
+#define TEMP_INIT(_val) { .format = &bt_mesh_sensor_format_temp, .raw = {      \
+	FIELD_GET(GENMASK(7, 0), (_val) * 100),                                \
+	FIELD_GET(GENMASK(15, 8), (_val) * 100)                                \
+}}
+
+#define COL_INIT(_start, _width) { TEMP_INIT(_start), TEMP_INIT(_width) }
+
 /* The columns (temperature ranges) for relative
  * runtime in a chip temperature
  */
 static const struct bt_mesh_sensor_column columns[] = {
-	{ { 0 }, { 20 } },
-	{ { 20 }, { 25 } },
-	{ { 25 }, { 30 } },
-	{ { 30 }, { 100 } },
+	COL_INIT(0, 20),
+	COL_INIT(20, 5),
+	COL_INIT(25, 5),
+	COL_INIT(30, 70)
+};
+
+struct sensor_value_range {
+	struct bt_mesh_sensor_value start;
+	struct bt_mesh_sensor_value end;
 };
 
 #define DEFAULT_TEMP_RANGE_LOW 0
 #define DEFAULT_TEMP_RANGE_HIGH 100
 /* Range limiting the reported values of the chip temperature */
-static struct bt_mesh_sensor_column temp_range = {
-	.start = { .val1 = DEFAULT_TEMP_RANGE_LOW, .val2 = 0},
-	.end = { .val1 = DEFAULT_TEMP_RANGE_HIGH, .val2 = 0},
+static struct sensor_value_range temp_range = {
+	TEMP_INIT(DEFAULT_TEMP_RANGE_LOW),
+	TEMP_INIT(DEFAULT_TEMP_RANGE_HIGH),
 };
 
 static const struct device *dev = DEVICE_DT_GET(SENSOR_NODE);
 static uint32_t tot_temp_samps;
 static uint32_t col_samps[ARRAY_SIZE(columns)];
 static uint32_t outside_temp_range;
-static struct sensor_value pres_mot_thres;
-static double amb_light_level_ref;
-static double amb_light_level_gain = 1.0;
+static struct bt_mesh_sensor_value pres_mot_thres = {
+	.format = &bt_mesh_sensor_format_percentage_8,
+	/* Initialize to "Value is not known" encoded as 0xff. */
+	.raw = { 0xff }
+};
+static struct bt_mesh_sensor_value amb_light_level_ref;
+static float amb_light_level_gain = 1.0;
 /* Using a dummy ambient light value because we do not have a real ambient light sensor. */
-static double dummy_ambient_light_value;
+static float dummy_ambient_light_value;
 
-static int32_t pres_detect;
+static bool pres_detect;
 static uint32_t prev_detect;
 
 #if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
@@ -90,19 +106,24 @@ static const struct bt_mesh_comp2 comp_p2 = {
 static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 			 struct bt_mesh_sensor *sensor,
 			 struct bt_mesh_msg_ctx *ctx,
-			 struct sensor_value *rsp)
+			 struct bt_mesh_sensor_value *rsp)
 {
+	struct sensor_value channel_val;
 	int err;
 
 	sensor_sample_fetch(dev);
 
-	err = sensor_channel_get(dev, SENSOR_DATA_TYPE, rsp);
-
+	err = sensor_channel_get(dev, SENSOR_DATA_TYPE, &channel_val);
 	if (err) {
 		printk("Error getting temperature sensor data (%d)\n", err);
 	}
+	err = bt_mesh_sensor_value_from_sensor_value(
+		sensor->type->channels[0].format, &channel_val, rsp);
+	if (err) {
+		printk("Error encoding temperature sensor data (%d)\n", err);
+	}
 
-	if (!bt_mesh_sensor_value_in_column(rsp, &temp_range)) {
+	if (!BT_MESH_SENSOR_VALUE_IN_RANGE(rsp, &temp_range.start, &temp_range.end)) {
 		outside_temp_range++;
 	}
 
@@ -121,34 +142,31 @@ static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 /* Tolerance is based on the nRF52832's temperature sensor's accuracy and range (5/125 = 4%). */
 static const struct bt_mesh_sensor_descriptor chip_temp_descriptor = {
 	.tolerance = {
-		.negative = {
-			.val1 = 4,
-		},
-		.positive = {
-			.val1 = 4,
-		}
+		.negative = BT_MESH_SENSOR_TOLERANCE_ENCODE(4),
+		.positive = BT_MESH_SENSOR_TOLERANCE_ENCODE(4),
 	},
 	.sampling_type = BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS,
 };
 
 static void chip_temp_range_get(struct bt_mesh_sensor_srv *srv, struct bt_mesh_sensor *sensor,
 				const struct bt_mesh_sensor_setting *setting,
-				struct bt_mesh_msg_ctx *ctx, struct sensor_value *rsp)
+				struct bt_mesh_msg_ctx *ctx, struct bt_mesh_sensor_value *rsp)
 {
 	rsp[0] = temp_range.start;
 	rsp[1] = temp_range.end;
-	printk("Temperature sensor lower limit: %u\n", rsp[0].val1);
-	printk("Temperature sensor upper limit: %u\n", rsp[1].val1);
+	printk("Temperature sensor lower limit: %s\n", bt_mesh_sensor_ch_str(&rsp[0]));
+	printk("Temperature sensor upper limit: %s\n", bt_mesh_sensor_ch_str(&rsp[1]));
 }
 
 static int chip_temp_range_set(struct bt_mesh_sensor_srv *srv, struct bt_mesh_sensor *sensor,
 			       const struct bt_mesh_sensor_setting *setting,
-			       struct bt_mesh_msg_ctx *ctx, const struct sensor_value *value)
+			       struct bt_mesh_msg_ctx *ctx,
+			       const struct bt_mesh_sensor_value *value)
 {
 	temp_range.start = value[0];
 	temp_range.end = value[1];
-	printk("Temperature sensor lower limit: %u\n", value[0].val1);
-	printk("Temperature sensor upper limit: %u\n", value[1].val1);
+	printk("Temperature sensor lower limit: %s\n", bt_mesh_sensor_ch_str(&value[0]));
+	printk("Temperature sensor upper limit: %s\n", bt_mesh_sensor_ch_str(&value[1]));
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		int err;
@@ -209,21 +227,38 @@ static int relative_runtime_in_chip_temp_series_get(struct bt_mesh_sensor_srv *s
 	struct bt_mesh_sensor *sensor,
 	struct bt_mesh_msg_ctx *ctx,
 	uint32_t column_index,
-	struct sensor_value *value)
+	struct bt_mesh_sensor_value *value)
 {
-	if (tot_temp_samps) {
-		uint8_t percent_steps =
-			(200 * col_samps[column_index]) / tot_temp_samps;
+	int err;
 
-		value[0].val1 = percent_steps / 2;
-		value[0].val2 = (percent_steps % 2) * 500000;
+	if (tot_temp_samps) {
+		int64_t percent_micros =
+			(100 * 1000000LL * col_samps[column_index]) / tot_temp_samps;
+
+		err = bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
+						      percent_micros, &value[0]);
+		if (err) {
+			printk("Error encoding relative runtime in chip temp series (%d)\n", err);
+		}
 	} else {
-		value[0].val1 = 0;
-		value[0].val2 = 0;
+		err = bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
+						      0, &value[0]);
+		if (err) {
+			printk("Error encoding relative runtime in chip temp series (%d)\n", err);
+		}
 	}
 
 	value[1] = columns[column_index].start;
-	value[2] = columns[column_index].end;
+
+	int64_t start_micro, width_micro;
+
+	(void)bt_mesh_sensor_value_to_micro(&columns[column_index].start, &start_micro);
+	(void)bt_mesh_sensor_value_to_micro(&columns[column_index].width, &width_micro);
+	err = bt_mesh_sensor_value_from_micro(columns[column_index].start.format,
+					      start_micro + width_micro, &value[2]);
+	if (err) {
+		printk("Error encoding column end (%d)\n", err);
+	}
 
 	return 0;
 }
@@ -231,17 +266,25 @@ static int relative_runtime_in_chip_temp_series_get(struct bt_mesh_sensor_srv *s
 static int relative_runtime_in_chip_temp_get(struct bt_mesh_sensor_srv *srv,
 					     struct bt_mesh_sensor *sensor,
 					     struct bt_mesh_msg_ctx *ctx,
-					     struct sensor_value *rsp)
+					     struct bt_mesh_sensor_value *rsp)
 {
-	if (tot_temp_samps) {
-		uint8_t percent_steps =
-			(200 * (tot_temp_samps - outside_temp_range)) / tot_temp_samps;
+	int err;
 
-		rsp[0].val1 = percent_steps / 2;
-		rsp[0].val2 = (percent_steps % 2) * 500000;
+	if (tot_temp_samps) {
+		int64_t percent_micros =
+			(100 * 1000000LL * (tot_temp_samps - outside_temp_range)) / tot_temp_samps;
+
+		err = bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
+						      percent_micros, &rsp[0]);
+		if (err) {
+			printk("Error encoding relative runtime in chip temp (%d)\n", err);
+		}
 	} else {
-		rsp[0].val1 = 100;
-		rsp[0].val2 = 0;
+		err = bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
+						      100 * 1000000LL, &rsp[0]);
+		if (err) {
+			printk("Error encoding relative runtime in chip temp series (%d)\n", err);
+		}
 	}
 
 	rsp[1] = temp_range.start;
@@ -264,20 +307,38 @@ static void presence_motion_threshold_get(struct bt_mesh_sensor_srv *srv,
 	struct bt_mesh_sensor *sensor,
 	const struct bt_mesh_sensor_setting *setting,
 	struct bt_mesh_msg_ctx *ctx,
-	struct sensor_value *rsp)
+	struct bt_mesh_sensor_value *rsp)
 {
+	int64_t mot_thres_micro;
+	enum bt_mesh_sensor_value_status status;
+
 	rsp[0] = pres_mot_thres;
-	printk("Presence motion threshold: %u [%d ms]\n", rsp[0].val1, 100 * rsp[0].val1);
+	status = bt_mesh_sensor_value_to_micro(&rsp[0], &mot_thres_micro);
+	if (bt_mesh_sensor_value_status_is_numeric(status)) {
+		printk("Presence motion threshold: %s [%d ms]\n", bt_mesh_sensor_ch_str(rsp),
+		       (uint16_t)(mot_thres_micro / 10000));
+	} else {
+		printk("Presence motion threshold: %s\n", bt_mesh_sensor_ch_str(rsp));
+	}
 }
 
 static int presence_motion_threshold_set(struct bt_mesh_sensor_srv *srv,
 	struct bt_mesh_sensor *sensor,
 	const struct bt_mesh_sensor_setting *setting,
 	struct bt_mesh_msg_ctx *ctx,
-	const struct sensor_value *value)
+	const struct bt_mesh_sensor_value *value)
 {
+	int64_t mot_thres_micro;
+	enum bt_mesh_sensor_value_status status;
+
 	pres_mot_thres = value[0];
-	printk("Presence motion threshold: %u [%d ms]\n", value[0].val1, 100 * value[0].val1);
+	status = bt_mesh_sensor_value_to_micro(&value[0], &mot_thres_micro);
+	if (bt_mesh_sensor_value_status_is_numeric(status)) {
+		printk("Presence motion threshold: %s [%d ms]\n", bt_mesh_sensor_ch_str(value),
+		       (uint16_t)(mot_thres_micro / 10000));
+	} else {
+		printk("Presence motion threshold: %s\n", bt_mesh_sensor_ch_str(value));
+	}
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		int err;
@@ -332,11 +393,15 @@ struct settings_handler presence_motion_threshold_conf = {
 static int presence_detected_get(struct bt_mesh_sensor_srv *srv,
 				 struct bt_mesh_sensor *sensor,
 				 struct bt_mesh_msg_ctx *ctx,
-				 struct sensor_value *rsp)
+				 struct bt_mesh_sensor_value *rsp)
 {
-	rsp->val1 = pres_detect;
+	int err = bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
+						  pres_detect * 1000000LL, rsp);
 
-	return 0;
+	if (err) {
+		printk("Error encoding presence detected (%d)", err);
+	}
+	return err;
 };
 
 static struct bt_mesh_sensor presence_sensor = {
@@ -351,20 +416,34 @@ static struct bt_mesh_sensor presence_sensor = {
 static int time_since_presence_detected_get(struct bt_mesh_sensor_srv *srv,
 					struct bt_mesh_sensor *sensor,
 					struct bt_mesh_msg_ctx *ctx,
-					struct sensor_value *rsp)
+					struct bt_mesh_sensor_value *rsp)
 {
+	int err;
+	const struct bt_mesh_sensor_format *format = sensor->type->channels[0].format;
+
 	if (pres_detect) {
-		rsp->val1 = 0;
+		err = bt_mesh_sensor_value_from_micro(format, 0, rsp);
 	} else if (prev_detect) {
-		rsp->val1 = MIN((k_uptime_get_32() - prev_detect) / MSEC_PER_SEC, 0xFFFF);
+		int64_t micro_since_detect =
+			(k_uptime_get() - prev_detect) * USEC_PER_MSEC;
+
+		err = bt_mesh_sensor_value_from_micro(format, micro_since_detect, rsp);
+		if (err == -ERANGE) {
+			/* Ignore range error and respond with clamped value */
+			return 0;
+		}
 	} else {
 		/* Before first detection, the time since last detection is unknown. Returning
-		 * unknown value until a detection is done. Value is defined in specification.
+		 * unknown value until a detection is done.
 		 */
-		rsp->val1 = 0xFFFF;
+		err = bt_mesh_sensor_value_from_special_status(
+			format, BT_MESH_SENSOR_VALUE_UNKNOWN, rsp);
 	}
 
-	return 0;
+	if (err) {
+		printk("Error encoding time since presence detected (%d)", err);
+	}
+	return err;
 }
 
 static struct bt_mesh_sensor time_since_presence_detected = {
@@ -376,13 +455,19 @@ static void amb_light_level_gain_get(struct bt_mesh_sensor_srv *srv,
 				     struct bt_mesh_sensor *sensor,
 				     const struct bt_mesh_sensor_setting *setting,
 				     struct bt_mesh_msg_ctx *ctx,
-				     struct sensor_value *rsp)
+				     struct bt_mesh_sensor_value *rsp)
 {
-	(void)sensor_value_from_double(rsp, amb_light_level_gain);
-	printk("Ambient light level gain: %s\n", bt_mesh_sensor_ch_str(rsp));
+	int err = bt_mesh_sensor_value_from_float(setting->type->channels[0].format,
+						  amb_light_level_gain, rsp);
+
+	if (err) {
+		printk("Error encoding ambient light level gain (%d)\n", err);
+	} else {
+		printk("Ambient light level gain: %s\n", bt_mesh_sensor_ch_str(rsp));
+	}
 };
 
-static void amb_light_level_gain_store(double gain)
+static void amb_light_level_gain_store(float gain)
 {
 	amb_light_level_gain = gain;
 
@@ -403,9 +488,14 @@ static int amb_light_level_gain_set(struct bt_mesh_sensor_srv *srv,
 				    struct bt_mesh_sensor *sensor,
 				    const struct bt_mesh_sensor_setting *setting,
 				    struct bt_mesh_msg_ctx *ctx,
-				    const struct sensor_value *value)
+				    const struct bt_mesh_sensor_value *value)
 {
-	amb_light_level_gain_store(sensor_value_to_double(value));
+	float value_f;
+
+	/* Ignore status; type is float and can always be decoded to a float. */
+	(void)bt_mesh_sensor_value_to_float(value, &value_f);
+
+	amb_light_level_gain_store(value_f);
 	printk("Ambient light level gain: %s\n", bt_mesh_sensor_ch_str(value));
 
 	return 0;
@@ -415,25 +505,34 @@ static int amb_light_level_ref_set(struct bt_mesh_sensor_srv *srv,
 				   struct bt_mesh_sensor *sensor,
 				   const struct bt_mesh_sensor_setting *setting,
 				   struct bt_mesh_msg_ctx *ctx,
-				   const struct sensor_value *value)
+				   const struct bt_mesh_sensor_value *value)
 {
-	struct sensor_value gain_value_tmp;
+	amb_light_level_ref = value[0];
 
-	amb_light_level_ref = sensor_value_to_double(value);
+	float ref_float;
+	enum bt_mesh_sensor_value_status status = bt_mesh_sensor_value_to_float(
+		value, &ref_float);
+
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		/* Format can encode "Value is not known",
+		 * handle by keeping the gain unchanged.
+		 */
+		printk("Ambient light level ref set to %s, gain is not modified\n",
+		       bt_mesh_sensor_ch_str(value));
+		return 0;
+	}
 
 	/* When using the a real ambient light sensor the sensor value should be
 	 * read and used instead of the dummy value.
 	 */
 	if (dummy_ambient_light_value > 0.0) {
-		amb_light_level_gain_store(amb_light_level_ref / dummy_ambient_light_value);
+		amb_light_level_gain_store(ref_float / dummy_ambient_light_value);
 	} else {
 		amb_light_level_gain_store(FLT_MAX);
 	}
 
-	sensor_value_from_double(&gain_value_tmp, amb_light_level_gain);
-
 	printk("Ambient light level ref(%s) ", bt_mesh_sensor_ch_str(value));
-	printk("gain(%s)\n", bt_mesh_sensor_ch_str(&gain_value_tmp));
+	printk("gain(%f)\n", amb_light_level_gain);
 
 	return 0;
 }
@@ -442,9 +541,9 @@ static void amb_light_level_ref_get(struct bt_mesh_sensor_srv *srv,
 				     struct bt_mesh_sensor *sensor,
 				     const struct bt_mesh_sensor_setting *setting,
 				     struct bt_mesh_msg_ctx *ctx,
-				     struct sensor_value *rsp)
+				     struct bt_mesh_sensor_value *rsp)
 {
-	(void)sensor_value_from_double(rsp, amb_light_level_ref);
+	rsp[0] = amb_light_level_ref;
 	printk("Ambient light level ref: %s\n", bt_mesh_sensor_ch_str(rsp));
 };
 
@@ -491,15 +590,20 @@ struct settings_handler amb_light_level_gain_conf = {
 	.h_set = amb_light_level_gain_settings_restore
 };
 
-static struct bt_mesh_sensor_column amb_light_level_range = {
-	.start = { .val1 = 0, .val2 = 0},
-	.end = { .val1 = 167772, .val2 = 130000 },
-};
+#define ILLUMINANCE_INIT_MILLIS(_val)                                          \
+{                                                                              \
+	.format = &bt_mesh_sensor_format_illuminance,                          \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_val / 10)),                         \
+		FIELD_GET(GENMASK(15, 8), (_val / 10)),                        \
+		FIELD_GET(GENMASK(23, 16), (_val / 10)),                       \
+	}                                                                      \
+}
 
 static int amb_light_level_get(struct bt_mesh_sensor_srv *srv,
 			       struct bt_mesh_sensor *sensor,
 			       struct bt_mesh_msg_ctx *ctx,
-			       struct sensor_value *rsp)
+			       struct bt_mesh_sensor_value *rsp)
 {
 	int err;
 
@@ -507,38 +611,22 @@ static int amb_light_level_get(struct bt_mesh_sensor_srv *srv,
 	 * a button. The logic and hardware for measuring the actual ambient
 	 * light usage of the device should be implemented here.
 	 */
-	double reported_value = amb_light_level_gain * dummy_ambient_light_value;
+	float reported_value = amb_light_level_gain * dummy_ambient_light_value;
 
-	err = sensor_value_from_double(rsp, reported_value);
-	if (err) {
-		printk("Error getting ambient light level sensor data (%d)\n", err);
+	err = bt_mesh_sensor_value_from_float(sensor->type->channels[0].format,
+					      reported_value, rsp);
+	if (err && err != -ERANGE) {
+		printk("Error encoding ambient light level sensor data (%d)\n", err);
+		return err;
 	}
 
-	if (!bt_mesh_sensor_value_in_column(rsp, &amb_light_level_range)) {
-		if (amb_light_level_range.start.val1 == amb_light_level_range.end.val1) {
-			if (rsp->val2 <= amb_light_level_range.start.val2) {
-				*rsp = amb_light_level_range.start;
-			} else {
-				*rsp = amb_light_level_range.end;
-			}
-		} else if (rsp->val1 <= amb_light_level_range.start.val1) {
-			*rsp = amb_light_level_range.start;
-		} else {
-			*rsp = amb_light_level_range.end;
-		}
-	}
-
-	return err;
+	return 0;
 }
 
 static const struct bt_mesh_sensor_descriptor present_amb_light_desc = {
 	.tolerance = {
-		.negative = {
-			.val1 = 0,
-		},
-		.positive = {
-			.val1 = 0,
-		}
+		.negative = BT_MESH_SENSOR_TOLERANCE_ENCODE(0),
+		.positive = BT_MESH_SENSOR_TOLERANCE_ENCODE(0),
 	},
 	.sampling_type = BT_MESH_SENSOR_SAMPLING_UNSPECIFIED,
 	.period = 0,
@@ -579,16 +667,12 @@ static struct bt_mesh_sensor_srv chip_temp_sensor_srv =
 
 static struct k_work_delayable presence_detected_work;
 
+#define BOOLEAN_INIT(_bool) { .format = &bt_mesh_sensor_format_boolean, .raw = { (_bool) } }
+
 static void presence_detected(struct k_work *work)
 {
 	int err;
-
-	/* This sensor value must be boolean -
-	 * .val1 can only be '0' or '1'
-	 */
-	struct sensor_value val = {
-		.val1 = 1,
-	};
+	struct bt_mesh_sensor_value val = BOOLEAN_INIT(true);
 
 	err = bt_mesh_sensor_srv_pub(&occupancy_sensor_srv, NULL, &presence_sensor, &val);
 
@@ -617,7 +701,16 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 	}
 
 	if (pressed & changed & BIT(0)) {
-		k_work_reschedule(&presence_detected_work, K_MSEC(100 * pres_mot_thres.val1));
+		int64_t thres_micros;
+		enum bt_mesh_sensor_value_status status;
+
+		status = bt_mesh_sensor_value_to_micro(&pres_mot_thres, &thres_micros);
+		if (bt_mesh_sensor_value_status_is_numeric(status)) {
+			k_work_reschedule(&presence_detected_work, K_MSEC(thres_micros / 10000));
+		} else {
+			/* Value is not known, register presence immediately */
+			k_work_reschedule(&presence_detected_work, K_NO_WAIT);
+		}
 	}
 
 	if ((!pressed) & changed & BIT(0)) {
@@ -625,13 +718,7 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 			k_work_cancel_delayable(&presence_detected_work);
 		} else {
 			int err;
-
-			/* This sensor value must be boolean -
-			 * .val1 can only be '0' or '1'
-			 */
-			struct sensor_value val = {
-				.val1 = 0,
-			};
+			struct bt_mesh_sensor_value val = BOOLEAN_INIT(false);
 
 			err = bt_mesh_sensor_srv_pub(&occupancy_sensor_srv, NULL,
 						&presence_sensor, &val);
@@ -648,12 +735,14 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 	if (pressed & changed & BIT(1)) {
 		int err;
 		static int amb_light_idx;
-		struct sensor_value val;
+		struct bt_mesh_sensor_value val;
 
 		dummy_ambient_light_value = dummy_amb_light_values[amb_light_idx++];
 		amb_light_idx = amb_light_idx % ARRAY_SIZE(dummy_amb_light_values);
 
-		err = sensor_value_from_double(&val, dummy_ambient_light_value);
+		err = bt_mesh_sensor_value_from_float(
+			present_amb_light_level.type->channels[0].format,
+			dummy_ambient_light_value, &val);
 		if (err) {
 			printk("Error getting ambient light level sensor data (%d)\n", err);
 		}
