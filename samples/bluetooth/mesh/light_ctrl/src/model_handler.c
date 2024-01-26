@@ -197,15 +197,14 @@ static int dummy_energy_use;
 static int energy_use_get(struct bt_mesh_sensor_srv *srv,
 			 struct bt_mesh_sensor *sensor,
 			 struct bt_mesh_msg_ctx *ctx,
-			 struct sensor_value *rsp)
+			 struct bt_mesh_sensor_value *rsp)
 {
 	/* Report energy usage as dummy value, and increase it by one every time
 	 * a get callback is triggered. The logic and hardware for mesuring
 	 * the actual energy usage of the device should be implemented here.
 	 */
-	rsp[0].val1 = dummy_energy_use;
-	rsp[0].val2 = 0;
-
+	bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
+					dummy_energy_use * 1000000LL, rsp);
 	dummy_energy_use++;
 
 	return 0;
@@ -213,12 +212,8 @@ static int energy_use_get(struct bt_mesh_sensor_srv *srv,
 
 static const struct bt_mesh_sensor_descriptor energy_use_desc = {
 	.tolerance = {
-		.negative = {
-			.val1 = 0,
-		},
-		.positive = {
-			.val1 = 0,
-		}
+		.negative = 0,
+		.positive = 0,
 	},
 	.sampling_type = BT_MESH_SENSOR_SAMPLING_UNSPECIFIED,
 	.period = 0,
