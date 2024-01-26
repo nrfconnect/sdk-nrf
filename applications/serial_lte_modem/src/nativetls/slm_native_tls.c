@@ -6,7 +6,7 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/settings/settings.h>
 #include "slm_native_tls.h"
-#include "slm_uart_handler.h"
+#include "slm_at_host.h"
 #include "slm_at_cmng.h"
 
 LOG_MODULE_REGISTER(slm_native_tls, CONFIG_SLM_LOG_LEVEL);
@@ -133,9 +133,9 @@ static int list_credentials_cb(const char *key, size_t len, settings_read_cb rea
 		ptr++;
 	}
 
-	err = slm_uart_tx_write(buf, strlen(buf), false, false);
+	slm_at_send_str(buf);
 	if (err) {
-		LOG_ERR("Failed slm_uart_tx_write: %d", err);
+		LOG_ERR("Failed slm_at_send: %d", err);
 	}
 
 	return err;

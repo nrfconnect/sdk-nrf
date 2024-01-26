@@ -45,7 +45,7 @@ choice
 endchoice
 
 #
-# UART buffers
+# UART buffers (when CMUX is not in use)
 #
 config SLM_UART_RX_BUF_COUNT
 	int "Receive buffers for UART"
@@ -86,7 +86,7 @@ config SLM_INDICATE_PIN
 	int "Indicate pin"
 	default -1
 	help
-	  Interface GPIO pin used to indicate that data is available or an unexpected reset has occurred
+	  Interface GPIO pin used to indicate that data is available when SLM is idle (after #XSLEEP=2 AT command).
 
 config SLM_INDICATE_TIME
 	int "Indication period"

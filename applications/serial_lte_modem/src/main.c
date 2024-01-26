@@ -25,7 +25,6 @@
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
 #include "slm_settings.h"
-#include "slm_uart_handler.h"
 #include "slm_util.h"
 
 LOG_MODULE_REGISTER(slm, CONFIG_SLM_LOG_LEVEL);
@@ -152,7 +151,7 @@ static int init_gpio(void)
 	return 0;
 }
 
-int indicate_start(void)
+int slm_indicate(void)
 {
 	int err = 0;
 
@@ -195,7 +194,7 @@ static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_ca
 		return;
 	}
 
-	LOG_INF("Exit idle");
+	LOG_INF("Resuming from idle.");
 	if (k_work_delayable_is_pending(&indicate_work)) {
 		(void)k_work_cancel_delayable(&indicate_work);
 		indicate_stop();
@@ -205,7 +204,7 @@ static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_ca
 	if (err < 0) {
 		LOG_WRN("Failed to enable ext XTAL: %d", err);
 	}
-	err = slm_uart_power_on();
+	err = slm_at_host_power_on();
 	if (err) {
 		(void)atomic_set(&gpio_cb_running, false);
 		LOG_ERR("Failed to power on uart: %d", err);
@@ -219,6 +218,7 @@ static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_ca
 
 void enter_idle(void)
 {
+	LOG_INF("Entering idle.");
 	int err;
 
 	gpio_init_callback(&gpio_cb, gpio_cb_func, BIT(CONFIG_SLM_WAKEUP_PIN));
@@ -241,6 +241,7 @@ void enter_idle(void)
 
 void enter_sleep(void)
 {
+	LOG_INF("Entering sleep.");
 	/*
 	 * Due to errata 4, Always configure PIN_CNF[n].INPUT before PIN_CNF[n].SENSE.
 	 * At this moment WAKEUP_PIN has already been configured as INPUT at init_gpio().
@@ -254,6 +255,8 @@ void enter_sleep(void)
 
 void enter_shutdown(void)
 {
+	LOG_INF("Entering shutdown.");
+
 	/* De-configure GPIOs */
 	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_INT_DISABLE);
 	gpio_pin_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_DISCONNECTED);
