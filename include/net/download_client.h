@@ -223,7 +223,7 @@ struct download_client {
 		DOWNLOAD_CLIENT_IDLE,
 		DOWNLOAD_CLIENT_CONNECTING,
 		DOWNLOAD_CLIENT_DOWNLOADING,
-		DOWNLOAD_CLIENT_FINNISHED,
+		DOWNLOAD_CLIENT_FINISHED,
 		DOWNLOAD_CLIENT_CLOSING
 	} state;
 };
@@ -338,7 +338,7 @@ int download_client_disconnect(struct download_client *client);
  * separate calls to download_client_set_host(), download_client_start()
  * and download_client_disconnect().
  *
- * Downloads are handled one at a time. If previous download is not finnished
+ * Downloads are handled one at a time. If previous download is not finished
  * this returns -EALREADY.
  *
  * The download is carried out in fragments of up to
