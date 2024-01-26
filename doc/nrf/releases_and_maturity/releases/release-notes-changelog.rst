@@ -756,6 +756,7 @@ Modem libraries
 
     * The ``lte_net_if`` module now handles the :c:enumerator:`~pdn_event.PDN_EVENT_NETWORK_DETACH` PDN event.
       Not handling this caused permanent connection loss and error message (``ipv4_addr_add, error: -19``) in some situations when reconnecting.
+    * Threads sleeping in the :c:func:`nrf_modem_os_timedwait` function with context ``0`` are now woken by all calls to the :c:func:`nrf_modem_os_event_notify` function.
 
   * Removed:
 
