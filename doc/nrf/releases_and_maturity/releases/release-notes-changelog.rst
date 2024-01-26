@@ -364,6 +364,10 @@ Bluetooth samples
 
   * Corrected the behavior when building with the :ref:`ble_rpc` library.
 
+* :ref:`bluetooth_central_dfu_smp` sample:
+
+  * Updated to adapt to API changes in zcbor 0.8.x.
+
 Bluetooth Mesh samples
 ----------------------
 
