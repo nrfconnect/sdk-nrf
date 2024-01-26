@@ -20,3 +20,7 @@ install(FILES       config.cmake
 
 install(FILES       ../common/config.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}/../common/)
+
+install(DIRECTORY   ${Trusted\ Firmware\ M_SOURCE_DIR}/platform/ext/target/nordic_nrf/nrf5340dk_nrf5340_cpuapp/tests
+        DESTINATION ${INSTALL_PLATFORM_NS_DIR}
+)
