@@ -306,7 +306,8 @@ static void smp_echo_rsp_proc(struct bt_dfu_smp *dfu_smp)
 		char map_value[SMP_ECHO_MAP_VALUE_MAX_LEN];
 		bool ok;
 
-		zcbor_new_decode_state(zsd, ARRAY_SIZE(zsd), smp_rsp_buff.payload, payload_len, 1);
+		zcbor_new_decode_state(zsd, ARRAY_SIZE(zsd), smp_rsp_buff.payload, payload_len, 1,
+					NULL, 0);
 
 		/* Stop decoding on the error. */
 		zsd->constant_state->stop_on_error = true;
@@ -360,7 +361,7 @@ static void smp_echo_rsp_proc(struct bt_dfu_smp *dfu_smp)
 }
 
 static int send_smp_echo(struct bt_dfu_smp *dfu_smp,
-			 const char *string)
+			 const char *string, size_t string_max_len)
 {
 	static struct smp_buffer smp_cmd;
 	zcbor_state_t zse[CBOR_ENCODER_STATE_NUM];
@@ -374,7 +375,7 @@ static int send_smp_echo(struct bt_dfu_smp *dfu_smp,
 
 	zcbor_map_start_encode(zse, CBOR_MAP_MAX_ELEMENT_CNT);
 	zcbor_tstr_put_lit(zse, "d");
-	zcbor_tstr_put_term(zse, string);
+	zcbor_tstr_put_term(zse, string, string_max_len);
 	zcbor_map_end_encode(zse, CBOR_MAP_MAX_ELEMENT_CNT);
 
 	if (!zcbor_check_error(zse)) {
@@ -409,7 +410,7 @@ static void button_echo(bool state)
 		++echo_cnt;
 		printk("Echo test: %d\n", echo_cnt);
 		snprintk(buffer, sizeof(buffer), "Echo message: %u", echo_cnt);
-		ret = send_smp_echo(&dfu_smp, buffer);
+		ret = send_smp_echo(&dfu_smp, buffer, sizeof(buffer));
 		if (ret) {
 			printk("Echo command send error (err: %d)\n", ret);
 		}
