@@ -26,7 +26,6 @@ jobs:
         run: |
           apt-get update
           apt install -y lcov curl ruby-full
-          pip3 install zcbor==0.5.1
 
       - name: Install sonar-scanner and build-wrapper
         uses: sonarsource/sonarcloud-github-c-cpp@v2.0.2
