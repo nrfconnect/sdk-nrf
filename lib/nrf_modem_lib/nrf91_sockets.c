@@ -305,7 +305,6 @@ static int nrf_to_z_addrinfo(struct zsock_addrinfo *z_out,
 			     const struct nrf_addrinfo *nrf_in)
 {
 	z_out->ai_next = NULL;
-	z_out->ai_canonname = NULL; /* TODO Do proper content copy. */
 	z_out->ai_flags = nrf_in->ai_flags;
 	z_out->ai_socktype = nrf_in->ai_socktype;
 
@@ -330,6 +329,15 @@ static int nrf_to_z_addrinfo(struct zsock_addrinfo *z_out,
 			(const struct nrf_sockaddr_in6 *)nrf_in->ai_addr);
 	} else {
 		return -EAFNOSUPPORT;
+	}
+
+	if (nrf_in->ai_canonname) {
+		strncpy(z_out->_ai_canonname, nrf_in->ai_canonname,
+			sizeof(z_out->_ai_canonname));
+		z_out->_ai_canonname[sizeof(z_out->_ai_canonname) - 1] = '\0';
+		z_out->ai_canonname = z_out->_ai_canonname;
+	} else {
+		z_out->ai_canonname = NULL;
 	}
 
 	return 0;
