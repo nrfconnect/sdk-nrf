@@ -125,7 +125,7 @@ west==1.2.0               # via -r nrf/scripts/requirements-base.txt, -r zephyr/
 wget==3.2                 # via -r nrf/scripts/requirements-ci.txt
 wrapt==1.15.0             # via astroid, deprecated, python-can
 yamllint==1.32.0          # via -r zephyr/scripts/requirements-compliance.txt
-zcbor==0.7.0              # via -r nrf/scripts/requirements-build.txt, -r nrf/scripts/requirements-extra.txt, -r zephyr/scripts/requirements-extras.txt
+zcbor==0.8.1              # via -r nrf/scripts/requirements-build.txt, -r nrf/scripts/requirements-extra.txt, -r zephyr/scripts/requirements-extras.txt
 zipp==3.17.0              # via importlib-metadata, importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
