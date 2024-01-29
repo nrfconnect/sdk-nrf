@@ -87,6 +87,13 @@ The following changes are mandatory to make your application work in the same wa
 
   * Instead of the ``CONFIG_WIFI_MGMT_SCAN_MAX_BSS_CNT`` Kconfig option, a new :kconfig:option:`CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT` Kconfig option is added.
 
+* For samples using ``CONFIG_NRF_SECURITY``:
+
+  * RSA keys are no longer enabled by default.
+    This reduces the code size by 30 kB if not using RSA keys.
+    This also breaks the configuration if using the RSA keys without explicitly enabling an RSA key size.
+    Enable the required key size to fix the configuration, for example by setting the Kconfig option :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` if 2048-bit RSA keys are required.
+
 Recommended changes
 *******************
 
