@@ -66,6 +66,8 @@ static int do_agnss_request_send(struct lwm2m_ctx *ctx);
 static int do_pgps_request_send(struct lwm2m_ctx *ctx);
 static int do_ground_fix_request_send(struct lwm2m_ctx *ctx);
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) ||                                    \
+	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 static int gnss_assintace_request_prepare(void)
 {
 	if (permanent_error) {
@@ -86,6 +88,7 @@ static int gnss_assintace_request_prepare(void)
 	gnss_retry_info.retry_left = 1;
 	return 0;
 }
+#endif
 
 static void location_assist_gnss_work_handler(struct k_work *work)
 {
