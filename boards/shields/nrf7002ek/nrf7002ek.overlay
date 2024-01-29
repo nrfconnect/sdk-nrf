@@ -5,6 +5,17 @@
 #include <freq.h>
 #include "nrf7002ek_coex.overlay"
 
+/ {
+	nordic_wlan0: nordic_wlan0 {
+		compatible = "nordic,wlan0";
+		status = "okay";
+	};
+
+	chosen {
+		zephyr,wifi = &nordic_wlan0;
+	};
+};
+
 &arduino_spi {
 	status = "okay";
 
