@@ -23,7 +23,7 @@
 #include "le_audio_rx.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(streamctrl_unicast_client, CONFIG_STREAMCTRL_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
 static enum stream_state strm_state = STATE_PAUSED;
 
@@ -225,6 +225,10 @@ static void le_audio_msg_sub_thread(void)
 				break;
 			}
 
+			if (msg.dir == BT_AUDIO_DIR_SINK) {
+				audio_system_encoder_start();
+			}
+
 			audio_system_start();
 			stream_state_set(STATE_STREAMING);
 
@@ -238,6 +242,10 @@ static void le_audio_msg_sub_thread(void)
 			if (strm_state == STATE_PAUSED) {
 				LOG_DBG("Got not_streaming event in paused state");
 				break;
+			}
+
+			if (msg.dir == BT_AUDIO_DIR_SINK) {
+				audio_system_encoder_stop();
 			}
 
 			stream_state_set(STATE_PAUSED);
