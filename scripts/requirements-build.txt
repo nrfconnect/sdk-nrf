@@ -5,4 +5,4 @@ cryptography>=42.0.0
 imagesize>=1.2.0
 intelhex
 pylint
-zcbor
+zcbor~=0.8.0
