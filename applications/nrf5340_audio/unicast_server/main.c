@@ -25,7 +25,7 @@
 #include "le_audio_rx.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(streamctrl_unicast_server, CONFIG_STREAMCTRL_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
 
@@ -187,6 +187,10 @@ static void le_audio_msg_sub_thread(void)
 		case LE_AUDIO_EVT_STREAMING:
 			LOG_DBG("LE audio evt streaming");
 
+			if (msg.dir == BT_AUDIO_DIR_SOURCE) {
+				audio_system_encoder_start();
+			}
+
 			if (strm_state == STATE_STREAMING) {
 				LOG_DBG("Got streaming event in streaming state");
 				break;
@@ -205,6 +209,10 @@ static void le_audio_msg_sub_thread(void)
 			if (strm_state == STATE_PAUSED) {
 				LOG_DBG("Got not_streaming event in paused state");
 				break;
+			}
+
+			if (msg.dir == BT_AUDIO_DIR_SOURCE) {
+				audio_system_encoder_stop();
 			}
 
 			stream_state_set(STATE_PAUSED);

@@ -35,8 +35,15 @@ K_THREAD_STACK_DEFINE(encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE);
 DATA_FIFO_DEFINE(fifo_tx, FIFO_TX_BLOCK_COUNT, WB_UP(BLOCK_SIZE_BYTES));
 DATA_FIFO_DEFINE(fifo_rx, FIFO_RX_BLOCK_COUNT, WB_UP(BLOCK_SIZE_BYTES));
 
+static K_SEM_DEFINE(sem_encoder_start, 0, 1);
+
 static struct k_thread encoder_thread_data;
 static k_tid_t encoder_thread_id;
+
+static struct k_poll_signal encoder_sig;
+
+static struct k_poll_event encoder_evt =
+	K_POLL_EVENT_INITIALIZER(K_POLL_TYPE_SIGNAL, K_POLL_MODE_NOTIFY_ONLY, &encoder_sig);
 
 static struct sw_codec_config sw_codec_cfg;
 /* Buffer which can hold max 1 period test tone at 1000 Hz */
@@ -122,6 +129,9 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 	static uint32_t test_tone_finite_pos;
 
 	while (1) {
+		/* Don't start encoding until the stream needing it has started */
+		ret = k_poll(&encoder_evt, 1, K_FOREVER);
+
 		/* Get PCM data from I2S */
 		/* Since one audio frame is divided into a number of
 		 * blocks, we need to fetch the pointers to all of these
@@ -178,6 +188,17 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		}
 		STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
 	}
+}
+
+void audio_system_encoder_start(void)
+{
+	LOG_DBG("Encoder started");
+	k_poll_signal_raise(&encoder_sig, 0);
+}
+
+void audio_system_encoder_stop(void)
+{
+	k_poll_signal_reset(&encoder_sig);
 }
 
 int audio_system_encode_test_tone_set(uint32_t freq)
@@ -448,6 +469,8 @@ int audio_system_init(void)
 		return ret;
 	}
 #endif
+	k_poll_signal_init(&encoder_sig);
+
 	return 0;
 }
 

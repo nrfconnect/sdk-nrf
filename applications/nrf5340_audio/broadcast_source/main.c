@@ -137,6 +137,8 @@ static void le_audio_msg_sub_thread(void)
 		case LE_AUDIO_EVT_STREAMING:
 			LOG_DBG("LE audio evt streaming");
 
+			audio_system_encoder_start();
+
 			if (strm_state == STATE_STREAMING) {
 				LOG_DBG("Got streaming event in streaming state");
 				break;
@@ -151,6 +153,8 @@ static void le_audio_msg_sub_thread(void)
 
 		case LE_AUDIO_EVT_NOT_STREAMING:
 			LOG_DBG("LE audio evt not_streaming");
+
+			audio_system_encoder_stop();
 
 			if (strm_state == STATE_PAUSED) {
 				LOG_DBG("Got not_streaming event in paused state");

@@ -52,6 +52,7 @@ struct sw_codec_encoder {
 
 struct sw_codec_decoder {
 	bool enabled;
+	bool started;
 	enum sw_codec_channel_mode channel_mode; /* Mono or stereo. */
 	uint8_t num_ch;				 /* Number of decoder channels. */
 	enum audio_channel audio_ch;		 /* Used to choose which channel to use. */

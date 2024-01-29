@@ -7,6 +7,7 @@
 #include "le_audio.h"
 
 #include <zephyr/bluetooth/audio/bap.h>
+#include <zephyr/bluetooth/audio/audio.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(le_audio, CONFIG_BLE_LOG_LEVEL);
@@ -106,4 +107,19 @@ int le_audio_frame_blocks_per_sdu_get(const struct bt_audio_codec_cfg *codec,
 	*frame_blks_per_sdu = ret;
 
 	return 0;
+}
+
+int le_audio_stream_dir_get(struct bt_bap_stream const *const stream)
+{
+	int ret;
+	struct bt_bap_ep_info ep_info;
+
+	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
+
+	if (ret) {
+		LOG_WRN("Failed to get ep_info");
+		return ret;
+	}
+
+	return ep_info.dir;
 }

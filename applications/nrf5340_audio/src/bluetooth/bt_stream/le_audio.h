@@ -111,5 +111,16 @@ int le_audio_octets_per_frame_get(const struct bt_audio_codec_cfg *codec, uint32
  */
 int le_audio_frame_blocks_per_sdu_get(const struct bt_audio_codec_cfg *codec,
 				      uint32_t *frame_blks_per_sdu);
+/*
+ * @brief	Get the direction of the @p stream provided
+ *
+ * @param	stream	Stream to check direction for.
+ *
+ * @retval	BT_AUDIO_DIR_SINK	sink direction.
+ * @retval	BT_AUDIO_DIR_SOURCE	source direction.
+ * @retval	Negative value		Failed to get ep_info from host.
+ *
+ */
+int le_audio_stream_dir_get(struct bt_bap_stream const *const stream);
 
 #endif /* _LE_AUDIO_H_ */

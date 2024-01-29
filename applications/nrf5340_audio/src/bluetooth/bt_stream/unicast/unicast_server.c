@@ -78,13 +78,15 @@ static uint8_t unicast_server_adv_data[] = {
 	0x00, /* Metadata length */
 };
 
-static void le_audio_event_publish(enum le_audio_evt_type event, struct bt_conn *conn)
+static void le_audio_event_publish(enum le_audio_evt_type event, struct bt_conn *conn,
+				   enum bt_audio_dir dir)
 {
 	int ret;
 	struct le_audio_msg msg;
 
 	msg.event = event;
 	msg.conn = conn;
+	msg.dir = dir;
 
 	ret = zbus_chan_pub(&le_audio_chan, &msg, LE_AUDIO_ZBUS_EVENT_WAIT_TIME);
 	ERR_CHK(ret);
@@ -257,13 +259,13 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 			if (dir == BT_AUDIO_DIR_SINK) {
 				LOG_DBG("BT_AUDIO_DIR_SINK");
 				print_codec(codec, dir);
-				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn);
+				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn, dir);
 			}
 #if (CONFIG_BT_AUDIO_TX)
 			else if (dir == BT_AUDIO_DIR_SOURCE) {
 				LOG_DBG("BT_AUDIO_DIR_SOURCE");
 				print_codec(codec, dir);
-				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn);
+				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn, dir);
 
 				/* CIS headset only supports one source stream for now */
 				bap_tx_streams[0] = audio_stream;
@@ -297,7 +299,15 @@ static int lc3_reconfig_cb(struct bt_bap_stream *stream, enum bt_audio_dir dir,
 static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_audio_codec_qos *qos,
 		      struct bt_bap_ascs_rsp *rsp)
 {
-	le_audio_event_publish(LE_AUDIO_EVT_PRES_DELAY_SET, stream->conn);
+	enum bt_audio_dir dir;
+
+	dir = le_audio_stream_dir_get(stream);
+	if (dir <= 0) {
+		LOG_ERR("Failed to get dir of stream %p", stream);
+		return -EIO;
+	}
+
+	le_audio_event_publish(LE_AUDIO_EVT_PRES_DELAY_SET, stream->conn, dir);
 
 	LOG_DBG("QoS: stream %p qos %p", (void *)stream, (void *)qos);
 
@@ -327,27 +337,51 @@ static int lc3_metadata_cb(struct bt_bap_stream *stream, const uint8_t *meta, si
 
 static int lc3_disable_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rsp)
 {
+	enum bt_audio_dir dir;
+
+	dir = le_audio_stream_dir_get(stream);
+	if (dir <= 0) {
+		LOG_ERR("Failed to get dir of stream %p", stream);
+		return -EIO;
+	}
+
 	LOG_DBG("Disable: stream %p", (void *)stream);
 
-	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, dir);
 
 	return 0;
 }
 
 static int lc3_stop_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rsp)
 {
+	enum bt_audio_dir dir;
+
+	dir = le_audio_stream_dir_get(stream);
+	if (dir <= 0) {
+		LOG_ERR("Failed to get dir of stream %p", stream);
+		return -EIO;
+	}
+
 	LOG_DBG("Stop: stream %p", (void *)stream);
 
-	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, dir);
 
 	return 0;
 }
 
 static int lc3_release_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rsp)
 {
+	enum bt_audio_dir dir;
+
+	dir = le_audio_stream_dir_get(stream);
+	if (dir <= 0) {
+		LOG_ERR("Failed to get dir of stream %p", stream);
+		return -EIO;
+	}
+
 	LOG_DBG("Release: stream %p", (void *)stream);
 
-	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, dir);
 
 	return 0;
 }
@@ -395,16 +429,17 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 static void stream_enabled_cb(struct bt_bap_stream *stream)
 {
 	int ret;
-	struct bt_bap_ep_info ep_info;
+	enum bt_audio_dir dir;
 
-	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
-	if (ret) {
-		LOG_WRN("Failed to get ep_info");
+	dir = le_audio_stream_dir_get(stream);
+	if (dir <= 0) {
+		LOG_ERR("Failed to get dir of stream %p", stream);
+		return;
 	}
 
 	LOG_DBG("Stream %p enabled", stream);
 
-	if (ep_info.dir == BT_AUDIO_DIR_SINK) {
+	if (dir == BT_AUDIO_DIR_SINK) {
 		/* Automatically do the receiver start ready operation */
 		ret = bt_bap_stream_start(stream);
 		if (ret != 0) {
@@ -421,40 +456,40 @@ static void stream_disabled_cb(struct bt_bap_stream *stream)
 
 static void stream_started_cb(struct bt_bap_stream *stream)
 {
-	int ret;
-	struct bt_bap_ep_info ep_info;
+	enum bt_audio_dir dir;
 
-	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
-	if (ret) {
-		LOG_WRN("Failed to get ep_info");
+	dir = le_audio_stream_dir_get(stream);
+	if (dir <= 0) {
+		LOG_ERR("Failed to get dir of stream %p", stream);
+		return;
 	}
 
 	LOG_INF("Stream %p started", stream);
 
-	if (ep_info.dir == BT_AUDIO_DIR_SOURCE) {
+	if (dir == BT_AUDIO_DIR_SOURCE) {
 		ERR_CHK(bt_le_audio_tx_stream_started(0));
 	}
 
-	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn, dir);
 }
 
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
-	int ret;
-	struct bt_bap_ep_info ep_info;
+	enum bt_audio_dir dir;
 
-	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
-	if (ret) {
-		LOG_WRN("Failed to get ep_info");
+	dir = le_audio_stream_dir_get(stream);
+	if (dir <= 0) {
+		LOG_ERR("Failed to get dir of stream %p", stream);
+		return;
 	}
 
 	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
 
-	if (ep_info.dir == BT_AUDIO_DIR_SOURCE) {
+	if (dir == BT_AUDIO_DIR_SOURCE) {
 		ERR_CHK(bt_le_audio_tx_stream_stopped(0));
 	}
 
-	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, dir);
 }
 
 static void stream_released_cb(struct bt_bap_stream *stream)
