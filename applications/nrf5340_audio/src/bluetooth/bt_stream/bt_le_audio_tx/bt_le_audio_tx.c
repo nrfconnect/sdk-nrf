@@ -113,7 +113,9 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_bap
 	}
 
 	if (ret < 0) {
-		LOG_WRN("Failed to send audio data: %d stream %p", ret, bap_stream);
+		if (ret != -ENOTCONN) {
+			LOG_WRN("Failed to send audio data: %d stream %p", ret, bap_stream);
+		}
 		net_buf_unref(buf);
 		atomic_dec(&tx_info->iso_tx_pool_alloc);
 	} else {
@@ -200,9 +202,11 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 		if (!ts_common_acquired) {
 			ret = bt_bap_stream_get_tx_sync(bap_streams[i], &tx_info[i].iso_tx);
 			if (ret) {
-				LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
-					bap_streams[i]);
-				return ret;
+				if (ret != -ENOTCONN) {
+					LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
+						bap_streams[i]);
+				}
+				continue;
 			}
 
 			ts_common = tx_info[i].iso_tx.ts;
