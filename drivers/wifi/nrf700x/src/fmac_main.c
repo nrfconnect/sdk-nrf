@@ -778,6 +778,7 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 	.wifi_iface.start = nrf_wifi_if_start_zep,
 	.wifi_iface.stop = nrf_wifi_if_stop_zep,
 	.wifi_iface.set_config = nrf_wifi_if_set_config_zep,
+	.wifi_iface.get_config = nrf_wifi_if_get_config_zep,
 	.wifi_iface.get_capabilities = nrf_wifi_if_caps_get,
 	.wifi_iface.send = nrf_wifi_if_send,
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
