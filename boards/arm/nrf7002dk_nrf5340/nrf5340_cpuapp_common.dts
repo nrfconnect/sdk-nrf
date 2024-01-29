@@ -107,6 +107,11 @@
 		btrf-switch-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
 	};
 
+	nordic_wlan0: nordic_wlan0 {
+		compatible = "nordic,wlan0";
+		status = "okay";
+	};
+
 	/* These aliases are provided for compatibility with samples */
 	aliases {
 		led0 = &led0;

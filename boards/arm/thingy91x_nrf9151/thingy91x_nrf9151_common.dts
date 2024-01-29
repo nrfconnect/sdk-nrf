@@ -59,6 +59,11 @@
 		nrf5340-reset-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
 	};
 
+	nordic_wlan0: nordic_wlan0 {
+		compatible = "nordic,wlan0";
+		status = "okay";
+	};
+
 	aliases {
 		sw0 = &button0;
 		led0 = &red_led;
