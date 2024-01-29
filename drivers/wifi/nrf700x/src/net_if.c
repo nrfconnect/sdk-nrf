@@ -163,7 +163,8 @@ static bool is_eapol(struct net_pkt *pkt)
 enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev)
 {
 	enum ethernet_hw_caps caps = (ETHERNET_LINK_10BASE_T |
-			ETHERNET_LINK_100BASE_T | ETHERNET_LINK_1000BASE_T);
+			ETHERNET_LINK_100BASE_T | ETHERNET_LINK_1000BASE_T |
+			ETHERNET_TXINJECTION_MODE);
 
 #ifdef CONFIG_NRF700X_TCP_IP_CHECKSUM_OFFLOAD
 	caps |= ETHERNET_HW_TX_CHKSUM_OFFLOAD |
@@ -720,12 +721,14 @@ out:
 	return ret;
 }
 
-
-int nrf_wifi_if_set_config_zep(const struct device *dev,
+int nrf_wifi_if_get_config_zep(const struct device *dev,
 			       enum ethernet_config_type type,
-			       const struct ethernet_config *config)
+			       struct ethernet_config *config)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
 	int ret = -1;
 
 	if (!dev) {
@@ -742,6 +745,55 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		goto out;
 	}
 
+	/* if vif_ctx_zep exists, rpu_ctx_zep and subsequent priv structures
+	 * should exist and cannot be NULL. Derive the pointers for further
+	 * structures */
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
+	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
+		config->txinjection_mode =
+			def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode;
+	}
+	ret = 0;
+out:
+	return ret;
+}
+
+int nrf_wifi_if_set_config_zep(const struct device *dev,
+			       enum ethernet_config_type type,
+			       const struct ethernet_config *config)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	int ret = -1;
+
+	if (!dev) {
+		LOG_ERR("%s: Invalid parameters",
+			__func__);
+		goto out;
+	}
+
+	vif_ctx_zep = dev->data;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL",
+			__func__);
+		goto out;
+	}
+
+	/* if vif_ctx_zep exists, rpu_ctx_zep and subsequent priv structures
+	 * should exist and cannot be NULL. Derive the pointers for further
+	 * structures */
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
 	if (type == ETHERNET_CONFIG_TYPE_MAC_ADDRESS) {
 		if (!net_eth_is_addr_valid((struct net_eth_addr *)&config->mac_address)) {
 			LOG_ERR("%s: Invalid MAC address",
@@ -756,6 +808,36 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 				     vif_ctx_zep->mac_addr.addr,
 				     sizeof(vif_ctx_zep->mac_addr.addr),
 				     NET_LINK_ETHERNET);
+	} else if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
+		unsigned char mode;
+
+		if (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode ==
+		    config->txinjection_mode) {
+			LOG_ERR("%s: Driver TX injection setting is same as configured setting",
+				__func__);
+			goto out;
+		}
+		/**
+		 * Since UMAC wishes to use the same mode command as previously
+		 * used for mode, `OR` the Major mode with TX-Injection mode and
+		 * send it to the UMAC. That way UMAC can still maintain code
+		 * as is
+		 */
+		if (config->txinjection_mode) {
+			mode = (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode) |
+			       (NRF_WIFI_TX_INJECTION_MODE);
+		} else {
+			mode = (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode) ^
+			       (NRF_WIFI_TX_INJECTION_MODE);
+		}
+
+		ret = nrf_wifi_fmac_set_mode(rpu_ctx_zep->rpu_ctx,
+					     vif_ctx_zep->vif_idx, mode);
+
+		if (ret != NRF_WIFI_STATUS_SUCCESS) {
+			LOG_ERR("%s: mode set operation failed", __func__);
+			goto out;
+		}
 	}
 
 	ret = 0;
