@@ -791,6 +791,15 @@ int nrf_wifi_mode(const struct device *dev,
 
 	} else {
 		mode->mode = def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode;
+
+		/**
+		 * This is a work-around to maintain umac context for mode same as much
+		 * as possible. Only provide major modes to the user
+		 */
+
+		if (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode == true) {
+			mode->mode ^= NRF_WIFI_TX_INJECTION_MODE;
+		}
 	}
 	ret = 0;
 out:
