@@ -512,13 +512,13 @@
 .. _`Cellular Monitor`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
 .. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
 
+.. _`nRF Connect Programmer`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/index.html
+.. _`Programming the nRF52840 Dongle`:
+.. _`Programming a Development Kit`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html
+
 .. ### Source: infocenter.nordicsemi.com
 
 .. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
-
-.. _`nRF Connect Programmer`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_introduction.html
-.. _`Programming the nRF52840 Dongle`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_programming_dongle.html
-.. _`Programming a Development Kit`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/common/ncp_programming_dk.html
 
 .. _`nRF pynrfjprog`: https://infocenter.nordicsemi.com/topic/ug_pynrfjprog/UG/pynrfjprog/pynrfjprog_lpage.html
 
