@@ -765,9 +765,12 @@ static struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 #ifdef CONFIG_NRF700X_SYSTEM_MODE
 	.mode = nrf_wifi_mode,
 #endif
-#ifdef CONFIG_NRF700X_RAW_DATA_TX
+#ifdef CONFIG_NRF700X_RAW_DATA_TX || CONFIG_NRF700X_RAW_DATA_RX
 	.channel = nrf_wifi_channel,
-#endif /* CONFIG_NRF700X_RAW_DATA_TX */
+#endif /* CONFIG_NRF700X_RAW_DATA_TX || CONFIG_NRF700X_RAW_DATA_RX */
+#ifdef CONFIG_NRF700X_RAW_DATA_RX
+	.filter = nrf_wifi_filter,
+#endif /* CONFIG_NRF700X_RAW_DATA_RX */
 };
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 
