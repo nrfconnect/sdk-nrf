@@ -177,6 +177,8 @@ int dfu_target_reset(void)
 		return err;
 	}
 
+	current_target = NULL;
+
 	return 0;
 }
 
