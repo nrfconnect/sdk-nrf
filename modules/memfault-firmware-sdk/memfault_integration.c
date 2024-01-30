@@ -61,7 +61,7 @@ BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_VERSION_STATIC) > 1,
 /* Hardware version check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_HW_VERSION) > 1, "Hardware version must be configured");
 
-extern void memfault_ncs_metrcics_init(void);
+extern void memfault_ncs_metrics_init(void);
 
 sMfltHttpClientConfig g_mflt_http_client_config = {
 	.api_key = CONFIG_MEMFAULT_NCS_PROJECT_KEY,
@@ -144,7 +144,7 @@ static int init(void)
 #endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI || CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC */
 
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_USE_DEFAULT_METRICS)) {
-		memfault_ncs_metrcics_init();
+		memfault_ncs_metrics_init();
 	}
 
 	return err;
