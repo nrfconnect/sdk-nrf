@@ -225,6 +225,9 @@ static int headset_pres_delay_find(uint8_t index, uint32_t *pres_dly_us)
 	uint32_t pref_dly_min = headsets[index].sink_ep->qos_pref.pref_pd_min;
 	uint32_t pref_dly_max = headsets[index].sink_ep->qos_pref.pref_pd_max;
 
+	LOG_DBG("Index: %d, Pref min: %d, pref max: %d, pres_min: %d, pres_max: %d", index,
+		pref_dly_min, pref_dly_max, pres_dly_min, pres_dly_max);
+
 	for (int i = 0; i < ARRAY_SIZE(headsets); i++) {
 		if (headsets[i].sink_ep != NULL) {
 			pres_dly_min = MAX(pres_dly_min, headsets[i].sink_ep->qos_pref.pd_min);
@@ -247,38 +250,29 @@ static int headset_pres_delay_find(uint8_t index, uint32_t *pres_dly_us)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_PRES_DELAY_SRCH_PREF_MIN)) {
-		*pres_dly_us = pref_dly_min;
+		/* Preferred min is 0, so we set min supported */
+		if (pref_dly_min == 0) {
+			*pres_dly_us = pres_dly_min;
+		} else {
+			*pres_dly_us = pref_dly_min;
+		}
 
 		return 0;
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_PRES_DELAY_SRCH_PREF_MAX)) {
-		*pres_dly_us = pref_dly_max;
-
-		return 0;
-	}
-
-	if (IS_ENABLED(CONFIG_BT_AUDIO_PRES_DELAY_SRCH_PREF_MIN)) {
-		if (IN_RANGE(CONFIG_BT_AUDIO_PRESENTATION_DELAY_US, pres_dly_min, pres_dly_max)) {
-			*pres_dly_us = CONFIG_BT_AUDIO_PRESENTATION_DELAY_US;
+		/* Preferred max is 0, so we set max supported */
+		if (pref_dly_max == 0) {
+			*pres_dly_us = pres_dly_max;
 		} else {
-			LOG_WRN("Preferred local presentation delay outside of range");
-
-			if (pres_dly_max < CONFIG_BT_AUDIO_PRESENTATION_DELAY_US) {
-				*pres_dly_us = pres_dly_max;
-
-				LOG_WRN("Selecting maximum common delay: %d us ", pres_dly_max);
-			} else {
-				*pres_dly_us = pres_dly_min;
-
-				LOG_WRN("Selecting minimum common delay: %d us ", pres_dly_min);
-			}
+			*pres_dly_us = pref_dly_max;
 		}
 
 		return 0;
 	}
 
 	LOG_ERR("Trying to use unrecognized search mode");
+
 	return -EINVAL;
 }
 
