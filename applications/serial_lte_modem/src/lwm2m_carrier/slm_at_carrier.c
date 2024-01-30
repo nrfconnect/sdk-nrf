@@ -20,7 +20,7 @@ LOG_MODULE_REGISTER(slm_carrier, CONFIG_SLM_LOG_LEVEL);
 /**@brief LwM2M Carrier operations. */
 enum slm_carrier_operation {
 	/* Carrier AppData Operation */
-	CARRIER_OP_APPDATA_SEND,
+	CARRIER_OP_APPDATA_SET,
 	/* Carrier Device Operation */
 	CARRIER_OP_DEVICE_BATTERY_LEVEL,
 	CARRIER_OP_DEVICE_BATTERY_STATUS,
@@ -59,7 +59,7 @@ struct carrier_op_list {
 static int m_mem_free;
 
 /** forward declaration of cmd handlers **/
-static int do_carrier_appdata_send(void);
+static int do_carrier_appdata_set(void);
 static int do_carrier_device_battery_level(void);
 static int do_carrier_device_battery_status(void);
 static int do_carrier_device_current(void);
@@ -82,7 +82,7 @@ static int do_carrier_request_link_up(void);
 
 /**@brief SLM Carrier AT Command list type. */
 static struct carrier_op_list op_list[CARRIER_OP_MAX] = {
-	{CARRIER_OP_APPDATA_SEND, "app_data", do_carrier_appdata_send},
+	{CARRIER_OP_APPDATA_SET, "app_data_set", do_carrier_appdata_set},
 	{CARRIER_OP_DEVICE_BATTERY_LEVEL, "battery_level", do_carrier_device_battery_level},
 	{CARRIER_OP_DEVICE_BATTERY_STATUS, "battery_status", do_carrier_device_battery_status},
 	{CARRIER_OP_DEVICE_CURRENT, "current", do_carrier_device_current},
@@ -276,7 +276,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	return err;
 }
 
-/* Carrier App Data Send data mode handler */
+/* Carrier App Data Set data mode handler */
 static int carrier_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8_t flags)
 {
 	int ret = 0;
@@ -290,7 +290,7 @@ static int carrier_datamode_callback(uint8_t op, const uint8_t *data, int len, u
 		uint16_t path[3] = { LWM2M_CARRIER_OBJECT_APP_DATA_CONTAINER, 0, 0 };
 		uint8_t path_len = 3;
 
-		ret = lwm2m_carrier_app_data_send(path, path_len, data, len);
+		ret = lwm2m_carrier_app_data_set(path, path_len, data, len);
 		LOG_INF("datamode send: %d", ret);
 		if (ret < 0) {
 			(void)exit_datamode_handler(ret);
@@ -302,8 +302,8 @@ static int carrier_datamode_callback(uint8_t op, const uint8_t *data, int len, u
 	return ret;
 }
 
-/* AT#XCARRIER="app_data"[,<data>][,<instance_id>,<resource_instance_id>] */
-static int do_carrier_appdata_send(void)
+/* AT#XCARRIER="app_data_set"[,<data>][,<instance_id>,<resource_instance_id>] */
+static int do_carrier_appdata_set(void)
 {
 	int ret = 0;
 
@@ -327,7 +327,7 @@ static int do_carrier_appdata_send(void)
 			return ret;
 		}
 
-		ret = lwm2m_carrier_app_data_send(path, path_len, data, size);
+		ret = lwm2m_carrier_app_data_set(path, path_len, data, size);
 	} else if (param_count == 4 || param_count == 5) {
 		uint8_t *data = NULL;
 		char buffer[CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN] = {0};
@@ -362,7 +362,7 @@ static int do_carrier_appdata_send(void)
 			data = buffer;
 		}
 
-		ret = lwm2m_carrier_app_data_send(path, path_len, data, size);
+		ret = lwm2m_carrier_app_data_set(path, path_len, data, size);
 	}
 
 	return ret;

@@ -748,8 +748,8 @@ int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float 
 			       float uncertainty_v);
 
 /**
- * @brief Schedule application data to be set using either the Binary App Data Container object
- *        or the App Data Container object.
+ * @brief Set application data in either the Binary App Data Container object or the App Data
+ *        Container object.
  *
  * @details This function sets the resource given by the path to the desired value. The resource
  *          can then be read by, or reported to, the LwM2M server.
@@ -757,12 +757,12 @@ int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float 
  * @note Both the Binary App Data Container object and the App Data Container object will not be
  *       initialized for every carrier.
  *
- * @param[in]  path       The path of the resource or resource instance to be sent to. The path
+ * @param[in]  path       The path of the resource or resource instance which is to be set. The path
  *                        contains the object id, object instance id, resource id and resource
  *                        instance id in order. The resource instance id is not needed for the
  *                        App Data Container object.
  * @param[in]  path_len   The length of the path. Must be 3 or 4.
- * @param[in]  buffer     Buffer containing the application data to be sent. If this is set to null
+ * @param[in]  buffer     Buffer containing the application data to be set. If this is set to null
  *                        the resource instance is deleted instead when using the Binary App Data
  *                        Container object.
  * @param[in]  buffer_len Number of bytes in the buffer.
@@ -772,11 +772,11 @@ int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float 
  * @retval -EINVAL If at least one input argument is incorrect.
  * @retval -ENOMEM If there is not enough memory to copy the buffer contents to the resource model.
  */
-int lwm2m_carrier_app_data_send(const uint16_t *path, uint16_t path_len, const uint8_t *buffer,
-				size_t buffer_len);
+int lwm2m_carrier_app_data_set(const uint16_t *path, uint16_t path_len, const uint8_t *buffer,
+			       size_t buffer_len);
 
 /**
- * @brief Send log data using the Event Log object.
+ * @brief Set log data in the Event Log object.
  *
  * @note The Event Log object will not be initialized for every carrier.
  *

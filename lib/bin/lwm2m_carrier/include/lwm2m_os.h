@@ -126,6 +126,14 @@ struct lwm2m_os_download_evt {
 	};
 };
 
+/** @brief PDN family */
+enum lwm2m_os_pdn_fam {
+	LWM2M_OS_PDN_FAM_IPV4,
+	LWM2M_OS_PDN_FAM_IPV6,
+	LWM2M_OS_PDN_FAM_IPV4V6,
+	LWM2M_OS_PDN_FAM_NONIP,
+};
+
 /**
  * @brief Download client configuration options.
  */
@@ -136,20 +144,14 @@ struct lwm2m_os_download_cfg {
 	uint8_t sec_tag_count;
 	/** PDN ID to be used for the download. */
 	int pdn_id;
+	/** Address family to be used for the download. Set to 0 for both IPv6 and IPv4. */
+	enum lwm2m_os_pdn_fam family;
 };
 
 /**
  * @brief Download client asynchronous event handler.
  */
 typedef int (*lwm2m_os_download_callback_t)(const struct lwm2m_os_download_evt *event);
-
-/** @brief PDN family */
-enum lwm2m_os_pdn_fam {
-	LWM2M_OS_PDN_FAM_IPV4,
-	LWM2M_OS_PDN_FAM_IPV6,
-	LWM2M_OS_PDN_FAM_IPV4V6,
-	LWM2M_OS_PDN_FAM_NONIP,
-};
 
 /** @brief PDN event */
 enum lwm2m_os_pdn_event {
@@ -172,13 +174,6 @@ enum lwm2m_os_pdn_event {
  */
 typedef void (*lwm2m_os_pdn_event_handler_t)
 	(uint8_t cid, enum lwm2m_os_pdn_event event, int reason);
-
-/**
- * @brief Initialize the PDN functionality.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_pdn_init(void);
 
 /**
  * @brief Create a Packet Data Protocol (PDP) context.
@@ -246,18 +241,6 @@ int lwm2m_os_pdn_deactivate(uint8_t cid);
  * @retval  0      If success.
  */
 int lwm2m_os_pdn_id_get(uint8_t cid);
-
-/**
- * @brief Retrieve the default Access Point Name (APN).
- *
- * The default APN is the APN of the default PDP context (zero).
- *
- * @param buf The buffer to copy the APN into.
- * @param len The size of the output buffer.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_pdn_default_apn_get(char *buf, size_t len);
 
 /**
  * @brief Set a callback for events pertaining to the default PDP context (zero).
@@ -438,16 +421,6 @@ bool lwm2m_os_timer_is_pending(lwm2m_os_timer_t *timer);
  * @retval -EIO    If AT command driver initialization failed.
  */
 int lwm2m_os_at_init(lwm2m_os_at_handler_callback_t callback);
-
-/**
- * @brief Initialize SMS subscriber library.
- */
-int lwm2m_os_sms_init(void);
-
-/**
- * @brief Uninitialize SMS subscriber library.
- */
-void lwm2m_os_sms_uninit(void);
 
 /**
  * @brief Register as an SMS client/listener.

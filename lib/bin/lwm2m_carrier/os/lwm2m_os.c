@@ -443,6 +443,12 @@ int lwm2m_os_download_get(const char *host, const struct lwm2m_os_download_cfg *
 		.pdn_id = cfg->pdn_id,
 	};
 
+	if (cfg->family == LWM2M_OS_PDN_FAM_IPV6) {
+		config.family = AF_INET6;
+	} else if (cfg->family == LWM2M_OS_PDN_FAM_IPV4) {
+		config.family = AF_INET;
+	}
+
 	return download_client_get(&http_downloader, host, &config, NULL, from);
 }
 
@@ -662,11 +668,6 @@ int lwm2m_os_pdn_deactivate(uint8_t cid)
 int lwm2m_os_pdn_id_get(uint8_t cid)
 {
 	return pdn_id_get(cid);
-}
-
-int lwm2m_os_pdn_default_apn_get(char *buf, size_t len)
-{
-	return pdn_default_apn_get(buf, len);
 }
 
 int lwm2m_os_pdn_default_callback_set(lwm2m_os_pdn_event_handler_t cb)

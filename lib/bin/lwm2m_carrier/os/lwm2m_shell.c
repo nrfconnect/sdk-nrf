@@ -702,7 +702,7 @@ static int cmd_device_memory_free_write(const struct shell *shell, size_t argc, 
 	return 0;
 }
 
-static int cmd_log_data_send(const struct shell *shell, size_t argc, char **argv)
+static int cmd_log_data_set(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc != 2) {
 		shell_print(shell, "%s <data>", argv[0]);
@@ -734,7 +734,7 @@ static int cmd_log_data_send(const struct shell *shell, size_t argc, char **argv
 	return 0;
 }
 
-static int cmd_app_data_send(const struct shell *shell, size_t argc, char **argv)
+static int cmd_app_data_set(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc < 2 || argc > 4) {
 		shell_print(shell, "%s <data> | [<instance_id> <resource_instance_id> [data]]",
@@ -774,7 +774,7 @@ static int cmd_app_data_send(const struct shell *shell, size_t argc, char **argv
 		}
 	}
 
-	int err = lwm2m_carrier_app_data_send(path, path_len, buffer, buffer_len);
+	int err = lwm2m_carrier_app_data_set(path, path_len, buffer, buffer_len);
 
 	switch (err) {
 	case 0:
@@ -1514,13 +1514,13 @@ static int cmd_settings_print(const struct shell *shell, size_t argc, char **arg
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_event_log,
-		SHELL_CMD(send, NULL, "Send log data using the event log object",
-			  cmd_log_data_send),
+		SHELL_CMD(set, NULL, "Set log data in the event log object",
+			  cmd_log_data_set),
 		SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_app_data,
-		SHELL_CMD(send, NULL, "Send data using an app data container object",
-			  cmd_app_data_send),
+		SHELL_CMD(set, NULL, "Set data in an app data container object",
+			  cmd_app_data_set),
 		SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_api_device,

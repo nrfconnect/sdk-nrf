@@ -79,7 +79,7 @@ Syntax
 
 The ``<cmd>`` command is a string, and can be used as follows:
 
-* ``AT#XCARRIER="app_data"[,<data>][,<instance_id>,<resource_instance_id>]``
+* ``AT#XCARRIER="app_data_set"[,<data>][,<instance_id>,<resource_instance_id>]``
 * ``AT#XCARRIER="battery_level",<battery_level>``
 * ``AT#XCARRIER="battery_status",<battery_status>``
 * ``AT#XCARRIER="current",<power_source>,<current>``
@@ -101,8 +101,8 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XCARRIER="voltage",<power_source>,<voltage>``
 
 The values of the parameters depend on the command string used.
-Specifying ``instance_id`` and ``resource_instance_id`` in the ``app_data`` command sends the data to the Binary App Data Container object instead of the App Data Container object.
-When using the ``app_data`` command, if no attributes are specified, SLM enters ``slm_data_mode``.
+Specifying ``instance_id`` and ``resource_instance_id`` in the ``app_data_set`` command sends the data to the Binary App Data Container object instead of the App Data Container object.
+When using the ``app_data_set`` command, if no attributes are specified, SLM enters ``slm_data_mode``.
 ``slm_data_mode`` is only supported when using the App Data Container object.
 
 Response syntax
