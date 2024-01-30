@@ -46,7 +46,12 @@ static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 	if (new_mode == LTE_LC_FUNC_MODE_NORMAL || new_mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
 		LOG_INF("Provisioning library requests normal mode");
 
-		/* Connect all interfaces since we are done provisioning. */
+		/* We are done installing credentials, reactivate GNSS and network */
+
+		/* Reactivate GNSS */
+		lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_GNSS);
+
+		/* Reactivate LTE */
 		conn_mgr_all_if_connect(true);
 
 		/* Wait for network readiness to be re-established before returning. */
@@ -57,8 +62,26 @@ static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 	} else if (new_mode == LTE_LC_FUNC_MODE_OFFLINE ||
 		   new_mode == LTE_LC_FUNC_MODE_DEACTIVATE_LTE) {
 		LOG_INF("Provisioning library requests offline mode");
-		/* Disconnect all interfaces to allow cert installation. */
+
+		/* The provisioning library wants to install or generate credentials.
+		 * Deactivate LTE and GNSS to allow this.
+		 */
+
+		/* Shut down LTE */
 		conn_mgr_all_if_disconnect(true);
+
+		/* Shut down GNSS */
+		lte_lc_func_mode_set(LTE_LC_FUNC_MODE_DEACTIVATE_GNSS);
+
+		/* Note:
+		 * You could shut down both LTE and GNSS at once by using
+		 * lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+		 * But conn_mgr will interpret this as an unintended connectivity loss.
+		 * Using conn_mgr_all_if_disconnect lets conn_mgr know the LTE loss is intentional.
+		 *
+		 * lte_lc_func_mode_set(LTE_LC_FUNC_MODE_DEACTIVATE_GNSS) can then be used to shut
+		 * down GNSS, since conn_mgr does not interfere with GNSS state.
+		 */
 
 		/* Wait for network disconnection before returning. */
 		LOG_DBG("Waiting for network down.");
