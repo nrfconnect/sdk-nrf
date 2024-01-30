@@ -50,6 +50,4 @@
 
 #include "psa/crypto_adjust_auto_enabled.h"
 
-#include "oberon_config.h"
-
 #endif /* MBEDTLS_CONFIG_PSA_H */
