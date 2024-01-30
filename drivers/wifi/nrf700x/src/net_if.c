@@ -91,6 +91,34 @@ static void nrf_wifi_net_iface_work_handler(struct k_work *work)
 	}
 }
 
+#ifdef CONFIG_NRF700X_RAW_DATA_RX
+void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm, struct raw_rx_pkt_header *raw_rx_hdr)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = os_vif_ctx;
+	struct net_if *iface = vif_ctx_zep->zep_net_if_ctx;
+	struct net_pkt *pkt;
+	int status;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
+	pkt = net_raw_pkt_from_nbuf(iface, frm, sizeof(struct raw_rx_pkt_header), raw_rx_hdr);
+	if (!pkt) {
+		LOG_DBG("Failed to allocate net_pkt");
+		return;
+	}
+
+	status = net_recv_data(iface, pkt);
+
+	if (status < 0) {
+		LOG_DBG("Raw packet dropped by NET stack: %d", status);
+		net_pkt_unref(pkt);
+	}
+}
+#endif /* CONFIG_NRF700X_RAW_DATA_RX */
+
 void nrf_wifi_if_rx_frm(void *os_vif_ctx, void *frm)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = os_vif_ctx;
@@ -727,11 +755,12 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 			       enum ethernet_config_type type,
 			       struct ethernet_config *config)
 {
+	int ret = -1;
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
-	int ret = -1;
 
 	if (!dev || !config) {
 		LOG_ERR("%s: Invalid parameters",
@@ -747,22 +776,22 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 		goto out;
 	}
 
-	/* if vif_ctx_zep exists, rpu_ctx_zep and subsequent priv structures
+	/**
+	 * If vif_ctx_zep exists, rpu_ctx_zep and subsequent priv structures
 	 * should exist and cannot be NULL. Derive the pointers for further
-	 * structures */
-
+	 * structures
+	 */
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-#ifdef CONFIG_NRF700X_RAW_DATA_TX
 	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
 		config->txinjection_mode =
 			def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode;
 	}
-#endif
 	ret = 0;
 out:
+#endif
 	return ret;
 }
 
@@ -790,10 +819,11 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		goto out;
 	}
 
-	/* if vif_ctx_zep exists, rpu_ctx_zep and subsequent priv structures
+	/**
+	 * If vif_ctx_zep exists, rpu_ctx_zep and subsequent priv structures
 	 * should exist and cannot be NULL. Derive the pointers for further
-	 * structures */
-
+	 * structures
+	 */
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
@@ -819,13 +849,13 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 
 		if (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode ==
 		    config->txinjection_mode) {
-			LOG_ERR("%s: Driver TX injection setting is same as configured setting",
+			LOG_INF("%s: Driver TX injection setting is same as configured setting",
 				__func__);
 			goto out;
 		}
 		/**
 		 * Since UMAC wishes to use the same mode command as previously
-		 * used for mode, `OR` the Major mode with TX-Injection mode and
+		 * used for mode, `OR` the primary mode with TX-Injection mode and
 		 * send it to the UMAC. That way UMAC can still maintain code
 		 * as is
 		 */
@@ -841,7 +871,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 					     vif_ctx_zep->vif_idx, mode);
 
 		if (ret != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: mode set operation failed", __func__);
+			LOG_ERR("%s: Mode set operation failed", __func__);
 			goto out;
 		}
 	}

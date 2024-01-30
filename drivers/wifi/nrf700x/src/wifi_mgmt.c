@@ -792,14 +792,11 @@ int nrf_wifi_mode(const struct device *dev,
 	} else {
 		mode->mode = def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode;
 
-		/**
-		 * This is a work-around to maintain umac context for mode same as much
-		 * as possible. Only provide major modes to the user
-		 */
-
+#if defined(CONFIG_NRF700X_RAW_DATA_TX) || defined(CONFIG_NRF700X_RAW_DATA_RX)
 		if (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode == true) {
 			mode->mode ^= NRF_WIFI_TX_INJECTION_MODE;
 		}
+#endif
 	}
 	ret = 0;
 out:
@@ -808,7 +805,7 @@ out:
 }
 #endif
 
-#ifdef CONFIG_NRF700X_RAW_DATA_TX || CONFIG_NRF700X_RAW_DATA_RX
+#if defined(CONFIG_NRF700X_RAW_DATA_TX) || defined(CONFIG_NRF700X_RAW_DATA_RX)
 int nrf_wifi_channel(const struct device *dev,
 		     struct wifi_channel_info *channel)
 {
@@ -886,7 +883,7 @@ int nrf_wifi_filter(const struct device *dev,
 	int ret = -1;
 
 	if (!dev || !filter) {
-		LOG_ERR("%s: illegal input parameters", __func__);
+		LOG_ERR("%s: Illegal input parameters", __func__);
 		goto out;
 	}
 
@@ -906,7 +903,8 @@ int nrf_wifi_filter(const struct device *dev,
 		 * or all the filter bits. Map it to bit 0 set to
 		 * enable "all" packet filter bit setting
 		 */
-		if (filter->filter == 0xE || filter->filter == 0xF) {
+		if (filter->filter == WIFI_MGMT_DATA_CTRL_FILTER_SETTING
+		    || filter->filter == WIFI_ALL_FILTER_SETTING) {
 			filter->filter = 1;
 		}
 
@@ -919,7 +917,7 @@ int nrf_wifi_filter(const struct device *dev,
 		status = nrf_wifi_fmac_set_packet_filter(rpu_ctx_zep->rpu_ctx, filter->filter,
 							 vif_ctx_zep->vif_idx, filter->buffer_size);
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: filter operation failed\n", __func__);
+			LOG_ERR("%s: Set filter operation failed\n", __func__);
 			goto out;
 		}
 	} else {
