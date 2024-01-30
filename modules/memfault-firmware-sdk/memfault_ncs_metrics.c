@@ -114,7 +114,7 @@ void memfault_metrics_heartbeat_collect_data(void)
 void memfault_ncs_metrics_init(void)
 {
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_LTE_METRICS)) {
-		memfault_lte_metrcics_init();
+		memfault_lte_metrics_init();
 	}
 
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_BT_METRICS)) {
