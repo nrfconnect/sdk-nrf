@@ -91,6 +91,32 @@ static void nrf_wifi_net_iface_work_handler(struct k_work *work)
 	}
 }
 
+void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm, struct raw_rx_pkt_header *raw_rx_hdr) {
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = os_vif_ctx;
+	struct net_if *iface = vif_ctx_zep->zep_net_if_ctx;
+	struct net_pkt *pkt;
+	int status;
+
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
+	pkt = net_raw_pkt_from_nbuf(iface, frm, sizeof(struct raw_rx_pkt_header), raw_rx_hdr);
+	if (!pkt) {
+		LOG_DBG("Failed to allocate net_pkt");
+		return;
+	}
+
+	status = net_recv_data(iface, pkt);
+
+	if (status < 0) {
+		LOG_DBG("Raw packet dropped by NET stack: %d", status);
+		net_pkt_unref(pkt);
+	}
+}
+
 void nrf_wifi_if_rx_frm(void *os_vif_ctx, void *frm)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = os_vif_ctx;
@@ -207,6 +233,7 @@ int nrf_wifi_if_send(const struct device *dev,
 
 #ifdef CONFIG_NRF700X_RAW_DATA_TX
 	if ((*(unsigned int *)pkt->frags->data) == NRF_WIFI_MAGIC_NUM_RAWTX) {
+
 		if (vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
 			goto unlock;
 		}

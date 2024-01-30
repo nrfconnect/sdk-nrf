@@ -370,6 +370,47 @@ out:
 	return pkt;
 }
 
+void *net_raw_pkt_from_nbuf(void *iface, void *frm, unsigned short raw_hdr_len, void *raw_rx_hdr)
+{
+	struct net_pkt *pkt = NULL;
+	unsigned char *nwb_data;
+	unsigned char *data =  NULL;
+	unsigned int nwb_len;
+	unsigned int total_len;
+	struct nwb *nwb = frm;
+
+	if (!nwb) {
+		return NULL;
+	}
+
+	nwb_len = zep_shim_nbuf_data_size(nwb);
+	nwb_data = zep_shim_nbuf_data_get(nwb);
+
+	total_len = raw_hdr_len + nwb_len;
+
+	data = (unsigned char *)malloc(total_len);
+
+	pkt = net_pkt_rx_alloc_with_buffer(iface, total_len, AF_PACKET, ETH_P_ALL, K_MSEC(100));
+	if (!pkt) {
+		goto out;
+	}
+
+	memcpy(data, raw_rx_hdr, raw_hdr_len);
+	memcpy((data+raw_hdr_len), nwb_data, nwb_len);
+
+	if (net_pkt_write(pkt, data, total_len)) {
+		net_pkt_unref(pkt);
+		pkt = NULL;
+		goto out;
+	}
+out:
+	if (data != NULL) {
+		free(data);
+	}
+	zep_shim_nbuf_free(nwb);
+	return pkt;
+}
+
 static void *zep_shim_llist_node_alloc(void)
 {
 	struct zep_shim_llist_node *llist_node = NULL;
