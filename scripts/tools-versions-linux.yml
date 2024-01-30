@@ -22,6 +22,7 @@ zephyr-sdk:
     - aarch64-zephyr-elf
     - x86_64-zephyr-elf
     - arm-zephyr-eabi
+    - riscv64-zephyr-elf
 ccache:
   version: 4.8.2
 dfu_util:
