@@ -66,7 +66,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 static uint8_t update_state[MAX_INSTANCE_COUNT];
 static uint8_t update_result[MAX_INSTANCE_COUNT];
 static uint8_t delivery_method[MAX_INSTANCE_COUNT];
-static time_t last_change[MAX_INSTANCE_COUNT];
+static int64_t last_change[MAX_INSTANCE_COUNT];
 static char package_uri[MAX_INSTANCE_COUNT][PACKAGE_URI_LEN];
 static char component_version[MAX_INSTANCE_COUNT][PACKAGE_URI_LEN];
 static struct lwm2m_objlnk linked_instances[MAX_INSTANCE_COUNT * LINKED_INSTANCES_LEN];
@@ -514,7 +514,8 @@ static struct lwm2m_engine_obj_inst *firmware_create(uint16_t obj_inst_id)
 			  sizeof(delivery_method[obj_inst_id]));
 	INIT_OBJ_RES_EXECUTE(FIRMWARE_CANCEL_ID, res[obj_inst_id], i, cancel);
 	INIT_OBJ_RES_DATA(FIRMWARE_LAST_STATE_CHANGE_TIME_ID, res[obj_inst_id], i,
-			  res_inst[obj_inst_id], j, &last_change[obj_inst_id], sizeof(time_t));
+			  res_inst[obj_inst_id], j, &last_change[obj_inst_id],
+			  sizeof(last_change[obj_inst_id]));
 	INIT_OBJ_RES_OPTDATA(FIRMWARE_COMPONENT_NAME_ID, res[obj_inst_id], i, res_inst[obj_inst_id],
 			     j);
 	INIT_OBJ_RES_DATA_LEN(FIRMWARE_CURRENT_VERSION_ID, res[obj_inst_id], i,
