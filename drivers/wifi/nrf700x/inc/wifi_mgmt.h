@@ -60,4 +60,6 @@ int nrf_wifi_mode(const struct device *dev,
 int nrf_wifi_channel(const struct device *dev,
 		     struct wifi_channel_info *channel);
 #endif /* CONFIG_NRF700X_RAW_DATA_TX */
+int nrf_wifi_filter(const struct device *dev,
+		    struct wifi_filter_info *filter);
 #endif /*  __ZEPHYR_WIFI_MGMT_H__ */
