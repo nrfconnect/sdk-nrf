@@ -769,6 +769,13 @@ int nrf_wifi_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 		goto out;
 	}
 
+#ifdef CONFIG_NRF700X_RAW_DATA_RX
+	if (vif_ctx_zep->if_type == NRF_WIFI_IFTYPE_MONITOR) {
+		LOG_ERR("%s: Interface is in Monitor mode -  cannot connect to a BSS", __func__);
+		goto out;
+	}
+#endif /* CONFIG_NRF700X_RAW_DATA_RX */
+
 	memset(&auth_info, 0, sizeof(auth_info));
 
 
