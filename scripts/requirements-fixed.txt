@@ -49,7 +49,7 @@ iniconfig==2.0.0          # via pytest
 intelhex==2.3.0           # via -r bootloader/mcuboot/scripts/requirements.txt, -r nrf/scripts/requirements-build.txt, -r zephyr/scripts/requirements-base.txt, imgtool, lpc-checksum, pyocd
 intervaltree==3.1.0       # via pyocd
 isort==5.12.0             # via pylint
-jinja2==3.1.3             # via gcovr, junit2html
+jinja2==3.1.3             # via -r nrf/scripts/requirements-extra.txt, gcovr, junit2html
 jsonschema==4.19.1        # via -r nrf/scripts/requirements-ci.txt
 jsonschema-specifications==2023.7.1  # via jsonschema
 junit2html==30.1.3        # via -r zephyr/scripts/requirements-extras.txt
@@ -126,7 +126,7 @@ west==1.2.0               # via -r nrf/scripts/requirements-base.txt, -r zephyr/
 wget==3.2                 # via -r nrf/scripts/requirements-ci.txt
 wrapt==1.15.0             # via astroid, deprecated, python-can
 yamllint==1.32.0          # via -r zephyr/scripts/requirements-compliance.txt
-zcbor==0.8.1              # via -r nrf/scripts/requirements-build.txt, -r nrf/scripts/requirements-extra.txt, -r zephyr/scripts/requirements-extras.txt
+zcbor==0.7.0              # via -r nrf/scripts/requirements-build.txt, -r nrf/scripts/requirements-extra.txt, -r zephyr/scripts/requirements-extras.txt
 zipp==3.17.0              # via importlib-metadata, importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
