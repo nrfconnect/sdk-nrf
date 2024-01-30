@@ -15,3 +15,5 @@ endif()
 if (CONFIG_MPSL_CX AND NOT CONFIG_MPSL_FEM_ONLY)
   add_subdirectory(cx)
 endif()
+
+add_subdirectory_ifdef(CONFIG_MPSL_PIN_DEBUG pin_debug)

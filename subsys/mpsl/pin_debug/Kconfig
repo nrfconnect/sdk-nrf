@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MPSL_PIN_DEBUG
+	bool "Toggle MPSL debug pins [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	depends on (BOARD_NRF52DK_NRF52832 || \
+		    BOARD_NRF52833DK_NRF52833 || \
+		    BOARD_NRF52840DK_NRF52840 || \
+		    BOARD_NRF5340DK_NRF5340_CPUNET || \
+		    BOARD_NRF5340DK_NRF5340_CPUAPP)
+	help
+	  Set this option to enable toggling of GPIO pins upon radio
+	  events. This can be useful for debugging purposes to figure
+	  out when the radio is used.
+
+config MPSL_PIN_DEBUG_APP_CORE
+	bool
+	depends on MPSL_PIN_DEBUG
+	depends on SOC_COMPATIBLE_NRF5340_CPUAPP
+	default y if SOC_COMPATIBLE_NRF5340_CPUAPP
+
+config MPSL_PIN_DEBUG_RADIO_CORE
+	bool
+	depends on MPSL_PIN_DEBUG
+	select NRFX_GPIOTE
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	default y if (SOC_COMPATIBLE_NRF52X || SOC_COMPATIBLE_NRF5340_CPUNET)
+
+config MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN
+	int "Pin toggled upon the events RADIO->EVENTS_READY and RADIO->EVENTS_DISABLED"
+	depends on MPSL_PIN_DEBUG
+	default 3 if SOC_COMPATIBLE_NRF52X
+	default 4 if SOC_COMPATIBLE_NRF53X
+	help
+	  Only PORT0 can be used.
+
+config MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN
+	int "Pin toggled upon the events RADIO->EVENTS_ADDRESS and RADIO->EVENTS_END"
+	depends on MPSL_PIN_DEBUG
+	default 4 if SOC_COMPATIBLE_NRF52X
+	default 5 if SOC_COMPATIBLE_NRF53X
+	help
+	  Only PORT0 can be used.
