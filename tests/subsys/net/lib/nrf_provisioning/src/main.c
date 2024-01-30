@@ -15,6 +15,7 @@
 
 #include "cmock_date_time.h"
 #include "cmock_lte_lc.h"
+#include "cmock_modem_attest_token.h"
 #include "cmock_modem_key_mgmt.h"
 #include "cmock_modem_info.h"
 #include "cmock_nrf_modem_lib.h"

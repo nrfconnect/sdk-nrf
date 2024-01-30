@@ -630,15 +630,14 @@ int nrf_cloud_coap_patch(const char *resource, const char *query,
 
 int nrf_cloud_coap_disconnect(void)
 {
-	int err;
+	int tmp;
 
 	if (sock < 0) {
 		return -ENOTCONN;
 	}
 
 	authenticated = false;
-	err = close(sock);
-	sock = -1;
-
-	return err;
+	tmp = sock;
+	coap_client.fd = sock = -1;
+	return close(tmp);
 }

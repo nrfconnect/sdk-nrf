@@ -22,6 +22,7 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h
 	FUNC_EXCLUDE ".*(lte_lc_rai_req|lte_lc_rai_param_set)"
 	WORD_EXCLUDE "__deprecated")
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_key_mgmt.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_attest_token.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_info.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/nrf_modem_lib.h)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/settings/settings.h)

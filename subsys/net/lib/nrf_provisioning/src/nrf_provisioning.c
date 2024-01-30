@@ -21,6 +21,7 @@
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/nrf_modem_lib.h>
+#include <modem/modem_attest_token.h>
 #include <net/nrf_provisioning.h>
 #include <net/rest_client.h>
 #include <date_time.h>
@@ -560,6 +561,25 @@ int nrf_provisioning_req(void)
 				ret = nrf_provisioning_coap_req(&coap_ctx);
 			}
 			dm.cb(NRF_PROVISIONING_EVENT_STOP, dm.user_data);
+		}
+
+		if (ret == -EACCES) {
+			LOG_WRN("Unauthorized access: device is not yet claimed.");
+			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN)) {
+				struct nrf_attestation_token token = { 0 };
+				int err;
+
+				err = modem_attest_token_get(&token);
+				if (err) {
+					LOG_ERR("Failed to get token, err %d", err);
+				} else {
+					printk("\nAttestation token "
+					       "for claiming device on nRFCloud:\n");
+					printk("%.*s.%.*s\n\n", token.attest_sz, token.attest,
+					       token.cose_sz, token.cose);
+					modem_attest_token_free(&token);
+				}
+			}
 		}
 
 		if (ret == -EINVAL) {
