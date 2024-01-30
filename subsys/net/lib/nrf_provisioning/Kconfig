@@ -73,6 +73,14 @@ config NRF_PROVISIONING_JWT_MAX_VALID_TIME_S
 	range 0 360
 	default 300
 
+config NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN
+	bool "Display attestation token when unauthorized"
+	default y if !NRF_PROVISIONING_SHELL
+	help
+	  Unauthorized errors occur when the device is not yet claimed on
+	  nRF Cloud. Display the attestation token
+	  needed for claiming the device.
+
 rsource "Kconfig.nrf_provisioning_http"
 
 rsource "Kconfig.nrf_provisioning_coap"
