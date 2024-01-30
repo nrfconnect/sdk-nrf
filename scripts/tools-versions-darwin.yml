@@ -20,5 +20,6 @@ zephyr-sdk:
     - aarch64-zephyr-elf
     - x86_64-zephyr-elf
     - arm-zephyr-eabi
+    - riscv64-zephyr-elf
 doxygen:
   version: 1.9.2
