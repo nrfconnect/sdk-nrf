@@ -35,5 +35,6 @@ If you want to go through an online training course to familiarize yourself with
    regulatory_support
    scan_operation
    debugging
-   raw_tx_operation
    sap
+   raw_tx_operation
+   sniffer_rx_operation

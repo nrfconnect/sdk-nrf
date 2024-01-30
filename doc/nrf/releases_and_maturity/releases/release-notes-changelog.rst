@@ -679,6 +679,8 @@ Wi-Fi drivers
 
 * Added TX injection feature to the nRF70 Series device.
 
+* Added Monitor feature to the nRF70 Series device.
+
 Libraries
 =========
 
@@ -1066,6 +1068,7 @@ Documentation
   * :ref:`ug_lte` user guide under :ref:`protocols`.
   * Gazell and NFC sections in the :ref:`app_power_opt_recommendations` user guide.
   * :ref:`ug_nrf70_stack partitioning` page in the :ref:`ug_nrf70_developing` user guide.
+  * A page on :ref:`ug_nrf70_developing_raw_ieee_80211_packet_reception` in the :ref:`ug_wifi` user guide.
 
 * Updated:
 
