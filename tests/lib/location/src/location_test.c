@@ -243,6 +243,7 @@ static void location_event_handler(const struct location_event_data *event_data)
 	location_callback_called_occurred++;
 
 	TEST_ASSERT_EQUAL(test_location_event_data.id, event_data->id);
+	TEST_ASSERT_EQUAL(test_location_event_data.method, event_data->method);
 
 	switch (event_data->id) {
 	case LOCATION_EVT_LOCATION:
@@ -536,6 +537,7 @@ void test_location_gnss(void)
 
 	location_callback_called_expected = 1;
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_GNSS;
 	test_location_event_data.location.latitude = 61.005;
 	test_location_event_data.location.longitude = -45.997;
 	test_location_event_data.location.accuracy = 15.83;
@@ -742,6 +744,7 @@ void test_location_gnss_location_request_timeout(void)
 	location_callback_called_expected = 1;
 
 	test_location_event_data.id = LOCATION_EVT_TIMEOUT;
+	test_location_event_data.method = LOCATION_METHOD_GNSS;
 	test_location_event_data.location.latitude = 61.005;
 	test_location_event_data.location.longitude = -45.997;
 	test_location_event_data.location.accuracy = 15.83;
@@ -839,8 +842,10 @@ void test_location_cellular(void)
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	location_callback_called_expected++;
 	test_location_event_data.id = LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST;
+	test_location_event_data.method = LOCATION_METHOD_GNSS;
 #else
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_CELLULAR;
 	test_location_event_data.location.latitude = 61.50375;
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
@@ -880,6 +885,7 @@ void test_location_cellular(void)
 	TEST_ASSERT_EQUAL(0, err);
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_GNSS;
 	test_location_event_data.location.latitude = 61.50375;
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
@@ -940,6 +946,7 @@ void test_location_cellular_timeout_during_1st_ncellmeas(void)
 	location_callback_called_expected = 1;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_CELLULAR;
 	test_location_event_data.location.latitude = 61.50375;
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
@@ -994,6 +1001,7 @@ void test_location_cellular_timeout_during_2nd_ncellmeas_backup_timeout(void)
 	location_callback_called_expected = 1;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_CELLULAR;
 	test_location_event_data.location.latitude = 61.50375;
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
@@ -1049,6 +1057,7 @@ void test_location_wifi(void)
 	location_config_defaults_set(&config, 1, methods);
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_WIFI;
 	test_location_event_data.location.latitude = 51.98765;
 	test_location_event_data.location.longitude = 13.12345;
 	test_location_event_data.location.accuracy = 50.0;
@@ -1133,6 +1142,7 @@ void test_location_wifi_timeout(void)
 	config.methods[0].wifi.timeout = 1;
 
 	test_location_event_data.id = LOCATION_EVT_ERROR;
+	test_location_event_data.method = LOCATION_METHOD_WIFI;
 
 	location_callback_called_expected = 1;
 	net_mgmt_NET_REQUEST_WIFI_SCAN_expected = true;
@@ -1260,6 +1270,7 @@ void test_location_request_default(void)
 	int err;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_CELLULAR;
 	test_location_event_data.location.latitude = 61.50375;
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
@@ -1379,6 +1390,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 	config.methods[1].gnss.timeout = -10;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_CELLULAR;
 	test_location_event_data.location.latitude = 61.50375;
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
@@ -1427,6 +1439,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 
 	/***** Then GNSS positioning *****/
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_GNSS;
 	test_location_event_data.location.latitude = 60.987;
 	test_location_event_data.location.longitude = -45.997;
 	test_location_event_data.location.accuracy = 15.83;
@@ -1521,6 +1534,7 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 	config.methods[1].gnss.timeout = 100;
 
 	test_location_event_data.id = LOCATION_EVT_ERROR;
+	test_location_event_data.method = LOCATION_METHOD_CELLULAR;
 
 	location_callback_called_expected = 2;
 
@@ -1543,6 +1557,7 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 
 	/***** Then GNSS positioning *****/
 	test_location_event_data.id = LOCATION_EVT_TIMEOUT;
+	test_location_event_data.method = LOCATION_METHOD_GNSS;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
 
@@ -1603,6 +1618,7 @@ void test_location_gnss_periodic(void)
 	config.methods[0].gnss.accuracy = LOCATION_ACCURACY_NORMAL;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_GNSS;
 	test_location_event_data.location.latitude = 61.005;
 	test_location_event_data.location.longitude = -45.997;
 	test_location_event_data.location.accuracy = 15.83;
@@ -1689,6 +1705,7 @@ void test_location_gnss_periodic(void)
 	/* 2nd GNSS fix */
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_GNSS;
 	test_location_event_data.location.latitude = 61.005;
 	test_location_event_data.location.longitude = -44.123;
 	test_location_event_data.location.accuracy = 15.83;
@@ -1785,6 +1802,7 @@ void test_location_cellular_periodic(void)
 	config.methods[0].cellular.cell_count = 1;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_CELLULAR;
 	test_location_event_data.location.latitude = 61.50375;
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
@@ -1823,6 +1841,7 @@ void test_location_cellular_periodic(void)
 
 	/* TODO: Set different values to first iteration */
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.method = LOCATION_METHOD_CELLULAR;
 	test_location_event_data.location.latitude = 61.5037;
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
