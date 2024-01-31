@@ -173,8 +173,10 @@ void disconnect_cloud(void)
 #elif defined(CONFIG_NRF_CLOUD_COAP)
 	err = nrf_cloud_coap_disconnect();
 #endif
-	/* nrf_cloud_uninit returns -EACCES if we are not currently in a connected state. */
-	if (err == -EACCES) {
+	/* nrf_cloud_disconnect returns -EACCES if we are not currently in a connected state.
+	 * nrf_cloud_coap_disconnect returns -ENOTCONN if socket is not open.
+	 */
+	if ((err == -EACCES) || (err == -ENOTCONN)) {
 		LOG_DBG("Already disconnected from nRF Cloud");
 	} else if (err) {
 		LOG_ERR("Cannot disconnect from nRF Cloud, error: %d. Continuing anyways", err);
@@ -539,7 +541,13 @@ static void check_credentials(void)
 	int status = nrf_cloud_credentials_configured_check();
 
 	if (status == -ENOTSUP) {
-		LOG_WRN("nRF Cloud credentials are not installed. Please install and reboot.");
+		if (IS_ENABLED(CONFIG_NRF_PROVISIONING)) {
+			LOG_WRN("nRF Cloud credentials are not installed. "
+				"Claim and onboard device on nrfcloud.com to continue.");
+		} else {
+			LOG_WRN("nRF Cloud credentials are not installed. "
+				"Please install and reboot.");
+		}
 		k_sleep(K_FOREVER);
 	} else if (status) {
 		LOG_ERR("Error while checking for credentials: %d. Proceeding anyway.", status);
