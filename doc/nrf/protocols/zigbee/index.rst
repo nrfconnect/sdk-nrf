@@ -33,6 +33,5 @@ See also :ref:`zigbee_samples` for the list of available Zigbee samples and :ref
    configuring
    configuring_libraries
    configuring_zboss_traces
-   adding_clusters
    other_ecosystems
    tools
