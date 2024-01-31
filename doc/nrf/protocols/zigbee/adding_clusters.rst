@@ -1,3 +1,5 @@
+:orphan:
+
 .. _ug_zigee_adding_clusters:
 
 Adding ZCL clusters to application
