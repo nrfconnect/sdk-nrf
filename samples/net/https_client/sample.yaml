@@ -6,11 +6,11 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-      - nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp_ns
     platform_allow:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-      - nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp_ns
     tags: ci_build
   sample.net.https_client.lte.tfm-mbedtls:
     build_only: true

@@ -590,6 +590,9 @@ Networking samples
 
 * Added a new sample :ref:`http_server`.
 
+* Updated the networking samples to build using the non-secure target when building for the nRF7002DK.
+  The :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_SMALL` profile type is used for Trusted Firmware-M (TF-M) to optimize its memory footprint.
+
 * :ref:`net_coap_client_sample` sample:
 
   * Added support for Wi-Fi and LTE connectivity through the connection manager API.
