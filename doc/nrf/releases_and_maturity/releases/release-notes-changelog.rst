@@ -371,6 +371,7 @@ Cellular samples
     * A generic processing example for application-specific shadow data.
     * Configuration and overlay files to enable MCUboot to use the external flash on the nRF1961 DK.
     * A :kconfig:option:`CONFIG_COAP_ALWAYS_CONFIRM` Kconfig option to select CON or NON CoAP transfers for functions that previously used NON transfers only.
+    * Support for the :ref:`lib_nrf_provisioning` library.
 
   * Fixed:
 
