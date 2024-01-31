@@ -103,6 +103,10 @@ features:
       rule: WIFI_NRF700X && NRF700X_RAW_DATA_RX
       boards_and_shields:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
+    TX injection Mode:
+      rule: WIFI_NRF700X && NRF700X_RAW_DATA_TX
+      boards_and_shields:
+        - BOARD_NRF7002DK_NRF5340_CPUAPP
   trusted_firmware_m:
     Minimal Build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
     Full build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_NOT_SET && NRF_SECURITY

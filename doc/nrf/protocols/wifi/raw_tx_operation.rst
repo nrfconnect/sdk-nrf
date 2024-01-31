@@ -25,23 +25,28 @@ To use the raw packet transmit feature in your applications, you must enable the
 TX injection mode
 *****************
 
-The nRF70 Series device supports raw 802.11 packet transmission when TX injection mode is enabled in the nRF Wi-Fi® driver.
-To enable the TX injection mode of operation, you can use the ``NET_REQUEST_WIFI_MODE`` network management runtime API.
-This API can be used to disable TX injection mode in the driver when raw 802.11 packet transmission is not required by the application.
+The nRF70 Series device supports raw 802.11 packet transmission when TX injection mode is enabled in the nRF Wi-Fi driver.
 
-TX injection mode can be enabled when the nRF70 Series device operates in Station mode, both when it is operating in a connected Station mode or in a non-connected Station mode (not connected to an Access Point (AP)).
+The TX injection mode can be enabled when the primary mode of operation for the nRF70 Series device is set to either Station mode or Monitor mode.
+When the nRF70 Series device is configured in Station mode, TX injection mode can be enabled regardless of whether the device is connected to an Access Point (AP) or not.
+
+Use the ``net_eth_txinjection_mode`` functional API to enable or disable TX injection mode in the nRF Wi-Fi driver as required by the application.
+You can also use the ``NET_REQUEST_ETHERNET_SET_TXINJECTION_MODE`` network management API to enable or disable TX injection mode, however it is recommended to use the functional API (``net_eth_txinjection_mode``).
+
+The network management API ``NET_REQUEST_ETHERNET_GET_TXINJECTION_MODE`` can be used to obtain the current TX injection configured setting in the nRF Wi-Fi driver.
 
 When TX injection mode is enabled, you need to configure the operating channel.
-This channel will be used as the default transmit channel when the nRF70 device operates in a non-connected Station mode.
-When the device operates in Station mode connected to an AP on a given channel, the same channel will be used for raw 802.11 packet transmission.
+This channel will be used as the transmit channel when the nRF70 Series device operates in Station mode, but is not connected to an AP.
+When the nRF70 Series device operates in Station mode and is connected to an AP on a given channel, the connected channel will be used for raw 802.11 packet transmission.
+When the nRF70 Series device operates in Monitor mode, the configured channel for Monitor mode will be used as the transmit channel for TX injection operation.
 
 To set the desired channel for raw 802.11 packet transmission, you can use the ``NET_REQUEST_WIFI_CHANNEL`` network management API.
 
 See the :ref:`wifi_shell_sample` sample for more information on configuring mode and channel settings for raw packet transmission through shell commands.
 
-The following table lists the shell commands and network management APIs used to switch between operational modes and set channels:
+The following table lists the shell commands and network management APIs used to switch the primary modes of operation needed for raw packet transmission.
 
-.. list-table:: Wi-Fi raw packet transmission network management APIs
+.. list-table:: Wi-Fi raw packet transmission network management APIs for primary mode of operation
    :header-rows: 1
 
    * - Network management APIs
@@ -50,12 +55,34 @@ The following table lists the shell commands and network management APIs used to
      - Description
    * - net_mgmt(NET_REQUEST_WIFI_MODE)
      - ``wifi mode -i<interface instance> <configuration>``
-     - ``wifi mode -i1 -st``
-     - Configure interface instance 1 to Station with TX injection mode
+     - ``wifi mode -i1 -m``
+     - Configure interface instance 1 to Monitor mode
    * - net_mgmt(NET_REQUEST_WIFI_MODE)
      - ``wifi mode -i<interface instance> <configuration>``
      - ``wifi mode -i1 -s``
      - Configure interface instance 1 to Station mode
+
+The following table provides the parameter details for the ``net_eth_txinjection_mode`` API, which is used to enable or disable TX injection mode for raw packet transmission.
+
+.. list-table:: Wi-Fi raw packet transmission API parameter details
+   :header-rows: 1
+
+   * - API parameter
+     - description
+   * - iface
+     - Network interface on which TX injection mode is to be enabled
+   * - enable
+     - Boolean value to enable or disable TX injection mode
+
+The following table provides the network management API used to set the channel of operation for raw packet transmission.
+
+.. list-table:: Wi-Fi raw packet transmission channel configuration
+   :header-rows: 1
+
+   * - Network management APIs
+     - Wi-Fi shell command
+     - Example usage
+     - Description
    * - net_mgmt(NET_REQUEST_WIFI_CHANNEL)
      - ``wifi channel -i<interface instance> <channel number to set>``
      - ``wifi channel -i1 -c6``
