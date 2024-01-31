@@ -23,6 +23,7 @@ append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
   aria.c
   camellia.c
   des.c
+  psa_util.c
 )
 
 # Add all files that are neccessary for nrf_oberon + builtin in legacy mode
