@@ -112,7 +112,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: add44638157ea4d55f0f0f5e38fd2d8a54069349
+      revision: 8022ef951c77f3bc08726d1c2b44e792b3091a35
       userdata:
         ncs:
           upstream-url: https://w1.fi/cgit/hostap/
