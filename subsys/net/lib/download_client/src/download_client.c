@@ -695,11 +695,9 @@ static int handle_received(struct download_client *dl, ssize_t len)
 	if (dl->proto == IPPROTO_TCP || dl->proto == IPPROTO_TLS_1_2) {
 		rc = http_parse(dl, len);
 		if (rc > 0 &&
-		    (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS) || !dl->http.has_header)) {
-			/* Wait for more data (fragment/header).
-			 * Unranged request (normal GET) should start forwarding the data
-			 * once HTTP headers are received. Ranged-GET should receive full
-			 * buffer(fragment) before sending an event.
+		    (!dl->http.has_header || dl->offset < sizeof(dl->buf))) {
+			/* Wait for more data (full buffer).
+			 * Forward only full buffers to callback.
 			 */
 			return 1;
 		}
