@@ -8,20 +8,20 @@ tests:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
       - thingy91_nrf9160_ns
-      - nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp_ns
     platform_allow:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
       - thingy91_nrf9160_ns
-      - nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp_ns
       - native_posix
     tags: ci_build
   sample.net.mqtt.nrf70.tls:
     build_only: true
     build_on_all: true
     integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp_ns
+    platform_allow: nrf7002dk_nrf5340_cpuapp_ns
     tags: ci_build
     extra_args: EXTRA_CONF_FILE=overlay-tls-nrf70.conf
   sample.net.mqtt.nrf91.tls:

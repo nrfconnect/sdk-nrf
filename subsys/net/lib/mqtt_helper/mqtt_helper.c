@@ -158,7 +158,10 @@ static int certificates_provision(void)
 					 TLS_CREDENTIAL_CA_CERTIFICATE,
 					 ca_certificate,
 					 sizeof(ca_certificate));
-		if (err < 0) {
+		if (err == -EEXIST) {
+			LOG_DBG("CA certificate already exists, sec tag: %d",
+				CONFIG_MQTT_HELPER_SEC_TAG);
+		} else if (err < 0) {
 			LOG_ERR("Failed to register CA certificate: %d", err);
 			return err;
 		}
@@ -169,7 +172,10 @@ static int certificates_provision(void)
 					 TLS_CREDENTIAL_PRIVATE_KEY,
 					 private_key,
 					 sizeof(private_key));
-		if (err < 0) {
+		if (err == -EEXIST) {
+			LOG_DBG("Private key already exists, sec tag: %d",
+				CONFIG_MQTT_HELPER_SEC_TAG);
+		} else if (err < 0) {
 			LOG_ERR("Failed to register private key: %d", err);
 			return err;
 		}
@@ -180,7 +186,10 @@ static int certificates_provision(void)
 					 TLS_CREDENTIAL_SERVER_CERTIFICATE,
 					 device_certificate,
 					 sizeof(device_certificate));
-		if (err < 0) {
+		if (err == -EEXIST) {
+			LOG_DBG("Public certificate already exists, sec tag: %d",
+				CONFIG_MQTT_HELPER_SEC_TAG);
+		} else  if (err < 0) {
 			LOG_ERR("Failed to register public certificate: %d", err);
 			return err;
 		}
@@ -195,7 +204,10 @@ static int certificates_provision(void)
 					 TLS_CREDENTIAL_CA_CERTIFICATE,
 					 ca_certificate_2,
 					 sizeof(ca_certificate_2));
-		if (err < 0) {
+		if (err == -EEXIST) {
+			LOG_DBG("CA certificate already exists, sec tag: %d",
+				CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG);
+		} else if (err < 0) {
 			LOG_ERR("Failed to register secondary CA certificate: %d", err);
 			return err;
 		}
@@ -206,7 +218,10 @@ static int certificates_provision(void)
 					 TLS_CREDENTIAL_PRIVATE_KEY,
 					 private_key_2,
 					 sizeof(private_key_2));
-		if (err < 0) {
+		if (err == -EEXIST) {
+			LOG_DBG("Private key already exists, sec tag: %d",
+				CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG);
+		} else if (err < 0) {
 			LOG_ERR("Failed to register secondary private key: %d", err);
 			return err;
 		}
@@ -217,7 +232,10 @@ static int certificates_provision(void)
 					 TLS_CREDENTIAL_SERVER_CERTIFICATE,
 					 device_certificate_2,
 					 sizeof(device_certificate_2));
-		if (err < 0) {
+		if (err == -EEXIST) {
+			LOG_DBG("Public certificate already exists, sec tag: %d",
+				CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG);
+		} else if (err < 0) {
 			LOG_ERR("Failed to register secondary public certificate: %d", err);
 			return err;
 		}
