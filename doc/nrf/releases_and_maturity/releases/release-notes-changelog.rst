@@ -789,6 +789,7 @@ Libraries for networking
 
     * IPv6 support changed from compile time to runtime, and is default enabled.
     * IPv6 to IPv4 fallback is done when both DNS request and TCP/TLS connect fails.
+    * HTTP downloads forward data fragments to a callback only when the buffer is full.
 
   * Removed:
 
