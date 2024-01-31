@@ -604,8 +604,10 @@ int sock_open_and_connect(
 		}
 	}
 
-	if (type == SOCK_STREAM || (type == SOCK_DGRAM && secure)) {
-		/* Connect TCP and DTLS socket */
+	if (type == SOCK_STREAM || type == SOCK_DGRAM) {
+		/* Connect TCP or UDP socket.
+		 * UDP socket supports connect for setting peer address.
+		 */
 		err = connect(
 			fd,
 			socket_info->addrinfo->ai_addr,
@@ -689,7 +691,6 @@ static int sock_send(
 	bool data_hex_format)
 {
 	int bytes;
-	int dest_addr_len = 0;
 	int set, res;
 	char packet_number_prefix_str[5];
 
@@ -722,19 +723,7 @@ static int sock_send(
 		}
 	}
 
-	if (socket_info->type == SOCK_DGRAM && !socket_info->secure) {
-		/* UDP */
-		if (socket_info->family == AF_INET) {
-			dest_addr_len = sizeof(struct sockaddr_in);
-		} else if (socket_info->family == AF_INET6) {
-			dest_addr_len = sizeof(struct sockaddr_in6);
-		}
-		bytes = sendto(socket_info->fd, data, length, 0,
-			       socket_info->addrinfo->ai_addr, dest_addr_len);
-	} else {
-		/* TCP, DTLS and raw socket */
-		bytes = send(socket_info->fd, data, length, 0);
-	}
+	bytes = send(socket_info->fd, data, length, 0);
 	if (bytes < 0) {
 		/* Ideally we'd like to log the failure here but non-blocking
 		 * socket causes huge number of failures due to incorrectly

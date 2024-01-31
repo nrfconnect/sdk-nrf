@@ -363,6 +363,12 @@ Cellular samples
     * The MQTT and CoAP overlays to enable the Kconfig option :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI`.
       The sample no longer sends a device shadow update for MQTT and CoAP builds; this is now handled by the :ref:`lib_nrf_cloud` library.
     * To use the new :c:struct:`nrf_cloud_location_config` structure when calling the :c:func:`nrf_cloud_location_request` function.
+    * The ``connect`` subcommand to use the :c:func:`connect` function on non-secure datagram sockets.
+      This sets the peer address for the non-secure datagram socket.
+      This fixes a bug where using the ``connect`` subcommand and then using the ``rai_no_data`` option with the ``rai`` subcommand on a non-secure datagram socket would lead to an error.
+      The ``rai_no_data`` option requires the socket to be connected and have a peer address set.
+      This bug is caused by the non-secure datagram socket not being connected when using the ``connect`` subcommand.
+    * The ``send`` subcommand to use the :c:func:`send` function for non-secure datagram sockets that are connected and have a peer address set.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
