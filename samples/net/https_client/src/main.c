@@ -103,7 +103,9 @@ int cert_provision(void)
 				 TLS_CREDENTIAL_CA_CERTIFICATE,
 				 cert,
 				 sizeof(cert));
-	if (err < 0) {
+	if (err == -EEXIST) {
+		printk("CA certificate already exists, sec tag: %d\n", TLS_SEC_TAG);
+	} else if (err < 0) {
 		printk("Failed to register CA certificate: %d\n", err);
 		return err;
 	}

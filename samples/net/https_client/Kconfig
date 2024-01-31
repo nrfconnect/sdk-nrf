@@ -8,6 +8,7 @@ menu "HTTPS client sample"
 
 config SAMPLE_TFM_MBEDTLS
 	bool "Use TF-M and MbedTLS"
+	depends on NRF_MODEM_LIB
 	help
 	  Use TF-M and MbedTLS in this sample instead of using
 	  the offloaded TLS stack in the modem.

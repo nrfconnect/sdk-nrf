@@ -5,6 +5,7 @@ config SAMPLE_SECURE_SOCKET
 	default y
 
 if SAMPLE_SECURE_SOCKET
+
 config SAMPLE_SEC_TAG
 	int "Security tag"
 	default 42
