@@ -1097,6 +1097,7 @@ Documentation
   * The :ref:`dev-model` section with the :ref:`documentation` pages, previously listed separately.
   * The :ref:`glossary` page by moving it back to the main hierarchy level.
   * The structure of the :ref:`ug_wifi` page by moving :ref:`ug_nrf70_developing_powersave`, :ref:`ug_nrf70_developing_regulatory_support`, :ref:`ug_nrf70_developing_scan_operation`, :ref:`ug_nrf70_developing_debugging`, :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`, and :ref:`nRF70_soft_ap_mode` pages, which were previously listed under :ref:`ug_nrf70_developing`.
+  * Updated TX injection mode command in the :ref:`ug_nrf70_developing_tx_injection_mode` section in the :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission` user guide.
 
 * Removed the Welcome to the |NCS| page.
   This page is replaced with existing :ref:`ncs_introduction` page.
