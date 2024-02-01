@@ -226,7 +226,7 @@ Wi-Fi radio test subcommands
      - N/A
      - N/A
      - Action
-     - Compute optimal XO value. Note: This is still experimental and to be used at own risk.
+     - Compute optimal XO trim value.
    * - get_stats
      - N/A
      - N/A
