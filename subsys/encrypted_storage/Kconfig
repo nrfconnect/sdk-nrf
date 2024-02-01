@@ -80,7 +80,7 @@ config ENCRYPTED_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE
 	help
 	  This defines the maximum data size that can be stored.
 
-choice ENCRYPTED_STORAGE_AEAD_BACKEND_CRYPTO
+choice ENCRYPTED_STORAGE_BACKEND_AEAD_CRYPTO
 	prompt "AEAD algorithm crypto backend"
 	default ENCRYPTED_STORAGE_BACKEND_AEAD_CRYPTO_PSA_CHACHAPOLY
 	help
@@ -93,7 +93,7 @@ config ENCRYPTED_STORAGE_BACKEND_AEAD_CRYPTO_PSA_CHACHAPOLY
 	help
 	  Use PSA Crypto API's with the ChaChaPoly-1305 AEAD algorithm.
 
-endchoice # ENCRYPTED_STORAGE_AEAD_BACKEND_CRYPTO
+endchoice # ENCRYPTED_STORAGE_BACKEND_AEAD_CRYPTO
 
 choice ENCRYPTED_STORAGE_BACKEND_AEAD_NONCE
 	prompt "AEAD nonce implementation"
@@ -138,7 +138,7 @@ config ENCRYPTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
 	  Use the Hardware Unique Key (HUK) with the UID as label to derive a
 	  new key.
 
-config ENCRYPTED_STORAGE_AEAD_BACKEND_KEY_CUSTOM
+config ENCRYPTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM
 	bool "Custom"
 	help
 	  Use custom implementation for AEAD key provider.
