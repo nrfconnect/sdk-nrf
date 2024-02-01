@@ -51,6 +51,7 @@ DECLARE_FAKE_VOID_FUNC(engine_trigger_update, bool);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_init);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_params_init, struct modem_param_info *);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_params_get, struct modem_param_info *);
+DECLARE_FAKE_VALUE_FUNC(int, modem_info_get_hw_version, char *, uint8_t);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_lte_mode_get, enum lte_lc_lte_mode *);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
 DECLARE_FAKE_VALUE_FUNC(int, dfu_target_mcuboot_set_buf, uint8_t *, size_t);
@@ -92,6 +93,7 @@ DECLARE_FAKE_VALUE_FUNC(int, fota_download_util_download_cancel);
 DECLARE_FAKE_VALUE_FUNC(int, fota_download_util_image_schedule, enum dfu_target_image_type);
 DECLARE_FAKE_VALUE_FUNC(int, fota_download_util_image_reset, enum dfu_target_image_type);
 DECLARE_FAKE_VALUE_FUNC(int, fota_download_util_apply_update, enum dfu_target_image_type);
+
 
 /* List of fakes used by this unit tester */
 #define DO_FOREACH_FAKE(FUNC)                                                                      \
@@ -155,13 +157,14 @@ DECLARE_FAKE_VALUE_FUNC(int, fota_download_util_apply_update, enum dfu_target_im
 		FUNC(lwm2m_notify_observer_path)                                                   \
 		FUNC(engine_remove_observer_by_id)                                                 \
 		FUNC(lwm2m_firmware_start_transfer)                                                \
-		FUNC(fota_download_util_stream_init)                                             \
-		FUNC(fota_download_util_dfu_target_init)                                         \
-		FUNC(fota_download_util_download_start)                                          \
-		FUNC(fota_download_util_download_cancel)                                         \
-		FUNC(fota_download_util_image_schedule)                                          \
-		FUNC(fota_download_util_image_reset)                                             \
-		FUNC(fota_download_util_apply_update)                                            \
+		FUNC(fota_download_util_stream_init)                                               \
+		FUNC(fota_download_util_dfu_target_init)                                           \
+		FUNC(fota_download_util_download_start)                                            \
+		FUNC(fota_download_util_download_cancel)                                           \
+		FUNC(fota_download_util_image_schedule)                                            \
+		FUNC(fota_download_util_image_reset)                                               \
+		FUNC(fota_download_util_apply_update)                                              \
+		FUNC(modem_info_get_hw_version)                                                    \
 	} while (0)
 
 #endif

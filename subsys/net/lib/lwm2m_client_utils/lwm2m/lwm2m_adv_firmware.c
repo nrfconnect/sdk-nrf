@@ -564,7 +564,7 @@ int lwm2m_adv_firmware_create_inst(const char *component, lwm2m_engine_set_data_
 		return ret;
 	}
 
-	len = strlen(component);
+	len = strlen(component) + 1;
 	ret = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, idx,
 				FIRMWARE_COMPONENT_NAME_ID), (void *)component, len, len,
 				LWM2M_RES_DATA_FLAG_RO);

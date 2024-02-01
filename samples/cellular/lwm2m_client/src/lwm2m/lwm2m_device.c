@@ -13,11 +13,14 @@
 #include "pm_config.h"
 #include "lwm2m_app_utils.h"
 
+#ifdef CONFIG_SOC_SERIES_NRF91X
+#include <modem/modem_info.h>
+#endif
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 
 #define CLIENT_MODEL_NUMBER CONFIG_BOARD
-#define CLIENT_HW_VER CONFIG_SOC
 #define CLIENT_FLASH_SIZE PM_MCUBOOT_SECONDARY_SIZE
 
 #define UTC_OFFSET_STR_LEN 7 /* '+00:00' + '\0' = 7 */
@@ -47,8 +50,23 @@ static int device_factory_default_cb(uint16_t obj_inst_id, uint8_t *args, uint16
 
 int lwm2m_app_init_device(char *serial_num)
 {
-	char *client_sw_ver = (strlen(CONFIG_APP_CUSTOM_VERSION) > 0) ?
+	const void *hw_str = CONFIG_SOC;
+	uint16_t hw_str_len = sizeof(CONFIG_SOC);
+	const char *client_sw_ver = (strlen(CONFIG_APP_CUSTOM_VERSION) > 0) ?
 			      CONFIG_APP_CUSTOM_VERSION : NCS_VERSION_STRING;
+
+	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF91X)) {
+		int err;
+		static char hw_buf[sizeof("nRF91__ ____ ___ ")];
+
+		err = modem_info_get_hw_version(hw_buf, sizeof(hw_buf));
+		if (err == 0) {
+			hw_str = hw_buf;
+			hw_str_len = strlen(hw_buf) + 1;
+		} else {
+			LOG_ERR("modem_info_get_hw_version() failed, err %d", err);
+		}
+	}
 
 	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
 			  CONFIG_APP_MANUFACTURER, sizeof(CONFIG_APP_MANUFACTURER),
@@ -70,13 +88,12 @@ int lwm2m_app_init_device(char *serial_num)
 			  CONFIG_APP_DEVICE_TYPE, sizeof(CONFIG_APP_DEVICE_TYPE),
 			  sizeof(CONFIG_APP_DEVICE_TYPE), LWM2M_RES_DATA_FLAG_RO);
 	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID),
-			  CLIENT_HW_VER, sizeof(CLIENT_HW_VER), sizeof(CLIENT_HW_VER),
-			  LWM2M_RES_DATA_FLAG_RO);
+			  (void *)hw_str, hw_str_len, hw_str_len, LWM2M_RES_DATA_FLAG_RO);
 	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, SOFTWARE_VERSION_RID),
-			  client_sw_ver, strlen(client_sw_ver) + 1,
+			  (void *)client_sw_ver, strlen(client_sw_ver) + 1,
 			  strlen(client_sw_ver) + 1, LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, BATTERY_STATUS_RID),
-			  &bat_status, sizeof(bat_status), sizeof(bat_status), 0);
+	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, BATTERY_STATUS_RID), &bat_status,
+			  sizeof(bat_status), sizeof(bat_status), 0);
 	lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MEMORY_TOTAL_RID),
 			  &mem_total, sizeof(mem_total), sizeof(mem_total), 0);
 
