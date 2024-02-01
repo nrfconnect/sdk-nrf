@@ -14,16 +14,19 @@ class ATclient:
     """Send and receive AT commands to modem through serial port."""
     def __init__(self, serial_path):
         self.serial = serial.Serial(serial_path, 115200, timeout=0.1)
+        self.lf = b'\r'
         if not self.is_ready():
-            logging.error("AT interface not responding")
-            sys.exit(1)
+            self.lf = b'\r\n'
+            if not self.is_ready():
+                logging.error("AT interface not responding")
+                sys.exit(1)
 
     def is_ready(self):
         """\
         Check if AT client is passing our AT commands
         to the modem, and the modem is responding
         """
-        self.serial.write(b'\r')
+        self.serial.write(self.lf)
         self.serial.readlines()  # empty buffers
         for _ in range(3):
             if self.at_cmd('AT', timeout=1) is None:
@@ -40,8 +43,8 @@ class ATclient:
             at_str = at_str.encode()
         self.serial.write(at_str)
         logging.debug(at_str.decode())
-        if not b'\r' in at_str:
-            self.serial.write(b'\r')
+        if not self.lf in at_str:
+            self.serial.write(self.lf)
         resp = []
         while True:
             line = self.serial.readline()
@@ -60,5 +63,6 @@ class ATclient:
                 return None
         except IndexError:
             return None
+        # Drop the OK from response
         resp.pop()
         return ''.join(resp).strip()
