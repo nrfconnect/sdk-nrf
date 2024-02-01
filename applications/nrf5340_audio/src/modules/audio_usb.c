@@ -25,7 +25,13 @@ static struct data_fifo *fifo_rx;
 NET_BUF_POOL_FIXED_DEFINE(pool_out, CONFIG_FIFO_FRAME_SPLIT_NUM, USB_FRAME_SIZE_STEREO, 8,
 			  net_buf_destroy);
 
+static uint32_t rx_num_overruns;
+static bool rx_first_data;
+static bool tx_first_data;
+
 #if (CONFIG_STREAM_BIDIRECTIONAL)
+static uint32_t tx_num_underruns;
+
 static void data_write(const struct device *dev)
 {
 	int ret;
@@ -42,9 +48,12 @@ static void data_write(const struct device *dev)
 
 	ret = data_fifo_pointer_last_filled_get(fifo_tx, &data_out, &data_out_size, K_NO_WAIT);
 	if (ret) {
-		/* NOTE: The string below is used by the Nordic CI system */
-		LOG_WRN("USB TX underrun");
+		tx_num_underruns++;
+		if ((tx_num_underruns % 100) == 1) {
+			LOG_WRN("USB TX underrun. Num: %d", tx_num_underruns);
+		}
 		net_buf_unref(buf_out);
+
 		return;
 	}
 
@@ -60,6 +69,11 @@ static void data_write(const struct device *dev)
 
 	} else {
 		LOG_WRN("Wrong size write: %d", data_out_size);
+	}
+
+	if (!tx_first_data) {
+		LOG_INF("USB TX first data sent.");
+		tx_first_data = true;
 	}
 }
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
@@ -94,7 +108,10 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 		void *temp;
 		size_t temp_size;
 
-		LOG_WRN("USB RX overrun");
+		rx_num_overruns++;
+		if ((rx_num_overruns % 100) == 1) {
+			LOG_WRN("USB RX overrun. Num: %d", rx_num_overruns);
+		}
 
 		ret = data_fifo_pointer_last_filled_get(fifo_rx, &temp, &temp_size, K_NO_WAIT);
 		ERR_CHK(ret);
@@ -112,6 +129,11 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 	ERR_CHK_MSG(ret, "Failed to lock block");
 
 	net_buf_unref(buffer);
+
+	if (!rx_first_data) {
+		LOG_INF("USB RX first data received.");
+		rx_first_data = true;
+	}
 }
 
 static void feature_update(const struct device *dev, const struct usb_audio_fu_evt *evt)
@@ -147,6 +169,8 @@ int audio_usb_start(struct data_fifo *fifo_tx_in, struct data_fifo *fifo_rx_in)
 
 void audio_usb_stop(void)
 {
+	rx_first_data = false;
+	tx_first_data = false;
 	fifo_tx = NULL;
 	fifo_rx = NULL;
 }
@@ -183,6 +207,8 @@ int audio_usb_init(void)
 		LOG_ERR("Failed to enable USB");
 		return ret;
 	}
+
+	LOG_INF("Ready for USB host to send/receive.");
 
 	return 0;
 }

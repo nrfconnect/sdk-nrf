@@ -47,6 +47,7 @@ void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, boo
 	uint32_t blocks_alloced_num, blocks_locked_num;
 	struct ble_iso_data *iso_received = NULL;
 	static struct rx_stats rx_stats[AUDIO_CH_NUM];
+	static uint32_t num_overruns;
 
 	if (!initialized) {
 		ERR_CHK_MSG(-EPERM, "Data received but le_audio_rx is not initialized");
@@ -95,8 +96,11 @@ void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, boo
 
 		void *stale_data;
 		size_t stale_size;
+		num_overruns++;
 
-		LOG_WRN("BLE ISO RX overrun");
+		if ((num_overruns % 100) == 1) {
+			LOG_WRN("BLE ISO RX overrun: Num: %d", num_overruns);
+		}
 
 		ret = data_fifo_pointer_last_filled_get(&ble_fifo_rx, &stale_data, &stale_size,
 							K_NO_WAIT);
