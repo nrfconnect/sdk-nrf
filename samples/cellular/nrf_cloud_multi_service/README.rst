@@ -757,9 +757,9 @@ You can enable support for this service by building the sample as follows:
 
       .. code-block:: console
 
-         west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG="overlay-nrf_provisioning.conf"
+         west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG="overlay-http_nrf_provisioning.conf"
 
-      The :file:`overlay-nrf_provisioning.conf` overlay enables the :ref:`lib_nrf_provisioning` library, and its shell interface.
+      The :file:`overlay-http_nrf_provisioning.conf` overlay enables the :ref:`lib_nrf_provisioning` library, and its shell interface to use HTTP for communication.
       A side-effect of this is that the sample will use the :ref:`lib_at_shell` library instead of the :ref:`lib_at_host` library, so AT commands must be issued using the ``at`` shell command.
 
    .. group-tab:: CoAP
@@ -768,12 +768,12 @@ You can enable support for this service by building the sample as follows:
 
       .. code-block:: console
 
-         west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG="overlay-nrf_provisioning.conf;overlay_coap.conf"
+         west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG="overlay-coap_nrf_provisioning.conf;overlay_coap.conf"
 
-      The :file:`overlay-nrf_provisioning.conf` overlay enables the :ref:`lib_nrf_provisioning` library, and its shell interface.
-      A side-effect of this is that the sample will use the :ref:`lib_at_shell` library instead of the :ref:`lib_at_host` library, so AT commands must be issued using the ``at`` shell command.
+      The :file:`overlay-coap_nrf_provisioning.conf` overlay enables the :ref:`lib_nrf_provisioning` library to use CoAP for communication.
+      It does not enable the shell.
 
-      The :file:`overlay_coap.conf` overlay causes the sample to use CoAP instead of MQTT.
+      The :file:`overlay_coap.conf` overlay causes the sample to use CoAP instead of MQTT for normal communication.
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_provisioning_service` for instructions on how to provision your device with the Provisioning Service.
 
