@@ -15,6 +15,7 @@
 #include <zephyr/net/lwm2m.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/modem_key_mgmt.h>
+#include <modem/modem_info.h>
 #include <net/fota_download.h>
 #include <fota_download_util.h>
 #include <lwm2m_util.h>
@@ -1266,8 +1267,13 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 		"application", firmware_block_received_cb, firmware_update_cb);
 	lwm2m_firmware_object_setup_init(application_obj_id);
 
-	modem_obj_id = lwm2m_adv_firmware_create_inst(
-		"modem:" CONFIG_SOC, firmware_block_received_cb, firmware_update_cb);
+	static char hw_buf[sizeof("modem:nRF91__ ____ ___ ")];
+
+	strcat(hw_buf, "modem:");
+	modem_info_get_hw_version(hw_buf + strlen("modem:"), sizeof(hw_buf) - strlen("modem:"));
+
+	modem_obj_id = lwm2m_adv_firmware_create_inst(hw_buf, firmware_block_received_cb,
+						      firmware_update_cb);
 	lwm2m_firmware_object_setup_init(modem_obj_id);
 
 	lwm2m_adv_modem_firmware_versions_set();

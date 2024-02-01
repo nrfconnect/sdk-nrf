@@ -55,6 +55,7 @@ DEFINE_FAKE_VALUE_FUNC(int, modem_info_init);
 DEFINE_FAKE_VALUE_FUNC(int, modem_info_params_init, struct modem_param_info *);
 DEFINE_FAKE_VALUE_FUNC(int, modem_info_params_get, struct modem_param_info *);
 DEFINE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
+DEFINE_FAKE_VALUE_FUNC(int, modem_info_get_hw_version, char *, uint8_t);
 DEFINE_FAKE_VOID_FUNC(engine_trigger_update, bool);
 DEFINE_FAKE_VALUE_FUNC(int, dfu_target_mcuboot_set_buf, uint8_t *, size_t);
 DEFINE_FAKE_VALUE_FUNC(int, nrf_modem_lib_shutdown);
