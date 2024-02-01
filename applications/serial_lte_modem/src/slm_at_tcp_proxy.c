@@ -21,9 +21,6 @@ LOG_MODULE_REGISTER(slm_tcp, CONFIG_SLM_LOG_LEVEL);
 #define THREAD_STACK_SIZE	KB(4)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
 
-/* Some features need future modem firmware support */
-#define SLM_TCP_PROXY_FUTURE_FEATURE	0
-
 /**@brief Proxy operations. */
 enum slm_tcp_proxy_operation {
 	SERVER_STOP,
@@ -63,32 +60,11 @@ static int do_tcp_server_start(uint16_t port)
 	int ret;
 	int reuseaddr = 1;
 
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	if (proxy.sec_tag != INVALID_SEC_TAG) {
-		ret = slm_native_tls_load_credentials(proxy.sec_tag);
-		if (ret < 0) {
-			LOG_ERR("Failed to load sec tag: %d (%d)", proxy.sec_tag, ret);
-			return ret;
-		}
-	}
-#else
-#if !SLM_TCP_PROXY_FUTURE_FEATURE
-/* TLS server not officially supported by modem yet */
-	if (proxy.sec_tag != INVALID_SEC_TAG) {
-		LOG_ERR("Not supported");
-		return -ENOTSUP;
-	}
-#endif
-#endif
 	/* Open socket */
 	if (proxy.sec_tag == INVALID_SEC_TAG) {
 		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
-#if defined(CONFIG_SLM_NATIVE_TLS)
-		ret = socket(proxy.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
-#else
 		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
-#endif
 	}
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
@@ -97,8 +73,26 @@ static int do_tcp_server_start(uint16_t port)
 	}
 	proxy.sock = ret;
 
-	/* Config socket options */
 	if (proxy.sec_tag != INVALID_SEC_TAG) {
+#ifndef CONFIG_SLM_NATIVE_TLS
+		LOG_ERR("Not supported");
+		return -ENOTSUP;
+#else
+		ret = slm_native_tls_load_credentials(proxy.sec_tag);
+		if (ret < 0) {
+			LOG_ERR("Failed to load sec tag: %d (%d)", proxy.sec_tag, ret);
+			return ret;
+		}
+		int tls_native = 1;
+
+		/* Must be the first socket option to set. */
+		ret = setsockopt(proxy.sock, SOL_TLS, TLS_NATIVE, &tls_native,
+					sizeof(tls_native));
+		if (ret) {
+			ret = errno;
+			goto exit_svr;
+		}
+#endif
 		sec_tag_t sec_tag_list[1] = { proxy.sec_tag };
 
 		ret = setsockopt(proxy.sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
@@ -108,25 +102,6 @@ static int do_tcp_server_start(uint16_t port)
 			ret = -errno;
 			goto exit_svr;
 		}
-#if SLM_TCP_PROXY_FUTURE_FEATURE
-/* TLS server not officially supported by modem yet */
-		int tls_role = TLS_DTLS_ROLE_SERVER;
-		int peer_verify = TLS_PEER_VERIFY_NONE;
-
-		ret = setsockopt(proxy.sock, SOL_TLS, TLS_DTLS_ROLE, &tls_role, sizeof(int));
-		if (ret) {
-			LOG_ERR("setsockopt(TLS_DTLS_ROLE) error: %d", -errno);
-			ret = -errno;
-			goto exit_svr;
-		}
-		ret = setsockopt(proxy.sock, SOL_TLS, TLS_PEER_VERIFY, &peer_verify,
-				 sizeof(peer_verify));
-		if (ret) {
-			LOG_ERR("setsockopt(TLS_PEER_VERIFY) error: %d", errno);
-			ret = -errno;
-			goto exit_svr;
-		}
-#endif
 	}
 
 	ret = setsockopt(proxy.sock, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(int));
@@ -250,11 +225,7 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 	if (proxy.sec_tag == INVALID_SEC_TAG) {
 		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
-#if defined(CONFIG_SLM_NATIVE_TLS)
-		ret = socket(proxy.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
-#else
 		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
-#endif
 	}
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
@@ -263,14 +234,23 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 	proxy.sock = ret;
 
 	if (proxy.sec_tag != INVALID_SEC_TAG) {
-		sec_tag_t sec_tag_list[1] = { proxy.sec_tag };
 #if defined(CONFIG_SLM_NATIVE_TLS)
 		ret = slm_native_tls_load_credentials(proxy.sec_tag);
 		if (ret < 0) {
 			LOG_ERR("Failed to load sec tag: %d (%d)", proxy.sec_tag, ret);
 			goto exit_cli;
 		}
+		int tls_native = 1;
+
+		/* Must be the first socket option to set. */
+		ret = setsockopt(proxy.sock, SOL_TLS, TLS_NATIVE, &tls_native, sizeof(tls_native));
+		if (ret) {
+			ret = errno;
+			goto exit_cli;
+		}
 #endif
+		sec_tag_t sec_tag_list[1] = { proxy.sec_tag };
+
 		ret = setsockopt(proxy.sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 				 sizeof(sec_tag_t));
 		if (ret) {
