@@ -153,8 +153,8 @@ static int SimulatedBridgedDeviceOnOffLightSwitchWriteHandler(const struct shell
 	uint8_t value = strtoul(argv[1], nullptr, 0);
 	chip::EndpointId endpointId = strtoul(argv[2], nullptr, 0);
 
-	DeviceType deviceType{};
-	auto *provider = BridgeManager().Instance().GetProvider(endpointId, deviceType);
+	uint16_t deviceType{};
+	auto *provider = Nrf::BridgeManager().Instance().GetProvider(endpointId, deviceType);
 
 	if (provider) {
 		if ((0 == strcmp(command, "onoff_switch") && deviceType != DeviceType::OnOffLightSwitch)) {

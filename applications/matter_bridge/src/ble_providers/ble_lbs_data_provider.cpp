@@ -28,26 +28,18 @@ static bt_uuid *sUuidButton = BT_UUID_LBS_BUTTON;
 static bt_uuid *sUuidCcc = BT_UUID_GATT_CCC;
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
-void ProcessCommand(CommandId aCommandId, const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice,
-		    void *aContext)
+void ProcessCommand(const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice, Nrf::Matter::BindingHandler::BindingData &aData)
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;
-	Nrf::Matter::BindingHandler::BindingData *data =
-		reinterpret_cast<Nrf::Matter::BindingHandler::BindingData *>(aContext);
 
-	auto onSuccess = [dataRef = data](const ConcreteCommandPath &commandPath, const StatusIB &status,
-					  const auto &dataResponse) {
-		LOG_DBG("Binding command applied successfully!");
+	auto onSuccess = [dataRef = Platform::New<Nrf::Matter::BindingHandler::BindingData>(aData)](
+				 const ConcreteCommandPath &commandPath, const StatusIB &status,
+				 const auto &dataResponse) { Matter::BindingHandler::OnInvokeCommandSucces(dataRef); };
 
-		/* If session was recovered and communication works, reset flag to the initial state. */
-		if (dataRef->CaseSessionRecovered) {
-			dataRef->CaseSessionRecovered = false;
-		}
-	};
-
-	auto onFailure = [dataRef = *data](CHIP_ERROR aError) mutable {
-		Nrf::Matter::BindingHandler::OnInvokeCommandFailure(dataRef, aError);
-	};
+	auto onFailure =
+		[dataRef = Platform::New<Nrf::Matter::BindingHandler::BindingData>(aData)](CHIP_ERROR aError) mutable {
+			Matter::BindingHandler::OnInvokeCommandFailure(dataRef, aError);
+		};
 
 	if (aDevice) {
 		/* We are validating connection is ready once here instead of multiple times in each case statement
