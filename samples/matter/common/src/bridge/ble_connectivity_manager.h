@@ -39,7 +39,7 @@ public:
 	};
 
 	struct ScanResult {
-		ScannedDevice * mDevices = nullptr;
+		ScannedDevice *mDevices = nullptr;
 		uint8_t mCount = 0;
 	};
 
@@ -78,9 +78,14 @@ private:
 		k_timer mRecoveryTimer;
 	};
 
+	struct DiscoveryHandlerCtx {
+		BLEBridgedDeviceProvider *mProvider;
+		bt_gatt_dm *mDiscoveryData;
+	};
+
 public:
-	using DeviceConnectedCallback = void (*)(bool discoverySucceeded, void *context);
-	using ScanDoneCallback = void (*)(ScanResult & result, void *context);
+	using DeviceConnectedCallback = CHIP_ERROR (*)(bool success, void *context);
+	using ScanDoneCallback = void (*)(ScanResult &result, void *context);
 	using ConnectionSecurityRequestCallback = void (*)(void *context);
 
 	struct ConnectionSecurityRequest {
@@ -228,7 +233,7 @@ public:
 		static BLEConnectivityManager sInstance;
 		return sInstance;
 	}
-	static void ReScanCallback(ScanResult & result, void *context);
+	static void ReScanCallback(ScanResult &result, void *context);
 
 private:
 	bt_le_conn_param *GetScannedDeviceConnParams(bt_addr_le_t address);
