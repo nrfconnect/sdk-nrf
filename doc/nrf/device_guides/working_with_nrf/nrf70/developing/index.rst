@@ -12,5 +12,6 @@ The following subpages cover topics related to developing applications with the 
    :maxdepth: 2
    :caption: Subpages:
 
+   stack_partitioning
    constrained
    fw_patches_ext_flash

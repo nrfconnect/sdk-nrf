@@ -1016,6 +1016,7 @@ Documentation
   * :ref:`contributions_ncs` page in a new :ref:`contributions` section that also includes the development model pages, previously listed under :ref:`releases_and_maturity`.
   * :ref:`ug_lte` user guide under :ref:`protocols`.
   * Gazell and NFC sections in the :ref:`app_power_opt_recommendations` user guide.
+  * :ref:`ug_nrf70_stack partitioning` page in the :ref:`ug_nrf70_developing` user guide.
 
 * Updated:
 
