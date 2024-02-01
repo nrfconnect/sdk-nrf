@@ -946,6 +946,14 @@ Libraries for networking
 
   * Updated the :c:struct:`nrf_cloud_rest_location_request` structure to accept a pointer to a :c:struct:`nrf_cloud_location_config` structure in place of the single ``disable_response`` flag.
 
+* :ref:`lib_wifi_credentials` library:
+
+  * Updated PSA backend to use PSA Internal Trusted Storage (ITS) to store Wi-Fi credentials instead of Protected Storage.
+    The change is because PSA ITS is better suited to store secrets.
+    When switching storage the credentials need to be migrated manually, or the existing credentials are lost.
+    Removed ``CONFIG_WIFI_CREDENTIALS_BACKEND_PSA_UID_OFFSET``.
+    Use the :kconfig:option:`CONFIG_WIFI_CREDENTIALS_BACKEND_PSA_OFFSET` Kconfig option instead.
+
 Libraries for NFC
 -----------------
 
