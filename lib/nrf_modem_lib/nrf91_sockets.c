@@ -1119,7 +1119,7 @@ static int nrf91_socket_create(int family, int type, int proto)
 
 #define NRF91_SOCKET_PRIORITY 40
 
-NET_SOCKET_REGISTER(nrf91_socket, NRF91_SOCKET_PRIORITY, AF_UNSPEC,
+NET_SOCKET_OFFLOAD_REGISTER(nrf91_socket, NRF91_SOCKET_PRIORITY, AF_UNSPEC,
 		    nrf91_socket_is_supported, nrf91_socket_create);
 
 /* Create a network interface for nRF91 */
