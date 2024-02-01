@@ -261,7 +261,7 @@ Kconfig*                                  @tejlmand
 /subsys/nrf_profiler/                     @pdunaj
 /subsys/shell/                            @nordic-krch
 /subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
-/subsys/secure_storage/                   @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
+/subsys/encrypted_storage/                @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /subsys/net_core_monitor/                 @maje-emb
 /subsys/zigbee/                           @milewr
 /tests/                                   @PerMac @katgiadla

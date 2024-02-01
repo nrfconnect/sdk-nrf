@@ -13,7 +13,7 @@
 #define STORAGE_PARTITION    storage_partition
 #define STORAGE_PARTITION_ID FIXED_PARTITION_ID(STORAGE_PARTITION)
 
-LOG_MODULE_REGISTER(persistent_key_usage_secure_storage, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(persistent_key_usage_encrypted_storage, LOG_LEVEL_DBG);
 
 /* LittleFS work area strcut */
 FS_LITTLEFS_DECLARE_DEFAULT_CONFIG(cstorage);
@@ -44,7 +44,7 @@ static int setup_settings_backend(void)
 
 SYS_INIT(setup_settings_backend, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
-#ifdef CONFIG_SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
+#ifdef CONFIG_ENCRYPTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
 #include <nrf_cc3xx_platform.h>
 #include <hw_unique_key.h>
 
@@ -71,4 +71,4 @@ int write_huk(void)
 
 	return 0;
 }
-#endif /* CONFIG_SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK */
+#endif /* CONFIG_ENCRYPTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK */

@@ -22,7 +22,7 @@ if(NOT SYSBUILD)
 endif()
 
 add_subdirectory_ifdef(CONFIG_NRF_SECURITY nrf_security)
-add_subdirectory_ifdef(CONFIG_SECURE_STORAGE secure_storage)
+add_subdirectory_ifdef(CONFIG_ENCRYPTED_STORAGE encrypted_storage)
 
 add_subdirectory(net)
 add_subdirectory_ifdef(CONFIG_ESB		esb)
@@ -31,6 +31,7 @@ add_subdirectory_ifdef(CONFIG_APP_EVENT_MANAGER	app_event_manager_profiler_trace
 add_subdirectory_ifdef(CONFIG_EVENT_MANAGER_PROXY	event_manager_proxy)
 add_subdirectory_ifdef(CONFIG_CAF		caf)
 add_subdirectory_ifdef(CONFIG_NRF_PROFILER		nrf_profiler)
+add_subdirectory(dfu)
 add_subdirectory(dfu)
 if (CONFIG_PCD OR CONFIG_PCD_APP OR CONFIG_PCD_NET)
 add_subdirectory(pcd)

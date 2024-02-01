@@ -14,13 +14,13 @@
 
 #include "storage_backend.h"
 
-LOG_MODULE_REGISTER(internal_secure_storage_settings, CONFIG_SECURE_STORAGE_LOG_LEVEL);
+LOG_MODULE_REGISTER(internal_encrypted_storage_settings, CONFIG_ENCRYPTED_STORAGE_LOG_LEVEL);
 
 /* Storage pattern: prefix, uid low, uid high, suffix */
-#define SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_PATTERN "%s/%08x%08x%s"
+#define ENCRYPTED_STORAGE_SETTINGS_BACKEND_FILENAME_PATTERN "%s/%08x%08x%s"
 
 /* Max filename length aligned with Settings File backend max length */
-#define SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH 32
+#define ENCRYPTED_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH 32
 
 struct load_object_info {
 	uint8_t *data;
@@ -34,7 +34,7 @@ static psa_status_t create_filename(char *filename, const size_t filename_size, 
 {
 	int ret;
 
-	ret = snprintf(filename, filename_size, SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_PATTERN,
+	ret = snprintf(filename, filename_size, ENCRYPTED_STORAGE_SETTINGS_BACKEND_FILENAME_PATTERN,
 		       prefix, (unsigned int)((uid) >> 32), (unsigned int)((uid)&0xffffffff),
 		       suffix);
 	/* snprintf doc:
@@ -89,7 +89,7 @@ static psa_status_t error_to_psa_error(int errorno)
 psa_status_t storage_get_object(const psa_storage_uid_t uid, const char *prefix, const char *suffix,
 				uint8_t *object_data, const size_t object_size)
 {
-	char path[SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1];
+	char path[ENCRYPTED_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1];
 	struct load_object_info info;
 	int ret;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
@@ -98,7 +98,7 @@ psa_status_t storage_get_object(const psa_storage_uid_t uid, const char *prefix,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	status = create_filename(path, SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1,
+	status = create_filename(path, ENCRYPTED_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1,
 				 prefix, uid, suffix);
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -125,13 +125,13 @@ psa_status_t storage_set_object(const psa_storage_uid_t uid, const char *prefix,
 				const uint8_t *object_data, const size_t object_size)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	char path[SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1];
+	char path[ENCRYPTED_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1];
 
 	if (object_size == 0 || object_data == NULL || prefix == NULL || suffix == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	status = create_filename(path, SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1,
+	status = create_filename(path, ENCRYPTED_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1,
 				 prefix, uid, suffix);
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -144,13 +144,13 @@ psa_status_t storage_remove_object(const psa_storage_uid_t uid, const char *pref
 				   const char *suffix)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	char path[SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1];
+	char path[ENCRYPTED_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1];
 
 	if (prefix == NULL || suffix == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	status = create_filename(path, SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1,
+	status = create_filename(path, ENCRYPTED_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1,
 				 prefix, uid, suffix);
 	if (status != PSA_SUCCESS) {
 		return status;

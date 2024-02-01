@@ -27,7 +27,7 @@ static struct aead_ctr_nonce {
 
 static bool is_ctr_initialized;
 
-static psa_status_t secure_storage_nonce_init(void)
+static psa_status_t encrypted_storage_nonce_init(void)
 {
 	psa_status_t status;
 
@@ -48,7 +48,7 @@ static psa_status_t secure_storage_nonce_init(void)
 }
 
 /* Return an incrementing nonce */
-psa_status_t secure_storage_get_nonce(uint8_t *nonce, size_t nonce_len)
+psa_status_t encrypted_storage_get_nonce(uint8_t *nonce, size_t nonce_len)
 {
 	psa_status_t status;
 
@@ -65,7 +65,7 @@ psa_status_t secure_storage_get_nonce(uint8_t *nonce, size_t nonce_len)
 	}
 
 	if (!is_ctr_initialized) {
-		status = secure_storage_nonce_init();
+		status = encrypted_storage_nonce_init();
 
 		if (status != PSA_SUCCESS) {
 			return status;
