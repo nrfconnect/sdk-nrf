@@ -22,7 +22,7 @@ public:
 	uint16_t GetBindingClusterRevision() { return kBindingClusterRevision; }
 	uint32_t GetBindingFeatureMap() { return kBindingFeatureMap; }
 
-	Nrf::MatterBridgedDevice::DeviceType GetDeviceType() const override
+	uint16_t GetDeviceType() const override
 	{
 		return Nrf::MatterBridgedDevice::DeviceType::OnOffLightSwitch;
 	}

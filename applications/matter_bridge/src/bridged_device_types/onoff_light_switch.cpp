@@ -53,14 +53,14 @@ DECLARE_DYNAMIC_CLUSTER(Clusters::OnOff::Id, onOffClientAttrs, ZAP_CLUSTER_MASK(
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedLightSwitchEndpoint, bridgedLightSwitchClusters);
 
-static constexpr uint8_t kBridgedOnOffLightSwitchEndpointVersion = 2
+static constexpr uint8_t kBridgedOnOffLightSwitchEndpointVersion = 2;
 
-	static constexpr EmberAfDeviceType kBridgedLightSwitchDeviceTypes[] = {
-		{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::OnOffLightSwitch),
-		  kBridgedOnOffLightSwitchEndpointVersion },
-		{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::BridgedNode),
-		  MatterBridgedDevice::kDefaultDynamicEndpointVersion }
-	};
+static constexpr EmberAfDeviceType kBridgedLightSwitchDeviceTypes[] = {
+	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::OnOffLightSwitch),
+	  kBridgedOnOffLightSwitchEndpointVersion },
+	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::BridgedNode),
+	  MatterBridgedDevice::kDefaultDynamicEndpointVersion }
+};
 
 static constexpr uint8_t kLightSwitchDataVersionSize = ArraySize(bridgedLightSwitchClusters);
 
