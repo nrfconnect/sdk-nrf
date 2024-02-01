@@ -340,6 +340,10 @@ Bluetooth samples
 
   * Added the configuration option to disable the Direction Finding feature.
 
+* :ref:`central_uart` sample:
+
+  * Corrected the behavior when building with the :ref:`ble_rpc` library.
+
 Bluetooth Mesh samples
 ----------------------
 
