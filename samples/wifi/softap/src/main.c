@@ -19,6 +19,13 @@ LOG_MODULE_REGISTER(softap, CONFIG_LOG_DEFAULT_LEVEL);
 
 static struct net_mgmt_event_callback wifi_sap_mgmt_cb;
 
+static K_MUTEX_DEFINE(wifi_ap_sta_list_lock);
+struct wifi_ap_sta_node {
+	bool valid;
+	struct wifi_ap_sta_info sta_info;
+};
+static struct wifi_ap_sta_node sta_list[CONFIG_SOFTAP_SAMPLE_MAX_STATIONS];
+
 static void handle_wifi_ap_enable_result(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_status *status =
@@ -31,12 +38,77 @@ static void handle_wifi_ap_enable_result(struct net_mgmt_event_callback *cb)
 	}
 }
 
+static void handle_wifi_ap_sta_connected(struct net_mgmt_event_callback *cb)
+{
+	const struct wifi_ap_sta_info *sta_info =
+		(const struct wifi_ap_sta_info *)cb->info;
+	uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
+	int i;
+
+	LOG_INF("Station connected: %s",
+		net_sprint_ll_addr_buf(sta_info->mac, WIFI_MAC_ADDR_LEN,
+				       mac_string_buf, sizeof(mac_string_buf)));
+
+	k_mutex_lock(&wifi_ap_sta_list_lock, K_FOREVER);
+	for (i = 0; i < CONFIG_SOFTAP_SAMPLE_MAX_STATIONS; i++) {
+		if (!sta_list[i].valid) {
+			sta_list[i].sta_info = *sta_info;
+			sta_list[i].valid = true;
+			break;
+		}
+	}
+
+	if (i == CONFIG_SOFTAP_SAMPLE_MAX_STATIONS) {
+		LOG_ERR("No space to store station info: "
+			"Increase CONFIG_SOFTAP_SAMPLE_MAX_STATIONS");
+	}
+
+	k_mutex_unlock(&wifi_ap_sta_list_lock);
+}
+
+static void handle_wifi_ap_sta_disconnected(struct net_mgmt_event_callback *cb)
+{
+	const struct wifi_ap_sta_info *sta_info =
+		(const struct wifi_ap_sta_info *)cb->info;
+	uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
+	int i;
+
+	LOG_INF("Station disconnected: %s",
+		net_sprint_ll_addr_buf(sta_info->mac, WIFI_MAC_ADDR_LEN,
+				       mac_string_buf, sizeof(mac_string_buf)));
+
+	k_mutex_lock(&wifi_ap_sta_list_lock, K_FOREVER);
+	for (i = 0; i < CONFIG_SOFTAP_SAMPLE_MAX_STATIONS; i++) {
+		if (!sta_list[i].valid) {
+			continue;
+		}
+
+		if (!memcmp(sta_list[i].sta_info.mac, sta_info->mac,
+			    WIFI_MAC_ADDR_LEN)) {
+			sta_list[i].valid = false;
+			break;
+		}
+	}
+
+	if (i == CONFIG_SOFTAP_SAMPLE_MAX_STATIONS) {
+		LOG_WRN("No matching MAC address found in the list");
+	}
+
+	k_mutex_unlock(&wifi_ap_sta_list_lock);
+}
+
 static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 				    uint32_t mgmt_event, struct net_if *iface)
 {
 	switch (mgmt_event) {
 	case NET_EVENT_WIFI_AP_ENABLE_RESULT:
 		handle_wifi_ap_enable_result(cb);
+		break;
+	case NET_EVENT_WIFI_AP_STA_CONNECTED:
+		handle_wifi_ap_sta_connected(cb);
+		break;
+	case NET_EVENT_WIFI_AP_STA_DISCONNECTED:
+		handle_wifi_ap_sta_disconnected(cb);
 		break;
 	default:
 		break;

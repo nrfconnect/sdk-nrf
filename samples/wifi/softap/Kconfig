@@ -83,4 +83,13 @@ config SOFTAP_SAMPLE_PASSWORD
 	string "Passphrase (WPA2) or password (WPA3)"
 	help
 	  Set the password for SoftAP.
+
+config SOFTAP_SAMPLE_MAX_STATIONS
+	int "Maximum number of stations"
+	# Experimental support for one, but in future support for up to 8 (nRF70 limitation)
+	range 1 1
+	default 1
+	help
+	  Set the maximum number of stations allowed to connect to the SoftAP.
+
 endmenu
