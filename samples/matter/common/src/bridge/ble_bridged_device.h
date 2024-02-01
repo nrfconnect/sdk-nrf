@@ -40,6 +40,24 @@ public:
 	virtual bt_uuid *GetServiceUuid() = 0;
 	virtual int ParseDiscoveredData(bt_gatt_dm *discoveredData) = 0;
 
+	BLEBridgedDevice &GetBLEBridgedDevice() { return mDevice; }
+	void SetConnectionObject(bt_conn *conn) { mDevice.mConn = conn; }
+	bt_conn *GetConnectionObject() { return mDevice.mConn; }
+	void RemoveConnectionObject() { mDevice.mConn = nullptr; }
+
+	/**
+	 * @brief Initialize BLE bridged device
+	 *
+	 * Sets the user provided initialization parameters of the BLE bridged device.
+	 * The user provided connection callback is triggered as a final step of the connection establishment procedure.
+	 * The context data can be used to perform next steps aiming to eventually bridge the BLE device with the Matter
+	 * counterpart after the connection was successful. Note that it is user's responsibility to take care about the
+	 * context data lifetime.
+	 *
+	 * @param address BT address of the device
+	 * @param callback connection callback
+	 * @param context connection callback context data
+	 */
 	void InitializeBridgedDevice(bt_addr_le_t address, BLEConnectivityManager::DeviceConnectedCallback callback,
 				     void *context)
 	{
@@ -48,11 +66,6 @@ public:
 		mDevice.mFirstConnectionCallbackContext = context;
 		mDevice.mProvider = this;
 	}
-
-	BLEBridgedDevice &GetBLEBridgedDevice() { return mDevice; }
-	void SetConnectionObject(bt_conn *conn) { mDevice.mConn = conn; }
-	bt_conn *GetConnectionObject() { return mDevice.mConn; }
-	void RemoveConnectionObject() { mDevice.mConn = nullptr; }
 
 	/**
 	 * @brief Check if the bridged device has been initially connected.

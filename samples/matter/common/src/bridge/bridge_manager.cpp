@@ -20,7 +20,8 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 using namespace ::chip;
 using namespace ::chip::app;
 
-namespace Nrf {
+namespace Nrf
+{
 
 CHIP_ERROR BridgeManager::Init(LoadStoredBridgedDevicesCallback loadStoredBridgedDevicesCb)
 {
@@ -60,16 +61,21 @@ CHIP_ERROR BridgeManager::AddBridgedDevices(MatterBridgedDevice *devices[], Brid
 {
 	chip::Optional<uint8_t> indexes[deviceListSize];
 	uint16_t endpoints[deviceListSize];
+	Platform::UniquePtr<BridgedDeviceDataProvider> providerPtr(dataProvider);
 
 	VerifyOrReturnError(devicesPairIndexes, CHIP_ERROR_INTERNAL);
-
-	return AddBridgedDevices(devices, dataProvider, deviceListSize, devicesPairIndexes, endpoints, indexes);
+	CHIP_ERROR err =
+		DoAddBridgedDevices(devices, providerPtr.get(), deviceListSize, devicesPairIndexes, endpoints, indexes);
+	/* The ownership was transferred unconditionally. */
+	providerPtr.release();
+	return err;
 }
 
 CHIP_ERROR BridgeManager::AddBridgedDevices(MatterBridgedDevice *devices[], BridgedDeviceDataProvider *dataProvider,
 					    uint8_t deviceListSize, uint8_t devicesPairIndexes[],
 					    uint16_t endpointIds[])
 {
+	Platform::UniquePtr<BridgedDeviceDataProvider> providerPtr(dataProvider);
 	chip::Optional<uint8_t> indexes[deviceListSize];
 
 	VerifyOrReturnError(devicesPairIndexes, CHIP_ERROR_INTERNAL);
@@ -77,13 +83,16 @@ CHIP_ERROR BridgeManager::AddBridgedDevices(MatterBridgedDevice *devices[], Brid
 	for (auto i = 0; i < deviceListSize; i++) {
 		indexes[i].SetValue(devicesPairIndexes[i]);
 	}
-
-	return AddBridgedDevices(devices, dataProvider, deviceListSize, devicesPairIndexes, endpointIds, indexes);
+	CHIP_ERROR err = DoAddBridgedDevices(devices, providerPtr.get(), deviceListSize, devicesPairIndexes,
+					     endpointIds, indexes);
+	/* The ownership was transferred unconditionally. */
+	providerPtr.release();
+	return err;
 }
 
-CHIP_ERROR BridgeManager::AddBridgedDevices(MatterBridgedDevice *devices[], BridgedDeviceDataProvider *dataProvider,
-					    uint8_t deviceListSize, uint8_t devicesPairIndexes[],
-					    uint16_t endpointIds[], chip::Optional<uint8_t> indexes[])
+CHIP_ERROR BridgeManager::DoAddBridgedDevices(MatterBridgedDevice *devices[], BridgedDeviceDataProvider *dataProvider,
+					      uint8_t deviceListSize, uint8_t devicesPairIndexes[],
+					      uint16_t endpointIds[], chip::Optional<uint8_t> indexes[])
 {
 	CHIP_ERROR err = AddDevices(devices, dataProvider, deviceListSize, indexes, endpointIds);
 
@@ -307,30 +316,38 @@ CHIP_ERROR BridgeManager::AddDevices(MatterBridgedDevice *devices[], BridgedDevi
 				     uint8_t deviceListSize, chip::Optional<uint8_t> devicesPairIndexes[],
 				     uint16_t endpointIds[])
 {
-	VerifyOrReturnError(devices && dataProvider, CHIP_ERROR_INTERNAL);
+	CHIP_ERROR err{ CHIP_NO_ERROR };
+
+	VerifyOrReturnError(devices || dataProvider, CHIP_ERROR_INVALID_ARGUMENT);
+	VerifyOrExit(devices, err = CHIP_ERROR_INVALID_ARGUMENT);
+	VerifyOrExit(dataProvider, err = CHIP_ERROR_INVALID_ARGUMENT);
 
 	/* Maximum number of Matter bridged devices is controlled inside mDevicesMap,
 	   but the data providers may be created independently, so let's ensure we do not
 	   violate the maximum number of supported instances. */
-	if (mDevicesMap.FreeSlots() < deviceListSize) {
-		/* This method takes care of the resources, so objects have to be deleted. */
-		for (auto i = 0; i < deviceListSize; ++i) {
-			chip::Platform::Delete(devices[i]);
-		}
-		chip::Platform::Delete(dataProvider);
-		return CHIP_ERROR_NO_MEMORY;
-	}
+	VerifyOrExit(mDevicesMap.FreeSlots() >= deviceListSize, err = CHIP_ERROR_NO_MEMORY);
 
-	CHIP_ERROR status{ CHIP_NO_ERROR };
 	for (auto i = 0; i < deviceListSize; ++i) {
-		status = AddSingleDevice(devices[i], dataProvider, devicesPairIndexes[i], endpointIds[i]);
+		err = AddSingleDevice(devices[i], dataProvider, devicesPairIndexes[i], endpointIds[i]);
 
-		if (status != CHIP_NO_ERROR) {
-			return status;
+		if (err != CHIP_NO_ERROR) {
+			return err;
 		}
 	}
+exit:
+	/* This method takes care of the resources, so objects have to be deleted in case of failures. */
+	if (err != CHIP_NO_ERROR) {
+		if (dataProvider) {
+			chip::Platform::Delete(dataProvider);
+		}
 
-	return CHIP_NO_ERROR;
+		if (devices) {
+			for (auto i = 0; i < deviceListSize; ++i) {
+				chip::Platform::Delete(devices[i]);
+			}
+		}
+	}
+	return err;
 }
 
 CHIP_ERROR BridgeManager::HandleRead(uint16_t index, ClusterId clusterId,
@@ -451,8 +468,8 @@ EmberAfStatus emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterI
 {
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 
-	if (CHIP_NO_ERROR ==
-	    Nrf::BridgeManager::Instance().HandleRead(endpointIndex, clusterId, attributeMetadata, buffer, maxReadLength)) {
+	if (CHIP_NO_ERROR == Nrf::BridgeManager::Instance().HandleRead(endpointIndex, clusterId, attributeMetadata,
+								       buffer, maxReadLength)) {
 		return EMBER_ZCL_STATUS_SUCCESS;
 	} else {
 		return EMBER_ZCL_STATUS_FAILURE;

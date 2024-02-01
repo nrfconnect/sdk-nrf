@@ -99,6 +99,8 @@ void BLEConnectivityManager::ConnectionHandler(bt_conn *conn, uint8_t conn_err)
 {
 	const bt_addr_le_t *dstAddr = bt_conn_get_dst(conn);
 	BLEBridgedDeviceProvider *provider = nullptr;
+	int err = 0;
+	bool securityFailed = false;
 
 	/* Find the created device instance based on address. */
 	for (int i = 0; i < kMaxConnectedDevices; i++) {
@@ -117,6 +119,10 @@ void BLEConnectivityManager::ConnectionHandler(bt_conn *conn, uint8_t conn_err)
 	if (!provider) {
 		return;
 	}
+
+	/* If there was an error during the initial connection, we should notify the application */
+	bool firstConnFailed = (conn_err && !provider->IsInitiallyConnected());
+	VerifyOrExit(!firstConnFailed, err = conn_err);
 
 	/* The device was successfully recovered. */
 	if (conn_err == 0 && provider->IsInitiallyConnected()) {
@@ -143,20 +149,31 @@ void BLEConnectivityManager::ConnectionHandler(bt_conn *conn, uint8_t conn_err)
 	LOG_INF("Connected: %s", addrStr);
 
 #if defined(CONFIG_BT_SMP)
-	int err = bt_conn_set_security(conn, static_cast<bt_security_t>(CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL));
-	if (err) {
-		LOG_ERR("Failed to set security (%d)", err);
-		return;
-	}
+	err = bt_conn_set_security(conn, static_cast<bt_security_t>(CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL));
+	VerifyOrExit(err == 0, securityFailed = true);
 
 	/* Start GATT discovery only if this specific device was successfully connected before. Otherwise, it will be
 	 * called after a successful pairing. */
 	if (provider->IsInitiallyConnected()) {
-		StartGattDiscovery(conn, provider);
+		err = StartGattDiscovery(conn, provider);
+		VerifyOrExit(err == 0, );
 	}
 #else
-	StartGattDiscovery(conn, provider);
+	err = StartGattDiscovery(conn, provider);
+	VerifyOrExit(err == 0, );
 #endif
+
+	return;
+
+exit:
+	if (securityFailed) {
+		LOG_ERR("Failed to set the connection security (%d)", err);
+	} else {
+		LOG_ERR("The connection failed (%d)", err);
+	}
+	/* Trigger the connection callback to inform the application that the connection procedure failed. */
+	provider->GetBLEBridgedDevice().mFirstConnectionCallback(
+		false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
 }
 
 void BLEConnectivityManager::DisconnectionHandler(bt_conn *conn, uint8_t reason)
@@ -288,22 +305,44 @@ void BLEConnectivityManager::DiscoveryCompletedHandler(bt_gatt_dm *dm, void *con
 
 	discoveryResult = true;
 exit:
-	if (provider) {
-		if (!provider->IsInitiallyConnected()) {
-			/* Provider is not initalized it so we need to call the first connection callback */
-			provider->GetBLEBridgedDevice().mFirstConnectionCallback(
-				discoveryResult, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
-			provider->ConfirmInitialConnection();
-		}
 
-		VerifyOrReturn(CHIP_NO_ERROR == provider->NotifyReachableStatusChange(true),
-			       LOG_WRN("The device has not been notified about the status change."));
-
-		VerifyOrReturn(provider->ParseDiscoveredData(dm) == 0,
-			       LOG_ERR("Cannot parse the GATT discovered data."));
+	Platform::UniquePtr<DiscoveryHandlerCtx> discoveryCtx(Platform::New<DiscoveryHandlerCtx>());
+	if (!discoveryCtx) {
+		return;
 	}
 
-	bt_gatt_dm_data_release(dm);
+	discoveryCtx->mProvider = provider;
+	discoveryCtx->mDiscoveryData = dm;
+
+	CHIP_ERROR err = chip::DeviceLayer::PlatformMgr().ScheduleWork(
+		[](intptr_t context) {
+			Platform::UniquePtr<DiscoveryHandlerCtx> ctx(reinterpret_cast<DiscoveryHandlerCtx *>(context));
+			if (!ctx->mProvider->IsInitiallyConnected()) {
+				/* Provider is not initalized, so we need to call the first connection callback. */
+				CHIP_ERROR err = ctx->mProvider->GetBLEBridgedDevice().mFirstConnectionCallback(
+					ctx->mDiscoveryData,
+					ctx->mProvider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
+				ctx->mProvider->ConfirmInitialConnection();
+				VerifyOrReturn(CHIP_NO_ERROR == err, bt_gatt_dm_data_release(ctx->mDiscoveryData);
+					       Instance().RemoveBLEProvider(ctx->mProvider->GetBtAddress()););
+			}
+
+			if (CHIP_NO_ERROR != ctx->mProvider->NotifyReachableStatusChange(true)) {
+				LOG_WRN("The device has not been notified about the status change.");
+			}
+
+			if (0 != ctx->mProvider->ParseDiscoveredData(ctx->mDiscoveryData)) {
+				LOG_ERR("Cannot parse the GATT discovered data.");
+			}
+			bt_gatt_dm_data_release(ctx->mDiscoveryData);
+		},
+		reinterpret_cast<intptr_t>(discoveryCtx.get()));
+
+	if (CHIP_NO_ERROR == err) {
+		discoveryCtx.release();
+	} else {
+		bt_gatt_dm_data_release(dm);
+	}
 }
 
 void BLEConnectivityManager::DiscoveryNotFound(bt_conn *conn, void *context)
@@ -611,11 +650,13 @@ CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider, C
 	mRecovery.CancelTimer();
 	StopScan();
 
-	bt_conn *conn;
-	bt_le_conn_param *connParams = GetScannedDeviceConnParams(provider->GetBLEBridgedDevice().mAddr);
+	bt_conn *conn{};
+	bt_addr_le_t btAddress = provider->GetBtAddress();
+	bt_le_conn_param *connParams = GetScannedDeviceConnParams(btAddress);
 
 	if (!connParams) {
 		LOG_ERR("Failed to get conn params");
+		RemoveBLEProvider(btAddress);
 		return CHIP_ERROR_INTERNAL;
 	}
 
@@ -623,6 +664,7 @@ CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider, C
 
 	if (err) {
 		LOG_ERR("Creating connection failed (err %d)", err);
+		RemoveBLEProvider(btAddress);
 		return System::MapErrorZephyr(err);
 	} else {
 		provider->SetConnectionObject(conn);
@@ -774,7 +816,7 @@ void BLEConnectivityManager::Recovery::TimerTimeoutCallback(k_timer *timer)
 
 BLEBridgedDeviceProvider *BLEConnectivityManager::Recovery::GetProvider(sys_slist_t *list)
 {
-	ListItem *item = reinterpret_cast<ListItem*>(sys_slist_get(list));
+	ListItem *item = reinterpret_cast<ListItem *>(sys_slist_get(list));
 	BLEBridgedDeviceProvider *provider = nullptr;
 
 	if (item) {

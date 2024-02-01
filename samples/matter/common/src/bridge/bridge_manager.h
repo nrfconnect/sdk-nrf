@@ -11,7 +11,8 @@
 #include "bridged_device_data_provider.h"
 #include "matter_bridged_device.h"
 
-namespace Nrf {
+namespace Nrf
+{
 
 class BridgeManager {
 public:
@@ -115,8 +116,7 @@ public:
 	static void HandleUpdate(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
 				 chip::AttributeId attributeId, void *data, size_t dataSize);
 	static void HandleCommand(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
-				  chip::CommandId commandId,
-				  Nrf::Matter::BindingHandler::InvokeCommand invokeCommand);
+				  chip::CommandId commandId, Nrf::Matter::BindingHandler::InvokeCommand invokeCommand);
 
 	static BridgeManager &Instance()
 	{
@@ -198,10 +198,11 @@ private:
 
 	/**
 	 * @brief Add pair of bridged devices and their data provider using optional index and endpoint id. This is a
-	 * wrapper method invoked by public AddBridgedDevices methods that maps integer indexes to optionals are assigns
-	 * output index values.
+	 * wrapper method invoked by public AddBridgedDevices methods that maps indexes from optionals to integers that
+	 * are assigned with output values. This method takes the ownership of the passed `devices` and `dataProvider`
+	 * objects unconditionally.
 	 *
-	 * @param device address of valid bridged device object
+	 * @param devices address of valid bridged device objects
 	 * @param dataProvider address of valid data provider object
 	 * @param devicesPairIndexes array of the index objects that will be filled with pairs' indexes
 	 * assigned by the bridge
@@ -212,9 +213,9 @@ private:
 	 * @return CHIP_NO_ERROR on success
 	 * @return other error code on failure
 	 */
-	CHIP_ERROR AddBridgedDevices(MatterBridgedDevice *devices[], BridgedDeviceDataProvider *dataProvider,
-				     uint8_t deviceListSize, uint8_t devicesPairIndexes[], uint16_t endpointIds[],
-				     chip::Optional<uint8_t> indexes[]);
+	CHIP_ERROR DoAddBridgedDevices(MatterBridgedDevice *devices[], BridgedDeviceDataProvider *dataProvider,
+				       uint8_t deviceListSize, uint8_t devicesPairIndexes[], uint16_t endpointIds[],
+				       chip::Optional<uint8_t> indexes[]);
 
 	/**
 	 * @brief Add pair of bridged devices and their data provider using optional index and endpoint id. The method
