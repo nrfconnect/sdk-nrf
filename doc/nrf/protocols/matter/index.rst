@@ -24,6 +24,12 @@ The |NCS| allows you to develop applications with different versions of Matter, 
 +--------------------------+-----------------------------------------------------+------------------------+
 | |release|                | :ref:`1.1.0 <ug_matter_overview_dev_model_support>` | 1.1.0.1                |
 +--------------------------+                                                     |                        |
+| v2.5.1                   |                                                     |                        |
++--------------------------+                                                     |                        |
+| v2.5.0                   |                                                     |                        |
++--------------------------+                                                     |                        |
+| v2.4.3                   |                                                     |                        |
++--------------------------+                                                     |                        |
 | v2.4.2                   |                                                     |                        |
 +--------------------------+                                                     |                        |
 | v2.4.1                   |                                                     |                        |
@@ -46,7 +52,7 @@ The |NCS| allows you to develop applications with different versions of Matter, 
    These changes are listed in the Matter fork section of the |NCS| :ref:`release_notes`.
 
 .. important::
-   For Matter over Thread samples, starting with |NCS| v2.6.0, the default cryptography backend is Arm PSA Crypto API instead of Mbed TLS, which was used in earlier versions.
+   For Matter over Thread samples, starting with |NCS| releases after v2.5.2, the default cryptography backend is Arm PSA Crypto API instead of Mbed TLS, which was used in earlier versions.
    To :ref:`inherit Thread certification <ug_matter_device_certification_reqs_dependent>` from Nordic Semiconductor, you must use the PSA Crypto API backend.
    See the :ref:`migration guide <migration_2.6>` to learn about all changes if you are migrating from an earlier version of the |NCS|.
 
