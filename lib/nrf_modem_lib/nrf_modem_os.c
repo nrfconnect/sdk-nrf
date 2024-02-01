@@ -174,9 +174,21 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 
 	sleeping_thread_init(&thread, context);
 
+/* GCC 13 will emit a warning related to dangling pointer when
+ * stacked variable "thread.node" is added to the slist.
+ * This can be safely ignored, as "thread" is both added and
+ * removed from the slist within the same scope.
+ */
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-pointer"
+#endif /* __GNUC__ */
 	if (!sleeping_thread_add(&thread)) {
 		return 0;
 	}
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif /* __GNUC__ */
 
 	(void)k_sem_take(&thread.sem, SYS_TIMEOUT_MS(*timeout));
 
