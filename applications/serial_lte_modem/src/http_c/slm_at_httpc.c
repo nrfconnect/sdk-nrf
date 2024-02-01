@@ -224,16 +224,7 @@ static int do_http_connect(void)
 	if (httpc.sec_tag == INVALID_SEC_TAG) {
 		ret = socket(httpc.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
-#if defined(CONFIG_SLM_NATIVE_TLS)
-		ret = slm_native_tls_load_credentials(httpc.sec_tag);
-		if (ret < 0) {
-			LOG_ERR("Failed to load sec tag: %d (%d)", httpc.sec_tag, ret);
-			return ret;
-		}
-		ret = socket(httpc.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
-#else
 		ret = socket(httpc.family, SOCK_STREAM, IPPROTO_TLS_1_2);
-#endif
 	}
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
@@ -242,20 +233,22 @@ static int do_http_connect(void)
 	httpc.fd = ret;
 
 	/* Set socket options */
-	LOG_DBG("Configuring socket timeout (%lld s)", timeo.tv_sec);
-	ret = setsockopt(httpc.fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
-	if (ret) {
-		LOG_ERR("setsockopt(SO_SNDTIMEO) error: %d", -errno);
-		ret = -errno;
-		goto exit_cli;
-	}
-	ret = setsockopt(httpc.fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
-	if (ret) {
-		LOG_ERR("setsockopt(SO_SNDTIMEO) error: %d", -errno);
-		ret = -errno;
-		goto exit_cli;
-	}
 	if (httpc.sec_tag != INVALID_SEC_TAG) {
+#if defined(CONFIG_SLM_NATIVE_TLS)
+		ret = slm_native_tls_load_credentials(httpc.sec_tag);
+		if (ret < 0) {
+			LOG_ERR("Failed to load sec tag: %d (%d)", httpc.sec_tag, ret);
+			goto exit_cli;
+		}
+		int tls_native = 1;
+
+		/* Must be the first socket option to set. */
+		ret = setsockopt(httpc.fd, SOL_TLS, TLS_NATIVE, &tls_native, sizeof(tls_native));
+		if (ret) {
+			ret = errno;
+			goto exit_cli;
+		}
+#endif
 		sec_tag_t sec_tag_list[] = { httpc.sec_tag };
 
 		ret = setsockopt(httpc.fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
@@ -294,6 +287,20 @@ static int do_http_connect(void)
 			goto exit_cli;
 		}
 #endif
+	}
+
+	LOG_DBG("Configuring socket timeout (%lld s)", timeo.tv_sec);
+	ret = setsockopt(httpc.fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
+	if (ret) {
+		LOG_ERR("setsockopt(SO_SNDTIMEO) error: %d", -errno);
+		ret = -errno;
+		goto exit_cli;
+	}
+	ret = setsockopt(httpc.fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
+	if (ret) {
+		LOG_ERR("setsockopt(SO_SNDTIMEO) error: %d", -errno);
+		ret = -errno;
+		goto exit_cli;
 	}
 
 	/* Connect to HTTP server */
