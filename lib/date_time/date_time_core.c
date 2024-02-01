@@ -33,6 +33,9 @@ static K_WORK_DELAYABLE_DEFINE(time_work, date_time_handler);
 static int64_t date_time_last_update_uptime;
 static date_time_evt_handler_t app_evt_handler;
 
+/* In units of quarters of hours, same as used by AT+CCLK. */
+static int date_time_tz = DATE_TIME_TZ_INVALID;
+
 static void date_time_core_notify_event(enum date_time_evt_type time_source)
 {
 	static struct date_time_evt evt;
@@ -86,11 +89,12 @@ static void date_time_update_thread(void)
 
 #if defined(CONFIG_DATE_TIME_MODEM)
 		LOG_DBG("Getting time from cellular network");
+		int tz = DATE_TIME_TZ_INVALID;
 		int64_t date_time_ms_modem = 0;
 
-		err = date_time_modem_get(&date_time_ms_modem);
+		err = date_time_modem_get(&date_time_ms_modem, &tz);
 		if (err == 0) {
-			date_time_core_store(date_time_ms_modem, DATE_TIME_OBTAINED_MODEM);
+			date_time_core_store_tz(date_time_ms_modem, DATE_TIME_OBTAINED_MODEM, tz);
 			continue;
 		}
 #endif
@@ -174,6 +178,23 @@ int date_time_core_now(int64_t *unix_time_ms)
 	return 0;
 }
 
+int date_time_core_now_local(int64_t *local_time_ms)
+{
+	int err;
+
+	if (date_time_tz == DATE_TIME_TZ_INVALID) {
+		return -EAGAIN;
+	}
+
+	err = date_time_core_now(local_time_ms);
+	if (err) {
+		return err;
+	}
+
+	*local_time_ms += date_time_tz * 15 * 60 * 1000;
+	return 0;
+}
+
 int date_time_core_update_async(date_time_evt_handler_t evt_handler)
 {
 	if (evt_handler) {
@@ -208,6 +229,15 @@ bool date_time_core_is_valid(void)
 	return (date_time_last_update_uptime != 0);
 }
 
+bool date_time_core_is_valid_local(void)
+{
+	if (date_time_tz == DATE_TIME_TZ_INVALID) {
+		return false;
+	}
+
+	return date_time_core_is_valid();
+}
+
 void date_time_core_clear(void)
 {
 	date_time_last_update_uptime = 0;
@@ -231,11 +261,19 @@ int date_time_core_current_check(void)
 
 void date_time_core_store(int64_t curr_time_ms, enum date_time_evt_type time_source)
 {
-	struct timespec tp = { 0 };
-	struct tm ltm = { 0 };
+	/* Preserve existing TZ */
+	date_time_core_store_tz(curr_time_ms, time_source, date_time_tz);
+}
+
+void date_time_core_store_tz(int64_t curr_time_ms, enum date_time_evt_type time_source, int tz)
+{
+	struct timespec tp = {0};
+	struct tm ltm = {0};
 	int ret;
 
 	date_time_last_update_uptime = k_uptime_get();
+
+	date_time_tz = tz;
 
 	date_time_core_schedule_update(false);
 
@@ -249,12 +287,12 @@ void date_time_core_store(int64_t curr_time_ms, enum date_time_evt_type time_sou
 		return;
 	}
 	gmtime_r(&tp.tv_sec, &ltm);
-	LOG_DBG("System time updated: %04u-%02u-%02u %02u:%02u:%02u",
+	LOG_DBG("System time updated: %04u-%02u-%02u %02u:%02u:%02u%+03d",
 		ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday,
-		ltm.tm_hour, ltm.tm_min, ltm.tm_sec);
+		ltm.tm_hour, ltm.tm_min, ltm.tm_sec, tz);
 
 #if defined(CONFIG_DATE_TIME_MODEM)
-	date_time_modem_store(&ltm);
+	date_time_modem_store(&ltm, tz);
 #endif
 
 	date_time_core_notify_event(time_source);
