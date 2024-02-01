@@ -9,6 +9,13 @@ tests:
       - nrf52dk_nrf52832
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
-    platform_allow: nrf52840dk_nrf52840 nrf52dk_nrf52832 nrf5340dk_nrf5340_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp
+    platform_allow: >
+      nrf52840dk_nrf52840
+      nrf52dk_nrf52832
+      nrf5340dk_nrf5340_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns
+      nrf54h20dk_nrf54h20_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp
     tags: ci_build
