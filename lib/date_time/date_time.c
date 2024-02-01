@@ -126,9 +126,28 @@ int date_time_now(int64_t *unix_time_ms)
 	return err;
 }
 
+int date_time_now_local(int64_t *local_time_ms)
+{
+	if (local_time_ms == NULL) {
+		LOG_ERR("The passed in pointer cannot be NULL");
+		return -EINVAL;
+	}
+	if (!date_time_is_valid()) {
+		LOG_WRN("Valid time not currently available");
+		return -ENODATA;
+	}
+
+	return date_time_core_now_local(local_time_ms);
+}
+
 bool date_time_is_valid(void)
 {
 	return date_time_core_is_valid();
+}
+
+bool date_time_is_valid_local(void)
+{
+	return date_time_core_is_valid_local();
 }
 
 void date_time_register_handler(date_time_evt_handler_t evt_handler)

@@ -91,6 +91,21 @@ int date_time_uptime_to_unix_time_ms(int64_t *uptime);
  */
 int date_time_now(int64_t *unix_time_ms);
 
+/** @brief Get the current date time in local time.
+ *
+ *  @note If the function fails, the passed in variable retains its
+ *        old value.
+ *
+ *  @param[out] local_time_ms Pointer to a variable to store the current date
+ *                            time.
+ *
+ *  @return 0        If the operation was successful.
+ *  @return -ENODATA If the library does not have a valid date time.
+ *  @return -EAGAIN  If the library has the date time, but not a valid timezone.
+ *  @return -EINVAL  If the passed in pointer is NULL.
+ */
+int date_time_now_local(int64_t *local_time_ms);
+
 /** @brief Convenience function that checks if the library has obtained
  *	   an initial valid date time.
  *
@@ -103,6 +118,17 @@ int date_time_now(int64_t *unix_time_ms);
  *  @return false The library has not obtained an initial date time.
  */
 bool date_time_is_valid(void);
+
+/** @brief Check if the library has obtained
+ *	   an initial valid date time and timezone.
+ *
+ *  @note If this function returns false there is no point of
+ *	  subsequent calls to date_time_now_local().
+ *
+ *  @return true  The library has obtained a local date time.
+ *  @return false The library has not obtained a local date time.
+ */
+bool date_time_is_valid_local(void);
 
 /** @brief Register an event handler for Date time library events.
  *

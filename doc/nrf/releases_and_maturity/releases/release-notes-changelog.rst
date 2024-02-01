@@ -987,6 +987,10 @@ Other libraries
   * Added more default LTE metrics, such as band, operator, RSRP, and kilobytes sent and received.
   * Updated the default metric names to follow the standard |NCS| variable name convention.
 
+* :ref:`lib_date_time` library:
+
+  * Added the :c:func:`date_time_now_local()` function to the API.
+
 Common Application Framework (CAF)
 ----------------------------------
 
