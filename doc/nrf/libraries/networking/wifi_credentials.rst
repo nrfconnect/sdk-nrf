@@ -12,7 +12,7 @@ The Wi-Fi credentials library provides means to load and store Wi-Fi network cre
 Overview
 ********
 
-This library uses either Zephyr's settings subsystem or Platform Security Architecture (PSA) protected storage to store credentials.
+This library uses either Zephyr's settings subsystem or Platform Security Architecture (PSA) Internal Trusted Storage (ITS) to store credentials.
 It also holds a list of SSIDs in RAM to provide dictionary-like access using SSIDs as keys.
 
 Configuration
@@ -30,7 +30,7 @@ To configure the maximum number of networks, use the :kconfig:option:`CONFIG_WIF
 The IEEE 802.11 standard does not specify the maximum length of SAE passwords.
 To change the default, use the :kconfig:option:`CONFIG_WIFI_CREDENTIALS_SAE_PASSWORD_LENGTH` Kconfig option.
 
-When using the PSA protected storage backend, entries will be saved under consecutive UIDs with an offset configured with the :kconfig:option:`CONFIG_WIFI_CREDENTIALS_BACKEND_PSA_UID_OFFSET` Kconfig option.
+When using the PSA ITS backend, entries will be saved under consecutive key IDs with an offset configured with the :kconfig:option:`CONFIG_WIFI_CREDENTIALS_BACKEND_PSA_OFFSET` Kconfig option.
 
 Adding credentials
 ******************

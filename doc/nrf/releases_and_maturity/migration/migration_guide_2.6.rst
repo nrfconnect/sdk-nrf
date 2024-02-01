@@ -97,6 +97,13 @@ The following changes are mandatory to make your application work in the same wa
   * The PSA config is now validated by ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h.
     Users with invalid configurations must update their PSA configuration according to the error messages that check_crypto_config.h provides.
 
+* For :ref:`lib_wifi_credentials` library and Wi-Fi samples:
+
+  * ``CONFIG_WIFI_CREDENTIALS_BACKEND_PSA_UID_OFFSET`` has been removed because it was specific to the previous solution that used PSA Protected Storage instead of PSA Internal Trusted Storage (ITS).
+    Use :kconfig:option:`CONFIG_WIFI_CREDENTIALS_BACKEND_PSA_OFFSET` to specify the key offset for PSA ITS.
+    Be aware that Wi-Fi credentials stored in Protected Storage will not appear in ITS when switching.
+    To avoid re-provisioning Wi-Fi credentials, manually read out the old credentials from Protected Storage in the previously used UID and store to ITS.
+
 Recommended changes
 *******************
 
