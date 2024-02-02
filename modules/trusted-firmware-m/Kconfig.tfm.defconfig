@@ -69,7 +69,7 @@ config TFM_PARTITION_PROTECTED_STORAGE
 	# The protected storage partition require HKDF with HMAC and SHA-256 to
 	# derive the storage key and an AEAD encryption algorithm for storage
 	# encryption.
-	select HW_UNIQUE_KEY
+	select HW_UNIQUE_KEY if HW_UNIQUE_KEY_SUPPORTED
 	select PSA_WANT_ALG_HKDF
 	select PSA_WANT_ALG_HMAC
 	select PSA_WANT_ALG_SHA_256
