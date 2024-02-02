@@ -91,5 +91,4 @@ config SOFTAP_SAMPLE_MAX_STATIONS
 	default 1
 	help
 	  Set the maximum number of stations allowed to connect to the SoftAP.
-
 endmenu
