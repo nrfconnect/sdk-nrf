@@ -26,8 +26,8 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 
-#include "link/link_shell_pdn.h"
-#include "utils/net_utils.h"
+#include "link_shell_pdn.h"
+#include "net_utils.h"
 #include "mosh_print.h"
 
 #define NO_MDM_SCKT -1

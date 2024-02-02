@@ -22,7 +22,7 @@
 #include "mosh_defines.h"
 #include "mosh_print.h"
 #include "link_api.h"
-#include "utils/net_utils.h"
+#include "net_utils.h"
 
 /* Maximum length of the address */
 #define SOCK_MAX_ADDR_LEN 100

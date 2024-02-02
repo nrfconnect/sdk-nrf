@@ -18,7 +18,7 @@
 #include <zephyr/posix/arpa/inet.h>
 #include <zephyr/net/net_ip.h>
 
-#include "utils/net_utils.h"
+#include "net_utils.h"
 #include "mosh_print.h"
 
 #include "link_shell.h"

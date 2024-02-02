@@ -8,7 +8,7 @@
 
 #include <zephyr/shell/shell.h>
 
-#include "th/th_ctrl.h"
+#include "th_ctrl.h"
 #include "mosh_print.h"
 
 static int cmd_th_startbg(const struct shell *shell, size_t argc, char **argv)

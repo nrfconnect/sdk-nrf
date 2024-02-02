@@ -32,7 +32,7 @@
 #include <net/nrf_cloud_os.h>
 
 #include <dk_buttons_and_leds.h>
-#include "uart/uart_shell.h"
+#include "uart_shell.h"
 
 #if defined(CONFIG_MOSH_PPP)
 #include "ppp_ctrl.h"
@@ -50,7 +50,7 @@
 #include "fota.h"
 #endif
 #if defined(CONFIG_MOSH_WORKER_THREADS)
-#include "th/th_ctrl.h"
+#include "th_ctrl.h"
 #endif
 #include "mosh_defines.h"
 #include "mosh_print.h"
