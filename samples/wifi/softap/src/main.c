@@ -14,6 +14,7 @@ LOG_MODULE_REGISTER(softap, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/wifi_utils.h>
 #include "net_private.h"
+#include <zephyr/net/dhcpv4_server.h>
 
 #define WIFI_SAP_MGMT_EVENTS (NET_EVENT_WIFI_AP_ENABLE_RESULT)
 
@@ -251,6 +252,34 @@ static void wifi_set_reg_domain(void)
 	}
 }
 
+static void configure_dhcp_server(void)
+{
+	struct net_if *iface;
+	struct in_addr pool_start;
+	int ret;
+
+	iface = net_if_get_first_wifi();
+	if (!iface) {
+		LOG_ERR("Failed to get Wi-Fi interface");
+		return;
+	}
+
+	if (net_addr_pton(AF_INET, CONFIG_SOFTAP_SAMPLE_DHCPV4_POOL_START, &pool_start.s_addr)) {
+		LOG_ERR("Invalid address: %s", CONFIG_SOFTAP_SAMPLE_DHCPV4_POOL_START);
+		return;
+	}
+
+	ret = net_dhcpv4_server_start(iface, &pool_start);
+	if (ret == -EALREADY) {
+		LOG_ERR("DHCPv4 server already running on interface");
+	} else if (ret < 0) {
+		LOG_ERR("DHCPv4 server failed to start and returned %d error", ret);
+	} else {
+		LOG_INF("DHCPv4 server started and pool address starts from %s",
+			CONFIG_SOFTAP_SAMPLE_DHCPV4_POOL_START);
+	}
+}
+
 int main(void)
 {
 	net_mgmt_init_event_callback(&wifi_sap_mgmt_cb,
@@ -263,6 +292,8 @@ int main(void)
 
 	/* TODO: SHEL-2458 */
 	k_msleep(20);
+
+	configure_dhcp_server();
 
 	wifi_softap_enable();
 
