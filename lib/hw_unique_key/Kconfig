@@ -28,9 +28,13 @@ config HW_UNIQUE_KEY_LOAD
 	  area on the first clean boot. On subsequent boots, the bootloader
 	  will fail if no key is present.
 
+config HW_UNIQUE_KEY_SUPPORTED
+	bool
+	default y if HAS_HW_NRF_CC3XX
+
 config HW_UNIQUE_KEY
 	bool "Hardware Unique Keys (HUK)"
-	depends on HAS_HW_NRF_CC310 || HAS_HW_NRF_CC312
+	depends on HW_UNIQUE_KEY_SUPPORTED
 	depends on NRF_CC3XX_PLATFORM || BUILD_WITH_TFM
 	depends on NRF_SECURITY
 	depends on MPU_ALLOW_FLASH_WRITE || BUILD_WITH_TFM

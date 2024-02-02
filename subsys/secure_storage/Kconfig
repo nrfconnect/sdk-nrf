@@ -134,6 +134,7 @@ config SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
 	select HW_UNIQUE_KEY
 	select HW_UNIQUE_KEY_RANDOM
 	select PM_SINGLE_IMAGE
+	depends on HW_UNIQUE_KEY_SUPPORTED
 	help
 	  Use the Hardware Unique Key (HUK) with the UID as label to derive a
 	  new key.
