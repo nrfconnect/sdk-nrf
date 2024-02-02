@@ -118,8 +118,9 @@ static void button_msg_sub_thread(void)
 
 		switch (msg.button_pin) {
 		case BUTTON_PLAY_PAUSE:
-			if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
-				LOG_DBG("Play/pause not supported in walkie-talkie mode");
+			if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+				LOG_WRN("Play/pause not supported in walkie-talkie and "
+					"bidirectional mode");
 				break;
 			}
 
