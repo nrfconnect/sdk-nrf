@@ -440,26 +440,6 @@ static int setup_server(int *sock, struct sockaddr *bind_addr, socklen_t bind_ad
 	return ret;
 }
 
-static void server_poll(int sock)
-{
-	struct pollfd fd = {
-		.fd = sock,
-		.events = POLLIN
-	};
-
-	int ret = poll(&fd, 1, -1);
-
-	if (ret < 0) {
-		LOG_ERR("poll, error: %d", -errno);
-		FATAL_ERROR();
-		return;
-	} else if ((fd.revents & POLLIN) != POLLIN) {
-		LOG_ERR("Got different event than POLLIN: %d", fd.revents);
-		FATAL_ERROR();
-		return;
-	}
-}
-
 static void client_conn_handler(void *ptr1, void *ptr2, void *ptr3)
 {
 	ARG_UNUSED(ptr1);
@@ -526,15 +506,13 @@ static int get_free_slot(int *accepted)
 	return -1;
 }
 
-static void process_tcp(int *sock, int *accepted)
+static void process_tcp(sa_family_t family, int *sock, int *accepted)
 {
 	int client;
 	int slot;
 	struct sockaddr_in6 client_addr;
 	socklen_t client_addr_len = sizeof(client_addr);
 	char addr_str[INET6_ADDRSTRLEN];
-
-	server_poll(*sock);
 
 	client = accept(*sock, (struct sockaddr *)&client_addr,
 			&client_addr_len);
@@ -552,7 +530,7 @@ static void process_tcp(int *sock, int *accepted)
 
 	accepted[slot] = client;
 
-	if (client_addr.sin6_family == AF_INET6) {
+	if (family == AF_INET6) {
 		tcp6_handler_tid[slot] = k_thread_create(
 			&tcp6_handler_thread[slot],
 			tcp6_handler_stack[slot],
@@ -563,9 +541,7 @@ static void process_tcp(int *sock, int *accepted)
 			&tcp6_handler_tid[slot],
 			THREAD_PRIORITY,
 			0, K_NO_WAIT);
-	}
-
-	if (client_addr.sin6_family == AF_INET) {
+	} else if (family == AF_INET) {
 		tcp4_handler_tid[slot] = k_thread_create(
 			&tcp4_handler_thread[slot],
 			tcp4_handler_stack[slot],
@@ -602,7 +578,7 @@ static void process_tcp4(void)
 	LOG_INF("Waiting for IPv4 HTTP connections on port %d, sock %d", SERVER_PORT, tcp4_sock);
 
 	while (true) {
-		process_tcp(&tcp4_sock, tcp4_accepted);
+		process_tcp(AF_INET, &tcp4_sock, tcp4_accepted);
 	}
 }
 
@@ -628,7 +604,7 @@ static void process_tcp6(void)
 	k_sem_give(&ipv6_setup_sem);
 
 	while (true) {
-		process_tcp(&tcp6_sock, tcp6_accepted);
+		process_tcp(AF_INET6, &tcp6_sock, tcp6_accepted);
 	}
 }
 
