@@ -221,6 +221,17 @@ Asset Tracker v2
   * The :kconfig:option:`NRF_CLOUD_SEND_SERVICE_INFO_FOTA` and :kconfig:option:`NRF_CLOUD_SEND_SERVICE_INFO_UI` Kconfig options.
     The application no longer sends a device shadow update; this is now handled by the :ref:`lib_nrf_cloud` library.
 
+* Updated:
+
+  * The following power optimizations to the LwM2M configuration overlay:
+
+    * Enable DTLS Connection Identifier.
+    * Perform LwM2M update once an hour and request for similar update interval of periodic tracking area from the LTE network.
+    * Request the same active time as the QUEUE mode polling time.
+    * Enable eDRX with shortest possible interval and a short paging window.
+    * Enable tickless mode in the LwM2M engine.
+    * Enable LTE Release Assist Indicator.
+
 * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
 Serial LTE modem

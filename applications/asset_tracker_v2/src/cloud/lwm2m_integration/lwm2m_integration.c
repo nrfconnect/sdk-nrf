@@ -109,6 +109,8 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 	struct cloud_wrap_event cloud_wrap_evt = { 0 };
 	bool notify = false;
 
+	lwm2m_utils_connection_manage(client, &client_event);
+
 	switch (client_event) {
 	case LWM2M_RD_CLIENT_EVENT_NONE:
 		LOG_DBG("LWM2M_RD_CLIENT_EVENT_NONE");
