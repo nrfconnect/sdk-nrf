@@ -565,6 +565,7 @@ Networking samples
 
   * Updated:
 
+    * The :file:`.pem` certificate for example.com.
     * The format of the :file:`.pem` file to the pem format.
     * The sample to automatically convert the :file:`.pem` file to hex format so it can be included.
     * The sample to gracefully bring down the network interfaces.
