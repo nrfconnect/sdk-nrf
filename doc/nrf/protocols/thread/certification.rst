@@ -24,6 +24,8 @@ Navigate to the compatibility matrix for your chip and select *Thread CIDs*.
 
 Depending on your development approach, you have several certification options when using Nordic Semiconductor devices.
 
+.. _ug_thread_cert_inheritance_without_modifications:
+
 Certification by inheritance without modifications to binaries
 ==============================================================
 

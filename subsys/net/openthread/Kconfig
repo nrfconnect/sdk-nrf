@@ -24,14 +24,14 @@ config OPENTHREAD_NRF_SECURITY_PSA_CHOICE
 	select OPENTHREAD_NRF_SECURITY_PSA
 
 config OPENTHREAD_NRF_SECURITY_CHOICE
-	bool "nRF Security"
+	bool "[DEPRECATED] nRF Security"
+	select DEPRECATED
 	select OPENTHREAD_NRF_SECURITY
 
 endchoice
 
 config OPENTHREAD_NRF_SECURITY_PSA
 	bool
-	select EXPERIMENTAL
 	select NRF_SECURITY
 	select MBEDTLS_ENABLE_HEAP
 	select MBEDTLS_TLS_LIBRARY if (OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
@@ -75,6 +75,7 @@ endchoice # SECURE_STORAGE_BACKEND_AEAD_KEY
 
 config OPENTHREAD_NRF_SECURITY
 	bool
+	select DEPRECATED
 	select MBEDTLS_AES_C
 	select MBEDTLS_ENABLE_HEAP
 	select MBEDTLS_CCM_C
@@ -96,6 +97,8 @@ config OPENTHREAD_NRF_SECURITY
 	  Enables nrf_security module for use by OpenThread. This allows
 	  OpenThread to make use of hardware accelerated cryptography functions
 	  if available as well as fast oberon backend for software encryption.
+
+	  [DEPRECATED] use OPENTHREAD_NRF_SECURITY_PSA instead.
 
 config OPENTHREAD_MBEDTLS_LIB_NAME
 	default "mbedtls_external" if OPENTHREAD_NRF_SECURITY || OPENTHREAD_NRF_SECURITY_PSA
