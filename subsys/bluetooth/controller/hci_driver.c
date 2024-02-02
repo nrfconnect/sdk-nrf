@@ -1069,29 +1069,26 @@ static int configure_memory_usage(void)
 #endif /* CONFIG_BT_CTLR_BROADCAST_ISO */
 
 #if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT)
-	cfg.iso_rx_pdu_buffer_per_stream_cfg.count =
+	cfg.iso_buffer_cfg.rx_pdu_buffer_per_stream_count =
 		CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT;
-	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-					  SDC_CFG_TYPE_ISO_RX_PDU_BUFFER_PER_STREAM_CFG, &cfg);
-	if (required_memory < 0) {
-		return required_memory;
-	}
 
-	cfg.iso_rx_sdu_buffer_cfg.count = iso_rx_paths;
-	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-					  SDC_CFG_TYPE_ISO_RX_SDU_BUFFER_CFG, &cfg);
-	if (required_memory < 0) {
-		return required_memory;
-	}
+	cfg.iso_buffer_cfg.rx_sdu_buffer_count = iso_rx_paths;
+	cfg.iso_buffer_cfg.rx_sdu_buffer_size = SDC_DEFAULT_ISO_RX_SDU_BUFFER_SIZE;
 #endif
 
 #if defined(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT) &&                                         \
 	defined(CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT)
-	cfg.iso_tx_buffer_cfg.tx_hci_buffer_count = CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT;
-	cfg.iso_tx_buffer_cfg.tx_pdu_buffer_per_stream_count =
+	cfg.iso_buffer_cfg.tx_hci_buffer_count = CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT;
+	cfg.iso_buffer_cfg.tx_hci_buffer_size = SDC_DEFAULT_ISO_TX_HCI_BUFFER_SIZE;
+	cfg.iso_buffer_cfg.tx_pdu_buffer_per_stream_count =
 		CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT;
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT) ||                             \
+	(defined(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT) &&                                   \
+	defined(CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT))
 	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-					  SDC_CFG_TYPE_ISO_TX_BUFFER_CFG, &cfg);
+					  SDC_CFG_TYPE_ISO_BUFFER_CFG, &cfg);
 	if (required_memory < 0) {
 		return required_memory;
 	}
