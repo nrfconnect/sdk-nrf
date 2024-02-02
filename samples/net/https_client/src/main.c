@@ -38,7 +38,7 @@ static char recv_buf[RECV_BUF_SIZE];
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
 /* Certificate for `example.com` */
 static const char cert[] = {
-#include "../cert/DigiCertGlobalRootCA.pem"
+#include "../cert/DigiCertGlobalG2.pem"
 };
 
 /* Zephyr NET management event callback structures. */
