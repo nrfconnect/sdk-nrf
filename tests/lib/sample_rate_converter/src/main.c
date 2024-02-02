@@ -899,6 +899,41 @@ ZTEST(suite_sample_rate_converter, test_init_invalid_sample_rates_equal)
 		      "Process did not fail when input and out sample rate is the same");
 }
 
+ZTEST(suite_sample_rate_converter, test_init_valid_filter_changed)
+{
+	int ret;
+
+	uint32_t input_sample_rate = 48000;
+	uint32_t output_sample_rate = 24000;
+	uint32_t conversion_ratio = input_sample_rate / output_sample_rate;
+
+	uint16_t input_samples[] = {1000, 2000, 3000, 4000,  5000,  6000,
+				    7000, 8000, 9000, 10000, 11000, 12000};
+	size_t num_samples = ARRAY_SIZE(input_samples);
+	size_t expected_output_samples = num_samples / conversion_ratio;
+	uint16_t output_samples[expected_output_samples];
+	size_t output_written;
+
+	enum sample_rate_converter_filter original_filter = SAMPLE_RATE_FILTER_SIMPLE;
+	enum sample_rate_converter_filter new_filter = SAMPLE_RATE_FILTER_TEST;
+
+	conv_ctx.sample_rate_input = input_sample_rate;
+	conv_ctx.sample_rate_output = output_sample_rate;
+	conv_ctx.filter_type = original_filter;
+
+	ret = sample_rate_converter_process(
+		&conv_ctx, new_filter, input_samples, num_samples * sizeof(uint16_t),
+		input_sample_rate, output_samples, expected_output_samples * sizeof(uint16_t),
+		&output_written, output_sample_rate);
+
+	zassert_equal(ret, 0, "Sample rate conversion process failed");
+	zassert_equal(conv_ctx.sample_rate_input, input_sample_rate,
+		      "Input sample rate not as expected");
+	zassert_equal(conv_ctx.sample_rate_output, output_sample_rate,
+		      "Output sample rate not as expected");
+	zassert_equal(conv_ctx.filter_type, new_filter, "Filter set incorrectly");
+}
+
 ZTEST(suite_sample_rate_converter, test_invalid_process_ctx_null_ptr)
 {
 	int ret;

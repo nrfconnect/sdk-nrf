@@ -27,8 +27,16 @@ config SAMPLE_RATE_CONVERTER_FILTER_TEST
 	  intended to be used for unittests only, as they give predictable and easy to understand
 	  output.
 
+config SAMPLE_RATE_CONVERTER_FILTER_SIMPLE
+	bool "Include the simple sample rate converter filters"
+	help
+	  Includes the simple filters for the sample rate converter. The simle filters uses a small
+	  amount of space and time for the conversion, while also giving some low-pass filter
+	  capabilities.
+
 config SAMPLE_RATE_CONVERTER_MAX_FILTER_SIZE
 	int
+	default 72 if SAMPLE_RATE_CONVERTER_FILTER_SIMPLE
 	default 3 if SAMPLE_RATE_CONVERTER_FILTER_TEST
 	help
 	  The maximum number of filter taps the sample rate converter supports.

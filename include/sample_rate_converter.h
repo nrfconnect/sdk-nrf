@@ -39,7 +39,8 @@
 
 /** Filter types supported by the sample rate converter */
 enum sample_rate_converter_filter {
-	SAMPLE_RATE_FILTER_TEST = 1
+	SAMPLE_RATE_FILTER_TEST = 1,
+	SAMPLE_RATE_FILTER_SIMPLE
 };
 
 /**
