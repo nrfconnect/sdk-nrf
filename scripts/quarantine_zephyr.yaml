@@ -11,13 +11,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24917"
 
 - scenarios:
-    - libraries.encoding.jwt
-  platforms:
-    - nrf5340dk_nrf5340_cpuapp_ns
-    - nrf9160dk_nrf9160_ns
-  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15508"
-
-- scenarios:
     - libraries.hash_map.newlib.cxx_unordered_map.djb2
   platforms:
     - nrf52dk_nrf52832
@@ -46,20 +39,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24921"
 
 - scenarios:
-    - net.mqtt.tls
-  platforms:
-    - nrf9160dk_nrf9160_ns
-    - nrf5340dk_nrf5340_cpuapp_ns
-  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-24922"
-
-- scenarios:
-    - net.socket.register.tls
-  platforms:
-    - nrf5340dk_nrf5340_cpuapp_ns
-    - nrf9160dk_nrf9160_ns
-  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-18853"
-
-- scenarios:
     - sample.bluetooth.central.multilink
     - sample.bluetooth.peripheral_identity
   platforms:
@@ -75,13 +54,6 @@
   platforms:
     - native_posix
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24924"
-
-- scenarios:
-    - sample.drivers.crypto.mbedtls
-  platforms:
-    - nrf9160dk_nrf9160_ns
-    - nrf5340dk_nrf5340_cpuapp_ns
-  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15306"
 
 - scenarios:
     - sample.drivers.flash.soc_flash_nrf
@@ -110,6 +82,47 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24928"
 
 - scenarios:
+    - sample.bindesc
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp_ns
+    - nrf9160dk_nrf9160_ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-25551"
+
+- scenarios:
+    - net.ip-addr
+  comment: "Fixed with https://github.com/zephyrproject-rtos/zephyr/pull/68463"
+
+# ---------------------------------   Won't fix section -----------------------------------
+
+- scenarios:
+    - libraries.encoding.jwt
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp_ns
+    - nrf9160dk_nrf9160_ns
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15508"
+
+- scenarios:
+    - net.mqtt.tls
+  platforms:
+    - nrf9160dk_nrf9160_ns
+    - nrf5340dk_nrf5340_cpuapp_ns
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-24922"
+
+- scenarios:
+    - net.socket.register.tls
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp_ns
+    - nrf9160dk_nrf9160_ns
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-18853"
+
+- scenarios:
+    - sample.drivers.crypto.mbedtls
+  platforms:
+    - nrf9160dk_nrf9160_ns
+    - nrf5340dk_nrf5340_cpuapp_ns
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15306"
+
+- scenarios:
     - sample.net.sockets.websocket_client
   platforms:
     - nrf5340dk_nrf5340_cpuapp_ns
@@ -122,14 +135,3 @@
     - nrf5340dk_nrf5340_cpuapp_ns
     - nrf9160dk_nrf9160_ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-22771"
-
-- scenarios:
-    - sample.bindesc
-  platforms:
-    - nrf5340dk_nrf5340_cpuapp_ns
-    - nrf9160dk_nrf9160_ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-25551"
-
-- scenarios:
-    - net.ip-addr
-  comment: "Fixed with https://github.com/zephyrproject-rtos/zephyr/pull/68463"
