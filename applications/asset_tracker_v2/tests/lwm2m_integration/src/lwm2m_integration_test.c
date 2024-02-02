@@ -148,6 +148,7 @@ void test_lwm2m_integration_connect(void)
 	uint32_t current_lifetime_expected = 0;
 	uint32_t new_lifetime_expected = CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME;
 
+	__cmock_lwm2m_utils_connection_manage_Ignore();
 	__cmock_lwm2m_rd_client_start_AddCallback(&rd_client_set_callback_stub);
 
 	/* After the uut has been put into state CONNECTED, the lwm2m lifetime resource is
@@ -357,12 +358,14 @@ void test_lwm2m_integration_registration_failure(void)
 
 void test_lwm2m_integration_registration_update_failure(void)
 {
+	__cmock_lwm2m_utils_connection_manage_Ignore();
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_TIMEOUT);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_CONNECTING, last_cb_type);
 }
 
 void test_lwm2m_integration_registration_update_success(void)
 {
+	__cmock_lwm2m_utils_connection_manage_Ignore();
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_REG_TIMEOUT);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_CONNECTING, last_cb_type);
 
@@ -372,12 +375,14 @@ void test_lwm2m_integration_registration_update_success(void)
 
 void test_lwm2m_integration_deregistration_failure(void)
 {
+	__cmock_lwm2m_utils_connection_manage_Ignore();
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_ERROR, last_cb_type);
 }
 
 void test_lwm2m_integration_network_error(void)
 {
+	__cmock_lwm2m_utils_connection_manage_Ignore();
 	rd_client_callback(&client, LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR);
 	TEST_ASSERT_EQUAL(CLOUD_WRAP_EVT_ERROR, last_cb_type);
 }
