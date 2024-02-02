@@ -129,3 +129,7 @@
     - nrf5340dk_nrf5340_cpuapp_ns
     - nrf9160dk_nrf9160_ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-25551"
+
+- scenarios:
+    - net.ip-addr
+  comment: "Fixed with https://github.com/zephyrproject-rtos/zephyr/pull/68463"
