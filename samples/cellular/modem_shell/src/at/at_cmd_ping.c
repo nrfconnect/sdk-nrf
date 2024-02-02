@@ -17,7 +17,7 @@
 #include "mosh_print.h"
 
 #if defined(CONFIG_MOSH_PING)
-#include "../ping/icmp_ping.h"
+#include "icmp_ping.h"
 #endif
 #include "at_cmd_ping.h"
 

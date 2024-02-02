@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <zephyr/shell/shell.h>
-#include "utils/str_utils.h"
+#include "str_utils.h"
 #include "mosh_print.h"
 
 #if defined(CONFIG_MOSH_IPERF3)

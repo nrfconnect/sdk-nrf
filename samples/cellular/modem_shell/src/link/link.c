@@ -29,7 +29,7 @@
 #include "link_api.h"
 #include "link.h"
 
-#include "uart/uart_shell.h"
+#include "uart_shell.h"
 #include "mosh_print.h"
 #include "mosh_defines.h"
 

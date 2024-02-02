@@ -8,11 +8,7 @@ cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(MOSH)
-target_include_directories(app PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/src
-  ${CMAKE_CURRENT_SOURCE_DIR}/iperf
-  ${CMAKE_CURRENT_SOURCE_DIR}/ping
-  ${CMAKE_CURRENT_SOURCE_DIR}/utils)
+target_include_directories(app PRIVATE src)
 
 target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE src/shell.c)
@@ -36,8 +32,6 @@ add_subdirectory_ifdef(CONFIG_MOSH_STARTUP_CMDS src/startup_cmd)
 add_subdirectory_ifdef(CONFIG_MOSH_GPIO_COUNT src/gpio_count)
 add_subdirectory_ifdef(CONFIG_NRF_MODEM_LIB_TRACE src/modem_trace)
 add_subdirectory(src/cloud)
-
-zephyr_include_directories_ifdef(CONFIG_MEMFAULT config)
 
 if(NOT ENV{PROJECT_NAME})
   zephyr_compile_definitions(

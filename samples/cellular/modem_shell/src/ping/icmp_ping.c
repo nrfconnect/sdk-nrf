@@ -23,7 +23,7 @@
 
 #include <zephyr/posix/arpa/inet.h>
 
-#include "utils/net_utils.h"
+#include "net_utils.h"
 #include "link_api.h"
 #include "mosh_defines.h"
 
