@@ -21,6 +21,7 @@
  * @retval	-EINVAL	Conversion ratio not supported or no filter matching parameters found.
  */
 int sample_rate_converter_filter_get(enum sample_rate_converter_filter filter_type,
-				     int conversion_ratio, void **filter_ptr, size_t *filter_size);
+				     int conversion_ratio, void const **filter_ptr,
+				     size_t *filter_size);
 
 #endif /* _SAMPLE_RATE_CONVERTER_FILTER_H_ */

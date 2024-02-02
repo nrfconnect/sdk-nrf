@@ -97,7 +97,7 @@ static int sample_rate_converter_reconfigure(struct sample_rate_converter_ctx *c
 {
 	int ret;
 	arm_status arm_err;
-	uint8_t *filter_coeffs;
+	const uint8_t *filter_coeffs;
 	size_t filter_size;
 
 	__ASSERT(ctx != NULL, "Context cannot be NULL");
@@ -115,7 +115,7 @@ static int sample_rate_converter_reconfigure(struct sample_rate_converter_ctx *c
 
 	ctx->filter_type = filter;
 	ret = sample_rate_converter_filter_get(filter, ctx->conversion_ratio,
-					       (void **)&filter_coeffs, &filter_size);
+					       (void const **)&filter_coeffs, &filter_size);
 	if (ret) {
 		LOG_ERR("Failed to get filter (%d)", ret);
 		return ret;
