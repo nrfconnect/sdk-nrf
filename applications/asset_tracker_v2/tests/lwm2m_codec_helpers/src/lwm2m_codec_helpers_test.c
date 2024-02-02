@@ -112,6 +112,20 @@ void test_codec_helpers_setup_resource_buffers(void)
 		LWM2M_RES_DATA_FLAG_RW, 0);
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
+		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MODEL_NUMBER_RID), CONFIG_BOARD,
+		sizeof(CONFIG_BOARD), sizeof(CONFIG_BOARD), LWM2M_RES_DATA_FLAG_RO, 0);
+
+	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
+		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID), CONFIG_SOC,
+		sizeof(CONFIG_SOC), sizeof(CONFIG_SOC), LWM2M_RES_DATA_FLAG_RO, 0);
+
+	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
+		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
+		CONFIG_CLOUD_CODEC_MANUFACTURER, sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
+		sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER), LWM2M_RES_DATA_FLAG_RO, 0);
+
+
+	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
 		&pressure_ts, sizeof(pressure_ts), sizeof(pressure_ts),
 		LWM2M_RES_DATA_FLAG_RW, 0);
@@ -597,19 +611,6 @@ void test_codec_helpers_set_modem_static_data(void)
 		.ts = 1000,
 		.queued = true,
 	};
-
-	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MODEL_NUMBER_RID), CONFIG_BOARD,
-		strlen(CONFIG_BOARD) + 1, strlen(CONFIG_BOARD) + 1, LWM2M_RES_DATA_FLAG_RO, 0);
-
-	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID), CONFIG_SOC,
-		strlen(CONFIG_SOC) + 1, strlen(CONFIG_SOC) + 1, LWM2M_RES_DATA_FLAG_RO, 0);
-
-	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
-		CONFIG_CLOUD_CODEC_MANUFACTURER, strlen(CONFIG_CLOUD_CODEC_MANUFACTURER) + 1,
-		strlen(CONFIG_CLOUD_CODEC_MANUFACTURER) + 1, LWM2M_RES_DATA_FLAG_RO, 0);
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, FIRMWARE_VERSION_RID), modem_static.appv,

@@ -240,6 +240,33 @@ int lwm2m_codec_helpers_setup_resources(void)
 		return err;
 	}
 
+	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MODEL_NUMBER_RID),
+				CONFIG_BOARD,
+				(uint16_t)sizeof(CONFIG_BOARD),
+				(uint16_t)sizeof(CONFIG_BOARD),
+				LWM2M_RES_DATA_FLAG_RO);
+	if (err) {
+		return err;
+	}
+
+	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID),
+				CONFIG_SOC,
+				(uint16_t)sizeof(CONFIG_SOC),
+				(uint16_t)sizeof(CONFIG_SOC),
+				LWM2M_RES_DATA_FLAG_RO);
+	if (err) {
+		return err;
+	}
+
+	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
+				CONFIG_CLOUD_CODEC_MANUFACTURER,
+				(uint16_t)sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
+				(uint16_t)sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
+				LWM2M_RES_DATA_FLAG_RO);
+	if (err) {
+		return err;
+	}
+
 #if defined(CONFIG_CLOUD_CODEC_LWM2M_THINGY91_SENSORS)
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
 				&pressure_ts, sizeof(pressure_ts),
@@ -734,33 +761,6 @@ int lwm2m_codec_helpers_set_modem_static_data(struct cloud_data_modem_static *mo
 
 	if (!modem_static->queued) {
 		return -ENODATA;
-	}
-
-	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MODEL_NUMBER_RID),
-				CONFIG_BOARD,
-				(uint16_t)sizeof(CONFIG_BOARD),
-				(uint16_t)sizeof(CONFIG_BOARD),
-				LWM2M_RES_DATA_FLAG_RO);
-	if (err) {
-		return err;
-	}
-
-	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID),
-				CONFIG_SOC,
-				(uint16_t)sizeof(CONFIG_SOC),
-				(uint16_t)sizeof(CONFIG_SOC),
-				LWM2M_RES_DATA_FLAG_RO);
-	if (err) {
-		return err;
-	}
-
-	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
-				CONFIG_CLOUD_CODEC_MANUFACTURER,
-				(uint16_t)sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
-				(uint16_t)sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
-				LWM2M_RES_DATA_FLAG_RO);
-	if (err) {
-		return err;
 	}
 
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, FIRMWARE_VERSION_RID),
