@@ -128,20 +128,22 @@ void test_codec_helpers_setup_resource_buffers(void)
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(IPSO_OBJECT_TEMP_SENSOR_ID, 0, SENSOR_UNITS_RID), BME680_TEMP_UNIT,
-		strlen(BME680_TEMP_UNIT), strlen(BME680_TEMP_UNIT), LWM2M_RES_DATA_FLAG_RO, 0);
-
-	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
-		&LWM2M_OBJ(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, SENSOR_UNITS_RID), BME680_HUMID_UNIT,
-		strlen(BME680_HUMID_UNIT), strlen(BME680_HUMID_UNIT), LWM2M_RES_DATA_FLAG_RO, 0);
-
-	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
-		&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_UNITS_RID), BME680_PRESSURE_UNIT,
-		strlen(BME680_PRESSURE_UNIT), strlen(BME680_PRESSURE_UNIT), LWM2M_RES_DATA_FLAG_RO,
+		strlen(BME680_TEMP_UNIT) + 1, strlen(BME680_TEMP_UNIT) + 1, LWM2M_RES_DATA_FLAG_RO,
 		0);
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
+		&LWM2M_OBJ(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, SENSOR_UNITS_RID), BME680_HUMID_UNIT,
+		strlen(BME680_HUMID_UNIT) + 1, strlen(BME680_HUMID_UNIT) + 1,
+		LWM2M_RES_DATA_FLAG_RO, 0);
+
+	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
+		&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_UNITS_RID), BME680_PRESSURE_UNIT,
+		strlen(BME680_PRESSURE_UNIT) + 1, strlen(BME680_PRESSURE_UNIT) + 1,
+		LWM2M_RES_DATA_FLAG_RO, 0);
+
+	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, APPLICATION_TYPE_RID),
-		BUTTON1_APP_NAME, strlen(BUTTON1_APP_NAME), strlen(BUTTON1_APP_NAME),
+		BUTTON1_APP_NAME, strlen(BUTTON1_APP_NAME) + 1, strlen(BUTTON1_APP_NAME) + 1,
 		LWM2M_RES_DATA_FLAG_RO, 0);
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
@@ -151,7 +153,7 @@ void test_codec_helpers_setup_resource_buffers(void)
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON2_OBJ_INST_ID, APPLICATION_TYPE_RID),
-		BUTTON2_APP_NAME, strlen(BUTTON2_APP_NAME), strlen(BUTTON2_APP_NAME),
+		BUTTON2_APP_NAME, strlen(BUTTON2_APP_NAME) + 1, strlen(BUTTON2_APP_NAME) + 1,
 		LWM2M_RES_DATA_FLAG_RO, 0);
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
@@ -598,28 +600,31 @@ void test_codec_helpers_set_modem_static_data(void)
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MODEL_NUMBER_RID), CONFIG_BOARD,
-		strlen(CONFIG_BOARD), strlen(CONFIG_BOARD), LWM2M_RES_DATA_FLAG_RO, 0);
+		strlen(CONFIG_BOARD) + 1, strlen(CONFIG_BOARD) + 1, LWM2M_RES_DATA_FLAG_RO, 0);
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID), CONFIG_SOC,
-		strlen(CONFIG_SOC), strlen(CONFIG_SOC), LWM2M_RES_DATA_FLAG_RO, 0);
+		strlen(CONFIG_SOC) + 1, strlen(CONFIG_SOC) + 1, LWM2M_RES_DATA_FLAG_RO, 0);
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
-		CONFIG_CLOUD_CODEC_MANUFACTURER, strlen(CONFIG_CLOUD_CODEC_MANUFACTURER),
-		strlen(CONFIG_CLOUD_CODEC_MANUFACTURER), LWM2M_RES_DATA_FLAG_RO, 0);
+		CONFIG_CLOUD_CODEC_MANUFACTURER, strlen(CONFIG_CLOUD_CODEC_MANUFACTURER) + 1,
+		strlen(CONFIG_CLOUD_CODEC_MANUFACTURER) + 1, LWM2M_RES_DATA_FLAG_RO, 0);
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, FIRMWARE_VERSION_RID), modem_static.appv,
-		strlen(modem_static.appv), strlen(modem_static.appv), LWM2M_RES_DATA_FLAG_RO, 0);
+		strlen(modem_static.appv) + 1, strlen(modem_static.appv) + 1,
+		LWM2M_RES_DATA_FLAG_RO, 0);
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, SOFTWARE_VERSION_RID), modem_static.fw,
-		strlen(modem_static.fw), strlen(modem_static.fw), LWM2M_RES_DATA_FLAG_RO, 0);
+		strlen(modem_static.fw) + 1, strlen(modem_static.fw) + 1, LWM2M_RES_DATA_FLAG_RO,
+		0);
 
 	__cmock_lwm2m_set_res_buf_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_SERIAL_NUMBER_ID), modem_static.imei,
-		strlen(modem_static.imei), strlen(modem_static.imei), LWM2M_RES_DATA_FLAG_RO, 0);
+		strlen(modem_static.imei) + 1, strlen(modem_static.imei) + 1,
+		LWM2M_RES_DATA_FLAG_RO, 0);
 
 	TEST_ASSERT_EQUAL(0, lwm2m_codec_helpers_set_modem_static_data(&modem_static));
 }

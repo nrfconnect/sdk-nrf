@@ -263,23 +263,23 @@ int lwm2m_codec_helpers_setup_resources(void)
 	}
 
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_TEMP_SENSOR_ID, 0, SENSOR_UNITS_RID),
-				BME680_TEMP_UNIT, (uint16_t)strlen(BME680_TEMP_UNIT),
-				(uint16_t)strlen(BME680_TEMP_UNIT), LWM2M_RES_DATA_FLAG_RO);
+				BME680_TEMP_UNIT, (uint16_t)strlen(BME680_TEMP_UNIT) + 1,
+				(uint16_t)strlen(BME680_TEMP_UNIT) + 1, LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
 	}
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
 					   SENSOR_UNITS_RID),
-				BME680_HUMID_UNIT, (uint16_t)strlen(BME680_HUMID_UNIT),
-				(uint16_t)strlen(BME680_HUMID_UNIT),
+				BME680_HUMID_UNIT, (uint16_t)strlen(BME680_HUMID_UNIT) + 1,
+				(uint16_t)strlen(BME680_HUMID_UNIT) + 1,
 				LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
 	}
 
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_UNITS_RID),
-				BME680_PRESSURE_UNIT, (uint16_t)strlen(BME680_PRESSURE_UNIT),
-				(uint16_t)strlen(BME680_PRESSURE_UNIT),
+				BME680_PRESSURE_UNIT, (uint16_t)strlen(BME680_PRESSURE_UNIT) + 1,
+				(uint16_t)strlen(BME680_PRESSURE_UNIT) + 1,
 				LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
@@ -293,8 +293,8 @@ int lwm2m_codec_helpers_setup_resources(void)
 
 	err = lwm2m_set_res_buf(
 		&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, APPLICATION_TYPE_RID),
-		BUTTON1_APP_NAME, (uint16_t)strlen(BUTTON1_APP_NAME),
-		(uint16_t)strlen(BUTTON1_APP_NAME), LWM2M_RES_DATA_FLAG_RO);
+		BUTTON1_APP_NAME, (uint16_t)strlen(BUTTON1_APP_NAME) + 1,
+		(uint16_t)strlen(BUTTON1_APP_NAME) + 1, LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
 	}
@@ -307,12 +307,11 @@ int lwm2m_codec_helpers_setup_resources(void)
 	}
 
 	if (CONFIG_LWM2M_IPSO_PUSH_BUTTON_INSTANCE_COUNT == 2) {
-		err = lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID,
-							  BUTTON2_OBJ_INST_ID,
-							  APPLICATION_TYPE_RID),
-					       BUTTON2_APP_NAME, (uint16_t)strlen(BUTTON2_APP_NAME),
-					       (uint16_t)strlen(BUTTON2_APP_NAME),
-					       LWM2M_RES_DATA_FLAG_RO);
+		err = lwm2m_set_res_buf(&LWM2M_OBJ(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON2_OBJ_INST_ID,
+						   APPLICATION_TYPE_RID),
+					BUTTON2_APP_NAME, (uint16_t)strlen(BUTTON2_APP_NAME) + 1,
+					(uint16_t)strlen(BUTTON2_APP_NAME) + 1,
+					LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
@@ -669,8 +668,8 @@ int lwm2m_codec_helpers_set_modem_dynamic_data(struct cloud_data_modem_dynamic *
 
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
 					   0, IP_ADDRESSES, 0),
-				modem_dynamic->ip, (uint16_t)strlen(modem_dynamic->ip),
-				(uint16_t)strlen(modem_dynamic->ip),
+				modem_dynamic->ip, (uint16_t)strlen(modem_dynamic->ip) + 1,
+				(uint16_t)strlen(modem_dynamic->ip) + 1,
 				LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
@@ -678,8 +677,8 @@ int lwm2m_codec_helpers_set_modem_dynamic_data(struct cloud_data_modem_dynamic *
 
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
 					   0, APN, 0),
-				modem_dynamic->apn, (uint16_t)strlen(modem_dynamic->apn),
-				(uint16_t)strlen(modem_dynamic->apn),
+				modem_dynamic->apn, (uint16_t)strlen(modem_dynamic->apn) + 1,
+				(uint16_t)strlen(modem_dynamic->apn) + 1,
 				LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
@@ -739,8 +738,8 @@ int lwm2m_codec_helpers_set_modem_static_data(struct cloud_data_modem_static *mo
 
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MODEL_NUMBER_RID),
 				CONFIG_BOARD,
-				(uint16_t)strlen(CONFIG_BOARD),
-				(uint16_t)strlen(CONFIG_BOARD),
+				(uint16_t)sizeof(CONFIG_BOARD),
+				(uint16_t)sizeof(CONFIG_BOARD),
 				LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
@@ -748,8 +747,8 @@ int lwm2m_codec_helpers_set_modem_static_data(struct cloud_data_modem_static *mo
 
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, HARDWARE_VERSION_RID),
 				CONFIG_SOC,
-				(uint16_t)strlen(CONFIG_SOC),
-				(uint16_t)strlen(CONFIG_SOC),
+				(uint16_t)sizeof(CONFIG_SOC),
+				(uint16_t)sizeof(CONFIG_SOC),
 				LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
@@ -757,8 +756,8 @@ int lwm2m_codec_helpers_set_modem_static_data(struct cloud_data_modem_static *mo
 
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, MANUFACTURER_RID),
 				CONFIG_CLOUD_CODEC_MANUFACTURER,
-				(uint16_t)strlen(CONFIG_CLOUD_CODEC_MANUFACTURER),
-				(uint16_t)strlen(CONFIG_CLOUD_CODEC_MANUFACTURER),
+				(uint16_t)sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
+				(uint16_t)sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
 				LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
@@ -766,8 +765,8 @@ int lwm2m_codec_helpers_set_modem_static_data(struct cloud_data_modem_static *mo
 
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, FIRMWARE_VERSION_RID),
 				modem_static->appv,
-				(uint16_t)strlen(modem_static->appv),
-				(uint16_t)strlen(modem_static->appv),
+				(uint16_t)strlen(modem_static->appv) + 1,
+				(uint16_t)strlen(modem_static->appv) + 1,
 				LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
@@ -775,8 +774,8 @@ int lwm2m_codec_helpers_set_modem_static_data(struct cloud_data_modem_static *mo
 
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, SOFTWARE_VERSION_RID),
 				modem_static->fw,
-				(uint16_t)strlen(modem_static->fw),
-				(uint16_t)strlen(modem_static->fw),
+				(uint16_t)strlen(modem_static->fw) + 1,
+				(uint16_t)strlen(modem_static->fw) + 1,
 				LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
@@ -785,8 +784,8 @@ int lwm2m_codec_helpers_set_modem_static_data(struct cloud_data_modem_static *mo
 	err = lwm2m_set_res_buf(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0,
 					   DEVICE_SERIAL_NUMBER_ID),
 				modem_static->imei,
-				(uint16_t)strlen(modem_static->imei),
-				(uint16_t)strlen(modem_static->imei),
+				(uint16_t)strlen(modem_static->imei) + 1,
+				(uint16_t)strlen(modem_static->imei) + 1,
 				LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
