@@ -379,6 +379,7 @@ Cellular samples
     * Support for changing shell UART baudrate using the ``uart baudrate`` command.
     * Support for DNS query using the ``sock getaddrinfo`` command.
     * Support for PDN CID 0 in the ``-I`` argument for the ``sock connect`` command.
+    * Support for listing interface addresses using the ``link ifaddrs`` command.
 
   * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 

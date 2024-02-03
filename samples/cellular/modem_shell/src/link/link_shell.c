@@ -1079,6 +1079,11 @@ show_usage:
 	return 0;
 }
 
+static int link_shell_ifaddrs(const struct shell *shell, size_t argc, char **argv)
+{
+	return link_getifaddrs();
+}
+
 static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
@@ -2597,6 +2602,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		funmode, NULL,
 		"Set/read functional modes of the modem.",
 		link_shell_funmode, 0, 10),
+	SHELL_CMD_ARG(
+		ifaddrs, NULL,
+		"Get interface address information (no options).",
+		link_shell_ifaddrs, 1, 0),
 	SHELL_CMD_ARG(
 		msleep, NULL,
 		"Subscribe/unsubscribe for modem sleep notifications.",
