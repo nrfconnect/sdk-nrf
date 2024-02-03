@@ -427,6 +427,7 @@ Cellular samples
     * The ``send`` subcommand to use the :c:func:`send` function for non-secure datagram sockets that are connected and have a peer address set.
     * The ``modem_trace`` command has been moved to :ref:`nrf_modem_lib_readme`.
       See :ref:`modem_trace_shell_command` for information about modem trace commands.
+    * The sample to allow TLS/DTLS security tag values up to ``4294967295``.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
