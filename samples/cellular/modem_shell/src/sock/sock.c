@@ -237,7 +237,7 @@ static int sock_validate_parameters(
 	int bind_port,
 	int pdn_cid,
 	bool secure,
-	int sec_tag)
+	uint32_t sec_tag)
 {
 	/* Validate family parameter */
 	if (family != AF_INET && family != AF_INET6 && family != AF_PACKET) {
@@ -350,19 +350,19 @@ static int sock_getaddrinfo_req(
 
 static int sock_set_tls_options(
 	int fd,
-	int sec_tag,
+	uint32_t sec_tag,
 	bool session_cache,
 	int peer_verify,
 	char *peer_hostname)
 {
 	int err;
-	sec_tag_t sec_tag_list[] = { sec_tag };
+	uint32_t sec_tag_list[] = { sec_tag };
 	uint8_t cache;
 	uint32_t verify;
 
 	/* Security tag */
 	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
-			 sizeof(sec_tag_t) * ARRAY_SIZE(sec_tag_list));
+			 sizeof(uint32_t) * ARRAY_SIZE(sec_tag_list));
 	if (err) {
 		mosh_error("Unable to set security tag, errno %d", errno);
 		err = errno;
@@ -524,7 +524,7 @@ int sock_open_and_connect(
 	int bind_port,
 	int pdn_cid,
 	bool secure,
-	int sec_tag,
+	uint32_t sec_tag,
 	bool session_cache,
 	int peer_verify,
 	char *peer_hostname)
@@ -537,7 +537,7 @@ int sock_open_and_connect(
 		   "pdn_cid=%d, address=%s",
 		   family, type, port, bind_port, pdn_cid, address);
 	if (secure) {
-		mosh_print("                        secure=%d, sec_tag=%d, session_cache=%d, "
+		mosh_print("                        secure=%d, sec_tag=%u, session_cache=%d, "
 			   "peer_verify=%d, peer_hostname=%s",
 			   secure, sec_tag, session_cache, peer_verify, peer_hostname);
 	}

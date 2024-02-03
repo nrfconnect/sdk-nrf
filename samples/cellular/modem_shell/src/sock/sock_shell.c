@@ -341,7 +341,7 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 	int arg_bind_port = 0;
 	int arg_pdn_cid = 0;
 	bool arg_secure = false;
-	int arg_sec_tag = -1;
+	uint32_t arg_sec_tag = 0;
 	bool arg_session_cache = false;
 	int arg_peer_verify = 2;
 	char arg_peer_hostname[SOCK_MAX_ADDR_LEN + 1];
@@ -429,11 +429,12 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 			arg_secure = true;
 			break;
 		case 'T': /* Security tag */
-			arg_sec_tag = atoi(optarg);
-			if (arg_sec_tag < 0) {
+			err = 0;
+			arg_sec_tag = shell_strtoul(optarg, 10, &err);
+			if (err) {
 				mosh_error(
-					"Valid range for security tag (%d) is 0 ... 2147483647.",
-					arg_sec_tag);
+					"Valid range for security tag (%s) is 0 .. %u.",
+					optarg, UINT32_MAX);
 				return -EINVAL;
 			}
 			break;
