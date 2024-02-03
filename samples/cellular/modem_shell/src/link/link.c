@@ -775,6 +775,49 @@ int link_setdnsaddr(const char *ip_address)
 	return 0;
 }
 
+int link_getifaddrs(void)
+{
+	struct nrf_ifaddrs *ifaddrs;
+	char addr_str[INET6_ADDRSTRLEN];
+	int err;
+
+	err = nrf_getifaddrs(&ifaddrs);
+	if (err) {
+		mosh_error("Error getting interface addresses: %d", errno);
+		return -errno;
+	}
+
+	mosh_print("Interface addresses:");
+
+	for (struct nrf_ifaddrs *ifa = ifaddrs; ifa; ifa = ifa->ifa_next) {
+		switch (ifa->ifa_addr->sa_family) {
+		case NRF_AF_INET:
+			nrf_inet_ntop(ifa->ifa_addr->sa_family,
+				      &((struct nrf_sockaddr_in *)(ifa->ifa_addr))->sin_addr,
+				      addr_str, sizeof(addr_str));
+			break;
+		case NRF_AF_INET6:
+			nrf_inet_ntop(ifa->ifa_addr->sa_family,
+				      &((struct nrf_sockaddr_in6 *)(ifa->ifa_addr))->sin6_addr,
+				      addr_str, sizeof(addr_str));
+			break;
+		default:
+			snprintf(addr_str, sizeof(addr_str),
+				 "Unknown family %d", ifa->ifa_addr->sa_family);
+			break;
+		}
+
+		/* Netmask, broadaddr and dstaddr are not supported by the modem
+		 * and will always be zero.
+		 */
+		mosh_print("  %s: %s", ifa->ifa_name, addr_str);
+	}
+
+	nrf_freeifaddrs(ifaddrs);
+
+	return 0;
+}
+
 void link_propripsm_read(void)
 {
 	int ret;
