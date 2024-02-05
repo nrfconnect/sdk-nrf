@@ -226,6 +226,9 @@ config MBEDTLS_MAC_SHA256_ENABLED
 
 config MBEDTLS_MAC_MD5_ENABLED
 	bool "MD5 hash algorithm"
+	# We have no PSA driver for MD5, so when MD5 is enabled we must
+	# also enable legacy mbedtls
+	select MBEDTLS_LEGACY_CRYPTO_C
 
 config MBEDTLS_CTR_DRBG_ENABLED
 	bool "Enable the CTR_DRBG AES-256-based random generator"
