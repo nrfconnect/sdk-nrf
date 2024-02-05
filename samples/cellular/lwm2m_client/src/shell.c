@@ -11,7 +11,7 @@
 
 #define HELP_CMD  "LwM2M client application commands"
 #define HELP_GNSS "Trigger GNSS search"
-#define HELP_GFIX "Trigger Ground Fix location request"
+#define HELP_GFIX "gfix [info]\nTrigger Ground Fix location request/inform"
 
 static int cmd_gnss(const struct shell *sh, size_t argc, char **argv)
 {
@@ -29,11 +29,21 @@ static int cmd_gnss(const struct shell *sh, size_t argc, char **argv)
 static int cmd_gfix(const struct shell *sh, size_t argc, char **argv)
 {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
-	shell_print(sh, "Send cell location request event\n");
-	struct ground_fix_location_request_event *ground_fix_event =
-		new_ground_fix_location_request_event();
-
-	APP_EVENT_SUBMIT(ground_fix_event);
+	if (argc < 2) {
+		shell_print(sh, "Send cell location request\n");
+		struct ground_fix_location_request_event *ground_fix_event =
+			new_ground_fix_location_request_event();
+		APP_EVENT_SUBMIT(ground_fix_event);
+	} else if (strcmp(argv[1], "info") == 0) {
+		shell_print(sh, "Send cell location inform\n");
+		struct ground_fix_location_inform_event *ground_fix_event =
+			new_ground_fix_location_inform_event();
+		APP_EVENT_SUBMIT(ground_fix_event);
+	} else {
+		shell_error(sh, "Invalid param\n");
+		shell_help(sh);
+		return -EINVAL;
+	}
 	return 0;
 #else
 	shell_print(sh, "Ground Fix not enabled\n");
@@ -45,6 +55,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_app,
 			       SHELL_COND_CMD_ARG(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE,
 						  gnss, NULL, HELP_GNSS, cmd_gnss, 1, 0),
 			       SHELL_COND_CMD_ARG(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT,
-						  gfix, NULL, HELP_GFIX, cmd_gfix, 1, 0),
+						  gfix, NULL, HELP_GFIX, cmd_gfix, 1, 1),
 			       SHELL_SUBCMD_SET_END);
 SHELL_CMD_ARG_REGISTER(app, &sub_app, HELP_CMD, NULL, 1, 0);
