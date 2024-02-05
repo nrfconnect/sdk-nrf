@@ -143,10 +143,23 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	  The time set aside for connections on every connection interval in
 	  microseconds. The event length and the connection interval are the
 	  primary parameters for setting the throughput of a connection.
+	  When connection event extension is enabled, more time may be used.
 	  The event length may be set to a value that is shorter than the time needed
 	  for a single packet pair on a given PHY.
 	  In that case the controller will reserve time for receiving 27 bytes and transmitting
 	  the number of bytes configured with BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT.
+
+config BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
+	bool "Enable connection event extension by default"
+	default y
+	help
+	  When Extended Connection Events are disabled, the maximum connection event length is
+	  configured with BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT.
+	  When Extended Connection Events are enabled, the controller
+	  will extend the connection event as much as possible, if
+	  - Either of the peers has more data to send.
+	    See also: Core v5.6, Vol 6, Part B, Section 4.5.6.
+	  - There are no conflicts with other roles of equal or higher priority.
 
 config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
 	int "Default central ACL event spacing [us]"
