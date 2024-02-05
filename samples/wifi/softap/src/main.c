@@ -27,6 +27,39 @@ struct wifi_ap_sta_node {
 };
 static struct wifi_ap_sta_node sta_list[CONFIG_SOFTAP_SAMPLE_MAX_STATIONS];
 
+static void wifi_ap_stations_unlocked(void)
+{
+	size_t id = 1;
+
+	LOG_INF("AP stations:");
+	LOG_INF("============");
+
+	for (int i = 0; i < CONFIG_SOFTAP_SAMPLE_MAX_STATIONS; i++) {
+		struct wifi_ap_sta_info *sta;
+		uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
+
+		if (!sta_list[i].valid) {
+			continue;
+		}
+
+		sta = &sta_list[i].sta_info;
+
+		LOG_INF("Station %zu:", id++);
+		LOG_INF("==========");
+		LOG_INF("MAC: %s",
+			net_sprint_ll_addr_buf(sta->mac,
+					       WIFI_MAC_ADDR_LEN,
+					       mac_string_buf,
+					       sizeof(mac_string_buf)));
+		LOG_INF("Link mode: %s", wifi_link_mode_txt(sta->link_mode));
+		LOG_INF("TWT: %s", sta->twt_capable ? "Supported" : "Not supported");
+	}
+
+	if (id == 1) {
+		LOG_INF("No stations connected");
+	}
+}
+
 static void handle_wifi_ap_enable_result(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_status *status =
@@ -64,6 +97,7 @@ static void handle_wifi_ap_sta_connected(struct net_mgmt_event_callback *cb)
 			"Increase CONFIG_SOFTAP_SAMPLE_MAX_STATIONS");
 	}
 
+	wifi_ap_stations_unlocked();
 	k_mutex_unlock(&wifi_ap_sta_list_lock);
 }
 
@@ -95,6 +129,7 @@ static void handle_wifi_ap_sta_disconnected(struct net_mgmt_event_callback *cb)
 		LOG_WRN("No matching MAC address found in the list");
 	}
 
+	wifi_ap_stations_unlocked();
 	k_mutex_unlock(&wifi_ap_sta_list_lock);
 }
 
