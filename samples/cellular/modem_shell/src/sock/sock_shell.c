@@ -80,7 +80,7 @@ static const char sock_getaddrinfo_usage_str[] =
 
 static const char sock_send_usage_str[] =
 	"Usage: sock send -i <socket id> [-d <data> | -l <data length>] [-e <interval>]\n"
-	"       [--packet_number_prefix] [-B <blocking>] [-s <size>] [-x]\n"
+	"       [--packet_number_prefix] [-B <blocking>] [-s <size>] [-x] [-W]\n"
 	"Options:\n"
 	"  -i, --id, [int]           Socket id. Use 'sock list' command to see open\n"
 	"                            sockets.\n"
@@ -96,8 +96,8 @@ static const char sock_send_usage_str[] =
 	"                            The number is between 0001..9999 and it can roll over.\n"
 	"                            Must be used with -d and -e options and without\n"
 	"                            -l and -x options.\n"
-	"  -B, --blocking, [int]     Blocking (1) or non-blocking (0) mode. This is only\n"
-	"                            valid when -l is given. Default value is 1.\n"
+	"  -B, --blocking, [int]     Blocking (1) or non-blocking (0) mode. This is not\n"
+	"                            valid when -e is given. Default value is 1.\n"
 	"  -s, --buffer_size, [int]  Send buffer size. This is only valid when -l is\n"
 	"                            given. Default value for 'stream' socket is 3540\n"
 	"                            and for 'dgram' socket 1200.\n"
@@ -111,6 +111,10 @@ static const char sock_send_usage_str[] =
 	"                                010203040506070809101112\n"
 	"                                01 02 03 04 05 06 07 08 09 10 11 12\n"
 	"                                01020304 05060708 09101112\n"
+	"  -W, --wait_ack            Request a blocking send operation until the data\n"
+	"                            has been sent on-air and acknowledged by the peer,\n"
+	"                            if required by the network protocol. This is not valid\n"
+	"                            when -B0 (non-blocking mode) is used.\n"
 	"  -h, --help,               Shows this help information";
 
 static const char sock_recv_usage_str[] =
@@ -190,6 +194,7 @@ static struct option long_options[] = {
 	{ "hex",            no_argument,       0, 'x' },
 	{ "start",          no_argument,       0, 'r' },
 	{ "blocking",       required_argument, 0, 'B' },
+	{ "wait_ack",       no_argument,       0, 'W' },
 	{ "print_format",   required_argument, 0, 'P' },
 	{ "packet_number_prefix", no_argument, 0, SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX },
 	{ "rai_last",       no_argument,       0, SOCK_SHELL_OPT_RAI_LAST },
@@ -201,7 +206,7 @@ static struct option long_options[] = {
 	{ 0,                0,                 0, 0   }
 };
 
-static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:P:h";
+static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:WP:h";
 
 static void sock_print_usage(enum sock_shell_command command)
 {
@@ -558,6 +563,7 @@ static int cmd_sock_send(const struct shell *shell, size_t argc, char **argv)
 	bool arg_data_format_hex = false;
 	bool arg_blocking_send = true;
 	bool arg_blocking_recv = false;
+	int arg_flags = 0;
 
 	memset(arg_send_data, 0, SOCK_MAX_SEND_DATA_LEN + 1);
 
@@ -615,6 +621,9 @@ static int cmd_sock_send(const struct shell *shell, size_t argc, char **argv)
 			arg_blocking_send = blocking;
 			break;
 		}
+		case 'W':
+			arg_flags |= MSG_WAITACK;
+			break;
 		case SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX:
 			arg_packet_number_prefix = true;
 			break;
@@ -640,6 +649,7 @@ static int cmd_sock_send(const struct shell *shell, size_t argc, char **argv)
 		arg_data_interval,
 		arg_packet_number_prefix,
 		arg_blocking_send,
+		arg_flags,
 		arg_buffer_size,
 		arg_data_format_hex);
 
