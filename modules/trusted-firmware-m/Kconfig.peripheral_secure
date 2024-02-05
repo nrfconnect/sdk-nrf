@@ -270,7 +270,7 @@ rsource "Kconfig.template.peripheral_secure"
 
 config NRF_GPIOTE0_SECURE
 	bool "GPIOTE configured as secure peripheral"
-	depends on HAS_HW_NRF_GPIOTE
+	depends on HAS_HW_NRF_GPIOTE0
 	help
 	  GPIOTE0 is implemented with secure only security.
 	  This option only enables it to be used in the secure image.
