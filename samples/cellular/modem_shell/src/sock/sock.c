@@ -63,6 +63,7 @@ struct sock_info {
 	int port;
 	int bind_port;
 	int pdn_cid;
+	int send_flags;
 	bool in_use;
 	bool secure;
 	char *send_buffer;
@@ -676,7 +677,7 @@ static void print_throughput_summary(uint32_t data_len, int64_t time_ms)
 
 	mosh_print("Summary:");
 	mosh_print("  Data length: %7u bytes", data_len);
-	mosh_print("  Time:        %7.2f s", (float)time_ms / 1000);
+	mosh_print("  Time:       %8.3f s", (float)time_ms / 1000);
 	mosh_print("  Throughput:  %7.0f bit/s", throughput);
 }
 
@@ -743,7 +744,7 @@ static int sock_send(
 		}
 	}
 
-	bytes = send(socket_info->fd, data, length, 0);
+	bytes = send(socket_info->fd, data, length, socket_info->send_flags);
 	if (bytes < 0) {
 		int err = errno;
 
@@ -845,6 +846,7 @@ int sock_send_data(
 	int interval,
 	bool packet_number_prefix,
 	bool blocking,
+	int flags,
 	int buffer_size,
 	bool data_format_hex)
 {
@@ -858,7 +860,14 @@ int sock_send_data(
 		return -EINVAL;
 	}
 
+	if ((flags & MSG_WAITACK) && !blocking) {
+		mosh_error("The wait_ack flag cannot be used in non-blocking mode");
+		return -EINVAL;
+	}
+
 	sock_all_set_nonblocking();
+
+	socket_info->send_flags = flags;
 
 	/* Process data to be sent if it's in hex format */
 	if (data_format_hex) {
@@ -988,8 +997,14 @@ int sock_send_data(
 		}
 
 	} else if (data_out != NULL && data_out_length > 0) {
+		/* Set requested blocking mode for duration of data sending */
+		set_sock_blocking_mode(socket_info->fd, blocking);
+
 		/* Send data if it's given and is not zero length */
 		sock_send(socket_info, data_out, data_out_length, true, data_format_hex);
+
+		/* Keep default mode of the socket in non-blocking mode */
+		set_sock_blocking_mode(socket_info->fd, false);
 	} else {
 		mosh_print("No send parameters given");
 		return -EINVAL;
