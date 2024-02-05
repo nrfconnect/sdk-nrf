@@ -56,6 +56,8 @@ Instead of just providing a module repository like in the previous approach, you
 With this approach, you can import your manifest directly.
 It will then in turn import the |NCS| `west manifest file`_.
 
+A good starting point for such an approach is the Nordic-provided `ncs-example-application`_ repository.
+It contains all the necessary integration with |NCS| and example functionality (a driver, library, subsystem, test, etc.) to serve as a reference for your own distribution's manifest repository.
 Just like in the previous approach, Golioth provides an example of such a west manifest, `west-ncs.yml <Golioth west-ncs.yml_>`_ along with a `guide document <Golioth README nRF Connect SDK_>`_.
 
 Forking the |NCS|
