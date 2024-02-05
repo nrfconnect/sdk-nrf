@@ -650,6 +650,8 @@ Wi-Fi samples
     * Added ``raw_tx`` extension to the Wi-Fi command line.
       It adds the subcommands to configure and send raw TX packets.
 
+* Added the :ref:`wifi_softap_sample` sample that demonstrates how to start a nRF70 Series device in :term:`Software-enabled Access Point (SoftAP or SAP)` mode.
+
 Other samples
 -------------
 
