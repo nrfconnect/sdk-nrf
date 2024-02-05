@@ -17,6 +17,8 @@ There are different ways to install the |NCS|, depending on your preferred devel
 Regardless of which way you choose, the following steps install the |NCS| source code and the |NCS| :term:`toolchain`.
 This includes everything that is required by Zephyr's :ref:`zephyr:getting_started` together with additional tools and Python dependencies that the |NCS| uses.
 
+Using |VSC| and the |nRFVSC| is also covered in the `Installing nRF Connect SDK and VS Code`_ exercise of the `nRF Connect SDK Fundamentals course`_ on Nordic Developer Academy.
+
 .. rst-class:: numbered-step
 
 Update operating system
@@ -32,16 +34,16 @@ See :ref:`requirements` for information on the supported operating systems.
 Install prerequisites
 *********************
 
-Depending on your preferred development environment, install the following tools:
+Depending on your preferred development environment, install the required tools:
 
 .. tabs::
 
    .. group-tab:: nRF Connect for Visual Studio Code
 
-      * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
-      * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
       * The latest version of the :ref:`requirements_clt` package.
         Download it from the `nRF Command Line Tools`_ page.
+      * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
+      * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
 
    .. group-tab:: Command line
 
@@ -77,14 +79,15 @@ Depending on your preferred development environment, complete the following step
    .. group-tab:: nRF Connect for Visual Studio Code
 
       1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
-      #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage toolchains`.
-      #. In the SDK management menu, click :guilabel:`Install Toolchain`.
+      #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Install Toolchain`.
       #. Select the toolchain version to install.
          The toolchain version should match the |NCS| version you are going to work with.
          If you have received a custom URL for installing the toolchain, you can provide it using the :guilabel:`Change Toolchain Index` button in the quick pick's header.
          The toolchain installation starts in the background, as can be seen in the notification that appears.
 
       When you install the toolchain for the first time, the installed version is automatically selected for your project.
+
+      After installing the toolchain, you can access the :guilabel:`Install Toolchain` option by clicking on :guilabel:`Manage toolchains`.
 
    .. group-tab:: Command line
 
