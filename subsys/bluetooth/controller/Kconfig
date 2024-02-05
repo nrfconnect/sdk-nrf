@@ -151,7 +151,7 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 
 config BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
 	bool "Enable connection event extension by default"
-	default y
+	default y if !NRF_802154_RADIO_DRIVER
 	help
 	  When Extended Connection Events are disabled, the maximum connection event length is
 	  configured with BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT.
