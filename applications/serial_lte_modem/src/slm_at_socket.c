@@ -50,7 +50,7 @@ static char udp_url[SLM_MAX_URL];
 static uint16_t udp_port;
 
 static struct slm_socket {
-	uint16_t type;     /* SOCK_STREAM or SOCK_DGRAM */
+	int type;          /* SOCK_STREAM or SOCK_DGRAM */
 	uint16_t role;     /* Client or Server */
 	sec_tag_t sec_tag; /* Security tag of the credential */
 	int family;        /* Socket address family */
@@ -166,21 +166,23 @@ static int do_socket_open(void)
 static int do_secure_socket_open(int peer_verify)
 {
 	int ret = 0;
-	int proto = IPPROTO_TLS_1_2;
+	int proto = sock.type == SOCK_STREAM ? IPPROTO_TLS_1_2 : IPPROTO_DTLS_1_2;
 
-	if (sock.type == SOCK_STREAM) {
-#if defined(CONFIG_SLM_NATIVE_TLS)
-		ret = socket(sock.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
-#else
-		ret = socket(sock.family, SOCK_STREAM, IPPROTO_TLS_1_2);
-#endif
-	} else if (sock.type == SOCK_DGRAM) {
-		ret = socket(sock.family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
-		proto = IPPROTO_DTLS_1_2;
-	} else {
+	if (sock.type != SOCK_STREAM && sock.type != SOCK_DGRAM) {
 		LOG_ERR("socket type %d not supported", sock.type);
 		return -ENOTSUP;
 	}
+
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	ret = slm_native_tls_load_credentials(sock.sec_tag);
+	if (ret < 0) {
+		LOG_ERR("Failed to load sec tag: %d (%d)", sock.sec_tag, ret);
+		return ret;
+	}
+	sock.type |= SOCK_NATIVE_TLS;
+#endif
+
+	ret = socket(sock.family, sock.type, proto);
 	if (ret < 0) {
 		LOG_ERR("socket() error: %d", -errno);
 		return -errno;
@@ -194,15 +196,7 @@ static int do_secure_socket_open(int peer_verify)
 	}
 
 	sec_tag_t sec_tag_list[1] = { sock.sec_tag };
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	if (sock.type == SOCK_STREAM) {
-		ret = slm_native_tls_load_credentials(sock.sec_tag);
-		if (ret < 0) {
-			LOG_ERR("Failed to load sec tag: %d (%d)", sock.sec_tag, ret);
-			goto error_exit;
-		}
-	}
-#endif
+
 	ret = setsockopt(sock.fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list, sizeof(sec_tag_t));
 	if (ret) {
 		LOG_ERR("setsockopt(TLS_SEC_TAG_LIST) error: %d", -errno);
@@ -502,17 +496,17 @@ static int do_secure_socketopt_get(int option)
 	return ret;
 }
 
-static int do_bind(uint16_t port)
+int slm_bind_to_local_addr(int socket, int family, uint16_t port)
 {
 	int ret;
 
-	if (sock.family == AF_INET) {
+	if (family == AF_INET) {
 		char ipv4_addr[INET_ADDRSTRLEN];
 
 		util_get_ip_addr(0, ipv4_addr, NULL);
 		if (!*ipv4_addr) {
 			LOG_ERR("Get local IPv4 address failed");
-			return -EINVAL;
+			return -ENETDOWN;
 		}
 
 		struct sockaddr_in local = {
@@ -522,22 +516,22 @@ static int do_bind(uint16_t port)
 
 		if (inet_pton(AF_INET, ipv4_addr, &local.sin_addr) != 1) {
 			LOG_ERR("Parse local IPv4 address failed: %d", -errno);
-			return -EAGAIN;
+			return -EINVAL;
 		}
 
-		ret = bind(sock.fd, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
+		ret = bind(socket, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
 		if (ret) {
-			LOG_ERR("bind() failed: %d", -errno);
+			LOG_ERR("bind() sock %d failed: %d", socket, -errno);
 			return -errno;
 		}
-		LOG_DBG("bind to %s", ipv4_addr);
-	} else if (sock.family == AF_INET6) {
+		LOG_DBG("bind sock %d to %s", socket, ipv4_addr);
+	} else if (family == AF_INET6) {
 		char ipv6_addr[INET6_ADDRSTRLEN];
 
 		util_get_ip_addr(0, NULL, ipv6_addr);
 		if (!*ipv6_addr) {
 			LOG_ERR("Get local IPv6 address failed");
-			return -EINVAL;
+			return -ENETDOWN;
 		}
 
 		struct sockaddr_in6 local = {
@@ -547,14 +541,14 @@ static int do_bind(uint16_t port)
 
 		if (inet_pton(AF_INET6, ipv6_addr, &local.sin6_addr) != 1) {
 			LOG_ERR("Parse local IPv6 address failed: %d", -errno);
-			return -EAGAIN;
+			return -EINVAL;
 		}
-		ret = bind(sock.fd, (struct sockaddr *)&local, sizeof(struct sockaddr_in6));
+		ret = bind(socket, (struct sockaddr *)&local, sizeof(struct sockaddr_in6));
 		if (ret) {
-			LOG_ERR("bind() failed: %d", -errno);
+			LOG_ERR("bind() sock %d failed: %d", socket, -errno);
 			return -errno;
 		}
-		LOG_DBG("bind to %s", ipv6_addr);
+		LOG_DBG("bind sock %d to %s", socket, ipv6_addr);
 	} else {
 		return -EINVAL;
 	}
@@ -651,7 +645,7 @@ static int do_send(const uint8_t *data, int datalen)
 	int sockfd = sock.fd;
 
 	/* For TCP/TLS Server, send to incoming socket */
-	if (sock.type == SOCK_STREAM && sock.role == AT_SOCKET_ROLE_SERVER) {
+	if ((sock.type & SOCK_STREAM) != 0 && sock.role == AT_SOCKET_ROLE_SERVER) {
 		if (sock.fd_peer != INVALID_SOCKET) {
 			sockfd = sock.fd_peer;
 		} else {
@@ -691,7 +685,7 @@ static int do_send_datamode(const uint8_t *data, int datalen)
 	int sockfd = sock.fd;
 
 	/* For TCP/TLS Server, send to incoming socket */
-	if (sock.type == SOCK_STREAM && sock.role == AT_SOCKET_ROLE_SERVER) {
+	if ((sock.type & SOCK_STREAM) != 0 && sock.role == AT_SOCKET_ROLE_SERVER) {
 		if (sock.fd_peer != INVALID_SOCKET) {
 			sockfd = sock.fd_peer;
 		} else {
@@ -724,7 +718,7 @@ static int do_recv(int timeout, int flags)
 	int sockfd = sock.fd;
 
 	/* For TCP/TLS Server, receive from incoming socket */
-	if (sock.type == SOCK_STREAM && sock.role == AT_SOCKET_ROLE_SERVER) {
+	if ((sock.type & SOCK_STREAM) != 0 && sock.role == AT_SOCKET_ROLE_SERVER) {
 		if (sock.fd_peer != INVALID_SOCKET) {
 			sockfd = sock.fd_peer;
 		} else {
@@ -942,7 +936,7 @@ static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len, ui
 	int ret = 0;
 
 	if (op == DATAMODE_SEND) {
-		if (sock.type == SOCK_DGRAM && (flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
+		if ((sock.type & SOCK_DGRAM) != 0 && (flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
 			LOG_ERR("Datamode buffer overflow");
 			(void)exit_datamode_handler(-EOVERFLOW);
 			return -EOVERFLOW;
@@ -980,7 +974,7 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 				return -EINVAL;
 			}
 			INIT_SOCKET(sock);
-			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &sock.type);
+			err = at_params_int_get(&slm_at_param_list, 2, &sock.type);
 			if (err) {
 				return err;
 			}
@@ -1056,7 +1050,7 @@ int handle_at_secure_socket(enum at_cmd_type cmd_type)
 				return -EINVAL;
 			}
 			INIT_SOCKET(sock);
-			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &sock.type);
+			err = at_params_int_get(&slm_at_param_list, 2, &sock.type);
 			if (err) {
 				return err;
 			}
@@ -1288,7 +1282,7 @@ int handle_at_bind(enum at_cmd_type cmd_type)
 		if (err < 0) {
 			return err;
 		}
-		err = do_bind(port);
+		err = slm_bind_to_local_addr(sock.fd, sock.family, port);
 		break;
 
 	default:

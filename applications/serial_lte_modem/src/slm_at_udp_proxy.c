@@ -11,7 +11,11 @@
 #include <zephyr/net/tls_credentials.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
+#include "slm_at_socket.h"
 #include "slm_at_udp_proxy.h"
+#if defined(CONFIG_SLM_NATIVE_TLS)
+#include "slm_native_tls.h"
+#endif
 
 LOG_MODULE_REGISTER(slm_udp, CONFIG_SLM_LOG_LEVEL);
 
@@ -63,74 +67,86 @@ static void udp_thread_func(void *p1, void *p2, void *p3);
 static int do_udp_server_start(uint16_t port)
 {
 	int ret;
+	int type = SOCK_DGRAM;
+	int proto = IPPROTO_UDP;
+
+	if (proxy.sec_tag != INVALID_SEC_TAG) {
+#if defined(CONFIG_SLM_NATIVE_TLS)
+		ret = slm_native_tls_load_credentials(proxy.sec_tag);
+		if (ret < 0) {
+			LOG_ERR("Failed to load sec tag: %d (%d)", proxy.sec_tag, ret);
+			return ret;
+		}
+
+		type |= SOCK_NATIVE_TLS;
+		proto = IPPROTO_DTLS_1_2;
+#else
+		LOG_ERR("Not supported");
+		return -ENOTSUP;
+#endif
+	}
 
 	/* Open socket */
-	ret = socket(proxy.family, SOCK_DGRAM, IPPROTO_UDP);
+	ret = socket(proxy.family, type, proto);
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
 		return -errno;
 	}
-
 	proxy.sock = ret;
+
 	/* Bind to local port */
-	if (proxy.family == AF_INET) {
-		char ipv4_addr[INET_ADDRSTRLEN];
-
-		util_get_ip_addr(0, ipv4_addr, NULL);
-		if (!*ipv4_addr) {
-			LOG_ERR("Unable to obtain local IPv4 address");
-			close(proxy.sock);
-			return -EAGAIN;
-		}
-
-		struct sockaddr_in local = {
-			.sin_family = AF_INET,
-			.sin_port = htons(port)
-		};
-
-		if (inet_pton(AF_INET, ipv4_addr, &local.sin_addr) != 1) {
-			LOG_ERR("Parse local IPv4 address failed: %d", -errno);
-			close(proxy.sock);
-			return -EINVAL;
-		}
-		ret = bind(proxy.sock, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
-	} else {
-		char ipv6_addr[INET6_ADDRSTRLEN];
-
-		util_get_ip_addr(0, NULL, ipv6_addr);
-		if (!*ipv6_addr) {
-			LOG_ERR("Unable to obtain local IPv6 address");
-			close(proxy.sock);
-			return -EAGAIN;
-		}
-
-		struct sockaddr_in6 local = {
-			.sin6_family = AF_INET6,
-			.sin6_port = htons(port)
-		};
-
-		if (inet_pton(AF_INET6, ipv6_addr, &local.sin6_addr) != 1) {
-			LOG_ERR("Parse local IPv6 address failed: %d", -errno);
-			close(proxy.sock);
-			return -EINVAL;
-		}
-		ret = bind(proxy.sock, (struct sockaddr *)&local, sizeof(struct sockaddr_in6));
-	}
+	ret = slm_bind_to_local_addr(proxy.sock, proxy.family, port);
 	if (ret) {
-		LOG_ERR("bind() failed: %d", -errno);
-		close(proxy.sock);
-		return -errno;
+		goto exit_svr;
 	}
 
+	/* Config socket options */
+	if (proxy.sec_tag != INVALID_SEC_TAG) {
+		sec_tag_t sec_tag_list[1] = { proxy.sec_tag };
+
+		ret = setsockopt(proxy.sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
+				 sizeof(sec_tag_t));
+		if (ret) {
+			LOG_ERR("setsockopt(TLS_SEC_TAG_LIST) error: %d", -errno);
+			ret = -errno;
+			goto exit_svr;
+		}
+		int tls_role = TLS_DTLS_ROLE_SERVER;
+
+		ret = setsockopt(proxy.sock, SOL_TLS, TLS_DTLS_ROLE, &tls_role, sizeof(int));
+		if (ret) {
+			LOG_ERR("setsockopt(TLS_DTLS_ROLE) error: %d", -errno);
+			ret = -errno;
+			goto exit_svr;
+		}
+	}
+	int reuseaddr = 1;
+
+	ret = setsockopt(proxy.sock, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(int));
+	if (ret < 0) {
+		LOG_ERR("setsockopt(SO_REUSEADDR): %d", -errno);
+		ret = -errno;
+		goto exit_svr;
+	}
+
+	proxy.role = UDP_ROLE_SERVER;
 	udp_thread_id = k_thread_create(&udp_thread, udp_thread_stack,
 			K_THREAD_STACK_SIZEOF(udp_thread_stack),
 			udp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	proxy.role = UDP_ROLE_SERVER;
 	rsp_send("\r\n#XUDPSVR: %d,\"started\"\r\n", proxy.sock);
 
 	return 0;
+
+exit_svr:
+	if (proxy.sock != INVALID_SOCKET) {
+		close(proxy.sock);
+		proxy.sock = INVALID_SOCKET;
+	}
+	rsp_send("\r\n#UDPSVR: %d,\"not started\"\r\n", ret);
+
+	return ret;
 }
 
 static int do_udp_server_stop(void)
@@ -169,9 +185,22 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 	struct timeval timeout;
 	const bool using_cid = (proxy.dtls_cid != INVALID_DTLS_CID);
 	const bool using_dtls = (proxy.sec_tag != INVALID_SEC_TAG);
+	int type = SOCK_DGRAM;
+
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	if (using_dtls) {
+		ret = slm_native_tls_load_credentials(proxy.sec_tag);
+		if (ret < 0) {
+			LOG_ERR("Failed to load sec tag: %d (%d)", proxy.sec_tag, ret);
+			return ret;
+		}
+
+		type |= SOCK_NATIVE_TLS;
+	}
+#endif
 
 	/* Open socket */
-	ret = socket(proxy.family, SOCK_DGRAM, using_dtls ? IPPROTO_DTLS_1_2 : IPPROTO_UDP);
+	ret = socket(proxy.family, type, using_dtls ? IPPROTO_DTLS_1_2 : IPPROTO_UDP);
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
 		return -errno;
@@ -245,39 +274,12 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 	}
 	LOG_INF("Connected.");
 
-	if (using_cid) {
-		int cid_status;
-		socklen_t cid_status_size = sizeof(cid_status);
-
-		/* Check the connection identifier status, and fail
-		 * if it does not correspond to what was requested.
-		 */
-		ret = getsockopt(proxy.sock, SOL_TLS, TLS_DTLS_CID_STATUS,
-							&cid_status, &cid_status_size);
-		if (ret) {
-			LOG_ERR("Getting DTLS CID status failed: %d", ret);
-			ret = -errno;
-			goto cli_exit;
-		} else {
-			if (proxy.dtls_cid == TLS_DTLS_CID_ENABLED
-				&& !(cid_status == TLS_DTLS_CID_STATUS_BIDIRECTIONAL
-					|| cid_status == TLS_DTLS_CID_STATUS_DOWNLINK)) {
-				LOG_ERR("DTLS CID status (%d) not satisfactory for"
-					" requested DTLS CID (%d).", cid_status, proxy.dtls_cid);
-				ret = -ENOTSUP;
-				goto cli_exit;
-			} else {
-				LOG_INF("DTLS CID status: %d", cid_status);
-			}
-		}
-	}
-
+	proxy.role = UDP_ROLE_CLIENT;
 	udp_thread_id = k_thread_create(&udp_thread, udp_thread_stack,
 			K_THREAD_STACK_SIZEOF(udp_thread_stack),
 			udp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	proxy.role = UDP_ROLE_CLIENT;
 	rsp_send("\r\n#XUDPCLI: %d,\"connected\"\r\n", proxy.sock);
 
 	return 0;
@@ -415,10 +417,12 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 			break;
 		}
 		if ((fds.revents & POLLHUP) == POLLHUP) {
-			/* Lose LTE connection */
-			LOG_WRN("POLLHUP");
-			ret = -ECONNRESET;
-			break;
+			/* DTLS server does not exit when client disconnects. */
+			if (proxy.role == UDP_ROLE_CLIENT || proxy.sec_tag == INVALID_SEC_TAG) {
+				LOG_WRN("POLLHUP");
+				ret = -ECONNRESET;
+				break;
+			}
 		}
 		if ((fds.revents & POLLIN) != POLLIN) {
 			continue;
@@ -432,17 +436,18 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 				memset(&proxy.remote, 0, sizeof(struct sockaddr_in));
 				ret = recvfrom(
 					proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf),
-					0, (struct sockaddr *)&(proxy.remote), &size);
+					MSG_DONTWAIT, (struct sockaddr *)&(proxy.remote), &size);
 			} else {
 				int size = sizeof(struct sockaddr_in6);
 
 				memset(&proxy.remote6, 0, sizeof(struct sockaddr_in6));
 				ret = recvfrom(
 					proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf),
-					0, (struct sockaddr *)&(proxy.remote6), &size);
+					MSG_DONTWAIT, (struct sockaddr *)&(proxy.remote6), &size);
 			}
 		} else {
-			ret = recv(proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf), 0);
+			ret = recv(proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf),
+				   MSG_DONTWAIT);
 		}
 		if (ret < 0) {
 			LOG_WRN("recv() error: %d", -errno);
@@ -510,6 +515,7 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 	int err = -EINVAL;
 	uint16_t op;
 	uint16_t port;
+	int param_count = at_params_valid_count_get(&slm_at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -521,10 +527,15 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 			if (socket_is_in_use()) {
 				return -EINVAL;
 			}
-			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &port);
-			if (err) {
-				return err;
+			if (at_params_unsigned_short_get(&slm_at_param_list, 2, &port)) {
+				return -EINVAL;
 			}
+			proxy.sec_tag = INVALID_SEC_TAG;
+			if (param_count > 3 &&
+			    at_params_int_get(&slm_at_param_list, 3, &proxy.sec_tag)) {
+				return -EINVAL;
+			}
+
 			proxy.family = (op == SERVER_START) ? AF_INET : AF_INET6;
 			err = do_udp_server_start(port);
 		} else if (op == SERVER_STOP) {
