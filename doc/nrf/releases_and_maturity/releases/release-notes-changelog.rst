@@ -475,7 +475,10 @@ Cellular samples
     * Release Assistance Indication (RAI) feature.
       This helps to save power by releasing the network connection faster on a network that supports it.
 
-  * Updated the eDRX cycle to 5.12s for both LTE-M and Nb-IOT.
+  * Updated:
+
+    * The eDRX cycle to 5.12 s for both LTE-M and NB-IoT.
+    * The periodic TAU (RPTAU) to 12 hours.
 
 Cryptography samples
 --------------------
@@ -909,7 +912,10 @@ Libraries for networking
 
 * :ref:`lib_lwm2m_client_utils` library:
 
-  * Updated the Release Assistance Indication (RAI) support to follow socket state changes from LwM2M engine, and modify RAI values based on the state.
+  * Updated:
+
+    * The Release Assistance Indication (RAI) support to follow socket state changes from LwM2M engine and modify RAI values based on the state.
+    * Request a periodic TAU (RPTAU) to match the client lifetime.
 
 * :ref:`lib_lwm2m_location_assistance` library:
 
