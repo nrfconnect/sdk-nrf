@@ -36,7 +36,7 @@ extensions.extend(["zephyr.external_content", "zephyr.doxyrunner"])
 
 # Options for HTML output ------------------------------------------------------
 
-html_static_path.append(str(NRF_BASE / "doc" / "_static"))
+html_static_path = [str(NRF_BASE / "doc" / "_static")]
 html_theme_options = {"docset": "nrfx", "docsets": utils.ALL_DOCSETS}
 
 # -- Options for doxyrunner ----------------------------------------------------
