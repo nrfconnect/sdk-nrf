@@ -1194,7 +1194,7 @@ static int hci_driver_open(void)
 		}
 
 		sdc_hci_cmd_vs_conn_event_extend_t event_extend_params = {
-			.enable = CONFIG_BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
+			.enable = IS_ENABLED(CONFIG_BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT)
 		};
 		err = sdc_hci_cmd_vs_conn_event_extend(&event_extend_params);
 		if (err) {
