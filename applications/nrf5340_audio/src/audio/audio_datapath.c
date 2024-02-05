@@ -85,8 +85,12 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define DRIFT_REGULATOR_DIV_FACTOR 2
 
 /* To allow BLE transmission and (host -> HCI -> controller) */
-#define JUST_IN_TIME_US		  (CONFIG_AUDIO_FRAME_DURATION_US - 2500)
-#define JUST_IN_TIME_THRESHOLD_US 1500
+#if defined(CONFIG_BT_LL_ACS_NRF53)
+#define JUST_IN_TIME_TARGET_DLY_US (CONFIG_AUDIO_FRAME_DURATION_US - 2500)
+#else /* !CONFIG_BT_LL_ACS_NRF53 */
+#define JUST_IN_TIME_TARGET_DLY_US 2500
+#endif /* !CONFIG_BT_LL_ACS_NRF53 */
+#define JUST_IN_TIME_BOUND_US 1500
 
 /* How often to print under-run warning */
 #define UNDERRUN_LOG_INTERVAL_BLKS 5000
@@ -793,30 +797,59 @@ static void audio_datapath_i2s_stop(void)
  *		to allow the sending of encoded data to be sent just before the connection interval
  *		opens up. This is done to reduce overall latency.
  *
- * @param[in]	sdu_ref_us	The SDU reference, in µs, to the previous sent packet.
+ * @param[in]	tx_sync_ts_us	The timestamp from get_tx_sync.
+ * @param[in]	curr_ts_us	The current time. This must be in the controller frame of reference.
  */
-static void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
+static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
+							 uint32_t curr_ts_us)
 {
 	int ret;
-	static int32_t count;
+	static int32_t print_count;
+	int64_t diff;
 
-	uint32_t curr_frame_ts = audio_sync_timer_capture();
-	int diff = curr_frame_ts - sdu_ref_us;
-
-	if (count++ % 100 == 0) {
-		LOG_DBG("Time from last anchor: %d us, time to next: %d us", diff,
-			CONFIG_AUDIO_FRAME_DURATION_US - diff);
+	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
+		/* CONFIG_BT_LL_ACS_NRF53 custom implementation. */
+		diff = (int64_t)curr_ts_us - tx_sync_ts_us;
+	} else {
+		diff = (int64_t)tx_sync_ts_us - curr_ts_us;
 	}
 
-	if ((diff < (JUST_IN_TIME_US - JUST_IN_TIME_THRESHOLD_US)) ||
-	    (diff > (JUST_IN_TIME_US + JUST_IN_TIME_THRESHOLD_US))) {
+	/* The diff should always be positive. If diff is a large negative number, it is likely
+	 * that wrapping has occurred. A small negative value however, may point to a fault in the
+	 * controller.
+	 */
+	if (diff < -((int64_t)UINT32_MAX / 2)) {
+		LOG_DBG("Timestamp wrap. diff: %lld", diff);
+		diff += UINT32_MAX;
+
+	} else if (diff < 0) {
+		LOG_ERR("tx_sync_ts_us: %u is earlier than curr_ts_us %u", tx_sync_ts_us,
+			curr_ts_us);
+		return;
+	}
+
+	if (print_count % 100 == 0) {
+		if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
+			LOG_DBG("JIT diff: %lld us. Target: %u +/- %u",
+				CONFIG_AUDIO_FRAME_DURATION_US - diff,
+				CONFIG_AUDIO_FRAME_DURATION_US - JUST_IN_TIME_TARGET_DLY_US,
+				JUST_IN_TIME_BOUND_US);
+		} else {
+			LOG_DBG("JIT diff: %lld us. Target: %u +/- %u", diff,
+				JUST_IN_TIME_TARGET_DLY_US, JUST_IN_TIME_BOUND_US);
+		}
+	}
+	print_count++;
+
+	if ((diff < (JUST_IN_TIME_TARGET_DLY_US - JUST_IN_TIME_BOUND_US)) ||
+	    (diff > (JUST_IN_TIME_TARGET_DLY_US + JUST_IN_TIME_BOUND_US))) {
 		ret = audio_system_fifo_rx_block_drop();
 		if (ret) {
 			LOG_WRN("Not able to drop FIFO RX block");
 			return;
 		}
 		LOG_DBG("Dropped block to align with connection interval");
-		count = 0;
+		print_count = 0;
 	}
 }
 
@@ -832,22 +865,25 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 static void audio_datapath_sdu_ref_update(const struct zbus_channel *chan)
 {
 	if (IS_ENABLED(CONFIG_AUDIO_SOURCE_I2S)) {
-		uint32_t sdu_ref_us;
+		uint32_t tx_sync_ts_us;
+		uint32_t curr_ts_us;
 		bool adjust;
 		const struct sdu_ref_msg *msg;
 
 		msg = zbus_chan_const_msg(chan);
-		sdu_ref_us = msg->timestamp;
+		tx_sync_ts_us = msg->tx_sync_ts_us;
+		curr_ts_us = msg->curr_ts_us;
 		adjust = msg->adjust;
 
 		if (ctrl_blk.stream_started) {
-			ctrl_blk.prev_drift_sdu_ref_us = sdu_ref_us;
+			ctrl_blk.prev_drift_sdu_ref_us = tx_sync_ts_us;
 
-			if (adjust && sdu_ref_us != 0) {
-				audio_datapath_just_in_time_check_and_adjust(sdu_ref_us);
+			if (adjust && tx_sync_ts_us != 0) {
+				audio_datapath_just_in_time_check_and_adjust(tx_sync_ts_us,
+									     curr_ts_us);
 			}
 		} else {
-			LOG_WRN("Stream not started - Can not update sdu_ref_us");
+			LOG_WRN("Stream not started - Can not update tx_sync_ts_us");
 		}
 	}
 }

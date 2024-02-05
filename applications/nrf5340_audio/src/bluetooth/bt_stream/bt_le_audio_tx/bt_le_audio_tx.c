@@ -11,6 +11,7 @@
 #include <../subsys/bluetooth/audio/bap_stream.h>
 
 #include "nrf5340_audio_common.h"
+#include "audio_sync_timer.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_le_audio_tx, CONFIG_BLE_LOG_LEVEL);
@@ -41,30 +42,31 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(SRC_STREAM_COUNT,
 						       NET_BUF_POOL_PTR_ITERATE, (,)) };
 /* clang-format on */
 
-struct bt_le_audio_tx_info {
+struct tx_inf {
 	struct bt_iso_tx_info iso_tx;
+	struct bt_iso_tx_info iso_tx_readback;
 	struct net_buf_pool *iso_tx_pool;
 	atomic_t iso_tx_pool_alloc;
 	bool hci_wrn_printed;
 };
 
 static bool initialized;
-static struct bt_le_audio_tx_info tx_info[SRC_STREAM_COUNT];
+static struct tx_inf tx_info_arr[SRC_STREAM_COUNT];
 
 /**
  * @brief Sends audio data over a single BAP stream.
  *
- * @param data		Audio data to send.
- * @param size		Size of data.
- * @param bap_stream	Pointer to BAP stream to use.
- * @param tx_info	Pointer to tx_info struct.
+ * @param data			Audio data to send.
+ * @param size			Size of data.
+ * @param bap_stream		Pointer to BAP stream to use.
+ * @param tx_info		Pointer to tx_info struct.
  * @param ts_tx		Timestamp to send. Note that for some controllers, BT_ISO_TIMESTAMP_NONE
  *			is used. This timestamp is used to ensure that SDUs are sent in the same
  *			connection interval.
  * @return		0 if successful, error otherwise.
  */
 static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_bap_stream *bap_stream,
-			   struct bt_le_audio_tx_info *tx_info, uint32_t ts_tx)
+			   struct tx_inf *tx_info, uint32_t ts_tx)
 {
 	int ret;
 	struct net_buf *buf;
@@ -159,17 +161,26 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 		return -EINVAL;
 	}
 
-	/* When sending data, we always send ts = 0 to the first active transmitting channel.
+	/* When sending ISO data, we always send ts = 0 to the first active transmitting channel.
 	 * The controller will populate with a ts which is fetched using bt_iso_chan_get_tx_sync.
 	 * This timestamp will be submitted to all the other channels in order to place data on all
 	 * channels in the same ISO interval.
 	 */
 
-	uint32_t ts_common = 0;
+	uint32_t common_tx_sync_ts_us = 0;
+	uint32_t curr_ts_us = 0;
 	bool ts_common_acquired = false;
 	uint32_t common_interval = 0;
 
 	for (int i = 0; i < streams_to_tx; i++) {
+		if (tx_info_arr[i].iso_tx.seq_num == 0) {
+			/* Temporary fix until /zephyr/pull/68745/ is available
+			 */
+#if defined(CONFIG_BT_BAP_DEBUG_STREAM_SEQ_NUM)
+			bap_streams[i]->_prev_seq_num = 0;
+#endif /* CONFIG_BT_BAP_DEBUG_STREAM_SEQ_NUM */
+		}
+
 		if (!le_audio_ep_state_check(bap_streams[i]->ep, BT_BAP_EP_STATE_STREAMING)) {
 			/* This bap_stream is not streaming*/
 			continue;
@@ -184,11 +195,11 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 		/* Check if same audio is sent to all channels */
 		if (enc_audio.num_ch == 1) {
 			ret = iso_stream_send(enc_audio.data, data_size_pr_stream, bap_streams[i],
-					      &tx_info[i], ts_common);
+					      &tx_info_arr[i], common_tx_sync_ts_us);
 		} else {
 			ret = iso_stream_send(&enc_audio.data[data_size_pr_stream * i],
-					      data_size_pr_stream, bap_streams[i], &tx_info[i],
-					      ts_common);
+					      data_size_pr_stream, bap_streams[i], &tx_info_arr[i],
+					      common_tx_sync_ts_us);
 		}
 
 		if (ret) {
@@ -198,32 +209,41 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 			continue;
 		}
 
-		if (!ts_common_acquired) {
-			ret = bt_bap_stream_get_tx_sync(bap_streams[i], &tx_info[i].iso_tx);
-			if (ret) {
-				if (ret != -ENOTCONN) {
-					LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
-						bap_streams[i]);
-				}
-				continue;
+		/* Strictly, it is only required to call get_tx_sync on the first streaming channel
+		 * to get the timestamp which is sent to all other channels. However, to be able to
+		 * detect errors, this is called on each TX.
+		 */
+		ret = bt_bap_stream_get_tx_sync(bap_streams[i], &tx_info_arr[i].iso_tx_readback);
+		if (ret) {
+			if (ret != -ENOTCONN) {
+				LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
+					bap_streams[i]);
 			}
+			continue;
+		}
 
-			ts_common = tx_info[i].iso_tx.ts;
+		if (!ts_common_acquired) {
+			curr_ts_us = audio_sync_timer_capture();
+			common_tx_sync_ts_us = tx_info_arr[i].iso_tx_readback.ts;
 			ts_common_acquired = true;
 		}
 	}
 
 	if (ts_common_acquired) {
-		if (IS_ENABLED(CONFIG_BT_BAP_UNICAST_CLIENT)) {
-			struct sdu_ref_msg msg;
+		/*TODO: Disabled for LL_ACS_NRF53 BIS due to timestamp issue */
+		if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53) && IS_ENABLED(CONFIG_TRANSPORT_BIS)) {
+			return 0;
+		}
 
-			msg.timestamp = ts_common;
-			msg.adjust = true;
+		struct sdu_ref_msg msg;
 
-			ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
-			if (ret) {
-				LOG_WRN("Failed to publish timestamp: %d", ret);
-			}
+		msg.tx_sync_ts_us = common_tx_sync_ts_us;
+		msg.curr_ts_us = curr_ts_us;
+		msg.adjust = true;
+
+		ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
+		if (ret) {
+			LOG_WRN("Failed to publish timestamp: %d", ret);
 		}
 	}
 
@@ -236,8 +256,8 @@ int bt_le_audio_tx_stream_stopped(uint8_t stream_idx)
 		return -EACCES;
 	}
 
-	atomic_clear(&tx_info[stream_idx].iso_tx_pool_alloc);
-	tx_info[stream_idx].hci_wrn_printed = false;
+	atomic_clear(&tx_info_arr[stream_idx].iso_tx_pool_alloc);
+	tx_info_arr[stream_idx].hci_wrn_printed = false;
 
 	return 0;
 }
@@ -248,7 +268,8 @@ int bt_le_audio_tx_stream_started(uint8_t stream_idx)
 		return -EACCES;
 	}
 
-	tx_info[stream_idx].iso_tx.seq_num = 0;
+	tx_info_arr[stream_idx].iso_tx.seq_num = 0;
+	tx_info_arr[stream_idx].iso_tx_readback.seq_num = 0;
 	return 0;
 }
 
@@ -258,7 +279,7 @@ int bt_le_audio_tx_stream_sent(uint8_t stream_idx)
 		return -EACCES;
 	}
 
-	atomic_dec(&tx_info[stream_idx].iso_tx_pool_alloc);
+	atomic_dec(&tx_info_arr[stream_idx].iso_tx_pool_alloc);
 	return 0;
 }
 
@@ -269,11 +290,14 @@ int bt_le_audio_tx_init(void)
 	}
 
 	for (int i = 0; i < SRC_STREAM_COUNT; i++) {
-		tx_info[i].iso_tx_pool = iso_tx_pools[i];
-		tx_info[i].hci_wrn_printed = false;
-		tx_info[i].iso_tx.ts = 0;
-		tx_info[i].iso_tx.offset = 0;
-		tx_info[i].iso_tx.seq_num = 0;
+		tx_info_arr[i].iso_tx_pool = iso_tx_pools[i];
+		tx_info_arr[i].hci_wrn_printed = false;
+		tx_info_arr[i].iso_tx.ts = 0;
+		tx_info_arr[i].iso_tx.offset = 0;
+		tx_info_arr[i].iso_tx.seq_num = 0;
+		tx_info_arr[i].iso_tx_readback.ts = 0;
+		tx_info_arr[i].iso_tx_readback.offset = 0;
+		tx_info_arr[i].iso_tx_readback.seq_num = 0;
 	}
 
 	initialized = true;

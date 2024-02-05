@@ -39,8 +39,13 @@ struct le_audio_msg {
 	enum bt_audio_dir dir;
 };
 
+/**
+ * tx_sync_ts_us	The timestamp from get_tx_sync.
+ * curr_ts_us		The current time. This must be in the controller frame of reference.
+ */
 struct sdu_ref_msg {
-	uint32_t timestamp;
+	uint32_t tx_sync_ts_us;
+	uint32_t curr_ts_us;
 	bool adjust;
 };
 
