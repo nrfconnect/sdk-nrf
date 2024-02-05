@@ -38,7 +38,7 @@ enum sock_shell_command {
 
 static const char sock_connect_usage_str[] =
 	"Usage: sock connect -a <address> -p <port>\n"
-	"       [-f <family>] [-t <type>] [-b <port>] [-I <cid>]\n"
+	"       [-f <family>] [-t <type>] [-b <port>] [-I <cid>] [-K]\n"
 	"       [-S] [-T <sec_tag>] [-c] [-V <level>] [-H <hostname>]\n"
 	"Options:\n"
 	"  -a, --address, [str]      Address as ip address or hostname\n"
@@ -50,6 +50,7 @@ static const char sock_connect_usage_str[] =
 	"  -b, --bind_port, [int]    Local port to bind the socket to\n"
 	"  -I, --cid, [int]          Use this option to bind socket to specific\n"
 	"                            PDN CID. See link command for available CIDs.\n"
+	"  -K, --keep_open           Keep socket open when its PDN connection is lost.\n"
 	"  -S, --secure,             Enable secure connection (TLS 1.2/DTLS 1.2).\n"
 	"  -T, --sec_tag, [int]      Security tag for TLS certificate(s).\n"
 	"  -c, --cache,              Enable TLS session cache.\n"
@@ -195,6 +196,7 @@ static struct option long_options[] = {
 	{ "start",          no_argument,       0, 'r' },
 	{ "blocking",       required_argument, 0, 'B' },
 	{ "wait_ack",       no_argument,       0, 'W' },
+	{ "keep_open",      no_argument,       0, 'K' },
 	{ "print_format",   required_argument, 0, 'P' },
 	{ "packet_number_prefix", no_argument, 0, SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX },
 	{ "rai_last",       no_argument,       0, SOCK_SHELL_OPT_RAI_LAST },
@@ -206,7 +208,7 @@ static struct option long_options[] = {
 	{ 0,                0,                 0, 0   }
 };
 
-static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:WP:h";
+static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:WKP:h";
 
 static void sock_print_usage(enum sock_shell_command command)
 {
@@ -348,6 +350,7 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 	bool arg_secure = false;
 	uint32_t arg_sec_tag = 0;
 	bool arg_session_cache = false;
+	bool arg_keep_open = false;
 	int arg_peer_verify = 2;
 	char arg_peer_hostname[SOCK_MAX_ADDR_LEN + 1];
 
@@ -430,6 +433,9 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 				return -EINVAL;
 			}
 			break;
+		case 'K':
+			arg_keep_open = true;
+			break;
 		case 'S': /* Security */
 			arg_secure = true;
 			break;
@@ -490,6 +496,7 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 		arg_secure,
 		arg_sec_tag,
 		arg_session_cache,
+		arg_keep_open,
 		arg_peer_verify,
 		arg_peer_hostname);
 

@@ -25,7 +25,7 @@ int sock_getaddrinfo(int family, int type, char *hostname, int pdn_cid);
 int sock_open_and_connect(
 	int family, int type, char *address, int port,
 	int bind_port, int pdn_cid, bool secure, uint32_t sec_tag,
-	bool session_cache, int peer_verify,
+	bool session_cache, bool keep_open, int peer_verify,
 	char *peer_hostname);
 
 int sock_send_data(

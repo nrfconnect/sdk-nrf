@@ -485,6 +485,7 @@ Cellular samples
     * Support for PDN CID 0 in the ``-I`` argument for the ``sock connect`` command.
     * Support for listing interface addresses using the ``link ifaddrs`` command.
     * Support for the ``MSG_WAITACK`` send flag using the ``sock send`` command.
+    * Support for connect with ``SO_KEEPOPEN`` using the ``sock connect`` command.
 
   * Removed:
 

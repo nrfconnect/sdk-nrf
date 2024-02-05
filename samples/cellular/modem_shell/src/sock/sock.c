@@ -527,6 +527,7 @@ int sock_open_and_connect(
 	bool secure,
 	uint32_t sec_tag,
 	bool session_cache,
+	bool keep_open,
 	int peer_verify,
 	char *peer_hostname)
 {
@@ -613,6 +614,14 @@ int sock_open_and_connect(
 	if (bind_port > 0) {
 		err = sock_bind(fd, family, bind_port);
 		if (err) {
+			goto connect_error;
+		}
+	}
+
+	if (keep_open) {
+		err = setsockopt(fd, SOL_SOCKET, SO_KEEPOPEN, &(int){1}, sizeof(int));
+		if (err) {
+			mosh_error("Unable to set option SO_KEEPOPEN, errno %d", errno);
 			goto connect_error;
 		}
 	}
