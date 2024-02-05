@@ -13,6 +13,7 @@ LOG_MODULE_REGISTER(softap, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/wifi_utils.h>
+#include "net_private.h"
 
 #define WIFI_SAP_MGMT_EVENTS (NET_EVENT_WIFI_AP_ENABLE_RESULT)
 
@@ -74,6 +75,50 @@ static int __wifi_args_to_params(struct wifi_connect_req_params *params)
 	params->psk = CONFIG_SOFTAP_SAMPLE_PASSWORD;
 	params->psk_length = strlen(params->psk);
 #endif
+
+	return 0;
+}
+
+static int cmd_wifi_status(void)
+{
+	struct net_if *iface;
+	struct wifi_iface_status status = { 0 };
+
+	iface = net_if_get_first_wifi();
+	if (!iface) {
+		LOG_ERR("Failed to get Wi-FI interface");
+		return -ENOEXEC;
+	}
+
+	if (net_mgmt(NET_REQUEST_WIFI_IFACE_STATUS, iface, &status,
+				sizeof(struct wifi_iface_status))) {
+		LOG_ERR("Status request failed");
+		return -ENOEXEC;
+	}
+
+	LOG_INF("Status: successful");
+	LOG_INF("==================");
+	LOG_INF("State: %s", wifi_state_txt(status.state));
+
+	if (status.state >= WIFI_STATE_ASSOCIATED) {
+		uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
+
+		LOG_INF("Interface Mode: %s", wifi_mode_txt(status.iface_mode));
+		LOG_INF("Link Mode: %s", wifi_link_mode_txt(status.link_mode));
+		LOG_INF("SSID: %.32s", status.ssid);
+		LOG_INF("BSSID: %s",
+			net_sprint_ll_addr_buf(status.bssid,
+					       WIFI_MAC_ADDR_LEN, mac_string_buf,
+					       sizeof(mac_string_buf)));
+		LOG_INF("Band: %s", wifi_band_txt(status.band));
+		LOG_INF("Channel: %d", status.channel);
+		LOG_INF("Security: %s", wifi_security_txt(status.security));
+		LOG_INF("MFP: %s", wifi_mfp_txt(status.mfp));
+		LOG_INF("Beacon Interval: %d", status.beacon_interval);
+		LOG_INF("DTIM: %d", status.dtim_period);
+		LOG_INF("TWT: %s",
+			status.twt_capable ? "Supported" : "Not supported");
+	}
 
 	return 0;
 }
@@ -148,6 +193,8 @@ int main(void)
 	k_msleep(20);
 
 	wifi_softap_enable();
+
+	cmd_wifi_status();
 
 	return 0;
 }
