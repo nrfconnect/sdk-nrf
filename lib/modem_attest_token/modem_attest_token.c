@@ -262,7 +262,8 @@ int modem_attest_token_parse(struct nrf_attestation_token const *const token_in,
 		goto cleanup;
 	}
 
-	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), bin_buf, bin_buf_sz, 1);
+	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), bin_buf, bin_buf_sz, 1,
+			NULL, 0);
 
 	/* Get attestation token data */
 	err = get_attest_data(states, data_out);

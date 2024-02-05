@@ -855,6 +855,10 @@ Modem libraries
 
   * Fixed a potential race condition, where two threads might corrupt a shared response buffer.
 
+* :ref:`lib_modem_attest_token` library:
+
+  * Updated to adapt to API changes in zcbor 0.8.x.
+
 Libraries for networking
 ------------------------
 
