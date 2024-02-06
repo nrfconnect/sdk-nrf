@@ -6,3 +6,13 @@
     - None
   platforms:
     - all
+
+- scenarios:
+    - applications.asset_tracker_v2.lwm2m.debug-modem_trace
+    - applications.asset_tracker_v2.lwm2m.debug-modem_trace.sysbuild
+    - sample.cellular.modem_shell.app_fota
+  platforms:
+    - nrf9160dk_nrf9160_ns
+    - nrf9161dk_nrf9161_ns
+    - thingy91_nrf9160_ns
+  comment: "FLASH overflow - https://nordicsemi.atlassian.net/browse/NCSDK-25891"
