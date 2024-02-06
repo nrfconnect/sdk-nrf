@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+//
+// This file is based on the Arm PSA Crypto Driver API.
 
 #ifndef OBERON_KEY_DERIVATION_H
 #define OBERON_KEY_DERIVATION_H
@@ -31,6 +33,7 @@ typedef enum {
     OBERON_TLS12_PRF_ALG = 6,
     OBERON_TLS12_PSK_TO_MS_ALG = 7,
     OBERON_ECJPAKE_TO_PMS_ALG = 8,
+    OBERON_SP800_108_COUNTER_ALG = 9,
 } oberon_kdf_alg;
 
 typedef struct {
