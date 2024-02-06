@@ -98,6 +98,9 @@ config BT_GATT_CLIENT
 config BT_GATT_DM
 	default y
 
+config BT_EXT_ADV
+	default y
+
 config BT_SMP
 	default y
 
@@ -113,9 +116,6 @@ config BT_MAX_PAIRED
 # Use two Bluetooth LE identities. The first one is used by the peripheral for Matter service advertising purposes, and the other is used by the Matter bridge central.
 config BT_ID_MAX
 	default 2
-
-config BT_EXT_ADV
-	default y
 
 config BT_EXT_ADV_LEGACY_SUPPORT
 	default y
