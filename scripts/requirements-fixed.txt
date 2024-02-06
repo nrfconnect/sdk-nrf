@@ -24,7 +24,7 @@ click==8.0.3              # via -r bootloader/mcuboot/scripts/requirements.txt, 
 cmsis-pack-manager==0.5.2  # via pyocd
 colorama==0.4.6           # via -r zephyr/scripts/requirements-build-test.txt, pyocd, west
 coverage==7.3.1           # via -r zephyr/scripts/requirements-build-test.txt
-cryptography==41.0.6      # via -r bootloader/mcuboot/scripts/requirements.txt, -r nrf/scripts/requirements-build.txt, imgtool, pyjwt
+cryptography==42.0.2      # via -r bootloader/mcuboot/scripts/requirements.txt, -r nrf/scripts/requirements-build.txt, imgtool, pyjwt
 deprecated==1.2.14        # via pygithub
 dill==0.3.7               # via pylint
 docopt==0.6.2             # via pykwalify
