@@ -119,11 +119,6 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *con
 	size_t len = sizeof(buffer);
 	int err;
 
-	/* QZSS assistance is not yet supported with CoAP, make sure we only ask for GPS. */
-	if (request->type == NRF_CLOUD_REST_AGNSS_REQ_CUSTOM) {
-		request->agnss_req->system_count = 1;
-	}
-
 	err = coap_codec_agnss_encode(request, buffer, &len,
 				     COAP_CONTENT_FORMAT_APP_CBOR);
 	if (err) {
