@@ -14,29 +14,29 @@
   "stack_size": "0x800",
 
   # Service definitions for IPC mode.
-  "services" : [
-  {
-    "name": "TFM_SPP_PROCESS",
-    "sid": "0xFFFFF001", # Bits [31:12] denote the vendor (change this),
-                         # bits [11:0] are arbitrary at the discretion of the
-                         # vendor.
-    "connection_based": false,
-    "non_secure_clients": true,
-    "stateless_handle": "auto",
-    "version": 1,
-    "version_policy": "STRICT",
-   },
-   {
-    "name": "TFM_SPP_SEND",
-    "sid": "0xFFFFF002", # Bits [31:12] denote the vendor (change this),
-                         # bits [11:0] are arbitrary at the discretion of the
-                         # vendor.
-    "connection_based": false,
-    "non_secure_clients": true,
-    "stateless_handle": "auto",
-    "version": 1,
-    "version_policy": "STRICT",
-   },
+  "services": [
+    {
+      "name": "TFM_SPP_PROCESS",
+      # bits [31:12]: Vendor (change this)
+      # bits [11:0] : Arbitrary at the discretion of the vendor
+      "sid": "0xFFFFF001",
+      "connection_based": false,
+      "non_secure_clients": true,
+      "stateless_handle": "auto",
+      "version": 1,
+      "version_policy": "STRICT",
+    },
+    {
+      "name": "TFM_SPP_SEND",
+      # bits [31:12]: Vendor (change this)
+      # bits [11:0] : Arbitrary at the discretion of the vendor
+      "sid": "0xFFFFF002",
+      "connection_based": false,
+      "non_secure_clients": true,
+      "stateless_handle": "auto",
+      "version": 1,
+      "version_policy": "STRICT",
+    },
   ],
 
   "mmio_regions": [
