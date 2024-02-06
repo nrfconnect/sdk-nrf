@@ -301,7 +301,7 @@ endif()
 
 if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
   # Copy the mbed TLS config file (default: nrf-config.h)
-  configure_file(${NRF_SECURITY_ROOT}/configs/nrf-config.h
+  configure_file(${NRF_SECURITY_ROOT}/configs/nrf-config.h.template
     ${generated_include_path}/${CONFIG_MBEDTLS_CFG_FILE}
   )
 
