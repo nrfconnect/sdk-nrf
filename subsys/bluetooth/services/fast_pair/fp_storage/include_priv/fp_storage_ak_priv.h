@@ -79,7 +79,7 @@ BUILD_ASSERT(SETTINGS_NAME_SEPARATOR == '/');
  *
  * @param _metadata	Account Key Metadata that will be changed.
  * @param _field_name	Field name in Account Key Metadata that will be changed.
- * @param _val		Value to which the field will be set
+ * @param _val		Value to which the field will be set.
  */
 #define ACCOUNT_KEY_METADATA_FIELD_SET(_metadata, _field_name, _val)		\
 	__ASSERT_NO_MSG(((_val << ACCOUNT_KEY_METADATA_##_field_name##_POS) &	\
@@ -91,7 +91,7 @@ BUILD_ASSERT(SETTINGS_NAME_SEPARATOR == '/');
 /** Get field of Account Key Metadata.
  *
  * @param _metadata	Account Key Metadata.
- * @param _field_name	Field name in Account Key Metadata that will be changed.
+ * @param _field_name	Field name in Account Key Metadata.
  */
 #define ACCOUNT_KEY_METADATA_FIELD_GET(_metadata, _field_name)		\
 	((_metadata & ACCOUNT_KEY_METADATA_##_field_name##_MASK) >>	\
