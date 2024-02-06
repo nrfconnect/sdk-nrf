@@ -12,6 +12,7 @@
 
 #include "nrf5340_audio_common.h"
 #include "audio_sync_timer.h"
+#include "sdc_hci_vs.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_le_audio_tx, CONFIG_BLE_LOG_LEVEL);
@@ -29,6 +30,8 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 #define SRC_STREAM_COUNT 0
 #endif
 
+#define HANDLE_INVALID 0xFFFF
+
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 
 /* For being able to dynamically define iso_tx_pools */
@@ -43,6 +46,7 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(SRC_STREAM_COUNT,
 /* clang-format on */
 
 struct tx_inf {
+	uint16_t iso_conn_handle;
 	struct bt_iso_tx_info iso_tx;
 	struct bt_iso_tx_info iso_tx_readback;
 	struct net_buf_pool *iso_tx_pool;
@@ -121,6 +125,68 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_bap
 		return ret;
 	} else {
 		tx_info->iso_tx.seq_num++;
+	}
+
+	return 0;
+}
+
+static int get_tx_sync_sdc(uint16_t iso_conn_handle, struct bt_iso_tx_info *info)
+{
+	int ret;
+	struct net_buf *buf;
+	struct net_buf *rsp;
+	sdc_hci_cmd_vs_iso_read_tx_timestamp_t *cmd_read_tx_timestamp;
+
+	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_ISO_READ_TX_TIMESTAMP,
+				sizeof(*cmd_read_tx_timestamp));
+	if (!buf) {
+		LOG_ERR("Could not allocate command buffer");
+		return -ENOBUFS;
+	}
+
+	cmd_read_tx_timestamp = net_buf_add(buf, sizeof(*cmd_read_tx_timestamp));
+	cmd_read_tx_timestamp->conn_handle = iso_conn_handle;
+
+	ret = bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_ISO_READ_TX_TIMESTAMP, buf, &rsp);
+	if (ret) {
+		return ret;
+	}
+
+	if (rsp) {
+		sdc_hci_cmd_vs_iso_read_tx_timestamp_return_t *rsp_params = (void *)&rsp->data[1];
+
+		info->ts = rsp_params->tx_time_stamp;
+		info->seq_num = rsp_params->packet_sequence_number;
+		info->offset = 0;
+
+		net_buf_unref(rsp);
+		return 0;
+	}
+
+	return -EINVAL;
+}
+
+static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_conn_handle)
+{
+	int ret;
+
+	if (*iso_conn_handle == HANDLE_INVALID) {
+		struct bt_bap_ep_info ep_info;
+
+		ret = bt_bap_ep_get_info(bap_stream->ep, &ep_info);
+		if (ret) {
+			LOG_WRN("Unable to get info for ep");
+			return -EACCES;
+		}
+
+		ret = bt_hci_get_conn_handle(ep_info.iso_chan->iso,
+					     iso_conn_handle);
+		if (ret) {
+			LOG_ERR("Failed obtaining conn_handle (ret:%d)", ret);
+			return ret;
+		}
+	} else {
+		/* Already set. */
 	}
 
 	return 0;
@@ -218,11 +284,17 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 			continue;
 		}
 
-		/* Strictly, it is only required to call get_tx_sync on the first streaming channel
-		 * to get the timestamp which is sent to all other channels. However, to be able to
-		 * detect errors, this is called on each TX.
+		ret = iso_conn_handle_set(bap_streams[i], &tx_info_arr[i].iso_conn_handle);
+		if (ret) {
+			continue;
+		}
+
+		/* Strictly, it is only required to call get_tx_sync_sdc on the first streaming
+		 * channel to get the timestamp which is sent to all other channels.
+		 * However, to be able to detect errors, this is called on each TX.
 		 */
-		ret = bt_bap_stream_get_tx_sync(bap_streams[i], &tx_info_arr[i].iso_tx_readback);
+		ret = get_tx_sync_sdc(tx_info_arr[i].iso_conn_handle,
+				      &tx_info_arr[i].iso_tx_readback);
 		if (ret) {
 			if (ret != -ENOTCONN) {
 				LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
@@ -261,7 +333,6 @@ int bt_le_audio_tx_stream_stopped(uint8_t stream_idx)
 	}
 
 	atomic_clear(&tx_info_arr[stream_idx].iso_tx_pool_alloc);
-	tx_info_arr[stream_idx].hci_wrn_printed = false;
 
 	return 0;
 }
@@ -272,6 +343,8 @@ int bt_le_audio_tx_stream_started(uint8_t stream_idx)
 		return -EACCES;
 	}
 
+	tx_info_arr[stream_idx].hci_wrn_printed = false;
+	tx_info_arr[stream_idx].iso_conn_handle = HANDLE_INVALID;
 	tx_info_arr[stream_idx].iso_tx.seq_num = 0;
 	tx_info_arr[stream_idx].iso_tx_readback.seq_num = 0;
 	return 0;
@@ -296,6 +369,7 @@ int bt_le_audio_tx_init(void)
 	for (int i = 0; i < SRC_STREAM_COUNT; i++) {
 		tx_info_arr[i].iso_tx_pool = iso_tx_pools[i];
 		tx_info_arr[i].hci_wrn_printed = false;
+		tx_info_arr[i].iso_conn_handle = HANDLE_INVALID;
 		tx_info_arr[i].iso_tx.ts = 0;
 		tx_info_arr[i].iso_tx.offset = 0;
 		tx_info_arr[i].iso_tx.seq_num = 0;
