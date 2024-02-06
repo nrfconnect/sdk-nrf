@@ -79,6 +79,19 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	uint8_t num_conn = 0;
 	struct bt_mgmt_msg msg;
 
+	if (err == BT_HCI_ERR_ADV_TIMEOUT && IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		LOG_INF("Directed adv timed out with no connection, reverting to normal adv");
+
+		bt_mgmt_dir_adv_timed_out();
+
+		ret = bt_mgmt_adv_start(NULL, 0, NULL, 0, true);
+		if (ret) {
+			LOG_ERR("Failed to restart advertising: %d", ret);
+		}
+
+		return;
+	}
+
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (err) {

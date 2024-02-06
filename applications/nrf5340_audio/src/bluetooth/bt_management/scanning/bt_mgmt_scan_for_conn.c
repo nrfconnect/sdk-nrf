@@ -149,6 +149,11 @@ static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 		/* Note: May lead to connection creation */
 		if (bonded_num < CONFIG_BT_MAX_PAIRED) {
 			bt_data_parse(ad, device_name_check, (void *)info->addr);
+		} else {
+			/* All bonded slots are taken, so we will only
+			 * accept previously bonded devices
+			 */
+			bt_foreach_bond(BT_ID_DEFAULT, bond_connect, (void *)info->addr);
 		}
 		break;
 	default:
