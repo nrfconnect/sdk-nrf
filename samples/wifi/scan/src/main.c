@@ -122,6 +122,7 @@ static void handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
 	const struct wifi_scan_result *entry =
 		(const struct wifi_scan_result *)cb->info;
 	uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
+	uint8_t ssid_print[WIFI_SSID_MAX_LEN + 1];
 
 	scan_result++;
 
@@ -130,12 +131,15 @@ static void handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
 		       "Num", "SSID", "(len)", "Chan", "RSSI", "Security", "BSSID");
 	}
 
+	strncpy(ssid_print, entry->ssid, sizeof(ssid_print) - 1);
+	ssid_print[sizeof(ssid_print) - 1] = '\0';
+
 #if defined CONFIG_WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC
-	__ASSERT(!local_mac_check(entry->mac), "Locally administered MAC found: %s\n", entry->ssid);
+	__ASSERT(!local_mac_check(entry->mac), "Locally administered MAC found: %s\n", ssid_print);
 #endif /* CONFIG_WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC */
 
 	printk("%-4d | %-32s %-5u | %-4u | %-4d | %-5s | %s\n",
-	       scan_result, entry->ssid, entry->ssid_length,
+	       scan_result, ssid_print, entry->ssid_length,
 	       entry->channel, entry->rssi,
 	       wifi_security_txt(entry->security),
 	       ((entry->mac_length) ?
