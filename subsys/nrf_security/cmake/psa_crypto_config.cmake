@@ -305,8 +305,8 @@ if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
     ${generated_include_path}/${CONFIG_MBEDTLS_CFG_FILE}
   )
 
-  # Generate the mbed TLS user config file (default nrf-config-user.h)
+  # Generate the PSA config file (default nrf-psa-crypto-config.h)
   configure_file(${NRF_SECURITY_ROOT}/configs/psa_crypto_config.h.template
-    ${generated_include_path}/${CONFIG_MBEDTLS_USER_CONFIG_FILE}
+    ${generated_include_path}/${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}
   )
 endif()
