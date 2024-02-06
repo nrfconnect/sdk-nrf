@@ -308,6 +308,7 @@ static int err_check(const struct device *dev)
 	return uart_err_check(data->target);
 }
 
+#ifdef CONFIG_UART_USE_RUNTIME_CONFIGURE
 static int configure(const struct device *dev, const struct uart_config *cfg)
 {
 	__ASSERT_NO_MSG(dev);
@@ -331,6 +332,7 @@ static int config_get(const struct device *dev, struct uart_config *cfg)
 
 	return uart_config_get(data->target, cfg);
 }
+#endif /* CONFIG_UART_USE_RUNTIME_CONFIGURE */
 
 
 #ifdef CONFIG_UART_LINE_CTRL
@@ -557,8 +559,10 @@ const struct uart_driver_api uart_async_adapter_driver_api = {
 	.poll_in = poll_in,
 	.poll_out = poll_out,
 	.err_check = err_check,
+#ifdef CONFIG_UART_USE_RUNTIME_CONFIGURE
 	.configure = configure,
 	.config_get = config_get,
+#endif
 
 #ifdef CONFIG_UART_LINE_CTRL
 	.line_ctrl_set = line_ctrl_set,
