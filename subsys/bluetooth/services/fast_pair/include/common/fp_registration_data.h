@@ -14,8 +14,6 @@
  * @defgroup fp_registration_data Fast Pair registration data
  * @brief Internal API for Fast Pair registration data
  *
- * The module must be initialized with @ref bt_fast_pair_enable before using API functions.
- *
  * @{
  */
 
@@ -39,6 +37,8 @@ extern "C" {
 int fp_reg_data_get_model_id(uint8_t *buf, size_t size);
 
 /** Get Fast Pair anti-spoofing private key.
+ *
+ * The module must be initialized with @ref bt_fast_pair_enable before using this function.
  *
  * @param[out] buf  Pointer to the buffer to be filled with the anti-spoofing private key.
  * @param[in]  size Buffer length (in bytes). The buffer must be at least
