@@ -221,7 +221,12 @@ void memfault_lte_metrics_update(void)
 
 	err = modem_info_get_operator(operator_name, sizeof(operator_name));
 	if (err != 0) {
-		LOG_WRN("Network operator collection failed, error: %d", err);
+		LOG_DBG("Network operator name was not reported by the modem");
+
+		err = MEMFAULT_METRIC_SET_STRING(ncs_lte_operator, "Not available");
+		if (err) {
+			LOG_ERR("Failed to set ncs_lte_operator");
+		}
 	} else {
 		err = MEMFAULT_METRIC_SET_STRING(ncs_lte_operator, operator_name);
 		if (err) {
