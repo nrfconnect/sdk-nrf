@@ -119,16 +119,8 @@ int nrf_cloud_agnss_request(const struct nrf_modem_gnss_agnss_data_frame *reques
 
 static bool qzss_assistance_is_supported(void)
 {
-	char resp[32];
-
-	if (nrf_modem_at_cmd(resp, sizeof(resp), "AT+CGMM") == 0) {
-		/* nRF9160 does not support QZSS assistance, while nRF91x1 do. */
-		if (strstr(resp, "nRF9160") != NULL) {
-			return false;
-		}
-	}
-
-	return true;
+	/* Assume that all cellular products other than the nRF9160 support this. */
+	return (IS_ENABLED(CONFIG_NRF_MODEM_LIB) && !IS_ENABLED(CONFIG_SOC_NRF9160));
 }
 
 int nrf_cloud_agnss_request_all(void)
