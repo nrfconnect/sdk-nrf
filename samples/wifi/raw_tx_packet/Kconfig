@@ -95,6 +95,7 @@ config RAW_TX_PACKET_SAMPLE_RATE_VALUE
 
 config RAW_TX_PACKET_SAMPLE_RATE_FLAGS
 	int "Rate flag value"
+	range 0 4
 	default 1
 	help
 	  Specify the rate flag value to be used for raw TX packet transmission.
@@ -104,7 +105,6 @@ config RAW_TX_PACKET_SAMPLE_RATE_FLAGS
 	  2 - VHT format
 	  3 - HE_SU
 	  4 - HE_ER_SU
-	  5 - HE_TB
 
 config RAW_TX_PACKET_SAMPLE_QUEUE_NUM
 	int "Queue number"
