@@ -1042,6 +1042,7 @@ static void api_poll_out(const struct device *dev, unsigned char out_char)
 	}
 }
 
+#ifdef CONFIG_UART_USE_RUNTIME_CONFIGURE
 static int api_configure(const struct device *dev, const struct uart_config *cfg)
 {
 	const struct lpuart_data *data = get_dev_data(dev);
@@ -1059,6 +1060,7 @@ static int api_config_get(const struct device *dev, struct uart_config *cfg)
 
 	return uart_config_get(data->uart, cfg);
 }
+#endif /* CONFIG_UART_USE_RUNTIME_CONFIGURE */
 
 #define LPUART_PIN_CFG_INITIALIZER(pin_prop) \
 	{ \
@@ -1085,8 +1087,10 @@ static const struct uart_driver_api lpuart_api = {
 	.rx_disable = api_rx_disable,
 	.poll_in = api_poll_in,
 	.poll_out = api_poll_out,
+#ifdef CONFIG_UART_USE_RUNTIME_CONFIGURE
 	.configure = api_configure,
 	.config_get = api_config_get,
+#endif
 #if CONFIG_UART_INTERRUPT_DRIVEN
 	INT_DRIVEN_API_SET(fifo_fill, api_fifo_fill),
 	INT_DRIVEN_API_SET(fifo_read, api_fifo_read),
