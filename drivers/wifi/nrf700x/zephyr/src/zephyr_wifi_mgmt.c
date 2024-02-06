@@ -35,21 +35,27 @@ int nrf_wifi_set_power_save(const struct device *dev,
 	unsigned int uapsd_queue = UAPSD_Q_MIN; /* Legacy mode */
 
 	if (!dev || !params) {
-		LOG_ERR("%s: dev or params is NULL\n", __func__);
-		goto out;
+		LOG_ERR("%s: dev or params is NULL", __func__);
+		return ret;
 	}
 
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
-		goto out;
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return ret;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
 		goto out;
 	}
 
@@ -119,6 +125,7 @@ int nrf_wifi_set_power_save(const struct device *dev,
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -133,23 +140,34 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 	int count = 0;
 
 	if (!dev || !ps_config) {
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
-		goto out;
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return ret;
 	}
 
 	if (vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION) {
 		LOG_ERR("%s: Operation supported only in STA mode\n",
 			__func__);
-		goto out;
+		return ret;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
 	if (!rpu_ctx_zep) {
@@ -186,6 +204,7 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -391,16 +410,20 @@ int nrf_wifi_twt_teardown_flows(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 	int ret = 0;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
-		ret = -1;
-		goto out;
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return ret;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
-		ret = -1;
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
 		goto out;
 	}
 
@@ -423,6 +446,7 @@ int nrf_wifi_twt_teardown_flows(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 	}
 
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -436,20 +460,27 @@ int nrf_wifi_set_twt(const struct device *dev,
 	int ret = -1;
 
 	if (!dev || !twt_params) {
-		goto out;
+		LOG_ERR("%s: dev or twt_params is NULL", __func__);
+		return ret;
 	}
 
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
-		goto out;
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return ret;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
 		goto out;
 	}
 
@@ -538,6 +569,7 @@ int nrf_wifi_set_twt(const struct device *dev,
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -627,6 +659,12 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 		return;
 	}
 
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
@@ -669,4 +707,6 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 	default:
 	break;
 	}
+out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 }

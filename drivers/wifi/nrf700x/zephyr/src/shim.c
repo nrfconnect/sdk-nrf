@@ -684,6 +684,11 @@ static void irq_work_handler(struct k_work *work)
 {
 	int ret = 0;
 
+	if (!intr_priv) {
+		LOG_ERR("%s: Invalid intr_priv\n", __func__);
+		return;
+	}
+
 	ret = intr_priv->callbk_fn(intr_priv->callbk_data);
 
 	if (ret) {
@@ -698,6 +703,11 @@ static void zep_shim_irq_handler(const struct device *dev, struct gpio_callback 
 {
 	ARG_UNUSED(cb);
 	ARG_UNUSED(pins);
+
+	if (!intr_priv) {
+		LOG_ERR("%s: Invalid intr_priv\n", __func__);
+		return;
+	}
 
 	k_work_schedule_for_queue(&zep_wifi_intr_q, &intr_priv->work, K_NO_WAIT);
 }
