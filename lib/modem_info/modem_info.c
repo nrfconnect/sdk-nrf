@@ -974,8 +974,8 @@ int modem_info_get_operator(char *buf, size_t buf_size)
 				buf);
 
 	if (ret != 1) {
-		/* Warning instead of error because it is not always reported */
-		LOG_WRN("No valid operator");
+		/* Debug instead of error because it is not always reported */
+		LOG_DBG("No valid operator name found");
 		return map_nrf_modem_at_scanf_error(ret);
 	}
 
