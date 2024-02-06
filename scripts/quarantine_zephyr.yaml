@@ -92,6 +92,22 @@
     - net.ip-addr
   comment: "Fixed with https://github.com/zephyrproject-rtos/zephyr/pull/68463"
 
+- scenarios:
+    - examples.nrfx_gppi.fork
+    - examples.nrfx_gppi.one_to_one
+    - examples.nrfx_saadc.simple_blocking
+    - examples.nrfx_saadc.simple_non_blocking
+    - examples.nrfx_saadc.advanced_blocking
+    - examples.nrfx_saadc.advanced_non_blocking_internal_timer
+    - examples.nrfx_saadc.maximum_performance
+  platforms:
+    - nrf52dk_nrf52832
+    - nrf52833dk_nrf52833
+    - nrf52840dk_nrf52840
+    - nrf5340dk_nrf5340_cpuapp
+    - nrf9160dk_nrf9160
+  comment: "nrfx samples alignment to nrfx 3.2 - https://nordicsemi.atlassian.net/browse/NRFX-5188"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
