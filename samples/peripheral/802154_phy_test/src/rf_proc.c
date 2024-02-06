@@ -38,6 +38,10 @@ static struct rf_rx_pkt_s rf_rx_pool[RF_RX_POOL_N];
 static struct rf_rx_pkt_s ack_packet;
 static uint8_t temp_tx_pkt[RF_PSDU_MAX_SIZE];
 
+#ifdef CONFIG_PTT_ANTENNA_DIVERSITY
+static const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(0);
+#endif
+
 static inline void rf_rx_pool_init(void);
 static void rf_rx_pool_clear(void);
 
@@ -153,7 +157,7 @@ static void configure_antenna_diversity(void)
 
 	nrfx_ppi_channel_alloc(&ppi_channel);
 	cfg.ppi_ch = (uint8_t)ppi_channel;
-	nrfx_gpiote_channel_alloc(&gpiote_channel);
+	nrfx_gpiote_channel_alloc(&gpiote, &gpiote_channel);
 	cfg.gpiote_ch = gpiote_channel;
 	nrf_802154_sl_ant_div_mode_t ant_div_auto = 0x02;
 
