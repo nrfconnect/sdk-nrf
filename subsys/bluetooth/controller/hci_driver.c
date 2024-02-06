@@ -830,6 +830,13 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_IGNORE_HCI_ISO_DATA_TS_FROM_HOST)) {
+		err = sdc_iso_host_timestamps_ignore(true);
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	if (IS_ENABLED(CONFIG_BT_CTLR_SYNC_ISO)) {
 		err = sdc_support_bis_sink();
 		if (err) {

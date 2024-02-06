@@ -497,5 +497,16 @@ config BT_CTLR_SDC_SILENCE_UNEXPECTED_MSG_TYPE
 	help
 	  Convenience config to silence unexpected incoming msg type
 
+config BT_CTLR_SDC_IGNORE_HCI_ISO_DATA_TS_FROM_HOST
+	bool "Configure the controller to ignore timestamps in HCI ISO data packets."
+	depends on BT_CTLR_PERIPHERAL_ISO || BT_CTLR_CENTRAL_ISO || BT_CTLR_ADV_ISO
+	select DEPRECATED
+	help
+	  Configures the SoftDevice Controller to ignore timestamps on HCI ISO data packets.
+	  The only use-case for this option is if the host uses timestamps which are not based
+	  on the clock of the controller. Instead of this configuration, the host should
+	  not add timestamps to the HCI ISO data packets if the timestamp is not based on the clock
+	  of the controller.
+
 endmenu
 endif  # BT_LL_SOFTDEVICE
