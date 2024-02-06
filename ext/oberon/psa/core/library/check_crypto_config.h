@@ -170,6 +170,16 @@
 #error "PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128 defined, but not all prerequisites"
 #endif
 
+#if defined(PSA_WANT_ALG_SP800_108_COUNTER_HMAC) && \
+    !defined(PSA_WANT_ALG_HMAC)
+#error "PSA_WANT_ALG_SP800_108_COUNTER_HMAC defined, but not all prerequisites"
+#endif
+
+#if defined(PSA_WANT_ALG_SP800_108_COUNTER_CMAC) && \
+    !defined(PSA_WANT_ALG_CMAC)
+#error "PSA_WANT_ALG_SP800_108_COUNTER_CMAC defined, but not all prerequisites"
+#endif
+
 #if defined(PSA_WANT_KEY_TYPE_AES) && \
     !(defined(PSA_WANT_AES_KEY_SIZE_128) || \
       defined(PSA_WANT_AES_KEY_SIZE_192) || \

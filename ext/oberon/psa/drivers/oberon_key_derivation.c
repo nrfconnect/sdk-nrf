@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+//
+// This file implements functions from the Arm PSA Crypto Driver API.
 
 #include <string.h>
 
@@ -19,7 +21,8 @@ static const uint8_t zero[PSA_HASH_MAX_SIZE] = { 0 };
 #endif
 
 
-#if defined(PSA_NEED_OBERON_HKDF) || defined(PSA_NEED_OBERON_PBKDF2_HMAC) || defined(PSA_NEED_OBERON_PBKDF2_AES_CMAC_PRF_128)
+#if defined(PSA_NEED_OBERON_HKDF) || defined(PSA_NEED_OBERON_PBKDF2_HMAC) || defined(PSA_NEED_OBERON_PBKDF2_AES_CMAC_PRF_128) || \
+    defined(PSA_NEED_OBERON_SP800_108_COUNTER_HMAC) || defined(PSA_NEED_OBERON_SP800_108_COUNTER_CMAC)
 static psa_status_t oberon_setup_mac(
     oberon_key_derivation_operation_t *operation,
     const uint8_t *key, size_t key_length)
@@ -34,6 +37,22 @@ static psa_status_t oberon_setup_mac(
         &operation->mac_op,
         &attributes, key, key_length,
         operation->mac_alg);
+}
+#endif
+
+#if defined(PSA_NEED_OBERON_PBKDF2_HMAC) || defined(PSA_NEED_OBERON_PBKDF2_AES_CMAC_PRF_128) || \
+    defined(PSA_NEED_OBERON_SP800_108_COUNTER_HMAC) || defined(PSA_NEED_OBERON_SP800_108_COUNTER_CMAC)
+static psa_status_t oberon_mac_update_num(
+    oberon_key_derivation_operation_t *operation,
+    uint32_t num)
+{
+    uint8_t idx[4];
+
+    idx[0] = (uint8_t)(num >> 24);
+    idx[1] = (uint8_t)(num >> 16);
+    idx[2] = (uint8_t)(num >> 8);
+    idx[3] = (uint8_t)(num);
+    return psa_driver_wrapper_mac_update(&operation->mac_op, idx, 4);
 }
 #endif
 
@@ -72,6 +91,18 @@ psa_status_t oberon_key_derivation_setup(
         operation->alg = OBERON_PBKDF2_CMAC_ALG;
     } else
 #endif /* PSA_NEED_OBERON_PBKDF2_AES_CMAC_PRF_128 */
+
+#ifdef PSA_NEED_OBERON_SP800_108_COUNTER_CMAC
+    if (alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
+        operation->block_length = PSA_BLOCK_CIPHER_BLOCK_LENGTH(PSA_KEY_TYPE_AES);
+        operation->mac_alg = PSA_ALG_CMAC;
+        operation->key_type = PSA_KEY_TYPE_AES;
+        operation->alg = OBERON_SP800_108_COUNTER_ALG;
+        operation->info[0] = 0u; // separator
+        operation->info_length = 1;
+        operation->count = 0xFFFFFFF8;
+    } else
+#endif /* PSA_NEED_OBERON_SP800_108_COUNTER_CMAC */
 
     {
         // all olthers are HMAC based
@@ -131,6 +162,15 @@ psa_status_t oberon_key_derivation_setup(
         } else
 #endif /* PSA_NEED_OBERON_TLS12_ECJPAKE_TO_PMS */
 
+#ifdef PSA_NEED_OBERON_SP800_108_COUNTER_HMAC
+        if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(alg)) {
+            operation->alg = OBERON_SP800_108_COUNTER_ALG;
+            operation->info[0] = 0u; // separator
+            operation->info_length = 1;
+            operation->count = 0xFFFFFFF8;
+        } else
+#endif /* PSA_NEED_OBERON_SP800_108_COUNTER_HMAC */
+
         {
             (void)alg;
             return PSA_ERROR_NOT_SUPPORTED;
@@ -147,6 +187,11 @@ psa_status_t oberon_key_derivation_set_capacity(
     oberon_key_derivation_operation_t *operation,
     size_t capacity)
 {
+#if defined(PSA_NEED_OBERON_SP800_108_COUNTER_HMAC) || defined(PSA_NEED_OBERON_SP800_108_COUNTER_CMAC)
+    if (operation->alg == OBERON_SP800_108_COUNTER_ALG) {
+        operation->count = (uint32_t)(capacity * 8); // L in bits
+    }
+#endif
     (void)operation;
     (void)capacity;
     return PSA_SUCCESS;
@@ -158,7 +203,7 @@ psa_status_t oberon_key_derivation_input_bytes(
     const uint8_t *data, size_t data_length)
 {
     psa_status_t status;
-    size_t length;
+    size_t i, length;
 
     switch (step) {
 
@@ -194,7 +239,8 @@ psa_status_t oberon_key_derivation_input_bytes(
 
 #if defined(PSA_NEED_OBERON_HKDF) || defined(PSA_NEED_OBERON_HKDF_EXTRACT) || \
     defined(PSA_NEED_OBERON_HKDF_EXPAND) || defined(PSA_NEED_OBERON_TLS12_PRF) || \
-    defined(PSA_NEED_OBERON_TLS12_PSK_TO_MS) || defined(PSA_NEED_OBERON_TLS12_ECJPAKE_TO_PMS)
+    defined(PSA_NEED_OBERON_TLS12_PSK_TO_MS) || defined(PSA_NEED_OBERON_TLS12_ECJPAKE_TO_PMS) || \
+    defined(PSA_NEED_OBERON_SP800_108_COUNTER_HMAC) || defined(PSA_NEED_OBERON_SP800_108_COUNTER_CMAC)
     case PSA_KEY_DERIVATION_INPUT_SECRET:
         switch (operation->alg) {
 #ifdef PSA_NEED_OBERON_HKDF_EXPAND
@@ -237,6 +283,13 @@ psa_status_t oberon_key_derivation_input_bytes(
             operation->key_length = (uint16_t)32;
             return PSA_SUCCESS;
 #endif /* PSA_NEED_OBERON_TLS12_ECJPAKE_TO_PMS */
+#if defined(PSA_NEED_OBERON_SP800_108_COUNTER_HMAC) || defined(PSA_NEED_OBERON_SP800_108_COUNTER_CMAC)
+        case OBERON_SP800_108_COUNTER_ALG:
+            if (data_length > sizeof operation->key) return PSA_ERROR_INSUFFICIENT_MEMORY;
+            memcpy(operation->key, data, data_length);
+            operation->key_length = (uint16_t)data_length;
+            return PSA_SUCCESS;
+#endif /* PSA_NEED_OBERON_SP800_108_COUNTER_HMAC || PSA_NEED_OBERON_SP800_108_COUNTER_CMAC */
         default:
 #if defined(PSA_NEED_OBERON_HKDF) || defined(PSA_NEED_OBERON_HKDF_EXTRACT)
             if (operation->salt_length == 0) {
@@ -267,8 +320,7 @@ psa_status_t oberon_key_derivation_input_bytes(
     case PSA_KEY_DERIVATION_INPUT_PASSWORD:
         if (operation->alg == OBERON_PBKDF2_HMAC_ALG) {
 #ifdef PSA_NEED_OBERON_PBKDF2_HMAC
-            size_t hash_block_size = PSA_HASH_BLOCK_LENGTH(operation->mac_alg);
-            if (data_length > hash_block_size) {
+            if (data_length > PSA_HASH_BLOCK_LENGTH(operation->mac_alg)) {
                 // key = H(password)
                 status = oberon_hash_key(operation, data, data_length);
                 if (status) return status; // no cleanup needed
@@ -303,21 +355,54 @@ psa_status_t oberon_key_derivation_input_bytes(
         memcpy(operation->info, data, data_length);
         operation->info_length = (uint16_t)data_length;
         return PSA_SUCCESS;
+#endif /* PSA_NEED_OBERON_TLS12_PRF || PSA_NEED_OBERON_TLS12_PSK_TO_MS */
+
+#if defined(PSA_NEED_OBERON_TLS12_PRF) || defined(PSA_NEED_OBERON_TLS12_PSK_TO_MS) || \
+    defined(PSA_NEED_OBERON_SP800_108_COUNTER_HMAC) || defined(PSA_NEED_OBERON_SP800_108_COUNTER_CMAC)
     case PSA_KEY_DERIVATION_INPUT_LABEL:
-        // seed = label || seed
+#if defined(PSA_NEED_OBERON_SP800_108_COUNTER_HMAC) || defined(PSA_NEED_OBERON_SP800_108_COUNTER_CMAC)
+        if (operation->alg == OBERON_SP800_108_COUNTER_ALG) {
+            for (i = 0; i < data_length; i++) {
+                if (data[i] == 0) return PSA_ERROR_INVALID_ARGUMENT;
+            }
+            // store label
+            if (data_length >= sizeof operation->info) return PSA_ERROR_INSUFFICIENT_MEMORY;
+            memcpy(operation->info, data, data_length);
+            operation->info[data_length] = 0u; // separator
+            operation->info_length = (uint8_t)data_length + 1;
+            return PSA_SUCCESS;
+        } else
+#endif /* PSA_NEED_OBERON_SP800_108_COUNTER_HMAC || PSA_NEED_OBERON_SP800_108_COUNTER_CMAC */
+        {
+#if defined(PSA_NEED_OBERON_TLS12_PRF) || defined(PSA_NEED_OBERON_TLS12_PSK_TO_MS)
+            // TLS12
+            // seed = label || seed
+            length = operation->info_length + data_length;
+            if (length < data_length || length > sizeof operation->info) return PSA_ERROR_INSUFFICIENT_MEMORY;
+            memmove(operation->info + data_length, operation->info, operation->info_length);
+            memcpy(operation->info, data, data_length);
+            operation->info_length = (uint16_t)length;
+#endif /* PSA_NEED_OBERON_TLS12_PRF || PSA_NEED_OBERON_TLS12_PSK_TO_MS */
+            return PSA_SUCCESS;
+        }
+#endif /* PSA_NEED_OBERON_TLS12_PRF || PSA_NEED_OBERON_TLS12_PSK_TO_MS || PSA_NEED_OBERON_SP800_108_COUNTER */
+
+#if defined(PSA_NEED_OBERON_SP800_108_COUNTER_HMAC) || defined(PSA_NEED_OBERON_SP800_108_COUNTER_CMAC)
+    case PSA_KEY_DERIVATION_INPUT_CONTEXT:
+        // insert context
         length = operation->info_length + data_length;
         if (length < data_length || length > sizeof operation->info) return PSA_ERROR_INSUFFICIENT_MEMORY;
-        memmove(operation->info + data_length, operation->info, operation->info_length);
-        memcpy(operation->info, data, data_length);
+        memcpy(operation->info + operation->info_length, data, data_length);
         operation->info_length = (uint16_t)length;
         return PSA_SUCCESS;
-#endif /* PSA_NEED_OBERON_TLS12_PRF || PSA_NEED_OBERON_TLS12_PSK_TO_MS */
+#endif /* PSA_NEED_OBERON_SP800_108_COUNTER_HMAC || PSA_NEED_OBERON_SP800_108_COUNTER_CMAC */
 
     default:
         (void)data;
         (void)data_length;
         (void)status;
         (void)length;
+        (void)i;
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
@@ -356,7 +441,7 @@ psa_status_t oberon_key_derivation_output_bytes(
     size_t data_length = operation->data_length;
     size_t i, length;
     uint8_t u[PSA_HASH_MAX_SIZE];
-    uint8_t idx[4];
+    uint8_t idx;
 
     if (output_length == 0) return PSA_SUCCESS;
 
@@ -371,7 +456,24 @@ psa_status_t oberon_key_derivation_output_bytes(
             output_length -= data_length;
         }
     }
-    
+
+#ifdef PSA_NEED_OBERON_SP800_108_COUNTER_CMAC
+    if (operation->alg == OBERON_SP800_108_COUNTER_ALG && operation->key_type == PSA_KEY_TYPE_AES) {
+        // setup K0
+        // key
+        status = oberon_setup_mac(operation, operation->key, operation->key_length);
+        if (status) goto exit;
+        // label + context
+        status = psa_driver_wrapper_mac_update(&operation->mac_op, operation->info, operation->info_length);
+        if (status) goto exit;
+        // L
+        status = oberon_mac_update_num(operation, operation->count);
+        if (status) goto exit;
+        status = psa_driver_wrapper_mac_sign_finish(&operation->mac_op, u, block_length, &length);
+        if (status) goto exit;
+    }
+#endif
+
     // KDF expand
     for (;;) {
         switch (operation->alg) {
@@ -397,8 +499,8 @@ psa_status_t oberon_key_derivation_output_bytes(
             status = psa_driver_wrapper_mac_update(&operation->mac_op, operation->info, operation->info_length);
             if (status) goto exit;
             // i
-            idx[0] = (uint8_t)operation->index;
-            status = psa_driver_wrapper_mac_update(&operation->mac_op, idx, 1);
+            idx = (uint8_t)operation->index;
+            status = psa_driver_wrapper_mac_update(&operation->mac_op, &idx, 1);
             if (status) goto exit;
             status = psa_driver_wrapper_mac_sign_finish(&operation->mac_op, operation->data, block_length, &length);
             if (status) goto exit;
@@ -443,11 +545,7 @@ psa_status_t oberon_key_derivation_output_bytes(
             if (status) goto exit;
             status = psa_driver_wrapper_mac_update(&operation->mac_op, operation->info, operation->salt_length);
             if (status) goto exit;
-            idx[0] = (uint8_t)(operation->index >> 24);
-            idx[1] = (uint8_t)(operation->index >> 16);
-            idx[2] = (uint8_t)(operation->index >> 8);
-            idx[3] = (uint8_t)(operation->index);
-            status = psa_driver_wrapper_mac_update(&operation->mac_op, idx, 4);
+            status = oberon_mac_update_num(operation, operation->index);
             if (status) goto exit;
             status = psa_driver_wrapper_mac_sign_finish(&operation->mac_op, u, block_length, &length);
             if (status) goto exit;
@@ -472,6 +570,33 @@ psa_status_t oberon_key_derivation_output_bytes(
             return psa_driver_wrapper_hash_compute(PSA_ALG_SHA_256, operation->key, 32, output, output_length, &length);
 #endif /* PSA_NEED_OBERON_TLS12_ECJPAKE_TO_PMS */
 
+#if defined(PSA_NEED_OBERON_SP800_108_COUNTER_HMAC) || defined(PSA_NEED_OBERON_SP800_108_COUNTER_CMAC)
+        case OBERON_SP800_108_COUNTER_ALG:
+            // key
+            status = oberon_setup_mac(operation, operation->key, operation->key_length);
+            if (status) goto exit;
+            // i
+            status = oberon_mac_update_num(operation, operation->index);
+            if (status) goto exit;
+            // label + context
+            status = psa_driver_wrapper_mac_update(&operation->mac_op, operation->info, operation->info_length);
+            if (status) goto exit;
+            // L
+            status = oberon_mac_update_num(operation, operation->count);
+            if (status) goto exit;
+#ifdef PSA_NEED_OBERON_SP800_108_COUNTER_CMAC
+            if (operation->key_type == PSA_KEY_TYPE_AES) {
+                // K0
+                status = psa_driver_wrapper_mac_update(&operation->mac_op, u, block_length);
+                if (status) goto exit;
+            }
+#endif
+            // output
+            status = psa_driver_wrapper_mac_sign_finish(&operation->mac_op, operation->data, block_length, &length);
+            if (status) goto exit;
+            break;
+#endif /* PSA_NEED_OBERON_SP800_108_COUNTER_HMAC || PSA_NEED_OBERON_SP800_108_COUNTER_CMAC */
+
         default:
             (void)i;
             (void)u;
@@ -494,7 +619,8 @@ psa_status_t oberon_key_derivation_output_bytes(
 
 #if defined(PSA_NEED_OBERON_HKDF) || defined(PSA_NEED_OBERON_HKDF_EXPAND) || \
     defined(PSA_NEED_OBERON_PBKDF2_HMAC) || defined(PSA_NEED_OBERON_PBKDF2_AES_CMAC_PRF_128) || \
-    defined(PSA_NEED_OBERON_TLS12_PRF) || defined(PSA_NEED_OBERON_TLS12_PSK_TO_MS)
+    defined(PSA_NEED_OBERON_TLS12_PRF) || defined(PSA_NEED_OBERON_TLS12_PSK_TO_MS) || \
+    defined(PSA_NEED_OBERON_SP800_108_COUNTER_HMAC) || defined(PSA_NEED_OBERON_SP800_108_COUNTER_CMAC)
 exit:
     psa_driver_wrapper_mac_abort(&operation->mac_op);
     return status;

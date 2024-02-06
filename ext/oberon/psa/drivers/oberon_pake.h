@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+//
+// This file is based on the Arm PSA Crypto Driver API.
 
 #ifndef OBERON_PAKE_H
 #define OBERON_PAKE_H
