@@ -39,3 +39,4 @@ If you want to go through an online training course to familiarize yourself with
    raw_tx_operation
    sniffer_rx_operation
    stack_configuration
+   promiscuous_operation
