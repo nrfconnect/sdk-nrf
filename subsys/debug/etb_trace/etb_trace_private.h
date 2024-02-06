@@ -95,3 +95,5 @@
 #define CS_LOCK(reg_base)	(*((volatile uint32_t *)(reg_base + LAR_OFFSET)) = CS_LOCK_KEY)
 #define ETB_FORMATTER_STOPPED	((GET_REG(ETB_FFSR) & ETB_FFSR_FTSTOPPED))
 #define ETB_FLUSH_IN_PROGRESS	((GET_REG(ETB_FFSR) & ETB_FFSR_FLINPROG))
+
+void etb_trace_on_idle_exit(void);
