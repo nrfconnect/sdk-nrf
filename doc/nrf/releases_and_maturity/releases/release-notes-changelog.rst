@@ -687,6 +687,8 @@ Wi-Fi drivers
 
 * Added Monitor feature to the nRF70 Series device.
 
+* Added Promiscuous mode feature to the nRF70 Series device.
+
 Libraries
 =========
 
@@ -1089,6 +1091,7 @@ Documentation
   * Gazell and NFC sections in the :ref:`app_power_opt_recommendations` user guide.
   * :ref:`ug_nrf70_stack partitioning` page in the :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_developing_raw_ieee_80211_packet_reception` in the :ref:`ug_wifi` user guide.
+  * A page on :ref:`ug_nrf70_developing_promiscuous_packet_reception` in the :ref:`ug_wifi` user guide.
 
 * Updated:
 
