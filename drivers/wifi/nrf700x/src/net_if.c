@@ -199,8 +199,7 @@ int nrf_wifi_if_send(const struct device *dev,
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-
-	if (!rpu_ctx_zep->rpu_ctx) {
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
 		goto unlock;
 	}
 

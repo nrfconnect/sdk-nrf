@@ -56,17 +56,23 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
-		goto out;
+		return ret;
 	}
 
 	if (vif_ctx_zep->if_op_state != NRF_WIFI_FMAC_IF_OP_STATE_UP) {
 		LOG_ERR("%s: Interface not UP", __func__);
-		goto out;
+		return ret;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	if (!rpu_ctx_zep) {
 		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
 		goto out;
 	}
 
@@ -197,7 +203,7 @@ out:
 	if (scan_info) {
 		k_free(scan_info);
 	}
-
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -207,6 +213,16 @@ enum nrf_wifi_status nrf_wifi_disp_scan_res_get_zep(struct nrf_wifi_vif_ctx_zep 
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return NRF_WIFI_STATUS_FAIL;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	status = nrf_wifi_fmac_scan_res_get(rpu_ctx_zep->rpu_ctx,
 					    vif_ctx_zep->vif_idx,
@@ -219,6 +235,7 @@ enum nrf_wifi_status nrf_wifi_disp_scan_res_get_zep(struct nrf_wifi_vif_ctx_zep 
 
 	status = NRF_WIFI_STATUS_SUCCESS;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return status;
 }
 
@@ -368,6 +385,12 @@ void nrf_wifi_rx_bcn_prb_resp_frm(void *vif_ctx,
 		return;
 	}
 
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
 	frame_length = nrf_wifi_osal_nbuf_data_size(fmac_dev_ctx->fpriv->opriv,
@@ -397,5 +420,7 @@ void nrf_wifi_rx_bcn_prb_resp_frm(void *vif_ctx,
 	wifi_mgmt_raise_raw_scan_result_event(vif_ctx_zep->zep_net_if_ctx,
 					      &bcn_prb_resp_info);
 
+out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 }
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */

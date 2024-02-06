@@ -485,11 +485,21 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 
 	if (!if_priv || !params) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_ERR("%s: RPU context not initialized", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	if (vif_ctx_zep->scan_in_progress) {
 		LOG_ERR("%s: Scan already in progress", __func__);
@@ -557,6 +567,7 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 out:
 	if (scan_info)
 		k_free(scan_info);
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -568,7 +579,21 @@ int nrf_wifi_wpa_supp_scan_abort(void *if_priv)
 	int sem_ret;
 
 	vif_ctx_zep = if_priv;
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return -1;
+	}
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return -1;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	if (!vif_ctx_zep->scan_in_progress) {
 		LOG_ERR("%s:Ignore scan abort, no scan in progress", __func__);
@@ -592,6 +617,7 @@ int nrf_wifi_wpa_supp_scan_abort(void *if_priv)
 	}
 
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return status;
 }
 
@@ -604,11 +630,21 @@ int nrf_wifi_wpa_supp_scan_results_get(void *if_priv)
 
 	if (!if_priv) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	status = nrf_wifi_fmac_scan_res_get(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
 					    SCAN_CONNECT);
@@ -620,6 +656,7 @@ int nrf_wifi_wpa_supp_scan_results_get(void *if_priv)
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -633,11 +670,21 @@ int nrf_wifi_wpa_supp_deauthenticate(void *if_priv, const char *addr, unsigned s
 
 	if ((!if_priv) || (!addr)) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	memset(&deauth_info, 0, sizeof(deauth_info));
 
@@ -654,6 +701,7 @@ int nrf_wifi_wpa_supp_deauthenticate(void *if_priv, const char *addr, unsigned s
 
 	ret = nrf_wifi_twt_teardown_flows(vif_ctx_zep, 0, NRF_WIFI_MAX_TWT_FLOWS);
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -705,11 +753,21 @@ int nrf_wifi_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 
 	if ((!if_priv) || (!params)) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	memset(&auth_info, 0, sizeof(auth_info));
 
@@ -782,6 +840,7 @@ int nrf_wifi_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 		ret = 0;
 	}
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -795,11 +854,21 @@ int nrf_wifi_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 
 	if ((!if_priv) || (!params)) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	memset(&assoc_info, 0, sizeof(assoc_info));
 
@@ -851,6 +920,7 @@ int nrf_wifi_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 	}
 
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -870,11 +940,21 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 
 	if ((!if_priv) || (!ifname)) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	/* Can happen in a positive case where "net if down" is completed, but WPA
 	 * supplicant is still deleting keys.
@@ -979,6 +1059,7 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 		ret = 0;
 	}
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -988,14 +1069,23 @@ int nrf_wifi_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 	struct nrf_wifi_umac_chg_sta_info chg_sta_info;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	int ret;
+	int ret = -1;
+
+	if (!if_priv || !bssid) {
+		LOG_ERR("%s: Invalid params", __func__);
+		return ret;
+	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
 
-	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
-	if (ret) {
-		LOG_ERR("%s: Failed to lock vif mutex", __func__);
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
 		goto out;
 	}
 
@@ -1043,11 +1133,22 @@ int nrf_wifi_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 
 	if (!if_priv || !si || !bssid) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
 	vif_ctx_zep->signal_info = si;
@@ -1087,6 +1188,7 @@ int nrf_wifi_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 	vif_ctx_zep->signal_info->frequency = vif_ctx_zep->assoc_freq;
 out:
 	vif_ctx_zep->signal_info = NULL;
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -1104,6 +1206,7 @@ void nrf_wifi_wpa_supp_event_proc_get_sta(void *if_priv,
 	}
 	vif_ctx_zep = if_priv;
 	signal_info = vif_ctx_zep->signal_info;
+
 
 	/* Semaphore timedout */
 	if (!signal_info) {
@@ -1136,7 +1239,6 @@ void nrf_wifi_wpa_supp_event_proc_get_sta(void *if_priv,
 			signal_info->current_txrate = info->sta_info.tx_bitrate.bitrate * 100;
 		}
 	}
-
 	k_sem_give(&wait_for_event_sem);
 }
 
@@ -1258,13 +1360,23 @@ int nrf_wifi_nl80211_send_mlme(void *if_priv, const u8 *data,
 	struct nrf_wifi_umac_mgmt_tx_info *mgmt_tx_info = NULL;
 	unsigned int timeout = 0;
 
-	if (!if_priv) {
-		LOG_ERR("%s: Missing interface context", __func__);
-		goto out;
+	if (!if_priv || !data) {
+		LOG_ERR("%s: Invalid params", __func__);
+		return -1;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return -1;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	mgmt_tx_info = k_calloc(sizeof(*mgmt_tx_info), sizeof(char));
 
@@ -1337,7 +1449,7 @@ int nrf_wifi_nl80211_send_mlme(void *if_priv, const u8 *data,
 out:
 	if (mgmt_tx_info)
 		k_free(mgmt_tx_info);
-
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return status;
 }
 
@@ -1524,11 +1636,21 @@ int nrf_wifi_supp_get_wiphy(void *if_priv)
 
 	if (!if_priv) {
 		LOG_ERR("%s: Missing interface context", __func__);
-		goto out;
+		return -1;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return -1;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	status = nrf_wifi_fmac_get_wiphy(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
 
@@ -1537,6 +1659,7 @@ int nrf_wifi_supp_get_wiphy(void *if_priv)
 		goto out;
 	}
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return status;
 }
 
@@ -1551,11 +1674,21 @@ int nrf_wifi_supp_register_frame(void *if_priv,
 
 	if (!if_priv || !match || !match_len) {
 		LOG_ERR("%s: Invalid parameters", __func__);
-		goto out;
+		return -1;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return -1;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	memset(&frame_info, 0, sizeof(frame_info));
 
@@ -1571,6 +1704,7 @@ int nrf_wifi_supp_register_frame(void *if_priv,
 		goto out;
 	}
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return status;
 }
 
@@ -1609,11 +1743,21 @@ int nrf_wifi_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 
 	if (!if_priv || !capa) {
 		LOG_ERR("%s: Invalid parameters", __func__);
-		goto out;
+		return -1;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return -1;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	/* TODO: Get these from RPU*/
 	memset(capa, 0, sizeof(*capa));
@@ -1646,6 +1790,7 @@ int nrf_wifi_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 		capa->extended_capa_len = vif_ctx_zep->iface_ext_capa.ext_capa_len;
 	}
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return status;
 }
 
@@ -1678,11 +1823,22 @@ int nrf_wifi_supp_get_conn_info(void *if_priv, struct wpa_conn_info *info)
 
 	if (!if_priv || !info) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
 	vif_ctx_zep->conn_info = info;
@@ -1700,6 +1856,7 @@ int nrf_wifi_supp_get_conn_info(void *if_priv, struct wpa_conn_info *info)
 	}
 
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -1735,8 +1892,24 @@ static int nrf_wifi_vif_state_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	int ret = -1;
 
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: Invalid params", __func__);
+		return ret;
+	}
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
 	def_dev_ctx = wifi_dev_priv(rpu_ctx_zep->rpu_ctx);
 	vif_ctx = def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx];
 
@@ -1763,9 +1936,10 @@ static int nrf_wifi_vif_state_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 		LOG_ERR("%s: set interface state event not received (%dms)", __func__, timeout);
 		goto out;
 	}
-	return 0;
+	ret = 0;
 out:
-	return -1;
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+	return ret;
 }
 
 static int nrf_wifi_iftype_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep, int iftype)
@@ -1776,8 +1950,21 @@ static int nrf_wifi_iftype_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep, int 
 	unsigned int timeout = 0;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: Invalid params", __func__);
+		return ret;
+	}
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
 
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	ret = nrf_wifi_vif_state_change(vif_ctx_zep, NRF_WIFI_FMAC_IF_OP_STATE_DOWN);
 	if (ret) {
@@ -1814,8 +2001,9 @@ static int nrf_wifi_iftype_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep, int 
 		LOG_ERR("%s: Failed to set interface up", __func__);
 		goto out;
 	}
-	return 0;
+	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -1826,7 +2014,21 @@ static int nrf_wifi_wait_for_carrier_status(struct nrf_wifi_vif_ctx_zep *vif_ctx
 	int ret = -1;
 	unsigned int timeout = 0;
 
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: Invalid params", __func__);
+		return ret;
+	}
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	while (vif_ctx_zep->if_carr_state != carrier_status &&
 	       timeout++ < CARR_ON_TIMEOUT_MS) {
@@ -1842,6 +2044,7 @@ static int nrf_wifi_wait_for_carrier_status(struct nrf_wifi_vif_ctx_zep *vif_ctx
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -1854,16 +2057,26 @@ int nrf_wifi_wpa_supp_init_ap(void *if_priv, struct wpa_driver_associate_params 
 
 	if (!if_priv || !params) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	if (params->mode != IEEE80211_MODE_AP) {
 		LOG_ERR("%s: Invalid mode", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	ret = nrf_wifi_iftype_change(vif_ctx_zep, NRF_WIFI_IFTYPE_AP);
 	if (ret) {
@@ -1872,6 +2085,7 @@ int nrf_wifi_wpa_supp_init_ap(void *if_priv, struct wpa_driver_associate_params 
 	}
 
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -1950,11 +2164,21 @@ int nrf_wifi_supp_register_mgmt_frame(void *if_priv,
 
 	if (!if_priv || (match_len && !match)) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	mgmt_frame_info.frame_type = frame_type;
 	mgmt_frame_info.frame_match.frame_match_len = match_len;
@@ -1975,6 +2199,7 @@ int nrf_wifi_supp_register_mgmt_frame(void *if_priv,
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -1993,7 +2218,21 @@ static int nrf_wifi_set_bss(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	int i;
 
+	if (!vif_ctx_zep || !params) {
+		LOG_ERR("%s: Invalid params", __func__);
+		return ret;
+	}
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	if (params->basic_rates) {
 		for (i = 0; params->basic_rates[i] != -1; i++) {
@@ -2021,6 +2260,7 @@ static int nrf_wifi_set_bss(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -2034,11 +2274,21 @@ int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *param
 
 	if (!if_priv || !params) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	nrf_wifi_set_beacon_data(params, &start_ap_info.beacon_data);
 	start_ap_info.beacon_interval = params->beacon_int;
@@ -2090,6 +2340,7 @@ int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *param
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -2103,11 +2354,21 @@ int nrf_wifi_wpa_supp_change_beacon(void *if_priv, struct wpa_driver_ap_params *
 
 	if (!if_priv || !params) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	nrf_wifi_set_beacon_data(params, &chg_bcn_info.beacon_data);
 
@@ -2119,6 +2380,7 @@ int nrf_wifi_wpa_supp_change_beacon(void *if_priv, struct wpa_driver_ap_params *
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -2131,11 +2393,21 @@ int nrf_wifi_wpa_supp_stop_ap(void *if_priv)
 
 	if (!if_priv) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	status = nrf_wifi_fmac_stop_ap(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
 
@@ -2151,6 +2423,7 @@ int nrf_wifi_wpa_supp_stop_ap(void *if_priv)
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -2163,11 +2436,21 @@ int nrf_wifi_wpa_supp_deinit_ap(void *if_priv)
 
 	if (!if_priv) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_DBG("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	status = nrf_wifi_wpa_supp_stop_ap(if_priv);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -2184,6 +2467,7 @@ int nrf_wifi_wpa_supp_deinit_ap(void *if_priv)
 	}
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -2225,11 +2509,21 @@ int nrf_wifi_wpa_supp_sta_add(void *if_priv, struct hostapd_sta_add_params *para
 
 	if (!if_priv || !params) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
 
 	sta_info.nrf_wifi_listen_interval = params->listen_interval;
 	sta_info.aid = params->aid;
@@ -2304,6 +2598,7 @@ int nrf_wifi_wpa_supp_sta_add(void *if_priv, struct hostapd_sta_add_params *para
 
 	ret = 0;
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -2317,11 +2612,22 @@ int nrf_wifi_wpa_supp_sta_remove(void *if_priv, const u8 *addr)
 
 	if (!if_priv || !addr) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_DBG("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
 	memcpy(del_sta.mac_addr, addr, sizeof(del_sta.mac_addr));
 
 	status = nrf_wifi_fmac_del_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &del_sta);
@@ -2333,6 +2639,7 @@ int nrf_wifi_wpa_supp_sta_remove(void *if_priv, const u8 *addr)
 	ret = 0;
 
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
@@ -2348,11 +2655,22 @@ int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 
 	if (!if_priv || !addr) {
 		LOG_ERR("%s: Invalid params", __func__);
-		goto out;
+		return ret;
 	}
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_DBG("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
 	memcpy(chg_sta.mac_addr, addr, sizeof(chg_sta.mac_addr));
 
 	chg_sta.sta_flags2.nrf_wifi_mask = nrf_wifi_sta_flags_to_nrf(flags_or | ~flags_and);
@@ -2370,6 +2688,7 @@ int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 	ret = 0;
 
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 #endif /* CONFIG_NRF700X_AP_MODE */
