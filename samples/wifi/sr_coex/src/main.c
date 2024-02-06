@@ -100,7 +100,7 @@ static int cmd_wifi_status(void)
 		       wifi_mode_txt(status.iface_mode));
 		LOG_INF("Link Mode: %s\n",
 		       wifi_link_mode_txt(status.link_mode));
-		LOG_INF("SSID: %-32s\n", status.ssid);
+		LOG_INF("SSID: %.32s\n", status.ssid);
 		LOG_INF("BSSID: %s\n",
 		       net_sprint_ll_addr_buf(
 				status.bssid, WIFI_MAC_ADDR_LEN,
