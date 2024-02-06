@@ -61,8 +61,8 @@ config MPSL_FEM_NRF21540_GPIO
 	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT
 	select NRFX_GPIOTE
 	select GPIO if ($(dt_node_has_prop,nrf_radio_fem,mode_gpios) || $(dt_node_has_prop,nrf_radio_fem,ant_sel_gpios))
-	select NRFX_PPI if SOC_SERIES_NRF52X
-	select NRFX_DPPI if SOC_SERIES_NRF53X
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "nRF21540 front-end module in GPIO mode"
 	help
@@ -72,8 +72,8 @@ config MPSL_FEM_NRF21540_GPIO_SPI
 	depends on MPSL_FEM_NRF21540_GPIO_SPI_SUPPORT
 	select NRFX_GPIOTE
 	select GPIO if ($(dt_node_has_prop,nrf_radio_fem,mode_gpios) || $(dt_node_has_prop,nrf_radio_fem,ant_sel_gpios))
-	select NRFX_PPI if SOC_SERIES_NRF52X
-	select NRFX_DPPI if SOC_SERIES_NRF53X
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	imply MPSL_FEM_POWER_MODEL if MPSL_FEM   # Don't force the model, but make it a default
@@ -84,8 +84,8 @@ config MPSL_FEM_NRF21540_GPIO_SPI
 config MPSL_FEM_SIMPLE_GPIO
 	depends on MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
 	select NRFX_GPIOTE
-	select NRFX_PPI if SOC_SERIES_NRF52X
-	select NRFX_DPPI if SOC_SERIES_NRF53X
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "Generic front-end module with two-pin control"
 	help
