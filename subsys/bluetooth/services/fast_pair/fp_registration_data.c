@@ -51,7 +51,7 @@ static bool is_enabled;
 
 int fp_reg_data_get_model_id(uint8_t *buf, size_t size)
 {
-	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+	__ASSERT_NO_MSG(is_enabled);
 
 	int err;
 	const struct flash_area *fa;
@@ -170,5 +170,5 @@ static int fp_reg_data_uninit(void)
 	return 0;
 }
 
-FP_ACTIVATION_MODULE_REGISTER(fp_reg_data, FP_ACTIVATION_INIT_PRIORITY_DEFAULT, fp_reg_data_init,
-			      fp_reg_data_uninit);
+FP_ACTIVATION_MODULE_REGISTER(fp_reg_data, CONFIG_BT_FAST_PAIR_REGISTRATION_DATA_INIT_PRIORITY,
+			      fp_reg_data_init, fp_reg_data_uninit);
