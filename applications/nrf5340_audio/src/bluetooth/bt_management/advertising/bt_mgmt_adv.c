@@ -25,12 +25,11 @@ ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 #endif
 
 static struct k_work adv_work;
-
+static bool dir_adv_timed_out;
 static struct bt_le_ext_adv *ext_adv;
 
 static const struct bt_data *adv_local;
 static size_t adv_local_size;
-
 static const struct bt_data *per_adv_local;
 static size_t per_adv_local_size;
 
@@ -130,7 +129,7 @@ static int direct_adv_create(bt_addr_le_t addr)
 	struct bt_le_adv_param adv_param;
 	struct bt_le_ext_adv_info ext_adv_info;
 
-	adv_param = *BT_LE_ADV_CONN_DIR_LOW_DUTY(&addr);
+	adv_param = *BT_LE_ADV_CONN_DIR(&addr);
 	adv_param.id = BT_ID_DEFAULT;
 	adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
 
@@ -170,10 +169,15 @@ static int extended_adv_create(void)
 		return -ENXIO;
 	}
 
-	ret = bt_le_ext_adv_set_data(ext_adv, adv_local, adv_local_size, NULL, 0);
-	if (ret) {
-		LOG_ERR("Failed to set advertising data: %d", ret);
-		return ret;
+	if (dir_adv_timed_out) {
+		/* If the directed adv has timed out it means we only need to update the adv data */
+		bt_le_adv_update_data(adv_local, adv_local_size, NULL, 0);
+	} else {
+		ret = bt_le_ext_adv_set_data(ext_adv, adv_local, adv_local_size, NULL, 0);
+		if (ret) {
+			LOG_ERR("Failed to set advertising data: %d", ret);
+			return ret;
+		}
 	}
 
 	if (per_adv_local != NULL && IS_ENABLED(CONFIG_BT_PER_ADV)) {
@@ -217,21 +221,27 @@ static void advertising_process(struct k_work *work)
 
 	bt_addr_le_t addr;
 
-	if (!k_msgq_get(&bonds_queue, &addr, K_NO_WAIT)) {
+	if (!k_msgq_get(&bonds_queue, &addr, K_NO_WAIT) && !dir_adv_timed_out) {
 		ret = direct_adv_create(addr);
 		if (ret) {
 			LOG_WRN("Failed to create direct advertisement: %d", ret);
 			return;
 		}
+
+		ret = bt_le_ext_adv_start(
+			ext_adv,
+			BT_LE_EXT_ADV_START_PARAM(BT_GAP_ADV_HIGH_DUTY_CYCLE_MAX_TIMEOUT, 0));
 	} else {
 		ret = extended_adv_create();
 		if (ret) {
 			LOG_WRN("Failed to create extended advertisement: %d", ret);
 			return;
 		}
+
+		dir_adv_timed_out = false;
+		ret = bt_le_ext_adv_start(ext_adv, BT_LE_EXT_ADV_START_DEFAULT);
 	}
 
-	ret = bt_le_ext_adv_start(ext_adv, BT_LE_EXT_ADV_START_DEFAULT);
 	if (ret) {
 		LOG_ERR("Failed to start advertising set. Err: %d", ret);
 		return;
@@ -254,6 +264,29 @@ static void advertising_process(struct k_work *work)
 
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Advertising successfully started");
+}
+
+void bt_mgmt_dir_adv_timed_out(void)
+{
+	int ret;
+
+	dir_adv_timed_out = true;
+
+	LOG_DBG("Clearing ext_adv");
+
+	ret = bt_le_ext_adv_delete(ext_adv);
+	if (ret) {
+		LOG_ERR("Failed to clear ext_adv");
+	}
+
+	ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb, &ext_adv);
+	if (ret) {
+		LOG_ERR("Unable to create a connectable extended advertising set: %d", ret);
+		return;
+	}
+
+	/* Restart normal advertising */
+	bt_mgmt_adv_start(NULL, 0, NULL, 0, true);
 }
 
 int bt_mgmt_adv_start(const struct bt_data *adv, size_t adv_size, const struct bt_data *per_adv,

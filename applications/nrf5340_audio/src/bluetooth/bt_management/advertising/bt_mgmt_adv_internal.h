@@ -14,4 +14,12 @@
  */
 void bt_mgmt_adv_init(void);
 
+/**
+ * @brief	Handle timed-out directed advertisement.
+ *
+ *		This function deletes the old ext_adv and creates a new one.
+ *		It also sets the dir_adv_timed_out flag and restarts advertisement.
+ */
+void bt_mgmt_dir_adv_timed_out(void);
+
 #endif /* _BT_MGMT_ADV_INTERNAL_H_ */

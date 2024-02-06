@@ -256,8 +256,9 @@ nRF5340 Audio
 
 * Updated:
 
-  * ISO data sending has been refactored, and is now done in a single file: bt_le_audio_tx.
-  * Split the generic applications into their own samples with separate main.c files
+  * Sending of the ISO data, which is now done in a single file :file:`bt_le_audio_tx`.
+  * Application structure, which is now split into four separate, generic applications with separate :file:`main.c` files.
+  * Advertising process by reverting back to slower advertising after a short burst (1.28 s) of directed advertising.
 
 
 nRF Machine Learning (Edge Impulse)
