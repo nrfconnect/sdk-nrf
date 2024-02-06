@@ -8,10 +8,10 @@
 #ifndef MBEDTLS_CONFIG_PSA_H
 #define MBEDTLS_CONFIG_PSA_H
 
-#if defined(MBEDTLS_USER_CONFIG_FILE)
-#include MBEDTLS_USER_CONFIG_FILE
+#if defined(MBEDTLS_PSA_CRYPTO_CONFIG_FILE)
+#include MBEDTLS_PSA_CRYPTO_CONFIG_FILE
 #else
-#error "MBEDTLS_USER_CONFIG_FILE expected to be set"
+#error "MBEDTLS_PSA_CRYPTO_CONFIG_FILE expected to be set"
 #endif
 
 #ifdef __cplusplus

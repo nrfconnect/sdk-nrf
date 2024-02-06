@@ -16,8 +16,6 @@ Complete the following steps:
 
    * `CONFIG_GENERATE_MBEDTLS_CFG_FILE=n`.
    * `CONFIG_MBEDTLS_CFG_FILE="custom-name-nrf-config.h"`.
-   * `CONFIG_MBEDTLS_USER_CONFIG_FILE="empty_file.h"`.
-#. Create an empty file named :file:`empty_file.h`.
 #. Edit :file:`custom-name-nrf-config.h` with your custom configuration.
 #. If the header files are not already in the include path, add them by editing the application build scripts.
 

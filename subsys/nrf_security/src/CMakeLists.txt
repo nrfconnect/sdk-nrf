@@ -22,8 +22,17 @@ add_library(mbedcrypto_common INTERFACE)
 target_compile_definitions(mbedcrypto_common
   INTERFACE
     -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
-    -DMBEDTLS_USER_CONFIG_FILE="${CONFIG_MBEDTLS_USER_CONFIG_FILE}"
+    -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
+    -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
 )
+
+# Add the user config only if it is set
+if(NOT ${CONFIG_MBEDTLS_USER_CONFIG_FILE} STREQUAL "nrf-config-user-empty.h" )
+  target_compile_definitions(mbedcrypto_common
+    INTERFACE
+      -DMBEDTLS_USER_CONFIG_FILE="${CONFIG_MBEDTLS_USER_CONFIG_FILE}"
+  )
+endif()
 
 if (CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
   # Building as part of the TF-M build system.
