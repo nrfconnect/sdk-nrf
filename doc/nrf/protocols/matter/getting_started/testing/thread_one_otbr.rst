@@ -67,9 +67,10 @@ Complete the following steps:
 
 1. Choose one of the following options:
 
-   * For Linux only - Use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page.
+   * Use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page.
      Make sure that the package is compatible with your |NCS| version.
-   * For both Linux and macOS - Build it manually from the source files available in the :file:`modules/lib/matter/examples/chip-tool` directory and using the building instructions from the :doc:`matter:chip_tool_guide` page in the Matter documentation.
+   * Build manually from the source files available in the :file:`modules/lib/matter/examples/chip-tool` directory.
+     Use the building instructions from the :doc:`matter:chip_tool_guide` page in the Matter documentation.
 
 #. Configure the CHIP Tool controller.
    Complete the following actions by following the steps in the :doc:`matter:chip_tool_guide` user guide in the Matter documentation:
