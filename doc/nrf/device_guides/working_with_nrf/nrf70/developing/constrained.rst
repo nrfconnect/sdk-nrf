@@ -95,7 +95,7 @@ The nRF70 Series driver provides the following software configurations to fine-t
      - Purpose
    * - :kconfig:option:`CONFIG_WPA_SUPP`
      - ``y`` or ``n``
-     - Enable or disable Wi-Fi Protected Access (WPA) supplicant
+     - Enable or disable Wi-Fi Protected Access (WPA™) supplicant
      - Memory savings
      - This specifies the inclusion of the WPA supplicant module.
        Disabling this flag restricts the nRF70 Series driver's functionality to STA scan only.
@@ -114,7 +114,7 @@ The nRF70 Series driver provides the following software configurations to fine-t
    * - :kconfig:option:`CONFIG_NRF700X_MAX_TX_TOKENS`
      - ``5``, ``10``, ``11``, ``12``
      - Maximum number of TX tokens.
-       These are distributed across all WMM access categories (including a pool for all).
+       These are distributed across all WMM® access categories (including a pool for all).
      - Performance tuning and Memory savings
      - This specifies the maximum number of TX tokens that can be used in the token bucket algorithm.
        More tokens imply more concurrent transmit opportunities for RPU but can lead to poor aggregation performance

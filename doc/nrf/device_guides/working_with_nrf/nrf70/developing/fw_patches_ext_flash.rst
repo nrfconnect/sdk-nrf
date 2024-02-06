@@ -15,7 +15,7 @@ This guide explains the available options for having the nRF70 Series firmware p
 Overview
 ********
 
-By default the nRF70 Series firmware patches are built as part of the nRF Wi-Fi host driver code, residing in on-chip memory.
+By default the nRF70 Series firmware patches are built as part of the nRF Wi-Fi® host driver code, residing in on-chip memory.
 The firmware patches include code that is executed on the nRF70 Series device.
 The size of the firmware patches may be considerably large, which limits the amount of on-chip code memory available for the user application.
 In order to increase the amount of on-chip memory available for user applications, the nRF70 Series Wi-Fi driver supports the option of using external memory, if that is available.
@@ -48,10 +48,10 @@ Available options
 
 There are two supported options for offloading the firmware patches in the external memory feature:
 
-* using XIP access
-* using QSPI transfers to RAM
+* Using XIP access
+* Using QSPI transfers to RAM
 
-using XIP access
+Using XIP access
 ================
 
 If the application supports XIP from external memory, then the firmware patches can be loaded as part of the nRF Wi-Fi driver code (RODATA) and then relocated to the external memory.
@@ -71,7 +71,7 @@ A sample memory regions summary is shown below:
              RAM:      170636 B       448 KB     37.20%
         IDT_LIST:          0 GB         2 KB      0.00%
 
-using QSPI transfers to RAM
+Using QSPI transfers to RAM
 ===========================
 
 The nRF Wi-Fi driver supports the option for offloading the nRF70 firmware patch to external non-XIP memory.
@@ -80,7 +80,7 @@ In this case the upload of the firmware patch from the external memory to the nR
 * first the firmware patch is loaded from the external memory onto internal RAM and
 * then it is uploaded to the nRF70 device.
 
-This feature can be enabled using DTS or :ref::`snippets` feature or by using :ref::`partition_manager`.
+This feature can be enabled using DTS or :ref:`snippets` feature or by using :ref:`partition_manager`.
 
 Configuration
 -------------
