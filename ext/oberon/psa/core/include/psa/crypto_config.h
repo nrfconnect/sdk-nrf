@@ -83,6 +83,8 @@
 #define PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS       1
 #define PSA_WANT_ALG_TLS12_PRF                  1
 #define PSA_WANT_ALG_TLS12_PSK_TO_MS            1
+#define PSA_WANT_ALG_SP800_108_COUNTER_HMAC     1
+#define PSA_WANT_ALG_SP800_108_COUNTER_CMAC     1
 
 #define PSA_WANT_ECC_MONTGOMERY_255             1
 #define PSA_WANT_ECC_MONTGOMERY_448             1

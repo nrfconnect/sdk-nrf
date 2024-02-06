@@ -3532,7 +3532,7 @@ psa_status_t psa_key_derivation_set_capacity(psa_key_derivation_operation_t *ope
         return PSA_ERROR_INVALID_ARGUMENT;
     }
     operation->capacity = capacity;
-    return PSA_SUCCESS;
+    return psa_driver_wrapper_key_derivation_set_capacity(operation, capacity);
 }
 
 #define PSA_KEY_DERIVATION_OUTPUT -1  // used as step below
@@ -3691,6 +3691,37 @@ static psa_status_t psa_key_derivation_check_state(
     } else
 #endif /* PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS */
 
+#if defined(PSA_WANT_ALG_SP800_108_COUNTER_HMAC) || defined(PSA_WANT_ALG_SP800_108_COUNTER_CMAC)
+#if defined(PSA_WANT_ALG_SP800_108_COUNTER_HMAC) && defined(PSA_WANT_ALG_SP800_108_COUNTER_CMAC)
+        if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(alg) || alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
+#elif defined(PSA_WANT_ALG_SP800_108_COUNTER_HMAC)
+        if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(alg)) {
+#elif defined(PSA_WANT_ALG_SP800_108_COUNTER_CMAC)
+        if (alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
+#endif
+        switch (step) {
+        case PSA_KEY_DERIVATION_INPUT_SECRET:
+            if (operation->secret_set) return PSA_ERROR_BAD_STATE;
+            operation->secret_set = 1;
+            break;
+        case PSA_KEY_DERIVATION_INPUT_LABEL:
+            if (!operation->secret_set || operation->label_set || operation->context_set) return PSA_ERROR_BAD_STATE;
+            operation->label_set = 1;
+            break;
+        case PSA_KEY_DERIVATION_INPUT_CONTEXT:
+            if (!operation->secret_set || operation->context_set) return PSA_ERROR_BAD_STATE;
+            operation->context_set = 1;
+            break;
+        case PSA_KEY_DERIVATION_OUTPUT:
+            if (!operation->secret_set) return PSA_ERROR_BAD_STATE;
+            operation->no_input = 1;
+            break;
+        default:
+            return PSA_ERROR_INVALID_ARGUMENT;
+        }
+    } else
+#endif /* PSA_WANT_ALG_SP800_108_COUNTER_HMAC || PSA_WANT_ALG_SP800_108_COUNTER_CMAC */
+
     {
         return PSA_ERROR_NOT_SUPPORTED;
     }
@@ -3698,19 +3729,18 @@ static psa_status_t psa_key_derivation_check_state(
     return PSA_SUCCESS;
 }
 
-psa_status_t psa_key_derivation_output_bytes(
+psa_status_t psa_key_derivation_output_bytes_internal(
     psa_key_derivation_operation_t *operation,
     uint8_t *output,
     size_t output_length)
 {
     psa_status_t status;
 
-    status = psa_key_derivation_check_state(operation, PSA_KEY_DERIVATION_OUTPUT);
-    if (status != PSA_SUCCESS) goto exit;
-
     if (output_length <= operation->capacity && operation->capacity > 0) {
         status = psa_driver_wrapper_key_derivation_output_bytes(operation, output, output_length);
         operation->capacity -= output_length;
+        if (status == PSA_SUCCESS) return PSA_SUCCESS;
+        psa_key_derivation_abort(operation);
     } else {
         // Not enough capacity:
         // We have to return PSA_ERROR_INSUFFICIENT_DATA and enter a special
@@ -3722,18 +3752,25 @@ psa_status_t psa_key_derivation_output_bytes(
         status = PSA_ERROR_INSUFFICIENT_DATA;
     }
 
-exit:
-    if (status != PSA_SUCCESS) {
-        /* Preserve the algorithm upon errors, but clear all sensitive state.
-         * This allows us to differentiate between exhausted operations and
-         * blank operations, so we can return PSA_ERROR_BAD_STATE on blank
-         * operations. */
-        if (status != PSA_ERROR_INSUFFICIENT_DATA) {
-            psa_key_derivation_abort(operation);
-        }
-        memset(output, '!', output_length);
-    }
+    memset(output, '!', output_length);
     return status;
+}
+
+psa_status_t psa_key_derivation_output_bytes(
+    psa_key_derivation_operation_t *operation,
+    uint8_t *output,
+    size_t output_length)
+{
+    psa_status_t status;
+
+    status = psa_key_derivation_check_state(operation, PSA_KEY_DERIVATION_OUTPUT);
+    if (status != PSA_SUCCESS) return status;
+
+    if (operation->no_output) {
+        return PSA_ERROR_NOT_PERMITTED;
+    }
+
+    return psa_key_derivation_output_bytes_internal(operation, output, output_length);
 }
 
 static psa_status_t psa_generate_derived_key_internal(
@@ -3790,7 +3827,7 @@ static psa_status_t psa_generate_derived_key_internal(
     }
 
     do {
-        status = psa_key_derivation_output_bytes(operation, data, bytes);
+        status = psa_key_derivation_output_bytes_internal(operation, data, bytes);
         if (status != PSA_SUCCESS) goto exit;
 
 #ifdef PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE
@@ -3805,7 +3842,7 @@ static psa_status_t psa_generate_derived_key_internal(
             case 256:
             case 384: break;
             case 521: data[0] &= 0x01; break; // truncate to 521 bits
-            default:
+            default: 
                 {
                     status = PSA_ERROR_INVALID_ARGUMENT;
                     goto exit;
@@ -3854,11 +3891,10 @@ psa_status_t psa_key_derivation_output_key(const psa_key_attributes_t *attribute
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
-    if (operation->alg == PSA_ALG_NONE) {
-        return PSA_ERROR_BAD_STATE;
-    }
+    status = psa_key_derivation_check_state(operation, PSA_KEY_DERIVATION_OUTPUT);
+    if (status != PSA_SUCCESS) return status;
 
-    if (!operation->can_output_key) {
+    if (operation->no_output || !operation->can_output_key) {
         return PSA_ERROR_NOT_PERMITTED;
     }
 
@@ -3879,6 +3915,74 @@ psa_status_t psa_key_derivation_output_key(const psa_key_attributes_t *attribute
     return status;
 }
 
+psa_status_t psa_key_derivation_verify_bytes(
+    psa_key_derivation_operation_t *operation,
+    const uint8_t *expected_output,
+    size_t output_length)
+{
+    psa_status_t status = PSA_SUCCESS;
+    uint8_t buffer[256];
+    size_t length;
+    int diff = 0;
+
+    status = psa_key_derivation_check_state(operation, PSA_KEY_DERIVATION_OUTPUT);
+    if (status != PSA_SUCCESS) goto exit;
+
+    if (operation->no_verify) {
+        status = PSA_ERROR_NOT_PERMITTED;
+        goto exit;
+    }
+
+    length = sizeof buffer;
+    while (output_length) {
+        if (output_length < length) length = output_length;
+        status = psa_key_derivation_output_bytes_internal(operation, buffer, length);
+        if (status != PSA_SUCCESS) return status;
+        diff |= mbedtls_ct_memcmp(buffer, expected_output, length);
+        expected_output += length;
+        output_length -= length;
+    }
+    if (diff) return PSA_ERROR_INVALID_SIGNATURE;
+    return PSA_SUCCESS;
+
+exit:
+    psa_key_derivation_abort(operation);
+    return status;
+}
+
+psa_status_t psa_key_derivation_verify_key(
+    psa_key_derivation_operation_t *operation,
+    mbedtls_svc_key_id_t expected)
+{
+    psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_status_t unlock_status = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_key_slot_t *slot = NULL;
+
+    status = psa_get_and_lock_transparent_key_slot_with_policy(
+        expected, &slot, PSA_KEY_USAGE_VERIFY_DERIVATION, operation->alg);
+    if (status != PSA_SUCCESS) goto exit;
+
+    if (slot->attr.type != PSA_KEY_TYPE_PASSWORD_HASH) {
+        status = PSA_ERROR_INVALID_ARGUMENT;
+        goto exit;
+    }
+
+    if (operation->no_verify) {
+        status = PSA_ERROR_NOT_PERMITTED;
+        goto exit;
+    }
+
+    status = psa_key_derivation_verify_bytes(
+        operation, slot->key.data, slot->key.bytes);
+
+    unlock_status = psa_unlock_key_slot(slot);
+    return (status == PSA_SUCCESS) ? unlock_status : status;
+
+exit:
+    psa_unlock_key_slot(slot);
+    psa_key_derivation_abort(operation);
+    return status;
+}
 
 
 /****************************************************************/
@@ -3919,6 +4023,8 @@ psa_status_t psa_key_derivation_setup(psa_key_derivation_operation_t *operation,
         operation->capacity = PSA_HASH_LENGTH(kdf_alg);
     } else if (kdf_alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
         operation->capacity = PSA_TLS12_ECJPAKE_TO_PMS_DATA_SIZE;
+    } else if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(kdf_alg) || kdf_alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
+        operation->capacity = 0x1fffffff;
     } else {
         operation->capacity = PSA_KEY_DERIVATION_UNLIMITED_CAPACITY;
     }
@@ -3963,6 +4069,7 @@ static int psa_key_derivation_check_input_type(
         case PSA_KEY_DERIVATION_INPUT_INFO:
         case PSA_KEY_DERIVATION_INPUT_SEED:
         case PSA_KEY_DERIVATION_INPUT_COST:
+        case PSA_KEY_DERIVATION_INPUT_CONTEXT:
             if (key_type == PSA_KEY_TYPE_RAW_DATA) {
                 return PSA_SUCCESS;
             }
@@ -4032,7 +4139,7 @@ psa_status_t psa_key_derivation_input_integer(
             status = PSA_ERROR_NOT_SUPPORTED;
             goto exit;
         }
-    }
+    } 
 
     status = psa_driver_wrapper_key_derivation_input_integer(operation, step, value);
     if (status != PSA_SUCCESS) goto exit;
@@ -4051,13 +4158,23 @@ psa_status_t psa_key_derivation_input_key(
 {
     psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
     psa_status_t unlock_status = PSA_ERROR_CORRUPTION_DETECTED;
-    psa_key_slot_t *slot;
+    psa_key_slot_t *slot = NULL;
 
     status = psa_get_and_lock_transparent_key_slot_with_policy(
-        key, &slot, PSA_KEY_USAGE_DERIVE, operation->alg);
-    if (status != PSA_SUCCESS) {
-        psa_key_derivation_abort(operation);
-        return status;
+        key, &slot, 0, operation->alg);
+    if (status != PSA_SUCCESS) goto exit;
+
+    /* check usage, PSA_KEY_USAGE_DERIVE or PSA_KEY_USAGE_VERIFY_DERIVATION */
+    if ((slot->attr.policy.usage & PSA_KEY_USAGE_DERIVE) != 0) {
+        if ((slot->attr.policy.usage & PSA_KEY_USAGE_VERIFY_DERIVATION) == 0) {
+            operation->no_verify = 1;
+        }
+    } else {
+        operation->no_output = 1;
+        if ((slot->attr.policy.usage & PSA_KEY_USAGE_VERIFY_DERIVATION) == 0) {
+            status = PSA_ERROR_NOT_PERMITTED;
+            goto exit;
+        }
     }
 
     /* Passing a key object as a SECRET or PASSWORD input unlocks the
@@ -4072,9 +4189,16 @@ psa_status_t psa_key_derivation_input_key(
                                                slot->key.data,
                                                slot->key.bytes);
 
+exit:
     unlock_status = psa_unlock_key_slot(slot);
 
-    return (status == PSA_SUCCESS) ? unlock_status : status;
+    if (status == PSA_SUCCESS) {
+        status = unlock_status;
+    } else {
+        psa_key_derivation_abort(operation);
+    }
+
+    return status;
 }
 
 
@@ -4395,7 +4519,7 @@ psa_status_t psa_pake_set_password_key(psa_pake_operation_t *operation,
         goto exit;
     }
 #endif
-
+     
     status = psa_get_and_lock_key_slot_with_policy(
         password, &slot, PSA_KEY_USAGE_DERIVE, operation->alg);
     if (status != PSA_SUCCESS) goto exit;

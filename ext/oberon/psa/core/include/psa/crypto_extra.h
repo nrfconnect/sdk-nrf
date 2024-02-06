@@ -931,7 +931,7 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(
  * psa_pake_set_peer(operation, ...);
  * psa_pake_set_password_key(operation, ...);
  * \endcode
- *
+ * 
  * The role set by \c psa_pake_set_role() must be either
  * \c PSA_PAKE_ROLE_CLIENT or \c PSA_PAKE_ROLE_SERVER.
  *

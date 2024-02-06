@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+//
+// This file implements functions from the Arm PSA Crypto Driver API.
 
 #include <string.h>
 

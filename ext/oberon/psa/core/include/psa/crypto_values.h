@@ -2132,6 +2132,95 @@
     (PSA_ALG_IS_PBKDF2_HMAC(kdf_alg) || \
      ((kdf_alg) == PSA_ALG_PBKDF2_AES_CMAC_PRF_128))
 
+
+#define PSA_ALG_SP800_108_COUNTER_HMAC_BASE     ((psa_algorithm_t) 0x08000700)
+ /** Macro to build a NIST SP 800-108 conformant, counter-mode KDF algorithm based on HMAC.
+ *
+ * For example, PSA_ALG_SP800_108_COUNTER_HMAC(PSA_ALG_SHA_256) is counter-mode KDF using HMAC-SHA-256.
+ *
+ * This is an HMAC-based, counter mode key derivation function, using the construction recommended
+ * specified by SP800-108, §4.1.
+ * 
+ * This key derivation algorithm uses the following inputs:
+ * - #PSA_KEY_DERIVATION_INPUT_SECRET is the secret input keying material, K_in.
+ * - #PSA_KEY_DERIVATION_INPUT_LABEL is the label.
+ *   It is optional; if omitted, the label is a zero-length string. If provided, it must not contain any null bytes.
+ * - #PSA_KEY_DERIVATION_INPUT_CONTEXT is the context.
+ *   It is optional; if omitted, the context is a zero-length string.
+ * Each input can only be passed once. Inputs must be passed in the order above.
+ *
+ * This algorithm uses the output length as part of the derivation process. In the derivation this value is L,
+ * the required output size in bits. After setup, the initial capacity of the key derivation operation is
+ * 2^29 - 1 bytes (0x1fffffff). The capacity can be set to a lower value by calling psa_key_derivation_set_capacity().
+ * When the first output is requested, the value of L is calculated as L = 8 * cap, where cap is the value of
+ * psa_key_derivation_get_capacity().
+ * Subsequent calls to psa_key_derivation_set_capacity() are not permitted for this algorithm.
+ * 
+ * The derivation is constructed as described in SP800-108 §4.1, with the iteration counter i and
+ * output length L encoded as big-endian, 32-bit values. The resulting output stream
+ * K_1 || K_2 || K_3 || ... is computed as:
+ * 
+ * K_i = HMAC( K_in, [i]4 || label || 0x00 || context || [L]4 ), for i = 1, 2, 3, ...
+ * Where [x]n is the big-endian, n-byte encoding of the integer x.
+ *
+ * \param hash_alg      A hash algorithm (\c PSA_ALG_XXX value such that
+ *                      #PSA_ALG_IS_HASH(\p hash_alg) is true).
+ *
+ * \return              The corresponding counter-mode KDF algorithm.
+ * \return              Unspecified if \p hash_alg is not a supported
+ *                      hash algorithm.
+ */
+#define PSA_ALG_SP800_108_COUNTER_HMAC(hash_alg)                       \
+    (PSA_ALG_SP800_108_COUNTER_HMAC_BASE | ((hash_alg) & PSA_ALG_HASH_MASK))
+
+ /** Whether the specified algorithm is a key derivation algorithm constructed
+ * using #PSA_ALG_SP800_108_COUNTER_HMAC(\p hash_alg).
+ *
+ * \param alg An algorithm identifier (value of type #psa_algorithm_t).
+ *
+ * \return 1 if \p alg is a key derivation algorithm constructed using #PSA_ALG_SP800_108_COUNTER_HMAC(),
+ *         0 otherwise. This macro may return either 0 or 1 if \c alg is not a supported
+ *         key derivation algorithm identifier.
+ */
+#define PSA_ALG_IS_SP800_108_COUNTER_HMAC(alg)                         \
+    (((alg) & ~PSA_ALG_HASH_MASK) == PSA_ALG_SP800_108_COUNTER_HMAC_BASE)
+
+ /** Macro to build a NIST SP 800-108 conformant, counter-mode KDF algorithm based on CMAC.
+ *
+ * This is a CMAC-based, counter mode key derivation function, using the construction recommended
+ * specified by SP800-108, §4.1.
+ * 
+ * This key derivation algorithm uses the following inputs:
+ * - #PSA_KEY_DERIVATION_INPUT_SECRET is the secret input keying material, K_in.
+ *   This must be a block-cipher key that is compatible with the CMAC algorithm,
+ *   and must be input using psa_key_derivation_input_key(). See also #PSA_ALG_CMAC.
+ * - #PSA_KEY_DERIVATION_INPUT_LABEL is the label.
+ *   It is optional; if omitted, the label is a zero-length string. If provided, it must not contain any null bytes.
+ * - #PSA_KEY_DERIVATION_INPUT_CONTEXT is the context.
+ *   It is optional; if omitted, the context is a zero-length string.
+ * Each input can only be passed once. Inputs must be passed in the order above.
+ *
+ * This algorithm uses the output length as part of the derivation process. In the derivation this value is L,
+ * the required output size in bits. After setup, the initial capacity of the key derivation operation is
+ * 2^29 - 1 bytes (0x1fffffff). The capacity can be set to a lower value by calling psa_key_derivation_set_capacity().
+ * When the first output is requested, the value of L is calculated as L = 8 * cap, where cap is the value of
+ * psa_key_derivation_get_capacity().
+ * Subsequent calls to psa_key_derivation_set_capacity() are not permitted for this algorithm.
+ * 
+ * The derivation is constructed as described in SP800-108 §4.1, , with the following details:
+ * - The iteration counter i and output length L are encoded as big-endian, 32-bit values.
+ * - The mitigation to make the CMAC-based construction robust is implemented.
+ * 
+ * The resulting output stream K_1 || K_2 || K_3 || ... is computed as:
+ * 
+ * K_0 = CMAC( K_in, label || 0x00 || context || [L]4 )
+ * K_i = CMAC( K_in, [i]4 || label || 0x00 || context || [L]4 || K_0), for i = 1, 2, 3, ...
+ * Where [x]n is the big-endian, n-byte encoding of the integer x.
+ *
+ * \return              The corresponding counter-mode KDF algorithm.
+ */
+#define PSA_ALG_SP800_108_COUNTER_CMAC          ((psa_algorithm_t) 0x08000800)
+
 #define PSA_ALG_KEY_DERIVATION_MASK             ((psa_algorithm_t) 0xfe00ffff)
 #define PSA_ALG_KEY_AGREEMENT_MASK              ((psa_algorithm_t) 0xffff0000)
 
@@ -2738,6 +2827,13 @@ static inline int mbedtls_svc_key_id_is_null(mbedtls_svc_key_id_t key)
  * This must be a direct input, passed to psa_key_derivation_input_integer().
  */
 #define PSA_KEY_DERIVATION_INPUT_COST       ((psa_key_derivation_step_t) 0x0205)
+
+/** A context for key derivation.
+ *
+ * This should be a direct input.
+ * It can also be a key of type #PSA_KEY_TYPE_RAW_DATA.
+ */
+#define PSA_KEY_DERIVATION_INPUT_CONTEXT    ((psa_key_derivation_step_t) 0x0206)
 
 /**@}*/
 

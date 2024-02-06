@@ -191,11 +191,14 @@ struct psa_key_derivation_s {  /*!!OM*/
 
     psa_algorithm_t MBEDTLS_PRIVATE(alg);
     unsigned int MBEDTLS_PRIVATE(can_output_key) : 1;
+    unsigned int MBEDTLS_PRIVATE(no_output) : 1;
+    unsigned int MBEDTLS_PRIVATE(no_verify) : 1;
     unsigned int MBEDTLS_PRIVATE(cost_set) : 1;
     unsigned int MBEDTLS_PRIVATE(salt_set) : 1;
     unsigned int MBEDTLS_PRIVATE(secret_set) : 1;
     unsigned int MBEDTLS_PRIVATE(seed_set) : 1;
     unsigned int MBEDTLS_PRIVATE(label_set) : 1;
+    unsigned int MBEDTLS_PRIVATE(context_set) : 1;
     unsigned int MBEDTLS_PRIVATE(passw_set) : 1;
     unsigned int MBEDTLS_PRIVATE(info_set) : 1;
     unsigned int MBEDTLS_PRIVATE(no_input) : 1;
@@ -204,7 +207,7 @@ struct psa_key_derivation_s {  /*!!OM*/
     psa_driver_key_derivation_context_t MBEDTLS_PRIVATE(ctx);
 };
 
-#define PSA_KEY_DERIVATION_OPERATION_INIT { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { 0 } }
+#define PSA_KEY_DERIVATION_OPERATION_INIT { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { 0 } }
 static inline struct psa_key_derivation_s psa_key_derivation_operation_init(
     void)
 {
