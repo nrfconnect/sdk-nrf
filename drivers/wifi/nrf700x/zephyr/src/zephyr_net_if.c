@@ -89,6 +89,12 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	if (ret) {
 		LOG_ERR("%s: net_if_down failed: %d", __func__, ret);
 		/* Continue with the recovery */
+	} else {
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
+		LOG_ERR("%s: Interface down", __func__);
+#else
+		LOG_DBG("%s: Interface down", __func__);
+#endif
 	}
 	k_msleep(CONFIG_NRF_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS);
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
@@ -99,6 +105,12 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	ret = net_if_up(vif_ctx_zep->zep_net_if_ctx);
 	if (ret) {
 		LOG_ERR("%s: net_if_up failed: %d", __func__, ret);
+	} else {
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
+		LOG_ERR("%s: Interface up", __func__);
+#else
+		LOG_DBG("%s: Interface up", __func__);
+#endif
 	}
 	rpu_ctx_zep->rpu_recovery_in_progress = false;
 	k_mutex_unlock(&rpu_ctx_zep->rpu_lock);
@@ -273,8 +285,7 @@ int nrf_wifi_if_send(const struct device *dev,
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-
-	if (!rpu_ctx_zep->rpu_ctx) {
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
 		goto unlock;
 	}
 
