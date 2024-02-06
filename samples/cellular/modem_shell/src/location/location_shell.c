@@ -221,6 +221,34 @@ static void location_evt_led_worker(struct k_work *work_item)
 }
 #endif
 
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+static void location_print_data_details(
+	enum location_method method,
+	const struct location_data_details *details)
+{
+	mosh_print("  elapsed method time: %d ms", details->elapsed_time_method);
+#if defined(CONFIG_LOCATION_METHOD_GNSS)
+	if (method == LOCATION_METHOD_GNSS) {
+		mosh_print("  satellites tracked: %d", details->gnss.satellites_tracked);
+		mosh_print("  satellites used: %d", details->gnss.satellites_tracked);
+		mosh_print("  elapsed GNSS time: %d ms", details->gnss.elapsed_time_gnss);
+		mosh_print("  GNSS execution time: %d ms", details->gnss.pvt_data.execution_time);
+	}
+#endif
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
+	if (method == LOCATION_METHOD_CELLULAR) {
+		mosh_print("  neighbor cells: %d", details->cellular.ncells_count);
+		mosh_print("  GCI cells: %d", details->cellular.gci_cells_count);
+	}
+#endif
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	if (method == LOCATION_METHOD_WIFI) {
+		mosh_print("  Wi-Fi APs: %d", details->wifi.ap_count);
+	}
+#endif
+}
+#endif
+
 void location_ctrl_event_handler(const struct location_event_data *event_data)
 {
 	switch (event_data->id) {
@@ -250,6 +278,9 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 			"  Google maps URL: https://maps.google.com/?q=%f,%f",
 			event_data->location.latitude, event_data->location.longitude);
 
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+		location_print_data_details(event_data->method, &event_data->location.details);
+#endif
 		if (gnss_location_to_cloud) {
 			gnss_location_work_data.loc_evt_data = *event_data;
 			gnss_location_work_data.format = gnss_location_to_cloud_format;
@@ -264,11 +295,25 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		break;
 
 	case LOCATION_EVT_TIMEOUT:
-		mosh_error("Location request timed out");
+		mosh_error("Location request timed out:");
+		mosh_print(
+			"  used method: %s (%d)",
+			location_method_str(event_data->method),
+			event_data->method);
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+		location_print_data_details(event_data->method, &event_data->error.details);
+#endif
 		break;
 
 	case LOCATION_EVT_ERROR:
-		mosh_error("Location request failed");
+		mosh_error("Location request failed:");
+		mosh_print(
+			"  used method: %s (%d)",
+			location_method_str(event_data->method),
+			event_data->method);
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+		location_print_data_details(event_data->method, &event_data->error.details);
+#endif
 		break;
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
@@ -325,10 +370,18 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 #endif
 #endif /* defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */
 	case LOCATION_EVT_RESULT_UNKNOWN:
-		mosh_print("Location request completed, but the result is not known");
+		mosh_print("Location request completed, but the result is not known:");
+		mosh_print(
+			"  used method: %s (%d)",
+			location_method_str(event_data->method),
+			event_data->method);
 		break;
 	case LOCATION_EVT_STARTED:
-		mosh_print("Location request has been started");
+		mosh_print("Location request has been started:");
+		mosh_print(
+			"  used method: %s (%d)",
+			location_method_str(event_data->method),
+			event_data->method);
 		break;
 	default:
 		mosh_warn("Unknown event from location library, id %d", event_data->id);

@@ -754,6 +754,7 @@ Modem libraries
     * The :c:enumerator:`LOCATION_EVT_STARTED` event to indicate that location request has been started.
       This is for metrics collection purposes and sent only if the :kconfig:option:`CONFIG_LOCATION_DATA_DETAILS` Kconfig option is set.
     * Support for multiple event handlers.
+    * Additional location data details into the :c:struct:`location_data_details` structure hierarchy.
 
   * Updated:
 

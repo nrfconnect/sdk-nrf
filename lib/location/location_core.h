@@ -37,6 +37,9 @@ struct location_request_info {
 	/** Whether to perform fallback for current location request processing. */
 	bool execute_fallback;
 
+	/** Uptime at the start of the positioning for the current method. */
+	int64_t elapsed_time_method_start_timestamp;
+
 	/**
 	 * Device uptime when location request timer expires.
 	 * This is used in cloud location method to calculate timeout for the cloud operation.

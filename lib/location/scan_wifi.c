@@ -52,6 +52,13 @@ struct wifi_scan_info *scan_wifi_results_get(void)
 	return &scan_wifi_info;
 }
 
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+void scan_wifi_details_get(struct location_data_details *details)
+{
+	details->wifi.ap_count = scan_wifi_info.cnt;
+}
+#endif
+
 void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
 {
 	int ret;

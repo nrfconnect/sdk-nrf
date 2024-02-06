@@ -292,6 +292,10 @@ when :c:func:`location_config_defaults_set` function is called:
 * :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_CELL_COUNT`
 * :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT`
 
+The following option adds more details to the :c:struct:`location_event_data` structure:
+
+* :kconfig:option:`CONFIG_LOCATION_DATA_DETAILS`
+
 Usage
 *****
 
