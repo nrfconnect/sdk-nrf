@@ -17,26 +17,25 @@
 LOG_MODULE_REGISTER(internal_secure_storage_settings, CONFIG_SECURE_STORAGE_LOG_LEVEL);
 
 /* Storage pattern: prefix, uid low, uid high, suffix */
-#define SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_PATTERN "%s/%08x%08x%s"
+#define SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_PATTERN "%s/%08x%08x"
 
 /* Max filename length aligned with Settings File backend max length */
 #define SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH 32
 
 struct load_object_info {
-	uint8_t *data;
+	void *data;
 	size_t size;
 	int ret;
 };
 
 /* Helper to fill filename with a suffix */
 static psa_status_t create_filename(char *filename, const size_t filename_size, const char *prefix,
-				    const psa_storage_uid_t uid, const char *suffix)
+				    const psa_storage_uid_t uid)
 {
 	int ret;
 
 	ret = snprintf(filename, filename_size, SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_PATTERN,
-		       prefix, (unsigned int)((uid) >> 32), (unsigned int)((uid)&0xffffffff),
-		       suffix);
+		       prefix, (unsigned int)((uid) >> 32), (unsigned int)((uid) & 0xffffffff));
 	/* snprintf doc:
 	 * Notice that only when this returned value is non-negative and less than n, the string has
 	 * been completely written
@@ -49,20 +48,14 @@ static psa_status_t create_filename(char *filename, const size_t filename_size, 
 }
 
 /*
- * Reads the object content
- * if object size is larger only read the provided size
- * is object is smaller, return with error
+ * Reads the object content up to the size of object.
  */
 static int storage_settings_load_object(const char *key, size_t len, settings_read_cb read_cb,
 					void *cb_arg, void *param)
 {
 	struct load_object_info *info = param;
 
-	if (len < info->size) {
-		info->ret = -EINVAL;
-	} else {
-		info->ret = read_cb(cb_arg, info->data, info->size);
-	}
+	info->ret = read_cb(cb_arg, info->data, MIN(info->size, len));
 
 	/*
 	 * This returned value isn't necessarily kept
@@ -86,20 +79,21 @@ static psa_status_t error_to_psa_error(int errorno)
 	}
 }
 
-psa_status_t storage_get_object(const psa_storage_uid_t uid, const char *prefix, const char *suffix,
-				uint8_t *object_data, const size_t object_size)
+psa_status_t storage_get_object(const psa_storage_uid_t uid, const char *prefix, void *object_data,
+				const size_t object_size, size_t *object_length)
 {
 	char path[SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1];
 	struct load_object_info info;
 	int ret;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
-	if (object_size == 0 || object_data == NULL || prefix == NULL || suffix == NULL) {
+	if (object_size == 0 || object_data == NULL || prefix == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	status = create_filename(path, SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1,
-				 prefix, uid, suffix);
+				 prefix, uid);
+
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -110,6 +104,10 @@ psa_status_t storage_get_object(const psa_storage_uid_t uid, const char *prefix,
 	info.ret = -ENOENT;
 
 	ret = settings_load_subtree_direct(path, storage_settings_load_object, &info);
+
+	LOG_DBG("Get object with filename %s (max_size: %zd), ret: %d", path, object_size,
+		info.ret);
+
 	if (ret < 0) {
 		return error_to_psa_error(ret);
 	}
@@ -118,21 +116,26 @@ psa_status_t storage_get_object(const psa_storage_uid_t uid, const char *prefix,
 		return error_to_psa_error(info.ret);
 	}
 
+	*object_length = info.ret;
+
 	return PSA_SUCCESS;
 }
 
-psa_status_t storage_set_object(const psa_storage_uid_t uid, const char *prefix, char *suffix,
-				const uint8_t *object_data, const size_t object_size)
+psa_status_t storage_set_object(const psa_storage_uid_t uid, const char *prefix,
+				const void *object_data, const size_t object_size)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	char path[SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1];
 
-	if (object_size == 0 || object_data == NULL || prefix == NULL || suffix == NULL) {
+	if (object_size == 0 || object_data == NULL || prefix == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	status = create_filename(path, SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1,
-				 prefix, uid, suffix);
+				 prefix, uid);
+
+	LOG_DBG("Set object with filename %s. Size: %zd", path, object_size);
+
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -140,20 +143,25 @@ psa_status_t storage_set_object(const psa_storage_uid_t uid, const char *prefix,
 	return error_to_psa_error(settings_save_one(path, object_data, object_size));
 }
 
-psa_status_t storage_remove_object(const psa_storage_uid_t uid, const char *prefix,
-				   const char *suffix)
+psa_status_t storage_remove_object(const psa_storage_uid_t uid, const char *prefix)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	char path[SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1];
 
-	if (prefix == NULL || suffix == NULL) {
+	if (prefix == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	status = create_filename(path, SECURE_STORAGE_SETTINGS_BACKEND_FILENAME_MAX_LENGTH + 1,
-				 prefix, uid, suffix);
+				 prefix, uid);
+
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	return error_to_psa_error(settings_delete(path));
+
+	status = error_to_psa_error(settings_delete(path));
+
+	LOG_DBG("Remove object with filename: %s, status %d", path, status);
+
+	return status;
 }

@@ -19,12 +19,6 @@ psa_status_t secure_storage_aead_init(void)
 	return psa_crypto_init();
 }
 
-size_t secure_storage_aead_get_encrypted_size(size_t data_size)
-{
-	return PSA_AEAD_ENCRYPT_OUTPUT_SIZE(PSA_KEY_TYPE_CHACHA20, PSA_ALG_CHACHA20_POLY1305,
-					    data_size);
-}
-
 static psa_status_t secure_storage_aead_psa_crypt(psa_key_usage_t key_usage, const void *key_buf,
 						  size_t key_len, const void *nonce_buf,
 						  size_t nonce_len, const void *add_buf,
