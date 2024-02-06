@@ -16,6 +16,9 @@ LOG_MODULE_REGISTER(slm_cmux, CONFIG_SLM_LOG_LEVEL);
 
 enum cmux_channel {
 	AT_CHANNEL,
+#if defined(CONFIG_SLM_PPP)
+	PPP_CHANNEL,
+#endif
 	CHANNEL_COUNT
 };
 
@@ -77,8 +80,9 @@ static void dlci_pipe_event_handler(struct modem_pipe *pipe,
 
 static void cmux_event_handler(struct modem_cmux *, enum modem_cmux_event event, void *)
 {
-	assert(event == MODEM_CMUX_EVENT_CONNECTED || event == MODEM_CMUX_EVENT_DISCONNECTED);
-	LOG_INF("CMUX %sconnected.", (event == MODEM_CMUX_EVENT_CONNECTED) ? "" : "dis");
+	if (event == MODEM_CMUX_EVENT_CONNECTED || event == MODEM_CMUX_EVENT_DISCONNECTED) {
+		LOG_INF("CMUX %sconnected.", (event == MODEM_CMUX_EVENT_CONNECTED) ? "" : "dis");
+	}
 }
 
 static void init_dlci(size_t dlci_idx, uint16_t recv_buf_size,
@@ -151,6 +155,30 @@ static bool cmux_is_initialized(void)
 	return (cmux.uart_pipe != NULL);
 }
 
+void slm_cmux_init(void)
+{
+	const struct modem_cmux_config cmux_config = {
+		.callback = cmux_event_handler,
+		.receive_buf = cmux.cmux_receive_buf,
+		.receive_buf_size = sizeof(cmux.cmux_receive_buf),
+		.transmit_buf = cmux.cmux_transmit_buf,
+		.transmit_buf_size = sizeof(cmux.cmux_transmit_buf),
+	};
+
+	modem_cmux_init(&cmux.instance, &cmux_config);
+
+	for (size_t i = 0; i != ARRAY_SIZE(cmux.dlcis); ++i) {
+		init_dlci(i, sizeof(cmux.dlcis[i].receive_buf), cmux.dlcis[i].receive_buf);
+	}
+}
+
+#if defined(CONFIG_SLM_PPP)
+void *slm_cmux_get_ppp_channel_pipe(void)
+{
+	return cmux.dlcis[PPP_CHANNEL].pipe;
+}
+#endif
+
 static int cmux_start(void)
 {
 	int ret;
@@ -175,22 +203,6 @@ static int cmux_start(void)
 		cmux.uart_pipe = modem_backend_uart_init(&cmux.uart_backend, &uart_backend_config);
 		if (!cmux.uart_pipe) {
 			return -ENODEV;
-		}
-	}
-	{
-		const struct modem_cmux_config cmux_config = {
-			.callback = cmux_event_handler,
-			.receive_buf = cmux.cmux_receive_buf,
-			.receive_buf_size = sizeof(cmux.cmux_receive_buf),
-			.transmit_buf = cmux.cmux_transmit_buf,
-			.transmit_buf_size = sizeof(cmux.cmux_transmit_buf),
-		};
-
-		modem_cmux_init(&cmux.instance, &cmux_config);
-	}
-	{
-		for (size_t i = 0; i != ARRAY_SIZE(cmux.dlcis); ++i) {
-			init_dlci(i, sizeof(cmux.dlcis[i].receive_buf), cmux.dlcis[i].receive_buf);
 		}
 	}
 

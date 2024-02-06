@@ -892,14 +892,6 @@ int slm_at_host_init(void)
 		return -EFAULT;
 	}
 
-#if defined(CONFIG_SLM_PPP)
-	err = slm_ppp_init();
-	if (err) {
-		LOG_ERR("PPP initialization failed (%d).", err);
-		return err;
-	}
-#endif
-
 	k_work_init(&raw_send_scheduled_work, raw_send_scheduled);
 
 	err = slm_uart_handler_enable();

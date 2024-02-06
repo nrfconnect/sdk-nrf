@@ -669,7 +669,16 @@ int slm_at_init(void)
 		return -EFAULT;
 	}
 #endif
-
+#if defined(CONFIG_SLM_CMUX)
+	slm_cmux_init();
+#endif
+#if defined(CONFIG_SLM_PPP)
+	err = slm_ppp_init();
+	if (err) {
+		LOG_ERR("PPP initialization failed. (%d)", err);
+		return err;
+	}
+#endif
 	return err;
 }
 

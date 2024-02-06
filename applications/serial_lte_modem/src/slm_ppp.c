@@ -7,12 +7,18 @@
 #include "slm_ppp.h"
 #include "slm_at_host.h"
 #include "slm_util.h"
+#if defined(CONFIG_SLM_CMUX)
+#include "slm_cmux.h"
+#endif
 #include <modem/at_cmd_custom.h>
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
+#include <zephyr/modem/ppp.h>
+#include <zephyr/modem/backend/uart.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/ppp.h>
 #include <zephyr/posix/sys/socket.h>
+#include <zephyr/random/random.h>
 #include <assert.h>
 
 LOG_MODULE_REGISTER(slm_ppp, CONFIG_SLM_LOG_LEVEL);
@@ -23,8 +29,9 @@ LOG_MODULE_REGISTER(slm_ppp, CONFIG_SLM_LOG_LEVEL);
  */
 bool slm_fwd_cgev_notifs;
 
-static const struct device *ppp_uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_ppp_uart));
-static int ppp_iface_idx;
+#if !defined(CONFIG_SLM_CMUX)
+static const struct device *ppp_uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_ppp_uart));
+#endif
 static struct net_if *ppp_iface;
 
 static uint8_t ppp_data_buf[1500];
@@ -35,8 +42,14 @@ static K_THREAD_STACK_DEFINE(ppp_data_passing_thread_stack, KB(2));
 static void ppp_data_passing_thread(void*, void*, void*);
 
 static struct k_work ppp_restart_work;
+static struct k_work ppp_stop_work;
 
 static bool ppp_peer_connected;
+
+MODEM_PPP_DEFINE(ppp_module, NULL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT,
+		 sizeof(ppp_data_buf), sizeof(ppp_data_buf));
+
+static struct modem_pipe *ppp_pipe;
 
 /* We use only the default PDP context. */
 enum { PDP_CID = 0 };
@@ -64,7 +77,7 @@ static bool open_ppp_sockets(void)
 
 	ppp_zephyr_dst_addr = (struct sockaddr_ll){
 		.sll_family = AF_PACKET,
-		.sll_ifindex = ppp_iface_idx
+		.sll_ifindex = net_if_get_by_iface(ppp_iface)
 	};
 	ret = bind(ppp_fds[ZEPHYR_FD_IDX],
 		   (const struct sockaddr *)&ppp_zephyr_dst_addr, sizeof(ppp_zephyr_dst_addr));
@@ -98,6 +111,8 @@ static void close_ppp_sockets(void)
 
 static bool configure_ppp_link_ip_addresses(struct ppp_context *ctx)
 {
+	static uint8_t ppp_ll_addr[PPP_INTERFACE_IDENTIFIER_LEN];
+	uint8_t ll_addr_len;
 	char addr4[INET_ADDRSTRLEN];
 	char addr6[INET6_ADDRSTRLEN];
 
@@ -111,24 +126,40 @@ static bool configure_ppp_link_ip_addresses(struct ppp_context *ctx)
 		LOG_ERR("No connectivity.");
 		return false;
 	}
+
 	if (*addr6) {
 		struct in6_addr in6;
-		struct ipv6cp_options *const opts = &ctx->ipv6cp.my_options;
 
 		if (inet_pton(AF_INET6, addr6, &in6) != 1) {
 			return false;
 		}
 		/* The interface identifier is the last 64 bits of the IPv6 address. */
-		BUILD_ASSERT(sizeof(in6) >= sizeof(opts->iid));
-		/* Setting it doesn't seem to change anything in practice, but this
-		 * is what it's meant for, so fill it anyway.
-		 */
-		memcpy(opts->iid, (uint8_t *)(&in6 + 1) - sizeof(opts->iid), sizeof(opts->iid));
+		BUILD_ASSERT(sizeof(in6) >= sizeof(ppp_ll_addr));
+		ll_addr_len = sizeof(ppp_ll_addr);
+		memcpy(ppp_ll_addr, (uint8_t *)(&in6 + 1) - ll_addr_len, ll_addr_len);
+	} else {
+		/* 00-00-5E-00-53-xx as per RFC 7042, as zephyr/drivers/net/ppp.c does. */
+		ll_addr_len = 6;
+		ppp_ll_addr[0] = 0x00;
+		ppp_ll_addr[1] = 0x00;
+		ppp_ll_addr[2] = 0x5E;
+		ppp_ll_addr[3] = 0x00;
+		ppp_ll_addr[4] = 0x53;
+		ppp_ll_addr[5] = sys_rand32_get();
 	}
+	net_if_set_link_addr(ppp_iface, ppp_ll_addr, ll_addr_len, NET_LINK_UNKNOWN);
+
 	return true;
 }
 
-static int slm_ppp_start(void)
+static int ppp_start_failure(int ret)
+{
+	close_ppp_sockets();
+	net_if_down(ppp_iface);
+	return ret;
+}
+
+static int ppp_start(void)
 {
 	int ret;
 	unsigned int mtu;
@@ -156,10 +187,22 @@ static int slm_ppp_start(void)
 	}
 
 	if (!open_ppp_sockets()) {
-		close_ppp_sockets();
-		net_if_down(ppp_iface);
-		return -ENOTCONN;
+		return ppp_start_failure(-ENOTCONN);
 	}
+
+	modem_ppp_attach(&ppp_module, ppp_pipe);
+
+#if defined(CONFIG_SLM_CMUX)
+	/* The pipe will get opened when the PPP CMUX channel is opened. */
+#else
+	ret = modem_pipe_open(ppp_pipe);
+	if (ret) {
+		LOG_ERR("Failed to open PPP pipe (%d).", ret);
+		return ppp_start_failure(ret);
+	}
+#endif
+
+	net_if_carrier_on(ppp_iface);
 
 	LOG_INF("PPP started.");
 
@@ -172,25 +215,33 @@ static int slm_ppp_start(void)
 	return 0;
 }
 
-/** @return Whether PPP is fully started. */
-static bool slm_ppp_is_started(void)
+static bool ppp_is_running(void)
 {
-	return net_if_flag_is_set(ppp_iface, NET_IF_UP)
+	return net_if_is_carrier_ok(ppp_iface)
 	    && ppp_fds[ZEPHYR_FD_IDX] >= 0
 	    && ppp_fds[MODEM_FD_IDX] >= 0;
 }
 
-static void slm_ppp_stop(void)
+static void ppp_stop(void)
 {
-	if (!slm_ppp_is_started()) {
+	if (!ppp_is_running()) {
 		return;
 	}
-	/* First bring the interface down so that slm_ppp_is_started()
+	LOG_DBG("Stopping PPP...");
+
+	/* First bring the carrier down so that ppp_is_running()
 	 * returns false right away. This is to prevent trying to stop PPP at the
 	 * same time from multiple sources: the original one (e.g. "AT#XPPP=0")
 	 * and the data passing thread. The latter attempts to stop PPP when it receives
 	 * an error on some of the sockets, which happens when they are closed.
 	 */
+	net_if_carrier_off(ppp_iface);
+
+#if !defined(CONFIG_SLM_CMUX)
+	modem_pipe_close(ppp_pipe);
+#endif
+	modem_ppp_release(&ppp_module);
+
 	const int ret = net_if_down(ppp_iface);
 
 	if (ret) {
@@ -213,9 +264,9 @@ static void pdp_ctx_event_handler(uint8_t cid, enum pdn_event event, int reason)
 		k_work_submit_to_queue(&slm_work_q, &ppp_restart_work);
 		break;
 	case PDN_EVENT_DEACTIVATED:
-		if (slm_ppp_is_started()) {
+		if (ppp_is_running()) {
 			LOG_INF("Connection down. Stopping PPP.");
-			slm_ppp_stop();
+			ppp_stop();
 		} else {
 			LOG_DBG("Connection down.");
 		}
@@ -311,13 +362,18 @@ static int at_cfun_set_callback(char *buf, size_t len, char *at_cmd)
 
 static void ppp_restarter(struct k_work *)
 {
-	slm_ppp_stop();
+	ppp_stop();
 
-	const int ret = slm_ppp_start();
+	const int ret = ppp_start();
 
 	if (ret) {
 		LOG_ERR("Failed to start PPP (%d).", ret);
 	}
+}
+
+static void ppp_stopper(struct k_work *)
+{
+	ppp_stop();
 }
 
 static void ppp_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
@@ -336,7 +392,7 @@ static void ppp_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 		}
 		ppp_peer_connected = false;
 		/* Also ignore this event when it is received after PPP has been stopped. */
-		if (!slm_ppp_is_started()) {
+		if (!ppp_is_running()) {
 			break;
 		}
 		/* For the peer to be able to successfully reconnect
@@ -349,29 +405,61 @@ static void ppp_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-int slm_ppp_init(void)
+static int ppp_link_init(void)
 {
-	static struct net_mgmt_event_callback ppp_net_mgmt_event_cb;
-
+#if defined(CONFIG_SLM_CMUX)
+	ppp_pipe = slm_cmux_get_ppp_channel_pipe();
+#else
 	if (!device_is_ready(ppp_uart_dev)) {
 		return -EAGAIN;
 	}
 
-	ppp_iface_idx = net_if_get_by_name(CONFIG_NET_PPP_DRV_NAME);
-	ppp_iface = net_if_get_by_index(ppp_iface_idx);
-	if (!ppp_iface) {
-		LOG_ERR("PPP network interface not found (%d).", ppp_iface_idx);
-		return -ENODEV;
+	{
+		static struct modem_backend_uart ppp_uart_backend;
+		static uint8_t ppp_uart_backend_receive_buf[sizeof(ppp_data_buf)];
+		static uint8_t ppp_uart_backend_transmit_buf[sizeof(ppp_data_buf)];
+
+		const struct modem_backend_uart_config uart_backend_config = {
+			.uart = ppp_uart_dev,
+			.receive_buf = ppp_uart_backend_receive_buf,
+			.receive_buf_size = sizeof(ppp_uart_backend_receive_buf),
+			.transmit_buf = ppp_uart_backend_transmit_buf,
+			.transmit_buf_size = sizeof(ppp_uart_backend_transmit_buf),
+		};
+
+		ppp_pipe = modem_backend_uart_init(&ppp_uart_backend, &uart_backend_config);
 	}
+#endif
+	if (!ppp_pipe) {
+		return -ENOSYS;
+	}
+	return 0;
+}
+
+int slm_ppp_init(void)
+{
+	const int ret = ppp_link_init();
+
+	if (ret) {
+		return ret;
+	}
+
+	ppp_iface = modem_ppp_get_iface(&ppp_module);
+
 	net_if_flag_set(ppp_iface, NET_IF_POINTOPOINT);
 
 	pdn_default_ctx_cb_reg(pdp_ctx_event_handler);
 
-	net_mgmt_init_event_callback(&ppp_net_mgmt_event_cb, ppp_net_mgmt_event_handler,
-				     NET_EVENT_PPP_PHASE_RUNNING | NET_EVENT_PPP_PHASE_DEAD);
-	net_mgmt_add_event_callback(&ppp_net_mgmt_event_cb);
+	{
+		static struct net_mgmt_event_callback ppp_net_mgmt_event_cb;
+
+		net_mgmt_init_event_callback(&ppp_net_mgmt_event_cb, ppp_net_mgmt_event_handler,
+					    NET_EVENT_PPP_PHASE_RUNNING | NET_EVENT_PPP_PHASE_DEAD);
+		net_mgmt_add_event_callback(&ppp_net_mgmt_event_cb);
+	}
 
 	k_work_init(&ppp_restart_work, ppp_restarter);
+	k_work_init(&ppp_stop_work, ppp_stopper);
 
 	LOG_DBG("PPP initialized.");
 	return 0;
@@ -384,12 +472,12 @@ int handle_at_ppp(enum at_cmd_type cmd_type)
 	unsigned int op;
 	enum {
 		OP_STOP,
-		OP_RESTART,
+		OP_START,
 		OP_COUNT
 	};
 
 	if (cmd_type == AT_CMD_TYPE_READ_COMMAND) {
-		rsp_send("\r\n#XPPP: %u,%u\r\n", slm_ppp_is_started(), ppp_peer_connected);
+		rsp_send("\r\n#XPPP: %u,%u\r\n", ppp_is_running(), ppp_peer_connected);
 		return 0;
 	}
 	if (cmd_type != AT_CMD_TYPE_SET_COMMAND
@@ -403,13 +491,18 @@ int handle_at_ppp(enum at_cmd_type cmd_type)
 	} else if (op >= OP_COUNT) {
 		return -EINVAL;
 	}
+	const bool is_running = ppp_is_running();
 
-	slm_ppp_stop();
-	if (op == OP_RESTART) {
-		return slm_ppp_start();
+	if ((!is_running && op == OP_STOP) || (is_running && op == OP_START)) {
+		return -EALREADY;
 	}
-	assert(op == OP_STOP);
-	return 0;
+	if (op == OP_START) {
+		ret = ppp_start();
+	} else {
+		k_work_submit_to_queue(&slm_work_q, &ppp_stop_work);
+		ret = 0;
+	}
+	return ret;
 }
 
 static void ppp_data_passing_thread(void*, void*, void*)
@@ -427,7 +520,7 @@ static void ppp_data_passing_thread(void*, void*, void*)
 
 		if (poll_ret <= 0) {
 			LOG_ERR("Sockets polling failed (%d, %d).", poll_ret, errno);
-			slm_ppp_stop();
+			ppp_stop();
 			return;
 		}
 
@@ -445,7 +538,7 @@ static void ppp_data_passing_thread(void*, void*, void*)
 					LOG_WRN("Unexpected event 0x%x on %s socket.",
 						revents, ppp_socket_names[src]);
 				}
-				slm_ppp_stop();
+				ppp_stop();
 				return;
 			}
 			const ssize_t len = recv(fds[src].fd, ppp_data_buf, mtu, MSG_DONTWAIT);
