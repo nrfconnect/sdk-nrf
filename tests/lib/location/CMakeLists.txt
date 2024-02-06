@@ -49,6 +49,10 @@ zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include)
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/include)
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/net)
 
+# The test uses double precision floating point numbers. This is not enabled by default in unity
+# unless we set the following define.
+zephyr_compile_definitions(UNITY_INCLUDE_DOUBLE)
+
 target_sources(app PRIVATE src/location_test.c)
 
 target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/include/net)

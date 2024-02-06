@@ -94,7 +94,7 @@ static const struct location_method_api method_cellular_api = {
 	.cancel           = method_cloud_location_cancel,
 	.timeout          = method_cloud_location_cancel,
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
-	.details_get      = NULL,
+	.details_get      = scan_cellular_details_get,
 #endif
 };
 #endif
@@ -108,7 +108,7 @@ static const struct location_method_api method_wifi_api = {
 	.cancel           = method_cloud_location_cancel,
 	.timeout          = method_cloud_location_cancel,
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
-	.details_get      = NULL,
+	.details_get      = scan_wifi_details_get,
 #endif
 
 /** Threshold for cloud location method to select Wi-Fi vs. cellular into the returned event. */
@@ -129,7 +129,7 @@ static const struct location_method_api method_cloud_location_api = {
 	.cancel           = method_cloud_location_cancel,
 	.timeout          = method_cloud_location_cancel,
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
-	.details_get      = NULL,
+	.details_get      = method_cloud_location_details_get,
 #endif
 };
 #endif
@@ -156,6 +156,7 @@ static void location_core_current_event_data_init(enum location_method method)
 	memset(&loc_req_info.current_event_data, 0, sizeof(loc_req_info.current_event_data));
 
 	loc_req_info.current_method = method;
+	loc_req_info.elapsed_time_method_start_timestamp = k_uptime_get();
 }
 
 static void location_core_current_config_clear(void)
@@ -613,6 +614,9 @@ static void location_core_event_details_get(struct location_event_data *event)
 		}
 
 		location_method_api_get(loc_req_info.current_method)->details_get(details);
+
+		details->elapsed_time_method = (uint32_t)
+			(k_uptime_get() - loc_req_info.elapsed_time_method_start_timestamp);
 	}
 #endif
 }

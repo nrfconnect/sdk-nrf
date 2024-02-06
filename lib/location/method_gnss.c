@@ -151,6 +151,7 @@ static int fixes_remaining;
 
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
 static struct location_data_details_gnss location_data_details_gnss;
+static int64_t elapsed_time_gnss_start_timestamp;
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -635,6 +636,13 @@ int method_gnss_cancel(void)
 	int sleeping;
 	int rrc_idling;
 
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	if (elapsed_time_gnss_start_timestamp != 0) {
+		location_data_details_gnss.elapsed_time_gnss =
+			(uint32_t)(k_uptime_get() - elapsed_time_gnss_start_timestamp);
+	}
+#endif
+
 	if ((err != 0) && (err != -NRF_EPERM)) {
 		LOG_ERR("Failed to stop GNSS, error: %d", err);
 	}
@@ -796,6 +804,25 @@ static uint8_t method_gnss_tracked_satellites(const struct nrf_modem_gnss_pvt_da
 	return tracked;
 }
 
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+static uint8_t method_gnss_satellites_used(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
+	uint8_t used = 0;
+
+	for (uint32_t i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
+		if (pvt_data->sv[i].sv == 0) {
+			break;
+		}
+
+		if (pvt_data->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX) {
+			used++;
+		}
+	}
+
+	return used;
+}
+#endif
+
 static uint8_t method_gnss_tracked_satellites_nonzero_cn0(
 		const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
@@ -861,6 +888,7 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
 	location_data_details_gnss.pvt_data = pvt_data;
 	location_data_details_gnss.satellites_tracked = method_gnss_tracked_satellites(&pvt_data);
+	location_data_details_gnss.satellites_used = method_gnss_satellites_used(&pvt_data);
 #endif
 
 	/* Store fix data only if we get a valid fix. Thus, the last valid data is always kept
@@ -1218,6 +1246,9 @@ static void method_gnss_start_work_fn(struct k_work *work)
 		return;
 	}
 
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	elapsed_time_gnss_start_timestamp = k_uptime_get();
+#endif
 	location_core_timer_start(gnss_config.timeout);
 }
 
@@ -1228,6 +1259,7 @@ int method_gnss_location_get(const struct location_request_info *request)
 	gnss_config = *request->gnss;
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
 	memset(&location_data_details_gnss, 0, sizeof(location_data_details_gnss));
+	elapsed_time_gnss_start_timestamp = 0;
 #endif
 	/* GNSS event handler is already set once in method_gnss_init(). If no other thread is
 	 * using GNSS, setting it again is not needed.

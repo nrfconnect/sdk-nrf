@@ -161,14 +161,64 @@ struct location_datetime {
 struct location_data_details_gnss {
 	/** Number of satellites tracked at the time of event. */
 	uint8_t satellites_tracked;
+	/** Number of satellites used at the time of event. */
+	uint8_t satellites_used;
 	/** PVT data. */
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
+	/**
+	 * Elapsed GNSS time in milliseconds.
+	 *
+	 * This is the time since last start of GNSS operation until the fix or timeout
+	 * including any time LTE has blocked GNSS.
+	 *
+	 * @ref pvt_data member has ``execution_time``, which indicates cumulative GNSS
+	 * execution time since last start excluding any time LTE has blocked GNSS.
+	 */
+	uint32_t elapsed_time_gnss;
 };
 
-/** Location details. */
+/** Location details for cellular. */
+struct location_data_details_cellular {
+	/** Number of neighbor cells. */
+	uint8_t ncells_count;
+	/** Number of GCI (surrounding) cells. */
+	uint8_t gci_cells_count;
+};
+
+/** Location details for Wi-Fi. */
+struct location_data_details_wifi {
+	/** Number of Wi-Fi APs. */
+	uint16_t ap_count;
+};
+
+/**
+ * Location details.
+ *
+ * Only one of the child structures is filled most of the time depending on the method
+ * found in @ref location_event_data.method member of the parent structure.
+ * There are cases when cellular and Wi-Fi data are combined into a single cloud request
+ * in which case data details for both methods are filled.
+ */
 struct location_data_details {
+	/**
+	 * Elapsed method time in milliseconds.
+	 *
+	 * This is the time from method start until it completes and includes any time
+	 * spent waiting for some conditions to happen before proceeding, such as
+	 * waiting for LTE connection to go idle for some methods.
+	 */
+	uint32_t elapsed_time_method;
+
 	/** Location details for GNSS. */
 	struct location_data_details_gnss gnss;
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
+	/** Location details for cellular. */
+	struct location_data_details_cellular cellular;
+#endif
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	/** Location details for Wi-Fi. */
+	struct location_data_details_wifi wifi;
+#endif
 };
 #endif
 
