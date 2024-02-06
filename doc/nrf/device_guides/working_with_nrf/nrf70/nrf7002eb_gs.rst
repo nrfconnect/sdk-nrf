@@ -9,7 +9,7 @@ Getting started with nRF7002 EB
 
 This section gets you started with your nRF7002 :term:`Expansion Board (EB)` using the |NCS|.
 
-The nRF7002 EB can be used to provide Wi-Fi connectivity to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
+The nRF7002 EB can be used to provide Wi-Fi® connectivity to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
 
 The nRF7002 EB has a :term:`Printed Circuit Board (PCB)` edge connector that can be used with a compatible development board such as the Nordic Thingy:53, an IoT prototyping platform from Nordic Semiconductor.
 There are also castellated holes on the side of the board that allow the EB to be used as a breakout board that can be soldered to other PCB assemblies.

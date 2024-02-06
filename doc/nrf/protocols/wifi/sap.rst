@@ -8,7 +8,7 @@ SoftAP mode
    :depth: 2
 
 The nRF70 Series device supports :term:`Software-enabled Access Point (SoftAP or SAP)` mode.
-This mode allows a device to operate as a virtual router or temporary access point (AP) and accept connections from other Wi-Fi station devices.
+This mode allows a device to operate as a virtual router or temporary access point (AP) and accept connections from other Wi-Fi® station devices.
 SoftAP mode is typically used in scenarios where a Wi-Fi device wishes to share its internet connection with nearby station devices.
 For instance, smartphone Wi-Fi hotspots utilize SoftAP mode.
 The smartphone acts as a virtual router, allowing other station devices to connect to the internet through it.
@@ -24,9 +24,7 @@ The SAP mode in the nRF70 Series devices provides SoftAP support with the follow
   * A network interface can operate in either SAP mode or Station mode, but not in both modes simultaneously.
   * SAP mode only supports the Wi-Fi 4 (IEEE 802.11n) mode of operation.
   * The SAP mode currently supports a single station device connection.
-
-      However, the implementation provides an :ref:`experimental <software_maturity>` support for up to eight station connections.
-
+    However, the implementation provides an :ref:`experimental <software_maturity>` support for up to eight station connections.
   * Only Wi-Fi personal security (WPA2-PSK) is supported.
 
 Enabling the SAP mode

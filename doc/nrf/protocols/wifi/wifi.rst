@@ -13,7 +13,7 @@ Two network modes, infrastructure and peer-to-peer, are supported.
 The infrastructure mode is by far the most common mode, where multiple stations (STAs) communicate with an access point (AP), identified through its service set identifier (SSID).
 In addition, multiple APs can be used to service a SSID in order to improve coverage, but any individual STA will only be connected to a single AP at any time.
 In the infrastructure mode, the AP is the network coordinator, using regular transmission of beacon packets for the purpose of coordinating all connected STAs.
-The most common variant of peer-to-peer mode used is Wi-Fi Direct.
+The most common variant of peer-to-peer mode used is Wi-Fi Direct®.
 
 Wi-Fi is an Internet Protocol (IP) based network, with every device (AP or STA) having a unique 48-bit MAC address.
 Since the radio frequency (RF) communication channel is unreliable, a number of mechanisms are used in an attempt to achieve reliability not typically present in wired networks.
@@ -27,7 +27,7 @@ Acknowledgements (ACKs) are used for unicast packet transmissions, with every su
 
 The RF medium also necessitates security to achieve privacy of the over-the-air packet transmissions.
 Again, multiple schemes are available depending on the version of the standard in use, though over time the older schemes tend to be deprecated as vulnerabilities emerge.
-The schemes are referred to as Wi-Fi Protected Access (WPA), with WPA3 being the latest version (mandated for all new Wi-Fi Alliance certifications).
+The schemes are referred to as Wi-Fi Protected Access (WPA™), with WPA3™ being the latest version (mandated for all new Wi-Fi Alliance® certifications).
 
 .. _ug_wifi_stack:
 

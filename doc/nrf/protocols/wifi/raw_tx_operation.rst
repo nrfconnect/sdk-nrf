@@ -25,7 +25,7 @@ To use the raw packet transmit feature in your applications, you must enable the
 TX injection mode
 *****************
 
-The nRF70 Series device supports raw 802.11 packet transmission when TX injection mode is enabled in the nRF Wi-Fi driver.
+The nRF70 Series device supports raw 802.11 packet transmission when TX injection mode is enabled in the nRF Wi-Fi® driver.
 To enable the TX injection mode of operation, you can use the ``NET_REQUEST_WIFI_MODE`` network management runtime API.
 This API can be used to disable TX injection mode in the driver when raw 802.11 packet transmission is not required by the application.
 

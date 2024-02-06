@@ -139,6 +139,6 @@ Currently, the nRF70 Series devices support the following modes:
 The nRF70  Series devices also support the functionality of :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`.
 This allows the injection of raw 802.11 frames in any of the above modes.
 
-Peer-to-peer support in the form of Wi-Fi Direct will be available in the future.
+Peer-to-peer support in the form of Wi-Fi Direct® will be available in the future.
 
 See the :ref:`ug_wifi` documentation for more information related to Wi-Fi modes of operation.

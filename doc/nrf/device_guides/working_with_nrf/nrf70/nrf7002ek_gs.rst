@@ -10,7 +10,7 @@ Getting started with nRF7002 EK
 This section gets you started with your nRF7002 :term:`Evaluation Kit (EK)` using the |NCS|.
 
 The nRF7002 EK is a versatile evaluation kit in the form of an Arduino shield.
-The kit can be used to provide Wi-Fi connectivity and Wi-Fi-based locationing to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
+The kit can be used to provide Wi-Fi® connectivity and Wi-Fi-based locationing to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
 
 The nRF7002 EK features the nRF7002 companion IC.
 In addition, the shield may be used to emulate the nRF7001 and nRF7000 companion IC variants.

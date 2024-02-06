@@ -331,7 +331,7 @@ You can get the configured regulatory domain using either an API or a shell comm
 Wi-Fi regulatory channel rules
 ******************************
 
-The following tables indicate the Wi-Fi regulatory channel rules for different countries.
+The following tables indicate the Wi-Fi® regulatory channel rules for different countries.
 
 The values in the tables show the maximum allowed transmit power (in dBm) for each country.
 
