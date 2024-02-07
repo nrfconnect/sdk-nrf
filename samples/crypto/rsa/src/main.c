@@ -33,6 +33,10 @@ LOG_MODULE_REGISTER(rsa, LOG_LEVEL_DBG);
 /* ====================================================================== */
 /*				Global variables/defines for the RSA example			  */
 
+#ifndef CONFIG_PSA_WANT_RSA_KEY_SIZE_2048
+#error "This sample needs a key size of 2048"
+#endif
+
 #define NRF_CRYPTO_EXAMPLE_RSA_TEXT_SIZE (100)
 #define NRF_CRYPTO_EXAMPLE_RSA_PUBLIC_KEY_SIZE (PSA_KEY_EXPORT_RSA_PUBLIC_KEY_MAX_SIZE(2048))
 #define NRF_CRYPTO_EXAMPLE_RSA_SIGNATURE_SIZE  (PSA_BITS_TO_BYTES(2048))
