@@ -13,8 +13,12 @@
 static int get_data(struct bt_data *d, const struct bt_le_adv_prov_adv_state *state,
 		    struct bt_le_adv_prov_feedback *fb)
 {
-	ARG_UNUSED(state);
 	ARG_UNUSED(fb);
+
+	if (IS_ENABLED(CONFIG_BT_ADV_PROV_DEVICE_NAME_PAIRING_MODE_ONLY) &&
+	    !state->pairing_mode) {
+		return -ENOENT;
+	}
 
 	const char *name = bt_get_name();
 
