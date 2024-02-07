@@ -338,7 +338,7 @@ static int sock_getaddrinfo_req(
 		err = getaddrinfo(address, service, &hints, result);
 		if (err) {
 			if (err == DNS_EAI_SYSTEM) {
-				mosh_error("getaddrinfo() failed, err %d errno %d", err, errno);
+				mosh_error("getaddrinfo() failed, err %d, errno %d", err, errno);
 			} else {
 				mosh_error("getaddrinfo() failed, err %d", err);
 			}
@@ -584,7 +584,7 @@ int sock_open_and_connect(
 				"through this application.",
 				CONFIG_POSIX_MAX_FDS);
 		} else {
-			mosh_error("Socket create failed, err %d", errno);
+			mosh_error("Socket create failed, errno %d", errno);
 		}
 		err = errno;
 		goto connect_error;
@@ -745,14 +745,9 @@ static int sock_send(
 
 	bytes = send(socket_info->fd, data, length, 0);
 	if (bytes < 0) {
-		/* Ideally we'd like to log the failure here but non-blocking
-		 * socket causes huge number of failures due to incorrectly
-		 * set POLLOUT flag:
-		 * https://devzone.nordicsemi.com/f/nordic-q-a/65392/bug-nrf9160-tcp-send-flow-control-seems-entirely-broken
-		 * Hence, we'll log only if we have blocking socket
-		 */
-		if (sock_get_blocking_mode(socket_info->fd)) {
-			mosh_print("socket send failed, err %d", errno);
+		/* Do not log EAGAIN when in non-blocking mode, this is normal. */
+		if ((errno != EAGAIN) || sock_get_blocking_mode(socket_info->fd)) {
+			mosh_error("Socket send failed, errno %d", errno);
 		}
 		return -1;
 	}
@@ -1215,7 +1210,7 @@ static int sock_rai_option_set(int fd, int option, char *option_string)
 	int err = setsockopt(fd, SOL_SOCKET, option, NULL, 0);
 
 	if (err) {
-		mosh_error("setsockopt() for %s failed with error %d", option_string, errno);
+		mosh_error("setsockopt() for %s failed, errno %d", option_string, errno);
 		return err;
 	}
 
