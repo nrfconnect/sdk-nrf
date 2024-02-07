@@ -64,7 +64,7 @@ static struct pollfd fds[SLM_MAX_SOCKET_COUNT];
 static struct slm_socket sock;
 
 /* forward declarations */
-#define SOCKET_SEND_TMO_SEC      30
+#define SOCKET_SEND_TMO_SEC 30
 static int socket_poll(int sock_fd, int event, int timeout);
 
 static int socket_ranking;
@@ -145,22 +145,32 @@ static int do_socket_open(void)
 	}
 
 	sock.fd = ret;
+
+	ret = slm_sockopt_set(sock.fd, SO_SNDTIMEO, SOCKET_SEND_TMO_SEC);
+	if (ret) {
+		goto error;
+	}
+
 	/* Explicitly bind to secondary PDP context if required */
 	ret = bind_to_pdn(sock.cid);
 	if (ret) {
-		close(sock.fd);
-		return ret;
+		goto error;
 	}
 
 	sock.ranking = socket_ranking++;
 	ret = find_avail_socket();
 	if (ret < 0) {
-		return ret;
+		goto error;
 	}
 	socks[ret] = sock;
 	rsp_send("\r\n#XSOCKET: %d,%d,%d\r\n", sock.fd, sock.type, proto);
 
 	return 0;
+
+error:
+	close(sock.fd);
+	sock.fd = INVALID_SOCKET;
+	return ret;
 }
 
 static int do_secure_socket_open(int peer_verify)
@@ -185,23 +195,27 @@ static int do_secure_socket_open(int peer_verify)
 		ret = slm_native_tls_load_credentials(sock.sec_tag);
 		if (ret < 0) {
 			LOG_ERR("Failed to load sec tag: %d (%d)", sock.sec_tag, ret);
-			goto error_exit;
+			goto error;
 		}
 		int tls_native = 1;
 
 		/* Must be the first socket option to set. */
 		ret = setsockopt(sock.fd, SOL_TLS, TLS_NATIVE, &tls_native, sizeof(tls_native));
 		if (ret) {
-			goto error_exit;
+			goto error;
 		}
 	}
 #endif
 
+	ret = slm_sockopt_set(sock.fd, SO_SNDTIMEO, SOCKET_SEND_TMO_SEC);
+	if (ret) {
+		goto error;
+	}
+
 	/* Explicitly bind to secondary PDP context if required */
 	ret = bind_to_pdn(sock.cid);
 	if (ret) {
-		close(sock.fd);
-		return ret;
+		goto error;
 	}
 	sec_tag_t sec_tag_list[1] = { sock.sec_tag };
 
@@ -209,7 +223,7 @@ static int do_secure_socket_open(int peer_verify)
 	if (ret) {
 		LOG_ERR("setsockopt(TLS_SEC_TAG_LIST) error: %d", -errno);
 		ret = -errno;
-		goto error_exit;
+		goto error;
 	}
 
 	/* Set up (D)TLS peer verification */
@@ -217,7 +231,7 @@ static int do_secure_socket_open(int peer_verify)
 	if (ret) {
 		LOG_ERR("setsockopt(TLS_PEER_VERIFY) error: %d", errno);
 		ret = -errno;
-		goto error_exit;
+		goto error;
 	}
 	/* Set up (D)TLS server role if applicable */
 	if (sock.role == AT_SOCKET_ROLE_SERVER) {
@@ -227,23 +241,23 @@ static int do_secure_socket_open(int peer_verify)
 		if (ret) {
 			LOG_ERR("setsockopt(TLS_DTLS_ROLE) error: %d", -errno);
 			ret = -errno;
-			goto error_exit;
+			goto error;
 		}
 	}
 
 	sock.ranking = socket_ranking++;
 	ret = find_avail_socket();
 	if (ret < 0) {
-		return ret;
+		goto error;
 	}
 	socks[ret] = sock;
 	rsp_send("\r\n#XSSOCKET: %d,%d,%d\r\n", sock.fd, sock.type, proto);
 
 	return 0;
 
-error_exit:
+error:
 	close(sock.fd);
-	INIT_SOCKET(sock);
+	sock.fd = INVALID_SOCKET;
 	return ret;
 }
 
@@ -297,14 +311,14 @@ static int do_socket_close(void)
 	return ret;
 }
 
-static int do_socketopt_set(int option, int value)
+int slm_sockopt_set(int socket, int option, int value)
 {
 	int ret = 0;
 
 	switch (option) {
 	case SO_BINDTOPDN:
 	case SO_REUSEADDR:
-		ret = setsockopt(sock.fd, SOL_SOCKET, option, &value, sizeof(int));
+		ret = setsockopt(socket, SOL_SOCKET, option, &value, sizeof(int));
 		break;
 
 	case SO_RCVTIMEO:
@@ -312,21 +326,21 @@ static int do_socketopt_set(int option, int value)
 		struct timeval tmo = { .tv_sec = value };
 		socklen_t len = sizeof(struct timeval);
 
-		ret = setsockopt(sock.fd, SOL_SOCKET, option, &tmo, len);
+		ret = setsockopt(socket, SOL_SOCKET, option, &tmo, len);
 	} break;
 
 	/** NCS extended socket options */
 	case SO_SILENCE_ALL:
-		ret = setsockopt(sock.fd, IPPROTO_ALL, option, &value, sizeof(int));
+		ret = setsockopt(socket, IPPROTO_ALL, option, &value, sizeof(int));
 		break;
 	case SO_IP_ECHO_REPLY:
-		ret = setsockopt(sock.fd, IPPROTO_IP, option, &value, sizeof(int));
+		ret = setsockopt(socket, IPPROTO_IP, option, &value, sizeof(int));
 		break;
 	case SO_IPV6_ECHO_REPLY:
-		ret = setsockopt(sock.fd, IPPROTO_IPV6, option, &value, sizeof(int));
+		ret = setsockopt(socket, IPPROTO_IPV6, option, &value, sizeof(int));
 		break;
 	case SO_TCP_SRV_SESSTIMEO:
-		ret = setsockopt(sock.fd, IPPROTO_TCP, option, &value, sizeof(int));
+		ret = setsockopt(socket, IPPROTO_TCP, option, &value, sizeof(int));
 		break;
 
 	/* RAI-related */
@@ -335,7 +349,7 @@ static int do_socketopt_set(int option, int value)
 	case SO_RAI_ONE_RESP:
 	case SO_RAI_ONGOING:
 	case SO_RAI_WAIT_MORE:
-		ret = setsockopt(sock.fd, SOL_SOCKET, option, NULL, 0);
+		ret = setsockopt(socket, SOL_SOCKET, option, NULL, 0);
 		break;
 
 	default:
@@ -665,10 +679,6 @@ static int do_send(const uint8_t *data, int datalen)
 	uint32_t offset = 0;
 
 	while (offset < datalen) {
-		ret = socket_poll(sockfd, POLLOUT, SOCKET_SEND_TMO_SEC);
-		if (ret) {
-			break;
-		}
 		ret = send(sockfd, data + offset, datalen - offset, 0);
 		if (ret < 0) {
 			LOG_ERR("send() failed: %d, sent: %d", -errno, offset);
@@ -705,10 +715,6 @@ static int do_send_datamode(const uint8_t *data, int datalen)
 	uint32_t offset = 0;
 
 	while (offset < datalen) {
-		ret = socket_poll(sockfd, POLLOUT, SOCKET_SEND_TMO_SEC);
-		if (ret) {
-			break;
-		}
 		ret = send(sockfd, data + offset, datalen - offset, 0);
 		if (ret < 0) {
 			LOG_ERR("send() failed: %d, sent: %d", -errno, offset);
@@ -735,7 +741,7 @@ static int do_recv(int timeout, int flags)
 		}
 	}
 
-	ret = socket_poll(sockfd, POLLIN, timeout);
+	ret = slm_sockopt_set(sock.fd, SO_RCVTIMEO, timeout);
 	if (ret) {
 		return ret;
 	}
@@ -777,10 +783,6 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 	}
 
 	while (offset < datalen) {
-		ret = socket_poll(sock.fd, POLLOUT, SOCKET_SEND_TMO_SEC);
-		if (ret) {
-			break;
-		}
 		if (sa.sa_family == AF_INET) {
 			ret = sendto(sock.fd, data + offset, datalen - offset, 0,
 				&sa, sizeof(struct sockaddr_in));
@@ -822,10 +824,6 @@ static int do_sendto_datamode(const uint8_t *data, int datalen)
 	uint32_t offset = 0;
 
 	while (offset < datalen) {
-		ret = socket_poll(sock.fd, POLLOUT, SOCKET_SEND_TMO_SEC);
-		if (ret) {
-			break;
-		}
 		if (sa.sa_family == AF_INET) {
 			ret = sendto(sock.fd, data + offset, datalen - offset, 0,
 				&sa, sizeof(struct sockaddr_in));
@@ -849,7 +847,7 @@ static int do_recvfrom(int timeout, int flags)
 	struct sockaddr remote;
 	socklen_t addrlen = sizeof(struct sockaddr);
 
-	ret = socket_poll(sock.fd, POLLIN, timeout);
+	ret = slm_sockopt_set(sock.fd, SO_RCVTIMEO, timeout);
 	if (ret) {
 		return ret;
 	}
@@ -1200,7 +1198,7 @@ int handle_at_socketopt(enum at_cmd_type cmd_type)
 					return err;
 				}
 			}
-			err = do_socketopt_set(name, value);
+			err = slm_sockopt_set(sock.fd, name, value);
 		} else if (op == AT_SOCKETOPT_GET) {
 			err = do_socketopt_get(name);
 		} break;

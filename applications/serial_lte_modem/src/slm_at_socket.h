@@ -14,6 +14,17 @@
  */
 
 /**
+ * @brief Set SLM socket option.
+ * @param[in] socket Socket to set the option.
+ * @param[in] option Socket option to set.
+ * @param[in] value Value of the socket option.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int slm_sockopt_set(int socket, int option, int value);
+
+/**
  * @brief Initialize socket AT command parser.
  *
  * @retval 0 If the operation was successful.
