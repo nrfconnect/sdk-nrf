@@ -91,9 +91,17 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 	 */
 	if (sensor->state.threshold.delta.type ==
 	    BT_MESH_SENSOR_DELTA_PERCENT) {
-		int64_t prev_mill = llabs(SENSOR_MILL(&sensor->state.prev));
+		/* Store the Status Delta Trigger threshold in sensor_value first to avoid int64_t
+		 * overflow caused by multiplication of values converted by the SENSOR_MILL() macro.
+		 */
+		struct sensor_value thrsh_delta = delta_mill >= 0 ?
+			sensor->state.threshold.delta.up : sensor->state.threshold.delta.down;
+		struct sensor_value thrsh = {
+			.val1 = thrsh_delta.val1 * sensor->state.prev.val1,
+			.val2 = thrsh_delta.val2 * sensor->state.prev.val2,
+		};
 
-		thrsh_mill = (prev_mill * thrsh_mill) / (100LL * 1000000LL);
+		thrsh_mill = llabs(SENSOR_MILL(&thrsh)) / 100LL;
 	}
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_LOG_LEVEL_DBG)) {
