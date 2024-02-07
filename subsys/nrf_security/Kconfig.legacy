@@ -786,4 +786,10 @@ config MBEDTLS_PK_PARSE_C
 	prompt "Enable PK parse support"
 	default y if MBEDTLS_TLS_LIBRARY
 
+config MBEDTLS_PK_PARSE_EC_EXTENDED
+	bool
+	prompt "Enhance support for reading EC keys"
+	default y
+	depends on MBEDTLS_PK_PARSE_C
+
 endmenu # Legacy mbed TLS crypto APIs
