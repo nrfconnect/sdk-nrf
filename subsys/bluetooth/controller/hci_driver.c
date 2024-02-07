@@ -1074,6 +1074,11 @@ static int configure_memory_usage(void)
 
 	cfg.iso_buffer_cfg.rx_sdu_buffer_count = iso_rx_paths;
 	cfg.iso_buffer_cfg.rx_sdu_buffer_size = SDC_DEFAULT_ISO_RX_SDU_BUFFER_SIZE;
+#else
+	cfg.iso_buffer_cfg.rx_pdu_buffer_per_stream_count =
+		SDC_DEFAULT_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT;
+	cfg.iso_buffer_cfg.rx_sdu_buffer_count = SDC_DEFAULT_ISO_RX_SDU_BUFFER_COUNT;
+	cfg.iso_buffer_cfg.rx_sdu_buffer_size = SDC_DEFAULT_ISO_RX_SDU_BUFFER_SIZE;
 #endif
 
 #if defined(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT) &&                                         \
@@ -1082,6 +1087,11 @@ static int configure_memory_usage(void)
 	cfg.iso_buffer_cfg.tx_hci_buffer_size = SDC_DEFAULT_ISO_TX_HCI_BUFFER_SIZE;
 	cfg.iso_buffer_cfg.tx_pdu_buffer_per_stream_count =
 		CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT;
+#else
+	cfg.iso_buffer_cfg.tx_hci_buffer_count = SDC_DEFAULT_ISO_TX_HCI_BUFFER_COUNT;
+	cfg.iso_buffer_cfg.tx_hci_buffer_size = SDC_DEFAULT_ISO_TX_HCI_BUFFER_SIZE;
+	cfg.iso_buffer_cfg.tx_pdu_buffer_per_stream_count
+		= SDC_DEFAULT_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT;
 #endif
 
 #if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT) ||                             \
