@@ -35,21 +35,6 @@ IDE and tool support
 
 |no_changes_yet_note|
 
-Application development
-=======================
-
-This section provides detailed lists of changes to overarching SDK systems and components.
-
-Build system
-------------
-
-|no_changes_yet_note|
-
-nRF Front-End Modules
----------------------
-
-|no_changes_yet_note|
-
 Working with nRF91 Series
 =========================
 
@@ -70,6 +55,11 @@ Working with nRF53 Series
 =========================
 
 |no_changes_yet_note|
+
+Working with RF front-end modules
+=================================
+
+* Added a clarification that the Simple GPIO implementation is intended for multiple front-end modules (not just one specific device) in the :ref:`ug_radio_fem_sw_support_mpsl` section of the :ref:`ug_radio_fem` guide.
 
 Protocols
 =========
