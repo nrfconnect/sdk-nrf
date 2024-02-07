@@ -7,9 +7,6 @@
 #include <zephyr/ztest.h>
 #include <zephyr/fff.h>
 
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(conneval_test);
-
 #include <net/lwm2m_client_utils.h>
 #include "stubs.h"
 
