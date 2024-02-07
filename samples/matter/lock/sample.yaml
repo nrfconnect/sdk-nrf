@@ -40,3 +40,11 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+  sample.matter.lock.thread_wifi_switched_ext_patch:
+    build_only: true
+    extra_args: SHIELD=nrf7002ek multiprotocol_rpmsg_SHIELD=nrf7002ek_coex
+      CONF_FILE=prj_thread_wifi_switched.conf CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y 
+      CONFIG_NRF_WIFI_FW_FLASH_CHUNK_SIZE=8192
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp

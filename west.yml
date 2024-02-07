@@ -39,6 +39,8 @@ manifest:
       url-base: https://github.com/BabbleSim
     - name: bosch
       url-base: https://github.com/boschsensortec
+    - name: arbl
+      url-base: https://github.com/ArekBalysNordic
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -129,7 +131,8 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: a9d5fa76a6840f8934b2aaaf51e290f91eb3f991
+      remote: arbl
+      revision: skip_3rd_validation
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
