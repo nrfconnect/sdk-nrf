@@ -606,7 +606,7 @@ static int cmd_sock_send(const struct shell *shell, size_t argc, char **argv)
 
 			if (blocking != 0 && blocking != 1) {
 				mosh_error(
-					"Blocking (%d) must be either '0' (false) or '1' (true)",
+					"Blocking (%s) must be either '0' (false) or '1' (true)",
 					optarg);
 				return -EINVAL;
 			}
@@ -687,7 +687,7 @@ static int cmd_sock_recv(const struct shell *shell, size_t argc, char **argv)
 
 			if (blocking != 0 && blocking != 1) {
 				mosh_error(
-					"Blocking (%d) must be either '0' (false) or '1' (true)",
+					"Blocking (%s) must be either '0' (false) or '1' (true)",
 					optarg);
 				return -EINVAL;
 			}
