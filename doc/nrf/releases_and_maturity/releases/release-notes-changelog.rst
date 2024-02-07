@@ -706,6 +706,12 @@ Bluetooth libraries and services
 
   * Added the :c:func:`bt_scan_update_connect_if_match` function to update the autoconnect flag after a filter match.
 
+* :ref:`bt_le_adv_prov_readme`:
+
+  * Updated the default behavior of the Bluetooth device name provider (:kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME`).
+    By default, the device name is provided only in the pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`).
+    You can disable the newly introduced Kconfig option (:kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME_PAIRING_MODE_ONLY`) to provide the device name also when the device is not in the pairing mode.
+
 Bootloader libraries
 --------------------
 
