@@ -433,15 +433,11 @@ int pdn_ctx_configure(uint8_t cid, const char *apn, enum pdn_fam fam,
 	}
 
 	if (opt) {
-		/* NOTE: this is a workaround for an issue
-		 * where passing default values does not work as intended.
-		 * Only format these params when `opt` is passed explicitly.
-		 */
-		err = nrf_modem_at_printf("AT+CGDCONT=%u,%s,%s,,,,%u,,,,%u,%u",
-			cid, family, apn,
-			opt->ip4_addr_alloc,
-			opt->nslpi,
-			opt->secure_pco);
+		err = nrf_modem_at_printf("AT+CGDCONT=%u,%s,%s,0,0,0,%u,0,0,0,%u,%u",
+					  cid, family, apn,
+					  opt->ip4_addr_alloc,
+					  opt->nslpi,
+					  opt->secure_pco);
 	} else {
 		if (apn != NULL) {
 			err = nrf_modem_at_printf("AT+CGDCONT=%u,%s,%s", cid, family, apn);
