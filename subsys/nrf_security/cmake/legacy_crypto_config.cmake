@@ -94,6 +94,7 @@ kconfig_check_and_set_base(MBEDTLS_MD_C)
 kconfig_check_and_set_base(MBEDTLS_PK_C)
 kconfig_check_and_set_base(MBEDTLS_PKCS5_C)
 kconfig_check_and_set_base(MBEDTLS_PK_PARSE_C)
+kconfig_check_and_set_base(MBEDTLS_PK_PARSE_EC_EXTENDED)
 kconfig_check_and_set_base(MBEDTLS_PK_WRITE_C)
 kconfig_check_and_set_base(MBEDTLS_DEBUG_C)
 kconfig_check_and_set_base(MBEDTLS_MEMORY_DEBUG)
@@ -168,6 +169,7 @@ kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED)
 kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED)
 kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED)
 kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED)
+kconfig_check_and_set_base(MBEDTLS_PK_PARSE_EC_EXTENDED)
 
 #
 # CC3XX flags for threading and platform zeroize
