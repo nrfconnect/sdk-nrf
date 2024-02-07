@@ -103,7 +103,7 @@ There are multiple ways to generate and register these certificates:
 
          .. code-block:: console
 
-            aws iot create-certificate-from-csr --certificate-signing-request device_cert.csr.pem --certificate-pem-outfile device_cert.pem --set-as-active --no-cli-pager --query certificateArn
+            aws iot create-certificate-from-csr --certificate-signing-request file://device_cert.csr.pem --certificate-pem-outfile device_cert.pem --set-as-active --no-cli-pager --query certificateArn
 
       #. Take note of the certificate ARN, as it will be required later.
       #. Provision the certificate using the following command:
