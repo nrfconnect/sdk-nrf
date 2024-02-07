@@ -66,7 +66,7 @@ In addition to publishing data to the AWS IoT shadow, the sample also subscribes
 +--------------------------------------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
 | ``my-custom-topic/example``                      | NA - Non-shadow topic                                          | Dummy application-specific topic. Can be used for anything.                                                         |
 +--------------------------------------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
-| ``my-custom-topic/example``                      | NA - Non-shadow topic                                          | Dummy application-specific topic. Can be used for anything.                                                         |
+| ``my-custom-topic/example_2``                    | NA - Non-shadow topic                                          | Dummy application-specific topic. Can be used for anything.                                                         |
 +--------------------------------------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
 
 The application-specific topics are not part of the AWS IoT shadow service and must therefore be passed to the :ref:`lib_aws_iot` library using the :c:func:`aws_iot_application_topics_set` function before connecting.
