@@ -745,11 +745,13 @@ static int sock_send(
 
 	bytes = send(socket_info->fd, data, length, 0);
 	if (bytes < 0) {
+		int err = errno;
+
 		/* Do not log EAGAIN when in non-blocking mode, this is normal. */
-		if ((errno != EAGAIN) || sock_get_blocking_mode(socket_info->fd)) {
-			mosh_error("Socket send failed, errno %d", errno);
+		if ((err != EAGAIN) || sock_get_blocking_mode(socket_info->fd)) {
+			mosh_error("Socket send failed, errno %d", err);
 		}
-		return -1;
+		return -err;
 	}
 	return bytes;
 }
@@ -800,16 +802,15 @@ static void sock_send_random_data_length(struct sock_info *socket_info)
 		bytes = sock_send(socket_info, socket_info->send_buffer,
 				  strlen(socket_info->send_buffer), false, false);
 
-		if (bytes == -ECANCELED) {
+		if (bytes == -EAGAIN) {
+			/* Wait for socket to allow sending again */
+			socket_info->send_poll = true;
+			return;
+		} else if (bytes < 0) {
 			socket_info->send_poll = false;
 			break;
 		}
 
-		if (bytes < 0) {
-			/* Wait for socket to allow sending again */
-			socket_info->send_poll = true;
-			return;
-		}
 		socket_info->send_bytes_sent += bytes;
 		socket_info->send_bytes_left -= bytes;
 
