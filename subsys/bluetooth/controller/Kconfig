@@ -395,20 +395,43 @@ config BT_CTLR_SDC_EVENT_TRIGGER
 config BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT
 	int "BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT"
 	depends on BT_CTLR_SYNC_ISO || BT_CTLR_CONN_ISO
-	range 0 10
+	range 0 32
+	default 4 if BT_CTLR_SYNC_ISO
 	default 3
+	help
+	  Configures the number of RX PDU buffers allocated per ISO stream.
+	  This is the number of maximum size (251 bytes) PDU buffers.
+	  When PDU size is smaller than the maximum size, the pool will be repartitioned
+	  into a larger number of adjusted PDUs.
+	  For BIS, this value determines how many pretransmissions can be stored and utilized.
 
 config BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT
 	int "BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT"
 	depends on BT_CTLR_ADV_ISO || BT_CTLR_CONN_ISO
 	range 0 10
 	default 3
+	help
+	  Configures the number of HCI TX buffers allocated for ISO.
+	  The HCI buffers are shared between the different streams.
+	  This number may need to be larger if there is high CPU utilization or lots of
+	  SDUs are being sent to the controller in quick succession, such as if using
+	  a very small SDU interval or lots of ISO streams concurrently.
+	  When using Testmode, the number of HCI TX buffers must be larger than the number
+	  of streams using Testmode at one time.
 
 config BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT
 	int "BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT"
 	depends on BT_CTLR_ADV_ISO || BT_CTLR_CONN_ISO
-	range 1 32
+	range 0 32
 	default 3
+	help
+	  Configures the number of TX PDU buffers allocated per ISO stream.
+	  This is the number of maximum size (251 bytes) PDU buffers.
+	  When PDU size is smaller than the maximum size, the pool will be repartitioned
+	  into a larger number of adjusted PDUs.
+	  For BIS, this value determines the number of PDUs that can be cached in the controller,
+	  therefore limiting the number of pretransmission subevents and value of pretransmission
+	  offset (PTO) that the controller can use.
 
 config BT_UNINIT_MPSL_ON_DISABLE
 	bool "Uninitializes MPSL on BT disable"
