@@ -40,7 +40,7 @@ The MPSL library provides the following GPIO interface implementations:
 
 * :ref:`ug_radio_fem_nrf21540_spi_gpio` - For the nRF21540 GPIO+SPI implementation that uses a 3-pin interface and an SPI interface with the nRF21540.
 * :ref:`ug_radio_fem_nrf21540_gpio` - For the nRF21540 GPIO implementation that uses a 3-pin interface with the nRF21540.
-* :ref:`ug_radio_fem_skyworks` - For the Simple GPIO implementation that uses a 2-pin interface with the SKY66112-11 device.
+* :ref:`ug_radio_fem_skyworks` - For the implementation that uses a 2-pin interface with the SKY66112-11 device and other compatible front-end modules.
 
 To use these implementations, your application must use a protocol driver that enables the FEM feature.
 
@@ -437,8 +437,8 @@ The following properties are optional and you can add them to the devicetree nod
 
 .. _ug_radio_fem_skyworks:
 
-Adding support for Skyworks front-end module
-============================================
+Adding support for front-end modules using Simple GPIO interface
+================================================================
 
 You can use the Skyworks range extenders with nRF52 and nRF53 Series devices.
 SKY66112-11 is one of many FEM devices that support the 2-pin PA/LNA interface.
