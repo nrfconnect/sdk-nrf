@@ -114,6 +114,14 @@ The following changes are recommended for your application to work optimally aft
   * The new API and helper modules have been added to the :file:`samples/matter/common` directory.
     All Matter samples and applications have been changed to use the common software modules.
 
+    The inclusion of common software module source code in the CMake application target has been moved to the :file:`samples/matter/common/cmake/source_common.cmake` file.
+    Source code for specific software modules is added automatically based on the selected Kconfig options.
+    To include all required source code files, add the following line to the :file:`CMakeLists.txt` file in your project directory:
+
+    .. code-block:: console
+
+      include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/source_common.cmake)
+
     You can follow the new approach and migrate your application to use the common software modules.
     This will significantly reduce the size of the code required to be implemented in the application.
     You can also choose to keep using the previous approach, but due to the structural differences, it may be harder to use Matter samples and applications as a reference for an application using the older approach.

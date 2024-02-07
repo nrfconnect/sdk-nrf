@@ -564,6 +564,7 @@ Matter samples
   * Divided events to application and system events.
   * Defined common LED and button constants in the dedicated board configuration files.
   * Created the Kconfig file for the Matter common directory.
+  * Created a CMake file in the Matter common directory to centralize the sourcing of all common software module source code.
 
 * Disabled :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
 
