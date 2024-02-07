@@ -23,44 +23,37 @@ find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-bridge)
 
-set(COMMON_ROOT ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common)
-set(NLIO_ROOT ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/third_party/nlio/repo)
+# Enable GNU STD support and initialize the Matter Data Model.
 include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/app/enable-gnu-std.cmake)
 include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/chip_data_model.cmake)
 
 # NORDIC SDK APP START
+
+# Include all source files that are located in the Matter common directory.
+include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/source_common.cmake)
+
 target_include_directories(app PRIVATE
     src
     src/bridged_device_types
-    ${COMMON_ROOT}/src
-    ${COMMON_ROOT}/src/bridge/
-    ${COMMON_ROOT}/src/bridge/util
-    ${NLIO_ROOT}/include
-    ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/zzz_generated/app-common
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/util
 )
 
 target_sources(app PRIVATE
     src/app_task.cpp
     src/main.cpp
     src/bridge_shell.cpp
-    ${COMMON_ROOT}/src/bridge/bridge_manager.cpp
-    ${COMMON_ROOT}/src/bridge/matter_bridged_device.cpp
-    ${COMMON_ROOT}/src/bridge/bridge_storage_manager.cpp
-    ${COMMON_ROOT}/src/bridge/bridged_device_data_provider.cpp
-    ${COMMON_ROOT}/src/binding/binding_handler.cpp
-    src/zap-generated/IMClusterCommandHandler.cpp
-    src/zap-generated/callback-stub.cpp
-    ${COMMON_ROOT}/src/board/led_widget.cpp
-    ${COMMON_ROOT}/src/persistent_storage/persistent_storage_util.cpp
-    ${COMMON_ROOT}/src/app/task_executor.cpp
-    ${COMMON_ROOT}/src/board/board.cpp
-    ${COMMON_ROOT}/src/app/matter_init.cpp
-    ${COMMON_ROOT}/src/app/matter_event_handler.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_manager.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/matter_bridged_device.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_storage_manager.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridged_device_data_provider.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/binding/binding_handler.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/persistent_storage/persistent_storage_util.cpp
 )
 
 if(CONFIG_BRIDGED_DEVICE_BT)
     target_sources(app PRIVATE
-        ${COMMON_ROOT}/src/bridge/ble_connectivity_manager.cpp
+         ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/ble_connectivity_manager.cpp
         src/ble_providers/ble_bridged_device_factory.cpp
     )
     target_include_directories(app PRIVATE src/ble_providers)
@@ -145,14 +138,6 @@ if(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
 endif() # CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 
 endif() # CONFIG_BRIDGED_DEVICE_BT
-
-if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_TRANSPORT_BT)
-    target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu/ota/ota_util.cpp)
-endif()
-
-if(CONFIG_MCUMGR_TRANSPORT_BT)
-    target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu/smp/dfu_over_smp.cpp)
-endif()
 
 chip_configure_data_model(app
     INCLUDE_SERVER
