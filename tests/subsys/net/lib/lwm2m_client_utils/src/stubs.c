@@ -28,6 +28,7 @@ DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_res_data_len, const struct lwm2m_obj_path 
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_get_res_buf, const struct lwm2m_obj_path *, void **, uint16_t *,
 		       uint16_t *, uint8_t *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_get_u8, const struct lwm2m_obj_path *, uint8_t *);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_get_u32, const struct lwm2m_obj_path *, uint32_t *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_get_bool, const struct lwm2m_obj_path *, bool *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_opaque, const struct lwm2m_obj_path *, const char *,
 		       uint16_t);
@@ -66,6 +67,7 @@ DEFINE_FAKE_VALUE_FUNC(int, lte_lc_psm_get, int *, int *);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_edrx_param_set, enum lte_lc_lte_mode, const char *);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_edrx_req, bool);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, struct lte_lc_ncellmeas_params *);
+DEFINE_FAKE_VALUE_FUNC(int, lte_lc_psm_param_set_seconds, int, int);
 DEFINE_FAKE_VOID_FUNC(lte_lc_register_handler, lte_lc_evt_handler_t);
 DEFINE_FAKE_VALUE_FUNC(int, nrf_cloud_agnss_process, const char *, size_t);
 DEFINE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_begin_update);

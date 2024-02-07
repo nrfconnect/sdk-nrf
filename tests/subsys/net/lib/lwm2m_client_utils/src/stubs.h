@@ -23,6 +23,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_res_data_len, const struct lwm2m_obj_path
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_get_res_buf, const struct lwm2m_obj_path *, void **,
 			uint16_t *, uint16_t *, uint8_t *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_get_u8, const struct lwm2m_obj_path *, uint8_t *);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_get_u32, const struct lwm2m_obj_path *, uint32_t *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_get_bool, const struct lwm2m_obj_path *, bool *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_opaque, const struct lwm2m_obj_path *, const char *,
 			uint16_t);
@@ -60,6 +61,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lte_lc_psm_get, int *, int *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_param_set, enum lte_lc_lte_mode, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_req, bool);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, struct lte_lc_ncellmeas_params *);
+DECLARE_FAKE_VALUE_FUNC(int, lte_lc_psm_param_set_seconds, int, int);
 DECLARE_FAKE_VOID_FUNC(lte_lc_register_handler, lte_lc_evt_handler_t);
 DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_agnss_process, const char *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_begin_update);
@@ -113,6 +115,7 @@ DECLARE_FAKE_VOID_FUNC(lwm2m_utils_rai_event_cb, struct lwm2m_ctx *, enum lwm2m_
 	FUNC(lwm2m_set_res_data_len)                    \
 	FUNC(lwm2m_get_res_buf)                         \
 	FUNC(lwm2m_get_u8)                              \
+	FUNC(lwm2m_get_u32)                             \
 	FUNC(lwm2m_get_bool)                            \
 	FUNC(lwm2m_set_s16)                             \
 	FUNC(lwm2m_set_s32)                             \
@@ -151,6 +154,7 @@ DECLARE_FAKE_VOID_FUNC(lwm2m_utils_rai_event_cb, struct lwm2m_ctx *, enum lwm2m_
 	FUNC(lte_lc_edrx_req)                           \
 	FUNC(lte_lc_neighbor_cell_measurement)          \
 	FUNC(lte_lc_register_handler)                   \
+	FUNC(lte_lc_psm_param_set_seconds)              \
 	FUNC(nrf_cloud_agnss_process)			\
 	FUNC(nrf_cloud_pgps_begin_update)		\
 	FUNC(nrf_cloud_pgps_process_update)		\
