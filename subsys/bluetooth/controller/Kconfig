@@ -534,5 +534,12 @@ config BT_CTLR_SDC_IGNORE_HCI_ISO_DATA_TS_FROM_HOST
 	  not add timestamps to the HCI ISO data packets if the timestamp is not based on the clock
 	  of the controller.
 
+config BT_CTLR_SDC_BIG_RESERVED_TIME_US
+	int "BIG reserved time [us]"
+	range 0 4000000
+	default 2500
+	help
+	  The time reserved for other roles in each ISO interval, used when selecting BIG parameters.
+
 endmenu
 endif  # BT_LL_SOFTDEVICE
