@@ -14,7 +14,6 @@
 #include "mosh_defines.h"
 #include "mosh_print.h"
 
-#include "at_cmd.h"
 #include "at_cmd_mode.h"
 
 extern struct k_work_q mosh_common_work_q;
@@ -77,22 +76,11 @@ static void at_cmd_mode_send_at_cmd(const char *at_str, char *rsp_buf, int rsp_b
 {
 	int err;
 
-	/* 1st: handle MoSh specific AT commands */
-	err = at_cmd_mosh_execute(at_str);
-	if (err == 0) {
-		sprintf(rsp_buf, "OK\n");
-		goto done;
-	} else if (err != -ENOENT) {
-		sprintf(rsp_buf, "ERROR\n");
-		goto done;
-	}
-
-	/* 2nd: modem at commands */
 	err = nrf_modem_at_cmd(rsp_buf, rsp_buf_len, "%s", at_str);
 	if (err < 0) {
 		sprintf(rsp_buf, "ERROR: AT command failed: %d\n", err);
 	} /* else if (err > 0): print error from modem */
-done:
+
 	/* Response */
 	printk("%s", rsp_buf);
 }
