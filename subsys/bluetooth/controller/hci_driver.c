@@ -1200,6 +1200,17 @@ static int hci_driver_open(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_ISO_BROADCASTER)) {
+		sdc_hci_cmd_vs_big_reserved_time_set_t params = {
+			.reserved_time_us = CONFIG_BT_CTLR_SDC_BIG_RESERVED_TIME_US
+		};
+		err = sdc_hci_cmd_vs_big_reserved_time_set(&params);
+		if (err) {
+			MULTITHREADING_LOCK_RELEASE();
+			return -ENOTSUP;
+		}
+	}
+
 	if (IS_ENABLED(CONFIG_BT_CONN)) {
 		sdc_hci_cmd_vs_event_length_set_t params = {
 			.event_length_us = CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
