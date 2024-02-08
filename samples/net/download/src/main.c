@@ -38,6 +38,11 @@ static K_SEM_DEFINE(network_connected_sem, 0, 1);
 #if CONFIG_SAMPLE_SECURE_SOCKET
 static const char cert[] = {
 	#include SAMPLE_CERT_FILE_INC
+
+	/* Null terminate certificate if running Mbed TLS on the application core.
+	 * Required by TLS credentials API.
+	 */
+	IF_ENABLED(CONFIG_TLS_CREDENTIALS, (0x00))
 };
 static int sec_tag_list[] = { SEC_TAG };
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
