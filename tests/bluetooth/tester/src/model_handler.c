@@ -8,6 +8,7 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
+#include <sensor.h>
 
 #include <zephyr/logging/log.h>
 #define LOG_MODULE_NAME bttester_model_handler
@@ -283,7 +284,7 @@ static void prop_mfr_get(struct bt_mesh_prop_srv *srv,
 static int sensor_data_get(struct bt_mesh_sensor_srv *srv,
 			   struct bt_mesh_sensor *sensor,
 			   struct bt_mesh_msg_ctx *ctx,
-			   struct sensor_value *rsp);
+			   sensor_value_type *rsp);
 
 static struct bt_mesh_sensor time_since_presence_detected = {
 	.type = &bt_mesh_sensor_time_since_presence_detected,
@@ -302,7 +303,7 @@ static struct bt_mesh_sensor_srv sensor_srv =
 static int sensor_data_get(struct bt_mesh_sensor_srv *srv,
 			   struct bt_mesh_sensor *sensor,
 			   struct bt_mesh_msg_ctx *ctx,
-			   struct sensor_value *rsp)
+			   sensor_value_type *rsp)
 {
 	int i;
 
@@ -310,8 +311,16 @@ static int sensor_data_get(struct bt_mesh_sensor_srv *srv,
 		if (sensor->type->id != sensors[i]->type->id) {
 			continue;
 		}
-
+#if !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE)
+		int err = bt_mesh_sensor_value_from_sensor_value(sensor->type->channels[0].format,
+								 &values[i], rsp);
+		if (err) {
+			LOG_ERR("Failed to convert sensor value (err: %d)", err);
+			return err;
+		}
+#else
 		memcpy(rsp, &values[i], sizeof(*rsp));
+#endif
 		break;
 	}
 
