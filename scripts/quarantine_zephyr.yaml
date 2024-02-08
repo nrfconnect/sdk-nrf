@@ -147,6 +147,16 @@
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-18853"
 
 - scenarios:
+    - sample.tfm.regression_ipc_lvl1
+    - sample.tfm.regression_ipc_lvl2
+    - sample.tfm.regression_sfn
+    - sample.tfm.psa_test_protected_storage
+    - sample.tfm.psa_test_internal_trusted_storage
+    - sample.tfm.psa_test_storage
+    - sample.tfm.psa_test_crypto
+  comment: "Won't be fixed - We have our own copy of these regression tests in nrf"
+
+- scenarios:
     - sample.drivers.crypto.mbedtls
   platforms:
     - nrf9160dk_nrf9160_ns
