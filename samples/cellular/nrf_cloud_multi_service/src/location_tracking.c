@@ -41,6 +41,9 @@ static void location_event_handler(const struct location_event_data *event_data)
 		LOG_DBG("Location Event: GNSS assistance requested");
 		break;
 
+	case LOCATION_EVT_STARTED:
+		break;
+
 	default:
 		LOG_DBG("Location Event: Unknown event");
 		break;

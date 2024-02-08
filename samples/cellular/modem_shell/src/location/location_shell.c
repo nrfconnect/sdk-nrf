@@ -376,6 +376,7 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 			location_method_str(event_data->method),
 			event_data->method);
 		break;
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 	case LOCATION_EVT_STARTED:
 		mosh_print("Location request has been started:");
 		mosh_print(
@@ -383,6 +384,24 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 			location_method_str(event_data->method),
 			event_data->method);
 		break;
+	case LOCATION_EVT_FALLBACK:
+		mosh_print("Location request fallback has occurred:");
+		mosh_print(
+			"  failed method: %s (%d)",
+			location_method_str(event_data->method),
+			event_data->method);
+		mosh_print(
+			"  new method: %s (%d)",
+			location_method_str(event_data->fallback.next_method),
+			event_data->fallback.next_method);
+		mosh_print(
+			"  cause: %s",
+			(event_data->fallback.cause == LOCATION_EVT_TIMEOUT) ? "timeout" :
+			(event_data->fallback.cause == LOCATION_EVT_ERROR) ? "error" :
+			"unknown");
+		location_print_data_details(event_data->method, &event_data->fallback.details);
+		break;
+#endif
 	default:
 		mosh_warn("Unknown event from location library, id %d", event_data->id);
 		break;

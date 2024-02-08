@@ -1391,6 +1391,11 @@ void test_location_request_default(void)
 	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_GNSS;
 	location_cb_expected++;
 #endif
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_FALLBACK;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_GNSS;
+	location_cb_expected++;
+#endif
 	test_location_event_data[location_cb_expected].id = LOCATION_EVT_LOCATION;
 	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_CELLULAR;
 	test_location_event_data[location_cb_expected].location.latitude = 61.50375;
@@ -1460,6 +1465,11 @@ void test_location_request_default(void)
 	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
 
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	/* Wait for LOCATION_EVT_FALLBACK */
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
+#endif
 	/***** Fallback to cellular *****/
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);

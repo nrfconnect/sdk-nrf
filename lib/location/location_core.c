@@ -376,7 +376,10 @@ static int location_core_location_get_pos(void)
 	if (IS_ENABLED(CONFIG_LOCATION_DATA_DETAILS)) {
 		struct location_event_data request_started = {
 			.id = LOCATION_EVT_STARTED,
-			.method = requested_method
+			/* Use the first method from the config to avoid putting internal combined
+			 * Wi-Fi and cellular method into the event.
+			 */
+			.method = loc_req_info.config.methods[0].method
 		};
 
 		location_utils_event_dispatch(&request_started);
@@ -621,6 +624,48 @@ static void location_core_event_details_get(struct location_event_data *event)
 #endif
 }
 
+static void location_core_event_cb_fallback(
+	enum location_method current_method,
+	enum location_method next_method,
+	enum location_event_id current_event,
+	struct location_data_details *details)
+{
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	if (current_method == LOCATION_METHOD_INTERNAL_WIFI_CELLULAR) {
+		/* When fallback happens, current method is always the 1st one whenever
+		 * combined Wi-Fi and cellular method is used.
+		 * For example, method list is Wi-Fi, Cellular, GNSS, we use Wi-Fi.
+		 * If the Wi-Fi and cellular are not the first two methods in some order,
+		 * we won't be in fallback from the combined Wi-Fi and cellular method.
+		 * Note: If CONFIG_LOCATION_METHODS_LIST_SIZE is increased, this won't work anymore.
+		 */
+		current_method = loc_req_info.config.methods[0].method;
+	}
+	if (next_method == LOCATION_METHOD_INTERNAL_WIFI_CELLULAR) {
+		/* When fallback happens, next method is always the 2nd one whenever
+		 * combined Wi-Fi and cellular method is used.
+		 * For example, method list is GNSS, Cellular, Wi-Fi, we use Cellular.
+		 * If the Wi-Fi and cellular are not the 2nd and 3rd methods in some order,
+		 * we won't be in fallback into the combined Wi-Fi and cellular method.
+		 * Note: If CONFIG_LOCATION_METHODS_LIST_SIZE is increased, this won't work anymore.
+		 */
+		next_method = loc_req_info.config.methods[1].method;
+	}
+
+	struct location_event_data fallback = {
+		.id = LOCATION_EVT_FALLBACK,
+		.method = current_method,
+		.fallback = {
+			.next_method = next_method,
+			.cause = current_event,
+			.details = *details,
+		}
+	};
+
+	location_utils_event_dispatch(&fallback);
+#endif
+}
+
 enum location_method location_core_event_method_resolve(enum location_method method)
 {
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR) && defined(CONFIG_LOCATION_METHOD_WIFI)
@@ -745,6 +790,13 @@ static void location_core_event_cb_fn(struct k_work *work)
 				 * also for failure events
 				 */
 				location_utils_event_dispatch(&loc_req_info.current_event_data);
+			} else {
+				/* Details had been set into the error information */
+				location_core_event_cb_fallback(
+					loc_req_info.current_method,
+					requested_method,
+					loc_req_info.current_event_data.id,
+					&loc_req_info.current_event_data.error.details);
 			}
 
 			location_core_current_event_data_init(requested_method);

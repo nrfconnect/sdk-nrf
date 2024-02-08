@@ -415,8 +415,8 @@ void location_event_handler(const struct location_event_data *event_data)
 		stats.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 		LOG_DBG("  search time: %d ms", stats.search_time);
 
-		/* Only GNSS result is handled as cellular is handled
-		 * as part of LOCATION_EVT_CELLULAR_EXT_REQUEST
+		/* Only GNSS result is handled as cellular and Wi-Fi are handled
+		 * as part of LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST
 		 */
 		stats.satellites_tracked = 0;
 		if (event_data->method == LOCATION_METHOD_GNSS) {
@@ -500,6 +500,17 @@ void location_event_handler(const struct location_event_data *event_data)
 		cloud_location_request_pending = true;
 		break;
 #endif
+
+	case LOCATION_EVT_STARTED:
+		LOG_DBG("Location request has been started with '%s' method",
+			location_method_str(event_data->method));
+		break;
+
+	case LOCATION_EVT_FALLBACK:
+		LOG_DBG("Location fallback has occurred from '%s' to '%s'",
+			location_method_str(event_data->method),
+			location_method_str(event_data->fallback.next_method));
+		break;
 
 	default:
 		LOG_DBG("Getting location: Unknown event %d", event_data->id);
