@@ -23,7 +23,7 @@ extern "C" {
 #endif
 
 static inline const struct bt_mesh_sensor_format *
-prop_format_get(enum bt_mesh_light_ctrl_prop id)
+prop_format_get(uint16_t id)
 {
 	switch (id) {
 	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON:
@@ -36,6 +36,11 @@ prop_format_get(enum bt_mesh_light_ctrl_prop id)
 		return &bt_mesh_sensor_format_perceived_lightness;
 	case BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY:
 		return &bt_mesh_sensor_format_percentage_8;
+	case BT_MESH_LIGHT_CTRL_COEFF_KID:
+	case BT_MESH_LIGHT_CTRL_COEFF_KIU:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPD:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPU:
+		return &bt_mesh_sensor_format_coefficient;
 	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG:
 	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_ON:
 	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_AUTO:

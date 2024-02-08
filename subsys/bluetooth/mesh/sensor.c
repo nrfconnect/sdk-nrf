@@ -313,6 +313,9 @@ int sensor_ch_decode(struct net_buf_simple *buf,
 	return format->decode(format, buf, value);
 #else
 	value->format = format;
+	if (buf->len < format->size) {
+		return -ENOMEM;
+	}
 	memcpy(value->raw, net_buf_simple_pull_mem(buf, format->size),
 	       format->size);
 	return 0;
