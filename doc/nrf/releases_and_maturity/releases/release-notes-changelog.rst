@@ -997,6 +997,11 @@ Common Application Framework (CAF)
   * Added :c:member:`ble_peer_event.reason` to inform about reason code related to state of the Bluetooth LE peer.
     The field is used to propagate information about error code related to a connection establishment failure and disconnection reason.
 
+* :ref:`caf_ble_adv`:
+
+  * Added the :kconfig:option:`CONFIG_CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15` Kconfig option.
+    You can use this option to force system power down when a bonded peer disconnects with reason ``0x15`` (Remote Device Terminated due to Power Off).
+
 Shell libraries
 ---------------
 

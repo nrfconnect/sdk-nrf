@@ -18,6 +18,15 @@ config CAF_BLE_ADV_PM_EVENTS
 	depends on CAF_PM_EVENTS
 	default y
 
+config CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15
+	bool "Force power down on disconnection with reason 0x15"
+	depends on CAF_BLE_ADV_PM_EVENTS
+	select CAF_FORCE_POWER_DOWN_EVENTS
+	help
+	  Force power down when a bonded peer disconnects with reason 0x15
+	  (Remote Device Terminated due to Power Off). The module instantly
+	  stops Bluetooth LE advertising and submits a force_power_down event.
+
 config CAF_BLE_ADV_DIRECT_ADV
 	bool "Advertise to bonded peer directly"
 	depends on SETTINGS

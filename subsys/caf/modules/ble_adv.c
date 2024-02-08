@@ -17,6 +17,7 @@
 #define MODULE ble_adv
 #include <caf/events/module_state_event.h>
 #include <caf/events/ble_common_event.h>
+#include <caf/events/force_power_down_event.h>
 #include <caf/events/power_event.h>
 
 #include <zephyr/logging/log.h>
@@ -876,6 +877,22 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 		break;
 
 	case PEER_STATE_DISCONNECTED:
+		if (IS_ENABLED(CONFIG_CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15)) {
+			bt_addr_le_t addr;
+
+			bond_addr_get(cur_identity, &addr);
+			/* Check if disconnected peer was bonded. */
+			if (bt_addr_le_cmp(&addr, BT_ADDR_LE_ANY) &&
+			    !bt_addr_le_cmp(&addr, bt_conn_get_dst(event->id))) {
+				if ((event->reason == BT_HCI_ERR_REMOTE_POWER_OFF) &&
+				    (state != STATE_OFF)) {
+					LOG_INF("Bonded peer power off, force system power down");
+					update_state(STATE_OFF);
+					force_power_down();
+				}
+			}
+		}
+
 		if (state != STATE_OFF) {
 			req_new_adv_session = true;
 			req_fast_adv = true;

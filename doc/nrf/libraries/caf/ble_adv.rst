@@ -19,6 +19,7 @@ The following Kconfig options are available for this module:
 
 * :kconfig:option:`CONFIG_CAF_BLE_ADV`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_PM_EVENTS`
+* :kconfig:option:`CONFIG_CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FAST_ADV`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT`
@@ -98,6 +99,17 @@ This is done to ensure that the user does not try to connect to the device that 
 
    The :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD` is enabled by default if the Swift Pair advertising data provider is enabled in the configuration.
 
+Force power down on bonded peer power off
+-----------------------------------------
+
+You can use the :kconfig:option:`CONFIG_CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15` Kconfig option to force power down when a bonded peer disconnects with reason ``0x15`` (Remote Device Terminated due to Power Off).
+On a Bluetooth LE peer event (:c:struct:`ble_peer_event`) reporting :c:enumerator:`PEER_STATE_DISCONNECTED` (:c:member:`ble_peer_event.state`) with reason ``0x15`` (:c:member:`ble_peer_event.reason`), the module performs the following:
+
+ * Instantly stops Bluetooth LE advertising (the module enters power down state).
+ * Submits a force power down event (:c:struct:`force_power_down_event`).
+
+You can use this feature to prevent a bonded peer from waking up until activity on the peripheral is detected.
+
 Implementation details
 **********************
 
@@ -127,7 +139,7 @@ The Bluetooth LE bond module broadcasts information related to bond control usin
 The |ble_adv| reacts on :c:struct:`ble_peer_operation_event` related to the Bluetooth peer change or erase advertising.
 The module performs one of the following operations:
 
-* If there is a peer connected over Bluetooth, the |ble_adv| triggers disconnection and submits a :c:struct:`ble_peer_event` with :c:member:`ble_peer_event.state` set to :c:enum:`PEER_STATE_DISCONNECTING` to let other application modules prepare for the planned disconnection.
+* If there is a peer connected over Bluetooth, the |ble_adv| triggers disconnection and submits a :c:struct:`ble_peer_event` with :c:member:`ble_peer_event.state` set to :c:enumerator:`PEER_STATE_DISCONNECTING` to let other application modules prepare for the planned disconnection.
 * Otherwise, the Bluetooth advertising with the newly selected Bluetooth local identity is started.
 
 Avoiding connection requests from unbonded centrals when bonded
