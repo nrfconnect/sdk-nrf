@@ -19,27 +19,6 @@ The applications use the same code base, but use different :file:`main.c` files 
 You might need to configure and program two applications for testing the interoperability, depending on your use case.
 See the testing steps for each of the application for more information.
 
-.. _nrf53_audio_app_overview_differences:
-
-Differences between apps
-************************
-
-The following table summarizes the differences between the available nRF5340 Audio applications.
-
-.. list-table:: Differences between nRF5340 Audio applications
-   :header-rows: 1
-
-   * - Application
-     - LE Audio mode and role
-   * - :ref:`Unicast client<nrf53_audio_unicast_client_app>`
-     - CIS gateway
-   * - :ref:`Unicast server<nrf53_audio_unicast_server_app>`
-     - CIS headset
-   * - :ref:`Broadcast sink<nrf53_audio_broadcast_sink_app>`
-     - BIS gateway
-   * - :ref:`Broadcast source<nrf53_audio_broadcast_source_app>`
-     - BIS headset
-
 .. _nrf53_audio_app_overview_modes:
 
 Application modes

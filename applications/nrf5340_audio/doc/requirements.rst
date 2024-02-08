@@ -62,5 +62,5 @@ For each application, only one of the following :file:`.conf` files is included 
   See :ref:`nrf53_audio_app_building` for details.
 
 In addition, the application features the :file:`child_image` directory with an experimental :file:`hci_ipc.conf`.
-This file is a work-in-progress implementation of the SoftDevice Controller that has not been thoroughly tested and is currently not meant for production.
+This file is a work-in-progress implementation of the :ref:`SoftDevice Controller for LE Isochronous Channels <nrfxlib:softdevice_controller_iso>` that has not been thoroughly tested and is currently not meant for production.
 The application is only tested using :ref:`lib_bt_ll_acs_nrf53_readme`.
