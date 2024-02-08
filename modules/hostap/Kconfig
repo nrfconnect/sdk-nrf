@@ -16,10 +16,15 @@ menuconfig WPA_SUPP
 	select NET_L2_WIFI_MGMT
 	select WIFI_NM
 	select EXPERIMENTAL if !SOC_SERIES_NRF53X && !SOC_SERIES_NRF91X
+	select COMMON_LIBC_MALLOC
 	help
 	  WPA supplicant implements 802.1X related functions.
 
 if WPA_SUPP
+
+config COMMON_LIBC_MALLOC_ARENA_SIZE
+	# 30K is mandatory, but might need more for long duration use cases
+	default 30000
 
 # Hidden as these are mandatory for WFA certification
 config WPA_SUPP_WMM_AC
