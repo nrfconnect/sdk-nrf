@@ -762,7 +762,8 @@ static void update_peer_is_rpa(enum peer_rpa new_peer_rpa)
 
 static void disconnect_peer(struct bt_conn *conn)
 {
-	int err = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+	uint8_t reason = BT_HCI_ERR_REMOTE_USER_TERM_CONN;
+	int err = bt_conn_disconnect(conn, reason);
 
 	if (!err) {
 		/* Submit event to let other application modules prepare for
@@ -772,6 +773,7 @@ static void disconnect_peer(struct bt_conn *conn)
 
 		event->id = conn;
 		event->state = PEER_STATE_DISCONNECTING;
+		event->reason = reason;
 		APP_EVENT_SUBMIT(event);
 
 		LOG_INF("Peer disconnecting");

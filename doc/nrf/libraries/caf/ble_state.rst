@@ -54,22 +54,14 @@ Connection state change
 =======================
 
 The module propagates information about the connection state changes using :c:struct:`ble_peer_event`.
-In this event, :c:member:`ble_peer_event.id` is a pointer to the connection object and :c:member:`ble_peer_event.state` is the connection state.
 
 .. figure:: images/caf_ble_state_transitions.svg
    :alt: Bluetooth connection state handling in CAF
 
    Bluetooth connection state handling in CAF
 
-The connection state can be set to one of the following values:
-
-* :c:enum:`PEER_STATE_CONNECTED` - Bluetooth stack successfully connected to the remote peer.
-* :c:enum:`PEER_STATE_CONN_FAILED` - Bluetooth stack failed to connect the remote peer.
-* :c:enum:`PEER_STATE_SECURED` - Bluetooth stack set the connection security to at least level 2 (that is, encryption and no authentication).
-* :c:enum:`PEER_STATE_DISCONNECTED` - Bluetooth stack disconnected from the remote peer.
-
 Other application modules can call :c:func:`bt_conn_disconnect` to disconnect the remote peer.
-The application module can submit a :c:struct:`ble_peer_event` with :c:member:`ble_peer_event.state` set to :c:enum:`PEER_STATE_DISCONNECTING` to let other application modules prepare for the disconnection.
+The application module can submit a :c:struct:`ble_peer_event` with :c:member:`ble_peer_event.state` set to :c:enumerator:`PEER_STATE_DISCONNECTING` to let other application modules prepare for the disconnection.
 
 Connection parameter change
 ===========================

@@ -27,8 +27,8 @@ static void log_ble_peer_event(const struct app_event_header *aeh)
 
 	__ASSERT_NO_MSG(event->state < PEER_STATE_COUNT);
 
-	APP_EVENT_MANAGER_LOG(aeh, "id=%p %s", event->id,
-			state_name[event->state]);
+	APP_EVENT_MANAGER_LOG(aeh, "id=%p %s reason=%" PRIu8,
+			      event->id, state_name[event->state], event->reason);
 }
 
 static void profile_ble_peer_event(struct log_event_buf *buf,
@@ -38,11 +38,12 @@ static void profile_ble_peer_event(struct log_event_buf *buf,
 
 	nrf_profiler_log_encode_uint32(buf, (uint32_t)event->id);
 	nrf_profiler_log_encode_uint8(buf, event->state);
+	nrf_profiler_log_encode_uint8(buf, event->reason);
 }
 
 APP_EVENT_INFO_DEFINE(ble_peer_event,
-		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8),
-		  ENCODE("conn_id", "state"),
+		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U8),
+		  ENCODE("conn_id", "state", "reason"),
 		  profile_ble_peer_event);
 
 APP_EVENT_TYPE_DEFINE(ble_peer_event,

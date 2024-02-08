@@ -994,6 +994,8 @@ Common Application Framework (CAF)
 
   * Updated the dependencies of the :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` Kconfig option.
     The option can be enabled even when the Bluetooth controller is not enabled as part of the application that uses :ref:`caf_ble_state`.
+  * Added :c:member:`ble_peer_event.reason` to inform about reason code related to state of the Bluetooth LE peer.
+    The field is used to propagate information about error code related to a connection establishment failure and disconnection reason.
 
 Shell libraries
 ---------------
