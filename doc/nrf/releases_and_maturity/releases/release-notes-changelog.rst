@@ -189,9 +189,7 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
-* Added:
-
-  :ref:`wifi_raw_tx_packet_sample` sample that demonstrates how to transmit raw TX packets.
+|no_changes_yet_note|
 
 HomeKit
 -------
@@ -663,6 +661,7 @@ Wi-Fi samples
       It adds the subcommands to configure and send raw TX packets.
 
 * Added the :ref:`wifi_softap_sample` sample that demonstrates how to start a nRF70 Series device in :term:`Software-enabled Access Point (SoftAP or SAP)` mode.
+* Added the :ref:`wifi_raw_tx_packet_sample` sample that demonstrates how to transmit raw TX packets.
 
 Other samples
 -------------
