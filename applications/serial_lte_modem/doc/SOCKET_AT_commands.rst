@@ -565,6 +565,11 @@ Syntax
 
     * ``<value>`` is ignored.
 
+  * ``55`` - :c:macro:`SO_TCP_SRV_SESSTIMEO`.
+
+    * ``<value>`` is an integer that indicates the TCP server session inactivity timeout for a socket.
+      It accepts value from range ``0`` to ``135``, where ``0`` is no timeout and ``135`` is 2 h 15 min.
+
 See `nRF socket options`_ for explanation of the supported options.
 
 Examples
@@ -640,7 +645,7 @@ Syntax
 
 * The ``<name>`` parameter can accept one of the following values:
 
-  * ``2`` - :c:macro:`TLS_HOSTNAME` (set-only).
+  * ``2`` - :c:macro:`TLS_HOSTNAME`.
 
     * ``<value>`` is a string that indicates the hostname to check against during TLS handshakes.
       It can be ``NULL`` to disable hostname verification.

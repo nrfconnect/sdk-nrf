@@ -13,6 +13,7 @@
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_socket.h"
+#include "slm_sockopt.h"
 #if defined(CONFIG_SLM_NATIVE_TLS)
 #include "slm_native_tls.h"
 #endif
@@ -145,9 +146,12 @@ static int do_socket_open(void)
 	}
 
 	sock.fd = ret;
+	struct timeval tmo = {.tv_sec = SOCKET_SEND_TMO_SEC};
 
-	ret = slm_sockopt_set(sock.fd, SO_SNDTIMEO, SOCKET_SEND_TMO_SEC);
+	ret = setsockopt(sock.fd, SOL_SOCKET, SO_SNDTIMEO, &tmo, sizeof(tmo));
 	if (ret) {
+		LOG_ERR("setsockopt(%d) error: %d", SO_SNDTIMEO, -errno);
+		ret = -errno;
 		goto error;
 	}
 
@@ -206,9 +210,12 @@ static int do_secure_socket_open(int peer_verify)
 		}
 	}
 #endif
+	struct timeval tmo = {.tv_sec = SOCKET_SEND_TMO_SEC};
 
-	ret = slm_sockopt_set(sock.fd, SO_SNDTIMEO, SOCKET_SEND_TMO_SEC);
+	ret = setsockopt(sock.fd, SOL_SOCKET, SO_SNDTIMEO, &tmo, sizeof(tmo));
 	if (ret) {
+		LOG_ERR("setsockopt(%d) error: %d", SO_SNDTIMEO, -errno);
+		ret = -errno;
 		goto error;
 	}
 
@@ -311,208 +318,235 @@ static int do_socket_close(void)
 	return ret;
 }
 
-int slm_sockopt_set(int socket, int option, int value)
+static int at_sockopt_to_sockopt(enum at_sockopt at_option, int *level, int *option)
 {
-	int ret = 0;
-
-	switch (option) {
-	case SO_BINDTOPDN:
-	case SO_REUSEADDR:
-		ret = setsockopt(socket, SOL_SOCKET, option, &value, sizeof(int));
+	switch (at_option) {
+	case AT_SO_REUSEADDR:
+		*level = SOL_SOCKET;
+		*option = SO_REUSEADDR;
 		break;
-
-	case SO_RCVTIMEO:
-	case SO_SNDTIMEO: {
-		struct timeval tmo = { .tv_sec = value };
-		socklen_t len = sizeof(struct timeval);
-
-		ret = setsockopt(socket, SOL_SOCKET, option, &tmo, len);
-	} break;
-
-	/** NCS extended socket options */
-	case SO_SILENCE_ALL:
-		ret = setsockopt(socket, IPPROTO_ALL, option, &value, sizeof(int));
+	case AT_SO_RCVTIMEO:
+		*level = SOL_SOCKET;
+		*option = SO_RCVTIMEO;
 		break;
-	case SO_IP_ECHO_REPLY:
-		ret = setsockopt(socket, IPPROTO_IP, option, &value, sizeof(int));
+	case AT_SO_SNDTIMEO:
+		*level = SOL_SOCKET;
+		*option = SO_SNDTIMEO;
 		break;
-	case SO_IPV6_ECHO_REPLY:
-		ret = setsockopt(socket, IPPROTO_IPV6, option, &value, sizeof(int));
+	case AT_SO_SILENCE_ALL:
+		*level = IPPROTO_ALL;
+		*option = SO_SILENCE_ALL;
 		break;
-	case SO_TCP_SRV_SESSTIMEO:
-		ret = setsockopt(socket, IPPROTO_TCP, option, &value, sizeof(int));
+	case AT_SO_IP_ECHO_REPLY:
+		*level = IPPROTO_IP;
+		*option = SO_IP_ECHO_REPLY;
 		break;
-
-	/* RAI-related */
-	case SO_RAI_LAST:
-	case SO_RAI_NO_DATA:
-	case SO_RAI_ONE_RESP:
-	case SO_RAI_ONGOING:
-	case SO_RAI_WAIT_MORE:
-		ret = setsockopt(socket, SOL_SOCKET, option, NULL, 0);
+	case AT_SO_IPV6_ECHO_REPLY:
+		*level = IPPROTO_IPV6;
+		*option = SO_IPV6_ECHO_REPLY;
+		break;
+	case AT_SO_BINDTOPDN:
+		*level = SOL_SOCKET;
+		*option = SO_BINDTOPDN;
+		break;
+	case AT_SO_RAI_NO_DATA:
+		*level = SOL_SOCKET;
+		*option = SO_RAI_NO_DATA;
+		break;
+	case AT_SO_RAI_LAST:
+		*level = SOL_SOCKET;
+		*option = SO_RAI_LAST;
+		break;
+	case AT_SO_RAI_ONE_RESP:
+		*level = SOL_SOCKET;
+		*option = SO_RAI_ONE_RESP;
+		break;
+	case AT_SO_RAI_ONGOING:
+		*level = SOL_SOCKET;
+		*option = SO_RAI_ONGOING;
+		break;
+	case AT_SO_RAI_WAIT_MORE:
+		*level = SOL_SOCKET;
+		*option = SO_RAI_WAIT_MORE;
+		break;
+	case AT_SO_TCP_SRV_SESSTIMEO:
+		*level = IPPROTO_TCP;
+		*option = SO_TCP_SRV_SESSTIMEO;
 		break;
 
 	default:
-		ret = -ENOTSUP;
-		LOG_WRN("Unsupported option: %d", option);
-		break;
+		LOG_WRN("Unsupported option: %d", at_option);
+		return -ENOTSUP;
 	}
 
-	if (ret && ret != -ENOTSUP) {
-		LOG_ERR("setsockopt(%d) error: %d", option, -errno);
+	return 0;
+}
+
+static int sockopt_set(enum at_sockopt at_option, int at_value)
+{
+	int ret, level, option;
+	void *value = &at_value;
+	socklen_t len = sizeof(at_value);
+	struct timeval tmo;
+
+	ret = at_sockopt_to_sockopt(at_option, &level, &option);
+	if (ret) {
+		return ret;
+	}
+
+	/* Options with special handling. */
+	if (level == SOL_SOCKET && (option == SO_RCVTIMEO || option == SO_SNDTIMEO)) {
+		tmo.tv_sec = at_value;
+		value = &tmo;
+		len = sizeof(tmo);
+	} else if (level == SOL_SOCKET && (option == SO_RAI_LAST || option == SO_RAI_NO_DATA ||
+					   option == SO_RAI_ONE_RESP || option == SO_RAI_ONGOING ||
+					   option == SO_RAI_WAIT_MORE)) {
+		value = NULL;
+		len = 0;
+	}
+
+	ret = setsockopt(sock.fd, level, option, value, len);
+	if (ret) {
+		LOG_ERR("setsockopt(%d,%d) error: %d", level, option, -errno);
 	}
 
 	return ret;
 }
 
-static int do_sockopt_get_int(int level, int option)
+static int sockopt_get(enum at_sockopt at_option)
 {
-	int ret;
-	int value;
+	int ret, value, level, option;
 	socklen_t len = sizeof(int);
 
-	ret = getsockopt(sock.fd, level, option, &value, &len);
-	if (ret == 0) {
-		rsp_send("\r\n#XSOCKETOPT: %d\r\n", value);
+	ret = at_sockopt_to_sockopt(at_option, &level, &option);
+	if (ret) {
+		return ret;
 	}
 
-	return ret;
-}
-
-static int do_socketopt_get(int option)
-{
-	int ret = 0;
-
-	switch (option) {
-	case SO_SILENCE_ALL:
-		ret = do_sockopt_get_int(IPPROTO_ALL, option);
-		break;
-	case SO_IP_ECHO_REPLY:
-		ret = do_sockopt_get_int(IPPROTO_IP, option);
-		break;
-	case SO_IPV6_ECHO_REPLY:
-		ret = do_sockopt_get_int(IPPROTO_IPV6, option);
-		break;
-	case SO_TCP_SRV_SESSTIMEO:
-		ret = do_sockopt_get_int(IPPROTO_TCP, option);
-		break;
-	case SO_ERROR:
-		ret = do_sockopt_get_int(SOL_SOCKET, option);
-		break;
-
-	case SO_RCVTIMEO:
-	case SO_SNDTIMEO: {
+	/* Options with special handling. */
+	if (level == SOL_SOCKET && (option == SO_RCVTIMEO || option == SO_SNDTIMEO)) {
 		struct timeval tmo;
-		socklen_t len = sizeof(struct timeval);
 
-		ret = getsockopt(sock.fd, SOL_SOCKET, option, &tmo, &len);
+		len = sizeof(struct timeval);
+		ret = getsockopt(sock.fd, level, option, &tmo, &len);
 		if (ret == 0) {
 			rsp_send("\r\n#XSOCKETOPT: %ld\r\n", (long)tmo.tv_sec);
 		}
-	} break;
-
-	default:
-		ret = -ENOTSUP;
-		LOG_WRN("Unsupported option: %d", option);
-		break;
+	} else {
+		/* Default */
+		ret = getsockopt(sock.fd, level, option, &value, &len);
+		if (ret == 0) {
+			rsp_send("\r\n#XSOCKETOPT: %d\r\n", value);
+		}
 	}
 
-	if (ret && ret != -ENOTSUP) {
-		LOG_ERR("setsockopt(%d) error: %d", option, -errno);
+	if (ret) {
+		LOG_ERR("getsockopt(%d,%d) error: %d", level, option, -errno);
 	}
 
 	return ret;
 }
 
-static int do_secure_socketopt_set_str(int option, const char *value)
+static int at_sec_sockopt_to_sockopt(enum at_sec_sockopt at_option, int *level, int *option)
 {
-	int ret = 0;
+	*level = SOL_TLS;
 
-	switch (option) {
-	case TLS_HOSTNAME:
-		/** Write-only socket option to set hostname. It accepts a string containing
-		 *  the hostname (may be NULL to disable hostname verification).
-		 */
+	switch (at_option) {
+	case AT_TLS_HOSTNAME:
+		*option = TLS_HOSTNAME;
+		break;
+	case AT_TLS_CIPHERSUITE_USED:
+		*option = TLS_CIPHERSUITE_USED;
+		break;
+	case AT_TLS_PEER_VERIFY:
+		*option = TLS_PEER_VERIFY;
+		break;
+	case AT_TLS_SESSION_CACHE:
+		*option = TLS_SESSION_CACHE;
+		break;
+	case AT_TLS_SESSION_CACHE_PURGE:
+		*option = TLS_SESSION_CACHE_PURGE;
+		break;
+	case AT_TLS_DTLS_CID:
+		*option = TLS_DTLS_CID;
+		break;
+	case AT_TLS_DTLS_CID_STATUS:
+		*option = TLS_DTLS_CID_STATUS;
+		break;
+	case AT_TLS_DTLS_HANDSHAKE_TIMEO:
+		*option = TLS_DTLS_HANDSHAKE_TIMEO;
+		break;
+	default:
+		LOG_WRN("Unsupported option: %d", at_option);
+		return -ENOTSUP;
+	}
+
+	return 0;
+}
+
+static int sec_sockopt_set(enum at_sec_sockopt at_option, void *value, socklen_t len)
+{
+	int ret, level, option;
+
+	ret = at_sec_sockopt_to_sockopt(at_option, &level, &option);
+	if (ret) {
+		return ret;
+	}
+
+	/* Options with special handling. */
+	if (level == SOL_TLS && option == TLS_HOSTNAME) {
 		if (slm_util_casecmp(value, "NULL")) {
-			ret = setsockopt(sock.fd, SOL_TLS, option, NULL, 0);
-		} else {
-			ret = setsockopt(sock.fd, SOL_TLS, option, value, strlen(value));
+			value = NULL;
+			len = 0;
 		}
-		break;
-
-	default:
-		ret = -ENOTSUP;
-		LOG_WRN("Unsupported option: %d", option);
-		break;
+	} else if (len != sizeof(int)) {
+		return -EINVAL;
 	}
 
-	if (ret && ret != -ENOTSUP) {
-		LOG_ERR("setsockopt(%d) error: %d", option, -errno);
+	ret = setsockopt(sock.fd, level, option, value, len);
+	if (ret) {
+		LOG_ERR("setsockopt(%d,%d) error: %d", level, option, -errno);
 	}
 
 	return ret;
 }
 
-static int do_secure_socketopt_set_int(int option, int value)
+
+static int sec_sockopt_get(enum at_sec_sockopt at_option)
 {
-	int ret = 0;
-
-	switch (option) {
-	case TLS_PEER_VERIFY:
-	case TLS_SESSION_CACHE:
-	case TLS_SESSION_CACHE_PURGE:
-	case TLS_DTLS_HANDSHAKE_TIMEO:
-	case TLS_DTLS_CID:
-		ret = setsockopt(sock.fd, SOL_TLS, option, &value, sizeof(value));
-		if (ret) {
-			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
-		}
-		break;
-
-	default:
-		ret = -ENOTSUP;
-		LOG_WRN("Unsupported option: %d", option);
-		break;
-	}
-
-	if (ret && ret != -ENOTSUP) {
-		LOG_ERR("setsockopt(%d) error: %d", option, -errno);
-	}
-
-	return ret;
-}
-
-static int do_secure_socketopt_get(int option)
-{
-	int ret = 0;
-	int value;
+	int ret, value, level, option;
 	socklen_t len = sizeof(int);
 
-	switch (option) {
-	case TLS_CIPHERSUITE_USED: /* MFW >= 2.0.0 */
-		ret = getsockopt(sock.fd, SOL_TLS, option, &value, &len);
+	ret = at_sec_sockopt_to_sockopt(at_option, &level, &option);
+	if (ret) {
+		return ret;
+	}
+
+	/* Options with special handling. */
+	if (level == SOL_TLS && option == TLS_CIPHERSUITE_USED) {
+		ret = getsockopt(sock.fd, level, option, &value, &len);
 		if (ret == 0) {
 			rsp_send("\r\n#XSSOCKETOPT: 0x%x\r\n", value);
 		}
-		break;
-	case TLS_DTLS_CID_STATUS:
-	case TLS_PEER_VERIFY:
-	case TLS_SESSION_CACHE:
-	case TLS_DTLS_HANDSHAKE_TIMEO:
-		ret = getsockopt(sock.fd, SOL_TLS, option, &value, &len);
+	} else if (level == SOL_TLS && option == TLS_HOSTNAME) {
+		char hostname[SLM_MAX_URL] = {0};
+
+		len = sizeof(hostname);
+		ret = getsockopt(sock.fd, level, option, &hostname, &len);
+		if (ret == 0) {
+			rsp_send("\r\n#XSSOCKETOPT: %s\r\n", hostname);
+		}
+	} else {
+		/* Default */
+		ret = getsockopt(sock.fd, level, option, &value, &len);
 		if (ret == 0) {
 			rsp_send("\r\n#XSSOCKETOPT: %d\r\n", value);
 		}
-		break;
-
-	default:
-		ret = -ENOTSUP;
-		LOG_WRN("Unsupported option: %d", option);
-		break;
 	}
 
-	if (ret && ret != -ENOTSUP) {
-		LOG_ERR("setsockopt(%d) error: %d", option, -errno);
+	if (ret) {
+		LOG_ERR("getsockopt(%d,%d) error: %d", level, option, -errno);
 	}
 
 	return ret;
@@ -740,10 +774,12 @@ static int do_recv(int timeout, int flags)
 			return -EINVAL;
 		}
 	}
+	struct timeval tmo = {.tv_sec = timeout};
 
-	ret = slm_sockopt_set(sock.fd, SO_RCVTIMEO, timeout);
+	ret = setsockopt(sock.fd, SOL_SOCKET, SO_RCVTIMEO, &tmo, sizeof(tmo));
 	if (ret) {
-		return ret;
+		LOG_ERR("setsockopt(%d) error: %d", SO_RCVTIMEO, -errno);
+		return -errno;
 	}
 	ret = recv(sockfd, (void *)slm_data_buf, sizeof(slm_data_buf), flags);
 	if (ret < 0) {
@@ -846,10 +882,12 @@ static int do_recvfrom(int timeout, int flags)
 	int ret;
 	struct sockaddr remote;
 	socklen_t addrlen = sizeof(struct sockaddr);
+	struct timeval tmo = {.tv_sec = timeout};
 
-	ret = slm_sockopt_set(sock.fd, SO_RCVTIMEO, timeout);
+	ret = setsockopt(sock.fd, SOL_SOCKET, SO_RCVTIMEO, &tmo, sizeof(tmo));
 	if (ret) {
-		return ret;
+		LOG_ERR("setsockopt(%d) error: %d", SO_RCVTIMEO, -errno);
+		return -errno;
 	}
 	ret = recvfrom(
 		sock.fd, (void *)slm_data_buf, sizeof(slm_data_buf), flags, &remote, &addrlen);
@@ -1198,9 +1236,10 @@ int handle_at_socketopt(enum at_cmd_type cmd_type)
 					return err;
 				}
 			}
-			err = slm_sockopt_set(sock.fd, name, value);
+
+			err = sockopt_set(name, value);
 		} else if (op == AT_SOCKETOPT_GET) {
-			err = do_socketopt_get(name);
+			err = sockopt_get(name);
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
@@ -1249,18 +1288,18 @@ int handle_at_secure_socketopt(enum at_cmd_type cmd_type)
 				if (err) {
 					return err;
 				}
-				err = do_secure_socketopt_set_int(name, value_int);
+				err = sec_sockopt_set(name, &value_int, sizeof(value_int));
 			} else if (type == AT_PARAM_TYPE_STRING) {
 				err = util_string_get(&slm_at_param_list, 3, value_str, &size);
 				if (err) {
 					return err;
 				}
-				err = do_secure_socketopt_set_str(name, value_str);
+				err = sec_sockopt_set(name, value_str, strlen(value_str));
 			} else {
 				return -EINVAL;
 			}
 		}  else if (op == AT_SOCKETOPT_GET) {
-			err = do_secure_socketopt_get(name);
+			err = sec_sockopt_get(name);
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
