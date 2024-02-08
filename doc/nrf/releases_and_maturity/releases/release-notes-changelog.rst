@@ -189,7 +189,10 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
-|no_changes_yet_note|
+* Updated:
+
+  * WPA supplicant now reserves libc heap memory rather than using leftover RAM.
+    This doesn't affect the overall memory used, but now the RAM footprint as reported by the build will show higher usage.
 
 HomeKit
 -------
