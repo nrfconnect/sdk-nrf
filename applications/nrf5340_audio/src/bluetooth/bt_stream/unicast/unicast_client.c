@@ -715,11 +715,16 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 	int ret;
 	uint8_t channel_index;
 
-	ret = channel_index_get(stream->conn, &channel_index);
-	if (ret) {
-		LOG_ERR("Channel index not found");
+	if (le_audio_ep_state_check(stream->ep, BT_BAP_EP_STATE_STREAMING)) {
+
+		ret = channel_index_get(stream->conn, &channel_index);
+		if (ret) {
+			LOG_ERR("Channel index not found");
+		} else {
+			ERR_CHK(bt_le_audio_tx_stream_sent(channel_index));
+		}
 	} else {
-		ERR_CHK(bt_le_audio_tx_stream_sent(channel_index));
+		LOG_WRN("Not in streaming state");
 	}
 }
 
