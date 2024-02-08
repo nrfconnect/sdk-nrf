@@ -115,6 +115,13 @@ struct ble_peer_event {
 	/** State of the Bluetooth LE peer. */
 	enum peer_state state;
 
+	/** Reason code related to state of the Bluetooth LE peer. The field is used only for
+	 *  PEER_STATE_CONN_FAILED (error code related to connection establishment failure),
+	 *  PEER_STATE_DISCONNECTING, PEER_STATE_DISCONNECTED (disconnection reason). Other peer
+	 *  states do not use this field and set the value to zero.
+	 */
+	uint8_t reason;
+
 	/** ID used to identify Bluetooth connection - pointer to the bt_conn. */
 	void *id;
 };
