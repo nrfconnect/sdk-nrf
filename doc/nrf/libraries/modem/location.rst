@@ -122,6 +122,8 @@ The following diagram shows successful cellular positioning.
 The following diagram depicts a failure to find the GNSS fix, followed by a fallback to cloud positioning.
 Since the Wi-Fi and cellular positioning methods are one after another, they are combined to a single cloud positioning request.
 Both Wi-Fi APs and LTE cells are given to the application with a single :c:enum:`LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST` event.
+The :c:enum:`LOCATION_EVT_STARTED` and the :c:enum:`LOCATION_EVT_FALLBACK` events are sent,
+if the :kconfig:option:`CONFIG_LOCATION_DATA_DETAILS` Kconfig option is set.
 
 .. msc::
   hscale="1.3";
@@ -132,6 +134,7 @@ Both Wi-Fi APs and LTE cells are given to the application with a single :c:enum:
 
   Application => Loclib [label="location_request(&config)\nmethod list: GNSS, Wi-Fi, Cellular"];
   |||;
+  Application << Loclib [label="LOCATION_EVT_STARTED"];
   Application << Loclib [label="LOCATION_EVT_GNSS_ASSISTANCE_REQUEST"];
   Application => Cloud [label="Request A-GNSS data"];
   Application << Cloud [label="A-GNSS data"];
@@ -141,6 +144,7 @@ Both Wi-Fi APs and LTE cells are given to the application with a single :c:enum:
   Loclib rbox Loclib [label="GNSS timeout occurs"];
 
   Loclib rbox Loclib [label="Fallback to cloud positioning"];
+  Application << Loclib [label="LOCATION_EVT_FALLBACK"];
   Loclib rbox Loclib [label="Scan Wi-Fi and LTE networks"];
   |||;
   Application << Loclib [label="LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST"];

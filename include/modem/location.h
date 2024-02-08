@@ -94,6 +94,14 @@ enum location_event_id {
 	 * This event is only sent if @kconfig{CONFIG_LOCATION_DATA_DETAILS} is set.
 	 */
 	LOCATION_EVT_STARTED,
+	/**
+	 * A fallback from one method to another has occurred,
+	 * and the positioning procedure continues.
+	 *
+	 * This event is only sent if @kconfig{CONFIG_LOCATION_DATA_DETAILS} is set and
+	 * @ref location_config.mode is @ref LOCATION_REQ_MODE_FALLBACK.
+	 */
+	LOCATION_EVT_FALLBACK,
 };
 
 /** Result of the external cloud location request. */
@@ -245,6 +253,20 @@ struct location_data_error {
 	/** Data details at the time of error. */
 	struct location_data_details details;
 };
+
+/** Location fallback information. */
+struct location_data_fallback {
+	/** New location method that is tried next. */
+	enum location_method next_method;
+	/**
+	 * Event ID indicating the cause for the fallback.
+	 *
+	 * Either @ref LOCATION_EVT_TIMEOUT and @ref LOCATION_EVT_ERROR.
+	 */
+	enum location_event_id cause;
+	/** Data details at the time of a timeout or an error that caused the fallback. */
+	struct location_data_details details;
+};
 #endif
 
 /** Cloud location information. */
@@ -283,6 +305,15 @@ struct location_event_data {
 		 * Used with events @ref LOCATION_EVT_TIMEOUT and @ref LOCATION_EVT_ERROR.
 		 */
 		struct location_data_error error;
+#endif
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+		/**
+		 * Relevant location data when a fallback to another method occurs
+		 * due to a timeout or an error.
+		 * Used with event @ref LOCATION_EVT_FALLBACK.
+		 */
+		struct location_data_fallback fallback;
 #endif
 
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)
