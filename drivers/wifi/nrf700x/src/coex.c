@@ -43,7 +43,7 @@ static struct nrf_wifi_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 	#define NRF_RADIO_COEX_NODE DT_NODELABEL(nrf_radio_coex)
-	static const struct gpio_dt_spec btrf_switch_spec =
+	static const struct gpio_dt_spec sr_rf_switch_spec =
 	GPIO_DT_SPEC_GET(NRF_RADIO_COEX_NODE, btrf_switch_gpios);
 #endif
 
@@ -138,10 +138,8 @@ int nrf_wifi_coex_config_non_pta(bool separate_antennas)
 	}
 
 	cmd_len = (COEX_CONFIG_FIXED_PARAMS + num_reg_to_config) * sizeof(uint32_t);
-
-	status = nrf_wifi_fmac_conf_btcoex(rpu_ctx->rpu_ctx,
+	status = nrf_wifi_fmac_conf_srcoex(rpu_ctx->rpu_ctx,
 					   (void *)(&params), cmd_len);
-
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		return -1;
 	}
@@ -194,10 +192,8 @@ int nrf_wifi_coex_config_pta(enum nrf_wifi_pta_wlan_op_band wlan_band, bool sepa
 	}
 
 	cmd_len = (COEX_CONFIG_FIXED_PARAMS + num_reg_to_config) * sizeof(uint32_t);
-
-	status = nrf_wifi_fmac_conf_btcoex(rpu_ctx->rpu_ctx,
+	status = nrf_wifi_fmac_conf_srcoex(rpu_ctx->rpu_ctx,
 					   (void *)(&params), cmd_len);
-
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		return -1;
 	}
@@ -211,26 +207,24 @@ int nrf_wifi_config_sr_switch(bool separate_antennas)
 {
 	int ret;
 
-	if (!device_is_ready(btrf_switch_spec.port)) {
+	if (!device_is_ready(sr_rf_switch_spec.port)) {
 		LOG_ERR("Unable to open GPIO device");
 		return -ENODEV;
 	}
 
-	ret = gpio_pin_configure_dt(&btrf_switch_spec, GPIO_OUTPUT);
+	ret = gpio_pin_configure_dt(&sr_rf_switch_spec, GPIO_OUTPUT);
 	if (ret < 0) {
 		LOG_ERR("Unable to configure GPIO device");
 		return -1;
 	}
 
 	if (separate_antennas) {
-		gpio_pin_set_dt(&btrf_switch_spec, 0x0);
+		gpio_pin_set_dt(&sr_rf_switch_spec, 0x0);
 		LOG_INF("GPIO P1.10 set to 0");
 	} else {
-		gpio_pin_set_dt(&btrf_switch_spec, 0x1);
+		gpio_pin_set_dt(&sr_rf_switch_spec, 0x1);
 		LOG_INF("GPIO P1.10 set to 1");
 	}
-
-	LOG_DBG("Successfully configured GPIO P1.10");
 
 	return 0;
 }
@@ -258,7 +252,7 @@ int nrf_wifi_coex_hw_reset(void)
 
 	cmd_len = (COEX_CONFIG_FIXED_PARAMS + num_reg_to_config) * sizeof(uint32_t);
 
-	status = nrf_wifi_fmac_conf_btcoex(rpu_ctx->rpu_ctx,
+	status = nrf_wifi_fmac_conf_srcoex(rpu_ctx->rpu_ctx,
 				(void *)(&params), cmd_len);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {

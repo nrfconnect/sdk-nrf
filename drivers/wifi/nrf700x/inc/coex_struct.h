@@ -8,8 +8,8 @@
  * @brief Structures and related enumerations used in Coexistence.
  */
 
-#ifndef __ZEPHYR_COEX_STRUCT_H__
-#define __ZEPHYR_COEX_STRUCT_H__
+#ifndef __COEX_STRUCT_H__
+#define __COEX_STRUCT_H__
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -179,4 +179,4 @@ struct coex_sr_traffic_info {
 	uint32_t sr_traffic_info[MAX_SR_TRAFFIC_BUF_SIZE];
 };
 
-#endif /* __ZEPHYR_COEX_STRUCT_H__ */
+#endif /* __COEX_STRUCT_H__ */

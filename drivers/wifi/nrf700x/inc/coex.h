@@ -8,8 +8,8 @@
  * @brief Header containing Coexistence APIs.
  */
 
-#ifndef __ZEPHYR_FMAC_COEX_H__
-#define __ZEPHYR_FMAC_COEX_H__
+#ifndef __COEX_H__
+#define __COEX_H__
 
 #include <stdbool.h>
 
@@ -17,7 +17,6 @@
 enum nrf_wifi_pta_wlan_op_band {
 	NRF_WIFI_PTA_WLAN_OP_BAND_2_4_GHZ = 0,
 	NRF_WIFI_PTA_WLAN_OP_BAND_5_GHZ,
-
 	NRF_WIFI_PTA_WLAN_OP_BAND_NONE = 0xFF
 };
 
@@ -78,4 +77,4 @@ int nrf_wifi_coex_config_non_pta(bool separate_antennas);
  */
 int nrf_wifi_coex_hw_reset(void);
 
-#endif /* __ZEPHYR_FMAC_COEX_H__ */
+#endif /* __COEX_H__ */
