@@ -775,6 +775,7 @@ config MBEDTLS_PKCS5_C
 	prompt "Enable PKCS5 support"
 	default y
 	depends on MBEDTLS_MD_C
+	depends on MBEDTLS_CIPHER_PADDING_PKCS7
 
 config MBEDTLS_PK_WRITE_C
 	bool
