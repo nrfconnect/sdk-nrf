@@ -1,4 +1,5 @@
 .. _wifi_sr_coex_sample:
+.. _wifi_ble_coex_sample:
 
 Wi-Fi: Bluetooth LE coexistence
 ###############################
@@ -7,7 +8,7 @@ Wi-Fi: Bluetooth LE coexistence
    :local:
    :depth: 2
 
-The Bluetooth LE coexistence sample demonstrates coexistence between Wi-Fi® and Short Range (SR) radios in 2.4 GHz frequency.
+The Bluetooth LE coexistence sample demonstrates coexistence between Wi-Fi® and Bluetooth LE radios in 2.4 GHz frequency.
 The sample documentation includes details of test setup used, build procedure, test procedure and the results obtained when the sample is run on the nRF7002 DK.
 
 Requirements
@@ -69,7 +70,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/sr_coex/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/ble_coex/Kconfig`):
 
 .. _CONFIG_COEX_SEP_ANTENNAS:
 
@@ -182,7 +183,7 @@ Set up the following configuration parameters in the :file:`prj_nrf5340dk_nrf534
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/sr_coex`
+.. |sample path| replace:: :file:`samples/wifi/ble_coex`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -239,7 +240,7 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
      -DSHIELD=nrf7002ek_nrf7001 -Dhci_ipc_SHIELD=nrf7002ek_nrf7001_coex
 
-The generated HEX file to be used is :file:`sr_coex/build/zephyr/merged_domains.hex`.
+The generated HEX file to be used is :file:`ble_coex/build/zephyr/merged_domains.hex`.
 
 Use the Bluetooth throughput sample from the :file:`nrf/samples/bluetooth/throughput` folder on the peer nRF5340 DK device.
 
@@ -292,7 +293,7 @@ To program the nRF5340 DK:
 To program the nRF7002 DK:
 
 1. Open a new terminal in the test PC.
-#. Navigate to :file:`<ncs code>/nrf/samples/wifi/sr_coex/`.
+#. Navigate to :file:`<ncs code>/nrf/samples/wifi/ble_coex/`.
 #. Run the following command:
 
    .. code-block:: console

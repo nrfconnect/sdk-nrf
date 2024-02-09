@@ -96,20 +96,20 @@ static int cmd_wifi_status(void)
 	if (status.state >= WIFI_STATE_ASSOCIATED) {
 		uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
 
-		LOG_INF("Interface Mode: %s\n",
+		LOG_INF("Interface Mode: %s",
 		       wifi_mode_txt(status.iface_mode));
-		LOG_INF("Link Mode: %s\n",
+		LOG_INF("Link Mode: %s",
 		       wifi_link_mode_txt(status.link_mode));
-		LOG_INF("SSID: %.32s\n", status.ssid);
-		LOG_INF("BSSID: %s\n",
+		LOG_INF("SSID: %.32s", status.ssid);
+		LOG_INF("BSSID: %s",
 		       net_sprint_ll_addr_buf(
 				status.bssid, WIFI_MAC_ADDR_LEN,
 				mac_string_buf, sizeof(mac_string_buf)));
-		LOG_INF("Band: %s\n", wifi_band_txt(status.band));
-		LOG_INF("Channel: %d\n", status.channel);
-		LOG_INF("Security: %s\n", wifi_security_txt(status.security));
-		LOG_INF("MFP: %s\n", wifi_mfp_txt(status.mfp));
-		LOG_INF("RSSI: %d\n", status.rssi);
+		LOG_INF("Band: %s", wifi_band_txt(status.band));
+		LOG_INF("Channel: %d", status.channel);
+		LOG_INF("Security: %s", wifi_security_txt(status.security));
+		LOG_INF("MFP: %s", wifi_mfp_txt(status.mfp));
+		LOG_INF("RSSI: %d", status.rssi);
 	}
 
 	return 0;
@@ -363,10 +363,10 @@ int main(void)
 	int ret = 0;
 	bool test_wlan = IS_ENABLED(CONFIG_TEST_TYPE_WLAN);
 	bool test_ble = IS_ENABLED(CONFIG_TEST_TYPE_BLE);
-#ifdef CONFIG_NRF700X_BT_COEX
+#ifdef CONFIG_NRF700X_SR_COEX
 	enum nrf_wifi_pta_wlan_op_band wlan_band;
 	bool separate_antennas = IS_ENABLED(CONFIG_COEX_SEP_ANTENNAS);
-#endif /* CONFIG_NRF700X_BT_COEX */
+#endif /* CONFIG_NRF700X_SR_COEX */
 
 #if !defined(CONFIG_COEX_SEP_ANTENNAS) && \
 	!(defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
@@ -420,7 +420,7 @@ int main(void)
 			goto err;
 		}
 
-#ifdef CONFIG_NRF700X_BT_COEX
+#ifdef CONFIG_NRF700X_SR_COEX
 		/* Configure Coexistence Hardware */
 		LOG_INF("\n");
 		LOG_INF("Configuring non-PTA registers.\n");
@@ -442,7 +442,7 @@ int main(void)
 			LOG_ERR("Failed to configure PTA coex hardware: %d\n", ret);
 			goto err;
 		}
-#endif /* CONFIG_NRF700X_BT_COEX */
+#endif /* CONFIG_NRF700X_SR_COEX */
 	}
 
 	if (test_ble) {
