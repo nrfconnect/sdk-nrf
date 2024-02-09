@@ -8,6 +8,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <string.h>
 #include <zephyr/sys/__assert.h>
+#include <soc_nrf_common.h>
 
 #if !defined(CONFIG_MPSL_FEM_PIN_FORWARDER)
 #include <mpsl_fem_config_nrf21540_gpio.h>
@@ -30,24 +31,30 @@ static int fem_nrf21540_gpio_configure(void)
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
 	uint8_t txen_gpiote_channel;
+	const nrfx_gpiote_t txen_gpiote = NRFX_GPIOTE_INSTANCE(
+		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), tx_en_gpios));
 
-	if (nrfx_gpiote_channel_alloc(&txen_gpiote_channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(&txen_gpiote, &txen_gpiote_channel) != NRFX_SUCCESS) {
 		return -ENOMEM;
 	}
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
 	uint8_t rxen_gpiote_channel;
+	const nrfx_gpiote_t rxen_gpiote = NRFX_GPIOTE_INSTANCE(
+		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), rx_en_gpios));
 
-	if (nrfx_gpiote_channel_alloc(&rxen_gpiote_channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(&rxen_gpiote, &rxen_gpiote_channel) != NRFX_SUCCESS) {
 		return -ENOMEM;
 	}
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
 	uint8_t pdn_gpiote_channel;
+	const nrfx_gpiote_t pdn_gpiote = NRFX_GPIOTE_INSTANCE(
+		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), pdn_gpios));
 
-	if (nrfx_gpiote_channel_alloc(&pdn_gpiote_channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(&pdn_gpiote, &pdn_gpiote_channel) != NRFX_SUCCESS) {
 		return -ENOMEM;
 	}
 #endif
