@@ -84,6 +84,7 @@ Bluetooth Mesh
     The old APIs based on the :c:struct:`sensor_value` type are deprecated, but are still available for backward compatibility, and can be enabled for use by setting the :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE` Kconfig option.
   * :ref:`bt_mesh_ug_reserved_ids` with model ID and opcodes for the new :ref:`bt_mesh_le_pair_resp_readme` model.
   * :ref:`bt_mesh_light_ctrl_readme` APIs to match new Sensor APIs.
+  * :ref:`ug_bt_mesh_configuring` with the recommendation on how to configure persistent storage to increase performance.
 
 Matter
 ------
