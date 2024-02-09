@@ -273,6 +273,7 @@
   - "include/nrf_profiler.h"
   - "scripts/hid_configurator/**/*"
   - "subsys/bluetooth/services/**/*"
+  - "subsys/bluetooth/adv_prov/**/*"
   - "subsys/bluetooth/*"
   - "subsys/caf/**/*"
   - "subsys/app_event_manager/**/*"
