@@ -6,34 +6,14 @@
 
 #include "settings/settings_file.h"
 #include <zephyr/device.h>
-#include <zephyr/fs/fs.h>
-#include <zephyr/fs/littlefs.h>
 #include <zephyr/logging/log.h>
-
-#define STORAGE_PARTITION    storage_partition
-#define STORAGE_PARTITION_ID FIXED_PARTITION_ID(STORAGE_PARTITION)
 
 LOG_MODULE_REGISTER(persistent_key_usage_secure_storage, LOG_LEVEL_DBG);
 
-/* LittleFS work area strcut */
-FS_LITTLEFS_DECLARE_DEFAULT_CONFIG(cstorage);
-static struct fs_mount_t littlefs_mnt = {
-	.type = FS_LITTLEFS,
-	.fs_data = &cstorage,
-	.storage_dev = (void *)STORAGE_PARTITION_ID,
-	.mnt_point = "/0",
-};
-
 static int setup_settings_backend(void)
 {
-	int rc;
+	int rc = settings_subsys_init();
 
-	rc = fs_mount(&littlefs_mnt);
-	if (rc != 0) {
-		LOG_ERR("%s failed (ret %d)", __func__, rc);
-		return rc;
-	}
-	rc = settings_subsys_init();
 	if (rc != 0) {
 		LOG_ERR("%s failed (ret %d)", __func__, rc);
 		return rc;
