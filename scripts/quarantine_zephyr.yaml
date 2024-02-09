@@ -135,6 +135,8 @@
     - sample.tfm.regression_ipc_lvl1
     - sample.tfm.regression_ipc_lvl2
     - sample.tfm.regression_sfn
+    - sample.tfm.psa_test_internal_trusted_storage
+    - sample.tfm.psa_test_storage
   comment: "Won't be fixed - We have our own copy of these regression tests in nrf"
 
 - scenarios:
