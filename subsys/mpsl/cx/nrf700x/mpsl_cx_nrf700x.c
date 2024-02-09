@@ -24,6 +24,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/devicetree.h>
+#include <soc_nrf_common.h>
 
 #include "hal/nrf_gpio.h"
 #include <nrfx_gpiote.h>
@@ -56,6 +57,9 @@
 
 #define GRANT_PIN_PORT_NO  DT_PROP(DT_GPIO_CTLR(CX_NODE, grant_gpios), port)
 #define GRANT_PIN_PIN_NO   DT_GPIO_PIN(CX_NODE, grant_gpios)
+
+static const nrfx_gpiote_t gpiote =
+	NRFX_GPIOTE_INSTANCE(NRF_DT_GPIOTE_INST(CX_NODE, grant_gpios));
 
 static const struct gpio_dt_spec req_spec     = GPIO_DT_SPEC_GET(CX_NODE, req_gpios);
 static const struct gpio_dt_spec status0_spec = GPIO_DT_SPEC_GET(CX_NODE, status0_gpios);
@@ -227,9 +231,9 @@ static int32_t register_callback(mpsl_cx_cb_t cb)
 	callback = cb;
 
 	if (cb != NULL) {
-		nrfx_gpiote_trigger_enable(grant_abs_pin, true);
+		nrfx_gpiote_trigger_enable(&gpiote, grant_abs_pin, true);
 	} else {
-		nrfx_gpiote_trigger_disable(grant_abs_pin);
+		nrfx_gpiote_trigger_disable(&gpiote, grant_abs_pin);
 	}
 
 	return 0;
@@ -275,7 +279,7 @@ static int mpsl_cx_init(void)
 		return ret;
 	}
 	grant_abs_pin = NRF_GPIO_PIN_MAP(GRANT_PIN_PORT_NO, GRANT_PIN_PIN_NO);
-	nrfx_gpiote_trigger_disable(grant_abs_pin);
+	nrfx_gpiote_trigger_disable(&gpiote, grant_abs_pin);
 
 	gpio_init_callback(&grant_cb, gpiote_irq_handler, BIT(grant_spec.pin));
 	gpio_add_callback(grant_spec.port, &grant_cb);

@@ -16,6 +16,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/devicetree.h>
+#include <soc_nrf_common.h>
 #include <nrfx.h>
 #include <nrfx_ppi.h>
 #include <nrfx_gpiote.h>
@@ -55,10 +56,12 @@ static int mpsl_cx_bt_interface_1wire_config_set(void)
 	nrf_ppi_channel_t ppi_channel;
 	mpsl_coex_if_t coex_if_bt;
 	mpsl_coex_1wire_gpiote_if_t *coex_if = &coex_if_bt.interfaces.coex_1wire_gpiote;
+	const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(
+		NRF_DT_GPIOTE_INST(COEX_NODE, grant_gpios));
 
 	/* Allocate GPIOTE and PPI channels for the GRANT line */
 	gpiote_cfg = &coex_if->grant_cfg;
-	if (nrfx_gpiote_channel_alloc(&gpiote_cfg->gpiote_ch_id) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(&gpiote, &gpiote_cfg->gpiote_ch_id) != NRFX_SUCCESS) {
 		return -ENOMEM;
 	}
 	if (nrfx_ppi_channel_alloc(&ppi_channel) != NRFX_SUCCESS) {
