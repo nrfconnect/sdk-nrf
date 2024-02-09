@@ -44,6 +44,18 @@ LOG_MODULE_REGISTER(periph);
 #define PTT_CLK_TIMER 2
 
 static nrfx_timer_t clk_timer = NRFX_TIMER_INSTANCE(PTT_CLK_TIMER);
+
+#define GPIOTE_NODE(gpio_node) DT_PHANDLE(gpio_node, gpiote_instance)
+#define GPIOTE_INST_AND_COMMA(gpio_node) \
+	[DT_PROP(gpio_node, port)] = \
+		NRFX_GPIOTE_INSTANCE(DT_PROP(GPIOTE_NODE(gpio_node), instance)),
+
+static const nrfx_gpiote_t gpiote_inst[GPIO_COUNT] = {
+	DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, GPIOTE_INST_AND_COMMA)
+};
+
+#define NRF_GPIOTE_FOR_GPIO(idx)  &gpiote_inst[idx]
+#define NRF_GPIOTE_FOR_PSEL(psel) &gpiote_inst[psel >> 5]
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
 static const struct gpio_dt_spec led0 = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
@@ -79,8 +91,14 @@ void periph_init(void)
 	err_code = nrfx_timer_init(&clk_timer, &clk_timer_cfg, clk_timer_handler);
 	NRFX_ASSERT(err_code);
 
-	err_code = nrfx_gpiote_init(0);
-	NRFX_ASSERT(err_code);
+	for (int i = 0; i < GPIO_COUNT; ++i) {
+		const nrfx_gpiote_t *gpiote = NRF_GPIOTE_FOR_GPIO(i);
+
+		if (!nrfx_gpiote_init_check(gpiote)) {
+			err_code = nrfx_gpiote_init(gpiote, 0);
+			NRFX_ASSERT(err_code);
+		}
+	}
 #endif
 
 	assert(device_is_ready(led0.port));
@@ -107,6 +125,7 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
 	uint32_t compare_evt_addr;
 	nrfx_err_t err;
+	const nrfx_gpiote_t *gpiote = NRF_GPIOTE_FOR_PSEL(pin);
 
 	if (!nrf_gpio_pin_present_check(pin)) {
 		return false;
@@ -116,7 +135,7 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 		nrfx_timer_extended_compare(&clk_timer, (nrf_timer_cc_channel_t)0, 1,
 					    NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, false);
 
-		err = nrfx_gpiote_channel_alloc(&task_channel);
+		err = nrfx_gpiote_channel_alloc(gpiote, &task_channel);
 		if (err != NRFX_SUCCESS) {
 			LOG_ERR("nrfx_gpiote_channel_alloc error: %08x", err);
 			return false;
@@ -132,7 +151,7 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 		/* Initialize output pin. SET task will turn the LED on,
 		 * CLR will turn it off and OUT will toggle it.
 		 */
-		err = nrfx_gpiote_output_configure(pin, &config, &out_config);
+		err = nrfx_gpiote_output_configure(gpiote, pin, &config, &out_config);
 		if (err != NRFX_SUCCESS) {
 			LOG_ERR("nrfx_gpiote_output_configure error: %08x", err);
 			return false;
@@ -141,7 +160,7 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 		compare_evt_addr =
 			nrfx_timer_event_address_get(&clk_timer, NRF_TIMER_EVENT_COMPARE0);
 
-		nrfx_gpiote_out_task_enable(pin);
+		nrfx_gpiote_out_task_enable(gpiote, pin);
 
 		/* Allocate a (D)PPI channel. */
 		err = nrfx_gppi_channel_alloc(&ppi_channel);
@@ -153,7 +172,8 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 
 		nrfx_gppi_channel_endpoints_setup(
 			ppi_channel, compare_evt_addr,
-			nrf_gpiote_task_address_get(NRF_GPIOTE, nrfx_gpiote_in_event_get(pin)));
+			nrf_gpiote_task_address_get(gpiote->p_reg,
+						    nrfx_gpiote_in_event_get(gpiote, pin)));
 
 		/* Enable (D)PPI channel. */
 		nrfx_gppi_channels_enable(BIT(ppi_channel));
@@ -161,15 +181,15 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 		nrfx_timer_enable(&clk_timer);
 	} else {
 		nrfx_timer_disable(&clk_timer);
-		nrfx_gpiote_out_task_disable(pin);
+		nrfx_gpiote_out_task_disable(gpiote, pin);
 		err = nrfx_gppi_channel_free(ppi_channel);
 
 		if (err != NRFX_SUCCESS) {
 			LOG_ERR("Failed to disable (D)PPI channel, error: %08x", err);
 			return false;
 		}
-		nrfx_gpiote_pin_uninit(pin);
-		err = nrfx_gpiote_channel_free(task_channel);
+		nrfx_gpiote_pin_uninit(gpiote, pin);
+		err = nrfx_gpiote_channel_free(gpiote, task_channel);
 
 		if (err != NRFX_SUCCESS) {
 			LOG_ERR("Failed to disable GPIOTE channel, error: %08x", err);
