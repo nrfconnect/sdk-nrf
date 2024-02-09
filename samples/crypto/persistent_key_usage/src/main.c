@@ -73,7 +73,7 @@ int crypto_finish(void)
 	return APP_SUCCESS;
 }
 
-int generate_prersistent_key(void)
+int generate_persistent_key(void)
 {
 	psa_status_t status;
 
@@ -120,7 +120,7 @@ int main(void)
 		return APP_ERROR;
 	}
 
-	status = generate_prersistent_key();
+	status = generate_persistent_key();
 	if (status != APP_SUCCESS) {
 		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
