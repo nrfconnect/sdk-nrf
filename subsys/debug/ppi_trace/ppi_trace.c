@@ -46,6 +46,20 @@ LOG_MODULE_REGISTER(ppi_trace, CONFIG_PPI_TRACE_LOG_LEVEL);
 #define GET_START_CH(handle) GET_CH(handle)
 #define GET_STOP_CH(handle) (((uint32_t)handle >> 8) & 0xFF)
 
+#define GPIOTE_NODE(gpio_node) DT_PHANDLE(gpio_node, gpiote_instance)
+#define GPIOTE_INST_AND_COMMA(gpio_node) \
+	[DT_PROP(gpio_node, port)] = \
+		NRFX_GPIOTE_INSTANCE(DT_PROP(GPIOTE_NODE(gpio_node), instance)),
+
+static const nrfx_gpiote_t *get_gpiote(nrfx_gpiote_pin_t pin)
+{
+	static const nrfx_gpiote_t gpiote[GPIO_COUNT] = {
+		DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, GPIOTE_INST_AND_COMMA)
+	};
+
+	return &gpiote[pin >> 5];
+}
+
 /** @brief Allocate (D)PPI channel. */
 static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 {
@@ -110,15 +124,16 @@ static void ppi_disable(uint32_t channel_mask)
 static int gpiote_channel_alloc(uint32_t pin)
 {
 	uint8_t channel;
+	const nrfx_gpiote_t *gpiote = get_gpiote(pin);
 
-	if (nrfx_gpiote_channel_alloc(&channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(gpiote, &channel) != NRFX_SUCCESS) {
 		return -1;
 	}
 
-	nrf_gpiote_task_configure(NRF_GPIOTE, channel, pin,
+	nrf_gpiote_task_configure(gpiote->p_reg, channel, pin,
 				  NRF_GPIOTE_POLARITY_TOGGLE,
 				  NRF_GPIOTE_INITIAL_VALUE_LOW);
-	nrf_gpiote_task_enable(NRF_GPIOTE, channel);
+	nrf_gpiote_task_enable(gpiote->p_reg, channel);
 
 	return channel;
 }
@@ -144,7 +159,7 @@ void *ppi_trace_config(uint32_t pin, uint32_t evt)
 	}
 
 	task_id = offsetof(NRF_GPIOTE_Type, TASKS_OUT[gpiote_ch]);
-	task = nrf_gpiote_task_address_get(NRF_GPIOTE, task_id);
+	task = nrf_gpiote_task_address_get(get_gpiote(pin)->p_reg, task_id);
 	ppi_assign(ppi_ch, evt, task);
 
 	return HANDLE_ENCODE(ppi_ch);
@@ -187,9 +202,9 @@ void *ppi_trace_pair_config(uint32_t pin, uint32_t start_evt, uint32_t stop_evt)
 	task_set_id = offsetof(NRF_GPIOTE_Type, TASKS_SET[gpiote_ch]);
 	task_clr_id = offsetof(NRF_GPIOTE_Type, TASKS_CLR[gpiote_ch]);
 
-	task = nrf_gpiote_task_address_get(NRF_GPIOTE, task_set_id);
+	task = nrf_gpiote_task_address_get(get_gpiote(pin)->p_reg, task_set_id);
 	ppi_assign(start_ch, start_evt, task);
-	task = nrf_gpiote_task_address_get(NRF_GPIOTE, task_clr_id);
+	task = nrf_gpiote_task_address_get(get_gpiote(pin)->p_reg, task_clr_id);
 	ppi_assign(stop_ch, stop_evt, task);
 
 	return HANDLE_ENCODE(PACK_CHANNELS(start_ch, stop_ch));
