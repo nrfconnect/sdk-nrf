@@ -331,7 +331,15 @@ void AppTask::UpdateLedState()
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
+#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+	ReturnErrorOnFailure(
+		Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = []() -> CHIP_ERROR {
+			Nrf::GetDFUOverSMP().StartServer();
+			return CHIP_NO_ERROR;
+		} }));
+#else
 	ReturnErrorOnFailure(Nrf::Matter::PrepareServer());
+#endif
 
 	/* Set references for RGB LED */
 	mRedLED = &Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED1);
@@ -382,10 +390,6 @@ CHIP_ERROR AppTask::Init()
 	k_timer_init(
 		&sIdentifyTimer, [](k_timer *) { Nrf::PostTask([] { IdentifyTimerHandler(); }); }, nullptr);
 	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs), K_MSEC(kMeasurementsIntervalMs));
-
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-	Nrf::GetDFUOverSMP().StartServer();
-#endif
 
 	return Nrf::Matter::StartServer();
 }
