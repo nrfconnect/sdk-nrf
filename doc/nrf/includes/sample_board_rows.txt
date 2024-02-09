@@ -197,3 +197,23 @@
 .. native_sim
 
 | Native Simulator | | native_sim | ``native_sim`` |
+
+.. nrf54h20dk_nrf54h20_cpuapp@soc1
+
+| :ref:`nRF54H20 PDK <ug_nrf54h20_gs>` | | ``nrf54h20pdk_nrf54h20_cpuapp`` | ``nrf54h20pdk_nrf54h20_cpuapp@soc1`` |
+
+.. nrf54h20pdk_nrf54h20_cpurad@soc1
+
+| :ref:`nRF54H20 PDK <ug_nrf54h20_gs>` | | ``nrf54h20pdk_nrf54h20_cpurad`` | ``nrf54h20pdk_nrf54h20_cpurad@soc1`` |
+
+.. nrf54h20pdk_nrf54h20_cpuapp
+
+| :ref:`nRF54H20 PDK <ug_nrf54h20_gs>` | | ``nrf54h20pdk_nrf54h20_cpuapp`` | ``nrf54h20pdk_nrf54h20_cpuapp`` |
+
+.. nrf54h20pdk_nrf54h20_cpurad
+
+| :ref:`nRF54H20 PDK <ug_nrf54h20_gs>` | | ``nrf54h20pdk_nrf54h20_cpurad`` | ``nrf54h20pdk_nrf54h20_cpurad`` |
+
+.. nrf54l15pdk_nrf54l15_cpuapp@soc1
+
+| :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | | ``nrf54l15pdk_nrf54l15_cpuapp`` | ``nrf54l15pdk_nrf54l15_cpuapp@soc1`` |

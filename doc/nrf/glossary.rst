@@ -15,6 +15,9 @@ Glossary
       In the |NCS|, it uses ``APPROTECT`` registers and several Kconfig options, as described in :ref:`app_approtect`.
       See also :term:`Secure access port protection mechanism (Secure AP-Protect)`.
 
+   Advanced eXtensible Interface (AXI) Communication
+      A system that transfers data between components inside a computer or between computers.
+
    AHB Access Port (AHB-AP)
       An Arm Coresight component that allows a debug probe to access CPU cores for programming and debugging.
       Access through the AHB-AP can be blocked with :term:`Access port protection mechanism (AP-Protect)`.
@@ -58,6 +61,13 @@ Glossary
 
    Basic Service Set Identifier (BSSID)
       The MAC address of an access point.
+
+   BELLBOARD
+      A peripheral associated with a given core that provides support for the inter-domain SW signaling.
+      It includes a set of tasks and events intended for signaling within an interprocessor communication (IPC) framework.
+
+   Bill of materials (BoM)
+      List of the raw materials, sub-assemblies, intermediate assemblies, sub-components, parts, and the quantities of each needed to manufacture an end product.
 
    Binary Convolutional Codes (BCC)
       A type of error-correcting code that generates parity symbols using the sliding application of a boolean polynomial function to a data stream.
@@ -145,12 +155,19 @@ Glossary
    Contribution
       A change to the codebase sent to a remote :term:`repository <Repository>` for inclusion.
 
+   Core
+      Subsets of :term:`domains <Domain>`.
+      Most memory and peripherals can be flexibly allocated to cores at compile time.
+
    Cortex Microcontroller Software Interface Standard (CMSIS)
       A vendor-independent hardware abstraction layer for the Cortex-M processor series that defines generic tool interfaces.
 
    Cortex-M Security Extensions (CMSE)
       A group term for different security extensions for the Arm Cortex-M33 processor.
       In the |NCS|, this term is used in the context of `ARM TrustZone`_ and :ref:`app_boards_spe_nspe` (:term:`Non-Secure Processing Environment (NSPE)` and :term:`Secure Processing Environment (SPE)`).
+
+   CRACEN
+      A hardware cryptographic engine within nRF54H devices.
 
    Data Terminal Ready (DTR)
       A control signal in RS-232 serial communications transmitted from data terminal equipment, such as a computer, to data communication equipment.
@@ -175,6 +192,9 @@ Glossary
    Device Under Test (DUT)
       A manufactured product undergoing testing.
 
+   Dynamic Voltage and Frequency Scaling (DVFS)
+      A power management technique that allows adjusting the operating voltage and operating frequency of a CPU, depending on the workload.
+
    Docker
       A set of software tools using OS-level virtualization to create and run applications and their dependencies in self-contained environments called :term:`Docker containers <Docker container>`.
 
@@ -187,6 +207,10 @@ Glossary
 
    Docker engine
       The :term:`Docker container` runtime that runs :term:`Docker images <Docker container image>`.
+
+   Domain
+      Functional blocks included in the system/SoC.
+      Contains the user-programmable main CPU and its associated functions.
 
    Domain Name System (DNS)
       A hierarchical distributed naming system for computers, services, or any resource connected to the Internet or a private network.
@@ -201,11 +225,19 @@ Glossary
       A :term:`repository <Repository>` located downstream, relative to another repository, in the flow of information.
       See :ref:`dm_repo_types`.
 
+   Easy Direct Memory Access (EasyDMA)
+      A module that some peripherals implement to gain direct access to data RAM.
+
    Embedded Universal Integrated Circuit Card (eUICC)
       A component of a SIM card that enables switching Mobile Network Operators over-the-air.
 
    Endpoint
       In the context of a :ref:`Matter <ug_matter>` or :ref:`Zigbee <ug_zigbee>` network, an addressable container that contains *clusters* appropriate for a single device type such as a sensor or a light bulb.
+
+   Enhanced ShockBurst (ESB)
+      A basic protocol supporting two-way data packet communication including packet buffering, packet acknowledgment, and automatic retransmission of lost packets.
+      ESB provides radio communication with low power consumption.
+      The implementation is small in code size and easy to use.
 
    Ephemeris data
       In the :term:`Global Navigation Satellite System (GNSS)`, the data providing information about the orbit of the satellite transmitting it.
@@ -226,6 +258,16 @@ Glossary
    Extended Discontinuous Reception (eDRX)
       A method to conserve the battery of an Internet of Things (IoT) device by allowing it to remain inactive for extended periods.
 
+   External Memory Interface (EXMIF)
+      A bus protocol for communication from an integrated circuit, such as a microprocessor, to an external memory device located on a circuit board.
+
+   External Memory Interface Encryption Engine (EXMEE)
+      A peripheral that supports on-the-fly encryption and authentication for the memory connected to EXMIF.
+      The AES tweaked mode is used to provide encryption, and one of single hash, granular hash, or Merkle tree is used to provide authentication, using the SHA3 algorithm.
+
+   Fast Lightweight Processor (FLPR, pronounced “Flipper”)
+      A processor that is located in the high-speed portion of the Global Domain primarily intended to implement software-defined peripheral functions.
+
    Firmware Over-the-Air (FOTA) update
       A firmware update performed remotely over-the-air (OTA).
 
@@ -241,6 +283,12 @@ Glossary
 
    Frequency Division Duplex (FDD)
       A method used in wireless communication that uses different frequencies for uplink and downlink, which allows the user to transmit and receive simultaneously.
+
+   Frequency-locked loop (FLL)
+      An electronic control system that generates a signal that is locked to the frequency of an input or "reference" signal.
+
+   Fully Depleted Silicon-on-Insulator (FD-SOI)
+      A type of SOI technology that uses a thin layer of silicon that is fully depleted of electrons.
 
    GitHub fork
       A `GitHub fork`_ is a copy of a repository inside GitHub, that allows the user to create a :term:`Pull Request`.
@@ -318,6 +366,9 @@ Glossary
    Internet Protocol version 6 (IPv6)
       The latest version of the Internet Protocol (IP).
       It is the communications protocol that provides an identification and location system for computers on networks and routes traffic across the Internet.
+
+   Interprocessor Communication Transceiver (IPCT)
+      A peripheral used for direct signalling between peripherals in other domains.
 
    IPv4 address
       A numerical label that is used to identify a network interface of a computer or other network node participating in an IPv4 computer network.
@@ -415,12 +466,21 @@ Glossary
    MCUboot
       A secure bootloader for 32-bit microcontroller units, which is independent of hardware and operating system.
 
-   Mcumgr
+   MCUmgr
       A management library for 32-bit MCUs.
       It uses the :term:`Simple Management Protocol (SMP)`.
 
    Media Access Control address (MAC address)
       The unique 48-bit serial number in the network circuitry of every Ethernet and Wi-Fi device.
+
+   Memory Privilege Controller (MPC)
+      Performs security configuration, enforcement, and bus decoding.
+      It implements security filtering, checking bus accesses against the configured access properties and blocking any unauthorized accesses.
+
+   Memory-to-memory Vector Direct Memory Access (MVDMA)
+      A peripheral capable of copying data from one memory address to another memory address.
+      It is not a complement to the EasyDMA (:term:`Easy Direct Memory Access (EasyDMA)`).
+      The scatter-gather property applies to MVDMA as well.
 
    Memory Watch Unit (MWU)
       A peripheral that can be used to generate events when a memory region is accessed by the CPU.
@@ -550,14 +610,31 @@ Glossary
       It does not require a repository.
       Sometimes it is improperly used as a synonym of :term:`commit <Commit>`.
 
+   Peripheral Processor (PPR, pronounced “Pepper”)
+      A processor that is located in the low-leakage portion of the Global Domain and is primarily intended to:
+
+         * Handle peripherals in low-power states while the main processors are in sleep mode.
+         * Coordinate peripherals.
+         * Implement low-level protocols for communicating with sensors and actuators
+
    Personal Unblocking Key (PUK)
       A key used to reset a PIN that has been lost or forgotten for a SIM card.
+
+   Physically Unclonable Function (PUF)
+      A function device that exploits inherent randomness introduced during manufacturing to give a physical entity a unique "fingerprint" or a trust anchor.
+
+   Platform Security Architecture Certified (PSA Certified)
+      A security certification scheme for Internet of Things (IoT) hardware, software and devices.
 
    Power Amplifier (PA)
       A device used to increase the transmit power level of a radio signal.
 
    Power Management Integrated Circuit (PMIC)
       A chip used for various functions related to power management.
+
+   Power Management Service
+      A service that automatically handles the settings described by an application.
+      It decides how registers will be retained, which parts of the device are put into what mode, and what clock signals are running.
 
    Power Saving Mode (PSM)
       A feature introduced in 3GPP Release 12 to improve the battery life of IoT (Internet of Things) devices by minimizing energy consumption.
@@ -594,6 +671,9 @@ Glossary
 
    Pull Request
       A set of :term:`commits <Commit>` that are sent as a :term:`contribution <Contribution>` to a Git :term:`repository <Repository>`.
+
+   Quad Serial Peripheral Interface (QSPI)
+      A peripheral that provides support for communicating with an external flash memory device using SPI.
 
    Qualified Design Identification (QDID)
       A unique identifier assigned to a design that has completed the Bluetooth Qualification Process.
@@ -666,6 +746,19 @@ Glossary
       In the |NCS|, it uses ``SECUREAPPROTECT`` registers and several Kconfig options, as described in :ref:`app_approtect`.
       See also :term:`Access port protection mechanism (AP-Protect)`.
 
+   Secure domain (SecDom)
+      A dedicated :term:`Domain` which executes a pre-compiled firmware component that is signed by Nordic Semiconductor.
+      It exposes security services to the other domains through an Interprocess Communication interface.
+
+   Serial Peripheral Interface (SPI)
+      An interface bus commonly used to send data between microcontrollers and small peripherals such as shift registers, sensors, and SD cards.
+
+   Serial Peripheral Interface Master (SPIM)
+      A peripheral that can communicate with multiple slaves using individual chip select signals for each of the slave devices attached to a bus.
+
+   Serial Peripheral Interface Slave (SPIS)
+      A peripheral used for ultra-low power serial communication from an external SPI master.
+
    Secure Processing Environment (SPE)
       One of the two processing environments when using Cortex-M Security Extensions.
       When firmware is separated between :term:`Non-Secure Processing Environment (NSPE)` and SPE, SPE is used to store security features.
@@ -686,7 +779,7 @@ Glossary
       The level of signal power compared to the level of noise power, often expressed in decibels (dB).
 
    Simple Management Protocol (SMP)
-      A transport protocol used by :term:`Mcumgr`.
+      A transport protocol used by :term:`MCUmgr`.
 
    Simple Network Time Protocol (SNTP)
       A less complex implementation of :term:`Network Time Protocol (NTP)`, using the same protocol but without requiring the storage of state over extended periods of time.
@@ -704,6 +797,10 @@ Glossary
    Software Development Kit (SDK)
       A set of tools used for developing applications for a specific device or operating system.
 
+   Spin-Transfer Torque Magneto-Resistive Random Access Memory (MRAM (STT-MRAM))
+      An alternative :term:`Non-volatile memory (NVM)` to flash memory.
+      Compared to flash, MRAM does not have to be erased before writing and can simply be written, making it easier to use.
+
    Spinel
       A general management protocol for enabling a host device to communicate with and manage co-processors, like a network co-processor (NCP) or a radio co-processor (RCP).
 
@@ -716,6 +813,9 @@ Glossary
 
    Supervisor Call (SVC)
       It generates a software exception in which access to system resources or privileged operations can be provided.
+
+   System Controller
+      A :term:`VPR Core` that implements system startup and power management functionalities that in the past would have been implemented in hardware.
 
    System in Package (SiP)
       Several integrated circuits, often from different technologies, enclosed in a single module that performs as a system or subsystem.
@@ -734,6 +834,10 @@ Glossary
       A function that allows an access point to define a specific time or set of times for individual devices to access the wireless network.
       It is the mechanism that allows devices to negotiate when and how often they turn on and off, based on when they need to send and receive data.
 
+   Tightly Coupled Memory (TCM)
+      Part of RAM which provides a low-latency memory access that the core can use with predictable access time.
+      Unlike cached memories for which the access latency is unpredictable.
+
    Temporal Key Integrity Protocol (TKIP)
       A security protocol used in the IEEE 802.11 wireless networking standard.
 
@@ -743,6 +847,15 @@ Glossary
    Time to First Fix (TTFF)
       The time needed by a :term:`Global Navigation Satellite System (GNSS)` module to estimate its position.
 
+   TIMER
+      A peripheral that runs on the high-frequency clock source (HFCLK) and includes a four-bit (1/2X) prescaler that can divide the timer input clock from the HFCLK controller.
+      It can operate in two modes: timer and counter.
+
+   Toolchain
+      A set of development tools: compiler, assembler, and linker.
+      The Zephyr SDK includes this set plus a couple more Zephyr-specific tools.
+      The |NCS| toolchain is based on the Zephyr SDK and then adds on top of it a :ref:`set of tools and modules specific to the nRF Connect SDK <requirements>` that are required to build |NCS| samples and applications.
+
    Traffic Indication Map (TIM)
       A field in the Wi-Fi access point's beacon frame containing information about which Wi-Fi stations have buffered data waiting for them.
       This allows devices in power save mode to remain in a low-power state until they have data waiting for them.
@@ -751,13 +864,14 @@ Glossary
       A connection-oriented protocol that provides reliable transport.
       This reliability comes at the cost of control packets overhead of the protocol itself, making it unsuitable for bandwidth-constrained applications.
 
-   Toolchain
-      A set of development tools: compiler, assembler, and linker.
-      The Zephyr SDK includes this set plus a couple more Zephyr-specific tools.
-      The |NCS| toolchain is based on the Zephyr SDK and then adds on top of it a :ref:`set of tools and modules specific to the nRF Connect SDK <requirements>` that are required to build |NCS| samples and applications.
-
    Transmit Data (TXD)
       A signal line in a serial interface that transmits data to another device.
+
+   Trusted Third Party (TTP)
+      An entity which facilitates interactions between two parties who both trust the third party.
+
+   TrustZone
+      Provides a cost-effective methodology to isolate security-critical components in an ARM Cortex CPU by hardware separating a rich operating system from smaller, secure operating system.
 
    UART Hardware Flow Control (UART HWFC)
       A handshaking mechanism used to prevent a buffer overflow in the receiver (in embedded computing use cases).
@@ -796,6 +910,18 @@ Glossary
 
    Version
       A string that identifies a project release.
+
+   VPR Core
+      Pronounced "Viper Core", a :term:`Core` that is compatible with the RISC-V instruction set, meaning the industry-standard RISC-V development tools can be used.
+      VPR implements the RV32E instruction set (Base Integer Instruction Set (embedded) - 32 bit, 16 registers) and the following extensions:
+
+         * M: Multiply and divide extension
+         * C: Compressed extension (compressed instructions)
+
+      The nRF54H20 PDK uses several VPR cores: :term:`Fast Lightweight Processor (FLPR, pronounced “Flipper”)`, :term:`Peripheral Processor (PPR, pronounced “Pepper”)` and :term:`System Controller`.
+
+   VPR Event Interface (VEVIF)
+      A real-time peripheral that allows interaction with the VPR's interrupts and the PPI system in the domain where the VPR is instantiated.
 
    Watchdog timer (WDT)
       A timer that causes a system reset if it is not poked periodically.

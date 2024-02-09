@@ -1503,3 +1503,5 @@
 .. _`nRF Sniffer for Bluetooth LE`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_sniffer_ble%2FUG%2Fsniffer_ble%2Fintro.html
 .. _`Git for Windows`: https://git-scm.com/download/win
 .. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html
+
+.. _`nRF7002 EK`: https://infocenter.nordicsemi.com/topic/ug_nrf7002_ek/UG/nrf7002_EK/intro.html
