@@ -320,22 +320,6 @@ If you want to use |NCS| to build the firmware image separated in SPE with TF-M 
 
 #. Build the application firmware for the network core using the ``nrf7002dk_nrf5340_cpunet`` build target.
 
-
-Building the secure firmware using |NCS|
-----------------------------------------
-
-If you want to use |NCS| to build the firmware images with CMSE enabled, but without TF-M, complete the following steps:
-
-1. Build the |NCS| application binary for SPE for the application core using the ``nrf7002dk_nrf5340_cpuapp`` build target.
-
-   Also set :kconfig:option:`CONFIG_TRUSTED_EXECUTION_SECURE` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n`` in the application project configuration file.
-#. Build the |NCS| application binary for NSPE for the application core using the ``nrf7002dk_nrf5340_cpuapp_ns`` build target.
-#. Merge the two binaries.
-#. Build the application firmware for the network core using the ``nrf7002dk_nrf5340_cpunet`` build target.
-
-When building application with SPE and NSPE for the nRF5340 application core, the SPE image must set the IDAU (SPU) configuration to allow non-secure access to all CPU resources used by the application firmware in NSPE.
-SPU configuration must be applied before jumping to the application in NSPE.
-
 Building application without CMSE
 =================================
 
