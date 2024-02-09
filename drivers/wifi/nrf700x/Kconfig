@@ -208,7 +208,7 @@ config NRF700X_ON_SPI
 
 # RF switch based coexistence
 config NRF700X_RADIO_COEX
-	def_bool $(dt_nodelabel_has_prop,nrf_radio_coex,btrf-switch-gpios)
+	def_bool $(dt_nodelabel_has_prop,nrf_radio_coex,sr-rf-switch-gpios)
 
 config NRF700X_WORKQ_STACK_SIZE
 	int "Stack size for workqueue"
@@ -226,8 +226,8 @@ config NRF700X_UTIL
 	depends on SHELL
 	bool "Enable Utility shell in nRF700x driver"
 
-config NRF700X_BT_COEX
-	bool "Enable Wi-Fi Bluetooth coexistence support"
+config NRF700X_SR_COEX
+	bool "Enable Wi-Fi and SR coexistence support"
 	depends on SOC_NRF5340_CPUAPP_QKAA
 	default y if SOC_NRF5340_CPUAPP_QKAA
 

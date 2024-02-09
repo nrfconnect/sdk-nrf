@@ -32,7 +32,7 @@ zephyr_include_directories_ifndef(CONFIG_NRF700X_RADIO_TEST
   ${OS_AGNOSTIC_BASE}/fw_if/umac_if/inc/default
 )
 
-zephyr_library_sources_ifdef(CONFIG_NRF700X_BT_COEX
+zephyr_library_sources_ifdef(CONFIG_NRF700X_SR_COEX
   src/coex.c
 )
 
