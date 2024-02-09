@@ -3,6 +3,13 @@ sample:
 tests:
   sample.net.download_client:
     build_only: true
+    integration_platforms:
+      - nrf9161dk_nrf9161_ns
+    platform_allow:
+      - nrf9161dk_nrf9161_ns
+    tags: ci_build
+  sample.net.download_client.ci:
+    build_only: true
     extra_configs:
       - CONFIG_SHELL=y
       - CONFIG_COAP=y
