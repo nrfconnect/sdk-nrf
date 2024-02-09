@@ -182,11 +182,26 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	# option is propagated to the MCUboot child image automatically.
 	depends on PM_EXTERNAL_FLASH_ENABLED || MCUBOOT
 	default y if BOOTLOADER_MCUBOOT
+	imply PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY_1
+	help
+	  Place the secondary partition of MCUboot image 0 in the external flash
+	  instead of the internal flash. This option should only be enabled by
+	  the user in the parent image. The value of this option is propagated to
+	  the MCUboot child image automatically.
+
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY_1
+	bool "Place MCUboot secondary 1 in external flash"
+	depends on BOOTLOADER_MCUBOOT || MCUBOOT
+	# Only depend on the chosen for the parent image.
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH)) || MCUBOOT
+	depends on UPDATEABLE_IMAGE_NUMBER > 1 || !MCUBOOT
+	default y if BOOTLOADER_MCUBOOT
 	imply ADD_MCUBOOT_MEDIATE_SIM_FLASH_DTS
 	help
-	  Place the secondary partition of MCUboot in the external flash instead
-	  of the internal flash. This option should only be enabled by the user
-	  in the parent image.
+	  Place the secondary partition of MCUboot image 1 in the external flash
+	  instead of the internal flash. This option should only be enabled by
+	  the user in the parent image. The value of this option is propagated
+	  to the MCUboot child image automatically.
 
 config PM_IMAGE_NOT_BUILT_FROM_SOURCE
 	bool
