@@ -9,17 +9,7 @@ Working with nRF54H20 and Matter and Thread
    :local:
    :depth: 2
 
-.. caution::
-
-   The limited customer sampling version of the |NCS| is affected by the OpenThread KeyID Mode 2 Security Vulnerability.
-   This vulnerability impacts all Thread devices using OpenThread and allows an attacker in physical proximity to compromise non-router-capable devices and the entire Thread network in the case of router-capable devices.
-   The vulnerability allows an attacker in physical proximity to inject arbitrary IPv6 packets into the Thread network via IEEE 802.15.4 frame transmissions.
-   Because the Thread Management Framework (TMF) protocol does not have any additional layer of security, the attacker could exploit this vulnerability to update the Thread Network Key and gain full access to the Thread network.
-   There is no known exploitation of vulnerability.
-
-   Due to this issue, the Thread certifications for OpenThread libraries in all |NCS| releases up to v2.4.0, which the limited customer sampling is based on, are deprecated.
-
-Starting with the ``v2.2.99-cs1-dev1`` limited customer sampling tag, the nRF54H20 PDK supports the following Matter and Thread samples:
+The nRF54H20 PDK supports the following Matter and Thread samples:
 
 * :ref:`Matter door lock sample <matter_lock_sample>`
 * :ref:`Matter template sample <matter_template_sample>`
@@ -137,7 +127,7 @@ Additional requirements on the nRF54H20 PDK
 In addition to the standard requirements for the |NCS|, such as the :ref:`ug_matter_gs_tools_gn` for Matter, you need the following to run Matter-enabled or Thread-enabled applications on the nRF54H20 PDK:
 
 * For DFU - J-Link and a USB cable.
-* The compatible version of the nrfjprog tool, included in the :ref:`nRF Command Line Tools version specific to the limited customer sampling<nrf54h20_install_commandline>`.
+* nrfjprog from the `nRF Command Line Tools`_.
 
 Configuring Matter and Thread on the nRF54H20 PDK
 *************************************************
@@ -148,7 +138,7 @@ Follow the configuration steps on the :ref:`ug_matter_gs_testing` page to config
 Currently, only the :ref:`ot_cli_sample` sample is supported for Thread.
 See the sample documentation for how to configure it.
 
-The Matter and Thread samples included in the limited customer sampling can work on the corresponding networks with standard devices of the same protocol.
+The Matter and Thread samples can work on the corresponding networks with standard devices of the same protocol.
 
 Programming Matter and Thread samples on the nRF54H20 PDK
 =========================================================
