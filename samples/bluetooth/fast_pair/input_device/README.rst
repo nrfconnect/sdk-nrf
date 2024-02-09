@@ -74,7 +74,7 @@ By default, if Model ID and Anti-Spoofing Private Key are not specified, the fol
 
 See :ref:`ug_bt_fast_pair_provisioning` in the Fast Pair user guide for details.
 
-.. include:: /applications/nrf_desktop/README.rst
+.. include:: /applications/nrf_desktop/description.rst
    :start-after: nrf_desktop_fastpair_important_start
    :end-before: nrf_desktop_fastpair_important_end
 

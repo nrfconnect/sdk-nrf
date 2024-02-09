@@ -334,6 +334,17 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
+* Added:
+
+  * The :ref:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT <config_desktop_app_options>` Kconfig option to the :ref:`nrf_desktop_hid_state`.
+    The option allows to configure a maximum number of simultaneously supported HID data subscribers.
+    By default, the value of this Kconfig option is set to ``1``.
+    Make sure to align the value in your application configuration.
+    For example, to allow subscribing for HID reports simultaneously from the :ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state` (a single USB HID instance), you must set the value of this Kconfig option to ``2``.
+  * The pin control (:kconfig:option:`CONFIG_PINCTRL`) dependency to the :ref:`nrf_desktop_wheel`.
+    The dependency simplifies accessing **A** and **B** QDEC pins in the wheel module's implementation.
+    The pin control is selected by the QDEC driver (:kconfig:option:`CONFIG_QDEC_NRFX`).
+
 * Updated:
 
   * The :ref:`nrf_desktop_dfu` to use :ref:`partition_manager` definitions for determining currently booted image slot in build time.
@@ -365,17 +376,7 @@ nRF Desktop
     The option is enabled by default by the nRF Desktop application.
     Force power down on disconnection with reason ``0x15`` (Remote Device Terminated due to Power Off) is triggered to avoid waking up HID host until user input is detected.
   * The :ref:`nrf_desktop_wheel` configuration to allow using **GPIO1** for scroll wheel.
-
-* Added:
-
-  * The :ref:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT <config_desktop_app_options>` Kconfig option to the :ref:`nrf_desktop_hid_state`.
-    The option allows to configure a maximum number of simultaneously supported HID data subscribers.
-    By default, the value of this Kconfig option is set to ``1``.
-    Make sure to align the value in your application configuration.
-    For example, to allow subscribing for HID reports simultaneously from the :ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state` (a single USB HID instance), you must set the value of this Kconfig option to ``2``.
-  * The pin control (:kconfig:option:`CONFIG_PINCTRL`) dependency to the :ref:`nrf_desktop_wheel`.
-    The dependency simplifies accessing **A** and **B** QDEC pins in the wheel module's implementation.
-    The pin control is selected by the QDEC driver (:kconfig:option:`CONFIG_QDEC_NRFX`).
+  * The :ref:`application documentation <nrf_desktop>` by splitting it into several pages.
 
 Thingy:53: Matter weather station
 ---------------------------------
