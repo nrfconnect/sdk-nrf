@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ /{
+	allocatable_ram {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* Configure PPR memory region. Allow to use defined RAM3x
+		 * region by App and cores owned by App.
+		 */
+		ram3x_app_ppr: memory@2fc00000 {
+			compatible = "nordic,allocatable-ram";
+			reg = <0x2fc00000 DT_SIZE_K(32)>;
+			perm-read;
+			perm-write;
+			perm-execute;
+		};
+	};
+
+	chosen {
+		zephyr,console = &uart136;
+	};
+};
+
+/* Remove shared area node and use its space for extending cpuppr_sram */
+/delete-node/ &ipc_shm_area_cpuapp_cpuppr;
+/delete-node/ &ipc_to_cpuppr;
+
+&ppr_code {
+	reg = <0xe126000 DT_SIZE_K(28)>;
+};
+
+&cpuppr_sram {
+	reg = <0x0 DT_SIZE_K(28)>;
+	ranges = <0x0 0x0 DT_SIZE_K(28)>;
+};
+
+&cpuppr {
+	loader-img-src = <&ppr_code>;
+	loader-img-dst = <&cpuppr_sram>;
+	status = "okay";
+};
+
+/* ram3x_cpuapp buffer is used by App core UART driver. */
+&ram3x_cpuapp {
+	status = "okay";
+};
+
+&uart136 {
+	status = "okay";
+	memory-regions = <&ram3x_cpuapp>;
+};
+
+/* Configure PPR UART. */
+&uart135 {
+	status = "reserved";
+};
+
+&grtc {
+	status = "okay";
+};
+
+/* Disable systick for App core, GRTC is used as tick source. */
+&systick {
+	status = "disabled";
+};

@@ -17,3 +17,26 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     tags: ci_build
     extra_args: -DCONFIG_BOOTLOADER_MCUBOOT=y
+  sample.multicore.hello_world.nrf54h20:
+    build_only: true
+    sysbuild: true
+    platform_allow: nrf54h20pdk_nrf54h20_cpuapp@soc1
+    integration_platforms:
+      - nrf54h20pdk_nrf54h20_cpuapp@soc1
+    tags: ci_build
+  sample.multicore.hello_world.nrf54h20.stm_logging_fsc_frontend:
+    build_only: true
+    sysbuild: true
+    platform_allow: nrf54h20pdk_nrf54h20_cpuapp@soc1
+    integration_platforms:
+      - nrf54h20pdk_nrf54h20_cpuapp@soc1
+    tags: ci_build
+    extra_args:
+      DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpuapp_soc1_stm_logging.overlay
+      remote_DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpuppr_soc1_stm_logging.overlay
+      remote_CONFIG_LOG_STM=y remote_CONFIG_UART_CONSOLE=n remote_CONFIG_CONSOLE=n
+      CONFIG_LOG_STM=y
+      CONFIG_SECDOM_STM_LOGGING_SUPPORT=y
+      CONFIG_SERIAL=n
+      CONFIG_CONSOLE=n
+      remote_CONFIG_XIP=y

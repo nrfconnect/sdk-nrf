@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	chosen {
+		zephyr,console = &uart135;
+		zephyr,code-partition = &mram0;
+	};
+};
+
+&uart135 {
+	status = "okay";
+};
+
+/* Remove shared area node and use its space for extending cpuppr_sram */
+/delete-node/ &ipc_shm_area_cpuapp_cpuppr;
+/delete-node/ &ipc_to_cpuapp;
+
+&cpuppr_sram {
+	reg = <0x0 DT_SIZE_K(28)>;
+	ranges = <0x0 0x0 DT_SIZE_K(28)>;
+};

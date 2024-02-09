@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ /{
+	allocatable_ram {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* Configure PPR memory region. Allow to use defined RAM
+		 * region by App and cores owned by App.
+		 */
+		ram3x_app_ppr: memory@2fc00000 {
+			compatible = "nordic,allocatable-ram";
+			reg = <0x2fc00000 DT_SIZE_K(32)>;
+			perm-read;
+			perm-write;
+		};
+
+		ppr_stmesp: memory@ae000000 {
+			compatible = "nordic,allocatable-ram";
+			reg = <0xae000000 DT_SIZE_K(16384)>;
+			perm-read;
+			perm-write;
+		};
+	};
+};
+
+&cpuppr {
+	loader-img-dst = <&ppr_code>;
+	status = "okay";
+};
+
+&grtc {
+	status = "okay";
+};
+
+/* Disable systick for App core, GRTC is used as tick source. */
+&systick {
+	status = "disabled";
+};

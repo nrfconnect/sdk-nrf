@@ -1,0 +1,16 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	soc {
+		stmesp: memory@ae000000 {
+			compatible = "nordic,allocatable-ram";
+			reg = <0xae000000 DT_SIZE_K(16384)>;
+			perm-read;
+			perm-write;
+		};
+	};
+};
