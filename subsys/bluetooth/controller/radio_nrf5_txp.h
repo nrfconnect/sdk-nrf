@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #if defined(CONFIG_BT_CTLR_TX_PWR_0) && CONFIG_BT_CTLR_TX_PWR_ANTENNA == 0
