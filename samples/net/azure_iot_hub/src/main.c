@@ -91,6 +91,8 @@ static int event_interval_get(char *buf)
 	 */
 	desired_obj = cJSON_GetObjectItem(root_obj, "desired");
 	if (desired_obj == NULL) {
+		LOG_DBG("Incoming device twin document contains only the 'desired' object");
+
 		desired_obj = root_obj;
 	}
 
@@ -98,7 +100,8 @@ static int event_interval_get(char *buf)
 	event_interval_obj = cJSON_GetObjectItem(desired_obj,
 						 "telemetryInterval");
 	if (event_interval_obj == NULL) {
-		LOG_INF("No 'telemetryInterval' object in the device twin");
+		LOG_DBG("No 'telemetryInterval' object found in the device twin document");
+
 		goto clean_exit;
 	}
 
