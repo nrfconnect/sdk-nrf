@@ -209,7 +209,6 @@
 #cmakedefine MBEDTLS_ENTROPY_HARDWARE_ALT
 #cmakedefine MBEDTLS_THREADING_C
 #cmakedefine MBEDTLS_THREADING_ALT
-#cmakedefine MBEDTLS_PLATFORM_ZEROIZE_ALT
 
 /* Legacy configurations for _ALT defines */
 #cmakedefine MBEDTLS_AES_SETKEY_ENC_ALT

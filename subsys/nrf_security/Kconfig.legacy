@@ -49,10 +49,6 @@ config MBEDTLS_THREADING_ALT
 	bool
 	default y if CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
 
-config MBEDTLS_PLATFORM_ZEROIZE_ALT
-	bool
-	default y if NRF_CC3XX_PLATFORM
-
 # Legacy configurations for _ALT defines
 config MBEDTLS_AES_SETKEY_ENC_ALT
 	bool
