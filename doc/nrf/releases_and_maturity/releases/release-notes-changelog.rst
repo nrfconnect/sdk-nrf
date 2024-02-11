@@ -376,6 +376,10 @@ Bluetooth samples
 
   * Updated to adapt to API changes in zcbor 0.8.x.
 
+* :ref:`ble_connection_event_trigger` sample:
+
+  * Added the :ref:`ble_connection_event_trigger` sample for the proprietary Event Trigger feature.
+
 Bluetooth Mesh samples
 ----------------------
 
