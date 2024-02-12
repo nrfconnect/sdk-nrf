@@ -17,8 +17,8 @@
 #if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
 /* MCUBoot support is required */
 #include <fw_info.h>
-#if CONFIG_BUILD_WITH_TFM
-#include <tfm_ioctl_api.h>
+#if CONFIG_TRUSTED_EXECUTION_NONSECURE
+#include <tfm/tfm_ioctl_api.h>
 #endif
 #include <dfu/dfu_target_mcuboot.h>
 #endif
@@ -401,13 +401,7 @@ int fota_download_s0_active_get(bool *const s0_active)
 	int err;
 
 #ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
-#if CONFIG_SPM_SERVICE_S0_ACTIVE
-	err = spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active);
-#elif CONFIG_BUILD_WITH_TFM
 	err = tfm_platform_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active);
-#else
-#error "Not possible to read s0 active status"
-#endif
 #else /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
 	err = read_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active);
 #endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
