@@ -64,7 +64,7 @@ Amazon Sidewalk
 
 KRKNWK-17860: QSPI assert occurs when performing DFU in the Sidewalk application mode
   The DFU must be performed only in the DFU mode.
-  The DFU Bluetooth service can be used in the Sidewalk mode, however, using it leads to assertion failure, resulting in a Zephyr fatal error.
+  The DFU *Bluetooth®* service can be used in the Sidewalk mode, however, using it leads to assertion failure, resulting in a Zephyr fatal error.
 
 .. rst-class:: v2-5-2 v2-5-1 v2-5-0
 
@@ -113,8 +113,8 @@ KRKNWK-14299: NRPA MAC address cannot be set in Zephyr
   The non-resolvable private address (NRPA) cannot be set in the connectable mode for Bluetooth LE.
   Currently, there is no workaround for this issue.
 
-Bluetooth® LE
-=============
+Bluetooth LE
+============
 
 The issues in this section are related to :ref:`ug_ble_controller`.
 
@@ -146,7 +146,7 @@ NCSDK-13459: Uninitialized size in hids_boot_kb_outp_report_read
 
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-NCSDK-9106: Bluetooth® ECC thread stack size too small
+NCSDK-9106: Bluetooth ECC thread stack size too small
   The Bluetooth ECC thread used during the pairing procedure with LE Secure Connections might overflow when an interrupt is triggered when the stack usage is at its maximum.
 
   **Workaround:** Increase the ECC stack size by setting ``CONFIG_BT_HCI_ECC_STACK_SIZE`` to ``1140``.
@@ -203,7 +203,7 @@ NCSDK-5711: High-throughput transmission can deadlock the receive thread
 
 .. rst-class:: v1-2-1 v1-2-0
 
-Only secure applications can use Bluetooth® LE
+Only secure applications can use Bluetooth LE
   Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` build target.
 
   **Affected platforms:** nRF5340
@@ -290,21 +290,21 @@ NCSDK-14399: Legacy advertiser can occasionally do more message retransmissions 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
 
 NCSDK-16061: IV update procedure fails on the device
-  Bluetooth® Mesh device does not undergo IV update and fails to participate in the procedure initiated by any other node unless it is rebooted after the provisioning.
+  Bluetooth Mesh device does not undergo IV update and fails to participate in the procedure initiated by any other node unless it is rebooted after the provisioning.
 
   **Workaround:** Reboot the device after provisioning.
 
 .. rst-class:: v1-6-1 v1-6-0
 
 NCSDK-10200: The device stops sending Secure Network Beacons after re-provisioning
-  Bluetooth® Mesh stops sending Secure Network Beacons if the device is re-provisioned after reset through Config Node Reset message or ``bt_mesh_reset()`` call.
+  Bluetooth Mesh stops sending Secure Network Beacons if the device is re-provisioned after reset through Config Node Reset message or ``bt_mesh_reset()`` call.
 
   **Workaround:** Reboot the device after re-provisioning.
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-5580: nRF5340 only supports SoftDevice Controller
-  On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth® Mesh.
+  On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth Mesh.
 
   **Affected platforms:** nRF5340
 
@@ -618,7 +618,7 @@ KRKNWK-11225: CHIP Tool for Android cannot communicate with a Matter device afte
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 KRKNWK-10589: CHIP Tool for Android crashes when commissioning a Matter device
-  In random circumstances, CHIP Tool for Android crashes when trying to connect to a Matter device over Bluetooth® LE.
+  In random circumstances, CHIP Tool for Android crashes when trying to connect to a Matter device over Bluetooth LE.
 
   **Workaround:** Restart the application and try to commission the Matter device again.
   If the problem persists, clear the application data and try again.
@@ -630,7 +630,7 @@ KRKNWK-12950: CHIP Tool for Android opens the commissioning window using an inco
 
 .. rst-class:: v1-6-1 v1-6-0
 
-KRKNWK-10387: Matter service is needlessly advertised over Bluetooth® LE during DFU
+KRKNWK-10387: Matter service is needlessly advertised over Bluetooth LE during DFU
   The Matter samples can be configured to include the support for Device Firmware Upgrade (DFU) over Bluetooth LE.
   When the DFU procedure is started, the Matter Bluetooth LE service is needlessly advertised, revealing the device identifiers such as Vendor and Product IDs.
   The service is meant to be advertised only during the device commissioning.
@@ -1367,7 +1367,7 @@ The issues in this section are related to the :ref:`nrf_desktop` application.
 
 .. rst-class:: wontfix v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
-NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth® LE to Linux host
+NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth LE to Linux host
   Using :ref:`nrf_desktop_config_channel_script` for peripherals connected to host directly over Bluetooth LE might result in receiving improper HID feature report ID.
   In such case, the device will provide HID input reports, but it cannot be configured with the HID configurator.
 
@@ -1925,7 +1925,7 @@ NCSDK-8321: NUS shell transport sample does not display the initial shell prompt
 
 .. rst-class:: v1-2-1 v1-2-0
 
-Peripheral HIDS keyboard sample cannot be used with nRF Bluetooth® LE Controller
+Peripheral HIDS keyboard sample cannot be used with nRF Bluetooth LE Controller
   The :ref:`peripheral_hids_keyboard` sample cannot be used with the :ref:`nrfxlib:softdevice_controller` because the NFC subsystem does not work with the controller library.
   The library uses the MPSL Clock driver, which does not provide an API for asynchronous clock operation.
   NFC requires this API to work correctly.
@@ -1933,7 +1933,7 @@ Peripheral HIDS keyboard sample cannot be used with nRF Bluetooth® LE Controlle
 .. rst-class:: v1-2-1 v1-2-0
 
 Peripheral HIDS mouse sample advertising issues
-  When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth® LE Controller, directed advertising does not time out and the regular advertising cannot be started.
+  When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth LE Controller, directed advertising does not time out and the regular advertising cannot be started.
 
 .. rst-class:: v1-2-1 v1-2-0
 
@@ -1943,7 +1943,7 @@ Central HIDS sample issues with directed advertising
 .. rst-class:: v1-1-0
 
 Unstable samples
-  Bluetooth® Low Energy peripheral samples are unstable in some conditions (when pairing and bonding are performed and then disconnections/re-connections happen).
+  Bluetooth Low Energy peripheral samples are unstable in some conditions (when pairing and bonding are performed and then disconnections/re-connections happen).
 
 .. rst-class:: v1-1-0 v1-0-0
 
@@ -1953,7 +1953,7 @@ Unstable samples
 .. rst-class:: v1-0-0
 
 :ref:`bluetooth_central_hids` loses UART connectivity
-  After programming a HEX file to the nrf52_pca10040 board, UART connectivity is lost when using the Bluetooth® LE Controller.
+  After programming a HEX file to the nrf52_pca10040 board, UART connectivity is lost when using the Bluetooth LE Controller.
   The board must be reset to get UART output.
 
   **Affected platforms:** nRF52832
@@ -1961,7 +1961,7 @@ Unstable samples
 .. rst-class:: v1-1-0 v1-0-0
 
 Samples crashing on nRF51 when using GPIO
-  On nRF51 devices, Bluetooth® LE samples that use GPIO might crash when buttons are pressed frequently.
+  On nRF51 devices, Bluetooth LE samples that use GPIO might crash when buttons are pressed frequently.
   In such case, the GPIO ISR introduces latency that violates real-time requirements of the Radio ISR.
   nRF51 is more sensitive to this issue than nRF52 (faster core).
 
@@ -1977,7 +1977,7 @@ GATT Discovery Manager missing support
 .. rst-class:: v0-4-0
 
 Samples do not work with SD Controller v0.1.0
-  Bluetooth® LE samples cannot be built with the :ref:`nrfxlib:softdevice_controller` v0.1.0.
+  Bluetooth LE samples cannot be built with the :ref:`nrfxlib:softdevice_controller` v0.1.0.
 
 .. rst-class:: v0-3-0
 
@@ -3189,8 +3189,8 @@ KRKNWK-14898: CSMA-CA backoff parameters might not be randomized in a uniform wa
 
 .. rst-class:: v1-7-1 v1-7-0
 
-KRKNWK-11384: Assertion with Bluetooth® LE and multiprotocol usage
-  The device might assert on rare occasions during the use of Bluetooth® LE and 802.15.4 multiprotocol.
+KRKNWK-11384: Assertion with Bluetooth LE and multiprotocol usage
+  The device might assert on rare occasions during the use of Bluetooth LE and 802.15.4 multiprotocol.
 
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0
 
@@ -3538,7 +3538,7 @@ DRGN-15993: Assertion with legacy advertising commands
 
 DRGN-15852: In rare cases on nRF53 Series devices, an assert can occur while scanning
   This only occurs when the host started scanning using HCI LE Set Scan Enable.
-  This is default configuration of the Bluetooth® host.
+  This is default configuration of the Bluetooth host.
 
   **Affected platforms:** nRF5340, Thingy:53
 
