@@ -15,3 +15,4 @@ The following subpages cover topics related to developing applications with the 
    stack_partitioning
    constrained
    fw_patches_ext_flash
+   power_profiling
