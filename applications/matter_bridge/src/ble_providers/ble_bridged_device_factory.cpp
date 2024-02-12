@@ -128,7 +128,7 @@ CHIP_ERROR AddMatterDevices(MatterBridgedDevice::DeviceType deviceTypes[], uint8
 	VerifyOrReturnError(count <= BridgeManager::kMaxBridgedDevicesPerProvider, CHIP_ERROR_BUFFER_TOO_SMALL,
 			    LOG_ERR("Trying to add too many endpoints for single provider device."));
 
-	CHIP_ERROR err;
+	CHIP_ERROR err = CHIP_NO_ERROR;
 
 	MatterBridgedDevice *newBridgedDevices[BridgeManager::kMaxBridgedDevicesPerProvider];
 	uint8_t deviceIndexes[BridgeManager::kMaxBridgedDevicesPerProvider];
@@ -138,18 +138,28 @@ CHIP_ERROR AddMatterDevices(MatterBridgedDevice::DeviceType deviceTypes[], uint8
 		forceIndexesAndEndpoints = true;
 	}
 
-	for (uint8_t i = 0; i < count; i++) {
-		newBridgedDevices[i] =
-			BleBridgedDeviceFactory::GetBridgedDeviceFactory().Create(deviceTypes[i], nodeLabel);
+	uint8_t addedDevicesCount = 0;
+	for (; addedDevicesCount < count; addedDevicesCount++) {
+		newBridgedDevices[addedDevicesCount] = BleBridgedDeviceFactory::GetBridgedDeviceFactory().Create(
+			deviceTypes[addedDevicesCount], nodeLabel);
 
-		if (!newBridgedDevices[i]) {
+		if (!newBridgedDevices[addedDevicesCount]) {
 			LOG_ERR("Cannot allocate Matter device of given type");
-			return CHIP_ERROR_NO_MEMORY;
+			err = CHIP_ERROR_NO_MEMORY;
+			break;
 		}
 
 		if (forceIndexesAndEndpoints) {
-			deviceIndexes[i] = indexes[i];
+			deviceIndexes[addedDevicesCount] = indexes[addedDevicesCount];
 		}
+	}
+
+	/* Not all requested devices were created successfully, delete all previously created objects and return. */
+	if (err != CHIP_NO_ERROR) {
+		for (uint8_t i = 0; i < addedDevicesCount; i++) {
+			chip::Platform::Delete(newBridgedDevices[i]);
+		}
+		return err;
 	}
 
 	if (forceIndexesAndEndpoints) {
