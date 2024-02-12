@@ -756,6 +756,8 @@ Modem libraries
       These are for metrics collection purposes and sent only if the :kconfig:option:`CONFIG_LOCATION_DATA_DETAILS` Kconfig option is set.
     * Support for multiple event handlers.
     * Additional location data details into the :c:struct:`location_data_details` structure hierarchy.
+    * The :c:enumerator:`LOCATION_METHOD_WIFI_CELLULAR` method that cannot be added into the location configuration passed to the :c:func:`location_request()` function,
+      but may occur within the :c:struct:`location_event_data` structure.
 
   * Updated:
 

@@ -60,6 +60,14 @@ The supported location methods are as follows:
 
 The ``cloud location`` method handles the location methods (cellular and Wi-Fi positioning)
 that scan for technology-specific information and sends it over to the cloud service for location resolution.
+If the following conditions are met, Wi-Fi and cellular scan results are combined into a single cloud request:
+
+* Methods are one after the other in the location request method list.
+* Location request mode is :c:enum:`LOCATION_REQ_MODE_FALLBACK`.
+* Requested cloud service for Wi-Fi and cellular is the same.
+
+A special :c:enum:`LOCATION_METHOD_WIFI_CELLULAR` method can appear within the :c:struct:`location_event_data` structure,
+but it cannot be added into the location configuration passed to the :c:func:`location_request` function.
 
 The default priority order of location methods is GNSS positioning, Wi-Fi positioning and Cellular positioning.
 If any of these methods are disabled, the method is simply omitted from the list.

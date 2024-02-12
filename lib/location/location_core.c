@@ -122,8 +122,8 @@ static const struct location_method_api method_wifi_api = {
  * into a single cloud request. This method cannot be chosen in the library API.
  */
 static const struct location_method_api method_cloud_location_api = {
-	.method           = LOCATION_METHOD_INTERNAL_WIFI_CELLULAR,
-	.method_string    = "Wi-Fi + Cellular (internal)",
+	.method           = LOCATION_METHOD_WIFI_CELLULAR,
+	.method_string    = "Wi-Fi + Cellular",
 	.init             = method_cloud_location_init,
 	.location_get     = method_cloud_location_get,
 	.cancel           = method_cloud_location_cancel,
@@ -281,6 +281,10 @@ int location_core_validate_params(const struct location_config *config)
 	}
 
 	for (int i = 0; i < config->methods_count; i++) {
+		if (config->methods[i].method == LOCATION_METHOD_WIFI_CELLULAR) {
+			LOG_ERR("LOCATION_METHOD_WIFI_CELLULAR cannot be given in location config");
+			return -EINVAL;
+		}
 		/* Check if the method is valid */
 		method_api = location_method_api_get(config->methods[i].method);
 		if (method_api == NULL) {
@@ -376,10 +380,7 @@ static int location_core_location_get_pos(void)
 	if (IS_ENABLED(CONFIG_LOCATION_DATA_DETAILS)) {
 		struct location_event_data request_started = {
 			.id = LOCATION_EVT_STARTED,
-			/* Use the first method from the config to avoid putting internal combined
-			 * Wi-Fi and cellular method into the event.
-			 */
-			.method = loc_req_info.config.methods[0].method
+			.method = requested_method
 		};
 
 		location_utils_event_dispatch(&request_started);
@@ -450,7 +451,7 @@ static void location_request_info_create(const struct location_config *config)
 			if (!combined) {
 				LOG_INF("Wi-Fi and cellular methods combined");
 				loc_req_info.methods[loc_req_info.methods_count] =
-					LOCATION_METHOD_INTERNAL_WIFI_CELLULAR;
+					LOCATION_METHOD_WIFI_CELLULAR;
 				loc_req_info.methods_count++;
 				combined = true;
 			}
@@ -624,80 +625,6 @@ static void location_core_event_details_get(struct location_event_data *event)
 #endif
 }
 
-static void location_core_event_cb_fallback(
-	enum location_method current_method,
-	enum location_method next_method,
-	enum location_event_id current_event,
-	struct location_data_details *details)
-{
-#if defined(CONFIG_LOCATION_DATA_DETAILS)
-	if (current_method == LOCATION_METHOD_INTERNAL_WIFI_CELLULAR) {
-		/* When fallback happens, current method is always the 1st one whenever
-		 * combined Wi-Fi and cellular method is used.
-		 * For example, method list is Wi-Fi, Cellular, GNSS, we use Wi-Fi.
-		 * If the Wi-Fi and cellular are not the first two methods in some order,
-		 * we won't be in fallback from the combined Wi-Fi and cellular method.
-		 * Note: If CONFIG_LOCATION_METHODS_LIST_SIZE is increased, this won't work anymore.
-		 */
-		current_method = loc_req_info.config.methods[0].method;
-	}
-	if (next_method == LOCATION_METHOD_INTERNAL_WIFI_CELLULAR) {
-		/* When fallback happens, next method is always the 2nd one whenever
-		 * combined Wi-Fi and cellular method is used.
-		 * For example, method list is GNSS, Cellular, Wi-Fi, we use Cellular.
-		 * If the Wi-Fi and cellular are not the 2nd and 3rd methods in some order,
-		 * we won't be in fallback into the combined Wi-Fi and cellular method.
-		 * Note: If CONFIG_LOCATION_METHODS_LIST_SIZE is increased, this won't work anymore.
-		 */
-		next_method = loc_req_info.config.methods[1].method;
-	}
-
-	struct location_event_data fallback = {
-		.id = LOCATION_EVT_FALLBACK,
-		.method = current_method,
-		.fallback = {
-			.next_method = next_method,
-			.cause = current_event,
-			.details = *details,
-		}
-	};
-
-	location_utils_event_dispatch(&fallback);
-#endif
-}
-
-enum location_method location_core_event_method_resolve(enum location_method method)
-{
-#if defined(CONFIG_LOCATION_METHOD_CELLULAR) && defined(CONFIG_LOCATION_METHOD_WIFI)
-	/* Other than combined Wi-Fi + cellular method is used as is */
-	if (method != LOCATION_METHOD_INTERNAL_WIFI_CELLULAR) {
-		return method;
-	}
-
-	/* If Wi-Fi and cellular were requested and location accuracy is available */
-	if (loc_req_info.wifi != NULL && loc_req_info.cellular != NULL &&
-	    loc_req_info.current_event_data.location.accuracy > 0) {
-
-		/* If accuracy is higher than Wi-Fi threshold, use cellular, otherwise Wi-Fi */
-		if (loc_req_info.current_event_data.location.accuracy >
-		    METHOD_WIFI_ACCURACY_THRESHOLD) {
-			return LOCATION_METHOD_CELLULAR;
-		} else {
-			return LOCATION_METHOD_WIFI;
-		}
-	}
-
-	/* If Wi-Fi was requested, use Wi-Fi, otherwise cellular */
-	if (loc_req_info.wifi != NULL) {
-		return LOCATION_METHOD_WIFI;
-	} else {
-		return LOCATION_METHOD_CELLULAR;
-	}
-#else
-	return method;
-#endif
-}
-
 static void location_core_event_cb_fn(struct k_work *work)
 {
 	char latitude_str[12];
@@ -707,8 +634,7 @@ static void location_core_event_cb_fn(struct k_work *work)
 	int err;
 
 	k_work_cancel_delayable(&location_core_method_timeout_work);
-	loc_req_info.current_event_data.method =
-		location_core_event_method_resolve(loc_req_info.current_method);
+	loc_req_info.current_event_data.method = loc_req_info.current_method;
 
 	/* Update the event structure with the details of the current method */
 	location_core_event_details_get(&loc_req_info.current_event_data);
@@ -790,13 +716,23 @@ static void location_core_event_cb_fn(struct k_work *work)
 				 * also for failure events
 				 */
 				location_utils_event_dispatch(&loc_req_info.current_event_data);
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 			} else {
 				/* Details had been set into the error information */
-				location_core_event_cb_fallback(
-					loc_req_info.current_method,
-					requested_method,
-					loc_req_info.current_event_data.id,
-					&loc_req_info.current_event_data.error.details);
+				struct location_data_details *details =
+					&loc_req_info.current_event_data.error.details;
+
+				struct location_event_data fallback = {
+					.id = LOCATION_EVT_FALLBACK,
+					.method = loc_req_info.current_method,
+					.fallback = {
+						.next_method = requested_method,
+						.cause = loc_req_info.current_event_data.id,
+						.details = *details,
+					}
+				};
+				location_utils_event_dispatch(&fallback);
+#endif
 			}
 
 			location_core_current_event_data_init(requested_method);

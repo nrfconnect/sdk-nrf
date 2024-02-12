@@ -179,11 +179,11 @@ int method_cloud_location_get(const struct location_request_info *request)
 	method_cloud_location_start_work.wifi_config = NULL;
 	method_cloud_location_start_work.cell_config = NULL;
 	if (request->current_method == LOCATION_METHOD_CELLULAR ||
-	    request->current_method == LOCATION_METHOD_INTERNAL_WIFI_CELLULAR) {
+	    request->current_method == LOCATION_METHOD_WIFI_CELLULAR) {
 		method_cloud_location_start_work.cell_config = request->cellular;
 	}
 	if (request->current_method == LOCATION_METHOD_WIFI ||
-	    request->current_method == LOCATION_METHOD_INTERNAL_WIFI_CELLULAR) {
+	    request->current_method == LOCATION_METHOD_WIFI_CELLULAR) {
 		method_cloud_location_start_work.wifi_config = request->wifi;
 	}
 

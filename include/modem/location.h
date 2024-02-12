@@ -43,6 +43,19 @@ enum location_method {
 	LOCATION_METHOD_GNSS,
 	/** Wi-Fi positioning. */
 	LOCATION_METHOD_WIFI,
+	/**
+	 * Wi-Fi and cellular positioning combined into one cloud request.
+	 *
+	 * Cannot be used in the method list passed to location_request(),
+	 * but this method can appear in the location event (@ref location_event_data.id)
+	 * to indicate that Wi-Fi and cellular positioning methods have been combined
+	 * into a single cloud location method.
+	 *
+	 * If the combined method is desired, set Wi-Fi and cellular methods next to each other
+	 * in the method list passed to location_request(). This also happens by default if
+	 * NULL configuration is passed to location_request().
+	 */
+	LOCATION_METHOD_WIFI_CELLULAR,
 };
 
 /** Location acquisition mode. */
@@ -204,8 +217,8 @@ struct location_data_details_wifi {
  *
  * Only one of the child structures is filled most of the time depending on the method
  * found in @ref location_event_data.method member of the parent structure.
- * There are cases when cellular and Wi-Fi data are combined into a single cloud request
- * in which case data details for both methods are filled.
+ * For a combined method @ref LOCATION_METHOD_WIFI_CELLULAR both @ref cellular and
+ * @ref wifi are filled.
  */
 struct location_data_details {
 	/**
@@ -285,13 +298,7 @@ struct location_data_cloud {
 struct location_event_data {
 	/** Event ID. */
 	enum location_event_id id;
-	/**
-	 * Used location method.
-	 *
-	 * When cellular and Wi-Fi positioning are used and they are combined into a single
-	 * cloud request by the library, the method is not known so there is some uncertainty
-	 * on the reported location method.
-	 */
+	/** Used location method. */
 	enum location_method method;
 
 	/** Event specific data. */

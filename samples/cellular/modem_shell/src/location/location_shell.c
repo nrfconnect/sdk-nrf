@@ -236,13 +236,13 @@ static void location_print_data_details(
 	}
 #endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
-	if (method == LOCATION_METHOD_CELLULAR) {
+	if (method == LOCATION_METHOD_CELLULAR || method == LOCATION_METHOD_WIFI_CELLULAR) {
 		mosh_print("  neighbor cells: %d", details->cellular.ncells_count);
 		mosh_print("  GCI cells: %d", details->cellular.gci_cells_count);
 	}
 #endif
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
-	if (method == LOCATION_METHOD_WIFI) {
+	if (method == LOCATION_METHOD_WIFI || method == LOCATION_METHOD_WIFI_CELLULAR) {
 		mosh_print("  Wi-Fi APs: %d", details->wifi.ap_count);
 	}
 #endif
