@@ -28,10 +28,10 @@ LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
  */
 const uint32_t z_mpsl_used_nrf_ppi_channels = MPSL_RESERVED_PPI_CHANNELS;
 const uint32_t z_mpsl_used_nrf_ppi_groups;
-#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC)
+#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
 static void mpsl_calibration_work_handler(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(calibration_work, mpsl_calibration_work_handler);
-#endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC */
+#endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
 extern void rtc_pretick_rtc0_isr_hook(void);
 
@@ -40,6 +40,93 @@ extern void rtc_pretick_rtc0_isr_hook(void);
 		BUILD_ASSERT(CONFIG_NRF52_ANOMALY_109_WORKAROUND_EGU_INSTANCE != 5,
 			     "MPSL uses EGU instance 5, please use another one");
 	#endif
+#endif
+
+#if !defined(CONFIG_SOC_SERIES_NRF54HX) && !defined(CONFIG_SOC_SERIES_NRF54LX)
+#define MPSL_TIMER_IRQn TIMER0_IRQn
+#define MPSL_RTC_IRQn RTC0_IRQn
+#define MPSL_RADIO_IRQn RADIO_IRQn
+#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#define MPSL_TIMER_IRQn TIMER10_IRQn
+#define MPSL_RTC_IRQn	GRTC_3_IRQn
+#define MPSL_RADIO_IRQn RADIO_0_IRQn
+#elif defined(CONFIG_SOC_SERIES_NRF54HX)
+#define MPSL_TIMER_IRQn TIMER020_IRQn
+#define MPSL_RTC_IRQn GRTC_0_IRQn /* non-secure GRTC IRQ. */
+#define MPSL_RADIO_IRQn RADIO_0_IRQn
+
+/* Basic build time sanity checking */
+#define MPSL_RESERVED_GRTC_CHANNELS ((1U << 8) | (1U << 9) | (1U << 10) | (1U << 11) | (1U << 12))
+#define MPSL_RESERVED_DPPI_SOURCE_CHANNELS (1U << 0)
+#define MPSL_RESERVED_DPPI_SINK_CHANNELS (1U << 0)
+#define MPSL_RESERVED_IPCT_SOURCE_CHANNELS (1U << 0)
+
+BUILD_ASSERT(MPSL_RTC_IRQn != DT_IRQN(DT_NODELABEL(grtc)), "MPSL requires a dedicated GRTC IRQ");
+
+#define CHECK_IRQ(val, _) (DT_IRQ_BY_IDX(DT_NODELABEL(grtc), val, irq) == MPSL_RTC_IRQn)
+#define NUM_IRQS DT_NUM_IRQS(DT_NODELABEL(grtc))
+/* Note: MPSL_RTC_IRQn is an enum value so this macro will be a concatenation of
+ * conditions and not 0 or 1
+ */
+#define MPSL_IRQ_IN_DT (LISTIFY(NUM_IRQS, CHECK_IRQ, (|)))
+
+BUILD_ASSERT(MPSL_IRQ_IN_DT, "The MPSL GRTC IRQ is not in the device tree");
+
+BUILD_ASSERT((NRFX_CONFIG_GRTC_MASK_DT(child_owned_channels) & MPSL_RESERVED_GRTC_CHANNELS) ==
+		     MPSL_RESERVED_GRTC_CHANNELS,
+	     "The GRTC channels used by MPSL must not be used by zephyr");
+
+/* check the GRTC source channels.
+ * i.e. ensure something similar to this is present in the DT
+ * &dppic132 {
+ *   owned-channels = <0>;
+ *   source-channels = <0>;
+ * };
+ */
+#define SHIFT_DPPI_SOURCE_CHANNELS(val, _)                                                         \
+	(1 << (DT_PROP_BY_IDX(DT_NODELABEL(dppic132), source_channels, val)))
+#define NUM_DPPI_SOURCE_CHANNELS DT_PROP_LEN(DT_NODELABEL(dppic132), source_channels)
+#define DPPI_SOURCE_CHANNELS (LISTIFY(NUM_DPPI_SOURCE_CHANNELS, SHIFT_DPPI_SOURCE_CHANNELS, (|)))
+
+BUILD_ASSERT((DPPI_SOURCE_CHANNELS & MPSL_RESERVED_DPPI_SOURCE_CHANNELS) ==
+		     MPSL_RESERVED_DPPI_SOURCE_CHANNELS,
+	     "The required DPPIC channels in the GRTC domain are not reserved");
+
+/* check the GRTC sink channels.
+ * i.e. ensure something similar to this is present in the DT
+ * &dppic130 {
+ *   owned-channels = <0>;
+ *   sink-channels = <0>;
+ * };
+ */
+#define SHIFT_DPPI_SINK_CHANNELS(val, _)                                                           \
+	(1 << (DT_PROP_BY_IDX(DT_NODELABEL(dppic130), sink_channels, val)))
+#define NUM_DPPI_SINK_CHANNELS DT_PROP_LEN(DT_NODELABEL(dppic130), sink_channels)
+#define DPPI_SINK_CHANNELS (LISTIFY(NUM_DPPI_SINK_CHANNELS, SHIFT_DPPI_SINK_CHANNELS, (|)))
+
+BUILD_ASSERT((DPPI_SINK_CHANNELS & MPSL_RESERVED_DPPI_SINK_CHANNELS) ==
+		     MPSL_RESERVED_DPPI_SINK_CHANNELS,
+	     "The required DPPIC channels in the IPCT domain are not reserved");
+
+/* check the IPCT source channels.
+ * i.e. ensure something similar to this is present in the DT
+ * &ipct130 {
+ *   owned-channels = <0>;
+ *   source-channel-links = <0 3 0>;
+ * };
+ */
+#define SHIFT_IPCT_SOURCE_CHANNELS(val, _)                                                         \
+	(1 << (DT_PROP_BY_IDX(DT_NODELABEL(ipct130), owned_channels, val)))
+#define NUM_IPCT_SOURCE_CHANNELS DT_PROP_LEN(DT_NODELABEL(ipct130), owned_channels)
+#define IPCT_SOURCE_CHANNELS (LISTIFY(NUM_IPCT_SOURCE_CHANNELS, SHIFT_IPCT_SOURCE_CHANNELS, (|)))
+
+/* NOTE: this is not checking the source/sink allocation as the device tree property is an
+ * array of triplets that is difficult to separate using macros.
+ */
+BUILD_ASSERT((IPCT_SOURCE_CHANNELS & MPSL_RESERVED_IPCT_SOURCE_CHANNELS) ==
+		     MPSL_RESERVED_IPCT_SOURCE_CHANNELS,
+	     "The required IPCT source channels are not reserved");
+
 #endif
 #define MPSL_LOW_PRIO (4)
 
@@ -118,9 +205,9 @@ static void mpsl_radio_isr_wrapper(const void *args)
 
 static void mpsl_lib_irq_disable(void)
 {
-	irq_disable(TIMER0_IRQn);
-	irq_disable(RTC0_IRQn);
-	irq_disable(RADIO_IRQn);
+	irq_disable(MPSL_TIMER_IRQn);
+	irq_disable(MPSL_RTC_IRQn);
+	irq_disable(MPSL_RADIO_IRQn);
 }
 
 static void mpsl_lib_irq_connect(void)
@@ -128,16 +215,16 @@ static void mpsl_lib_irq_connect(void)
 	/* Ensure IRQs are disabled before attaching. */
 	mpsl_lib_irq_disable();
 
-	irq_connect_dynamic(TIMER0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			mpsl_timer0_isr_wrapper, NULL, IRQ_CONNECT_FLAGS);
-	irq_connect_dynamic(RTC0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			mpsl_rtc0_isr_wrapper, NULL, IRQ_CONNECT_FLAGS);
-	irq_connect_dynamic(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			mpsl_radio_isr_wrapper, NULL, IRQ_CONNECT_FLAGS);
+	irq_connect_dynamic(MPSL_TIMER_IRQn, MPSL_HIGH_IRQ_PRIORITY, mpsl_timer0_isr_wrapper, NULL,
+			    IRQ_CONNECT_FLAGS);
+	irq_connect_dynamic(MPSL_RTC_IRQn, MPSL_HIGH_IRQ_PRIORITY, mpsl_rtc0_isr_wrapper, NULL,
+			    IRQ_CONNECT_FLAGS);
+	irq_connect_dynamic(MPSL_RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY, mpsl_radio_isr_wrapper, NULL,
+			    IRQ_CONNECT_FLAGS);
 
-	irq_enable(TIMER0_IRQn);
-	irq_enable(RTC0_IRQn);
-	irq_enable(RADIO_IRQn);
+	irq_enable(MPSL_TIMER_IRQn);
+	irq_enable(MPSL_RTC_IRQn);
+	irq_enable(MPSL_RADIO_IRQn);
 }
 #else /* !IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 ISR_DIRECT_DECLARE(mpsl_timer0_isr_wrapper)
@@ -205,6 +292,7 @@ static void m_assert_handler(const char *const file, const uint32_t line)
 }
 #endif /* IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
 
+#if !defined(CONFIG_SOC_SERIES_NRF54HX)
 static uint8_t m_config_clock_source_get(void)
 {
 #ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
@@ -222,8 +310,9 @@ static uint8_t m_config_clock_source_get(void)
 	return 0;
 #endif
 }
+#endif /* !CONFIG_SOC_SERIES_NRF54HX */
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC)
+#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
 static void mpsl_calibration_work_handler(struct k_work *work)
 {
 	ARG_UNUSED(work);
@@ -233,7 +322,7 @@ static void mpsl_calibration_work_handler(struct k_work *work)
 	k_work_schedule_for_queue(&mpsl_work_q, &calibration_work,
 				  K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD));
 }
-#endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC */
+#endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
 static int32_t mpsl_lib_init_internal(void)
 {
@@ -248,6 +337,8 @@ static int32_t mpsl_lib_init_internal(void)
 		(uint32_t)&NRF_IPC->TASKS_SEND[CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START_CHANNEL]);
 #endif
 
+	/* TODO: Clock config should be adapted in the future to new architecture. */
+#if !defined(CONFIG_SOC_SERIES_NRF54HX)
 	clock_cfg.source = m_config_clock_source_get();
 	clock_cfg.accuracy_ppm = CONFIG_CLOCK_CONTROL_NRF_ACCURACY;
 	clock_cfg.skip_wait_lfclk_started =
@@ -267,10 +358,22 @@ static int32_t mpsl_lib_init_internal(void)
 	clock_cfg.rc_ctiv = 0;
 	clock_cfg.rc_temp_ctiv = 0;
 #endif
+#else
+	/* For now just set the values to 0 to avoid "use of uninitialized variable" warnings.
+	 * MPSL assumes the clocks are always available and does currently not implement
+	 * clock handling on these platforms. The LFCLK is expected to have an accuracy of
+	 * 500ppm or better regardless of the value passed in clock_cfg.
+	 */
+	memset(&clock_cfg, 0, sizeof(clock_cfg));
+#endif
 
 	err = mpsl_init(&clock_cfg, CONFIG_MPSL_LOW_PRIO_IRQN, m_assert_handler);
 	if (err) {
 		return err;
+	}
+
+	if (IS_ENABLED(CONFIG_SOC_NRF_FORCE_CONSTLAT)) {
+		mpsl_pan_rfu();
 	}
 
 #if MPSL_TIMESLOT_SESSION_COUNT > 0
@@ -303,21 +406,21 @@ static int mpsl_lib_init_sys(void)
 	 * however, as this decision needs to be made during build-time,
 	 * rescheduling is performed to account for user-provided handlers.
 	 */
-	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(TIMER0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			IRQ_CONNECT_FLAGS, reschedule);
-	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(RTC0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			IRQ_CONNECT_FLAGS, reschedule);
-	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			IRQ_CONNECT_FLAGS, reschedule);
+	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(MPSL_TIMER_IRQn, MPSL_HIGH_IRQ_PRIORITY, IRQ_CONNECT_FLAGS,
+				       reschedule);
+	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(MPSL_RTC_IRQn, MPSL_HIGH_IRQ_PRIORITY, IRQ_CONNECT_FLAGS,
+				       reschedule);
+	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(MPSL_RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY, IRQ_CONNECT_FLAGS,
+				       reschedule);
 
 	mpsl_lib_irq_connect();
 #else /* !IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
-	IRQ_DIRECT_CONNECT(TIMER0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			   mpsl_timer0_isr_wrapper, IRQ_CONNECT_FLAGS);
-	IRQ_DIRECT_CONNECT(RTC0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			   mpsl_rtc0_isr_wrapper, IRQ_CONNECT_FLAGS);
-	IRQ_DIRECT_CONNECT(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			   mpsl_radio_isr_wrapper, IRQ_CONNECT_FLAGS);
+	IRQ_DIRECT_CONNECT(MPSL_TIMER_IRQn, MPSL_HIGH_IRQ_PRIORITY, mpsl_timer0_isr_wrapper,
+			   IRQ_CONNECT_FLAGS);
+	IRQ_DIRECT_CONNECT(MPSL_RTC_IRQn, MPSL_HIGH_IRQ_PRIORITY, mpsl_rtc0_isr_wrapper,
+			   IRQ_CONNECT_FLAGS);
+	IRQ_DIRECT_CONNECT(MPSL_RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY, mpsl_radio_isr_wrapper,
+			   IRQ_CONNECT_FLAGS);
 #endif /* IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 
 	return 0;
@@ -335,10 +438,10 @@ static int mpsl_low_prio_init(void)
 	IRQ_CONNECT(CONFIG_MPSL_LOW_PRIO_IRQN, MPSL_LOW_PRIO,
 		    mpsl_low_prio_irq_handler, NULL, 0);
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC)
+#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
 	k_work_schedule_for_queue(&mpsl_work_q, &calibration_work,
 				  K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD));
-#endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC */
+#endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
 	return 0;
 }
