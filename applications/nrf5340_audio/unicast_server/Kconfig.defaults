@@ -6,7 +6,10 @@
 
 ## ACL related configs ##
 config BT_MAX_CONN
-	default 1
+	default 4
+
+config BT_MAX_PAIRED
+	default 4
 
 config BT_PERIPHERAL
 	default y

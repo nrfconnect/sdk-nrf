@@ -72,6 +72,17 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 	}
 }
 
+static void filter_accept_list_add(const struct bt_bond_info *info, void *user_data)
+{
+	int ret;
+
+	ret = bt_le_filter_accept_list_add(&info->addr);
+	if (ret) {
+		LOG_WRN("Could not add peer to Filter Accept List: %d", ret);
+		return;
+	}
+}
+
 /**
  * @brief Prints the address of the local device and the remote device.
  *
@@ -217,6 +228,16 @@ static void advertising_process(struct k_work *work)
 
 	if (IS_ENABLED(CONFIG_BT_BONDABLE)) {
 		bt_foreach_bond(BT_ID_DEFAULT, bond_find, NULL);
+		/* Populate Filter Accept List */
+		if (IS_ENABLED(CONFIG_BT_FILTER_ACCEPT_LIST)) {
+			ret = bt_le_filter_accept_list_clear();
+			if (ret) {
+				LOG_ERR("Failed to clear filter accept list");
+				return;
+			}
+
+			bt_foreach_bond(BT_ID_DEFAULT, filter_accept_list_add, NULL);
+		}
 	}
 
 	bt_addr_le_t addr;
@@ -279,7 +300,13 @@ void bt_mgmt_dir_adv_timed_out(void)
 		LOG_ERR("Failed to clear ext_adv");
 	}
 
-	ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb, &ext_adv);
+	if (IS_ENABLED(CONFIG_BT_FILTER_ACCEPT_LIST)) {
+		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME_FILTER, &adv_cb,
+					   &ext_adv);
+	} else {
+		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb, &ext_adv);
+	}
+
 	if (ret) {
 		LOG_ERR("Unable to create a connectable extended advertising set: %d", ret);
 		return;

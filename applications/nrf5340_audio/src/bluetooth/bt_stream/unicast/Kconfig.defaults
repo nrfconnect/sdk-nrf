@@ -13,6 +13,9 @@ config BT_BONDABLE
 config BT_PRIVACY
 	default y
 
+config BT_FILTER_ACCEPT_LIST
+	default y
+
 config BT_SMP
 	default y
 
