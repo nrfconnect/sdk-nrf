@@ -89,8 +89,9 @@ config BT_MESH_LE_PAIR_RESP
 	select BT_MESH_VENDOR_MODELS
 	select EXPERIMENTAL
 	depends on BT_FIXED_PASSKEY
+	depends on BT_SMP_SC_ONLY
 	help
-	  Enable the LE Pairing Responder model. The LE Pairing Responder model is used to transfer
-	  a passkey used for LE pairing over a mesh network to the pairing initiator.
+	  Enable the LE Pairing Responder model. The LE Pairing Responder model is used to generate
+	  and transfer a passkey used for LE pairing over a mesh network to the pairing initiator.
 
 endmenu
