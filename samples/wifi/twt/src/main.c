@@ -357,13 +357,13 @@ static int __wifi_args_to_params(struct wifi_connect_req_params *params)
 	params->ssid_length = strlen(params->ssid);
 
 #if defined(CONFIG_TWT_STA_KEY_MGMT_WPA2)
-	params->security = 1;
+	params->security = WIFI_SECURITY_TYPE_PSK;
 #elif defined(CONFIG_TWT_STA_KEY_MGMT_WPA2_256)
-	params->security = 2;
+	params->security = WIFI_SECURITY_TYPE_PSK_SHA256;
 #elif defined(CONFIG_TWT_STA_KEY_MGMT_WPA3)
-	params->security = 3;
+	params->security = WIFI_SECURITY_TYPE_SAE;
 #else
-	params->security = 0;
+	params->security = WIFI_SECURITY_TYPE_NONE;
 #endif
 
 #if !defined(CONFIG_TWT_STA_KEY_MGMT_NONE)
