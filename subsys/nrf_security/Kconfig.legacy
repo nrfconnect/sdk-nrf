@@ -669,7 +669,7 @@ config MBEDTLS_HKDF_C
 config MBEDTLS_RSA_C
 	bool
 	prompt "RSA - Rivest-Shamir-Adleman cryptosystem"
-	depends on PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY
+	depends on PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY || !MBEDTLS_USE_PSA_CRYPTO
 	help
 	  Enable RSA cryptosystem support.
 	  MBEDTLS_RSA_C setting in mbed TLS config file.
