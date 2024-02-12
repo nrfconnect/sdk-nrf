@@ -3,7 +3,7 @@ python:
 git:
   version: 2.37.3
 cmake:
-  version: 3.20.5
+  version: 3.21.0
 ninja:
   version: 1.10.2
 gperf:
