@@ -272,6 +272,12 @@ It adds the following subcommands to configure and send raw TX packets:
    * - Subcommands
      - Description
      - Valid values
+   * - mode
+     - | Enable or Disable TX injection mode
+       | [-h, --help]: Print out the help for the mode command
+     - | Valid values:
+       | 1 - Enable
+       | 0 - Disable
    * - configure
      - | Configure the raw TX packet header with the following parameters:
        | [-f, --rate-flags]: Rate flag value
