@@ -156,6 +156,20 @@ Button 1:
       Releasing the button within a 3-second window of the initiation cancels the factory reset procedure.
 
 .. include:: ../../../samples/matter/lock/README.rst
+    :start-after: matter_door_lock_sample_led1_start
+    :end-before: matter_door_lock_sample_led1_end
+
+LED 2:
+   If the :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` kconfig option is set to ``y``, shows the current state of Bridge's Bluetooth LE connectivity.
+   The following states are possible:
+
+   * Turned Off - The Bridge device is in the idle state and has no Bluetooth LE devices paired.
+   * Solid On - The Bridge device is in the idle state and all connections to the Bluetooth LE bridged devices are stable.
+   * Slow Even Flashing (1000 ms on / 1000 ms off) - The Bridge device lost connection to at least one Bluetooth LE bridged device.
+   * Even Flashing (300 ms on / 300 ms off) - The scan for Bluetooth LE devices is in progress.
+   * Fast Even Flashing (100 ms on / 100 ms off) - The Bridge device is connecting to the Bluetooth LE device and waiting for the Bluetooth LE authentication PIN code.
+
+.. include:: ../../../samples/matter/lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start
     :end-before: matter_door_lock_sample_jlink_end
 

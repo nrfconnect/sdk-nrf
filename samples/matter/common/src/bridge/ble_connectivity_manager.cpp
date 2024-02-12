@@ -139,14 +139,21 @@ void BLEConnectivityManager::ConnectionHandler(bt_conn *conn, uint8_t conn_err)
 				Instance().Reconnect(reinterpret_cast<BLEBridgedDeviceProvider *>(context));
 			},
 			reinterpret_cast<intptr_t>(providerToRecover));
+		/* We have still a device to recover, keep the LostDevice state active */
+		Instance().UpdateStateFlag(State::LostDevice, true);
 	} else if (!sys_slist_is_empty(&Instance().mRecovery.mListToRecover)) {
 		/* There are pending providers to recover and no more scanned ones, schedule next scan operation. */
 		Instance().mRecovery.StartTimer();
+	} else {
+		/* All devices have been recovered, disable LostDevice state */
+		Instance().UpdateStateFlag(State::LostDevice, false);
 	}
 
 	char addrStr[BT_ADDR_LE_STR_LEN];
 	bt_addr_le_to_str(dstAddr, addrStr, sizeof(addrStr));
 	LOG_INF("Connected: %s", addrStr);
+	/* A new devices has been connected, activate the Connected state */
+	Instance().UpdateStateFlag(State::Connected, true);
 
 #if defined(CONFIG_BT_SMP)
 	err = bt_conn_set_security(conn, static_cast<bt_security_t>(CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL));
@@ -170,6 +177,10 @@ exit:
 		LOG_ERR("Failed to set the connection security (%d)", err);
 	} else {
 		LOG_ERR("The connection failed (%d)", err);
+#if defined(CONFIG_BT_SMP)
+		/* In case when the connection failed, disable the Pairing state */
+		Instance().UpdateStateFlag(State::Pairing, false);
+#endif
 	}
 	/* Trigger the connection callback to inform the application that the connection procedure failed. */
 	provider->GetBLEBridgedDevice().mFirstConnectionCallback(
@@ -257,6 +268,9 @@ void BLEConnectivityManager::PairingComplete(struct bt_conn *conn, bool bonded)
 		return;
 	}
 
+	/* Pairing finished, disable the Pairing state */
+	Instance().UpdateStateFlag(State::Pairing, false);
+
 	/* Once pairing completed successfully, start GATT discovery procedure. */
 	StartGattDiscovery(conn, provider);
 }
@@ -268,6 +282,9 @@ void BLEConnectivityManager::PairingFailed(struct bt_conn *conn, enum bt_securit
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	LOG_ERR("Pairing failed conn: %s, reason %d\n", addr, reason);
+
+	/* Pairing finished, disable the Pairing state */
+	Instance().UpdateStateFlag(State::Pairing, false);
 
 	Instance().RemoveBLEProvider(*bt_conn_get_dst(conn));
 }
@@ -378,6 +395,9 @@ CHIP_ERROR BLEConnectivityManager::Init(bt_uuid **serviceUuids, uint8_t serviceU
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 
+	/* Initialize the BLEConnectivity manage's state to Idle */
+	UpdateStateFlag(State::Idle, true);
+
 	memcpy(mServicesUuid, serviceUuids, serviceUuidsCount * sizeof(serviceUuids));
 	mServicesUuidCount = serviceUuidsCount;
 
@@ -460,9 +480,14 @@ CHIP_ERROR BLEConnectivityManager::Scan(ScanDoneCallback callback, void *context
 		mRecovery.CancelTimer();
 		ret = StopScan();
 		VerifyOrExit(ret == CHIP_NO_ERROR, );
+		/* A scan has been requested, activate the Scanning state */
+		Instance().UpdateStateFlag(State::Scanning, true);
 	} else if (mScanActive) {
 		LOG_ERR("Scan is already in progress");
 		return CHIP_ERROR_INCORRECT_STATE;
+	} else {
+		/* The Bridge lost connection to the device, activate the LostDevice state */
+		Instance().UpdateStateFlag(State::LostDevice, true);
 	}
 
 	mScannedDevicesCounter = 0;
@@ -578,6 +603,11 @@ CHIP_ERROR BLEConnectivityManager::StopScan()
 		return System::MapErrorZephyr(err);
 	}
 
+	if (mScanDoneCallback != ReScanCallback) {
+		/* Scanning has been finished, disable the Scanning state */
+		Instance().UpdateStateFlag(State::Scanning, false);
+	}
+
 	mScanActive = false;
 
 	return CHIP_NO_ERROR;
@@ -585,6 +615,9 @@ CHIP_ERROR BLEConnectivityManager::StopScan()
 
 void BLEConnectivityManager::ScanTimeoutCallback(k_timer *timer)
 {
+	/* Scanning has been finished, disable the Scanning state */
+	Instance().UpdateStateFlag(State::Scanning, false);
+
 	DeviceLayer::PlatformMgr().ScheduleWork(ScanTimeoutHandle, reinterpret_cast<intptr_t>(timer));
 }
 
@@ -645,6 +678,9 @@ CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider, C
 
 	mConnectionSecurityRequest.mCallback = request->mCallback;
 	mConnectionSecurityRequest.mContext = request->mContext;
+
+	/* Pairing started, activate the Paring state */
+	Instance().UpdateStateFlag(State::Pairing, true);
 #endif /* CONFIG_BT_SMP */
 
 	mRecovery.CancelTimer();
@@ -720,6 +756,11 @@ CHIP_ERROR BLEConnectivityManager::RemoveBLEProvider(bt_addr_le_t address)
 
 	if (!provider->GetBLEBridgedDevice().mConn) {
 		return CHIP_ERROR_INTERNAL;
+	}
+
+	if (0 == mConnectedProvidersCounter) {
+		/* There are no active providers anymore, so disable the Connected state */
+		UpdateStateFlag(State::Connected, false);
 	}
 
 #ifdef CONFIG_BT_SMP
@@ -879,6 +920,28 @@ void BLEConnectivityManager::Recovery::StartTimer()
 	time = time < kRecoveryMaxIntervalSec ? time : kRecoveryMaxIntervalSec;
 
 	k_timer_start(&mRecoveryTimer, K_SECONDS(time), K_NO_WAIT);
+}
+
+BLEConnectivityManager::State BLEConnectivityManager::GetCurrentState()
+{
+	/* Iterate through states from the maximum priority to the minimum one */
+	for (uint8_t s = State::Start; s < State::End; s++) {
+		if (mStateBitmask & (1 << s)) {
+			return static_cast<State>(s);
+		}
+	}
+	return State::Unknown;
+}
+
+void BLEConnectivityManager::UpdateStateFlag(State state, bool enabled)
+{
+	uint8_t newStateBitmask = enabled ? mStateBitmask | (1 << state) : mStateBitmask & ~(1 << state);
+	if (newStateBitmask != mStateBitmask) {
+		mStateBitmask = newStateBitmask;
+		if (mStateChangedCb) {
+			mStateChangedCb(GetCurrentState());
+		}
+	}
 }
 
 } /* namespace Nrf */
