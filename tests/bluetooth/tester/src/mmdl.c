@@ -16,7 +16,6 @@
 #include <sensor.h>
 #include <time_internal.h>
 #include <lightness_internal.h>
-#include <light_ctrl_internal.h>
 
 #define LOG_LEVEL CONFIG_BT_MESH_LOG_LEVEL
 #include "zephyr/logging/log.h"
@@ -3325,7 +3324,7 @@ static void light_lc_property_get(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	format = prop_format_get(id);
+	format = bt_mesh_lc_prop_format_get(id);
 	if (!format) {
 		LOG_ERR("Invalid format");
 		goto fail;
@@ -3381,7 +3380,7 @@ static void light_lc_property_set(uint8_t *data, uint16_t len)
 
 	net_buf_simple_init_with_data(buf, &cmd->val, sizeof(cmd->val));
 
-	format = prop_format_get(id);
+	format = bt_mesh_lc_prop_format_get(id);
 	if (!format) {
 		LOG_ERR("Invalid format");
 		goto fail;

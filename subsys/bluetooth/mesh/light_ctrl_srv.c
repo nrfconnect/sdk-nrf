@@ -1152,7 +1152,7 @@ static int prop_get(struct net_buf_simple *buf,
 	struct bt_mesh_sensor_value sensor_val;
 	int err;
 	int64_t micro = 0;
-	const struct bt_mesh_sensor_format *format = prop_format_get(id);
+	const struct bt_mesh_sensor_format *format = bt_mesh_lc_prop_format_get(id);
 
 	if (!format) {
 		return -ENOENT;
@@ -1253,7 +1253,7 @@ static int prop_set(struct net_buf_simple *buf,
 {
 	struct bt_mesh_sensor_value val;
 	int err;
-	const struct bt_mesh_sensor_format *format = prop_format_get(id);
+	const struct bt_mesh_sensor_format *format = bt_mesh_lc_prop_format_get(id);
 	enum bt_mesh_sensor_value_status status;
 
 	if (!format) {
