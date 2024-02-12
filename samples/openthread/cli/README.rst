@@ -64,20 +64,21 @@ See `Testing diagnostic module`_ section for an example.
 .. note::
     If you disable the :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` feature set, you can enable the diagnostic module with the :kconfig:option:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
 
-For the ``nrf52840dongle_nrf52840`` build target, diagnostic GPIO commands can also be used.
-They are enabled in the ``openthread_config`` node in the :file:`boards/nrf52840dongle_nrf52840.overlay` file, with the node configured for the **P0.19** pin, which is connected to the **RESET** pin on the nRF52840 Dongle.
-The pin is set in output mode with a low state so that the **RESET** pin is pulled to **GND**, which results in the device rebooting without skipping the bootloader.
+.. _ot_cli_sample_bootloader:
+
+Rebooting to bootloader
+=======================
+
+For the ``nrf52840dongle_nrf52840`` build target, the device can reboot to bootloader by triggering a GPIO pin.
+To enable this behavior, enable the :kconfig:option:`CONFIG_OPENTHREAD_PLATFORM_BOOTLOADER_MODE_GPIO` Kconfig option and configure the Devicetree overlay in the :file:`boards/nrf52840dongle_nrf52840.overlay` file.
+For this sample, the ``bootloader-gpios`` property in the ``openthread_config`` node is pre-configured for the **P0.19** pin, which is connected to the **RESET** pin on the nRF52840 Dongle.
 This functionality is not enabled by other commands, such as ``factoryreset``, as they can only trigger a software reset, skipping the bootloader.
 
-To reboot to the bootloader, run the following commands on the device:
+To reboot to the bootloader, run the following command on the device:
 
 .. code-block:: console
 
-   uart:~$ ot diag start
-   start diagnostics mode
-   status 0x00
-   Done
-   uart:~$ ot diag gpio mode 0 out
+   uart:~$ ot reset bootloader
 
 Configuration
 *************
@@ -122,7 +123,7 @@ Serial transport
 
 The Thread CLI sample supports UART and USB CDC ACM as serial transports.
 By default, it uses USB CDC ACM transport for ``nrf52840dongle_nrf52840``, and UART transport for other build targets.
-To switch to USB transport on targets that use UART by default, :ref:`activate the USB overlay extension <ot_cli_sample_activating_variants>`.
+To switch to USB transport on targets that use UART by default, :ref:`activate the USB snippet <ot_cli_sample_activating_variants>`.
 
 Building and running
 ********************
