@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Monitor sample"
+
+config STATS_PRINT_TIMEOUT
+	int "Wait duration for printing WiFi packet statistics"
+	default 5
+
+config MONITOR_MODE_CHANNEL
+	int "Configure the channel for Monitor mode sample"
+	range 1 233
+	default 1
+	help
+	  Specify the channel for receiving WiFi packets in Monitor mode.
+	  The valid channel range is 1 to 233.
+
+endmenu
