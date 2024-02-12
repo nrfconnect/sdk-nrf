@@ -12,7 +12,7 @@ Template: Integration
    Refer to the following instructions to create the description:
 
    * Provide a title that starts with the product or service name with "integration" as a suffix, for example, "Memfault integration".
-   * Place the documentation inside the :file:`nrf/doc/nrf` folder.
+   * Place the documentation inside the :file:`nrf/doc/nrf/external_comp` folder.
    * List the file name with path in the ``.. toctree:`` of the :file:`integrations` RST file.
    * Sections with * are optional and can be left out.
      All other sections are required.

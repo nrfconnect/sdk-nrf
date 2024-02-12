@@ -7,7 +7,7 @@ Google Fast Pair Service (GFPS)
    :local:
    :depth: 2
 
-The Google Fast Pair Service (Fast Pair for short) implements a Bluetooth® Low Energy (LE) GATT Service required when :ref:`ug_bt_fast_pair`.
+The Google Fast Pair Service (Fast Pair for short) implements a Bluetooth® Low Energy (LE) GATT Service required for :ref:`ug_bt_fast_pair` with the |NCS|.
 
 Service UUID
 ************
