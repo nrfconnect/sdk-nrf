@@ -48,6 +48,42 @@ static bt_uuid *sUuidLbs = BT_UUID_LBS;
 static bt_uuid *sUuidEs = BT_UUID_ESS;
 static bt_uuid *sUuidServices[] = { sUuidLbs, sUuidEs };
 static constexpr uint8_t kUuidServicesNumber = ARRAY_SIZE(sUuidServices);
+/**
+ * @brief Blink rates for indication the BLE Connectivity Manager state.
+ *
+ */
+constexpr static uint32_t kPairingBlinkRate{ 100 };
+constexpr static uint32_t kScanningBlinkRate_ms{ 300 };
+constexpr static uint32_t kLostBlinkRate_ms{ 1000 };
+
+void BLEStateChangeCallback(Nrf::BLEConnectivityManager::State state)
+{
+	switch (state) {
+	case Nrf::BLEConnectivityManager::State::Connected:
+		Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(true); });
+		break;
+	case Nrf::BLEConnectivityManager::State::Scanning:
+		Nrf::PostTask([] {
+			Nrf::GetBoard()
+				.GetLED(Nrf::DeviceLeds::LED2)
+				.Blink(kScanningBlinkRate_ms, kScanningBlinkRate_ms);
+		});
+		break;
+	case Nrf::BLEConnectivityManager::State::LostDevice:
+		Nrf::PostTask([] {
+			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(kLostBlinkRate_ms, kLostBlinkRate_ms);
+		});
+		break;
+	case Nrf::BLEConnectivityManager::State::Pairing:
+		Nrf::PostTask([] {
+			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(kPairingBlinkRate, kPairingBlinkRate);
+		});
+		break;
+	default:
+		Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false); });
+	}
+}
+
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
 
 } /* namespace */
@@ -110,6 +146,7 @@ CHIP_ERROR AppTask::Init()
 	/* Initialize Matter stack */
 	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
 #ifdef CONFIG_BRIDGED_DEVICE_BT
+		Nrf::BLEConnectivityManager::Instance().RegisterStateCallback(BLEStateChangeCallback);
 		/* Initialize BLE Connectivity Manager before the Bridge Manager, as it must be ready to recover
 		 * devices loaded from persistent storage during the bridge init. */
 		CHIP_ERROR bleInitError =
