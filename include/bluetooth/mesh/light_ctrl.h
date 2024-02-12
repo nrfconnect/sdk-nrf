@@ -14,6 +14,7 @@
 #define BT_MESH_LIGHT_CTRL_H__
 
 #include <bluetooth/mesh/properties.h>
+#include <bluetooth/mesh/sensor_types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -182,6 +183,44 @@ enum bt_mesh_light_ctrl_coeff {
 	 */
 	BT_MESH_LIGHT_CTRL_COEFF_KPU = BT_MESH_PROP_ID_LIGHT_CTRL_REG_KPU,
 };
+
+/** @brief Get the sensor format for the given Light Lightness Control property ID.
+ *
+ *  @param[in] id Light Lightness Control property ID.
+ *
+ *  @return The associated sensor format, or NULL if the ID is unknown.
+ */
+static inline const struct bt_mesh_sensor_format *
+bt_mesh_lc_prop_format_get(uint16_t id)
+{
+	switch (id) {
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON:
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG:
+	case BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY:
+		return &bt_mesh_sensor_format_illuminance;
+	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_ON:
+	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_PROLONG:
+	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_STANDBY:
+		return &bt_mesh_sensor_format_perceived_lightness;
+	case BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY:
+		return &bt_mesh_sensor_format_percentage_8;
+	case BT_MESH_LIGHT_CTRL_COEFF_KID:
+	case BT_MESH_LIGHT_CTRL_COEFF_KIU:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPD:
+	case BT_MESH_LIGHT_CTRL_COEFF_KPU:
+		return &bt_mesh_sensor_format_coefficient;
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG:
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_ON:
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_AUTO:
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL:
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_OCCUPANCY_DELAY:
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_PROLONG:
+	case BT_MESH_LIGHT_CTRL_PROP_TIME_ON:
+		return &bt_mesh_sensor_format_time_millisecond_24;
+	default:
+		return NULL;
+	}
+}
 
 /** @cond INTERNAL_HIDDEN */
 #define BT_MESH_LIGHT_CTRL_OP_MODE_GET BT_MESH_MODEL_OP_2(0x82, 0x91)

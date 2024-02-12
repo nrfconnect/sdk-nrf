@@ -10,7 +10,7 @@
 #include <bluetooth/mesh/models.h>
 #include <bluetooth/mesh/light_ctrl_srv.h>
 #include <bluetooth/mesh/light_ctrl_reg_spec.h>
-#include "light_ctrl_internal.h"
+#include "sensor.h"
 
 #define FLAGS_CONFIGURATION (BIT(FLAG_STARTED) | BIT(FLAG_OCC_MODE))
 

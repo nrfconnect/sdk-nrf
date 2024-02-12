@@ -6,7 +6,6 @@
 
 #include <bluetooth/mesh/light_ctrl_cli.h>
 #include "model_utils.h"
-#include "light_ctrl_internal.h"
 #include "sensor.h"
 
 union prop_value {
@@ -134,7 +133,7 @@ static int handle_prop(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 		       net_buf_simple_pull_mem(buf, sizeof(float)),
 		       sizeof(float));
 	} else {
-		format = prop_format_get(id);
+		format = bt_mesh_lc_prop_format_get(id);
 		if (!format) {
 			return -ENOENT;
 		}
@@ -424,7 +423,7 @@ int bt_mesh_light_ctrl_cli_prop_set(struct bt_mesh_light_ctrl_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_PROP_SET);
 	net_buf_simple_add_le16(&buf, id);
 
-	format = prop_format_get(id);
+	format = bt_mesh_lc_prop_format_get(id);
 	if (!format) {
 		return -EINVAL;
 	}
@@ -471,7 +470,7 @@ int bt_mesh_light_ctrl_cli_prop_set_unack(struct bt_mesh_light_ctrl_cli *cli,
 	bt_mesh_model_msg_init(&buf, BT_MESH_LIGHT_CTRL_OP_PROP_SET_UNACK);
 	net_buf_simple_add_le16(&buf, id);
 
-	format = prop_format_get(id);
+	format = bt_mesh_lc_prop_format_get(id);
 	if (!format) {
 		return -EINVAL;
 	}
