@@ -1,13 +1,13 @@
 .. _ug_bt_fast_pair:
 
-Using Google Fast Pair with the |NCS|
-#####################################
+Google Fast Pair integration
+############################
 
 .. contents::
    :local:
    :depth: 2
 
-Google Fast Pair is a standard for pairing Bluetooth® and Bluetooth Low Energy (LE) devices with as little user interaction required as possible.
+Google Fast Pair is a standard for pairing *Bluetooth®* and Bluetooth Low Energy (LE) devices with as little user interaction required as possible.
 Google also provides additional features built upon the Fast Pair standard.
 For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
 
@@ -17,6 +17,27 @@ For detailed information about supported functionalities, see the official `Fast
 
    The implementation passes tests of `Fast Pair Validator app`_ (beta version).
    The procedure triggered in Android settings is successful (tested with Android 11).
+
+Integration prerequisites
+*************************
+
+Before you start the |NCS| integration with Fast Pair, make sure that the following prerequisites are fulfilled:
+
+* :ref:`Install the nRF Connect SDK <installation>`.
+* Set up a supported :term:`Development Kit (DK)`.
+  See :ref:`device_guides` for more information on setting up the DK you are using.
+* Install the requirements mentioned in the :ref:`bt_fast_pair_provision_script`.
+  The script is automatically invoked by the build system during application build to generate Fast Pair provisioning data hex file.
+* During the early stages of development, you can use the debug Model ID and Anti-Spoofing Public/Private Key pair obtained by Nordic Semiconductor for local tests.
+  Later on, you need to register your own Fast Pair Provider device with Google.
+  The :ref:`ug_bt_fast_pair_provisioning_register` section in this document explains how to register the device and obtain the Model ID and Anti-Spoofing Public/Private Key pair.
+
+Solution architecture
+*********************
+
+The |NCS| integrates the Fast Pair Provider role, facilitating communication between the Fast Pair Seeker (typically a smartphone) and the Provider (your device).
+The integration involves following the instructions outlined in the :ref:`ug_integrating_fast_pair` section.
+The SDK supports extensions such as Battery Notification and Personalized Name, which can be included based on the specific use case requirements.
 
 .. _ug_fast_pair_extensions:
 
@@ -51,8 +72,8 @@ For more details on this extension, see the `Fast Pair Personalized Name extensi
 
 .. _ug_integrating_fast_pair:
 
-Integrating Fast Pair
-*********************
+Integration steps
+*****************
 
 The Fast Pair standard integration in the |NCS| consists of the following steps:
 
@@ -87,8 +108,8 @@ See the official `Fast Pair Model Registration`_ documentation for information o
 Alternatively, you can use the debug Model ID and Anti-Spoofing Public/Private Key pair obtained by Nordic Semiconductor for the development purposes.
 See the following samples and applications for details about the debug Fast Pair Providers registered by Nordic:
 
-* the :ref:`fast_pair_input_device` sample
-* the :ref:`nrf_desktop` application
+* The :ref:`fast_pair_input_device` sample
+* The :ref:`nrf_desktop` application
 
 .. _ug_bt_fast_pair_provisioning_register_device_type:
 
@@ -302,3 +323,42 @@ The specific use case of the Google Fast Pair application is indicated by the ch
 Different use cases may require implementation of additional guidelines for your accessory firmware or specific configuration of your device model in the Google Nearby Devices console.
 These requirements typically help to improve user experience or security properties for the chosen use case.
 To learn more, see the official `Fast Pair`_ documentation.
+
+Applications and samples
+************************
+
+The following application and sample use the Fast Pair integration in the |NCS|:
+
+* :ref:`nrf_desktop` application
+* :ref:`fast_pair_input_device` sample
+
+Library support
+***************
+
+The following |NCS| libraries support the Fast Pair integration:
+
+* :ref:`bt_fast_pair_readme` library implements the Fast Pair GATT Service and provides the APIs required for :ref:`ug_bt_fast_pair` with the |NCS|.
+* :ref:`bt_le_adv_prov_readme` library - Google Fast Pair advertising data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR`) can be used to integrate Fast Pair advertising payload to this library.
+  The Bluetooth LE advertising provider subsystem can be used to manage advertising and scan response data.
+
+Required scripts
+****************
+
+The :ref:`bt_fast_pair_provision_script` is required to generate the provisioning data for the device.
+The script is automatically invoked by the build system during application build when the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option is enabled.
+
+Terms and licensing
+*******************
+
+The use of Google Fast Pair may be subject to Google's terms and licensing.
+Refer to the official `Fast Pair`_ documentation for development-related licensing information.
+
+Dependencies
+************
+
+The following are the required dependencies for the Fast Pair integration:
+
+* :ref:`nrfxlib:crypto`
+* :ref:`zephyr:bluetooth`
+* :ref:`zephyr:settings_api`
+* :ref:`partition_manager`
