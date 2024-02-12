@@ -1391,7 +1391,7 @@ static int nrf_wifi_radio_test_set_rx(const struct shell *shell,
 
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
-static int nrf_wifi_radio_test_ble_ant_switch_ctrl(const struct shell *shell,
+static int nrf_wifi_radio_test_sr_ant_switch_ctrl(const struct shell *shell,
 					     size_t argc,
 					     const char *argv[])
 {
@@ -1404,9 +1404,9 @@ static int nrf_wifi_radio_test_ble_ant_switch_ctrl(const struct shell *shell,
 
 	val  = strtoul(argv[1], NULL, 0);
 
-	ctx->conf_params.ble_ant_switch_ctrl = val;
+	ctx->conf_params.sr_ant_switch_ctrl = val;
 
-	return ble_ant_switch(val);
+	return sr_ant_switch(val);
 }
 #endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */
 
@@ -1935,8 +1935,8 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 	shell_fprintf(shell,
 		      SHELL_INFO,
-		      "ble_ant_switch_ctrl = %d\n",
-		      conf_params->ble_ant_switch_ctrl);
+		      "sr_ant_switch_ctrl = %d\n",
+		      conf_params->sr_ant_switch_ctrl);
 #endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */
 
 	shell_fprintf(shell,
@@ -2048,7 +2048,7 @@ static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
 
 	ctx->conf_params.wlan_ant_switch_ctrl = params.switch_A;
 
-	status = nrf_wifi_fmac_conf_btcoex(ctx->rpu_ctx,
+	status = nrf_wifi_fmac_conf_srcoex(ctx->rpu_ctx,
 					   &params, sizeof(params));
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -2303,11 +2303,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
-	SHELL_CMD_ARG(ble_ant_switch_ctrl,
+	SHELL_CMD_ARG(sr_ant_switch_ctrl,
 		      NULL,
 		      "0 - Switch set to use the BLE antenna\n"
 		      "1 - Switch set to use the shared Wi-Fi antenna",
-		      nrf_wifi_radio_test_ble_ant_switch_ctrl,
+		      nrf_wifi_radio_test_sr_ant_switch_ctrl,
 		      2,
 		      0),
 #endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */
