@@ -35,6 +35,7 @@ config NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR
 	bool "UART"
 	depends on SERIAL
 	depends on UART_ASYNC_API
+	select UART_USE_RUNTIME_CONFIGURE
 	help
 	  Modem tracing with UART require the chosen `nordic,modem-trace-uart`
 	  to be set in the Device tree.
