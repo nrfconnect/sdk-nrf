@@ -305,6 +305,9 @@ nRF Desktop
   * The default value of the newly introduced :kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME_PAIRING_MODE_ONLY` Kconfig option.
     The option is disabled by default by the nRF Desktop application.
     The Bluetooth device name is provided in the scan response also outside of pairing mode for backwards compatibility.
+  * The default value of newly introduced :kconfig:option:`CONFIG_CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15` Kconfig option.
+    The option is enabled by default by the nRF Desktop application.
+    Force power down on disconnection with reason ``0x15`` (Remote Device Terminated due to Power Off) is triggered to avoid waking up HID host until user input is detected.
 
 * Added the :ref:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT <config_desktop_app_options>` Kconfig option to the :ref:`nrf_desktop_hid_state`.
   The option allows to configure a maximum number of simultaneously supported HID data subscribers.
