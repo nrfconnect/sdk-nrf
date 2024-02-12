@@ -43,6 +43,12 @@ config BT_ADV_PROV_GAP_APPEARANCE
 config BT_ADV_PROV_DEVICE_NAME
 	default y
 
+config BT_ADV_PROV_DEVICE_NAME_PAIRING_MODE_ONLY
+	default n
+	help
+	  nRF Desktop provides device name also outside of pairing mode. This is
+	  done for backwards compatibility.
+
 config BT_ADV_PROV_SWIFT_PAIR
 	default y
 

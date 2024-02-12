@@ -298,6 +298,9 @@ nRF Desktop
     Disabling this Kconfig option improves the debugging experience.
   * The MCUboot, B0, and HCI RPMsg child images release configurations to explicitly enable the :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR` Kconfig option.
     Enabling this Kconfig option improves the reliability of the firmware.
+  * The default value of the newly introduced :kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME_PAIRING_MODE_ONLY` Kconfig option.
+    The option is disabled by default by the nRF Desktop application.
+    The Bluetooth device name is provided in the scan response also outside of pairing mode for backwards compatibility.
 
 * Added the :ref:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT <config_desktop_app_options>` Kconfig option to the :ref:`nrf_desktop_hid_state`.
   The option allows to configure a maximum number of simultaneously supported HID data subscribers.
