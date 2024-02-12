@@ -17,13 +17,16 @@ append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
   sha1.c
   sha256.c
   sha512.c
+  sha3.c
   ripemd160.c
   md5.c
   aesni.c
+  aesce.c
   aria.c
   camellia.c
   des.c
   psa_util.c
+  platform_util.c
 )
 
 # Add all files that are neccessary for nrf_oberon + builtin in legacy mode
@@ -38,6 +41,7 @@ if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR
     ecdsa.c
     ecp.c
     ecp_curves.c
+    ecp_curves_new.c
     gcm.c
     hkdf.c
     hmac_drbg.c
@@ -66,6 +70,7 @@ if(NOT CONFIG_OBERON_BACKEND)
     chacha20.c
     poly1305.c
     ecjpake.c
+    platform.c
   )
 endif()
 
