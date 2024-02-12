@@ -319,6 +319,16 @@ Examples
 
      sock connect -a 1a2b:1a2b:1a2b:1a2b::1 -p 20000 -f inet6 -t dgram
 
+* Open an IPv6 DTLS socket:
+
+  .. code-block:: console
+
+     sock connect -a 1a2b:1a2b:1a2b:1a2b::1 -p 20000 -f inet6 -t dgram -S -T 123
+
+  .. note::
+     The certificate must have been written beforehand to security tag ``123``.
+     See the `Credential storage management %CMNG`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 credential storage management %CMNG_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
+
 * Open a raw socket:
 
   .. code-block:: console
