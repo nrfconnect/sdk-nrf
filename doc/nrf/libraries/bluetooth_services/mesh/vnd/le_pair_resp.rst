@@ -26,6 +26,8 @@ See the :file:`samples/bluetooth/mesh/common/smp_bt_auth.c` file for the referen
 .. figure:: images/bt_mesh_le_pair_resp.svg
    :alt: Diagram of interaction between an Initiator and the LE Pairing Responder model
 
+The model supports only LE Secure Connection pairing and requires the :kconfig:option:`CONFIG_BT_SMP_SC_ONLY` to be enabled.
+
 Messages
 ========
 
