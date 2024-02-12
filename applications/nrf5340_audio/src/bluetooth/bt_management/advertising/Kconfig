@@ -48,7 +48,7 @@ config BLE_ACL_EXT_ADV_INT_MAX
 
 config EXT_ADV_BUF_MAX
 	int "Maximum number of extended advertising data parameters"
-	default 10
+	default 15
 
 config EXT_ADV_UUID_BUF_MAX
 	int "Maximum number of UUIDs to add to extended advertisements"

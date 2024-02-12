@@ -254,6 +254,8 @@ Serial LTE modem
 nRF5340 Audio
 -------------
 
+* Added support for Filter Accept List and enabled as default.
+
 * Updated:
 
   * Sending of the ISO data, which is now done in a single file :file:`bt_le_audio_tx`.
