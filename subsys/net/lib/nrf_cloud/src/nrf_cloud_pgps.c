@@ -110,7 +110,8 @@ static uint8_t prediction_cache[PGPS_PREDICTION_STORAGE_SIZE];
 
 static uint8_t prediction_buf[PGPS_PREDICTION_STORAGE_SIZE];
 static atomic_t accept_packets;
-static atomic_t pgps_need_assistance;
+static atomic_t loading_in_progress;
+static atomic_t notified;
 
 static int validate_stored_predictions(uint16_t *bad_day, uint32_t *bad_time);
 static void log_pgps_header(const char *msg, const struct nrf_cloud_pgps_header *header);
@@ -506,15 +507,16 @@ int nrf_cloud_pgps_notify_prediction(void)
 	LOG_INF("Searching for prediction");
 	err = nrf_cloud_pgps_find_prediction(&prediction);
 	if (err == -ELOADING) {
-		pgps_need_assistance = true;
+		loading_in_progress = true;
 		err = 0;
 	} else if (err < 0) {
-		if (!pgps_need_assistance) {
-			pgps_need_assistance = true;
+		if (!loading_in_progress) {
+			loading_in_progress = true;
+			notified = false;
 			err = pgps_request_all();
 			if (err) {
 				LOG_ERR("Error while requesting pgps set: %d", err);
-				pgps_need_assistance = false; /* try again next time */
+				loading_in_progress = false; /* try again next time */
 			}
 		} else {
 			err = 0;
@@ -523,7 +525,7 @@ int nrf_cloud_pgps_notify_prediction(void)
 		pnum = err;
 		err = 0;
 		LOG_DBG("Found P-GPS prediction %d", pnum);
-		pgps_need_assistance = false;
+		loading_in_progress = false;
 		/* the application should now send data to modem with
 		 * nrf_cloud_pgps_inject()
 		 */
@@ -622,7 +624,7 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 		LOG_ERR("server error: expired data");
 		index.cur_pnum = 0xff;
 		state = PGPS_EXPIRED;
-		pgps_need_assistance = false; /* make sure we request it */
+		loading_in_progress = false; /* make sure we request it */
 		return -ENODATA;
 	}
 
@@ -633,7 +635,7 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 		}
 		index.cur_pnum = 0xff;
 		state = PGPS_EXPIRED;
-		pgps_need_assistance = false; /* make sure we request it */
+		loading_in_progress = false; /* make sure we request it */
 		LOG_WRN("No data stored");
 		return -ENODATA;
 	}
@@ -662,6 +664,9 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 		return -ETIMEUNKNOWN;
 	} else if (cur_gps_sec > end_sec) {
 		if ((cur_gps_sec - end_sec) > PGPS_MARGIN_SEC) {
+			index.cur_pnum = 0xff;
+			state = PGPS_EXPIRED;
+			loading_in_progress = false; /* make sure we request it */
 			LOG_WRN("data expired!");
 			return -ETIMEDOUT;
 		}
@@ -700,8 +705,7 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 bool nrf_cloud_pgps_loading(void)
 {
 	LOG_DBG("Checking state:%d", state);
-	return ((state == PGPS_REQUEST_NEEDED) ||
-		(state == PGPS_REQUESTING) ||
+	return ((state == PGPS_REQUESTING) ||
 		(state == PGPS_LOADING));
 }
 
@@ -730,7 +734,7 @@ int nrf_cloud_pgps_request_all(void)
 void nrf_cloud_pgps_request_reset(void)
 {
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)) {
-		if (state == PGPS_REQUESTING) {
+		if (nrf_cloud_pgps_loading()) {
 			LOG_DBG("Allowing another request");
 			state = PGPS_REQUEST_NEEDED;
 		}
@@ -858,7 +862,6 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 #endif
 	if (!buf_len) {
 		LOG_ERR("Zero length packet received");
-		state = PGPS_NONE;
 		return -EINVAL;
 	}
 
@@ -907,7 +910,7 @@ int nrf_cloud_pgps_update(struct nrf_cloud_pgps_result *file_location)
 	err =  npgps_download_start(file_location->host, file_location->path,
 				    sec_tag, 0, FRAGMENT_SIZE);
 	if (err) {
-		state = PGPS_NONE;
+		state = PGPS_REQUEST_NEEDED; /* Will try again next time. */
 	}
 
 	return err;
@@ -1190,7 +1193,6 @@ static int open_storage(uint32_t offset, bool preserve)
 	if (err) {
 		LOG_ERR("Failed to init flash stream for offset %u: %d",
 			offset, err);
-		state = PGPS_NONE;
 		return err;
 	}
 
@@ -1361,7 +1363,7 @@ static int consume_pgps_header(const char *buf, size_t buf_len)
 	struct nrf_cloud_pgps_header *header = (struct nrf_cloud_pgps_header *)buf;
 
 	if (!validate_pgps_header(header)) {
-		state = PGPS_NONE;
+		state = PGPS_REQUEST_NEEDED; /* Ignore bad data. Try again next time. */
 		return -EINVAL;
 	}
 
@@ -1509,7 +1511,8 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 			index.predictions[pnum] = npgps_block_to_pointer(index.store_block);
 
 			if (!finished) {
-				if (pgps_need_assistance && (index.loading_count > 1)) {
+				if (loading_in_progress && !notified && (index.loading_count > 1)) {
+					notified = true;
 					nrf_cloud_pgps_notify_prediction();
 				}
 
@@ -1521,7 +1524,8 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 					evt_handler(&evt);
 				}
 			} else {
-				if (pgps_need_assistance) {
+				if (loading_in_progress && !notified) {
+					notified = true;
 					nrf_cloud_pgps_notify_prediction();
 				}
 
@@ -1576,7 +1580,9 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 	return 0;
 
 fail:
-	state = PGPS_NONE;
+	state = PGPS_NONE; /* Fatal error in managing flash storage.
+			    * Allow app to keep running w/o P-GPS.
+			    */
 	return err;
 }
 
@@ -1593,12 +1599,18 @@ int nrf_cloud_pgps_begin_update(void)
 	/* assume cache is no longer valid */
 	discard_prediction_buffer();
 
+	index.loading_count = 0;
+	index.store_block = npgps_alloc_block();
+	if (index.store_block == NO_BLOCK) {
+		LOG_ERR("No free flash space!");
+		return -ENOMEM;
+	}
 	state = PGPS_LOADING;
+
 	if (!index.partial_request) {
 		index.header.prediction_count = NUM_PREDICTIONS;
 		index.header.prediction_period_min = PREDICTION_PERIOD;
-		index.period_sec =
-			index.header.prediction_period_min * SEC_PER_MIN;
+		index.period_sec = index.header.prediction_period_min * SEC_PER_MIN;
 		memset(index.predictions, 0, sizeof(index.predictions));
 	} else {
 		for (uint8_t pnum = index.pnum_offset;
@@ -1606,21 +1618,16 @@ int nrf_cloud_pgps_begin_update(void)
 			index.predictions[pnum] = NULL;
 		}
 	}
-	index.loading_count = 0;
-	index.store_block = npgps_alloc_block();
-	if (index.store_block == NO_BLOCK) {
-		LOG_ERR("No free flash space!");
-		state = PGPS_NONE;
-		npgps_download_unlock();
-		return -ENOMEM;
-	}
+
 	index.storage_extent = npgps_get_block_extent(index.store_block);
 	LOG_DBG("Opening storage at block:%d, len:%d", index.store_block,
 		index.storage_extent);
 	err = open_storage(npgps_block_to_offset(index.store_block),
 			   index.partial_request);
 	if (err) {
-		state = PGPS_NONE;
+		state = PGPS_NONE; /* Fatal error in managing flash storage.
+				    * Allow app to keep running w/o P-GPS.
+				    */
 		npgps_download_unlock();
 		return err;
 	}
@@ -1777,6 +1784,8 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 			pnum = err;
 		}
 	}
+
+	/* Subsystem is now initialized. Load predictions if required. */
 
 	if (!num_valid) {
 		/* read a full set of predictions */

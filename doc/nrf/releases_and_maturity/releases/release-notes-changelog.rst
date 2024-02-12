@@ -916,6 +916,7 @@ Libraries for networking
 * :ref:`lib_nrf_cloud_pgps` library:
 
   * Fixed a bug in prediction set update when the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig option was set to non-zero value.
+  * Fixed a bug in handling errors when downloading P-GPS data that prevented retries until after a reboot.
 
 * :ref:`lib_nrf_provisioning` library:
 
