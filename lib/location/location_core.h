@@ -7,8 +7,6 @@
 #ifndef LOCATION_CORE_H
 #define LOCATION_CORE_H
 
-#define LOCATION_METHOD_INTERNAL_WIFI_CELLULAR 100
-
 /** Information required to carry out a location request. */
 struct location_request_info {
 	const struct location_wifi_config *wifi;

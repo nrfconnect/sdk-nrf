@@ -504,11 +504,6 @@ void test_location_method_str(void)
 
 	method = location_method_str(99);
 	TEST_ASSERT_EQUAL_STRING("Unknown", method);
-
-	/* 100 is a hidden internally used LOCATION_METHOD_INTERNAL_WIFI_CELLULAR constant */
-	method = location_method_str(100);
-	TEST_ASSERT_EQUAL_STRING("Wi-Fi + Cellular", method);
-
 }
 
 /********* GNSS POSITIONING TESTS ***********************/
@@ -1347,6 +1342,23 @@ void test_error_too_many_methods(void)
 	/* Check that location_request returns an error with too many methods */
 	location_config_defaults_set(&config, 2, methods);
 	config.methods_count = 4;
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
+}
+
+/* Test location request with LOCATION_METHOD_WIFI_CELLULAR in method list. */
+void test_error_wifi_cellular_method(void)
+{
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {
+		LOCATION_METHOD_GNSS,
+		LOCATION_METHOD_WIFI_CELLULAR,
+		LOCATION_METHOD_CELLULAR};
+
+	/* Check that location_config_defaults_set returns an error with too many methods */
+	location_config_defaults_set(&config, 3, methods);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(-EINVAL, err);

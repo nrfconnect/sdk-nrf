@@ -85,7 +85,7 @@ static bool initialized;
 static const char LOCATION_METHOD_CELLULAR_STR[] = "Cellular";
 static const char LOCATION_METHOD_GNSS_STR[] = "GNSS";
 static const char LOCATION_METHOD_WIFI_STR[] = "Wi-Fi";
-static const char LOCATION_METHOD_INTERNAL_WIFI_CELLULAR_STR[] = "Wi-Fi + Cellular";
+static const char LOCATION_METHOD_WIFI_CELLULAR_STR[] = "Wi-Fi + Cellular";
 static const char LOCATION_METHOD_UNKNOWN_STR[] = "Unknown";
 
 int location_handler_register(location_event_handler_t handler)
@@ -299,13 +299,10 @@ const char *location_method_str(enum location_method method)
 	case LOCATION_METHOD_WIFI:
 		return LOCATION_METHOD_WIFI_STR;
 
+	case LOCATION_METHOD_WIFI_CELLULAR:
+		return LOCATION_METHOD_WIFI_CELLULAR_STR;
+
 	default:
-		/* Wi-Fi + Cellular method cannot be checked in switch-case because
-		 * it's not defined in the enum
-		 */
-		if (method == LOCATION_METHOD_INTERNAL_WIFI_CELLULAR) {
-			return LOCATION_METHOD_INTERNAL_WIFI_CELLULAR_STR;
-		}
 		return LOCATION_METHOD_UNKNOWN_STR;
 	}
 }
