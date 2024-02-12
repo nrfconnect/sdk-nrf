@@ -19,6 +19,7 @@
 #include <hal/nrf_egu.h>
 #endif
 
+const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(0);
 LOG_MODULE_REGISTER(mpsl_radio_pin_debug, CONFIG_MPSL_LOG_LEVEL);
 
 static int m_ppi_config(void)
@@ -52,22 +53,24 @@ static int m_ppi_config(void)
 	nrfx_gppi_channel_endpoints_setup(
 		ppi_chan_radio_ready, nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_READY),
 		nrfx_gpiote_out_task_address_get(
-			CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
+			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
 
 	nrfx_gppi_channel_endpoints_setup(
 		ppi_chan_radio_disabled,
 		nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_DISABLED),
 		nrfx_gpiote_out_task_address_get(
-			CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
+			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
 
 	nrfx_gppi_channel_endpoints_setup(
 		ppi_chan_radio_address,
 		nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS),
-		nrfx_gpiote_out_task_address_get(CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
+		nrfx_gpiote_out_task_address_get(&gpiote,
+						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
 
 	nrfx_gppi_channel_endpoints_setup(
 		ppi_chan_radio_end, nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_END),
-		nrfx_gpiote_out_task_address_get(CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
+		nrfx_gpiote_out_task_address_get(&gpiote,
+						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
 
 	if (nrfx_ppi_channel_enable(ppi_chan_radio_ready) != NRFX_SUCCESS) {
 		LOG_ERR("Failed enabling channel");
@@ -119,13 +122,15 @@ static int m_ppi_config(void)
 	nrf_egu_publish_set(NRF_EGU0, NRF_EGU_EVENT_TRIGGERED2, dppi_chan_address_end);
 	nrf_egu_publish_set(NRF_EGU0, NRF_EGU_EVENT_TRIGGERED3, dppi_chan_address_end);
 
-	nrfx_gppi_task_endpoint_setup(dppi_chan_ready_disabled,
-				      nrfx_gpiote_out_task_address_get(
-					      CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
+	nrfx_gppi_task_endpoint_setup(
+		dppi_chan_ready_disabled,
+		nrfx_gpiote_out_task_address_get(
+			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
 
 	nrfx_gppi_task_endpoint_setup(
 		dppi_chan_address_end,
-		nrfx_gpiote_out_task_address_get(CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
+		nrfx_gpiote_out_task_address_get(&gpiote,
+						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
 
 	if (nrfx_dppi_channel_enable(dppi_chan_ready_disabled) != NRFX_SUCCESS) {
 		LOG_ERR("Failed enabling channel");
@@ -150,12 +155,14 @@ static int mpsl_radio_pin_debug_init(void)
 
 	const nrfx_gpiote_output_config_t gpiote_output_cfg = NRFX_GPIOTE_DEFAULT_OUTPUT_CONFIG;
 
-	if (nrfx_gpiote_channel_alloc(&radio_ready_radio_disabled_gpiote_channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(&gpiote, &radio_ready_radio_disabled_gpiote_channel) !=
+	    NRFX_SUCCESS) {
 		LOG_ERR("Failed allocating GPIOTE chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_gpiote_channel_alloc(&radio_address_radio_end_gpiote_channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(&gpiote, &radio_address_radio_end_gpiote_channel) !=
+	    NRFX_SUCCESS) {
 		LOG_ERR("Failed allocating GPIOTE chan");
 		return -ENOMEM;
 	}
@@ -166,9 +173,9 @@ static int mpsl_radio_pin_debug_init(void)
 		.init_val = NRF_GPIOTE_INITIAL_VALUE_LOW,
 	};
 
-	if (nrfx_gpiote_output_configure(CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN,
-					 &gpiote_output_cfg,
-					 &task_cfg_ready_disabled) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_output_configure(
+		    &gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN, &gpiote_output_cfg,
+		    &task_cfg_ready_disabled) != NRFX_SUCCESS) {
 		LOG_ERR("Failed configuring GPIOTE chan");
 		return -ENOMEM;
 	}
@@ -179,7 +186,7 @@ static int mpsl_radio_pin_debug_init(void)
 		.init_val = NRF_GPIOTE_INITIAL_VALUE_LOW,
 	};
 
-	if (nrfx_gpiote_output_configure(CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN,
+	if (nrfx_gpiote_output_configure(&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN,
 					 &gpiote_output_cfg,
 					 &task_cfg_address_end) != NRFX_SUCCESS) {
 		LOG_ERR("Failed configuring GPIOTE chan");
@@ -190,8 +197,8 @@ static int mpsl_radio_pin_debug_init(void)
 		return -ENOMEM;
 	}
 
-	nrfx_gpiote_out_task_enable(CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN);
-	nrfx_gpiote_out_task_enable(CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN);
+	nrfx_gpiote_out_task_enable(&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN);
+	nrfx_gpiote_out_task_enable(&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN);
 
 	return 0;
 }
