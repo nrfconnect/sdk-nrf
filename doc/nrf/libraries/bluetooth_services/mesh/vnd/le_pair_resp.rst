@@ -7,7 +7,8 @@ LE Pairing Responder
    :local:
    :depth: 2
 
-The LE Pairing Responder model can be used to hand over a passkey that will authenticate a Bluetooth LE connection over a mesh network when it is not possible to use other pairing methods.
+The LE Pairing Responder model is a vendor model.
+This model can be used to hand over a passkey that will authenticate a Bluetooth LE connection over a mesh network when it is not possible to use other pairing methods.
 
 Before the pairing is initiated, an initiator should send an LE Pairing message with Passkey Reset sub-opcode to set a new passkey for the next pairing request.
 The passkey returned in the LE Pairing message with the Passkey Status sub-opcode should be used for the next pairing.
