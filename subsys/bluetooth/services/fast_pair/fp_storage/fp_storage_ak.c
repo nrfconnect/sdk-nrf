@@ -421,7 +421,7 @@ void fp_storage_ak_ram_clear(void)
 	is_enabled = false;
 }
 
-bool bt_fast_pair_has_account_key(void)
+bool fp_storage_ak_has_account_key(void)
 {
 	return (fp_storage_ak_count() > 0);
 }

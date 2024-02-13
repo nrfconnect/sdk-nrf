@@ -53,6 +53,12 @@ int fp_storage_ak_save(const struct fp_account_key *account_key);
  */
 int fp_storage_ak_count(void);
 
+/** Verify that any Account Key is stored.
+ *
+ * @return True when at least one Account Key is stored, false otherwise.
+ */
+bool fp_storage_ak_has_account_key(void);
+
 /** Get stored Account Key List.
  *  This function should not be used if only one key is about to be used, because it doesn't trigger
  *  key usage order update. Use @ref fp_storage_ak_find instead.
