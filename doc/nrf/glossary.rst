@@ -442,6 +442,9 @@ Glossary
    Modulation Coding Scheme (MCS)
       An index defined by the Wi-Fi standards where each index specifies a combination of modulation scheme and forward error correction coding rate.
 
+   Monitor
+      A network interface mode for nRF70 Series devices that enables the capture and analysis of all incoming IEEE 802.11 packets.
+
    Multicast addressing
       An addressing type that uses a one-to-many association, where datagrams are routed from a single sender to multiple selected endpoints simultaneously in a single transmission.
 
