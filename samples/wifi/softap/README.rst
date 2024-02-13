@@ -31,6 +31,7 @@ You can enable the SoftAP mode by setting the below configuration options in the
 .. note::
 
    The SoftAP mode operation is dictated by regulatory requirements.
+   It is mandatory to set the regulatory domain to a specific country when operating in the 5 GHz frequency band.
 
 You can set the regulatory domain using the below configuration option:
 
