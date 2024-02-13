@@ -231,6 +231,13 @@ Asset Tracker v2
 
 * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
+Connectivity Bridge
+-------------------
+
+* Updated:
+
+  * Reworked handling of emulated README.txt to support multiple boards. Also, README.txt now contains version information.
+
 Serial LTE modem
 ----------------
 

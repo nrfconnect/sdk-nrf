@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 
 #include <app_event_manager.h>
+#include <hw_id.h>
 
 #define MODULE main
 #include "module_state_event.h"
@@ -14,17 +15,22 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE);
 
-#define USB_SERIALNUMBER_TEMPLATE "THINGY91_%04X%08X"
-
 static uint8_t usb_serial_str[] = "THINGY91_12PLACEHLDRS";
 
 /* Overriding weak function to set iSerialNumber at runtime. */
 uint8_t *usb_update_sn_string_descriptor(void)
 {
-	snprintk(usb_serial_str, sizeof(usb_serial_str), USB_SERIALNUMBER_TEMPLATE,
+#if defined(CONFIG_SOC_SERIES_NRF52X)
+	snprintk(usb_serial_str, sizeof(usb_serial_str), "THINGY91_%04X%08X",
 				(uint32_t)(NRF_FICR->DEVICEADDR[1] & 0x0000FFFF)|0x0000C000,
 				(uint32_t)NRF_FICR->DEVICEADDR[0]);
+#else
+	char buf[HW_ID_LEN] = {0};
 
+	if (!hw_id_get(buf, ARRAY_SIZE(buf))) {
+		snprintk(usb_serial_str, sizeof(usb_serial_str), "THINGY91_%s", buf);
+	}
+#endif
 	return usb_serial_str;
 }
 
