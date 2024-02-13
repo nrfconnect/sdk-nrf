@@ -56,7 +56,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	if (is_power_down_event(aeh)) {
+#if defined(CONFIG_SOC_SERIES_NRF52X)
 		nrf_power_system_off(NRF_POWER);
+#endif
 	}
 
 	/* If event is unhandled, unsubscribe. */
