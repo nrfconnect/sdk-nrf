@@ -36,8 +36,7 @@ To pre-program the certificates, use one of the following methods:
 * Build and flash the LwM2M carrier sample, while making sure that:
 
   * The appropriate certificates (:file:`*.pem`) are included in the :file:`certs` folder.
-  * The :file:`*.pem`` files are converted to hex files in :file:`CMakeLists.txt`.
-  * The converted hex files are referenced in :file:`carrier_certs.c`.
+  * |hex_format|
 
 Other samples and applications like :ref:`asset_tracker_v2` and :ref:`modem_shell_application` with the carrier library integration do not write any certificates in the application.
 
