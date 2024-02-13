@@ -84,6 +84,11 @@ config NRF700X_RAW_DATA_RX
 	bool "Enable RAW RX sniffer operation in the driver"
 	depends on NRF700X_SYSTEM_MODE
 
+config NRF700X_PROMISC_DATA_RX
+	bool "Enable promiscuous RX sniffer operation in the driver"
+	select EXPERIMENTAL
+	depends on NRF700X_SYSTEM_MODE
+
 config NRF_WIFI_IF_AUTO_START
 	bool "Enable Wi-Fi interface auto start on boot"
 	default y
