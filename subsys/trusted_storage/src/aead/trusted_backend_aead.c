@@ -7,11 +7,11 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/logging/log.h>
 #include <mbedtls/platform_util.h>
-LOG_MODULE_REGISTER(internal_secure_aead, CONFIG_SECURE_STORAGE_LOG_LEVEL);
+LOG_MODULE_REGISTER(internal_trusted_aead, CONFIG_TRUSTED_STORAGE_LOG_LEVEL);
 
 #include <string.h>
 
-#include "../secure_storage_backend.h"
+#include "../trusted_storage_backend.h"
 #include "../storage_backend.h"
 #include "aead_key.h"
 #include "aead_nonce.h"
@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(internal_secure_aead, CONFIG_SECURE_STORAGE_LOG_LEVEL);
 #define AEAD_NONCE_SIZE 12
 #define AEAD_TAG_SIZE	16
 
-#define STORAGE_MAX_ASSET_SIZE CONFIG_SECURE_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE
+#define STORAGE_MAX_ASSET_SIZE CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE
 #define AEAD_MAX_BUF_SIZE      ROUND_UP(STORAGE_MAX_ASSET_SIZE + AEAD_TAG_SIZE, AEAD_TAG_SIZE)
 
 /** Header of stored object. Supplied as additional data when encrypting. */
@@ -45,7 +45,7 @@ typedef struct stored_object {
 	uint8_t data[AEAD_MAX_BUF_SIZE];
 } stored_object;
 
-psa_status_t secure_get_info(const psa_storage_uid_t uid, const char *prefix,
+psa_status_t trusted_get_info(const psa_storage_uid_t uid, const char *prefix,
 			     struct psa_storage_info_t *p_info)
 {
 	psa_status_t status;
@@ -69,7 +69,7 @@ psa_status_t secure_get_info(const psa_storage_uid_t uid, const char *prefix,
 	return PSA_SUCCESS;
 }
 
-psa_status_t secure_get(const psa_storage_uid_t uid, const char *prefix, size_t data_offset,
+psa_status_t trusted_get(const psa_storage_uid_t uid, const char *prefix, size_t data_offset,
 			size_t data_length, void *p_data, size_t *p_data_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
@@ -86,7 +86,7 @@ psa_status_t secure_get(const psa_storage_uid_t uid, const char *prefix, size_t 
 	}
 
 	/* Get AEAD key */
-	status = secure_storage_get_key(uid, key_buf, AEAD_KEY_SIZE);
+	status = trusted_storage_get_key(uid, key_buf, AEAD_KEY_SIZE);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -98,7 +98,7 @@ psa_status_t secure_get(const psa_storage_uid_t uid, const char *prefix, size_t 
 		return status;
 	}
 
-	status = secure_storage_aead_decrypt(key_buf, AEAD_KEY_SIZE, object_data.nonce,
+	status = trusted_storage_aead_decrypt(key_buf, AEAD_KEY_SIZE, object_data.nonce,
 					     AEAD_NONCE_SIZE, (void *)&object_data.header,
 					     sizeof(object_data.header), object_data.data,
 					     out_length - offsetof(stored_object, data),
@@ -123,7 +123,7 @@ clean_up:
 	return status;
 }
 
-psa_status_t secure_set(const psa_storage_uid_t uid, const char *prefix, size_t data_length,
+psa_status_t trusted_set(const psa_storage_uid_t uid, const char *prefix, size_t data_length,
 			const void *p_data, psa_storage_create_flags_t create_flags)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
@@ -158,13 +158,13 @@ psa_status_t secure_set(const psa_storage_uid_t uid, const char *prefix, size_t 
 	}
 
 	/* Get AEAD key */
-	status = secure_storage_get_key(uid, key_buf, AEAD_KEY_SIZE);
+	status = trusted_storage_get_key(uid, key_buf, AEAD_KEY_SIZE);
 	if (status != PSA_SUCCESS) {
 		goto cleanup_objects;
 	}
 
 	/* Get new nonce at each set */
-	status = secure_storage_get_nonce(object_data.nonce, AEAD_NONCE_SIZE);
+	status = trusted_storage_get_nonce(object_data.nonce, AEAD_NONCE_SIZE);
 	if (status != PSA_SUCCESS) {
 		goto cleanup_objects;
 	}
@@ -172,7 +172,7 @@ psa_status_t secure_set(const psa_storage_uid_t uid, const char *prefix, size_t 
 	object_data.header.create_flags = create_flags;
 	object_data.header.data_size = data_length;
 
-	status = secure_storage_aead_encrypt(key_buf, AEAD_KEY_SIZE, object_data.nonce,
+	status = trusted_storage_aead_encrypt(key_buf, AEAD_KEY_SIZE, object_data.nonce,
 					     AEAD_NONCE_SIZE, (void *)&object_data.header,
 					     sizeof(object_data.header), p_data, data_length,
 					     object_data.data, AEAD_MAX_BUF_SIZE, &out_length);
@@ -194,7 +194,7 @@ psa_status_t secure_set(const psa_storage_uid_t uid, const char *prefix, size_t 
 
 cleanup_objects:
 	/* Remove object if an error occurs */
-	LOG_DBG("secure_set cleanup. status %d", status);
+	LOG_DBG("trusted_set cleanup. status %d", status);
 	storage_remove_object(uid, prefix);
 
 cleanup:
@@ -203,7 +203,7 @@ cleanup:
 	return status;
 }
 
-psa_status_t secure_remove(const psa_storage_uid_t uid, const char *prefix)
+psa_status_t trusted_remove(const psa_storage_uid_t uid, const char *prefix)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	size_t out_length;
@@ -222,12 +222,12 @@ psa_status_t secure_remove(const psa_storage_uid_t uid, const char *prefix)
 	return storage_remove_object(uid, prefix);
 }
 
-uint32_t secure_get_support(void)
+uint32_t trusted_get_support(void)
 {
 	return 0;
 }
 
-psa_status_t secure_create(const psa_storage_uid_t uid, size_t capacity,
+psa_status_t trusted_create(const psa_storage_uid_t uid, size_t capacity,
 			   psa_storage_create_flags_t create_flags)
 {
 
@@ -237,7 +237,7 @@ psa_status_t secure_create(const psa_storage_uid_t uid, size_t capacity,
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
-psa_status_t secure_set_extended(const psa_storage_uid_t uid, size_t data_offset,
+psa_status_t trusted_set_extended(const psa_storage_uid_t uid, size_t data_offset,
 				 size_t data_length, const void *p_data)
 {
 	ARG_UNUSED(uid);

@@ -14,17 +14,17 @@
 
 #define CHACHA20_KEY_SIZE 32
 
-psa_status_t secure_storage_aead_init(void)
+psa_status_t trusted_storage_aead_init(void)
 {
 	return psa_crypto_init();
 }
 
-static psa_status_t secure_storage_aead_psa_crypt(psa_key_usage_t key_usage, const void *key_buf,
-						  size_t key_len, const void *nonce_buf,
-						  size_t nonce_len, const void *add_buf,
-						  size_t add_len, const void *input_buf,
-						  size_t input_len, void *output_buf,
-						  size_t output_size, size_t *output_len)
+static psa_status_t trusted_storage_aead_psa_crypt(psa_key_usage_t key_usage, const void *key_buf,
+						   size_t key_len, const void *nonce_buf,
+						   size_t nonce_len, const void *add_buf,
+						   size_t add_len, const void *input_buf,
+						   size_t input_len, void *output_buf,
+						   size_t output_size, size_t *output_len)
 {
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
@@ -59,22 +59,24 @@ static psa_status_t secure_storage_aead_psa_crypt(psa_key_usage_t key_usage, con
 	return status;
 }
 
-psa_status_t secure_storage_aead_encrypt(const void *key_buf, size_t key_len, const void *nonce_buf,
-					 size_t nonce_len, const void *add_buf, size_t add_len,
-					 const void *input_buf, size_t input_len, void *output_buf,
-					 size_t output_size, size_t *output_len)
+psa_status_t trusted_storage_aead_encrypt(const void *key_buf, size_t key_len,
+					  const void *nonce_buf, size_t nonce_len,
+					  const void *add_buf, size_t add_len,
+					  const void *input_buf, size_t input_len, void *output_buf,
+					  size_t output_size, size_t *output_len)
 {
-	return secure_storage_aead_psa_crypt(PSA_KEY_USAGE_ENCRYPT, key_buf, key_len, nonce_buf,
-					     nonce_len, add_buf, add_len, input_buf, input_len,
-					     output_buf, output_size, output_len);
+	return trusted_storage_aead_psa_crypt(PSA_KEY_USAGE_ENCRYPT, key_buf, key_len, nonce_buf,
+					      nonce_len, add_buf, add_len, input_buf, input_len,
+					      output_buf, output_size, output_len);
 }
 
-psa_status_t secure_storage_aead_decrypt(const void *key_buf, size_t key_len, const void *nonce_buf,
-					 size_t nonce_len, const void *add_buf, size_t add_len,
-					 const void *input_buf, size_t input_len, void *output_buf,
-					 size_t output_size, size_t *output_len)
+psa_status_t trusted_storage_aead_decrypt(const void *key_buf, size_t key_len,
+					  const void *nonce_buf, size_t nonce_len,
+					  const void *add_buf, size_t add_len,
+					  const void *input_buf, size_t input_len, void *output_buf,
+					  size_t output_size, size_t *output_len)
 {
-	return secure_storage_aead_psa_crypt(PSA_KEY_USAGE_DECRYPT, key_buf, key_len, nonce_buf,
-					     nonce_len, add_buf, add_len, input_buf, input_len,
-					     output_buf, output_size, output_len);
+	return trusted_storage_aead_psa_crypt(PSA_KEY_USAGE_DECRYPT, key_buf, key_len, nonce_buf,
+					      nonce_len, add_buf, add_len, input_buf, input_len,
+					      output_buf, output_size, output_len);
 }

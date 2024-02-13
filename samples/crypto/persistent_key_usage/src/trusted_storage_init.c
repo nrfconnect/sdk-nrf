@@ -8,7 +8,7 @@
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_REGISTER(persistent_key_usage_secure_storage, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(persistent_key_usage_trusted_storage, LOG_LEVEL_DBG);
 
 static int setup_settings_backend(void)
 {
@@ -24,7 +24,7 @@ static int setup_settings_backend(void)
 
 SYS_INIT(setup_settings_backend, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
-#ifdef CONFIG_SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
+#ifdef CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
 #include <nrf_cc3xx_platform.h>
 #include <hw_unique_key.h>
 
@@ -51,4 +51,4 @@ int write_huk(void)
 
 	return 0;
 }
-#endif /* CONFIG_SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK */
+#endif /* CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK */

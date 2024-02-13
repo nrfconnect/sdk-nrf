@@ -14,6 +14,6 @@ target_sources(app PRIVATE
         src/main.c
         )
 
-target_sources_ifdef(CONFIG_SECURE_STORAGE app PRIVATE
-        src/secure_storage_init.c
+target_sources_ifdef(CONFIG_TRUSTED_STORAGE app PRIVATE
+        src/trusted_storage_init.c
         )
