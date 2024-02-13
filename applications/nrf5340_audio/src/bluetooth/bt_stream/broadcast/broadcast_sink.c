@@ -178,8 +178,11 @@ static void get_codec_info(const struct bt_audio_codec_cfg *codec,
 			return;
 		}
 
-		codec_info->bitrate =
-			(codec_info->octets_per_sdu * 8 * 1000000) / codec_info->frame_duration_us;
+		ret = le_audio_bitrate_get(codec, &codec_info->bitrate);
+		if (ret) {
+			LOG_ERR("Error calculating bitrate: %d", ret);
+			return;
+		}
 
 		ret = le_audio_frame_blocks_per_sdu_get(codec, &codec_info->blocks_per_sdu);
 		if (codec_info->octets_per_sdu < 0) {
