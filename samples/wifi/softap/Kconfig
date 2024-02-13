@@ -49,14 +49,14 @@ config SOFTAP_SAMPLE_CHANNEL
 
 config SOFTAP_SAMPLE_SSID
 	string "SoftAP SSID"
-	default "MySoftAP"
+	default "Myssid"
 	help
 	  Set the SSID (Service Set Identifier) for the SoftAP.
 	  This is the name that will be broadcasted for client(s) to connect.
 
 choice  SOFTAP_SAMPLE_KEY_MGMT_SELECT
 	prompt "Security option for SoftAP"
-	default SOFTAP_SAMPLE_KEY_MGMT_WPA3
+	default SOFTAP_SAMPLE_KEY_MGMT_WPA2
 
 config SOFTAP_SAMPLE_KEY_MGMT_NONE
 	bool "Open security"
@@ -81,6 +81,7 @@ endchoice
 
 config SOFTAP_SAMPLE_PASSWORD
 	string "Passphrase (WPA2) or password (WPA3)"
+	default "Mypassword"
 	help
 	  Set the password for SoftAP.
 
