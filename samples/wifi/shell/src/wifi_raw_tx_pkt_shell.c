@@ -425,7 +425,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "[-d, --data-rate] : Data rate value.\n"
 		      "[-q, --queue-number] : Queue number.\n"
 		      "[-h, --help] : Print out the help for the configure command\n"
-		      "Usage: raw_tx configure -f 1 -d 9 -q 1\n",
+		      "Usage: raw_tx configure -f 0 -d 9 -q 1\n",
 		      cmd_configure_raw_tx_pkt,
 		      7, 0),
 	SHELL_CMD_ARG(send, NULL,
