@@ -8,7 +8,10 @@
 
 #define MODULE file_readme
 #include "fs_event.h"
+
+static const char file_contents[] = {
 #include "readme.h"
+};
 
 #if CONFIG_FS_FATFS_LFN
 #define FILE_NAME         "README.txt"

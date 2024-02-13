@@ -34,13 +34,12 @@ if(GIT_FOUND)
 endif()
 string(REPLACE "\"" "\\\"" README_CONTENT "${README_CONTENT}")
 string(REPLACE "\n" "\\n\"\n\"" README_CONTENT "${README_CONTENT}")
-file(WRITE ${OUTPUT_README_HEADER_FILE} "const char* file_contents = \"${README_CONTENT}\";\n\n")
+file(WRITE ${OUTPUT_README_HEADER_FILE} "\"${README_CONTENT}\"")
 
 
 # Include application events and disk files
 zephyr_library_include_directories(
   src/events
-  ${NRF_DIR}/samples/dap/src
   ${CMAKE_BINARY_DIR}/generated/readme
   )
 

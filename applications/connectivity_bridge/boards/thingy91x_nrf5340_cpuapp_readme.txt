@@ -1,9 +1,6 @@
-====================
-  Nordic Thingy:91
-====================
-
-Full Nordic Thingy:91 documentation can be found here:
-https://nordicsemi.com/thingy91
+=====================
+  Nordic Thingy:91 X
+=====================
 
 This USB interface has the following functions:
 * Disk drive containing this file and others
@@ -11,14 +8,16 @@ This USB interface has the following functions:
 
 COM Ports
 ====================
+This USB interface exposes two COM ports mapped to the physical UART interfaces between the nRF91 and nRF5340 devices.
+When opening these ports manually (without using LTE Link Monitor) be aware that the USB COM port baud rate selection is applied to the UART.
 
-This USB interface exposes two COM ports mapped to the physical UART interfaces between the nRF91 Series and nRF52840 devices.
+This USB interface exposes two COM ports mapped to the physical UART interfaces between the nRF91 Series and nRF5340 devices.
 When opening these ports manually (without using the LTE Link Monitor), be aware that the USB COM port baud rate selection is applied to the UART.
 
 Bluetooth LE Central UART Service
 =================================
 
-This device advertises as "Thingy:91 UART".
+This device advertises as "Thingy:91 X UART".
 Connect using a Bluetooth LE Central device, for example a phone running the nRF Connect app:
 https://www.nordicsemi.com/Software-and-tools/Development-Tools/nRF-Connect-for-mobile/
 

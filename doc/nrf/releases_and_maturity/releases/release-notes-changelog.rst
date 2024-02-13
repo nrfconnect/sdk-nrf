@@ -234,9 +234,8 @@ Asset Tracker v2
 Connectivity Bridge
 -------------------
 
-* Updated:
-
-  * Reworked handling of emulated README.txt to support multiple boards. Also, README.txt now contains version information.
+* Updated handling of the :file:`README.txt` file to support multiple boards.
+  Also, the :file:`README.txt` file now contains version information.
 
 Serial LTE modem
 ----------------
