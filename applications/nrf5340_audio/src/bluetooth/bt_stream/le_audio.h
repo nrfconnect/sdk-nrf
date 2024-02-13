@@ -111,7 +111,19 @@ int le_audio_octets_per_frame_get(const struct bt_audio_codec_cfg *codec, uint32
  */
 int le_audio_frame_blocks_per_sdu_get(const struct bt_audio_codec_cfg *codec,
 				      uint32_t *frame_blks_per_sdu);
-/*
+
+/**
+ * @brief	Get the bitrate for the codec configuration.
+ *
+ * @details	Decodes the audio frame duration and the number of octets per fram from the codec
+ *		configuration, and calculates the bitrate.
+ *
+ * @param[in]	codec	The audio codec structure.
+ * @param[out]	bitrate	Pointer to the bitrate in bps.
+ */
+int le_audio_bitrate_get(const struct bt_audio_codec_cfg *const codec, uint32_t *bitrate);
+
+/**
  * @brief	Get the direction of the @p stream provided
  *
  * @param	stream	Stream to check direction for.

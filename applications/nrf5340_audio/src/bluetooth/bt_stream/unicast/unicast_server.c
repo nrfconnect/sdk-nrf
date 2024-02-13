@@ -206,7 +206,11 @@ static void print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_di
 			return;
 		}
 
-		bitrate = octets_per_sdu * 8 * (1000000 / dur_us);
+		ret = le_audio_bitrate_get(codec, &bitrate);
+		if (ret) {
+			LOG_ERR("Unable to calculate bitrate: %d", ret);
+			return;
+		}
 
 		if (dir == BT_AUDIO_DIR_SINK) {
 			LOG_INF("LC3 codec config for sink:");
@@ -551,25 +555,11 @@ int unicast_server_config_get(uint32_t *bitrate, uint32_t *sampling_rate_hz,
 	}
 
 	if (bitrate != NULL) {
-		int dur_us;
-
-		ret = le_audio_duration_us_get(audio_streams[0].codec_cfg, &dur_us);
+		ret = le_audio_bitrate_get(audio_streams[0].codec_cfg, bitrate);
 		if (ret) {
-			LOG_ERR("Invalid frame duration: %d", ret);
+			LOG_ERR("Unable to calculate bitrate: %d", ret);
 			return -ENXIO;
 		}
-
-		/* Get the configuration for the sink stream */
-		int frames_per_sec = 1000000 / dur_us;
-		int octets_per_sdu;
-
-		ret = le_audio_octets_per_frame_get(audio_streams[0].codec_cfg, &octets_per_sdu);
-		if (ret) {
-			LOG_ERR("Invalid octets per frame: %d", ret);
-			return -ENXIO;
-		}
-
-		*bitrate = frames_per_sec * (octets_per_sdu * 8);
 	}
 
 	if (pres_delay_us != NULL) {
