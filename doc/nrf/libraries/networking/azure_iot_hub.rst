@@ -50,8 +50,8 @@ The Azure IoT Hub library requires provisioning of the following certificates an
    Azure IoT Hub servers have finished this transition, and only DigiCert Global Root G2 is used now for those connections.
    Azure advises to have both Baltimore CyberTrust Root and DigiCert Global Root G2 certificates for all devices to avoid disruption of service during the transition.
    Refer to `Azure IoT TLS: Critical changes`_ for updated information and timeline.
-   Due to this, it is recommended to provision the DigiCert altimore CyberTrust Root Certificate to a secondary security tag set by the :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG` option.
-   This ensures that the device can connect also after the transition.
+   Due to this, it is recommended to provision the DigiCert Baltimore CyberTrust Root Certificate to a secondary security tag set by the :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG` option.
+   This ensures that the device can also connect after the transition.
 
 
 The location and name of the generated public device certificate and private key files vary depending on the method you use for the credential generation as follows:
