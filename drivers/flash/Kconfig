@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config FLASH_RPC
+	bool "Flash over RPC [EXPERIMENTAL]"
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	select FLASH
+
+	help
+	  Enables a seralized flash API of a device's flash over RPC
+
+if FLASH_RPC
+
+choice
+	prompt "Flash RPC role selection"
+	default FLASH_RPC_HOST if SOC_NRF5340_CPUNET
+	default FLASH_RPC_CONTROLLER
+
+config FLASH_RPC_CONTROLLER
+	bool "Flash RPC Controller"
+	help
+	  Flash RPC API will use the nRF RPC library to access the flash of a host
+	  on the remote core. All the buffers transferred under read/write flash
+	  API calls needs to be accessible for the remote host.
+
+config FLASH_RPC_HOST
+	bool "Flash RPC Host"
+	help
+	  Flash RPC API will expose the flash of a host to a client on the remote core.
+endchoice
+
+if FLASH_RPC_CONTROLLER
+
+config FLASH_RPC_DRIVER_INIT_PRIORITY
+	int "Flash RPC Driver Init Priority"
+	default 52
+	help
+	Device driver initialization priority for Remote Core Flash driver over RPC
+	must be higher than remote core boot priority.
+endif
+
+config FLASH_RPC_SYS_INIT_PRIORITY
+	int "Init priority"
+	default 48 if FLASH_RPC_HOST
+	default 51
+	help
+	  Device driver initialization priority.
+
+config FLASH_RPC_SYS_INIT
+	bool "Enable at sys init"
+	help
+	  SYS_INIT nrf_rpc
+
+module = FLASH_RPC
+module-str = Flash over nRF RPC
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # FLASH_RPC
