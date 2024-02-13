@@ -416,6 +416,8 @@ static int bt_mesh_time_srv_init(const struct bt_mesh_model *model)
 	srv->model = model;
 	srv->data.timestamp = -STATUS_INTERVAL_MIN;
 	net_buf_simple_init(srv->pub.msg, 0);
+	srv->is_unsolicited = false;
+	srv->cached_ttl = 0;
 
 	k_work_init_delayable(&srv->status_delay, time_status_send_after_delay);
 
@@ -429,6 +431,8 @@ static void bt_mesh_time_srv_reset(const struct bt_mesh_model *model)
 
 	srv->data = data;
 	net_buf_simple_reset(srv->pub.msg);
+	srv->is_unsolicited = false;
+	srv->cached_ttl = 0;
 	(void)k_work_cancel_delayable(&srv->status_delay);
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
@@ -489,6 +493,7 @@ const struct bt_mesh_model_cb _bt_mesh_time_setup_srv_cb = {
 int _bt_mesh_time_srv_update_handler(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_time_srv *srv = model->rt->user_data;
+	struct bt_mesh_model_pub *pub = srv->model->pub;
 	struct bt_mesh_time_status status;
 	int64_t uptime;
 	int err;
@@ -504,6 +509,15 @@ int _bt_mesh_time_srv_update_handler(const struct bt_mesh_model *model)
 		return err;
 	}
 
+	/* If sent as an unsolicited message, the Time Status message shall be sent
+	 * with TTL=0 to avoid building up cumulative time errors resulting from delays
+	 * in processing the messages by relays.
+	 */
+	if (!bt_mesh_model_pub_is_retransmission(pub->mod) && srv->is_unsolicited) {
+		pub->ttl = srv->cached_ttl;
+		srv->is_unsolicited = false;
+	}
+
 	srv->data.timestamp = uptime;
 	/* Account for delay in TX processing: */
 	status.uncertainty += CONFIG_BT_MESH_TIME_MESH_HOP_UNCERTAINTY;
@@ -517,6 +531,7 @@ int _bt_mesh_time_srv_update_handler(const struct bt_mesh_model *model)
 int bt_mesh_time_srv_time_status_send(struct bt_mesh_time_srv *srv,
 				      struct bt_mesh_msg_ctx *ctx)
 {
+	struct bt_mesh_model_pub *pub = srv->model->pub;
 	int64_t uptime = k_uptime_get();
 	int err;
 
@@ -528,7 +543,14 @@ int bt_mesh_time_srv_time_status_send(struct bt_mesh_time_srv *srv,
 		return -EOPNOTSUPP;
 	}
 
-	srv->model->pub->ttl = 0;
+	if (ctx) {
+		ctx->send_ttl = 0;
+		ctx->rnd_delay = false;
+	} else {
+		srv->cached_ttl = srv->is_unsolicited ? srv->cached_ttl : pub->ttl;
+		srv->is_unsolicited = true;
+		pub->ttl = 0;
+	}
 
 	err = send_time_status(srv->model, ctx, uptime);
 	if (!err) {
