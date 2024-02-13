@@ -85,6 +85,7 @@ Bluetooth Mesh
   * :ref:`bt_mesh_ug_reserved_ids` with model ID and opcodes for the new :ref:`bt_mesh_le_pair_resp_readme` model.
   * :ref:`bt_mesh_light_ctrl_readme` APIs to match new Sensor APIs.
   * :ref:`ug_bt_mesh_configuring` with the recommendation on how to configure persistent storage to increase performance.
+  * Fixed an issue when the Time Server model rewrites TTL to zero forever during the unsolicited Time Status publication.
 
 Matter
 ------

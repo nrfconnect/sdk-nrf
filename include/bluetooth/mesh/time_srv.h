@@ -107,6 +107,11 @@ struct bt_mesh_time_srv {
 	struct bt_mesh_time_srv_data data;
 	/** Delayable work to randomize status relaying. */
 	struct k_work_delayable status_delay;
+	/** Property whether the Time status was unsolicited. */
+	bool is_unsolicited;
+	/** Cached publishing TTL while server is sending the unsolicited Time Status with zero TTL.
+	 */
+	uint8_t cached_ttl;
 
 	/** @brief Update callback.
 	 *
