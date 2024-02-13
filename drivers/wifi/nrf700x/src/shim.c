@@ -386,8 +386,11 @@ out:
 	return pkt;
 }
 
-#ifdef CONFIG_NRF700X_RAW_DATA_RX
-void *net_raw_pkt_from_nbuf(void *iface, void *frm, unsigned short raw_hdr_len, void *raw_rx_hdr)
+#if defined(CONFIG_NRF700X_RAW_DATA_RX) || defined(CONFIG_NRF700X_PROMISC_DATA_RX)
+void *net_raw_pkt_from_nbuf(void *iface, void *frm,
+			    unsigned short raw_hdr_len,
+			    void *raw_rx_hdr,
+			    bool pkt_free)
 {
 	struct net_pkt *pkt = NULL;
 	unsigned char *nwb_data;
@@ -403,7 +406,6 @@ void *net_raw_pkt_from_nbuf(void *iface, void *frm, unsigned short raw_hdr_len, 
 
 	nwb_len = zep_shim_nbuf_data_size(nwb);
 	nwb_data = zep_shim_nbuf_data_get(nwb);
-
 	total_len = raw_hdr_len + nwb_len;
 
 	data = (unsigned char *)k_malloc(total_len);
@@ -430,10 +432,14 @@ out:
 	if (data != NULL) {
 		k_free(data);
 	}
-	zep_shim_nbuf_free(nwb);
+
+	if (pkt_free) {
+		zep_shim_nbuf_free(nwb);
+	}
+
 	return pkt;
 }
-#endif /* CONFIG_NRF700X_RAW_DATA_RX */
+#endif /* CONFIG_NRF700X_RAW_DATA_RX || CONFIG_NRF700X_PROMISC_DATA_RX */
 
 static void *zep_shim_llist_node_alloc(void)
 {

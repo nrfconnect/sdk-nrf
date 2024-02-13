@@ -57,11 +57,12 @@ struct zep_shim_llist {
 
 void *net_pkt_to_nbuf(struct net_pkt *pkt);
 void *net_pkt_from_nbuf(void *iface, void *frm);
-#ifdef CONFIG_NRF700X_RAW_DATA_RX
+#if defined(CONFIG_NRF700X_RAW_DATA_RX) || defined(CONFIG_NRF700X_PROMISC_DATA_RX)
 void *net_raw_pkt_from_nbuf(void *iface,
 			    void *frm,
 			    unsigned short raw_hdr_len,
-			    void *raw_rx_hdr);
-#endif /* CONFIG_NRF700X_RAW_DATA_RX */
+			    void *raw_rx_hdr,
+			    bool pkt_free);
+#endif /* CONFIG_NRF700X_RAW_DATA_RX || CONFIG_NRF700X_PROMISC_DATA_RX */
 
 #endif /* __SHIM_H__ */
