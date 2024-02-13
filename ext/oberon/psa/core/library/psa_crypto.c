@@ -4433,12 +4433,14 @@ psa_status_t psa_pake_set_user(psa_pake_operation_t *operation,
     }
 #endif
 
-    operation->inputs.user = mbedtls_calloc(1, user_id_len);
-    if (operation->inputs.user == NULL) {
-        status = PSA_ERROR_INSUFFICIENT_MEMORY;
-        goto exit;
-    }
-    memcpy(operation->inputs.user, user_id, user_id_len);
+	if(user_id_len != 0) {
+		operation->inputs.user = mbedtls_calloc(1, user_id_len);
+		if (operation->inputs.user == NULL) {
+			status = PSA_ERROR_INSUFFICIENT_MEMORY;
+			goto exit;
+		}
+		memcpy(operation->inputs.user, user_id, user_id_len);
+	}
     operation->inputs.user_len = user_id_len;
     operation->user_set = 1;
     return PSA_SUCCESS;
@@ -4483,12 +4485,15 @@ psa_status_t psa_pake_set_peer(psa_pake_operation_t *operation,
     }
 #endif
 
-    operation->inputs.peer = mbedtls_calloc(1, peer_id_len);
-    if (operation->inputs.peer == NULL) {
-        status = PSA_ERROR_INSUFFICIENT_MEMORY;
-        goto exit;
-    }
-    memcpy(operation->inputs.peer, peer_id, peer_id_len);
+	if(peer_id_len != 0) {
+		operation->inputs.peer = mbedtls_calloc(1, peer_id_len);
+		if (operation->inputs.peer == NULL) {
+			status = PSA_ERROR_INSUFFICIENT_MEMORY;
+			goto exit;
+		}
+		memcpy(operation->inputs.peer, peer_id, peer_id_len);
+	}
+
     operation->inputs.peer_len = peer_id_len;
     operation->peer_set = 1;
     return PSA_SUCCESS;
