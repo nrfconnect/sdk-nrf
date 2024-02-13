@@ -8,7 +8,6 @@
 
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/zbus/zbus.h>
-#include <../subsys/bluetooth/audio/bap_iso.h>
 #include <../subsys/bluetooth/audio/bap_stream.h>
 
 #include "nrf5340_audio_common.h"

@@ -7,7 +7,6 @@
 #include <zephyr/kernel.h>
 #include <nrfx_clock.h>
 
-#include "nrf5340_audio_common.h"
 #include "streamctrl.h"
 #include "audio_datapath.h"
 #include "macros_common.h"

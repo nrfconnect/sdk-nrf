@@ -118,7 +118,7 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 	char pcm_data_mono[PCM_NUM_BYTES_MONO] = {0};
 	static char pcm_data_stereo[PCM_NUM_BYTES_STEREO];
 
-	uint16_t pcm_size_stereo = 0;
+	size_t pcm_size_stereo = 0;
 	uint16_t pcm_size_session = 0;
 
 	switch (m_config.sw_codec) {
@@ -147,7 +147,7 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 			 */
 			ret = pscm_zero_pad(pcm_data_mono, (size_t)pcm_size_session,
 					    m_config.decoder.audio_ch, CONFIG_AUDIO_BIT_DEPTH_BITS,
-					    pcm_data_stereo, (size_t *)&pcm_size_stereo);
+					    pcm_data_stereo, &pcm_size_stereo);
 			if (ret) {
 				return ret;
 			}
@@ -177,7 +177,7 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 			}
 			ret = pscm_combine(pcm_data_mono, pcm_data_mono_right,
 					   (size_t)pcm_size_session, CONFIG_AUDIO_BIT_DEPTH_BITS,
-					   pcm_data_stereo, (size_t *)&pcm_size_stereo);
+					   pcm_data_stereo, &pcm_size_stereo);
 			if (ret) {
 				return ret;
 			}
@@ -189,7 +189,7 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 			return -ENODEV;
 		}
 
-		*decoded_size = (size_t)pcm_size_stereo;
+		*decoded_size = pcm_size_stereo;
 		*decoded_data = pcm_data_stereo;
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;

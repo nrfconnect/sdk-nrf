@@ -493,6 +493,10 @@ static int cmd_play_wav_file(const struct shell *shell, size_t argc, char **argv
 		return -EINVAL;
 	}
 
+	if ((strlen(playback_file_path) + strlen(argv[1])) >= ARRAY_SIZE(file_loc)) {
+		return -ENOMEM;
+	}
+
 	strcat(file_loc, playback_file_path);
 	strcat(file_loc, argv[1]);
 	ret = sd_card_playback_wav(file_loc);
@@ -514,6 +518,10 @@ static int cmd_play_lc3_file(const struct shell *shell, size_t argc, char **argv
 	}
 
 	char file_loc[MAX_PATH_LEN] = "";
+
+	if ((strlen(playback_file_path) + strlen(argv[1])) >= ARRAY_SIZE(file_loc)) {
+		return -ENOMEM;
+	}
 
 	strcat(file_loc, playback_file_path);
 	strcat(file_loc, argv[1]);
@@ -537,6 +545,11 @@ static int cmd_change_dir(const struct shell *shell, size_t argc, char **argv)
 		playback_file_path[0] = '\0';
 		shell_print(shell, "Current directory: root");
 	} else {
+		if ((strlen(playback_file_path) + strlen(argv[1])) >=
+		    ARRAY_SIZE(playback_file_path)) {
+			return -ENOMEM;
+		}
+
 		strcat(playback_file_path, argv[1]);
 		strcat(playback_file_path, "/");
 		shell_print(shell, "Current directory: %s", playback_file_path);
