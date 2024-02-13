@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Wi-Fi Monitor mode sample"
+
+config MONITOR_MODE_CHANNEL
+	int "Configure the channel for Monitor mode sample"
+	default 1
+	help
+	  Specify the channel for receiving Wi-Fi packets in Monitor mode.
+	  The valid channel range for 2G is 1 to 14.
+	  The valid channel range for 5G starts from 36, 40, 44, up to 165.
+
+config RX_THREAD_STACK_SIZE
+	int "Thread Stack Size"
+	default 1024
+	help
+	  This option sets the stack size for the threads used in the sample.
+
+config STATS_PRINT_TIMEOUT
+	int "Periodic statistics print timeout"
+	default 5
+	help
+	  This option sets the timeout for periodic statistics print in seconds.
+
+endmenu
