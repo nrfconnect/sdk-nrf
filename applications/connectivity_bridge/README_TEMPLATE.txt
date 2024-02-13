@@ -1,11 +1,11 @@
-=============================
+==============================
   Nordic Connectivity Bridge
 =============================
 
-This device is running Nordic's Connectivity Bridge application.
+This device is running Nordic's Connectivity bridge application.
 
-Depending on configuration, the Connectivity Bridge can offer the following functions:
-- UART-USB bridge for two UART ports
-- UART-BLE bridge for the first port using Nordic UART Service
+Depending on configuration, the Connectivity bridge can offer the following functions:
+* UART-USB bridge for two UART ports
+* UART-BLE bridge for the first port using Nordic UART Service
 
-Please create a board-specific README file before deploying your firmware.
+Create a board-specific README file before deploying your firmware.
