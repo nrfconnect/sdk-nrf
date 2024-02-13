@@ -11,10 +11,16 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 #include "fp_storage.h"
 #include "fp_activation.h"
+#include "fp_storage_ak.h"
 
 int bt_fast_pair_factory_reset(void)
 {
 	return fp_storage_factory_reset();
+}
+
+bool bt_fast_pair_has_account_key(void)
+{
+	return fp_storage_ak_has_account_key();
 }
 
 static int storage_init(void)
