@@ -21,6 +21,10 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/gatt_dm.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Value that shows that the battery level is invalid.
  *
@@ -231,6 +235,10 @@ int bt_bas_start_per_read_battery_level(struct bt_bas_client *bas,
  * @param bas BAS Client object.
  */
 void bt_bas_stop_per_read_battery_level(struct bt_bas_client *bas);
+
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * @}
