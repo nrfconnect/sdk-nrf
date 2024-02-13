@@ -202,6 +202,7 @@ Kconfig*                                  @tejlmand
 /samples/wifi/shutdown/                   @krish2718 @sachinthegreen
 /samples/wifi/twt/                        @chiranjeevi2776 @krish2718
 /samples/wifi/throughput/                 @SusanGRapaka @D-Triveni
+/samples/wifi/raw_tx_packet/              @D-Triveni
 /samples/wifi/softap/                     @D-Triveni @krish2718
 /samples/wifi/monitor/                    @chiranjeevi2776 @krish2718
 /scripts/                                 @tejlmand @nrfconnect/ncs-test-leads
