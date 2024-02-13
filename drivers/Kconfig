@@ -14,6 +14,7 @@ rsource "sensor/Kconfig"
 rsource "serial/Kconfig"
 rsource "wifi/Kconfig"
 rsource "tmp_rng/Kconfig"
+rsource "flash/Kconfig"
 
 if MPSL && !MPSL_FEM_ONLY
 rsource "mpsl/Kconfig"
