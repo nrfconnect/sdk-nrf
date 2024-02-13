@@ -79,6 +79,9 @@ int nrf_wifi_set_power_save(const struct device *dev,
 #ifdef CONFIG_NRF700X_RAW_DATA_TX
 		    && (vif_ctx_zep->if_type != NRF_WIFI_STA_TX_INJECTOR)
 #endif /* CONFIG_NRF700X_RAW_DATA_TX */
+#ifdef CONFIG_NRF700X_PROMISC_DATA_RX
+		    && (vif_ctx_zep->if_type != NRF_WIFI_STA_PROMISC_TX_INJECTOR)
+#endif /* CONFIG_NRF700X_PROMISC_DATA_RX */
 		   ) {
 			LOG_ERR("%s: Operation supported only in STA enabled mode",
 				__func__);
@@ -158,6 +161,9 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 #ifdef CONFIG_NRF700X_RAW_DATA_TX
 	    && (vif_ctx_zep->if_type != NRF_WIFI_STA_TX_INJECTOR)
 #endif /* CONFIG_NRF700X_RAW_DATA_TX */
+#ifdef CONFIG_NRF700X_PROMISC_DATA_RX
+	    && (vif_ctx_zep->if_type != NRF_WIFI_STA_PROMISC_TX_INJECTOR)
+#endif /* CONFIG_NRF700X_PROMISC_DATA_RX */
 	    ) {
 		LOG_ERR("%s: Operation supported only in STA enabled mode",
 			__func__);
@@ -791,19 +797,27 @@ int nrf_wifi_mode(const struct device *dev,
 
 	} else {
 		mode->mode = def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode;
-
-#if defined(CONFIG_NRF700X_RAW_DATA_TX) || defined(CONFIG_NRF700X_RAW_DATA_RX)
+		/**
+		 * This is a work-around to handle current UMAC mode handling.
+		 * This might be removed in future versions when UMAC has more space.
+		 */
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
 		if (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode == true) {
 			mode->mode ^= NRF_WIFI_TX_INJECTION_MODE;
 		}
-#endif
+#endif /* CONFIG_NRF700X_RAW_DATA_TX */
+#ifdef CONFIG_NRF700X_PROMISC_DATA_RX
+		if (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->promisc_mode == true) {
+			mode->mode ^= NRF_WIFI_PROMISCUOUS_MODE;
+		}
+#endif /* CONFIG_NRF700X_PROMISC_DATA_RX */
 	}
 	ret = 0;
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
-#endif
+#endif /* CONFIG_NRF700X_SYSTEM_MODE */
 
 #if defined(CONFIG_NRF700X_RAW_DATA_TX) || defined(CONFIG_NRF700X_RAW_DATA_RX)
 int nrf_wifi_channel(const struct device *dev,
@@ -871,7 +885,7 @@ out:
 }
 #endif /* CONFIG_NRF700X_RAW_DATA_TX || CONFIG_NRF700X_RAW_DATA_RX */
 
-#ifdef CONFIG_NRF700X_RAW_DATA_RX
+#if defined(CONFIG_NRF700X_RAW_DATA_RX) || defined(CONFIG_NRF700X_PROMISC_DATA_RX)
 int nrf_wifi_filter(const struct device *dev,
 		    struct wifi_filter_info *filter)
 {
@@ -927,4 +941,4 @@ int nrf_wifi_filter(const struct device *dev,
 out:
 	return ret;
 }
-#endif /* CONFIG_NRF700X_RAW_DATA_RX */
+#endif /* CONFIG_NRF700X_RAW_DATA_RX || CONFIG_NRF700X_PROMISC_DATA_RX */

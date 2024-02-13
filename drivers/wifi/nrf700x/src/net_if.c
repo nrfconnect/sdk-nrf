@@ -91,8 +91,10 @@ static void nrf_wifi_net_iface_work_handler(struct k_work *work)
 	}
 }
 
-#ifdef CONFIG_NRF700X_RAW_DATA_RX
-void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm, struct raw_rx_pkt_header *raw_rx_hdr)
+#if defined(CONFIG_NRF700X_RAW_DATA_RX) || defined(CONFIG_NRF700X_PROMISC_DATA_RX)
+void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
+				struct raw_rx_pkt_header *raw_rx_hdr,
+				bool pkt_free)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = os_vif_ctx;
 	struct net_if *iface = vif_ctx_zep->zep_net_if_ctx;
@@ -104,7 +106,9 @@ void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm, struct raw_rx_pkt_h
 
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	pkt = net_raw_pkt_from_nbuf(iface, frm, sizeof(struct raw_rx_pkt_header), raw_rx_hdr);
+	pkt = net_raw_pkt_from_nbuf(iface, frm, sizeof(struct raw_rx_pkt_header),
+				    raw_rx_hdr,
+				    pkt_free);
 	if (!pkt) {
 		LOG_DBG("Failed to allocate net_pkt");
 		return;
@@ -117,7 +121,7 @@ void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm, struct raw_rx_pkt_h
 		net_pkt_unref(pkt);
 	}
 }
-#endif /* CONFIG_NRF700X_RAW_DATA_RX */
+#endif /* CONFIG_NRF700X_RAW_DATA_RX || CONFIG_NRF700X_PROMISC_DATA_RX */
 
 void nrf_wifi_if_rx_frm(void *os_vif_ctx, void *frm)
 {
@@ -200,6 +204,9 @@ enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev)
 
 #ifdef CONFIG_NRF700X_RAW_DATA_TX
 	caps |= ETHERNET_TXINJECTION_MODE;
+#endif
+#ifdef CONFIG_NRF700X_PROMISC_DATA_RX
+	caps |= ETHERNET_PROMISC_MODE;
 #endif
 	return caps;
 }
@@ -870,7 +877,34 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		}
 	}
 #endif
+#ifdef CONFIG_NRF700X_PROMISC_DATA_RX
+	else if (type == ETHERNET_CONFIG_TYPE_PROMISC_MODE) {
+		unsigned char mode;
 
+		if (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->promisc_mode ==
+		    config->promisc_mode) {
+			LOG_ERR("%s: Driver promisc mode setting is same as configured setting",
+				__func__);
+			goto out;
+		}
+
+		if (config->promisc_mode) {
+			mode = (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode) |
+			       (NRF_WIFI_PROMISCUOUS_MODE);
+		} else {
+			mode = (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode) ^
+			       (NRF_WIFI_PROMISCUOUS_MODE);
+		}
+
+		ret = nrf_wifi_fmac_set_mode(rpu_ctx_zep->rpu_ctx,
+					     vif_ctx_zep->vif_idx, mode);
+
+		if (ret != NRF_WIFI_STATUS_SUCCESS) {
+			LOG_ERR("%s: mode set operation failed", __func__);
+			goto out;
+		}
+	}
+#endif
 	ret = 0;
 out:
 	return ret;
