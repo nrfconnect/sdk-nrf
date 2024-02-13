@@ -668,6 +668,8 @@ Wi-Fi samples
 * Added the :ref:`wifi_softap_sample` sample that demonstrates how to start a nRF70 Series device in :term:`Software-enabled Access Point (SoftAP or SAP)` mode.
 * Added the :ref:`wifi_raw_tx_packet_sample` sample that demonstrates how to transmit raw TX packets.
 
+* Added the :ref:`wifi_monitor_sample` sample that demonstrates how to start a nRF70 Series device in :term:`Monitor` mode.
+
 Other samples
 -------------
 
