@@ -235,9 +235,9 @@ enum bt_mesh_light_ctrl_coeff {
 #else
 #define BT_MESH_LIGHT_CTRL_SRV_LUX_INIT                                        \
 	.centilux = {                                                          \
-		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY,                 \
-		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON,                      \
-		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG                  \
+		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY * 100,           \
+		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON * 100,                \
+		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG * 100            \
 	}
 #endif
 #else
