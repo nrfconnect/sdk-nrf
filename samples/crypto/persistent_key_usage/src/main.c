@@ -15,7 +15,7 @@
 #include <tfm_ns_interface.h>
 #endif
 
-#include "secure_storage_init.h"
+#include "trusted_storage_init.h"
 
 #define APP_SUCCESS	    (0)
 #define APP_ERROR	    (-1)
@@ -46,9 +46,9 @@ int crypto_init(void)
 {
 	psa_status_t status;
 
-#ifdef CONFIG_SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
+#ifdef CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
 	write_huk();
-#endif /* CONFIG_SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK */
+#endif /* CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK */
 
 	/* Initialize PSA Crypto */
 	status = psa_crypto_init();

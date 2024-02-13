@@ -6,8 +6,8 @@
 
 # Secure storage subsystem configuration options
 
-menuconfig SECURE_STORAGE
-	bool "Secure Storage"
+menuconfig TRUSTED_STORAGE
+	bool "Trusted Storage"
 	depends on !BUILD_WITH_TFM
 	help
 	  The secure storage subsystem allows its users to store in a secure
@@ -16,9 +16,9 @@ menuconfig SECURE_STORAGE
 	  provide various levels of trust depending on the device security
 	  features.
 
-if SECURE_STORAGE
-module = SECURE_STORAGE
-module-str = secure_storage
+if TRUSTED_STORAGE
+module = TRUSTED_STORAGE
+module-str = trusted_storage
 source "subsys/logging/Kconfig.template.log_config"
 
 
@@ -59,69 +59,69 @@ config PSA_INTERNAL_TRUSTED_STORAGE_PREFIX
 
 endif # PSA_INTERNAL_TRUSTED_STORAGE
 
-choice SECURE_STORAGE_BACKEND
+choice TRUSTED_STORAGE_BACKEND
 	prompt "Secure storage backend"
-	default SECURE_STORAGE_BACKEND_AEAD
+	default TRUSTED_STORAGE_BACKEND_AEAD
 	help
 	  The backend that handles encryption, authentication or other means of
 	  validation of the stored assets.
 
-menuconfig SECURE_STORAGE_BACKEND_AEAD
+menuconfig TRUSTED_STORAGE_BACKEND_AEAD
 	bool "Use AEAD scheme"
 	help
 	  Use an AEAD scheme to encrypt the asset data and authenticate its
 	  data including the meta data.
 
-if SECURE_STORAGE_BACKEND_AEAD
+if TRUSTED_STORAGE_BACKEND_AEAD
 
-config SECURE_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE
+config TRUSTED_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE
 	int "AEAD backend maximum storage size"
 	default 256
 	help
 	  This defines the maximum data size that can be stored.
 
-choice SECURE_STORAGE_AEAD_BACKEND_CRYPTO
+choice TRUSTED_STORAGE_BACKEND_AEAD_CRYPTO
 	prompt "AEAD algorithm crypto backend"
-	default SECURE_STORAGE_BACKEND_AEAD_CRYPTO_PSA_CHACHAPOLY
+	default TRUSTED_STORAGE_BACKEND_AEAD_CRYPTO_PSA_CHACHAPOLY
 	help
 	  Decides which implementation to be used to perform the AEAD crypto
 	  operations.
 
-config SECURE_STORAGE_BACKEND_AEAD_CRYPTO_PSA_CHACHAPOLY
+config TRUSTED_STORAGE_BACKEND_AEAD_CRYPTO_PSA_CHACHAPOLY
 	bool "PSA ChaChaPoly"
 	select PSA_WANT_ALG_CHACHA20_POLY1305
 	help
 	  Use PSA Crypto API's with the ChaChaPoly-1305 AEAD algorithm.
 
-endchoice # SECURE_STORAGE_AEAD_BACKEND_CRYPTO
+endchoice # TRUSTED_STORAGE_BACKEND_AEAD_CRYPTO
 
-choice SECURE_STORAGE_BACKEND_AEAD_NONCE
+choice TRUSTED_STORAGE_BACKEND_AEAD_NONCE
 	prompt "AEAD nonce implementation"
-	default SECURE_STORAGE_BACKEND_AEAD_NONCE_PSA_SEED_COUNTER
+	default TRUSTED_STORAGE_BACKEND_AEAD_NONCE_PSA_SEED_COUNTER
 	help
 	  Implementation to provide a AEAD nonce.
 
-config SECURE_STORAGE_BACKEND_AEAD_NONCE_PSA_SEED_COUNTER
+config TRUSTED_STORAGE_BACKEND_AEAD_NONCE_PSA_SEED_COUNTER
 	bool "PSA Nonce Seed + Counter"
 	select PSA_WANT_GENERATE_RANDOM
 	help
 	  Use PSA Crypto for Nonce initial random seed, then incrementing
 	  nonce for each AEAD encryption.
 
-config SECURE_STORAGE_BACKEND_AEAD_NONCE_CUSTOM
+config TRUSTED_STORAGE_BACKEND_AEAD_NONCE_CUSTOM
 	bool "Custom"
 	help
 	  Use custom implementation for AEAD Nonce provider.
 
-endchoice # SECURE_STORAGE_BACKEND_AEAD_NONCE
+endchoice # TRUSTED_STORAGE_BACKEND_AEAD_NONCE
 
-choice SECURE_STORAGE_BACKEND_AEAD_KEY
+choice TRUSTED_STORAGE_BACKEND_AEAD_KEY
 	prompt "AEAD Key implementation"
-	default SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
+	default TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
 	help
 	  Implementation to provide the AEAD keys.
 
-config SECURE_STORAGE_BACKEND_AEAD_KEY_HASH_UID
+config TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID
 	bool "Hash of UID"
 	select PSA_WANT_ALG_SHA_256
 	help
@@ -129,7 +129,7 @@ config SECURE_STORAGE_BACKEND_AEAD_KEY_HASH_UID
 	  level of security and therefor is not recommended and should only be used
 	  if it is impossible to use the HUK.
 
-config SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
+config TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
 	bool "HUK + UID"
 	select HW_UNIQUE_KEY
 	select HW_UNIQUE_KEY_RANDOM
@@ -139,29 +139,29 @@ config SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
 	  Use the Hardware Unique Key (HUK) with the UID as label to derive a
 	  new key.
 
-config SECURE_STORAGE_AEAD_BACKEND_KEY_CUSTOM
+config TRUSTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM
 	bool "Custom"
 	help
 	  Use custom implementation for AEAD key provider.
 
-endchoice # SECURE_STORAGE_BACKEND_AEAD_KEY
+endchoice # TRUSTED_STORAGE_BACKEND_AEAD_KEY
 
-endif # SECURE_STORAGE_BACKEND_AEAD
+endif # TRUSTED_STORAGE_BACKEND_AEAD
 
-endchoice # SECURE_STORAGE_BACKEND
+endchoice # TRUSTED_STORAGE_BACKEND
 
-choice SECURE_STORAGE_STORAGE_BACKEND
+choice TRUSTED_STORAGE_STORAGE_BACKEND
 	prompt "Storage backend"
-	default SECURE_STORAGE_STORAGE_BACKEND_SETTINGS
+	default TRUSTED_STORAGE_STORAGE_BACKEND_SETTINGS
 	help
 	  Implementation used to store the assets
 
-config SECURE_STORAGE_STORAGE_BACKEND_SETTINGS
+config TRUSTED_STORAGE_STORAGE_BACKEND_SETTINGS
 	bool "Settings storage backend"
 	depends on SETTINGS_NVS
 	help
 	  Use the Settings subsystem with NVS to store the assets
 
-endchoice # CONFIG_SECURE_STORAGE_STORAGE_BACKEND
+endchoice # CONFIG_TRUSTED_STORAGE_STORAGE_BACKEND
 
-endif # SECURE_STORAGE
+endif # TRUSTED_STORAGE

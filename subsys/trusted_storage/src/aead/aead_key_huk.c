@@ -16,7 +16,7 @@
 #define KEYSLOT HUK_KEYSLOT_KDR
 #endif
 
-psa_status_t secure_storage_get_key(psa_storage_uid_t uid, uint8_t *key_buf, size_t key_length)
+psa_status_t trusted_storage_get_key(psa_storage_uid_t uid, uint8_t *key_buf, size_t key_length)
 {
 
 	int result;
