@@ -162,7 +162,7 @@ The sample shows the following output when battery voltage drops to a very low v
 
    Battery voltage: 3175
    Battery voltage: 3175
-   Modem Event Batter LOW:
+   Modem Event Battery LOW:
    ******************************************************************
    * Attention! Do not attempt to write to NVM while in this state. *
    * The NVM operation will sometimes appear to finish successfully *
