@@ -30,5 +30,8 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf9151dk_nrf9151_ns
     tags: ci_build
