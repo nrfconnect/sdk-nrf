@@ -125,6 +125,27 @@ static void wifi_set_mode(int mode_val)
 	}
 }
 
+#ifdef CONFIG_RAW_TX_PKT_SAMPLE_INJECTION_ENABLE
+static int wifi_set_tx_injection_mode(void)
+{
+	struct net_if *iface;
+
+	iface = net_if_get_first_wifi();
+	if (!iface) {
+		LOG_ERR("Failed to get Wi-Fi iface");
+		return -1;
+	}
+
+	if (net_eth_txinjection_mode(iface, true)) {
+		LOG_ERR("TX Injection mode enable failed");
+		return -1;
+	}
+
+	LOG_INF("TX Injection mode enabled");
+	return 0;
+}
+#endif /* CONFIG_RAW_TX_PKT_SAMPLE_INJECTION_ENABLE */
+
 static int setup_raw_pkt_socket(int *sockfd, struct sockaddr_ll *sa)
 {
 	struct net_if *iface = NULL;
@@ -275,12 +296,16 @@ static void wifi_send_raw_tx_packets(void)
 int main(void)
 {
 	int mode;
-#ifdef CONFIG_RAW_TX_PKT_SAMPLE_STA_ONLY_MODE
+
 	mode = BIT(0);
-#elif CONFIG_RAW_TX_PKT_SAMPLE_INJECTION_ENABLE
-	mode = BIT(0) | BIT(2);
-#endif
+	/* This is to set mode to STATION */
 	wifi_set_mode(mode);
+
+#ifdef CONFIG_RAW_TX_PKT_SAMPLE_INJECTION_ENABLE
+	if (wifi_set_tx_injection_mode()) {
+		return -1;
+	}
+#endif
 
 #ifdef CONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE
 	int status;
