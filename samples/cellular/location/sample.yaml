@@ -6,7 +6,10 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf9151dk_nrf9151_ns
     tags: ci_build
   sample.cellular.location.esp_wifi:
     build_only: true
@@ -15,7 +18,10 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf9151dk_nrf9151_ns
     tags: ci_build
   sample.cellular.location.pgps:
     build_only: true
@@ -23,14 +29,20 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf9151dk_nrf9151_ns
     tags: ci_build
   sample.cellular.location.nrf7002ek_wifi:
     build_only: true
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf9151dk_nrf9151_ns
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
     tags: ci_build
   sample.cellular.location.nrf7000ek_wifi:
@@ -38,7 +50,10 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf9151dk_nrf9151_ns
     extra_args: SHIELD=nrf7002ek_nrf7000 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
                 CONFIG_WPA_SUPP=n
     tags: ci_build
@@ -47,6 +62,9 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf9151dk_nrf9151_ns
     extra_args: SHIELD=nrf7002ek_nrf7001 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
     tags: ci_build
