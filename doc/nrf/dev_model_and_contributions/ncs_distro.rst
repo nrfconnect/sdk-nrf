@@ -47,7 +47,7 @@ This approach is essentially identical to the previous one.
 However, the :ref:`module repository <zephyr:modules>` you create will not be part of the |NCS| official distribution by default.
 Instead, you will need to host your own documentation explaining how to add the module you make available to user's :ref:`own manifest <dm_workflow_4>`.
 
-An example of this approach is the `Golioth Zephyr SDK`_, which is set up as a `Zephyr module <Golioth module.yml_>`_ that a user can add to their own manifest.
+An example of this approach is the `Golioth Firmware SDK`_, which is set up as a `Zephyr module <Golioth module.yml_>`_ that a user can add to their own manifest.
 
 Providing a west manifest
 *************************
@@ -58,7 +58,7 @@ It will then in turn import the |NCS| `west manifest file`_.
 
 A good starting point for such an approach is the Nordic-provided `ncs-example-application`_ repository.
 It contains all the necessary integration with |NCS| and example functionality (a driver, library, subsystem, test, etc.) to serve as a reference for your own distribution's manifest repository.
-Just like in the previous approach, Golioth provides an example of such a west manifest, `west-ncs.yml <Golioth west-ncs.yml_>`_ along with a `guide document <Golioth README nRF Connect SDK_>`_.
+Just like in the previous approach, Golioth provides an example of such a west manifest, `west-ncs.yml <Golioth west-ncs.yml_>`_ along with a `guide document <Golioth Firmware SDK NCS doc_>`_.
 
 Forking the |NCS|
 *****************
