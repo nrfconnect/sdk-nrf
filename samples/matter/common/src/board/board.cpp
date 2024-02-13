@@ -290,7 +290,7 @@ void Board::StartBLEAdvertisement()
 
 void Board::DefaultMatterEventHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
 {
-	bool isNetworkProvisioned = false;
+	static bool isNetworkProvisioned = false;
 
 	switch (event->Type) {
 	case DeviceEventType::kCHIPoBLEAdvertisingChange:
