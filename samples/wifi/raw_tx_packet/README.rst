@@ -29,6 +29,8 @@ The sample provides the option to select the traffic pattern between the followi
 
 The configurations for connected Station or non-connected Station modes, and for continuous or fixed packet transmission, are set at build time.
 
+For more information, see :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`.
+
 Configuration
 *************
 
