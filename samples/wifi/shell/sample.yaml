@@ -106,6 +106,12 @@ tests:
       - nrf9161dk_nrf9161_ns
       - nrf9151dk_nrf9151_ns
     tags: ci_build
+  sample.nrf7002.shell.scan_only_thingy91x:
+    build_only: true
+    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf CONFIG_WPA_SUPP=n
+    platform_allow:
+      - thingy91x_nrf9151_ns
+    tags: ci_build
   sample.nrf7002.shell.otbr:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-openthread.conf

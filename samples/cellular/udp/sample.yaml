@@ -12,4 +12,5 @@ tests:
       - nrf9161dk_nrf9161_ns
       - nrf9151dk_nrf9151_ns
       - thingy91_nrf9160_ns
+      - thingy91x_nrf9151_ns
     tags: ci_build
