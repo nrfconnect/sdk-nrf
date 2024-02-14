@@ -28,39 +28,6 @@
 #define CID_STR_LEN 8
 
 /**
- * @brief Parse and fill XMONITOR status to client context lte_params.
- *        If status is 1 or 5, LTE params are available, otherwise not.
- *
- * @param[in,out] lte       LTE params to fill
- * @param[in]     buf       Input buffer. Assumes form "%XMONITOR: 1",
- *                          where the integer defines the status.
- * @param[in]     buf_len   Input buffer length. Error, if length < 1.
- *
- * @return 0 when status filled successfully, -1 otherwise
- */
-static int parse_lte_status(struct lte_params *lte,
-			    const char *buf,
-			    int buf_len)
-{
-	if (buf_len < 1) {
-		return -1;
-	}
-
-	int status = 0;
-
-	status = (int)strtol(&buf[buf_len - 1], NULL, 0);
-
-	if ((status != 1) && (status != 5)) {
-		lte->status = false;
-		return -1;
-	}
-
-	lte->status = true;
-
-	return 0;
-}
-
-/**
  * @brief Parse and fill XMONITOR MCC to client context lte_params
  *
  * @param[in,out] lte       LTE params to fill
@@ -239,6 +206,11 @@ static int parse_lte_phys_cid(struct lte_params *lte,
 void lte_params_init(struct lte_params *params)
 {
 	memset(params, 0, sizeof(struct lte_params));
+
+	/* status is always set to true as a workaround for a bug in the SUPL client library.
+	 * When LTE registration information is not available, all parameters are zeroes.
+	 */
+	params->status = true;
 }
 
 int handler_at_xmonitor(struct supl_session_ctx *session_ctx,
@@ -247,10 +219,6 @@ int handler_at_xmonitor(struct supl_session_ctx *session_ctx,
 			int buf_len)
 {
 	switch (col_number) {
-	case 0:
-		return parse_lte_status(&session_ctx->lte_params,
-					buf,
-					buf_len);
 	case 3:
 		if (parse_lte_mcc(&session_ctx->lte_params,
 				  buf,
