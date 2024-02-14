@@ -101,6 +101,7 @@ static void lwm2m_set_socket_state(int sock_fd, enum lwm2m_socket_states state)
 {
 	int opt = -1;
 	int ret;
+	static enum lwm2m_socket_states last_state;
 	static const char * const opt_names[] = {
 		"ONGOING",
 		"ONE_RESP",
@@ -119,7 +120,20 @@ static void lwm2m_set_socket_state(int sock_fd, enum lwm2m_socket_states state)
 		opt = SO_RAI_ONE_RESP;
 		break;
 	case LWM2M_SOCKET_STATE_LAST:
-		opt = SO_RAI_LAST;
+		if (last_state == LWM2M_SOCKET_STATE_NO_DATA) {
+			/* Special case: Special case: We have already told the modem to release the
+			 * connection but the server has sent us something and we are responding.
+			 * (CoAP Ack == LAST)
+			 * We don't know how many packets are coming, so indicate that
+			 * communication is ongoing and disable until we go back to RX_OFF.
+			 */
+			opt = SO_RAI_ONGOING;
+			state = LWM2M_SOCKET_STATE_ONGOING;
+			activate_rai = false;
+			LOG_INF("Ongoing traffic, RAI disabled");
+		} else {
+			opt = SO_RAI_LAST;
+		}
 		break;
 	case LWM2M_SOCKET_STATE_NO_DATA:
 		opt = SO_RAI_NO_DATA;
@@ -132,5 +146,7 @@ static void lwm2m_set_socket_state(int sock_fd, enum lwm2m_socket_states state)
 	if (ret < 0) {
 		ret = -errno;
 		LOG_ERR("Failed to set RAI socket option, error code: %d", ret);
+		return;
 	}
+	last_state = state;
 }
