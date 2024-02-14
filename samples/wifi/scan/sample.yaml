@@ -64,3 +64,7 @@ tests:
       - thingy53_nrf5340_cpuapp
     platform_allow: thingy53_nrf5340_cpuapp
     tags: ci_build
+  sample.thingy91x_nrf7002.scan:
+    build_only: true
+    platform_allow: thingy91x_nrf9151_ns
+    tags: ci_build
