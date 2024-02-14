@@ -299,10 +299,12 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   endif ()
 
   foreach (filepath ${mcuboot_CONF_FILE})
-    file(STRINGS ${filepath} mcuboot_CONFIG_BOOT_SIGNATURE_KEY_FILE
-         REGEX "^CONFIG_BOOT_SIGNATURE_KEY_FILE=")
-    if (mcuboot_CONFIG_BOOT_SIGNATURE_KEY_FILE)
-      get_filename_component(mcuboot_CONF_DIR ${filepath} DIRECTORY)
+    if (EXISTS ${filepath})
+      file(STRINGS ${filepath} mcuboot_CONFIG_BOOT_SIGNATURE_KEY_FILE
+           REGEX "^CONFIG_BOOT_SIGNATURE_KEY_FILE=")
+      if (mcuboot_CONFIG_BOOT_SIGNATURE_KEY_FILE)
+        get_filename_component(mcuboot_CONF_DIR ${filepath} DIRECTORY)
+      endif()
     endif()
   endforeach()
 
