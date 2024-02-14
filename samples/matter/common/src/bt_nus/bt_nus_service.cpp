@@ -16,8 +16,6 @@ using namespace ::chip::DeviceLayer;
 
 LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 
-#define NUS_BT_NAME (CONFIG_BT_DEVICE_NAME "_NUS")
-
 namespace
 {
 constexpr uint32_t kAdvertisingOptions = BT_LE_ADV_OPT_CONNECTABLE;
@@ -49,7 +47,7 @@ NUSService NUSService::sInstance;
 bool NUSService::Init(uint8_t priority, uint16_t minInterval, uint16_t maxInterval)
 {
 	mAdvertisingItems[0] = BT_DATA(BT_DATA_FLAGS, &kAdvertisingFlags, sizeof(kAdvertisingFlags));
-	mAdvertisingItems[1] = BT_DATA(BT_DATA_NAME_COMPLETE, NUS_BT_NAME, strlen(NUS_BT_NAME));
+	mAdvertisingItems[1] = BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, strlen(CONFIG_BT_DEVICE_NAME));
 
 	mServiceItems[0] = BT_DATA(BT_DATA_UUID128_ALL, kBTUuid, sizeof(kBTUuid));
 
