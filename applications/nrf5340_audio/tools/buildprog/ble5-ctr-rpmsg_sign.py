@@ -17,8 +17,8 @@ import re
 BLE5_CTR_HEX = 'new_fw_info_ble5-ctr.hex'
 FINAL_BLE5_CTR_HEX = 'ble5-ctr_CPUNET.hex'
 FINAL_BLE5_CTR_UPDATE_BIN = 'ble5-ctr_net_core_update.bin'
-ORIG_BLE5_CTR_PATTERN = r'ble5-ctr-rpmsg_shifted_\d{4}.hex'
-ORIG_BLE5_CTR_MIN_PATTERN = r'ble5-ctr-rpmsg_shifted_min_\d{4}.hex'
+ORIG_BLE5_CTR_PATTERN = r'ble5-ctr-rpmsg_shifted_\d+\.hex'
+ORIG_BLE5_CTR_MIN_PATTERN = r'ble5-ctr-rpmsg_shifted_min_\d+\.hex'
 NET_CORE_APP_NAME = 'empty_net_core'
 
 ZEPHYR_BASE = os.environ['ZEPHYR_BASE']
@@ -269,7 +269,7 @@ def find_hex_name(options):
 
     in_path = Path(options.input_folder).resolve()
 
-    # Add files only match pattern filename and 4 digits build number
+    # Add files only match pattern filename and includes digits for build number
     pattern_found = sorted([
         file for file in in_path.iterdir()\
         if re.match(ORIG_BLE5_CTR_MIN_PATTERN if options.min_b0n else ORIG_BLE5_CTR_PATTERN, file.name)\

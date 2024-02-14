@@ -214,7 +214,7 @@ def __populate_hex_paths(dev, options, child_image):
     if dev.core_net_programmed == SelectFlags.TBD:
 
         hex_files_found = 0
-        for hex_path in glob.glob(str(TARGET_CORE_NET_FOLDER) + "/ble5-ctr-rpmsg_????.hex"):
+        for hex_path in glob.glob(str(TARGET_CORE_NET_FOLDER) + "/ble5-ctr-rpmsg_" + "[0-9]" + "*" + ".hex"):
             dev.hex_path_net = hex_path
             hex_files_found += 1
 
