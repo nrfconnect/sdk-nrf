@@ -174,21 +174,21 @@ static int __wifi_args_to_params(struct wifi_connect_req_params *params)
 	params->mfp = WIFI_MFP_OPTIONAL;
 
 	/* SSID */
-	params->ssid = CONFIG_RAW_TX_PACKET_SAMPLE_SSID;
+	params->ssid = CONFIG_RAW_TX_PKT_SAMPLE_SSID;
 	params->ssid_length = strlen(params->ssid);
 
-#if defined(CONFIG_RAW_TX_PACKET_SAMPLE_KEY_MGMT_WPA2)
+#if defined(CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA2)
 	params->security = 1;
-#elif defined(CONFIG_RAW_TX_PACKET_SAMPLE_KEY_MGMT_WPA2_256)
+#elif defined(CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA2_256)
 	params->security = 2;
-#elif defined(CONFIG_RAW_TX_PACKET_SAMPLE_KEY_MGMT_WPA3)
+#elif defined(CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA3)
 	params->security = 3;
 #else
 	params->security = 0;
 #endif
 
-#if !defined(CONFIG_RAW_TX_PACKET_SAMPLE_KEY_MGMT_NONE)
-	params->psk = CONFIG_RAW_TX_PACKET_SAMPLE_PASSWORD;
+#if !defined(CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_NONE)
+	params->psk = CONFIG_RAW_TX_PKT_SAMPLE_PASSWORD;
 	params->psk_length = strlen(params->psk);
 #endif
 

@@ -68,7 +68,7 @@ static struct beacon test_beacon_frame = {
 	}
 };
 
-#ifdef CONFIG_RAW_TX_PACKET_SAMPLE_NON_CONNECTED_MODE
+#ifdef CONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE
 static void wifi_set_channel(void)
 {
 	struct net_if *iface;
@@ -84,7 +84,7 @@ static void wifi_set_channel(void)
 	}
 
 	channel_info.if_index = net_if_get_by_iface(iface);
-	channel_info.channel = CONFIG_RAW_TX_PACKET_SAMPLE_CHANNEL;
+	channel_info.channel = CONFIG_RAW_TX_PKT_SAMPLE_CHANNEL;
 	if ((channel_info.channel < WIFI_CHANNEL_MIN) ||
 		   (channel_info.channel > WIFI_CHANNEL_MAX)) {
 		LOG_ERR("Invalid channel number. Range is (1-233)");
@@ -161,10 +161,10 @@ static void fill_raw_tx_pkt_hdr(struct raw_tx_pkt_header *raw_tx_pkt)
 {
 	/* Raw Tx Packet header */
 	raw_tx_pkt->magic_num = NRF_WIFI_MAGIC_NUM_RAWTX;
-	raw_tx_pkt->data_rate = CONFIG_RAW_TX_PACKET_SAMPLE_RATE_VALUE;
+	raw_tx_pkt->data_rate = CONFIG_RAW_TX_PKT_SAMPLE_RATE_VALUE;
 	raw_tx_pkt->packet_length = sizeof(test_beacon_frame);
-	raw_tx_pkt->tx_mode = CONFIG_RAW_TX_PACKET_SAMPLE_RATE_FLAGS;
-	raw_tx_pkt->queue = CONFIG_RAW_TX_PACKET_SAMPLE_QUEUE_NUM;
+	raw_tx_pkt->tx_mode = CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS;
+	raw_tx_pkt->queue = CONFIG_RAW_TX_PKT_SAMPLE_QUEUE_NUM;
 	/* The byte is reserved and used by the driver */
 	raw_tx_pkt->raw_tx_flag = 0;
 }
@@ -179,9 +179,9 @@ int wifi_send_raw_tx_pkt(int sockfd, char *test_frame,
 static int get_pkt_transmit_count(unsigned int *mode_of_transmission,
 					unsigned int *num_tx_pkts)
 {
-#ifdef CONFIG_RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_FIXED
+#ifdef CONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_FIXED
 	*mode_of_transmission = 1;
-	*num_tx_pkts = CONFIG_RAW_TX_PACKET_SAMPLE_FIXED_NUM_PACKETS;
+	*num_tx_pkts = CONFIG_RAW_TX_PKT_SAMPLE_FIXED_NUM_PACKETS;
 	if (*num_tx_pkts == 0) {
 		LOG_ERR("Can't send %d number of raw tx packets", *num_tx_pkts);
 		return -1;
@@ -261,7 +261,7 @@ static void wifi_send_raw_tx_packets(void)
 
 			increment_seq_control();
 
-			k_msleep(CONFIG_RAW_TX_PACKET_SAMPLE_INTER_FRAME_DELAY_MS);
+			k_msleep(CONFIG_RAW_TX_PKT_SAMPLE_INTER_FRAME_DELAY_MS);
 		}
 	}
 
@@ -275,14 +275,14 @@ static void wifi_send_raw_tx_packets(void)
 int main(void)
 {
 	int mode;
-#ifdef CONFIG_RAW_TX_PACKET_SAMPLE_STA_ONLY_MODE
+#ifdef CONFIG_RAW_TX_PKT_SAMPLE_STA_ONLY_MODE
 	mode = BIT(0);
-#elif CONFIG_RAW_TX_PACKET_SAMPLE_STA_TX_INJECTION_MODE
+#elif CONFIG_RAW_TX_PKT_SAMPLE_INJECTION_ENABLE
 	mode = BIT(0) | BIT(2);
 #endif
 	wifi_set_mode(mode);
 
-#ifdef CONFIG_RAW_TX_PACKET_SAMPLE_CONNECTION_MODE
+#ifdef CONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE
 	int status;
 
 	status = try_wifi_connect();

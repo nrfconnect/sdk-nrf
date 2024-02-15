@@ -24,8 +24,8 @@ As a consequence, the nRF70 Series device can be identified as a Wi-Fi® beaconi
 The sample demonstrates how to transmit raw TX packets in both connected Station and non-connected Station modes of operation.
 The sample provides the option to select the traffic pattern between the following modes:
 
-* :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_CONTINUOUS`: Selects continuous packet transmission.
-* :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_FIXED`: Selects fixed number of transmitted packets.
+* :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_CONTINUOUS`: Selects continuous packet transmission.
+* :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_FIXED`: Selects fixed number of transmitted packets.
 
 The configurations for connected Station or non-connected Station modes, and for continuous or fixed packet transmission, are set at build time.
 
@@ -50,12 +50,12 @@ By using the following Kconfig options, you can configure the sample for differe
 
   To configure the sample in connected Station mode, you must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
 
-  * :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_SSID`: Sets the name of your Wi-Fi network.
-  * :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_KEY_MGMT_NONE`: Selects open security.
-  * :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_KEY_MGMT_WPA2`: Selects PSK security.
-  * :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_KEY_MGMT_WPA2_256`: Selects PSK-256 security.
-  * :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_KEY_MGMT_WPA3`: Selects SAE security (default).
-  * :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_PASSWORD`: Sets the password of your Wi-Fi network.
+  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_SSID`: Sets the name of your Wi-Fi network.
+  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_NONE`: Selects open security.
+  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA2`: Selects PSK security.
+  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA2_256`: Selects PSK-256 security.
+  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA3`: Selects SAE security (default).
+  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_PASSWORD`: Sets the password of your Wi-Fi network.
 
   .. note::
      You can also use ``menuconfig`` to enable the ``Key management`` option.
@@ -64,7 +64,7 @@ By using the following Kconfig options, you can configure the sample for differe
 
 * For non-connected Station mode
 
-  To configure the sample in non-connected Station mode, you must configure the :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_CHANNEL` Kconfig option in the :file:`prj.conf` file.
+  To configure the sample in non-connected Station mode, you must configure the :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_CHANNEL` Kconfig option in the :file:`prj.conf` file.
 
   This specifies the Wi-Fi channel to be used for communication on the wireless network.
 
@@ -73,11 +73,11 @@ Configuration options for raw TX packet header
 
 The following configuration options are available for the raw TX packet header:
 
-* :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_RATE_VALUE`: Specifies the data transmission PHY rate.
-* :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_RATE_FLAGS`: Specifies the data transmission mode.
-* :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_QUEUE_NUM`: Specifies the transmission queue to which raw TX packets are assigned for sending.
+* :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_RATE_VALUE`: Specifies the data transmission PHY rate.
+* :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS`: Specifies the data transmission mode.
+* :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_QUEUE_NUM`: Specifies the transmission queue to which raw TX packets are assigned for sending.
 
-Additionally, you must configure the :kconfig:option:`CONFIG_RAW_TX_PACKET_SAMPLE_INTER_FRAME_DELAY_MS` Kconfig option in the :file:`prj.conf` file to define the time delay between raw TX packets.
+Additionally, you must configure the :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_INTER_FRAME_DELAY_MS` Kconfig option in the :file:`prj.conf` file to define the time delay between raw TX packets.
 
 This sets the time duration between raw TX packets.
 
@@ -121,25 +121,25 @@ The following are examples of the CLI commands:
 
   .. code-block:: console
 
-     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PACKET_SAMPLE_CONNECTION_MODE=y -DCONFIG_RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_CONTINUOUS=y
+     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_CONTINUOUS=y
 
 * Fixed number of raw 802.11 packet transmission in the connected Station mode:
 
   .. code-block:: console
 
-     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PACKET_SAMPLE_CONNECTION_MODE=y -DCONFIG_RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_FIXED=y -DCONFIG_RAW_TX_PACKET_SAMPLE_FIXED_NUM_PACKETS=<number of packets to be sent>
+     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_FIXED=y -DCONFIG_RAW_TX_PKT_SAMPLE_FIXED_NUM_PACKETS=<number of packets to be sent>
 
 * Continuous raw 802.11 packet transmission in the non-connected Station mode:
 
   .. code-block:: console
 
-     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PACKET_SAMPLE_NON_CONNECTED_MODE=y -DCONFIG_RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_CONTINUOUS=y
+     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_CONTINUOUS=y
 
 * Fixed number of raw 802.11 packet transmission in the non-connected Station mode:
 
   .. code-block:: console
 
-     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PACKET_SAMPLE_NON_CONNECTED_MODE=y -DCONFIG_RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_FIXED=y -DCONFIG_RAW_TX_PACKET_SAMPLE_FIXED_NUM_PACKETS=<number of packets to be sent>
+     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_FIXED=y -DCONFIG_RAW_TX_PKT_SAMPLE_FIXED_NUM_PACKETS=<number of packets to be sent>
 
 Change the build target as given below for the nRF7002 EK.
 
