@@ -33,7 +33,7 @@ The following sections provide detailed lists of changes by component.
 IDE and tool support
 ====================
 
-|no_changes_yet_note|
+* Updated the supported operating system table on the :ref:`requirements` page.
 
 Working with nRF91 Series
 =========================

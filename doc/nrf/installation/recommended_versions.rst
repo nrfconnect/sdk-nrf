@@ -30,24 +30,28 @@ The following table shows the operating system versions that support the |NCS| t
      - Not supported
    * - `Linux - Ubuntu 22.04 LTS`_
      - Not supported
-     - Tier 3
+     - Tier 1
      - Not supported
    * - `Linux - Ubuntu 20.04 LTS`_
      - Not supported
-     - Tier 1
+     - Tier 2
      - Not supported
+   * - `macOS 14`_
+     - Not applicable
+     - Tier 3
+     - Tier 3
    * - `macOS 13`_
      - Not applicable
-     - Tier 3
-     - Tier 3
+     - Tier 1
+     - Tier 1
    * - `macOS 12`_
      - Not applicable
-     - Tier 2
-     - Tier 2
+     - Tier 3
+     - Tier 3
    * - `macOS 11`_
      - Not applicable
-     - Tier 1
-     - Not supported
+     - Tier 2
+     - Tier 2
    * - `macOS 10.15`_
      - Not applicable
      - Tier 3
