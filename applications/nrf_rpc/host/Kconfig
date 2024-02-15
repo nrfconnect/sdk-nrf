@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = NRF_RPC_HOST
+module-str = nrf_rpc_host
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

@@ -145,7 +145,7 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 	return 0;
 }
 
-int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t length)
+static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t length)
 {
 	int err;
 	struct nrf_rpc_ipc *ipc_config = transport->ctx;
@@ -172,7 +172,7 @@ int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t length)
 	return translate_error(err);
 }
 
-void *tx_buf_alloc(const struct nrf_rpc_tr *transport, size_t *size)
+static void *tx_buf_alloc(const struct nrf_rpc_tr *transport, size_t *size)
 {
 	void *data = NULL;
 	struct nrf_rpc_ipc *ipc_config = transport->ctx;
@@ -197,7 +197,7 @@ error:
 	return NULL;
 }
 
-void tx_buf_free(const struct nrf_rpc_tr *transport, void *buf)
+static void tx_buf_free(const struct nrf_rpc_tr *transport, void *buf)
 {
 	struct nrf_rpc_ipc *ipc_config = transport->ctx;
 
