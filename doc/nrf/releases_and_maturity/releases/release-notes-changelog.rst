@@ -229,6 +229,8 @@ Asset Tracker v2
     * Enable tickless mode in the LwM2M engine.
     * Enable LTE Release Assist Indicator.
 
+  * Add support for ADXL367 accelerometer.
+
 * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
 Connectivity Bridge
