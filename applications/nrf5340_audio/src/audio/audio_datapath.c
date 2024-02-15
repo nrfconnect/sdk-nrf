@@ -814,18 +814,18 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 		diff = (int64_t)tx_sync_ts_us - curr_ts_us;
 	}
 
-	/* The diff should always be positive. If diff is a large negative number, it is likely
-	 * that wrapping has occurred. A small negative value however, may point to a fault in the
-	 * controller.
+	/*
+	 * The diff should always be positive. If diff is a large negative number, it is likely
+	 * that wrapping has occurred. A small negative value however, may point to the application
+	 * sending data too late, and we need to drop data to get back in sync with the controller.
 	 */
 	if (diff < -((int64_t)UINT32_MAX / 2)) {
 		LOG_DBG("Timestamp wrap. diff: %lld", diff);
 		diff += UINT32_MAX;
 
 	} else if (diff < 0) {
-		LOG_ERR("tx_sync_ts_us: %u is earlier than curr_ts_us %u", tx_sync_ts_us,
+		LOG_DBG("tx_sync_ts_us: %u is earlier than curr_ts_us %u", tx_sync_ts_us,
 			curr_ts_us);
-		return;
 	}
 
 	if (print_count % 100 == 0) {

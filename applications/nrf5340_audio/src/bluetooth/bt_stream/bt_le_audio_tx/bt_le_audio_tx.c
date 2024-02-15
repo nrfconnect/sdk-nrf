@@ -119,6 +119,7 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_bap
 		}
 		net_buf_unref(buf);
 		atomic_dec(&tx_info->iso_tx_pool_alloc);
+		return ret;
 	} else {
 		tx_info->iso_tx.seq_num++;
 	}
