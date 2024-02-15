@@ -412,6 +412,45 @@ void nrf_wifi_event_proc_cookie_rsp(void *vif_ctx,
 	 */
 }
 #endif /* CONFIG_NRF700X_STA_MODE */
+
+void reg_change_callbk_fn(void *vif_ctx,
+			  struct nrf_wifi_event_regulatory_change *reg_change_event,
+			  unsigned int event_len)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	vif_ctx_zep = vif_ctx;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return;
+	}
+
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+	if (!fmac_dev_ctx) {
+		LOG_ERR("%s: fmac_dev_ctx is NULL", __func__);
+		return;
+	}
+
+	fmac_dev_ctx->reg_change = k_malloc(sizeof(struct nrf_wifi_event_regulatory_change));
+	if (!fmac_dev_ctx->reg_change) {
+		LOG_ERR("%s: Failed to allocate memory for reg_change", __func__);
+		return;
+	}
+
+	memcpy(fmac_dev_ctx->reg_change,
+		   reg_change_event,
+		   sizeof(struct nrf_wifi_event_regulatory_change));
+	fmac_dev_ctx->reg_set_status = true;
+}
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 
@@ -670,6 +709,7 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 
 	callbk_fns.scan_start_callbk_fn = nrf_wifi_event_proc_scan_start_zep;
 	callbk_fns.scan_done_callbk_fn = nrf_wifi_event_proc_scan_done_zep;
+	callbk_fns.reg_change_callbk_fn = reg_change_callbk_fn;
 #ifdef CONFIG_NET_L2_WIFI_MGMT
 	callbk_fns.disp_scan_res_callbk_fn = nrf_wifi_event_proc_disp_scan_res_zep;
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
