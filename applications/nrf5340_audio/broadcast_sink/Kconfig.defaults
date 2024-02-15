@@ -50,6 +50,8 @@ config BT_PAC_SNK
 config BT_AUDIO_RX
 	default y
 
+config BT_AUDIO_CODEC_CFG_MAX_METADATA_SIZE
+	default 80
 
 ## Audio related configs ##
 config AUDIO_MUTE
