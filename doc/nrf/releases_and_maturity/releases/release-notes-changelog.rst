@@ -255,6 +255,7 @@ Serial LTE modem
 nRF5340 Audio
 -------------
 
+* The SoftDevice Controller is the default controller for the build script.
 * Added support for Filter Accept List and enabled as default.
 
 * Updated:

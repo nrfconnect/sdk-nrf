@@ -144,7 +144,7 @@ config FS_FATFS_MAX_LFN
 	default 255
 
 config BT_LL_ACS_NRF53
-	default y
+	default n
 
 config WATCHDOG
 	default y

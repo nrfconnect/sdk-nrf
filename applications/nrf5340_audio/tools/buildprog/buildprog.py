@@ -98,6 +98,7 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine,
             dest_folder = TARGET_DEV_GATEWAY_FOLDER
         else:
             raise Exception("Invalid device!")
+
         if build == BuildType.debug:
             release_flag = ""
             dest_folder /= TARGET_DEBUG_FOLDER
@@ -113,10 +114,10 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine,
             device_flag += " -DCONFIG_AUDIO_DFU=2"
         if options.min_b0n:
             device_flag += " -DCONFIG_B0N_MINIMAL=y"
-        if options.controller == Controller.sdc:
-            device_flag += " -DCONFIG_BT_LL_ACS_NRF53=n"
-            if not child_image:
-                device_flag += " -DCONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE=n"
+        if options.controller == Controller.acs_nrf53:
+            device_flag += " -DCONFIG_BT_LL_ACS_NRF53=y"
+        elif not child_image:
+            device_flag += " -DCONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE=n"
 
         if options.nrf21540:
             device_flag += " -DSHIELD=nrf21540ek_fwd"
@@ -317,7 +318,7 @@ def __main():
         type=str,
         choices=[i.value for i in Controller],
         dest="controller",
-        default=Controller.acs_nrf53.value,
+        default=Controller.sdc.value,
         help=argparse.SUPPRESS,
     )
     # DFU relative option
