@@ -224,6 +224,13 @@ int dfu_target_stream_reset(void)
 	stream.buf_bytes = 0;
 	stream.bytes_written = 0;
 
+#ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
+	err = settings_delete(current_name_key);
+	if (err != 0) {
+		LOG_ERR("settings_delete error %d", err);
+	}
+#endif
+
 	/* No flash device specified, nothing to erase. */
 	if (stream.fdev == NULL) {
 		current_id = NULL;
