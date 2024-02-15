@@ -45,9 +45,6 @@ config BOARD_ENABLE_DCDC_NET
 config BOARD_ENABLE_CPUNET
 	default y
 
-config NFCT_PINS_AS_GPIOS
-	default y
-
 config ZBUS
 	default y
 
@@ -142,9 +139,6 @@ config FS_FATFS_EXFAT
 # Set the maximum file name length to 255
 config FS_FATFS_MAX_LFN
 	default 255
-
-config BT_LL_ACS_NRF53
-	default y
 
 config WATCHDOG
 	default y

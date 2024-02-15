@@ -305,11 +305,12 @@ nRF5340 Audio
 
 * Updated:
 
+  * Changed the default controller from the :ref:`lib_bt_ll_acs_nrf53_readme` to the :ref:`ug_ble_controller_softdevice`.
+    Read :ref:`migration_2.6` for information about how this affects your application.
   * Sending of the ISO data, which is now done in a single file :file:`bt_le_audio_tx`.
   * Application structure, which is now split into four separate, generic applications with separate :file:`main.c` files.
   * Advertising process by reverting back to slower advertising after a short burst (1.28 s) of directed advertising.
   * Scan process for broadcasters by adding ID as a searchable parameter.
-
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
