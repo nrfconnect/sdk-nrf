@@ -276,7 +276,9 @@ tests:
     build_only: true
     integration_platforms:
       - thingy91_nrf9160_ns
-    platform_allow: thingy91_nrf9160_ns
+    platform_allow:
+      - thingy91_nrf9160_ns
+      - thingy91x_nrf9151_ns
     tags: ci_build
   sample.cellular.modem_shell.modem_trace_shell_ext_flash:
     build_only: true
@@ -407,7 +409,9 @@ tests:
     extra_args: SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - thingy91_nrf9160_ns
-    platform_allow: thingy91_nrf9160_ns
+    platform_allow:
+      - thingy91_nrf9160_ns
+      - thingy91x_nrf9151_ns
     tags: ci_build
 
   # Configuration which will be used by the CI integration job to verify PRs
