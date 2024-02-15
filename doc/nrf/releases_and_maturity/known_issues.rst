@@ -3222,6 +3222,14 @@ SoftDevice Controller
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v2-6-0
+
+DRGN-21293: The Le Read ISO TX Sync command is implemented according to the raised errata ES-23138.
+  In ES-23138, the return parameter ``TX_Time_Stamp`` is used as the SDU synchronization reference of the SDU previously scheduled for transmission.
+  This differs from the Bluetooth Core Specification v5.4, which uses the CIG or BIG reference anchor point as the SDU synchronization reference.
+  Note that when the CIG or BIG is configured with an ``ISO_Interval`` that equals the ``SDU_Interval``, there is no difference between the CIG or BIG reference anchor point and the SDU synchronization reference.
+  If several SDUs are transmitted during each ``ISO_Interval``, meaning that the ``ISO_Interval`` is larger than the ``SDU_Interval``, our implementation of the LE Read ISO TX Sync command returns a unique SDU synchronization reference for each SDU.
+
 .. rst-class:: v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0
 
 DRGN-21020: The continuous extended scanner sometimes stops generating advertising reports
