@@ -29,6 +29,7 @@ struct entropy_get_result {
 static void (*result_callback)(int result, uint8_t *buffer, size_t length);
 
 NRF_RPC_IPC_TRANSPORT(entropy_group_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "nrf_rpc_ept");
+NRF_RPC_IPC_TRANSPORT_DECLARE(entropy_group_tr);
 NRF_RPC_GROUP_DEFINE(entropy_group, "nrf_sample_entropy", &entropy_group_tr, NULL, NULL, NULL);
 
 

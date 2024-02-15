@@ -1,0 +1,13 @@
+sample:
+  name: nRF RPC application
+  description: Test nRF RPC application
+tests:
+  sample.basic.rpc:
+    build_only: true
+    platform_allow: >
+      nrf52840dk_nrf52840
+    tags: ci_build
+    extra_args: >
+      SNIPPET="multiprotocol"
+    integration_platforms:
+      - nrf52840dk_nrf52840

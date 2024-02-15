@@ -40,7 +40,7 @@ endchoice
 
 config OPENTHREAD_RPC_INITIALIZE_NRF_RPC
 	bool "Automatically initialize nRF RPC library"
-	default y
+	default n
 	help
 	  Initialize nRF RPC library during the system startup. Disabling this
 	  option allow user to initialize it in a different way.
