@@ -42,10 +42,6 @@ LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 K_SEM_DEFINE(z_wpas_ready_sem, 0, 1);
 #include <l2_packet/l2_packet.h>
 
-/* Should match with the driver name */
-#define DEFAULT_IFACE_NAME "wlan0"
-#define IFACE_MATCHING_PREFIX "wlan"
-
 static struct net_mgmt_event_callback cb;
 struct k_mutex iface_up_mutex;
 
