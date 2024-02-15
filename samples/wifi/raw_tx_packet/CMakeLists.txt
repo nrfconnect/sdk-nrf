@@ -15,7 +15,7 @@ target_include_directories(
 	PRIVATE
 	${ZEPHYR_BASE}/../nrfxlib/)
 
-target_sources_ifdef(CONFIG_RAW_TX_PACKET_SAMPLE_CONNECTION_MODE
+target_sources_ifdef(CONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE
 	app
 	PRIVATE
 	src/wifi_connection.c)
