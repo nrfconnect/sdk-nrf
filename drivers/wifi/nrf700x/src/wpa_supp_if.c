@@ -22,6 +22,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 
 K_SEM_DEFINE(wait_for_event_sem, 0, 1);
 K_SEM_DEFINE(wait_for_scan_resp_sem, 0, 1);
+static K_MUTEX_DEFINE(mgmt_tx_lock);
 
 #define ACTION_FRAME_RESP_TIMEOUT_MS 5000
 #define SET_IFACE_EVENT_TIMEOUT_MS 5000
@@ -1300,6 +1301,8 @@ void nrf_wifi_wpa_supp_event_mgmt_tx_status(void *if_priv,
 	}
 
 	acked = mlme_event->nrf_wifi_flags & NRF_WIFI_EVENT_MLME_ACK ? true : false;
+	LOG_DBG("%s: Mgmt frame %llx tx status: %s",
+		    __func__, mlme_event->cookie, acked ? "ACK" : "NOACK");
 
 	if (vif_ctx_zep->supp_drv_if_ctx &&
 		vif_ctx_zep->supp_callbk_fns.mgmt_tx_status) {
@@ -1385,6 +1388,8 @@ int nrf_wifi_nl80211_send_mlme(void *if_priv, const u8 *data,
 		goto out;
 	}
 
+	k_mutex_lock(&mgmt_tx_lock, K_FOREVER);
+
 	mgmt_tx_info = k_calloc(sizeof(*mgmt_tx_info), sizeof(char));
 
 	if (!mgmt_tx_info) {
@@ -1422,6 +1427,8 @@ int nrf_wifi_nl80211_send_mlme(void *if_priv, const u8 *data,
 	mgmt_tx_info->host_cookie = cookie;
 	vif_ctx_zep->cookie_resp_received = false;
 
+	LOG_DBG("%s: Sending frame to RPU: cookie=%d wait_time=%d no_ack=%d", __func__,
+		    cookie, wait_time, noack);
 	status = nrf_wifi_fmac_mgmt_tx(rpu_ctx_zep->rpu_ctx,
 			vif_ctx_zep->vif_idx,
 			mgmt_tx_info);
@@ -1456,6 +1463,7 @@ int nrf_wifi_nl80211_send_mlme(void *if_priv, const u8 *data,
 out:
 	if (mgmt_tx_info)
 		k_free(mgmt_tx_info);
+	k_mutex_unlock(&mgmt_tx_lock);
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return status;
 }
