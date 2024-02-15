@@ -6,10 +6,13 @@
 
 config BT_LL_ACS_NRF53
 	bool "LE Audio Controller Subsystem for nRF53"
-	select EXPERIMENTAL
+	select DEPRECATED
 	depends on (SOC_NRF5340_CPUAPP || SOC_NRF5340_CPUNET)
+	default n
 	help
 	  Use LE Audio Controller Subsystem Link Layer binary. Only for nRF53 NET core.
+
+	  This binary has been deprecated and should not be used.
 
 #----------------------------------------------------------------------------#
 menu "Log levels"
