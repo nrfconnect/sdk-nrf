@@ -554,7 +554,9 @@ static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
 	const size_t cmd_name_len = cmd_name_toupper(at_cmd, cmd_length);
 
 	err = slm_at_parse(at_cmd, cmd_name_len);
-	if (err == 0) {
+	if (err == SILENT_AT_COMMAND_RET) {
+		return;
+	} else if (err == 0) {
 		rsp_send_ok();
 		return;
 	} else if (err != UNKNOWN_AT_COMMAND_RET) {

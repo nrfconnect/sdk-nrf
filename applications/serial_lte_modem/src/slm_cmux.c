@@ -5,6 +5,9 @@
  */
 #include "slm_cmux.h"
 #include "slm_at_host.h"
+#if defined(CONFIG_SLM_PPP)
+#include "slm_ppp.h"
+#endif
 #include <zephyr/logging/log.h>
 #include <zephyr/modem/backend/uart.h>
 #include <zephyr/modem/cmux.h>
@@ -14,13 +17,7 @@
 /* This makes use of part of the Zephyr modem subsystem which has a CMUX module. */
 LOG_MODULE_REGISTER(slm_cmux, CONFIG_SLM_LOG_LEVEL);
 
-enum cmux_channel {
-	AT_CHANNEL,
-#if defined(CONFIG_SLM_PPP)
-	PPP_CHANNEL,
-#endif
-	CHANNEL_COUNT
-};
+#define CHANNEL_COUNT (1 + IS_ENABLED(CONFIG_SLM_PPP))
 
 #define RECV_BUF_LEN SLM_AT_MAX_CMD_LEN
 /* The CMUX module reserves some spare buffer bytes. To achieve a maximum
@@ -49,6 +46,8 @@ static struct {
 		uint8_t address;
 		uint8_t receive_buf[RECV_BUF_LEN];
 	} dlcis[CHANNEL_COUNT];
+	/* Index of the DLCI used for AT communication; defaults to 0. */
+	unsigned int at_channel;
 } cmux;
 
 static void dlci_pipe_event_handler(struct modem_pipe *pipe,
@@ -59,6 +58,7 @@ static void dlci_pipe_event_handler(struct modem_pipe *pipe,
 	switch (event) {
 	case MODEM_PIPE_EVENT_OPENED:
 	case MODEM_PIPE_EVENT_CLOSED:
+		/* The PPP DLCI events are received here only when PPP isn't started. */
 		LOG_INF("DLCI %u %s.", dlci->address,
 			(event == MODEM_PIPE_EVENT_OPENED) ? "opened" : "closed");
 		break;
@@ -67,11 +67,14 @@ static void dlci_pipe_event_handler(struct modem_pipe *pipe,
 		const int recv_len = modem_pipe_receive(pipe, recv_buf, sizeof(recv_buf));
 
 		if (recv_len > 0) {
-			if (ARRAY_INDEX(cmux.dlcis, dlci) == AT_CHANNEL) {
+			if (ARRAY_INDEX(cmux.dlcis, dlci) == cmux.at_channel) {
 				slm_at_receive(recv_buf, recv_len);
+			} else {
+				LOG_WRN("Discarding %u byte%s received on non-AT DLCI %u.",
+					recv_len, (recv_len > 1) ? "s" : "", dlci->address);
 			}
 		} else {
-			LOG_ERR("Failed to receive data from DLCI %u. (%d)",
+			LOG_ERR("Failed to receive data on DLCI %u. (%d)",
 				dlci->address, recv_len);
 		}
 		break;
@@ -105,8 +108,7 @@ static void init_dlci(size_t dlci_idx, uint16_t recv_buf_size,
 
 static int cmux_write_at_channel(const uint8_t *data, size_t len)
 {
-	struct modem_pipe *const at_dlci_pipe = cmux.dlcis[AT_CHANNEL].pipe;
-	int ret = modem_pipe_transmit(at_dlci_pipe, data, len);
+	int ret = modem_pipe_transmit(cmux.dlcis[cmux.at_channel].pipe, data, len);
 
 	if (ret != len) {
 		const int sent_len = MAX(0, ret);
@@ -150,7 +152,7 @@ static int cmux_stop(void)
 	return 0;
 }
 
-static bool cmux_is_initialized(void)
+static bool cmux_is_started(void)
 {
 	return (cmux.uart_pipe != NULL);
 }
@@ -173,17 +175,41 @@ void slm_cmux_init(void)
 }
 
 #if defined(CONFIG_SLM_PPP)
-void *slm_cmux_get_ppp_channel_pipe(void)
+
+static struct cmux_dlci *cmux_ppp_dlci(void)
 {
-	return cmux.dlcis[PPP_CHANNEL].pipe;
+	BUILD_ASSERT(ARRAY_SIZE(cmux.dlcis) == 2);
+	/* The DLCI that is not the AT channel's is PPP's. */
+	return &cmux.dlcis[!cmux.at_channel];
 }
+
+struct modem_pipe *slm_cmux_reserve_ppp_channel(void)
+{
+	/* Return the PPP channel's pipe. PPP will attach to it, after which
+	 * this pipe's events and data will not be received here anymore
+	 * until the pipe is released (below) and we attach back to it.
+	 */
+	return cmux_ppp_dlci()->pipe;
+}
+
+void slm_cmux_release_ppp_channel(void)
+{
+	struct cmux_dlci *ppp_dlci = cmux_ppp_dlci();
+
+#if CONFIG_SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE
+	cmux.at_channel = 0;
 #endif
+
+	modem_pipe_attach(ppp_dlci->pipe, dlci_pipe_event_handler, ppp_dlci);
+}
+
+#endif /* CONFIG_SLM_PPP */
 
 static int cmux_start(void)
 {
 	int ret;
 
-	if (cmux_is_initialized()) {
+	if (cmux_is_started()) {
 		ret = modem_pipe_open(cmux.uart_pipe);
 		if (!ret) {
 			LOG_INF("CMUX resumed.");
@@ -234,24 +260,38 @@ static void cmux_starter(struct k_work *)
 int handle_at_cmux(enum at_cmd_type cmd_type)
 {
 	static struct k_work_delayable cmux_start_work;
+	const unsigned int param_count = at_params_valid_count_get(&slm_at_param_list);
+	unsigned int at_dlci;
 	int ret;
-	unsigned int op;
-	enum {
-		OP_START,
-	};
 
-	if (cmd_type != AT_CMD_TYPE_SET_COMMAND
-	 || at_params_valid_count_get(&slm_at_param_list) != 2) {
+	if (cmd_type != AT_CMD_TYPE_SET_COMMAND || param_count > 2) {
 		return -EINVAL;
 	}
 
-	ret = at_params_unsigned_int_get(&slm_at_param_list, 1, &op);
-	if (ret) {
-		return ret;
-	} else if (op != OP_START) {
-		return -EINVAL;
-	} else if (cmux_is_initialized()) {
+	if (param_count == 1 && cmux_is_started()) {
 		return -EALREADY;
+	}
+
+	if (param_count == 2) {
+		ret = at_params_unsigned_int_get(&slm_at_param_list, 1, &at_dlci);
+		if (ret || at_dlci < 1 || at_dlci > ARRAY_SIZE(cmux.dlcis)) {
+			return -EINVAL;
+		}
+		const unsigned int at_channel = at_dlci - 1;
+
+#if defined(CONFIG_SLM_PPP)
+		if (slm_ppp_is_running() && at_channel != cmux.at_channel) {
+			/* The AT channel cannot be changed when PPP is running. */
+			return -ENOTSUP;
+		}
+#endif
+		if (cmux_is_started()) {
+			/* Just update the AT channel, first answering "OK" on the current DLCI. */
+			rsp_send_ok();
+			cmux.at_channel = at_channel;
+			return SILENT_AT_COMMAND_RET;
+		}
+		cmux.at_channel = at_channel;
 	}
 
 	k_work_init_delayable(&cmux_start_work, cmux_starter);

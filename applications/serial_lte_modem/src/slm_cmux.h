@@ -10,10 +10,13 @@
 
 void slm_cmux_init(void);
 
-#if defined(CONFIG_SLM_PPP)
-void *slm_cmux_get_ppp_channel_pipe(void);
-#endif
-
 int handle_at_cmux(enum at_cmd_type cmd_type);
+
+#if defined(CONFIG_SLM_PPP)
+struct modem_pipe;
+struct modem_pipe *slm_cmux_reserve_ppp_channel(void);
+
+void slm_cmux_release_ppp_channel(void);
+#endif /* CONFIG_SLM_PPP */
 
 #endif

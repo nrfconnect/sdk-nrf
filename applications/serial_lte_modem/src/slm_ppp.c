@@ -190,11 +190,14 @@ static int ppp_start(void)
 		return ppp_start_failure(-ENOTCONN);
 	}
 
+#if defined(CONFIG_SLM_CMUX)
+	ppp_pipe = slm_cmux_reserve_ppp_channel();
+	/* The pipe opening is managed by CMUX. */
+#endif
+
 	modem_ppp_attach(&ppp_module, ppp_pipe);
 
-#if defined(CONFIG_SLM_CMUX)
-	/* The pipe will get opened when the PPP CMUX channel is opened. */
-#else
+#if !defined(CONFIG_SLM_CMUX)
 	ret = modem_pipe_open(ppp_pipe);
 	if (ret) {
 		LOG_ERR("Failed to open PPP pipe (%d).", ret);
@@ -215,7 +218,7 @@ static int ppp_start(void)
 	return 0;
 }
 
-static bool ppp_is_running(void)
+bool slm_ppp_is_running(void)
 {
 	return net_if_is_carrier_ok(ppp_iface)
 	    && ppp_fds[ZEPHYR_FD_IDX] >= 0
@@ -224,12 +227,12 @@ static bool ppp_is_running(void)
 
 static void ppp_stop(void)
 {
-	if (!ppp_is_running()) {
+	if (!slm_ppp_is_running()) {
 		return;
 	}
 	LOG_DBG("Stopping PPP...");
 
-	/* First bring the carrier down so that ppp_is_running()
+	/* First bring the carrier down so that slm_ppp_is_running()
 	 * returns false right away. This is to prevent trying to stop PPP at the
 	 * same time from multiple sources: the original one (e.g. "AT#XPPP=0")
 	 * and the data passing thread. The latter attempts to stop PPP when it receives
@@ -240,7 +243,12 @@ static void ppp_stop(void)
 #if !defined(CONFIG_SLM_CMUX)
 	modem_pipe_close(ppp_pipe);
 #endif
+
 	modem_ppp_release(&ppp_module);
+
+#if defined(CONFIG_SLM_CMUX)
+	slm_cmux_release_ppp_channel();
+#endif
 
 	const int ret = net_if_down(ppp_iface);
 
@@ -264,7 +272,7 @@ static void pdp_ctx_event_handler(uint8_t cid, enum pdn_event event, int reason)
 		k_work_submit_to_queue(&slm_work_q, &ppp_restart_work);
 		break;
 	case PDN_EVENT_DEACTIVATED:
-		if (ppp_is_running()) {
+		if (slm_ppp_is_running()) {
 			LOG_INF("Connection down. Stopping PPP.");
 			ppp_stop();
 		} else {
@@ -392,7 +400,7 @@ static void ppp_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 		}
 		ppp_peer_connected = false;
 		/* Also ignore this event when it is received after PPP has been stopped. */
-		if (!ppp_is_running()) {
+		if (!slm_ppp_is_running()) {
 			break;
 		}
 		/* For the peer to be able to successfully reconnect
@@ -405,11 +413,9 @@ static void ppp_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-static int ppp_link_init(void)
+int slm_ppp_init(void)
 {
-#if defined(CONFIG_SLM_CMUX)
-	ppp_pipe = slm_cmux_get_ppp_channel_pipe();
-#else
+#if !defined(CONFIG_SLM_CMUX)
 	if (!device_is_ready(ppp_uart_dev)) {
 		return -EAGAIN;
 	}
@@ -428,21 +434,11 @@ static int ppp_link_init(void)
 		};
 
 		ppp_pipe = modem_backend_uart_init(&ppp_uart_backend, &uart_backend_config);
+		if (!ppp_pipe) {
+			return -ENOSYS;
+		}
 	}
 #endif
-	if (!ppp_pipe) {
-		return -ENOSYS;
-	}
-	return 0;
-}
-
-int slm_ppp_init(void)
-{
-	const int ret = ppp_link_init();
-
-	if (ret) {
-		return ret;
-	}
 
 	ppp_iface = modem_ppp_get_iface(&ppp_module);
 
@@ -477,7 +473,7 @@ int handle_at_ppp(enum at_cmd_type cmd_type)
 	};
 
 	if (cmd_type == AT_CMD_TYPE_READ_COMMAND) {
-		rsp_send("\r\n#XPPP: %u,%u\r\n", ppp_is_running(), ppp_peer_connected);
+		rsp_send("\r\n#XPPP: %u,%u\r\n", slm_ppp_is_running(), ppp_peer_connected);
 		return 0;
 	}
 	if (cmd_type != AT_CMD_TYPE_SET_COMMAND
@@ -491,7 +487,7 @@ int handle_at_ppp(enum at_cmd_type cmd_type)
 	} else if (op >= OP_COUNT) {
 		return -EINVAL;
 	}
-	const bool is_running = ppp_is_running();
+	const bool is_running = slm_ppp_is_running();
 
 	if ((!is_running && op == OP_STOP) || (is_running && op == OP_START)) {
 		return -EALREADY;
@@ -499,8 +495,10 @@ int handle_at_ppp(enum at_cmd_type cmd_type)
 	if (op == OP_START) {
 		ret = ppp_start();
 	} else {
+		/* Send "OK" first in case stopping PPP results in the CMUX AT channel switching. */
+		rsp_send_ok();
 		k_work_submit_to_queue(&slm_work_q, &ppp_stop_work);
-		ret = 0;
+		ret = SILENT_AT_COMMAND_RET;
 	}
 	return ret;
 }
@@ -554,8 +552,6 @@ static void ppp_data_passing_thread(void*, void*, void*)
 			const size_t dst = (src == ZEPHYR_FD_IDX) ? MODEM_FD_IDX : ZEPHYR_FD_IDX;
 			void *dst_addr = (dst == MODEM_FD_IDX) ? NULL : &ppp_zephyr_dst_addr;
 			socklen_t addrlen = (dst == MODEM_FD_IDX) ? 0 : sizeof(ppp_zephyr_dst_addr);
-
-			LOG_DBG("Forwarding %zd bytes to %s socket.", len, ppp_socket_names[dst]);
 
 			send_ret = sendto(fds[dst].fd, ppp_data_buf, len, 0, dst_addr, addrlen);
 			if (send_ret == -1) {
