@@ -22,7 +22,7 @@ A known issue can list one or both of the following entries:
   Sometimes, they are discovered later and added over time.
 
 .. version-filter::
-  :default: v2-5-1
+  :default: v2-5-2
   :container: dl/dt
   :tags: [("wontfix", "Won't fix")]
 
