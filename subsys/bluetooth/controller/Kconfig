@@ -334,14 +334,6 @@ config BT_LL_SOFTDEVICE_MULTIROLE
 
 endchoice
 
-config BT_LL_SOFTDEVICE_EXPERIMENTAL_ISO
-	bool "ISO Support in the SoftDevice Controller [EXPERIMENTAL]"
-	default BT_ISO
-	select EXPERIMENTAL
-	help
-	  ISO support in the SoftDevice Controller is experimental.
-	  It cannot be used in products as per now.
-
 config BT_CTLR_FAL_SIZE
 	int "Configures the maximum number of addresses in the Filter Accept List"
 	range 0 255
