@@ -167,6 +167,18 @@ config SLM_PPP
 config SLM_CMUX
 	bool "CMUX support in SLM"
 
+if SLM_CMUX && SLM_PPP
+
+config SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE
+	bool "AT channel automatic fallback to DLCI 1 when PPP stops."
+	help
+	  This is mainly intended for compatibility with Zephyr's generic modem driver.
+	  If enabled, when PPP stops (which happens automatically when the LTE link goes down)
+	  CMUX will make the AT channel be on DLCI 1. This only has an effect if it had been
+	  configured to be elsewhere, e.g. with AT#XCMUX=2.
+
+endif
+
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"
 rsource "src/http_c/Kconfig"
