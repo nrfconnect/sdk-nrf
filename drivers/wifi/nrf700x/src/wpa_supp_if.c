@@ -1929,9 +1929,7 @@ static int nrf_wifi_vif_state_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 	vif_ctx = def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx];
 
 	vif_state_info.state = state;
-	memcpy(vif_state_info.ifacename,
-	       vif_ctx_zep->ifname,
-	       strlen(vif_ctx_zep->ifname));
+	vif_state_info.if_index = vif_ctx_zep->vif_idx;
 	vif_ctx->ifflags = false;
 	status = nrf_wifi_fmac_chg_vif_state(rpu_ctx_zep->rpu_ctx,
 					     vif_ctx_zep->vif_idx,
