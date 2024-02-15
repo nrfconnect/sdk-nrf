@@ -193,7 +193,7 @@
 		compatible = "adi,adxl367";
 		odr = <3>;
 		reg = <0x1d>;
-		int1-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
+		int1-gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
 	};
 
 	magnetometer: bmm150@10 {

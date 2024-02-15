@@ -20,44 +20,88 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ext_sensors, CONFIG_EXTERNAL_SENSORS_LOG_LEVEL);
 
-/* Convert to s/m2 depending on the maximum measured range used for adxl362. */
-#if IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_2G)
-#define ADXL362_RANGE_MAX_M_S2 19.6133
-#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_4G)
-#define ADXL362_RANGE_MAX_M_S2 39.2266
-#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_8G)
-#define ADXL362_RANGE_MAX_M_S2 78.4532
-#endif
-
-/* This is derived from the sensitivity values in the datasheet. */
-#define ADXL362_THRESHOLD_RESOLUTION_DECIMAL_MAX 2000
-
-#if IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_12_5)
-#define ADXL362_TIMEOUT_MAX_S 5242.88
-#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_25)
-#define ADXL362_TIMEOUT_MAX_S 2621.44
-#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_50)
-#define ADXL362_TIMEOUT_MAX_S 1310.72
-#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_100)
-#define ADXL362_TIMEOUT_MAX_S 655.36
-#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_200)
-#define ADXL362_TIMEOUT_MAX_S 327.68
-#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_400)
-#define ADXL362_TIMEOUT_MAX_S 163.84
-#endif
-
-#define ADXL362_TIMEOUT_RESOLUTION_MAX 65536
-
-/* Local accelerometer threshold value. Used to filter out unwanted values in
- * the callback from the accelerometer.
- */
-double threshold = ADXL362_RANGE_MAX_M_S2;
-
 struct env_sensor {
 	enum sensor_channel channel;
 	const struct device *dev;
 	struct k_spinlock lock;
 };
+
+#if defined(CONFIG_ADXL362)
+/* Convert to s/m2 depending on the maximum measured range used for adxl362. */
+#if IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_2G)
+#define ACCEL_LP_RANGE_MAX_M_S2 19.6133
+#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_4G)
+#define ACCEL_LP_RANGE_MAX_M_S2 39.2266
+#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_8G)
+#define ACCEL_LP_RANGE_MAX_M_S2 78.4532
+#endif
+
+/* This is derived from the sensitivity values in the datasheet. */
+#define ACCEL_LP_THRESHOLD_RESOLUTION_DECIMAL_MAX 2000
+
+#if IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_12_5)
+#define ACCEL_LP_TIMEOUT_MAX_S 5242.88
+#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_25)
+#define ACCEL_LP_TIMEOUT_MAX_S 2621.44
+#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_50)
+#define ACCEL_LP_TIMEOUT_MAX_S 1310.72
+#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_100)
+#define ACCEL_LP_TIMEOUT_MAX_S 655.36
+#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_200)
+#define ACCEL_LP_TIMEOUT_MAX_S 327.68
+#elif IS_ENABLED(CONFIG_ADXL362_ACCEL_ODR_400)
+#define ACCEL_LP_TIMEOUT_MAX_S 163.84
+#endif
+
+#define ACCEL_LP_TIMEOUT_RESOLUTION_MAX 65536
+
+/* Local accelerometer threshold value. Used to filter out unwanted values in
+ * the callback from the accelerometer.
+ */
+double threshold = ACCEL_LP_RANGE_MAX_M_S2;
+
+/** Sensor struct for the low-power accelerometer */
+static struct env_sensor accel_sensor_lp = {
+	.channel = SENSOR_CHAN_ACCEL_XYZ,
+	.dev = DEVICE_DT_GET(DT_ALIAS(accelerometer)),
+};
+
+static struct sensor_trigger accel_lp_sensor_trigger_motion = {
+	.chan = SENSOR_CHAN_ACCEL_XYZ,
+	.type = SENSOR_TRIG_MOTION
+};
+
+static struct sensor_trigger accel_lp_sensor_trigger_stationary = {
+	.chan = SENSOR_CHAN_ACCEL_XYZ,
+	.type = SENSOR_TRIG_STATIONARY
+};
+
+#endif /* defined(CONFIG_ADXL362) */
+#if defined(CONFIG_ADXL367)
+
+/** Sensor struct for the low-power accelerometer */
+static struct env_sensor accel_sensor_lp = {
+	.channel = SENSOR_CHAN_ACCEL_XYZ,
+	.dev = DEVICE_DT_GET(DT_ALIAS(accelerometer)),
+};
+
+static struct sensor_trigger accel_lp_sensor_trigger_motion = {
+	.chan = SENSOR_CHAN_ACCEL_XYZ,
+	.type = SENSOR_TRIG_THRESHOLD
+};
+
+#define ACCEL_LP_THRESHOLD_RESOLUTION_DECIMAL_MAX 8000
+#define ACCEL_LP_TIMEOUT_RESOLUTION_MAX 65535
+
+/* 2G range */
+#define ACCEL_LP_RANGE_MAX_M_S2 19.6133
+
+/* 400Hz ODR */
+#define ACCEL_LP_TIMEOUT_MAX_S 163.8375
+
+double threshold = ACCEL_LP_RANGE_MAX_M_S2;
+
+#endif /* defined(CONFIG_ADXL367) */
 
 static struct env_sensor temp_sensor = {
 	.channel = SENSOR_CHAN_AMBIENT_TEMP,
@@ -83,22 +127,6 @@ static struct env_sensor iaq_sensor = {
 };
 #endif
 
-/** Sensor struct for the low-power accelerometer */
-static struct env_sensor accel_sensor_lp = {
-	.channel = SENSOR_CHAN_ACCEL_XYZ,
-	.dev = DEVICE_DT_GET(DT_ALIAS(accelerometer)),
-};
-
-static struct sensor_trigger adxl362_sensor_trigger_motion = {
-		.chan = SENSOR_CHAN_ACCEL_XYZ,
-		.type = SENSOR_TRIG_MOTION
-};
-
-static struct sensor_trigger adxl362_sensor_trigger_stationary = {
-		.chan = SENSOR_CHAN_ACCEL_XYZ,
-		.type = SENSOR_TRIG_STATIONARY
-};
-
 #if defined(CONFIG_EXTERNAL_SENSORS_IMPACT_DETECTION)
 static struct sensor_trigger adxl372_sensor_trigger = {
 	.chan = SENSOR_CHAN_ACCEL_XYZ,
@@ -123,6 +151,7 @@ static void accelerometer_trigger_handler(const struct device *dev,
 	switch (trig->type) {
 	case SENSOR_TRIG_MOTION:
 	case SENSOR_TRIG_STATIONARY:
+	case SENSOR_TRIG_THRESHOLD:
 
 		if (sensor_sample_fetch(dev) < 0) {
 			LOG_ERR("Sample fetch error");
@@ -139,7 +168,7 @@ static void accelerometer_trigger_handler(const struct device *dev,
 		evt.value_array[1] = sensor_value_to_double(&data[1]);
 		evt.value_array[2] = sensor_value_to_double(&data[2]);
 
-		if (trig->type == SENSOR_TRIG_MOTION) {
+		if (trig->type == SENSOR_TRIG_MOTION || trig->type == SENSOR_TRIG_THRESHOLD) {
 			evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER;
 			LOG_DBG("Activity detected");
 		} else {
@@ -230,11 +259,13 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		evt_handler(&evt);
 	}
 
+#if defined(CONFIG_ADXL362) || defined(CONFIG_ADXL367)
 	if (!device_is_ready(accel_sensor_lp.dev)) {
 		LOG_ERR("Low-power accelerometer device is not ready");
 		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
 		evt_handler(&evt);
 	}
+#endif /* defined(CONFIG_ADXL362) || defined(CONFIG_ADXL367) */
 
 #if defined(CONFIG_EXTERNAL_SENSORS_IMPACT_DETECTION)
 	if (!device_is_ready(accel_sensor_hg.dev)) {
@@ -391,8 +422,15 @@ int ext_sensors_air_quality_get(uint16_t *ext_bsec_air_quality)
 
 int ext_sensors_accelerometer_threshold_set(double threshold, bool upper)
 {
+#if defined(CONFIG_ADXL367)
+	if (!upper) {
+		/* cannot distinguish events on adxl367 yet */
+		return 0;
+	}
+#endif /* defined(CONFIG_ADXL367) */
+#if defined(CONFIG_ADXL362) || defined(CONFIG_ADXL367)
 	int err, input_value;
-	double range_max_m_s2 = ADXL362_RANGE_MAX_M_S2;
+	double range_max_m_s2 = ACCEL_LP_RANGE_MAX_M_S2;
 	struct ext_sensor_evt evt = {0};
 
 	if ((threshold > range_max_m_s2) || (threshold <= 0.0)) {
@@ -404,14 +442,14 @@ int ext_sensors_accelerometer_threshold_set(double threshold, bool upper)
 	 * to the configured measuring range of the accelerometer.
 	 */
 	threshold = (threshold *
-		(ADXL362_THRESHOLD_RESOLUTION_DECIMAL_MAX / range_max_m_s2));
+		(ACCEL_LP_THRESHOLD_RESOLUTION_DECIMAL_MAX / range_max_m_s2));
 
 	/* Add 0.5 to ensure proper conversion from double to int. */
 	threshold = threshold + 0.5;
 	input_value = (int)threshold;
 
-	if (input_value >= ADXL362_THRESHOLD_RESOLUTION_DECIMAL_MAX) {
-		input_value = ADXL362_THRESHOLD_RESOLUTION_DECIMAL_MAX - 1;
+	if (input_value >= ACCEL_LP_THRESHOLD_RESOLUTION_DECIMAL_MAX) {
+		input_value = ACCEL_LP_THRESHOLD_RESOLUTION_DECIMAL_MAX - 1;
 	} else if (input_value < 0) {
 		input_value = 0;
 	}
@@ -435,22 +473,24 @@ int ext_sensors_accelerometer_threshold_set(double threshold, bool upper)
 		evt_handler(&evt);
 		return err;
 	}
+#endif /* defined(CONFIG_ADXL362) || defined(CONFIG_ADXL367) */
 	return 0;
 }
 
 int ext_sensors_inactivity_timeout_set(double inact_time)
 {
+#if defined(CONFIG_ADXL362)
 	int err, inact_time_decimal;
 	struct ext_sensor_evt evt = {0};
 
-	if (inact_time > ADXL362_TIMEOUT_MAX_S || inact_time < 0) {
+	if (inact_time > ACCEL_LP_TIMEOUT_MAX_S || inact_time < 0) {
 		LOG_ERR("Invalid timeout value");
 		return -ENOTSUP;
 	}
 
-	inact_time = inact_time / ADXL362_TIMEOUT_MAX_S * ADXL362_TIMEOUT_RESOLUTION_MAX;
+	inact_time = inact_time / ACCEL_LP_TIMEOUT_MAX_S * ACCEL_LP_TIMEOUT_RESOLUTION_MAX;
 	inact_time_decimal = (int) (inact_time + 0.5);
-	inact_time_decimal = MIN(inact_time_decimal, ADXL362_TIMEOUT_RESOLUTION_MAX);
+	inact_time_decimal = MIN(inact_time_decimal, ACCEL_LP_TIMEOUT_RESOLUTION_MAX);
 	inact_time_decimal = MAX(inact_time_decimal, 0);
 
 	const struct sensor_value data = {
@@ -468,29 +508,36 @@ int ext_sensors_inactivity_timeout_set(double inact_time)
 		evt_handler(&evt);
 		return err;
 	}
+#endif /* defined(CONFIG_ADXL362) */
 	return 0;
 }
 
 int ext_sensors_accelerometer_trigger_callback_set(bool enable)
 {
-	int err;
+	int err = 0;
+#if defined(CONFIG_ADXL362) || defined(CONFIG_ADXL367)
 	struct ext_sensor_evt evt = {0};
 
 	sensor_trigger_handler_t handler = enable ? accelerometer_trigger_handler : NULL;
 
-	err = sensor_trigger_set(accel_sensor_lp.dev, &adxl362_sensor_trigger_motion, handler);
+#if defined(CONFIG_ADXL362)
+	err = sensor_trigger_set(accel_sensor_lp.dev, &accel_lp_sensor_trigger_stationary, handler);
 	if (err) {
 		goto error;
 	}
-	err = sensor_trigger_set(accel_sensor_lp.dev, &adxl362_sensor_trigger_stationary, handler);
+#endif /* defined(CONFIG_ADXL362) */
+
+	err = sensor_trigger_set(accel_sensor_lp.dev, &accel_lp_sensor_trigger_motion, handler);
 	if (err) {
 		goto error;
 	}
-		return 0;
+	return 0;
+
 error:
 	LOG_ERR("Could not set trigger for device %s, error: %d",
 		accel_sensor_lp.dev->name, err);
 	evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
 	evt_handler(&evt);
+#endif /* defined(CONFIG_ADXL362) || defined(CONFIG_ADXL367) */
 	return err;
 }
