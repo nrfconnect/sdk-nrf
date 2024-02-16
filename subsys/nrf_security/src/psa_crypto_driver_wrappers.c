@@ -35,6 +35,10 @@
 #include "nrf_cc3xx_platform_hmac_drbg.h"
 #endif
 
+#if defined(CONFIG_TMP_RNG)
+#include "tmp_rng.h"
+#endif
+
 #if defined(PSA_CRYPTO_DRIVER_OBERON)
 #endif /* PSA_CRYPTO_DRIVER_OBERON */
 
@@ -2149,6 +2153,9 @@ psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context,
 	}
 #endif
 
+#if defined(CONFIG_TMP_RNG)
+	return tmp_rng(output, output_size);
+#endif
 #if defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)
 	return oberon_ctr_drbg_get_random(&context->oberon_ctr_drbg_ctx, output, output_size);
 #elif defined(PSA_NEED_OBERON_HMAC_DRBG_DRIVER)
