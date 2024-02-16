@@ -431,9 +431,9 @@ LwM2M configuration:
 Modem configurations:
 
 * Network Mode: LTE-M with GNSS.
-* PSM: Enabled TAU 60 minutes, RAT 30 seconds
+* PSM: Enabled TAU 12 hours, RAT 30 seconds
 * Paging window: LTE 1.28 seconds and NB-IoT 2.56 seconds
-* eDRX: Enabled, with request of 10.24 seconds on LTE and 20.48 seconds on NB-IoT.
+* eDRX: Enabled, with request of 5.12 seconds on LTE and 20.48 seconds on NB-IoT.
 * TAU pre-warning enabled, notification triggers registration update and TAU will be sent with the update which decreases power consumption.
 
 Modem proprietary PSM
