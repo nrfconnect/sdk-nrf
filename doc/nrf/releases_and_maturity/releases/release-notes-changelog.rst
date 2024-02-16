@@ -175,6 +175,7 @@ Gazell
 * Fixed:
 
   * Clear system address and host id in RAM when :c:func:`gzp_erase_pairing_data` is called.
+  * Reset error code before using it to avoid incorrecy usage.
 
 Enhanced ShockBurst (ESB)
 -------------------------

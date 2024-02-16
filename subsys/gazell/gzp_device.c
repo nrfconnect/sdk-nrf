@@ -692,6 +692,7 @@ static void gzp_addr_req_process(enum gzp_state state,
 		if (event_info->event_type == GZP_EVENT_LL_DISABLED) {
 			/* Modify parameters */
 			nrf_gzll_set_max_tx_attempts(GZP_REQ_TX_TIMEOUT);
+			nrf_gzll_reset_error_code();
 			nrf_gzll_set_tx_power(GZP_POWER);
 			__ASSERT_NO_MSG(nrf_gzll_get_error_code() == NRF_GZLL_ERROR_CODE_NO_ERROR);
 
@@ -769,6 +770,8 @@ static void gzp_addr_req_process(enum gzp_state state,
 					LOG_ERR("Cannot update radio parameters");
 				}
 			}
+
+			nrf_gzll_reset_error_code();
 			nrf_gzll_flush_rx_fifo(GZP_PAIRING_PIPE);
 			__ASSERT_NO_MSG(nrf_gzll_get_error_code() == NRF_GZLL_ERROR_CODE_NO_ERROR);
 			nrf_gzll_flush_tx_fifo(GZP_PAIRING_PIPE);

@@ -454,6 +454,7 @@ static void gzp_process_address_req(uint8_t *gzp_req)
 
 	gzp_address_exchanged_f = false;
 
+	nrf_gzll_reset_error_code();
 	gzll_goto_idle();
 	__ASSERT_NO_MSG(nrf_gzll_get_error_code() == NRF_GZLL_ERROR_CODE_NO_ERROR);
 
@@ -704,6 +705,7 @@ static void gzp_process_id_fetch(uint8_t *rx_payload)
 			tx_payload[0] = (uint8_t)GZP_CMD_HOST_ID_FETCH_RESP;
 			gzp_add_validation_id(
 				&tx_payload[GZP_CMD_HOST_ID_FETCH_RESP_VALIDATION_ID]);
+			nrf_gzll_reset_error_code();
 			gzp_crypt(&tx_payload[1],
 				  &tx_payload[1],
 				  GZP_CMD_HOST_ID_FETCH_RESP_PAYLOAD_LENGTH - 1);
@@ -731,6 +733,7 @@ static void gzp_process_key_update_prepare(void)
 			&tx_payload[GZP_CMD_KEY_UPDATE_PREPARE_RESP_SESSION_TOKEN]);
 	}
 
+	nrf_gzll_reset_error_code();
 	gzp_preload_ack(tx_payload, GZP_CMD_KEY_UPDATE_PREPARE_RESP_PAYLOAD_LENGTH, GZP_DATA_PIPE);
 	__ASSERT_NO_MSG(nrf_gzll_get_error_code() == NRF_GZLL_ERROR_CODE_NO_ERROR);
 }
@@ -770,6 +773,7 @@ static void gzp_process_encrypted_user_data(uint8_t *rx_payload, uint8_t length)
 		  GZP_VALIDATION_ID_LENGTH);
 	gzp_get_session_counter(&tx_payload[GZP_CMD_ENCRYPTED_USER_DATA_RESP_SESSION_TOKEN]);
 
+	nrf_gzll_reset_error_code();
 	/* Update "session token" only if no ID request is pending */
 	if (!gzp_id_req_received()) {
 		gzp_crypt_set_session_token(
