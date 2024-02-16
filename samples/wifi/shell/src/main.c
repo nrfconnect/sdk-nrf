@@ -10,7 +10,7 @@
 
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
-#if defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M
+#if NRFX_CLOCK_ENABLED && defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) && NRF_CLOCK_HAS_HFCLK192M
 #include <nrfx_clock.h>
 #endif
 #include <zephyr/device.h>
@@ -42,7 +42,7 @@ int init_usb(void)
 
 int main(void)
 {
-#if defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M
+#if NRFX_CLOCK_ENABLED && defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) && NRF_CLOCK_HAS_HFCLK192M
 	/* For now hardcode to 128MHz */
 	nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK,
 			       NRF_CLOCK_HFCLK_DIV_1);
