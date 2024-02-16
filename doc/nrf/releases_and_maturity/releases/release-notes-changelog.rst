@@ -257,13 +257,17 @@ Serial LTE modem
 nRF5340 Audio
 -------------
 
-* Added support for Filter Accept List and enabled as default.
+* Added:
+
+  * Support for Filter Accept List; enabled as default.
+  * Metadata used in Auracast, such as ``active_state`` and ``parental_rating``.
 
 * Updated:
 
   * Sending of the ISO data, which is now done in a single file :file:`bt_le_audio_tx`.
   * Application structure, which is now split into four separate, generic applications with separate :file:`main.c` files.
   * Advertising process by reverting back to slower advertising after a short burst (1.28 s) of directed advertising.
+  * Scan process for broadcasters by adding ID as a searchable parameter.
 
 
 nRF Machine Learning (Edge Impulse)

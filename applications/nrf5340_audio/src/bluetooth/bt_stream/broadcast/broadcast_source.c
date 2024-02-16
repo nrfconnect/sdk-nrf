@@ -75,7 +75,10 @@ static bool initialized;
 static bool delete_broadcast_src;
 
 #if (CONFIG_AURACAST)
-NET_BUF_SIMPLE_DEFINE(pba_buf, BT_UUID_SIZE_16 + 2);
+/* Make sure pba_buf is large enough for a 16bit UUID and meta data
+ * (any addition to pba_buf requires an increase of this value)
+ */
+NET_BUF_SIMPLE_DEFINE(pba_buf, BT_UUID_SIZE_16 + 8);
 static struct bt_data ext_ad[4];
 #else
 static struct bt_data ext_ad[3];
@@ -242,8 +245,28 @@ static int adv_create(void)
 
 	net_buf_simple_add_le16(&pba_buf, 0x1856);
 	net_buf_simple_add_u8(&pba_buf, pba_features);
-	/* No metadata, set length to 0 */
-	net_buf_simple_add_u8(&pba_buf, 0x00);
+
+	/* Metadata */
+	/* 3 bytes for parental_rating and 3 bytes for active_flag LTVs */
+	net_buf_simple_add_u8(&pba_buf, 0x06);
+
+	/* Parental rating*/
+	/* Length */
+	net_buf_simple_add_u8(&pba_buf, 0x02);
+	/* Type */
+	net_buf_simple_add_u8(&pba_buf, BT_AUDIO_METADATA_TYPE_PARENTAL_RATING);
+	/* Value */
+	net_buf_simple_add_u8(&pba_buf, CONFIG_BT_AUDIO_BROADCAST_PARENTAL_RATING);
+
+	/* Active flag */
+	/* Length */
+	net_buf_simple_add_u8(&pba_buf, 0x02);
+	/* Type */
+	net_buf_simple_add_u8(&pba_buf, BT_AUDIO_METADATA_TYPE_AUDIO_STATE);
+	/* Value */
+	net_buf_simple_add_u8(&pba_buf, BT_AUDIO_ACTIVE_STATE_ENABLED);
+
+	/* If any additional data is to be added, remember to increase NET_BUF size */
 
 	ext_ad[3].data_len = pba_buf.len;
 	ext_ad[3].type = BT_DATA_SVC_DATA16;
@@ -442,9 +465,8 @@ int broadcast_source_enable(void)
 		subgroup_params[i].stream_params = &stream_params[i];
 		subgroup_params[i].codec_cfg = &lc3_preset.codec_cfg;
 #if (CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG)
-		/* Immediate rendering flag */
-		subgroup_params[i].codec_cfg->meta_len++;
-		subgroup_params[i].codec_cfg->meta[subgroup_params[i].codec_cfg->meta_len] = 0x09;
+		bt_audio_codec_cfg_meta_set_bcast_audio_immediate_rend_flag(
+			subgroup_params[i].codec_cfg);
 #endif /* (CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG) */
 	}
 

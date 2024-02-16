@@ -60,7 +60,8 @@ static void bond_connect(const struct bt_bond_info *info, void *user_data)
 		if (ret) {
 			LOG_WRN("Create ACL connection failed: %d", ret);
 
-			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL);
+			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL,
+						 BRDCAST_ID_NOT_USED);
 			if (ret) {
 				LOG_ERR("Failed to restart scanning: %d", ret);
 			}
@@ -109,7 +110,8 @@ static bool device_name_check(struct bt_data *data, void *user_data)
 			if (ret) {
 				LOG_ERR("Could not init connection");
 
-				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL);
+				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL,
+							 BRDCAST_ID_NOT_USED);
 				if (ret) {
 					LOG_ERR("Failed to restart scanning: %d", ret);
 				}
