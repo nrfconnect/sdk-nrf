@@ -69,9 +69,19 @@ namespace Nrf::Matter
 		VerifyOrReturn(context != nullptr, LOG_ERR("Invalid context for device handler"));
 		BindingData *data = static_cast<BindingData *>(context);
 
-		if (binding.type == EMBER_MULTICAST_BINDING && data->IsGroup) {
+		if (binding.type == EMBER_MULTICAST_BINDING) {
+
+			if (data->IsGroup.HasValue() && !data->IsGroup.Value()) {
+				return;
+			}
+
 			data->InvokeCommandFunc(binding, nullptr, *data);
-		} else if (binding.type == EMBER_UNICAST_BINDING && !(data->IsGroup)) {
+		} else if (binding.type == EMBER_UNICAST_BINDING) {
+
+			if (data->IsGroup.HasValue() && data->IsGroup.Value()) {
+				return;
+			}
+
 			data->InvokeCommandFunc(binding, deviceProxy, *data);
 		}
 	}
@@ -96,18 +106,6 @@ namespace Nrf::Matter
 		BindingManager::GetInstance().RegisterBoundDeviceChangedHandler(DeviceChangedCallback);
 		BindingManager::GetInstance().RegisterBoundDeviceContextReleaseHandler(DeviceContextReleaseHandler);
 		BindingHandler::PrintBindingTable();
-	}
-
-	bool BindingHandler::IsGroupBound()
-	{
-		BindingTable &bindingTable = BindingTable::GetInstance();
-
-		for (auto &entry : bindingTable) {
-			if (EMBER_MULTICAST_BINDING == entry.type) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	void BindingHandler::PrintBindingTable()

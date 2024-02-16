@@ -22,7 +22,8 @@ void SimulatedOnOffLightSwitchDataProvider::NotifyUpdateState(chip::ClusterId cl
 {
 }
 
-void ProcessCommand(const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice, Nrf::Matter::BindingHandler::BindingData &aData)
+void ProcessCommand(const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice,
+		    Nrf::Matter::BindingHandler::BindingData &aData)
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;
 

@@ -53,7 +53,6 @@ void LightSwitch::InitiateActionSwitch(Action action)
 			Platform::Delete(data);
 			return;
 		}
-		data->IsGroup = Nrf::Matter::BindingHandler::IsGroupBound();
 		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 	}
 }
@@ -74,7 +73,6 @@ void LightSwitch::DimmerChangeBrightness()
 			sBrightness = 0;
 		}
 		data->Value = (uint8_t)sBrightness;
-		data->IsGroup = Nrf::Matter::BindingHandler::IsGroupBound();
 		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 	}
 }
@@ -82,7 +80,7 @@ void LightSwitch::DimmerChangeBrightness()
 void LightSwitch::SwitchChangedHandler(const EmberBindingTableEntry &binding, OperationalDeviceProxy *deviceProxy,
 				       Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
-	if (binding.type == EMBER_MULTICAST_BINDING && bindingData.IsGroup) {
+	if (binding.type == EMBER_MULTICAST_BINDING) {
 		switch (bindingData.ClusterId) {
 		case Clusters::OnOff::Id:
 			OnOffProcessCommand(bindingData.CommandId, binding, nullptr, bindingData);
@@ -94,7 +92,7 @@ void LightSwitch::SwitchChangedHandler(const EmberBindingTableEntry &binding, Op
 			ChipLogError(NotSpecified, "Invalid binding group command data");
 			break;
 		}
-	} else if (binding.type == EMBER_UNICAST_BINDING && !bindingData.IsGroup) {
+	} else if (binding.type == EMBER_UNICAST_BINDING) {
 		switch (bindingData.ClusterId) {
 		case Clusters::OnOff::Id:
 			OnOffProcessCommand(bindingData.CommandId, binding, deviceProxy, bindingData);
