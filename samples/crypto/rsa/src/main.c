@@ -12,20 +12,22 @@
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
 
+#include "key.h"
+
 #ifdef CONFIG_BUILD_WITH_TFM
 #include <tfm_ns_interface.h>
 #endif
 
-#define APP_SUCCESS		(0)
-#define APP_ERROR		(-1)
+#define APP_SUCCESS	    (0)
+#define APP_ERROR	    (-1)
 #define APP_SUCCESS_MESSAGE "Example finished successfully!"
-#define APP_ERROR_MESSAGE "Example exited with error!"
+#define APP_ERROR_MESSAGE   "Example exited with error!"
 
-#define PRINT_HEX(p_label, p_text, len)\
-	({\
-		LOG_INF("---- %s (len: %u): ----", p_label, len);\
-		LOG_HEXDUMP_INF(p_text, len, "Content:");\
-		LOG_INF("---- %s end  ----", p_label);\
+#define PRINT_HEX(p_label, p_text, len)                                                            \
+	({                                                                                         \
+		LOG_INF("---- %s (len: %u): ----", p_label, len);                                  \
+		LOG_HEXDUMP_INF(p_text, len, "Content:");                                          \
+		LOG_INF("---- %s end  ----", p_label);                                             \
 	})
 
 LOG_MODULE_REGISTER(rsa, LOG_LEVEL_DBG);
@@ -33,26 +35,23 @@ LOG_MODULE_REGISTER(rsa, LOG_LEVEL_DBG);
 /* ====================================================================== */
 /*				Global variables/defines for the RSA example			  */
 
-#ifndef CONFIG_PSA_WANT_RSA_KEY_SIZE_2048
-#error "This sample needs a key size of 2048"
+#ifndef CONFIG_PSA_WANT_RSA_KEY_SIZE_4096
+#error "This sample needs a key size of 4096"
 #endif
 
-#define NRF_CRYPTO_EXAMPLE_RSA_TEXT_SIZE (100)
-#define NRF_CRYPTO_EXAMPLE_RSA_PUBLIC_KEY_SIZE (PSA_KEY_EXPORT_RSA_PUBLIC_KEY_MAX_SIZE(2048))
-#define NRF_CRYPTO_EXAMPLE_RSA_SIGNATURE_SIZE  (PSA_BITS_TO_BYTES(2048))
+#define NRF_CRYPTO_EXAMPLE_RSA_TEXT_SIZE       (100)
+#define NRF_CRYPTO_EXAMPLE_RSA_PUBLIC_KEY_SIZE (PSA_KEY_EXPORT_RSA_PUBLIC_KEY_MAX_SIZE(4096))
+#define NRF_CRYPTO_EXAMPLE_RSA_SIGNATURE_SIZE  (PSA_BITS_TO_BYTES(4096))
 
 /* Below text is used as plaintext for signing using RSA . */
 static char m_plain_text[NRF_CRYPTO_EXAMPLE_RSA_TEXT_SIZE] = {
-	"Example string to demonstrate basic usage of RSA."
-};
-
-static char m_pub_key[NRF_CRYPTO_EXAMPLE_RSA_PUBLIC_KEY_SIZE];
+	"Example string to demonstrate basic usage of RSA."};
 
 static char m_signature[NRF_CRYPTO_EXAMPLE_RSA_SIGNATURE_SIZE];
 static char m_hash[32];
 
 static psa_key_id_t keypair_handle;
-static psa_key_id_t pub_key_id;
+static psa_key_id_t pub_key_handle;
 /* ====================================================================== */
 
 int crypto_init(void)
@@ -61,8 +60,9 @@ int crypto_init(void)
 
 	/* Initialize PSA Crypto */
 	status = psa_crypto_init();
-	if (status != PSA_SUCCESS)
+	if (status != PSA_SUCCESS) {
 		return APP_ERROR;
+	}
 
 	return APP_SUCCESS;
 }
@@ -78,7 +78,7 @@ int crypto_finish(void)
 		return APP_ERROR;
 	}
 
-	status = psa_destroy_key(pub_key_id);
+	status = psa_destroy_key(pub_key_handle);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -87,12 +87,11 @@ int crypto_finish(void)
 	return APP_SUCCESS;
 }
 
-int generate_rsa_keypair(void)
+int import_rsa_keypair(void)
 {
 	psa_status_t status;
-	size_t olen;
 
-	LOG_INF("Generating random RSA keypair...");
+	LOG_INF("Importing RSA keypair...");
 
 	/* Configure the key attributes */
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -102,21 +101,15 @@ int generate_rsa_keypair(void)
 	psa_set_key_lifetime(&key_attributes, PSA_KEY_LIFETIME_VOLATILE);
 	psa_set_key_algorithm(&key_attributes, PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256));
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_RSA_KEY_PAIR);
-	psa_set_key_bits(&key_attributes, 2048);
+	psa_set_key_bits(&key_attributes, 4096);
 
 	/* Generate a random keypair. The keypair is not exposed to the application,
 	 * we can use it to signing/verification the key handle.
 	 */
-	status = psa_generate_key(&key_attributes, &keypair_handle);
+	status = psa_import_key(&key_attributes, private_key_der, sizeof(private_key_der),
+				&keypair_handle);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("psa_generate_key failed! (Error: %d)", status);
-		return APP_ERROR;
-	}
-
-	/* Export the public key */
-	status = psa_export_public_key(keypair_handle, m_pub_key, sizeof(m_pub_key), &olen);
-	if (status != PSA_SUCCESS) {
-		LOG_INF("psa_export_public_key failed! (Error: %d)", status);
+		LOG_INF("psa_import_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
@@ -139,9 +132,10 @@ int import_rsa_pub_key(void)
 	psa_set_key_lifetime(&key_attributes, PSA_KEY_LIFETIME_VOLATILE);
 	psa_set_key_algorithm(&key_attributes, PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256));
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY);
-	psa_set_key_bits(&key_attributes, 2048);
+	psa_set_key_bits(&key_attributes, 4096);
 
-	status = psa_import_key(&key_attributes, m_pub_key, sizeof(m_pub_key), &pub_key_id);
+	status = psa_import_key(&key_attributes, public_key_der, sizeof(public_key_der),
+				&pub_key_handle);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_import_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -161,21 +155,16 @@ int sign_message_rsa(void)
 	LOG_INF("Signing a message using RSA...");
 
 	/* Compute the SHA256 hash */
-	status = psa_hash_compute(
-		PSA_ALG_SHA_256, m_plain_text, sizeof(m_plain_text), m_hash, sizeof(m_hash), &olen);
+	status = psa_hash_compute(PSA_ALG_SHA_256, m_plain_text, sizeof(m_plain_text), m_hash,
+				  sizeof(m_hash), &olen);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_hash_compute failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	/* Sign the hash using RSA */
-	status = psa_sign_hash(keypair_handle,
-			       PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256),
-			       m_hash,
-			       sizeof(m_hash),
-			       m_signature,
-			       sizeof(m_signature),
-			       &olen);
+	status = psa_sign_hash(keypair_handle, PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256), m_hash,
+			       sizeof(m_hash), m_signature, sizeof(m_signature), &olen);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_sign_hash failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -196,12 +185,8 @@ int verify_message_rsa(void)
 	LOG_INF("Verifying RSA signature...");
 
 	/* Verify the hash */
-	status = psa_verify_hash(pub_key_id,
-				 PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256),
-				 m_hash,
-				 sizeof(m_hash),
-				 m_signature,
-				 sizeof(m_signature));
+	status = psa_verify_hash(pub_key_handle, PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256), m_hash,
+				 sizeof(m_hash), m_signature, sizeof(m_signature));
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_verify_hash failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -224,7 +209,7 @@ int main(void)
 		return APP_ERROR;
 	}
 
-	status = generate_rsa_keypair();
+	status = import_rsa_keypair();
 	if (status != APP_SUCCESS) {
 		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
