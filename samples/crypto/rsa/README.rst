@@ -26,13 +26,16 @@ The sample performs the following operations:
 1. Initialization:
 
    a. The Platform Security Architecture (PSA) API is initialized.
-   #. A random RSA key pair is generated and imported into the PSA crypto keystore.
-   #. The public key of the RSA key pair is imported into the PSA crypto keystore.
+   #. An RSA key pair is imported into the PSA crypto keystore.
+   #. The public key is imported into the PSA crypto keystore.
+
+      .. note::
+         The keys used in the sample are for demonstration purposes only and must never be used in a product.
 
 #. RSA signing and verification:
 
    a. Signing is performed using the RSA private key.
-   #. The signature is verified using the exported public key.
+   #. The signature is verified using the public key.
 
 #. Cleanup:
 
