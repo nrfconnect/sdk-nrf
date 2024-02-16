@@ -146,11 +146,13 @@ static void button_msg_sub_thread(void)
 
 			if (broadcast_alt) {
 				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
-							 CONFIG_BT_AUDIO_BROADCAST_NAME_ALT);
+							 CONFIG_BT_AUDIO_BROADCAST_NAME_ALT,
+							 BRDCAST_ID_NOT_USED);
 				broadcast_alt = false;
 			} else {
 				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
-							 CONFIG_BT_AUDIO_BROADCAST_NAME);
+							 CONFIG_BT_AUDIO_BROADCAST_NAME,
+							 BRDCAST_ID_NOT_USED);
 				broadcast_alt = true;
 			}
 
@@ -258,7 +260,8 @@ static void le_audio_msg_sub_thread(void)
 			}
 
 			if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
-				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL);
+				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL,
+							 BRDCAST_ID_NOT_USED);
 				if (ret) {
 					if (ret == -EALREADY) {
 						break;
@@ -358,7 +361,8 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 
 		if (IS_ENABLED(CONFIG_BT_OBSERVER) &&
 		    msg->pa_sync_term_reason != BT_HCI_ERR_LOCALHOST_TERM_CONN) {
-			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL);
+			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL,
+						 BRDCAST_ID_NOT_USED);
 			if (ret) {
 				if (ret == -EALREADY) {
 					return;
@@ -461,7 +465,8 @@ int main(void)
 	ret = broadcast_sink_enable(le_audio_rx_data_handler);
 	ERR_CHK_MSG(ret, "Failed to enable broadcast sink");
 
-	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, CONFIG_BT_AUDIO_BROADCAST_NAME);
+	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, CONFIG_BT_AUDIO_BROADCAST_NAME,
+				 BRDCAST_ID_NOT_USED);
 	ERR_CHK_MSG(ret, "Failed to start scanning");
 
 	return 0;

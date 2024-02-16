@@ -14,9 +14,11 @@
  *
  * @param[in]	scan_param	Pointer to the struct containing parameters to use.
  * @param[in]	name		Broadcast name to search for.
+ * @param[in]	brdcast_id	Broadcast ID to search for.
  *
  * @return	0 if success, error otherwise.
  */
-int bt_mgmt_scan_for_broadcast_start(struct bt_le_scan_param *scan_param, char const *const name);
+int bt_mgmt_scan_for_broadcast_start(struct bt_le_scan_param *scan_param, char const *const name,
+				     uint32_t brdcast_id);
 
 #endif /* _BT_MGMT_SCAN_FOR_BROADCAST_INTERNAL_H_ */

@@ -460,7 +460,8 @@ int main(void)
 	ret = unicast_client_enable(le_audio_rx_data_handler);
 	ERR_CHK(ret);
 
-	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, CONFIG_BT_DEVICE_NAME);
+	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, CONFIG_BT_DEVICE_NAME,
+				 BRDCAST_ID_NOT_USED);
 	if (ret) {
 		LOG_ERR("Failed to start scanning");
 		return ret;

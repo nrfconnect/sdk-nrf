@@ -101,7 +101,8 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 		bt_conn_unref(conn);
 
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL);
+			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL,
+						 BRDCAST_ID_NOT_USED);
 			if (ret) {
 				LOG_ERR("Failed to restart scanning: %d", ret);
 			}
@@ -125,7 +126,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 
 	if (IS_ENABLED(CONFIG_BT_CENTRAL) && (num_conn < MAX_CONN_NUM)) {
 		/* Room for more connections, start scanning again */
-		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL);
+		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL, BRDCAST_ID_NOT_USED);
 		if (ret) {
 			LOG_ERR("Failed to resume scanning: %d", ret);
 		}
@@ -197,7 +198,7 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL);
+		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL, BRDCAST_ID_NOT_USED);
 		if (ret) {
 			LOG_ERR("Failed to restart scanning: %d", ret);
 		}

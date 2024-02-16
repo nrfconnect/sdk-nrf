@@ -34,6 +34,7 @@ struct bt_le_scan_cb scan_callback;
 static bool scan_cb_registered;
 static bool sync_cb_registered;
 static char const *srch_name;
+static uint32_t srch_brdcast_id = BRDCAST_ID_NOT_USED;
 static struct bt_le_per_adv_sync *pa_sync;
 static uint32_t broadcaster_broadcast_id;
 
@@ -57,7 +58,7 @@ static void scan_restart_worker(struct k_work *work)
 		LOG_WRN("Failed to delete pending PA sync: %d", ret);
 	}
 
-	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL);
+	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL, BRDCAST_ID_NOT_USED);
 	if (ret) {
 		LOG_WRN("Failed to restart scanning for broadcast: %d", ret);
 	}
@@ -185,11 +186,20 @@ static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 	bt_data_parse(ad, scan_check_broadcast_source, (void *)&source);
 
 	if (source.broadcast_id != INVALID_BROADCAST_ID) {
-		if (strncmp(source.name, srch_name, BLE_SEARCH_NAME_MAX_LEN) == 0) {
-			LOG_INF("Broadcast source %s found, id: 0x%06x", source.name,
-				source.broadcast_id);
-			periodic_adv_sync(info, source.broadcast_id);
+		if (srch_brdcast_id < BRDCAST_ID_NOT_USED) {
+			/* Valid srch_brdcast_id supplied */
+			if (source.broadcast_id != srch_brdcast_id) {
+				/* Broadcaster does not match src_brdcast_id */
+				return;
+			}
+
+		} else if (strncmp(source.name, srch_name, BLE_SEARCH_NAME_MAX_LEN) != 0) {
+			/* Broadcaster does not match src_name */
+			return;
 		}
+
+		LOG_INF("Broadcast source %s found, id: 0x%06x", source.name, source.broadcast_id);
+		periodic_adv_sync(info, source.broadcast_id);
 	}
 }
 
@@ -242,7 +252,8 @@ static struct bt_le_per_adv_sync_cb sync_callbacks = {
 	.term = pa_sync_terminated_cb,
 };
 
-int bt_mgmt_scan_for_broadcast_start(struct bt_le_scan_param *scan_param, char const *const name)
+int bt_mgmt_scan_for_broadcast_start(struct bt_le_scan_param *scan_param, char const *const name,
+				     uint32_t brdcast_id)
 {
 	int ret;
 
@@ -270,6 +281,9 @@ int bt_mgmt_scan_for_broadcast_start(struct bt_le_scan_param *scan_param, char c
 	}
 
 	srch_name = name;
+	if (brdcast_id != BRDCAST_ID_NOT_USED) {
+		srch_brdcast_id = brdcast_id;
+	}
 
 	ret = bt_le_scan_start(scan_param, NULL);
 	if (ret) {

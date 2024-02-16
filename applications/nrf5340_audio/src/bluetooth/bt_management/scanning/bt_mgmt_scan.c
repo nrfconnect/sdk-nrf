@@ -34,7 +34,7 @@ static void addr_print(void)
 }
 
 int bt_mgmt_scan_start(uint16_t scan_intvl, uint16_t scan_win, enum bt_mgmt_scan_type type,
-		       char const *const name)
+		       char const *const name, uint32_t brdcast_id)
 {
 	int ret;
 
@@ -65,7 +65,7 @@ int bt_mgmt_scan_start(uint16_t scan_intvl, uint16_t scan_win, enum bt_mgmt_scan
 		ret = bt_mgmt_scan_for_conn_start(scan_param, srch_name);
 	} else if (type == BT_MGMT_SCAN_TYPE_BROADCAST &&
 		   IS_ENABLED(CONFIG_BT_BAP_BROADCAST_SINK)) {
-		ret = bt_mgmt_scan_for_broadcast_start(scan_param, srch_name);
+		ret = bt_mgmt_scan_for_broadcast_start(scan_param, srch_name, brdcast_id);
 	} else {
 		LOG_WRN("Invalid scan type: %d, scan not started", type);
 		return -EINVAL;
