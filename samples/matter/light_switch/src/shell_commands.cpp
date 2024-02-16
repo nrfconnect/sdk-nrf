@@ -71,6 +71,7 @@ namespace Unicast
 		data->CommandId = Clusters::OnOff::Commands::On::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
+		data->IsGroup.SetValue(false);
 
 		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
@@ -84,6 +85,7 @@ namespace Unicast
 		data->CommandId = Clusters::OnOff::Commands::Off::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
+		data->IsGroup.SetValue(false);
 
 		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
@@ -97,6 +99,7 @@ namespace Unicast
 		data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
+		data->IsGroup.SetValue(false);
 
 		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
@@ -143,7 +146,7 @@ namespace Group
 		data->CommandId = Clusters::OnOff::Commands::On::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
-		data->IsGroup = true;
+		data->IsGroup.SetValue(true);
 
 		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
@@ -157,7 +160,7 @@ namespace Group
 		data->CommandId = Clusters::OnOff::Commands::Off::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
-		data->IsGroup = true;
+		data->IsGroup.SetValue(true);
 
 		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
@@ -171,7 +174,7 @@ namespace Group
 		data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
-		data->IsGroup = true;
+		data->IsGroup.SetValue(true);
 
 		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;

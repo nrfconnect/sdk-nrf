@@ -87,7 +87,6 @@ void TemperatureSensor::ExternalMeasurement()
 	Nrf::Matter::BindingHandler::BindingData *data = Platform::New<Nrf::Matter::BindingHandler::BindingData>();
 	data->ClusterId = Clusters::TemperatureMeasurement::Id;
 	data->EndpointId = mTemperatureMeasurementEndpointId;
-	data->IsGroup = BindingHandler::IsGroupBound();
 	data->InvokeCommandFunc = ExternalTemperatureMeasurementReadHandler;
 	BindingHandler::RunBoundClusterAction(data);
 }

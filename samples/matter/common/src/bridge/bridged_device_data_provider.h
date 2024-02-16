@@ -11,7 +11,8 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/util/attribute-storage.h>
 
-namespace Nrf {
+namespace Nrf
+{
 
 class BridgedDeviceDataProvider {
 public:
