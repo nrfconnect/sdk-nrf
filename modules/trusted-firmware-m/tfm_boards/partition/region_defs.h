@@ -26,12 +26,6 @@
 #define SPU_FLASH_REGION_SIZE   (CONFIG_NRF_SPU_FLASH_REGION_SIZE)
 #define SPU_SRAM_REGION_SIZE    (0x00002000)
 
-/* This size of buffer is big enough to store an attestation
- * token produced by initial attestation service
- */
-#define PSA_INITIAL_ATTEST_TOKEN_MAX_SIZE   (0x250)
-
-
 #if !defined(LINK_TO_SECONDARY_PARTITION)
 #ifdef NRF_NS_SECONDARY
 #define S_IMAGE_PRIMARY_PARTITION_OFFSET   (PM_MCUBOOT_PRIMARY_ADDRESS)
