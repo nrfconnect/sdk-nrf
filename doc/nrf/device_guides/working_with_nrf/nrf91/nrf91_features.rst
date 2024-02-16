@@ -10,47 +10,12 @@ Features of nRF91 Series
 The nRF91 Series SiPs integrate an application MCU, a full LTE modem, an RF front end, and power management.
 With built-in GNSS support, it is a great choice for asset tracking applications.
 
-For more details on the SiPs, see the following guides:
-
-* nRF9161 - `nRF9161 product website`_ and the `nRF9161 Product Specification`_
-* nRF9160 - `nRF9160 product website`_ and the `nRF9160 Product Specification`_
-
 The following figure illustrates the conceptual layout when targeting an nRF91 Series Cortex-M33 application MCU with TrustZone:
 
 .. figure:: images/nrf91_ug_overview.svg
    :alt: Overview of nRF91 application architecture
 
    Overview of nRF91 application architecture
-
-Supported boards
-****************
-
-Devices in the nRF91 Series are supported by the following boards in the `Zephyr`_ open source project and in |NCS|.
-
-
-.. list-table::
-   :header-rows: 1
-
-   * - DK or Prototype platform
-     - PCA number
-     - Build target
-     - Documentation
-   * - :ref:`zephyr:nrf9161dk_nrf9161`
-     - PCA10153
-     - ``nrf9161dk_nrf9161_ns``
-     - | `Product Specification <nRF9161 Product Specification_>`_
-       | `User Guide <nRF9161 DK Hardware_>`_
-   * - :ref:`zephyr:nrf9160dk_nrf9160`
-     - PCA10090
-     - ``nrf9160dk_nrf9160_ns``
-     - | `Product Specification <nRF9160 Product Specification_>`_
-       | :ref:`Getting started <ug_nrf9160_gs>`
-       | `User Guide <nRF9160 DK Hardware_>`_
-   * - Thingy91
-     - PCA20035
-     - ``thingy91_nrf9160_ns``
-     - | :ref:`Getting started <ug_thingy91_gsg>`
-       | `User Guide <Nordic Thingy:91 User Guide_>`_
 
 Application MCU
 ***************

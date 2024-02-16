@@ -554,8 +554,6 @@ For example, the :file:`pm.yml.pgps` file has an option (:kconfig:option:`CONFIG
 
 It is also possible to change the size of the partition with :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE`.
 
-.. _nrf9160_ug_drivs_libs_samples:
-
 Available drivers, libraries, and samples
 *****************************************
 

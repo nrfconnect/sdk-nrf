@@ -22,9 +22,9 @@ If you are not familiar with the |NCS| and its development environment, see :ref
 
    See the `nRF Connect SDK v1.4.0 documentation`_ for the last release supporting the nRF5340 PDK.
 
-|nrf5340_audio_note|
-Given its complexity, the application uses custom building and programming procedures.
-Refer to its documentation for more information.
+The |NCS| includes :ref:`nrf53_audio_app`, which integrate the LE Audio standard with custom reference hardware based on the nRF5340 DK.
+Given their complexity, the applications use custom building and programming procedures.
+Refer to their documentation for more information.
 
 .. _ug_nrf5340_intro:
 
