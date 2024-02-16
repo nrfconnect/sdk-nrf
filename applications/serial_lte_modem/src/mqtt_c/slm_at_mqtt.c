@@ -77,6 +77,24 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c, const struct mqt
 	int size_read = 0;
 	int ret;
 
+	/* Send QoS acknowledgments */
+	if (evt->param.publish.message.topic.qos == MQTT_QOS_1_AT_LEAST_ONCE) {
+		const struct mqtt_puback_param ack = {
+			.message_id = evt->param.publish.message_id
+		};
+
+		mqtt_publish_qos1_ack(&client, &ack);
+	} else if (evt->param.publish.message.topic.qos == MQTT_QOS_2_EXACTLY_ONCE) {
+		const struct mqtt_pubrec_param ack = {
+			.message_id = evt->param.publish.message_id
+		};
+
+		mqtt_publish_qos2_receive(&client, &ack);
+	}
+
+	/* SLM MQTT client does not track the packet identifiers, so MQTT_QOS_2_EXACTLY_ONCE
+	 * promise is not kept. This deviates from MQTT v3.1.1.
+	 */
 	rsp_send("\r\n#XMQTTMSG: %d,%d\r\n",
 		evt->param.publish.message.topic.topic.size,
 		evt->param.publish.message.payload.len);
@@ -92,14 +110,6 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c, const struct mqt
 	} while (ret >= 0 && size_read < evt->param.publish.message.payload.len);
 	data_send("\r\n", 2);
 
-	/* Send QoS1 acknowledgment */
-	if (evt->param.publish.message.topic.qos == MQTT_QOS_1_AT_LEAST_ONCE) {
-		const struct mqtt_puback_param ack = {
-			.message_id = evt->param.publish.message_id
-		};
-
-		mqtt_publish_qos1_ack(&client, &ack);
-	}
 
 	return 0;
 }
@@ -430,6 +440,9 @@ static int do_mqtt_disconnect(void)
 
 static int do_mqtt_publish(uint8_t *msg, size_t msg_len)
 {
+	/* SLM MQTT client does not store packets, so we will not retransmit packets
+	 * that are lacking response. This deviates from MQTT v3.1.1.
+	 */
 	pub_param.message.payload.data = msg;
 	pub_param.message.payload.len  = msg_len;
 

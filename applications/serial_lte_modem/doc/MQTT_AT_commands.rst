@@ -9,44 +9,11 @@ MQTT client AT commands
 
 This page describes the AT commands used to operate the MQTT client.
 
-MQTT event #XMQTTEVT
-====================
+.. note::
 
-The ``#XMQTTEVT`` is an unsolicited notification that indicates the event of the MQTT client.
-
-Unsolicited notification
-------------------------
-
-It indicates the event of the MQTT client.
-
-Syntax
-~~~~~~
-
-::
-
-   #XMQTTEVT=<evt_type>,<result>
-
-* The ``<evt_type>`` value is an integer indicating the type of the event.
-  It can return the following values:
-
-  * ``0`` - Connection request.
-  * ``1`` - Disconnection.
-    The MQTT client is disconnected from the MQTT broker once this event is notified.
-  * ``2`` - Message received on a topic the client is subscribed to.
-  * ``3`` - Acknowledgment for the published message with QoS 1.
-  * ``4`` - Confirmation of the reception for the published message with QoS 2.
-  * ``5`` - Release of the published message with QoS 2.
-  * ``6`` - Confirmation to a publish release message with QoS 2.
-  * ``7`` - Reception of the subscribe request.
-  * ``8`` - Reception of the unsubscription request.
-  * ``9`` - Ping response from the MQTT broker.
-
-* The ``<result>`` value is an integer indicating the result of the event.
-  It can return the following values:
-
-  * ``0`` - Success.
-  * *Negative value* - Failure.
-    It is the error code indicating the reason for the failure.
+   The MQTT client holds no internal state information for publish and subscript.
+   It will not retransmit packets or guarantee packet delivery according to QoS classes.
+   This deviates from MQTT v3.1.1.
 
 MQTT configure #XMQTTCFG
 ========================
@@ -179,9 +146,9 @@ Syntax
   * ``2`` - Connect to the MQTT broker using IP protocol family version 6.
 
 * The ``<username>`` parameter is a string.
-  It indicates the MQTT Client username.
+  It indicates the MQTT client username.
 * The ``<password>`` parameter is a string.
-  It indicates the MQTT Client password in cleartext.
+  It indicates the MQTT client password in cleartext.
 * The ``<url>`` parameter is a string.
   It indicates the MQTT broker hostname.
 * The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
@@ -194,16 +161,35 @@ Response syntax
 
 ::
 
-   #XMQTTEVT: <evt_type>,<result>
+   #XMQTTEVT=<evt_type>,<result>
 
-* The ``<evt_type>`` value is an integer.
-  When ``0``, it indicates the acknowledgment of the connection request.
-* The ``<result>`` value is an integer.
-  It can return the following values:
+* The ``<evt_type>`` value is an integer indicating the type of the event.
+  It can return the following values for the ``#XMQTTCON`` command:
 
-  * ``0`` - Connection succeeded.
-  * *Negative Value* - Error code.
-    It indicates the reason for the failure.
+  * ``0`` - Acknowledgment of connection request (CONNACK).
+  * ``1`` - Disconnection notification (DISCONNECT).
+    The MQTT client is disconnected from the MQTT broker once this event is notified.
+
+* The ``<result>`` value is an integer. It can return the following values:
+
+  * ``0`` - Success.
+  * *Negative value* - Error code indicating the reason for the failure.
+
+
+Unsolicited notification
+------------------------
+
+::
+   #XMQTTEVT=<evt_type>,<result>
+
+* The ``<evt_type>`` value is an integer indicating the type of the event.
+  After the connection is established, it can return ``9`` to indicate a ping response from the MQTT broker (PINGRESP).
+  This is received when pinging (PINGREQ) the broker after the keep alive is reached.
+
+* The ``<result>`` value is an integer. It can return the following values:
+
+  * ``0`` - Success.
+  * *Negative value* - Error code indicating the reason for the failure.
 
 Examples
 ~~~~~~~~
@@ -216,6 +202,9 @@ Examples
    AT#XMQTTCON=1,"","","mqtt.server.com",1883
    OK
    #XMQTTEVT: 0,0
+
+   Keep alive expires and broker responds to our ping:
+   #XMQTTEVT: 9,0
 
 ::
 
@@ -313,9 +302,9 @@ Syntax
    AT#XMQTTSUB=<topic>,<qos>
 
 * The ``<topic>`` parameter is a string.
-  It indicates the topic to be subscribed to.
+  It indicates the topic to subscribe to.
 * The ``<qos>`` parameter is an integer.
-  It indicates the MQTT Quality of Service types.
+  It indicates the MQTT Quality of Service type to use.
   It can accept the following values:
 
   * ``0`` - Lowest Quality of Service.
@@ -333,26 +322,24 @@ Response syntax
    #XMQTTEVT: <evt_type>,<result>
 
 * The ``<evt_type>`` value is an integer.
-  It can return the following values:
+  It can return the following values for the ``#XMQTTSUB`` command::
 
-  * ``2`` - Notification that a *publish event* has been received on a topic the client is subscribed to.
-  * ``7`` - Acknowledgment of the subscribe request.
+  * ``7`` - Acknowledgment of the subscribe request (SUBACK).
 
-* The ``<result>`` value is an integer.
-  It can return the following values:
+* The ``<result>`` value is an integer. It can return the following values:
 
-  * ``0`` - Value indicating the acknowledgment of the connection request.
-  * *Negative Value* - Error code indicating the reason for the failure.
+  * ``0`` - Success.
+  * *Negative value* - Error code indicating the reason for the failure.
 
-Unsolicited notification
-~~~~~~~~~~~~~~~~~~~~~~~~
+Unsolicited notifications
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the MQTT client successfully subscribes to a topic, the following unsolicited notification indicates that a message from the topic is received:
+When the MQTT client has successfully subscribed to a topic and a message is published with the topic, the following unsolicited notifications are received:
 
 ::
 
-   #XMQTTMSG: <topic_length>,<message_length><CR><LF>
-   <topic_received><CR><LF>
+   #XMQTTMSG: <topic_length>,<message_length>
+   <topic_received>
    <message>
 
 * The ``<topic_length>`` value is an integer.
@@ -360,9 +347,24 @@ If the MQTT client successfully subscribes to a topic, the following unsolicited
 * The ``<message_length>`` parameter is an integer.
   It indicates the length of the ``<message>`` field.
 * The ``<topic_received>`` value is a string.
-  It indicates the topic that receives the message.
+  It indicates the topic that received the message.
 * The ``<message>`` value can be a string or a HEX.
-  It contains the message received from a topic.
+  It contains the message received from the topic.
+
+::
+
+   #XMQTTEVT: <evt_type>,<result>
+
+* The ``<evt_type>`` value is an integer.
+  It can return the following values for the ``#XMQTTSUB`` command:
+
+  * ``2`` - Message received on a topic the client is subscribed to (PUBLISH).
+  * ``5`` - Release of a published message with QoS 2 (PUBREL).
+
+* The ``<result>`` value is an integer. It can return the following values:
+
+  * ``0`` - Success.
+  * *Negative value* - Error code indicating the reason for the failure.
 
 
 Examples
@@ -374,17 +376,39 @@ Examples
    OK
    #XMQTTEVT: 7,0
 
+   Message with QoS0 is received:
+   #XMQTTMSG: 21,7
+   nrf91/slm/mqtt/topic0
+   message
+   #XMQTTEVT: 2,0
+
 ::
 
    AT#XMQTTSUB="nrf91/slm/mqtt/topic1",1
    OK
    #XMQTTEVT: 7,0
 
+   Message with QoS1 is received:
+   #XMQTTMSG: 21,7
+   nrf91/slm/mqtt/topic1
+   message
+
+   #XMQTTEVT: 2,0
+
 ::
 
    AT#XMQTTSUB="nrf91/slm/mqtt/topic2",2
    OK
    #XMQTTEVT: 7,0
+
+   Message with QoS2 is received:
+   #XMQTTMSG: 21,7
+   nrf91/slm/mqtt/topic2
+   message
+
+   #XMQTTEVT: 2,0
+
+   #XMQTTEVT: 5,0
 
 Read command
 ------------
@@ -425,13 +449,12 @@ Response syntax
    #XMQTTEVT: <evt_type>,<result>
 
 * The ``<evt_type>`` value is an integer.
-  When ``8``, it acknowledges the reception of the unsubscription request.
+  It can return ``8`` for the ``#XMQTTUNSUB`` command to indicate an acknowledgment of the unsubscription request (UNSUBACK).
 
-* The ``<result>`` value is an integer.
-  It can return the following values:
+* The ``<result>`` value is an integer. It can return the following values:
 
-  * ``0`` - Value indicating the successful unsubscription.
-  * *Negative Value* - Error code indicating the reason for the failure.
+  * ``0`` - Success.
+  * *Negative value* - Error code indicating the reason for the failure.
 
 Examples
 ~~~~~~~~
@@ -478,7 +501,7 @@ Syntax
   The maximum size of the payload is 1024 bytes when not empty.
   If the payload is empty (for example, ``""``), SLM enters ``slm_data_mode``.
 * The ``<qos>`` parameter is an integer.
-  It indicates the MQTT Quality of Service types.
+  It indicates the MQTT Quality of Service type to use.
   It can accept the following values:
 
   * ``0`` - Lowest Quality of Service (default value).
@@ -500,22 +523,16 @@ Response syntax
    #XMQTTEVT: <evt_type>,<result>
 
 * The ``<evt_type>`` value is an integer.
-  It can return the following values:
+  It can return the following values for the ``#XMQTTPUB`` command:
 
-  * ``3`` - Acknowledgment for the published message with QoS 1.
-  * ``4`` - Reception confirmation for the published message with QoS 2.
+  * ``3`` - Acknowledgment for the published message with QoS 1 (PUBACK).
+  * ``4`` - Reception confirmation for the published message with QoS 2 (PUBREC).
+  * ``6`` - Confirmation to a publish release message with QoS 2 (PUBCOMP).
 
-    It is notified when PUBREC is received from the broker.
-  * ``5`` - Release of the published message with QoS 2.
-  * ``6`` - Confirmation (PUBREL) to a publish release message with QoS 2.
+* The ``<result>`` value is an integer. It can return the following values:
 
-    It is notified when PUBREL is received from the broker.
-
-* The ``<result>`` value is an integer.
-  It can return the following values:
-
-  * ``0`` - Value indicating the acknowledgment of the connection request.
-  * *Negative Value* - Error code indicating the reason for the failure.
+  * ``0`` - Success.
+  * *Negative value* - Error code indicating the reason for the failure.
 
 Examples
 ~~~~~~~~
@@ -524,10 +541,6 @@ Examples
 
    AT#XMQTTPUB="nrf91/slm/mqtt/topic0","Test message with QoS 0",0,0
    OK
-   #XMQTTMSG: 21,23
-   nrf91/slm/mqtt/topic0
-   Test message with QoS 0
-   #XMQTTEVT: 2,0
 
 ::
 
@@ -535,20 +548,12 @@ Examples
    OK
    {"msg":"Test Json publish"}+++
    #XDATAMODE: 0
-   #XMQTTMSG: 21,27
-   nrf91/slm/mqtt/topic0
-   {"msg":"Test Json publish"}
-   #XMQTTEVT: 2,0
 
 ::
 
    AT#XMQTTPUB="nrf91/slm/mqtt/topic1","Test message with QoS 1",1,0
    OK
    #XMQTTEVT: 3,0
-   #XMQTTMSG: 21,23
-   nrf91/slm/mqtt/topic1
-   Test message with QoS 1
-   #XMQTTEVT: 2,0
 
 ::
 
@@ -558,10 +563,6 @@ Examples
    #XDATAMODE: 0
    #XMQTTEVT: 4,0
    #XMQTTEVT: 6,0
-   #XMQTTMSG: 21,23
-   nrf91/slm/mqtt/topic2
-   Test message with QoS 2
-   #XMQTTEVT: 2,0
 
 Read command
 ------------
