@@ -90,25 +90,27 @@ int validate(int value, int min, int max, const char *param)
 
 int validate_rate(int data_rate, int flag)
 {
-	if ((flag == 0) && ((data_rate == 1) ||
-			   (data_rate == 2) ||
-			   (data_rate == 55) ||
-			   (data_rate == 11) ||
-			   (data_rate == 6) ||
-			   (data_rate == 9) ||
-			   (data_rate == 12) ||
-			   (data_rate == 18) ||
-			   (data_rate == 24) ||
-			   (data_rate == 36) ||
-			   (data_rate == 48) ||
-			   (data_rate == 54))) {
+	if ((flag == NRF_WIFI_FMAC_RAWTX_MODE_LEGACY) && ((data_rate == 1) ||
+							 (data_rate == 2) ||
+							 (data_rate == 55) ||
+							 (data_rate == 11) ||
+							 (data_rate == 6) ||
+							 (data_rate == 9) ||
+							 (data_rate == 12) ||
+							 (data_rate == 18) ||
+							 (data_rate == 24) ||
+							 (data_rate == 36) ||
+							 (data_rate == 48) ||
+							 (data_rate == 54))) {
 
 		return 1;
-	} else if (((flag >= 1 && flag <= 5)) && ((data_rate >= 0) && (data_rate <= 7))) {
+	} else if (((flag >= NRF_WIFI_FMAC_RAWTX_MODE_HT &&
+		    flag <= NRF_WIFI_FMAC_RAWTX_MODE_HE_ER_SU)) &&
+		    ((data_rate >= 0) && (data_rate <= 7))) {
 		return 1;
 	}
 
-	LOG_ERR("Invalid Data rate");
+	LOG_ERR("Invalid data rate %d", data_rate);
 	return 0;
 }
 
@@ -217,7 +219,8 @@ static int parse_raw_tx_configure_args(const struct shell *sh,
 		switch (opt) {
 		case 'f':
 			*flags = atoi(optarg);
-			if (!validate(*flags, 0, 4, "Rate Flags")) {
+			if (!validate(*flags, NRF_WIFI_FMAC_RAWTX_MODE_LEGACY,
+				      NRF_WIFI_FMAC_RAWTX_MODE_HE_ER_SU, "Rate Flags")) {
 				return -ENOEXEC;
 			}
 			opt_num++;
