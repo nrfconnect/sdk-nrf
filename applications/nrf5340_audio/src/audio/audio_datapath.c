@@ -928,11 +928,6 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 		return;
 	}
 
-	if (bad_frame) {
-		/* Error in the frame or frame lost - sdu_ref_us is still valid */
-		LOG_DBG("Bad audio frame");
-	}
-
 	bool sdu_ref_not_consecutive = false;
 
 	if (ctrl_blk.prev_pres_sdu_ref_us) {
