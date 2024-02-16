@@ -278,7 +278,14 @@ void Board::StartBLEAdvertisement()
 	}
 
 	if (chip::DeviceLayer::ConnectivityMgr().IsBLEAdvertisingEnabled()) {
-		LOG_INF("BLE advertising is already enabled");
+		if (!chip::DeviceLayer::ConnectivityMgr().IsBLEAdvertising()) {
+			LOG_INF("BLE advertising is already enabled but not active - restarting");
+			/* Kick the BLEMgr state machine to retry to start advertising one more time. */
+			CHIP_ERROR err = chip::DeviceLayer::ConnectivityMgr().SetBLEAdvertisingEnabled(true);
+			VerifyOrReturn(CHIP_NO_ERROR == err, LOG_ERR("Could not restart Matter advertisement"));
+		} else {
+			LOG_INF("BLE advertising is already enabled and active");
+		}
 		return;
 	}
 
