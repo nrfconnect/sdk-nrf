@@ -325,9 +325,6 @@ int main(void)
 
 	wifi_set_reg_domain();
 
-	/* TODO: SHEL-2458 */
-	k_msleep(20);
-
 	configure_dhcp_server();
 
 	wifi_softap_enable();
