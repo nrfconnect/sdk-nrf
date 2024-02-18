@@ -363,7 +363,7 @@ int nrf_wifi_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_do
 			reg_domain_chan_info = &(reg_domain_info.reg_chan_info[chan_idx]);
 			chan_info->center_frequency = reg_domain_chan_info->center_frequency;
 			chan_info->dfs = !!reg_domain_chan_info->dfs;
-			chan_info->max_power = !!reg_domain_chan_info->max_power;
+			chan_info->max_power = reg_domain_chan_info->max_power;
 			chan_info->passive_only = !!reg_domain_chan_info->passive_channel;
 			chan_info->supported = !!reg_domain_chan_info->supported;
 		}
