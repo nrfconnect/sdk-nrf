@@ -23,6 +23,7 @@ menuconfig WPA_SUPP
 if WPA_SUPP
 
 config COMMON_LIBC_MALLOC_ARENA_SIZE
+	default 40000 if WPA_SUPP_AP
 	# 30K is mandatory, but might need more for long duration use cases
 	default 30000
 
