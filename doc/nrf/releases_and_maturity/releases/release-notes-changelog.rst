@@ -612,7 +612,7 @@ NFC samples
 nRF5340 samples
 ---------------
 
-|no_changes_yet_note|
+* Added the :ref:`smp_svr_ext_xip` sample that demonstrates how to split an application that uses internal flash and Quad Serial Peripheral Interface (QSPI) flash with the Simple Management Protocol (SMP) server.
 
 Peripheral samples
 ------------------
