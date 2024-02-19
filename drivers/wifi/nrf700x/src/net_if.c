@@ -686,6 +686,12 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 		goto out;
 	}
 
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("%s: Failed to lock vif_lock", __func__);
+		goto out;
+	}
+
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
@@ -694,11 +700,6 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 		goto out;
 	}
 
-	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
-	if (ret != 0) {
-		LOG_ERR("%s: Failed to lock vif_lock", __func__);
-		goto out;
-	}
 
 #ifdef CONFIG_NRF700X_STA_MODE
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
