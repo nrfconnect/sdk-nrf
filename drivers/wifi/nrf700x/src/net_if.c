@@ -24,12 +24,6 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 #include "wpa_supp_if.h"
 #include "net_if.h"
 
-
-extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
-#if defined(CONFIG_NRF700X_DATA_TX) || defined(CONFIG_NRF700X_STA_MODE)
-static struct nrf_wifi_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
-#endif /* CONFIG_NRF700X_DATA_TX || CONFIG_NRF700X_STA_MODE */
-
 extern char *net_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len,
 				    char *buf, int buflen);
 
@@ -279,6 +273,8 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 	struct nrf_wifi_umac_mcast_cfg *mcast_info = NULL;
 	enum nrf_wifi_status status;
 	uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	int ret;
 
 	if (mgmt_event != NET_EVENT_IPV4_MADDR_ADD &&
 	    mgmt_event != NET_EVENT_IPV4_MADDR_DEL &&
@@ -290,6 +286,19 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 	vif_ctx_zep = nrf_wifi_get_vif_ctx(iface);
 	if (!vif_ctx_zep) {
 		return;
+	}
+
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("%s: Failed to lock vif_lock", __func__);
+		goto out;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: rpu_ctx_zep or rpu_ctx is NULL",
+			__func__);
+		goto unlock;
 	}
 
 	mcast_info = k_calloc(sizeof(*mcast_info), sizeof(char));
@@ -304,7 +313,7 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 	    (mgmt_event == NET_EVENT_IPV4_MADDR_DEL)) {
 		if ((cb->info == NULL) ||
 		    (cb->info_length != sizeof(struct in_addr))) {
-			goto out;
+			goto unlock;
 		}
 
 		net_eth_ipv4_mcast_to_mac_addr((const struct in_addr *)cb->info,
@@ -320,7 +329,7 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 		   (mgmt_event == NET_EVENT_IPV6_MADDR_DEL)) {
 		if ((cb->info == NULL) ||
 		    (cb->info_length != sizeof(struct in6_addr))) {
-			goto out;
+			goto unlock;
 		}
 
 		net_eth_ipv6_mcast_to_mac_addr(
@@ -338,7 +347,7 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 	       &mac_addr,
 	       NRF_WIFI_ETH_ADDR_LEN);
 
-	status = nrf_wifi_fmac_set_mcast_addr(rpu_ctx->rpu_ctx,
+	status = nrf_wifi_fmac_set_mcast_addr(rpu_ctx_zep->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
 					      mcast_info);
 
@@ -350,6 +359,8 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 					       WIFI_MAC_ADDR_LEN, mac_string_buf,
 					       sizeof(mac_string_buf)));
 	}
+unlock:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 out:
 	k_free(mcast_info);
 }
@@ -360,21 +371,28 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	int ret;
 
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-
-	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL",
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL",
 			__func__);
 		goto out;
+	}
+
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("%s: Failed to lock vif_lock", __func__);
+		goto out;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: rpu_ctx_zep or rpu_ctx is NULL",
+			__func__);
+		goto unlock;
 	}
 
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
-	if (!fmac_dev_ctx) {
-		LOG_ERR("%s: fmac_dev_ctx is NULL",
-			__func__);
-		goto out;
-	}
 
 	if (strlen(CONFIG_WIFI_FIXED_MAC_ADDRESS) > 0) {
 		char fixed_mac_addr[WIFI_MAC_ADDR_LEN];
@@ -387,7 +405,7 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 			LOG_ERR("%s: Failed to parse MAC address: %s",
 				__func__,
 				CONFIG_WIFI_FIXED_MAC_ADDRESS);
-			goto out;
+			goto unlock;
 		}
 
 		memcpy(vif_ctx_zep->mac_addr.addr,
@@ -400,7 +418,7 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: Fetching of MAC address from OTP failed",
 				__func__);
-			goto out;
+			goto unlock;
 		}
 	}
 
@@ -414,9 +432,11 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 		memset(vif_ctx_zep->mac_addr.addr,
 			0,
 			WIFI_MAC_ADDR_LEN);
-		goto out;
+		goto unlock;
 	}
 	status = NRF_WIFI_STATUS_SUCCESS;
+unlock:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 out:
 	return status;
 }
@@ -686,13 +706,11 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-
 	if (!rpu_ctx_zep) {
 		LOG_ERR("%s: rpu_ctx_zep is NULL",
 			__func__);
 		goto out;
 	}
-
 
 #ifdef CONFIG_NRF700X_STA_MODE
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
@@ -764,27 +782,39 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 	}
 
 	vif_ctx_zep = dev->data;
-
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL",
 			__func__);
 		goto out;
 	}
 
-	/**
-	 * If vif_ctx_zep exists, rpu_ctx_zep and subsequent priv structures
-	 * should exist and cannot be NULL. Derive the pointers for further
-	 * structures
-	 */
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("%s: Failed to lock vif_lock", __func__);
+		goto out;
+	}
+
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: rpu_ctx_zep or rpu_ctx is NULL",
+			__func__);
+		goto unlock;
+	}
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	if (!def_dev_ctx) {
+		LOG_ERR("%s: def_dev_ctx is NULL",
+			__func__);
+		goto unlock;
+	}
 
 	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
 		config->txinjection_mode =
 			def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode;
 	}
 	ret = 0;
+unlock:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 out:
 #endif
 	return ret;
@@ -807,27 +837,38 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 	}
 
 	vif_ctx_zep = dev->data;
-
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL",
 			__func__);
 		goto out;
 	}
 
-	/**
-	 * If vif_ctx_zep exists, rpu_ctx_zep and subsequent priv structures
-	 * should exist and cannot be NULL. Derive the pointers for further
-	 * structures
-	 */
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("%s: Failed to lock vif_lock", __func__);
+		goto out;
+	}
+
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: rpu_ctx_zep or rpu_ctx is NULL",
+			__func__);
+		goto unlock;
+	}
+
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	if (!def_dev_ctx) {
+		LOG_ERR("%s: def_dev_ctx is NULL",
+			__func__);
+		goto unlock;
+	}
 
 	if (type == ETHERNET_CONFIG_TYPE_MAC_ADDRESS) {
 		if (!net_eth_is_addr_valid((struct net_eth_addr *)&config->mac_address)) {
 			LOG_ERR("%s: Invalid MAC address",
 				__func__);
-			goto out;
+			goto unlock;
 		}
 		memcpy(vif_ctx_zep->mac_addr.addr,
 		       config->mac_address.addr,
@@ -846,7 +887,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		    config->txinjection_mode) {
 			LOG_INF("%s: Driver TX injection setting is same as configured setting",
 				__func__);
-			goto out;
+			goto unlock;
 		}
 		/**
 		 * Since UMAC wishes to use the same mode command as previously
@@ -867,12 +908,14 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 
 		if (ret != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: Mode set operation failed", __func__);
-			goto out;
+			goto unlock;
 		}
 	}
 #endif
 
 	ret = 0;
+unlock:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 out:
 	return ret;
 }
@@ -888,7 +931,6 @@ struct net_stats_eth *nrf_wifi_eth_stats_get(const struct device *dev)
 	}
 
 	vif_ctx_zep = dev->data;
-
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
@@ -920,25 +962,28 @@ int nrf_wifi_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 	}
 
 	vif_ctx_zep = dev->data;
-
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
 	}
 
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-
-	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("%s: Failed to lock vif_lock", __func__);
 		goto out;
+	}
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: rpu_ctx_zep or rpu_ctx is NULL",
+			__func__);
+		goto unlock;
 	}
 
 	memset(&stats, 0, sizeof(struct rpu_op_stats));
 	status = nrf_wifi_fmac_stats_get(rpu_ctx_zep->rpu_ctx, 0, &stats);
-
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_stats_get failed", __func__);
-		goto out;
+		goto unlock;
 	}
 
 	zstats->pkts.tx = stats.host.total_tx_pkts;
@@ -956,7 +1001,8 @@ int nrf_wifi_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 	zstats->multicast.tx = stats.fw.umac.interface_data_stats.tx_multicast_pkt_count;
 
 	ret = 0;
-
+unlock:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 out:
 	return ret;
 }
