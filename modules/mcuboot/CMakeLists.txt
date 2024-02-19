@@ -707,6 +707,64 @@ CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT cannot be used with CONFIG_XIP_SPLIT_IMAGE.
       endif()
     endif()
 
+    # Targets for adding nrf70 wifi firmware patch. This workflow creates the nrf70_signed.hex and nrf70_update.bin files that can be
+    # used in DFU process, and multi-image DFU process.
+    if(CONFIG_NRF_WIFI_FW_PATCH_DFU)
+      set(nrf70_binary_name nrf70_update.bin)
+
+      sign(
+        SIGNED_BIN_FILE_IN ${PROJECT_BINARY_DIR}/nrf70.hex
+        SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/nrf70
+        SLOT_SIZE $<TARGET_PROPERTY:partition_manager,PM_NRF70_WIFI_FW_SIZE>
+        SIGNED_HEX_FILE_OUT nrf70_signed_hex
+        SIGNED_BIN_FILE_OUT nrf70_signed_bin
+        SIGNED_HEX_TEST_FILE_OUT nrf70_signed_test_hex
+        DEPENDS ${PROJECT_BINARY_DIR}/nrf70.hex
+      )
+
+      add_custom_target(mcuboot_nrf70_target
+        DEPENDS
+        ${nrf70_signed_hex}
+        ${nrf70_signed_bin}
+        ${nrf70_signed_test_hex}
+      )
+
+      set_property(GLOBAL PROPERTY
+        nrf70_wifi_fw_PM_HEX_FILE
+        ${nrf70_signed_hex}
+      )
+
+      set_property(GLOBAL PROPERTY
+        nrf70_wifi_fw_PM_TARGET
+        mcuboot_nrf70_target
+      )
+
+      add_dependencies(
+        mcuboot_sign_target
+        mcuboot_nrf70_target
+      )
+
+      # Add nrf70 update file to the existing bin files list before generating the zip file.
+      list(APPEND generate_bin_files
+        ${PROJECT_BINARY_DIR}/${nrf70_binary_name}
+      )
+
+      if(CONFIG_NRF53_UPGRADE_NETWORK_CORE)
+        list(APPEND generate_script_params
+         "${nrf70_binary_name}image_index=2"
+         "${nrf70_binary_name}slot_index_primary=5"
+         "${nrf70_binary_name}slot_index_secondary=6"
+        )
+      else()
+        list(APPEND generate_script_params
+          "${nrf70_binary_name}image_index=1"
+          "${nrf70_binary_name}slot_index_primary=3"
+          "${nrf70_binary_name}slot_index_secondary=4"
+        )
+      endif()
+
+    endif()
+
     generate_dfu_zip(
       OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip
       BIN_FILES ${generate_bin_files}
@@ -821,6 +879,16 @@ CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD cannot be used with CONFIG_XIP_SPLIT_IMAGE.
     list(APPEND dfu_multi_image_ids -2 -1)
     list(APPEND dfu_multi_image_paths "${s0_bin_path}" "${s1_bin_path}")
     list(APPEND dfu_multi_image_targets signed_s0_target signed_s1_target)
+  endif()
+
+  if(CONFIG_NRF_WIFI_FW_PATCH_DFU)
+    if (CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET)
+      list(APPEND dfu_multi_image_ids 2)
+    else()
+      list(APPEND dfu_multi_image_ids 1)
+    endif()
+    list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/${nrf70_binary_name}")
+    list(APPEND dfu_multi_image_targets mcuboot_nrf70_target)
   endif()
 
   dfu_multi_image_package(dfu_multi_image_pkg
