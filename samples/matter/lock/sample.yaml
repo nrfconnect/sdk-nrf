@@ -29,7 +29,8 @@ tests:
   sample.matter.lock.thread_wifi_switched:
     build_only: true
     extra_args: SHIELD=nrf7002ek multiprotocol_rpmsg_SHIELD=nrf7002ek_coex
-      CONF_FILE=prj_thread_wifi_switched.conf
+      CONF_FILE=prj_thread_wifi_switched.conf CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y
+      mcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
