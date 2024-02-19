@@ -101,8 +101,8 @@ The raw packet to be transmitted by an application must be a fully conformant IE
 .. note::
    If the packet is not a properly framed 802.11 packet, it will be dropped by the nRF70 Series device and will not be transmitted over-the-air.
 
-Additionally, the raw packet must provide transmit parameters that inform the nRF70 Series Wi-Fi device driver on how the packet must be transmitted.
-It must also provide a packet marker identifying itself as a special packet, which must be handled differently by the nRF70 series Wi-Fi driver.
+Additionally, the raw packet must provide transmit parameters that inform the nRF Wi-Fi driver on how the packet must be transmitted.
+It must also provide a packet marker identifying itself as a special packet, which must be handled differently by the nRF Wi-Fi driver.
 The transmit parameters and the packet marker together form the raw packet transmit header.
 The raw packet transmit header is prepended to the 802.11 conformant raw packet before the packet is passed to the nRF Wi-Fi driver by the application.
 
@@ -139,7 +139,7 @@ You can refer to the relevant structures at:
 Raw 802.11 packet transmit operation
 ************************************
 
-The raw packet data has to be encompassed in an 802.11 packet and prepended with the raw transmit header before it is transmitted through raw socket to the nRF70 Wi-Fi device driver for transmission.
+The raw packet data has to be encompassed in an 802.11 packet and prepended with the raw transmit header before it is transmitted through raw socket to the nRF Wi-Fi driver for transmission.
 The packet is forwarded to the nRF70 Series device, which transmits the packet over-the-air.
 All 802.11 MAC layer rules for the 802.11 packet (such as, link-layer acknowledgements, retransmissions) are handled by the nRF70 Series device.
 

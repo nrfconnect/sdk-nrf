@@ -1149,6 +1149,7 @@ Documentation
   * The :ref:`dev-model` section with the :ref:`documentation` pages, previously listed separately.
   * The :ref:`glossary` page by moving it back to the main hierarchy level.
   * The structure of the :ref:`ug_wifi` page by moving :ref:`ug_nrf70_developing_powersave`, :ref:`ug_nrf70_developing_regulatory_support`, :ref:`ug_nrf70_developing_scan_operation`, :ref:`ug_nrf70_developing_debugging`, :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`, and :ref:`nRF70_soft_ap_mode` pages, which were previously listed under :ref:`ug_nrf70_developing`.
+    Additionally, the Memory requirements for Wi-Fi applications page is split into two sections :ref:`ug_wifi_mem_req_sta_mode` and :ref:`ug_wifi_mem_req_scan_mode`, based on different supported modes.
   * TX injection mode command in the :ref:`ug_nrf70_developing_tx_injection_mode` section in the :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission` user guide.
   * The :ref:`ug_nrf70_powersave` user guide by separating information about power profiling into its own :ref:`ug_nrf70_developing_power_profiling` page under :ref:`ug_nrf70_developing`.
   * The Operating with a resource constrained host user guide by renaming it to :ref:`nRF70_nRF5340_constrained_host`.

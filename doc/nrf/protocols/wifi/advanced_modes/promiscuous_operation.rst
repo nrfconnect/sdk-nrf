@@ -9,7 +9,7 @@ Raw IEEE 802.11 packet reception using Promiscuous mode
 
 The nRF70 Series devices support Promiscuous mode.
 Promiscuous mode of operation is only supported in connected Station mode.
-In Promiscuous mode of operation, all received IEEE 802.11 packets that belong to the connected Basic Service Set (BSS) are sent to the receiving application by the nRF70 Series Wi-Fi driver.
+In Promiscuous mode of operation, all received IEEE 802.11 packets that belong to the connected Basic Service Set (BSS) are sent to the receiving application by the nRF Wi-Fi driver.
 
 .. _ug_nrf70_developing_enabling_promiscuous_mode_feature:
 
@@ -23,12 +23,12 @@ To use the Promiscuous mode feature in your applications, you must enable the :k
 Promiscuous mode operation
 **************************
 
-The nRF70 Series device supports raw 802.11 packet reception from a specific BSSID to which the device is connected in Station mode, when Promiscuous mode is enabled for the nRF70 Series Wi-Fi driver.
+The nRF70 Series device supports raw 802.11 packet reception from a specific BSSID to which the device is connected in Station mode, when Promiscuous mode is enabled for the nRF Wi-Fi driver.
 Promiscuous mode setting can be enabled when the nRF70 Series device operates in Station mode, however, raw IEEE 802.11 packets in Promiscuous mode are only received when the nRF70 Series device connects to a specific BSSID and operates as a connected station.
 
-The ``net_eth_promisc_mode`` functional API can be used to enable or disable Promiscuous mode in the nRF70 Series Wi-Fi driver as required by the application.
+The ``net_eth_promisc_mode`` functional API can be used to enable or disable Promiscuous mode in the nRF Wi-Fi driver as required by the application.
 The ``NET_REQUEST_ETHERNET_SET_PROMISC_MODE`` network management API can also be used to enable or disable Promiscuous mode.
-However, it is recommended to use the functional API ``net_eth_promisc_mode`` for enabling or disabling Promiscuous mode in the nRF70 Series Wi-Fi driver.
+However, it is recommended to use the functional API ``net_eth_promisc_mode`` for enabling or disabling Promiscuous mode in the nRF Wi-Fi driver.
 
 The following table provides the parameter details for the ``net_eth_promisc_mode`` API which is used to enable or disable Promiscuous mode for raw packet reception.
 
@@ -81,8 +81,8 @@ The IEEE 802.11 packet that is captured by the nRF70 Series device will be prepe
 Promiscuous mode receive operation
 **********************************
 
-An IEEE 802.11 packet captured by the nRF70 Series device in Promiscuous mode will be sent up to the nRF70 Series Wi-Fi driver, which will prepend a radio information header to the received packet and present the resulting set to the user application.
-To receive the captured traffic in Promiscuous mode, the user application layer needs to open a raw socket to the nRF70 Series Wi-Fi driver.
+An IEEE 802.11 packet captured by the nRF70 Series device in Promiscuous mode will be sent up to the nRF Wi-Fi driver, which will prepend a radio information header to the received packet and present the resulting set to the user application.
+To receive the captured traffic in Promiscuous mode, the user application layer needs to open a raw socket to the nRF Wi-Fi driver.
 
 The following figure illustrates the packet structure and IEEE 802.11 packet sniffer operational flow:
 
@@ -97,7 +97,7 @@ Promiscuous mode receive operation filter configuration
 *******************************************************
 
 The type of IEEE 802.11 receive packets that the application receives can be configured using the filter ``NET_REQUEST_WIFI_PACKET_FILTER`` net management command.
-The nRF70 Series Wi-Fi driver has to be configured to operate in Monitor mode or Promiscuous mode for setting packet filter settings.
+The nRF Wi-Fi driver has to be configured to operate in Monitor mode or Promiscuous mode for setting packet filter settings.
 The application can choose to receive 802.11 management packets, 802.11 control packets, 802.11 data packets or a combination of the three types of 802.11 packets.
 
 See the :ref:`wifi_shell_sample` sample for more information on configuring the filter settings for raw packet reception through shell commands.

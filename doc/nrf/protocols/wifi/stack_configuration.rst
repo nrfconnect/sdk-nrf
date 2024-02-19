@@ -7,7 +7,7 @@ Wi-Fi stack configuration and performance
    :local:
    :depth: 2
 
-This guide provides information on the configuration of the Wi-Fi® stack and the nRF70 Series driver's performance.
+This guide provides information on the configuration of the Wi-Fi® stack and the nRF Wi-Fi driver's performance.
 
 Zephyr OS factors
 *****************
@@ -25,9 +25,9 @@ For high performance applications, it is recommended to use 128 MHz as the CPU f
 Networking stack
 ================
 
-The nRF70 Series driver uses the Zephyr networking stack for Wi-Fi protocol implementation.
+The nRF Wi-Fi driver uses the Zephyr networking stack for Wi-Fi protocol implementation.
 You can configure the networking stack to use different networking buffers and queue depths.
-The nRF70 Series driver can be configured to use different numbers of TX buffers and RX buffers based on the use case.
+The nRF Wi-Fi driver can be configured to use different numbers of TX buffers and RX buffers based on the use case.
 A separate configuration option is provided to configure the number of packets, and the number of buffers used by each packet can also be configured.
 
 The following table explains the configuration options:
@@ -50,10 +50,10 @@ The following table explains the configuration options:
 
 .. _constrained_host_driver_memory_controls:
 
-nRF70 Series driver performance and memory fine-tuning controls
-***************************************************************
+nRF Wi-Fi driver performance and memory fine-tuning controls
+************************************************************
 
-The nRF70 Series driver provides the following software configurations to fine-tune memory and performance based on the use case:
+The nRF Wi-Fi driver provides the following software configurations to fine-tune memory and performance based on the use case:
 
 .. list-table::
    :header-rows: 1
@@ -68,19 +68,19 @@ The nRF70 Series driver provides the following software configurations to fine-t
      - Enable or disable Wi-Fi Protected Access (WPA™) supplicant
      - Memory savings
      - This specifies the inclusion of the WPA supplicant module.
-       Disabling this flag restricts the nRF70 Series driver's functionality to STA scan only.
+       Disabling this flag restricts the nRF Wi-Fi driver's functionality to STA scan only.
    * - :kconfig:option:`CONFIG_NRF700X_AP_MODE`
      - ``y`` or ``n``
      - Enable or disable Access Point (AP) mode
      - Memory savings
      - This specifies the inclusion of the AP mode module.
-       Disabling this flag restricts the nRF70 Series driver's functionality to :term:`Station mode (STA)` only.
+       Disabling this flag restricts the nRF Wi-Fi driver's functionality to :term:`Station mode (STA)` only.
    * - :kconfig:option:`CONFIG_NRF700X_P2P_MODE`
      - ``y`` or ``n``
      - Enable or disable Wi-Fi direct mode
      - Memory Savings
      - This specifies the inclusion of the P2P mode module.
-       Disabling this flag restricts the nRF70 Series driver's functionality to STA or AP mode only.
+       Disabling this flag restricts the nRF Wi-Fi driver's functionality to STA or AP mode only.
    * - :kconfig:option:`CONFIG_NRF700X_MAX_TX_TOKENS`
      - ``5``, ``10``, ``11``, ``12``
      - Maximum number of TX tokens.
@@ -101,7 +101,7 @@ The nRF70 Series driver provides the following software configurations to fine-t
      - ``1`` to ``Unlimited`` (based on available memory in nRF70 Series device)
      - Number of RX buffers
      - Memory savings
-     - This specifies the number of RX buffers that can be used by the nRF70 Series driver.
+     - This specifies the number of RX buffers that can be used by the nRF Wi-Fi driver.
        The number of buffers must be enough to keep up with the RX traffic, otherwise packets might be dropped.
    * - :kconfig:option:`CONFIG_NRF700X_TX_MAX_DATA_SIZE`
      - ``64`` to ``1600``
@@ -164,7 +164,7 @@ There is a build time check to ensure that the total packet memory size does not
 Usage profiles
 **************
 
-The nRF70 Series driver can be used in the following profiles (not an exhaustive list):
+The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive list):
 
 .. list-table::
    :header-rows: 1
