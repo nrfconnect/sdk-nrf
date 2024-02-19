@@ -117,6 +117,15 @@ Testing
       [00:00:05.492,980] <inf> monitor:       Null Count: 0
       [00:00:05.493,011] <inf> monitor:       QoS Null Count: 0
 
+Offline net capture
+*******************
+
+The sample supports the offline net capture feature in Zephyr, see `Zephyr net capture`_ for details.
+To enable this feature, use the configuration overlay files :file:`overlay-net-capture.conf` and :file:`overlay-netusb.conf`.
+
+When the offline net capture feature is enabled, incoming IEEE 802.11 packets are routed to the offline storage over the net capture tunnel.
+These packets can then be analyzed using Wireshark.
+
 Dependencies
 ************
 
