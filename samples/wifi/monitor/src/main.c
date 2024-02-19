@@ -210,6 +210,36 @@ static int printStats(void)
 	return 0;
 }
 
+static int wifi_set_reg(void)
+{
+	struct net_if *iface;
+	struct wifi_reg_domain reg = { 0 };
+	int ret;
+
+	reg.oper = WIFI_MGMT_SET;
+
+	iface = net_if_get_first_wifi();
+	if (iface == NULL) {
+		LOG_ERR("No Wi-Fi interface found");
+		return -1;
+	}
+
+	reg.country_code[0] = CONFIG_MONITOR_MODE_REG_DOMAIN_ALPHA2[0];
+	reg.country_code[1] = CONFIG_MONITOR_MODE_REG_DOMAIN_ALPHA2[1];
+	reg.force = false;
+
+	ret = net_mgmt(NET_REQUEST_WIFI_REG_DOMAIN, iface, &reg, sizeof(reg));
+	if (ret) {
+		LOG_ERR("Regulatory setting failed %d", ret);
+		return -1;
+	}
+
+	LOG_INF("Regulatory set to %c%c for interface %d", reg.country_code[0],
+		reg.country_code[1], net_if_get_by_iface(iface));
+
+	return 0;
+}
+
 static int wifi_set_channel(void)
 {
 	struct net_if *iface;
@@ -370,6 +400,11 @@ int main(void)
 	int ret;
 
 	ret = wifi_set_mode();
+	if (ret) {
+		return -1;
+	}
+
+	ret = wifi_set_reg();
 	if (ret) {
 		return -1;
 	}
