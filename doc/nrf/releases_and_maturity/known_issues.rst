@@ -323,6 +323,13 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1
+
+KRKNWK-18495: The Color Control server's ``RemainingTime`` attribute change may be reported every 100 ms, even though the color temperature value handled by the Color Control server is not modified.
+  This can result in the Thread network being spammed with unnecessary network traffic when controlling the brightness or color of the :ref:`matter_light_bulb_sample` sample.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``3da44025b18d17adacf0a4abf0456c5735399dbd``).
+
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2
 
 KRKNWK-18371: The GlobalSceneControl attribute from the OnOff cluster does not change in a way compatible with the Matter specification
