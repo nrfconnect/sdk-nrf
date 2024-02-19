@@ -550,7 +550,7 @@ static void receive_work_handler(struct k_work *work)
 	hci_driver_receive_process();
 }
 
-static const struct device *entropy_source = DEVICE_DT_GET(DT_NODELABEL(rng));
+static const struct device *entropy_source = DEVICE_DT_GET(DT_CHOSEN(zephyr_entropy));
 
 static uint8_t rand_prio_low_vector_get(uint8_t *p_buff, uint8_t length)
 {

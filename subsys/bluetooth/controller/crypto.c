@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(bt_sdc_crypto);
 
 #define BT_ECB_BLOCK_SIZE 16
 
-static const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(rng));
+static const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_entropy));
 
 int bt_rand(void *buf, size_t len)
 {
