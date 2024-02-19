@@ -226,7 +226,7 @@ static void parseAndUpdateStats(unsigned char *packet, packetStats *stats)
 	}
 }
 
-static int printStats(void)
+static void printStats(void)
 {
 	/* Print the updated statistics */
 	LOG_INF("Management Frames:");
@@ -247,8 +247,6 @@ static int printStats(void)
 	LOG_INF("\tNull Count: %d", stats.nullCount);
 	LOG_INF("\tQoS Null Count: %d", stats.qosNullCount);
 	LOG_INF("\n");
-
-	return 0;
 }
 
 static int wifi_set_reg(void)
