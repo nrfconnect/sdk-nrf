@@ -93,10 +93,10 @@ void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = os_vif_ctx;
 	struct net_if *iface = vif_ctx_zep->zep_net_if_ctx;
 	struct net_pkt *pkt;
-	int status;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	int ret;
 
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
@@ -108,10 +108,11 @@ void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
 		return;
 	}
 
-	status = net_recv_data(iface, pkt);
+	net_capture_pkt(iface, pkt);
 
-	if (status < 0) {
-		LOG_DBG("Raw packet dropped by NET stack: %d", status);
+	ret = net_recv_data(iface, pkt);
+	if (ret < 0) {
+		LOG_DBG("RCV Packet dropped by NET stack: %d", ret);
 		net_pkt_unref(pkt);
 	}
 }
