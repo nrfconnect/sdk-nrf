@@ -292,7 +292,9 @@ void date_time_core_store_tz(int64_t curr_time_ms, enum date_time_evt_type time_
 		ltm.tm_hour, ltm.tm_min, ltm.tm_sec, tz);
 
 #if defined(CONFIG_DATE_TIME_MODEM)
-	date_time_modem_store(&ltm, tz);
+	if (time_source != DATE_TIME_OBTAINED_MODEM) {
+		date_time_modem_store(&ltm, tz);
+	}
 #endif
 
 	date_time_core_notify_event(time_source);
