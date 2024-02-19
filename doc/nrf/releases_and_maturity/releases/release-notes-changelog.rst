@@ -76,6 +76,12 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
+* Added:
+
+  * Script for extracting the Bluetooth Mesh DFU metadata automatically when building an application.
+    The script is enabled by the :kconfig:option:`CONFIG_BT_MESH_DFU_METADATA_ON_BUILD` Kconfig option.
+  * Separate command ``west build -t ble_mesh_dfu_metadata`` to print already generated Bluetooth Mesh DFU metadata to a terminal.
+
 * Updated:
 
   * :ref:`bt_mesh_dm_srv_readme` and :ref:`bt_mesh_dm_cli_readme` model IDs and opcodes have been updated to avoid conflict with Simple OnOff Server and Client models.
