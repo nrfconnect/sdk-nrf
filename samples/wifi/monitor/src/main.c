@@ -13,6 +13,9 @@
 #include <zephyr/net/wifi_mgmt.h>
 LOG_MODULE_REGISTER(monitor, CONFIG_LOG_DEFAULT_LEVEL);
 
+#ifdef CONFIG_NET_CONFIG_SETTINGS
+#include <zephyr/net/net_config.h>
+#endif
 #include <zephyr/net/socket.h>
 
 #define STACK_SIZE CONFIG_RX_THREAD_STACK_SIZE
@@ -85,6 +88,33 @@ struct packet_data {
 	int recv_sock;
 	char recv_buffer[RECV_BUFFER_SIZE];
 };
+
+#ifdef CONFIG_NET_CAPTURE
+static const struct device *capture_dev;
+#endif
+
+#ifdef CONFIG_USB_DEVICE_STACK
+#include <zephyr/usb/usb_device.h>
+
+/* Fixed address as the static IP given from Kconfig will be
+ * applied to Wi-Fi interface.
+ */
+#define CONFIG_NET_CONFIG_USB_IPV4_ADDR "192.0.2.1"
+#define CONFIG_NET_CONFIG_USB_IPV4_MASK "255.255.255.0"
+
+int init_usb(void)
+{
+	int ret;
+
+	ret = usb_enable(NULL);
+	if (ret != 0) {
+		printk("Cannot enable USB (%d)", ret);
+		return ret;
+	}
+
+	return 0;
+}
+#endif
 
 #define PKT_FC_TYPE_MASK 0x0C
 #define PKT_FC_TYPE_SHIFT 2
@@ -393,11 +423,96 @@ static void create_rx_thread(void)
 			return;
 		}
 	}
+
+	close(sock_packet.recv_sock);
 }
+
+#ifdef CONFIG_NET_CAPTURE
+static int wifi_net_capture(void)
+{
+	struct net_if *iface;
+	const char *remote, *local, *peer;
+	int ret;
+
+	/* For now hardcode these addresses, as they never change */
+	remote = "192.0.2.2";
+	local = "2001:db8:200::1";
+	peer = "2001:db8:200::2";
+
+	ret = net_capture_setup(remote, local, peer, &capture_dev);
+	if (ret < 0) {
+		LOG_ERR("Failed to setup network capture : %d", ret);
+		return ret;
+	}
+
+	/* Wi-Fi is the capture interface */
+	iface = net_if_get_first_wifi();
+	if (iface == NULL) {
+		LOG_ERR("No Wi-Fi interface found");
+		return -1;
+	}
+
+	ret = net_capture_enable(capture_dev, iface);
+	if (ret < 0) {
+		LOG_ERR("Failed to enable network capture : %d", ret);
+		return ret;
+	}
+
+	return 0;
+}
+#endif
 
 int main(void)
 {
+#ifdef CONFIG_USB_DEVICE_STACK
+	struct in_addr addr;
+#endif
 	int ret;
+
+#ifdef CONFIG_USB_DEVICE_STACK
+	init_usb();
+
+	/* Redirect static IP address to netusb*/
+	const struct device *usb_dev = device_get_binding("eth_netusb");
+	struct net_if *iface = net_if_lookup_by_dev(usb_dev);
+
+	if (!iface) {
+		printk("Cannot find network interface: %s", "eth_netusb");
+		return -1;
+	}
+	if (sizeof(CONFIG_NET_CONFIG_USB_IPV4_ADDR) > 1) {
+		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_USB_IPV4_ADDR, &addr)) {
+			printk("Invalid address: %s", CONFIG_NET_CONFIG_USB_IPV4_ADDR);
+			return -1;
+		}
+		net_if_ipv4_addr_add(iface, &addr, NET_ADDR_MANUAL, 0);
+	}
+
+	if (sizeof(CONFIG_NET_CONFIG_USB_IPV4_MASK) > 1) {
+		/* If not empty */
+		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_USB_IPV4_MASK, &addr)) {
+			printk("Invalid netmask: %s", CONFIG_NET_CONFIG_USB_IPV4_MASK);
+		} else {
+			net_if_ipv4_set_netmask(iface, &addr);
+		}
+	}
+#endif
+
+#ifdef CONFIG_NET_CONFIG_SETTINGS
+	/* Without this, DHCPv4 starts on first interface and if that is not Wi-Fi or
+	 * only supports IPv6, then its an issue. (E.g., OpenThread)
+	 *
+	 * So, we start DHCPv4 on Wi-Fi interface always, independent of the ordering.
+	 */
+	/* TODO: Replace device name with DTS settings later */
+	const struct device *dev = device_get_binding("wlan0");
+	struct net_if *wifi_iface = net_if_lookup_by_dev(dev);
+
+	/* As both are Ethernet, we need to set specific interface*/
+	net_if_set_default(wifi_iface);
+
+	net_config_init_app(dev, "Initializing network");
+#endif
 
 	ret = wifi_set_mode();
 	if (ret) {
@@ -414,7 +529,24 @@ int main(void)
 		return -1;
 	}
 
+#ifdef CONFIG_NET_CAPTURE
+	ret = wifi_net_capture();
+	if (ret) {
+		return -1;
+	}
+	LOG_INF("Network capture of Wi-Fi traffic enabled");
+#endif
+
 	k_thread_start(receiver_thread_id);
+
+	k_thread_join(receiver_thread_id, K_FOREVER);
+
+#ifdef CONFIG_NET_CAPTURE
+	ret = net_capture_disable(capture_dev);
+	if (ret < 0) {
+		LOG_ERR("Failed to disable network capture : %d", ret);
+	}
+#endif
 
 	return 0;
 }
