@@ -27,19 +27,19 @@ Monitor mode operation
 **********************
 
 Monitor mode can be enabled or disabled on the nRF70 Series device at runtime, using the ``NET_REQUEST_WIFI_MODE`` network management runtime API.
-This runtime API can be used to disable the Monitor mode in the nRF70 Series Wi-Fi driver, when the packet sniffer operation is no longer required in the user application.
+This runtime API can be used to disable the Monitor mode in the nRF Wi-Fi driver, when the packet sniffer operation is no longer required in the user application.
 
 Monitor mode on the nRF70 device cannot operate concurrently with other modes, such as Station mode or SoftAP mode.
 
-you must configure the operating Wi-Fi channel on which the nRF70 device will monitor and receive 802.11 packets.
-When the device operates in Monitor mode, all 802.11 packets received on the configured channel will be sent up the stack by the nRF70 Series device and the nRF70 Series Wi-Fi driver.
+You must configure the operating Wi-Fi channel on which the nRF70 device will monitor and receive 802.11 packets.
+When the device operates in Monitor mode, all 802.11 packets received on the configured channel will be sent up the stack by the nRF70 Series device and the nRF Wi-Fi driver.
 
 To set the desired channel for 802.11 packet reception, use the ``NET_REQUEST_WIFI_CHANNEL`` runtime network management API.
-The channel configuration runtime NET-management API can be used to set the channel after setting the nRF70 Series device in Monitor mode.
+The channel configuration runtime network management API can be used to set the channel after setting the nRF70 Series device in Monitor mode.
 
 See the :ref:`wifi_shell_sample` sample for more information on configuring the mode and channel settings for raw packet reception through shell commands.
 
-The following table lists the shell commands and NET-management APIs that are used to enable Monitor and TX injection mode, and to select the desired Wi-Fi channel:
+The following table lists the shell commands and network management APIs that are used to enable Monitor and TX injection mode, and to select the desired Wi-Fi channel:
 
 .. list-table:: Wi-Fi packet reception network management APIs
    :header-rows: 1
@@ -96,8 +96,8 @@ You can refer to the relevant structure at :file:`nrfxlib/nrf_wifi/fw_if/umac_if
 Monitor mode receive operation
 ******************************
 
-An IEEE 802.11 packet captured by the nRF70 Series device in Monitor mode will be sent up to the nRF70 Series Wi-Fi driver, which will prepend a radio information header to the received packet and present the resulting set to the user application.
-To receive the captured traffic in Monitor mode, the user application layer needs to open a raw socket to the nRF70 Series Wi-Fi driver.
+An IEEE 802.11 packet captured by the nRF70 Series device in Monitor mode will be sent up to the nRF Wi-Fi driver, which will prepend a radio information header to the received packet and present the resulting set to the user application.
+To receive the captured traffic in Monitor mode, the user application layer needs to open a raw socket to the nRF Wi-Fi driver.
 
 The following figure illustrates the packet structure and IEEE 802.11 packet sniffer operational flow:
 
@@ -112,7 +112,7 @@ Monitor mode receive operation filter configuration
 ***************************************************
 
 The type of IEEE 802.11 receive packets that the application receives can be configured using the filter ``NET_REQUEST_WIFI_PACKET_FILTER`` Wi-Fi management command.
-The nRF70 Series Wi-Fi driver must be configured to operate in Monitor mode or Promiscuous mode for setting packet filter settings.
+The nRF Wi-Fi driver must be configured to operate in Monitor mode or Promiscuous mode for setting packet filter settings.
 The application can choose to receive 802.11 management packets, 802.11 control packets, 802.11 data packets, or a combination of the three types of 802.11 packets.
 
 See the :ref:`wifi_shell_sample` sample for more information on configuring the filter settings for raw packet reception through shell commands.

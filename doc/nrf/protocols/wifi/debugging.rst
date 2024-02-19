@@ -12,12 +12,12 @@ This guide describes how to debug applications that use the nRF70 Series compani
 Software
 ********
 
-The scope of this section is limited to the nRF70 driver, WPA supplicant and networking stack.
+The scope of this section is limited to the nRF Wi-Fi driver, WPA supplicant and networking stack.
 
 Enable debug features
 =====================
 
-The nRF70 driver, WPA supplicant, and networking stack have debug features that can be enabled to help debug issues.
+The nRF Wi-Fi driver, WPA supplicant, and networking stack have debug features that can be enabled to help debug issues.
 
 You can enable debug features by using Zephyr's configuration :ref:`snippets` feature.
 
@@ -41,7 +41,7 @@ With CMake
 Statistics
 ==========
 
-The nRF70 driver, firmware, and networking stack have statistics feature that can be enabled to help debug issues.
+The nRF Wi-Fi driver, firmware, and networking stack have statistics feature that can be enabled to help debug issues.
 
 You can enable statistics by using the ``nrf70-debug`` snippet.
 See `Enable debug features`_.
@@ -56,11 +56,11 @@ See `Enable debug features`_.
       - Displays statistics for the networking stack, network interfaces, and network protocols.
       - Data path debugging (Networking stack)
     * - ``wifi statistics``
-      - Displays frame statistics for the nRF70 driver.
-      - Data path debugging (Wi-Fi driver)
+      - Displays frame statistics for the nRF Wi-Fi driver.
+      - Data path debugging (nRF Wi-Fi driver)
     * - ``wifi_util tx_stats <vif_index>``
-      - Displays transmit statistics for the nRF70 driver.
-      - Data path debugging (Wi-Fi driver TX)
+      - Displays transmit statistics for the nRF Wi-Fi driver.
+      - Data path debugging (nRF Wi-Fi driver TX)
     * - ``wifi_util rpu_stats all`` [1]_
       - Displays statistics for the nRF70 firmware (all modules, support for specific modules is also available).
       - nRF70 firmware debugging (Data and control path)

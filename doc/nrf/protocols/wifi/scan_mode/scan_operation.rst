@@ -90,7 +90,7 @@ This is achieved by:
 
 * Compiling out the WPA supplicant module
 
-* Compiling out non-scan related functionality in the Wi-Fi driver
+* Compiling out non-scan related functionality in the nRF Wi-Fi driver
 
 * Removing the need for network data buffers
 
@@ -177,7 +177,7 @@ The scan robustness (the number of APs scanned) can be controlled by using the f
 Impact of scan controls
 ***********************
 
-The following table provides a summary of the impact of the different scan controls on various parameters (limited to the Zephyr networking stack, Wi-Fi driver, and Wi-Fi IC):
+The following table provides a summary of the impact of the different scan controls on various parameters (limited to the Zephyr networking stack, nRF Wi-Fi driver, and Wi-Fi IC):
 
 .. list-table::
    :header-rows: 1
