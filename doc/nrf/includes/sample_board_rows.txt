@@ -182,6 +182,14 @@
 
 | :ref:`nRF7002 DK (emulating nRF7001) <nrf7002dk_nrf5340>` | PCA10143 | :ref:`nrf7002dk_nrf7001_nrf5340 <nrf7002dk_nrf5340>` | ``nrf7002dk_nrf7001_nrf5340_cpunet`` |
 
+.. nrf54h20pdk_nrf54h20_cpuapp
+
+| nRF54H20 PDK | | nrf54h20pdk_nrf54h20_cpuapp | ``nrf54h20pdk_nrf54h20_cpuapp`` |
+
+.. nrf54h20pdk_nrf54h20_cpuppr
+
+| nRF54H20 PDK | | nrf54h20pdk_nrf54h20_cpuppr | ``nrf54h20pdk_nrf54h20_cpuppr`` |
+
 .. native_posix
 
 | Native Posix | | native_posix | ``native_posix`` |
