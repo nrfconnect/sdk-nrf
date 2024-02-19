@@ -34,6 +34,7 @@ enum FrameType {
 };
 
 enum ControlSubtype {
+	CF_END_SUBTYPE = 0x0E,
 	ACK_SUBTYPE = 0x0D,
 	RTS_SUBTYPE = 0x0B,
 	CTS_SUBTYPE = 0x0C,
@@ -51,7 +52,8 @@ enum DataSubtype {
 enum ManagementSubtype {
 	PROBE_REQ_SUBTYPE = 0x04,
 	BEACON_SUBTYPE = 0x08,
-	PROBE_RESPONSE_SUBTYPE = 0x05
+	PROBE_RESPONSE_SUBTYPE = 0x05,
+	ACTION_SUBTYPE = 0x0D
     /* Add more subtypes as needed */
 };
 
@@ -69,6 +71,8 @@ typedef struct {
 	int qosDataCount;
 	int nullCount;
 	int qosNullCount;
+	int actionCount;
+	int cfEndCount;
 	/* Add more counters for other types as needed */
 } packetStats;
 
@@ -165,6 +169,8 @@ static void parseAndUpdateStats(unsigned char *packet, packetStats *stats)
 		case BLOCK_ACK_REQ_SUBTYPE:
 			stats->blockAckReqCount++;
 			break;
+		case CF_END_SUBTYPE:
+			stats->cfEndCount++;
 			/* Add more cases for other Data frame subtypes as needed */
 		default:
 			LOG_INF("Unknown Control frame subtype: %d", frameSubtype);
@@ -201,6 +207,9 @@ static void parseAndUpdateStats(unsigned char *packet, packetStats *stats)
 		case PROBE_RESPONSE_SUBTYPE:
 			stats->probeResponseCount++;
 			break;
+		case ACTION_SUBTYPE:
+			stats->actionCount++;
+			break;
 		/* Add more cases for other Management frame subtypes as needed */
 		default:
 			LOG_INF("Unknown Management frame subtype: %d", frameSubtype);
@@ -224,12 +233,14 @@ static int printStats(void)
 	LOG_INF("\tBeacon Count: %d", stats.beaconCount);
 	LOG_INF("\tProbe Request Count: %d", stats.probeReqCount);
 	LOG_INF("\tProbe Response Count: %d", stats.probeResponseCount);
+	LOG_INF("\tAction Count: %d", stats.actionCount);
 	LOG_INF("Control Frames:");
 	LOG_INF("\t ACK Count %d", stats.ackCount);
 	LOG_INF("\t RTS Count %d", stats.rtsCount);
 	LOG_INF("\t CTS Count %d", stats.ctsCount);
 	LOG_INF("\t Block Ack Count %d", stats.blockAckCount);
 	LOG_INF("\t Block Ack Req Count %d", stats.blockAckReqCount);
+	LOG_INF("\t CF End Count %d", stats.cfEndCount);
 	LOG_INF("Data Frames:");
 	LOG_INF("\tData Count: %d", stats.dataCount);
 	LOG_INF("\tQoS Data Count: %d", stats.qosDataCount);
