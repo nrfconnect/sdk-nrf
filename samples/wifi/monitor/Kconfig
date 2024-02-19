@@ -18,7 +18,7 @@ config MONITOR_MODE_CHANNEL
 
 config RX_THREAD_STACK_SIZE
 	int "Thread Stack Size"
-	default 1024
+	default 4096
 	help
 	  This option sets the stack size for the threads used in the sample.
 
