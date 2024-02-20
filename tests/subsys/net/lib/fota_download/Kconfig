@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+# Needed to allow mocking of tfm functions
+config MOCK_TFM_PLATFORM_S0_FUNCTIONS
+	bool
+	default y
+	depends on BUILD_WITH_TFM
