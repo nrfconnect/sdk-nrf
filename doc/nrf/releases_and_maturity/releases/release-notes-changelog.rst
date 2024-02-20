@@ -236,7 +236,10 @@ nRF5340 Audio
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-* Updated the ``ml_runner`` application module to allow running a machine learning model without anomaly support.
+* Updated:
+
+  The ``ml_runner`` application module to allow running a machine learning model without anomaly support.
+  The :ref:`application documentation <nrf_machine_learning_app>` by splitting it into several pages.
 
 nRF Desktop
 -----------
