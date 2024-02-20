@@ -417,7 +417,8 @@ Cellular samples
     * Configuration and overlay files to enable MCUboot to use the external flash on the nRF1961 DK.
     * A :kconfig:option:`CONFIG_COAP_ALWAYS_CONFIRM` Kconfig option to select CON or NON CoAP transfers for functions that previously used NON transfers only.
     * Support for the :ref:`lib_nrf_provisioning` library.
-    * An overlay file :file:`overlay-coap_nrf_provisioning.conf` to enable the :ref:`lib_nrf_provisioning` library with CoAP connectivity.
+    * Two overlay files :file:`overlay-http_nrf_provisioning.conf` and :file:`overlay-coap_nrf_provisioning.conf` to enable the :ref:`lib_nrf_provisioning` library with HTTP and CoAP connectivity respectively.
+      Both overlays specify UUID-style device IDs (not 'nrf-\ *IMEI*\ '-style) for compatibility with nRF Cloud auto-onboarding.
 
   * Fixed:
 
@@ -486,6 +487,10 @@ Cellular samples
 
     * The eDRX cycle to 5.12 s for both LTE-M and NB-IoT.
     * The periodic TAU (RPTAU) to 12 hours.
+
+* :ref:`nrf_cloud_rest_device_message` sample:
+
+  * Updated the :file:`overlay-nrf_provisioning.conf` overlay to specify UUID-style device IDs for compatibility with nRF Cloud auto-onboarding.
 
 Cryptography samples
 --------------------

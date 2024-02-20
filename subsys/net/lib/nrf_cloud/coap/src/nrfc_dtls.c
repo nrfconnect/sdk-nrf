@@ -55,8 +55,8 @@ static int get_modem_info(void)
 		return err;
 	}
 
-	LOG_INF("IMEI:                    %s", mdm_param.device.imei.value_string);
-	LOG_INF("Modem FW version:        %s", mdm_param.device.modem_fw.value_string);
+	LOG_INF("IMEI:                  %s", mdm_param.device.imei.value_string);
+	LOG_INF("Modem FW version:      %s", mdm_param.device.modem_fw.value_string);
 
 	return 0;
 }
