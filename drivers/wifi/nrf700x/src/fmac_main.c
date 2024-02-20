@@ -454,27 +454,6 @@ void reg_change_callbk_fn(void *vif_ctx,
 }
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
-
-void set_tx_pwr_ceil_default(struct nrf_wifi_tx_pwr_ceil_params *pwr_ceil_params)
-{
-	memset(pwr_ceil_params, 0, sizeof(*pwr_ceil_params));
-#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
-defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP) || \
-defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP)
-	pwr_ceil_params->max_pwr_2g_dsss = 0x54;
-	pwr_ceil_params->max_pwr_2g_mcs7 = 0x40;
-	pwr_ceil_params->max_pwr_2g_mcs0 = 0x40;
-#endif
-#if defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP) || defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP)
-	pwr_ceil_params->max_pwr_5g_low_mcs7 = 0x38;
-	pwr_ceil_params->max_pwr_5g_mid_mcs7 = 0x38;
-	pwr_ceil_params->max_pwr_5g_high_mcs7 = 0x38;
-	pwr_ceil_params->max_pwr_5g_low_mcs0 = 0x38;
-	pwr_ceil_params->max_pwr_5g_mid_mcs0 = 0x38;
-	pwr_ceil_params->max_pwr_5g_high_mcs0 = 0x38;
-#endif
-}
-
 void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 				struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params)
 {
@@ -499,64 +478,35 @@ void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_p
 	tx_pwr_ctrl_params->band_edge_5g_unii_4_lo = CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF;
 	tx_pwr_ctrl_params->band_edge_5g_unii_4_hi = CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF;
 
-#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
-defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP) || \
-defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP)
-	set_tx_pwr_ceil_default(tx_pwr_ceil_params);
-	#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_dsss)
-		tx_pwr_ceil_params->max_pwr_2g_dsss =
+	/* Mandatory fields in DTS, so, always one */
+	tx_pwr_ceil_params->rf_tx_pwr_ceil_params_override = 1;
+
+	tx_pwr_ceil_params->max_pwr_2g_dsss =
 			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_dsss);
-	#endif
 
-	#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_mcs7)
-		tx_pwr_ceil_params->max_pwr_2g_mcs7 =
-			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_mcs7);
-	#endif
+	tx_pwr_ceil_params->max_pwr_2g_mcs7 =
+		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_mcs7);
 
-	#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_mcs0)
-		tx_pwr_ceil_params->max_pwr_2g_mcs0 =
-			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_mcs0);
-	#endif
+	tx_pwr_ceil_params->max_pwr_2g_mcs0 =
+		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_mcs0);
 
-	#if DT_NODE_EXISTS(DT_NODELABEL(nrf70_tx_power_ceiling))
-		tx_pwr_ceil_params->rf_tx_pwr_ceil_params_override = 1;
-	#else
-		tx_pwr_ceil_params->rf_tx_pwr_ceil_params_override = 0;
-	#endif
-#endif
+	tx_pwr_ceil_params->max_pwr_5g_low_mcs7 =
+		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_low_mcs7);
 
-#if defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP) || defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP)
+	tx_pwr_ceil_params->max_pwr_5g_mid_mcs7 =
+		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_mid_mcs7);
 
-	#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_low_mcs7)
-		tx_pwr_ceil_params->max_pwr_5g_low_mcs7 =
-			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_low_mcs7);
-	#endif
+	tx_pwr_ceil_params->max_pwr_5g_high_mcs7 =
+		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_high_mcs7);
 
-	#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_mid_mcs7)
-		tx_pwr_ceil_params->max_pwr_5g_mid_mcs7 =
-			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_mid_mcs7);
-	#endif
+	tx_pwr_ceil_params->max_pwr_5g_low_mcs0 =
+		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_low_mcs0);
 
-	#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_high_mcs7)
-		tx_pwr_ceil_params->max_pwr_5g_high_mcs7 =
-			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_high_mcs7);
-	#endif
+	tx_pwr_ceil_params->max_pwr_5g_mid_mcs0 =
+		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_mid_mcs0);
 
-	#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_low_mcs0)
-		tx_pwr_ceil_params->max_pwr_5g_low_mcs0 =
-			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_low_mcs0);
-	#endif
-
-	#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_mid_mcs0)
-		tx_pwr_ceil_params->max_pwr_5g_mid_mcs0 =
-			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_mid_mcs0);
-	#endif
-
-	#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_high_mcs0)
-		tx_pwr_ceil_params->max_pwr_5g_high_mcs0 =
-			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_high_mcs0);
-	#endif
-#endif
+	tx_pwr_ceil_params->max_pwr_5g_high_mcs0 =
+		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_high_mcs0);
 }
 
 enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
