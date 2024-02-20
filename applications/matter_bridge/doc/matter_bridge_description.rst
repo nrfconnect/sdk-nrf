@@ -468,6 +468,16 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. include:: ../../../samples/matter/lock/README.rst
+    :start-after: matter_door_lock_sample_nrf70_firmware_patch_start
+    :end-before: matter_door_lock_sample_nrf70_firmware_patch_end
+
+For example:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -p -- -DSHIELD=nrf7002ek -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
+
 Selecting a build type
 ======================
 

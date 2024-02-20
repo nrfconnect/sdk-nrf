@@ -96,6 +96,25 @@ Instead, the factory reset and recommissioning to a Matter fabric allows the dev
 
 See `Matter door lock build types`_, `Selecting a build type`_, and :ref:`matter_lock_sample_switching_thread_wifi` for more information about how to configure and test this feature with this sample.
 
+Wi-Fi firmware on external memory
+---------------------------------
+
+.. matter_door_lock_sample_nrf70_firmware_patch_start
+
+You can program a portion of the application code related to the nRF70 Series' Wi-Fi firmware onto an external memory to free up space in the on-chip memory.
+This option is available only when building for the nRF5340 DK with the nRF7002 EK shield attached.
+To prepare an application to use this feature, you need to create additional MCUboot partitions.
+To learn how to configure MCUboot partitions, see the :ref:`nrf70_fw_patch_update_adding_partitions` guide.
+To enable this feature for Matter, set the :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU` Kconfig option to ``y`` for the application (in the application :file:`prj.conf`) and the :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` Kconfig option to ``3`` for the MCUBoot child image (in its own :file:`prj.conf`).
+
+.. matter_door_lock_sample_nrf70_firmware_patch_end
+
+For example:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -p -- -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex -DCONF_FILE=prj_thread_wifi_switched.conf -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
+
 .. _matter_lock_sample_ble_nus:
 
 Matter Bluetooth LE with Nordic UART Service

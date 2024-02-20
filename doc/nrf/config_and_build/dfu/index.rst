@@ -80,3 +80,4 @@ See the following user guides for an overview of topics related to firmware upda
    :caption: Subpages:
 
    dfu_image_versions
+   nrf70_fw_patch_update
