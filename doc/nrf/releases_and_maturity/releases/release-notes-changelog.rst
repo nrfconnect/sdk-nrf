@@ -336,6 +336,7 @@ nRF Desktop
   * The default value of newly introduced :kconfig:option:`CONFIG_CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15` Kconfig option.
     The option is enabled by default by the nRF Desktop application.
     Force power down on disconnection with reason ``0x15`` (Remote Device Terminated due to Power Off) is triggered to avoid waking up HID host until user input is detected.
+  * The :ref:`nrf_desktop_wheel` configuration to allow using **GPIO1** for scroll wheel.
 
 * Added:
 
