@@ -9,8 +9,11 @@
 #
 # Can be executed by both the NCS and TF-M build systems.
 #
-# For TF-M the nrf_security/tfm/CMakeLists.txt file will execute this file.
-# For NCS  the nrf_security/CMakeLists.txt     file will execute this file.
+# The variable BUILD_INSIDE_TFM can be used to distinguish between being
+# within the TF-M build system or the NCS build system.
+#
+# For TF-M the nrf_security/tfm/CMakeLists.txt file will execute this file. BUILD_INSIDE_TFM=True
+# For NCS  the nrf_security/CMakeLists.txt     file will execute this file. BUILD_INSIDE_TFM=False
 #
 
 set(OBERON_PSA_PATH ${ZEPHYR_NRF_MODULE_DIR}/ext/oberon/psa)
@@ -34,8 +37,7 @@ if(NOT ${CONFIG_MBEDTLS_USER_CONFIG_FILE} STREQUAL "nrf-config-user-empty.h" )
   )
 endif()
 
-if (CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
-  # Building as part of the TF-M build system.
+if(BUILD_INSIDE_TFM)
   # In order to support FPU in TF-M the following is documented by the TF-M
   # build system:
   #
@@ -255,7 +257,7 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
   )
 endif()
 
-if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
+if (NOT BUILD_INSIDE_TFM)
   # Add zephyr-specific code
   add_subdirectory(zephyr)
 endif()
