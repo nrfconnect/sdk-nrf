@@ -60,6 +60,10 @@ choice LIBC_IMPLEMENTATION
 	default NEWLIB_LIBC
 endchoice
 
+config WPA_SUPP_MGD_IFACES_PREFIXES
+	string "WPA supplicant managed interfaces prefixes"
+	default "wlan,esp,nordic_wlan"
+
 config WPA_SUPP_THREAD_STACK_SIZE
 	int "Stack size for wpa_supplicant thread"
 	default 8192

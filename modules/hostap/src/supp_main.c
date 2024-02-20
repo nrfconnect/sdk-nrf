@@ -306,9 +306,25 @@ static void iface_event_handler(struct net_mgmt_event_callback *cb,
 							uint32_t mgmt_event, struct net_if *iface)
 {
 	const char *ifname = iface->if_dev->dev->name;
+	char *prefix;
+	char mgd_if_prefix[] = CONFIG_WPA_SUPP_MGD_IFACES_PREFIXES;
+	bool found = false;
 
-	if (strncmp(ifname, IFACE_MATCHING_PREFIX, sizeof(IFACE_MATCHING_PREFIX) - 1) != 0) {
-		return;
+	if (sizeof(mgd_if_prefix) > 0) {
+		prefix = strtok(mgd_if_prefix, ",");
+
+		while (prefix) {
+			if (strncmp(ifname, prefix, strlen(prefix)) == 0) {
+				found = true;
+				break;
+			}
+			prefix = strtok(NULL, ",");
+		}
+
+		if (!found) {
+			wpa_printf(MSG_ERROR, "No matching prefix found");
+			return;
+		}
 	}
 
 	wpa_printf(MSG_DEBUG, "Event: %d", mgmt_event);
@@ -340,12 +356,19 @@ static void wait_for_interface_up(const char *iface_name)
 static void iface_cb(struct net_if *iface, void *user_data)
 {
 	const char *ifname = iface->if_dev->dev->name;
+	const struct device *wifi_dev = NULL;
+
+	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
+	if (!wifi_dev) {
+		wpa_printf(MSG_ERROR, "Device instance not found");
+		return;
+	}
 
 	if (ifname == NULL) {
 		return;
 	}
 
-	if (strncmp(ifname, DEFAULT_IFACE_NAME, strlen(ifname)) != 0) {
+	if (strncmp(ifname, wifi_dev->name, strlen(ifname)) != 0) {
 		return;
 	}
 
@@ -361,6 +384,13 @@ static void iface_cb(struct net_if *iface, void *user_data)
 static void z_wpas_iface_work_handler(struct k_work *item)
 {
 	ARG_UNUSED(item);
+	const struct device *wifi_dev = NULL;
+
+	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
+	if (!wifi_dev) {
+		wpa_printf(MSG_ERROR, "Device instance not found");
+		return;
+	}
 
 	int ret = k_sem_take(&z_wpas_ready_sem, K_SECONDS(5));
 
@@ -370,7 +400,7 @@ static void z_wpas_iface_work_handler(struct k_work *item)
 	}
 
 	net_if_foreach(iface_cb, NULL);
-	wait_for_interface_up(DEFAULT_IFACE_NAME);
+	wait_for_interface_up(wifi_dev->name);
 
 	k_sem_give(&z_wpas_ready_sem);
 }
@@ -475,6 +505,13 @@ static void z_wpas_start(void)
 {
 	struct wpa_params params;
 	int exitcode = -1;
+	const struct device *wifi_dev = NULL;
+
+	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
+	if (!wifi_dev) {
+		wpa_printf(MSG_ERROR, "Device instance not found");
+		return;
+	}
 
 #if !defined(CONFIG_WPA_SUPP_CRYPTO_NONE) && !defined(CONFIG_MBEDTLS_ENABLE_HEAP)
 	/* Needed for crypto operation as default is no-op and fails */
@@ -531,7 +568,7 @@ static void z_wpas_start(void)
 		exitcode = wpa_supplicant_run(global);
 	}
 
-	generate_supp_state_event(DEFAULT_IFACE_NAME, NET_EVENT_WPA_SUPP_CMD_NOT_READY, 0);
+	generate_supp_state_event(wifi_dev->name, NET_EVENT_WPA_SUPP_CMD_NOT_READY, 0);
 	eloop_unregister_read_sock(z_wpas_event_sockpair[0]);
 
 	z_global_wpa_ctrl_deinit();
