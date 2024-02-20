@@ -186,3 +186,11 @@ For example, for nrfjprog:
 .. code-block:: console
 
     nrfjprog -f nrf53 -s 0 --program build/zephyr/merged.hex ---sectorerase --qspisectorerase --verify --reset
+
+Updating firmware patches
+=========================
+
+You can update the firmware patches using all available DFU alternatives described in the main :ref:`ug_fw_update` page.
+To do it, you need to use MCUboot bootloader and create proper partitions to allow storing and replacing the firmware patches.
+
+To learn how to prepare your application and perform the firmware patch update, see the :ref:`ug_nrf70_fw_patch_update` page.
