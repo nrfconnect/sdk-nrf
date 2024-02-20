@@ -58,6 +58,8 @@ int tfm_platform_firmware_info(uint32_t fw_address, struct fw_info *info)
 	return status2err(ret, out.result);
 }
 
+/* Don't include the function if it is mocked for tests */
+#ifndef CONFIG_MOCK_TFM_PLATFORM_S0_FUNCTIONS
 int tfm_platform_s0_active(uint32_t s0_address, uint32_t s1_address,
 			   bool *s0_active)
 {
@@ -83,6 +85,7 @@ int tfm_platform_s0_active(uint32_t s0_address, uint32_t s1_address,
 
 	return 0;
 }
+#endif /* not defined(CONFIG_MOCK_TFM_PLATFORM_S0_FUNCTIONS) */
 #endif
 
 int tfm_platform_ns_fault_set_handler(struct tfm_ns_fault_service_handler_context  *context,
