@@ -66,6 +66,7 @@ int npgps_get_time(int64_t *gps_sec, uint16_t *gps_day, uint32_t *gps_time_of_da
 /* flash block allocation functions */
 int ngps_block_pool_init(uint32_t base_address, int num);
 int npgps_alloc_block(void);
+void npgps_undo_alloc_block(int block);
 void npgps_free_block(int block);
 int npgps_get_block_extent(int block);
 void npgps_reset_block_pool(void);

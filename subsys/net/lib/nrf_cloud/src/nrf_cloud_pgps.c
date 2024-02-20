@@ -109,9 +109,9 @@ static uint8_t prediction_cache[PGPS_PREDICTION_STORAGE_SIZE];
 #endif
 
 static uint8_t prediction_buf[PGPS_PREDICTION_STORAGE_SIZE];
-static atomic_t accept_packets;
-static atomic_t loading_in_progress;
-static atomic_t notified;
+static volatile bool accept_packets;
+static volatile bool loading_in_progress;
+static volatile bool notified;
 
 static int validate_stored_predictions(uint16_t *bad_day, uint32_t *bad_time);
 static void log_pgps_header(const char *msg, const struct nrf_cloud_pgps_header *header);
@@ -1628,6 +1628,8 @@ int nrf_cloud_pgps_begin_update(void)
 		state = PGPS_NONE; /* Fatal error in managing flash storage.
 				    * Allow app to keep running w/o P-GPS.
 				    */
+		npgps_undo_alloc_block(index.store_block);
+		index.store_block = NO_BLOCK;
 		npgps_download_unlock();
 		return err;
 	}
@@ -1652,6 +1654,7 @@ static void end_transfer_handler(int transfer_result)
 		LOG_DBG("Download completed without error.");
 	} else {
 		LOG_ERR("Download failed: %d", transfer_result);
+		npgps_undo_alloc_block(index.store_block);
 	}
 	nrf_cloud_pgps_finish_update();
 }
