@@ -300,5 +300,5 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 
 out:
 	k_mutex_unlock(&key_mgmt_mutex);
-	return 0;
+	return err;
 }
