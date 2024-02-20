@@ -35,7 +35,7 @@ future==0.18.3            # via junitparser
 gcovr==6.0                # via -r zephyr/scripts/requirements-build-test.txt
 gitdb==4.0.10             # via gitpython
 gitlint==0.18.0           # via -r nrf/scripts/requirements-ci.txt, -r zephyr/scripts/requirements-extras.txt
-gitlint-core==0.18.0      # via gitlint, gitlint-core
+gitlint-core==0.18.0      # via gitlint
 gitpython==3.1.41         # via -r nrf/scripts/requirements-ci.txt
 graphviz==0.20.1          # via -r zephyr/scripts/requirements-extras.txt
 grpcio==1.58.0            # via grpcio-tools
@@ -84,7 +84,7 @@ pyelftools==0.30          # via -r zephyr/scripts/requirements-base.txt, pyocd
 pygit2==1.10.0            # via -r nrf/scripts/requirements-extra.txt
 pygithub==1.59.1          # via -r nrf/scripts/requirements-extra.txt, -r zephyr/scripts/requirements-extras.txt
 pygments==2.16.1          # via gcovr
-pyjwt==2.8.0              # via pygithub, pyjwt
+pyjwt==2.8.0              # via pygithub
 pykwalify==1.8.0          # via -r zephyr/scripts/requirements-base.txt, west
 pylink-square==1.2.0      # via -r zephyr/scripts/requirements-base.txt, pyocd
 pylint==2.17.5            # via -r nrf/scripts/requirements-build.txt, -r zephyr/scripts/requirements-compliance.txt
