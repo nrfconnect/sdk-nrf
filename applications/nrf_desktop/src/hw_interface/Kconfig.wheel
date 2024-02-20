@@ -10,6 +10,7 @@ menu "Wheel configuration"
 config DESKTOP_WHEEL_ENABLE
 	bool "Enable wheel hardware interface"
 	depends on QDEC_NRFX
+	depends on PINCTRL
 	help
 	  This option enables wheel hardware interface for nRF Desktop application.
 	  Wheel hardware interface is responsible for generating events related to rotation of the
