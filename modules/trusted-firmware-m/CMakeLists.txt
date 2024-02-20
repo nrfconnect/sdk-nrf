@@ -187,7 +187,10 @@ if (CONFIG_TFM_PSA_FRAMEWORK_HAS_MM_IOVEC)
     )
 endif()
 
-if (CONFIG_NFCT_PINS_AS_GPIOS)
+# Get the nfct-pins-as-gpios property from the device tree
+dt_prop(nfct_pins_as_gpios_dt PATH "/uicr" PROPERTY "nfct-pins-as-gpios")
+
+if (CONFIG_NFCT_PINS_AS_GPIOS OR DEFINED ${nfct_pins_as_gpios_dt})
   set_property(TARGET zephyr_property_target
   APPEND PROPERTY TFM_CMAKE_OPTIONS
     -DCONFIG_NFCT_PINS_AS_GPIOS=${CONFIG_NFCT_PINS_AS_GPIOS}
