@@ -38,6 +38,7 @@
 
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
+#define DT_DRV_COMPAT nordic_wlan0
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 
 struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
@@ -872,8 +873,7 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 
 
 #ifdef CONFIG_NET_L2_ETHERNET
-ETH_NET_DEVICE_INIT(wlan0, /* name - token */
-		    "wlan0", /* driver name - dev->name */
+ETH_NET_DEVICE_DT_INST_DEFINE(0,
 		    nrf_wifi_drv_main_zep, /* init_fn */
 		    NULL, /* pm_action_cb */
 		    &rpu_drv_priv_zep.rpu_ctx_zep.vif_ctx_zep[0], /* data */
@@ -886,8 +886,7 @@ ETH_NET_DEVICE_INIT(wlan0, /* name - token */
 		    &wifi_offload_ops, /* api */
 		    CONFIG_NRF_WIFI_IFACE_MTU); /*mtu */
 #else
-DEVICE_DEFINE(wlan0, /* name - token */
-	      "wlan0", /* driver name - dev->name */
+DEVICE_DT_INST_DEFINE(0,
 	      nrf_wifi_drv_main_zep, /* init_fn */
 	      NULL, /* pm_action_cb */
 #ifndef CONFIG_NRF700X_RADIO_TEST
@@ -902,5 +901,5 @@ DEVICE_DEFINE(wlan0, /* name - token */
 #endif /* CONFIG_NRF700X_STA_MODE */
 
 #ifdef CONFIG_L2_WIFI_CONNECTIVITY
-CONN_MGR_BIND_CONN(wlan0, L2_CONN_WLAN0);
+CONN_MGR_BIND_CONN(Z_DEVICE_DT_DEV_ID(DT_DRV_INST(0)), L2_CONN_WLAN0);
 #endif /* CONFIG_L2_WIFI_CONNECTIVITY */
