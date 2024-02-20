@@ -36,14 +36,21 @@ Supported Matter versions in the |NCS|
 
 The following table lists Matter versions supported in the |NCS|, with a brief overview of changes and the release date.
 
-+-----------------+--------------------------------------------------------------------------------------------------------------------------------+---------------------+
-| Matter version  | Overview of changes                                                                                                            | Release date        |
-+=================+================================================================================================================================+=====================+
-| 1.1.0           | - Improved Intermittently Connected Device (ICD) support: more :ref:`ug_matter_configuring_optional_persistent_subscriptions`. | May 18, 2023        |
-|                 | - Enhancements and bug fixes for Matter Specification, Certification Test Plan, and the Matter SDK.                            |                     |
-+-----------------+--------------------------------------------------------------------------------------------------------------------------------+---------------------+
-| 1.0.0           | Initial version of the Matter specification.                                                                                   | November 2, 2022    |
-+-----------------+--------------------------------------------------------------------------------------------------------------------------------+---------------------+
++-----------------+----------------------------------------------------------------------------------------------------------+---------------------+
+| Matter version  | Overview of changes                                                                                      | Release date        |
++=================+==========================================================================================================+=====================+
+| 1.2.0           | - Introduced support for the ICD Management cluster.                                                     | October 23, 2023    |
+|                 | - Added the Product Appearance attribute in the Basic Information cluster.                               |                     |
+|                 | - Added nine new :ref:`device types <ug_matter_device_types>`:                                           |                     |
+|                 |   Refrigerator, Room Air Conditioner, Dishwasher, Laundry Washer, Robotic Vacuum Cleaner,                |                     |
+|                 |   Smoke CO Alarm, Air Quality Sensor, Air Purifier, and Fan.                                             |                     |
++-----------------+----------------------------------------------------------------------------------------------------------+---------------------+
+| 1.1.0           | - Improved Intermittently Connected Device (ICD) support:                                                | May 18, 2023        |
+|                 |   more :ref:`ug_matter_configuring_optional_persistent_subscriptions`.                                   |                     |
+|                 | - Enhancements and bug fixes for Matter Specification, Certification Test Plan, and the Matter SDK.      |                     |
++-----------------+----------------------------------------------------------------------------------------------------------+---------------------+
+| 1.0.0           | Initial version of the Matter specification.                                                             | November 2, 2022    |
++-----------------+----------------------------------------------------------------------------------------------------------+---------------------+
 
 .. _ug_matter_overview_dev_model_ecosystems:
 
