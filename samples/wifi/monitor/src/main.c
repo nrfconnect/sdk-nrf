@@ -73,6 +73,11 @@ typedef struct {
 	int qosNullCount;
 	int actionCount;
 	int cfEndCount;
+	int unknownMgmtCount;
+	int unknownCtrlCount;
+	int unknownDataCount;
+	int reservedFrameCount;
+	int unknownFrameCount;
 	/* Add more counters for other types as needed */
 } packetStats;
 
@@ -173,7 +178,8 @@ static void parseAndUpdateStats(unsigned char *packet, packetStats *stats)
 			stats->cfEndCount++;
 			/* Add more cases for other Data frame subtypes as needed */
 		default:
-			LOG_INF("Unknown Control frame subtype: %d", frameSubtype);
+			stats->unknownCtrlCount++;
+			LOG_DBG("Unknown Control frame subtype: %d", frameSubtype);
 		}
 		break;
 	case DATA_FRAME:
@@ -192,7 +198,8 @@ static void parseAndUpdateStats(unsigned char *packet, packetStats *stats)
 			break;
 		/* Add more cases for other Data frame subtypes as needed */
 		default:
-			LOG_INF("Unknown Data frame subtype: %d", frameSubtype);
+			stats->unknownDataCount++;
+			LOG_DBG("Unknown Data frame subtype: %d", frameSubtype);
 		}
 		break;
 
@@ -212,16 +219,19 @@ static void parseAndUpdateStats(unsigned char *packet, packetStats *stats)
 			break;
 		/* Add more cases for other Management frame subtypes as needed */
 		default:
-			LOG_INF("Unknown Management frame subtype: %d", frameSubtype);
+			stats->unknownMgmtCount++;
+			LOG_DBG("Unknown Management frame subtype: %d", frameSubtype);
 		}
 		break;
 	case RESERVED_FRAME:
 		/* Handle reserved frame types as needed */
-		LOG_INF("Reserved frame type: %d", frameType);
+		stats->reservedFrameCount++;
+		LOG_DBG("Reserved frame type: %d", frameType);
 		break;
 	default:
 		/* Handle unknown frame types as needed */
-		LOG_INF("Unknown frame type: %d", frameType);
+		stats->unknownFrameCount++;
+		LOG_DBG("Unknown frame type: %d", frameType);
 		break;
 	}
 }
@@ -246,6 +256,12 @@ static void printStats(void)
 	LOG_INF("\tQoS Data Count: %d", stats.qosDataCount);
 	LOG_INF("\tNull Count: %d", stats.nullCount);
 	LOG_INF("\tQoS Null Count: %d", stats.qosNullCount);
+	LOG_INF("Unknown Frames:");
+	LOG_INF("\tUnknown Management Frame Count: %d", stats.unknownMgmtCount);
+	LOG_INF("\tUnknown Control Frame Count: %d", stats.unknownCtrlCount);
+	LOG_INF("\tUnknown Data Frame Count: %d", stats.unknownDataCount);
+	LOG_INF("\tReserved Frame Count: %d", stats.reservedFrameCount);
+	LOG_INF("\tUnknown Frame Count: %d", stats.unknownFrameCount);
 	LOG_INF("\n");
 }
 
