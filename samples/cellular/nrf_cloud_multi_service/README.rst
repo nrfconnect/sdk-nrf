@@ -40,6 +40,7 @@ This sample implements or demonstrates the following features:
 * Support for modem AT commands over UART using the :ref:`lib_at_host` library (default) or the :ref:`lib_at_shell` library (for builds that need the :ref:`Zephyr shell <shell_api>`).
   See `nRF91x1 AT Commands Reference Guide`_ or `nRF9160 AT Commands Reference Guide`_ documentation on each AT command.
 * Support for the `nRF Cloud Provisioning Service`_ using the :ref:`lib_nrf_provisioning` library.
+  For compatibility with auto-onboarding, the device ID uses the 128 bit UUID format rather than the older nrf-<IMEI> format.
 * Support for remote execution of modem AT commands using application-specific device messages.
 * Periodic cellular, Wi-Fi, and GNSS location tracking using the :ref:`lib_location` library.
 * Periodic temperature sensor sampling on your `Nordic Thingy:91`_, or fake temperature  measurements on your `Nordic nRF9161 DK`_, or `Nordic nRF9160 DK`_.
@@ -749,6 +750,10 @@ Building with nRF Cloud Provisioning Service Support
 
 The `nRF Cloud Provisioning Service`_ allows you to securely provision and onboard your Nordic Semiconductor devices entirely over-the-air (after you have obtained an `attestation token <nRF Cloud Generating attestation tokens_>`_ for the device).
 
+.. note::
+
+   This service is not compatible with devices that use the nRF9160, but only newer nRF91x1 devices such as the nRF9161.
+
 You can enable support for this service by building the sample as follows:
 
 .. tabs::
@@ -776,6 +781,7 @@ You can enable support for this service by building the sample as follows:
       The :file:`overlay_coap.conf` overlay causes the sample to use CoAP instead of MQTT for normal communication.
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_provisioning_service` for instructions on how to provision your device with the Provisioning Service.
+The device is identified using its UUID rather than its IMEI, since both overlays set the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` Kconfig option.
 
 .. _nrf_cloud_multi_service_building_wifi_scan:
 
@@ -966,12 +972,14 @@ For your device to successfully connect to nRF Cloud, you must `onboard it <nRF 
 The following sections outline the various onboarding methods that this sample supports.
 
   * If you are building with :ref:`provisioning service support <nrf_cloud_multi_service_building_provisioning_service>`, proceed to :ref:`nrf_cloud_multi_service_provisioning_service`.
+    Use this method for nRF91x1-based devices.
+  * If you are not building with Provisioning Service support, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding`.
+    Use this method for nRF9160-based devices.
   * If you are building with :ref:`hard-coded credentials <nrf_cloud_multi_service_build_hardcoded>`, proceed to :ref:`nrf_cloud_multi_service_onboard_hardcoded`.
-  * Otherwise, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding`.
 
 .. note::
    You only need to perform one of the above methods.
-   Select the one that best matches your build configuration.
+   Select the one that best matches your needs, then build and run the sample with the required build configuration.
 
 .. _nrf_cloud_multi_service_install_nrf_utils:
 
@@ -979,8 +987,94 @@ Download and install nRF Cloud Utilities
 ========================================
 
 To perform many of the actions in the other sections, you will need to install the `nRF Cloud Utilities <nRF Cloud Utilities documentation_>`_ repository.
+This is not necessary if you are using the `auto-onboarding <nRF Cloud Auto-onboarding_>`_ feature of the nRF Cloud Provisioning Service.
 
 To install the repository, clone or download it and `install the required packages <nRF Cloud Utilities Prerequisites>`_.
+
+.. _nrf_cloud_multi_service_provisioning_service:
+
+Provisioning with the nRF Cloud Provisioning Service
+====================================================
+
+The nRF Cloud Provisioning Service is only compatible with nRF91x1 devices.
+For devices using the nRF9160, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding`.
+
+If you have :ref:`enabled support <nrf_cloud_multi_service_building_provisioning_service>` for the `provisioning service <nRF Cloud Provisioning Service_>`_, you can provision and onboard your device in one of two ways:
+
+* Using auto-onboarding, the easiest method.
+
+   The nRF Cloud Provisioning Service auto-onboarding is currently compatible with CoAP and REST but not MQTT connectivity to nRF Cloud; for that, use scripted onboarding.
+
+   With this method, use the nRF Connect Serial Terminal program and the nRF Cloud portal.
+   The device ID used in nRF Cloud portal requires the UUID format and not the 'nrf-\ *IMEI*\ ' format.
+   See `device claiming <nRF Cloud device claiming_>`_ for more information.
+
+* Using scripted onboarding, as follows:
+
+   First, :ref:`create a self-signed CA certificate <nrf_cloud_multi_service_create_self_signed_ca>`.
+
+   Then, complete the following steps for each device you wish to onboard:
+
+   1. Make sure that your device is plugged in and this sample has been flashed to it.
+   #. Use the :file:`claim_and_provision_device.py` Python script :ref:`you installed <nrf_cloud_multi_service_install_nrf_utils>` to provision and onboard your device
+
+      .. tabs::
+
+         .. group-tab:: MQTT
+
+               .. parsed-literal::
+                  :class: highlight
+
+                  python3 claim_and_provision_device.py --api_key "\ *your_api_key*\ " --ca="self\_\ *self_cert_serial*\ \_ca.pem" --ca_key="self\_\ *self_cert_serial*\ \_prv.pem" --install_ca --unclaim --id_imei --id_str "nrf-"
+
+               Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>` and *your_api_key* is your `nRF Cloud REST API key`_.
+
+         .. group-tab:: CoAP
+
+               .. parsed-literal::
+                  :class: highlight
+
+                  python3 claim_and_provision_device.py --api_key "\ *your_api_key*\ " --ca="self\_\ *self_cert_serial*\ \_ca.pem" --ca_key="self\_\ *self_cert_serial*\ \_prv.pem" --install_ca --unclaim --id_imei --id_str "nrf-" --coap
+
+               Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>` and *your_api_key* is your `nRF Cloud REST API key`_.
+               The ``--coap`` option indicates that the device needs the CoAP root CA installed.
+               See below for more details.
+
+      .. note::
+         This command assumes you have left the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` option enabled and the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` option set to ``nrf-``.
+         See :ref:`configuration_device_id` to use other device ID formats.
+
+      This script automatically performs the following steps:
+
+      1. Obtains an `attestation token <nRF Cloud Generating attestation tokens_>`_ from your device over UART using the :ref:`lib_nrf_provisioning` library shell, and then *claims* your device on nRF Cloud.
+      2. Generates, signs, and installs a device credential for your device.
+
+         * This happens entirely over-the-air.
+         * The private key for this credential is generated by the device itself.
+           It is stored securely and never leaves the device.
+
+      3. Installs any necessary root CA certificates.
+
+         * CoAP connections use one root CA certificate, whereas HTTPS and MQTT use another.
+         * Devices using CoAP need both installed, since HTTPS is used for FOTA and P-GPS on CoAP devices.
+
+      This script may take a few minutes.
+      When it succeeds, you should see several provisioning commands be issued and succeed, and some additional final output:
+
+      .. parsed-literal::
+         :class: highlight
+
+         Adding device 'nrf-\ *IMEI*\ ' to cloud account...
+         ProvisionDevices API call response: 202 - Accepted
+         Done.
+
+      Where *IMEI* is the IMEI of your device.
+
+      The device should also appear in the devices list in the nRF Cloud portal.
+
+      Once the script is complete, you can connect to your device with a UART terminal to monitor its activity.
+
+      Within a few minutes of script completion, it should successfully connect to nRF Cloud and begin demonstrating the :ref:`supported nRF Cloud features <nrf_cloud_multi_service_features>`.
 
 .. _nrf_cloud_multi_service_standard_onboarding:
 
@@ -1081,78 +1175,6 @@ Then, complete the following steps for each device you wish to onboard:
    Once the `Bulk Onboard Devices`_ page is open, drag in the :file:`provision.csv` file and click **Onboard**.
 
    You should see a message stating that the file was uploaded successfully, and your device should appear in the `Devices <nRF Cloud Portal Devices_>`_ page.
-
-.. _nrf_cloud_multi_service_provisioning_service:
-
-Provisioning with the nRF Cloud Provisioning Service
-====================================================
-
-If you have :ref:`enabled support <nrf_cloud_multi_service_building_provisioning_service>` for the `nRF Cloud Provisioning Service`_, you can provision and onboard your device as follows:
-
-First, :ref:`create a self-signed CA certificate <nrf_cloud_multi_service_create_self_signed_ca>`.
-
-Then, complete the following steps for each device you wish to onboard:
-
-1. Make sure your device is plugged in, and that this sample has been flashed to it.
-#. Use the :file:`claim_and_provision_device.py` Python script :ref:`you installed <nrf_cloud_multi_service_install_nrf_utils>` to provision and onboard your device
-
-   .. tabs::
-
-      .. group-tab:: MQTT
-
-            .. parsed-literal::
-               :class: highlight
-
-               python3 claim_and_provision_device.py --api_key "\ *your_api_key*\ " --ca="self\_\ *self_cert_serial*\ \_ca.pem" --ca_key="self\_\ *self_cert_serial*\ \_prv.pem" --install_ca --unclaim --id_imei --id_str "nrf-"
-
-            Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>` and *your_api_key* is your `nRF Cloud REST API key`_.
-
-      .. group-tab:: CoAP
-
-            .. parsed-literal::
-               :class: highlight
-
-               python3 claim_and_provision_device.py --api_key "\ *your_api_key*\ " --ca="self\_\ *self_cert_serial*\ \_ca.pem" --ca_key="self\_\ *self_cert_serial*\ \_prv.pem" --install_ca --unclaim --id_imei --id_str "nrf-" --coap
-
-            Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>` and *your_api_key* is your `nRF Cloud REST API key`_.
-            The ``--coap`` option indicates that the device needs the CoAP root CA installed.
-            See below for more details.
-
-   .. note::
-      This command assumes you have left the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` option enabled and the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` option set to ``nrf-``.
-      See :ref:`configuration_device_id` to use other device ID formats.
-
-   This script automatically performs the following steps:
-
-   1. Obtains an `attestation token <nRF Cloud Generating attestation tokens_>`_ from your device over UART using the :ref:`lib_nrf_provisioning` library shell, and then `claims` your device on nRF Cloud.
-   2. Generates, signs, and installs a device credential for your device.
-
-      * This happens entirely over-the-air.
-      * The private key for this credential is generated by the device itself.
-        It is stored securely and never leaves the device.
-
-   3. Installs any necessary root CA certificates.
-
-      * CoAP connections use one root CA certificate, whereas HTTPS and MQTT use another.
-      * Devices using CoAP need both installed, since HTTPS is used for FOTA and PGPS on CoAP devices.
-
-   This script may take a few minutes.
-   When it succeeds, you should see several provisioning commands be issued and succeed, and some additional final output:
-
-   .. parsed-literal::
-      :class: highlight
-
-      Adding device 'nrf-\ *IMEI*\ ' to cloud account...
-      ProvisionDevices API call response: 202 - Accepted
-      Done.
-
-   Where *IMEI* is the IMEI of your device.
-
-   The device should also appear in the devices list in the nRF Cloud portal.
-
-   Once the script is complete, you can connect to your device with a UART terminal to monitor its activity.
-
-   Within a few minutes of script completion, it should successfully connect to nRF Cloud and begin demonstrating the :ref:`supported nRF Cloud features <nrf_cloud_multi_service_features>`.
 
 .. _nrf_cloud_multi_service_onboard_hardcoded:
 

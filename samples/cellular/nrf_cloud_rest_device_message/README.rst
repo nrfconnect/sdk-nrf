@@ -54,18 +54,40 @@ The configured Send LED (**LED 2** by default) (:ref:`CONFIG_REST_DEVICE_MESSAGE
 
 .. _nrf_cloud_rest_device_message_provisioning:
 
+Provisioning and onboarding your device to nRF Cloud
+****************************************************
+
+You must on-board your device to nRF Cloud for this sample to function.
+You only need to do this once for each device.
+
+This sample supports two methods to on-board your device:
+
+* Using `nRF Cloud Provisioning Service`_ and the auto-onboarding option.
+   This is the preferred option for nRF91x1-based devices.
+   The nRF Cloud Provisioning Service auto-onboarding is currently compatible with REST and CoAP but not MQTT connectivity to nRF Cloud; for that, use the next method.
+* Using Just-in-time provisioning.
+   This is the legacy option.
+   Use this method for nRF9160-based devices.
+
+Remote provisioning and auto-onboarding with nRF Cloud
+======================================================
+
+Build and run the sample with the remote provisioning overlay as explained below: :ref:`nrf_cloud_rest_device_message_remote_provisioning_overlay`.
+Follow the steps outlined in `device claiming <nRF Cloud device claiming_>`_.
+See `nRF Cloud Auto-onboarding`_ for more information.
+The device ID is in the UUID format, not the legacy 'nrf-\ *IMEI*\ ' format.
+
 Just-in-time provisioning (JITP) with nRF Cloud
-***********************************************
+===============================================
 
-Your device must be provisioned with nRF Cloud for this sample to function.
-
-Complete the following steps to provision your device:
+Complete the following steps to on-board your device:
 
 1. Enable the :ref:`CONFIG_REST_DEVICE_MESSAGE_DO_JITP <CONFIG_REST_DEVICE_MESSAGE_DO_JITP>` option.
 #. Press button 1 when prompted at startup.
 #. Follow the instructions for just-in-time provisioning (JITP) printed to UART.
 
-You only need to do this once for each device.
+See `nRF Cloud Just-In-Time-Provisioning`_ for more information.
+The device ID is in the legacy 'nrf-\ *IMEI*\ ' format.
 
 Configuration
 *************
@@ -104,6 +126,10 @@ Building and running
 
 The configuration file for this sample is located in :file:`samples/cellular/nrf_cloud_rest_device_message`.
 See :ref:`configure_application` for information on how to configure the parameters.
+
+nRF Cloud logging overlay
+=========================
+
 To enable `Zephyr Logging`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` library, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_nrfcloud_logging.conf``
@@ -112,11 +138,18 @@ This overlay allows the sample and various subsystems that have logging enabled 
 Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` option to the log level of messages to send to nRF Cloud, such as ``4`` for debug log messages.
 Set the :kconfig:option:`CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL_DBG` option so that log messages are generated on each button press.
 
+.. _nrf_cloud_rest_device_message_remote_provisioning_overlay:
+
+Remote provisioning overlay
+===========================
+
+This overlay is for use with nRF91x1-based devices only.
 To enable remote provisioning with the `nRF Cloud Provisioning Service`_ add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay-nrf_provisioning.conf``
 
 This overlay enables the :ref:`lib_nrf_provisioning` library and its provisioning shell.
+It configures the device ID to use the UUID format, not the legacy 'nrf-\ *IMEI*\ ' format.
 The sample will periodically check for provisioning commands.
 Press **Button 2** to manually initiate a check for provisioning commands.
 
