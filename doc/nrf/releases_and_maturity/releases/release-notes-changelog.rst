@@ -976,6 +976,7 @@ Libraries for networking
 
   * Fixed a bug in prediction set update when the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig option was set to non-zero value.
   * Fixed a bug in handling errors when downloading P-GPS data that prevented retries until after a reboot.
+  * Fixed a bug in handling errors when downloading P-GPS data does not begin due to active FOTA download.
 
 * :ref:`lib_nrf_provisioning` library:
 

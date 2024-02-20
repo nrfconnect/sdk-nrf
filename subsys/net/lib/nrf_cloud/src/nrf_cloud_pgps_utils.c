@@ -319,6 +319,19 @@ int npgps_alloc_block(void)
 	return idx;
 }
 
+void npgps_undo_alloc_block(int block)
+{
+	if (!pool.block_used[block]) {
+		return;
+	}
+	if (pool.first_free == ((block + 1) % num_blocks)) {
+		pool.block_used[block] = false;
+		pool.first_free = block;
+	} else {
+		npgps_free_block(block);
+	}
+}
+
 void npgps_free_block(int block)
 {
 	LOG_DBG("free:%d", block);
@@ -480,7 +493,8 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 			.sec_tag_list = NULL,
 			.pdn_id = pdn_id,
 			.frag_size_override = fragment_size,
-			.set_tls_hostname = false
+			.set_tls_hostname = false,
+			.family = AF_INET
 		},
 		.dlc = &dlc
 	};
@@ -497,6 +511,7 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 	err = nrf_cloud_download_start(&dl);
 	if (err) {
 		LOG_ERR("Failed to start P-GPS download, error: %d", err);
+		eot_handler(err); /* Let requester know so it can clean up. */
 	}
 
 	return err;
@@ -544,9 +559,7 @@ static int download_client_callback(const struct download_client_evt *event)
 	int ret = download_client_disconnect(&dlc);
 
 	if (ret) {
-		LOG_ERR("Error disconnecting from "
-			"download client:%d", ret);
-		err = ret;
+		LOG_ERR("Error disconnecting from download client:%d", ret);
 	}
 
 	nrf_cloud_download_end();
