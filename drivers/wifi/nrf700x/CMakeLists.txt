@@ -181,16 +181,19 @@ if(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
         ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex
         $<TARGET_PROPERTY:partition_manager,nrf70_wifi_fw_XIP_ABS_ADDR>
       )
-    set_property(
-      GLOBAL PROPERTY
-      nrf70_wifi_fw_PM_HEX_FILE
-      ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex
-      )
-    set_property(
-      GLOBAL PROPERTY
-      nrf70_wifi_fw_PM_TARGET
-      nrf70_wifi_fw_patch_target
-      )
+    # Delegate merging WiFi FW patch to mcuboot because we need to merge signed hex instead of raw nrf70.hex.
+    if(NOT CONFIG_NRF_WIFI_FW_PATCH_DFU)
+      set_property(
+        GLOBAL PROPERTY
+        nrf70_wifi_fw_PM_HEX_FILE
+        ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex
+        )
+      set_property(
+        GLOBAL PROPERTY
+        nrf70_wifi_fw_PM_TARGET
+        nrf70_wifi_fw_patch_target
+        )
+    endif()
   else()
     dt_nodelabel(nrf70_fw_node NODELABEL "nrf70_fw_partition")
     if(NOT DEFINED nrf70_fw_node)
