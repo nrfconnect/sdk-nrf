@@ -982,6 +982,9 @@ int nrf_wifi_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
+	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
+#endif /* CONFIG_NRF700X_RAW_DATA_TX */
 	struct rpu_op_stats stats;
 	int ret = -1;
 
@@ -1034,6 +1037,10 @@ int nrf_wifi_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 	zstats->multicast.rx = stats.fw.umac.interface_data_stats.rx_multicast_pkt_count;
 	zstats->multicast.tx = stats.fw.umac.interface_data_stats.tx_multicast_pkt_count;
 
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
+	def_dev_ctx = wifi_dev_priv(rpu_ctx_zep->rpu_ctx);
+	zstats->errors.tx += def_dev_ctx->raw_pkt_stats.raw_pkt_send_failure;
+#endif /* CONFIG_NRF700X_RAW_DATA_TX */
 	ret = 0;
 unlock:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
