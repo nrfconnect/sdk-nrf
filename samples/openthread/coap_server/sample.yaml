@@ -1,15 +1,20 @@
 sample:
   description: Test CoAP communication in Thread network
   name: OpenThread CoAP Server
+
 tests:
-  sample.openthread.coap_server:
+  sample.openthread.coap_server.ftd:
     build_only: true
-    extra_args: SNIPPET=ci
+    tags: ci_build
+    platform_allow: >
+      nrf52840dk_nrf52840
+      nrf21540dk_nrf52840
+      nrf5340dk_nrf5340_cpuapp
+      nrf5340dk_nrf5340_cpuapp_ns
+    extra_args: >
+      SNIPPET="ci;logging"
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
       - nrf21540dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840
-      nrf21540dk_nrf52840
-    tags: ci_build
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
