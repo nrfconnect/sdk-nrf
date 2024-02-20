@@ -18,4 +18,18 @@
 		zephyr,code-partition = &slot0_ns_partition;
 		zephyr,wifi = &nordic_wlan0;
 	};
+
+	nrf70_tx_power_ceiling: nrf70_tx_power_ceiling_node {
+		status = "okay";
+		compatible = "nordic,nrf700x-tx-power-ceiling";
+		max-pwr-2g-dsss = <0x54>;
+		max-pwr-2g-mcs0 = <0x40>;
+		max-pwr-2g-mcs7 = <0x40>;
+		max-pwr-5g-low-mcs0 = <0x24>;
+		max-pwr-5g-low-mcs7 = <0x24>;
+		max-pwr-5g-mid-mcs0 = <0x2C>;
+		max-pwr-5g-mid-mcs7 = <0x2C>;
+		max-pwr-5g-high-mcs0 = <0x34>;
+		max-pwr-5g-high-mcs7 = <0x34>;
+	};
 };
