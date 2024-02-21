@@ -156,3 +156,13 @@ config NRF53_RAM_FLASH_SIZE
 	  is read from external flash, and buffered in  RAM. This option is used
 	  to define forward the size of this RAM region to the partition manager
 	  configuration.
+
+config MCUBOOT_CLEANUP_UNUSABLE_SECONDARY
+	bool "Clean-up unusable secondary slots"
+	default y if FLASH_LOAD_OFFSET != 0 || SOC_NRF5340_CPUAPP
+	help
+	  If enbales, the mcuboot performs clean-up content of all the secondary slots
+	  which contains valid header but couldn't be assigned to any of
+	  supported primary images.
+	  This behaviour is desired when configuration allows to use one secondary
+	  slot for collecting image for multiple primary slots.
