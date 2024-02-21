@@ -17,11 +17,11 @@
 
 #include <net/mqtt_helper.h>
 #include <zephyr/net/mqtt.h>
+#include <zephyr/logging/log.h>
 
 #if defined(CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES)
-#include CONFIG_MQTT_HELPER_CERTIFICATES_FILE
-#endif /* CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES */
-#include <zephyr/logging/log.h>
+#include "mqtt-certs.h"
+#endif
 
 LOG_MODULE_REGISTER(mqtt_helper, CONFIG_MQTT_HELPER_LOG_LEVEL);
 

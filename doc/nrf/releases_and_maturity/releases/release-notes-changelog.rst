@@ -243,7 +243,9 @@ Multicore samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  *  The networking samples to support import of certificates in valid PEM formats.
 
 NFC samples
 -----------
@@ -355,6 +357,11 @@ Libraries for networking
     * Support for Wi-Fi anchor names in the :c:struct:`nrf_cloud_location_result` structure.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST` Kconfig option to enable including Wi-Fi anchor names in the location callback.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE` Kconfig option to control the buffer size used for the anchor names.
+
+* :ref:`lib_mqtt_helper` library:
+
+  * Changed the library to read certificates as standard PEM format. Previously the certificates had to be manually converted to string format before compiling the application.
+  * Replaced the ``CONFIG_MQTT_HELPER_CERTIFICATES_FILE`` Kconfig option with :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER`. The new option specifies the folder where the certificates are stored.
 
 Libraries for NFC
 -----------------

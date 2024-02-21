@@ -31,7 +31,16 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+* For applications using the :ref:`lib_mqtt_helper` library:
+
+  * The ``CONFIG_MQTT_HELPER_CERTIFICATES_FILE`` is now replaced by :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER`.
+    The new option is a folder path where the certificates are stored.
+    The folder path must be relative to the root of the project.
+
+    If you are using the :ref:`lib_mqtt_helper` library, you must update the Kconfig option to use the new option.
+
+  * When using the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option, the certificate files must be in standard PEM format.
+    This means that the PEM files must not be converted to string format anymore.
 
 Libraries
 =========

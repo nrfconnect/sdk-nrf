@@ -27,7 +27,7 @@ Additionally, configure the following options as per the needs of your applicati
 * :kconfig:option:`CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE`
 * :kconfig:option:`CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN`
 * :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES`
-* :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FILE`
+* :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER`
 
 API documentation
 *****************

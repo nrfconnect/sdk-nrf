@@ -188,9 +188,9 @@ There are multiple ways to generate and register these certificates:
 
       #. Take note of the certificate ARN, as it will be required later.
       #. Download the `Amazon Root CA 1`_ PEM file as :file:`ca-cert.pem`.
-      #. Provision the certificates and private key at runtime to the Mbed TLS stack.
-         This is achieved by placing the PEM files into a :file:`certs/` subdirectory and ensuring the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option is enabled.
-         For more information, refer to the :ref:`aws_iot` sample as well as the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FILE` Kconfig option.
+      #. Place the PEM files into the folder path specified by the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER` option, default is :file:`<app_src_dir>/certs/`.
+         Ensure that the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` option is set.
+      #. If the files are placed correctly, the :ref:`lib_mqtt_helper` library finds the certificates and provisions them to the Mbed TLS stack when connecting to AWS IoT.
 
 .. rst-class:: numbered-step
 

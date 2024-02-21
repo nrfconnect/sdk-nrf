@@ -4,40 +4,30 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/*
- *      "-----BEGIN CA CERTIFICATE-----\n"
- *      "-----CERTIFICATE-----\n"
- *      "-----END CA CERTIFICATE-----\n"
- */
 static const unsigned char ca_certificate[] = {
-#if __has_include("ca-cert.pem")
-#include "ca-cert.pem"
+#if defined(MQTT_HELPER_CA_CERT)
+#include MQTT_HELPER_CA_CERT
+
+/* Null terminate certificate */
+(0x00)
 #else
 ""
 #endif
 };
 
-/*
- *      "-----BEGIN PRIVATE KEY-----\n"
- *      "-----KEY-----\n"
- *      "-----END PRIVATE KEY-----\n"
- */
 static const unsigned char private_key[] = {
-#if __has_include("private-key.pem")
-#include "private-key.pem"
+#if defined(MQTT_HELPER_PRIVATE_KEY)
+#include MQTT_HELPER_PRIVATE_KEY
+(0x00)
 #else
 ""
 #endif
 };
 
-/*
- *      "-----BEGIN CLIENT CERTIFICATE-----\n"
- *      "-----CERTIFICATE-----\n"
- *      "-----END CLIENT CERTIFICATE-----\n"
- */
 static const unsigned char device_certificate[] = {
-#if __has_include("client-cert.pem")
-#include "client-cert.pem"
+#if defined(MQTT_HELPER_CLIENT_CERT)
+#include MQTT_HELPER_CLIENT_CERT
+(0x00)
 #else
 ""
 #endif
@@ -45,40 +35,28 @@ static const unsigned char device_certificate[] = {
 
 #if CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG != -1
 
-/*
- *      "-----BEGIN CA CERTIFICATE-----\n"
- *      "-----CERTIFICATE-----\n"
- *      "-----END CA CERTIFICATE-----\n"
- */
 static const unsigned char ca_certificate_2[] = {
-#if __has_include("ca-cert-2.pem")
-#include "ca-cert-2.pem"
+#if defined(MQTT_HELPER_CA_CERT_2)
+#include MQTT_HELPER_CA_CERT_2
+(0x00)
 #else
 ""
 #endif
 };
 
-/*
- *      "-----BEGIN PRIVATE KEY-----\n"
- *      "-----KEY-----\n"
- *      "-----END PRIVATE KEY-----\n"
- */
 static const unsigned char private_key_2[] = {
-#if __has_include("private-key-2.pem")
-#include "private-key-2.pem"
+#if defined(MQTT_HELPER_PRIVATE_KEY_2)
+#include MQTT_HELPER_PRIVATE_KEY_2
+(0x00)
 #else
 ""
 #endif
 };
 
-/*
- *      "-----BEGIN CLIENT CERTIFICATE-----\n"
- *      "-----CERTIFICATE-----\n"
- *      "-----END CLIENT CERTIFICATE-----\n"
- */
 static const unsigned char device_certificate_2[] = {
-#if __has_include("client-cert-2.pem")
-#include "client-cert-2.pem"
+#if defined(MQTT_HELPER_CLIENT_CERT_2)
+#include MQTT_HELPER_CLIENT_CERT_2
+(0x00)
 #else
 ""
 #endif

@@ -9,11 +9,27 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
 
-/* Include the server certificate and private key. These are intended for testing and should
- * not be used for anything else.
- */
-#include "server_certificate.h"
-#include "server_private_key.h"
+static const unsigned char server_certificate[] = {
+#if defined(HTTP_SERVER_CA_CERT)
+#include HTTP_SERVER_CA_CERT
+
+/* Null terminate certificate */
+(0x00)
+#else
+""
+#endif
+};
+
+static const unsigned char server_private_key[] = {
+#if defined(HTTP_SERVER_PRIVATE_KEY)
+#include HTTP_SERVER_PRIVATE_KEY
+
+/* Null terminate certificate */
+(0x00)
+#else
+""
+#endif
+};
 
 LOG_MODULE_REGISTER(http_server_credentials_provision, CONFIG_HTTP_SERVER_SAMPLE_LOG_LEVEL);
 

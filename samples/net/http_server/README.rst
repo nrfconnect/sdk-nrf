@@ -137,14 +137,8 @@ To generate new credentials, run the following commands:
          # Sign the client's CSR with the server's private key and certificate, creating a client certificate.
          openssl x509 -req -in client.csr -CA server_certificate.pem -CAkey server_private_key.pem -CAcreateserial -out client.crt -days 365
 
-To provision the generated credentials to the server's TLS stack, the credentials need to be converted into C header files that are readable by the server code.
-To do this, you can use the following script :file:`sdk-nrf/scripts/cert_to_header.py`.
-Replace the generated header files with the pregenerated header files in the :file:`http_server/credentials` folder.
-
-.. code-block:: console
-
-   python3 cert_to_header.py server_certificate.pem
-   python3 cert_to_header.py server_private_key.pem
+To provision the generated credentials to the server's TLS stack, replace the pregenerated certificates with the newly generated one in the :file:`http_server/credentials` folder in PEM format.
+Provisioning happens automatically after the firmware boots by the sample.
 
 Configuration
 *************
