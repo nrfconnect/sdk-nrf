@@ -165,3 +165,13 @@ The channel configuration for raw packet transmission will be applied as follows
 
 .. note::
    You must explicitly configure the channel for raw packet transmission when the device operates in non-connected Station mode. The device will use a fallback channel for raw packet transmission if one is not configured.
+
+.. _ug_nrf70_developing_error_handling_for_raw_packet_transmission:
+
+Error handling for raw packet transmission
+******************************************
+
+The raw packet transmission errors can be obtained by invoking the ``NET_REQUEST_STATS_GET_WIFI`` network management API.
+
+After invoking the API, you can use the ``struct net_stats_wifi`` struct in the :file:`zephyr/include/zephyr/net/net_stats.h` header file.
+The ``error`` member in ``struct net_stats_wifi`` will provide the transmit errors for all packets including raw packet transmit failure.
