@@ -131,3 +131,6 @@ endchoice
 endmenu
 
 endif
+
+# TODO: add dependency on NET_L2_OPENTHREAD
+rsource "rpc/Kconfig"
