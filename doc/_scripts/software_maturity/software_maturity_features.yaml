@@ -111,7 +111,12 @@ features:
     TX injection Mode:
       rule: WIFI_NRF700X && NRF700X_RAW_DATA_TX
       boards_and_shields:
+        - SHIELD_NRF7002EK
+        - SHIELD_NRF7002EK_NRF7000
+        - SHIELD_NRF7002EK_NRF7001
+        - SHIELD_NRF7002EB
         - BOARD_NRF7002DK_NRF5340_CPUAPP
+        - BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP
     Promiscuous Mode:
       rule: WIFI_NRF700X && NRF700X_PROMISC_DATA_RX
       boards_and_shields:
