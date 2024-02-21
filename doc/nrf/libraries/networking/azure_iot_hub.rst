@@ -342,14 +342,6 @@ The following are the ways to generate and register device certificates:
 
       #. Provision the certificates and private key at runtime to the Mbed TLS stack.
          This is achieved by placing the PEM files into a :file:`certs/` subdirectory and ensuring the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option is enabled.
-         The PEM files need to be converted to string format to be compiled into the firmware.
-
-         To do this, enclose each line in the PEM file with double quotes and finish each line with a newline character, using the following command:
-
-         .. code-block:: console
-
-            sed -i'.org' 's/.*/"&\\n"/' <pem_file>
-
          For more information, refer to the :ref:`azure_iot_hub` sample as well as the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FILE` Kconfig option.
 
 .. rst-class:: numbered-step

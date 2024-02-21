@@ -15,7 +15,3 @@ target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END
 
 zephyr_include_directories(src)
-
-# Make folder containing certificates global so that it can be located by
-# the MQTT helper library.
-zephyr_include_directories_ifdef(CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES certs)

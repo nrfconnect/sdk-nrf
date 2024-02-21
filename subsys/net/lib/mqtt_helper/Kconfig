@@ -89,23 +89,20 @@ config MQTT_HELPER_PROVISION_CERTIFICATES
 	default y
 	imply MBEDTLS_PEM_CERTIFICATE_FORMAT if MBEDTLS
 	help
-	  Enable run-time provisioning of certificates from the
-	  certificates header file selected by using MQTT_HELPER_CERTIFICATES_FILE
-	  This option is only available for emulation build targets,
-	  such as QEMU x86 or Native Posix.
+	  Enable run-time provisioning of certificates located in the folder path
+	  set by CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER.
 	  This option is only intended for testing and should not be used in a production scenario.
 	  Enabling this option means that the credentials used in the TLS communication towards the
 	  server will be exposed in flash memory.
 
-config MQTT_HELPER_CERTIFICATES_FILE
-	string "TLS certificates"
+config MQTT_HELPER_CERTIFICATES_FOLDER
+	string "TLS certificates folder"
 	depends on MQTT_HELPER_PROVISION_CERTIFICATES
-	default "../cert/mqtt-certs.h"
+	default "certs"
 	help
-	  The default path for a header file that contains definitions for certificates that are
-	  used during run-time provisioning of TLS credentials.
+	  The default path for the folder that contains credentials, relative to the application source directory.
 	  By default, the library expects the credentials to be in
-	  Privacy Enhanced Mail (PEM) format. See "mqtt-certs.h" for a template.
+	  Privacy Enhanced Mail (PEM) format.
 
 config MQTT_HELPER_LAST_WILL
 	bool "Last will"
