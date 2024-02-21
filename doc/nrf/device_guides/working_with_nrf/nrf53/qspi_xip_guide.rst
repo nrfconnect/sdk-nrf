@@ -32,7 +32,7 @@ Additionally, set the following options:
 
 * :kconfig:option:`CONFIG_CUSTOM_LINKER_SCRIPT` to ``"<linker_file_for_relocation>"``
 * :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` to ``3``
-* :kconfig:option:`CONFIG_FLASH_INIT_PRIORITY` to ``40`` - It is required to ensure the QSPI device initialization priority, which makes the external XIP code accessible before it is executed.
+* :kconfig:option:`CONFIG_FLASH_INIT_PRIORITY` to ``40`` - You must ensure the QSPI device initialization priority, as it makes the external XIP code accessible before it is executed.
   If any initialization code is expected to be run from the QSPI XIP, then its initialization priority value must be lower than the QSPI device initialization priority.
 
 Setting up QSPI flash
@@ -91,7 +91,7 @@ Setting up static partition manager
 You need to complete the setup in order to use a static partitioning in your project.
 The configuration must have 3 images with 2 slots each:
 
-.. figure:: images/nrf5340_static_partition_manager_slots.png
+.. figure:: images/nrf5340_static_partition_manager_slots.svg
    :alt: Static partitioning slots in the nRF5340 SoC
 
    Static partitioning slots in the nRF5340 SoC.
@@ -290,7 +290,7 @@ You can change this behavior by using a custom :file:`Qspi.ini` configuration fi
     The :file:`Qspi.ini` file is required to work on the Nordic Thingy:53.
 
 If you wish to use the :file:`Qspi.ini` file, you will need to manually flash the HEX files in the repository.
-For example, for the Simple Management Protocol (SMP) server application, you need to flash the following files (paths are relative to the build directory):
+For example, for the :ref:`smp_svr_ext_xip` sample, you need to flash the following files (paths are relative to the build directory):
 
 * :file:`<cpunet_build_subdirectory>/zephyr/merged_CPUNET.hex`
   * For Bluetooth stack application the path is :file:`<cpunet_build_subdirectory> hci_ipc`.
@@ -298,7 +298,7 @@ For example, for the Simple Management Protocol (SMP) server application, you ne
 * :file:`zephyr/internal_flash_signed.hex`
 * :file:`zephyr/qspi_flash_signed.hex`
 
-Use the following commands to flash and verify the SMP server sample:
+Use the following commands to flash and verify the Simple Management Protocol (SMP) server sample:
 
 .. code-block:: console
 
