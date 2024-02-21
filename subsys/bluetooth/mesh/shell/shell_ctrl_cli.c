@@ -27,7 +27,7 @@ static int cmd_mode_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
 	bool rsp;
 
 	int err = bt_mesh_light_ctrl_cli_mode_get(cli, NULL, &rsp);
@@ -50,7 +50,7 @@ static int mode_set(const struct shell *shell, size_t argc, char *argv[], bool a
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
 
 	if (acked) {
 		bool rsp;
@@ -86,7 +86,7 @@ static int cmd_occupancy_enabled_get(const struct shell *shell, size_t argc, cha
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
 	bool rsp;
 
 	int err = bt_mesh_light_ctrl_cli_occupancy_enabled_get(cli, NULL, &rsp);
@@ -109,7 +109,7 @@ static int occupancy_enabled_set(const struct shell *shell, size_t argc, char *a
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
 
 	if (acked) {
 		bool rsp;
@@ -146,7 +146,7 @@ static int cmd_light_onoff_get(const struct shell *shell, size_t argc, char *arg
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_onoff_status rsp;
 
 	int err = bt_mesh_light_ctrl_cli_light_onoff_get(cli, NULL, &rsp);
@@ -171,7 +171,7 @@ static int light_onoff_set(const struct shell *shell, size_t argc, char *argv[],
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_onoff_set set = { .on_off = on_off,
 					 .transition = (argc > 2) ? &trans : NULL };
@@ -197,7 +197,7 @@ static int cmd_light_onoff_set_unack(const struct shell *shell, size_t argc, cha
 	return light_onoff_set(shell, argc, argv, false);
 }
 
-static void prop_print(const struct shell *shell, int err, struct sensor_value *rsp)
+static void prop_print(const struct shell *shell, int err, sensor_value_type *rsp)
 {
 	if (!err) {
 		shell_fprintf(shell, SHELL_NORMAL, "Property value: ");
@@ -221,8 +221,8 @@ static int cmd_prop_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
-	struct sensor_value rsp;
+	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
+	sensor_value_type rsp;
 
 	err = bt_mesh_light_ctrl_cli_prop_get(cli, NULL, id, &rsp);
 	prop_print(shell, err, &rsp);
@@ -232,9 +232,22 @@ static int cmd_prop_get(const struct shell *shell, size_t argc, char *argv[])
 static int prop_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
 	int err = 0;
-	enum bt_mesh_light_ctrl_prop id =
-		(enum bt_mesh_light_ctrl_prop)shell_strtol(argv[1], 0, &err);
-	struct sensor_value set = shell_model_strtosensorval(argv[2], &err);
+
+	uint16_t id = shell_strtol(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
+
+	const struct bt_mesh_sensor_format *prop_format = bt_mesh_lc_prop_format_get(id);
+
+	if (!prop_format) {
+		shell_warn(shell, "Unknown property id");
+		return -ENOENT;
+	}
+
+	sensor_value_type set = shell_model_strtosensorval(prop_format, argv[2], &err);
 
 	if (err) {
 		shell_warn(shell, "Unable to parse input string arg");
@@ -245,10 +258,10 @@ static int prop_set(const struct shell *shell, size_t argc, char *argv[], bool a
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
 
 	if (acked) {
-		struct sensor_value rsp;
+		sensor_value_type rsp;
 		err = bt_mesh_light_ctrl_cli_prop_set(cli, NULL, id, &set, &rsp);
 
 		prop_print(shell, err, &rsp);
@@ -290,7 +303,7 @@ static int cmd_coeff_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
 	float rsp;
 
 	err = bt_mesh_light_ctrl_cli_coeff_get(cli, NULL, id, &rsp);
@@ -314,7 +327,7 @@ static int coeff_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
 
 	if (acked) {
 		float rsp;
