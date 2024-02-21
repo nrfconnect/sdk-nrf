@@ -41,8 +41,8 @@ This certificate is provided in the :file:`samples/net/https_client/cert` folder
 To connect to other servers, you might need to provision a different certificate.
 See :ref:`cert_dwload` for more information.
 
-Using Mbed TLS and TF-M
-***********************
+Using Mbed TLS and TF-M on nRF91 Series DKs
+*******************************************
 
 This sample supports using Mbed TLS and Trusted Firmware-M (TF-M).
 Instead of offloading the TLS sockets into the modem, you can use the Mbed TLS library from Zephyr.
@@ -69,19 +69,19 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To build the sample with Mbed TLS and TF-M, add the following to your west build command:
+To build the sample with Mbed TLS and TF-M for the nRF91 Series DKs, add the following to your west build command:
 
 .. code-block:: none
 
-   -DOVERLAY_CONFIG=overlay-tfm_mbedtls.conf
+   -DOVERLAY_CONFIG=overlay-tfm-nrf91.conf
 
 The default packet data network (PDN) configuration is dual stack, which will use an IPv6 address if available (and IPv4 if not).
 
-For testing IPv4 only, you might need to configure the packet data network settings, adding the following to your build command:
+On the nRF91 Series DKs, for testing IPv4 only, you might need to configure the packet data network settings, adding the following to your build command:
 
 .. code-block:: none
 
-   -DOVERLAY_CONFIG=overlay-pdn_ipv4.conf
+   -DOVERLAY_CONFIG=overlay-pdn-nrf91-ipv4.conf
 
 Testing
 =======
@@ -136,7 +136,7 @@ Output for the default configuration, where the carrier does support IPv6:
    Finished, closing socket.
    PDP context 0 deactivated
 
-Output where you override the default packet data network (PDN) configuration to IPv4 only, via the `overlay-pdn_ipv4.conf` overlay:
+Output where you override the default packet data network (PDN) configuration to IPv4 only, using the ``overlay-pdn-nrf91-ipv4.conf`` overlay:
 
 .. code-block:: console
 
