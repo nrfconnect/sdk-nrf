@@ -9,6 +9,7 @@ zephyr_library_include_directories(
     controller_config
     dfu
     scanning
+    ${ZEPHYR_BASE}/subsys/bluetooth/host/
 )
 
 target_sources(app PRIVATE
