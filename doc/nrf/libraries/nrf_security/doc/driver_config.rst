@@ -727,15 +727,21 @@ Password-authenticated key exchange configurations
 
 To enable password-authenticated key exchange (PAKE) support, set one or more of the Kconfig options in the following table:
 
-+-----------------------+-----------------------------------------------+
-| PAKE algorithm        | Configuration option                          |
-+=======================+===============================================+
-| EC J-PAKE             | :kconfig:option:`CONFIG_PSA_WANT_ALG_JPAKE`   |
-+-----------------------+-----------------------------------------------+
-| SPAKE2+               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P` |
-+-----------------------+-----------------------------------------------+
-| SRP-6                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`   |
-+-----------------------+-----------------------------------------------+
++------------------------+------------------------------------------------------+
+| PAKE algorithm         | Configuration option                                 |
++========================+======================================================+
+| EC J-PAKE              | :kconfig:option:`CONFIG_PSA_WANT_ALG_JPAKE`          |
++------------------------+------------------------------------------------------+
+| SPAKE2+ with HMAC      | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_HMAC`   |
++------------------------+------------------------------------------------------+
+| SPAKE2+ with CMAC      | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_CMAC`   |
++------------------------+------------------------------------------------------+
+| SPAKE2+ for Matter     | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER` |
++------------------------+------------------------------------------------------+
+| SRP-6                  | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`          |
++------------------------+------------------------------------------------------+
+| SRP-6 password hashing | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`          |
++------------------------+------------------------------------------------------+
 
 .. note::
    * The provided support is experimental.
