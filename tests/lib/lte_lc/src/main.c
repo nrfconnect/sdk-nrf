@@ -89,86 +89,86 @@ void test_parse_cereg(void)
 	/* For CEREG reads, we only check the network status, as that's the only
 	 * functionality that is exposed.
 	 */
-	err = parse_cereg(at_response_0, false, &status, NULL, NULL);
+	err = parse_cereg(at_response_0, false, &status, NULL, NULL, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_NOT_REGISTERED, status);
 
-	err = parse_cereg(at_response_1, false, &status, &cell, &mode);
+	err = parse_cereg(at_response_1, false, &status, &cell, &mode, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_HOME, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
 
-	err = parse_cereg(at_response_2, false, &status, NULL, NULL);
+	err = parse_cereg(at_response_2, false, &status, NULL, NULL, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
 
-	err = parse_cereg(at_response_3, false, &status, NULL, NULL);
+	err = parse_cereg(at_response_3, false, &status, NULL, NULL, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTRATION_DENIED, status);
 
-	err = parse_cereg(at_response_4, false, &status, NULL, NULL);
+	err = parse_cereg(at_response_4, false, &status, NULL, NULL, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UNKNOWN, status);
 
-	err = parse_cereg(at_response_5, false, &status, NULL, NULL);
+	err = parse_cereg(at_response_5, false, &status, NULL, NULL, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_ROAMING, status);
 
-	err = parse_cereg(at_response_90, false, &status, NULL, NULL);
+	err = parse_cereg(at_response_90, false, &status, NULL, NULL, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UICC_FAIL, status);
 
-	err = parse_cereg(at_response_wrong, false, &status, NULL, NULL);
+	err = parse_cereg(at_response_wrong, false, &status, NULL, NULL, NULL);
 	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, err, "parse_cereg should have failed");
 
 	/* For CEREG notifications, we test the parser function, which
 	 * implicitly also tests parse_nw_reg_status() for notifications.
 	 */
-	err = parse_cereg(at_notif_0, true, &status, &cell, &mode);
+	err = parse_cereg(at_notif_0, true, &status, &cell, &mode, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_NOT_REGISTERED, status);
 
-	err = parse_cereg(at_notif_1, true, &status, &cell, &mode);
+	err = parse_cereg(at_notif_1, true, &status, &cell, &mode, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_HOME, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
 	TEST_ASSERT_EQUAL(9, mode);
 
-	err = parse_cereg(at_notif_2, true, &status, &cell, &mode);
+	err = parse_cereg(at_notif_2, true, &status, &cell, &mode, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
 	TEST_ASSERT_EQUAL(9, mode);
 
-	err = parse_cereg(at_notif_3, true, &status, &cell, &mode);
+	err = parse_cereg(at_notif_3, true, &status, &cell, &mode, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTRATION_DENIED, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
 	TEST_ASSERT_EQUAL(9, mode);
 
-	err = parse_cereg(at_notif_4, true, &status, &cell, &mode);
+	err = parse_cereg(at_notif_4, true, &status, &cell, &mode, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UNKNOWN, status);
 	TEST_ASSERT_EQUAL(0xFFFFFFFF, cell.id);
 	TEST_ASSERT_EQUAL(0xFFFF, cell.tac);
 	TEST_ASSERT_EQUAL(9, mode);
 
-	err = parse_cereg(at_notif_5, true, &status, &cell, &mode);
+	err = parse_cereg(at_notif_5, true, &status, &cell, &mode, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_ROAMING, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
 	TEST_ASSERT_EQUAL(9, mode);
 
-	err = parse_cereg(at_notif_90, true, &status, &cell, &mode);
+	err = parse_cereg(at_notif_90, true, &status, &cell, &mode, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UICC_FAIL, status);
 
-	err = parse_cereg(at_notif_wrong, true, &status, &cell, &mode);
+	err = parse_cereg(at_notif_wrong, true, &status, &cell, &mode, NULL);
 	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, err, "parse_cereg should have failed");
 }
 

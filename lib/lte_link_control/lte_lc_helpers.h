@@ -227,6 +227,7 @@ int encode_psm(char *tau_ext_str, char *active_time_str, int rptau, int rat);
  *		     Can be NULL.
  * @param cell Pointer to cell information struct. Can be NULL.
  * @param lte_mode Pointer to LTE mode struct. Can be NULL.
+ * @param psm_cfg Pointer to PSM configuration struct. Can be NULL.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
@@ -234,7 +235,8 @@ int parse_cereg(const char *at_response,
 		bool is_notif,
 		enum lte_lc_nw_reg_status *reg_status,
 		struct lte_lc_cell *cell,
-		enum lte_lc_lte_mode *lte_mode);
+		enum lte_lc_lte_mode *lte_mode,
+		struct lte_lc_psm_cfg *psm_cfg);
 
 /* @brief Parses an XT3412 response and extracts the time until next TAU.
  *

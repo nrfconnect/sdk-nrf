@@ -313,16 +313,6 @@ void test_lte_lc_connect_success(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", 0);
 
-	static const char xmonitor_resp[] =
-		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"002F\",7,20,\"0012BEEF\","
-		"334,6200,66,44,\"\","
-		"\"00000101\",\"00010011\",\"01001001\"";
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
-	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
-		(char *)xmonitor_resp, sizeof(xmonitor_resp));
-
 	/* AT commands triggered by lte_lc_offline() */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
 
@@ -355,7 +345,7 @@ void test_lte_lc_connect_success(void)
 	test_event_data[6].lte_mode = LTE_LC_LTE_MODE_NONE;
 
 	/* Schedule +CEREG notification to be dispatched while lte_lc_connect() blocks */
-	strcpy(at_notif, "+CEREG: 1,\"002F\",\"0012BEEF\",7\r\n");
+	strcpy(at_notif, "+CEREG: 1,\"002F\",\"0012BEEF\",7,,,\"00000101\",\"00010011\"\r\n");
 	k_work_schedule(&at_notif_dispatch_work, K_MSEC(1));
 
 	ret = lte_lc_connect();
@@ -405,7 +395,7 @@ void test_lte_lc_connect_fallback(void)
 	static const char xmonitor_resp[] =
 		"%XMONITOR: 5,\"Operator\",\"OP\",\"20065\",\"003F\",9,20,\"0013BEEF\","
 		"334,6200,66,44,\"\","
-		"\"11100000\",\"00101000\",\"11100000\"";
+		"\"11100000\",\"11100000\",\"00111000\"";
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -429,7 +419,7 @@ void test_lte_lc_connect_fallback(void)
 	test_event_data[2].lte_mode = LTE_LC_LTE_MODE_NBIOT;
 
 	test_event_data[3].type = LTE_LC_EVT_PSM_UPDATE;
-	test_event_data[3].psm_cfg.tau = 28800;
+	test_event_data[3].psm_cfg.tau = 1440;
 	test_event_data[3].psm_cfg.active_time = -1;
 
 	/* De-registration */
@@ -449,12 +439,12 @@ void test_lte_lc_connect_fallback(void)
 	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Schedule +CEREG notification to be dispatched after timeout to trigger fallback */
-	strcpy(at_notif, "+CEREG: 5,\"003F\",\"0013BEEF\",9\r\n");
+	strcpy(at_notif, "+CEREG: 5,\"003F\",\"0013BEEF\",9,,,\"11100000\",\"11100000\"\r\n");
 	k_work_schedule(&at_notif_dispatch_work, K_MSEC(1100));
 
 	ret = lte_lc_connect();
 	TEST_ASSERT_EQUAL(0, ret);
-
+	k_sleep(K_MSEC(1));
 	ret = lte_lc_offline();
 	TEST_ASSERT_EQUAL(0, ret);
 
@@ -1045,11 +1035,6 @@ void test_lte_lc_cereg(void)
 {
 	strcpy(at_notif, "+CEREG: 1,\"4321\",\"12345678\",7,,,\"11100000\",\"00010011\"\r\n");
 
-	static const char xmonitor_resp[] =
-		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"4321\",7,20,\"12345678\","
-		"334,6200,66,44,\"\","
-		"\"11100000\",\"00010011\",\"01001001\"";
-
 	lte_lc_callback_count_expected = 4;
 
 	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
@@ -1075,6 +1060,43 @@ void test_lte_lc_cereg(void)
 	test_event_data[3].psm_cfg.tau = 11400;
 	test_event_data[3].psm_cfg.active_time = -1;
 
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_cereg_with_xmonitor(void)
+{
+	strcpy(at_notif, "+CEREG: 5,\"4321\",\"87654321\",9,,,\"11100000\",\"11100000\"\r\n");
+
+	static const char xmonitor_resp[] =
+		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"4321\",9,20,\"12345678\","
+		"334,6200,66,44,\"\","
+		"\"11100000\",\"11100000\",\"01001001\"";
+
+	lte_lc_callback_count_expected = 4;
+
+	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_REGISTERED_ROAMING;
+
+	test_event_data[1].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[1].cell.mcc = 0;
+	test_event_data[1].cell.mnc = 0;
+	test_event_data[1].cell.id = 0x87654321;
+	test_event_data[1].cell.tac = 0x4321;
+	test_event_data[1].cell.earfcn = 0;
+	test_event_data[1].cell.timing_advance = 0;
+	test_event_data[1].cell.timing_advance_meas_time = 0;
+	test_event_data[1].cell.measurement_time = 0;
+	test_event_data[1].cell.phys_cell_id = 0;
+	test_event_data[1].cell.rsrp = 0;
+	test_event_data[1].cell.rsrq = 0;
+
+	test_event_data[2].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[2].lte_mode = LTE_LC_LTE_MODE_NBIOT;
+
+	test_event_data[3].type = LTE_LC_EVT_PSM_UPDATE;
+	test_event_data[3].psm_cfg.tau = 3240;
+	test_event_data[3].psm_cfg.active_time = -1;
+
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -1082,6 +1104,7 @@ void test_lte_lc_cereg(void)
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 
 	at_monitor_dispatch(at_notif);
+	k_sleep(K_MSEC(1));
 }
 
 /* Test the following CEREG syntax:
