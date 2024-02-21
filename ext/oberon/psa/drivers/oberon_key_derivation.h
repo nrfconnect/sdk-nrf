@@ -34,6 +34,7 @@ typedef enum {
     OBERON_TLS12_PSK_TO_MS_ALG = 7,
     OBERON_ECJPAKE_TO_PMS_ALG = 8,
     OBERON_SP800_108_COUNTER_ALG = 9,
+    OBERON_SRP_PASSWORD_HASH_ALG = 10,
 } oberon_kdf_alg;
 
 typedef struct {

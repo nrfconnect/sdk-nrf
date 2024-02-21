@@ -162,30 +162,36 @@ psa_status_t oberon_export_ec_public_key(
 }
 
 #if defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_IMPORT_MONTGOMERY) || \
-    defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY)
+    defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY) || \
+    defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY)
 static void oberon_set_forced_bits(uint8_t *key, size_t bits)
 {
     switch (bits) {
 #if defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_IMPORT_MONTGOMERY_255) || \
-    defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY_255)
+    defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY_255) || \
+    defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY_255)
     case 255:
         key[0]  = (uint8_t)(key[0] & 0xF8);
         key[31] = (uint8_t)((key[31] & 0x7F) | 0x40);
         break;
 #endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_IMPORT_MONTGOMERY_255 ||
-        PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY_255 */
+        PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY_255 ||
+        PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY_255 */
 #if defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_IMPORT_MONTGOMERY_448) || \
-    defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY_448)
+    defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY_448) || \
+    defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY_448)
     case 448:
         key[0]  = (uint8_t)(key[0] & 0xFC);
         key[55] = (uint8_t)(key[55] | 0x80);
         break;
 #endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_IMPORT_MONTGOMERY_448 ||
-        PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY_448 */
+        PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY_448 ||
+        PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY_448 */
     }
 }
 #endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_IMPORT_MONTGOMERY ||
-        PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY */
+        PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_GENERATE_MONTGOMERY ||
+        PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY */
 
 psa_status_t oberon_import_ec_key(
     const psa_key_attributes_t *attributes,
@@ -387,7 +393,7 @@ psa_status_t oberon_generate_ec_key(
     const psa_key_attributes_t *attributes,
     uint8_t *key, size_t key_size, size_t *key_length)
 {
-    int res = 0;
+    int res;
     psa_status_t status;
     size_t bits = psa_get_key_bits(attributes);
     psa_key_type_t type = psa_get_key_type(attributes);
@@ -474,5 +480,103 @@ psa_status_t oberon_generate_ec_key(
     }
 
     *key_length = length;
+    return PSA_SUCCESS;
+}
+
+psa_status_t oberon_derive_ec_key(
+    const psa_key_attributes_t *attributes,
+    const uint8_t *input, size_t input_length,
+    uint8_t *key, size_t key_size, size_t *key_length)
+{
+    int res;
+    size_t bits = psa_get_key_bits(attributes);
+    psa_key_type_t type = psa_get_key_type(attributes);
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP
+    uint32_t c;
+    size_t i;
+#endif
+
+    if (key_size < input_length) return PSA_ERROR_BUFFER_TOO_SMALL;
+    memcpy(key, input, input_length);
+    *key_length = input_length;
+
+    // check and preprocess key data
+    switch (type) {
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP
+    case PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
+
+        // increment key data
+        c = 1; i = input_length;
+        do {
+            c += key[--i];
+            key[i] = (uint8_t)c;
+            c >>= 8;
+        } while (i > 0);
+
+        switch (bits) {
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP_R1_224
+        case 224:
+            res = ocrypto_ecdh_p224_secret_key_check(key);
+            break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP_R1_224 */
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP_R1_256
+        case 256:
+            res = ocrypto_ecdh_p256_secret_key_check(key);
+            break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP_R1_256 */
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP_R1_384
+        case 384:
+            res = ocrypto_ecdh_p384_secret_key_check(key);
+            break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP_R1_384 */
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP_R1_521
+        case 521:
+            key[0] &= 0x01; // truncate to 521 bits
+            res = ocrypto_ecdh_p521_secret_key_check(key);
+            break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP_R1_521 */
+        default:
+            return PSA_ERROR_INVALID_ARGUMENT;
+        }
+        // repeat if input out of range
+        if (res || !oberon_ct_compare_zero(key, input_length)) return PSA_ERROR_INSUFFICIENT_DATA;
+        break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_SECP */
+
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY
+    case PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_MONTGOMERY):
+        switch (bits) {
+#if defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY_255)
+        case 255: break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY_255 */
+#if defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY_448)
+        case 448: break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY_448 */
+        default: return PSA_ERROR_INVALID_ARGUMENT;
+        }
+        oberon_set_forced_bits(key, bits);
+        break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY */
+
+#ifdef PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_TWISTED_EDWARDS
+    case PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS):
+        switch (bits) {
+#if defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_TWISTED_EDWARDS_255)
+        case 255: break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_TWISTED_EDWARDS_255 */
+#if defined(PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_TWISTED_EDWARDS_448)
+        case 448: break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_TWISTED_EDWARDS_448 */
+        default: return PSA_ERROR_INVALID_ARGUMENT;
+        }
+        break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_TWISTED_EDWARDS */
+
+    default:
+        (void)res;
+        (void)bits;
+        return PSA_ERROR_NOT_SUPPORTED;
+    }
+
     return PSA_SUCCESS;
 }

@@ -147,6 +147,12 @@ psa_status_t psa_driver_wrapper_copy_key(
     const uint8_t *source_key, size_t source_key_length,
     uint8_t *target_key_buffer, size_t target_key_buffer_size,
     size_t *target_key_buffer_length);
+
+psa_status_t psa_driver_wrapper_derive_key(
+    const psa_key_attributes_t *attributes,
+    const uint8_t *input, size_t input_length,
+    uint8_t *key_buffer, size_t key_buffer_size, size_t *key_buffer_length);
+
 /*
  * Cipher functions
  */
@@ -441,12 +447,25 @@ psa_status_t psa_driver_wrapper_key_derivation_abort(
  */
 psa_status_t psa_driver_wrapper_pake_setup(
     psa_pake_operation_t *operation,
-    const psa_pake_cipher_suite_t *cipher_suite,
     const psa_key_attributes_t *attributes,
     const uint8_t *password, size_t password_length,
-    const uint8_t *user_id, size_t user_id_length,
-    const uint8_t *peer_id, size_t peer_id_length,
+    const psa_pake_cipher_suite_t *cipher_suite);
+
+psa_status_t psa_driver_wrapper_pake_set_role(
+    psa_pake_operation_t *operation,
     psa_pake_role_t role);
+
+psa_status_t psa_driver_wrapper_pake_set_user(
+    psa_pake_operation_t *operation,
+    const uint8_t *user_id, size_t user_id_length);
+
+psa_status_t psa_driver_wrapper_pake_set_peer(
+    psa_pake_operation_t *operation,
+    const uint8_t *peer_id, size_t peer_id_length);
+
+psa_status_t psa_driver_wrapper_pake_set_context(
+    psa_pake_operation_t *operation,
+    const uint8_t *context, size_t context_length);
 
 psa_status_t psa_driver_wrapper_pake_output(
     psa_pake_operation_t *operation,
@@ -461,10 +480,10 @@ psa_status_t psa_driver_wrapper_pake_input(
     const uint8_t *input,
     size_t input_length);
 
-psa_status_t psa_driver_wrapper_pake_get_implicit_key(
+psa_status_t psa_driver_wrapper_pake_get_shared_key(
     psa_pake_operation_t *operation,
-    uint8_t *output, size_t output_size,
-    size_t *output_length);
+    const psa_key_attributes_t *attributes,
+    uint8_t *key_buffer, size_t key_buffer_size, size_t *key_buffer_length);
 
 psa_status_t psa_driver_wrapper_pake_abort(
     psa_pake_operation_t *operation);

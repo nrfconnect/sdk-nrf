@@ -821,9 +821,11 @@ psa_status_t psa_export_key_internal(
 {
     psa_key_type_t type = attributes->core.type;
 
-    if (key_type_is_raw_bytes(type) ||
-        PSA_KEY_TYPE_IS_RSA(type)   ||
-        PSA_KEY_TYPE_IS_ECC(type)) {
+    if (key_type_is_raw_bytes(type)   ||
+        PSA_KEY_TYPE_IS_RSA(type)     ||
+        PSA_KEY_TYPE_IS_ECC(type)     ||
+        PSA_KEY_TYPE_IS_SPAKE2P(type) ||
+        PSA_KEY_TYPE_IS_SRP(type)) {
         return psa_export_key_buffer_internal(
             key_buffer, key_buffer_size,
             data, data_size, data_length);
@@ -892,7 +894,8 @@ psa_status_t psa_export_public_key_internal(
 
     if (PSA_KEY_TYPE_IS_PUBLIC_KEY(type) &&
         (PSA_KEY_TYPE_IS_RSA(type) || PSA_KEY_TYPE_IS_ECC(type) ||
-         PSA_KEY_TYPE_IS_DH(type))) {
+         PSA_KEY_TYPE_IS_DH(type) || PSA_KEY_TYPE_IS_SPAKE2P(type) ||
+         PSA_KEY_TYPE_IS_SRP(type))) {
         /* Exporting public -> public */
         return psa_export_key_buffer_internal(
             key_buffer, key_buffer_size,
@@ -3691,6 +3694,31 @@ static psa_status_t psa_key_derivation_check_state(
     } else
 #endif /* PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS */
 
+#ifdef PSA_WANT_ALG_SRP_PASSWORD_HASH
+    if (PSA_ALG_IS_SRP_PASSWORD_HASH(alg)) {
+        switch (step) {
+        case PSA_KEY_DERIVATION_INPUT_INFO:
+            if (operation->info_set) return PSA_ERROR_BAD_STATE;
+            operation->info_set = 1;
+            break;
+        case PSA_KEY_DERIVATION_INPUT_PASSWORD:
+            if (!operation->info_set || operation->passw_set) return PSA_ERROR_BAD_STATE;
+            operation->passw_set = 1;
+            break;
+        case PSA_KEY_DERIVATION_INPUT_SALT:
+            if (!operation->passw_set || operation->salt_set) return PSA_ERROR_BAD_STATE;
+            operation->salt_set = 1;
+            break;
+        case PSA_KEY_DERIVATION_OUTPUT:
+            if (!operation->salt_set) return PSA_ERROR_BAD_STATE;
+            operation->no_input = 1;
+            break;
+        default:
+            return PSA_ERROR_INVALID_ARGUMENT;
+        }
+    } else
+#endif /* PSA_WANT_ALG_SRP_PASSWORD_HASH */
+
 #if defined(PSA_WANT_ALG_SP800_108_COUNTER_HMAC) || defined(PSA_WANT_ALG_SP800_108_COUNTER_CMAC)
 #if defined(PSA_WANT_ALG_SP800_108_COUNTER_HMAC) && defined(PSA_WANT_ALG_SP800_108_COUNTER_CMAC)
         if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(alg) || alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
@@ -3783,25 +3811,35 @@ static psa_status_t psa_generate_derived_key_internal(
     size_t storage_size = bytes;
     psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
     psa_key_attributes_t attributes;
-    psa_ecc_family_t curve = 0;
+    psa_key_type_t type = slot->attr.type;
     int calculate_key = 0;
 
-    if (PSA_KEY_TYPE_IS_PUBLIC_KEY(slot->attr.type)) {
+    if (PSA_KEY_TYPE_IS_PUBLIC_KEY(type)) {
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
-    if (key_type_is_raw_bytes(slot->attr.type)) {
+    if (key_type_is_raw_bytes(type)) {
         if (bits % 8 != 0) return PSA_ERROR_INVALID_ARGUMENT;
 #ifdef PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE
-    } else if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(slot->attr.type)) {
-        curve = PSA_KEY_TYPE_ECC_GET_FAMILY(slot->attr.type);
-        if (PSA_ECC_FAMILY_IS_WEIERSTRASS(curve)) {
-            /* Weierstrass elliptic curve */
-            calculate_key = 1;
+    } else if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(type)) {
+        if (type == PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS)) {
+            bytes = PSA_BITS_TO_BYTES(bits + 1); // ED needs an extra bit
         }
+        calculate_key = 1;
 #endif /* PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE */
+#ifdef PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE
+    } else if (PSA_KEY_TYPE_IS_SPAKE2P_KEY_PAIR(type)) {
+        storage_size = bytes * 2u;  // w0 : w1
+        bytes = storage_size + 16u; // w0s : w1s
+        calculate_key = 1;
+#endif /* PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE */
+#ifdef PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE
+    } else if (PSA_KEY_TYPE_IS_SRP_KEY_PAIR(type)) {
+        if (!PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) return PSA_ERROR_INVALID_ARGUMENT;
+        storage_size = bytes = PSA_HASH_LENGTH(operation->alg);
+#endif /* PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE */
     } else {
-        (void)curve;
+        (void)calculate_key;
         return PSA_ERROR_NOT_SUPPORTED;
     }
 
@@ -3830,45 +3868,26 @@ static psa_status_t psa_generate_derived_key_internal(
         status = psa_key_derivation_output_bytes_internal(operation, data, bytes);
         if (status != PSA_SUCCESS) goto exit;
 
-#ifdef PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE
+#if defined(PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE) || defined(PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE)
         if (calculate_key) {
-            uint32_t c;
-            size_t i;
+            status = psa_driver_wrapper_derive_key(
+                &attributes,
+                data, bytes,
+                slot->key.data, slot->key.bytes, &slot->key.bytes);
 
-            // mask data & avoid invalid argument error inside import_key()
-            switch (bits) {
-            case 192:
-            case 224:
-            case 256:
-            case 384: break;
-            case 521: data[0] &= 0x01; break; // truncate to 521 bits
-            default:
-                {
-                    status = PSA_ERROR_INVALID_ARGUMENT;
-                    goto exit;
-                }
+        } else
+#endif /* PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE || PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE */
+        {
+            status = psa_driver_wrapper_import_key(
+                &attributes,
+                data, bytes,
+                slot->key.data, slot->key.bytes, &slot->key.bytes,
+                &bits);
+            if (bits != slot->attr.bits) {
+                status = PSA_ERROR_INVALID_ARGUMENT;
             }
-
-            // increment data (to be compatible with PSA API spec)
-            c = 1; i = bytes;
-            do {
-                c += data[--i];
-                data[i] = (uint8_t)c;
-                c >>= 8;
-            } while (i > 0);
         }
-#endif /* PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE */
-
-        status = psa_driver_wrapper_import_key(
-            &attributes,
-            data, bytes,
-            slot->key.data, slot->key.bytes, &slot->key.bytes,
-            &bits);
-    } while (status == PSA_ERROR_INVALID_ARGUMENT && calculate_key);
-
-    if (bits != slot->attr.bits) {
-        status = PSA_ERROR_INVALID_ARGUMENT;
-    }
+    } while (status == PSA_ERROR_INSUFFICIENT_DATA);
 
 exit:
     mbedtls_zeroize_and_free(data, bytes);
@@ -4019,7 +4038,7 @@ psa_status_t psa_key_derivation_setup(psa_key_derivation_operation_t *operation,
     operation->alg = alg;
     if (PSA_ALG_IS_HKDF(kdf_alg) || PSA_ALG_IS_HKDF_EXPAND(kdf_alg)) {
         operation->capacity = 255 * PSA_HASH_LENGTH(kdf_alg);
-    } else if (PSA_ALG_IS_HKDF_EXTRACT(kdf_alg)) {
+    } else if (PSA_ALG_IS_HKDF_EXTRACT(kdf_alg) || PSA_ALG_IS_SRP_PASSWORD_HASH(kdf_alg)) {
         operation->capacity = PSA_HASH_LENGTH(kdf_alg);
     } else if (kdf_alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
         operation->capacity = PSA_TLS12_ECJPAKE_TO_PMS_DATA_SIZE;
@@ -4342,24 +4361,98 @@ exit:
 /****************************************************************/
 
 psa_status_t psa_pake_setup(psa_pake_operation_t *operation,
+    mbedtls_svc_key_id_t password_key,
     const psa_pake_cipher_suite_t *cipher_suite)
 {
+    psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_status_t unlock_status = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_algorithm_t alg = psa_pake_cs_get_algorithm(cipher_suite);
+    psa_pake_primitive_t primitive = psa_pake_cs_get_primitive(cipher_suite);
+    psa_pake_primitive_t ptype = PSA_PAKE_PRIMITIVE_GET_TYPE(primitive);
+    psa_ecc_family_t family = PSA_PAKE_PRIMITIVE_GET_FAMILY(primitive);
+    size_t bits = PSA_PAKE_PRIMITIVE_GET_BITS(primitive);
+    psa_key_attributes_t attributes;
+    psa_key_slot_t *slot = NULL;
+    psa_key_type_t ktype;
+
     if (operation->alg) {
         return PSA_ERROR_BAD_STATE;
     }
 
-    if (!PSA_ALG_IS_PAKE(cipher_suite->algorithm) ||
-        !PSA_ALG_IS_HASH(cipher_suite->hash) ||
-        (cipher_suite->type != PSA_PAKE_PRIMITIVE_TYPE_ECC &&
-            cipher_suite->type != PSA_PAKE_PRIMITIVE_TYPE_DH)) {
+    if (!PSA_ALG_IS_PAKE(alg) ||
+        (ptype != PSA_PAKE_PRIMITIVE_TYPE_ECC && ptype != PSA_PAKE_PRIMITIVE_TYPE_DH)) {
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
-    operation->alg = cipher_suite->algorithm;
-    operation->sequence = 0;
-    operation->inputs.cipher_suite = *cipher_suite;
+    status = psa_get_and_lock_key_slot_with_policy(
+        password_key, &slot, PSA_KEY_USAGE_DERIVE, alg);
+    if (status != PSA_SUCCESS) goto exit;
+    ktype = slot->attr.type;
 
-    return PSA_SUCCESS;
+    if (PSA_ALG_IS_JPAKE(alg)) {
+        if ((ktype != PSA_KEY_TYPE_PASSWORD && ktype != PSA_KEY_TYPE_PASSWORD_HASH) ||
+            psa_pake_cs_get_key_confirmation(cipher_suite) != PSA_PAKE_UNCONFIRMED_KEY) {
+            status = PSA_ERROR_INVALID_ARGUMENT;
+            goto exit;
+        }
+        if (ptype == PSA_PAKE_PRIMITIVE_TYPE_ECC) {
+            operation->secret_size = PSA_KEY_EXPORT_ECC_PUBLIC_KEY_MAX_SIZE(bits);
+        } else if (ptype == PSA_PAKE_PRIMITIVE_TYPE_DH) {
+            operation->secret_size = PSA_BITS_TO_BYTES(bits);
+        } else {
+            status = PSA_ERROR_INVALID_ARGUMENT;
+            goto exit;
+        }
+    } else {
+        if (PSA_ALG_IS_SPAKE2P(alg)) {
+            if (!PSA_KEY_TYPE_IS_SPAKE2P(ktype) || ptype != PSA_PAKE_PRIMITIVE_TYPE_ECC ||
+                family != PSA_KEY_TYPE_SPAKE2P_GET_FAMILY(ktype)) {
+                status = PSA_ERROR_INVALID_ARGUMENT;
+                goto exit;
+            }
+        } else if (PSA_ALG_IS_SRP_6(alg)) {
+            if (!PSA_KEY_TYPE_IS_SRP(ktype) || ptype != PSA_PAKE_PRIMITIVE_TYPE_DH ||
+                family != PSA_KEY_TYPE_SRP_GET_FAMILY(ktype)) {
+                status = PSA_ERROR_INVALID_ARGUMENT;
+                goto exit;
+            }
+        } else {
+            status = PSA_ERROR_NOT_SUPPORTED;
+            goto exit;
+        }
+        if (psa_pake_cs_get_key_confirmation(cipher_suite) != PSA_PAKE_CONFIRMED_KEY ||
+            bits != slot->attr.bits) {
+            status = PSA_ERROR_INVALID_ARGUMENT;
+            goto exit;
+        }
+
+        operation->secret_size = PSA_HASH_LENGTH(alg);
+        if (alg == PSA_ALG_SPAKE2P_MATTER) operation->secret_size >>= 1;
+    }
+
+    attributes = (psa_key_attributes_t) {
+        .core = slot->attr
+    };
+
+    status = psa_driver_wrapper_pake_setup(
+        operation, &attributes,
+        slot->key.data, slot->key.bytes,
+        cipher_suite);
+
+    operation->alg = alg;
+    operation->started = 0;
+    operation->sequence = 0;
+
+exit:
+    unlock_status = psa_unlock_key_slot(slot);
+
+    if (status == PSA_SUCCESS) {
+        status = unlock_status;
+    } else {
+        psa_pake_abort(operation);
+    }
+
+    return status;
 }
 
 psa_status_t psa_pake_set_role(psa_pake_operation_t *operation,
@@ -4372,24 +4465,25 @@ psa_status_t psa_pake_set_role(psa_pake_operation_t *operation,
         goto exit;
     }
 
-    switch (operation->alg) {
 #ifdef PSA_WANT_ALG_JPAKE
-    case PSA_ALG_JPAKE:
+    if (PSA_ALG_IS_JPAKE(operation->alg)) {
         if (role > PSA_PAKE_ROLE_SECOND) return PSA_ERROR_INVALID_ARGUMENT;
-        break;
+    } else
 #endif
-#if defined(PSA_WANT_ALG_SPAKE2P) || defined(PSA_WANT_ALG_SRP_6)
-    case PSA_ALG_SPAKE2P:
-    case PSA_ALG_SRP_6:
+#if defined(PSA_WANT_ALG_SPAKE2P_HMAC) || defined(PSA_WANT_ALG_SPAKE2P_CMAC) || \
+    defined(PSA_WANT_ALG_SPAKE2P_MATTER) || defined(PSA_WANT_ALG_SRP_6)
+    if (PSA_ALG_IS_SPAKE2P(operation->alg) || PSA_ALG_IS_SRP_6(operation->alg)) {
         if (role == PSA_PAKE_ROLE_SERVER) operation->is_second = 1;
         else if (role != PSA_PAKE_ROLE_CLIENT) return PSA_ERROR_INVALID_ARGUMENT;
-        break;
+    } else
 #endif
-    default:
+    {
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
-    operation->inputs.role = role;
+    status = psa_driver_wrapper_pake_set_role(operation, role);
+    if (status != PSA_SUCCESS) goto exit;
+
     operation->role_set = 1;
     return PSA_SUCCESS;
 
@@ -4409,39 +4503,45 @@ psa_status_t psa_pake_set_user(psa_pake_operation_t *operation,
         goto exit;
     }
 
-#ifdef PSA_WANT_ALG_SPAKE2P
-    if (operation->alg == PSA_ALG_SPAKE2P) {
+#ifdef PSA_WANT_ALG_JPAKE
+    if (PSA_ALG_IS_JPAKE(operation->alg)) {
+        if (user_id == NULL || user_id_len == 0) {
+            status = PSA_ERROR_INVALID_ARGUMENT;
+            goto exit;
+        }
+    } else
+#endif
+#if defined(PSA_WANT_ALG_SPAKE2P_HMAC) || defined(PSA_WANT_ALG_SPAKE2P_CMAC) || defined(PSA_WANT_ALG_SPAKE2P_MATTER)
+    if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+        if (!operation->role_set) {
+            status = PSA_ERROR_BAD_STATE;
+            goto exit;
+        }
         if (user_id == NULL && user_id_len != 0) {
             status = PSA_ERROR_INVALID_ARGUMENT;
             goto exit;
         }
     } else
 #endif
-    {
-        if (user_id == NULL || user_id_len == 0) {
-            status = PSA_ERROR_INVALID_ARGUMENT;
-            goto exit;
-        }
-    }
-
-#if defined(PSA_WANT_ALG_SPAKE2P) || defined(PSA_WANT_ALG_SRP_6)
-    if (operation->alg == PSA_ALG_SPAKE2P || operation->alg == PSA_ALG_SRP_6) {
+#ifdef PSA_WANT_ALG_SRP_6
+    if (PSA_ALG_IS_SRP_6(operation->alg)) {
         if (!operation->role_set) {
             status = PSA_ERROR_BAD_STATE;
             goto exit;
         }
-    }
+        if (user_id == NULL || user_id_len == 0) {
+            status = PSA_ERROR_INVALID_ARGUMENT;
+            goto exit;
+        }
+    } else
 #endif
+    {
+        return PSA_ERROR_INVALID_ARGUMENT;
+    }
 
-	if(user_id_len != 0) {
-		operation->inputs.user = mbedtls_calloc(1, user_id_len);
-		if (operation->inputs.user == NULL) {
-			status = PSA_ERROR_INSUFFICIENT_MEMORY;
-			goto exit;
-		}
-		memcpy(operation->inputs.user, user_id, user_id_len);
-	}
-    operation->inputs.user_len = user_id_len;
+    status = psa_driver_wrapper_pake_set_user(operation, user_id, user_id_len);
+    if (status != PSA_SUCCESS) goto exit;
+
     operation->user_set = 1;
     return PSA_SUCCESS;
 
@@ -4461,8 +4561,24 @@ psa_status_t psa_pake_set_peer(psa_pake_operation_t *operation,
         goto exit;
     }
 
-#ifdef PSA_WANT_ALG_SPAKE2P
-    if (operation->alg == PSA_ALG_SPAKE2P) {
+#ifdef PSA_WANT_ALG_JPAKE
+    if (PSA_ALG_IS_JPAKE(operation->alg)) {
+        if (!operation->user_set) {
+            status = PSA_ERROR_BAD_STATE;
+            goto exit;
+        }
+        if (peer_id == NULL || peer_id_len == 0) {
+            status = PSA_ERROR_INVALID_ARGUMENT;
+            goto exit;
+        }
+    } else
+#endif
+#if defined(PSA_WANT_ALG_SPAKE2P_HMAC) || defined(PSA_WANT_ALG_SPAKE2P_CMAC) || defined(PSA_WANT_ALG_SPAKE2P_MATTER)
+        if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+        if (!operation->role_set) {
+            status = PSA_ERROR_BAD_STATE;
+            goto exit;
+        }
         if (peer_id == NULL && peer_id_len != 0) {
             status = PSA_ERROR_INVALID_ARGUMENT;
             goto exit;
@@ -4470,31 +4586,13 @@ psa_status_t psa_pake_set_peer(psa_pake_operation_t *operation,
     } else
 #endif
     {
-        if (peer_id == NULL || peer_id_len == 0) {
-            status = PSA_ERROR_INVALID_ARGUMENT;
-            goto exit;
-        }
+        status = PSA_ERROR_BAD_STATE;
+        goto exit;
     }
 
-#if defined(PSA_WANT_ALG_SPAKE2P) || defined(PSA_WANT_ALG_SRP_6)
-    if (operation->alg == PSA_ALG_SPAKE2P || operation->alg == PSA_ALG_SRP_6) {
-        if (!operation->role_set) {
-            status = PSA_ERROR_BAD_STATE;
-            goto exit;
-        }
-    }
-#endif
+    status = psa_driver_wrapper_pake_set_peer(operation, peer_id, peer_id_len);
+    if (status != PSA_SUCCESS) goto exit;
 
-	if(peer_id_len != 0) {
-		operation->inputs.peer = mbedtls_calloc(1, peer_id_len);
-		if (operation->inputs.peer == NULL) {
-			status = PSA_ERROR_INSUFFICIENT_MEMORY;
-			goto exit;
-		}
-		memcpy(operation->inputs.peer, peer_id, peer_id_len);
-	}
-
-    operation->inputs.peer_len = peer_id_len;
     operation->peer_set = 1;
     return PSA_SUCCESS;
 
@@ -4503,63 +4601,41 @@ exit:
     return status;
 }
 
-psa_status_t psa_pake_set_password_key(psa_pake_operation_t *operation,
-    mbedtls_svc_key_id_t password)
+psa_status_t psa_pake_set_context(psa_pake_operation_t *operation,
+    const uint8_t *context,
+    size_t context_len)
 {
     psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-    psa_status_t unlock_status = PSA_ERROR_CORRUPTION_DETECTED;
-    psa_key_slot_t *slot = NULL;
-    psa_key_attributes_t attributes;
-    psa_key_type_t type;
 
-    if (operation->alg == 0 || operation->passw_set || operation->started) {
+    if (operation->alg == 0 || operation->context_set || !operation->role_set || operation->started) {
         status = PSA_ERROR_BAD_STATE;
         goto exit;
     }
 
-#ifdef PSA_WANT_ALG_SPAKE2P
-    if (operation->alg == PSA_ALG_SPAKE2P &&
-        (!operation->role_set || !operation->user_set || !operation->peer_set)) {
-        status = PSA_ERROR_BAD_STATE;
-        goto exit;
-    }
+#if defined(PSA_WANT_ALG_SPAKE2P_HMAC) || defined(PSA_WANT_ALG_SPAKE2P_CMAC) || defined(PSA_WANT_ALG_SPAKE2P_MATTER)
+    if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+        if (context == NULL && context_len != 0) {
+            status = PSA_ERROR_INVALID_ARGUMENT;
+            goto exit;
+        }
+    } else
 #endif
+    {
+        status = PSA_ERROR_BAD_STATE;
+        goto exit;
+    }
 
-    status = psa_get_and_lock_key_slot_with_policy(
-        password, &slot, PSA_KEY_USAGE_DERIVE, operation->alg);
+    status = psa_driver_wrapper_pake_set_context(operation, context, context_len);
     if (status != PSA_SUCCESS) goto exit;
 
-    attributes = (psa_key_attributes_t) {
-        .core = slot->attr
-    };
-
-    type = psa_get_key_type( &attributes );
-    if (type != PSA_KEY_TYPE_PASSWORD && type != PSA_KEY_TYPE_PASSWORD_HASH) {
-        status = PSA_ERROR_INVALID_ARGUMENT;
-        goto exit;
-    }
-
-    operation->inputs.password = mbedtls_calloc(1, slot->key.bytes);
-    if (operation->inputs.password == NULL) {
-        status = PSA_ERROR_INSUFFICIENT_MEMORY;
-        goto exit;
-    }
-    memcpy(operation->inputs.password, slot->key.data, slot->key.bytes);
-    operation->inputs.password_len = slot->key.bytes;
-    operation->inputs.attributes = attributes;
-    operation->passw_set = 1;
+    operation->context_set = 1;
+    return PSA_SUCCESS;
 
 exit:
-    unlock_status = psa_unlock_key_slot( slot );
-
-    if (status == PSA_SUCCESS) {
-        status = unlock_status;
-    } else {
-        psa_pake_abort( operation );
-    }
-
+    psa_pake_abort(operation);
     return status;
 }
+
 
 #ifdef PSA_WANT_ALG_JPAKE
 /* JPAKE sequence numbers:
@@ -4570,14 +4646,13 @@ exit:
  *  9-11: input  SHARE,PUBLIC,PROOF    output SHARE,PUBLIC,PROOF
  * 12-14: output SHARE,PUBLIC,PROOF    input  SHARE,PUBLIC,PROOF
  * 15-17: input  SHARE,PUBLIC,PROOF    output SHARE,PUBLIC,PROOF
- * 18:    get_implicit_key             get_implicit_key
  */
 
 static psa_status_t psa_check_jpake_sequence(psa_pake_operation_t *operation,
     psa_pake_step_t step,
     unsigned int first)
 {
-    if (step != PSA_PAKE_STEP_KEY_SHARE && step != PSA_PAKE_STEP_ZK_PUBLIC && step != PSA_PAKE_STEP_ZK_PROOF) { // ???
+    if (step != PSA_PAKE_STEP_KEY_SHARE && step != PSA_PAKE_STEP_ZK_PUBLIC && step != PSA_PAKE_STEP_ZK_PROOF) {
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
@@ -4614,36 +4689,35 @@ static psa_status_t psa_check_jpake_sequence(psa_pake_operation_t *operation,
 }
 #endif
 
-#ifdef PSA_WANT_ALG_SPAKE2P
+#if defined(PSA_WANT_ALG_SPAKE2P_HMAC) || defined(PSA_WANT_ALG_SPAKE2P_CMAC) || defined(PSA_WANT_ALG_SPAKE2P_MATTER)
 /* SPAKE2+ sequence numbers:
  *      prover (client)       verifier (server)
  *  0:  output shareP         input  shareP
  *  1:  input  shareV         output shareV
  *  2:  input  confirmV       output confirmV
  *  3:  output confirmP       input  confirmP
- *  4:  get_implicit_key      get_implicit_key
  */
 
 static psa_status_t psa_check_spake2p_sequence(psa_pake_operation_t *operation,
     psa_pake_step_t step,
     unsigned int first)
 {
+    if (step != PSA_PAKE_STEP_KEY_SHARE && step != PSA_PAKE_STEP_CONFIRM) {
+        return PSA_ERROR_INVALID_ARGUMENT;
+    }
+
     switch (operation->sequence) {
     case 0: // shareP
-        if (!first) return PSA_ERROR_BAD_STATE;
-        if (step != PSA_PAKE_STEP_KEY_SHARE) return PSA_ERROR_INVALID_ARGUMENT;
+        if (!first || step != PSA_PAKE_STEP_KEY_SHARE) return PSA_ERROR_BAD_STATE;
         break;
     case 1: // shareV
-        if (first) return PSA_ERROR_BAD_STATE;
-        if (step != PSA_PAKE_STEP_KEY_SHARE) return PSA_ERROR_INVALID_ARGUMENT;
+        if (first || step != PSA_PAKE_STEP_KEY_SHARE) return PSA_ERROR_BAD_STATE;
         break;
     case 2: // confirmV
-        if (first) return PSA_ERROR_BAD_STATE;
-        if (step != PSA_PAKE_STEP_CONFIRM) return PSA_ERROR_INVALID_ARGUMENT;
+        if (first || step != PSA_PAKE_STEP_CONFIRM) return PSA_ERROR_BAD_STATE;
         break;
     case 3: // confirmP
-        if (!first) return PSA_ERROR_BAD_STATE;
-        if (step != PSA_PAKE_STEP_CONFIRM) return PSA_ERROR_INVALID_ARGUMENT;
+        if (!first || step != PSA_PAKE_STEP_CONFIRM) return PSA_ERROR_BAD_STATE;
         operation->done = 1;
         break;
     default:
@@ -4656,65 +4730,48 @@ static psa_status_t psa_check_spake2p_sequence(psa_pake_operation_t *operation,
 
 #ifdef PSA_WANT_ALG_SRP_6
 /* SRP sequence numbers:
+ * (salt and share can be used in any order)
  *      client                server
- * 012: input  salt           input salt
- * 012: output client key     input  client key
- * 012: input  server key     output server key
- *   3: output proof1         input  proof1
- *   4: input  proof2         output proof2
- *   5: get_implicit_key      get_implicit_key
+ *  ~1: input  salt           input salt
+ *  ~2: output client share   input  client share
+ *  ~4: input  server share   output server share
+ *   7: output proof1         input  proof1
+ *  15: input  proof2         output proof2
  */
 
 static psa_status_t psa_check_srp_sequence(psa_pake_operation_t *operation,
     psa_pake_step_t step,
     unsigned int first)
 {
-    switch (operation->sequence) {
-    case 0:
-    case 1:
-    case 2: // salt or key
-        if (step != PSA_PAKE_STEP_SALT && step != PSA_PAKE_STEP_KEY_SHARE) return PSA_ERROR_INVALID_ARGUMENT;
+    switch (step) {
+    case PSA_PAKE_STEP_SALT:
+        if (operation->sequence & 1) return PSA_ERROR_BAD_STATE;
         break;
-    case 3: // proof1
-        if (!first) return PSA_ERROR_BAD_STATE;
-        if (step != PSA_PAKE_STEP_CONFIRM) return PSA_ERROR_INVALID_ARGUMENT;
+    case PSA_PAKE_STEP_KEY_SHARE:
+        if (first) {
+            if (operation->sequence & 2) return PSA_ERROR_BAD_STATE;
+            operation->sequence += 1;
+        } else {
+            if (operation->sequence & 4) return PSA_ERROR_BAD_STATE;
+            operation->sequence += 3;
+        }
         break;
-    case 4: // proof2
-        if (first) return PSA_ERROR_BAD_STATE;
-        if (step != PSA_PAKE_STEP_CONFIRM) return PSA_ERROR_INVALID_ARGUMENT;
-        operation->done = 1;
+    case PSA_PAKE_STEP_CONFIRM:
+        if (first) {
+            if (operation->sequence != 7) return PSA_ERROR_BAD_STATE;
+            operation->sequence += 7;
+        } else {
+            if (operation->sequence != 15) return PSA_ERROR_BAD_STATE;
+            operation->done = 1;
+        }
         break;
     default:
-        return PSA_ERROR_BAD_STATE;
+        return PSA_ERROR_INVALID_ARGUMENT;
     }
 
     return PSA_SUCCESS;
 }
 #endif
-
-psa_status_t psa_pake_start_input_output(psa_pake_operation_t *operation)
-{
-    psa_status_t status;
-    psa_crypto_driver_pake_inputs_t *inputs = &operation->inputs;
-
-    status = psa_driver_wrapper_pake_setup(
-        operation,
-        &inputs->cipher_suite,
-        &inputs->attributes,
-        inputs->password, inputs->password_len,
-        inputs->user, inputs->user_len,
-        inputs->peer, inputs->peer_len,
-        inputs->role);
-    mbedtls_zeroize_and_free(inputs->password, inputs->password_len);
-    mbedtls_free(inputs->user);
-    mbedtls_free(inputs->peer);
-    if (status != PSA_SUCCESS) {
-        psa_pake_abort(operation);
-        return status;
-    }
-    operation->started = 1;
-    return PSA_SUCCESS;
-}
 
 psa_status_t psa_pake_output(psa_pake_operation_t *operation,
     psa_pake_step_t step,
@@ -4724,42 +4781,38 @@ psa_status_t psa_pake_output(psa_pake_operation_t *operation,
 {
     psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
-    if (operation->alg == 0 || !operation->passw_set) {
+    if (operation->alg == 0) {
         return PSA_ERROR_BAD_STATE;
     }
 
-    switch (operation->alg) {
-    case PSA_ALG_JPAKE:
 #ifdef PSA_WANT_ALG_JPAKE
-        if (!operation->user_set || !operation->peer_set) return PSA_ERROR_BAD_STATE;
+    if (PSA_ALG_IS_JPAKE(operation->alg)) {
+        if (!operation->peer_set) return PSA_ERROR_BAD_STATE;
         if (operation->sequence == 0 || operation->sequence == 12) operation->is_second = 0;
         status = psa_check_jpake_sequence(operation, step, 1 - operation->is_second);
         if (status != PSA_SUCCESS) return status;
-        break;
+    } else
 #endif
-#ifdef PSA_WANT_ALG_SPAKE2P
-    case PSA_ALG_SPAKE2P:
-        if (!operation->role_set || !operation->user_set || !operation->peer_set) return PSA_ERROR_BAD_STATE;
+#if defined(PSA_WANT_ALG_SPAKE2P_HMAC) || defined(PSA_WANT_ALG_SPAKE2P_CMAC) || defined(PSA_WANT_ALG_SPAKE2P_MATTER)
+    if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+        if (!operation->role_set) return PSA_ERROR_BAD_STATE;
         status = psa_check_spake2p_sequence(operation, step, 1 - operation->is_second);
         if (status != PSA_SUCCESS) return status;
-        break;
+    } else
 #endif
 #ifdef PSA_WANT_ALG_SRP_6
-    case PSA_ALG_SRP_6:
+    if (PSA_ALG_IS_SRP_6(operation->alg)) {
         if (!operation->role_set || !operation->user_set) return PSA_ERROR_BAD_STATE;
         if (step == PSA_PAKE_STEP_SALT) return PSA_ERROR_INVALID_ARGUMENT;
         status = psa_check_srp_sequence(operation, step, 1 - operation->is_second);
         if (status != PSA_SUCCESS) return status;
-        break;
+    } else
 #endif
-    default:
+    {
         return PSA_ERROR_NOT_SUPPORTED;
     }
 
-    if (operation->started == 0) {
-        status = psa_pake_start_input_output(operation);
-        if (status) return status;
-    }
+    operation->started = 1;
     operation->sequence++;
 
     status = psa_driver_wrapper_pake_output(
@@ -4780,55 +4833,40 @@ psa_status_t psa_pake_input(psa_pake_operation_t *operation,
 {
     psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
-    if (operation->alg == 0 || !operation->passw_set) {
+    if (operation->alg == 0) {
         return PSA_ERROR_BAD_STATE;
     }
 
     if (input == NULL || input_length == 0) return PSA_ERROR_INVALID_ARGUMENT;
 
-    switch (operation->alg) {
 #ifdef PSA_WANT_ALG_JPAKE
-    case PSA_ALG_JPAKE:
-        if (!operation->user_set || !operation->peer_set) return PSA_ERROR_BAD_STATE;
+    if (PSA_ALG_IS_JPAKE(operation->alg)) {
+        if (!operation->peer_set) return PSA_ERROR_BAD_STATE;
         if (operation->sequence == 0 || operation->sequence == 12) operation->is_second = 1;
         status = psa_check_jpake_sequence(operation, step, operation->is_second);
         if (status != PSA_SUCCESS) return status;
-        break;
+    } else
 #endif
-#ifdef PSA_WANT_ALG_SPAKE2P
-    case PSA_ALG_SPAKE2P:
-        if (!operation->role_set || !operation->user_set || !operation->peer_set) return PSA_ERROR_BAD_STATE;
-        if (step == PSA_PAKE_STEP_CONTEXT) {
-            if (operation->sequence != 0 || operation->started) return PSA_ERROR_BAD_STATE;
-        } else {
-            status = psa_check_spake2p_sequence(operation, step, operation->is_second);
-            if (status != PSA_SUCCESS) return status;
-        }
-        break;
+#if defined(PSA_WANT_ALG_SPAKE2P_HMAC) || defined(PSA_WANT_ALG_SPAKE2P_CMAC) || defined(PSA_WANT_ALG_SPAKE2P_MATTER)
+    if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+        if (!operation->role_set) return PSA_ERROR_BAD_STATE;
+        status = psa_check_spake2p_sequence(operation, step, operation->is_second);
+        if (status != PSA_SUCCESS) return status;
+    } else
 #endif
 #ifdef PSA_WANT_ALG_SRP_6
-    case PSA_ALG_SRP_6:
+    if (PSA_ALG_IS_SRP_6(operation->alg)) {
         if (!operation->role_set || !operation->user_set) return PSA_ERROR_BAD_STATE;
         status = psa_check_srp_sequence(operation, step, operation->is_second);
         if (status != PSA_SUCCESS) return status;
-        break;
+    } else
 #endif
-    default:
+    {
         return PSA_ERROR_NOT_SUPPORTED;
     }
 
-    if (operation->started == 0) {
-        status = psa_pake_start_input_output(operation);
-        if (status) return status;
-    }
-
-#ifdef PSA_WANT_ALG_SPAKE2P
-    if (step != PSA_PAKE_STEP_CONTEXT) {
-#endif
-        operation->sequence++;
-#ifdef PSA_WANT_ALG_SPAKE2P
-    }
-#endif
+    operation->started = 1;
+    operation->sequence++;
 
     status = psa_driver_wrapper_pake_input(
         operation, step,
@@ -4841,38 +4879,61 @@ psa_status_t psa_pake_input(psa_pake_operation_t *operation,
     return status;
 }
 
-psa_status_t psa_pake_get_implicit_key(psa_pake_operation_t *operation,
-    psa_key_derivation_operation_t *output)
+psa_status_t psa_pake_get_shared_key(psa_pake_operation_t *operation,
+    const psa_key_attributes_t *attributes,
+    mbedtls_svc_key_id_t *key)
 {
     psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-#if defined(PSA_WANT_ALG_JPAKE) && PSA_TLS12_ECJPAKE_TO_PMS_INPUT_SIZE > PSA_HASH_MAX_SIZE
-    uint8_t data[PSA_TLS12_ECJPAKE_TO_PMS_INPUT_SIZE];
-#else
-    uint8_t data[PSA_HASH_MAX_SIZE];
-#endif
-    size_t data_length = 0;
+    psa_key_slot_t *slot = NULL;
+    psa_se_drv_table_entry_t *driver = NULL;
+    psa_key_type_t type;
+    size_t storage_size;
 
     if (operation->alg == 0 || operation->done == 0) {
         return PSA_ERROR_BAD_STATE;
     }
 
-    status = psa_driver_wrapper_pake_get_implicit_key(
-        operation,
-        data, sizeof data, &data_length);
-    if (status != PSA_SUCCESS) {
-        psa_key_derivation_abort(output);
-        goto exit;
+    if (psa_get_key_bits(attributes) != 0) {
+        return PSA_ERROR_INVALID_ARGUMENT;
     }
 
-    // forward common secret to key derivation function
-    output->can_output_key = 1;
-    status = psa_key_derivation_input_internal(
-        output,
-        PSA_KEY_DERIVATION_INPUT_SECRET,
-        PSA_KEY_TYPE_DERIVE,
-        data, data_length);
+    type = psa_get_key_type(attributes);
+    if (type != PSA_KEY_TYPE_DERIVE && type != PSA_KEY_TYPE_HMAC) {
+        if (PSA_ALG_IS_SPAKE2P(operation->alg) || PSA_ALG_IS_SRP_6(operation->alg)) {
+            // the SPAKE2+ and SRP secret can be used directly for symmetric crypto
+            if ((type & PSA_KEY_TYPE_CATEGORY_MASK) != PSA_KEY_TYPE_CATEGORY_SYMMETRIC) {
+                return PSA_ERROR_INVALID_ARGUMENT;
+            }
+        } else {
+            return PSA_ERROR_INVALID_ARGUMENT;
+        }
+    }
+
+    status = psa_start_key_creation(
+        PSA_KEY_CREATION_DERIVE, attributes, &slot, &driver);
+    if (status != PSA_SUCCESS) goto exit;
+
+    storage_size = operation->secret_size;
+    if (psa_key_lifetime_is_external(attributes->core.lifetime)) {
+        status = psa_driver_wrapper_get_key_buffer_size(attributes, &storage_size);
+        if (status != PSA_SUCCESS) goto exit;
+    }
+    status = psa_allocate_buffer_to_slot(slot, storage_size);
+    if (status != PSA_SUCCESS) goto exit;
+
+    status = psa_driver_wrapper_pake_get_shared_key(
+        operation, attributes,
+        slot->key.data, slot->key.bytes, &slot->key.bytes);
+    if (status == PSA_SUCCESS) {
+        status = psa_finish_key_creation(slot, driver, key);
+    }
 
 exit:
+    if (status != PSA_SUCCESS) {
+        psa_fail_key_creation(slot, driver);
+        *key = MBEDTLS_SVC_KEY_ID_INIT;
+    }
+
     psa_pake_abort(operation);
     return status;
 }

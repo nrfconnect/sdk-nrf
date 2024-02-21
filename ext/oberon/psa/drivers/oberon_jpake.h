@@ -39,11 +39,17 @@ typedef struct {
 
 psa_status_t oberon_jpake_setup(
     oberon_jpake_operation_t *operation,
-    const psa_pake_cipher_suite_t *cipher_suite,
+    const psa_key_attributes_t *attributes,
     const uint8_t *password, size_t password_length,
-    const uint8_t *user_id, size_t user_id_length,
-    const uint8_t *peer_id, size_t peer_id_length,
-    psa_pake_role_t role);
+    const psa_pake_cipher_suite_t *cipher_suite);
+
+psa_status_t oberon_jpake_set_user(
+    oberon_jpake_operation_t *operation,
+    const uint8_t *user_id, size_t user_id_len);
+
+psa_status_t oberon_jpake_set_peer(
+    oberon_jpake_operation_t *operation,
+    const uint8_t *peer_id, size_t peer_id_len);
 
 psa_status_t oberon_jpake_output(
     oberon_jpake_operation_t *operation,
@@ -55,7 +61,7 @@ psa_status_t oberon_jpake_input(
     psa_pake_step_t step,
     const uint8_t *input, size_t input_length);
 
-psa_status_t oberon_jpake_get_implicit_key(
+psa_status_t oberon_jpake_get_shared_key(
     oberon_jpake_operation_t *operation,
     uint8_t *output, size_t output_size, size_t *output_length);
 

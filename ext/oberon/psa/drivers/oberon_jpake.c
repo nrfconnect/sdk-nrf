@@ -12,6 +12,7 @@
 
 #include "psa/crypto.h"
 #include "oberon_jpake.h"
+#include "oberon_helpers.h"
 #include "psa_crypto_driver_wrappers.h"
 
 #include "ocrypto_ecjpake_p256.h"
@@ -186,7 +187,7 @@ static psa_status_t oberon_read_zk_proof(
     uint8_t h[PSA_HASH_MAX_SIZE];
     size_t h_len;
 
-    if (input_length > sizeof op->r) return PSA_ERROR_INVALID_ARGUMENT;
+    if (input_length > sizeof op->r) return PSA_ERROR_INVALID_SIGNATURE;
     if (input_length < sizeof op->r) {
         memset(rp, 0, sizeof op->r - input_length);
         rp += sizeof op->r - input_length;
@@ -210,41 +211,57 @@ static psa_status_t oberon_read_zk_proof(
 
 psa_status_t oberon_jpake_setup(
     oberon_jpake_operation_t *operation,
-    const psa_pake_cipher_suite_t *cipher_suite,
+    const psa_key_attributes_t *attributes,
     const uint8_t *password, size_t password_length,
-    const uint8_t *user_id, size_t user_id_length,
-    const uint8_t *peer_id, size_t peer_id_length,
-    psa_pake_role_t role)
+    const psa_pake_cipher_suite_t *cipher_suite)
 {
-    (void)role;
-    if (cipher_suite->algorithm != PSA_ALG_JPAKE ||
-        cipher_suite->type != PSA_PAKE_PRIMITIVE_TYPE_ECC ||
-        cipher_suite->family != PSA_ECC_FAMILY_SECP_R1 ||
-        cipher_suite->bits != 256 ||
-        cipher_suite->hash != PSA_ALG_SHA_256) {
+    (void)attributes;
+
+    if (psa_pake_cs_get_primitive(cipher_suite) !=
+            PSA_PAKE_PRIMITIVE(PSA_PAKE_PRIMITIVE_TYPE_ECC, PSA_ECC_FAMILY_SECP_R1, 256)) {
         return PSA_ERROR_NOT_SUPPORTED;
     }
-    operation->hash_alg = cipher_suite->hash;
+    operation->hash_alg = PSA_ALG_GET_HASH(psa_pake_cs_get_algorithm(cipher_suite));
+    if (operation->hash_alg != PSA_ALG_SHA_256) return PSA_ERROR_NOT_SUPPORTED;
+
     operation->rd_idx = 0;
     operation->wr_idx = 0;
 
-    if (user_id_length == peer_id_length) {
-        if (memcmp(user_id, peer_id, user_id_length) == 0) {
+    // store reduced password
+    ocrypto_ecjpake_read_shared_secret(operation->secret, password, password_length);
+
+    if (oberon_ct_compare_zero(operation->secret, sizeof operation->secret) == 0) {
+        return PSA_ERROR_INVALID_ARGUMENT;
+    }
+
+    return PSA_SUCCESS;
+}
+
+psa_status_t oberon_jpake_set_user(
+    oberon_jpake_operation_t *operation,
+    const uint8_t *user_id, size_t user_id_len)
+{
+    if (user_id_len > sizeof operation->user_id) return PSA_ERROR_NOT_SUPPORTED;
+    memcpy(operation->user_id, user_id, user_id_len);
+    operation->user_id_length = (uint8_t)user_id_len;
+
+    return PSA_SUCCESS;
+}
+
+psa_status_t oberon_jpake_set_peer(
+    oberon_jpake_operation_t *operation,
+    const uint8_t *peer_id, size_t peer_id_len)
+{
+    if (peer_id_len == operation->user_id_length) {
+        if (memcmp(peer_id, operation->user_id, peer_id_len) == 0) {
             // user and peer ids must not be equal
             return PSA_ERROR_INVALID_ARGUMENT;
         }
     }
 
-    // store reduced password
-    ocrypto_ecjpake_read_shared_secret(operation->secret, password, password_length);
-
-    if (user_id_length > sizeof operation->user_id) return PSA_ERROR_NOT_SUPPORTED;
-    memcpy(operation->user_id, user_id, user_id_length);
-    operation->user_id_length = (uint8_t)user_id_length;
-
-    if (peer_id_length > sizeof operation->peer_id) return PSA_ERROR_NOT_SUPPORTED;
-    memcpy(operation->peer_id, peer_id, peer_id_length);
-    operation->peer_id_length = (uint8_t)peer_id_length;
+    if (peer_id_len > sizeof operation->peer_id) return PSA_ERROR_NOT_SUPPORTED;
+    memcpy(operation->peer_id, peer_id, peer_id_len);
+    operation->peer_id_length = (uint8_t)peer_id_len;
 
     return PSA_SUCCESS;
 }
@@ -295,7 +312,7 @@ psa_status_t oberon_jpake_input(
     }
 }
 
-psa_status_t oberon_jpake_get_implicit_key(
+psa_status_t oberon_jpake_get_shared_key(
     oberon_jpake_operation_t *operation,
     uint8_t *output, size_t output_size, size_t *output_length)
 {
