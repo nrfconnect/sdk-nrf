@@ -22,10 +22,22 @@ LOG_MODULE_REGISTER(bt_mgmt_ctlr_cfg, CONFIG_BT_MGMT_CTLR_CFG_LOG_LEVEL);
 #define COMPANY_ID_NORDIC      0x0059
 #define COMPANY_ID_PACKETCRAFT 0x07E8
 
-#define WDT_TIMEOUT_MS	      1200
-#define CTLR_POLL_INTERVAL_MS (WDT_TIMEOUT_MS - 200)
+#define WDT_TIMEOUT_MS	      1500
+#define CTLR_POLL_INTERVAL_MS (WDT_TIMEOUT_MS - 500)
 
 static struct k_work work_ctlr_poll;
+
+#define CTLR_POLL_WORK_STACK_SIZE 1024
+
+K_THREAD_STACK_DEFINE(ctlr_poll_stack_area, CTLR_POLL_WORK_STACK_SIZE);
+
+struct k_work_q ctrl_poll_work_q;
+
+struct k_work_queue_config ctrl_poll_work_q_config = {
+	.name = "ctlr_poll",
+	.no_yield = false,
+};
+
 static void ctlr_poll_timer_handler(struct k_timer *timer_id);
 static int wdt_ch_id;
 
@@ -139,12 +151,17 @@ static void work_ctlr_poll_handler(struct k_work *work)
 
 static void ctlr_poll_timer_handler(struct k_timer *timer_id)
 {
-	k_work_submit(&work_ctlr_poll);
+	int ret;
+
+	ret = k_work_submit_to_queue(&ctrl_poll_work_q, &work_ctlr_poll);
+	if (ret < 0) {
+		LOG_ERR("Work q submit failed: %d", ret);
+	}
 }
 
 static void wdt_timeout_cb(int channel_id, void *user_data)
 {
-	ERR_CHK_MSG(-ETIMEDOUT, "Controller not responsive");
+	ERR_CHK_MSG(-ETIMEDOUT, "No response from IPC or controller");
 }
 
 int bt_mgmt_ctlr_cfg_manufacturer_get(bool print_version, uint16_t *manufacturer)
@@ -216,6 +233,12 @@ int bt_mgmt_ctlr_cfg_init(bool watchdog_enable)
 		if (wdt_ch_id < 0) {
 			return wdt_ch_id;
 		}
+		k_work_queue_init(&ctrl_poll_work_q);
+
+		k_work_queue_start(&ctrl_poll_work_q, ctlr_poll_stack_area,
+				   K_THREAD_STACK_SIZEOF(ctlr_poll_stack_area),
+				   K_PRIO_PREEMPT(CONFIG_CTLR_POLL_WORK_Q_PRIO),
+				   &ctrl_poll_work_q_config);
 
 		k_work_init(&work_ctlr_poll, work_ctlr_poll_handler);
 		k_timer_start(&ctlr_poll_timer, K_MSEC(CTLR_POLL_INTERVAL_MS),

@@ -154,6 +154,17 @@ config BLE_ADV_TX_POWER_DBM
 
 endmenu # Power control
 
+menu "Thread priorities"
+
+config CTLR_POLL_WORK_Q_PRIO
+	int "Work queue priority for controller poll"
+	default 6
+	help
+	  This is a preemptible work queue.
+	  This work queue will poll the controller to check it is alive.
+
+endmenu # Thread priorities
+
 rsource "dfu/Kconfig"
 rsource "advertising/Kconfig"
 rsource "scanning/Kconfig"
