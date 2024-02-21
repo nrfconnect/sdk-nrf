@@ -446,14 +446,12 @@ if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
   kconfig_check_and_set_base_to_one(MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED)
 endif()
 
-if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
-  # Copy the mbed TLS config file (default: nrf-config.h)
-  configure_file(${NRF_SECURITY_ROOT}/configs/nrf-config.h.template
-    ${generated_include_path}/${CONFIG_MBEDTLS_CFG_FILE}
-  )
+# Copy the mbed TLS config file (default: nrf-config.h)
+configure_file(${NRF_SECURITY_ROOT}/configs/nrf-config.h.template
+  ${generated_include_path}/${CONFIG_MBEDTLS_CFG_FILE}
+)
 
-  # Generate the PSA config file (default nrf-psa-crypto-config.h)
-  configure_file(${NRF_SECURITY_ROOT}/configs/psa_crypto_config.h.template
-    ${generated_include_path}/${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}
-  )
-endif()
+# Generate the PSA config file (default nrf-psa-crypto-config.h)
+configure_file(${NRF_SECURITY_ROOT}/configs/psa_crypto_config.h.template
+  ${generated_include_path}/${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}
+)
