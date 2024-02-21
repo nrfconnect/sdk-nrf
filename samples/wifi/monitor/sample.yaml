@@ -16,3 +16,21 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build
+  sample.nrf7000.monitor:
+    # For SML only
+    skip: true
+    build_only: true
+    extra_args:
+      SHIELD=nrf7002ek_nrf7000
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+  sample.nrf7001.monitor:
+    # For SML only
+    skip: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk_nrf7001_nrf5340_cpuapp
+    platform_allow: nrf7002dk_nrf7001_nrf5340_cpuapp
+    tags: ci_build
