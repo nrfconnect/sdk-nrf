@@ -162,7 +162,7 @@ static void rx_recovery(void)
 	}
 
 	if (atomic_cas(&recovery_state, RECOVERY_ONGOING, RECOVERY_IDLE)) {
-		LOG_INF("UART RX enabled");
+		LOG_DBG("UART RX enabled");
 	}
 }
 
@@ -238,12 +238,12 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 		break;
 	case UART_RX_BUF_REQUEST:
 		if (k_msgq_num_free_get(&rx_event_queue) < UART_RX_EVENT_COUNT_FOR_BUF) {
-			LOG_INF("Disabling UART RX: No event space.");
+			LOG_WRN("Disabling UART RX: No event space.");
 			break;
 		}
 		buf = rx_buf_alloc();
 		if (!buf) {
-			LOG_INF("Disabling UART RX: No free buffers.");
+			LOG_WRN("Disabling UART RX: No free buffers.");
 			break;
 		}
 		err = uart_rx_buf_rsp(slm_uart_dev, buf->buf, sizeof(buf->buf));
@@ -258,7 +258,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 		}
 		break;
 	case UART_RX_STOPPED:
-		LOG_WRN("UART_RX_STOPPED (%d)", evt->data.rx_stop.reason);
+		LOG_DBG("UART_RX_STOPPED (%d)", evt->data.rx_stop.reason);
 		break;
 	case UART_RX_DISABLED:
 		LOG_DBG("UART_RX_DISABLED");
