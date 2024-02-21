@@ -17,11 +17,8 @@
 #include "oberon_helpers.h"
 #include "psa_crypto_driver_wrappers.h"
 
+#include "ocrypto_ecdh_p256.h"
 #include "ocrypto_spake2p_p256.h"
-
-
-// up to version 04 the K_main, K_confirmP, and K_confirmV values were calculated differently
-//#define SPAKE2P_USE_VERSION_04
 
 
 #define P256_KEY_SIZE    32
@@ -84,14 +81,15 @@ static psa_status_t oberon_write_key_share(
 {
     int res;
     psa_status_t status;
-    uint8_t xs[40];
+    const uint8_t *mn;
 
     // random secret key
-    status = psa_generate_random(xs, sizeof xs);
+    status = psa_generate_random(op->XY, 40);
     if (status != PSA_SUCCESS) return status;
-    ocrypto_spake2p_p256_reduce(op->xy, xs, sizeof xs);
+    ocrypto_spake2p_p256_reduce(op->xy, op->XY, 40);
 
-    res = ocrypto_spake2p_p256_get_key_share(op->XY, op->w0, op->xy, op->MN);
+    mn = op->role == PSA_PAKE_ROLE_CLIENT ? M : N;
+    res = ocrypto_spake2p_p256_get_key_share(op->XY, op->w0, op->xy, mn);
     if (res) return PSA_ERROR_INVALID_ARGUMENT;
 
     if (output_size < P256_POINT_SIZE) return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -132,16 +130,17 @@ static psa_status_t oberon_get_confirmation_keys(
     uint8_t *KconfP, uint8_t *KconfV)
 {
     psa_status_t status;
+    psa_algorithm_t hkdf_alg = PSA_ALG_HKDF(PSA_ALG_GET_HASH(op->alg));
     psa_key_derivation_operation_t kdf_op = PSA_KEY_DERIVATION_OPERATION_INIT;
     uint8_t Z[P256_POINT_SIZE];
     uint8_t V[P256_POINT_SIZE];
-    size_t hash_len;
+    size_t hash_len, conf_len = 0, shared_len = 0, mac_len = 0;
 
     // add Z, V, and w0 to TT
     if (op->role == PSA_PAKE_ROLE_CLIENT) {
-        ocrypto_spake2p_p256_get_ZV(Z, V, op->w0, op->w1, op->xy, op->YX, op->NM, NULL);
+        ocrypto_spake2p_p256_get_ZV(Z, V, op->w0, &op->w1L[1], op->xy, op->YX, N, NULL);
     } else {
-        ocrypto_spake2p_p256_get_ZV(Z, V, op->w0, NULL, op->xy, op->YX, op->NM, op->L);
+        ocrypto_spake2p_p256_get_ZV(Z, V, op->w0, NULL, op->xy, op->YX, M, op->w1L);
     }
     status = oberon_update_hash_with_prefix(&op->hash_op, Z, P256_POINT_SIZE);
     if (status) return status;
@@ -156,37 +155,67 @@ static psa_status_t oberon_get_confirmation_keys(
         psa_driver_wrapper_hash_abort(&op->hash_op);
         return status;
     }
-    op->hash_len = hash_len;
 
     // get K_shared
-#ifdef SPAKE2P_USE_VERSION_04
-    hash_len >>= 1; // K_confirm and confirm size is hash_len / 2
-    memcpy(op->shared, V + hash_len, hash_len);
-#else
-    status = psa_driver_wrapper_key_derivation_setup(&kdf_op, PSA_ALG_HKDF(op->hash_alg));
-    if (status) goto exit;
-    status = psa_driver_wrapper_key_derivation_input_bytes(&kdf_op, PSA_KEY_DERIVATION_INPUT_INFO, (uint8_t *)"SharedKey", 9);
-    if (status) goto exit;
-    status = psa_driver_wrapper_key_derivation_input_bytes(&kdf_op, PSA_KEY_DERIVATION_INPUT_SECRET, V, hash_len);
-    if (status) goto exit;
-    status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, op->shared, hash_len);
-    if (status) goto exit;
-    psa_key_derivation_abort(&kdf_op);
+#ifdef PSA_NEED_OBERON_SPAKE2P_MATTER
+    if (op->alg == PSA_ALG_SPAKE2P_MATTER) {
+        // Spake2+ draft version 2
+        conf_len = hash_len >> 1;   // K_confirm is hash_len / 2
+        shared_len = hash_len >> 1; // shared key size is hash_len / 2
+        mac_len = hash_len;         // mac size is hash_len
+        memcpy(op->shared, V + conf_len, shared_len);
+    } else
 #endif
+    {
+#if defined(PSA_NEED_OBERON_SPAKE2P_HMAC_SECP_R1_256) || defined(PSA_NEED_OBERON_SPAKE2P_CMAC_SECP_R1_256)
+        shared_len = hash_len;
+#if defined(PSA_NEED_OBERON_SPAKE2P_HMAC_SECP_R1_256) && defined(PSA_NEED_OBERON_SPAKE2P_CMAC_SECP_R1_256)
+        if (PSA_ALG_IS_SPAKE2P_CMAC(op->alg)) {
+#endif
+#ifdef PSA_NEED_OBERON_SPAKE2P_CMAC_SECP_R1_256
+            mac_len = PSA_MAC_LENGTH(PSA_KEY_TYPE_AES, 128, PSA_ALG_CMAC);
+#endif
+#if defined(PSA_NEED_OBERON_SPAKE2P_HMAC_SECP_R1_256) && defined(PSA_NEED_OBERON_SPAKE2P_CMAC_SECP_R1_256)
+        } else {
+#endif
+#ifdef PSA_NEED_OBERON_SPAKE2P_HMAC_SECP_R1_256
+            mac_len = hash_len;
+#endif
+#if defined(PSA_NEED_OBERON_SPAKE2P_HMAC_SECP_R1_256) && defined(PSA_NEED_OBERON_SPAKE2P_CMAC_SECP_R1_256)
+        }
+#endif
+        conf_len = mac_len;
+        status = psa_driver_wrapper_key_derivation_setup(&kdf_op, hkdf_alg);
+        if (status) goto exit;
+        status = psa_driver_wrapper_key_derivation_input_bytes(&kdf_op, PSA_KEY_DERIVATION_INPUT_INFO, (uint8_t *)"SharedKey", 9);
+        if (status) goto exit;
+        status = psa_driver_wrapper_key_derivation_input_bytes(&kdf_op, PSA_KEY_DERIVATION_INPUT_SECRET, V, hash_len);
+        if (status) goto exit;
+        status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, op->shared, shared_len);
+        if (status) goto exit;
+        psa_key_derivation_abort(&kdf_op);
+#endif /* PSA_NEED_OBERON_SPAKE2P_HMAC_SECP_R1_256 || PSA_NEED_OBERON_SPAKE2P_CMAC_SECP_R1_256 */
+    }
+
+    op->conf_len = (uint8_t)conf_len;
+    op->shared_len = (uint8_t)shared_len;
+    op->mac_len = (uint8_t)mac_len;
 
     // get K_confirmP & K_confirmV
-    status = psa_driver_wrapper_key_derivation_setup(&kdf_op, PSA_ALG_HKDF(op->hash_alg));
+    status = psa_driver_wrapper_key_derivation_setup(&kdf_op, hkdf_alg);
     if (status) goto exit;
     status = psa_driver_wrapper_key_derivation_input_bytes(&kdf_op, PSA_KEY_DERIVATION_INPUT_INFO, (uint8_t *)"ConfirmationKeys", 16);
     if (status) goto exit;
-    status = psa_driver_wrapper_key_derivation_input_bytes(&kdf_op, PSA_KEY_DERIVATION_INPUT_SECRET, V, hash_len);
+    status = psa_driver_wrapper_key_derivation_input_bytes(&kdf_op, PSA_KEY_DERIVATION_INPUT_SECRET, V, conf_len);
     if (status) goto exit;
-    status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, KconfP, hash_len);
+    status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, KconfP, conf_len);
     if (status) goto exit;
-    status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, KconfV, hash_len);
+    status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, KconfV, conf_len);
 
 exit:
     psa_driver_wrapper_key_derivation_abort(&kdf_op);
+    memset(Z, 0, sizeof Z);
+    memset(V, 0, sizeof V);
     return status;
 }
 
@@ -198,19 +227,37 @@ static psa_status_t oberon_get_confirmation(
 {
     size_t length;
     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+    psa_algorithm_t mac_alg = 0;
+
+#if defined(PSA_NEED_OBERON_SPAKE2P_CMAC_SECP_R1_256) && \
+   (defined(PSA_NEED_OBERON_SPAKE2P_HMAC_SECP_R1_256) || defined(PSA_NEED_OBERON_SPAKE2P_MATTER))
+    if (PSA_ALG_IS_SPAKE2P_CMAC(op->alg)) {
+#endif
+#ifdef PSA_NEED_OBERON_SPAKE2P_CMAC_SECP_R1_256
+        mac_alg = PSA_ALG_CMAC;
+        psa_set_key_type(&attributes, PSA_KEY_TYPE_AES);
+#endif
+#if defined(PSA_NEED_OBERON_SPAKE2P_CMAC_SECP_R1_256) && \
+   (defined(PSA_NEED_OBERON_SPAKE2P_HMAC_SECP_R1_256) || defined(PSA_NEED_OBERON_SPAKE2P_MATTER))
+    } else {
+#endif
+#if defined(PSA_NEED_OBERON_SPAKE2P_HMAC_SECP_R1_256) || defined(PSA_NEED_OBERON_SPAKE2P_MATTER)
+        mac_alg = PSA_ALG_HMAC(PSA_ALG_GET_HASH(op->alg));
+        psa_set_key_type(&attributes, PSA_KEY_TYPE_HMAC);
+#endif
+#if defined(PSA_NEED_OBERON_SPAKE2P_CMAC_SECP_R1_256) && \
+   (defined(PSA_NEED_OBERON_SPAKE2P_HMAC_SECP_R1_256) || defined(PSA_NEED_OBERON_SPAKE2P_MATTER))
+    }
+#endif
+
     psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_SIGN_MESSAGE);
-    psa_set_key_algorithm(&attributes, PSA_ALG_HMAC(op->hash_alg));
-    psa_set_key_type(&attributes, PSA_KEY_TYPE_HMAC);
+    psa_set_key_algorithm(&attributes, mac_alg);
 
     return psa_driver_wrapper_mac_compute(
-#ifdef SPAKE2P_USE_VERSION_04
-        &attributes, kconf, op->hash_len >> 1,
-#else
-        &attributes, kconf, op->hash_len,
-#endif
-        PSA_ALG_HMAC(op->hash_alg),
+        &attributes, kconf, op->conf_len,
+        mac_alg,
         share, P256_POINT_SIZE,
-        conf, op->hash_len, &length);
+        conf, op->mac_len, &length);
 }
 
 static psa_status_t oberon_write_confirm(
@@ -224,10 +271,10 @@ static psa_status_t oberon_write_confirm(
         if (status) return status;
     }
 
-    if (output_size < op->hash_len) return PSA_ERROR_BUFFER_TOO_SMALL;
+    if (output_size < op->mac_len) return PSA_ERROR_BUFFER_TOO_SMALL;
     status = oberon_get_confirmation(op, op->KconfPV, op->YX, output);
     if (status) return status;
-    *output_length = op->hash_len;
+    *output_length = op->mac_len;
 
     return PSA_SUCCESS;
 }
@@ -247,8 +294,8 @@ static psa_status_t oberon_read_confirm(
     status = oberon_get_confirmation(op, op->KconfVP, op->XY, conf);
     if (status) return status;
 
-    if (input_length != op->hash_len) return PSA_ERROR_INVALID_SIGNATURE;
-    if (oberon_ct_compare(input, conf, op->hash_len)) return PSA_ERROR_INVALID_SIGNATURE;
+    if (input_length != op->mac_len) return PSA_ERROR_INVALID_SIGNATURE;
+    if (oberon_ct_compare(input, conf, op->mac_len)) return PSA_ERROR_INVALID_SIGNATURE;
 
     return PSA_SUCCESS;
 }
@@ -256,64 +303,108 @@ static psa_status_t oberon_read_confirm(
 
 psa_status_t oberon_spake2p_setup(
     oberon_spake2p_operation_t *operation,
-    const psa_pake_cipher_suite_t *cipher_suite,
+    const psa_key_attributes_t *attributes,
     const uint8_t *password, size_t password_length,
-    const uint8_t *user_id, size_t user_id_length,
-    const uint8_t *peer_id, size_t peer_id_length,
-    psa_pake_role_t role)
+    const psa_pake_cipher_suite_t *cipher_suite)
 {
-    psa_status_t status;
-    int res;
+    (void)attributes;
 
-    if (cipher_suite->algorithm != PSA_ALG_SPAKE2P ||
-        cipher_suite->type != PSA_PAKE_PRIMITIVE_TYPE_ECC ||
-        cipher_suite->family != PSA_ECC_FAMILY_SECP_R1 ||
-        cipher_suite->bits != 256) {
+    if (psa_pake_cs_get_primitive(cipher_suite) !=
+            PSA_PAKE_PRIMITIVE(PSA_PAKE_PRIMITIVE_TYPE_ECC, PSA_ECC_FAMILY_SECP_R1, 256) ||
+        psa_pake_cs_get_key_confirmation(cipher_suite) != PSA_PAKE_CONFIRMED_KEY) {
         return PSA_ERROR_NOT_SUPPORTED;
     }
 
-    // prepare TT calculation
-    operation->hash_alg = cipher_suite->hash;
-    operation->role = role;
-    status = psa_driver_wrapper_hash_setup(&operation->hash_op, cipher_suite->hash);
-    if (status) return status;
+    if (password_length == 2 * P256_KEY_SIZE) {
+        // password = w0:w1
+        memcpy(operation->w0, password, P256_KEY_SIZE);
+        password += P256_KEY_SIZE;
+        operation->w1L[0] = 0; // w1L is 0x00:w1
+        ocrypto_spake2p_p256_reduce(&operation->w1L[1], password, P256_KEY_SIZE);
+    } else if (password_length == P256_KEY_SIZE + P256_POINT_SIZE) {
+        // password = w0:L
+        memcpy(operation->w0, password, P256_KEY_SIZE);
+        password += P256_KEY_SIZE;
+        memcpy(operation->w1L, password, P256_POINT_SIZE); // w1L is L = 0x04:x:y
+    } else {
+        return PSA_ERROR_INVALID_ARGUMENT;
+    }
 
+    // prepare TT calculation
+    operation->alg = psa_pake_cs_get_algorithm(cipher_suite);
+    return psa_driver_wrapper_hash_setup(&operation->hash_op, PSA_ALG_GET_HASH(operation->alg));
+}
+
+psa_status_t oberon_spake2p_set_role(
+    oberon_spake2p_operation_t *operation,
+    psa_pake_role_t role)
+{
     if (role == PSA_PAKE_ROLE_CLIENT) {
-        operation->MN = M;
-        operation->NM = N;
+        if (operation->w1L[0] == 0x04) return PSA_ERROR_INVALID_ARGUMENT;
+    } else {
+        if (operation->w1L[0] != 0x04) { // secret key -> public key
+            operation->w1L[0] = 0x04;
+            ocrypto_ecdh_p256_public_key(&operation->w1L[1], &operation->w1L[1]);
+        }
+    }
+    operation->role = role;
+    return PSA_SUCCESS;
+}
+
+psa_status_t oberon_spake2p_set_user(
+    oberon_spake2p_operation_t *operation,
+    const uint8_t *user_id, size_t user_id_len)
+{
+    if (operation->role == PSA_PAKE_ROLE_CLIENT) {
         // prover = user; verifier = peer
-        if (user_id_length > sizeof operation->prover || peer_id_length > sizeof operation->verifier) {
+        if (user_id_len > sizeof operation->prover) {
             return PSA_ERROR_INSUFFICIENT_MEMORY;
         }
-        memcpy(operation->prover, user_id, user_id_length);
-        operation->prover_len = (uint8_t)user_id_length;
-        memcpy(operation->verifier, peer_id, peer_id_length);
-        operation->verifier_len = (uint8_t)peer_id_length;
-        // password = w0s:w1s
-        if (password_length < 2 * P256_KEY_SIZE) return PSA_ERROR_INVALID_ARGUMENT;
-        ocrypto_spake2p_p256_reduce(operation->w0, password, password_length >> 1);
-        password += password_length >> 1;
-        ocrypto_spake2p_p256_reduce(operation->w1, password, password_length >> 1);
+        memcpy(operation->prover, user_id, user_id_len);
+        operation->prover_len = (uint8_t)user_id_len;
     } else { /* role == PSA_PAKE_ROLE_SERVER */
-        operation->MN = N;
-        operation->NM = M;
         // prover = peer; verifier = user
-        if (peer_id_length > sizeof operation->prover || user_id_length > sizeof operation->verifier) {
+        if (user_id_len > sizeof operation->verifier) {
             return PSA_ERROR_INSUFFICIENT_MEMORY;
         }
-        memcpy(operation->prover, peer_id, peer_id_length);
-        operation->prover_len = (uint8_t)peer_id_length;
-        memcpy(operation->verifier, user_id, user_id_length);
-        operation->verifier_len = (uint8_t)user_id_length;
-        // password = w0s:L
-        if (password_length < P256_KEY_SIZE + P256_POINT_SIZE) return PSA_ERROR_INVALID_ARGUMENT;
-        ocrypto_spake2p_p256_reduce(operation->w0, password, password_length - P256_POINT_SIZE);
-        password += password_length - P256_POINT_SIZE;
-        res = ocrypto_spake2p_p256_check_key(password);
-        if (res) return PSA_ERROR_INVALID_ARGUMENT;
-        memcpy(operation->L, password, P256_POINT_SIZE);
+        memcpy(operation->verifier, user_id, user_id_len);
+        operation->verifier_len = (uint8_t)user_id_len;
     }
     return PSA_SUCCESS;
+}
+
+psa_status_t oberon_spake2p_set_peer(
+    oberon_spake2p_operation_t *operation,
+    const uint8_t *peer_id, size_t peer_id_len)
+{
+    if (operation->role == PSA_PAKE_ROLE_CLIENT) {
+        // prover = user; verifier = peer
+        if (peer_id_len > sizeof operation->verifier) {
+            return PSA_ERROR_INSUFFICIENT_MEMORY;
+        }
+        memcpy(operation->verifier, peer_id, peer_id_len);
+        operation->verifier_len = (uint8_t)peer_id_len;
+    } else { /* role == PSA_PAKE_ROLE_SERVER */
+        // prover = peer; verifier = user
+        if (peer_id_len > sizeof operation->prover) {
+            return PSA_ERROR_INSUFFICIENT_MEMORY;
+        }
+        memcpy(operation->prover, peer_id, peer_id_len);
+        operation->prover_len = (uint8_t)peer_id_len;
+    }
+    return PSA_SUCCESS;
+}
+
+psa_status_t oberon_spake2p_set_context(
+    oberon_spake2p_operation_t *operation,
+    const uint8_t *context, size_t context_len)
+{
+    if (context_len == 0) return PSA_SUCCESS;
+
+    // add context to TT
+    return oberon_update_hash_with_prefix(
+        &operation->hash_op,
+        context, context_len);
 }
 
 psa_status_t oberon_spake2p_output(
@@ -341,11 +432,6 @@ psa_status_t oberon_spake2p_input(
     const uint8_t *input, size_t input_length)
 {
     switch (step) {
-    case PSA_PAKE_STEP_CONTEXT:
-        // add context to TT
-        return oberon_update_hash_with_prefix(
-            &operation->hash_op,
-            input, input_length);
     case PSA_PAKE_STEP_KEY_SHARE:
         return oberon_read_key_share(
             operation,
@@ -359,19 +445,14 @@ psa_status_t oberon_spake2p_input(
     }
 }
 
-psa_status_t oberon_spake2p_get_implicit_key(
+psa_status_t oberon_spake2p_get_shared_key(
     oberon_spake2p_operation_t *operation,
     uint8_t *output, size_t output_size, size_t *output_length)
 {
-#ifdef SPAKE2P_USE_VERSION_04
-    if (output_size < operation->hash_len >> 1) return PSA_ERROR_BUFFER_TOO_SMALL;
-    memcpy(output, operation->shared, operation->hash_len >> 1);
-    *output_length = operation->hash_len >> 1;
-#else
-    if (output_size < operation->hash_len) return PSA_ERROR_BUFFER_TOO_SMALL;
-    memcpy(output, operation->shared, operation->hash_len);
-    *output_length = operation->hash_len;
-#endif
+    size_t shared_len = operation->shared_len;
+    if (output_size < shared_len) return PSA_ERROR_BUFFER_TOO_SMALL;
+    memcpy(output, operation->shared, shared_len);
+    *output_length = shared_len;
     return PSA_SUCCESS;
 }
 
@@ -379,4 +460,130 @@ psa_status_t oberon_spake2p_abort(
     oberon_spake2p_operation_t *operation)
 {
     return psa_driver_wrapper_hash_abort(&operation->hash_op);
+}
+
+
+// key management
+
+psa_status_t oberon_derive_spake2p_key(
+    const psa_key_attributes_t *attributes,
+    const uint8_t *input, size_t input_length,
+    uint8_t *key, size_t key_size, size_t *key_length)
+{
+    size_t bits = psa_get_key_bits(attributes);
+    psa_key_type_t type = psa_get_key_type(attributes);
+
+    switch (type) {
+#ifdef PSA_NEED_OBERON_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE_SECP_R1_256
+    case PSA_KEY_TYPE_SPAKE2P_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
+        if (bits != 256) return PSA_ERROR_NOT_SUPPORTED;
+        if (input_length != 80) return PSA_ERROR_INVALID_ARGUMENT;
+        if (key_size < 64) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_spake2p_p256_reduce(key, input, 40);           // w0s -> w0
+        if (!oberon_ct_compare_zero(key, 32)) return PSA_ERROR_INVALID_ARGUMENT;
+        ocrypto_spake2p_p256_reduce(key + 32, input + 40, 40); // w1s -> w1
+        if (!oberon_ct_compare_zero(key + 32, 32)) return PSA_ERROR_INVALID_ARGUMENT;
+        *key_length = 64;
+        break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE_SECP_R1_256 */
+
+    default:
+        (void)input;
+        (void)input_length;
+        (void)key;
+        (void)key_size;
+        (void)key_length;
+        (void)bits;
+        return PSA_ERROR_NOT_SUPPORTED;
+    }
+
+    return PSA_SUCCESS;
+}
+
+psa_status_t oberon_import_spake2p_key(
+    const psa_key_attributes_t *attributes,
+    const uint8_t *data, size_t data_length,
+    uint8_t *key, size_t key_size, size_t *key_length,
+    size_t *key_bits)
+{
+    int res;
+    size_t bits = psa_get_key_bits(attributes);
+    psa_key_type_t type = psa_get_key_type(attributes);
+
+    switch (type) {
+#ifdef PSA_NEED_OBERON_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT_SECP_R1_256
+    case PSA_KEY_TYPE_SPAKE2P_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
+        if (data_length != 64) return PSA_ERROR_NOT_SUPPORTED;
+        if (bits != 0 && (bits != 256)) return PSA_ERROR_INVALID_ARGUMENT;
+        if (!oberon_ct_compare_zero(data, 32)) return PSA_ERROR_INVALID_ARGUMENT;
+        res = ocrypto_ecdh_p256_secret_key_check(data);
+        if (res) return PSA_ERROR_INVALID_ARGUMENT; // out of range
+        if (!oberon_ct_compare_zero(data + 32, 32)) return PSA_ERROR_INVALID_ARGUMENT;
+        res = ocrypto_ecdh_p256_secret_key_check(data + 32);
+        if (res) return PSA_ERROR_INVALID_ARGUMENT; // out of range
+        break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT_SECP_R1_256 */
+
+#ifdef PSA_NEED_OBERON_KEY_TYPE_SPAKE2P_PUBLIC_KEY_SECP_R1_256
+    case PSA_KEY_TYPE_SPAKE2P_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1):
+        if (data_length != 32 + 65) return PSA_ERROR_NOT_SUPPORTED;
+        if (bits != 0 && (bits != 256)) return PSA_ERROR_INVALID_ARGUMENT;
+        if (!oberon_ct_compare_zero(data, 32)) return PSA_ERROR_INVALID_ARGUMENT;
+        res = ocrypto_ecdh_p256_secret_key_check(data);
+        if (res) return PSA_ERROR_INVALID_ARGUMENT; // out of range
+        if (data[32] != 0x04) return PSA_ERROR_INVALID_ARGUMENT;
+        res = ocrypto_ecdh_p256_public_key_check(&data[33]);
+        if (res) return PSA_ERROR_INVALID_ARGUMENT; // point not on curve
+        break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_SPAKE2P_PUBLIC_KEY_SECP_R1_256 */
+
+    default:
+        (void)res;
+        (void)bits;
+        return PSA_ERROR_NOT_SUPPORTED;
+    }
+
+    if (key_size < data_length) return PSA_ERROR_BUFFER_TOO_SMALL;
+    memcpy(key, data, data_length);
+    *key_length = data_length;
+    *key_bits = 256;
+    return PSA_SUCCESS;
+}
+
+psa_status_t oberon_export_spake2p_public_key(
+    const psa_key_attributes_t *attributes,
+    const uint8_t *key, size_t key_length,
+    uint8_t *data, size_t data_size, size_t *data_length)
+{
+    int res;
+    size_t bits = psa_get_key_bits(attributes);
+    psa_key_type_t type = psa_get_key_type(attributes);
+
+    if (PSA_KEY_TYPE_IS_PUBLIC_KEY(type)) {
+        if (key_length > data_size) return PSA_ERROR_BUFFER_TOO_SMALL;
+        memcpy(data, key, key_length);
+        *data_length = key_length;
+        return PSA_SUCCESS;
+    }
+
+    switch (type) {
+#ifdef PSA_NEED_OBERON_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT_SECP_R1_256
+    case PSA_KEY_TYPE_SPAKE2P_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
+        if (bits != 256) return PSA_ERROR_NOT_SUPPORTED;
+        if (key_length != 64) return PSA_ERROR_INVALID_ARGUMENT;
+        if (data_size < 32 + 65) return PSA_ERROR_BUFFER_TOO_SMALL;
+        memcpy(data, key, 32); // w0
+        data[32] = 0x04;
+        res = ocrypto_ecdh_p256_public_key(&data[33], &key[32]); // w1 -> L
+        if (res) return PSA_ERROR_INVALID_ARGUMENT;
+        *data_length = 32 + 65;
+        break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_EXPORT_SECP_R1_256 */
+    default:
+        (void)res;
+        (void)bits;
+        return PSA_ERROR_NOT_SUPPORTED;
+    }
+
+    return PSA_SUCCESS;
 }

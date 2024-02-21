@@ -48,12 +48,25 @@ typedef struct {
 
 psa_status_t oberon_pake_setup(
     oberon_pake_operation_t *operation,
-    const psa_pake_cipher_suite_t *cipher_suite,
     const psa_key_attributes_t *attributes,
     const uint8_t *password, size_t password_length,
-    const uint8_t *user_id, size_t user_id_length,
-    const uint8_t *peer_id, size_t peer_id_length,
+    const psa_pake_cipher_suite_t *cipher_suite);
+
+psa_status_t oberon_pake_set_role(
+    oberon_pake_operation_t *operation,
     psa_pake_role_t role);
+
+psa_status_t oberon_pake_set_user(
+    oberon_pake_operation_t *operation,
+    const uint8_t *user_id, size_t user_id_len);
+
+psa_status_t oberon_pake_set_peer(
+    oberon_pake_operation_t *operation,
+    const uint8_t *peer_id, size_t peer_id_len);
+
+psa_status_t oberon_pake_set_context(
+    oberon_pake_operation_t *operation,
+    const uint8_t *context, size_t context_len);
 
 psa_status_t oberon_pake_output(
     oberon_pake_operation_t *operation,
@@ -65,9 +78,10 @@ psa_status_t oberon_pake_input(
     psa_pake_step_t step,
     const uint8_t *input, size_t input_length);
 
-psa_status_t oberon_pake_get_implicit_key(
+psa_status_t oberon_pake_get_shared_key(
     oberon_pake_operation_t *operation,
-    uint8_t *output, size_t output_size, size_t *output_length);
+    const psa_key_attributes_t *attributes,
+    uint8_t *key, size_t key_size, size_t *key_length);
 
 psa_status_t oberon_pake_abort(
     oberon_pake_operation_t *operation);

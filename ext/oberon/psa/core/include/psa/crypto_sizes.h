@@ -901,6 +901,34 @@
 #define PSA_KEY_EXPORT_FFDH_PUBLIC_KEY_MAX_SIZE(key_bits)   \
     (PSA_BITS_TO_BYTES(key_bits))
 
+/* Maximum size of the export encoding of an SPAKE2+ public key.
+ *
+ * An SPAKE2+ public key is represented by the secret values w0 and L.
+ */
+#define PSA_KEY_EXPORT_SPAKE2P_PUBLIC_KEY_MAX_SIZE(key_bits)   \
+    (3u * PSA_BITS_TO_BYTES(key_bits) + 1u)
+
+/* Maximum size of the export encoding of an SPAKE2+ key pair.
+ *
+ * An SPAKE2+ key pair is represented by the secret values w0 and w1.
+ */
+#define PSA_KEY_EXPORT_SPAKE2P_KEY_PAIR_MAX_SIZE(key_bits)   \
+    (2u * PSA_BITS_TO_BYTES(key_bits))
+
+/* Maximum size of the export encoding of an SRP public key.
+ *
+ * An SRP public key is represented by the password verifier.
+ */
+#define PSA_KEY_EXPORT_SRP_PUBLIC_KEY_MAX_SIZE(key_bits)   \
+    (PSA_BITS_TO_BYTES(key_bits))
+
+/* Maximum size of the export encoding of an SRP key pair.
+ *
+ * An SRP key pair is represented by the password hash.
+ */
+#define PSA_KEY_EXPORT_SRP_KEY_PAIR_MAX_SIZE(key_bits)   \
+    (PSA_HASH_MAX_SIZE)
+
 /** Sufficient output buffer size for psa_export_key() or
  * psa_export_public_key().
  *
@@ -947,7 +975,11 @@
      (key_type) == PSA_KEY_TYPE_RSA_PUBLIC_KEY ? PSA_KEY_EXPORT_RSA_PUBLIC_KEY_MAX_SIZE(key_bits) : \
      (key_type) == PSA_KEY_TYPE_DSA_KEY_PAIR ? PSA_KEY_EXPORT_DSA_KEY_PAIR_MAX_SIZE(key_bits) :     \
      (key_type) == PSA_KEY_TYPE_DSA_PUBLIC_KEY ? PSA_KEY_EXPORT_DSA_PUBLIC_KEY_MAX_SIZE(key_bits) : \
-     PSA_KEY_TYPE_ECC_GET_FAMILY(key_type) == PSA_ECC_FAMILY_TWISTED_EDWARDS ? PSA_BITS_TO_BYTES(key_bits + 1) : /*!!OM-PCI-27*/ \
+     PSA_KEY_TYPE_IS_SPAKE2P_KEY_PAIR(key_type) ? 2u * PSA_BITS_TO_BYTES(key_bits) : \
+     PSA_KEY_TYPE_IS_SPAKE2P_PUBLIC_KEY(key_type) ? 3u * PSA_BITS_TO_BYTES(key_bits) + 1u : \
+     PSA_KEY_TYPE_IS_SRP_KEY_PAIR(key_type) ? PSA_HASH_MAX_SIZE : \
+     PSA_KEY_TYPE_IS_SRP_PUBLIC_KEY(key_type) ? PSA_BITS_TO_BYTES(key_bits) : \
+     PSA_KEY_TYPE_ECC_GET_FAMILY(key_type) == PSA_ECC_FAMILY_TWISTED_EDWARDS ? PSA_BITS_TO_BYTES(key_bits + 1u) : /*!!OM-PCI-27*/ \
      PSA_KEY_TYPE_ECC_GET_FAMILY(key_type) == PSA_ECC_FAMILY_MONTGOMERY ? PSA_BITS_TO_BYTES(key_bits) : \
      PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type) ? PSA_KEY_EXPORT_ECC_KEY_PAIR_MAX_SIZE(key_bits) :      \
      PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type) ? PSA_KEY_EXPORT_ECC_PUBLIC_KEY_MAX_SIZE(key_bits) :  \
@@ -1001,6 +1033,8 @@
 #define PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE(key_type, key_bits)                           \
     (PSA_KEY_TYPE_IS_RSA(key_type) ? PSA_KEY_EXPORT_RSA_PUBLIC_KEY_MAX_SIZE(key_bits) : \
      PSA_KEY_TYPE_IS_DH(key_type) ? PSA_BITS_TO_BYTES(key_bits) : \
+     PSA_KEY_TYPE_IS_SPAKE2P(key_type) ? 3u * PSA_BITS_TO_BYTES(key_bits) + 1u : \
+     PSA_KEY_TYPE_IS_SRP(key_type) ? PSA_BITS_TO_BYTES(key_bits) : \
      PSA_KEY_TYPE_ECC_GET_FAMILY(key_type) == PSA_ECC_FAMILY_TWISTED_EDWARDS ? PSA_BITS_TO_BYTES(key_bits + 1) : \
      PSA_KEY_TYPE_ECC_GET_FAMILY(key_type) == PSA_ECC_FAMILY_MONTGOMERY ? PSA_BITS_TO_BYTES(key_bits) : \
      PSA_KEY_TYPE_IS_ECC(key_type) ? PSA_KEY_EXPORT_ECC_PUBLIC_KEY_MAX_SIZE(key_bits) : \
@@ -1037,6 +1071,20 @@
 #define PSA_EXPORT_KEY_PAIR_MAX_SIZE    \
     PSA_KEY_EXPORT_FFDH_KEY_PAIR_MAX_SIZE(PSA_VENDOR_FFDH_MAX_KEY_BITS)
 #endif
+#if defined(PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_BASIC) && \
+    (PSA_KEY_EXPORT_SPAKE2P_KEY_PAIR_MAX_SIZE(PSA_VENDOR_ECC_MAX_CURVE_BITS) > \
+     PSA_EXPORT_KEY_PAIR_MAX_SIZE)
+#undef PSA_EXPORT_KEY_PAIR_MAX_SIZE
+#define PSA_EXPORT_KEY_PAIR_MAX_SIZE    \
+    PSA_KEY_EXPORT_SPAKE2P_KEY_PAIR_MAX_SIZE(PSA_VENDOR_ECC_MAX_CURVE_BITS)
+#endif
+#if defined(PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_BASIC) && \
+    (PSA_KEY_EXPORT_SRP_KEY_PAIR_MAX_SIZE(PSA_VENDOR_FFDH_MAX_KEY_BITS) > \
+     PSA_EXPORT_KEY_PAIR_MAX_SIZE)
+#undef PSA_EXPORT_KEY_PAIR_MAX_SIZE
+#define PSA_EXPORT_KEY_PAIR_MAX_SIZE    \
+    PSA_KEY_EXPORT_SRP_KEY_PAIR_MAX_SIZE(PSA_VENDOR_FFDH_MAX_KEY_BITS)
+#endif
 
 /** Sufficient buffer size for exporting any asymmetric public key.
  *
@@ -1069,6 +1117,20 @@
 #undef PSA_EXPORT_PUBLIC_KEY_MAX_SIZE
 #define PSA_EXPORT_PUBLIC_KEY_MAX_SIZE    \
     PSA_KEY_EXPORT_FFDH_PUBLIC_KEY_MAX_SIZE(PSA_VENDOR_FFDH_MAX_KEY_BITS)
+#endif
+#if defined(PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY) && \
+    (PSA_KEY_EXPORT_SPAKE2P_PUBLIC_KEY_MAX_SIZE(PSA_VENDOR_ECC_MAX_CURVE_BITS) > \
+     PSA_EXPORT_PUBLIC_KEY_MAX_SIZE)
+#undef PSA_EXPORT_PUBLIC_KEY_MAX_SIZE
+#define PSA_EXPORT_PUBLIC_KEY_MAX_SIZE    \
+    PSA_KEY_EXPORT_SPAKE2P_PUBLIC_KEY_MAX_SIZE(PSA_VENDOR_ECC_MAX_CURVE_BITS)
+#endif
+#if defined(PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY) && \
+    (PSA_KEY_EXPORT_SRP_PUBLIC_KEY_MAX_SIZE(PSA_VENDOR_FFDH_MAX_KEY_BITS) > \
+     PSA_EXPORT_PUBLIC_KEY_MAX_SIZE)
+#undef PSA_EXPORT_PUBLIC_KEY_MAX_SIZE
+#define PSA_EXPORT_PUBLIC_KEY_MAX_SIZE    \
+    PSA_KEY_EXPORT_SRP_PUBLIC_KEY_MAX_SIZE(PSA_VENDOR_FFDH_MAX_KEY_BITS)
 #endif
 
 /** Sufficient output buffer size for psa_raw_key_agreement().

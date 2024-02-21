@@ -34,6 +34,11 @@ psa_status_t oberon_generate_ec_key(
     const psa_key_attributes_t *attributes,
     uint8_t *key, size_t key_size, size_t *key_length);
 
+psa_status_t oberon_derive_ec_key(
+    const psa_key_attributes_t *attributes,
+    const uint8_t *input, size_t input_length,
+    uint8_t *key, size_t key_size, size_t *key_length);
+
 
 #ifdef __cplusplus
 }

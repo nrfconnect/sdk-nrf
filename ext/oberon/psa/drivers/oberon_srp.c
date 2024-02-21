@@ -19,11 +19,11 @@
 
 #include "ocrypto_srp.h"
 
-#define SRP_KEY_SIZE    (256/8)
-#define SRP_FIELD_SIZE  (3072/8)
+#define SRP_FIELD_BITS  3072
+#define SRP_FIELD_SIZE  PSA_BITS_TO_BYTES(SRP_FIELD_BITS)
 
 
-static const uint8_t oberon_P3072[] = {
+static const uint8_t oberon_P3072[SRP_FIELD_SIZE] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xC9, 0x0F, 0xDA, 0xA2, 0x21, 0x68, 0xC2, 0x34,
     0xC4, 0xC6, 0x62, 0x8B, 0x80, 0xDC, 0x1C, 0xD1, 0x29, 0x02, 0x4E, 0x08, 0x8A, 0x67, 0xCC, 0x74,
     0x02, 0x0B, 0xBE, 0xA6, 0x3B, 0x13, 0x9B, 0x22, 0x51, 0x4A, 0x08, 0x79, 0x8E, 0x34, 0x04, 0xDD,
@@ -136,20 +136,12 @@ static psa_status_t oberon_get_proof(oberon_srp_operation_t *op)
     // H(p) ^ H(g)
     oberon_xor(op->m2, op->m2, op->m1, hash_len);
 
-    // H(user)
-    status = psa_driver_wrapper_hash_setup(&hash_op, op->hash_alg);
-    if (status) goto exit;
-    status = psa_driver_wrapper_hash_update(&hash_op, op->user, op->user_len);
-    if (status) goto exit;
-    status = psa_driver_wrapper_hash_finish(&hash_op, op->m1, sizeof op->m1, &hash_len);
-    if (status) goto exit;
-
     // m1 = H(H(p) ^ H(g) | H(user) | salt | A | B | k)
     status = psa_driver_wrapper_hash_setup(&hash_op, op->hash_alg);
     if (status) goto exit;
     status = psa_driver_wrapper_hash_update(&hash_op, op->m2, hash_len); // H(p) ^ H(g)
     if (status) goto exit;
-    status = psa_driver_wrapper_hash_update(&hash_op, op->m1, hash_len); // H(user)
+    status = psa_driver_wrapper_hash_update(&hash_op, op->user, hash_len); // H(user)
     if (status) goto exit;
     status = psa_driver_wrapper_hash_update(&hash_op, op->salt, op->salt_len);
     if (status) goto exit;
@@ -177,9 +169,9 @@ static psa_status_t oberon_get_proof(oberon_srp_operation_t *op)
     return PSA_SUCCESS;
 exit:
     psa_hash_abort(&hash_op);
+    memset(s, 0, sizeof s);
     return status;
 }
-
 
 static psa_status_t oberon_write_key_share(
     oberon_srp_operation_t *op,
@@ -187,7 +179,6 @@ static psa_status_t oberon_write_key_share(
 {
     psa_status_t status;
     psa_hash_operation_t hash_op = PSA_HASH_OPERATION_INIT;
-    uint8_t k[SRP_FIELD_SIZE];
 
     // random secret key
     status = psa_generate_random(op->ab, sizeof op->ab);
@@ -201,10 +192,10 @@ static psa_status_t oberon_write_key_share(
         memcpy(output, op->A, SRP_FIELD_SIZE);
     } else {
         // k = H(p | g)
-        status = oberon_get_multiplier(op, &hash_op, k);
+        status = oberon_get_multiplier(op, &hash_op, op->B);
         if (status) return status;
         // B = k*v + g^b
-        ocrypto_srp_server_public_key(op->B, op->ab, k, op->password);
+        ocrypto_srp_server_public_key(op->B, op->ab, op->B, op->password);
         memcpy(output, op->B, SRP_FIELD_SIZE);
     }
 
@@ -265,41 +256,53 @@ static psa_status_t oberon_read_confirm(
 
 psa_status_t oberon_srp_setup(
     oberon_srp_operation_t *operation,
-    const psa_pake_cipher_suite_t *cipher_suite,
+    const psa_key_attributes_t *attributes,
     const uint8_t *password, size_t password_length,
-    const uint8_t *user_id, size_t user_id_length,
-    const uint8_t *peer_id, size_t peer_id_length,
-    psa_pake_role_t role)
+    const psa_pake_cipher_suite_t *cipher_suite)
 {
-    (void)peer_id;
-    (void)peer_id_length;
+    (void)attributes;
 
-    if (cipher_suite->algorithm != PSA_ALG_SRP_6 ||
-        cipher_suite->type != PSA_PAKE_PRIMITIVE_TYPE_DH ||
-        cipher_suite->family != PSA_DH_FAMILY_RFC3526 ||
-        cipher_suite->bits != 3072) {
+    if (psa_pake_cs_get_primitive(cipher_suite) !=
+            PSA_PAKE_PRIMITIVE(PSA_PAKE_PRIMITIVE_TYPE_DH, PSA_DH_FAMILY_RFC3526, SRP_FIELD_BITS) ||
+        psa_pake_cs_get_key_confirmation(cipher_suite) != PSA_PAKE_CONFIRMED_KEY) {
         return PSA_ERROR_NOT_SUPPORTED;
     }
 
-    operation->hash_alg = cipher_suite->hash;
-    operation->hash_len = PSA_HASH_LENGTH(cipher_suite->hash);
-    operation->role = role;
+    operation->hash_alg = PSA_ALG_GET_HASH(psa_pake_cs_get_algorithm(cipher_suite));
+    operation->hash_len = PSA_HASH_LENGTH(operation->hash_alg);
 
-    if (user_id_length > sizeof operation->user) return PSA_ERROR_NOT_SUPPORTED;
-    memcpy(operation->user, user_id, user_id_length);
-    operation->user_len = user_id_length;
-
-    if (operation->role == PSA_PAKE_ROLE_CLIENT) {
-        // password hash
-        if (password_length != operation->hash_len) return PSA_ERROR_INVALID_ARGUMENT;
-        memcpy(operation->password, password, operation->hash_len);
-    } else { /* role == PSA_PAKE_ROLE_SERVER */
-        // password verifier
-        if (password_length != SRP_FIELD_SIZE) return PSA_ERROR_INVALID_ARGUMENT;
-        memcpy(operation->password, password, SRP_FIELD_SIZE);
-    }
+    if (password_length != operation->hash_len && password_length != SRP_FIELD_SIZE) return PSA_ERROR_INVALID_ARGUMENT;
+    memcpy(operation->password, password, password_length);
+    operation->pw_len = (uint16_t)password_length;
 
     return PSA_SUCCESS;
+}
+
+psa_status_t oberon_srp_set_role(
+    oberon_srp_operation_t *operation,
+    psa_pake_role_t role)
+{
+    if (role == PSA_PAKE_ROLE_CLIENT) {
+        if (operation->pw_len != operation->hash_len) return PSA_ERROR_INVALID_ARGUMENT;
+    } else {
+        if (operation->pw_len != SRP_FIELD_SIZE) {
+            ocrypto_srp_client_public_key(operation->password, operation->password, operation->pw_len);
+        }
+    }
+    operation->role = role;
+    return PSA_SUCCESS;
+}
+
+psa_status_t oberon_srp_set_user(
+    oberon_srp_operation_t *operation,
+    const uint8_t *user_id, size_t user_id_len)
+{
+    size_t length;
+
+    // store H(user)
+    return psa_driver_wrapper_hash_compute(operation->hash_alg,
+        user_id, user_id_len,
+        operation->user, sizeof operation->user, &length);
 }
 
 psa_status_t oberon_srp_output(
@@ -330,7 +333,7 @@ psa_status_t oberon_srp_input(
     case PSA_PAKE_STEP_SALT:
         if (input_length > sizeof operation->salt) return PSA_ERROR_NOT_SUPPORTED;
         memcpy(operation->salt, input, input_length);
-        operation->salt_len = input_length;
+        operation->salt_len = (uint8_t)input_length;
         return PSA_SUCCESS;
     case PSA_PAKE_STEP_KEY_SHARE:
         return oberon_read_key_share(
@@ -345,7 +348,7 @@ psa_status_t oberon_srp_input(
     }
 }
 
-psa_status_t oberon_srp_get_implicit_key(
+psa_status_t oberon_srp_get_shared_key(
     oberon_srp_operation_t *operation,
     uint8_t *output, size_t output_size, size_t *output_length)
 {
@@ -359,5 +362,91 @@ psa_status_t oberon_srp_abort(
     oberon_srp_operation_t *operation)
 {
     (void)operation;
+    return PSA_SUCCESS;
+}
+
+
+// key management
+
+#ifdef PSA_NEED_OBERON_KEY_TYPE_SRP_6_PUBLIC_KEY_3072
+// constant-time big endian byte stream compare less than
+static int less_than(const uint8_t *a, const uint8_t *b, size_t len)
+{
+    int i, c = 0;
+    for (i = len - 1; i >= 0; i--) {
+        c = (c + (int)a[i] - (int)b[i]) >> 8;
+    }
+    return c;
+}
+#endif /* PSA_NEED_OBERON_KEY_TYPE_SRP_6_PUBLIC_KEY_3072 */
+
+psa_status_t oberon_import_srp_key(
+    const psa_key_attributes_t *attributes,
+    const uint8_t *data, size_t data_length,
+    uint8_t *key, size_t key_size, size_t *key_length,
+    size_t *key_bits)
+{
+    size_t bits = psa_get_key_bits(attributes);
+    psa_key_type_t type = psa_get_key_type(attributes);
+
+    switch (type) {
+#ifdef PSA_NEED_OBERON_KEY_TYPE_SRP_6_KEY_PAIR_IMPORT_3072
+    case PSA_KEY_TYPE_SRP_KEY_PAIR(PSA_DH_FAMILY_RFC3526):
+        if (bits != SRP_FIELD_BITS) return PSA_ERROR_NOT_SUPPORTED;
+        break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_SRP_6_KEY_PAIR_IMPORT_3072 */
+
+#ifdef PSA_NEED_OBERON_KEY_TYPE_SRP_6_PUBLIC_KEY_3072
+    case PSA_KEY_TYPE_SRP_PUBLIC_KEY(PSA_DH_FAMILY_RFC3526):
+        if (data_length != SRP_FIELD_SIZE) return PSA_ERROR_NOT_SUPPORTED;
+        if (bits != 0 && (bits != SRP_FIELD_BITS)) return PSA_ERROR_INVALID_ARGUMENT;
+        // check key < P
+        if (!less_than(data, oberon_P3072, SRP_FIELD_SIZE)) return PSA_ERROR_INVALID_ARGUMENT;
+        break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_SRP_6_PUBLIC_KEY_3072 */
+
+    default:
+        (void)bits;
+        return PSA_ERROR_NOT_SUPPORTED;
+    }
+
+    // check key > 0
+    if (oberon_ct_compare_zero(data, data_length) == 0) return PSA_ERROR_INVALID_ARGUMENT;
+    if (key_size < data_length) return PSA_ERROR_BUFFER_TOO_SMALL;
+    memcpy(key, data, data_length);
+    *key_length = data_length;
+    *key_bits = SRP_FIELD_BITS;
+    return PSA_SUCCESS;
+}
+
+psa_status_t oberon_export_srp_public_key(
+    const psa_key_attributes_t *attributes,
+    const uint8_t *key, size_t key_length,
+    uint8_t *data, size_t data_size, size_t *data_length)
+{
+    size_t bits = psa_get_key_bits(attributes);
+    psa_key_type_t type = psa_get_key_type(attributes);
+
+    if (PSA_KEY_TYPE_IS_PUBLIC_KEY(type)) {
+        if (key_length > data_size) return PSA_ERROR_BUFFER_TOO_SMALL;
+        memcpy(data, key, key_length);
+        *data_length = key_length;
+        return PSA_SUCCESS;
+    }
+
+    switch (type) {
+#ifdef PSA_NEED_OBERON_KEY_TYPE_SRP_6_KEY_PAIR_EXPORT_3072
+    case PSA_KEY_TYPE_SRP_KEY_PAIR(PSA_DH_FAMILY_RFC3526):
+        if (bits != SRP_FIELD_BITS) return PSA_ERROR_NOT_SUPPORTED;
+        if (data_size < SRP_FIELD_SIZE) return PSA_ERROR_BUFFER_TOO_SMALL;
+        ocrypto_srp_client_public_key(data, key, key_length); // hash -> verifier
+        *data_length = SRP_FIELD_SIZE;
+        break;
+#endif /* PSA_NEED_OBERON_KEY_TYPE_SRP_6_KEY_PAIR_EXPORT_3072 */
+    default:
+        (void)bits;
+        return PSA_ERROR_NOT_SUPPORTED;
+    }
+
     return PSA_SUCCESS;
 }

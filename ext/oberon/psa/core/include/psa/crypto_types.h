@@ -509,8 +509,4 @@ typedef uint8_t psa_pake_role_t;
  */
 typedef uint8_t psa_pake_step_t;
 
-/** The type of input values for PAKE operations. */
-typedef struct psa_crypto_driver_pake_inputs_s psa_crypto_driver_pake_inputs_t;
-
-
 #endif /* PSA_CRYPTO_TYPES_H */
