@@ -123,6 +123,14 @@ static const char system_mode_preference[] = {
 	[LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO]	= '4',
 };
 
+static void lte_lc_psm_get_work_fn(struct k_work *work_item);
+K_WORK_DEFINE(lte_lc_psm_get_work, lte_lc_psm_get_work_fn);
+
+#define LTE_LC_PSM_GET_STACK_SIZE 1024
+K_THREAD_STACK_DEFINE(lte_lc_psm_get_stack, LTE_LC_PSM_GET_STACK_SIZE);
+
+static struct k_work_q lte_lc_psm_get_work_q;
+
 static bool is_cellid_valid(uint32_t cellid)
 {
 	if (cellid == LTE_LC_CELL_EUTRAN_ID_INVALID) {
@@ -130,6 +138,41 @@ static bool is_cellid_valid(uint32_t cellid)
 	}
 
 	return true;
+}
+
+static void lte_lc_evt_psm_update_send(struct lte_lc_psm_cfg *psm_cfg)
+{
+	static struct lte_lc_psm_cfg prev_psm_cfg;
+	struct lte_lc_evt evt = {0};
+
+	/* PSM configuration update event */
+	if ((psm_cfg->tau != prev_psm_cfg.tau) ||
+	    (psm_cfg->active_time != prev_psm_cfg.active_time)) {
+		evt.type = LTE_LC_EVT_PSM_UPDATE;
+
+		memcpy(&prev_psm_cfg, psm_cfg, sizeof(struct lte_lc_psm_cfg));
+		memcpy(&evt.psm_cfg, psm_cfg, sizeof(struct lte_lc_psm_cfg));
+		event_handler_list_dispatch(&evt);
+	}
+}
+
+static void lte_lc_psm_get_work_fn(struct k_work *work_item)
+{
+	int err;
+	struct lte_lc_psm_cfg psm_cfg = {
+		.active_time = -1,
+		.tau = -1
+	};
+
+	err = lte_lc_psm_get(&psm_cfg.tau, &psm_cfg.active_time);
+	if (err) {
+		if (err != -EBADMSG) {
+			LOG_ERR("Failed to get PSM information");
+		}
+		return;
+	}
+
+	lte_lc_evt_psm_update_send(&psm_cfg);
 }
 
 AT_MONITOR(ltelc_atmon_cereg, "+CEREG", at_handler_cereg);
@@ -147,19 +190,20 @@ static void at_handler_cereg(const char *response)
 
 	__ASSERT_NO_MSG(response != NULL);
 
-	static enum lte_lc_nw_reg_status prev_reg_status =
-		LTE_LC_NW_REG_NOT_REGISTERED;
+	static enum lte_lc_nw_reg_status prev_reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
 	static struct lte_lc_cell prev_cell;
-	static struct lte_lc_psm_cfg prev_psm_cfg;
 	static enum lte_lc_lte_mode prev_lte_mode = LTE_LC_LTE_MODE_NONE;
 	enum lte_lc_nw_reg_status reg_status = 0;
 	struct lte_lc_cell cell = {0};
 	enum lte_lc_lte_mode lte_mode;
-	struct lte_lc_psm_cfg psm_cfg = {0};
+	struct lte_lc_psm_cfg psm_cfg = {
+		.active_time = -1,
+		.tau = -1
+	};
 
 	LOG_DBG("+CEREG notification: %.*s", strlen(response) - strlen("\r\n"), response);
 
-	err = parse_cereg(response, true, &reg_status, &cell, &lte_mode);
+	err = parse_cereg(response, true, &reg_status, &cell, &lte_mode, &psm_cfg);
 	if (err) {
 		LOG_ERR("Failed to parse notification (error %d): %s",
 			err, response);
@@ -250,23 +294,21 @@ static void at_handler_cereg(const char *response)
 		return;
 	}
 
-	err = lte_lc_psm_get(&psm_cfg.tau, &psm_cfg.active_time);
-	if (err) {
-		if (err != -EBADMSG) {
-			LOG_ERR("Failed to get PSM information");
-		}
+	if (psm_cfg.tau == -1) {
+		/* Need to get legacy T3412 value as TAU using AT%XMONITOR.
+		 *
+		 * As we are in an AT notification handler that is run from the system work queue,
+		 * we shall not send AT commands here because another AT command might be ongoing,
+		 * and the second command will be blocked until the first one completes.
+		 * Further AT notifications from the modem will gradually exhaust AT monitor
+		 * library's heap, and eventually it will run out causing an assert or
+		 * AT notifications not being dispatched.
+		 */
+		k_work_submit_to_queue(&lte_lc_psm_get_work_q, &lte_lc_psm_get_work);
 		return;
 	}
 
-	/* PSM configuration update event */
-	if ((psm_cfg.tau != prev_psm_cfg.tau) ||
-	    (psm_cfg.active_time != prev_psm_cfg.active_time)) {
-		evt.type = LTE_LC_EVT_PSM_UPDATE;
-
-		memcpy(&prev_psm_cfg, &psm_cfg, sizeof(struct lte_lc_psm_cfg));
-		memcpy(&evt.psm_cfg, &psm_cfg, sizeof(struct lte_lc_psm_cfg));
-		event_handler_list_dispatch(&evt);
-	}
+	lte_lc_evt_psm_update_send(&psm_cfg);
 }
 
 static void at_handler_cscon(const char *response)
@@ -1818,3 +1860,21 @@ int lte_lc_factory_reset(enum lte_lc_factory_reset_type type)
 {
 	return nrf_modem_at_printf("AT%%XFACTORYRESET=%d", type) ? -EFAULT : 0;
 }
+
+static int lte_lc_sys_init(void)
+{
+	struct k_work_queue_config cfg = {
+		.name = "lte_lc_psm_get_work_q",
+	};
+
+	k_work_queue_start(
+		&lte_lc_psm_get_work_q,
+		lte_lc_psm_get_stack,
+		K_THREAD_STACK_SIZEOF(lte_lc_psm_get_stack),
+		K_LOWEST_APPLICATION_THREAD_PRIO,
+		&cfg);
+
+	return 0;
+}
+
+SYS_INIT(lte_lc_sys_init, APPLICATION, 0);
