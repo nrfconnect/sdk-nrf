@@ -1087,9 +1087,9 @@
 .. _`Provision Devices`: http://nrfcloud.com/#/provision-devices
 
 .. _`nRF Cloud documentation`:
-.. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/
-.. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/Devices/MessagesAndAlerts/DeviceMessages.html
-.. _`nRF Cloud Device ID`: https://docs.nrfcloud.com/Devices/Properties/DeviceId.html
+.. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/inde.html
+.. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/Devices/MessagesAndAlerts/DeviceMessages
+.. _`nRF Cloud Device ID`: https://docs.nrfcloud.com/Devices/Properties/DeviceIdd.html
 .. _`nRF Cloud Device Shadows`: https://docs.nrfcloud.com/Devices/Properties/Shadows.html
 .. _`nRF Cloud Security`: https://docs.nrfcloud.com/Devices/Security/Security.html
 .. _`nRF Cloud Preconnect Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html#preconnect-provisioning
