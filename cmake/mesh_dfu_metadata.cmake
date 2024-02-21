@@ -12,7 +12,7 @@ function(mesh_dfu_metadata)
         COMMAND
         ${PYTHON_EXECUTABLE}
         ${ZEPHYR_NRF_MODULE_DIR}/scripts/bluetooth/mesh/mesh_dfu_metadata.py
-        ${PROJECT_BINARY_DIR}
+        --bin-path ${PROJECT_BINARY_DIR}
         DEPENDS
         ${PROJECT_BINARY_DIR}/dfu_application.zip
     )
@@ -22,4 +22,16 @@ function(mesh_dfu_metadata)
         ALL
         DEPENDS ${PROJECT_BINARY_DIR}/dfu_application.zip_ble_mesh_metadata.json
     )
+
+    add_custom_target(
+        # Prints already generated metadata
+        ble_mesh_dfu_metadata
+        COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${ZEPHYR_NRF_MODULE_DIR}/scripts/bluetooth/mesh/mesh_dfu_metadata.py
+        --bin-path ${PROJECT_BINARY_DIR}
+        --print-metadata
+        COMMAND_EXPAND_LISTS
+        )
+
 endfunction()

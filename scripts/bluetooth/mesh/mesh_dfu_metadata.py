@@ -25,6 +25,7 @@ from cryptography.hazmat.primitives import cmac
 from cryptography.hazmat.primitives.ciphers import algorithms
 from zipfile import ZipFile
 import traceback
+import argparse
 
 FILE_NAME_IN_ZIP = 'ble_mesh_metadata.json'
 FILE_NAME = 'dfu_application.zip_ble_mesh_metadata.json'
@@ -355,9 +356,8 @@ def parse_comp_data(elf_path, kconfigs):
     except Exception as err :
         raise Exception("Failed to extract composition data from .elf file") from err
 
-def encoded_metadata_get(version, comp):
+def encoded_metadata_get(version, comp, binary_size):
     core_type = 0 # FIX ME: For now, hardcoded to application core
-    binary_size = os.path.getsize(os.path.join(bin_path, 'app_update.bin'))
     elem_cnt = len(comp.elems)
 
     bytestring = bytearray()
@@ -372,16 +372,32 @@ def encoded_metadata_get(version, comp):
     # FIX ME: Support user data
     return bytestring
 
+def input_parse():
+    parser = argparse.ArgumentParser(allow_abbrev=False)
+    parser.add_argument('--bin-path', required=True, type=str)
+    parser.add_argument('--print-metadata', action='store_true')
+    return parser.parse_known_args()[0]
+
+def existing_metadata_print(path):
+    try:
+        metadata_file = open(path, 'r')
+        print(json.dumps(json.load(metadata_file), indent=4))
+    except Exception as err :
+        raise Exception("Failed to get existing metadata") from err
+
 if __name__ == "__main__":
     try:
-        if len(sys.argv) != 2:
-            raise Exception("Unexpected number of script input arguments")
+        args = input_parse()
 
-        bin_path = sys.argv[1]
-        zip_path = os.path.abspath(os.path.join(bin_path, 'dfu_application.zip'))
-        metadata_path = os.path.abspath(os.path.join(bin_path, FILE_NAME))
-        elf_path = os.path.abspath(os.path.join(bin_path, 'zephyr.elf'))
-        config_path = os.path.abspath(os.path.join(bin_path, '.config'))
+        zip_path = os.path.abspath(os.path.join(args.bin_path, 'dfu_application.zip'))
+        metadata_path = os.path.abspath(os.path.join(args.bin_path, FILE_NAME))
+        elf_path = os.path.abspath(os.path.join(args.bin_path, 'zephyr.elf'))
+        config_path = os.path.abspath(os.path.join(args.bin_path, '.config'))
+
+        if args.print_metadata:
+            # Caller requests already generated metadata
+            existing_metadata_print(metadata_path)
+            sys.exit(0)
 
         zip = ZipFile(zip_path, "a")
         if FILE_NAME_IN_ZIP in zip.namelist():
@@ -391,10 +407,12 @@ if __name__ == "__main__":
         kconfigs = KConfig.from_file(config_path)
         comp = parse_comp_data(elf_path, kconfigs)
         version = kconfigs.version_parse()
-        encoded_metadata = encoded_metadata_get(version, comp)
+        binary_size = os.path.getsize(os.path.join(args.bin_path, 'app_update.bin'))
+        encoded_metadata = encoded_metadata_get(version, comp, binary_size)
 
         j_dict = {
             "sign_version": version,
+            "binary_size": binary_size,
             "composition_data": comp.dict_generate(),
             "composition_hash": str(hex(comp.hash_generate())),
             "encoded_metadata": str(encoded_metadata.hex()),
