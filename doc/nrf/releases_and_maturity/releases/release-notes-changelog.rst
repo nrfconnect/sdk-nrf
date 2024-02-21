@@ -613,6 +613,7 @@ Networking samples
     * The format of the :file:`.pem` file to the pem format.
     * The sample to automatically convert the :file:`.pem` file to hex format so it can be included.
     * The sample to gracefully bring down the network interfaces.
+    * Renamed :file:`overlay-pdn_ipv4.conf` to :file:`overlay-pdn-nrf91-ipv4.conf` and :file:`overlay-tfm_mbedtls.conf` to :file:`overlay-tfm-nrf91.conf`.
 
 * :ref:`download_sample` sample:
 
