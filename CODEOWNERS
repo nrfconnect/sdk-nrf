@@ -279,6 +279,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/wifi_credentials/         @nrfconnect/ncs-cia
 /subsys/net/lib/softap_wifi_provision/    @nrfconnect/ncs-cia
 /subsys/net/openthread/                   @rlubos @edmont @canisLupus1313 @maciejbaczmanski
+/subsys/net/openthread/rpc                @nrfconnect/ncs-protocols-serialization
 /subsys/nfc/                              @grochu @anangl
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
 /subsys/partition_manager/                @hakonfam
