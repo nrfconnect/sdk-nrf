@@ -552,22 +552,6 @@ static void receive_work_handler(struct k_work *work)
 
 static const struct device *entropy_source = DEVICE_DT_GET(DT_CHOSEN(zephyr_entropy));
 
-static uint8_t rand_prio_low_vector_get(uint8_t *p_buff, uint8_t length)
-{
-	int ret = entropy_get_entropy_isr(entropy_source, p_buff, length, 0);
-
-	__ASSERT(ret >= 0, "The entropy source returned an error in the low priority context");
-	return ret >= 0 ? ret : 0;
-}
-
-static uint8_t rand_prio_high_vector_get(uint8_t *p_buff, uint8_t length)
-{
-	int ret = entropy_get_entropy_isr(entropy_source, p_buff, length, 0);
-
-	__ASSERT(ret >= 0, "The entropy source returned an error in the high priority context");
-	return ret >= 0 ? ret : 0;
-}
-
 static void rand_prio_low_vector_get_blocking(uint8_t *p_buff, uint8_t length)
 {
 	int err = entropy_get_entropy(entropy_source, p_buff, length);
@@ -1149,8 +1133,6 @@ static int hci_driver_open(void)
 	}
 
 	sdc_rand_source_t rand_functions = {
-		.rand_prio_low_get = rand_prio_low_vector_get,
-		.rand_prio_high_get = rand_prio_high_vector_get,
 		.rand_poll = rand_prio_low_vector_get_blocking
 	};
 
