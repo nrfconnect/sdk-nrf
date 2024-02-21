@@ -29,14 +29,6 @@ set_property(TARGET zephyr_property_target
       -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE:STRING=${CMAKE_CURRENT_BINARY_DIR}/src/include/generated/${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}
 )
 
-if(NOT ${CONFIG_MBEDTLS_USER_CONFIG_FILE} STREQUAL "nrf-config-user-empty.h" )
-  set_property(TARGET zephyr_property_target
-  APPEND
-    PROPERTY TFM_CMAKE_OPTIONS
-      -DTFM_MBEDCRYPTO_USER_CONFIG_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/src/include/generated/${CONFIG_MBEDTLS_USER_CONFIG_FILE}
-  )
-endif()
-
 if(CONFIG_TFM_BL2)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS

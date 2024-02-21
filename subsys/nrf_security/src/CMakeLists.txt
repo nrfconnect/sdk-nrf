@@ -29,14 +29,6 @@ target_compile_definitions(mbedcrypto_common
     -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
 )
 
-# Add the user config only if it is set
-if(NOT ${CONFIG_MBEDTLS_USER_CONFIG_FILE} STREQUAL "nrf-config-user-empty.h" )
-  target_compile_definitions(mbedcrypto_common
-    INTERFACE
-      -DMBEDTLS_USER_CONFIG_FILE="${CONFIG_MBEDTLS_USER_CONFIG_FILE}"
-  )
-endif()
-
 if(BUILD_INSIDE_TFM)
   # In order to support FPU in TF-M the following is documented by the TF-M
   # build system:

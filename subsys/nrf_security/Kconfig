@@ -57,7 +57,8 @@ config MBEDTLS_CFG_FILE
 	  in configurations with or without PSA APIs supported.
 
 config MBEDTLS_USER_CONFIG_FILE
-	string "mbed TLS user configuration file"
+	string "[DEPRECATED] mbed TLS user configuration file"
+	select DEPRECATED
 	default "nrf-config-user-empty.h"
 	help
 	  Name of the file that will contain additional configurations for mbed TLS.
