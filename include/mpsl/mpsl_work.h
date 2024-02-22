@@ -41,12 +41,37 @@ extern struct k_work_q mpsl_work_q;
  * @note Can be called by ISRs.
  *
  * @param work Address of work item.
- *
- * @return N/A
  */
-static inline int mpsl_work_submit(struct k_work *work)
+static inline void mpsl_work_submit(struct k_work *work)
 {
-	return k_work_submit_to_queue(&mpsl_work_q, work);
+	if (k_work_submit_to_queue(&mpsl_work_q, work) < 0) {
+		__ASSERT(false, "k_work_submit_to_queue() failed.");
+	}
+}
+
+/** @brief Submit an idle work item to the MPSL workqueue after a delay.
+ *
+ * @note Can be called by ISRs.
+ *
+ * @note
+ * Work items submitted to the MPSL workqueue should avoid using handlers
+ * that block or yield since this may prevent the MPSL workqueue from
+ * processing other work items in a timely manner.
+ *
+ * @note This is a no-op if the work item is already scheduled or submitted,
+ * even if @p delay is @c K_NO_WAIT.
+ *
+ * @param dwork Address of delayable work item.
+ *
+ * @param delay the time to wait before submitting the work item.  If @c
+ * K_NO_WAIT and the work is not pending this is equivalent to
+ * mpsl_work_submit().
+ */
+static inline void mpsl_work_schedule(struct k_work_delayable *dwork, k_timeout_t delay)
+{
+	if (k_work_schedule_for_queue(&mpsl_work_q, dwork, delay) < 0) {
+		__ASSERT(false, "k_work_schedule_for_queue() failed.");
+	}
 }
 
 #ifdef __cplusplus

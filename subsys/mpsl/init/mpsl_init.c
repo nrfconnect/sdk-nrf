@@ -22,6 +22,10 @@
 #include <hal/nrf_ipc.h>
 #endif
 
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
+#include <pm/mpsl_pm_utils.h>
+#endif
+
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
 /* The following two constants are used in nrfx_glue.h for marking these PPI
@@ -165,7 +169,7 @@ static uint8_t __aligned(4) timeslot_context[TIMESLOT_MEM_SIZE];
 
 static void mpsl_low_prio_irq_handler(const void *arg)
 {
-	k_work_submit_to_queue(&mpsl_work_q, &mpsl_low_prio_work);
+	mpsl_work_submit(&mpsl_low_prio_work);
 }
 
 static void mpsl_low_prio_work_handler(struct k_work *item)
@@ -176,7 +180,13 @@ static void mpsl_low_prio_work_handler(struct k_work *item)
 
 	errcode = MULTITHREADING_LOCK_ACQUIRE();
 	__ASSERT_NO_MSG(errcode == 0);
+
 	mpsl_low_priority_process();
+
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
+	mpsl_pm_utils_work_handler();
+#endif
+
 	MULTITHREADING_LOCK_RELEASE();
 }
 
@@ -329,8 +339,8 @@ static void mpsl_calibration_work_handler(struct k_work *work)
 
 	mpsl_calibration_timer_handle();
 
-	k_work_schedule_for_queue(&mpsl_work_q, &calibration_work,
-				  K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD));
+	mpsl_work_schedule(&calibration_work,
+			   K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD));
 }
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
@@ -406,6 +416,10 @@ static int mpsl_lib_init_sys(void)
 		return err;
 	}
 
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
+	mpsl_pm_utils_init();
+#endif
+
 #if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
 	/* Ensure IRQs are disabled before attaching. */
 	mpsl_lib_irq_disable();
@@ -449,8 +463,8 @@ static int mpsl_low_prio_init(void)
 		    mpsl_low_prio_irq_handler, NULL, 0);
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
-	k_work_schedule_for_queue(&mpsl_work_q, &calibration_work,
-				  K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD));
+	mpsl_work_schedule(&calibration_work,
+			   K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD));
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
 	return 0;
