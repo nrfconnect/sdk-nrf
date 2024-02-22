@@ -126,7 +126,7 @@ Check and configure the following options in Memfault SDK that are used by the s
 * :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE`
 * :kconfig:option:`CONFIG_MEMFAULT_COREDUMP_COLLECT_BSS_REGIONS`
 
-If :kconfig:option:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM` is enabled, TLS certificates used for HTTP uploads are provisioned to the cellular modem when :c:func:`memfault_zephyr_port_install_root_certs` is called.
+If :kconfig:option:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM` is enabled, TLS certificates used for HTTP uploads are provisioned to the nRF91 Series modem when :c:func:`memfault_zephyr_port_install_root_certs` is called.
 
 Check and configure the following options for Memfault that are specific to |NCS|:
 

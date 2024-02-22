@@ -199,6 +199,7 @@ The sample includes pre-configured configuration files for the development kits 
 
 * :file:`prj.conf` - For all devices.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - For the nRF7002 DK.
+* :file:`boards/nrf9151dk_nrf9151_ns.conf` - For the nRF9151 DK.
 * :file:`boards/nrf9161dk_nrf9161_ns.conf` - For the nRF9161 DK.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - For the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - For the Thingy:91.
@@ -331,7 +332,7 @@ Troubleshooting
 ***************
 
 If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor`_ documentation to learn how to capture modem traces to debug network traffic in Wireshark.
-Modem traces can be enabled by providing a snippet with the west build command using the ``-S`` argument:
+Modem traces can be enabled by providing a snippet with the west build command using the ``-S`` argument as shown in the following example for nRF9161 DK:
 
 .. code-block:: console
 

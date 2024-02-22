@@ -25,6 +25,7 @@ To change the partition size, the project needs to configure the :kconfig:option
 
 The following build targets have support for this snippet:
 
+* ``nrf9151dk_nrf9151_ns``
 * ``nrf9161dk_nrf9161_ns``
 * ``nrf9160dk_nrf9160_ns``
 * ``nrf9131ek_nrf9131_ns``
