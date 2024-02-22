@@ -1,0 +1,109 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+config PSA_CRYPTO_DRIVER_CRACEN
+	bool "Enable the Cracen PSA driver"
+	depends on MBEDTLS_PSA_CRYPTO_C
+	depends on CRACEN_HW_PRESENT
+	# CRACEN uses the k_event_ API
+	select EVENTS
+	help
+	  PSA crypto driver for the CRACEN HW peripheral.
+
+
+if PSA_CRYPTO_DRIVER_CRACEN
+
+menu "CRACEN PSA driver"
+config PSA_USE_CRACEN_KEY_MANAGEMENT_DRIVER
+	bool "Cracen key management driver"
+	default y
+
+config PSA_USE_CRACEN_AEAD_DRIVER
+	bool "Cracen AEAD driver"
+	default y
+
+config PSA_USE_CRACEN_CIPHER_DRIVER
+	bool "Cracen cipher driver"
+	default y
+
+config PSA_USE_CRACEN_KEY_AGREEMENT_DRIVER
+	bool "Cracen key agreement driver"
+	default y
+
+config PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER
+	bool "Cracen asymmetric encryption driver"
+	default y
+
+config PSA_USE_CRACEN_HASH_DRIVER
+	bool "Cracen hash driver"
+	default y
+
+config PSA_USE_CRACEN_MAC_DRIVER
+	bool "Cracen MAC driver"
+	default y
+
+if PSA_USE_CRACEN_KEY_MANAGEMENT_DRIVER
+
+config PSA_USE_CRACEN_KEY_DERIVATION_DRIVER
+	bool "Cracen key derivation driver"
+	default y
+
+config PSA_USE_CRACEN_PAKE_DRIVER
+	bool "Cracen PAKE driver"
+	default y
+
+config PSA_USE_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER
+	bool "Cracen asymmetric signature driver"
+	default y
+
+endif # PSA_USE_CRACEN_KEY_MANAGEMENT_DRIVER
+
+config PSA_USE_CRACEN_CTR_DRBG_DRIVER
+	bool
+	default y
+
+config CRACEN_LOAD_MICROCODE
+	bool
+	depends on SOC_SERIES_NRF54LX || SOC_NRF54H20_CPUSEC
+	default y
+	help
+	  Prompt-less configuration to load the CRACEN microcode.
+	  This is required to use the PKE/IKG engine. Note that this is not
+	  required when a bootloader has already loaded the microcode.
+
+config CRACEN_LIB_KMU
+	bool
+	depends on SOC_SERIES_NRF54LX
+	default y
+	help
+	  The CRACEN KMU library.
+
+config CRACEN_LOAD_KMU_SEED
+	bool
+	prompt "Load the CRACEN IKG seed"
+	depends on CRACEN_LIB_KMU
+	default y
+	help
+	  Configuration to load a The CRACEN IKG seed value from KMU.
+	  The KMU seed is used to give support for key derived from IKG.
+	  If there is no seed in KMU, it is expected to be generated.
+	  Note that this is not required to be used if a bootloader is loading
+	  KMU seed.
+config CRACEN_GENERATE_KMU_SEED
+	bool
+	prompt "Generate CRACEN IKG seed in KMU"
+	depends on CRACEN_LIB_KMU
+	depends on CRACEN_LOAD_KMU_SEED
+	default y
+	help
+	  This configuration enables generation of the CRACEN IKG seed value used for
+	  IKG support. The generated seed is written into KMU (write once).
+	  If the seed is already generated and written in KMU, this configuration
+	  will have no effect.
+
+endmenu
+
+endif
+rsource 'psa_driver.Kconfig'

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CRACEN_HW_PRESENT
+	def_bool $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_CRACEN))
+
+rsource "ext/Kconfig"
+
+# Configure CRACEN_LOG_LEVEL
+module = CRACEN
+module-str = CRACEN
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
