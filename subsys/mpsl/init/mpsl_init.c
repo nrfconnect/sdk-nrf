@@ -20,6 +20,9 @@
 #if defined(CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START)
 #include <hal/nrf_ipc.h>
 #endif
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM) /* CONFIG_MPSL_USE_ZEPHYR_PM needs to be changed to correct config*/
+#include <mpsl_pm.h>
+#endif
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
@@ -138,6 +141,7 @@ BUILD_ASSERT((IPCT_SOURCE_CHANNELS & MPSL_RESERVED_IPCT_SOURCE_CHANNELS) ==
 
 static struct k_work mpsl_low_prio_work;
 struct k_work_q mpsl_work_q;
+static struct k_work low_prio_pm_work;
 static K_THREAD_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
 
 #define MPSL_TIMESLOT_SESSION_COUNT (\
@@ -155,7 +159,28 @@ static uint8_t __aligned(4) timeslot_context[TIMESLOT_MEM_SIZE];
 
 static void mpsl_low_prio_irq_handler(const void *arg)
 {
-	k_work_submit_to_queue(&mpsl_work_q, &mpsl_low_prio_work);
+	mpsl_work_submit(&mpsl_low_prio_work);
+	//put something in our own queue
+	if(mpsl_pm_param_to_zephyr.prev_flag_value != mpsl_pm_param_to_zephyr.mpsl_pm_flag)
+	{
+		mpsl_work_submit(&low_prio_pm_work);
+	}
+}
+
+static void low_prio_pm_work_handler(struct k_work *item)
+{
+	ARG_UNUSED(item);
+
+	int errcode;
+
+	errcode = MULTITHREADING_LOCK_ACQUIRE();
+	__ASSERT_NO_MSG(errcode == 0);
+	// prev_flag_value = mpsl_pm_flag;
+	// read global params for zephyr APIs
+	// if (mpsl_pm_param_to_zephyr.prev_flag_value != mpsl_pm_param_to_zephyr.mpsl_pm_flag) high_prio changed global struct, read params again
+	// ^try that twice, and otherwise use zephyr API safety setting (so we don't power off ex.)
+	// call zephyr PM functions depending on what is set in global vars
+	MULTITHREADING_LOCK_RELEASE();
 }
 
 static void mpsl_low_prio_work_handler(struct k_work *item)
@@ -324,6 +349,17 @@ static void mpsl_calibration_work_handler(struct k_work *work)
 }
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
+void set_pm_interface(void)
+{
+	/* so that PM doesn't shut us off power when we are idle i.e. CPU running in open loop configuration*/
+	/* see min. residency times: https://github.com/nrfconnect/sdk-sysctrl/blob/master/sysctrl/conf/pm.overlay#L19*/
+	/* we want max sleep?? -> low_but_not_zero < 5000000us*/
+	nrf_set_latency(low_but_not_zero);
+	// empty/invalidate mpsl_pm_param_to_zephyr
+}
+#endif
+
 static int32_t mpsl_lib_init_internal(void)
 {
 	int err = 0;
@@ -434,6 +470,7 @@ static int mpsl_low_prio_init(void)
 			   K_PRIO_COOP(CONFIG_MPSL_THREAD_COOP_PRIO), NULL);
 	k_thread_name_set(&mpsl_work_q.thread, "MPSL Work");
 	k_work_init(&mpsl_low_prio_work, mpsl_low_prio_work_handler);
+	k_work_init(&mpsl_low_prio_work, low_prio_pm_work_handler);
 
 	IRQ_CONNECT(CONFIG_MPSL_LOW_PRIO_IRQN, MPSL_LOW_PRIO,
 		    mpsl_low_prio_irq_handler, NULL, 0);
