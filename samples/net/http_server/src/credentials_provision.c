@@ -25,7 +25,11 @@ int credentials_provision(void)
 				 TLS_CREDENTIAL_CA_CERTIFICATE,
 				 server_certificate,
 				 sizeof(server_certificate));
-	if (ret < 0) {
+
+	if (ret == -EEXIST) {
+		LOG_DBG("CA certificate already exists, sec tag: %d",
+			CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG);
+	} else if (ret < 0) {
 		LOG_ERR("Failed to register CA certificate: %d", ret);
 		return ret;
 	}
@@ -34,7 +38,10 @@ int credentials_provision(void)
 				 TLS_CREDENTIAL_SERVER_CERTIFICATE,
 				 server_certificate,
 				 sizeof(server_certificate));
-	if (ret < 0) {
+	if (ret == -EEXIST) {
+		LOG_DBG("Public certificate already exists, sec tag: %d",
+			CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG);
+	} else if (ret < 0) {
 		LOG_ERR("Failed to register public certificate: %d", ret);
 		return ret;
 	}
@@ -42,7 +49,11 @@ int credentials_provision(void)
 	ret = tls_credential_add(CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG,
 				 TLS_CREDENTIAL_PRIVATE_KEY,
 				 server_private_key, sizeof(server_private_key));
-	if (ret < 0) {
+
+	if (ret == -EEXIST) {
+		LOG_DBG("Private key already exists, sec tag: %d",
+			CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG);
+	} else if (ret < 0) {
 		LOG_ERR("Failed to register private key: %d", ret);
 		return ret;
 	}
