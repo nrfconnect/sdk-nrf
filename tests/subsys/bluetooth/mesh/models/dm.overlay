@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	/* The timer instance to use. */
+	chosen {
+		ncs,dm-timer = &timer2;
+	};
+
+};

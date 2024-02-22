@@ -31,7 +31,7 @@ static int cmd_xyl_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_xyl_cli *cli = mod->user_data;
+	struct bt_mesh_light_xyl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_xyl_status rsp;
 
 	int err = bt_mesh_light_xyl_get(cli, NULL, &rsp);
@@ -58,7 +58,7 @@ static int xyl_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_xyl_cli *cli = mod->user_data;
+	struct bt_mesh_light_xyl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_light_xyl_set_params set = {
 		.params = {
@@ -96,7 +96,7 @@ static int cmd_xyl_target_get(const struct shell *shell, size_t argc, char *argv
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_xyl_cli *cli = mod->user_data;
+	struct bt_mesh_light_xyl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_xyl_status rsp;
 
 	int err = bt_mesh_light_xyl_target_get(cli, NULL, &rsp);
@@ -119,7 +119,7 @@ static int cmd_xyl_default_get(const struct shell *shell, size_t argc, char *arg
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_xyl_cli *cli = mod->user_data;
+	struct bt_mesh_light_xyl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_xyl rsp;
 
 	int err = bt_mesh_light_xyl_default_get(cli, NULL, &rsp);
@@ -144,7 +144,7 @@ static int xyl_default_set(const struct shell *shell, size_t argc, char *argv[],
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_xyl_cli *cli = mod->user_data;
+	struct bt_mesh_light_xyl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_xyl set = {
 		.lightness = light,
 		.xy.x = x,
@@ -190,7 +190,7 @@ static int cmd_xyl_range_get(const struct shell *shell, size_t argc, char *argv[
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_xyl_cli *cli = mod->user_data;
+	struct bt_mesh_light_xyl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_xyl_range_status rsp;
 
 	int err = bt_mesh_light_xyl_range_get(cli, NULL, &rsp);
@@ -216,7 +216,7 @@ static int xyl_range_set(const struct shell *shell, size_t argc, char *argv[], b
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_xyl_cli *cli = mod->user_data;
+	struct bt_mesh_light_xyl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_xy_range set = {
 		.min.x = x_min,
 		.min.y = y_min,

@@ -44,7 +44,7 @@ static int cmd_prop_client_props_get(const struct shell *shell, size_t argc, cha
 		return -ENODEV;
 	}
 
-	struct bt_mesh_prop_cli *cli = mod->user_data;
+	struct bt_mesh_prop_cli *cli = mod->rt->user_data;
 	uint16_t ids[CONFIG_BT_MESH_PROP_MAXCOUNT];
 	struct bt_mesh_prop_list rsp = { .ids = &ids[0], .count = CONFIG_BT_MESH_PROP_MAXCOUNT };
 
@@ -68,7 +68,7 @@ static int cmd_prop_props_get(const struct shell *shell, size_t argc, char *argv
 		return -ENODEV;
 	}
 
-	struct bt_mesh_prop_cli *cli = mod->user_data;
+	struct bt_mesh_prop_cli *cli = mod->rt->user_data;
 	uint16_t ids[CONFIG_BT_MESH_PROP_MAXCOUNT];
 	struct bt_mesh_prop_list rsp = { .ids = &ids[0], .count = CONFIG_BT_MESH_PROP_MAXCOUNT };
 
@@ -100,7 +100,7 @@ static int cmd_prop_prop_get(const struct shell *shell, size_t argc, char *argv[
 		return -ENODEV;
 	}
 
-	struct bt_mesh_prop_cli *cli = mod->user_data;
+	struct bt_mesh_prop_cli *cli = mod->rt->user_data;
 	uint8_t value[CONFIG_BT_MESH_PROP_MAXSIZE];
 	struct bt_mesh_prop_val rsp = { .value = &value[0], .size = CONFIG_BT_MESH_PROP_MAXSIZE };
 
@@ -125,7 +125,7 @@ static int user_prop_set(const struct shell *shell, size_t argc, char *argv[], b
 		return -ENODEV;
 	}
 
-	struct bt_mesh_prop_cli *cli = mod->user_data;
+	struct bt_mesh_prop_cli *cli = mod->rt->user_data;
 	struct bt_mesh_prop_val set = {
 		.meta.id = id,
 		.value = val,
@@ -172,7 +172,7 @@ static int admin_prop_set(const struct shell *shell, size_t argc, char *argv[], 
 		return -ENODEV;
 	}
 
-	struct bt_mesh_prop_cli *cli = mod->user_data;
+	struct bt_mesh_prop_cli *cli = mod->rt->user_data;
 	struct bt_mesh_prop_val set = {
 		.meta.id = id,
 		.meta.user_access = access,
@@ -218,7 +218,7 @@ static int mfr_prop_set(const struct shell *shell, size_t argc, char *argv[], bo
 		return -ENODEV;
 	}
 
-	struct bt_mesh_prop_cli *cli = mod->user_data;
+	struct bt_mesh_prop_cli *cli = mod->rt->user_data;
 	struct bt_mesh_prop set = {
 		.id = id,
 		.user_access = access,

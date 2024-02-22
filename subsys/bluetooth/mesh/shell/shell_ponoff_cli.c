@@ -27,7 +27,7 @@ static int cmd_on_power_up_get(const struct shell *shell, size_t argc, char *arg
 		return -ENODEV;
 	}
 
-	struct bt_mesh_ponoff_cli *cli = mod->user_data;
+	struct bt_mesh_ponoff_cli *cli = mod->rt->user_data;
 	enum bt_mesh_on_power_up rsp;
 
 	int err = bt_mesh_ponoff_cli_on_power_up_get(cli, NULL, &rsp);
@@ -50,7 +50,7 @@ static int on_power_up_set(const struct shell *shell, size_t argc, char *argv[],
 		return -ENODEV;
 	}
 
-	struct bt_mesh_ponoff_cli *cli = mod->user_data;
+	struct bt_mesh_ponoff_cli *cli = mod->rt->user_data;
 
 	if (acked) {
 		enum bt_mesh_on_power_up rsp;

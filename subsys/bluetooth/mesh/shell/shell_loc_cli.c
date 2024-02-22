@@ -28,7 +28,7 @@ static int cmd_loc_global_get(const struct shell *shell, size_t argc, char *argv
 		return -ENODEV;
 	}
 
-	struct bt_mesh_loc_cli *cli = mod->user_data;
+	struct bt_mesh_loc_cli *cli = mod->rt->user_data;
 	struct bt_mesh_loc_global rsp;
 
 	int err = bt_mesh_loc_cli_global_get(cli, NULL, &rsp);
@@ -53,7 +53,7 @@ static int global_set(const struct shell *shell, size_t argc, char *argv[], bool
 		return -ENODEV;
 	}
 
-	struct bt_mesh_loc_cli *cli = mod->user_data;
+	struct bt_mesh_loc_cli *cli = mod->rt->user_data;
 	struct bt_mesh_loc_global set = {
 		.latitude = latitude,
 		.longitude = longitude,
@@ -99,7 +99,7 @@ static int cmd_loc_local_get(const struct shell *shell, size_t argc, char *argv[
 		return -ENODEV;
 	}
 
-	struct bt_mesh_loc_cli *cli = mod->user_data;
+	struct bt_mesh_loc_cli *cli = mod->rt->user_data;
 	struct bt_mesh_loc_local rsp;
 
 	int err = bt_mesh_loc_cli_local_get(cli, NULL, &rsp);
@@ -128,7 +128,7 @@ static int local_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		return -ENODEV;
 	}
 
-	struct bt_mesh_loc_cli *cli = mod->user_data;
+	struct bt_mesh_loc_cli *cli = mod->rt->user_data;
 	struct bt_mesh_loc_local set = {
 		.north = north,
 		.east = east,

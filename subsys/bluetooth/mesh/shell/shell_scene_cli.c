@@ -33,7 +33,7 @@ static int cmd_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_scene_cli *cli = mod->user_data;
+	struct bt_mesh_scene_cli *cli = mod->rt->user_data;
 	struct bt_mesh_scene_state rsp;
 
 	int err = bt_mesh_scene_cli_get(cli, NULL, &rsp);
@@ -59,11 +59,11 @@ static int cmd_register_get(const struct shell *shell, size_t argc, char *argv[]
 		return -ENODEV;
 	}
 
-	struct bt_mesh_scene_cli *cli = mod->user_data;
+	struct bt_mesh_scene_cli *cli = mod->rt->user_data;
 	uint16_t scenes[SHELL_SENSOR_CLI_REG_CNT_MAX];
 	struct bt_mesh_scene_register rsp = {
 		.count = SHELL_SENSOR_CLI_REG_CNT_MAX,
-		.scenes = &scenes[0],
+		.scenes = scenes,
 	};
 
 	int err = bt_mesh_scene_cli_register_get(cli, NULL, &rsp);
@@ -86,13 +86,13 @@ static int store(const struct shell *shell, size_t argc, char *argv[], bool acke
 		return -ENODEV;
 	}
 
-	struct bt_mesh_scene_cli *cli = mod->user_data;
+	struct bt_mesh_scene_cli *cli = mod->rt->user_data;
 
 	if (acked) {
 		uint16_t scenes[CONFIG_BT_MESH_SCENES_MAX];
 		struct bt_mesh_scene_register rsp = {
 			.count = CONFIG_BT_MESH_SCENES_MAX,
-			.scenes = &scenes[0],
+			.scenes = scenes,
 		};
 
 		err = bt_mesh_scene_cli_store(cli, NULL, scene, &rsp);
@@ -127,13 +127,13 @@ static int scene_del(const struct shell *shell, size_t argc, char *argv[], bool 
 		return -ENODEV;
 	}
 
-	struct bt_mesh_scene_cli *cli = mod->user_data;
+	struct bt_mesh_scene_cli *cli = mod->rt->user_data;
 
 	if (acked) {
 		uint16_t scenes[CONFIG_BT_MESH_SCENES_MAX];
 		struct bt_mesh_scene_register rsp = {
 			.count = CONFIG_BT_MESH_SCENES_MAX,
-			.scenes = &scenes[0],
+			.scenes = scenes,
 		};
 
 		err = bt_mesh_scene_cli_delete(cli, NULL, scene, &rsp);
@@ -170,7 +170,7 @@ static int recall(const struct shell *shell, size_t argc, char *argv[], bool ack
 		return -ENODEV;
 	}
 
-	struct bt_mesh_scene_cli *cli = mod->user_data;
+	struct bt_mesh_scene_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 
 	if (acked) {

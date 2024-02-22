@@ -28,7 +28,7 @@ static int cmd_onoff_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_onoff_cli *cli = mod->user_data;
+	struct bt_mesh_onoff_cli *cli = mod->rt->user_data;
 	struct bt_mesh_onoff_status rsp;
 
 	int err = bt_mesh_onoff_cli_get(cli, NULL, &rsp);
@@ -53,7 +53,7 @@ static int onoff_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		return -ENODEV;
 	}
 
-	struct bt_mesh_onoff_cli *cli = mod->user_data;
+	struct bt_mesh_onoff_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_onoff_set set = { .on_off = on_off,
 					 .transition = (argc > 2) ? &trans : NULL };

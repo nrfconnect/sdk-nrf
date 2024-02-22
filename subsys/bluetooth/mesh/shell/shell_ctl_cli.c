@@ -31,7 +31,7 @@ static int cmd_ctl_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_ctl_status rsp;
 
 	int err = bt_mesh_light_ctl_get(cli, NULL, &rsp);
@@ -58,7 +58,7 @@ static int ctl_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_light_ctl_set set = {
 		.params = {
@@ -107,7 +107,7 @@ static int cmd_temp_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_temp_status rsp;
 
 	int err = bt_mesh_light_temp_get(cli, NULL, &rsp);
@@ -133,7 +133,7 @@ static int temp_set(const struct shell *shell, size_t argc, char *argv[], bool a
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_light_temp_set set = {
 		.params = {
@@ -178,7 +178,7 @@ static int cmd_ctl_default_get(const struct shell *shell, size_t argc, char *arg
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_ctl rsp;
 
 	int err = bt_mesh_light_ctl_default_get(cli, NULL, &rsp);
@@ -203,7 +203,7 @@ static int default_set(const struct shell *shell, size_t argc, char *argv[], boo
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_ctl set = {
 		.light = light,
 		.temp = temp,
@@ -246,7 +246,7 @@ static int cmd_temp_range_get(const struct shell *shell, size_t argc, char *argv
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_temp_range_status rsp;
 
 	int err = bt_mesh_light_temp_range_get(cli, NULL, &rsp);
@@ -270,7 +270,7 @@ static int temp_range_set(const struct shell *shell, size_t argc, char *argv[], 
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_ctl_cli *cli = mod->user_data;
+	struct bt_mesh_light_ctl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_temp_range set = {
 		.min = min,
 		.max = max,

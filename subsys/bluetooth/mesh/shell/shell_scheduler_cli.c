@@ -24,7 +24,7 @@ static int cmd_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_scheduler_cli *cli = mod->user_data;
+	struct bt_mesh_scheduler_cli *cli = mod->rt->user_data;
 	uint16_t rsp;
 
 	int err = bt_mesh_scheduler_cli_get(cli, NULL, &rsp);
@@ -63,7 +63,7 @@ static int cmd_action_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_scheduler_cli *cli = mod->user_data;
+	struct bt_mesh_scheduler_cli *cli = mod->rt->user_data;
 	struct bt_mesh_schedule_entry rsp;
 
 	err = bt_mesh_scheduler_cli_action_get(cli, NULL, idx, &rsp);
@@ -113,7 +113,7 @@ static int action_set(const struct shell *shell, size_t argc, char *argv[], bool
 		return -ENODEV;
 	}
 
-	struct bt_mesh_scheduler_cli *cli = mod->user_data;
+	struct bt_mesh_scheduler_cli *cli = mod->rt->user_data;
 
 	if (acked) {
 		struct bt_mesh_schedule_entry rsp;
