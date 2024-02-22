@@ -101,9 +101,9 @@ psa_status_t do_rounds(psa_pake_operation_t *server, psa_pake_operation_t *clien
 }
 
 psa_status_t pake_setup(psa_pake_operation_t *op, psa_pake_cipher_suite_t *cs, const char *user,
-			const char *peer, psa_key_id_t *password)
+			const char *peer, psa_key_id_t password)
 {
-	psa_status_t status = psa_pake_setup(op, cs);
+	psa_status_t status = psa_pake_setup(op, password, cs);
 
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_pake_setup failed. (Error: %d)", status);
@@ -122,30 +122,36 @@ psa_status_t pake_setup(psa_pake_operation_t *op, psa_pake_cipher_suite_t *cs, c
 		return status;
 	}
 
-	status = psa_pake_set_password_key(op, *password);
-	if (status != PSA_SUCCESS) {
-		LOG_INF("psa_pake_set_password_key failed. (Error: %d)", status);
-		return status;
-	}
-
 	return PSA_SUCCESS;
 }
 
 psa_status_t do_key_derivation(psa_pake_operation_t *op, uint8_t *key_buffer,
 			       size_t key_buffer_size)
 {
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_key_id_t key;
+	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_key_derivation_operation_t kdf = PSA_KEY_DERIVATION_OPERATION_INIT;
 
-	psa_status_t status = psa_key_derivation_setup(&kdf, PSA_ALG_TLS12_ECJPAKE_TO_PMS);
+	psa_set_key_type(&attributes, PSA_KEY_TYPE_DERIVE);
+	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_DERIVE);
+	psa_set_key_algorithm(&attributes, PSA_ALG_TLS12_ECJPAKE_TO_PMS);
 
+	status = psa_pake_get_shared_key(op, &attributes, &key);
+	if (status != PSA_SUCCESS) {
+		LOG_INF("psa_pake_get_shared_key failed. (Error: %d)", status);
+		return status;
+	}
+
+	status = psa_key_derivation_setup(&kdf, PSA_ALG_TLS12_ECJPAKE_TO_PMS);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_key_derivation_setup failed. (Error: %d)", status);
 		return status;
 	}
 
-	status = psa_pake_get_implicit_key(op, &kdf);
+	status = psa_key_derivation_input_key(&kdf, PSA_KEY_DERIVATION_INPUT_SECRET, key);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("psa_pake_get_implicit_key failed. (Error: %d)", status);
+		LOG_INF("psa_key_derivation_input_key failed. (Error: %d)", status);
 		psa_key_derivation_abort(&kdf);
 		return status;
 	}
@@ -169,16 +175,14 @@ int main(void)
 	}
 
 	psa_pake_cipher_suite_t cipher_suite = PSA_PAKE_CIPHER_SUITE_INIT;
-
-	psa_pake_cs_set_algorithm(&cipher_suite, PSA_ALG_JPAKE);
+	psa_pake_cs_set_algorithm(&cipher_suite, PSA_ALG_JPAKE(PSA_ALG_SHA_256));
 	psa_pake_cs_set_primitive(&cipher_suite, PSA_PAKE_PRIMITIVE(PSA_PAKE_PRIMITIVE_TYPE_ECC,
 								    PSA_ECC_FAMILY_SECP_R1, 256));
-	psa_pake_cs_set_hash(&cipher_suite, PSA_ALG_SHA_256);
+	psa_pake_cs_set_key_confirmation(&cipher_suite, PSA_PAKE_UNCONFIRMED_KEY);
 
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
-
 	psa_set_key_usage_flags(&key_attributes, PSA_KEY_USAGE_DERIVE);
-	psa_set_key_algorithm(&key_attributes, PSA_ALG_JPAKE);
+	psa_set_key_algorithm(&key_attributes, PSA_ALG_JPAKE(PSA_ALG_SHA_256));
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_PASSWORD);
 
 	psa_key_id_t key;
@@ -192,7 +196,7 @@ int main(void)
 	/* Initialize PAKE operation object for the client.*/
 	psa_pake_operation_t client = PSA_PAKE_OPERATION_INIT;
 
-	status = pake_setup(&client, &cipher_suite, "client", "server", &key);
+	status = pake_setup(&client, &cipher_suite, "client", "server", key);
 	if (status != PSA_SUCCESS) {
 		goto error;
 	}
@@ -200,7 +204,7 @@ int main(void)
 	/* Initialize PAKE operation object for the server. */
 	psa_pake_operation_t server = PSA_PAKE_OPERATION_INIT;
 
-	status = pake_setup(&server, &cipher_suite, "server", "client", &key);
+	status = pake_setup(&server, &cipher_suite, "server", "client", key);
 	if (status != PSA_SUCCESS) {
 		goto error;
 	}
