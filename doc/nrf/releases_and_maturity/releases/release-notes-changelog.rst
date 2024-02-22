@@ -348,7 +348,13 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_nrf_cloud` library:
+
+  * Added:
+
+    * Support for Wi-Fi anchor names in the :c:struct:`nrf_cloud_location_result` structure.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST` Kconfig option to enable including Wi-Fi anchor names in the location callback.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE` Kconfig option to control the buffer size used for the anchor names.
 
 Libraries for NFC
 -----------------

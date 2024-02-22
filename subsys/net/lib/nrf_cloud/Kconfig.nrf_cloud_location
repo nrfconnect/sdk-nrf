@@ -8,3 +8,17 @@ config NRF_CLOUD_LOCATION
 	imply FPU
 	depends on NRF_CLOUD_MQTT
 	select CJSON_LIB
+
+config NRF_CLOUD_LOCATION_ANCHOR_LIST
+	bool "Include the list of anchor names when receiving location results from the callback"
+	depends on NRF_CLOUD_LOCATION
+	depends on WIFI
+
+config NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE
+	int "Size of the buffer to contain the anchor name list"
+	depends on NRF_CLOUD_LOCATION_ANCHOR_LIST
+	default 185
+	help
+	  The maximum length of an anchor name is 32 characters.
+	  Anchor names are returned to the user in a singly-linked list,
+	  which requires 37 bytes for each anchor name on a 32-bit system.

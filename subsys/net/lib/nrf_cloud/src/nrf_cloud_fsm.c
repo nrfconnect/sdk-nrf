@@ -120,6 +120,9 @@ static bool c2d_topic_modified;
 static bool add_shadow_info = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SHADOW_INFO);
 
 #if defined(CONFIG_NRF_CLOUD_LOCATION) && defined(CONFIG_NRF_CLOUD_MQTT)
+#if defined(CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST)
+static char anchor_list_buf[CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE];
+#endif
 static nrf_cloud_location_response_t location_cb;
 void nfsm_set_location_response_cb(nrf_cloud_location_response_t cb)
 {
@@ -668,9 +671,16 @@ static int location_process(const char * const buf)
 {
 #if defined(CONFIG_NRF_CLOUD_LOCATION) && defined(CONFIG_NRF_CLOUD_MQTT)
 	if (location_cb) {
-		struct nrf_cloud_location_result res;
-		int ret = nrf_cloud_location_process(buf, &res);
 
+		int ret;
+		struct nrf_cloud_location_result res = {0};
+
+#if defined(CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST)
+		res.anchor_buf = anchor_list_buf;
+		res.anchor_buf_sz = sizeof(anchor_list_buf);
+#endif
+
+		ret = nrf_cloud_location_process(buf, &res);
 		if (ret <= 0) {
 			/* A location response was received, send to callback */
 			location_cb(&res);
