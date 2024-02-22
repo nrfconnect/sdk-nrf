@@ -150,6 +150,10 @@ enum bt_mesh_sensor_value_status {
 	BT_MESH_SENSOR_VALUE_NUMBER = 0,
 	/** An error ocurred during conversion from the encoded sensor value. */
 	BT_MESH_SENSOR_VALUE_CONVERSION_ERROR,
+	/** The encoded value could not fit in the target type and was clamped
+	 *  to the closest available value.
+	 */
+	BT_MESH_SENSOR_VALUE_CLAMPED,
 	/** The encoded sensor value represents an unknown value. */
 	BT_MESH_SENSOR_VALUE_UNKNOWN,
 	/** The encoded sensor value represents an invalid value. */
@@ -652,6 +656,7 @@ static inline bool
 bt_mesh_sensor_value_status_is_numeric(enum bt_mesh_sensor_value_status status)
 {
 	return (status == BT_MESH_SENSOR_VALUE_NUMBER ||
+		status == BT_MESH_SENSOR_VALUE_CLAMPED ||
 		status == BT_MESH_SENSOR_VALUE_MIN_OR_LESS ||
 		status == BT_MESH_SENSOR_VALUE_MAX_OR_GREATER);
 }
