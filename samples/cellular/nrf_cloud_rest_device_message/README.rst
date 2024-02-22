@@ -57,10 +57,10 @@ The configured Send LED (**LED 2** by default) (:ref:`CONFIG_REST_DEVICE_MESSAGE
 Provisioning and onboarding your device to nRF Cloud
 ****************************************************
 
-You must on-board your device to nRF Cloud for this sample to function.
+You must onboard your device to nRF Cloud for this sample to function.
 You only need to do this once for each device.
 
-This sample supports two methods to on-board your device:
+This sample supports two methods to onboard your device:
 
 * Using `nRF Cloud Provisioning Service`_ and the auto-onboarding option.
    This is the preferred option for nRF91x1-based devices.
@@ -80,7 +80,7 @@ The device ID is in the UUID format, not the legacy 'nrf-\ *IMEI*\ ' format.
 Just-in-time provisioning (JITP) with nRF Cloud
 ===============================================
 
-Complete the following steps to on-board your device:
+Complete the following steps to onboard your device:
 
 1. Enable the :ref:`CONFIG_REST_DEVICE_MESSAGE_DO_JITP <CONFIG_REST_DEVICE_MESSAGE_DO_JITP>` option.
 #. Press button 1 when prompted at startup.
