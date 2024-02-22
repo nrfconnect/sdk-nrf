@@ -12,6 +12,7 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/sys/slist.h>
 #include <modem/lte_lc.h>
 #include <net/nrf_cloud.h>
 #include <net/wifi_location_common.h>
@@ -32,6 +33,9 @@ extern "C" {
 /** Minimum number of access points required by nRF Cloud */
 #define NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN 2
 
+/** Maximum string length of an anchor name */
+#define NRF_CLOUD_LOCATION_ANCHOR_NAME_MAX 32
+
 /** @brief Location request type */
 enum nrf_cloud_location_type {
 	LOCATION_TYPE_SINGLE_CELL,
@@ -40,6 +44,15 @@ enum nrf_cloud_location_type {
 
 	LOCATION_TYPE__INVALID
 };
+
+/** @brief Anchor name list node, to be used with sys_slist_t APIs */
+struct nrf_cloud_anchor_list_node {
+	sys_snode_t node;
+	char name[];
+};
+
+#define NRF_CLOUD_ANCHOR_LIST_BUF_MIN_SZ	(sizeof(struct nrf_cloud_anchor_list_node) + \
+						 NRF_CLOUD_LOCATION_ANCHOR_NAME_MAX + 1)
 
 /** @brief Location request result */
 struct nrf_cloud_location_result {
@@ -55,6 +68,21 @@ struct nrf_cloud_location_result {
 	uint32_t unc;
 	/** Error value received from nRF Cloud. NRF_CLOUD_ERROR_NONE on success. */
 	enum nrf_cloud_error err;
+
+	/** The number of anchors received */
+	uint32_t anchor_cnt;
+
+	/** List of received anchor names contained as @ref nrf_cloud_anchor_list_node.
+	 *  If all anchor names cannot fit in the list, the number of items in the list
+	 *  will be less than @ref anchor_cnt.
+	 */
+	sys_slist_t anchor_list;
+
+	/** User provided buffer to contain the @ref anchor_list */
+	char *anchor_buf;
+
+	/** Size of provided buffer */
+	size_t anchor_buf_sz;
 };
 
 /** @brief Location request config */
@@ -109,6 +137,9 @@ typedef void (*nrf_cloud_location_response_t)(const struct nrf_cloud_location_re
  *                 which is do_reply = true, hi_conf = false, and fallback = true.
  * @param cb Callback function to receive parsed location result. Only used when
  *           config->do_reply is true or config is NULL.
+ *           If @kconfig{CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST} is enabled, the application
+ *           should not access the anchor list data after exiting the callback as it may
+ *           become invalid.
  *           If cb is NULL, JSON result will be sent to the cloud event handler as
  *           an NRF_CLOUD_EVT_RX_DATA_LOCATION event.
  * @retval 0       Request sent successfully.

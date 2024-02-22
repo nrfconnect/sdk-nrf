@@ -2815,6 +2815,69 @@ static bool json_item_string_exists(const cJSON *const obj, const char *const ke
 	return (strcmp(str_val, val) == 0);
 }
 
+static void nrf_cloud_parse_location_anchors_json(const cJSON * const loc_obj,
+	struct nrf_cloud_location_result * const location_out)
+{
+	cJSON *anchors, *mac, *name;
+	size_t buf_idx = 0;
+	size_t node_sz;
+	size_t name_sz;
+	bool buf_exists = location_out->anchor_buf_sz && location_out->anchor_buf;
+
+	/* Init anchor output */
+	sys_slist_init(&location_out->anchor_list);
+	if (buf_exists) {
+		location_out->anchor_buf[0] = '\0';
+	}
+
+	/* Anchor info is provided in an array of objects */
+	anchors	= cJSON_GetObjectItem(loc_obj, NRF_CLOUD_LOCATION_JSON_KEY_ANCHORS);
+	location_out->anchor_cnt = (uint32_t)cJSON_GetArraySize(anchors);
+
+	for (int idx = 0; idx < location_out->anchor_cnt; ++idx) {
+		struct nrf_cloud_anchor_list_node *node;
+		cJSON *anc = cJSON_GetArrayItem(anchors, idx);
+
+		mac	= cJSON_GetObjectItem(anc, NRF_CLOUD_LOCATION_JSON_KEY_ANC_MAC);
+		name	= cJSON_GetObjectItem(anc, NRF_CLOUD_LOCATION_JSON_KEY_ANC_NAME);
+
+		if (cJSON_IsString(mac)) {
+			LOG_DBG("Wi-Fi anchor MAC: %s", mac->valuestring);
+		}
+
+		if (cJSON_IsString(name)) {
+			LOG_DBG("Wi-Fi anchor name: %s", name->valuestring);
+		} else {
+			continue;
+		}
+
+		if (!buf_exists) {
+			/* No anchor buffer provided */
+			continue;
+		}
+
+		/* Get the size of the anchor name and node container */
+		name_sz = strlen(name->valuestring) + 1;
+		node_sz = sizeof(*node) + name_sz;
+
+		/* Ensure node will fit in buffer */
+		if ((buf_idx + node_sz) > location_out->anchor_buf_sz) {
+			LOG_WRN("Anchor does not fit in provided buffer");
+			continue;
+		}
+
+		/* Get a node pointer from the anchor buffer */
+		node = (struct nrf_cloud_anchor_list_node *)&location_out->anchor_buf[buf_idx];
+		node->node.next = NULL;
+		/* Copy the anchor name */
+		memcpy(node->name, name->valuestring, name_sz);
+		/* Update the buffer index */
+		buf_idx += node_sz;
+		/* Add node to list */
+		sys_slist_append(&location_out->anchor_list, &node->node);
+	}
+}
+
 static int nrf_cloud_parse_location_json(const cJSON *const loc_obj,
 	struct nrf_cloud_location_result *const location_out)
 {
@@ -2826,12 +2889,9 @@ static int nrf_cloud_parse_location_json(const cJSON *const loc_obj,
 	bool anchor = false;
 	char *type;
 
-	lat = cJSON_GetObjectItem(loc_obj,
-				  NRF_CLOUD_LOCATION_JSON_KEY_LAT);
-	lon = cJSON_GetObjectItem(loc_obj,
-				  NRF_CLOUD_LOCATION_JSON_KEY_LON);
-	unc = cJSON_GetObjectItem(loc_obj,
-				  NRF_CLOUD_LOCATION_JSON_KEY_UNCERT);
+	lat = cJSON_GetObjectItem(loc_obj, NRF_CLOUD_LOCATION_JSON_KEY_LAT);
+	lon = cJSON_GetObjectItem(loc_obj, NRF_CLOUD_LOCATION_JSON_KEY_LON);
+	unc = cJSON_GetObjectItem(loc_obj, NRF_CLOUD_LOCATION_JSON_KEY_UNCERT);
 
 	if (!cJSON_IsNumber(lat) || !cJSON_IsNumber(lon) || !cJSON_IsNumber(unc)) {
 		return -EBADMSG;
@@ -2860,29 +2920,8 @@ static int nrf_cloud_parse_location_json(const cJSON *const loc_obj,
 		LOG_WRN("Location type not found in message");
 	}
 
-	/* Print anchor info */
 	if (anchor) {
-		cJSON *anchors, *mac, *name;
-		int anc_cnt;
-
-		/* Anchor info is provided in an array of objects */
-		anchors	= cJSON_GetObjectItem(loc_obj, NRF_CLOUD_LOCATION_JSON_KEY_ANCHORS);
-		anc_cnt = cJSON_GetArraySize(anchors);
-
-		for (int idx = 0; idx < anc_cnt; ++idx) {
-			cJSON *anc = cJSON_GetArrayItem(anchors, idx);
-
-			mac	= cJSON_GetObjectItem(anc, NRF_CLOUD_LOCATION_JSON_KEY_ANC_MAC);
-			name	= cJSON_GetObjectItem(anc, NRF_CLOUD_LOCATION_JSON_KEY_ANC_NAME);
-
-			if (cJSON_IsString(mac)) {
-				LOG_DBG("Wi-Fi anchor MAC: %s", mac->valuestring);
-			}
-
-			if (cJSON_IsString(name)) {
-				LOG_INF("Wi-Fi anchor name: %s", name->valuestring);
-			}
-		}
+		nrf_cloud_parse_location_anchors_json(loc_obj, location_out);
 	}
 
 	return 0;
