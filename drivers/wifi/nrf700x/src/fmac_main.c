@@ -575,7 +575,8 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 					NRF_WIFI_DEF_PHY_CALIB,
 					op_band,
 					IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
-					&tx_pwr_ctrl_params);
+					&tx_pwr_ctrl_params,
+					&tx_pwr_ceil_params);
 #else
 	status = nrf_wifi_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
