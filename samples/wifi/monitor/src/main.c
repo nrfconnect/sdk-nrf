@@ -25,7 +25,7 @@ LOG_MODULE_REGISTER(monitor, CONFIG_LOG_DEFAULT_LEVEL);
 #define RAW_PKT_HDR 6
 
 /* Enumeration for Wi-Fi frame types and subtypes */
-enum FrameType {
+enum frame_type {
 	MANAGEMENT_FRAME = 0x00,
 	CONTROL_FRAME = 0x01,
 	DATA_FRAME = 0x02,
@@ -33,7 +33,7 @@ enum FrameType {
 	UNKNOWN_FRAME = 0xFF
 };
 
-enum ControlSubtype {
+enum control_subtype {
 	CF_END_SUBTYPE = 0x0E,
 	ACK_SUBTYPE = 0x0D,
 	RTS_SUBTYPE = 0x0B,
@@ -42,55 +42,55 @@ enum ControlSubtype {
 	BLOCK_ACK_REQ_SUBTYPE = 0x08
 };
 
-enum DataSubtype {
+enum data_subtype {
 	DATA_SUBTYPE = 0x00,
 	QOS_DATA_SUBTYPE = 0x08,
 	NULL_SUBTYPE = 0x04,
 	QOS_NULL_SUBTYPE = 0x0C
 };
 
-enum ManagementSubtype {
+enum management_subtype {
 	PROBE_REQ_SUBTYPE = 0x04,
 	BEACON_SUBTYPE = 0x08,
 	PROBE_RESPONSE_SUBTYPE = 0x05,
 	ACTION_SUBTYPE = 0x0D
-    /* Add more subtypes as needed */
+	/* Add more subtypes as needed */
 };
 
 /* Structure for wifi packet stats */
 typedef struct {
-	int ackCount;
-	int rtsCount;
-	int ctsCount;
-	int blockAckCount;
-	int blockAckReqCount;
-	int probeReqCount;
-	int beaconCount;
-	int probeResponseCount;
-	int dataCount;
-	int qosDataCount;
-	int nullCount;
-	int qosNullCount;
-	int actionCount;
-	int cfEndCount;
-	int unknownMgmtCount;
-	int unknownCtrlCount;
-	int unknownDataCount;
-	int reservedFrameCount;
-	int unknownFrameCount;
+	int ack_count;
+	int rts_count;
+	int cts_count;
+	int block_ack_count;
+	int block_ack_req_count;
+	int probe_req_count;
+	int beacon_count;
+	int probe_response_count;
+	int data_count;
+	int qos_data_count;
+	int null_count;
+	int qos_null_count;
+	int action_count;
+	int cf_end_count;
+	int unknown_mgmt_count;
+	int unknown_ctrl_count;
+	int unknown_data_count;
+	int reserved_frame_count;
+	int unknown_frame_count;
 	/* Add more counters for other types as needed */
-} packetStats;
+} packet_stats;
 
-packetStats stats = {0};
+packet_stats stats = {0};
 
 /* Structure for the MAC header */
 typedef struct {
-	unsigned char frameControl;
+	unsigned char frame_control;
 	unsigned char duration[2];
-	unsigned char receiverAddr[6];
-	unsigned char transmitterAddr[6];
+	unsigned char receiver_addr[6];
+	unsigned char transmitter_addr[6];
 	/* Add more fields based on your actual MAC header structure */
-} macHeader;
+} mac_header;
 
 struct packet_data {
 	int send_sock;
@@ -147,124 +147,122 @@ K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE,
 		THREAD_PRIORITY, 0, -1);
 
 /* Function to parse and update statistics for Wi-Fi packets */
-static void parseAndUpdateStats(unsigned char *packet, packetStats *stats)
+static void parse_and_update_stats(unsigned char *packet, packet_stats *stats)
 {
-	macHeader *macHdr = (macHeader *)packet;
+	mac_header *mac_hdr = (mac_header *)packet;
 
 	/* Extract the frame type and subtype from the frame control field */
-	unsigned char frameType = get_frame_type(macHdr->frameControl);
-	unsigned char frameSubtype = get_frame_subtype(macHdr->frameControl);
+	unsigned char frame_type = get_frame_type(mac_hdr->frame_control);
+	unsigned char frame_subtype = get_frame_subtype(mac_hdr->frame_control);
 
 	/* Update statistics based on the frame type and subtype */
-	switch (frameType) {
+	switch (frame_type) {
 	case CONTROL_FRAME:
-		switch (frameSubtype) {
+		switch (frame_subtype) {
 		case ACK_SUBTYPE:
-			stats->ackCount++;
+			stats->ack_count++;
 			break;
 		case RTS_SUBTYPE:
-			stats->rtsCount++;
+			stats->rts_count++;
 			break;
 		case CTS_SUBTYPE:
-			stats->ctsCount++;
+			stats->cts_count++;
 			break;
 		case BLOCK_ACK_SUBTYPE:
-			stats->blockAckCount++;
+			stats->block_ack_count++;
 			break;
 		case BLOCK_ACK_REQ_SUBTYPE:
-			stats->blockAckReqCount++;
+			stats->block_ack_req_count++;
 			break;
 		case CF_END_SUBTYPE:
-			stats->cfEndCount++;
+			stats->cf_end_count++;
 			/* Add more cases for other Data frame subtypes as needed */
 		default:
-			stats->unknownCtrlCount++;
-			LOG_DBG("Unknown Control frame subtype: %d", frameSubtype);
+			stats->unknown_ctrl_count++;
+			LOG_DBG("Unknown Control frame subtype: %d", frame_subtype);
 		}
 		break;
 	case DATA_FRAME:
-		switch (frameSubtype) {
+		switch (frame_subtype) {
 		case DATA_SUBTYPE:
-			stats->dataCount++;
+			stats->data_count++;
 			break;
 		case QOS_DATA_SUBTYPE:
-			stats->qosDataCount++;
+			stats->qos_data_count++;
 			break;
 		case NULL_SUBTYPE:
-			stats->nullCount++;
+			stats->null_count++;
 			break;
 		case QOS_NULL_SUBTYPE:
-			stats->qosNullCount++;
+			stats->qos_null_count++;
 			break;
 		/* Add more cases for other Data frame subtypes as needed */
 		default:
-			stats->unknownDataCount++;
-			LOG_DBG("Unknown Data frame subtype: %d", frameSubtype);
+			stats->unknown_data_count++;
+			LOG_DBG("Unknown Data frame subtype: %d", frame_subtype);
 		}
 		break;
-
 	case MANAGEMENT_FRAME:
-		switch (frameSubtype) {
+		switch (frame_subtype) {
 		case PROBE_REQ_SUBTYPE:
-			stats->probeReqCount++;
+			stats->probe_req_count++;
 			break;
 		case BEACON_SUBTYPE:
-			stats->beaconCount++;
+			stats->beacon_count++;
 			break;
 		case PROBE_RESPONSE_SUBTYPE:
-			stats->probeResponseCount++;
+			stats->probe_response_count++;
 			break;
 		case ACTION_SUBTYPE:
-			stats->actionCount++;
+			stats->action_count++;
 			break;
 		/* Add more cases for other Management frame subtypes as needed */
 		default:
-			stats->unknownMgmtCount++;
-			LOG_DBG("Unknown Management frame subtype: %d", frameSubtype);
+			stats->unknown_mgmt_count++;
+			LOG_DBG("Unknown Management frame subtype: %d", frame_subtype);
 		}
 		break;
 	case RESERVED_FRAME:
 		/* Handle reserved frame types as needed */
-		stats->reservedFrameCount++;
-		LOG_DBG("Reserved frame type: %d", frameType);
+		stats->reserved_frame_count++;
+		LOG_DBG("Reserved frame type: %d", frame_type);
 		break;
 	default:
 		/* Handle unknown frame types as needed */
-		stats->unknownFrameCount++;
-		LOG_DBG("Unknown frame type: %d", frameType);
+		stats->unknown_frame_count++;
+		LOG_DBG("Unknown frame type: %d", frame_type);
 		break;
 	}
 }
 
-static void printStats(void)
+static void print_stats(void)
 {
 	/* Print the updated statistics */
 	LOG_INF("Management Frames:");
-	LOG_INF("\tBeacon Count: %d", stats.beaconCount);
-	LOG_INF("\tProbe Request Count: %d", stats.probeReqCount);
-	LOG_INF("\tProbe Response Count: %d", stats.probeResponseCount);
-	LOG_INF("\tAction Count: %d", stats.actionCount);
+	LOG_INF("\tBeacon Count: %d", stats.beacon_count);
+	LOG_INF("\tProbe Request Count: %d", stats.probe_req_count);
+	LOG_INF("\tProbe Response Count: %d", stats.probe_response_count);
+	LOG_INF("\tAction Count: %d", stats.action_count);
 	LOG_INF("Control Frames:");
-	LOG_INF("\t ACK Count %d", stats.ackCount);
-	LOG_INF("\t RTS Count %d", stats.rtsCount);
-	LOG_INF("\t CTS Count %d", stats.ctsCount);
-	LOG_INF("\t Block Ack Count %d", stats.blockAckCount);
-	LOG_INF("\t Block Ack Req Count %d", stats.blockAckReqCount);
-	LOG_INF("\t CF End Count %d", stats.cfEndCount);
+	LOG_INF("\t ACK Count %d", stats.ack_count);
+	LOG_INF("\t RTS Count %d", stats.rts_count);
+	LOG_INF("\t CTS Count %d", stats.cts_count);
+	LOG_INF("\t Block Ack Count %d", stats.block_ack_count);
+	LOG_INF("\t Block Ack Req Count %d", stats.block_ack_req_count);
+	LOG_INF("\t CF End Count %d", stats.cf_end_count);
 	LOG_INF("Data Frames:");
-	LOG_INF("\tData Count: %d", stats.dataCount);
-	LOG_INF("\tQoS Data Count: %d", stats.qosDataCount);
-	LOG_INF("\tNull Count: %d", stats.nullCount);
-	LOG_INF("\tQoS Null Count: %d", stats.qosNullCount);
+	LOG_INF("\tData Count: %d", stats.data_count);
+	LOG_INF("\tQoS Data Count: %d", stats.qos_data_count);
+	LOG_INF("\tNull Count: %d", stats.null_count);
+	LOG_INF("\tQoS Null Count: %d", stats.qos_null_count);
 	LOG_INF("Unknown Frames:");
-	LOG_INF("\tUnknown Management Frame Count: %d", stats.unknownMgmtCount);
-	LOG_INF("\tUnknown Control Frame Count: %d", stats.unknownCtrlCount);
-	LOG_INF("\tUnknown Data Frame Count: %d", stats.unknownDataCount);
-	LOG_INF("\tReserved Frame Count: %d", stats.reservedFrameCount);
-	LOG_INF("\tUnknown Frame Count: %d", stats.unknownFrameCount);
+	LOG_INF("\tUnknown Management Frame Count: %d", stats.unknown_mgmt_count);
+	LOG_INF("\tUnknown Control Frame Count: %d", stats.unknown_ctrl_count);
+	LOG_INF("\tUnknown Data Frame Count: %d", stats.unknown_data_count);
+	LOG_INF("\tReserved Frame Count: %d", stats.reserved_frame_count);
+	LOG_INF("\tUnknown Frame Count: %d", stats.unknown_frame_count);
 	LOG_INF("\n");
 }
-
 static int wifi_set_reg(void)
 {
 	struct net_if *iface;
@@ -384,10 +382,10 @@ static int process_rx_packet(struct packet_data *packet)
 			break;
 		}
 
-		parseAndUpdateStats(&packet->recv_buffer[RAW_PKT_HDR], &stats);
+		parse_and_update_stats(&packet->recv_buffer[RAW_PKT_HDR], &stats);
 
 		if ((k_uptime_get_32() - start_time) >= stats_print_period)	{
-			printStats();
+			print_stats();
 			start_time = k_uptime_get_32();
 		}
 	} while (true);
