@@ -309,6 +309,7 @@ nRF5340 Audio
   * Support for Filter Accept List; enabled as default.
   * Metadata used in Auracast, such as ``active_state`` and ``parental_rating``.
   * Updated :ref:`lib_bt_ll_acs_nrf53_readme` from v3424 to v17933.
+  * Support for converting the audio sample rate between 48 kHz, 24 kHz, and 16 kHz.
 
 * Updated:
 

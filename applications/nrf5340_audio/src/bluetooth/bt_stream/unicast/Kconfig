@@ -36,6 +36,13 @@ config BT_BAP_UNICAST_24_2_1
 	help
 	  Unicast codec capability 24_2_1.
 	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
+
+config BT_BAP_UNICAST_48_4_1
+	bool "48_4_1"
+	depends on TRANSPORT_CIS
+	help
+	  Unicast codec capability 48_4_1.
+	  48kHz, 96kbps, 5 retransmits, 20ms transport latency, and 40ms presentation delay.
 endchoice
 
 choice	BT_AUDIO_PRES_DLY_SRCH

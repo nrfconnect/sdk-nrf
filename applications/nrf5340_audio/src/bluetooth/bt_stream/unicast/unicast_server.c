@@ -21,6 +21,8 @@
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
 
+#include <../subsys/bluetooth/audio/bap_endpoint.h>
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_server, CONFIG_UNICAST_SERVER_LOG_LEVEL);
 
@@ -123,11 +125,17 @@ struct bt_csip_set_member_register_param csip_param = {
 	.cb = &csip_callbacks,
 };
 
-static struct bt_audio_codec_cap lc3_codec = BT_AUDIO_CODEC_CAP_LC3(
+static struct bt_audio_codec_cap lc3_codec_sink = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAPABILIY_FREQ,
 	(BT_AUDIO_CODEC_LC3_DURATION_10 | BT_AUDIO_CODEC_LC3_DURATION_PREFER_10),
 	BT_AUDIO_CODEC_LC3_CHAN_COUNT_SUPPORT(1), LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
-	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, AVAILABLE_SINK_CONTEXT);
+
+static struct bt_audio_codec_cap lc3_codec_source = BT_AUDIO_CODEC_CAP_LC3(
+	BT_AUDIO_CODEC_CAPABILIY_FREQ,
+	(BT_AUDIO_CODEC_LC3_DURATION_10 | BT_AUDIO_CODEC_LC3_DURATION_PREFER_10),
+	BT_AUDIO_CODEC_LC3_CHAN_COUNT_SUPPORT(1), LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, AVAILABLE_SOURCE_CONTEXT);
 
 static enum bt_audio_dir caps_dirs[] = {
 	BT_AUDIO_DIR_SINK,
@@ -145,12 +153,12 @@ static const struct bt_audio_codec_qos_pref qos_pref = BT_AUDIO_CODEC_QOS_PREF(
 static struct bt_pacs_cap caps[] = {
 #if (CONFIG_BT_AUDIO_RX)
 				{
-					 .codec_cap = &lc3_codec,
+					 .codec_cap = &lc3_codec_sink,
 				},
 #endif
 #if (CONFIG_BT_AUDIO_TX)
 				{
-					 .codec_cap = &lc3_codec,
+					 .codec_cap = &lc3_codec_source,
 				}
 #endif /* (CONFIG_BT_AUDIO_TX) */
 };
@@ -531,8 +539,8 @@ static int adv_buf_put(struct bt_data *adv_buf, uint8_t adv_buf_vacant, int *ind
 	return 0;
 }
 
-int unicast_server_config_get(uint32_t *bitrate, uint32_t *sampling_rate_hz,
-			      uint32_t *pres_delay_us)
+int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
+			      uint32_t *sampling_rate_hz, uint32_t *pres_delay_us)
 {
 	int ret;
 
@@ -541,34 +549,74 @@ int unicast_server_config_get(uint32_t *bitrate, uint32_t *sampling_rate_hz,
 		return -ENXIO;
 	}
 
-	if (audio_streams[0].codec_cfg == NULL) {
-		LOG_ERR("No codec found for the stream");
-		return -ENXIO;
-	}
+	if (dir == BT_AUDIO_DIR_SINK) {
+		/* If multiple sink streams exists, they should have the same configurations,
+		 * hence we only check the first one.
+		 */
+		if (audio_streams[0].codec_cfg == NULL) {
+			LOG_ERR("No codec found for the stream");
 
-	if (sampling_rate_hz != NULL) {
-		ret = le_audio_freq_hz_get(audio_streams[0].codec_cfg, sampling_rate_hz);
-		if (ret) {
-			LOG_ERR("Invalid sampling frequency: %d", ret);
-			return -ENXIO;
-		}
-	}
-
-	if (bitrate != NULL) {
-		ret = le_audio_bitrate_get(audio_streams[0].codec_cfg, bitrate);
-		if (ret) {
-			LOG_ERR("Unable to calculate bitrate: %d", ret);
-			return -ENXIO;
-		}
-	}
-
-	if (pres_delay_us != NULL) {
-		if (audio_streams[0].qos == NULL) {
-			LOG_ERR("No QoS found for the stream");
 			return -ENXIO;
 		}
 
-		*pres_delay_us = audio_streams[0].qos->pd;
+		if (sampling_rate_hz != NULL) {
+			ret = le_audio_freq_hz_get(audio_streams[0].codec_cfg, sampling_rate_hz);
+			if (ret) {
+				LOG_ERR("Invalid sampling frequency: %d", ret);
+				return -ENXIO;
+			}
+		}
+
+		if (bitrate != NULL) {
+			ret = le_audio_bitrate_get(audio_streams[0].codec_cfg, bitrate);
+			if (ret) {
+				LOG_ERR("Unable to calculate bitrate: %d", ret);
+				return -ENXIO;
+			}
+		}
+
+		if (pres_delay_us != NULL) {
+			if (audio_streams[0].qos == NULL) {
+				LOG_ERR("No QoS found for the stream");
+				return -ENXIO;
+			}
+
+			*pres_delay_us = audio_streams[0].qos->pd;
+		}
+	} else if (dir == BT_AUDIO_DIR_SOURCE) {
+		/* If multiple source streams exists, they should have the same configurations,
+		 * hence we only check the first one.
+		 */
+		if (bap_tx_streams[0]->codec_cfg == NULL) {
+			LOG_ERR("No codec found for the stream");
+			return -ENXIO;
+		}
+
+		if (sampling_rate_hz != NULL) {
+			ret = le_audio_freq_hz_get(bap_tx_streams[0]->codec_cfg, sampling_rate_hz);
+			if (ret) {
+				LOG_ERR("Invalid sampling frequency: %d", ret);
+				return -ENXIO;
+			}
+		}
+
+		if (bitrate != NULL) {
+			ret = le_audio_bitrate_get(bap_tx_streams[0]->codec_cfg, bitrate);
+			if (ret) {
+				LOG_ERR("Unable to calculate bitrate: %d", ret);
+				return -ENXIO;
+			}
+		}
+
+		if (pres_delay_us != NULL) {
+			if (bap_tx_streams[0]->qos == NULL) {
+				LOG_ERR("No QoS found for the stream");
+				return -ENXIO;
+			}
+
+			*pres_delay_us = bap_tx_streams[0]->qos->pd;
+			LOG_ERR("pres_delay_us: %d", *pres_delay_us);
+		}
 	}
 
 	return 0;

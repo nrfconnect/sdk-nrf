@@ -27,6 +27,35 @@ config BT_AUDIO_PACKING_INTERLEAVED
 	help
 	  ISO channels can either be interleaved or sequentially packed; sequential is the default one.
 
+config BT_AUDIO_PREF_SAMPLE_RATE_VALUE
+	hex
+	default 0x03 if BT_AUDIO_PREF_SAMPLE_RATE_16KHZ
+	default 0x05 if BT_AUDIO_PREF_SAMPLE_RATE_24KHZ
+	default 0x08 if BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+
+choice BT_AUDIO_PREF_SAMPLE_RATE
+	prompt "Preferred audio sample rate"
+	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if STREAM_BIDIRECTIONAL
+	default BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+	help
+	  Select the preferred sample rate if there are more than one to choose from.
+
+config  BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+	bool "48 kHz"
+	help
+	  Select 48000 Hz as the preferred sample rate.
+
+config  BT_AUDIO_PREF_SAMPLE_RATE_24KHZ
+	bool "24 kHz"
+	help
+	  Select 24000 Hz as the preferred sample rate.
+
+config  BT_AUDIO_PREF_SAMPLE_RATE_16KHZ
+	bool "16 kHz"
+	help
+	  Select 16000 Hz as the preferred sample rate.
+endchoice
+
 #----------------------------------------------------------------------------#
 menu "QoS"
 
@@ -50,11 +79,11 @@ config BT_AUDIO_MAX_TRANSPORT_LATENCY_MS
 	  Max transport latency for the ISO link.
 
 config BT_AUDIO_RETRANSMITS
-	int "Number of retransmits"
+	int "Number of re-transmits"
 	range 0 30
 	default 2
 	help
-	  Number of retransmits for the ISO link. 2 retransmits means a total
+	  Number of re-transmits for the ISO link. 2 re-transmits means a total
 	  of 3 packets sent per stream.
 
 endmenu # QoS

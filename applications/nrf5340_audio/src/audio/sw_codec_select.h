@@ -12,7 +12,7 @@
 
 #if (CONFIG_SW_CODEC_LC3)
 #define LC3_MAX_FRAME_SIZE_MS	10
-#define LC3_ENC_MONO_FRAME_SIZE (CONFIG_LC3_BITRATE * LC3_MAX_FRAME_SIZE_MS / (8 * 1000))
+#define LC3_ENC_MONO_FRAME_SIZE (CONFIG_LC3_BITRATE_MAX * LC3_MAX_FRAME_SIZE_MS / (8 * 1000))
 
 #define LC3_PCM_NUM_BYTES_MONO                                                                     \
 	(CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS * LC3_MAX_FRAME_SIZE_MS / 1000)
@@ -48,6 +48,7 @@ struct sw_codec_encoder {
 	enum sw_codec_channel_mode channel_mode;
 	uint8_t num_ch;
 	enum audio_channel audio_ch;
+	uint32_t sample_rate_hz;
 };
 
 struct sw_codec_decoder {
@@ -56,6 +57,7 @@ struct sw_codec_decoder {
 	enum sw_codec_channel_mode channel_mode; /* Mono or stereo. */
 	uint8_t num_ch;				 /* Number of decoder channels. */
 	enum audio_channel audio_ch;		 /* Used to choose which channel to use. */
+	uint32_t sample_rate_hz;
 };
 
 /**

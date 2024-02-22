@@ -70,6 +70,9 @@ enum sample_rate_converter_filter {
 	((CONFIG_SAMPLE_RATE_CONVERTER_BLOCK_SIZE_MAX +                                            \
 	  SAMPLE_RATE_CONVERTER_OUTPUT_BUFFER_NUMBER_OVERFLOW_SAMPLES) *                           \
 	 sizeof(uint32_t))
+#else
+#define SAMPLE_RATE_CONVERTER_INPUT_BUF_SIZE 0
+#define SAMPLE_RATE_CONVERTER_RINGBUF_SIZE   0
 #endif
 
 /** Buffer used for storing input bytes to the sample rate converter */
