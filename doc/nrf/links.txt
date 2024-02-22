@@ -1421,6 +1421,8 @@
 
 .. _`Wireshark`: https://www.wireshark.org
 
+.. _`Wireshark with Lua`: https://wiki.wireshark.org/Lua
+
 .. _`Amazon license`: https://raw.githubusercontent.com/nrfconnect/sdk-sidewalk/main/LICENSE.txt
 
 .. _`Sidewalk documentation`: https://nrfconnect.github.io/sdk-sidewalk/

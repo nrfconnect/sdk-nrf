@@ -126,6 +126,63 @@ To enable this feature, use the configuration overlay files :file:`overlay-net-c
 When the offline net capture feature is enabled, incoming IEEE 802.11 packets are routed to the offline storage over the net capture tunnel.
 These packets can then be analyzed using Wireshark.
 
+Wireshark decode as IEEE 802.11
+===============================
+
+The packets from the device are sent to the host over the net capture tunnel using IP in IP tunneling.
+The nRF70 Series device sends the IEEE 802.11 packets prepended with a custom metadata over the net capture tunnel to the host.
+To analyze the packets in `Wireshark`_, the payload of the UDP packets must be dissected as IEEE 802.11 packets.
+
+This support is only available in `Wireshark`_ 4.3 (under development).
+A custom build of `Wireshark`_ from the latest sources is required.
+Once the custom build is installed, complete the following steps to dissect the payload of the UDP packets as IEEE 802.11 packets:
+
+1. Ensure Wireshark is compiled with Lua support, see `Wireshark with Lua`_ for details.
+#. Open Wireshark and go to :guilabel:`Analyze` > :guilabel:`Decode As` > :guilabel:`+`, then select :guilabel:`UDP`.
+#. In the **Current** column, ensure `IEEE 802.11` is available.
+
+   If not then `Wireshark`_ does not have the support to decode the UDP payload as IEEE 802.11 packets.
+
+#. Copy the following Lua script to a file, for example, :file:`nordic_decode_raw_80211.lua` file.
+
+   .. code-block:: lua
+
+         -- Create a new dissector
+         local nordic_raw_80211 = Proto("nordic_raw_80211", "Nordic Raw 802.11 dissector")
+
+         -- This function will dissect the packet
+         function nordic_raw_80211.dissector(buffer, pinfo, tree)
+            -- Dissect the first 6 bytes (Raw RX custom header)
+            local payload = buffer(6):tvb()
+            local subtree = tree:add(nordic_raw_80211, buffer(), "Nordic Raw 802.11 Dissector")
+            subtree:add(buffer(0, 2), "Frequency: " .. buffer(0, 2):le_uint())
+            subtree:add(buffer(2, 2), "Signal: " .. buffer(2, 2):le_int())
+            subtree:add(buffer(4, 1), "Rate Flags: " .. buffer(4, 1):uint())
+            subtree:add(buffer(5, 1), "Rate: " .. buffer(5, 1):uint())
+
+            local wlan_dissector_name = "wlan"
+            local wlan_dissector = Dissector.get(wlan_dissector_name)
+            if wlan_dissector == nil then
+               print("Error: No dissector found for " .. wlan_dissector_name)
+               return
+            end
+            -- Call IEEE 802.11 dissector
+            wlan_dissector:call(payload, pinfo, tree)
+         end
+
+         -- Register the dissector
+         local netcapture_udp_port = 4242
+         local udp_port = DissectorTable.get("udp.port")
+         udp_port:add(netcapture_udp_port, nordic_raw_80211)
+#. Copy the Lua script to the Wireshark plugin directory.
+
+   The plugin directory can be found in the Wireshark preferences.
+#. Open Wireshark and either start capturing packets or open a capture file.
+#. The UDP payload for port ``4242`` is now dissected as the following:
+
+     * Nordic Raw 802.1 header
+     * IEEE 802.11 packet
+
 Dependencies
 ************
 
