@@ -454,7 +454,7 @@ static void available_contexts_cb(struct bt_conn *conn, enum bt_audio_context sn
 
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_DBG("conn: %s, snk ctx %d src ctx %d\n", addr, snk_ctx, src_ctx);
+	LOG_DBG("conn: %s, snk ctx %d src ctx %d", addr, snk_ctx, src_ctx);
 }
 
 static int temp_cap_index_get(struct bt_conn *conn, uint8_t *index)
@@ -743,9 +743,11 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 
 	if (stream->ep->dir == BT_AUDIO_DIR_SINK) {
 		/* NOTE: The string below is used by the Nordic CI system */
-		LOG_INF("%s sink stream configured", headsets[channel_index].ch_name);
+		LOG_INF("%s sink stream %p configured", headsets[channel_index].ch_name,
+			(void *)stream);
 	} else if (stream->ep->dir == BT_AUDIO_DIR_SOURCE) {
-		LOG_INF("%s source stream configured", headsets[channel_index].ch_name);
+		LOG_INF("%s source stream %p configured", headsets[channel_index].ch_name,
+			(void *)stream);
 	} else {
 		LOG_WRN("Endpoint direction not recognized: %d", stream->ep->dir);
 		return;
@@ -1097,13 +1099,27 @@ static void work_stream_start(struct k_work *work)
 				K_MSEC(CIS_CONN_RETRY_DELAY_MS));
 		}
 	} else if (ret != 0) {
-		LOG_ERR("Failed to establish CIS, ret = %d", ret);
-		/** Defining the connection as having invalid configs, since it is not
-		 * possible to start stream
+		LOG_WRN("Failed to establish CIS, ret = %d", ret);
+		/** The connection could have invalid configs, or abnormal behavior cause the CIS
+		 * failed to establish. Sending an event for triggering disconnection could clean up
+		 * the abnormal state and restart the connection.
 		 */
 		le_audio_event_publish(LE_AUDIO_EVT_NO_VALID_CFG,
 				       headsets[work_data.channel_index].headset_conn,
 				       work_data.dir);
+	} else if (k_msgq_peek(&kwork_msgq, &work_data) != -ENOMSG) {
+		if (work_data.dir == BT_AUDIO_DIR_SINK &&
+		    !k_work_delayable_is_pending(
+			    &headsets[work_data.channel_index].stream_start_sink_work)) {
+			k_work_reschedule(&headsets[work_data.channel_index].stream_start_sink_work,
+					  K_MSEC(CIS_CONN_RETRY_DELAY_MS));
+		} else if (work_data.dir == BT_AUDIO_DIR_SOURCE &&
+			   !k_work_delayable_is_pending(
+				   &headsets[work_data.channel_index].stream_start_source_work)) {
+			k_work_reschedule(
+				&headsets[work_data.channel_index].stream_start_source_work,
+				K_MSEC(CIS_CONN_RETRY_DELAY_MS));
+		}
 	}
 }
 
