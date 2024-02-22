@@ -478,9 +478,6 @@ void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_p
 	tx_pwr_ctrl_params->band_edge_5g_unii_4_lo = CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF;
 	tx_pwr_ctrl_params->band_edge_5g_unii_4_hi = CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF;
 
-	/* Mandatory fields in DTS, so, always one */
-	tx_pwr_ceil_params->rf_tx_pwr_ceil_params_override = 1;
-
 	tx_pwr_ceil_params->max_pwr_2g_dsss =
 			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_dsss);
 
