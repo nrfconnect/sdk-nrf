@@ -1078,7 +1078,7 @@ static int handle_sensor_status(const struct bt_mesh_model *model, struct bt_mes
 
 		LOG_DBG("Checking sensor val");
 		if (id == BT_MESH_PROP_ID_TIME_SINCE_MOTION_SENSED) {
-			delayed_occupancy(srv, val);
+			delayed_occupancy(srv, 1000.0f * val);
 		} else if (val > 0) {
 			delayed_occupancy(srv, 0);
 		}

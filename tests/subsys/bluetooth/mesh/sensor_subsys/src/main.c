@@ -231,6 +231,28 @@ static void time_second16_check(const struct bt_mesh_sensor_type *sensor_type)
 	}
 }
 
+static void time_millisecond24_check(const struct bt_mesh_sensor_type *sensor_type)
+{
+	struct {
+		struct sensor_value val;
+		uint32_t expected;
+	} test_vector[] = {
+		{ { 0, 0 }, 0 },
+		{ { 0, 1000 }, 1 },
+		{ { 1, 0 }, 1000 },
+		{ { 123, 456000 }, 123456 },
+		{ { 16777, 214000 }, 16777214 },
+		{ { 0xFFFFFF, 0 }, 0xFFFFFF }
+	};
+
+	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
+		encoding_checking_proceed(
+			sensor_type, &test_vector[i].val, &test_vector[i].expected, 3);
+		decoding_checking_proceed(
+			sensor_type, &test_vector[i].expected, 3, &test_vector[i].val);
+	}
+}
+
 static void humidity_check(const struct bt_mesh_sensor_type *sensor_type)
 {
 	struct sensor_value in_value = {0};
@@ -820,7 +842,7 @@ static void temp8_in_period_of_day_check(const struct bt_mesh_sensor_type *senso
 {
 	struct sensor_value in_value[sensor_type->channel_count];
 	int8_t test_vector_temp[] = {-64, -32, 0, 32, 53, 0x7F};
-	uint8_t test_vector_time[] = {0, 5, 10, 17, 24, 0xff};
+	uint8_t test_vector_time[] = {0, 5, 10, 17, 23, 0xff};
 	uint8_t expected[3];
 
 	memset(in_value, 0, sizeof(in_value));
@@ -1097,7 +1119,7 @@ static void energy_in_a_period_of_day_check(const struct bt_mesh_sensor_type *se
 	} test_vector[] = {
 		{{{0, 0}, {0, 0}, {1, 0}}, {{0}, 0, 10}},
 		{{{1000, 0}, {10, 100000}, {12, 200000}}, {{1000}, 101, 122}},
-		{{{16777214, 0}, {15, 500000}, {24, 0}}, {{16777214}, 155, 240}},
+		{{{16777214, 0}, {15, 500000}, {23, 900000}}, {{16777214}, 155, 239}},
 		{{{1, 0}, {2, 0}, {0xFF, 0}}, {{1}, 20, 0xFF}},
 	};
 
@@ -1113,8 +1135,8 @@ static void energy_in_a_period_of_day_check(const struct bt_mesh_sensor_type *se
 		{{-1, 0}, {0, 0}, {0, 0}},
 		{{0, 0}, {-1, 0}, {0, 0}},
 		{{0, 0}, {0, 0}, {-1, 0}},
-		{{1, 0}, {25, 0}, {0, 0}},
-		{{1, 0}, {0, 0}, {25, 0}},
+		{{1, 0}, {24, 0}, {0, 0}},
+		{{1, 0}, {0, 0}, {24, 0}},
 		{{0x1000000, 0}, {0, 0}, {0, 0}},
 	};
 
@@ -1638,7 +1660,7 @@ ZTEST(sensor_types_test, test_time_since_motion_sensed)
 
 	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TIME_SINCE_MOTION_SENSED);
 	sensor_type_sanitize(sensor_type);
-	time_second16_check(sensor_type);
+	time_millisecond24_check(sensor_type);
 }
 
 ZTEST(sensor_types_test, test_time_since_presence_detected)

@@ -68,10 +68,15 @@ UNIT(va) = { "Volt Ampere", "VA" };
 UNIT(kvah) = { "Kilo Volt Ampere hours", "kVAh" };
 UNIT(db) = { "Decibel", "dB" };
 UNIT(lux) = { "Lux", "lx" };
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 UNIT(klxh) = { "Kilo Lux hours", "klxh" };
+UNIT(klmh) = { "Kilo Lumen hours", "klmh" };
+#else
+UNIT(lxh) = { "Lux hours", "lxh" };
+UNIT(lmh) = { "Lumen hours", "lmh" };
+#endif
 UNIT(lumen) = { "Lumen", "lm" };
 UNIT(lumen_per_watt) = { "Lumen per Watt", "lm/W" };
-UNIT(klmh) = { "Kilo Lumen hours", "klmh" };
 UNIT(degrees) = { "Degrees", "degrees" };
 UNIT(mps) = { "Metres per second", "m/s" };
 UNIT(microtesla) = { "Microtesla", "uT" };
@@ -131,6 +136,16 @@ UNIT(unitless) = { "Unitless" };
 				_scalar, ((_flags) | HAS_MAX), 0, _max)),         \
 	}
 
+#define SCALAR_FORMAT_MIN(_size, _flags, _unit, _scalar, _min)                 \
+	{                                                                      \
+		SCALAR_CALLBACKS,                                              \
+		.unit = &bt_mesh_sensor_unit_##_unit,                          \
+		.size = _size,                                                 \
+		.user_data = (void *)&(                                        \
+			(const struct scalar_repr)SCALAR_REPR_RANGED(          \
+				_scalar, ((_flags) | HAS_MIN), _min, 0)),      \
+	}
+
 #define SCALAR_FORMAT(_size, _flags, _unit, _scalar)                           \
 	{                                                                      \
 		SCALAR_CALLBACKS,                                              \
@@ -159,6 +174,15 @@ UNIT(unitless) = { "Unitless" };
 				_scalar, ((_flags) | HAS_MAX), 0, _max)),         \
 	}
 
+#define SCALAR_FORMAT_MIN(_size, _flags, _unit, _scalar, _min)                 \
+	{                                                                      \
+		SCALAR_CALLBACKS,                                              \
+		.size = _size,                                                 \
+		.user_data = (void *)&(                                        \
+			(const struct scalar_repr)SCALAR_REPR_RANGED(          \
+				_scalar, ((_flags) | HAS_MIN), _min, 0)),      \
+	}
+
 #define SCALAR_FORMAT(_size, _flags, _unit, _scalar)                           \
 	{                                                                      \
 		SCALAR_CALLBACKS,                                              \
@@ -167,14 +191,6 @@ UNIT(unitless) = { "Unitless" };
 			_scalar, _flags)),                                     \
 	}
 #endif
-
-#define MUL_SCALAR(_val, _repr) (((repr)->flags & DIVIDE) ?                    \
-				 ((_val) / (_repr)->value) :                   \
-				 ((_val) * (_repr)->value))
-
-#define DIV_SCALAR(_val, _repr) (((repr)->flags & DIVIDE) ?                    \
-				 ((_val) * (_repr)->value) :                   \
-				 ((_val) / (_repr)->value))
 
 enum scalar_repr_flags {
 	UNSIGNED = 0,
@@ -316,6 +332,14 @@ static int scalar_encode_raw(const struct bt_mesh_sensor_format *format,
 }
 
 #ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+#define MUL_SCALAR(_val, _repr) (((repr)->flags & DIVIDE) ?                    \
+				 ((_val) / (_repr)->value) :                   \
+				 ((_val) * (_repr)->value))
+
+#define DIV_SCALAR(_val, _repr) (((repr)->flags & DIVIDE) ?                    \
+				 ((_val) * (_repr)->value) :                   \
+				 ((_val) / (_repr)->value))
+
 static int scalar_encode(const struct bt_mesh_sensor_format *format,
 			 const struct sensor_value *val,
 			 struct net_buf_simple *buf)
@@ -517,6 +541,28 @@ static int float32_decode(const struct bt_mesh_sensor_format *format,
 	return 0;
 }
 #else /* !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
+static inline int64_t mul_scalar(int64_t val, const struct scalar_repr *repr)
+{
+	return repr->flags & DIVIDE ?
+		DIV_ROUND_CLOSEST(val, repr->value) : val * repr->value;
+}
+
+static inline float mul_scalar_f(float val, const struct scalar_repr *repr)
+{
+	return repr->flags & DIVIDE ? val / repr->value : val * repr->value;
+}
+
+static inline int64_t div_scalar(int64_t val, const struct scalar_repr *repr)
+{
+	return repr->flags & DIVIDE ?
+		val * repr->value : DIV_ROUND_CLOSEST(val, repr->value);
+}
+
+static inline float div_scalar_f(float val, const struct scalar_repr *repr)
+{
+	return repr->flags & DIVIDE ? val * repr->value : val / repr->value;
+}
+
 static bool percentage_delta_check(const struct bt_mesh_sensor_value *delta,
 				   float diff, float prev)
 {
@@ -705,7 +751,7 @@ scalar_to_float(const struct bt_mesh_sensor_value *sensor_val, float *val)
 	if (val && bt_mesh_sensor_value_status_is_numeric(status)) {
 		const struct scalar_repr *repr = sensor_val->format->user_data;
 
-		*val = MUL_SCALAR((float)raw, repr);
+		*val = mul_scalar_f(raw, repr);
 	}
 
 	return status;
@@ -715,9 +761,23 @@ static int scalar_from_float(const struct bt_mesh_sensor_format *format,
 			     float val, struct bt_mesh_sensor_value *sensor_val)
 {
 	const struct scalar_repr *repr = format->user_data;
-	float raw = DIV_SCALAR(val, repr);
+	float raw_f = round(div_scalar_f(val, repr));
+	int64_t raw;
 
-	return scalar_from_raw(format, CLAMP(raw, INT64_MIN, INT64_MAX), sensor_val);
+	/* Clamp float to int64_t range. No formats use the full range so
+	 * -ERANGE will be correctly returned from scalar_from_raw whenever this
+	 * clamping occurs. Can't use CLAMP here because that uses ternary
+	 * expressions which will implicitly convert the values to float before
+	 * the return value is converted back which causes overflow error.
+	 */
+	if (raw_f >= INT64_MAX) {
+		raw = INT64_MAX;
+	} else if (raw_f <= INT64_MIN) {
+		raw = INT64_MIN;
+	} else {
+		raw = raw_f;
+	}
+	return scalar_from_raw(format, raw, sensor_val);
 }
 
 static enum bt_mesh_sensor_value_status
@@ -729,7 +789,7 @@ scalar_to_micro(const struct bt_mesh_sensor_value *sensor_val, int64_t *val)
 	if (val && bt_mesh_sensor_value_status_is_numeric(status)) {
 		const struct scalar_repr *repr = sensor_val->format->user_data;
 
-		*val = MUL_SCALAR(raw * 1000000LL, repr);
+		*val = mul_scalar(raw * 1000000LL, repr);
 	}
 
 	return status;
@@ -740,8 +800,8 @@ static int scalar_from_micro(const struct bt_mesh_sensor_format *format,
 			     struct bt_mesh_sensor_value *sensor_val)
 {
 	const struct scalar_repr *repr = format->user_data;
-	int64_t raw = DIV_SCALAR(val / 1000000, repr) +
-		      DIV_SCALAR(val % 1000000, repr) / 1000000LL;
+	int64_t raw = div_scalar(val / 1000000, repr) +
+		      DIV_ROUND_CLOSEST(div_scalar(val % 1000000, repr), 1000000LL);
 
 	return scalar_from_raw(format, raw, sensor_val);
 }
@@ -862,8 +922,12 @@ static bool boolean_delta_check(const struct bt_mesh_sensor_value *current,
 static enum bt_mesh_sensor_value_status
 boolean_to_float(const struct bt_mesh_sensor_value *sensor_val, float *val)
 {
+	if (*(sensor_val->raw) > 1) {
+		return BT_MESH_SENSOR_VALUE_CONVERSION_ERROR;
+	}
+
 	if (val) {
-		*val = !!*(sensor_val->raw);
+		*val = *(sensor_val->raw);
 	}
 	return BT_MESH_SENSOR_VALUE_NUMBER;
 }
@@ -885,8 +949,12 @@ static enum bt_mesh_sensor_value_status
 boolean_to_micro(const struct bt_mesh_sensor_value *sensor_val,
 		 int64_t *val)
 {
+	if (*(sensor_val->raw) > 1) {
+		return BT_MESH_SENSOR_VALUE_CONVERSION_ERROR;
+	}
+
 	if (val) {
-		*val = (!!*(sensor_val->raw)) ? 1000000 : 0;
+		*val = *(sensor_val->raw) ? 1000000 : 0;
 	}
 	return BT_MESH_SENSOR_VALUE_NUMBER;
 }
@@ -1064,7 +1132,7 @@ static int exp_1_1_from_float(const struct bt_mesh_sensor_format *format,
 		return 0;
 	}
 
-	float result = roundf(logf(val)/LOG_1_1);
+	float result = 64.0f + roundf(logf(val)/LOG_1_1);
 
 	*(sensor_val->raw) = CLAMP(result, 0x01, 0xfd);
 
@@ -1091,6 +1159,7 @@ static int exp_1_1_from_special_status(
 		return -ERANGE;
 	}
 
+	sensor_val->format = format;
 	return 0;
 }
 
@@ -1217,10 +1286,11 @@ FORMAT(temp_8)		      = SCALAR_FORMAT(1,
 					      (SIGNED | HAS_UNDEFINED),
 					      celsius,
 					      SCALAR(1, -1));
-FORMAT(temp)		      = SCALAR_FORMAT(2,
+FORMAT(temp)		      = SCALAR_FORMAT_MIN(2,
 					      (SIGNED | HAS_UNDEFINED_MIN),
 					      celsius,
-					      SCALAR(1e-2, 0));
+					      SCALAR(1e-2, 0),
+					      -27315);
 FORMAT(co2_concentration)     = SCALAR_FORMAT_MAX(2,
 					      (UNSIGNED |
 					      HAS_HIGHER_THAN |
@@ -1281,7 +1351,7 @@ FORMAT(time_decihour_8)	    = SCALAR_FORMAT_MAX(1,
 						(UNSIGNED | HAS_UNDEFINED),
 						hours,
 						SCALAR(1e-1, 0),
-						240);
+						239);
 FORMAT(time_hour_24)	    = SCALAR_FORMAT(3,
 					    (UNSIGNED | HAS_UNDEFINED),
 					    hours,
@@ -1380,6 +1450,7 @@ FORMAT(luminous_efficacy)	= SCALAR_FORMAT_MAX(2,
 						    lumen_per_watt,
 						    SCALAR(1e-1, 0),
 						    18000);
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 FORMAT(luminous_energy)		= SCALAR_FORMAT(3,
 						(UNSIGNED | HAS_UNDEFINED),
 						klmh,
@@ -1388,6 +1459,16 @@ FORMAT(luminous_exposure)	= SCALAR_FORMAT(3,
 						(UNSIGNED | HAS_UNDEFINED),
 						klxh,
 						SCALAR(1, 0));
+#else
+FORMAT(luminous_energy)		= SCALAR_FORMAT(3,
+						(UNSIGNED | HAS_UNDEFINED),
+						lmh,
+						SCALAR(1e3, 0));
+FORMAT(luminous_exposure)	= SCALAR_FORMAT(3,
+						(UNSIGNED | HAS_UNDEFINED),
+						lxh,
+						SCALAR(1e3, 0));
+#endif
 FORMAT(luminous_flux)		= SCALAR_FORMAT(2,
 						(UNSIGNED | HAS_UNDEFINED),
 						lumen,
@@ -1489,7 +1570,7 @@ SENSOR_TYPE(presence_detected) = {
 };
 SENSOR_TYPE(time_since_motion_sensed) = {
 	.id = BT_MESH_PROP_ID_TIME_SINCE_MOTION_SENSED,
-	CHANNELS(CHANNEL("Time since motion detected", time_second_16)),
+	CHANNELS(CHANNEL("Time since motion detected", time_millisecond_24)),
 };
 SENSOR_TYPE(time_since_presence_detected) = {
 	.id = BT_MESH_PROP_ID_TIME_SINCE_PRESENCE_DETECTED,
@@ -1683,8 +1764,8 @@ SENSOR_TYPE(avg_input_voltage) = {
 SENSOR_TYPE(input_current_range_spec) = {
 	.id = BT_MESH_PROP_ID_INPUT_CURRENT_RANGE_SPEC,
 	CHANNELS(CHANNEL("Min", electric_current),
-		 CHANNEL("Max", electric_current),
-		 CHANNEL("Typical electric current value", electric_current)),
+		 CHANNEL("Typical electric current value", electric_current),
+		 CHANNEL("Max", electric_current)),
 };
 SENSOR_TYPE(input_current_stat) = {
 	.id = BT_MESH_PROP_ID_INPUT_CURRENT_STAT,
@@ -1694,8 +1775,8 @@ SENSOR_TYPE(input_current_stat) = {
 SENSOR_TYPE(input_voltage_range_spec) = {
 	.id = BT_MESH_PROP_ID_INPUT_VOLTAGE_RANGE_SPEC,
 	CHANNELS(CHANNEL("Min", voltage),
-		 CHANNEL("Max", voltage),
-		 CHANNEL("Typical voltage value", voltage)),
+		 CHANNEL("Typical voltage value", voltage),
+		 CHANNEL("Max", voltage)),
 };
 SENSOR_TYPE(input_voltage_stat) = {
 	.id = BT_MESH_PROP_ID_INPUT_VOLTAGE_STAT,
@@ -1893,6 +1974,7 @@ SENSOR_TYPE(output_ripple_voltage_spec) = {
 SENSOR_TYPE(output_voltage_range) = {
 	.id = BT_MESH_PROP_ID_OUTPUT_VOLTAGE_RANGE,
 	CHANNELS(CHANNEL("Min", voltage),
+		 CHANNEL("Typical voltage value", voltage),
 		 CHANNEL("Max", voltage)),
 };
 SENSOR_TYPE(output_voltage_stat) = {
@@ -1929,7 +2011,7 @@ SENSOR_TYPE(rel_dev_runtime_in_a_generic_level_range) = {
 
 SENSOR_TYPE(total_dev_runtime) = {
 	.id = BT_MESH_PROP_ID_TOT_DEV_RUNTIME,
-	CHANNELS(CHANNEL("Total device runtime", time_decihour_8)),
+	CHANNELS(CHANNEL("Total device runtime", time_hour_24)),
 };
 
 /******************************************************************************/

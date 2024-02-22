@@ -300,6 +300,11 @@ int sensor_ch_encode(struct net_buf_simple *buf,
 	if (format != value->format) {
 		return -EINVAL;
 	}
+
+	if (net_buf_simple_tailroom(buf) < format->size) {
+		return -ENOMEM;
+	}
+
 	net_buf_simple_add_mem(buf, value->raw, value->format->size);
 	return 0;
 #endif
@@ -312,10 +317,10 @@ int sensor_ch_decode(struct net_buf_simple *buf,
 #ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	return format->decode(format, buf, value);
 #else
-	value->format = format;
 	if (buf->len < format->size) {
 		return -ENOMEM;
 	}
+	value->format = format;
 	memcpy(value->raw, net_buf_simple_pull_mem(buf, format->size),
 	       format->size);
 	return 0;
@@ -907,7 +912,24 @@ bt_mesh_sensor_value_to_micro(
 
 	status = sensor_val->format->cb->to_float(sensor_val, &f);
 	if (bt_mesh_sensor_value_status_is_numeric(status)) {
-		*val = f * 1000000.0f;
+		float micro_f = f * 1000000.0f;
+
+		/* Clamp to max range for int64_t.
+		 * (Can't use CLAMP here because it uses ternary which
+		 * implicitly converts the return type to float which is then
+		 * converted back again, causing overflow)
+		 */
+		if (micro_f >= INT64_MAX) {
+			*val = INT64_MAX;
+		} else if (micro_f <= INT64_MIN) {
+			*val = INT64_MIN;
+		} else {
+			*val = micro_f;
+		}
+
+		if (micro_f > INT64_MAX || micro_f < INT64_MIN) {
+			return BT_MESH_SENSOR_VALUE_CLAMPED;
+		}
 	}
 	return status;
 }
@@ -934,7 +956,18 @@ bt_mesh_sensor_value_to_sensor_value(
 
 	status = bt_mesh_sensor_value_to_micro(sensor_val, &micro);
 	if (bt_mesh_sensor_value_status_is_numeric(status)) {
-		val->val1 = micro / 1000000;
+		int64_t val1 = micro / 1000000;
+
+		if (val1 > INT32_MAX) {
+			val->val1 = INT32_MAX;
+			val->val2 = 999999;
+			return BT_MESH_SENSOR_VALUE_CLAMPED;
+		} else if (val1 < INT32_MIN) {
+			val->val1 = INT32_MIN;
+			val->val2 = -999999;
+			return BT_MESH_SENSOR_VALUE_CLAMPED;
+		}
+		val->val1 = val1;
 		val->val2 = micro % 1000000;
 	}
 	return status;
