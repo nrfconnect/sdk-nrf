@@ -30,14 +30,6 @@ Legacy crypto support
 To enable the legacy crypto support mode of nRF Security, set both the :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` and :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig options along with additional configuration options, as described in :ref:`nrf_security_legacy_config`.
 The legacy crypto support allows backwards compatibility for software that requires usage of Mbed TLS crypto toolbox functions prefixed with ``mbedtls_``.
 
-Custom Mbed TLS configuration files
-***********************************
-
-The nRF Security Kconfig options are used to generate an Mbed TLS configuration file.
-
-Although not recommended, it is possible to provide a custom Mbed TLS configuration file by disabling :kconfig:option:`CONFIG_GENERATE_MBEDTLS_CFG_FILE`.
-See :ref:`nrf_security_tls_header`.
-
 Building with TF-M
 ******************
 
