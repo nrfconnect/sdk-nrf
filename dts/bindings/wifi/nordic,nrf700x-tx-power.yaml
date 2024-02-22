@@ -23,25 +23,19 @@ properties:
     description: 8-bit values for max tx power in 2.4GHz band for MCS7
   max-pwr-5g-low-mcs0:
     type: int
-    required: true
     description: 8-bit values for max tx power in 5GHz band MCS0 low sub-band
   max-pwr-5g-low-mcs7:
     type: int
-    required: true
     description: 8-bit values for max tx power in 5GHz band MCS7 low sub-band
   max-pwr-5g-mid-mcs0:
     type: int
-    required: true
     description: 8-bit values for max tx power in 5GHz band MCS0 mid sub-band
   max-pwr-5g-mid-mcs7:
     type: int
-    required: true
     description: 8-bit values for max tx power in 5GHz band MCS7 mid sub-band
   max-pwr-5g-high-mcs0:
     type: int
-    required: true
     description: 8-bit values for max tx power in 5GHz band MCS0 high sub-band
   max-pwr-5g-high-mcs7:
     type: int
-    required: true
     description: 8-bit values for max tx power in 5GHz band MCS7 high sub-band
