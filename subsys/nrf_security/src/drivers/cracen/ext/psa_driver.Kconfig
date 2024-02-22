@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# This invisible menu helps hiding these not user selectable options
+# from menuconfig even when show-all mode is enabled
 menu "PSA NEED CRACEN - invisible"
 visible if 0
 
