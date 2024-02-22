@@ -841,10 +841,13 @@ static uint8_t method_gnss_tracked_satellites_nonzero_cn0(
 
 static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
-	LOG_DBG("Tracked satellites: %d, fix valid: %s, insuf. time window: %s",
+	LOG_DBG("Tracked satellites: %d, fix valid: %s, insuf. time window: %s, "
+		"deadline missed: %s",
 		method_gnss_tracked_satellites(pvt_data),
 		pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID ? "true" : "false",
 		pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME ?
+		"true" : "false",
+		pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED ?
 		"true" : "false");
 
 	/* Print details for each satellite */
