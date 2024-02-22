@@ -157,11 +157,6 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 		return -EINVAL;
 	}
 
-	if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE)) {
-		LOG_ERR("The encoded data size does not match the SDU size");
-		return -EINVAL;
-	}
-
 	/* When sending ISO data, we always send ts = 0 to the first active transmitting channel.
 	 * The controller will populate with a ts which is fetched using bt_iso_chan_get_tx_sync.
 	 * This timestamp will be submitted to all the other channels in order to place data on all
@@ -185,6 +180,19 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 		if (!le_audio_ep_state_check(bap_streams[i]->ep, BT_BAP_EP_STATE_STREAMING)) {
 			/* This bap_stream is not streaming*/
 			continue;
+		}
+
+		uint32_t bitrate;
+
+		ret = le_audio_bitrate_get(bap_streams[i]->codec_cfg, &bitrate);
+		if (ret) {
+			LOG_ERR("Failed to calculate bitrate: %d", ret);
+			return ret;
+		}
+
+		if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(bitrate)) {
+			LOG_ERR("The encoded data size does not match the SDU size");
+			return -EINVAL;
 		}
 
 		if (common_interval != 0 && (common_interval != bap_streams[i]->qos->interval)) {

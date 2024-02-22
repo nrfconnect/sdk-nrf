@@ -50,6 +50,15 @@ static struct sw_codec_config sw_codec_cfg;
 static int16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 1000];
 static size_t test_tone_size;
 
+static bool sample_rate_valid(uint32_t sample_rate_hz)
+{
+	if (sample_rate_hz == 16000 || sample_rate_hz == 24000 || sample_rate_hz == 48000) {
+		return true;
+	}
+
+	return false;
+}
+
 static void audio_gateway_configure(void)
 {
 	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
@@ -63,12 +72,6 @@ static void audio_gateway_configure(void)
 	sw_codec_cfg.decoder.num_ch = 1;
 	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
-
-	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
-		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
-	} else {
-		ERR_CHK_MSG(-EINVAL, "No codec selected");
-	}
 
 	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
 		sw_codec_cfg.encoder.num_ch = 1;
@@ -93,12 +96,6 @@ static void audio_headset_configure(void)
 	sw_codec_cfg.encoder.enabled = true;
 	sw_codec_cfg.encoder.num_ch = 1;
 	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
-
-	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
-		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
-	} else {
-		ERR_CHK_MSG(-EINVAL, "No codec selected");
-	}
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
 	sw_codec_cfg.decoder.num_ch = 1;
@@ -254,6 +251,30 @@ int audio_system_encode_test_tone_step(void)
 	if (ret) {
 		LOG_ERR("Failed to generate test tone");
 		return ret;
+	}
+
+	return 0;
+}
+
+int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bitrate,
+			    uint32_t decoder_sample_rate_hz)
+{
+	if (sample_rate_valid(encoder_sample_rate_hz)) {
+		sw_codec_cfg.encoder.sample_rate_hz = encoder_sample_rate_hz;
+	} else if (encoder_sample_rate_hz) {
+		LOG_ERR("%d is not a valid sample rate", encoder_sample_rate_hz);
+		return -EINVAL;
+	}
+
+	if (sample_rate_valid(decoder_sample_rate_hz)) {
+		sw_codec_cfg.decoder.sample_rate_hz = decoder_sample_rate_hz;
+	} else if (decoder_sample_rate_hz) {
+		LOG_ERR("%d is not a valid sample rate", decoder_sample_rate_hz);
+		return -EINVAL;
+	}
+
+	if (encoder_bitrate) {
+		sw_codec_cfg.encoder.bitrate = encoder_bitrate;
 	}
 
 	return 0;

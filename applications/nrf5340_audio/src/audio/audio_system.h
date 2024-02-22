@@ -11,6 +11,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define VALUE_NOT_SET 0
+
 /**
  * @brief	Start the execution of the encoder thread.
  */
@@ -45,6 +47,21 @@ int audio_system_encode_test_tone_set(uint32_t freq);
  * @return	0 on success, error otherwise.
  */
 int audio_system_encode_test_tone_step(void);
+
+/**
+ * @brief	Set the sample rates for the encoder and the decoder, and the bit rate for encoder.
+ *
+ * @note	If any of the values are 0, the corresponding configuration will not be set.
+ *
+ * @param[in]	encoder_sample_rate_hz	Sample rate to be used by the encoder; can be 0.
+ * @param[in]	encoder_bitrate		Bit rate to be used by the encoder (bps); can be 0.
+ * @param[in]	decoder_sample_rate_hz	Sample rate to be used by the decoder; can be 0.
+ *
+ * @retval	-EINVAL	Invalid sample rate given.
+ * @retval	0	On success.
+ */
+int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bitrate,
+			    uint32_t decoder_sample_rate_hz);
 
 /**
  * @brief	Decode data and then add it to TX FIFO buffer.

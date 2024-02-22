@@ -15,15 +15,18 @@
 /**
  * @brief	Get configuration for audio stream.
  *
- * @param[out]	bitrate			Pointer to the bitrate used; can be NULL.
+ * @param[in]	conn			Pointer to the connection to get the configuration for.
+ * @param[in]	dir			Direction to get the configuration from.
+ * @param[out]	bitrate			Pointer to the bit rate used; can be NULL.
  * @param[out]	sampling_rate_hz	Pointer to the sampling rate used; can be NULL.
- * @param[out]	pres_delay_us		Pointer to the presentation delay used; can be NULL.
+ * @param[out]	pres_delay_us		Pointer to the presentation delay used; can be NULL. Only
+ *					valid for the sink direction.
  *
  * @retval	0		Operation successful.
  * @retval	-ENXIO		The feature is disabled.
  */
-int unicast_server_config_get(uint32_t *bitrate, uint32_t *sampling_rate_hz,
-			      uint32_t *pres_delay_us);
+int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
+			      uint32_t *sampling_rate_hz, uint32_t *pres_delay_us);
 
 /**
  * @brief	Put the UUIDs from this module into the buffer.
@@ -44,7 +47,7 @@ int unicast_server_uuid_populate(struct net_buf_simple *uuid_buf);
  * @param[out]	adv_buf		Buffer being populated with ext adv elements.
  * @param[in]	adv_buf_vacant	Number of vacant elements in @p adv_buf.
  *
- * @return	Negative values for errors or num elements added to @p adv_buf.
+ * @return	Negative values for errors or number of elements added to @p adv_buf.
  */
 int unicast_server_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant);
 
