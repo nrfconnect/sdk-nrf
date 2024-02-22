@@ -25,7 +25,7 @@
 /scripts/quarantine.yaml                  @nrfconnect/ncs-test-leads
 
 # VS Code Configuration files
-/.vscode/                                 @trond-snekvik
+/.vscode/                                 @FilipZajdel
 
 # Applications
 /applications/asset_tracker_v2/           @nrfconnect/ncs-cia @coderbyheart
@@ -125,7 +125,7 @@ Kconfig*                                  @tejlmand
 /lib/modem_key_mgmt/                      @rlubos
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
 /lib/pdn/                                 @lemrey @rlubos
-/lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
+/lib/ram_pwrdn/                           @MarekPorwisz
 /lib/fatal_error/                         @KAGA164 @nordic-krch
 /lib/sfloat/                              @kapi-no @maje-emb
 /lib/sms/                                 @trantanen @tokangas
@@ -334,6 +334,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/event_manager_proxy/        @rakons
 /tests/subsys/app_event_manager/          @pdunaj @MarekPieta @rakons
 /tests/subsys/fw_info/                    @oyvindronningstad
+/tests/subsys/mpsl/                       @nrfconnect/ncs-dragoon
 /tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
 /tests/subsys/net/lib/azure_iot_hub/      @nrfconnect/ncs-cia
 /tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh
