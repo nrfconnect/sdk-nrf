@@ -490,6 +490,7 @@ void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_p
 	tx_pwr_ceil_params->max_pwr_2g_mcs0 =
 		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_mcs0);
 
+#ifndef CONFIG_NRF70_2_4G_ONLY
 	tx_pwr_ceil_params->max_pwr_5g_low_mcs7 =
 		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_low_mcs7);
 
@@ -507,6 +508,7 @@ void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_p
 
 	tx_pwr_ceil_params->max_pwr_5g_high_mcs0 =
 		DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_high_mcs0);
+#endif /* CONFIG_NRF70_2_4G_ONLY */
 }
 
 enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
