@@ -161,7 +161,7 @@ static bool check_valid_chan_2g(unsigned char chan_num)
 }
 
 
-#ifndef CONFIG_BOARD_NRF7001
+#ifndef CONFIG_NRF70_2_4G_ONLY
 static bool check_valid_chan_5g(unsigned char chan_num)
 {
 	if ((chan_num == 32) ||
@@ -205,7 +205,7 @@ static bool check_valid_chan_5g(unsigned char chan_num)
 
 	return false;
 }
-#endif /* CONFIG_BOARD_NRF7001 */
+#endif /* CONFIG_NRF70_2_4G_ONLY */
 
 
 static bool check_valid_channel(unsigned char chan_num)
@@ -218,9 +218,9 @@ static bool check_valid_channel(unsigned char chan_num)
 		goto out;
 	}
 
-#ifndef CONFIG_BOARD_NRF7001
+#ifndef CONFIG_NRF70_2_4G_ONLY
 	ret = check_valid_chan_5g(chan_num);
-#endif /* CONFIG_BOARD_NRF7001 */
+#endif /* CONFIG_NRF70_2_4G_ONLY */
 
 out:
 	return ret;
@@ -2164,9 +2164,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "0 - Legacy mode\n"
 		      "1 - HT mode\n"
-#ifndef CONFIG_BOARD_NRF7001
+#ifndef CONFIG_NRF70_2_4G_ONLY
 		      "2 - VHT mode\n"
-#endif /* CONFIG_BOARD_NRF7001 */
+#endif /* CONFIG_NRF70_2_4G_ONLY */
 		      "3 - HE(SU) mode\n"
 		      "4 - HE(ER SU) mode\n"
 		      "5 - HE (TB) mode                                   ",

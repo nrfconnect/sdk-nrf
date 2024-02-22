@@ -479,11 +479,11 @@ config WIFI_NRF700X_SCAN_TIMEOUT_S
 
 config NRF_WIFI_2G_BAND
 	bool "Set operation band to 2.4GHz"
-	default y if BOARD_NRF7001
+	default y if NRF70_2_4G_ONLY
 
 config NRF_WIFI_5G_BAND
 	bool "Set operation band to 5GHz"
-	depends on !BOARD_NRF7001
+	depends on !NRF70_2_4G_ONLY
 
 config NRF_WIFI_OP_BAND
 	int "Options to set operation band"
