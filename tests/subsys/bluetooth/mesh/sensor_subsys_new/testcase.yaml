@@ -1,0 +1,7 @@
+tests:
+  bluetooth.mesh.sensor_subsys_new:
+    platform_allow: native_posix qemu_cortex_m3
+    tags: bluetooth ci_build
+    integration_platforms:
+      - native_posix
+      - qemu_cortex_m3
