@@ -6,6 +6,6 @@
 config SHIELD_NRF7002EK_NRF7001
 	def_bool $(shields_list_contains,nrf7002ek_nrf7001)
 
-config BOARD_NRF7001
+config NRF70_2_4G_ONLY
 	bool
 	default y if SHIELD_NRF7002EK_NRF7001
