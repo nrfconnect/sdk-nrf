@@ -43,9 +43,12 @@ Currently, the nRF70 Series devices support the following modes:
 * :ref:`Software-enabled Access Point (SoftAP or SAP) <nRF70_soft_ap_mode>`: Operates as a virtual access point device.
 * :ref:`Scan <ug_nrf70_developing_scan_operation>`: Operates as a scan-only device.
 * :ref:`Radio test <wifi_radio_test>`: For PHY (Baseband and Radio) characterizations and calibrations.
+* :ref:`Monitor <ug_nrf70_developing_raw_ieee_80211_packet_reception>`: Operates as an IEEE 802.11 wireless packet sniffer.
 
-The nRF70  Series devices also support the functionality of :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`.
-This allows the injection of raw 802.11 frames in any of the above modes.
+The nRF70 Series devices also support the following functionalities:
+
+* :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`: Allows the injection of raw IEEE 802.11 frames in Station and Monitor modes.
+* :ref:`Promiscuous reception <ug_nrf70_developing_promiscuous_packet_reception>`: Allows the reception of IEEE 802.11 packets from a connected BSSID when operating in Station mode.
 
 Peer-to-peer support in the form of Wi-Fi Direct® will be available in the future.
 
