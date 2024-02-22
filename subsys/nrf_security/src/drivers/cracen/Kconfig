@@ -5,7 +5,7 @@
 #
 
 config CRACEN_HW_PRESENT
-	def_bool $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_CRACEN))
+	def_bool SOC_SERIES_NRF54LX
 
 rsource "ext/Kconfig"
 

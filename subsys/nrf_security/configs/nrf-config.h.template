@@ -20,6 +20,18 @@ extern "C" {
 #endif
 
 /****************************************************************/
+/* Require built-in implementations based on CRACEN PSA requirements
+ *
+ * NOTE: Required by the CRACEN driver still, which is checking for
+ * MBEDTLS crypto definitions.
+ */
+/****************************************************************/
+#if defined(CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
+/* TODO: NCSDK-26258: Improve, or get rid of this code */
+#define MBEDTLS_ASN1_PARSE_C
+#endif
+
+/****************************************************************/
 /* Require built-in implementations based on PSA requirements
  *
  * NOTE: Required by the TLS stack still, which is checking for MBEDTLS crypto definitions.

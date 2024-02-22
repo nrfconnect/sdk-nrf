@@ -7,19 +7,6 @@
 # This CMakeLists.txt is executed both by the Zephyr build system and
 # by the TF-M build system and must thus be portable to both.
 
-if(NOT CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
-  # These sources are only added when CRACEN is used and it is only
-  # supported to use CRACEN as a PSA_CRYPTO_DRIVER.
-  return()
-endif()
-
-if(CONFIG_BUILD_WITH_TFM)
-  # CONFIG_BUILD_WITH_TFM is not set for the TF-M image, so this must
-  # be the non-secure image and the non-secure image should not have
-  # cracen sources so we return.
-  return()
-endif()
-
 # This CMakeListst.txt will add sources to the pre-existing CMake
 # library called ${mbedcrypto_target}.
 if(NOT TARGET "${mbedcrypto_target}")

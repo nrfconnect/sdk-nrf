@@ -22,9 +22,6 @@
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/byteorder.h>
 
-#define PSA_ALG_IS_PBKDF2(kdf_alg)                                                                 \
-	(PSA_ALG_IS_PBKDF2_HMAC(kdf_alg) || (kdf_alg == PSA_ALG_PBKDF2_AES_CMAC_PRF_128))
-
 static psa_status_t ecc_key_agreement_check_alg(psa_algorithm_t alg)
 {
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
