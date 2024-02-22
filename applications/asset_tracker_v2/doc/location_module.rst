@@ -70,6 +70,15 @@ To enable Wi-Fi positioning and especially nRF7002 functionality, use the ``-DSH
 
 .. tabs::
 
+   .. group-tab:: nRF9151 DK
+
+      To build for the nRF9151 DK with nRF7002 EK, use the ``nrf9151dk_nrf9151_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
+      The following is an example of the CLI command:
+
+      .. code-block:: console
+
+         west build -p -b nrf9151dk_nrf9151_ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+
    .. group-tab:: nRF9161 DK
 
       To build for the nRF9161 DK with nRF7002 EK, use the ``nrf9161dk_nrf9161_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.

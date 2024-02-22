@@ -145,6 +145,8 @@ Configuration files
 The sample includes pre-configured configuration files for the development kits that are supported:
 
 * :file:`prj.conf` - General configuration file for all devices.
+* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
@@ -205,7 +207,7 @@ The *modem_version* parameter in messages published to AWS IoT will not be prese
 .. note::
    For nRF91 Series devices, the output differs from the above example output.
    This is because the sample enables the :ref:`lib_at_host` library using the :kconfig:option:`CONFIG_AT_HOST_LIBRARY` option.
-   This library makes it possible to send AT commands to the cellular modem and receive responses using the `Cellular Monitor`_ app from nRF Connect for Desktop.
+   This library makes it possible to send AT commands to the nRF91 Series modem and receive responses using the `Cellular Monitor`_ app from nRF Connect for Desktop.
    The additional logs are AT command responses that the modem sends to the application core that are forwarded over UART to be displayed on any of these nRF Connect for Desktop apps.
 
 To observe incoming messages in the AWS IoT console, follow the steps documented in :ref:`aws_iot_testing_and_debugging`.

@@ -48,9 +48,13 @@
 
 | nRF9131 EK | PCA10165 | :ref:`nrf9131ek_nrf9131 <zephyr:nrf9131ek_nrf9131>` | ``nrf9131ek_nrf9131_ns`` |
 
+.. nrf9151dk_nrf9151
+
+| nRF9151 DK | PCA10171 | :ref:`nrf9151dk_nrf9151 <zephyr:nrf9151dk_nrf9151>` | ``nrf9151dk_nrf9151`` |
+
 .. nrf9151dk_nrf9151_ns
 
-| nRF9151 DK |  | ``nrf9151dk_nrf9151`` | ``nrf9151dk_nrf9151_ns`` |
+| nRF9151 DK | PCA10171 | :ref:`nrf9151dk_nrf9151 <zephyr:nrf9151dk_nrf9151>` | ``nrf9151dk_nrf9151_ns`` |
 
 .. nrf5340dk_nrf5340_cpuapp
 

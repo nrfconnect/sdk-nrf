@@ -95,7 +95,7 @@ This enables the cloud to issue FOTA updates and update the application and mode
 For additional documentation on the various FOTA implementations, refer to the respective client library documentation linked to in :ref:`Integration layers <integration_layers>`.
 
 Full modem FOTA updates are only supported by nRF Cloud.
-This application implements full modem FOTA only for the nRF9161 DK, and for nRF9160 DK version 0.14.0 and higher.
+This application implements full modem FOTA for the nRF9151 and nRF9161 DKs and for the nRF9160 DK version 0.14.0 and higher.
 To enable full modem FOTA, add the ``-DEXTRA_CONF_FILE=overlay-full_modem_fota.conf`` parameter to your build command.
 
 Also, specify your development kit version by appending it to the board name.
