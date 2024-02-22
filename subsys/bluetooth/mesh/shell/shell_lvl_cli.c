@@ -28,7 +28,7 @@ static int cmd_lvl_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_lvl_cli *cli = mod->user_data;
+	struct bt_mesh_lvl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_lvl_status rsp;
 
 	int err = bt_mesh_lvl_cli_get(cli, NULL, &rsp);
@@ -53,7 +53,7 @@ static int lvl_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 		return -ENODEV;
 	}
 
-	struct bt_mesh_lvl_cli *cli = mod->user_data;
+	struct bt_mesh_lvl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_lvl_set set = {
 		.lvl = lvl,
@@ -97,7 +97,7 @@ static int delta_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		return -ENODEV;
 	}
 
-	struct bt_mesh_lvl_cli *cli = mod->user_data;
+	struct bt_mesh_lvl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_lvl_delta_set set = {
 		.delta = delta,
@@ -141,7 +141,7 @@ static int move_set(const struct shell *shell, size_t argc, char *argv[], bool a
 		return -ENODEV;
 	}
 
-	struct bt_mesh_lvl_cli *cli = mod->user_data;
+	struct bt_mesh_lvl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_lvl_move_set set = {
 		.delta = delta,

@@ -28,7 +28,7 @@ static int cmd_power_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_plvl_status rsp;
 
 	int err = bt_mesh_plvl_cli_power_get(cli, NULL, &rsp);
@@ -53,7 +53,7 @@ static int power_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		return -ENODEV;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_plvl_set set = { .power_lvl = lvl,
 					.transition = (argc > 2) ? &trans : NULL };
@@ -93,7 +93,7 @@ static int cmd_range_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_plvl_range_status rsp;
 
 	int err = bt_mesh_plvl_cli_range_get(cli, NULL, &rsp);
@@ -117,7 +117,7 @@ static int range_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		return -ENODEV;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_plvl_range set = { .min = min, .max = max };
 
 	if (acked) {
@@ -154,7 +154,7 @@ static int cmd_default_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = mod->rt->user_data;
 	uint16_t rsp;
 
 	int err = bt_mesh_plvl_cli_default_get(cli, NULL, &rsp);
@@ -177,7 +177,7 @@ static int default_set(const struct shell *shell, size_t argc, char *argv[], boo
 		return -ENODEV;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = mod->rt->user_data;
 
 	if (acked) {
 		uint16_t rsp;
@@ -206,7 +206,7 @@ static int cmd_last_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_plvl_cli *cli = mod->user_data;
+	struct bt_mesh_plvl_cli *cli = mod->rt->user_data;
 	uint16_t rsp;
 
 	int err = bt_mesh_plvl_cli_last_get(cli, NULL, &rsp);

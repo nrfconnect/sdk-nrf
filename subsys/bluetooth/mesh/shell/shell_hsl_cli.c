@@ -31,7 +31,7 @@ static int cmd_hsl_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_hsl_status rsp;
 
 	int err = bt_mesh_light_hsl_get(cli, NULL, &rsp);
@@ -58,7 +58,7 @@ static int hsl_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_light_hsl_params set = {
 		.params = {
@@ -96,7 +96,7 @@ static int cmd_hsl_target_get(const struct shell *shell, size_t argc, char *argv
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_hsl_status rsp;
 
 	int err = bt_mesh_light_hsl_target_get(cli, NULL, &rsp);
@@ -128,7 +128,7 @@ static int cmd_hsl_default_get(const struct shell *shell, size_t argc, char *arg
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_hsl rsp;
 
 	int err = bt_mesh_light_hsl_default_get(cli, NULL, &rsp);
@@ -153,7 +153,7 @@ static int hsl_default_set(const struct shell *shell, size_t argc, char *argv[],
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_hsl set = {
 		.lightness = light,
 		.hue = hue,
@@ -199,7 +199,7 @@ static int cmd_hsl_range_get(const struct shell *shell, size_t argc, char *argv[
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_hsl_range_status rsp;
 
 	int err = bt_mesh_light_hsl_range_get(cli, NULL, &rsp);
@@ -225,7 +225,7 @@ static int hsl_range_set(const struct shell *shell, size_t argc, char *argv[], b
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_hue_sat_range set = {
 		.min.hue = hue_min,
 		.max.hue = hue_max,
@@ -268,7 +268,7 @@ static int cmd_hue_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_hue_status rsp;
 
 	int err = bt_mesh_light_hue_get(cli, NULL, &rsp);
@@ -293,7 +293,7 @@ static int hue_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_light_hue set = { .lvl = lvl, .transition = (argc > 2) ? &trans : NULL };
 
@@ -333,7 +333,7 @@ static int cmd_saturation_get(const struct shell *shell, size_t argc, char *argv
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_light_sat_status rsp;
 
 	int err = bt_mesh_light_saturation_get(cli, NULL, &rsp);
@@ -358,7 +358,7 @@ static int saturation_set(const struct shell *shell, size_t argc, char *argv[], 
 		return -ENODEV;
 	}
 
-	struct bt_mesh_light_hsl_cli *cli = mod->user_data;
+	struct bt_mesh_light_hsl_cli *cli = mod->rt->user_data;
 	struct bt_mesh_model_transition trans = { .time = time, .delay = delay };
 	struct bt_mesh_light_sat set = { .lvl = lvl, .transition = (argc > 2) ? &trans : NULL };
 

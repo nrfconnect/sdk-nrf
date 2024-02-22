@@ -31,7 +31,7 @@ static int cmd_time_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_time_cli *cli = mod->user_data;
+	struct bt_mesh_time_cli *cli = mod->rt->user_data;
 	struct bt_mesh_time_status rsp;
 
 	int err = bt_mesh_time_cli_time_get(cli, NULL, &rsp);
@@ -59,7 +59,7 @@ static int cmd_time_set(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_time_cli *cli = mod->user_data;
+	struct bt_mesh_time_cli *cli = mod->rt->user_data;
 	struct bt_mesh_time_status set = { .tai.sec = sec,
 					   .tai.subsec = subsec,
 					   .uncertainty = uncertainty,
@@ -88,7 +88,7 @@ static int cmd_zone_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_time_cli *cli = mod->user_data;
+	struct bt_mesh_time_cli *cli = mod->rt->user_data;
 	struct bt_mesh_time_zone_status rsp;
 
 	int err = bt_mesh_time_cli_zone_get(cli, NULL, &rsp);
@@ -112,7 +112,7 @@ static int cmd_zone_set(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_time_cli *cli = mod->user_data;
+	struct bt_mesh_time_cli *cli = mod->rt->user_data;
 	struct bt_mesh_time_zone_change set = { .new_offset = new_offset, .timestamp = ts };
 	struct bt_mesh_time_zone_status rsp;
 
@@ -137,7 +137,7 @@ static int cmd_tai_utc_delta_get(const struct shell *shell, size_t argc, char *a
 		return -ENODEV;
 	}
 
-	struct bt_mesh_time_cli *cli = mod->user_data;
+	struct bt_mesh_time_cli *cli = mod->rt->user_data;
 	struct bt_mesh_time_tai_utc_delta_status rsp;
 
 	int err = bt_mesh_time_cli_tai_utc_delta_get(cli, NULL, &rsp);
@@ -161,7 +161,7 @@ static int cmd_tai_utc_delta_set(const struct shell *shell, size_t argc, char *a
 		return -ENODEV;
 	}
 
-	struct bt_mesh_time_cli *cli = mod->user_data;
+	struct bt_mesh_time_cli *cli = mod->rt->user_data;
 	struct bt_mesh_time_tai_utc_change set = { .delta_new = delta_new, .timestamp = ts };
 	struct bt_mesh_time_tai_utc_delta_status rsp;
 
@@ -183,7 +183,7 @@ static int cmd_role_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_time_cli *cli = mod->user_data;
+	struct bt_mesh_time_cli *cli = mod->rt->user_data;
 	uint8_t rsp;
 
 	int err = bt_mesh_time_cli_role_get(cli, NULL, &rsp);
@@ -206,7 +206,7 @@ static int cmd_role_set(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_time_cli *cli = mod->user_data;
+	struct bt_mesh_time_cli *cli = mod->rt->user_data;
 	uint8_t rsp;
 
 	err = bt_mesh_time_cli_role_set(cli, NULL, &role, &rsp);
