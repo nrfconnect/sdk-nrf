@@ -255,6 +255,17 @@ static void le_audio_msg_sub_thread(void)
 			ERR_CHK(ret);
 			break;
 
+		case LE_AUDIO_EVT_NO_VALID_CFG:
+			LOG_WRN("No valid configurations found or CIS establishment failed, will "
+				"disconnect");
+
+			ret = bt_mgmt_conn_disconnect(msg.conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+			if (ret) {
+				LOG_ERR("Failed to disconnect: %d", ret);
+			}
+
+			break;
+
 		default:
 			LOG_WRN("Unexpected/unhandled le_audio event: %d", msg.event);
 			break;
