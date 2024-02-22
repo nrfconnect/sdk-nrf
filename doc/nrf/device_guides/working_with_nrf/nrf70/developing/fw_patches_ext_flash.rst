@@ -15,10 +15,10 @@ This guide explains the available options for having the nRF70 Series firmware p
 Overview
 ********
 
-By default the nRF70 Series firmware patches are built as part of the nRF Wi-Fi® host driver code, residing in on-chip memory.
+By default the nRF70 Series firmware patches are built as part of the nRF Wi-Fi driver code, residing in on-chip memory.
 The firmware patches include code that is executed on the nRF70 Series device.
 The size of the firmware patches may be considerably large, which limits the amount of on-chip code memory available for the user application.
-In order to increase the amount of on-chip memory available for user applications, the nRF70 Series Wi-Fi driver supports the option of using external memory, if that is available.
+In order to increase the amount of on-chip memory available for user applications, the nRF Wi-Fi driver supports the option of using external memory, if that is available.
 
 Prerequisites
 =============
