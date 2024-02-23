@@ -325,6 +325,13 @@ The issues in this section are related to the :ref:`ug_matter` protocol.
 
 .. rst-class:: v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1
 
+KRKNWK-18316: When the :kconfig:option:`CONFIG_PRINTK_SYNC` Kconfig option is enabled in a Matter over Thread application, the IEEE 802.15.4 radio driver may calculate invalid IEEE 802.15.4 radio frame timestamps
+  This is caused by the implementation of synchronous ``printk`` in Zephyr using ``spinlock`` synchronization primitive, which can block Real Time Clock interrupts that are needed by the radio driver to calculate precise timestamps.
+
+  **Workaround:** If it is enabled, disable the :kconfig:option:`CONFIG_PRINTK_SYNC` Kconfig option in your application.
+
+.. rst-class:: v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1
+
 KRKNWK-18495: The Color Control server's ``RemainingTime`` attribute change may be reported every 100 ms, even though the color temperature value handled by the Color Control server is not modified.
   This can result in the Thread network being spammed with unnecessary network traffic when controlling the brightness or color of the :ref:`matter_light_bulb_sample` sample.
 

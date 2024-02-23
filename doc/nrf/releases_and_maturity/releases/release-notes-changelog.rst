@@ -153,6 +153,8 @@ The following list summarizes the most important changes inherited from the upst
 
    * zcbor 0.7.0 to 0.8.1.
 
+* Disabled :kconfig:option:`CONFIG_PRINTK_SYNC` to avoid potential interrupts blockage in Matter applications that can violate time-sensitive components, like nRF IEEE 802.15.4 radio driver.
+
 Thread
 ------
 
