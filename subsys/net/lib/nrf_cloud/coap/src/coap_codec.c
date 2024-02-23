@@ -358,7 +358,7 @@ int coap_codec_ground_fix_resp_decode(struct nrf_cloud_location_result *result,
 	size_t out_len;
 
 	err = cbor_decode_ground_fix_resp(buf, len, &res, &out_len);
-	if (out_len != len) {
+	if (!err && (out_len != len)) {
 		LOG_WRN("Different response length: expected:%zd, decoded:%zd",
 			len, out_len);
 	}
