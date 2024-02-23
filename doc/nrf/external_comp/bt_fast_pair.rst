@@ -157,16 +157,22 @@ You must enable the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option to supp
 An application can communicate with the Fast Pair subsystem using API calls and registered callbacks.
 The Fast Pair subsystem uses the registered callbacks to inform the application about the Fast Pair related events.
 
-The application must register the callbacks before it starts to operate as the Fast Pair Provider and advertise Bluetooth LE packets.
+The application must register the callbacks before it enables the Fast Pair subsystem and starts to operate as the Fast Pair Provider and advertise Bluetooth LE packets.
 To identify the callback registration functions in the Fast Pair API, look for the ``_register`` suffix.
 Set your application-specific callback functions in the callback structure that is the input parameter for the ``..._register`` API function.
 The callback structure must persist in the application memory (static declaration), as during the registration, the Fast Pair module stores only the memory pointer to it.
 
-The standard Fast Pair API (without extensions) currently supports the :c:func:`bt_fast_pair_info_cb` function (optional) for registering application callbacks.
+The standard Fast Pair API (without extensions) currently supports the :c:func:`bt_fast_pair_info_cb_register` function (optional) for registering application callbacks.
 
 The standard Fast Pair (without extensions) does not require registration of any callback type, meaning all callbacks are optional.
 
-Apart from the callback registration, no additional operations are needed to integrate the standard Fast Pair implementation.
+After the callback registration, the Fast Pair subsystem must be enabled with the :c:func:`bt_fast_pair_enable` function.
+Before performing the :c:func:`bt_fast_pair_enable` operation, you must enable Bluetooth with the :c:func:`bt_enable` function and load Zephyr's :ref:`zephyr:settings_api` with the :c:func:`settings_load` function.
+The Fast Pair subsystem readiness can be checked with the :c:func:`bt_fast_pair_is_ready` function.
+The Fast Pair subsystem can be disabled with the :c:func:`bt_fast_pair_disable` function.
+In the Fast Pair subsystem disabled state, most of the Fast Pair APIs are not available.
+
+Apart from the callback registration and enabling the Fast Pair subsystem, no additional operations are needed to integrate the standard Fast Pair implementation.
 
 Personalized Name extension
 ===========================
@@ -263,6 +269,9 @@ The service implements functionalities required by the `Fast Pair Procedure`_.
 The procedure is initiated by the Fast Pair Seeker after Bluetooth LE connection is established.
 No application interaction is required.
 
+The Fast Pair GATT service is statically defined, so it is still present in the GATT database after the Fast Pair subsystem is disabled.
+In the Fast Pair subsystem disabled state, GATT operations on the Fast Pair service are rejected.
+
 The Fast Pair GATT service modifies default values of related Kconfig options to follow Fast Pair requirements.
 The service also enables the needed functionalities using Kconfig select statement.
 For details, see the :ref:`bt_fast_pair_readme` Bluetooth service documentation in the |NCS|.
@@ -290,6 +299,9 @@ Managing factory resets
 
 The Fast Pair GATT service uses a non-volatile memory to store the Fast Pair user data such as Account Keys and the Personalized Name.
 This data can be cleared by calling the :c:func:`bt_fast_pair_factory_reset` function.
+Calling the :c:func:`bt_fast_pair_factory_reset` function does not affect the Fast Pair subsystem's readiness.
+If the subsystem is enabled with the :c:func:`bt_fast_pair_enable` function, it stays enabled after calling the :c:func:`bt_fast_pair_factory_reset` function.
+The same applies for the Fast Pair subsystem disabled state.
 For details, see the :c:func:`bt_fast_pair_factory_reset` function documentation.
 
 .. _ug_bt_fast_pair_factory_reset_custom_user_reset_action:
@@ -303,8 +315,8 @@ Optionally, you can also define the :c:func:`bt_fast_pair_factory_reset_user_act
 Both functions are defined as weak no-op functions.
 Ensure that your reset action implementation executes correctly in the following execution contexts:
 
-* In the :c:func:`bt_fast_pair_factory_reset` function context: the factory reset action is triggered by calling the :c:func:`bt_fast_pair_factory_reset` function.
-* In the :c:func:`settings_load` function context during the commit phase (after data is loaded from the non-volatile memory): the factory reset action using the :c:func:`bt_fast_pair_factory_reset` function was interrupted and the factory reset is retried on the system bootup.
+* In the :c:func:`bt_fast_pair_factory_reset` function context - The factory reset action is triggered by calling the :c:func:`bt_fast_pair_factory_reset` function.
+* In the :c:func:`bt_fast_pair_enable` function context - The factory reset action using the :c:func:`bt_fast_pair_factory_reset` function was interrupted, and the factory reset is retried when enabling the Fast Pair subsystem.
 
 .. caution::
    If the factory reset operation constantly fails due to an error in the custom user reset action, the system may never be able to properly boot-up.
