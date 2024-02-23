@@ -742,6 +742,9 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
+  * Added the :c:func:`bt_fast_pair_enable`, :c:func:`bt_fast_pair_disable`, :c:func:`bt_fast_pair_is_ready` functions to handle the Fast Pair subsystem readiness.
+    In order to use the Fast Pair service, the Fast Pair subsystem must be enabled with the :c:func:`bt_fast_pair_enable` function.
+
   * Updated:
 
     * Improved the :ref:`bt_fast_pair_readme` library documentation to include the description of the missing Kconfig options.
