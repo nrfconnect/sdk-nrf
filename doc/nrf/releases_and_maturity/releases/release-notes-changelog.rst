@@ -637,8 +637,6 @@ Matter samples
   * Created the Kconfig file for the Matter common directory.
   * Created a CMake file in the Matter common directory to centralize the sourcing of all common software module source code.
 
-* Disabled :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
-
 * :ref:`matter_light_bulb_sample` sample:
 
   * Added support for `AWS IoT Core`_.
@@ -659,6 +657,9 @@ Matter samples
   * :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
   * WPA Supplicant advanced features in all Matter samples using the :kconfig:option:`WPA_SUPP_ADVANCED_FEATURES` Kconfig option.
     This saves roughly 25 KB of FLASH memory for firmware images with Wi-Fi support.
+
+* Added ``matter_shell`` shell commands set to gather the current information about the NVS settings backend such as current usage, free space, and peak usage value.
+  You can enable them by setting the :kconfig:option:`NCS_SAMPLE_MATTER_SETTINGS_SHELL` Kconfig option to ``y``.
 
 Multicore samples
 -----------------

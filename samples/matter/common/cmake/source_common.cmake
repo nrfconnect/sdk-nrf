@@ -40,3 +40,7 @@ endif()
 if(CONFIG_CHIP_NUS)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/bt_nus/bt_nus_service.cpp)
 endif()
+
+if(CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL)
+    target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/persistent_storage/persistent_storage_shell.cpp)
+endif()
