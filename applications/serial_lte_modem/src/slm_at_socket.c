@@ -349,6 +349,10 @@ static int at_sockopt_to_sockopt(enum at_sockopt at_option, int *level, int *opt
 		*level = SOL_SOCKET;
 		*option = SO_BINDTOPDN;
 		break;
+	case AT_SO_RAI:
+		*level = SOL_SOCKET;
+		*option = SO_RAI;
+		break;
 	case AT_SO_RAI_NO_DATA:
 		*level = SOL_SOCKET;
 		*option = SO_RAI_NO_DATA;

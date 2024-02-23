@@ -23,9 +23,9 @@ static void on_modem_shutdown(void *ctx)
 	printk("> Shutting down\n");
 }
 
-LTE_LC_ON_CFUN(cfun_monitor, on_cfun, NULL);
+NRF_MODEM_LIB_ON_CFUN(cfun_monitor, on_cfun, NULL);
 
-static void on_cfun(enum lte_lc_func_mode mode, void *ctx)
+static void on_cfun(int mode, void *ctx)
 {
 	printk("> Functional mode has changed to %d\n", mode);
 }

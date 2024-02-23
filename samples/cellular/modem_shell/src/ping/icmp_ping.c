@@ -321,12 +321,12 @@ static uint32_t send_ping_wait_reply(struct icmp_ping_shell_cmd_argv *ping_args,
 #endif
 	if (rai != PING_RAI_NONE) {
 		/* Set RAI option ONGOING except for the last packet for which we set ONE_RESP */
-		int rai_option = SO_RAI_ONGOING;
+		int rai_option = RAI_ONGOING;
 
 		if (rai == PING_RAI_LAST_PACKET) {
-			rai_option = SO_RAI_ONE_RESP;
+			rai_option = RAI_ONE_RESP;
 		}
-		ret = setsockopt(fd, SOL_SOCKET, rai_option, NULL, 0);
+		ret = setsockopt(fd, SOL_SOCKET, SO_RAI, &rai_option, sizeof(rai_option));
 		if (ret) {
 			ping_error(ping_args, "setsockopt() for RAI failed with error %d", errno);
 			goto close_end;
@@ -414,8 +414,9 @@ wait_for_data:
 	} while (true);
 
 	if (rai == PING_RAI_LAST_PACKET) {
+		int rai = RAI_NO_DATA;
 		/* Set RAI option NO_DATA after last response has been received */
-		ret = setsockopt(fd, SOL_SOCKET, SO_RAI_NO_DATA, NULL, 0);
+		ret = setsockopt(fd, SOL_SOCKET, SO_RAI, &rai, sizeof(rai));
 		if (ret) {
 			ping_error(
 				ping_args, "setsockopt() for SO_RAI_NO_DATA failed with error %d",

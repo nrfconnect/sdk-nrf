@@ -19,9 +19,6 @@
 #include <modem/pdn.h>
 #include <modem/at_monitor.h>
 #include <modem/nrf_modem_lib.h>
-#if defined(CONFIG_LTE_LINK_CONTROL)
-#include <modem/lte_lc.h>
-#endif
 
 LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 
@@ -32,6 +29,10 @@ LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 #define PDN_ACT_REASON_IPV6_ONLY (1)
 
 #define APN_STR_MAX_LEN 64
+
+#define MODEM_CFUN_POWER_OFF 0
+#define MODEM_CFUN_NORMAL 1
+#define MODEM_CFUN_ACTIVATE_LTE 21
 
 static K_MUTEX_DEFINE(list_mutex);
 
@@ -651,15 +652,14 @@ int pdn_default_apn_get(char *buf, size_t len)
 	return 0;
 }
 
-#if defined(CONFIG_LTE_LINK_CONTROL)
-LTE_LC_ON_CFUN(pdn_cfun_hook, on_cfun, NULL);
+NRF_MODEM_LIB_ON_CFUN(pdn_cfun_hook, on_cfun, NULL);
 
-static void on_cfun(enum lte_lc_func_mode mode, void *ctx)
+static void on_cfun(int mode, void *ctx)
 {
 	int err;
 
-	if (mode == LTE_LC_FUNC_MODE_NORMAL ||
-	    mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
+	if (mode == MODEM_CFUN_NORMAL ||
+	    mode == MODEM_CFUN_ACTIVATE_LTE) {
 		LOG_DBG("Subscribing to +CNEC=16 and +CGEREP=1");
 		err = nrf_modem_at_printf("AT+CNEC=16");
 		if (err) {
@@ -671,10 +671,9 @@ static void on_cfun(enum lte_lc_func_mode mode, void *ctx)
 		}
 	}
 
-	if (mode == LTE_LC_FUNC_MODE_POWER_OFF) {
+	if (mode == MODEM_CFUN_POWER_OFF) {
 #if defined(CONFIG_PDN_DEFAULTS_OVERRIDE)
 		pdn_defaults_override();
 #endif
 	}
 }
-#endif /* CONFIG_LTE_LINK_CONTROL */

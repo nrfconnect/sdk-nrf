@@ -540,35 +540,37 @@ Syntax
 
     * ``<value>`` is an integer that indicates the packet data network ID to bind to.
 
-  * ``50`` - :c:macro:`SO_RAI_NO_DATA` (set-only).
-    Immediately release the RRC.
-
-    * ``<value>`` is ignored.
-
-  * ``51`` - :c:macro:`SO_RAI_LAST` (set-only).
-    Enter Radio Resource Control (RRC) idle immediately after the next send operation.
-
-    * ``<value>`` is ignored.
-
-  * ``52`` - :c:macro:`SO_RAI_ONE_RESP` (set-only).
-    Wait for one incoming packet after the next send operation, before entering RRC idle mode.
-
-    * ``<value>`` is ignored.
-
-  * ``53`` - :c:macro:`SO_RAI_ONGOING` (set-only).
-    Keep RRC in connected mode after the next send operation (client).
-
-    * ``<value>`` is ignored.
-
-  * ``54`` - :c:macro:`SO_RAI_WAIT_MORE` (set-only).
-    Keep RRC in connected mode after the next send operation (server).
-
-    * ``<value>`` is ignored.
-
   * ``55`` - :c:macro:`SO_TCP_SRV_SESSTIMEO`.
 
     * ``<value>`` is an integer that indicates the TCP server session inactivity timeout for a socket.
       It accepts value from range ``0`` to ``135``, where ``0`` is no timeout and ``135`` is 2 h 15 min.
+
+  * ``61`` - :c:macro:`SO_RAI` (set-only).
+    Release Assistance Indication (RAI).
+
+    * ``<value>`` The option accepts an integer, indicating the type of RAI.
+      Accepted values for the option are:
+
+      * ``1`` - :c:macro:`RAI_NO_DATA`.
+        Indicates that the application does not intend to send more data.
+        This socket option applies immediately and lets the modem exit connected mode more quickly.
+
+      * ``2`` - :c:macro:`RAI_LAST`.
+        Indicates that the application does not intend to send more data after the next call to :c:func:`send` or :c:func:`sendto`.
+        This lets the modem exit connected mode more quickly after sending the data.
+
+      * ``3`` - :c:macro:`RAI_ONE_RESP`.
+        Indicates that the application is expecting to receive just one data packet after the next call to :c:func:`send` or :c:func:`sendto`.
+        This lets the modem exit connected mode more quickly after having received the data.
+
+      * ``4`` - :c:macro:`RAI_ONGOING`.
+        Indicates that the application is expecting to receive just one data packet after the next call to :c:func:`send` or :c:func:`sendto`.
+        This lets the modem exit connected mode more quickly after having received the data.
+
+      * ``5`` - :c:macro:`RAI_WAIT_MORE`.
+        Indicates that the socket is in active use by a server application.
+        This lets the modem stay in connected mode longer.
+
 
 See `nRF socket options`_ for explanation of the supported options.
 

@@ -29,6 +29,11 @@ static int cmd_gnss_delete_ephe(const struct shell *shell, size_t argc, char **a
 	return gnss_delete_data(GNSS_DATA_DELETE_EPHEMERIDES) == 0 ? 0 : -ENOEXEC;
 }
 
+static int cmd_gnss_delete_ekf(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_delete_data(GNSS_DATA_DELETE_EKF) == 0 ? 0 : -ENOEXEC;
+}
+
 static int cmd_gnss_delete_all(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_delete_data(GNSS_DATA_DELETE_ALL) == 0 ? 0 : -ENOEXEC;
@@ -37,6 +42,22 @@ static int cmd_gnss_delete_all(const struct shell *shell, size_t argc, char **ar
 static int cmd_gnss_delete_tcxo(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_delete_data(GNSS_DATA_DELETE_TCXO) == 0 ? 0 : -ENOEXEC;
+}
+
+static int cmd_gnss_delete_mask(const struct shell *shell, size_t argc, char **argv)
+{
+	int err = 0;
+	uint32_t mask;
+
+	mask = shell_strtoul(argv[1], 16, &err);
+
+	if (err) {
+		mosh_error("mask: invalid mask value %s", argv[1]);
+
+		return -ENOEXEC;
+	}
+
+	return gnss_delete_data_custom(mask) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_mode_cont(const struct shell *shell, size_t argc, char **argv)
@@ -672,12 +693,20 @@ static int cmd_gnss_output(const struct shell *shell, size_t argc, char **argv)
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_delete,
-	SHELL_CMD_ARG(ephe, NULL, "Delete ephemerides (forces a warm start).",
+	SHELL_CMD_ARG(ephe, NULL, "Delete ephemerides (forces a warm start).\n"
+				  "With modem firmware v2.0.1 or later, also the EKF state must "
+				  "be deleted separately to force a warm start.",
 		      cmd_gnss_delete_ephe, 1, 0),
+	SHELL_CMD_ARG(ekf, NULL, "Delete Extended Kalman Filter (EKF) state.\n"
+				 "Only supported by modem firmware v2.0.1 or later.",
+		      cmd_gnss_delete_ekf, 1, 0),
 	SHELL_CMD_ARG(all, NULL, "Delete all data, except the TCXO offset (forces a cold start).",
 		      cmd_gnss_delete_all, 1, 0),
 	SHELL_CMD_ARG(tcxo, NULL, "Delete the TCXO offset.",
 		      cmd_gnss_delete_tcxo, 1, 0),
+	SHELL_CMD_ARG(mask, NULL, "<bitmask>\nDelete data using a custom bitmask. The bitmask "
+				  "is given in hex, for example \"17f\".",
+		      cmd_gnss_delete_mask, 2, 0),
 	SHELL_SUBCMD_SET_END
 );
 

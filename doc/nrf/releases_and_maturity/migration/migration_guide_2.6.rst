@@ -19,6 +19,46 @@ The following changes are mandatory to make your application work in the same wa
     The setting controls whether the SLM connects automatically to the network on startup.
     You can read and write it using the ``AT#XCARRIER="auto_connect"`` command.
 
+  * The handling of Release Assistance Indication (RAI) socket options has been updated in the ``#XSOCKETOPT`` command.
+    The individual RAI-related socket options have been consolidated into a single ``SO_RAI`` option.
+    You must modify your application to use the new ``SO_RAI`` option with the corresponding value to specify the RAI behavior.
+    The changes are as follows:
+
+    The ``SO_RAI_NO_DATA``, ``SO_RAI_LAST``, ``SO_RAI_ONE_RESP``, ``SO_RAI_ONGOING``, and ``SO_RAI_WAIT_MORE`` options have been replaced by the ``SO_RAI`` option with values from ``1`` to ``5``.
+
+    Here are the changes you need to make in your application code:
+
+    * If you previously used ``AT#XSOCKETOPT=1,50,`` replace it with ``AT#XSOCKETOPT=1,61,1`` to indicate ``RAI_NO_DATA``.
+    * If you previously used ``AT#XSOCKETOPT=1,51,`` replace it with ``AT#XSOCKETOPT=1,61,2`` to indicate ``RAI_LAST``.
+    * If you previously used ``AT#XSOCKETOPT=1,52,`` replace it with ``AT#XSOCKETOPT=1,61,3`` to indicate ``RAI_ONE_RESP``.
+    * If you previously used ``AT#XSOCKETOPT=1,53,`` replace it with ``AT#XSOCKETOPT=1,61,4`` to indicate ``RAI_ONGOING``.
+    * If you previously used ``AT#XSOCKETOPT=1,54,`` replace it with ``AT#XSOCKETOPT=1,61,5`` to indicate ``RAI_WAIT_MORE``.
+
+* For applications using :ref:`nrf_modem_lib_readme`:
+
+  * The  ``lte_connectivity`` module is renamed to ``lte_net_if``. Please make sure that all references are updated accordingly, including function names and Kconfig options.
+
+  * If your application is using the ``lte_net_if`` (formerly ``lte_connectivity``) without disabling :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options, changes are required as the default values are changed from enabled to disabled.
+
+    * Consider using the :c:func:`conn_mgr_all_if_up`, :c:func:`conn_mgr_if_connect` and :c:func:`conn_mgr_if_disconnect` functions instead of enabling the Kconfig options to have better control of the initialization and connection establishment.
+
+  * The Release Assistance Indication (RAI) socket options have been deprecated and replaced with a new consolidated socket option.
+    If your application uses ``SO_RAI_*`` socket options, you need to update your socket configuration as follows:
+
+    #. Replace the deprecated socket options :c:macro:`SO_RAI_NO_DATA`, :c:macro:`SO_RAI_LAST`, :c:macro:`SO_RAI_ONE_RESP`, :c:macro:`SO_RAI_ONGOING`, and :c:macro:`SO_RAI_WAIT_MORE` with the new :c:macro:`SO_RAI` option.
+    #. Set the optval parameter of the :c:macro:`SO_RAI` socket option to one of the new values :c:macro:`RAI_NO_DATA`, :c:macro:`RAI_LAST`, :c:macro:`RAI_ONE_RESP`, :c:macro:`RAI_ONGOING`, or :c:macro:`RAI_WAIT_MORE` to specify the desired indication.
+
+    Example of migration:
+
+    .. code-block:: c
+
+      /* Before migration. */
+      setsockopt(socket_fd, SOL_SOCKET, SO_RAI_LAST, NULL, 0);
+
+      /* After migration. */
+      int rai_option = RAI_LAST;
+      setsockopt(socket_fd, SOL_SOCKET, SO_RAI, &rai_option, sizeof(rai_option));
+
   * The ``AT#XCMNG`` AT command, which is activated with the :file:`overlay-native_tls.conf` overlay file, has been changed from using modem certificate storage to Zephyr settings storage.
     You need to use the ``AT#XCMNG`` command to store previously stored credentials again.
 

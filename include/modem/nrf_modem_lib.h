@@ -131,9 +131,17 @@ struct nrf_modem_lib_shutdown_cb {
 };
 
 /**
+ * @brief AT CFUN callback entry.
+ */
+struct nrf_modem_lib_at_cfun_cb {
+	/** CFUN callback. */
+	void (*callback)(int mode, void *ctx);
+	/** User defined context */
+	void *context;
+};
+
+/**
  * @brief Define a callback for DFU result @ref nrf_modem_lib_init calls.
- *
- * The callback function @p _callback is invoked after the library has been initialized.
  *
  * @note The @c NRF_MODEM_LIB_ON_DFU_RES callback can be used to subscribe to the result of a modem
  * DFU operation.
@@ -184,6 +192,20 @@ struct nrf_modem_lib_shutdown_cb {
 #define NRF_MODEM_LIB_ON_SHUTDOWN(name, _callback, _context)                                       \
 	static void _callback(void *ctx);                                                          \
 	STRUCT_SECTION_ITERABLE(nrf_modem_lib_shutdown_cb, nrf_modem_hook_##name) = {              \
+		.callback = _callback,                                                             \
+		.context = _context,                                                               \
+	};
+
+/**
+ * @brief Define a callback for successful AT CFUN calls.
+ *
+ * @param name Callback name
+ * @param _callback Callback function name
+ * @param _context User-defined context for the callback
+ */
+#define NRF_MODEM_LIB_ON_CFUN(name, _callback, _context)                                           \
+	static void _callback(int mode, void *ctx);                                                \
+	STRUCT_SECTION_ITERABLE(nrf_modem_lib_at_cfun_cb, nrf_modem_at_cfun_hook_##name) = {       \
 		.callback = _callback,                                                             \
 		.context = _context,                                                               \
 	};

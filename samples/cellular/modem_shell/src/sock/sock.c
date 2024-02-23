@@ -1223,10 +1223,11 @@ int sock_close(int socket_id)
 
 static int sock_rai_option_set(int fd, int option, char *option_string)
 {
-	int err = setsockopt(fd, SOL_SOCKET, option, NULL, 0);
+	int err = setsockopt(fd, SOL_SOCKET, SO_RAI, &option, sizeof(option));
 
 	if (err) {
-		mosh_error("setsockopt() for %s failed, errno %d", option_string, errno);
+		mosh_error("setsockopt() for SO_RAI with value %s failed with error %d",
+			   option_string, errno);
 		return err;
 	}
 
@@ -1248,41 +1249,41 @@ int sock_rai(int socket_id, bool rai_last, bool rai_no_data,
 		mosh_error("No socket specific RAI options given with -i");
 	}
 
-	/* SO_RAI_LAST */
+	/* RAI_LAST */
 	if (rai_last) {
-		err = sock_rai_option_set(socket_info->fd, SO_RAI_LAST, "SO_RAI_LAST");
+		err = sock_rai_option_set(socket_info->fd, RAI_LAST, "RAI_LAST");
 		if (err) {
 			return err;
 		}
 	}
 
-	/* SO_RAI_NO_DATA */
+	/* RAI_NO_DATA */
 	if (rai_no_data) {
-		err = sock_rai_option_set(socket_info->fd, SO_RAI_NO_DATA, "SO_RAI_NO_DATA");
+		err = sock_rai_option_set(socket_info->fd, RAI_NO_DATA, "RAI_NO_DATA");
 		if (err) {
 			return err;
 		}
 	}
 
-	/* SO_RAI_ONE_RESP */
+	/* RAI_ONE_RESP */
 	if (rai_one_resp) {
-		err = sock_rai_option_set(socket_info->fd, SO_RAI_ONE_RESP, "SO_RAI_ONE_RESP");
+		err = sock_rai_option_set(socket_info->fd, RAI_ONE_RESP, "RAI_ONE_RESP");
 		if (err) {
 			return err;
 		}
 	}
 
-	/* SO_RAI_ONGOING */
+	/* RAI_ONGOING */
 	if (rai_ongoing) {
-		err = sock_rai_option_set(socket_info->fd, SO_RAI_ONGOING, "SO_RAI_ONGOING");
+		err = sock_rai_option_set(socket_info->fd, RAI_ONGOING, "RAI_ONGOING");
 		if (err) {
 			return err;
 		}
 	}
 
-	/* SO_RAI_WAIT_MORE */
+	/* RAI_WAIT_MORE */
 	if (rai_wait_more) {
-		err = sock_rai_option_set(socket_info->fd, SO_RAI_WAIT_MORE, "SO_RAI_WAIT_MORE");
+		err = sock_rai_option_set(socket_info->fd, RAI_WAIT_MORE, "RAI_WAIT_MORE");
 		if (err) {
 			return err;
 		}

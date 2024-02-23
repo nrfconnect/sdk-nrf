@@ -201,6 +201,12 @@ These callbacks allow any part of the application to perform certain operations 
 For example, one kind of operation that the application or a library may need to perform and repeat, whenever the modem enters a certain functional mode is the subscription to AT notifications.
 The application can set up a callback for modem`s functional mode changes using the :c:macro:`LTE_LC_ON_CFUN` macro.
 
+.. important::
+   When the :c:macro:`LTE_LC_ON_CFUN` macro is used, the application must not call :c:func:`nrf_modem_at_cfun_handler_set` as that will override the handler set by the modem library integration layer.
+
+.. note::
+   The CFUN callback is not supported with :c:func:`nrf_modem_at_cmd_async`.
+
 The following code snippet shows how to use the :c:macro:`LTE_LC_ON_CFUN` macro:
 
 .. code-block:: c

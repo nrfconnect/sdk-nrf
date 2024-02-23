@@ -1583,7 +1583,7 @@ int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg);
  *
  * For reference see 3GPP 24.301 Ch. 9.9.4.25.
  *
- * @deprecated Use @kconfig{CONFIG_LTE_RAI_REQ} and socket options SO_RAI_* instead.
+ * @deprecated Use @kconfig{CONFIG_LTE_RAI_REQ} and socket option @ref SO_RAI instead.
  *
  * @note This feature is only supported by modem firmware versions < 2.0.0.
  *
@@ -1600,7 +1600,7 @@ __deprecated int lte_lc_rai_param_set(const char *value);
  * Used RAI value can be set using @kconfig{CONFIG_LTE_RAI_REQ_VALUE} or by calling
  * lte_lc_rai_param_set().
  *
- * @deprecated Use @kconfig{CONFIG_LTE_RAI_REQ} and socket options SO_RAI_* instead.
+ * @deprecated Use @kconfig{CONFIG_LTE_RAI_REQ} and socket option @ref SO_RAI instead.
  *
  * @note This feature is only supported by modem firmware versions < 2.0.0.
  *

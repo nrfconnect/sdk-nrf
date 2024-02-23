@@ -14,6 +14,8 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 NRF_MODEM_LIB_ON_INIT(lte_lc_init_hook, on_modem_init, NULL);
 NRF_MODEM_LIB_ON_SHUTDOWN(lte_lc_shutdown_hook, on_modem_shutdown, NULL);
 
+NRF_MODEM_LIB_ON_CFUN(lte_lc_cfun_hook, on_modem_cfun, NULL);
+
 static void on_modem_init(int err, void *ctx)
 {
 	extern const enum lte_lc_system_mode lte_lc_sys_mode;
@@ -125,5 +127,15 @@ static void on_modem_shutdown(void *ctx)
 	/* Make sure the Modem library was in normal mode and not in bootloader mode. */
 	if (nrf_modem_is_initialized()) {
 		(void)lte_lc_power_off();
+	}
+}
+
+static void on_modem_cfun(int mode, void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	STRUCT_SECTION_FOREACH(lte_lc_cfun_cb, e) {
+		LOG_DBG("CFUN monitor callback: %p", e->callback);
+		e->callback(mode, e->context);
 	}
 }

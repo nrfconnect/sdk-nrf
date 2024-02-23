@@ -145,7 +145,7 @@ int main(void)
 		.ai_family = AF_INET,
 		.ai_socktype = SOCK_STREAM,
 	};
-	nrf_sec_cipher_t ciphersuite_list[] = { 0 };
+	int ciphersuite_list[] = { 0 };
 
 	printk("TLS Ciphersuites sample started\n\r");
 
