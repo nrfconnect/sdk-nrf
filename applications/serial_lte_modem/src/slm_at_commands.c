@@ -79,19 +79,16 @@ enum sleep_modes {
 /** @brief AT command handler type. */
 typedef int (*slm_at_handler_t) (enum at_cmd_type);
 
-static struct slm_work_info {
-	struct k_work_delayable sleep_work;
-	uint32_t data;
-} slm_work;
+#if POWER_PIN_IS_ENABLED
+static struct {
+	struct k_work_delayable work;
+	uint32_t mode;
+} sleep;
+#endif
 
-/* global functions defined in different files */
-void enter_idle(void);
-void enter_sleep(void);
-void enter_shutdown(void);
 bool verify_datamode_control(uint16_t time_limit, uint16_t *time_limit_min);
 
-/** @return Whether the modem is in the given functional mode. */
-static bool is_modem_functional_mode(enum lte_lc_func_mode mode)
+bool slm_is_modem_functional_mode(enum lte_lc_func_mode mode)
 {
 	int cfun;
 	int rc = slm_util_at_scanf("AT+CFUN?", "+CFUN: %d", &cfun);
@@ -99,18 +96,14 @@ static bool is_modem_functional_mode(enum lte_lc_func_mode mode)
 	return (rc == 1 && cfun == mode);
 }
 
-static void modem_power_off(void)
+int slm_power_off_modem(void)
 {
-	/* First check whether the modem has already been turned off by the MCU. */
-	if (!is_modem_functional_mode(LTE_LC_FUNC_MODE_POWER_OFF)) {
-
-		/* "[...] there may be a delay until modem is disconnected from the network."
-		 * https://infocenter.nordicsemi.com/topic/ps_nrf9160/chapters/pmu/doc/operationmodes/system_off_mode.html
-		 * This will return once the modem responds, which means it has actually
-		 * stopped. This has been observed to take between 1 and 2 seconds.
-		 */
-		slm_util_at_printf("AT+CFUN=0");
-	}
+	/* "[...] there may be a delay until modem is disconnected from the network."
+	 * https://infocenter.nordicsemi.com/topic/ps_nrf9160/chapters/pmu/doc/operationmodes/system_off_mode.html
+	 * This will return once the modem responds, which means it has actually stopped.
+	 * This has been observed to take between 1 and 2 seconds when it is not already stopped.
+	 */
+	return slm_util_at_printf("AT+CFUN=0");
 }
 
 /* Handles AT#XSLMVER command. */
@@ -135,27 +128,18 @@ static int handle_at_slmver(enum at_cmd_type type)
 	return ret;
 }
 
-static void go_sleep_wk(struct k_work *work)
-{
-	ARG_UNUSED(work);
+#if POWER_PIN_IS_ENABLED
 
-	if (slm_work.data == SLEEP_MODE_IDLE) {
+static void go_sleep_wk(struct k_work *)
+{
+	if (sleep.mode == SLEEP_MODE_IDLE) {
 		if (slm_at_host_power_off() == 0) {
-			enter_idle();
+			slm_enter_idle();
 		} else {
 			LOG_ERR("failed to power off UART");
 		}
-	} else if (slm_work.data == SLEEP_MODE_DEEP) {
-		slm_at_host_uninit();
-
-		/* Only power off the modem if it has not been put
-		 * in flight mode to allow reducing NVM wear.
-		 */
-		if (!is_modem_functional_mode(LTE_LC_FUNC_MODE_OFFLINE)) {
-			modem_power_off();
-		}
-		LOG_PANIC();
-		enter_sleep();
+	} else if (sleep.mode == SLEEP_MODE_DEEP) {
+		slm_enter_sleep();
 	}
 }
 
@@ -165,12 +149,12 @@ static int handle_at_sleep(enum at_cmd_type type)
 	int ret = -EINVAL;
 
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
-		ret = at_params_unsigned_int_get(&slm_at_param_list, 1, &slm_work.data);
+		ret = at_params_unsigned_int_get(&slm_at_param_list, 1, &sleep.mode);
 		if (ret) {
 			return -EINVAL;
 		}
-		if (slm_work.data == SLEEP_MODE_DEEP || slm_work.data == SLEEP_MODE_IDLE) {
-			k_work_reschedule(&slm_work.sleep_work, K_MSEC(100));
+		if (sleep.mode == SLEEP_MODE_DEEP || sleep.mode == SLEEP_MODE_IDLE) {
+			k_work_reschedule(&sleep.work, SLM_UART_RESPONSE_DELAY);
 		} else {
 			ret = -EINVAL;
 		}
@@ -181,6 +165,8 @@ static int handle_at_sleep(enum at_cmd_type type)
 
 	return ret;
 }
+
+#endif /* POWER_PIN_IS_ENABLED */
 
 static void final_call(void (*func)(void))
 {
@@ -194,9 +180,9 @@ static void final_call(void (*func)(void))
 static void slm_shutdown(void)
 {
 	slm_at_host_uninit();
-	modem_power_off();
+	slm_power_off_modem();
 	LOG_PANIC();
-	enter_shutdown();
+	slm_enter_shutdown();
 }
 
 /* Handles AT#XSHUTDOWN command. */
@@ -212,7 +198,7 @@ static int handle_at_shutdown(enum at_cmd_type type)
 FUNC_NORETURN void slm_reset(void)
 {
 	slm_at_host_uninit();
-	modem_power_off();
+	slm_power_off_modem();
 	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
 }
@@ -235,7 +221,7 @@ static int handle_at_modemreset(enum at_cmd_type type)
 	}
 
 	/* The modem must be put in minimal function mode before being shut down. */
-	modem_power_off();
+	slm_power_off_modem();
 
 	unsigned int step = 1;
 	int ret;
@@ -413,7 +399,9 @@ static struct slm_at_cmd {
 } slm_at_cmd_list[] = {
 	/* Generic commands */
 	{"AT#XSLMVER", handle_at_slmver},
+#if POWER_PIN_IS_ENABLED
 	{"AT#XSLEEP", handle_at_sleep},
+#endif
 	{"AT#XSHUTDOWN", handle_at_shutdown},
 	{"AT#XRESET", handle_at_reset},
 	{"AT#XMODEMRESET", handle_at_modemreset},
@@ -579,7 +567,9 @@ int slm_at_init(void)
 {
 	int err;
 
-	k_work_init_delayable(&slm_work.sleep_work, go_sleep_wk);
+#if POWER_PIN_IS_ENABLED
+	k_work_init_delayable(&sleep.work, go_sleep_wk);
+#endif
 
 	err = slm_at_tcp_proxy_init();
 	if (err) {

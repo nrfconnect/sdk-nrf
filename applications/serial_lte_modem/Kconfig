@@ -69,18 +69,21 @@ config SLM_UART_TX_BUF_SIZE
 	  Amount of UART traffic waiting to be sent (TX), that can be held. If the buffers are full, will send synchronously.
 
 #
-# GPIO wakeup
+# GPIO functionality
 #
 config SLM_START_SLEEP
 	bool "Enter sleep on startup"
 	help
-	  Put nRF9160 into deep sleep mode after startup.
+	  If enabled, the SiP is put into deep sleep when powered on.
+	  It can then be started using SLM_POWER_PIN.
+	depends on SLM_POWER_PIN >= 0
 
-config SLM_WAKEUP_PIN
-	int "Wakeup pin"
+config SLM_POWER_PIN
+	int "Power pin"
 	default -1
 	help
-	  Interface GPIO to wake up from sleep or exit idle
+	  Interface GPIO pin used to put the SiP into deep sleep and wake up from it or exit idle.
+	  The pin is configured with a pull up and must be pulled down shortly to perform one power off or wake up operation.
 
 config SLM_INDICATE_PIN
 	int "Indicate pin"

@@ -252,6 +252,8 @@ Serial LTE modem
 
 * Updated:
 
+  * The ``CONFIG_SLM_WAKEUP_PIN`` Kconfig option was renamed to :ref:`CONFIG_SLM_POWER_PIN <CONFIG_SLM_POWER_PIN>`.
+    In addition to its already existing functionality, it can now be used to power off the SiP.
   * ``#XMQTTCON`` AT command to exclude MQTT client ID from the parameter list.
   * ``#XSLMVER`` AT command to report CONFIG_SLM_CUSTOMER_VERSION if it is defined.
   * The ``#XTCPCLI``, ``#XUDPCLI`` and ``#XHTTPCCON`` AT commands with options to:

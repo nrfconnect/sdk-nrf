@@ -13,15 +13,27 @@
  * @{
  */
 #include "slm_trap_macros.h"
-#include <zephyr/logging/log.h>
-#include <stdbool.h>
-#include <zephyr/net/socket.h>
 #include <modem/at_cmd_parser.h>
+#include <modem/lte_lc.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/socket.h>
+#include <stdbool.h>
+#include <hal/nrf_gpio.h>
 
 extern struct k_work_q slm_work_q; /* SLM's work queue. */
 
+/** @return Whether the modem is in the given functional mode. */
+bool slm_is_modem_functional_mode(enum lte_lc_func_mode mode);
+
+/** @brief Puts the modem in minimal function mode. */
+int slm_power_off_modem(void);
+
 /** @brief Performs a reset of the SiP. */
 FUNC_NORETURN void slm_reset(void);
+
+void slm_enter_idle(void);
+FUNC_NORETURN void slm_enter_sleep(void);
+FUNC_NORETURN void slm_enter_shutdown(void);
 
 /** @brief Temporarily sets the indicate pin high. */
 int slm_indicate(void);
