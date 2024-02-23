@@ -143,11 +143,10 @@ See :ref:`ug_fw_update_keys` for information on how to generate custom keys for 
 
 Additionally, the |NSIB| supports the following methods for signing images with private keys:
 
-* :ref:`ug_fw_update_keys_python` - The default method, using the :kconfig:option:`CONFIG_SB_SIGNING_PYTHON`.
-* :ref:`ug_fw_update_keys_openssl` - Uses the :kconfig:option:`CONFIG_SB_SIGNING_OPENSSL`.
-* :ref:`Using a custom command <ug_bootloader_adding_immutable_b0_custom_signing>` - Uses the :kconfig:option:`CONFIG_SB_SIGNING_CUSTOM`.
+* :ref:`ug_fw_update_keys_openssl` - Uses the :kconfig:option:`CONFIG_SB_SIGNING_OPENSSL` Kconfig option.
+* :ref:`Using a custom command <ug_bootloader_adding_immutable_b0_custom_signing>` - Uses the :kconfig:option:`CONFIG_SB_SIGNING_CUSTOM` Kconfig option.
 
-Both Python and OpenSSL methods are handled internally by the build system, whereas using custom commands requires more configuration steps.
+The OpenSSL method is handled internally by the build system, whereas using custom commands requires more configuration steps.
 
 Checking the public key
 ^^^^^^^^^^^^^^^^^^^^^^^

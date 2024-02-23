@@ -27,7 +27,11 @@ The |NCS| supports the following most common ways to generate private/public key
 
 * :ref:`ug_fw_update_keys_openssl`
 * :ref:`ug_fw_update_keys_imgtool`
-* :ref:`ug_fw_update_keys_python`
+
+.. caution::
+
+   The security of the firmware update process depends on the secrecy of the private key.
+   You must prevent unauthorized access to the private key.
 
 .. _ug_fw_update_keys_openssl:
 
@@ -99,21 +103,6 @@ Examples of imgtool used to create some commonly used key types:
 
 For a full list of supported types, use the ``--help`` argument with the tool or any of its commands.
 
-.. _ug_fw_update_keys_python:
-
-Using Python to generate keys
-=============================
-
-The |NCS| includes an internal script to interact with private and public keys with the |NSIB|.
-This script is maintained by the |NCS| team and uses the ``ecdsa`` package available from PyPI.
-It is only valid for use with ECDSA keys.
-
-An example of this internal Python script used to generate keys.
-
-.. code-block:: console
-
-   python3 nrf/scripts/bootloader/keygen.py --private -o priv.pem
-
 .. _ug_fw_update_development_keys:
 
 Using development keys
@@ -148,11 +137,7 @@ See :kconfig:option:`CONFIG_SB_PUBLIC_KEY_FILES` for details on how this mechani
 
 You can add this feature to your own project and check its functionality as follows:
 
-1. Use the :ref:`bootloader Python script <ug_fw_update_keys_python>` to generate two or more private keys for the application and extract a public key for each one:
-
-   .. code-block:: console
-
-      python3 nrf/scripts/bootloader/keygen.py --public -i priv.pem -o pub.pem
+1. Generate two or more private keys for the application and extract a public key for each one (for example, using :ref:`OpenSSL <ug_fw_update_keys_openssl>`).
 
 #. Compile the application and bootloader with the relevant configurations, using only absolute paths:
 
