@@ -64,5 +64,5 @@ This allows the module to update the Fast Pair advertising payload just before t
 The module is a subscriber for :c:struct:`ble_dongle_peer_event`.
 This allows the module to remove the Fast Pair advertising payload when the application identity of the dongle peer is used.
 
-The module registers the global application's Bluetooth authentication callbacks (:c:struct:`bt_conn_auth_cb`) on application start.
+The module registers the global application's Bluetooth authentication callbacks (:c:struct:`bt_conn_auth_cb`) and enables the :ref:`bt_fast_pair_readme` (:c:func:`bt_fast_pair_enable`) after :ref:`caf_settings_loader` loads Zephyr's :ref:`zephyr:settings_api`.
 The callbacks are used to reject normal Bluetooth pairing when outside of the pairing mode.
