@@ -10,6 +10,11 @@ Follow the steps in `How to create devicetree files`_ and use one of the followi
 * `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_
 * `Devicetree language support`_
 
+Like Kconfig fragment files, devicetree files can also be provided as overlays.
+The devicetree overlay files are named the same as the build target and use the file extension :file:`.overlay`.
+When they are placed in the :file:`boards` folder and the devicetree overlay file name matches the build target, the build system automatically selects and applies the overlay.
+To select them manually, see :ref:`cmake_options`.
+
 The following guides provide information about configuring specific aspects of hardware support related to devicetree.
 Read them together with Zephyr's :ref:`zephyr:hardware_support` and :ref:`zephyr:dt-guide` guides, and the official `Devicetree Specification`_.
 

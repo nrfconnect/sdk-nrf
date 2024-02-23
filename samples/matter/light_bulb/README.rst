@@ -163,13 +163,10 @@ To set up an AWS IoT instance and configure the sample, complete the following s
 
    The certificates will vary in size depending on the method you chose when generating the certificates.
    Due to this, you might need to increase the value of the :kconfig:option:`CONFIG_MBEDTLS_SSL_OUT_CONTENT_LEN` option to be able to establish a connection.
-#. Build the sample using the following command:
-
-   .. code-block:: console
-
-      west build -p -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
-
+#. Build the sample for the ``nrf7002dk_nrf5340_cpuapp`` build target with the :makevar:`EXTRA_CONF_FILE` option set to :file:`overlay-aws-iot-integration.conf`.
+   See :ref:`cmake_options` for instructions on how to provide this build variable.
 #. Flash the firmware and boot the sample.
+   See :ref:`programming`.
 #. |connect_kit|
 #. |connect_terminal_ANSI|
 #. Commission the device to the Matter network.

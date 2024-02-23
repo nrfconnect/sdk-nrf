@@ -318,7 +318,7 @@ To use MCUboot as an upgradable bootloader to your application, complete the fol
       -DCONFIG_BOOTLOADER_MCUBOOT=y \
       -DCONFIG_SECURE_BOOT=y \
       -Dmcuboot_CONF_FILE=prj_minimal.conf \
-      -Dmcuboot_OVERLAY_CONFIG=external_crypto.conf
+      -Dmcuboot_EXTRA_CONF_FILE=external_crypto.conf
 
    See :ref:`ug_bootloader_config` for more information about using Kconfig fragments with bootloaders.
 

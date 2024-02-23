@@ -67,34 +67,35 @@ Currently, the following configurations are supported:
 * nRF7002 EK + SPI
 
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
-The following is an example of the CLI command:
 
-.. code-block:: console
+To build for the nRF7002 EK with the nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the :makevar:`SHIELD` :ref:`CMake option <cmake_options>` set to ``nrf7002ek``.
 
-   west build -b nrf7002dk_nrf5340_cpuapp
+Activating sample extensions
+============================
 
-To build for the nRF7002 EK with the nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
-The following is an example of the CLI command:
+You can enable the following optional extensions during the sample build process:
 
-.. code-block:: console
+.. list-table::
+   :header-rows: 1
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek
+   * - Extension
+     - Files to use
+     - Build variables
+   * - netusb support for the nRF7002 DK
+     - :file:`overlay-netusb.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-netusb.conf``
+   * - Serial Line Internet Protocol (SLIP) support for the nRF7002 DK
+     - * :file:`overlay-slip.conf`
+       * :file:`nrf7002_uart_pipe.overlay`
+     - * ``-DEXTRA_CONF_FILE=overlay-slip.conf``
+       * ``-DEXTRA_DTC_OVERLAY_FILE=nrf7002_uart_pipe.overlay``
 
-To build for the nRF7002 DK with the netusb support, use the ``nrf7002dk_nrf5340_cpuapp`` build target with the configuration overlay :file:`overlay-netusb.conf`.
-The following is an example of the CLI command:
+.. |variable_feature| replace:: netusb support for the nRF7002 DK
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-netusb.conf
+.. |board_name| replace:: nrf7002dk_nrf5340_cpuapp
 
-.. code-block:: console
-
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-netusb.conf
-
-To build for the nRF7002 DK with the Serial Line Internet Protocol (SLIP) support, use the ``nrf7002dk_nrf5340_cpuapp`` build target with the configuration overlay :file:`overlay-slip.conf` and DTC overlay :file:`nrf7002_uart_pipe.overlay`.
-The following is an example of the CLI command:
-
-.. code-block:: console
-
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-slip.conf -DDTC_OVERLAY_FILE=nrf7002_uart_pipe.overlay
-
-See also :ref:`cmake_options` for instructions on how to provide CMake options.
+.. include:: /includes/apply_cmake_variable.txt
 
 Testing
 =======

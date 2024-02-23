@@ -69,46 +69,36 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-nRF91 Series DK with nRF7002 EK Wi-Fi support
-=============================================
+Activating sample extensions
+============================
 
-To build the sample with nRF91 Series DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
-For example:
+You can enable the following optional extensions during the sample build process:
 
-.. parsed-literal::
-   :class: highlight
+.. list-table::
+   :header-rows: 1
 
-   west build -p -b *build_target* -- -DSHIELD=nrf7002ek -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+   * - Extension
+     - Files to use
+     - Build variables
+   * - nRF91 Series DK and nRF7002 EK Wi-Fi support
+     - :file:`overlay-nrf7002ek-wifi-scan-only.conf`
+     - * ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf``
+       *  ``-DSHIELD=nrf7002ek``
+   * - ESP8266 Wi-Fi support
+     - * :file:`overlay-esp-wifi.conf`
+       * :file:`esp_8266_nrf9160ns.overlay`
+     - * ``-DEXTRA_CONF_FILE=overlay-esp-wifi.conf``
+       * ``-DEXTRA_DTC_OVERLAY_FILE=esp_8266_nrf9160ns.overlay``
+   * - P-GPS support
+     - :file:`overlay-pgps.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-pgps.conf``
 
-|build_target|
+.. |variable_feature| replace:: the P-GPS support
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-pgps.conf
+.. |board_name| replace:: nrf9160dk_nrf9160_ns
 
-See :ref:`cmake_options` for more instructions on how to add these options.
-
-ESP8266 Wi-Fi support
-=====================
-
-To build the Location sample with ESP8266 Wi-Fi chip support, use the ``-DDTC_OVERLAY_FILE=esp_8266_nrf9160ns.overlay`` and  ``-DOVERLAY_CONFIG=overlay-esp-wifi.conf`` options.
-For example:
-
-.. code-block:: console
-
-   west build -p -b nrf9160dk_nrf9160_ns -- -DDTC_OVERLAY_FILE=esp_8266_nrf9160ns.overlay -DOVERLAY_CONFIG=overlay-esp-wifi.conf
-
-See :ref:`cmake_options` for more instructions on how to add these options.
-
-P-GPS support
-=============
-
-To build the Location sample with P-GPS support, use the following commands:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -p -b *build_target* -- -DOVERLAY_CONFIG=overlay-pgps.conf
-
-|build_target|
-
-See :ref:`cmake_options` for more instructions on how to add this option.
+.. include:: /includes/apply_cmake_variable.txt
 
 Testing
 =======

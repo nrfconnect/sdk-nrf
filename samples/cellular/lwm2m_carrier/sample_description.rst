@@ -79,6 +79,8 @@ Set the server address and PSK
 Configuration options
 =====================
 
+The sample can either be configured by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
+
 Check and configure the following configuration options for the sample:
 
 Server options
@@ -100,9 +102,7 @@ The sample provides predefined configuration files for typical use cases.
 The following files are available:
 
 * :file:`prj.conf` - Standard default configuration file.
-* :file:`overlay-shell.conf` - Enables the :ref:`lwm2m_carrier_shell` and :ref:`lib_at_shell`.
-
-The sample can either be configured by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
+* :file:`overlay-shell.conf` - Enables the :ref:`lwm2m_carrier_shell` and :ref:`lib_at_shell` in addition to the configurations found in the :file:`prj.conf` file.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
@@ -117,20 +117,15 @@ Building and running
 
 .. _lwm2m_carrier_shell_overlay:
 
-Building with overlay
-=====================
+Activating sample extensions
+============================
 
-To build with a Kconfig overlay, pass it to the build system using the ``OVERLAY_CONFIG`` CMake variable, as shown in the following example:
+.. |variable_feature| replace:: the :ref:`lwm2m_carrier_shell`
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-shell.conf
+.. |board_name| replace:: nrf9160dk_nrf9160_ns
 
-.. parsed-literal::
-   :class: highlight
-
-   west build -b *build_target* -- -DOVERLAY_CONFIG=overlay-shell.conf
-
-|build_target|
-
-This command builds for your nRF91 Series DK using the configurations found in the :file:`overlay-shell.conf` file, in addition to the configurations found in the :file:`prj.conf` file.
-If some options are defined in both files, the options set in the overlay take precedence.
+.. include:: /includes/apply_cmake_variable.txt
 
 Testing
 =======

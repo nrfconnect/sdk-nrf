@@ -179,20 +179,15 @@ In this sample, they are separated for clarity.
 
 This sample supports full modem FOTA for the nRF91 Series development kit.
 Version 0.14.0 or higher is required for nRF9160 DK.
-To enable full modem FOTA, add the following parameter to your build command:
 
-``-DOVERLAY_CONFIG=overlay_full_modem_fota.conf``
+To enable full modem FOTA, build the application with the :makevar:`EXTRA_CONF_FILE` variable set to the :file:`overlay_full_modem_fota.conf` file.
+See :ref:`cmake_options` for more examples and detailed information.
 
-Also, specify your development kit version by appending it to the board name.
-For example, if you are using an nRF9160 DK version 1.0.1, use the following board name in your build command:
-
-``nrf9160dk_nrf9160_ns@1.0.1``
+.. note::
+    Make sure to specify your development kit version by appending it to the board name (for example, ``nrf9160dk_nrf9160_ns@1.0.1``)
 
 This sample also supports placement of the MCUboot secondary partition in external flash for the nRF91x1 DKs, and for nRF9160 DK version 0.14.0 and higher.
-To enable this, add the following parameter to your build command:
-
-``-DOVERLAY_CONFIG=overlay_mcuboot_ext_flash.conf``
-
+To enable this, set the :makevar:`EXTRA_CONF_FILE` to the :file:`overlay_mcuboot_ext_flash.conf` file when building the sample.
 Then specify your development kit version as described earlier.
 
 .. _nrf_cloud_multi_service_temperature_sensing:
@@ -236,14 +231,11 @@ See :ref:`nrf_cloud_multi_service_building_wifi_scan` for details on how to enab
 
 This sample supports placing P-GPS data in external flash for the nRF91 Series development kit.
 Version 0.14.0 or later is required for the nRF9160 DK.
-To enable this, add the following parameter to your build command:
 
-``-DOVERLAY_CONFIG=overlay_pgps_ext_flash.conf``
-
+To enable this, set the :makevar:`EXTRA_CONF_FILE` to the :file:`overlay_pgps_ext_flash.conf` file when building the sample.
 Also, specify your development kit version by appending it to the board name.
-For example, if you are using an nRF9160 development kit version 1.0.1, use the following board name in your build command:
-
-``nrf9160dk_nrf9160_ns@1.0.1``
+For example, if you are using an nRF9160 DK version 1.0.1, use the ``nrf9160dk_nrf9160_ns@1.0.1`` board name.
+See :ref:`cmake_options` for instructions on how to provide these build variables.
 
 .. _nrf_cloud_multi_service_remote_at:
 
@@ -715,23 +707,12 @@ You can build the sample to connect over LTE as follows:
 
    .. group-tab:: MQTT
 
-      .. parsed-literal::
-         :class: highlight
-
-         west build -p -b *build_target*
-
-      |build_target|
+      Use the :ref:`standard procedures for building samples <building>` in the |NCS|.
 
    .. group-tab:: CoAP
 
-      To build the sample to use CoAP instead of MQTT, use the ``-DOVERLAY_CONFIG=overlay_coap.conf`` option.
-
-      .. parsed-literal::
-         :class: highlight
-
-         west build -p -b *build_target* -- -DOVERLAY_CONFIG="overlay_coap.conf"
-
-      |build_target|
+      To build the sample to use CoAP instead of MQTT, set the :makevar:`EXTRA_CONF_FILE` to the :file:`overlay_coap.conf` file when building the sample.
+      See :ref:`cmake_options` for instructions on how to provide this build variable.
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
 
@@ -748,29 +729,29 @@ The `nRF Cloud Provisioning Service`_ allows you to securely provision and onboa
 
 You can enable support for this service by building the sample as follows:
 
-.. tabs::
+Support using MQTT
+------------------
 
-   .. group-tab:: MQTT
+.. |variable_feature| replace:: nRF Cloud Provisioning Service Support using MQTT
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-http_nrf_provisioning.conf
+.. |board_name| replace:: thingy91_nrf9160_ns
 
-      .. code-block:: console
+.. include:: /includes/apply_cmake_variable.txt
 
-         west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG="overlay-http_nrf_provisioning.conf"
+The :file:`overlay-http_nrf_provisioning.conf` overlay enables the :ref:`lib_nrf_provisioning` library, and its shell interface to use HTTP for communication.
+A side-effect of this is that the sample will use the :ref:`lib_at_shell` library instead of the :ref:`lib_at_host` library, so AT commands must be issued using the ``at`` shell command.
 
-      The :file:`overlay-http_nrf_provisioning.conf` overlay enables the :ref:`lib_nrf_provisioning` library, and its shell interface to use HTTP for communication.
-      A side-effect of this is that the sample will use the :ref:`lib_at_shell` library instead of the :ref:`lib_at_host` library, so AT commands must be issued using the ``at`` shell command.
+Support using CoAP
+------------------
 
-   .. group-tab:: CoAP
+To enable nRF Cloud Provisioning Service Support using CoAP, build the application with the :makevar:`EXTRA_CONF_FILE` variable set to ``"overlay-http_nrf_provisioning.conf;overlay_coap.conf"``.
+See the MQTT section for information how to provide this variable and :ref:`cmake_options` for more examples.
 
-      To build the sample to use CoAP instead of MQTT, use the ``-DOVERLAY_CONFIG=overlay_coap.conf`` option.
+The :file:`overlay-coap_nrf_provisioning.conf` overlay enables the :ref:`lib_nrf_provisioning` library to use CoAP for communication.
+It does not enable the shell.
 
-      .. code-block:: console
-
-         west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG="overlay-coap_nrf_provisioning.conf;overlay_coap.conf"
-
-      The :file:`overlay-coap_nrf_provisioning.conf` overlay enables the :ref:`lib_nrf_provisioning` library to use CoAP for communication.
-      It does not enable the shell.
-
-      The :file:`overlay_coap.conf` overlay causes the sample to use CoAP instead of MQTT for normal communication.
+The :file:`overlay_coap.conf` overlay causes the sample to use CoAP instead of MQTT for normal communication.
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_provisioning_service` for instructions on how to provision your device with the Provisioning Service.
 The device is identified using its UUID rather than its IMEI, since both overlays set the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` Kconfig option.
@@ -780,16 +761,20 @@ The device is identified using its UUID rather than its IMEI, since both overlay
 Building with nRF7002 EK Wi-Fi scanning support (for nRF91 Series DK)
 =====================================================================
 
-To build the sample with nRF7002 EK Wi-Fi scanning support, use the ``-DSHIELD=nrf7002ek`` and  ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf`` options.
+To build the sample with nRF7002 EK Wi-Fi scanning support, use the following variables:
+
+.. list-table::
+  :header-rows: 1
+
+  * - Files to use
+    - Build variables
+  * - :file:`overlay-nrf7002ek-wifi-scan-only.conf`
+    - * ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf``
+      * ``-DSHIELD=nrf7002ek``
+
+See :ref:`cmake_options` for instructions on how to provide these build variables.
 
 This enables the Wi-Fi location tracking method automatically.
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -p -b *build_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
-
-|build_target|
 
 See also :ref:`the paragraphs on the Wi-Fi location tracking method <nrf_cloud_multi_service_wifi_location_tracking>`.
 
@@ -819,25 +804,24 @@ See the :file:`src/prj.conf` configuration file and the :file:`overlay_nrf7002ek
 
 This overlay also enables the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credential installation.
 
-If you are certain you understand the risks, you can configure your build to use Wi-Fi connectivity on the nRF5340 DK with the nRF7002 EK shield by using the ``--board nrf5340dk_nrf5340_cpuapp_ns`` target and the ``-DSHIELD=nrf7002ek`` and ``-DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf`` options.
+If you are certain you understand the risks, you can configure your build to use Wi-Fi connectivity on the nRF5340 DK with the nRF7002 EK shield by using the following variables:
 
-You must also configure a (globally unique) device ID at build time by enabling the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and setting :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` to the device ID.
+.. list-table::
+  :header-rows: 1
 
-For example, for a device with the device ID ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
+  * - Build target
+    - Files and Kconfig options to use
+    - Build variables
+  * - ``nrf5340dk_nrf5340_cpuapp_ns``
+    - * :file:`overlay_nrf7002ek_wifi_no_lte.conf`
+      * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME`
+      * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` (set to the globally unique device ID)
+    - * ``-DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf``
+      * ``-DSHIELD=nrf7002ek``
+      * ``-DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y``
+      * ``-DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"`` (for ID ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``)
 
-.. tabs::
-
-   .. group-tab:: Bash
-
-      .. code-block:: console
-
-        west build --board nrf5340dk_nrf5340_cpuapp_ns -p always -- -DSHIELD=nrf7002ek -DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
-
-   .. group-tab:: PowerShell
-
-      .. code-block:: console
-
-         west build --board nrf5340dk_nrf5340_cpuapp_ns -p always -- -DSHIELD=nrf7002ek "-DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf" -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+See :ref:`cmake_options` for instructions on how to provide these build variables.
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
 
@@ -872,26 +856,9 @@ If you are certain you understand the inherent security risks, you can use this 
 
    This is required for onboarding to succeed.
 
-   Enable the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and set :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` to the device ID.
-
-   For example, if the device ID is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
-
-   .. tabs::
-
-      .. group-tab:: Bash
-
-         .. parsed-literal::
-            :class: highlight
-
-            west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
-
-      .. group-tab:: PowerShell
-
-         .. parsed-literal::
-            :class: highlight
-
-            west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
-
+   Enable the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and set :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` to the device ID (for example, ``-DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"``).
+   See :ref:`cmake_options` for instructions on how to provide these build variables.
+   You can use the table in the previous section as reference as well.
 
 .. _nrf_cloud_multi_service_setup_wifi_cred:
 
@@ -918,9 +885,8 @@ See the :ref:`Wi-Fi shell sample documentation <wifi_shell_sample>` for more det
 Building with nRF Cloud logging support
 =======================================
 
-To enable transmission of `logs <Zephyr Logging_>`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` library, add the following parameter to your build command:
-
-``-DOVERLAY_CONFIG=overlay_nrfcloud_logging.conf``
+To enable transmission of `logs <Zephyr Logging_>`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` library, set the :makevar:`EXTRA_CONF_FILE` to the :file:`overlay_nrfcloud_logging.conf` file when building the sample.
+See :ref:`cmake_options` for instructions on how to provide this build variable.
 
 This overlay enables transmission of `logs <Zephyr Logging_>`_ to nRF Cloud.
 Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` Kconfig option to the log level of messages to send to nRF Cloud, such as ``4`` for debug log messages.
@@ -936,13 +902,9 @@ See `Dictionary-based Logging`_ to learn how dictionary-based logging works, how
 Building with minimal services
 ==============================
 
-To build the sample with only temperature tracking enabled for either MQTT or CoAP, add the following parameter to your build command:
-
-``-DOVERLAY_CONFIG=overlay_min_mqtt.conf``
-
-or
-
-``-DOVERLAY_CONFIG=overlay_min_coap.conf``
+To build the sample with only temperature tracking enabled for either MQTT or CoAP, set the :makevar:`EXTRA_CONF_FILE` to the :file:`overlay_min_mqtt.conf` file when building the sample.
+Alternatively, for CoAP, set the :makevar:`EXTRA_CONF_FILE` to the :file:`overlay_min_coap.conf` file when building the sample.
+See :ref:`cmake_options` for instructions on how to provide these build variables.
 
 These overlays show all the Kconfig settings changes needed to properly disable all but a single sensor.
 

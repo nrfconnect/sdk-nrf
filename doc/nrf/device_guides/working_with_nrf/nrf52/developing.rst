@@ -78,7 +78,7 @@ Here is an example of how you can build for the :ref:`peripheral_lbs` sample:
     west build -b *build_target* -- -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
 
 When you connect to the device after the build has completed and the firmware has been programmed to it, the SMP Service is enabled with the ``UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84``.
-If you want to add SMP Service to advertising data, refer to the :zephyr:code-sample:`smp-svr`.
+If you want to add SMP Service to advertising data, refer to the :zephyr:code-sample:`smp-svr` sample.
 
 .. fota_upgrades_over_ble_additional_information_end
 
@@ -180,19 +180,15 @@ To perform a FOTA update, complete the following steps:
 FOTA update sample
 ==================
 
-The :zephyr:code-sample:`smp-svr` demonstrates how to set up your project to support FOTA updates.
+The :zephyr:code-sample:`smp-svr` sample demonstrates how to set up your project to support FOTA updates.
 
 The sample documentation is from the Zephyr project and is incompatible with the :ref:`ug_multi_image`.
 When working in the |NCS| environment, ignore the part of the sample documentation that describes the building and programming steps.
-In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any other sample using the following commands:
 
-.. parsed-literal::
-   :class: highlight
+In the |NCS|, you can build the :zephyr:code-sample:`smp-svr` sample with :makevar:`EXTRA_CONF_FILE` set to the :file:`overlay-bt.conf` file.
+See :ref:`cmake_options` for instructions on how to provide the build variables.
+See :ref:`programming` for instructions on how to program the sample.
 
-    west build -b *build_target* -- -DOVERLAY_CONFIG=overlay-bt.conf
-    west flash
-
-Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.
 This configuration was carefully selected to achieve the maximum possible throughput of the FOTA update transport over Bluetooth with the help of the following features:
 
 * Bluetooth MTU - To increase the packet size of a single Bluetooth packet transmitted over the air (:kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` and others).

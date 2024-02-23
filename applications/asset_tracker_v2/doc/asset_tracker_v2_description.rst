@@ -129,16 +129,15 @@ Custom DTC overlay file for enabling a specific feature:
 
 * :file:`nrf91xxdk_with_nrf7002ek` - Configuration file that enables Wi-Fi scanning with nRF7002 EK.
 
+.. |variable_feature| replace:: communication with AWS IoT Core
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-aws.conf
+.. |board_name| replace:: nrf9160dk_nrf9160_ns
+
+.. include:: /includes/apply_cmake_variable.txt
+
+Other overlay files follow the same pattern.
 Multiple overlay files can be included to enable multiple features at the same time.
-
-.. note::
-
-   Generally, Kconfig overlays have an ``overlay-`` prefix and a :file:`.conf` extension.
-   Board-specific configuration files are placed in the :file:`boards` folder and are named as :file:`<BOARD>.conf`.
-   DTS overlay files are named the same as the build target and use the file extension :file:`.overlay`.
-   When they are placed in the :file:`boards` folder and the DTS overlay filename matches the build target,
-   the build system automatically selects and applies the overlay.
-   You can give the custom DTS overlay files as a compiler option ``-DEXTRA_DTC_OVERLAY_FILE=<dtc_filename>.overlay``.
 
 Optional library configurations
 ===============================
