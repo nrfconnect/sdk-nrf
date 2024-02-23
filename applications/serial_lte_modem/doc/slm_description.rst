@@ -87,10 +87,10 @@ CONFIG_SLM_START_SLEEP - Enter sleep on startup
    This option makes an nRF91 Series device enter deep sleep after startup.
    It is not selected by default.
 
-.. _CONFIG_SLM_WAKEUP_PIN:
+.. _CONFIG_SLM_POWER_PIN:
 
-CONFIG_SLM_WAKEUP_PIN - Interface GPIO to exit from sleep or idle
-   This option specifies which interface GPIO to use for exiting sleep or idle mode.
+CONFIG_SLM_POWER_PIN - Interface GPIO pin to power off the SiP and exit from sleep or idle
+   This option specifies which pin to use to power on or off the SiP and make SLM exit idle mode.
    It is set by default as follows:
 
    * On the nRF9161 DK:
@@ -106,13 +106,13 @@ CONFIG_SLM_WAKEUP_PIN - Interface GPIO to exit from sleep or idle
    * On Thingy:91, **P0.26** (Multi-function button on Thingy:91) is used.
 
    .. note::
-      This pin is used as input GPIO and configured as *Active Low*.
-      By default, the application pulls up this GPIO.
+      This pin is configured with a pull up, so it is active low.
+      It must be pulled down for a short time to perform one power off or wake up operation.
 
 .. _CONFIG_SLM_INDICATE_PIN:
 
-CONFIG_SLM_INDICATE_PIN - Interface GPIO to indicate data available or unsolicited event notifications
-   This option specifies which interface GPIO to use for indicating data available or unsolicited event notifications from the modem.
+CONFIG_SLM_INDICATE_PIN - Interface GPIO pin to indicate data available or unsolicited event notifications
+   This option specifies which pin to use for indicating data available or unsolicited event notifications from the modem.
    It is set by default as follows:
 
    * On the nRF9161 DK:
@@ -128,8 +128,7 @@ CONFIG_SLM_INDICATE_PIN - Interface GPIO to indicate data available or unsolicit
    * It is not defined when the target is Thingy:91.
 
    .. note::
-      This pin is used as output GPIO and configured as *Active Low*.
-      By default, the application sets this GPIO as *Inactive High*.
+      This pin is configured to be active low, so it will be high when inactive.
 
 .. _CONFIG_SLM_INDICATE_TIME:
 
@@ -411,14 +410,14 @@ To connect with an external MCU using UART_2, change the configuration files for
           # unmask the following config
           #CONFIG_UART_0_NRF_HW_ASYNC_TIMER=2
           #CONFIG_UART_0_NRF_HW_ASYNC=y
-          #CONFIG_SLM_WAKEUP_PIN=8
+          #CONFIG_SLM_POWER_PIN=8
           #CONFIG_SLM_INDICATE_PIN=0
 
           # Use UART_2 (when working with external MCU)
           # unmask the following config
           CONFIG_UART_2_NRF_HW_ASYNC_TIMER=2
           CONFIG_UART_2_NRF_HW_ASYNC=y
-          CONFIG_SLM_WAKEUP_PIN=31
+          CONFIG_SLM_POWER_PIN=31
           CONFIG_SLM_INDICATE_PIN=30
 
       * In the :file:`nrf9161dk_nrf9161_ns.overlay` file::
@@ -453,14 +452,14 @@ To connect with an external MCU using UART_2, change the configuration files for
           # unmask the following config
           #CONFIG_UART_0_NRF_HW_ASYNC_TIMER=2
           #CONFIG_UART_0_NRF_HW_ASYNC=y
-          #CONFIG_SLM_WAKEUP_PIN=6
+          #CONFIG_SLM_POWER_PIN=6
           #CONFIG_SLM_INDICATE_PIN=2
 
           # Use UART_2 (when working with external MCU)
           # unmask the following config
           CONFIG_UART_2_NRF_HW_ASYNC_TIMER=2
           CONFIG_UART_2_NRF_HW_ASYNC=y
-          CONFIG_SLM_WAKEUP_PIN=31
+          CONFIG_SLM_POWER_PIN=31
           CONFIG_SLM_INDICATE_PIN=30
 
 

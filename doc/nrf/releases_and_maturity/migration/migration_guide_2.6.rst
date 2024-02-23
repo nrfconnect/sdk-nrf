@@ -22,6 +22,9 @@ The following changes are mandatory to make your application work in the same wa
   * The ``AT#XCMNG`` AT command, which is activated with the :file:`overlay-native_tls.conf` overlay file, has been changed from using modem certificate storage to Zephyr settings storage.
     You need to use the ``AT#XCMNG`` command to store previously stored credentials again.
 
+  * The ``CONFIG_SLM_WAKEUP_PIN`` Kconfig option was renamed to :ref:`CONFIG_SLM_POWER_PIN <CONFIG_SLM_POWER_PIN>`.
+    If you have defined it separately from the default configurations, you need to update its name accordingly.
+
 * For the Matter samples and applications using Intermittently Connected Devices configuration (formerly called Sleepy End Devices):
 
   * The naming convention for the energy-optimized devices has been changed from Sleepy End Devices (SED) to Intermittently Connected Devices (ICD).

@@ -146,15 +146,15 @@ The ``<sleep_mode>`` parameter accepts only the following integer values:
 * ``1`` - Enter Sleep.
   In this mode, both the SLM service and the LTE connection are terminated.
 
-  The nRF91 Series SiP can be woken up using the :ref:`CONFIG_SLM_WAKEUP_PIN <CONFIG_SLM_WAKEUP_PIN>`.
+  The nRF91 Series SiP can be woken up using the pin specified with the :ref:`CONFIG_SLM_POWER_PIN <CONFIG_SLM_POWER_PIN>` Kconfig option.
 
 * ``2`` - Enter Idle.
-
   In this mode, both the SLM service and the LTE connection are maintained.
-  The nRF91 Series SiP can be made to exit idle using the :ref:`CONFIG_SLM_WAKEUP_PIN <CONFIG_SLM_WAKEUP_PIN>`.
-  If the :ref:`CONFIG_SLM_INDICATE_PIN <CONFIG_SLM_INDICATE_PIN>` is defined, SLM toggle this GPIO when there is data for MCU.
-  MCU could in turn make SLM to exit idle by :ref:`CONFIG_SLM_WAKEUP_PIN <CONFIG_SLM_WAKEUP_PIN>`.
-  The data is buffered during the idle status and sent to MCU after exiting the idle status.
+
+  The nRF91 Series SiP can be made to exit idle using the pin specified with the :ref:`CONFIG_SLM_POWER_PIN <CONFIG_SLM_POWER_PIN>` Kconfig option.
+  If the :ref:`CONFIG_SLM_INDICATE_PIN <CONFIG_SLM_INDICATE_PIN>` Kconfig option is defined, SLM toggles the specified pin when there is data for the MCU to read.
+  The MCU can in turn make SLM exit idle by toggling the pin specified with the :ref:`CONFIG_SLM_POWER_PIN <CONFIG_SLM_POWER_PIN>` Kconfig option.
+  The data is buffered when SLM is idle and sent to the MCU after having exited idle.
 
 .. note::
 
@@ -240,7 +240,7 @@ Syntax
 
 .. note::
 
-   In this case the nRF91 Series SiP cannot be woken up using the :ref:`CONFIG_SLM_WAKEUP_PIN <CONFIG_SLM_WAKEUP_PIN>`..
+   In this case the nRF91 Series SiP cannot be woken up using the pin specified with the :ref:`CONFIG_SLM_POWER_PIN <CONFIG_SLM_POWER_PIN>` Kconfig option.
 
 Example
 ~~~~~~~~

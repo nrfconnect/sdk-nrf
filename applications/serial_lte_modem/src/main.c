@@ -6,6 +6,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/kernel.h>
+#include <assert.h>
 #include <stdio.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/drivers/gpio.h>
@@ -34,16 +35,15 @@ LOG_MODULE_REGISTER(slm, CONFIG_SLM_LOG_LEVEL);
 static K_THREAD_STACK_DEFINE(slm_wq_stack_area, SLM_WQ_STACK_SIZE);
 
 static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
+#if POWER_PIN_IS_ENABLED
 static struct gpio_callback gpio_cb;
-static atomic_t gpio_cb_running; /* Protect the gpio_cb. */
+#endif
 static struct k_work_delayable indicate_work;
 
 struct k_work_q slm_work_q;
 
 /* Forward declarations */
 static void indicate_wk(struct k_work *work);
-
-BUILD_ASSERT(CONFIG_SLM_WAKEUP_PIN >= 0, "Wake up pin not configured");
 
 NRF_MODEM_LIB_ON_INIT(lwm2m_init_hook, on_modem_lib_init, NULL);
 NRF_MODEM_LIB_ON_DFU_RES(main_dfu_hook, on_modem_dfu_res, NULL);
@@ -124,8 +124,66 @@ static int ext_xtal_control(bool xtal_on)
 	return err;
 }
 
-/* This function is safe to call twice after reset */
-static int init_gpio(void)
+#if POWER_PIN_IS_ENABLED
+
+static int configure_power_pin_interrupt(gpio_callback_handler_t handler, gpio_flags_t flags)
+{
+	int err;
+	const gpio_pin_t pin = CONFIG_SLM_POWER_PIN;
+
+	/* First disable the previously configured interrupt. Somehow when in idle mode if
+	 * the wake-up interrupt is configured to be on an edge the power consumption
+	 * drastically increases (3x), which is is why it is configured to be level-triggered.
+	 * When entering idle for some reason first disabling the previously edge-level
+	 * configured interrupt is also needed to keep the power consumption down.
+	 */
+	gpio_pin_interrupt_configure(gpio_dev, pin, GPIO_INT_DISABLE);
+
+	err = gpio_pin_interrupt_configure(gpio_dev, pin, flags);
+	if (err) {
+		LOG_ERR("Failed to configure %s (0x%x) on power pin. (%d)",
+			"interrupt", flags, err);
+		return err;
+	}
+
+	gpio_init_callback(&gpio_cb, handler, BIT(pin));
+
+	err = gpio_add_callback(gpio_dev, &gpio_cb);
+	if (err) {
+		LOG_ERR("Failed to configure %s (0x%x) on power pin. (%d)", "callback", flags, err);
+		return err;
+	}
+
+	LOG_DBG("Configured interrupt (0x%x) on power pin (%u).", flags, pin);
+	return 0;
+}
+
+static void power_pin_callback_poweroff(const struct device *, struct gpio_callback *, uint32_t)
+{
+	LOG_INF("Power off triggered.");
+	slm_enter_sleep();
+}
+
+static void poweroff_interrupt_enabler(struct k_work *)
+{
+	configure_power_pin_interrupt(power_pin_callback_poweroff, GPIO_INT_EDGE_RISING);
+}
+
+#endif /* POWER_PIN_IS_ENABLED */
+
+static int configure_gpio(gpio_pin_t pin, gpio_flags_t flags)
+{
+	const int err = gpio_pin_configure(gpio_dev, pin, flags);
+
+	if (err) {
+		LOG_ERR("Failed to configure GPIO pin P0.%d. (%d)", pin, err);
+		return err;
+	}
+
+	return 0;
+}
+
+static int init_gpios(void)
 {
 	int err;
 
@@ -133,17 +191,17 @@ static int init_gpio(void)
 		LOG_ERR("GPIO controller not ready");
 		return -ENODEV;
 	}
-	err = gpio_pin_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN,
-				 GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW);
+
+#if POWER_PIN_IS_ENABLED
+	err = configure_gpio(CONFIG_SLM_POWER_PIN, GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW);
 	if (err) {
-		LOG_ERR("GPIO_0 config error: %d", err);
 		return err;
 	}
-#if (CONFIG_SLM_INDICATE_PIN >= 0)
-	err = gpio_pin_configure(gpio_dev, CONFIG_SLM_INDICATE_PIN,
-				 GPIO_OUTPUT_INACTIVE | GPIO_ACTIVE_LOW);
+#endif
+
+#if INDICATE_PIN_IS_ENABLED
+	err = configure_gpio(CONFIG_SLM_INDICATE_PIN, GPIO_OUTPUT_INACTIVE | GPIO_ACTIVE_LOW);
 	if (err) {
-		LOG_ERR("GPIO_0 config error: %d", err);
 		return err;
 	}
 #endif
@@ -155,7 +213,7 @@ int slm_indicate(void)
 {
 	int err = 0;
 
-#if (CONFIG_SLM_INDICATE_PIN >= 0)
+#if (INDICATE_PIN_IS_ENABLED)
 	if (k_work_delayable_is_pending(&indicate_work)) {
 		return 0;
 	}
@@ -172,7 +230,7 @@ int slm_indicate(void)
 
 static void indicate_stop(void)
 {
-#if (CONFIG_SLM_INDICATE_PIN >= 0)
+#if (INDICATE_PIN_IS_ENABLED)
 	if (gpio_pin_set(gpio_dev, CONFIG_SLM_INDICATE_PIN, 0) != 0) {
 		LOG_WRN("GPIO_0 set error");
 	}
@@ -180,23 +238,36 @@ static void indicate_stop(void)
 #endif
 }
 
-static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_callback,
-			 uint32_t pins)
+#if POWER_PIN_IS_ENABLED
+
+static void power_pin_callback_enable_poweroff(const struct device *dev,
+					       struct gpio_callback *gpio_callback, uint32_t)
 {
+	static K_WORK_DELAYABLE_DEFINE(work, poweroff_interrupt_enabler);
+
+	LOG_DBG("Enabling the poweroff interrupt shortly...");
+	gpio_remove_callback(dev, gpio_callback);
+
+	/* Enable the poweroff interrupt after a small delay
+	 * so that it doesn't fire right away (which it does if enabled here).
+	 */
+	k_work_schedule(&work, K_MSEC(1));
+}
+
+static void power_pin_callback_wakeup(const struct device *dev,
+				      struct gpio_callback *gpio_callback, uint32_t)
+{
+	static atomic_t callback_running;
 	int err;
 
-	if ((BIT(CONFIG_SLM_WAKEUP_PIN) & pins) == 0) {
-		return;
-	}
-
 	/* Prevent level triggered interrupt running this multiple times. */
-	if (!atomic_cas(&gpio_cb_running, false, true)) {
+	if (!atomic_cas(&callback_running, false, true)) {
 		return;
 	}
 
 	LOG_INF("Resuming from idle.");
 	if (k_work_delayable_is_pending(&indicate_work)) {
-		(void)k_work_cancel_delayable(&indicate_work);
+		k_work_cancel_delayable(&indicate_work);
 		indicate_stop();
 	}
 
@@ -206,30 +277,28 @@ static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_ca
 	}
 	err = slm_at_host_power_on();
 	if (err) {
-		(void)atomic_set(&gpio_cb_running, false);
+		atomic_set(&callback_running, false);
 		LOG_ERR("Failed to power on uart: %d", err);
 		return;
 	}
 
-	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_INT_DISABLE);
-	gpio_remove_callback(gpio_dev, gpio_callback);
-	(void)atomic_set(&gpio_cb_running, false);
+	gpio_remove_callback(dev, gpio_callback);
+
+	/* Enable the poweroff interrupt only when the pin will be back to a nonactive state. */
+	configure_power_pin_interrupt(power_pin_callback_enable_poweroff, GPIO_INT_EDGE_RISING);
+
+	atomic_set(&callback_running, false);
 }
 
-void enter_idle(void)
+void slm_enter_idle(void)
 {
 	LOG_INF("Entering idle.");
 	int err;
 
-	gpio_init_callback(&gpio_cb, gpio_cb_func, BIT(CONFIG_SLM_WAKEUP_PIN));
-	err = gpio_add_callback(gpio_dev, &gpio_cb);
+	gpio_remove_callback(gpio_dev, &gpio_cb);
+
+	err = configure_power_pin_interrupt(power_pin_callback_wakeup, GPIO_INT_LEVEL_LOW);
 	if (err) {
-		LOG_ERR("GPIO_0 add callback error: %d", err);
-		return;
-	}
-	err = gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_INT_LEVEL_LOW);
-	if (err) {
-		LOG_ERR("GPIO_0 enable callback error: %d", err);
 		return;
 	}
 
@@ -239,32 +308,50 @@ void enter_idle(void)
 	}
 }
 
-void enter_sleep(void)
+FUNC_NORETURN static void enter_sleep_no_uninit(void)
 {
 	LOG_INF("Entering sleep.");
-	/*
-	 * Due to errata 4, Always configure PIN_CNF[n].INPUT before PIN_CNF[n].SENSE.
-	 * At this moment WAKEUP_PIN has already been configured as INPUT at init_gpio().
-	 */
-	nrf_gpio_cfg_sense_set(CONFIG_SLM_WAKEUP_PIN, NRF_GPIO_PIN_SENSE_LOW);
+	LOG_PANIC();
+	nrf_gpio_cfg_sense_set(CONFIG_SLM_POWER_PIN, NRF_GPIO_PIN_SENSE_LOW);
 
 	k_sleep(K_MSEC(100));
 
 	nrf_regulators_system_off(NRF_REGULATORS_NS);
+	assert(false);
 }
 
-void enter_shutdown(void)
+FUNC_NORETURN void slm_enter_sleep(void)
+{
+	slm_at_host_uninit();
+
+	/* Only power off the modem if it has not been put
+	 * in flight mode to allow reducing NVM wear.
+	 */
+	if (!slm_is_modem_functional_mode(LTE_LC_FUNC_MODE_OFFLINE)) {
+		slm_power_off_modem();
+	}
+	enter_sleep_no_uninit();
+}
+
+#endif /* POWER_PIN_IS_ENABLED */
+
+FUNC_NORETURN void slm_enter_shutdown(void)
 {
 	LOG_INF("Entering shutdown.");
 
 	/* De-configure GPIOs */
-	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_INT_DISABLE);
-	gpio_pin_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_DISCONNECTED);
+#if POWER_PIN_IS_ENABLED
+	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_POWER_PIN, GPIO_INT_DISABLE);
+	gpio_pin_configure(gpio_dev, CONFIG_SLM_POWER_PIN, GPIO_DISCONNECTED);
+#endif
+#if INDICATE_PIN_IS_ENABLED
 	gpio_pin_configure(gpio_dev, CONFIG_SLM_INDICATE_PIN, GPIO_DISCONNECTED);
+#endif
 
 	k_sleep(K_MSEC(100));
 
 	nrf_regulators_system_off(NRF_REGULATORS_NS);
+	assert(false);
 }
 
 static void on_modem_dfu_res(int dfu_res, void *ctx)
@@ -411,6 +498,16 @@ int start_execute(void)
 		LOG_ERR("Failed to init at_host: %d", err);
 		return err;
 	}
+	/* Do not directly enable the poweroff interrupt so that only a full toggle triggers
+	 * power off. This is because power on is triggered on low level, so if the pin is held
+	 * down until SLM is fully initialized releasing it would directly trigger the power off.
+	 */
+	err = configure_power_pin_interrupt(power_pin_callback_enable_poweroff,
+					    GPIO_INT_EDGE_FALLING);
+
+	if (err) {
+		return err;
+	}
 	k_work_queue_start(&slm_work_q, slm_wq_stack_area,
 			   K_THREAD_STACK_SIZEOF(slm_wq_stack_area),
 			   SLM_WQ_PRIORITY, NULL);
@@ -434,9 +531,8 @@ int main(void)
 	LOG_DBG("RR: 0x%08x", rr);
 	k_work_init_delayable(&indicate_work, indicate_wk);
 
-	/* Init GPIOs */
-	if (init_gpio() != 0) {
-		LOG_WRN("Failed to init gpio");
+	if (init_gpios() != 0) {
+		LOG_WRN("Failed to init GPIO pins.");
 	}
 	/* Init and load settings */
 	if (slm_settings_init() != 0) {
@@ -465,10 +561,10 @@ int main(void)
 	check_app_fota_status();
 
 #if defined(CONFIG_SLM_START_SLEEP)
-	if (!(rr & NRF_POWER_RESETREAS_OFF_MASK) &&  /* DETECT signal from GPIO*/
-	    !(rr & NRF_POWER_RESETREAS_DIF_MASK)) {  /* Entering debug interface mode */
-		enter_sleep();
-		return 0;
+
+	if (!(rr & NRF_POWER_RESETREAS_OFF_MASK)) { /* DETECT signal from GPIO */
+
+		enter_sleep_no_uninit();
 	}
 #endif /* CONFIG_SLM_START_SLEEP */
 
