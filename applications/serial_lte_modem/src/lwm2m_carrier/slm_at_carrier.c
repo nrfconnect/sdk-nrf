@@ -302,7 +302,7 @@ static int carrier_datamode_callback(uint8_t op, const uint8_t *data, int len, u
 	return ret;
 }
 
-/* AT#XCARRIER="app_data"[,<data>][,<instance_id>,<resource_instance_id>] */
+/* AT#XCARRIER="app_data"[,<data>][,<obj_inst_id>,<res_inst_id>] */
 static int do_carrier_appdata_send(void)
 {
 	int ret = 0;
@@ -781,7 +781,7 @@ static int do_carrier_location_velocity(void)
 	return lwm2m_carrier_velocity_set(heading, speed_h, speed_v, uncertainty_h, uncertainty_v);
 }
 
-/* AT#XCARRIER="portfolio","create|read|write",<instance_id>[,<identity_type>[,<identity>]] */
+/* AT#XCARRIER="portfolio","create|read|write",<obj_inst_id>[,<identity_type>[,<identity>]] */
 static int do_carrier_portfolio(void)
 {
 	int ret, param_count;

@@ -79,31 +79,151 @@ Syntax
 
 The ``<cmd>`` command is a string, and can be used as follows:
 
-* ``AT#XCARRIER="app_data"[,<data>][,<instance_id>,<resource_instance_id>]``
+* ``AT#XCARRIER="app_data"[,<data>][,<obj_inst_id>,<res_inst_id>]``
+
+  Put the value in ``<data>`` into the indicated path.
+  ``<data>`` must be an opaque string in double quotes, unless ``slm_data_mode`` is enabled.
+
+  * If ``<obj_inst_id>`` and ``<res_inst_id>`` are specified, the data is set in an instance of the Data resource (ID: 0) of the Binary App Data Container object (ID: 19).
+    The URI path of the resource instance is indicated as ``/19/<obj_inst_id>/0/<res_inst_id>``.
+  * If ``<obj_inst_id>`` and ``<res_inst_id>`` are not present, the data is set in the Uplink Data resource (ID: 0) of the App Data Container object (ID: 10250).
+    The URI path of the resource instance is indicated as ``/10250/0/0``.
+  * If ``<data>`` is not present, SLM enters ``slm_data_mode`` and the data is set in the Uplink Data resource (ID: 0) of the App Data Container object (ID: 10250).
+    The URI path of the resource instance is indicated as ``/10250/0/0``.
+
 * ``AT#XCARRIER="battery_level",<battery_level>``
+
+  Put the value in ``<battery_level>`` into the Battery Level resource (ID: 9) of the Device object (ID :3).
+  ``<battery_level>`` must be an integer value between ``0`` and ``100``.
+
 * ``AT#XCARRIER="battery_status",<battery_status>``
+
+  Set the Battery Status resource (ID: 20) of the Device object (ID: 3).
+  ``<battery_status>`` must be an integer value as defined in the OMA LwM2M specification.
+
 * ``AT#XCARRIER="current",<power_source>,<current>``
+
+  Put the value in ``<current>`` into the Power Source Current resource (ID: 8) instance corresponding to one of the Available Power Sources resource (ID: 6) instances of the Device object (ID: 3).
+  Refer to the ``AT#XCARRIER="power_sources"`` command for information regarding the supported power sources.
+  ``<current>`` must be an integer value specified in milliamperes (mA).
+
 * ``AT#XCARRIER="error","add|remove",<error>``
+
+  Update the Error Code resource (ID: 11) of the Device Object (ID: 3) by adding or removing an individual error.
+  ``<error>`` must be an integer value as defined in the OMA LwM2M specification.
+
+  * ``AT#XCARRIER="error","add",<error>`` adds a resource instance with the indicated error if one with that error is not present already.
+  * ``AT#XCARRIER="error","remove",<error>`` removes the resource instance with the indicated error if it exists.
+
 * ``AT#XCARRIER="link_down"``
+
+  Request to set the modem to flight mode.
+
 * ``AT#XCARRIER="link_up"``
+
+  Request to set the modem to full functionality.
+
 * ``AT#XCARRIER="log_data",<data>``
+
+  Put the value in ``<data>`` into the LogData resource (ID: 4014) of the default EventLog object (ID: 20) instance.
+  ``<data>`` must be an opaque string in double quotes.
+
 * ``AT#XCARRIER="memory_free","read|write"[,<memory>]``
+
+  Read or write the Memory Free resource (ID: 10) of the Device object (ID: 3).
+
+  * ``AT#XCARRIER="memory_free","read"`` returns the current value expressed in kilobytes.
+  * ``AT#XCARRIER="memory_free","write",<memory>`` puts the value in ``<memory>`` into the resource.
+    ``<memory>`` must be an integer value specified in kilobytes.
+
 * ``AT#XCARRIER="memory_total",<memory>``
-* ``AT#XCARRIER="portfolio","create|read|write",<instance_id>[,<identity_type>[,<identity>]]``
+
+  Put the value in ``<memory>`` into the Memory Total resource (ID: 21) of the Device object (ID: 3).
+  ``<memory>`` must be an integer value specified in kilobytes.
+
+* ``AT#XCARRIER="portfolio","create|read|write",<obj_inst_id>[,<res_inst_id>[,<identity>]]``
+
+  Create an instance of the Portfolio object (ID: 16), or read or write into the Identity (ID: 0) resource of the Portfolio object (ID: 16).
+
+  * ``AT#XCARRIER="portfolio","create",<obj_inst_id>`` creates an instance of the object, where the URI path is specified as ``/16/<obj_inst_id>``.
+  * ``AT#XCARRIER="portfolio","read",<obj_inst_id>,<res_inst_id>`` returns the current value of the indicated resource instance, where the URI path is specified as ``/16/<obj_inst_id>/0/<res_inst_id>``.
+  * ``AT#XCARRIER="portfolio","write",<obj_inst_id>,<res_inst_id>,<identity>`` puts the value in ``<identity>`` into the indicated resource instance, where the URI path is specified as ``/16/<obj_inst_id>/0/<res_inst_id>``.
+    ``<identity>`` must be a string in double quotes.
+
 * ``AT#XCARRIER="power_sources"[,<source1>[,<source2>[,...[,<source8>]]]]``
+
+  Set one or more sources specified in ``<source>`` parameters into the Available Power Sources resource (ID: 6) of the Device object (ID: 3).
+  Each ``<source>`` parameter must be an integer value as defined in the OMA LwM2M specification.
+
 * ``AT#XCARRIER="position",<latitude>,<longitude>,<altitude>,<timestamp>,<uncertainty>``
+
+  Put location telemetry values into the corresponding resources of the Location object (ID: 6).
+
+  * ``<latitude>`` specified in the decimal notation of latitude (WGS1984) is put into the Latitude resource (ID: 0).
+    Must be a double type value in double quotes.
+  * ``<longitude>`` specified in the decimal notation of latitude (WGS1984) is put into the Longitude resource (ID: 1).
+    Must be a double type value in double quotes.
+  * ``<altitude>`` specified in meters is put into the Altitude resource (ID: 2).
+    Must be a float type value in double quotes.
+  * ``<timestamp>`` is put into the Timestamp resource (ID: 5).
+    Must be an integer value specified in UNIX time.
+  * ``<uncertainty>`` specified in meters is put into the Radius resource (ID: 3).
+    Must be a float type value in double quotes.
+
 * ``AT#XCARRIER="reboot"``
+
+  Request to reboot the device.
+
 * ``AT#XCARRIER="time"``
+
+  Read the time reported by the device, including the UTC time, the UTC offset and the timezone.
+  See examples for response syntax.
+
 * ``AT#XCARRIER="timezone","read|write"[,<timezone>]``
+
+  Read or write the value reported in the Timezone (ID: 15) resource of the Device object (ID: 3) in IANA Timezone (TZ) database format.
+
+  * ``AT#XCARRIER="timezone","read"`` returns the timezone currently stored by the device.
+  * ``AT#XCARRIER="timezone","write",<timezone>`` puts the value in ``<timezone>`` into the resource.
+    ``<timezone>`` must be a string in double quotes.
+
 * ``AT#XCARRIER="utc_offset","read|write"[,<utc_offset>]``
+
+  Read or write the UTC Offset resource (ID: 14) of the Device object (ID: 3).
+
+  * ``AT#XCARRIER="utc_offset","read"`` returns the UTC offset currently in effect for the device as per ISO 8601.
+  * ``AT#XCARRIER="utc_offset","write",<utc_offset>`` puts the value in ``<utc_offset>`` into the resource.
+    ``<utc_offset>`` must be an integer value specified in minutes.
+
 * ``AT#XCARRIER="utc_time","read|write"[,<utc_time>]``
+
+  Read or write the Current Time resource (ID: 13) of the Device object (ID: 3).
+
+  * ``AT#XCARRIER="utc_time","read"`` returns the current UNIX time of the device.
+  * ``AT#XCARRIER="utc_time","write",<utc_time>`` puts the value in ``<utc_time>`` into the resource.
+    ``<utc_time>`` must be an integer value specified in UNIX time.
+
 * ``AT#XCARRIER="velocity",<heading>,<speed_h>,<speed_v>,<uncertainty_h>,<uncertainty_v>``
+
+  Set or update the latest velocity information that will be mapped into the Velocity resource (ID: 4) and Speed resource (ID: 6) of the Location object (ID: 6).
+
+  * ``<heading>`` is the horizontal direction of movement in degrees clockwise from North.
+    Must be an integer value between ``0`` and ``359``.
+  * ``<speed_h>`` is the horizontal non-negative speed in meters per second.
+    Must be a float type value in double quotes.
+  * ``<speed_v>`` is the vertical speed in meters per second.
+    A positive value indicates upward motion, while a negative value indicates downward motion.
+    Must be a float type value in double quotes.
+  * ``<uncertainty_h>`` is the horizontal uncertainty speed in meters per second.
+    Must be a non-negative float type value in double quotes.
+  * ``<uncertainty_v>`` is the vertical uncertainty speed in meters per second.
+    Must be a non-negative float type value in double quotes.
+
 * ``AT#XCARRIER="voltage",<power_source>,<voltage>``
 
-The values of the parameters depend on the command string used.
-Specifying ``instance_id`` and ``resource_instance_id`` in the ``app_data`` command sends the data to the Binary App Data Container object instead of the App Data Container object.
-When using the ``app_data`` command, if no attributes are specified, SLM enters ``slm_data_mode``.
-``slm_data_mode`` is only supported when using the App Data Container object.
+  Put the value in ``<voltage>`` into the Power Source Voltage resource (ID: 7) instance corresponding to one of the Available Power Sources resource (ID: 6) instances of the Device object (ID: 3).
+  Refer to the ``AT#XCARRIER="power_sources"`` command for information regarding the supported power sources.
+  ``<voltage>`` must be an integer value specified in millivolts.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -143,6 +263,11 @@ Examples
    AT#XCARRIER="reboot"
    OK
 
+::
+
+   AT#XCARRIER="position","63.43","10.47","48",1708684683,"30.5"
+   OK
+
 Read command
 ------------
 
@@ -179,22 +304,39 @@ The ``<cmd>`` command is a string, and can be used as follows:
 
 * ``AT#XCARRIERCFG="apn"[,<apn>]``
 
+  Configure the LwM2M carrier library to use a custom APN specified in ``<apn>`` when connecting to the device management network.
+  ``<apn>`` must be a string in double quotes.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` Kconfig option.
 
 * ``AT#XCARRIERCFG="auto_startup"[,<0|1>]``
 
-  Set flag to automatically apply the enabled settings to the library configuration and connect to the device management server.
+  Set a flag to automatically apply the enabled settings to the LwM2M carrier library configuration and connect to the device management network.
+  This command accepts two possible input parameters: ``0`` to disable or ``1`` to enable.
 
 * ``AT#XCARRIERCFG="bootstrap_smartcard"[,<0|1>]``
 
+  Configure the LwM2M carrier library to allow bootstrap from Smartcard.
+  This command accepts two possible input parameters: ``0`` to disable or ``1`` to enable.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD` Kconfig option.
 
-* ``AT#XCARRIERCFG="carriers"[,"all"|<carrier1>[<carrier2>[,...[,<carrier6>]]]]``
+* ``AT#XCARRIERCFG="carriers"[,"all"|<carrier1>[,<carrier2>[,...[,<carrier6>]]]]``
 
-  Choose the networks in which the LwM2M carrier library will apply (see the :ref:`general_options_lwm2m` section of the library's documentation).
+  Configure the networks in which the LwM2M carrier library will apply (see the :ref:`general_options_lwm2m` section of the library's documentation).
+  By default, any network is allowed. The input parameters are mapped as follows:
+
+  * ``all`` - Any network allowed.
+  * ``0`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`.
+  * ``1`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON`.
+  * ``2`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT`.
+  * ``3`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`.
+  * ``4`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_T_MOBILE`.
+  * ``5`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK`.
 
 * ``AT#XCARRIERCFG="coap_con_interval"[,<interval>]``
 
+  Configure how often the LwM2M carrier library is to send the Notify operation as a CoAP Confirmable message instead of a Non-Confirmable message.
+  ``<interval>`` must be an integer value specified in seconds.
+  Two special values may also be used: ``-1`` to always use Confirmable notifications, or ``0`` to use the default interval of 86400 seconds.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_COAP_CON_INTERVAL` Kconfig option.
 
 * ``AT#XCARRIERCFG="config_enable"[,<0|1>]``
@@ -207,37 +349,72 @@ The ``<cmd>`` command is a string, and can be used as follows:
 
 * ``AT#XCARRIERCFG="device_type"[,<device_type>]``
 
+  Configure the value in ``<device_type>`` to be put into the Device Type resource (ID: 17) of the Device object (ID: 3).
+  ``<device_type>`` must be a string in double quotes.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_TYPE` Kconfig option.
 
 * ``AT#XCARRIERCFG="hardware_version"[,<version>]``
 
+  Configure the value in ``<version>`` to be put into the Hardware Version resource (ID: 18) of the Device object (ID: 3).
+  ``<version>`` must be a string in double quotes.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_HARDWARE_VERSION` Kconfig option.
 
 * ``AT#XCARRIERCFG="manufacturer"[,<manufacturer>]``
 
+  Configure the value in ``<manufacturer>`` to be put into the Manufacturer resource (ID: 0) of the Device object (ID: 3).
+  ``<manufacturer>`` must be a string in double quotes.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MANUFACTURER` Kconfig option.
 
 * ``AT#XCARRIERCFG="model_number"[,<model_number>]``
 
+  Configure the value in ``<model_number>`` to be put into the Model Number resource (ID: 1) of the Device object (ID: 3).
+  ``<model_number>`` must be a string in double quotes.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MODEL_NUMBER` Kconfig option.
 
 * ``AT#XCARRIERCFG="software_version"[,<version>]``
 
+  Configure the value in ``<version>`` to be put into the Software Version resource (ID: 19) of the Device object (ID: 3).
+  ``<version>`` must be a string in double quotes.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION` Kconfig option.
 
 * ``AT#XCARRIERCFG="device_serial_no_type"[,<device_serial_no_type>]``
+
+  Configure the Device Serial Number type to be used in LG U+ network.
+  The ``<device_serial_no_type>`` must be an integer value.
+  It accepts the following values:
+
+  * ``0`` - :kconfig:option:`LWM2M_CARRIER_LG_UPLUS_IMEI`.
+  * ``1`` - :kconfig:option:`LWM2M_CARRIER_LG_UPLUS_2DID`.
 
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER` Kconfig option.
 
 * ``AT#XCARRIERCFG="service_code"[,<service_code>]``
 
+  Configure the Service Code registered for this device with LG U+.
+  ``<service_code>`` must be a string in double quotes.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE` Kconfig option.
 
 * ``AT#XCARRIERCFG="pdn_type"[,<pdn_type>]``
 
+  Configure the PDN type of the custom APN configured through the ``AT#XCARRIERCFG="apn"`` command.
+  ``<pdn_type>`` must be an integer value.
+  It accepts the following values:
+
+  * ``0`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_IPV4V6`.
+  * ``1`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_IPV4`.
+  * ``2`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_IPV6`.
+  * ``3`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_NONIP`.
+
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_PDN_TYPE` Kconfig option.
 
 * ``AT#XCARRIERCFG="binding"[,<binding>]``
+
+  Configure the binding over which the LwM2M carrier library is to connect to the device management network.
+  ``<binding>`` must be a string in double quotes.
+  It accepts the following values:
+
+  * ``"U"`` - :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_U`.
+  * ``"N"`` - :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_N`.
 
   For details, see the :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE` Kconfig option.
 
@@ -247,56 +424,39 @@ The ``<cmd>`` command is a string, and can be used as follows:
 
 * ``AT#XCARRIERCFG="is_bootstrap"[,<0|1>]``
 
+  Indicate whether the custom server configured through the ``AT#XCARRIERCFG="uri"`` command is a bootstrap server.
+  This command accepts two possible input parameters: ``0`` if it is not a bootstrap server or ``1`` if it is a bootstrap server.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` Kconfig option.
 
 * ``AT#XCARRIERCFG="lifetime"[,<lifetime>]``
 
+  Configure the lifetime of the custom server configured through the ``AT#XCARRIERCFG="uri"`` command.
+  ``<lifetime>`` must an integer value specified in seconds.
+  This configuration is ignored if the custom server is a bootstrap server.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` Kconfig option.
 
 * ``AT#XCARRIERCFG="sec_tag"[,<sec_tag>]``
 
+  Configure the security tag that stores the credentials to be used to set up the DTLS session with the custom server configured through the ``AT#XCARRIERCFG="uri"`` command.
+  ``<sec_tag>`` must be an integer value specifying the security tag number to be used.
+  This configuration is ignored for non-secure connections.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` Kconfig option.
 
 * ``AT#XCARRIERCFG="uri"[,<uri>]``
 
+  Configure the URI of a custom server that the library is to connect to.
+  ``<uri>`` must be a string in double quotes.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` Kconfig option.
 
 * ``AT#XCARRIERCFG="session_idle_timeout"[,<session_idle_timeout>]``
 
+  Configure how long a DTLS session used by the library can be idle before it is closed.
+  ``<session_idle_timeout>`` must be an integer value specified in seconds.
+  Two special values may also be used: ``-1`` to disable the session idle timeout, or ``0`` to use the default interval of 60 seconds.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT` Kconfig option.
 
 
-The values of the parameters depend on the command string used.
 If a valid command string is used without any parameter, the current value of the corresponding configuration will be returned in the response, as in the examples shown below.
-Boolean configurations, such as ``auto_startup`` or ``is_bootstrap``, only accept ``0`` (disable) and ``1`` (enable) as input parameters.
-
-The ``carriers`` configuration allows to choose the networks in which the LwM2M carrier library will apply.
-Possible inputs are mapped as follows:
-
-* ``all`` - Any network allowed.
-* ``0`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`.
-* ``1`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON`.
-* ``2`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT`.
-* ``3`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`.
-* ``4`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_T_MOBILE`.
-* ``5`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK`.
-
-The ``device_serial_no_type`` configuration accepts the following values:
-
-* ``0`` - :kconfig:option:`LWM2M_CARRIER_LG_UPLUS_IMEI`.
-* ``1`` - :kconfig:option:`LWM2M_CARRIER_LG_UPLUS_2DID`.
-
-The ``pdn_type`` configuration accepts the following values:
-
-* ``0`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_IPV4V6`.
-* ``1`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_IPV4`.
-* ``2`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_IPV6`.
-* ``3`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_NONIP`.
-
-The ``binding`` configuration accepts the following values:
-
-* ``"U"`` - :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_U`.
-* ``"N"`` - :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_N`.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -326,6 +486,15 @@ Examples
 
    AT#XCARRIERCFG="manufacturer"
    #XCARRIERCFG: Nordic Semiconductor ASA
+   OK
+
+::
+
+   AT#XCARRIERCFG="apn","custom.APN"
+   OK
+
+   AT#XCARRIERCFG="apn"
+   #XCARRIERCFG: custom.APN
    OK
 
 ::
