@@ -266,8 +266,9 @@ int bt_fast_pair_info_cb_register(const struct bt_fast_pair_info_cb *cb);
 /** Perform a reset to the default factory settings for Google Fast Pair Service.
  *
  * Clears the Fast Pair storage. If the reset operation is interrupted by system reboot or power
- * outage, the reset is automatically resumed at the stage of loading the Fast Pair storage.
- * It prevents the Fast Pair storage from ending in unwanted state after the reset interruption.
+ * outage, the reset is automatically resumed at the stage of initializing the Fast Pair storage
+ * when calling the @ref bt_fast_pair_enable API. It prevents the Fast Pair storage from ending in
+ * unwanted state after the reset interruption.
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
