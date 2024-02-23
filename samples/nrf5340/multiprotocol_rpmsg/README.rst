@@ -46,24 +46,31 @@ You must program this sample to the nRF5340 network core.
 The recommended way of building the sample is to use the multi-image feature of the build system.
 In this way, the sample is built automatically as a child image when both :kconfig:option:`CONFIG_BT_HCI_IPC` and :kconfig:option:`CONFIG_NRF_802154_SER_HOST` are enabled.
 
-However, you can also build the sample as a stand-alone image.
-
-See :ref:`configure_application` for information about how to configure the sample.
-
-For example, you can include the Multiprotocol RPMsg sample in a multi-image build by building the :zephyr:code-sample:`sockets-echo-server` sample for the nRF5340 application core and adding the following configuration files to your build as CMake options:
-
-* :file:`overlay-802154.conf`
-* :file:`overlay-bt.conf`
-
-See :ref:`cmake_options` for instructions on how to add these options to your build.
-To see an example of this multi-image build on the command line, run the following command:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b nrf5340dk_nrf5340_cpuapp -p -- -DOVERLAY_CONFIG="overlay-802154.conf;overlay-bt.conf"
-
 .. include:: /includes/build_and_run.txt
+
+Building as a stand-alone image
+===============================
+
+You can also build the sample as a stand-alone image.
+
+For example, to include the Multiprotocol RPMsg sample in a multi-image build of the :zephyr:code-sample:`sockets-echo-server` sample for the nRF5340 application core, use the following variables:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Build target
+     - Files to use
+     - Build variables
+   * - ``nrf5340dk_nrf5340_cpuapp``
+     - :file:`overlay-802154.conf` and :file:`overlay-bt.conf`
+     - ``-DEXTRA_CONF_FILE="overlay-802154.conf;overlay-bt.conf"``
+
+.. |variable_feature| replace:: these configuration files
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: "overlay-802154.conf;overlay-bt.conf"
+.. |board_name| replace:: nrf5340dk_nrf5340_cpuapp
+
+.. include:: /includes/apply_cmake_variable.txt
 
 Testing
 *******

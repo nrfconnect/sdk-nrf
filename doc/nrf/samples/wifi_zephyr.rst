@@ -46,23 +46,32 @@ See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how
 Building and running
 ********************
 
-To build the sample with |VSC|, follow the steps listed on the `How to build an application`_ page in the |nRFVSC| documentation.
-See :ref:`building` for other building scenarios, :ref:`programming` for programming steps, and :ref:`testing` for general information about testing and debugging in the |NCS|.
+See :ref:`building` for the available building scenarios, :ref:`programming` for programming steps, and :ref:`testing` for general information about testing and debugging in the |NCS|.
 
-An overlay file, ``overlay-nrf700x.conf`` is provided to all Zephyr samples, which configures the sample to run with the Wi-Fi driver.
+To build any of the listed samples with the Wi-Fi driver, use the following variables for the chosen hardware platform:
 
-To build Zephyr samples for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
-The following is an example of the CLI command:
+.. list-table::
+  :header-rows: 1
 
-.. code-block:: console
+  * - Hardware platform
+    - Build target
+    - Files to use
+    - Build variables
+  * - nRF7002 DK
+    - ``nrf7002dk_nrf5340_cpuapp``
+    - :file:`overlay-nrf700x.conf`
+    - ``-DEXTRA_CONF_FILE=overlay-nrf700x.conf``
+  * - nRF7002 EK with nRF5340 DK
+    - ``nrf5340dk_nrf5340_cpuapp``
+    - :file:`overlay-nrf700x.conf`
+    - * ``-DEXTRA_CONF_FILE=overlay-nrf700x.conf``
+      * ``-DSHIELD=nrf7002ek``
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-nrf700x.conf
+.. |variable_feature| replace:: the first of the provided variants
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-nrf700x.conf
+.. |board_name| replace:: nrf7002dk_nrf5340_cpuapp
 
-To build for the nRF7002 EK with nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
-The following is an example of the CLI command:
+.. include:: /includes/apply_cmake_variable.txt
 
-.. code-block:: console
-
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek -DOVERLAY_CONFIG=overlay-nrf700x.conf
-
-For additional details about running a sample, refer to the respective sample in Zephyr’s Samples and Demos documentation.
+For additional details about running a sample, refer to the respective sample in Zephyr's Samples and Demos documentation.

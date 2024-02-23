@@ -68,19 +68,32 @@ Building
 .. note::
    Before building the sample, make sure the **PROG/DEBUG** switch is set to **nRF52**.
 
-MCUboot recovery mode
-=====================
+Activating sample extensions
+============================
 
-.. code-block:: console
+You can enable the following optional extensions during the sample build process:
 
-   west build --pristine -b nrf9160dk_nrf52840 -- -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_recovery.overlay"
+.. list-table::
+   :header-rows: 1
 
-MCUmgr server image management
-==============================
+   * - Extension
+     - Files to use
+     - Build variables
+   * - MCUboot recovery mode
+     - :file:`nrf9160dk_nrf52840_recovery.overlay`
+     - ``-DEXTRA_DTC_OVERLAY_FILE=nrf9160dk_nrf52840_recovery.overlay``
+   * - MCUmgr server image management
+     - * :file:`overlay-serial.conf`
+       * :file:`nrf9160dk_nrf52840_recovery.overlay`
+     - * ``-DEXTRA_CONF_FILE=prj_cdc.conf``
+       * ``-DEXTRA_DTC_OVERLAY_FILE=nrf9160dk_nrf52840_recovery.overlay``
 
-.. code-block:: console
+.. |variable_feature| replace:: the MCUboot recovery mode
+.. |makevar| replace:: EXTRA_DTC_OVERLAY_FILE
+.. |cmake_file_name| replace:: nrf9160dk_nrf52840_recovery.overlay
+.. |board_name| replace:: nrf9160dk_nrf52840
 
-   west build --pristine -b nrf9160dk_nrf52840 -- -DOVERLAY_CONFIG="overlay-serial.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_mcumgr_srv.overlay"
+.. include:: /includes/apply_cmake_variable.txt
 
 Testing
 =======

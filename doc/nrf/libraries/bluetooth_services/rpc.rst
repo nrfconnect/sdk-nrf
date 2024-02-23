@@ -74,12 +74,13 @@ Set the following options in the same way for the :ref:`ble_rpc_host` and applic
    * :kconfig:option:`CONFIG_CBKPROXY_OUT_SLOTS` on one core must be equal to :kconfig:option:`CONFIG_CBKPROXY_IN_SLOTS` on the other.
 
 To keep all the above configuration options in sync, create an overlay file that is shared between the application and network core.
-Then, you can invoke build command like this:
 
-.. parsed-literal::
-   :class: highlight
+.. |variable_feature| replace:: the overlay file you've created
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: <file_name>.conf
+.. |board_name| replace:: nrf5340dk_nrf5340_cpuapp
 
-   west build -b *board* -- -DOVERLAY_CONFIG=my_overlay_file.conf
+.. include:: /includes/apply_cmake_variable.txt
 
 .. _ble_rpc_api:
 

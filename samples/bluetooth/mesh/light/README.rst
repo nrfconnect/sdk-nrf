@@ -131,16 +131,14 @@ This sample is split into the following source files:
 DFU configuration
 =================
 
-To enable the DFU feature for the supported nRF52 Series development kits, set :makevar:`OVERLAY_CONFIG` to :file:`overlay-dfu.conf` when building the sample.
-For example, when building from the command line, use the following command:
+.. |variable_feature| replace:: the DFU feature for the supported nRF52 Series development kits
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-dfu.conf
+.. |board_name| replace:: nrf52840dk_nrf52840
 
-  .. code-block:: console
+.. include:: /includes/apply_cmake_variable.txt
 
-     west build -b <BOARD> -p -- -DOVERLAY_CONFIG="overlay-dfu.conf"
-
-The configuration overlay :file:`overlay-dfu.conf` enables the DFU feature.
 To review the required configuration alterations, open and inspect the :file:`overlay-dfu.conf` file.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 FEM support
 ===========

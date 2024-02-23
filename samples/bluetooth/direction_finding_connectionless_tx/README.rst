@@ -48,9 +48,13 @@ Configuration
 Angle of arrival mode
 =====================
 
-To build this sample with AoA mode only, set ``OVERLAY_CONFIG`` to the :file:`overlay-aoa.conf` file.
+.. |variable_feature| replace:: only the AoA mode
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-aoa.conf
+.. |board_name| replace:: nrf5340dk_nrf5340_cpuapp
 
-See :ref:`cmake_options` for instructions on how to add this option.
+.. include:: /includes/apply_cmake_variable.txt
+
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 To build this sample for :ref:`nRF5340 DK <ug_nrf5340>`, with AoA mode only, add content of :file:`overlay-aoa.conf` file to :file:`child_image/hci_ipc.conf` file.

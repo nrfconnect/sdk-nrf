@@ -14,18 +14,14 @@ Configuring and building an application
 After you have :ref:`created an application <create_application>`, you need to build it in order to be able to program it.
 Just as for creating the application, you can build the application using either the |nRFVSC| or the command line.
 
-.. note::
-    |application_sample_long_path_windows|
-
 .. tabs::
 
    .. group-tab:: nRF Connect for VS Code
 
       For instructions about building with the |nRFVSC|, see `How to build an application`_ in the extension documentation.
 
-      .. note::
-          By default, the extension runs both stages of the CMake build (:ref:`configuration phase and building phase <app_build_system>`).
-          If you want to only set up the build configuration without building it, make sure the :guilabel:`Build after generating configuration` is not selected.
+      By default, the extension runs both stages of the CMake build (:ref:`configuration phase and building phase <app_build_system>`).
+      If you want to only set up the build configuration without building it, make sure the :guilabel:`Build after generating configuration` is not selected.
 
       If you want to build with custom options or scripts, read about `Binding custom tasks to actions`_ in the extension documentation.
 
@@ -62,6 +58,9 @@ Just as for creating the application, you can build the application using either
          For more information on the contents of the build directory, see :ref:`zephyr:build-directory-contents` in the Zephyr documentation.
 
        For more information on building using the command line, see :ref:`Building <zephyr:west-building>` in the Zephyr documentation.
+
+.. note::
+    |application_sample_long_path_windows|
 
 .. toctree::
    :maxdepth: 1

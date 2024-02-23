@@ -1,0 +1,24 @@
+To enable |variable_feature|, build the application with the following variables:
+
+.. tabs::
+
+   .. group-tab:: nRF Connect for VS Code
+
+      Select the following variables when `setting up a build configuration <How to build an application_>`_:
+
+      * |vsc_board_guilabel|: |board_name|
+      * |vsc_fragments_guilabel|: |cmake_file_name|
+      * |vsc_overlay_guilabel|: |dts_file_name|
+      * |vsc_snippet_guilabel|: |snippet_name|
+      * |vsc_cmake_arg_guilabel|: |extra_cmake_arg|
+
+   .. group-tab:: Command line
+
+      Provide the arguments after the ``west build`` command, introduced by ``--``.
+
+      .. parsed-literal::
+        :class: highlight
+
+        west build -b |board_name| -- |west_build_vars|
+
+See :ref:`cmake_options` for more information.

@@ -1,0 +1,37 @@
+.. |makevarformatstart| raw:: html
+
+   <strong class="makevar">
+
+.. |makevarformatend| raw:: html
+
+   </strong>
+
+.. |fileformatstart| raw:: html
+
+   <code class="file docutils literal notranslate"><span class="pre">
+
+.. |fileformatend| raw:: html
+
+   </span></code>
+
+For example, to enable |variable_feature|, build the application with the |makevarformatstart|\ |makevar|\ |makevarformatend| variable set to |fileformatstart|\ |cmake_file_name|\ |fileformatend|.
+
+.. tabs::
+
+   .. group-tab:: nRF Connect for VS Code
+
+      When `setting up a build configuration <How to build an application_>`_, select the required files from :guilabel:`Kconfig fragments`, :guilabel:`Devicetree overlays`, and :guilabel:`Snippets` drop-down menus.
+      If you need to specify a variable that does not have a dedicated drop-down menu, provide the argument in **Extra CMake arguments** (see the tooltip in the extension for the formatting).
+
+   .. group-tab:: Command line
+
+      Provide the arguments after the ``west build`` command, introduced by ``--``.
+
+      .. parsed-literal::
+        :class: highlight
+
+        west build -b |board_name| -- -D\ |makevar|\ =\ |cmake_file_name|
+
+      If other variables are needed, add them after the first argument using the same pattern.
+
+See :ref:`cmake_options` for more examples and detailed information.

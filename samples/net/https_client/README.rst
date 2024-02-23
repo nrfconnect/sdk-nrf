@@ -71,19 +71,30 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To build the sample with Mbed TLS and TF-M for the nRF91 Series DKs, add the following to your west build command:
+Activating sample extensions
+============================
 
-.. code-block:: none
+You can enable the following optional extensions during the sample build process:
 
-   -DOVERLAY_CONFIG=overlay-tfm-nrf91.conf
+.. list-table::
+   :header-rows: 1
 
-The default packet data network (PDN) configuration is dual stack, which will use an IPv6 address if available (and IPv4 if not).
+   * - Extension
+     - Files to use
+     - Build variables
+   * - Mbed TLS and TF-M support
+     - :file:`overlay-tfm-nrf91.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-tfm-nrf91.conf``
+   * - IPv4 Packet data network (instead of dual IPv6 and IPv4)
+     - :file:`overlay-pdn-nrf91-ipv4.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-pdn-nrf91-ipv4.conf``
 
-On the nRF91 Series DKs, for testing IPv4 only, you might need to configure the packet data network settings, adding the following to your build command:
+.. |variable_feature| replace:: the Mbed TLS and TF-M support
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-tfm-nrf91.conf
+.. |board_name| replace:: nrf9160dk_nrf9160_ns
 
-.. code-block:: none
-
-   -DOVERLAY_CONFIG=overlay-pdn-nrf91-ipv4.conf
+.. include:: /includes/apply_cmake_variable.txt
 
 Testing
 =======

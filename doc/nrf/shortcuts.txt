@@ -203,3 +203,9 @@
    The generated :file:`.inc` file is then included in the code, where it is provisioned to the modem.
 
 .. |build_target| replace:: Replace the *build_target* with the build target of the nRF91 Series device you are using (see the Requirements section).
+
+.. |vsc_board_guilabel| replace:: :guilabel:`Board`
+.. |vsc_fragments_guilabel| replace:: :guilabel:`Kconfig fragments`
+.. |vsc_overlay_guilabel| replace:: :guilabel:`Devicetree overlays`
+.. |vsc_snippet_guilabel| replace:: :guilabel:`Snippet`
+.. |vsc_cmake_arg_guilabel| replace:: :guilabel:`Extra CMake arguments`

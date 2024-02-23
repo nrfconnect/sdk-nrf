@@ -255,7 +255,7 @@ The following example adds an extra Kconfig fragment ``extrafragment.conf`` to `
   .. parsed-literal::
     :class: highlight
 
-     cmake -D\ *childimageone*\_OVERLAY_CONFIG=\ *extrafragment.conf*\ [...]
+     cmake -D\ *childimageone*\_EXTRA_CONF_FILE=\ *extrafragment.conf*\ [...]
 
 It is also possible to provide a custom configuration file as a replacement for the default Kconfig file for the child image.
 The following example uses the custom configuration file ``myfile.conf`` when building ``childimageone``:
@@ -268,20 +268,20 @@ The following example uses the custom configuration file ``myfile.conf`` when bu
 If your application includes multiple child images, then you can combine all the above as follows:
 
 * Setting ``CONFIG_VARIABLEONE=val`` in the main application.
-* Adding a Kconfig fragment ``extrafragment.conf`` to the ``childimageone`` child image, using ``-Dchildimageone_OVERLAY_CONFIG=extrafragment.conf``.
+* Adding a Kconfig fragment ``extrafragment.conf`` to the ``childimageone`` child image, using ``-Dchildimageone_EXTRA_CONF_FILE=extrafragment.conf``.
 * Using ``myfile.conf`` as configuration for the ``quz`` child image, using ``-Dquz_CONF_FILE=myfile.conf``.
 
   .. parsed-literal::
     :class: highlight
 
-     cmake -DCONFIG_VARIABLEONE=val -D\ *childimageone*\_OVERLAY_CONFIG=\ *extrafragment.conf*\ -Dquz_CONF_FILE=\ *myfile.conf*\ [...]
+     cmake -DCONFIG_VARIABLEONE=val -D\ *childimageone*\_EXTRA_CONF_FILE=\ *extrafragment.conf*\ -Dquz_CONF_FILE=\ *myfile.conf*\ [...]
 
 See :ref:`ug_bootloader` for more details.
 
 .. note::
 
    The build system grabs the Kconfig fragment or configuration file specified in a CMake argument relative to that image's application directory.
-   For example, the build system uses ``nrf/samples/bootloader/my-fragment.conf`` when building with the ``-Db0_OVERLAY_CONFIG=my-fragment.conf`` option, whereas ``-DOVERLAY_CONFIG=my-fragment.conf`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-fragment.conf``.
+   For example, the build system uses ``nrf/samples/bootloader/my-fragment.conf`` when building with the ``-Db0_EXTRA_CONF_FILE=my-fragment.conf`` option, whereas ``-DEXTRA_CONF_FILE=my-fragment.conf`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-fragment.conf``.
 
 You can also merge multiple fragments into the overall configuration for an image by giving a list of Kconfig fragments as a string, separated using ``;``.
 The following example shows how to combine ``abc.conf``, Kconfig fragment of the ``childimageone`` child image, with the ``extrafragment.conf`` fragment:
@@ -289,7 +289,7 @@ The following example shows how to combine ``abc.conf``, Kconfig fragment of the
   .. parsed-literal::
     :class: highlight
 
-     cmake -D\ *childimageone*\_OVERLAY_CONFIG='\ *extrafragment.conf*\;\ *abc.conf*\'
+     cmake -D\ *childimageone*\_EXTRA_CONF_FILE='\ *extrafragment.conf*\;\ *abc.conf*\'
 
 When the build system finds the fragment, it outputs their merge during the CMake build output as follows:
 
@@ -311,7 +311,7 @@ The following example sets the devicetree overlay ``extra.overlay`` to ``childim
 .. parsed-literal::
    :class: highlight
 
-   cmake -D\ *childimageone*\_DTC_OVERLAY_FILE='\ *extra.overlay*\'
+   cmake -D\ *childimageone*\_EXTRA_DTC_OVERLAY_FILE='\ *extra.overlay*\'
 
 The build system does also automatically apply any devicetree overlay located in the ``child_image`` folder and named as follows (where ``ACI_NAME`` is the name of the child image):
 
@@ -324,7 +324,7 @@ The build system does also automatically apply any devicetree overlay located in
 .. note::
 
    The build system grabs the devicetree overlay files specified in a CMake argument relative to that image's application directory.
-   For example, the build system uses ``nrf/samples/bootloader/my-dts.overlay`` when building with the ``-Db0_DTC_OVERLAY_FILE=my-dts.overlay`` option, whereas ``-DDTC_OVERLAY_FILE=my-dts.overlay`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-dts.overlay``.
+   For example, the build system uses ``nrf/samples/bootloader/my-dts.overlay`` when building with the ``-Db0_EXTRA_DTC_OVERLAY_FILE=my-dts.overlay`` option, whereas ``-DEXTRA_DTC_OVERLAY_FILE=my-dts.overlay`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-dts.overlay``.
 
 .. _ug_multi_image_permanent_changes:
 

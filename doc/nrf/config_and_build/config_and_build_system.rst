@@ -65,7 +65,7 @@ When you start building, a CMake build is executed in two stages: configuration 
 Configuration phase
 ===================
 
-During this phase, CMake executes build scripts from :file:`CMakeLists.txt` and gathers configuration from different sources, for example :ref:`app_build_additions_build_types`, to generate the final build scripts and create a model of the build for the specified build target.
+During this phase, CMake executes build scripts from :file:`CMakeLists.txt` and gathers configuration from different sources, for example :ref:`CMake build options <cmake_options>`, to generate the final build scripts and create a model of the build for the specified build target.
 The result of this process is a :term:`build configuration`, a set of files that will drive the build process.
 
 For more information about this phase, see the respective sections on Zephyr's :ref:`zephyr:cmake-details` page, which describes in-depth the usage of CMake for Zephyr-based applications.
@@ -81,7 +81,7 @@ Zephyr provides a CMake package that must be loaded by the application into its 
 When loaded, the application can reference items provided by both Zephyr and the |NCS|.
 
 Loading Zephyr's `CMake <CMake documentation_>`_ package creates the ``app`` CMake target.
-You can add application source files to this target from the application :file:`CMakeLists.txt` file.
+You can add application source files to this target from the application :file:`CMakeLists.txt` file or using :ref:`zephyr:important-build-vars`.
 See :ref:`modifying_files_compiler` for detailed information.
 
 .. _configure_application_hw:

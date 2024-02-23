@@ -51,7 +51,10 @@ If you have enabled the :ref:`CONFIG_REST_FOTA_ENABLE_LED <CONFIG_REST_FOTA_ENAB
 
 Configuration
 *************
+
 |config|
+
+The configuration files for this sample are located in :file:`samples/cellular/nrf_cloud_rest_fota`.
 
 Configuration options
 =====================
@@ -99,19 +102,33 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-The configuration file for this sample is located in :file:`samples/cellular/nrf_cloud_rest_fota`.
-See :ref:`configure_application` for information on how to configure the parameters.
-
-To create a FOTA test version of this sample, add the following parameter to your build command:
-
-``-DOVERLAY_CONFIG=overlay_fota_test.conf``
-
-To enable full modem FOTA, add the following parameter to your build command:
-
-``-DOVERLAY_CONFIG=overlay_full_modem_fota.conf``
-
 Also, if you are using an nRF9160 DK, specify your development kit version by appending it to the board name.
 For example, if you are using version 1.0.1, use the board name ``nrf9160dk_nrf9160_ns@1_0_1`` in your build command.
+
+Activating sample extensions
+============================
+
+You can enable the following optional extensions during the sample build process:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Extension
+     - Files to use
+     - Build variables
+   * - FOTA test version of the sample
+     - :file:`overlay_fota_test.conf`
+     - ``-DEXTRA_CONF_FILE=overlay_fota_test.conf``
+   * - Full modem FOTA
+     - :file:`overlay_full_modem_fota.conf`
+     - ``-DEXTRA_CONF_FILE=overlay_full_modem_fota.conf``
+
+.. |variable_feature| replace:: the FOTA test version of the sample
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay_fota_test.conf
+.. |board_name| replace:: nrf9160dk_nrf9160_ns
+
+.. include:: /includes/apply_cmake_variable.txt
 
 Dependencies
 ************

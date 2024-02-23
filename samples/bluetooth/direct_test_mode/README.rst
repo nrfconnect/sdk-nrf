@@ -368,46 +368,36 @@ Building and running
    The Remote IPC shell sample is built and programmed automatically by default.
    If you want to program your custom solution for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE` Kconfig option.
 
-Disabling Direction Finding feature
-===================================
+Activating sample extensions
+============================
 
-To build the sample without support for the Direction Finding feature, use the following command:
+You can enable the following optional extensions during the sample build process:
 
-.. code-block:: console
+.. list-table::
+   :header-rows: 1
 
-   west build samples/bluetooth/direct_test_mode -b board_name -- -DEXTRA_DTC_OVERLAY_FILE=no-dfe.overlay
+   * - Extension
+     - Files to use
+     - Build variables
+   * - No support for the Direction Finding feature
+     - :file:`no-dfe.overlay`
+     - ``-DEXTRA_DTC_OVERLAY_FILE=no-dfe.overlay``
+   * - Experimental HCI interface
+     - * :file:`overlay-hci.conf`
+     - * ``-DEXTRA_CONF_FILE=overlay-hci.conf``
+   * - USB CDC ACM transport variant (nRF5340 DK)
+     - * :kconfig:option:`CONFIG_DTM_USB`
+     - * ``-DCONFIG_DTM_USB=y``
 
-Experimental HCI interface
-==========================
+.. |variable_feature| replace:: the experimental HCI interface
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-hci.conf
+.. |board_name| replace:: nrf5340dk_nrf5340_cpunet
 
-To build the sample with an HCI interface, use the following command:
+.. include:: /includes/apply_cmake_variable.txt
 
-.. code-block:: console
-
-   west build samples/bluetooth/direct_test_mode -b board_name -- -DEXTRA_CONF_FILE=overlay-hci.conf
-
-On the |nRF5340DKnoref| the sample with HCI interface can also be built with the `remote_hci` image using the following command:
-
-.. code-block:: console
-
-   west build samples/bluetooth/direct_test_mode -b board_name -- -DEXTRA_CONF_FILE=overlay-hci-nrf53.conf
-
-USB CDC ACM transport variant
-=============================
-
-On the nRF5340 development kit, you can build this sample configured to use the USB interface as a communication interface with the tester.
-Use the following command:
-
-.. code-block:: console
-
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk_nrf5340_cpunet -- -DCONFIG_DTM_USB=y
-
-You can also build this sample with support for the front-end module.
-Use the following command:
-
-.. code-block:: console
-
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540ek -DCONFIG_DTM_USB=y
+.. note::
+    On the |nRF5340DKnoref|, the sample with HCI interface can also be built with the `remote_hci` image using the :file:`overlay-hci-nrf53.conf` Kconfig overlay file.
 
 .. _dtm_testing:
 

@@ -72,9 +72,13 @@ The following additional configuration files are available for the :ref:`nRF5340
 Angle of departure mode
 =======================
 
-To build this sample with AoD mode only, set ``OVERLAY_CONFIG`` to the :file:`overlay-aod.conf` file.
+.. |variable_feature| replace:: only the AoD mode
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-aod.conf
+.. |board_name| replace:: nrf5340dk_nrf5340_cpuapp
 
-See :ref:`cmake_options` for instructions on how to add this option.
+.. include:: /includes/apply_cmake_variable.txt
+
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 To build this sample for :ref:`nRF5340 DK <ug_nrf5340>`, with AoD mode only, add content of :file:`overlay-aod.conf` file to :file:`child_image/hci_ipc.conf` file.

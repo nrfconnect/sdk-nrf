@@ -99,36 +99,8 @@ This sample is split into the following source files:
 Configuration files for sample extensions
 =========================================
 
-The sample provides predefined configuration files for optional extensions.
+The sample provides predefined configuration files for optional extensions, which you can :ref:`enable when building the sample <zigbee_light_switch_activating_extensions>`.
 You can find the configuration files in the :file:`samples/zigbee/light_switch` directory.
-
-Activating optional extensions
-------------------------------
-
-To activate the :ref:`lib_zigbee_fota`, use the :file:`prj_fota.conf` configuration file.
-For example, when building from the command line, use the following command:
-
-.. code-block:: console
-
-   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DCONF_FILE='prj_fota.conf'
-
-Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
-
-.. note::
-   You can use the :file:`prj_fota.conf` file only with a development kit that contains the nRF52840 or nRF5340 SoC.
-
-To activate the Multiprotocol Bluetooth LE extension, set :makevar:`OVERLAY_CONFIG` to the :file:`overlay-multiprotocol_ble.conf`.
-For example, when building from the command line, use the following command:
-
-.. code-block:: console
-
-   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG='overlay-multiprotocol_ble.conf'
-
-
-For the board name to use instead of the ``nrf52840dk_nrf52840``, see :ref:`programming_board_names`.
-
-See :ref:`cmake_options` for instructions on how to add flags to your build.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 FEM support
 ===========
@@ -205,6 +177,33 @@ Building and running
 |enable_zigbee_before_testing|
 
 .. include:: /includes/build_and_run.txt
+
+.. _zigbee_light_switch_activating_extensions:
+
+Activating sample extensions
+============================
+
+You can enable the following optional extensions during the sample build process:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Extension
+     - Files to use
+     - Build variables
+   * - :ref:`lib_zigbee_fota` (instead of :ref:`manual FOTA configuration <ug_zigbee_configuring_components_ota>`)
+     - :file:`prj_fota.conf`
+     - ``-DEXTRA_CONF_FILE=prj_fota.conf`` (only with a development kit that contains the nRF52840 or nRF5340 SoC)
+   * - Multiprotocol Bluetooth LE extension
+     - :file:`overlay-multiprotocol_ble.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-multiprotocol_ble.conf``
+
+.. |variable_feature| replace:: :ref:`lib_zigbee_fota`
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: prj_fota.conf
+.. |board_name| replace:: nrf52840dk_nrf52840
+
+.. include:: /includes/apply_cmake_variable.txt
 
 .. _zigbee_light_switch_testing:
 

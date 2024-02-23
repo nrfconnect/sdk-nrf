@@ -86,15 +86,6 @@ Optional build parameters
 
 Here are some of the possible options you can use:
 
-* Some applications contain configuration overlay files that enable specific features.
-  These can be added to the ``west build`` command as follows:
-
-  .. parsed-literal::
-     :class: highlight
-
-     west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-feature1.conf;overlay-feature2.conf"
-
-  See :ref:`configuration_permanent_change` and Zephyr's :ref:`zephyr:west-building-cmake-args` for more information.
 * You can include the *directory_name* parameter to build from a directory other than the current directory.
 * You can use the *build_target@board_revision* parameter to get extra devicetree overlays with new features available for a board version.
   The *board_revision* is printed on the label of your DK, just below the PCA number.

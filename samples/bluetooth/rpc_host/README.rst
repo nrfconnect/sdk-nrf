@@ -43,14 +43,12 @@ You must program this sample to the nRF5340 network core.
 Debug build
 ===========
 
-To build the sample with a debugging configuration, use the ``-DOVERLAY_CONFIG=overlay-debugging.conf'`` flag in your build.
+.. |variable_feature| replace:: the debug build
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-debugging.conf
+.. |board_name| replace:: nrf5340dk_nrf5340_cpunet
 
-See :ref:`cmake_options` for instructions on how to add this option to your build.
-For example, when building on the command line, enter the following command:
-
-.. code-block:: console
-
-   west build samples/bluetooth/rpc_host -- -DOVERLAY_CONFIG=overlay-debugging.conf
+.. include:: /includes/apply_cmake_variable.txt
 
 .. _rpc_host_testing:
 

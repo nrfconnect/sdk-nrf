@@ -88,12 +88,17 @@ You can get your project key after signing up with Memfault.
    For the |NCS| samples that use Memfault, the Memfault configurations are already included in their folders.
    Make sure to add your project key in the :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` Kconfig option.
 
-You can also add the configurations using a Kconfig configuration fragment file.
-See the following example on how to set an overlay configuration for Memfault integration on an nRF9160 DK:
+You can also add the configurations using a Kconfig fragment file, using the following variables:
 
-.. code-block:: console
+.. list-table::
+  :header-rows: 1
 
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-memfault.conf
+  * - Files to use
+    - Build variables
+  * - :file:`overlay-memfault.conf`
+    - ``-DEXTRA_CONF_FILE=overlay-memfault.conf``
+
+See :ref:`cmake_options` for instructions on how to provide the build variables.
 
 .. rst-class:: numbered-step
 
