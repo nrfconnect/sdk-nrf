@@ -540,5 +540,15 @@ config BT_CTLR_SDC_CIG_RESERVED_TIME_US
 	help
 	  The time reserved for other roles in each ISO interval, used when selecting CIG parameters.
 
+config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
+	int "CIS subevent length [us]"
+	default 0
+	help
+	  Sets the subevent length to be used for CISes in microseconds.
+	  If the configured subevent length is too small, the
+	  HCI command used to configure the CIG will fail.
+	  If this parameter is set to zero, the subevent length
+	  is chosen by the controller.
+
 endmenu
 endif  # BT_LL_SOFTDEVICE
