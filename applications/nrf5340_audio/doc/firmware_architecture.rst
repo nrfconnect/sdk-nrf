@@ -70,10 +70,9 @@ The following figure illustrates the software layout for the nRF5340 Audio appli
 
    nRF5340 Audio high-level design (overview)
 
-The network core of the nRF5340 SoC runs the *LE Audio Controller Subsystem for nRF53*, which is included in the :ref:`lib_bt_ll_acs_nrf53_readme` library's HEX file.
-This subsystem is custom-made for the application.
-It is responsible for receiving the audio stream data from hardware layers and forwarding the data to the Bluetooth LE host on the application core.
-The subsystem implements the lower layers of the Bluetooth Low Energy software stack and follows the LE Audio specification requirements.
+The network core of the nRF5340 SoC runs the SoftDevice Controller, which is responsible for receiving the audio stream data from hardware layers and forwarding the data to the Bluetooth LE host on the application core.
+The controller implements the lower layers of the Bluetooth Low Energy software stack.
+See :ref:`ug_ble_controller_softdevice` for more information about the controller, and :ref:`SoftDevice Controller for LE Isochronous Channels <nrfxlib:softdevice_controller_iso>` for information on how it implements ISO channels used by the nRF5340 Audio applications.
 
 The application core runs both the Bluetooth LE Host from Zephyr and the application layer.
 The application layer is composed of a series of modules from different sources.
@@ -252,8 +251,8 @@ Synchronization module flow
 
 The received audio data in the I2S-based firmware devices follows the following path:
 
-1. The LE Audio Controller Subsystem for nRF53 running on the network core receives the compressed audio data.
-#. The controller subsystem sends the audio data to the Zephyr Bluetooth LE host similarly to the :ref:`zephyr:bluetooth-hci-ipc-sample` sample.
+1. The SoftDevice Controller running on the network core receives the compressed audio data.
+#. The controller, running in the :ref:`zephyr:bluetooth-hci-ipc-sample` sample on the nRF5340 SoC network core, sends the audio data to the Zephyr Bluetooth LE host running on the nRF5340 SoC application core.
 #. The host sends the data to the stream control module.
 #. The data is sent to a FIFO buffer.
 #. The data is sent from the FIFO buffer to the :file:`audio_datapath.c` synchronization module.

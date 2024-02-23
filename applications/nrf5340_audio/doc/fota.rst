@@ -63,9 +63,6 @@ The generated FOTA build files use the following naming patterns:
 
 See :ref:`app_build_output_files` for more information about the image files.
 
-.. note::
-   |nrf5340_audio_net_core_hex_note|
-
 Entering the DFU mode
 =====================
 
