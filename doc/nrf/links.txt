@@ -542,6 +542,8 @@
 .. _`Programming the nRF52840 Dongle`:
 .. _`Programming a Development Kit`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html
 
+.. _`sysbuild support`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_overview.html#system-build-sysbuild
+
 .. ### Source: infocenter.nordicsemi.com
 
 .. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
