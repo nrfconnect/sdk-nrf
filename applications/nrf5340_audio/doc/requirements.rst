@@ -61,6 +61,5 @@ For each application, only one of the following :file:`.conf` files is included 
   When building using the command line, you must explicitly specify if :file:`prj_release.conf` is going to be included instead of :file:`prj.conf`.
   See :ref:`nrf53_audio_app_building` for details.
 
-In addition, the application features the :file:`child_image` directory with an experimental :file:`hci_ipc.conf`.
-This file is a work-in-progress implementation of the :ref:`SoftDevice Controller for LE Isochronous Channels <nrfxlib:softdevice_controller_iso>` that has not been thoroughly tested and is currently not meant for production.
-The application is only tested using :ref:`lib_bt_ll_acs_nrf53_readme`.
+In addition, the application features the :file:`child_image` directory with :file:`hci_ipc.conf`.
+This file contains the necessary configurations for nRF5340 Audio applications to run the :ref:`bluetooth-hci-ipc-sample` sample with :ref:`SoftDevice Controller for LE Isochronous Channels <nrfxlib:softdevice_controller_iso>` support.

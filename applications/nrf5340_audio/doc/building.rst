@@ -9,11 +9,6 @@ Building and running nRF5340 Audio applications
 
 This nRF5340 Audio application source files can be found in their respective folders under :file:`applications/nrf5340_audio` in the nRF Connect SDK folder structure.
 
-.. note::
-   Building and programming the nRF5340 Audio applications is different from the :ref:`standard procedure <ug_nrf5340_building>` of building and programming for the nRF5340 DK.
-   This is because the nRF5340 Audio applications only build and program the files for the application core.
-   |nrf5340_audio_net_core_hex_note|
-
 You can build and program the applications in one of the following ways:
 
 * :ref:`nrf53_audio_app_building_script`.
@@ -115,8 +110,7 @@ Programming with the script
 
       python buildprog.py -c both -b debug -d both -p
 
-   This command builds the headset and the gateway applications with the ``debug`` application version and programs the application core.
-   Given the ``-c both`` parameter, it also takes the precompiled Bluetooth Low Energy Controller binary from the :file:`nrf/lib/bin/bt_ll_acs_nrf53/bin` directory and programs it to the network core of both the gateway and the headset.
+   This command builds the headset and the gateway applications with ``debug`` version of both the application core binary and the network core binary - and programs each to its respective core.
 
    .. note::
       If the programming command fails because of :ref:`readback_protection_error`, run :file:`buildprog.py` with the ``--recover_on_fail`` or ``-f`` parameter to recover and re-program automatically when programming fails.
@@ -217,7 +211,7 @@ Complete the following steps to build the application:
       * For the debug version: No build flag needed.
       * For the release version: ``-DCONF_FILE="prj_release.conf"``
 
-#. Build the application using the standard :ref:`build steps <programming_cmd>` for the command line.
+#. Build the application using the standard :ref:`build steps <building>` for the command line.
    For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command from the :file:`applications/nrf5340_audio/` directory:
 
    .. code-block:: console
@@ -232,63 +226,24 @@ Complete the following steps to build the application:
 Programming the application
 ===========================
 
-After building the files for the development kit you want to program, complete the following steps to program the applications from the command line:
+After building the files for the development kit you want to program, follow the :ref:`standard procedure for programming applications <building>` in the |NCS|.
 
-1. Plug the device into the USB port.
+When using the default CIS configuration, if you want to use two headset devices, you must also populate the UICR with the desired channel for each headset.
+Use the following commands, depending on which headset you want to populate:
 
-   .. note::
-      |usb_known_issues|
-
-#. Turn on the development kit using the On/Off switch.
-#. Open a command prompt.
-#. Run the following command to print the SEGGER serial number of your development kit:
+* Left headset:
 
    .. code-block:: console
 
-      nrfjprog -i
+      nrfjprog --memwr 0x00FF80F4 --val 0
 
-   .. note::
-      Pay attention to which device is to be programmed with the gateway HEX file and which devices are to be programmed with the headset HEX file.
-
-#. Program the network core on the development kit by running the following command:
+* Right headset:
 
    .. code-block:: console
 
-      nrfjprog --program bin/*.hex --chiperase --coprocessor CP_NETWORK -r
+      nrfjprog --memwr 0x00FF80F4 --val 1
 
-   |nrf5340_audio_net_core_hex_note|
-#. Program the application core on the development kit with the respective HEX file from the :file:`build` directory by running the following command:
+Select the correct board when prompted with the popup or add the ``--snr`` parameter followed by the SEGGER serial number of the correct board at the end of the ``nrfjprog`` command.
 
-   .. code-block:: console
-
-      nrfjprog --program build/zephyr/zephyr.hex --coprocessor CP_APPLICATION --chiperase -r
-
-   In this command, :file:`build/zephyr/zephyr.hex` is the HEX binary file for the application core.
-   If a custom build folder is specified, the path to this folder must be used instead of :file:`build/`.
-#. If any device is not programmed due to :ref:`readback_protection_error`, complete the following steps:
-
-   a. Run the following commands to recover the device:
-
-      .. code-block:: console
-
-         nrfjprog --recover --coprocessor CP_NETWORK
-         nrfjprog --recover
-
-   #. Repeat steps 5 and 6 to program both cores again.
-
-#. When using the default CIS configuration, if you want to use two headset devices, you must also populate the UICR with the desired channel for each headset.
-   Use the following commands, depending on which headset you want to populate:
-
-   * Left headset:
-
-     .. code-block:: console
-
-        nrfjprog --memwr 0x00FF80F4 --val 0
-
-   * Right headset:
-
-     .. code-block:: console
-
-        nrfjprog --memwr 0x00FF80F4 --val 1
-
-   Select the correct board when prompted with the popup or add the ``--snr`` parameter followed by the SEGGER serial number of the correct board at the end of the ``nrfjprog`` command.
+.. note::
+   |usb_known_issues|

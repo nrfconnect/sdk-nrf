@@ -3,6 +3,10 @@
 LE Audio controller for nRF5340
 ###############################
 
+.. warning::
+   This LE Audio controller for nRF5340 is :ref:`deprecated <api_deprecation>`, no longer supported in |NCS| v2.6.0 and onwards, and will be removed in one of the future releases.
+   Use :ref:`SoftDevice Controller for LE Isochronous Channels <nrfxlib:softdevice_controller_iso>` instead.
+
 .. contents::
    :local:
    :depth: 2
@@ -12,14 +16,14 @@ The LE Audio controller for nRF5340 is a link layer controller for the nRF5340 n
 This controller is compatible with the HCI IPC driver provided by the |NCS| Bluetooth® :ref:`bt_hci_drivers` core.
 When the communication between the application and the network core on a device is handled by the HCI IPC driver, this link layer controller can be used to handle time critical low level communication and the radio.
 
-.. note::
-   The LE Audio controller for nRF5340 is under development and is provided in the :ref:`experimental state <software_maturity>`.
-   Make sure to always use the latest version of the controller.
-
 .. le_audio_controller_qdid_start
 
 LE Audio controller for nRF5340 QDID
    The LE Audio controller for nRF5340 associated with this version of the |NCS| comes with the QDID #181316.
+
+.. note::
+   Because the LE Audio controller for nRF5340 has been :ref:`deprecated <api_deprecation>` in the |NCS| v2.6.0, the software combination required for this QDID is no longer supported.
+   This controller will keep its QDID, but no further qualifications will be made.
 
 .. le_audio_controller_qdid_end
 
