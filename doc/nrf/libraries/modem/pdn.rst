@@ -21,9 +21,8 @@ The library uses several AT commands, and it relies on the following two types o
 * Notifications for unsolicited reporting of error codes sent by the network (``+CNEC``) - Subscribed by using the ``AT+CNEC=16`` command.
   See the `AT+CNEC set command`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 AT+CGEREP set command_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
 
-If the application uses the :ref:`lte_lc_readme` library to change the modem's functional mode, the PDN library automatically subscribes to the necessary AT notifications.
+The PDN library automatically subscribes to the necessary AT notifications using :ref:`mlil_callbacks`.
 This includes automatically resubscribing to the notifications upon functional mode changes.
-If the application does not use the :ref:`lte_lc_readme` library to change the modem's functional mode, the application must subscribe to the necessary AT notifications manually.
 
 .. note::
    The subscription to AT notifications is lost upon changing the modem functional mode to ``+CFUN=0``.

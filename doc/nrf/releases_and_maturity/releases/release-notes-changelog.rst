@@ -929,13 +929,26 @@ Modem libraries
 
     * A mention about enabling TF-M logging while using modem traces in the :ref:`modem_trace_module`.
     * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT` option, allowing the user to change the behavior of the driver's :c:func:`net_if_down` implementation at build time.
+    * The :c:macro:`SO_RAI` socket option for Release Assistance Indication (RAI).
+      The socket option uses values ``RAI_NO_DATA``, ``RAI_LAST``, ``RAI_ONE_RESP``, ``RAI_ONGOING``, or ``RAI_WAIT_MORE`` to specify the desired indication.
+      This socket option substitutes the deprecated RAI (``SO_RAI_*``) socket options.
 
   * Updated:
 
-  * The library by renaming ``lte_connectivity`` module to ``lte_net_if``.
-    All related Kconfig options have been renamed accordingly.
-  * The default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
-  * The modem trace shell command implementation is moved from :ref:`modem_shell_application` sample into :ref:`nrf_modem_lib_readme` to be used by any application with the :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHELL_TRACE` option enabled.
+    * The following socket options have been deprecated:
+
+       * :c:macro:`SO_RAI_NO_DATA`
+       * :c:macro:`SO_RAI_LAST`
+       * :c:macro:`SO_RAI_ONE_RESP`
+       * :c:macro:`SO_RAI_ONGOING`
+       * :c:macro:`SO_RAI_WAIT_MORE`
+
+      Use the :c:macro:`SO_RAI` socket option instead.
+
+    * The library by renaming ``lte_connectivity`` module to ``lte_net_if``.
+      All related Kconfig options have been renamed accordingly.
+    * The default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
+    * The modem trace shell command implementation is moved from :ref:`modem_shell_application` sample into :ref:`nrf_modem_lib_readme` to be used by any application with the :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHELL_TRACE` option enabled.
 
   * Fixed:
 
@@ -967,6 +980,10 @@ Modem libraries
    * Updated:
 
      * The library to add PDP auto configuration to the :c:enumerator:`LTE_LC_FUNC_MODE_POWER_OFF` event.
+
+  * Removed:
+
+     * The dependency on the :ref:`lte_lc_readme` library.
 
 * :ref:`lib_at_host` library:
 

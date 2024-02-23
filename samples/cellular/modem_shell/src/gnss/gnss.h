@@ -17,6 +17,7 @@ enum gnss_duty_cycling_policy {
 
 enum gnss_data_delete {
 	GNSS_DATA_DELETE_EPHEMERIDES,
+	GNSS_DATA_DELETE_EKF,
 	GNSS_DATA_DELETE_ALL,
 	GNSS_DATA_DELETE_TCXO
 };
@@ -88,6 +89,16 @@ int gnss_stop(void);
  *         Otherwise, a (negative) error code is returned.
  */
 int gnss_delete_data(enum gnss_data_delete data);
+
+/**
+ * @brief Deletes GNSS data from NV memory using custom bitmask.
+ *
+ * @param mask Bitmask indicating which is deleted.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_delete_data_custom(uint32_t mask);
 
 /**
  * @brief Sets continuous tracking mode.

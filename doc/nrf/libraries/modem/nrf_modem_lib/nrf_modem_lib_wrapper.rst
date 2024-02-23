@@ -22,10 +22,14 @@ When using the Modem library in |NCS|, the library must be initialized and shutd
 
 .. _mlil_callbacks:
 
-Callbacks
-*********
+Modem library callbacks
+***********************
 
-The library wrapper also provides callbacks for the initialization and shutdown operations.
+The library wrapper provides callbacks for the modem initialization and shutdown operations, as well as macros for registering multiple callbacks on changes to the modem functional mode.
+
+Modem initialization and shutdown
+=================================
+
 The application can set up a callback for the :c:func:`nrf_modem_lib_init` function using the :c:macro:`NRF_MODEM_LIB_ON_INIT` macro, and a callback for :c:func:`nrf_modem_lib_shutdown` function using the :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macro.
 These compile-time callbacks allow any part of the application to perform any setup steps that require the modem to be in a certain state.
 Furthermore, the callbacks ensure that the setup steps are repeated whenever another part of the application turns the modem on or off.
@@ -43,3 +47,18 @@ The callbacks registered using the :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macro ar
 The callback context is provided to these callbacks.
 Callbacks for the macro :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` must have the signature ``void callback_name(void *ctx)``, where ``ctx`` is the context passed to the macro.
 See the :ref:`modem_callbacks_sample` sample for more information.
+
+Modem functional mode changes
+=============================
+
+The application can set up a callback for AT CFUN calls using the :c:macro:`NRF_MODEM_LIB_ON_CFUN` macro.
+This compile-time callback allows any part of the application to perform any steps that are required when the modem changes functional mode.
+The callbacks registered using the :c:macro:`NRF_MODEM_LIB_ON_CFUN` macro are executed after the functional mode has been successfully set.
+See the :ref:`modem_callbacks_sample` sample for more information.
+
+.. important::
+   The application should not call :c:func:`nrf_modem_at_cfun_handler_set` as that will override the handler set by the modem library integration layer.
+   Instead, the application should use the :c:macro:`NRF_MODEM_LIB_ON_CFUN` macro to register functional mode changes.
+
+.. note::
+   The CFUN callback is not supported with :c:func:`nrf_modem_at_cmd_async`.

@@ -396,7 +396,7 @@ Release Assistance Indication (RAI)
 
 If you have low-level control over the protocol your IOT device uses, you might know when you should not expect more data.
 In that case, you can request to skip the RRC idle mode using :term:`Release Assistance Indication (RAI)`.
-The recommended way to do this is using setsockopt with an option like ``SO_RAI_LAST``.
+The recommended way to do this is using :c:func:`setsockopt` with the option ``SO_RAI`` and value ``RAI_LAST``.
 
 Low battery behavior
 ====================

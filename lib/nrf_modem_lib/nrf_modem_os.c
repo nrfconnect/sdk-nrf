@@ -255,6 +255,10 @@ int nrf_modem_os_sem_init(void **sem,
 	__ASSERT(used < NRF_MODEM_OS_NUM_SEM_REQUIRED,
 		 "Not enough semaphores in glue layer");
 
+	if (used >= NRF_MODEM_OS_NUM_SEM_REQUIRED) {
+		return -NRF_ENOMEM;
+	}
+
 	*sem = &nrf_modem_os_sems[used++];
 
 recycle:
@@ -288,6 +292,53 @@ unsigned int nrf_modem_os_sem_count_get(void *sem)
 {
 	return k_sem_count_get(sem);
 }
+
+static struct k_mutex nrf_modem_os_mutexes[NRF_MODEM_OS_NUM_MUTEX_REQUIRED];
+
+int nrf_modem_os_mutex_init(void **mutex)
+{
+	static uint8_t used;
+
+	if (PART_OF_ARRAY(nrf_modem_os_mutexes, (struct k_mutex *)*mutex)) {
+		goto recycle;
+	}
+
+	__ASSERT(used < NRF_MODEM_OS_NUM_MUTEX_REQUIRED,
+		 "Not enough mutexes in glue layer");
+
+	if (used >= NRF_MODEM_OS_NUM_MUTEX_REQUIRED) {
+		return -NRF_ENOMEM;
+	}
+
+	*mutex = &nrf_modem_os_mutexes[used++];
+
+recycle:
+	return k_mutex_init((struct k_mutex *)*mutex);
+}
+
+int nrf_modem_os_mutex_unlock(void *mutex)
+{
+	__ASSERT(PART_OF_ARRAY(nrf_modem_os_mutexes, (struct k_mutex *)mutex),
+		 "Uninitialised mutex");
+
+	return k_mutex_unlock((struct k_mutex *)mutex);
+}
+
+int nrf_modem_os_mutex_lock(void *mutex, int timeout)
+{
+	int err;
+
+	__ASSERT(PART_OF_ARRAY(nrf_modem_os_mutexes, (struct k_mutex *)mutex),
+		 "Uninitialised mutex");
+
+	err = k_mutex_lock((struct k_mutex *)mutex, timeout == -1 ? K_FOREVER : K_MSEC(timeout));
+	if (err) {
+		return -NRF_EAGAIN;
+	}
+
+	return 0;
+}
+
 
 void nrf_modem_os_event_notify(uint32_t context)
 {

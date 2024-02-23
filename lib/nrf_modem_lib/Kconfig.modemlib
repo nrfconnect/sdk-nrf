@@ -217,6 +217,13 @@ config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
 
 endchoice # NRF_MODEM_LIB_ON_FAULT
 
+config NRF_MODEM_LIB_CFUN_HOOKS
+	bool "Modem CFUN hooks"
+	default y
+	help
+	  Allow the application to subscribe to functional mode changes in the modem
+	  using the NRF_MODEM_LIB_ON_CFUN macro.
+
 config NRF_MODEM_LIB_FAULT_STRERROR
 	bool "Compile fault reason table"
 	help
