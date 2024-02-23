@@ -668,6 +668,9 @@ static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_ISO_TX_BUFFERS)
 	cmds->iso_read_tx_timestamp = 1;
 #endif
+#if defined(CONFIG_BT_CTLR_ADV_ISO)
+	cmds->big_reserved_time_set = 1;
+#endif
 }
 #endif	/* CONFIG_BT_HCI_VS */
 
