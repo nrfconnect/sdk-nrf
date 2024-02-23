@@ -1222,6 +1222,17 @@ static int hci_driver_open(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_CONN_ISO)) {
+		sdc_hci_cmd_vs_cis_subevent_length_set_t params = {
+			.cis_subevent_length_us = CONFIG_BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
+		};
+		err = sdc_hci_cmd_vs_cis_subevent_length_set(&params);
+		if (err) {
+			MULTITHREADING_LOCK_RELEASE();
+			return -ENOTSUP;
+		}
+	}
+
 	if (IS_ENABLED(CONFIG_BT_CONN)) {
 		sdc_hci_cmd_vs_event_length_set_t params = {
 			.event_length_us = CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
