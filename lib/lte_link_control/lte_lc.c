@@ -1390,11 +1390,6 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 		return -EFAULT;
 	}
 
-	STRUCT_SECTION_FOREACH(lte_lc_cfun_cb, e) {
-		LOG_DBG("CFUN monitor callback: %p", e->callback);
-		e->callback(mode, e->context);
-	}
-
 	return 0;
 }
 

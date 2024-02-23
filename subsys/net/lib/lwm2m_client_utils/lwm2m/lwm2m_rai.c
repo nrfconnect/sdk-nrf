@@ -99,7 +99,7 @@ void lwm2m_utils_rai_event_cb(struct lwm2m_ctx *client,
 
 static void lwm2m_set_socket_state(int sock_fd, enum lwm2m_socket_states state)
 {
-	int opt = -1;
+	int optval = -1;
 	int ret;
 	static enum lwm2m_socket_states last_state;
 	static const char * const opt_names[] = {
@@ -114,10 +114,10 @@ static void lwm2m_set_socket_state(int sock_fd, enum lwm2m_socket_states state)
 	}
 	switch (state) {
 	case LWM2M_SOCKET_STATE_ONGOING:
-		opt = SO_RAI_ONGOING;
+		optval = RAI_ONGOING;
 		break;
 	case LWM2M_SOCKET_STATE_ONE_RESPONSE:
-		opt = SO_RAI_ONE_RESP;
+		optval = RAI_ONE_RESP;
 		break;
 	case LWM2M_SOCKET_STATE_LAST:
 		if (last_state == LWM2M_SOCKET_STATE_NO_DATA) {
@@ -127,21 +127,21 @@ static void lwm2m_set_socket_state(int sock_fd, enum lwm2m_socket_states state)
 			 * We don't know how many packets are coming, so indicate that
 			 * communication is ongoing and disable until we go back to RX_OFF.
 			 */
-			opt = SO_RAI_ONGOING;
+			optval = RAI_ONGOING;
 			state = LWM2M_SOCKET_STATE_ONGOING;
 			activate_rai = false;
 			LOG_INF("Ongoing traffic, RAI disabled");
 		} else {
-			opt = SO_RAI_LAST;
+			optval = RAI_LAST;
 		}
 		break;
 	case LWM2M_SOCKET_STATE_NO_DATA:
-		opt = SO_RAI_NO_DATA;
+		optval = RAI_NO_DATA;
 		break;
 	}
 
-	LOG_DBG("Set socket option SO_RAI_%s\n", opt_names[state]);
-	ret = setsockopt(sock_fd, SOL_SOCKET, opt, NULL, 0);
+	LOG_DBG("Set socket option SO_RAI with value %s\n", opt_names[state]);
+	ret = setsockopt(sock_fd, SOL_SOCKET, SO_RAI, &optval, sizeof(optval));
 
 	if (ret < 0) {
 		ret = -errno;

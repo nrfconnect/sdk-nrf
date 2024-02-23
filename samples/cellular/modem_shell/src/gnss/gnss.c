@@ -308,6 +308,9 @@ static void print_pvt_flags(struct nrf_modem_gnss_pvt_data_frame *pvt)
 	mosh_print(
 		"Velocity valid:     %s",
 		pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_VELOCITY_VALID ? "true" : "false");
+	mosh_print(
+		"Scheduled download: %s",
+		pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_SCHED_DOWNLOAD ? "true" : "false");
 }
 
 static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
@@ -1147,8 +1150,17 @@ int gnss_delete_data(enum gnss_data_delete data)
 		delete_mask = NRF_MODEM_GNSS_DELETE_EPHEMERIDES;
 		break;
 
+	case GNSS_DATA_DELETE_EKF:
+		delete_mask = NRF_MODEM_GNSS_DELETE_EKF;
+		break;
+
 	case GNSS_DATA_DELETE_ALL:
-		/* Delete everything else but TCXO frequency offset data */
+		/* Delete everything else but TCXO frequency offset data. Deleting EKF state is not
+		 * supported by older MFWs and returns an error. Because of this EKF state is
+		 * deleted separately and the return value is ignored.
+		 */
+		(void)nrf_modem_gnss_nv_data_delete(NRF_MODEM_GNSS_DELETE_EKF);
+
 		delete_mask = NRF_MODEM_GNSS_DELETE_EPHEMERIDES |
 			      NRF_MODEM_GNSS_DELETE_ALMANACS |
 			      NRF_MODEM_GNSS_DELETE_IONO_CORRECTION_DATA |
@@ -1169,6 +1181,19 @@ int gnss_delete_data(enum gnss_data_delete data)
 	}
 
 	err = nrf_modem_gnss_nv_data_delete(delete_mask);
+	if (err) {
+		mosh_error("GNSS: Failed to delete NV data, error: %d (%s)",
+			   err, gnss_err_to_str(err));
+	}
+
+	return err;
+}
+
+int gnss_delete_data_custom(uint32_t mask)
+{
+	int err;
+
+	err = nrf_modem_gnss_nv_data_delete(mask);
 	if (err) {
 		mosh_error("GNSS: Failed to delete NV data, error: %d (%s)",
 			   err, gnss_err_to_str(err));

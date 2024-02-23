@@ -25,6 +25,7 @@ static void socket_transmission_work_fn(struct k_work *work)
 {
 	int err;
 	char buffer[CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES] = {"\0"};
+	int rai;
 
 	printk("Transmitting UDP/IP payload of %d bytes to the ",
 	       CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES + UDP_IP_HEADER_SIZE);
@@ -36,7 +37,8 @@ static void socket_transmission_work_fn(struct k_work *work)
 	/* Let the modem know that this is the last packet for now and we do not
 	 * wait for a response.
 	 */
-	err = setsockopt(client_fd, SOL_SOCKET, SO_RAI_LAST, NULL, 0);
+	rai = RAI_LAST;
+	err = setsockopt(client_fd, SOL_SOCKET, SO_RAI, &rai, sizeof(rai));
 	if (err) {
 		printk("Failed to set socket option, error: %d\n", errno);
 	}

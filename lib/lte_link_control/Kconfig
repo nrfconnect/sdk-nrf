@@ -262,7 +262,7 @@ config LTE_RAI_REQ
 	bool "Release Assistance Indication (RAI) request"
 	help
 	  Request use of RAI using AT%RAI. When RAI is enabled, the application needs to use
-	  the RAI socket options (SO_RAI_*) to inform the modem when no more data is expected
+	  the RAI socket option (SO_RAI) to inform the modem when no more data is expected
 	  and the RRC connection can be released.
 
 config LTE_RAI_REQ_VALUE

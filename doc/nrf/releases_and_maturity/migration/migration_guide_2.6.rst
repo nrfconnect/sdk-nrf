@@ -19,6 +19,32 @@ The following changes are mandatory to make your application work in the same wa
     The setting controls whether the SLM connects automatically to the network on startup.
     You can read and write it using the ``AT#XCARRIER="auto_connect"`` command.
 
+* For applications using :ref:`nrf_modem_lib_readme`:
+
+  * The  ``lte_connectivity`` module is renamed to ``lte_net_if``.
+    Make sure that all references are updated accordingly, including function names and Kconfig options.
+
+  * If your application is using the ``lte_net_if`` (formerly ``lte_connectivity``) without disabling :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options, changes are required as the default values are changed from enabled to disabled.
+
+    * Consider using the :c:func:`conn_mgr_all_if_up`, :c:func:`conn_mgr_if_connect` and :c:func:`conn_mgr_if_disconnect` functions instead of enabling the Kconfig options to have better control of the initialization and connection establishment.
+
+  * The Release Assistance Indication (RAI) socket options have been deprecated and replaced with a new consolidated socket option.
+    If your application uses ``SO_RAI_*`` socket options, you need to update your socket configuration as follows:
+
+    #. Replace the deprecated socket options :c:macro:`SO_RAI_NO_DATA`, :c:macro:`SO_RAI_LAST`, :c:macro:`SO_RAI_ONE_RESP`, :c:macro:`SO_RAI_ONGOING`, and :c:macro:`SO_RAI_WAIT_MORE` with the new :c:macro:`SO_RAI` option.
+    #. Set the optval parameter of the :c:macro:`SO_RAI` socket option to one of the new values ``RAI_NO_DATA``, ``RAI_LAST``, ``RAI_ONE_RESP``, ``RAI_ONGOING``, or ``RAI_WAIT_MORE`` to specify the desired indication.
+
+    Example of migration:
+
+    .. code-block:: c
+
+      /* Before migration. */
+      setsockopt(socket_fd, SOL_SOCKET, SO_RAI_LAST, NULL, 0);
+
+      /* After migration. */
+      int rai_option = RAI_LAST;
+      setsockopt(socket_fd, SOL_SOCKET, SO_RAI, &rai_option, sizeof(rai_option));
+
   * The ``AT#XCMNG`` AT command, which is activated with the :file:`overlay-native_tls.conf` overlay file, has been changed from using modem certificate storage to Zephyr settings storage.
     You need to use the ``AT#XCMNG`` command to store previously stored credentials again.
 

@@ -198,6 +198,9 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case SO_ERROR:
 			*nrf_out_optname = NRF_SO_ERROR;
 			break;
+		case SO_KEEPOPEN:
+			*nrf_out_optname = NRF_SO_KEEPOPEN;
+			break;
 		case SO_EXCEPTIONAL_DATA:
 			*nrf_out_optname = NRF_SO_EXCEPTIONAL_DATA;
 			break;
@@ -213,6 +216,8 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case SO_REUSEADDR:
 			*nrf_out_optname = NRF_SO_REUSEADDR;
 			break;
+
+		/* SO_RAI_* and NRF_SO_RAI_* are deprecated */
 		case SO_RAI_LAST:
 			*nrf_out_optname = NRF_SO_RAI_LAST;
 			break;
@@ -227,6 +232,9 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 			break;
 		case SO_RAI_WAIT_MORE:
 			*nrf_out_optname = NRF_SO_RAI_WAIT_MORE;
+			break;
+		case SO_RAI:
+			*nrf_out_optname = NRF_SO_RAI;
 			break;
 		default:
 			retval = -1;
@@ -518,7 +526,7 @@ static int nrf91_socket_offload_setsockopt(void *obj, int level, int optname,
 			nrf_optlen = sizeof(struct nrf_timeval);
 		}
 	} else if ((level == SOL_TLS) && (optname == TLS_SESSION_CACHE)) {
-		nrf_optlen = sizeof(nrf_sec_session_cache_t);
+		nrf_optlen = sizeof(int);
 	}
 
 	retval = nrf_setsockopt(sd, nrf_level, nrf_optname, nrf_optval,
