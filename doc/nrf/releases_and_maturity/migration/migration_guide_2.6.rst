@@ -676,6 +676,86 @@ The following changes are recommended for your application to work optimally aft
   This change enables the use of standard |NCS| tools and procedures for building and configuring the controller.
   The SoftDevice Controller will for some time not have a QDID for the ISO operation.
 
+* For the Bluetooth Mesh samples and applications, a new sensor API (see :ref:`bt_mesh_sensors_readme`) is introduced with |NCS| v2.6.0.
+  The previous sensor API is deprecated.
+
+  The usage of the new sensor API is demonstrated in samples :ref:`bluetooth_mesh_sensor_client`, :ref:`bluetooth_mesh_sensor_server` and :ref:`bluetooth_mesh_light_lc`.
+
+  The Kconfig option :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE` is enabled by default in the deprecation period.
+  This means that the existing samples and applications can continue using the deprecated sensor API as normal during the deprecation period, without the additional configuration.
+  The samples and applications will get a deprecation warning when compiled, that the user can choose to disregard.
+
+  When the deprecation period is over, the deprecated sensor API will be removed, and the samples and applications will no longer compile unless updated to the new sensor API.
+
+  To use the new sensor API for new and existing samples and applications, disable the Kconfig option :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE` in the configuration.
+  This configuration option will be removed when the deprecation period is over, and then it has to be removed from the sample and application configuration.
+  It is also recommended to enable the Kconfig option :kconfig:option:`CONFIG_FPU` to support the accelerated floating point operations, and the Kconfig option :kconfig:option:`CONFIG_CBPRINTF_FP_SUPPORT` to support the floating point printing.
+
+  * Sensor API arguments and callback parameters previously defined with :c:struct:`sensor_value` now use :c:struct:`bt_mesh_sensor_value` instead.
+  * The :c:member:`bt_mesh_sensor_value.format` needs to be filled by the application for variables passed to the sensor API.
+  * There are several different types of :c:struct:`bt_mesh_sensor_format` described in the file :file:`include/bluetooth/mesh/sensor_types.h`.
+  * When filling in sensor values for a channel, the format can be found through ``sensor->type.channels[i].format`` defined for the given :c:struct:`bt_mesh_sensor` sensor.
+  * :c:struct:`bt_mesh_sensor_value` with a valid format can be converted to and from integer, float and :c:struct:`sensor_value` through ``bt_mesh_sensor_value_to/from*`` functions.
+  * Where the applications previously just added values directly to :c:member:`sensor_value.val1` and :c:member:`sensor_value.val2`, the correct way is to use ``bt_mesh_sensor_value_to/from*`` functions to either set or extract the values.
+
+  Example of changes that need to be done for a sensor using sensor values, from e.g. the file :file:`drivers/sensor.h`:
+
+    ..  code-block:: diff
+
+        static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
+                                 struct bt_mesh_sensor *sensor,
+                                 struct bt_mesh_msg_ctx *ctx,
+        -                         struct sensor_value *rsp)
+        +                         struct bt_mesh_sensor_value *rsp)
+        {
+        +        struct sensor_value channel_val;
+                int err;
+
+                sensor_sample_fetch(dev);
+
+        -        err = sensor_channel_get(dev, SENSOR_DATA_TYPE, rsp);
+        +        err = sensor_channel_get(dev, SENSOR_DATA_TYPE, &channel_val);
+                if (err) {
+                        printk("Error getting temperature sensor data (%d)\n", err);
+                }
+        +        err = bt_mesh_sensor_value_from_sensor_value(
+        +                sensor->type->channels[0].format, &channel_val, rsp);
+        +        if (err) {
+        +                printk("Error encoding temperature sensor data (%d)\n", err);
+        +        }
+
+                return err;
+        }
+
+  Example of changes that need to be done for a sensor using the float values:
+
+    ..  code-block:: diff
+
+        static int amb_light_level_get(struct bt_mesh_sensor_srv *srv,
+                                       struct bt_mesh_sensor *sensor,
+                                       struct bt_mesh_msg_ctx *ctx,
+        -                               struct sensor_value *rsp)
+        +                               struct bt_mesh_sensor_value *rsp)
+        {
+                int err;
+
+                /* Report ambient light as dummy value, and changing it by pressing
+                 * a button. The logic and hardware for measuring the actual ambient
+                 * light usage of the device should be implemented here.
+                 */
+        -        double reported_value = amb_light_level_gain * dummy_ambient_light_value;
+        +        float reported_value = amb_light_level_gain * dummy_ambient_light_value;
+
+        -        err = sensor_value_from_double(rsp, reported_value);
+        +        err = bt_mesh_sensor_value_from_float(sensor->type->channels[0].format,
+        +                                              reported_value, rsp);
+        -        if (err) {
+        +        if (err && err != -ERANGE) {
+                        printk("Error encoding ambient light level sensor data (%d)\n", err);
+                        return err;
+                }
+                return 0;
+        }
 
 .. HOWTO
 
