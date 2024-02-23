@@ -102,7 +102,7 @@ static void qspi_device_uninit(const struct device *dev);
 #define QSPI_SCK_DELAY 0
 #define WORD_SIZE 4
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_BUS_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf_bus, CONFIG_WIFI_NRF700X_BUS_LOG_LEVEL);
 
 /**
  * @brief QSPI buffer structure
