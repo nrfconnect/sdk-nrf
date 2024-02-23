@@ -47,7 +47,10 @@ The firmware supports the following development kits:
 
 .. table-from-sample-yaml::
 
-To automatically attach the firmware image, you need to use the :ref:`sysbuild`.
+To automatically attach the firmware image, you need to use Zephyr's :ref:`zephyr:sysbuild`.
+
+The |nRFVSC| supports sysbuild during `build configuration setup <How to build an application_>`_.
+To learn more about sysbuild in the extension, see `sysbuild support`_ page in its documentation.
 
 Configuration
 *************
@@ -89,24 +92,23 @@ The following files are available:
 * :file:`overlay-bt_hci_ipc.conf` - Configuration file enabling Bluetooth Low Energy over HCI.
 * :file:`overlay-bt_rpc.conf` - Configuration file enabling Bluetooth Low Energy over RPC.
 
-Building and running
-********************
+.. note::
+   When you use sysbuild to build an application which uses the ipc_radio as network core image the preceding configuration files are added automatically to ipc_radio.
+   The selection of specific configuration files is determined by the sysbuild kconfig.
+
+   For instance the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154` kconfig enables the :file:`overlay-802154.conf` configuration file to be used with ipc_radio.
+
+Building and running as a single image
+**************************************
 
 .. |application path| replace:: :file:`applications/ipc_radio`
 
 .. include:: /includes/application_build_and_run.txt
 
-To enable a specific configuration overlay file, use the following command:
-
-.. code-block:: console
-
-   west build |application path| -b board_name -- -DEXTRA_CONF_FILE="overlay-***.conf"
-
-You can add multiple configuration files separated by a semicolon.
-You cannot use :ref:`ble_rpc` together with the HCI :ref:`bluetooth_controller`.
+For instructions on how to enable a specific configuration overlay file, see :ref:`building_advanced`.
 
 .. note::
-   When using Sysbuild, the configuration files are added automatically.
+   You cannot use :ref:`ble_rpc` together with the HCI :ref:`bluetooth_controller`.
 
 Dependencies
 ************
