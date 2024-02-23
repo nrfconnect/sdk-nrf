@@ -671,6 +671,9 @@ static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_ADV_ISO)
 	cmds->big_reserved_time_set = 1;
 #endif
+#if defined(CONFIG_BT_CTLR_CONN_ISO)
+	cmds->cig_reserved_time_set = 1;
+#endif
 }
 #endif	/* CONFIG_BT_HCI_VS */
 
@@ -1623,6 +1626,11 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 	case SDC_HCI_OPCODE_CMD_VS_BIG_RESERVED_TIME_SET:
 		return sdc_hci_cmd_vs_big_reserved_time_set(
 			(sdc_hci_cmd_vs_big_reserved_time_set_t const *)cmd_params);
+#endif
+#if defined(CONFIG_BT_CTLR_CONN_ISO)
+	case SDC_HCI_OPCODE_CMD_VS_CIG_RESERVED_TIME_SET:
+		return sdc_hci_cmd_vs_cig_reserved_time_set(
+			(sdc_hci_cmd_vs_cig_reserved_time_set_t const *)cmd_params);
 #endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
