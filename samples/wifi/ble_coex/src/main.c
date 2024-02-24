@@ -367,6 +367,7 @@ int main(void)
 	enum nrf_wifi_pta_wlan_op_band wlan_band;
 	bool separate_antennas = IS_ENABLED(CONFIG_COEX_SEP_ANTENNAS);
 #endif /* CONFIG_NRF700X_SR_COEX */
+	bool is_sr_protocol_ble = IS_ENABLED(CONFIG_SR_PROTOCOL_BLE);
 
 #if !defined(CONFIG_COEX_SEP_ANTENNAS) && \
 	!(defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
@@ -424,7 +425,7 @@ int main(void)
 		/* Configure Coexistence Hardware */
 		LOG_INF("\n");
 		LOG_INF("Configuring non-PTA registers.\n");
-		ret = nrf_wifi_coex_config_non_pta(separate_antennas);
+		ret = nrf_wifi_coex_config_non_pta(separate_antennas, is_sr_protocol_ble);
 		if (ret != 0) {
 			LOG_ERR("Configuring non-PTA registers of CoexHardware FAIL\n");
 			goto err;
@@ -437,7 +438,7 @@ int main(void)
 		}
 
 		LOG_INF("Configuring PTA registers for %s\n", wifi_band_txt(status.band));
-		ret = nrf_wifi_coex_config_pta(wlan_band, separate_antennas);
+		ret = nrf_wifi_coex_config_pta(wlan_band, separate_antennas, is_sr_protocol_ble);
 		if (ret != 0) {
 			LOG_ERR("Failed to configure PTA coex hardware: %d\n", ret);
 			goto err;

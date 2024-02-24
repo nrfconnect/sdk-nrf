@@ -142,4 +142,8 @@ config COEX_SEP_ANTENNAS
 	bool "Control if the antennas are shared/serparate for BT and WLAN"
 	default y
 
+config SR_PROTOCOL_BLE
+	bool "Indicates if the Short Range protocol is Bluetooth LE or not"
+	default y
+
 endmenu
