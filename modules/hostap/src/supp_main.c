@@ -440,6 +440,11 @@ static void z_wpas_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
 			os_free((char *)data->rx_mgmt.frame);
 		} else if (msg.event == EVENT_TX_STATUS) {
 			os_free((char *)data->tx_status.data);
+		} else if (msg.event == EVENT_ASSOC) {
+			os_free((char *)data->assoc_info.addr);
+			os_free((char *)data->assoc_info.req_ies);
+			os_free((char *)data->assoc_info.resp_ies);
+			os_free((char *)data->assoc_info.resp_frame);
 		}
 		os_free(msg.data);
 	}
