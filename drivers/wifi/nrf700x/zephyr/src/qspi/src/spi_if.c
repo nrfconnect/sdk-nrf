@@ -233,6 +233,13 @@ int spim_init(struct qspi_config *config)
 	return 0;
 }
 
+int spim_deinit(void)
+{
+	LOG_DBG("TODO : %s", __func__);
+
+	return 0;
+}
+
 static void spim_addr_check(unsigned int addr, const void *data, unsigned int len)
 {
 	if ((addr % 4 != 0) || (((unsigned int)data) % 4 != 0) || (len % 4 != 0)) {
