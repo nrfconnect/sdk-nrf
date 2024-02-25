@@ -72,7 +72,7 @@ Add the following Kconfig options to change the version:
 * :kconfig:option:`CONFIG_CHIP_DEVICE_SOFTWARE_VERSION` to set to the version number.
 * :kconfig:option:`CONFIG_CHIP_DEVICE_SOFTWARE_VERSION_STRING` to set the version string.
 
-Additionally, since Nordic chips use MCUboot Image Tool, you need to also edit the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option, with a value in the following format: ``"MAJOR . MINOR . PATCHLEVEL . TWEAK"``.
+Additionally, since Nordic chips use MCUboot Image Tool, you need to also edit the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option, with a value in the following format: ``"MAJOR . MINOR . PATCHLEVEL + TWEAK"``.
 
 For example:
 
@@ -82,7 +82,7 @@ For example:
    CONFIG_CHIP_DEVICE_SOFTWARE_VERSION_STRING="2.5.99+0"
    CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.5.99+0"
 
-Where ``33907456`` is 0x02056300, the hexadecimal versioning of 2.5.99.0.
+Where ``33907456`` is 0x02056300, the hexadecimal versioning of 2.5.99+0.
 
 .. _ug_matter_dfu_smp:
 
