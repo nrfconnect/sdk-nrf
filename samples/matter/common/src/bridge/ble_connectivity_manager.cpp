@@ -182,9 +182,12 @@ exit:
 		Instance().UpdateStateFlag(State::Pairing, false);
 #endif
 	}
-	/* Trigger the connection callback to inform the application that the connection procedure failed. */
-	provider->GetBLEBridgedDevice().mFirstConnectionCallback(
-		false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
+
+	if (!provider->IsInitiallyConnected()) {
+		/* Trigger the connection callback to inform the application that the connection procedure failed. */
+		provider->GetBLEBridgedDevice().mFirstConnectionCallback(
+			false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
+	}
 }
 
 void BLEConnectivityManager::DisconnectionHandler(bt_conn *conn, uint8_t reason)
