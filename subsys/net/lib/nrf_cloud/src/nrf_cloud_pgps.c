@@ -1603,6 +1603,7 @@ int nrf_cloud_pgps_begin_update(void)
 	index.store_block = npgps_alloc_block();
 	if (index.store_block == NO_BLOCK) {
 		LOG_ERR("No free flash space!");
+		npgps_download_unlock();
 		return -ENOMEM;
 	}
 	state = PGPS_LOADING;
