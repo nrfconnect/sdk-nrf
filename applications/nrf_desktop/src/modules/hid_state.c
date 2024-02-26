@@ -824,6 +824,13 @@ static bool update_report(struct report_data *rd)
 {
 	bool update_needed = false;
 
+	/* Update report is never needed for the empty report data. Empty report data does not link
+	 * to subscriber too (`linked_rs` field is set to NULL).
+	 */
+	if (rd == &empty_rd) {
+		return update_needed;
+	}
+
 	while (!update_needed && !eventq_is_empty(&rd->eventq)) {
 		/* There are enqueued events to handle. */
 		struct item_event *event = eventq_get(&rd->eventq);
