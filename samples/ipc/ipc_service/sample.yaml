@@ -1,52 +1,87 @@
 sample:
-    name: IPC Service integration test
-    description: IPC Service integration and efficiency test
+  name: IPC Service integration test
+  description: IPC Service integration and efficiency test
+
+common:
+  build_only: true
+  sysbuild: true
+  tags: ipc
+
 tests:
-  sample.ipc.ipc_service.rpmsg_default:
-    build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+  sample.ipc.ipc_service.nrf5340dk_rpmsg_default:
+    platform_allow:
+      - nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    tags: ipc
-  sample.ipc.ipc_service.rpmsg_cpuapp_sending:
-    build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    tags: ipc
     extra_args:
-      OVERLAY_CONFIG=overlay-cpuapp-sending.conf
-  sample.ipc.ipc_service.rpmsg_cpunet_sending:
-    build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
+      ipc_service_OVERLAY_CONFIG=rpmsg.conf
+      remote_OVERLAY_CONFIG=rpmsg.conf
+
+  sample.ipc.ipc_service.nrf5340dk_rpmsg_cpuapp_sending:
+    platform_allow:
+      - nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    tags: ipc
+    extra_configs:
+      - ipc_service_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
+      - remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
     extra_args:
-      OVERLAY_CONFIG=overlay-cpunet-sending.conf
-  sample.ipc.ipc_service.icmsg_default:
-    build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
+      ipc_service_OVERLAY_CONFIG=rpmsg.conf
+      remote_OVERLAY_CONFIG=rpmsg.conf
+
+  sample.ipc.ipc_service.nrf5340dk_rpmsg_cpunet_sending:
+    platform_allow:
+      - nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    tags: ipc
+    extra_configs:
+      - ipc_service_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
+      - remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
     extra_args:
-      CONF_FILE=prj_icmsg.conf
-  sample.ipc.ipc_service.icmsg_cpuapp_sending:
-    build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
+      ipc_service_OVERLAY_CONFIG=rpmsg.conf
+      remote_OVERLAY_CONFIG=rpmsg.conf
+
+  sample.ipc.ipc_service.nrf5340dk_icmsg_default:
+    platform_allow:
+      - nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    tags: ipc
     extra_args:
-      CONF_FILE=prj_icmsg.conf
-      OVERLAY_CONFIG=overlay-cpuapp-sending.conf
-  sample.ipc.ipc_service.icmsg_cpunet_sending:
-    build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
+      ipc_service_OVERLAY_CONFIG=icmsg.conf
+      ipc_service_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpuapp_icmsg.overlay
+      remote_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpunet_icmsg.overlay
+      remote_OVERLAY_CONFIG=icmsg.conf
+
+  sample.ipc.ipc_service.nrf5340dk_icmsg_cpuapp_sending:
+    platform_allow:
+      - nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    tags: ipc
+    extra_configs:
+      - ipc_service_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
+      - remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
     extra_args:
-      CONF_FILE=prj_icmsg.conf
-      OVERLAY_CONFIG=overlay-cpunet-sending.conf
+      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
+      ipc_service_OVERLAY_CONFIG=icmsg.conf
+      ipc_service_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpuapp_icmsg.overlay
+      remote_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpunet_icmsg.overlay
+      remote_OVERLAY_CONFIG=icmsg.conf
+
+  sample.ipc.ipc_service.nrf5340dk_icmsg_cpunet_sending:
+    platform_allow:
+      - nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    extra_configs:
+      - ipc_service_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
+      - remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
+    extra_args:
+      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
+      ipc_service_OVERLAY_CONFIG=icmsg.conf
+      ipc_service_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpuapp_icmsg.overlay
+      remote_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpunet_icmsg.overlay
+      remote_OVERLAY_CONFIG=icmsg.conf
