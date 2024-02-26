@@ -13,7 +13,10 @@
 #include "psa_manifest/pid.h"
 #include "tfm_spm_log.h"
 
+#ifdef CONFIG_HW_UNIQUE_KEY
 #include <hw_unique_key.h>
+#endif
+
 #include <identity_key.h>
 
 #define TFM_NS_PARTITION_ID -1

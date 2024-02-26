@@ -57,6 +57,7 @@
 #define RTE_USART1 1
 #endif
 
+// TODO: NCSDK-25009: Support configuring which UART instance is enabled
 #if defined(CONFIG_TFM_SECURE_UART22)
 #define RTE_USART22 1
 #endif
@@ -68,5 +69,13 @@
  */
 #define RTE_USART0_PINS RTE_USART_PINS(0)
 #define RTE_USART1_PINS RTE_USART_PINS(1)
+
+/* TODO: NCSDK-25009: Note that we don't use the macro like the above
+ * defines do because this define does not use DT */
+#define RTE_USART22_PINS          \
+{                                 \
+        NRF_PSEL(UART_TX,  1, 4), \
+        NRF_PSEL(UART_RX,  1, 5), \
+}
 
 #endif  /* __RTE_DEVICE_H */

@@ -44,9 +44,6 @@
 #include "tmp_rng.h"
 #endif
 
-#if defined(PSA_CRYPTO_DRIVER_OBERON)
-#endif /* PSA_CRYPTO_DRIVER_OBERON */
-
 #ifdef PSA_NEED_OBERON_AEAD_DRIVER
 #include "oberon_aead.h"
 #endif
@@ -107,6 +104,14 @@
 #include "oberon_pake.h"
 #endif
 
+#if defined(PSA_CRYPTO_DRIVER_CRACEN)
+#ifndef PSA_CRYPTO_DRIVER_PRESENT
+#define PSA_CRYPTO_DRIVER_PRESENT
+#endif
+#include "cracen_psa.h"
+#include "security/cracen.h"
+#endif /* PSA_CRYPTO_DRIVER_CRACEN */
+
 /* Include TF-M builtin key driver */
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 #include "tfm_crypto_defs.h"
@@ -127,12 +132,22 @@
  */
 
 #define PSA_CRYPTO_CC3XX_DRIVER_ID (4)
+#define PSA_CRYPTO_CRACEN_DRIVER_ID (5)
 
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
-#define PSA_CRYPTO_TFM_BUILTIN_KEY_LOADER_DRIVER_ID (5)
+#define PSA_CRYPTO_TFM_BUILTIN_KEY_LOADER_DRIVER_ID (6)
 #endif /* PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER */
 
 #define PSA_CRYPTO_OBERON_DRIVER_ID (28)
+
+#define CRACEN_JPAKE_DRIVER_ID 61
+#define CRACEN_SPAKE_DRIVER_ID 62
+#define CRACEN_SRP_DRIVER_ID   63
+
+/* This option is deprecated and unsupported */
+#if defined(MBEDTLS_PSA_CRYPTO_SE_C)
+#error "MBEDTLS_PSA_CRYPTO_SE_C is not supported"
+#endif
 
 #if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
 psa_status_t prng_test_generate_random(uint8_t *output, size_t output_size);
@@ -157,6 +172,14 @@ static psa_status_t hw_unique_key_provisioning(void)
 psa_status_t psa_driver_wrapper_init(void)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	(void)status;
+
+#if defined(PSA_CRYPTO_DRIVER_CRACEN)
+	status = cracen_init();
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+#endif
 
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	status = tfm_builtin_key_loader_init();
@@ -199,6 +222,15 @@ psa_status_t psa_driver_wrapper_sign_message(const psa_key_attributes_t *attribu
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
+		status = cracen_sign_message(attributes, key_buffer, key_buffer_size, alg, input,
+					     input_length, signature, signature_size,
+					     signature_length);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER */
 #if defined(PSA_NEED_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER)
 		status = cc3xx_sign_message(attributes, key_buffer, key_buffer_size, alg, input,
 					    input_length, signature, signature_size,
@@ -248,6 +280,14 @@ psa_status_t psa_driver_wrapper_verify_message(const psa_key_attributes_t *attri
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
+		status = cracen_verify_message(attributes, key_buffer, key_buffer_size, alg, input,
+					       input_length, signature, signature_length);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER */
 #if defined(PSA_NEED_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER)
 		status = cc3xx_verify_message(attributes, key_buffer, key_buffer_size, alg, input,
 					      input_length, signature, signature_length);
@@ -295,6 +335,15 @@ psa_status_t psa_driver_wrapper_sign_hash(const psa_key_attributes_t *attributes
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+
+#if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
+		status = cracen_sign_hash(attributes, key_buffer, key_buffer_size, alg, hash,
+					  hash_length, signature, signature_size, signature_length);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER */
 #if defined(PSA_NEED_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER)
 		status = cc3xx_sign_hash(attributes, key_buffer, key_buffer_size, alg, hash,
 					 hash_length, signature, signature_size, signature_length);
@@ -347,6 +396,15 @@ psa_status_t psa_driver_wrapper_verify_hash(const psa_key_attributes_t *attribut
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
+		status = cracen_verify_hash(attributes, key_buffer, key_buffer_size, alg, hash,
+					    hash_length, signature, signature_length);
+
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER */
 #if defined(PSA_NEED_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER)
 		/* Do not call the cc3xx_verify_hash for RSA keys since it still in early
 		 * development
@@ -438,6 +496,11 @@ psa_status_t psa_driver_wrapper_get_key_buffer_size(const psa_key_attributes_t *
 
 	*key_buffer_size = 0;
 	switch (location) {
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN:
+		*key_buffer_size = cracen_get_opaque_size(attributes);
+		return *key_buffer_size != 0 ? PSA_SUCCESS : PSA_ERROR_NOT_SUPPORTED;
+#endif
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
 		return tfm_builtin_key_loader_get_key_buffer_size(psa_get_key_id(attributes),
@@ -465,6 +528,14 @@ psa_status_t psa_driver_wrapper_generate_key(const psa_key_attributes_t *attribu
 		/* Transparent drivers are limited to generating asymmetric keys */
 		if (PSA_KEY_TYPE_IS_ASYMMETRIC(attributes->core.type)) {
 			/* Cycle through all known transparent accelerators */
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+			status = cracen_generate_key(attributes, key_buffer, key_buffer_size,
+						     key_buffer_length);
+			/* Declared with fallback == true */
+			if (status != PSA_ERROR_NOT_SUPPORTED) {
+				break;
+			}
+#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER*/
 #if defined(PSA_NEED_CC3XX_KEY_MANAGEMENT_DRIVER)
 			status = cc3xx_generate_key(attributes, key_buffer, key_buffer_size,
 						    key_buffer_length);
@@ -514,6 +585,14 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+		status = cracen_import_key(attributes, data, data_length, key_buffer,
+					   key_buffer_size, key_buffer_length, bits);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif
 #if defined(PSA_NEED_CC3XX_KEY_MANAGEMENT_DRIVER)
 		status = cc3xx_import_key(attributes, data, data_length, key_buffer,
 					  key_buffer_size, key_buffer_length, bits);
@@ -583,6 +662,14 @@ psa_status_t psa_driver_wrapper_export_public_key(const psa_key_attributes_t *at
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+		status = cracen_export_public_key(attributes, key_buffer, key_buffer_size, data,
+						  data_size, data_length);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER*/
 #if defined(PSA_NEED_CC3XX_KEY_MANAGEMENT_DRIVER)
 		status = cc3xx_export_public_key(attributes, key_buffer, key_buffer_size, data,
 						 data_size, data_length);
@@ -599,6 +686,11 @@ psa_status_t psa_driver_wrapper_export_public_key(const psa_key_attributes_t *at
 			return status;
 		}
 #endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER */
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN:
+		return cracen_export_public_key(attributes, key_buffer, key_buffer_size, data,
+						data_size, data_length);
+#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER*/
 		/* Fell through, meaning no accelerator supports this operation.
 		 * The CryptoCell driver doesn't support export public keys when
 		 * the key is a public key itself, so this is necessary.
@@ -619,6 +711,11 @@ psa_status_t psa_driver_wrapper_get_builtin_key(psa_drv_slot_number_t slot_numbe
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
 
 	switch (location) {
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN:
+		return (cracen_get_builtin_key(slot_number, attributes, key_buffer, key_buffer_size,
+					       key_buffer_length));
+#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER*/
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
 		return tfm_builtin_key_loader_get_builtin_key(slot_number, attributes, key_buffer,
@@ -701,6 +798,16 @@ psa_status_t psa_driver_wrapper_cipher_encrypt(const psa_key_attributes_t *attri
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
+		status = cracen_cipher_encrypt(attributes, key_buffer, key_buffer_size, alg, iv,
+					       iv_length, input, input_length, output, output_size,
+					       output_length);
+
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_CIPHER_DRIVER */
 #if defined(PSA_NEED_CC3XX_CIPHER_DRIVER)
 		status = cc3xx_cipher_encrypt(attributes, key_buffer, key_buffer_size, alg, iv,
 					      iv_length, input, input_length, output, output_size,
@@ -767,6 +874,14 @@ psa_status_t psa_driver_wrapper_cipher_decrypt(const psa_key_attributes_t *attri
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
+		status = cracen_cipher_decrypt(attributes, key_buffer, key_buffer_size, alg, input,
+					       input_length, output, output_size, output_length);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_CIPHER_DRIVER */
 #if defined(PSA_NEED_CC3XX_CIPHER_DRIVER)
 		status = cc3xx_cipher_decrypt(attributes, key_buffer, key_buffer_size, alg, input,
 					      input_length, output, output_size, output_length);
@@ -815,6 +930,18 @@ psa_status_t psa_driver_wrapper_cipher_encrypt_setup(psa_cipher_operation_t *ope
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
+		status = cracen_cipher_encrypt_setup(&operation->ctx.cracen_driver_ctx, attributes,
+						     key_buffer, key_buffer_size, alg);
+		/* Declared with fallback == true */
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+		}
+
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_CIPHER_DRIVER */
 #if defined(PSA_NEED_CC3XX_CIPHER_DRIVER)
 		status = cc3xx_cipher_encrypt_setup(&operation->ctx.cc3xx_driver_ctx, attributes,
 						    key_buffer, key_buffer_size, alg);
@@ -866,6 +993,18 @@ psa_status_t psa_driver_wrapper_cipher_decrypt_setup(psa_cipher_operation_t *ope
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
+		status = cracen_cipher_decrypt_setup(&operation->ctx.cracen_driver_ctx, attributes,
+						     key_buffer, key_buffer_size, alg);
+		/* Declared with fallback == true */
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+		}
+
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif
 #if defined(PSA_NEED_CC3XX_CIPHER_DRIVER)
 		status = cc3xx_cipher_decrypt_setup(&operation->ctx.cc3xx_driver_ctx, attributes,
 						    key_buffer, key_buffer_size, alg);
@@ -905,6 +1044,10 @@ psa_status_t psa_driver_wrapper_cipher_set_iv(psa_cipher_operation_t *operation,
 					      size_t iv_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_cipher_set_iv(&operation->ctx.cracen_driver_ctx, iv, iv_length));
+#endif /* PSA_NEED_CRACEN_CIPHER_DRIVER */
 #if defined(PSA_NEED_CC3XX_CIPHER_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_cipher_set_iv(&operation->ctx.cc3xx_driver_ctx, iv, iv_length);
@@ -927,6 +1070,11 @@ psa_status_t psa_driver_wrapper_cipher_update(psa_cipher_operation_t *operation,
 					      size_t *output_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_cipher_update(&operation->ctx.cracen_driver_ctx, input, input_length,
+					     output, output_size, output_length));
+#endif /* PSA_NEED_CRACEN_CIPHER_DRIVER */
 #if defined(PSA_NEED_CC3XX_CIPHER_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_cipher_update(&operation->ctx.cc3xx_driver_ctx, input, input_length,
@@ -952,6 +1100,11 @@ psa_status_t psa_driver_wrapper_cipher_finish(psa_cipher_operation_t *operation,
 					      size_t output_size, size_t *output_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_cipher_finish(&operation->ctx.cracen_driver_ctx, output, output_size,
+					     output_length));
+#endif /* PSA_NEED_CRACEN_CIPHER_DRIVER */
 #if defined(PSA_NEED_CC3XX_CIPHER_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_cipher_finish(&operation->ctx.cc3xx_driver_ctx, output, output_size,
@@ -976,6 +1129,13 @@ psa_status_t psa_driver_wrapper_cipher_abort(psa_cipher_operation_t *operation)
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		status = cracen_cipher_abort(&operation->ctx.cracen_driver_ctx);
+		mbedtls_platform_zeroize(&operation->ctx.cracen_driver_ctx,
+					 sizeof(operation->ctx.cracen_driver_ctx));
+		return status;
+#endif /* PSA_NEED_CRACEN_CIPHER_DRIVER */
 #if defined(PSA_NEED_CC3XX_CIPHER_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		status = cc3xx_cipher_abort(&operation->ctx.cc3xx_driver_ctx);
@@ -1011,6 +1171,12 @@ psa_status_t psa_driver_wrapper_hash_compute(psa_algorithm_t alg, const uint8_t 
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	/* Try accelerators first */
+#if defined(PSA_NEED_CRACEN_HASH_DRIVER)
+	status = cracen_hash_compute(alg, input, input_length, hash, hash_size, hash_length);
+	if (status != PSA_ERROR_NOT_SUPPORTED) {
+		return status;
+	}
+#endif /* PSA_NEED_CRACEN_HASH_DRIVER */
 #if defined(PSA_NEED_CC3XX_HASH_DRIVER)
 	status = cc3xx_hash_compute(alg, input, input_length, hash, hash_size, hash_length);
 	if (status != PSA_ERROR_NOT_SUPPORTED) {
@@ -1046,6 +1212,16 @@ psa_status_t psa_driver_wrapper_hash_setup(psa_hash_operation_t *operation, psa_
 #endif
 
 	/* Try setup on accelerators first */
+#if defined(PSA_NEED_CRACEN_HASH_DRIVER)
+	status = cracen_hash_setup(&operation->ctx.cracen_driver_ctx, alg);
+	if (status == PSA_SUCCESS) {
+		operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+	}
+
+	if (status != PSA_ERROR_NOT_SUPPORTED) {
+		return status;
+	}
+#endif /* PSA_NEED_CRACEN_HASH_DRIVER */
 #if defined(PSA_NEED_CC3XX_HASH_DRIVER)
 	status = cc3xx_hash_setup(&operation->ctx.cc3xx_driver_ctx, alg);
 	if (status == PSA_SUCCESS) {
@@ -1078,6 +1254,12 @@ psa_status_t psa_driver_wrapper_hash_clone(const psa_hash_operation_t *source_op
 					   psa_hash_operation_t *target_operation)
 {
 	switch (source_operation->id) {
+#if defined(PSA_NEED_CRACEN_HASH_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		target_operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+		return (cracen_hash_clone(&source_operation->ctx.cracen_driver_ctx,
+					  &target_operation->ctx.cracen_driver_ctx));
+#endif /* PSA_NEED_CRACEN_HASH_DRIVER */
 #if defined(PSA_NEED_CC3XX_HASH_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		target_operation->id = PSA_CRYPTO_CC3XX_DRIVER_ID;
@@ -1100,6 +1282,10 @@ psa_status_t psa_driver_wrapper_hash_update(psa_hash_operation_t *operation, con
 					    size_t input_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_HASH_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_hash_update(&operation->ctx.cracen_driver_ctx, input, input_length));
+#endif /* PSA_NEED_CRACEN_HASH_DRIVER */
 #if defined(PSA_NEED_CC3XX_HASH_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_hash_update(&operation->ctx.cc3xx_driver_ctx, input, input_length);
@@ -1119,6 +1305,11 @@ psa_status_t psa_driver_wrapper_hash_finish(psa_hash_operation_t *operation, uin
 					    size_t hash_size, size_t *hash_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_HASH_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_hash_finish(&operation->ctx.cracen_driver_ctx, hash, hash_size,
+					   hash_length));
+#endif /* PSA_NEED_CRACEN_HASH_DRIVER */
 #if defined(PSA_NEED_CC3XX_HASH_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_hash_finish(&operation->ctx.cc3xx_driver_ctx, hash, hash_size,
@@ -1140,6 +1331,10 @@ psa_status_t psa_driver_wrapper_hash_finish(psa_hash_operation_t *operation, uin
 psa_status_t psa_driver_wrapper_hash_abort(psa_hash_operation_t *operation)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_HASH_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_hash_abort(&operation->ctx.cracen_driver_ctx));
+#endif /* PSA_NEED_CRACEN_HASH_DRIVER */
 #if defined(PSA_NEED_CC3XX_HASH_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_hash_abort(&operation->ctx.cc3xx_driver_ctx);
@@ -1173,6 +1368,17 @@ psa_status_t psa_driver_wrapper_aead_encrypt(const psa_key_attributes_t *attribu
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+		status = cracen_aead_encrypt(attributes, key_buffer, key_buffer_size, alg, nonce,
+					     nonce_length, additional_data, additional_data_length,
+					     plaintext, plaintext_length, ciphertext,
+					     ciphertext_size, ciphertext_length);
+
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER */
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 		status = cc3xx_aead_encrypt(attributes, key_buffer, key_buffer_size, alg, nonce,
 					    nonce_length, additional_data, additional_data_length,
@@ -1233,6 +1439,16 @@ psa_status_t psa_driver_wrapper_aead_decrypt(const psa_key_attributes_t *attribu
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+		status = cracen_aead_decrypt(attributes, key_buffer, key_buffer_size, alg, nonce,
+					     nonce_length, additional_data, additional_data_length,
+					     ciphertext, ciphertext_length, plaintext,
+					     plaintext_size, plaintext_length);
+
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER */
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 		status = cc3xx_aead_decrypt(attributes, key_buffer, key_buffer_size, alg, nonce,
 					    nonce_length, additional_data, additional_data_length,
@@ -1292,6 +1508,16 @@ psa_status_t psa_driver_wrapper_aead_encrypt_setup(psa_aead_operation_t *operati
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+		operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+		status = cracen_aead_encrypt_setup(&operation->ctx.cracen_driver_ctx, attributes,
+						   key_buffer, key_buffer_size, alg);
+
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER*/
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 		status = cc3xx_aead_encrypt_setup(&operation->ctx.cc3xx_driver_ctx, attributes,
 						  key_buffer, key_buffer_size, alg);
@@ -1346,6 +1572,16 @@ psa_status_t psa_driver_wrapper_aead_decrypt_setup(psa_aead_operation_t *operati
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+		operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+		status = cracen_aead_decrypt_setup(&operation->ctx.cracen_driver_ctx, attributes,
+						   key_buffer, key_buffer_size, alg);
+
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER */
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 		status = cc3xx_aead_decrypt_setup(&operation->ctx.cc3xx_driver_ctx, attributes,
 						  key_buffer, key_buffer_size, alg);
@@ -1387,6 +1623,11 @@ psa_status_t psa_driver_wrapper_aead_set_nonce(psa_aead_operation_t *operation,
 					       const uint8_t *nonce, size_t nonce_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_aead_set_nonce(&operation->ctx.cracen_driver_ctx, nonce,
+					      nonce_length));
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER */
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_aead_set_nonce(&operation->ctx.cc3xx_driver_ctx, nonce, nonce_length);
@@ -1408,6 +1649,11 @@ psa_status_t psa_driver_wrapper_aead_set_lengths(psa_aead_operation_t *operation
 						 size_t plaintext_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_aead_set_lengths(&operation->ctx.cracen_driver_ctx, ad_length,
+						plaintext_length));
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER */
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_aead_set_lengths(&operation->ctx.cc3xx_driver_ctx, ad_length,
@@ -1430,6 +1676,11 @@ psa_status_t psa_driver_wrapper_aead_update_ad(psa_aead_operation_t *operation,
 					       const uint8_t *input, size_t input_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_aead_update_ad(&operation->ctx.cracen_driver_ctx, input,
+					      input_length));
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER */
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_aead_update_ad(&operation->ctx.cc3xx_driver_ctx, input, input_length);
@@ -1452,6 +1703,11 @@ psa_status_t psa_driver_wrapper_aead_update(psa_aead_operation_t *operation, con
 					    size_t output_size, size_t *output_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_aead_update(&operation->ctx.cracen_driver_ctx, input, input_length,
+					   output, output_size, output_length));
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER */
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_aead_update(&operation->ctx.cc3xx_driver_ctx, input, input_length,
@@ -1479,6 +1735,12 @@ psa_status_t psa_driver_wrapper_aead_finish(psa_aead_operation_t *operation, uin
 					    uint8_t *tag, size_t tag_size, size_t *tag_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_aead_finish(&operation->ctx.cracen_driver_ctx, ciphertext,
+					   ciphertext_size, ciphertext_length, tag, tag_size,
+					   tag_length));
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER */
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_aead_finish(&operation->ctx.cc3xx_driver_ctx, ciphertext,
@@ -1509,6 +1771,11 @@ psa_status_t psa_driver_wrapper_aead_verify(psa_aead_operation_t *operation, uin
 					    const uint8_t *tag, size_t tag_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_aead_verify(&operation->ctx.cracen_driver_ctx, plaintext,
+					   plaintext_size, plaintext_length, tag, tag_length));
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER */
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_aead_verify(&operation->ctx.cc3xx_driver_ctx, plaintext,
@@ -1534,6 +1801,10 @@ psa_status_t psa_driver_wrapper_aead_verify(psa_aead_operation_t *operation, uin
 psa_status_t psa_driver_wrapper_aead_abort(psa_aead_operation_t *operation)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_aead_abort(&operation->ctx.cracen_driver_ctx));
+#endif /* PSA_NEED_CRACEN_AEAD_DRIVER */
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_aead_abort(&operation->ctx.cc3xx_driver_ctx);
@@ -1573,6 +1844,14 @@ psa_status_t psa_driver_wrapper_mac_compute(const psa_key_attributes_t *attribut
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_MAC_DRIVER)
+		status = cracen_mac_compute(attributes, key_buffer, key_buffer_size, alg, input,
+					    input_length, mac, mac_size, mac_length);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_MAC_DRIVER */
 #if defined(PSA_NEED_CC3XX_MAC_DRIVER)
 		status = cc3xx_mac_compute(attributes, key_buffer, key_buffer_size, alg, input,
 					   input_length, mac, mac_size, mac_length);
@@ -1627,6 +1906,16 @@ psa_status_t psa_driver_wrapper_mac_sign_setup(psa_mac_operation_t *operation,
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_MAC_DRIVER)
+		status = cracen_mac_sign_setup(&operation->ctx.cracen_driver_ctx, attributes,
+					       key_buffer, key_buffer_size, alg);
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+		}
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_MAC_DRIVER */
 #if defined(PSA_NEED_CC3XX_MAC_DRIVER)
 		status = cc3xx_mac_sign_setup(&operation->ctx.cc3xx_driver_ctx, attributes,
 					      key_buffer, key_buffer_size, alg);
@@ -1681,6 +1970,16 @@ psa_status_t psa_driver_wrapper_mac_verify_setup(psa_mac_operation_t *operation,
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_MAC_DRIVER)
+		status = cracen_mac_verify_setup(&operation->ctx.cracen_driver_ctx, attributes,
+						key_buffer, key_buffer_size, alg);
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+		}
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_MAC_DRIVER */
 #if defined(PSA_NEED_CC3XX_MAC_DRIVER)
 		status = cc3xx_mac_verify_setup(&operation->ctx.cc3xx_driver_ctx, attributes,
 						key_buffer, key_buffer_size, alg);
@@ -1701,6 +2000,16 @@ psa_status_t psa_driver_wrapper_mac_verify_setup(psa_mac_operation_t *operation,
 			return status;
 		}
 #endif /* PSA_NEED_OBERON_MAC_DRIVER */
+#if defined(PSA_CRYPTO_DRIVER_HAS_MAC_SUPPORT_CRACEN)
+		status = cracen_mac_verify_setup(&operation->ctx.cracen_driver_ctx, attributes,
+						 key_buffer, key_buffer_size, alg);
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+		}
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_CRYPTO_DRIVER_HAS_MAC_SUPPORT_CRACEN */
 		(void)status;
 		(void)key_buffer;
 		(void)key_buffer_size;
@@ -1720,6 +2029,10 @@ psa_status_t psa_driver_wrapper_mac_update(psa_mac_operation_t *operation, const
 					   size_t input_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_MAC_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_mac_update(&operation->ctx.cracen_driver_ctx, input, input_length));
+#endif /* PSA_NEED_CRACEN_MAC_DRIVER */
 #if defined(PSA_NEED_CC3XX_MAC_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_mac_update(&operation->ctx.cc3xx_driver_ctx, input, input_length);
@@ -1741,6 +2054,11 @@ psa_status_t psa_driver_wrapper_mac_sign_finish(psa_mac_operation_t *operation, 
 	psa_status_t status;
 
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_MAC_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_mac_sign_finish(&operation->ctx.cracen_driver_ctx, mac, mac_size,
+					       mac_length));
+#endif /* PSA_NEED_CRACEN_MAC_DRIVER */
 #if defined(PSA_NEED_CC3XX_MAC_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		status = cc3xx_mac_sign_finish(&operation->ctx.cc3xx_driver_ctx, mac, mac_size,
@@ -1771,6 +2089,11 @@ psa_status_t psa_driver_wrapper_mac_verify_finish(psa_mac_operation_t *operation
 	psa_status_t status;
 
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_MAC_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_mac_verify_finish(&operation->ctx.cracen_driver_ctx, mac,
+						 mac_length));
+#endif /* PSA_NEED_CRACEN_MAC_DRIVER */
 #if defined(PSA_NEED_CC3XX_MAC_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		status = cc3xx_mac_verify_finish(&operation->ctx.cc3xx_driver_ctx, mac, mac_length);
@@ -1795,6 +2118,10 @@ psa_status_t psa_driver_wrapper_mac_verify_finish(psa_mac_operation_t *operation
 psa_status_t psa_driver_wrapper_mac_abort(psa_mac_operation_t *operation)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_MAC_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return (cracen_mac_abort(&operation->ctx.cracen_driver_ctx));
+#endif /* PSA_NEED_CRACEN_MAC_DRIVER */
 #if defined(PSA_NEED_CC3XX_MAC_DRIVER)
 	case PSA_CRYPTO_CC3XX_DRIVER_ID:
 		return cc3xx_mac_abort(&operation->ctx.cc3xx_driver_ctx);
@@ -1816,6 +2143,16 @@ psa_status_t psa_driver_wrapper_key_derivation_setup(psa_key_derivation_operatio
 {
 	psa_status_t status;
 
+#if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
+	status = cracen_key_derivation_setup(&operation->ctx.cracen_kdf_ctx, alg);
+	if (status == PSA_SUCCESS) {
+		operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+	}
+
+	if (status != PSA_ERROR_NOT_SUPPORTED) {
+		return status;
+	}
+#endif /* PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER */
 #if defined(PSA_NEED_OBERON_KEY_DERIVATION_DRIVER)
 	status = oberon_key_derivation_setup(&operation->ctx.oberon_kdf_ctx, alg);
 	if (status == PSA_SUCCESS) {
@@ -1835,6 +2172,10 @@ psa_driver_wrapper_key_derivation_set_capacity(psa_key_derivation_operation_t *o
 					       size_t capacity)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_key_derivation_set_capacity(&operation->ctx.cracen_kdf_ctx, capacity);
+#endif /* PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER */
 #if defined(PSA_NEED_OBERON_KEY_DERIVATION_DRIVER)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_key_derivation_set_capacity(&operation->ctx.oberon_kdf_ctx, capacity);
@@ -1852,6 +2193,11 @@ psa_driver_wrapper_key_derivation_input_bytes(psa_key_derivation_operation_t *op
 					      size_t data_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_key_derivation_input_bytes(&operation->ctx.cracen_kdf_ctx, step, data,
+							 data_length);
+#endif /* PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER */
 #if defined(PSA_NEED_OBERON_KEY_DERIVATION_DRIVER)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_key_derivation_input_bytes(&operation->ctx.oberon_kdf_ctx, step, data,
@@ -1871,6 +2217,11 @@ psa_driver_wrapper_key_derivation_input_integer(psa_key_derivation_operation_t *
 						psa_key_derivation_step_t step, uint64_t value)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_key_derivation_input_integer(&operation->ctx.cracen_kdf_ctx, step,
+							   value);
+#endif /* PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER */
 #if defined(PSA_NEED_OBERON_KEY_DERIVATION_DRIVER)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_key_derivation_input_integer(&operation->ctx.oberon_kdf_ctx, step,
@@ -1889,6 +2240,11 @@ psa_driver_wrapper_key_derivation_output_bytes(psa_key_derivation_operation_t *o
 					       uint8_t *output, size_t output_length)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_key_derivation_output_bytes(&operation->ctx.cracen_kdf_ctx, output,
+							  output_length);
+#endif /* PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER */
 #if defined(PSA_NEED_OBERON_KEY_DERIVATION_DRIVER)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_key_derivation_output_bytes(&operation->ctx.oberon_kdf_ctx, output,
@@ -1905,6 +2261,10 @@ psa_driver_wrapper_key_derivation_output_bytes(psa_key_derivation_operation_t *o
 psa_status_t psa_driver_wrapper_key_derivation_abort(psa_key_derivation_operation_t *operation)
 {
 	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_key_derivation_abort(&operation->ctx.cracen_kdf_ctx);
+#endif /* PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER */
 #if defined(PSA_NEED_OBERON_KEY_DERIVATION_DRIVER)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_key_derivation_abort(&operation->ctx.oberon_kdf_ctx);
@@ -1936,6 +2296,14 @@ psa_status_t psa_driver_wrapper_key_agreement(const psa_key_attributes_t *attrib
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER)
+		status = cracen_key_agreement(attributes, priv_key, priv_key_size, publ_key,
+					      publ_key_size, output, output_size, output_length,
+					      alg);
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER */
 #if defined(PSA_NEED_CC3XX_KEY_AGREEMENT_DRIVER)
 		status =
 			cc3xx_key_agreement(attributes, priv_key, priv_key_size, publ_key,
@@ -1981,10 +2349,19 @@ psa_status_t psa_driver_wrapper_pake_setup(psa_pake_operation_t *operation,
 					   const psa_pake_cipher_suite_t *cipher_suite)
 {
 	psa_status_t status;
-
 	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		/* Add cases for transparent drivers here */
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+		status = cracen_pake_setup(&operation->ctx.cracen_pake_ctx, cipher_suite);
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
+		}
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_PAKE_DRIVER */
+
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 		status = oberon_pake_setup(&operation->ctx.oberon_pake_ctx, attributes, password,
 					   password_length, cipher_suite);
@@ -1993,6 +2370,7 @@ psa_status_t psa_driver_wrapper_pake_setup(psa_pake_operation_t *operation,
 		}
 		return status;
 #endif /* PSA_NEED_OBERON_PAKE_DRIVER */
+
 		return PSA_ERROR_NOT_SUPPORTED;
 
 		/* Add cases for opaque driver here */
@@ -2072,16 +2450,87 @@ psa_status_t psa_driver_wrapper_pake_set_context(psa_pake_operation_t *operation
 	}
 }
 
+psa_status_t psa_driver_wrapper_pake_set_password_key(psa_pake_operation_t *operation,
+						      const psa_key_attributes_t *attributes,
+						      const uint8_t *password,
+						      size_t password_length)
+{
+	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_set_password_key(&operation->ctx.cracen_pake_ctx, attributes,
+						    password, password_length);
+#endif
+
+	default:
+		(void)attributes;
+		(void)password;
+		(void)password_length;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_pake_set_user(psa_pake_operation_t *operation,
+					      const uint8_t *user_id, size_t user_id_len)
+{
+	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_set_user(&operation->ctx.cracen_pake_ctx, user_id, user_id_len);
+#endif
+
+	default:
+		(void)user_id;
+		(void)user_id_len;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_pake_set_peer(psa_pake_operation_t *operation,
+					      const uint8_t *peer_id, size_t peer_id_len)
+{
+	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_set_peer(&operation->ctx.cracen_pake_ctx, peer_id, peer_id_len);
+#endif
+
+	default:
+		(void)peer_id;
+		(void)peer_id_len;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_pake_set_role(psa_pake_operation_t *operation, psa_pake_role_t role)
+{
+	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_set_role(&operation->ctx.cracen_pake_ctx, role);
+#endif
+
+	default:
+		(void)role;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
 psa_status_t psa_driver_wrapper_pake_output(psa_pake_operation_t *operation, psa_pake_step_t step,
 					    uint8_t *output, size_t output_size,
 					    size_t *output_length)
 {
 	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_output(&operation->ctx.cracen_pake_ctx, step, output,
+					  output_size, output_length);
+#endif
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_output(&operation->ctx.oberon_pake_ctx, step, output,
 					  output_size, output_length);
-#endif /* PSA_NEED_OBERON_PAKE_DRIVER */
+#endif
 
 	default:
 		(void)step;
@@ -2096,11 +2545,16 @@ psa_status_t psa_driver_wrapper_pake_input(psa_pake_operation_t *operation, psa_
 					   const uint8_t *input, size_t input_length)
 {
 	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_input(&operation->ctx.cracen_pake_ctx, step, input,
+					 input_length);
+#endif
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_input(&operation->ctx.oberon_pake_ctx, step, input,
 					 input_length);
-#endif /* PSA_NEED_OBERON_PAKE_DRIVER */
+#endif
 
 	default:
 		(void)step;
@@ -2116,11 +2570,16 @@ psa_status_t psa_driver_wrapper_pake_get_shared_key(psa_pake_operation_t *operat
 						    size_t *key_buffer_length)
 {
 	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_get_implicit_key(&operation->ctx.cracen_pake_ctx, output,
+						    output_size, output_length);
+#endif
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_get_shared_key(&operation->ctx.oberon_pake_ctx, attributes,
 						  key_buffer, key_buffer_size, key_buffer_length);
-#endif /* PSA_NEED_OBERON_PAKE_DRIVER */
+#endif
 
 	default:
 		(void)attributes;
@@ -2134,6 +2593,10 @@ psa_status_t psa_driver_wrapper_pake_get_shared_key(psa_pake_operation_t *operat
 psa_status_t psa_driver_wrapper_pake_abort(psa_pake_operation_t *operation)
 {
 	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_abort(&operation->ctx.cracen_pake_ctx);
+#endif
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_abort(&operation->ctx.oberon_pake_ctx);
@@ -2166,6 +2629,14 @@ psa_status_t psa_driver_wrapper_asymmetric_encrypt(
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER)
+		status = cracen_asymmetric_encrypt(attributes, key_buffer, key_buffer_size, alg,
+						   input, input_length, salt, salt_length, output,
+						   output_size, output_length);
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER */
 #if defined(PSA_NEED_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER)
 		status = cc3xx_asymmetric_encrypt(attributes, key_buffer, key_buffer_size, alg,
 						  input, input_length, salt, salt_length, output,
@@ -2218,6 +2689,14 @@ psa_status_t psa_driver_wrapper_asymmetric_decrypt(
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER)
+		status = cracen_asymmetric_decrypt(attributes, key_buffer, key_buffer_size, alg,
+						   input, input_length, salt, salt_length, output,
+						   output_size, output_length);
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER */
 #if defined(PSA_NEED_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER)
 		status = cc3xx_asymmetric_decrypt(attributes, key_buffer, key_buffer_size, alg,
 						  input, input_length, salt, salt_length, output,
@@ -2255,8 +2734,9 @@ psa_status_t psa_driver_wrapper_asymmetric_decrypt(
 
 psa_status_t psa_driver_wrapper_init_random(psa_driver_random_context_t *context)
 {
-
-#if defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)
+#if defined(PSA_NEED_CRACEN_CTR_DRBG_DRIVER)
+	return cracen_init_random(NULL);
+#elif defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)
 	return oberon_ctr_drbg_init(&context->oberon_ctr_drbg_ctx);
 #elif defined(PSA_NEED_OBERON_HMAC_DRBG_DRIVER)
 	return oberon_hmac_drbg_init(&context->oberon_hmac_drbg_ctx);
@@ -2285,7 +2765,9 @@ psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context,
 #if defined(CONFIG_TMP_RNG)
 	return tmp_rng(output, output_size);
 #endif
-#if defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)
+#if defined(PSA_NEED_CRACEN_CTR_DRBG_DRIVER)
+	return cracen_get_random(NULL, output, output_size);
+#elif defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)
 	return oberon_ctr_drbg_get_random(&context->oberon_ctr_drbg_ctx, output, output_size);
 #elif defined(PSA_NEED_OBERON_HMAC_DRBG_DRIVER)
 	return oberon_hmac_drbg_get_random(&context->oberon_hmac_drbg_ctx, output, output_size);
@@ -2320,7 +2802,9 @@ psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context,
 
 psa_status_t psa_driver_wrapper_free_random(psa_driver_random_context_t *context)
 {
-#if defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)
+#if defined(PSA_NEED_CRACEN_CTR_DRBG_DRIVER)
+	return cracen_free_random(NULL);
+#elif defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)
 	return oberon_ctr_drbg_free(&context->oberon_ctr_drbg_ctx);
 #elif defined(PSA_NEED_OBERON_HMAC_DRBG_DRIVER)
 	return oberon_hmac_drbg_free(&context->oberon_hmac_drbg_ctx);

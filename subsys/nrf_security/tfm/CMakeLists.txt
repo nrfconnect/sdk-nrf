@@ -9,6 +9,7 @@ set(BUILD_INSIDE_TFM True)
 
 set(NRFXLIB_DIR ${CMAKE_CURRENT_LIST_DIR}/../../../../nrfxlib)
 set(NRF_SECURITY_ROOT ${CMAKE_CURRENT_LIST_DIR}/..)
+set(ZEPHYR_NRF_MODULE_DIR ${NRF_DIR})
 
 include(${NRF_SECURITY_ROOT}/cmake/extensions.cmake)
 
@@ -59,6 +60,7 @@ set(CONFIG_MBEDTLS_MD_C                             False)
 # enable it manually.
 if(CONFIG_HAS_HW_NRF_CC3XX)
   set(CONFIG_NRF_CC3XX_PLATFORM                       True)
+  set(CONFIG_MBEDTLS_PLATFORM_ZEROIZE_ALT             True)
 endif()
 
 # Disable threading for TF-M SPM image

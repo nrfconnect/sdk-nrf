@@ -24,6 +24,10 @@
 #include "oberon_hmac_drbg.h"
 #endif
 
+#if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER) || defined(PSA_NEED_CRACEN_PAKE_DRIVER)
+#include "cracen_psa_primitives.h"
+#endif
+
 /*
  * Define the context to be used for an operation that is executed through the
  * PSA Driver wrapper layer as the union of all possible drivers' contexts.
@@ -38,6 +42,9 @@ typedef union {
 #ifdef PSA_NEED_OBERON_KEY_DERIVATION_DRIVER
 	oberon_key_derivation_operation_t oberon_kdf_ctx;
 #endif
+#ifdef PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER
+	cracen_key_derivation_operation_t cracen_kdf_ctx;
+#endif
 } psa_driver_key_derivation_context_t;
 
 typedef union {
@@ -45,6 +52,9 @@ typedef union {
 	unsigned int dummy;
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	oberon_pake_operation_t oberon_pake_ctx;
+#endif
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	cracen_pake_operation_t cracen_pake_ctx;
 #endif
 } psa_driver_pake_context_t;
 
