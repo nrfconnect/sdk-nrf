@@ -9,6 +9,9 @@
 #include <zephyr/logging/log.h>
 
 #include <app-common/zap-generated/ids/Commands.h>
+#include <app-common/zap-generated/attributes/Accessors.h>
+// #include <app-common/zap-generated/cluster-objects.h>
+#include <app/clusters/switch-server/switch-server.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
@@ -26,14 +29,16 @@ using namespace Nrf;
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(switchAttr)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Switch::Attributes::NumberOfPositions::Id, INT8U, 1, 0),
 	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Switch::Attributes::CurrentPosition::Id, INT8U, 1, 0),
+	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Switch::Attributes::FeatureMap::Id, BITMAP32, 4, 0),
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(genericSwitchClusters)
 DECLARE_DYNAMIC_CLUSTER(Clusters::Switch::Id, switchAttr, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Descriptor::Id, descriptorAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
-	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
-	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(SERVER), sIdentifyIncomingCommands,
-				nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
+	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs,
+				ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
+	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(SERVER),
+				sIdentifyIncomingCommands, nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedGenericSwitchEndpoint, genericSwitchClusters);
 
@@ -108,6 +113,13 @@ CHIP_ERROR GenericSwitchDevice::HandleAttributeChange(chip::ClusterId clusterId,
 		case Clusters::Switch::Attributes::CurrentPosition::Id: {
 			err = CopyAttribute(data, dataSize, &mCurrentPosition, sizeof(mCurrentPosition));
 			VerifyOrReturnError(err == CHIP_NO_ERROR, err);
+
+			/* The device supports only two positions, so non-zero means the switch was pressed. */
+			if (mCurrentPosition) {
+				Clusters::Switch::Attributes::CurrentPosition::Set(mEndpointId, mCurrentPosition);
+				Clusters::SwitchServer::Instance().OnInitialPress(mEndpointId, mCurrentPosition);
+			}
+
 			break;
 		}
 		default:
