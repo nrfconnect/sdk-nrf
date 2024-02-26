@@ -463,7 +463,7 @@ static int register_wpa_event_sock(void)
 
 int z_wpas_send_event(const struct wpa_supplicant_event_msg *msg)
 {
-	int ret;
+	int ret = -1;
 	unsigned int retry = 0;
 
 	k_mutex_lock(&z_wpas_event_mutex, K_FOREVER);
@@ -494,7 +494,7 @@ retry_send:
 	ret = 0;
 err:
 	k_mutex_unlock(&z_wpas_event_mutex);
-	return -1;
+	return ret;
 }
 
 static void z_wpas_start(void)
