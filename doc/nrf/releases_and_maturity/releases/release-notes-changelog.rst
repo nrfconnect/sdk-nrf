@@ -950,9 +950,18 @@ Modem libraries
 
 * :ref:`pdn_readme` library:
 
-   * Added the :c:func:`pdn_dynamic_params_get` function to retrieve dynamic parameters of an active PDN connection.
-   * Fixed a potential issue where the library tries to free the PDN context twice, causing the application to crash.
-   * Updated the library to add PDP auto configuration to the :c:enumerator:`LTE_LC_FUNC_MODE_POWER_OFF` event.
+   * Added:
+
+     * The :c:func:`pdn_dynamic_params_get` function to retrieve dynamic parameters of an active PDN connection.
+
+   * Fixed:
+
+     * A potential issue where the library tries to free the PDN context twice, causing the application to crash.
+     * A potential crash when an AT notification arrives during :c:func:`pdn_ctx_create`. The callback was only initialised after adding it to the list.
+
+   * Updated:
+
+     * The library to add PDP auto configuration to the :c:enumerator:`LTE_LC_FUNC_MODE_POWER_OFF` event.
 
 * :ref:`lib_at_host` library:
 
