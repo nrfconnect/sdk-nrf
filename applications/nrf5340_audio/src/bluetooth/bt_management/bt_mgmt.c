@@ -212,10 +212,10 @@ static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum 
 	struct bt_mgmt_msg msg;
 
 	if (err) {
-		LOG_ERR("Security failed: level %d err %d", level, err);
+		LOG_WRN("Security failed: level %d err %d", level, err);
 		ret = bt_conn_disconnect(conn, err);
 		if (ret) {
-			LOG_ERR("Failed to disconnect %d", ret);
+			LOG_WRN("Failed to disconnect %d", ret);
 		}
 	} else {
 		LOG_DBG("Security changed: level %d", level);
