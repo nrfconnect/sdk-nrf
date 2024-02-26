@@ -32,6 +32,12 @@
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 
+/* Define a dummy driver just that the linker finds it. Otherwise we get a complaint like:
+ *     undefined reference to `__device_dts_ord_12'
+ */
+#define DT_DRV_COMPAT nordic_wlan0
+DEVICE_DT_INST_DEFINE(0, NULL, NULL, NULL, NULL, POST_KERNEL, 0, NULL);
+
 /* Custom mock for WiFi scan request net_mgmt_NET_REQUEST_WIFI_SCAN(). */
 static struct net_if wifi_iface;
 static int net_mgmt_NET_REQUEST_WIFI_SCAN_retval;
@@ -478,8 +484,8 @@ void test_location_init(void)
 	/* __cmock_device_get_binding_ExpectAndReturn is not called for an unknown reason.
 	 * __syscall in the function declaration may have something to do with it.
 	 */
-	__cmock_z_device_is_ready_ExpectAndReturn(0, true);
-	__cmock_net_if_lookup_by_dev_ExpectAndReturn(0, &wifi_iface);
+	__cmock_z_device_is_ready_IgnoreAndReturn(true);
+	__cmock_net_if_lookup_by_dev_IgnoreAndReturn(&wifi_iface);
 	__cmock_net_mgmt_init_event_callback_Ignore();
 	__cmock_net_mgmt_add_event_callback_Ignore();
 

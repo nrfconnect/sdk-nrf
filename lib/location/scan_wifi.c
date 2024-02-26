@@ -164,6 +164,12 @@ int scan_wifi_init(void)
 #else
 	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_location_wifi));
 #endif
+
+	if (!wifi_dev) {
+		LOG_ERR("Wi-Fi device not found");
+		return -ENODEV;
+	}
+
 	if (!device_is_ready(wifi_dev)) {
 		LOG_ERR("Wi-Fi device %s not ready", wifi_dev->name);
 		return -ENODEV;
@@ -171,7 +177,7 @@ int scan_wifi_init(void)
 
 	wifi_iface = net_if_lookup_by_dev(wifi_dev);
 	if (wifi_iface == NULL) {
-		LOG_ERR("Could not get the Wi-Fi net interface");
+		LOG_ERR("No Wi-Fi interface found: %s", wifi_dev->name);
 		return -EFAULT;
 	}
 
