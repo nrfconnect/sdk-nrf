@@ -121,7 +121,9 @@ Offline net capture
 *******************
 
 The sample supports the offline net capture feature in Zephyr, see `Zephyr net capture`_ for details.
-To enable this feature, use the configuration overlay files :file:`overlay-net-capture.conf` and :file:`overlay-netusb.conf`.
+See the `Zephyr net capture Linux setup`_ section for instructions on how to set up the Linux host for offline net capture.
+Ensure the requirements from `Zephyr net capture`_ are met before proceeding.
+To enable this feature in this sample, use the configuration overlay files :file:`overlay-net-capture.conf` and :file:`overlay-netusb.conf`.
 
 When the offline net capture feature is enabled, incoming IEEE 802.11 packets are routed to the offline storage over the net capture tunnel.
 These packets can then be analyzed using Wireshark.
