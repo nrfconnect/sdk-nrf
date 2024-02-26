@@ -18,7 +18,7 @@ The following steps show how to add support for a new Matter device type, using 
 #. Implement the ``Matter Bridged Device`` role.
 
    a. Create the :file:`pressure_sensor.cpp` and :file:`pressure_sensor.h` files in the :file:`src/bridged_device_types` directory.
-   #. Open the :file:`nrf/samples/matter/common/bridge/matter_bridged_device.h` header file and find the :c:struct:`MatterBridgedDevice` class constructor.
+   #. Open the :file:`nrf/samples/matter/common/src/bridge/matter_bridged_device.h` header file and find the :c:struct:`MatterBridgedDevice` class constructor.
       Note the constructor signature, it will be used in the child class implemented in the next steps.
    #. Add a new :c:struct:`PressureSensorDevice` class inheriting :c:struct:`MatterBridgedDevice`, and implement its constructor in the :file:`pressure_sensor.cpp` and :file:`pressure_sensor.h` files.
 
@@ -30,7 +30,7 @@ The following steps show how to add support for a new Matter device type, using 
 
             #include "matter_bridged_device.h"
 
-            class PressureSensorDevice : public MatterBridgedDevice {
+            class PressureSensorDevice : public Nrf::MatterBridgedDevice {
             public:
 
             PressureSensorDevice(const char *nodeLabel);
@@ -48,7 +48,7 @@ The following steps show how to add support for a new Matter device type, using 
 
    #. Declare all clusters that are mandatory for the Pressure Sensor device type, according to the Matter device library specification, and fill the appropriate :c:struct:`MatterBridgedDevice` class fields in the :c:struct:`PressureSensorDevice` class constructor.
 
-      The Pressure Sensor device requires the ``Descriptor``, ``Bridged Device Basic Information`` and ``Identify`` clusters, which can be declared using helper macros from the :file:`nrf/samples/matter/common/bridge/matter_bridged_device.h` header file, and the ``Pressure Measurement`` cluster, which has to be defined in the application.
+      The Pressure Sensor device requires the ``Descriptor``, ``Bridged Device Basic Information`` and ``Identify`` clusters, which can be declared using helper macros from the :file:`nrf/samples/matter/common/src/bridge/matter_bridged_device.h` header file, and the ``Pressure Measurement`` cluster, which has to be defined in the application.
       Edit the :file:`pressure_sensor.cpp` file as follows:
 
       - Add:
@@ -63,6 +63,7 @@ The following steps show how to add support for a new Matter device type, using 
             }; /* namespace */
             using namespace ::chip;
             using namespace ::chip::app;
+            using namespace Nrf;
 
             DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(pressureSensorAttrs)
             DECLARE_DYNAMIC_ATTRIBUTE(Clusters::PressureMeasurement::Attributes::MeasuredValue::Id, INT16S, 2, 0),
@@ -106,7 +107,7 @@ The following steps show how to add support for a new Matter device type, using 
                   mDataVersion = static_cast<DataVersion *>(chip::Platform::MemoryAlloc(sizeof(DataVersion) * mDataVersionSize));
             }
 
-   #. Open the :file:`nrf/samples/matter/common/bridge/matter_bridged_device.h` header file again to see which methods of the :c:struct:`MatterBridgedDevice` class are purely virtual (assigned with ``=0``) and have to be overridden by the :c:struct:`PressureSensorDevice` class.
+   #. Open the :file:`nrf/samples/matter/common/src/bridge/matter_bridged_device.h` header file again to see which methods of the :c:struct:`MatterBridgedDevice` class are purely virtual (assigned with ``=0``) and have to be overridden by the :c:struct:`PressureSensorDevice` class.
    #. Edit the :c:struct:`PressureSensorDevice` class in the :file:`pressure_sensor.h` header file to declare the required methods as follows:
 
       .. code-block:: C++
@@ -254,7 +255,7 @@ The following steps show how to add support for a new Matter device type, using 
 #. Implement the ``Bridged Device Data Provider`` role.
 
    a. Create the :file:`simulated_pressure_sensor_data_provider.cpp` and :file:`simulated_pressure_sensor_data_provider.h` files in the :file:`src/simulated_providers` directory.
-   #. Open the :file:`nrf/samples/matter/common/bridge/bridged_device_data_provider.h` header file and find the :c:struct:`BridgedDeviceDataProvider` class constructor.
+   #. Open the :file:`nrf/samples/matter/common/src/bridge/bridged_device_data_provider.h` header file and find the :c:struct:`BridgedDeviceDataProvider` class constructor.
       Note the constructor signature, it will be used in the child class implemented in the next steps.
    #. Add a new :c:struct:`SimulatedPressureSensorDataProvider` class inheriting :c:struct:`BridgedDeviceDataProvider`, and implement its constructor in the :file:`simulated_pressure_sensor_data_provider.h` header file.
 
@@ -266,13 +267,13 @@ The following steps show how to add support for a new Matter device type, using 
 
          #include <zephyr/kernel.h>
 
-         class SimulatedPressureSensorDataProvider : public BridgedDeviceDataProvider {
+         class SimulatedPressureSensorDataProvider : public Nrf::BridgedDeviceDataProvider {
          public:
-            SimulatedPressureSensorDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback) {}
+            SimulatedPressureSensorDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : Nrf::BridgedDeviceDataProvider(updateCallback, commandCallback) {}
             ~SimulatedPressureSensorDataProvider() {}
          };
 
-   #. Open the :file:`nrf/samples/matter/common/bridge/bridged_device_data_provider.h` header file again to see which methods of the :c:struct:`BridgedDeviceDataProvider` class are purely virtual (assigned with ``=0``) and have to be overridden by the :c:struct:`SimulatedPressureSensorDataProvider` class.
+   #. Open the :file:`nrf/samples/matter/common/src/bridge/bridged_device_data_provider.h` header file again to see which methods of the :c:struct:`BridgedDeviceDataProvider` class are purely virtual (assigned with ``=0``) and have to be overridden by the :c:struct:`SimulatedPressureSensorDataProvider` class.
    #. Edit the :c:struct:`SimulatedPressureSensorDataProvider` class in the :file:`simulated_pressure_sensor_data_provider.h` header file to declare the required methods as follows:
 
       .. code-block:: C++
@@ -308,6 +309,7 @@ The following steps show how to add support for a new Matter device type, using 
 
             using namespace ::chip;
             using namespace ::chip::app;
+            using namespace Nrf;
 
             void SimulatedPressureSensorDataProvider::Init()
             {
@@ -387,19 +389,19 @@ The following steps show how to add support for a new Matter device type, using 
          #include "pressure_sensor.h"
          #include "simulated_pressure_sensor_data_provider.h"
 
-   - :file:`src/simulated_providers/simulated_bridged_device_factory.h`, :c:func:`GetBridgedDeviceFactory` method
+   - :file:`src/simulated_providers/simulated_bridged_device_factory.cpp`, :c:func:`GetBridgedDeviceFactory` method
 
       .. code-block:: C++
 
          { PressureSensorDevice::kPressureSensorDeviceTypeId,
-         [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
+         [checkLabel](const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
             if (!checkLabel(nodeLabel)) {
                return nullptr;
             }
             return chip::Platform::New<PressureSensorDevice>(nodeLabel);
          } },
 
-   - :file:`src/simulated_providers/simulated_bridged_device_factory.h`, :c:func:`GetDataProviderFactory` method
+   - :file:`src/simulated_providers/simulated_bridged_device_factory.cpp`, :c:func:`GetDataProviderFactory` method
 
       .. code-block:: C++
 

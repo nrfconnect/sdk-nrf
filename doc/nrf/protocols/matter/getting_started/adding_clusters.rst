@@ -181,53 +181,26 @@ This is needed to properly model the sensor's behavior.
 The :file:`src/app_task.cpp` file contains the main loop of the application.
 Complete the steps in the following subsections to modify the main loop.
 
-Edit the event queue
-====================
+Add new tasks
+=============
 
-The main application loop is based on an ``AppEventQueue``, on which events are posted by ZCL callbacks and by other application components, such as Zephyr timers.
-In each iteration, an event is dequeued and a corresponding event handler is called.
+The main application uses a task queue managed by the ``task_executor`` common module, on which tasks are posted by ZCL callbacks and by other application components, such as Zephyr timers.
+In each iteration, a task is dequeued and a corresponding task handler is called.
 
-Add new events
---------------
+To model the behavior of the sensor, you should add new tasks in the following subsections:
 
-After you copied the template sample application, the following events are used in the application (:file:`src/app_event.h`):
-
-* :c:enum:`Button` - For general operation of **Button 1**.
-* :c:enum:`ButtonPushed` - For pressing **Button 1**.
-* :c:enum:`ButtonReleased` - For releasing **Button 1**.
-* :c:enum:`Timer` - For factory reset timeout.
-* :c:enum:`UpdateLedState` - For updating of the **LED 1** state.
-
-To model the behavior of the sensor, add the following new :c:enum:`AppEventType` events:
-
-* :c:enum:`SensorActivate` - For sensor activation.
-* :c:enum:`SensorDeactivate` - For sensor deactivation.
-* :c:enum:`SensorMeasure` - For sensor measurement update.
-
-For example, the edited :c:enum:`AppEventType` can look as follows:
-
-.. code-block:: C++
-
-   enum class AppEventType {
-        None = 0,
-        Button,
-        ButtonPushed,
-        ButtonReleased,
-        Timer,
-        UpdateLedState,
-        SensorActivate,
-        SensorDeactivate,
-        SensorMeasure
-   };
+* ``Sensor Activate`` - For sensor activation.
+* ``Sensor Deactivate`` - For sensor deactivation.
+* ``Sensor Measure`` - For sensor measurement update.
 
 Add sensor timer
 ----------------
 
 You need to make sure that the sensor is making measurements at the required time points.
-For this purpose, use a Zephyr timer to periodically post :c:enum:`SensorMeasure` events.
+For this purpose, use a Zephyr timer to periodically post ``Sensor Measure`` tasks.
 In the template sample, such a timer is being used to count down 6 seconds when **Button 1** is being pressed to initiate the factory reset.
 
-To add a new timer for the measurement event, edit the :file:`src/app_task.cpp` file as follows:
+To add a new timer for the measurement task, edit the :file:`src/app_task.cpp` file as follows:
 
 .. code-block:: C++
 
@@ -235,10 +208,7 @@ To add a new timer for the measurement event, edit the :file:`src/app_task.cpp` 
 
    void SensorTimerHandler(k_timer *timer)
    {
-           AppEvent event;
-           event.Type = AppEventType::SensorMeasure;
-           event.Handler = AppTask::SensorMeasureHandler;
-           AppTask::Instance().PostEvent(event);
+           Nrf::PostTask([] { AppTask::SensorMeasureHandler(); });
    }
 
    void StartSensorTimer(uint32_t aTimeoutMs)
@@ -259,35 +229,35 @@ To add a new timer for the measurement event, edit the :file:`src/app_task.cpp` 
 
            k_timer_init(&sSensorTimer, &SensorTimerHandler, nullptr);
            k_timer_user_data_set(&sSensorTimer, this);
-           return CHIP_NO_ERROR;
+           return Nrf::Matter::StartServer();
    }
 
 The timer must be initialized in the ``Init()`` method of the ``AppTask`` class.
-If :c:func:`StartSensorTimer()` is called, the :c:struct:`SensorMeasure` event is added to the event queue every *aTimeoutMs* milliseconds, until :c:func:`StopSensorTimer()` is called.
+If :c:func:`StartSensorTimer()` is called, the ``Sensor Measure`` task is added to the tasks queue every *aTimeoutMs* milliseconds, until :c:func:`StopSensorTimer()` is called.
 
-Implement event handlers
-------------------------
+Implement task handlers
+-----------------------
 
-When an event is dequeued, the application calls the event handler in the :c:func:`DispatchEvent()` function.
-Because you have added new events, you must implement the corresponding handlers.
+When a task is dequeued, the ``task_executor`` module calls the task handler passed to the :c:func:`PostTask()` function.
+Because you need to handle new tasks, you must implement the corresponding handlers.
 
-To add new event handlers, complete the following steps:
+To add new task handlers, complete the following steps:
 
 1. Edit the :file:`src/app_task.cpp` file as follows:
 
    .. code-block:: C++
 
-      void AppTask::SensorActivateHandler(const AppEvent &)
+      void AppTask::SensorActivateHandler()
       {
               StartSensorTimer(500);
       }
 
-      void AppTask::SensorDeactivateHandler(const AppEvent &)
+      void AppTask::SensorDeactivateHandler()
       {
               StopSensorTimer();
       }
 
-      void AppTask::SensorMeasureHandler(const AppEvent &)
+      void AppTask::SensorMeasureHandler()
       {
               chip::app::Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Set(
                       /* endpoint ID */ 1, /* temperature in 0.01*C */ int16_t(rand() % 5000));
@@ -317,9 +287,9 @@ To import helper functions for accessing cluster attributes, make sure to includ
 Create a callback for sensor activation and deactivation
 ********************************************************
 
-Handlers for the :c:struct:`SensorActivate` and :c:struct:`SensorDeactivate` events are now ready, but the events are not posted to the event queue.
+Handlers for the ``Sensor Activate`` and ``Sensor Deactivate`` tasks are now ready, but the tasks are not posted to the task queue.
 The sensor is supposed to be turned on and off remotely by changing the ``OnOff`` attribute of the On/off cluster, for example using the Matter controller.
-This means that we need to implement a callback function to post one of these events every time the ``OnOff`` attribute changes.
+This means that we need to implement a callback function to post one of these tasks every time the ``OnOff`` attribute changes.
 
 To implement the callback function, complete the following steps:
 
@@ -335,6 +305,7 @@ For example, the implementation can look as follows:
 .. code-block:: C++
 
    #include "app_task.h"
+   #include "app/task_executor.h"
 
    #include <app-common/zap-generated/ids/Attributes.h>
    #include <app-common/zap-generated/ids/Clusters.h>
@@ -346,23 +317,18 @@ For example, the implementation can look as follows:
    void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath & attributePath, uint8_t type,
                                           uint16_t size, uint8_t * value)
    {
-           if (attributePath.mClusterId != OnOff::Id || attributePath.mAttributeId != OnOff::Attributes::OnOff::Id)
+            if (attributePath.mClusterId != OnOff::Id || attributePath.mAttributeId != OnOff::Attributes::OnOff::Id)
                    return;
 
-           AppEvent event;
-           if (*value) {
-               event.Type = AppEventType::SensorActivate;
-               event.Handler = AppTask::SensorActivateHandler;
-           }
-           else {
-               event.Type = AppEventType::SensorDeactivate;
-               event.Handler = AppTask::SensorDeactivateHandler;
-           }
-           AppTask::Instance().PostEvent(event);
+            if (*value) {
+                   Nrf::PostTask([] { AppTask::SensorActivateHandler(); });
+            } else {
+                   Nrf::PostTask([] { AppTask::SensorDeactivateHandler(); });
+            }
    }
 
 In this implementation, the ``if`` part filters out events other than those that belong to the On/Off cluster.
-Then, the callback posts the event for the sensor, namely ``SensorActivate`` if the current value of the attribute is not zero.
+Then, the callback posts the task for the sensor, namely ``Sensor Activate`` if the current value of the attribute is not zero.
 
 .. _ug_matter_creating_accessory_add_source:
 

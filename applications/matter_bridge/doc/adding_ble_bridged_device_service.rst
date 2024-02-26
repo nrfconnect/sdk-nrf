@@ -30,9 +30,9 @@ The following steps show how to add support for a new Bluetooth LE service calle
 #. Implement the ``Bridged Device Data Provider`` role.
 
    a. Create the :file:`my_bt_service_data_provider.cpp` and :file:`my_bt_service_data_provider.h` files for your Bluetooth LE Data Provider in the :file:`src/ble_providers` directory.
-   #. Open the :file:`nrf/samples/matter/common/bridge/ble_bridged_device.h` header file and find the :c:struct:`BLEBridgedDeviceProvider` class constructor.
+   #. Open the :file:`nrf/samples/matter/common/src/bridge/ble_bridged_device.h` header file and find the :c:struct:`BLEBridgedDeviceProvider` class constructor.
       Note the constructor signature, it will be used in the child class implemented in the next steps.
-   #. Add a new :c:struct:`MyBtServiceDataProvider` class inheriting :c:struct:`BLEBridgedDeviceProvider`, and implement its constructor in the :file:`my_bt_service_data_provider.cpp` and :file:`my_bt_service_data_provider.h` files.
+   #. Add a new :c:struct:`MyBtServiceDataProvider` class inheriting :c:struct:`BLEBridgedDeviceProvider`, and implement its constructor in the :file:`my_bt_service_data_provider.h` file.
 
       .. code-block:: C++
 
@@ -42,13 +42,13 @@ The following steps show how to add support for a new Bluetooth LE service calle
 
         #include "my_bt_service.h"
 
-        class MyBtServiceDataProvider : public BLEBridgedDeviceProvider {
+        class MyBtServiceDataProvider : public Nrf::BLEBridgedDeviceProvider {
         public:
-            explicit MyBtServiceDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BLEBridgedDeviceProvider(updateCallback, commandCallback) {}
+            explicit MyBtServiceDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : Nrf::BLEBridgedDeviceProvider(updateCallback, commandCallback) {}
 
         };
 
-   #. Open the :file:`nrf/samples/matter/common/bridge/ble_bridged_device.h` header file again to see which methods of :c:struct:`BLEBridgedDeviceProvider` class are purely virtual (assigned with ``=0``) and have to be overridden by the :c:struct:`MyBtServiceDataProvider` class.
+   #. Open the :file:`nrf/samples/matter/common/src/bridge/ble_bridged_device.h` header file again to see which methods of :c:struct:`BLEBridgedDeviceProvider` class are purely virtual (assigned with ``=0``) and have to be overridden by the :c:struct:`MyBtServiceDataProvider` class.
 
       Note that :c:struct:`BLEBridgedDeviceProvider` inherits from the :c:struct:`BridgedDeviceDataProvider` class, so the :c:struct:`MyBtServiceDataProvider` class has to implement the purely virtual methods of :c:struct:`BridgedDeviceDataProvider` as well.
    #. Edit the :c:struct:`MyBtServiceDataProvider` class in the :file:`my_bt_service_data_provider.h` header file to declare the required methods as follows:
@@ -61,6 +61,20 @@ The following steps show how to add support for a new Bluetooth LE service calle
         CHIP_ERROR UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override;
         bt_uuid *GetServiceUuid() override;
         int ParseDiscoveredData(bt_gatt_dm *discoveredData) override;
+
+   #. Include the necessary header files and namespaces in the :file:`my_bt_service_data_provider.cpp` file:
+
+      .. code-block:: C++
+
+         #include "my_bt_service_data_provider.h"
+
+         #include <bluetooth/gatt_dm.h>
+         #include <zephyr/bluetooth/conn.h>
+         #include <zephyr/bluetooth/gatt.h>
+
+         using namespace ::chip;
+         using namespace ::chip::app;
+         using namespace Nrf;
 
    #. Implement the body of the :c:func:`Init` method so that it can prepare the data provider for further operation.
       If there are no additional actions to be done before starting the provider, it can be implemented in the :file:`my_bt_service_data_provider.cpp` file as empty.
