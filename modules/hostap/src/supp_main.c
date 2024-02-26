@@ -252,7 +252,11 @@ static int z_wpas_remove_interface(const char *ifname)
 		.data = event,
 	};
 
-	z_wpas_send_event(&msg);
+	ret = z_wpas_send_event(&msg);
+	if (ret) {
+		wpa_printf(MSG_ERROR, "Failed to send event: %d", ret);
+		goto err;
+	}
 
 	while (retry++ < count &&
 		   wpa_s->wpa_state != WPA_INTERFACE_DISABLED) {
