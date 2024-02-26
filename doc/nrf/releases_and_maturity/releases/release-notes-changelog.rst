@@ -255,8 +255,11 @@ Serial LTE modem
 nRF5340 Audio
 -------------
 
-* The SoftDevice Controller is the default controller for the build script.
-* Added support for Filter Accept List and enabled as default.
+* Added:
+
+  * Changed the default controller from the :ref:`_lib_bt_ll_acs_nrf53_readme` to the :ref:`ug_ble_controller_softdevice`. Read :ref:`migration_2.6` for information about how this affects your application.
+  * Support for Filter Accept List; enabled as default.
+  * Metadata used in Auracast, such as ``active_state`` and ``parental_rating``.
 
 * Updated:
 

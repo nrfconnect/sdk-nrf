@@ -652,6 +652,8 @@ The following changes are recommended for your application to work optimally aft
 
 * For LwM2M applications, replace the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DTLS_CID` Kconfig option with :kconfig:option:`CONFIG_LWM2M_DTLS_CID`.
 
+* The :ref:`nrf53_audio_app` have changed the default controller from the :ref:`_lib_bt_ll_acs_nrf53_readme` to Nordic Semiconductor's :ref:`ug_ble_controller_softdevice`. Make sure to transition to using the SoftDevice Controller. There should be no negative impact on performance for the nRF5340 Audio applications. This change will enable use of standard tools for building and configuring the controller. The SoftDevice Controller will for some time not have a QDID for the ISO operation.
+
 .. HOWTO
 
    Add changes in the following format:

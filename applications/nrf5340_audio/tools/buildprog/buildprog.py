@@ -44,7 +44,6 @@ else:
 TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME = "nrf5340_audio_dk_nrf5340_cpuapp"
 
 TARGET_CORE_APP_FOLDER = NRF5340_AUDIO_FOLDER
-TARGET_CORE_NET_FOLDER = NRF_FOLDER / "lib/bin/bt_ll_acs_nrf53/bin"
 TARGET_DEV_HEADSET_FOLDER = NRF5340_AUDIO_FOLDER / "build/dev_headset"
 TARGET_DEV_GATEWAY_FOLDER = NRF5340_AUDIO_FOLDER / "build/dev_gateway"
 
@@ -114,13 +113,15 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine,
             device_flag += " -DCONFIG_AUDIO_DFU=2"
         if options.min_b0n:
             device_flag += " -DCONFIG_B0N_MINIMAL=y"
-        if options.controller == Controller.acs_nrf53:
-            device_flag += " -DCONFIG_BT_LL_ACS_NRF53=y"
-        elif not child_image:
+
+        if options.controller != Controller.sdc:
+            device_flag += " -DCONFIG_BT_LL_ACS_NRF53=y -DCONFIG_AUDIO_SYNC_TIMER_USES_RTC=n -DCONFIG_BT_ATT_ENFORCE_FLOW=n -DCONFIG_BT_HCI_VS_EXT=n -DCONFIG_BT_HCI_ACL_FLOW_CONTROL=n"
+
+        if not child_image:
             device_flag += " -DCONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE=n"
 
         if options.nrf21540:
-            device_flag += " -DSHIELD=nrf21540ek_fwd"
+            device_flag += " -DSHIELD=nrf21540ek_fwd -Dhci_ipc_SHIELD=nrf21540ek"
 
         if options.custom_bt_name is not None and options.user_bt_name:
             raise Exception(
@@ -143,7 +144,13 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine,
             build_cmd += " -p"
 
     elif core == Core.net:
-        dest_folder = TARGET_CORE_NET_FOLDER
+        if build == BuildType.debug:
+           dest_folder /= TARGET_DEBUG_FOLDER
+        elif build == BuildType.release:
+            dest_folder /= TARGET_RELEASE_FOLDER
+        else:
+            raise Exception("Invalid build type!")
+
         build_cmd = ""
         device_flag = ""
         release_flag = ""
@@ -201,34 +208,33 @@ def __populate_hex_paths(dev, options, child_image):
 
     dest_folder = temp_dest_folder
 
-    if options.controller != Controller.acs_nrf53:
+    if options.controller == Controller.sdc:
         dev.hex_path_app = dest_folder / "zephyr/zephyr.hex"
         dev.hex_path_net = dest_folder / "hci_ipc/zephyr/zephyr.hex"
-        return
+    else:
+        if dev.core_app_programmed == SelectFlags.TBD:
 
-    if dev.core_app_programmed == SelectFlags.TBD:
-        if options.mcuboot != '':
-            dev.hex_path_app = dest_folder / "zephyr/merged.hex"
-        else:
-            dev.hex_path_app = dest_folder / "zephyr/zephyr.hex"
-
-    if dev.core_net_programmed == SelectFlags.TBD:
-
-        hex_files_found = 0
-        for hex_path in glob.glob(str(TARGET_CORE_NET_FOLDER) + "/ble5-ctr-rpmsg_????.hex"):
-            dev.hex_path_net = hex_path
-            hex_files_found += 1
-
-        if options.mcuboot != '':
-            dev.hex_path_net = dest_folder / "zephyr/net_core_app_signed.hex"
-        else:
-            dest_folder = TARGET_CORE_NET_FOLDER
-
-            if hex_files_found != 1:
-                raise Exception(
-                    f"Found zero or multiple NET hex files in folder: {dest_folder}")
+            if options.mcuboot != '':
+                dev.hex_path_app = dest_folder / "zephyr/merged.hex"
             else:
-                print(f"Using NET hex: {dev.hex_path_net} for {dev}")
+                dev.hex_path_app = dest_folder / "zephyr/zephyr.hex"
+
+        if dev.core_net_programmed == SelectFlags.TBD:
+            hex_files_found = 0
+            for hex_path in glob.glob(str(NRF_FOLDER) + "/lib/bin/bt_ll_acs_nrf53/bin/ble5-ctr-rpmsg_????.hex"):
+                dev.hex_path_net = hex_path
+                hex_files_found += 1
+
+            if options.mcuboot != '':
+                dev.hex_path_net = dest_folder / "zephyr/net_core_app_signed.hex"
+            else:
+                dest_folder = NRF_FOLDER / "lib/bin/bt_ll_acs_nrf53/bin"
+
+                if hex_files_found != 1:
+                    raise Exception(
+                        f"Found zero or multiple NET hex files in folder: {dest_folder}")
+                else:
+                    print(f"Using NET hex: {dev.hex_path_net} for {dev}")
 
 
 def __finish(device_list):
@@ -365,11 +371,11 @@ def __main():
 
     options = parser.parse_args(args=sys.argv[1:])
 
-    if options.controller != Controller.acs_nrf53:
+    if options.controller == Controller.sdc:
         print(Fore.YELLOW +
               "Experimental app - controller combination" + Style.RESET_ALL)
-        if options.nrf21540 or options.mcuboot != '' or options.min_b0n:
-            raise Exception("nrf21540 or DFU arguments only accepted when using controller: " +
+        if options.mcuboot != '' or options.min_b0n:
+            raise Exception("DFU arguments only accepted when using controller: " +
                             Controller.acs_nrf53 + ". Please use standard tools.")
 
     # Post processing for Enums
