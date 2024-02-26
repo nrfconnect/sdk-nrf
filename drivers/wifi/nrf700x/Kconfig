@@ -515,3 +515,7 @@ config WIFI_NRF700X_SCAN_DISABLE_DFS_CHANNELS
 	help
 	  This option disables inclusion of DFS channels in scan operation.
 	  This is useful to reduce the scan time, as DFS channels are seldom used.
+
+config NET_INTERFACE_NAME_LEN
+	# nordic_wlanN
+	default 15
