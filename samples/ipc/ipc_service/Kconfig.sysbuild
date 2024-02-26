@@ -8,6 +8,3 @@ source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 
 config REMOTE_BOARD
 	string "The board used for remote target"
-	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
-	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns"
-	default "UNKNOWN"

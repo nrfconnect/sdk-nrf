@@ -54,40 +54,31 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-A set of overlays are available for the sample to verify the throughput that only one core is sending the data.
-You could use different overlay build commands for different testing scenarios, which are as follows:
+**nRF5340 DK**
 
-* To test the application where only the application core is sending data through the IPC service, specify ``-DOVERLAY_CONFIG=overlay-cpuapp-sending.conf`` overlay parameter with the build command:
+You can build the sample using either the RPMsg or ICMSG backends, as follows:
 
-  .. code-block:: console
+.. code-block:: console
 
-     west build -p -b nrf5340dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-cpuapp-sending.conf
+   west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_default .
+   west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_default .
 
-  The :file:`CMakeLists.txt` of the application ensures adding a matching config overlay for the child image.
+A set of overlays is available for the sample to verify the throughput when only one core is sending the data.
+Use these overlays when building the IPC sample to test the following scenarios:
 
-* To test the application for a scenario where only the network core is sending data through the IPC service, specify the ``-DOVERLAY_CONFIG=overlay-cpunet-sending.conf`` overlay parameter with the build command:
-
-  .. code-block:: console
-
-     west build -p -b nrf5340dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-cpunet-sending.conf
-
-  The :file:`CMakeLists.txt` of the application ensures adding a matching config overlay for the child image.
-
-* To test the application with the ICMSG backend, specify the ``-DCONF_FILE=prj_icmsg.conf`` parameter along with the build command:
+* Either the network or application core is sending data through the IPC service using RPMsg:
 
   .. code-block:: console
 
-     west build -p -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_icmsg.conf
+     west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_cpuapp_sending .
+     west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_cpunet_sending .
 
-  The :file:`CMakeLists.txt` of the application ensures adding a matching ``config`` and ``DT`` overlay for the child image.
-
-* Combine the above options and test maximal core to core throughput with the ICMSG backend.
-  To do so, build the application with the following commands:
+* Either the network or application core is sending data through the IPC service using the ICMSG backend:
 
   .. code-block:: console
 
-     west build -p -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_icmsg.conf -DOVERLAY_CONFIG=overlay-cpuapp-sending.conf
-     west build -p -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_icmsg.conf -DOVERLAY_CONFIG=overlay-cpunet-sending.conf
+     west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpuapp_sending .
+     west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpunet_sending .
 
 Testing
 =======

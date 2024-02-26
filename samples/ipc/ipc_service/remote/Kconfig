@@ -5,4 +5,4 @@
 #
 
 source "Kconfig.zephyr"
-rsource "../Kconfig.app"
+rsource "../Kconfig.common"
