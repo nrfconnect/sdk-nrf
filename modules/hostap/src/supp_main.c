@@ -242,7 +242,13 @@ static int z_wpas_remove_interface(const char *ifname)
 	generate_supp_state_event(ifname, NET_EVENT_WPA_SUPP_CMD_IFACE_REMOVING, 0);
 	wpa_printf(MSG_DEBUG, "Remove interface %s\n", ifname);
 
-	os_memcpy(event->interface_status.ifname, ifname, IFNAMSIZ);
+	if (sizeof(event->interface_status.ifname) < strlen(ifname)) {
+		wpa_printf(MSG_ERROR, "Interface name too long: %s (max: %d)",
+			ifname, sizeof(event->interface_status.ifname));
+		goto err;
+	}
+
+	os_memcpy(event->interface_status.ifname, ifname, strlen(ifname));
 	event->interface_status.ievent = EVENT_INTERFACE_REMOVED;
 
 	struct wpa_supplicant_event_msg msg = {
