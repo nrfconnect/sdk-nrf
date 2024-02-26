@@ -1065,7 +1065,17 @@ int audio_datapath_init(void)
 	audio_i2s_init();
 	ctrl_blk.datapath_initialized = true;
 	ctrl_blk.drift_comp.enabled = true;
-	ctrl_blk.pres_comp.enabled = true;
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) && (CONFIG_AUDIO_DEV == GATEWAY) &&
+	    IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
+		/* Disable presentation compensation feature for microphone return on gateway when
+		 * using Audio Controller Subsystem. Also, since there's only one stream output from
+		 * gateway for now, so no need to have presentation compensation.
+		 */
+		ctrl_blk.pres_comp.enabled = false;
+	} else {
+		ctrl_blk.pres_comp.enabled = true;
+	}
+
 	ctrl_blk.pres_comp.pres_delay_us = CONFIG_BT_AUDIO_PRESENTATION_DELAY_US;
 
 	return 0;
