@@ -9,6 +9,26 @@ Changelog
 
 Notable changes to this controller are documented in this file.
 
+Controller v17933
+*****************
+
+.. note::
+     This controller is now :ref:`deprecated <api_deprecation>`. Before it is removed, make sure to transition to using :ref:`softdevice_controller`.
+
+The following changes have been introduced in the v17933 of the controller:
+
+Changes
+=======
+
+* Improved the robustness for the CIS bidirectional four stream scenario (two sinks and two sources).
+* Improved the stability for switching between the BIS and the CIS scenarios at runtime.
+* Corrected the timestamps for BIS.
+* Fixed the wrong Link Layer ID (LLID) from ISO empty packets.
+* Corrected the disconnection reason for CIS.
+* Pre-transmission offset (PTO) is not supported, but the sink will now accept ``PTO=0`` or ``PTO=1`` values and will not fail in either case.
+* Optimized the CIS setup time.
+* Bugfixes and stability improvements.
+
 Controller v3424
 ****************
 

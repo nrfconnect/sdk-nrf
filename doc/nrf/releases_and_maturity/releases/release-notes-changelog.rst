@@ -275,6 +275,7 @@ nRF5340 Audio
 
   * Support for Filter Accept List; enabled as default.
   * Metadata used in Auracast, such as ``active_state`` and ``parental_rating``.
+  * Updated :ref:`lib_bt_ll_acs_nrf53_readme` from v3424 to v17933.
 
 * Updated:
 
