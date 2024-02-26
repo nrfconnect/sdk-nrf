@@ -124,10 +124,22 @@
 			gpio-controller;
 			#gpio-cells = <2>;
 			ngpios = <5>;
+			npm13_button: GPIO0 {
+				gpio-hog;
+				gpios = <0 GPIO_ACTIVE_HIGH>;
+			};
 			/* GPIO1 switches power to the short range RF front end */
 			ldsw_rf_fe_sr_en: GPIO1 {
 				gpio-hog;
 				gpios = <1 GPIO_ACTIVE_HIGH>;
+			};
+			power_switch: GPIO2 {
+				gpio-hog;
+				gpios = <2 GPIO_ACTIVE_HIGH>;
+			};
+			npm60_ready: GPIO4 {
+				gpio-hog;
+				gpios = <4 GPIO_ACTIVE_HIGH>;
 			};
 		};
 
@@ -200,7 +212,7 @@
 		status = "disabled";
 		compatible = "bosch,bmm150";
 		reg = <0x10>;
-		//irq-gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+		drdy-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
 	};
 };
 
@@ -246,7 +258,7 @@
 		status = "disabled";
 		reg = <2>;
 		spi-max-frequency = <DT_FREQ_M(10)>;
-		//irq-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
+		irq-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
 	};
 
 };
