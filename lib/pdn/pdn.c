@@ -86,6 +86,9 @@ static struct pdn *pdn_ctx_new(void)
 		return NULL;
 	}
 
+	pdn->context_id = INT8_MAX;
+	pdn->callback = NULL;
+
 	k_mutex_lock(&list_mutex, K_FOREVER);
 	sys_slist_append(&pdn_contexts, &pdn->node);
 	k_mutex_unlock(&list_mutex);
