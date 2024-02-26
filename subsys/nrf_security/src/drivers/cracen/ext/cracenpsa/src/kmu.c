@@ -387,7 +387,7 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 		break;
 #ifdef PSA_ALG_SP800_108_COUNTER_CMAC
 	case PSA_ALG_SP800_108_COUNTER_CMAC:
-		metadata->algorihm = METADATA_ALG_SP800_108_COUNTER_CMAC;
+		metadata->algorithm = METADATA_ALG_SP800_108_COUNTER_CMAC;
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
