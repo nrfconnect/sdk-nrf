@@ -104,8 +104,7 @@ int main(void)
 	 *
 	 * So, we start DHCPv4 on Wi-Fi interface always, independent of the ordering.
 	 */
-	/* TODO: Replace device name with DTS settings later */
-	const struct device *dev = device_get_binding("wlan0");
+	const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
 	struct net_if *wifi_iface = net_if_lookup_by_dev(dev);
 
 	if (!wifi_iface) {

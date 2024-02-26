@@ -114,7 +114,7 @@ static int lwm2m_wifi_scan_init(void)
 	const struct device *wifi_dev;
 
 	wifi_iface = NULL;
-	wifi_dev = device_get_binding("wlan0");
+	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
 	LOG_DBG("Initialize wifi scan module");
 
 	if (!device_is_ready(wifi_dev)) {
