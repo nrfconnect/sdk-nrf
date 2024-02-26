@@ -36,6 +36,8 @@ config NRF_SECURITY
 	depends on SOC_FAMILY_NRF
 	default y if BUILD_WITH_TFM
 	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
+	# Generating random requires a CRACEN PSA Crypto driver on nrf54L
+	select PSA_CRYPTO_DRIVER_CRACEN if PSA_WANT_GENERATE_RANDOM && SOC_SERIES_NRF54LX
 	help
 	  Set this configuration to enable nRF Security. This provides
 	  Arm PSA cryptography APIs with RNG support (optionally).

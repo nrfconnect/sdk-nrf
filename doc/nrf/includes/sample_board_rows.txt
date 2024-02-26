@@ -225,3 +225,7 @@
 .. nrf54l15pdk_nrf54l15_cpuapp@soc1
 
 | :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | | ``nrf54l15pdk_nrf54l15_cpuapp`` | ``nrf54l15pdk_nrf54l15_cpuapp@soc1`` |
+
+.. nrf54l15pdk_nrf54l15_cpuapp_ns@soc1
+
+| :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | | ``nrf54l15pdk_nrf54l15_cpuapp`` | ``nrf54l15pdk_nrf54l15_cpuapp_ns@soc1`` |

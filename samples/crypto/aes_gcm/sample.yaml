@@ -23,6 +23,8 @@ tests:
   sample.aes_gcm.oberon:
     tags: introduction psa oberon
     platform_allow: >
+      nrf54h20pdk_nrf54h20_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns nrf5340dk_nrf5340_cpuapp
       nrf52840dk_nrf52840 nrf9160dk_nrf9160_ns nrf9160dk_nrf9160
       nrf9161dk_nrf9161 nrf9161dk_nrf9161_ns
@@ -37,3 +39,5 @@ tests:
       - nrf9160dk_nrf9160
       - nrf9161dk_nrf9161
       - nrf9161dk_nrf9161_ns
+      - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54h20pdk_nrf54h20_cpuapp

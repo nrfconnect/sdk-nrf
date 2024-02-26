@@ -10,6 +10,7 @@ config TFM_BOARD
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf9160" if SOC_NRF9160
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf9120" if SOC_NRF9120
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf5340_cpuapp" if SOC_NRF5340_CPUAPP
+	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf54l15_cpuapp" if SOC_SERIES_NRF54LX
 	depends on TRUSTED_EXECUTION_NONSECURE
 
 if BUILD_WITH_TFM
@@ -34,7 +35,9 @@ config TFM_LOG_LEVEL_SILENCE
 	# assigned GPIO pins using pinctrl.
 	default n
 	depends on $(dt_nodelabel_has_prop,uart0,pinctrl-names) || \
-		   $(dt_nodelabel_has_prop,uart1,pinctrl-names)
+		   $(dt_nodelabel_has_prop,uart1,pinctrl-names) || \
+		   SOC_SERIES_NRF54LX # TODO: NCSDK-25009: Use pin-ctrl-names for 54L
+
 
 choice TFM_PROFILE_TYPE
 	default TFM_PROFILE_TYPE_MINIMAL
@@ -76,6 +79,7 @@ config TFM_PARTITION_PROTECTED_STORAGE
 	select PSA_WANT_KEY_TYPE_AES
 	select PSA_WANT_ALG_CCM if SOC_SERIES_NRF91X
 	select PSA_WANT_ALG_GCM if SOC_NRF5340_CPUAPP
+	select PSA_WANT_ALG_GCM if SOC_SERIES_NRF54LX
 
 config BOOTLOADER_MCUBOOT
 	bool

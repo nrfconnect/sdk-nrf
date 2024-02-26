@@ -20,6 +20,7 @@ The nRF Security supports the following PSA drivers:
 
 * Arm CryptoCell cc3xx binary
 * nrf_oberon binary
+* CRACEN sources
 
 .. note::
    Whenever this documentation mentions 'original' Mbed TLS, it refers to the open-source `Arm Mbed TLS project`_, not the customized version available in Zephyr.
@@ -76,6 +77,21 @@ Enabling the nrf_oberon driver
 ==============================
 
 To enable the :ref:`nrf_oberon_readme` PSA driver, set the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_OBERON` Kconfig option.
+
+.. _nrf_security_drivers_cracen:
+
+CRACEN driver
+*************
+
+The CRACEN driver provides hardware-accelerated cryptography using the CRACEN (Crypto Accelerator Engine) peripheral.
+This driver is only available on nRF54L Series devices.
+
+Enabling the CRACEN driver
+==========================
+
+The CRACEN driver can be enabled by setting the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option.
+
+The nrf_oberon driver may then be disabled by using the Kconfig option :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_OBERON` (``CONFIG_PSA_CRYPTO_DRIVER_OBERON=n``).
 
 Legacy Mbed TLS
 ***************

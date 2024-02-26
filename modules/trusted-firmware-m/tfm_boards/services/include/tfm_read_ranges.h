@@ -13,6 +13,11 @@
 
 #include "nrf.h"
 
+/*
+ * On platforms like nrf53 we provide a service for reading out
+ * FICR. But on platforms like nrf54l, FICR is hardware fixed to NS so
+ * the non-secure image can just read it directly.
+ */
 #ifdef NRF_FICR_S_BASE
 
 #define FICR_BASE               NRF_FICR_S_BASE

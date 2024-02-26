@@ -67,6 +67,48 @@ tests:
       - nrf9161dk_nrf9161_ns
     tags: ci_build cc3xx_oberon dtls
   ################################################################################
+  ## PSA APIs with Oberon
+  ################################################################################
+  sample.psa_tls.server.ecdsa.oberon:
+    build_only: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf"
+    platform_allow: >
+      nrf54l15pdk_nrf54l15_cpuapp
+    integration_platforms:
+      - nrf54l15pdk_nrf54l15_cpuapp
+    tags: ci_build oberon
+  sample.psa_tls.client.ecdsa.oberon:
+    build_only: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf"
+    platform_allow: >
+      nrf54l15pdk_nrf54l15_cpuapp
+    integration_platforms:
+      - nrf54l15pdk_nrf54l15_cpuapp
+    tags: ci_build oberon
+  ################################################################################
+  ## PSA APIs with Cracen
+  ################################################################################
+  sample.psa_tls.server.ecdsa.cracen:
+    build_only: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf"
+    platform_allow: >
+      nrf54l15pdk_nrf54l15_cpuapp
+    integration_platforms:
+      - nrf54l15pdk_nrf54l15_cpuapp
+    tags: ci_build cracen
+  sample.psa_tls.client.ecdsa.cracen:
+    build_only: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf"
+    platform_allow: >
+      nrf54l15pdk_nrf54l15_cpuapp
+    integration_platforms:
+      - nrf54l15pdk_nrf54l15_cpuapp
+    tags: ci_build cracen
+  ################################################################################
   ## Legacy APIs with Cryptocell (secure-only)
   ################################################################################
   sample.psa_tls.tls_server.rsa.cc3xx_legacy:

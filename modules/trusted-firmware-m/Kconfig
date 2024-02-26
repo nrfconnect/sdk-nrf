@@ -318,6 +318,7 @@ config TFM_SECURE_UART_SHARE_INSTANCE
 
 choice TFM_SECURE_UART_INSTANCE
 	prompt "TF-M logging UART instance"
+	default TFM_SECURE_UART22 if SOC_SERIES_NRF54LX
 	default TFM_SECURE_UART1
 
 config TFM_SECURE_UART0
@@ -331,6 +332,12 @@ config TFM_SECURE_UART1
 	depends on $(dt_nodelabel_has_prop,uart1,pinctrl-names)
 	select NRF_UARTE1_SECURE
 	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE1 || HAS_HW_NRF_UARTE1
+
+config TFM_SECURE_UART22
+	bool "TF-M logging will use UART22 instance"
+#TODO: NCSDK-25009: Fix DT for secure UART22 depends on $(dt_nodelabel_has_prop,uart22,pinctrl-names)
+	select NRF_UARTE22_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE22 || HAS_HW_NRF_UARTE22
 
 endchoice
 
@@ -410,6 +417,7 @@ config TFM_S_CODE_VECTOR_TABLE_SIZE
 	hex
 	default 0x144 if SOC_SERIES_NRF91X
 	default 0x154 if SOC_NRF5340_CPUAPP
+	default 0x47c if SOC_SERIES_NRF54LX
 	default 0xffffffff # Invalid value to discover missing SOC support.
 	help
 	  The TF-M interrupt vector table size.
