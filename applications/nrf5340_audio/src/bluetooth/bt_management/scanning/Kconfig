@@ -37,7 +37,7 @@ config BLE_ACL_SLAVE_LATENCY
 
 config BLE_ACL_SUP_TIMEOUT
 	int "Bluetooth LE Supervision Timeout (x*10ms)"
-	default 100
+	default 40
 
 endmenu # Connection
 
