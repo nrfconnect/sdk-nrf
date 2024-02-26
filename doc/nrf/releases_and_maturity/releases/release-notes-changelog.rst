@@ -452,11 +452,43 @@ Bluetooth Mesh samples
 
     * Support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
 
+  * Fixed:
+
+    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+
 * :ref:`bluetooth_mesh_light_lc` sample:
 
   * Added:
 
     * Support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
+
+  * Fixed:
+
+    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+
+* :ref:`bluetooth_mesh_light` sample:
+
+  * Fixed:
+
+    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+
+* :ref:`bluetooth_mesh_light_switch` sample:
+
+  * Fixed:
+
+    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+
+* :ref:`bluetooth_mesh_sensor_server` sample:
+
+  * Fixed:
+
+    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+
+* :ref:`bluetooth_mesh_silvair_enocean` sample:
+
+  * Fixed:
+
+    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` board.
 
 Cellular samples
 ----------------
