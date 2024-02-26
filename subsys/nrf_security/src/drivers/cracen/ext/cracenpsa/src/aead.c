@@ -97,6 +97,7 @@ static uint8_t get_block_size(psa_algorithm_t alg)
 static psa_status_t process_on_hw(cracen_aead_operation_t *operation)
 {
 	int sx_status = sx_aead_save_state(&operation->ctx);
+
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -167,6 +168,7 @@ static psa_status_t initialize_ctx(cracen_aead_operation_t *operation)
 static psa_status_t initialize_or_resume_context(cracen_aead_operation_t *operation)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
 	switch (operation->context_state) {
 	case CRACEN_NOT_INITIALIZED:
 		status = initialize_ctx(operation);
@@ -188,6 +190,7 @@ static psa_status_t initialize_or_resume_context(cracen_aead_operation_t *operat
 static void cracen_writebe(uint8_t *out, uint64_t data, uint16_t targetsz)
 {
 	uint_fast16_t i;
+
 	for (i = 0; i < targetsz; i++) {
 		out[(targetsz - 1) - i] = (data >> (i * 8)) & 0xFF;
 	}
@@ -389,13 +392,13 @@ static psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operati
 			       input, input_length);
 			operation->unprocessed_input_bytes += input_length;
 			return PSA_SUCCESS;
-		} else {
-			memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes,
-			       input, remaining_bytes);
-			input += remaining_bytes;
-			input_length -= remaining_bytes;
-			operation->unprocessed_input_bytes += remaining_bytes;
 		}
+
+		memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes,
+			   input, remaining_bytes);
+		input += remaining_bytes;
+		input_length -= remaining_bytes;
+		operation->unprocessed_input_bytes += remaining_bytes;
 	}
 
 	if (operation->unprocessed_input_bytes == get_block_size(operation->alg)) {
@@ -460,6 +463,7 @@ static psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operati
 
 	/* Copy remaining bytes to be encrypted later. */
 	size_t remaining_bytes = input_length;
+
 	if (remaining_bytes) {
 		memcpy(operation->unprocessed_input, input, remaining_bytes);
 		operation->unprocessed_input_bytes = remaining_bytes;
@@ -487,7 +491,8 @@ psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_
 	}
 
 	/* If there is unprocessed "additional data", then feed it before
-	 * feeding the plaintext. */
+	 * feeding the plaintext.
+	 */
 	if (operation->unprocessed_input_bytes && !operation->ad_finished) {
 		psa_status_t status =
 			cracen_feed_data_to_hw(operation, operation->unprocessed_input,
@@ -534,7 +539,8 @@ psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *cip
 		}
 	} else {
 		/* In this case plaintext and AD has length 0 and we don't have a context.
-		   Initialize it here, so we can produce the tag. */
+		 * Initialize it here, so we can produce the tag.
+		 */
 		initialize_or_resume_context(operation);
 	}
 
@@ -578,7 +584,8 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 		}
 	} else {
 		/* In this case ciphertext and AD has length 0 and we don't have a context.
-		   Initialize it here, so we can verify the tag. */
+		 * Initialize it here, so we can verify the tag.
+		 */
 		initialize_or_resume_context(operation);
 	}
 

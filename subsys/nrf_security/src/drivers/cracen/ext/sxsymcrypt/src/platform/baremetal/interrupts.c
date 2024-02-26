@@ -88,11 +88,12 @@ uint32_t cracen_wait_for_cm_interrupt(void)
 {
 	if (k_is_pre_kernel()) {
 		/* Scheduling is not available pre-kernel. Initialization may
-		 * run PRNG at this point. */
+		 * run PRNG at this point.
+		 */
 		return 0;
-	} else {
-		return cracen_wait_for_interrupt(&cracen_irq_event_for_cryptomaster);
 	}
+
+	return cracen_wait_for_interrupt(&cracen_irq_event_for_cryptomaster);
 }
 
 uint32_t cracen_wait_for_pke_interrupt(void)

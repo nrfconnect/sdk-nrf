@@ -33,7 +33,7 @@
 #endif
 
 /** \brief Hardware accelerator failed */
-#define MBEDTLS_ERR_PLATFORM_HW_ACCEL_FAILED -0x0070
+#define MBEDTLS_ERR_PLATFORM_HW_ACCEL_FAILED	 -0x0070
 /** \brief The requested feature is not supported by the platform */
 #define MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED -0x0072
 
@@ -64,7 +64,7 @@ extern "C" {
 #endif
 #if !defined(MBEDTLS_PLATFORM_STD_VSNPRINTF)
 #if defined(MBEDTLS_PLATFORM_HAS_NON_CONFORMING_VSNPRINTF)
- /** \brief The default \c vsnprintf function to use.  */
+/** \brief The default \c vsnprintf function to use.  */
 #define MBEDTLS_PLATFORM_STD_VSNPRINTF mbedtls_platform_win32_vsnprintf
 #else
 #define MBEDTLS_PLATFORM_STD_VSNPRINTF vsnprintf /**< The default \c vsnprintf function to use. */

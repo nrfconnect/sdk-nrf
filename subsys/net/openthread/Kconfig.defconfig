@@ -59,7 +59,7 @@ config ENTROPY_TEST_PRNG
 #To be removed
 config IPC_SERVICE_BACKEND_RPMSG_SHMEM_RESET
 	bool
-    default y
+	   default y
 
 #To be removed
 config MBOX

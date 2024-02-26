@@ -113,6 +113,7 @@ int lenAlenC_nop(size_t aadsz, size_t datasz, uint8_t *out)
 static int lenAlenC_sm4gcm_ba419(size_t aadsz, size_t datasz, uint8_t *out)
 {
 	uint32_t i = 0;
+
 	aadsz = aadsz << 3;
 	datasz = datasz << 3;
 	for (i = 0; i < 8; i++) {
@@ -315,6 +316,7 @@ static int sx_aead_create_sm4ccm(struct sxaead *c, const struct sxkeyref *key, c
 
 	/* datasz must ensure  0 <= datasz < 2^(8L) */
 	uint8_t l = 15 - noncesz;
+
 	if ((l < 8U) && (datasz >= (1ULL << (l * 8)))) {
 		/* message too long to encode the size in the CCM header */
 		return SX_ERR_TOO_BIG;
@@ -367,7 +369,8 @@ static int sx_blkcipher_create_sm4xts(struct sxblkcipher *c, const struct sxkeyr
 		return SX_ERR_INVALID_KEYREF;
 	}
 	/* XTS does not support HW keys, therefore both keys must be user
-	 * provided keys */
+	 * provided keys
+	 */
 	if (!(KEYREF_IS_USR(key1) && KEYREF_IS_USR(key2))) {
 		return SX_ERR_HW_KEY_NOT_SUPPORTED;
 	}

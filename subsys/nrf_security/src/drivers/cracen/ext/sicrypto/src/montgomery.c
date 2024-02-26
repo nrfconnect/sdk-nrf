@@ -1,3 +1,10 @@
+/*
+ *  Copyright (c) 2020-2021 Silex Insight
+ *  Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <string.h>
 #include <silexpk/core.h>
 #include <silexpk/montgomery.h>
@@ -24,7 +31,8 @@ static int x448_genpubkey_finish(struct sitask *t, struct siwq *wq)
 	}
 
 	/* Get result of the point multiplication. This is the encoding of the
-    [s]B point, which is the public key. */
+	 * [s]B point, which is the public key.
+	 */
 	sx_async_x448_ptmult_end(t->pk, (struct sx_x448_op *)t->params.x448_pubkey.pubkey);
 
 	return t->statuscode;
@@ -54,7 +62,8 @@ static int x25519_genpubkey_finish(struct sitask *t, struct siwq *wq)
 	}
 
 	/* Get result of the point multiplication. This is the encoding of the
-    [s]B point, which is the public key. */
+	 * [s]B point, which is the public key.
+	 */
 	sx_async_x25519_ptmult_end(t->pk, (struct sx_x25519_op *)t->params.x25519_pubkey.pubkey);
 
 	return t->statuscode;

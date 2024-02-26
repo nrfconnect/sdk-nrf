@@ -76,8 +76,10 @@ static int rndinrange_continue(struct sitask *t, struct siwq *wq)
 static void rndinrange_getrnd(struct sitask *t)
 {
 	/* Get random octets from the PRNG in the environment. Place them
-    directly in the user's output buffer. */
+	 * directly in the user's output buffer.
+	 */
 	psa_status_t status = cracen_get_random(NULL, t->output, t->params.rndinrange.rndsz);
+
 	if (status != PSA_SUCCESS) {
 		si_task_mark_final(t, SX_ERR_UNKNOWN_ERROR);
 		return;

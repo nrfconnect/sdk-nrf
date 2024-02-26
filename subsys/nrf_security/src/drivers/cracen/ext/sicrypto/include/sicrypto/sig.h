@@ -34,8 +34,8 @@ struct si_ik_key {
 
 /** Structure to represent a private key of any type. */
 struct si_sig_privkey {
-	const struct si_sig_def *def;	 /**< Defines the algorithm that the key
-					    can be used with. */
+	/* Defines the algorithm that the key can be used with. */
+	const struct si_sig_def *def;
 	const struct sxhashalg *hashalg; /**< Hash algorithm to use. */
 	size_t saltsz;			 /**< Salt size in bytes. */
 	union {
@@ -51,8 +51,8 @@ struct si_sig_privkey {
 
 /** Structure to represent a public key of any type. */
 struct si_sig_pubkey {
-	const struct si_sig_def *def;	 /**< Defines the algorithm that the key
-					    can be used with. */
+	/* Defines the algorithm that the key can be used with. */
+	const struct si_sig_def *def;
 	const struct sxhashalg *hashalg; /**< Hash algorithm to use. */
 	size_t saltsz;			 /**< Salt size in bytes. */
 	union {

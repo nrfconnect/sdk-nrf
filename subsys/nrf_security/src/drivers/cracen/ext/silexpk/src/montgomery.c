@@ -27,6 +27,7 @@ struct sx_pk_acq_req sx_async_x25519_ptmult_go(const struct sx_x25519_op *k,
 		return pkreq;
 	}
 	struct sx_pk_inops_montgomery_mult inputs;
+
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
@@ -76,6 +77,7 @@ struct sx_pk_acq_req sx_async_x448_ptmult_go(const struct sx_x448_op *k,
 		return pkreq;
 	}
 	struct sx_pk_inops_montgomery_mult inputs;
+
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;

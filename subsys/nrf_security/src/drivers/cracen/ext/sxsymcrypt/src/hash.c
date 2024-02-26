@@ -1,3 +1,9 @@
+/*
+ *  Copyright (c) 2020-2021 Silex Insight
+ *  Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
 #include "../include/sxsymcrypt/hash.h"
 #include <cracen/statuscodes.h>
 #include "../include/sxsymcrypt/internal.h"
@@ -17,7 +23,7 @@ static const struct sx_digesttags ba413tags = {
 	.keycfg = DMATAG_BA413 | DMATAG_DATATYPE(2) | DMATAG_LAST,
 	.data = DMATAG_BA413 | DMATAG_DATATYPE(0)};
 
-#define HASH_INVALID_BYTES  4 // number of invalid bytes when empty message, required by HW
+#define HASH_INVALID_BYTES  4 /* number of invalid bytes when empty message, required by HW */
 #define CMDMA_BA413_MODE(x) ((x) | (HASH_HW_PAD | HASH_FINAL))
 
 static int sx_hash_create_ba413(struct sxhash *c, size_t csz);
@@ -50,14 +56,16 @@ static void sx_hash_pad(struct sxhash *c)
 
 	/* as per SHA standard, write the full hashed message size in
 	 * big endian form starting with 0x80 and as many 0 bytes as
-	 * needed to have full block size. */
+	 * needed to have full block size.
+	 */
 	size_t length_field_sz = (c->algo->digestsz >= 48) ? 16 : 8;
+
 	padsz = c->algo->blocksz - (c->totalsz & (c->algo->blocksz - 1));
 	if (padsz < (length_field_sz + 1)) {
 		padsz += c->algo->blocksz;
 	}
 
-	padding[padsz - 1] = (v & 0x1f) << 3; // multiply by 8 for bits
+	padding[padsz - 1] = (v & 0x1f) << 3; /* multiply by 8 for bits */
 	v >>= 5;
 	for (size_t i = padsz - 2; i > 0; i--) {
 		padding[i] = v & 0xFF;
@@ -70,7 +78,7 @@ static void sx_hash_pad(struct sxhash *c)
 	/* Padding is done only when sx_hash_resume_state() has been called and
 	 * sx_hash_resume_state() already reserved room for this extra
 	 * descriptor.
-	 * */
+	 */
 }
 
 void sx_ba413_digest(struct sxhash *c, char *digest)
@@ -78,7 +86,8 @@ void sx_ba413_digest(struct sxhash *c, char *digest)
 	if (c->totalsz == 0) {
 		/* If we get here it means an empty message hash will be
 		 * generated. 4 dummy bytes will be added to hash, these bytes
-		 * will be dropped by the hash engine. */
+		 * will be dropped by the hash engine.
+		 */
 		ADD_EMPTY_INDESC(c->dma, HASH_INVALID_BYTES, c->dmatags->data);
 	}
 
@@ -88,6 +97,7 @@ void sx_ba413_digest(struct sxhash *c, char *digest)
 	SET_LAST_DESC_IGN(c->dma.d - 1, c->feedsz, CMDMA_BA413_BUS_MSK);
 
 	struct sxdesc *out = c->dma.dmamem.outdescs;
+
 	ADD_OUTDESCA(out, digest, c->algo->digestsz, CMDMA_BA413_BUS_MSK);
 
 	if (!(c->dma.dmamem.cfg & HASH_FINAL) && (c->algo->statesz - c->algo->digestsz)) {
@@ -176,13 +186,14 @@ int sx_hash_resume_state(struct sxhash *c)
 	}
 	size_t totalsz = c->totalsz;
 	int r = c->algo->reservehw(c, sizeof(*c));
+
 	if (r) {
 		return r;
 	}
 	c->totalsz = totalsz;
 	ADD_INDESC_PRIV(c->dma, (OFFSET_EXTRAMEM(c) + sizeof(c->extramem) - c->algo->statesz),
 			c->algo->statesz, c->dmatags->initialstate);
-	c->cntindescs += 2; // ensure that we have a free descriptor for padding
+	c->cntindescs += 2; /* ensure that we have a free descriptor for padding */
 
 	return SX_OK;
 }
@@ -197,7 +208,7 @@ int sx_hash_feed(struct sxhash *c, const char *msg, size_t sz)
 		return SX_OK;
 	}
 
-	if (c->cntindescs >= (sizeof(c->allindescs) / sizeof(c->allindescs[0]))) {
+	if (c->cntindescs >= (ARRAY_SIZE(c->allindescs))) {
 		sx_hash_free(c);
 		return SX_ERR_FEED_COUNT_EXCEEDED;
 	}
@@ -239,6 +250,7 @@ int sx_hash_save_state(struct sxhash *c)
 	}
 
 	struct sxdesc *out = c->dma.dmamem.outdescs;
+
 	c->dma.dmamem.cfg ^= c->algo->exportcfg;
 	c->dma.dmamem.cfg ^= c->algo->resumecfg;
 	ADD_OUTDESC_PRIV(c->dma, out, (OFFSET_EXTRAMEM(c) + sizeof(c->extramem) - c->algo->statesz),

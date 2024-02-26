@@ -9,71 +9,71 @@
  * Examples:
  * The following examples show typical sequences of function calls for
  * encryption and decryption a message.
-   @code
-   1. One-shot operation
-      a. Encryption
-	 sx_aead_create_aesgcm_enc(ctx, ...)
-	 sx_aead_feed_aad(ctx, aad, aadsz)
-	 sx_aead_crypt(ctx, datain, datainz, dataout)
-	 sx_aead_produce_tag(ctx, tag)
-	 sx_aead_wait(ctx)
-      b. Decryption
-	 sx_aead_create_aesgcm_dec(ctx, ...)
-	 sx_aead_feed_aad(ctx, aad, aadsz)
-	 sx_aead_crypt(ctx, datain, datainz, dataout)
-	 sx_aead_verify_tag(ctx, tag)
-	 sx_aead_wait(ctx)
-   2. Context-saving operation
-	 a. Encryption
-	 First ad round:
-	    sx_aead_create_aesccm_enc(ctx)
-	    sx_aead_feed_aad(ctx, aad, aadsz)
-	    sx_aead_save_state(ctx)
-	    sx_aead_wait(ctx)
-	Intermediary rounds:
-	    sx_aead_resume_state(ctx)
-	    sx_aead_feed_aad(ctx, aad, aadsz)
-	    sx_aead_save_state(ctx)
-	    sx_aead_wait(ctx)
-	Last round:
-	    sx_aead_resume_state(ctx)
-	    sx_aead_feed_aad(ctx, aad, aadsz)
-	    sx_aead_save_state(ctx)
-	    sx_aead_wait(ctx)
-	First crypt data round:
-	    sx_aead_resume_state(ctx)
-	    sx_aead_crypt(ctx, 'first chunk')
-	    sx_aead_save_state(ctx)
-	    sx_aead_wait(ctx)
-	 Intermediary rounds:
-	    sx_aead_resume_state(ctx)
-	    sx_aead_crypt(ctx, 'n-th chunk')
-	    sx_aead_save_state(ctx)
-	    sx_aead_wait(ctx)
-	 Last round:
-	    sx_aead_resume_state(ctx)
-	    sx_aead_crypt(ctx, 'last chunk')
-	    sx_aead_produce_tag(ctx, tag)
-	    sx_aead_wait(ctx)
-	 b. Decryption
-	 First round:
-	    sx_aead_create_aesccm_dec(ctx)
-	    sx_aead_feed_aad(ctx, aad, aadsz)
-	    sx_aead_crypt(ctx, 'first chunk')
-	    sx_aead_save_state(ctx)
-	    sx_aead_wait(ctx)
-	 Intermediary rounds:
-	    sx_aead_resume_state(ctx)
-	    sx_aead_crypt(ctx, 'n-th chunk')
-	    sx_aead_save_state(ctx)
-	    sx_aead_wait(ctx)
-	 Last round:
-	    sx_aead_resume_state(ctx)
-	    sx_aead_crypt(ctx, 'last chunk')
-	    sx_aead_verify_tag(ctx, tag)
-	    sx_aead_wait(ctx)
-   @endcode
- */
+ *  @code
+ *  1. One-shot operation
+ *     a. Encryption
+ * sx_aead_create_aesgcm_enc(ctx, ...)
+ * sx_aead_feed_aad(ctx, aad, aadsz)
+ * sx_aead_crypt(ctx, datain, datainz, dataout)
+ * sx_aead_produce_tag(ctx, tag)
+ * sx_aead_wait(ctx)
+ *     b. Decryption
+ * sx_aead_create_aesgcm_dec(ctx, ...)
+ * sx_aead_feed_aad(ctx, aad, aadsz)
+ * sx_aead_crypt(ctx, datain, datainz, dataout)
+ * sx_aead_verify_tag(ctx, tag)
+ * sx_aead_wait(ctx)
+ *  2. Context-saving operation
+ * a. Encryption
+ * First ad round:
+ *    sx_aead_create_aesccm_enc(ctx)
+ *    sx_aead_feed_aad(ctx, aad, aadsz)
+ *    sx_aead_save_state(ctx)
+ *    sx_aead_wait(ctx)
+ * Intermediary rounds:
+ *    sx_aead_resume_state(ctx)
+ *    sx_aead_feed_aad(ctx, aad, aadsz)
+ *    sx_aead_save_state(ctx)
+ *    sx_aead_wait(ctx)
+ * Last round:
+ *    sx_aead_resume_state(ctx)
+ *    sx_aead_feed_aad(ctx, aad, aadsz)
+ *    sx_aead_save_state(ctx)
+ *    sx_aead_wait(ctx)
+ * First crypt data round:
+ *    sx_aead_resume_state(ctx)
+ *    sx_aead_crypt(ctx, 'first chunk')
+ *    sx_aead_save_state(ctx)
+ *    sx_aead_wait(ctx)
+ * Intermediary rounds:
+ *    sx_aead_resume_state(ctx)
+ *    sx_aead_crypt(ctx, 'n-th chunk')
+ *    sx_aead_save_state(ctx)
+ *    sx_aead_wait(ctx)
+ * Last round:
+ *    sx_aead_resume_state(ctx)
+ *    sx_aead_crypt(ctx, 'last chunk')
+ *    sx_aead_produce_tag(ctx, tag)
+ *    sx_aead_wait(ctx)
+ * b. Decryption
+ * First round:
+ *    sx_aead_create_aesccm_dec(ctx)
+ *    sx_aead_feed_aad(ctx, aad, aadsz)
+ *    sx_aead_crypt(ctx, 'first chunk')
+ *    sx_aead_save_state(ctx)
+ *    sx_aead_wait(ctx)
+ * Intermediary rounds:
+ *    sx_aead_resume_state(ctx)
+ *    sx_aead_crypt(ctx, 'n-th chunk')
+ *    sx_aead_save_state(ctx)
+ *    sx_aead_wait(ctx)
+ * Last round:
+ *    sx_aead_resume_state(ctx)
+ *    sx_aead_crypt(ctx, 'last chunk')
+ *    sx_aead_verify_tag(ctx, tag)
+ *    sx_aead_wait(ctx)
+ *  @endcode
+ **/
 
 #ifndef AEAD_HEADER_FILE
 #define AEAD_HEADER_FILE
@@ -123,7 +123,7 @@ int sx_aead_feed_aad(struct sxaead *c, const char *aad, size_t aadsz);
  * This function is used for adding data to be processed. The function will
  * return immediately.
  *
- * The result of the operation will be transfered to \p dataout after the
+ * The result of the operation will be transferred to \p dataout after the
  * operation is successfully completed.
  *
  * For context saving, \p datain size(\p datainsz) must be a multiple of 16
@@ -231,7 +231,7 @@ int sx_aead_resume_state(struct sxaead *c);
  * This function is used to start a partial encryption or decryption of
  * \p datain. The function will return immediately.
  *
- * The partial result will be transfered to \p dataout only after the operation
+ * The partial result will be transferred to \p dataout only after the operation
  * is successfully completed. The user shall check operation status with
  * sx_aead_status() or sx_aead_wait().
  *

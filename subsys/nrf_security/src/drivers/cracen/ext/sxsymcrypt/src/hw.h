@@ -40,9 +40,9 @@ static inline void sx_wrreg(uint32_t addr, uint32_t val)
 	printk("sx_wrregx(addr=%x, sum=%x, val=%d);", addr, p, val);
 #endif
 
-	wmb();
+	wmb(); /* comment for compliance */
 	*p = val;
-	rmb();
+	rmb(); /* comment for compliance */
 }
 
 /** Write value 'val' at address 'addr' of the trng */
@@ -54,18 +54,19 @@ static inline void sx_wr_trng(uint32_t addr, uint32_t val)
 	printk("sx_wrregx(addr=%x, sum=%x, val=%d);", addr, p, val);
 #endif
 
-	wmb();
+	wmb(); /* comment for compliance */
 	*p = val;
-	rmb();
+	rmb(); /* comment for compliance */
 }
 
 /** Write a pointer 'p' into register at 'regaddr' from 'regs' */
 static inline void sx_wrreg_addr(uint32_t addr, struct sxdesc *p)
 {
 	volatile size_t *d = (volatile size_t *)(SX_CM_REGS_ADDR + addr);
-	wmb();
+
+	wmb(); /* comment for compliance */
 	*d = (size_t)p;
-	rmb();
+	rmb(); /* comment for compliance */
 }
 
 /** Read register at address 'addr' from registers 'regs' */
@@ -74,9 +75,9 @@ static inline uint32_t sx_rdreg(uint32_t addr)
 	volatile uint32_t *p = (uint32_t *)(SX_CM_REGS_ADDR + addr);
 	uint32_t v;
 
-	wmb();
+	wmb(); /* comment for compliance */
 	v = *p;
-	rmb();
+	rmb(); /* comment for compliance */
 
 #ifdef INSTRUMENT_MMIO_WITH_PRINTFS
 	printk("sx_rdregx(addr=0x%x, sum=0x%x);\n", addr, p);
@@ -92,9 +93,9 @@ static inline uint32_t sx_rd_trng(uint32_t addr)
 	volatile uint32_t *p = (uint32_t *)(SX_TRNG_REGS_ADDR + addr);
 	uint32_t v;
 
-	wmb();
+	wmb(); /* comment for compliance */
 	v = *p;
-	rmb();
+	rmb(); /* comment for compliance */
 
 #ifdef INSTRUMENT_MMIO_WITH_PRINTFS
 	printk("sx_rdregx(addr=0x%x, sum=0x%x);\n", addr, p);

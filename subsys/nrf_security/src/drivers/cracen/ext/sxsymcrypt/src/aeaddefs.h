@@ -1,3 +1,10 @@
+/*
+ *  Copyright (c) 2020-2021 Silex Insight
+ *  Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <stddef.h>
 
 #ifndef AEADDEFS_HEADER_FILE
@@ -19,7 +26,7 @@ struct sx_aead_cmdma_cfg {
 	uint32_t mode;
 	const struct sx_aead_cmdma_tags *dmatags;
 	const char *verifier;
-	int (*lenAlenC)(size_t, size_t, uint8_t *);
+	int (*lenAlenC)(size_t arg0, size_t arg1, uint8_t *arg2);
 	uint32_t ctxsave;
 	uint32_t ctxload;
 	int granularity;
@@ -30,7 +37,7 @@ struct sx_aead_cmdma_cfg {
 
 #define BA411_MODEID_OFFSET 8
 
-// BA411E-AES Config register -> ModeOfOperation [16:8]
+/* BA411E-AES Config register -> ModeOfOperation [16:8] */
 #define CMDMA_AEAD_MODE_SET(modeid) (1 << (BA411_MODEID_OFFSET + (modeid)))
 
 #endif

@@ -50,7 +50,8 @@ static psa_status_t cracen_cipher_crypt(cracen_cipher_operation_t *operation,
 
 /* The AES ECB does not support multipart operations in Cracen. This means that keeping
  * the state between calls is not supported. This function is using the single part
- * APIs of Cracen to perform the AES ECB operations.*/
+ * APIs of Cracen to perform the AES ECB operations.
+ */
 static psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *input,
 					    size_t input_length, uint8_t *output,
 					    size_t output_size, size_t *output_length,
@@ -118,6 +119,7 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
 		if (alg == PSA_ALG_ECB_NO_PADDING) {
 			struct sxkeyref key;
+
 			status = cracen_load_keyref(attributes, key_buffer, key_buffer_size, &key);
 			if (status != PSA_SUCCESS) {
 				return status;
@@ -434,8 +436,9 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 
 	if (operation->dir == DECRYPT && operation->alg == PSA_ALG_CBC_PKCS7) {
 		/* The last block contains padding. The block containing padding
-		   must be handled in finish operation. If input data is block
-		   aligned we must postpone processing of the last block. */
+		 * must be handled in finish operation. If input data is block
+		 * aligned we must postpone processing of the last block.
+		 */
 		if (block_bytes == input_length) {
 			block_bytes -= (uint32_t)operation->blk_size;
 		}
@@ -483,6 +486,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				}
 			} else {
 				psa_status_t r = initialize_cipher(operation);
+
 				if (r != PSA_SUCCESS) {
 					return r;
 				}
@@ -526,7 +530,8 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 	}
 
 	/* Store unprocessed bytes until next update or finalization of crypto
-	 * operation. */
+	 * operation.
+	 */
 	if (block_bytes < input_length) {
 		__ASSERT_NO_MSG(operation->unprocessed_input_bytes == 0);
 		memcpy(operation->unprocessed_input, input + block_bytes,
@@ -545,135 +550,136 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 	__ASSERT_NO_MSG(output_length != NULL);
 
 	int sx_status;
+
 	*output_length = 0;
-	if (operation->unprocessed_input_bytes || operation->alg == PSA_ALG_CBC_PKCS7) {
-		sx_status = SX_ERR_UNINITIALIZED_OBJ;
 
-		/* sxsymcrypt doesn't support context saving for ECB, as each encrypted block is
-		 * independent from the previous one we just encrypt the so far available full
-		 * blocks.
-		 */
-		if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
-			if (operation->alg == PSA_ALG_ECB_NO_PADDING) {
-				return cracen_cipher_crypt_ecb(
-					&operation->keyref, operation->unprocessed_input,
-					operation->unprocessed_input_bytes, output, output_size,
-					output_length, operation->dir);
-			}
+	if (operation->unprocessed_input_bytes == 0 && operation->alg != PSA_ALG_CBC_PKCS7) {
+		return PSA_SUCCESS;
+	}
+
+	sx_status = SX_ERR_UNINITIALIZED_OBJ;
+
+	/* sxsymcrypt doesn't support context saving for ECB, as each encrypted block is
+	 * independent from the previous one we just encrypt the so far available full
+	 * blocks.
+	 */
+	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
+		if (operation->alg == PSA_ALG_ECB_NO_PADDING) {
+			return cracen_cipher_crypt_ecb(&operation->keyref,
+						       operation->unprocessed_input,
+						       operation->unprocessed_input_bytes, output,
+						       output_size, output_length, operation->dir);
 		}
+	}
 
-		if (operation->initialized) {
-			sx_status = sx_blkcipher_resume_state(&operation->cipher);
-			if (sx_status) {
-				return silex_statuscodes_to_psa(sx_status);
-			}
-		} else {
-			psa_status_t r = initialize_cipher(operation);
-			if (r != PSA_SUCCESS) {
-				return r;
-			}
+	if (operation->initialized) {
+		sx_status = sx_blkcipher_resume_state(&operation->cipher);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
 		}
+	} else {
+		psa_status_t r = initialize_cipher(operation);
 
-		if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
-			if (operation->alg == PSA_ALG_CBC_PKCS7) {
-				if (operation->dir == ENCRYPT) {
-					uint8_t padding = (uint32_t)operation->blk_size -
-							  operation->unprocessed_input_bytes;
+		if (r != PSA_SUCCESS) {
+			return r;
+		}
+	}
 
-					/* The value to pad which equals the number of
-					 * padded bytes as described in PKCS7 (rfc2315).
-					 */
-					memset(&operation->unprocessed_input
-							[operation->unprocessed_input_bytes],
-					       padding, padding);
-					operation->unprocessed_input_bytes =
-						SX_BLKCIPHER_AES_BLK_SZ;
-				} else {
-					__ASSERT_NO_MSG(operation->blk_size ==
-							SX_BLKCIPHER_AES_BLK_SZ);
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
+		if (operation->alg == PSA_ALG_CBC_PKCS7) {
+			if (operation->dir == ENCRYPT) {
+				uint8_t padding = (uint32_t)operation->blk_size -
+						  operation->unprocessed_input_bytes;
 
-					if (operation->unprocessed_input_bytes !=
-					    SX_BLKCIPHER_AES_BLK_SZ) {
-						return PSA_ERROR_INVALID_ARGUMENT;
-					}
+				/* The value to pad which equals the number of
+				 * padded bytes as described in PKCS7 (rfc2315).
+				 */
+				memset(&operation->unprocessed_input
+						[operation->unprocessed_input_bytes],
+				       padding, padding);
+				operation->unprocessed_input_bytes = SX_BLKCIPHER_AES_BLK_SZ;
+			} else {
+				__ASSERT_NO_MSG(operation->blk_size == SX_BLKCIPHER_AES_BLK_SZ);
 
-					uint8_t out_with_padding[SX_BLKCIPHER_AES_BLK_SZ];
+				if (operation->unprocessed_input_bytes != SX_BLKCIPHER_AES_BLK_SZ) {
+					return PSA_ERROR_INVALID_ARGUMENT;
+				}
 
-					sx_status = sx_blkcipher_crypt(
-						&operation->cipher, operation->unprocessed_input,
-						operation->unprocessed_input_bytes,
-						out_with_padding);
-					if (sx_status) {
-						return silex_statuscodes_to_psa(sx_status);
-					}
+				uint8_t out_with_padding[SX_BLKCIPHER_AES_BLK_SZ];
 
-					sx_status = sx_blkcipher_run(&operation->cipher);
-					if (sx_status) {
-						return silex_statuscodes_to_psa(sx_status);
-					}
+				sx_status = sx_blkcipher_crypt(
+					&operation->cipher, operation->unprocessed_input,
+					operation->unprocessed_input_bytes, out_with_padding);
+				if (sx_status) {
+					return silex_statuscodes_to_psa(sx_status);
+				}
 
-					sx_status = sx_blkcipher_wait(&operation->cipher);
-					if (sx_status) {
-						return silex_statuscodes_to_psa(sx_status);
-					}
+				sx_status = sx_blkcipher_run(&operation->cipher);
+				if (sx_status) {
+					return silex_statuscodes_to_psa(sx_status);
+				}
 
-					uint8_t padding =
-						out_with_padding[SX_BLKCIPHER_AES_BLK_SZ - 1];
-					/* Verify that that padding is in the valid
-					 * range. */
-					if (padding > SX_BLKCIPHER_AES_BLK_SZ || padding == 0) {
+				sx_status = sx_blkcipher_wait(&operation->cipher);
+				if (sx_status) {
+					return silex_statuscodes_to_psa(sx_status);
+				}
+
+				uint8_t padding = out_with_padding[SX_BLKCIPHER_AES_BLK_SZ - 1];
+				/* Verify that padding is in the valid
+				 * range.
+				 */
+				if (padding > SX_BLKCIPHER_AES_BLK_SZ || padding == 0) {
+					return PSA_ERROR_INVALID_PADDING;
+				}
+
+				/* Verify all padding bytes. */
+				for (unsigned int i = SX_BLKCIPHER_AES_BLK_SZ;
+				     i > (SX_BLKCIPHER_AES_BLK_SZ - padding); i--) {
+					if (out_with_padding[i - 1] != padding) {
 						return PSA_ERROR_INVALID_PADDING;
 					}
-
-					/* Verify all padding bytes. */
-					for (unsigned i = SX_BLKCIPHER_AES_BLK_SZ;
-					     i > (SX_BLKCIPHER_AES_BLK_SZ - padding); i--) {
-						if (out_with_padding[i - 1] != padding) {
-							return PSA_ERROR_INVALID_PADDING;
-						}
-					}
-
-					/* Verify output buffer. */
-					*output_length = SX_BLKCIPHER_AES_BLK_SZ - padding;
-					if (*output_length > output_size) {
-						*output_length = 0;
-						return PSA_ERROR_BUFFER_TOO_SMALL;
-					}
-
-					/* Copy plaintext without padding. */
-					memcpy(output, out_with_padding, *output_length);
-
-					return PSA_SUCCESS;
 				}
+
+				/* Verify output buffer. */
+				*output_length = SX_BLKCIPHER_AES_BLK_SZ - padding;
+				if (*output_length > output_size) {
+					*output_length = 0;
+					return PSA_ERROR_BUFFER_TOO_SMALL;
+				}
+
+				/* Copy plaintext without padding. */
+				memcpy(output, out_with_padding, *output_length);
+
+				return PSA_SUCCESS;
 			}
 		}
+	}
 
-		*output_length = operation->unprocessed_input_bytes;
-		if (*output_length > output_size) {
-			*output_length = 0;
-			return PSA_ERROR_BUFFER_TOO_SMALL;
-		}
+	*output_length = operation->unprocessed_input_bytes;
+	if (*output_length > output_size) {
+		*output_length = 0;
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
 
-		if (operation->alg == PSA_ALG_CBC_NO_PADDING &&
-		    (operation->unprocessed_input_bytes % SX_BLKCIPHER_AES_BLK_SZ) != 0) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
+	if (operation->alg == PSA_ALG_CBC_NO_PADDING &&
+	    (operation->unprocessed_input_bytes % SX_BLKCIPHER_AES_BLK_SZ) != 0) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
 
-		sx_status = sx_blkcipher_crypt(&operation->cipher, operation->unprocessed_input,
-					       operation->unprocessed_input_bytes, output);
-		if (sx_status) {
-			return silex_statuscodes_to_psa(sx_status);
-		}
+	sx_status = sx_blkcipher_crypt(&operation->cipher, operation->unprocessed_input,
+				       operation->unprocessed_input_bytes, output);
+	if (sx_status) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
 
-		sx_status = sx_blkcipher_run(&operation->cipher);
-		if (sx_status) {
-			return silex_statuscodes_to_psa(sx_status);
-		}
+	sx_status = sx_blkcipher_run(&operation->cipher);
+	if (sx_status) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
 
-		sx_status = sx_blkcipher_wait(&operation->cipher);
-		if (sx_status) {
-			return silex_statuscodes_to_psa(sx_status);
-		}
+	sx_status = sx_blkcipher_wait(&operation->cipher);
+	if (sx_status) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	return PSA_SUCCESS;

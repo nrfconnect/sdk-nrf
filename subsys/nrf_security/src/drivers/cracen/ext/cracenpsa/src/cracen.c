@@ -15,7 +15,7 @@
 #include "common.h"
 #include "microcode_binary.h"
 
-// The KMU slot that is used for the CRACEN->SEED.
+/* The KMU slot that is used for the CRACEN->SEED. */
 #define SLOT_OFFSET 0
 
 static int users;
@@ -24,7 +24,7 @@ K_MUTEX_DEFINE(cracen_mutex);
 
 LOG_MODULE_REGISTER(cracen, CONFIG_CRACEN_LOG_LEVEL);
 
-/* Lumos defines NRF_CRACEN_S and Haltium NRF_CRACEN*/
+/* Lumos defines NRF_CRACEN_S and Haltium NRF_CRACEN */
 #ifdef NRF_CRACEN_S
 #define NRF_CRACEN NRF_CRACEN_S
 #endif
@@ -80,6 +80,7 @@ static int cracen_load_kmu_seed(uint32_t slot_offset)
 		LOG_DBG("Pushing KMU slot %d\n", slot_offset + i);
 
 		int err = lib_kmu_push_slot(slot_offset + i);
+
 		if (err) {
 			LOG_ERR("Failed to push KMU slot %d\n", slot_offset + i);
 			return err;
@@ -97,8 +98,10 @@ static psa_status_t cracen_prng_init_kmu_seed(uint32_t slot_offset)
 	LOG_DBG("Generating KMU seed\n");
 
 	/* If the IKG seed is already loaded (and locked). New seed can't be
-	 * generated! */
+	 * generated!
+	 */
 	bool is_locked = nrf_cracen_seedram_lock_check(NRF_CRACEN);
+
 	if (is_locked) {
 		LOG_DBG("CRACEN IKG seed is already loaded!\n");
 		return PSA_SUCCESS;
@@ -116,8 +119,7 @@ static psa_status_t cracen_prng_init_kmu_seed(uint32_t slot_offset)
 
 		/* Check that the KMU slot is empty before generation. */
 		if (!lib_kmu_is_slot_empty(slot_offset + i)) {
-			LOG_DBG("KMU isn't empty (slot %d). Can't generate "
-				"CRACEN IKG seed!\n",
+			LOG_DBG("KMU isn't empty (slot %d). Can't generate CRACEN IKG seed!\n",
 				slot_offset + i);
 			return PSA_ERROR_BAD_STATE;
 		}
@@ -176,7 +178,7 @@ void cracen_release(void)
 		int_disable_mask |= CRACEN_INTENCLR_RNG_Msk;
 		int_disable_mask |= CRACEN_INTENCLR_PKEIKG_Msk;
 
-		// Disable IRQs at the CRACEN peripheral
+		/* Disable IRQs at the CRACEN peripheral */
 		nrf_cracen_int_disable(NRF_CRACEN, int_disable_mask);
 
 		uint32_t enable_mask = 0;
@@ -185,15 +187,15 @@ void cracen_release(void)
 		enable_mask |= CRACEN_ENABLE_RNG_Msk;
 		enable_mask |= CRACEN_ENABLE_PKEIKG_Msk;
 
-		// Power off CRACEN
+		/* Power off CRACEN */
 		nrf_cracen_module_disable(NRF_CRACEN, enable_mask);
 
-		// Clear CRACEN events
+		/* Clear CRACEN events */
 		nrf_cracen_event_clear(NRF_CRACEN, NRF_CRACEN_EVENT_CRYPTOMASTER);
 		nrf_cracen_event_clear(NRF_CRACEN, NRF_CRACEN_EVENT_RNG);
 		nrf_cracen_event_clear(NRF_CRACEN, NRF_CRACEN_EVENT_PKE_IKG);
 
-		// Clear pending IRQs at the ARM NVIC
+		/* Clear pending IRQs at the ARM NVIC */
 		NVIC_ClearPendingIRQ(CRACEN_IRQn);
 
 		LOG_DBG("Powered off CRACEN.");
@@ -211,8 +213,9 @@ int cracen_init(void)
 	int err = 0;
 
 	static uint32_t cracen_initialized = CRACEN_NOT_INITIALIZED;
+
 	if (cracen_initialized == CRACEN_INITIALIZED) {
-		// cracen_init has already succeeded
+		/* cracen_init has already succeeded */
 		return 0;
 	}
 
@@ -225,7 +228,7 @@ int cracen_init(void)
 		cracen_load_microcode();
 	}
 
-	/* Initalize PK engine. */
+	/* Initialize PK engine. */
 	err = sx_pk_init();
 	if (err != SX_OK) {
 		status = silex_statuscodes_to_psa(err);

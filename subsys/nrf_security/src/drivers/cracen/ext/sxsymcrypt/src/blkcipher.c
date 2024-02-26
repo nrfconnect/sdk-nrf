@@ -66,6 +66,7 @@ static int sx_blkcipher_hw_reserve(struct sxblkcipher *c)
 	int err = SX_OK;
 
 	uint32_t prng_value;
+
 	if (c->aes_countermeasures == BA411_AES_COUNTERMEASURES_ENABLE) {
 		err = cracen_prng_value_from_pool(&prng_value);
 		if (err != SX_OK) {
@@ -323,7 +324,8 @@ int sx_blkcipher_run(struct sxblkcipher *c)
 	}
 
 	/* at this moment we have only one descriptor that holds the message to
-	 * be processed, therefore, it is the last one */
+	 * be processed, therefore, it is the last one
+	 */
 	sz = INDESC_SZ(c->dma.d - 1);
 
 	if (sz < c->inminsz) {
@@ -355,7 +357,7 @@ int sx_blkcipher_resume_state(struct sxblkcipher *c)
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
-	if ((c->mode == BLKCIPHER_MODEID_ECB)) {
+	if (c->mode == BLKCIPHER_MODEID_ECB) {
 		return SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED;
 	}
 
@@ -369,9 +371,10 @@ int sx_blkcipher_resume_state(struct sxblkcipher *c)
 	if (KEYREF_IS_USR(&c->key)) {
 		ADD_CFGDESC(c->dma, c->key.key, c->key.sz, c->cfg->dmatags->key);
 	}
-	/* Context will be transfered in the same place as the IV. However,
+	/* Context will be transferred in the same place as the IV. However,
 	 * we cannot use same approach as for IV because context is stored in c
-	 * and needs to be added using ADD_INDESC_PRIV() */
+	 * and needs to be added using ADD_INDESC_PRIV()
+	 */
 	ADD_INDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), 16, c->cfg->dmatags->iv_or_state);
 
 	c->dma.dmamem.cfg |= get_blkcipher_ctx_load(c->mode);
@@ -387,13 +390,14 @@ int sx_blkcipher_save_state(struct sxblkcipher *c)
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
-	if ((c->mode == BLKCIPHER_MODEID_ECB)) {
+	if (c->mode == BLKCIPHER_MODEID_ECB) {
 		sx_blkcipher_free(c);
 		return SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED;
 	}
 
 	/* at this moment we have only one descriptor that holds the message to
-	 * be processed, therefore, it is the last one */
+	 * be processed, therefore, it is the last one
+	 */
 	sz = INDESC_SZ(c->dma.d - 1);
 
 	if (sz < BLKCIPHER_BLOCK_SZ) {

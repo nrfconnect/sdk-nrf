@@ -43,7 +43,8 @@
 /** SoftRst: Software reset. */
 #define BA431_FLD_Control_SoftRst_MASK		(0x100u)
 /** Nb128BitBlocks: Number of 128 bit blocks used in AES-CBCMAC
- * post-processing. This value cannot be zero. */
+ * post-processing. This value cannot be zero.
+ */
 #define BA431_FLD_Control_Nb128BitBlocks_LSB	(16u)
 #define BA431_FLD_Control_Nb128BitBlocks_MASK	(0xF0000u)
 /** State: State of the control FSM. */
@@ -52,10 +53,12 @@
 /** ForceActiveROs: Force oscillators to run when FIFO is full. */
 #define BA431_FLD_Control_ForceActiveROs_MASK	(0x800u)
 /** HealthTestBypass: Bypass NIST tests such that the results of the start-up
- * and online test do not affect the FSM state. */
+ * and online test do not affect the FSM state.
+ */
 #define BA431_FLD_Control_HealthTestBypass_MASK (0x1000u)
 /** AIS31Bypass: Bypass AIS31 tests such that the results of the start-up
- * and online tests do not affect the FSM state. */
+ * and online tests do not affect the FSM state.
+ */
 #define BA431_FLD_Control_AIS31Bypass_MASK	(0x2000u)
 
 /** BA431 operating states */

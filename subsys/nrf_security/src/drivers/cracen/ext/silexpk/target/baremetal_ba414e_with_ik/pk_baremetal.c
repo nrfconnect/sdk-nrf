@@ -38,8 +38,6 @@
 #define NULL (void *)0
 #endif
 
-// #define INSTRUMENT_MMIO_WITH_PRINTFS 1
-
 #define ADDR_BA414EP_REGS(instance) ((char *)(ADDR_BA414EP_REGS_BASE) + 0x10000 * (instance))
 #define ADDR_BA414EP_CRYPTORAM(instance)                                                           \
 	((char *)ADDR_BA414EP_CRYPTORAM_BASE + 0x10000 * (instance))
@@ -86,10 +84,11 @@ int read_status(sx_pk_req *req)
 {
 	if (sx_pk_is_ik_cmd(req)) {
 		return sx_ik_read_status(req);
-	} else {
-		uint32_t status = sx_pk_rdreg(&req->regs, PK_REG_STATUS);
-		return convert_ba414_status(status);
 	}
+
+	uint32_t status = sx_pk_rdreg(&req->regs, PK_REG_STATUS);
+
+	return convert_ba414_status(status);
 }
 
 int sx_pk_wait(sx_pk_req *req)
@@ -138,7 +137,8 @@ const struct sx_pk_capabilities *sx_pk_fetch_capabilities(void)
 
 	if (silex_pk_engine.caps.maxpending) {
 		/* capabilities already fetched from hardware. Return
-		 * immediately. */
+		 * immediately.
+		 */
 		return &silex_pk_engine.caps;
 	}
 
@@ -165,6 +165,7 @@ int sx_pk_init(void)
 
 	/** If cryptoRAM is sized for 4096b slots or less, use 4096b slots */
 	int op_offset = 0x200;
+
 	if (cnx->caps.max_gfp_opsz > 0x200) {
 		/** If cryptoRAM is sized for 8192b slots use 8192b slots */
 		op_offset = 0x400;

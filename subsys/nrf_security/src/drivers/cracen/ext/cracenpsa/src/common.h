@@ -19,7 +19,8 @@
 #include <sxsymcrypt/sha3.h>
 
 /* RFC5480 - first byte of ECC public key that indicates that the key
- * is uncompressed */
+ * is uncompressed
+ */
 #define SI_ECC_PUBKEY_UNCOMPRESSED (0x04)
 
 /* Cracen supports max 521 bits curves, the private key for such a curve

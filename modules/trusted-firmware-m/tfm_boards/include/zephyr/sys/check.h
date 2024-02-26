@@ -23,14 +23,12 @@
  * We don't allow exclusion of these checks.
  */
 #if defined(CONFIG_ASSERT_ON_ERRORS)
-#define CHECKIF(expr)               \
-	__ASSERT_NO_MSG(!(expr));   \
+#define CHECKIF(expr)                                                                              \
+	__ASSERT_NO_MSG(!(expr));                                                                  \
 	if (0)
 #else
-#define CHECKIF(expr)               \
-	if (expr)
+#define CHECKIF(expr) if (expr)
 #endif
-
 
 #endif /* ZEPHYR_INCLUDE_SYS_CHECK_H_ */
 

@@ -17,8 +17,7 @@ void log_memory_protection_of_mpu(void)
 	SPMLOG_DBGMSG("\nARM MPU configuration\r\n");
 	SPMLOG_DBGMSGVAL("CTRL", MPU->CTRL);
 
-	uint32_t num_regions =
-		((MPU->TYPE & MPU_TYPE_DREGION_Msk) >> MPU_TYPE_DREGION_Pos);
+	uint32_t num_regions = ((MPU->TYPE & MPU_TYPE_DREGION_Msk) >> MPU_TYPE_DREGION_Pos);
 
 	for (uint32_t i = 0; i < num_regions; i++) {
 		MPU->RNR = i;
@@ -64,8 +63,10 @@ void log_memory_protection_of_spu_flash(void)
 	SPMLOG_DBGMSG("SPU FLASH region permissions\n");
 	uint32_t num_flash_regions = ARRAY_SIZE(NRF_SPU_S->FLASHREGION);
 	uint32_t prev_perm = 0x0BADF00D;
+
 	for (int i = 0; i < num_flash_regions; i++) {
 		uint32_t perm = NRF_SPU_S->FLASHREGION[i].PERM;
+
 		if (perm != prev_perm) {
 			prev_perm = perm;
 			SPMLOG_DBGMSGVAL("i", i * nrfx_nvmc_flash_page_size_get());
@@ -79,8 +80,10 @@ void log_memory_protection_of_spu_ram(void)
 	SPMLOG_DBGMSG("SPU RAM region permissions\n");
 	uint32_t num_ram_regions = ARRAY_SIZE(NRF_SPU_S->RAMREGION);
 	uint32_t prev_perm = 0x0BADF00D;
+
 	for (int i = 0; i < num_ram_regions; i++) {
 		uint32_t perm = NRF_SPU_S->RAMREGION[i].PERM;
+
 		if (perm != prev_perm) {
 			prev_perm = perm;
 			SPMLOG_DBGMSGVAL("i", i * SPU_RAMREGION_SIZE);

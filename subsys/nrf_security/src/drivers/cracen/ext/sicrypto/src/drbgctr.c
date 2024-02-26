@@ -136,7 +136,8 @@ static int start_drbgctr_internal_update(struct sitask *t, struct siwq *wq)
 
 	/* CTR_DRBG Generate Process, step 6 from spec:
 	 *    (Key, V) = CTR_DRBG_Update (additional_input, Key, V))
-	 * As we don't have additional_input, use zeros instead. */
+	 * As we don't have additional_input, use zeros instead.
+	 */
 	si_wq_run_after(t, &t->params.drbgctr.wq, drbgctr_becomes_ready);
 
 	return start_drbgctr_update(t);
@@ -163,6 +164,7 @@ static int drbgctr_continue_produce(struct sitask *t, struct siwq *wq)
 	/* CTR_DRBG Generate Process, step 2 : no additional data */
 	/* CTR_DRBG Generate Process, step 3, 4 and 5 from spec */
 	size_t psz = (t->params.drbgctr.outsz > XORBUF_SZ) ? XORBUF_SZ : t->params.drbgctr.outsz;
+
 	r = sx_blkcipher_crypt(&t->u.b, ptrs.xorbuf, psz, t->output);
 	if (r) {
 		return si_task_mark_final(t, r);
@@ -181,7 +183,8 @@ static int drbgctr_continue_produce(struct sitask *t, struct siwq *wq)
 
 	/* Total size will be added to V after wait/status finishes.
 	 * That's done in start_drbgctr_internal_update()
-	 * or in drbgctr_continue_produce(). */
+	 * or in drbgctr_continue_produce().
+	 */
 
 	r = sx_blkcipher_run(&t->u.b);
 	if (r) {
@@ -211,7 +214,8 @@ static void drbgctr_produce_random(struct sitask *t, char *out, size_t sz)
 	}
 
 	/* override statuscode value to be able to run
-	 * drbgctr_continue_produce() */
+	 * drbgctr_continue_produce()
+	 */
 	t->statuscode = SX_OK;
 
 	drbgctr_continue_produce(t, NULL);
@@ -229,7 +233,8 @@ static void drbgctr_seed_extra(struct sitask *t, const char *data, size_t sz)
 	si_xorbytes(drbgctr_xorbuf(t), data, sz);
 
 	/* uninstall consume action: only one call allowed to provide pers
-	 * string */
+	 * string
+	 */
 	t->actions.consume = NULL;
 }
 
@@ -335,7 +340,8 @@ void si_prng_create_drbg_aes_ctr(struct sitask *t, size_t keysz, const char *ent
 	safe_memset(t->workmem, t->workmemsz, 0, t->params.drbgctr.keysz + BLOCKLEN + XORBUF_SZ);
 
 	/* As we use AES CTR hardware, we need to increment V => V=1
-	 * See CTR_DRBG_Update, step 2.1 in the spec. */
+	 * See CTR_DRBG_Update, step 2.1 in the spec.
+	 */
 	t->workmem[t->params.drbgctr.keysz + BLOCKLEN - 1] = 1;
 
 	drbgctr_seed(t, entropy, t->params.drbgctr.keysz + BLOCKLEN);

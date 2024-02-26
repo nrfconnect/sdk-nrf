@@ -76,8 +76,8 @@ struct sxkeyref {
 	const char *key;
 	size_t sz;
 	uint32_t cfg;
-	int (*prepare_key)(const uint8_t *);
-	int (*clean_key)(const uint8_t *);
+	int (*prepare_key)(const uint8_t *arg0);
+	int (*clean_key)(const uint8_t *arg0);
 	const uint8_t *user_data;
 };
 

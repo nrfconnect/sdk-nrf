@@ -26,7 +26,8 @@ struct sx_pk_cnx;
  * This structure is used to represent plaintexts and ciphertexts in asymmetric
  * (i.e. public key) encryption and decryption operations. It is used with the
  * tasks that implement the RSAES-OAEP and RSAES-PKCS1-v1_5 encryption
- * schemes. */
+ * schemes.
+ */
 struct si_ase_text {
 	char *addr;
 	size_t sz;

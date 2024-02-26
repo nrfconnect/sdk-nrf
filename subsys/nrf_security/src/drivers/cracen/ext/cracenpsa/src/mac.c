@@ -28,6 +28,7 @@ static psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 	const struct sxhashalg *sx_hash_algo = NULL;
 
 	psa_status_t psa_status = hash_get_algo(PSA_ALG_HMAC_GET_HASH(alg), &sx_hash_algo);
+
 	if (psa_status) {
 		return psa_status;
 	}
@@ -163,8 +164,8 @@ psa_status_t cracen_mac_setup(cracen_mac_operation_t *operation,
 			      size_t key_buffer_size, psa_algorithm_t alg)
 {
 	/* Assuming that psa_core checks that key has PSA_KEY_USAGE_SIGN_MESSAGE
-	 * set */
-	/* Assuming that psa_core checks that alg is PSA_ALG_IS_MAC(alg) == true
+	 * set
+	 * Assuming that psa_core checks that alg is PSA_ALG_IS_MAC(alg) == true
 	 */
 	__ASSERT_NO_MSG(PSA_ALG_IS_MAC(alg));
 
@@ -220,6 +221,7 @@ static psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const 
 
 	/* As the block size is needed several times we compute it once here */
 	psa_status_t psa_status = hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &sx_hash_algo);
+
 	if (psa_status) {
 		return psa_status;
 	}
@@ -227,9 +229,10 @@ static psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const 
 
 	if (input_length < operation->bytes_left_for_next_block) {
 		/* si_task_consume doesn't buffer the input data until
-		 * si_task_partial_run */
-		/* is called  so a local buffer is used */
+		 * si_task_partial_run is called so a local buffer is used
+		 */
 		size_t offset = block_size - operation->bytes_left_for_next_block;
+
 		memcpy(operation->input_buffer + offset, input, input_length);
 		operation->bytes_left_for_next_block -= input_length;
 
@@ -242,8 +245,8 @@ static psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const 
 			(block_size - operation->bytes_left_for_next_block));
 
 	/* Add fill up the next block and add as many full blocks as possible by
-	 * adding as many */
-	/* input bytes as needed to get to be block aligned */
+	 * adding as many input bytes as needed to get to be block aligned
+	 */
 	input_chunk_length = operation->bytes_left_for_next_block;
 	input_chunk_length += (input_length - input_chunk_length) & ~(block_size - 1);
 	remaining_bytes = input_length - input_chunk_length;
@@ -259,7 +262,8 @@ static psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const 
 	}
 
 	/* Input buffer was processed, reset the bytes for the next block and
-	 * empty input buffer */
+	 * empty input buffer
+	 */
 	operation->bytes_left_for_next_block = block_size;
 	safe_memzero(operation->input_buffer, sizeof(operation->input_buffer));
 
@@ -282,6 +286,7 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 	if (input_length <= operation->bytes_left_for_next_block) {
 		/* Input is buffered to fill full AES blocks. */
 		size_t offset = AES_BLOCK_SIZE - operation->bytes_left_for_next_block;
+
 		memcpy(operation->input_buffer + offset, input, input_length);
 		operation->bytes_left_for_next_block -= input_length;
 
@@ -290,7 +295,8 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 	}
 
 	/* The state can only be resumed if is not the first time data are
-	 * processed. */
+	 * processed.
+	 */
 	if (!operation->cmac.is_first_block) {
 		status = sx_mac_resume_state(&operation->cmac.ctx);
 		if (status) {
@@ -298,8 +304,8 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 		}
 	}
 
-	if (AES_BLOCK_SIZE != operation->bytes_left_for_next_block &&
-	    0 != operation->bytes_left_for_next_block) {
+	if (operation->bytes_left_for_next_block != AES_BLOCK_SIZE &&
+	    operation->bytes_left_for_next_block != 0) {
 		memcpy(operation->input_buffer +
 			       (AES_BLOCK_SIZE - operation->bytes_left_for_next_block),
 		       input, operation->bytes_left_for_next_block);
@@ -311,17 +317,19 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 	/* Process the maximum number of full AES blocks. The processing of the
 	 * last byte must be postponed until the operation is finished in @ref
 	 * cracen_cmac_finish. This is because we need to feed the HW some data
-	 * when generating the mac. */
+	 * when generating the mac.
+	 */
 	block_bytes = ROUND_DOWN(input_length - 1, AES_BLOCK_SIZE);
 	remaining_bytes = input_length - block_bytes;
 
-	if (0 == operation->bytes_left_for_next_block) {
+	if (operation->bytes_left_for_next_block == 0) {
 		status = sx_mac_feed(&operation->cmac.ctx, operation->input_buffer, AES_BLOCK_SIZE);
 		if (status) {
 			return silex_statuscodes_to_psa(status);
 		}
 		/* Input buffer was processed, reset the bytes for the next block and
-		 * empty input buffer */
+		 * empty input buffer
+		 */
 		operation->bytes_left_for_next_block = AES_BLOCK_SIZE;
 		operation->cmac.is_first_block = false;
 	}
@@ -346,7 +354,8 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 		}
 
 		/* Clear the input_buffer only after the sx_mac_wait call is executed
-		 * executed since we need to make sure that the DMA transaction is finished */
+		 * since we need to make sure that the DMA transaction is finished
+		 */
 		safe_memzero(operation->input_buffer, sizeof(operation->input_buffer));
 	}
 
@@ -419,7 +428,8 @@ psa_status_t cracen_mac_sign_finish(cracen_mac_operation_t *operation, uint8_t *
 	}
 
 	/* Copy out the from out internal buffer to output buffer. Truncation
-	 * can happen here. */
+	 * can happen here.
+	 */
 	memcpy(mac, operation->input_buffer, operation->mac_size);
 	*mac_length = operation->mac_size;
 
@@ -442,7 +452,8 @@ psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const u
 	}
 
 	/* If the provided buffer is of a different size than the calculated
-	 * one, it will not match. */
+	 * one, it will not match.
+	 */
 	if (mac_length != operation->mac_size) {
 		return PSA_ERROR_INVALID_SIGNATURE;
 	}

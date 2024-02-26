@@ -37,6 +37,7 @@ void safe_memset(void *dest, const size_t dest_size, const uint8_t ch, const siz
 	size_t bytes_to_set = MIN(dest_size, n);
 	/* convert to volatile pointer to prevent to be optimized out*/
 	volatile uint8_t *byte_ptr = dest;
+
 	while (bytes_to_set--) {
 		*byte_ptr = ch;
 		byte_ptr++;

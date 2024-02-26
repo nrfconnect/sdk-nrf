@@ -69,7 +69,8 @@ void convert_ba414_capabilities(uint32_t ba414epfeatures, struct sx_pk_capabilit
 	}
 	if ((ba414epfeatures & BA414EP_PREDEFCURVES_MASK) != BA414EP_PREDEFCURVES_MASK) {
 		/* Standard curve parameters are not predefined. Currently
-		 * not supported yet by SilexPK. */
+		 * not supported yet by SilexPK.
+		 */
 		caps->max_ecc_opsz = 0;
 	}
 	if (ba414epfeatures & BA414EP_CM_DISABLE) {

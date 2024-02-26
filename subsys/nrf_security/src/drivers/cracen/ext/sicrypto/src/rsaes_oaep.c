@@ -105,6 +105,7 @@ static int rsaoaep_encrypt_finish(struct sitask *t, struct siwq *wq)
 	/* copy output of exponentiation (the ciphertext) to workmem */
 	const char **outputs = sx_pk_get_output_ops(t->pk);
 	const int opsz = sx_pk_get_opsize(t->pk);
+
 	sx_rdpkmem(wmem, outputs[0], opsz);
 	sx_pk_release_req(t->pk);
 
@@ -201,7 +202,8 @@ static int rsaoaep_encrypt_get_seed(struct sitask *t, struct siwq *wq)
 	}
 
 	/* pointer used to walk through the data block DB, initialized to point
-    just after the label's digest */
+	 * just after the label's digest
+	 */
 	char *datab = datablockstart + digestsz;
 
 	/* write the padding string PS, consisting of zero octets */
@@ -305,8 +307,8 @@ static int rsaoaep_decrypt_finish(struct sitask *t, struct siwq *wq)
 	datab += digestsz;
 
 	/* Scan the padding string PS and find the 0x01 octet that separates PS
-    from the message M. Pointer datablockend points to the first octet after DB.
-  */
+	 * from the message M. Pointer datablockend points to the first octet after DB.
+	 */
 	while ((*datab == 0) && (datab < datablockend)) {
 		datab++;
 	}
@@ -314,9 +316,10 @@ static int rsaoaep_decrypt_finish(struct sitask *t, struct siwq *wq)
 	r |= (datab == datablockend);
 
 	/* The following memory access is never a problem, even in the case
-    where datab points one byte past the end of the EM. In fact, in such case,
-    datab would still be pointing inside the workmem area, more precisely in the
-    part dedicated to the MGF1XOR sub-task. */
+	 * where datab points one byte past the end of the EM. In fact, in such case,
+	 * datab would still be pointing inside the workmem area, more precisely in the
+	 * part dedicated to the MGF1XOR sub-task.
+	 */
 	r |= (*datab != 0x01);
 	datab++;
 
@@ -393,6 +396,7 @@ static int rsaoaep_decrypt_continue(struct sitask *t, struct siwq *wq)
 	/* copy output of exponentiation to workmem */
 	const char **outputs = sx_pk_get_output_ops(t->pk);
 	const int opsz = sx_pk_get_opsize(t->pk);
+
 	sx_rdpkmem(wmem, outputs[0], opsz);
 	sx_pk_release_req(t->pk);
 
@@ -432,7 +436,8 @@ void si_ase_create_rsa_oaep_decrypt(struct sitask *t, const struct sxhashalg *ha
 	}
 
 	/* the ciphertext must not be longer than the modulus (modified step 1.b
-    of RSAES-OAEP-DECRYPT) */
+	 * of RSAES-OAEP-DECRYPT)
+	 */
 	if (text->sz > modulussz) {
 		si_task_mark_final(t, SX_ERR_TOO_BIG);
 		return;

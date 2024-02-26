@@ -79,6 +79,7 @@ static int lenAlenC_nop(size_t aadsz, size_t datasz, uint8_t *out)
 static int lenAlenC_aesgcm_ba411(size_t aadsz, size_t datasz, uint8_t *out)
 {
 	uint32_t i = 0;
+
 	aadsz = aadsz << 3;
 	datasz = datasz << 3;
 	for (i = 0; i < 8; i++) {
@@ -106,6 +107,7 @@ static int sx_aead_hw_reserve(struct sxaead *c)
 {
 	int err = SX_OK;
 	uint32_t prng_value;
+
 	if (c->aes_countermeasures == BA411_AES_COUNTERMEASURES_ENABLE) {
 		err = cracen_prng_value_from_pool(&prng_value);
 		if (err != SX_OK) {
@@ -237,6 +239,7 @@ static int sx_aead_create_aesccm(struct sxaead *c, const struct sxkeyref *key, c
 
 	/* datasz must ensure  0 <= datasz < 2^(8L) */
 	uint8_t l = 15 - noncesz;
+
 	if ((l < 8U) && (datasz >= (1ULL << (l * 8)))) {
 		/* message too long to encode the size in the CCM header */
 		return SX_ERR_TOO_BIG;
@@ -408,7 +411,8 @@ int sx_aead_verify_tag(struct sxaead *c, const char *tagin)
 		/* The hardware will output a 4 bytes tag. It will be all 0 if
 		 * authentication with the tag succeeded. Set tagsz to the size
 		 * of that "computed validation tag" for the check by
-		 * sx_aead_status(). */
+		 * sx_aead_status().
+		 */
 		c->tagsz = 4;
 	}
 	ADD_OUTDESC_PRIV(c->dma, c->dma.out, OFFSET_EXTRAMEM(c), c->tagsz, 0xf);

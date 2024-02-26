@@ -77,7 +77,7 @@ static inline struct sx_pk_acq_req sx_async_dsa_sign_go(struct sx_pk_cnx *cnx, c
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	int sizes[] = {
 		sx_op_size(p), sx_op_size(q),	    sx_op_size(g),
 		sx_op_size(k), sx_op_size(privkey), sx_op_size(h),
@@ -189,7 +189,7 @@ static inline struct sx_pk_acq_req sx_async_dsa_ver_go(struct sx_pk_cnx *cnx, co
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	int sizes[] = {
 		sx_op_size(p), sx_op_size(q), sx_op_size(g), sx_op_size(pubkey),
 		sx_op_size(h), sx_op_size(r), sx_op_size(s),

@@ -104,7 +104,7 @@ static void run_ed448_ver(struct sitask *t)
 static void write_dom4(char *dst)
 {
 	unsigned int i;
-	const char dom4_string[8] = "SigEd448";
+	static const char dom4_string[8] = "SigEd448";
 
 	/* Write domain string to destination address. */
 	for (i = 0; i < sizeof(dom4_string); i++) {
@@ -142,13 +142,15 @@ static int ed448_compute_pubkey(struct sitask *t)
 	struct sx_pk_acq_req pkreq;
 
 	/* The secret scalar s is computed in place from the first half of the
-    private key digest. */
+	 * private key digest.
+	 */
 	t->workmem[0] &= ~0x03;		     /* clear bits 0 and 1 */
 	t->workmem[SX_ED448_SZ - 1] = 0;     /* clear last octet */
 	t->workmem[SX_ED448_SZ - 2] |= 0x80; /* set bit 447 */
 
 	/* Clear second half of private key digest: sx_async_ed448_ptmult_go()
-    works on an input of SX_ED448_DGST_SZ bytes. */
+	 * works on an input of SX_ED448_DGST_SZ bytes.
+	 */
 	safe_memset(t->workmem + SX_ED448_SZ, t->workmemsz - SX_ED448_SZ, 0, SX_ED448_SZ);
 
 	/* Perform point multiplication A = [s]B, to obtain the public key A. */
@@ -190,7 +192,8 @@ static int ed448_sign_continue(struct sitask *t, struct siwq *wq)
 	si_wq_run_after(t, &t->params.ed448_sign.wq, ed448_sign_finish);
 
 	/* Compute (r + k * s) mod L. This gives the second part of the
-    signature, which is the encoded S. */
+	 * signature, which is the encoded S.
+	 */
 	pkreq = sx_pk_async_ed448_sign_go(
 		(const struct sx_ed448_dgst *)(t->workmem + SX_ED448_SZ),
 		(const struct sx_ed448_dgst *)(t->workmem + 3 * SX_ED448_SZ),
@@ -214,7 +217,8 @@ static int ed448_sign_k_hash(struct sitask *t, struct siwq *wq)
 	}
 
 	/* Get result of the point multiplication. This is the encoding of the
-    [s]B point, which is the public key A. */
+	 * [s]B point, which is the public key A.
+	 */
 	sx_async_ed448_ptmult_end(t->pk, (struct sx_ed448_pt *)(t->workmem + SX_ED448_SZ));
 
 	si_wq_run_after(t, &t->params.ed448_sign.wq, ed448_sign_continue);
@@ -242,7 +246,8 @@ static int ed448_sign_pubkey_ptmult(struct sitask *t, struct siwq *wq)
 	}
 
 	/* Get result of the point multiplication. This is the encoded point R,
-    which is the first part of the signature. */
+	 * which is the first part of the signature.
+	 */
 	sx_async_ed448_ptmult_end(t->pk, (struct sx_ed448_pt *)t->params.ed448_sign.signature->r);
 
 	si_wq_run_after(t, &t->params.ed448_sign.wq, ed448_sign_k_hash);
@@ -288,7 +293,8 @@ static int ed448_sign_hash_message(struct sitask *t, struct siwq *wq)
 	write_dom4(t->workmem + 3 * SX_ED448_SZ);
 
 	/* Obtain r by hashing (dom4 || prefix || message), where prefix is the
-    second half of the private key digest. */
+	 * second half of the private key digest.
+	 */
 	si_hash_create(t, &sxhashalg_shake256_114);
 	si_task_consume(t, t->workmem + 3 * SX_ED448_SZ, DOM4_PREFIX_SZ);
 	si_task_consume(t, t->workmem + SX_ED448_SZ, SX_ED448_SZ);
@@ -345,7 +351,8 @@ static int ed448_genpubkey_finish(struct sitask *t, struct siwq *wq)
 	}
 
 	/* Get result of the point multiplication. This is the encoding of the
-    [s]B point, which is the public key. */
+	 * [s]B point, which is the public key.
+	 */
 	sx_async_ed448_ptmult_end(t->pk, t->params.ed448_pubkey.pubkey);
 
 	return t->statuscode;

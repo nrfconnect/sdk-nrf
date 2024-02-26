@@ -19,7 +19,8 @@ int sx_cm_load_mask(uint32_t csprng_value)
 	struct sxcmmask cmmask;
 
 	/* This is a special case where "cfg" is used to transmit the random
-	 * value instead of a command word. */
+	 * value instead of a command word.
+	 */
 	sx_cmdma_newcmd(&cmmask.dma, cmmask.allindescs, csprng_value,
 			DMATAG_BA411 | DMATAG_CONFIG(0x68));
 	sx_cmdma_finalize_descs(cmmask.allindescs, cmmask.dma.d - 1);

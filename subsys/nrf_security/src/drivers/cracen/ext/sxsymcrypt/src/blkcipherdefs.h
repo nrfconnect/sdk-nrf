@@ -22,7 +22,7 @@
 
 #define BLKCIPHER_BLOCK_SZ (16)
 
-// BA411E-AES and BA419-SM4 Config register -> ModeOfOperation [16:8]
+/* BA411E-AES and BA419-SM4 Config register -> ModeOfOperation [16:8] */
 #define CMDMA_BLKCIPHER_MODE_SET(modeid) (1 << (8 + (modeid)))
 
 struct sx_blkcipher_cmdma_tags {

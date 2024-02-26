@@ -1,9 +1,7 @@
 /*
- * Copyright (c) 2018-2022, Arm Limited. All rights reserved.
- * Copyright (c) 2020, Cypress Semiconductor Corporation. All rights reserved.
- * Copyright (c) 2020, Nordic Semiconductor ASA. All rights reserved.
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  */
 
@@ -14,7 +12,7 @@
 extern "C" {
 #endif
 
-// TODO: NCSDK-22597: Define peripherals
+	/* TODO: NCSDK-22597: Define peripherals */
 
 #include <nrfx.h>
 

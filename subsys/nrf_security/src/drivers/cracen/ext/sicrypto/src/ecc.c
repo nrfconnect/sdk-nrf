@@ -31,7 +31,8 @@ static int on_generated_public(struct sitask *t, struct siwq *wq)
 	const int opsz = sx_pk_curve_opsize(t->params.ecc.sk->curve);
 
 	/* When countermeasures are used, the operation may fail with error code
-    SX_ERR_NOT_INVERTIBLE. In this case we can try again. */
+	 * SX_ERR_NOT_INVERTIBLE. In this case we can try again.
+	 */
 	if (t->statuscode == SX_ERR_NOT_INVERTIBLE) {
 		if (t->params.ecc.attempts--) {
 			sx_pk_release_req(t->pk);
@@ -105,7 +106,8 @@ static void run_ecc_generate_private_rnd(struct sitask *t)
 	si_wq_run_after(t, &t->params.ecc.wq, on_generated_private_rnd);
 
 	/* generate private key, a random in [1, n-1], where n is the curve
-	 * order */
+	 * order
+	 */
 	si_rndinrange_create(t, (const unsigned char *)curve_n, opsz, t->workmem);
 
 	si_task_run(t);
@@ -126,6 +128,7 @@ void si_ecc_create_genprivkey(struct sitask *t, const struct sx_pk_ecurve *curve
 			      struct si_eccsk *sk)
 {
 	size_t keysz = (size_t)sx_pk_curve_opsize(curve);
+
 	if (t->workmemsz < keysz) {
 		si_task_mark_final(t, SX_ERR_WORKMEM_BUFFER_TOO_SMALL);
 		return;

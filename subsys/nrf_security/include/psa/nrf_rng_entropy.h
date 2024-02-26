@@ -17,7 +17,7 @@ extern "C" {
 #endif
 
 psa_status_t nrf_rng_get_entropy(uint32_t flags, size_t *estimate_bits, uint8_t *output,
-				size_t output_size);
+				 size_t output_size);
 
 #ifdef __cplusplus
 }

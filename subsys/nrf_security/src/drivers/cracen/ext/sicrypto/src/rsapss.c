@@ -92,9 +92,10 @@ static int diff_array_val(const char *a, char val, size_t sz)
 }
 
 /* Produce the bit mask that is needed for steps 6 and 9 of EMSA-PSS-VERIFY and
-for step 11 of EMSA-PSS-ENCODE. In the returned bit mask, all the bits with
-higher or equal significance than the most significant non-zero bit in the
-most significant byte of the modulus are set to 1. */
+ * for step 11 of EMSA-PSS-ENCODE. In the returned bit mask, all the bits with
+ * higher or equal significance than the most significant non-zero bit in the
+ * most significant byte of the modulus are set to 1.
+ */
 static unsigned char create_msb_mask(struct sitask *t)
 {
 	unsigned int mask;
@@ -152,7 +153,8 @@ static int rsapss_verify_finish(struct sitask *t, struct siwq *wq)
 	db = wmem + modulussz - par->emsz;
 
 	/* Step 9 of EMSA-PSS-VERIFY in RFC 8017 (clear the leftmost bits in DB
-    according to bitmask). This works also when emsz equals modulussz - 1. */
+	 * according to bitmask). This works also when emsz equals modulussz - 1.
+	 */
 	bitmask = create_msb_mask(t);
 	wmem[0] &= ~bitmask;
 
@@ -229,17 +231,20 @@ static int rsapss_verify_continue(struct sitask *t, struct siwq *wq)
 	/* the output of the exponentiation is the encoded message EM. */
 	const char **outputs = sx_pk_get_output_ops(t->pk);
 	const int opsz = sx_pk_get_opsize(t->pk);
+
 	sx_rdpkmem(wmem, outputs[0], opsz);
 	sx_pk_release_req(t->pk);
 
 	/* invalid signature if rightmost byte of EM is not 0xBC (step 4 of
-    EMSA-PSS-VERIFY in RFC 8017) */
+	 * EMSA-PSS-VERIFY in RFC 8017)
+	 */
 	if (((unsigned char)wmem[SI_RSA_KEY_OPSZ(par->key) - 1]) != 0xBC) {
 		return si_task_mark_final(t, SX_ERR_INVALID_SIGNATURE);
 	}
 
 	/* Step 6 of EMSA-PSS-VERIFY in RFC 8017: test the leftmost bits in EM
-    according to bitmask. This works also when emsz equals modulussz - 1. */
+	 * according to bitmask. This works also when emsz equals modulussz - 1.
+	 */
 	bitmask = create_msb_mask(t);
 	if (((unsigned char)wmem[0]) & bitmask) {
 		return si_task_mark_final(t, SX_ERR_INVALID_SIGNATURE);
@@ -272,6 +277,7 @@ static int rsapss_start_modexp(struct sitask *t, const char *base, size_t basesz
 		return si_task_mark_final(t, pkreq.status);
 	}
 	int sizes[6];
+
 	si_ffkey_write_sz(key, sizes);
 	SI_FFKEY_REFER_INPUT(key, sizes) = basesz;
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, inputs);
@@ -425,10 +431,12 @@ static int rsapss_sign_exp_finish(struct sitask *t, struct siwq *wq)
 	/* the output of the exponentiation is the signature.*/
 	const char **outputs = sx_pk_get_output_ops(t->pk);
 	const int opsz = sx_pk_get_opsize(t->pk);
+
 	sx_rdpkmem(par->sig->r, outputs[0], opsz);
 	par->sig->sz = opsz;
 	/* releases the HW resource so it has to be
-    called even if an error occurred */
+	 * called even if an error occurred
+	 */
 	sx_pk_release_req(t->pk);
 
 	return t->statuscode;
@@ -447,8 +455,9 @@ static int rsapss_sign_finish(struct sitask *t, struct siwq *wq)
 	}
 
 	/* step 11 of EMSA-PSS-ENCODE in RFC 8017 (clear the leftmost bits in
-    maskedDB according to bitmask). This works also when emsz equals
-    modulussz - 1. */
+	 * maskedDB according to bitmask). This works also when emsz equals
+	 * modulussz - 1.
+	 */
 	bitmask = create_msb_mask(t);
 	wmem[0] &= ~bitmask;
 
@@ -481,6 +490,7 @@ static int rsapss_sign_continue(struct sitask *t, struct siwq *wq)
 
 	/* prepare padding string PS (step 7 of EMSA-PSS-ENCODE) */
 	const size_t padding_ps_offset = SI_RSA_KEY_OPSZ(par->key) - par->emsz;
+
 	safe_memset(wmem + padding_ps_offset, wmem_sz - padding_ps_offset, 0,
 		    masksz - par->saltsz - 1);
 
@@ -635,6 +645,7 @@ static void si_sig_create_rsa_pss_sign(struct sitask *t, const struct si_sig_pri
 static unsigned short int get_key_opsz(const struct si_sig_privkey *privkey)
 {
 	const struct si_rsa_key *key = &(privkey->key.rsa);
+
 	return SI_RSA_KEY_OPSZ(key);
 }
 

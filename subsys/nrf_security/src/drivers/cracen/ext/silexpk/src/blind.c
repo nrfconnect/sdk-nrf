@@ -11,6 +11,7 @@
 void sx_pk_cnx_configure_blinding(struct sx_pk_cnx *cnx, struct sx_pk_blinder *prng)
 {
 	const struct sx_pk_capabilities *caps = sx_pk_fetch_capabilities();
+
 	if (!prng || !caps->blinding) {
 		return;
 	}
@@ -20,8 +21,9 @@ void sx_pk_cnx_configure_blinding(struct sx_pk_cnx *cnx, struct sx_pk_blinder *p
 
 sx_pk_blind_factor sx_pk_default_blind_gen(struct sx_pk_blinder *blinder)
 {
-	// source: https://en.wikipedia.org/wiki/Xorshift xorshift64()
+	/* source: https://en.wikipedia.org/wiki/Xorshift xorshift64() */
 	sx_pk_blind_factor x = blinder->state.blind;
+
 	x ^= x << 13;
 	x ^= x >> 7;
 	x ^= x << 17;

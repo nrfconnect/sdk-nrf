@@ -25,7 +25,8 @@
 
 /** Size of ChaCha20Poly1305 context saving state, in bytes
  * The ChaCha20Poly1305 context saving state is made of ChaCha20 state(first 16
- * bytes) and Poly1305(next 32 bytes). */
+ * bytes) and Poly1305(next 32 bytes).
+ */
 #define CHACHAPOLY_CTX_STATE_SZ (16 + 32)
 
 /** Mode Register value for context loading */
@@ -79,6 +80,7 @@ static const struct sx_blkcipher_cmdma_cfg ba417chacha20cfg = {
 static int lenAlenC_chachapoly(size_t aadsz, size_t datasz, uint8_t *out)
 {
 	uint32_t i = 0;
+
 	for (i = 0; i < 8; i++) {
 		out[i] = aadsz & 0xFF;
 		aadsz >>= 8;
@@ -108,7 +110,8 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *c, const struct sxkeyr
 
 	/* In AEAD context, for BA417, the counter that must be provided and
 	 * initialized with 1. counter size is 4 bytes. Starting at position 16
-	 * due to lenAlenC that uses first 16 bytes of extramem */
+	 * due to lenAlenC that uses first 16 bytes of extramem
+	 */
 	c->extramem[16] = 0;
 	c->extramem[17] = 0;
 	c->extramem[18] = 0;

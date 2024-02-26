@@ -67,10 +67,12 @@ void sx_pk_write_curve(sx_pk_req *req, const struct sx_pk_ecurve *curve)
 	}
 	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
-		 * of the slot. */
+		 * of the slot.
+		 */
 		dst += slot_size - curve->sz;
 	}
 	int curve_param_count = sx_pk_count_curve_params(curve);
+
 	for (i = 0; i < curve_param_count; i++) {
 		sx_wrpkmem(dst, src, curve->sz);
 		src += curve->sz;
@@ -98,12 +100,13 @@ const char **sx_pk_get_output_ops(sx_pk_req *req)
 
 	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
-		 * of the slot. */
+		 * of the slot.
+		 */
 		cryptoram += slot_size - req->op_size;
 	}
 	while (slots) {
 		if (slots & 1) {
-			assert(i < sizeof(req->outputops) / sizeof(req->outputops[0]));
+			assert(i < ARRAY_SIZE(req->outputops));
 			req->outputops[i++] = cryptoram;
 		}
 		cryptoram += slot_size;
@@ -122,22 +125,26 @@ static int sx_pk_ik_mode(sx_pk_req *pk)
 static void write_command(sx_pk_req *req, int op_size, uint32_t flags)
 {
 	uint32_t command = req->cmd->cmdcode | ((op_size - 1) << 8) | flags;
+
 	sx_pk_wrreg(&req->regs, PK_REG_COMMAND, command);
 }
 
 static void sx_pk_blind(sx_pk_req *req, sx_pk_blind_factor factor)
 {
 	/* Casting the factor into char*. This way the LSB
-	 * can be changed regardless of the CPU endianness */
+	 * can be changed regardless of the CPU endianness
+	 */
 	char *p = (char *)(&factor);
 	int slot_sz = req->slot_sz;
 	char *cryptoram = req->cryptoram + slot_sz * 16;
 	const int blind_sz = sizeof(factor);
+
 	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* Force lsb bit to guarantee odd random value */
 		p[7] |= 1;
 		/* In big endian mode, the operands should be put at the end
-		 * of the slot. */
+		 * of the slot.
+		 */
 		sx_clrpkmem(cryptoram - req->op_size, req->op_size - blind_sz);
 		cryptoram -= blind_sz;
 	} else {
@@ -166,6 +173,7 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 
 	caps = sx_pk_fetch_capabilities();
 	int max_opsz = 0;
+
 	if (curve->curveflags & 0x80) {
 		max_opsz = caps->max_gfb_opsz;
 	} else {
@@ -183,7 +191,8 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 	write_command(req, curve->sz, curve->curveflags | flags);
 	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
-		 * of the slot. */
+		 * of the slot.
+		 */
 		cryptoram += slot_size - req->op_size;
 	}
 	while (slots) {
@@ -242,7 +251,8 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 	write_command(req, req->op_size, flags);
 	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
-		 * of the slot. */
+		 * of the slot.
+		 */
 		cryptoram += slot_size - req->op_size;
 		for (; slots; slots >>= 1, cryptoram += slot_size) {
 			if (slots & 1) {

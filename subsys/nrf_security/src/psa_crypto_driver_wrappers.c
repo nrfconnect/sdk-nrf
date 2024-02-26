@@ -131,7 +131,7 @@
  * ID 5 is defined by a vanilla TF-M patch file.
  */
 
-#define PSA_CRYPTO_CC3XX_DRIVER_ID (4)
+#define PSA_CRYPTO_CC3XX_DRIVER_ID  (4)
 #define PSA_CRYPTO_CRACEN_DRIVER_ID (5)
 
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
@@ -1972,7 +1972,7 @@ psa_status_t psa_driver_wrapper_mac_verify_setup(psa_mac_operation_t *operation,
 		 */
 #if defined(PSA_NEED_CRACEN_MAC_DRIVER)
 		status = cracen_mac_verify_setup(&operation->ctx.cracen_driver_ctx, attributes,
-						key_buffer, key_buffer_size, alg);
+						 key_buffer, key_buffer_size, alg);
 		if (status == PSA_SUCCESS) {
 			operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
 		}

@@ -61,6 +61,7 @@ static inline unsigned int si_op_bitsz(const struct sx_buf *op)
 	}
 
 	unsigned char v = (unsigned char)op->bytes[i];
+
 	while ((v & 0x80) == 0) {
 		v = v << 1;
 		bitsz--;

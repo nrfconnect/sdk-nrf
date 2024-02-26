@@ -93,6 +93,7 @@ static int rsassa_pkcs1v15_verify_continue(struct sitask *t, struct siwq *wq)
 
 	/* get reference DER encoding of the hash algorithm ID */
 	const unsigned char *refder = get_hash_der(t->hashalg, &dersz);
+
 	if (dersz == 0) {
 		sx_pk_release_req(t->pk);
 		return (t->statuscode = SX_ERR_UNSUPPORTED_HASH_ALG);
@@ -124,8 +125,9 @@ static int rsassa_pkcs1v15_verify_continue(struct sitask *t, struct siwq *wq)
 	paddingstrsz = ((size_t)(encmsg - encodedmsgstart)) - 2;
 
 	/* The size of the PS must match the empty space in the EM. This ensures
-    that no other information follows the hash value in the EM. This check is
-    required by FIPS 186-4, section 5.5, point f. */
+	 * that no other information follows the hash value in the EM. This check is
+	 * required by FIPS 186-4, section 5.5, point f.
+	 */
 	if (paddingstrsz != (modulussz - 3 - dersz - digestsz)) {
 		sx_pk_release_req(t->pk);
 		return (t->statuscode = SX_ERR_INVALID_SIGNATURE);
@@ -205,7 +207,8 @@ static int rsassa_pkcs1v15_verify_init(struct sitask *t, const struct si_sig_pub
 	}
 
 	/* the signature must not be longer than the modulus (modified step 1 of
-    RSASSA-PKCS1-V1_5-VERIFY) */
+	 * RSASSA-PKCS1-V1_5-VERIFY)
+	 */
 	if (signature->sz > SI_RSA_KEY_OPSZ(rsakey)) {
 		return si_task_mark_final(t, SX_ERR_INVALID_SIGNATURE);
 	}

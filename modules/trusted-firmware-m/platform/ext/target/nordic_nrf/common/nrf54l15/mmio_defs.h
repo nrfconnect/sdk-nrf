@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021-2022, Arm Limited. All rights reserved.
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  */
 
@@ -19,7 +19,7 @@ extern "C" {
 
 /* Allowed named MMIO of this platform */
 const uintptr_t partition_named_mmio_list[] = {
-	// TODO: NCSDK-22597: Populate this list
+	/* TODO: NCSDK-22597: Populate this list */
 };
 
 #ifdef __cplusplus

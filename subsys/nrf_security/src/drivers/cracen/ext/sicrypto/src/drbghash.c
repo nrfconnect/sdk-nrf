@@ -60,9 +60,10 @@ static int hashdf_c_start(struct sitask *t, struct siwq *wq);
 static void consume_reseed(struct sitask *t, const char *msg, size_t sz);
 
 /* Compute v = v + summand
-- v is an unsigned integer stored as a big endian byte array of sz bytes
-- summand must be <= than the maximum value of a uint64_t minus 255
-- final carry is discarded: addition is modulo 2^(sz*8) */
+ * - v is an unsigned integer stored as a big endian byte array of sz bytes
+ * - summand must be <= than the maximum value of a uint64_t minus 255
+ * - final carry is discarded: addition is modulo 2^(sz*8)
+ */
 static void be_add_uint64(unsigned char *v, size_t sz, uint64_t summand)
 {
 	for (; sz > 0;) {
@@ -74,10 +75,11 @@ static void be_add_uint64(unsigned char *v, size_t sz, uint64_t summand)
 }
 
 /* Add two unsigned integers stored as big endian byte arrays (a = a + b);
-- parameter a is used as both input and output
-- bsz must be <= asz
-- final carry is discarded: addition is modulo 2^(asz*8)
-- time constant implementation */
+ * - parameter a is used as both input and output
+ * - bsz must be <= asz
+ * - final carry is discarded: addition is modulo 2^(asz*8)
+ * - time constant implementation
+ */
 static void be_array_add(unsigned char *a, size_t asz, const unsigned char *b, size_t bsz)
 {
 	unsigned int tmp = 0;
@@ -97,8 +99,9 @@ static void be_array_add(unsigned char *a, size_t asz, const unsigned char *b, s
 }
 
 /* Return the maximum security strength, in bytes, that a DRBG Hash can support,
-as a function of the selected hash algorithm. Based on NIST SP 800-57 Part 1
-Rev. 5, table 3. */
+ * as a function of the selected hash algorithm. Based on NIST SP 800-57 Part 1
+ * Rev. 5, table 3.
+ */
 static size_t get_security_strength(struct sitask *t)
 {
 	switch (sx_hash_get_alg_digestsz(t->hashalg)) {
@@ -130,8 +133,9 @@ static int drbghash_gen_update_v(struct sitask *t, struct siwq *wq)
 	be_array_add(vbase, drbgpars->seedlen, cbase, drbgpars->seedlen);
 
 	/* it is safe to use be_add_uint64() because drbgpars->reseed_ctr cannot
-    be greater than RESEED_INTERVAL, so it will always be <= than the maximum
-    value of a uint64_t minus 255 */
+	 * be greater than RESEED_INTERVAL, so it will always be <= than the maximum
+	 * value of a uint64_t minus 255
+	 */
 	be_add_uint64(vbase, drbgpars->seedlen, drbgpars->reseed_ctr);
 
 	drbgpars->reseed_ctr++;
@@ -291,7 +295,8 @@ static int hashdf_v(struct sitask *t, struct siwq *wq)
 	t->output += outlen;
 
 	/* move on to compute C if all internal hash_df iterations have been
-	 * done */
+	 * done
+	 */
 	if (((int)t->workmem[0]) == drbgpars->hashdf_iterations) {
 		si_wq_run_after(t, &drbgpars->wq, hashdf_c_start);
 	} else {
@@ -351,7 +356,8 @@ static void consume_reseed(struct sitask *t, const char *msg, size_t sz)
 }
 
 /* Install the actions that are allowed after the instantiation is complete:
-produce (to generate random bytes) and consume (to reseed). */
+ * produce (to generate random bytes) and consume (to reseed).
+ */
 static int install_drbg_functions(struct sitask *t, struct siwq *wq)
 {
 	struct siparams_drbghash *drbgpars = &t->params.drbghash;
@@ -439,7 +445,8 @@ static void consume_nonce(struct sitask *t, const char *msg, size_t sz)
 }
 
 /* Returns the minimum required workmem size for a DRBG Hash task, computed with
-the formula: 6 + 2*digestsz*ceiling(seedsz/digestsz) + seedsz. */
+ * the formula: 6 + 2*digestsz*ceiling(seedsz/digestsz) + seedsz.
+ */
 static size_t minworkmemsz(size_t digestsz)
 {
 	size_t seedsz, ceil, workmemsz;
@@ -516,9 +523,11 @@ void si_prng_create_drbg_hash(struct sitask *t, const struct sxhashalg *hashalg,
 	drbgpars->reseed_ctr = 1;
 
 	/* Convert seedlen from bytes to bits and write that value to workmem
-    (bytes 1 to 4, big endian). These bytes serve as the "no_of_bits_to_return"
-    argument to hash_df. */
+	 * (bytes 1 to 4, big endian). These bytes serve as the "no_of_bits_to_return"
+	 * argument to hash_df.
+	 */
 	uint32_t tmp = drbgpars->seedlen << 3;
+
 	t->workmem[1] = (tmp >> 24) & 0xFF;
 	t->workmem[2] = (tmp >> 16) & 0xFF;
 	t->workmem[3] = (tmp >> 8) & 0xFF;

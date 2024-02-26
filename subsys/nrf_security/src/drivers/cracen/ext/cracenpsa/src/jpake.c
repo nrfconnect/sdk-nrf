@@ -70,14 +70,14 @@ psa_status_t cracen_jpake_set_password_key(cracen_jpake_operation_t *operation,
 
 	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (char *)order};
 	sx_op b = {.sz = password_length, .bytes = (char *)password};
-	sx_op result = {.sz = sizeof operation->secret, .bytes = operation->secret};
+	sx_op result = {.sz = sizeof(operation->secret), .bytes = operation->secret};
 
 	/* The nistp256 curve order (n) is prime so we use the ODD variant of the reduce command. */
 	const struct sx_pk_cmd_def *cmd = SX_PK_CMD_ODD_MOD_REDUCE;
 	int sx_status = sx_mod_single_op_cmd(cmd, &modulo, &b, &result);
 
 	if (sx_status == SX_OK) {
-		if (constant_memcmp_is_zero(operation->secret, sizeof operation->secret)) {
+		if (constant_memcmp_is_zero(operation->secret, sizeof(operation->secret))) {
 			return PSA_ERROR_INVALID_HANDLE;
 		}
 	}
@@ -88,7 +88,7 @@ psa_status_t cracen_jpake_set_password_key(cracen_jpake_operation_t *operation,
 psa_status_t cracen_jpake_set_user(cracen_jpake_operation_t *operation, const uint8_t *user_id,
 				   size_t user_id_len)
 {
-	if (user_id_len > sizeof operation->user_id) {
+	if (user_id_len > sizeof(operation->user_id)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -101,7 +101,7 @@ psa_status_t cracen_jpake_set_user(cracen_jpake_operation_t *operation, const ui
 psa_status_t cracen_jpake_set_peer(cracen_jpake_operation_t *operation, const uint8_t *peer_id,
 				   size_t peer_id_len)
 {
-	if (peer_id_len > sizeof operation->peer_id) {
+	if (peer_id_len > sizeof(operation->peer_id)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -170,6 +170,7 @@ static psa_status_t cracen_ecjpake_get_public_key(cracen_jpake_operation_t *oper
 	}
 
 	const char **outputs = sx_pk_get_output_ops(pkreq.req);
+
 	sx_rdpkmem(&public_key[0], outputs[0], opsz);
 	sx_rdpkmem(&public_key[32], outputs[1], opsz);
 	sx_pk_release_req(pkreq.req);
@@ -333,7 +334,8 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 		return PSA_ERROR_BAD_STATE;
 	}
 
-	status = rnd_in_range(v, sizeof v, sx_pk_curve_order(operation->curve), RANDOM_RETRY_LIMIT);
+	status =
+		rnd_in_range(v, sizeof(v), sx_pk_curve_order(operation->curve), RANDOM_RETRY_LIMIT);
 
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -357,6 +359,7 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 	sx_ecop sx_x = {.bytes = operation->x[idx], .sz = sizeof(operation->x[idx])};
 	sx_ecop sx_h = {.bytes = h, .sz = PSA_HASH_LENGTH(PSA_ALG_SHA_256)};
 	sx_ecop sx_r = {.bytes = operation->r, .sz = sizeof(operation->r)};
+
 	sx_status = sx_ecjpake_generate_zkp(operation->curve, &sx_v, &sx_x, &sx_h, &sx_r);
 
 	if (sx_status != SX_OK) {
@@ -372,13 +375,13 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 static psa_status_t cracen_write_zk_public(cracen_jpake_operation_t *operation, uint8_t *output,
 					   size_t output_size, size_t *output_length)
 {
-	if (sizeof operation->V >= output_size) {
+	if (sizeof(operation->V) >= output_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
 	output[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
-	memcpy(&output[1], operation->V, sizeof operation->V);
-	*output_length = sizeof operation->V + 1;
+	memcpy(&output[1], operation->V, sizeof(operation->V));
+	*output_length = sizeof(operation->V) + 1;
 
 	return PSA_SUCCESS;
 }
@@ -386,12 +389,12 @@ static psa_status_t cracen_write_zk_public(cracen_jpake_operation_t *operation, 
 static psa_status_t cracen_write_zk_proof(cracen_jpake_operation_t *operation, uint8_t *output,
 					  size_t output_size, size_t *output_length)
 {
-	if (sizeof operation->r > output_size) {
+	if (sizeof(operation->r) > output_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	memcpy(output, operation->r, sizeof operation->r);
-	*output_length = sizeof operation->r;
+	memcpy(output, operation->r, sizeof(operation->r));
+	*output_length = sizeof(operation->r);
 	operation->wr_idx++;
 
 	return PSA_SUCCESS;
@@ -422,7 +425,7 @@ static psa_status_t cracen_read_key_share(cracen_jpake_operation_t *operation, c
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	memcpy(operation->P[idx], &input[1], sizeof operation->P[idx]);
+	memcpy(operation->P[idx], &input[1], sizeof(operation->P[idx]));
 
 	return PSA_SUCCESS;
 }
@@ -434,7 +437,7 @@ static psa_status_t cracen_read_zk_public(cracen_jpake_operation_t *operation, c
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	memcpy(operation->V, &input[1], sizeof operation->V);
+	memcpy(operation->V, &input[1], sizeof(operation->V));
 
 	return PSA_SUCCESS;
 }
@@ -449,12 +452,12 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 	uint8_t h[PSA_HASH_MAX_SIZE];
 	size_t h_len;
 
-	if (input_length > sizeof operation->r) {
+	if (input_length > sizeof(operation->r)) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
-	if (input_length < sizeof operation->r) {
-		safe_memset(rp, sizeof operation->r, 0, sizeof operation->r - input_length);
-		rp += sizeof operation->r - input_length;
+	if (input_length < sizeof(operation->r)) {
+		safe_memset(rp, sizeof(operation->r), 0, sizeof(operation->r) - input_length);
+		rp += sizeof(operation->r) - input_length;
 	}
 	memcpy(rp, input, input_length);
 
@@ -462,6 +465,7 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 		/* Verify that user id != peer id */
 		if (operation->peer_id_length == operation->user_id_length) {
 			bool equal = true;
+
 			for (size_t i = 0; i < operation->user_id_length; i++) {
 				if (operation->peer_id[i] != operation->user_id[i]) {
 					equal = false;
@@ -481,6 +485,7 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 		MAKE_SX_POINT(g, generator, CRACEN_P256_POINT_SIZE);
 
 		int sx_status = sx_ecjpake_3pt_add(operation->curve, &G1, &G2, &G3, &g);
+
 		if (sx_status) {
 			return silex_statuscodes_to_psa(sx_status);
 		}
@@ -491,7 +496,7 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 	status = cracen_get_zkp_hash(
 		operation->alg, operation->P[idx], operation->V,
 		idx == 2 ? generator : (uint8_t *)sx_pk_generator_point(operation->curve),
-		operation->peer_id, operation->peer_id_length, h, sizeof h, &h_len);
+		operation->peer_id, operation->peer_id_length, h, sizeof(h), &h_len);
 
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -546,6 +551,7 @@ psa_status_t cracen_jpake_get_implicit_key(cracen_jpake_operation_t *operation, 
 	MAKE_SX_POINT(b, operation->P[2], CRACEN_P256_POINT_SIZE);
 	sx_ecop x2 = {.bytes = operation->x[1], .sz = CRACEN_P256_KEY_SIZE};
 	sx_ecop x2s = {.bytes = operation->x[2], .sz = CRACEN_P256_KEY_SIZE};
+
 	MAKE_SX_POINT(t, output + 1, CRACEN_P256_POINT_SIZE);
 	sx_status = sx_ecjpake_gen_sess_key(operation->curve, &x4, &b, &x2, &x2s, &t);
 

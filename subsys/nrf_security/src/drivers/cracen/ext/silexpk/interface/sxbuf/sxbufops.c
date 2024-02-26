@@ -28,6 +28,7 @@ void sx_pk_ecop2mem_le(const sx_ecop *op, char *mem, int sz)
 
 	char buf[SX_PK_MAX_OP_SZ];
 	char *ptr = op->bytes;
+
 	assert(cursz <= SX_PK_MAX_OP_SZ);
 	for (int i = 0; i < cursz; i += 1) {
 		buf[i] = ptr[cursz - i - 1];
@@ -58,6 +59,7 @@ void sx_pk_op2vmem_le(const sx_op *op, char *mem)
 	int sz = op->sz;
 	char buf[SX_PK_MAX_OP_SZ];
 	char *ptr = op->bytes;
+
 	assert(sz <= SX_PK_MAX_OP_SZ);
 	for (int i = 0; i < sz; i += 1) {
 		buf[i] = ptr[sz - i - 1];

@@ -68,7 +68,8 @@ psa_status_t silex_statuscodes_to_psa(int ret)
 
 	case SX_ERR_INVALID_CIPHERTEXT:
 		/* This can happen in psa_asymmetric_decrypt. PSA Crypto specification
-		   does not list an appropriate error code for this. */
+		 * does not list an appropriate error code for this.
+		 */
 		return PSA_ERROR_INVALID_ARGUMENT;
 
 	case SX_ERR_INVALID_ARG:
@@ -149,7 +150,6 @@ static psa_status_t get_sx_brainpool_curve(size_t curve_bits, const struct sx_pk
 		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
-		break;
 	}
 
 	if (selected_curve == NOT_ENABLED_CURVE) {
@@ -187,7 +187,6 @@ static psa_status_t get_sx_secp_r1_curve(size_t curve_bits, const struct sx_pk_e
 		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
-		break;
 	}
 
 	if (selected_curve == NOT_ENABLED_CURVE) {
@@ -238,7 +237,6 @@ static psa_status_t get_sx_montgomery_curve(size_t curve_bits, const struct sx_p
 		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
-		break;
 	}
 
 	if (selected_curve == NOT_ENABLED_CURVE) {
@@ -264,7 +262,6 @@ static psa_status_t get_sx_edwards_curve(size_t curve_bits, const struct sx_pk_e
 		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
-		break;
 	}
 
 	if (selected_curve == NOT_ENABLED_CURVE) {
@@ -295,10 +292,8 @@ psa_status_t cracen_ecc_get_ecurve_from_psa(psa_ecc_family_t curve_family, size_
 	case PSA_ECC_FAMILY_SECT_R1:
 	case PSA_ECC_FAMILY_SECT_R2:
 		return PSA_ERROR_NOT_SUPPORTED;
-		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
-		break;
 	}
 }
 
@@ -372,6 +367,7 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
 	}
 
 	uint8_t msb_mask;
+
 	for (msb_mask = 0xFF; upperlimit[0] & msb_mask; msb_mask <<= 1) {
 		;
 	}
@@ -379,12 +375,14 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
 
 	while (retries++ < retry_limit) {
 		psa_status_t status = psa_generate_random(n, sz);
+
 		if (status) {
 			return status;
 		}
 		n[0] &= msb_mask;
 
 		int ge = si_be_cmp(n, upperlimit, sz, 0);
+
 		if (ge == -1) {
 
 			bool is_zero = constant_memcmp_is_zero(n, sz);
@@ -524,7 +522,8 @@ static int cracen_clean_ik_key(const uint8_t *user_data)
 {
 	/* We should call sx_pk_ik_mode_exit(NULL) here, but it hangs.
 	 * Currently Cracen is powered off after each operation, so in
-	 * any case Cracen is not in IK-mode for the next operation.  */
+	 * any case Cracen is not in IK-mode for the next operation.
+	 */
 	return SX_OK;
 }
 
@@ -559,10 +558,10 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 		default:
 			return PSA_ERROR_NOT_PERMITTED;
 		}
-	} else
+	}
 #endif
-		if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
-		    PSA_KEY_LOCATION_CRACEN) {
+	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
+		PSA_KEY_LOCATION_CRACEN) {
 
 		k->prepare_key = cracen_prepare_ik_key;
 		k->clean_key = cracen_clean_ik_key;

@@ -1,3 +1,9 @@
+/*
+ *  Copyright (c) 2020-2021 Silex Insight
+ *  Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
 #include "../include/sxsymcrypt/hash.h"
 #include "../include/sxsymcrypt/sha3.h"
 #include <cracen/statuscodes.h>
@@ -64,10 +70,12 @@ static void shake256_digest(struct sxhash *c, char *digest)
 
 	/* Use ADD_INDESC_PRIV_RAW instead of ADD_INDESC_PRIV.
 	 * BA418 hardware cannot work with ADD_INDESC_PRIV as BA418 does not
-	 * support byte ignore flags. */
+	 * support byte ignore flags.
+	 */
 	ADD_INDESC_PRIV_RAW(c->dma, OFFSET_EXTRAMEM(c), padsz, c->dmatags->data);
 
 	struct sxdesc *out = c->dma.dmamem.outdescs;
+
 	ADD_OUTDESCA(out, digest, c->algo->digestsz, CMDMA_BA413_BUS_MSK);
 	sx_cmdma_finalize_descs(c->dma.dmamem.outdescs, out - 1);
 }
@@ -81,10 +89,12 @@ static void sha3_digest(struct sxhash *c, char *digest)
 			    padding);
 	/* Use ADD_INDESC_PRIV_RAW instead of ADD_INDESC_PRIV.
 	 * BA418 hardware cannot work with ADD_INDESC_PRIV as BA418 does not
-	 * support byte ignore flags. */
+	 * support byte ignore flags.
+	 */
 	ADD_INDESC_PRIV_RAW(c->dma, OFFSET_EXTRAMEM(c), padsz, c->dmatags->data);
 
 	struct sxdesc *out = c->dma.dmamem.outdescs;
+
 	ADD_OUTDESCA(out, digest, c->algo->digestsz, CMDMA_BA413_BUS_MSK);
 	sx_cmdma_finalize_descs(c->dma.dmamem.outdescs, out - 1);
 }
@@ -111,6 +121,7 @@ static int sx_hash_create_ba418(struct sxhash *c, size_t csz)
 static int sx_hash_create_ba418_shake256(struct sxhash *c, size_t csz)
 {
 	int r = sx_hash_create_ba418(c, csz);
+
 	if (r != SX_OK) {
 		return r;
 	}

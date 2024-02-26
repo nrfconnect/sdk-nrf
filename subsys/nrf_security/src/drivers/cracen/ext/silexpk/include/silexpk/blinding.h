@@ -31,7 +31,7 @@ struct sx_pk_blinder {
 		void *custom;		  /**< Custom state of generation function */
 	} state;			  /**< Structure for state saving of generation function */
 	sx_pk_blind_factor (*generate)(
-		struct sx_pk_blinder *); /**< Function pointer to a blinding generator */
+		struct sx_pk_blinder *blinder); /**< Function pointer to a blinding generator */
 };
 
 /** Activate the blinding countermeasures where available

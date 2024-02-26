@@ -6,31 +6,31 @@
  */
 
 /*
-Workmem layout for the 'coprime check' task:
-- result of the modular reduction (size: min(asz, bsz)).
-
-The algorithm implemented in this task is based on the fact that:
-a, b are coprime <==> GCD(a, b) = 1
-<==> a is invertible in the integers modulo b.
-
-High level description of the algorithm:
-- at least one of the two input numbers 'a', 'b' must be odd
-- swap 'a' and 'b', if necessary, so that 'b' is the smallest of the odd numbers
-- if the size of 'a' is greater than the size of 'b':
-    - 'a' is reduced modulo 'b', using the SilexPK command
-    SX_PK_CMD_ODD_MOD_REDUCE
-- 'a' is inverted modulo 'b', using the SilexPK command SX_PK_CMD_ODD_MOD_INV
-- status code at the end of the task
-    - SX_OK: 'a' and 'b' are coprime
-    - SX_ERR_NOT_INVERTIBLE: 'a' and 'b' are not coprime
-    - other value: an error has occurred.
-
-The modular reduction operation is done for performance reasons: a large modular
-reduction + a short modular inversion is faster than a large modular inversion.
-Modular reduction is always performed, except when one input is even and shorter
-than the odd input. The result of the modular reduction is placed in workmem.
-Requesting that workmem size be equal to min(asz, bsz) works in any case.
-*/
+ * Workmem layout for the 'coprime check' task:
+ * - result of the modular reduction (size: min(asz, bsz)).
+ *
+ * The algorithm implemented in this task is based on the fact that:
+ * a, b are coprime <==> GCD(a, b) = 1
+ * <==> a is invertible in the integers modulo b.
+ *
+ * High level description of the algorithm:
+ * - at least one of the two input numbers 'a', 'b' must be odd
+ * - swap 'a' and 'b', if necessary, so that 'b' is the smallest of the odd numbers
+ * - if the size of 'a' is greater than the size of 'b':
+ *     - 'a' is reduced modulo 'b', using the SilexPK command
+ *     SX_PK_CMD_ODD_MOD_REDUCE
+ * - 'a' is inverted modulo 'b', using the SilexPK command SX_PK_CMD_ODD_MOD_INV
+ * - status code at the end of the task
+ *     - SX_OK: 'a' and 'b' are coprime
+ *     - SX_ERR_NOT_INVERTIBLE: 'a' and 'b' are not coprime
+ *     - other value: an error has occurred.
+ *
+ * The modular reduction operation is done for performance reasons: a large modular
+ * reduction + a short modular inversion is faster than a large modular inversion.
+ * Modular reduction is always performed, except when one input is even and shorter
+ * than the odd input. The result of the modular reduction is placed in workmem.
+ * Requesting that workmem size be equal to min(asz, bsz) works in any case.
+ */
 
 #include <stddef.h>
 #include <silexpk/iomem.h>
@@ -50,7 +50,8 @@ static int modular_inversion_finish(struct sitask *t, struct siwq *wq)
 	sx_pk_release_req(t->pk);
 
 	/* we are not interested in getting the result of the modular inversion,
-    we only need to know if the inversion was possible */
+	 * we only need to know if the inversion was
+	 */
 	return t->statuscode;
 }
 
@@ -102,7 +103,8 @@ static int modular_reduction_finish(struct sitask *t, struct siwq *wq)
 	}
 
 	/* copy to workmem the result of the modular reduction, to be found
-    at the end of the device memory slot */
+	 * at the end of the device memory slots
+	 */
 	sx_rdpkmem(t->workmem, outputs[0] + opsz - bsz, bsz);
 
 	sx_pk_release_req(t->pk);
@@ -143,7 +145,8 @@ static void modular_reduction_start(struct sitask *t)
 	}
 
 	/* Copy modulo and operand to the device memory slots. Note that the
-    modulo b must be placed at the end of its memory slot. */
+	 * modulo b must be placed at the end of its memory slot.
+	 */
 	sx_clrpkmem(inputs.n.addr, asz - bsz);
 	sx_wrpkmem(inputs.n.addr + asz - bsz, t->params.coprimecheck.b, bsz);
 	sx_wrpkmem(inputs.b.addr, t->params.coprimecheck.a, asz);
@@ -189,10 +192,12 @@ void si_create_coprime_check(struct sitask *t, const char *a, size_t asz, const 
 	}
 
 	/* swap a and b, if necessary, so that b is odd and, if possible, b is
-    shorter than a */
+	 * shorter than a
+	 */
 	if ((!b_is_odd) || (a_is_odd && (asz < bsz))) {
 		const char *tmp = a;
 		size_t tmpsz = asz;
+
 		a = b;
 		asz = bsz;
 		b = tmp;

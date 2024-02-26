@@ -100,7 +100,8 @@ static int start_hmac_computation(struct sitask *t, struct siwq *wq)
 	blocksz = sx_hash_get_alg_blocksz(t->hashalg);
 
 	/* The "prepared" key (called K0 in FIPS 198-1) is available and
-    t->workmem points to it. Here we compute K0 xor ipad.*/
+	 * t->workmem points to it. Here we compute K0 xor ipad.
+	 */
 	xorbuf(t->workmem, 0x36, blocksz);
 
 	/* start feeding the hash task */
@@ -124,7 +125,8 @@ void si_mac_create_hmac(struct sitask *t, const struct sxhashalg *hashalg, const
 	}
 
 	/* a key longer than hash block size needs an additional preparation
-	 * step */
+	 * step
+	 */
 	if (keysz > blocksz) {
 		/* hash the key */
 		si_hash_create(t, t->hashalg);
