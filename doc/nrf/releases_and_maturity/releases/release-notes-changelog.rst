@@ -205,6 +205,9 @@ Wi-Fi
   * WPA supplicant now reserves libc heap memory rather than using leftover RAM.
     This doesn't affect the overall memory used, but now the RAM footprint as reported by the build will show higher usage.
 
+  * The Wi-Fi interface is renamed from ``wlan0`` to ``nordic_wlan0`` and is available as ``zephyr_wifi`` in the DTS.
+    Use the DT APIs to get the handle to the Wi-Fi interface.
+
 HomeKit
 -------
 
@@ -746,6 +749,9 @@ Wi-Fi drivers
 * Added Monitor feature to the nRF70 Series device.
 
 * Added Promiscuous mode feature to the nRF70 Series device.
+
+* The Wi-Fi interface is now renamed and registered as a devicetree instance.
+
 
 Libraries
 =========
