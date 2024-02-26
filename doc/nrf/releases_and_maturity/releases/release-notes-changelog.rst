@@ -44,7 +44,7 @@ Working with nRF91 Series
 Working with nRF70 Series
 =========================
 
-* Added a new page :ref:`nRF70_soft_ap_mode` about `Software-enabled Access Point (SAP)` mode.
+|no_changes_yet_note|
 
 Working with nRF52 Series
 =========================
@@ -1177,15 +1177,18 @@ Documentation
 * Added
 
   * :ref:`ug_nrf9161` user guide.
-  * A page on :ref:`ug_nrf70_developing_debugging` in the :ref:`ug_nrf70_developing` user guide.
-  * A page on :ref:`ug_nrf70_developing_fw_patch_ext_flash` in the :ref:`ug_nrf70_developing` user guide.
-  * A page on :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission` in the :ref:`ug_nrf70_developing` user guide.
+  * :ref:`ug_nrf70_developing_fw_patch_ext_flash` and :ref:`ug_nrf70_stack partitioning` pages in the :ref:`ug_nrf70_developing` user guide.
   * :ref:`contributions_ncs` page in a new :ref:`contributions` section that also includes the development model pages, previously listed under :ref:`releases_and_maturity`.
   * :ref:`ug_lte` user guide under :ref:`protocols`.
   * Gazell and NFC sections in the :ref:`app_power_opt_recommendations` user guide.
-  * :ref:`ug_nrf70_stack partitioning` page in the :ref:`ug_nrf70_developing` user guide.
-  * A page on :ref:`ug_nrf70_developing_raw_ieee_80211_packet_reception` in the :ref:`ug_wifi` user guide.
-  * A page on :ref:`ug_nrf70_developing_promiscuous_packet_reception` in the :ref:`ug_wifi` user guide.
+  * Following new user guides under :ref:`ug_wifi`:
+
+    * :ref:`ug_nrf70_developing_debugging`
+    * :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`
+    * :ref:`nRF70_soft_ap_mode`
+    * :ref:`ug_nrf70_developing_raw_ieee_80211_packet_reception`
+    * :ref:`ug_nrf70_developing_promiscuous_packet_reception`
+
   * :ref:`qspi_xip` user guide under :ref:`ug_nrf53`.
 
 * Updated:
@@ -1209,17 +1212,21 @@ Documentation
   * The :ref:`tfm_enable_share_uart` section on :ref:`ug_nrf9160`.
   * Integration steps in the :ref:`ug_bt_fast_pair` guide.
     Reorganized extension-specific content into dedicated subsections.
-  * The :ref:`ug_nrf70_developing_powersave_power_save_mode` section in the :ref:`ug_nrf70_developing_powersave` user guide.
   * The :ref:`nrf7002dk_nrf5340` page with a link to the `Wi-Fi Fundamentals course`_ in the `Nordic Developer Academy`_.
-
   * The :ref:`dev-model` section with the :ref:`documentation` pages, previously listed separately.
   * The :ref:`glossary` page by moving it back to the main hierarchy level.
-  * The structure of the :ref:`ug_wifi` page by moving :ref:`ug_nrf70_developing_powersave`, :ref:`ug_nrf70_developing_regulatory_support`, :ref:`ug_nrf70_developing_scan_operation`, :ref:`ug_nrf70_developing_debugging`, :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`, and :ref:`nRF70_soft_ap_mode` pages, which were previously listed under :ref:`ug_nrf70_developing`.
-    Additionally, the Memory requirements for Wi-Fi applications page is split into two sections :ref:`ug_wifi_mem_req_sta_mode` and :ref:`ug_wifi_mem_req_scan_mode`, based on different supported modes.
-  * TX injection mode command in the :ref:`ug_nrf70_developing_tx_injection_mode` section in the :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission` user guide.
-  * The :ref:`ug_nrf70_powersave` user guide by separating information about power profiling into its own :ref:`ug_nrf70_developing_power_profiling` page under :ref:`ug_nrf70_developing`.
-  * The Operating with a resource constrained host user guide by renaming it to :ref:`nRF70_nRF5340_constrained_host`.
-    Additionally, the information about stack configuration and performance is placed into its own separate page, :ref:`ug_wifi_stack_configuration`, under :ref:`ug_wifi`.
+  * The :ref:`ug_wifi` page:
+
+    * Moved :ref:`ug_nrf70_developing_powersave`, :ref:`ug_nrf70_developing_regulatory_support`, and :ref:`ug_nrf70_developing_scan_operation` pages, which were previously listed under :ref:`ug_nrf70_developing`.
+    * The Memory requirements for Wi-Fi applications page is split into two sections :ref:`ug_wifi_mem_req_sta_mode` and :ref:`ug_wifi_mem_req_scan_mode`, based on different supported modes.
+    * The :ref:`ug_nrf70_powersave` user guide by separating information about power profiling into its own :ref:`ug_nrf70_developing_power_profiling` page under :ref:`ug_nrf70_developing`.
+      Additionally, updated the :ref:`ug_nrf70_developing_powersave_power_save_mode` section.
+
+  * The :ref:`ug_nrf70` page:
+
+    * The Getting started with nRF70 Series user guide is split into three user guides, :ref:`ug_nrf7002_gs`, :ref:`ug_nrf7002ek_gs` and :ref:`ug_nrf7002eb_gs`.
+    * The Operating with a resource constrained host user guide by renaming it to :ref:`nRF70_nRF5340_constrained_host`.
+      Additionally, the information about stack configuration and performance is placed into its own separate page, :ref:`ug_wifi_stack_configuration`, under :ref:`ug_wifi`.
 
 * Removed the Welcome to the |NCS| page.
   This page is replaced with existing :ref:`ncs_introduction` page.
