@@ -18,7 +18,6 @@
 #include <nrfx_nvmc.h>
 #include <bl_storage.h>
 
-
 static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum lcs lcs)
 {
 	switch (lcs) {
@@ -92,7 +91,7 @@ enum tfm_plat_err_t tfm_attest_hal_get_verification_service(uint32_t *size, uint
 	/* Actually copied data is always the smaller */
 	copy_size = *size < otp_size ? *size : otp_size;
 	/* String content */
-	*size = tfm_strnlen((char*)buf, copy_size);
+	*size = tfm_strnlen((char *)buf, copy_size);
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
@@ -116,7 +115,7 @@ enum tfm_plat_err_t tfm_attest_hal_get_profile_definition(uint32_t *size, uint8_
 	/* Actually copied data is always the smaller */
 	copy_size = *size < otp_size ? *size : otp_size;
 	/* String content */
-	*size = tfm_strnlen((char*)buf, copy_size);
+	*size = tfm_strnlen((char *)buf, copy_size);
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
@@ -165,7 +164,7 @@ enum tfm_plat_err_t tfm_plat_get_cert_ref(uint32_t *size, uint8_t *buf)
 	/* Actually copied data is always the smaller */
 	copy_size = *size < otp_size ? *size : otp_size;
 	/* String content */
-	*size = tfm_strnlen((char*)buf, copy_size);
+	*size = tfm_strnlen((char *)buf, copy_size);
 
 	return TFM_PLAT_ERR_SUCCESS;
 }

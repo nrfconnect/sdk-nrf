@@ -61,7 +61,7 @@ typedef union {
 	oberon_hash_operation_t oberon_driver_ctx;
 #endif
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
-    cracen_hash_operation_t cracen_driver_ctx;
+	cracen_hash_operation_t cracen_driver_ctx;
 #endif
 } psa_driver_hash_context_t;
 
@@ -74,7 +74,7 @@ typedef union {
 	oberon_cipher_operation_t oberon_driver_ctx;
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
-    cracen_cipher_operation_t cracen_driver_ctx;
+	cracen_cipher_operation_t cracen_driver_ctx;
 #endif
 
 } psa_driver_cipher_context_t;

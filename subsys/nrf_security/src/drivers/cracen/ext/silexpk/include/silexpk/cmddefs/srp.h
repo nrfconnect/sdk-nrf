@@ -50,10 +50,12 @@ struct sx_pk_inops_srp_user_keyparams {
 	struct sx_pk_slot n; /**< Safe prime number **/
 	struct sx_pk_slot g; /**< Generator of the multiplicative group **/
 	struct sx_pk_slot a; /**< Random value **/
-	struct sx_pk_slot b; /**< k * g^x + g^t with t random salt, k value derived by
-				both sides (for example k = H(n, g)) **/
-	struct sx_pk_slot x; /**< Hash of (s, p) with s a random salt and p the
-				user password **/
+	/* k * g^x + g^t with t random salt, k value derived by
+	 * both sides (for example k = H(n, g))
+	 */
+	struct sx_pk_slot b;
+	/* Hash of (s, p) with s a random salt and p the user password */
+	struct sx_pk_slot x;
 	struct sx_pk_slot k; /**< Hash of (n, g) **/
 	struct sx_pk_slot u; /**< Hash of (g^a, b) **/
 };

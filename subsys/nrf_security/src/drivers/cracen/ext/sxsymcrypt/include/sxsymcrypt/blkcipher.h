@@ -108,7 +108,7 @@ int sx_blkcipher_crypt(struct sxblkcipher *c, const char *datain, size_t sz, cha
  * create function was used, sx_blkcipher_create_*_enc() or
  * sx_blkcipher_create_*_dec(). The function will return immediately.
  *
- * The result will be transfered only after the operation is successfully
+ * The result will be transferred only after the operation is successfully
  * completed. The user shall check operation status with sx_blkcipher_status()
  * or sx_blkcipher_wait().
  *
@@ -160,7 +160,7 @@ int sx_blkcipher_resume_state(struct sxblkcipher *c);
  * This function is used to start a partial encryption or decryption of
  * \p datain. The function will return immediately.
  *
- * The partial result will be transfered to \p dataout only after the operation
+ * The partial result will be transferred to \p dataout only after the operation
  * is successfully completed. The user shall check operation status with
  * sx_blkcipher_status() or sx_blkcipher_wait().
  *

@@ -53,7 +53,7 @@ static int cracen_signature_set_hashalgo_from_digestsz(const struct sxhashalg **
 	int status = SX_OK;
 
 	status = cracen_signature_set_hashalgo(hashalg, alg);
-	if (SX_ERR_INVALID_ARG == status) {
+	if (status == SX_ERR_INVALID_ARG) {
 		switch (digestsz) {
 		case 16: /* DES not supported yet */
 			return SX_ERR_INCOMPATIBLE_HW;
@@ -74,9 +74,8 @@ static int cracen_signature_set_hashalgo_from_digestsz(const struct sxhashalg **
 			break;
 		default:
 			return SX_ERR_INVALID_ARG;
-			break;
 		}
-	} else if (SX_OK != status) {
+	} else if (status != SX_OK) {
 		return status;
 	}
 	/* if status == SX_OK */
@@ -202,12 +201,11 @@ static int cracen_signature_prepare_ec_pubkey(struct sitask *t, struct si_sig_pu
 			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
 				pubkey->key.ed25519 = (struct sx_ed25519_pt *)key_buffer;
 				return SX_OK;
-			} else {
-				if (curvesz != key_buffer_size) {
-					return SX_ERR_INVALID_KEY_SZ;
-				}
-				pubkey->key.ed25519 = (struct sx_ed25519_pt *)pubkey_buffer;
 			}
+			if (curvesz != key_buffer_size) {
+				return SX_ERR_INVALID_KEY_SZ;
+			}
+			pubkey->key.ed25519 = (struct sx_ed25519_pt *)pubkey_buffer;
 		}
 	}
 
@@ -244,6 +242,7 @@ static int cracen_signature_prepare_ec_pubkey(struct sitask *t, struct si_sig_pu
 
 	if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(psa_get_key_type(attributes))) {
 		struct si_sig_privkey m_privkey;
+
 		status = cracen_signature_prepare_ec_prvkey(&m_privkey, key_buffer, key_buffer_size,
 							    sicurve, alg, attributes, message,
 							    digestsz);
@@ -331,7 +330,7 @@ static psa_status_t cracen_signature_ecc_verify(int message, const psa_key_attri
 	const struct sx_pk_ecurve *curve;
 	struct si_sig_pubkey pubkey = {0};
 	struct si_sig_signature sign = {0};
-	char pubkey_buffer[132] = {0}; // 521 bits * 2
+	char pubkey_buffer[132] = {0}; /* 521 bits * 2 */
 
 	/* Workmem for sicrypto ecc verify task is digest size. */
 	char workmem[PSA_HASH_MAX_SIZE];
@@ -351,7 +350,7 @@ static psa_status_t cracen_signature_ecc_verify(int message, const psa_key_attri
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	si_task_init(&t, workmem, sizeof workmem);
+	si_task_init(&t, workmem, sizeof(workmem));
 
 	si_status = cracen_signature_prepare_ec_pubkey(&t, &pubkey, (char *)key_buffer,
 						       key_buffer_size, &curve, alg, attributes,
@@ -457,7 +456,7 @@ static psa_status_t cracen_signature_rsa_sign(int message, const psa_key_attribu
 
 	si_task_init(&t, workmem, sizeof(workmem));
 
-	if (PSA_ALG_RSA_PKCS1V15_SIGN_RAW == alg || key_bits_attr < 2048) {
+	if (alg == PSA_ALG_RSA_PKCS1V15_SIGN_RAW || key_bits_attr < 2048) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -538,9 +537,9 @@ static psa_status_t cracen_signature_rsa_verify(int message, const psa_key_attri
 	/* Workmem for RSA verify task is  rsa_modulus_size + 2 * hash_digest_size + 4 */
 	char workmem[PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + 2 * PSA_HASH_MAX_SIZE + 4];
 
-	si_task_init(&t, workmem, sizeof workmem);
+	si_task_init(&t, workmem, sizeof(workmem));
 
-	if (PSA_ALG_RSA_PKCS1V15_SIGN_RAW == alg || key_bits_attr < 2048) {
+	if (alg == PSA_ALG_RSA_PKCS1V15_SIGN_RAW || key_bits_attr < 2048) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 	if (((message) && (!SI_PSA_IS_KEY_FLAG(PSA_KEY_USAGE_VERIFY_MESSAGE, attributes))) ||

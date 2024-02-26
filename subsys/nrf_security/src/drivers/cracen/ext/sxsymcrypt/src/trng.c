@@ -20,23 +20,27 @@
 #define RNG_FIFOLEVEL_GRANULARITY (4)
 #define RNG_NO_OF_COND_KEYS	  (4)
 
-static int ba431_check_state()
+static int ba431_check_state(void)
 {
 	uint32_t state = sx_rd_trng(BA431_REG_Status_OFST);
+
 	state = (state & BA431_FLD_Status_State_MASK) >> BA431_FLD_Status_State_LSB;
 
-	if (BA431_STATE_ERROR == state) {
+	if (state == BA431_STATE_ERROR) {
 		return SX_ERR_RESET_NEEDED;
-	} else if ((BA431_STATE_RESET == state) || (BA431_STATE_STARTUP == state)) {
+	}
+
+	if ((state == BA431_STATE_RESET) || (state == BA431_STATE_STARTUP)) {
 		return SX_ERR_HW_PROCESSING;
 	}
 
 	return SX_OK;
 }
 
-static void ba431_softreset()
+static void ba431_softreset(void)
 {
 	uint32_t ctrl_reg = sx_rd_trng(BA431_REG_Control_OFST);
+
 	sx_wr_trng(BA431_REG_Control_OFST, ctrl_reg | BA431_FLD_Control_SoftRst_MASK);
 	sx_wr_trng(BA431_REG_Control_OFST, ctrl_reg & ~BA431_FLD_Control_SoftRst_MASK);
 }
@@ -89,6 +93,7 @@ int sx_trng_open(struct sx_trng *ctx, const struct sx_trng_config *config)
 
 	/* Configure the control register */
 	uint32_t control = sx_rd_trng(BA431_REG_Control_OFST);
+
 	control &= ~(BA431_FLD_Control_Nb128BitBlocks_MASK | BA431_FLD_Control_ForceActiveROs_MASK |
 		     BA431_FLD_Control_HealthTestBypass_MASK | BA431_FLD_Control_AIS31Bypass_MASK);
 	control |= (RNG_NB_128BIT_BLOCKS << BA431_FLD_Control_Nb128BitBlocks_LSB) | ctrlbitmask;
@@ -147,8 +152,10 @@ int sx_trng_get(struct sx_trng *ctx, char *dst, size_t size)
 	}
 
 	/* Block sizes above the FIFO wakeup level to guarantee that the
-	 * hardware will be able at some time to provide the requested bytes. */
+	 * hardware will be able at some time to provide the requested bytes.
+	 */
 	uint32_t wakeup_level = sx_rd_trng(BA431_REG_FIFOThreshold_OFST);
+
 	if (size > (wakeup_level + 1) * 16) {
 		return SX_ERR_TOO_BIG;
 	}
@@ -161,6 +168,7 @@ int sx_trng_get(struct sx_trng *ctx, char *dst, size_t size)
 
 	while (size) {
 		uint32_t data;
+
 		data = sx_rd_trng(BA431_REG_FIFODATA_OFST);
 		for (size_t i = 0; (i < sizeof(data)) && (size); i++, size--) {
 			*dst = (char)(data & 0xFF);

@@ -19,7 +19,7 @@
 #include "zephyr/sys/__assert.h"
 
 /* NCSDK-25121: Ensure address of this array is at a fixed address. */
-uint8_t kmu_push_area[64] __attribute__((aligned(8)));
+uint8_t kmu_push_area[64] __aligned(8);
 
 typedef struct kmu_metadata {
 	uint32_t metadata_version: 4;
@@ -71,12 +71,14 @@ static psa_status_t get_encryption_key(const uint8_t *context, uint8_t *key)
 {
 	psa_status_t status;
 	psa_key_attributes_t mkek_attr = PSA_KEY_ATTRIBUTES_INIT;
+
 	psa_set_key_id(&mkek_attr, CRACEN_BUILTIN_MKEK_ID);
 	psa_set_key_lifetime(&mkek_attr,
 			     PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 				     PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN));
 
 	cracen_key_derivation_operation_t op = {};
+
 	status = cracen_key_derivation_setup(&op, PSA_ALG_CMAC);
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -107,6 +109,7 @@ static psa_status_t cracen_kmu_encrypt(const uint8_t *key, size_t key_length,
 	uint8_t key_buffer[32] = {};
 	psa_status_t status;
 	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
+
 	psa_set_key_algorithm(&attr, PSA_ALG_GCM);
 	psa_set_key_type(&attr, PSA_KEY_TYPE_AES);
 	psa_set_key_bits(&attr, 256);
@@ -119,6 +122,7 @@ static psa_status_t cracen_kmu_encrypt(const uint8_t *key, size_t key_length,
 	}
 
 	uint8_t *nonce = encrypted_buffer;
+
 	encrypted_buffer += CRACEN_KMU_SLOT_KEY_SIZE;
 	encrypted_buffer_size -= CRACEN_KMU_SLOT_KEY_SIZE;
 
@@ -141,6 +145,7 @@ static psa_status_t cracen_kmu_encrypt(const uint8_t *key, size_t key_length,
 static psa_status_t cracen_kmu_decrypt(kmu_metadata *metadata, size_t number_of_slots)
 {
 	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
+
 	psa_set_key_algorithm(&attr, PSA_ALG_GCM);
 	psa_set_key_type(&attr, PSA_KEY_TYPE_AES);
 	psa_set_key_bits(&attr, 256);
@@ -148,11 +153,13 @@ static psa_status_t cracen_kmu_decrypt(kmu_metadata *metadata, size_t number_of_
 
 	uint8_t key_buffer[32] = {50};
 	psa_status_t status = get_encryption_key(kmu_push_area, key_buffer);
+
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
 	size_t outlen = 0;
+
 	return cracen_aead_decrypt(&attr, key_buffer, sizeof(key_buffer), PSA_ALG_GCM,
 				   kmu_push_area, 12, (uint8_t *)metadata, sizeof(*metadata),
 				   kmu_push_area + CRACEN_KMU_SLOT_KEY_SIZE,
@@ -176,6 +183,7 @@ int cracen_kmu_prepare_key(const uint8_t *user_data)
 		return SX_OK;
 	case KMU_METADATA_SCHEME_ENCRYPTED: {
 		kmu_metadata metadata;
+
 		if (lib_kmu_read_metadata((int)key->slot_id, (uint32_t *)&metadata) != 0) {
 			return SX_ERR_INVALID_KEYREF;
 		}
@@ -186,6 +194,7 @@ int cracen_kmu_prepare_key(const uint8_t *user_data)
 		}
 
 		psa_status_t status = cracen_kmu_decrypt(&metadata, key->number_of_slots);
+
 		if (status != PSA_SUCCESS) {
 			return SX_ERR_PLATFORM_ERROR;
 		}
@@ -214,6 +223,7 @@ int cracen_kmu_clean_key(const uint8_t *user_data)
 bool is_secondary_slot(kmu_metadata *metadata)
 {
 	uint32_t value = 0xffffffff;
+
 	return memcmp(&value, metadata, sizeof(value)) == 0;
 }
 
@@ -290,6 +300,7 @@ psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attribute
 	psa_key_usage_t usage_flags = 0;
 
 	uint32_t metadata_usage_flags = metadata->usage_flags;
+
 	for (size_t i = 0; metadata_usage_flags; i++) {
 		if (metadata_usage_flags & 1) {
 			if (i > ARRAY_SIZE(metadata_usage_flags_mapping)) {
@@ -393,6 +404,7 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 	}
 
 	psa_key_usage_t resulting_usage = 0;
+
 	for (size_t i = 0; i < ARRAY_SIZE(metadata_usage_flags_mapping); i++) {
 		if (psa_get_key_usage_flags(key_attr) & metadata_usage_flags_mapping[i]) {
 			metadata->usage_flags |= 1 << i;
@@ -513,13 +525,15 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		       CRACEN_KMU_SLOT_KEY_SIZE);
 
 		int st = lib_kmu_provision_slot(slot_id + i, &kmu_desc);
+
 		if (st) {
 			/* We've already verified that this slot empty, so it should not fail. */
 
 			/* Attempt cleanup. */
 			for (size_t j = 0; j < i; j++) {
 				/* Cleanup will fail if rpolicy is LOCKED or REVOKED.
-				 * But there is nothing we can do to recover. */
+				 * But there is nothing we can do to recover.
+				 */
 				(void)lib_kmu_revoke_slot(slot_id + j);
 			}
 
@@ -548,9 +562,10 @@ psa_status_t cracen_kmu_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifeti
 {
 	kmu_metadata metadata;
 
-	unsigned slot_id = CRACEN_PSA_GET_KMU_SLOT(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
+	unsigned int slot_id = CRACEN_PSA_GET_KMU_SLOT(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
 
 	int kmu_status = lib_kmu_read_metadata((int)slot_id, (uint32_t *)&metadata);
+
 	if (kmu_status == -LIB_KMU_ERROR || is_secondary_slot(&metadata)) {
 		return PSA_ERROR_DOES_NOT_EXIST;
 	}
@@ -572,6 +587,7 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 {
 	kmu_metadata metadata;
 	int kmu_status = lib_kmu_read_metadata((int)slot_number, (uint32_t *)&metadata);
+
 	if (kmu_status == -LIB_KMU_ERROR || is_secondary_slot(&metadata)) {
 		return PSA_ERROR_DOES_NOT_EXIST;
 	}
@@ -589,6 +605,7 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 	if (key_buffer_size >= cracen_get_opaque_size(attributes)) {
 		*key_buffer_length = cracen_get_opaque_size(attributes);
 		kmu_opaque_key_buffer *key = (kmu_opaque_key_buffer *)key_buffer;
+
 		key->key_usage_scheme = metadata.key_usage_scheme;
 		key->number_of_slots = metadata.size > METADATA_ALG_KEY_BITS_128 ? 2 : 1;
 		if (key->key_usage_scheme == KMU_METADATA_SCHEME_ENCRYPTED) {

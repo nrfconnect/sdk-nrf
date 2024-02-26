@@ -17,26 +17,21 @@
 #include <identity_key.h>
 #include <tfm_spm_log.h>
 
-
 static enum tfm_plat_err_t disable_debugging(void)
 {
 	/* Configure the UICR such that upon the next reset, APPROTECT will be enabled */
 	bool approt_writable;
 
-	approt_writable = nrfx_nvmc_word_writable_check(
-		(uint32_t)&NRF_UICR_S->APPROTECT,
-		UICR_APPROTECT_PALL_Protected);
-	approt_writable &= nrfx_nvmc_word_writable_check(
-		(uint32_t)&NRF_UICR_S->SECUREAPPROTECT,
-		UICR_SECUREAPPROTECT_PALL_Protected);
+	approt_writable = nrfx_nvmc_word_writable_check((uint32_t)&NRF_UICR_S->APPROTECT,
+							UICR_APPROTECT_PALL_Protected);
+	approt_writable &= nrfx_nvmc_word_writable_check((uint32_t)&NRF_UICR_S->SECUREAPPROTECT,
+							 UICR_SECUREAPPROTECT_PALL_Protected);
 
 	if (approt_writable) {
-		nrfx_nvmc_word_write(
-			(uint32_t)&NRF_UICR_S->APPROTECT,
-			UICR_APPROTECT_PALL_Protected);
-		nrfx_nvmc_word_write(
-			(uint32_t)&NRF_UICR_S->SECUREAPPROTECT,
-			UICR_SECUREAPPROTECT_PALL_Protected);
+		nrfx_nvmc_word_write((uint32_t)&NRF_UICR_S->APPROTECT,
+				     UICR_APPROTECT_PALL_Protected);
+		nrfx_nvmc_word_write((uint32_t)&NRF_UICR_S->SECUREAPPROTECT,
+				     UICR_SECUREAPPROTECT_PALL_Protected);
 	} else {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
@@ -69,8 +64,7 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 
 	/* The Hardware Unique Keys should be already written */
 	if (!hw_unique_key_are_any_written()) {
-		SPMLOG_ERRMSG(
-			"This device has not been provisioned with Hardware Unique Keys.");
+		SPMLOG_ERRMSG("This device has not been provisioned with Hardware Unique Keys.");
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
@@ -92,7 +86,6 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 	if (disable_debugging() != TFM_PLAT_ERR_SUCCESS) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
-
 
 	/* Transition to the SECURED lifecycle state */
 	if (tfm_attest_update_security_lifecycle_otp(TFM_SLC_SECURED) != 0) {
@@ -131,8 +124,8 @@ static bool dummy_key_is_present(void)
 	uint8_t first_8_bytes[8] = {0xA9, 0xB4, 0x54, 0xB2, 0x6D, 0x6F, 0x90, 0xA4};
 
 	/* Check if any bytes differ */
-	for(int i = 0; i < 8; i++) {
-		if(key[i] != first_8_bytes[i]) {
+	for (int i = 0; i < 8; i++) {
+		if (key[i] != first_8_bytes[i]) {
 			return false;
 		}
 	}
@@ -143,7 +136,6 @@ static bool dummy_key_is_present(void)
 	return false;
 #endif
 }
-
 
 void tfm_plat_provisioning_check_for_dummy_keys(void)
 {

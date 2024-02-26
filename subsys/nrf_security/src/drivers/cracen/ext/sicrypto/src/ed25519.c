@@ -136,7 +136,8 @@ static int ed25519_sign_continue(struct sitask *t, struct siwq *wq)
 	si_wq_run_after(t, &t->params.ed25519_sign.wq, ed25519_sign_finish);
 
 	/* Compute (r + k * s) mod L. This gives the second part of the
-    signature, which is the encoded S. */
+	 * signature, which is the encoded S.
+	 */
 	pkreq = sx_pk_async_ed25519_sign_go(
 		(const struct sx_ed25519_dgst *)(t->workmem + SX_ED25519_SZ),
 		(const struct sx_ed25519_dgst *)(t->workmem + 3 * SX_ED25519_SZ),
@@ -160,7 +161,8 @@ static int ed25519_sign_k_hash(struct sitask *t, struct siwq *wq)
 	}
 
 	/* Get result of the point multiplication. This is the encoding of the
-    [s]B point, which is the public key A. */
+	 * [s]B point, which is the public key A.
+	 */
 	sx_async_ed25519_ptmult_end(t->pk, (struct sx_ed25519_pt *)(t->workmem + SX_ED25519_SZ));
 
 	si_wq_run_after(t, &t->params.ed25519_sign.wq, ed25519_sign_continue);
@@ -180,13 +182,15 @@ static int ed25519_compute_pubkey(struct sitask *t)
 	struct sx_pk_acq_req pkreq;
 
 	/* The secret scalar s is computed in place from the first half of the
-    private key digest. */
+	 * private key digest.
+	 */
 	t->workmem[0] &= ~0x07;			/* clear bits 0, 1 and 2 */
 	t->workmem[SX_ED25519_SZ - 1] &= ~0x80; /* clear bit 255 */
 	t->workmem[SX_ED25519_SZ - 1] |= 0x40;	/* set bit 254 */
 
 	/* Clear second half of private key digest: sx_async_ed25519_ptmult_go()
-    works on an input of SX_ED25519_DGST_SZ bytes. */
+	 * works on an input of SX_ED25519_DGST_SZ bytes.
+	 */
 	safe_memset(t->workmem + SX_ED25519_SZ, t->workmemsz - SX_ED25519_SZ, 0, SX_ED25519_SZ);
 
 	/* Perform point multiplication A = [s]B, to obtain the public key A. */
@@ -210,7 +214,8 @@ static int ed25519_sign_pubkey_ptmult(struct sitask *t, struct siwq *wq)
 	}
 
 	/* Get result of the point multiplication. This is the encoded point R,
-    which is the first part of the signature. */
+	 * which is the first part of the signature.
+	 */
 	sx_async_ed25519_ptmult_end(t->pk,
 				    (struct sx_ed25519_pt *)t->params.ed25519_sign.signature->r);
 
@@ -256,7 +261,8 @@ static int ed25519_sign_hash_message(struct sitask *t, struct siwq *wq)
 	si_wq_run_after(t, &t->params.ed25519_sign.wq, ed25519_sign_r_ptmult);
 
 	/* Obtain r by hashing (prefix || message), where prefix is the second
-    half of the private key digest. */
+	 * half of the private key digest.
+	 */
 	si_hash_create(t, &sxhashalg_sha2_512);
 	si_task_consume(t, t->workmem + SX_ED25519_SZ, SX_ED25519_SZ);
 	si_task_consume(t, t->params.ed25519_sign.msg, t->params.ed25519_sign.msgsz);
@@ -312,7 +318,8 @@ static int ed25519_genpubkey_finish(struct sitask *t, struct siwq *wq)
 	}
 
 	/* Get result of the point multiplication. This is the encoding of the
-    [s]B point, which is the public key. */
+	 * [s]B point, which is the public key.
+	 */
 	sx_async_ed25519_ptmult_end(t->pk, t->params.ed25519_pubkey.pubkey);
 
 	return t->statuscode;

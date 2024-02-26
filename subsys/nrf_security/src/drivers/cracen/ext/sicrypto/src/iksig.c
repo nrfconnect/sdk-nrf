@@ -109,6 +109,7 @@ static int finish_ecdsa_ik_sign(struct sitask *t, struct siwq *wq)
 
 	const char **outputs = sx_pk_get_output_ops(t->pk);
 	const int opsz = sx_pk_get_opsize(t->pk);
+
 	si_ecdsa_read_sig(t->params.ik.signature, outputs[0], outputs[1], opsz);
 
 	return exit_ikg(t);
@@ -152,7 +153,8 @@ static int start_ecdsa_ik_sign(struct sitask *t, struct siwq *wq)
 static void run_ecdsa_ik_hash(struct sitask *t)
 {
 	/* Override SX_ERR_HW_PROCESSING state pre-set by si_task_run()
-	 * to be able to start the hash */
+	 * to be able to start the hash
+	 */
 	t->statuscode = SX_ERR_READY;
 	si_task_produce(t, t->workmem, sx_hash_get_digestsz(&t->u.h));
 
@@ -183,6 +185,7 @@ static int finish_ik_pubkey(struct sitask *t, struct siwq *wq)
 
 	const char **outputs = sx_pk_get_output_ops(t->pk);
 	const int opsz = sx_pk_get_opsize(t->pk);
+
 	sx_rdpkmem(t->params.ik.pubkey->key.eckey.qx, outputs[0], opsz);
 	sx_rdpkmem(t->params.ik.pubkey->key.eckey.qy, outputs[1], opsz);
 
@@ -229,7 +232,7 @@ static const struct si_sig_def si_sig_def_ik = {
 	.pubkey = create_pubkey,
 };
 
-static const struct sxhashalg *select_optimal_hashalg()
+static const struct sxhashalg *select_optimal_hashalg(void)
 {
 	const struct sx_pk_capabilities *caps = sx_pk_fetch_capabilities();
 	int sz = caps->ik_opsz;
@@ -237,13 +240,10 @@ static const struct sxhashalg *select_optimal_hashalg()
 	switch (sz) {
 	case 48:
 		return &sxhashalg_sha2_384;
-		break;
 	case 66:
 		return &sxhashalg_sha2_512;
-		break;
 	default:
 		return &sxhashalg_sha2_256;
-		break;
 	}
 }
 

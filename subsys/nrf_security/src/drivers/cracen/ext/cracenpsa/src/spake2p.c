@@ -58,6 +58,7 @@ static psa_status_t cracen_update_hash_with_length(cracen_hash_operation_t *hash
 {
 	psa_status_t status;
 	uint8_t len[8] = {0};
+
 	if (prefix) {
 		data_len++;
 	}
@@ -130,6 +131,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	psa_status_t status;
 
 	uint8_t w0N[CRACEN_P256_POINT_SIZE];
+
 	MAKE_SX_POINT(pt_n_w0N, w0N, CRACEN_P256_POINT_SIZE);
 	MAKE_SX_POINT(pt_NM, (char *)operation->NM, CRACEN_P256_POINT_SIZE);
 	sx_ecop w0 = {.bytes = operation->w0, .sz = sizeof(operation->w0)};
@@ -149,6 +151,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	uint8_t zeroes[CRACEN_P256_KEY_SIZE] = {0};
 	sx_op a = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (char *)zeroes};
 	sx_op b = {.sz = CRACEN_P256_KEY_SIZE, .bytes = &w0N[CRACEN_P256_KEY_SIZE]};
+
 	status = sx_mod_primitive_cmd(NULL, cmd, &modulo, &a, &b, &b);
 	if (status) {
 		return silex_statuscodes_to_psa(status);
@@ -163,6 +166,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 
 	/* Calculate Z = x * (previous result) */
 	sx_ecop x = {.sz = CRACEN_P256_KEY_SIZE, .bytes = operation->xy};
+
 	MAKE_SX_POINT(pt_Z, Z, CRACEN_P256_POINT_SIZE);
 	status = sx_ecp_ptmult(operation->curve, &x, &pt_n_w0N, &pt_Z);
 	if (status) {
@@ -257,11 +261,13 @@ static psa_status_t cracen_get_confirmation(cracen_spake2p_operation_t *operatio
 					    uint8_t *confirmation)
 {
 	psa_key_attributes_t attributes = {};
+
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_SIGN_MESSAGE);
 	psa_set_key_algorithm(&attributes, PSA_ALG_HMAC(PSA_ALG_SHA_256));
 	psa_set_key_type(&attributes, PSA_KEY_TYPE_HMAC);
 
 	size_t length;
+
 	return psa_driver_wrapper_mac_compute(
 		&attributes, kconf, CRACEN_SPAKE2P_HASH_LEN, PSA_ALG_HMAC(PSA_ALG_SHA_256), share,
 		CRACEN_P256_POINT_SIZE, confirmation, CRACEN_SPAKE2P_HASH_LEN, &length);
@@ -280,7 +286,8 @@ static psa_status_t cracen_p256_reduce(cracen_spake2p_operation_t *operation,
 	sx_op result = {.sz = CRACEN_P256_KEY_SIZE, .bytes = result_buffer};
 
 	/* The nistp256 curve order (n) is prime so we use the ODD variant of the reduce
-	 * command. */
+	 * command.
+	 */
 	const struct sx_pk_cmd_def *cmd = SX_PK_CMD_ODD_MOD_REDUCE;
 	int sx_status = sx_mod_single_op_cmd(cmd, &modulo, &b, &result);
 
@@ -346,10 +353,12 @@ static psa_status_t cracen_get_key_share(cracen_spake2p_operation_t *operation)
 
 	uint8_t xP[CRACEN_P256_POINT_SIZE];
 	uint8_t w0M[CRACEN_P256_POINT_SIZE];
+
 	MAKE_SX_POINT(pt_xP, xP, CRACEN_P256_POINT_SIZE);
 
 	/* Calculate x * P */
 	sx_ecop x = {.bytes = operation->xy, .sz = CRACEN_P256_KEY_SIZE};
+
 	status = sx_ecp_ptmult(operation->curve, &x, SX_PTMULT_CURVE_GENERATOR, &pt_xP);
 	if (status != SX_OK) {
 		return silex_statuscodes_to_psa(status);
@@ -357,6 +366,7 @@ static psa_status_t cracen_get_key_share(cracen_spake2p_operation_t *operation)
 
 	/* Calculate w0 * M */
 	sx_ecop w0 = {.bytes = operation->w0, .sz = sizeof(operation->w0)};
+
 	MAKE_SX_POINT(pt_w0M, w0M, CRACEN_P256_POINT_SIZE);
 	MAKE_SX_POINT(pt_M, (char *)operation->MN, CRACEN_P256_POINT_SIZE);
 	status = sx_ecp_ptmult(operation->curve, &w0, &pt_M, &pt_w0M);
@@ -364,7 +374,7 @@ static psa_status_t cracen_get_key_share(cracen_spake2p_operation_t *operation)
 		return silex_statuscodes_to_psa(status);
 	}
 
-	/* Add the the two previous results. */
+	/* Add the two previous results. */
 	MAKE_SX_POINT(pt_XY, operation->XY + 1, CRACEN_P256_POINT_SIZE);
 	status = sx_ecp_ptadd(operation->curve, &pt_w0M, &pt_xP, &pt_XY);
 	if (status != SX_OK) {
@@ -609,6 +619,6 @@ psa_status_t cracen_spake2p_get_implicit_key(cracen_spake2p_operation_t *operati
 psa_status_t cracen_spake2p_abort(cracen_spake2p_operation_t *operation)
 {
 	cracen_hash_abort(&operation->hash_op);
-	safe_memzero(operation, sizeof *operation);
+	safe_memzero(operation, sizeof(*operation));
 	return PSA_SUCCESS;
 }

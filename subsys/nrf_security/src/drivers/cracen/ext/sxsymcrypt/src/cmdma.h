@@ -23,7 +23,7 @@
 #define DMATAG_BA419	      (0x0B)
 #define DMATAG_CONFIG(offset) ((1 << 4) | (offset << 8))
 
-// can be 0, 1 or 2
+/* can be 0, 1 or 2 */
 #define DMATAG_DATATYPE(x)   (x << 6)
 #define DMATAG_CFG_BA415_W   (DMATAG_AESGCM | DMATAG_CONFIG(0))
 #define DMATAG_CFG_BA415_KEY (DMATAG_AESGCM | DMATAG_CONFIG(0x10))
@@ -178,10 +178,11 @@ void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end);
  *  - SX_OK: The DMA transfers finished successfully.
  *  - SX_ERR_DMA_FAILED: The DMA engine failed.
  */
-int sx_cmdma_check();
+int sx_cmdma_check(void);
 
 /* Struct describing the features of CRACEN. ba411, ba413 and ba419 are the HWCONFIG
-   from the IPS. */
+ * from the PS.
+ */
 static const struct {
 	uint32_t capabilities;
 	uint32_t ba411;
@@ -191,6 +192,6 @@ static const struct {
 
 /** Soft-reset of the DMA
  */
-void sx_cmdma_reset();
+void sx_cmdma_reset(void);
 
 #endif /* CMDMA_HEADER_FILE */

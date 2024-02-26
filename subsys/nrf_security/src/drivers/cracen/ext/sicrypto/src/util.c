@@ -44,6 +44,7 @@ int si_wait_on_prng(struct sitask *t)
 int si_silexpk_status(struct sitask *t)
 {
 	int r = sx_pk_has_finished(t->pk);
+
 	if (r == SX_ERR_BUSY) {
 		return SX_ERR_HW_PROCESSING;
 	}
@@ -53,6 +54,7 @@ int si_silexpk_status(struct sitask *t)
 int si_silexpk_wait(struct sitask *t)
 {
 	int r = sx_pk_wait(t->pk);
+
 	return si_task_mark_final(t, r);
 }
 

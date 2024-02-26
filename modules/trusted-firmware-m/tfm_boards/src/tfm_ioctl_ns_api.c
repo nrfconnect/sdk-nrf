@@ -52,16 +52,14 @@ int tfm_platform_firmware_info(uint32_t fw_address, struct fw_info *info)
 	args.fw_address = (void *)fw_address;
 	args.info = info;
 
-	ret = tfm_platform_ioctl(TFM_PLATFORM_IOCTL_FW_INFO, &in_vec,
-				 &out_vec);
+	ret = tfm_platform_ioctl(TFM_PLATFORM_IOCTL_FW_INFO, &in_vec, &out_vec);
 
 	return status2err(ret, out.result);
 }
 
 /* Don't include the function if it is mocked for tests */
 #ifndef CONFIG_MOCK_TFM_PLATFORM_S0_FUNCTIONS
-int tfm_platform_s0_active(uint32_t s0_address, uint32_t s1_address,
-			   bool *s0_active)
+int tfm_platform_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active)
 {
 	struct fw_info s0, s1;
 	bool s0_valid, s1_valid;
@@ -88,7 +86,7 @@ int tfm_platform_s0_active(uint32_t s0_address, uint32_t s1_address,
 #endif /* not defined(CONFIG_MOCK_TFM_PLATFORM_S0_FUNCTIONS) */
 #endif
 
-int tfm_platform_ns_fault_set_handler(struct tfm_ns_fault_service_handler_context  *context,
+int tfm_platform_ns_fault_set_handler(struct tfm_ns_fault_service_handler_context *context,
 				      tfm_ns_fault_service_handler_callback callback)
 {
 	enum tfm_platform_err_t ret;
@@ -106,8 +104,7 @@ int tfm_platform_ns_fault_set_handler(struct tfm_ns_fault_service_handler_contex
 	args.context = context;
 	args.callback = callback;
 
-	ret = tfm_platform_ioctl(TFM_PLATFORM_IOCTL_NS_FAULT, &in_vec,
-				 &out_vec);
+	ret = tfm_platform_ioctl(TFM_PLATFORM_IOCTL_NS_FAULT, &in_vec, &out_vec);
 
 	return status2err(ret, out.result);
 }

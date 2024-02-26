@@ -53,6 +53,7 @@ static inline char *get_workmem_pointer(struct sitask *t)
 {
 	size_t digestsz = sx_hash_get_alg_digestsz(t->hashalg);
 	size_t blocksz = sx_hash_get_alg_blocksz(t->hashalg);
+
 	return t->workmem + HMAC_WORKMEM_SZ(digestsz, blocksz);
 }
 
@@ -60,6 +61,7 @@ static inline size_t get_workmem_size(struct sitask *t)
 {
 	size_t digestsz = sx_hash_get_alg_digestsz(t->hashalg);
 	size_t blocksz = sx_hash_get_alg_blocksz(t->hashalg);
+
 	return t->workmemsz - HMAC_WORKMEM_SZ(digestsz, blocksz);
 }
 
@@ -82,10 +84,10 @@ static int pbkdf2_innerloop_finish(struct sitask *t, struct siwq *wq)
 	if (t->params.pbkdf2.outsz) {
 		/* perform another outer loop iteration */
 		return pbkdf2_produce_continue(t);
-	} else {
-		/* end of outer loop, hence of the task */
-		return si_task_mark_final(t, SX_OK);
 	}
+
+	/* end of outer loop, hence of the task */
+	return si_task_mark_final(t, SX_OK);
 }
 
 static int pbkdf2_innerloop_continue(struct sitask *t, struct siwq *wq)
@@ -118,7 +120,8 @@ static int pbkdf2_innerloop_continue(struct sitask *t, struct siwq *wq)
 }
 
 /* Perform an outer loop iteration and the first inner loop iteration. The
-pbkdf2_workmem argument must point to the workmem of the PBKDF2 task. */
+ * pbkdf2_workmem argument must point to the workmem of the PBKDF2 task.
+ */
 static int pbkdf2_outer_loop(struct sitask *t, char *pbkdf2_workmem)
 {
 	char *outer_ctr = pbkdf2_workmem;
@@ -224,9 +227,11 @@ void si_kdf_create_pbkdf2(struct sitask *t, const struct sxhashalg *hashalg, con
 	t->params.pbkdf2.saltsz = saltsz;
 
 	/* if the password needs to be hashed, do it here to avoid repeating the
-    key hash computation for each HMAC task execution */
+	 * key hash computation for each HMAC task execution
+	 */
 	if (t->params.pbkdf2.pswdsz > blocksz) {
 		char *wmem = get_workmem_pointer(t);
+
 		pswd_hash = wmem + PBKDF2_COUNTER_SZ + 2 * digestsz;
 
 		si_hash_create(t, t->hashalg);

@@ -7,11 +7,12 @@
  */
 
 #include <silexpk/core.h>
+#include <zephyr/sys/util.h>
 
-static const char *descriptions[] = {
+static const char * const descriptions[] = {
 	"OK",
-	"Invalid paramter",
-	"Unknwon error",
+	"Invalid parameter",
+	"Unknown error",
 	"Busy",
 	"Non quadratic residue",
 	"Composite value",
@@ -33,7 +34,7 @@ static const char *descriptions[] = {
 
 const char *sx_describe_statuscode(unsigned int code)
 {
-	if (code >= sizeof(descriptions) / sizeof(descriptions[0])) {
+	if (code >= ARRAY_SIZE(descriptions)) {
 		return "Invalid status code";
 	}
 	return descriptions[code];

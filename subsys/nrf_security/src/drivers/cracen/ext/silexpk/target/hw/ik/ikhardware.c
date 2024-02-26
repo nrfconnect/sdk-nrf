@@ -29,6 +29,7 @@ int sx_pk_is_ik_cmd(sx_pk_req *req)
 int sx_ik_read_status(sx_pk_req *req)
 {
 	uint32_t status = sx_pk_rdreg(&req->regs, IK_REG_PK_STATUS);
+
 	if (status & 1) {
 		return SX_ERR_NOT_IMPLEMENTED;
 	}
@@ -41,9 +42,9 @@ int sx_ik_read_status(sx_pk_req *req)
 
 void sx_pk_run(sx_pk_req *req)
 {
-	// Selection of operands ignore by hardware if in IK mode
+	/* Selection of operands ignore by hardware if in IK mode */
 	sx_pk_select_ops(req);
-	wmb();
+	wmb(); /* comment for compliance */
 	if (sx_pk_is_ik_cmd(req)) {
 		sx_pk_wrreg(&req->regs, IK_REG_PK_CONTROL,
 			    IK_PK_CONTROL_START_OP | IK_PK_CONTROL_CLEAR_IRQ);
@@ -55,14 +56,15 @@ void sx_pk_run(sx_pk_req *req)
 
 int sx_pk_get_status(sx_pk_req *req)
 {
-	rmb();
+	rmb(); /* comment for compliance */
 
 	if (sx_pk_is_ik_cmd(req)) {
 		return sx_ik_read_status(req);
-	} else {
-		uint32_t status = sx_pk_rdreg(&req->regs, PK_REG_STATUS);
-		return convert_ba414_status(status);
 	}
+
+	uint32_t status = sx_pk_rdreg(&req->regs, PK_REG_STATUS);
+
+	return convert_ba414_status(status);
 }
 
 int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *inputs)
@@ -71,6 +73,7 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 	char *cryptoram = req->cryptoram;
 	int i = 0;
 	const struct sx_pk_capabilities *caps;
+
 	caps = sx_pk_fetch_capabilities();
 
 	if (!caps->ik_opsz) {
@@ -79,8 +82,10 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 	}
 
 	int max_opsz = caps->max_gfp_opsz;
+
 	req->op_size = caps->ik_opsz;
 	uint32_t rval = req->cmd->cmdcode & 0x301;
+
 	if (req->cmd->cmdcode == PK_OP_IK_EXIT) {
 		req->ik_mode = 0;
 	} else {
@@ -90,6 +95,7 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 		}
 		uint32_t config = sx_pk_rdreg(&req->regs, IK_REG_HW_CONFIG);
 		uint32_t max_hw_keys = ((config & IK_NB_PRIV_KEYS_MASK) >> 4);
+
 		if (key >= max_hw_keys) {
 			sx_pk_release_req(req);
 			return SX_ERR_INVALID_PARAM;
@@ -97,12 +103,13 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 		rval |= (key << 4);
 	}
 
-	// Write IK cmd register
+	/* Write IK cmd register */
 	sx_pk_wrreg(&req->regs, IK_REG_PK_COMMAND, rval);
 
 	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
-		 * of the slot. */
+		 * of the slot.
+		 */
 		cryptoram += max_opsz - req->op_size;
 	}
 	while (slots) {
@@ -122,11 +129,11 @@ static int sx_ik_gen_keys(struct sx_regs *regs, struct sx_pk_config_ik *cfg)
 	int error = 0;
 	int success = 0;
 
-	// Reset
+	/* Reset */
 	sx_pk_wrreg(regs, IK_REG_SOFT_RST, 1);
 	sx_pk_wrreg(regs, IK_REG_SOFT_RST, 0);
 
-	// Wait for CTRDRB health check
+	/* Wait for CTRDRB health check */
 	status = IK_CTRDRBG_BUSY;
 	while (status & IK_CTRDRBG_BUSY) {
 		status = sx_pk_rdreg(regs, IK_REG_STATUS);
@@ -136,6 +143,7 @@ static int sx_ik_gen_keys(struct sx_regs *regs, struct sx_pk_config_ik *cfg)
 	}
 
 	uint32_t config = sx_pk_rdreg(regs, IK_REG_HW_CONFIG);
+
 	sx_pk_wrreg(regs, IK_REG_INITDATA, 1);
 	int person_sz = (config >> 24) & 0xF;
 
@@ -149,10 +157,11 @@ static int sx_ik_gen_keys(struct sx_regs *regs, struct sx_pk_config_ik *cfg)
 			sx_pk_wrreg(regs, IK_REG_PERSONALIZATION_STRING, cfg->key_bundle[i]);
 		}
 	}
-	/** Maximal device secret secret length **/
+	/** Maximal device secret length **/
 	int nonce_sz;
 	int reg_addr;
-	if (config & (1 << 12)) { // DF enabled
+
+	if (config & (1 << 12)) { /* DF enabled */
 		reg_addr = IK_REG_NONCE;
 		nonce_sz = (config >> 20) & 0xF;
 	} else {
@@ -173,7 +182,7 @@ static int sx_ik_gen_keys(struct sx_regs *regs, struct sx_pk_config_ik *cfg)
 		}
 	}
 
-	// Start key generation
+	/* Start key generation */
 	sx_pk_wrreg(regs, IK_REG_START, 1);
 	while (!success && !error) {
 		status = sx_pk_rdreg(regs, IK_REG_STATUS);
@@ -196,10 +205,12 @@ static int sx_ik_gen_keys(struct sx_regs *regs, struct sx_pk_config_ik *cfg)
 void sx_pk_read_ik_capabilities(struct sx_regs *regs, struct sx_pk_capabilities *caps)
 {
 	uint32_t config = sx_pk_rdreg(regs, IK_REG_HW_CONFIG);
+
 	config &= IK_CURVE_MASK;
 	int ik_opsz = 0;
-	switch (config >> 10) // Get curve ID
-	{
+
+	/* Get curve ID */
+	switch (config >> 10) {
 	case 0:
 		ik_opsz = 32;
 		break;
@@ -217,8 +228,10 @@ int sx_pk_ik_derive_keys(struct sx_pk_config_ik *cfg)
 {
 	struct sx_regs *regs = sx_pk_get_regs();
 	int r = sx_ik_gen_keys(regs, cfg);
+
 	if (!r) {
 		struct sx_pk_capabilities *caps = sx_pk_get_caps();
+
 		sx_pk_read_ik_capabilities(regs, caps);
 	}
 	return r;
@@ -228,6 +241,7 @@ int sx_pk_ik_mode_exit(struct sx_pk_cnx *cnx)
 {
 	int sx_status;
 	struct sx_pk_acq_req pkreq = sx_pk_acquire_req(SX_PK_CMD_IK_EXIT);
+
 	if (pkreq.status) {
 		return pkreq.status;
 	}
@@ -254,7 +268,7 @@ int sx_pk_ik_rng_reconfig(struct sx_pk_cnx *cnx, struct sx_pk_config_rng *cfg)
 			return SX_ERR_OPERAND_TOO_LARGE;
 		}
 
-		// Write Personalization string
+		/* Write Personalization string */
 		sx_pk_wrreg(regs, IK_REG_INITDATA, 1);
 		for (int i = 0; i < cfg->personalization_sz; i++) {
 			sx_pk_wrreg(regs, IK_REG_PERSONALIZATION_STRING, cfg->personalization[i]);

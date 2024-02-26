@@ -50,10 +50,8 @@ static psa_status_t check_brainpool_alg_and_key_bits(psa_algorithm_t alg, size_t
 	case 384:
 	case 512:
 		return PSA_SUCCESS;
-		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
-		break;
 	}
 }
 
@@ -67,13 +65,10 @@ static psa_status_t check_secp_k1_alg_and_key_bits(psa_algorithm_t alg, size_t k
 	case 192:
 	case 256:
 		return PSA_SUCCESS;
-		break;
 	case 225:
 		return PSA_ERROR_NOT_SUPPORTED;
-		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
-		break;
 	}
 }
 static psa_status_t check_secp_r1_alg_and_key_bits(psa_algorithm_t alg, size_t key_bits)
@@ -89,10 +84,8 @@ static psa_status_t check_secp_r1_alg_and_key_bits(psa_algorithm_t alg, size_t k
 	case 384:
 	case 521:
 		return PSA_SUCCESS;
-		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
-		break;
 	}
 }
 
@@ -106,10 +99,8 @@ static psa_status_t check_montgmr_alg_and_key_bits(psa_algorithm_t alg, size_t k
 	case 255:
 	case 448:
 		return PSA_SUCCESS;
-		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
-		break;
 	}
 }
 
@@ -120,13 +111,10 @@ static psa_status_t check_edwards_alg_and_key_bits(psa_algorithm_t alg, size_t k
 		switch (key_bits) {
 		case 255:
 			return PSA_SUCCESS;
-			break;
 		case 448:
 			return PSA_ERROR_NOT_SUPPORTED;
-			break;
 		default:
 			return PSA_ERROR_INVALID_ARGUMENT;
-			break;
 		}
 		break;
 	case PSA_ALG_ED25519PH:
@@ -134,16 +122,13 @@ static psa_status_t check_edwards_alg_and_key_bits(psa_algorithm_t alg, size_t k
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		return PSA_ERROR_NOT_SUPPORTED;
-		break;
 	case PSA_ALG_ED448PH:
 		if (key_bits != 448) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		return PSA_ERROR_NOT_SUPPORTED;
-		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
-		break;
 	}
 }
 
@@ -184,7 +169,6 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 		(void)curve;
 		(void)key_alg;
 		return PSA_ERROR_NOT_SUPPORTED;
-		break;
 	}
 
 	return status;
@@ -203,16 +187,12 @@ static psa_status_t check_rsa_key_attributes(const psa_key_attributes_t *attribu
 	switch (key_bits) {
 	case 2048:
 		return PSA_SUCCESS;
-		break;
 	case 3072:
 		return PSA_SUCCESS;
-		break;
 	case 4096:
 		return PSA_SUCCESS;
-		break;
 	default:
 		return PSA_ERROR_NOT_SUPPORTED;
-		break;
 	}
 }
 
@@ -256,29 +236,27 @@ static size_t calc_key_bits_from_pub_key_buffer_size(psa_ecc_family_t curve, siz
 	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
 	case PSA_ECC_FAMILY_SECP_R1: {
 		size_t priv_key_size = (pub_key_size - 1) / 2;
+
 		if (priv_key_size == PSA_BITS_TO_BYTES(521)) {
 			/* The secpr1p521 is a special case since the number of
-			 * bits are not divisible by 8 */
+			 * bits are not divisible by 8
+			 */
 			return 521;
 		}
 		return PSA_BYTES_TO_BITS(priv_key_size);
-		break;
 	}
 	case PSA_ECC_FAMILY_MONTGOMERY:
 		if (pub_key_size == PSA_BITS_TO_BYTES(255)) {
 			return 255;
 		}
 		return PSA_BYTES_TO_BITS(pub_key_size);
-		break;
 	case PSA_ECC_FAMILY_TWISTED_EDWARDS:
 		if (pub_key_size == PSA_BITS_TO_BYTES(255)) {
 			return 255;
 		}
 		return 0;
-		break;
 	default:
 		return 0;
-		break;
 	}
 }
 
@@ -310,10 +288,11 @@ static psa_status_t import_ecc_private_key(const psa_key_attributes_t *attribute
 		return psa_status;
 	}
 
-	// TODO: NCSDK-24516: Here we don't check if key < n.
-	// We don't consider this a security issue since it should return an
-	// error when tried to be used. Remove the comment when more testing is
-	// done and we can verify that this is not needed.
+	/* TODO: NCSDK-24516: Here we don't check if key < n.
+	 * We don't consider this a security issue since it should return an
+	 * error when tried to be used. Remove the comment when more testing is
+	 * done and we can verify that this is not needed.
+	 */
 	memcpy(key_buffer, data, data_length);
 	*key_bits = key_bits_attr;
 	*key_buffer_length = data_length;
@@ -433,7 +412,8 @@ static psa_status_t import_rsa_key(const psa_key_attributes_t *attributes, const
 
 	/* When importing keys the PSA APIs allow for key bits to be 0 and they
 	 * expect it to be calculated based on the buffer size of the data. For
-	 * RSA keys the key size is the size of the modulus. */
+	 * RSA keys the key size is the size of the modulus.
+	 */
 	if (key_bits_attr == 0) {
 		key_bits_attr = PSA_BYTES_TO_BITS(n.sz);
 	}
@@ -659,6 +639,7 @@ static psa_status_t export_rsa_public_key_from_keypair(const psa_key_attributes_
 	struct sx_buf e = {0};
 
 	psa_status_t status = check_rsa_key_attributes(attributes, key_bits_attr);
+
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -675,7 +656,7 @@ static psa_status_t export_rsa_public_key_from_keypair(const psa_key_attributes_
 	/* Array of buffers in the order they will be serialized. */
 	struct sx_buf *buffers[] = {&n, &e};
 
-	for (size_t i = 0; i < sizeof(buffers) / sizeof(buffers[0]); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(buffers); i++) {
 		if (buffers[i]->bytes[0] & 0x80) {
 			buffers[i]->sz++;
 		}
@@ -683,6 +664,7 @@ static psa_status_t export_rsa_public_key_from_keypair(const psa_key_attributes_
 	}
 
 	size_t total_size = get_asn1_size_with_tag_and_length(sequence.sz);
+
 	sequence.bytes = data + total_size - sequence.sz;
 
 	if (total_size > data_size) {
@@ -691,8 +673,10 @@ static psa_status_t export_rsa_public_key_from_keypair(const psa_key_attributes_
 
 	/* Start placing buffers from the end */
 	size_t offset = total_size;
+
 	for (int i = ARRAY_SIZE(buffers) - 1; i >= 0; i--) {
 		uint8_t *new_location = data + offset - buffers[i]->sz;
+
 		if (buffers[i]->bytes[0] & 0x80) {
 			*new_location = 0x0;
 			memcpy(new_location + 1, buffers[i]->bytes, buffers[i]->sz - 1);
@@ -743,6 +727,7 @@ static psa_status_t rsa_export_public_key(const psa_key_attributes_t *attributes
 	}
 
 	psa_status_t status = check_rsa_key_attributes(attributes, psa_get_key_bits(attributes));
+
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -820,6 +805,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		}
 
 		psa_status_t status = cracen_kmu_provision(attributes, slot_id, data, data_length);
+
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
@@ -869,12 +855,14 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	size_t key_size_half = key_size_bytes / 2;
 
 	/* RSA public exponent used in PSA is 65537. We provide this as a 3 byte
-	 * big endian array. */
+	 * big endian array.
+	 */
 	uint8_t pub_exponent[] = {0x01, 0x00, 0x01};
 
 	struct sitask t;
 
 	psa_status_t status = check_rsa_key_attributes(attributes, bits);
+
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -884,21 +872,21 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	 *
 	 * RSAPrivateKey ::= SEQUENCE {
 	 *		version INTEGER, -- must be 0
-	 * 		modulus INTEGER, -- n
-	 * 		publicExponent INTEGER, -- e
-	 * 		privateExponent INTEGER, -- d
-	 * 		prime1 INTEGER, -- p
-	 * 		prime2 INTEGER, -- q
-	 * 		exponent1 INTEGER, -- d mod (p-1)
-	 * 		exponent2 INTEGER, -- d mod (q-1)
-	 * 		coefficient INTEGER, -- (inverse of q) mod p
+	 *		modulus INTEGER, -- n
+	 *		publicExponent INTEGER, -- e
+	 *		privateExponent INTEGER, -- d
+	 *		prime1 INTEGER, -- p
+	 *		prime2 INTEGER, -- q
+	 *		exponent1 INTEGER, -- d mod (p-1)
+	 *		exponent2 INTEGER, -- d mod (q-1)
+	 *		coefficient INTEGER, -- (inverse of q) mod p
 	 * }
 	 */
 	uint8_t version_bytes = 0;
 	struct sx_buf sequence = {.sz = 0};
 	struct sx_buf version = {.bytes = &version_bytes, .sz = sizeof(version_bytes)};
 
-	/* The buffers are first layed out sequentially in the buffer provided
+	/* The buffers are first laid out sequentially in the buffer provided
 	 * by the caller. When the key generation is finished we place the
 	 * buffers correctly and write the ASN.1 tag and size fields.
 	 */
@@ -924,7 +912,7 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	/* The workmem size requirement is twice the key size. */
 	uint8_t workmem[PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) * 2] = {};
 
-	si_task_init(&t, workmem, sizeof workmem);
+	si_task_init(&t, workmem, sizeof(workmem));
 	si_rsa_create_genprivkey(&t, pub_exponent, sizeof(pub_exponent), key_size_bytes, &privkey);
 	si_task_run(&t);
 
@@ -944,10 +932,12 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 
 	/* In DER encoding all numbers are in 2's complement form. We need to
 	 * pad numbers where the first bit is set with 0x0 to encode them as
-	 * positive. */
+	 * positive.
+	 */
 
 	for (int i = ARRAY_SIZE(buffers) - 1; i >= 0; i--) {
 		size_t sign_padding = 0;
+
 		if (buffers[i]->bytes[0] & 0x80) {
 			sign_padding = 1;
 		}
@@ -967,6 +957,7 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	 */
 	for (int i = ARRAY_SIZE(buffers) - 1; i >= 0; i--) {
 		uint8_t *new_position = key + total_size - offset - buffers[i]->sz;
+
 		memmove(new_position, buffers[i]->bytes, buffers[i]->sz);
 		buffers[i]->bytes = new_position;
 
@@ -1077,8 +1068,9 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 				    size_t key_buffer_size, size_t *key_buffer_length)
 {
 	/* According to the PSA Crypto Driver specification, the PSA core will set the `id`
-	   and the `lifetime` field of the attribute struct. We will fill all the other
-	   attributes, and update the `lifetime` field to be more specific. */
+	 * and the `lifetime` field of the attribute struct. We will fill all the other
+	 * attributes, and update the `lifetime` field to be more specific.
+	 */
 	switch (slot_number) {
 	case CRACEN_IDENTITY_KEY_SLOT_NUMBER:
 		psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
@@ -1092,7 +1084,8 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 
 		/* According to the PSA Crypto Driver interface proposed document the driver
 		 * should fill the attributes even if the buffer of the key is too small. So
-		 * we check the buffer here and not earlier in the function. */
+		 * we check the buffer here and not earlier in the function.
+		 */
 		if (key_buffer_size >= cracen_get_opaque_size(attributes)) {
 			*key_buffer_length = cracen_get_opaque_size(attributes);
 			*key_buffer = slot_number;
@@ -1114,7 +1107,8 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 					PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_VERIFY_DERIVATION);
 
 		/* See comment about the placement of this check in the previous switch
-		 * case. */
+		 * case.
+		 */
 		if (key_buffer_size >= cracen_get_opaque_size(attributes)) {
 			*key_buffer_length = cracen_get_opaque_size(attributes);
 			*key_buffer = slot_number;
@@ -1122,7 +1116,6 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 		} else {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
-		break;
 
 	default:
 #if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
@@ -1172,11 +1165,13 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		int status = cracen_kmu_prepare_key(key_buffer);
+
 		if (status != SX_OK) {
 			return silex_statuscodes_to_psa(status);
 		}
 
 		size_t key_out_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
+
 		if (key_out_size < data_size) {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
@@ -1199,6 +1194,7 @@ psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		uint32_t slot_id = CRACEN_PSA_GET_KMU_SLOT(psa_get_key_id(attributes));
 		psa_status_t status = cracen_kmu_revoke_key_slot(slot_id++);
+
 		if (status != PSA_SUCCESS) {
 			return status;
 		}

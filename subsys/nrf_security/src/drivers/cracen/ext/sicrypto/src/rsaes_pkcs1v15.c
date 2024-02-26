@@ -82,6 +82,7 @@ static int rsaes_pkcs1v15_decrypt_finish(struct sitask *t, struct siwq *wq)
 	/* copy output of exponentiation (the encoded message EM) to workmem */
 	const char **outputs = sx_pk_get_output_ops(t->pk);
 	const int opsz = sx_pk_get_opsize(t->pk);
+
 	sx_rdpkmem(t->workmem, outputs[0], opsz);
 	sx_pk_release_req(t->pk);
 
@@ -140,7 +141,8 @@ void si_ase_create_rsa_pkcs1v15_decrypt(struct sitask *t, struct si_rsa_key *pri
 	}
 
 	/* check ciphertext size (step 1 of RSAES-PKCS1-V1_5-DECRYPT modified:
-    we allow the ciphertext to have length <= than the modulus length) */
+	 * we allow the ciphertext to have length <= than the modulus length)
+	 */
 	if (text->sz > modulussz) {
 		si_task_mark_final(t, SX_ERR_TOO_BIG);
 		return;
@@ -161,6 +163,7 @@ static int rsaes_pkcs1v15_encrypt_continue(struct sitask *t, struct siwq *wq);
 static void rsaes_pkcs1v15_encrypt_getrnd(struct sitask *t, char *out, size_t sz)
 {
 	psa_status_t status = cracen_get_random(NULL, out, sz);
+
 	if (status != PSA_SUCCESS) {
 		si_task_mark_final(t, SX_ERR_UNKNOWN_ERROR);
 		return;
@@ -184,6 +187,7 @@ static int rsaes_pkcs1v15_encrypt_finish(struct sitask *t, struct siwq *wq)
 	/* get result of modular exponentiation, placing it in workmem */
 	const char **outputs = sx_pk_get_output_ops(t->pk);
 	const int opsz = sx_pk_get_opsize(t->pk);
+
 	sx_rdpkmem(t->workmem, outputs[0], opsz);
 	sx_pk_release_req(t->pk);
 
@@ -243,7 +247,8 @@ static int rsaes_pkcs1v15_encrypt_continue(struct sitask *t, struct siwq *wq)
 
 	if (zeros) {
 		/* get more random bytes: final PS must not contain any zero
-		 * octets */
+		 * octets
+		 */
 		rsaes_pkcs1v15_encrypt_getrnd(t, paddingstrend - zeros, zeros);
 	} else {
 		/* proceed to modular exponentiation if no zero octets found */
@@ -274,12 +279,13 @@ static void rsaes_pkcs1v15_encrypt_run(struct sitask *t)
 	rsaes_pkcs1v15_encrypt_getrnd(t, t->workmem + 2, paddingstrsz);
 
 	/* The counter of PRNG requests is initialized to its max allowed value:
-    100 times the size of the padding string PS. The retry counter has type
-    unsigned long because, assuming as worst case RSA key size a 8192-bit key,
-    the worst case PS size is 1021 bytes, so the worst case number of allowed
-    retries is 102100. This number cannot be represented as unsigned int if the
-    machine has 16-bit int, while it can always be represented as unsigned long
-    (the C standard specifies type long be at least 32 bits wide). */
+	 * 100 times the size of the padding string PS. The retry counter has type
+	 * unsigned long because, assuming as worst case RSA key size a 8192-bit key,
+	 * the worst case PS size is 1021 bytes, so the worst case number of allowed
+	 * retries is 102100. This number cannot be represented as unsigned int if the
+	 * machine has 16-bit int, while it can always be represented as unsigned long
+	 * (the C standard specifies type long be at least 32 bits wide).
+	 */
 	t->params.rsaes_pkcs1v15.retryctr = 100 * paddingstrsz;
 }
 

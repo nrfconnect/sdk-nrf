@@ -34,6 +34,9 @@ static bool is_alg_supported(psa_algorithm_t alg)
 	return false;
 }
 
+/* Use a define to fix a line wrap formatting compliance issue */
+#define WORKMEM_SIZE (PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + PSA_HASH_MAX_SIZE + 4)
+
 static psa_status_t
 cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				 size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *input,
@@ -63,8 +66,8 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 
 	struct si_ase_text text = {(char *)input, input_length};
 
-	char workmem[PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + PSA_HASH_MAX_SIZE + 4] =
-		{}; /* modulusz + digestsz + 4 */
+	char workmem[WORKMEM_SIZE] = {};
+
 	si_task_init(&t, workmem, sizeof(workmem));
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_RSA_OAEP)) {

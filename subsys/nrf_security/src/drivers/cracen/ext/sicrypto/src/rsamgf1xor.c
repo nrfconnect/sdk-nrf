@@ -24,7 +24,8 @@
 static int mgf1xor_hash(struct sitask *t);
 
 /* this function: (1) computes the xor of the mask segment that was just
-produced with the bytes pointed by xorinout, (2) increments the MGF1 counter */
+ * produced with the bytes pointed by xorinout, (2) increments the MGF1 counter
+ */
 static int mgf1xor_xorincr(struct sitask *t, struct siwq *wq)
 {
 	size_t toxor;

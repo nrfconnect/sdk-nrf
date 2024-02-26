@@ -34,10 +34,10 @@ bool constant_memcmp_is_zero(const void *s1, size_t n);
 /*!
  * \brief A memory set that is not optimized out by the compiler.
  *
- * \param[in] dest 	Pointer to the memory to set.
+ * \param[in] dest		Pointer to the memory to set.
  * \param[in] dest_size Size of the memory to set in bytes.
- * \param[in] ch 	Fill byte.
- * \param[in] n 	Bytes to be filled.
+ * \param[in] ch		Fill byte.
+ * \param[in] n		Bytes to be filled.
  *
  */
 void safe_memset(void *dest, const size_t dest_size, const uint8_t ch, const size_t n);
@@ -45,7 +45,7 @@ void safe_memset(void *dest, const size_t dest_size, const uint8_t ch, const siz
 /*!
  * \brief A meset to zero function that is not optimized out by the compiler.
  *
- * \param[in] dest 	Pointer to the memory to set to zero.
+ * \param[in] dest		Pointer to the memory to set to zero.
  * \param[in] dest_size Size of the memory in bytes.
  *
  */

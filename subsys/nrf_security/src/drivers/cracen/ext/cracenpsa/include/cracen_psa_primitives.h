@@ -48,11 +48,13 @@
 #define CRACEN_MAX_CIPHER_KEY_SIZE (32u)
 
 /* Max length of PBKDF2 salt. There is no set max length.
- * For this implementation max length is set 128 bytes. */
+ * For this implementation max length is set 128 bytes.
+ */
 #define CRACEN_PBKDF_MAX_SALT_SIZE 128
 
 /* Max length for HKDF info input. The input is optional and has no set max
- * length. For this implementation max length is set 128 bytes. */
+ * length. For this implementation max length is set 128 bytes.
+ */
 #define CRACEN_HKDF_MAX_INFO_SIZE 128
 
 #define CRACEN_CMAC_MAX_LABEL_SIZE 127
@@ -75,7 +77,7 @@
 #define CRACEN_PRNG_NONCE_SIZE		     (0u)   /* Not supported for CTR_DRBG */
 #define CRACEN_PRNG_PERSONALIZATION_MAX_SIZE (48u)  /* Max Equal to SEED size */
 #define CRACEN_PRNG_WORKMEM_SIZE	     (176u) /* KeyLen + AES block len + XORBUF_SZ (128) */
-#define CRACEN_PRNG_MAX_REQUEST_SIZE	     (1u << 16) /* Max request according to NIST specification */
+#define CRACEN_PRNG_MAX_REQUEST_SIZE	 (1u << 16) /* Max request. See NIST specification */
 
 #define CRACEN_SPAKE2P_HASH_LEN PSA_HASH_LENGTH(PSA_ALG_SHA_256)
 
@@ -131,9 +133,10 @@ struct cracen_hash_operation_s {
 	struct sxhash sx_ctx;
 
 	/* The driver can perform a processing round after getting a multiple of
-	 * the blocksize. */
-	/* Therefore we have to know how much much data is left to fill up to
-	 * the next block */
+	 * the blocksize.
+	 * Therefore we have to know how much much data is left to fill up to
+	 * the next block
+	 */
 	size_t bytes_left_for_next_block;
 
 	/* Buffer for input data to fill up the next block */
@@ -181,9 +184,10 @@ struct cracen_mac_operation_s {
 	size_t mac_size;
 
 	/* The driver can perform a processing round after getting a multiple of
-	 * the blocksize. */
-	/* Therefore we have to know how much much data is left to fill up to
-	 * the next block */
+	 * the blocksize.
+	 * Therefore we have to know how much much data is left to fill up to
+	 * the next block
+	 */
 	size_t bytes_left_for_next_block;
 
 	/* Buffer for input data to fill up the next block */
@@ -240,7 +244,8 @@ struct cracen_key_derivation_operation {
 			struct sx_pk_cnx *pk_cnx;
 			uint32_t counter;
 			/* The +1 here is meant to store an algorithm specific byte needed after the
-			 * label */
+			 * label
+			 */
 			uint8_t label[CRACEN_CMAC_MAX_LABEL_SIZE + 1];
 			size_t label_length;
 			uint8_t context[CRACEN_CMAC_MAX_CONTEXT_SIZE];
@@ -253,7 +258,8 @@ struct cracen_key_derivation_operation {
 
 		struct {
 			/* May contain secret, length of secret as uint16be, other secret
-			   and other secret length as uint16be. */
+			 * and other secret length as uint16be.
+			 */
 			uint8_t secret[PSA_TLS12_PSK_TO_MS_PSK_MAX_SIZE * 2 + 4];
 			size_t secret_length;
 			uint8_t seed[CRACEN_TLS12_PRF_MAX_SEED_SIZE];

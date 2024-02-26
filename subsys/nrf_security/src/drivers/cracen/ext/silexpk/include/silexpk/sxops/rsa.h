@@ -76,7 +76,7 @@ sx_async_mod_single_op_cmd_go(const struct sx_pk_cmd_def *cmd, const sx_op *modu
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	int sizes[] = {
 		sx_op_size(modulo),
 		sx_op_size(b),
@@ -179,7 +179,7 @@ static inline struct sx_pk_acq_req sx_async_mod_cmd_go(struct sx_pk_cnx *cnx,
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	int sizes[] = {
 		sx_op_size(modulo),
 		sx_op_size(a),
@@ -438,7 +438,7 @@ static inline struct sx_pk_acq_req sx_async_crt_mod_exp_go(struct sx_pk_cnx *cnx
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	int sizes[] = {sx_op_size(p),  sx_op_size(q),  sx_op_size(in),
 		       sx_op_size(dp), sx_op_size(dq), sx_op_size(qinv)};
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
@@ -550,8 +550,9 @@ static inline struct sx_pk_acq_req sx_async_rsa_keygen_go(const sx_op *p, const 
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	int sizes[] = {sx_op_size(p), sx_op_size(q), sx_op_size(public_expo)};
+
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
@@ -669,8 +670,9 @@ static inline struct sx_pk_acq_req sx_async_rsa_crt_keyparams_go(const sx_op *p,
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	int sizes[] = {sx_op_size(p), sx_op_size(q), sx_op_size(privkey)};
+
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
@@ -794,8 +796,9 @@ static inline struct sx_pk_acq_req sx_async_miller_rabin_go(const sx_op *n, cons
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	int sizes[] = {sx_op_size(n), sx_op_size(a)};
+
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;

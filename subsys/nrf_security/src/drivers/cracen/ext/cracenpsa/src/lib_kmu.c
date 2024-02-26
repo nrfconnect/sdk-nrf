@@ -40,6 +40,7 @@ static void rramc_enable_writes(void)
 static void rramc_disable_writes(void)
 {
 	nrf_rramc_config_t const config = {.mode_write = false, .write_buff_size = 1};
+
 	nrf_rramc_config_set(NRF_RRAMC_S, &config);
 	while (!nrf_rramc_ready_check(NRF_RRAMC_S)) {
 		;
@@ -65,9 +66,12 @@ static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,
 	*task = 1;
 
 	while (!(*event || NRF_KMU_S->EVENTS_ERROR)) {
-		// Poll until KMU completes or fails the operation. This is
-		// not expected to take long.
-		// The body is intentionally left empty.
+		/*
+		 * Poll until KMU completes or fails the operation. This is
+		 * not expected to take long.
+		 *
+		 * The body is intentionally left empty.
+		 */
 	}
 
 	if (NRF_KMU_S->EVENTS_ERROR) {
@@ -89,7 +93,7 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src)
 		return -LIB_KMU_NULL_PNT;
 	}
 
-	// DEST must be on a 64-bit boundary
+	/* DEST must be on a 64-bit boundary */
 	__ASSERT(IS_PTR_ALIGNED(kmu_src->dest, uint64_t), "unaligned kmu_src->dest");
 
 	int result = 1;

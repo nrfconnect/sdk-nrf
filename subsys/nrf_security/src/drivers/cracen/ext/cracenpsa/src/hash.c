@@ -31,6 +31,7 @@ psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size
 	const struct sxhashalg *sx_hash_algo = NULL;
 
 	psa_status_t psa_status = hash_get_algo(alg, &sx_hash_algo);
+
 	if (psa_status) {
 		return psa_status;
 	}
@@ -81,9 +82,10 @@ static int init_or_resume_context(cracen_hash_operation_t *operation)
 	int sx_status;
 
 	/* The SX driver expects to have gotten some data, before being able to
-	 * save the context, */
-	/* therefore the create call is done here, then feed data and then safe
-	 * the context */
+	 * save the context,
+	 * therefore the create call is done here, then feed data and then safe
+	 * the context.
+	 */
 	if (operation->is_first_block == true) {
 		sx_status = sx_hash_create(&operation->sx_ctx, operation->sx_hash_algo,
 					   sizeof(operation->sx_ctx));
@@ -93,7 +95,7 @@ static int init_or_resume_context(cracen_hash_operation_t *operation)
 		operation->is_first_block = false;
 
 	} else {
-		/* Get back the old state if previous operation had been done*/
+		/* Get back the old state if previous operation had been done */
 		sx_status = sx_hash_resume_state(&operation->sx_ctx);
 		if (sx_status) {
 			return sx_status;
@@ -110,24 +112,26 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 	size_t input_chunk_length = 0;
 	size_t remaining_bytes = 0;
 
-	/* Valid PSA call, just nothing to do*/
+	/* Valid PSA call, just nothing to do */
 	if (input_length == 0) {
 		return PSA_SUCCESS;
 	}
 
 	/* After input_length check as it might be valid to have length 0 with
-	 * input == NULL */
+	 * input == NULL
+	 */
 	__ASSERT_NO_MSG(input != NULL);
 
 	if (input_length < operation->bytes_left_for_next_block) {
 		/* sx_hash_feed doesn't buffer the input data until sx_hash_wait
-		 * is called so a local buffer is used. */
+		 * is called so a local buffer is used.
+		 */
 		size_t offset = sx_hash_get_alg_blocksz(operation->sx_hash_algo) -
 				operation->bytes_left_for_next_block;
 		memcpy(operation->input_buffer + offset, input, input_length);
 		operation->bytes_left_for_next_block -= input_length;
 
-		/* can't fill a full block so nothing more to do here*/
+		/* can't fill a full block so nothing more to do here */
 		return PSA_SUCCESS;
 	}
 
@@ -147,12 +151,13 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 
 	/* Add as many full blocks as possible by adding as many input bytes as
 	 * needed to get to be block aligned. The block size is not guaranteed to be
-	 * power of two. */
+	 * power of two.
+	 */
 	input_chunk_length = input_length - ((input_length - operation->bytes_left_for_next_block) %
 					     sx_hash_get_alg_blocksz(operation->sx_hash_algo));
 	remaining_bytes = input_length - input_chunk_length;
 
-	/* forward the data to the driver and process the data*/
+	/* forward the data to the driver and process the data */
 	sx_status = sx_hash_feed(&operation->sx_ctx, input, input_chunk_length);
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
@@ -162,14 +167,15 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	/* Wait until partial processing is done*/
+	/* Wait until partial processing is done */
 	sx_status = sx_hash_wait(&operation->sx_ctx);
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* As we just passed the last block reset the remaining size and clean
-	 * input buffer*/
+	 * input buffer
+	 */
 	operation->bytes_left_for_next_block = sx_hash_get_alg_blocksz(operation->sx_hash_algo);
 	safe_memzero(operation->input_buffer, sizeof(operation->input_buffer));
 

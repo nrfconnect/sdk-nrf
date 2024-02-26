@@ -54,6 +54,7 @@
 static int clz_u8(uint8_t i)
 {
 	int r = 0;
+
 	while (((1 << (7 - r)) & i) == 0) {
 		r++;
 	}
@@ -346,12 +347,15 @@ void bits2int(const uint8_t *data, size_t data_len, uint8_t *out_data, size_t ql
 
 	if (data_bitlen > qlen) {
 		uint32_t rshift = qbytes * 8 - qlen;
+
 		memmove(out_data, data, qbytes);
 
 		if (rshift) {
 			uint8_t prev = 0;
+
 			for (size_t i = 0; i < qbytes; i++) {
 				uint8_t tmp = out_data[i];
+
 				out_data[i] = prev << (8 - rshift) | (tmp >> rshift);
 				prev = tmp;
 			}
@@ -372,11 +376,14 @@ void bits2octets(const uint8_t *data, size_t data_len, uint8_t *out_data, const 
 	bits2int(data, data_len, out_data, order_len * 8 - clz_u8(order[0]));
 
 	int ge = si_be_cmp(out_data, order, order_len, 0);
+
 	if (ge >= 0) {
 		uint8_t carry = 0;
+
 		for (size_t i = order_len; i > 0; i--) {
 			uint32_t a = out_data[i - 1];
 			uint32_t b = order[i - 1] + carry;
+
 			if (b > a) {
 				a += 0x100;
 				carry = 1;
@@ -412,7 +419,8 @@ static int run_deterministic_ecdsa_hmac_step(struct sitask *t, struct siwq *wq)
 		}
 
 		/* The original h1 must be preserved for the sign operation. We reuse T for the
-		 * transformed value. */
+		 * transformed value.
+		 */
 		bits2octets(h1, digestsz, T, curve_n, opsz);
 
 		si_wq_run_after(t, wq, run_deterministic_ecdsa_hmac_step);
@@ -443,6 +451,7 @@ static int run_deterministic_ecdsa_hmac_step(struct sitask *t, struct siwq *wq)
 		si_wq_run_after(t, wq, run_deterministic_ecdsa_hmac_step);
 
 		size_t copylen = MIN(digestsz, opsz - t->params.ecdsa_sign.tlen);
+
 		memcpy(T + t->params.ecdsa_sign.tlen, V, copylen);
 		t->params.ecdsa_sign.tlen += copylen;
 		if (t->params.ecdsa_sign.tlen < opsz) {
@@ -460,6 +469,7 @@ static int run_deterministic_ecdsa_hmac_step(struct sitask *t, struct siwq *wq)
 		bits2int(T, opsz, T, opsz * 8 - rshift);
 
 		bool is_zero = true;
+
 		for (size_t i = 0; i < opsz; i++) {
 			if (T[i]) {
 				is_zero = false;
@@ -479,13 +489,13 @@ static int run_deterministic_ecdsa_hmac_step(struct sitask *t, struct siwq *wq)
 			deterministic_ecdsa_hmac(t, t->params.ecdsa_sign.privkey->hashalg, K, V,
 						 digestsz, 0, NULL, NULL, 0, K);
 			return SX_ERR_HW_PROCESSING;
-		} else {
-			si_wq_run_after(t, wq, start_ecdsa_sign);
-
-			/* Copy parameters to start_ecdsa_sign. .*/
-			memcpy(t->workmem, h1, digestsz);
-			memcpy(t->workmem + digestsz, T, opsz);
 		}
+
+		si_wq_run_after(t, wq, start_ecdsa_sign);
+
+		/* Copy parameters to start_ecdsa_sign. .*/
+		memcpy(t->workmem, h1, digestsz);
+		memcpy(t->workmem + digestsz, T, opsz);
 	}
 	}
 
@@ -500,6 +510,7 @@ static void run_ecdsa_sign_deterministic(struct sitask *t)
 	size_t blocksz = sx_hash_get_alg_blocksz(t->params.ecdsa_sign.privkey->hashalg);
 
 	uint8_t *h1 = t->workmem + digestsz + blocksz;
+
 	memcpy(h1, t->workmem, digestsz);
 
 	t->params.ecdsa_sign.deterministic_retries = 0;

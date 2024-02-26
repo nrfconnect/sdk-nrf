@@ -8,7 +8,7 @@
 
 int stdio_output_string(const unsigned char *str, uint32_t len)
 {
-    return 0;
+	return 0;
 }
 
 void stdio_init(void)

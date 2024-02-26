@@ -10,6 +10,7 @@
 struct sxkeyref sx_keyref_load_material(size_t keysz, const char *keymaterial)
 {
 	struct sxkeyref k;
+
 	k.key = keymaterial;
 	k.sz = keysz;
 	k.cfg = 0;

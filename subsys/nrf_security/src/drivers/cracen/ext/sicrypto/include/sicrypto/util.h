@@ -13,11 +13,12 @@
 #include <stddef.h>
 
 /* Return 1, 0 or -1 if (a + carry) is greater than b, equal to b or less than
-b, respectively.
-
-Inputs a and b are unsigned integers stored as big endian byte arrays of sz
-bytes. The absolute value of the carry argument must be strictly smaller than
-0x100. */
+ * b, respectively.
+ *
+ * Inputs a and b are unsigned integers stored as big endian byte arrays of sz
+ * bytes. The absolute value of the carry argument must be strictly smaller than
+ * 0x100.
+ */
 int si_be_cmp(const unsigned char *a, const unsigned char *b, size_t sz, int carry);
 
 #endif

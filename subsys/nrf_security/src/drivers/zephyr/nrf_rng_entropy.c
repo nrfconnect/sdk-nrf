@@ -27,7 +27,7 @@
  * Note that NRF_RNG produces TRNG, not CSPRNG.
  */
 psa_status_t nrf_rng_get_entropy(uint32_t flags, size_t *estimate_bits, uint8_t *output,
-				size_t output_size)
+				 size_t output_size)
 {
 	const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(rng));
 	uint16_t request_len = MIN(UINT16_MAX, output_size);

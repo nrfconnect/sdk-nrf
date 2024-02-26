@@ -9,8 +9,8 @@
 
 #include "tfm_ioctl_api.h"
 
-int ns_fault_service_set_handler(struct tfm_ns_fault_service_handler_context  *context,
-					tfm_ns_fault_service_handler_callback callback);
+int ns_fault_service_set_handler(struct tfm_ns_fault_service_handler_context *context,
+				 tfm_ns_fault_service_handler_callback callback);
 
 void ns_fault_service_call_handler(void);
 

@@ -1,10 +1,7 @@
 /*
- * Copyright (c) 2021-2022, Arm Limited. All rights reserved.
- * Copyright (c) 2022 Cypress Semiconductor Corporation (an Infineon
- * company) or an affiliate of Cypress Semiconductor Corporation. All rights
- * reserved.
+ * Copyright (c) 2024, Nordic Semiconductor ASA. All rights reserved.
  *
- * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  */
 

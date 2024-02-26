@@ -44,7 +44,7 @@ int sx_mac_feed(struct sxmac *c, const char *datain, size_t sz);
  * This function is used to start MAC generation.
  * The function will return immediately.
  *
- * The result will be transfered only after the operation is successfully
+ * The result will be transferred only after the operation is successfully
  * completed. The user shall check operation status with sx_mac_status()
  * or sx_mac_wait().
  *
@@ -98,7 +98,7 @@ int sx_mac_resume_state(struct sxmac *c);
  * sx_mac_feed().
  * The function will return immediately.
  *
- * The partial result will be transfered only after the operation is
+ * The partial result will be transferred only after the operation is
  * successfully completed. The user shall check operation status with
  * sx_mac_status() or sx_mac_wait().
  *

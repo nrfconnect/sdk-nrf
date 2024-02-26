@@ -44,7 +44,8 @@ static const uint8_t cracen_N3072[] = {
 	0x43, 0xDB, 0x5B, 0xFC, 0xE0, 0xFD, 0x10, 0x8E, 0x4B, 0x82, 0xD1, 0x20, 0xA9, 0x3A, 0xD2,
 	0xCA, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 /* RFC5326 specifies 2 as generator, but Oberon PSA driver uses 5, to align that implementation
- * using same here */
+ * using same here
+ */
 static const uint8_t cracen_G3072[] = {5};
 
 psa_status_t cracen_srp_setup(cracen_srp_operation_t *operation,
@@ -197,6 +198,7 @@ static psa_status_t cracen_srp_calculate_server_key_share(cracen_srp_operation_t
 	sx_op modulo = {.sz = sizeof(cracen_N3072), .bytes = (char *)cracen_N3072};
 	sx_op temp_b = {.sz = sizeof(temp_value), .bytes = temp_value};
 	int sx_status = sx_mod_exp(NULL, &g, &b, &modulo, &temp_b);
+
 	status = silex_statuscodes_to_psa(sx_status);
 	if (status != PSA_SUCCESS) {
 		goto error;
@@ -219,6 +221,7 @@ static psa_status_t cracen_srp_calculate_server_key_share(cracen_srp_operation_t
 	sx_op v = {.sz = sizeof(operation->v), .bytes = operation->v};
 	sx_op kv = {.sz = sizeof(temp_value_2), .bytes = temp_value_2};
 	const struct sx_pk_cmd_def *cmd_mul = SX_PK_CMD_ODD_MOD_MULT;
+
 	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &k, &v, &kv);
 	status = silex_statuscodes_to_psa(sx_status);
 	if (status != PSA_SUCCESS) {
@@ -228,6 +231,7 @@ static psa_status_t cracen_srp_calculate_server_key_share(cracen_srp_operation_t
 	/* B = (kv + b') mod N */
 	sx_op result = {.sz = sizeof(operation->B), .bytes = operation->B};
 	const struct sx_pk_cmd_def *cmd_add = SX_PK_CMD_MOD_ADD;
+
 	sx_status = sx_mod_primitive_cmd(NULL, cmd_add, &modulo, &kv, &temp_b, &result);
 	status = silex_statuscodes_to_psa(sx_status);
 	if (status != PSA_SUCCESS) {
@@ -294,6 +298,7 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 	sx_op modulo = {.sz = sizeof(cracen_N3072), .bytes = (char *)cracen_N3072};
 	sx_op temp_g = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
 	int sx_status = sx_mod_exp(NULL, &g, &x, &modulo, &temp_g);
+
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -307,6 +312,7 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 	sx_op k = {.sz = CRACEN_SRP_HASH_LENGTH, .bytes = temp_value_0};
 	sx_op kg = {.sz = sizeof(temp_value_1), .bytes = temp_value_1};
 	const struct sx_pk_cmd_def *cmd_mul = SX_PK_CMD_ODD_MOD_MULT;
+
 	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &k, &temp_g, &kg);
 	status = silex_statuscodes_to_psa(sx_status);
 	if (status != PSA_SUCCESS) {
@@ -317,6 +323,7 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 	sx_op B = {.sz = sizeof(operation->B), .bytes = operation->B};
 	sx_op temp_b = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
 	const struct sx_pk_cmd_def *cmd_sub = SX_PK_CMD_MOD_SUB;
+
 	sx_status = sx_mod_primitive_cmd(NULL, cmd_sub, &modulo, &B, &kg, &temp_b);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
@@ -325,6 +332,7 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 	/* t_1 = (B')^a mod N */
 	sx_op a = {.sz = sizeof(operation->ab), .bytes = (char *)operation->ab};
 	sx_op temp_1 = {.sz = sizeof(temp_value_1), .bytes = temp_value_1};
+
 	sx_status = sx_mod_exp(NULL, &temp_b, &a, &modulo, &temp_1);
 
 	/* get u */
@@ -336,6 +344,7 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 	/* t_2 = (B')^u mod N */
 	sx_op u = {.sz = CRACEN_SRP_HASH_LENGTH, .bytes = (char *)temp_value_0};
 	sx_op temp_2 = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
+
 	sx_status = sx_mod_exp(NULL, &temp_b, &u, &modulo, &temp_2);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
@@ -343,6 +352,7 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 
 	/* t_3 = (t_2)^x mod N = ((B')^u)^x mod N = (B')^(ux) mod N */
 	sx_op temp_3 = {.sz = sizeof(temp_value_0), .bytes = temp_value_0};
+
 	sx_status = sx_mod_exp(NULL, &temp_2, &x, &modulo, &temp_3);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
@@ -350,6 +360,7 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 
 	/* B = t_1 * t_3 mod N */
 	sx_op result = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
+
 	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &temp_1, &temp_3, &result);
 	return silex_statuscodes_to_psa(sx_status);
 }
@@ -378,6 +389,7 @@ static psa_status_t cracen_srp_calculate_server_S(cracen_srp_operation_t *operat
 	sx_op modulo = {.sz = sizeof(cracen_N3072), .bytes = (char *)cracen_N3072};
 	sx_op temp_1 = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
 	int sx_status = sx_mod_exp(NULL, &v, &u, &modulo, &temp_1);
+
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -386,6 +398,7 @@ static psa_status_t cracen_srp_calculate_server_S(cracen_srp_operation_t *operat
 	sx_op temp_2 = {.sz = sizeof(temp_value), .bytes = temp_value};
 	sx_op A = {.sz = sizeof(operation->A), .bytes = operation->A};
 	const struct sx_pk_cmd_def *cmd_mul = SX_PK_CMD_ODD_MOD_MULT;
+
 	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &A, &temp_1, &temp_2);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
@@ -394,6 +407,7 @@ static psa_status_t cracen_srp_calculate_server_S(cracen_srp_operation_t *operat
 	/* t_2^b mod N = (Av^u)^b mod N = S */
 	sx_op b = {.sz = sizeof(operation->ab), .bytes = (char *)operation->ab};
 	sx_op result = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
+
 	sx_status = sx_mod_exp(NULL, &temp_2, &b, &modulo, &result);
 	return silex_statuscodes_to_psa(sx_status);
 }

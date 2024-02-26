@@ -8,12 +8,12 @@
 #define SI_MONTGOMERY_H
 
 /**
- * @brief Defintions for X25519. Only public key generation available.
+ * @brief Definitions for X25519. Only public key generation available.
  */
 extern const struct si_sig_def *const si_sig_def_x25519;
 
 /**
- * @brief Defintions for X448. Only public key generation available.
+ * @brief Definitions for X448. Only public key generation available.
  */
 extern const struct si_sig_def *const si_sig_def_x448;
 

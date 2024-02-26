@@ -49,10 +49,12 @@ struct sx_pk_capabilities {
 	 */
 	int max_gfp_opsz;
 	/** Maximum operand size for elliptic curve operands. 0 when not
-	 * supported. */
+	 * supported.
+	 */
 	int max_ecc_opsz;
 	/** Maximum operand size for binary field operands. 0 when not
-	 * supported. */
+	 * supported.
+	 */
 	int max_gfb_opsz;
 	/** Operand size for IK operands. 0 when not supported. */
 	int ik_opsz;

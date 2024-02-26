@@ -65,7 +65,8 @@ static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *cur
 	}
 
 	/* For Weierstrass curves in PSA we only use the X coordinate of the
-	 * point multiplication result.*/
+	 * point multiplication result.
+	 */
 	if (output_size < priv_key_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
@@ -97,11 +98,12 @@ static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *cur
  * @brief Convert a byte array containing a scalar to sx_x25519_op.
  *
  * Loads a byte array (of size 32) and decodes it. This corresponds to the
- * the decodeScalar25519 function in RFC 7748.
+ * decodeScalar25519 function in RFC 7748.
  */
 static struct sx_x25519_op decode_scalar_25519(const uint8_t *k)
 {
 	struct sx_x25519_op r;
+
 	memcpy(r.bytes, k, CRACEN_X25519_KEY_SIZE_BYTES);
 
 	r.bytes[0] &= 248;
@@ -115,11 +117,12 @@ static struct sx_x25519_op decode_scalar_25519(const uint8_t *k)
  * @brief Convert a byte array containing a coordinate to sx_x25519_op.
  *
  * Loads a byte array (of size 32) and decodes it. This corresponds to the
- * the decodeUCoordinate (for 255 bits) function in RFC 7748.
+ * decodeUCoordinate (for 255 bits) function in RFC 7748.
  */
 static struct sx_x25519_op decode_coordinate_25519(const uint8_t *k)
 {
 	struct sx_x25519_op r;
+
 	memcpy(r.bytes, k, CRACEN_X25519_KEY_SIZE_BYTES);
 
 	r.bytes[31] &= (1 << 7) - 1;
@@ -131,11 +134,12 @@ static struct sx_x25519_op decode_coordinate_25519(const uint8_t *k)
  * @brief Convert a byte array containing a scalar to sx_x448_op.
  *
  * Loads a byte array (of size 56) and decodes it. This corresponds to the
- * the decodeScalar448 function in RFC 7748.
+ * decodeScalar448 function in RFC 7748.
  */
 static struct sx_x448_op decode_scalar_448(const uint8_t *k)
 {
 	struct sx_x448_op r;
+
 	memcpy(r.bytes, k, CRACEN_X448_KEY_SIZE_BYTES);
 
 	r.bytes[0] &= 252;
@@ -164,6 +168,7 @@ static psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *c
 	if (curve_op_sz == CRACEN_X25519_KEY_SIZE_BYTES) {
 		struct sx_x25519_op k = decode_scalar_25519(priv_key);
 		struct sx_x25519_op pt = decode_coordinate_25519(publ_key);
+
 		sx_status = sx_x25519_ptmult(&k, &pt, (struct sx_x25519_op *)output);
 
 	} else if (curve_op_sz == CRACEN_X448_KEY_SIZE_BYTES) {
@@ -196,6 +201,7 @@ static psa_status_t start_mac_operation(cracen_key_derivation_operation_t *opera
 					const uint8_t *key_buffer, size_t key_buffer_size)
 {
 	psa_key_attributes_t attributes = {0};
+
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_SIGN_HASH);
 	psa_set_key_bits(&attributes, PSA_BYTES_TO_BITS(key_buffer_size));
 
@@ -230,7 +236,7 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 		size_t hash_size = PSA_HASH_LENGTH(PSA_ALG_HKDF_GET_HASH(alg));
 
 		if (hash_size == 0) {
-			return (PSA_ERROR_NOT_SUPPORTED);
+			return PSA_ERROR_NOT_SUPPORTED;
 		}
 
 		operation->capacity =
@@ -244,7 +250,7 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 		size_t output_length = pbkdf2_prf_output_length(operation->alg);
 
 		if (output_length == 0) {
-			return (PSA_ERROR_NOT_SUPPORTED);
+			return PSA_ERROR_NOT_SUPPORTED;
 		}
 
 		operation->capacity = (uint64_t)(UINT32_MAX)*output_length;
@@ -275,7 +281,8 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 	 * TODO: The PSA core doesn't support the key derivation with CMAC in counter mode
 	 * yet. The PSA_ALG_CMAC algorithm is used here just so that we have something
 	 * compiling. We need to change this to the correct algorithm when the PSA core
-	 * supports it. Tracked in: NCSDK-22278 */
+	 * supports it. Tracked in: NCSDK-22278
+	 */
 	if (operation->alg == PSA_ALG_CMAC) {
 		operation->capacity = (uint64_t)((UINT32_MAX - 1)) * SX_BLKCIPHER_AES_BLK_SZ;
 		operation->state = CRACEN_KD_STATE_CMAC_CTR_INIT;
@@ -334,11 +341,13 @@ cracen_key_derivation_input_bytes_hkdf(cracen_key_derivation_operation_t *operat
 
 	case PSA_KEY_DERIVATION_INPUT_SECRET: {
 		size_t hmac_length = 0;
+
 		if (operation->state == CRACEN_KD_STATE_HKDF_INIT) {
 			/* rfc5869: salt is optional. Set to string of HashLen
-			 * zeroes if not provided. */
-			/* We reuse prk from the operation context since it's
-			 * not in use yet. */
+			 * zeroes if not provided.
+			 * We reuse prk from the operation context since it's
+			 * not in use yet.
+			 */
 			safe_memzero(operation->hkdf.prk, sizeof(operation->hkdf.prk));
 			status = start_mac_operation(
 				operation, operation->hkdf.prk,
@@ -406,7 +415,8 @@ cracen_key_derivation_input_bytes_pbkdf2(cracen_key_derivation_operation_t *oper
 			return PSA_ERROR_INSUFFICIENT_MEMORY;
 		}
 		/* Must provided one or more times. If used multiple times, the
-		 * inputs will be concatenated. */
+		 * inputs will be concatenated.
+		 */
 		memcpy(operation->pbkdf2.salt + operation->pbkdf2.salt_length, data, data_length);
 		operation->pbkdf2.salt_length += data_length;
 		operation->state = CRACEN_KD_STATE_PBKDF2_SALT;
@@ -474,7 +484,8 @@ cracen_key_derivation_input_bytes_cmac_ctr(cracen_key_derivation_operation_t *op
 			sizeof(operation->cmac_ctr.label) - operation->cmac_ctr.label_length;
 
 		/* Reserve the last byte of the label for setting the byte 0x0 which is required
-		 * by the CMAC CTR key derivation. */
+		 * by the CMAC CTR key derivation.
+		 */
 		if (label_remaining_bytes > 0) {
 			label_remaining_bytes--;
 		}
@@ -542,7 +553,8 @@ cracen_key_derivation_input_bytes_tls12(cracen_key_derivation_operation_t *opera
 			return PSA_ERROR_INSUFFICIENT_MEMORY;
 		}
 		/* First two bytes is uint16 that will be encoded in the mandatory
-		   PSA_KEY_DERIVATION_INPUT_SECRET step */
+		 * PSA_KEY_DERIVATION_INPUT_SECRET step
+		 */
 		memcpy(operation->tls12.secret + 2, data, data_length);
 		operation->tls12.secret_length = data_length;
 		break;
@@ -632,6 +644,7 @@ psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *
 					     const uint8_t *key_buffer, size_t key_buffer_size)
 {
 	psa_status_t status = PSA_SUCCESS;
+
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) !=
 	    PSA_KEY_LOCATION_CRACEN) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -707,7 +720,8 @@ cracen_key_derivation_cmac_ctr_generate_block(cracen_key_derivation_operation_t 
 	/* We reserved one byte of the label for the 0x0 which needs to follow
 	 * the label in the CMAC CTR key derivation. We did this because we
 	 * can only call sx_mac_feed  a limited number of time before we generate
-	 * the mac. The limitation comes from the number of in descriptors in the sxmac.*/
+	 * the mac. The limitation comes from the number of in descriptors in the sxmac.
+	 */
 	operation->cmac_ctr.label[operation->cmac_ctr.label_length] = 0x0;
 	operation->cmac_ctr.label_length++;
 
@@ -754,7 +768,7 @@ static psa_status_t
 cracen_key_derivation_hkdf_generate_block(cracen_key_derivation_operation_t *operation)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	unsigned digestsz = PSA_HASH_LENGTH(PSA_ALG_GET_HASH(operation->alg));
+	unsigned int digestsz = PSA_HASH_LENGTH(PSA_ALG_GET_HASH(operation->alg));
 	size_t hmac_length = 0;
 
 	/* Create T(N) = HMAC-Hash(PRK, T(N-1) || info || N) */
@@ -772,7 +786,8 @@ cracen_key_derivation_hkdf_generate_block(cracen_key_derivation_operation_t *ope
 	}
 
 	/* This is already verified against operation->capacity in
-	 * cracen_key_derivation_output_bytes. */
+	 * cracen_key_derivation_output_bytes.
+	 */
 	__ASSERT_NO_MSG(operation->hkdf.blk_counter != 0xff);
 
 	operation->hkdf.blk_counter++;
@@ -810,7 +825,7 @@ static psa_status_t
 cracen_key_derivation_pbkdf2_generate_block(cracen_key_derivation_operation_t *operation)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	unsigned h_len = pbkdf2_prf_output_length(operation->alg);
+	unsigned int h_len = pbkdf2_prf_output_length(operation->alg);
 	size_t mac_length = 0;
 
 	operation->pbkdf2.blk_counter++;
@@ -876,6 +891,7 @@ cracen_key_derivation_tls12_prf_generate_block(cracen_key_derivation_operation_t
 	size_t length;
 
 	const struct sxhashalg *hash;
+
 	status = silex_statuscodes_to_psa(hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &hash));
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -1083,8 +1099,11 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 	while (output_length) {
 		if (operation->output_block_available_bytes) {
 			/* Copy out buffered output. This may be a partial
-			 * block. */
-			unsigned out = MIN(output_length, operation->output_block_available_bytes);
+			 * block.
+			 */
+			unsigned int out =
+				MIN(output_length, operation->output_block_available_bytes);
+
 			memcpy(output, operation->output_block, out);
 
 			output += out;
@@ -1098,6 +1117,7 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 		} else {
 			/* No data available, produce new block. */
 			psa_status_t status = generator(operation);
+
 			if (status != PSA_SUCCESS) {
 				return status;
 			}

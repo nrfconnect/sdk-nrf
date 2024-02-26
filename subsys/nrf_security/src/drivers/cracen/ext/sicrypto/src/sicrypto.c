@@ -30,7 +30,8 @@ int si_task_status(struct sitask *t)
 		/* The task hasn't run on the hardware yet and it hasn't got its
 		 * final statuscode yet. In this case, we should not run the
 		 * next steps in the waitqueue. The waitqueue is run only when
-		 * processing finishes. */
+		 * processing finishes.
+		 */
 		return t->statuscode;
 	}
 	if (t->statuscode == SX_ERR_HW_PROCESSING) {
@@ -48,7 +49,8 @@ int si_task_wait(struct sitask *t)
 	if (t->statuscode == SX_ERR_READY) {
 		/* The task hasn't run on the hardware yet and it hasn't got its
 		 * final statuscode yet. In this case, there's no need to wait
-		 * or run work from the waitqueue. */
+		 * or run work from the waitqueue.
+		 */
 		return t->statuscode;
 	}
 	while (t->statuscode == SX_ERR_HW_PROCESSING) {

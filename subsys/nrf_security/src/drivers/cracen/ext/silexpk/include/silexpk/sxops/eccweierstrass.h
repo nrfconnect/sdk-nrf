@@ -92,12 +92,13 @@ static inline struct sx_pk_acq_req sx_async_ecdsa_generate_go(const struct sx_pk
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
 	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
 	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
@@ -217,12 +218,13 @@ static inline struct sx_pk_acq_req sx_async_ecdsa_verify_go(const struct sx_pk_e
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
 	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
 	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
@@ -328,11 +330,13 @@ static inline struct sx_pk_acq_req sx_async_ecp_mult_go(const struct sx_pk_ecurv
 	}
 
 	struct sx_pk_inops_ecp_mult inputs;
+
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
 	if (p == SX_PTMULT_CURVE_GENERATOR) {
 		sx_pk_write_curve_gen(pkreq.req, curve, inputs.px, inputs.py);
@@ -438,11 +442,13 @@ static inline struct sx_pk_acq_req sx_async_ecp_double_go(const struct sx_pk_ecu
 	}
 
 	struct sx_pk_inops_ecp_double inputs;
+
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_affpt2mem(p, inputs.px.addr, inputs.py.addr, opsz);
 
 	sx_pk_run(pkreq.req);
@@ -534,6 +540,7 @@ static inline struct sx_pk_acq_req sx_async_ec_ptoncurve_go(const struct sx_pk_e
 	}
 
 	struct sx_pk_inops_ec_ptoncurve inputs;
+
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
@@ -618,6 +625,7 @@ sx_async_ec_pt_decompression_go(const struct sx_pk_ecurve *curve, const sx_ecop 
 	}
 
 	struct sx_pk_inops_ec_pt_decompression inputs;
+
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, ((y_lsb & 1) << 29),
 					      (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
@@ -732,12 +740,13 @@ sx_async_eckcdsa_pubkey_generate_go(const struct sx_pk_ecurve *curve, const sx_e
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
 
 	sx_pk_run(pkreq.req);
@@ -846,12 +855,13 @@ static inline struct sx_pk_acq_req sx_async_eckcdsa_sign_go(const struct sx_pk_e
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
 	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
 	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
@@ -960,12 +970,13 @@ static inline struct sx_pk_acq_req sx_async_eckcdsa_verify_go(const struct sx_pk
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
 	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
 	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
@@ -1082,11 +1093,13 @@ static inline struct sx_pk_acq_req sx_async_ecp_add_go(const struct sx_pk_ecurve
 	}
 
 	struct sx_pk_inops_ecp_add inputs;
+
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_affpt2mem(p1, inputs.p1x.addr, inputs.p1y.addr, opsz);
 	sx_pk_affpt2mem(p2, inputs.p2x.addr, inputs.p2y.addr, opsz);
 
@@ -1202,12 +1215,13 @@ static inline struct sx_pk_acq_req sx_async_sm2_generate_go(const struct sx_pk_e
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
 	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
 	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
@@ -1325,12 +1339,13 @@ static inline struct sx_pk_acq_req sx_async_sm2_verify_go(const struct sx_pk_ecu
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
 	sx_pk_ecop2mem(r, inputs.r.addr, opsz);
 	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
@@ -1377,6 +1392,7 @@ static inline int sx_sm2_verify(const struct sx_pk_ecurve *curve, const sx_pk_af
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
+
 	pkreq = sx_async_sm2_verify_go(curve, q, r, s, h);
 	if (pkreq.status) {
 		return pkreq.status;
@@ -1425,12 +1441,13 @@ sx_async_sm2_exchange_go(const struct sx_pk_ecurve *curve, const sx_ecop *d, con
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
 	}
 	int opsz = sx_pk_get_opsize(pkreq.req);
+
 	sx_pk_ecop2mem(d, inputs.d.addr, opsz);
 	sx_pk_ecop2mem(k, inputs.k.addr, opsz);
 	sx_pk_affpt2mem(q, inputs.qx.addr, inputs.qy.addr, opsz);
@@ -1507,6 +1524,7 @@ static inline int sx_sm2_exchange(const struct sx_pk_ecurve *curve, const sx_eco
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
+
 	pkreq = sx_async_sm2_exchange_go(curve, d, k, q, rb, cof, rax, w);
 	if (pkreq.status) {
 		return pkreq.status;

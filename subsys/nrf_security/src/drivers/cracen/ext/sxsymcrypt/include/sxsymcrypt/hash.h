@@ -160,7 +160,7 @@ int sx_hash_save_state(struct sxhash *c);
  * If used in context-saving approach, this function will compute the digest
  * based on last computed state and last chunks of the message.
  *
- * The function will return immediately. The result will be transfered to
+ * The function will return immediately. The result will be transferred to
  * \p digest only after the operation is successfully completed. The user shall
  * check operation status with sx_hash_status() or sx_hash_wait().
  *

@@ -59,6 +59,7 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz)
 {
 	volatile char *d = (volatile char *)dst;
 	volatile const char *s = (volatile const char *)src;
+
 	while (sz && (!IS_NATURAL_ALIGNED(d, tfrblk) || !IS_NATURAL_SIZE(sz, tfrblk))) {
 		*d = *s;
 		d++;
@@ -75,6 +76,7 @@ void sx_rdpkmem(void *dst, const void *src, size_t sz)
 	} else {
 		volatile char *d = (volatile char *)dst;
 		volatile const char *s = (volatile const char *)src;
+
 		while (sz) {
 			*d = *s;
 			d++;

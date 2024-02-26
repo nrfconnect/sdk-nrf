@@ -75,7 +75,7 @@ sx_async_srp_user_keygen_go(struct sx_pk_cnx *cnx, const sx_op *n, const sx_op *
 		return pkreq;
 	}
 
-	// convert and transfer operands
+	/* convert and transfer operands */
 	int sizes[] = {sx_op_size(n), sx_op_size(g), sx_op_size(a), sx_op_size(b),
 		       sx_op_size(x), sx_op_size(k), sx_op_size(u)};
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);

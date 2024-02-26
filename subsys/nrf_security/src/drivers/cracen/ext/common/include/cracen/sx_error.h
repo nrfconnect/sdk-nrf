@@ -85,7 +85,8 @@ inline __attribute__((always_inline)) int sx_err2errno(int sx_err)
 		return -EINVAL;
 	case SX_ERR_INVALID_KEY_SZ:
 		/* The given key size is not supported by the algorithm or the
-		 * hardware */
+		 * hardware
+		 */
 		return -EINVAL;
 	case SX_ERR_INVALID_TAG_SIZE:
 		/* Input tag size is invalid */
@@ -101,11 +102,13 @@ inline __attribute__((always_inline)) int sx_err2errno(int sx_err)
 		return -EINVAL;
 	case SX_ERR_HW_KEY_NOT_SUPPORTED:
 		/* Attempt to use HW keys with a mode that does not support HW
-		 * keys */
+		 * keys
+		 */
 		return -ENOTSUP;
 	case SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED:
 		/* Attempt to use a mode or engine that does not support context
-		 * saving */
+		 * saving
+		 */
 		return -ENOTSUP;
 	case SX_ERR_FEED_AFTER_DATA:
 		/* Attempt to feed AAD after input data was fed */
@@ -232,15 +235,18 @@ inline __attribute__((always_inline)) int sx_err2errno(int sx_err)
 		return -EBADMSG;
 	case SX_ERR_TOO_MANY_ATTEMPTS:
 		/** The number of attempts in an algorithm has exceeded a given
-		 * threshold */
+		 * threshold
+		 */
 		return -ECONNREFUSED;
 	case SX_ERR_RSA_PQ_RANGE_CHECK_FAIL:
 		/** Range checks, performed on p and/or q during RSA key
-		 * generation, failed */
+		 * generation, failed
+		 */
 		return -EDOM;
 	case SX_ERR_WORKMEM_BUFFER_TOO_SMALL:
 		/** Task needs bigger workmem buffer than what provided with
-		 * si_task_init() */
+		 * si_task_init()
+		 */
 		return -ENOMEM;
 	case SX_ERR_INSUFFICIENT_ENTROPY:
 		/** Size of entropy buffer is too small. */
@@ -335,7 +341,8 @@ inline __attribute__((always_inline)) const char *sx_err2str(int sx_err)
 		return "SX_ERR_OUTPUT_BUFFER_TOO_SMALL";
 	case SX_ERR_INVALID_KEY_SZ:
 		/* The given key size is not supported by the algorithm or the
-		 * hardware */
+		 * hardware
+		 */
 		return "SX_ERR_INVALID_KEY_SZ";
 	case SX_ERR_INVALID_TAG_SIZE:
 		/* Input tag size is invalid */
@@ -351,11 +358,13 @@ inline __attribute__((always_inline)) const char *sx_err2str(int sx_err)
 		return "SX_ERR_WRONG_SIZE_GRANULARITY";
 	case SX_ERR_HW_KEY_NOT_SUPPORTED:
 		/* Attempt to use HW keys with a mode that does not support HW
-		 * keys */
+		 * keys
+		 */
 		return "SX_ERR_HW_KEY_NOT_SUPPORTED";
 	case SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED:
 		/* Attempt to use a mode or engine that does not support context
-		 * saving */
+		 * saving
+		 */
 		return "SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED";
 	case SX_ERR_FEED_AFTER_DATA:
 		/* Attempt to feed AAD after input data was fed */
@@ -482,15 +491,18 @@ inline __attribute__((always_inline)) const char *sx_err2str(int sx_err)
 		return "SX_ERR_INVALID_CIPHERTEXT";
 	case SX_ERR_TOO_MANY_ATTEMPTS:
 		/** The number of attempts in an algorithm has exceeded a given
-		 * threshold */
+		 * threshold
+		 */
 		return "SX_ERR_TOO_MANY_ATTEMPTS";
 	case SX_ERR_RSA_PQ_RANGE_CHECK_FAIL:
 		/** Range checks, performed on p and/or q during RSA key
-		 * generation, failed */
+		 * generation, failed
+		 */
 		return "SX_ERR_RSA_PQ_RANGE_CHECK_FAIL";
 	case SX_ERR_WORKMEM_BUFFER_TOO_SMALL:
 		/** Task needs bigger workmem buffer than what provided with
-		 * si_task_init() */
+		 * si_task_init()
+		 */
 		return "SX_ERR_WORKMEM_BUFFER_TOO_SMALL";
 	/* End of error codes from sicrypto */
 	default:

@@ -41,6 +41,7 @@ static int trng_get_seed(char *dst, int num_trng_bytes)
 {
 	int sx_err = SX_ERR_RESET_NEEDED;
 	struct sx_trng trng;
+
 	while (true) {
 		switch (sx_err) {
 		case SX_ERR_RESET_NEEDED:
@@ -95,7 +96,8 @@ static int reseed_prng(struct sitask *const task, size_t entropy_len)
 	sx_err = si_task_wait(task);
 
 	/* Erase the entropy seed from memory after usage to protect against
-	 * leakage. */
+	 * leakage.
+	 */
 	safe_memset(entropy, sizeof(entropy), 0, entropy_len);
 
 	return sx_err;

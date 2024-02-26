@@ -72,7 +72,7 @@ void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end)
 	end->sz |= DMA_REALIGN;
 }
 
-int sx_cmdma_check()
+int sx_cmdma_check(void)
 {
 	uint32_t r = 0xFF;
 	uint32_t busy;
@@ -97,11 +97,12 @@ int sx_cmdma_check()
 	return SX_OK;
 }
 
-void sx_cmdma_reset()
+void sx_cmdma_reset(void)
 {
 	uint32_t intrmask = sx_rdreg(REG_INT_EN);
+
 	sx_wrreg(REG_CONFIG, REG_SOFT_RESET_ENABLE);
-	sx_wrreg(REG_CONFIG, 0); // clear SW reset
+	sx_wrreg(REG_CONFIG, 0); /* clear SW reset */
 
 	/* Wait for soft-reset to end */
 	while (sx_rdreg(REG_STATUS) & REG_SOFT_RESET_BUSY) {

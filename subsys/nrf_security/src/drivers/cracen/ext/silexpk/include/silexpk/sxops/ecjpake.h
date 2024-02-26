@@ -44,7 +44,8 @@ struct sx_pk_ecurve;
  */
 
 /** Curve generator point for sx_ecjpake_verify_zkp() or
- * sx_ecjpake_verify_zkp_go() */
+ * sx_ecjpake_verify_zkp_go()
+ */
 #ifndef SX_PT_CURVE_GENERATOR
 #define SX_PT_CURVE_GENERATOR NULL
 #endif

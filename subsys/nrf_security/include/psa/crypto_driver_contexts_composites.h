@@ -62,7 +62,7 @@ typedef union {
 	oberon_mac_operation_t oberon_driver_ctx;
 #endif
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
-    cracen_mac_operation_t cracen_driver_ctx;
+	cracen_mac_operation_t cracen_driver_ctx;
 #endif
 } psa_driver_mac_context_t;
 
@@ -77,7 +77,7 @@ typedef union {
 	oberon_aead_operation_t oberon_driver_ctx;
 #endif
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
-    cracen_aead_operation_t cracen_driver_ctx;
+	cracen_aead_operation_t cracen_driver_ctx;
 #endif /* PSA_CRYPTO_DRIVER_CRACEN */
 
 } psa_driver_aead_context_t;

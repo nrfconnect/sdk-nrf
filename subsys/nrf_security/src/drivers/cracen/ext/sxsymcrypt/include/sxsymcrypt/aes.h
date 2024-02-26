@@ -202,7 +202,7 @@ int sx_blkcipher_create_aesecb_dec(struct sxblkcipher *c, const struct sxkeyref 
  * @return ::SX_ERR_INVALID_KEY_SZ
  * @return ::SX_ERR_INCOMPATIBLE_HW
  * @return ::SX_ERR_RETRY
-  *
+ *
  * @pre - key reference provided by \p key must be initialized using
  *        sx_keyref_load_material() or sx_keyref_load_by_id()
  */

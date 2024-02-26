@@ -18,13 +18,13 @@
 
 /* Construct a PSA Key handle for key stored in KMU */
 #define PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(scheme, slot_id)                                       \
-	(0x7fff0000 | ((scheme) << 12) | ((slot_id) & 0xff))
+	(0x7fff0000 | ((scheme) << 12) | ((slot_id)&0xff))
 
 /* Retrieve key usage scheme from PSA key id. */
 #define CRACEN_PSA_GET_KEY_USAGE_SCHEME(key_id) (((key_id) >> 12) & 0xf)
 
 /* Retrieve KMU slot number for PSA key id. */
-#define CRACEN_PSA_GET_KMU_SLOT(key_id) ((key_id) & 0xff)
+#define CRACEN_PSA_GET_KMU_SLOT(key_id) ((key_id)&0xff)
 
 #define CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED 0
 #define CRACEN_KMU_KEY_USAGE_SCHEME_SEED      1

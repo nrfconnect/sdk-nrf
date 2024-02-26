@@ -62,7 +62,8 @@ static int continue_hkdf_prod(struct sitask *t, struct siwq *wq)
 	t->params.hkdf.outsz -= digestsz;
 	si_mac_create_hmac(t, t->hashalg, prk, digestsz);
 	/* Can consume + produce immediately because prk size is
-	 * smaller than hash block size. */
+	 * smaller than hash block size.
+	 */
 	si_task_consume(t, tmp, digestsz);
 	si_task_consume(t, t->params.hkdf.info, t->params.hkdf.infosz);
 	*counter += 1;
@@ -106,7 +107,8 @@ static void start_hkdf_produce(struct sitask *t, char *out, size_t sz)
 
 	si_mac_create_hmac(t, t->hashalg, prk, digestsz);
 	/* Can consume + produce immediately because prk size is
-	 * smaller than hash block size. */
+	 * smaller than hash block size.
+	 */
 	si_task_consume(t, t->params.hkdf.info, t->params.hkdf.infosz);
 	si_task_consume(t, counter, 1);
 	si_task_produce(t, tmp, digestsz);
@@ -161,7 +163,8 @@ void si_kdf_create_hkdf(struct sitask *t, const struct sxhashalg *hashalg, const
 
 	si_mac_create_hmac(t, hashalg, salt, saltsz);
 	/* Can consume and produce immediately because the code above ensures
-	 * that salt size is smaller than hash block size. */
+	 * that salt size is smaller than hash block size.
+	 */
 	si_task_consume(t, ikm, ikmsz);
 	si_task_produce(t, prk_salt, digestsz);
 }

@@ -30,6 +30,7 @@ int sx_mac_hw_reserve(struct sxmac *c)
 	int err = SX_OK;
 
 	uint32_t prng_value;
+
 	err = cracen_prng_value_from_pool(&prng_value);
 	if (err != SX_OK) {
 		return err;
@@ -64,7 +65,7 @@ int sx_mac_feed(struct sxmac *c, const char *datain, size_t sz)
 		sx_mac_free(c);
 		return SX_ERR_TOO_BIG;
 	}
-	if (c->cntindescs >= (sizeof(c->allindescs) / sizeof(c->allindescs[0]))) {
+	if (c->cntindescs >= (ARRAY_SIZE(c->allindescs))) {
 		sx_mac_free(c);
 		return SX_ERR_FEED_COUNT_EXCEEDED;
 	}
@@ -126,7 +127,8 @@ int sx_mac_resume_state(struct sxmac *c)
 	}
 
 	/* Note that the sx_mac APIs are used only with CMAC at the moment so we always need to
-	 * enable the AES countermeasures.  */
+	 * enable the AES countermeasures.
+	 */
 	err = sx_mac_hw_reserve(c);
 	if (err != SX_OK) {
 		return err;
@@ -156,7 +158,8 @@ int sx_mac_save_state(struct sxmac *c)
 	}
 
 	/* at this moment we have only one descriptor that holds the message to
-	 * be processed, therefore, it is the last one */
+	 * be processed, therefore, it is the last one
+	 */
 	sz = INDESC_SZ(c->dma.d - 1);
 
 	if (sz < c->cfg->blocksz) {

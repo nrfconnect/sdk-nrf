@@ -36,7 +36,6 @@
 static enum tfm_hal_status_t crypto_platform_init(void)
 {
 	int err = 0;
-
 #ifdef CONFIG_HAS_HW_NRF_CC3XX
 
 	/* Initialize the nrf_cc3xx runtime */
@@ -47,7 +46,7 @@ static enum tfm_hal_status_t crypto_platform_init(void)
 #elif defined(CONFIG_PSA_NEED_CC3XX_HMAC_DRBG_DRIVER)
 	err = nrf_cc3xx_platform_init_hmac_drbg();
 #else
-	#error "Please enable either PSA_WANT_ALG_CTR_DRBG or PSA_WANT_ALG_HMAC_DRBG"
+#error "Please enable either PSA_WANT_ALG_CTR_DRBG or PSA_WANT_ALG_HMAC_DRBG"
 #endif
 
 	if (err) {
@@ -78,18 +77,18 @@ static enum tfm_hal_status_t crypto_platform_init(void)
 
 static void allow_nonsecure_reset(void)
 {
-    uint32_t reg_value = SCB->AIRCR;
+	uint32_t reg_value = SCB->AIRCR;
 
-    /* Clear SCB_AIRCR_VECTKEY value */
-    reg_value &= ~(uint32_t)(SCB_AIRCR_VECTKEY_Msk);
+	/* Clear SCB_AIRCR_VECTKEY value */
+	reg_value &= ~(uint32_t)(SCB_AIRCR_VECTKEY_Msk);
 
-    /* Clear SCB_AIRC_SYSRESETREQS value */
-    reg_value &= ~(uint32_t)(SCB_AIRCR_SYSRESETREQS_Msk);
+	/* Clear SCB_AIRC_SYSRESETREQS value */
+	reg_value &= ~(uint32_t)(SCB_AIRCR_SYSRESETREQS_Msk);
 
-    /* Add VECTKEY value needed to write the register. */
-    reg_value |= (uint32_t)(AIRCR_VECTKEY_PERMIT_WRITE);
+	/* Add VECTKEY value needed to write the register. */
+	reg_value |= (uint32_t)(AIRCR_VECTKEY_PERMIT_WRITE);
 
-    SCB->AIRCR = reg_value;
+	SCB->AIRCR = reg_value;
 }
 
 enum tfm_hal_status_t tfm_hal_platform_init(void)
@@ -103,8 +102,7 @@ enum tfm_hal_status_t tfm_hal_platform_init(void)
 
 #if defined(TFM_PARTITION_CRYPTO)
 	status = crypto_platform_init();
-	if (status != TFM_HAL_SUCCESS)
-	{
+	if (status != TFM_HAL_SUCCESS) {
 		return status;
 	}
 #endif /* defined(TFM_PARTITION_CRYPTO) */
@@ -119,7 +117,8 @@ enum tfm_hal_status_t tfm_hal_platform_init(void)
  */
 #if defined(NRF_PROVISIONING)
 	enum tfm_security_lifecycle_t lcs = tfm_attest_hal_get_security_lifecycle();
-	if(lcs != TFM_SLC_PSA_ROT_PROVISIONING && lcs != TFM_SLC_SECURED) {
+
+	if (lcs != TFM_SLC_PSA_ROT_PROVISIONING && lcs != TFM_SLC_SECURED) {
 		return TFM_HAL_ERROR_BAD_STATE;
 	}
 #endif /* defined(NRF_PROVISIONING) */
