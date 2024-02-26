@@ -272,6 +272,7 @@ private:
 	bt_le_conn_param *GetScannedDeviceConnParams(bt_addr_le_t address);
 	State GetCurrentState();
 	void UpdateStateFlag(State state, bool enabled);
+	void UpdateRecovery();
 
 	StateChangedCallback mStateChangedCb = nullptr;
 	uint8_t mStateBitmask = 0;
