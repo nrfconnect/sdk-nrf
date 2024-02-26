@@ -160,7 +160,7 @@ int scan_wifi_init(void)
 
 	wifi_iface = NULL;
 #if defined(CONFIG_WIFI_NRF700X)
-	wifi_dev = device_get_binding("wlan0");
+	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
 #else
 	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_location_wifi));
 #endif
