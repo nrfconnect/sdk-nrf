@@ -90,6 +90,12 @@ The following changes are mandatory to make your application work in the same wa
 
   * Instead of the ``CONFIG_WIFI_MGMT_SCAN_MAX_BSS_CNT`` Kconfig option, a new :kconfig:option:`CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT` Kconfig option is added.
 
+  * The Wi-Fi interface is now renamed from ``wlan0`` to ``nordic_wlan0``, and for easier fetching of the handler, an entry in the DTS file is added ``zephyr_wifi``.
+
+    If your application was using ``device_get_binding("wlan0")``, replace with ``DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi))``.
+
+    Optionally, you can override the label `zephyr_wifi` in the DTS file with a different Wi-Fi interface name.
+
 * For samples using ``CONFIG_NRF_SECURITY``:
 
   * RSA keys are no longer enabled by default.
