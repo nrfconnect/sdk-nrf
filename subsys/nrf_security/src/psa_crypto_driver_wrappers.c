@@ -40,10 +40,6 @@
 #include "nrf_cc3xx_platform_hmac_drbg.h"
 #endif
 
-#if defined(CONFIG_TMP_RNG)
-#include "tmp_rng.h"
-#endif
-
 #ifdef PSA_NEED_OBERON_AEAD_DRIVER
 #include "oberon_aead.h"
 #endif
@@ -2762,9 +2758,6 @@ psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context,
 	}
 #endif
 
-#if defined(CONFIG_TMP_RNG)
-	return tmp_rng(output, output_size);
-#endif
 #if defined(PSA_NEED_CRACEN_CTR_DRBG_DRIVER)
 	return cracen_get_random(NULL, output, output_size);
 #elif defined(PSA_NEED_OBERON_CTR_DRBG_DRIVER)

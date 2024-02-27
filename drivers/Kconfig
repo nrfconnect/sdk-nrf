@@ -13,7 +13,6 @@ rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "serial/Kconfig"
 rsource "wifi/Kconfig"
-rsource "tmp_rng/Kconfig"
 
 if MPSL && !MPSL_FEM_ONLY
 rsource "mpsl/Kconfig"
