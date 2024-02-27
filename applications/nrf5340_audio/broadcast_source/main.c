@@ -315,6 +315,8 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 int main(void)
 {
 	int ret;
+	static const struct bt_data *ext_adv;
+	static const struct bt_data *per_adv;
 
 	LOG_DBG("nRF5340 APP core started");
 
@@ -326,8 +328,6 @@ int main(void)
 
 	size_t ext_adv_size = 0;
 	size_t per_adv_size = 0;
-	const struct bt_data *ext_adv = NULL;
-	const struct bt_data *per_adv = NULL;
 
 	ret = zbus_subscribers_create();
 	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
