@@ -78,6 +78,8 @@ static void dlci_pipe_event_handler(struct modem_pipe *pipe,
 				dlci->address, recv_len);
 		}
 		break;
+	case MODEM_PIPE_EVENT_TRANSMIT_IDLE:
+		break;
 	}
 }
 
