@@ -64,14 +64,19 @@ config OPENTHREAD_NRF_SECURITY_PSA
 	select TRUSTED_STORAGE
 	# TRUSTED_STORAGE requires Settings
 	select SETTINGS
+	select HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT if SOC_NRF5340_CPUAPP
 	depends on !BUILD_WITH_TFM
 
+if (OPENTHREAD_NRF_SECURITY_PSA && (BUILD_WITH_TFM || !SOC_NRF5340_CPUAPP))
+# Temporarily use hash of UID as AEAD Key implementation for non nRF5340 and TFM builds
+# until Hardware Unique Key provisioning (more secure) is implemented for all targets
+
 choice TRUSTED_STORAGE_BACKEND_AEAD_KEY
-# Temporarily use hash of UID as AEAD Key implementation
-# until Hardware Unique Key provisioning (more secure) is implemented
-	default TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID if OPENTHREAD_NRF_SECURITY_PSA
+	default TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID
 
 endchoice # TRUSTED_STORAGE_BACKEND_AEAD_KEY
+
+endif # (OPENTHREAD_NRF_SECURITY_PSA && (BUILD_WITH_TFM || !SOC_NRF5340_CPUAPP))
 
 config OPENTHREAD_NRF_SECURITY
 	bool
