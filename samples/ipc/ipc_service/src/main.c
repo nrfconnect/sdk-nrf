@@ -60,6 +60,30 @@ static struct ipc_ept_cfg ep_cfg = {
 	},
 };
 
+static void check_task(void *arg1, void *arg2, void *arg3)
+{
+	ARG_UNUSED(arg1);
+	ARG_UNUSED(arg2);
+	ARG_UNUSED(arg3);
+
+	unsigned long last_cnt = p_payload->cnt;
+	unsigned long delta;
+
+	while (1) {
+		k_sleep(K_MSEC(1000));
+
+		delta = p_payload->cnt - last_cnt;
+
+		printk("Δpkt: %ld (%ld B/pkt) | throughput: %ld bit/s\n",
+			delta, p_payload->size, delta * CONFIG_APP_IPC_SERVICE_MESSAGE_LEN * 8);
+
+		last_cnt = p_payload->cnt;
+	}
+}
+
+K_THREAD_DEFINE(thread_check_id, STACKSIZE, check_task, NULL, NULL, NULL,
+		K_PRIO_COOP(1), 0, -1);
+
 int main(void)
 {
 	const struct device *ipc0_instance;
@@ -83,17 +107,18 @@ int main(void)
 
 	ret = ipc_service_open_instance(ipc0_instance);
 	if ((ret < 0) && (ret != -EALREADY)) {
-		LOG_INF("ipc_service_open_instance() failure");
+		LOG_INF("ipc_service_open_instance() failure (%d)", ret);
 		return ret;
 	}
 
 	ret = ipc_service_register_endpoint(ipc0_instance, &ep, &ep_cfg);
 	if (ret < 0) {
-		printf("ipc_service_register_endpoint() failure");
+		printf("ipc_service_register_endpoint() failure (%d)", ret);
 		return ret;
 	}
 
 	k_sem_take(&bound_sem, K_FOREVER);
+	k_thread_start(thread_check_id);
 
 	while (true) {
 		ret = ipc_service_send(&ep, p_payload, CONFIG_APP_IPC_SERVICE_MESSAGE_LEN);
@@ -121,26 +146,3 @@ int main(void)
 
 	return 0;
 }
-
-static void check_task(void *arg1, void *arg2, void *arg3)
-{
-	ARG_UNUSED(arg1);
-	ARG_UNUSED(arg2);
-	ARG_UNUSED(arg3);
-
-	unsigned long last_cnt = p_payload->cnt;
-	unsigned long delta;
-
-	while (1) {
-		k_sleep(K_MSEC(1000));
-
-		delta = p_payload->cnt - last_cnt;
-
-		printk("Δpkt: %ld (%ld B/pkt) | throughput: %ld bit/s\n",
-			delta, p_payload->size, delta * CONFIG_APP_IPC_SERVICE_MESSAGE_LEN * 8);
-
-		last_cnt = p_payload->cnt;
-	}
-}
-K_THREAD_DEFINE(thread_check_id, STACKSIZE, check_task, NULL, NULL, NULL,
-		K_PRIO_COOP(1), 0, 100);
