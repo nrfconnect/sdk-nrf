@@ -59,6 +59,48 @@ struct tm;
 		struct bt_mesh_time_srv, _srv),                                \
 		&_bt_mesh_time_setup_srv_cb)
 
+#if defined(CONFIG_BT_MESH_LARGE_COMP_DATA_SRV)
+/** @def BT_MESH_MODEL_TIME_SRV_WITH_METADATA
+ *
+ * @brief Time Server model composition data entry with metadata.
+ *
+ * @param[in] _srv Pointer to a @ref bt_mesh_time_srv instance.
+ * @param[in] _metadata Pointer to a @ref bt_mesh_models_metadata_entry.
+ */
+#define BT_MESH_MODEL_TIME_SRV_WITH_METADATA(_srv, _metadata)                                      \
+	BT_MESH_MODEL_METADATA_CB(BT_MESH_MODEL_ID_TIME_SRV, _bt_mesh_time_srv_op, &(_srv)->pub,   \
+				  BT_MESH_MODEL_USER_DATA(struct bt_mesh_time_srv, _srv),          \
+				  &_bt_mesh_time_srv_cb, &_metadata),                              \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_TIME_SETUP_SRV, _bt_mesh_time_setup_srv_op,              \
+			 &(_srv)->setup_pub,                                                       \
+			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_time_srv, _srv),                   \
+			 &_bt_mesh_time_setup_srv_cb)
+#endif
+
+/** Clock Accuracy Metadata ID. */
+#define BT_MESH_CLOCK_ACCURACY_METADATA_ID 0x0007
+
+/** Timekeeping Reserve Metadata ID. */
+#define BT_MESH_TIMEKEEPING_RESERVE_METADATA_ID 0x0008
+
+/**
+ *  Clock Accuracy Metadata entry.
+ *
+ *  @param clock_accuracy 24-bit clock accuracy value.
+ */
+#define BT_MESH_CLOCK_ACCURACY_METADATA(clock_accuracy)                                            \
+	BT_MESH_MODELS_METADATA_ENTRY(3, BT_MESH_CLOCK_ACCURACY_METADATA_ID,                       \
+				      ((uint8_t[]){BT_BYTES_LIST_LE24(clock_accuracy)}))
+
+/**
+ *  Timekeeping Reserve Metadata entry.
+ *
+ *  @param timekeeping_reserve 24-bit timekeeping reserve value.
+ */
+#define BT_MESH_TIMEKEEPING_RESERVE_METADATA(timekeeping_reserve)                                  \
+	BT_MESH_MODELS_METADATA_ENTRY(3, BT_MESH_TIMEKEEPING_RESERVE_METADATA_ID,                  \
+				      ((uint8_t[]){BT_BYTES_LIST_LE24(timekeeping_reserve)}))
+
 /** Time srv update types */
 enum bt_mesh_time_update_types {
 	/** Status update */

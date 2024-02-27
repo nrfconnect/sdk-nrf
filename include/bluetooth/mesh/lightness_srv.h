@@ -65,6 +65,53 @@ struct bt_mesh_lightness_srv;
 						 _srv),                        \
 			 &_bt_mesh_lightness_setup_srv_cb)
 
+#ifdef CONFIG_BT_MESH_LARGE_COMP_DATA_SRV
+/** @def BT_MESH_MODEL_LIGHTNESS_SRV_WITH_METADATA
+ *
+ * @brief Light Lightness model entry with metadata.
+ *
+ * @param[in] _srv Pointer to a @ref bt_mesh_lightness_srv instance.
+ * @param[in] _metadata Pointer to a @ref bt_mesh_models_metadata_entry.
+ */
+#define BT_MESH_MODEL_LIGHTNESS_SRV_WITH_METADATA(_srv, _metadata)                                 \
+	BT_MESH_MODEL_LVL_SRV(&(_srv)->lvl),                                                       \
+	BT_MESH_MODEL_PONOFF_SRV(&(_srv)->ponoff),                                                 \
+	BT_MESH_MODEL_METADATA_CB(                                                                 \
+			BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SRV, _bt_mesh_lightness_srv_op,           \
+			&(_srv)->pub, BT_MESH_MODEL_USER_DATA(struct bt_mesh_lightness_srv, _srv), \
+			&_bt_mesh_lightness_srv_cb, &_metadata),                                   \
+	BT_MESH_MODEL_CB(                                                                          \
+			BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV,                                \
+			_bt_mesh_lightness_setup_srv_op, NULL,                                     \
+			BT_MESH_MODEL_USER_DATA(struct bt_mesh_lightness_srv, _srv),               \
+			&_bt_mesh_lightness_setup_srv_cb)
+#endif
+
+/** The Light Purpose Metadata ID. */
+#define BT_MESH_LIGHT_PURPOSE_METADATA_ID 0x0002
+
+/** Light Lightness Range Metadata ID. */
+#define BT_MESH_LIGHT_LIGHTNESS_RANGE_METADATA_ID 0x0003
+
+/**
+ *  Define the Light Purpose Metadata entry.
+ *
+ *  @param light_purpose 16-bit light purpose value.
+ */
+#define BT_MESH_LIGHT_PURPOSE_METADATA(light_purpose)                                              \
+	BT_MESH_MODELS_METADATA_ENTRY(2, BT_MESH_LIGHT_PURPOSE_METADATA_ID,                        \
+				      ((uint16_t[]){(light_purpose)}))
+
+/**
+ *  Light Lightness Range Metadata entry.
+ *
+ *  @param range_min Minimum boundary of range (16-bit)
+ *  @param range_max Maximum boundary of range (16-bit)
+ */
+#define BT_MESH_LIGHT_LIGHTNESS_RANGE_METADATA(range_min, range_max)                               \
+	BT_MESH_MODELS_METADATA_ENTRY(4, BT_MESH_LIGHT_LIGHTNESS_RANGE_METADATA_ID,                \
+				      ((uint16_t[]){(range_min), (range_max)}))
+
 /** Collection of handler callbacks for the Light Lightness Server. */
 struct bt_mesh_lightness_srv_handlers {
 	/** @brief Set the Light state.
