@@ -140,11 +140,6 @@
 #define CRACEN_SPAKE_DRIVER_ID 62
 #define CRACEN_SRP_DRIVER_ID   63
 
-/* This option is deprecated and unsupported */
-#if defined(MBEDTLS_PSA_CRYPTO_SE_C)
-#error "MBEDTLS_PSA_CRYPTO_SE_C is not supported"
-#endif
-
 #if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
 psa_status_t prng_test_generate_random(uint8_t *output, size_t output_size);
 #endif
