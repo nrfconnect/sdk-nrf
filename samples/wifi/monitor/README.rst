@@ -143,7 +143,7 @@ Once the custom build is installed, complete the following steps to dissect the 
 #. Open Wireshark and go to :guilabel:`Analyze` > :guilabel:`Decode As` > :guilabel:`+`, then select :guilabel:`UDP`.
 #. In the **Current** column, ensure `IEEE 802.11` is available.
 
-   If not then `Wireshark`_ version does not have the support to decode the UDP payload as IEEE 802.11 packets, and you need to build `Wireshark`_ from the latest sources.
+   If not, then the `Wireshark`_ version does not have the support to decode the UDP payload as IEEE 802.11 packets, and you need to build `Wireshark`_ from the latest sources.
 
 #. Copy the following Lua script to a file, for example, :file:`nordic_decode_raw_80211.lua` file.
 
@@ -184,6 +184,14 @@ Once the custom build is installed, complete the following steps to dissect the 
 
      * Nordic Raw 802.11 header
      * IEEE 802.11 packet
+
+   See the reference image below:
+
+   .. figure:: /images/wireshark_decode_as_nordic_80211.png
+      :alt: Wireshark decode Nordic Raw 802.11
+      :align: center
+
+      UDP payload
 
 Dependencies
 ************
