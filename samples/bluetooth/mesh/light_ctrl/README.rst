@@ -143,6 +143,9 @@ LEDs:
    :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
    Each RGB LED channel is used as separate LED.
 
+.. note::
+   :ref:`zephyr:thingy53_nrf5340` and the :ref:`zephyr:nrf52840dongle_nrf52840` do not support emergency data storage.
+
 Configuration
 *************
 
