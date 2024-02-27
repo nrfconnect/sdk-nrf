@@ -43,6 +43,22 @@ static void bond_connect(const struct bt_bond_info *info, void *user_data)
 	if (!bt_addr_le_cmp(&info->addr, adv_addr)) {
 		LOG_DBG("Found bonded device");
 
+		/* Check if the device is still connected due to waiting for ACL timeout */
+		struct bt_conn *bonded_conn = bt_conn_lookup_addr_le(BT_ID_DEFAULT, &info->addr);
+		struct bt_conn_info info;
+
+		if (bonded_conn != NULL) {
+			ret = bt_conn_get_info(bonded_conn, &info);
+			if (ret == 0 && info.state == BT_CONN_STATE_CONNECTED) {
+				LOG_DBG("Trying to connect to an already connected conn");
+				bt_conn_unref(bonded_conn);
+				return;
+			}
+
+			/* Unref is needed due to bt_conn_lookup */
+			bt_conn_unref(bonded_conn);
+		}
+
 		bt_le_scan_cb_unregister(&scan_callback);
 		cb_registered = false;
 
