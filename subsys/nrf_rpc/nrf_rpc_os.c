@@ -8,6 +8,7 @@
 #include <nrf_rpc_log.h>
 
 #include "nrf_rpc_os.h"
+#include <zephyr/sys/math_extras.h>
 
 /* Maximum number of remote thread that this implementation allows. */
 #define MAX_REMOTE_THREADS 255
@@ -126,7 +127,7 @@ uint32_t nrf_rpc_os_ctx_pool_reserve(void)
 
 	do {
 		old_mask = atomic_get(&context_mask);
-		number = __CLZ(old_mask);
+		number = u32_count_leading_zeros(old_mask);
 		new_mask = old_mask & ~(0x80000000u >> number);
 	} while (!atomic_cas(&context_mask, old_mask, new_mask));
 
