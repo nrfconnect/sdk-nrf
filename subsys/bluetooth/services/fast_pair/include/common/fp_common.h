@@ -18,8 +18,6 @@
 extern "C" {
 #endif
 
-/** UUID of the Fast Pair GATT Service. */
-#define FP_SERVICE_UUID		0xFE2C
 /** Length of Account Key (128 bits = 16 bytes). */
 #define FP_ACCOUNT_KEY_LEN	16U
 
