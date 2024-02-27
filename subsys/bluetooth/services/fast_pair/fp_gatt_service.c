@@ -511,6 +511,10 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 
 	NET_BUF_SIMPLE_DEFINE(rsp, FP_CRYPTO_AES128_BLOCK_LEN);
 
+	/* It is assumed that this function executes in the cooperative thread context. */
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+	__ASSERT_NO_MSG(!k_is_in_isr());
+
 	if (!bt_fast_pair_is_ready()) {
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 		LOG_INF("Key-based Pairing write: res=%d conn=%p, "
@@ -635,6 +639,10 @@ static ssize_t write_passkey(struct bt_conn *conn,
 	NET_BUF_SIMPLE_DEFINE(req, FP_CRYPTO_AES128_BLOCK_LEN);
 	NET_BUF_SIMPLE_DEFINE(rsp, FP_CRYPTO_AES128_BLOCK_LEN);
 
+	/* It is assumed that this function executes in the cooperative thread context. */
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+	__ASSERT_NO_MSG(!k_is_in_isr());
+
 	if (!bt_fast_pair_is_ready()) {
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 		LOG_INF("Passkey write: res=%d conn=%p, "
@@ -700,6 +708,10 @@ static ssize_t write_account_key(struct bt_conn *conn,
 	int err = 0;
 	ssize_t res = len;
 
+	/* It is assumed that this function executes in the cooperative thread context. */
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+	__ASSERT_NO_MSG(!k_is_in_isr());
+
 	if (!bt_fast_pair_is_ready()) {
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 		LOG_INF("Account Key write: res=%d conn=%p, "
@@ -757,6 +769,10 @@ static ssize_t write_additional_data(struct bt_conn *conn,
 	int err = 0;
 	ssize_t res = len;
 
+	/* It is assumed that this function executes in the cooperative thread context. */
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+	__ASSERT_NO_MSG(!k_is_in_isr());
+
 	if (!bt_fast_pair_is_ready()) {
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 		LOG_INF("Additional Data write: res=%d conn=%p, "
@@ -801,6 +817,14 @@ finish:
 
 int bt_fast_pair_info_cb_register(const struct bt_fast_pair_info_cb *cb)
 {
+	/* It is assumed that this function executes in the cooperative thread context. */
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+	__ASSERT_NO_MSG(!k_is_in_isr());
+
+	if (bt_fast_pair_is_ready()) {
+		return -EACCES;
+	}
+
 	if (!cb) {
 		return -EINVAL;
 	}
