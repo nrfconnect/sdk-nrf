@@ -201,6 +201,11 @@ config PSA_USE_CRACEN_CTR_DRBG_DRIVER
 	bool
 	default y
 
+# CTR DRBG is needed for AES counter measurements
+config PSA_NEED_CRACEN_CTR_DRBG_DRIVER
+	bool
+	default y
+
 endif
 endmenu
 

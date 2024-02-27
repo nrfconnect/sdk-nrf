@@ -169,7 +169,7 @@ struct sxmac {
 	int macsz;
 	const struct sxkeyref *key;
 	struct sx_dmactl dma;
-	struct sxdesc allindescs[5];
+	struct sxdesc allindescs[7];
 	uint8_t extramem[16];
 };
 

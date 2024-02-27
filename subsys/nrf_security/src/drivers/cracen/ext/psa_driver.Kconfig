@@ -426,6 +426,10 @@ config PSA_NEED_CRACEN_PBKDF2_HMAC
 	bool
 	default y
 
+config PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC
+	bool
+	default y
+
 config PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER
 	bool
 	default y
