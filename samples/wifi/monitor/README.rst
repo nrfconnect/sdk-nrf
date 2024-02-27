@@ -135,15 +135,15 @@ The packets from the device are sent to the host over the net capture tunnel usi
 The nRF70 Series device sends the IEEE 802.11 packets prepended with a custom metadata over the net capture tunnel to the host.
 To analyze the packets in `Wireshark`_, the payload of the UDP packets must be dissected as IEEE 802.11 packets.
 
-This support is only available in `Wireshark`_ 4.3 (under development).
-A custom build of `Wireshark`_ from the latest sources is required.
+This support is only available in `Wireshark`_ 4.3 (under development: `master` branch).
+A custom build of `Wireshark`_ from the latest sources is required, see `Wireshark Unix Build setup`_ for details.
 Once the custom build is installed, complete the following steps to dissect the payload of the UDP packets as IEEE 802.11 packets:
 
 1. Ensure Wireshark is compiled with Lua support, see `Wireshark with Lua`_ for details.
 #. Open Wireshark and go to :guilabel:`Analyze` > :guilabel:`Decode As` > :guilabel:`+`, then select :guilabel:`UDP`.
 #. In the **Current** column, ensure `IEEE 802.11` is available.
 
-   If not then `Wireshark`_ does not have the support to decode the UDP payload as IEEE 802.11 packets.
+   If not then `Wireshark`_ version does not have the support to decode the UDP payload as IEEE 802.11 packets, and you need to build `Wireshark`_ from the latest sources.
 
 #. Copy the following Lua script to a file, for example, :file:`nordic_decode_raw_80211.lua` file.
 
@@ -182,7 +182,7 @@ Once the custom build is installed, complete the following steps to dissect the 
 #. Open Wireshark and either start capturing packets or open a capture file.
 #. The UDP payload for port ``4242`` is now dissected as the following:
 
-     * Nordic Raw 802.1 header
+     * Nordic Raw 802.11 header
      * IEEE 802.11 packet
 
 Dependencies
