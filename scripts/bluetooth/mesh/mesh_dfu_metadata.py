@@ -357,7 +357,7 @@ def parse_comp_data(elf_path, kconfigs):
         raise Exception("Failed to extract composition data from .elf file") from err
 
 def encoded_metadata_get(version, comp, binary_size):
-    core_type = 0 # FIX ME: For now, hardcoded to application core
+    core_type = 1 # FIX ME: For now, hardcoded to application core
     elem_cnt = len(comp.elems)
 
     bytestring = bytearray()
