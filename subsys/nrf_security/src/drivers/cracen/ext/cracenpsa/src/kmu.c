@@ -79,7 +79,7 @@ static psa_status_t get_encryption_key(const uint8_t *context, uint8_t *key)
 
 	cracen_key_derivation_operation_t op = {};
 
-	status = cracen_key_derivation_setup(&op, PSA_ALG_CMAC);
+	status = cracen_key_derivation_setup(&op, PSA_ALG_SP800_108_COUNTER_CMAC);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

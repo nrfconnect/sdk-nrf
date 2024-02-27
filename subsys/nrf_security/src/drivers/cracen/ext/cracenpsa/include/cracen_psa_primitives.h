@@ -240,6 +240,7 @@ struct cracen_key_derivation_operation {
 		} pbkdf2;
 
 		struct {
+			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
 			struct sxkeyref keyref;
 			struct sx_pk_cnx *pk_cnx;
 			uint32_t counter;
@@ -250,6 +251,8 @@ struct cracen_key_derivation_operation {
 			size_t label_length;
 			uint8_t context[CRACEN_CMAC_MAX_CONTEXT_SIZE];
 			size_t context_length;
+			uint32_t L;
+			uint8_t K_0[SX_BLKCIPHER_AES_BLK_SZ];
 		} cmac_ctr;
 
 		struct {

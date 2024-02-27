@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include "common.h"
+#include "cracen_psa_cmac_kdf.h"
 #include "cracen_psa_primitives.h"
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>
@@ -19,8 +20,10 @@
 #include <silexpk/sxops/eccweierstrass.h>
 #include <stdint.h>
 #include <string.h>
-#include <zephyr/sys/__assert.h>
-#include <zephyr/sys/byteorder.h>
+
+#define uint32_to_be(i)                                                                            \
+	((((i) & 0xFF) << 24) | ((((i) >> 8) & 0xFF) << 16) | ((((i) >> 16) & 0xFF) << 8) |        \
+	 (((i) >> 24) & 0xFF))
 
 static psa_status_t ecc_key_agreement_check_alg(psa_algorithm_t alg)
 {
@@ -277,14 +280,8 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 		return PSA_SUCCESS;
 	}
 
-	/**
-	 * TODO: The PSA core doesn't support the key derivation with CMAC in counter mode
-	 * yet. The PSA_ALG_CMAC algorithm is used here just so that we have something
-	 * compiling. We need to change this to the correct algorithm when the PSA core
-	 * supports it. Tracked in: NCSDK-22278
-	 */
-	if (operation->alg == PSA_ALG_CMAC) {
-		operation->capacity = (uint64_t)((UINT32_MAX - 1)) * SX_BLKCIPHER_AES_BLK_SZ;
+	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
+		operation->capacity = PSA_ALG_SP800_108_COUNTER_CMAC_INIT_CAPACITY;
 		operation->state = CRACEN_KD_STATE_CMAC_CTR_INIT;
 		/* CMAC CTR key derivation starts the counter with 1, see NIST.SP.800-108r1 */
 		operation->cmac_ctr.counter = 1;
@@ -306,6 +303,12 @@ psa_status_t cracen_key_derivation_set_capacity(cracen_key_derivation_operation_
 	}
 
 	operation->capacity = capacity;
+	/* The capacity changes when the output bytes are derived, but L must not change, therefore
+	 * saving it separately
+	 */
+	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
+		operation->cmac_ctr.L = uint32_to_be(PSA_BYTES_TO_BITS(operation->capacity));
+	}
 	return PSA_SUCCESS;
 }
 
@@ -500,11 +503,7 @@ cracen_key_derivation_input_bytes_cmac_ctr(cracen_key_derivation_operation_t *op
 		operation->state = CRACEN_KD_STATE_CMAC_CTR_INPUT_LABEL;
 		break;
 	}
-
-	/** TODO: Change this to PSA_KEY_DERIVATION_INPUT_CONTEXT when it is available in the core
-	 * Tracked in: NCSDK-22278
-	 */
-	case PSA_KEY_DERIVATION_INPUT_INFO: {
+	case PSA_KEY_DERIVATION_INPUT_CONTEXT: {
 		size_t context_remaining_bytes =
 			sizeof(operation->cmac_ctr.context) - operation->cmac_ctr.context_length;
 		if (data_length > context_remaining_bytes) {
@@ -610,6 +609,12 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 		return cracen_key_derivation_input_bytes_pbkdf2(operation, step, data, data_length);
 	}
 
+	if (IS_ENABLED(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC) &&
+	    (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC)) {
+		return cracen_key_derivation_input_bytes_cmac_ctr(operation, step, data,
+								  data_length);
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS) &&
 	    operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
 		if (data_length != 65 || data[0] != 0x04) {
@@ -630,11 +635,6 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 		return cracen_key_derivation_input_bytes_tls12(operation, step, data, data_length);
 	}
 
-	if (operation->alg == PSA_ALG_CMAC) {
-		return cracen_key_derivation_input_bytes_cmac_ctr(operation, step, data,
-								  data_length);
-	}
-
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
@@ -643,14 +643,13 @@ psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *
 					     const psa_key_attributes_t *attributes,
 					     const uint8_t *key_buffer, size_t key_buffer_size)
 {
-	psa_status_t status = PSA_SUCCESS;
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
-	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) !=
-	    PSA_KEY_LOCATION_CRACEN) {
+	if (operation->alg != PSA_ALG_SP800_108_COUNTER_CMAC) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (operation->alg != PSA_ALG_CMAC) {
+	if (psa_get_key_type(attributes) != PSA_KEY_TYPE_AES) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -658,6 +657,16 @@ psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *
 	    step != PSA_KEY_DERIVATION_INPUT_SECRET) {
 		return PSA_ERROR_BAD_STATE;
 	}
+
+	/*
+	 * Copy the key into the operation struct as it is not guaranteed
+	 * to be valid longer than the function call.
+	 */
+	if (key_buffer_size > sizeof(operation->cmac_ctr.key_buffer)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+	memcpy(operation->cmac_ctr.key_buffer, key_buffer,
+	       PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)));
 
 	status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
 				    &operation->cmac_ctr.keyref);
@@ -687,6 +696,58 @@ psa_status_t cracen_key_derivation_input_integer(cracen_key_derivation_operation
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
+static int
+cracen_key_derivation_cmac_ctr_add_core_fixed_input(cracen_key_derivation_operation_t *operation,
+						    struct sxmac *cmac_ctx)
+{
+	/* Make sure the byte after the label is set to zero */
+	safe_memzero(operation->cmac_ctr.label + operation->cmac_ctr.label_length, 1);
+
+	/* Label + 0x00*/
+	int sx_status = sx_mac_feed(cmac_ctx, operation->cmac_ctr.label,
+				    operation->cmac_ctr.label_length + 1);
+	if (sx_status) {
+		return sx_status;
+	}
+
+	/* Context */
+	sx_status = sx_mac_feed(cmac_ctx, operation->cmac_ctr.context,
+				operation->cmac_ctr.context_length);
+	if (sx_status) {
+		return sx_status;
+	}
+
+	/* L_4 */
+	return sx_mac_feed(cmac_ctx, (uint8_t *)&operation->cmac_ctr.L,
+			   sizeof(operation->cmac_ctr.L));
+}
+
+static psa_status_t
+cracen_key_derivation_cmac_ctr_generate_K_0(cracen_key_derivation_operation_t *operation)
+{
+	struct sxmac cmac_ctx;
+	int sx_status;
+
+	sx_status = sx_mac_create_aescmac(&cmac_ctx, &operation->cmac_ctr.keyref);
+	if (sx_status) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
+	sx_status = cracen_key_derivation_cmac_ctr_add_core_fixed_input(operation, &cmac_ctx);
+	if (sx_status) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
+	sx_status = sx_mac_generate(&cmac_ctx, operation->cmac_ctr.K_0);
+	if (sx_status) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
+	sx_status = sx_mac_wait(&cmac_ctx);
+
+	return silex_statuscodes_to_psa(sx_status);
+}
+
 /**
  * @brief Generate a PRF block based on CMAC in counter mode (NIST.SP.800-108r1)
  *
@@ -704,40 +765,25 @@ cracen_key_derivation_cmac_ctr_generate_block(cracen_key_derivation_operation_t 
 {
 	struct sxmac cmac_ctx;
 	int sx_status;
-	const uint16_t L = PSA_BYTES_TO_BITS(SX_BLKCIPHER_AES_BLK_SZ);
+	uint32_t counter_be;
 
 	sx_status = sx_mac_create_aescmac(&cmac_ctx, &operation->cmac_ctr.keyref);
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	sx_status = sx_mac_feed(&cmac_ctx, (char *)&operation->cmac_ctr.counter,
-				sizeof(operation->cmac_ctr.counter));
+	counter_be = uint32_to_be(operation->cmac_ctr.counter);
+	sx_status = sx_mac_feed(&cmac_ctx, (uint8_t *)&counter_be, sizeof(counter_be));
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	/* We reserved one byte of the label for the 0x0 which needs to follow
-	 * the label in the CMAC CTR key derivation. We did this because we
-	 * can only call sx_mac_feed  a limited number of time before we generate
-	 * the mac. The limitation comes from the number of in descriptors in the sxmac.
-	 */
-	operation->cmac_ctr.label[operation->cmac_ctr.label_length] = 0x0;
-	operation->cmac_ctr.label_length++;
-
+	sx_status = cracen_key_derivation_cmac_ctr_add_core_fixed_input(operation, &cmac_ctx);
+	if (sx_status) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
 	sx_status =
-		sx_mac_feed(&cmac_ctx, operation->cmac_ctr.label, operation->cmac_ctr.label_length);
-	if (sx_status) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_mac_feed(&cmac_ctx, operation->cmac_ctr.context,
-				operation->cmac_ctr.context_length);
-	if (sx_status) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_mac_feed(&cmac_ctx, (char *)&L, sizeof(L));
+		sx_mac_feed(&cmac_ctx, operation->cmac_ctr.K_0, sizeof(operation->cmac_ctr.K_0));
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -785,11 +831,6 @@ cracen_key_derivation_hkdf_generate_block(cracen_key_derivation_operation_t *ope
 		}
 	}
 
-	/* This is already verified against operation->capacity in
-	 * cracen_key_derivation_output_bytes.
-	 */
-	__ASSERT_NO_MSG(operation->hkdf.blk_counter != 0xff);
-
 	operation->hkdf.blk_counter++;
 
 	status = cracen_mac_update(&operation->mac_op, operation->hkdf.info,
@@ -829,7 +870,7 @@ cracen_key_derivation_pbkdf2_generate_block(cracen_key_derivation_operation_t *o
 	size_t mac_length = 0;
 
 	operation->pbkdf2.blk_counter++;
-	uint32_t blk_counter_be = sys_cpu_to_be32(operation->pbkdf2.blk_counter);
+	uint32_t blk_counter_be = uint32_to_be(operation->pbkdf2.blk_counter);
 
 	/* Generate U1 = MAC(Password, Salt || BigEndian(i)) */
 	status = start_mac_operation(operation, operation->pbkdf2.password,
@@ -969,10 +1010,6 @@ psa_status_t cracen_key_agreement(const psa_key_attributes_t *attributes, const 
 				  size_t publ_key_size, uint8_t *output, size_t output_size,
 				  size_t *output_length, psa_algorithm_t alg)
 {
-	__ASSERT_NO_MSG(publ_key != NULL);
-	__ASSERT_NO_MSG(output != NULL);
-	__ASSERT_NO_MSG(output_length != NULL);
-
 	psa_ecc_family_t curve_family = PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes));
 	size_t curve_bits = psa_get_key_bits(attributes);
 	psa_status_t psa_status;
@@ -1046,6 +1083,26 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 		generator = cracen_key_derivation_pbkdf2_generate_block;
 	}
 
+	if (IS_ENABLED(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC) &&
+	    (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC)) {
+		if (operation->state == CRACEN_KD_STATE_CMAC_CTR_INPUT_LABEL ||
+		    operation->state == CRACEN_KD_STATE_CMAC_CTR_INPUT_CONTEXT ||
+		    operation->state == CRACEN_KD_STATE_CMAC_CTR_OUTPUT) {
+			if (operation->state != CRACEN_KD_STATE_CMAC_CTR_OUTPUT) {
+				operation->state = CRACEN_KD_STATE_CMAC_CTR_OUTPUT;
+				psa_status_t status =
+					cracen_key_derivation_cmac_ctr_generate_K_0(operation);
+				if (status != PSA_SUCCESS) {
+					return status;
+				}
+			}
+			generator = cracen_key_derivation_cmac_ctr_generate_block;
+
+		} else {
+			return PSA_ERROR_BAD_STATE;
+		}
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS) &&
 	    operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
 		size_t outlen;
@@ -1059,19 +1116,6 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 			return PSA_ERROR_HARDWARE_FAILURE;
 		}
 		return PSA_SUCCESS;
-	}
-
-	if (operation->alg == PSA_ALG_CMAC) {
-		if (operation->state == CRACEN_KD_STATE_CMAC_CTR_INPUT_LABEL ||
-		    operation->state == CRACEN_KD_STATE_CMAC_CTR_INPUT_CONTEXT ||
-		    operation->state == CRACEN_KD_STATE_CMAC_CTR_OUTPUT) {
-
-			operation->state = CRACEN_KD_STATE_CMAC_CTR_OUTPUT;
-			generator = cracen_key_derivation_cmac_ctr_generate_block;
-
-		} else {
-			return PSA_ERROR_BAD_STATE;
-		}
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_PRF) && PSA_ALG_IS_TLS12_PRF(operation->alg)) {
