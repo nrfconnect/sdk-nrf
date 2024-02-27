@@ -138,3 +138,13 @@ API documentation
 .. doxygengroup:: bt_fast_pair
    :project: nrf
    :members:
+
+Fast Pair UUID API
+==================
+
+| Header file: :file:`include/bluetooth/services/fast_pair/uuid.h`
+| Source files: :file:`subsys/bluetooth/services/fast_pair`
+
+.. doxygengroup:: bt_fast_pair_uuid
+   :project: nrf
+   :members:

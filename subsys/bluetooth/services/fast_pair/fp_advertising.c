@@ -13,6 +13,7 @@
 LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 #include <bluetooth/services/fast_pair/fast_pair.h>
+#include <bluetooth/services/fast_pair/uuid.h>
 #include "fp_battery.h"
 #include "fp_common.h"
 #include "fp_crypto.h"
@@ -37,7 +38,7 @@ enum fp_field_type {
 	FP_FIELD_TYPE_HIDE_BATTERY_UI_INDICATION = 0b0100,
 };
 
-static const uint16_t fast_pair_uuid = FP_SERVICE_UUID;
+static const uint16_t fast_pair_uuid = BT_FAST_PAIR_UUID_FPS_VAL;
 static const uint8_t version_and_flags;
 static const uint8_t empty_account_key_list;
 
