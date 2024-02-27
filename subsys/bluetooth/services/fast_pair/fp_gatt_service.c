@@ -12,7 +12,7 @@
 #include <zephyr/bluetooth/l2cap.h>
 #include <zephyr/bluetooth/gatt.h>
 
-#include <bluetooth/services/fast_pair.h>
+#include <bluetooth/services/fast_pair/fast_pair.h>
 
 /* Those headers are included to make a workaround of Android issue with sending old RPA address
  * during Key-based Pairing write.

@@ -132,7 +132,7 @@ The pairing flow and the set of Bluetooth authentication callbacks in use depend
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/fast_pair.h`
+| Header file: :file:`include/bluetooth/services/fast_pair/fast_pair.h`
 | Source files: :file:`subsys/bluetooth/services/fast_pair`
 
 .. doxygengroup:: bt_fast_pair

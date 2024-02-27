@@ -12,7 +12,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
-#include <bluetooth/services/fast_pair.h>
+#include <bluetooth/services/fast_pair/fast_pair.h>
 #include "fp_battery.h"
 #include "fp_common.h"
 #include "fp_crypto.h"

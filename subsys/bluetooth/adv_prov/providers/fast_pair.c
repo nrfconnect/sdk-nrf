@@ -6,7 +6,7 @@
 
 #include <bluetooth/adv_prov.h>
 #include <bluetooth/adv_prov/fast_pair.h>
-#include <bluetooth/services/fast_pair.h>
+#include <bluetooth/services/fast_pair/fast_pair.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(bt_le_adv_prov, CONFIG_BT_ADV_PROV_LOG_LEVEL);

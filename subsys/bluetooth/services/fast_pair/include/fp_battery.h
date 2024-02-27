@@ -7,7 +7,7 @@
 #ifndef _FP_BATTERY_H_
 #define _FP_BATTERY_H_
 
-#include <bluetooth/services/fast_pair.h>
+#include <bluetooth/services/fast_pair/fast_pair.h>
 
 /**
  * @defgroup fp_battery Fast Pair battery
