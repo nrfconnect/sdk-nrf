@@ -11,6 +11,7 @@
 #include "lc_pwm_led.h"
 
 #define PWM_SIZE_STEP 512
+#define BT_MESH_LIGHT_PURPOSE_INDICATOR_LIGHT 0x0013
 
 struct lightness_ctx {
 	struct bt_mesh_lightness_srv lightness_srv;
@@ -101,8 +102,30 @@ static const struct bt_mesh_health_srv_cb health_srv_cb = {
 	.attn_off = attention_off,
 };
 
+#ifdef CONFIG_BT_MESH_LARGE_COMP_DATA_SRV
+static uint8_t health_tests[] = {
+	BT_MESH_HEALTH_TEST_INFO(CONFIG_BT_COMPANY_ID, 3, 0x11, 0x22, 0x33),
+};
+
+static struct bt_mesh_models_metadata_entry lightness_srv_metadata[] = {
+	BT_MESH_LIGHT_PURPOSE_METADATA(BT_MESH_LIGHT_PURPOSE_INDICATOR_LIGHT),
+	BT_MESH_LIGHT_LIGHTNESS_RANGE_METADATA(0, UINT16_MAX),
+	BT_MESH_MODELS_METADATA_END,
+};
+
+static struct bt_mesh_models_metadata_entry *p_lightness_srv_metadata = lightness_srv_metadata;
+
+static struct bt_mesh_models_metadata_entry health_srv_metadata[] = {
+	BT_MESH_HEALTH_TEST_INFO_METADATA(health_tests),
+	BT_MESH_MODELS_METADATA_END,
+};
+#endif
+
 static struct bt_mesh_health_srv health_srv = {
 	.cb = &health_srv_cb,
+#ifdef CONFIG_BT_MESH_LARGE_COMP_DATA_SRV
+	.metadata = health_srv_metadata,
+#endif
 };
 
 BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
@@ -189,7 +212,6 @@ static const struct bt_mesh_lightness_srv_handlers lightness_srv_handlers = {
 
 static struct lightness_ctx my_ctx = {
 	.lightness_srv = BT_MESH_LIGHTNESS_SRV_INIT(&lightness_srv_handlers),
-
 };
 
 static int dummy_energy_use;
@@ -240,17 +262,19 @@ static struct bt_mesh_light_ctrl_srv light_ctrl_srv =
 
 static struct bt_mesh_elem elements[] = {
 	BT_MESH_ELEM(1,
-		     BT_MESH_MODEL_LIST(
-			     BT_MESH_MODEL_CFG_SRV,
-			     BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
-			     BT_MESH_MODEL_LIGHTNESS_SRV(
-					 &my_ctx.lightness_srv),
-			     BT_MESH_MODEL_SCENE_SRV(&scene_srv),
-			     BT_MESH_MODEL_SENSOR_SRV(&sensor_srv)),
+		     BT_MESH_MODEL_LIST(BT_MESH_MODEL_CFG_SRV,
+					BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
+#if defined(CONFIG_BT_MESH_LARGE_COMP_DATA_SRV)
+					BT_MESH_MODEL_LARGE_COMP_DATA_SRV,
+					BT_MESH_MODEL_LIGHTNESS_SRV_WITH_METADATA(
+						&my_ctx.lightness_srv, p_lightness_srv_metadata),
+#else
+					BT_MESH_MODEL_LIGHTNESS_SRV(&my_ctx.lightness_srv),
+#endif
+					BT_MESH_MODEL_SCENE_SRV(&scene_srv),
+					BT_MESH_MODEL_SENSOR_SRV(&sensor_srv)),
 		     BT_MESH_MODEL_NONE),
-	BT_MESH_ELEM(2,
-		     BT_MESH_MODEL_LIST(
-			     BT_MESH_MODEL_LIGHT_CTRL_SRV(&light_ctrl_srv)),
+	BT_MESH_ELEM(2, BT_MESH_MODEL_LIST(BT_MESH_MODEL_LIGHT_CTRL_SRV(&light_ctrl_srv)),
 		     BT_MESH_MODEL_NONE),
 };
 
