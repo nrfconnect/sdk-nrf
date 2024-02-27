@@ -49,6 +49,65 @@ extern "C" {
  *  @{
  */
 
+/** @def BT_MESH_SENSOR_FORMAT_PERCENTAGE_8_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_percentage_8
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_PERCENTAGE_8_INIT(_micro) {                      \
+	.format = &bt_mesh_sensor_format_percentage_8,                         \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 500000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_PERCENTAGE_16_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_percentage_16
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_PERCENTAGE_16_INIT(_micro) {                     \
+	.format = &bt_mesh_sensor_format_percentage_16,                        \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 10000),                    \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 10000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_PERCENTAGE_DELTA_TRIGGER_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_percentage_delta_trigger
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_PERCENTAGE_DELTA_TRIGGER_INIT(_micro) {          \
+	.format = &bt_mesh_sensor_format_percentage_delta_trigger,             \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 10000),                    \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 10000),                   \
+	}                                                                      \
+}
+
 /** Percentage 8
  *  - Unit: Percent
  *  - Encoding: 8 bit unsigned scalar (Resolution: 0.5)
@@ -74,6 +133,265 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_percentage_delta
 /** @defgroup bt_mesh_sensor_formats_environmental Environmental sensor formats
  *  @{
  */
+
+
+/** @def BT_MESH_SENSOR_FORMAT_TEMP_8_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_temp_8
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_TEMP_8_INIT(_micro) {                            \
+	.format = &bt_mesh_sensor_format_temp_8,                               \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 500000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_TEMP_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_temp
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_TEMP_INIT(_micro) {                              \
+	.format = &bt_mesh_sensor_format_temp,                                 \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 10000),                    \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 10000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_CO2_CONCENTRATION_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_co2_concentration
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_CO2_CONCENTRATION_INIT(_micro) {                 \
+	.format = &bt_mesh_sensor_format_co2_concentration,                    \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_NOISE_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_noise
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_NOISE_INIT(_micro) {                             \
+	.format = &bt_mesh_sensor_format_noise,                                \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_VOC_CONCENTRATION_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_voc_concentration
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_VOC_CONCENTRATION_INIT(_micro) {                 \
+	.format = &bt_mesh_sensor_format_voc_concentration,                    \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_WIND_SPEED_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_wind_speed
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_WIND_SPEED_INIT(_micro) {                        \
+	.format = &bt_mesh_sensor_format_wind_speed,                           \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 10000),                    \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 10000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_TEMP_8_WIDE_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_temp_8_wide
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_TEMP_8_WIDE_INIT(_micro) {                       \
+	.format = &bt_mesh_sensor_format_temp_8_wide,                          \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_GUST_FACTOR_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_gust_factor
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_GUST_FACTOR_INIT(_micro) {                       \
+	.format = &bt_mesh_sensor_format_gust_factor,                          \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 100000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_MAGNETIC_FLUX_DENSITY_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_magnetic_flux_density
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_MAGNETIC_FLUX_DENSITY_INIT(_micro) {             \
+	.format = &bt_mesh_sensor_format_magnetic_flux_density,                \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 100000),                   \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 100000),                  \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_POLLEN_CONCENTRATION_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_pollen_concentration
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_POLLEN_CONCENTRATION_INIT(_micro) {              \
+	.format = &bt_mesh_sensor_format_pollen_concentration,                 \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 1000000),                \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_PRESSURE_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_pressure
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_PRESSURE_INIT(_micro) {                          \
+	.format = &bt_mesh_sensor_format_pressure,                             \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 100000),                   \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 100000),                  \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 100000),                 \
+		FIELD_GET(GENMASK(31, 24), (_micro) / 100000),                 \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_RAINFALL_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_rainfall
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_RAINFALL_INIT(_micro) {                          \
+	.format = &bt_mesh_sensor_format_rainfall,                             \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000),                     \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000),                    \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_UV_INDEX_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_uv_index
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_UV_INDEX_INIT(_micro) {                          \
+	.format = &bt_mesh_sensor_format_uv_index,                             \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+	}                                                                      \
+}
 
 /** Temp 8
  *  - Unit: Celsius
@@ -171,6 +489,104 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_uv_index;
  *  @{
  */
 
+/** @def BT_MESH_SENSOR_FORMAT_TIME_DECIHOUR_8_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_time_decihour_8
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_TIME_DECIHOUR_8_INIT(_micro) {                   \
+	.format = &bt_mesh_sensor_format_time_decihour_8,                      \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 100000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_TIME_HOUR_24_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_time_hour_24
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_TIME_HOUR_24_INIT(_micro) {                      \
+	.format = &bt_mesh_sensor_format_time_hour_24,                         \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 1000000),                \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_TIME_SECOND_16_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_time_second_16
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_TIME_SECOND_16_INIT(_micro) {                    \
+	.format = &bt_mesh_sensor_format_time_second_16,                       \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_TIME_MILLISECOND_24_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_time_millisecond_24
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_TIME_MILLISECOND_24_INIT(_micro) {               \
+	.format = &bt_mesh_sensor_format_time_millisecond_24,                  \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000),                     \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000),                    \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 1000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_TIME_EXP_8_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_time_exp_8 from a float value in seconds.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _seconds
+ *
+ *  @param[in] _seconds The float value to initialize the sensor value to, in
+ *                      seconds.
+ */
+#define BT_MESH_SENSOR_FORMAT_TIME_EXP_8_INIT(_seconds) {                      \
+	.format = &bt_mesh_sensor_format_time_exp_8,                           \
+	.raw = { (uint8_t)((_seconds) == 0.0f ? 0 :                            \
+		64.0f + roundf(logf((_seconds))/logf(1.1f))) }                 \
+}
+
 /** Time decihour 8
  *  - Unit: Hours
  *  - Encoding: 8 bit unsigned scalar (Resolution: 0.1)
@@ -210,6 +626,153 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_exp_8;
 /** @defgroup bt_mesh_sensor_formats_electrical Electrical sensor formats
  *  @{
  */
+
+/** @def BT_MESH_SENSOR_FORMAT_ELECTRIC_CURRENT_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_electric_current
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_ELECTRIC_CURRENT_INIT(_micro) {                  \
+	.format = &bt_mesh_sensor_format_electric_current,                     \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 10000),                    \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 10000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_VOLTAGE_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_voltage
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_VOLTAGE_INIT(_micro) {                           \
+	.format = &bt_mesh_sensor_format_voltage,                              \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 15625),                    \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 15625),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_ENERGY32_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_energy32
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_ENERGY32_INIT(_micro) {                          \
+	.format = &bt_mesh_sensor_format_energy32,                             \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000),                     \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000),                    \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 1000),                   \
+		FIELD_GET(GENMASK(31, 24), (_micro) / 1000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_APPARENT_ENERGY32_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_apparent_energy32
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_APPARENT_ENERGY32_INIT(_micro) {                 \
+	.format = &bt_mesh_sensor_format_apparent_energy32,                    \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000),                     \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000),                    \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 1000),                   \
+		FIELD_GET(GENMASK(31, 24), (_micro) / 1000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_APPARENT_POWER_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_apparent_power
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_APPARENT_POWER_INIT(_micro) {                    \
+	.format = &bt_mesh_sensor_format_apparent_power,                       \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 100000),                   \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 100000),                  \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 100000),                 \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_POWER_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_power
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_POWER_INIT(_micro) {                             \
+	.format = &bt_mesh_sensor_format_power,                                \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 100000),                   \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 100000),                  \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 100000),                 \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_ENERGY_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_energy
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_ENERGY_INIT(_micro) {                            \
+	.format = &bt_mesh_sensor_format_energy,                               \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 1000000),                \
+	}                                                                      \
+}
 
 /** Electric current
  *  - Unit: Ampere
@@ -265,6 +828,210 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_energy;
 /** @defgroup bt_mesh_sensor_formats_lighting Lighting sensor formats
  *  @{
  */
+
+/** @def BT_MESH_SENSOR_FORMAT_CHROMATIC_DISTANCE_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_chromatic_distance
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_CHROMATIC_DISTANCE_INIT(_micro) {                \
+	.format = &bt_mesh_sensor_format_chromatic_distance,                   \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 10),                       \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 10),                      \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_CHROMATIC_DISTANCE_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_chromatic_distance
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_CHROMATIC_DISTANCE_INIT(_micro) {                \
+	.format = &bt_mesh_sensor_format_chromatic_distance,                   \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 10),                       \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 10),                      \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_CHROMATICITY_COORDINATE_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_chromaticity_coordinate
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_CHROMATICITY_COORDINATE_INIT(_micro) {           \
+	.format = &bt_mesh_sensor_format_chromaticity_coordinate,              \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (uint32_t)((_micro) / 15.258789f)),   \
+		FIELD_GET(GENMASK(15, 8), (uint32_t)((_micro) / 15.258789f)),  \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_CORRELATED_COLOR_TEMP_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_correlated_color_temp
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_CORRELATED_COLOR_TEMP_INIT(_micro) {             \
+	.format = &bt_mesh_sensor_format_correlated_color_temp,                \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_ILLUMINANCE_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_illuminance
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_ILLUMINANCE_INIT(_micro) {                       \
+	.format = &bt_mesh_sensor_format_illuminance,                          \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 10000),                    \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 10000),                   \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 10000),                  \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_LUMINOUS_EFFICACY_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_luminous_efficacy
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_LUMINOUS_EFFICACY_INIT(_micro) {                 \
+	.format = &bt_mesh_sensor_format_luminous_efficacy,                    \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 100000),                   \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 100000),                  \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_LUMINOUS_ENERGY_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_luminous_energy
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_LUMINOUS_ENERGY_INIT(_micro) {                   \
+	.format = &bt_mesh_sensor_format_luminous_energy,                      \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000000LL),             \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000000LL),            \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 1000000000LL),           \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_LUMINOUS_EXPOSURE_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_luminous_exposure
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_LUMINOUS_EXPOSURE_INIT(_micro) {                 \
+	.format = &bt_mesh_sensor_format_luminous_exposure,                    \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000000LL),             \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000000LL),            \
+		FIELD_GET(GENMASK(23, 16), (_micro) / 1000000000LL),           \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_LUMINOUS_FLUX_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_luminous_flux
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_LUMINOUS_FLUX_INIT(_micro) {                     \
+	.format = &bt_mesh_sensor_format_luminous_flux,                        \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_PERCEIVED_LIGHTNESS_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_perceived_lightness
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_PERCEIVED_LIGHTNESS_INIT(_micro) {               \
+	.format = &bt_mesh_sensor_format_perceived_lightness,                  \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+	}                                                                      \
+}
+
 /** Chromatic distance
  *  - Unit: Unitless
  *  - Encoding: 16 bit signed scalar (Resolution: 0.00001)
@@ -332,6 +1099,117 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_perceived_lightn
 /** @defgroup bt_mesh_sensor_formats_miscellaneous Miscellaneous sensor formats
  *  @{
  */
+
+/** @def BT_MESH_SENSOR_FORMAT_DIRECTION_16_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_direction_16
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_DIRECTION_16_INIT(_micro) {                      \
+	.format = &bt_mesh_sensor_format_direction_16,                         \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 10000),                    \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 10000),                   \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_COUNT_16_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_count_16
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_COUNT_16_INIT(_micro) {                          \
+	.format = &bt_mesh_sensor_format_count_16,                             \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_GEN_LVL_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_gen_lvl
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_GEN_LVL_INIT(_micro) {                           \
+	.format = &bt_mesh_sensor_format_gen_lvl,                              \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+		FIELD_GET(GENMASK(15, 8), (_micro) / 1000000),                 \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_COS_OF_THE_ANGLE_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_cos_of_the_angle
+ *         from an integer in micro-units.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _micro
+ *
+ *  @param[in] _micro The value to initialize the sensor value to, in
+ *                    micro-units.
+ */
+#define BT_MESH_SENSOR_FORMAT_COS_OF_THE_ANGLE_INIT(_micro) {                  \
+	.format = &bt_mesh_sensor_format_cos_of_the_angle,                     \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_micro) / 1000000),                  \
+	}                                                                      \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_BOOLEAN_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_boolean from a boolean value.
+ *
+ *  @note This does not take into account minimum or maximum values, the user
+ *        is responsible for supplying a valid value in @c _bool
+ *
+ *  @param[in] _bool The boolean value to initialize the sensor value to.
+ */
+#define BT_MESH_SENSOR_FORMAT_BOOLEAN_INIT(_bool) {                            \
+	.format = &bt_mesh_sensor_format_boolean,                              \
+	.raw = { _bool }                                                       \
+}
+
+/** @def BT_MESH_SENSOR_FORMAT_COEFFICIENT_INIT
+ *
+ *  @brief Initialize a @ref bt_mesh_sensor_value with format
+ *         @ref bt_mesh_sensor_format_coefficient from a float value.
+ *
+ *  @param[in] _float The float value to initialize the sensor value to.
+ */
+#define BT_MESH_SENSOR_FORMAT_COEFFICIENT_INIT(_float) {                       \
+	.format = &bt_mesh_sensor_format_coefficient,                          \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), *(uint32_t *)&(float){(_float)}),     \
+		FIELD_GET(GENMASK(15, 8), *(uint32_t *)&(float){(_float)}),    \
+		FIELD_GET(GENMASK(23, 16), *(uint32_t *)&(float){(_float)}),   \
+		FIELD_GET(GENMASK(31, 24), *(uint32_t *)&(float){(_float)}),   \
+	}                                                                      \
+}
 
 /** Direction 16
  *  - Unit: Degrees

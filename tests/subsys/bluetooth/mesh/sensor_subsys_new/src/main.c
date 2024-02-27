@@ -180,6 +180,19 @@ static void check_to_status(const struct bt_mesh_sensor_format *format,
 	zassert_equal(status, expected_status);
 }
 
+static void check_init_macro(const struct bt_mesh_sensor_format *format,
+			     struct bt_mesh_sensor_value (*init_with_macro)(int64_t val),
+			     int64_t micro, uint32_t expected_raw)
+{
+	printk("Testing init macro with micro == %lld\n", (long long)micro);
+	struct bt_mesh_sensor_value val = init_with_macro(micro);
+	uint32_t raw = sys_get_le32(val.raw);
+
+	zassert_equal(raw, expected_raw,
+		"Expected 0x%08x, got 0x%08x", expected_raw, raw);
+	zassert_equal(val.format, format);
+}
+
 static uint32_t encoded(const struct format_spec *spec, double value)
 {
 	int64_t val = round(value / spec->ratio);
@@ -204,8 +217,10 @@ static float smallest_float_geq(double limit)
 	return val >= limit ? val : nextafterf(val, INFINITY);
 }
 
-static void check_scalar_format(const struct bt_mesh_sensor_format *format,
-				const struct format_spec *spec)
+static void check_scalar_format(
+	const struct bt_mesh_sensor_format *format,
+	const struct format_spec *spec,
+	struct bt_mesh_sensor_value (*init_with_macro)(int64_t val))
 {
 	/* Decoded values inside [min, max] range */
 	int64_t micro_max = round(spec->max * MICRO);
@@ -221,6 +236,7 @@ static void check_scalar_format(const struct bt_mesh_sensor_format *format,
 	check_to_float(format, encoded(spec, spec->max),
 		       BT_MESH_SENSOR_VALUE_NUMBER, spec->max, false);
 	check_to_status(format, encoded(spec, spec->max), BT_MESH_SENSOR_VALUE_NUMBER);
+	check_init_macro(format, init_with_macro, micro_max, encoded(spec, spec->max));
 
 	/* Checking encoding/decoding minimum value */
 	check_from_micro(format, micro_min, 0, encoded(spec, spec->min), true);
@@ -230,6 +246,7 @@ static void check_scalar_format(const struct bt_mesh_sensor_format *format,
 	check_to_float(format, encoded(spec, spec->min),
 		       BT_MESH_SENSOR_VALUE_NUMBER, spec->min, false);
 	check_to_status(format, encoded(spec, spec->min), BT_MESH_SENSOR_VALUE_NUMBER);
+	check_init_macro(format, init_with_macro, micro_min, encoded(spec, spec->min));
 
 	/* Decoded values outside [min, max] range */
 	int64_t micro_max_plus_one = micro_max + round(MICRO * spec->ratio);
@@ -334,11 +351,18 @@ static void check_scalar_format(const struct bt_mesh_sensor_format *format,
 	}
 }
 
-#define TEST_SCALAR_FORMAT(_name, _spec)                                       \
+#define TEST_SCALAR_FORMAT(_name, _name_upper, _spec)                          \
+struct bt_mesh_sensor_value _init_with_macro_##_name(int64_t value)            \
+{                                                                              \
+	struct bt_mesh_sensor_value val =                                      \
+		BT_MESH_SENSOR_FORMAT_##_name_upper##_INIT(value);             \
+	return val;                                                            \
+}                                                                              \
 ZTEST(sensor_types_test_new, test_format_##_name)                              \
 {                                                                              \
 	struct format_spec spec = _spec;                                       \
-	check_scalar_format(&bt_mesh_sensor_format_##_name, &spec);            \
+	check_scalar_format(&bt_mesh_sensor_format_##_name, &spec,             \
+			    _init_with_macro_##_name);                         \
 }
 
 static void check_sensor_type(const struct bt_mesh_sensor_type *type,
@@ -396,50 +420,50 @@ ZTEST(sensor_types_test_new, test_type_##_name)                                \
 		ARRAY_SIZE(((struct channel_spec[]){ __VA_ARGS__ })));         \
 }
 
-TEST_SCALAR_FORMAT(percentage_8,
+TEST_SCALAR_FORMAT(percentage_8, PERCENTAGE_8,
 		   FORMAT_SPEC(1, 1, 0, -1, 0.0, 100.0,
 			       SPECIAL(unknown, 0xff),
 			       SPECIAL(prohibited, 0xC9)))
 
-TEST_SCALAR_FORMAT(percentage_16,
+TEST_SCALAR_FORMAT(percentage_16, PERCENTAGE_16,
 		   FORMAT_SPEC(2, 1, -2, 0, 0.0, 100.0,
 			       SPECIAL(unknown, 0xffff),
 			       SPECIAL(prohibited, 0x2711)))
 
-TEST_SCALAR_FORMAT(percentage_delta_trigger,
+TEST_SCALAR_FORMAT(percentage_delta_trigger, PERCENTAGE_DELTA_TRIGGER,
 		   FORMAT_SPEC(2, 1, -2, 0, 0.0, 655.35))
 
-TEST_SCALAR_FORMAT(temp_8,
+TEST_SCALAR_FORMAT(temp_8, TEMP_8,
 		   FORMAT_SPEC(1, 1, 0, -1, -64.0, 63.0,
 			       SPECIAL(unknown, 0x7f)))
 
-TEST_SCALAR_FORMAT(temp,
+TEST_SCALAR_FORMAT(temp, TEMP,
 		   FORMAT_SPEC(2, 1, -2, 0, -273.15, 327.67,
 			       SPECIAL(unknown, 0x8000),
 			       SPECIAL(prohibited, 0x954C)))
 
-TEST_SCALAR_FORMAT(co2_concentration,
+TEST_SCALAR_FORMAT(co2_concentration, CO2_CONCENTRATION,
 		   FORMAT_SPEC(2, 1, 0, 0, 0, 65533,
 			       SPECIAL(max_or_greater, 0xFFFE),
 			       SPECIAL(unknown, 0xFFFF)))
 
-TEST_SCALAR_FORMAT(noise,
+TEST_SCALAR_FORMAT(noise, NOISE,
 		   FORMAT_SPEC(1, 1, 0, 0, 0, 253,
 			       SPECIAL(max_or_greater, 0xFE),
 			       SPECIAL(unknown, 0xFF)))
 
-TEST_SCALAR_FORMAT(voc_concentration,
+TEST_SCALAR_FORMAT(voc_concentration, VOC_CONCENTRATION,
 		   FORMAT_SPEC(2, 1, 0, 0, 0, 65533,
 			       SPECIAL(max_or_greater, 0xFFFE),
 			       SPECIAL(unknown, 0xFFFF)))
 
-TEST_SCALAR_FORMAT(wind_speed,
+TEST_SCALAR_FORMAT(wind_speed, WIND_SPEED,
 		   FORMAT_SPEC(2, 1, -2, 0, 0, 655.35))
 
-TEST_SCALAR_FORMAT(temp_8_wide,
+TEST_SCALAR_FORMAT(temp_8_wide, TEMP_8_WIDE,
 		   FORMAT_SPEC(1, 1, 0, 0, -128, 127))
 
-TEST_SCALAR_FORMAT(gust_factor,
+TEST_SCALAR_FORMAT(gust_factor, GUST_FACTOR,
 		   FORMAT_SPEC(1, 1, -1, 0, 0, 25.5))
 
 /* GSS specifies d = -7. Implemented in the stack as d = -1 with unit of
@@ -447,41 +471,51 @@ TEST_SCALAR_FORMAT(gust_factor,
  * and to/from sensor_value.
  * Testing using d = -1
  */
-TEST_SCALAR_FORMAT(magnetic_flux_density,
+TEST_SCALAR_FORMAT(magnetic_flux_density, MAGNETIC_FLUX_DENSITY,
 		   FORMAT_SPEC(2, 1, -1, 0, -3276.8, 3276.7))
 
-TEST_SCALAR_FORMAT(pollen_concentration,
+TEST_SCALAR_FORMAT(pollen_concentration, POLLEN_CONCENTRATION,
 		   FORMAT_SPEC(3, 1, 0, 0, 0, 16777215))
 
-TEST_SCALAR_FORMAT(pressure,
+TEST_SCALAR_FORMAT(pressure, PRESSURE,
 		   FORMAT_SPEC(4, 1, -1, 0, 0, 429496729.5))
 
-TEST_SCALAR_FORMAT(rainfall,
+TEST_SCALAR_FORMAT(rainfall, RAINFALL,
 		   FORMAT_SPEC(2, 1, -3, 0, 0, 65.535))
 
-TEST_SCALAR_FORMAT(uv_index,
+TEST_SCALAR_FORMAT(uv_index, UV_INDEX,
 		   FORMAT_SPEC(1, 1, 0, 0, 0, 255))
 
-TEST_SCALAR_FORMAT(time_decihour_8,
+TEST_SCALAR_FORMAT(time_decihour_8, TIME_DECIHOUR_8,
 		   FORMAT_SPEC(1, 1, -1, 0, 0, 23.9,
 			       SPECIAL(unknown, 0xFF),
 			       SPECIAL(prohibited, 0xF0)))
 
-TEST_SCALAR_FORMAT(time_hour_24,
+TEST_SCALAR_FORMAT(time_hour_24, TIME_HOUR_24,
 		   FORMAT_SPEC(3, 1, 0, 0, 0, 16777214,
 			       SPECIAL(unknown, 0xFFFFFF)))
 
-TEST_SCALAR_FORMAT(time_second_16,
+TEST_SCALAR_FORMAT(time_second_16, TIME_SECOND_16,
 		   FORMAT_SPEC(2, 1, 0, 0, 0, 65534,
 			       SPECIAL(unknown, 0xFFFF)))
 
-TEST_SCALAR_FORMAT(time_millisecond_24,
+TEST_SCALAR_FORMAT(time_millisecond_24, TIME_MILLISECOND_24,
 		   FORMAT_SPEC(3, 1, -3, 0, 0, 16777.214,
 			       SPECIAL(unknown, 0xFFFFFF)))
+
+struct bt_mesh_sensor_value init_with_macro_time_exp_8(float seconds)
+{
+	struct bt_mesh_sensor_value val =
+		BT_MESH_SENSOR_FORMAT_TIME_EXP_8_INIT(seconds);
+	return val;
+}
 
 ZTEST(sensor_types_test_new, test_format_time_exp_8)
 {
 	const struct bt_mesh_sensor_format *fmt = &bt_mesh_sensor_format_time_exp_8;
+	struct bt_mesh_sensor_value val;
+	uint32_t macro_raw;
+	double error;
 
 	/*                         Specially encoded 0
 	 *                         |     Lowest normal value
@@ -509,6 +543,16 @@ ZTEST(sensor_types_test_new, test_format_time_exp_8)
 		check_to_micro(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER, micro, false);
 		check_to_float(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER, f, false);
 		check_to_status(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER);
+		/* Test init macro */
+		val = init_with_macro_time_exp_8(f);
+		zassert_equal(val.format, fmt);
+		macro_raw = sys_get_le32(val.raw);
+		if (raw == 0) {
+			zassert_equal(macro_raw, raw);
+		} else {
+			error = (double)macro_raw / (double)raw;
+			zassert_between_inclusive(error, 0.99999, 1.00001);
+		}
 	}
 
 	/* Checking special values*/
@@ -528,7 +572,7 @@ ZTEST(sensor_types_test_new, test_format_time_exp_8)
 	check_to_status(fmt, unknown_raw, BT_MESH_SENSOR_VALUE_UNKNOWN);
 }
 
-TEST_SCALAR_FORMAT(electric_current,
+TEST_SCALAR_FORMAT(electric_current, ELECTRIC_CURRENT,
 		   FORMAT_SPEC(2, 1, -2, 0, 0, 655.34,
 			       SPECIAL(unknown, 0xFFFF)))
 
@@ -538,37 +582,37 @@ TEST_SCALAR_FORMAT(electric_current,
  * these special values to be excluded from the min and max range specified,
  * the min and max used here are 0 + 2^-6 and 1022.0 - 2^-6.
  */
-TEST_SCALAR_FORMAT(voltage,
+TEST_SCALAR_FORMAT(voltage, VOLTAGE,
 		   FORMAT_SPEC(2, 1, 0, -6, 0.015625, 1021.984375,
 			       SPECIAL(unknown, 0xFFFF),
 			       SPECIAL(max_or_greater, 0xFF80),
 			       SPECIAL(min_or_less, 0x0000),
 			       SPECIAL(prohibited, 0xFF81)))
 
-TEST_SCALAR_FORMAT(energy32,
+TEST_SCALAR_FORMAT(energy32, ENERGY32,
 		   FORMAT_SPEC(4, 1, -3, 0, 0, 4294967.293,
 			       SPECIAL(invalid, 0xFFFFFFFE),
 			       SPECIAL(unknown, 0xFFFFFFFF)))
 
-TEST_SCALAR_FORMAT(apparent_energy32,
+TEST_SCALAR_FORMAT(apparent_energy32, APPARENT_ENERGY32,
 		   FORMAT_SPEC(4, 1, -3, 0, 0, 4294967.293,
 			       SPECIAL(invalid, 0xFFFFFFFE),
 			       SPECIAL(unknown, 0xFFFFFFFF)))
 
-TEST_SCALAR_FORMAT(apparent_power,
+TEST_SCALAR_FORMAT(apparent_power, APPARENT_POWER,
 		   FORMAT_SPEC(3, 1, -1, 0, 0, 1677721.3,
 			       SPECIAL(invalid, 0xFFFFFE),
 			       SPECIAL(unknown, 0xFFFFFF)))
 
-TEST_SCALAR_FORMAT(power,
+TEST_SCALAR_FORMAT(power, POWER,
 		   FORMAT_SPEC(3, 1, -1, 0, 0, 1677721.4,
 			       SPECIAL(unknown, 0xFFFFFF)))
 
-TEST_SCALAR_FORMAT(energy,
+TEST_SCALAR_FORMAT(energy, ENERGY,
 		   FORMAT_SPEC(3, 1, 0, 0, 0, 16777214,
 			       SPECIAL(unknown, 0xFFFFFF)))
 
-TEST_SCALAR_FORMAT(chromatic_distance,
+TEST_SCALAR_FORMAT(chromatic_distance, CHROMATIC_DISTANCE,
 		   FORMAT_SPEC(2, 1, -5, 0, -0.05, 0.05,
 			       SPECIAL(invalid, 0x7FFF),
 			       SPECIAL(unknown, 0x7FFE),
@@ -579,47 +623,47 @@ TEST_SCALAR_FORMAT(chromatic_distance,
  * contradictory and the stack currently encodes/decodes according to
  * "b = -16", the max is recomputed in this test to 0.9999847 (~= 65535/65536)
  */
-TEST_SCALAR_FORMAT(chromaticity_coordinate,
+TEST_SCALAR_FORMAT(chromaticity_coordinate, CHROMATICITY_COORDINATE,
 		   FORMAT_SPEC(2, 1, 0, -16, 0, 0.9999847))
 
-TEST_SCALAR_FORMAT(correlated_color_temp,
+TEST_SCALAR_FORMAT(correlated_color_temp, CORRELATED_COLOR_TEMP,
 		   FORMAT_SPEC(2, 1, 0, 0, 800, 65534,
 			       SPECIAL(unknown, 0xFFFF),
 			       SPECIAL(prohibited, 0x031f)))
 
-TEST_SCALAR_FORMAT(illuminance,
+TEST_SCALAR_FORMAT(illuminance, ILLUMINANCE,
 		   FORMAT_SPEC(3, 1, -2, 0, 0, 167772.14,
 			       SPECIAL(unknown, 0xFFFFFF)))
 
-TEST_SCALAR_FORMAT(luminous_efficacy,
+TEST_SCALAR_FORMAT(luminous_efficacy, LUMINOUS_EFFICACY,
 		   FORMAT_SPEC(2, 1, -1, 0, 0, 1800,
 			       SPECIAL(unknown, 0xFFFF),
 			       SPECIAL(prohibited, 0x4651)))
 
-TEST_SCALAR_FORMAT(luminous_energy,
+TEST_SCALAR_FORMAT(luminous_energy, LUMINOUS_ENERGY,
 		   FORMAT_SPEC(3, 1, 3, 0, 0, 16777214000.0,
 			       SPECIAL(unknown, 0xFFFFFF)))
 
-TEST_SCALAR_FORMAT(luminous_exposure,
+TEST_SCALAR_FORMAT(luminous_exposure, LUMINOUS_EXPOSURE,
 		   FORMAT_SPEC(3, 1, 3, 0, 0, 16777214000.0,
 			       SPECIAL(unknown, 0xFFFFFF)))
 
-TEST_SCALAR_FORMAT(luminous_flux,
+TEST_SCALAR_FORMAT(luminous_flux, LUMINOUS_FLUX,
 		   FORMAT_SPEC(2, 1, 0, 0, 0, 65534,
 			       SPECIAL(unknown, 0xFFFF)))
 
-TEST_SCALAR_FORMAT(perceived_lightness,
+TEST_SCALAR_FORMAT(perceived_lightness, PERCEIVED_LIGHTNESS,
 		   FORMAT_SPEC(2, 1, 0, 0, 0, 65535))
 
-TEST_SCALAR_FORMAT(direction_16,
+TEST_SCALAR_FORMAT(direction_16, DIRECTION_16,
 		   FORMAT_SPEC(2, 1, -2, 0, 0, 359.99,
 			       SPECIAL(prohibited, 0x8CA0)))
 
-TEST_SCALAR_FORMAT(count_16,
+TEST_SCALAR_FORMAT(count_16, COUNT_16,
 		   FORMAT_SPEC(2, 1, 0, 0, 0, 65534,
 			       SPECIAL(unknown, 0xFFFF)))
 
-TEST_SCALAR_FORMAT(gen_lvl,
+TEST_SCALAR_FORMAT(gen_lvl, GEN_LVL,
 		   FORMAT_SPEC(2, 1, 0, 0, 0, 65535))
 
 /* GSS specifies d = -2, however, it also says that the value is
@@ -628,7 +672,7 @@ TEST_SCALAR_FORMAT(gen_lvl,
  * The stack currently returns values in hundredths, i.e. d = 0, so this is
  * what is tested.
  */
-TEST_SCALAR_FORMAT(cos_of_the_angle,
+TEST_SCALAR_FORMAT(cos_of_the_angle, COS_OF_THE_ANGLE,
 		   FORMAT_SPEC(1, 1, 0, 0, -100, 100,
 			       SPECIAL(unknown, 0x7F),
 			       SPECIAL(prohibited, 0x9B)))
@@ -636,20 +680,33 @@ TEST_SCALAR_FORMAT(cos_of_the_angle,
 ZTEST(sensor_types_test_new, test_format_boolean)
 {
 	const struct bt_mesh_sensor_format *fmt = &bt_mesh_sensor_format_boolean;
+	uint32_t expected_raw;
 
 	/* Checking false (0) */
-	check_from_micro(fmt, 0, 0, 0x00, true);
-	check_from_float(fmt, 0.0f, 0, 0x00, true);
-	check_to_micro(fmt, 0x00, BT_MESH_SENSOR_VALUE_NUMBER, 0, true);
-	check_to_float(fmt, 0x00, BT_MESH_SENSOR_VALUE_NUMBER, 0.0f, true);
-	check_to_status(fmt, 0x00, BT_MESH_SENSOR_VALUE_NUMBER);
+	expected_raw = 0x00;
+	check_from_micro(fmt, 0, 0, expected_raw, true);
+	check_from_float(fmt, 0.0f, 0, expected_raw, true);
+	check_to_micro(fmt, expected_raw, BT_MESH_SENSOR_VALUE_NUMBER, 0, true);
+	check_to_float(fmt, expected_raw, BT_MESH_SENSOR_VALUE_NUMBER, 0.0f, true);
+	check_to_status(fmt, expected_raw, BT_MESH_SENSOR_VALUE_NUMBER);
+	/* Checking init macro */
+	struct bt_mesh_sensor_value val_false = BT_MESH_SENSOR_FORMAT_BOOLEAN_INIT(false);
+
+	zassert_equal(val_false.format, fmt);
+	zassert_mem_equal(val_false.raw, &expected_raw, 4);
 
 	/* Checking true (1) */
-	check_from_micro(fmt, 1 * MICRO, 0, 0x01, true);
-	check_from_float(fmt, 1.0f, 0, 0x01, true);
-	check_to_micro(fmt, 0x01, BT_MESH_SENSOR_VALUE_NUMBER, 1 * MICRO, true);
-	check_to_float(fmt, 0x01, BT_MESH_SENSOR_VALUE_NUMBER, 1.0f, true);
-	check_to_status(fmt, 0x01, BT_MESH_SENSOR_VALUE_NUMBER);
+	expected_raw = 0x01;
+	check_from_micro(fmt, 1 * MICRO, 0, expected_raw, true);
+	check_from_float(fmt, 1.0f, 0, expected_raw, true);
+	check_to_micro(fmt, expected_raw, BT_MESH_SENSOR_VALUE_NUMBER, 1 * MICRO, true);
+	check_to_float(fmt, expected_raw, BT_MESH_SENSOR_VALUE_NUMBER, 1.0f, true);
+	check_to_status(fmt, expected_raw, BT_MESH_SENSOR_VALUE_NUMBER);
+	/* Checking init macro */
+	struct bt_mesh_sensor_value val_true = BT_MESH_SENSOR_FORMAT_BOOLEAN_INIT(true);
+
+	zassert_equal(val_true.format, fmt);
+	zassert_mem_equal(val_true.raw, &expected_raw, 4);
 
 	/* Checking out of range float/micro */
 	check_from_micro(fmt, 2 * MICRO, -ERANGE, 0x01, true);
@@ -660,9 +717,17 @@ ZTEST(sensor_types_test_new, test_format_boolean)
 	check_to_float(fmt, 0x02, BT_MESH_SENSOR_VALUE_CONVERSION_ERROR, 0.0f, true);
 }
 
+struct bt_mesh_sensor_value init_with_macro_coefficient(float value)
+{
+	struct bt_mesh_sensor_value val =
+		BT_MESH_SENSOR_FORMAT_COEFFICIENT_INIT(value);
+	return val;
+}
+
 ZTEST(sensor_types_test_new, test_format_coefficient)
 {
 	const struct bt_mesh_sensor_format *fmt = &bt_mesh_sensor_format_coefficient;
+	struct bt_mesh_sensor_value val;
 
 	/* Coefficient is encoded as a raw 32 bit float */
 	float test_vector_float[] = {
@@ -676,6 +741,9 @@ ZTEST(sensor_types_test_new, test_format_coefficient)
 		check_from_float(fmt, f, 0, raw, true);
 		check_to_float(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER, f, true);
 		check_to_status(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER);
+		val = init_with_macro_coefficient(f);
+		zassert_equal(val.format, fmt);
+		zassert_mem_equal(val.raw, &raw, 4);
 	}
 
 	int64_t test_vector_micro[] = { INT64_MIN, 0, 1, 1000000, INT64_MAX };

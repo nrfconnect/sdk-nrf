@@ -1000,4 +1000,42 @@ int bt_mesh_sensor_value_from_special_status(
 	}
 	return format->cb->from_special_status(format, status, sensor_val);
 }
+
+int bt_mesh_sensor_column_end_get(const struct bt_mesh_sensor_column *column,
+				  struct bt_mesh_sensor_value *column_end)
+{
+	const struct bt_mesh_sensor_format *format = column->start.format;
+	enum bt_mesh_sensor_value_status status;
+	int err;
+
+	if (format->cb->to_micro) {
+		/* Use micro if dedicated encoder available */
+		int64_t start_micro, width_micro;
+
+		status = bt_mesh_sensor_value_to_micro(&column->start, &start_micro);
+		if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+			return -ERANGE;
+		}
+		status = bt_mesh_sensor_value_to_micro(&column->width, &width_micro);
+		if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+			return -ERANGE;
+		}
+		return bt_mesh_sensor_value_from_micro(format, start_micro + width_micro,
+						       column_end);
+	}
+	/* Use float otherwise (micro would delegate to to_float in this case
+	 * and lose precision)
+	 */
+	float start_f, width_f;
+
+	status = bt_mesh_sensor_value_to_float(&column->start, &start_f);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return -ERANGE;
+	}
+	status = bt_mesh_sensor_value_to_float(&column->width, &width_f);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return -ERANGE;
+	}
+	return bt_mesh_sensor_value_from_float(format, start_f + width_f, column_end);
+}
 #endif /* defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */

@@ -26,12 +26,10 @@
 #error "Unsupported board!"
 #endif
 
-#define TEMP_INIT(_val) { .format = &bt_mesh_sensor_format_temp, .raw = {      \
-	FIELD_GET(GENMASK(7, 0), (_val) * 100),                                \
-	FIELD_GET(GENMASK(15, 8), (_val) * 100)                                \
-}}
-
-#define COL_INIT(_start, _width) { TEMP_INIT(_start), TEMP_INIT(_width) }
+#define COL_INIT(_start, _width) {
+	BT_MESH_SENSOR_FORMAT_TEMP_INIT(_start * 1000000LL),
+	BT_MESH_SENSOR_FORMAT_TEMP_INIT(_width * 1000000LL)
+}
 
 /* The columns (temperature ranges) for relative
  * runtime in a chip temperature
@@ -52,8 +50,8 @@ struct sensor_value_range {
 #define DEFAULT_TEMP_RANGE_HIGH 100
 /* Range limiting the reported values of the chip temperature */
 static struct sensor_value_range temp_range = {
-	TEMP_INIT(DEFAULT_TEMP_RANGE_LOW),
-	TEMP_INIT(DEFAULT_TEMP_RANGE_HIGH),
+	BT_MESH_SENSOR_FORMAT_TEMP_INIT(DEFAULT_TEMP_RANGE_LOW * 1000000LL),
+	BT_MESH_SENSOR_FORMAT_TEMP_INIT(DEFAULT_TEMP_RANGE_HIGH * 1000000LL),
 };
 
 static const struct device *dev = DEVICE_DT_GET(SENSOR_NODE);
@@ -249,13 +247,7 @@ static int relative_runtime_in_chip_temp_series_get(struct bt_mesh_sensor_srv *s
 	}
 
 	value[1] = columns[column_index].start;
-
-	int64_t start_micro, width_micro;
-
-	(void)bt_mesh_sensor_value_to_micro(&columns[column_index].start, &start_micro);
-	(void)bt_mesh_sensor_value_to_micro(&columns[column_index].width, &width_micro);
-	err = bt_mesh_sensor_value_from_micro(columns[column_index].start.format,
-					      start_micro + width_micro, &value[2]);
+	err = bt_mesh_sensor_column_end_get(&columns[column_index], &value[2]);
 	if (err) {
 		printk("Error encoding column end (%d)\n", err);
 	}
@@ -589,16 +581,6 @@ struct settings_handler amb_light_level_gain_conf = {
 	.name = "amb_light_level",
 	.h_set = amb_light_level_gain_settings_restore
 };
-
-#define ILLUMINANCE_INIT_MILLIS(_val)                                          \
-{                                                                              \
-	.format = &bt_mesh_sensor_format_illuminance,                          \
-	.raw = {                                                               \
-		FIELD_GET(GENMASK(7, 0), (_val / 10)),                         \
-		FIELD_GET(GENMASK(15, 8), (_val / 10)),                        \
-		FIELD_GET(GENMASK(23, 16), (_val / 10)),                       \
-	}                                                                      \
-}
 
 static int amb_light_level_get(struct bt_mesh_sensor_srv *srv,
 			       struct bt_mesh_sensor *sensor,

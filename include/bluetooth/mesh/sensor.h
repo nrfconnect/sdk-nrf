@@ -816,6 +816,23 @@ int bt_mesh_sensor_value_from_special_status(
 	enum bt_mesh_sensor_value_status status,
 	struct bt_mesh_sensor_value *sensor_val);
 
+/** @brief Encode the endpoint of a @ref bt_mesh_sensor_column as a
+ *         @ref bt_mesh_sensor_value.
+ *
+ *  This is useful in series get callbacks, where the third channel of the
+ *  sensor value typically should contain the column endpoint.
+ *
+ *  The endpoint is computed as column->start + column->width.
+ *
+ *  @param[in]  column     The column to get the endpoint for.
+ *  @param[out] column_end The computed endpoint, encoded with the same format
+ *                         as the column start value.
+ *
+ *  @return 0 on success, (negative) error code otherwise.
+ */
+int bt_mesh_sensor_column_end_get(const struct bt_mesh_sensor_column *column,
+				  struct bt_mesh_sensor_value *column_end);
+
 /** @brief Check whether a single channel sensor value lies within a column.
  *
  *  @param[in] value Value to check. Only the first channel is considered.
