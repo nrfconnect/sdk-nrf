@@ -19,6 +19,11 @@
 
 #if defined(MBEDTLS_PSA_CRYPTO_C)
 
+#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && \
+	!defined(CONFIG_BUILD_WITH_TFM)
+#include <hw_unique_key.h>
+#endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT && !CONFIG_BUILD_WITH_TFM */
+
 #if defined(MBEDTLS_PSA_CRYPTO_DRIVERS)
 
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER) || defined(PSA_NEED_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER) || \
@@ -133,6 +138,22 @@
 psa_status_t prng_test_generate_random(uint8_t *output, size_t output_size);
 #endif
 
+#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && \
+	!defined(CONFIG_BUILD_WITH_TFM)
+static psa_status_t hw_unique_key_provisioning(void)
+{
+	if (!hw_unique_key_are_any_written()) {
+		int result = hw_unique_key_write_random();
+
+		if (result != HW_UNIQUE_KEY_SUCCESS) {
+			return PSA_ERROR_GENERIC_ERROR;
+		}
+	}
+
+	return PSA_SUCCESS;
+}
+#endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT && !CONFIG_BUILD_WITH_TFM */
+
 psa_status_t psa_driver_wrapper_init(void)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
@@ -143,6 +164,14 @@ psa_status_t psa_driver_wrapper_init(void)
 		return status;
 	}
 #endif /* PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER */
+
+#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && \
+	!defined(CONFIG_BUILD_WITH_TFM)
+	status = hw_unique_key_provisioning();
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+#endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT && !CONFIG_BUILD_WITH_TFM */
 
 	return PSA_SUCCESS;
 }
