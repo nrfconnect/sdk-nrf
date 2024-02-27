@@ -9,7 +9,6 @@ tests:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
-
   sample.nrf7002.iot_devices:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-iot-devices.conf
@@ -18,7 +17,6 @@ tests:
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
     skip: true
-
   sample.nrf7002.high_performance:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-high-performance.conf
@@ -27,7 +25,6 @@ tests:
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
     skip: true
-    
   sample.nrf7002.memory_optimized:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-memory-optimized.conf
@@ -36,7 +33,6 @@ tests:
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
     skip: true
-    
   sample.nrf7002.rx_prioritized:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-rx-prio.conf
@@ -45,7 +41,6 @@ tests:
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
     skip: true
-
   sample.nrf7002.tx_prioritized:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-tx-prio.conf
