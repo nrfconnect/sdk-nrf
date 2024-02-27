@@ -21,7 +21,7 @@
 .. _`Pinctrl Migration Utility Script documentation`: https://github.com/zephyrproject-rtos/zephyr/blob/main/scripts/utils/pinctrl_nrf_migrate.py
 .. _`Zephyr Wi-Fi management API`: https://docs.zephyrproject.org/apidoc/latest/group__wifi__mgmt.html
 .. _`Zephyr net capture`: https://docs.zephyrproject.org/latest/samples/net/capture/README.html
-.. _`Zephyr net capture Linux setup`: https://docs.zephyrproject.org/latest/samples/net/capture/README.html#network-configuration
+.. _`Zephyr net capture Linux setup`: https://docs.zephyrproject.org/latest/connectivity/networking/usbnet_setup.html#usb-device-networking-setup
 
 .. ### Source: github.com
 
@@ -1424,6 +1424,8 @@
 .. _`Wireshark`: https://www.wireshark.org
 
 .. _`Wireshark with Lua`: https://wiki.wireshark.org/Lua
+
+.. _`Wireshark Unix Build setup`: https://www.wireshark.org/docs/wsdg_html_chunked/ChapterSetup.html#ChSetupUNIX
 
 .. _`Amazon license`: https://raw.githubusercontent.com/nrfconnect/sdk-sidewalk/main/LICENSE.txt
 
