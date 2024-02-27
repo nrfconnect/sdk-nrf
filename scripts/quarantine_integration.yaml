@@ -53,3 +53,13 @@
   platforms:
     - nrf7002dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.nrf7002.iot_devices
+    - sample.nrf7002.high_performance
+    - sample.nrf7002.memory_optimized
+    - sample.nrf7002.rx_prioritized
+    - sample.nrf7002.tx_prioritized
+  platforms:
+    - nrf7002dk_nrf5340_cpuapp
+  comment: "To save CI-Integration time, these are part of Wi-Fi nighlty"
