@@ -516,8 +516,8 @@ client_events:
 			/* Process POLLIN first to get the data, even if there are errors. */
 			if ((fds[1].revents & POLLIN) == POLLIN) {
 				ret = recv(fds[1].fd, (void *)slm_data_buf,
-					   sizeof(slm_data_buf), 0);
-				if (ret < 0) {
+					   sizeof(slm_data_buf), MSG_DONTWAIT);
+				if (ret < 0 && errno != EAGAIN) {
 					LOG_ERR("recv() error: %d", -errno);
 					tcpsvr_terminate_connection(-errno);
 					fds[1].fd = INVALID_SOCKET;
@@ -603,8 +603,8 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 		if ((fds.revents & POLLIN) != POLLIN) {
 			continue;
 		}
-		ret = recv(fds.fd, (void *)slm_data_buf, sizeof(slm_data_buf), 0);
-		if (ret < 0) {
+		ret = recv(fds.fd, (void *)slm_data_buf, sizeof(slm_data_buf), MSG_DONTWAIT);
+		if (ret < 0 && errno != EAGAIN) {
 			LOG_WRN("recv() error: %d", -errno);
 			continue;
 		}
