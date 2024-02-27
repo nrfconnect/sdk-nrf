@@ -7,6 +7,13 @@ Light Lightness Control Client
    :local:
    :depth: 2
 
+.. note::
+   This model interacts with the new sensor API introduced as of |NCS| v2.6.0.
+   As a consequence, parts of the model API have been changed as well.
+   The old API is deprecated, but still available by enabling the Kconfig option :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE`.
+   The Kconfig option is enabled by default in the deprecation period.
+   See the documentation for |NCS| versions prior to v2.6.0 for documentation about the old sensor API.
+
 The Light Lightness Control (LC) Client configures and interacts with the :ref:`bt_mesh_light_ctrl_srv_readme`.
 
 The Light LC Client creates a single model instance in the mesh composition data, and it can send messages to both the Light LC Server and the Light LC Setup Server, as long as it has the right application keys.

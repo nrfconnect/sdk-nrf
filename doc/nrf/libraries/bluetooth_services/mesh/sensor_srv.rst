@@ -7,6 +7,12 @@ Sensor Server
    :local:
    :depth: 2
 
+.. note::
+   A new sensor API is introduced as of |NCS| v2.6.0.
+   The old API is deprecated, but still available by enabling the Kconfig option :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE`.
+   The Kconfig option is enabled by default in the deprecation period.
+   See the documentation for |NCS| versions prior to v2.6.0 for documentation about the old sensor API.
+
 The Sensor Server model holds a list of sensors, and exposes them to the mesh network.
 There may be multiple Sensor Server models on a single mesh node, and each model may hold up to 47 sensors.
 
