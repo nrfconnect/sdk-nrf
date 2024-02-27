@@ -279,7 +279,11 @@ struct bt_mesh_sensor_column {
 	struct bt_mesh_sensor_value width;
 };
 
-/** Sensor format callbacks. */
+/** Sensor format callbacks.
+ *
+ *  (For internal use, applications should use the conversion functions provided
+ *  in sensor.h instead.)
+ */
 struct bt_mesh_sensor_format_cb {
 	/** @brief Perform a delta check between two @ref bt_mesh_sensor_value
 	 *         instances.
@@ -332,9 +336,9 @@ struct bt_mesh_sensor_format_cb {
 	 *  If @c val has a value that cannot be represented by the format,
 	 *  @c sensor_val will be set to the value clamped to the range
 	 *  supported by the format, and this function will return -ERANGE. This
-	 *  will clamp to "Greater than or equal to the maximum value" and "Less
-	 *  than or equal to the minimum value" if these are supported by the
-	 *  format.
+	 *  will clamp to "Greater than or equal to the maximum value" and
+	 *  "Less than or equal to the minimum value" if these are supported by
+	 *  the format.
 	 *
 	 *  If this function returns an error code other than -ERANGE,
 	 *  @c sensor_val is not modified.
@@ -368,9 +372,9 @@ struct bt_mesh_sensor_format_cb {
 	 *  If @c val has a value that cannot be represented by the format,
 	 *  @c sensor_val will be set to the value clamped to the range
 	 *  supported by the format, and this function will return -ERANGE. This
-	 *  will clamp to "Greater than or equal to the maximum value" and "Less
-	 *  than or equal to the minimum value" if these are supported by the
-	 *  format.
+	 *  will clamp to "Greater than or equal to the maximum value" and
+	 *  "Less than or equal to the minimum value" if these are supported by
+	 *  the format.
 	 *
 	 *  If this function returns an error code other than -ERANGE,
 	 *  @c sensor_val is not modified.
@@ -448,7 +452,11 @@ struct bt_mesh_sensor_format_cb {
 
 /** Sensor channel value format. */
 struct bt_mesh_sensor_format {
-	/** Callbacks used for this format. */
+	/** Callbacks used for this format.
+	 *
+	 *  (For internal use. Applications should use the conversion functions
+	 *  in sensor.h)
+	 */
 	struct bt_mesh_sensor_format_cb *cb;
 	/** User data pointer. Used internally by the sensor types. */
 	void *user_data;
@@ -645,8 +653,9 @@ int bt_mesh_sensor_value_compare(const struct bt_mesh_sensor_value *a,
 
 /** @brief Returns true if @c status is a value which can be represented by a
  *         number, meaning one of @c BT_MESH_SENSOR_VALUE_NUMBER,
- *         @c BT_MESH_SENSOR_VALUE_MIN_OR_LESS and
- *         @c BT_MESH_SENSOR_VALUE_MAX_OR_GREATER.
+ *         @c BT_MESH_SENSOR_VALUE_MIN_OR_LESS,
+ *         @c BT_MESH_SENSOR_VALUE_MAX_OR_GREATER and
+ *         @c BT_MESH_SENSOR_VALUE_CLAMPED
  *
  *  @param[in] status The value to check.
  *
@@ -681,8 +690,9 @@ bt_mesh_sensor_value_to_float(const struct bt_mesh_sensor_value *sensor_val,
  *  If @c val has a value that cannot be represented by the format,
  *  @c sensor_val will be set to the value clamped to the range supported by
  *  the format, and this function will return -ERANGE. This will clamp to
- *  "Greater than or equal to the maximum value" and "Less than or equal to the
- *  minimum value" if these are supported by the format.
+ *  "Greater than or equal to the maximum value" and
+ *  "Less than or equal to the minimum value" if these are supported by the
+ *  format.
  *
  *  If this function returns an error code other than -ERANGE, @c sensor_val is
  *  not modified.
@@ -719,8 +729,9 @@ bt_mesh_sensor_value_to_micro(
  *  If @c val has a value that cannot be represented by the format,
  *  @c sensor_val will be set to the value clamped to the range supported by
  *  the format, and this function will return -ERANGE. This will clamp to
- *  "Greater than or equal to the maximum value" and "Less than or equal to the
- *  minimum value" if these are supported by the format.
+ *  "Greater than or equal to the maximum value" and
+ *  "Less than or equal to the minimum value" if these are supported by the
+ *  format.
  *
  *  If this function returns an error code other than -ERANGE, @c sensor_val is
  *  not modified.
@@ -759,8 +770,9 @@ bt_mesh_sensor_value_to_sensor_value(
  *  If @c val has a value that cannot be represented by the format,
  *  @c sensor_val will be set to the value clamped to the range supported by
  *  the format, and this function will return -ERANGE. This will clamp to
- *  "Greater than or equal to the maximum value" and "Less than or equal to the
- *  minimum value" if these are supported by the format.
+ *  "Greater than or equal to the maximum value" and
+ *  "Less than or equal to the minimum value" if these are supported by the
+ *  format.
  *
  *  If this function returns an error code other than -ERANGE, @c sensor_val is
  *  not modified.
@@ -828,6 +840,9 @@ bool bt_mesh_sensor_value_in_column(const struct bt_mesh_sensor_value *value,
 
 /** @brief Get a human readable representation of a single sensor channel.
  *
+ *  @note This prints float values internally for most formats, which requires
+ *  @kconfig{CONFIG_CBPRINTF_FP_SUPPORT} to be enabled.
+ *
  *  @param[in]  ch  Sensor channel to represent.
  *  @param[out] str String buffer to fill. Should be @ref
  *                  BT_MESH_SENSOR_CH_STR_LEN bytes long.
@@ -840,6 +855,9 @@ int bt_mesh_sensor_ch_to_str(const struct bt_mesh_sensor_value *ch, char *str,
 			     size_t len);
 
 /** @brief Get a human readable representation of a single sensor channel.
+ *
+ *  @note This prints float values internally for most formats, which requires
+ *  @kconfig{CONFIG_CBPRINTF_FP_SUPPORT} to be enabled.
  *
  *  @note This function is not thread safe.
  *

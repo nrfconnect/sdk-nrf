@@ -7,6 +7,12 @@ Bluetooth Mesh sensors
    :local:
    :depth: 2
 
+.. note::
+   A new sensor API is introduced as of |NCS| v2.6.0.
+   The old API is deprecated, but still available by enabling the Kconfig option :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE`.
+   The Kconfig option is enabled by default in the deprecation period.
+   See the documentation for |NCS| versions prior to v2.6.0 for documentation about the old sensor API.
+
 The Bluetooth® mesh specification provides a common scheme for representing all sensors.
 A single Bluetooth Mesh sensor instance represents a single physical sensor, and a mesh device may present any number of sensors to the network through a Sensor Server model.
 Sensors represent their measurements as a list of sensor channels, as described by the sensor's assigned type.
@@ -17,6 +23,10 @@ Sensors are accessed through the Sensor models, which are documented separately:
 
   - :ref:`bt_mesh_sensor_srv_readme`
   - :ref:`bt_mesh_sensor_cli_readme`
+
+.. note::
+   Several floating point computations are done internally in the stack when using the sensor API.
+   It is recommended to enable the :kconfig:option:`CONFIG_FPU` Kconfig option to improve the performance of these computations.
 
 .. _bt_mesh_sensor_basic_example:
 
@@ -31,10 +41,17 @@ A sensor reporting the device operating temperature could combine the Bluetooth 
 
    static int temp_get(struct bt_mesh_sensor *sensor,
                        struct bt_mesh_msg_ctx *ctx,
-                       struct sensor_value *rsp)
+                       struct bt_mesh_sensor_value *rsp)
    {
+       struct sensor_value value;
+       int err;
+
        sensor_sample_fetch(dev);
-       return sensor_channel_get(dev, SENSOR_CHAN_DIE_TEMP, rsp);
+       err = sensor_channel_get(dev, SENSOR_CHAN_DIE_TEMP, &value);
+       if (err) {
+           return err;
+       }
+       return bt_mesh_sensor_value_from_sensor_value(&value, rsp);
    }
 
    struct bt_mesh_sensor temp_sensor = {
@@ -49,6 +66,20 @@ A sensor reporting the device operating temperature could combine the Bluetooth 
 
 Additionally, a pointer to the ``temp_sensor`` structure should be passed to a Sensor Server to be exposed to the mesh.
 See :ref:`bt_mesh_sensor_srv_readme` for details.
+
+.. _bt_mesh_sensor_values:
+
+Sensor values
+*************
+
+Sensor values are represented in the API using :c:struct:`bt_mesh_sensor_value`.
+This contains the raw sensor value, encoded according to a certain Bluetooth GATT Characteristic, and a pointer to :c:struct:`bt_mesh_sensor_format` describing how that characteristic is encoded/decoded.
+
+Applications will normally not access :c:member:`bt_mesh_sensor_value.raw` or the members of :c:member:`bt_mesh_sensor_value.format` directly.
+Instead, API functions for converting between :c:struct:`bt_mesh_sensor_value` and the values suitable for application use are used.
+An exception to this is when statically initializing :c:struct:`bt_mesh_sensor_value` at compile-time, in which case the API functions cannot be used.
+
+The sensor API is built to integrate well with the Zephyr :ref:`zephyr:sensor_api` API, and provides functions for converting to and from :c:struct:`sensor_value`.
 
 .. _bt_mesh_sensor_types:
 
@@ -65,9 +96,6 @@ Like the Device Properties, the Sensor types are connected to a Bluetooth GATT C
 
 The sensor types may either be used as the data types of the sensor output values, or as configuration parameters for the sensors.
 
-The Bluetooth Mesh Sensor type API is built to mirror and integrate well with the Zephyr :ref:`zephyr:sensor_api` API.
-Some concepts in the Bluetooth Mesh specification are changed slightly to fit better with the Zephyr Sensor API, with focus on making integration as simple as possible.
-
 .. _bt_mesh_sensor_types_channels:
 
 Sensor channels
@@ -77,9 +105,8 @@ Each sensor type may consist of one or more channels.
 The list of sensor channels in each sensor type is immutable, and all channels must always have a valid value when the sensor data is passed around.
 This is slightly different from the sensor type representation in the Bluetooth Mesh specification, which represents multi-channel sensors as structures, rather than flat lists.
 
-Each channel in a sensor type is represented by a single :c:struct:`sensor_value`.
-For sensor values that are represented as whole numbers, the fractional part of the value (:c:member:`sensor_value.val2`) is ignored.
-Boolean types are inferred only from the integer part of the value (:c:member:`sensor_value.val1`).
+Each channel in a sensor type is represented by a single :c:struct:`bt_mesh_sensor_value` structure.
+This contains the raw value of the sensor value, and a pointer to :c:struct:`bt_mesh_sensor_format` used for encoding and decoding of the raw value.
 
 Every sensor channel has a name and a unit, as listed in the sensor type documentation.
 The name and unit are only available if :kconfig:option:`CONFIG_BT_MESH_SENSOR_LABELS` option is set, and can aid in debugging and presentation of the sensor output.
@@ -92,11 +119,12 @@ Before encoding, the sensor values are rounded to their nearest available repres
 
 .. code-block:: c
 
+   struct bt_mesh_sensor_value sensor_val;
+
    /* Sensor value: 7.3123 A */
-   struct sensor_value electrical_current = {
-       .val1 = 7,
-       .val2 = 312300, /* 6 digit fraction */
-   };
+   (void)bt_mesh_sensor_value_from_float(
+       &bt_mesh_sensor_format_electric_current,
+       7.3123f, &sensor_val);
 
 Various other encoding schemes are used to represent non-scalars.
 See the documentation or specification for the individual sensor channels for more details.
@@ -219,8 +247,8 @@ If the sensor has a descriptor, a pointer to it should be passed to :c:member:`b
 
    static const struct bt_mesh_sensor_descriptor temp_sensor_descriptor = {
        .tolerance = {
-           .negative = { .val1 = 0, .val2 = 750000 },
-           .positive = { .val1 = 3, .val2 = 500000 },
+           .negative = BT_MESH_SENSOR_TOLERANCE_ENCODE(0.75f)
+           .positive = BT_MESH_SENSOR_TOLERANCE_ENCODE(3.5f)
        },
        .sampling_type = BT_MESH_SENSOR_SAMPLING_ARITHMETIC_MEAN,
        .period = 300,
@@ -250,7 +278,20 @@ Sensor data
 ===========
 
 Sensor data is accessed through the :c:member:`bt_mesh_sensor.get` callback, which is expected to fill the ``rsp`` parameter with the most recent sensor data and return a status code.
-Each sensor channel will be encoded internally according to the sensor type.
+Each sensor channel must be encoded according to the channel format.
+This can be done using one of the conversion functions :c:func:`bt_mesh_sensor_value_from_micro`, :c:func:`bt_mesh_sensor_value_from_float` or :c:func:`bt_mesh_sensor_value_from_sensor_value`.
+A pointer to the format for a given channel can be found through the :c:struct:`bt_mesh_sensor` pointer passed to the callback in a following way:
+
+.. code-block:: c
+
+   static int get_cb(struct bt_mesh_sensor *sensor,
+                       struct bt_mesh_msg_ctx *ctx,
+                       struct bt_mesh_sensor_value *rsp)
+   {
+       /* Get the correct format to use for encoding rsp[0]: */
+       const struct_bt_mesh_sensor_format *channel_0_format =
+           sensor->type->channels[0].format;
+   }
 
 The sensor data in the callback typically comes from a sensor using the :ref:`Zephyr sensor API <zephyr:sensor_api>`.
 The Zephyr sensor API records samples in two steps:
@@ -286,12 +327,27 @@ Example: A three-channel sensor (average ambient temperature in a period of day)
 
 .. code-block:: c
 
+   /* Macro for statically initializing time_decihour_8.
+    * Raw is computed by multiplying by 10 according to
+    * the resolution specified in the GATT Specification
+    * Supplement.
+    */
+   #define TIME_DECIHOUR_8_INIT(_hours) {                \
+       .format = &bt_mesh_sensor_format_time_decihour_8, \
+       .raw = { (_hours) * 10 }                          \
+   }
+
+   #define COLUMN_INIT(_start, _width) { \
+       TIME_DECIHOUR_8_INIT(_start),     \
+       TIME_DECIHOUR_8_INIT(_width)      \
+   }
+
    /* 4 columns representing different hours in a day */
    static const struct bt_mesh_sensor_column columns[] = {
-       {{0}, {6}},
-       {{6}, {12}},
-       {{12}, {18}},
-       {{18}, {24}},
+       COLUMN_INIT(0, 6),
+       COLUMN_INIT(6, 6),
+       COLUMN_INIT(12, 6),
+       COLUMN_INIT(18, 6)
    };
 
    static struct bt_mesh_sensor temp_sensor = {
@@ -304,16 +360,34 @@ Example: A three-channel sensor (average ambient temperature in a period of day)
    };
 
    /** Sensor data is divided into columns and filled elsewhere */
-   static struct sensor_value avg_temp[ARRAY_SIZE(columns)];
+   static float avg_temp[ARRAY_SIZE(columns)];
 
    static int getter(struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx,
-                     uint32_t column_index, struct sensor_value *value)
+                     uint32_t column_index, struct bt_mesh_sensor_value *value)
    {
-       value[0] = avg_temp[column_index];
-       value[1] = columns[column_index].start;
-       value[2] = columns[column_index].end;
+       int err = bt_mesh_sensor_value_from_float(
+           sensor->type->channels[0].format, &avg_temp[column_index], &value[0]);
 
-       return 0;
+       if (err) {
+           return err;
+       }
+       value[1] = columns[column_index].start;
+
+       /* Compute end value from column start and width: */
+       int64_t start, width;
+       enum bt_mesh_sensor_value_status status;
+
+       status = bt_mesh_sensor_value_to_micro(&columns[column_index].start, &start);
+       if (!bt_mesh_sensor_status_is_numeric(status)) {
+           return -EINVAL;
+       }
+       status = bt_mesh_sensor_value_to_micro(&columns[column_index].width, &width);
+       if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+           return -EINVAL;
+       }
+       return bt_mesh_sensor_value_from_micro(
+           bt_mesh_sensor_column_format_get(sensor),
+           start + width, &value[2]);
    }
 
 Example: Single-channel sensor (motion sensed) as a sensor series:
@@ -332,14 +406,14 @@ Example: Single-channel sensor (motion sensed) as a sensor series:
    };
 
    /** Sensor data is divided into columns and filled elsewhere */
-   static struct sensor_value motion[COLUMN_COUNT];
+   static uint8_t motion[COLUMN_COUNT];
 
    static int getter(struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx,
-                     uint32_t column_index, struct sensor_value *value)
+                     uint32_t column_index, struct bt_mesh_sensor_value *value)
    {
-       value[0] = motion[column_index];
-
-       return 0;
+       return bt_mesh_sensor_value_from_micro(
+           sensor->type->channels[0].format,
+           motion[column_index] * 1000000LL, &value[0]);
    }
 
 Sensor settings
@@ -360,7 +434,7 @@ The following code is an example of adding a setting to a sensor:
                                     struct bt_mesh_sensor *sensor,
                                     const struct bt_mesh_sensor_setting *setting,
                                     struct bt_mesh_msg_ctx *ctx,
-                                    struct sensor_value *rsp)
+                                    struct bt_mesh_sensor_value *rsp)
    {
         /** Get the current threshold in an application defined way and
          *  store it in rsp.
@@ -372,7 +446,7 @@ The following code is an example of adding a setting to a sensor:
                                    struct bt_mesh_sensor *sensor,
                                    const struct bt_mesh_sensor_setting *setting,
                                    struct bt_mesh_msg_ctx *ctx,
-                                   const struct sensor_value *value)
+                                   const struct bt_mesh_sensor_value *value)
    {
         /** Store incoming threshold in application-defined way.
          *  Return error code to reject set.
