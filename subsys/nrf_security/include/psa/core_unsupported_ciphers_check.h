@@ -17,21 +17,6 @@
 #if defined(CONFIG_PSA_WANT_ALG_SHA_512_256) && !defined(CONFIG_PSA_ACCEL_SHA_512_256)
 #error "No crypto implementation for SHA-512-256"
 #endif
-#if defined(CONFIG_PSA_WANT_ALG_SHA3_224) && !defined(CONFIG_PSA_ACCEL_SHA3_224)
-#error "No crypto implementation for SHA3-224"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_SHA3_256) && !defined(CONFIG_PSA_ACCEL_SHA3_256)
-#error "No crypto implementation for SHA3-256"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_SHA3_384) && !defined(CONFIG_PSA_ACCEL_SHA3_384)
-#error "No crypto implementation for SHA3-384"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_SHA3_512) && !defined(CONFIG_PSA_ACCEL_SHA3_512)
-#error "No crypto implementation for SHA3-512"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_SHAKE256_512) && !defined(CONFIG_PSA_ACCEL_SHAKE256_512)
-#error "No crypto implementation for SHAKE-256"
-#endif
 #if defined(CONFIG_PSA_WANT_ALG_MD5) && !defined(CONFIG_PSA_ACCEL_MD5)
 #error "No crypto implementation for MD5"
 #endif
@@ -82,21 +67,6 @@
 #if defined(CONFIG_PSA_WANT_AES_KEY_SIZE_256) && !defined(CONFIG_PSA_ACCEL_CBC_MAC_AES_256)
 #error "No crypto implementation for 256 bit AES-CBC-MAC"
 #endif
-#endif
-
-#if defined(CONFIG_PSA_WANT_ALG_ECDH) && defined(CONFIG_PSA_WANT_ECC_MONTGOMERY_448) &&            \
-	!defined(CONFIG_PSA_ACCEL_ECDH_MONTGOMERY_448)
-#error "No crypto implementation for X448"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_PURE_EDDSA) && defined(CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448) && \
-	!defined(CONFIG_PSA_ACCEL_PURE_EDDSA_TWISTED_EDWARDS_448)
-#error "No crypto implementation for ED448"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_ED25519PH) && !defined(CONFIG_PSA_ACCEL_ED25519PH)
-#error "No crypto implementation for pre-hashed ED25519"
-#endif
-#if defined(CONFIG_PSA_WANT_ALG_ED448PH) && !defined(CONFIG_PSA_ACCEL_ED448PH)
-#error "No crypto implementation for pre-hashed ED448"
 #endif
 
 #if defined(CONFIG_PSA_WANT_ALG_FFDH)
