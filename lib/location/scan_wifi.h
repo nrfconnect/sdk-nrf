@@ -7,6 +7,7 @@
 #ifndef SCAN_WIFI_H
 #define SCAN_WIFI_H
 
+#include <modem/location.h>
 #include <net/wifi_location_common.h>
 
 int scan_wifi_init(void);
