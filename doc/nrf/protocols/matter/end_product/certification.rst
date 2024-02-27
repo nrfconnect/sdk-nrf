@@ -278,7 +278,7 @@ Nordic Semiconductor provides the following certification identifiers:
 * Bluetooth Qualified Design IDs (Bluetooth QDIDs) - Obtained in accordance with `Bluetooth SIG's Qualification Process`_.
 * Thread Certification IDs (Thread CIDs) - Obtained in accordance with `Thread Group's certification information`_.
 
-You can visit the following pages on Nordic Semiconductor Infocenter to check the Bluetooth QDIDs and Thread CIDs valid for SoCs that support Matter applications:
+You can visit the following pages to check the Bluetooth QDIDs and Thread CIDs valid for SoCs that support Matter applications:
 
 * `nRF5340 DK Compatibility Matrix`_
 * `nRF52840 DK Compatibility Matrix`_

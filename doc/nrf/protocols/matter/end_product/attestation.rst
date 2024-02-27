@@ -36,7 +36,7 @@ During the Device Attestation procedure, the commissioner checks the certificate
 These certificates form a chain in which they mutually rely on each other.
 
 All certificates come from Matter certification authorities (CAs).
-The primary source of Matter certification authority policies is Connectivity Standards Alliance's Test and Certification Oversight Committee (TCOC), which develops them in accordance with `Connectivity Standards Alliance Certification Policy`_.
+The primary source of Matter certification authority policies is Connectivity Standards Alliance's Test and Certification Oversight Committee (TCOC), which develops them in accordance with `Connectivity Standards Alliance Certification Policy`_ (authorized access required).
 
 CSA assigns the status of Product Attestation Authority (PAA) to selected organizations, which become root certificate authorities for the Device Attestation procedure.
 Each PAA owns a key pair, which consists of a private and a public key, and the self-signed PAA certificate.
@@ -123,7 +123,7 @@ Generating DAC using own PKI (option 2)
 +++++++++++++++++++++++++++++++++++++++
 
 The manufacturer can set up its own :ref:`ug_matter_device_attestation_cert_pki` to generate PAI and DAC certificates using its own existing PKI.
-The rules for setting own PKI are outlined in the `Matter Certification Policy`_ document (authorized access required).
+The rules for setting own PKI are outlined in the `Connectivity Standards Alliance Certification Policy`_ document (authorized access required).
 Setting up own PKI lets the manufacturer obtain the following certificates:
 
 * Own PAA - Provided that the manufacturer has a certification authority with root in the DCL.
