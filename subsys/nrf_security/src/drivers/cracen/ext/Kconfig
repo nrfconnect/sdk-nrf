@@ -44,6 +44,13 @@ config CRACEN_GENERATE_KMU_SEED
 	  If the seed is already generated and written in KMU, this configuration
 	  will have no effect.
 
+#TODO: NCSDK-26142 Remove once available in zephyr
+config PSA_WANT_ALG_SP800_108_COUNTER_CMAC
+	bool
+	prompt "Add PSA SP800-108r1 CTR CMAC KBKDF support"
+	help
+	  Temp fix until this symbol is offically in zephyr
+
 rsource 'psa_driver.Kconfig'
 
 endif
