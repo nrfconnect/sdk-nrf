@@ -101,7 +101,8 @@ Building and running
 Testing
 =======
 
-This sample has been tested with the nRF52840 DK (nrf52840dk_nrf52840) board.
+After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.
+Testing consists of provisioning the device and configuring it for communication with the mesh models, then performing a Device Firmware Update.
 
 .. _ble_mesh_dfu_target_provisioning:
 
@@ -166,8 +167,11 @@ Only 2 options are supported by this sample:
    In this case, the device unprovisions itself before programming the new firmware.
    The unprovisioning happens before the device reboots, so if the MCUboot fails to validate the new firmware, the device will boot unprovisioned anyway.
 
-In this sample, the device flash is split into fixed partitions using devicetree as defined in :zephyr_file:`nrf52840dk_nrf52840.dts<boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts>`.
-When the DFU transfer starts, the sample stores the new firmware at slot-1 using :ref:`zephyr:flash_map_api`.
+In this sample, the device flash is split into partitions using the :ref:`partition_manager`.
+When the DFU transfer starts, the sample stores the new firmware at the MCUboot secondary slot using the :ref:`zephyr:flash_map_api`.
+
+.. note::
+   For the :ref:`zephyr:nrf52840dongle_nrf52840`, the sample has a static partition management file :file:`pm_static_nrf52840dongle_nrf52840.yml` to reserve the space for the `nRF5 SDK Bootloader`_.
 
 When the DFU transfer ends, the sample requests the MCUboot to replace slot-0 with slot-1 and reboots the device.
 The MCUboot performs the validation of the image located at slot-1.
@@ -185,6 +189,9 @@ Logging
 =======
 
 In this sample, UART and SEGGER RTT are available as logging backends.
+
+.. note::
+   With the :ref:`zephyr:nrf52840dongle_nrf52840`, only logging over UART is available.
 
 Dependencies
 ************

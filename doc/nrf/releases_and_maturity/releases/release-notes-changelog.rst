@@ -428,6 +428,24 @@ Bluetooth Mesh samples
     * An issue where the shell interface was not accessible over UART because UART was used as a transport for MCUmgr SMP protocol.
       Shell is now accessible over RTT.
 
+* :ref:`ble_mesh_dfu_target` sample:
+
+  * Added:
+
+    * Support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
+
+* :ref:`bluetooth_mesh_light_dim` sample:
+
+  * Added:
+
+    * Support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
+
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+  * Added:
+
+    * Support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
+
 Cellular samples
 ----------------
 
