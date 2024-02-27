@@ -181,6 +181,8 @@ Thread
   You can still build all examples with deprecated Mbed TLS support by setting the :kconfig:option:`OPENTHREAD_NRF_SECURITY_CHOICE` Kconfig option to ``y``, but you must build the Thread libraries from sources.
   To :ref:`inherit Thread certification <ug_thread_cert_inheritance_without_modifications>` from Nordic Semiconductor, you must use the PSA Crypto API backend.
 
+* nRF5340 SoC targets that don't include :ref:`Trusted Firmware-M <ug_tfm>` now use Hardware Unique Key (HUK, see the :ref:`lib_hw_unique_key` library) for PSA Internal Trusted Storage (ITS).
+
 See `Thread samples`_ for the list of changes for the Thread samples.
 
 Zigbee
