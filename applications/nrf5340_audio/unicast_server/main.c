@@ -482,10 +482,10 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 int main(void)
 {
 	int ret;
+	static struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
 
 	LOG_DBG("nRF5340 APP core started");
 
-	struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
 	size_t ext_adv_buf_cnt = 0;
 
 	ret = nrf5340_audio_dk_init();
