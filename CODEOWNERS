@@ -90,7 +90,7 @@ Kconfig*                                  @tejlmand
 /include/net/wifi_credentials.h           @nrfconnect/ncs-cia
 /include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
 /include/bluetooth/                       @alwa-nordic @jori-nordic @KAGA164
-/include/bluetooth/services/fast_pair.h   @alstrzebonski @MarekPieta @kapi-no
+/include/bluetooth/services/fast_pair/    @alstrzebonski @MarekPieta @kapi-no
 /include/bluetooth/adv_prov.h             @MarekPieta @kapi-no @KAGA164
 /include/bluetooth/mesh/                  @ludvigsj
 /include/caf/                             @pdunaj

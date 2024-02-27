@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/services/fast_pair.h>
+#include <bluetooth/services/fast_pair/fast_pair.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);

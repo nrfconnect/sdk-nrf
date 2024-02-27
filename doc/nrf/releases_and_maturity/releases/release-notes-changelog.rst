@@ -835,6 +835,7 @@ Bluetooth libraries and services
       More functions are required to be called in the cooperative thread context.
     * The :c:func:`bt_fast_pair_info_cb_register` function is now not allowed to be called when the Fast Pair is enabled.
       The :c:func:`bt_fast_pair_info_cb_register` function can only be called before enabling the Fast Pair with the :c:func:`bt_fast_pair_enable` function.
+    * The :file:`include/bluetooth/services/fast_pair.h` header file is moved to the :file:`ncs/nrf/include/bluetooth/services/fast_pair` directory to have a common place for Fast Pair headers.
 
 * :ref:`bt_mesh` library:
 

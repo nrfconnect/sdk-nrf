@@ -9,7 +9,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/settings/settings.h>
-#include <bluetooth/services/fast_pair.h>
+#include <bluetooth/services/fast_pair/fast_pair.h>
 #include <bluetooth/adv_prov/fast_pair.h>
 
 #include <dk_buttons_and_leds.h>

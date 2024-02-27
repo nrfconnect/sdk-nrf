@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/bluetooth/conn.h>
-#include <bluetooth/services/fast_pair.h>
+#include <bluetooth/services/fast_pair/fast_pair.h>
 #include <zephyr/sys/reboot.h>
 
 #define MODULE factory_reset

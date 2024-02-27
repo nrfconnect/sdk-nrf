@@ -11,7 +11,7 @@
 #include <string.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/settings/settings.h>
-#include <bluetooth/services/fast_pair.h>
+#include <bluetooth/services/fast_pair/fast_pair.h>
 
 #include "fp_common.h"
 #include "fp_storage_ak.h"

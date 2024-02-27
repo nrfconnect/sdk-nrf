@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef BT_FAST_PAIR_H_
-#define BT_FAST_PAIR_H_
+#ifndef BT_FAST_PAIR_FAST_PAIR_H_
+#define BT_FAST_PAIR_FAST_PAIR_H_
 
 #include <zephyr/bluetooth/bluetooth.h>
 
@@ -294,4 +294,4 @@ int bt_fast_pair_factory_reset(void);
  * @}
  */
 
-#endif /* BT_FAST_PAIR_H_ */
+#endif /* BT_FAST_PAIR_FAST_PAIR_H_ */
