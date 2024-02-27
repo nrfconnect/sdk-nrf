@@ -798,6 +798,10 @@ Bluetooth libraries and services
   * Updated:
 
     * Improved the :ref:`bt_fast_pair_readme` library documentation to include the description of the missing Kconfig options.
+    * Strengthen requirements regarding the thread context of Fast Pair API calls.
+      More functions are required to be called in the cooperative thread context.
+    * The :c:func:`bt_fast_pair_info_cb_register` function is now not allowed to be called when the Fast Pair is enabled.
+      The :c:func:`bt_fast_pair_info_cb_register` function can only be called before enabling the Fast Pair with the :c:func:`bt_fast_pair_enable` function.
 
 * :ref:`bt_mesh` library:
 

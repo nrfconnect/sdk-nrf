@@ -13,6 +13,9 @@
  * @defgroup bt_fast_pair Fast Pair API
  * @brief Fast Pair API
  *
+ * The Fast Pair subsystem needs the Bluetooth GATT operations to be run from the cooperative
+ * thread context. It requires proper configuration of the CONFIG_BT_RECV_CONTEXT Kconfig option.
+ *
  * @{
  */
 
@@ -181,6 +184,8 @@ bool bt_fast_pair_is_ready(void);
  * This function can only be called if Fast Pair was previously enabled with the
  * @ref bt_fast_pair_enable API.
  *
+ * This function must be called in the cooperative thread context.
+ *
  * @param[in] fp_adv_config	Fast Pair advertising config.
  *
  * @return Fast Pair advertising data buffer size in bytes if the operation was successful.
@@ -196,7 +201,7 @@ size_t bt_fast_pair_adv_data_size(struct bt_fast_pair_adv_config fp_adv_config);
  * The buffer size must be at least @ref bt_fast_pair_adv_data_size. Caller shall also make sure
  * that Account Key write from a connected Fast Pair Seeker would not preempt generating Fast Pair
  * not discoverable advertising data. To achieve this, this function and
- * @ref bt_fast_pair_adv_data_size should be called from context with cooperative priority.
+ * @ref bt_fast_pair_adv_data_size must be called from context with cooperative priority.
  *
  * This function can only be called if Fast Pair was previously enabled with the
  * @ref bt_fast_pair_enable API.
@@ -257,6 +262,11 @@ int bt_fast_pair_battery_set(enum bt_fast_pair_battery_comp battery_comp,
  *  persist in the memory after this function exits, as it is used directly without the copy
  *  operation. It is possible to register only one instance of callbacks with this API.
  *
+ *  This function can only be called before enabling Fast Pair with the @ref bt_fast_pair_enable
+ *  API.
+ *
+ *  This function must be called in the cooperative thread context.
+ *
  *  @param cb Callback struct.
  *
  *  @return Zero on success or negative error code otherwise
@@ -269,6 +279,8 @@ int bt_fast_pair_info_cb_register(const struct bt_fast_pair_info_cb *cb);
  * outage, the reset is automatically resumed at the stage of initializing the Fast Pair storage
  * when calling the @ref bt_fast_pair_enable API. It prevents the Fast Pair storage from ending in
  * unwanted state after the reset interruption.
+ *
+ * This function must be called in the cooperative thread context.
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */

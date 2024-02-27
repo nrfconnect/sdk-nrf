@@ -95,6 +95,10 @@ static size_t bt_fast_pair_adv_data_size_discoverable(void)
 
 size_t bt_fast_pair_adv_data_size(struct bt_fast_pair_adv_config fp_adv_config)
 {
+	/* It is assumed that this function executes in the cooperative thread context. */
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+	__ASSERT_NO_MSG(!k_is_in_isr());
+
 	if (!bt_fast_pair_is_ready()) {
 		return 0;
 	}
@@ -227,6 +231,10 @@ static int fp_adv_data_fill_discoverable(struct net_buf_simple *buf)
 int bt_fast_pair_adv_data_fill(struct bt_data *bt_adv_data, uint8_t *buf, size_t buf_size,
 			       struct bt_fast_pair_adv_config fp_adv_config)
 {
+	/* It is assumed that this function executes in the cooperative thread context. */
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+	__ASSERT_NO_MSG(!k_is_in_isr());
+
 	if (!bt_fast_pair_is_ready()) {
 		LOG_ERR("Fast Pair not enabled");
 		return -EACCES;
