@@ -478,7 +478,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     sign(
       SIGNED_BIN_FILE_IN ${PROJECT_BINARY_DIR}/qspi_flash.hex
       SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/qspi_flash
-      SLOT_SIZE $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>
+      SLOT_SIZE $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_2_SIZE>
       SIGNED_HEX_FILE_OUT qspi_flash_signed_hex
       SIGNED_BIN_FILE_OUT qspi_flash_signed_bin
       ${sign_dependencies}
