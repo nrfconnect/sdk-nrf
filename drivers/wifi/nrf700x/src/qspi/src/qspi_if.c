@@ -1018,7 +1018,7 @@ int qspi_RDSR1(const struct device *dev, uint8_t *rdsr1)
 
 	qspi_device_uninit(dev);
 
-	LOG_DBG("RDSR2 = 0x%x", sr);
+	LOG_DBG("RDSR1 = 0x%x", sr);
 
 	if (ret == 0)
 		*rdsr1 = sr;
