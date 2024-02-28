@@ -7,7 +7,6 @@
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/uart.h>
-#include <zephyr/usb/usb_device.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
@@ -82,11 +81,8 @@ extern volatile int num_interrupts;
 
 int main(void)
 {
-	int ret = usb_enable(NULL);
-	if (ret != 0 && ret != -EALREADY) {
-		LOG_ERR("Failed to enable USB");
-		return 0;
-	}
+	int ret;
+
 	k_sleep(K_MSEC(5000));
 	ret = serialization_init();
 
