@@ -26,3 +26,9 @@ config WFA_QT_REBOOT_TIMEOUT_MS
 	default 1000
 	help
 	  Set the timeout value (in milliseconds) for reboot operation.
+
+config WFA_QT_DEFAULT_INTERFACE
+	string "Default Wi-Fi interface"
+	default "nordic_wlan0"
+	help
+	  Set the default Wi-Fi interface.
