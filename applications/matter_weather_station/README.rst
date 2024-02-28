@@ -166,6 +166,14 @@ The application comes with the following overlays:
   See `Generating factory data`_ to learn how to put factory data into device's storage.
   To learn more about factory data, read the :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
 
+  This overlay requires providing of the :file:`pm_static_factory_data.yml` Partition Manager static configuration file.
+
+  To build the example with the factory data support, run the following command:
+
+  .. code-block:: console
+
+      west build -b thingy53_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-factory_data.conf -DPM_STATIC_YML_FILE=pm_static_factory_data.yml
+
 .. note::
    Matter factory data support requires the dedicated partition layout.
    This means that if you build the application using the ``overlay-factory_data`` configuration overlay, it will not be compatible with other :ref:`Thingy:53 applications and samples <thingy53_compatible_applications>`.

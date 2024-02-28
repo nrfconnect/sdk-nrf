@@ -105,10 +105,6 @@ The sample supports the following build types:
      - :file:`prj_release.conf`
      - All from `Requirements`_
      - Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
-   * - No DFU
-     - :file:`prj_no_dfu.conf`
-     - nRF52840 DK, nRF5340 DK, nRF7002 DK, and nRF21540 DK
-     - Debug version of the application without Device Firmware Upgrade feature support.
 
 .. matter_light_bulb_sample_configuration_file_types_end
 
@@ -171,7 +167,7 @@ To set up an AWS IoT instance and configure the sample, complete the following s
 
    .. code-block:: console
 
-      west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG="overlay-aws-iot-integration.conf"
+      west build -p -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
 
 #. Flash the firmware and boot the sample.
 #. |connect_kit|

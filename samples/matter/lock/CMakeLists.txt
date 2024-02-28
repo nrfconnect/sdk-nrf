@@ -16,12 +16,6 @@ if(CONF_FILE)
     get_filename_component(CONF_FILE_NAME ${CONF_FILE} NAME CACHE)
 endif()
 
-if(CONF_FILE_NAME STREQUAL "prj_thread_wifi_switched.conf")
-    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_dfu_wifi_ext_patch.yml)
-elseif(NOT CONF_FILE_NAME STREQUAL "prj_no_dfu.conf")
-    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_dfu.yml)
-endif()
-
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-lock)
