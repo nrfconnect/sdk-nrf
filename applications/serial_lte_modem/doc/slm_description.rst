@@ -41,8 +41,6 @@ Configuration
 Configuration options
 =====================
 
-Check and configure the following configuration options for the sample:
-
 .. _CONFIG_SLM_CUSTOMER_VERSION:
 
 CONFIG_SLM_CUSTOMER_VERSION - Customer version string
@@ -53,6 +51,22 @@ CONFIG_SLM_CUSTOMER_VERSION - Customer version string
 
 CONFIG_SLM_AT_MAX_PARAM - AT command parameter count limit
    This defines the maximum number of parameters allowed in an AT command, including the command name.
+
+.. _CONFIG_SLM_CMUX:
+
+CONFIG_SLM_CMUX - Enable CMUX functionality
+   This option is enabled by the CMUX overlay.
+   It adds support for CMUX.
+   See :ref:`SLM_AT_CMUX` for more information.
+
+.. _CONFIG_SLM_PPP:
+
+CONFIG_SLM_PPP - Enable PPP functionality
+   This option is enabled by the PPP overlay.
+   It adds support for PPP.
+   PPP can be used in conjunction with :ref:`CMUX <CONFIG_SLM_CMUX>` in order to use a single UART for both AT data and PPP.
+   When CMUX is also enabled, PPP is usable only through a CMUX channel.
+   See :ref:`SLM_AT_PPP` for more information.
 
 .. _CONFIG_SLM_NATIVE_TLS:
 
@@ -85,7 +99,7 @@ CONFIG_SLM_EXTERNAL_XTAL - Use external XTAL for UARTE
 
 CONFIG_SLM_START_SLEEP - Enter sleep on startup
    This option makes an nRF91 Series device enter deep sleep after startup.
-   It is not selected by default.
+   It is not enabled by default.
 
 .. _CONFIG_SLM_POWER_PIN:
 
@@ -267,7 +281,6 @@ To switch to UART output, change the following options in the :file:`prj.conf` f
 Configuration files
 ===================
 
-The sample provides predefined configuration files for both the parent image and the child image.
 You can find the configuration files in the :file:`applications/serial_lte_modem` directory.
 
 The following configuration files are provided:
@@ -283,6 +296,17 @@ The following configuration files are provided:
 
 * :file:`overlay-full_fota.conf` - Configuration file that adds full modem FOTA support.
   See :ref:`SLM_AT_FOTA` for more information on how to use full modem FOTA functionality.
+
+* :file:`overlay-cmux.conf` - Configuration file that adds support for the CMUX protocol.
+  See :ref:`SLM_AT_CMUX` for more information.
+
+* :file:`overlay-ppp.conf` - Configuration file that adds support for the Point-to-Point Protocol (PPP).
+  This disables most of the IP-based protocols available through AT commands (such as FTP and MQTT) as it is expected that the external MCU's own IP stack is used instead.
+  See :ref:`CONFIG_SLM_PPP <CONFIG_SLM_PPP>` and :ref:`SLM_AT_PPP` for more information.
+
+* :file:`overlay-ppp-without-cmux.overlay` - Devicetree overlay file that configures the UART to be used by PPP.
+  This configuration file should be included when building SLM with PPP and without CMUX, in addition to :file:`overlay-ppp.conf`.
+  It can be customized to fit your configuration (UART, baud rate, and so on).
 
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for the nRF9160 DK.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
