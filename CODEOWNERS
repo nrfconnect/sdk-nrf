@@ -74,6 +74,8 @@ Kconfig*                                  @tejlmand
 /doc/nrf/security/                        @greg-fer
 /doc/nrf/test_and_optimize/               @greg-fer
 /doc/nrf/*.rst                            @greg-fer
+# Protocols related docs
+/doc/nrf/protocols/thread/*.rst           @wiba-nordic
 # All subfolders
 /drivers/                                 @anangl
 /drivers/serial/                          @nordic-krch @anangl
