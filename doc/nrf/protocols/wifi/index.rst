@@ -25,13 +25,13 @@ For nRF70 series documentation, see the following:
 If you want to go through an online training course to familiarize yourself with Wi-Fi and the development of Wi-Fi applications, enroll in the `Wi-Fi Fundamentals course`_ in the `Nordic Developer Academy`_.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Subpages:
 
    wifi.rst
    station_mode/index
    scan_mode/index
-   sap
+   sap_mode/index
    advanced_modes/index
    regulatory_support
    debugging
