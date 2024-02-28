@@ -778,6 +778,9 @@ Wi-Fi samples
     * Added ``raw_tx`` extension to the Wi-Fi command line.
       It adds the subcommands to configure and send raw TX packets.
 
+    * Added ``promiscuous_set`` extension to the Wi-Fi command line.
+      It adds the subcommand to configure Promiscuous mode.
+
 * Added the :ref:`wifi_softap_sample` sample that demonstrates how to start a nRF70 Series device in :term:`Software-enabled Access Point (SoftAP or SAP)` mode.
 * Added the :ref:`wifi_raw_tx_packet_sample` sample that demonstrates how to transmit raw TX packets.
 
