@@ -306,12 +306,11 @@ psa_status_t cracen_srp_get_implicit_key(cracen_srp_operation_t *operation, uint
 
 psa_status_t cracen_srp_abort(cracen_srp_operation_t *operation);
 
-psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
-			       const psa_pake_cipher_suite_t *cipher_suite);
-
-psa_status_t cracen_pake_set_password_key(cracen_pake_operation_t *operation,
-					  const psa_key_attributes_t *attributes,
-					  const uint8_t *password, size_t password_length);
+psa_status_t cracen_pake_setup(
+	cracen_pake_operation_t *operation,
+	const psa_pake_cipher_suite_t *cipher_suite, const psa_key_attributes_t *attributes,
+	const uint8_t *password, size_t password_length, const uint8_t *user_id,
+	size_t user_id_length, const uint8_t *peer_id, size_t peer_id_length, psa_pake_role_t role);
 
 psa_status_t cracen_pake_set_user(cracen_pake_operation_t *operation, const uint8_t *user_id,
 				  size_t user_id_len);

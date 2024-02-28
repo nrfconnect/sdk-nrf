@@ -12,38 +12,9 @@
 #include "psa/crypto_values.h"
 #include <psa_crypto_driver_wrappers.h>
 
-psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
-			       const psa_pake_cipher_suite_t *cipher_suite)
-{
-	operation->alg = cipher_suite->algorithm;
-	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
-
-	switch (operation->alg) {
-	case PSA_ALG_JPAKE:
-		if (IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
-			status = cracen_jpake_setup(&operation->cracen_jpake_ctx, cipher_suite);
-		}
-		break;
-	case PSA_ALG_SRP_6:
-		if (IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
-			status = cracen_srp_setup(&operation->cracen_srp_ctx, cipher_suite);
-		}
-		break;
-	case PSA_ALG_SPAKE2P:
-		if (IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
-			status = cracen_spake2p_setup(&operation->cracen_spake2p_ctx, cipher_suite);
-		}
-		break;
-	default:
-		(void)cipher_suite;
-	}
-
-	return status;
-}
-
-psa_status_t cracen_pake_set_password_key(cracen_pake_operation_t *operation,
-					  const psa_key_attributes_t *attributes,
-					  const uint8_t *password, size_t password_length)
+static psa_status_t set_password_key(cracen_pake_operation_t *operation,
+				     const psa_key_attributes_t *attributes,
+				     const uint8_t *password, size_t password_length)
 {
 	psa_status_t status = PSA_ERROR_BAD_STATE;
 
@@ -72,6 +43,63 @@ psa_status_t cracen_pake_set_password_key(cracen_pake_operation_t *operation,
 		(void)attributes;
 		(void)password;
 		(void)password_length;
+	}
+
+	return status;
+}
+
+psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
+			       const psa_pake_cipher_suite_t *cipher_suite,
+			       const psa_key_attributes_t *attributes, const uint8_t *password,
+			       size_t password_length, const uint8_t *user_id,
+			       size_t user_id_length, const uint8_t *peer_id, size_t peer_id_length,
+			       psa_pake_role_t role)
+{
+	operation->alg = cipher_suite->algorithm;
+	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
+
+	switch (operation->alg) {
+	case PSA_ALG_JPAKE:
+		if (IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
+			status = cracen_jpake_setup(&operation->cracen_jpake_ctx, cipher_suite);
+		}
+		break;
+	case PSA_ALG_SRP_6:
+		if (IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
+			status = cracen_srp_setup(&operation->cracen_srp_ctx, cipher_suite);
+		}
+		break;
+	case PSA_ALG_SPAKE2P:
+		if (IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+			status = cracen_spake2p_setup(&operation->cracen_spake2p_ctx, cipher_suite);
+		}
+		break;
+	default:
+		(void)cipher_suite;
+	}
+
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	status = set_password_key(operation, attributes, password, password_length);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	status = cracen_pake_set_user(operation, user_id, user_id_length);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	status = cracen_pake_set_peer(operation, peer_id, peer_id_length);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	status = cracen_pake_set_role(operation, role);
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
 
 	return status;
