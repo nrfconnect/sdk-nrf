@@ -989,12 +989,12 @@ int qspi_validate_rpu_wake_writecmd(const struct device *dev)
 
 	for (int ii = 0; ii < 1; ii++) {
 		ret = qspi_RDSR2(dev, &rdsr2);
-		if (ret && (rdsr2 & RPU_WAKEUP_NOW)) {
+		if (!ret && (rdsr2 & RPU_WAKEUP_NOW)) {
 			return 0;
 		}
 	}
 
-	return rdsr2;
+	return -1;
 }
 
 
@@ -1044,11 +1044,13 @@ int qspi_wait_while_rpu_awake(const struct device *dev)
 		k_msleep(1);
 	}
 
-	/* Configure DTS settings */
-	if (val & RPU_AWAKE_BIT) {
-		/* Restore QSPI clock frequency from DTS */
-		QSPIconfig.phy_if.sck_freq = INST_0_SCK_CFG;
+	if (ret || !(val & RPU_AWAKE_BIT)) {
+		LOG_ERR("RPU is not awake even after 10ms");
+		return -1;
 	}
+
+	/* Restore QSPI clock frequency from DTS */
+	QSPIconfig.phy_if.sck_freq = INST_0_SCK_CFG;
 
 	return val;
 }

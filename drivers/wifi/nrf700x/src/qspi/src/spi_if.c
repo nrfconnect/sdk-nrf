@@ -164,6 +164,11 @@ int _spim_wait_while_rpu_awake(void)
 		k_msleep(1);
 	}
 
+	if (ret || !(val & RPU_AWAKE_BIT)) {
+		LOG_ERR("RPU is not awake even after 10ms");
+		return -1;
+	}
+
 	return val;
 }
 
@@ -184,6 +189,11 @@ int spim_wait_while_rpu_wake_write(void)
 		}
 
 		k_msleep(1);
+	}
+
+	if (ret || !(val & RPU_WAKEUP_NOW)) {
+		LOG_ERR("RPU wakeup write ACK failed even after 10ms");
+		return -1;
 	}
 
 	return ret;
