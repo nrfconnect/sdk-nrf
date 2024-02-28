@@ -1216,6 +1216,10 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
     The ZIP format is used for update images in the nRF Connect SDK.
     The change simplifies integrating new update image file formats.
 
+* Added ``cert_tool.py`` script.
+
+  This is a script to generate EC private keys, create CSRs, create root CA and subordinate CA certificates and sign CSRs.
+
 MCUboot
 =======
 

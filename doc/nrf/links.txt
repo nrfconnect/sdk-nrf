@@ -875,7 +875,6 @@
 .. _`Creating an Azure IoT Hub instance using the Azure portal`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal
 .. _`Azure IoT Hub Device Provisioning Service (DPS)`: https://docs.microsoft.com/en-us/azure/iot-dps/
 .. _`Set up an Azure IoT Hub Device Provisioning Service (DPS) instance`: https://docs.microsoft.com/en-us/azure/iot-dps/quick-setup-auto-provision
-.. _`Creating Azure IoT Hub certificates`: https://docs.microsoft.com/en-us/azure/iot-hub/tutorial-x509-scripts
 .. _`Azure IoT Hub direct method`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-direct-methods
 .. _`Azure IoT Hub MQTT protocol support`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-mqtt-support
 .. _`Azure IoT Explorer`: https://docs.microsoft.com/en-us/azure/iot-pnp/howto-use-iot-explorer
