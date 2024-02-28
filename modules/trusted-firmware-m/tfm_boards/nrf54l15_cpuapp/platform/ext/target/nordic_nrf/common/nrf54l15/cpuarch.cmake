@@ -21,4 +21,5 @@ add_compile_definitions(
   NRF_APPLICATION
   # SKIP configuring the SAU from the MDK as it does not fit TF-M's needs
   NRF_SKIP_SAU_CONFIGURATION
+  NRF_SKIP_FICR_NS_COPY_TO_RAM
 )
