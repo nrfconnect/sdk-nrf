@@ -20,3 +20,9 @@ config WFA_QT_THREAD_STACK_SIZE
 	default 4096
 	help
 	  Set the stack size for WFA QT thread.
+
+config WFA_QT_REBOOT_TIMEOUT_MS
+	int "Timeout for reboot (in milliseconds)"
+	default 1000
+	help
+	  Set the timeout value (in milliseconds) for reboot operation.
