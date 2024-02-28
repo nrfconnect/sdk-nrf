@@ -330,6 +330,7 @@ struct cracen_srp_operation {
 typedef struct cracen_srp_operation cracen_srp_operation_t;
 
 struct cracen_spake2p_operation {
+	psa_algorithm_t alg;
 	cracen_hash_operation_t hash_op; /* Protocol transcript (TT) */
 	uint8_t w0[CRACEN_P256_KEY_SIZE];
 	uint8_t w1_or_L[CRACEN_P256_POINT_SIZE]; /* w1 is scalar, L is a point. */
@@ -337,6 +338,7 @@ struct cracen_spake2p_operation {
 	uint8_t XY[CRACEN_P256_POINT_SIZE + 1]; /* Includes prefix for uncompressed points (0x04) */
 	uint8_t YX[CRACEN_P256_POINT_SIZE + 1]; /* Includes prefix for uncompressed points (0x04) */
 	uint8_t shared[CRACEN_SPAKE2P_HASH_LEN];
+	uint8_t shared_len;
 	uint8_t KconfPV[CRACEN_SPAKE2P_HASH_LEN];
 	uint8_t KconfVP[CRACEN_SPAKE2P_HASH_LEN];
 	uint8_t prover[32];

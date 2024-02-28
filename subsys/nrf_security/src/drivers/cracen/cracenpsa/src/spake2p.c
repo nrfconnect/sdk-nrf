@@ -38,7 +38,7 @@
  */
 #define UNCOMPRESSED_POINT_TYPE 0x04
 
-/* Points on the curve as defined by Spake2+ draft. */
+/* Point generation seeds specified for P-256 by RFC 9382. */
 static const uint8_t SPAKE2P_POINT_M[] = {
 	0x88, 0x6e, 0x2f, 0x97, 0xac, 0xe4, 0x6e, 0x55, 0xba, 0x9d, 0xd7, 0x24, 0x25,
 	0x79, 0xf2, 0x99, 0x3b, 0x64, 0xe1, 0x6e, 0xf3, 0xdc, 0xab, 0x95, 0xaf, 0xd4,
@@ -196,8 +196,6 @@ static psa_status_t cracen_get_confirmation_keys(cracen_spake2p_operation_t *ope
 	psa_key_derivation_operation_t kdf_op = {};
 	uint8_t Z[CRACEN_P256_POINT_SIZE];
 	uint8_t V[CRACEN_P256_POINT_SIZE];
-	/* For KDF halves of the hash is used in Draft 02. */
-	const size_t half_hash = CRACEN_SPAKE2P_HASH_LEN / 2;
 	size_t hash_len;
 
 	cracen_get_ZV(operation, Z, V);
@@ -224,10 +222,33 @@ static psa_status_t cracen_get_confirmation_keys(cracen_spake2p_operation_t *ope
 		return status;
 	}
 
-	/* Get K_e (K_shared) */
-	__ASSERT_NO_MSG(hash_len / 2 == half_hash);
-	/* Second half the hash is used. */
-	memcpy(operation->shared, V + half_hash, half_hash);
+	if (operation->alg == PSA_ALG_SPAKE2P_MATTER) {
+		operation->shared_len = hash_len / 2;
+		memcpy(operation->shared, V + operation->shared_len, operation->shared_len);
+	} else {
+		operation->shared_len = hash_len;
+		status = psa_driver_wrapper_key_derivation_setup(&kdf_op,
+								 PSA_ALG_HKDF(PSA_ALG_SHA_256));
+		if (status) {
+			goto exit;
+		}
+		status = psa_driver_wrapper_key_derivation_input_bytes(
+			&kdf_op, PSA_KEY_DERIVATION_INPUT_INFO, (uint8_t *)"SharedKey", 9);
+		if (status) {
+			goto exit;
+		}
+		status = psa_driver_wrapper_key_derivation_input_bytes(
+			&kdf_op, PSA_KEY_DERIVATION_INPUT_SECRET, V, hash_len);
+		if (status) {
+			goto exit;
+		}
+		status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, operation->shared,
+									operation->shared_len);
+		if (status) {
+			goto exit;
+		}
+		psa_key_derivation_abort(&kdf_op);
+	}
 
 	status = psa_driver_wrapper_key_derivation_setup(&kdf_op, PSA_ALG_HKDF(PSA_ALG_SHA_256));
 	if (status) {
@@ -239,19 +260,21 @@ static psa_status_t cracen_get_confirmation_keys(cracen_spake2p_operation_t *ope
 		goto exit;
 	}
 
-	/* Here the first half of the hash is used. */
 	status = psa_driver_wrapper_key_derivation_input_bytes(
-		&kdf_op, PSA_KEY_DERIVATION_INPUT_SECRET, V, half_hash);
+		&kdf_op, PSA_KEY_DERIVATION_INPUT_SECRET, V, operation->shared_len);
 	if (status) {
 		goto exit;
 	}
-	status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, KconfP, half_hash);
+	status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, KconfP,
+								operation->shared_len);
 	if (status) {
 		goto exit;
 	}
-	status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, KconfV, half_hash);
+	status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, KconfV,
+								operation->shared_len);
 exit:
 	safe_memzero(V, sizeof(V));
+	safe_memzero(Z, sizeof(Z));
 	(void)psa_driver_wrapper_key_derivation_abort(&kdf_op);
 	return status;
 }
@@ -445,39 +468,15 @@ static psa_status_t cracen_write_confirm(cracen_spake2p_operation_t *operation, 
 	return PSA_SUCCESS;
 }
 
-psa_status_t cracen_spake2p_setup(cracen_spake2p_operation_t *operation,
-				  const psa_pake_cipher_suite_t *cipher_suite)
-{
-	if (cipher_suite->algorithm != PSA_ALG_SPAKE2P ||
-	    cipher_suite->type != PSA_PAKE_PRIMITIVE_TYPE_ECC ||
-	    cipher_suite->family != PSA_ECC_FAMILY_SECP_R1 || cipher_suite->bits != 256 ||
-	    cipher_suite->hash != PSA_ALG_SHA_256) {
-		return PSA_ERROR_NOT_SUPPORTED;
-	}
-
-	psa_status_t status =
-		cracen_ecc_get_ecurve_from_psa(PSA_ECC_FAMILY_SECP_R1, 256, &operation->curve);
-
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-
-	/* Initialize hash for protocol transcript TT. */
-	return cracen_hash_setup(&operation->hash_op, cipher_suite->hash);
-}
-
-psa_status_t cracen_spake2p_set_password_key(cracen_spake2p_operation_t *operation,
-					     const psa_key_attributes_t *attributes,
-					     const uint8_t *password, size_t password_length)
+static psa_status_t set_password_key(cracen_spake2p_operation_t *operation,
+				     const psa_key_attributes_t *attributes,
+				     const uint8_t *password, size_t password_length)
 {
 	psa_status_t status;
 
 	/* Compute w0 and w1 according to spec. */
-	if (operation->role == PSA_PAKE_ROLE_CLIENT) {
-		/* Password contains: w0s || w1s */
-		if (password_length < 2 * CRACEN_P256_KEY_SIZE) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
+	if (password_length == 2 * CRACEN_P256_KEY_SIZE) {
+		/* Password contains: w0 || w1 */
 		status = cracen_p256_reduce(operation, operation->w0, (uint8_t *)password,
 					    password_length / 2);
 		if (status != PSA_SUCCESS) {
@@ -490,11 +489,8 @@ psa_status_t cracen_spake2p_set_password_key(cracen_spake2p_operation_t *operati
 			return status;
 		}
 
-	} else {
-		/* Password contains: w0s || L */
-		if (password_length < (CRACEN_P256_POINT_SIZE + CRACEN_P256_KEY_SIZE + 1)) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
+	} else if (password_length == CRACEN_P256_POINT_SIZE + CRACEN_P256_KEY_SIZE + 1) {
+		/* Password contains: w0 || L */
 		status = cracen_p256_reduce(operation, operation->w0, (uint8_t *)password,
 					    CRACEN_P256_KEY_SIZE);
 		password += password_length - CRACEN_P256_POINT_SIZE;
@@ -510,9 +506,41 @@ psa_status_t cracen_spake2p_set_password_key(cracen_spake2p_operation_t *operati
 			return status;
 		}
 		memcpy(operation->w1_or_L, password, CRACEN_P256_POINT_SIZE);
+	} else {
+		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	return PSA_SUCCESS;
+}
+
+psa_status_t cracen_spake2p_setup(cracen_spake2p_operation_t *operation,
+
+				  const psa_key_attributes_t *attributes, const uint8_t *password,
+				  size_t password_length,
+				  const psa_pake_cipher_suite_t *cipher_suite)
+{
+	if (psa_pake_cs_get_primitive(cipher_suite) !=
+		    PSA_PAKE_PRIMITIVE(PSA_PAKE_PRIMITIVE_TYPE_ECC, PSA_ECC_FAMILY_SECP_R1, 256) ||
+	    psa_pake_cs_get_key_confirmation(cipher_suite) != PSA_PAKE_CONFIRMED_KEY) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	psa_status_t status =
+		cracen_ecc_get_ecurve_from_psa(PSA_ECC_FAMILY_SECP_R1, 256, &operation->curve);
+
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	status = set_password_key(operation, attributes, password, password_length);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	operation->alg = psa_pake_cs_get_algorithm(cipher_suite);
+
+	/* Initialize hash for protocol transcript TT. */
+	return cracen_hash_setup(&operation->hash_op, PSA_ALG_SHA_256);
 }
 
 psa_status_t cracen_spake2p_set_user(cracen_spake2p_operation_t *operation, const uint8_t *user_id,
@@ -557,6 +585,16 @@ psa_status_t cracen_spake2p_set_peer(cracen_spake2p_operation_t *operation, cons
 	return PSA_SUCCESS;
 }
 
+psa_status_t cracen_spake2p_set_context(cracen_spake2p_operation_t *operation,
+					const uint8_t *context, size_t context_len)
+{
+	if (context_len == 0) {
+		return PSA_SUCCESS;
+	}
+
+	return cracen_update_hash_with_length(&operation->hash_op, context, context_len, 0);
+}
+
 psa_status_t cracen_spake2p_set_role(cracen_spake2p_operation_t *operation, psa_pake_role_t role)
 {
 	switch (role) {
@@ -596,22 +634,21 @@ psa_status_t cracen_spake2p_input(cracen_spake2p_operation_t *operation, psa_pak
 		return cracen_read_key_share(operation, input, input_length);
 	case PSA_PAKE_STEP_CONFIRM:
 		return cracen_read_confirm(operation, input, input_length);
-	case PSA_PAKE_STEP_CONTEXT:
-		return cracen_update_hash_with_length(&operation->hash_op, input, input_length, 0);
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 }
 
-psa_status_t cracen_spake2p_get_implicit_key(cracen_spake2p_operation_t *operation, uint8_t *output,
-					     size_t output_size, size_t *output_length)
+psa_status_t cracen_spake2p_get_shared_key(cracen_spake2p_operation_t *operation,
+					   const psa_key_attributes_t *attributes, uint8_t *output,
+					   size_t output_size, size_t *output_length)
 {
-	if (output_size < CRACEN_SPAKE2P_HASH_LEN) {
+	if (output_size < operation->shared_len) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
-	/* Only half the hash is used for Spake2+ Draft 02 */
-	memcpy(output, operation->shared, CRACEN_SPAKE2P_HASH_LEN / 2);
-	*output_length = CRACEN_SPAKE2P_HASH_LEN / 2;
+
+	memcpy(output, operation->shared, operation->shared_len);
+	*output_length = operation->shared_len;
 
 	return PSA_SUCCESS;
 }
