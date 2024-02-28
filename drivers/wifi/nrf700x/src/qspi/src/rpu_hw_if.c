@@ -377,10 +377,17 @@ int rpu_wakeup(void)
 		return ret;
 	}
 
-	/* These return actual values not return values */
-	(void)rpu_rdsr2();
+	ret = rpu_rdsr2();
+	if (ret < 0) {
+		LOG_ERR("Error: RDSR2 failed");
+		return ret;
+	}
 
-	(void)rpu_rdsr1();
+	ret = rpu_rdsr1();
+	if (ret < 0) {
+		LOG_ERR("Error: RDSR1 failed");
+		return ret;
+	}
 
 	return 0;
 }
