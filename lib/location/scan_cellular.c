@@ -69,7 +69,7 @@ struct lte_lc_cells_info *scan_cellular_results_get(void)
 	return &scan_cellular_info;
 }
 
-#if defined(CONFIG_LOCATION_DATA_DETAILS)
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR) && defined(CONFIG_LOCATION_DATA_DETAILS)
 void scan_cellular_details_get(struct location_data_details *details)
 {
 	details->cellular.ncells_count = scan_cellular_info.ncells_count;
