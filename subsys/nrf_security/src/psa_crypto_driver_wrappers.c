@@ -136,10 +136,6 @@
 
 #define PSA_CRYPTO_OBERON_DRIVER_ID (28)
 
-#define CRACEN_JPAKE_DRIVER_ID 61
-#define CRACEN_SPAKE_DRIVER_ID 62
-#define CRACEN_SRP_DRIVER_ID   63
-
 #if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
 psa_status_t prng_test_generate_random(uint8_t *output, size_t output_size);
 #endif
@@ -2344,7 +2340,9 @@ psa_status_t psa_driver_wrapper_pake_setup(psa_pake_operation_t *operation,
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		/* Add cases for transparent drivers here */
 #ifdef PSA_NEED_CRACEN_PAKE_DRIVER
-		status = cracen_pake_setup(&operation->ctx.cracen_pake_ctx, cipher_suite);
+	status = cracen_pake_setup(&operation->ctx.cracen_pake_ctx, cipher_suite, attributes,
+				   password, password_length, user_id, user_id_length, peer_id,
+				   peer_id_length, role);
 		if (status == PSA_SUCCESS) {
 			operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
 		}
@@ -2441,34 +2439,14 @@ psa_status_t psa_driver_wrapper_pake_set_context(psa_pake_operation_t *operation
 	}
 }
 
-psa_status_t psa_driver_wrapper_pake_set_password_key(psa_pake_operation_t *operation,
-						      const psa_key_attributes_t *attributes,
-						      const uint8_t *password,
-						      size_t password_length)
-{
-	switch (operation->id) {
+/* TODO: NCSDK-26303 */
 #ifdef PSA_NEED_CRACEN_PAKE_DRIVER
-	case PSA_CRYPTO_CRACEN_DRIVER_ID:
-		return cracen_pake_set_password_key(&operation->ctx.cracen_pake_ctx, attributes,
-						    password, password_length);
-#endif
-
-	default:
-		(void)attributes;
-		(void)password;
-		(void)password_length;
-		return PSA_ERROR_BAD_STATE;
-	}
-}
-
 psa_status_t psa_driver_wrapper_pake_set_user(psa_pake_operation_t *operation,
 					      const uint8_t *user_id, size_t user_id_len)
 {
 	switch (operation->id) {
-#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
 	case PSA_CRYPTO_CRACEN_DRIVER_ID:
 		return cracen_pake_set_user(&operation->ctx.cracen_pake_ctx, user_id, user_id_len);
-#endif
 
 	default:
 		(void)user_id;
@@ -2506,6 +2484,7 @@ psa_status_t psa_driver_wrapper_pake_set_role(psa_pake_operation_t *operation, p
 		return PSA_ERROR_BAD_STATE;
 	}
 }
+#endif /* PSA_NEED_CRACEN_PAKE_DRIVER */
 
 psa_status_t psa_driver_wrapper_pake_output(psa_pake_operation_t *operation, psa_pake_step_t step,
 					    uint8_t *output, size_t output_size,
