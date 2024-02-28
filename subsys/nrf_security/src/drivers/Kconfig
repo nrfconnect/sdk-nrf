@@ -32,6 +32,7 @@ config PSA_CRYPTO_DRIVER_CRACEN
 	depends on CRACEN_HW_PRESENT
 	# CRACEN uses the k_event_ API
 	select EVENTS
+	default y
 	help
 	  PSA crypto driver for the CRACEN HW peripheral.
 
