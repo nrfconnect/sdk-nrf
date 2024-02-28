@@ -19,4 +19,9 @@ target_sources_ifdef(CONFIG_NRF700X_RAW_DATA_TX
 	PRIVATE
 	src/wifi_raw_tx_pkt_shell.c)
 
+target_sources_ifdef(CONFIG_NRF700X_PROMISC_DATA_RX
+	app
+	PRIVATE
+	src/wifi_promiscuous_shell.c)
+
 target_sources(app PRIVATE src/main.c)
