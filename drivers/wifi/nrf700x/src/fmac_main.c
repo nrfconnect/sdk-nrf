@@ -461,22 +461,53 @@ void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_p
 	tx_pwr_ctrl_params->ant_gain_5g_band1 = CONFIG_NRF700X_ANT_GAIN_5G_BAND1;
 	tx_pwr_ctrl_params->ant_gain_5g_band2 = CONFIG_NRF700X_ANT_GAIN_5G_BAND2;
 	tx_pwr_ctrl_params->ant_gain_5g_band3 = CONFIG_NRF700X_ANT_GAIN_5G_BAND3;
-	tx_pwr_ctrl_params->band_edge_2g_lo = CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_2g_hi = CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_5g_unii_1_lo = CONFIG_NRF700X_BAND_UNII_1_LOWER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_5g_unii_1_hi = CONFIG_NRF700X_BAND_UNII_1_UPPER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_5g_unii_2a_lo =
-					CONFIG_NRF700X_BAND_UNII_2A_LOWER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_5g_unii_2a_hi =
-					CONFIG_NRF700X_BAND_UNII_2A_UPPER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_5g_unii_2c_lo =
-					CONFIG_NRF700X_BAND_UNII_2C_LOWER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_5g_unii_2c_hi =
-					CONFIG_NRF700X_BAND_UNII_2C_UPPER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_5g_unii_3_lo = CONFIG_NRF700X_BAND_UNII_3_LOWER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_5g_unii_3_hi = CONFIG_NRF700X_BAND_UNII_3_UPPER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_5g_unii_4_lo = CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF;
-	tx_pwr_ctrl_params->band_edge_5g_unii_4_hi = CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params->band_edge_2g_lo_dss = CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF_DSSS;
+	tx_pwr_ctrl_params->band_edge_2g_lo_ht = CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_2g_lo_he = CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_2g_hi_dsss = CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF_DSSS;
+	tx_pwr_ctrl_params->band_edge_2g_hi_ht = CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_2g_hi_he = CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_5g_unii_1_lo_ht =
+		CONFIG_NRF700X_BAND_UNII_1_LOWER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_5g_unii_1_lo_he =
+		CONFIG_NRF700X_BAND_UNII_1_LOWER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_5g_unii_1_hi_ht =
+		CONFIG_NRF700X_BAND_UNII_1_UPPER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_5g_unii_1_hi_he =
+		CONFIG_NRF700X_BAND_UNII_1_UPPER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_5g_unii_2a_lo_ht =
+		CONFIG_NRF700X_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_5g_unii_2a_lo_he =
+		CONFIG_NRF700X_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_5g_unii_2a_hi_ht =
+		CONFIG_NRF700X_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_5g_unii_2a_hi_he =
+		CONFIG_NRF700X_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_5g_unii_2c_lo_ht =
+		CONFIG_NRF700X_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_5g_unii_2c_lo_he =
+		CONFIG_NRF700X_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_5g_unii_2c_hi_ht =
+		CONFIG_NRF700X_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_5g_unii_2c_hi_he =
+		CONFIG_NRF700X_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_5g_unii_3_lo_ht =
+		CONFIG_NRF700X_BAND_UNII_3_LOWER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_5g_unii_3_lo_he =
+		CONFIG_NRF700X_BAND_UNII_3_LOWER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_5g_unii_3_hi_ht =
+		CONFIG_NRF700X_BAND_UNII_3_UPPER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_5g_unii_3_hi_he =
+		CONFIG_NRF700X_BAND_UNII_3_UPPER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_5g_unii_4_lo_ht =
+		CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_5g_unii_4_lo_he =
+		CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF_HE;
+	tx_pwr_ctrl_params->band_edge_5g_unii_4_hi_ht =
+		CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF_HT;
+	tx_pwr_ctrl_params->band_edge_5g_unii_4_hi_he =
+		CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF_HE;
+
 
 	tx_pwr_ceil_params->max_pwr_2g_dsss =
 			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_dsss);

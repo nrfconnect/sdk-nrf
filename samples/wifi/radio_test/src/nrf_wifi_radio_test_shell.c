@@ -1747,6 +1747,59 @@ out:
 	return ret;
 }
 
+static int nrf_wifi_radio_test_set_ant_gain(const struct shell *shell,
+					    size_t argc,
+					    const char *argv[])
+{
+	char *ptr = NULL;
+	unsigned long ant_gain = 0;
+
+	ant_gain = strtoul(argv[1], &ptr, 10);
+
+	if ((ant_gain < 0) || (ant_gain > 6)) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid antenna gain setting\n");
+		return -ENOEXEC;
+	}
+
+	if (!check_test_in_prog(shell)) {
+		return -ENOEXEC;
+	}
+
+	memset(&ctx->conf_params.rf_params[ANT_GAIN_2G_OFST],
+	       ant_gain,
+	       NUM_ANT_GAIN);
+
+	return 0;
+}
+
+static int nrf_wifi_radio_test_set_edge_bo(const struct shell *shell,
+					   size_t argc,
+					   const char *argv[])
+{
+	char *ptr = NULL;
+	unsigned long edge_bo = 0;
+
+	edge_bo = strtoul(argv[1], &ptr, 10);
+
+	if ((edge_bo < 0) || (edge_bo > 10)) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid edge backoff setting\n");
+		return -ENOEXEC;
+	}
+
+	if (!check_test_in_prog(shell)) {
+		return -ENOEXEC;
+	}
+
+	memset(&ctx->conf_params.rf_params[BAND_2G_LW_ED_BKF_DSSS_OFST],
+	       edge_bo,
+	       NUM_EDGE_BACKOFF);
+
+	return 0;
+}
 
 static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 					size_t argc,
@@ -2388,6 +2441,18 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 			   "maximum TX power of channel in the configured regulatory domain.\n"
 		      "1 - Configured TX power value will be used for the channel.				",
 		      nrf_wifi_radio_test_set_bypass_reg,
+		      2,
+		      0),
+	SHELL_CMD_ARG(set_ant_gain,
+		      NULL,
+		      "<val> - Value in dB",
+		      nrf_wifi_radio_test_set_ant_gain,
+		      2,
+		      0),
+	SHELL_CMD_ARG(set_edge_bo,
+		      NULL,
+		      "<val> - Value in dB",
+		      nrf_wifi_radio_test_set_edge_bo,
 		      2,
 		      0),
 	SHELL_SUBCMD_SET_END);
