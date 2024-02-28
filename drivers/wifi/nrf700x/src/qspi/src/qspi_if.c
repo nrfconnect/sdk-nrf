@@ -1055,44 +1055,6 @@ int qspi_wait_while_rpu_awake(const struct device *dev)
 	return val;
 }
 
-/* Wait until RDSR1 confirms RPU_AWAKE/RPU_READY and Firmware is booted */
-int qspi_wait_while_firmware_awake(const struct device *dev)
-{
-	int ret = 0;
-	uint8_t sr = 0;
-
-	const struct qspi_buf sr_buf = {
-		.buf = &sr,
-		.len = sizeof(sr),
-	};
-	struct qspi_cmd cmd = {
-		.op_code = 0x1f,
-		.rx_buf = &sr_buf,
-	};
-
-	for (int ii = 0; ii < 10; ii++) {
-		int ret;
-
-		ret = qspi_device_init(dev);
-
-		if (ret == 0)
-			ret = qspi_send_cmd(dev, &cmd, false);
-
-		qspi_device_uninit(dev);
-
-		if ((ret < 0) || (sr != 0x6)) {
-			LOG_DBG("ret val = 0x%x\t RDSR1 = 0x%x", ret, sr);
-		} else {
-			LOG_DBG("RDSR1 = 0x%x", sr);
-			LOG_INF("RPU is awake...");
-			break;
-		}
-		k_msleep(1);
-	}
-
-	return ret;
-}
-
 int qspi_WRSR2(const struct device *dev, uint8_t data)
 {
 	const struct qspi_buf tx_buf = {

@@ -92,7 +92,6 @@ extern struct device qspi_perip;
 
 int qspi_validate_rpu_wake_writecmd(const struct device *dev);
 int qspi_cmd_wakeup_rpu(const struct device *dev, uint8_t data);
-int qspi_wait_while_firmware_awake(const struct device *dev);
 int qspi_wait_while_rpu_awake(const struct device *dev);
 
 int qspi_RDSR1(const struct device *dev, uint8_t *rdsr1);
