@@ -23,7 +23,7 @@ The sample supports the following development kits:
 Overview
 ********
 
-The Modem trace backend sample implements and selects a custom trace backend to receive traces from the cellular modem.
+The Modem trace backend sample implements and selects a custom trace backend to receive traces from the nRF91 Series modem.
 For demonstration purposes, the custom trace backend counts the number of bytes received and calculates the data rate of modem traces received.
 The CPU utilization is also measured.
 The byte count, data rate, and CPU load are periodically printed to terminal using a delayable work item and the system workqueue.

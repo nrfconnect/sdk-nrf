@@ -149,7 +149,7 @@ The following example output shows the allocation of a resource id ``lwm2m_clien
 
 .. tabs::
 
-   .. group-tab:: nRF9161 DK
+   .. group-tab:: nRF91x1 DK
 
       .. code-block:: console
 
@@ -193,7 +193,7 @@ Following is an example of updating a modem instance by giving a binary file:
 
 .. tabs::
 
-   .. group-tab:: nRF9161 DK
+   .. group-tab:: nRF91x1 DK
 
       .. code-block:: console
 
@@ -219,7 +219,7 @@ Following is an example of uploading a binary and updating a modem by referring 
 
 .. tabs::
 
-      .. group-tab:: nRF9161 DK
+      .. group-tab:: nRF91x1 DK
 
          .. code-block:: console
 
@@ -249,7 +249,7 @@ Complete the following steps to test the advanced FOTA firmware update with the 
 
    .. tabs::
 
-      .. group-tab:: nRF9161 DK
+      .. group-tab:: nRF91x1 DK
 
          * :file:`mfw_nrf91x1_update_from_2.x.x_to_2.x.x-FOTA-TEST.bin`
          * :file:`mfw_nrf91x1_update_from_2.x.x-FOTA-TEST_to_2.x.x.bin`
@@ -336,7 +336,7 @@ Complete the following steps to test the advanced FOTA firmware update with the 
 
       .. tabs::
 
-         .. group-tab:: nRF9161 DK
+         .. group-tab:: nRF91x1 DK
 
             .. code-block:: console
 

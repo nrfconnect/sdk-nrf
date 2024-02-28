@@ -53,19 +53,12 @@ To use the UART overlay for increasing the transfer speed, add the ``-DDTC_OVERL
 See :ref:`cmake_options` for instructions on how to add this flag.
 When building on the command line add the UART overlay in the following way, depending on the DK you are using:
 
-   .. tabs::
+.. parsed-literal::
+   :class: highlight
 
-      .. group-tab:: nRF9161 DK
+   west build -b *build_target* -- -DDTC_OVERLAY_FILE=uart.overlay
 
-         .. code-block:: console
-
-            west build -b nrf9161dk_nrf9161_ns -- -DDTC_OVERLAY_FILE=uart.overlay
-
-      .. group-tab:: nRF9160 DK
-
-         .. code-block:: console
-
-            west build -b nrf9160dk_nrf9160_ns -- -DDTC_OVERLAY_FILE=uart.overlay
+|build_target|
 
 Testing
 =======
@@ -78,7 +71,7 @@ After programming the sample to your development kit, test it by performing the 
 
    .. tabs::
 
-      .. group-tab:: nRF9161 DK
+      .. group-tab:: nRF91x1 DK
 
          * If you used the default baud rate:
 

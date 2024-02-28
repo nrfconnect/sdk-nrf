@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample requires an `nRF Cloud`_ account and modem firmware v1.3.x or later for an nRF9160 DK, or modem firmware v2.x.x for an nRF9161 DK..
+The sample requires an `nRF Cloud`_ account and modem firmware v1.3.x or later for an nRF9160 DK, or modem firmware v2.x.x for the nRF91x1 DKs.
 
 .. note::
    Full modem FOTA requires development kit version 0.14.0 or higher if you are using an nRF9160 DK.

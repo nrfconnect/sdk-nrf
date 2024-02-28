@@ -21,7 +21,7 @@ The sample supports the following development kits:
 Overview
 ********
 
-The SMS sample registers your nRF91 Series device for SMS service within the cellular modem using the :ref:`sms_readme` library.
+The SMS sample registers your nRF91 Series device for SMS service within the nRF91 Series modem using the :ref:`sms_readme` library.
 The sample requires an LTE connection.
 
 When the sample starts, it sends an SMS if a recipient phone number is set in the configuration.

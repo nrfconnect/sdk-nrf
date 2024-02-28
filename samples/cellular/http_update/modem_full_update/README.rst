@@ -26,7 +26,7 @@ Overview
 
 An |external_flash_size| of free space is required to perform a full modem update.
 Hence, for the nRF9160 DK, version 0.14.0 or higher is supported by the sample as the earlier versions do not have any external flash memory.
-The nRF9161 DK has external flash memory.
+The nRF91x1 DK has external flash memory.
 
 The sample proceeds as follows:
 

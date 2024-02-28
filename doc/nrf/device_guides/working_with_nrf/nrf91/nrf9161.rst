@@ -39,6 +39,7 @@ Updating the nRF Cloud certificate
    :end-before: dk_update_cloud_cer_end
 
 .. _downloading_cloud_certificate_nRF9161:
+.. _downloading_cloud_certificate_nRF91x1:
 
 Downloading the nRF Cloud certificate for the |DK|
 ==================================================

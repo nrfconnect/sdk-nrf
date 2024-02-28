@@ -201,3 +201,5 @@
 
 .. |hex_format| replace:: The certificate is automatically converted to a HEX format in the :file:`CMakeLists.txt` file.
    The generated :file:`.inc` file is then included in the code, where it is provisioned to the modem.
+
+.. |build_target| replace:: Replace the *build_target* with the build target of the DK you are using (see the Requirements section).
