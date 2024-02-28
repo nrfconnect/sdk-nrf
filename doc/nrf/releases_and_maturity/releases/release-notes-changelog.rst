@@ -78,21 +78,25 @@ Bluetooth Mesh
 
 * Added:
 
-  * Script for extracting the Bluetooth Mesh DFU metadata automatically when building an application.
+  * A script for extracting the Bluetooth Mesh DFU metadata automatically when building an application.
     The script is enabled by the :kconfig:option:`CONFIG_BT_MESH_DFU_METADATA_ON_BUILD` Kconfig option.
-  * Separate command ``west build -t ble_mesh_dfu_metadata`` to print already generated Bluetooth Mesh DFU metadata to a terminal.
+  * A separate command ``west build -t ble_mesh_dfu_metadata`` to print already generated Bluetooth Mesh DFU metadata to a terminal.
 
 * Updated:
 
-  * :ref:`bt_mesh_dm_srv_readme` and :ref:`bt_mesh_dm_cli_readme` model IDs and opcodes have been updated to avoid conflict with Simple OnOff Server and Client models.
-  * :ref:`bt_mesh_sensors_readme` now use an updated API with sensor values represented by :c:struct:`bt_mesh_sensor_value` instead of :c:struct:`sensor_value`.
+  * :ref:`bt_mesh_dm_srv_readme` and :ref:`bt_mesh_dm_cli_readme` model IDs and opcodes to avoid conflict with Simple OnOff Server and Client models.
+  * :ref:`bt_mesh_sensors_readme` to use an updated API with sensor values represented by :c:struct:`bt_mesh_sensor_value` instead of :c:struct:`sensor_value`.
     This makes it possible to accurately represent all encodable sensor values.
-    The old APIs based on the :c:struct:`sensor_value` type are deprecated, but are still available for backward compatibility, and can be enabled for use by setting the :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE` Kconfig option.
-  * :ref:`bt_mesh_ug_reserved_ids` with model ID and opcodes for the new :ref:`bt_mesh_le_pair_resp_readme` model.
-  * :ref:`bt_mesh_light_ctrl_readme` APIs to match new Sensor APIs.
-  * :ref:`ug_bt_mesh_configuring` with the recommendation on how to configure persistent storage to increase performance.
-  * :ref:`ug_bt_mesh_configuring` with the required configuration for the network core.
-  * Fixed an issue when the Time Server model rewrites TTL to zero forever during the unsolicited Time Status publication.
+    The old APIs based on the :c:struct:`sensor_value` type are deprecated, but are still available for backward compatibility and can be enabled for use by setting the :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE` Kconfig option.
+  * The :ref:`bt_mesh_ug_reserved_ids` page with model ID and opcodes for the new :ref:`bt_mesh_le_pair_resp_readme` model.
+  * :ref:`bt_mesh_light_ctrl_readme` APIs to match the new sensor APIs.
+  * The :ref:`ug_bt_mesh_configuring` page with:
+
+    * The recommendation on how to configure persistent storage to increase performance.
+    * The required configuration for the network core.
+  * The :ref:`bluetooth_mesh_dfu_eval_md` section with details about the automated metadata generation.
+
+* Fixed an issue when the Time Server model rewrites TTL to zero forever during the unsolicited Time Status publication.
 
 Matter
 ------
@@ -435,64 +439,39 @@ Bluetooth Mesh samples
 
 * :ref:`ble_mesh_dfu_distributor` sample:
 
-  * Added:
-
-    * Support for pairing with display capability and the :ref:`bt_mesh_le_pair_resp_readme`.
-
-  * Fixed:
-
-    * An issue where the shell interface was not accessible over UART because UART was used as a transport for MCUmgr SMP protocol.
-      Shell is now accessible over RTT.
+  * Added support for pairing with display capability and the :ref:`bt_mesh_le_pair_resp_readme`.
+  * Fixed an issue where the shell interface was not accessible over UART because UART was used as a transport for the MCUmgr SMP protocol.
+    Shell is now accessible over RTT.
 
 * :ref:`ble_mesh_dfu_target` sample:
 
-  * Added:
-
-    * Support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
+  * Added support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
 
 * :ref:`bluetooth_mesh_light_dim` sample:
 
-  * Added:
-
-    * Support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
-
-  * Fixed:
-
-    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+  * Added support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
 
 * :ref:`bluetooth_mesh_light_lc` sample:
 
-  * Added:
-
-    * Support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
-
-  * Fixed:
-
-    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+  * Added support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
 
 * :ref:`bluetooth_mesh_light` sample:
 
-  * Fixed:
-
-    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
 
 * :ref:`bluetooth_mesh_light_switch` sample:
 
-  * Fixed:
-
-    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
 
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
-  * Fixed:
-
-    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
 
 * :ref:`bluetooth_mesh_silvair_enocean` sample:
 
-  * Fixed:
-
-    * Building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` board.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` board.
 
 Cellular samples
 ----------------
