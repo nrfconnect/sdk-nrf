@@ -237,7 +237,8 @@ TAB_SIZE               = 4
 
 ALIASES                = "tagGreenTick=\htmlonly<CENTER><font color=\"green\">✔</font></CENTER>\endhtmlonly \xmlonly<verbatim>embed:rst:inline :green:`✔`</verbatim>\endxmlonly" \
                          "tagRedCross=\htmlonly<CENTER><font color=\"red\">✖</font></CENTER>\endhtmlonly \xmlonly<verbatim>embed:rst:inline :red:`✖`</verbatim>\endxmlonly" \
-                         "nRF5340pinAssignmentsURL=\"https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf5340%2Fchapters%2Fpin.html\""
+                         "nRF5340pinAssignmentsURL=\"https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf5340%2Fchapters%2Fpin.html\"" \
+                         "refhal{1}=\sa \1 \copydoc \1"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"
@@ -791,14 +792,14 @@ WARN_LOGFILE           =
 
 ### EDIT THIS ###
 
-INPUT                  = @NRFX_BASE@/helpers \
+INPUT                  = @NRFX_BASE@/doc/config_dox \
+                         @NRFX_BASE@/helpers \
                          @NRFX_BASE@/drivers \
                          @NRFX_BASE@/hal \
                          @NRFX_BASE@/haly \
                          @NRFX_BASE@/soc \
                          @NRFX_BASE@/templates \
                          @NRFX_BASE@/CHANGELOG.md \
-                         @NRFX_BASE@/doc/config_dox \
                          @NRFX_BASE@/doc
 
 # This tag can be used to specify the character encoding of the source files
@@ -1100,7 +1101,7 @@ IGNORE_PREFIX          =
 # If the GENERATE_HTML tag is set to YES, doxygen will generate HTML output
 # The default value is: YES.
 
-GENERATE_HTML          = NO
+GENERATE_HTML          = YES
 
 # The HTML_OUTPUT tag is used to specify where the HTML docs will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
@@ -2089,14 +2090,7 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = SUPPRESS_INLINE_IMPLEMENTATION \
                          __NRFX_DOXYGEN__ \
-                         CONFIG_PURGE_ENABLED \
-                         CONFIG_DISASSOCIATE_ENABLED \
-                         CONFIG_GTS_ENABLED \
-                         CONFIG_ORPHAN_ENABLED \
-                         CONFIG_RXE_ENABLED \
-                         CONFIG_START_ENABLED \
-                         CONFIG_SYNC_ENABLED \
-                         CONFIG_PANID_CONFLICT_ENABLED \
+                         __PACKED=
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
