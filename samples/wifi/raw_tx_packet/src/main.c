@@ -286,7 +286,7 @@ static void wifi_send_raw_tx_packets(void)
 		}
 	}
 
-	LOG_INF("Sent %d packets with %d failures", num_pkts, num_failures);
+	LOG_INF("Sent %d packets with %d failures on socket", num_pkts, num_failures);
 
 	/* close the socket */
 	close(sockfd);

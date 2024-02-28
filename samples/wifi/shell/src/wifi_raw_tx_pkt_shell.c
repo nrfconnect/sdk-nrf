@@ -194,7 +194,7 @@ static void send_packet(const char *transmission_mode,
 		k_msleep(delay);
 	}
 
-	LOG_INF("Sent %d packets with %d failures", num_pkts, num_failures);
+	LOG_INF("Sent %d packets with %d failures on socket", num_pkts, num_failures);
 	close(sockfd);
 	free(test_frame);
 }
