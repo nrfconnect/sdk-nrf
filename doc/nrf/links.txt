@@ -97,6 +97,7 @@
 .. _`OpenThread CLI Reference - pollperiod command`: https://github.com/openthread/openthread/blob/main/src/cli/README.md#pollperiod
 .. _`Commissioner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_COMMISSIONER.md
 .. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_JOINER.md
+.. _`BBTC Client`: https://github.com/nrfconnect/sdk-openthread/tree/main/tools/tcat_ble_client
 
 .. _`Breathe issue #437`: https://github.com/michaeljones/breathe/issues/437
 .. _`Breathe issue #438`: https://github.com/michaeljones/breathe/issues/438

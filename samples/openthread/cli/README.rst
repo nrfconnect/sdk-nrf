@@ -103,6 +103,7 @@ The following snippets are available:
   Not compatible with the ``tcat`` snippet.
 * ``tcat`` - Enables support for Thread commissioning over authenticated TLS.
   Not compatible with the ``multiprotocol`` snippet.
+  For using TCAT, refer to the :ref:`thread_tcat` page.
 * ``tcp`` - Enables experimental TCP support in this sample.
 * ``low_power`` - Enables low power consumption mode in this sample.
 
