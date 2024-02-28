@@ -975,12 +975,17 @@ char *get_hapd_exec_file(void)
 /* parse hostapd full path and set hostapd's file name */
 int set_hapd_exec_file(char *path)
 {
+	char *ret = NULL;
 	char *ptr = indigo_strrstr(path, "/");
 
 	if (ptr) {
-		strcpy(hapd_exec_file, ptr+1);
+		ret = strncpy(hapd_exec_file, ptr+1, sizeof(hapd_exec_file));
 	} else {
-		strcpy(hapd_exec_file, path);
+		ret = strncpy(hapd_exec_file, path, sizeof(hapd_exec_file));
+	}
+
+	if (!ret) {
+		return -1;
 	}
 
 	return 0;
@@ -1108,14 +1113,18 @@ char *get_wpas_exec_file(void)
 
 int set_wpas_exec_file(char *path)
 {
+	char *ret = NULL;
 	char *ptr = indigo_strrstr(path, "/");
 
 	if (ptr) {
-		strcpy(wpas_exec_file, ptr+1);
+		ret = strncpy(wpas_exec_file, ptr+1, sizeof(wpas_exec_file));
 	} else {
-		strcpy(wpas_exec_file, path);
+		ret = strncpy(wpas_exec_file, path, sizeof(wpas_exec_file));
 	}
 
+	if (!ret) {
+		return -1;
+	}
 	return 0;
 }
 
@@ -1229,7 +1238,10 @@ int add_wireless_interface_info(int band, int bssid, char *name)
 	interfaces[interface_count].band = band;
 	interfaces[interface_count].bssid = -1;
 	interfaces[interface_count].identifier = UNUSED_IDENTIFIER;
-	strcpy(interfaces[interface_count++].ifname, name);
+	if (strncpy(interfaces[interface_count++].ifname, name,
+		sizeof(interfaces[interface_count].ifname)) == NULL) {
+		return -1;
+	}
 
 	return 0;
 }
@@ -1565,7 +1577,9 @@ int get_key_value(char *value, char *buffer, char *token)
 	ptr += strlen(_token);
 	endptr = strstr(ptr, "\n");
 	if (endptr) {
-		strncpy(value, ptr, endptr - ptr);
+		if (strncpy(value, ptr, endptr - ptr) == NULL) {
+			goto done;
+		}
 	} else {
 		strcpy(value, ptr);
 	}
