@@ -258,7 +258,7 @@ static void cmux_starter(struct k_work *)
 	}
 }
 
-/* Handles AT#CMUX commands. */
+/* Handles AT#XCMUX commands. */
 int handle_at_cmux(enum at_cmd_type cmd_type)
 {
 	static struct k_work_delayable cmux_start_work;
@@ -266,6 +266,10 @@ int handle_at_cmux(enum at_cmd_type cmd_type)
 	unsigned int at_dlci;
 	int ret;
 
+	if (cmd_type == AT_CMD_TYPE_READ_COMMAND) {
+		rsp_send("\r\n#XCMUX: %u,%u\r\n", cmux.at_channel + 1, CHANNEL_COUNT);
+		return 0;
+	}
 	if (cmd_type != AT_CMD_TYPE_SET_COMMAND || param_count > 2) {
 		return -EINVAL;
 	}

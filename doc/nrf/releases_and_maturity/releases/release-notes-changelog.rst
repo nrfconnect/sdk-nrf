@@ -269,6 +269,11 @@ Serial LTE modem
 
 * Added:
 
+  * Support for the CMUX protocol in order to multiplex multiple data streams through a single serial link.
+    The ``#XCMUX`` AT command is added to set up CMUX.
+  * Support for PPP in order to use the external MCU's own IP stack instead of offloaded sockets used via AT commands.
+    It can be used in conjunction with CMUX to use a single UART for both AT data and PPP.
+    The ``#XPPP`` AT command is added to manage the PPP link.
   * ``#XMQTTCFG`` AT command to configure MQTT client before connecting to the broker.
   * The :ref:`CONFIG_SLM_AUTO_CONNECT <CONFIG_SLM_AUTO_CONNECT>` Kconfig option to support automatic LTE connection at start-up or reset.
   * The :ref:`CONFIG_SLM_CUSTOMER_VERSION <CONFIG_SLM_CUSTOMER_VERSION>` Kconfig option for customers to define their own version string after customization.
