@@ -86,6 +86,18 @@ tests:
       remote_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpunet_icmsg.overlay
       remote_OVERLAY_CONFIG=icmsg.conf
 
+  sample.ipc.ipc_service.nrf54h20pdk_cpuapp_cpurad_rpmsg:
+    platform_allow:
+      - nrf54h20pdk_nrf54h20_cpuapp
+    integration_platforms:
+      - nrf54h20pdk_nrf54h20_cpuapp
+    extra_args:
+      SB_CONF_FILE=sysbuild/nrf54h20pdk_nrf54h20_cpurad.conf
+      ipc_service_OVERLAY_CONFIG="rpmsg.conf;boards/nrf54h20pdk_nrf54h20_cpuapp_cpurad_rpmsg.conf"
+      ipc_service_DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpuapp_cpurad_rpmsg.overlay
+      remote_OVERLAY_CONFIG="rpmsg.conf;boards/nrf54h20pdk_nrf54h20_cpurad_cpuapp_rpmsg.conf"
+      remote_DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpurad_cpuapp_rpmsg.overlay
+
   sample.ipc.ipc_service.nrf54h20pdk_cpuapp_cpuppr_icmsg:
     platform_allow:
       - nrf54h20pdk_nrf54h20_cpuapp
