@@ -855,12 +855,14 @@ static int setup(void)
 		return err;
 	}
 
-#if defined(CONFIG_MCUBOOT_IMG_MANAGER)
+#if (defined(CONFIG_MCUBOOT_IMG_MANAGER) && !defined(CONFIG_LWM2M_CARRIER))
 	/* After a successful initializaton, tell the bootloader that the
 	 * current image is confirmed to be working.
+	 * If the LwM2M Carrier library is enabled, allow the library to confirm
+	 * the image.
 	 */
 	boot_write_img_confirmed();
-#endif /* CONFIG_MCUBOOT_IMG_MANAGER */
+#endif /* CONFIG_MCUBOOT_IMG_MANAGER && !CONFIG_LWM2M_CARRIER */
 
 	return 0;
 }

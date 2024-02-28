@@ -79,7 +79,7 @@ Syntax
 
 The ``<cmd>`` command is a string, and can be used as follows:
 
-* ``AT#XCARRIER="app_data"[,<data>][,<obj_inst_id>,<res_inst_id>]``
+* ``AT#XCARRIER="app_data_set"[,<data>][,<obj_inst_id>,<res_inst_id>]``
 
   Put the value in ``<data>`` into the indicated path.
   ``<data>`` must be an opaque string in double quotes, unless ``slm_data_mode`` is enabled.
@@ -173,6 +173,12 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XCARRIER="reboot"``
 
   Request to reboot the device.
+
+* ``AT#XCARRIER="send",<obj_id>,<obj_inst_id>,<res_id>[,<res_inst_id>]``
+
+  Perform a Send operation to send the currently stored data in the indicated resource or resource instance to the server.
+  This operation is currently only supported for readable opaque resources.
+  The URI path of the resource or resource instance is indicated as ``/<obj_id>/<obj_inst_id>/<res_id>/<res_inst_id>``.
 
 * ``AT#XCARRIER="time"``
 
@@ -268,6 +274,11 @@ Examples
    AT#XCARRIER="position","63.43","10.47","48",1708684683,"30.5"
    OK
 
+::
+
+   AT#XCARRIER="send",19,0,0,0
+   OK
+
 Read command
 ------------
 
@@ -339,6 +350,13 @@ The ``<cmd>`` command is a string, and can be used as follows:
   Two special values may also be used: ``-1`` to always use Confirmable notifications, or ``0`` to use the default interval of 86400 seconds.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_COAP_CON_INTERVAL` Kconfig option.
 
+* ``AT#XCARRIERCFG="download_timeout"[,<timeout>]``
+
+  Configure the time allowed for a single firmware image download before it is aborted.
+  This configuration is only supported for Push delivery method of firmware images.
+  ``<timeout>`` must be an integer value specified in minutes.
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_FIRMWARE_DOWNLOAD_TIMEOUT` Kconfig option.
+
 * ``AT#XCARRIERCFG="config_enable"[,<0|1>]``
 
   Set flag to apply the stored settings to the general Kconfig options (see the :ref:`general_options_lwm2m` section of the library's documentation).
@@ -406,6 +424,13 @@ The ``<cmd>`` command is a string, and can be used as follows:
   * ``3`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_NONIP`.
 
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_PDN_TYPE` Kconfig option.
+
+* ``AT#XCARRIERCFG="queue_mode"[,<0|1>]``
+
+  Configure whether the LwM2M carrier library is to inform the server that it may be disconnected for an extended period of time.
+  This configuration corresponds to the Queue Mode Operation as defined in the OMA LwM2M specification.
+  This command accepts two possible input parameters: ``0`` to disable or ``1`` to enable.
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_QUEUE_MODE` Kconfig option.
 
 * ``AT#XCARRIERCFG="binding"[,<binding>]``
 

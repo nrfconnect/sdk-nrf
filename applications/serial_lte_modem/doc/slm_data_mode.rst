@@ -51,7 +51,7 @@ Other examples:
 * ``AT#XFTP="mput",<file>``
 * ``AT#XMQTTPUB=<topic>,"",<qos>,<retain>``
 * ``AT#XNRFCLOUD=2``
-* ``AT#XCARRIER="app_data"``
+* ``AT#XCARRIER="app_data_set"``
 
 The SLM application sends an *OK* response when it successfully enters data mode.
 

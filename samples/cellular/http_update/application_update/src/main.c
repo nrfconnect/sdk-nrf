@@ -498,8 +498,12 @@ int main(void)
 	printk("HTTP application update sample started\n");
 	printk("Using version %d\n", CONFIG_APPLICATION_VERSION);
 
-	/* This is needed so that MCUBoot won't revert the update */
+#if !defined(CONFIG_LWM2M_CARRIER)
+	/* This is needed so that MCUBoot won't revert the update.
+	 * If the LwM2M Carrier library is enabled, allow the library to confirm the image.
+	 */
 	boot_write_img_confirmed();
+#endif
 
 	err = nrf_modem_lib_init();
 	if (err < 0) {
