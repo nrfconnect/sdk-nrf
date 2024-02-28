@@ -1352,8 +1352,7 @@ static int nrf_wifi_radio_test_set_rx(const struct shell *shell,
 	return 0;
 }
 
-#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
+#ifdef CONFIG_NRF700X_RADIO_COEX
 static int nrf_wifi_radio_test_sr_ant_switch_ctrl(const struct shell *shell,
 					     size_t argc,
 					     const char *argv[])
@@ -1371,7 +1370,7 @@ static int nrf_wifi_radio_test_sr_ant_switch_ctrl(const struct shell *shell,
 
 	return sr_ant_switch(val);
 }
-#endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */
+#endif /* CONFIG_NRF700X_RADIO_COEX */
 
 
 static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
@@ -2264,8 +2263,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_rx,
 		      2,
 		      0),
-#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
+#ifdef CONFIG_NRF700X_RADIO_COEX
 	SHELL_CMD_ARG(sr_ant_switch_ctrl,
 		      NULL,
 		      "0 - Switch set to use the BLE antenna\n"
@@ -2273,7 +2271,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_sr_ant_switch_ctrl,
 		      2,
 		      0),
-#endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */
+#endif /* CONFIG_NRF700X_RADIO_COEX */
 	SHELL_CMD_ARG(rx_lna_gain,
 		      NULL,
 		      "<val> - LNA gain to be configured.\n"
