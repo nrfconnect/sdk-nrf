@@ -14,8 +14,6 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
 
-#define WIRELESS_INTERFACE_DEFAULT "wlan0"
-
 LOG_MODULE_REGISTER(wfa_qt, CONFIG_WFA_QT_LOG_LEVEL);
 int control_socket_init(int port);
 void qt_main(void);
@@ -43,11 +41,11 @@ void qt_main(void)
 	print_welcome();
 
 	/* Set default wireless interface information */
-	set_wireless_interface(WIRELESS_INTERFACE_DEFAULT);
+	set_wireless_interface(CONFIG_WFA_QT_DEFAULT_INTERFACE);
 
 	/* Print the run-time information */
 	LOG_INF("QuickTrack control app running at: %d", get_service_port());
-	LOG_INF("Wireless Interface: %s", WIRELESS_INTERFACE_DEFAULT);
+	LOG_INF("Wireless Interface: %s", CONFIG_WFA_QT_DEFAULT_INTERFACE);
 
 	/* Register the callback */
 	register_apis();
