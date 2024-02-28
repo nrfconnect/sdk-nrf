@@ -7,7 +7,7 @@ Cellular: AT Client
    :local:
    :depth: 2
 
-The AT Client sample demonstrates the asynchronous serial communication taking place over UART to the cellular modem.
+The AT Client sample demonstrates the asynchronous serial communication taking place over UART to the nRF91 Series modem.
 The sample enables you to use an external computer or MCU to send AT commands to the LTE-M/NB-IoT modem of your nRF91 Series device.
 
 Requirements
@@ -22,8 +22,8 @@ The sample supports the following development kits:
 Overview
 ********
 
-The AT Client sample acts as a proxy for sending directives to the cellular modem using AT commands.
-This facilitates the reading of responses or analyzing of events related to the cellular modem.
+The AT Client sample acts as a proxy for sending directives to the nRF91 Series modem using AT commands.
+This facilitates the reading of responses or analyzing of events related to the nRF91 Series modem.
 You can initiate the commands manually from a terminal such as the `nRF Connect Serial Terminal`_, or visually using the `Cellular Monitor`_ app.
 Both apps are part of `nRF Connect for Desktop`_.
 

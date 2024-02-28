@@ -188,7 +188,7 @@ For example, if you are using an nRF9160 DK version 1.0.1, use the following boa
 
 ``nrf9160dk_nrf9160_ns@1.0.1``
 
-This sample also supports placement of the MCUboot secondary partition in external flash for the nRF9161 DK, and for nRF9160 DK version 0.14.0 and higher.
+This sample also supports placement of the MCUboot secondary partition in external flash for the nRF91x1 DKs, and for nRF9160 DK version 0.14.0 and higher.
 To enable this, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_mcuboot_ext_flash.conf``
@@ -286,7 +286,7 @@ This is performed by a background thread implemented in the :file:`src/led_contr
 Other threads may request either a temporary or indefinite LED pattern.
 This wakes up the ``led_thread``, which begins animating the requested pattern, sleeping for 100 milliseconds at a time between animation frames, until the requested pattern has completed (if it is temporary), or until a new pattern is requested in its place.
 
-This feature is enabled by default for the ``thingy91_nrf9160_ns`` (Thingy:91), ``nrf9161dk_nrf9161_ns`` (nRF9161 DK), and ``nrf9160dk_nrf9160_ns`` (nRF9160 DK) targets.
+This feature is enabled by default for the *build_target* mentioned in the `Requirements`_ sections.
 
 The patterns displayed, the states they describe, and the options required for them to appear are as follows:
 
@@ -390,7 +390,7 @@ For examples, see the related minimal overlays in the :ref:`nrf_cloud_multi_serv
 Customizing GNSS antenna configuration
 ======================================
 
-This sample uses the :ref:`lib_modem_antenna` library, which is enabled by default for builds targeting the ``nrf9161dk_nrf9161_ns``, ``nrf9160dk_nrf9160_ns``, or ``thingy91_nrf9160_ns`` board names.
+This sample uses the :ref:`lib_modem_antenna` library, which is enabled by default for the *build_target* mentioned in the `Requirements`_ sections.
 
 If you are using a different board or build target, or would like to use a custom or external GNSS antenna, see the :ref:`lib_modem_antenna` library documentation for configuration instructions.
 
@@ -426,7 +426,13 @@ To add your own LED indication implementations, you can add values to the ``LED_
 
 To disable LED indication, enable the :ref:`CONFIG_LED_INDICATION_DISABLED <CONFIG_LED_INDICATION_DISABLED>` option.
 
-For examples of how to set up devicetree entries compatible with the Zephyr ``gpio-leds`` and ``pwm-leds`` drivers, see the files :file:`zephyr/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_common.dts`, :file:`zephyr/boards/arm/nrf9161dk_nrf9161/nrf9161dk_nrf9161_common.dts` and :file:`zephyr/boards/arm/thingy91_nrf9160/thingy91_nrf9160_common.dts`.
+For examples of how to set up devicetree entries compatible with the Zephyr ``gpio-leds`` and ``pwm-leds`` drivers, see the following files, depending on the DK you are using:
+
+* :file:`zephyr/boards/arm/nrf9161dk_nrf9151/nrf9151dk_nrf9151_common.dts`
+* :file:`zephyr/boards/arm/nrf9161dk_nrf9161/nrf9161dk_nrf9161_common.dts`
+* :file:`zephyr/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_common.dts`
+* :file:`zephyr/boards/arm/thingy91_nrf9160/thingy91_nrf9160_common.dts`
+
 Search for nodes with ``compatible = "gpio-leds";`` and ``compatible = "pwm-leds";`` respectively.
 
 Useful debugging options
@@ -709,37 +715,23 @@ You can build the sample to connect over LTE as follows:
 
    .. group-tab:: MQTT
 
-      .. tabs::
+      .. parsed-literal::
+         :class: highlight
 
-         .. group-tab:: nRF9161 DK
+         west build -p -b *build_target*
 
-            .. code-block:: console
-
-               west build -p -b nrf9161dk_nrf9161_ns
-
-         .. group-tab:: nRF9160 DK
-
-            .. code-block:: console
-
-               west build -p -b nrf9160dk_nrf9160_ns
+      |build_target|
 
    .. group-tab:: CoAP
 
       To build the sample to use CoAP instead of MQTT, use the ``-DOVERLAY_CONFIG=overlay_coap.conf`` option.
 
-      .. tabs::
+      .. parsed-literal::
+         :class: highlight
 
-         .. group-tab:: nRF9161 DK
+         west build -p -b *build_target* -- -DOVERLAY_CONFIG="overlay_coap.conf"
 
-            .. code-block:: console
-
-               west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG="overlay_coap.conf"
-
-         .. group-tab:: nRF9160 DK
-
-            .. code-block:: console
-
-               west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay_coap.conf"
+      |build_target|
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
 
@@ -752,7 +744,7 @@ The `nRF Cloud Provisioning Service`_ allows you to securely provision and onboa
 
 .. note::
 
-   This service is not compatible with devices that use the nRF9160, but only newer nRF91x1 devices such as the nRF9161.
+   This service is not compatible with devices that use the nRF9160, but only newer nRF91x1 devices such as the nRF9151 and nRF9161.
 
 You can enable support for this service by building the sample as follows:
 
@@ -792,19 +784,12 @@ To build the sample with nRF7002 EK Wi-Fi scanning support, use the ``-DSHIELD=n
 
 This enables the Wi-Fi location tracking method automatically.
 
-.. tabs::
+.. parsed-literal::
+   :class: highlight
 
-   .. group-tab:: nRF9161 DK
+   west build -p -b *build_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
 
-      .. code-block:: console
-
-         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
-
-   .. group-tab:: nRF9160 DK
-
-      .. code-block:: console
-
-         west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
+|build_target|
 
 See also :ref:`the paragraphs on the Wi-Fi location tracking method <nrf_cloud_multi_service_wifi_location_tracking>`.
 
@@ -921,9 +906,9 @@ Before the sample can connect to a Wi-Fi network, you must add at least one cred
 Once your device has been flashed with this sample, you can add a credential by connecting to your device's UART interface and then entering the following command:
 
 .. parsed-literal::
-      :class: highlight
+   :class: highlight
 
-      wifi_cred add *NetworkSSID* WPA2-PSK *NetworkPassword*
+   wifi_cred add *NetworkSSID* WPA2-PSK *NetworkPassword*
 
 Where *NetworkSSID* is replaced with the SSID of the Wi-Fi access point you want your device to connect to, and *NetworkPassword* is its password.
 Then either reboot the device or use the ``wifi_cred auto_connect`` command to manually trigger a connection attempt.

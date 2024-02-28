@@ -518,7 +518,7 @@ Check and configure the following LwM2M options that are used by the sample:
 * :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS` - Enables notifications before Tracking Area Update (TAU). Notification triggers LWM2M registration update and TAU will be sent together with the user data. This decreases power consumption.
 
 .. note::
-   The cellular modem negotiates PSM and eDRX modes with the network it is trying to connect.
+   The nRF91 Series modem negotiates PSM and eDRX modes with the network it is trying to connect.
    The network can either accept the values, assign different values or reject them.
 
 For Thingy:91, configure the ADXL362 accelerometer sensor range by choosing one of the following options (default value is |plusminus| 2 g):
@@ -631,21 +631,15 @@ Bootstrap support
 To successfully run the bootstrap procedure, you must first register the device in the LwM2M bootstrap server.
 See :ref:`registering your device to an LwM2M bootstrap server <bootstrap_server_reg>` for instructions.
 
-To build the LwM2M Client with LwM2M bootstrap support, use :file:`overlay-avsystem-bootstrap.conf` or :file:`overlay-leshan-bootstrap.conf` configuration overlays:
+To build the LwM2M Client with LwM2M bootstrap support, use the :file:`overlay-avsystem-bootstrap.conf` or :file:`overlay-leshan-bootstrap.conf` configuration overlay.
+For example:
 
-   .. tabs::
+.. parsed-literal::
+   :class: highlight
 
-      .. group-tab:: nRF9161 DK
+   west build -b *build_target* -- -DEXTRA_CONF_FILE=overlay-leshan-bootstrap.conf
 
-         .. code-block:: console
-
-            west build -b nrf9161dk_nrf9161_ns -- -DEXTRA_CONF_FILE=overlay-leshan-bootstrap.conf
-
-      .. group-tab:: nRF9160 DK
-
-         .. code-block:: console
-
-            west build -b nrf9160dk_nrf9160_ns -- -DEXTRA_CONF_FILE=overlay-leshan-bootstrap.conf
+|build_target|
 
 In bootstrap mode, application does not overwrite the PSK key from the modem so :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` is not used.
 Please refer to :ref:`lwm2m_client_provisioning` for instructions how to provision bootstrap keys.

@@ -494,6 +494,12 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
+* Added support for the nRF9151 DK in all cellular samples except for the following samples:
+
+  * :ref:`lte_sensor_gateway`
+  * :ref:`smp_svr`
+  * :ref:`slm_shell_sample`
+
 * :ref:`ciphersuites` sample:
 
   * Updated:

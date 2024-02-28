@@ -25,7 +25,7 @@ Programming the AT Client sample
 
 You must program the :ref:`at_client_sample` sample to your device to control the security tags in the modem.
 See the `nRF91x1 AT Commands Reference Guide`_  or `nRF9160 AT Commands Reference Guide`_ for documentation on each AT command.
-Also, you must provision the bootstrap credentials for the security tag (that you have specified in :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG` Kconfig option) to the cellular modem.
+Also, you must provision the bootstrap credentials for the security tag (that you have specified in :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG` Kconfig option) to the nRF91 Series modem.
 
 Provisioning the identity and security credentials
 **************************************************
