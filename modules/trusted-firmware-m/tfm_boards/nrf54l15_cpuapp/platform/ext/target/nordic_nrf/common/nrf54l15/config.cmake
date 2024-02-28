@@ -5,8 +5,6 @@
 #
 #-------------------------------------------------------------------------------
 
-include(${PLATFORM_PATH}/common/core/config.cmake)
-
 set(SECURE_UART1                        ON         CACHE BOOL      "Enable secure UART1")
 set(PSA_API_TEST_TARGET                 "nrf54l15" CACHE STRING    "PSA API test target")
 set(NRF_NS_STORAGE                      OFF        CACHE BOOL      "Enable non-secure storage partition")

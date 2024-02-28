@@ -1,16 +1,13 @@
 #-------------------------------------------------------------------------------
-# Copyright (c) 2023, Nordic Semiconductor ASA.
+# Copyright (c) 2024, Nordic Semiconductor ASA.
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 #-------------------------------------------------------------------------------
 
 include(${CMAKE_CURRENT_LIST_DIR}/../common/config.cmake)
+include(${PLATFORM_PATH}/common/core/config.cmake)
 
-set(OOT_PLATFORM_PATH ${NRF_DIR}/modules/trusted-firmware-m/platform/ext/target/nordic_nrf)
-set(PLATFORM_PATH                                           platform/ext/target/nordic_nrf)
+set(NRF_SOC_VARIANT nrf54l15 CACHE STRING "nRF SoC Variant")
 
-include(${OOT_PLATFORM_PATH}/common/nrf54l15/config.cmake)
-
-# Override the AEAD algorithm configuration
-set(PS_CRYPTO_AEAD_ALG                  PSA_ALG_GCM CACHE STRING    "The AEAD algorithm to use for authenticated encryption in Protected Storage")
+include(${OOT_54L_PLATFORM_PATH}/config.cmake)
