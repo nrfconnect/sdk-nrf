@@ -13,10 +13,12 @@
 #include <silexpk/sxbuf/sxbufop.h>
 #include <silexpk/sxops/rsa.h>
 
+#define SRP_FIELD_BITS 3072
+
 /* From RFC3526
  * This prime is: 2^3072 - 2^3008 - 1 + 2^64 * { [2^2942 pi] + 1690314 }
  */
-static const uint8_t cracen_N3072[] = {
+const uint8_t cracen_N3072[384] = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xC9, 0x0F, 0xDA, 0xA2, 0x21, 0x68, 0xC2,
 	0x34, 0xC4, 0xC6, 0x62, 0x8B, 0x80, 0xDC, 0x1C, 0xD1, 0x29, 0x02, 0x4E, 0x08, 0x8A, 0x67,
 	0xCC, 0x74, 0x02, 0x0B, 0xBE, 0xA6, 0x3B, 0x13, 0x9B, 0x22, 0x51, 0x4A, 0x08, 0x79, 0x8E,
@@ -48,18 +50,46 @@ static const uint8_t cracen_N3072[] = {
  */
 static const uint8_t cracen_G3072[] = {5};
 
-psa_status_t cracen_srp_setup(cracen_srp_operation_t *operation,
-			      const psa_pake_cipher_suite_t *cipher_suite)
+static psa_status_t set_password_key(cracen_srp_operation_t *operation,
+				     const psa_key_attributes_t *attributes,
+				     const uint8_t *password, const size_t password_length)
 {
-	if (cipher_suite->algorithm != PSA_ALG_SRP_6 ||
-	    cipher_suite->type != PSA_PAKE_PRIMITIVE_TYPE_DH ||
-	    cipher_suite->family != PSA_DH_FAMILY_RFC3526 ||
-	    cipher_suite->bits != CRACEN_SRP_RFC3526_KEY_BITS_SIZE ||
-	    cipher_suite->hash != CRACEN_SRP_HASH_ALG) {
-		return PSA_ERROR_NOT_SUPPORTED;
+
+	if (operation->role == PSA_PAKE_ROLE_CLIENT) {
+		/* password = x = SHA512(salt | SHA512(user | ":" | pass)) */
+		if (password_length != CRACEN_SRP_HASH_LENGTH) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		memcpy(operation->x, password, CRACEN_SRP_HASH_LENGTH);
+	} else { /* PSA_PAKE_ROLE_SERVER */
+		/* password = password_verifier = v = g^x mod N */
+		if (password_length != CRACEN_SRP_FIELD_SIZE) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		memcpy(operation->v, password, CRACEN_SRP_FIELD_SIZE);
 	}
 
 	return PSA_SUCCESS;
+}
+
+psa_status_t cracen_srp_setup(cracen_srp_operation_t *operation,
+			      const psa_key_attributes_t *attributes, const uint8_t *password,
+			      size_t password_length, const psa_pake_cipher_suite_t *cipher_suite)
+{
+	if (psa_pake_cs_get_primitive(cipher_suite) !=
+		    PSA_PAKE_PRIMITIVE(PSA_PAKE_PRIMITIVE_TYPE_DH, PSA_DH_FAMILY_RFC3526,
+				       SRP_FIELD_BITS) ||
+	    psa_pake_cs_get_key_confirmation(cipher_suite) != PSA_PAKE_CONFIRMED_KEY) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	psa_algorithm_t hash_alg = PSA_ALG_GET_HASH(psa_pake_cs_get_algorithm(cipher_suite));
+
+	if (hash_alg != CRACEN_SRP_HASH_ALG) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	return set_password_key(operation, attributes, password, password_length);
 }
 
 psa_status_t cracen_srp_set_user(cracen_srp_operation_t *operation, const uint8_t *user_id,
@@ -87,28 +117,6 @@ psa_status_t cracen_srp_set_role(cracen_srp_operation_t *operation, const psa_pa
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 	operation->role = role;
-
-	return PSA_SUCCESS;
-}
-
-psa_status_t cracen_srp_set_password_key(cracen_srp_operation_t *operation,
-					 const psa_key_attributes_t *attributes,
-					 const uint8_t *password, const size_t password_length)
-{
-
-	if (operation->role == PSA_PAKE_ROLE_CLIENT) {
-		/* password = x = SHA512(salt | SHA512(user | ":" | pass)) */
-		if (password_length != CRACEN_SRP_HASH_LENGTH) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
-		memcpy(operation->x, password, CRACEN_SRP_HASH_LENGTH);
-	} else { /* PSA_PAKE_ROLE_SERVER */
-		/* password = password_verifier = v = g^x mod N */
-		if (password_length != CRACEN_SRP_FIELD_SIZE) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
-		memcpy(operation->v, password, CRACEN_SRP_FIELD_SIZE);
-	}
 
 	return PSA_SUCCESS;
 }
@@ -684,8 +692,9 @@ psa_status_t cracen_srp_input(cracen_srp_operation_t *operation, const psa_pake_
 	}
 }
 
-psa_status_t cracen_srp_get_implicit_key(cracen_srp_operation_t *operation, uint8_t *output,
-					 const size_t output_size, size_t *output_length)
+psa_status_t cracen_srp_get_shared_key(cracen_srp_operation_t *operation,
+				       const psa_key_attributes_t *attributes, uint8_t *output,
+				       const size_t output_size, size_t *output_length)
 {
 	if (output_size < CRACEN_SRP_HASH_LENGTH) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;

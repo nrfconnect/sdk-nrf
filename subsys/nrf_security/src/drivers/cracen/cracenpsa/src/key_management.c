@@ -7,9 +7,6 @@
 #include "common.h"
 #include <cracen/mem_helpers.h>
 #include "cracen_psa.h"
-#include "psa/crypto.h"
-#include "psa/crypto_values.h"
-#include <psa/crypto_sizes.h>
 
 #include <sicrypto/drbghash.h>
 #include <sicrypto/ecc.h>
@@ -18,6 +15,7 @@
 #include <sicrypto/ed448.h>
 #include <sicrypto/montgomery.h>
 #include <sicrypto/rsa_keygen.h>
+#include <sicrypto/util.h>
 #include <silexpk/ed448.h>
 #include <silexpk/sxops/rsa.h>
 #include <sicrypto/ik.h>
@@ -33,6 +31,8 @@ enum asn1_tags {
 	ASN1_INTEGER = 0x2,
 	ASN1_CONSTRUCTED = 0x20
 };
+
+extern const uint8_t cracen_N3072[384];
 
 static psa_status_t check_brainpool_alg_and_key_bits(psa_algorithm_t alg, size_t key_bits)
 {
@@ -425,6 +425,110 @@ static psa_status_t import_rsa_key(const psa_key_attributes_t *attributes, const
 	*key_buffer_length = data_length;
 	*key_bits = key_bits_attr;
 
+	return PSA_SUCCESS;
+}
+
+static psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, const uint8_t *data,
+				       size_t data_length, uint8_t *key_buffer,
+				       size_t key_buffer_size, size_t *key_buffer_length,
+				       size_t *key_bits)
+{
+	size_t bits = psa_get_key_bits(attributes);
+	psa_key_type_t type = psa_get_key_type(attributes);
+
+	switch (type) {
+	case PSA_KEY_TYPE_SPAKE2P_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
+		/* These keys contains w0 and w1. */
+		if (data_length != CRACEN_P256_KEY_SIZE * 2) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		if (bits != 0 && (bits != 256)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		/* Do not allow w0 to be 0. */
+		if (constant_memcmp_is_zero(data, CRACEN_P256_KEY_SIZE)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		/* Do not allow w1 to be 0. */
+		if (constant_memcmp_is_zero(data + CRACEN_P256_KEY_SIZE, CRACEN_P256_KEY_SIZE)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		/* We don't check if the keys are in range. This will generate an error on usage. */
+		break;
+	case PSA_KEY_TYPE_SPAKE2P_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1):
+		/* These keys contains w0 and L. L is an uncompressed point. */
+		if (data_length != CRACEN_P256_KEY_SIZE + CRACEN_P256_POINT_SIZE + 1) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		if (bits != 0 && (bits != 256)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		/* Do not allow w0 to be 0. */
+		if (constant_memcmp_is_zero(data, CRACEN_P256_KEY_SIZE)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		/* Validate L */
+		if (check_wstr_pub_key_data(PSA_ALG_ECDH, PSA_ECC_FAMILY_SECP_R1, bits,
+					    &data[CRACEN_P256_KEY_SIZE],
+					    CRACEN_P256_POINT_SIZE + 1)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		break;
+	default:
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	if (key_buffer_size < data_length) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+	memcpy(key_buffer, data, data_length);
+	*key_buffer_length = data_length;
+	*key_bits = bits;
+
+	return PSA_SUCCESS;
+}
+
+static psa_status_t import_srp_key(const psa_key_attributes_t *attributes, const uint8_t *data,
+				   size_t data_length, uint8_t *key_buffer, size_t key_buffer_size,
+				   size_t *key_buffer_length, size_t *key_bits)
+{
+	size_t bits = psa_get_key_bits(attributes);
+	psa_key_type_t type = psa_get_key_type(attributes);
+
+	switch (type) {
+	case PSA_KEY_TYPE_SRP_KEY_PAIR(PSA_DH_FAMILY_RFC3526):
+		if (bits != PSA_BYTES_TO_BITS(sizeof(cracen_N3072))) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		break;
+	case PSA_KEY_TYPE_SRP_PUBLIC_KEY(PSA_DH_FAMILY_RFC3526):
+		if (bits != PSA_BYTES_TO_BITS(sizeof(cracen_N3072))) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		if (data_length != sizeof(cracen_N3072)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		if (si_be_cmp(data, cracen_N3072, sizeof(cracen_N3072), 0) >= 0) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		break;
+	default:
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	if (constant_memcmp_is_zero(data, data_length)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+	if (key_buffer_size < data_length) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+	memcpy(key_buffer, data, data_length);
+	*key_buffer_length = data_length;
+	*key_bits = bits;
 	return PSA_SUCCESS;
 }
 
@@ -839,6 +943,16 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 			return import_rsa_key(attributes, data, data_length, key_buffer,
 					      key_buffer_size, key_buffer_length, key_bits);
 		}
+	}
+
+	if (PSA_KEY_TYPE_IS_SPAKE2P(key_type) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+		return import_spake2p_key(attributes, data, data_length, key_buffer,
+					  key_buffer_size, key_buffer_length, key_bits);
+	}
+
+	if (PSA_KEY_TYPE_IS_SRP(key_type) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
+		return import_srp_key(attributes, data, data_length, key_buffer, key_buffer_size,
+				      key_buffer_length, key_bits);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;

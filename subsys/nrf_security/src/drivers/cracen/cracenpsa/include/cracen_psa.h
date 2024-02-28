@@ -260,6 +260,8 @@ psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes);
 size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes);
 
 psa_status_t cracen_jpake_setup(cracen_jpake_operation_t *operation,
+				const psa_key_attributes_t *attributes, const uint8_t *password,
+				size_t password_length,
 				const psa_pake_cipher_suite_t *cipher_suite);
 
 psa_status_t cracen_jpake_set_password_key(cracen_jpake_operation_t *operation,
@@ -280,8 +282,9 @@ psa_status_t cracen_jpake_output(cracen_jpake_operation_t *operation, psa_pake_s
 psa_status_t cracen_jpake_input(cracen_jpake_operation_t *operation, psa_pake_step_t step,
 				const uint8_t *input, size_t input_length);
 
-psa_status_t cracen_jpake_get_implicit_key(cracen_jpake_operation_t *operation, uint8_t *output,
-					   size_t output_size, size_t *output_length);
+psa_status_t cracen_jpake_get_shared_key(cracen_jpake_operation_t *operation,
+					 const psa_key_attributes_t *attributes, uint8_t *output,
+					 size_t output_size, size_t *output_length);
 
 psa_status_t cracen_jpake_abort(cracen_jpake_operation_t *operation);
 
@@ -290,7 +293,9 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 psa_status_t cracen_free_random(cracen_prng_context_t *context);
 
 psa_status_t cracen_srp_setup(cracen_srp_operation_t *operation,
-			      const psa_pake_cipher_suite_t *cipher_suite);
+			      const psa_key_attributes_t *attributes, const uint8_t *password,
+			      size_t password_length, const psa_pake_cipher_suite_t *cipher_suite);
+
 psa_status_t cracen_srp_set_user(cracen_srp_operation_t *operation, const uint8_t *user_id,
 				 size_t user_id_len);
 psa_status_t cracen_srp_set_role(cracen_srp_operation_t *operation, psa_pake_role_t role);
@@ -301,22 +306,24 @@ psa_status_t cracen_srp_output(cracen_srp_operation_t *operation, psa_pake_step_
 			       uint8_t *output, size_t output_size, size_t *output_length);
 psa_status_t cracen_srp_input(cracen_srp_operation_t *operation, psa_pake_step_t step,
 			      const uint8_t *input, size_t input_length);
-psa_status_t cracen_srp_get_implicit_key(cracen_srp_operation_t *operation, uint8_t *output,
-					 size_t output_size, size_t *output_length);
+psa_status_t cracen_srp_get_shared_key(cracen_srp_operation_t *operation,
+				       const psa_key_attributes_t *attributes, uint8_t *output,
+				       size_t output_size, size_t *output_length);
 
 psa_status_t cracen_srp_abort(cracen_srp_operation_t *operation);
 
-psa_status_t cracen_pake_setup(
-	cracen_pake_operation_t *operation,
-	const psa_pake_cipher_suite_t *cipher_suite, const psa_key_attributes_t *attributes,
-	const uint8_t *password, size_t password_length, const uint8_t *user_id,
-	size_t user_id_length, const uint8_t *peer_id, size_t peer_id_length, psa_pake_role_t role);
+psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
+			       const psa_key_attributes_t *attributes, const uint8_t *password,
+			       size_t password_length, const psa_pake_cipher_suite_t *cipher_suite);
 
 psa_status_t cracen_pake_set_user(cracen_pake_operation_t *operation, const uint8_t *user_id,
 				  size_t user_id_len);
 
 psa_status_t cracen_pake_set_peer(cracen_pake_operation_t *operation, const uint8_t *peer_id,
 				  size_t peer_id_len);
+
+psa_status_t cracen_pake_set_context(cracen_pake_operation_t *operation, const uint8_t *context,
+				     size_t context_length);
 
 psa_status_t cracen_pake_set_role(cracen_pake_operation_t *operation, psa_pake_role_t role);
 
@@ -326,12 +333,15 @@ psa_status_t cracen_pake_output(cracen_pake_operation_t *operation, psa_pake_ste
 psa_status_t cracen_pake_input(cracen_pake_operation_t *operation, psa_pake_step_t step,
 			       const uint8_t *input, size_t input_length);
 
-psa_status_t cracen_pake_get_implicit_key(cracen_pake_operation_t *operation, uint8_t *output,
-					  size_t output_size, size_t *output_length);
+psa_status_t cracen_pake_get_shared_key(cracen_pake_operation_t *operation,
+					const psa_key_attributes_t *attributes, uint8_t *key_buffer,
+					size_t key_buffer_size, size_t *key_buffer_length);
 
 psa_status_t cracen_pake_abort(cracen_pake_operation_t *operation);
 
 psa_status_t cracen_spake2p_setup(cracen_spake2p_operation_t *operation,
+				  const psa_key_attributes_t *attributes, const uint8_t *password,
+				  size_t password_length,
 				  const psa_pake_cipher_suite_t *cipher_suite);
 
 psa_status_t cracen_spake2p_set_password_key(cracen_spake2p_operation_t *operation,
@@ -344,6 +354,9 @@ psa_status_t cracen_spake2p_set_user(cracen_spake2p_operation_t *operation, cons
 psa_status_t cracen_spake2p_set_peer(cracen_spake2p_operation_t *operation, const uint8_t *peer_id,
 				     size_t peer_id_len);
 
+psa_status_t cracen_spake2p_set_context(cracen_spake2p_operation_t *operation,
+					const uint8_t *context, size_t context_length);
+
 psa_status_t cracen_spake2p_set_role(cracen_spake2p_operation_t *operation, psa_pake_role_t role);
 
 psa_status_t cracen_spake2p_output(cracen_spake2p_operation_t *operation, psa_pake_step_t step,
@@ -352,8 +365,9 @@ psa_status_t cracen_spake2p_output(cracen_spake2p_operation_t *operation, psa_pa
 psa_status_t cracen_spake2p_input(cracen_spake2p_operation_t *operation, psa_pake_step_t step,
 				  const uint8_t *input, size_t input_length);
 
-psa_status_t cracen_spake2p_get_implicit_key(cracen_spake2p_operation_t *operation, uint8_t *output,
-					     size_t output_size, size_t *output_length);
+psa_status_t cracen_spake2p_get_shared_key(cracen_spake2p_operation_t *operation,
+					   const psa_key_attributes_t *attributes, uint8_t *output,
+					   size_t output_size, size_t *output_length);
 
 psa_status_t cracen_spake2p_abort(cracen_spake2p_operation_t *operation);
 

@@ -36,12 +36,15 @@
 #define RANDOM_RETRY_LIMIT 16
 
 psa_status_t cracen_jpake_setup(cracen_jpake_operation_t *operation,
-				const psa_pake_cipher_suite_t *cipher_suite)
+				const psa_key_attributes_t *attributes, const uint8_t *password,
+				size_t password_length, const psa_pake_cipher_suite_t *cipher_suite)
 {
-	if (cipher_suite->algorithm != PSA_ALG_JPAKE ||
-	    cipher_suite->type != PSA_PAKE_PRIMITIVE_TYPE_ECC ||
-	    cipher_suite->family != PSA_ECC_FAMILY_SECP_R1 || cipher_suite->bits != 256 ||
-	    cipher_suite->hash != PSA_ALG_SHA_256) {
+	if (psa_pake_cs_get_primitive(cipher_suite) !=
+	    PSA_PAKE_PRIMITIVE(PSA_PAKE_PRIMITIVE_TYPE_ECC, PSA_ECC_FAMILY_SECP_R1, 256)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	if (PSA_ALG_GET_HASH(psa_pake_cs_get_algorithm(cipher_suite)) != PSA_ALG_SHA_256) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -52,11 +55,11 @@ psa_status_t cracen_jpake_setup(cracen_jpake_operation_t *operation,
 		return status;
 	}
 
-	operation->alg = cipher_suite->hash;
+	operation->alg = PSA_ALG_SHA_256;
 	operation->rd_idx = 0;
 	operation->wr_idx = 0;
 
-	return PSA_SUCCESS;
+	return cracen_jpake_set_password_key(operation, attributes, password, password_length);
 }
 
 psa_status_t cracen_jpake_set_password_key(cracen_jpake_operation_t *operation,
@@ -536,8 +539,9 @@ psa_status_t cracen_jpake_input(cracen_jpake_operation_t *operation, psa_pake_st
 	}
 }
 
-psa_status_t cracen_jpake_get_implicit_key(cracen_jpake_operation_t *operation, uint8_t *output,
-					   size_t output_size, size_t *output_length)
+psa_status_t cracen_jpake_get_shared_key(cracen_jpake_operation_t *operation,
+					 const psa_key_attributes_t *attributes, uint8_t *output,
+					 size_t output_size, size_t *output_length)
 {
 	int sx_status;
 

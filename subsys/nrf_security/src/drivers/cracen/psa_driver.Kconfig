@@ -389,10 +389,6 @@ config PSA_NEED_CRACEN_CTR_DRBG_DRIVER
 
 # CRACEN PAKE Driver
 
-
-# Disabled until NCSDK-26303 is complete
-if n
-
 config PSA_NEED_CRACEN_SRP_6
 	bool
 	default y
@@ -408,8 +404,6 @@ config PSA_NEED_CRACEN_SPAKE2P
 config PSA_NEED_CRACEN_PAKE_DRIVER
 	bool
 	default y
-
-endif
 
 # CRACEN Key derivation Driver
 

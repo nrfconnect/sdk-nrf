@@ -2340,9 +2340,8 @@ psa_status_t psa_driver_wrapper_pake_setup(psa_pake_operation_t *operation,
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		/* Add cases for transparent drivers here */
 #ifdef PSA_NEED_CRACEN_PAKE_DRIVER
-	status = cracen_pake_setup(&operation->ctx.cracen_pake_ctx, cipher_suite, attributes,
-				   password, password_length, user_id, user_id_length, peer_id,
-				   peer_id_length, role);
+		status = cracen_pake_setup(&operation->ctx.cracen_pake_ctx, attributes, password,
+					   password_length, cipher_suite);
 		if (status == PSA_SUCCESS) {
 			operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
 		}
@@ -2377,6 +2376,10 @@ psa_status_t psa_driver_wrapper_pake_setup(psa_pake_operation_t *operation,
 psa_status_t psa_driver_wrapper_pake_set_role(psa_pake_operation_t *operation, psa_pake_role_t role)
 {
 	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_set_role(&operation->ctx.cracen_pake_ctx, role);
+#endif /* PSA_NEED_CRACEN_PAKE_DRIVER */
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_set_role(&operation->ctx.oberon_pake_ctx, role);
@@ -2392,6 +2395,11 @@ psa_status_t psa_driver_wrapper_pake_set_user(psa_pake_operation_t *operation,
 					      const uint8_t *user_id, size_t user_id_length)
 {
 	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_set_user(&operation->ctx.cracen_pake_ctx, user_id,
+					    user_id_length);
+#endif /* PSA_NEED_CRACEN_PAKE_DRIVER */
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_set_user(&operation->ctx.oberon_pake_ctx, user_id,
@@ -2409,6 +2417,11 @@ psa_status_t psa_driver_wrapper_pake_set_peer(psa_pake_operation_t *operation,
 					      const uint8_t *peer_id, size_t peer_id_length)
 {
 	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_set_peer(&operation->ctx.cracen_pake_ctx, peer_id,
+					    peer_id_length);
+#endif
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_set_peer(&operation->ctx.oberon_pake_ctx, peer_id,
@@ -2426,6 +2439,11 @@ psa_status_t psa_driver_wrapper_pake_set_context(psa_pake_operation_t *operation
 						 const uint8_t *context, size_t context_length)
 {
 	switch (operation->id) {
+#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_pake_set_context(&operation->ctx.cracen_pake_ctx, context,
+					       context_length);
+#endif
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_set_context(&operation->ctx.oberon_pake_ctx, context,
@@ -2438,53 +2456,6 @@ psa_status_t psa_driver_wrapper_pake_set_context(psa_pake_operation_t *operation
 		return PSA_ERROR_BAD_STATE;
 	}
 }
-
-/* TODO: NCSDK-26303 */
-#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
-psa_status_t psa_driver_wrapper_pake_set_user(psa_pake_operation_t *operation,
-					      const uint8_t *user_id, size_t user_id_len)
-{
-	switch (operation->id) {
-	case PSA_CRYPTO_CRACEN_DRIVER_ID:
-		return cracen_pake_set_user(&operation->ctx.cracen_pake_ctx, user_id, user_id_len);
-
-	default:
-		(void)user_id;
-		(void)user_id_len;
-		return PSA_ERROR_BAD_STATE;
-	}
-}
-
-psa_status_t psa_driver_wrapper_pake_set_peer(psa_pake_operation_t *operation,
-					      const uint8_t *peer_id, size_t peer_id_len)
-{
-	switch (operation->id) {
-#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
-	case PSA_CRYPTO_CRACEN_DRIVER_ID:
-		return cracen_pake_set_peer(&operation->ctx.cracen_pake_ctx, peer_id, peer_id_len);
-#endif
-
-	default:
-		(void)peer_id;
-		(void)peer_id_len;
-		return PSA_ERROR_BAD_STATE;
-	}
-}
-
-psa_status_t psa_driver_wrapper_pake_set_role(psa_pake_operation_t *operation, psa_pake_role_t role)
-{
-	switch (operation->id) {
-#ifdef PSA_NEED_CRACEN_PAKE_DRIVER
-	case PSA_CRYPTO_CRACEN_DRIVER_ID:
-		return cracen_pake_set_role(&operation->ctx.cracen_pake_ctx, role);
-#endif
-
-	default:
-		(void)role;
-		return PSA_ERROR_BAD_STATE;
-	}
-}
-#endif /* PSA_NEED_CRACEN_PAKE_DRIVER */
 
 psa_status_t psa_driver_wrapper_pake_output(psa_pake_operation_t *operation, psa_pake_step_t step,
 					    uint8_t *output, size_t output_size,
@@ -2542,8 +2513,8 @@ psa_status_t psa_driver_wrapper_pake_get_shared_key(psa_pake_operation_t *operat
 	switch (operation->id) {
 #ifdef PSA_NEED_CRACEN_PAKE_DRIVER
 	case PSA_CRYPTO_CRACEN_DRIVER_ID:
-		return cracen_pake_get_implicit_key(&operation->ctx.cracen_pake_ctx, output,
-						    output_size, output_length);
+		return cracen_pake_get_shared_key(&operation->ctx.cracen_pake_ctx, attributes,
+						  key_buffer, key_buffer_size, key_buffer_length);
 #endif
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
