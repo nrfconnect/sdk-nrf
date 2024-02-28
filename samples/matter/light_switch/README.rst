@@ -174,7 +174,7 @@ NFC port with antenna attached:
 Matter CLI commands
 ===================
 
-If you build the application using the ``debug`` or ``no_dfu`` build type, you can use a series of commands to control the light switch device.
+If you build the application using the ``debug`` build type, you can use a series of commands to control the light switch device.
 These commands can be sent to one device (unicast) or a group of devices (groupcast).
 
 Unicast commands

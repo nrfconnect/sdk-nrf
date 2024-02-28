@@ -130,10 +130,6 @@ The sample supports the following build types:
      - :file:`prj_release.conf`
      - All from `Requirements`_
      - Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
-   * - No DFU
-     - :file:`prj_no_dfu.conf`
-     - nRF52840 DK, nRF5340 DK, and nRF7002 DK
-     - Debug version of the application without Device Firmware Upgrade feature support.
 
 Device Firmware Upgrade support
 ===============================

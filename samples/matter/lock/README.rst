@@ -183,10 +183,6 @@ The sample supports the following build types:
      - :file:`prj_thread_wifi_switched.conf`
      - nRF5340 DK with the nRF7002 EK shield attached
      - Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_wifi_thread_switching>` in the field.
-   * - No DFU
-     - :file:`prj_no_dfu.conf`
-     - nRF52840 DK, nRF5340 DK, nRF7002 DK, and nRF21540 DK
-     - Debug version of the application without Device Firmware Upgrade feature support.
 
 .. matter_door_lock_sample_configuration_file_types_end
 
@@ -214,7 +210,6 @@ The DFU over Matter is enabled by default.
 The following configuration arguments are available during the build process for configuring DFU:
 
 * To configure the sample to support the DFU over Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag.
-* To configure the sample to disable the DFU and the secure bootloader, use the ``-DCONF_FILE=prj_no_dfu.conf`` build flag.
 
 See :ref:`cmake_options` for instructions on how to add these options to your build.
 
@@ -269,7 +264,7 @@ Factory data support
 
 .. matter_door_lock_sample_factory_data_start
 
-In this sample, the factory data support is enabled by default for all build types except for the ``no_dfu`` build type.
+In this sample, the factory data support is enabled by default for all build types except for the target board nRF21540 DK.
 This means that a new factory data set will be automatically generated when building for the target board.
 
 To disable factory data support, set the following Kconfig options to ``n``:

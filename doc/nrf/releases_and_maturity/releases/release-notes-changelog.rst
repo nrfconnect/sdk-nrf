@@ -241,7 +241,12 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* Removed:
+
+  * The :file:`configuration` directory which contained the Partition Manager configuration file.
+    It has been replaced replace with :file:`pm_static_<BOARD>` Partition Manager configuration files for all required target boards in the samples' directories.
+  * The :file:`prj_no_dfu.conf` file.
+  * Support for ``no_dfu`` build type for nRF5350 DK, nRF52840 DK and nRF7002 DK.
 
 Multicore samples
 -----------------

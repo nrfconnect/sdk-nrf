@@ -59,7 +59,16 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+Matter
+------
+
+.. toggle::
+
+   * For the Matter samples and applications:
+
+      * All Partition Manager configuration files (:file:`pm_static` files) have been removed from the :file:`configuration` directory.
+        Instead, a :file:`pm_static_<BOARD>` file has been created for each target board and placed in the samples' directories.
+        Setting the ``PM_STATIC_YML_FILE`` argument in the :file:`CMakeLists.txt` file has been removed, as it is no longer needed.
 
 Libraries
 =========
