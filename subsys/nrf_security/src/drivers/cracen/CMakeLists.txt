@@ -16,14 +16,14 @@ endif()
 set(cracen_driver_sources)
 
 set(cracen_driver_include_dirs
-  ${CMAKE_CURRENT_LIST_DIR}/ext/common/include/
+  ${CMAKE_CURRENT_LIST_DIR}/common/include/
 )
 
 # Add more CRACEN sources and include dirs from the ext directory
-include(ext/sxsymcrypt/sxsymcrypt.cmake)
-include(ext/silexpk/silexpk.cmake)
-include(ext/sicrypto/sicrypto.cmake)
-include(ext/cracenpsa/cracenpsa.cmake)
+include(sxsymcrypt/sxsymcrypt.cmake)
+include(silexpk/silexpk.cmake)
+include(sicrypto/sicrypto.cmake)
+include(cracenpsa/cracenpsa.cmake)
 
 target_sources(
   ${mbedcrypto_target}
@@ -73,7 +73,7 @@ if(BUILD_FROM_TFM)
 endif()
 
 zephyr_library_named(cracen_interrupts)
-zephyr_library_sources(ext/sxsymcrypt/src/platform/baremetal/interrupts.c)
+zephyr_library_sources(sxsymcrypt/src/platform/baremetal/interrupts.c)
 target_link_libraries(cracen_interrupts
   PRIVATE
   ${mbedcrypto_target}
