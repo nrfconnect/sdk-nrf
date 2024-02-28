@@ -53,7 +53,11 @@ struct InitData {
 	chip::DeviceLayer::DeviceInfoProviderImpl *mDeviceInfoProvider{ nullptr };
 #ifdef CONFIG_CHIP_FACTORY_DATA
 	/** @brief Pointer to the user provided FactoryDataProvider implementation. */
-	chip::DeviceLayer::FactoryDataProviderBase *mFactoryDataProvider{ &sDefaultFactoryDataProvider };
+	chip::DeviceLayer::FactoryDataProviderBase *mFactoryDataProvider{ &sFactoryDataProviderDefault };
+#endif
+#ifdef CONFIG_CHIP_CRYPTO_PSA
+	/** @brief Pointer to the user provided OperationalKeystore implementation. */
+	chip::Crypto::OperationalKeystore *mOperationalKeyStore{ &sOperationalKeystoreDefault };
 #endif
 	/** @brief Custom code to execute in the Matter main event loop before the server initialization. */
 	CustomInit mPreServerInitClbk{ nullptr };
@@ -68,17 +72,17 @@ struct InitData {
 	static chip::CommonCaseDeviceServerInitParams sServerInitParamsDefault;
 #ifdef CONFIG_CHIP_FACTORY_DATA
 	static chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData>
-		sDefaultFactoryDataProvider;
+		sFactoryDataProviderDefault;
 #endif
 #ifdef CONFIG_CHIP_CRYPTO_PSA
-	static chip::Crypto::PSAOperationalKeystore sPSAOperationalKeystore;
+	static chip::Crypto::PSAOperationalKeystore sOperationalKeystoreDefault;
 #endif
 };
 
 /**
  * @brief Prepare Matter server.
  *
- * This function schedules initialization of all Matter server components including memory, networking backed
+ * This function schedules initialization of all Matter server components including memory, networking backend
  * and factory data in the Matter thread. After this function is used, the StartServer() must be called to
  * start the Matter thread, eventually execute the initialization and wait to synchronize the caller's thread
  * with the Matter thread.

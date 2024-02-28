@@ -42,12 +42,12 @@ Clusters::NetworkCommissioning::Instance Nrf::Matter::InitData::sWiFiCommissioni
 };
 #endif
 
-#if CONFIG_CHIP_CRYPTO_PSA
-chip::Crypto::PSAOperationalKeystore Nrf::Matter::InitData::sPSAOperationalKeystore{};
+#ifdef CONFIG_CHIP_CRYPTO_PSA
+chip::Crypto::PSAOperationalKeystore Nrf::Matter::InitData::sOperationalKeystoreDefault{};
 #endif
 
 #ifdef CONFIG_CHIP_FACTORY_DATA
-FactoryDataProvider<InternalFlashFactoryData> Nrf::Matter::InitData::sDefaultFactoryDataProvider{};
+FactoryDataProvider<InternalFlashFactoryData> Nrf::Matter::InitData::sFactoryDataProviderDefault{};
 #endif
 namespace
 {
@@ -57,6 +57,9 @@ Nrf::Matter::InitData sLocalInitData{ .mNetworkingInstance = nullptr,
 				      .mDeviceInfoProvider = nullptr,
 #ifdef CONFIG_CHIP_FACTORY_DATA
 				      .mFactoryDataProvider = nullptr,
+#endif
+#ifdef CONFIG_CHIP_CRYPTO_PSA
+				      .mOperationalKeyStore = nullptr,
 #endif
 				      .mPreServerInitClbk = nullptr,
 				      .mPostServerInitClbk = nullptr };
@@ -179,7 +182,7 @@ void DoInitChipServer(intptr_t /* unused */)
 #endif
 
 #ifdef CONFIG_CHIP_CRYPTO_PSA
-	sLocalInitData.mServerInitParams->operationalKeystore = &Nrf::Matter::InitData::sPSAOperationalKeystore;
+	sLocalInitData.mServerInitParams->operationalKeystore = sLocalInitData.mOperationalKeyStore;
 #endif
 
 	VerifyOrReturn(sLocalInitData.mServerInitParams, LOG_ERR("No valid server initialization parameters"));
