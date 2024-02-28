@@ -38,8 +38,7 @@ enum nrf_wifi_pta_wlan_op_band {
 int nrf_wifi_coex_config_pta(enum nrf_wifi_pta_wlan_op_band wlan_band, bool separate_antennas,
 	bool is_sr_protocol_ble);
 
-#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
+#if defined(CONFIG_NRF700X_RADIO_COEX) || defined(__DOXYGEN__)
 /**
  * @function   nrf_wifi_config_sr_switch(bool separate_antennas)
  *
@@ -53,7 +52,7 @@ int nrf_wifi_coex_config_pta(enum nrf_wifi_pta_wlan_op_band wlan_band, bool sepa
  *             Returns non-zero upon unsuccessful configuration.
  */
 int nrf_wifi_config_sr_switch(bool separate_antennas);
-#endif
+#endif /* CONFIG_NRF700X_RADIO_COEX */
 
 /**
  * @function   nrf_wifi_coex_config_non_pta(bool separate_antennas)
