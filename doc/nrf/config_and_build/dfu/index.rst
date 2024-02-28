@@ -73,11 +73,15 @@ Based on these criteria, the |NCS| offers support for the following DFU alternat
       - Library in the |NCS| that provides functions for downloading a firmware file as an upgrade candidate to the DFU target. The library is often used by IoT libraries, such as the :ref:`lib_nrf_cloud` library.
       - OTA (LTE, Wi-Fi)
 
-See the following user guides for an overview of topics related to firmware updates with the |NCS|:
+See the following pages for device-specific guides related to DFU:
+
+* :ref:`qspi_xip` - for the nRF5340 SoC
+* :ref:`ug_nrf70_fw_patch_update` - for nRF70 Series devices
+
+See the following user guides for an overview of topics related to general firmware updates with the |NCS|:
 
 .. toctree::
    :maxdepth: 2
    :caption: Subpages:
 
    dfu_image_versions
-   nrf70_fw_patch_update

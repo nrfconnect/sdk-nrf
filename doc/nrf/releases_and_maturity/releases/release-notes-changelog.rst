@@ -222,6 +222,9 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
+* Added the :kconfig:option:`NRF_WIFI_FW_PATCH_DFU` Kconfig option that enables DFU support for nRF70 Series devices.
+  This allows firmware patches for signed images to be sent to multi-image targets over Wi-Fi.
+
 * Updated:
 
   * WPA supplicant now reserves libc heap memory rather than using leftover RAM.
@@ -405,6 +408,8 @@ Matter Bridge
   * Support for Bluetooth LE Security Manager Protocol that allows to establish secure session with bridged Bluetooth LE devices.
   * Callback to indicate the current state of Bluetooth LE Connectivity Manager.
     The current state is shown by LED 2.
+  * Support for the nRF5340 DK with the nRF7002 EK attached.
+  * Support for Wi-Fi firmware upgrades on external memory, for the nRF5340 DK with the nRF7002 EK attached.
 
 Samples
 =======
@@ -678,8 +683,12 @@ Matter samples
 * Disabled:
 
   * :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
-  * WPA supplicant advanced features in all Matter samples using the :kconfig:option:`CONFIG_WPA_SUPP_ADVANCED_FEATURES` Kconfig option.
-    This saves roughly 25 KB of FLASH memory for firmware images with Wi-Fi support.
+  * WPA supplicant advanced features in all Matter samples using the :kconfig:option:`WPA_SUPP_ADVANCED_FEATURES` Kconfig option.
+    This saves roughly 25 KB of flash memory for firmware images with Wi-Fi support.
+
+* :ref:`matter_lock_sample` sample:
+
+  * Added support for Wi-Fi firmware upgrade on external memory, only for the combination of the nRF5340 DK with the nRF7002 EK.
 
 * Added ``matter_shell`` shell commands set to gather the current information about the NVS settings backend such as current usage, free space, and peak usage value.
   You can enable them by setting the :kconfig:option:`NCS_SAMPLE_MATTER_SETTINGS_SHELL` Kconfig option to ``y``.
@@ -1334,6 +1343,7 @@ Documentation
 
   * :ref:`ug_nrf9161` user guide.
   * :ref:`ug_nrf70_developing_fw_patch_ext_flash` and :ref:`ug_nrf70_stack partitioning` pages in the :ref:`ug_nrf70_developing` user guide.
+  * :ref:`ug_nrf70_fw_patch_update` in the :ref:`ug_nrf70_developing` user guide section that describes how to perform a DFU for firmware patches using Wi-Fi.
   * :ref:`contributions_ncs` page in a new :ref:`contributions` section that also includes the development model pages, previously listed under :ref:`releases_and_maturity`.
   * :ref:`ug_lte` user guide under :ref:`protocols`.
   * Gazell and NFC sections in the :ref:`app_power_opt_recommendations` user guide.
