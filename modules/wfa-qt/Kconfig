@@ -32,3 +32,9 @@ config WFA_QT_DEFAULT_INTERFACE
 	default "nordic_wlan0"
 	help
 	  Set the default Wi-Fi interface.
+
+config WPAS_READY_TIMEOUT_MS
+	int "WPA supplicant ready timeout (ms)"
+	default 10000
+	help
+	  Set the timeout for WPA supplicant to be ready.

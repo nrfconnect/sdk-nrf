@@ -33,6 +33,7 @@ zephyr_include_directories(
 
 zephyr_library_sources(
 	# Zephyr's port of the Indigo API
+	${SOURCES_BASE}/src/wpas_events.c
 	${SOURCES_BASE}/src/main.c
 	${SOURCES_BASE}/src/indigo_api_callback_dut.c
 	${SOURCES_BASE}/src/vendor_specific_dut.c
