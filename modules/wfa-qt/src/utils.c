@@ -738,28 +738,61 @@ int find_interface_ip(char *ipaddr, int ipaddr_len, char *name)
 	return 0;
 }
 
-int get_mac_address(char *buffer, int size, char *interface)
+struct iface_data {
+	struct net_if *iface;
+	char *iface_name;
+};
+
+static void iface_cb(struct net_if *iface, void *user_data)
 {
-	const struct device *dev = device_get_binding(interface);
-	struct net_if *wifi_iface = net_if_lookup_by_dev(dev);
+	const char *ifname = iface->if_dev->dev->name;
+	struct iface_data *iface_data = user_data;
 
-	if (net_if_is_wifi(wifi_iface)) {
-		struct net_linkaddr *linkaddr = net_if_get_link_addr(wifi_iface);
-
-		if (!linkaddr || linkaddr->len != WIFI_MAC_ADDR_LEN) {
-			return false;
-		}
-
-		sprintf(buffer, "%02x:%02x:%02x:%02x:%02x:%02x",
-			linkaddr->addr[0] & 0xff, linkaddr->addr[1] & 0xff,
-			linkaddr->addr[2] & 0xff, linkaddr->addr[3] & 0xff,
-			linkaddr->addr[4] & 0xff, linkaddr->addr[5] & 0xff);
-		indigo_logger(LOG_LEVEL_INFO,
-			      "%s - %d: mac address:%s", __func__, __LINE__, buffer);
-		return 0;
+	if (ifname == NULL) {
+		return;
 	}
 
-	return 1;
+	if (strncmp(ifname, iface_data->iface_name, strlen(ifname)) != 0) {
+		return;
+	}
+
+	if (!net_if_is_wifi(iface)) {
+		return;
+	}
+
+	iface_data->iface = iface;
+}
+
+int get_mac_address(char *buffer, int size, char *interface)
+{
+	struct net_linkaddr *linkaddr;
+	struct iface_data iface_data;
+
+	if (!interface) {
+		return 1;
+	}
+
+	iface_data.iface = NULL;
+	iface_data.iface_name = interface;
+
+	net_if_foreach(iface_cb, &iface_data);
+
+	if (!iface_data.iface) {
+		return 1;
+	}
+
+	linkaddr = net_if_get_link_addr(iface_data.iface);
+	if (!linkaddr || linkaddr->len != WIFI_MAC_ADDR_LEN) {
+		return 1;
+	}
+
+	sprintf(buffer, "%02x:%02x:%02x:%02x:%02x:%02x",
+		linkaddr->addr[0] & 0xff, linkaddr->addr[1] & 0xff,
+		linkaddr->addr[2] & 0xff, linkaddr->addr[3] & 0xff,
+		linkaddr->addr[4] & 0xff, linkaddr->addr[5] & 0xff);
+	indigo_logger(LOG_LEVEL_INFO,
+		      "%s - %d: mac address:%s", __func__, __LINE__, buffer);
+	return 0;
 }
 
 int set_mac_address(char *ifname, char *mac)
