@@ -90,7 +90,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 
 #ifndef CONFIG_NRF70_2_4G_ONLY
 		band_flags &= (~(1 << WIFI_FREQ_BAND_5_GHZ));
-#endif /* CONFIG_BOARD_NF7001 */
+#endif /* CONFIG_NRF70_2_4G_ONLY */
 
 		if (params->bands & band_flags) {
 			LOG_ERR("%s: Unsupported band(s) (0x%X)", __func__, params->bands);
