@@ -7,7 +7,7 @@ Wi-Fi: SoftAP
    :local:
    :depth: 2
 
-The SoftAP sample demonstrates how to start a nRF70 Series device in Software-enabled Access Point (SoftAP or SAP) mode.
+The SoftAP sample demonstrates how to start an nRF70 Series device in :term:`Software-enabled Access Point (SoftAP or SAP)` mode.
 
 Requirements
 ************

@@ -1297,6 +1297,7 @@ Documentation
     * :ref:`ug_nrf70_developing_debugging`
     * :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`
     * :ref:`nRF70_soft_ap_mode`
+    * :ref:`ug_wifi_mem_req_softap_mode`
     * :ref:`ug_nrf70_developing_raw_ieee_80211_packet_reception`
     * :ref:`ug_nrf70_developing_promiscuous_packet_reception`
 
