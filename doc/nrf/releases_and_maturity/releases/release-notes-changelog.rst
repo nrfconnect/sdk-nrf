@@ -1206,6 +1206,9 @@ Libraries for NFC
 nRF Security
 ------------
 
+* PSA crypto is now supported on nRF54L Series devices.
+  Enable PSA crypto support with a CRACEN driver as the backend by setting the Kconfig option :kconfig:option:`CONFIG_NRF_SECURITY`.
+
 * Updated the library to no longer enable RSA keys by default.
   This reduces the code size by 30 kB for those that are not using RSA keys.
   This will also break the configuration for those using the RSA keys without explicitly enabling an RSA key size.
