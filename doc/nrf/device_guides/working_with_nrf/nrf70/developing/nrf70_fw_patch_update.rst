@@ -1,7 +1,7 @@
 .. _ug_nrf70_fw_patch_update:
 
-nRF70 Series firmware patch update
-##################################
+Firmware patch update
+#####################
 
 .. contents::
    :local:
@@ -208,4 +208,4 @@ If you want to use the :ref:`ug_multi_image` feature, you need to set the :kconf
 Performing the update of the nRF70 Series firmware patch
 ========================================================
 
-To perform the update of the nRF70 Series firmware patch, you can use all available DFU alternatives described on the main :ref:`ug_fw_update` page.
+To perform the update of the nRF70 Series firmware patch, you can use all available DFU alternatives described in the :ref:`ug_fw_update` page.
