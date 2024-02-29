@@ -9,6 +9,19 @@ Changelog
 
 Notable changes to this controller are documented in this file.
 
+Controller v18929
+*****************
+
+.. note::
+     This controller is now :ref:`deprecated <api_deprecation>`. Before it is removed, make sure to transition to using :ref:`softdevice_controller`.
+
+The following changes have been introduced in the v18929 of the controller:
+
+Changes
+=======
+
+* Fixed a bug where the right headset would disconnect when in bidirectional mode.
+
 Controller v17933
 *****************
 
