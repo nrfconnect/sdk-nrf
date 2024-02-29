@@ -11,6 +11,6 @@ enum location_cmd_cloud_data_gnss_format { CLOUD_GNSS_FORMAT_PVT, CLOUD_GNSS_FOR
 
 int location_cmd_utils_gnss_loc_to_cloud_payload_json_encode(
 	enum nrf_cloud_gnss_type format, const struct location_data *location_data,
-	char **json_str_out);
+	int64_t timestamp_ms, char **json_str_out);
 
 #endif /* MOSH_LOCATION_CMD_UTILS_H */
