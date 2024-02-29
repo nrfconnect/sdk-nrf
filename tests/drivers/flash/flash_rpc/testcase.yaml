@@ -1,0 +1,9 @@
+common:
+  tags:
+    - drivers
+    - flash
+tests:
+  drivers.flash.flash_rpc:
+    platform_allow: nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
