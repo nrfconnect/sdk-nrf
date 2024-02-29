@@ -35,3 +35,4 @@ tests:
       - nrf54h20pdk_nrf54h20_cpuapp
     extra_args:
       SB_CONF_FILE=sysbuild/nrf54h20pdk_nrf54h20_cpuppr.conf
+      hello_world_SNIPPET=nordic-ppr
