@@ -182,7 +182,7 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* Added the :ref:`bluetooth_isochronous_time_synchronization` sample showcasing time-synchronized processing of isochronous data.
 
 Bluetooth Mesh samples
 ----------------------
