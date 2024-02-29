@@ -64,14 +64,14 @@ static int location_cmd_utils_generate_nmea(const struct location_data *location
 
 int location_cmd_utils_gnss_loc_to_cloud_payload_json_encode(
 	enum nrf_cloud_gnss_type format, const struct location_data *location_data,
-	char **json_str_out)
+	int64_t timestamp_ms, char **json_str_out)
 {
 	__ASSERT_NO_MSG(location_data != NULL);
 	__ASSERT_NO_MSG(json_str_out != NULL);
 
 	struct nrf_cloud_gnss_data gnss_data = {
 		.type = format,
-		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
+		.ts_ms = timestamp_ms,
 		.pvt = {
 			.lon		= location_data->longitude,
 			.lat		= location_data->latitude,
@@ -90,14 +90,6 @@ int location_cmd_utils_gnss_loc_to_cloud_payload_json_encode(
 		goto cleanup;
 	}
 
-#if defined(CONFIG_DATE_TIME)
-	/* Add the timestamp */
-	err = date_time_now(&gnss_data.ts_ms);
-	if (err) {
-		mosh_error("Failed to create timestamp");
-		goto cleanup;
-	}
-#endif
 	if (format == NRF_CLOUD_GNSS_TYPE_NMEA) {
 		(void)location_cmd_utils_generate_nmea(location_data, nmea_buf, sizeof(nmea_buf));
 		gnss_data.nmea.sentence = nmea_buf;

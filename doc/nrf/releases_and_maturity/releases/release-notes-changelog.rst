@@ -288,6 +288,7 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
+  * Added support for sending location data details into nRF Cloud with ``--cloud_details`` command-line option in the ``location`` command.
   * Removed ESP8266 Wi-Fi DTC and Kconfig overlay files.
 
 Cryptography samples
