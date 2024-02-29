@@ -15,6 +15,4 @@ if (CONFIG_AWS_IOT_INTEGRATION)
 
 	target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/aws_iot_integration.c)
 	target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/codec/codec.c)
-
-	target_compile_options(app PRIVATE "-flto")
 endif()

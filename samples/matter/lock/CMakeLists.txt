@@ -18,8 +18,6 @@ endif()
 
 if(CONF_FILE_NAME STREQUAL "prj_thread_wifi_switched.conf")
     set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_dfu_wifi_ext_patch.yml)
-    # TODO: Add Kconfig for adding custom Matter compilation flags
-    set(CHIP_CFLAGS "-flto")
 elseif(NOT CONF_FILE_NAME STREQUAL "prj_no_dfu.conf")
     set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_dfu.yml)
 endif()
@@ -49,15 +47,9 @@ target_sources(app PRIVATE
 )
 
 if(CONFIG_THREAD_WIFI_SWITCHING)
-    target_sources(app PRIVATE src/thread_wifi_switch.cpp
-        # TODO: Remove the following lines once there is LTO support for the Zephyr library
-        src/zap-generated/callback-stub.cpp
-        src/zap-generated/IMClusterCommandHandler.cpp
+    target_sources(app PRIVATE
+        src/thread_wifi_switch.cpp
     )
-
-    # Enable link-time optimization for the app and WPA supplicant libraries
-    target_compile_options(app PRIVATE -flto)
-    target_compile_options(..__nrf__modules__hostap PRIVATE -flto)
 endif()
 
 chip_configure_data_model(app
