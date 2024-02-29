@@ -47,6 +47,7 @@ These are built from the files available in the official `Matter GitHub reposito
    advanced_kconfigs
    transmission_power
    adding_clusters
+   matter_api
    adding_bt_services
    low_power_configuration
    memory_optimization
