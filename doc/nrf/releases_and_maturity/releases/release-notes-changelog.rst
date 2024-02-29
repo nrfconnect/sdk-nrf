@@ -290,6 +290,8 @@ Serial LTE modem
 
 * Added:
 
+  * Support for Zephyr's cellular modem driver which allows a Zephyr application running on an external MCU to seamlessly use Zephyr's IP stack instead of AT commands for connectivity.
+    See :ref:`slm_as_zephyr_modem` for more information.
   * Support for the CMUX protocol in order to multiplex multiple data streams through a single serial link.
     The ``#XCMUX`` AT command is added to set up CMUX.
   * Support for PPP in order to use the external MCU's own IP stack instead of offloaded sockets used via AT commands.

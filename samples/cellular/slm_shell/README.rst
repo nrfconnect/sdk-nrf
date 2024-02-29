@@ -95,7 +95,7 @@ References
 
 * `nRF91x1 AT Commands Reference Guide`_
 * `nRF9160 AT Commands Reference Guide`_
-* :ref:`SLM_AT_intro`
+* :ref:`SLM_AT_commands`
 
 Dependencies
 ************

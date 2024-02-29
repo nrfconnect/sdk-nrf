@@ -20,7 +20,7 @@ The application accepts both the modem-specific AT commands and proprietary AT c
 The AT commands are documented in the following guides:
 
 * Modem-specific AT commands - `nRF91x1 AT Commands Reference Guide`_  and `nRF9160 AT Commands Reference Guide`_
-* Proprietary AT commands - :ref:`SLM_AT_intro`
+* Proprietary AT commands - :ref:`SLM_AT_commands`
 
 Requirements
 ************
@@ -36,7 +36,7 @@ Configuration
 
 |config|
 
-.. _slm_config:
+.. _slm_config_options:
 
 Configuration options
 =====================
@@ -261,6 +261,8 @@ CONFIG_SLM_UART_TX_BUF_SIZE - Send buffer size for UART.
    This option defines the size of the buffer for sending (TX) UART traffic.
    The default value is 256.
 
+.. _slm_additional_config:
+
 Additional configuration
 ========================
 
@@ -284,9 +286,20 @@ Configuration files
 
 You can find the configuration files in the :file:`applications/serial_lte_modem` directory.
 
+In general, they have an ``overlay-`` prefix, and a :file:`.conf` or :file:`.overlay` extension for Kconfig or devicetree overlays, respectively.
+Board-specific configuration files are named :file:`<BOARD>` with a :file:`.conf` or :file:`.overlay` extension and are located in the :file:`boards` directory.
+When the name of the board-specific configuration file matches the build target, the overlay is automatically included by the build system.
+
+See :ref:`app_build_system`: for more information on the |NCS| configuration system.
+
+.. important::
+
+  When adding Kconfig fragments and devicetree overlays, make sure to use the ``-DEXTRA_CONF_FILE`` and ``-DEXTRA_DTC_OVERLAY_FILE`` CMake parameters, respectively.
+  Otherwise, if ``-DCONF_FILE`` or ``-DDTC_OVERLAY_FILE`` is used, all the configuration files that normally get picked up automatically will have to be included explicitly.
+
 The following configuration files are provided:
 
-* :file:`prj.conf` - This configuration file contains the standard configuration for the serial LTE modem application.
+* :file:`prj.conf` - This configuration file contains the standard configuration for the serial LTE modem application and is included by default by the build system.
 
 * :file:`overlay-native_tls.conf` - This configuration file contains additional configuration options that are required to use :ref:`slm_native_tls`.
   You can include it by adding ``-DEXTRA_CONF_FILE=overlay-native_tls.conf`` to your build command.
@@ -302,13 +315,16 @@ The following configuration files are provided:
   See :ref:`SLM_AT_CMUX` for more information.
 
 * :file:`overlay-ppp.conf` - Configuration file that adds support for the Point-to-Point Protocol (PPP).
-  This disables most of the IP-based protocols available through AT commands (such as FTP and MQTT) as it is expected that the external MCU's own IP stack is used instead.
+  This disables most of the IP-based protocols available through AT commands (such as FTP and MQTT) as it is expected that the controlling chip's own IP stack is used instead.
   See :ref:`CONFIG_SLM_PPP <CONFIG_SLM_PPP>` and :ref:`SLM_AT_PPP` for more information.
 
 * :file:`overlay-ppp-without-cmux.overlay` - Devicetree overlay file that configures the UART to be used by PPP.
   This configuration file should be included when building SLM with PPP and without CMUX, in addition to :file:`overlay-ppp.conf`.
   It can be customized to fit your configuration (UART, baud rate, and so on).
   By default, it sets the baud rate of the PPP UART to 1 000 000.
+
+* :file:`overlay-zephyr-modem.conf`, :file:`overlay-zephyr-modem-external-mcu.conf`, :file:`overlay-zephyr-modem-nrf9160dk-nrf52840.conf`, :file:`overlay-external-mcu.overlay`,  and :file:`overlay-zephyr-modem-nrf9160dk-nrf52840.overlay` - These configuration files are used when compiling SLM to turn an nRF91 Series SiP into a Zephyr-compatible standalone modem.
+   See :ref:`slm_as_zephyr_modem` for more information.
 
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for the nRF9160 DK.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
@@ -318,14 +334,6 @@ The following configuration files are provided:
 
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file specific for Thingy:91.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160_ns`` build target.
-
-In general, Kconfig overlays have an ``overlay-`` prefix and a :file:`.conf` extension.
-Board-specific configuration files are named :file:`<BOARD>.conf` and are located in the :file:`boards` folder.
-DTS overlay files are named as the build target they are meant to be used with, and use the file extension :file:`.overlay`.
-They are also placed in the :file:`boards` folder.
-When the DTS overlay filename matches the build target, the overlay is automatically chosen and applied by the build system.
-
-See :ref:`app_build_system`: for more information on the |NCS| configuration system.
 
 .. _slm_native_tls:
 
@@ -408,7 +416,7 @@ To connect to an nRF91 Series DK with a PC:
          :alt: Teraterm configuration for sending AT commands through UART
 
       When using PuTTY, you must set the :ref:`CONFIG_SLM_CR_TERMINATION <CONFIG_SLM_CR_TERMINATION>` SLM configuration option instead.
-      See :ref:`application configuration <slm_config>` for more details.
+      See :ref:`slm_config_options` for more details.
 
 .. slm_connecting_91dk_pc_instr_end
 

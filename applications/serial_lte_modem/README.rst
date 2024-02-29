@@ -8,7 +8,7 @@ The application accepts both the modem-specific AT commands and proprietary AT c
 The AT commands are documented in the following guides:
 
 * Modem-specific AT commands - `nRF91x1 AT Commands Reference Guide`_  and `nRF9160 AT Commands Reference Guide`_
-* Proprietary AT commands - :ref:`SLM_AT_intro`
+* Proprietary AT commands - :ref:`SLM_AT_commands`
 
 See the subpages for how to use the application, how to extend it, and information on the supported AT commands.
 
@@ -17,7 +17,8 @@ See the subpages for how to use the application, how to extend it, and informati
    :caption: Subpages:
 
    doc/slm_description
+   doc/nRF91_as_Zephyr_modem
    doc/slm_testing
    doc/slm_extending
    doc/slm_data_mode
-   doc/AT_commands_intro
+   doc/AT_commands

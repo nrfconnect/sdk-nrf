@@ -277,7 +277,7 @@ nRF9160: Serial LTE modem
       * Additional configuration section by adding information about the configuration files for Thingy:91.
 
   * SLM UART #XSLMUART section in :ref:`SLM_AT_gen`.
-  * :ref:`slm_config` with the configuration option related to SLM UART.
+  * :ref:`slm_config_options` with the configuration option related to SLM UART.
 
 
 Samples
