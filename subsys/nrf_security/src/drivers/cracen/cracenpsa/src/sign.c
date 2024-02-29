@@ -383,59 +383,6 @@ static psa_status_t cracen_signature_ecc_verify(int message, const psa_key_attri
 	return silex_statuscodes_to_psa(si_status);
 }
 
-/*
- * This function is based mbedtls pk_get_rsapubkey().
- */
-static int cracen_signature_get_rsa_pubkey(struct si_rsa_key *rsa,
-					   const psa_key_attributes_t *attributes,
-					   const unsigned char *key, size_t keylen,
-					   struct sx_buf *modulus, struct sx_buf *exponent)
-{
-	int ret;
-	size_t len;
-	unsigned char *p, *end;
-
-	p = (unsigned char *)key;
-	end = p + keylen;
-
-	/*
-	 * This function parses the RSAPrivateKey (PKCS#1)
-	 *
-	 *  RSAPrivateKey ::= SEQUENCE {
-	 *      version           Version,
-	 *      modulus           INTEGER,  -- n
-	 *      publicExponent    INTEGER,  -- e
-	 *  }
-	 */
-
-	if (SI_PSA_IS_KEY_TYPE(PSA_KEY_TYPE_RSA_KEY_PAIR, attributes)) {
-		return cracen_signature_get_rsa_key(rsa, SI_EXTRACT_PUBKEY, true, key, keylen,
-						    modulus, exponent);
-	} else if (SI_PSA_IS_KEY_TYPE(PSA_KEY_TYPE_RSA_PUBLIC_KEY, attributes)) {
-		/* Nothing to do here, proceed with public key process */
-	} else {
-		return SX_ERR_INVALID_KEYREF;
-	}
-
-	*rsa = SI_KEY_INIT_RSA(modulus, exponent);
-
-	ret = mbedtls_asn1_get_tag(&p, end, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-	if (ret) {
-		return SX_ERR_INVALID_KEYREF;
-	}
-
-	/* Import N */
-	ret = cracen_signature_asn1_get_operand(&p, end, modulus);
-	if (ret) {
-		return ret;
-	}
-
-	/* Import E */
-	ret = cracen_signature_asn1_get_operand(&p, end, exponent);
-
-	return ret;
-}
-
 static psa_status_t cracen_signature_rsa_sign(int message, const psa_key_attributes_t *attributes,
 					      const uint8_t *key_buffer, size_t key_buffer_size,
 					      psa_algorithm_t alg, const uint8_t *input,
@@ -557,8 +504,10 @@ static psa_status_t cracen_signature_rsa_verify(int message, const psa_key_attri
 		return silex_statuscodes_to_psa(si_status);
 	}
 
-	si_status = cracen_signature_get_rsa_pubkey(&pubkey.key.rsa, attributes, key_buffer,
-						    key_buffer_size, &modulus, &exponent);
+	si_status = cracen_signature_get_rsa_key(
+		&pubkey.key.rsa, true, SI_PSA_IS_KEY_TYPE(PSA_KEY_TYPE_RSA_KEY_PAIR, attributes),
+		key_buffer, key_buffer_size, &modulus, &exponent);
+
 	if (si_status) {
 		return silex_statuscodes_to_psa(si_status);
 	}
