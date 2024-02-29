@@ -3,16 +3,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	ipc0: ipc0 {
-		compatible = "zephyr,ipc-openamp-static-vrings";
-		memory-region = <&cpuapp_cpurad_ram0x_region>;
-		mboxes = <&cpurad_bellboard 12>,
-			     <&cpuapp_bellboard 18>;
-		mbox-names = "tx", "rx";
-		role = "host";
-		status = "okay";
-	};
+ipc0: &cpuapp_cpurad_ipc {
+	/* convert default IPC to zephyr,ipc-openamp-static-vrings */
+	compatible = "zephyr,ipc-openamp-static-vrings";
+	memory-region = <&cpuapp_cpurad_ram0x_region>;
+	role = "host";
+	/delete-property/ tx-region;
+	/delete-property/ rx-region;
+	status = "okay";
 };
 
 &cpuapp_cpurad_ram0x_region {
@@ -21,7 +19,6 @@
 
 &cpuapp_bellboard {
 	status = "okay";
-	nordic,interrupt-mapping = <0x00040000 0>;
 };
 
 &cpurad_bellboard {

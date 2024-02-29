@@ -3,16 +3,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
-	ipc0: ipc0 {
-		compatible = "zephyr,ipc-icmsg";
-		tx-region = <&cpurad_cpuapp_ipc_shm>;
-		rx-region = <&cpuapp_cpurad_ipc_shm>;
-		mboxes = <&cpuapp_bellboard 18>,
-			 <&cpurad_bellboard 12>;
-		mbox-names = "tx", "rx";
-		status = "okay";
-	};
+ipc0: &cpuapp_cpurad_ipc {
+	status = "okay";
 };
 
 &cpuapp_cpurad_ram0x_region {
@@ -21,7 +13,6 @@
 
 &cpurad_bellboard {
 	status = "okay";
-	nordic,interrupt-mapping = <0x00001000 0>;
 };
 
 &cpuapp_bellboard {
