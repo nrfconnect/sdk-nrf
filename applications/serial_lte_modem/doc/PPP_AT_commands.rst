@@ -9,6 +9,10 @@ PPP AT commands
 
 This page describes AT commands related to the Point-to-Point Protocol (PPP).
 
+.. note::
+
+   To use the nRF91 Series SiP as a standalone modem in Zephyr, see :ref:`slm_as_zephyr_modem`.
+
 PPP is enabled in SLM by compiling it with the appropriate configuration files, depending on your use case (with or without CMUX).
 See the :ref:`slm_config_files` section for more information.
 
@@ -112,18 +116,16 @@ For the process described here, SLM's UARTs must be connected to the Linux host.
 
 1. Get PPP running on SLM.
    To do this, start SLM and issue an ``AT+CFUN=1`` command.
-
 #. Make sure that the network registration succeeds and that PPP is started successfully.
    To do this, either look at SLM's logs, or issue an ``AT#XPPP?`` command, which returns ``#XPPP: 1,0`` when PPP has started successfully.
-
 #. Run the following command on the Linux host:
 
    .. code-block:: console
 
       $ sudo pppd -detach <PPP_UART_dev> <baud_rate> noauth crtscts novj nodeflate nobsdcomp debug +ipv6 usepeerdns noipdefault defaultroute defaultroute6 ipv6cp-restart 5 ipcp-restart 5
 
-   Replace ``<PPP_UART_dev>`` by the device file assigned to the PPP UART and ``<baud_rate>`` by the baud rate of the UART that PPP is using.
-   Typically, when ``uart1`` is assigned to be the PPP UART (in the devicetree overlay), the device file assigned to it is :file:`/dev/ttyACM2` for an nRF9160 DK, and :file:`/dev/ttyACM2` for the other nRF91 Series DKs.
+   Replace ``<PPP_UART_dev>`` by the device file assigned to the PPP UART and ``<baud_rate>`` by the baud rate of the UART that PPP is using (which is set in the :file:`overlay-ppp-without-cmux.overlay` file).
+   Typically, when ``uart1`` is assigned to be the PPP UART (in the devicetree overlay), the device file assigned to it is :file:`/dev/ttyACM2` for an nRF9160 DK, and :file:`/dev/ttyACM1` for the other nRF91 Series DKs.
 
 #. After the PPP link negotiation has completed successfully, a new network interface will be available, typically ``ppp0``.
    This network interface will allow sending and receiving IP traffic through the modem of the nRF91 Series SiP running SLM.

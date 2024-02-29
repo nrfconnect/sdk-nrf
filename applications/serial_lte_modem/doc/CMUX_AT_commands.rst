@@ -14,6 +14,13 @@ For example, it can be used to exchange AT data and have a :ref:`Point-to-Point 
 
 .. note::
 
+   To use the nRF91 Series SiP as a standalone modem in Zephyr, see :ref:`slm_as_zephyr_modem`.
+
+CMUX is enabled in SLM by compiling it with the appropriate configuration files, depending on your use case.
+See the :ref:`slm_config_files` section for more information.
+
+.. note::
+
    SLM does not have an equivalent to the ``AT+CMUX`` command described in 3GPP TS 27.007.
    Here is how SLM's implementation of CMUX relates to the standard command's parameters:
 

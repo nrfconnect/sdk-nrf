@@ -1,4 +1,4 @@
-.. _SLM_AT_intro:
+.. _SLM_AT_commands:
 
 SLM-specific AT commands
 ########################
