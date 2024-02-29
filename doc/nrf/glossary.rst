@@ -610,6 +610,9 @@ Glossary
       It does not require a repository.
       Sometimes it is improperly used as a synonym of :term:`commit <Commit>`.
 
+   Peripheral CPU Device Firmware Update (PCD)
+      A library that adds functionality for transferring DFU images from the application core to the network core on the nRF5340 SoC.
+
    Peripheral Processor (PPR, pronounced “Pepper”)
       A processor that is located in the low-leakage portion of the Global Domain and is primarily intended to:
 
