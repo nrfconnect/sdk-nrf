@@ -17,13 +17,13 @@ If you want to list applications available for one or more specific boards, `use
    :glob:
    :caption: Subpages:
 
-   ../../applications/connectivity_bridge/README
-   ../../applications/matter_bridge/README
    ../../applications/asset_tracker_v2/README
-   ../../applications/serial_lte_modem/README
-   ../../applications/nrf_desktop/README
+   ../../applications/connectivity_bridge/README
+   ../../applications/ipc_radio/README
+   ../../applications/matter_bridge/README
    ../../applications/nrf5340_audio/index
+   ../../applications/nrf_desktop/README
    ../../applications/machine_learning/README
    ../../applications/matter_weather_station/README
    ../../applications/zigbee_weather_station/README
-   ../../applications/ipc_radio/README
+   ../../applications/serial_lte_modem/README

@@ -205,7 +205,7 @@ Syntax
   * ``0`` - Do not verify the hostname against the received certificate.
   * ``1`` - Verify the hostname against the received certificate (default).
 
-See `nRF socket options`_ ``peer_verify`` and ``tls_hostname`` for more information on ``<peer_verify>`` and ``<hostname_verify>``.
+See :ref:`nRF socket options <nrfxlib:nrf_sockets>` ``peer_verify`` and ``tls_hostname`` for more information on ``<peer_verify>`` and ``<hostname_verify>``.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -583,7 +583,7 @@ Syntax
   * ``0`` - Do not verify the hostname against the received certificate.
   * ``1`` - Verify the hostname against the received certificate (default).
 
-See `nRF socket options`_ ``peer_verify`` and ``tls_hostname`` for more information on ``<peer_verify>`` and ``<hostname_verify>``.
+See :ref:`nRF socket options <nrfxlib:nrf_sockets>` ``peer_verify`` and ``tls_hostname`` for more information on ``<peer_verify>`` and ``<hostname_verify>``.
 
 Response syntax
 ~~~~~~~~~~~~~~~

@@ -2115,7 +2115,7 @@ NCSDK-5666: LTE Sensor Gateway
 .. rst-class:: v1-2-0
 
 GPS sockets and SUPL client library stops working
-  The `nRF9160: GPS with SUPL client library <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/samples/cellular/gps/README.html>`_ sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
+  The `nRF9160: GPS with SUPL client library`_ sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
 
   **Affected platforms:** nRF9160
 
@@ -4333,7 +4333,7 @@ KRKNWK-13063: RTT logs do not work with the Light Bulb multiprotocol sample with
 KRKNWK-13064: Nordic DFU is not compliant with HAP certification requirements
   Some of the HAP certification requirements are not met by the Nordic DFU solution.
 
-  **Workaround:** Cherry-pick changes from `PR #332 in sdk-homekit repo`_.
+  **Workaround:** Cherry-pick changes from PR #332 in sdk-homekit repo.
 
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
 
@@ -4351,7 +4351,7 @@ KRKNWK-13095: Change in KVS key naming scheme causes an error for updated device
   A previous implementation allowed for empty key in domain.
   This has been restricted during refactoring.
 
-  **Workaround:** Cherry-pick changes from `PR #329 in sdk-homekit repo`_.
+  **Workaround:** Cherry-pick changes from PR #329 in sdk-homekit repo.
 
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0
 

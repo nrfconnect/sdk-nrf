@@ -116,7 +116,7 @@ To change the radio TX power used by Zephyr's Bluetooth LE controller, set the :
 However, you cannot set this config value directly, as it obtains the value from the selected ``CONFIG_BT_CTLR_TX_PWR_MINUS_<X>`` or ``CONFIG_BT_CTLR_TX_PWR_PLUS_<X>``, where *<X>* is replaced by the desired power value, in an irregular dBm range from ``-40`` to ``3`` or ``8`` dBm (depending on the SoC).
 For example, to set Bluetooth LE TX power to +5 dBM, set the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_5` Kconfig option to ``y``.
 
-Check the :ref:`Kconfig Reference <kconfig-search>` for the full list of possible values for `CONFIG_BT_CTLR_TX_PWR_MINUS`_ and `CONFIG_BT_CTLR_TX_PWR_PLUS`_, as well as their dependencies.
+Check the :ref:`Kconfig Reference <kconfig-search>` for the full list of possible values for `CONFIG_BT_CTLR_TX_PWR_MINUS <CONFIG_BT_CTLR_TX_PWR_MINUS_>`_ and `CONFIG_BT_CTLR_TX_PWR_PLUS <CONFIG_BT_CTLR_TX_PWR_PLUS_>`_, as well as their dependencies.
 The only exception is the value of 0 dBm, which is set with the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_0` Kconfig option.
 
 The following table lists the minimum and maximum output power values in dBm for each board.

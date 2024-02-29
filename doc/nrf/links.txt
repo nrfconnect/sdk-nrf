@@ -43,6 +43,7 @@
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
+.. _`MCUboot Kconfig option`: https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370
 
 .. _`sdk-mbedtls`: https://github.com/nrfconnect/sdk-mbedtls
 .. _`Arm Mbed TLS project`: https://github.com/ARMmbed/mbedtls
@@ -139,8 +140,8 @@
 .. _`LogModule enumeration`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/181b0cb/src/lib/support/logging/Constants.h
 .. _`Matter SDK's Logging header`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/181b0cb/src/lib/support/logging/CHIPLogging.h
 
-.. _`bt_nus_service.cpp`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus_service.cpp
-.. _`bt_nus_service.h`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus_service.h
+.. _`bt_nus_service.cpp`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus/bt_nus_service.cpp
+.. _`bt_nus_service.h`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus/bt_nus_service.h
 
 .. _`DCL Quick Start Guide`: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
 
@@ -160,10 +161,6 @@
 .. _`nordic-hid.quirk`: https://github.com/fwupd/fwupd/tree/main/plugins/nordic-hid/nordic-hid.quirk
 
 .. _`fwupd`: https://github.com/fwupd/fwupd
-
-.. _`PR #329 in sdk-homekit repo`: https://github.com/nrfconnect/sdk-homekit/pull/329
-
-.. _`PR #332 in sdk-homekit repo`: https://github.com/nrfconnect/sdk-homekit/pull/332
 
 .. _`docbuild`: https://github.com/nrfconnect/sdk-nrf/blob/main/.github/workflows/docbuild.yml
 .. _`docpublish`: https://github.com/nrfconnect/sdk-nrf/blob/main/.github/workflows/docpublish.yml
@@ -333,7 +330,7 @@
 
 .. _`Repositories and revisions for v2.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.2/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/nrf/releases_and_maturity/repository_revisions.html
-.. _`Repositories and revisions for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrf/introduction.html#ncs-repository-revisions
+.. _`Repositories and revisions for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.4.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.3/nrf/introduction.html#ncs-repository-revisions
 .. _`Repositories and revisions for v2.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.2/nrf/introduction.html#ncs-repository-revisions
 .. _`Repositories and revisions for v2.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.1/nrf/introduction.html#ncs-repository-revisions
@@ -408,6 +405,8 @@
 .. _`Run-time Filtering`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/services/logging/index.html#run-time-filtering
 
 .. _`Capabilities for the LE Audio Controller Subsystem for nRF5340`: https://developer.nordicsemi.com/nRF_Connect_SDK/nrf5340_audio/bt_ll_acs_nrf53/bt_ll_acs_nrf53_capabilities.pdf
+
+.. _`nRF9160: GPS with SUPL client library`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/samples/nrf9160/gps/README.html
 
 .. ### Source: www.nordicsemi.com
 
@@ -1256,7 +1255,7 @@
 .. _`nRF Cloud integration with Coiote Device Management`: https://iotdevzone.avsystem.com/docs/Cloud_integrations/nRF_Cloud_Location_services/Configure_nRF_Cloud_integration/
 .. _`Viewing device location in Coiote Device Management`: https://iotdevzone.avsystem.com/docs/Cloud_integrations/nRF_Cloud_Location_services/Configure_nRF_Cloud_integration/#view-device-location-in-coiote-dm
 .. _`Setting observations for an object`: https://iotdevzone.avsystem.com/docs/Coiote_IoT_DM/Quick_Start/Visualize_device_data/#set-observation-and-add-widget
-.. _`nRF9160 Anjay integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/nRF9160/
+.. _`nRF9160 Anjay integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/nRF9160DK/
 .. _`Thingy:91 integration`: https://iotdevzone.avsystem.com/docs/LwM2M_Client/Nordic/Thingy91/#thingy91
 
 .. ### Source: mosquitto
