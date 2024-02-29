@@ -29,8 +29,8 @@
 #include "str_utils.h"
 #include "location_srv_ext.h"
 #include "location_cmd_utils.h"
-#if defined(CONFIG_MOSH_METRICS)
-#include "location_metrics.h"
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+#include "location_details.h"
 #include "str_utils.h"
 #endif
 #include "mosh_defines.h"
@@ -66,7 +66,7 @@ static bool metrics_to_cloud;
 static struct k_work_delayable location_evt_led_work;
 #endif
 
-#if defined(CONFIG_MOSH_METRICS)
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 /* Work for location metrics to nRF Cloud */
 struct metrics_work_data {
 	struct k_work work;
@@ -107,7 +107,7 @@ static const char location_get_usage_str[] =
 	"  --gnss_priority,            Enables GNSS priority mode\n"
 	"  --gnss_cloud_nmea,          Send acquired GNSS location to nRF Cloud formatted as NMEA\n"
 	"  --gnss_cloud_pvt,           Send acquired GNSS location to nRF Cloud formatted as PVT\n"
-#if defined(CONFIG_MOSH_METRICS)
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 	"  --cloud_metrics,            Send metrics data to cloud. Note: additional costs may\n"
 	"                              apply.\n"
 #endif
@@ -135,7 +135,7 @@ enum {
 	LOCATION_SHELL_OPT_GNSS_PRIORITY_MODE,
 	LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA,
 	LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT,
-#if defined(CONFIG_MOSH_METRICS)
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 	LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_METRICS,
 #endif
 	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT,
@@ -159,7 +159,7 @@ static struct option long_options[] = {
 	{ "gnss_priority", no_argument, 0, LOCATION_SHELL_OPT_GNSS_PRIORITY_MODE },
 	{ "gnss_cloud_nmea", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA },
 	{ "gnss_cloud_pvt", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT },
-#if defined(CONFIG_MOSH_METRICS)
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 	{ "cloud_metrics", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_METRICS },
 #endif
 	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
@@ -256,7 +256,7 @@ static void location_evt_led_worker(struct k_work *work_item)
 }
 #endif
 
-#if defined(CONFIG_MOSH_METRICS)
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 static void metrics_to_cloud_worker(struct k_work *work_item)
 {
 	struct metrics_work_data *data = CONTAINER_OF(work_item, struct metrics_work_data, work);
@@ -375,9 +375,6 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 				event_data->location.datetime.second,
 				event_data->location.datetime.ms);
 		}
-#if defined(CONFIG_LOCATION_DATA_DETAILS)
-		mosh_print("  TTF: %.02f secs", event_data->location.details.elapsed_time_method);
-#endif
 		mosh_print(
 			"  Google maps URL: https://maps.google.com/?q=%f,%f",
 			event_data->location.latitude, event_data->location.longitude);
@@ -391,7 +388,7 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 			gnss_location_work_data.timestamp_ms = ts_ms;
 			gnss_location_work_data.loc_evt_data = *event_data;
 			gnss_location_work_data.format = gnss_location_to_cloud_format;
-#if defined(CONFIG_MOSH_METRICS)
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 			/* Cannot use the same workq as metrics does, using system workq */
 			/* TODO: Should not use the system work queue either, because this can
 			 * block it for too long. This should be refactored at some point.
@@ -521,7 +518,10 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		mosh_warn("Unknown event from location library, id %d", event_data->id);
 		break;
 	}
-#if defined(CONFIG_MOSH_METRICS)
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	/* TODO: What about other than LOCATION_EVT_LOCATION (started/fallback and error/timeout)
+	 * and especially service external
+	 */
 	if (metrics_to_cloud) {
 		k_work_init(&metrics_work_data.work, metrics_to_cloud_worker);
 
@@ -794,7 +794,7 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 		return -1;
 	}
 
-#if defined(CONFIG_MOSH_METRICS)
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 	/* Store current command */
 	get_command_str_from_argv(
 		argc, argv,
@@ -817,7 +817,7 @@ static int cmd_location_cancel(const struct shell *shell, size_t argc, char **ar
 	metrics_to_cloud = false;
 	gnss_location_to_cloud = false;
 	k_work_cancel(&gnss_location_work_data.work);
-#if defined(CONFIG_MOSH_METRICS)
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 	k_work_cancel(&metrics_work_data.work);
 #endif
 	ret = location_request_cancel();
@@ -827,7 +827,7 @@ static int cmd_location_cancel(const struct shell *shell, size_t argc, char **ar
 		mosh_print("Location request cancelled");
 	}
 
-#if defined(CONFIG_MOSH_METRICS)
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
 	/* Store current command */
 	get_command_str_from_argv(
 		argc, argv,

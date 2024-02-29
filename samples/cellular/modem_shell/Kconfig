@@ -139,14 +139,6 @@ config MOSH_COMMON_WORKQUEUE_PRIORITY
 	int "Common workqueue priority"
 	default 5
 
-if MOSH_LOCATION
-config MOSH_METRICS
-	bool "Gather and send metrics to nrf cloud"
-	default y
-	select LOCATION_DATA_DETAILS
-	select LOCATION_METRICS
-endif
-
 if MOSH_IPERF3 || MOSH_PING
 menu "MoSH iperf3 and ping command selections"
 

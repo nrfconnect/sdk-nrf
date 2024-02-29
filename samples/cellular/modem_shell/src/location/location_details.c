@@ -22,9 +22,7 @@
 #include "link_api.h"
 #include "link_shell_print.h"
 #include "location_cmd_utils.h"
-#include "location_metrics.h"
-
-/******************************************************************************/
+#include "location_details.h"
 
 static int json_add_num_cs(cJSON *parent, const char *str, double item)
 {
@@ -34,8 +32,6 @@ static int json_add_num_cs(cJSON *parent, const char *str, double item)
 
 	return cJSON_AddNumberToObjectCS(parent, str, item) ? 0 : -ENOMEM;
 }
-
-/******************************************************************************/
 
 #define GNSS_PVT_KEY_LAT "lat"
 #define GNSS_PVT_KEY_LON "lng"
@@ -199,153 +195,6 @@ cleanup:
 	return -ENOMEM;
 }
 
-/******************************************************************************/
-
-static int location_metrics_request_config_encode(
-	const struct location_config *loc_conf, cJSON * const root_obj)
-{
-	cJSON *loc_conf_obj = NULL;
-	char tmp_str[9] = { 0 };
-
-	if (!loc_conf || !root_obj) {
-		return -EINVAL;
-	}
-
-	loc_conf_obj = cJSON_CreateObject();
-	if (loc_conf_obj == NULL) {
-		mosh_error("No memory create json obj for metrics loc_conf_obj");
-		goto cleanup;
-	}
-
-	if (!cJSON_AddItemToObject(root_obj, "location_config", loc_conf_obj)) {
-		mosh_error("No memory to create json obj location_config");
-		goto cleanup;
-	}
-
-	if (loc_conf->mode == LOCATION_REQ_MODE_FALLBACK) {
-		strcpy(tmp_str, "fallback");
-	} else if (loc_conf->mode == LOCATION_REQ_MODE_ALL) {
-		strcpy(tmp_str, "all");
-	}
-	if (!cJSON_AddStringToObjectCS(loc_conf_obj, "req_mode", tmp_str)) {
-		mosh_error("No memory to add req_mode string");
-		goto cleanup;
-	}
-
-	if (json_add_num_cs(loc_conf_obj, "methods_count", loc_conf->methods_count) ||
-	    json_add_num_cs(loc_conf_obj, "interval", loc_conf->interval) ||
-	    json_add_num_cs(loc_conf_obj, "timeout", loc_conf->timeout)) {
-		mosh_error("Failed to location_config base data");
-		goto cleanup;
-	}
-
-	cJSON *loc_method_conf_arr = NULL;
-	cJSON *loc_method_conf_obj = NULL;
-
-	/* location_method_config data */
-	loc_method_conf_arr = cJSON_AddArrayToObjectCS(loc_conf_obj, "methods");
-	if (!loc_method_conf_arr) {
-		mosh_error("Cannot create json array loc_method_conf_arr");
-		goto cleanup;
-	}
-
-	for (int i = 0; i < loc_conf->methods_count; i++) {
-		loc_method_conf_obj = cJSON_CreateObject();
-		if (loc_method_conf_obj == NULL) {
-			mosh_error("No memory create json obj loc_method_conf_obj");
-			goto cleanup;
-		}
-
-		if (!cJSON_AddItemToArray(loc_method_conf_arr, loc_method_conf_obj)) {
-			mosh_error("Cannot add item to loc_method_conf_arr");
-			cJSON_Delete(loc_method_conf_obj);
-			goto cleanup;
-		}
-		if (loc_conf->methods[i].method == LOCATION_METHOD_GNSS) {
-			char tmp_str[9] = { 0 };
-
-			if (json_add_num_cs(loc_method_conf_obj, "gnss_timeout",
-					    loc_conf->methods[i].gnss.timeout) ||
-			    json_add_num_cs(loc_method_conf_obj, "gnss_num_con_fixes",
-					    loc_conf->methods[i].gnss.num_consecutive_fixes) ||
-			    json_add_num_cs(loc_method_conf_obj, "gnss_visibility_detect",
-					    loc_conf->methods[i].gnss.visibility_detection) ||
-			    json_add_num_cs(loc_method_conf_obj, "gnss_prio_mode",
-					    loc_conf->methods[i].gnss.priority_mode)) {
-				mosh_error("Cannot add gnss conf item to loc_method_conf_obj");
-				goto cleanup;
-			}
-
-			if (loc_conf->methods[i].gnss.accuracy == LOCATION_ACCURACY_LOW) {
-				strcpy(tmp_str, "low");
-			} else if (loc_conf->methods[i].gnss.accuracy == LOCATION_ACCURACY_NORMAL) {
-				strcpy(tmp_str, "normal");
-			} else if (loc_conf->methods[i].gnss.accuracy == LOCATION_ACCURACY_HIGH) {
-				strcpy(tmp_str, "high");
-			}
-
-			if (!cJSON_AddStringToObjectCS(loc_method_conf_obj, "gnss_accuracy",
-						       tmp_str)) {
-				mosh_error("No memory to add accuracy string");
-				goto cleanup;
-			}
-		} else if (loc_conf->methods[i].method == LOCATION_METHOD_WIFI) {
-			char tmp_str[10] = { 0 };
-
-			if (json_add_num_cs(loc_method_conf_obj, "wifi_timeout",
-					    loc_conf->methods[i].wifi.timeout)) {
-				mosh_error("Cannot add wifi conf item to loc_method_conf_obj");
-				goto cleanup;
-			}
-			if (loc_conf->methods[i].wifi.service == LOCATION_SERVICE_ANY) {
-				strcpy(tmp_str, "any");
-			} else if (loc_conf->methods[i].wifi.service ==
-				   LOCATION_SERVICE_NRF_CLOUD) {
-				strcpy(tmp_str, "nrf cloud");
-			} else if (loc_conf->methods[i].wifi.service == LOCATION_SERVICE_HERE) {
-				strcpy(tmp_str, "here");
-			}
-
-			if (!cJSON_AddStringToObjectCS(loc_method_conf_obj, "wifi_service",
-						       tmp_str)) {
-				mosh_error("No memory to add wifi service string");
-				goto cleanup;
-			}
-		} else if (loc_conf->methods[i].method == LOCATION_METHOD_CELLULAR) {
-			char tmp_str[16] = { 0 };
-
-			if (json_add_num_cs(loc_method_conf_obj, "cell_timeout",
-					    loc_conf->methods[i].cellular.timeout) ||
-			    json_add_num_cs(
-				    loc_method_conf_obj, "cellular_cell_count",
-				    loc_conf->methods[i].cellular.cell_count)) {
-				mosh_error("Cannot add cellular conf item to loc_method_conf_obj");
-				goto cleanup;
-			}
-			if (loc_conf->methods[i].cellular.service == LOCATION_SERVICE_ANY) {
-				strcpy(tmp_str, "any");
-			} else if (loc_conf->methods[i].cellular.service ==
-				   LOCATION_SERVICE_NRF_CLOUD) {
-				strcpy(tmp_str, "nrf cloud");
-			} else if (loc_conf->methods[i].cellular.service == LOCATION_SERVICE_HERE) {
-				strcpy(tmp_str, "here");
-			}
-			if (!cJSON_AddStringToObjectCS(loc_method_conf_obj, "cell_service",
-						       tmp_str)) {
-				mosh_error("No memory to add cellular service string");
-				goto cleanup;
-			}
-		}
-	}
-
-	return 0;
-
-cleanup:
-	/* No need to delete others as they were added to here */
-	cJSON_Delete(loc_conf_obj);
-	return -ENOMEM;
-}
-
 static int location_metrics_request_info_encode(
 	const struct location_metrics_data *loc_metrics_data, cJSON * const root_obj)
 {
@@ -357,7 +206,6 @@ static int location_metrics_request_info_encode(
 	struct location_event_data *loc_evt_data =
 		(struct location_event_data *)&loc_metrics_data->event_data;
 	struct location_data_details *details;
-	//int err;
 
 	if (loc_evt_data->id == LOCATION_EVT_LOCATION) {
 		details = (struct location_data_details *)&loc_evt_data->location.details;
@@ -385,21 +233,12 @@ static int location_metrics_request_info_encode(
 		goto cleanup;
 	}
 
-	/*err = location_metrics_request_config_encode(&details->used_config,
-						     loc_req_info_obj);
-	if (err) {
-		mosh_warn("Failed to encode location_config data to json, err %d", err);
-		goto cleanup;
-	}*/
-
 	return 0;
 cleanup:
 	/* No need to delete others as they were added to here */
 	cJSON_Delete(loc_req_info_obj);
 	return -ENOMEM;
 }
-
-/******************************************************************************/
 
 static int location_metrics_modem_json_encode(cJSON *const root_obj)
 {
@@ -480,8 +319,6 @@ cleanup:
 	return -ENOMEM;
 }
 
-/******************************************************************************/
-
 static int location_data_encode(const struct location_metrics_data *loc_metrics_data,
 				cJSON *const root_obj)
 {
@@ -523,13 +360,8 @@ static int location_data_encode(const struct location_metrics_data *loc_metrics_
 		}
 
 	} else {
-		/* error/timeout  */
+		/* error/timeout/fallback  */
 		details = (struct location_data_details *)&loc_evt_data->error.details;
-		/*if (!cJSON_AddStringToObjectCS(loc_data_obj, "failure_cause_str",
-					       loc_evt_data->error.failure_cause_str)) {
-			mosh_error("No memory create json obj failure_cause_str");
-			goto cleanup;
-		}*/
 	}
 
 	if (loc_evt_data->method == LOCATION_METHOD_GNSS) {
@@ -544,13 +376,6 @@ static int location_data_encode(const struct location_metrics_data *loc_metrics_
 			mosh_error("No memory create json obj used_satellites");
 			goto cleanup;
 		}
-/*
-		if (json_add_num_cs(loc_data_obj, "cn0_avg_of_used_satellites",
-				    (details->gnss.cn0_avg_satellites_used * 0.1))) {
-			mosh_error("No memory create json obj cn0_avg_of_used_satellites");
-			goto cleanup;
-		}
-*/
 		err = location_metrics_detailed_pvt_encode(&details->gnss.pvt_data,
 							   loc_data_obj);
 		if (err) {
