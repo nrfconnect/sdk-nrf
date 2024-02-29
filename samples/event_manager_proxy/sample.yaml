@@ -1,17 +1,33 @@
 sample:
   description: Sample showing usage of sending the events to another core via Event Manager Proxy
   name: Event Manager proxy sample
+
+common:
+  build_only: true
+  sysbuild: true
+  tags: ipc ci_build
+
 tests:
   sample.event_manager_proxy:
-    build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+    platform_allow:
+      - nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    tags: ci_build
-  sample.event_manager_proxy.icmsg:
-    build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+  sample.event_manager_proxy.nrf5340dk_nrf5340_cpuapp.icmsg:
+    platform_allow:
+      - nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    tags: ci_build
     extra_args: CONF_FILE=prj_icmsg.conf
+  sample.event_manager_proxy.nrf54h20pdk_cpuapp.icmsg:
+    platform_allow:
+      - nrf54h20pdk_nrf54h20_cpuapp
+    integration_platforms:
+      - nrf54h20pdk_nrf54h20_cpuapp
+    extra_args:
+      event_manager_proxy_SNIPPET=nordic-ppr
+      event_manager_proxy_CONF_FILE=prj_icmsg.conf
+      event_manager_proxy_DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpuapp_icmsg.overlay
+      remote_CONF_FILE=prj_icmsg.conf
+      remote_OVERLAY_CONFIG=boards/nrf54h20pdk_nrf54h20_cpuppr_icmsg.conf
+      remote_DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpuppr_icmsg.overlay
