@@ -46,3 +46,11 @@ tests:
       SB_CONF_FILE=sysbuild/nrf54h20pdk_nrf54h20_cpuppr.conf
       hello_world_SNIPPET=nordic-ppr-ram
       remote_OVERLAY_CONFIG=boards/nrf54h20pdk_nrf54h20_cpuppr_ram.conf
+
+  sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpurad:
+    platform_allow:
+      - nrf54h20pdk_nrf54h20_cpuapp
+    integration_platforms:
+      - nrf54h20pdk_nrf54h20_cpuapp
+    extra_args:
+      SB_CONF_FILE=sysbuild/nrf54h20pdk_nrf54h20_cpurad.conf
