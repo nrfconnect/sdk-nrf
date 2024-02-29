@@ -7,14 +7,14 @@
 #ifndef MOSH_LOCATION_DETAILS_H
 #define MOSH_LOCATION_DETAILS_H
 
-#define LOCATION_METRICS_CMD_STR_MAX_LEN 255
-struct location_metrics_data {
+#define LOCATION_DETAILS_CMD_STR_MAX_LEN 255
+struct location_details_data {
 	struct location_event_data event_data;
 	int64_t timestamp_ms;
-	char loc_cmd_str[LOCATION_METRICS_CMD_STR_MAX_LEN + 1];
+	char loc_cmd_str[LOCATION_DETAILS_CMD_STR_MAX_LEN + 1];
 };
 
-int location_metrics_utils_json_payload_encode(
-	const struct location_metrics_data *loc_metrics_data, char **json_str_out);
+int location_details_utils_json_payload_encode(
+	const struct location_details_data *loc_details_data, char **json_str_out);
 
 #endif /* MOSH_LOCATION_DETAILS_H */

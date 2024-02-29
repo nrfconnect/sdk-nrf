@@ -52,7 +52,7 @@ static int json_add_num_cs(cJSON *parent, const char *str, double item)
 #define GNSS_PVT_KEY_TDOP "tdop"
 #define GNSS_PVT_KEY_FLAGS "flags"
 
-static int location_metrics_simple_pvt_encode(
+static int location_details_simple_pvt_encode(
 	const struct location_data *location, cJSON * const root_obj)
 {
 	cJSON *pvt_data_obj = NULL;
@@ -87,7 +87,7 @@ cleanup:
 	return -ENOMEM;
 }
 
-static int location_metrics_detailed_pvt_encode(
+static int location_details_detailed_pvt_encode(
 	const struct nrf_modem_gnss_pvt_data_frame *const mdm_pvt, cJSON *const root_obj)
 {
 	cJSON *pvt_data_obj = NULL;
@@ -98,7 +98,7 @@ static int location_metrics_detailed_pvt_encode(
 
 	pvt_data_obj = cJSON_CreateObject();
 	if (pvt_data_obj == NULL) {
-		mosh_error("No memory create json obj for metrics pvt_data_obj");
+		mosh_error("No memory create json obj for details pvt_data_obj");
 		goto cleanup;
 	}
 
@@ -195,16 +195,16 @@ cleanup:
 	return -ENOMEM;
 }
 
-static int location_metrics_request_info_encode(
-	const struct location_metrics_data *loc_metrics_data, cJSON * const root_obj)
+static int location_details_request_info_encode(
+	const struct location_details_data *loc_details_data, cJSON * const root_obj)
 {
-	if (!loc_metrics_data || !root_obj) {
+	if (!loc_details_data || !root_obj) {
 		return -EINVAL;
 	}
 
 	cJSON *loc_req_info_obj = NULL;
 	struct location_event_data *loc_evt_data =
-		(struct location_event_data *)&loc_metrics_data->event_data;
+		(struct location_event_data *)&loc_details_data->event_data;
 	struct location_data_details *details;
 
 	if (loc_evt_data->id == LOCATION_EVT_LOCATION) {
@@ -228,7 +228,7 @@ static int location_metrics_request_info_encode(
 	if (!cJSON_AddNumberToObjectCS(loc_req_info_obj, "used_time_sec",
 				       round(details->elapsed_time_method)) ||
 	    !cJSON_AddStringToObjectCS(loc_req_info_obj, "location_cmd_str",
-				       loc_metrics_data->loc_cmd_str)) {
+				       loc_details_data->loc_cmd_str)) {
 		mosh_error("Failed to encode used_time_sec or location_cmd_str");
 		goto cleanup;
 	}
@@ -240,9 +240,9 @@ cleanup:
 	return -ENOMEM;
 }
 
-static int location_metrics_modem_json_encode(cJSON *const root_obj)
+static int location_details_modem_json_encode(cJSON *const root_obj)
 {
-	cJSON *mdm_metrics_data_obj = NULL;
+	cJSON *mdm_details_data_obj = NULL;
 	struct lte_xmonitor_resp_t xmonitor_resp;
 	enum lte_lc_system_mode sysmode;
 	int err = link_api_xmonitor_read(&xmonitor_resp);
@@ -254,13 +254,13 @@ static int location_metrics_modem_json_encode(cJSON *const root_obj)
 		return err;
 	}
 
-	mdm_metrics_data_obj = cJSON_CreateObject();
-	if (mdm_metrics_data_obj == NULL) {
-		mosh_error("No memory create json obj mdm_metrics_data_obj");
+	mdm_details_data_obj = cJSON_CreateObject();
+	if (mdm_details_data_obj == NULL) {
+		mosh_error("No memory create json obj mdm_details_data_obj");
 		goto cleanup;
 	}
 
-	if (!cJSON_AddItemToObject(root_obj, "modem_metrics", mdm_metrics_data_obj)) {
+	if (!cJSON_AddItemToObject(root_obj, "modem_details", mdm_details_data_obj)) {
 		goto cleanup;
 	}
 
@@ -271,7 +271,7 @@ static int location_metrics_modem_json_encode(cJSON *const root_obj)
 	if (len > 2 && len <= OP_FULL_NAME_STR_MAX_LEN) {
 		strncpy(tmp_str, xmonitor_resp.full_name_str + 1, len - 2);
 	}
-	if (!cJSON_AddStringToObjectCS(mdm_metrics_data_obj, "operator_full_name", tmp_str)) {
+	if (!cJSON_AddStringToObjectCS(mdm_details_data_obj, "operator_full_name", tmp_str)) {
 		mosh_error("No memory create json obj operator_full_name");
 		goto cleanup;
 	}
@@ -282,20 +282,20 @@ static int location_metrics_modem_json_encode(cJSON *const root_obj)
 	if (len > 2 && len <= OP_PLMN_STR_MAX_LEN) {
 		strncpy(tmp_str, xmonitor_resp.plmn_str + 1, len - 2);
 	}
-	if (!cJSON_AddStringToObjectCS(mdm_metrics_data_obj, "plmn", tmp_str)) {
+	if (!cJSON_AddStringToObjectCS(mdm_details_data_obj, "plmn", tmp_str)) {
 		mosh_error("No memory create json obj plmn");
 		goto cleanup;
 	}
 
-	if (json_add_num_cs(mdm_metrics_data_obj, "cell_id", xmonitor_resp.cell_id) ||
-	    json_add_num_cs(mdm_metrics_data_obj, "pci", xmonitor_resp.pci) ||
-	    json_add_num_cs(mdm_metrics_data_obj, "band", xmonitor_resp.band) ||
-	    json_add_num_cs(mdm_metrics_data_obj, "tac", xmonitor_resp.tac) ||
-	    json_add_num_cs(mdm_metrics_data_obj, "rsrp_dbm",
+	if (json_add_num_cs(mdm_details_data_obj, "cell_id", xmonitor_resp.cell_id) ||
+	    json_add_num_cs(mdm_details_data_obj, "pci", xmonitor_resp.pci) ||
+	    json_add_num_cs(mdm_details_data_obj, "band", xmonitor_resp.band) ||
+	    json_add_num_cs(mdm_details_data_obj, "tac", xmonitor_resp.tac) ||
+	    json_add_num_cs(mdm_details_data_obj, "rsrp_dbm",
 			    RSRP_IDX_TO_DBM(xmonitor_resp.rsrp)) ||
-	    json_add_num_cs(mdm_metrics_data_obj, "snr_db",
+	    json_add_num_cs(mdm_details_data_obj, "snr_db",
 			    xmonitor_resp.snr - LINK_SNR_OFFSET_VALUE)) {
-		mosh_error("No memory create modem metrics json obj");
+		mosh_error("No memory create modem details json obj");
 		goto cleanup;
 	}
 
@@ -303,7 +303,7 @@ static int location_metrics_modem_json_encode(cJSON *const root_obj)
 	if (err) {
 		mosh_warn("lte_lc_system_mode_get failed with err %d", err);
 	} else {
-		if (!cJSON_AddStringToObjectCS(mdm_metrics_data_obj, "sysmode",
+		if (!cJSON_AddStringToObjectCS(mdm_details_data_obj, "sysmode",
 					       link_shell_sysmode_to_string(sysmode, tmp_str))) {
 			mosh_error("No memory create json obj sysmode");
 			goto cleanup;
@@ -314,27 +314,27 @@ static int location_metrics_modem_json_encode(cJSON *const root_obj)
 
 cleanup:
 	/* No need to delete others as they were added to here */
-	cJSON_Delete(mdm_metrics_data_obj);
+	cJSON_Delete(mdm_details_data_obj);
 
 	return -ENOMEM;
 }
 
-static int location_data_encode(const struct location_metrics_data *loc_metrics_data,
+static int location_data_encode(const struct location_details_data *loc_details_data,
 				cJSON *const root_obj)
 {
-	if (!loc_metrics_data || !root_obj) {
+	if (!loc_details_data || !root_obj) {
 		return -EINVAL;
 	}
 
 	cJSON *loc_data_obj = NULL;
 	struct location_data_details *details;
 	struct location_event_data *loc_evt_data =
-		(struct location_event_data *)&loc_metrics_data->event_data;
+		(struct location_event_data *)&loc_details_data->event_data;
 	int err = -ENOMEM;
 
 	loc_data_obj = cJSON_CreateObject();
 	if (loc_data_obj == NULL) {
-		mosh_error("No memory create json obj for metrics loc_data_obj");
+		mosh_error("No memory create json obj for details loc_data_obj");
 		goto cleanup;
 	}
 	if (!cJSON_AddItemToObject(root_obj, "location_data", loc_data_obj)) {
@@ -351,7 +351,7 @@ static int location_data_encode(const struct location_metrics_data *loc_metrics_
 	if (loc_evt_data->id == LOCATION_EVT_LOCATION) {
 		details = (struct location_data_details *)&loc_evt_data->location.details;
 		if (loc_evt_data->method != LOCATION_METHOD_GNSS) {
-			err = location_metrics_simple_pvt_encode(&loc_evt_data->location,
+			err = location_details_simple_pvt_encode(&loc_evt_data->location,
 								 loc_data_obj);
 			if (err) {
 				mosh_error("Failed to encode PVT data for nrf cloud to json");
@@ -376,7 +376,7 @@ static int location_data_encode(const struct location_metrics_data *loc_metrics_
 			mosh_error("No memory create json obj used_satellites");
 			goto cleanup;
 		}
-		err = location_metrics_detailed_pvt_encode(&details->gnss.pvt_data,
+		err = location_details_detailed_pvt_encode(&details->gnss.pvt_data,
 							   loc_data_obj);
 		if (err) {
 			mosh_error("Failed to encode PVT data for nrf cloud to json");
@@ -403,34 +403,34 @@ cleanup:
 
 /******************************************************************************/
 
-static int location_metrics_json_payload_encode(
-	const struct location_metrics_data *loc_metrics_data, cJSON *const root_obj)
+static int location_details_json_payload_encode(
+	const struct location_details_data *loc_details_data, cJSON *const root_obj)
 {
-	if (!loc_metrics_data || !root_obj) {
+	if (!loc_details_data || !root_obj) {
 		return -EINVAL;
 	}
 
 	int err = 0;
 
 	/* Fill location_req_info */
-	err = location_metrics_request_info_encode(loc_metrics_data, root_obj);
+	err = location_details_request_info_encode(loc_details_data, root_obj);
 	if (err) {
 		mosh_warn("Failed to encode location_req_info data to json, err %d", err);
 		goto cleanup;
 	}
 
 	/* Fill actual location_data */
-	err = location_data_encode(loc_metrics_data, root_obj);
+	err = location_data_encode(loc_details_data, root_obj);
 	if (err) {
 		mosh_warn("Failed to encode location_data to json, err %d", err);
 		goto cleanup;
 	}
 
-	/* Fill common modem metrics */
-	err = location_metrics_modem_json_encode(root_obj);
+	/* Fill common modem details */
+	err = location_details_modem_json_encode(root_obj);
 	if (err) {
-		mosh_warn("Failed to encode modem_metrics data to json, err %d", err);
-		/* We didn't get modem_metrics, but we don't care. Let it be empty. */
+		mosh_warn("Failed to encode modem_details data to json, err %d", err);
+		/* We didn't get modem_details, but we don't care. Let it be empty. */
 	}
 
 	return 0;
@@ -456,7 +456,7 @@ cleanup:
  *	"location_req_info": {
  *		"used_time_sec": 15,
  *		"location_cmd_str": "location get --mode all -m cellular -m wifi -m gnss
- *					--gnss_cloud_pvt --cloud_metrics --interval 15",
+ *					--gnss_cloud_pvt --cloud_details --interval 15",
  *		"location_config": {
  *			"req_mode": "all",
  *			"methods_count": 3,
@@ -599,7 +599,7 @@ cleanup:
  *			]
  *		}
  *	},
- *	"modem_metrics": {
+ *	"modem_details": {
  *		"operator_full_name": "DNA",
  *		"plmn": "24412",
  *		"cell_id": 1805086,
@@ -613,10 +613,10 @@ cleanup:
  *}
  */
 
-int location_metrics_utils_json_payload_encode(const struct location_metrics_data *loc_metrics_data,
+int location_details_utils_json_payload_encode(const struct location_details_data *loc_details_data,
 					       char **json_str_out)
 {
-	__ASSERT_NO_MSG(loc_metrics_data != NULL);
+	__ASSERT_NO_MSG(loc_details_data != NULL);
 	__ASSERT_NO_MSG(json_str_out != NULL);
 
 	int err = 0;
@@ -625,7 +625,7 @@ int location_metrics_utils_json_payload_encode(const struct location_metrics_dat
 	char app_id_str[32];
 	struct location_data_details *details;
 	struct location_event_data *loc_evt_data =
-		(struct location_event_data *)&loc_metrics_data->event_data;
+		(struct location_event_data *)&loc_details_data->event_data;
 	double used_time_sec;
 
 	if (loc_evt_data->id == LOCATION_EVT_LOCATION) {
@@ -673,20 +673,20 @@ int location_metrics_utils_json_payload_encode(const struct location_metrics_dat
 	if (!cJSON_AddStringToObjectCS(root_obj, MSG_DATA, used_time_sec_str) ||
 	    !cJSON_AddStringToObjectCS(root_obj, MSG_APP_ID, app_id_str) ||
 	    !cJSON_AddStringToObjectCS(root_obj, MSG_TYPE, "DATA") ||
-	    !cJSON_AddNumberToObjectCS(root_obj, MSG_TIMESTAMP, loc_metrics_data->timestamp_ms)) {
+	    !cJSON_AddNumberToObjectCS(root_obj, MSG_TIMESTAMP, loc_details_data->timestamp_ms)) {
 		mosh_error("Cannot add metadata json objects");
 		err = -ENOMEM;
 		goto cleanup;
 	}
 
-	err = location_metrics_json_payload_encode(loc_metrics_data, root_obj);
+	err = location_details_json_payload_encode(loc_details_data, root_obj);
 	if (err) {
-		mosh_error("Failed to encode metrics data to json");
+		mosh_error("Failed to encode details data to json");
 		goto cleanup;
 	}
 	*json_str_out = cJSON_PrintUnformatted(root_obj);
 	if (*json_str_out == NULL) {
-		mosh_error("location metrics: failed to print json objects to string");
+		mosh_error("location details: failed to print json objects to string");
 		err = -ENOMEM;
 	}
 
