@@ -28,8 +28,6 @@
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/byteorder.h>
 
-/* Entropy is recommended to be max 32 (in trng.h) */
-#define ENTROPY_SIZE (32)
 enum asn1_tags {
 	ASN1_SEQUENCE = 0x10,
 	ASN1_INTEGER = 0x2,
