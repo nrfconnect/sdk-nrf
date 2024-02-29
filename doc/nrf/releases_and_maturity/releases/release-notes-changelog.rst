@@ -142,6 +142,8 @@ Matter
 
     In |NCS| Matter samples, the default reaction to migration failure is a factory reset of the device.
     To change the default reaction, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE` Kconfig option to ``n``.
+  * Experimental support for building Matter samples and applications with Link Time Optimization (LTO).
+    To enable it, set the :kconfig:option:`CONFIG_LTO` and :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION` Kconfig options to ``y``.
 
   * Documentation page about :ref:`ug_matter_gs_matter_api`.
 

@@ -38,3 +38,15 @@ You can reduce the memory usage of each of these modules in the following ways:
   .. code-block:: c
 
      CHIP_CONFIG_LOG_MODULE_Ble 0
+
+Enabling Link Time Optimization (LTO)
+*************************************
+
+You can reduce the memory usage of your Matter application by enabling Link Time Optimization (LTO).
+
+LTO is an advanced compilation technique that performs optimization across all compiled units of an application at the link stage, rather than within each unit separately.
+
+To enable LTO, set the :kconfig:option:`CONFIG_LTO` and :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION` Kconfig options to ``y``.
+
+.. note::
+   Support for Link Time Optimization is experimental.
