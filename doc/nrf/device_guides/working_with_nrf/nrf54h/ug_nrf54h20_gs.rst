@@ -77,15 +77,19 @@ Programming the sample
 **********************
 
 The :ref:`multicore_hello_world` sample is a multicore sample running on both the Application core (``cpuapp``) and the Peripheral Processor (PPR, ``cpuppr``).
-It uses the ``nrf54h20dk_nrf54h20_cpuapp@soc1`` build target.
+It uses the ``nrf54h20pdk_nrf54h20_cpuapp`` build target.
 
 To build and program the sample to the nRF54H20 PDK, complete the following steps:
 
 1. Connect the nRF54H20 PDK to you computer using the IMCU USB port on the PDK.
 #. Navigate to the :file:`nrf/samples/multicore/hello_world` folder containing the sample.
-#. Build the sample by running the following command::
+#. Build the sample for application and radio cores by running the following command::
 
-      west build -b nrf54h20dk_nrf54h20_cpuapp@soc1
+      west build -p -b nrf54h20pdk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpurad .
+
+#. Alternatively, build the sample for the application and PPR cores by running the following command::
+
+      west build -p -b nrf54h20pdk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpuppr .
 
 #. Program the sample using nrfjprog.
    If you have multiple Nordic Semiconductor devices, make sure that only the nRF54H20 PDK you want to program is connected.
@@ -101,7 +105,7 @@ The sample will be automatically built and programmed on both the Application co
 Reading the logs
 ****************
 
-With the :ref:`multicore_hello_world` sample programmed, the nRF54H20 PDK outputs logs for the application core and the peripheral processor.
+With the :ref:`multicore_hello_world` sample programmed, the nRF54H20 PDK outputs logs for the application core and the configured remote processor.
 The logs are output over UART.
 
 To read the logs from the :ref:`multicore_hello_world` sample programmed to the nRF54H20 PDK, complete the following steps:
@@ -121,15 +125,19 @@ To read the logs from the :ref:`multicore_hello_world` sample programmed to the 
 
      .. code-block:: console
 
-        *** Booting Zephyr OS build v2.7.99-ncs1-2193-gd359a86abf14  ***
-        Hello world from nrf54h20dk_nrf54h20_cpuapp
+        *** Booting nRF Connect SDK zephyr-v3.5.0-3517-g9458a1aaf744 ***
+        Hello world from nrf54h20pdk_nrf54h20_cpuapp
+        Hello world from nrf54h20pdk_nrf54h20_cpuapp
+        ...
 
-   * For the PPR core, the output should be as follows:
+   * For the remote core, e.g. PPR, the output should be as follows:
 
      .. code-block:: console
 
-        *** Booting Zephyr OS build v2.7.99-ncs1-2193-gd359a86abf14  ***
-        Hello world from nrf54h20dk_nrf54h20_cpuppr
+        *** Booting nRF Connect SDK zephyr-v3.5.0-3517-g9458a1aaf744 ***
+        Hello world from nrf54h20pdk_nrf54h20_cpuppr
+        Hello world from nrf54h20pdk_nrf54h20_cpuppr
+        ...
 
 .. note::
    If no output is shown when using nRF Serial Terminal, select a different serial port in the terminal application.
