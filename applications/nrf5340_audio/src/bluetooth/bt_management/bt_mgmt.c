@@ -103,7 +103,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL,
 						 BRDCAST_ID_NOT_USED);
-			if (ret) {
+			if (ret && ret != -EALREADY) {
 				LOG_ERR("Failed to restart scanning: %d", ret);
 			}
 		}
@@ -170,6 +170,8 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	}
 }
 
+K_MUTEX_DEFINE(mtx_duplicate_scan);
+
 static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 {
 	int ret;
@@ -197,12 +199,18 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 		ERR_CHK(ret);
 	}
 
+	/* The mutex for preventing the racing condition if two headset disconnected too close,
+	 * cause the disconnected_cb() triggered in short time leads to duplicate scanning
+	 * operation.
+	 */
+	k_mutex_lock(&mtx_duplicate_scan, K_FOREVER);
 	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL, BRDCAST_ID_NOT_USED);
-		if (ret) {
+		if (ret && ret != -EALREADY) {
 			LOG_ERR("Failed to restart scanning: %d", ret);
 		}
 	}
+	k_mutex_unlock(&mtx_duplicate_scan);
 }
 
 #if defined(CONFIG_BT_SMP)

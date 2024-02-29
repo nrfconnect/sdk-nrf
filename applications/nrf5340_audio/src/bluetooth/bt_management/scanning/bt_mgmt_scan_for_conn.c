@@ -192,7 +192,7 @@ int bt_mgmt_scan_for_conn_start(struct bt_le_scan_param *scan_param, char const 
 	} else {
 		/* Already scanning, stop current scan to update param in case it has changed */
 		ret = bt_le_scan_stop();
-		if (ret) {
+		if (ret && ret != -EALREADY) {
 			LOG_ERR("Failed to stop scan: %d", ret);
 			return ret;
 		}
