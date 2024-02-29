@@ -240,6 +240,7 @@ Applications
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
+* The Matter Bridge application is now supported instead of experimental.
 * Added the :ref:`ipc_radio` application.
 
 Asset Tracker v2
