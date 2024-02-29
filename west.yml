@@ -61,7 +61,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: baa4ee7ebd5d885119d6d196d62c1ca1e6af5841
+      revision: v3.5.99-ncs1-rc1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -129,7 +129,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 323fb663e832d4c45eb2fc2d30a3955684791b7d
+      revision: v2.0.99-ncs1-rc1
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -138,15 +138,15 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: 4625a6097993a0bae01f809aacd48ee2c9cb1d0b
+      revision: v3.5.2-ncs1-rc1
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 319739c30e3310d58d45b4b04d11de217c9b8a14
+      revision: v2.6.0-rc1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: a6932d74bb285b8dfab33fdfdfc9508c980da1de
+      revision: v2.0.0-ncs1-rc1
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -154,7 +154,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 0b7d6e4909f070d20e0f5532927a7241f5de9364
+      revision: v2.6.0-rc1
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -174,7 +174,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: ba0351eb38e7b423c64940dace50658d72409e0d
+      revision: v2.6.0-rc1
       groups:
         - nrf-802154
     - name: dragoon
@@ -196,12 +196,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: dd1ce026d608956a249f4753bd663bc328916f8a
+      revision: v2.6.0-rc1
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: de25273096aa6ab735121cb849ad10a9b46a67fd
+      revision: v2.6.0-rc1
       groups:
         - find-my
     - name: azure-sdk-for-c
