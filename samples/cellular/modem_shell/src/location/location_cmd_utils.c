@@ -64,14 +64,14 @@ static int location_cmd_utils_generate_nmea(const struct location_data *location
 
 int location_cmd_utils_gnss_loc_to_cloud_payload_json_encode(
 	enum nrf_cloud_gnss_type format, const struct location_data *location_data,
-	int64_t ts_ms, char **json_str_out)
+	int64_t timestamp_ms, char **json_str_out)
 {
 	__ASSERT_NO_MSG(location_data != NULL);
 	__ASSERT_NO_MSG(json_str_out != NULL);
 
 	struct nrf_cloud_gnss_data gnss_data = {
 		.type = format,
-		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
+		.ts_ms = timestamp_ms,
 		.pvt = {
 			.lon		= location_data->longitude,
 			.lat		= location_data->latitude,

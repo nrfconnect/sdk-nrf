@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -33,68 +33,69 @@ static int json_add_num_cs(cJSON *parent, const char *str, double item)
 	return cJSON_AddNumberToObjectCS(parent, str, item) ? 0 : -ENOMEM;
 }
 
-#define GNSS_PVT_KEY_LAT "lat"
-#define GNSS_PVT_KEY_LON "lng"
-#define GNSS_PVT_KEY_ACC "acc"
-
-#define GNSS_PVT_KEY_ALTITUDE "alt"
-#define GNSS_PVT_KEY_ALTITUDE_ACC "altAcc"
-#define GNSS_PVT_KEY_SPEED "spd"
-#define GNSS_PVT_KEY_SPEED_ACC "spdAcc"
-#define GNSS_PVT_KEY_VER_SPEED "verSpd"
-#define GNSS_PVT_KEY_VER_SPEED_ACC "verSpdAcc"
-#define GNSS_PVT_KEY_HEADING "hdg"
-#define GNSS_PVT_KEY_HEADING_ACC "hdgAcc"
-
-#define GNSS_PVT_KEY_PDOP "pdop"
-#define GNSS_PVT_KEY_HDOP "hdop"
-#define GNSS_PVT_KEY_VDOP "vdop"
-#define GNSS_PVT_KEY_TDOP "tdop"
-#define GNSS_PVT_KEY_FLAGS "flags"
-
-static int location_details_simple_pvt_encode(
-	const struct location_data *location, cJSON * const root_obj)
+static const char *location_details_event_str(enum location_event_id event_id)
 {
-	cJSON *pvt_data_obj = NULL;
+	const char *event_str = NULL;
 
-	if (!location || !root_obj) {
-		return -EINVAL;
+	switch (event_id) {
+	case LOCATION_EVT_LOCATION:
+		event_str = "success";
+		break;
+	case LOCATION_EVT_TIMEOUT:
+		event_str = "timeout";
+		break;
+	case LOCATION_EVT_ERROR:
+		event_str = "error";
+		break;
+	case LOCATION_EVT_RESULT_UNKNOWN:
+		event_str = "unknown";
+		break;
+	case LOCATION_EVT_FALLBACK:
+		event_str = "fallback";
+		break;
+	default:
+		event_str = "BUG";
+		break;
 	}
 
-	pvt_data_obj = cJSON_CreateObject();
-	if (pvt_data_obj == NULL) {
-		mosh_error("No memory create json obj for simple pvt_data_obj");
+	return event_str;
+}
+
+static int location_details_position_encode(const struct location_data *location, cJSON *root_obj)
+{
+	cJSON *position_data_obj = NULL;
+
+	position_data_obj = cJSON_CreateObject();
+	if (position_data_obj == NULL) {
+		mosh_error("No memory to create json obj for position");
 		goto cleanup;
 	}
 
-	if (!cJSON_AddItemToObject(root_obj, "pvt_data_simple", pvt_data_obj)) {
-		mosh_error("No memory to add json obj pvt_data_simple");
+	if (json_add_num_cs(position_data_obj, "lng", location->longitude) ||
+	    json_add_num_cs(position_data_obj, "lat", location->latitude) ||
+	    json_add_num_cs(position_data_obj, "acc", location->accuracy)) {
+		mosh_error("Failed to encode position data");
 		goto cleanup;
 	}
 
-	if (json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_LON, location->longitude) ||
-	    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_LAT, location->latitude) ||
-	    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_ACC, location->accuracy)) {
-		mosh_error("Failed to encode PVT data");
+	if (!cJSON_AddItemToObject(root_obj, "position", position_data_obj)) {
+		mosh_error("No memory to add json obj position");
 		goto cleanup;
 	}
 
 	return 0;
 cleanup:
 	/* No need to delete others as they were added to here */
-	cJSON_Delete(pvt_data_obj);
+	cJSON_Delete(position_data_obj);
 
 	return -ENOMEM;
 }
 
-static int location_details_detailed_pvt_encode(
-	const struct nrf_modem_gnss_pvt_data_frame *const mdm_pvt, cJSON *const root_obj)
+static int location_details_pvt_data_encode(
+	const struct nrf_modem_gnss_pvt_data_frame *mdm_pvt,
+	cJSON *root_obj)
 {
 	cJSON *pvt_data_obj = NULL;
-
-	if (!mdm_pvt || !root_obj) {
-		return -EINVAL;
-	}
 
 	pvt_data_obj = cJSON_CreateObject();
 	if (pvt_data_obj == NULL) {
@@ -102,47 +103,44 @@ static int location_details_detailed_pvt_encode(
 		goto cleanup;
 	}
 
-	if (!cJSON_AddItemToObject(root_obj, "pvt_data_detailed", pvt_data_obj)) {
-		mosh_error("No memory to add json obj pvt_data_detailed");
-		goto cleanup;
-	}
-
 	/* Flags */
-	if (json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_FLAGS, mdm_pvt->flags)) {
+	if (json_add_num_cs(pvt_data_obj, "flags", mdm_pvt->flags) ||
+	    json_add_num_cs(pvt_data_obj, "execution_time",
+			    (double)mdm_pvt->execution_time / 1000)) {
 		goto cleanup;
 	}
 
 	/* GNSS fix data */
 	if (mdm_pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
-		if (json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_LON, mdm_pvt->longitude) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_LAT, mdm_pvt->latitude) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_ACC,
+		if (json_add_num_cs(pvt_data_obj, "lng", mdm_pvt->longitude) ||
+		    json_add_num_cs(pvt_data_obj, "lat", mdm_pvt->latitude) ||
+		    json_add_num_cs(pvt_data_obj, "acc",
 				    round(mdm_pvt->accuracy * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_ALTITUDE,
+		    json_add_num_cs(pvt_data_obj, "alt",
 				    round(mdm_pvt->altitude * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_ALTITUDE_ACC,
+		    json_add_num_cs(pvt_data_obj, "altAcc",
 				    round(mdm_pvt->altitude_accuracy * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_SPEED,
+		    json_add_num_cs(pvt_data_obj, "spd",
 				    round(mdm_pvt->speed * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_SPEED_ACC,
+		    json_add_num_cs(pvt_data_obj, "spdAcc",
 				    round(mdm_pvt->speed_accuracy * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_HEADING,
-				    round(mdm_pvt->heading * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_HEADING_ACC,
-				    round(mdm_pvt->heading_accuracy * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_VER_SPEED,
+		    json_add_num_cs(pvt_data_obj, "verSpd",
 				    round(mdm_pvt->vertical_speed * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_VER_SPEED_ACC,
+		    json_add_num_cs(pvt_data_obj, "verSpdAcc",
 				    round(mdm_pvt->vertical_speed_accuracy * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_PDOP,
+		    json_add_num_cs(pvt_data_obj, "hdg",
+				    round(mdm_pvt->heading * 1000) / 1000) ||
+		    json_add_num_cs(pvt_data_obj, "hdgAcc",
+				    round(mdm_pvt->heading_accuracy * 1000) / 1000) ||
+		    json_add_num_cs(pvt_data_obj, "pdop",
 				    round(mdm_pvt->pdop * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_HDOP,
+		    json_add_num_cs(pvt_data_obj, "hdop",
 				    round(mdm_pvt->hdop * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_VDOP,
+		    json_add_num_cs(pvt_data_obj, "vdop",
 				    round(mdm_pvt->vdop * 1000) / 1000) ||
-		    json_add_num_cs(pvt_data_obj, GNSS_PVT_KEY_TDOP,
+		    json_add_num_cs(pvt_data_obj, "tdop",
 				    round(mdm_pvt->tdop * 1000) / 1000)) {
-			mosh_error("Failed to encode GNSS fix data");
+			mosh_error("Failed to encode GNSS PVT data");
 			goto cleanup;
 		}
 	}
@@ -187,6 +185,11 @@ static int location_details_detailed_pvt_encode(
 		}
 	}
 
+	if (!cJSON_AddItemToObject(root_obj, "pvt_data", pvt_data_obj)) {
+		mosh_error("No memory to add json obj pvt_data");
+		goto cleanup;
+	}
+
 	return 0;
 cleanup:
 	/* No need to delete others as they were added to here */
@@ -195,72 +198,53 @@ cleanup:
 	return -ENOMEM;
 }
 
-static int location_details_request_info_encode(
-	const struct location_details_data *loc_details_data, cJSON * const root_obj)
+static int location_details_location_req_info_encode(
+	const char *mosh_cmd,
+	cJSON *root_obj)
 {
-	if (!loc_details_data || !root_obj) {
-		return -EINVAL;
-	}
+	cJSON *location_req_info_obj = NULL;
 
-	cJSON *loc_req_info_obj = NULL;
-	struct location_event_data *loc_evt_data =
-		(struct location_event_data *)&loc_details_data->event_data;
-	struct location_data_details *details;
-
-	if (loc_evt_data->id == LOCATION_EVT_LOCATION) {
-		details = (struct location_data_details *)&loc_evt_data->location.details;
-	} else {
-		/* error/timeout  */
-		details = (struct location_data_details *)&loc_evt_data->error.details;
-	}
-
-	loc_req_info_obj = cJSON_CreateObject();
-	if (loc_req_info_obj == NULL) {
-		mosh_error("No memory create json obj for loc_req_info_obj");
+	location_req_info_obj = cJSON_CreateObject();
+	if (location_req_info_obj == NULL) {
+		mosh_error("No memory create json obj for location_req_info_obj");
 		goto cleanup;
 	}
 
-	if (!cJSON_AddItemToObject(root_obj, "location_req_info", loc_req_info_obj)) {
+	if (!cJSON_AddStringToObjectCS(location_req_info_obj, "mosh_cmd", mosh_cmd)) {
+		mosh_error("Failed to encode mosh_cmd");
+		goto cleanup;
+	}
+
+	if (!cJSON_AddItemToObject(root_obj, "location_req_info", location_req_info_obj)) {
 		mosh_error("No memory to add json obj location_req_info");
-		goto cleanup;
-	}
-
-	if (!cJSON_AddNumberToObjectCS(loc_req_info_obj, "used_time_sec",
-				       round(details->elapsed_time_method)) ||
-	    !cJSON_AddStringToObjectCS(loc_req_info_obj, "location_cmd_str",
-				       loc_details_data->loc_cmd_str)) {
-		mosh_error("Failed to encode used_time_sec or location_cmd_str");
 		goto cleanup;
 	}
 
 	return 0;
 cleanup:
 	/* No need to delete others as they were added to here */
-	cJSON_Delete(loc_req_info_obj);
+	cJSON_Delete(location_req_info_obj);
 	return -ENOMEM;
 }
 
-static int location_details_modem_json_encode(cJSON *const root_obj)
+static int location_details_modem_details_encode(cJSON *root_obj)
 {
-	cJSON *mdm_details_data_obj = NULL;
+	cJSON *modem_details_obj = NULL;
 	struct lte_xmonitor_resp_t xmonitor_resp;
 	enum lte_lc_system_mode sysmode;
-	int err = link_api_xmonitor_read(&xmonitor_resp);
+	int err;
 	char tmp_str[OP_FULL_NAME_STR_MAX_LEN + 1];
 	int len;
 
+	err = link_api_xmonitor_read(&xmonitor_resp);
 	if (err) {
 		mosh_error("link_api_xmonitor_read failed, result: ret %d", err);
 		return err;
 	}
 
-	mdm_details_data_obj = cJSON_CreateObject();
-	if (mdm_details_data_obj == NULL) {
-		mosh_error("No memory create json obj mdm_details_data_obj");
-		goto cleanup;
-	}
-
-	if (!cJSON_AddItemToObject(root_obj, "modem_details", mdm_details_data_obj)) {
+	modem_details_obj = cJSON_CreateObject();
+	if (modem_details_obj == NULL) {
+		mosh_error("No memory create json obj modem_details_obj");
 		goto cleanup;
 	}
 
@@ -271,7 +255,7 @@ static int location_details_modem_json_encode(cJSON *const root_obj)
 	if (len > 2 && len <= OP_FULL_NAME_STR_MAX_LEN) {
 		strncpy(tmp_str, xmonitor_resp.full_name_str + 1, len - 2);
 	}
-	if (!cJSON_AddStringToObjectCS(mdm_details_data_obj, "operator_full_name", tmp_str)) {
+	if (!cJSON_AddStringToObjectCS(modem_details_obj, "operator_full_name", tmp_str)) {
 		mosh_error("No memory create json obj operator_full_name");
 		goto cleanup;
 	}
@@ -282,18 +266,17 @@ static int location_details_modem_json_encode(cJSON *const root_obj)
 	if (len > 2 && len <= OP_PLMN_STR_MAX_LEN) {
 		strncpy(tmp_str, xmonitor_resp.plmn_str + 1, len - 2);
 	}
-	if (!cJSON_AddStringToObjectCS(mdm_details_data_obj, "plmn", tmp_str)) {
+	if (!cJSON_AddStringToObjectCS(modem_details_obj, "plmn", tmp_str)) {
 		mosh_error("No memory create json obj plmn");
 		goto cleanup;
 	}
 
-	if (json_add_num_cs(mdm_details_data_obj, "cell_id", xmonitor_resp.cell_id) ||
-	    json_add_num_cs(mdm_details_data_obj, "pci", xmonitor_resp.pci) ||
-	    json_add_num_cs(mdm_details_data_obj, "band", xmonitor_resp.band) ||
-	    json_add_num_cs(mdm_details_data_obj, "tac", xmonitor_resp.tac) ||
-	    json_add_num_cs(mdm_details_data_obj, "rsrp_dbm",
-			    RSRP_IDX_TO_DBM(xmonitor_resp.rsrp)) ||
-	    json_add_num_cs(mdm_details_data_obj, "snr_db",
+	if (json_add_num_cs(modem_details_obj, "cell_id", xmonitor_resp.cell_id) ||
+	    json_add_num_cs(modem_details_obj, "pci", xmonitor_resp.pci) ||
+	    json_add_num_cs(modem_details_obj, "band", xmonitor_resp.band) ||
+	    json_add_num_cs(modem_details_obj, "tac", xmonitor_resp.tac) ||
+	    json_add_num_cs(modem_details_obj, "rsrp_dbm", RSRP_IDX_TO_DBM(xmonitor_resp.rsrp)) ||
+	    json_add_num_cs(modem_details_obj, "snr_db",
 			    xmonitor_resp.snr - LINK_SNR_OFFSET_VALUE)) {
 		mosh_error("No memory create modem details json obj");
 		goto cleanup;
@@ -303,306 +286,325 @@ static int location_details_modem_json_encode(cJSON *const root_obj)
 	if (err) {
 		mosh_warn("lte_lc_system_mode_get failed with err %d", err);
 	} else {
-		if (!cJSON_AddStringToObjectCS(mdm_details_data_obj, "sysmode",
+		if (!cJSON_AddStringToObjectCS(modem_details_obj, "sysmode",
 					       link_shell_sysmode_to_string(sysmode, tmp_str))) {
 			mosh_error("No memory create json obj sysmode");
 			goto cleanup;
 		}
 	}
 
+	if (!cJSON_AddItemToObject(root_obj, "modem_details", modem_details_obj)) {
+		goto cleanup;
+	}
+
 	return 0;
 
 cleanup:
 	/* No need to delete others as they were added to here */
-	cJSON_Delete(mdm_details_data_obj);
+	cJSON_Delete(modem_details_obj);
 
 	return -ENOMEM;
 }
 
-static int location_data_encode(const struct location_details_data *loc_details_data,
-				cJSON *const root_obj)
+static int location_details_location_data_encode(
+	const struct location_event_data *loc_evt_data,
+	cJSON *root_obj)
 {
-	if (!loc_details_data || !root_obj) {
-		return -EINVAL;
-	}
-
-	cJSON *loc_data_obj = NULL;
-	struct location_data_details *details;
-	struct location_event_data *loc_evt_data =
-		(struct location_event_data *)&loc_details_data->event_data;
+	cJSON *location_data_obj = NULL;
+	cJSON *method_details_obj = NULL;
+	const struct location_data_details *details;
 	int err = -ENOMEM;
 
-	loc_data_obj = cJSON_CreateObject();
-	if (loc_data_obj == NULL) {
-		mosh_error("No memory create json obj for details loc_data_obj");
-		goto cleanup;
-	}
-	if (!cJSON_AddItemToObject(root_obj, "location_data", loc_data_obj)) {
-		mosh_error("No memory to add json obj location_data");
+	details = location_details_get(loc_evt_data);
+	if (details == NULL) {
 		goto cleanup;
 	}
 
-	if (!cJSON_AddStringToObjectCS(loc_data_obj, "loc_method",
+	location_data_obj = cJSON_CreateObject();
+	if (location_data_obj == NULL) {
+		mosh_error("No memory create json obj for details location_data_obj");
+		goto cleanup;
+	}
+
+	if (!cJSON_AddStringToObjectCS(location_data_obj, "method",
 				       location_method_str(loc_evt_data->method))) {
-		mosh_error("No memory create json obj loc_method");
+		mosh_error("No memory create json obj method");
+		goto cleanup;
+	}
+
+	if (!cJSON_AddStringToObjectCS(location_data_obj, "event",
+				       location_details_event_str(loc_evt_data->id))) {
+		mosh_error("No memory create json obj event");
+		goto cleanup;
+	}
+
+	if (!cJSON_AddNumberToObjectCS(location_data_obj, "elapsed_time_method_sec",
+				       (double)details->elapsed_time_method / 1000)) {
+		mosh_error("No memory create json obj elapsed_time_method_sec");
 		goto cleanup;
 	}
 
 	if (loc_evt_data->id == LOCATION_EVT_LOCATION) {
-		details = (struct location_data_details *)&loc_evt_data->location.details;
-		if (loc_evt_data->method != LOCATION_METHOD_GNSS) {
-			err = location_details_simple_pvt_encode(&loc_evt_data->location,
-								 loc_data_obj);
-			if (err) {
-				mosh_error("Failed to encode PVT data for nrf cloud to json");
-				goto cleanup;
-			}
+		err = location_details_position_encode(&loc_evt_data->location, location_data_obj);
+		if (err) {
+			mosh_error("Failed to encode position data for nrf cloud to json");
+			goto cleanup;
 		}
-
-	} else {
-		/* error/timeout/fallback  */
-		details = (struct location_data_details *)&loc_evt_data->error.details;
 	}
 
+	method_details_obj = cJSON_CreateObject();
+	if (method_details_obj == NULL) {
+		mosh_error("No memory create json obj for details method_details_obj");
+		goto cleanup;
+	}
+
+	if (!cJSON_AddItemToObject(location_data_obj, "method_details", method_details_obj)) {
+		mosh_error("No memory to add json obj method_details");
+		cJSON_Delete(method_details_obj);
+		goto cleanup;
+	}
+
+#if defined(CONFIG_LOCATION_METHOD_GNSS)
 	if (loc_evt_data->method == LOCATION_METHOD_GNSS) {
-		if (json_add_num_cs(loc_data_obj, "tracked_satellites",
+		if (json_add_num_cs(method_details_obj, "tracked_satellites",
 				    details->gnss.satellites_tracked)) {
 			mosh_error("No memory create json obj tracked_satellites");
 			goto cleanup;
 		}
 
-		if (json_add_num_cs(loc_data_obj, "used_satellites",
+		if (json_add_num_cs(method_details_obj, "used_satellites",
 				    details->gnss.satellites_used)) {
 			mosh_error("No memory create json obj used_satellites");
 			goto cleanup;
 		}
-		err = location_details_detailed_pvt_encode(&details->gnss.pvt_data,
-							   loc_data_obj);
+
+		if (json_add_num_cs(method_details_obj, "elapsed_time_gnss",
+				    (double)details->gnss.elapsed_time_gnss / 1000)) {
+			mosh_error("No memory create json obj used_satellites");
+			goto cleanup;
+		}
+
+		err = location_details_pvt_data_encode(
+			&details->gnss.pvt_data,
+			method_details_obj);
 		if (err) {
 			mosh_error("Failed to encode PVT data for nrf cloud to json");
 			goto cleanup;
 		}
 	}
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
-	else if (loc_evt_data->method == LOCATION_METHOD_WIFI) {
-		if (json_add_num_cs(loc_data_obj, "scanned_wifi_ap_cnt",
-				    details->wifi.ap_count)) {
-			mosh_error("No memory create json obj scanned_ap_count");
+#endif
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
+	if (loc_evt_data->method == LOCATION_METHOD_CELLULAR ||
+	    loc_evt_data->method == LOCATION_METHOD_WIFI_CELLULAR) {
+		if (json_add_num_cs(method_details_obj, "cellular_ncells_count",
+				    details->cellular.ncells_count)) {
+			mosh_error("No memory create json obj cellular_ncells_count");
+			goto cleanup;
+		}
+		if (json_add_num_cs(method_details_obj, "cellular_gci_cells_count",
+				    details->cellular.gci_cells_count)) {
+			mosh_error("No memory create json obj cellular_gci_cells_count");
 			goto cleanup;
 		}
 	}
 #endif
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	if (loc_evt_data->method == LOCATION_METHOD_WIFI ||
+	    loc_evt_data->method == LOCATION_METHOD_WIFI_CELLULAR) {
+		if (json_add_num_cs(method_details_obj, "wifi_ap_cnt",
+				    details->wifi.ap_count)) {
+			mosh_error("No memory create json obj wifi_ap_cnt");
+			goto cleanup;
+		}
+	}
+#endif
+	if (!cJSON_AddItemToObject(root_obj, "location_data", location_data_obj)) {
+		mosh_error("No memory to add json obj location_data");
+		goto cleanup;
+	}
+
 	return 0;
 
 cleanup:
 	/* No need to delete others as they were added to here */
-	cJSON_Delete(loc_data_obj);
+	cJSON_Delete(location_data_obj);
 
 	return err;
 }
 
-/******************************************************************************/
-
-static int location_details_json_payload_encode(
-	const struct location_details_data *loc_details_data, cJSON *const root_obj)
+static int location_details_root_encode(
+	const struct location_event_data *loc_evt_data,
+	const char *mosh_cmd,
+	cJSON *root_obj)
 {
-	if (!loc_details_data || !root_obj) {
-		return -EINVAL;
-	}
-
 	int err = 0;
 
 	/* Fill location_req_info */
-	err = location_details_request_info_encode(loc_details_data, root_obj);
+	err = location_details_location_req_info_encode(mosh_cmd, root_obj);
 	if (err) {
 		mosh_warn("Failed to encode location_req_info data to json, err %d", err);
-		goto cleanup;
+		return err;
 	}
 
 	/* Fill actual location_data */
-	err = location_data_encode(loc_details_data, root_obj);
+	err = location_details_location_data_encode(loc_evt_data, root_obj);
 	if (err) {
 		mosh_warn("Failed to encode location_data to json, err %d", err);
-		goto cleanup;
+		return err;
 	}
 
 	/* Fill common modem details */
-	err = location_details_modem_json_encode(root_obj);
+	err = location_details_modem_details_encode(root_obj);
 	if (err) {
 		mosh_warn("Failed to encode modem_details data to json, err %d", err);
 		/* We didn't get modem_details, but we don't care. Let it be empty. */
 	}
 
 	return 0;
-
-cleanup:
-
-	return err;
 }
 
-/******************************************************************************/
-#define MSG_TYPE "messageType"
-#define MSG_APP_ID "appId"
-#define MSG_DATA "data"
-#define MSG_TIMESTAMP "ts"
-
 /*
- * Following added to given as an output to json_str_out as an example:
+ * Encode location details into JSON format to be sent to nRF Cloud.
+ * This is a MOSH specific custom data format.
+ *
+ * An example output in json_str_out for GNSS is as follows:
  *{
- *	"data": "14.76",
+ *	"data": "5.087",
  *	"appId": "LOC_GNSS_TTF",
  *	"messageType": "DATA",
  *	"ts": 1669711208428,
  *	"location_req_info": {
- *		"used_time_sec": 15,
- *		"location_cmd_str": "location get --mode all -m cellular -m wifi -m gnss
- *					--gnss_cloud_pvt --cloud_details --interval 15",
- *		"location_config": {
- *			"req_mode": "all",
- *			"methods_count": 3,
- *			"interval": 15,
- *			"timeout": 300000,
- *			"methods": [
- *				{
- *					"cell_timeout": 30000,
- *					"cell_ncellmeas_at_search_type": 0,
- *					"cell_ncellmeas_at_gci_count": 10,
- *					"cell_service": "any"
- *				},
- *				{
- *					"wifi_timeout": 30000,
- *					"wifi_service": "any"
- *				},
- *				{
- *					"gnss_timeout": 120000,
- *					"gnss_num_con_fixes": 3,
- *					"gnss_visibility_detect": 0,
- *					"gnss_prio_mode": 0,
- *					"gnss_accuracy": "normal"
- *				}
- *			]
- *		}
+ *		"mosh_cmd": "get --mode all -m cellular -m wifi -m gnss
+ *			     --gnss_cloud_pvt --cloud_details --interval 15",
  *	},
  *	"location_data": {
- *		"loc_method": "GNSS",
- *		"tracked_satellites": 10,
- *		"used_satellites": 9,
- *		"cn0_avg_of_used_satellites": 45.9,
- *		"pvt_data_detailed": {
- *			"flags": 35,
+ *		"method": "GNSS",
+ *		"event": "success",
+ *		"elapsed_time_method_sec": 5.087,
+ *		"position": {
  *			"lng": 23.775882648600284,
  *			"lat": 61.493788965179519,
- *			"acc": 4.484,
- *			"alt": 144.601,
- *			"altAcc": 7.932,
- *			"spd": 0.098,
- *			"spdAcc": 0.345,
- *			"hdg": 0,
- *			"hdgAcc": 180,
- *			"verSpd": 0.026,
- *			"verSpdAcc": 0.655,
- *			"pdop": 2.13,
- *			"hdop": 0.955,
- *			"vdop": 1.904,
- *			"tdop": 1.171,
- *			"sv_info": [
- *				{
- *					"sv": 4,
- *					"c_n0": 47.2,
- *					"sig": 1,
- *					"elev": 52,
- *					"az": 93,
- *					"in_fix": 1,
- *					"unhealthy": 0
- *				},
- *				{
- *					"sv": 6,
- *					"c_n0": 47.1,
- *					"sig": 1,
- *					"elev": 35,
- *					"az": 237,
- *					"in_fix": 1,
- *					"unhealthy": 0
- *				},
- *				{
- *					"sv": 7,
- *					"c_n0": 48.4,
- *					"sig": 1,
- *					"elev": 33,
- *					"az": 191,
- *					"in_fix": 1,
- *					"unhealthy": 0
- *				},
- *				{
- *					"sv": 9,
- *					"c_n0": 48.1,
- *					"sig": 1,
- *					"elev": 80,
- *					"az": 194,
- *					"in_fix": 1,
- *					"unhealthy": 0
- *				},
- *				{
- *					"sv": 11,
- *					"c_n0": 47.5,
- *					"sig": 1,
- *					"elev": 39,
- *					"az": 284,
- *					"in_fix": 1,
- *					"unhealthy": 0
- *				},
- *				{
- *					"sv": 16,
- *					"c_n0": 46.4,
- *					"sig": 1,
- *					"elev": 25,
- *					"az": 84,
- *					"in_fix": 1,
- *					"unhealthy": 0
- *				},
- *				{
- *					"sv": 26,
- *					"c_n0": 42.7,
- *					"sig": 1,
- *					"elev": 25,
- *					"az": 48,
- *					"in_fix": 1,
- *					"unhealthy": 0
- *				},
- *				{
- *					"sv": 29,
- *					"c_n0": 43.5,
- *					"sig": 1,
- *					"elev": 14,
- *					"az": 354,
- *					"in_fix": 1,
- *					"unhealthy": 0
- *				},
- *				{
- *					"sv": 20,
- *					"c_n0": 42.9,
- *					"sig": 1,
- *					"elev": 27,
- *					"az": 302,
- *					"in_fix": 1,
- *					"unhealthy": 0
- *				},
- *				{
- *					"sv": 3,
- *					"c_n0": 42.2,
- *					"sig": 1,
- *					"elev": 9,
- *					"az": 137,
- *					"in_fix": 0,
- *					"unhealthy": 0
- *				}
- *			]
+ *			"acc": 4.484
+ *		},
+ *		"method_details": {
+ *			"tracked_satellites": 10,
+ *			"used_satellites": 9,
+ *			"pvt_data": {
+ *				"flags": 35,
+ *				"lng": 23.775882648600284,
+ *				"lat": 61.493788965179519,
+ *				"acc": 4.484,
+ *				"alt": 144.601,
+ *				"altAcc": 7.932,
+ *				"spd": 0.098,
+ *				"spdAcc": 0.345,
+ *				"hdg": 0,
+ *				"hdgAcc": 180,
+ *				"verSpd": 0.026,
+ *				"verSpdAcc": 0.655,
+ *				"pdop": 2.13,
+ *				"hdop": 0.955,
+ *				"vdop": 1.904,
+ *				"tdop": 1.171,
+ *				"sv_info": [
+ *					{
+ *						"sv": 4,
+ *						"c_n0": 47.2,
+ *						"sig": 1,
+ *						"elev": 52,
+ *						"az": 93,
+ *						"in_fix": 1,
+ *						"unhealthy": 0
+ *					},
+ *					{
+ *						"sv": 6,
+ *						"c_n0": 47.1,
+ *						"sig": 1,
+ *						"elev": 35,
+ *						"az": 237,
+ *						"in_fix": 1,
+ *						"unhealthy": 0
+ *					},
+ *					{
+ *						"sv": 7,
+ *						"c_n0": 48.4,
+ *						"sig": 1,
+ *						"elev": 33,
+ *						"az": 191,
+ *						"in_fix": 1,
+ *						"unhealthy": 0
+ *					},
+ *					{
+ *						"sv": 9,
+ *						"c_n0": 48.1,
+ *						"sig": 1,
+ *						"elev": 80,
+ *						"az": 194,
+ *						"in_fix": 1,
+ *						"unhealthy": 0
+ *					},
+ *					{
+ *						"sv": 11,
+ *						"c_n0": 47.5,
+ *						"sig": 1,
+ *						"elev": 39,
+ *						"az": 284,
+ *						"in_fix": 1,
+ *						"unhealthy": 0
+ *					},
+ *					{
+ *						"sv": 16,
+ *						"c_n0": 46.4,
+ *						"sig": 1,
+ *						"elev": 25,
+ *						"az": 84,
+ *						"in_fix": 1,
+ *						"unhealthy": 0
+ *					},
+ *					{
+ *						"sv": 26,
+ *						"c_n0": 42.7,
+ *						"sig": 1,
+ *						"elev": 25,
+ *						"az": 48,
+ *						"in_fix": 1,
+ *						"unhealthy": 0
+ *					},
+ *					{
+ *						"sv": 29,
+ *						"c_n0": 43.5,
+ *						"sig": 1,
+ *						"elev": 14,
+ *						"az": 354,
+ *						"in_fix": 1,
+ *						"unhealthy": 0
+ *					},
+ *					{
+ *						"sv": 20,
+ *						"c_n0": 42.9,
+ *						"sig": 1,
+ *						"elev": 27,
+ *						"az": 302,
+ *						"in_fix": 1,
+ *						"unhealthy": 0
+ *					},
+ *					{
+ *						"sv": 3,
+ *						"c_n0": 42.2,
+ *						"sig": 1,
+ *						"elev": 9,
+ *						"az": 137,
+ *						"in_fix": 0,
+ *						"unhealthy": 0
+ *					}
+ *				]
+ *			}
  *		}
  *	},
  *	"modem_details": {
- *		"operator_full_name": "DNA",
- *		"plmn": "24412",
- *		"cell_id": 1805086,
+ *		"operator_full_name": "ExampleOp",
+ *		"plmn": "12398",
+ *		"cell_id": 1234567,
  *		"pci": 110,
  *		"band": 20,
  *		"tac": 312,
@@ -611,49 +613,90 @@ cleanup:
  *		"sysmode": "LTE-M - GNSS"
  *	}
  *}
+ *
+ * An example output in json_str_out for Wi-Fi and cellular positioning is as follows:
+ *{
+ *	"data": "6.804",
+ *	"appId": "LOC_WIFI_CELLULAR_TTF",
+ *	"messageType": "DATA",
+ *	"ts": 1669711208428,
+ *	"location_req_info": {
+ *		"mosh_cmd": "get -m gnss -m cellular -m wifi --cloud_details --interval 15",
+ *	},
+ *	"location_data": {
+ *		"method": "Wi-Fi + Cellular",
+ *		"elapsed_time_method_sec": 6.804,
+ *		"position": {
+ *			"lng": 23.775882648600284,
+ *			"lat": 61.493788965179519,
+ *			"acc": 4.484
+ *		},
+ *		"method_details": {
+ *			"cellular_ncells_count":4,
+ *			"cellular_gci_cells_count":0,
+ *			"wifi_ap_cnt":4
+ *		}
+ *	},
+ *	"modem_details": {
+ *		"operator_full_name": "ExampleOp",
+ *		"plmn": "12398",
+ *		"cell_id": 1234567,
+ *		"pci": 110,
+ *		"band": 20,
+ *		"tac": 312,
+ *		"rsrp_dbm": -85,
+ *		"snr_db": 4,
+ *		"sysmode": "LTE-M - GNSS"
+ *	}
  */
-
-int location_details_utils_json_payload_encode(const struct location_details_data *loc_details_data,
-					       char **json_str_out)
+int location_details_json_payload_encode(
+	const struct location_event_data *loc_evt_data,
+	int64_t timestamp_ms,
+	const char *mosh_cmd,
+	char **json_str_out)
 {
-	__ASSERT_NO_MSG(loc_details_data != NULL);
+	__ASSERT_NO_MSG(loc_evt_data != NULL);
 	__ASSERT_NO_MSG(json_str_out != NULL);
 
 	int err = 0;
 	cJSON *root_obj = NULL;
-	char used_time_sec_str[32];
 	char app_id_str[32];
-	struct location_data_details *details;
-	struct location_event_data *loc_evt_data =
-		(struct location_event_data *)&loc_details_data->event_data;
-	double used_time_sec;
+	const struct location_data_details *details;
+	double elapsed_time_method_sec;
+	enum location_event_id event_id;
 
-	if (loc_evt_data->id == LOCATION_EVT_LOCATION) {
-		details = (struct location_data_details *)&loc_evt_data->location.details;
-	} else {
-		details = (struct location_data_details *)&loc_evt_data->error.details;
-	}
-	used_time_sec = details->elapsed_time_method;
+	details = location_details_get(loc_evt_data);
+	elapsed_time_method_sec = (double)details->elapsed_time_method / 1000;
 
 	/* Used time for a location request as a root "key"
 	 * and custom appId based on used method.
 	 */
-	if (loc_evt_data->method == LOCATION_METHOD_GNSS) {
+	switch (loc_evt_data->method) {
+	case LOCATION_METHOD_GNSS:
 		strcpy(app_id_str, "LOC_GNSS_TTF");
-	} else if (loc_evt_data->method == LOCATION_METHOD_CELLULAR) {
+		break;
+	case LOCATION_METHOD_CELLULAR:
 		strcpy(app_id_str, "LOC_CELL_TTF");
-	} else {
-		__ASSERT_NO_MSG(loc_evt_data->method == LOCATION_METHOD_WIFI);
+		break;
+	case LOCATION_METHOD_WIFI:
 		strcpy(app_id_str, "LOC_WIFI_TTF");
+		break;
+	default:
+		__ASSERT_NO_MSG(loc_evt_data->method == LOCATION_METHOD_WIFI_CELLULAR);
+		strcpy(app_id_str, "LOC_WIFI_CELLULAR_TTF");
+		break;
 	}
 
-	if (loc_evt_data->id == LOCATION_EVT_TIMEOUT) {
-		/* We alter the used time for timeout to pop out clearly
-		 * from other values in a card
-		 */
-		used_time_sec = -5;
-	} else if (loc_evt_data->id == LOCATION_EVT_ERROR) {
-		used_time_sec = -1;
+	event_id = loc_evt_data->id;
+	if (loc_evt_data->id == LOCATION_EVT_FALLBACK) {
+		event_id = loc_evt_data->fallback.cause;
+	}
+
+	/* Alter the time for timeout/error to pop out clearly in the card */
+	if (event_id == LOCATION_EVT_TIMEOUT) {
+		elapsed_time_method_sec = -5;
+	} else if (event_id == LOCATION_EVT_ERROR) {
+		elapsed_time_method_sec = -1;
 	}
 
 	/* This structure corresponds to the General Message Schema described in the
@@ -668,18 +711,16 @@ int location_details_utils_json_payload_encode(const struct location_details_dat
 		goto cleanup;
 	}
 
-	sprintf(used_time_sec_str, "%.2f", used_time_sec);
-
-	if (!cJSON_AddStringToObjectCS(root_obj, MSG_DATA, used_time_sec_str) ||
-	    !cJSON_AddStringToObjectCS(root_obj, MSG_APP_ID, app_id_str) ||
-	    !cJSON_AddStringToObjectCS(root_obj, MSG_TYPE, "DATA") ||
-	    !cJSON_AddNumberToObjectCS(root_obj, MSG_TIMESTAMP, loc_details_data->timestamp_ms)) {
+	if (!cJSON_AddNumberToObjectCS(root_obj, "data", elapsed_time_method_sec) ||
+	    !cJSON_AddStringToObjectCS(root_obj, "appId", app_id_str) ||
+	    !cJSON_AddStringToObjectCS(root_obj, "messageType", "DATA") ||
+	    !cJSON_AddNumberToObjectCS(root_obj, "ts", timestamp_ms)) {
 		mosh_error("Cannot add metadata json objects");
 		err = -ENOMEM;
 		goto cleanup;
 	}
 
-	err = location_details_json_payload_encode(loc_details_data, root_obj);
+	err = location_details_root_encode(loc_evt_data, mosh_cmd, root_obj);
 	if (err) {
 		mosh_error("Failed to encode details data to json");
 		goto cleanup;
