@@ -136,6 +136,7 @@ bool nrf_cloud_alert_control_get(void);
 /** @} */
 
 #ifdef __cplusplus
+}
 #endif
 
 #endif /* NRF_CLOUD_ALERT_H_ */
