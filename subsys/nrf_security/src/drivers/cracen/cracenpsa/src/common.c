@@ -25,6 +25,9 @@
 #define NOT_ENABLED_CURVE    (0)
 #define NOT_ENABLED_HASH_ALG (0)
 
+static const uint8_t RSA_ALGORITHM_IDENTIFIER[] = {0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7,
+						   0x0d, 0x01, 0x01, 0x01, 0x05, 0x00};
+
 psa_status_t silex_statuscodes_to_psa(int ret)
 {
 	switch (ret) {
@@ -433,9 +436,8 @@ int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *en
 }
 
 /*
- * This function is based mbedtls pk_parse_key_pkcs1_der().
  * This function extracts a RSA key from a key pair.
- * Based in extract_pubkey, we extract the public key, or
+ * Depending on extract_pubkey, we extract the public key, or
  * the private key.
  */
 int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
@@ -454,7 +456,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 	}
 
 	/*
-	 * This function parses the RSAPrivateKey (PKCS#1)
+	 * This function parses the RSA keys (PKCS#1)
 	 *
 	 *  RSAPrivateKey ::= SEQUENCE {
 	 *      version           Version,
@@ -468,6 +470,15 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 	 *      coefficient       INTEGER,  -- (inverse of q) mod p
 	 *      otherPrimeInfos   OtherPrimeInfos OPTIONAL
 	 *  }
+	 *
+	 *  RSAPublicKey ::= SEQUENCE {
+	 *      version           Version,
+	 *      modulus           INTEGER,  -- n
+	 *      publicExponent    INTEGER,  -- e
+	 *  }
+	 *
+	 *  OpenSSL wraps public keys with an RSA algorithm identifier that we skip
+	 *  if it is present.
 	 */
 	ret = mbedtls_asn1_get_tag(&p, end, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
 	if (ret) {
@@ -483,6 +494,36 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 		}
 		if (version != 0) {
 			return SX_ERR_INVALID_KEYREF;
+		}
+	} else {
+		/* Skip algorithm identifier prefix. */
+		unsigned char *id_seq = p;
+
+		ret = mbedtls_asn1_get_tag(&id_seq, end, &len,
+					   MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+		if (ret == 0) {
+			if (len != sizeof(RSA_ALGORITHM_IDENTIFIER)) {
+				return SX_ERR_INVALID_KEYREF;
+			}
+
+			if (memcmp(id_seq, RSA_ALGORITHM_IDENTIFIER, len) != 0) {
+				return SX_ERR_INVALID_KEYREF;
+			}
+
+			id_seq += len;
+
+			ret = mbedtls_asn1_get_tag(&id_seq, end, &len, MBEDTLS_ASN1_BIT_STRING);
+			if (ret != 0 || *id_seq != 0) {
+				return SX_ERR_INVALID_KEYREF;
+			}
+
+			p = id_seq + 1;
+
+			ret = mbedtls_asn1_get_tag(
+				&p, end, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+			if (ret) {
+				return SX_ERR_INVALID_KEYREF;
+			}
 		}
 	}
 
@@ -561,7 +602,7 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 	}
 #endif
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
-		PSA_KEY_LOCATION_CRACEN) {
+	    PSA_KEY_LOCATION_CRACEN) {
 
 		k->prepare_key = cracen_prepare_ik_key;
 		k->clean_key = cracen_clean_ik_key;
