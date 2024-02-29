@@ -3,19 +3,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	ipc0: ipc0 {
-		compatible = "zephyr,ipc-icmsg";
-		tx-region = <&cpuppr_cpuapp_ipc_shm>;
-		rx-region = <&cpuapp_cpuppr_ipc_shm>;
-		mboxes = <&cpuapp_bellboard 12>,
-			 <&vevif 12>;
-		mbox-names = "tx", "rx";
-		status = "okay";
-	};
+ipc0: &cpuapp_cpuppr_ipc {
+	status = "okay";
 };
 
-&vevif {
+&cpuppr_vevif {
 	status = "okay";
 };
 
