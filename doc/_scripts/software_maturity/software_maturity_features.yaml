@@ -22,10 +22,27 @@ features:
     Sidewalk over LORA: SIDEWALK && SIDEWALK_LINK_MASK_LORA
     Sidewalk - OTA DFU over Bluetooth LE: SIDEWALK && SIDEWALK_DFU_SERVICE_BLE
   bluetooth:
-    Bluetooth LE Peripheral/Central: BT_CTLR && (BT_CENTRAL || BT_PERIPHERAL)
-    LLPM: BT_CTLR_SDC_LLPM
-    LE Coded PHY: BT_CTLR_PHY_CODED_SUPPORT
-    Connectionless/Connected CTE Transmitter: BT_CTLR_DF_CTE_TX_SUPPORT
+    LE 2M PHY: BT_CTLR_PHY_2M_SUPPORT
+    Peripheral: BT_CTLR && BT_PERIPHERAL
+    Central: BT_CTLR && BT_CENTRAL
+    Data Length Extensions: BT_CTLR && BT_DATA_LEN_UPDATE
+    Advertising Extensions: BT_CTLR_ADV_EXT
+    Periodic Advertising: BT_CTLR_ADV_PERIODIC
+    Connectionless CTE Advertising: CONFIG_BT_CTLR_DF_CTE_TX
+    Connection CTE Response: CONFIG_BT_CTLR_DF_CTE_TX
+    LE Coded PHY: BT_CTLR_PHY_CODED
+    LE Power Control: BT_CTLR_LE_POWER_CONTROL
+    Periodic Advertising Sync Transfer - Sender: BT_CTLR_SYNC_TRANSFER_SENDER
+    Periodic Advertising Sync Transfer - Receiver: BT_CTLR_SYNC_TRANSFER_RECEIVER
+    Sleep Clock Accuracy Updates: BT_CTLR_SCA_UPDATE
+    Periodic Advertising with Responses - Advertiser: BT_CTLR_SDC_PAWR_ADV
+    Periodic Advertising with Responses - Scanner: BT_CTLR_SDC_PAWR_SYNC
+    Connected Isochronous Stream - Peripheral: BT_CTLR_PERIPHERAL_ISO
+    Connected Isochronous Stream - Central: BT_CTLR_CENTRAL_ISO
+    Isochronous Broadcaster: BT_CTLR_ADV_ISO
+    Synchronized Receiver: BT_CTLR_SYNC_ISO
+    Low Latency Packet Mode: BT_CTLR_SDC_LLPM
+    QoS Channel Survey: BT_CTLR_SDC_QOS_CHANNEL_SURVEY
   zigbee:
     Zigbee (Sleepy) End Device: ZIGBEE_ROLE_END_DEVICE
     Zigbee Router: CONFIG_ZIGBEE_ROLE_ROUTER
