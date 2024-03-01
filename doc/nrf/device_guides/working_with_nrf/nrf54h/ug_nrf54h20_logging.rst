@@ -34,10 +34,6 @@ This approach has a minimal cost on performance and code size, allowing for a no
 
 The STM implements a frontend of the Zephyr logging subsystem, allowing you to use the standard Zephyr logging API.
 
-.. note::
-
-   Currently, only the :ref:`multicore_hello_world` sample supports STM logging.
-
 Embedded Trace Router (ETR)
 ===========================
 
