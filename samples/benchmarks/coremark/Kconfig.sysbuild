@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "boards/Kconfig.sysbuild_boards"
+source "share/sysbuild/Kconfig"
+
+config IMAGE_2_BOARD
+	string
+	default ""
+
+config IMAGE_3_BOARD
+	string
+	default ""

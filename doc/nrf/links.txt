@@ -133,6 +133,8 @@
 .. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
 .. _`Matter factory data Kconfig options`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CHIP_FACTORY_DATA
 
+.. _`CoreMark GitHub`: https://github.com/eembc/coremark
+
 .. ### Matter links that need updated SHA per release
 
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/181b0cb/src/controller
@@ -1454,6 +1456,8 @@
 .. _`Devicetree Specification`: https://www.devicetree.org/
 
 .. _`Mobile IoT deployment map`: https://www.gsma.com/iot/deployment-map/
+
+.. _`CoreMark®`: https://www.eembc.org/coremark/
 
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 

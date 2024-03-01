@@ -347,7 +347,8 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`coremark_sample` sample that demonstrates how to easily measure a performance of the supported SoCs by running the Embedded Microprocessor Benchmark Consortium (EEMBC) CoreMark benchmark.
+  Included support for the nRF52840 DK, nRF5340 DK, and nRF54L15 PDK.
 
 Drivers
 =======
@@ -532,3 +533,5 @@ Documentation
 * Updated:
 
   * The table listing the :ref:`boards included in sdk-zephyr <app_boards_names_zephyr>` with the nRF54L15 PDK and nRF54H20 DK boards.
+
+* Added the :ref:`ug_coremark` page.

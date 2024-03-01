@@ -1,0 +1,62 @@
+sample:
+  name: CoreMark Benchmark
+  description: CoreMark sample for the CPU performance evaluation.
+               Sample runs the CoreMark benchmark that measures the CPU efficiency
+               performing different algorithms like state machine, CRC calculation,
+               matrix manipulation and list processing (find and sort).
+tests:
+  sample.benchmark.coremark:
+    sysbuild: true
+    build_only: false
+    platform_allow:
+      - nrf52840dk_nrf52840
+      - nrf52dk_nrf52832
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp
+    tags: ci_build
+    harness: console
+    harness_config:
+      ordered: false
+      regex:
+        - "CoreMark started!"
+        - "Correct operation validated."
+      type: multi_line
+    extra_args: CONFIG_APP_MODE_FLASH_AND_RUN=y
+  sample.benchmark.coremark_heap_nrf53:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: EXTRA_CONF_FILE="prj_heap_memory.conf"
+                coremark_nrf5340dk_nrf5340_cpunet_EXTRA_CONF_FILE="prj_heap_memory.conf"
+  sample.benchmark.coremark_static:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf52840dk_nrf52840
+      - nrf52dk_nrf52832
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    tags: ci_build
+    extra_args: EXTRA_CONF_FILE="prj_static_memory.conf"
+  sample.benchmark.coremark_multithread:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf52840dk_nrf52840
+      - nrf52dk_nrf52832
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    tags: ci_build
+    extra_args: EXTRA_CONF_FILE="prj_multiple_threads.conf"
