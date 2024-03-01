@@ -134,6 +134,8 @@ features:
     Immutable Bootloader as part of build: SECURE_BOOT
   hw_unique_key:
     Key Derivation from Hardware Unique Key: HW_UNIQUE_KEY
+  trusted_storage:
+    Trusted storage implements the PSA Certified Secure Storage APIs without TF-M: TRUSTED_STORAGE
   power_management:
     nPM1100: REGULATOR_NPM1100
     nPM1300: MFD_NPM1300
