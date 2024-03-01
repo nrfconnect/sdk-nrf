@@ -1061,6 +1061,8 @@ Libraries for networking
 
 * :ref:`lib_azure_iot_hub` library:
 
+  * Added the :file:`cert_tool.py` Python script.
+    This is a script to generate EC private keys, create Certificate Signing Request (CSR), create root Certificate Authority (CA), subordinate CA certificates, and sign CSRs.
   * Improved the documentation on IoT Hub configuration and credentials storage.
     The documentation now contains more details on how to use the Azure CLI to set up an IoT Hub.
     The documentation on credential provisioning has also been updated, both for nRF91 Series devices and nRF70 Series devices.
@@ -1278,10 +1280,6 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
   * Separated functions that are specific to handling the :file:`dfu_application.zip` file format.
     The ZIP format is used for update images in the nRF Connect SDK.
     The change simplifies integrating new update image file formats.
-
-* Added ``cert_tool.py`` script.
-
-  This is a script to generate EC private keys, create CSRs, create root CA and subordinate CA certificates and sign CSRs.
 
 MCUboot
 =======
