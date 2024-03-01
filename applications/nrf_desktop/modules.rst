@@ -1,7 +1,7 @@
 .. _nrf_desktop_app_internal_modules:
 
-nRF Desktop application internal modules
-########################################
+nRF Desktop: Application internal modules
+#########################################
 
 .. contents::
    :local:

@@ -59,11 +59,14 @@ external_content_contents = [
     (MATTER_BASE / "docs" / "guides", "nrfconnect_examples_configuration.md"),
     (MATTER_BASE / "docs" / "guides", "nrfconnect_examples_cli.md"),
     (MATTER_BASE / "docs" / "guides", "nrfconnect_examples_software_update.md"),
+    (MATTER_BASE / "docs" / "guides", "openthread_border_router_pi.md"),
+    (MATTER_BASE / "docs" / "guides", "openthread_rcp_nrf_dongle.md"),
     (MATTER_BASE / "docs" / "guides", "nrfconnect_factory_data_configuration.md"),
     (MATTER_BASE / "docs" / "guides", "BUILDING.md"),
     (MATTER_BASE / "docs" / "guides", "chip_tool_guide.md"),
     (MATTER_BASE / "docs" / "guides", "access-control-guide.md"),
     (MATTER_BASE / "src" / "tools" / "chip-cert", "README.md"),
+
 ]
 
 

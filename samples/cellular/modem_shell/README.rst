@@ -1242,7 +1242,7 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -d build -- -DOVERLAY_CONFIG="overlay-cloud_mqtt.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y
+   west build -p -b *build_target* -d build -- -DOVERLAY_CONFIG=overlay-cloud_mqtt.conf -DCONFIG_LOCATION_SERVICE_EXTERNAL=y
 
 |build_target|
 

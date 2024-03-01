@@ -20,7 +20,7 @@ To enable external flash with MCUboot, complete the following steps:
 #. Enable the :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` Kconfig option.
    (Depending on the build configuration, this option will be set to ``y`` automatically.)
 
-#. Update the ``CONFIG_BOOT_MAX_IMG_SECTORS`` `MCUboot Kconfig option <https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370>`_ accordingly for child images.
+#. Update the ``CONFIG_BOOT_MAX_IMG_SECTORS`` `MCUboot Kconfig option`_ accordingly for child images.
    This option defines the maximum number of image sectors MCUboot can handle, as MCUboot typically increases slot sizes when external flash is enabled.
    Otherwise the ``CONFIG_BOOT_MAX_IMG_SECTORS`` Kconfig option defaults to the value used for internal flash, and the application may not boot if the value is set too low.
 

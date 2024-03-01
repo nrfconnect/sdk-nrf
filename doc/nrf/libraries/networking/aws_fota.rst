@@ -176,10 +176,10 @@ Known error codes
 =================
 
 ERROR: ``-NRF_ECONNREFUSED``:
-   Error ``-NRF_ECONNREFUSED`` ("Connection refused") indicates an error with the configured certificates.
+   Connection refused - This indicates an error with the configured certificates.
 
 ERROR: ``-NRF_EHOSTUNREACH``:
-   Error ``-NRF_EHOSTUNREACH`` ("Host is unreachable") indicates that the download URL provided in the job document is wrong.
+   Host is unreachable - This indicates that the download URL provided in the job document is wrong.
 
 Content range is not defined:
    If you host the firmware image on a different server than in an S3 bucket, this error indicates that the Content-Range field is missing in the HTTP GET header.
