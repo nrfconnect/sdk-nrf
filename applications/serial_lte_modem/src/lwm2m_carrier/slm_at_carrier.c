@@ -258,6 +258,9 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		/* Return -1 to defer the reboot until the application decides to do so. */
 		err = -1;
 		break;
+	case LWM2M_CARRIER_EVENT_MODEM_DOMAIN:
+		LOG_DBG("LWM2M_CARRIER_EVENT_MODEM_DOMAIN");
+		break;
 	case LWM2M_CARRIER_EVENT_APP_DATA:
 		LOG_DBG("LWM2M_CARRIER_EVENT_APP_DATA");
 		on_event_app_data(event);
