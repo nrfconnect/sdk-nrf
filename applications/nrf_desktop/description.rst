@@ -881,8 +881,6 @@ You can also configure the following feature in the nRF Desktop application:
 * :ref:`Memory layout <nrf_desktop_memory_layout>`
 * :ref:`Bluetooth <nrf_desktop_bluetooth_guide>`
 * :ref:`Bootloader and Device Firmware Update <nrf_desktop_bootloader>`
-* :ref:`nrf_desktop_board_configuration`
-* :ref:`nrf_desktop_nrf21540ek`
 
 Building and running
 ********************
