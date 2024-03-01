@@ -377,7 +377,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 		LOG_DBG("efd events 0x%08x", fds[EVENT_FD].revents);
 		if ((fds[SOCK].revents & POLLIN) != 0) {
 			if (proxy.role == UDP_ROLE_SERVER) {
-				/* remember remote from last recvfrom */
+				/* Store the remote to send responses with the #XUDPSEND command. */
 				unsigned int size = sizeof(proxy.remote);
 
 				memset(&proxy.remote, 0, sizeof(proxy.remote));
@@ -391,12 +391,10 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 			if (ret < 0 && errno != EAGAIN) {
 				LOG_WRN("recv() error: %d", -errno);
 			} else if (ret > 0) {
-				if (in_datamode()) {
-					data_send(slm_data_buf, ret);
-				} else {
+				if (!in_datamode()) {
 					rsp_send("\r\n#XUDPDATA: %d\r\n", ret);
-					data_send(slm_data_buf, ret);
 				}
+				data_send(slm_data_buf, ret);
 			}
 		}
 		if ((fds[SOCK].revents & POLLERR) != 0) {
@@ -428,12 +426,12 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 
 	} while (true);
 
-	if (in_datamode()) {
-		exit_datamode_handler(ret);
-	}
 	close(proxy.sock);
 	proxy.sock = INVALID_SOCKET;
-	if (proxy.role == UDP_ROLE_CLIENT) {
+
+	if (in_datamode()) {
+		exit_datamode_handler(ret);
+	} else if (proxy.role == UDP_ROLE_CLIENT) {
 		rsp_send("\r\n#XUDPCLI: %d,\"disconnected\"\r\n", ret);
 	} else {
 		rsp_send("\r\n#XUDPSVR: %d,\"stopped\"\r\n", ret);
@@ -453,9 +451,13 @@ static int udp_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8
 			return -EOVERFLOW;
 		}
 		ret = do_udp_send_datamode(data, len);
-		LOG_INF("datamode send: %d", ret);
+		LOG_DBG("datamode send: %d", ret);
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("datamode exit");
+		if ((flags & SLM_DATAMODE_FLAGS_EXIT_HANDLER) != 0) {
+			/* Datamode exited unexpectedly. */
+			rsp_send(CONFIG_SLM_DATAMODE_TERMINATOR);
+		}
 	}
 
 	return ret;

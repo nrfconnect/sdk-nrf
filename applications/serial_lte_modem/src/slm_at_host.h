@@ -25,6 +25,7 @@
 
 #define SLM_DATAMODE_FLAGS_NONE	0
 #define SLM_DATAMODE_FLAGS_MORE_DATA (1 << 0)
+#define SLM_DATAMODE_FLAGS_EXIT_HANDLER (1 << 1)
 
 extern struct at_param_list slm_at_param_list; /* For AT parser. */
 extern uint8_t slm_data_buf[SLM_MAX_MESSAGE_SIZE];  /* For socket data. */
@@ -143,7 +144,10 @@ int enter_datamode(slm_datamode_handler_t handler);
 bool in_datamode(void);
 
 /**
- * @brief Indicate that data mode handler has closed
+ * @brief Exit the data mode handler
+ *
+ * Remove the callback to the data mode handler and start dropping the incoming data, until
+ * the data mode is exited.
  *
  * @param result Result of sending in data mode.
  *
