@@ -1,4 +1,5 @@
 .. _test_and_optimize:
+.. _testing:
 .. _gs_testing:
 .. _serial_terminal_connect:
 .. _testing_rtt:

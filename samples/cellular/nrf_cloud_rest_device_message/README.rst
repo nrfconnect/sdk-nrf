@@ -69,6 +69,8 @@ This sample supports two methods to onboard your device:
    This is the legacy option.
    Use this method for nRF9160-based devices.
 
+.. _remote_prov_auto_onboard:
+
 Remote provisioning and auto-onboarding with nRF Cloud
 ======================================================
 
