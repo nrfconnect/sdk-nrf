@@ -9,6 +9,14 @@ The devices on the non-Matter side of the Matter bridge are called *bridged devi
 
 The Matter bridge device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.11ax (Wi-Fi 6) network.
 
+Currently the Matter bridge application supports the following types of *bridged devices*:
+
+* Bluetooth® LE peripheral devices - Devices that operate on real data (such as sensor measurements or lighting state).
+* Simulated devices - Devices that interact with the bridge by using data fabricated programmatically by the software.
+
+Note that, in addition to already implemented *bridged devices*, the Matter bridge architecture allows you to add support for other devices that run over diverse connectivity technologies, such as Zigbee or Bluetooth® Mesh.
+To learn more details about supported *bridged devices*, refer to the :ref:`Bridged device support <matter_bridge_app_bridged_support>` section of Matter bridge application guide.
+
 See the subpages for how to use the application and how to extend it.
 
 .. toctree::
