@@ -62,42 +62,42 @@ The following structure collects all Matter interfaces that need to be initializ
     * and custom initialization callbacks that must be initialized in the Matter thread.
     */
    struct InitData {
-     /** @brief Matter stack events handler. */
-     chip::DeviceLayer::PlatformManager::EventHandlerFunct mEventHandler{ DefaultEventHandler };
-     /** @brief Pointer to the user provided NetworkCommissioning instance. */
+         /** @brief Matter stack events handler. */
+         chip::DeviceLayer::PlatformManager::EventHandlerFunct mEventHandler{ DefaultEventHandler };
+         /** @brief Pointer to the user provided NetworkCommissioning instance. */
    #ifdef CONFIG_CHIP_WIFI
-     chip::app::Clusters::NetworkCommissioning::Instance *mNetworkingInstance{ &sWiFiCommissioningInstance };
+         chip::app::Clusters::NetworkCommissioning::Instance *mNetworkingInstance{ &sWiFiCommissioningInstance };
    #else
-     chip::app::Clusters::NetworkCommissioning::Instance *mNetworkingInstance{ nullptr };
+         chip::app::Clusters::NetworkCommissioning::Instance *mNetworkingInstance{ nullptr };
    #endif
-     /** @brief Pointer to the user provided custom server initialization parameters. */
-     chip::CommonCaseDeviceServerInitParams *mServerInitParams{ &sServerInitParamsDefault };
-     /** @brief Pointer to the user provided custom device info provider implementation. */
-     chip::DeviceLayer::DeviceInfoProviderImpl *mDeviceInfoProvider{ nullptr };
+         /** @brief Pointer to the user provided custom server initialization parameters. */
+         chip::CommonCaseDeviceServerInitParams *mServerInitParams{ &sServerInitParamsDefault };
+         /** @brief Pointer to the user provided custom device info provider implementation. */
+         chip::DeviceLayer::DeviceInfoProviderImpl *mDeviceInfoProvider{ nullptr };
    #ifdef CONFIG_CHIP_FACTORY_DATA
-     /** @brief Pointer to the user provided FactoryDataProvider implementation. */
-     chip::DeviceLayer::FactoryDataProviderBase *mFactoryDataProvider{ &sFactoryDataProviderDefault };
+         /** @brief Pointer to the user provided FactoryDataProvider implementation. */
+         chip::DeviceLayer::FactoryDataProviderBase *mFactoryDataProvider{ &sFactoryDataProviderDefault };
    #endif
    #ifdef CONFIG_CHIP_CRYPTO_PSA
-     /** @brief Pointer to the user provided OperationalKeystore implementation. */
-     chip::Crypto::OperationalKeystore *mOperationalKeyStore{ &sOperationalKeystoreDefault };
+         /** @brief Pointer to the user provided OperationalKeystore implementation. */
+         chip::Crypto::OperationalKeystore *mOperationalKeyStore{ &sOperationalKeystoreDefault };
    #endif
-     /** @brief Custom code to execute in the Matter main event loop before the server initialization. */
-     CustomInit mPreServerInitClbk{ nullptr };
-     /** @brief Custom code to execute in the Matter main event loop after the server initialization. */
-     CustomInit mPostServerInitClbk{ nullptr };
+         /** @brief Custom code to execute in the Matter main event loop before the server initialization. */
+         CustomInit mPreServerInitClbk{ nullptr };
+         /** @brief Custom code to execute in the Matter main event loop after the server initialization. */
+         CustomInit mPostServerInitClbk{ nullptr };
 
-     /** @brief Default implementation static objects that will be stripped by the compiler when above
-      * pointers are overwritten by the application. */
+         /** @brief Default implementation static objects that will be stripped by the compiler when above
+          * pointers are overwritten by the application. */
    #ifdef CONFIG_CHIP_WIFI
-     static chip::app::Clusters::NetworkCommissioning::Instance sWiFiCommissioningInstance;
+         static chip::app::Clusters::NetworkCommissioning::Instance sWiFiCommissioningInstance;
    #endif
-     static chip::CommonCaseDeviceServerInitParams sServerInitParamsDefault;
+         static chip::CommonCaseDeviceServerInitParams sServerInitParamsDefault;
    #ifdef CONFIG_CHIP_FACTORY_DATA
-     static chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> sFactoryDataProviderDefault;
+         static chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> sFactoryDataProviderDefault;
    #endif
    #ifdef CONFIG_CHIP_CRYPTO_PSA
-     static chip::Crypto::PSAOperationalKeystore sOperationalKeystoreDefault;
+         static chip::Crypto::PSAOperationalKeystore sOperationalKeystoreDefault;
    #endif
    };
 
@@ -166,31 +166,31 @@ Combining both aforementioned nRF Connect Matter APIs, you can develop an applic
 
    static void CustomMatterEventHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
    {
-     switch (event->Type) {
-     case DeviceEventType::kCHIPoBLEAdvertisingChange:
-     /* Custom code, e.g. control LED */
-     break;
-     }
+         switch (event->Type) {
+         case DeviceEventType::kCommissioningComplete:
+             /* Custom code, e.g. control LED */
+             break;
+         }
    }
 
    CHIP_ERROR MatterAppInit()
    {
-     /* Initialize Matter stack */
-     ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
-     LOG_INF("Matter server has been initialized.");
-     return CHIP_NO_ERROR;
-     } }));
+         /* Initialize Matter stack */
+         ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
+                LOG_INF("Matter server has been initialized.");
+                return CHIP_NO_ERROR;
+         } }));
 
-     /* Register custom Matter event handler. */
-     ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(CustomMatterEventHandler, 0));
+         /* Register custom Matter event handler. */
+         ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(CustomMatterEventHandler, 0));
 
-     /* Application specific initialization, e.g. hardware initialization.
+         /* Application specific initialization, e.g. hardware initialization.
 
-     ...
-     */
+            ...
+         */
 
-     /* Start Matter thread that will run the scheduled initialization procedure. */
-     return Nrf::Matter::StartServer();
+         /* Start Matter thread that will run the scheduled initialization procedure. */
+         return Nrf::Matter::StartServer();
    }
 
 Note that the ``PrepareServer()`` call may contain more fields of the :c:struct:`InitData` being initialized, or can be called without any explicit argument.
@@ -228,20 +228,20 @@ An example implementation of the :c:func:`MatterPostAttributeChangeCallback()` t
    void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &attributePath, uint8_t type,
                    uint16_t size, uint8_t *value)
    {
-     if (attributePath.mClusterId == DoorLock::Id &&
-         attributePath.mAttributeId == DoorLock::Attributes::LockState::Id) {
-       /* Post events only if current lock state is different than given */
-       switch (*value) {
-       case to_underlying(DlLockState::kLocked):
-         /* Lock the physical door lock. */
-         break;
-       case to_underlying(DlLockState::kUnlocked):
-       /* Unlock the physical door lock. */
-         break;
-       default:
-         break;
-       }
-     }
+         if (attributePath.mClusterId == DoorLock::Id &&
+             attributePath.mAttributeId == DoorLock::Attributes::LockState::Id) {
+           /* Post events only if current lock state is different than given */
+           switch (*value) {
+           case to_underlying(DlLockState::kLocked):
+                 /* Lock the physical door lock. */
+                 break;
+           case to_underlying(DlLockState::kUnlocked):
+               /* Unlock the physical door lock. */
+                 break;
+           default:
+                 break;
+           }
+         }
    }
 
 In addition to Matter generic callbacks, the Matter Data Model engine provides callbacks that are cluster-specific.
