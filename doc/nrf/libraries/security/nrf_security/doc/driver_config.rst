@@ -750,7 +750,6 @@ To enable password-authenticated key exchange (PAKE) support, set one or more of
 
 .. note::
    * The provided support is experimental.
-   * Not supported with TF-M.
 
 Password-authenticated key exchange support
 ===========================================
