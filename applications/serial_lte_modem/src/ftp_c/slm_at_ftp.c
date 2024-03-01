@@ -390,10 +390,10 @@ static int ftp_put_handler(const uint8_t *data, int len, uint8_t flags)
 	if (strlen(filepath) > 0 && data != NULL) {
 		ret = ftp_put(filepath, data, len, FTP_PUT_NORMAL);
 		if (ret != FTP_CODE_226) {
-			(void) exit_datamode_handler(-EAGAIN);
+			exit_datamode_handler(-EAGAIN);
 		} else if ((flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
 			LOG_ERR("Datamode buffer overflow");
-			(void)exit_datamode_handler(-EOVERFLOW);
+			exit_datamode_handler(-EOVERFLOW);
 		}
 	}
 
@@ -443,10 +443,10 @@ static int ftp_uput_handler(const uint8_t *data, int len, uint8_t flags)
 	if (data != NULL) {
 		ret = ftp_put(NULL, data, len, FTP_PUT_UNIQUE);
 		if (ret != FTP_CODE_226) {
-			(void)exit_datamode_handler(-EAGAIN);
+			exit_datamode_handler(-EAGAIN);
 		} else if ((flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
 			LOG_ERR("Datamode buffer overflow");
-			(void)exit_datamode_handler(-EOVERFLOW);
+			exit_datamode_handler(-EOVERFLOW);
 		}
 	}
 
