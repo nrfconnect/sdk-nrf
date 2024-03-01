@@ -82,8 +82,8 @@
 #define CRACEN_SPAKE2P_HASH_LEN PSA_HASH_LENGTH(PSA_ALG_SHA_256)
 
 enum cipher_operation {
-	DECRYPT,
-	ENCRYPT
+	CRACEN_DECRYPT,
+	CRACEN_ENCRYPT
 };
 
 enum cracen_kd_state {

@@ -57,8 +57,9 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 	}
 
 	int si_status = cracen_signature_get_rsa_key(
-		&pubkey, dir == ENCRYPT, PSA_KEY_TYPE_RSA_KEY_PAIR == psa_get_key_type(attributes),
-		key_buffer, key_buffer_size, &modulus, &exponent);
+		&pubkey, dir == CRACEN_ENCRYPT,
+		psa_get_key_type(attributes) == PSA_KEY_TYPE_RSA_KEY_PAIR, key_buffer,
+		key_buffer_size, &modulus, &exponent);
 
 	if (si_status != SX_OK) {
 		return silex_statuscodes_to_psa(si_status);
@@ -79,7 +80,7 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 
 			struct sx_buf label = {salt_length, (char *)salt};
 
-			if (dir == ENCRYPT) {
+			if (dir == CRACEN_ENCRYPT) {
 				si_ase_create_rsa_oaep_encrypt(&t, hashalg, &pubkey, &text, &label);
 			} else {
 				si_ase_create_rsa_oaep_decrypt(&t, hashalg, &pubkey, &text, &label);
@@ -89,7 +90,7 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_RSA_PKCS1V15_CRYPT)) {
 		if (alg == PSA_ALG_RSA_PKCS1V15_CRYPT) {
-			if (dir == ENCRYPT) {
+			if (dir == CRACEN_ENCRYPT) {
 				si_ase_create_rsa_pkcs1v15_encrypt(&t, &pubkey, &text);
 			} else {
 				si_ase_create_rsa_pkcs1v15_decrypt(&t, &pubkey, &text);
@@ -130,7 +131,7 @@ psa_status_t cracen_asymmetric_encrypt(const psa_key_attributes_t *attributes,
 {
 	return cracen_asymmetric_crypt_internal(attributes, key_buffer, key_buffer_size, alg, input,
 						input_length, salt, salt_length, output,
-						output_size, output_length, ENCRYPT);
+						output_size, output_length, CRACEN_ENCRYPT);
 }
 
 psa_status_t cracen_asymmetric_decrypt(const psa_key_attributes_t *attributes,
@@ -141,5 +142,5 @@ psa_status_t cracen_asymmetric_decrypt(const psa_key_attributes_t *attributes,
 {
 	return cracen_asymmetric_crypt_internal(attributes, key_buffer, key_buffer_size, alg, input,
 						input_length, salt, salt_length, output,
-						output_size, output_length, DECRYPT);
+						output_size, output_length, CRACEN_DECRYPT);
 }
