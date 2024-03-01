@@ -633,7 +633,8 @@ Matter samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`mult
 Multicore samples
 -----------------
 
-|no_changes_yet_note|
+* Removed the "Multicore Hello World application" sample in favor of :zephyr:code-sample:`sysbuild_hello_world`, which has equivalent functionality.
+  This also removes the Multicore samples category from the :ref:`samples` page.
 
 Networking samples
 ------------------

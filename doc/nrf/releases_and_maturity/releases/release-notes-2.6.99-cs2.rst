@@ -94,7 +94,7 @@ Enhanced ShockBurst samples
 Multicore samples
 -----------------
 
-* :ref:`multicore_hello_world` sample:
+* ``multicore_hello_world`` sample:
 
   * Added support for the :ref:`nRF54H20 DK <ug_nrf54h20_gs>` with build target ``nrf54h20dk_nrf54h20_cpuapp``.
 
