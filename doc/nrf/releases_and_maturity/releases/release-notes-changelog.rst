@@ -636,6 +636,7 @@ Cellular samples
 Cryptography samples
 --------------------
 
+* Added the :ref:`crypto_pbkdf2` sample.
 * Updated:
 
   * All crypto samples to use ``psa_key_id_t`` instead of ``psa_key_handle_t``.
@@ -1339,10 +1340,14 @@ For more information see the `zcbor 0.8.0 release notes`_ and the `zcbor 0.8.1 r
 Trusted Firmware-M
 ==================
 
-* The minimal TF-M build profile no longer silences TF-M logs by default.
+* Updated:
 
-  .. note::
-     This can be a breaking change if the UART instance used by TF-M is already in use, for example by modem trace with a UART backend.
+  * The minimal TF-M build profile no longer silences TF-M logs by default.
+
+    .. note::
+       This can be a breaking change if the UART instance used by TF-M is already in use, for example by modem trace with a UART backend.
+
+  * The TF-M version is updated to TF-M v2.0.0.
 
 cJSON
 =====
