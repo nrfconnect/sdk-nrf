@@ -22,7 +22,6 @@ menuconfig ZIGBEE
 	imply MPU_ALLOW_FLASH_WRITE
 	imply NRF_STORE_REBOOT_TYPE_GPREGRET
 	depends on (SOC_NRF52840 || SOC_NRF52833 || SOC_NRF5340_CPUAPP)
-	select EXPERIMENTAL
 
 if ZIGBEE
 
@@ -368,7 +367,6 @@ choice
 	prompt "ZBOSS time source"
 	default ZIGBEE_TIME_COUNTER if ZIGBEE_LIBRARY_PRODUCTION && \
 		$(dt_chosen_enabled,$(DT_CHOSEN_NCS_ZIGBEE_TIMER))
-	default ZIGBEE_TIME_KTIMER if ZIGBEE_LIBRARY_DEVELOPMENT
 
 config ZIGBEE_TIME_COUNTER
 	bool "Dedicated timer-based counter"
