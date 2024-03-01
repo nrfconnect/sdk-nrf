@@ -197,7 +197,7 @@ Cellular samples
 Cryptography samples
 --------------------
 
-|no_changes_yet_note|
+* Added :ref:`crypto_spake2p` sample.
 
 Debug samples
 -------------
