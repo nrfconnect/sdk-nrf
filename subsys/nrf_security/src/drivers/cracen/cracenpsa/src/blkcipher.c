@@ -70,7 +70,7 @@ static psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const ui
 
 	*output_length = 0;
 
-	if (dir == ENCRYPT) {
+	if (dir == CRACEN_ENCRYPT) {
 		sx_status = sx_blkcipher_create_aesecb_enc(&blkciph, key);
 	} else {
 		sx_status = sx_blkcipher_create_aesecb_dec(&blkciph, key);
@@ -125,7 +125,7 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 				return status;
 			}
 			return cracen_cipher_crypt_ecb(&key, input, input_length, output,
-						       output_size, output_length, ENCRYPT);
+						       output_size, output_length, CRACEN_ENCRYPT);
 		}
 	}
 
@@ -174,7 +174,7 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 				return status;
 			}
 			return cracen_cipher_crypt_ecb(&key, input, input_length, output,
-						       output_size, output_length, DECRYPT);
+						       output_size, output_length, CRACEN_DECRYPT);
 		}
 	}
 
@@ -244,7 +244,7 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 	switch (operation->alg) {
 	case PSA_ALG_CBC_NO_PADDING:
 		if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES)) {
-			sx_status = operation->dir == DECRYPT
+			sx_status = operation->dir == CRACEN_DECRYPT
 					    ? sx_blkcipher_create_aescbc_dec(&operation->cipher,
 									     &operation->keyref,
 									     operation->iv)
@@ -255,7 +255,7 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 		break;
 	case PSA_ALG_CBC_PKCS7:
 		if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
-			sx_status = operation->dir == DECRYPT
+			sx_status = operation->dir == CRACEN_DECRYPT
 					    ? sx_blkcipher_create_aescbc_dec(&operation->cipher,
 									     &operation->keyref,
 									     operation->iv)
@@ -266,7 +266,7 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 		break;
 	case PSA_ALG_OFB:
 		if (IS_ENABLED(PSA_NEED_CRACEN_OFB_AES)) {
-			sx_status = operation->dir == DECRYPT
+			sx_status = operation->dir == CRACEN_DECRYPT
 					    ? sx_blkcipher_create_aesofb_dec(&operation->cipher,
 									     &operation->keyref,
 									     operation->iv)
@@ -278,7 +278,7 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 	case PSA_ALG_CTR:
 		if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
 			sx_status =
-				operation->dir == DECRYPT
+				operation->dir == CRACEN_DECRYPT
 					? sx_blkcipher_create_aesctr_dec(&operation->cipher,
 									 &operation->keyref,
 									 operation->iv)
@@ -289,7 +289,7 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 		break;
 	case PSA_ALG_STREAM_CIPHER:
 		if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)) {
-			sx_status = operation->dir == DECRYPT
+			sx_status = operation->dir == CRACEN_DECRYPT
 					    ? sx_blkcipher_create_chacha20_dec(
 						      &operation->cipher, &operation->keyref,
 						      &operation->iv[0], &operation->iv[4])
@@ -347,7 +347,8 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
-	return operation_setup(ENCRYPT, operation, attributes, key_buffer, key_buffer_size, alg);
+	return operation_setup(CRACEN_ENCRYPT, operation, attributes, key_buffer, key_buffer_size,
+			       alg);
 }
 
 psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
@@ -355,7 +356,8 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
-	return operation_setup(DECRYPT, operation, attributes, key_buffer, key_buffer_size, alg);
+	return operation_setup(CRACEN_DECRYPT, operation, attributes, key_buffer, key_buffer_size,
+			       alg);
 }
 
 psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const uint8_t *iv,
@@ -434,7 +436,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 	/* Clamp processed data to multiple of block size */
 	size_t block_bytes = input_length & ~((uint32_t)operation->blk_size - 1);
 
-	if (operation->dir == DECRYPT && operation->alg == PSA_ALG_CBC_PKCS7) {
+	if (operation->dir == CRACEN_DECRYPT && operation->alg == PSA_ALG_CBC_PKCS7) {
 		/* The last block contains padding. The block containing padding
 		 * must be handled in finish operation. If input data is block
 		 * aligned we must postpone processing of the last block.
@@ -587,7 +589,7 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
 		if (operation->alg == PSA_ALG_CBC_PKCS7) {
-			if (operation->dir == ENCRYPT) {
+			if (operation->dir == CRACEN_ENCRYPT) {
 				uint8_t padding = (uint32_t)operation->blk_size -
 						  operation->unprocessed_input_bytes;
 

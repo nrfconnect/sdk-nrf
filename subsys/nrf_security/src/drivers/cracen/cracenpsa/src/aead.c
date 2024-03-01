@@ -122,7 +122,7 @@ static psa_status_t initialize_ctx(cracen_aead_operation_t *operation)
 	switch (operation->alg) {
 	case PSA_ALG_GCM:
 		if (IS_ENABLED(PSA_NEED_CRACEN_GCM_AES)) {
-			sx_status = operation->dir == DECRYPT
+			sx_status = operation->dir == CRACEN_DECRYPT
 					    ? sx_aead_create_aesgcm_dec(
 						      &operation->ctx, &operation->keyref,
 						      operation->nonce, operation->tag_size)
@@ -133,7 +133,7 @@ static psa_status_t initialize_ctx(cracen_aead_operation_t *operation)
 		break;
 	case PSA_ALG_CCM:
 		if (IS_ENABLED(PSA_NEED_CRACEN_CCM_AES)) {
-			sx_status = operation->dir == DECRYPT
+			sx_status = operation->dir == CRACEN_DECRYPT
 					    ? sx_aead_create_aesccm_dec(
 						      &operation->ctx, &operation->keyref,
 						      operation->nonce, operation->nonce_length,
@@ -148,7 +148,7 @@ static psa_status_t initialize_ctx(cracen_aead_operation_t *operation)
 		break;
 	case PSA_ALG_CHACHA20_POLY1305:
 		if (IS_ENABLED(PSA_NEED_CRACEN_CHACHA20_POLY1305)) {
-			sx_status = operation->dir == DECRYPT
+			sx_status = operation->dir == CRACEN_DECRYPT
 					    ? sx_aead_create_chacha20poly1305_dec(
 						      &operation->ctx, &operation->keyref,
 						      operation->nonce, operation->tag_size)
@@ -333,7 +333,7 @@ psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg)
 {
-	return setup(operation, ENCRYPT, attributes, key_buffer, key_buffer_size, alg);
+	return setup(operation, CRACEN_ENCRYPT, attributes, key_buffer, key_buffer_size, alg);
 }
 
 psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
@@ -341,7 +341,7 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg)
 {
-	return setup(operation, DECRYPT, attributes, key_buffer, key_buffer_size, alg);
+	return setup(operation, CRACEN_DECRYPT, attributes, key_buffer, key_buffer_size, alg);
 }
 
 psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
@@ -394,8 +394,8 @@ static psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operati
 			return PSA_SUCCESS;
 		}
 
-		memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes,
-			   input, remaining_bytes);
+		memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes, input,
+		       remaining_bytes);
 		input += remaining_bytes;
 		input_length -= remaining_bytes;
 		operation->unprocessed_input_bytes += remaining_bytes;
