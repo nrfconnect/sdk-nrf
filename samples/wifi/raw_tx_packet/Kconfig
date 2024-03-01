@@ -16,42 +16,6 @@ config RAW_TX_PKT_SAMPLE_DHCP_TIMEOUT_S
 	int "DHCP timeout in seconds"
 	default 20
 
-config RAW_TX_PKT_SAMPLE_SSID
-	string "SSID"
-	help
-	  Specify the SSID to establish a wireless connection with
-	  an Access point in Connected Station mode.
-
-choice  RAW_TX_PKT_SAMPLE_KEY_MGMT_SELECT
-	prompt "Security Option"
-	default RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA3
-
-config RAW_TX_PKT_SAMPLE_KEY_MGMT_NONE
-	bool "Open Security"
-	help
-	  Enable for Open Security
-
-config RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA2
-	bool "WPA2 Security"
-	help
-	  Enable for WPA2 Security
-
-config RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA2_256
-	bool "WPA2 SHA 256 Security"
-	help
-	  Enable for WPA2-PSK-256 Security
-
-config RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA3
-	bool "WPA3 Security"
-	help
-	  Enable for WPA3 Security
-endchoice
-
-config RAW_TX_PKT_SAMPLE_PASSWORD
-	string "Passphrase (WPA2) or password (WPA3)"
-	help
-	  Specify the Password to connect
-
 config RAW_TX_PKT_SAMPLE_STA_ONLY_MODE
 	bool "Set Wi-Fi Station mode"
 	default n

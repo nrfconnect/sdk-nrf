@@ -42,42 +42,6 @@ config TEST_TYPE_BLE
 	help
 	  Enable BLE
 
-config STA_SAMPLE_SSID
-	string "SSID"
-	default "coex_24"
-	help
-	  Specify the SSID to connect
-
-choice  STA_KEY_MGMT_SELECT
-	prompt "Security Option"
-	default STA_KEY_MGMT_NONE
-
-config STA_KEY_MGMT_NONE
-	bool "Open Security"
-	help
-	  Enable for Open Security
-
-config STA_KEY_MGMT_WPA2
-	bool "WPA2 Security"
-	help
-	  Enable for WPA2 Security
-
-config STA_KEY_MGMT_WPA2_256
-	bool "WPA2 SHA 256 Security"
-	help
-	  Enable for WPA2-PSK-256 Security
-
-config STA_KEY_MGMT_WPA3
-	bool "WPA3 Security"
-	help
-	  Enable for WPA3 Security
-endchoice
-
-config STA_SAMPLE_PASSWORD
-	string "Passphrase (WPA2) or password (WPA3)"
-	help
-	  Specify the Password to connect
-
 config NET_CONFIG_PEER_IPV4_ADDR
 	string "Peer IPv4 address"
 	default "192.168.1.253"
