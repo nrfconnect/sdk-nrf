@@ -143,6 +143,9 @@ Matter
     In |NCS| Matter samples, the default reaction to migration failure is a factory reset of the device.
     To change the default reaction, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE` Kconfig option to ``n``.
 
+  * Factory reset sequence now unregisters all DNS records that the device has registered at a remote SRP server.
+    This ensures that other Matter nodes do not use stale DNS records of the present device after it has been factory reset and removed from the network.
+
   * Documentation page about :ref:`ug_matter_gs_matter_api`.
 
 Matter fork
