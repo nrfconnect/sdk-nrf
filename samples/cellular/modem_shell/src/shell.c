@@ -144,6 +144,12 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	case LWM2M_CARRIER_EVENT_REBOOT:
 		mosh_print("LwM2M carrier event: reboot");
 		break;
+	case LWM2M_CARRIER_EVENT_MODEM_DOMAIN:
+		mosh_print("LwM2M carrier event: modem domain");
+		break;
+	case LWM2M_CARRIER_EVENT_APP_DATA:
+		mosh_print("LwM2M carrier event: app data");
+		break;
 	case LWM2M_CARRIER_EVENT_MODEM_INIT:
 		mosh_print("LwM2M carrier event: modem init");
 		err = nrf_modem_lib_init();

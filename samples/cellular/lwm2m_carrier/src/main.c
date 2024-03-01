@@ -157,6 +157,12 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	case LWM2M_CARRIER_EVENT_REBOOT:
 		printk("LWM2M_CARRIER_EVENT_REBOOT\n");
 		break;
+	case LWM2M_CARRIER_EVENT_MODEM_DOMAIN:
+		printk("LWM2M_CARRIER_EVENT_MODEM_DOMAIN\n");
+		break;
+	case LWM2M_CARRIER_EVENT_APP_DATA:
+		printk("LWM2M_CARRIER_EVENT_APP_DATA\n");
+		break;
 	case LWM2M_CARRIER_EVENT_MODEM_INIT:
 		printk("LWM2M_CARRIER_EVENT_MODEM_INIT\n");
 		err = nrf_modem_lib_init();
