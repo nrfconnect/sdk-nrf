@@ -434,7 +434,7 @@ zcbor
 Trusted Firmware-M
 ==================
 
-|no_changes_yet_note|
+* Support PSA PAKE APIs from the PSA Crypto API specification 1.2.
 
 cJSON
 =====
