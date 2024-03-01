@@ -628,7 +628,7 @@ static int mqtt_datamode_callback(uint8_t op, const uint8_t *data, int len, uint
 	if (op == DATAMODE_SEND) {
 		if ((flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
 			LOG_ERR("Datamode buffer overflow");
-			(void)exit_datamode_handler(-EOVERFLOW);
+			exit_datamode_handler(-EOVERFLOW);
 			return -EOVERFLOW;
 		}
 		ret = do_mqtt_publish((uint8_t *)data, len);

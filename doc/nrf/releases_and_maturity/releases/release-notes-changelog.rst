@@ -216,6 +216,11 @@ Asset Tracker v2
 Serial LTE modem
 ----------------
 
+* Added:
+
+  * New behavior for when a connection is closed unexpectedly while SLM is in data mode.
+    SLM now sends the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` string when this happens.
+
 * Removed:
 
   * Mention of Termite and Teraterm terminal emulators from the documentation.

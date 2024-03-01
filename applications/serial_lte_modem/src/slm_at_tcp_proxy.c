@@ -391,9 +391,13 @@ static int tcp_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8
 
 	if (op == DATAMODE_SEND) {
 		ret = do_tcp_send_datamode(data, len);
-		LOG_INF("datamode send: %d", ret);
+		LOG_DBG("datamode send: %d", ret);
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("datamode exit");
+		if ((flags & SLM_DATAMODE_FLAGS_EXIT_HANDLER) != 0) {
+			/* Datamode exited unexpectedly. */
+			rsp_send(CONFIG_SLM_DATAMODE_TERMINATOR);
+		}
 	}
 
 	return ret;
@@ -404,15 +408,17 @@ static int tcp_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8
  */
 static void tcpsvr_terminate_connection(int cause)
 {
-	if (in_datamode()) {
-		(void)exit_datamode_handler(cause);
-	}
 	if (proxy.sock_peer != INVALID_SOCKET) {
 		if (close(proxy.sock_peer) < 0) {
-			LOG_WRN("close() error: %d", -errno);
+			LOG_WRN("sock %d close() error: %d", proxy.sock_peer, -errno);
 		}
 		proxy.sock_peer = INVALID_SOCKET;
-		rsp_send("\r\n#XTCPSVR: %d,\"disconnected\"\r\n", cause);
+
+		if (in_datamode()) {
+			exit_datamode_handler(cause);
+		} else {
+			rsp_send("\r\n#XTCPSVR: %d,\"disconnected\"\r\n", cause);
+		}
 	}
 }
 
@@ -585,7 +591,11 @@ client_events:
 	close(proxy.sock);
 	proxy.sock = INVALID_SOCKET;
 
-	rsp_send("\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
+	if (in_datamode()) {
+		exit_datamode_handler(ret);
+	} else {
+		rsp_send("\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
+	}
 	LOG_INF("TCP server thread terminated");
 }
 
@@ -628,12 +638,10 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 			if (ret < 0 && errno != EAGAIN) {
 				LOG_WRN("recv() error: %d", -errno);
 			} else if (ret > 0) {
-				if (in_datamode()) {
-					data_send(slm_data_buf, ret);
-				} else {
+				if (!in_datamode()) {
 					rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
-					data_send(slm_data_buf, ret);
 				}
+				data_send(slm_data_buf, ret);
 			}
 		}
 		if ((fds[SOCK].revents & POLLERR) != 0) {
@@ -668,12 +676,14 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 		}
 	}
 
-	if (in_datamode()) {
-		(void)exit_datamode_handler(ret);
-	}
 	close(proxy.sock);
 	proxy.sock = INVALID_SOCKET;
-	rsp_send("\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
+
+	if (in_datamode()) {
+		exit_datamode_handler(ret);
+	} else {
+		rsp_send("\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
+	}
 
 	LOG_INF("TCP client thread terminated");
 }
