@@ -37,7 +37,6 @@ If you want to list samples available for one or more specific boards, `use the 
    samples/gazell
    samples/keys
    samples/matter
-   samples/multicore
    samples/net
    samples/nfc
    samples/nrf5340

@@ -491,7 +491,7 @@ nRF5340 samples
 * Added:
 
   * :ref:`nrf5340_remote_shell` sample.
-  * :ref:`multicore_hello_world` sample.
+  * ``multicore_hello_world`` sample.
 
 * Updated:
 
