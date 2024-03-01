@@ -1235,6 +1235,13 @@ Other libraries
 
   * Added the :c:func:`date_time_now_local` function to the API.
 
+* :ref:`dk_buttons_and_leds_readme` library:
+
+  * Added an experimental no interrupts mode for button handling.
+    To enable this mode, use the :kconfig:option:`CONFIG_DK_LIBRARY_BUTTON_NO_ISR` Kconfig option.
+    You can use this mode as a workaround to avoid using the GPIO interrupts.
+    However, it increases the power consumption.
+
 Common Application Framework (CAF)
 ----------------------------------
 
