@@ -199,10 +199,11 @@ The following table indicates the software maturity levels of the support for ea
 
   .. sml-table:: sidewalk
 
-Bluetooth features support
-**************************
+Bluetooth Low Energy features support
+*************************************
 
-The following table indicates the software maturity levels of the support for each Bluetooth feature:
+The following table indicates the software maturity levels of the support for each Bluetooth Low Energy feature.
+See the * :ref:`softdevice_controller` documentation for additional information.
 
 .. toggle::
 
