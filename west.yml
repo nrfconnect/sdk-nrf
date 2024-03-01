@@ -39,6 +39,8 @@ manifest:
       url-base: https://github.com/BabbleSim
     - name: bosch
       url-base: https://github.com/boschsensortec
+    - name: eembc
+      url-base: https://github.com/eembc
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -272,6 +274,12 @@ manifest:
       revision: v1.5.2400
       groups:
         - bsec
+    - name: coremark
+      remote: eembc
+      path: modules/benchmark/coremark
+      revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
+      groups:
+        - benchmark
 
 
   # West-related configuration for the nrf repository.

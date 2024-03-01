@@ -22,3 +22,4 @@ The following user guides describe available integrations:
    external_comp/memfault
    external_comp/avsystem
    external_comp/nrf_cloud
+   external_comp/coremark

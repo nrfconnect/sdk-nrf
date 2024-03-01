@@ -149,6 +149,7 @@ Kconfig*                                  @tejlmand
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @nrfconnect/ncs-cia @plskeggs @sigvartmh
 /modules/trusted-firmware-m/              @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
+/modules/coremark/                        @zycz
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/net/                             @nrfconnect/ncs-cia @lemrey
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
@@ -210,6 +211,7 @@ Kconfig*                                  @tejlmand
 /samples/wifi/raw_tx_packet/              @D-Triveni
 /samples/wifi/softap/                     @D-Triveni @krish2718
 /samples/wifi/monitor/                    @chiranjeevi2776 @krish2718
+/samples/benchmarks/coremark/             @zycz
 /scripts/                                 @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @MarekPieta
 /scripts/tools-versions-*.txt             @tejlmand @grho @shanthanordic @ihansse
