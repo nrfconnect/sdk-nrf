@@ -255,6 +255,7 @@ The following sections contain the tables indicating the software maturity level
 * PSA Crypto
 * |NSIB|
 * Hardware Unique Key
+* Trusted storage
 
 Trusted Firmware-M support
 ==========================
@@ -283,6 +284,13 @@ Hardware Unique Key
 .. toggle::
 
   .. sml-table:: hw_unique_key
+
+Trusted storage
+===============
+
+.. toggle::
+
+  .. sml-table:: trusted_storage
 
 Power management device support
 *******************************
