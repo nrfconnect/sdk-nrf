@@ -19,8 +19,6 @@ You can also find these in Zephyr's Samples and Demos documentation.
 
 The following |NCS| samples have been developed and tested on the nRF54H20:
 
-* :ref:`multicore_hello_world`
-
 |NCS| applications
 ******************
 
@@ -36,4 +34,5 @@ Zephyr samples
 
 The following Zephyr samples have been developed and tested on the nRF54H20:
 
+* :zephyr:code-sample:`sysbuild_hello_world`
 * :zephyr:code-sample:`blinky`

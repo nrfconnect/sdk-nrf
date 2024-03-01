@@ -8,7 +8,7 @@ Getting started with the nRF54H20 DK
    :depth: 2
 
 This section gets you started with your nRF54H20 Development Kit (DK) using the |NCS|.
-It tells you how to install the :ref:`multicore_hello_world` sample and perform a quick test of your DK.
+It tells you how to install the :zephyr:code-sample:`sysbuild_hello_world` sample and perform a quick test of your DK.
 
 If you have already set up your nRF54H20 DK and want to learn more, see the following documentation:
 
@@ -381,20 +381,20 @@ To transition the LCS to ``RoT``, do the following:
 Programming the sample
 **********************
 
-The :ref:`multicore_hello_world` sample is a multicore sample running on both the Application Core (``cpuapp``) and the Peripheral Processor (PPR, ``cpuppr``).
+The :zephyr:code-sample:`sysbuild_hello_world` sample is a multicore sample running on both the Application Core (``cpuapp``) and the Peripheral Processor (PPR, ``cpuppr``).
 It uses the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
 
 To build and program the sample to the nRF54H20 DK, complete the following steps:
 
 1. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
-#. Navigate to the :file:`nrf/samples/multicore/hello_world` folder containing the sample.
+#. Navigate to the :file:`zephyr/samples/sysbuild/hello_world` folder containing the sample.
 #. Build the sample for application and radio cores by running the following command::
 
-      west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad .
+      west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .
 
 #. Alternatively, build the sample for the application and PPR cores by running the following command::
 
-      west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr .
+      west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpuppr .
 
 #. Program the sample.
    If you have multiple Nordic Semiconductor devices, make sure that only the nRF54H20 DK you want to program is connected.
@@ -412,10 +412,10 @@ The sample will be automatically built and programmed on both the Application Co
 Reading the logs
 ****************
 
-With the :ref:`multicore_hello_world` sample programmed, the nRF54H20 DK outputs logs for the Application Core and the configured remote processor.
+With the :zephyr:code-sample:`sysbuild_hello_world` sample programmed, the nRF54H20 DK outputs logs for the Application Core and the configured remote processor.
 The logs are output over UART.
 
-To read the logs from the :ref:`multicore_hello_world` sample programmed to the nRF54H20 DK, complete the following steps:
+To read the logs from the :zephyr:code-sample:`sysbuild_hello_world` sample programmed to the nRF54H20 DK, complete the following steps:
 
 1. Connect to the DK with a terminal emulator (for example, `nRF Connect Serial Terminal`_) using the :ref:`default serial port connection settings <test_and_optimize>`.
 #. Press the **Reset** button on the PCB to reset the DK.
@@ -427,8 +427,6 @@ To read the logs from the :ref:`multicore_hello_world` sample programmed to the 
 
         *** Booting nRF Connect SDK zephyr-v3.5.0-3517-g9458a1aaf744 ***
         Hello world from nrf54h20dk/nrf54h20/cpuapp
-        Hello world from nrf54h20dk/nrf54h20/cpuapp
-        ...
 
    * For the remote core, like PPR, the output should be as follows:
 
@@ -436,8 +434,6 @@ To read the logs from the :ref:`multicore_hello_world` sample programmed to the 
 
         *** Booting nRF Connect SDK zephyr-v3.5.0-3517-g9458a1aaf744 ***
         Hello world from nrf54h20dk/nrf54h20/cpuppr
-        Hello world from nrf54h20dk/nrf54h20/cpuppr
-        ...
 
 .. note::
    If no output is shown when using nRF Serial Terminal, select a different serial port in the terminal application.
