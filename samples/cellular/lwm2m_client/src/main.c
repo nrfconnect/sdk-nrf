@@ -754,7 +754,7 @@ int main(void)
 			break;
 
 		case UPDATE_FIRMWARE:
-			LOG_INF("Prepare for Firmware update: Stop client and disbale Modem");
+			LOG_INF("Prepare for Firmware update: Stop client and disable Modem");
 			k_mutex_unlock(&lte_mutex);
 			lwm2m_rd_client_stop(&client, NULL, false);
 			ready_for_firmware_update = true;
