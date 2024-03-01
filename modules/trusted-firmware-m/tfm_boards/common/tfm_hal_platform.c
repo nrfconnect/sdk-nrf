@@ -7,7 +7,7 @@
 #if defined(TFM_PARTITION_CRYPTO)
 #include <autoconf.h>
 
-#ifdef CONFIG_CRYPTOCELL_USABLE
+#ifdef CONFIG_HAS_HW_NRF_CC3XX
 #include <nrf_cc3xx_platform.h>
 #include <nrf_cc3xx_platform_ctr_drbg.h>
 #endif
