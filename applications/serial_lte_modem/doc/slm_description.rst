@@ -277,6 +277,7 @@ To switch to UART output, change the following options in the :file:`prj.conf` f
    CONFIG_LOG_BACKEND_RTT=n
    CONFIG_LOG_BACKEND_UART=y
 
+.. _slm_config_files:
 
 Configuration files
 ===================
@@ -307,6 +308,7 @@ The following configuration files are provided:
 * :file:`overlay-ppp-without-cmux.overlay` - Devicetree overlay file that configures the UART to be used by PPP.
   This configuration file should be included when building SLM with PPP and without CMUX, in addition to :file:`overlay-ppp.conf`.
   It can be customized to fit your configuration (UART, baud rate, and so on).
+  By default, it sets the baud rate of the PPP UART to 1 000 000.
 
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for the nRF9160 DK.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
