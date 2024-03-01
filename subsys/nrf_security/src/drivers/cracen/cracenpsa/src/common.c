@@ -128,27 +128,27 @@ static psa_status_t get_sx_brainpool_curve(size_t curve_bits, const struct sx_pk
 
 	switch (curve_bits) {
 	case 192:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_BRAINPOOL_P_R1,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1_192,
 			   (selected_curve = &sx_curve_brainpoolP192r1));
 		break;
 	case 224:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_BRAINPOOL_P_R1,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1_224,
 			   (selected_curve = &sx_curve_brainpoolP224r1));
 		break;
 	case 256:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_BRAINPOOL_P_R1_256,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1_256,
 			   (selected_curve = &sx_curve_brainpoolP256r1));
 		break;
 	case 320:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_BRAINPOOL_P_R1,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1_320,
 			   (selected_curve = &sx_curve_brainpoolP320r1));
 		break;
 	case 384:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_BRAINPOOL_P_R1_384,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1_384,
 			   (selected_curve = &sx_curve_brainpoolP384r1));
 		break;
 	case 512:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_BRAINPOOL_P_R1_512,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1_512,
 			   (selected_curve = &sx_curve_brainpoolP512r1));
 		break;
 	default:
@@ -169,23 +169,23 @@ static psa_status_t get_sx_secp_r1_curve(size_t curve_bits, const struct sx_pk_e
 
 	switch (curve_bits) {
 	case 192:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_SECP_R1_192,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1_192,
 			   (selected_curve = &sx_curve_nistp192));
 		break;
 	case 224:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_SECP_R1_224,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1_224,
 			   (selected_curve = &sx_curve_nistp224));
 		break;
 	case 256:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_SECP_R1_256,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1_256,
 			   (selected_curve = &sx_curve_nistp256));
 		break;
 	case 384:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_SECP_R1_384,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1_384,
 			   (selected_curve = &sx_curve_nistp384));
 		break;
 	case 521:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_SECP_R1_521,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1_521,
 			   (selected_curve = &sx_curve_nistp521));
 		break;
 	default:
@@ -206,13 +206,13 @@ static psa_status_t get_sx_secp_k1_curve(size_t curve_bits, const struct sx_pk_e
 
 	switch (curve_bits) {
 	case 192:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_SECP_K1_192,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1_192,
 			   (selected_curve = &sx_curve_secp192k1));
 		break;
 	case 225:
 		return PSA_ERROR_NOT_SUPPORTED;
 	case 256:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_SECP_K1_256,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1_256,
 			   (selected_curve = &sx_curve_secp256k1));
 		break;
 	}
@@ -231,11 +231,11 @@ static psa_status_t get_sx_montgomery_curve(size_t curve_bits, const struct sx_p
 
 	switch (curve_bits) {
 	case 255:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_MONTGOMERY_255,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_255,
 			   (selected_curve = &sx_curve_x25519));
 		break;
 	case 448:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_MONTGOMERY_448,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_448,
 			   (selected_curve = &sx_curve_x448));
 		break;
 	default:
@@ -256,11 +256,11 @@ static psa_status_t get_sx_edwards_curve(size_t curve_bits, const struct sx_pk_e
 
 	switch (curve_bits) {
 	case 255:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_TWISTED_EDWARDS_448,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS_255,
 			   (selected_curve = &sx_curve_ed25519));
 		break;
 	case 448:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_TWISTED_EDWARDS_448,
+		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS_448,
 			   (selected_curve = &sx_curve_ed448));
 		break;
 	default:

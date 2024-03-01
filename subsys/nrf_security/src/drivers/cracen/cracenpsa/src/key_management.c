@@ -139,27 +139,27 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 
 	switch (curve) {
 	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
-		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_BRAINPOOL_P_R1)) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)) {
 			status = check_brainpool_alg_and_key_bits(key_alg, key_bits);
 		}
 		break;
 	case PSA_ECC_FAMILY_SECP_K1:
-		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_SECP_K1)) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1)) {
 			status = check_secp_k1_alg_and_key_bits(key_alg, key_bits);
 		}
 		break;
 	case PSA_ECC_FAMILY_SECP_R1:
-		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_SECP_R1)) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1)) {
 			status = check_secp_r1_alg_and_key_bits(key_alg, key_bits);
 		}
 		break;
 	case PSA_ECC_FAMILY_MONTGOMERY:
-		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_MONTGOMERY)) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY)) {
 			status = check_montgmr_alg_and_key_bits(key_alg, key_bits);
 		}
 		break;
 	case PSA_ECC_FAMILY_TWISTED_EDWARDS:
-		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_TWISTED_EDWARDS)) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)) {
 			status = check_edwards_alg_and_key_bits(key_alg, key_bits);
 		}
 		break;
@@ -854,7 +854,7 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_ANY_ECC)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_EXPORT)) {
 		if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
 			return export_ecc_public_key_from_keypair(attributes, key_buffer,
 								  key_buffer_size, data, data_size,
@@ -865,15 +865,14 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		}
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ANY_RSA_KEY_SIZE)) {
-		if (key_type == PSA_KEY_TYPE_RSA_KEY_PAIR) {
-			return export_rsa_public_key_from_keypair(attributes, key_buffer,
-								  key_buffer_size, data, data_size,
-								  data_length);
-		} else if (key_type == PSA_KEY_TYPE_RSA_PUBLIC_KEY) {
-			return rsa_export_public_key(attributes, key_buffer, key_buffer_size, data,
-						     data_size, data_length);
-		}
+	if (key_type == PSA_KEY_TYPE_RSA_KEY_PAIR &&
+	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_EXPORT)) {
+		return export_rsa_public_key_from_keypair(attributes, key_buffer, key_buffer_size,
+							  data, data_size, data_length);
+	} else if (key_type == PSA_KEY_TYPE_RSA_PUBLIC_KEY &&
+		   IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_RSA_PUBLIC_KEY)) {
+		return rsa_export_public_key(attributes, key_buffer, key_buffer_size, data,
+					     data_size, data_length);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -928,7 +927,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_ANY_ECC)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_IMPORT)) {
 		if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
 			return import_ecc_private_key(attributes, data, data_length, key_buffer,
 						      key_buffer_size, key_buffer_length, key_bits);
@@ -938,11 +937,10 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		}
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ANY_RSA_KEY_SIZE)) {
-		if (PSA_KEY_TYPE_IS_RSA(key_type)) {
-			return import_rsa_key(attributes, data, data_length, key_buffer,
-					      key_buffer_size, key_buffer_length, key_bits);
-		}
+	if (PSA_KEY_TYPE_IS_RSA(key_type) &&
+	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_IMPORT)) {
+		return import_rsa_key(attributes, data, data_length, key_buffer, key_buffer_size,
+				      key_buffer_length, key_bits);
 	}
 
 	if (PSA_KEY_TYPE_IS_SPAKE2P(key_type) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
@@ -1133,18 +1131,16 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_MANAGEMENT_ANY_ECC)) {
-		if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
-			return generate_ecc_private_key(attributes, key_buffer, key_buffer_size,
-							key_buffer_length);
-		}
+	if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type) &&
+	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE)) {
+		return generate_ecc_private_key(attributes, key_buffer, key_buffer_size,
+						key_buffer_length);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ANY_RSA_KEY_SIZE)) {
-		if (key_type == PSA_KEY_TYPE_RSA_KEY_PAIR) {
-			return generate_rsa_private_key(attributes, key_buffer, key_buffer_size,
-							key_buffer_length);
-		}
+	if (key_type == PSA_KEY_TYPE_RSA_KEY_PAIR &&
+	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_GENERATE)) {
+		return generate_rsa_private_key(attributes, key_buffer, key_buffer_size,
+						key_buffer_length);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
