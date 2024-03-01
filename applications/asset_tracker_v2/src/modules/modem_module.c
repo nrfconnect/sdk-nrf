@@ -426,6 +426,12 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 		 */
 		return 1;
 	}
+	case LWM2M_CARRIER_EVENT_MODEM_DOMAIN:
+		LOG_INF("LWM2M_CARRIER_EVENT_MODEM_DOMAIN");
+		break;
+	case LWM2M_CARRIER_EVENT_APP_DATA:
+		LOG_INF("LWM2M_CARRIER_EVENT_APP_DATA");
+		break;
 	case LWM2M_CARRIER_EVENT_MODEM_INIT:
 		LOG_INF("LWM2M_CARRIER_EVENT_MODEM_INIT");
 		err = nrf_modem_lib_init();
