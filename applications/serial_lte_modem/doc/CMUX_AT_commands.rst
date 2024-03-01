@@ -12,6 +12,15 @@ This page describes CMUX-related AT commands.
 The CMUX protocol enables multiplexing multiple data streams through a single serial link, setting up one channel per data stream.
 For example, it can be used to exchange AT data and have a :ref:`Point-to-Point Protocol (PPP) <CONFIG_SLM_PPP>` link up at the same time on a single UART.
 
+.. note::
+
+   SLM does not have an equivalent to the ``AT+CMUX`` command described in 3GPP TS 27.007.
+   Here is how SLM's implementation of CMUX relates to the standard command's parameters:
+
+   * Only UIH frames are used.
+   * The speed used is the configured baud rate of SLM's UART.
+   * The maximum frame size is ``2100`` (defined by :c:macro:`SLM_AT_MAX_RSP_LEN` found in :file:`slm_defines.h`).
+
 CMUX setup #XCMUX
 =================
 
