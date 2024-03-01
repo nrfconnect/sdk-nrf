@@ -244,7 +244,7 @@ manifest:
       remote: memfault
     - name: ant
       repo-path: sdk-ant
-      revision: c0cb28b9ea43009f6611386656881352d5382c36
+      revision: fcfcd1bc801b0ad2ef08117c7a681514729a5c4b
       remote: ant-nrfconnect
       groups:
         - ant
