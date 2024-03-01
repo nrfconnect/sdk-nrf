@@ -25,8 +25,7 @@ Configuration
 Set the :kconfig:option:`CONFIG_MODEM_ANTENNA` Kconfig option to enable this library.
 
 .. note::
-
-   The library is enabled by default when building for targets ``nrf9161dk_nrf9161_ns``, ``nrf9160dk_nrf9160_ns``, and ``thingy91_nrf9160_ns``.
+   The library is enabled by default when building for the nRF91 Series build targets.
 
 Use one of the following options to select the used antenna type:
 

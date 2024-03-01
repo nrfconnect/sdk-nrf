@@ -1,7 +1,7 @@
 .. _nrf_desktop_application_Kconfig:
 
-nRF Desktop application-specific Kconfig options
-################################################
+nRF Desktop: Application-specific Kconfig options
+#################################################
 
 .. contents::
    :local:

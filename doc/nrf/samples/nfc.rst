@@ -3,7 +3,6 @@
 NFC samples
 ###########
 
-
 .. toctree::
    :maxdepth: 1
    :caption: Subpages

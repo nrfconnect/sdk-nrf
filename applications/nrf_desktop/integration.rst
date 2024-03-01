@@ -1,7 +1,7 @@
 .. _nrf_desktop_porting_guide:
 
-Integrating your own hardware into the nRF Desktop application
-##############################################################
+nRF Desktop: Integrating your own hardware
+##########################################
 
 .. contents::
    :local:

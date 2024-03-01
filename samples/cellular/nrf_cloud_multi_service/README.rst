@@ -744,7 +744,7 @@ The `nRF Cloud Provisioning Service`_ allows you to securely provision and onboa
 
 .. note::
 
-   This service is not compatible with devices that use the nRF9160, but only newer nRF91x1 devices such as the nRF9151 and nRF9161.
+   This service is not compatible with devices that use the nRF9160, but only for the nRF9161 device.
 
 You can enable support for this service by building the sample as follows:
 
@@ -974,7 +974,7 @@ Download and install nRF Cloud Utilities
 To perform many of the actions in the other sections, you will need to install the `nRF Cloud Utilities <nRF Cloud Utilities documentation_>`_ repository.
 This is not necessary if you are using the `auto-onboarding <nRF Cloud Auto-onboarding_>`_ feature of the nRF Cloud Provisioning Service.
 
-To install the repository, clone or download it and `install the required packages <nRF Cloud Utilities Prerequisites>`_.
+To install the repository, clone or download it and `install the required packages <nRF Cloud Utilities Prerequisites_>`_.
 
 .. _nrf_cloud_multi_service_provisioning_service:
 

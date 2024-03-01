@@ -17,6 +17,8 @@ This documentation set includes a selection of pages available in the `Matter <h
    chip_tool_guide
    access-control-guide
    README
+   openthread_border_router_pi
+   openthread_rcp_nrf_dongle.md
 
 .. toctree::
    :maxdepth: 1

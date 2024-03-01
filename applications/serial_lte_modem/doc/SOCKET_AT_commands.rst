@@ -572,7 +572,7 @@ Syntax
         This lets the modem stay in connected mode longer.
 
 
-See `nRF socket options`_ for explanation of the supported options.
+See :ref:`nRF socket options <nrfxlib:nrf_sockets>` for explanation of the supported options.
 
 Examples
 ~~~~~~~~
@@ -694,7 +694,7 @@ Syntax
     * ``<value>`` is an integer that indicates the DTLS handshake timeout in seconds.
       It can be one of the following values: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
 
-See `nRF socket options`_ for explanation of the supported options.
+See :ref:`nRF socket options <nrfxlib:nrf_sockets>` for explanation of the supported options.
 
 
 Example

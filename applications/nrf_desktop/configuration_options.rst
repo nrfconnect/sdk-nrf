@@ -1,7 +1,7 @@
 .. _config_desktop_app_options:
 
-nRF Desktop application Kconfig options scheme
-##############################################
+nRF Desktop: Application Kconfig options scheme
+###############################################
 
 .. contents::
    :local:

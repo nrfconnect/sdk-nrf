@@ -3,6 +3,10 @@
 Sleepy End Device types in Thread
 #################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Sleepy End Devices (SEDs) and Synchronized Sleepy End Devices (SSEDs) are both Minimal Thread Devices (MTDs).
 Unlike Full Thread Devices (FTDs), MTDs do not maintain a routing table and are typically low-power devices that are not always on.
 
@@ -20,7 +24,7 @@ The :kconfig:option:`CONFIG_OPENTHREAD_POLL_PERIOD` Kconfig handles the SED conf
 A higher polling frequency results in lower latency (better responsiveness), but also higher power consumption.
 
 The polling period can also be configured in runtime.
-See the ``pollperiod`` command in the OpenThread `CLI reference <OpenThread CLI Reference - pollperiod command>`_.
+See the ``pollperiod`` command in the OpenThread `CLI reference <OpenThread CLI Reference - pollperiod command_>`_.
 
 Synchronized Sleepy End Device
 ******************************
