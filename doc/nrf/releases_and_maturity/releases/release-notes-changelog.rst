@@ -553,6 +553,12 @@ Modem libraries
 
   * Fixed an issue with the CFUN hooks when the Modem library is initialized during ``SYS_INIT`` at kernel level and makes calls to the :ref:`nrf_modem_at` interface before the application level initialization is done.
 
+* :ref:`lib_location` library:
+
+  * Added:
+
+    * Convenience function to get :c:struct:`location_data_details` from the :c:struct:`location_event_data`.
+
 Libraries for networking
 ------------------------
 

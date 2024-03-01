@@ -307,6 +307,30 @@ const char *location_method_str(enum location_method method)
 	}
 }
 
+const struct location_data_details *location_details_get(
+	const struct location_event_data *event_data)
+{
+	const struct location_data_details *details = NULL;
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	switch (event_data->id) {
+	case LOCATION_EVT_LOCATION:
+		details = &event_data->location.details;
+		break;
+	case LOCATION_EVT_TIMEOUT:
+	case LOCATION_EVT_ERROR:
+		details = &event_data->error.details;
+		break;
+	case LOCATION_EVT_FALLBACK:
+		details = &event_data->fallback.details;
+		break;
+	default:
+		break;
+	}
+#endif
+	return details;
+}
+
 int location_agnss_data_process(const char *buf, size_t buf_len)
 {
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)
