@@ -279,6 +279,7 @@ config LWM2M_CARRIER_WORKQ_STACK_SIZE
 
 config LWM2M_CARRIER_THREAD_STACK_SIZE
 	int "LwM2M carrier thread stack size"
+	default 2048 if NEWLIB_LIBC
 	default 1536
 	help
 	  Stack size for the LwM2M carrier thread.
