@@ -958,7 +958,7 @@ void lwm2m_os_dfu_reset(void)
 
 __weak bool lwm2m_os_dfu_application_update_validate(void)
 {
-#if CONFIG_BOOTLOADER_MCUBOOT
+#if defined(CONFIG_MCUBOOT_IMG_MANAGER)
 	int err;
 	bool img_confirmed;
 
@@ -972,7 +972,7 @@ __weak bool lwm2m_os_dfu_application_update_validate(void)
 
 		LOG_WRN("Failed to mark running image as confirmed");
 	}
-#endif /* CONFIG_BOOTLOADER_MCUBOOT */
+#endif /* CONFIG_MCUBOOT_IMG_MANAGER */
 
 	return false;
 }
