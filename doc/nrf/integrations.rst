@@ -17,8 +17,9 @@ The following user guides describe available integrations:
    :maxdepth: 1
    :caption: Subpages:
 
-   external_comp/bt_fast_pair
-   external_comp/edge_impulse
-   external_comp/memfault
    external_comp/avsystem
+   external_comp/coremark
+   external_comp/edge_impulse
+   external_comp/bt_fast_pair
+   external_comp/memfault
    external_comp/nrf_cloud

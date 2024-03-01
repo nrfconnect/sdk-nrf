@@ -331,7 +331,8 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`coremark_sample` sample that demonstrates how to easily measure a performance of the supported SoCs by running the Embedded Microprocessor Benchmark Consortium (EEMBC) CoreMark benchmark.
+  Included support for the nRF52840 DK, nRF5340 DK, and nRF54L15 PDK.
 
 Drivers
 =======
@@ -512,3 +513,4 @@ Documentation
 =============
 
 * Recommend the use of a :file:`VERSION` file for :ref:`ug_fw_update_image_versions_mcuboot` in the :ref:`ug_fw_update_image_versions` user guide.
+* Added the :ref:`ug_coremark` page.
