@@ -195,7 +195,13 @@ See `Thread samples`_ for the list of changes for the Thread samples.
 Zigbee
 ------
 
-|no_changes_yet_note|
+* Updated:
+
+  * :ref:`nrfxlib:zboss` to v3.11.3.0 and platform v5.1.4 (``v3.11.3.0+5.1.4``).
+  * :ref:`ZBOSS Network Co-processor Host <ug_zigbee_tools_ncp_host>` package to the new version v2.1.2.
+
+* Removed the precompiled development ZBOSS libraries.
+
 
 Gazell
 ------
