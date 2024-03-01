@@ -29,7 +29,7 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 #define LF		'\n'
 #define HEXDUMP_LIMIT   16
 
-static const char *const slm_quit_str = CONFIG_SLM_DATAMODE_TERMINATOR;
+const char *const slm_quit_str = CONFIG_SLM_DATAMODE_TERMINATOR;
 
 /* Operation mode variables */
 enum slm_operation_mode {
@@ -832,15 +832,11 @@ bool exit_datamode_handler(int result)
 
 	if (set_slm_mode(SLM_NULL_MODE)) {
 		if (datamode_handler) {
-			(void)datamode_handler(DATAMODE_EXIT, NULL, 0, SLM_DATAMODE_FLAGS_NONE);
+			datamode_handler(DATAMODE_EXIT, NULL, 0, SLM_DATAMODE_FLAGS_EXIT_HANDLER);
 		}
 		datamode_handler = NULL;
 		datamode_handler_result = result;
 		ret = true;
-
-		/* TODO: Send quit_str or another defined string to indicate that client should
-		 *       exit datamode as there has been failure?
-		 */
 	}
 
 	k_mutex_unlock(&mutex_mode);

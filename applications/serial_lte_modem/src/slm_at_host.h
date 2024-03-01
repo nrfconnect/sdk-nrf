@@ -25,6 +25,9 @@
 
 #define SLM_DATAMODE_FLAGS_NONE	0
 #define SLM_DATAMODE_FLAGS_MORE_DATA (1 << 0)
+#define SLM_DATAMODE_FLAGS_EXIT_HANDLER (1 << 1)
+
+extern const char *const slm_quit_str;
 
 extern struct at_param_list slm_at_param_list; /* For AT parser. */
 extern uint8_t slm_data_buf[SLM_MAX_MESSAGE_SIZE];  /* For socket data. */
