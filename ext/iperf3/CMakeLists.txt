@@ -11,7 +11,6 @@ zephyr_interface_library_named(iperf3)
 target_include_directories(iperf3 INTERFACE .)
 
 zephyr_library()
-zephyr_library_link_libraries(posix_subsys)
 
 zephyr_library_sources(
   dscp.c
