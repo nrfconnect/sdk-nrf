@@ -181,22 +181,22 @@ static void print_result(struct dm_result *result)
 
 	printk("\tDistance estimates: ");
 	if (result->ranging_mode == DM_RANGING_MODE_RTT) {
-		printk("rtt: rtt=%.2f\n", result->dist_estimates.rtt.rtt);
+		printk("rtt: rtt=%.2f\n", (double)result->dist_estimates.rtt.rtt);
 	} else {
 #ifdef CONFIG_DM_HIGH_PRECISION_CALC
 		printk("mcpd: high_precision=%.2f ifft=%.2f phase_slope=%.2f "
 			"rssi_openspace=%.2f best=%.2f\n",
-			result->dist_estimates.mcpd.high_precision,
-			result->dist_estimates.mcpd.ifft,
-			result->dist_estimates.mcpd.phase_slope,
-			result->dist_estimates.mcpd.rssi_openspace,
-			result->dist_estimates.mcpd.best);
+			(double)result->dist_estimates.mcpd.high_precision,
+			(double)result->dist_estimates.mcpd.ifft,
+			(double)result->dist_estimates.mcpd.phase_slope,
+			(double)result->dist_estimates.mcpd.rssi_openspace,
+			(double)result->dist_estimates.mcpd.best);
 #else
 		printk("mcpd: ifft=%.2f phase_slope=%.2f rssi_openspace=%.2f best=%.2f\n",
-			result->dist_estimates.mcpd.ifft,
-			result->dist_estimates.mcpd.phase_slope,
-			result->dist_estimates.mcpd.rssi_openspace,
-			result->dist_estimates.mcpd.best);
+			(double)result->dist_estimates.mcpd.ifft,
+			(double)result->dist_estimates.mcpd.phase_slope,
+			(double)result->dist_estimates.mcpd.rssi_openspace,
+			(double)result->dist_estimates.mcpd.best);
 #endif
 	}
 }

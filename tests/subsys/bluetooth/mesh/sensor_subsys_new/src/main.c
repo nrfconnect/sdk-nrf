@@ -193,7 +193,7 @@ static float biggest_float_leq(double limit)
 {
 	float val = limit;
 
-	return val <= limit ? val : nextafterf(val, -INFINITY);
+	return (double)val <= limit ? val : nextafterf(val, -INFINITY);
 }
 
 /** Finds the smallest float greater than or equal to @c limit. */
@@ -201,7 +201,7 @@ static float smallest_float_geq(double limit)
 {
 	float val = limit;
 
-	return val >= limit ? val : nextafterf(val, INFINITY);
+	return (double)val >= limit ? val : nextafterf(val, INFINITY);
 }
 
 static void check_scalar_format(const struct bt_mesh_sensor_format *format,

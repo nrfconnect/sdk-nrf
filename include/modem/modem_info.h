@@ -35,10 +35,10 @@ extern "C" {
 #define RSRP_OFFSET_VAL 140
 
 /** RSRQ offset value. */
-#define RSRQ_OFFSET_VAL 19.5
+#define RSRQ_OFFSET_VAL 19.5f
 
 /** RSRQ scale value. */
-#define RSRQ_SCALE_VAL 0.5
+#define RSRQ_SCALE_VAL 0.5f
 
 /** Modem firmware version string can be up to 40 characters long. */
 #define MODEM_INFO_FWVER_SIZE 41

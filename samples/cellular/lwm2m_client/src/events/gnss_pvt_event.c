@@ -12,7 +12,7 @@ static void log_gnss_event(const struct app_event_header *aeh)
 
 	APP_EVENT_MANAGER_LOG(aeh, "gnss_pvt_event lat: %lf long: %lf alt: %lf",
 			  event->pvt.latitude, event->pvt.longitude,
-			  event->pvt.altitude);
+			  (double)event->pvt.altitude);
 }
 
 APP_EVENT_TYPE_DEFINE(gnss_pvt_event,

@@ -260,7 +260,7 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 			event_data->method);
 		mosh_print("  latitude: %.06f", event_data->location.latitude);
 		mosh_print("  longitude: %.06f", event_data->location.longitude);
-		mosh_print("  accuracy: %.01f m", event_data->location.accuracy);
+		mosh_print("  accuracy: %.01f m", (double)event_data->location.accuracy);
 		if (event_data->location.datetime.valid) {
 			mosh_print(
 				"  date: %04d-%02d-%02d",

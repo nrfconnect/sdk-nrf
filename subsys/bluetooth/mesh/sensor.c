@@ -836,11 +836,11 @@ int bt_mesh_sensor_ch_to_str(const struct bt_mesh_sensor_value *ch, char *str,
 
 	switch (status) {
 	case BT_MESH_SENSOR_VALUE_NUMBER:
-		return snprintk(str, len, "%g", float_val);
+		return snprintk(str, len, "%g", (double)float_val);
 	case BT_MESH_SENSOR_VALUE_MAX_OR_GREATER:
-		return snprintk(str, len, ">=%g", float_val);
+		return snprintk(str, len, ">=%g", (double)float_val);
 	case BT_MESH_SENSOR_VALUE_MIN_OR_LESS:
-		return snprintk(str, len, "<=%g", float_val);
+		return snprintk(str, len, "<=%g", (double)float_val);
 	case BT_MESH_SENSOR_VALUE_UNKNOWN:
 		return snprintk(str, len, "%s", "<value is not known>");
 	case BT_MESH_SENSOR_VALUE_INVALID:

@@ -336,19 +336,19 @@ static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
 
 		mosh_print("Latitude:          %f", pvt->latitude);
 		mosh_print("Longitude:         %f", pvt->longitude);
-		mosh_print("Accuracy:          %.1f m", pvt->accuracy);
-		mosh_print("Altitude:          %.1f m", pvt->altitude);
-		mosh_print("Altitude accuracy: %.1f m", pvt->altitude_accuracy);
-		mosh_print("Speed:             %.1f m/s", pvt->speed);
-		mosh_print("Speed accuracy:    %.1f m/s", pvt->speed_accuracy);
-		mosh_print("V. speed:          %.1f m/s", pvt->vertical_speed);
-		mosh_print("V. speed accuracy: %.1f m/s", pvt->vertical_speed_accuracy);
-		mosh_print("Heading:           %.1f deg", pvt->heading);
-		mosh_print("Heading accuracy:  %.1f deg", pvt->heading_accuracy);
-		mosh_print("PDOP:              %.1f", pvt->pdop);
-		mosh_print("HDOP:              %.1f", pvt->hdop);
-		mosh_print("VDOP:              %.1f", pvt->vdop);
-		mosh_print("TDOP:              %.1f", pvt->tdop);
+		mosh_print("Accuracy:          %.1f m", (double)pvt->accuracy);
+		mosh_print("Altitude:          %.1f m", (double)pvt->altitude);
+		mosh_print("Altitude accuracy: %.1f m", (double)pvt->altitude_accuracy);
+		mosh_print("Speed:             %.1f m/s", (double)pvt->speed);
+		mosh_print("Speed accuracy:    %.1f m/s", (double)pvt->speed_accuracy);
+		mosh_print("V. speed:          %.1f m/s", (double)pvt->vertical_speed);
+		mosh_print("V. speed accuracy: %.1f m/s", (double)pvt->vertical_speed_accuracy);
+		mosh_print("Heading:           %.1f deg", (double)pvt->heading);
+		mosh_print("Heading accuracy:  %.1f deg", (double)pvt->heading_accuracy);
+		mosh_print("PDOP:              %.1f", (double)pvt->pdop);
+		mosh_print("HDOP:              %.1f", (double)pvt->hdop);
+		mosh_print("VDOP:              %.1f", (double)pvt->vdop);
+		mosh_print("TDOP:              %.1f", (double)pvt->tdop);
 
 		mosh_print(
 			"Google maps URL:   https://maps.google.com/?q=%f,%f",

@@ -1129,7 +1129,7 @@ static int cmd_i2s_tone_play(const struct shell *shell, size_t argc, const char 
 	}
 
 	shell_print(shell, "Tone play: %d Hz for %d ms with amplitude %.02f", freq, dur_ms,
-		    amplitude);
+		    (double)amplitude);
 
 	return ret;
 }

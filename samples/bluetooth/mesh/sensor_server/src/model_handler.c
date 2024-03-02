@@ -535,14 +535,14 @@ static int amb_light_level_ref_set(struct bt_mesh_sensor_srv *srv,
 	/* When using the a real ambient light sensor the sensor value should be
 	 * read and used instead of the dummy value.
 	 */
-	if (dummy_ambient_light_value > 0.0) {
+	if (dummy_ambient_light_value > 0.0f) {
 		amb_light_level_gain_store(ref_float / dummy_ambient_light_value);
 	} else {
 		amb_light_level_gain_store(FLT_MAX);
 	}
 
 	printk("Ambient light level ref(%s) ", bt_mesh_sensor_ch_str(value));
-	printk("gain(%f)\n", amb_light_level_gain);
+	printk("gain(%f)\n", (double)amb_light_level_gain);
 
 	return 0;
 }
