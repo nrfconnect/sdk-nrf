@@ -142,8 +142,7 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 			net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
 			sys_put_le32(iso_send_count, iso_data);
 			net_buf_add_mem(buf, iso_data, iso_tx_qos.sdu);
-			ret = bt_iso_chan_send(&bis_iso_chan[chan], buf, seq_num,
-					       BT_ISO_TIMESTAMP_NONE);
+			ret = bt_iso_chan_send(&bis_iso_chan[chan], buf, seq_num);
 			if (ret < 0) {
 				LOG_ERR("Unable to broadcast data on channel %u"
 					" : %d",

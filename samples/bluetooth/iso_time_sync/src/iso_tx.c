@@ -186,9 +186,9 @@ static int send_next_sdu(struct bt_iso_chan *chan, bool btn_pressed)
 	net_buf_add_le32(buf, num_sdus_sent);
 
 	if (first_sdu_sent) {
-		return bt_iso_chan_send(chan, buf, 0, tx_sdu_timestamp_us);
+		return bt_iso_chan_send_ts(chan, buf, 0, tx_sdu_timestamp_us);
 	} else {
-		return bt_iso_chan_send(chan, buf, 0, BT_ISO_TIMESTAMP_NONE);
+		return bt_iso_chan_send(chan, buf, 0);
 	}
 
 	return 0;
