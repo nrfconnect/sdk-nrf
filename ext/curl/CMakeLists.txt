@@ -11,7 +11,6 @@ target_include_directories(curl INTERFACE include/curl)
 zephyr_library()
 zephyr_library_include_directories(lib)
 
-zephyr_library_link_libraries(posix_subsys)
 zephyr_library_link_libraries(curl)
 
 add_subdirectory_ifdef(CONFIG_NRF_CURL_LIB lib)

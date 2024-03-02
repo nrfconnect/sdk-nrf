@@ -8,7 +8,6 @@
 
 zephyr_include_directories(.)
 zephyr_library()
-zephyr_library_link_libraries(posix_subsys)
 
 zephyr_library_sources(
   getopt.c
