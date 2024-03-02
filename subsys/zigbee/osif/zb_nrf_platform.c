@@ -600,12 +600,7 @@ void zb_reset(zb_uint8_t param)
 	reas = (uint8_t)SYS_REBOOT_NCP;
 #endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
 
-/* For nRF5340DK sys_reboot() does not set reset reason.
- * Do it manually in this case - NCP samples require this.
- */
-#ifdef CONFIG_SOC_NRF5340_CPUAPP
 	nrf_power_gpregret_set(NRF_POWER, 0, reas);
-#endif /* CONFIG_SOC_NRF5340_CPUAPP */
 
 	/* Power on unused sections of RAM to allow MCUboot to use it. */
 	if (IS_ENABLED(CONFIG_RAM_POWER_DOWN_LIBRARY)) {
