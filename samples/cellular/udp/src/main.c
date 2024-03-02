@@ -108,7 +108,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		break;
 	case LTE_LC_EVT_EDRX_UPDATE:
 		printk("eDRX parameter update: eDRX: %.2f s, PTW: %.2f s\n",
-		       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
+		       (double)evt->edrx_cfg.edrx, (double)evt->edrx_cfg.ptw);
 		break;
 	case LTE_LC_EVT_RRC_UPDATE:
 		printk("RRC mode: %s\n",

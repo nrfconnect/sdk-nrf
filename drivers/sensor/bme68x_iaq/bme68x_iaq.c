@@ -212,12 +212,12 @@ static void output_ready(const struct device *dev, const bsec_output_t *outputs,
 		case BSEC_OUTPUT_CO2_EQUIVALENT:
 			data->latest.co2 = (float) outputs[i].signal;
 			data->latest.co2_accuracy = (enum bme68x_accuracy) outputs[i].accuracy;
-			LOG_DBG("CO2: %.2f ppm", data->latest.co2);
+			LOG_DBG("CO2: %.2f ppm", (double)data->latest.co2);
 			break;
 		case BSEC_OUTPUT_BREATH_VOC_EQUIVALENT:
 			data->latest.voc = (float) outputs[i].signal;
 			data->latest.voc_accuracy = (enum bme68x_accuracy) outputs[i].accuracy;
-			LOG_DBG("VOC: %.2f ppm", data->latest.voc);
+			LOG_DBG("VOC: %.2f ppm", (double)data->latest.voc);
 			break;
 		case BSEC_OUTPUT_STABILIZATION_STATUS:
 			data->latest.gas_stabilizasion_status = (bool)(outputs[i].signal != 0.0f);
@@ -229,15 +229,15 @@ static void output_ready(const struct device *dev, const bsec_output_t *outputs,
 			break;
 		case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
 			data->latest.temperature = (float) outputs[i].signal;
-			LOG_DBG("Temp: %.2f C", data->latest.temperature);
+			LOG_DBG("Temp: %.2f C", (double)data->latest.temperature);
 			break;
 		case BSEC_OUTPUT_RAW_PRESSURE:
 			data->latest.pressure = (float) outputs[i].signal;
-			LOG_DBG("Press: %.2f Pa", data->latest.pressure);
+			LOG_DBG("Press: %.2f Pa", (double)data->latest.pressure);
 			break;
 		case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
 			data->latest.humidity = (float) outputs[i].signal;
-			LOG_DBG("Hum: %.2f %%", data->latest.humidity);
+			LOG_DBG("Hum: %.2f %%", (double)data->latest.humidity);
 			break;
 		default:
 			LOG_WRN("unknown bsec output id: %d", outputs[i].sensor_id);
@@ -262,7 +262,7 @@ static size_t sensor_data_to_bsec_inputs(bsec_bme_settings_t sensor_settings,
 		inputs[i].sensor_id = BSEC_INPUT_HEATSOURCE;
 		inputs[i].signal = temp_offset;
 		inputs[i].time_stamp = timestamp_ns;
-		LOG_DBG("Temp offset: %.2f", inputs[i].signal);
+		LOG_DBG("Temp offset: %.2f", (double)inputs[i].signal);
 		i++;
 
 		/* append temperature input */
@@ -275,7 +275,7 @@ static size_t sensor_data_to_bsec_inputs(bsec_bme_settings_t sensor_settings,
 		}
 
 		inputs[i].time_stamp = timestamp_ns;
-		LOG_DBG("Temp: %.2f", inputs[i].signal);
+		LOG_DBG("Temp: %.2f", (double)inputs[i].signal);
 		i++;
 	}
 	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_HUMIDITY)) {
@@ -288,21 +288,21 @@ static size_t sensor_data_to_bsec_inputs(bsec_bme_settings_t sensor_settings,
 		}
 
 		inputs[i].time_stamp = timestamp_ns;
-		LOG_DBG("Hum: %.2f", inputs[i].signal);
+		LOG_DBG("Hum: %.2f", (double)inputs[i].signal);
 		i++;
 	}
 	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_PRESSURE)) {
 		inputs[i].sensor_id = BSEC_INPUT_PRESSURE;
 		inputs[i].signal =  data->pressure;
 		inputs[i].time_stamp = timestamp_ns;
-		LOG_DBG("Press: %.2f", inputs[i].signal);
+		LOG_DBG("Press: %.2f", (double)inputs[i].signal);
 		i++;
 	}
 	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_GASRESISTOR)) {
 		inputs[i].sensor_id = BSEC_INPUT_GASRESISTOR;
 		inputs[i].signal =  data->gas_resistance;
 		inputs[i].time_stamp = timestamp_ns;
-		LOG_DBG("Gas: %.2f", inputs[i].signal);
+		LOG_DBG("Gas: %.2f", (double)inputs[i].signal);
 		i++;
 	}
 	if (BSEC_INPUT_PRESENT(sensor_settings, BSEC_INPUT_PROFILE_PART)) {
@@ -313,7 +313,7 @@ static size_t sensor_data_to_bsec_inputs(bsec_bme_settings_t sensor_settings,
 			inputs[i].signal =  data->gas_index;
 		}
 		inputs[i].time_stamp = timestamp_ns;
-		LOG_DBG("Profile: %.2f", inputs[i].signal);
+		LOG_DBG("Profile: %.2f", (double)inputs[i].signal);
 		i++;
 	}
 	return i;

@@ -38,8 +38,8 @@ BUILD_ASSERT(CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH >= AT_CMD_REQUEST_ERR_
 	     "Not enough AT command response buffer for printing error events.");
 
 /* Temperature alert limits. */
-#define TEMP_ALERT_LIMIT ((float)CONFIG_TEMP_ALERT_LIMIT)
-#define TEMP_ALERT_HYSTERESIS 1.5f
+#define TEMP_ALERT_LIMIT ((double)CONFIG_TEMP_ALERT_LIMIT)
+#define TEMP_ALERT_HYSTERESIS 1.5
 #define TEMP_ALERT_LOWER_LIMIT (TEMP_ALERT_LIMIT - TEMP_ALERT_HYSTERESIS)
 
 /**
@@ -183,7 +183,7 @@ static void on_location_update(const struct location_event_data * const location
 	LOG_INF("Location Updated: %.06f N %.06f W, accuracy: %.01f m, Method: %s",
 		location_data->location.latitude,
 		location_data->location.longitude,
-		location_data->location.accuracy,
+		(double)location_data->location.accuracy,
 		location_method_str(location_data->method));
 
 	/* If the position update was derived using GNSS, send it onward to nRF Cloud. */

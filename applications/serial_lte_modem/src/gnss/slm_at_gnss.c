@@ -502,8 +502,8 @@ static void fix_rep_wk(struct k_work *work)
 
 	/* GIS accuracy: http://wiki.gis.com/wiki/index.php/Decimal_degrees, use default .6lf */
 	rsp_send("\r\n#XGPS: %lf,%lf,%f,%f,%f,%f,\"%04u-%02u-%02u %02u:%02u:%02u\"\r\n",
-		pvt.latitude, pvt.longitude, pvt.altitude,
-		pvt.accuracy, pvt.speed, pvt.heading,
+		pvt.latitude, pvt.longitude, (double)pvt.altitude,
+		(double)pvt.accuracy, (double)pvt.speed, (double)pvt.heading,
 		pvt.datetime.year, pvt.datetime.month, pvt.datetime.day,
 		pvt.datetime.hour, pvt.datetime.minute, pvt.datetime.seconds);
 

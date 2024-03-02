@@ -109,6 +109,6 @@ ZTEST(sfloat_suite, test_sfloat_from_float)
 		res = sfloat_from_float(in_float);
 		zassert_true(res.val == out_sfloat.val,
 			"comparison failed for the sample[%d] equal to %f: 0x%04X != 0x%04X",
-			i, in_float, res.val, out_sfloat.val);
+			i, (double)in_float, res.val, out_sfloat.val);
 	}
 }

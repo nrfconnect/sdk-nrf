@@ -46,7 +46,7 @@ static void location_event_handler(const struct location_event_data *event_data)
 		printk("  method: %s\n", location_method_str(event_data->method));
 		printk("  latitude: %.06f\n", event_data->location.latitude);
 		printk("  longitude: %.06f\n", event_data->location.longitude);
-		printk("  accuracy: %.01f m\n", event_data->location.accuracy);
+		printk("  accuracy: %.01f m\n", (double)event_data->location.accuracy);
 		if (event_data->location.datetime.valid) {
 			printk("  date: %04d-%02d-%02d\n",
 				event_data->location.datetime.year,

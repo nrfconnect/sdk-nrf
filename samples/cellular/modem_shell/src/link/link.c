@@ -443,7 +443,7 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		len = snprintf(
 			log_buf, sizeof(log_buf),
 			"eDRX parameter update: eDRX: %f, PTW: %f",
-			evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
+			(double)evt->edrx_cfg.edrx, (double)evt->edrx_cfg.ptw);
 		if (len > 0) {
 			mosh_print("%s", log_buf);
 		}

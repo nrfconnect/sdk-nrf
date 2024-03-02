@@ -879,7 +879,7 @@ void cellular_rest_req_resp_handle(int test_event_data_index)
 	sprintf(http_resp_body, http_resp_body_fmt,
 		test_location_event_data[test_event_data_index].location.latitude,
 		test_location_event_data[test_event_data_index].location.longitude,
-		test_location_event_data[test_event_data_index].location.accuracy);
+		(double)test_location_event_data[test_event_data_index].location.accuracy);
 
 	sprintf(http_resp, "%s%s", http_resp_header_ok, http_resp_body);
 

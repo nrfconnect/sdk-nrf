@@ -2982,7 +2982,7 @@ static cJSON
                         str = (char *) calloc(sizeof(char), hsize + 1);   /* +1 for trailing null */
 			if (str == NULL) {
                         	iperf_printf(
-					test, 
+					test,
 					"ERROR: No memory for parsing json results of len %d\n",
 					hsize);
 				test->i_errno = IERECVRESULTS;
@@ -5220,7 +5220,7 @@ static void print_interval_results(struct iperf_test *test,
 	}
 
 	unit_snprintf(ubuf, UNIT_LEN, (double)(irp->bytes_transferred), 'A');
-	if (irp->interval_duration > 0.0) {
+	if ((double)irp->interval_duration > 0.0) {
 		bandwidth = (double)irp->bytes_transferred /
 			    (double)irp->interval_duration;
 	} else {

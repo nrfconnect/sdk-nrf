@@ -284,7 +284,7 @@ static int cmd_prop_set_unack(const struct shell *shell, size_t argc, char *argv
 static void coeff_print(const struct shell *shell, int err, float rsp)
 {
 	if (!err) {
-		shell_print(shell, "Regulator Coefficient: %f", rsp);
+		shell_print(shell, "Regulator Coefficient: %f", (double)rsp);
 	}
 }
 

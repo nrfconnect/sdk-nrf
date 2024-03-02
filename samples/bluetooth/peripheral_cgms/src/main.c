@@ -23,7 +23,7 @@
 
 #define APP_GLUCOSE_MIN    88
 #define APP_GLUCOSE_MAX    92
-#define APP_GLUCOSE_STEP   0.1
+#define APP_GLUCOSE_STEP   0.1f
 
 static bool session_state;
 
