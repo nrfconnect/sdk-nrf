@@ -79,7 +79,10 @@ static struct bt_uuid const * const uuid_ccc = BT_UUID_GATT_CCC;
 
 #define EL_IN_POOL_VERIFY(pool, el)                                            \
 	do {                                                                   \
+		_Pragma("GCC diagnostic push");                                \
+		_Pragma("GCC diagnostic ignored \"-Waddress\"");               \
 		__ASSERT(pool != NULL, "Pool is uninitialized");               \
+		_Pragma("GCC diagnostic pop");                                 \
 		__ASSERT(((uint32_t)el >= (uint32_t)pool) &&                         \
 			     (((uint32_t)el) < (((uint32_t)pool) + sizeof(pool))),   \
 			 "Element does not belong to the pool");               \
