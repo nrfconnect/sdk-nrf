@@ -68,8 +68,8 @@ static int read_and_log(const struct power_rail_config *config)
 	}
 
 	LOG_INF("%-10s:\t%.3fV, %06.3fmA, %06.3fmW", config->name, sensor_value_to_double(&voltage),
-		sensor_value_to_double(&current) * 1000.0f,
-		sensor_value_to_double(&power) * 1000.0f);
+		sensor_value_to_double(&current) * 1000.0,
+		sensor_value_to_double(&power) * 1000.0);
 
 	return 0;
 }

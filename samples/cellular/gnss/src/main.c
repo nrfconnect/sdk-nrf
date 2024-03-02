@@ -653,11 +653,11 @@ static void print_fix_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
 	printf("Latitude:       %.06f\n", pvt_data->latitude);
 	printf("Longitude:      %.06f\n", pvt_data->longitude);
-	printf("Altitude:       %.01f m\n", pvt_data->altitude);
-	printf("Accuracy:       %.01f m\n", pvt_data->accuracy);
-	printf("Speed:          %.01f m/s\n", pvt_data->speed);
-	printf("Speed accuracy: %.01f m/s\n", pvt_data->speed_accuracy);
-	printf("Heading:        %.01f deg\n", pvt_data->heading);
+	printf("Altitude:       %.01f m\n", (double)pvt_data->altitude);
+	printf("Accuracy:       %.01f m\n", (double)pvt_data->accuracy);
+	printf("Speed:          %.01f m/s\n", (double)pvt_data->speed);
+	printf("Speed accuracy: %.01f m/s\n", (double)pvt_data->speed_accuracy);
+	printf("Heading:        %.01f deg\n", (double)pvt_data->heading);
 	printf("Date:           %04u-%02u-%02u\n",
 	       pvt_data->datetime.year,
 	       pvt_data->datetime.month,
@@ -667,10 +667,10 @@ static void print_fix_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 	       pvt_data->datetime.minute,
 	       pvt_data->datetime.seconds,
 	       pvt_data->datetime.ms);
-	printf("PDOP:           %.01f\n", pvt_data->pdop);
-	printf("HDOP:           %.01f\n", pvt_data->hdop);
-	printf("VDOP:           %.01f\n", pvt_data->vdop);
-	printf("TDOP:           %.01f\n", pvt_data->tdop);
+	printf("PDOP:           %.01f\n", (double)pvt_data->pdop);
+	printf("HDOP:           %.01f\n", (double)pvt_data->hdop);
+	printf("VDOP:           %.01f\n", (double)pvt_data->vdop);
+	printf("TDOP:           %.01f\n", (double)pvt_data->tdop);
 }
 
 int main(void)

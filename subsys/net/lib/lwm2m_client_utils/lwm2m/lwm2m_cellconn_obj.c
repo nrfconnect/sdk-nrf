@@ -564,8 +564,8 @@ static void edrx_update(struct lte_lc_edrx_cfg edrx_cfg)
 	/* The eDRX value is a multiple of 10.24 seconds, except for the
 	 * special case of idx == 0 for LTE-M, where the value is 5.12 seconds.
 	 */
-	if (edrx_cfg.edrx > 10.0) {
-		val = round(edrx_cfg.edrx / 10.24);
+	if (edrx_cfg.edrx > 10.0f) {
+		val = round(edrx_cfg.edrx / 10.24f);
 		for (int i = 1; i < 16; i++) {
 			if (val == multipliers[i]) {
 				idx = i;
@@ -578,10 +578,10 @@ static void edrx_update(struct lte_lc_edrx_cfg edrx_cfg)
 	 * [3GPP-TS_24.008, clause 10.5.5.32]
 	 */
 	if (edrx_cfg.mode == LTE_LC_LTE_MODE_LTEM) {
-		ptw = round(edrx_cfg.ptw / 1.28) - 1;
+		ptw = round(edrx_cfg.ptw / 1.28f) - 1;
 		edrx = edrx_lookup_ltem[idx];
 	} else {
-		ptw = round(edrx_cfg.ptw / 2.56) - 1;
+		ptw = round(edrx_cfg.ptw / 2.56f) - 1;
 		edrx = edrx_lookup_nbiot[idx];
 	}
 
@@ -623,8 +623,8 @@ static void lte_event_handler(const struct lte_lc_evt *const evt)
 		break;
 	case LTE_LC_EVT_EDRX_UPDATE:
 		LOG_DBG("LTE EDRX update: mode %s, edrx %.2f s, Paging time %.2f s",
-			(evt->edrx_cfg.mode == 7 ? "LTE" : "NBIOT"), evt->edrx_cfg.edrx,
-			evt->edrx_cfg.ptw);
+			(evt->edrx_cfg.mode == 7 ? "LTE" : "NBIOT"),
+			(double)evt->edrx_cfg.edrx, (double)evt->edrx_cfg.ptw);
 		edrx_update(evt->edrx_cfg);
 		break;
 	case LTE_LC_EVT_LTE_MODE_UPDATE:

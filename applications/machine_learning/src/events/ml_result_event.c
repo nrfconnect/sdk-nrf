@@ -14,7 +14,7 @@ static void log_ml_result_event(const struct app_event_header *aeh)
 	const struct ml_result_event *event = cast_ml_result_event(aeh);
 
 	APP_EVENT_MANAGER_LOG(aeh, "%s val: %0.2f anomaly: %0.2f",
-			event->label, event->value, event->anomaly);
+			event->label, (double)event->value, (double)event->anomaly);
 }
 
 static void profile_ml_result_event(struct log_event_buf *buf,

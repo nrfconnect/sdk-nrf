@@ -655,7 +655,8 @@ static void location_core_event_cb_fn(struct k_work *work)
 		LOG_DBG("  latitude: %s", latitude_str);
 		sprintf(longitude_str, "%.06f", loc_req_info.current_event_data.location.longitude);
 		LOG_DBG("  longitude: %s", longitude_str);
-		sprintf(accuracy_str, "%.01f", loc_req_info.current_event_data.location.accuracy);
+		sprintf(accuracy_str, "%.01f",
+			(double)loc_req_info.current_event_data.location.accuracy);
 		LOG_DBG("  accuracy: %s m", accuracy_str);
 		if (loc_req_info.current_event_data.location.datetime.valid) {
 			LOG_DBG("  date: %04d-%02d-%02d",

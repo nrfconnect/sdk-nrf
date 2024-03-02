@@ -107,8 +107,8 @@ int fuel_gauge_update(const struct device *charger)
 	tte = nrf_fuel_gauge_tte_get();
 	ttf = nrf_fuel_gauge_ttf_get(cc_charging, -term_charge_current);
 
-	printk("V: %.3f, I: %.3f, T: %.2f, ", voltage, current, temp);
-	printk("SoC: %.2f, TTE: %.0f, TTF: %.0f\n", soc, tte, ttf);
+	printk("V: %.3f, I: %.3f, T: %.2f, ", (double)voltage, (double)current, (double)temp);
+	printk("SoC: %.2f, TTE: %.0f, TTF: %.0f\n", (double)soc, (double)tte, (double)ttf);
 
 	return 0;
 }

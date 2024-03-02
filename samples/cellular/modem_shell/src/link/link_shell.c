@@ -1256,7 +1256,7 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 				mosh_print("eDRX LTE mode: %s, eDRX interval: %.2f s, PTW: %.2f s",
 					   edrx_cfg.mode == LTE_LC_LTE_MODE_LTEM ?
 						"LTE-M" : "NB-IoT",
-					   edrx_cfg.edrx, edrx_cfg.ptw);
+					   (double)edrx_cfg.edrx, (double)edrx_cfg.ptw);
 			}
 		}
 	} else {

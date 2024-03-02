@@ -68,6 +68,8 @@ zephyr_library_sources(
 zephyr_library_sources(src/generic_teardown.c)
 zephyr_compile_definitions(UNITY_INCLUDE_CONFIG_H)
 
+# Override Zephyr's Wdouble-promotion, as unity gives warnings.
+zephyr_library_compile_options(-Wno-double-promotion)
 
 # Generate test runner file.
 function(test_runner_generate test_file_path)
