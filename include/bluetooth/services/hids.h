@@ -172,10 +172,13 @@ typedef void (*bt_hids_notify_handler_t) (enum bt_hids_notify_evt evt);
  * @param rep	Pointer to the report descriptor.
  * @param conn	Pointer to Connection Object.
  * @param write	@c true if handler is called for report write.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error
+ *	     code is returned.
  */
-typedef void (*bt_hids_rep_handler_t) (struct bt_hids_rep *rep,
-				       struct bt_conn *conn,
-				       bool write);
+typedef int (*bt_hids_rep_handler_t) (struct bt_hids_rep *rep,
+				      struct bt_conn *conn,
+				      bool write);
 
 /** @brief Input Report.
  */
