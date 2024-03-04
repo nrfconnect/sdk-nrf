@@ -45,7 +45,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define UART_WAIT_FOR_BUF_DELAY K_MSEC(50)
 #define UART_RX_TIMEOUT 50000 /* Wait for RX complete event time in microseconds. */
 
-static const struct device *uart = DEVICE_DT_GET(DT_NODELABEL(uart0));
+static const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(nordic_nus_uart));
 static struct k_work_delayable uart_work;
 
 K_SEM_DEFINE(nus_write_sem, 0, 1);
