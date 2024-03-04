@@ -1737,7 +1737,8 @@ config PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER
 
 config PSA_NEED_CRACEN_KMU_DRIVER
 	bool
-	default y
+	#TODO: Add support for KMU in TF-M builds: NCSDK-26633
+	default y if !BUILD_WITH_TFM
 	depends on PSA_NEED_CRACEN_GCM_AES && \
 		   PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER && \
 		   CRACEN_LIB_KMU
