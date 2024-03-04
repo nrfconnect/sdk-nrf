@@ -73,39 +73,39 @@ The table below gives an overview of the trusted storage support for the product
      - Authenticity
      - Isolation
    * - nRF52840
-     - Library
-     - ?
+     - Trusted storage library
+     - Partial [1]_
      - Yes
      - Yes
      - No
-   * - | nRF5340 ``cpuapp`` builds
-       | (no TF-M)
-     - Library
-     - ?
+   * - nRF5340 without TF-M
+     - Trusted storage library
+     - Partial [1]_
      - Yes
      - Yes
      - No
-   * - | nRF5340 ``ns`` builds
-       | (with TF-M)
-     - TF-M service
+   * - nRF5340 with TF-M
+     - TF-M secure storage service
      - Yes
      - Yes
      - Yes
      - Yes
-   * - | nRF9160 ``cpuapp`` builds
-       | (no TF-M)
-     - Library
-     - ?
+   * - nRF9160 without TF-M
+     - Trusted storage library
+     - Partial [1]_
      - Yes
      - Yes
      - No
-   * - | nRF9160 ``ns`` builds
-       | (with TF-M)
-     - TF-M service
+   * - nRF9160 with TF-M
+     - TF-M secure storage service
      - Yes
      - Yes
      - Yes
      - Yes
+.. [1] On systems without the isolation feature, the confidentiality is limited to protection of data at rest in a non-volatile internal or external memory.
+       This partial confidentiality is based on a CPU-inaccessible master key used for data encryption.
+       When the data is decrypted for usage, there is no mechanism providing access control and protecting its visibility.
+       Use of a TrustZone-enabled system provides stronger protection, and is recommended if available.
 
 The trusted storage library addresses two of the PSA Certified Level 2 and Level 3 optional security functional requirements (SFRs):
 

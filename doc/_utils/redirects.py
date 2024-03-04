@@ -253,4 +253,10 @@ NRF = [
     ("known_issues","releases_and_maturity/known_issues"),
     ("libraries/networking/nrf_cloud_agps","libraries/networking/nrf_cloud_agnss"),
     ("applications/nrf5340_audio/README","applications/nrf5340_audio/index"),
+    ("libraries/nrf_security/index", "libraries/security/nrf_security/index"),
+    ("libraries/nrf_security/doc/backend_config", "libraries/security/nrf_security/doc/backend_config"),
+    ("libraries/nrf_security/doc/configuration", "libraries/security/nrf_security/doc/configuration"),
+    ("libraries/nrf_security/doc/driver_config", "libraries/security/nrf_security/doc/driver_config"),
+    ("libraries/nrf_security/doc/drivers", "libraries/security/nrf_security/doc/drivers"),
+    ("libraries/nrf_security/doc/mbed_tls_header", "libraries/security/nrf_security/doc/mbed_tls_header"),
 ]
