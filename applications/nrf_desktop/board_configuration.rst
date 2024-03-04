@@ -101,3 +101,15 @@ Sample dongle (``nrf5340dk_nrf5340``)
       * Bluetooth uses Nordic Semiconductor's SoftDevice link layer without LLPM and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * The configuration with the B0 bootloader is set as default.
+
+Sample mouse or keyboard (``nrf54l15pdk_nrf54l15_cpuapp``)
+      * The configuration uses the nRF54L15 Preview Development Kit (PDK).
+      * The build types allow to build the application as a mouse or a keyboard.
+      * Inputs are simulated based on the hardware button presses.
+        On the PDK PCA10156, revision v0.2.1 AB0-ES5, GPIOs assigned to **Button 3** and **Button 4** do not support interrupts.
+        Because of this, the application cannot use those buttons.
+      * Only Bluetooth LE transport is enabled.
+        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
+      * In debug configurations, logs are provided through the UART.
+        For detailed information on working with the nRF54L15 PDK, see the :ref:`ug_nrf54l15_gs` documentation.
+      * Configurations do not enable bootloader and do not support a firmware update.
