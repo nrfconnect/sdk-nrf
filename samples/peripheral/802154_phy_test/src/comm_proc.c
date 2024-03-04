@@ -41,7 +41,7 @@ static int cmd_custom(const struct shell *shell_inst, size_t argc, char **argv)
 		strncat(cmd_buf, argv[i], max_append_len);
 
 		if (i < (argc - 1)) {
-			strncat(cmd_buf, " ", 1);
+			strcat(cmd_buf, " ");
 		}
 	}
 
