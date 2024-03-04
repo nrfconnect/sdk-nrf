@@ -132,6 +132,13 @@ The following changes are mandatory to make your application work in the same wa
   * The PSA config is now validated by the :file:`ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h` file.
     Users with invalid configurations must update their PSA configuration according to the error messages that the :file:`check_crypto_config.h` file provides.
 
+* For the :ref:`crypto_persistent_key` sample:
+
+  * The Kconfig option ``CONFIG_PSA_NATIVE_ITS`` is replaced by the Kconfig option :kconfig:option:`CONFIG_TRUSTED_STORAGE`, which enables the new :ref:`trusted_storage_readme` library.
+    The :ref:`trusted_storage_readme` library provides the PSA Internal Trusted Storage (ITS) API for build targets without TF-M.
+    It is not backward compatible with the previous PSA ITS implementation.
+    Migrating from the PSA ITS implementation, enabled by the ``CONFIG_PSA_NATIVE_ITS`` option, to the new :ref:`trusted_storage_readme` library requires manual data migration.
+
 * For :ref:`lib_wifi_credentials` library and Wi-Fi samples:
 
   * ``CONFIG_WIFI_CREDENTIALS_BACKEND_PSA_UID_OFFSET`` has been removed because it was specific to the previous solution that used PSA Protected Storage instead of PSA Internal Trusted Storage (ITS).
