@@ -181,10 +181,10 @@ static void public_broadcast_features_set(uint8_t *features)
 		*features |= 0x01;
 	}
 
-	if (freq == BT_AUDIO_CODEC_CONFIG_LC3_FREQ_16KHZ ||
-	    freq == BT_AUDIO_CODEC_CONFIG_LC3_FREQ_24KHZ) {
+	if (freq == BT_AUDIO_CODEC_CFG_FREQ_16KHZ ||
+	    freq == BT_AUDIO_CODEC_CFG_FREQ_24KHZ) {
 		*features |= 0x02;
-	} else if (freq == BT_AUDIO_CODEC_CONFIG_LC3_FREQ_48KHZ) {
+	} else if (freq == BT_AUDIO_CODEC_CFG_FREQ_48KHZ) {
 		*features |= 0x04;
 	} else {
 		LOG_WRN("%dkHz is not compatible with Auracast, choose 16kHz, 24kHz or 48kHz",
@@ -298,7 +298,7 @@ static void bt_audio_codec_allocation_set(uint8_t *data, uint8_t data_len,
 					  enum bt_audio_location loc)
 {
 	data[0] = data_len - 1;
-	data[1] = BT_AUDIO_CODEC_CONFIG_LC3_CHAN_ALLOC;
+	data[1] = BT_AUDIO_CODEC_CFG_CHAN_ALLOC;
 	sys_put_le32((const uint32_t)loc, &data[2]);
 }
 

@@ -107,10 +107,9 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_bap
 	atomic_inc(&tx_info->iso_tx_pool_alloc);
 
 	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
-		ret = bt_bap_stream_send(bap_stream, buf, tx_info->iso_tx.seq_num,
-					 BT_ISO_TIMESTAMP_NONE);
+		ret = bt_bap_stream_send(bap_stream, buf, tx_info->iso_tx.seq_num);
 	} else {
-		ret = bt_bap_stream_send(bap_stream, buf, tx_info->iso_tx.seq_num, ts_tx);
+		ret = bt_bap_stream_send_ts(bap_stream, buf, tx_info->iso_tx.seq_num, ts_tx);
 	}
 
 	if (ret < 0) {
