@@ -18,9 +18,12 @@ top_table:
 features:
   sidewalk:
     Sidewalk over BLE: SIDEWALK && SIDEWALK_LINK_MASK_BLE
-    Sidewalk over FSK: SIDEWALK && SIDEWALK_LINK_MASK_FSK
-    Sidewalk over LORA: SIDEWALK && SIDEWALK_LINK_MASK_LORA
+    Sidewalk over FSK: SIDEWALK && CONFIG_SIDEWALK_SUBGHZ_SUPPORT
+    Sidewalk over LORA: SIDEWALK && CONFIG_SIDEWALK_SUBGHZ_SUPPORT
     Sidewalk - OTA DFU over Bluetooth LE: SIDEWALK && SIDEWALK_DFU_SERVICE_BLE
+    Sidewalk on-device certification: SIDEWALK
+    Sidewalk Multi-link + Auto-connect: SIDEWALK && CONFIG_SIDEWALK_SUBGHZ_SUPPORT
+    Sidewalk File Transfer (FUOTA): SIDEWALK && SIDEWALK_FILE_TRANSFER
   bluetooth:
     Bluetooth LE Peripheral/Central: BT_CTLR && (BT_CENTRAL || BT_PERIPHERAL)
     LLPM: BT_CTLR_SDC_LLPM
