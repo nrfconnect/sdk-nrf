@@ -128,6 +128,7 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 	}
 }
 
+#if defined(CONFIG_BT_MCC_SET_MEDIA_CONTROL_POINT)
 /**
  * @brief	Callback handler for sent MCS commands.
  *
@@ -143,6 +144,7 @@ static void mcc_send_command_cb(struct bt_conn *conn, int err, const struct mpl_
 			cmd->param);
 	}
 }
+#endif /* defined(CONFIG_BT_MCC_SET_MEDIA_CONTROL_POINT) */
 
 /**
  * @brief  Callback handler for received notifications.
@@ -160,6 +162,7 @@ static void mcc_cmd_notification_cb(struct bt_conn *conn, int err, const struct 
 	}
 }
 
+#if defined(CONFIG_BT_MCC_READ_MEDIA_STATE)
 /**
  * @brief  Callback handler for reading media state.
  *
@@ -177,6 +180,7 @@ static void mcc_read_media_state_cb(struct bt_conn *conn, int err, uint8_t state
 
 	media_player_state = state;
 }
+#endif /* defined(CONFIG_BT_MCC_READ_MEDIA_STATE) */
 
 /**
  * @brief  Callback handler for received MCS commands.
@@ -462,10 +466,17 @@ int bt_content_ctrl_media_client_init(void)
 
 	static struct bt_mcc_cb mcc_cb;
 
+
+
+
 	mcc_cb.discover_mcs = mcc_discover_mcs_cb;
+#if defined(CONFIG_BT_MCC_SET_MEDIA_CONTROL_POINT)
 	mcc_cb.send_cmd = mcc_send_command_cb;
+#endif /* defined(CONFIG_BT_MCC_SET_MEDIA_CONTROL_POINT) */
 	mcc_cb.cmd_ntf = mcc_cmd_notification_cb;
+#if defined(CONFIG_BT_MCC_READ_MEDIA_STATE)
 	mcc_cb.read_media_state = mcc_read_media_state_cb;
+#endif /* defined(CONFIG_BT_MCC_READ_MEDIA_STATE) */
 	return bt_mcc_init(&mcc_cb);
 }
 

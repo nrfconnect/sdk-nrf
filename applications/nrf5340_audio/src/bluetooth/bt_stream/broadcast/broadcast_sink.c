@@ -63,8 +63,8 @@ static uint8_t active_stream_index;
 
 static struct bt_audio_codec_cap codec_cap = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAPABILIY_FREQ,
-	(BT_AUDIO_CODEC_LC3_DURATION_10 | BT_AUDIO_CODEC_LC3_DURATION_PREFER_10),
-	BT_AUDIO_CODEC_LC3_CHAN_COUNT_SUPPORT(1), LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
+	(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
+	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, BT_AUDIO_CONTEXT_TYPE_MEDIA);
 
 static struct bt_pacs_cap capabilities = {
@@ -288,7 +288,7 @@ static struct bt_bap_stream_ops stream_ops = {
 
 static bool parse_cb(struct bt_data *data, void *codec)
 {
-	if (data->type == BT_AUDIO_CODEC_CONFIG_LC3_CHAN_ALLOC) {
+	if (data->type == BT_AUDIO_CODEC_CFG_CHAN_ALLOC) {
 		((struct audio_codec_info *)codec)->chan_allocation = sys_get_le32(data->data);
 		return false;
 	}

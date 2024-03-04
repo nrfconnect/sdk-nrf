@@ -47,6 +47,12 @@ config BT_VCP_VOL_REND
 config BT_MCC
 	default y
 
+config BT_MCC_READ_MEDIA_STATE
+	default y
+
+config BT_MCC_SET_MEDIA_CONTROL_POINT
+	default y
+
 # For fixing compatibility issue with Android 14
 config BT_PAC_SNK_NOTIFIABLE
 	default y

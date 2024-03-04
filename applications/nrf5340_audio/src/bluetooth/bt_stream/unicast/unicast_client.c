@@ -327,15 +327,15 @@ static void supported_sample_rates_print(uint16_t supported_sample_rates, enum b
 {
 	char supported_str[20] = "";
 
-	if (supported_sample_rates & BT_AUDIO_CODEC_LC3_FREQ_48KHZ) {
+	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
 		strcat(supported_str, "48, ");
 	}
 
-	if (supported_sample_rates & BT_AUDIO_CODEC_LC3_FREQ_24KHZ) {
+	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
 		strcat(supported_str, "24, ");
 	}
 
-	if (supported_sample_rates & BT_AUDIO_CODEC_LC3_FREQ_16KHZ) {
+	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
 		strcat(supported_str, "16, ");
 	}
 
@@ -348,15 +348,15 @@ static void supported_sample_rates_print(uint16_t supported_sample_rates, enum b
 
 static bool sink_parse_cb(struct bt_data *data, void *user_data)
 {
-	if (data->type == BT_AUDIO_CODEC_LC3_FREQ) {
+	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
 		uint16_t lc3_freq_bit = sys_get_le16(data->data);
 
 		supported_sample_rates_print(lc3_freq_bit, BT_AUDIO_DIR_SINK);
 
 		/* Try with the preferred sample rate first */
 		switch (CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE) {
-		case BT_AUDIO_CODEC_CONFIG_LC3_FREQ_48KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_48KHZ) {
+		case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
+			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
 				lc3_preset_sink = lc3_preset_sink_48_4_1;
 				*(bool *)user_data = true;
 				/* Found what we were looking for, stop parsing LTV */
@@ -365,8 +365,8 @@ static bool sink_parse_cb(struct bt_data *data, void *user_data)
 
 			break;
 
-		case BT_AUDIO_CODEC_CONFIG_LC3_FREQ_24KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_24KHZ) {
+		case BT_AUDIO_CODEC_CFG_FREQ_24KHZ:
+			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
 				lc3_preset_sink = lc3_preset_sink_24_2_1;
 				*(bool *)user_data = true;
 				/* Found what we were looking for, stop parsing LTV */
@@ -375,8 +375,8 @@ static bool sink_parse_cb(struct bt_data *data, void *user_data)
 
 			break;
 
-		case BT_AUDIO_CODEC_CONFIG_LC3_FREQ_16KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_16KHZ) {
+		case BT_AUDIO_CODEC_CFG_FREQ_16KHZ:
+			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
 				lc3_preset_sink = lc3_preset_sink_16_2_1;
 				*(bool *)user_data = true;
 				/* Found what we were looking for, stop parsing LTV */
@@ -387,13 +387,13 @@ static bool sink_parse_cb(struct bt_data *data, void *user_data)
 		}
 
 		/* If no match with the preferred, revert to trying highest first */
-		if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_48KHZ) {
+		if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
 			lc3_preset_sink = lc3_preset_sink_48_4_1;
 			*(bool *)user_data = true;
-		} else if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_24KHZ) {
+		} else if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
 			lc3_preset_sink = lc3_preset_sink_24_2_1;
 			*(bool *)user_data = true;
-		} else if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_16KHZ) {
+		} else if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
 			lc3_preset_sink = lc3_preset_sink_16_2_1;
 			*(bool *)user_data = true;
 		}
@@ -408,15 +408,15 @@ static bool sink_parse_cb(struct bt_data *data, void *user_data)
 
 static bool source_parse_cb(struct bt_data *data, void *user_data)
 {
-	if (data->type == BT_AUDIO_CODEC_LC3_FREQ) {
+	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
 		uint16_t lc3_freq_bit = sys_get_le16(data->data);
 
 		supported_sample_rates_print(lc3_freq_bit, BT_AUDIO_DIR_SOURCE);
 
 		/* Try with the preferred sample rate first */
 		switch (CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE) {
-		case BT_AUDIO_CODEC_CONFIG_LC3_FREQ_48KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_48KHZ) {
+		case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
+			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
 				lc3_preset_source = lc3_preset_source_48_4_1;
 				*(bool *)user_data = true;
 				/* Found what we were looking for, stop parsing LTV */
@@ -425,8 +425,8 @@ static bool source_parse_cb(struct bt_data *data, void *user_data)
 
 			break;
 
-		case BT_AUDIO_CODEC_CONFIG_LC3_FREQ_24KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_24KHZ) {
+		case BT_AUDIO_CODEC_CFG_FREQ_24KHZ:
+			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
 				lc3_preset_source = lc3_preset_source_24_2_1;
 				*(bool *)user_data = true;
 				/* Found what we were looking for, stop parsing LTV */
@@ -435,8 +435,8 @@ static bool source_parse_cb(struct bt_data *data, void *user_data)
 
 			break;
 
-		case BT_AUDIO_CODEC_CONFIG_LC3_FREQ_16KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_16KHZ) {
+		case BT_AUDIO_CODEC_CFG_FREQ_16KHZ:
+			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
 				lc3_preset_source = lc3_preset_source_16_2_1;
 				*(bool *)user_data = true;
 				/* Found what we were looking for, stop parsing LTV */
@@ -447,13 +447,13 @@ static bool source_parse_cb(struct bt_data *data, void *user_data)
 		}
 
 		/* If no match with the preferred, revert to trying highest first */
-		if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_48KHZ) {
+		if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
 			lc3_preset_source = lc3_preset_source_48_4_1;
 			*(bool *)user_data = true;
-		} else if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_24KHZ) {
+		} else if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
 			lc3_preset_source = lc3_preset_source_24_2_1;
 			*(bool *)user_data = true;
-		} else if (lc3_freq_bit & BT_AUDIO_CODEC_LC3_FREQ_16KHZ) {
+		} else if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
 			lc3_preset_source = lc3_preset_source_16_2_1;
 			*(bool *)user_data = true;
 		}
@@ -514,7 +514,7 @@ static void bt_audio_codec_allocation_set(struct bt_audio_codec_cfg *codec_cfg,
 		uint8_t *value = &codec_cfg->data[i];
 		const uint8_t value_len = len - sizeof(type);
 
-		if (type == BT_AUDIO_CODEC_CONFIG_LC3_CHAN_ALLOC) {
+		if (type == BT_AUDIO_CODEC_CFG_CHAN_ALLOC) {
 			const uint32_t loc_32 = loc;
 
 			sys_put_le32(loc_32, value);
