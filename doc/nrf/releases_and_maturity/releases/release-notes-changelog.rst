@@ -1198,8 +1198,6 @@ Security libraries
       The RSA key size must be explicitly enabled to avoid breaking the configuration when using the RSA keys, for example by setting the Kconfig option :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` if 2048-bit RSA keys are required.
     * The PSA config is now validated by the file :file:`ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h`.
       Users with invalid configurations must update their PSA configuration according to the error messages that the file :file:`check_crypto_config.h` provides.
-    * PSA crypto is now supported on nRF54L Series devices.
-      Enable PSA crypto support with a CRACEN driver as the backend by setting the Kconfig option :kconfig:option:`CONFIG_NRF_SECURITY`.
 
 Other libraries
 ---------------
