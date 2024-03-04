@@ -782,6 +782,12 @@ int nrf_wifi_mode(const struct device *dev,
 			goto out;
 		}
 
+		if (vif_ctx_zep->authorized && (mode->mode == NRF_WIFI_MONITOR_MODE)) {
+			LOG_ERR("%s: Cannot set monitor mode when station is connected",
+				__func__);
+			goto out;
+		}
+
 		/**
 		 * Send the driver vif_idx instead of upper layer sent if_index.
 		 * we map network if_index 1 to vif_idx of 0 and so on. The vif_ctx_zep
