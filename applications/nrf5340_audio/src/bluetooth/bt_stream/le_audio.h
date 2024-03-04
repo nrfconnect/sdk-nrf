@@ -15,17 +15,17 @@
 
 #if CONFIG_SAMPLE_RATE_CONVERTER
 #define BT_AUDIO_CODEC_CAPABILIY_FREQ                                                              \
-	BT_AUDIO_CODEC_LC3_FREQ_48KHZ | BT_AUDIO_CODEC_LC3_FREQ_24KHZ |                            \
-		BT_AUDIO_CODEC_LC3_FREQ_16KHZ
+	BT_AUDIO_CODEC_CAP_FREQ_48KHZ | BT_AUDIO_CODEC_CAP_FREQ_24KHZ |                            \
+		BT_AUDIO_CODEC_CAP_FREQ_16KHZ
 
 #elif CONFIG_AUDIO_SAMPLE_RATE_16000_HZ
-#define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_AUDIO_CODEC_LC3_FREQ_16KHZ
+#define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_AUDIO_CODEC_CAP_FREQ_16KHZ
 
 #elif CONFIG_AUDIO_SAMPLE_RATE_24000_HZ
-#define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_AUDIO_CODEC_LC3_FREQ_24KHZ
+#define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_AUDIO_CODEC_CAP_FREQ_24KHZ
 
 #elif CONFIG_AUDIO_SAMPLE_RATE_48000_HZ
-#define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_AUDIO_CODEC_LC3_FREQ_48KHZ
+#define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_AUDIO_CODEC_CAP_FREQ_48KHZ
 
 #else
 #error No sample rate supported
@@ -34,12 +34,12 @@
 #define BT_BAP_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                            \
 	BT_BAP_LC3_PRESET(                                                                         \
 		BT_AUDIO_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE,                  \
-					  BT_AUDIO_CODEC_CONFIG_LC3_DURATION_10, _loc,             \
+					  BT_AUDIO_CODEC_CFG_DURATION_10, _loc,                    \
 					  LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1, _stream_context), \
-		BT_AUDIO_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),             \
-						   CONFIG_BT_AUDIO_RETRANSMITS,                    \
-						   CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,       \
-						   CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
+		BT_AUDIO_CODEC_QOS_UNFRAMED(10000u, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),            \
+					    CONFIG_BT_AUDIO_RETRANSMITS,                           \
+					    CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,              \
+					    CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
 
 /**
  * @brief Callback for receiving Bluetooth LE Audio data.
