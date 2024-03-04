@@ -9,76 +9,105 @@
 #include <nrf_rpc_tr.h>
 #include <nrf_rpc/nrf_rpc_uart.h>
 #include <nrf_rpc_errno.h>
+#include <sys/_stdint.h>
 #include <zephyr/drivers/uart.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/crc.h>
 
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_rpc_uart, CONFIG_NRF_RPC_TR_LOG_LEVEL);
 
-#define MAX_BUF_SIZE 256
-static uint8_t buffer[MAX_BUF_SIZE];
+enum {
+	/* TODO: check if we need handle other special values like XON or XOFF */
+	hdlc_char_escape = 0x7d,
+	hdlc_char_delimiter = 0x7e,
+};
 
-volatile int num_interrupts = 0;
-volatile int buf_ptr = 0;
-static struct nrf_rpc_uart *uart_tr_global;
+static int hdlc_input_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
+{
+	//uint16_t crc, frame_crc;
 
-static const int DELIMITER = 0x7E;
-static const int ESCAPE = 0x7D;
+	/* TODO: handle frame buffer overflow */
+
+	if (uart_tr->hdlc_state == hdlc_state_escape) {
+		uart_tr->frame_buffer[uart_tr->frame_len++] = byte ^ 0x20;
+		uart_tr->hdlc_state = hdlc_state_frame_start;
+	} else if (byte == hdlc_char_escape) {
+		uart_tr->hdlc_state = hdlc_state_escape;
+	} else if (byte == hdlc_char_delimiter) {
+		uart_tr->hdlc_state = (uart_tr->hdlc_state == hdlc_state_frame_start)
+					      ? hdlc_state_frame_found
+					      : hdlc_state_unsync;
+	} else {
+		uart_tr->frame_buffer[uart_tr->frame_len++] = byte;
+		uart_tr->hdlc_state = hdlc_state_frame_start;
+	}
+
+	if (uart_tr->hdlc_state == hdlc_state_frame_found) {
+		//crc = crc16_ccitt(0xffff, frame_buffer, frame_len-1);
+		//frame_crc = ((uint16_t)frame_buffer[frame_len-2] << 8) & frame_buffer[frame_len-1];
+		/*if (crc == frame_crc) {
+			LOG_DBG("frame crc match.");
+		} else {
+			LOG_DBG("frame crc MISmatch.");
+		}*/
+		LOG_HEXDUMP_DBG(uart_tr->frame_buffer, uart_tr->frame_len, "Received frame");
+	}
+
+	return 0;
+}
 
 static void work_handler(struct k_work *work)
 {
-	bool found_start=false;
-	bool found_stop=false;
-	int start = 0;
-	int stop = 0;
-	LOG_DBG("received data.");
-	if (uart_tr_global != NULL) {
-		for (size_t i = 0; i < MAX_BUF_SIZE; i++) {
-			if (buffer[i] == DELIMITER) {
-				if (found_start) {
-					found_stop = true;
-					stop = i;
-				}else {
-					found_start = true;
-					start = i+1;
-				}
+
+	struct nrf_rpc_uart *uart_tr = CONTAINER_OF(work, struct nrf_rpc_uart, cb_work);
+	const struct nrf_rpc_tr *transport = uart_tr->transport;
+	uint8_t *data;
+	size_t len;
+	int ret;
+
+	len = ring_buf_get_claim(&uart_tr->rx_ringbuf, &data, NRF_RPC_MAX_FRAME_SIZE);
+
+	for (size_t i = 0; i < len; i++) {
+		if (hdlc_input_byte(uart_tr, data[i]) == 0) {
+			if (uart_tr->hdlc_state == hdlc_state_frame_found) {
+				uart_tr->receive_callback(transport, uart_tr->frame_buffer,
+							  uart_tr->frame_len, uart_tr->receive_ctx);
+				uart_tr->frame_len = 0;
+				uart_tr->hdlc_state = hdlc_state_unsync;
 			}
 		}
-		const struct nrf_rpc_tr *transport = uart_tr_global->transport;
-		if (found_stop) {
-			LOG_DBG("frame found size: %d start: %d stop: %d", stop - start, start, stop);
-			uart_tr_global->receive_callback(transport, buffer + start, stop - start, transport->ctx);
-			buffer[start] = 0;
-			buffer[stop] = 0;
-			buf_ptr = 0;
-		} else {
-			LOG_DBG("frame not found");
-		}
-	} else {
-		LOG_ERR("uart transport not set");
+	}
+
+	ret = ring_buf_get_finish(&uart_tr->rx_ringbuf, len);
+	if (ret < 0) {
+		LOG_DBG("Cannot flush ring buffer (%d)", ret);
 	}
 }
 
-K_WORK_DEFINE(work, work_handler);
-
-static void serial_cb(const struct device *dev, void *user_data)
+static void serial_cb(const struct device *uart, void *user_data)
 {
 	struct nrf_rpc_uart *uart_tr = user_data;
-	int read = 0;
-	num_interrupts++;
-	if (!uart_irq_update(dev)) {
-		return;
-	}
+	int rx_len, ret;
+	uint8_t rx_buffer[8];
 
-	if (!uart_irq_rx_ready(dev)) {
-		return;
-	}
+	while (uart_irq_update(uart) && uart_irq_rx_ready(uart)) {
+		rx_len = uart_fifo_read(uart, rx_buffer, sizeof(rx_buffer));
+		if (rx_len <= 0) {
+			continue;
+		}
 
-	while((read = uart_fifo_read(uart_tr->uart, buffer+buf_ptr, 1)) != 0)
-	{
-		buf_ptr += read;
+		ret = ring_buf_put(&uart_tr->rx_ringbuf, rx_buffer, (uint32_t)rx_len);
+		if (ret < rx_len) {
+			LOG_ERR("Rx buffer doesn't have enough space. "
+				"Bytes pending: %d, written: %d",
+				rx_len, ret);
+			break;
+		}
+
+		k_work_submit(&uart_tr->cb_work);
 	}
-	k_work_submit(&work);
 }
 
 static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t receive_cb,
@@ -95,7 +124,7 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 		return -NRF_EINVAL;
 	}
 	uart_tr->receive_callback = receive_cb;
-	uart_tr_global = uart_tr;
+	uart_tr->receive_ctx = context;
 
 	if (!device_is_ready(uart_tr->uart)) {
 		LOG_ERR("UART device not found!");
@@ -115,6 +144,11 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 		}
 		return 0;
 	}
+
+	k_work_init(&uart_tr->cb_work, work_handler);
+	ring_buf_init(&uart_tr->rx_ringbuf, sizeof(uart_tr->rx_buffer), uart_tr->rx_buffer);
+	uart_tr->hdlc_state = hdlc_state_unsync;
+	uart_tr->frame_len = 0;
 	uart_irq_rx_enable(uart_tr->uart);
 
 	return 0;
@@ -122,21 +156,29 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 
 static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t length)
 {
-	LOG_DBG("Send frame len %d", length);
+	LOG_HEXDUMP_DBG(data, length, "Sending frame");
 	struct nrf_rpc_uart *uart_tr = transport->ctx;
+	uint16_t crc;
 
-	uart_poll_out(uart_tr->uart, DELIMITER);
+	// crc = crc16_ccitt(0xffff, data, length);
+	uart_poll_out(uart_tr->uart, hdlc_char_delimiter);
 
 	for(size_t i = 0; i < length; i++) {
-		if(data[i] == DELIMITER || data[i] == ESCAPE) {
-			uart_poll_out(uart_tr->uart, ESCAPE);
+		uint8_t byte = data[i];
+
+		if (data[i] == hdlc_char_delimiter || data[i] == hdlc_char_escape) {
+			uart_poll_out(uart_tr->uart, hdlc_char_escape);
+			byte ^= 0x20;
 		}
-		uart_poll_out(uart_tr->uart, data[i]);
+
+		uart_poll_out(uart_tr->uart, byte);
 	}
 
-	uart_poll_out(uart_tr->uart, DELIMITER);
+//	uart_poll_out(uart_tr->uart, (crc >> 8) & 0xff);
+//	uart_poll_out(uart_tr->uart, crc & 0xff);
+	uart_poll_out(uart_tr->uart, hdlc_char_delimiter);
 
-	k_free(data);
+	k_free((void*)data);
 
 	return 0;
 }

@@ -89,7 +89,7 @@ int main(void)
 {
 	int ret;
 
-	k_sleep(K_MSEC(5000));
+	k_sleep(K_MSEC(3000));
 	ret = serialization_init();
 
 	if (ret != 0) {
