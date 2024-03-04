@@ -206,11 +206,11 @@ void test_main(void)
 	zigbee_enable();
 
 	/* Only zboss_api_signals test suite should run now. */
-	ztest_run_all(&zboss_startup_finished);
+	ztest_run_all(&zboss_startup_finished, false, 1, 1);
 
 	/* Only zboss_api_alarm test suite should run now. */
 	zboss_startup_finished = true;
-	ztest_run_all(&zboss_startup_finished);
+	ztest_run_all(&zboss_startup_finished, false, 1, 1);
 
 	ztest_verify_all_test_suites_ran();
 }

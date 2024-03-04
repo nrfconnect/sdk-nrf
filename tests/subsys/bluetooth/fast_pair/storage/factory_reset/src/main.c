@@ -477,5 +477,5 @@ void test_main(void)
 		 (test_stage == RESET_TEST_STAGE_INTERRUPTED),
 		 "Invalid test stage");
 
-	ztest_run_all(NULL);
+	ztest_run_all(NULL, false, 1, 1);
 }
