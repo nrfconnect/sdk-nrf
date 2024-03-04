@@ -58,9 +58,6 @@ Creating a FOTA job
 #. Click :guilabel:`Objects` to go back to the bucket.
 #. Click :guilabel:`Upload` and :guilabel:`Add files`.
 #. Select the file :file:`app_update.bin` (located in the :file:`zephyr` subfolder of your build directory).
-
-   If you want to update the modem firmware, extract the content of a downloaded modem firmware zip and select the desired delta update, for example :file:`mfw_nrf9160_update_from_1.3.1_to_1.3.2`.
-   The various modem firmware versions can be found in `nRF9160 DK Downloads`_ for the nRF9160 DK, and `nRF9161 DK Downloads`_ for the nRF9161 DK.
 #. Click :guilabel:`Upload` and then :guilabel:`Close`.
 #. Click the uploaded image file :file:`app_update.bin` and copy the *Object URL* without the *https://* prefix and folder path.
 #. Create a text file (job document) with content as in the snippet, replacing the following data:
@@ -98,20 +95,7 @@ Creating a FOTA job
 After the job has been submitted, the device picks up the job automatically.
 This can take several minutes.
 In the `AWS S3 console`_ you can check the status of the job to confirm that it is in progress.
-
-Troubleshooting
-===============
-
-ERROR: -NRF_ECONNREFUSED:
-   Error -NRF_ECONNREFUSED ("Connection refused") indicates an error with the configured certificates.
-
-ERROR: -NRF_EHOSTUNREACH:
-   Error -NRF_EHOSTUNREACH ("Host is unreachable") indicates that the download URL provided in the job document is wrong.
-
-Content range is not defined:
-   If you host the firmware image on a different server than in an S3 bucket, this error indicates that the Content-Range field is missing in the HTTP GET header.
-   To fix this problem, configure the host server to provide this field.
-   Also, confirm that your file is available from the browser without being logged into your AWS account.
+To handle the failed statuses, see :ref:`aws_fota_troubleshooting`.
 
 Configuration
 *************
@@ -180,6 +164,36 @@ Alternatively, to use a single URL, a document like the following can be used:
    }
 
 For information on how to use presigned AWS S3 URLs, refer to `AWS IoT Developer Guide: Managing Jobs`_.
+
+.. _aws_fota_troubleshooting:
+
+Troubleshooting
+***************
+
+The following sections list some common errors and possible solutions to them.
+
+Known error codes
+=================
+
+ERROR: ``-NRF_ECONNREFUSED``:
+   Error ``-NRF_ECONNREFUSED`` ("Connection refused") indicates an error with the configured certificates.
+
+ERROR: ``-NRF_EHOSTUNREACH``:
+   Error ``-NRF_EHOSTUNREACH`` ("Host is unreachable") indicates that the download URL provided in the job document is wrong.
+
+Content range is not defined:
+   If you host the firmware image on a different server than in an S3 bucket, this error indicates that the Content-Range field is missing in the HTTP GET header.
+   To fix this problem, configure the host server to provide this field.
+   Also, confirm that your file is available from the browser without being logged into your AWS account.
+
+Presigned URLs
+==============
+
+When using the presigned URLs, you might need to increase the value of the following Kconfig options to accommodate the long file name and payload size of the presigned URL and the secure download of the image:
+
+* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE`.
+* :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`.
+* :kconfig:option:`CONFIG_MBEDTLS_HEAP_SIZE` - If running Mbed TLS on the application core (Wi-Fi® builds).
 
 Limitations
 ***********
