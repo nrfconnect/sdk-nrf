@@ -421,10 +421,10 @@ Using the command line
 ======================
 
 To build nRF5340 samples from the command line, use :ref:`west <zephyr:west>`.
-To program the nRF5340 DK from the command line, use either west or nrfjprog (which is part of the `nRF Command Line Tools`_).
+To program the nRF5340 DK from the command line, use either west (which uses nrfjprog that is part of the `nRF Command Line Tools`_) or :ref:`nRF Util <toolchain_management_tools>`.
 
 .. note::
-   Programming the nRF5340 DK from the command line (with west or nrfjprog) requires the `nRF Command Line Tools`_ v10.12.0 or later.
+   Programming the nRF5340 DK from the command line with west requires the `nRF Command Line Tools`_ v10.12.0 or later.
 
 Separate images
 ---------------
@@ -445,11 +445,11 @@ See the following instructions for programming the images separately:
 
            west flash --erase
 
-   .. group-tab:: nrfjprog
+   .. group-tab:: nRF Util
 
       1. Open a command prompt in the build folder of the network sample and enter the following command to erase the flash memory of the network core and program the network sample::
 
-           nrfjprog -f NRF53 --coprocessor CP_NETWORK --program zephyr/zephyr.hex --chiperase
+           nrfutil device program --firmware zephyr.hex  --options chip_erase_mode=ERASE_ALL --core Network
 
          .. note::
             If you cannot locate the build folder of the network sample, look for a folder with one of these names inside the build folder of the application sample:
@@ -461,11 +461,11 @@ See the following instructions for programming the images separately:
 
       2. Navigate to the build folder of the application sample and enter the following command to erase the flash memory of the application core and program the application sample::
 
-           nrfjprog -f NRF53 --program zephyr/zephyr.hex --chiperase
+           nrfutil device program --firmware zephyr/zephyr.hex  --options chip_erase_mode=ERASE_ALL
 
       3. Reset the development kit::
 
-           nrfjprog --pinreset
+           nrfutil device reset --reset-kind=RESET_PIN
 
 See :ref:`readback_protection_error` if you encounter an error.
 
@@ -474,7 +474,7 @@ Multi-image build
 
 To build and program a multi-image HEX file, follow the instructions in :ref:`programming_cmd` for the application core sample.
 
-To program the multi-image HEX file, you can use west or nrfjprog.
+To program the multi-image HEX file, you can use west or nRF Util.
 
 .. tabs::
 
@@ -482,18 +482,19 @@ To program the multi-image HEX file, you can use west or nrfjprog.
 
       Enter the following command to program multi-image builds for different cores::
 
-        west flash
+         west flash
 
-   .. group-tab:: nrfjprog
+      .. note::
+          The minimum supported version of nrfjprog for multi-image builds for different cores is 10.21.0.
+
+   .. group-tab:: nRF Util
 
       Enter the following commands to program multi-image builds for different cores::
 
-        nrfjprog -f NRF53 --program zephyr/merged_domains.hex --recover --verify
+         nrfutil device program --firmware zephyr/merged_domains.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
 
       .. note::
-         The minimum supported version of nrfjprog for multi-image builds for different cores is 10.21.0.
-
-         Additionally, the ``--verify`` command confirms that the writing operation has succeeded.
+           The ``--verify`` command confirms that the writing operation has succeeded.
 
 .. _readback_protection_error:
 
@@ -515,17 +516,17 @@ See the following instructions.
 
       Use the ``--recover`` parameter with ``west flash``, as described in :ref:`programming_params`.
 
-   .. group-tab:: nrfjprog
+   .. group-tab:: nRF Util
 
       Enter the following commands to recover first the network core and then the application core::
 
-        nrfjprog --recover --coprocessor CP_NETWORK
-        nrfjprog --recover
+        nrfutil device recover --core Network
+        nrfutil device recover
 
       .. note::
          Make sure to recover the network core before you recover the application core.
 
-         The ``--recover`` command erases the flash memory and then writes a small binary into the recovered flash memory.
+         The ``nrfutil device recover`` command erases the flash memory and then writes a small binary into the recovered flash memory.
          This binary prevents the readback protection from enabling itself again after a pin reset or power cycle.
 
          Recovering the network core erases the flash memory of both cores.
