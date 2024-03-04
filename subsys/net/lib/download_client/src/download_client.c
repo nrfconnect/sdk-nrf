@@ -264,7 +264,7 @@ static int host_lookup(const char *host, int family, uint8_t pdn_id,
 	}
 
 	if (err) {
-		LOG_WRN("Failed to resolve hostname %s on %s",
+		LOG_DBG("Failed to resolve hostname %s on %s",
 			hostname, str_family(family));
 		return -EHOSTUNREACH;
 	}
