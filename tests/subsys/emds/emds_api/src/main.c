@@ -345,7 +345,7 @@ void test_main(void)
 	printk("********** Test run: %s (%d) **********\n",
 		print_state(run_state), iteration);
 
-	ztest_run_all(&run_state);
+	ztest_run_all(&run_state, false, 1, 1);
 
 #if CONFIG_SETTINGS
 	iteration++;
