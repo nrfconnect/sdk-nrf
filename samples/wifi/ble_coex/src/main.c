@@ -327,7 +327,7 @@ static void udp_upload_results_cb(enum zperf_status status,
 		}
 		/* print results */
 		LOG_INF("Upload results:");
-		LOG_INF("%u bytes in %u ms",
+		LOG_INF("%u bytes in %llu ms",
 				(result->nb_packets_sent * result->packet_size),
 				(result->client_time_in_us / USEC_PER_MSEC));
 		LOG_INF("%u packets sent", result->nb_packets_sent);
