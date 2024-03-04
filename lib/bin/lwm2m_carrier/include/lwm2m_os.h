@@ -495,7 +495,13 @@ int lwm2m_os_nrf_errno(void);
  * @{
  */
 #define LWM2M_OS_DFU_IMG_TYPE_NONE        0
+/**
+ * MCUboot-style upgrades
+ */
 #define LWM2M_OS_DFU_IMG_TYPE_APPLICATION 1
+/**
+ * Modem delta upgrades
+ */
 #define LWM2M_OS_DFU_IMG_TYPE_MODEM_DELTA 2
 /** @} */
 

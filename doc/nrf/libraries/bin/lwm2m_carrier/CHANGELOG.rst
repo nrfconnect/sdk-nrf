@@ -17,7 +17,7 @@ For certification status of the released versions, see `Mobile network operator 
 liblwm2m_carrier 3.4.0
 **********************
 
-Release for modem firmware version 1.3.5, 1.3.6, 2.0.0, and 2.0.1.
+Release for modem firmware version 1.3.6 and 2.0.1.
 
 Size
 ====
@@ -52,13 +52,21 @@ Changes
 * Added a timeout to abort Push FOTA operations using the :kconfig:option:`CONFIG_LWM2M_CARRIER_FIRMWARE_DOWNLOAD_TIMEOUT` Kconfig option.
   By default (0), the timer is disabled for unknown subscriber IDs, and set to 30 minutes for the SoftBank subscriber ID.
 
-* Removed the Kconfig option ``LWM2M_CARRIER_THREAD_STACK_SIZE``, and the corresponding thread from the glue layer.
-
 * Added the function :c:func:`lwm2m_carrier_data_send`.
   This function can be used to send Binary App Data Container and Event Log object data.
 
   * Renamed the old ``lwm2m_carrier_app_data_send`` function to :c:func:`lwm2m_carrier_app_data_set` to avoid confusion with the new :c:func:`lwm2m_carrier_data_send` function.
     The name now also matches the similar function :c:func:`lwm2m_carrier_log_data_set`.
+
+* The :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` Kconfig option can now be used to provide a PSK Identity.
+  If a PSK Identity is stored in the configured security tag, the LwM2M carrier library makes use of it alongside the PSK.
+  This behavior does not apply when the device is in the Verizon network, in which case the PSK Identity is overwritten.
+
+* The FOTA implementation was reworked to use the :ref:`lib_dfu_target` library to manage the DFU process, providing a single interface to support different types of firmware upgrades.
+  Consequently, the LwM2M carrier library can now perform generic application FOTA.
+
+* Removed the firmware update type member ``type`` from the :c:struct:`lwm2m_carrier_event_fota_start_t` structure.
+  The image type is now determined when the LwM2M carrier library calls the glue layer function :c:func:`lwm2m_os_dfu_img_type`.
 
 liblwm2m_carrier 3.3.3
 **********************
