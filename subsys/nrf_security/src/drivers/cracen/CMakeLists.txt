@@ -45,7 +45,7 @@ target_compile_options(
   -Wno-pointer-sign
 )
 
-if(BUILD_FROM_TFM)
+if(BUILD_INSIDE_TFM)
   # Add an empty interface library called zephyr_interface so that we
   # can use the zephyr_library_* API's in both the TF-M and Zephyr
   # build.
