@@ -116,7 +116,7 @@ int import_rsa_keypair(void)
 	/* After the key handle is acquired the attributes are not needed */
 	psa_reset_key_attributes(&key_attributes);
 
-	LOG_INF("RSA generated successfully!");
+	LOG_INF("RSA private key imported successfully!");
 
 	return APP_SUCCESS;
 }
@@ -143,6 +143,8 @@ int import_rsa_pub_key(void)
 
 	/* After the key handle is acquired the attributes are not needed */
 	psa_reset_key_attributes(&key_attributes);
+
+	LOG_INF("RSA public key imported successfully!");
 
 	return APP_SUCCESS;
 }
