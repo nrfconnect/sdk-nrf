@@ -8,6 +8,7 @@ menuconfig SAMPLE_RATE_CONVERTER
 	bool "Sample Rate conversion library [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	select CMSIS_DSP
+	select CMSIS_DSP_FILTERING
 	select TIMING_FUNCTIONS
 	select RING_BUFFER
 	help
