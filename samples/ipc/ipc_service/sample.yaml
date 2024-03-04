@@ -62,7 +62,7 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     extra_configs:
-      - ipc_service_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
+      - ipc_service_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=35
       - remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
     extra_args:
       SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
