@@ -15,7 +15,6 @@ Following are some of the requirements and limitations of the application while 
    * Packet Domain events (``AT+CGEREP``).
    * Extended signal quality events (``AT%CESQ``).
    * ODIS events (``AT+ODISNTF``).
-   * Universal Integrated Circuit Card events (``AT%XSIM``).
    * Network Time events (``AT%XTIME``).
    * Modem Domain events (``AT%MDMEV``).
    * Report Network Error Codes events (``AT+CNEC``) - EPS Session Management events are used by the LwM2M carrier library.
@@ -40,10 +39,17 @@ Following are some of the requirements and limitations of the application while 
   * The socket is released by the library again upon the next reboot, or in the event of a FOTA error.
   * If the application always needs a TLS socket, it can use `Mbed TLS`_.
 
-* The LwM2M carrier library uses both the DTLS sessions made available through the modem. Therefore, the application cannot run any DTLS sessions.
+* When in the Verizon network, the LwM2M carrier library uses both the DTLS sessions made available through the modem.
+  Therefore, the application cannot run any DTLS or TLS sessions.
+
+  * In other networks, the application can still use one DTLS session and one TLS session (or two DTLS sessions).
+  * For more information, see the :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START` event in :ref:`lwm2m_events`.
 
 * The LwM2M carrier library provisions the necessary security credentials to the security tags 25, 26, 27, 28.
   These tags must not be used by the application.
+* If the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` is set, the range follows that ``sec_tag`` instead.
+
+  * For example, setting :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` to 42 uses the security tag range 43 to 46 instead of 25 to 28.
 
 * The CA certificates that are used for out-of-band FOTA must be provided by the application.
   Out-of-band FOTA updates are done by the :ref:`lib_download_client`.

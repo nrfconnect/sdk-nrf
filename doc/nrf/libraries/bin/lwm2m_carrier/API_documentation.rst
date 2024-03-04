@@ -23,3 +23,10 @@ LwM2M OS layer
 .. doxygengroup:: lwm2m_carrier_os
    :project: nrf
    :members:
+
+LwM2M OS DFU image type
+=======================
+
+.. doxygengroup:: lwm2m_os_dfu_img_type
+   :project: nrf
+   :members:
