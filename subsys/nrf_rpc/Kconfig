@@ -30,6 +30,8 @@ config NRF_RPC_IPC_SERVICE
 config NRF_RPC_UART_TRANSPORT
 	bool "UART transport for nrf RPC."
 	select UART_NRFX
+	select RING_BUFFER
+	select CRC
 
 endchoice
 
