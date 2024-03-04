@@ -554,18 +554,19 @@ Communicating with the modem on Thingy:91
 =========================================
 
 In this scenario, Thingy:91 running the Serial LTE Modem application serves as the host.
-You can use only a PC as a client.
+You can use a PC as a client.
 
 .. _slm_connecting_thingy91_pc:
 
 Connecting with a PC
 --------------------
 
-To connect to Thingy:91 with a PC, you must first program the :ref:`connectivity_bridge` on the nrf52840 of Thingy:91.
-It routes ``UART_0`` to ``USB_CDC0`` on Thingy:91.
-By enabling the option ``CONFIG_BRIDGE_BLE_ENABLE`` , you can also use SLM over :ref:`nus_service_readme`.
+The nRF52840 SoC of Thingy:91 is pre-programmed with the :ref:`connectivity_bridge` application.
+To update the :ref:`connectivity_bridge` application, see the :ref:`programming_thingy` documentation.
+The :ref:`connectivity_bridge` application routes ``UART_0`` to ``USB_CDC0`` on Thingy:91.
+By enabling the :kconfig:option:`CONFIG_BRIDGE_BLE_ENABLE` Kconfig option in the :ref:`connectivity_bridge`, you can also use SLM over :ref:`nus_service_readme`.
 
-Then follow the instructions below:
+To connect to a Thingy:91 with a PC:
 
 .. include:: slm_description.rst
    :start-after: .. slm_connecting_91dk_pc_instr_start
