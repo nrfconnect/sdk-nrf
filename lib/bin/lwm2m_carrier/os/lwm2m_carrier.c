@@ -240,6 +240,11 @@ void lwm2m_carrier_thread_run(void)
 		return;
 	}
 
+	/* Prevent an illegal configuration of the LwM2M carrier library. */
+	if (config.server_binding == 'N') {
+		config.server_uri = "";
+	}
+
 	/* Run the LwM2M carrier library.
 	 *
 	 * Note: can also pass NULL to initialize with default settings
