@@ -216,6 +216,13 @@ Only secure applications can use Bluetooth LE
   When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:zephyr:code-sample:`smp-svr`).
   However, security is not enabled by default in the Zephyr sample.
 
+.. rst-class:: v2-5-2
+
+DRGN-21390: The `disconnected` callback might not get called on nRF5340.
+  The Bluetooth host running on the nRF5340 application core might deadlock on disconnection.
+  This is due to a recent bugfix in the Softdevice Controller triggering a bug in the ATT queuing layer.
+
+  **Workaround:** Either disable host flow control (:kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL`) or cherry-pick commits from the upstream: `Zephyr PR #65272 <https://github.com/zephyrproject-rtos/zephyr/pull/65272>`_.
 
 Bluetooth Mesh
 ==============
