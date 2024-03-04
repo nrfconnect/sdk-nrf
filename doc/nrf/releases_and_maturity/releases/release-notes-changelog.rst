@@ -148,7 +148,9 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Added support for the nRF54L15 PDK with the ``nrf54l15pdk_nrf54l15_cpuapp`` board target.
+  The PDK can act as a sample mouse or keyboard.
+  It supports the Bluetooth LE HID data transport and uses SoftDevice Link Layer with Low Latency Packet Mode (LLPM) enabled.
 
 Thingy:53: Matter weather station
 ---------------------------------
