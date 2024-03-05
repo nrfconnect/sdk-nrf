@@ -365,7 +365,7 @@ Serial LTE modem
   * An ``auto_connect`` operation in the ``#XCARRIER`` carrier command.
     The operation controls automatic registration of UE to LTE network.
   * A ``log_data`` operation in the ``#XCARRIER`` carrier command.
-    The operation sends log data using the Event Log object to be read by the LwM2M server.
+    The operation sends log data using the Event Log object to be read by the LwM2M Server.
   * Support for the Binary App Data Container object as an alternative to the App Data Container object.
     This can be used through the ``app_data`` operation in the ``#XCARRIER`` carrier command.
   * ``#XNRFCLOUDPOS`` AT command to send location requests to nRF Cloud using cellular or Wi-Fi positioning, or both.
@@ -651,7 +651,7 @@ Cellular samples (renamed from nRF9160 samples)
       This fulfills the proprietary PSM requirements of modem firmware v2.0.0.
       Including a new overlay file for enabling this and devicetree overlay files for UART2 and MCUboot recovery mode.
     * A handler for a new LwM2M modem firmware callback event :c:member:`LWM2M_FOTA_UPDATE_MODEM_RECONNECT_REQ` to request for reconnecting the modem and client after firmware update
-    * A new state :c:member:`RECONNECT_AFTER_UPDATE` that initializes the modem to trigger LwM2M client re-connection.
+    * A new state :c:member:`RECONNECT_AFTER_UPDATE` that initializes the modem to trigger LwM2M Client re-connection.
 
   * Updated:
 

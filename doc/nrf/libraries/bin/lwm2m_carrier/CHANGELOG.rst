@@ -86,7 +86,7 @@ Release for modem firmware version 1.3.5 and 2.0.0.
 Changes
 =======
 
-* Fixed an issue where failed modem firmware updates would not be reported correctly to the user application and the LwM2M server.
+* Fixed an issue where failed modem firmware updates would not be reported correctly to the user application and the LwM2M Server.
 
 
 liblwm2m_carrier 3.3.1
@@ -318,7 +318,7 @@ Changes
 
   * This optional value can be left empty to use the default binding (UDP).
   * Added the new Kconfig :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE`.
-  * The binding can be either ``U`` (UDP) or ``N`` (Non-IP).
+  * The binding can be either ``U`` (UDP) or ``N`` (non-IP).
 
 * Added the function :c:func:`lwm2m_carrier_request`.
 
@@ -505,7 +505,7 @@ Changes
 * Library can now be provided a non-bootstrap custom URI. Previously, only bootstrap custom URI was accepted.
 
   * New Kconfig :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` indicates if the custom URI is a Bootstrap-Server.
-  * New Kconfig :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` sets the lifetime for the (non-bootstrap) LwM2M server.
+  * New Kconfig :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` sets the lifetime for the (non-bootstrap) LwM2M Server.
 * Library will now read bootstrap information from Smartcard when applicable.
 
   * New Kconfig :kconfig:option:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD` can be used to disable this feature.
@@ -556,7 +556,7 @@ Changes
   * Application is now expected to store CA certificates into the modem security tags.
   * Added a new event :c:macro:`LWM2M_CARRIER_EVENT_CERTS_INIT` that instructs the application to provide the CA certificate security tags to the LwM2M carrier library.
 * Renamed the event :c:macro:`LWM2M_CARRIER_BSDLIB_INIT` to :c:macro:`LWM2M_CARRIER_EVENT_MODEM_INIT`.
-* Added a new deferred event reason :c:macro:`LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE`, which indicates that the LwM2M server is unavailable due to maintenance.
+* Added a new deferred event reason :c:macro:`LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE`, which indicates that the LwM2M Server is unavailable due to maintenance.
 * Added a new error code :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION` which indicates that an illegal object configuration was detected.
 * Added new Kconfig options :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN` and :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` to set the ``apn`` member of :c:type:`lwm2m_carrier_config_t`.
 * It is now possible to configure a custom bootstrap URI using :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` regardless of operator SIM.

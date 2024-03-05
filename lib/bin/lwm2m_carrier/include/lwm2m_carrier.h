@@ -463,7 +463,7 @@ int lwm2m_carrier_utc_offset_read(void);
 char *lwm2m_carrier_timezone_read(void);
 
 /**
- * @brief Function to write current UTC time (LwM2M server write operation)
+ * @brief Function to write current UTC time (LwM2M Server write operation)
  *
  * @note This function can be implemented by the application, if custom time management is needed.
  *
@@ -474,7 +474,7 @@ char *lwm2m_carrier_timezone_read(void);
 int lwm2m_carrier_utc_time_write(int32_t time);
 
 /**
- * @brief Function to write UTC offset (LwM2M server write operation)
+ * @brief Function to write UTC offset (LwM2M Server write operation)
  *
  * @note This function can be implemented by the application, if custom time management is needed.
  *
@@ -485,7 +485,7 @@ int lwm2m_carrier_utc_time_write(int32_t time);
 int lwm2m_carrier_utc_offset_write(int offset);
 
 /**
- * @brief Function to write time zone (LwM2M server write operation).
+ * @brief Function to write time zone (LwM2M Server write operation).
  *
  * @note This function can be implemented by the application, if custom time management is needed.
  *
@@ -742,7 +742,7 @@ int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float 
  *        Container object.
  *
  * @details This function sets the resource given by the path to the desired value. The resource
- *          can then be read by, or reported to, the LwM2M server.
+ *          can then be read by, or reported to, the LwM2M Server.
  *
  * @note Both the Binary App Data Container object and the App Data Container object will not be
  *       initialized for every carrier.

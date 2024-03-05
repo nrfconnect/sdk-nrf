@@ -22,7 +22,7 @@ Overview
 ********
 
 LwM2M is an application layer protocol for IoT device management and service enablement.
-It is designed to expose various resources for reading, writing, and executing through an LwM2M server in a lightweight environment.
+It is designed to expose various resources for reading, writing, and executing through an LwM2M Server in a lightweight environment.
 
 The LwM2M carrier library is needed for certification in certain operator networks.
 The LwM2M carrier sample shows how to integrate the LwM2M carrier library.
@@ -33,7 +33,7 @@ Some of the configurations of the library must be changed according to your spec
 For example, at some point during certification, you might have to connect to one or more of an operator's test (certification) servers, by overwriting the library's automatic URI and PSK selection.
 When :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` is empty, the library connects to live (production) servers.
 
-The sections below explain how you can configure the library in different ways to connect to Leshan and AVSystem's Coiote LwM2M servers.
+The sections below explain how you can configure the library in different ways to connect to Leshan and AVSystem's Coiote LwM2M Servers.
 To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 Configuring your application to connect to other servers (such as your operator's test servers) might look different, depending on the operator's device management framework.
 
@@ -48,8 +48,8 @@ Setup
 Before building and running the sample, complete the following steps:
 
 1. Select the device that you plan to test.
-#. Select the LwM2M server for testing.
-#. Setup the LwM2M server by completing the steps listed in :ref:`server_setup_lwm2m_carrier`.
+#. Select the LwM2M Server for testing.
+#. Setup the LwM2M Server by completing the steps listed in :ref:`server_setup_lwm2m_carrier`.
    This step retrieves the server address and the security tag that will be needed during the next steps.
 #. :ref:`server_addr_PSK_carrier`.
 
@@ -71,10 +71,10 @@ Set the server address and PSK
    * For `Coiote Device Management`_ - ``coaps://eu.iot.avsystem.cloud:5684`` (`Coiote Device Management server`_).
    * For `Leshan Bootstrap Server Demo web UI <public Leshan Bootstrap Server Demo_>`_ - ``coaps://leshan.eclipseprojects.io:5784``
    * For Coiote bootstrap server - ``coaps://eu.iot.avsystem.cloud:5694``
-#. Set :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` if bootstrap is used. If bootstrap is not used, set :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` to specify the lifetime of the LwM2M server.
+#. Set :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` if bootstrap is used. If bootstrap is not used, set :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` to specify the lifetime of the LwM2M Server.
 #. Set :ref:`CONFIG_CARRIER_APP_PSK <CONFIG_CARRIER_APP_PSK>` to the hexadecimal representation of the PSK used when registering the device with the server.
 #. Specify a :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` to store the PSK.
-   Alternatively, you could only specify a security tag if a PSK is previously stored to the security tag as shown in :ref:`LwM2M client provisioning documentation <lwm2m_client_provisioning>`.
+   Alternatively, you could only specify a security tag if a PSK is previously stored to the security tag as shown in :ref:`LwM2M Client provisioning documentation <lwm2m_client_provisioning>`.
 
 Configuration options
 =====================
@@ -159,7 +159,7 @@ Once bootstrap has been done, subsequent reconnects will not contain the bootstr
    LWM2M Carrier library sample.
    LWM2M_CARRIER_EVENT_REGISTERED
 
-The device is now registered to an LwM2M server, and the server can interact with it.
+The device is now registered to an LwM2M Server, and the server can interact with it.
 If you used your own custom server as described in :ref:`server_setup_lwm2m_carrier`, you can try reading and observing the available resources.
 
 If you connected to the carrier (test) servers or live (production) servers, reach out to your mobile network operator to learn about how to proceed with certification tests or normal operation, respectively.

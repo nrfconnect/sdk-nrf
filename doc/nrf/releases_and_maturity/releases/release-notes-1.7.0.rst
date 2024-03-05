@@ -124,7 +124,7 @@ nRF9160
 
   * :ref:`liblwm2m_carrier_readme` library:
 
-    * Added deferred event reason :c:macro:`LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE`, which indicates that the LwM2M server is unavailable due to maintenance.
+    * Added deferred event reason :c:macro:`LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE`, which indicates that the LwM2M Server is unavailable due to maintenance.
     * Removed error code :c:macro:`LWM2M_CARRIER_ERROR_SERVICE_UNAVAILABLE`, which was used incorrectly to indicate a deferred event reason.
 
   * :ref:`lwm2m_carrier` sample - Adjusted the messages printed in :c:func:`lwm2m_carrier_event_handler` to reflect the updated event definitions in the :ref:`liblwm2m_carrier_readme` library.
