@@ -38,15 +38,36 @@ mapping_topics:
                                   "nrf9161", "nrf9151", "nrf5340", "thingy53", "nrf52840",
                                   "nrf52833", "nrf52832", "nrf52820", "nrf52811", "nrf52810",
                                   "nrf52805", "nrf21540", "npm1100", "npm1300", "npm6001"]
-  - nrf/config_and_build/configuring_app/*.html: ["applications", "samples", "development-kits",
-                                                  "evaluation-kits", "prototyping-platforms",
-                                                  "kconfig", "nrf-connect-vsc"]
+  - nrf/config_and_build/configuring_app/index.html: ["applications", "samples", "development-kits",
+                                                      "evaluation-kits", "prototyping-platforms",
+                                                      "kconfig", "nrf-connect-vsc"]
+  - nrf/config_and_build/configuring_app/cmake/index.html: ["applications", "samples",
+                                                            "development-kits", "evaluation-kits",
+                                                            "prototyping-platforms", "kconfig",
+                                                            "nrf-connect-vsc"]
+  - nrf/config_and_build/configuring_app/hardware/*.html: ["applications", "samples",
+                                                           "development-kits", "evaluation-kits",
+                                                           "prototyping-platforms", "kconfig"]
+  - nrf/config_and_build/configuring_app/kconfig/index.html: ["applications", "samples",
+                                                              "development-kits", "evaluation-kits",
+                                                              "prototyping-platforms", "kconfig"]
+  - nrf/config_and_build/configuring_app/advanced_building.html: ["applications", "samples",
+                                                                  "development-kits",
+                                                                  "evaluation-kits",
+                                                                  "prototyping-platforms",
+                                                                  "kconfig"]
+  - nrf/config_and_build/configuring_app/output_build_files.html: ["applications", "samples",
+                                                                   "development-kits",
+                                                                   "evaluation-kits",
+                                                                   "prototyping-platforms",
+                                                                   "kconfig"]
   - nrf/config_and_build/programming.html: ["applications", "samples", "development-kits",
                                             "evaluation-kits", "prototyping-platforms"]
   - nrf/config_and_build/multi_image.html: ["applications", "samples", "kconfig"]
-  - nrf/config_and_build/bootloaders_and_dfu/*.html: ["applications"]
-  - nrf/config_and_build/bootloaders_and_dfu/bootloader_adding.html: ["kconfig"]
-  - nrf/config_and_build/bootloaders_and_dfu/bootloader_config.html: ["kconfig"]
+  - nrf/config_and_build/bootloaders/*.html: ["applications"]
+  - nrf/config_and_build/bootloaders/bootloader_adding.html: ["kconfig"]
+  - nrf/config_and_build/bootloaders/bootloader_config.html: ["kconfig"]
+  - nrf/config_and_build/dfu/*.html: ["applications"]
   - nrf/test_and_optimize.html: ["nrf91-series", "nrf70-series", "nrf53-series", "nrf52-series",
                                  "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
                                  "nrf9161", "nrf9151", "nrf5340", "thingy53", "nrf52840",
@@ -162,7 +183,7 @@ mapping_topics:
   - nrf/protocols/wifi/index.html: ["nrf70-series", "nrf7002", "nrf7001", "nrf7000", "wifi"]
   - nrf/protocols/wifi/*.html: ["wifi", "nrf70-series", "nrf7002", "nrf7001", "nrf7000"]
   - nrf/protocols/wifi/wifi.html: ["certifications"]
-  - nrf/protocols/wifi/powersave.html: ["power-profiler-kit"]
+  - nrf/protocols/wifi/station_mode/powersave.html: ["power-profiler-kit"]
   - nrf/applications.html: ["nrf91-series", "nrf70-series", "nrf53-series", "nrf52-series",
                             "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91", "nrf9161",
                             "nrf9151", "nrf5340", "thingy53", "nrf52840", "nrf52833", "nrf52832",
@@ -171,6 +192,7 @@ mapping_topics:
                             "kconfig"]
   - nrf/applications/*.html: ["applications", "kconfig"]
   - nrf/applications/connectivity_bridge/README.html: ["lte"]
+  - nrf/applications/matter_bridge/README.html: ["matter", "wifi"]
   - nrf/applications/matter_bridge/*.html: ["matter", "wifi"]
   - nrf/applications/asset_tracker_v2/doc/*.html: ["lte"]
   - nrf/applications/asset_tracker_v2/README.html: ["lte"]
@@ -178,7 +200,7 @@ mapping_topics:
   - nrf/applications/serial_lte_modem/README.html: ["lte"]
   - nrf/applications/nrf_desktop/doc/*.html: ["ble"]
   - nrf/applications/nrf_desktop/README.html: ["ble"]
-  - nrf/applications/nrf5340_audio/README.html: ["ble", "nrf5340"]
+  - nrf/applications/nrf5340_audio/index.html: ["ble", "nrf5340"]
   - nrf/applications/nrf5340_audio/doc/*.html: ["ble", "nrf5340"]
   - nrf/applications/matter_weather_station/README.html: ["matter", "thingy53"]
   - nrf/applications/zigbee_weather_station/README.html: ["zigbee", "thingy53"]
