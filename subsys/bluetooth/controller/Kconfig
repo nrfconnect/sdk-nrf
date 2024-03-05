@@ -529,14 +529,14 @@ config BT_CTLR_SDC_IGNORE_HCI_ISO_DATA_TS_FROM_HOST
 config BT_CTLR_SDC_BIG_RESERVED_TIME_US
 	int "BIG reserved time [us]"
 	range 0 4000000
-	default 2500
+	default 1600
 	help
 	  The time reserved for other roles in each ISO interval, used when selecting BIG parameters.
 
 config BT_CTLR_SDC_CIG_RESERVED_TIME_US
 	int "CIG reserved time [us]"
 	range 0 4000000
-	default 2000
+	default 1300
 	help
 	  The time reserved for other roles in each ISO interval, used when selecting CIG parameters.
 
