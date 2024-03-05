@@ -61,7 +61,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 8d93a161567dcc525771f70692587e6a37947b71
+      revision: 226b676f94f6d0999b3199a6723057f533754ac7
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -132,7 +132,7 @@ manifest:
       revision: v2.0.99-ncs1-rc1
       path: bootloader/mcuboot
     - name: qcbor
-      url: https://github.com/laurencelundblade/QCBOR.git
+      url: https://github.com/laurencelundblade/QCBOR
       revision: 751d36583a9ce1a640900c57e13c9b6b8f3a2ba2
       path: modules/tee/tf-m/qcbor
     - name: mbedtls
