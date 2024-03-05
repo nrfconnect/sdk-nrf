@@ -328,7 +328,7 @@ static void iface_event_handler(struct net_mgmt_event_callback *cb,
 		}
 
 		if (!found) {
-			wpa_printf(MSG_ERROR, "No matching prefix found");
+			wpa_printf(MSG_DEBUG, "No matching prefix found for %s", ifname);
 			return;
 		}
 	}
