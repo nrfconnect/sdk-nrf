@@ -368,8 +368,8 @@ static int process_rx_packet(struct packet_data *packet)
 	start_time = k_uptime_get_32();
 
 	do {
-		received = recv(packet->recv_sock, packet->recv_buffer,
-				sizeof(packet->recv_buffer), 0);
+		received = zsock_recv(packet->recv_sock, packet->recv_buffer,
+				      sizeof(packet->recv_buffer), 0);
 		if (received <= 0) {
 			if (errno == EAGAIN) {
 				continue;
@@ -398,7 +398,7 @@ static int setup_raw_socket(int *sock)
 	struct sockaddr_ll dst = { 0 };
 	int ret;
 
-	*sock = socket(AF_PACKET, SOCK_RAW, ETH_P_ALL);
+	*sock = zsock_socket(AF_PACKET, SOCK_RAW, ETH_P_ALL);
 	if (*sock < 0) {
 		LOG_ERR("Failed to create RAW socket : %d",
 				errno);
@@ -408,8 +408,8 @@ static int setup_raw_socket(int *sock)
 	dst.sll_ifindex = net_if_get_by_iface(net_if_get_first_wifi());
 	dst.sll_family = AF_PACKET;
 
-	ret = bind(*sock, (const struct sockaddr *)&dst,
-			sizeof(struct sockaddr_ll));
+	ret = zsock_bind(*sock, (const struct sockaddr *)&dst,
+			 sizeof(struct sockaddr_ll));
 	if (ret < 0) {
 		LOG_ERR("Failed to bind packet socket : %d", errno);
 		return -errno;
@@ -433,8 +433,8 @@ static void create_rx_thread(void)
 		return;
 	}
 
-	ret = setsockopt(sock_packet.recv_sock, SOL_SOCKET, SO_RCVTIMEO,
-			&timeo_optval, sizeof(timeo_optval));
+	ret = zsock_setsockopt(sock_packet.recv_sock, SOL_SOCKET, SO_RCVTIMEO,
+			       &timeo_optval, sizeof(timeo_optval));
 	if (ret < 0) {
 		LOG_ERR("Failed to set socket options : %s", strerror(errno));
 		return;
@@ -447,7 +447,7 @@ static void create_rx_thread(void)
 		}
 	}
 
-	close(sock_packet.recv_sock);
+	zsock_close(sock_packet.recv_sock);
 }
 
 #ifdef CONFIG_NET_CAPTURE
