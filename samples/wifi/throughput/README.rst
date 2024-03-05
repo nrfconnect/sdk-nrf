@@ -24,7 +24,7 @@ The sample requires additional software, such as the Wi-Fi **iperf** application
 When the sample runs Wi-Fi UDP/TCP throughput in client mode, a peer device runs UDP/TCP throughput in server mode.
 When the sample runs Wi-Fi UDP/TCP throughput in server mode, a peer device runs UDP/TCP throughput in client mode.
 
-See the :ref:`nRF70_nRF5340_constrained_host` page for different Wi-Fi stack configuration profiles.
+See :ref:`constrained_host_usage_profiles` for different Wi-Fi stack configuration profiles.
 See `Network Traffic Generator`_ for instructions on how to use **zperf** and **iperf** applications.
 
 Test setup
