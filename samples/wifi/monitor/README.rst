@@ -152,15 +152,69 @@ Once the custom build is installed, complete the following steps to dissect the 
          -- Create a new dissector
          local nordic_raw_80211 = Proto("nordic_raw_80211", "Nordic Raw 802.11 dissector")
 
+         -- No built-in helper to convert a number to a signed char in Lua
+         function toSignedChar(value)
+            if value > 127 then
+               return value - 256
+            else
+               return value
+            end
+         end
+
+         local nordic_rate_flags = {
+            NORD_RATE_FLAG_LEGACY = 0,
+            NORD_RATE_FLAG_HT = 1,
+            NORD_RATE_FLAG_VHT = 2,
+            NORD_RATE_FLAG_HE_SU = 3,
+            NORD_RATE_FLAG_HE_ER_SU = 4,
+            NORD_RATE_FLAG_MAX = 5
+         }
+
+         function getRateFlags(rate_flags)
+            local rate_flags_str = ""
+            if rate_flags == nordic_rate_flags.NORD_RATE_FLAG_LEGACY then
+               rate_flags_str = "Legacy"
+            elseif rate_flags == nordic_rate_flags.NORD_RATE_FLAG_HT then
+               rate_flags_str = "HT"
+            elseif rate_flags == nordic_rate_flags.NORD_RATE_FLAG_VHT then
+               rate_flags_str = "VHT"
+            elseif rate_flags == nordic_rate_flags.NORD_RATE_FLAG_HE_SU then
+               rate_flags_str = "HE-SU"
+            elseif rate_flags == nordic_rate_flags.NORD_RATE_FLAG_HE_ER_SU then
+               rate_flags_str = "HE-ER-SU"
+            else
+               rate_flags_str = "Unknown"
+            end
+            return rate_flags_str
+         end
+
+         function getRate(rate_flags, rate)
+            local rate_str = ""
+            -- Lgeacy rates
+            if rate_flags == 0x00 then
+               if rate == 55 then
+                     rate_str = "Data rate: 5.5 Mbps"
+               else
+                     rate_str = "Data rate: " .. rate .. " Mbps"
+               end
+            else
+               rate_str = "MCS Index" .. rate
+            end
+            return rate_str
+         end
+
          -- This function will dissect the packet
          function nordic_raw_80211.dissector(buffer, pinfo, tree)
             -- Dissect the first 6 bytes (Raw RX custom header)
             local payload = buffer(6):tvb()
             local subtree = tree:add(nordic_raw_80211, buffer(), "Nordic Raw 802.11 Dissector")
             subtree:add(buffer(0, 2), "Frequency: " .. buffer(0, 2):le_uint())
-            subtree:add(buffer(2, 2), "Signal: " .. buffer(2, 2):le_int())
-            subtree:add(buffer(4, 1), "Rate Flags: " .. buffer(4, 1):uint())
-            subtree:add(buffer(5, 1), "Rate: " .. buffer(5, 1):uint())
+            -- Convert mBm to dBm and display as signed char
+            local mBm = buffer(2, 2):le_int()
+            local dBm = toSignedChar(mBm / 100)
+            subtree:add(buffer(2, 2), "Signal (dBm): " .. dBm)
+            subtree:add(buffer(4, 1), "Rate Flags: " .. getRateFlags(buffer(4, 1):uint()))
+            subtree:add(buffer(5, 1), getRate(buffer(4, 1):uint(), buffer(5, 1):uint()))
 
             local wlan_dissector_name = "wlan"
             local wlan_dissector = Dissector.get(wlan_dissector_name)
