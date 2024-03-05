@@ -403,7 +403,7 @@ static void test_connections(bool connect, enum audio_module_type from_type,
 	}
 
 	test_initialize_handle(&handle_from, &test_from_description, NULL, NULL);
-	memcpy(&handle_from.name, test_inst_from_name, CONFIG_AUDIO_MODULE_NAME_SIZE);
+	strncpy(handle_from.name, test_inst_from_name, CONFIG_AUDIO_MODULE_NAME_SIZE);
 	handle_from.state = from_state;
 	sys_slist_init(&handle_from.handle_dest_list);
 	k_mutex_init(&handle_from.dest_mutex);
