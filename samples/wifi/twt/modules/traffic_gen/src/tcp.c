@@ -11,6 +11,13 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(traffic_gen, CONFIG_TRAFFIC_GEN_LOG_LEVEL);
 
+#if defined(CONFIG_POSIX_API)
+#include <zephyr/posix/arpa/inet.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/posix/unistd.h>
+#include <zephyr/posix/sys/socket.h>
+#endif
+
 #include <nrfx_clock.h>
 #include <zephyr/kernel.h>
 #include <stdio.h>
