@@ -39,7 +39,7 @@ int init_tcp_client(struct traffic_gen_config *tg_config)
 	int sockfd = 0;
 
 	/* Create tcp socket */
-	sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	sockfd = zsock_socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sockfd < 0) {
 		LOG_ERR("Failed to create tcp client socket %d", errno);
 		return -errno;
@@ -62,20 +62,20 @@ int send_tcp_uplink_traffic(struct traffic_gen_config *tg_config)
 	/* Set server address */
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(tg_config->port);
-	if (inet_pton(AF_INET, tg_config->server_ip, &server_addr.sin_addr) <= 0) {
+	if (zsock_inet_pton(AF_INET, tg_config->server_ip, &server_addr.sin_addr) <= 0) {
 		LOG_ERR("Invalid IPV4 address format");
-		close(tg_config->data_sock_fd);
+		zsock_close(tg_config->data_sock_fd);
 		return -errno;
 	}
 
 	/* Connect to the server */
-	ret = connect(tg_config->data_sock_fd,
+	ret = zsock_connect(tg_config->data_sock_fd,
 				  (struct sockaddr *)&server_addr,
 				  sizeof(server_addr));
 	if (ret < 0) {
 		LOG_ERR("Cannot connect TCP remote (%s): %s\n", tg_config->server_ip,
 				strerror(errno));
-		close(tg_config->data_sock_fd);
+		zsock_close(tg_config->data_sock_fd);
 		return -errno;
 	}
 
@@ -89,7 +89,7 @@ int send_tcp_uplink_traffic(struct traffic_gen_config *tg_config)
 
 	while ((k_uptime_get_32() - start_time) < total_duration) {
 		if (tg_config->pause_traffic == false) {
-			bytes = send(tg_config->data_sock_fd,
+			bytes = zsock_send(tg_config->data_sock_fd,
 					tg_config->buffer, tg_config->payload_len, 0);
 			if (bytes < 0) {
 				LOG_INF("Failed to send TWT uplink traffic %d", errno);
@@ -127,7 +127,7 @@ int send_tcp_uplink_traffic(struct traffic_gen_config *tg_config)
 	k_sleep(K_SECONDS(1));
 
 	for (int i = 0; i <= MAX_EMPTY_MSG_LOOP_CNT; i++) {
-		ret = send(tg_config->data_sock_fd, &empty_data, 0, 0);
+		ret = zsock_send(tg_config->data_sock_fd, &empty_data, 0, 0);
 		if (ret < 0) {
 			LOG_ERR("Failed to send TWT config info to TWT server %d", errno);
 			return -errno;
@@ -136,7 +136,7 @@ int send_tcp_uplink_traffic(struct traffic_gen_config *tg_config)
 	}
 
 	/* Close data socket */
-	close(tg_config->data_sock_fd);
+	zsock_close(tg_config->data_sock_fd);
 
 	LOG_INF("Sent TCP uplink traffic for %d sec", tg_config->duration);
 
@@ -148,7 +148,7 @@ int init_tcp_server(struct traffic_gen_config *tg_config)
 	int sockfd = 0;
 	struct sockaddr_in server_addr;
 
-	sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	sockfd = zsock_socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sockfd < 0) {
 		LOG_ERR("Failed to create tcp server socket %d", errno);
 		return -errno;
@@ -158,15 +158,15 @@ int init_tcp_server(struct traffic_gen_config *tg_config)
 	server_addr.sin_port = htons(tg_config->port);
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	if (bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+	if (zsock_bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
 		LOG_ERR("Bind failed");
-		close(sockfd);
+		zsock_close(sockfd);
 		return -errno;
 	}
 
-	if (listen(sockfd, 3) < 0) {
+	if (zsock_listen(sockfd, 3) < 0) {
 		LOG_ERR("Failed to listen on TCP socket %d", errno);
-		close(sockfd);
+		zsock_close(sockfd);
 		return -errno;
 	}
 
@@ -185,17 +185,18 @@ int recv_tcp_downlink_traffic(struct traffic_gen_config *tg_config)
 	uint32_t current_time, start_time;
 	int elapsed_time = 0, throughput_kbps = 0;
 
-	sockfd = accept(tg_config->data_sock_fd, (struct sockaddr *)&client_addr, &client_addr_len);
+	sockfd = zsock_accept(tg_config->data_sock_fd, (struct sockaddr *)&client_addr,
+			      &client_addr_len);
 	if (sockfd < 0) {
 		LOG_INF("Accept failed\n");
-		close(tg_config->data_sock_fd);
+		zsock_close(tg_config->data_sock_fd);
 		return -errno;
 	}
 
 	memset(&remote_report, 0, sizeof(struct traffic_gen_report));
 	start_time = k_uptime_get_32();
 	while (1) {
-		bytes = recv(sockfd, tg_config->buffer, BUFFER_SIZE, 0);
+		bytes = zsock_recv(sockfd, tg_config->buffer, BUFFER_SIZE, 0);
 		if (bytes <= 0) {
 			LOG_INF("Finished TCP downlink traffic ");
 			break;
@@ -226,6 +227,6 @@ int recv_tcp_downlink_traffic(struct traffic_gen_config *tg_config)
 		remote_report.average_jitter = 0;
 	}
 
-	close(sockfd);
+	zsock_close(sockfd);
 	return 0;
 }
