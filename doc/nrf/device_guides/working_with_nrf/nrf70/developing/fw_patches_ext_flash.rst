@@ -126,7 +126,7 @@ Building
 
 See :ref:`nrf7002dk_nrf5340` for general instructions on building.
 
-Additionally, you must enable either the `nrf70-fw-patch-ext-flash` snippet or the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` option.
+Additionally, you must enable either the ``nrf70-fw-patch-ext-flash`` snippet or the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` option.
 
 For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with the ``nrf70-fw-patch-ext-flash`` snippet enabled, run the following commands.
 
