@@ -63,7 +63,7 @@ static void test_initialize_handle(struct audio_module_handle *test_handle, char
 				   enum audio_module_state state, struct data_fifo *fifo_tx,
 				   struct data_fifo *fifo_rx)
 {
-	memcpy(&test_handle->name[0], instance_name, CONFIG_AUDIO_MODULE_NAME_SIZE);
+	strncpy(&test_handle->name[0], instance_name, CONFIG_AUDIO_MODULE_NAME_SIZE);
 	test_handle->name[CONFIG_AUDIO_MODULE_NAME_SIZE] = '\0';
 	test_handle->description = description;
 	test_handle->state = state;
