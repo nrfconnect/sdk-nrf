@@ -119,7 +119,7 @@ static int setup_raw_pkt_socket(int *sockfd, struct sockaddr_ll *sa)
 	struct net_if *iface;
 	int ret;
 
-	*sockfd = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
+	*sockfd = zsock_socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
 	if (*sockfd < 0) {
 		LOG_ERR("Unable to create a socket %d", errno);
 		return -1;
@@ -135,10 +135,10 @@ static int setup_raw_pkt_socket(int *sockfd, struct sockaddr_ll *sa)
 	sa->sll_ifindex = net_if_get_by_iface(iface);
 
 	/* Bind the socket */
-	ret = bind(*sockfd, (struct sockaddr *)sa, sizeof(struct sockaddr_ll));
+	ret = zsock_bind(*sockfd, (struct sockaddr *)sa, sizeof(struct sockaddr_ll));
 	if (ret < 0) {
 		LOG_ERR("Error: Unable to bind socket to the network interface:%d", errno);
-		close(*sockfd);
+		zsock_close(*sockfd);
 		return -1;
 	}
 
@@ -182,8 +182,8 @@ static void send_packet(const char *transmission_mode,
 		memcpy(test_frame + sizeof(struct raw_tx_pkt_header),
 		       &test_beacon_frame, sizeof(test_beacon_frame));
 
-		ret = sendto(sockfd, test_frame, buf_length, 0,
-			     (struct sockaddr *)&sa, sizeof(sa));
+		ret = zsock_sendto(sockfd, test_frame, buf_length, 0,
+				   (struct sockaddr *)&sa, sizeof(sa));
 		if (ret < 0) {
 			LOG_ERR("Unable to send beacon frame: %s", strerror(errno));
 			num_failures++;
@@ -195,7 +195,7 @@ static void send_packet(const char *transmission_mode,
 	}
 
 	LOG_INF("Sent %d packets with %d failures on socket", num_pkts, num_failures);
-	close(sockfd);
+	zsock_close(sockfd);
 	free(test_frame);
 }
 
