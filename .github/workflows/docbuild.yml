@@ -71,10 +71,10 @@ jobs:
         working-directory: ncs/nrf
         run: |
           MONITOR="monitor_${{ github.run_id }}.txt"
-          ARCHIVE="doc_build_${{ github.run_id }}.zip"
 
           # Create documentation upload files
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            ARCHIVE="doc_build_pr_${{ github.event.number }}.zip"
             echo "publish2 dev PR-${{ github.event.number }} ${ARCHIVE}" > "${MONITOR}"
             echo "${{ github.event.number }}" > pr.txt
           else
@@ -87,6 +87,7 @@ jobs:
               echo "Not a release or latest, skipping publish"
               exit 0
             fi
+            ARCHIVE="doc_build_${VERSION}.zip"
             echo "publish2 main ${VERSION} ${ARCHIVE}" > "${MONITOR}"
           fi
 
