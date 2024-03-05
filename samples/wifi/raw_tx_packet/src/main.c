@@ -11,6 +11,13 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(raw_tx_packet, CONFIG_LOG_DEFAULT_LEVEL);
 
+#if defined(CONFIG_POSIX_API)
+#include <zephyr/posix/arpa/inet.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/posix/unistd.h>
+#include <zephyr/posix/sys/socket.h>
+#endif
+
 #include <zephyr/net/socket.h>
 #include <nrf_wifi/fw_if/umac_if/inc/default/fmac_structs.h>
 
