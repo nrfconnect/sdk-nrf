@@ -20,8 +20,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: NordicBuilder
+          password: ${{ secrets.NCS_GITHUB_PKG_WRITE_TOKEN }}
 
       - name: Build and push Docker image
         run: |

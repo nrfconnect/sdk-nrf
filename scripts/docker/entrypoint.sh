@@ -1,4 +1,4 @@
 #! /bin/bash
 
-source /root/toolchain-env.sh
+source /opt/toolchain-env.sh
 exec "$@"
