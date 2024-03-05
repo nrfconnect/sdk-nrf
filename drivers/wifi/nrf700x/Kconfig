@@ -89,6 +89,7 @@ config NRF700X_RAW_DATA_RX
 config NRF700X_PROMISC_DATA_RX
 	bool "Enable promiscuous RX sniffer operation in the driver"
 	select EXPERIMENTAL
+	select NET_PROMISCUOUS_MODE
 	depends on NRF700X_SYSTEM_MODE
 
 config NRF_WIFI_IF_AUTO_START
