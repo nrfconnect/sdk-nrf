@@ -1,12 +1,13 @@
 FROM ubuntu:22.04 as nrfutil-builder
 
 ARG VERSION
+ENV HOME=/opt
 RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 RUN wget https://developer.nordicsemi.com/.pc-tools/nrfutil/x64-linux/nrfutil && chmod +x nrfutil \
     && ./nrfutil install toolchain-manager && ./nrfutil toolchain-manager install --toolchain-bundle-id $VERSION
-RUN  ./nrfutil toolchain-manager env --as-script > /root/toolchain-env.sh
+RUN  ./nrfutil toolchain-manager env --as-script > /opt/toolchain-env.sh
 
 
 FROM ubuntu:22.04
@@ -21,10 +22,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy toolchain
-COPY --from=nrfutil-builder /root/ncs/toolchains /root/ncs/toolchains
-COPY --from=nrfutil-builder /root/toolchain-env.sh /root/toolchain-env.sh
+COPY --from=nrfutil-builder /opt/ncs/toolchains /opt/ncs/toolchains
+COPY --from=nrfutil-builder /opt/toolchain-env.sh /opt/toolchain-env.sh
 
 # Add entrypoint which calls toolchain-env.sh
-ADD entrypoint.sh /root/entrypoint.sh
-ENTRYPOINT ["/root/entrypoint.sh"]
+COPY entrypoint.sh /opt/entrypoint.sh
+ENTRYPOINT ["/opt/entrypoint.sh"]
 CMD ["bin/bash"]
