@@ -12,7 +12,7 @@ The TF-M platform security architecture test sample provides a basis for validat
 Requirements
 ************
 
-When :kconfig:option:`CONFIG_TFM_PSA_TEST_ATTESTATION` is enabled, it is required that the device is provisioned with the PSA root-of-trust security parameters using the :ref:`provisioning image <provisioning_image>` sample.
+When the Kconfig option :kconfig:option:`CONFIG_TFM_PSA_TEST_ATTESTATION` is enabled, it is required that the device is provisioned with the PSA root-of-trust security parameters using the :ref:`provisioning image <provisioning_image>` sample.
 To provision the device, build and flash the provisioning image sample before using the test sample.
 
 The test supports the following development kits:
@@ -107,11 +107,11 @@ Output
 
       [...]
 
-      TEST: 417 | DESCRIPTION: Storage assest capacity modification check
+      TEST: 417 | DESCRIPTION: Storage asset capacity modification check
       [Info] Executing tests from non-secure
 
       [Info] Executing PS tests
-      Test Case skipped as Optional PS APIs not are supported.
+      Test Case skipped as Optional PS APIs are not supported.
 
       TEST RESULT: SKIPPED (Skip Code=0x0000002B)
 
