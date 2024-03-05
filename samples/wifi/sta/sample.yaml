@@ -23,6 +23,9 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf52840dk_nrf52840
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+    extra_configs:
+      - CONFIG_NET_TX_STACK_SIZE=3700
+      - CONFIG_NET_RX_STACK_SIZE=3700
     tags: ci_build
   sample.nrf7001_eks.sta:
     build_only: true
@@ -31,6 +34,9 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf52840dk_nrf52840
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+    extra_configs:
+      - CONFIG_NET_TX_STACK_SIZE=3700
+      - CONFIG_NET_RX_STACK_SIZE=3700
     tags: ci_build
   sample.nrf7002_eb.thingy53.sta:
     build_only: true
