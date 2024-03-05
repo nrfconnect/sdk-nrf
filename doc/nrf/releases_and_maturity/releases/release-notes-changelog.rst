@@ -418,7 +418,8 @@ Matter Bridge
   * Callback to indicate the current state of Bluetooth LE Connectivity Manager.
     The current state is shown by LED 2.
   * Support for the nRF5340 DK with the nRF7002 EK attached.
-  * Support for Wi-Fi firmware upgrades on external memory, for the nRF5340 DK with the nRF7002 EK attached.
+  * Added support for Wi-Fi firmware upgrade on external memory.
+    This is only available for the nRF5340 DK with the nRF7002 EK.
 
 Samples
 =======
@@ -688,6 +689,7 @@ Matter samples
 
   * Fixed an issue that prevented nRF Toolbox for iOS in version 5.0.9 from controlling the sample using :ref:`nus_service_readme`.
   * Changed the design of the :ref:`matter_lock_sample_wifi_thread_switching` feature so that support for both Matter over Thread and Matter over Wi-Fi is included in a single firmware image.
+  * Added support for Wi-Fi firmware upgrade on external memory, only for the combination of the nRF5340 DK with the nRF7002 EK.
 
 * Disabled:
 
@@ -695,12 +697,9 @@ Matter samples
   * WPA supplicant advanced features in all Matter samples using the :kconfig:option:`WPA_SUPP_ADVANCED_FEATURES` Kconfig option.
     This saves roughly 25 KB of flash memory for firmware images with Wi-Fi support.
 
-* :ref:`matter_lock_sample` sample:
-
-  * Added support for Wi-Fi firmware upgrade on external memory, only for the combination of the nRF5340 DK with the nRF7002 EK.
-
 * Added ``matter_shell`` shell commands set to gather the current information about the NVS settings backend such as current usage, free space, and peak usage value.
   You can enable them by setting the :kconfig:option:`NCS_SAMPLE_MATTER_SETTINGS_SHELL` Kconfig option to ``y``.
+  To read more, see the :ref:`ug_matter_configuring_settings_shell` section.
 
 Multicore samples
 -----------------

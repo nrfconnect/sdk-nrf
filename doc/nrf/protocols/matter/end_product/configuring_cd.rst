@@ -25,7 +25,7 @@ You can locate the array of bytes related to CD by running the search with the f
 
 .. code-block:: console
 
-   cat CD.der | xxd -I
+   cat CD.der | xxd -i
 
 Storing Certification Declaration in Zephyr
 ===========================================

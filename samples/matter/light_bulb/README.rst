@@ -333,15 +333,7 @@ If you are new to Matter, the recommended approach is to use :ref:`CHIP Tool for
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
 The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
-If the Bluetooth LE advertising times out, use one of the following buttons to enable it again:
-
-   * On nRF52840 DK, nRF5340 DK and nRF21540 DK:
-
-     * Press **Button 4**.
-
-   * On nRF7002 DK:
-
-     * Press **Button 2** for at least three seconds.
+If the Bluetooth LE advertising times out, press **Button 1** to enable it again.
 
 Onboarding information
 ++++++++++++++++++++++
