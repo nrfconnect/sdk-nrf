@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/posix/unistd.h>
-#include <zephyr/net/socket.h>
+#include <zephyr/posix/sys/socket.h>
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(raw_tx_pkt, CONFIG_LOG_DEFAULT_LEVEL);
 
