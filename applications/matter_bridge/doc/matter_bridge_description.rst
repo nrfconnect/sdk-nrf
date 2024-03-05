@@ -126,7 +126,7 @@ By default, the Matter accessory device has no IPv6 network configured.
 To use the device within a Wi-Fi network, you must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller.
 
 The Bluetooth LE advertising starts automatically upon device startup, but only for a predefined period of time (15 minutes by default).
-If the Bluetooth LE advertising times out, you can re-enable it manually by pressing **Button (SW2)**.
+If the Bluetooth LE advertising times out, you can re-enable it manually by pressing **Button (SW1)**.
 
 Additionally, the controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
 For details, see the `Testing`_ section.

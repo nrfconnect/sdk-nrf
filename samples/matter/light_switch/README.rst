@@ -281,7 +281,7 @@ After building this and the :ref:`Matter Light Bulb <matter_light_bulb_sample>` 
 1. |connect_kit|
 #. |connect_terminal_ANSI|
 #. If devices were not erased during the programming, press and hold **Button 1** on each device until the factory reset takes place.
-#. On each device, press **Button 4** to start the Bluetooth LE advertising.
+#. On each device, press **Button 1** to start the Bluetooth LE advertising.
 #. Commission devices to the Matter network.
    See `Commissioning the device`_ for more information.
    During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
@@ -394,10 +394,7 @@ Commissioning the device
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
 By default, the device is not discoverable automatically upon startup.
-Press the following button to enable the Bluetooth LE advertising:
-
-* On nRF52840 DK, nRF5340 DK, and nRF21540 DK: Press **Button 4**.
-* On nRF7002 DK: Press **Button 2**.
+Press **Button 1** to enable the Bluetooth LE advertising.
 
 Onboarding information
 ----------------------

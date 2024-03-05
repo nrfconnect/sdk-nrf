@@ -107,7 +107,7 @@ The default implementation object is stripped by the compiler if the user overwr
 
 The nRF Connect Matter API contains the following functions that can be used to initialize Matter components in proper order:
 
-:c:func:`PrepareServer()`
+:c:func:`PrepareServer()`:
   This function schedules the initialization of Matter components, including memory, server configuration and networking backend.
   Depending on the selected Kconfig options, the initialization may also include factory data and operational key storage.
   All initialization procedures are scheduled to the Matter thread to provide a synchronization between all components and the application code.
