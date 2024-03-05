@@ -15,11 +15,11 @@ partition-size=0x1e000
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_config"
 
 partition=MCUBOOT_PAD
-if SOC_PLATFORM_NRF54L
+if SOC_SERIES_NRF54LX
 	partition-size=0x800
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_config"
 endif
-if !SOC_PLATFORM_NRF54L
+if !SOC_SERIES_NRF54LX
 	partition-size=0x200
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_config"
 endif

@@ -206,7 +206,7 @@ elseif (DEFINED CONFIG_SOC_NRF5340_CPUAPP)
   set(otp_size 764)  # 191 * 4
 endif()
 
-if (DEFINED CONFIG_SOC_PLATFORM_NRF54L)
+if (DEFINED CONFIG_SOC_SERIES_NRF54LX)
   set(soc_nvs_controller rram_controller)
   set(soc_nvs_controller_driver_kc CONFIG_SOC_FLASH_NRF_RRAM)
 else()
