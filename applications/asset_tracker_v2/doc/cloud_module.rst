@@ -190,7 +190,7 @@ Configurations for LwM2M integration layer
 
 When building for LwM2M, the cloud module's default configuration is to communicate with AVSystem's `Coiote Device Management`_, with a runtime provisioned `Pre-shared key (PSK)`_ set by the :kconfig:option:`CONFIG_LWM2M_INTEGRATION_PSK` option.
 This enables the device to work with `Coiote Device Management`_ without provisioning the PSK to the modem before running the application.
-To allow the device to communicate with other LwM2M servers, modify the default configuration by changing the following Kconfig options:
+To allow the device to communicate with other LwM2M Servers, modify the default configuration by changing the following Kconfig options:
 
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER`
 * :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP`

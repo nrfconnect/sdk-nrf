@@ -21,13 +21,13 @@ The sample supports the following development kits:
 Overview
 ********
 
-The NIDD sample creates a Non-IP PDN using the configured APN and uses socket operations to send and receive data.
-You can allocate a new PDN context to allow dual stack communication (IP and Non-IP).
+The NIDD sample creates a non-IP PDN using the configured APN and uses socket operations to send and receive data.
+You can allocate a new PDN context to allow dual stack communication (IP and non-IP).
 
 .. note::
 
-   This sample requires a SIM subscription with Non-IP service enabled, and LTE network configured to route the Non-IP traffic to a server that is able to respond.
-   Before using the sample, check with your operator if Non-IP service is supported.
+   This sample requires a SIM subscription with non-IP service enabled, and LTE network configured to route the non-IP traffic to a server that is able to respond.
+   Before using the sample, check with your operator if non-IP service is supported.
 
 
 Configuration

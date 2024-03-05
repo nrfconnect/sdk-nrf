@@ -185,7 +185,7 @@ The following samples use the AVSystem integration in |NCS|:
 * :ref:`lwm2m_carrier`
 * :ref:`modem_shell_application`
 
-All these samples offer LwM2M support and can be used to fetch location assistance data from nRF Cloud by proxying it through AVSystem's Coiote LwM2M server.
+All these samples offer LwM2M support and can be used to fetch location assistance data from nRF Cloud by proxying it through AVSystem's Coiote LwM2M Server.
 
 Library support
 ***************

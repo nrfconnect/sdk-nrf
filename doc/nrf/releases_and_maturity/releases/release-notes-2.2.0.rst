@@ -733,7 +733,7 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-* Added :ref:`lib_lwm2m_location_assistance` library that supports using A-GPS, P-GPS, and ground fix assistance from nRF Cloud through an LwM2M server.
+* Added :ref:`lib_lwm2m_location_assistance` library that supports using A-GPS, P-GPS, and ground fix assistance from nRF Cloud through an LwM2M Server.
 
 * Multicell location library:
 

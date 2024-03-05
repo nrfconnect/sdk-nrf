@@ -160,12 +160,12 @@ The server settings can put the LwM2M carrier library either in the normal mode 
 
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME`:
 
-  * This configuration specifies the lifetime of the custom LwM2M server.
+  * This configuration specifies the lifetime of the custom LwM2M Server.
   * This configuration is ignored if :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` is set.
 
 * :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE`:
 
-  * The binding can be either ``U`` (UDP) or ``N`` (Non-IP).
+  * The binding can be either ``U`` (UDP) or ``N`` (non-IP).
   * Leaving this configuration empty selects the default binding (UDP).
 
 .. _device_options_lwm2m:
@@ -409,7 +409,7 @@ Objects
 *******
 
 The objects enabled depend on the carrier network.
-When connecting to a generic LwM2M server, the following objects are enabled:
+When connecting to a generic LwM2M Server, the following objects are enabled:
 
 * Security
 * Server

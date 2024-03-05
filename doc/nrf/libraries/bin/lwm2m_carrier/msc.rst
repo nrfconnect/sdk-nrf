@@ -13,9 +13,9 @@ The following message sequence chart shows the states of the ``lwm2m_carrier_thr
 The following message sequence chart shows FOTA updates:
 
 .. figure:: /libraries/bin/lwm2m_carrier/images/lwm2m_carrier_msc_fota_success.svg
-    :alt: LwM2M server initiated FOTA
+    :alt: LwM2M Server initiated FOTA
 
-    LwM2M server initiated FOTA
+    LwM2M Server initiated FOTA
 
 The following message sequence chart shows that FOTA fails at run time if an invalid CA certificate is provided:
 

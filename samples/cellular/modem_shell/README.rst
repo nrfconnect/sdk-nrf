@@ -1356,13 +1356,13 @@ For example:
 LwM2M support
 =============
 
-Before building and running the sample, select the LwM2M server for testing.
+Before building and running the sample, select the LwM2M Server for testing.
 Follow the instructions in :ref:`server_setup_lwm2m_client` to set up the server and register your device to the server.
 With the default LwM2M configuration, the device connects directly to the device management server without bootstrap support.
-You can change the LwM2M server address by setting the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER` Kconfig option.
+You can change the LwM2M Server address by setting the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER` Kconfig option.
 
-Location assistance uses a proprietary mechanism to fetch location assistance data from nRF Cloud by proxying it through the LwM2M server.
-As of now, you can only use AVSystem's Coiote LwM2M server for the location assistance data from nRF Cloud.
+Location assistance uses a proprietary mechanism to fetch location assistance data from nRF Cloud by proxying it through the LwM2M Server.
+As of now, you can only use AVSystem's Coiote LwM2M Server for the location assistance data from nRF Cloud.
 To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 
 You can build the MoSh sample with different LwM2M configurations:
@@ -1388,7 +1388,7 @@ To also enable P-GPS, use the following command:
 
 |build_target|
 
-Use the following command to establish connection to the LwM2M server:
+Use the following command to establish connection to the LwM2M Server:
 
 .. code-block:: console
 
@@ -1396,7 +1396,7 @@ Use the following command to establish connection to the LwM2M server:
    LwM2M: Starting LwM2M client
    LwM2M: Registration complete
 
-Use the following command to disconnect from the LwM2M server:
+Use the following command to disconnect from the LwM2M Server:
 
 .. code-block:: console
 

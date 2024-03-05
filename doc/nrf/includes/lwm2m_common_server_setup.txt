@@ -3,7 +3,7 @@ Server setup
 
 The following instructions describe how to register your device to `Leshan Demo Server`_ or `Coiote Device Management server`_:
 
-1. To add the device to the LwM2M server, complete the following steps:
+1. To add the device to the LwM2M Server, complete the following steps:
 
    .. tabs::
 
@@ -43,7 +43,7 @@ The following instructions describe how to register your device to `Leshan Demo 
 
    .. _bootstrap_server_reg:
 
-2. To register the device to an LwM2M bootstrap server, complete the following steps:
+2. To register the device to an LwM2M Bootstrap Server, complete the following steps:
 
    .. tabs::
 
@@ -89,6 +89,6 @@ The following instructions describe how to register your device to `Leshan Demo 
 
             Also, make sure to select the :guilabel:`Key in hexadecimal` checkbox.
 
-            The Coiote bootstrap server automatically creates an account for the LwM2M server using the same device endpoint name and random PSK key.
+            The Coiote Bootstrap server automatically creates an account for the LwM2M Server using the same device endpoint name and random PSK key.
 
          #. Click :guilabel:`Add device`.

@@ -90,7 +90,7 @@ int lwm2m_settings_bootstrap_from_smartcard_set(bool new_bootstrap_from_smartcar
 bool lwm2m_settings_enable_custom_server_config_get(void);
 
 /**
- * @brief Enable or disable the LwM2M server custom settings.
+ * @brief Enable or disable the LwM2M Server custom settings.
  *
  * @param new_enable_custom_server_config Whether to enable LwM2M custom server settings or not.
  *

@@ -11,10 +11,10 @@ To use the :ref:`lwm2m_client` sample in production, you must prepare the sample
 
 #. Program the :ref:`at_client_sample` sample to your device.
 #. Provision the identity and security credentials.
-#. Program the LwM2M client sample.
+#. Program the LwM2M Client sample.
 
 .. figure:: /images/lwm2m_client_production.svg
-   :alt: LwM2M client production diagram
+   :alt: LwM2M Client production diagram
 
    Preparing the sample for production
 
@@ -105,6 +105,6 @@ To configure and program the sample, complete the following steps:
 
 1. Make the sample programmable to multiple devices by removing all hard coded credentials. This can be done by setting the :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` Kconfig option to empty value.
 #. Enable bootstrapping using the configuration overlay file :file:`overlay-avsystem-bootstrap.conf` or :file:`overlay-leshan-bootstrap.conf`.
-   Bootstrapping is required for an LwM2M client to rotate security credentials.
+   Bootstrapping is required for an LwM2M Client to rotate security credentials.
 #. Prepare the production script or steps for your nRF91 Series device.
 #. Program the sample.

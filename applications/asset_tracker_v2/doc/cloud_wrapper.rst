@@ -275,7 +275,7 @@ For more information on objects used in LwM2M, refer to the `OMA LwM2M Object an
 Uploading XML definition for configuration object
 -------------------------------------------------
 
-The application defines a proprietary ``Configuration object`` that the LwM2M server needs to be made aware of to enable the manipulation of its resources using the web console.
+The application defines a proprietary ``Configuration object`` that the LwM2M Server needs to be made aware of to enable the manipulation of its resources using the web console.
 If you are using `Coiote Device Management`_, complete the following steps to add the LwM2M object definition:
 
 1. Open `Coiote Device Management server`_.
