@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	chosen {
+		zephyr,sram = &cpuppr_code_data;
+	};
+
+	sensor_stub: sensor_stub {
+		compatible = "nordic,sensor-stub";
+		generator = "sensor_stub_gen";
+		status = "okay";
+	};
+
+	agg0: agg0 {
+		compatible = "caf,aggregator";
+		sensor_descr = "accel_sim_xyz";
+		buf_data_length = <240>;
+		sample_size = <3>;
+		memory-region = <&ram3x_agg_area0>;
+	};
+};
+
+/* Place aggregator buffers in PPR memory region. */
+
+&cpuppr_ram3x_region {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	ranges = <0x0 0x2fc00000 0x7000>;
+
+	cpuppr_code_data: memory@0 {
+		reg = <0x0 0x6a00>;
+	};
+
+	ram3x_agg_area0: memory@6a00 {
+		reg = <0x6a00 0x600>;
+	};
+};
+
+/* Enabled nodes required by IPC
+ * Two mboxes, one for each sides and one ipc instance
+ */
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+ipc0: &cpuapp_cpuppr_ipc {
+	status = "okay";
+};
