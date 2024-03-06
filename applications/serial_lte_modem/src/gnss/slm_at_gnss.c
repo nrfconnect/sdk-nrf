@@ -601,14 +601,15 @@ static void gnss_event_handler(int event)
 	}
 }
 
-/* Handles AT#XGPS commands. */
-int handle_at_gps(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xgps_set, "AT#XGPS=", handle_at_gps);
+SLM_AT_CMD_CUSTOM(xgps_read, "AT#XGPS?", handle_at_gps);
+static int handle_at_gps(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			 uint32_t param_count)
 {
 	int err = -EINVAL;
 	uint16_t op;
 	uint16_t interval;
 	uint16_t timeout;
-	uint32_t param_count;
 
 	enum {
 		OP_IDX = 1,
@@ -619,8 +620,7 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 	};
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		param_count = at_params_valid_count_get(&slm_at_param_list);
-		err = at_params_unsigned_short_get(&slm_at_param_list, OP_IDX, &op);
+		err = at_params_unsigned_short_get(param_list, OP_IDX, &op);
 		if (err) {
 			return err;
 		}
@@ -631,7 +631,7 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 			}
 
 			err = at_params_unsigned_short_get(
-				&slm_at_param_list, CLOUD_ASSISTANCE_IDX, &gnss_cloud_assistance);
+				param_list, CLOUD_ASSISTANCE_IDX, &gnss_cloud_assistance);
 			if (err || gnss_cloud_assistance > 1) {
 				return -EINVAL;
 			}
@@ -652,8 +652,7 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 				return -ENOTCONN;
 			}
 
-			err = at_params_unsigned_short_get(
-				&slm_at_param_list, INTERVAL_IDX, &interval);
+			err = at_params_unsigned_short_get(param_list, INTERVAL_IDX, &interval);
 			if (err || (interval > 1 && interval < 10)) {
 				return -EINVAL;
 			}
@@ -687,7 +686,7 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 					timeout = 60;  /* default value */
 				} else {
 					err = at_params_unsigned_short_get(
-						&slm_at_param_list, TIMEOUT_IDX, &timeout);
+						param_list, TIMEOUT_IDX, &timeout);
 					if (err || param_count != MAX_PARAM_COUNT) {
 						return -EINVAL;
 					}
@@ -731,15 +730,16 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/* Handles AT#XGPSDEL commands. */
-int handle_at_gps_delete(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xgpsdel, "AT#XGPSDEL", handle_at_gps_delete);
+static int handle_at_gps_delete(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+				uint32_t)
 {
 	int err = -EINVAL;
 	uint32_t mask;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_int_get(&slm_at_param_list, 1, &mask);
+		err = at_params_unsigned_int_get(param_list, 1, &mask);
 		if (err || !mask || (mask & NRF_MODEM_GNSS_DELETE_TCXO_OFFSET)) {
 			return -EINVAL;
 		}

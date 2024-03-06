@@ -104,10 +104,10 @@ static void ncell_meas_mon(const char *notify)
 	char mcc[4]  = {0};
 	char tac[9] = {0};
 	unsigned int ncells_count = 0;
+	struct at_param_list *list = NULL;
 
 	nrfcloud_ncellmeas_done = false;
-	at_params_list_clear(&slm_at_param_list);
-	err = at_parser_params_from_str(notify, NULL, &slm_at_param_list);
+	err = slm_get_at_param_list(notify, &list);
 	if (err == -E2BIG) {
 		LOG_WRN("%%NCELLMEAS result notification truncated"
 			" because its parameter count exceeds CONFIG_SLM_AT_MAX_PARAM.");
@@ -116,7 +116,7 @@ static void ncell_meas_mon(const char *notify)
 	}
 
 	/* parse status, 0: success 1: fail */
-	err = at_params_int_get(&slm_at_param_list, 1, &ncellmeas_status);
+	err = at_params_int_get(list, 1, &ncellmeas_status);
 	if (err) {
 		goto exit;
 	}
@@ -125,7 +125,7 @@ static void ncell_meas_mon(const char *notify)
 		err = -EAGAIN;
 		goto exit;
 	}
-	param_count = at_params_valid_count_get(&slm_at_param_list);
+	param_count = at_params_valid_count_get(list);
 	if (param_count < MAX_PARAM_CELL) { /* at least current cell */
 		LOG_ERR("Missing param in NCELLMEAS notification");
 		err = -EAGAIN;
@@ -134,7 +134,7 @@ static void ncell_meas_mon(const char *notify)
 
 	/* parse Cell ID */
 	size = sizeof(cid);
-	err = util_string_get(&slm_at_param_list, 2, cid, &size);
+	err = util_string_get(list, 2, cid, &size);
 	if (err) {
 		goto exit;
 	}
@@ -145,7 +145,7 @@ static void ncell_meas_mon(const char *notify)
 
 	/* parse PLMN */
 	size = sizeof(plmn);
-	err = util_string_get(&slm_at_param_list, 3, plmn, &size);
+	err = util_string_get(list, 3, plmn, &size);
 	if (err) {
 		goto exit;
 	}
@@ -161,7 +161,7 @@ static void ncell_meas_mon(const char *notify)
 
 	/* parse TAC */
 	size = sizeof(tac);
-	err = util_string_get(&slm_at_param_list, 4, tac, &size);
+	err = util_string_get(list, 4, tac, &size);
 	if (err) {
 		goto exit;
 	}
@@ -174,25 +174,24 @@ static void ncell_meas_mon(const char *notify)
 	nrfcloud_cell_data.current_cell.timing_advance = NRF_CLOUD_LOCATION_CELL_OMIT_TIME_ADV;
 
 	/* parse EARFCN */
-	err = at_params_unsigned_int_get(&slm_at_param_list, 6,
-		&nrfcloud_cell_data.current_cell.earfcn);
+	err = at_params_unsigned_int_get(list, 6, &nrfcloud_cell_data.current_cell.earfcn);
 	if (err) {
 		goto exit;
 	}
 
 	/* parse PCI */
-	err = at_params_unsigned_short_get(&slm_at_param_list, 7,
-		&nrfcloud_cell_data.current_cell.phys_cell_id);
+	err = at_params_unsigned_short_get(list, 7,
+					   &nrfcloud_cell_data.current_cell.phys_cell_id);
 	if (err) {
 		goto exit;
 	}
 
 	/* parse RSRP and RSRQ */
-	err = at_params_short_get(&slm_at_param_list, 8, &nrfcloud_cell_data.current_cell.rsrp);
+	err = at_params_short_get(list, 8, &nrfcloud_cell_data.current_cell.rsrp);
 	if (err < 0) {
 		goto exit;
 	}
-	err = at_params_short_get(&slm_at_param_list, 9, &nrfcloud_cell_data.current_cell.rsrq);
+	err = at_params_short_get(list, 9, &nrfcloud_cell_data.current_cell.rsrq);
 	if (err < 0) {
 		goto exit;
 	}
@@ -204,27 +203,26 @@ static void ncell_meas_mon(const char *notify)
 		const unsigned int offset = MAX_PARAM_CELL + i * MAX_PARAM_NCELL;
 
 		/* parse n_earfcn */
-		err = at_params_unsigned_int_get(&slm_at_param_list, offset,
-						 &nrfcloud_ncells[i].earfcn);
+		err = at_params_unsigned_int_get(list, offset, &nrfcloud_ncells[i].earfcn);
 		if (err < 0) {
 			goto exit;
 		}
 
 		/* parse n_phys_cell_id */
-		err = at_params_unsigned_short_get(&slm_at_param_list, offset + 1,
+		err = at_params_unsigned_short_get(list, offset + 1,
 						   &nrfcloud_ncells[i].phys_cell_id);
 		if (err < 0) {
 			goto exit;
 		}
 
 		/* parse n_rsrp */
-		err = at_params_short_get(&slm_at_param_list, offset + 2, &nrfcloud_ncells[i].rsrp);
+		err = at_params_short_get(list, offset + 2, &nrfcloud_ncells[i].rsrp);
 		if (err < 0) {
 			goto exit;
 		}
 
 		/* parse n_rsrq */
-		err = at_params_short_get(&slm_at_param_list, offset + 3, &nrfcloud_ncells[i].rsrq);
+		err = at_params_short_get(list, offset + 3, &nrfcloud_ncells[i].rsrq);
 		if (err < 0) {
 			goto exit;
 		}
@@ -570,8 +568,10 @@ static int nrf_cloud_datamode_callback(uint8_t op, const uint8_t *data, int len,
 	return ret;
 }
 
-/* Handles the AT#XNRFCLOUD commands. */
-int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xnrfcloud_set, "AT#XNRFCLOUD=", handle_at_nrf_cloud);
+SLM_AT_CMD_CUSTOM(xnrfcloud_read, "AT#XNRFCLOUD?", handle_at_nrf_cloud);
+static int handle_at_nrf_cloud(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			       uint32_t param_count)
 {
 	enum slm_nrfcloud_operation {
 		SLM_NRF_CLOUD_DISCONNECT,
@@ -584,14 +584,13 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(param_list, 1, &op);
 		if (err < 0) {
 			return err;
 		}
 		if (op == SLM_NRF_CLOUD_CONNECT && !slm_nrf_cloud_ready) {
-			if (at_params_valid_count_get(&slm_at_param_list) > 2) {
-				err = at_params_unsigned_short_get(&slm_at_param_list, 2,
-					&send_location);
+			if (param_count > 2) {
+				err = at_params_unsigned_short_get(param_list, 2, &send_location);
 				if (send_location != 0 && send_location != 1) {
 					err = -EINVAL;
 				}
@@ -648,11 +647,11 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 
 #if defined(CONFIG_NRF_CLOUD_LOCATION)
 
-/* Handles the AT#XNRFCLOUDPOS command. */
-int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xnrfcloudpos, "AT#XNRFCLOUDPOS", handle_at_nrf_cloud_pos);
+static int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type,
+				   const struct at_param_list *param_list, uint32_t param_count)
 {
 	int err;
-	const uint32_t param_count = at_params_valid_count_get(&slm_at_param_list);
 	uint16_t cell_pos, wifi_pos;
 
 	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
@@ -674,12 +673,12 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 		return -EINVAL;
 	}
 
-	err = at_params_unsigned_short_get(&slm_at_param_list, 1, &cell_pos);
+	err = at_params_unsigned_short_get(param_list, 1, &cell_pos);
 	if (err) {
 		return err;
 	}
 
-	err = at_params_unsigned_short_get(&slm_at_param_list, 2, &wifi_pos);
+	err = at_params_unsigned_short_get(param_list, 2, &wifi_pos);
 	if (err) {
 		return err;
 	}
@@ -725,7 +724,7 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 			/* Parse the MAC address. */
 			len = sizeof(mac_addr_str);
 			err = at_params_string_get(
-				&slm_at_param_list, param_idx, mac_addr_str, &len);
+				param_list, param_idx, mac_addr_str, &len);
 			if (!err && (len != sizeof(mac_addr_str)
 				|| sscanf(mac_addr_str, WIFI_MAC_ADDR_TEMPLATE,
 						&mac_addr[0], &mac_addr[1], &mac_addr[2],
@@ -744,7 +743,7 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 			ap->mac_length = WIFI_MAC_ADDR_LEN;
 
 			/* Parse the RSSI, if present. */
-			if (!at_params_int_get(&slm_at_param_list, param_idx + 1, &rssi)) {
+			if (!at_params_int_get(param_list, param_idx + 1, &rssi)) {
 				++param_idx;
 				const int rssi_min = -128;
 				const int rssi_max = 0;

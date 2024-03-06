@@ -128,8 +128,9 @@ static int do_tftp_put(int family, const char *server, uint16_t port, const char
 	return ret;
 }
 
-/* Handles AT#XTFTP commands. */
-int handle_at_tftp(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xtftp, "AT#XTFTP", handle_at_tftp);
+static int handle_at_tftp(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			  uint32_t param_count)
 {
 	int err = -EINVAL;
 	uint16_t op;
@@ -138,32 +139,31 @@ int handle_at_tftp(enum at_cmd_type cmd_type)
 	char filepath[SLM_MAX_FILEPATH];
 	char mode[16];   /** "netascii", "octet", "mail" */
 	int size;
-	int param_count = at_params_valid_count_get(&slm_at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(param_list, 1, &op);
 		if (err) {
 			return err;
 		}
 
 		size = sizeof(url);
-		err = util_string_get(&slm_at_param_list, 2, url, &size);
+		err = util_string_get(param_list, 2, url, &size);
 		if (err) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&slm_at_param_list, 3, &port);
+		err = at_params_unsigned_short_get(param_list, 3, &port);
 		if (err) {
 			return err;
 		}
 		size = sizeof(filepath);
-		err = util_string_get(&slm_at_param_list, 4, filepath, &size);
+		err = util_string_get(param_list, 4, filepath, &size);
 		if (err) {
 			return err;
 		}
 		if (param_count > 5) {
 			size = sizeof(mode);
-			err = util_string_get(&slm_at_param_list, 5, mode, &size);
+			err = util_string_get(param_list, 5, mode, &size);
 			if (err) {
 				return err;
 			}
@@ -184,7 +184,7 @@ int handle_at_tftp(enum at_cmd_type cmd_type)
 			uint8_t data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 
 			size = sizeof(data);
-			err = util_string_get(&slm_at_param_list, 6, data, &size);
+			err = util_string_get(param_list, 6, data, &size);
 			if (err) {
 				return err;
 			}

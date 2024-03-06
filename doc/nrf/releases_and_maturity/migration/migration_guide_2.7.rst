@@ -42,6 +42,15 @@ This section describes the changes related to samples and applications.
   * When using the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option, the certificate files must be in standard PEM format.
     This means that the PEM files must not be converted to string format anymore.
 
+Serial LTE Modem (SLM)
+----------------------
+
+.. toggle::
+
+  * The AT command parsing has been updated to utilize the :ref:`at_cmd_custom_readme` library.
+    If you have introduced custom AT commands to the SLM, you need to update the command parsing to use the new library.
+    See the :ref:`slm_extending` page for more information.
+
 Libraries
 =========
 

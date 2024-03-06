@@ -10,7 +10,6 @@
 #if defined(CONFIG_SLM_CMUX)
 #include "slm_cmux.h"
 #endif
-#include <modem/at_cmd_custom.h>
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 #include <zephyr/modem/ppp.h>
@@ -464,8 +463,9 @@ int slm_ppp_init(void)
 	return 0;
 }
 
-/* Handles AT#XPPP commands. */
-int handle_at_ppp(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xppp, "AT#XPPP", handle_at_ppp);
+static int handle_at_ppp(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			 uint32_t param_count)
 {
 	int ret;
 	unsigned int op;
@@ -479,12 +479,11 @@ int handle_at_ppp(enum at_cmd_type cmd_type)
 		rsp_send("\r\n#XPPP: %u,%u\r\n", slm_ppp_is_running(), ppp_peer_connected);
 		return 0;
 	}
-	if (cmd_type != AT_CMD_TYPE_SET_COMMAND
-	 || at_params_valid_count_get(&slm_at_param_list) != 2) {
+	if (cmd_type != AT_CMD_TYPE_SET_COMMAND || param_count != 2) {
 		return -EINVAL;
 	}
 
-	ret = at_params_unsigned_int_get(&slm_at_param_list, 1, &op);
+	ret = at_params_unsigned_int_get(param_list, 1, &op);
 	if (ret) {
 		return ret;
 	} else if (op >= OP_COUNT) {
@@ -501,7 +500,7 @@ int handle_at_ppp(enum at_cmd_type cmd_type)
 		/* Send "OK" first in case stopping PPP results in the CMUX AT channel switching. */
 		rsp_send_ok();
 		k_work_submit_to_queue(&slm_work_q, &ppp_stop_work);
-		ret = SILENT_AT_COMMAND_RET;
+		ret = -SILENT_AT_COMMAND_RET;
 	}
 	return ret;
 }

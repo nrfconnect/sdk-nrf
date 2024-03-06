@@ -504,8 +504,9 @@ static bool socket_is_in_use(void)
 	return true;
 }
 
-/* Handles AT#XUDPSVR commands. */
-int handle_at_udp_server(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xudpsvr, "AT#XUDPSVR", handle_at_udp_server);
+static int handle_at_udp_server(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+				uint32_t)
 {
 	int err = -EINVAL;
 	uint16_t op;
@@ -513,7 +514,7 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -521,7 +522,7 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 			if (socket_is_in_use()) {
 				return -EINVAL;
 			}
-			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &port);
+			err = at_params_unsigned_short_get(param_list, 2, &port);
 			if (err) {
 				return err;
 			}
@@ -549,15 +550,16 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/* Handles AT#XUDPCLI commands. */
-int handle_at_udp_client(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xudpcli, "AT#XUDPCLI", handle_at_udp_client);
+static int handle_at_udp_client(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+				uint32_t param_count)
 {
 	int err = -EINVAL;
 	uint16_t op;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -569,26 +571,25 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			if (socket_is_in_use()) {
 				return -EINVAL;
 			}
-			err = util_string_get(&slm_at_param_list, 2, url, &size);
+			err = util_string_get(param_list, 2, url, &size);
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &port);
+			err = at_params_unsigned_short_get(param_list, 3, &port);
 			if (err) {
 				return err;
 			}
 			proxy.sec_tag = INVALID_SEC_TAG;
-			const uint32_t param_count = at_params_valid_count_get(&slm_at_param_list);
 
 			if (param_count > 4) {
-				if (at_params_int_get(&slm_at_param_list, 4, &proxy.sec_tag)
+				if (at_params_int_get(param_list, 4, &proxy.sec_tag)
 				|| proxy.sec_tag == INVALID_SEC_TAG || proxy.sec_tag < 0) {
 					return -EINVAL;
 				}
 			}
 			proxy.dtls_cid = INVALID_DTLS_CID;
 			if (param_count > 5) {
-				if (at_params_int_get(&slm_at_param_list, 5, &proxy.dtls_cid)
+				if (at_params_int_get(param_list, 5, &proxy.dtls_cid)
 				|| !(proxy.dtls_cid == TLS_DTLS_CID_DISABLED
 					|| proxy.dtls_cid == TLS_DTLS_CID_SUPPORTED
 					|| proxy.dtls_cid == TLS_DTLS_CID_ENABLED)) {
@@ -597,7 +598,7 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			}
 			proxy.peer_verify = TLS_PEER_VERIFY_REQUIRED;
 			if (param_count > 6) {
-				if (at_params_int_get(&slm_at_param_list, 6, &proxy.peer_verify) ||
+				if (at_params_int_get(param_list, 6, &proxy.peer_verify) ||
 				    (proxy.peer_verify != TLS_PEER_VERIFY_NONE &&
 				     proxy.peer_verify != TLS_PEER_VERIFY_OPTIONAL &&
 				     proxy.peer_verify != TLS_PEER_VERIFY_REQUIRED)) {
@@ -608,8 +609,7 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			if (param_count > 7) {
 				uint16_t hostname_verify;
 
-				if (at_params_unsigned_short_get(&slm_at_param_list, 7,
-								 &hostname_verify) ||
+				if (at_params_unsigned_short_get(param_list, 7, &hostname_verify) ||
 				    (hostname_verify != 0 && hostname_verify != 1)) {
 					return -EINVAL;
 				}
@@ -640,8 +640,9 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/* Handles AT#XUDPSEND command. */
-int handle_at_udp_send(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xudpsend, "AT#XUDPSEND", handle_at_udp_send);
+static int handle_at_udp_send(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			      uint32_t param_count)
 {
 	int err = -EINVAL;
 	char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
@@ -653,9 +654,9 @@ int handle_at_udp_send(enum at_cmd_type cmd_type)
 			LOG_ERR("Not connected yet");
 			return -ENOTCONN;
 		}
-		if (at_params_valid_count_get(&slm_at_param_list) > 1) {
+		if (param_count > 1) {
 			size = sizeof(data);
-			err = util_string_get(&slm_at_param_list, 1, data, &size);
+			err = util_string_get(param_list, 1, data, &size);
 			if (err) {
 				return err;
 			}

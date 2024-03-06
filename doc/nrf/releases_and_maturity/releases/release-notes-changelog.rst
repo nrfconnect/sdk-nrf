@@ -138,6 +138,10 @@ Serial LTE modem
 * Removed mention of Termite and Teraterm terminal emulators from the documentation.
   The recommended approach is to use one of the emulators listed on the :ref:`test_and_optimize` page.
 
+* Updated:
+
+  * AT command parsing to utilize the :ref:`at_cmd_custom_readme` library.
+
 nRF5340 Audio
 -------------
 

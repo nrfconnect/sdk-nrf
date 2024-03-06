@@ -7,46 +7,37 @@ Extending the application
    :local:
    :depth: 2
 
-You can extend the serial LTE modem application by adding your own AT commands and custom error handling.
+The AT commands in the Serial LTE modem are implemented with the :ref:`at_cmd_custom_readme` library.
+You can extend the Serial LTE modem application by adding your own AT commands.
 
 Adding AT commands
 ******************
 
-If you want to implement custom AT commands and add them to the serial LTE modem application, see the parser implementation of the provided proprietary AT commands for reference.
-The source files can be found in the :file:`applications/serial_lte_modem/src/` folder.
+If you want to implement a custom AT command in SLM, you will need to follow the instructions in the :ref:`at_cmd_custom_readme` library documentation.
+Setting the AT command filter and callback with the :c:macro:`AT_CMD_CUSTOM` macro is enough for a custom AT command that does not require setup or teardown.
 
-Complete the following steps to add a parser for your own AT commands:
+As a preferred alternative to the :c:macro:`AT_CMD_CUSTOM` macro, SLM defines the :c:macro:`SLM_AT_CMD_CUSTOM` macro, which is a wrapper around the :c:macro:`AT_CMD_CUSTOM` macro.
+The :c:macro:`SLM_AT_CMD_CUSTOM` macro pre-processes the AT command parameters for the AT command callback and sets the default ``OK`` response if the callback returns successfully.
+
+If your custom AT command requires setup or teardown, you will need to perform the following steps:
 
 1. Create a header file in :file:`applications/serial_lte_modem/src/`.
-   The file must expose the following functions:
+   The file must expose the following function declarations:
 
-   * ``*_init()`` - Initialize the parser.
-   * ``*_uninit()`` - Uninitialize the parser.
+   * ``*_init()`` - Your setup function for the custom AT command.
+   * ``*_uninit()`` - Your teardown function for the custom AT command.
 
-   See the files for existing AT command parsers for reference.
-#. Implement your AT strings and handlers in a corresponding :file:`.c` file.
-   See the files for existing AT command parsers for reference.
+#. Create a corresponding :file:`.c` file in :file:`applications/serial_lte_modem/src/`.
+   The file must implement the following functions:
 
-   Pay attention to the following requirements:
+   * Your AT command callback, which is declared with the :c:macro:`AT_CMD_CUSTOM` macro.
+   * ``*_init()`` - Your setup function for the custom AT command.
+   * ``*_uninit()`` - Your teardown function for the custom AT command.
+     Make sure that the teardown function exits successfully.
+     It will be called before entering power saving states or shutting down.
 
-   * The names of new AT commands should start with ``AT#X``.
-   * Before entering idle state, the serial LTE modem application will call the uninit function.
-     Make sure that the uninit function exits successfully.
-     Otherwise, the application cannot enter idle state.
-#. Edit :file:`applications/serial_lte_modem/src/slm_at_commands.c` and add calls to your functions:
+#. Edit :file:`applications/serial_lte_modem/src/slm_at_commands.c` and make the following changes:
 
-   a. In ``slm_at_init()``, add a call to your init function.
-   #. In ``slm_at_uninit()``, add a call to your uninit function.
-   #. Declare your command handler like those of other service modules.
-   #. In ``slm_at_cmd_list``, add the mapping of your AT command and its handler.
-
-If you discover any bugs in the :file:`main.c`, :file:`slm_at_host.h`, or :file:`slm_at_host.c` files, report them on the `DevZone`_.
-
-Error handling
-**************
-
-The Serial LTE modem application returns error codes that are defined in :file:`zephyr/lib/libc/minimal/include/errno.h`.
-See the comments in that file for information about a specific error.
-
-If an error occurs during TCP/IP processing, the socket is usually closed.
-See the `POSIX Programmer's Manual`_ for information about the errors returned by each API.
+   a. Include your header file.
+   #. In the ``slm_at_init()`` function, add a call to your setup function.
+   #. In the ``slm_at_uninit()`` function, add a call to your teardown function.
