@@ -1,9 +1,0 @@
-#include <autoconf.h>
-
-b0n:
-  size: CONFIG_B0N_SIZE
-  placement:
-    after: start
-
-b0n_container:
-  span: [b0n, provision]

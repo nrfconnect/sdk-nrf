@@ -1,9 +1,0 @@
-sample:
-  description: Entropy remote network core sample
-  name: Entropy remote network core
-tests:
-  sample.nrf_rpc.entropy_cpunet:
-    build_only: true
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpunet
-    platform_allow: nrf5340dk_nrf5340_cpunet

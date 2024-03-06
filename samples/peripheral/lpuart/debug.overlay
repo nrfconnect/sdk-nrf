@@ -1,5 +1,0 @@
-/* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */
-
-&uart0 {
-	status = "okay";
-};
