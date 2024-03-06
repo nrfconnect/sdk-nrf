@@ -7,7 +7,7 @@ nRF Desktop: Integrating your own hardware
    :local:
    :depth: 2
 
-This section describes how to adapt the nRF Desktop application to different hardware, and lists the steps required for adding a new board.
+This page describes how to adapt the nRF Desktop application to different hardware and lists the required steps.
 
 .. tip::
    Make sure to get familiar with the :ref:`nrf_desktop_configuration` section before porting the application to a new board.
