@@ -355,9 +355,15 @@ typedef struct cracen_spake2p_operation cracen_spake2p_operation_t;
 struct cracen_pake_operation {
 	psa_algorithm_t alg;
 	union {
+#ifdef CONFIG_PSA_NEED_CRACEN_SRP_6
 		cracen_srp_operation_t cracen_srp_ctx;
+#endif /* CONFIG_PSA_NEED_CRACEN_SRP_6 */
+#ifdef CONFIG_PSA_NEED_CRACEN_ECJPAKE
 		cracen_jpake_operation_t cracen_jpake_ctx;
+#endif /* CONFIG_PSA_NEED_CRACEN_ECJPAKE */
+#ifdef CONFIG_PSA_NEED_CRACEN_SPAKE2P
 		cracen_spake2p_operation_t cracen_spake2p_ctx;
+#endif /* CONFIG_PSA_NEED_CRACEN_SPAKE2P */
 	};
 };
 typedef struct cracen_pake_operation cracen_pake_operation_t;
