@@ -498,6 +498,15 @@ foreach(d APP ${PM_DOMAINS})
     set(otp_size 764)  # 191 * 4
   endif()
 
+  sysbuild_get(${image_name}_CONFIG_SOC_SERIES_NRF54LX IMAGE ${image_name} VAR CONFIG_SOC_SERIES_NRF54LX KCONFIG)
+  if(${image_name}_CONFIG_SOC_SERIES_NRF54LX)
+    set(soc_nvs_controller rram_controller)
+    set(soc_nvs_controller_driver_kc CONFIG_SOC_FLASH_NRF_RRAM)
+  else()
+    set(soc_nvs_controller flash_controller)
+    set(soc_nvs_controller_driver_kc CONFIG_SOC_FLASH_NRF)
+  endif()
+
   add_region(
     NAME sram_primary
     SIZE ${${image_name}_CONFIG_PM_SRAM_SIZE}
@@ -525,8 +534,8 @@ foreach(d APP ${PM_DOMAINS})
     SIZE ${flash_size}
     BASE ${${image_name}_CONFIG_FLASH_BASE_ADDRESS}
     PLACEMENT complex
-    DEVICE flash_controller
-    DEFAULT_DRIVER_KCONFIG CONFIG_SOC_FLASH_NRF
+    DEVICE ${soc_nvs_controller}
+    DEFAULT_DRIVER_KCONFIG ${soc_nvs_controller_driver_kc}
     DOMAIN ${d}
     )
 
