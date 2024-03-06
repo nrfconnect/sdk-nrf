@@ -158,6 +158,6 @@ config CHIP_ENABLE_READ_CLIENT
 
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
-source "${ZEPHYR_BASE}/../nrf/samples/matter/common/src/bridge/Kconfig"
-source "${ZEPHYR_BASE}/../nrf/samples/matter/common/src/Kconfig"
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/Kconfig"
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/Kconfig"
 source "Kconfig.zephyr"
