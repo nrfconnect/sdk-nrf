@@ -19,3 +19,5 @@ if(CONFIG_LOCATION_METHOD_CELLULAR OR CONFIG_LOCATION_METHOD_WIFI)
 zephyr_library_sources(method_cloud_location.c)
 add_subdirectory(cloud_service)
 endif()
+
+zephyr_library_compile_definitions(_POSIX_C_SOURCE=200809L)
