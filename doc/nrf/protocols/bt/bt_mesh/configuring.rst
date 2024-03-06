@@ -7,7 +7,7 @@ Configuring Bluetooth Mesh in |NCS|
    :local:
    :depth: 2
 
-The Bluetooth® mesh support is controlled by :kconfig:option:`CONFIG_BT_MESH`, which depends on the following configuration options:
+The Bluetooth® Mesh support is controlled by :kconfig:option:`CONFIG_BT_MESH`, which depends on the following configuration options:
 
 * :kconfig:option:`CONFIG_BT` - Enables the Bluetooth subsystem.
 * :kconfig:option:`CONFIG_BT_OBSERVER` - Enables the Bluetooth Observer role.

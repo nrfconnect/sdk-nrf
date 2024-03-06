@@ -7,7 +7,7 @@ Bluetooth Mesh: Light
    :local:
    :depth: 2
 
-The Bluetooth® mesh light sample demonstrates how to set up a mesh server model application, and control LEDs with Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
+The Bluetooth® Mesh light sample demonstrates how to set up a mesh server model application, and control LEDs with Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
 
 .. note::
    This sample is self-contained, and can be tested on its own.

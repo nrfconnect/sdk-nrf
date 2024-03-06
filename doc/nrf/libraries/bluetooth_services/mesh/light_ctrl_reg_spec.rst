@@ -3,7 +3,7 @@
 Specification-defined illuminance regulator
 ###########################################
 
-This module implements the illuminance regulator defined in the Bluetooth® mesh model specification.
+This module implements the illuminance regulator defined in the Bluetooth® Mesh model specification.
 
 The regulator operates in a compile time configurable update interval between 10 and 100 ms.
 The interval can be configured through the :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL` option.

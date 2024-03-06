@@ -3,7 +3,7 @@
 Bluetooth Mesh profile
 ######################
 
-Bluetooth® mesh is supported for development in |NCS|, through the Zephyr :ref:`zephyr:bluetooth_mesh` implementation.
+Bluetooth® Mesh is supported for development in |NCS|, through the Zephyr :ref:`zephyr:bluetooth_mesh` implementation.
 Nordic Semiconductor's implementation of the Bluetooth Mesh allows applications to use the features provided by the Bluetooth Mesh when running on supported Nordic devices.
 
 The `Bluetooth Mesh profile specification`_ is developed and published by the Bluetooth® Special Interest Group (SIG).

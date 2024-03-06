@@ -7,7 +7,7 @@ Bluetooth Mesh: Coexistence with other LE services
    :local:
    :depth: 2
 
-This sample demonstrates how to combine Bluetooth® mesh and another Bluetooth Low Energy (LE) service in a single application.
+This sample demonstrates how to combine Bluetooth® Mesh and another Bluetooth Low Energy (LE) service in a single application.
 
 Requirements
 ************
