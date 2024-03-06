@@ -96,3 +96,17 @@ DEFINE_FAKE_VALUE_FUNC(int, fota_download_util_download_cancel);
 DEFINE_FAKE_VALUE_FUNC(int, fota_download_util_image_schedule, enum dfu_target_image_type);
 DEFINE_FAKE_VALUE_FUNC(int, fota_download_util_image_reset, enum dfu_target_image_type);
 DEFINE_FAKE_VALUE_FUNC(int, fota_download_util_apply_update, enum dfu_target_image_type);
+
+static int lwm2m_engine_init(void)
+{
+	STRUCT_SECTION_FOREACH(lwm2m_init_func, init) {
+		int ret = init->f();
+
+		if (ret) {
+			printf("Init function %p returned %d\n", init, ret);
+		}
+	}
+	return 0;
+}
+
+SYS_INIT(lwm2m_engine_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
