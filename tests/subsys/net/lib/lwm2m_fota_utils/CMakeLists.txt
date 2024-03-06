@@ -73,3 +73,5 @@ target_include_directories(app
   PRIVATE
   ${includes}
 )
+
+zephyr_linker_sources(SECTIONS src/iterables.ld)
