@@ -20,19 +20,21 @@ psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
 
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
 
-	if (PSA_ALG_IS_JPAKE(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
+	if (PSA_ALG_IS_JPAKE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_ECJPAKE
 		status = cracen_jpake_setup(&operation->cracen_jpake_ctx, attributes, password,
 					    password_length, cipher_suite);
-	} else if (PSA_ALG_IS_SRP_6(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
+#endif /* PSA_NEED_CRACEN_ECJPAKE */
+	} else if (PSA_ALG_IS_SRP_6(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SRP_6
 		status = cracen_srp_setup(&operation->cracen_srp_ctx, attributes, password,
 					  password_length, cipher_suite);
-	} else if (PSA_ALG_IS_SPAKE2P(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+#endif /* PSA_NEED_CRACEN_SRP_6 */
+	} else if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SPAKE2P
 		status = cracen_spake2p_setup(&operation->cracen_spake2p_ctx, attributes, password,
 					      password_length, cipher_suite);
-	}
-
-	if (status != PSA_SUCCESS) {
-		return status;
+#endif /* PSA_NEED_CRACEN_SPAKE2P */
 	}
 
 	return status;
@@ -43,13 +45,19 @@ psa_status_t cracen_pake_set_user(cracen_pake_operation_t *operation, const uint
 {
 	psa_status_t status = PSA_ERROR_BAD_STATE;
 
-	if (PSA_ALG_IS_JPAKE(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
+	if (PSA_ALG_IS_JPAKE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_ECJPAKE
 		status = cracen_jpake_set_user(&operation->cracen_jpake_ctx, user_id, user_id_len);
-	} else if (PSA_ALG_IS_SRP_6(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
+#endif /* PSA_NEED_CRACEN_ECJPAKE */
+	} else if (PSA_ALG_IS_SRP_6(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SRP_6
 		status = cracen_srp_set_user(&operation->cracen_srp_ctx, user_id, user_id_len);
-	} else if (PSA_ALG_IS_SPAKE2P(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+#endif /* PSA_NEED_CRACEN_SRP_6 */
+	} else if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SPAKE2P
 		status = cracen_spake2p_set_user(&operation->cracen_spake2p_ctx, user_id,
 						 user_id_len);
+#endif /* PSA_NEED_CRACEN_SPAKE2P */
 	}
 
 	return status;
@@ -59,10 +67,14 @@ psa_status_t cracen_pake_set_peer(cracen_pake_operation_t *operation, const uint
 				  size_t peer_id_len)
 {
 	if (PSA_ALG_IS_JPAKE(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
+#ifdef PSA_NEED_CRACEN_ECJPAKE
 		return cracen_jpake_set_peer(&operation->cracen_jpake_ctx, peer_id, peer_id_len);
+#endif /* PSA_NEED_CRACEN_ECJPAKE */
 	} else if (PSA_ALG_IS_SPAKE2P(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+#ifdef PSA_NEED_CRACEN_SPAKE2P
 		return cracen_spake2p_set_peer(&operation->cracen_spake2p_ctx, peer_id,
 					       peer_id_len);
+#endif /* PSA_NEED_CRACEN_SPAKE2P */
 	} else {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
@@ -73,13 +85,15 @@ psa_status_t cracen_pake_set_context(cracen_pake_operation_t *operation, const u
 {
 	psa_status_t status = PSA_ERROR_BAD_STATE;
 
-	if (PSA_ALG_IS_JPAKE(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
+	if (PSA_ALG_IS_JPAKE(operation->alg)) {
 		return PSA_ERROR_NOT_SUPPORTED;
-	} else if (PSA_ALG_IS_SRP_6(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
+	} else if (PSA_ALG_IS_SRP_6(operation->alg)) {
 		return PSA_ERROR_NOT_SUPPORTED;
-	} else if (PSA_ALG_IS_SPAKE2P(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+	} else if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SPAKE2P
 		status = cracen_spake2p_set_context(&operation->cracen_spake2p_ctx, context,
 						    context_length);
+#endif /* PSA_NEED_CRACEN_SPAKE2P */
 	}
 
 	return status;
@@ -89,12 +103,24 @@ psa_status_t cracen_pake_set_role(cracen_pake_operation_t *operation, psa_pake_r
 {
 	psa_status_t status = PSA_ERROR_BAD_STATE;
 
-	if (PSA_ALG_IS_JPAKE(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
+	if (PSA_ALG_IS_JPAKE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_ECJPAKE
 		status = cracen_jpake_set_role(&operation->cracen_jpake_ctx, role);
-	} else if (PSA_ALG_IS_SRP_6(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
+#else
+		status = PSA_ERROR_NOT_SUPPORTED;
+#endif /* PSA_NEED_CRACEN_ECJPAKE */
+	} else if (PSA_ALG_IS_SRP_6(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SRP_6
 		status = cracen_srp_set_role(&operation->cracen_srp_ctx, role);
-	} else if (PSA_ALG_IS_SPAKE2P(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+#else
+		status = PSA_ERROR_NOT_SUPPORTED;
+#endif /* PSA_NEED_CRACEN_SRP_6 */
+	} else if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SPAKE2P
 		status = cracen_spake2p_set_role(&operation->cracen_spake2p_ctx, role);
+#else
+		status = PSA_ERROR_NOT_SUPPORTED;
+#endif /* PSA_NEED_CRACEN_SPAKE2P */
 	}
 
 	return status;
@@ -105,15 +131,21 @@ psa_status_t cracen_pake_output(cracen_pake_operation_t *operation, psa_pake_ste
 {
 	psa_status_t status = PSA_ERROR_BAD_STATE;
 
-	if (PSA_ALG_IS_JPAKE(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
+	if (PSA_ALG_IS_JPAKE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_ECJPAKE
 		status = cracen_jpake_output(&operation->cracen_jpake_ctx, step, output,
 					     output_size, output_length);
-	} else if (PSA_ALG_IS_SRP_6(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
+#endif /* PSA_NEED_CRACEN_ECJPAKE */
+	} else if (PSA_ALG_IS_SRP_6(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SRP_6
 		status = cracen_srp_output(&operation->cracen_srp_ctx, step, output, output_size,
 					   output_length);
-	} else if (PSA_ALG_IS_SPAKE2P(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+#endif /* PSA_NEED_CRACEN_SRP_6 */
+	} else if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SPAKE2P
 		status = cracen_spake2p_output(&operation->cracen_spake2p_ctx, step, output,
 					       output_size, output_length);
+#endif /* PSA_NEED_CRACEN_SPAKE2P */
 	}
 
 	return status;
@@ -124,14 +156,20 @@ psa_status_t cracen_pake_input(cracen_pake_operation_t *operation, psa_pake_step
 {
 	psa_status_t status = PSA_ERROR_BAD_STATE;
 
-	if (PSA_ALG_IS_JPAKE(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
+	if (PSA_ALG_IS_JPAKE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_ECJPAKE
 		status =
 			cracen_jpake_input(&operation->cracen_jpake_ctx, step, input, input_length);
-	} else if (PSA_ALG_IS_SRP_6(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
+#endif /* PSA_NEED_CRACEN_ECJPAKE */
+	} else if (PSA_ALG_IS_SRP_6(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SRP_6
 		status = cracen_srp_input(&operation->cracen_srp_ctx, step, input, input_length);
-	} else if (PSA_ALG_IS_SPAKE2P(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+#endif /* PSA_NEED_CRACEN_SRP_6 */
+	} else if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SPAKE2P
 		status = cracen_spake2p_input(&operation->cracen_spake2p_ctx, step, input,
 					      input_length);
+#endif /* PSA_NEED_CRACEN_SPAKE2P */
 	}
 
 	return status;
@@ -143,17 +181,23 @@ psa_status_t cracen_pake_get_shared_key(cracen_pake_operation_t *operation,
 {
 	psa_status_t status = PSA_ERROR_BAD_STATE;
 
-	if (PSA_ALG_IS_JPAKE(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
+	if (PSA_ALG_IS_JPAKE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_ECJPAKE
 		status =
 			cracen_jpake_get_shared_key(&operation->cracen_jpake_ctx, attributes,
 						    key_buffer, key_buffer_size, key_buffer_length);
-	} else if (PSA_ALG_IS_SRP_6(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
+#endif /* PSA_NEED_CRACEN_ECJPAKE */
+	} else if (PSA_ALG_IS_SRP_6(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SRP_6
 		status = cracen_srp_get_shared_key(&operation->cracen_srp_ctx, attributes,
 						   key_buffer, key_buffer_size, key_buffer_length);
-	} else if (PSA_ALG_IS_SPAKE2P(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+#endif /* PSA_NEED_CRACEN_SRP_6 */
+	} else if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SPAKE2P
 		status = cracen_spake2p_get_shared_key(&operation->cracen_spake2p_ctx, attributes,
 						       key_buffer, key_buffer_size,
 						       key_buffer_length);
+#endif /* PSA_NEED_CRACEN_SPAKE2P */
 	}
 
 	return status;
@@ -163,12 +207,18 @@ psa_status_t cracen_pake_abort(cracen_pake_operation_t *operation)
 {
 	psa_status_t status = PSA_ERROR_BAD_STATE;
 
-	if (PSA_ALG_IS_JPAKE(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
+	if (PSA_ALG_IS_JPAKE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_ECJPAKE
 		status = cracen_jpake_abort(&operation->cracen_jpake_ctx);
-	} else if (PSA_ALG_IS_SRP_6(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
+#endif /* PSA_NEED_CRACEN_ECJPAKE */
+	} else if (PSA_ALG_IS_SRP_6(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SRP_6
 		status = cracen_srp_abort(&operation->cracen_srp_ctx);
-	} else if (PSA_ALG_IS_SPAKE2P(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
+#endif /* PSA_NEED_CRACEN_SRP_6 */
+	} else if (PSA_ALG_IS_SPAKE2P(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_SPAKE2P
 		status = cracen_spake2p_abort(&operation->cracen_spake2p_ctx);
+#endif /* PSA_NEED_CRACEN_SPAKE2P */
 	}
 
 	return status;
