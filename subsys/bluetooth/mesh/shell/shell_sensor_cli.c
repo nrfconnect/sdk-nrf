@@ -307,7 +307,7 @@ static int setting_set(const struct shell *shell, size_t argc, char *argv[], boo
 	int err = 0;
 	uint32_t sensor_id = shell_strtoul(argv[1], 0, &err);
 	uint32_t setting_id = shell_strtoul(argv[2], 0, &err);
-	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
+	struct bt_mesh_sensor_cli *cli;
 	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
 	const struct bt_mesh_sensor_type *setting_type = bt_mesh_sensor_type_get(setting_id);
 
@@ -326,6 +326,8 @@ static int setting_set(const struct shell *shell, size_t argc, char *argv[], boo
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_SENSOR_CLI, &mod)) {
 		return -ENODEV;
 	}
+
+	cli = mod->rt->user_data;
 
 	if (acked) {
 		struct bt_mesh_sensor_setting_status rsp;
