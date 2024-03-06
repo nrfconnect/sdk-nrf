@@ -74,3 +74,14 @@ tests:
       - nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek_nrf7001 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
     tags: ci_build
+  sample.cellular.location.thingy91x:
+    build_only: true
+    platform_allow:
+      - thingy91x_nrf9151_ns
+    tags: ci_build
+  sample.cellular.location.thingy91x_wifi:
+    build_only: true
+    platform_allow:
+      - thingy91x_nrf9151_ns
+    extra_args: OVERLAY_CONFIG=overlay-thingy91x-wifi-scan-only.conf DTC_OVERLAY_FILE=thingy91x_wifi.overlay
+    tags: ci_build
