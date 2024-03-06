@@ -2,7 +2,19 @@
 # will be skipped if quarantine is used. More details here:
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 # To have an empty list use:
+# - scenarios:
+#     - None
+#   platforms:
+#     - all
+
 - scenarios:
-    - None
+    - sample.bsc_rx
+    - sample.bsc_tx
+    - sample.ble_ant_app_hrm
+    - sample.bpwr_rx
+    - sample.bpwr_tx
+    - sample.hrm_rx
+    - sample.hrm_tx
   platforms:
     - all
+  comment: "ANT samples fail to build because the ANT repository redefines _CONCAT_2 macro"
