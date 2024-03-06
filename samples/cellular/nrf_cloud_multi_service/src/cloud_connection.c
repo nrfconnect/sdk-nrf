@@ -527,11 +527,6 @@ static int setup_cloud(void)
 		LOG_ERR("Error initializing FOTA: %d", err);
 		return err;
 	}
-	err = coap_fota_begin();
-	if (err) {
-		LOG_ERR("Error starting FOTA: %d", err);
-		return err;
-	}
 #endif /* CONFIG_COAP_FOTA */
 	err = nrf_cloud_coap_init();
 	if (err) {
