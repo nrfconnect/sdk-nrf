@@ -168,8 +168,8 @@ static int tx(const struct device *dev, const uint8_t *buf, size_t len, int32_t 
 	if (tx_send) {
 		uart_irq_tx_enable(data->target);
 	}
-	if (tx_send && timeout != SYS_FOREVER_MS) {
-		k_timer_start(&data->tx.timeout_timer, SYS_TIMEOUT_MS(timeout), K_NO_WAIT);
+	if (tx_send && timeout != SYS_FOREVER_US) {
+		k_timer_start(&data->tx.timeout_timer, K_USEC(timeout), K_NO_WAIT);
 	}
 	return ret;
 }
@@ -445,8 +445,8 @@ static inline void on_rx_ready(const struct device *dev, struct uart_async_adapt
 	bool notify_now = false;
 
 	LOG_DBG("%s: Enter (%s)", __func__, dev->name);
-	if (data->rx.timeout != SYS_FOREVER_MS) {
-		k_timer_start(&data->rx.timeout_timer, SYS_TIMEOUT_MS(data->rx.timeout), K_NO_WAIT);
+	if (data->rx.timeout != SYS_FOREVER_US) {
+		k_timer_start(&data->rx.timeout_timer, K_USEC(data->rx.timeout), K_NO_WAIT);
 	}
 	do {
 		k_spinlock_key_t key = k_spin_lock(&(data->lock));
