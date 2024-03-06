@@ -2,7 +2,33 @@
 # will be skipped if quarantine is used. More details here:
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 # To have an empty list use:
+# - scenarios:
+#     - None
+#   platforms:
+#     - all
+
 - scenarios:
-    - None
+    - sample.bsc_rx
+    - sample.bsc_rx.dual_core
+    - sample.bsc_rx.single_core
+    - sample.bsc_tx
+    - sample.bsc_tx.dual_core
+    - sample.bsc_tx.single_core
+    - sample.ble_ant_app_hrm
+    - sample.ble_ant_app_hrm.dual_core
+    - sample.ble_ant_app_hrm.single_core
+    - sample.bpwr_rx
+    - sample.bpwr_rx.dual_core
+    - sample.bpwr_rx.single_core
+    - sample.bpwr_tx
+    - sample.bpwr_tx.dual_core
+    - sample.bpwr_tx.single_core
+    - sample.hrm_rx
+    - sample.hrm_rx.dual_core
+    - sample.hrm_rx.single_core
+    - sample.hrm_tx
+    - sample.hrm_tx.dual_core
+    - sample.hrm_tx.single_core
   platforms:
     - all
+  comment: "ANT samples fail to build because the ANT repository redefines _CONCAT_2 macro"
