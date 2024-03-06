@@ -31,8 +31,9 @@ config WIFI_NRF700X_BUS_LOG_LEVEL
 
 choice NRF700X_OPER_MODES
 	bool "nRF700x operating modes"
-	default NRF700X_SYSTEM_MODE if WPA_SUPP
+	default NRF700X_SYSTEM_MODE if WPA_SUPP && !(NRF700X_RAW_DATA_TX || NRF700X_RAW_DATA_RX || NRF700X_PROMISC_DATA_RX)
 	default NRF700X_SCAN_ONLY if !WPA_SUPP
+	default NRF700X_SYSTEM_WITH_RAW_MODES
 	help
 	  Select the operating mode of the nRF700x driver
 
@@ -52,9 +53,15 @@ config NRF700X_SCAN_ONLY
 config NRF700X_RADIO_TEST
 	bool "Radio test mode of the nRF700x driver"
 
+config NRF700X_SYSTEM_WITH_RAW_MODES
+	bool "Enable nRF700X system mode with raw modes"
+	depends on WPA_SUPP
+	help
+	  Select this option to enable system mode of the nRF700x driver with raw modes
+
 endchoice
 
-if NRF700X_SYSTEM_MODE
+if NRF700X_SYSTEM_MODE || NRF700X_SYSTEM_WITH_RAW_MODES
 
 config NRF700X_STA_MODE
 	bool "Enable nRF700X STA mode"
@@ -69,27 +76,23 @@ config NRF700X_AP_MODE
 
 config NRF700X_P2P_MODE
 	bool "Enable P2P support in driver"
-
-endif # NRF700X_SYSTEM_MODE
-
-config NRF700X_DATA_TX
-	bool "Enable TX data path in the driver"
-	default y if NRF700X_SYSTEM_MODE
+endif # NRF700X_SYSTEM_MODE || NRF700X_SYSTEM_WITH_RAW_MODES
 
 config NRF700X_RAW_DATA_TX
 	bool "Enable RAW TX data path in the driver"
 	select EXPERIMENTAL
-	depends on NRF700X_SYSTEM_MODE
 
 config NRF700X_RAW_DATA_RX
 	bool "Enable RAW RX sniffer operation in the driver"
 	select EXPERIMENTAL
-	depends on NRF700X_SYSTEM_MODE
 
 config NRF700X_PROMISC_DATA_RX
 	bool "Enable promiscuous RX sniffer operation in the driver"
 	select EXPERIMENTAL
-	depends on NRF700X_SYSTEM_MODE
+
+config NRF700X_DATA_TX
+	bool "Enable TX data path in the driver"
+	default y if NRF700X_SYSTEM_MODE || NRF700X_SYSTEM_WITH_RAW_MODES
 
 config NRF_WIFI_IF_AUTO_START
 	bool "Enable Wi-Fi interface auto start on boot"

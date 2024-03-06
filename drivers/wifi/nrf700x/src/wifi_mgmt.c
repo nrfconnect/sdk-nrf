@@ -732,7 +732,7 @@ out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 }
 
-#ifdef CONFIG_NRF700X_SYSTEM_MODE
+#ifdef CONFIG_NRF700X_SYSTEM_WITH_RAW_MODES
 int nrf_wifi_mode(const struct device *dev,
 		  struct wifi_mode_info *mode)
 {
@@ -823,7 +823,7 @@ out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
-#endif /* CONFIG_NRF700X_SYSTEM_MODE */
+#endif /* CONFIG_NRF700X_SYSTEM_WITH_RAW_MODES */
 
 #if defined(CONFIG_NRF700X_RAW_DATA_TX) || defined(CONFIG_NRF700X_RAW_DATA_RX)
 int nrf_wifi_channel(const struct device *dev,

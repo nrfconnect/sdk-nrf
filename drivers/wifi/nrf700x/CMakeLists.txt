@@ -143,6 +143,8 @@ elseif(CONFIG_NRF700X_RADIO_TEST)
   set(NRF70_PATCH ${OS_AGNOSTIC_BASE}/fw_bins/radio_test/nrf70.bin)
 elseif(CONFIG_NRF700X_SCAN_ONLY)
   set(NRF70_PATCH ${OS_AGNOSTIC_BASE}/fw_bins/scan_only/nrf70.bin)
+elseif (CONFIG_NRF700X_SYSTEM_WITH_RAW_MODES)
+  set(NRF70_PATCH ${OS_AGNOSTIC_BASE}/fw_bins/system_with_raw/nrf70.bin)
 else()
   # Error
   message(FATAL_ERROR "Unsupported nRF70 patch configuration")
