@@ -29,7 +29,10 @@ LOG_MODULE_REGISTER(slm_ppp, CONFIG_SLM_LOG_LEVEL);
  */
 bool slm_fwd_cgev_notifs;
 
-#if !defined(CONFIG_SLM_CMUX)
+#if defined(CONFIG_SLM_CMUX)
+BUILD_ASSERT(!DT_NODE_EXISTS(DT_CHOSEN(ncs_slm_ppp_uart)),
+	"When CMUX is enabled PPP is usable only through it so it cannot have its own UART.");
+#else
 static const struct device *ppp_uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_ppp_uart));
 #endif
 static struct net_if *ppp_iface;
