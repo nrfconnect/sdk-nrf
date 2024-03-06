@@ -41,4 +41,17 @@
 			label = "Green LED 4";
 		};
 	};
+
+	/* Configure partition manager to use mx25r64 as the external flash */
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+
+	aliases {
+		ext-flash = &mx25r64;
+	};
+};
+
+&mx25r64 {
+	status = "okay";
 };
