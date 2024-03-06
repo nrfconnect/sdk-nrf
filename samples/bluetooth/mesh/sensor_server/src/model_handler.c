@@ -33,6 +33,16 @@
 
 #define COL_INIT(_start, _width) { TEMP_INIT(_start), TEMP_INIT(_width) }
 
+#define ILLUMINANCE_INIT_MILLIS(_val)                                          \
+{                                                                              \
+	.format = &bt_mesh_sensor_format_illuminance,                          \
+	.raw = {                                                               \
+		FIELD_GET(GENMASK(7, 0), (_val / 10)),                         \
+		FIELD_GET(GENMASK(15, 8), (_val / 10)),                        \
+		FIELD_GET(GENMASK(23, 16), (_val / 10)),                       \
+	}                                                                      \
+}
+
 /* The columns (temperature ranges) for relative
  * runtime in a chip temperature
  */
@@ -65,7 +75,7 @@ static struct bt_mesh_sensor_value pres_mot_thres = {
 	/* Initialize to "Value is not known" encoded as 0xff. */
 	.raw = { 0xff }
 };
-static struct bt_mesh_sensor_value amb_light_level_ref;
+static struct bt_mesh_sensor_value amb_light_level_ref = ILLUMINANCE_INIT_MILLIS(0);
 static float amb_light_level_gain = 1.0;
 /* Using a dummy ambient light value because we do not have a real ambient light sensor. */
 static float dummy_ambient_light_value;
@@ -589,16 +599,6 @@ struct settings_handler amb_light_level_gain_conf = {
 	.name = "amb_light_level",
 	.h_set = amb_light_level_gain_settings_restore
 };
-
-#define ILLUMINANCE_INIT_MILLIS(_val)                                          \
-{                                                                              \
-	.format = &bt_mesh_sensor_format_illuminance,                          \
-	.raw = {                                                               \
-		FIELD_GET(GENMASK(7, 0), (_val / 10)),                         \
-		FIELD_GET(GENMASK(15, 8), (_val / 10)),                        \
-		FIELD_GET(GENMASK(23, 16), (_val / 10)),                       \
-	}                                                                      \
-}
 
 static int amb_light_level_get(struct bt_mesh_sensor_srv *srv,
 			       struct bt_mesh_sensor *sensor,
