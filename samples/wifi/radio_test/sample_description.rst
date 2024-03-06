@@ -145,6 +145,35 @@ Testing
               wifi_radio_test tx 1
 
 
+         * To run a continuous OFDM TX traffic sequence with the following configuration:
+
+           * Channel: 1
+           * Frame duration: 2708 µs
+           * Inter-frame gap: 4200 µs
+           * Edge backoff: 3 dB
+           * Antenna gain: 2 dB
+
+           Execute the following sequence of commands:
+
+           .. code-block:: console
+
+              wifi_radio_test init 1
+              wifi_radio_test tx_pkt_rate 12
+              wifi_radio_test tx_pkt_len 4000
+              wifi_radio_test tx_power 10
+              wifi_radio_test tx_pkt_gap 4200
+              wifi_radio_test set_edge_bo 3
+              wifi_radio_test set_ant_gain 2
+              wifi_radio_test tx 1
+
+         .. note::
+
+            Edge backoff and antenna gain are configured in the Kconfig file.
+            To overwrite these backoffs with user-specified backoffs, use the``set_edge_bo`` and ``set_ant_gain`` commands.
+            These backoffs are applied only when the ``bypass_reg_domain`` is set to ``0``.
+
+
+
          * To run a continuous Direct-sequence spread spectrum (DSSS) TX traffic sequence with the following configuration:
 
            * Channel: 14

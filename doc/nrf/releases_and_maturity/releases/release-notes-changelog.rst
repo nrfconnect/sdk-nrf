@@ -231,8 +231,15 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
-* Added the :kconfig:option:`NRF_WIFI_FW_PATCH_DFU` Kconfig option that enables DFU support for nRF70 Series devices.
-  This allows firmware patches for signed images to be sent to multi-image targets over Wi-Fi.
+* Added:
+
+  * :kconfig:option:`NRF_WIFI_FW_PATCH_DFU` Kconfig option that enables DFU support for nRF70 Series devices.
+    This allows firmware patches for signed images to be sent to multi-image targets over Wi-Fi.
+  * Support for the CSP package.
+  * Modification to the application of edge backoff.
+    Previously, it was subtracted from the regulatory power limit.
+    Now, backoff is subtracted from the data rate-dependent power ceiling.
+
 
 * Updated:
 
@@ -829,6 +836,13 @@ Wi-Fi samples
 
     * Added ``promiscuous_set`` extension to the Wi-Fi command line.
       It adds the subcommand to configure Promiscuous mode.
+
+* :ref:`wifi_radio_test` sample:
+
+  * Updated:
+
+    * Added support for runtime configuration of antenna gain and edge backoff parameters.
+    * Antenna gain and edge backoff values are not applied if regulatory is bypassed.
 
 Other samples
 -------------

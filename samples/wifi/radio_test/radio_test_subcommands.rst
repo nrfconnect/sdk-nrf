@@ -248,8 +248,16 @@ Wi-Fi radio test subcommands
      - 0
      - Configuration
      - Configure WLAN to bypass current regulatory domain in TX test.
-
-
+   * - set_ant_gain
+     - <val> - Antenna gain in dB (Min: 0, Max: 6)
+     - 0
+     - Configuration
+     - <val> is subtracted from the transmit power.
+   * - set_edge_bo
+     - <val> - Edge backoff in dB (Min: 0, Max: 10)
+     - 0
+     - Configuration
+     - If the channel is an edge channel, the value of <val> is subtracted from the transmit power.
 
 
 .. _wifi_radio_test_stats:
