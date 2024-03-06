@@ -274,3 +274,12 @@ nRF Cloud common definitions
 .. doxygengroup:: nrf_cloud_defs
    :project: nrf
    :members:
+
+nRF Cloud FOTA poll for REST and CoAP
+****************************************
+
+| Header file: :file:`include/net/nrf_cloud_fota_poll.h`
+
+.. doxygengroup:: nrf_cloud_fota_poll
+   :project: nrf
+   :members:

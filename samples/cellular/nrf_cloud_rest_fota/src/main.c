@@ -14,6 +14,7 @@
 #include <modem/modem_info.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
+#include <net/nrf_cloud_fota_poll.h>
 #include <net/fota_download.h>
 #include <dk_buttons_and_leds.h>
 
@@ -148,11 +149,6 @@ static void get_modem_info(void)
 #if defined(CONFIG_REST_FOTA_DO_JITP)
 static void request_jitp(void)
 {
-	if (pending_fota_job_exists()) {
-		/* Skip request if a FOTA job already exists */
-		return;
-	}
-
 	int ret;
 
 	jitp_requested = false;
@@ -249,10 +245,17 @@ static void send_device_status(void)
 int init(void)
 {
 	int err = init_led();
+	enum nrf_cloud_fota_type pending_job_type = NRF_CLOUD_FOTA_TYPE__INVALID;
 
 	if (err) {
 		LOG_ERR("LED initialization failed: %d", err);
 		return err;
+	}
+
+	err = nrf_modem_lib_init();
+	if (err) {
+		LOG_ERR("Failed to initialize modem library: 0x%X", err);
+		return -EFAULT;
 	}
 
 	err = nrf_cloud_fota_poll_init(&fota_ctx);
@@ -261,20 +264,13 @@ int init(void)
 		return err;
 	}
 
-	err = nrf_modem_lib_init();
-
 	/* This function may perform a reboot if a FOTA update is in progress */
-	int ret = nrf_cloud_fota_poll_start(&fota_ctx);
-
-	if (err) {
-		LOG_ERR("Failed to initialize modem library: 0x%X", err);
-		return -EFAULT;
+	err = nrf_cloud_fota_poll_process_pending(&fota_ctx);
+	if (err < 0) {
+		LOG_ERR("Failed to process pending FOTA job, error: %d", err);
+		return err;
 	}
-
-	if (ret) {
-		LOG_ERR("FOTA support start failed: %d", ret);
-		return ret;
-	}
+	pending_job_type = (enum nrf_cloud_fota_type)err;
 
 	err = modem_info_init();
 	if (err) {
@@ -305,8 +301,10 @@ int init(void)
 	}
 
 #if defined(CONFIG_REST_FOTA_DO_JITP)
-	/* Present option for JITP via REST */
-	request_jitp();
+	/* Present option for JITP via REST if there is no pending job */
+	if (pending_job_type == NRF_CLOUD_FOTA_TYPE__INVALID) {
+		request_jitp();
+	}
 #endif
 
 	return 0;
@@ -449,9 +447,16 @@ int main(void)
 		 * it. This is a blocking operation which can take a long time.
 		 * This function is likely to reboot in order to complete the FOTA update.
 		 */
-		err = nrf_cloud_fota_poll_process(&fota_ctx);
-		if (err == -ENOTRECOVERABLE) {
-			sample_reboot(FOTA_REBOOT_SYS_ERROR);
+		while (true) {
+			err = nrf_cloud_fota_poll_process(&fota_ctx);
+			if (err == -ENOTRECOVERABLE) {
+				sample_reboot(FOTA_REBOOT_SYS_ERROR);
+			} else if ((err == -ENOENT) || (err == -EFAULT)) {
+				/* A job has finished or failed, check again for another */
+				continue;
+			}
+
+			break;
 		}
 
 		/* Wait for the configured duration or a button press */

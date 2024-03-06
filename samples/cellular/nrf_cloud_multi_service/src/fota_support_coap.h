@@ -8,8 +8,6 @@
 #define FOTA_SUPPORT_COAP_H
 
 int coap_fota_init(void);
-int coap_fota_begin(void);
-
 int coap_fota_thread_fn(void);
 
 #endif /* FOTA_SUPPORT_COAP_H */

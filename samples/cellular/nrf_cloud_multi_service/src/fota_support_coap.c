@@ -12,6 +12,7 @@
 #include <zephyr/logging/log.h>
 #include <net/fota_download.h>
 #include <net/nrf_cloud_coap.h>
+#include <net/nrf_cloud_fota_poll.h>
 #include "cloud_connection.h"
 #include "fota_support.h"
 #include "fota_support_coap.h"
@@ -48,12 +49,21 @@ void fota_reboot(enum nrf_cloud_fota_reboot_status status)
 
 int coap_fota_init(void)
 {
-	return nrf_cloud_fota_poll_init(&ctx);
-}
+	int err = nrf_cloud_fota_poll_init(&ctx);
 
-int coap_fota_begin(void)
-{
-	return nrf_cloud_fota_poll_start(&ctx);
+	if (err) {
+		return err;
+	}
+
+	/* Process pending FOTA job, the FOTA type is returned */
+	err = nrf_cloud_fota_poll_process_pending(&ctx);
+	if (err < 0) {
+		return err;
+	} else if (err != NRF_CLOUD_FOTA_TYPE__INVALID) {
+		LOG_INF("Processed pending FOTA job type: %d", err);
+	}
+
+	return 0;
 }
 
 int coap_fota_thread_fn(void)
@@ -65,7 +75,7 @@ int coap_fota_thread_fn(void)
 		LOG_DBG("Waiting for valid connection before processing FOTA");
 		(void)await_cloud_ready(K_FOREVER);
 
-		/* Query for any pending FOTA jobs. If one is found, download and install
+		/* Query for any queued FOTA jobs. If one is found, download and install
 		 * it. This is a blocking operation which can take a long time.
 		 * This function is likely to reboot in order to complete the FOTA update.
 		 */
