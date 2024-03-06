@@ -77,6 +77,16 @@ if (${TFM_PARTITION_CRYPTO})
       ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
   )
 
+  target_link_libraries(platform_crypto_keys
+	PUBLIC
+	platform_s
+	# Link with mbedcrypto_common to get Oberon PSA headers instead of
+	# TF-M PSA headers
+	mbedcrypto_common
+	# Link with tfm_sprt to get the include path for tfm_sp_log.h
+	tfm_sprt
+  )
+
   if (${CONFIG_HW_UNIQUE_KEY})
     target_compile_definitions(platform_s PUBLIC
       CONFIG_HW_UNIQUE_KEY
@@ -95,8 +105,6 @@ if (${TFM_PARTITION_CRYPTO})
         ${ZEPHYR_NRF_MODULE_DIR}/lib/identity_key/identity_key.c
     )
   endif()
-
-  target_link_libraries(platform_crypto_keys PUBLIC platform_s)
 
   if(EXISTS platform_cc3xx)
 	target_link_libraries(platform_s PRIVATE platform_cc3xx)
