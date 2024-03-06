@@ -7,7 +7,7 @@ Distance Measurement Server
    :local:
    :depth: 2
 
-The Distance Measurement Server vendor model provides capabilities to measure distance between Bluetooth® mesh devices within radio proximity.
+The Distance Measurement Server vendor model provides capabilities to measure distance between Bluetooth® Mesh devices within radio proximity.
 The measurements are conducted through the :ref:`mod_dm` library.
 
 At creation, each Distance Measurement Server instance must be initialized with a memory object that can hold one or more measurement results.

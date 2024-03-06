@@ -7,7 +7,7 @@ Bluetooth Mesh stack architecture
    :local:
    :depth: 2
 
-The Bluetooth® mesh stack in |NCS| is an extension of the Zephyr Bluetooth® mesh stack.
+The Bluetooth® Mesh stack in |NCS| is an extension of the Zephyr Bluetooth Mesh stack.
 The Zephyr Bluetooth Mesh stack implements the Bluetooth Mesh profile specification (see :ref:`zephyr:bluetooth_mesh`), while |NCS| provides additional model implementations from the Bluetooth Mesh model specification on top of the :ref:`zephyr:bluetooth_mesh_access` API.
 
 .. figure:: images/bt_mesh_basic_architecture.svg

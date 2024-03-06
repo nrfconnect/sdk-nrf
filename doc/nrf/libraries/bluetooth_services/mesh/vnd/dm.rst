@@ -7,7 +7,7 @@ Distance Measurement models
    :local:
    :depth: 2
 
-The Distance Measurement vendor models allow users to measure distance between different Bluetooth® mesh devices.
+The Distance Measurement vendor models allow users to measure distance between different Bluetooth® Mesh devices.
 
 The Distance Measurement models also feature their own common types, listed below.
 For types common to all models, see :ref:`bt_mesh_models`.

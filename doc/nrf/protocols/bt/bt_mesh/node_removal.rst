@@ -7,7 +7,7 @@ Removing a node from a mesh network
    :local:
    :depth: 2
 
-In certain circumstances, a need may arise to remove a node from a Bluetooth® mesh network.
+In certain circumstances, a need may arise to remove a node from a Bluetooth® Mesh network.
 This can be done by unprovisioning the node using the Config Node Reset message.
 
 Though the unprovisioning of the node is a straightforward procedure, some additional steps need to be taken to maintain the security of the network.

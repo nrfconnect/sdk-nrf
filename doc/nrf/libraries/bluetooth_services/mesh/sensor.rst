@@ -13,7 +13,7 @@ Bluetooth Mesh sensors
    The Kconfig option is enabled by default in the deprecation period.
    See the documentation for |NCS| versions prior to v2.6.0 for documentation about the old sensor API.
 
-The Bluetooth® mesh specification provides a common scheme for representing all sensors.
+The Bluetooth® Mesh specification provides a common scheme for representing all sensors.
 A single Bluetooth Mesh sensor instance represents a single physical sensor, and a mesh device may present any number of sensors to the network through a Sensor Server model.
 Sensors represent their measurements as a list of sensor channels, as described by the sensor's assigned type.
 
@@ -91,7 +91,7 @@ Each sensor type is assigned its own Device Property ID, as specified in the Blu
 Like the Device Properties, the Sensor types are connected to a Bluetooth GATT Characteristic, which describes the unit, range, resolution and encoding scheme of the sensor type.
 
 .. note::
-   The Bluetooth® mesh specification only allows sensor types that have a Device Property ID in the Bluetooth Mesh device properties specification.
+   The Bluetooth Mesh specification only allows sensor types that have a Device Property ID in the Bluetooth Mesh device properties specification.
    It's not possible to represent vendor specific sensor values.
 
 The sensor types may either be used as the data types of the sensor output values, or as configuration parameters for the sensors.
