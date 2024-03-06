@@ -18,33 +18,32 @@ enum slm_cmng_opcode {
 	AT_CMNG_OP_DELETE = 3
 };
 
-/* Handles AT#XCMNG command. */
-int handle_at_xcmng(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xcmng, "AT#XCMNG", handle_at_xcmng);
+static int handle_at_xcmng(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			   uint32_t param_count)
 {
 	int err = -EINVAL;
 	uint16_t op, type;
 	nrf_sec_tag_t sec_tag;
-	const int param_count = at_params_valid_count_get(&slm_at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_unsigned_short_get(&slm_at_param_list, 1, &op)) {
+		if (at_params_unsigned_short_get(param_list, 1, &op)) {
 			return -EINVAL;
 		}
 		if (param_count > 2 &&
-		    at_params_unsigned_int_get(&slm_at_param_list, 2, &sec_tag)) {
+		    at_params_unsigned_int_get(param_list, 2, &sec_tag)) {
 			return -EINVAL;
 		}
-		if (param_count > 3 &&
-		    (at_params_unsigned_short_get(&slm_at_param_list, 3, &type) ||
-		     type > SLM_AT_CMNG_TYPE_PSK_ID)) {
+		if (param_count > 3 && (at_params_unsigned_short_get(param_list, 3, &type) ||
+					type > SLM_AT_CMNG_TYPE_PSK_ID)) {
 			return -EINVAL;
 		}
 		if (op == AT_CMNG_OP_WRITE) {
 			const char *at_param;
 			size_t len;
 
-			if (at_params_string_ptr_get(&slm_at_param_list, 4, &at_param, &len)) {
+			if (at_params_string_ptr_get(param_list, 4, &at_param, &len)) {
 				return -EINVAL;
 			}
 			err = slm_native_tls_store_credential(sec_tag, type, at_param, len);

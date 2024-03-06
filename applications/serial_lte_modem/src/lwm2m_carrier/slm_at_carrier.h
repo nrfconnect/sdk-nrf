@@ -31,11 +31,6 @@ int slm_at_carrier_init(void);
  */
 int slm_at_carrier_uninit(void);
 
-/**
- * @brief AT#XCARRIER command handler.
- */
-int handle_at_carrier(enum at_cmd_type cmd_type);
-
 /** @} */
 
 #endif /* SLM_AT_CARRIER_ */

@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include <zephyr/init.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/kernel.h>
@@ -14,6 +15,7 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/types.h>
 #include <dfu/dfu_target.h>
+#include <modem/at_cmd_custom.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_jwt.h>
@@ -56,9 +58,6 @@
 #endif
 #if defined(CONFIG_SLM_CARRIER)
 #include "slm_at_carrier.h"
-#endif
-#if defined(CONFIG_LWM2M_CARRIER_SETTINGS)
-#include "slm_at_carrier_cfg.h"
 #endif
 #if defined(CONFIG_SLM_PPP)
 #include "slm_ppp.h"
@@ -106,12 +105,12 @@ int slm_power_off_modem(void)
 	return slm_util_at_printf("AT+CFUN=0");
 }
 
-/* Handles AT#XSLMVER command. */
-static int handle_at_slmver(enum at_cmd_type type)
+SLM_AT_CMD_CUSTOM(xslmver, "AT#XSLMVER", handle_at_slmver);
+static int handle_at_slmver(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
 {
 	int ret = -EINVAL;
 
-	if (type == AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type == AT_CMD_TYPE_SET_COMMAND) {
 		char *libmodem = nrf_modem_build_version();
 
 		if (strlen(CONFIG_SLM_CUSTOMER_VERSION) > 0) {
@@ -143,13 +142,14 @@ static void go_sleep_wk(struct k_work *)
 	}
 }
 
-/* Handles AT#XSLEEP commands. */
-static int handle_at_sleep(enum at_cmd_type type)
+SLM_AT_CMD_CUSTOM(xsleep, "AT#XSLEEP", handle_at_sleep);
+static int handle_at_sleep(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			   uint32_t)
 {
 	int ret = -EINVAL;
 
-	if (type == AT_CMD_TYPE_SET_COMMAND) {
-		ret = at_params_unsigned_int_get(&slm_at_param_list, 1, &sleep.mode);
+	if (cmd_type == AT_CMD_TYPE_SET_COMMAND) {
+		ret = at_params_unsigned_int_get(param_list, 1, &sleep.mode);
 		if (ret) {
 			return -EINVAL;
 		}
@@ -158,7 +158,7 @@ static int handle_at_sleep(enum at_cmd_type type)
 		} else {
 			ret = -EINVAL;
 		}
-	} else if (type == AT_CMD_TYPE_TEST_COMMAND) {
+	} else if (cmd_type == AT_CMD_TYPE_TEST_COMMAND) {
 		rsp_send("\r\n#XSLEEP: (%d,%d)\r\n", SLEEP_MODE_DEEP, SLEEP_MODE_IDLE);
 		ret = 0;
 	}
@@ -185,12 +185,13 @@ static void slm_shutdown(void)
 	slm_enter_shutdown();
 }
 
-/* Handles AT#XSHUTDOWN command. */
-static int handle_at_shutdown(enum at_cmd_type type)
+SLM_AT_CMD_CUSTOM(xshutdown, "AT#XSHUTDOWN", handle_at_shutdown);
+static int handle_at_shutdown(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
 {
-	if (type != AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
 		return -EINVAL;
 	}
+
 	final_call(slm_shutdown);
 	return 0;
 }
@@ -203,20 +204,21 @@ FUNC_NORETURN void slm_reset(void)
 	sys_reboot(SYS_REBOOT_COLD);
 }
 
-/* Handles AT#XRESET command. */
-static int handle_at_reset(enum at_cmd_type type)
+SLM_AT_CMD_CUSTOM(xreset, "AT#XRESET", handle_at_reset);
+static int handle_at_reset(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
 {
-	if (type != AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
 		return -EINVAL;
 	}
+
 	final_call(slm_reset);
 	return 0;
 }
 
-/* Handles AT#XMODEMRESET command. */
-static int handle_at_modemreset(enum at_cmd_type type)
+SLM_AT_CMD_CUSTOM(xmodemreset, "AT#XMODEMRESET", handle_at_modemreset);
+static int handle_at_modemreset(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
 {
-	if (type != AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
 		return -EINVAL;
 	}
 
@@ -255,12 +257,12 @@ out:
 	return 0;
 }
 
-/* Handles AT#XUUID command. */
-static int handle_at_uuid(enum at_cmd_type type)
+SLM_AT_CMD_CUSTOM(xuuid, "AT#XUUID", handle_at_uuid);
+static int handle_at_uuid(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
 {
 	int ret;
 
-	if (type != AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
 		return -EINVAL;
 	}
 
@@ -276,15 +278,16 @@ static int handle_at_uuid(enum at_cmd_type type)
 	return ret;
 }
 
-/* Handles AT#XDATACTRL commands. */
-static int handle_at_datactrl(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xdatactrl, "AT#XDATACTRL", handle_at_datactrl);
+static int handle_at_datactrl(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			      uint32_t)
 {
 	int ret = 0;
 	uint16_t time_limit, time_limit_min;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		ret = at_params_unsigned_short_get(&slm_at_param_list, 1, &time_limit);
+		ret = at_params_unsigned_short_get(param_list, 1, &time_limit);
 		if (ret) {
 			return ret;
 		}
@@ -311,256 +314,53 @@ static int handle_at_datactrl(enum at_cmd_type cmd_type)
 	return ret;
 }
 
-int handle_at_clac(enum at_cmd_type cmd_type);
-
-/* TCP proxy commands */
-int handle_at_tcp_server(enum at_cmd_type cmd_type);
-int handle_at_tcp_client(enum at_cmd_type cmd_type);
-int handle_at_tcp_send(enum at_cmd_type cmd_type);
-int handle_at_tcp_hangup(enum at_cmd_type cmd_type);
-
-/* UDP proxy commands */
-int handle_at_udp_server(enum at_cmd_type cmd_type);
-int handle_at_udp_client(enum at_cmd_type cmd_type);
-int handle_at_udp_send(enum at_cmd_type cmd_type);
-
-/* Socket-type TCPIP commands */
-int handle_at_socket(enum at_cmd_type cmd_type);
-int handle_at_secure_socket(enum at_cmd_type cmd_type);
-int handle_at_socket_select(enum at_cmd_type cmd_type);
-int handle_at_socketopt(enum at_cmd_type cmd_type);
-int handle_at_secure_socketopt(enum at_cmd_type cmd_type);
-int handle_at_bind(enum at_cmd_type cmd_type);
-int handle_at_connect(enum at_cmd_type cmd_type);
-int handle_at_listen(enum at_cmd_type cmd_type);
-int handle_at_accept(enum at_cmd_type cmd_type);
-int handle_at_send(enum at_cmd_type cmd_type);
-int handle_at_recv(enum at_cmd_type cmd_type);
-int handle_at_sendto(enum at_cmd_type cmd_type);
-int handle_at_recvfrom(enum at_cmd_type cmd_type);
-int handle_at_poll(enum at_cmd_type cmd_type);
-int handle_at_getaddrinfo(enum at_cmd_type cmd_type);
-
-#if defined(CONFIG_SLM_NATIVE_TLS)
-int handle_at_xcmng(enum at_cmd_type cmd_type);
-#endif
-
-/* ICMP commands */
-int handle_at_icmp_ping(enum at_cmd_type cmd_type);
-
-#if defined(CONFIG_SLM_SMS)
-/* SMS commands */
-int handle_at_sms(enum at_cmd_type cmd_type);
-#endif
-
-/* FOTA commands */
-int handle_at_fota(enum at_cmd_type cmd_type);
-
-#if defined(CONFIG_SLM_GNSS)
-int handle_at_gps(enum at_cmd_type cmd_type);
-int handle_at_gps_delete(enum at_cmd_type cmd_type);
-#endif
-
-#if defined(CONFIG_SLM_FTPC)
-int handle_at_ftp(enum at_cmd_type cmd_type);
-#endif
-#if defined(CONFIG_SLM_TFTPC)
-int handle_at_tftp(enum at_cmd_type cmd_type);
-#endif
-
-#if defined(CONFIG_SLM_MQTTC)
-int handle_at_mqtt_config(enum at_cmd_type cmd_type);
-int handle_at_mqtt_connect(enum at_cmd_type cmd_type);
-int handle_at_mqtt_publish(enum at_cmd_type cmd_type);
-int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type);
-int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type);
-#endif
-
-#if defined(CONFIG_SLM_HTTPC)
-int handle_at_httpc_connect(enum at_cmd_type cmd_type);
-int handle_at_httpc_request(enum at_cmd_type cmd_type);
-#endif
-
-#if defined(CONFIG_SLM_TWI)
-int handle_at_twi_list(enum at_cmd_type cmd_type);
-int handle_at_twi_write(enum at_cmd_type cmd_type);
-int handle_at_twi_read(enum at_cmd_type cmd_type);
-int handle_at_twi_write_read(enum at_cmd_type cmd_type);
-#endif
-
-#if defined(CONFIG_SLM_GPIO)
-int handle_at_gpio_configure(enum at_cmd_type cmd_type);
-int handle_at_gpio_operate(enum at_cmd_type cmd_type);
-#endif
-
-static struct slm_at_cmd {
-	const char *string;
-	slm_at_handler_t handler;
-} slm_at_cmd_list[] = {
-	/* Generic commands */
-	{"AT#XSLMVER", handle_at_slmver},
-#if POWER_PIN_IS_ENABLED
-	{"AT#XSLEEP", handle_at_sleep},
-#endif
-	{"AT#XSHUTDOWN", handle_at_shutdown},
-	{"AT#XRESET", handle_at_reset},
-	{"AT#XMODEMRESET", handle_at_modemreset},
-	{"AT#XUUID", handle_at_uuid},
-	{"AT#XCLAC", handle_at_clac},
-	{"AT#XDATACTRL", handle_at_datactrl},
-
-	/* TCP proxy commands */
-	{"AT#XTCPSVR", handle_at_tcp_server},
-	{"AT#XTCPCLI", handle_at_tcp_client},
-	{"AT#XTCPSEND", handle_at_tcp_send},
-	{"AT#XTCPHANGUP", handle_at_tcp_hangup},
-
-	/* UDP proxy commands */
-	{"AT#XUDPSVR", handle_at_udp_server},
-	{"AT#XUDPCLI", handle_at_udp_client},
-	{"AT#XUDPSEND", handle_at_udp_send},
-
-	/* Socket-type TCPIP commands */
-	{"AT#XSOCKET", handle_at_socket},
-	{"AT#XSSOCKET", handle_at_secure_socket},
-	{"AT#XSOCKETSELECT", handle_at_socket_select},
-	{"AT#XSOCKETOPT", handle_at_socketopt},
-	{"AT#XSSOCKETOPT", handle_at_secure_socketopt},
-	{"AT#XBIND", handle_at_bind},
-	{"AT#XCONNECT", handle_at_connect},
-	{"AT#XLISTEN", handle_at_listen},
-	{"AT#XACCEPT", handle_at_accept},
-	{"AT#XSEND", handle_at_send},
-	{"AT#XRECV", handle_at_recv},
-	{"AT#XSENDTO", handle_at_sendto},
-	{"AT#XRECVFROM", handle_at_recvfrom},
-	{"AT#XPOLL", handle_at_poll},
-	{"AT#XGETADDRINFO", handle_at_getaddrinfo},
-
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	{"AT#XCMNG", handle_at_xcmng},
-#endif
-	/* ICMP commands */
-	{"AT#XPING", handle_at_icmp_ping},
-
-#if defined(CONFIG_SLM_SMS)
-	/* SMS commands */
-	{"AT#XSMS", handle_at_sms},
-#endif
-
-	/* FOTA commands */
-	{"AT#XFOTA", handle_at_fota},
-
-#if defined(CONFIG_SLM_NRF_CLOUD)
-	{"AT#XNRFCLOUD", handle_at_nrf_cloud},
-#if defined(CONFIG_NRF_CLOUD_LOCATION)
-	{"AT#XNRFCLOUDPOS", handle_at_nrf_cloud_pos},
-#endif
-#endif
-
-#if defined(CONFIG_SLM_GNSS)
-	/* GNSS commands */
-	{"AT#XGPS", handle_at_gps},
-	{"AT#XGPSDEL", handle_at_gps_delete},
-#endif
-
-#if defined(CONFIG_SLM_FTPC)
-	/* FTP commands */
-	{"AT#XFTP", handle_at_ftp},
-#endif
-#if defined(CONFIG_SLM_TFTPC)
-	/* TFTP commands */
-	{"AT#XTFTP", handle_at_tftp},
-#endif
-
-#if defined(CONFIG_SLM_MQTTC)
-	{"AT#XMQTTCFG", handle_at_mqtt_config},
-	{"AT#XMQTTCON", handle_at_mqtt_connect},
-	{"AT#XMQTTPUB", handle_at_mqtt_publish},
-	{"AT#XMQTTSUB", handle_at_mqtt_subscribe},
-	{"AT#XMQTTUNSUB", handle_at_mqtt_unsubscribe},
-#endif
-
-#if defined(CONFIG_SLM_HTTPC)
-	{"AT#XHTTPCCON", handle_at_httpc_connect},
-	{"AT#XHTTPCREQ", handle_at_httpc_request},
-#endif
-
-#if defined(CONFIG_SLM_TWI)
-	{"AT#XTWILS", handle_at_twi_list},
-	{"AT#XTWIW", handle_at_twi_write},
-	{"AT#XTWIR", handle_at_twi_read},
-	{"AT#XTWIWR", handle_at_twi_write_read},
-#endif
-
-#if defined(CONFIG_SLM_GPIO)
-	{"AT#XGPIOCFG", handle_at_gpio_configure},
-	{"AT#XGPIO", handle_at_gpio_operate},
-#endif
-
-#if defined(CONFIG_SLM_CARRIER)
-	{"AT#XCARRIER", handle_at_carrier},
-#endif
-
-#if defined(CONFIG_LWM2M_CARRIER_SETTINGS)
-	{"AT#XCARRIERCFG", handle_at_carrier_cfg},
-#endif
-
-#if defined(CONFIG_SLM_PPP)
-	{"AT#XPPP", handle_at_ppp},
-#endif
-
-#if defined(CONFIG_SLM_CMUX)
-	{"AT#XCMUX", handle_at_cmux},
-#endif
-};
-
-/* Handles AT#XCLAC command. */
-int handle_at_clac(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xclac, "AT#XCLAC", handle_at_clac);
+static int handle_at_clac(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
 {
-	int ret = -EINVAL;
-
-	if (cmd_type == AT_CMD_TYPE_SET_COMMAND) {
-		int total = ARRAY_SIZE(slm_at_cmd_list);
-
-		for (int i = 0; i < total; i++) {
-			rsp_send("%s\r\n", slm_at_cmd_list[i].string);
-		}
-		ret = 0;
+	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
+		return -EINVAL;
 	}
 
-	return ret;
-}
+	/* Use AT_CMD_CUSTOM listing for extracting SLM AT commands. */
+	extern struct nrf_modem_at_cmd_custom _nrf_modem_at_cmd_custom_list_start[];
+	extern struct nrf_modem_at_cmd_custom _nrf_modem_at_cmd_custom_list_end[];
+	size_t cmd_custom_count = _nrf_modem_at_cmd_custom_list_end -
+				  _nrf_modem_at_cmd_custom_list_start;
+	size_t base_cmd_len[cmd_custom_count];
 
-int slm_at_parse(const char *cmd_str, size_t cmd_name_len)
-{
-	int ret = UNKNOWN_AT_COMMAND_RET;
-	int total = ARRAY_SIZE(slm_at_cmd_list);
-
-	for (int i = 0; i < total; i++) {
-		const struct slm_at_cmd *const at_cmd = &slm_at_cmd_list[i];
-
-		/* For the match to happen the AT command names must be identical,
-		 * which requires both names to have the same characters and the same length.
-		 */
-		if (!(!strncmp(cmd_str, at_cmd->string, cmd_name_len)
-		      && at_cmd->string[cmd_name_len] == '\0')) {
+	memset(base_cmd_len, 0, cmd_custom_count * sizeof(size_t));
+	rsp_send("\r\n");
+	for (size_t i = 0; i < cmd_custom_count; i++) {
+		/* SLM at commands start with AT#X. */
+		if (strncasecmp(_nrf_modem_at_cmd_custom_list_start[i].cmd, "AT#X",
+				strlen("AT#X"))) {
 			continue;
 		}
+		/* List commands without operations and list each command only once. */
+		base_cmd_len[i] = strcspn(_nrf_modem_at_cmd_custom_list_start[i].cmd, "?=");
+		bool duplicate = false;
 
-		const enum at_cmd_type type = at_parser_cmd_type_get(cmd_str);
-
-		at_params_list_clear(&slm_at_param_list);
-		ret = at_parser_params_from_str(cmd_str, NULL, &slm_at_param_list);
-		if (ret) {
-			LOG_ERR("Failed to parse AT command %d", ret);
-			return -EINVAL;
+		for (size_t j = 0; j < i; j++) {
+			/* Compare length and command as we have AT commands such as
+			 * AT#XSEND/AT#XSENDTO, AT#XFTP="whatever"
+			 * and AT#XNRFCLOUD[=?]/AT#XNRFCLOUDPOS.
+			 */
+			if ((base_cmd_len[i] == base_cmd_len[j]) &&
+			    !strncasecmp(_nrf_modem_at_cmd_custom_list_start[i].cmd,
+					 _nrf_modem_at_cmd_custom_list_start[j].cmd,
+					 base_cmd_len[i])) {
+				duplicate = true;
+				break;
+			}
 		}
-		ret = at_cmd->handler(type);
-		break;
+
+		if (!duplicate) {
+			rsp_send("%.*s\r\n", base_cmd_len[i],
+				 _nrf_modem_at_cmd_custom_list_start[i].cmd);
+		}
 	}
 
-	return ret;
+	return 0;
 }
 
 int slm_at_init(void)

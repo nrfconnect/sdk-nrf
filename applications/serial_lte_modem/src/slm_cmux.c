@@ -258,11 +258,11 @@ static void cmux_starter(struct k_work *)
 	}
 }
 
-/* Handles AT#XCMUX commands. */
-int handle_at_cmux(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xcmux, "AT#XCMUX", handle_at_cmux);
+static int handle_at_cmux(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			  uint32_t param_count)
 {
 	static struct k_work_delayable cmux_start_work;
-	const unsigned int param_count = at_params_valid_count_get(&slm_at_param_list);
 	unsigned int at_dlci;
 	int ret;
 
@@ -279,7 +279,7 @@ int handle_at_cmux(enum at_cmd_type cmd_type)
 	}
 
 	if (param_count == 2) {
-		ret = at_params_unsigned_int_get(&slm_at_param_list, 1, &at_dlci);
+		ret = at_params_unsigned_int_get(param_list, 1, &at_dlci);
 		if (ret || at_dlci < 1 || at_dlci > ARRAY_SIZE(cmux.dlcis)) {
 			return -EINVAL;
 		}
@@ -295,7 +295,7 @@ int handle_at_cmux(enum at_cmd_type cmd_type)
 			/* Just update the AT channel, first answering "OK" on the current DLCI. */
 			rsp_send_ok();
 			cmux.at_channel = at_channel;
-			return SILENT_AT_COMMAND_RET;
+			return -SILENT_AT_COMMAND_RET;
 		}
 		cmux.at_channel = at_channel;
 	}

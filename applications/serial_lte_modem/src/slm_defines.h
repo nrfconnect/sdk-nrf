@@ -16,10 +16,8 @@
 #define INVALID_DTLS_CID     -1
 
 enum {
-	/* The command is not a known (or activated) SLM-proprietary AT command. */
-	UNKNOWN_AT_COMMAND_RET = __ELASTERROR,
 	/* The command ran successfully and doesn't want the automatic response to be sent. */
-	SILENT_AT_COMMAND_RET,
+	SILENT_AT_COMMAND_RET = __ELASTERROR,
 };
 
 /** The maximum allowed length of an AT command/response passed through the SLM */

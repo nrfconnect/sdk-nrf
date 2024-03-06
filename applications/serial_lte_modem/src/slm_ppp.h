@@ -17,6 +17,4 @@ int slm_ppp_init(void);
 
 bool slm_ppp_is_running(void);
 
-int handle_at_ppp(enum at_cmd_type cmd_type);
-
 #endif

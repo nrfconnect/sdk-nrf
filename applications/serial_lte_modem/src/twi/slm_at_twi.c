@@ -142,8 +142,8 @@ static int do_twi_write_read(uint16_t index, uint16_t dev_addr, const uint8_t *t
 	return ret;
 }
 
-/* Handles AT#XTWILS command. */
-int handle_at_twi_list(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xtwils, "AT#XTWILS", handle_at_twi_list);
+static int handle_at_twi_list(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
 {
 	int err = -EINVAL;
 
@@ -160,8 +160,10 @@ int handle_at_twi_list(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/* Handles AT#XTWIW commands. */
-int handle_at_twi_write(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xtwiw_set, "AT#XTWIW=", handle_at_twi_write);
+SLM_AT_CMD_CUSTOM(xtwiw_read, "AT#XTWIW?", handle_at_twi_write);
+static int handle_at_twi_write(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			       uint32_t param_count)
 {
 	int err = -EINVAL;
 	uint16_t index, dev_addr;
@@ -170,17 +172,17 @@ int handle_at_twi_write(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&slm_at_param_list) != 4) {
+		if (param_count != 4) {
 			LOG_ERR("Wrong input parameters");
 			return -EINVAL;
 		}
-		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &index);
+		err = at_params_unsigned_short_get(param_list, 1, &index);
 		if (err < 0) {
 			LOG_ERR("Fail to get twi index: %d", err);
 			return err;
 		}
 		ascii_len = TWI_ADDR_LEN + 1;
-		err = util_string_get(&slm_at_param_list, 2, twi_addr_ascii, &ascii_len);
+		err = util_string_get(param_list, 2, twi_addr_ascii, &ascii_len);
 		if (err < 0) {
 			LOG_ERR("Fail to get device address");
 			return err;
@@ -188,7 +190,7 @@ int handle_at_twi_write(enum at_cmd_type cmd_type)
 		sscanf(twi_addr_ascii, "%hx", &dev_addr);
 		LOG_DBG("dev_addr: %hx", dev_addr);
 		ascii_len = sizeof(twi_data);
-		err = util_string_get(&slm_at_param_list, 3, twi_data, &ascii_len);
+		err = util_string_get(param_list, 3, twi_data, &ascii_len);
 		if (err) {
 			return err;
 		}
@@ -206,8 +208,9 @@ int handle_at_twi_write(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/* Handles AT#XTWIR commands. */
-int handle_at_twi_read(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xtwir, "AT#XTWIR", handle_at_twi_read);
+static int handle_at_twi_read(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+			      uint32_t)
 {
 	int err = -EINVAL;
 	uint16_t index, dev_addr, num_read;
@@ -216,20 +219,20 @@ int handle_at_twi_read(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &index);
+		err = at_params_unsigned_short_get(param_list, 1, &index);
 		if (err < 0) {
 			LOG_ERR("Fail to get twi index: %d", err);
 			return err;
 		}
 		ascii_len = TWI_ADDR_LEN + 1;
-		err = util_string_get(&slm_at_param_list, 2, twi_addr_ascii, &ascii_len);
+		err = util_string_get(param_list, 2, twi_addr_ascii, &ascii_len);
 		if (err < 0) {
 			LOG_ERR("Fail to get device address: %d", err);
 			return err;
 		}
 		sscanf(twi_addr_ascii, "%hx", &dev_addr);
 		LOG_DBG("dev_addr: %hx", dev_addr);
-		err = at_params_unsigned_short_get(&slm_at_param_list, 3, &num_read);
+		err = at_params_unsigned_short_get(param_list, 3, &num_read);
 		if (err < 0) {
 			LOG_ERR("Fail to get bytes to read: %d", err);
 			return err;
@@ -254,8 +257,9 @@ int handle_at_twi_read(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/* Handles AT#XTWIWR commands. */
-int handle_at_twi_write_read(enum at_cmd_type cmd_type)
+SLM_AT_CMD_CUSTOM(xtwiwr, "AT#XTWIWR", handle_at_twi_write_read);
+static int handle_at_twi_write_read(enum at_cmd_type cmd_type,
+				    const struct at_param_list *param_list, uint32_t)
 {
 	int err = -EINVAL;
 	uint16_t index, dev_addr, num_read;
@@ -264,13 +268,13 @@ int handle_at_twi_write_read(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &index);
+		err = at_params_unsigned_short_get(param_list, 1, &index);
 		if (err < 0) {
 			LOG_ERR("Fail to get twi index: %d", err);
 			return err;
 		}
 		ascii_len = TWI_ADDR_LEN + 1;
-		err = util_string_get(&slm_at_param_list, 2, twi_addr_ascii, &ascii_len);
+		err = util_string_get(param_list, 2, twi_addr_ascii, &ascii_len);
 		if (err < 0) {
 			LOG_ERR("Fail to get device address");
 			return err;
@@ -278,12 +282,12 @@ int handle_at_twi_write_read(enum at_cmd_type cmd_type)
 		sscanf(twi_addr_ascii, "%hx", &dev_addr);
 		LOG_DBG("dev_addr: %hx", dev_addr);
 		ascii_len = sizeof(twi_data);
-		err = util_string_get(&slm_at_param_list, 3, twi_data, &ascii_len);
+		err = util_string_get(param_list, 3, twi_data, &ascii_len);
 		if (err) {
 			return err;
 		}
 		LOG_DBG("Data to write: %s", (char *)twi_data);
-		err = at_params_unsigned_short_get(&slm_at_param_list, 4, &num_read);
+		err = at_params_unsigned_short_get(param_list, 4, &num_read);
 		if (err < 0) {
 			LOG_ERR("Fail to get twi index: %d", err);
 			return err;
