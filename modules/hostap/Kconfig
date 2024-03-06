@@ -59,10 +59,6 @@ config WPA_SUPP_RRM
 	default y
 endif
 
-choice LIBC_IMPLEMENTATION
-	default NEWLIB_LIBC
-endchoice
-
 config WPA_SUPP_MGD_IFACES_PREFIXES
 	string "WPA supplicant managed interfaces prefixes"
 	default "wlan,esp,nordic_wlan"
