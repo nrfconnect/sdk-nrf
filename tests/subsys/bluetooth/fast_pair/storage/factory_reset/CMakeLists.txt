@@ -20,3 +20,6 @@ target_include_directories(app PRIVATE ../common/include)
 set(NCS_FAST_PAIR_BASE ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/services/fast_pair)
 add_subdirectory(${NCS_FAST_PAIR_BASE}/fp_storage fp_storage)
 target_link_libraries(app PRIVATE fp_storage)
+
+# For strnlen()
+target_compile_definitions(app PRIVATE _POSIX_C_SOURCE=200809L)
