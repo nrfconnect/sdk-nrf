@@ -66,10 +66,24 @@ class ManifestRevisionsTable(SphinxDirective):
         # remove .git from base_url, if present
         base_url = base_url.split(".git")[0]
 
-        if re.match(r"^[0-9a-f]{40}$", rev):
-            return f"{base_url}/commit/{rev}"
+        if "github.com" in base_url:
+            commit_fmt = base_url + "/commit/{rev}"
+            tag_fmt = base_url + "/releases/tag/{rev}"
+        elif "projecttools.nordicsemi.no" in base_url:
+            m = re.match(r"^(.*)/scm/(.*)/(.*)$", base_url)
+            if not m:
+                raise ExtensionError(f"Invalid base URL: {base_url}")
 
-        return f"{base_url}/releases/tag/{rev}"
+            base_url = f"{m.group(1)}/projects/{m.group(2)}/repos/{m.group(3)}"
+            commit_fmt = base_url + "/commits/{rev}"
+            tag_fmt = commit_fmt
+        else:
+            raise ExtensionError(f"Unsupported SCM: {base_url}")
+
+        if re.match(r"^[0-9a-f]{40}$", rev):
+            return commit_fmt.format(rev=rev)
+
+        return tag_fmt.format(rev=rev)
 
     def run(self) -> List[nodes.Element]:
         # parse show-first option
