@@ -235,10 +235,6 @@ Use this functionality for :ref:`certification <ug_thread_cert>` of your configu
 You can install the libraries either with or without debug symbols.
 Installing the libraries with debug symbols can be useful when debugging, but will take a significant amount of storage memory.
 
-.. note::
-   When you select :kconfig:option:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`, the location of the directory for the libraries depends on the chosen :ref:`nrf_security backend <nrf_security_readme>`, either :kconfig:option:`CONFIG_CC3XX_BACKEND` or :kconfig:option:`CONFIG_OBERON_BACKEND`.
-   For example, when building the complete set of libraries for a device that uses the ARM Cortex-M4 with FPU support, the directories are :file:`ncs/nrfxlib/openthread/cortex-m4/hard-float/v1.3/master/cc3xx` and :file:`ncs/nrfxlib/openthread/cortex-m4/hard-float/v1.3/master/oberon`, respectively.
-
 Updating the libraries without debug symbols
 ============================================
 
