@@ -35,21 +35,21 @@ target_include_directories(mbedcrypto_common
     # Nordic PSA headers
     ${NRF_SECURITY_ROOT}/include
     # Oberon PSA headers
-    ${OBERON_PSA_PATH}/core/include
-    ${OBERON_PSA_PATH}/core/library
+    ${OBERON_PSA_PATH}/include
+    ${OBERON_PSA_PATH}/library
     # Mbed TLS (mbedcrypto) PSA headers
     ${ARM_MBEDTLS_PATH}/include
     ${ARM_MBEDTLS_PATH}/library
 )
 endif()
 
-append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_PATH}/core/library/
+append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_PATH}/library/
   platform.c
   platform_util.c
 )
 
 if (COMPILE_PSA_APIS)
-  append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_PATH}/core/library/
+  append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_PATH}/library/
     psa_crypto.c
     psa_crypto_client.c
     psa_crypto_slot_management.c

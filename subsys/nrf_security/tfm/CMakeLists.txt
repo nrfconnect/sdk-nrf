@@ -7,9 +7,13 @@
 # This file is nrf_security's entry-point for the TF-M build system
 set(BUILD_INSIDE_TFM True)
 
-set(NRFXLIB_DIR ${CMAKE_CURRENT_LIST_DIR}/../../../../nrfxlib)
+set(west_root_dir ${CMAKE_CURRENT_LIST_DIR}/../../../..)
+
+set(NRFXLIB_DIR ${west_root_dir}/nrfxlib)
 set(NRF_SECURITY_ROOT ${CMAKE_CURRENT_LIST_DIR}/..)
+
 set(ZEPHYR_NRF_MODULE_DIR ${NRF_DIR})
+set(ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR ${west_root_dir}/modules/crypto/oberon-psa-crypto)
 
 include(${NRF_SECURITY_ROOT}/cmake/extensions.cmake)
 

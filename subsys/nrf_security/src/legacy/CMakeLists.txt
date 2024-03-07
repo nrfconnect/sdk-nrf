@@ -192,8 +192,8 @@ if(NOT is_getting_includes)
   target_include_directories(${mbedcrypto_target}
   INTERFACE
   ${NRF_SECURITY_ROOT}/include
-    ${OBERON_PSA_PATH}/core/include
-    ${OBERON_PSA_PATH}/core/library
+  ${OBERON_PSA_PATH}/include
+  ${OBERON_PSA_PATH}/library
   ${ARM_MBEDTLS_PATH}/include
   ${ARM_MBEDTLS_PATH}/library
   )

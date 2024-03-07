@@ -16,7 +16,7 @@
 # For NCS  the nrf_security/CMakeLists.txt     file will execute this file. BUILD_INSIDE_TFM=False
 #
 
-set(OBERON_PSA_PATH ${ZEPHYR_NRF_MODULE_DIR}/ext/oberon/psa)
+set(OBERON_PSA_PATH ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR})
 
 # Library for mbedcrypto includes and configurations
 add_library(mbedcrypto_common INTERFACE)
