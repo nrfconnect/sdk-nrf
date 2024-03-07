@@ -174,6 +174,8 @@ static void poweroff_interrupt_enabler(struct k_work *)
 
 #endif /* POWER_PIN_IS_ENABLED */
 
+#if POWER_PIN_IS_ENABLED || INDICATE_PIN_IS_ENABLED
+
 static int configure_gpio(gpio_pin_t pin, gpio_flags_t flags)
 {
 	const int err = gpio_pin_configure(gpio_dev, pin, flags);
@@ -185,27 +187,24 @@ static int configure_gpio(gpio_pin_t pin, gpio_flags_t flags)
 
 	return 0;
 }
+#endif
 
 static int init_gpios(void)
 {
-	int err;
-
 	if (!device_is_ready(gpio_dev)) {
 		LOG_ERR("GPIO controller not ready");
 		return -ENODEV;
 	}
 
 #if POWER_PIN_IS_ENABLED
-	err = configure_gpio(CONFIG_SLM_POWER_PIN, GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW);
-	if (err) {
-		return err;
+	if (configure_gpio(CONFIG_SLM_POWER_PIN, GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW)) {
+		return -1;
 	}
 #endif
 
 #if INDICATE_PIN_IS_ENABLED
-	err = configure_gpio(CONFIG_SLM_INDICATE_PIN, GPIO_OUTPUT_INACTIVE | GPIO_ACTIVE_LOW);
-	if (err) {
-		return err;
+	if (configure_gpio(CONFIG_SLM_INDICATE_PIN, GPIO_OUTPUT_INACTIVE | GPIO_ACTIVE_LOW)) {
+		return -1;
 	}
 #endif
 
@@ -520,13 +519,14 @@ int start_execute(void)
 		LOG_ERR("Failed to init at_host: %d", err);
 		return err;
 	}
+#if POWER_PIN_IS_ENABLED
 	/* Do not directly enable the poweroff interrupt so that only a full toggle triggers
 	 * power off. This is because power on is triggered on low level, so if the pin is held
 	 * down until SLM is fully initialized releasing it would directly trigger the power off.
 	 */
 	err = configure_power_pin_interrupt(power_pin_callback_enable_poweroff,
 					    GPIO_INT_EDGE_FALLING);
-
+#endif
 	if (err) {
 		return err;
 	}
