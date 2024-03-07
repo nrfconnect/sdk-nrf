@@ -130,19 +130,13 @@ The following controls can fine-tune the time taken and power consumed by a scan
        | Run time:
        | :c:member:`wifi_scan_params.bands`
    * - Forced passive scan
-     - | Build time:
-       | :kconfig:option:`CONFIG_WIFI_MGMT_FORCED_PASSIVE_SCAN`
-       | Run time:
+     - | Run time:
        | :c:member:`wifi_scan_params.scan_type`
    * - Active dwell time
-     - | Build time:
-       | :kconfig:option:`CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_ACTIVE`
-       | Run time:
+     - | Run time:
        | :c:member:`wifi_scan_params.dwell_time_active`
    * - Passive dwell time
-     - | Build time:
-       | :kconfig:option:`CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_PASSIVE`
-       | Run time:
+     - | Run time:
        | :c:member:`wifi_scan_params.dwell_time_passive`
    * - Channel control
      - | Build time:
@@ -164,14 +158,10 @@ The scan robustness (the number of APs scanned) can be controlled by using the f
    * - Feature
      - Configuration parameters
    * - Active dwell time
-     - | Build time:
-       | :kconfig:option:`CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_ACTIVE`
-       | Run time:
+     - | Run time:
        | :c:member:`wifi_scan_params.dwell_time_active`
    * - Passive dwell time
-     - | Build time:
-       | :kconfig:option:`CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_PASSIVE`
-       | Run time:
+     - | Run time:
        | :c:member:`wifi_scan_params.dwell_time_passive`
 
 Impact of scan controls

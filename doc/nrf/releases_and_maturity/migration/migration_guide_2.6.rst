@@ -108,10 +108,7 @@ The following changes are mandatory to make your application work in the same wa
      If your application uses scan operations, they need to be updated to remove the dependency on the following options:
 
       * ``CONFIG_WIFI_MGMT_SCAN_BANDS``
-      * ``CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_ACTIVE``
-      * ``CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_PASSIVE``
       * ``CONFIG_WIFI_MGMT_SCAN_SSID_FILT``
-      * ``CONFIG_WIFI_MGMT_SCAN_MAX_BSS_CNT``
       * ``CONFIG_WIFI_MGMT_SCAN_CHAN``
 
   * Instead of the ``CONFIG_WIFI_MGMT_SCAN_MAX_BSS_CNT`` Kconfig option, a new :kconfig:option:`CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT` Kconfig option is added.
