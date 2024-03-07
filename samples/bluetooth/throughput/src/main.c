@@ -40,7 +40,7 @@ static volatile bool data_length_req;
 static volatile bool test_ready;
 static struct bt_conn *default_conn;
 static struct bt_throughput throughput;
-static struct bt_uuid *uuid128 = BT_UUID_THROUGHPUT;
+static const struct bt_uuid *uuid128 = BT_UUID_THROUGHPUT;
 static struct bt_gatt_exchange_params exchange_params;
 static struct bt_le_conn_param *conn_param =
 	BT_LE_CONN_PARAM(INTERVAL_MIN, INTERVAL_MAX, 0, 400);
