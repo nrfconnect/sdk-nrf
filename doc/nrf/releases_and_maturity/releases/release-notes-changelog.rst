@@ -582,6 +582,7 @@ Cellular samples
     * The sample reboot logic is now in a dedicated file so that it can be used in multiple locations.
     * The Wi-Fi connectivity overlay now uses the PSA Protected Storage backend of the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` instead of the volatile backend.
     * The Wi-Fi connectivity overlay now enables the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credential installation.
+    * Increased DNS resolution timeout for Wi-Fi connectivity builds.
 
   * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
