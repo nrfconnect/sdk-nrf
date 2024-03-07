@@ -10,10 +10,11 @@
 
 class OnOffLightDevice : public Nrf::MatterBridgedDevice {
 public:
-	static constexpr uint16_t kOnOffClusterRevision = 4;
+	static constexpr uint32_t kIdentifyFeatureMap = 0;
+	static constexpr uint16_t kOnOffClusterRevision = 5;
 	static constexpr uint32_t kOnOffFeatureMap = 1;
 	static constexpr uint16_t kGroupsClusterRevision = 4;
-	static constexpr uint32_t kGroupsFeatureMap = 0;
+	static constexpr uint32_t kGroupsFeatureMap = 1;
 	static constexpr uint8_t kGroupsNameSupportMap = 0;
 
 	OnOffLightDevice(const char *nodeLabel);

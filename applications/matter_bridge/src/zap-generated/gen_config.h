@@ -21,6 +21,7 @@
 #pragma once
 
 /**** Cluster endpoint counts ****/
+#define EMBER_AF_IDENTIFY_CLUSTER_CLIENT_ENDPOINT_COUNT (1)
 #define EMBER_AF_IDENTIFY_CLUSTER_SERVER_ENDPOINT_COUNT (2)
 #define EMBER_AF_GROUPS_CLUSTER_SERVER_ENDPOINT_COUNT (1)
 #define EMBER_AF_ON_OFF_CLUSTER_CLIENT_ENDPOINT_COUNT (1)
@@ -45,6 +46,10 @@
 #define EMBER_AF_RELATIVE_HUMIDITY_MEASUREMENT_CLUSTER_SERVER_ENDPOINT_COUNT (1)
 
 /**** Cluster Plugins ****/
+
+// Use this macro to check if the client side of the Identify cluster is included
+#define ZCL_USING_IDENTIFY_CLUSTER_CLIENT
+#define EMBER_AF_PLUGIN_IDENTIFY_CLIENT
 
 // Use this macro to check if the server side of the Identify cluster is included
 #define ZCL_USING_IDENTIFY_CLUSTER_SERVER

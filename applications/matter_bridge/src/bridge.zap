@@ -882,7 +882,7 @@
               "code": 2,
               "mfgCode": null,
               "side": "server",
-              "type": "OTAUpdateStateEnum",
+              "type": "UpdateStateEnum",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -1109,7 +1109,7 @@
               "code": 2,
               "mfgCode": null,
               "side": "server",
-              "type": "RegulatoryLocationType",
+              "type": "RegulatoryLocationTypeEnum",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -1125,7 +1125,7 @@
               "code": 3,
               "mfgCode": null,
               "side": "server",
-              "type": "RegulatoryLocationType",
+              "type": "RegulatoryLocationTypeEnum",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -1401,7 +1401,7 @@
               "code": 5,
               "mfgCode": null,
               "side": "server",
-              "type": "NetworkCommissioningStatus",
+              "type": "NetworkCommissioningStatusEnum",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -2165,7 +2165,7 @@
               "code": 2,
               "mfgCode": null,
               "side": "server",
-              "type": "int16u",
+              "type": "vendor_id",
               "included": 1,
               "storageOption": "External",
               "singleton": 0,
@@ -2814,7 +2814,7 @@
               "code": 1,
               "mfgCode": null,
               "side": "server",
-              "type": "enum8",
+              "type": "IdentifyTypeEnum",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -2915,7 +2915,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "2",
+              "defaultValue": "4",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -3127,6 +3127,58 @@
           "code": 3,
           "mfgCode": null,
           "define": "IDENTIFY_CLUSTER",
+          "side": "client",
+          "enabled": 1,
+          "commands": [
+            {
+              "name": "Identify",
+              "code": 0,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 0,
+              "isEnabled": 1
+            }
+          ],
+          "attributes": [
+            {
+              "name": "FeatureMap",
+              "code": 65532,
+              "mfgCode": null,
+              "side": "client",
+              "type": "bitmap32",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "0",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "ClusterRevision",
+              "code": 65533,
+              "mfgCode": null,
+              "side": "client",
+              "type": "int16u",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "4",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            }
+          ]
+        },
+        {
+          "name": "Identify",
+          "code": 3,
+          "mfgCode": null,
+          "define": "IDENTIFY_CLUSTER",
           "side": "server",
           "enabled": 1,
           "commands": [
@@ -3169,7 +3221,7 @@
               "code": 1,
               "mfgCode": null,
               "side": "server",
-              "type": "enum8",
+              "type": "IdentifyTypeEnum",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -3373,7 +3425,7 @@
               "code": 0,
               "mfgCode": null,
               "side": "server",
-              "type": "bitmap8",
+              "type": "NameSupportBitmap",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -3513,6 +3565,30 @@
               "source": "client",
               "isIncoming": 0,
               "isEnabled": 1
+            },
+            {
+              "name": "OffWithEffect",
+              "code": 64,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 0,
+              "isEnabled": 1
+            },
+            {
+              "name": "OnWithRecallGlobalScene",
+              "code": 65,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 0,
+              "isEnabled": 1
+            },
+            {
+              "name": "OnWithTimedOff",
+              "code": 66,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 0,
+              "isEnabled": 1
             }
           ],
           "attributes": [
@@ -3577,6 +3653,30 @@
             {
               "name": "Toggle",
               "code": 2,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 1,
+              "isEnabled": 1
+            },
+            {
+              "name": "OffWithEffect",
+              "code": 64,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 1,
+              "isEnabled": 1
+            },
+            {
+              "name": "OnWithRecallGlobalScene",
+              "code": 65,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 1,
+              "isEnabled": 1
+            },
+            {
+              "name": "OnWithTimedOff",
+              "code": 66,
               "mfgCode": null,
               "source": "client",
               "isIncoming": 1,
@@ -3653,7 +3753,7 @@
               "code": 16387,
               "mfgCode": null,
               "side": "server",
-              "type": "OnOffStartUpOnOff",
+              "type": "StartUpOnOffEnum",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,

@@ -23,20 +23,34 @@ using namespace ::chip;
 using namespace ::chip::app;
 using namespace Nrf;
 
+constexpr CommandId identifyIncomingCommands[] = {
+	app::Clusters::Identify::Commands::Identify::Id,
+	app::Clusters::Identify::Commands::TriggerEffect::Id,
+	kInvalidCommandId,
+};
+
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(onOffAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::OnOff::Id, BOOLEAN, 1, 0),
 	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::FeatureMap::Id, BITMAP32, 4, 0),
+	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::GlobalSceneControl::Id, BOOLEAN, 1, 0),
+	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::OnTime::Id, INT16U, 2, 0),
+	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::OffWaitTime::Id, INT16U, 2, 0),
+	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::StartUpOnOff::Id, ENUM8, 1, 0),
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 constexpr CommandId onOffIncomingCommands[] = {
 	app::Clusters::OnOff::Commands::Off::Id,
 	app::Clusters::OnOff::Commands::On::Id,
 	app::Clusters::OnOff::Commands::Toggle::Id,
+	app::Clusters::OnOff::Commands::OffWithEffect::Id,
+	app::Clusters::OnOff::Commands::OnWithRecallGlobalScene::Id,
+	app::Clusters::OnOff::Commands::OnWithTimedOff::Id,
 	kInvalidCommandId,
 };
 
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(groupsAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Groups::Attributes::NameSupport::Id, BITMAP8, 1, 0),
+	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Groups::Attributes::FeatureMap::Id, BITMAP32, 4, 1),
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 constexpr CommandId groupsIncomingCommands[] = {
@@ -49,15 +63,23 @@ constexpr CommandId groupsIncomingCommands[] = {
 	kInvalidCommandId,
 };
 
+constexpr CommandId groupsGeneratedCommands[] = {
+	app::Clusters::Groups::Commands::AddGroupResponse::Id,
+	app::Clusters::Groups::Commands::RemoveGroupResponse::Id,
+	app::Clusters::Groups::Commands::ViewGroupResponse::Id,
+	app::Clusters::Groups::Commands::GetGroupMembershipResponse::Id,
+	kInvalidCommandId,
+};
+
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(bridgedLightClusters)
 DECLARE_DYNAMIC_CLUSTER(Clusters::OnOff::Id, onOffAttrs, ZAP_CLUSTER_MASK(SERVER), onOffIncomingCommands, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Descriptor::Id, descriptorAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Groups::Id, groupsAttrs, ZAP_CLUSTER_MASK(SERVER), groupsIncomingCommands,
-				nullptr),
+				groupsGeneratedCommands),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs,
 				ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(SERVER),
-				sIdentifyIncomingCommands, nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
+				identifyIncomingCommands, nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedLightEndpoint, bridgedLightClusters);
 

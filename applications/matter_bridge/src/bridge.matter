@@ -2,6 +2,54 @@
 // It is for view/code review purposes only.
 
 /** Attributes and commands for putting a device into Identification mode (e.g. flashing a light). */
+client cluster Identify = 3 {
+  enum EffectIdentifierEnum : enum8 {
+    kBlink = 0;
+    kBreathe = 1;
+    kOkay = 2;
+    kChannelChange = 11;
+    kFinishEffect = 254;
+    kStopEffect = 255;
+  }
+
+  enum EffectVariantEnum : enum8 {
+    kDefault = 0;
+  }
+
+  enum IdentifyTypeEnum : enum8 {
+    kNone = 0;
+    kLightOutput = 1;
+    kVisibleIndicator = 2;
+    kAudibleBeep = 3;
+    kDisplay = 4;
+    kActuator = 5;
+  }
+
+  attribute int16u identifyTime = 0;
+  readonly attribute IdentifyTypeEnum identifyType = 1;
+  readonly attribute command_id generatedCommandList[] = 65528;
+  readonly attribute command_id acceptedCommandList[] = 65529;
+  readonly attribute event_id eventList[] = 65530;
+  readonly attribute attrib_id attributeList[] = 65531;
+  readonly attribute bitmap32 featureMap = 65532;
+  readonly attribute int16u clusterRevision = 65533;
+
+  request struct IdentifyRequest {
+    int16u identifyTime = 0;
+  }
+
+  request struct TriggerEffectRequest {
+    EffectIdentifierEnum effectIdentifier = 0;
+    EffectVariantEnum effectVariant = 1;
+  }
+
+  /** Command description for Identify */
+  command access(invoke: manage) Identify(IdentifyRequest): DefaultSuccess = 0;
+  /** Command description for TriggerEffect */
+  command access(invoke: manage) TriggerEffect(TriggerEffectRequest): DefaultSuccess = 64;
+}
+
+/** Attributes and commands for putting a device into Identification mode (e.g. flashing a light). */
 server cluster Identify = 3 {
   enum EffectIdentifierEnum : enum8 {
     kBlink = 0;
@@ -229,9 +277,23 @@ server cluster OnOff = 6 {
   readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 
+  request struct OffWithEffectRequest {
+    EffectIdentifierEnum effectIdentifier = 0;
+    int8u effectVariant = 1;
+  }
+
+  request struct OnWithTimedOffRequest {
+    OnOffControlBitmap onOffControl = 0;
+    int16u onTime = 1;
+    int16u offWaitTime = 2;
+  }
+
   command Off(): DefaultSuccess = 0;
   command On(): DefaultSuccess = 1;
   command Toggle(): DefaultSuccess = 2;
+  command OffWithEffect(OffWithEffectRequest): DefaultSuccess = 64;
+  command OnWithRecallGlobalScene(): DefaultSuccess = 65;
+  command OnWithTimedOff(OnWithTimedOffRequest): DefaultSuccess = 66;
 }
 
 /** The Descriptor Cluster is meant to replace the support from the Zigbee Device Object (ZDO) for describing a node, its endpoints and clusters. */
@@ -1082,6 +1144,58 @@ server cluster BridgedDeviceBasicInformation = 57 {
   readonly attribute int16u clusterRevision = 65533;
 }
 
+/** This cluster exposes interactions with a switch device, for the purpose of using those interactions by other devices.
+Two types of switch devices are supported: latching switch (e.g. rocker switch) and momentary switch (e.g. push button), distinguished with their feature flags.
+Interactions with the switch device are exposed as attributes (for the latching switch) and as events (for both types of switches). An interested party MAY subscribe to these attributes/events and thus be informed of the interactions, and can perform actions based on this, for example by sending commands to perform an action such as controlling a light or a window shade. */
+server cluster Switch = 59 {
+  bitmap Feature : bitmap32 {
+    kLatchingSwitch = 0x1;
+    kMomentarySwitch = 0x2;
+    kMomentarySwitchRelease = 0x4;
+    kMomentarySwitchLongPress = 0x8;
+    kMomentarySwitchMultiPress = 0x10;
+  }
+
+  info event SwitchLatched = 0 {
+    int8u newPosition = 0;
+  }
+
+  info event InitialPress = 1 {
+    int8u newPosition = 0;
+  }
+
+  info event LongPress = 2 {
+    int8u newPosition = 0;
+  }
+
+  info event ShortRelease = 3 {
+    int8u previousPosition = 0;
+  }
+
+  info event LongRelease = 4 {
+    int8u previousPosition = 0;
+  }
+
+  info event MultiPressOngoing = 5 {
+    int8u newPosition = 0;
+    int8u currentNumberOfPressesCounted = 1;
+  }
+
+  info event MultiPressComplete = 6 {
+    int8u previousPosition = 0;
+    int8u totalNumberOfPressesCounted = 1;
+  }
+
+  readonly attribute int8u numberOfPositions = 0;
+  readonly attribute int8u currentPosition = 1;
+  readonly attribute command_id generatedCommandList[] = 65528;
+  readonly attribute command_id acceptedCommandList[] = 65529;
+  readonly attribute event_id eventList[] = 65530;
+  readonly attribute attrib_id attributeList[] = 65531;
+  readonly attribute bitmap32 featureMap = 65532;
+  readonly attribute int16u clusterRevision = 65533;
+}
+
 /** Commands to trigger a Node to allow a new Administrator to commission it. */
 server cluster AdministratorCommissioning = 60 {
   enum CommissioningWindowStatusEnum : enum8 {
@@ -1577,7 +1691,7 @@ endpoint 1 {
     callback attribute eventList;
     callback attribute attributeList;
     ram      attribute featureMap default = 0;
-    ram      attribute clusterRevision default = 2;
+    ram      attribute clusterRevision default = 4;
 
     handle command Identify;
   }
@@ -1598,6 +1712,7 @@ endpoint 1 {
 endpoint 2 {
   device type ma_onofflight = 256, version 2;
 
+  binding cluster Identify;
   binding cluster OnOff;
 
   server cluster Identify {
@@ -1651,6 +1766,9 @@ endpoint 2 {
     handle command Off;
     handle command On;
     handle command Toggle;
+    handle command OffWithEffect;
+    handle command OnWithRecallGlobalScene;
+    handle command OnWithTimedOff;
   }
 
   server cluster Descriptor {
@@ -1697,6 +1815,18 @@ endpoint 2 {
     callback attribute attributeList;
     ram      attribute featureMap default = 0;
     ram      attribute clusterRevision default = 2;
+  }
+
+  server cluster Switch {
+    emits event InitialPress;
+    ram      attribute numberOfPositions default = 2;
+    ram      attribute currentPosition;
+    callback attribute generatedCommandList;
+    callback attribute acceptedCommandList;
+    callback attribute eventList;
+    callback attribute attributeList;
+    ram      attribute featureMap default = 2;
+    ram      attribute clusterRevision default = 1;
   }
 
   server cluster TemperatureMeasurement {

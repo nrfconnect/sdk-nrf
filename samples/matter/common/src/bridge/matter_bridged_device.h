@@ -26,6 +26,8 @@ namespace Nrf {
 					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* client list */    \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::PartsList::Id, ARRAY,           \
 					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* parts list */     \
+		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::FeatureMap::Id, BITMAP32, 4,    \
+					  0), /* feature map */                                                        \
 		DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 /* Declare Bridged Device Basic Information cluster attributes */
@@ -81,7 +83,7 @@ public:
 		GenericSwitch = 0x000F
 	};
 	using IdentifyType = chip::app::Clusters::Identify::IdentifyTypeEnum;
-	static constexpr uint8_t kDefaultDynamicEndpointVersion = 1;
+	static constexpr uint8_t kDefaultDynamicEndpointVersion = 2;
 	static constexpr uint8_t kNodeLabelSize = 32;
 	static constexpr uint8_t kDescriptorAttributeArraySize = 254;
 
@@ -125,7 +127,7 @@ public:
 	static constexpr uint16_t GetBridgedDeviceBasicInformationClusterRevision() { return 2; }
 	static constexpr uint32_t GetBridgedDeviceBasicInformationFeatureMap() { return 0; }
 	static constexpr uint16_t GetIdentifyClusterRevision() { return 4; }
-	static constexpr uint32_t GetIdentifyClusterFeatureMap() { return 1; }
+	static constexpr uint32_t GetIdentifyClusterFeatureMap() { return 0; }
 
 	static void NotifyAttributeChange(intptr_t context);
 

@@ -48,6 +48,8 @@ DECLARE_DYNAMIC_CLUSTER(Clusters::OnOff::Id, onOffClientAttrs, ZAP_CLUSTER_MASK(
 				ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(SERVER),
 				sIdentifyIncomingCommands, nullptr),
+	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(CLIENT),
+				sIdentifyIncomingCommands, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Binding::Id, bindingAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr,
 				nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
@@ -81,6 +83,24 @@ CHIP_ERROR OnOffLightSwitchDevice::HandleRead(ClusterId clusterId, AttributeId a
 		return HandleReadOnOff(attributeId, buffer, maxReadLength);
 	case Clusters::Identify::Id:
 		return HandleReadIdentify(attributeId, buffer, maxReadLength);
+	case Clusters::Binding::Id:
+		return HandleReadBinding(attributeId, buffer, maxReadLength);
+	default:
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+}
+
+CHIP_ERROR OnOffLightSwitchDevice::HandleReadBinding(AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength)
+{
+	switch (attributeId) {
+	case Clusters::Binding::Attributes::FeatureMap::Id: {
+		uint32_t featureMap = GetBindingFeatureMap();
+		return CopyAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
+	}
+	case Clusters::Binding::Attributes::ClusterRevision::Id: {
+		uint16_t clusterRevision = GetBindingClusterRevision();
+		return CopyAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
+	}
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
