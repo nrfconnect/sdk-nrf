@@ -10,7 +10,7 @@
 
 class HumiditySensorDevice : public Nrf::MatterBridgedDevice {
 public:
-	static constexpr uint16_t kRelativeHumidityMeasurementClusterRevision = 4;
+	static constexpr uint16_t kRelativeHumidityMeasurementClusterRevision = 3;
 	static constexpr uint32_t kRelativeHumidityMeasurementFeatureMap = 0;
 
 	HumiditySensorDevice(const char *nodeLabel);

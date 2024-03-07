@@ -281,7 +281,7 @@
 			  ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* IdentifyTime */                                                          \
 			{ ZAP_SIMPLE_DEFAULT(0x00), 0x00000001, 1, ZAP_TYPE(ENUM8), 0 }, /* IdentifyType */                           \
 			{ ZAP_SIMPLE_DEFAULT(0), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                             \
-			{ ZAP_SIMPLE_DEFAULT(2), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
+			{ ZAP_SIMPLE_DEFAULT(4), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
                                                                                                                                       \
 			/* Endpoint: 1, Cluster: Descriptor (server) */                                                               \
 			{ ZAP_EMPTY_DEFAULT(), 0x00000000, 0, ZAP_TYPE(ARRAY),                                                        \
@@ -518,13 +518,16 @@
   0x00000000 /* Off */, \
   0x00000001 /* On */, \
   0x00000002 /* Toggle */, \
+  0x00000040 /* OffWithEffect */, \
+  0x00000041 /* OnWithRecallGlobalScene */, \
+  0x00000042 /* OnWithTimedOff */, \
   chip::kInvalidCommandId /* end of list */, \
 }
 
 // clang-format on
 
 // This is an array of EmberAfCluster structures.
-#define GENERATED_CLUSTER_COUNT 25
+#define GENERATED_CLUSTER_COUNT 26
 // clang-format off
 #define GENERATED_CLUSTERS { \
   { \
@@ -723,6 +726,19 @@
       .eventCount = 0, \
     },\
   { \
+      /* Endpoint: 2, Cluster: Identify (client) */ \
+      .clusterId = 0x00000003, \
+      .attributes = ZAP_ATTRIBUTE_INDEX(106), \
+      .attributeCount = 0, \
+      .clusterSize = 0, \
+      .mask = ZAP_CLUSTER_MASK(CLIENT), \
+      .functions = NULL, \
+      .acceptedCommandList = nullptr, \
+      .generatedCommandList = nullptr, \
+      .eventList = nullptr, \
+      .eventCount = 0, \
+    },\
+  { \
       /* Endpoint: 2, Cluster: Identify (server) */ \
       .clusterId = 0x00000003, \
       .attributes = ZAP_ATTRIBUTE_INDEX(106), \
@@ -862,7 +878,7 @@
 #define GENERATED_ENDPOINT_TYPES                                                                                       \
 	{                                                                                                              \
 		{ ZAP_CLUSTER_INDEX(0), 13, 98 }, { ZAP_CLUSTER_INDEX(13), 2, 13 },                                    \
-			{ ZAP_CLUSTER_INDEX(15), 10, 721 },                                                            \
+			{ ZAP_CLUSTER_INDEX(15), 11, 721 },                                                            \
 	}
 
 // Largest attribute size is needed for various buffers
