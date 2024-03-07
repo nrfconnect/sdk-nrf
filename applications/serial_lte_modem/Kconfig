@@ -76,7 +76,6 @@ config SLM_START_SLEEP
 	help
 	  If enabled, the SiP is put into deep sleep when powered on.
 	  It can then be started using SLM_POWER_PIN.
-	depends on SLM_POWER_PIN >= 0
 
 config SLM_POWER_PIN
 	int "Power pin"

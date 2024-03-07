@@ -37,6 +37,9 @@ static K_THREAD_STACK_DEFINE(slm_wq_stack_area, SLM_WQ_STACK_SIZE);
 static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 #if POWER_PIN_IS_ENABLED
 static struct gpio_callback gpio_cb;
+#else
+BUILD_ASSERT(!IS_ENABLED(CONFIG_SLM_START_SLEEP),
+	"START_SLEEP requires the POWER_PIN to be defined.");
 #endif
 static struct k_work_delayable indicate_work;
 
