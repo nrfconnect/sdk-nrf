@@ -45,6 +45,8 @@ To enable the HUK in an application, enable the :kconfig:option:`CONFIG_HW_UNIQU
 
 For more information, see the hardware unique key :ref:`library <lib_hw_unique_key>` and :ref:`sample <hw_unique_key_usage>`.
 
+.. _trusted_storage_in_ncs:
+
 Trusted storage in the |NCS|
 ****************************
 
@@ -123,6 +125,8 @@ For more information about the firmware upgrades, see the available :ref:`DFU li
 The |NCS| can be configured to enforce secure DFU mechanisms, including validating the digital signature of an image and checking for the version to prevent downgrade attacks.
 The secure DFU mechanisms are handled by the MCUboot bootloader.
 For more information, see the :doc:`MCUboot documentation <mcuboot:design>`.
+
+.. _cryptographic_operations_in_ncs:
 
 Cryptographic operations in |NCS|
 *********************************
