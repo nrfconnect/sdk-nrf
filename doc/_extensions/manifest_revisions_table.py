@@ -63,6 +63,9 @@ class ManifestRevisionsTable(SphinxDirective):
             URL for the revision.
         """
 
+        # remove .git from base_url, if present
+        base_url = base_url.split(".git")[0]
+
         if re.match(r"^[0-9a-f]{40}$", rev):
             return f"{base_url}/commit/{rev}"
 
