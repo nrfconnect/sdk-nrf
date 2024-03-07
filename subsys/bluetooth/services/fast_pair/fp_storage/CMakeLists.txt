@@ -27,3 +27,6 @@ if(CONFIG_BT_FAST_PAIR_STORAGE_EXPOSE_PRIV_API)
 else()
   target_include_directories(fp_storage PRIVATE include_priv)
 endif()
+
+# For strnlen()
+zephyr_library_compile_definitions(_POSIX_C_SOURCE=200809L)
