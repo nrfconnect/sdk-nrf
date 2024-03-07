@@ -8,13 +8,13 @@ tests:
       - nrf9161dk_nrf9161_ns
       - nrf9151dk_nrf9151_ns
       - thingy91_nrf9160_ns
-      - nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp_ns
     platform_allow:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
       - nrf9151dk_nrf9151_ns
       - thingy91_nrf9160_ns
-      - nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp_ns
     tags: ci_build
   sample.net.udp.emulation:
     build_only: true
