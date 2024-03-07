@@ -817,11 +817,9 @@ See the :file:`src/prj.conf` configuration file and the :file:`overlay_nrf7002ek
    The provided overlay for Wi-Fi connectivity uses the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` (with the PSA Protected Storage backend, see :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_PROTECTED_STORAGE`) to store credentials when not in use.
    Even though this is more secure than :ref:`hard-coded credentials <nrf_cloud_multi_service_build_hardcoded>`, the device private key still has to be loaded into unprotected memory during TLS connections.
 
-   Note also that connecting to nRF Cloud using Wi-Fi is currently only possible with MQTT.
-
 This overlay also enables the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credential installation.
 
-If you are certain you understand the risks, you can configure your build to use Wi-Fi connectivity on the nRF5340 DK with the nRF7002 EK shield by using the ``--board nrf5340dk_nrf5340_cpuapp`` target and the ``-DSHIELD=nrf7002ek`` and ``-DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf`` options.
+If you are certain you understand the risks, you can configure your build to use Wi-Fi connectivity on the nRF5340 DK with the nRF7002 EK shield by using the ``--board nrf5340dk_nrf5340_cpuapp_ns`` target and the ``-DSHIELD=nrf7002ek`` and ``-DOVERLAY_CONFIG=overlay_nrf7002ek_wifi_no_lte.conf`` options.
 
 You must also configure a (globally unique) device ID at build time by enabling the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and setting :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` to the device ID.
 
