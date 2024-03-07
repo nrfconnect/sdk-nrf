@@ -86,6 +86,8 @@ Before using the trusted storage library with its default settings and options, 
   * The settings subsystem uses the :ref:`zephyr:nvs_api` file system by default.
     This file system has to be mounted to a mount point at application startup. For more information about this, see :ref:`zephyr:file_system_api`.
 
+.. _trusted_storage_configuration:
+
 Configuration
 *************
 
