@@ -702,12 +702,13 @@ The following changes are recommended for your application to work optimally aft
 
 * For LwM2M applications, replace the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DTLS_CID` Kconfig option with :kconfig:option:`CONFIG_LWM2M_DTLS_CID`.
 
-* The :ref:`nrf53_audio_app` have changed the default controller from the :ref:`lib_bt_ll_acs_nrf53_readme` to Nordic Semiconductor's :ref:`ug_ble_controller_softdevice` (:ref:`softdevice_controller_iso`).
-  The new controller is included and built automatically.
-  Make sure to remove references to LE Audio controller for nRF5340 from your application.
-  There should be no negative impact on performance of the nRF5340 Audio applications with the new controller.
-  This change enables the use of standard |NCS| tools and procedures for building and configuring the controller.
-  The SoftDevice Controller will for some time not have a QDID for the ISO operation.
+* The :ref:`nrf53_audio_app` have changed the default controller from the :ref:`lib_bt_ll_acs_nrf53_readme` to Nordic Semiconductor's standard :ref:`ug_ble_controller_softdevice` (:ref:`softdevice_controller_iso`).
+  :ref:`ug_ble_controller_softdevice` is included and built automatically.
+  For NCS 2.6.0, tests have been run and issues documented as before for the previously used :ref:`lib_bt_ll_acs_nrf53_readme`.
+  However, :ref:`lib_bt_ll_acs_nrf53_readme` is marked as deprecated, it will be removed soon, and there will be no new features or fixes to this controller.
+  Make sure to remove references to LE Audio controller for nRF5340 from your application and transition to the new controller.
+  There should be no negative impact on performance of the nRF5340 Audio applications with the :ref:`ug_ble_controller_softdevice` controller.
+  This change enables the use of standard |NCS| tools and procedures for building, configuring and DFU.
 
 * For the Bluetooth Mesh samples and applications, a new sensor API (see :ref:`bt_mesh_sensors_readme`) is introduced with |NCS| v2.6.0.
   The previous sensor API is deprecated.
