@@ -9,7 +9,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <soc.h>
-#include <sdc_soc.h>
+#include <mpsl_ecb.h>
 #include <zephyr/drivers/entropy.h>
 
 #include "nrf_errno.h"
@@ -36,25 +36,20 @@ int bt_encrypt_le(const uint8_t key[BT_ECB_BLOCK_SIZE],
 		  const uint8_t plaintext[BT_ECB_BLOCK_SIZE],
 		  uint8_t enc_data[BT_ECB_BLOCK_SIZE])
 {
-	uint8_t key_le[BT_ECB_BLOCK_SIZE];
-	uint8_t plaintext_le[BT_ECB_BLOCK_SIZE];
-	uint8_t enc_data_le[BT_ECB_BLOCK_SIZE];
-
 	LOG_HEXDUMP_DBG(key, BT_ECB_BLOCK_SIZE, "key");
 	LOG_HEXDUMP_DBG(plaintext, BT_ECB_BLOCK_SIZE, "plaintext");
-
-	sys_memcpy_swap(key_le, key, BT_ECB_BLOCK_SIZE);
-	sys_memcpy_swap(plaintext_le, plaintext, BT_ECB_BLOCK_SIZE);
 
 	int errcode = MULTITHREADING_LOCK_ACQUIRE();
 
 	if (!errcode) {
-		errcode = sdc_soc_ecb_block_encrypt(key_le, plaintext_le, enc_data_le);
-		MULTITHREADING_LOCK_RELEASE();
-	}
+		mpsl_ecb_hal_data_t ecb_data;
 
-	if (!errcode) {
-		sys_memcpy_swap(enc_data, enc_data_le, BT_ECB_BLOCK_SIZE);
+		sys_memcpy_swap(ecb_data.key, key, BT_ECB_BLOCK_SIZE);
+		sys_memcpy_swap(ecb_data.cleartext, plaintext, BT_ECB_BLOCK_SIZE);
+		mpsl_ecb_block_encrypt(&ecb_data);
+		sys_memcpy_swap(enc_data, ecb_data.ciphertext, BT_ECB_BLOCK_SIZE);
+
+		MULTITHREADING_LOCK_RELEASE();
 
 		LOG_HEXDUMP_DBG(enc_data, BT_ECB_BLOCK_SIZE, "enc_data");
 	}
@@ -72,11 +67,15 @@ int bt_encrypt_be(const uint8_t key[BT_ECB_BLOCK_SIZE],
 	int errcode = MULTITHREADING_LOCK_ACQUIRE();
 
 	if (!errcode) {
-		errcode = sdc_soc_ecb_block_encrypt(key, plaintext, enc_data);
-		MULTITHREADING_LOCK_RELEASE();
-	}
+		mpsl_ecb_hal_data_t ecb_data;
 
-	if (!errcode) {
+		memcpy(ecb_data.key, key, BT_ECB_BLOCK_SIZE);
+		memcpy(ecb_data.cleartext, plaintext, BT_ECB_BLOCK_SIZE);
+		mpsl_ecb_block_encrypt(&ecb_data);
+		memcpy(enc_data, ecb_data.ciphertext, BT_ECB_BLOCK_SIZE);
+
+		MULTITHREADING_LOCK_RELEASE();
+
 		LOG_HEXDUMP_DBG(enc_data, BT_ECB_BLOCK_SIZE, "enc_data");
 	}
 
