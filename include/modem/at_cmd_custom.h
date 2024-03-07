@@ -55,11 +55,12 @@ int at_cmd_custom_respond(char *buf, size_t buf_size,
  * @param _filter The (partial) AT command on which the callback should trigger.
  * @param _callback The AT command callback function.
  */
-#define AT_CMD_CUSTOM(entry, _filter, _callback)                                              \
+#define AT_CMD_CUSTOM(entry, _filter, _callback)                                                   \
 	static int _callback(char *buf, size_t len, char *at_cmd);                                 \
 	static STRUCT_SECTION_ITERABLE(nrf_modem_at_cmd_custom, entry) = {                         \
 		.cmd = _filter,                                                                    \
 		.callback = _callback,                                                             \
+		.cmd_strlen = sizeof(_filter) - sizeof(char)                                       \
 	}
 
 /** @} */
