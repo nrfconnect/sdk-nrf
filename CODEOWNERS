@@ -86,7 +86,6 @@ Kconfig*                                  @tejlmand
 /drivers/wifi/nrf700x/                    @krish2718 @sachinthegreen @rado17 @rlubos
 /dts/                                     @anangl
 /ext/                                     @carlescufi
-/ext/oberon/                              @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /include/                                 @anangl @rlubos
 /include/net/azure_*                      @nrfconnect/ncs-cia @coderbyheart
 /include/net/wifi_credentials.h           @nrfconnect/ncs-cia

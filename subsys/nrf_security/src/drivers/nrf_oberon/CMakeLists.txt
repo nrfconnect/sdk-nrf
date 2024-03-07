@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-set(drivers_path ${OBERON_PSA_PATH}/drivers)
+set(drivers_path ${OBERON_PSA_PATH}/oberon/drivers)
 
 # Link to libraries
 if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
