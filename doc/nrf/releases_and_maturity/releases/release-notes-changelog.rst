@@ -768,6 +768,8 @@ Documentation
   * The :ref:`ug_bt_mesh_configuring` page with an example of possible entries in the Settings NVS name cache.
   * The :ref:`lib_security` page to include all security-related libraries.
 
+  * Reworked the :ref:`ble_rpc` page to be more informative and aligned with the library template.
+
 * Fixed:
 
   * Replaced the occurrences of the outdated :makevar:`OVERLAY_CONFIG` with the currently used :makevar:`EXTRA_CONF_FILE`.
