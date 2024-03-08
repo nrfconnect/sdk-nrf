@@ -39,13 +39,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/SHEL-2579"
 
 - scenarios:
-    - applications.matter_bridge.nrf70ek
-    - sample.matter.lock.thread_wifi_switched
-  platforms:
-    - nrf5340dk_nrf5340_cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-26462"
-
-- scenarios:
     - sample.caf_sensor_manager.nrf54h20.multicore
     - sample.cellular.modem_shell.modem_trace_shell_ext_flash
     - sample.event_manager_proxy.nrf54h20pdk_cpuapp.icmsg
