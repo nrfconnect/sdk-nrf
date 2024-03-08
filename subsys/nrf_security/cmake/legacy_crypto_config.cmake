@@ -294,6 +294,12 @@ if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
   # Copy an empty PSA user-config, as it is not needed for legacy builds
   # Generate an empty file to prevent build issues
   configure_file(${NRF_SECURITY_ROOT}/configs/nrf-config-user-empty.h
-    ${generated_include_path}/${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}
+    ${generated_include_path}/${CONFIG_MBEDTLS_USER_CONFIG_FILE}
   )
+
+  # Copy an empty file to psa/crypto_config.h to ensure we don't use this functionality
+  configure_file(${NRF_SECURITY_ROOT}/configs/nrf-config-user-empty.h
+    ${generated_include_path}/psa/crypto_config.h
+  )
+
 endif()

@@ -7,7 +7,7 @@
 config MBEDTLS_PSA_CRYPTO_C
 	bool
 	prompt "Enable PSA crypto APIs"
-	default y
+	default y if BUILD_WITH_TFM || !NORDIC_SECURITY_BACKEND
 	help
 	  Enable the Platform Security Architecture cryptography API.
 	  Corresponds to setting in mbed TLS config file.

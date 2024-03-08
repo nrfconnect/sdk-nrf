@@ -314,6 +314,7 @@ config OBERON_BACKEND
 	prompt "Configuration to enable nrf_oberon for legacy mbed TLS APIs"
 	select NRF_OBERON
 	depends on !(CC3XX_BACKEND_FORCED || CC3XX_BACKEND)
+	default y if !MBEDTLS_PSA_CRYPTO_C
 	help
 	  This configuration enables legacy mbed TLS APIs using nrf_oberon.
 	  PSA_CRYPTO_DRIVER_OBERON should be used instead and will replace this once
@@ -324,6 +325,7 @@ config MBEDTLS_CTR_DRBG_C
 	prompt "PRNG using CTR_DRBG"
 	select MBEDTLS_AES_C
 	default y if !HAS_HW_NRF_CC3XX
+	depends on !MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG || MBEDTLS_LEGACY_CRYPTO_C
 	help
 	  This setting will enable CTR_DRBG APIs in mbed TLS.
 	  Corresponds to MBEDTLS_CTR_DRBG_C setting in mbed TLS config file.
@@ -662,6 +664,7 @@ config MBEDTLS_HKDF_C
 	bool
 	prompt "HKDF support"
 	default y
+	depends on MBEDTLS_TLS_LIBRARY || BUILD_WITH_TFM
 	help
 	  Enable HKDF support.
 	  MBEDTLS_HKDF_C setting in mbed TLS config file.
@@ -669,7 +672,7 @@ config MBEDTLS_HKDF_C
 config MBEDTLS_RSA_C
 	bool
 	prompt "RSA - Rivest-Shamir-Adleman cryptosystem"
-	depends on PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY || !MBEDTLS_USE_PSA_CRYPTO
+	depends on PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY || !MBEDTLS_TLS_LIBRARY
 	help
 	  Enable RSA cryptosystem support.
 	  MBEDTLS_RSA_C setting in mbed TLS config file.
@@ -712,6 +715,7 @@ config MBEDTLS_SHA224_C
 	bool
 	prompt "SHA-224 hash functionality"
 	default y if !NET_L2_OPENTHREAD
+	default y if MBEDTLS_SHA256_C
 	help
 	  SHA-224 hash functionality.
 

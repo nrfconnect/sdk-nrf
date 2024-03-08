@@ -25,17 +25,8 @@ add_library(mbedcrypto_common INTERFACE)
 target_compile_definitions(mbedcrypto_common
   INTERFACE
     -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
+    -DMBEDTLS_USER_CONFIG_FILE="${CONFIG_MBEDTLS_USER_CONFIG_FILE}"
 )
-
-# Add the user config only if it is set
-if(NOT ${CONFIG_MBEDTLS_USER_CONFIG_FILE} STREQUAL "nrf-config-user-empty.h" )
-  target_compile_definitions(mbedcrypto_common
-    INTERFACE
-      -DMBEDTLS_USER_CONFIG_FILE="${CONFIG_MBEDTLS_USER_CONFIG_FILE}"
-  )
-endif()
 
 if(BUILD_INSIDE_TFM)
   # In order to support FPU in TF-M the following is documented by the TF-M
@@ -59,9 +50,6 @@ set(generated_include_path ${CMAKE_CURRENT_BINARY_DIR}/include/generated)
 
 # Empty out previous versions of config-files
 file(REMOVE_RECURSE ${generated_include_path})
-
-# Generate PSA WANT configurations
-include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_want_config.cmake)
 
 # Generate mbed TLS configurations
 if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR NOT COMPILE_PSA_APIS)
@@ -124,6 +112,8 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
   padlock.c
   version.c
   constant_time.c
+  platform.c
+  platform_util.c
 )
 
 # Add base library with files required by all drivers/backends.
