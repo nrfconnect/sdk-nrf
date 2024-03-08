@@ -176,7 +176,7 @@ static int wpa_supp_process_status(struct supp_int_event_data *event_data, char 
 	case WPA_SUPP_EVENT_NETWORK_ADDED:
 	case WPA_SUPP_EVENT_NETWORK_REMOVED:
 		strncpy(data->supp_event_str, event_info.event_str,
-				 sizeof(data->supp_event_str));
+				 sizeof(data->supp_event_str)-1);
 		event_data->data_len = strlen(data->supp_event_str) + 1;
 	case WPA_SUPP_EVENT_DSCP_POLICY:
 		/* TODO */
