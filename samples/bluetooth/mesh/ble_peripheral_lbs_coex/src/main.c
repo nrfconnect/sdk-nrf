@@ -24,8 +24,17 @@ static void bt_ready(int err)
 
 	printk("Bluetooth initialized\n");
 
-	dk_leds_init();
-	dk_buttons_init(NULL);
+	err = dk_leds_init();
+	if (err) {
+		printk("Initializing LEDs failed (err %d)\n", err);
+		return;
+	}
+
+	err = dk_buttons_init(NULL);
+	if (err) {
+		printk("Initializing buttons failed (err %d)\n", err);
+		return;
+	}
 
 	err = bt_mesh_init(bt_mesh_dk_prov_init(), model_handler_init());
 	if (err) {
