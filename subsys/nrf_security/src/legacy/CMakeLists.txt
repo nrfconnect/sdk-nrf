@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-set(is_getting_includes FALSE)
-
 # Legacy APIs missing driver support or APIs assumed to be
 # deprecated with more PSA API awareness.
 append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
@@ -73,7 +71,6 @@ if(NOT CONFIG_OBERON_BACKEND)
     chacha20.c
     poly1305.c
     ecjpake.c
-    platform.c
   )
 endif()
 
@@ -107,7 +104,6 @@ if(DEFINED src_crypto_legacy_base)
 endif()
 
 if(TARGET mbedcrypto_oberon_mbedtls_imported)
-  set(is_getting_includes TRUE)
 
   # Get the include paths from nrf_oberon libraries
   get_target_property(NRF_OBERON_MBEDTLS_INCLUDE_PATH mbedcrypto_oberon_mbedtls_imported
@@ -125,7 +121,7 @@ if(TARGET mbedcrypto_oberon_mbedtls_imported)
 
 target_link_libraries(mbedcrypto_oberon_mbedtls_imported
   INTERFACE
-    mbedcrypto_base
+    ${mbedcrypto_target}
 )
 
   # Add nrf_oberon includes to mbedcrypto library
@@ -138,63 +134,63 @@ endif()
 
 
 if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C AND CONFIG_CC3XX_BACKEND)
-  set(is_getting_includes TRUE)
 
-  # Link directly with cc3xx platform/mbedcrypto libraries
-  target_link_libraries(${mbedcrypto_target} PRIVATE
-    nrf_cc3xx_legacy_crypto_imported
-  )
+  if (CONFIG_PSA_CRYPTO_C)
+    # Link directly with cc3xx core library
+    target_link_libraries(${mbedcrypto_target}
+      PRIVATE
+        nrf_cc3xx_core_imported
+    )
+  else()
+    # Link with legacy cc3xx legacy mbedcrypto library
+    target_link_libraries(${mbedcrypto_target}
+      PRIVATE
+        nrf_cc3xx_legacy_crypto_imported
+    )
 
-  target_link_libraries(nrf_cc3xx_core_imported
-    INTERFACE
-      mbedcrypto_base
-  )
+    # Resolve dependency bug for CC_EcMontScalarmult and CC_EcMontKeyPairBase
+    # being in the wrong library (is in core, should be in legacy so we have
+    # made a dependency the other way around). Resolving by going a level above
+    target_link_libraries(nrf_cc3xx_core_imported INTERFACE
+      ${mbedcrypto_target}
+    )
 
-  # Add cc3xx platform/mbedcrypto includes to mbedcrypto library
+  endif()
+
+  # Add cc3xx core and platform includes to mbedcrypto library
   target_include_directories(mbedcrypto_common
     INTERFACE
       $<TARGET_PROPERTY:nrf_cc3xx_core_imported,INTERFACE_INCLUDE_DIRECTORIES>
   )
 endif()
 
-if(TARGET nrf_cc3xx_core_imported)
-  set(is_getting_includes TRUE)
-
-  # The CC3XX needs funcionality which is provided by the inluded source files in src_crypto_legacy
-  # Link CC3XX with mbedcrypto_target because of link order dependency
-  target_link_libraries(nrf_cc3xx_core_imported INTERFACE
-    ${mbedcrypto_target}
-  )
-
-  get_target_property(NRF_CC3XX_MBEDCRYPTO_INCLUDE_PATH nrf_cc3xx_core_imported INTERFACE_INCLUDE_DIRECTORIES)
-
-  target_include_directories(mbedcrypto_common
-    INTERFACE
-      ${NRF_CC3XX_MBEDCRYPTO_INCLUDE_PATH}
-  )
-endif()
-
 target_include_directories(${mbedcrypto_target}
-INTERFACE
-  $<$<TARGET_EXISTS:nrf_cc3xx_platform>:$<TARGET_PROPERTY:nrf_cc3xx_platform,INTERFACE_INCLUDE_DIRECTORIES>>
+  INTERFACE
+    $<$<TARGET_EXISTS:nrf_cc3xx_platform>:$<TARGET_PROPERTY:nrf_cc3xx_platform,INTERFACE_INCLUDE_DIRECTORIES>>
 )
 
-if(NOT is_getting_includes)
+if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_C AND NOT CONFIG_BUILD_WITH_TFM)
+
   if(NOT DEFINED ARM_MBEDTLS_PATH)
-  message(FATAL_ERROR "misconfiguration")
+    message(FATAL_ERROR "misconfiguration")
   endif()
 
+
+  # If Oberon PSA core is not built, then there is a need to provide
+  # include files here.
+  #
+  #
   # Add mbedtls legacy include paths to the mbedtls legacy library and
   # it's users (users get the headers because we use interface).  Also
   # since nrf_security only provides some of the headers, add the rest
   # from Zephyr. We place nrf_security before ARM_MBEDTLS_PATH so that
   # nrf_security takes precedence.
   target_include_directories(${mbedcrypto_target}
-  INTERFACE
-  ${NRF_SECURITY_ROOT}/include
-    ${OBERON_PSA_PATH}/core/include
-    ${OBERON_PSA_PATH}/core/library
-  ${ARM_MBEDTLS_PATH}/include
-  ${ARM_MBEDTLS_PATH}/library
+    INTERFACE
+      ${NRF_SECURITY_ROOT}/include
+      ${OBERON_PSA_PATH}/core/include
+      ${OBERON_PSA_PATH}/core/library
+      ${ARM_MBEDTLS_PATH}/include
+      ${ARM_MBEDTLS_PATH}/library
   )
 endif()

@@ -24,11 +24,6 @@ target_include_directories(mbedcrypto_common
     ${ARM_MBEDTLS_PATH}/library
 )
 
-append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_PATH}/core/library/
-  platform.c
-  platform_util.c
-)
-
 if (COMPILE_PSA_APIS)
   append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_PATH}/core/library/
     psa_crypto.c

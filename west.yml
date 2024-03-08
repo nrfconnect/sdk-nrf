@@ -138,11 +138,11 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.5.2-ncs1-rc1
+      revision: pull/33/head
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: d6fee9061581666511b82a14b93d3e667f6b35d1
+      revision: pull/1255/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -154,7 +154,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 1e9f9b28141f663c3be1fdfa0c128cd774c35c89
+      revision: pull/406/head
       submodules:
         - name: nlio
           path: third_party/nlio/repo
