@@ -153,7 +153,7 @@ class KConfig(dict):
                 for line in config:
                     if not line.startswith("CONFIG_"):
                         continue
-                    kconfig, value = line.split("=")
+                    kconfig, value = line.split("=", 1)
                     configs[kconfig] = value.strip()
                 return configs
         except Exception as err :
