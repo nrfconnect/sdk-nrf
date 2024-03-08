@@ -176,10 +176,11 @@ if(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
     )
     add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex
       COMMAND ${Python3_EXECUTABLE}
-        -c 'import sys\; import intelhex\; intelhex.bin2hex(sys.argv[1], sys.argv[2], int(sys.argv[3])) '
+        -c "import sys; import intelhex; intelhex.bin2hex(sys.argv[1], sys.argv[2], int(sys.argv[3])) "
         ${NRF70_PATCH}
         ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex
         $<TARGET_PROPERTY:partition_manager,nrf70_wifi_fw_XIP_ABS_ADDR>
+        VERBATIM
       )
     # Delegate merging WiFi FW patch to mcuboot because we need to merge signed hex instead of raw nrf70.hex.
     if(NOT CONFIG_NRF_WIFI_FW_PATCH_DFU)
