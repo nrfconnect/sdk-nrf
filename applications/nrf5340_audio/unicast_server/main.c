@@ -422,7 +422,7 @@ static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size
 	int ret;
 	size_t ext_adv_buf_cnt = 0;
 
-	NET_BUF_SIMPLE_DEFINE(uuid_buf, CONFIG_EXT_ADV_UUID_BUF_MAX);
+	NET_BUF_SIMPLE_DEFINE_STATIC(uuid_buf, CONFIG_EXT_ADV_UUID_BUF_MAX);
 
 	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_UUID16_SOME;
 	ext_adv_buf[ext_adv_buf_cnt].data_len = 0;
