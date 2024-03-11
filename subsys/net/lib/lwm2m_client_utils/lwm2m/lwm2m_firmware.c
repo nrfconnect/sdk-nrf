@@ -947,10 +947,10 @@ static int write_dl_uri(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 
 
 	LOG_DBG("write URI: %s", package_uri);
-
 	state = get_state(obj_inst_id);
+	bool empty_uri = data_len == 0 || strnlen(data, data_len) == 0;
 
-	if (state == STATE_IDLE && data_len > 0) {
+	if (state == STATE_IDLE && !empty_uri) {
 		set_state(obj_inst_id, STATE_DOWNLOADING);
 
 		if (ongoing_obj_id == UNUSED_OBJ_ID) {
@@ -961,7 +961,7 @@ static int write_dl_uri(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 				set_result(obj_inst_id, RESULT_ADV_CONFLICT_STATE);
 			}
 		}
-	} else if (data_len == 0) {
+	} else if (empty_uri) {
 		if (ongoing_obj_id == UNUSED_OBJ_ID || ongoing_obj_id == obj_inst_id) {
 			ongoing_obj_id = obj_inst_id;
 			/* reset to state idle and result default */
