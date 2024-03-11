@@ -31,4 +31,16 @@
 #define CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED 2
 #define CRACEN_KMU_KEY_USAGE_SCHEME_RAW	      3
 
+/**
+ * @brief Retrieves the slot number for a given key handle.
+ *
+ * @param[in]  key_id      Key handler.
+ * @param[out] lifetime    Lifetime for key.
+ * @param[out] slot_number The key's slot number.
+ *
+ * @return psa_status_t
+ */
+psa_status_t cracen_kmu_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
+				     psa_drv_slot_number_t *slot_number);
+
 #endif /* CRACEN_PSA_KMU_H */

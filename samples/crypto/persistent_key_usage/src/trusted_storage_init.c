@@ -25,7 +25,6 @@ static int setup_settings_backend(void)
 SYS_INIT(setup_settings_backend, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
 #ifdef CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
-#include <nrf_cc3xx_platform.h>
 #include <hw_unique_key.h>
 
 #ifndef HUK_HAS_KMU

@@ -15,9 +15,6 @@
 #include "common.h"
 #include "microcode_binary.h"
 
-/* The KMU slot that is used for the CRACEN->SEED. */
-#define SLOT_OFFSET 0
-
 static int users;
 
 K_MUTEX_DEFINE(cracen_mutex);
@@ -43,108 +40,6 @@ static void cracen_load_microcode(void)
 	for (size_t i = 0; i < BA414EP_UCODE_SIZE; i++) {
 		microcode_addr[i] = ba414ep_ucode[i];
 	}
-}
-
-/**
- * @brief Function to check if the KMU seed slot is empty
- *
- * This will check three slots from a given slot_ofset to see
- * that they are filled.
- *
- * @param[in]	slot_offset	Offset for the KMU seed slot
- *
- * @retval true if empty, otherwise false.
- */
-static bool cracen_is_kmu_seed_empty(uint32_t slot_offset)
-{
-	for (size_t i = 0; i < 3; i++) {
-		if (!lib_kmu_is_slot_empty(slot_offset + i)) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-/**
- * @brief Function to load the CRACEN IKG seed
- *
- * Use the KMU peripheral to load a seed from KMU slot "slot_offset",
- * "slot_offset+1", and "slot_offset+2" into the CRACEN IKG seed registers.
- *
- * These KMU slots must first have been provisioned with an appropriate seed.
- */
-static int cracen_load_kmu_seed(uint32_t slot_offset)
-{
-	for (size_t i = 0; i < 3; i++) {
-		LOG_DBG("Pushing KMU slot %d\n", slot_offset + i);
-
-		int err = lib_kmu_push_slot(slot_offset + i);
-
-		if (err) {
-			LOG_ERR("Failed to push KMU slot %d\n", slot_offset + i);
-			return err;
-		}
-	}
-
-	return 0;
-}
-
-static psa_status_t cracen_prng_init_kmu_seed(uint32_t slot_offset)
-{
-	psa_status_t status;
-	int err;
-
-	LOG_DBG("Generating KMU seed\n");
-
-	/* If the IKG seed is already loaded (and locked). New seed can't be
-	 * generated!
-	 */
-	bool is_locked = nrf_cracen_seedram_lock_check(NRF_CRACEN);
-
-	if (is_locked) {
-		LOG_DBG("CRACEN IKG seed is already loaded!\n");
-		return PSA_SUCCESS;
-	}
-
-	/* Initialize CRACEN PRNG */
-	status = cracen_init_random(NULL);
-	if (status != PSA_SUCCESS) {
-		LOG_DBG("Unable to initialize PRNG: %d\n", status);
-		return status;
-	}
-
-	for (size_t i = 0; i < IKG_SEED_KMU_SLOT_NUM; i++) {
-		struct kmu_src_t src;
-
-		/* Check that the KMU slot is empty before generation. */
-		if (!lib_kmu_is_slot_empty(slot_offset + i)) {
-			LOG_DBG("KMU isn't empty (slot %d). Can't generate CRACEN IKG seed!\n",
-				slot_offset + i);
-			return PSA_ERROR_BAD_STATE;
-		}
-
-		/* Populate src.value using the random data */
-		status = cracen_get_random(NULL, (char *)src.value, sizeof(src.value));
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-
-		src.rpolicy = LIB_KMU_REV_POLICY_LOCKED;
-		src.dest = (uint64_t *)(&(NRF_CRACEN->SEED[i * 4]));
-
-		/* There is no significance to the metadata value yet */
-		src.metadata = 0x5EB0;
-
-		err = lib_kmu_provision_slot(slot_offset + i, &src);
-		if (err) {
-			return PSA_ERROR_GENERIC_ERROR;
-		}
-
-		LOG_DBG("Provisioned KMU slot %d\n", i);
-	}
-
-	return PSA_SUCCESS;
 }
 
 void cracen_acquire(void)
@@ -233,49 +128,6 @@ int cracen_init(void)
 	if (err != SX_OK) {
 		status = silex_statuscodes_to_psa(err);
 		goto exit;
-	}
-
-	if (IS_ENABLED(CONFIG_CRACEN_LOAD_KMU_SEED)) {
-		/**
-		 * Check that the KMU contains the CRACEN IKG seed value.
-		 */
-		if (cracen_is_kmu_seed_empty(SLOT_OFFSET)) {
-			if (IS_ENABLED(CONFIG_CRACEN_GENERATE_KMU_SEED)) {
-				err = cracen_prng_init_kmu_seed(SLOT_OFFSET);
-				if (err != 0) {
-					goto exit;
-				}
-			} else {
-				/**
-				 * Mismatch in configuration. We have enabled
-				 * CONFIG_CRACEN_LOAD_KMU_SEED but we have no KMU stored and no way
-				 * to generate it.
-				 */
-				LOG_ERR("CRACEN IKG seed is not in KMU, and we have no way to "
-					"generate it!");
-				k_panic();
-			}
-		}
-
-		/* Try to push the CRACEN IKG seed from KMU */
-		LOG_DBG("Loading CRACEN IKG seed from KMU...");
-		if (cracen_load_kmu_seed(SLOT_OFFSET) != 0) {
-			LOG_ERR("Unable to load CRACEN IKG seed!");
-			err = -ENODATA;
-			goto exit;
-		}
-
-		if (IS_ENABLED(CONFIG_SOC_SERIES_NRF54LX)) {
-			/**
-			 * Lock the CRACEN seed RAM.
-			 *
-			 * This must be done before the IKG engine is started.
-			 *
-			 * We only lock it on 54L because on 54H the SDROM locks the
-			 * Seed RAM for us.
-			 */
-			nrf_cracen_seedram_lock_enable_set(NRF_CRACEN, true);
-		}
 	}
 
 exit:

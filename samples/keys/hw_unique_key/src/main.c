@@ -8,12 +8,14 @@
 #include <zephyr/logging/log.h>
 #include <string.h>
 #include <stdio.h>
-#include <hw_unique_key.h>
 #include <psa/crypto.h>
 #ifdef CONFIG_BUILD_WITH_TFM
 #include <tfm_crypto_defs.h>
 #else /* CONFIG_BUILD_WITH_TFM */
+#include <hw_unique_key.h>
+#ifdef CONFIG_HW_CC3XX
 #include <nrf_cc3xx_platform.h>
+#endif
 #endif /* CONFIG_BUILD_WITH_TFM */
 #if !defined(HUK_HAS_KMU)
 #include <zephyr/sys/reboot.h>
@@ -51,12 +53,16 @@ int crypto_init(void)
 	psa_status_t status;
 
 #if !defined(CONFIG_BUILD_WITH_TFM)
-	int result = nrf_cc3xx_platform_init();
+	int result;
+
+#if defined(HUK_HAS_CC310) || defined(HUK_HAS_CC312)
+	result = nrf_cc3xx_platform_init();
 
 	if (result != NRF_CC3XX_PLATFORM_SUCCESS) {
 		LOG_INF("nrf_cc3xx_platform_init returned error: %d", result);
 		return APP_ERROR;
 	}
+#endif
 
 	if (!hw_unique_key_are_any_written()) {
 		LOG_INF("Writing random keys to KMU");
@@ -109,7 +115,7 @@ int generate_key(void)
 			(PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT));
 	psa_set_key_algorithm(&attributes, ENCRYPT_ALG);
 	psa_set_key_type(&attributes, PSA_KEY_TYPE_AES);
-	psa_set_key_bits(&attributes, PSA_BYTES_TO_BITS(HUK_SIZE_BYTES));
+	psa_set_key_bits(&attributes, 128);
 
 	status = derive_key(&attributes, key_label, sizeof(key_label) - 1, &key_id);
 	if (status != PSA_SUCCESS) {
