@@ -125,7 +125,7 @@ public:
 	 * @return CHIP_NO_ERROR on success
 	 * @return other error code on failure
 	 */
-	CHIP_ERROR Init(bt_uuid **serviceUuids, uint8_t serviceUuidsCount);
+	CHIP_ERROR Init(const bt_uuid **serviceUuids, uint8_t serviceUuidsCount);
 
 	/**
 	 * @brief Start scanning for Bluetooth LE peripheral devices advertising service UUIDs passed in @ref Init

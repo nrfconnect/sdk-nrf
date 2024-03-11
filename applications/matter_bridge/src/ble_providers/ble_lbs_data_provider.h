@@ -33,7 +33,7 @@ public:
 	static uint8_t GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_params *params, const void *data,
 					  uint16_t length);
 
-	bt_uuid *GetServiceUuid() override;
+	const bt_uuid *GetServiceUuid() override;
 	int ParseDiscoveredData(bt_gatt_dm *discoveredData) override;
 
 private:

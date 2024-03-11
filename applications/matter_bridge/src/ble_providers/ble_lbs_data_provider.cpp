@@ -22,10 +22,10 @@ using namespace ::chip;
 using namespace ::chip::app;
 using namespace Nrf;
 
-static bt_uuid *sServiceUuid = BT_UUID_LBS;
-static bt_uuid *sUuidLED = BT_UUID_LBS_LED;
-static bt_uuid *sUuidButton = BT_UUID_LBS_BUTTON;
-static bt_uuid *sUuidCcc = BT_UUID_GATT_CCC;
+static const bt_uuid *sServiceUuid = BT_UUID_LBS;
+static const bt_uuid *sUuidLED = BT_UUID_LBS_LED;
+static const bt_uuid *sUuidButton = BT_UUID_LBS_BUTTON;
+static const bt_uuid *sUuidCcc = BT_UUID_GATT_CCC;
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
 void ProcessCommand(const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice, Nrf::Matter::BindingHandler::BindingData &aData)
@@ -177,7 +177,7 @@ CHIP_ERROR BleLBSDataProvider::UpdateState(chip::ClusterId clusterId, chip::Attr
 	return CHIP_NO_ERROR;
 }
 
-bt_uuid *BleLBSDataProvider::GetServiceUuid()
+const bt_uuid *BleLBSDataProvider::GetServiceUuid()
 {
 	return sServiceUuid;
 }

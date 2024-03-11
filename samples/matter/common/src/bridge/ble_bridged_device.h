@@ -37,7 +37,7 @@ public:
 	}
 	~BLEBridgedDeviceProvider() { BLEConnectivityManager::Instance().RemoveBLEProvider(GetBtAddress()); }
 
-	virtual bt_uuid *GetServiceUuid() = 0;
+	virtual const bt_uuid *GetServiceUuid() = 0;
 	virtual int ParseDiscoveredData(bt_gatt_dm *discoveredData) = 0;
 
 	BLEBridgedDevice &GetBLEBridgedDevice() { return mDevice; }
