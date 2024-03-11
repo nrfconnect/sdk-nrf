@@ -404,7 +404,7 @@ void BLEConnectivityManager::DiscoveryError(bt_conn *conn, int err, void *contex
 	Instance().UpdateRecovery();
 }
 
-CHIP_ERROR BLEConnectivityManager::Init(bt_uuid **serviceUuids, uint8_t serviceUuidsCount)
+CHIP_ERROR BLEConnectivityManager::Init(const bt_uuid **serviceUuids, uint8_t serviceUuidsCount)
 {
 	if (!serviceUuids || serviceUuidsCount > kMaxServiceUuids) {
 		return CHIP_ERROR_INVALID_ARGUMENT;

@@ -44,9 +44,9 @@ using namespace ::chip::DeviceLayer;
 namespace
 {
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-static bt_uuid *sUuidLbs = BT_UUID_LBS;
-static bt_uuid *sUuidEs = BT_UUID_ESS;
-static bt_uuid *sUuidServices[] = { sUuidLbs, sUuidEs };
+static const bt_uuid *sUuidLbs = BT_UUID_LBS;
+static const bt_uuid *sUuidEs = BT_UUID_ESS;
+static const bt_uuid *sUuidServices[] = { sUuidLbs, sUuidEs };
 static constexpr uint8_t kUuidServicesNumber = ARRAY_SIZE(sUuidServices);
 /**
  * @brief Blink rates for indication the BLE Connectivity Manager state.

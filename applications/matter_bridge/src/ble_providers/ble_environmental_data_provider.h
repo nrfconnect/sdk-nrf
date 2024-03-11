@@ -19,7 +19,7 @@ public:
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
 			       size_t dataSize) override;
 	CHIP_ERROR UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override;
-	bt_uuid *GetServiceUuid() override;
+	const bt_uuid *GetServiceUuid() override;
 	int ParseDiscoveredData(bt_gatt_dm *discoveredData) override;
 
 private:
