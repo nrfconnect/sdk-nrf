@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+#
+# Template for defining service options for SSF services.
+#
+# Set the following variables before sourcing this file:
+#
+# service_name            - Short uppercase name for use in the service's Kconfig options.
+# service_default_enabled - 'y' to enable service by default,
+#                           'n' if service should not be enabled by default.
+# service_id              - Hexadecimal Service ID. To identify service when exchanging request
+#                           and notification messages. All services should have unique IDs.
+# service_version         - Service version number.
+# service_buffer_size     - Size of buffer to allocate when sending request, response or
+#                           notification messages in connection with the service.
+# service_name_str        - Printable name for the service.
+#
+menuconfig SSF_$(service_name)_SERVICE_ENABLED
+	bool "$(service_name_str) service"
+	default y if $(service_default_enabled)
+	depends on SDFW_SERVICES_ENABLED
+
+if SSF_$(service_name)_SERVICE_ENABLED
+
+config SSF_$(service_name)_SERVICE_ID
+	hex
+	default $(service_id)
+	help
+	  Service ID for $(service_name_str) service
+
+config SSF_$(service_name)_SERVICE_VERSION
+	int
+	default $(service_version)
+	help
+	  Version of $(service_name_str) service
+
+config SSF_$(service_name)_SERVICE_BUFFER_SIZE
+	int "Buffer size for $(service_name_str) service handler"
+	default $(service_buffer_size)
+
+module = SSF_$(service_name)_SERVICE
+module-str = $(service_name_str) service
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif

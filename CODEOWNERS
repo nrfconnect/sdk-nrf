@@ -100,6 +100,7 @@ Kconfig*                                  @tejlmand
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
+/include/sdfw_services/                   @anhmolt @hakonfam @jonathannilsen
 /include/shell/                           @nordic-krch
 /lib/bin/                                 @rlubos @lemrey
 /lib/adp536x/                             @nrfconnect/ncs-cia
@@ -266,6 +267,7 @@ Kconfig*                                  @tejlmand
 /subsys/pcd/                              @hakonfam
 /subsys/nrf_profiler/                     @pdunaj
 /subsys/shell/                            @nordic-krch
+/subsys/sdfw_services/                    @anhmolt @hakonfam @jonathannilsen
 /subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /subsys/trusted_storage/                  @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /subsys/uart_async_adapter/               @rakons
@@ -334,6 +336,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
+/tests/subsys/sdfw_services/              @anhmolt @hakonfam @jonathannilsen
 /tests/subsys/zigbee/                     @milewr
 /tests/tfm/                               @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch

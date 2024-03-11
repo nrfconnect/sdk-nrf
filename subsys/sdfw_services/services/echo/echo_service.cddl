@@ -1,0 +1,18 @@
+;
+; Copyright (c) 2024 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+; .. include_startingpoint_echo_cddl_rst
+; Echo service request payload.
+echo_service_req = [
+	str_in: tstr,
+]
+
+; Echo service response payload.
+echo_service_rsp = [
+	ret: int,
+	str_out: tstr,
+]
+; .. include_endpoint_echo_cddl_rst

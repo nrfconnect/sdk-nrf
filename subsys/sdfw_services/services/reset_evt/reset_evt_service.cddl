@@ -1,0 +1,21 @@
+;
+; Copyright (c) 2024 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+; Subscribe to reset events
+reset_evt_sub_req = [
+	subscribe: bool, ; True for subscribe, false for unsubscribe
+]
+
+; Response from subscribing to reset event service.
+reset_evt_sub_rsp = [
+	status: int,
+]
+
+; Reset event notification message.
+reset_evt_notif = [
+	domains: uint, ; Bitfield of domains that will be reset
+	delay_ms: uint, ; Delay in milliseconds before the incoming reset
+]

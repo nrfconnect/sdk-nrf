@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SSF_NRF_RPC_CMD_ID
+	hex
+	default 0x42
+	help
+	  nRF_RPC Command ID to use for SDFW Service Framework
+
+config SSF_NRF_RPC_NOTIF_ID
+	hex
+	default 0x43
+	help
+	  nRF_RPC Event ID to use for notifications
