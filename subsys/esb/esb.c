@@ -87,16 +87,25 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 /* NRF5340 Radio high voltage gain. */
 #define NRF5340_HIGH_VOLTAGE_GAIN 3
 
-#if !defined(RADIO_SHORTS_DISABLED_RSSISTOP_Msk)
-/* Devices without RSSISTOP task will stop RSSI measurement after specific period. */
-#define RADIO_SHORTS_COMMON                                                              \
-	(NRF_RADIO_SHORT_READY_START_MASK | ESB_SHORT_DISABLE_MASK |                     \
-	NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK)
+/* Fast switching is available for the nRF54H20 SoC.
+ * The nRF54H20 is a non-RSSISTOP device.
+ */
+#if defined(RADIO_SHORTS_DISABLED_RSSISTOP_Msk)
+#define RADIO_SHORTS_COMMON                                                                        \
+		(NRF_RADIO_SHORT_READY_START_MASK | ESB_SHORT_DISABLE_MASK |                       \
+		NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_DISABLED_RSSISTOP_MASK)
 #else
-#define RADIO_SHORTS_COMMON                                                              \
-	(NRF_RADIO_SHORT_READY_START_MASK | ESB_SHORT_DISABLE_MASK |                     \
-	NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_DISABLED_RSSISTOP_MASK)
-#endif /* !defined(RADIO_SHORTS_DISABLED_RSSISTOP_Msk) */
+/* Devices without RSSISTOP task will stop RSSI measurement after specific period. */
+#define RADIO_SHORTS_FAST_SWITCHING_NO_RSSISTOP                                                    \
+		(NRF_RADIO_SHORT_READY_START_MASK | NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK)
+#define RADIO_SHORTS_NO_FAST_SWITCHING_NO_RSSISTOP                                                 \
+		(NRF_RADIO_SHORT_READY_START_MASK | ESB_SHORT_DISABLE_MASK |                       \
+		NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK)
+
+#define RADIO_SHORTS_COMMON                                                                        \
+		(IS_ENABLED(CONFIG_ESB_FAST_SWITCHING) ? RADIO_SHORTS_FAST_SWITCHING_NO_RSSISTOP : \
+							 RADIO_SHORTS_NO_FAST_SWITCHING_NO_RSSISTOP)
+#endif  /* !defined(RADIO_SHORTS_DISABLED_RSSISTOP_Msk) */
 
 /* Internal Enhanced ShockBurst module state. */
 enum esb_state {
@@ -1008,8 +1017,13 @@ static void start_tx_transaction(void)
 
 		memcpy(pdu->data, current_payload->data, current_payload->length);
 
-		nrf_radio_shorts_set(NRF_RADIO,
-				     (radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
+		if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+			nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+		} else {
+			nrf_radio_shorts_set(NRF_RADIO,
+					(radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
+		}
 		nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 
 		/* Configure the retransmit counter */
@@ -1032,8 +1046,13 @@ static void start_tx_transaction(void)
 		 * selective auto ack is turned off
 		 */
 		if (ack) {
-			nrf_radio_shorts_set(NRF_RADIO,
-				(radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
+			if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+				nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+				nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+			} else {
+				nrf_radio_shorts_set(NRF_RADIO,
+					(radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
+			}
 
 			/* Configure the retransmit counter */
 			retransmits_remaining = esb_cfg.retransmit_count;
@@ -1247,8 +1266,12 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			 * be entered again as soon as the system timer reaches
 			 * CC[1].
 			 */
-			nrf_radio_shorts_set(NRF_RADIO,
-				(radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
+			if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+				nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+			} else {
+				nrf_radio_shorts_set(NRF_RADIO,
+					(radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
+			}
 			update_rf_payload_format(current_payload->length);
 
 			nrf_radio_packetptr_set(NRF_RADIO, tx_payload_buffer);
@@ -1399,8 +1422,12 @@ static void on_radio_disabled_rx(void)
 	if ((esb_cfg.selective_auto_ack == false) || rx_pdu->type.dpl_pdu.no_ack) {
 		esb_fem_for_tx_ack();
 
-		nrf_radio_shorts_set(NRF_RADIO,
+		if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+		} else {
+			nrf_radio_shorts_set(NRF_RADIO,
 				     (radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
+		}
 
 		switch (esb_cfg.protocol) {
 		case ESB_PROTOCOL_ESB_DPL:
@@ -1444,7 +1471,14 @@ static void on_radio_disabled_rx_ack(void)
 {
 	esb_fem_for_ack_rx();
 
-	nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
+	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+		nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+	} else {
+		nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |
+						 NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
+	}
+
 	update_rf_payload_format(esb_cfg.payload_length);
 
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
@@ -1480,6 +1514,18 @@ static void radio_irq_handler(void)
 		if (on_radio_disabled) {
 			on_radio_disabled();
 		}
+	}
+
+	if (nrf_radio_int_enable_check(NRF_RADIO, ESB_RADIO_INT_END_MASK) &&
+	    nrf_radio_event_check(NRF_RADIO, ESB_RADIO_EVENT_END)) {
+		/* The PHYEND event is called when fast switching is enabled
+		 * instead of the DISABLE event.
+		 * This event is handled in the analogous way to the disable event.
+		 */
+		if (on_radio_disabled) {
+			on_radio_disabled();
+		}
+		nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 	}
 }
 
@@ -1588,6 +1634,12 @@ int esb_init(const struct esb_config *config)
 	event_handler = config->event_handler;
 
 	memcpy(&esb_cfg, config, sizeof(esb_cfg));
+
+	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+		if (!esb_cfg.use_fast_ramp_up) {
+			return -EINVAL;
+		}
+	}
 
 	interrupt_flags = 0;
 
@@ -1856,7 +1908,14 @@ int esb_start_rx(void)
 
 	on_radio_disabled = on_radio_disabled_rx;
 
-	nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
+	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+		nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+		nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+	} else {
+		nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |
+						 NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
+	}
+
 	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 
 	esb_state = ESB_STATE_PRX;

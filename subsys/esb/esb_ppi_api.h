@@ -35,6 +35,10 @@ extern "C" {
  *           |
  *           \----> self disable
  *
+ *      if (fast_switching)
+ *                    1
+ *      RADIO_PHYEND ---> RADIO_TASK_TXEN/RXEN
+ *
  * @param[in] rx Radio Rx mode, otherwise Tx mode.
  * @param[in] timer_start Indicates whether the timer is to be started on the EGU event.
  */
