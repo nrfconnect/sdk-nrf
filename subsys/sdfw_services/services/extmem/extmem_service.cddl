@@ -1,0 +1,121 @@
+;
+; Copyright (c) 2024 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+extmem_read_done_req = (
+	1,
+	request_id: uint,
+	error: uint,
+	addr: uint,
+)
+
+extmem_read_done_rsp = (
+	1,
+)
+
+extmem_read_pending_notify = (
+	2,
+	request_id: uint,
+	offset: uint,
+	size: uint,
+)
+
+extmem_write_setup_req = (
+	3,
+	request_id: uint,
+	error: uint,
+	addr: uint,
+)
+
+extmem_write_setup_rsp = (
+	3,
+)
+
+extmem_write_done_req = (
+	5,
+	request_id: uint,
+	error: uint,
+)
+
+extmem_write_done_rsp = (
+	5,
+)
+
+extmem_write_pending_notify = (
+	6,
+	request_id: uint,
+	offset: uint,
+	size: uint,
+)
+
+extmem_erase_done_req = (
+	7,
+	request_id: uint,
+	error: uint,
+)
+
+extmem_erase_done_rsp = (
+	7,
+)
+
+extmem_erase_pending_notify = (
+	8,
+	request_id: uint,
+	offset: uint,
+	size: uint,
+)
+
+extmem_get_capabilities_req = (
+	9,
+	request_id: uint,
+	error: uint,
+	base_addr: uint,
+	capacity: uint,
+	erase_size: uint,
+	write_size: uint,
+	chunk_size: uint,
+	memory_mapped: bool,
+)
+
+extmem_get_capabilities_rsp = (
+	9,
+)
+
+extmem_get_capabilities_notify_pending = (
+	10,
+	request_id: uint,
+)
+
+extmem_req = [
+	; Union of different requests
+	msg: (
+		extmem_read_done_req /
+		extmem_write_setup_req /
+		extmem_write_done_req /
+		extmem_erase_done_req /
+		extmem_get_capabilities_req
+	),
+]
+
+extmem_rsp = [
+	; Union of different responses
+	msg: (
+		extmem_read_done_rsp /
+		extmem_write_setup_rsp /
+		extmem_write_done_rsp /
+		extmem_erase_done_rsp /
+		extmem_get_capabilities_rsp
+	),
+]
+
+extmem_nfy = [
+	; Union of different notifications
+	msg: (
+		extmem_read_pending_notify /
+		extmem_write_pending_notify /
+		extmem_erase_pending_notify /
+		extmem_get_capabilities_notify_pending
+	),
+]

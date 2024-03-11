@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+service_name = SDFW_UPDATE
+service_default_enabled = y
+service_id = 0x69
+service_version = 1
+service_buffer_size = 64
+service_name_str = SDFW Update
+rsource "../Kconfig.template.service"
+
+if SSF_SDFW_UPDATE_SERVICE_ENABLED
+
+config SSF_SDFW_UPDATE_TBS_OFFSET
+	hex
+	default 0x10
+	help
+	  Offset of TBS data inside the update blob.
+
+config SSF_SDFW_UPDATE_PUBLIC_KEY_OFFSET
+	hex
+	default 0x110
+	help
+	  Offset of public key inside the update blob.
+
+config SSF_SDFW_UPDATE_SIGNATURE_OFFSET
+	hex
+	default 0x130
+	help
+	  Offset of signature inside the update blob.
+
+config SSF_SDFW_UPDATE_FIRMWARE_OFFSET
+	hex
+	default 0x170
+	help
+	  Offset of firmware inside the update blob.
+
+config SSF_SDFW_UPDATE_DOWNLOAD_MAX
+	hex
+	default 0xf0000
+	help
+	  Max size of update.
+
+endif # SSF_SDFW_UPDATE_SERVICE_ENABLED

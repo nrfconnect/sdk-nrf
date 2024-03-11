@@ -1,0 +1,51 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SSF_EXTMEM_SERVICE_ENABLED
+	bool "EXTMEM Update service"
+	default n
+	depends on SDFW_SERVICES_ENABLED
+
+if SSF_EXTMEM_SERVICE_ENABLED
+
+config SSF_EXTMEM_SERVICE_ID
+	hex
+	default 0x54
+	help
+	  Service ID for EXTMEM service
+
+config SSF_EXTMEM_SERVICE_VERSION
+	int
+	default 1
+	help
+	  Version of EXTMEM service
+
+config SSF_EXTMEM_SERVICE_BUFFER_SIZE
+	int "Buffer size for EXTMEM service handler"
+	default 128
+
+config SSF_EXTMEM_READ_BUFFER_SIZE
+	int "Read buffer size"
+	default 4096
+	help
+	  The size of the memory buffer owned by the remote side that will be used to store data
+	  read from external memory device. This determines the largest single read chunk size.
+
+config SSF_EXTMEM_BASE_ADDRESS
+	hex "External memory base address"
+	default 0x60000000
+	help
+	  Base address is used when memory mapping feature of the external memory is available.
+	  This allows the SDFW to calculate the absolute memory address without communicating with
+	  the EXTMEM service provider. The EXTMEM service provider can adjust this value to point
+	  into the XIP or EXMEE memory regions. The SDFW will validate if the base
+	  address does not belong to memory ranges owned by other domains to prevent data leaks.
+
+module = SSF_EXTMEM_SERVICE
+module-str = EXTMEM Update service
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif

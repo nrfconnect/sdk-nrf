@@ -1,0 +1,37 @@
+;
+; Copyright (c) 2024 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+init_req_id = 0
+chunk_req_id = 1
+
+init = (
+	init_req_id,          ; Request ID
+	aad: bstr .size 8,    ; Additional authentication data
+	nonce: bstr .size 12, ; The nonce
+	tag: bstr .size 16,   ; The mac tag
+	buffer_addr: uint,    ; The address of the buffer to use for transport of encrypted data
+	buffer_len: uint,     ; The length of buffer used to transport encrypted data
+	image_addr: uint,     ; The address where to store the unencrypted image
+	image_len: uint,      ; The size of the unencrypted image
+)
+
+chunk = (
+	chunk_req_id, ; Request ID
+	length: uint, ; Length of the chunk
+	last: bool,   ; This chunk is the last, used to trigger verification
+)
+
+enc_fw_req = [
+	; Union of different requests.
+	msg: (
+		init /
+		chunk
+	),
+]
+
+enc_fw_rsp = [
+	status: int,
+]

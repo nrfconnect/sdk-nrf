@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Services
+add_subdirectory_ifdef(CONFIG_SSF_ECHO_SERVICE_ENABLED echo)
+add_subdirectory_ifdef(CONFIG_SSF_ENC_FW_SERVICE_ENABLED enc_fw)
+add_subdirectory_ifdef(CONFIG_SSF_EXTMEM_SERVICE_ENABLED extmem)
+add_subdirectory_ifdef(CONFIG_SSF_PRNG_SERVICE_ENABLED prng)
+add_subdirectory_ifdef(CONFIG_SSF_RESET_EVT_SERVICE_ENABLED reset_evt)
+add_subdirectory_ifdef(CONFIG_SSF_SDFW_UPDATE_SERVICE_ENABLED sdfw_update)

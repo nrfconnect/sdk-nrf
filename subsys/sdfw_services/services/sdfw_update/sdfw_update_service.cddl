@@ -1,0 +1,17 @@
+;
+; Copyright (c) 2024 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+sdfw_update_req = [
+	tbs_addr: uint,          ; Address of data to be stored in SICR.UROT.UPDATE.SM.TBS
+	dl_max: uint,            ; Value to write to SICR.UROT.UPDATE.DOWNLOAD.MAX
+	dl_addr_fw: uint,        ; Value to write to SICR.UROT.UPDATE.DOWNLOAD.FIRMWARE
+	dl_addr_pk: uint,        ; Value to write to SICR.UROT.UPDATE.DOWNLOAD.PUBKEY
+	dl_addr_signature: uint, ; Value to write to SICR.UROT.UPDATE.DOWNLOAD.SIGNATURE
+]
+
+sdfw_update_rsp = [
+	status: int,
+]
