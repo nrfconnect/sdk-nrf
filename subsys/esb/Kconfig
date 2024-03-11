@@ -148,6 +148,20 @@ config ESB_NEVER_DISABLE_TX
 	  the radio emitter needs to be turned off to enable the radio receiver.
 	  This reduces delay between consecutive transmissions but consumes more energy.
 
+config ESB_FAST_SWITCHING
+	select EXPERIMENTAL
+	depends on !ESB_NEVER_DISABLE_TX && SOC_NRF54H20_CPURAD
+	bool "Fast radio TX/RX and RX/TX switching [EXPERIMENTAL]"
+	help
+	  This option enables fast switching between transmit (TX) and receive (RX) modes
+	  and vice versa for ESB configurations.
+	  For the PTX node, this switching occurs after transmitting a packet and before waiting
+	  for acknowledgment (TX -> RX).
+	  For the PRX node, this switching occurs after receiving a packet and before
+	  transmitting an acknowledgment (RX -> TX).
+	  Enabling this feature can improve the responsiveness and efficiency of the radio
+	  communication system by reducing the latency.
+
 module=ESB
 module-str=ESB
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

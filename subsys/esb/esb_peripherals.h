@@ -36,6 +36,8 @@ extern "C" {
 	#define ESB_RADIO_EVENT_END NRF_RADIO_EVENT_PHYEND
 	#define ESB_SHORT_DISABLE_MASK NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
 
+	#define ESB_RADIO_INT_END_MASK NRF_RADIO_INT_PHYEND_MASK
+
 #elif defined(CONFIG_SOC_SERIES_NRF54LX)
 
 	/** The ESB EVT IRQ is using EGU on nRF54 devices. */
@@ -55,6 +57,7 @@ extern "C" {
 	#define ESB_RADIO_EVENT_END NRF_RADIO_EVENT_PHYEND
 	#define ESB_SHORT_DISABLE_MASK NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
 
+	#define ESB_RADIO_INT_END_MASK NRF_RADIO_INT_PHYEND_MASK
 #else
 
 	/** The ESB event IRQ number when running on the nRF52 and nRF53 device. */
@@ -72,6 +75,8 @@ extern "C" {
 	/** nRF52 and nRF53 device has just one kind of end event. */
 	#define ESB_RADIO_EVENT_END NRF_RADIO_EVENT_END
 	#define ESB_SHORT_DISABLE_MASK NRF_RADIO_SHORT_END_DISABLE_MASK
+
+	#define ESB_RADIO_INT_END_MASK NRF_RADIO_INT_END_MASK
 
 #endif
 
