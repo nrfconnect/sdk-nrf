@@ -41,6 +41,9 @@ struct nrf_rpc_ipc_endpoint {
 
 	/** IPC Service endpoint bond event. */
 	struct k_event ept_bond;
+
+	/** The absolute value for binding timeout, started when bonding procedure is initialized */
+	k_timeout_t timeout;
 };
 
 /** @brief nRF RPC IPC Service transport instance. */
@@ -56,8 +59,8 @@ struct nrf_rpc_ipc {
 	/** User context. */
 	void *context;
 
-	/** Indicates if transport is already initialized. */
-	bool used;
+	/** Current transport state. */
+	uint8_t state;
 };
 
 /** @brief Extern nRF RPC IPC Service transport declaration.
