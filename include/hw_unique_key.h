@@ -12,8 +12,11 @@
  * @defgroup hw_unique_key Hardware Unique Key (HUK) loading
  * @{
  *
- * @brief API for loading the Hardware Unique Key (HUK) in the CryptoCell
- *        KDR registers.
+ * @brief API for loading the Hardware Unique Key (HUK).
+ *
+ *        The library supports loading the HUK:
+ *            - To CryptoCell KDR registers.
+ *            - To Cracen SEED registers.
  */
 
 #ifdef __cplusplus
@@ -27,7 +30,7 @@ extern "C" {
 #endif
 #include <zephyr/devicetree.h>
 
-#if DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_kmu)
+#if DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_kmu) || defined(CONFIG_CRACEN_HW_PRESENT)
 #define HUK_HAS_KMU
 #endif
 #if defined(CONFIG_HAS_HW_NRF_CC310)
@@ -41,8 +44,10 @@ extern "C" {
 #define HUK_SIZE_WORDS 4
 #elif defined(HUK_HAS_CC312)
 #define HUK_SIZE_WORDS 8
+#elif defined(CONFIG_CRACEN_HW_PRESENT)
+#define HUK_SIZE_WORDS 12
 #else
-#error "This library requires CryptoCell to be available."
+#error "This library requires CryptoCell or Cracen to be available."
 #endif
 
 #define HUK_SIZE_BYTES (HUK_SIZE_WORDS * 4)
@@ -132,7 +137,8 @@ bool hw_unique_key_are_any_written(void);
 int hw_unique_key_load_kdr(void);
 
 /**
- * @brief Derive a key from the specified HUK, using the nrf_cc3xx_platform API
+ * @brief Derive a key from the specified HUK, using the nrf_cc3xx_platform API on CryptoCell.
+ *        Cracen PSA driver APIs on Cracen.
  *
  * See nrf_cc3xx_platform_kmu_shadow_key_derive() for more info.
  *

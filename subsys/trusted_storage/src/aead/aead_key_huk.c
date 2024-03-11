@@ -5,7 +5,6 @@
  */
 
 #include <hw_unique_key.h>
-#include <nrf_cc3xx_platform.h>
 #include <zephyr/init.h>
 
 #include "aead_key.h"

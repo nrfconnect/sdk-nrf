@@ -169,7 +169,11 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 	}
 
 	if (prng.initialized != CRACEN_PRNG_INITIALIZED) {
-		return PSA_ERROR_BAD_STATE;
+		psa_status_t status = cracen_init_random(context);
+
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
 	}
 
 	k_mutex_lock(&cracen_prng_context_mutex, K_FOREVER);

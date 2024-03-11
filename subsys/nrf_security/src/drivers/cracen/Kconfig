@@ -41,17 +41,6 @@ config CRACEN_LOAD_KMU_SEED
 	  If there is no seed in KMU, it is expected to be generated.
 	  Note that this is not required to be used if a bootloader is loading
 	  KMU seed.
-config CRACEN_GENERATE_KMU_SEED
-	bool
-	prompt "Generate CRACEN IKG seed in KMU"
-	depends on CRACEN_LIB_KMU
-	depends on CRACEN_LOAD_KMU_SEED
-	default y
-	help
-	  This configuration enables generation of the CRACEN IKG seed value used for
-	  IKG support. The generated seed is written into KMU (write once).
-	  If the seed is already generated and written in KMU, this configuration
-	  will have no effect.
 
 rsource 'psa_driver.Kconfig'
 

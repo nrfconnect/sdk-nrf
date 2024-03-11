@@ -29,7 +29,7 @@ LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
 psa_status_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
 			uint32_t label_size, psa_key_id_t *key_id_out)
 {
-	uint8_t key_out[HUK_SIZE_BYTES];
+	uint8_t key_out[PSA_BITS_TO_BYTES(128)];
 	psa_key_id_t key_id;
 	psa_status_t status;
 	int err;

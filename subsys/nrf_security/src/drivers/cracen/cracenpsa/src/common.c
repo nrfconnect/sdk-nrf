@@ -5,6 +5,7 @@
  */
 
 #include "common.h"
+#include <cracen/lib_kmu.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <mbedtls/asn1.h>
@@ -21,6 +22,7 @@
 #include <sxsymcrypt/sha2.h>
 #include <sxsymcrypt/sha3.h>
 #include <zephyr/sys/util.h>
+#include <hal/nrf_cracen.h>
 
 #define NOT_ENABLED_CURVE    (0)
 #define NOT_ENABLED_HASH_ALG (0)
@@ -560,6 +562,14 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 
 static int cracen_prepare_ik_key(const uint8_t *user_data)
 {
+#ifdef CONFIG_CRACEN_LOAD_KMU_SEED
+	if (!nrf_cracen_seedram_lock_check(NRF_CRACEN)) {
+		if (lib_kmu_push_slot(0) || lib_kmu_push_slot(1) || lib_kmu_push_slot(2)) {
+			return SX_ERR_INVALID_KEYREF;
+		}
+		nrf_cracen_seedram_lock_enable_set(NRF_CRACEN, true);
+	}
+#endif
 	return sx_pk_ik_derive_keys(NULL);
 }
 
