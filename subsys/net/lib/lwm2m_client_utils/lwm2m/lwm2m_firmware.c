@@ -307,7 +307,7 @@ static int write_resource_to_settings(uint16_t inst, uint16_t res, uint8_t *data
 	return 0;
 }
 
-static int write_image_type_to_settings(uint16_t inst, uint16_t img_type)
+static int write_image_type_to_settings(uint16_t inst, int img_type)
 {
 	char path[SETTINGS_FIRM_PATH_LEN];
 
@@ -409,6 +409,9 @@ static int firmware_target_reset(uint16_t obj_inst_id)
 	int dfu_image_type;
 
 	dfu_image_type = target_image_type_get(obj_inst_id);
+	if (dfu_image_type == DFU_TARGET_IMAGE_TYPE_NONE) {
+		return 0;
+	}
 
 	return fota_download_util_image_reset(dfu_image_type);
 }
@@ -643,6 +646,7 @@ static int firmware_update_state(uint16_t obj_inst_id, uint16_t res_id, uint16_t
 			if (ret < 0) {
 				LOG_ERR("Failed to reset DFU target, err: %d", ret);
 			}
+			target_image_type_store(obj_inst_id, DFU_TARGET_IMAGE_TYPE_NONE);
 			init_firmware_variables();
 		}
 		if (update_data.object_instance == obj_inst_id) {
