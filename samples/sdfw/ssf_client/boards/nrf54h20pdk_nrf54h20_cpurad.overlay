@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpusec_cpurad_ipc {
+	status = "okay";
+};
+
+&cpurad_ram0x_region {
+	status = "okay";
+};
+
+&cpusec_bellboard {
+	status = "okay";
+};
+
+&cpurad_bellboard {
+	status = "okay";
+};
