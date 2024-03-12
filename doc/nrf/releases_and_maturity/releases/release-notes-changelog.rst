@@ -359,7 +359,7 @@ Security libraries
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* Added the :ref:`lib_uart_async_adapter` library.
 
 Common Application Framework (CAF)
 ----------------------------------

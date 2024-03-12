@@ -7,7 +7,7 @@
 /** @file
  *  @brief Nordic UART Bridge Service (NUS) sample
  */
-#include "uart_async_adapter.h"
+#include <uart_async_adapter.h>
 
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
@@ -81,10 +81,10 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NUS_VAL),
 };
 
-#if CONFIG_BT_NUS_UART_ASYNC_ADAPTER
+#ifdef CONFIG_UART_ASYNC_ADAPTER
 UART_ASYNC_ADAPTER_INST_DEFINE(async_adapter);
 #else
-static const struct device *const async_adapter;
+#define async_adapter NULL
 #endif
 
 static void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
@@ -260,7 +260,7 @@ static int uart_init(void)
 	k_work_init_delayable(&uart_work, uart_work_handler);
 
 
-	if (IS_ENABLED(CONFIG_BT_NUS_UART_ASYNC_ADAPTER) && !uart_test_async_api(uart)) {
+	if (IS_ENABLED(CONFIG_UART_ASYNC_ADAPTER) && !uart_test_async_api(uart)) {
 		/* Implement API adapter */
 		uart_async_adapter_init(async_adapter, uart);
 		uart = async_adapter;

@@ -7,12 +7,12 @@
 /** @file
  *  @brief UART asynchronous API adapter implementation
  */
-#include "uart_async_adapter.h"
+#include <uart_async_adapter.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/sys/__assert.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(uart_async_adapter);
+LOG_MODULE_REGISTER(uart_async_adapter, CONFIG_UART_ASYNC_ADAPTER_LOG_LEVEL);
 
 
 #if !IS_ENABLED(CONFIG_UART_ASYNC_API)

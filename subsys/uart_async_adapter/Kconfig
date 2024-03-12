@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig UART_ASYNC_ADAPTER
+	bool "Enable UART async adapter [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	select SERIAL_SUPPORT_ASYNC
+	depends on SERIAL_SUPPORT_INTERRUPT
+	help
+	  Enables asynchronous adapter for UART drives that supports only
+	  IRQ interface.
+
+if UART_ASYNC_ADAPTER
+
+module = UART_ASYNC_ADAPTER
+module-str = UART Async Adapter
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif
