@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 zephyr_library()
+zephyr_library_sources_ifdef(CONFIG_WIFI_NRF700X nrf70_support.c)
+
 if(CONFIG_BOARD_THINGY91X_NRF9151_NS)
 	# Use static partition layout to ensure the partition layout remains
 	# unchanged after DFU. This needs to be made globally available
