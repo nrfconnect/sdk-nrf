@@ -80,6 +80,17 @@ enum bt_mgmt_scan_type {
  */
 int bt_mgmt_scan_start(uint16_t scan_intvl, uint16_t scan_win, enum bt_mgmt_scan_type type,
 		       char const *const name, uint32_t brdcast_id);
+
+/**
+ * @brief	Add manufacturer ID UUID to the advertisement packet.
+ *
+ * @param[out]	uuid_buf	Buffer being populated with UUIDs.
+ * @param[in]	company_id	16 bit UUID specific to the company.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int bt_mgmt_manufacturer_uuid_populate(struct net_buf_simple *uuid_buf, uint16_t company_id);
+
 /**
  * @brief	Create and start advertising for ACL connection.
  *

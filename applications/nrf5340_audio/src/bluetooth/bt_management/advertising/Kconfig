@@ -54,6 +54,14 @@ config EXT_ADV_UUID_BUF_MAX
 	int "Maximum number of UUIDs to add to extended advertisements"
 	default 20
 
+config BT_DEVICE_MANUFACTURER_ID
+	hex "Manufacturer ID"
+	default 0xFE58
+	help
+	  Bluetooth manufacturer ID. For the list of possible values please
+	  consult the following link:
+	  https://www.bluetooth.com/specifications/assigned-numbers
+
 #----------------------------------------------------------------------------#
 menu "Log level"
 

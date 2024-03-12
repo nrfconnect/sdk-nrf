@@ -79,9 +79,9 @@ static bool delete_broadcast_src;
  * (any addition to pba_buf requires an increase of this value)
  */
 NET_BUF_SIMPLE_DEFINE(pba_buf, BT_UUID_SIZE_16 + 8);
-static struct bt_data ext_ad[4];
+static struct bt_data ext_ad[5];
 #else
-static struct bt_data ext_ad[3];
+static struct bt_data ext_ad[4];
 #endif /* (CONFIG_AURACAST) */
 
 static struct bt_data per_ad[1];
@@ -202,8 +202,16 @@ static int adv_create(void)
 	NET_BUF_SIMPLE_DEFINE_STATIC(brdcst_id_buf, BT_UUID_SIZE_16 + BT_AUDIO_BROADCAST_ID_SIZE);
 	/* Buffer for Appearance */
 	NET_BUF_SIMPLE_DEFINE_STATIC(brdcst_appearance_buf, BT_UUID_SIZE_16);
+	/* Buffer for manufacturer ID */
+	NET_BUF_SIMPLE_DEFINE_STATIC(manufacturer_id_buf, BT_UUID_SIZE_16);
 	/* Buffer for Public Broadcast Announcement */
 	NET_BUF_SIMPLE_DEFINE_STATIC(base_buf, 128);
+
+	net_buf_simple_add_le16(&manufacturer_id_buf, CONFIG_BT_DEVICE_MANUFACTURER_ID);
+
+	ext_ad[0].data_len = manufacturer_id_buf.len;
+	ext_ad[0].type = BT_DATA_UUID16_SOME;
+	ext_ad[0].data = manufacturer_id_buf.data;
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_ID_RANDOM)) {
 		ret = bt_cap_initiator_broadcast_get_id(broadcast_source, &broadcast_id);
@@ -216,11 +224,11 @@ static int adv_create(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT)) {
-		ext_ad[0] = (struct bt_data)BT_DATA(BT_DATA_BROADCAST_NAME,
+		ext_ad[1] = (struct bt_data)BT_DATA(BT_DATA_BROADCAST_NAME,
 						    CONFIG_BT_AUDIO_BROADCAST_NAME_ALT,
 						    sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT) - 1);
 	} else {
-		ext_ad[0] = (struct bt_data)BT_DATA(BT_DATA_BROADCAST_NAME,
+		ext_ad[1] = (struct bt_data)BT_DATA(BT_DATA_BROADCAST_NAME,
 						    CONFIG_BT_AUDIO_BROADCAST_NAME,
 						    sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1);
 	}
@@ -229,15 +237,15 @@ static int adv_create(void)
 	net_buf_simple_add_le16(&brdcst_id_buf, BT_UUID_BROADCAST_AUDIO_VAL);
 	net_buf_simple_add_le24(&brdcst_id_buf, broadcast_id);
 
-	ext_ad[1].data_len = brdcst_id_buf.len;
-	ext_ad[1].type = BT_DATA_SVC_DATA16;
-	ext_ad[1].data = brdcst_id_buf.data;
+	ext_ad[2].data_len = brdcst_id_buf.len;
+	ext_ad[2].type = BT_DATA_SVC_DATA16;
+	ext_ad[2].data = brdcst_id_buf.data;
 
 	net_buf_simple_add_le16(&brdcst_appearance_buf, CONFIG_BT_DEVICE_APPEARANCE);
 
-	ext_ad[2].data_len = brdcst_appearance_buf.len;
-	ext_ad[2].type = BT_DATA_GAP_APPEARANCE;
-	ext_ad[2].data = brdcst_appearance_buf.data;
+	ext_ad[3].data_len = brdcst_appearance_buf.len;
+	ext_ad[3].type = BT_DATA_GAP_APPEARANCE;
+	ext_ad[3].data = brdcst_appearance_buf.data;
 
 #if (CONFIG_AURACAST)
 	uint8_t pba_features = 0;
@@ -268,9 +276,9 @@ static int adv_create(void)
 
 	/* If any additional data is to be added, remember to increase NET_BUF size */
 
-	ext_ad[3].data_len = pba_buf.len;
-	ext_ad[3].type = BT_DATA_SVC_DATA16;
-	ext_ad[3].data = pba_buf.data;
+	ext_ad[4].data_len = pba_buf.len;
+	ext_ad[4].type = BT_DATA_SVC_DATA16;
+	ext_ad[4].data = pba_buf.data;
 #endif /* (CONFIG_AURACAST) */
 
 	/* Setup periodic advertising data */
