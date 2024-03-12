@@ -86,8 +86,9 @@ void audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)
 		__ASSERT_NO_MSG(tx_buf != NULL);
 	}
 
-	const nrfx_i2s_buffers_t i2s_buf = { .p_rx_buffer = rx_buf,
-					     .p_tx_buffer = (uint32_t *)tx_buf };
+	const nrfx_i2s_buffers_t i2s_buf = {.p_rx_buffer = rx_buf,
+					    .p_tx_buffer = (uint32_t *)tx_buf,
+					    .buffer_size = I2S_SAMPLES_NUM};
 
 	nrfx_err_t ret;
 
@@ -106,9 +107,9 @@ void audio_i2s_start(const uint8_t *tx_buf, uint32_t *rx_buf)
 		__ASSERT_NO_MSG(tx_buf != NULL);
 	}
 
-	const nrfx_i2s_buffers_t i2s_buf = { .p_rx_buffer = rx_buf,
-					     .p_tx_buffer = (uint32_t *)tx_buf,
-					     .buffer_size = I2S_SAMPLES_NUM };
+	const nrfx_i2s_buffers_t i2s_buf = {.p_rx_buffer = rx_buf,
+					    .p_tx_buffer = (uint32_t *)tx_buf,
+					    .buffer_size = I2S_SAMPLES_NUM};
 
 	nrfx_err_t ret;
 

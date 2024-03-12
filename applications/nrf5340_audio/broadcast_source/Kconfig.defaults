@@ -8,6 +8,9 @@
 config BT_CAP_INITIATOR
 	default y
 
+config BT_MAX_CONN
+	default 1
+
 # Broadcasting Device - 0x0885
 config BT_DEVICE_APPEARANCE
 	default 2181
