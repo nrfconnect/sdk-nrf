@@ -3031,6 +3031,22 @@ Modem library
 
 The issues in this section are related to :ref:`nrfxlib:nrf_modem`.
 
+.. rst-class:: v2-6-0
+
+TNSW-59157: The :c:func:`nrf_recv` and :c:func:`nrf_recvfrom` functions erroneously return ``-1`` and set ``errno`` to :c:macro:`NRF_EAGAIN` instead of returning ``0`` when these three conditions are met:
+  * :c:func:`nrf_recv` and :c:func:`nrf_recvfrom` are called with flag :c:macro:`NRF_MSG_DONTWAIT` or when socket is non-blocking (``NRF_O_NONBLOCK`` is set on the socket).
+  * socket was closed by the server
+  * there is no more data to read (end of file)
+
+  **Affected platforms:** nRF9161 nRF9151 nRF9131 nRF9160
+
+  **Workaround:**
+
+  If the application depends on the server closing the connection:
+    * The applcation must avoid a non-blocking call to the :c:func:`nrf_recv` and :c:func:`nrf_recvfrom` functions.
+  If the application do not depend on the server closing the connection:
+    * Non-blocking call to the :c:func:`nrf_recv` and :c:func:`nrf_recvfrom` functions can be used without detecting end of file.
+
 .. rst-class:: v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-10106: Elevated current consumption when using applications without :ref:`nrfxlib:nrf_modem` on nRF9160
