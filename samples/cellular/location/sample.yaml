@@ -83,5 +83,6 @@ tests:
     build_only: true
     platform_allow:
       - thingy91x_nrf9151_ns
-    extra_args: OVERLAY_CONFIG=overlay-thingy91x-wifi-scan-only.conf DTC_OVERLAY_FILE=thingy91x_wifi.overlay
+    extra_args: OVERLAY_CONFIG=overlay-thingy91x-wifi-scan-only.conf
+                DTC_OVERLAY_FILE=thingy91x_wifi.overlay
     tags: ci_build
