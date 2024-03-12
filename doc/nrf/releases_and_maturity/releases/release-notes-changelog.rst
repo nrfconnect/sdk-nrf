@@ -248,6 +248,11 @@ Matter samples
   * The :file:`prj_no_dfu.conf` file.
   * Support for ``no_dfu`` build type for nRF5350 DK, nRF52840 DK and nRF7002 DK.
 
+* Added test event triggers to all Matter samples.
+  By utilizing the test event triggers, you can simulate various operational conditions and responses in your Matter device without the need for external setup.
+
+  To get started with using test event triggers in your Matter samples and to understand the capabilities of this feature, refer to the :ref:`ug_matter_test_event_triggers` page.
+
 Multicore samples
 -----------------
 

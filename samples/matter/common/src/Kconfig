@@ -52,3 +52,30 @@ config NCS_SAMPLE_MATTER_SETTINGS_SHELL
 	  get_size - to read the size of specific value.
 	  current - to read current settings usage.
 	  free - to read free settings space.
+
+config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	bool "Test event triggers support"
+	help
+	  Enables support for test event triggers for the specific use-cases.
+
+config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX
+	int "Maximum amount of event triggers"
+	default 5
+	depends on NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	help
+	  Defines the maximum amount of event triggers.
+
+config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS
+	bool "Register default triggers for Matter sample"
+	depends on NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	help
+	  Automatically register default triggers such as factory reset,
+	  device reboot, OTA start query.
+
+config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES
+	int "Maximum amount of the trigger delegates"
+	default 2
+	depends on NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	help
+	  Defines the maximum number for the TestEventTriggerDelegate implementations
+	  to be registered in the nRF test event triggers class.

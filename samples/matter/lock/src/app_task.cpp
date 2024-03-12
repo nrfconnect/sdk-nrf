@@ -214,6 +214,16 @@ void AppTask::NUSUnlockCallback(void *context)
 }
 #endif
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+CHIP_ERROR AppTask::DoorLockJammedEventCallback(Nrf::Matter::TestEventTrigger::TriggerValue)
+{
+	VerifyOrReturnError(DoorLockServer::Instance().SendLockAlarmEvent(kLockEndpointId, AlarmCodeEnum::kLockJammed),
+			    CHIP_ERROR_INTERNAL);
+	LOG_ERR("Event Trigger: Doorlock jammed.");
+	return CHIP_NO_ERROR;
+}
+#endif
+
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
@@ -260,6 +270,13 @@ CHIP_ERROR AppTask::Init()
 
 	/* Initialize lock manager */
 	BoltLockMgr().Init(LockStateChanged);
+
+	/* Register Door Lock test event trigger */
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTrigger(
+		kDoorLockJammedEventTriggerId,
+		Nrf::Matter::TestEventTrigger::EventTrigger{ 0, DoorLockJammedEventCallback }));
+#endif
 
 	return Nrf::Matter::StartServer();
 }
