@@ -558,6 +558,10 @@ Bluetooth libraries and services
 
   * Fixed an issue where the sensor data of a certain length was incorrectly parsed as switch commissioning.
 
+* :ref:`bt_fast_pair_readme` library:
+
+  * Added experimental support for a new cryptographical backend that relies on the PSA crypto APIs (:kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA`).
+
 Bootloader libraries
 --------------------
 
