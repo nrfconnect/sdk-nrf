@@ -21,6 +21,13 @@
 #include "dfu/smp/dfu_over_smp.h"
 #endif
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+#include "event_triggers/event_triggers.h"
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS
+#include "event_triggers/default_event_triggers.h"
+#endif
+#endif
+
 #include <app/InteractionModelEngine.h>
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <app/server/OnboardingCodesUtil.h>
@@ -49,6 +56,7 @@ chip::Crypto::PSAOperationalKeystore Nrf::Matter::InitData::sOperationalKeystore
 #ifdef CONFIG_CHIP_FACTORY_DATA
 FactoryDataProvider<InternalFlashFactoryData> Nrf::Matter::InitData::sFactoryDataProviderDefault{};
 #endif
+
 namespace
 {
 /* Local instance of the initialization data that is overwritten by an application. */
@@ -170,6 +178,20 @@ void DoInitChipServer(intptr_t /* unused */)
 	SetDeviceInstanceInfoProvider(sLocalInitData.mFactoryDataProvider);
 	SetDeviceAttestationCredentialsProvider(sLocalInitData.mFactoryDataProvider);
 	SetCommissionableDataProvider(sLocalInitData.mFactoryDataProvider);
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	/* Read the enable key from the factory data set */
+	uint8_t enableKeyData[chip::TestEventTriggerDelegate::kEnableKeyLength] = {};
+	MutableByteSpan enableKey(enableKeyData);
+	sInitResult = sLocalInitData.mFactoryDataProvider->GetEnableKey(enableKey);
+	VerifyInitResultOrReturn(sInitResult, "GetEnableKey() failed");
+	Nrf::Matter::TestEventTrigger::Instance().SetEnableKey(enableKey);
+	VerifyInitResultOrReturn(sInitResult, "SetEnableKey() failed");
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS
+	sLocalInitData.mServerInitParams->testEventTriggerDelegate = &Nrf::Matter::TestEventTrigger::Instance();
+	Nrf::Matter::DefaultTestEventTriggers::Register();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS */
+#endif /* CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS */
 #else
 	SetDeviceInstanceInfoProvider(&DeviceInstanceInfoProviderMgrImpl());
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
