@@ -8,7 +8,6 @@ menuconfig MBEDTLS_X509_LIBRARY
 	bool
 	prompt "Create mbed TLS x509 library"
 	select MBEDTLS_PK_C
-	default y if MBEDTLS_PSA_CRYPTO_C && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
 	help
 	  Create the mbed x509 library for handling of certificates.
 
@@ -75,7 +74,6 @@ menuconfig MBEDTLS_TLS_LIBRARY
 	select MBEDTLS_X509_LIBRARY
 	imply PSA_WANT_ALG_TLS12_PRF
 	imply PSA_WANT_ALG_TLS12_PSK_TO_MS
-	default y if MBEDTLS_PSA_CRYPTO_C && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
 	help
 	  Create the mbed SSL/TLS library in addition to the mbed crypto
 	  library.
