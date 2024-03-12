@@ -62,6 +62,21 @@ config FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX
 	help
 	  Maximum size of the list of security tags used to store TLS credentials.
 
+choice
+	prompt "Address family to be used for the FOTA download"
+	default FOTA_DOWNLOAD_ADDR_FAM_UNSPEC
+
+config FOTA_DOWNLOAD_ADDR_FAM_IPV4
+	bool "IPv4 (AF_INET)"
+
+config FOTA_DOWNLOAD_ADDR_FAM_IPV6
+	bool "IPv6 (AF_INET6)"
+
+config FOTA_DOWNLOAD_ADDR_FAM_UNSPEC
+	bool "Unspecified (AF_UNSPEC)"
+
+endchoice
+
 module=FOTA_DOWNLOAD
 module-dep=LOG
 module-str=Firmware Over the Air Download

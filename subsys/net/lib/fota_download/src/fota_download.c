@@ -433,6 +433,14 @@ int fota_download(const char *host, const char *file,
 		.frag_size_override = fragment_size,
 	};
 
+	if (IS_ENABLED(CONFIG_FOTA_DOWNLOAD_ADDR_FAM_IPV4)) {
+		config.family = AF_INET;
+	} else if (IS_ENABLED(CONFIG_FOTA_DOWNLOAD_ADDR_FAM_IPV6)) {
+		config.family = AF_INET6;
+	} else {
+		config.family = AF_UNSPEC;
+	}
+
 	if (host == NULL || file == NULL || callback == NULL) {
 		return -EINVAL;
 	}
