@@ -61,8 +61,12 @@ void ProcessCommand(const EmberBindingTableEntry &aBinding, OperationalDevicePro
 CHIP_ERROR SimulatedOnOffLightSwitchDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
 							      uint8_t *buffer)
 {
-	if (clusterId != Clusters::OnOff::Id || attributeId != Clusters::OnOff::Attributes::OnOff::Id) {
+	if (clusterId != Clusters::OnOff::Id) {
 		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (attributeId != Clusters::OnOff::Attributes::OnOff::Id) {
+		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 	}
 
 	bool mOnOff;

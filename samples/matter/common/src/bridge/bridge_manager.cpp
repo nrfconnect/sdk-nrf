@@ -397,8 +397,12 @@ CHIP_ERROR BridgeManager::HandleWrite(uint16_t index, ClusterId clusterId,
 
 	/* After updating MatterBridgedDevice state, forward request to the non-Matter device. */
 	if (err == CHIP_NO_ERROR) {
-		return Instance().mDevicesMap[index].mProvider->UpdateState(clusterId, attributeMetadata->attributeId,
-									    buffer);
+		CHIP_ERROR updateError = Instance().mDevicesMap[index].mProvider->UpdateState(
+			clusterId, attributeMetadata->attributeId, buffer);
+		/* This is acceptable that not all writable attributes can be reflected in the provider device. */
+		if (updateError != CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE) {
+			return updateError;
+		}
 	}
 	return err;
 }
