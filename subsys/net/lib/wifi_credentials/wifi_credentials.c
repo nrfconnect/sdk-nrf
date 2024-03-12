@@ -135,7 +135,8 @@ int wifi_credentials_get_by_ssid_personal_struct(const char *ssid, size_t ssid_l
 	if (buf->header.type != WIFI_SECURITY_TYPE_NONE &&
 	    buf->header.type != WIFI_SECURITY_TYPE_PSK &&
 	    buf->header.type != WIFI_SECURITY_TYPE_PSK_SHA256 &&
-	    buf->header.type != WIFI_SECURITY_TYPE_SAE) {
+	    buf->header.type != WIFI_SECURITY_TYPE_SAE &&
+	    buf->header.type != WIFI_SECURITY_TYPE_WPA_PSK) {
 		LOG_ERR("Requested WiFi credentials entry is corrupted");
 		ret = -EPROTO;
 		goto exit;
@@ -230,6 +231,7 @@ int wifi_credentials_set_personal(const char *ssid, size_t ssid_len, enum wifi_s
 		break;
 	case WIFI_SECURITY_TYPE_PSK:
 	case WIFI_SECURITY_TYPE_PSK_SHA256:
+	case WIFI_SECURITY_TYPE_WPA_PSK:
 	case WIFI_SECURITY_TYPE_SAE: {
 		struct wifi_credentials_personal *header_personal =
 			(struct wifi_credentials_personal *)buf;
@@ -297,6 +299,7 @@ int wifi_credentials_get_by_ssid_personal(const char *ssid, size_t ssid_len,
 		break;
 	case WIFI_SECURITY_TYPE_PSK:
 	case WIFI_SECURITY_TYPE_PSK_SHA256:
+	case WIFI_SECURITY_TYPE_WPA_PSK:
 	case WIFI_SECURITY_TYPE_SAE: {
 		struct wifi_credentials_personal *header_personal =
 			(struct wifi_credentials_personal *)buf;
