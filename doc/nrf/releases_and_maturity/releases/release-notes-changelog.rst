@@ -1233,12 +1233,8 @@ Security libraries
 
 * :ref:`nrf_security` library:
 
-  * Updated:
-
-    * The library no longer enables RSA keys by default, which reduces the code size by 30 kB for those that are not using RSA keys.
-      The RSA key size must be explicitly enabled to avoid breaking the configuration when using the RSA keys, for example by setting the Kconfig option :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` if 2048-bit RSA keys are required.
-    * The PSA config is now validated by the file :file:`ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h`.
-      Users with invalid configurations must update their PSA configuration according to the error messages that the file :file:`check_crypto_config.h` provides.
+* Always generated the mbed TLS configuration based on the set Kconfig options there removed :kconfig:option:`CONFIG_GENERATE_MBEDTLS_CFG_FILE`.
+  This also includes to use the user configuration so :kconfig:option:`CONFIG_MBEDTLS_USER_CONFIG_FILE` is not used anymore.
 
 Other libraries
 ---------------
