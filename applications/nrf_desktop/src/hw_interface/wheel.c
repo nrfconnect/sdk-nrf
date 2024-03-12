@@ -37,13 +37,21 @@ enum state {
 	STATE_SUSPENDED
 };
 
+#if DT_NODE_HAS_STATUS(DT_ALIAS(nrfdesktop_wheel_qdec), okay)
+  #define QDEC_DT_NODE_ID	DT_ALIAS(nrfdesktop_wheel_qdec)
+#elif DT_NODE_HAS_STATUS(DT_NODELABEL(qdec), okay)
+  #define QDEC_DT_NODE_ID	DT_NODELABEL(qdec)
+#else
+  #error DT node for QDEC must be specified.
+#endif
+
 #define QDEC_PIN_INIT(node_id, prop, idx) \
 	NRF_GET_PIN(DT_PROP_BY_IDX(node_id, prop, idx)),
 
 /* obtan qdec pins from default state */
 static const uint32_t qdec_pin[] = {
 	DT_FOREACH_CHILD_VARGS(
-		DT_PINCTRL_BY_NAME(DT_NODELABEL(qdec), default, 0),
+		DT_PINCTRL_BY_NAME(QDEC_DT_NODE_ID, default, 0),
 		DT_FOREACH_PROP_ELEM, psels, QDEC_PIN_INIT
 	)
 };
@@ -53,7 +61,7 @@ static const struct sensor_trigger qdec_trig = {
 	.chan = SENSOR_CHAN_ROTATION,
 };
 
-static const struct device *qdec_dev = DEVICE_DT_GET(DT_NODELABEL(qdec));
+static const struct device *qdec_dev = DEVICE_DT_GET(QDEC_DT_NODE_ID);
 static struct gpio_callback gpio_cbs[ARRAY_SIZE(qdec_pin)];
 static struct k_spinlock lock;
 static struct k_work_delayable idle_timeout;
@@ -208,7 +216,7 @@ static void wakeup_cb(const struct device *gpio_dev, struct gpio_callback *cb,
 
 static int setup_wakeup(void)
 {
-	int enable_pin = DT_PROP(DT_NODELABEL(qdec), enable_pin);
+	int enable_pin = DT_PROP(QDEC_DT_NODE_ID, enable_pin);
 	const struct device *port = map_gpio_port(enable_pin);
 	gpio_pin_t pin = map_gpio_pin(enable_pin);
 
