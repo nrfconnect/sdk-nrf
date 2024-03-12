@@ -206,6 +206,8 @@ static int add_static_network_config(struct net_if *iface)
 	creds.header.type = WIFI_SECURITY_TYPE_PSK_SHA256;
 #elif	defined(CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_SAE)
 	creds.header.type = WIFI_SECURITY_TYPE_SAE;
+#elif defined(CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_WPA_PSK)
+	creds.header.type = WIFI_SECURITY_TYPE_WPA_PSK;
 #else
 	#error "invalid CONFIG_WIFI_CREDENTIALS_STATIC_TYPE"
 #endif
