@@ -29,6 +29,9 @@ LOG_MODULE_REGISTER(unicast_server, CONFIG_UNICAST_SERVER_LOG_LEVEL);
 BUILD_ASSERT(CONFIG_BT_ASCS_ASE_SRC_COUNT <= 1,
 	     "A maximum of one source stream is currently supported");
 
+BUILD_ASSERT(strlen(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SET_SIRK_SIZE,
+	     "SIRK incorrect size, must be 16 bytes");
+
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
@@ -115,13 +118,6 @@ static struct bt_csip_set_member_cb csip_callbacks = {
 struct bt_csip_set_member_register_param csip_param = {
 	.set_size = CSIP_SET_SIZE,
 	.lockable = true,
-#if !CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA
-	/* CSIP SIRK for demo is used, must be changed before production */
-	.set_sirk = {'N', 'R', 'F', '5', '3', '4', '0', '_', 'T', 'W', 'S', '_', 'D', 'E', 'M',
-		     'O'},
-#else
-#warning "CSIP test sample data is used, must be changed before production"
-#endif
 	.cb = &csip_callbacks,
 };
 
@@ -717,6 +713,20 @@ int unicast_server_enable(le_audio_receive_cb recv_cb)
 	bt_bap_unicast_server_register_cb(&unicast_server_cb);
 
 	channel_assignment_get(&channel);
+
+	if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA)) {
+		LOG_WRN("CSIP test sample data is used, must be changed "
+			"before production");
+	} else {
+		if (strcmp(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT,
+			   CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == 0) {
+			LOG_WRN("CSIP using the default SIRK, must be changed "
+				"before production");
+		}
+
+		memcpy(csip_param.set_sirk, CONFIG_BT_SET_IDENTITY_RESOLVING_KEY,
+		       BT_CSIP_SET_SIRK_SIZE);
+	}
 
 	for (int i = 0; i < ARRAY_SIZE(caps); i++) {
 		ret = bt_pacs_cap_register(caps_dirs[i], &caps[i]);
