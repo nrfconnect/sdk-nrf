@@ -39,6 +39,8 @@ manifest:
       url-base: https://github.com/BabbleSim
     - name: bosch
       url-base: https://github.com/boschsensortec
+    - name: edmo
+      url-base: https://github.com/edmont
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -140,9 +142,10 @@ manifest:
       repo-path: sdk-mbedtls
       revision: v3.5.2-ncs1-rc2
     - name: nrfxlib
+      remote: edmo
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: v2.6.0-rc2
+      revision: test/warnings
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
