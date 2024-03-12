@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <thingy91x_wifi.dtsi>
+
 / {
 	aliases {
 		temp-sensor = &bme680;
