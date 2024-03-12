@@ -190,11 +190,20 @@
 
 		regulators {
 		compatible = "nordic,npm6001-regulator";
+			pmic_wifi_buck0: BUCK0 {
+				regulator-boot-off;
+			};
+			pmic_wifi_buck1: BUCK1 {
+				regulator-boot-off;
+			};
+			pmic_wifi_buck2: BUCK2 {
+				regulator-boot-off;
+			};
 			/* Dedicated 3.3 V regulator for nRF70 */
 			reg_wifi: BUCK3 {
 				regulator-min-microvolt = <3300000>;
 				regulator-max-microvolt = <3300000>;
-				regulator-initial-mode = <NPM6001_MODE_PWM>;
+				regulator-initial-mode = <NPM6001_MODE_HYS>;
 				regulator-boot-on;
 			};
 		};
