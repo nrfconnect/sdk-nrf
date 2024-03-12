@@ -122,6 +122,23 @@ config BT_AUDIO_BITRATE_UNICAST_SRC
 	help
 	  Bitrate for the unicast source ISO stream.
 
+config BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT
+	string
+	default "NRF5340_TWS_DEMO"
+	help
+	  Default string to configure the Set Identify Resolving Key (SIRK), must
+	  be changed before production uniquely for each coordinated set.
+
+config BT_SET_IDENTITY_RESOLVING_KEY
+	string "String used to configure the SIRK"
+	depends on TRANSPORT_CIS && BT_BAP_UNICAST_SERVER
+	default BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT
+	help
+	  Defines a string to configure the Set Identify Resolving Key (SIRK), must
+	  be changed before production uniquely for each coordinated set. The SIRK
+	  must be 16 characters (16 bytes).
+
+
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
