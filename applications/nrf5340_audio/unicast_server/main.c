@@ -443,6 +443,12 @@ static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size
 		return ret;
 	}
 
+	ret = bt_mgmt_manufacturer_uuid_populate(&uuid_buf, CONFIG_BT_DEVICE_MANUFACTURER_ID);
+	if (ret) {
+		LOG_ERR("Failed to add adv data with manufacturer ID: %d", ret);
+		return ret;
+	}
+
 	ret = unicast_server_adv_populate(&ext_adv_buf[ext_adv_buf_cnt],
 					  ext_adv_buf_size - ext_adv_buf_cnt);
 

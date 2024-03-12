@@ -316,6 +316,17 @@ void bt_mgmt_dir_adv_timed_out(void)
 	bt_mgmt_adv_start(NULL, 0, NULL, 0, true);
 }
 
+int bt_mgmt_manufacturer_uuid_populate(struct net_buf_simple *uuid_buf, uint16_t company_id)
+{
+	if (net_buf_simple_tailroom(uuid_buf) >= BT_UUID_SIZE_16) {
+		net_buf_simple_add_le16(uuid_buf, company_id);
+	} else {
+		return -ENOMEM;
+	}
+
+	return 0;
+}
+
 int bt_mgmt_adv_start(const struct bt_data *adv, size_t adv_size, const struct bt_data *per_adv,
 		      size_t per_adv_size, bool connectable)
 {
