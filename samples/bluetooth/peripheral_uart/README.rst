@@ -91,13 +91,11 @@ See :ref:`peripheral_uart_sample_activating_variants` for details about how to b
 Async adapter experimental module
 ---------------------------------
 
-The default sample configuration uses the UART async API, which is an :ref:`experimental <software_maturity>` module.
-The UART async adapter creates and initializes an instance of the async module.
+The default sample configuration uses the UART async API.
+The sample uses the :ref:`lib_uart_async_adapter` library to communicate with the USB CDC ACM driver.
 This is needed because the USB CDC ACM implementation provides only the interrupt interface.
-The adapter uses data provided in the :c:struct:`uart_async_adapter_data` to connect to the UART device that does not use the asynchronous interface.
 
-The module requires the :ref:`CONFIG_BT_NUS_UART_ASYNC_ADAPTER <CONFIG_BT_NUS_UART_ASYNC_ADAPTER>` to be set to ``y``.
-For more information about the adapter, see the :file:`uart_async_adapter` source files available in the :file:`peripheral_uart/src` directory.
+To use the library, set the :kconfig:option:`CONFIG_UART_ASYNC_ADAPTER` Kconfig option to ``y``.
 
 MCUboot with serial recovery of the networking core image
 =========================================================
@@ -148,9 +146,9 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. _CONFIG_BT_NUS_UART_ASYNC_ADAPTER:
+.. _CONFIG_UART_ASYNC_ADAPTER:
 
-CONFIG_BT_NUS_UART_ASYNC_ADAPTER - Enable UART async adapter
+CONFIG_UART_ASYNC_ADAPTER - Enable UART async adapter
    Enables asynchronous adapter for UART drives that supports only IRQ interface.
 
 Building and running
@@ -210,12 +208,9 @@ After programming the sample to your development kit, complete the following ste
 Dependencies
 ************
 
-This sample uses the following sample-specific library:
-
-* :file:`uart_async_adapter` at :file:`peripheral_uart/src`
-
 This sample uses the following |NCS| libraries:
 
+* :ref:`lib_uart_async_adapter`
 * :ref:`nus_service_readme`
 * :ref:`dk_buttons_and_leds_readme`
 

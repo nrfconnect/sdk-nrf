@@ -3,26 +3,30 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#ifndef __UART_ASYNC_ADAPTER_H
+#define __UART_ASYNC_ADAPTER_H
 
 /** @file
  *  @brief UART asynchronous API adapter
  */
-
-/**
- * @brief UART asynchronous API universal adapter
- * @defgroup uart_async_adapter UART ASYNC adapter
- * @{
- *
- * This module acts as an adapter between UART interrupt and async interface.
- *
- * @note The UART ASYNC API adapter implementation is experimental.
- *       It means it is not guaranteed to work in any corner situation.
- */
-
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/kernel.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @defgroup uart_async_adapter UART async adapter
+ * @{
+ * @brief UART asynchronous API universal adapter
+ *
+ * This module acts as an adapter between UART interrupt and async interface.
+ *
+ * @note The UART async API adapter implementation is experimental.
+ *       It means it is not guaranteed to work in any corner situation.
+ */
 
 /**
  * @brief UART asynch adapter data structure
@@ -42,7 +46,7 @@ struct uart_async_adapter_data {
 	struct k_spinlock lock;
 
 	/** Data used for output transmission */
-	struct {
+	struct uart_async_adapter_data_rx {
 		/** The original buffer pointer set when data transfer was requested */
 		const uint8_t *buf;
 		/** Current buffer position */
@@ -56,7 +60,7 @@ struct uart_async_adapter_data {
 	} tx;
 
 	/** Data used for input transmission */
-	struct {
+	struct uart_async_adapter_data_tx {
 		/** Base buffer pointer used now for data reception */
 		uint8_t *buf;
 		/** Current position to write data into */
@@ -79,7 +83,7 @@ struct uart_async_adapter_data {
 };
 
 /**
- * @brief Driver API for ASYNC adapter
+ * @brief Driver API for async adapter
  *
  * The API of the UART async adapter uses standard UART API structure.
  */
@@ -88,7 +92,7 @@ extern const struct uart_driver_api uart_async_adapter_driver_api;
 /**
  * @brief The name of the data instance connected with created device instance
  *
- * @name _dev_name The name of the created device instance
+ * @param _dev_name The name of the created device instance
  */
 #define UART_ASYNC_ADAPTER_INST_DATA_NAME(_dev_name) _CONCAT(uart_async_adapter_data_, _dev_name)
 
@@ -99,7 +103,7 @@ extern const struct uart_driver_api uart_async_adapter_driver_api;
 /**
  * @brief The macro that creates and instance of the UART async adapter
  *
- * @name _dev The name of the created device instance
+ * @param _dev The name of the created device instance
  */
 #define UART_ASYNC_ADAPTER_INST_DEFINE(_dev) \
 	static struct uart_async_adapter_data UART_ASYNC_ADAPTER_INST_DATA_NAME(_dev); \
@@ -124,3 +128,9 @@ extern const struct uart_driver_api uart_async_adapter_driver_api;
 void uart_async_adapter_init(const struct device *dev, const struct device *target);
 
 /** @} */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __UART_ASYNC_ADAPTER_H */
