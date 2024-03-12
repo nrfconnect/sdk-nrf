@@ -10,22 +10,9 @@
 
 class OnOffLightSwitchDevice : public Nrf::MatterBridgedDevice {
 public:
-	static constexpr uint16_t kOnOffClusterRevision = 4;
-	static constexpr uint32_t kOnOffFeatureMap = 1;
-	static constexpr uint16_t kBindingClusterRevision = 1;
-	static constexpr uint32_t kBindingFeatureMap = 0;
-
 	OnOffLightSwitchDevice(const char *nodeLabel);
 
-	uint16_t GetOnOffClusterRevision() { return kOnOffClusterRevision; }
-	uint32_t GetOnOffFeatureMap() { return kOnOffFeatureMap; }
-	uint16_t GetBindingClusterRevision() { return kBindingClusterRevision; }
-	uint32_t GetBindingFeatureMap() { return kBindingFeatureMap; }
-
-	uint16_t GetDeviceType() const override
-	{
-		return Nrf::MatterBridgedDevice::DeviceType::OnOffLightSwitch;
-	}
+	uint16_t GetDeviceType() const override { return Nrf::MatterBridgedDevice::DeviceType::OnOffLightSwitch; }
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;
 	CHIP_ERROR HandleReadOnOff(chip::AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength);
@@ -40,5 +27,8 @@ public:
 		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 	}
 
-private:
+	static constexpr uint16_t GetOnOffClusterRevision() { return 4; }
+	static constexpr uint32_t GetOnOffFeatureMap() { return 1; }
+	static constexpr uint16_t GetBindingClusterRevision() { return 1; }
+	static constexpr uint32_t GetBindingFeatureMap() { return 0; }
 };

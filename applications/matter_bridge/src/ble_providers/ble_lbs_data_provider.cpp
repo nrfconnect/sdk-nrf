@@ -171,7 +171,7 @@ CHIP_ERROR BleLBSDataProvider::UpdateState(chip::ClusterId clusterId, chip::Attr
 		return CHIP_NO_ERROR;
 	}
 	default:
-		return CHIP_ERROR_INVALID_ARGUMENT;
+		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 	}
 
 	return CHIP_NO_ERROR;

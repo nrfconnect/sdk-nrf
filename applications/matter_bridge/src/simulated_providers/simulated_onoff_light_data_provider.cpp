@@ -49,7 +49,7 @@ CHIP_ERROR SimulatedOnOffLightDataProvider::UpdateState(chip::ClusterId clusterI
 		return CHIP_NO_ERROR;
 	}
 	default:
-		return CHIP_ERROR_INVALID_ARGUMENT;
+		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 	}
 
 	return CHIP_NO_ERROR;
