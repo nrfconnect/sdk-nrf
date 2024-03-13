@@ -10,19 +10,38 @@ Device Firmware Updates
 
 Device Firmware Update (DFU) is the procedure of upgrading the application firmware version on a device.
 It is composed of two steps.
-First a new firmware image is transferred to the chip, and then the :ref:`bootloader <app_bootloaders>` tests and boots the new firmware.
+First, a new firmware image is transferred to the chip, and then the :ref:`bootloader <app_bootloaders>` tests and boots the new firmware.
+
+.. note::
+  The choice of bootloader affects how firmware updates can be performed.
+  While specifics regarding bootloader features such as out-of-the-box support for various DFU methods may vary, it's generally recognized that:
+
+  * MCUboot is designed with flexibility in mind and supports various protocols and methods for firmware updates.
+    However, the extent of supported features, like USB-DFU class, may vary and should be confirmed with the latest MCUboot documentation or source code.
+  * The nRF Secure Immutable Bootloader (NSIB) allows for firmware updates but might not include comprehensive support for all types of firmware updates compared to MCUboot.
+    Specifics of NSIB’s capabilities, particularly in terms of direct DFU support, are subject to change and should be verified with the latest documentation.
+
+  This distinction is crucial for developing your firmware update strategy and selecting the appropriate bootloader for your device's needs.
+
+The testing and booting process depends on the choice of bootloader, but also on the design of the application.
+Generally, bootloaders support two types of updates:
+
+* Direct updates, with an in-place substitution of the image.
+  In this case, it is typically the bootloader that must transfer the update image.
+* Background updates, where the updated image is obtained and stored by the application, but the update is completed by the bootloader after the device reboots.
+
+While the bootloader is essential for the final steps of the DFU process, including image verification and swapping, the application often plays a crucial role in receiving and staging updates, especially when using the Simple Management Protocol (SMP).
+For instance, in systems that use MCUboot, the application may be responsible for receiving update packages through SMP and staging them for the bootloader.
+
+These can be explained like so:
+
+* Bootloader capabilities typically refer to the bootloader's ability to receive, verify, and activate new firmware images.
+* Application-level update mechanisms involve the application's role in receiving or downloading new firmware images and preparing them for installation by the bootloader.
 
 You can transfer the updated images to the device in two ways:
 
 * Wired, where updates are sent through a wired connection, like UART, or delivered by connecting a flash device.
 * Over-the-air (OTA), where updates are sent through a wireless connection, like Bluetooth® Low Energy.
-
-The testing and booting process depends on the choice of bootloader.
-Generally, bootloaders support two types of updates:
-
-* Direct updates, with an in-place substitution of the image.
-  In this case, it is the bootloader that must transfer the update image.
-* Background updates, where the updated image is obtained and stored by the application, but the update is completed by the bootloader after the device reboots.
 
 Based on these criteria, the |NCS| offers support for the following DFU alternatives:
 
