@@ -36,7 +36,11 @@ This option can refer to two different things:
 Configuring image version with MCUboot
 **************************************
 
-To assign a semantic version number to your application when you have opted for booting application directly by the MCUboot bootloader (that is, if you have opted for either :ref:`ug_bootloader_adding_immutable_mcuboot` or :ref:`ug_bootloader_adding_upgradable_mcuboot`), add the version string to the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` option for the application:
+To assign a semantic version number to your application when you have opted for booting application directly by the MCUboot bootloader (that is, if you have opted for either :ref:`ug_bootloader_adding_immutable_mcuboot` or :ref:`ug_bootloader_adding_upgradable_mcuboot`), it is recommended to use the :file:`VERSION` file that contains the version information for the application image.
+Using a :file:`VERSION` file allows you to independently configure the version value for each build instance of the application.
+See Zephyr's :ref:`zephyr:app-version-details` page for more information.
+
+Alternatively, you can also add the version string to the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option for the application:
 
 .. code-block:: console
 
