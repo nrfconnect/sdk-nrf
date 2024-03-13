@@ -8,9 +8,13 @@ source "Kconfig.zephyr"
 
 menu "Nordic Raw Tx Packet sample"
 
-config CONNECTION_TIMEOUT
+config RAW_TX_PKT_SAMPLE_CONNECTION_TIMEOUT
 	int "Time to wait for a station to connect"
 	default 30
+
+config RAW_TX_PKT_SAMPLE_DHCP_TIMEOUT_S
+	int "DHCP timeout in seconds"
+	default 20
 
 config RAW_TX_PKT_SAMPLE_SSID
 	string "SSID"
