@@ -579,6 +579,48 @@ Bluetooth buffers configuration introduced by the :kconfig:option:`CONFIG_NCS_SA
    :start-after: fota_upgrades_zigbee_start
    :end-before: fota_upgrades_zigbee_end
 
+.. _ug_nrf5340_image_slot_numbering:
+
+Image IDs and slot numbering
+****************************
+
+Each image in the DFU process on the nRF5340 DK is identified by a unique ID, corresponding to a specific memory slot for each core.
+The slots are numbered from 0, and each slot corresponds to a specific location in memory.
+This configuration typically follows:
+
++-------+-------------------------------------------------------------+-----------+-----------+
+| Slot  | Description                                                 | DTS label | n <image> |
++=======+=============================================================+===========+===========+
+| slot0 | First image's primary slot (internal flash)                 | image-0   | 1         |
++-------+-------------------------------------------------------------+-----------+-----------+
+| slot1 | First image's secondary slot (internal or external flash)   | image-1   | 0, 2      |
++-------+-------------------------------------------------------------+-----------+-----------+
+| slot2 | Second image's primary slot (internal RAM)                  | image-2   | 3         |
++-------+-------------------------------------------------------------+-----------+-----------+
+| slot3 | Second image's secondary slot (internal or external flash)  | image-3   | 4         |
++-------+-------------------------------------------------------------+-----------+-----------+
+
+.. note::
+   Slot 1 is the default upload target for firmware updates using the :ref:`zephyr:mcu_mgr` CLI or similar software.
+   This behavior applies when no image number is provided and the application is build with the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_DIRECT_UPLOAD` Kconfig option enabled.
+
+   For non-default behavior targeting the secondary slot (other than slot 1), use ``-n <n>`` from the provided table.
+   You can not, however, upload to the same slot your application is currently running from.
+   For example, if your application is running from the slot 0 (``-n 1``), uploading to that slot will be refused.
+   This slot-to-n numbering adjustment ensures the compatibility with the existing client software, which typically sends the application image to slot 1 without specifying the slot number.
+
+For the nRF5340 DK, serial recovery differs based on the operation mode:
+
+* Direct upload in the app - the primary slot of the first image (slot 0) does not require a specific image number to be targeted for updates.
+
+* Direct upload in serial recovery - for updates to the network core, specify ``-n 3``.
+  This indicates that updates are mediated through the application core's RAM, a process specific to the nRF5340 DK in its default configuration.
+  This also requires enabling the ``CONFIG_MCUBOOT_SERIAL_DIRECT_IMAGE_UPLOAD`` Kconfig option, for the MCUboot child images as well.
+
+* Device Firmware Updates (DFU) - If no image number is provided or ``-n 0`` is used, the default behavior is to upload the firmware to slot 1.
+
+This distinction is important for ensuring the correct firmware update process is followed.
+
 .. _ug_nrf5340_multi_image_dfu:
 
 Simultaneous multi-image DFU
