@@ -14,8 +14,8 @@ set(gen_dir ${CMAKE_CURRENT_BINARY_DIR}/certs)
 zephyr_include_directories(${gen_dir})
 generate_inc_file_for_target(
     app
-    cert/DigiCertGlobalRootCA.pem
-    ${gen_dir}/DigiCertGlobalRootCA.pem.inc
+    cert/DigiCertGlobalG2.pem
+    ${gen_dir}/DigiCertGlobalG2.pem.inc
     )
 
 # NORDIC SDK APP START

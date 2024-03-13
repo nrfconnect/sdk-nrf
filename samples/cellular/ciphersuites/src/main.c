@@ -21,7 +21,7 @@
 
 /* Certificate for `example.com` */
 static const char cert[] = {
-#include "DigiCertGlobalRootCA.pem.inc"
+#include "DigiCertGlobalG2.pem.inc"
 };
 
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");

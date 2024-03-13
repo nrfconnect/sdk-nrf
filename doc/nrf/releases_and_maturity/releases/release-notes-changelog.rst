@@ -210,7 +210,9 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`ciphersuites` sample:
+
+  * Updated the :file:`.pem` certificate for example.com.
 
 Cryptography samples
 --------------------
