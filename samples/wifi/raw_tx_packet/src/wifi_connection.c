@@ -19,10 +19,9 @@ LOG_MODULE_REGISTER(wifi_connect, CONFIG_LOG_DEFAULT_LEVEL);
 				NET_EVENT_WIFI_DISCONNECT_RESULT)
 
 #define MAX_SSID_LEN        32
-#define DHCP_TIMEOUT        70
-#define CONNECTION_TIMEOUT  100
 #define STATUS_POLLING_MS   300
 
+K_SEM_DEFINE(wait_for_dhcp, 0, 1);
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 static struct net_mgmt_event_callback net_shell_mgmt_cb;
 
@@ -149,6 +148,7 @@ static void print_dhcp_ip(struct net_mgmt_event_callback *cb)
 	net_addr_ntop(AF_INET, addr, dhcp_info, sizeof(dhcp_info));
 
 	LOG_INF("DHCP IP address: %s", dhcp_info);
+	k_sem_give(&wait_for_dhcp);
 }
 
 static void net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
@@ -254,6 +254,8 @@ int try_wifi_connect(void)
 		}
 
 		if (context.connected) {
+			k_sem_take(&wait_for_dhcp,
+				   K_SECONDS(CONFIG_RAW_TX_PKT_SAMPLE_DHCP_TIMEOUT_S));
 			break;
 		} else if (context.connect_result) {
 			LOG_ERR("Connection unsuccessful with reason (%d)", context.connect_result);
