@@ -186,6 +186,7 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
+* Added the :ref:`bluetooth_isochronous_combined_bis_and_cis` sample showcasing forwarding isochronous data from CIS to BIS.
 * Added the :ref:`bluetooth_isochronous_time_synchronization` sample showcasing time-synchronized processing of isochronous data.
 
 Bluetooth Mesh samples
