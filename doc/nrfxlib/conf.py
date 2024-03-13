@@ -26,7 +26,7 @@ NRFXLIB_BASE = utils.get_projdir("nrfxlib")
 project = "nrfxlib"
 copyright = "2019-2024, Nordic Semiconductor"
 author = "Nordic Semiconductor"
-version = release = "2.6.0"
+version = release = "2.6.99"
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
