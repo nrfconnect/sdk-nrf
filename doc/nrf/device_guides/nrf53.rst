@@ -31,6 +31,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    :maxdepth: 2
    :caption: Subpages:
 
+   working_with_nrf/nrf53/features_nrf53
    working_with_nrf/nrf53/nrf5340_gs
    working_with_nrf/nrf53/nrf5340
    working_with_nrf/nrf53/qspi_xip_guide

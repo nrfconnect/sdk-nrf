@@ -630,6 +630,7 @@
 .. _`nRF91x1 Power saving mode setting`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/nw_service/cpsms.html
 .. _`nRF91x1 modem trace activation %XMODEMTRACE`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
 
+.. _`nRF53 Series`: https://docs.nordicsemi.com/category/nrf-53-series
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
 .. _`nRF5340 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_dk/UG/dk/intro.html
 .. _`Execute in place page in the nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/qspi.html#execute_in_place
