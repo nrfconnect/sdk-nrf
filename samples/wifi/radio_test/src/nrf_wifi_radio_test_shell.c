@@ -1938,7 +1938,7 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
-		      "rx_lna_gain = %d\n",
+		      "rx_bb_gain = %d\n",
 		      conf_params->bb_gain);
 
 	shell_fprintf(shell,
@@ -1973,6 +1973,17 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "bypass_reg_domain = %d\n",
 		      conf_params->bypass_regulatory);
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "ru_tone = %d\n",
+		      conf_params->ru_tone);
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "ru_index = %d\n",
+		      conf_params->ru_index);
+
 	return 0;
 }
 
@@ -2399,7 +2410,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 	SHELL_CMD_ARG(compute_optimal_xo_val,
 		      NULL,
-		      "Experimental",
+		      "Compute optimal XO trim value",
 		      nrf_wifi_radio_comp_opt_xo_val,
 		      1,
 		      0),
@@ -2445,13 +2456,13 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 	SHELL_CMD_ARG(set_ant_gain,
 		      NULL,
-		      "<val> - Value in dB",
+		      "<val> - Antenna gain in dB (Min: 0, Max: 6)",
 		      nrf_wifi_radio_test_set_ant_gain,
 		      2,
 		      0),
 	SHELL_CMD_ARG(set_edge_bo,
 		      NULL,
-		      "<val> - Value in dB",
+		      "<val> - Edge backoff in dB (Min: 0, Max: 10)",
 		      nrf_wifi_radio_test_set_edge_bo,
 		      2,
 		      0),
