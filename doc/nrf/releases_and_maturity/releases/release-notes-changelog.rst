@@ -187,7 +187,9 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* :ref:`bt_mesh_chat` sample:
+
+   * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
 
 Cellular samples
 ----------------
