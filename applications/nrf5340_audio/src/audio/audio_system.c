@@ -68,7 +68,6 @@ static void audio_gateway_configure(void)
 	}
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
-	sw_codec_cfg.decoder.enabled = true;
 	sw_codec_cfg.decoder.num_ch = 1;
 	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
@@ -81,7 +80,6 @@ static void audio_gateway_configure(void)
 
 	sw_codec_cfg.encoder.channel_mode =
 		(sw_codec_cfg.encoder.num_ch == 1) ? SW_CODEC_MONO : SW_CODEC_STEREO;
-	sw_codec_cfg.encoder.enabled = true;
 }
 
 static void audio_headset_configure(void)
@@ -93,7 +91,6 @@ static void audio_headset_configure(void)
 	}
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
-	sw_codec_cfg.encoder.enabled = true;
 	sw_codec_cfg.encoder.num_ch = 1;
 	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
@@ -105,8 +102,6 @@ static void audio_headset_configure(void)
 		/* Need an extra decoder channel to decode data from SD card */
 		sw_codec_cfg.decoder.num_ch++;
 	}
-
-	sw_codec_cfg.decoder.enabled = true;
 }
 
 static void encoder_thread(void *arg1, void *arg2, void *arg3)
@@ -267,6 +262,7 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
 	}
 
 	if (sample_rate_valid(decoder_sample_rate_hz)) {
+		sw_codec_cfg.decoder.enabled = true;
 		sw_codec_cfg.decoder.sample_rate_hz = decoder_sample_rate_hz;
 	} else if (decoder_sample_rate_hz) {
 		LOG_ERR("%d is not a valid sample rate", decoder_sample_rate_hz);
@@ -274,6 +270,7 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
 	}
 
 	if (encoder_bitrate) {
+		sw_codec_cfg.encoder.enabled = true;
 		sw_codec_cfg.encoder.bitrate = encoder_bitrate;
 	}
 
