@@ -8,7 +8,7 @@ nPM1300: One button
    :depth: 2
 
 The One button sample demonstrates how to support wake-up, shutdown and user interactions through
-a single button connected to the nPM1300.
+a single button connected to the `nPM1300 <nPM1300 product website_>`_.
 
 Requirements
 ************
@@ -17,7 +17,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also requires an nPM1300 EK.
+The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_.
 
 Overview
 ********

@@ -16,7 +16,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also requires an nPM1300 EK.
+The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_.
 
 Overview
 ********
