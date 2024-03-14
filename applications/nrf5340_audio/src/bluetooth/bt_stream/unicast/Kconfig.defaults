@@ -35,6 +35,9 @@ config BT_BUF_ACL_RX_SIZE
 	default 502 if (AUDIO_DFU > 0)
 	default 259
 
+config BT_BUF_ACL_TX_COUNT
+	default 12
+
 config SETTINGS
 	default y
 
