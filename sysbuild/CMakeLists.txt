@@ -117,9 +117,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   endif()
 
   if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-    # Make mcuboot a build only target as the main application will flash this from the
-    # merged hex file
-    set_target_properties(mcuboot PROPERTIES BUILD_ONLY true)
+    if(SB_CONFIG_PARTITION_MANAGER)
+      # Make mcuboot a build only target as the main application will flash this from the
+      # merged hex file
+      set_target_properties(mcuboot PROPERTIES BUILD_ONLY true)
+    endif()
+
     set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_UPDATEABLE_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES}\n")
     set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_UPDATEABLE_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES}\n")
 
