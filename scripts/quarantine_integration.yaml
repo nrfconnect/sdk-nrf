@@ -345,3 +345,143 @@
     - nrf5340_audio_dk_nrf5340_cpuapp
     - nrf5340dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - dfu.dfu_target.mcuboot
+    - mcuboot.direct_xip
+  platforms:
+    - nrf52dk_nrf52832
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.nrf_profiler
+  platforms:
+    - nrf21540dk_nrf52840
+    - nrf52840dk_nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - fast_pair.storage.factory_reset.6keys
+    - fast_pair.storage.factory_reset.7keys
+    - fast_pair.storage.factory_reset.8keys
+    - fast_pair.storage.factory_reset.9keys
+    - fast_pair.storage.factory_reset.default
+  platforms:
+    - nrf52840dk_nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - fast_pair.storage.account_key_storage.6keys
+    - fast_pair.storage.account_key_storage.7keys
+    - fast_pair.storage.account_key_storage.8keys
+    - fast_pair.storage.account_key_storage.9keys
+  platforms:
+    - qemu_cortex_m3
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - fast_pair.storage.account_key_storage.default
+  platforms:
+    - nrf52840dk_nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - fast_pair.crypto.mbedtls
+    - fast_pair.crypto.oberon
+    - fast_pair.crypto.tinycrypt
+  platforms:
+    - nrf52840dk_nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - nrf_profiler.core
+  platforms:
+    - nrf52840dk_nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - applications.nrf_desktop.zrelease
+  platforms:
+    - nrf52810dmouse_nrf52810
+    - nrf52840dk_nrf52840
+    - nrf52833dk_nrf52833
+    - nrf52833dongle_nrf52833
+    - nrf52dmouse_nrf52832
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - applications.nrf_desktop.zdebugwithshell
+  platforms:
+    - nrf52833dk_nrf52833
+    - nrf52833dongle_nrf52833
+    - nrf52kbd_nrf52832
+    - nrf52840dongle_nrf52840
+    - nrf52840gmouse_nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - applications.nrf_desktop.zdebug_fast_pair.gmouse
+  platforms:
+    - nrf52840dk_nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - applications.nrf_desktop.zdebug_3bleconn
+    - applications.nrf_desktop.zrelease_4llpmconn
+  platforms:
+    - nrf52840dongle_nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - applications.nrf_desktop.zdebug_mcuboot_smp
+    - applications.nrf_desktop.zrelease_fast_pair.gmouse
+  platforms:
+    - nrf52840gmouse_nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.find_my.coexistence.debug
+  platforms:
+    - nrf52840dk_nrf52840
+    - nrf5340dk_nrf5340_cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.find_my.coexistence.release
+  platforms:
+    - nrf52dk_nrf52832
+    - nrf5340dk_nrf5340_cpuapp_ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.find_my.qualification.release
+  platforms:
+    - nrf52840dk_nrf52840
+    - nrf5340dk_nrf5340_cpuapp_ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.find_my.qualification.debug
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.find_my.simple.release
+  platforms:
+    - nrf52840dk_nrf52840
+    - nrf5340dk_nrf5340_cpuapp
+    - nrf5340dk_nrf5340_cpuapp_ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.find_my.simple.debug
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp_ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - application.find_my.thingy.release
+  platforms:
+    - thingy53_nrf5340_cpuapp_ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
