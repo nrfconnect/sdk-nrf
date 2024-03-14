@@ -63,6 +63,8 @@ Working with nRF52 Series
 Working with nRF53 Series
 =========================
 
+* Added the :ref:`features_nrf53` page.
+
 |no_changes_yet_note|
 
 Working with RF front-end modules

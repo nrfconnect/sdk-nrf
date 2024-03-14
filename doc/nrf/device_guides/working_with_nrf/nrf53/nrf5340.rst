@@ -80,13 +80,6 @@ See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M t
 Inter-core communication
 ========================
 
-Communication between the application core and the network core happens through a shared memory area.
-The application core memory is mapped to the network core memory map.
-This means that the network core can access and use the application core memory for shared memory communication.
-
-Interprocessor Communication (IPC) is used to indicate to the other core that there is new data available to pick up.
-The actual data exchange is handled by Open Asymmetric Multi-Processing (OpenAMP).
-
 Zephyr includes the `OpenAMP`_ library, which provides a complete solution for exchanging messages between the cores.
 The IPC peripheral is presented to Zephyr as an Interprocessor Mailbox (IPM) device.
 The OpenAMP library uses the IPM SHIM layer, which in turn uses the IPC driver in `nrfx`_.
@@ -144,6 +137,8 @@ The following table lists performance numbers that were measured under different
 +-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
 | 128 MHz         | External flash  | Yes    | 48 MHz       | Quad   | 36.4      | 8.85               | 13.9               | 966                      | 911                      |
 +-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+
+.. _ug_nrf5340_protocols:
 
 Protocols and use cases
 ***********************
@@ -235,6 +230,7 @@ The sample implements the RPMsg transport using the `OpenAMP`_ library to commun
 For the application core, the |NCS| provides a series of samples for the :ref:`Thread <ug_thread>`, :ref:`Zigbee <ug_zigbee>`, and :ref:`Matter <ug_matter>` protocols.
 |multi_image|
 
+.. _ug_nrf5340_protocols_multiprotocol:
 
 Multiprotocol (Thread or Zigbee in combination with Bluetooth LE)
 =================================================================
