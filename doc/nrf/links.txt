@@ -74,9 +74,9 @@
 .. _`ANT entry in the manifest`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L182-L187
 
 .. _`Golioth Firmware SDK`: https://github.com/golioth/golioth-firmware-sdk
-.. _`Golioth module.yml`: https://github.com/golioth/golioth-firmware-sdk/blob/v0.10.0/zephyr/module.yml
-.. _`Golioth west-ncs.yml`: https://github.com/golioth/golioth-firmware-sdk/blob/v0.10.0/west-ncs.yml
-.. _`Golioth Firmware SDK NCS doc`: https://github.com/golioth/golioth-firmware-sdk/tree/main/examples/zephyr#using-with-nordics-nrf-connect-sdk
+.. _`Golioth module.yml`: https://github.com/golioth/golioth-firmware-sdk/blob/v0.13.1/zephyr/module.yml
+.. _`Golioth west-ncs.yml`: https://github.com/golioth/golioth-firmware-sdk/blob/v0.13.1/west-ncs.yml
+.. _`Golioth Firmware SDK NCS doc`: https://github.com/golioth/golioth-firmware-sdk/tree/v0.13.1/examples/zephyr#using-with-nordics-nrf-connect-sdk
 
 .. _`nrfx`: https://github.com/NordicSemiconductor/nrfx/
 .. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-220---2020-04-28
