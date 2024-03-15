@@ -19,7 +19,7 @@ enum kmu_metadata_key_bits {
 
 typedef struct {
 	uint8_t key_usage_scheme: 2; /* value of @ref kmu_metadata_key_usage_scheme. */
-	uint8_t number_of_slots: 2;  /* Number of slots to push. */
+	uint8_t number_of_slots: 3;  /* Number of slots to push. */
 	uint8_t slot_id;	     /* KMU slot number. */
 } kmu_opaque_key_buffer;
 
