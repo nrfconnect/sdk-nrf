@@ -33,6 +33,8 @@ LOG_MODULE_REGISTER(nrf_cloud_coap, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 #define COAP_GND_FIX_RSC "loc/ground-fix"
 #define COAP_FOTA_GET_RSC "fota/exec/current"
 #define COAP_SHDW_RSC "state"
+#define COAP_SHDW_REP_RSC "state/reported"
+#define COAP_SHDW_DES_RSC "state/desired"
 #define COAP_D2C_RSC "msg/d2c"
 #define COAP_D2C_BULK_RSC "msg/d/%s/d2c/bulk"
 #define COAP_D2C_RSC_MAX_LEN MAX(sizeof(COAP_D2C_RSC), sizeof(COAP_D2C_BULK_RSC))
@@ -629,7 +631,7 @@ int nrf_cloud_coap_shadow_get(char *buf, size_t buf_len, bool delta)
 	return err;
 }
 
-int nrf_cloud_coap_shadow_state_update(const char * const shadow_json)
+static int shadow_update(const char * const resource, const char * const shadow_json)
 {
 	int err;
 
@@ -638,7 +640,7 @@ int nrf_cloud_coap_shadow_state_update(const char * const shadow_json)
 		return -EACCES;
 	}
 
-	err = nrf_cloud_coap_patch(COAP_SHDW_RSC, NULL, (uint8_t *)shadow_json,
+	err = nrf_cloud_coap_patch(resource, NULL, (uint8_t *)shadow_json,
 				   strlen(shadow_json),
 				   COAP_CONTENT_FORMAT_APP_JSON, true, NULL, NULL);
 	if (err < 0) {
@@ -647,6 +649,16 @@ int nrf_cloud_coap_shadow_state_update(const char * const shadow_json)
 		LOG_RESULT_CODE_ERR("Error from server:", err);
 	}
 	return err;
+}
+
+int nrf_cloud_coap_shadow_state_update(const char * const shadow_json)
+{
+	return shadow_update(COAP_SHDW_REP_RSC, shadow_json);
+}
+
+int nrf_cloud_coap_shadow_desired_update(const char * const shadow_json)
+{
+	return shadow_update(COAP_SHDW_DES_RSC, shadow_json);
 }
 
 int nrf_cloud_coap_shadow_device_status_update(const struct nrf_cloud_device_status
@@ -736,22 +748,28 @@ int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data,
 	err = nrf_cloud_shadow_control_process(&shadow_data, &out_data);
 	if ((err == -ENODATA) || (err == -ENOMSG)) {
 		/* No control data in the delta or no reply is needed */
-	} else if (err) {
-		LOG_ERR("Failed to process device control shadow update, error: %d", err);
-	} else {
-		LOG_DBG("Ack delta: len:%zd, %s", out_data.len, (const char *)out_data.ptr);
+	} else if ((err == -EINVAL) || (err == 0)) {
+		const char *action = err ? "reject" : "acknowledge";
 
-		/* Acknowledge it so we do not receive it again. */
-		err = nrf_cloud_coap_shadow_state_update(out_data.ptr);
-		if (err) {
-			LOG_ERR("Failed to acknowledge control delta: %d", err);
+		LOG_DBG("delta: len:%zd, %s", out_data.len, (const char *)out_data.ptr);
+
+		/* Acknowledge it or reject it so we do not receive it again. */
+		if (!err) {
+			err = nrf_cloud_coap_shadow_state_update(out_data.ptr);
 		} else {
-			LOG_DBG("Control delta acknowledged");
+			err = nrf_cloud_coap_shadow_desired_update(out_data.ptr);
+		}
+		if (err) {
+			LOG_ERR("Failed to %s control delta: %d", action, err);
+		} else {
+			LOG_DBG("Control delta: %s", action);
 		}
 
 		nrf_cloud_free((void *)out_data.ptr);
 		out_data.ptr = NULL;
 		out_data.len = 0;
+	} else {
+		LOG_ERR("Failed to process device control shadow update, error: %d", err);
 	}
 
 	/* Check if there is delta data to give to the caller */
@@ -762,7 +780,8 @@ int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data,
 		err = 1;
 	} else {
 		nrf_cloud_obj_free(&shadow_delta.state);
+		err = 0;
 	}
 
-	return 0;
+	return err;
 }

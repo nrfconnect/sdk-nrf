@@ -4056,9 +4056,7 @@ int nrf_cloud_coap_shadow_default_process(struct nrf_cloud_obj_shadow_data *cons
 int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const input,
 				     struct nrf_cloud_data *const response_out)
 {
-	if (!input) {
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(input != NULL);
 
 	NRF_CLOUD_OBJ_JSON_DEFINE(ctrl_obj);
 	enum nrf_cloud_ctrl_status ctrl_status = NRF_CLOUD_CTRL_NOT_PRESENT;
@@ -4123,6 +4121,9 @@ int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const inp
 		if (err) {
 			LOG_ERR("nrf_cloud_shadow_control_response_encode failed %d", err);
 			return -EIO;
+		}
+		if (ctrl_status == NRF_CLOUD_CTRL_REJECT) {
+			return -EINVAL;
 		}
 	}
 
