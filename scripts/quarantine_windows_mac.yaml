@@ -41,10 +41,10 @@
 - scenarios:
     - sample.caf_sensor_manager.nrf54h20.multicore
     - sample.cellular.modem_shell.modem_trace_shell_ext_flash
-    - sample.event_manager_proxy.nrf54h20pdk_cpuapp.icmsg
-    - sample.ipc.ipc_service.nrf54h20pdk_cpuapp_cpuppr_icmsg
-    - sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpuppr
-    - sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpuppr_ram
+    - sample.event_manager_proxy.nrf54h20dk_cpuapp.icmsg
+    - sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpuppr_icmsg
+    - sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr
+    - sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr_xip
   platforms:
     - all
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-26460"

@@ -28,29 +28,28 @@ tests:
     extra_args:
       SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
 
-  sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpuppr:
+  sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr:
     platform_allow:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     integration_platforms:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20pdk_nrf54h20_cpuppr.conf
+      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr.conf
       hello_world_SNIPPET=nordic-ppr
 
-  sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpuppr_ram:
+  sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr_xip:
     platform_allow:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     integration_platforms:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20pdk_nrf54h20_cpuppr.conf
-      hello_world_SNIPPET=nordic-ppr-ram
-      remote_OVERLAY_CONFIG=boards/nrf54h20pdk_nrf54h20_cpuppr_ram.conf
+      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr_xip.conf
+      hello_world_SNIPPET=nordic-ppr-xip
 
-  sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpurad:
+  sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad:
     platform_allow:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     integration_platforms:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20pdk_nrf54h20_cpurad.conf
+      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf

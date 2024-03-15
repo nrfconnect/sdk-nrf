@@ -23,7 +23,7 @@ tests:
   sample.aes_gcm.oberon:
     tags: introduction psa oberon
     platform_allow: >
-      nrf54h20pdk_nrf54h20_cpuapp
+      nrf54h20dk_nrf54h20_cpuapp
       nrf54l15pdk_nrf54l15_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns nrf5340dk_nrf5340_cpuapp
       nrf52840dk_nrf52840 nrf9160dk_nrf9160_ns nrf9160dk_nrf9160
@@ -40,11 +40,11 @@ tests:
       - nrf9161dk_nrf9161
       - nrf9161dk_nrf9161_ns
       - nrf54l15pdk_nrf54l15_cpuapp
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
   sample.aes_gcm.cracen:
     tags: introduction psa cracen
     platform_allow: >
-      nrf54h20pdk_nrf54h20_cpuapp
+      nrf54h20dk_nrf54h20_cpuapp
       nrf54l15pdk_nrf54l15_cpuapp
       nrf54l15pdk_nrf54l15_cpuapp_ns
     harness: console
@@ -55,4 +55,4 @@ tests:
     integration_platforms:
       - nrf54l15pdk_nrf54l15_cpuapp
       - nrf54l15pdk_nrf54l15_cpuapp_ns
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp

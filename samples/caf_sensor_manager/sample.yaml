@@ -62,23 +62,23 @@ tests:
     build_only: true
     sysbuild: true
     platform_allow:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     integration_platforms:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20pdk_nrf54h20_cpuppr.conf
+      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr.conf
       caf_sensor_manager_SNIPPET=nordic-ppr
-      caf_sensor_manager_OVERLAY_CONFIG=boards/nrf54h20pdk_nrf54h20_cpuapp_multicore.conf
-      caf_sensor_manager_DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpuapp_multicore.overlay
-      remote_OVERLAY_CONFIG=boards/nrf54h20pdk_nrf54h20_cpuppr.conf
-      remote_DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpuppr.overlay
+      caf_sensor_manager_OVERLAY_CONFIG=boards/nrf54h20dk_nrf54h20_cpuapp_multicore.conf
+      caf_sensor_manager_DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuapp_multicore.overlay
+      remote_OVERLAY_CONFIG=boards/nrf54h20dk_nrf54h20_cpuppr.conf
+      remote_DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuppr.overlay
   sample.caf_sensor_manager.nrf54h20.singlecore:
     build_only: true
     sysbuild: true
     platform_allow:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     integration_platforms:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     extra_args:
-      caf_sensor_manager_OVERLAY_CONFIG=boards/nrf54h20pdk_nrf54h20_cpuapp_singlecore.conf
-      caf_sensor_manager_DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpuapp_singlecore.overlay
+      caf_sensor_manager_OVERLAY_CONFIG=boards/nrf54h20dk_nrf54h20_cpuapp_singlecore.conf
+      caf_sensor_manager_DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuapp_singlecore.overlay

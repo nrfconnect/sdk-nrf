@@ -10,14 +10,14 @@ common:
 
 tests:
   samples.sdfw.ssf_client:
-    platform_allow: nrf54h20pdk_nrf54h20_cpuapp nrf54h20pdk_nrf54h20_cpurad
+    platform_allow: nrf54h20dk_nrf54h20_cpuapp nrf54h20dk_nrf54h20_cpurad
     integration_platforms:
-      - nrf54h20pdk_nrf54h20_cpuapp
-      - nrf54h20pdk_nrf54h20_cpurad
+      - nrf54h20dk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpurad
 
   samples.sdfw.ssf_client.logging.uart:
-    platform_allow: nrf54h20pdk_nrf54h20_cpuapp nrf54h20pdk_nrf54h20_cpurad
+    platform_allow: nrf54h20dk_nrf54h20_cpuapp nrf54h20dk_nrf54h20_cpurad
     integration_platforms:
-      - nrf54h20pdk_nrf54h20_cpuapp
-      - nrf54h20pdk_nrf54h20_cpurad
+      - nrf54h20dk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpurad
     extra_args: EXTRA_CONF_FILE=uart_logging.conf
