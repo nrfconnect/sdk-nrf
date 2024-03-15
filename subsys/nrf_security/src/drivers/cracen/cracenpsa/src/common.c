@@ -413,11 +413,15 @@ int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *en
 				      struct sx_buf *op)
 {
 	int ret;
-	size_t len;
+	size_t len = 0;
 	size_t i = 0;
 
 	ret = mbedtls_asn1_get_tag(p, end, &len, MBEDTLS_ASN1_INTEGER);
 	if (ret) {
+		return SX_ERR_INVALID_PARAM;
+	}
+
+	if (*p + len > end) {
 		return SX_ERR_INVALID_PARAM;
 	}
 

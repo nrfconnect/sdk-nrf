@@ -467,6 +467,10 @@ static psa_status_t cracen_write_confirm(cracen_spake2p_operation_t *operation, 
 	if (operation->role == PSA_PAKE_ROLE_SERVER) {
 		status = cracen_get_confirmation_keys(operation, operation->KconfVP,
 						      operation->KconfPV);
+
+		if (status) {
+			return status;
+		}
 	}
 
 	status = cracen_get_confirmation(operation, operation->KconfPV, operation->YX, output);
