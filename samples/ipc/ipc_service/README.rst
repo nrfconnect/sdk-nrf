@@ -80,20 +80,20 @@ Use these overlays when building the IPC sample to test the following scenarios:
      west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpuapp_sending .
      west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpunet_sending .
 
-**nRF54H20 PDK**
+**nRF54H20 DK**
 
 You can build the sample to test IPC between the application and PPR core using the ICMSG backend, as follows:
 
 .. code-block:: console
 
-   west build -p -b nrf54h20pdk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20pdk_cpuapp_cpuppr_icmsg .
+   west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpuppr_icmsg .
 
 You can build the sample to test IPC between the application and radio domains using either the RPMsg or the ICMSG backend, as follows:
 
 .. code-block:: console
 
-   west build -p -b nrf54h20pdk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20pdk_cpuapp_cpurad_rpmsg .
-   west build -p -b nrf54h20pdk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20pdk_cpuapp_cpurad_icmsg .
+   west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_rpmsg .
+   west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_icmsg .
 
 Testing
 =======

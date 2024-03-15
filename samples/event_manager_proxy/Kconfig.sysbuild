@@ -10,5 +10,5 @@ config REMOTE_BOARD
 	string "The board used for remote target"
 	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
 	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns"
-	default "nrf54h20pdk_nrf54h20_cpuppr" if $(BOARD) = "nrf54h20pdk_nrf54h20_cpuapp"
+	default "nrf54h20dk_nrf54h20_cpuppr" if $(BOARD) = "nrf54h20dk_nrf54h20_cpuapp"
 	default "UNKNOWN"

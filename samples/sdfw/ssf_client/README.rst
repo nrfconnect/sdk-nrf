@@ -17,7 +17,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf54h20pdk_nrf54h20_cpuapp, nrf54h20pdk_nrf54h20_cpurad
+   :rows: nrf54h20dk_nrf54h20_cpuapp, nrf54h20dk_nrf54h20_cpurad
 
 Overview
 ********

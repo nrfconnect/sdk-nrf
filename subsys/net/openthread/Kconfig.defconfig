@@ -49,7 +49,7 @@ config PSA_CRYPTO_DRIVER_CRACEN
 	default y
 
 endif
-if SOC_NRF54H20_ENGA_CPUAPP
+if SOC_NRF54H20_CPUAPP
 
 #To be removed
 config ENTROPY_TEST_PRNG

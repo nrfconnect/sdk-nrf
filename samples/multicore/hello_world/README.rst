@@ -48,28 +48,28 @@ nRF5340 DK
 
      west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.multicore.hello_world.nrf5340dk_cpuapp_cpunet .
 
-nRF54H20 PDK
+nRF54H20 DK
   You can build the sample for application and radio cores as follows:
 
   .. code-block:: console
 
-     west build -p -b nrf54h20pdk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpurad .
+     west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad .
 
   You can build the sample for application and PPR cores as follows:
 
   .. code-block:: console
 
-     west build -p -b nrf54h20pdk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpuppr .
+     west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr .
 
   Note that :ref:`zephyr:nordic-ppr` is used in the configuration above to automatically launch PPR core from the application core.
 
-  An additional configuration setup is provided to execute code from RAM on the PPR core.
-  This configuration uses :ref:`zephyr:nordic-ppr-ram` and disables :kconfig:option:`CONFIG_XIP` on the PPR core.
+  An additional configuration setup is provided to execute code directly from MRAM on the PPR core.
+  This configuration uses :ref:`zephyr:nordic-ppr-xip` and enables :kconfig:option:`CONFIG_XIP` on the PPR core.
   It can be built as follows:
 
   .. code-block:: console
 
-     west build -p -b nrf54h20pdk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20pdk_cpuapp_cpuppr_ram .
+     west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr_xip .
 
 Testing
 =======

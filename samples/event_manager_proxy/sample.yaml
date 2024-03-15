@@ -19,15 +19,15 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     extra_args: CONF_FILE=prj_icmsg.conf
-  sample.event_manager_proxy.nrf54h20pdk_cpuapp.icmsg:
+  sample.event_manager_proxy.nrf54h20dk_cpuapp.icmsg:
     platform_allow:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     integration_platforms:
-      - nrf54h20pdk_nrf54h20_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     extra_args:
       event_manager_proxy_SNIPPET=nordic-ppr
       event_manager_proxy_CONF_FILE=prj_icmsg.conf
-      event_manager_proxy_DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpuapp_icmsg.overlay
+      event_manager_proxy_DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuapp_icmsg.overlay
       remote_CONF_FILE=prj_icmsg.conf
-      remote_OVERLAY_CONFIG=boards/nrf54h20pdk_nrf54h20_cpuppr_icmsg.conf
-      remote_DTC_OVERLAY_FILE=boards/nrf54h20pdk_nrf54h20_cpuppr_icmsg.overlay
+      remote_OVERLAY_CONFIG=boards/nrf54h20dk_nrf54h20_cpuppr_icmsg.conf
+      remote_DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuppr_icmsg.overlay

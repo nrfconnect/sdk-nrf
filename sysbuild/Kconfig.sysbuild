@@ -17,7 +17,7 @@ menuconfig PARTITION_MANAGER
 		      $(BOARD) != "nrf52_bsim" && \
 		      $(BOARD) != "nrf5340bsim_nrf5340_cpuapp" && \
 		      $(BOARD) != "nrf5340bsim_nrf5340_cpunet" && \
-		      $(BOARD) != "nrf54h20pdk_nrf54h20_cpuapp")
+		      $(BOARD) != "nrf54h20dk_nrf54h20_cpuapp")
 	depends on !EXTERNAL_CONFIGURED_NETCORE
 
 config PM_MCUBOOT_PAD
