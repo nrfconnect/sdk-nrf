@@ -2582,7 +2582,7 @@ The time returned by :ref:`lib_date_time` library becomes incorrect after one we
   The time returned by :ref:`lib_date_time` library becomes incorrect after one week elapses.
   This is due to an issue with clock_gettime() API.
 
-  **Affected platforms:** nRF9160
+  **Affected platforms:** nRF9160, nRF52840
 
 Subsystems
 **********
