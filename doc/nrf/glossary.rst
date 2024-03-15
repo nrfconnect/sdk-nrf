@@ -922,7 +922,7 @@ Glossary
          * M: Multiply and divide extension
          * C: Compressed extension (compressed instructions)
 
-      The nRF54H20 PDK uses several VPR cores: :term:`Fast Lightweight Processor (FLPR, pronounced “Flipper”)`, :term:`Peripheral Processor (PPR, pronounced “Pepper”)` and :term:`System Controller`.
+      The nRF54H20 DK uses several VPR cores: :term:`Fast Lightweight Processor (FLPR, pronounced “Flipper”)`, :term:`Peripheral Processor (PPR, pronounced “Pepper”)` and :term:`System Controller`.
 
    VPR Event Interface (VEVIF)
       A real-time peripheral that allows interaction with the VPR's interrupts and the PPI system in the domain where the VPR is instantiated.

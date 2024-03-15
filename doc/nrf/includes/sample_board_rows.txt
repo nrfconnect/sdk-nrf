@@ -190,17 +190,17 @@
 
 | :ref:`nRF7002 DK (emulating nRF7001) <nrf7002dk_nrf5340>` | PCA10143 | :ref:`nrf7002dk_nrf7001_nrf5340 <nrf7002dk_nrf5340>` | ``nrf7002dk_nrf7001_nrf5340_cpunet`` |
 
-.. nrf54h20pdk_nrf54h20_cpuapp
+.. nrf54h20dk_nrf54h20_cpuapp
 
-| :ref:`nRF54H20 PDK <ug_nrf54h20_gs>` | PCA10145 | :ref:`nrf54h20pdk_nrf54h20_cpuapp <zephyr:nrf54h20pdk_nrf54h20>` | ``nrf54h20pdk_nrf54h20_cpuapp`` |
+| :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :ref:`nrf54h20dk_nrf54h20_cpuapp <zephyr:nrf54h20dk_nrf54h20>` | ``nrf54h20dk_nrf54h20_cpuapp`` |
 
-.. nrf54h20pdk_nrf54h20_cpurad
+.. nrf54h20dk_nrf54h20_cpurad
 
-| :ref:`nRF54H20 PDK <ug_nrf54h20_gs>` | PCA10145 | :ref:`nrf54h20pdk_nrf54h20_cpurad <zephyr:nrf54h20pdk_nrf54h20>` | ``nrf54h20pdk_nrf54h20_cpurad`` |
+| :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :ref:`nrf54h20dk_nrf54h20_cpurad <zephyr:nrf54h20dk_nrf54h20>` | ``nrf54h20dk_nrf54h20_cpurad`` |
 
-.. nrf54h20pdk_nrf54h20_cpuppr
+.. nrf54h20dk_nrf54h20_cpuppr
 
-| :ref:`nRF54H20 PDK <ug_nrf54h20_gs>` | PCA10145 | :ref:`nrf54h20pdk_nrf54h20_cpuppr <zephyr:nrf54h20pdk_nrf54h20>` | ``nrf54h20pdk_nrf54h20_cpuppr`` |
+| :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :ref:`nrf54h20dk_nrf54h20_cpuppr <zephyr:nrf54h20dk_nrf54h20>` | ``nrf54h20dk_nrf54h20_cpuppr`` |
 
 .. native_posix
 

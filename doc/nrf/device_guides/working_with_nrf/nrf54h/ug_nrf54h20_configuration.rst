@@ -2,19 +2,19 @@
 
 .. _ug_nrf54h20_configuration:
 
-Configuring the nRF54H20 PDK
-############################
+Configuring the nRF54H20 DK
+###########################
 
 .. contents::
    :local:
    :depth: 2
 
-The nRF54H20 PDK uses both devicetree and Kconfig for its hardware and software configuration.
+The nRF54H20 DK uses both devicetree and Kconfig for its hardware and software configuration.
 
 You can find the basics of both devicetree and Kconfig in Zephyr in the :ref:`zephyr:application` section of the Zephyr documentation.
 You can also read the :ref:`app_build_system` section describing the |NCS| additions to the Zephyr configuration system.
 
-However, the multicore nature of the nRF54H20 PDK required some changes to the way devicetree files are organized.
+However, the multicore nature of the nRF54H20 DK required some changes to the way devicetree files are organized.
 
 DTS file scheme
 ***************
@@ -56,7 +56,7 @@ To see and test how to use overlays for changing nodes, see the *Lesson 3* of th
 Generated HEX files
 *******************
 
-When building an application for the nRF54H20 PDK, you are building all domain images at once.
+When building an application for the nRF54H20 DK, you are building all domain images at once.
 During this process, the following :file:`zephyr.hex` images are built:
 
 * Application core application
@@ -76,7 +76,7 @@ Additionally, the following user information configuration registers (UICR) cont
    Flashing both :file:`zephyr.hex` + :file:`uicr.hex` will result in the same configuration.
 
 All of the HEX files need to be flashed into the device.
-For more information on building images for the nRF54H20 PDK, see :ref:`ug_nrf54h20_gs`.
+For more information on building images for the nRF54H20 DK, see :ref:`ug_nrf54h20_gs`.
 For additional information on multi-image builds see :ref:`ug_multi_image`.
 
 Other revelant resources

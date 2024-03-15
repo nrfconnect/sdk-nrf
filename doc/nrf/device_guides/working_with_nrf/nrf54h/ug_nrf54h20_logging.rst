@@ -8,7 +8,7 @@ nRF54H20 logging
    :local:
    :depth: 2
 
-To read logs on the nRF54H20 PDK, you can use the following methods:
+To read logs on the nRF54H20 DK, you can use the following methods:
 
 * A direct UART connection to a specific core.
 * Local domain logging with System Trace Macrocell (STM).
