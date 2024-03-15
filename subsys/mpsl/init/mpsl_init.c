@@ -53,7 +53,7 @@ extern void rtc_pretick_rtc0_isr_hook(void);
 #define MPSL_RADIO_IRQn RADIO_0_IRQn
 #elif defined(CONFIG_SOC_SERIES_NRF54HX)
 #define MPSL_TIMER_IRQn TIMER020_IRQn
-#define MPSL_RTC_IRQn GRTC_0_IRQn /* non-secure GRTC IRQ. */
+#define MPSL_RTC_IRQn GRTC_2_IRQn
 #define MPSL_RADIO_IRQn RADIO_0_IRQn
 
 /* Basic build time sanity checking */
