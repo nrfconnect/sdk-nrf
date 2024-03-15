@@ -19,7 +19,7 @@
 #include "zephyr/sys/__assert.h"
 
 /* NCSDK-25121: Ensure address of this array is at a fixed address. */
-uint8_t kmu_push_area[64] __aligned(8);
+uint8_t kmu_push_area[64] __aligned(16);
 
 typedef struct kmu_metadata {
 	uint32_t metadata_version: 4;
