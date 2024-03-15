@@ -303,7 +303,7 @@ psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attribute
 
 	for (size_t i = 0; metadata_usage_flags; i++) {
 		if (metadata_usage_flags & 1) {
-			if (i > ARRAY_SIZE(metadata_usage_flags_mapping)) {
+			if (i >= ARRAY_SIZE(metadata_usage_flags_mapping)) {
 				return PSA_ERROR_GENERIC_ERROR;
 			}
 			usage_flags |= metadata_usage_flags_mapping[i];
@@ -431,9 +431,6 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 	}
 
 	metadata->key_usage_scheme = CRACEN_PSA_GET_KEY_USAGE_SCHEME(psa_get_key_id(key_attr));
-	if (metadata->key_usage_scheme > KMU_METADATA_SCHEME_RAW) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
 
 	if (metadata->key_usage_scheme == KMU_METADATA_SCHEME_PROTECTED) {
 		if (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_EXPORT) {
@@ -594,9 +591,11 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 
 	psa_status_t status = PSA_SUCCESS;
 
-	if (attributes) {
-		status = convert_to_psa_attributes(&metadata, attributes);
+	if (!attributes) {
+		return PSA_ERROR_INVALID_ARGUMENT;
 	}
+
+	status = convert_to_psa_attributes(&metadata, attributes);
 
 	if (status != PSA_SUCCESS) {
 		return status;

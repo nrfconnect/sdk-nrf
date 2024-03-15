@@ -16,6 +16,7 @@ struct sxkeyref sx_keyref_load_material(size_t keysz, const char *keymaterial)
 	k.cfg = 0;
 	k.prepare_key = 0;
 	k.clean_key = 0;
+	k.user_data = 0;
 
 	return k;
 }

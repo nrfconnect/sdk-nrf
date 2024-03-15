@@ -1112,6 +1112,9 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		uint8_t key[CRACEN_KMU_MAX_KEY_SIZE];
 		size_t key_bits;
+		if (PSA_BITS_TO_BYTES(psa_get_key_bits(attributes) > sizeof(key))) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
 		psa_status_t status =
 			psa_generate_random(key, PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)));
 		if (status != PSA_SUCCESS) {
@@ -1156,6 +1159,7 @@ size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes)
 			    PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
 				return 1;
 			}
+			break;
 		case CRACEN_BUILTIN_MEXT_ID:
 		case CRACEN_BUILTIN_MKEK_ID:
 			if (psa_get_key_type(attributes) == PSA_KEY_TYPE_AES) {
