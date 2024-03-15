@@ -9,7 +9,7 @@ nRF54H20 debugging
    :local:
    :depth: 2
 
-The main recommended tool for debugging in the |NCS| for the limited sampling of the nRF54H20 PDK is the `GNU Project Debugger`_ (GDB tool).
+The main recommended tool for debugging in the |NCS| for the limited sampling of the nRF54H20 DK is the `GNU Project Debugger`_ (GDB tool).
 
 When working from the command line, you can use west with the GDB tool.
 For details, read the :ref:`Debugging with west debug <zephyr:west-debugging>` section on the :ref:`zephyr:west-build-flash-debug` page in the Zephyr documentation.
@@ -73,11 +73,11 @@ To debug a specific core using ``JLinkExe`` do the following:
    You can use this command to run J-Link also on other Arm cores.
    You can find the ``SEGGER-ID`` as follows:
 
-   * Check the ``SEGGER ID`` printed on the label on the bottom side of the PDK.
+   * Check the ``SEGGER ID`` printed on the label on the bottom side of the DK.
    * Run the ``nrfjprog --ids`` command.
 
-   If just one PDK is connected to the machine, defining ``SEGGER-ID`` is not necessary.
-   If more than one PDK is connected to the machine and ``SEGGER-ID`` is undefined, a pop up window will appear where you can manually select the ID of the PDK you want to run J-Link on.
+   If just one DK is connected to the machine, defining ``SEGGER-ID`` is not necessary.
+   If more than one DK is connected to the machine and ``SEGGER-ID`` is undefined, a pop up window will appear where you can manually select the ID of the DK you want to run J-Link on.
 
    .. note::
       PPR core debugging is not functional in the initial limited sampling.
@@ -113,7 +113,7 @@ Logs are integrated into various modules and subsystems in the |NCS| and Zephyr.
 These logs are visible once you configure the logger for your application.
 
 You can also configure log level per logger module to, for example, get more information about a given subsystem.
-See :ref:`ug_nrf54h20_logging` for details on how to enable and configure logs on the nRF54H20 PDK.
+See :ref:`ug_nrf54h20_logging` for details on how to enable and configure logs on the nRF54H20 DK.
 
 Debugging stack overflows
 *************************

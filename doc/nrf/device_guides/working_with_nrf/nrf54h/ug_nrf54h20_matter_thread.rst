@@ -9,14 +9,14 @@ Working with nRF54H20 and Matter and Thread
    :local:
    :depth: 2
 
-The nRF54H20 PDK supports the following Matter and Thread samples:
+The nRF54H20 DK supports the following Matter and Thread samples:
 
 * :ref:`Matter door lock sample <matter_lock_sample>`
 * :ref:`Matter template sample <matter_template_sample>`
 * :ref:`Thread CLI sample <ot_cli_sample>`
 
 The Matter support is currently limited to Matter over Thread, and support for both Matter and Thread is currently :ref:`experimental <software_maturity>`.
-Read the following sections for more information about support in the nRF54H20 PDK and the platform design for the nRF54H20 SoC.
+Read the following sections for more information about support in the nRF54H20 DK and the platform design for the nRF54H20 SoC.
 
 For more information about Matter and Thread in the |NCS|, read the documentation in the :ref:`ug_matter` and :ref:`ug_thread` protocol sections.
 
@@ -121,16 +121,16 @@ For more information, see :ref:`ug_nrf54h20_architecture_cpu`.
 Refer to the :ref:`nrf54h20_platform_multi_figure` figure to see the architecture of the SoC.
 The Global Domain is not included.
 
-Additional requirements on the nRF54H20 PDK
-*******************************************
+Additional requirements on the nRF54H20 DK
+******************************************
 
-In addition to the standard requirements for the |NCS|, such as the :ref:`ug_matter_gs_tools_gn` for Matter, you need the following to run Matter-enabled or Thread-enabled applications on the nRF54H20 PDK:
+In addition to the standard requirements for the |NCS|, such as the :ref:`ug_matter_gs_tools_gn` for Matter, you need the following to run Matter-enabled or Thread-enabled applications on the nRF54H20 DK:
 
 * For DFU - J-Link and a USB cable.
 * nrfjprog from the `nRF Command Line Tools`_.
 
-Configuring Matter and Thread on the nRF54H20 PDK
-*************************************************
+Configuring Matter and Thread on the nRF54H20 DK
+************************************************
 
 Currently, only the configuration for Matter over Thread is supported for Matter.
 Follow the configuration steps on the :ref:`ug_matter_gs_testing` page to configure the Matter environment for the supported Matter samples.
@@ -140,21 +140,21 @@ See the sample documentation for how to configure it.
 
 The Matter and Thread samples can work on the corresponding networks with standard devices of the same protocol.
 
-Programming Matter and Thread samples on the nRF54H20 PDK
-=========================================================
+Programming Matter and Thread samples on the nRF54H20 DK
+========================================================
 
-To program the compatible Matter or Thread samples on the nRF54H20 PDK, follow the :ref:`ug_nrf54h20_gs_sample` steps.
+To program the compatible Matter or Thread samples on the nRF54H20 DK, follow the :ref:`ug_nrf54h20_gs_sample` steps.
 Read also programming guides prepared for specific Matter samples: :ref:`Matter door lock sample <matter_lock_sample>`, and :ref:`Matter template sample <matter_template_sample>`.
 
 .. note::
    :ref:`Testing using Bluetooth LE with Nordic UART Service <matter_lock_sample_ble_nus>` on the :ref:`Matter door lock sample <matter_lock_sample>` is disabled by default.
 
-Logging for Matter and Thread samples on the nRF54H20 PDK
-=========================================================
+Logging for Matter and Thread samples on the nRF54H20 DK
+========================================================
 
-To read logs for Matter samples on the nRF54H20 PDK, complete the following steps:
+To read logs for Matter samples on the nRF54H20 DK, complete the following steps:
 
-1. Connect to the nRF54H20 PDK using a USB cable.
+1. Connect to the nRF54H20 DK using a USB cable.
 #. Select the first available port to read the logs from.
 
 For more information, see :ref:`ug_nrf54h20_logging`.
@@ -168,7 +168,7 @@ Matter over Wi-Fi is currently supported on the :ref:`Matter door lock sample <m
 
 In this design, the Matter stack, the Wi-Fi stack, and the Bluetooth® Low Energy (LE) stack run on several cores and domains of a single nRF54H20 SoC.
 
-To run Matter over Wi-Fi on the nRF54H20 PDK you need the additional ``nrf7002_ek`` shield attached through the nRF54H20 PDK to the nRF7002 EK interposer board.
+To run Matter over Wi-Fi on the nRF54H20 DK you need the additional ``nrf7002_ek`` shield attached through the nRF54H20 DK to the nRF7002 EK interposer board.
 
 In this design:
 
@@ -186,15 +186,15 @@ To build the sample with Matter over Wi-Fi support run the following command:
 
 .. code-block:: console
 
-   west build -b nrf54h20dk_nrf54h20_cpuapp@soc1 -- -DCONF_FILE=prj_no_dfu.conf -DSHIELD=nrf700x_nrf54h20dk -DCONFIG_CHIP_WIFI=y
+   west build -b nrf54h20dk_nrf54h20_cpuapp -- -DCONF_FILE=prj_no_dfu.conf -DSHIELD=nrf700x_nrf54h20dk -DCONFIG_CHIP_WIFI=y
 
 
 .. _ug_nrf54h20_matter_thread_suit_dfu:
 
-SUIT Device Firmware Upgrade support on the nRF54H20 PDK
-========================================================
+SUIT Device Firmware Upgrade support on the nRF54H20 DK
+=======================================================
 
-The :ref:`SUIT Device Firmware Upgrade <ug_nrf54h20_suit_dfu>` feature has been implemented on the nRF54H20 PDK and you can use it in the :ref:`Matter door lock sample <matter_lock_sample>`.
+The :ref:`SUIT Device Firmware Upgrade <ug_nrf54h20_suit_dfu>` feature has been implemented on the nRF54H20 DK and you can use it in the :ref:`Matter door lock sample <matter_lock_sample>`.
 In this solution, both Application and Radio Cores can be upgraded sequentially to the newest version using :ref:`SUIT hierarchical manifests <ug_nrf54h20_suit_hierarchical_manifests>`.
 The SUIT DFU feature uses :ref:`SUIT manifests <ug_nrf54h20_suit_manifest_overview>` that contain components and images of the firmware and are used by the Secure Domain to replace, verify and run the firmware.
 In the Matter Lock sample, we use the Simple Management Protocol (SMP) over Bluetooth LE transport to deliver the new firmware to the device's DFU partition and then the SUIT processor installs the image according to the instructions that are described in the manifest.
@@ -227,11 +227,11 @@ After building the sample you can find two SUIT envelopes created in the build d
 
 To learn how to perform a DFU using the nRFConnect Device Manager mobile application read instructions in the ``suit smp transfer <nrf54h_suit_sample>`` guide.
 
-Performing DFU on nRF54H20 PDK using Mcumgr command-line tool
--------------------------------------------------------------
+Performing DFU on nRF54H20 DK using Mcumgr command-line tool
+------------------------------------------------------------
 
    1. Follow the instructions in the :ref:`Mcumgr command-line tool <zephyr:mcumgr_cli>` guide to install Mcumgr.
-   #. Press **Button 1** to enable Bluetooth LE SMP advertising on the nRF54H20 PDK.
+   #. Press **Button 1** to enable Bluetooth LE SMP advertising on the nRF54H20 DK.
    #. Run the following command to upgrade the Radio Core:
 
       .. parsed-literal::
@@ -242,7 +242,7 @@ Performing DFU on nRF54H20 PDK using Mcumgr command-line tool
       Where:
 
       * *hci number* is the Bluetooth LE device ID on your host device (by default it is ``0``).
-      * *peer name* is the Bluetooth LE name which is advertised by the nRF54H20 PDK (by default ``"Matter Lock"``).
+      * *peer name* is the Bluetooth LE name which is advertised by the nRF54H20 DK (by default ``"Matter Lock"``).
       * *path to multiprotocol_rpmsg_subimage.suit* is a path to the SUIT envelope that contains Radio Core image.
 
       For example:
@@ -252,7 +252,7 @@ Performing DFU on nRF54H20 PDK using Mcumgr command-line tool
 
          mcumgr --conntype ble --hci 0 --connstring peer_name="MatterLock" image upload build/multiprotocol_rpmsg/zephyr/multiprotocol_rpmsg_subimage.suit -n 0 -w 1
 
-   #. Press **Button 1** to enable Bluetooth LE SMP advertising on the nRF54H20 PDK again, because the previous operation disabled it after applying the image.
+   #. Press **Button 1** to enable Bluetooth LE SMP advertising on the nRF54H20 DK again, because the previous operation disabled it after applying the image.
    #. Run the same command as in Step 3 to upgrade the Application Core image, but this time provide a path to the ``app.suit`` file.
 
       For example:
@@ -263,17 +263,17 @@ Performing DFU on nRF54H20 PDK using Mcumgr command-line tool
          mcumgr --conntype ble --hci 0 --connstring peer_name="MatterLock" image upload build/zephyr/app.suit -n 0 -w 1
 
 
-Implementing support for the nRF54H20 PDK
-=========================================
+Implementing support for the nRF54H20 DK
+========================================
 
-If you want to implement support for the nRF54H20 PDK in your Matter-enabled or Thread-enabled application, read the :ref:`ug_nrf54h20_configuration` guide.
+If you want to implement support for the nRF54H20 DK in your Matter-enabled or Thread-enabled application, read the :ref:`ug_nrf54h20_configuration` guide.
 
 .. _ug_nrf54h20_matter_thread_limitations:
 
-Limitations for Matter and Thread on the nRF54H20 PDK
-*****************************************************
+Limitations for Matter and Thread on the nRF54H20 DK
+****************************************************
 
-Matter and Thread support has the following limitations on the nRF54H20 PDK:
+Matter and Thread support has the following limitations on the nRF54H20 DK:
 
 * DFU over Matter or Serial Link is not yet implemented.
 * The current implementation is not power-optimized.
@@ -283,7 +283,7 @@ Matter and Thread support has the following limitations on the nRF54H20 PDK:
 * The factory reset functionality does not work properly.
   After clearing all NVM storage, the device can not reboot automatically and falls into a hard fault.
 
-  As a workaround, press the reset button on the nRF54H20 PDK board after performing a factory reset.
+  As a workaround, press the reset button on the nRF54H20 DK board after performing a factory reset.
 * Matter over Thread commissioning might be unstable due to the lack of true random generator support on nRF54H20.
 
   After each reboot or factory reset, the device will always have the same Bluetooth LE and IEEE 80215.4 addresses.
