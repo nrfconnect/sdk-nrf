@@ -317,7 +317,7 @@ int nrf_cloud_coap_connect(const char * const app_ver)
 	}
 
 	err = nrf_cloud_coap_authenticate();
-	if (err < 0) {
+	if (err) {
 		goto fail;
 	}
 
