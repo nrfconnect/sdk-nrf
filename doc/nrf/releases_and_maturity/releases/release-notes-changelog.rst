@@ -371,6 +371,11 @@ Other libraries
 
 * Added the :ref:`lib_uart_async_adapter` library.
 
+* :ref:`app_event_manager`:
+
+  * Added the :kconfig:option:`CONFIG_APP_EVENT_MANAGER_REBOOT_ON_EVENT_ALLOC_FAIL` Kconfig option.
+    The option allows to select between system reboot or kernel panic on event allocation failure for default event allocator.
+
 Common Application Framework (CAF)
 ----------------------------------
 

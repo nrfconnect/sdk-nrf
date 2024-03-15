@@ -121,7 +121,7 @@ void * __weak app_event_manager_alloc(size_t size)
 	if (unlikely(!event)) {
 		LOG_ERR("Application Event Manager OOM error\n");
 		__ASSERT_NO_MSG(false);
-		if (IS_ENABLED(CONFIG_REBOOT)) {
+		if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_REBOOT_ON_EVENT_ALLOC_FAIL)) {
 			sys_reboot(SYS_REBOOT_WARM);
 		} else {
 			k_panic();
