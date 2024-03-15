@@ -18,6 +18,18 @@
 
 #define HELLO_PATTERN "Hello World! %s"
 
+/*
+ * The samples require a timer mapped as non-secure:
+ * For nRF91 and nRF53 TIMER1 can be mapped as non-secure
+ * For nRF54L TIMER1 doesn't exist so we use TIMER00 instead
+ */
+#if defined(NRF_TIMER1_NS)
+#define SAMPLE_NS_TIMER NRF_TIMER1_NS
+#elif defined(NRF_TIMER00_NS)
+#define SAMPLE_NS_TIMER NRF_TIMER00_NS
+#else
+#endif
+
 #if defined(CONFIG_TFM_PARTITION_PLATFORM)
 
 static uint32_t secure_read_word(intptr_t ptr)
@@ -35,6 +47,36 @@ static uint32_t secure_read_word(intptr_t ptr)
 
 	return val;
 }
+
+#if defined(NRF_FICR_S)
+void demonstrate_secure_memory_access(void)
+{
+	uint32_t info_ram;
+
+	SAMPLE_NS_TIMER->TASKS_START = 1;
+	info_ram = secure_read_word((intptr_t)&NRF_FICR_S->INFO.RAM);
+	SAMPLE_NS_TIMER->TASKS_CAPTURE[0] = 1;
+	printk("Approximate IPC overhead us: %d\n", SAMPLE_NS_TIMER->CC[0]);
+
+	printk("FICR->INFO.FLASH: 0x%08x\n",
+		secure_read_word((intptr_t)&NRF_FICR_S->INFO.FLASH));
+}
+#elif defined(NRF_APPLICATION_CPUC_S)
+void demonstrate_secure_memory_access(void)
+{
+	uint32_t cpu_id;
+
+	SAMPLE_NS_TIMER->TASKS_START = 1;
+	cpu_id = secure_read_word((intptr_t)&NRF_APPLICATION_CPUC_S->CPUID);
+	SAMPLE_NS_TIMER->TASKS_CAPTURE[0] = 1;
+	printk("Approximate IPC overhead us: %d\n", SAMPLE_NS_TIMER->CC[0]);
+	printk("NRF_APPLICATION_CPUC_S->CPUID: 0x%08x\n", cpu_id);
+}
+#else
+#error "The samples requires either FICR or the CPUC peripheral mapped as \
+	secure to demonstrate secure memory access"
+#endif
+
 #endif /* defined(CONFIG_TFM_PARTITION_PLATFORM) */
 
 static void print_hex_number(uint8_t *num, size_t len)
@@ -57,18 +99,9 @@ int main(void)
 	printk("%s\n", hello_string);
 
 #if defined(CONFIG_TFM_PARTITION_PLATFORM)
-	uint32_t info_ram;
-
 	printk("Reading some secure memory that NS is allowed to read\n");
+	demonstrate_secure_memory_access();
 
-	NRF_TIMER1_NS->TASKS_START = 1;
-	info_ram = secure_read_word((intptr_t)&NRF_FICR_S->INFO.RAM);
-	NRF_TIMER1_NS->TASKS_CAPTURE[0] = 1;
-	printk("Approximate IPC overhead us: %d\n", NRF_TIMER1_NS->CC[0]);
-
-	printk("FICR->INFO.RAM: 0x%08x\n", info_ram);
-	printk("FICR->INFO.FLASH: 0x%08x\n",
-		secure_read_word((intptr_t)&NRF_FICR_S->INFO.FLASH));
 #endif /* defined(CONFIG_TFM_PARTITION_PLATFORM) */
 
 	if (IS_ENABLED(CONFIG_TFM_CRYPTO_RNG_MODULE_ENABLED)) {
@@ -119,7 +152,7 @@ int main(void)
 #endif /*  PM_S1_ADDRESS */
 #endif /* defined(CONFIG_TFM_PARTITION_PLATFORM) */
 
-	printk("Finished\n");
+	printk("Example finished successfully!\n");
 
 	return 0;
 }
