@@ -12,6 +12,16 @@ menuconfig APP_EVENT_MANAGER
 
 if APP_EVENT_MANAGER
 
+config APP_EVENT_MANAGER_REBOOT_ON_EVENT_ALLOC_FAIL
+	bool "Reboot on event allocation failure"
+	depends on REBOOT
+	default y
+	help
+	  The default event allocator triggers assertion failure on event
+	  allocation failure. Then, depending on the value of this Kconfig
+	  option, the default allocator either triggers a system reboot or
+	  kernel panic.
+
 config APP_EVENT_MANAGER_SHOW_EVENTS
 	bool "Show events"
 	depends on LOG
