@@ -3418,7 +3418,7 @@ DRGN-21293: The LE Read ISO TX Sync command is implemented according to the rais
   When the CIG or BIG is configured with an ``ISO_Interval`` that equals the ``SDU_Interval``, there is no difference between the CIG or BIG reference anchor point and the SDU synchronization reference.
   If several SDUs are transmitted during each ``ISO_Interval``, meaning that it is larger than the ``SDU_Interval``, our implementation of the LE Read ISO TX Sync command returns a unique SDU synchronization reference for each SDU.
 
-.. rst-class:: v2-6-0 v2-5-2 v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v2-6-0 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 DRGN-20444: The HCI LE Create Connection command and the HCI LE Extended Create Connection command overwrite scan parameters
   This happens when the HCI LE Create Connection command or the HCI LE Extended Create Connection command is called after the scan parameters are set.
