@@ -73,11 +73,15 @@
 #define RTE_USART1_PINS RTE_USART_PINS(1)
 
 /* TODO: NCSDK-25009: Note that we don't use the macro like the above
- * defines do because this define does not use DT
+ * defines do because these defines don't use DT
  */
-#define RTE_USART22_PINS                                                                           \
+#define RTE_USART20_PINS                                                                           \
 	{                                                                                          \
 		NRF_PSEL(UART_TX, 1, 4), NRF_PSEL(UART_RX, 1, 5),                                  \
+	}
+#define RTE_USART22_PINS                                                                           \
+	{                                                                                          \
+		NRF_PSEL(UART_TX, 0, 0), NRF_PSEL(UART_RX, 0, 1),                                  \
 	}
 
 #endif /* __RTE_DEVICE_H */
