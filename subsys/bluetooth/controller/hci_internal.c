@@ -833,7 +833,7 @@ static void le_read_supported_states(uint8_t *buf)
 	 * Initiating State + Passive Scanning
 	 * Initiating State + Active Scanning
 	 */
-	states1 &= ~(BIT(22) | BIT(23));
+	// states1 &= ~(BIT(22) | BIT(23));
 	*buf = states1;
 	*(buf + 4) = states2;
 }
