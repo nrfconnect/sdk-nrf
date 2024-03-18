@@ -30,7 +30,9 @@ config HW_UNIQUE_KEY_LOAD
 
 config HW_UNIQUE_KEY_SUPPORTED
 	bool
-	default y if HAS_HW_NRF_CC3XX || CRACEN_HW_PRESENT
+	# NCSDK-22601: HW_UNIQUE_KEY is not yet supported with both CRACEN
+	# and TF-M enabled
+	default y if HAS_HW_NRF_CC3XX || (CRACEN_HW_PRESENT && !BUILD_WITH_TFM)
 
 config HW_UNIQUE_KEY
 	bool "Hardware Unique Keys (HUK)"
