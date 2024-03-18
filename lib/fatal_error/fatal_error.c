@@ -20,16 +20,8 @@ void k_sys_fatal_error_handler(unsigned int reason,
 	ARG_UNUSED(reason);
 
 	LOG_PANIC();
-
-	if (IS_ENABLED(CONFIG_RESET_ON_FATAL_ERROR)) {
-		LOG_ERR("Resetting system");
-		sys_arch_reboot(0);
-	} else {
-		LOG_ERR("Halting system");
-		for (;;) {
-			/* Spin endlessly */
-		}
-	}
+	LOG_ERR("Resetting system");
+	sys_arch_reboot(0);
 
 	CODE_UNREACHABLE;
 }
