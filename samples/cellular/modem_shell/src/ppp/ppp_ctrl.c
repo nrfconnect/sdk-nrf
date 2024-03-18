@@ -225,14 +225,6 @@ static void ppp_ctrl_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 		}
 		break;
 	}
-	case NET_EVENT_PPP_CARRIER_ON: {
-		mosh_print("PPP carrier ON");
-		break;
-	}
-	case NET_EVENT_PPP_CARRIER_OFF: {
-		mosh_print("PPP carrier OFF");
-		break;
-	}
 	default:
 		break;
 	}
@@ -283,8 +275,6 @@ static void ppp_ctrl_net_mgmt_events_subscribe(void)
 				     ppp_ctrl_net_mgmt_event_handler,
 				     (NET_EVENT_IF_UP |
 				      NET_EVENT_IF_DOWN |
-				      NET_EVENT_PPP_CARRIER_ON |
-				      NET_EVENT_PPP_CARRIER_OFF |
 				      NET_EVENT_PPP_PHASE_RUNNING |
 				      NET_EVENT_PPP_PHASE_DEAD));
 
@@ -511,9 +501,9 @@ clear:
 
 void ppp_ctrl_stop(void)
 {
+	ppp_up = false;
 	ppp_ctrl_stop_net_if();
 	ppp_ctrl_close_sckts();
 
 	mosh_print("PPP: stopped");
-	ppp_up = false;
 }
