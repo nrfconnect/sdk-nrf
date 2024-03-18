@@ -84,3 +84,8 @@
 &systick {
 	status = "disabled";
 };
+
+/* Disable so that TF-M can use this UART */
+&uart30 {
+	status = "disabled";
+};

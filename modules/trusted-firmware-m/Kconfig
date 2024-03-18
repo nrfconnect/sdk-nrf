@@ -327,7 +327,7 @@ config TFM_SECURE_UART_SHARE_INSTANCE
 
 choice TFM_SECURE_UART_INSTANCE
 	prompt "TF-M logging UART instance"
-	default TFM_SECURE_UART22 if SOC_SERIES_NRF54LX
+	default TFM_SECURE_UART30 if SOC_SERIES_NRF54LX
 	default TFM_SECURE_UART1
 
 config TFM_SECURE_UART0
@@ -342,11 +342,11 @@ config TFM_SECURE_UART1
 	select NRF_UARTE1_SECURE
 	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE1 || HAS_HW_NRF_UARTE1
 
-config TFM_SECURE_UART22
-	bool "TF-M logging will use UART22 instance"
-#TODO: NCSDK-25009: Fix DT for secure UART22 depends on $(dt_nodelabel_has_prop,uart22,pinctrl-names)
-	select NRF_UARTE22_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE22 || HAS_HW_NRF_UARTE22
+config TFM_SECURE_UART30
+	bool "TF-M logging will use UART30 instance"
+#TODO: NCSDK-25009: Fix DT for secure UART30 depends on $(dt_nodelabel_has_prop,uart30,pinctrl-names)
+	select NRF_UARTE30_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE30 || HAS_HW_NRF_UARTE30
 
 endchoice
 
