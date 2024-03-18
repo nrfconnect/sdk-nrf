@@ -198,12 +198,22 @@
   - any:
       - "include/bluetooth/**/*"
       - "!include/bluetooth/mesh/**/*"
-  - any:
-      - "samples/bluetooth/**/*"
-      - "!samples/bluetooth/mesh/**/*"
   - "subsys/nrf_rpc/**/*"
   - "subsys/mpsl/**/*"
   - "drivers/mpsl/**/*"
+
+"CI-ble-samples-test":
+  - "samples/bluetooth/**/*"
+  - "subsys/nrf_rpc/**/*"
+  - "subsys/mpsl/**/*"
+  - "drivers/mpsl/**/*"
+  - any:
+      - "subsys/bluetooth/**/*"
+      - "!subsys/bluetooth/mesh/**/*"
+  - any:
+      - "include/bluetooth/**/*"
+      - "!include/bluetooth/mesh/**/*"
+
 
 "CI-mesh-test":
   - "subsys/bluetooth/mesh/**/*"
