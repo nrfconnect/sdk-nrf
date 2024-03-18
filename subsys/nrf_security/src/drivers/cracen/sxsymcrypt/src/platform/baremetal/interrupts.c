@@ -54,7 +54,6 @@ void cracen_isr_handler(void *i)
 		k_event_set(&cracen_irq_event_for_cryptomaster, crypto_master_status);
 
 	} else if (nrf_cracen_event_check(NRF_CRACEN, NRF_CRACEN_EVENT_PKE_IKG)) {
-
 		/* Clear interrupts in PKE. */
 		sx_clear_interrupt(sx_get_current_req());
 

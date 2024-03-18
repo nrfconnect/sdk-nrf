@@ -226,6 +226,8 @@ void sx_pk_read_ik_capabilities(struct sx_regs *regs, struct sx_pk_capabilities 
 
 int sx_pk_ik_derive_keys(struct sx_pk_config_ik *cfg)
 {
+	/* Acquire a dummy req to ensure Cracen is powered on, and ready to be used. */
+	struct sx_pk_acq_req pkreq = sx_pk_acquire_req(NULL);
 	struct sx_regs *regs = sx_pk_get_regs();
 	int r = sx_ik_gen_keys(regs, cfg);
 
@@ -234,6 +236,9 @@ int sx_pk_ik_derive_keys(struct sx_pk_config_ik *cfg)
 
 		sx_pk_read_ik_capabilities(regs, caps);
 	}
+
+	sx_pk_release_req(pkreq.req);
+
 	return r;
 }
 
