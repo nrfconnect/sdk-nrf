@@ -164,7 +164,7 @@ BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 /* Maximum number of valid channels in BLE. */
 #define PHYS_CH_MAX 39
 
-#define FEM_USE_DEFAULT_GAIN 0xFF
+#define FEM_USE_DEFAULT_TX_POWER_CONTROL 0xFF
 
 /* Minimum supported CTE length in 8 us units. */
 #define CTE_LENGTH_MIN 0x02
@@ -273,8 +273,8 @@ enum dtm_vs_subcmd {
 	/* Switch front-end module (FEM) antenna. */
 	FEM_ANTENNA_SELECT = 3,
 
-	/* Set front-end module (FEM) gain value. */
-	FEM_GAIN_SET = 4,
+	/* Set front-end module (FEM) tx power control value. */
+	FEM_TX_POWER_CONTROL_SET = 4,
 
 	/* Set FEM ramp-up time. */
 	FEM_RAMP_UP_SET = 5,
@@ -318,6 +318,7 @@ struct dtm_cte_info {
 	dtm_iq_report_callback_t iq_rep_cb;
 };
 
+#if CONFIG_FEM
 struct fem_parameters {
 	/* Front-end module ramp-up time in microseconds. */
 	uint32_t ramp_up_time;
@@ -325,12 +326,13 @@ struct fem_parameters {
 	/* Front-end module vendor ramp-up time in microseconds. */
 	uint32_t vendor_ramp_up_time;
 
-	/* Front-end module Tx gain in unit specific for used FEM.
+	/* Front-end module Tx power control specific for used FEM.
 	 * For nRF21540 GPIO/SPI, this is a register value.
 	 * For nRF21540 GPIO, this is MODE pin value.
 	 */
-	uint32_t gain;
+	fem_tx_power_control tx_power_control;
 };
+#endif /* CONFIG_FEM */
 
 /* DTM instance definition */
 static struct dtm_instance {
@@ -384,8 +386,10 @@ static struct dtm_instance {
 	/* Constant Tone Extension configuration. */
 	struct dtm_cte_info cte_info;
 
+#if CONFIG_FEM
 	/* Front-end module (FEM) parameters. */
 	struct fem_parameters fem;
+#endif
 
 	/* Radio Enable PPI channel. */
 	uint8_t ppi_radio_start;
@@ -399,7 +403,9 @@ static struct dtm_instance {
 #endif /* NRF52_ERRATA_172_PRESENT */
 	.radio_mode = NRF_RADIO_MODE_BLE_1MBIT,
 	.txpower = NRF_RADIO_TXPOWER_0DBM,
-	.fem.gain = FEM_USE_DEFAULT_GAIN,
+#if CONFIG_FEM
+	.fem.tx_power_control = FEM_USE_DEFAULT_TX_POWER_CONTROL,
+#endif
 };
 
 /* The PRBS9 sequence used as packet payload.
@@ -927,7 +933,7 @@ int dtm_init(dtm_iq_report_callback_t callback)
 	/* When front-end module is used, set output power to the front-end module
 	 * default gain.
 	 */
-	dtm_inst.txpower = fem_default_tx_gain_get();
+	dtm_inst.txpower = fem_default_tx_output_power_get();
 #endif /* CONFIG_DTM_POWER_CONTROL_AUTOMATIC */
 
 	/** Connect radio interrupts. */
@@ -1455,9 +1461,9 @@ static int dtm_vendor_specific_pkt(uint32_t vendor_cmd, uint32_t vendor_option)
 				     NRF_RADIO_SHORT_READY_START_MASK);
 
 #if CONFIG_FEM
-		if ((dtm_inst.fem.gain != FEM_USE_DEFAULT_GAIN) &&
+		if ((dtm_inst.fem.tx_power_control != FEM_USE_DEFAULT_TX_POWER_CONTROL) &&
 		    (!IS_ENABLED(CONFIG_DTM_POWER_CONTROL_AUTOMATIC))) {
-			if (fem_tx_gain_set(dtm_inst.fem.gain) != 0) {
+			if (fem_tx_power_control_set(dtm_inst.fem.tx_power_control) != 0) {
 				return -EINVAL;
 			}
 		}
@@ -1489,8 +1495,8 @@ static int dtm_vendor_specific_pkt(uint32_t vendor_cmd, uint32_t vendor_option)
 		break;
 
 #if !CONFIG_DTM_POWER_CONTROL_AUTOMATIC
-	case FEM_GAIN_SET:
-		dtm_inst.fem.gain = vendor_option;
+	case FEM_TX_POWER_CONTROL_SET:
+		dtm_inst.fem.tx_power_control = vendor_option;
 
 		break;
 #endif /* !CONFIG_DTM_POWER_CONTROL_AUTOMATIC */
@@ -1501,7 +1507,7 @@ static int dtm_vendor_specific_pkt(uint32_t vendor_cmd, uint32_t vendor_option)
 		break;
 
 	case FEM_DEFAULT_PARAMS_SET:
-		dtm_inst.fem.gain = FEM_USE_DEFAULT_GAIN;
+		dtm_inst.fem.tx_power_control = FEM_USE_DEFAULT_TX_POWER_CONTROL;
 		dtm_inst.fem.vendor_ramp_up_time = 0;
 
 		if (fem_antenna_select(FEM_ANTENNA_1) != 0) {
@@ -2082,9 +2088,9 @@ int dtm_test_transmit(uint8_t channel, uint8_t length, enum dtm_packet pkt)
 			NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, false);
 
 #if CONFIG_FEM
-	if ((dtm_inst.fem.gain != FEM_USE_DEFAULT_GAIN) &&
+	if ((dtm_inst.fem.tx_power_control != FEM_USE_DEFAULT_TX_POWER_CONTROL) &&
 	    (!IS_ENABLED(CONFIG_DTM_POWER_CONTROL_AUTOMATIC))) {
-		if (fem_tx_gain_set(dtm_inst.fem.gain) != 0) {
+		if (fem_tx_power_control_set(dtm_inst.fem.tx_power_control) != 0) {
 			return -EINVAL;
 		}
 	}

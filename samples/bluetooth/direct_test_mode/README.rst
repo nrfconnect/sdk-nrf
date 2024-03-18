@@ -152,7 +152,7 @@ The behavior of the commands vary depending on the hardware configuration and Kc
      Additionally, you can use following vendor-specific commands:
 
       * The ``SET_TX_POWER`` command sets the SoC TX output power.
-      * The ``FEM_GAIN_SET`` command sets the front-end module gain.
+      * The ``FEM_TX_POWER_CONTROL_SET`` command sets the front-end module gain.
 
 Bluetooth Direction Finding support
 ===================================
@@ -289,9 +289,10 @@ Vendor-specific commands can be divided into different categories as follows:
      * ``0`` - ANT1 enabled, ANT2 disabled
      * ``1`` - ANT1 disabled, ANT2 enabled
 
-* If the **Length** field is set to ``4`` (symbol ``FEM_GAIN_SET``), the **Frequency** field sets the front-end module (FEM) TX gain value in arbitrary units.
+* If the **Length** field is set to ``4`` (symbol ``FEM_TX_POWER_CONTROL_SET``), the **Frequency** field sets the front-end module (FEM) TX power control value and is specific to the FEM type in use.
   The valid gain values are specified in your product-specific front-end module (FEM).
-  For example, in the nRF21540 front-end module, the gain range is 0 - 31.
+  For example, in the nRF21540 front-end module with GPIO interface, the tx power control range is 0 (POUTA) to 1 (POUTB).
+  For example, in the nRF21540 front-end module with GPIO?SPI, the tx power control range is 0 - 31 and is the value of TX_GAIN field of CONFREG0 register.
 * If the **Length** field is set to ``5`` (symbol ``FEM_ACTIVE_DELAY_SET``), the **Frequency** field sets the front-end module (FEM) activation delay in microseconds relative to the radio start.
   By default, this value is set to ``radio ramp-up time - front-end module (FEM) TX/RX settling time``.
 * If the **Length** field is set to ``6`` (symbol ``FEM_DEFAULT_PARAMS_SET``) and the **Frequency** field to any value, the front-end module parameters, such as ``antenna output``, ``gain``, and ``delay``, are set to their default values.
@@ -309,7 +310,7 @@ Vendor-specific commands can be divided into different categories as follows:
    When you build the DTM sample with support for front-end modules and the :ref:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC <CONFIG_DTM_POWER_CONTROL_AUTOMATIC>` Kconfig option is enabled, the following vendor-specific command are not available:
 
    * ``SET_TX_POWER``
-   * ``FEM_GAIN_SET``
+   * ``FEM_TX_POWER_CONTROL_SET``
 
    You can disable the :ref:`CONFIG_DTM_POWER_CONTROL_AUTOMATIC <CONFIG_DTM_POWER_CONTROL_AUTOMATIC>` Kconfig option if you want to set the SoC output power and the front-end module gain by separate commands.
    The official DTM command ``0x09`` for setting power level takes into account the SoC output power and the front-end module gain to set the total requested output power.
