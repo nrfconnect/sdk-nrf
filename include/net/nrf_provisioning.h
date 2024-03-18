@@ -106,6 +106,13 @@ int nrf_provisioning_init(struct nrf_provisioning_mm_change *mmode,
  */
 int nrf_provisioning_trigger_manually(void);
 
+/**
+ * @brief Set provisioning interval.
+ *
+ * @param interval Provisioning interval in seconds.
+ */
+void nrf_provisioning_set_interval(int interval);
+
 /** @} */
 
 #ifdef __cplusplus
