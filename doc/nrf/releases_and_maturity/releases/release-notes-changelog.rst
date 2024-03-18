@@ -373,7 +373,11 @@ Libraries for networking
 
 * :ref:`lib_nrf_provisioning` library:
 
-   * Added the :c:func:`nrf_provisioning_set_interval` function to set the interval between provisioning attempts.
+  * Added the :c:func:`nrf_provisioning_set_interval` function to set the interval between provisioning attempts.
+
+* :ref:`lib_nrf_cloud_coap` library:
+
+  * Updated to request proprietary PSM mode for ``SOC_NRF9151_LACA`` and ``SOC_NRF9131_LACA`` in addition to ``SOC_NRF9161_LACA``.
 
 Libraries for NFC
 -----------------
