@@ -575,10 +575,6 @@ static int cracen_prepare_ik_key(const uint8_t *user_data)
 
 static int cracen_clean_ik_key(const uint8_t *user_data)
 {
-	/* We should call sx_pk_ik_mode_exit(NULL) here, but it hangs.
-	 * Currently Cracen is powered off after each operation, so in
-	 * any case Cracen is not in IK-mode for the next operation.
-	 */
 	return SX_OK;
 }
 
