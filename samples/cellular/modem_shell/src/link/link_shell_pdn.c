@@ -60,7 +60,12 @@ void link_pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 			/* Notify PPP side about the default PDN activation status */
 			if (event == PDN_EVENT_ACTIVATED) {
 				ppp_ctrl_default_pdn_active(true);
-			} else if (event == PDN_EVENT_DEACTIVATED) {
+			} else if (event == PDN_EVENT_DEACTIVATED ||
+				   event == PDN_EVENT_NETWORK_DETACH) {
+				/* 3GPP 27.007 ch 10.1.19 for +CGEV: ME DETACH
+				 * This implies that all active contexts have been deactivated.
+				 * These are not reported separately.
+				 */
 				ppp_ctrl_default_pdn_active(false);
 			}
 #endif
