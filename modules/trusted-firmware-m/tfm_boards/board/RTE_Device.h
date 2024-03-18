@@ -35,7 +35,7 @@
 
 #else /* NRF_UARTE0 */
 
-#define RTE_USART22 1
+#define RTE_USART20 1
 
 #endif /* NRF_UARTE0 */
 
@@ -52,6 +52,11 @@
 
 #if defined(CONFIG_TFM_SECURE_UART1)
 #define RTE_USART1 1
+#endif
+
+#if defined(CONFIG_TFM_SECURE_UART20)
+/* TODO: NCSDK-25009: Support configuring which UART instance is enabled */
+#error "It is not yet supported to use UART20 from a secure TF-M image"
 #endif
 
 /* TODO: NCSDK-25009: Support configuring which UART instance is enabled */
