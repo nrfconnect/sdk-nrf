@@ -66,7 +66,7 @@ static struct radio_param_config {
 	.delay_ms = 10,
 	.duty_cycle = 50,
 #if CONFIG_FEM
-	.fem.gain = FEM_USE_DEFAULT_GAIN
+	.fem.tx_power_control = FEM_USE_DEFAULT_TX_POWER_CONTROL
 #endif /* CONFIG_FEM */
 };
 
@@ -224,8 +224,7 @@ static int cmd_tx_carrier_start(const struct shell *shell, size_t argc,
 	test_config.params.unmodulated_tx.txpower = config.txpower;
 	test_config.params.unmodulated_tx.channel = config.channel_start;
 #if CONFIG_FEM
-	test_config.fem.ramp_up_time = config.fem.ramp_up_time;
-	test_config.fem.gain = config.fem.gain;
+	test_config.fem = config.fem;
 #endif /* CONFIG_FEM */
 	radio_test_start(&test_config);
 
@@ -263,8 +262,7 @@ static int cmd_tx_modulated_carrier_start(const struct shell *shell,
 	test_config.params.modulated_tx.channel = config.channel_start;
 	test_config.params.modulated_tx.pattern = config.tx_pattern;
 #if CONFIG_FEM
-	test_config.fem.ramp_up_time = config.fem.ramp_up_time;
-	test_config.fem.gain = config.fem.gain;
+	test_config.fem = config.fem;
 #endif /* CONFIG_FEM */
 
 	if (argc == 2) {
@@ -316,8 +314,7 @@ static int cmd_duty_cycle_set(const struct shell *shell, size_t argc,
 	test_config.params.modulated_tx_duty_cycle.duty_cycle =
 		config.duty_cycle;
 #if CONFIG_FEM
-	test_config.fem.ramp_up_time = config.fem.ramp_up_time;
-	test_config.fem.gain = config.fem.gain;
+	test_config.fem = config.fem;
 #endif /* CONFIG_FEM */
 
 	radio_test_start(&test_config);
@@ -527,8 +524,7 @@ static int cmd_rx_sweep_start(const struct shell *shell, size_t argc,
 	test_config.params.rx_sweep.channel_end = config.channel_end;
 	test_config.params.rx_sweep.delay_ms = config.delay_ms;
 #if CONFIG_FEM
-	test_config.fem.ramp_up_time = config.fem.ramp_up_time;
-	test_config.fem.gain = config.fem.gain;
+	test_config.fem = config.fem;
 #endif /* CONFIG_FEM */
 
 	radio_test_start(&test_config);
@@ -550,8 +546,7 @@ static int cmd_tx_sweep_start(const struct shell *shell, size_t argc,
 	test_config.params.tx_sweep.delay_ms = config.delay_ms;
 	test_config.params.tx_sweep.txpower = config.txpower;
 #if CONFIG_FEM
-	test_config.fem.ramp_up_time = config.fem.ramp_up_time;
-	test_config.fem.gain = config.fem.gain;
+	test_config.fem = config.fem;
 #endif /* CONFIG_FEM */
 
 	radio_test_start(&test_config);
@@ -579,8 +574,7 @@ static int cmd_rx_start(const struct shell *shell, size_t argc, char **argv)
 	test_config.params.rx.channel = config.channel_start;
 	test_config.params.rx.pattern = config.tx_pattern;
 #if CONFIG_FEM
-	test_config.fem.ramp_up_time = config.fem.ramp_up_time;
-	test_config.fem.gain = config.fem.gain;
+	test_config.fem = config.fem;
 #endif /* CONFIG_FEM */
 
 	radio_test_start(&test_config);
@@ -928,10 +922,10 @@ static int cmd_fem(const struct shell *shell, size_t argc, char **argv)
 }
 
 #if !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
-static int cmd_fem_gain_set(const struct shell *shell, size_t argc,
+static int cmd_fem_tx_power_control_set(const struct shell *shell, size_t argc,
 			    char **argv)
 {
-	uint32_t gain;
+	uint32_t tx_power_control;
 
 	if (argc == 1) {
 		shell_help(shell);
@@ -943,11 +937,11 @@ static int cmd_fem_gain_set(const struct shell *shell, size_t argc,
 		return -EINVAL;
 	}
 
-	gain = atoi(argv[1]);
+	tx_power_control = atoi(argv[1]);
 
-	config.fem.gain = gain;
+	config.fem.tx_power_control = tx_power_control;
 
-	shell_print(shell, "Front-end module (FEM) Tx gain set to %d", gain);
+	shell_print(shell, "Front-end module (FEM) Tx power control set to %u", tx_power_control);
 
 	return 0;
 }
@@ -1091,9 +1085,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_fem_antenna,
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_fem,
 #if !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
-	SHELL_CMD(tx_gain, NULL,
-		  "Set the front-end module (FEM) Tx gain in an arbitrary units <gain>",
-		  cmd_fem_gain_set),
+	SHELL_CMD(tx_power_control, NULL,
+		  "Set the front-end module (FEM) Tx power control specific to the FEM in use <tx_power_control>.",
+		  cmd_fem_tx_power_control_set),
 #endif /* !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
 	SHELL_CMD(antenna, &sub_fem_antenna,
 		  "Select the front-end module (FEM) antenna <sub_cmd>",
@@ -1197,7 +1191,7 @@ static int radio_cmd_init(void)
 	/* When front-end module is used, set output power to the front-end module
 	 * default gain.
 	 */
-	config.txpower = fem_default_tx_gain_get();
+	config.txpower = fem_default_tx_output_power_get();
 #endif /* CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
 
 	return radio_test_init(&test_config);

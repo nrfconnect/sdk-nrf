@@ -9,6 +9,7 @@
 
 #include <zephyr/types.h>
 #include <hal/nrf_radio.h>
+#include <fem_al/fem_al.h>
 
 #ifdef NRF53_SERIES
 #ifndef RADIO_TXPOWER_TXPOWER_Pos3dBm
@@ -33,7 +34,7 @@
 /** IEEE 802.15.4 maximum channel. */
 #define IEEE_MAX_CHANNEL	26
 
-#define FEM_USE_DEFAULT_GAIN 0xFF
+#define FEM_USE_DEFAULT_TX_POWER_CONTROL 0xFF
 
 /**@brief Radio transmit and address pattern. */
 enum transmit_pattern {
@@ -73,11 +74,11 @@ struct radio_test_fem {
 	/* Front-end module radio ramp-up time in microseconds. */
 	uint32_t ramp_up_time;
 
-	/* Front-end module TX gain in arbitrary unit specific to given front-end module.
+	/* Front-end module TX power control specific to given front-end module.
 	 * For nRF21540 GPIO/SPI, this is a register value.
 	 * For nRF21540 GPIO, this is MODE pin value.
 	 */
-	uint8_t gain;
+	fem_tx_power_control tx_power_control;
 };
 
 /**@brief Radio test configuration. */
