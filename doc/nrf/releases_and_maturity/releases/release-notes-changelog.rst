@@ -363,6 +363,10 @@ Libraries for networking
   * Changed the library to read certificates as standard PEM format. Previously the certificates had to be manually converted to string format before compiling the application.
   * Replaced the ``CONFIG_MQTT_HELPER_CERTIFICATES_FILE`` Kconfig option with :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER`. The new option specifies the folder where the certificates are stored.
 
+* :ref:`lib_nrf_provisioning` library:
+
+   * Added the :c:func:`nrf_provisioning_set_interval` function to set the interval between provisioning attempts.
+
 Libraries for NFC
 -----------------
 

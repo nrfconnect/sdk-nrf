@@ -156,10 +156,11 @@ The feature is enabled by selecting :kconfig:option:`CONFIG_NRF_PROVISIONING_SHE
    uart:~$ nrf_provisioning
    nrf_provisioning - nRF Provisioning commands
    Subcommands:
-     init   :Start the client
-     now    :Do provisioning now
-     token  :Get the attestation token
-     uuid   :Get device UUID
+     init: Start the client
+     now: Do provisioning now
+     token: Get the attestation token
+     uuid: Get device UUID
+     interval: Set provisioning interval
 
 Dependencies
 ************
