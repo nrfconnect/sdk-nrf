@@ -21,33 +21,26 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #endif
 
 #define AWS "$aws/things/"
-#define CFG_TOPIC AWS "/shadow/get/accepted/desired/cfg"
-#define CFG_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(CFG_TOPIC) - 1)
-#define BATCH_TOPIC "/batch"
-#define BATCH_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(BATCH_TOPIC) - 1)
-#define MESSAGES_TOPIC "/messages"
-#define MESSAGES_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(MESSAGES_TOPIC) - 1)
-#define GROUND_FIX_TOPIC "/ground-fix"
-#define GROUND_FIX_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(GROUND_FIX_TOPIC) - 1)
-#define AGNSS_REQUEST_TOPIC "/agnss/get"
-#define AGNSS_REQUEST_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(AGNSS_REQUEST_TOPIC) - 1)
-#define AGNSS_RESPONSE_TOPIC "/agnss"
-#define AGNSS_RESPONSE_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(AGNSS_RESPONSE_TOPIC) - 1)
-#define PGPS_REQUEST_TOPIC "/pgps/get"
-#define PGPS_REQUEST_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(PGPS_REQUEST_TOPIC) - 1)
-#define PGPS_RESPONSE_TOPIC "/pgps"
-#define PGPS_RESPONSE_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(PGPS_RESPONSE_TOPIC) - 1)
-#define MEMFAULT_TOPIC "/memfault"							\
+#define CFG_TOPIC AWS "%s/shadow/get/accepted/desired/cfg"
+#define CFG_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(CFG_TOPIC) - 3)
+#define BATCH_TOPIC "%s/batch"
+#define BATCH_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(BATCH_TOPIC) - 3)
+#define MESSAGES_TOPIC "%s/messages"
+#define MESSAGES_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(MESSAGES_TOPIC) - 3)
+#define GROUND_FIX_TOPIC "%s/ground-fix"
+#define GROUND_FIX_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(GROUND_FIX_TOPIC) - 3)
+#define AGNSS_REQUEST_TOPIC "%s/agnss/get"
+#define AGNSS_REQUEST_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(AGNSS_REQUEST_TOPIC) - 3)
+#define AGNSS_RESPONSE_TOPIC "%s/agnss"
+#define AGNSS_RESPONSE_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(AGNSS_RESPONSE_TOPIC) - 3)
+#define PGPS_REQUEST_TOPIC "%s/pgps/get"
+#define PGPS_REQUEST_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(PGPS_REQUEST_TOPIC) - 3)
+#define PGPS_RESPONSE_TOPIC "%s/pgps"
+#define PGPS_RESPONSE_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(PGPS_RESPONSE_TOPIC) - 3)
+#define MEMFAULT_TOPIC "%s/memfault"							\
 		IF_ENABLED(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT,		\
 			   ("/" CONFIG_MEMFAULT_NCS_PROJECT_KEY))
-#if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)
-#define MEMFAULT_TOPIC_LEN \
-	(AWS_CLOUD_CLIENT_ID_LEN \
-	+ sizeof(MEMFAULT_TOPIC) - 1 \
-	+ sizeof(CONFIG_MEMFAULT_NCS_PROJECT_KEY))
-#else
-#define MEMFAULT_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(MEMFAULT_TOPIC) - 1)
-#endif /* if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT) */
+#define MEMFAULT_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + sizeof(MEMFAULT_TOPIC) - 3)
 
 #define APP_SUB_TOPIC_IDX_CFG			0
 #define APP_SUB_TOPIC_IDX_AGNSS			1
@@ -94,7 +87,7 @@ static int populate_app_endpoint_topics(void)
 {
 	int err;
 
-	err = snprintf(batch_topic, sizeof(batch_topic), "%s" BATCH_TOPIC,
+	err = snprintf(batch_topic, sizeof(batch_topic), BATCH_TOPIC,
 		       client_id_buf);
 	if (err != BATCH_TOPIC_LEN) {
 		return -ENOMEM;
@@ -103,7 +96,7 @@ static int populate_app_endpoint_topics(void)
 	pub_topics[APP_PUB_TOPIC_IDX_BATCH].topic.utf8 = batch_topic;
 	pub_topics[APP_PUB_TOPIC_IDX_BATCH].topic.size = BATCH_TOPIC_LEN;
 
-	err = snprintf(messages_topic, sizeof(messages_topic), "%s" MESSAGES_TOPIC,
+	err = snprintf(messages_topic, sizeof(messages_topic), MESSAGES_TOPIC,
 		       client_id_buf);
 	if (err != MESSAGES_TOPIC_LEN) {
 		return -ENOMEM;
@@ -113,7 +106,7 @@ static int populate_app_endpoint_topics(void)
 	pub_topics[APP_PUB_TOPIC_IDX_UI].topic.size = MESSAGES_TOPIC_LEN;
 
 	err = snprintf(ground_fix_topic, sizeof(ground_fix_topic),
-		       "%s" GROUND_FIX_TOPIC, client_id_buf);
+		       GROUND_FIX_TOPIC, client_id_buf);
 	if (err != GROUND_FIX_TOPIC_LEN) {
 		return -ENOMEM;
 	}
@@ -122,7 +115,7 @@ static int populate_app_endpoint_topics(void)
 	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].topic.size = GROUND_FIX_TOPIC_LEN;
 
 	err = snprintf(agnss_request_topic, sizeof(agnss_request_topic),
-		       "%s" AGNSS_REQUEST_TOPIC, client_id_buf);
+		       AGNSS_REQUEST_TOPIC, client_id_buf);
 	if (err != AGNSS_REQUEST_TOPIC_LEN) {
 		return -ENOMEM;
 	}
@@ -131,7 +124,7 @@ static int populate_app_endpoint_topics(void)
 	pub_topics[APP_PUB_TOPIC_IDX_AGNSS].topic.size = AGNSS_REQUEST_TOPIC_LEN;
 
 	err = snprintf(pgps_request_topic, sizeof(pgps_request_topic),
-		       "%s" PGPS_REQUEST_TOPIC, client_id_buf);
+		       PGPS_REQUEST_TOPIC, client_id_buf);
 	if (err != PGPS_REQUEST_TOPIC_LEN) {
 		return -ENOMEM;
 	}
@@ -139,7 +132,7 @@ static int populate_app_endpoint_topics(void)
 	pub_topics[APP_PUB_TOPIC_IDX_PGPS].topic.utf8 = pgps_request_topic;
 	pub_topics[APP_PUB_TOPIC_IDX_PGPS].topic.size = PGPS_REQUEST_TOPIC_LEN;
 
-	err = snprintf(memfault_topic, sizeof(memfault_topic), "%s" MEMFAULT_TOPIC, client_id_buf);
+	err = snprintf(memfault_topic, sizeof(memfault_topic), MEMFAULT_TOPIC, client_id_buf);
 	if (err != MEMFAULT_TOPIC_LEN) {
 		return -ENOMEM;
 	}
@@ -147,7 +140,7 @@ static int populate_app_endpoint_topics(void)
 	pub_topics[APP_PUB_TOPIC_IDX_MEMFAULT].topic.utf8 = memfault_topic;
 	pub_topics[APP_PUB_TOPIC_IDX_MEMFAULT].topic.size = MEMFAULT_TOPIC_LEN;
 
-	err = snprintf(cfg_topic, sizeof(cfg_topic), "%s" CFG_TOPIC, client_id_buf);
+	err = snprintf(cfg_topic, sizeof(cfg_topic), CFG_TOPIC, client_id_buf);
 	if (err != CFG_TOPIC_LEN) {
 		return -ENOMEM;
 	}
@@ -156,7 +149,7 @@ static int populate_app_endpoint_topics(void)
 	sub_topics[APP_SUB_TOPIC_IDX_CFG].topic.size = CFG_TOPIC_LEN;
 
 	err = snprintf(agnss_response_topic, sizeof(agnss_response_topic),
-		       "%s" AGNSS_RESPONSE_TOPIC, client_id_buf);
+		       AGNSS_RESPONSE_TOPIC, client_id_buf);
 	if (err != AGNSS_RESPONSE_TOPIC_LEN) {
 		return -ENOMEM;
 	}
@@ -164,7 +157,7 @@ static int populate_app_endpoint_topics(void)
 	sub_topics[APP_SUB_TOPIC_IDX_AGNSS].topic.utf8 = agnss_response_topic;
 	sub_topics[APP_SUB_TOPIC_IDX_AGNSS].topic.size = AGNSS_RESPONSE_TOPIC_LEN;
 
-	err = snprintf(pgps_response_topic, sizeof(pgps_response_topic), "%s" PGPS_RESPONSE_TOPIC,
+	err = snprintf(pgps_response_topic, sizeof(pgps_response_topic), PGPS_RESPONSE_TOPIC,
 		       client_id_buf);
 	if (err != PGPS_RESPONSE_TOPIC_LEN) {
 		return -ENOMEM;
