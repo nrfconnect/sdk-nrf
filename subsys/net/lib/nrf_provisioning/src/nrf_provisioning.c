@@ -45,7 +45,7 @@ K_CONDVAR_DEFINE(np_cond);
 #define SETTINGS_STORAGE_PREFIX CONFIG_NRF_PROVISIONING_SETTINGS_STORAGE_PATH
 
 static bool nw_connected = true;
-
+static bool reschedule;
 
 /* nRF Provisioning context */
 static struct nrf_provisioning_http_context rest_ctx = {
@@ -494,6 +494,8 @@ out:
 	retry_s += spread_s;
 
 	LOG_DBG("Connecting in %llds", retry_s);
+	reschedule = false;
+
 	return retry_s;
 }
 
@@ -509,6 +511,42 @@ static void commit_latest_cmd_id(void)
 			nrf_provisioning_codec_get_latest_cmd_id(), ret);
 	} else {
 		LOG_DBG("%s", nrf_provisioning_codec_get_latest_cmd_id());
+	}
+}
+
+void nrf_provisioning_set_interval(int interval)
+{
+	LOG_DBG("Provisioning interval set to %d", interval);
+
+	if (interval != nxt_provisioning) {
+		char time_str[sizeof(STRINGIFY(2147483647))] = {0};
+		int ret;
+
+		nxt_provisioning = interval;
+		reschedule = true;
+
+		ret = k_mutex_lock(&np_mtx, K_NO_WAIT);
+		if (ret < 0) {
+			LOG_ERR("Unable to lock mutex, err: %d", ret);
+			return;
+		}
+		/* Let the provisioning thread run */
+		k_condvar_signal(&np_cond);
+		k_mutex_unlock(&np_mtx);
+
+		ret = snprintf(time_str, sizeof(time_str), "%d", interval);
+		if (ret < 0) {
+			LOG_ERR("Unable to convert interval to string");
+			return;
+		}
+
+		ret = settings_save_one(SETTINGS_STORAGE_PREFIX "/interval-sec",
+			time_str, strlen(time_str) + 1);
+		if (ret) {
+			LOG_ERR("Unable to store interval, err: %d", ret);
+			return;
+		}
+		LOG_DBG("Stored interval: \"%s\"", time_str);
 	}
 }
 
@@ -535,7 +573,7 @@ int nrf_provisioning_req(void)
 
 			k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(ret));
 			k_mutex_unlock(&np_mtx);
-		} while (!nw_connected);
+		} while (!nw_connected || reschedule);
 
 		dm.cb(NRF_PROVISIONING_EVENT_START, dm.user_data);
 		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
