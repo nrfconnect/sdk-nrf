@@ -85,7 +85,9 @@
 };
 
 &uart30 {
-	status = "okay";
+	/* Disable so that TF-M can use this UART */
+	status = "disabled";
+
 	current-speed = <115200>;
 	pinctrl-0 = <&uart30_default>;
 	pinctrl-1 = <&uart30_sleep>;
