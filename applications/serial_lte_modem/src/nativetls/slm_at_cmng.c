@@ -35,9 +35,9 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 		    at_params_unsigned_int_get(&slm_at_param_list, 2, &sec_tag)) {
 			return -EINVAL;
 		}
-		if ((param_count > 3 &&
-		     at_params_unsigned_short_get(&slm_at_param_list, 3, &type)) ||
-		    type > SLM_AT_CMNG_TYPE_PSK_ID) {
+		if (param_count > 3 &&
+		    (at_params_unsigned_short_get(&slm_at_param_list, 3, &type) ||
+		     type > SLM_AT_CMNG_TYPE_PSK_ID)) {
 			return -EINVAL;
 		}
 		if (op == AT_CMNG_OP_WRITE) {
