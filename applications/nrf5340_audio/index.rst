@@ -13,25 +13,25 @@ The following table summarizes the differences between the available nRF5340 Aud
 .. list-table:: Differences between nRF5340 Audio applications
    :header-rows: 1
 
-   * - Application
-     - LE Audio mode and role
+   * - :ref:`Application name (LE Audio role) <nrf53_audio_app_overview>`
+     - :ref:`Application mode <nrf53_audio_app_overview_modes>`
      - Minimum amount of nRF5340 Audio DKs recommended for testing
-     - FEM support
-   * - :ref:`Unicast client<nrf53_audio_unicast_client_app>`
-     - CIS gateway
-     - 3
-     - ✔
-   * - :ref:`Unicast server<nrf53_audio_unicast_server_app>`
-     - CIS headset
-     - 3
-     - ✔
+     - :ref:`FEM support <nrf53_audio_app_adding_FEM_support>`
    * - :ref:`Broadcast sink<nrf53_audio_broadcast_sink_app>`
-     - BIS gateway
+     - BIS (headset)
      - 2
      -
    * - :ref:`Broadcast source<nrf53_audio_broadcast_source_app>`
-     - BIS headset
+     - BIS (gateway)
      - 2
+     - ✔
+   * - :ref:`Unicast client<nrf53_audio_unicast_client_app>`
+     - CIS (gateway)
+     - 3
+     - ✔
+   * - :ref:`Unicast server<nrf53_audio_unicast_server_app>`
+     - CIS (headset)
+     - 3
      - ✔
 
 See the subpages for detailed documentation of each of the nRF5340 applications and their internal modules:
