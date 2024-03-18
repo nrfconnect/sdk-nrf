@@ -100,7 +100,7 @@ ExternalProject_Add(tfm_psa_arch_test_app
                 -DCROSS_COMPILE=${TFM_TOOLCHAIN_PATH}/${TFM_TOOLCHAIN_PREFIX}
                 -DPSA_TOOLCHAIN_FILE=${TFM_BINARY_DIR}/api_ns/cmake/${TFM_TOOLCHAIN_NS_FILE}
                 -DQCBOR_PATH${QCBOR_PATH_TYPE}=${CONFIG_TFM_QCBOR_PATH}
-                -DCMAKE_BUILD_TYPE=RelWithDebInfo
+                -DCMAKE_BUILD_TYPE=Debug
                 -DTEST_PSA_API=${TEST_PSA_API}
                 -DZEPHYR_NRF_MODULE_DIR=${ZEPHYR_NRF_MODULE_DIR}
     BUILD_COMMAND ${CMAKE_COMMAND} --build .
