@@ -210,7 +210,7 @@ Programming the sample
 **********************
 
 You must program and run a precompiled version of the :ref:`wifi_scan_sample` sample on your development kit to test the functions.
-Download the precompiled version of the sample from the nRF7002 DK Downloads page.
+Download the precompiled version of the sample from the `nRF7002 DK Downloads`_ page.
 
 After downloading the zip archive, extract it to a folder of your choice.
 The archive contains the HEX file used to program the sample to your DK.
