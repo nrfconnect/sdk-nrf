@@ -134,7 +134,7 @@ static int dtls_setup(int fd)
 	}
 
 	/* Enable connection ID */
-	uint32_t dtls_cid = TLS_DTLS_CID_ENABLED;
+	uint32_t dtls_cid = TLS_DTLS_CID_SUPPORTED;
 
 	err = zsock_setsockopt(fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid, sizeof(dtls_cid));
 	if (err) {
