@@ -105,6 +105,7 @@ endchoice # NRF_CLOUD_PGPS_TRANSPORT
 
 choice NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT
 	prompt "nRF Cloud P-GPS download transport"
+	default NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_COAP if NRF_CLOUD_COAP
 	default NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP
 
 config NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP
@@ -119,6 +120,19 @@ config NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM
 	  Enabling this option bypasses the built-in HTTP(S) transport and
 	  replaces it with an application-specific transport for downloading
 	  prediction data.
+
+config NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_COAP
+	bool "Transport P-GPS prediction data over CoAP"
+	depends on NRF_CLOUD_COAP
+	depends on COAP_EXTENDED_OPTIONS_LEN
+	depends on (COAP_EXTENDED_OPTIONS_LEN_VALUE >= 64)
+	help
+	  Enabling this option will make the nRF Cloud P-GPS library use the existing
+	  nRF Cloud CoAP connection to download prediction data. The CoAP extended
+	  option field must be large enough to contain the download URI for the
+	  prediction data. The Kconfig option COAP_EXTENDED_OPTIONS_LEN_VALUE
+	  must be increased from the default value to at least 64. A safe value is 80.
+
 
 endchoice # NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT
 
