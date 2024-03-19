@@ -226,7 +226,7 @@ def find_comp_data_from_dwarf(elf_path):
         elf_path (ELFFile): ELFFile instance
 
     Returns:
-        addr: Address of the found composition data instances in the firmware.
+        List(addr): Addresses of the found composition data instances in the firmware.
     """
     DW_OP_addr = 0x3
 
@@ -272,9 +272,8 @@ def find_comp_data_from_dwarf(elf_path):
                         if type_die_type is None:
                             raise Exception('DW_AT_type is missing')
                         type_die = type_die.get_DIE_from_attribute('DW_AT_type')
-                        for j, _ in enumerate(exp_tags):
-                            if len(exp_tags[j]) > i and\
-                                type_die.tag == exp_tags[j][i]:
+                        for tags in exp_tags:
+                            if len(tags) > i and type_die.tag == tags[i]:
                                 break
                         else:
                             raise Exception('Wrong DW_AT_type')
@@ -291,10 +290,8 @@ def find_comp_data_from_dwarf(elf_path):
         if comp_data_arr is None or len(comp_data_arr) == 0:
             raise Exception("Could not find composition data in .elf file")
 
-        if len(comp_data_arr) > 1:
-            raise Exception("Multiple instances of composition data found in .elf file")
+        return comp_data_arr
 
-        return comp_data_arr[0]
 
 def read_comp_data(elf_path, addr, kconfigs):
     """
@@ -319,38 +316,39 @@ def read_comp_data(elf_path, addr, kconfigs):
         # The format of an element is defined by `struct bt_mesh_elem` type.
         # The format of a model is defined by `struct bt_mesh_model` type.
         # All types are declared in `zephyr/include/zephyr/bluetooth/mesh/access.h`.
-        cid, pid, vid, _, elems_count, elems_ptr = struct.unpack('HHHHII', cdp0_value)
+        for comp_data_entry in struct.iter_unpack('HHHHII', cdp0_value):
+            cid, pid, vid, _, elems_count, elems_ptr = comp_data_entry
 
-        comp = Comp0(cid, pid, vid, kconfigs)
+            comp = Comp0(cid, pid, vid, kconfigs)
 
-        elems_value = read_symbol_data(elf, elems_ptr)
-        elems_iter = struct.iter_unpack('IHBBII', elems_value)
-        i = 0
+            elems_value = read_symbol_data(elf, elems_ptr)
+            elems_iter = struct.iter_unpack('IHBBII', elems_value)
+            i = 0
 
-        for elem in elems_iter:
-            i += 1
-            if i > elems_count:
-                raise Exception('Extracted more elems than \'elem_count\'')
-            __rt, loc, sig_count, vnd_count, sig_ptr, vnd_ptr = elem
-            elem_item = comp.elem_add(loc)
+            for elem in elems_iter:
+                i += 1
+                if i > elems_count:
+                    raise Exception('Extracted more elems than \'elem_count\'')
+                __rt, loc, sig_count, vnd_count, sig_ptr, vnd_ptr = elem
+                elem_item = comp.elem_add(loc)
 
-            def models_unpack(ptr, elem_item, vnd):
-                models_value = read_symbol_data(elf, ptr)
-                model_format = 'HHIIIHHIHH' + ('I' if label_cnt > 0  else '') + 'II' + ('I' if lcd_srv else '')
-                models_iter = struct.iter_unpack(model_format, models_value)
+                def models_unpack(ptr, elem_item, vnd):
+                    models_value = read_symbol_data(elf, ptr)
+                    model_format = 'HHIIIHHIHH' + ('I' if label_cnt > 0  else '') + 'II' + ('I' if lcd_srv else '')
+                    models_iter = struct.iter_unpack(model_format, models_value)
 
-                for model in models_iter:
-                    id1, id2, __rt, __pub, __keys, __keys_cnt, _, __groups, __groups_cnt, _, __uuids, __op, __cb = model
-                    if not vnd:
-                        elem_item.sig_model_add(id1)
-                    else:
-                        elem_item.vnd_model_add(id1, id2)
+                    for model in models_iter:
+                        id1, id2, __rt, __pub, __keys, __keys_cnt, _, __groups, __groups_cnt, _, __uuids, __op, __cb = model
+                        if not vnd:
+                            elem_item.sig_model_add(id1)
+                        else:
+                            elem_item.vnd_model_add(id1, id2)
 
-            if sig_count > 0:
-                models_unpack(sig_ptr, elem_item, False)
-            if vnd_count > 0:
-                models_unpack(vnd_ptr, elem_item, True)
-        return comp
+                if sig_count > 0:
+                    models_unpack(sig_ptr, elem_item, False)
+                if vnd_count > 0:
+                    models_unpack(vnd_ptr, elem_item, True)
+            yield comp
 
 def parse_comp_data(elf_path, kconfigs):
     """
@@ -359,16 +357,18 @@ def parse_comp_data(elf_path, kconfigs):
     Parameters:
         kconfigs (KConfig): A KCoonfig object representing Kconfig options used for the firmware to compile with
     Returns:
-        Parsed Composition data
+        List of parsed composition data
     """
     try:
-        addr = find_comp_data_from_dwarf(elf_path)
-        return read_comp_data(elf_path, addr, kconfigs)
-    except Exception as err :
+        addrs = find_comp_data_from_dwarf(elf_path)
+        return [comp
+                for addr in addrs
+                for comp in read_comp_data(elf_path, addr, kconfigs)]
+    except Exception as err:
         raise Exception("Failed to extract composition data from .elf file") from err
 
 def encoded_metadata_get(version, comp, binary_size):
-    core_type = 1 # FIX ME: For now, hardcoded to application core
+    core_type = 1
     elem_cnt = len(comp.elems)
 
     bytestring = bytearray()
@@ -380,7 +380,6 @@ def encoded_metadata_get(version, comp, binary_size):
     bytestring.append(core_type)
     bytestring.extend(comp.hash_generate().to_bytes(4, 'little'))
     bytestring.extend(elem_cnt.to_bytes(2, 'little'))
-    # FIX ME: Support user data
     return bytestring
 
 def input_parse():
@@ -416,26 +415,33 @@ if __name__ == "__main__":
             sys.exit(0)
 
         kconfigs = KConfig.from_file(config_path)
-        comp = parse_comp_data(elf_path, kconfigs)
+        comps = parse_comp_data(elf_path, kconfigs)
         version = kconfigs.version_parse()
         binary_size = os.path.getsize(os.path.join(args.bin_path, 'app_update.bin'))
-        encoded_metadata = encoded_metadata_get(version, comp, binary_size)
 
-        j_dict = {
-            "sign_version": version,
-            "binary_size": binary_size,
-            "composition_data": comp.dict_generate(),
-            "composition_hash": str(hex(comp.hash_generate())),
-            "encoded_metadata": str(encoded_metadata.hex()),
-        }
+        json_data = []
+
+        for comp in comps:
+            encoded_metadata = encoded_metadata_get(version, comp, binary_size)
+            json_data.append({
+                "sign_version": version,
+                "binary_size": binary_size,
+                "composition_data": comp.dict_generate(),
+                "composition_hash": str(hex(comp.hash_generate())),
+                "encoded_metadata": str(encoded_metadata.hex()),
+            })
 
         with open(metadata_path, "w") as outfile:
-            outfile.write(json.dumps(j_dict, indent=4))
+            outfile.write(json.dumps(json_data if len(json_data) > 1 else json_data[0], indent=4))
         zip.write(metadata_path, FILE_NAME_IN_ZIP)
         zip.close()
 
         print("Bluetooth Mesh Composition metadata generated:")
-        print(f"\tEncoded metadata: {j_dict['encoded_metadata']}")
-        print(f"\tFull metadata written to: {zip_path}")
+        if len(json_data) > 1:
+            print(f"\t{len(json_data)} composition data instances found.")
+            print(f"\tAll metadata variants written to: {zip_path}")
+        else:
+            print(f"\tEncoded metadata: {json_data[0]['encoded_metadata']}")
+            print(f"\tFull metadata written to: {zip_path}")
     except Exception:
         exit_with_error_msg()
