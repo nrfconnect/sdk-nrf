@@ -98,7 +98,7 @@ In the nRF Machine Learning application, application modules are automatically s
 The application uses :ref:`caf_power_manager` for this purpose.
 This means that Zephyr power management is forced to the :c:enumerator:`PM_STATE_ACTIVE` state when the device is in either the Power management active or the Power management suspended state, but the power off state is forced directly by :ref:`caf_power_manager` as Zephyr's :c:enumerator:`PM_STATE_SOFT_OFF` state.
 
-* In the :c:enumerator:`POWER_MANAGER_LEVEL_ALIVE` state, the device is in working condition, Bluetooth is advertising whenever required and all the connections are maintained.
+* In the :c:enumerator:`POWER_MANAGER_LEVEL_ALIVE` state, the device is in working condition, Bluetooth® is advertising whenever required and all the connections are maintained.
 * In the :c:enumerator:`POWER_MANAGER_LEVEL_SUSPENDED` state, the device maintains the active Bluetooth connection.
 * In the :c:enumerator:`POWER_MANAGER_LEVEL_OFF` state, the CPU is switched to the off mode.
 
@@ -132,7 +132,7 @@ The figure visualizes relations between Application Event Manager, modules, driv
 
 Since the application architecture is uniform and the code is shared, the set of modules in use depends on configuration.
 In other words, not all of the modules need to be enabled for a given reference design.
-For example, the :ref:`caf_ble_state` and :ref:`caf_ble_adv` modules are not enabled if the configuration does not use Bluetooth®.
+For example, the :ref:`caf_ble_state` and :ref:`caf_ble_adv` modules are not enabled if the configuration does not use Bluetooth.
 
 See :ref:`nrf_machine_learning_app_internal_modules` for detailed information about every module used by the nRF Machine Learning application.
 
@@ -424,16 +424,16 @@ After programming the application, perform the following steps to test the nRF M
    After the mode is switched, the LED color changes to red and the LED starts blinking very slowly.
 #. Program the :ref:`central_uart` sample to a compatible development kit, for example the nRF52840 Development Kit.
 #. Turn on the programmed device.
-   After a brief delay, the Bluetooth® connection between the sample and the Thingy is established.
+   After a brief delay, the Bluetooth connection between the sample and the Thingy is established.
    The Thingy forwards the sensor readouts over NUS.
    The LED on the Thingy starts to blink rapidly.
-#. Connect to the Bluetooth® Central UART sample with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+#. Connect to the Bluetooth Central UART sample with a terminal emulator (for example, `nRF Connect Serial Terminal`_).
+   See :ref:`test_and_optimize` for the required settings.
 #. Observe the sensor readouts represented as comma-separated values.
    Every line represents a single sensor readout.
    The Thingy forwards sensor readouts over NUS to the Central UART sample.
    The sample forwards the data to the host over UART.
-#. Turn off PuTTY to ensure that only one program has access to data on UART.
+#. Turn off the terminal emulator to ensure that only one program has access to data on UART.
 
 Optionally, you can also connect to the device using `Edge Impulse's data forwarder`_ and forward data to `Edge Impulse studio`_ (after logging in).
 See `Forwarding data to Edge Impulse studio`_ for details.
@@ -456,11 +456,11 @@ After programming the application, perform the following steps to test the nRF M
    This signal is marked as anomaly by the machine learning model and **LED1** starts breathing.
 #. Press and hold **Button 1** for more than 5 seconds to switch to the data forwarding mode.
    After the mode is switched, **LED1** starts to blink rapidly.
-#. Connect to the development kit with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+#. Connect to the development kit with a terminal emulator (for example, `nRF Connect Serial Terminal`_).
+   See :ref:`test_and_optimize` for the required settings.
 #. Observe the sensor readouts represented as comma-separated values.
    Every line represents a single sensor readout.
-#. Turn off PuTTY to ensure that only one program will access data on UART.
+#. Turn off the terminal emulator to ensure that only one program will access data on UART.
 
 Optionally, you can also connect to the device using `Edge Impulse's data forwarder`_ and forward data to `Edge Impulse studio`_ (after logging in).
 See `Forwarding data to Edge Impulse studio`_ for details.

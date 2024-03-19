@@ -957,17 +957,9 @@ Testing
 
 After programming the application and all prerequisites to your development kit, test it by performing the following steps:
 
-1. Connect the development kit to the computer using a USB cable.
-   The development kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
-
-#. Create a serial connection to the development kit (J-Link COM port) with a terminal |ANSI| using the following settings:
-
-   * Hardware flow control: disabled
-   * Baud rate: 115200
-   * Parity bit: no
-
+1. |connect_kit|
+#. |connect_terminal_ANSI|
 #. Reset the development kit.
-
 #. Observe in the terminal window that the application starts.
    This is indicated by output similar to the following (there is also a lot of additional information about the LTE connection):
 

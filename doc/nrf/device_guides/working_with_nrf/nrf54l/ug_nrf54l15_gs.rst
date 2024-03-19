@@ -399,14 +399,7 @@ With the :ref:`zephyr:hello_world_user` sample programmed, the nRF54L15 PDK outp
 
 To read the logs from the :ref:`zephyr:hello_world_user` sample programmed to the nRF54L15 PDK, complete the following steps:
 
-1. Connect to the PDK with a terminal emulator (for example, `Serial Terminal from nRF Connect for Desktop`_) using the following settings:
-
-   * Baud rate: 115200
-   * 8 data bits
-   * 1 stop bit
-   * No parity
-   * HW flow control: None
-
+1. Connect to the PDK with a terminal emulator (for example, `nRF Connect Serial Terminal`_) using the :ref:`default serial port connection settings <test_and_optimize>`.
 #. Press the **Reset** button on the PCB to reset the PDK.
 #. Observe the console output (similar to the following):
 

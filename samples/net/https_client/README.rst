@@ -90,8 +90,10 @@ Testing
 
 After programming the sample to your development kit, test it by performing the following steps:
 
-1. Connect the USB cable and power on or reset your DK.
-#. Open a terminal emulator and observe that the sample starts, provisions certificates, connects to the network and to example.com, and then sends an HTTP HEAD request.
+1. |connect_kit|
+#. Power on or reset the kit.
+#. |connect_terminal|
+#. Observe that the sample starts, provisions certificates, connects to the network and to example.com, and then sends an HTTP HEAD request.
 #. Observe that the HTTP HEAD request returns ``HTTP/1.1 200 OK``.
 
 Sample output

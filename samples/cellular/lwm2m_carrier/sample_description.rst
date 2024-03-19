@@ -138,7 +138,9 @@ Testing
 After programming the sample and all prerequisites to the development kit, test it by performing the following steps:
 
 1. Connect the USB cable and power on or reset your nRF91 Series DK.
-#. Open a terminal emulator and observe that the kit prints the following information::
+#. Use a terminal emulator, like `nRF Connect Serial Terminal`_, to connect to the serial port.
+   See :ref:`test_and_optimize` for the required settings and steps.
+#. Observe that the kit prints the following information::
 
         LWM2M Carrier library sample.
 #. Observe that the application receives events from the :ref:`liblwm2m_carrier_readme` library using the registered event handler. If the client and server configuration is correct, the initial output looks similar to the following output:
