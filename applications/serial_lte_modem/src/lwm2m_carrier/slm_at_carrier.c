@@ -8,6 +8,7 @@
 #include <string.h>
 #include <time.h>
 #include <lwm2m_carrier.h>
+#include <lwm2m_settings.h>
 #include <zephyr/logging/log.h>
 #include <modem/nrf_modem_lib.h>
 #include "slm_at_host.h"
@@ -918,7 +919,7 @@ int slm_at_carrier_init(void)
 {
 	k_work_init_delayable(&reconnect_work, reconnect_wk);
 
-	return 0;
+	return lwm2m_settings_carriers_enabled_set(1 << CONFIG_SLM_CARRIER_BOOTSTRAP);
 }
 
 int slm_at_carrier_uninit(void)

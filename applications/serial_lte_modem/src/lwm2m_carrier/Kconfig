@@ -18,4 +18,51 @@ config SLM_CARRIER_APP_DATA_BUFFER_LEN
 	  Specifies maximum application data size to be set in the App Data Container,
 	  the Binary App Data Container or the Event Log objects.
 
+choice SLM_CARRIER_BOOTSTRAP_CHOICE
+	prompt "Choice of carrier for factory bootstrap"
+	default SLM_CARRIER_BOOTSTRAP_GENERIC
+
+config SLM_CARRIER_BOOTSTRAP_GENERIC
+	bool "Generic"
+	help
+	  Do factory bootstrap for generic carriers.
+
+config SLM_CARRIER_BOOTSTRAP_VERIZON
+	bool "Verizon"
+	help
+	  Do factory bootstrap for Verizon.
+
+config SLM_CARRIER_BOOTSTRAP_LG_UPLUS
+	bool "LG U+"
+	help
+	  Do factory bootstrap for LG U+.
+
+config SLM_CARRIER_BOOTSTRAP_T_MOBILE
+	bool "T-Mobile"
+	help
+	  Do factory bootstrap for T-Mobile.
+
+config SLM_CARRIER_BOOTSTRAP_SOFTBANK
+	bool "SoftBank"
+	help
+	  Do factory bootstrap for SoftBank.
+
+config SLM_CARRIER_BOOTSTRAP_CA
+	bool "Bell Canada"
+	help
+	  Do factory bootstrap for Bell Canada.
+
+endchoice
+
+config SLM_CARRIER_BOOTSTRAP
+	int
+	default 0 if SLM_CARRIER_BOOTSTRAP_GENERIC
+	default 1 if SLM_CARRIER_BOOTSTRAP_VERIZON
+	default 2 if SLM_CARRIER_BOOTSTRAP_CA
+	default 3 if SLM_CARRIER_BOOTSTRAP_LG_UPLUS
+	default 4 if SLM_CARRIER_BOOTSTRAP_T_MOBILE
+	default 5 if SLM_CARRIER_BOOTSTRAP_SOFTBANK
+	help
+	  Carrier to perform factory bootstrap.
+
 endif # SLM_CARRIER
