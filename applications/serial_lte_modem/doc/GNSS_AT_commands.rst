@@ -115,7 +115,7 @@ Unsolicited notification
 * The ``<heading>`` value represents the heading of the movement of the user in degrees.
 * The ``<datetime>`` value represents the UTC date-time.
 
-.. gps_status_notif_start
+.. slm_gps_status_notif_start
 
 .. code-block::
 
@@ -133,7 +133,7 @@ Unsolicited notification
   * ``3`` - GNSS enters sleep because of timeout.
   * ``4`` - GNSS enters sleep because a fix is acquired.
 
-.. gps_status_notif_end
+.. slm_gps_status_notif_end
 
 Example
 ~~~~~~~
@@ -265,8 +265,8 @@ Response syntax
 ~~~~~~~~~~~~~~~
 
 .. include:: GNSS_AT_commands.rst
-   :start-after: gps_status_notif_start
-   :end-before: gps_status_notif_end
+   :start-after: slm_gps_status_notif_start
+   :end-before: slm_gps_status_notif_end
 
 Example
 ~~~~~~~

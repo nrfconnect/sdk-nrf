@@ -19,6 +19,18 @@ For example, it can be used to exchange AT data and have a :ref:`Point-to-Point 
 CMUX is enabled in SLM by compiling it with the appropriate configuration files, depending on your use case.
 See the :ref:`slm_config_files` section for more information.
 
+.. slm_cmux_baud_rate_note_start
+
+.. note::
+
+   The maximum recommended baud rate is 460 800.
+   At higher baud rates (921 600, 1 000 000), it is possible for bytes to come in faster than the chip is able to handle, which causes the buffer space to run out if it goes on for too long.
+   UART RX is not disabled in that case, which results in data loss and communication failures.
+
+   At a baud rate of 460 800, the maximum throughput is slightly below that of the nRF91 Series modem when using LTE-M.
+
+.. slm_cmux_baud_rate_note_end
+
 .. note::
 
    SLM does not have an equivalent to the ``AT+CMUX`` command described in 3GPP TS 27.007.

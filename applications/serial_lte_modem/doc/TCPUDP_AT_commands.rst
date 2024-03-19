@@ -69,7 +69,7 @@ This is emitted when a new connection has been created to the server.
 
 * The ``<peer_ip>`` value is the IPv4 or IPv6 address of the peer.
 
-.. tcpsvr_disconnect_notif_start
+.. slm_tcpsvr_disconnect_notif_start
 
 ::
 
@@ -80,7 +80,7 @@ This is emitted when the client has been disconnected.
 * The ``<error>`` value is an integer.
   It is either ``0`` when the client is disconnected normally, or an *-errno* code.
 
-.. tcpsvr_disconnect_notif_end
+.. slm_tcpsvr_disconnect_notif_end
 
 
 Example
@@ -363,8 +363,8 @@ Response syntax
 ~~~~~~~~~~~~~~~
 
 .. include:: TCPUDP_AT_commands.rst
-   :start-after: tcpsvr_disconnect_notif_start
-   :end-before: tcpsvr_disconnect_notif_end
+   :start-after: slm_tcpsvr_disconnect_notif_start
+   :end-before: slm_tcpsvr_disconnect_notif_end
 
 Examples
 ~~~~~~~~
