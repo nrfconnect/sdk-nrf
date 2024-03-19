@@ -1,0 +1,10 @@
+/{
+	chosen{
+		zephyr,uart-mcumgr = &uart30;
+		zephyr,shell-uart = &uart30;
+	};
+};
+
+&uart30{
+	status = "okay";
+};

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if SOC_FLASH_NRF
+if SOC_FLASH_NRF || SOC_FLASH_NRF_RRAM
 
 choice SOC_FLASH_NRF_RADIO_SYNC_CHOICE
 	prompt "Nordic nRFx flash driver synchronization"
