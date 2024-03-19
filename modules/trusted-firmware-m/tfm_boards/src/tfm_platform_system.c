@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <nrf.h>
+
 #include <platform/include/tfm_platform_system.h>
 #include <cmsis.h>
 #include <stdio.h>
@@ -133,6 +135,11 @@ enum tfm_platform_err_t tfm_platform_hal_ioctl(tfm_platform_ioctl_req_t request,
 	case TFM_PLATFORM_IOCTL_GPIO_SERVICE:
 		return tfm_platform_hal_gpio_service(in_vec, out_vec);
 #endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
+
+#if RRAMC_PRESENT
+	case TFM_PLATFORM_IOCTL_NRF_RRAMC_CONFIG_SERVICE:
+		return tfm_platform_hal_nrf_rramc_config_service(in_vec, out_vec);
+#endif /* defined(NRF_RRAMC_S) */
 
 		/* Board specific IOCTL services */
 #if CONFIG_FW_INFO
