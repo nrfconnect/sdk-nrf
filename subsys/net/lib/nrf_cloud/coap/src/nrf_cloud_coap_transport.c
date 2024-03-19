@@ -49,6 +49,11 @@ LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 #define VER_STRING_FMT "mver=%s&cver=%s&dver=%s"
 #define VER_STRING_FMT2 "cver=" CDDL_VERSION "&dver=" BUILD_VERSION_STR
 #define BUILD_VERSION_STR STRINGIFY(BUILD_VERSION)
+#define COAP_PROXY_RSC "proxy"
+
+/* CoAP extended options must be specified in numerical order */
+#define ACPT_IDX 0 /* COAP_OPTION_ACCEPT (17) */
+#define PRXY_IDX 1 /* COAP_OPTION_PROXY_URI (35) */
 
 static int sock = -1;
 static bool authenticated;
@@ -495,14 +500,13 @@ static void client_callback(int16_t result_code, size_t offset, const uint8_t *p
 	}
 }
 
-static int client_transfer(enum coap_method method,
-			   const char *resource, const char *query,
-			   const uint8_t *buf, size_t buf_len,
-			   enum coap_content_format fmt_out,
-			   enum coap_content_format fmt_in,
-			   bool response_expected,
-			   bool reliable,
-			   coap_client_response_cb_t cb, void *user)
+static int client_transfer_opt(enum coap_method method,
+			       const char *resource, const char *query,
+			       const uint8_t *buf, size_t buf_len,
+			       enum coap_content_format fmt_out,
+			       struct coap_client_option *opt, const size_t opt_cnt,
+			       bool reliable,
+			       coap_client_response_cb_t cb, void *user)
 {
 	__ASSERT_NO_MSG(resource != NULL);
 
@@ -515,11 +519,7 @@ static int client_transfer(enum coap_method method,
 		.cb = cb,
 		.user_data = user
 	};
-	struct coap_client_option options[1] = {{
-		.code = COAP_OPTION_ACCEPT,
-		.len = 1,
-		.value[0] = fmt_in
-	}};
+
 	struct coap_client_request request = {
 		.method = method,
 		.confirmable = reliable,
@@ -528,16 +528,10 @@ static int client_transfer(enum coap_method method,
 		.payload = (uint8_t *)buf,
 		.len = buf_len,
 		.cb = client_callback,
-		.user_data = &user_cb
+		.user_data = &user_cb,
+		.options = opt,
+		.num_options = opt_cnt
 	};
-
-	if (response_expected) {
-		request.options = options;
-		request.num_options = ARRAY_SIZE(options);
-	} else {
-		request.options = NULL;
-		request.num_options = 0;
-	}
 
 	if (!query) {
 		strncpy(path, resource, MAX_COAP_PATH);
@@ -553,7 +547,7 @@ static int client_transfer(enum coap_method method,
 #if defined(CONFIG_NRF_CLOUD_COAP_LOG_LEVEL_DBG)
 	LOG_DBG("%s %s %s Content-Format:%s, %zd bytes out, Accept:%s", reliable ? "CON" : "NON",
 		METHOD_NAME(method), path, fmt_name(fmt_out), buf_len,
-		response_expected ? fmt_name(fmt_in) : "none");
+		opt ? fmt_name(opt->value[ACPT_IDX]) : "none");
 #endif /* CONFIG_NRF_CLOUD_COAP_LOG_LEVEL_DBG */
 
 	retry = 0;
@@ -590,6 +584,84 @@ static int client_transfer(enum coap_method method,
 	return err;
 }
 
+static int client_transfer(enum coap_method method,
+			   const char *resource, const char *query,
+			   const uint8_t *buf, size_t buf_len,
+			   enum coap_content_format fmt_out,
+			   enum coap_content_format fmt_in,
+			   bool response_expected,
+			   bool reliable,
+			   coap_client_response_cb_t cb, void *user)
+{
+	struct coap_client_option opt;
+
+	/* If a response is expected, set the acceptable content format option */
+	if (response_expected) {
+		opt.code = COAP_OPTION_ACCEPT;
+		opt.len = 1;
+		opt.value[0] = fmt_in;
+	}
+
+	return client_transfer_opt(method, resource, query, buf, buf_len, fmt_out,
+				  response_expected ? &opt : NULL,
+				  response_expected ? 1 : 0,
+				  reliable, cb, user);
+}
+
+#define PROXY_URI_DL_HTTPS		"https://"
+#define PROXY_URI_DL_HTTPS_LEN		(sizeof(PROXY_URI_DL_HTTPS) - 1)
+#define PROXY_URI_DL_SEP		"/"
+#define PROXY_URI_DL_SEP_LEN		(sizeof(PROXY_URI_DL_SEP) - 1)
+#define PROXY_URI_ADDED_LEN		(PROXY_URI_DL_HTTPS_LEN + PROXY_URI_DL_SEP_LEN)
+
+int nrf_cloud_coap_proxy_get(char const *const host, char const *const path,
+			     const char *query,
+			     enum coap_content_format fmt_out,
+			     bool reliable,
+			     coap_client_response_cb_t cb, void *user)
+{
+	__ASSERT_NO_MSG(host != NULL);
+	__ASSERT_NO_MSG(path != NULL);
+
+	size_t uri_idx = 0;
+	struct coap_client_option options[2] = {0};
+	size_t host_len = strlen(host);
+	size_t path_len = strlen(path);
+
+	options[ACPT_IDX].code = COAP_OPTION_ACCEPT;
+	options[ACPT_IDX].len = 1;
+	options[ACPT_IDX].value[0] = COAP_CONTENT_FORMAT_TEXT_PLAIN;
+
+	options[PRXY_IDX].code = COAP_OPTION_PROXY_URI;
+	options[PRXY_IDX].len = host_len + path_len + PROXY_URI_ADDED_LEN;
+
+	if (options[PRXY_IDX].len > CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE) {
+		LOG_ERR("Host and path for CoAP proxy GET is too large: %u bytes",
+			options[PRXY_IDX].len);
+		LOG_INF("Increase CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE, current value: %d",
+			CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE);
+		return -E2BIG;
+	}
+
+	/* We don't want a NULL terminated string, so just copy the data to create the full URI */
+	memcpy(&options[PRXY_IDX].value[uri_idx], PROXY_URI_DL_HTTPS, PROXY_URI_DL_HTTPS_LEN);
+	uri_idx += PROXY_URI_DL_HTTPS_LEN;
+
+	memcpy(&options[1].value[uri_idx], host, host_len);
+	uri_idx += host_len;
+
+	memcpy(&options[1].value[uri_idx], PROXY_URI_DL_SEP, PROXY_URI_DL_SEP_LEN);
+	uri_idx += PROXY_URI_DL_SEP_LEN;
+
+	memcpy(&options[1].value[uri_idx], path, path_len);
+
+	LOG_DBG("Proxy URI: %.*s", options[1].len, options[1].value);
+
+	return client_transfer_opt(COAP_METHOD_GET, COAP_PROXY_RSC, query, NULL, 0, fmt_out,
+				   options, ARRAY_SIZE(options), reliable, cb, user);
+}
+
+
 int nrf_cloud_coap_get(const char *resource, const char *query,
 		       const uint8_t *buf, size_t len,
 		       enum coap_content_format fmt_out,
@@ -597,7 +669,7 @@ int nrf_cloud_coap_get(const char *resource, const char *query,
 		       coap_client_response_cb_t cb, void *user)
 {
 	return client_transfer(COAP_METHOD_GET, resource, query,
-			   buf, len, fmt_out, fmt_in, true, reliable, cb, user);
+			       buf, len, fmt_out, fmt_in, true, reliable, cb, user);
 }
 
 int nrf_cloud_coap_post(const char *resource, const char *query,
@@ -606,7 +678,7 @@ int nrf_cloud_coap_post(const char *resource, const char *query,
 			coap_client_response_cb_t cb, void *user)
 {
 	return client_transfer(COAP_METHOD_POST, resource, query,
-			   buf, len, fmt, fmt, false, reliable, cb, user);
+			       buf, len, fmt, fmt, false, reliable, cb, user);
 }
 
 int nrf_cloud_coap_put(const char *resource, const char *query,
@@ -615,7 +687,7 @@ int nrf_cloud_coap_put(const char *resource, const char *query,
 		       coap_client_response_cb_t cb, void *user)
 {
 	return client_transfer(COAP_METHOD_PUT, resource, query,
-			   buf, len, fmt, fmt, false, reliable, cb, user);
+			       buf, len, fmt, fmt, false, reliable, cb, user);
 }
 
 int nrf_cloud_coap_delete(const char *resource, const char *query,
@@ -624,7 +696,7 @@ int nrf_cloud_coap_delete(const char *resource, const char *query,
 			  coap_client_response_cb_t cb, void *user)
 {
 	return client_transfer(COAP_METHOD_DELETE, resource, query,
-			   buf, len, fmt, fmt, false, reliable, cb, user);
+			       buf, len, fmt, fmt, false, reliable, cb, user);
 }
 
 int nrf_cloud_coap_fetch(const char *resource, const char *query,
@@ -634,7 +706,7 @@ int nrf_cloud_coap_fetch(const char *resource, const char *query,
 			 coap_client_response_cb_t cb, void *user)
 {
 	return client_transfer(COAP_METHOD_FETCH, resource, query,
-			   buf, len, fmt_out, fmt_in, true, reliable, cb, user);
+			       buf, len, fmt_out, fmt_in, true, reliable, cb, user);
 }
 
 int nrf_cloud_coap_patch(const char *resource, const char *query,
@@ -643,7 +715,7 @@ int nrf_cloud_coap_patch(const char *resource, const char *query,
 			 coap_client_response_cb_t cb, void *user)
 {
 	return client_transfer(COAP_METHOD_PATCH, resource, query,
-			   buf, len, fmt, fmt, false, reliable, cb, user);
+			       buf, len, fmt, fmt, false, reliable, cb, user);
 }
 
 int nrf_cloud_coap_disconnect(void)

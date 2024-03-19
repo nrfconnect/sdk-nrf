@@ -141,10 +141,12 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *con
 		LOG_INF("Got A-GNSS data");
 	} else if (err == -EAGAIN) {
 		LOG_ERR("Timeout waiting for A-GNSS data");
+	} else if (err < 0) {
+		LOG_ERR("Error getting A-GNSS data: %d", err);
 	} else if (agnss_err > 0) {
 		LOG_RESULT_CODE_ERR("Unexpected result code:", agnss_err);
 		err = agnss_err;
-	} else {
+	} else if (agnss_err < 0) {
 		err = agnss_err;
 		LOG_ERR("Error: %d", err);
 	}
@@ -154,6 +156,63 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *con
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
+
+static int pgps_data_err;
+static void get_pgps_data_callback(int16_t result_code, size_t offset, const uint8_t *payload,
+				   size_t len, bool last_block, void *user)
+{
+	if (offset == 0) {
+		/* Reset error flag on first block */
+		pgps_data_err = 0;
+	}
+
+	if (pgps_data_err) {
+		/* An error has occurred, no need to process anything else.
+		 * Currently unable to stop the transfer: NCSDK-26765
+		 */
+
+		return;
+	}
+
+	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
+		pgps_data_err = result_code;
+	} else {
+		pgps_data_err = nrf_cloud_pgps_process_update((uint8_t *)payload, len);
+	}
+
+	if (last_block || pgps_data_err) {
+		(void)nrf_cloud_pgps_finish_update();
+	}
+}
+
+int nrf_cloud_coap_pgps_data_get(struct nrf_cloud_pgps_result const *const file_location)
+{
+	__ASSERT_NO_MSG(file_location != NULL);
+	__ASSERT_NO_MSG(file_location->host != NULL);
+	__ASSERT_NO_MSG(file_location->host_sz != 0);
+	__ASSERT_NO_MSG(file_location->path != NULL);
+	__ASSERT_NO_MSG(file_location->path_sz != 0);
+
+	if (!nrf_cloud_coap_is_connected()) {
+		return -EACCES;
+	}
+
+	int err = nrf_cloud_coap_proxy_get(file_location->host, file_location->path,
+				       NULL, COAP_CONTENT_FORMAT_APP_OCTET_STREAM,
+				       true, get_pgps_data_callback, NULL);
+
+	if (err) {
+		LOG_ERR("Failed to send get request: %d", err);
+	} else if (pgps_data_err > 0) {
+		LOG_RESULT_CODE_ERR("Unexpected result code:", pgps_data_err);
+		err = pgps_data_err;
+	} else if (pgps_data_err < 0) {
+		LOG_ERR("Unable to process P-GPS data, error: %d", err);
+		err = -EIO;
+	}
+	return err;
+}
+
 static int pgps_err;
 
 static void get_pgps_callback(int16_t result_code,
@@ -199,6 +258,8 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const 
 		LOG_INF("Got P-GPS file location");
 	} else if (err == -EAGAIN) {
 		LOG_ERR("Timeout waiting for P-GPS file location");
+	} else if (err < 0) {
+		LOG_ERR("Error getting P-GPS file location: %d", err);
 	} else {
 		if (pgps_err > 0) {
 			LOG_RESULT_CODE_ERR("Error getting P-GPS file location; result code:",
@@ -475,6 +536,8 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
 		}
 	} else if (err == -EAGAIN) {
 		LOG_ERR("Timeout waiting for location");
+	} else if (err < 0) {
+		LOG_ERR("Error getting location: %d", err);
 	} else {
 		if (loc_err > 0) {
 			LOG_RESULT_CODE_ERR("Error getting location; result code:", loc_err);

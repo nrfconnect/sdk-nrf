@@ -13,6 +13,9 @@
 #include <cJSON.h>
 #include <modem/modem_info.h>
 #include <date_time.h>
+#if defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_coap.h>
+#endif
 #include <net/nrf_cloud_agnss.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_codec.h>
@@ -843,7 +846,8 @@ static int pgps_request_all(void)
 	return pgps_request(&request);
 }
 
-#if defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP)
+#if defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP) || \
+	defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_COAP)
 /* handle incoming P-GPS response packets */
 int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 {
@@ -898,6 +902,7 @@ int nrf_cloud_pgps_update(struct nrf_cloud_pgps_result *file_location)
 		return err;
 	}
 
+#if defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP)
 	int sec_tag = SEC_TAG;
 
 	if (FORCE_HTTP_DL && (strncmp(file_location->host, "https", 5) == 0)) {
@@ -906,16 +911,19 @@ int nrf_cloud_pgps_update(struct nrf_cloud_pgps_result *file_location)
 			strlen(&file_location->host[4]));
 		sec_tag = -1;
 	}
-
 	err =  npgps_download_start(file_location->host, file_location->path,
-				    sec_tag, 0, FRAGMENT_SIZE);
+					sec_tag, 0, FRAGMENT_SIZE);
+#elif defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_COAP)
+	err = nrf_cloud_coap_pgps_data_get(file_location);
+#endif
+
 	if (err) {
 		state = PGPS_REQUEST_NEEDED; /* Will try again next time. */
 	}
 
 	return err;
 }
-#endif /* CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP */
+#endif /* HTTP or CoAP */
 
 int nrf_cloud_pgps_preemptive_updates(void)
 {

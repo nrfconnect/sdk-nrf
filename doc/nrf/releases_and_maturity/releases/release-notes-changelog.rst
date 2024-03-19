@@ -628,7 +628,17 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_coap` library:
 
-  * Updated to request proprietary PSM mode for ``SOC_NRF9151_LACA`` and ``SOC_NRF9131_LACA`` in addition to ``SOC_NRF9161_LACA``.
+  * Added:
+
+    * Support for downloads using nRF Cloud CoAP's proxy resource.
+
+  * Updated:
+
+    * Request proprietary PSM mode for ``SOC_NRF9151_LACA`` and ``SOC_NRF9131_LACA`` in addition to ``SOC_NRF9161_LACA``.
+
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Added the :kconfig:option:`NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_COAP` Kconfig option to enable using the nRF Cloud CoAP connection to download P-GPS data.
 
   * Added the :c:func:`nrf_cloud_coap_shadow_desired_update` function to allow devices to reject invalid shadow deltas.
 
