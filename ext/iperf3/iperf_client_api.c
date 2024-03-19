@@ -107,7 +107,9 @@ iperf_create_streams(struct iperf_test *test, int sender)
 	    FD_SET(s, &test->write_set);
 	else
 	    FD_SET(s, &test->read_set);
-	if (s > test->max_fd) test->max_fd = s;
+
+    FD_SET(s, &test->err_set);
+    if (s > test->max_fd) test->max_fd = s;
 
         sp = iperf_new_stream(test, s, sender);
         if (!sp)
@@ -128,6 +130,12 @@ test_timer_proc(TimerClientData client_data, struct iperf_time *nowP)
 
     test->timer = NULL;
     test->done = 1;
+
+    iperf_printf(test, "%s", report_bw_separator);
+    iperf_printf(test,
+		 "Test duration %d seconds elapsed - testing done. Exchanging the results next.\n",
+		    test->duration);
+    iperf_printf(test, "%s", report_bw_separator);
 }
 
 static void
@@ -513,7 +521,7 @@ iperf_run_client(struct iperf_test * test)
 {
     int startup;
     int result = 0;
-    fd_set read_set, write_set;
+    fd_set read_set, write_set, err_set;
     struct iperf_time now;
     struct timeval* timeout = NULL;
 #if !defined (CONFIG_NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES)
@@ -570,6 +578,7 @@ iperf_run_client(struct iperf_test * test)
     memcpy(&read_set, &test->read_set, sizeof(fd_set));
     memcpy(&write_set, &test->write_set, sizeof(fd_set));
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+    memcpy(&err_set, &test->err_set, sizeof(fd_set));
     if (test->state == TEST_END || test->state == EXCHANGE_RESULTS ||
 	    test->state == DISPLAY_RESULTS || test->state == IPERF_DONE) {
 	    struct iperf_time now;
@@ -603,7 +612,7 @@ iperf_run_client(struct iperf_test * test)
 
     iperf_time_now(&now);
     timeout = tmr_timeout(&now);
-    result = select(test->max_fd + 1, &read_set, &write_set, NULL, timeout);
+	result = select(test->max_fd + 1, &read_set, &write_set, &err_set, timeout);
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
     if (!test->state) {
 	    /* ctrl socket connected but test not yet started: */
@@ -642,7 +651,19 @@ iperf_run_client(struct iperf_test * test)
 		    }          
 		FD_CLR(test->ctrl_sck, &read_set);    
 	    }
-	}    
+
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+	    /* Handle failures */
+	    if (FD_ISSET(test->ctrl_sck, &err_set)) {
+		    iperf_printf(test,
+				 "client: select(): control socket (%d) is having error condition "
+				 "(state %d).\n",
+				 test->ctrl_sck, test->state);
+		    test->i_errno = IESELECTERRORFDS;
+		    goto cleanup_and_fail;
+	    }
+#endif
+	}
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)//added due to early test jamn where rx buffer was full between modem and app
 	if (test->state == TEST_START ||

@@ -329,6 +329,9 @@ struct iperf_test
     int       max_fd;
     fd_set    read_set;                         /* set of read sockets */
     fd_set    write_set;                        /* set of write sockets */
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+    fd_set    err_set;
+#endif
 
     /* Interval related members */ 
     int       omitting;

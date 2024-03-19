@@ -468,6 +468,7 @@ enum {
     IETESTSTARTTIMEOUT = 303, // testing start timeout
     IEKILL = 304,             // not an error but testing was killed
     IETESTENDTIMEOUT = 305,   // testing end timeout
+    IESELECTERRORFDS = 306,   // one of the errorfds for select() failing
 #endif
 };
 
