@@ -152,7 +152,8 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 	if ((enc_audio.num_ch == 1) || (enc_audio.num_ch == streams_to_tx)) {
 		data_size_pr_stream = enc_audio.size / enc_audio.num_ch;
 	} else {
-		LOG_ERR("Num encoded channels must be 1 or equal to num streams");
+		LOG_ERR("Num encoded channels: %d must be 1 or equal to num streams: %d",
+			enc_audio.num_ch, streams_to_tx);
 		return -EINVAL;
 	}
 

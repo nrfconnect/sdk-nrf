@@ -102,7 +102,7 @@ static bool device_name_check(struct bt_data *data, void *user_data)
 	char addr_string[BT_ADDR_LE_STR_LEN];
 
 	/* We only care about LTVs with name */
-	if (data->type == BT_DATA_NAME_COMPLETE) {
+	if (data->type == BT_DATA_NAME_COMPLETE || data->type == BT_DATA_NAME_SHORTENED) {
 		size_t srch_name_size = strlen(srch_name);
 
 		if ((data->data_len == srch_name_size) &&
@@ -139,7 +139,7 @@ static bool device_name_check(struct bt_data *data, void *user_data)
 			ret = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, CONNECTION_PARAMETERS,
 						&conn);
 			if (ret) {
-				LOG_ERR("Could not init connection");
+				LOG_ERR("Could not init connection: %d", ret);
 
 				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL,
 							 BRDCAST_ID_NOT_USED);

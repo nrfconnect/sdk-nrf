@@ -209,6 +209,10 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 
 		break;
 
+	case BT_HCI_ERR_TERM_DUE_TO_MIC_FAIL:
+		LOG_INF("MIC fail. The encryption key may be wrong");
+		break;
+
 	default:
 		LOG_WRN("Unhandled reason: %d", reason);
 
@@ -263,7 +267,9 @@ static bool base_subgroup_bis_cb(const struct bt_bap_base_subgroup_bis *bis, voi
 	get_codec_info(&codec_cfg, &audio_codec_info[bis->index - 1]);
 
 	ret = bt_audio_codec_cfg_get_chan_allocation(&codec_cfg, &chan_allocation);
-	if (ret != 0) {
+	if (ret == -ENODATA) {
+		LOG_WRN("Channel allocation not available");
+	} else if (ret != 0) {
 		LOG_WRN("Could not find channel allocation, ret = %d", ret);
 	} else {
 		LOG_DBG("Channel allocation: 0x%x for BIS index %d", chan_allocation, bis->index);
