@@ -81,7 +81,7 @@ bool le_audio_ep_state_check(struct bt_bap_ep *ep, enum bt_bap_ep_state state);
 /**
  * @brief	Decode the audio sampling frequency in the codec configuration.
  *
- * @param[in]	codec		The audio codec structure.
+ * @param[in]	codec		Pointer to the audio codec structure.
  * @param[out]	freq_hz		Pointer to the sampling frequency in Hz.
  *
  * @return	0 for success, error otherwise.
@@ -91,7 +91,7 @@ int le_audio_freq_hz_get(const struct bt_audio_codec_cfg *codec, int *freq_hz);
 /**
  * @brief	Decode the audio frame duration in us in the codec configuration.
  *
- * @param[in]	codec			The audio codec structure.
+ * @param[in]	codec		Pointer to the audio codec structure.
  * @param[out]	frame_dur_us	Pointer to the frame duration in us.
  *
  * @return	0 for success, error otherwise.
@@ -101,7 +101,7 @@ int le_audio_duration_us_get(const struct bt_audio_codec_cfg *codec, int *frame_
 /**
  * @brief	Decode the number of octets per frame in the codec configuration.
  *
- * @param[in]	codec			The audio codec structure.
+ * @param[in]	codec		Pointer to the audio codec structure.
  * @param[out]	octets_per_sdu	Pointer to the number of octets per SDU.
  *
  * @return	0 for success, error otherwise.
@@ -111,7 +111,7 @@ int le_audio_octets_per_frame_get(const struct bt_audio_codec_cfg *codec, uint32
 /**
  * @brief	Decode the number of frame blocks per SDU in the codec configuration.
  *
- * @param[in]	codec				The audio codec structure.
+ * @param[in]	codec			Pointer to the audio codec structure.
  * @param[out]	frame_blks_per_sdu	Pointer to the number of frame blocks per SDU.
  *
  * @return	0 for success, error otherwise.
@@ -125,7 +125,7 @@ int le_audio_frame_blocks_per_sdu_get(const struct bt_audio_codec_cfg *codec,
  * @details	Decodes the audio frame duration and the number of octets per fram from the codec
  *		configuration, and calculates the bitrate.
  *
- * @param[in]	codec	The audio codec structure.
+ * @param[in]	codec	Pointer to the audio codec structure.
  * @param[out]	bitrate	Pointer to the bitrate in bps.
  */
 int le_audio_bitrate_get(const struct bt_audio_codec_cfg *const codec, uint32_t *bitrate);
@@ -161,5 +161,13 @@ bool le_audio_bitrate_check(const struct bt_audio_codec_cfg *codec);
  * retval	false	Otherwise.
  */
 bool le_audio_freq_check(const struct bt_audio_codec_cfg *codec);
+
+/**
+ * @brief	Print the codec configuration
+ *
+ * @param[in]	codec	Pointer to the audio codec structure.
+ * @param[in]	dir	Direction to print the codec configuration for.
+ */
+void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir);
 
 #endif /* _LE_AUDIO_H_ */

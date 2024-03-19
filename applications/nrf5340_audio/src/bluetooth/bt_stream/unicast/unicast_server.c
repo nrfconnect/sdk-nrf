@@ -165,72 +165,6 @@ BUILD_ASSERT(CONFIG_BT_ASCS_ASE_SRC_COUNT <= 1,
 	     "CIS headset only supports one source stream for now");
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
-static void print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir)
-{
-	if (codec->id == BT_HCI_CODING_FORMAT_LC3) {
-		/* LC3 uses the generic LTV format - other codecs might do as well */
-		int ret;
-		enum bt_audio_location chan_allocation;
-		int freq_hz;
-		int dur_us;
-		uint32_t octets_per_sdu;
-		int frame_blks_per_sdu;
-		uint32_t bitrate;
-
-		ret = le_audio_freq_hz_get(codec, &freq_hz);
-		if (ret) {
-			LOG_ERR("Error retrieving sampling frequency: %d", ret);
-			return;
-		}
-
-		ret = le_audio_duration_us_get(codec, &dur_us);
-		if (ret) {
-			LOG_ERR("Error retrieving frame duration: %d", ret);
-			return;
-		}
-
-		ret = le_audio_octets_per_frame_get(codec, &octets_per_sdu);
-		if (ret) {
-			LOG_ERR("Error retrieving octets per frame: %d", ret);
-			return;
-		}
-
-		ret = le_audio_frame_blocks_per_sdu_get(codec, &frame_blks_per_sdu);
-		if (ret) {
-			LOG_ERR("Error retrieving frame blocks per SDU: %d", ret);
-			return;
-		}
-
-		ret = bt_audio_codec_cfg_get_chan_allocation(codec, &chan_allocation);
-		if (ret) {
-			LOG_ERR("Error retrieving channel allocation: %d", ret);
-			return;
-		}
-
-		ret = le_audio_bitrate_get(codec, &bitrate);
-		if (ret) {
-			LOG_ERR("Unable to calculate bitrate: %d", ret);
-			return;
-		}
-
-		if (dir == BT_AUDIO_DIR_SINK) {
-			LOG_INF("LC3 codec config for sink:");
-		} else if (dir == BT_AUDIO_DIR_SOURCE) {
-			LOG_INF("LC3 codec config for source:");
-		} else {
-			LOG_INF("LC3 codec config for <unknown dir>:");
-		}
-
-		LOG_INF("\tFrequency: %d Hz", freq_hz);
-		LOG_INF("\tDuration: %d us", dur_us);
-		LOG_INF("\tChannel allocation: 0x%x", chan_allocation);
-		LOG_INF("\tOctets per frame: %d (%d bps)", octets_per_sdu, bitrate);
-		LOG_INF("\tFrames per SDU: %d", frame_blks_per_sdu);
-	} else {
-		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
-	}
-}
-
 static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum bt_audio_dir dir,
 			 const struct bt_audio_codec_cfg *codec, struct bt_bap_stream **stream,
 			 struct bt_audio_codec_qos_pref *const pref, struct bt_bap_ascs_rsp *rsp)
@@ -258,13 +192,13 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 
 			if (dir == BT_AUDIO_DIR_SINK) {
 				LOG_DBG("BT_AUDIO_DIR_SINK");
-				print_codec(codec, dir);
+				le_audio_print_codec(codec, dir);
 				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn, dir);
 			}
 #if (CONFIG_BT_AUDIO_TX)
 			else if (dir == BT_AUDIO_DIR_SOURCE) {
 				LOG_DBG("BT_AUDIO_DIR_SOURCE");
-				print_codec(codec, dir);
+				le_audio_print_codec(codec, dir);
 				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn, dir);
 
 				/* CIS headset only supports one source stream for now */
