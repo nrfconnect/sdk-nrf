@@ -24,14 +24,22 @@ static void BluetoothConnectionSecurityRequest(void *context)
 
 	const struct shell *shell = reinterpret_cast<struct shell *>(context);
 
-	shell_fprintf(shell, SHELL_INFO, "----------------------------------------------------------------------------------------\n");
-	shell_fprintf(shell, SHELL_INFO, "| Bridged Bluetooth LE device authentication                                           |\n");
-	shell_fprintf(shell, SHELL_INFO, "|                                                                                      |\n");
-	shell_fprintf(shell, SHELL_INFO, "| Insert pin code displayed by the Bluetooth LE peripheral device                      |\n");
-	shell_fprintf(shell, SHELL_INFO, "| to authenticate the pairing operation.                                               |\n");
-	shell_fprintf(shell, SHELL_INFO, "|                                                                                      |\n");
-	shell_fprintf(shell, SHELL_INFO, "| To do that, use matter_bridge pincode <ble_device_index> <pincode> shell command.    |\n");
-	shell_fprintf(shell, SHELL_INFO, "----------------------------------------------------------------------------------------\n");
+	shell_fprintf(shell, SHELL_INFO,
+		      "----------------------------------------------------------------------------------------\n");
+	shell_fprintf(shell, SHELL_INFO,
+		      "| Bridged Bluetooth LE device authentication                                           |\n");
+	shell_fprintf(shell, SHELL_INFO,
+		      "|                                                                                      |\n");
+	shell_fprintf(shell, SHELL_INFO,
+		      "| Insert pin code displayed by the Bluetooth LE peripheral device                      |\n");
+	shell_fprintf(shell, SHELL_INFO,
+		      "| to authenticate the pairing operation.                                               |\n");
+	shell_fprintf(shell, SHELL_INFO,
+		      "|                                                                                      |\n");
+	shell_fprintf(shell, SHELL_INFO,
+		      "| To do that, use matter_bridge pincode <ble_device_index> <pincode> shell command.    |\n");
+	shell_fprintf(shell, SHELL_INFO,
+		      "----------------------------------------------------------------------------------------\n");
 }
 #endif /* CONFIG_BRIDGED_DEVICE_BT && CONFIG_BT_SMP */
 
@@ -178,7 +186,7 @@ static int SimulatedBridgedDeviceOnOffLightSwitchWriteHandler(const struct shell
 #endif
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-static void BluetoothScanResult(Nrf::BLEConnectivityManager::ScanResult & result, void *context)
+static void BluetoothScanResult(Nrf::BLEConnectivityManager::ScanResult &result, void *context)
 {
 	if (!result.mDevices || !context) {
 		return;
@@ -192,9 +200,11 @@ static void BluetoothScanResult(Nrf::BLEConnectivityManager::ScanResult & result
 	shell_fprintf(shell, SHELL_INFO, "---------------------------------------------------------------------\n");
 	for (int i = 0; i < result.mCount; i++) {
 		shell_fprintf(shell, SHELL_INFO, "| %d     | %02x:%02x:%02x:%02x:%02x:%02x | 0x%04x (%s)\n", i,
-			      result.mDevices[i].mAddr.a.val[5], result.mDevices[i].mAddr.a.val[4], result.mDevices[i].mAddr.a.val[3],
-			      result.mDevices[i].mAddr.a.val[2], result.mDevices[i].mAddr.a.val[1], result.mDevices[i].mAddr.a.val[0],
-			      result.mDevices[i].mUuid, BleBridgedDeviceFactory::GetUuidString(result.mDevices[i].mUuid));
+			      result.mDevices[i].mAddr.a.val[5], result.mDevices[i].mAddr.a.val[4],
+			      result.mDevices[i].mAddr.a.val[3], result.mDevices[i].mAddr.a.val[2],
+			      result.mDevices[i].mAddr.a.val[1], result.mDevices[i].mAddr.a.val[0],
+			      result.mDevices[i].mUuid,
+			      BleBridgedDeviceFactory::GetUuidString(result.mDevices[i].mUuid));
 	}
 }
 
@@ -219,7 +229,7 @@ static int InsertBridgedDevicePincodeHandler(const struct shell *shell, size_t a
 
 static int ScanBridgedDeviceHandler(const struct shell *shell, size_t argc, char **argv)
 {
-	shell_fprintf(shell, SHELL_INFO, "Scanning for 10 s ...\n");
+	shell_fprintf(shell, SHELL_INFO, "Scanning for %d s ...\n", CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS / 1000);
 
 	Nrf::BLEConnectivityManager::Instance().Scan(BluetoothScanResult, const_cast<struct shell *>(shell));
 
@@ -278,7 +288,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(pincode, NULL,
 		      "Insert pincode for Bluetooth LE device pairing. \n"
 		      "Usage: pincode <ble_device_index> <pincode>\n"
-			  "* ble_device_index - the Bluetooth LE device's index on the list returned by the scan command\n"
+		      "* ble_device_index - the Bluetooth LE device's index on the list returned by the scan command\n"
 		      "* pincode - is a pin required for Bluetooth LE pairing authentication\n",
 		      InsertBridgedDevicePincodeHandler, 3, 0),
 #endif /* CONFIG_BT_SMP */

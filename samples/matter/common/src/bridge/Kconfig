@@ -30,6 +30,14 @@ config BRIDGE_BT_RECOVERY_SCAN_TIMEOUT_MS
 	int "Time (in ms) within which the Bridge will try to re-establish a connection to the lost BT LE device"
 	default 2000
 
+config BRIDGE_BT_MAX_SCANNED_DEVICES
+	int "Maximum amount of scanned devices"
+	default 16
+
+config BRIDGE_BT_SCAN_TIMEOUT_MS
+	int "Bluetooth scan timeout in milliseconds"
+	default 10000
+
 config BRIDGE_BT_MINIMUM_SECURITY_LEVEL
 	int "Minimum Bluetooth security level of bridged devices that will be accepted by the bridge device"
 	default 2
