@@ -205,3 +205,71 @@ bool le_audio_freq_check(const struct bt_audio_codec_cfg *codec)
 		return false;
 	}
 }
+
+void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir)
+{
+	if (codec->id == BT_HCI_CODING_FORMAT_LC3) {
+		/* LC3 uses the generic LTV format - other codecs might do as well */
+		int ret;
+		enum bt_audio_location chan_allocation;
+		int freq_hz;
+		int dur_us;
+		uint32_t octets_per_sdu;
+		int frame_blks_per_sdu;
+		uint32_t bitrate;
+
+		ret = le_audio_freq_hz_get(codec, &freq_hz);
+		if (ret) {
+			LOG_ERR("Error retrieving sampling frequency: %d", ret);
+			return;
+		}
+
+		ret = le_audio_duration_us_get(codec, &dur_us);
+		if (ret) {
+			LOG_ERR("Error retrieving frame duration: %d", ret);
+			return;
+		}
+
+		ret = le_audio_octets_per_frame_get(codec, &octets_per_sdu);
+		if (ret) {
+			LOG_ERR("Error retrieving octets per frame: %d", ret);
+			return;
+		}
+
+		ret = le_audio_frame_blocks_per_sdu_get(codec, &frame_blks_per_sdu);
+		if (ret) {
+			LOG_ERR("Error retrieving frame blocks per SDU: %d", ret);
+			return;
+		}
+
+		ret = bt_audio_codec_cfg_get_chan_allocation(codec, &chan_allocation);
+		if (ret == -ENODATA) {
+			LOG_WRN("Channel allocation not available");
+		} else if (ret) {
+			LOG_ERR("Error retrieving channel allocation: %d", ret);
+			return;
+		}
+
+		ret = le_audio_bitrate_get(codec, &bitrate);
+		if (ret) {
+			LOG_ERR("Unable to calculate bitrate: %d", ret);
+			return;
+		}
+
+		if (dir == BT_AUDIO_DIR_SINK) {
+			LOG_INF("LC3 codec config for sink:");
+		} else if (dir == BT_AUDIO_DIR_SOURCE) {
+			LOG_INF("LC3 codec config for source:");
+		} else {
+			LOG_INF("LC3 codec config for <unknown dir>:");
+		}
+
+		LOG_INF("\tFrequency: %d Hz", freq_hz);
+		LOG_INF("\tDuration: %d us", dur_us);
+		LOG_INF("\tChannel allocation: 0x%x", chan_allocation);
+		LOG_INF("\tOctets per frame: %d (%d bps)", octets_per_sdu, bitrate);
+		LOG_INF("\tFrames per SDU: %d", frame_blks_per_sdu);
+	} else {
+		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
+	}
+}

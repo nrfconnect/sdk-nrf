@@ -19,6 +19,7 @@
 
 #include "macros_common.h"
 #include "bt_le_audio_tx.h"
+#include "le_audio.h"
 #include "nrf5340_audio_common.h"
 
 #include <zephyr/logging/log.h>
@@ -130,6 +131,8 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Broadcast source %p started", (void *)stream);
+
+	le_audio_print_codec(stream->codec_cfg, BT_AUDIO_DIR_SOURCE);
 }
 
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
@@ -181,8 +184,7 @@ static void public_broadcast_features_set(uint8_t *features)
 		*features |= 0x01;
 	}
 
-	if (freq == BT_AUDIO_CODEC_CFG_FREQ_16KHZ ||
-	    freq == BT_AUDIO_CODEC_CFG_FREQ_24KHZ) {
+	if (freq == BT_AUDIO_CODEC_CFG_FREQ_16KHZ || freq == BT_AUDIO_CODEC_CFG_FREQ_24KHZ) {
 		*features |= 0x02;
 	} else if (freq == BT_AUDIO_CODEC_CFG_FREQ_48KHZ) {
 		*features |= 0x04;

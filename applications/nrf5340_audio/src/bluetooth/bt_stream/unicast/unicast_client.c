@@ -899,8 +899,12 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 	if (stream->ep->dir == BT_AUDIO_DIR_SINK) {
 		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF("%s sink stream configured", headsets[channel_index].ch_name);
+		le_audio_print_codec(headsets[channel_index].sink_stream.codec_cfg,
+				     stream->ep->dir);
 	} else if (stream->ep->dir == BT_AUDIO_DIR_SOURCE) {
 		LOG_INF("%s source stream configured", headsets[channel_index].ch_name);
+		le_audio_print_codec(headsets[channel_index].source_stream.codec_cfg,
+				     stream->ep->dir);
 	} else {
 		LOG_WRN("Endpoint direction not recognized: %d", stream->ep->dir);
 		return;
