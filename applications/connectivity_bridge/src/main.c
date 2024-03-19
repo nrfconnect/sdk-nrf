@@ -28,7 +28,7 @@ uint8_t *usb_update_sn_string_descriptor(void)
 	char buf[HW_ID_LEN] = {0};
 
 	if (!hw_id_get(buf, ARRAY_SIZE(buf))) {
-		snprintk(usb_serial_str, sizeof(usb_serial_str), "THINGY91_%s", buf);
+		snprintk(usb_serial_str, sizeof(usb_serial_str), "THINGY91X_%s", buf);
 	}
 #endif
 	return usb_serial_str;
