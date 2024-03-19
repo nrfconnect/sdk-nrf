@@ -135,7 +135,8 @@ Asset Tracker v2
 Serial LTE modem
 ----------------
 
-|no_changes_yet_note|
+* Removed mention of Termite and Teraterm terminal emulators from the documentation.
+  The recommended approach is to use one of the emulators listed on the :ref:`test_and_optimize` page.
 
 nRF5340 Audio
 -------------

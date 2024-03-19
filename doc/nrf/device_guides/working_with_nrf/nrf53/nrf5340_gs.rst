@@ -76,8 +76,7 @@ The archive contains the HEX file used to program the sample to your DK.
    :start-after: program_dk_sample_start
    :end-before: program_dk_sample_end
 
-After you have programmed the sample to the DK, you can connect to it and test the functions.
-If you connect to the sample now, you can go directly to Step 2 of :ref:`nrf5340_gs_connecting`.
+After you have programmed the sample to the DK, you can connect to it using a terminal emulator and test the functions.
 
 .. _nrf5340_gs_connecting:
 
@@ -88,7 +87,7 @@ Connecting to the sample
    :start-after: uart_dk_connect_start
    :end-before: uart_dk_connect_end
 
-Once the connection has been established, you can test the sample from Step 2 of :ref:`nrf5340_gs_testing`.
+Once the connection has been established, continue to :ref:`nrf5340_gs_testing`.
 
 .. _nrf5340_gs_testing:
 

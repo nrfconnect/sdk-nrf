@@ -116,8 +116,10 @@ Testing
 
 After programming the sample to your development kit, test it by performing the following steps:
 
-1. Connect the development kit to your PC using a USB cable and power on or reset the kit.
-#. Open a terminal emulator |ANSI| and observe that the sample starts, provisions certificates, and starts to download.
+1. |connect_kit|
+#. Power on or reset the kit.
+#. |connect_terminal_ANSI|
+#. Observe that the sample starts, provisions certificates, and starts to download.
 #. Observe that the progress bar fills up as the download progresses.
 #. Observe that the sample displays the message "Download completed" on the terminal when the download completes.
 

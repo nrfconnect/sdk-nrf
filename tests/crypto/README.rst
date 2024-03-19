@@ -172,7 +172,9 @@ Testing
 =======
 
 1. Compile and program the application.
-#. Observe the result of the different test vectors in the log using :ref:`RTT Viewer <zephyr:nordic_segger>` or a terminal emulator.
+#. |connect_kit|
+#. |connect_terminal|
+#. Observe the result of the different test vectors in the terminal emulator log.
    The last line of the output indicates the test result::
 
       PROJECT EXECUTION SUCCESSFUL

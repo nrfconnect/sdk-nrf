@@ -879,6 +879,7 @@ Glossary
    UART Hardware Flow Control (UART HWFC)
       A handshaking mechanism used to prevent a buffer overflow in the receiver (in embedded computing use cases).
       In a serial connection, when the transmission baud rate is high enough for data to appear faster than it can be processed by the receiver, the communicating devices can synchronize with each other, using :term:`Request to Send (RTS)` and :term:`Clear to Send (CTS)` pins.
+      In the |NCS|, UART HWFC is usually not used when :ref:`testing applications <test_and_optimize>`.
 
    Unicast addressing
       An addressing type that uses a one-to-one association between the destination address and the network endpoint.

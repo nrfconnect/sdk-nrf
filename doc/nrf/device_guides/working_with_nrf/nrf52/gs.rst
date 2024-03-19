@@ -115,8 +115,7 @@ To program the precompiled sample to your development kit, complete the followin
 
 .. program_dk_sample_end
 
-After you have programmed the sample to the DK, you can connect to it and test the functions.
-If you connect to the sample now, you can go directly to Step 2 of :ref:`nrf52_gs_connecting`.
+After you have programmed the sample to the DK, you can connect to it using a terminal emulator and test the functions.
 
 .. _nrf52_gs_connecting:
 
@@ -138,7 +137,7 @@ To connect using CDC-UART, complete the steps listed on the :ref:`test_and_optim
 
 .. uart_dk_connect_end
 
-Once the connection has been established, you can test the sample from Step 2 of :ref:`nrf52_gs_testing`.
+Once the connection has been established, continue to :ref:`nrf52_gs_testing`.
 
 .. _nrf52_gs_testing:
 
@@ -156,10 +155,7 @@ To perform tests, complete the following steps:
 
    .. group-tab:: Android
 
-      1. Connect the |DK| to the computer with a micro-USB cable and turn on the DK.
-
-         **LED1** starts blinking.
-
+      1. Make sure the |DK| is connected to the computer with a micro-USB cable and has been turned on (**LED1** is blinking).
       #. Open the nRF Connect for Mobile application on your Android device.
       #. In nRF Connect for Mobile, tap :guilabel:`Scan`.
       #. Find the DK in the list, select it and tap :guilabel:`Connect`.
@@ -188,10 +184,7 @@ To perform tests, complete the following steps:
 
    .. group-tab:: iOS
 
-      1. Connect the |DK| to the computer with a micro-USB cable and turn on the DK.
-
-         **LED1** starts blinking.
-
+      1. Make sure the |DK| is connected to the computer with a micro-USB cable and has been turned on (**LED1** is blinking).
       #. Open the nRF Connect for Mobile application on your iOS device.
       #. If the application does not automatically start scanning, tap the **Play** icon in the upper right corner.
       #. Find the DK in the list and tap the corresponding :guilabel:`Connect` button.
