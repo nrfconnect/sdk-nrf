@@ -36,6 +36,16 @@ static size_t per_adv_local_size;
 /* Bonded address queue */
 K_MSGQ_DEFINE(bonds_queue, sizeof(bt_addr_le_t), BONDS_QUEUE_SIZE, 4);
 
+static struct bt_le_adv_param ext_adv_param = {
+	.id = BT_ID_DEFAULT,
+	.sid = CONFIG_BLE_ACL_ADV_SID,
+	.secondary_max_skip = 0,
+	.options = BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_USE_NAME,
+	.interval_min = CONFIG_BLE_ACL_EXT_ADV_INT_MIN,
+	.interval_max = CONFIG_BLE_ACL_EXT_ADV_INT_MAX,
+	.peer = NULL,
+};
+
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
 	int ret;
@@ -137,12 +147,11 @@ static const struct bt_le_ext_adv_cb adv_cb = {
 static int direct_adv_create(bt_addr_le_t addr)
 {
 	int ret;
-	struct bt_le_adv_param adv_param;
 	struct bt_le_ext_adv_info ext_adv_info;
 
-	adv_param = *BT_LE_ADV_CONN_DIR(&addr);
-	adv_param.id = BT_ID_DEFAULT;
-	adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
+	ext_adv_param = *BT_LE_ADV_CONN_DIR(&addr);
+	ext_adv_param.id = BT_ID_DEFAULT;
+	ext_adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
 
 	/* Clear ADV data set before update to direct advertising */
 	ret = bt_le_ext_adv_set_data(ext_adv, NULL, 0, NULL, 0);
@@ -151,7 +160,7 @@ static int direct_adv_create(bt_addr_le_t addr)
 		return ret;
 	}
 
-	ret = bt_le_ext_adv_update_param(ext_adv, &adv_param);
+	ret = bt_le_ext_adv_update_param(ext_adv, &ext_adv_param);
 	if (ret) {
 		LOG_ERR("Failed to update ext_adv to direct advertising. Err = %d", ret);
 		return ret;
@@ -361,7 +370,7 @@ int bt_mgmt_adv_start(const struct bt_data *adv, size_t adv_size, const struct b
 			return ret;
 		}
 	} else {
-		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_NAME, &adv_cb, &ext_adv);
+		ret = bt_le_ext_adv_create(&ext_adv_param, &adv_cb, &ext_adv);
 		if (ret) {
 			LOG_ERR("Unable to create extended advertising set: %d", ret);
 			return ret;

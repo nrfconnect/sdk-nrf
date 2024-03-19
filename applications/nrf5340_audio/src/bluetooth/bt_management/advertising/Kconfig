@@ -62,6 +62,11 @@ config BT_DEVICE_MANUFACTURER_ID
 	  consult the following link:
 	  https://www.bluetooth.com/specifications/assigned-numbers
 
+config BLE_ACL_ADV_SID
+	hex "Advertising set ID"
+	range 0x00 0x0F
+	default 0x00
+
 #----------------------------------------------------------------------------#
 menu "Log level"
 
