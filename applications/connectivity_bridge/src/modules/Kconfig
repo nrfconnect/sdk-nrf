@@ -24,6 +24,19 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
+config BRIDGE_BULK_ENABLE
+	bool "Enable USB Bulk"
+	depends on USB_DEVICE_STACK
+	select USB_DEVICE_BOS
+
+if BRIDGE_BULK_ENABLE
+
+module = BRIDGE_BULK
+module-str = USB Bulk device
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
 config BRIDGE_MSC_ENABLE
 	bool "Enable USB Mass Storage"
 	depends on BRIDGE_CDC_ENABLE
