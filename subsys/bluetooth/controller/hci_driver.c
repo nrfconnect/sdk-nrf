@@ -137,6 +137,12 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	#define SDC_SCAN_SIZE 0
 #endif
 
+#if defined(CONFIG_BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING)
+	#define SDC_INITIATOR_SIZE SDC_MEM_INITIATOR
+#else
+	#define SDC_INITIATOR_SIZE 0
+#endif
+
 #ifdef CONFIG_BT_CTLR_DATA_LENGTH_MAX
 	#define MAX_TX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
 	#define MAX_RX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
@@ -230,6 +236,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_PERIODIC_SYNC_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_LIST_MEM_SIZE) + \
 		      (SDC_SCAN_SIZE) + \
+		      (SDC_INITIATOR_SIZE) + \
 		      (SDC_FAL_MEM_SIZE) + \
 		      (SDC_MEM_CHAN_SURV) + \
 		      (SDC_MEM_CIG) + \
@@ -834,6 +841,13 @@ static int configure_supported_features(void)
 			return -ENOTSUP;
 		}
 	}
+
+#if defined(CONFIG_BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING)
+	err = sdc_support_parallel_scanning_and_initiating();
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
 
 	return 0;
 }

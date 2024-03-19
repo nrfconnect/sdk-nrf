@@ -120,6 +120,13 @@ config BT_CTLR_SDC_QOS_CHANNEL_SURVEY
 	help
 	  Channel survey feature support
 
+config BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING
+	bool "Allow scanning and initiating at the same time"
+	select EXPERIMENTAL
+	depends on BT_CENTRAL
+	help
+	  Enables support for scanning and initiating at the same time
+
 config BT_CTLR_SDC_PERIPHERAL_COUNT
 	int "Number of concurrent peripheral roles"
 	default BT_MAX_CONN if (BT_PERIPHERAL && !BT_CENTRAL)
