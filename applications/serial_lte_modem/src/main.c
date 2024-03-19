@@ -39,7 +39,7 @@ static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 static struct gpio_callback gpio_cb;
 #else
 BUILD_ASSERT(!IS_ENABLED(CONFIG_SLM_START_SLEEP),
-	"START_SLEEP requires the POWER_PIN to be defined.");
+	"CONFIG_SLM_START_SLEEP requires CONFIG_SLM_POWER_PIN to be defined.");
 #endif
 static struct k_work_delayable indicate_work;
 
