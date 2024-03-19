@@ -32,6 +32,10 @@ For that, Kconfig fragments and devicetree overlays must be added to the compila
 
 See the :ref:`slm_config_files` section for information on how to compile with additional configuration files and a description of some of the mentioned Kconfig fragments.
 
+.. include:: CMUX_AT_commands.rst
+   :start-after: slm_cmux_baud_rate_note_start
+   :end-before: slm_cmux_baud_rate_note_end
+
 nRF91 Series SiP running SLM
 ============================
 
