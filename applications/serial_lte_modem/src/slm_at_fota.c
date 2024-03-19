@@ -216,6 +216,34 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 	}
 
 	/* start HTTP(S) FOTA */
+#if defined(CONFIG_FOTA_DOWNLOAD_NEW_API)
+	struct download_client_cfg dlc_cfg = {
+		.pdn_id = pdn_id,
+		.family = AF_UNSPEC
+	};
+
+	if (slm_util_casecmp(schema, SCHEMA_HTTPS)) {
+		if (sec_tag == INVALID_SEC_TAG) {
+			LOG_ERR("Missing sec_tag");
+			return -EINVAL;
+		}
+
+		static int sec_tag_list[1];
+
+		sec_tag_list[0] = sec_tag;
+		dlc_cfg.sec_tag_list = sec_tag_list;
+		dlc_cfg.sec_tag_count = 1;
+		dlc_cfg.set_tls_hostname = true;
+		ret = fota_download(hostname, path, type, &dlc_cfg);
+	} else if (slm_util_casecmp(schema, SCHEMA_HTTP)) {
+		dlc_cfg.sec_tag_list = NULL;
+		dlc_cfg.sec_tag_count = 0;
+		dlc_cfg.set_tls_hostname = false;
+		ret = fota_download(hostname, path, type, &dlc_cfg);
+	} else {
+		ret = -EINVAL;
+	}
+#else
 	if (slm_util_casecmp(schema, SCHEMA_HTTPS)) {
 		if (sec_tag == INVALID_SEC_TAG) {
 			LOG_ERR("Missing sec_tag");
@@ -227,6 +255,8 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 	} else {
 		ret = -EINVAL;
 	}
+#endif
+
 	/* Send an URC if failed to start */
 	if (ret) {
 		rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", FOTA_STAGE_DOWNLOAD,

@@ -55,7 +55,11 @@ static K_WORK_DEFINE(download_work, start_fota_download);
 static fota_download_callback_t fota_client_callback;
 static char fota_path[CONFIG_FOTA_DOWNLOAD_FILE_NAME_LENGTH];
 static char fota_host[CONFIG_FOTA_DOWNLOAD_HOST_NAME_LENGTH];
+#if defined(CONFIG_FOTA_DOWNLOAD_NEW_API)
+static int sec_tag_list[1];
+#else
 static int fota_sec_tag = -1;
+#endif
 static bool download_active;
 static enum dfu_target_image_type active_dfu_type;
 
@@ -177,9 +181,17 @@ static int download_url_parse(const char *uri, int sec_tag)
 			LOG_ERR("FOTA SMP sec tag not configured");
 			return -EINVAL;
 		}
+#if defined(CONFIG_FOTA_DOWNLOAD_NEW_API)
+		sec_tag_list[0] = sec_tag;
+#else
 		fota_sec_tag = sec_tag;
+#endif
 	} else {
+#if defined(CONFIG_FOTA_DOWNLOAD_NEW_API)
+		sec_tag_list[0] = -1;
+#else
 		fota_sec_tag = -1;
+#endif
 	}
 
 	strncpy(fota_host, parsed_uri.host, parsed_uri.host_len);
@@ -194,9 +206,22 @@ static int download_url_parse(const char *uri, int sec_tag)
 static void start_fota_download(struct k_work *work)
 {
 	int ret;
+#if !defined(CONFIG_FOTA_DOWNLOAD_NEW_API)
 
 	ret = fota_download_start_with_image_type(fota_host, fota_path, fota_sec_tag, 0, 0,
 						  active_dfu_type);
+#else
+	struct download_client_cfg dlc_cfg = {
+		.pdn_id = 0
+	};
+
+	if (sec_tag_list[0] != -1) {
+		dlc_cfg.sec_tag_list = sec_tag_list;
+		dlc_cfg.sec_tag_count = 1;
+	}
+
+	ret = fota_download(fota_host, fota_path, active_dfu_type, &dlc_cfg);
+#endif
 	if (ret) {
 		struct fota_download_evt evt;
 

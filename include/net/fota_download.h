@@ -116,6 +116,33 @@ typedef void (*fota_download_callback_t)(const struct fota_download_evt *evt);
  */
 int fota_download_init(fota_download_callback_t client_callback);
 
+#if defined(CONFIG_FOTA_DOWNLOAD_NEW_API)
+
+/**@brief Download the given file with the specified image type from the given host.
+ *
+ * Validate that the file type matches the expected type before proceeding with the download.
+ * When the download is complete, the secondary slot of MCUboot is tagged as having
+ * valid firmware inside it. The completion is reported through an event.
+ *
+ * URI parameters (host and file) are not copied, so pointers must stay valid
+ * until download is finished.
+ *
+ * @param host URI of the host to connect to.
+ *             Can include scheme, port number and full file path, defaults to
+ *             HTTP or HTTPS if no scheme is provided.
+ * @param file File to download or NULL if path is already provided in host parameter.
+ * @param expected_type Type of firmware file to be downloaded and installed.
+ * @param config Download client configuration options. The sec_tag_list pointer must stay valid.
+ *
+ * @retval 0	     If download has started successfully.
+ * @retval -EALREADY If download is already ongoing.
+ *                   Otherwise, a negative value is returned.
+ */
+int fota_download(const char *host, const char *file, enum dfu_target_image_type expected_type,
+		  struct download_client_cfg *config);
+
+#else
+
 /**@brief Download the given file with the specified image type from the given host.
  *
  * Validate that the file type matches the expected type before proceeding with the download.
@@ -145,7 +172,6 @@ int fota_download_init(fota_download_callback_t client_callback);
 int fota_download(const char *host, const char *file, const int *sec_tag_list,
 		  uint8_t sec_tag_count, uint8_t pdn_id, size_t fragment_size,
 		  const enum dfu_target_image_type expected_type);
-
 
 /**@brief Start downloading the given file of any image type from the given host.
  *
@@ -233,6 +259,8 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 int fota_download_start_with_image_type(const char *host, const char *file,
 			int sec_tag, uint8_t pdn_id, size_t fragment_size,
 			const enum dfu_target_image_type expected_type);
+
+#endif /* CONFIG_FOTA_DOWNLOAD_NEW_API */
 
 /**@brief Cancel FOTA image downloading.
  *

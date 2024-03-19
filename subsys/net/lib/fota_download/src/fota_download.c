@@ -353,6 +353,7 @@ stop_and_clear_flags:
 	return;
 }
 
+#if !defined(CONFIG_FOTA_DOWNLOAD_NEW_API)
 static bool is_ip_address(const char *host)
 {
 	struct sockaddr sa;
@@ -365,6 +366,7 @@ static bool is_ip_address(const char *host)
 
 	return false;
 }
+#endif
 
 #if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE) && defined(PM_S1_ADDRESS)
 static int read_s0_active(uint32_t s0_address, uint32_t s1_address,
@@ -411,6 +413,107 @@ int fota_download_s0_active_get(bool *const s0_active)
 #endif /* PM_S1_ADDRESS */
 }
 
+#if defined(CONFIG_FOTA_DOWNLOAD_NEW_API)
+
+int fota_download(const char *host, const char *file, enum dfu_target_image_type expected_type,
+	struct download_client_cfg *config)
+{
+	uint32_t host_hash = 0;
+	uint32_t file_hash = 0;
+	int err = -1;
+	struct sockaddr sa;
+
+	/* not initialized yet */
+	if (callback == NULL) {
+		return -EINVAL;
+	}
+
+	if (host == NULL || config == NULL) {
+		return -EINVAL;
+	}
+
+	if (atomic_test_and_set_bit(&flags, FLAG_DOWNLOADING)) {
+		return -EALREADY;
+	}
+
+	atomic_clear_bit(&flags, FLAG_CLOSED);
+	atomic_clear_bit(&flags, FLAG_RESUME);
+	set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR);
+
+	host_hash = sys_hash32(host, strlen(host));
+	file_hash = sys_hash32(file, strlen(file));
+	LOG_DBG("URI checksums %d,%d,%d,%d\r\n", host_hash, file_hash,
+						 dl_host_hash, dl_file_hash);
+
+	/* Verify if the URI is same as last time, if not, prevent resuming. */
+	if (dl_host_hash != host_hash || dl_file_hash != file_hash) {
+		atomic_set_bit(&flags, FLAG_NEW_URI);
+	} else {
+		atomic_clear_bit(&flags, FLAG_NEW_URI);
+	}
+
+	dl_host_hash = host_hash;
+	dl_file_hash = file_hash;
+	dl_host = host;
+	dl_file = file;
+
+	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
+
+#ifdef PM_S1_ADDRESS
+	/* B1 upgrade is supported, check what B1 slot is active,
+	 * (s0 or s1), and update file to point to correct candidate if
+	 * space separated file is given.
+	 */
+	const char *update;
+	bool s0_active;
+	/* Need a modifiable copy of the filename for splitting  */
+	static char file_buf[CONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH];
+
+	strncpy(file_buf, file, sizeof(file_buf) - 1);
+	file_buf[sizeof(file_buf) - 1] = '\0';
+	dl_file = file_buf;
+
+	err = fota_download_s0_active_get(&s0_active);
+	if (err != 0) {
+		atomic_clear_bit(&flags, FLAG_DOWNLOADING);
+		return err;
+	}
+
+	err = fota_download_parse_dual_resource_locator(file_buf, s0_active, &update);
+	if (err != 0) {
+		atomic_clear_bit(&flags, FLAG_DOWNLOADING);
+		return err;
+	}
+
+	if (update != NULL) {
+		LOG_INF("B1 update, selected file:\n%s", update);
+		dl_file = update;
+	}
+#endif /* PM_S1_ADDRESS */
+
+	img_type_expected = expected_type;
+
+	atomic_set_bit(&flags, FLAG_FIRST_FRAGMENT);
+
+	if (zsock_inet_pton(AF_INET, host, sa.data) == 1) {
+		config->set_tls_hostname = false;
+		config->family = AF_INET;
+	} else if (zsock_inet_pton(AF_INET6, host, sa.data) == 1) {
+		config->set_tls_hostname = false;
+		config->family = AF_INET6;
+	}
+
+	err = download_client_get(&dlc, dl_host, config, dl_file, 0);
+	if (err != 0) {
+		atomic_clear_bit(&flags, FLAG_DOWNLOADING);
+		download_client_disconnect(&dlc);
+		return err;
+	}
+
+	return 0;
+}
+
+#else  /* CONFIG_FOTA_DOWNLOAD_NEW_API */
 
 int fota_download_any(const char *host, const char *file, const int *sec_tag_list,
 		      uint8_t sec_tag_count, uint8_t pdn_id, size_t fragment_size)
@@ -544,6 +647,8 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	return fota_download(host, file, sec_tag_list, sec_tag_count, pdn_id,
 			     fragment_size, expected_type);
 }
+
+#endif /* CONFIG_FOTA_DOWNLOAD_NEW_API */
 
 static int fota_download_object_init(void)
 {

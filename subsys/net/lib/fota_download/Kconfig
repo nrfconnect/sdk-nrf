@@ -13,6 +13,10 @@ menuconfig FOTA_DOWNLOAD
 
 if (FOTA_DOWNLOAD)
 
+config FOTA_DOWNLOAD_NEW_API
+	bool "Use new version of fota download API"
+	default 'y'
+
 config FOTA_SOCKET_RETRIES
 	int "Number of retries for socket-related download issues"
 	default 2
@@ -56,11 +60,15 @@ config FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH
 	int "Size of buffer used for Resource locator"
 	default 512
 
+if !(FOTA_DOWNLOAD_NEW_API)
+
 config FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX
 	int "Size of security tag list"
 	default 5
 	help
 	  Maximum size of the list of security tags used to store TLS credentials.
+
+endif # FOTA_DOWNLOAD_NEW_API
 
 module=FOTA_DOWNLOAD
 module-dep=LOG
