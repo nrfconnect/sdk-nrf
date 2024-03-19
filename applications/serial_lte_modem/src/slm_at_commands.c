@@ -744,12 +744,6 @@ void slm_at_uninit(void)
 		LOG_ERR("GPIO could not be uninit: %d", err);
 	}
 #endif
-#if defined(CONFIG_SLM_NRF52_DFU)
-	err = slm_at_dfu_uninit();
-	if (err) {
-		LOG_ERR("DFU could not be uninitialized: %d", err);
-	}
-#endif
 #if defined(CONFIG_SLM_CARRIER)
 	err = slm_at_carrier_uninit();
 	if (err) {
