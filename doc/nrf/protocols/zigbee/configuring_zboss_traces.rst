@@ -11,7 +11,7 @@ The :ref:`nrfxlib:zboss` (ZBOSS stack) comes included in the |NCS| in a set of p
 To help with that, the ZBOSS stack can be configured to print trace logs that allow you to trace the stack behavior.
 This page describes how to enable and configure ZBOSS trace logs.
 
-Trace logs are printed in binary form and  require access to stack source files to be decoded into log messages.
+Trace logs are printed in binary form and require access to stack source files to be decoded into log messages.
 Enabling trace logs can help with the debugging process even if you cannot decode them (due to lack of access to stack source files).
 This is because of the information they can provide about the stack behavior whenever an issue is found or reproduced.
 
