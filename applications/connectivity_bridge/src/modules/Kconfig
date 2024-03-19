@@ -24,6 +24,25 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
+config BRIDGE_CMSIS_DAP_BULK_ENABLE
+	bool "Enable USB Bulk"
+	depends on USB_DEVICE_STACK
+	select USB_DEVICE_BOS
+
+if BRIDGE_CMSIS_DAP_BULK_ENABLE
+
+module = BRIDGE_BULK
+module-str = USB Bulk device
+source "subsys/logging/Kconfig.template.log_config"
+
+config BULK_USB_THREAD_STACK_SIZE
+	int "USB Bulk thread stack size"
+	default 1024
+	help
+	  Size of stack for USB Bulk handler thread.
+
+endif
+
 config BRIDGE_MSC_ENABLE
 	bool "Enable USB Mass Storage"
 	depends on BRIDGE_CDC_ENABLE

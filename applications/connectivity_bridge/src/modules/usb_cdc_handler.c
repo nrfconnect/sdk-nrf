@@ -41,6 +41,9 @@ static uint32_t cdc_ready[CDC_DEVICE_COUNT];
 
 static uint8_t overflow_buf[64];
 
+static bool fs_module_ready;
+static bool bulk_module_ready;
+
 static void cdc_dtr_timer_handler(struct k_timer *timer)
 {
 	k_work_submit(&cdc_dtr_work);
@@ -219,10 +222,18 @@ static bool app_event_handler(const struct app_event_header *aeh)
 #if CONFIG_BRIDGE_MSC_ENABLE
 		if (check_state(event, MODULE_ID(fs_handler), MODULE_STATE_STANDBY)) {
 			/* Enable USBD once file system is populated */
-#else
-		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			/* Enable USBD right away */
+			fs_module_ready = true;
+		}
 #endif
+#if CONFIG_BRIDGE_CMSIS_DAP_BULK_ENABLE
+		if (check_state(event, MODULE_ID(bulk_interface), MODULE_STATE_STANDBY)) {
+			/* Enable USBD once file system is populated */
+			bulk_module_ready = true;
+		}
+#endif
+		if ((!IS_ENABLED(CONFIG_BRIDGE_MSC_ENABLE) || fs_module_ready)
+		    && (!IS_ENABLED(CONFIG_BRIDGE_CMSIS_DAP_BULK_ENABLE) || bulk_module_ready)) {
+			/* Enable USBD */
 			int err;
 
 			err = usb_enable(usbd_status);
