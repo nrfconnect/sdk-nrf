@@ -649,7 +649,7 @@ iperf_run_client(struct iperf_test * test)
                 }
 		    goto cleanup_and_fail;
 		    }          
-		FD_CLR(test->ctrl_sck, &read_set);    
+		FD_CLR(test->ctrl_sck, &read_set);
 	    }
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
@@ -757,8 +757,8 @@ iperf_run_client(struct iperf_test * test)
 		/* Yes, done!  Send TEST_END. */
 		test->done = 1;
         if (test->debug) {
-            iperf_printf(test, "iperf_run_client: Yes, done! Send TEST_END\n");
-        }        
+            iperf_printf(test, "iperf_run_client: Yes, testing done! Send TEST_END\n");
+        }
 #if !defined(CONFIG_NRF_IPERF3_INTEGRATION)        
 		cpu_util(test->cpu_util);
 #endif
@@ -770,6 +770,30 @@ iperf_run_client(struct iperf_test * test)
             }               
             goto cleanup_and_fail;
         }
+#if defined(CONFIG_NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES)
+        if (true) {
+            struct iperf_stream *spp;
+
+            /* Read one more time before closing */
+            (void)iperf_recv(test, &read_set);
+
+            /* Eliminate all possible data transfer from modem by closing the socket */
+            iperf_printf(test, "Testing done: closing data sockets.\n");
+
+            /* Close all data sockets */
+            SLIST_FOREACH(spp, &test->streams, streams)
+            {
+                close(spp->socket);
+                FD_CLR(spp->socket, &test->read_set);
+                FD_CLR(spp->socket, &test->write_set);
+                FD_CLR(spp->socket, &test->err_set);
+                FD_CLR(spp->socket, &read_set);
+                FD_CLR(spp->socket, &write_set);
+                FD_CLR(spp->socket, &err_set);
+            }
+        }
+#endif
+
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 		iperf_time_now(&test_end_started_time);
 #endif

@@ -1676,69 +1676,41 @@ int iperf_set_send_state(struct iperf_test *test, signed char state)
 	test->state = state;
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-    fd_set flush_read_set;
-    struct iperf_stream *sp;
-
 	int ret = 0;
-	int i = 0;
+	struct timeval tout = {.tv_sec = CONFIG_NRF_IPERF3_RESULTS_WAIT_TIME, .tv_usec = 0};
+	struct iperf_time start_time;
+	struct iperf_time now;
+	struct iperf_time temp_time;
+
+	iperf_time_now(&start_time);
 
 	do {
-		if (test->mode == RECEIVER) {
-			int ret;
-			struct timeval timeout = { .tv_sec = 1, .tv_usec = 0 }; /* timeout immediately */
-
-
-			/* Read data to avoid deadlock and enable sending: ignore errors */
-			/*
-			FD_ZERO(&flush_read_set);
-			SLIST_FOREACH(sp, &test->streams, streams) {
-				FD_SET(sp->socket, &flush_read_set);
-			}*/
-			memcpy(&flush_read_set, &test->read_set, sizeof(fd_set));
-
-			ret = select(test->max_fd + 1, &flush_read_set, NULL, NULL, &timeout);
+		ret = Nwrite(test->ctrl_sck, (char *)&state, sizeof(state), Ptcp);
+		if (ret < 0) {
+			test->i_errno = IESENDMESSAGE;
 			if (test->debug) {
-				iperf_printf(test, "iperf_set_send_state: select return %d\n", ret);
-
-				SLIST_FOREACH(sp, &test->streams, streams) {
-					iperf_printf(test, "iperf_set_send_state before recv: stream [%d]: socket: %d read: %d\n",
-							i,
-							sp->socket,
-							(int)FD_ISSET(sp->socket, &flush_read_set));
-					i++;
-				}
+				iperf_printf(test,
+					"iperf_set_send_state failed of sending state: %d, ret: %d\n",
+					state, ret);
 			}
-
-			if (ret > 0) {
-				if (iperf_recv(test, &flush_read_set) < 0) {
-					if (test->debug) {
-						iperf_printf(test, "iperf_set_send_state: iperf_recv flushing failed, ignored\n");
-					}
-				}
-			}
-		}
-
-        ret = Nwrite(test->ctrl_sck, (char*) &state, sizeof(state), Ptcp);
-        if (ret < 0) {
-            test->i_errno = IESENDMESSAGE;
-			if (test->debug)
-				iperf_printf(test, "iperf_set_send_state failed of sending state: %d, ret: %d\n", state, ret);
-
 			ret = -1;
-            break;
-        }
-        else if (ret > 0) {
-			if (test->debug)
-				iperf_printf(test, "iperf_set_send_state succesfully sent the state: %d\n", state);
-
-            ret = 0;
-            break;
-        }
-		else {
-			if (test->debug)
-				iperf_printf(test, "iperf_set_send_state: Nwrite returned 0, retrying for state: %d\n", state);
+			break;
+		} else if (ret > 0) {
+			if (test->debug) {
+				iperf_printf(test, "iperf_set_send_state succesfully sent the state: %d\n",
+					state);
+			}
+			ret = 0;
+			break;
 		}
-
+		iperf_time_now(&now);
+		iperf_time_diff(&start_time, &now, &temp_time);
+		if (iperf_time_in_secs(&temp_time) > tout.tv_sec) {
+			test->i_errno = IESENDMESSAGE;
+			iperf_printf(test, "iperf_set_send_state: timeout to send the state\n");
+			ret = -1;
+			break;
+		}
 	} while (1);
 
 	return ret;
@@ -2749,142 +2721,130 @@ static int get_results(struct iperf_test *test)
 /*************************************************************/
 
 #if defined (CONFIG_NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES)
-static int
-JSON_write_nonblock(struct iperf_test *test, cJSON *json)
+static int JSON_write_nonblock(struct iperf_test *test, cJSON *json)
 {
-    /* Seems that select is not returning as expected in case when other end initiated the close.
-	   It is not returning write set as would be expected and then next send() would tell that direction is closed. */
+	/* Seems that select is not returning as expected in case when other end initiated the
+	   close. It is not returning write set as would be expected and then next send() would tell
+	   that direction is closed. */
 	struct iperf_time start_time;
 	struct iperf_time now;
 	struct iperf_time temp_time;
 
-    uint32_t hsize, nsize;
-    char *str;
-    int r = -1;
+	uint32_t hsize, nsize;
+	char *str;
+	int r = -1;
+	bool size_sent = false;
 
-    struct iperf_stream *sp;
+	fd_set read_set;
+	fd_set write_set;
 
-    bool size_sent = false;
-
-    fd_set read_set;
-    fd_set write_set;
-
-    str = cJSON_PrintUnformatted(json);
-    if (str == NULL)
-    {
-		if (test->debug)
+	str = cJSON_PrintUnformatted(json);
+	if (str == NULL) {
+		if (test->debug) {
 			iperf_printf(test, "JSON_write_nonblock: cJSON_PrintUnformatted failed\n");
+		}
 
 		goto exit;
-    }
-    else
-    {
-        hsize = strlen(str);
-        nsize = htonl(hsize);
-    }
+	} else {
+		hsize = strlen(str);
+		nsize = htonl(hsize);
+	}
 
-    /* wait for max 10 sec */
-    struct timeval tout = { .tv_sec = CONFIG_NRF_IPERF3_RESULTS_WAIT_TIME, .tv_usec = 0 };
-    int err;
-    //bool wait_for_send = false;
+	/* wait for max 10 sec */
+	struct timeval tout = {.tv_sec = CONFIG_NRF_IPERF3_RESULTS_WAIT_TIME, .tv_usec = 0};
+	int err;
+	// bool wait_for_send = false;
 
-	iperf_time_now(&start_time); //store starting time
+	iperf_time_now(&start_time); // store starting time
 
-    do {
-        int ret = 0;
-        int sel_ret = 0;
-        err = 0;
+	do {
+		int ret = 0;
+		int sel_ret = 0;
+		err = 0;
 
-        FD_ZERO(&write_set);
-        FD_SET(test->ctrl_sck, &write_set);
+		FD_ZERO(&write_set);
+		FD_SET(test->ctrl_sck, &write_set);
 
-        FD_ZERO(&read_set);
-        SLIST_FOREACH(sp, &test->streams, streams) {
-            FD_SET(sp->socket, &read_set);
-        }
+		FD_ZERO(&read_set);
 
 		iperf_time_now(&now);
 		iperf_time_diff(&start_time, &now, &temp_time);
 		if (iperf_time_in_secs(&temp_time) > tout.tv_sec) {
 			test->i_errno = IESENDRESULTS;
-			if (test->debug)
-				iperf_printf(test, "JSON_write_nonblock: breaking the select send loop due to timeout\n");
+			if (test->debug) {
+				iperf_printf(test, "JSON_write_nonblock: breaking the select send "
+						   "loop due to timeout\n");
+			}
 			break;
 		}
 
-#if defined (CONFIG_POSIX_API)
-        if ((sel_ret = select(test->max_fd + 1, &read_set, &write_set, NULL, &tout)) > 0)
+#if defined(CONFIG_POSIX_API)
+		if ((sel_ret = select(test->max_fd + 1, &read_set, &write_set, NULL, &tout)) > 0)
 #else
-        if ((sel_ret = zsock_select(test->max_fd + 1, &read_set, &write_set, NULL, &tout)) > 0)
+		if ((sel_ret = zsock_select(test->max_fd + 1, &read_set, &write_set, NULL, &tout)) >
+		    0)
 #endif
-        {
-            /* ignore errors from other than control socket reads */
-            (void)iperf_recv(test, &read_set);
+		{
+			if (FD_ISSET(test->ctrl_sck, &write_set)) {
+				// set_errno(0);
 
-            if (FD_ISSET(test->ctrl_sck, &write_set))
-            {
-                //set_errno(0);
-
-                if (!size_sent)
-                {
-#if defined (CONFIG_POSIX_API)
-                    if ((ret = write(test->ctrl_sck, &nsize, sizeof(nsize))) >= sizeof(nsize))
+				if (!size_sent) {
+#if defined(CONFIG_POSIX_API)
+					if ((ret = write(test->ctrl_sck, &nsize, sizeof(nsize))) >=
+					    sizeof(nsize))
 #else
-                    if ((ret = send(test->ctrl_sck, &nsize, sizeof(nsize), 0)) >= sizeof(nsize))
+					if ((ret = send(test->ctrl_sck, &nsize, sizeof(nsize),
+							0)) >= sizeof(nsize))
 #endif
-                    {
-                        size_sent = true;
-                    }
-                }
-                else
-                {
-#if defined (CONFIG_POSIX_API)
-                    if ((ret = write(test->ctrl_sck, str, hsize)) >= hsize)
+					{
+						size_sent = true;
+					}
+				} else {
+#if defined(CONFIG_POSIX_API)
+					if ((ret = write(test->ctrl_sck, str, hsize)) >= hsize)
 #else
-                    if ((ret = send(test->ctrl_sck, str, hsize, 0)) >= hsize)
+					if ((ret = send(test->ctrl_sck, str, hsize, 0)) >= hsize)
 #endif
-                    {
-                        /* sent successfully */
-                        r = 0;
-                        break;
-                    }
-                }
-            }
-        }
-        /* timeout or error */
-        else if (sel_ret <= 0)
-        {
-			if (sel_ret < 0) { //seems that select is timeoutting before the set time limit (i.e. = =0)? thus, let it timeout and don't care
-		        test->i_errno = IESENDRESULTS;
-				if (test->debug)
-					iperf_printf(test, "JSON_write_nonblock: IERECVRESULTS %d\n", ret);
+					{
+						/* sent successfully */
+						r = 0;
+						break;
+					}
+				}
+			}
+		}
+		/* timeout or error */
+		else if (sel_ret <= 0) {
+			if (sel_ret < 0) { // seems that select is timeoutting before the set time
+					   // limit (i.e. = =0)? thus, let it timeout and don't care
+				test->i_errno = IESENDRESULTS;
+				if (test->debug) {
+					iperf_printf(test,
+						     "JSON_write_nonblock: IERECVRESULTS %d\n",
+						     sel_ret);
+				}
 				break;
+			} else {
+				if (test->debug) {
+					iperf_printf(test, "JSON_write_nonblock: iperf_recv from "
+							   "select timeout\n");
+				}
 			}
-			else {
-				/* Data  might be still coming from server, read it to avoid deadlock due to buffering.
-				 ignore errors */
-				if (test->debug)
-					iperf_printf(test, "JSON_write_nonblock: iperf_recv from select timeout\n");
-
-				(void)iperf_recv(test, &read_set);
-			}
-        }
-    } while (1);
+		}
+	} while (1);
 
 exit:
-    if (str)
-    {
-        free(str);
-    }
+	if (str) {
+		free(str);
+	}
 
-    if (r < 0)
-    {
-        test->i_errno = IESENDRESULTS;
-    }
+	if (r < 0) {
+		test->i_errno = IESENDRESULTS;
+	}
 
-    return r;
+	return r;
 }
-#endif //CONFIG_NRF_IPERF3_INTEGRATION
+#endif // CONFIG_NRF_IPERF3_INTEGRATION
 /*************************************************************/
 
 static int JSON_write(int fd, cJSON *json)
@@ -2962,12 +2922,9 @@ static cJSON
 {
     /* Seems that select is not returning as expected in case when other end initiated the close.
 	   It is not returning read set as would be expected and then next recv() would tell that direction is closed. */
-	struct iperf_time start_time;
-	struct iperf_time now;
-	struct iperf_time temp_time;
-
-    struct iperf_stream *sp;
-
+    struct iperf_time start_time;
+    struct iperf_time now;
+    struct iperf_time temp_time;
     fd_set read_set;
 
     uint32_t hsize = 0, nsize;
@@ -2987,18 +2944,16 @@ static cJSON
 
         FD_ZERO(&read_set);
         FD_SET(test->ctrl_sck, &read_set);
-        SLIST_FOREACH(sp, &test->streams, streams) {
-            FD_SET(sp->socket, &read_set);
-        }
 
-		iperf_time_now(&now);
-		iperf_time_diff(&start_time, &now, &temp_time);
-		if (iperf_time_in_secs(&temp_time) > tout.tv_sec) {
-			test->i_errno = IERECVRESULTS;
-			if (test->debug)
-				iperf_printf(test, "JSON_read_nonblock: breaking the select recv loop due to timeout\n");
-			break;
-		}
+
+	iperf_time_now(&now);
+	iperf_time_diff(&start_time, &now, &temp_time);
+	if (iperf_time_in_secs(&temp_time) > tout.tv_sec) {
+		test->i_errno = IERECVRESULTS;
+		if (test->debug)
+			iperf_printf(test, "JSON_read_nonblock: breaking the select recv loop due to timeout\n");
+		break;
+	}
 
 #if defined (CONFIG_POSIX_API)
         if ((ret = select(test->max_fd + 1, &read_set, NULL, NULL, &tout)) > 0)
@@ -3096,9 +3051,6 @@ static cJSON
 
 //next:
             FD_CLR(test->ctrl_sck, &read_set);
-
-            /* ignore errors from other than control socket reads */
-            (void)iperf_recv(test, &read_set);
         }
         /* timeout or error */
         else if (ret <= 0)
@@ -3108,11 +3060,6 @@ static cJSON
 				if (test->debug)
 					iperf_printf(test, "JSON_read_nonblock: IERECVRESULTS %d\n", ret);
 				break;
-			}
-			else {
-				/* Data  might be still coming from server, read it to avoid deadlock due to buffering.
-				 ignore errors */
-				(void)iperf_recv(test, &read_set);
 			}
         }
     } while (!json);
