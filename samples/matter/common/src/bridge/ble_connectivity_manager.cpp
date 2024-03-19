@@ -671,7 +671,7 @@ CHIP_ERROR BLEConnectivityManager::Reconnect(BLEBridgedDeviceProvider *provider)
 	int err = bt_conn_le_create(&provider->GetBLEBridgedDevice().mAddr, create_param, connParams, &conn);
 
 	if (err) {
-		LOG_ERR("Creating reconnection failed (err %d)", err);
+		LOG_ERR("Creating reconnection failed (err %d) to %s", err, addrStr);
 		return System::MapErrorZephyr(err);
 	} else {
 		provider->SetConnectionObject(conn);
@@ -883,8 +883,35 @@ BLEBridgedDeviceProvider *BLEConnectivityManager::Recovery::GetProvider(sys_slis
 	return provider;
 }
 
+bool BLEConnectivityManager::Recovery::EntryExists(BLEBridgedDeviceProvider *provider, sys_slist_t *list)
+{
+	sys_snode_t *node;
+	sys_snode_t *tmpNodeSafe;
+
+	if (provider && list) {
+		SYS_SLIST_FOR_EACH_NODE_SAFE (list, node, tmpNodeSafe) {
+			ListItem *item = reinterpret_cast<ListItem *>(node);
+
+			if (!item) {
+				return false;
+			}
+
+			bt_addr_le_t addr = provider->GetBtAddress();
+			bt_addr_le_t storedAddr = item->mProvider->GetBtAddress();
+			if (bt_addr_le_cmp(&addr, &storedAddr) == 0) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 bool BLEConnectivityManager::Recovery::PutProvider(BLEBridgedDeviceProvider *provider, sys_slist_t *list)
 {
+	if (EntryExists(provider, list)) {
+		return true;
+	}
+
 	if (sys_slist_len(list) >= kMaxConnectedDevices) {
 		return false;
 	}
