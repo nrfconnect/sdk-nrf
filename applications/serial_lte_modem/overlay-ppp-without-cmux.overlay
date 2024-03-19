@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Include this overlay only if using PPP without CMUX. */
+/* Include this devicetree overlay only if using PPP without CMUX. */
 
  / {
 	chosen {

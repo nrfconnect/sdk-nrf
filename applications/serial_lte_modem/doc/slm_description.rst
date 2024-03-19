@@ -318,13 +318,16 @@ The following configuration files are provided:
   This disables most of the IP-based protocols available through AT commands (such as FTP and MQTT) as it is expected that the controlling chip's own IP stack is used instead.
   See :ref:`CONFIG_SLM_PPP <CONFIG_SLM_PPP>` and :ref:`SLM_AT_PPP` for more information.
 
-* :file:`overlay-ppp-without-cmux.overlay` - Devicetree overlay file that configures the UART to be used by PPP.
+* :file:`overlay-ppp-without-cmux.conf` - Kconfig fragment that configures the UART to be used by PPP.
+  This configuration file should be included when building SLM with PPP and without CMUX.
+
+* :file:`overlay-ppp-without-cmux.overlay` - Devicetree overlay that configures the UART to be used by PPP.
   This configuration file should be included when building SLM with PPP and without CMUX, in addition to :file:`overlay-ppp.conf`.
   It can be customized to fit your configuration (UART, baud rate, and so on).
   By default, it sets the baud rate of the PPP UART to 1 000 000.
 
 * :file:`overlay-zephyr-modem.conf`, :file:`overlay-zephyr-modem-external-mcu.conf`, :file:`overlay-zephyr-modem-nrf9160dk-nrf52840.conf`, :file:`overlay-external-mcu.overlay`,  and :file:`overlay-zephyr-modem-nrf9160dk-nrf52840.overlay` - These configuration files are used when compiling SLM to turn an nRF91 Series SiP into a Zephyr-compatible standalone modem.
-   See :ref:`slm_as_zephyr_modem` for more information.
+  See :ref:`slm_as_zephyr_modem` for more information.
 
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for the nRF9160 DK.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
