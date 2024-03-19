@@ -247,4 +247,22 @@ endif
 
 config WPA_SUPP_NO_DEBUG
 	bool "Disable printing of debug messages, saves code size significantly"
-endif
+
+choice WPA_SUPP_NW_SEL
+	prompt "WPA supplicant Network selection criterion"
+	default WPA_SUPP_NW_SEL_THROUGHPUT
+	help
+		Select the network selection method for the supplicant.
+
+config WPA_SUPP_NW_SEL_THROUGHPUT
+	bool "Throughput based network selection"
+	help
+	  Select the network based on throughput.
+
+config WPA_SUPP_NW_SEL_RELIABILITY
+	bool "Reliability based network selection"
+	help
+	  Select the network based on reliability.
+endchoice
+
+endif # WPA_SUPP
