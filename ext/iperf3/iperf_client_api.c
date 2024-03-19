@@ -480,6 +480,8 @@ iperf_client_end(struct iperf_test *test)
     int retval = 0; /* closing control socket when DONE failed */
 #endif
 
+    iperf_printf(test, "iperf3 testing is ending.\n");
+
     /* Close all stream sockets */
     SLIST_FOREACH(sp, &test->streams, streams) {
         close(sp->socket);
@@ -685,9 +687,9 @@ iperf_run_client(struct iperf_test * test)
                 }
 	    }
 
-            /* Run the timers. */
-            iperf_time_now(&now);
-            tmr_run(&now);
+        /* Run the timers. */
+        iperf_time_now(&now);
+        tmr_run(&now);
 
 	    /* Is the test done yet? */
 	    if ((!test->omitting) &&
@@ -721,19 +723,32 @@ iperf_run_client(struct iperf_test * test)
         }                    
 	}
 	} /* test->state == TEST_RUNNING */
-	// If we're in reverse mode, continue draining the data
+	// If we're in reverse or bidirectional mode, continue draining the data
 	// connection(s) even if test is over.  This prevents a
 	// deadlock where the server side fills up its pipe(s)
 	// and gets blocked, so it can't receive state changes
 	// from the client side.
-	else if (test->mode == RECEIVER && test->state == TEST_END) {
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+	else if (test->state == TEST_END &&
+             (test->mode == BIDIRECTIONAL || test->mode == RECEIVER)) {
 	    if (iperf_recv(test, &read_set) < 0) {
             if (test->debug) {
-                iperf_printf(test, "iperf_run_client: RECEIVER TEST_END iperf_recv failed\n");
-            }            
+                iperf_printf(test,
+                    "iperf_run_client: RECEIVER/BIDIRECTIONAL TEST_END iperf_recv failed\n");
+            }
     		goto cleanup_and_fail;
         }
 	}
+#else
+    else if (test->mode == RECEIVER && test->state == TEST_END) {
+            if (iperf_recv(test, &read_set) < 0) {
+                if (test->debug) {
+                    iperf_printf(test, "iperf_run_client: RECEIVER TEST_END iperf_recv failed\n");
+                }
+                goto cleanup_and_fail;
+            }
+        }
+#endif
     }
 
     if (test->json_output) {

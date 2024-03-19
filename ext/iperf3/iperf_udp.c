@@ -80,8 +80,164 @@ iperf_udp_recv(struct iperf_stream *sp)
     double    transit = 0, d = 0;
     struct iperf_time sent_time, arrival_time, temp_time;
 
-    r = Nread(sp->socket, sp->buffer, size, Pudp);
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+#define MAX_READ_COUNT 20 /* in case of very small buffers,                                                           \
+	                   * let's not stuck here more than count
+			   */
+    int count = 0;
+    int q;
+    int total_received = 0;
 
+    /* In embedded world, especially for bi-dir transfer,
+     * we need to read more from rcv buffer to avoid deadlocks.
+     */
+    do {
+	    q = Nread(sp->socket, sp->buffer, size, Pudp);
+	    if (q <= 0) {
+		    break;
+	    }
+
+	    total_received += q;
+	    count++;
+
+	    /* Only count bytes received while we're in the correct state. */
+	    if (sp->test->state == TEST_RUNNING) {
+		    /*
+		     * For jitter computation below, it's important to know if this
+		     * packet is the first packet received.
+		     */
+		    if (sp->result->bytes_received == 0) {
+			    first_packet = 1;
+		    }
+
+		    sp->result->bytes_received += q;
+		    sp->result->bytes_received_this_interval += q;
+
+		    /* Dig the various counters out of the incoming UDP packet */
+		    if (sp->test->udp_counters_64bit) {
+			    memcpy(&sec, sp->buffer, sizeof(sec));
+			    memcpy(&usec, sp->buffer + 4, sizeof(usec));
+			    memcpy(&pcount, sp->buffer + 8, sizeof(pcount));
+			    sec = ntohl(sec);
+			    usec = ntohl(usec);
+			    pcount = ntohll(pcount);
+			    sent_time.secs = sec;
+			    sent_time.usecs = usec;
+		    } else {
+			    uint32_t pc;
+
+			    memcpy(&sec, sp->buffer, sizeof(sec));
+			    memcpy(&usec, sp->buffer + 4, sizeof(usec));
+			    memcpy(&pc, sp->buffer + 8, sizeof(pc));
+			    sec = ntohl(sec);
+			    usec = ntohl(usec);
+			    pcount = ntohl(pc);
+			    sent_time.secs = sec;
+			    sent_time.usecs = usec;
+		    }
+
+		    if (sp->test->debug) {
+			    iperf_printf(sp->test, "pcount %d packet_count %d\n", (uint32_t)pcount,
+					 sp->packet_count);
+		    }
+
+		    /*
+		     * Try to handle out of order packets.  The way we do this
+		     * uses a constant amount of storage but might not be
+		     * correct in all cases.  In particular we seem to have the
+		     * assumption that packets can't be duplicated in the network,
+		     * because duplicate packets will possibly cause some problems here.
+		     *
+		     * First figure out if the sequence numbers are going forward.
+		     * Note that pcount is the sequence number read from the packet,
+		     * and sp->packet_count is the highest sequence number seen so
+		     * far (so we're expecting to see the packet with sequence number
+		     * sp->packet_count + 1 arrive next).
+		     */
+		    if (pcount >= sp->packet_count + 1) {
+
+			    /* Forward, but is there a gap in sequence numbers? */
+			    if (pcount > sp->packet_count + 1) {
+				    /* There's a gap so count that as a loss. */
+				    sp->cnt_error += (pcount - 1) - sp->packet_count;
+			    }
+			    /* Update the highest sequence number seen so far. */
+			    sp->packet_count = pcount;
+		    } else {
+
+			    /*
+			     * Sequence number went backward (or was stationary?!?).
+			     * This counts as an out-of-order packet.
+			     */
+			    sp->outoforder_packets++;
+
+			    /*
+			     * If we have lost packets, then the fact that we are now
+			     * seeing an out-of-order packet offsets a prior sequence
+			     * number gap that was counted as a loss.  So we can take
+			     * away a loss.
+			     */
+			    if (sp->cnt_error > 0) {
+				    sp->cnt_error--;
+			    }
+
+			    /* Log the out-of-order packet */
+
+			    /* 64bit varaiable printing not working */
+			    if (sp->test->debug) {
+				    iperf_printf(sp->test,
+						 "OUT OF ORDER - incoming packet sequence %d but "
+						 "expected sequence %d on stream %d",
+						 (uint32_t)pcount, sp->packet_count + 1,
+						 sp->socket);
+			    }
+		    }
+
+		    /*
+		     * jitter measurement
+		     *
+		     * This computation is based on RFC 1889 (specifically
+		     * sections 6.3.1 and A.8).
+		     *
+		     * Note that synchronized clocks are not required since
+		     * the source packet delta times are known.  Also this
+		     * computation does not require knowing the round-trip
+		     * time.
+		     */
+		    iperf_time_now(&arrival_time);
+
+		    iperf_time_diff(&arrival_time, &sent_time, &temp_time);
+		    transit = iperf_time_in_secs(&temp_time);
+
+		    /* Hack to handle the first packet by initializing prev_transit. */
+		    if (first_packet) {
+			    sp->prev_transit = transit;
+		    }
+
+		    d = transit - sp->prev_transit;
+		    if (d < 0) {
+			    d = -d;
+		    }
+
+		    sp->prev_transit = transit;
+		    sp->jitter += (d - sp->jitter) / 16.0;
+	    } else {
+		    if (sp->test->debug) {
+			    iperf_printf(sp->test,
+					 "UDP Early/Late receive, state = %d, count: %d\n",
+					 sp->test->state, q);
+		    }
+	    }
+
+    } while (q > 0 && count < MAX_READ_COUNT);
+
+    if (q < 0) {
+	r = q;
+    } else {
+	r = total_received;
+    }
+#else
+    r = Nread(sp->socket, sp->buffer, size, Pudp);
     /*
      * If we got an error in the read, or if we didn't read anything
      * because the underlying read(2) got a EAGAIN, then skip packet
@@ -111,11 +267,7 @@ iperf_udp_recv(struct iperf_stream *sp)
 	    memcpy(&pcount, sp->buffer+8, sizeof(pcount));
 	    sec = ntohl(sec);
 	    usec = ntohl(usec);
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-		pcount = ntohll(pcount);
-#else
 	    pcount = be64toh(pcount);
-#endif
 	    sent_time.secs = sec;
 	    sent_time.usecs = usec;
 	}
@@ -131,14 +283,9 @@ iperf_udp_recv(struct iperf_stream *sp)
 	    sent_time.usecs = usec;
 	}
 
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-	/* ....because 64bit printing ain't working */
-	if (sp->test->debug)
-	    iperf_printf(sp->test, "pcount %d packet_count %d\n", (uint32_t)pcount, sp->packet_count);
-#else
 	if (sp->test->debug)
 	    fprintf(stderr, "pcount %" PRIu64 " packet_count %d\n", pcount, sp->packet_count);
-#endif
+
 	/*
 	 * Try to handle out of order packets.  The way we do this
 	 * uses a constant amount of storage but might not be
@@ -163,7 +310,7 @@ iperf_udp_recv(struct iperf_stream *sp)
 	    sp->packet_count = pcount;
 	} else {
 
-	    /* 
+	    /*
 	     * Sequence number went backward (or was stationary?!?).
 	     * This counts as an out-of-order packet.
 	     */
@@ -177,17 +324,12 @@ iperf_udp_recv(struct iperf_stream *sp)
 	     */
 	    if (sp->cnt_error > 0)
 		sp->cnt_error--;
-	
+
 	    /* Log the out-of-order packet */
-		
-#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
-	    if (sp->test->debug) 
-			fprintf(stderr, "OUT OF ORDER - incoming packet sequence %" PRIu64 " but expected sequence %d on stream %d", pcount, sp->packet_count + 1, sp->socket);
-#else
+
 		/* 64bit varaiable printing not working */
-	    if (sp->test->debug) 
+	    if (sp->test->debug)
 			iperf_printf(sp->test, "OUT OF ORDER - incoming packet sequence %d but expected sequence %d on stream %d", (uint32_t)pcount, sp->packet_count + 1, sp->socket);
-#endif
 	}
 
 	/*
@@ -216,12 +358,8 @@ iperf_udp_recv(struct iperf_stream *sp)
 	sp->prev_transit = transit;
 	sp->jitter += (d - sp->jitter) / 16.0;
     }
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-    else {
-	if (sp->test->debug)
-	    iperf_printf(sp->test, "UDP Early/Late receive, state = %d, count: %d\n", sp->test->state, r);
-    }
-#endif
+#endif /* CONFIG_NRF_IPERF3_INTEGRATION */
+
     return r;
 }
 
@@ -253,11 +391,11 @@ iperf_udp_send(struct iperf_stream *sp)
 #else
 	pcount = htobe64(sp->packet_count);
 #endif
-	
+
 	memcpy(sp->buffer, &sec, sizeof(sec));
 	memcpy(sp->buffer+4, &usec, sizeof(usec));
 	memcpy(sp->buffer+8, &pcount, sizeof(pcount));
-	
+
     }
     else {
 
@@ -266,13 +404,12 @@ iperf_udp_send(struct iperf_stream *sp)
 	sec = htonl(before.secs);
 	usec = htonl(before.usecs);
 	pcount = htonl(sp->packet_count);
-	
+
 	memcpy(sp->buffer, &sec, sizeof(sec));
 	memcpy(sp->buffer+4, &usec, sizeof(usec));
 	memcpy(sp->buffer+8, &pcount, sizeof(pcount));
-	
-    }
 
+    }
     r = Nwrite(sp->socket, sp->buffer, size, Pudp);
 
     if (r < 0)
@@ -322,7 +459,7 @@ iperf_udp_buffercheck(struct iperf_test *test, int s)
      */
     int opt;
     socklen_t optlen;
-    
+
     if ((opt = test->settings->socket_bufsize)) {
         if (setsockopt(s, SOL_SOCKET, SO_RCVBUF, &opt, sizeof(opt)) < 0) {
             i_errno = IESETBUF;
@@ -447,7 +584,7 @@ iperf_udp_accept(struct iperf_test *test)
 		return rc;
 	}
     }
-	
+
 #if defined(HAVE_SO_MAX_PACING_RATE)
     /* If socket pacing is specified, try it. */
     if (test->settings->fqrate) {
@@ -492,7 +629,7 @@ iperf_udp_accept(struct iperf_test *test)
     if (write(s, &buf, sizeof(buf)) < 0) {
 #else
     if (send(s, &buf, sizeof(buf), 0) < 0) {
-#endif    	
+#endif
         i_errno = IESTREAMWRITE;
         return -1;
     }
@@ -565,7 +702,7 @@ iperf_udp_connect(struct iperf_test *test)
 		return rc;
 	}
     }
-	
+
 #if defined(HAVE_SO_MAX_PACING_RATE)
     /* If socket pacing is available and not disabled, try it. */
     if (test->settings->fqrate) {
@@ -609,7 +746,7 @@ iperf_udp_connect(struct iperf_test *test)
      */
     buf = 123456789;		/* this can be pretty much anything */
     if (write(s, &buf, sizeof(buf)) < 0) {
-        // XXX: Should this be changed to IESTREAMCONNECT? 
+        // XXX: Should this be changed to IESTREAMCONNECT?
         i_errno = IESTREAMWRITE;
         return -1;
     }
