@@ -107,6 +107,21 @@ static bool device_name_check(struct bt_data *data, void *user_data)
 
 		if ((data->data_len == srch_name_size) &&
 		    (strncmp(srch_name, data->data, srch_name_size) == 0)) {
+			/* Check if the device is still connected due to waiting for ACL timeout */
+			struct bt_conn_info info;
+			struct bt_conn *existing_conn = bt_conn_lookup_addr_le(BT_ID_DEFAULT, addr);
+
+			if (existing_conn != NULL) {
+				ret = bt_conn_get_info(existing_conn, &info);
+				if (ret == 0 && info.state == BT_CONN_STATE_CONNECTED) {
+					LOG_DBG("Trying to connect to an already connected conn");
+					bt_conn_unref(existing_conn);
+					return false;
+				}
+
+				/* Unref is needed due to bt_conn_lookup */
+				bt_conn_unref(existing_conn);
+			}
 			LOG_DBG("Device found: %s", srch_name);
 
 			bt_le_scan_cb_unregister(&scan_callback);
