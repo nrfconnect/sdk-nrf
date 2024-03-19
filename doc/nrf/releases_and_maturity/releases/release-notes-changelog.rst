@@ -330,7 +330,9 @@ DFU libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`nrf_modem_lib_readme`:
+
+  * Fixed an issue with the CFUN hooks when the Modem library is initialized during ``SYS_INIT`` at kernel level and makes calls to the :ref:`nrf_modem_at` interface before the application level initialization is done.
 
 Libraries for networking
 ------------------------
