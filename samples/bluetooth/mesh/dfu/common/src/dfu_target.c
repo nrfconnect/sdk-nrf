@@ -56,13 +56,13 @@ static bool is_firmware_newer(struct mcuboot_img_sem_ver *new, struct mcuboot_im
 
 	if (new->minor > cur->minor) {
 		return true;
-	} else if (new->minor > cur->minor) {
+	} else if (new->minor < cur->minor) {
 		return false;
 	}
 
 	if (new->revision > cur->revision) {
 		return true;
-	} else if (new->revision > cur->revision) {
+	} else if (new->revision < cur->revision) {
 		return false;
 	}
 
