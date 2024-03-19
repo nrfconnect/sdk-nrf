@@ -555,7 +555,7 @@ void zb_osif_init(void)
 	}
 	platform_inited = true;
 
-#ifdef CONFIG_ZB_HAVE_SERIAL
+#ifdef CONFIG_ZIGBEE_HAVE_SERIAL
 	/* Initialise serial trace */
 	zb_osif_serial_init();
 #endif
@@ -578,8 +578,10 @@ void zb_osif_abort(void)
 	LOG_ERR("ZBOSS fatal error occurred");
 	LOG_PANIC();
 
+#ifdef CONFIG_ZIGBEE_HAVE_SERIAL
 	/* Flush ZBOSS trace logs. */
 	ZB_OSIF_SERIAL_FLUSH();
+#endif
 
 	/* By default reset device or halt if so configured. */
 	if (IS_ENABLED(CONFIG_ZBOSS_RESET_ON_ASSERT)) {
