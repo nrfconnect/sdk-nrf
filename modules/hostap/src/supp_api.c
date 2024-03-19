@@ -321,7 +321,7 @@ int z_wpa_supplicant_connect(const struct device *dev,
 		}
 
 		if (chan_list) {
-			_wpa_cli_cmd_v("set_network %d freq_list%s", resp.network_id, chan_list);
+			_wpa_cli_cmd_v("set_network %d scan_freq%s", resp.network_id, chan_list);
 			k_free(chan_list);
 		}
 	}
