@@ -26,8 +26,8 @@ struct BLEBridgedDeviceProvider;
 
 class BLEConnectivityManager {
 public:
-	static constexpr uint16_t kScanTimeoutMs = 10000;
-	static constexpr uint16_t kMaxScannedDevices = 16;
+	static constexpr uint16_t kScanTimeoutMs = CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS;
+	static constexpr uint16_t kMaxScannedDevices = CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES;
 	/* One BT connection is reserved for the Matter service purposes. */
 	static constexpr uint16_t kMaxConnectedDevices = CONFIG_BT_MAX_CONN - 1;
 	static constexpr uint8_t kMaxServiceUuids = CONFIG_BT_SCAN_UUID_CNT;
@@ -86,8 +86,9 @@ private:
 		void NotifyProviderToRecover(BLEBridgedDeviceProvider *provider);
 
 	private:
-		BLEBridgedDeviceProvider *GetProvider(sys_slist_t *list);
-		bool PutProvider(BLEBridgedDeviceProvider *provider, sys_slist_t *list);
+		static bool EntryExists(BLEBridgedDeviceProvider *provider, sys_slist_t *list);
+		static BLEBridgedDeviceProvider *GetProvider(sys_slist_t *list);
+		static bool PutProvider(BLEBridgedDeviceProvider *provider, sys_slist_t *list);
 		bool IsNeeded() { return !sys_slist_is_empty(&mListToRecover); }
 		void StartTimer();
 		void CancelTimer() { k_timer_stop(&mRecoveryTimer); }
