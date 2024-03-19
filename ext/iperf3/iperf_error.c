@@ -268,6 +268,9 @@ char *iperf_strerror(int int_errno)
         case IEKILL:
             snprintf(errstr, len, "kill signal received - aborting");
             break;
+        case IESELECTERRORFDS:
+            snprintf(errstr, len, "select() is informing that one of the testing sockets are having error condition");
+            break;
 #endif
         case IEINITTEST:
             snprintf(errstr, len, "test initialization failed");
