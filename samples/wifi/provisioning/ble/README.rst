@@ -1,7 +1,8 @@
+.. _wifi_provisioning:
 .. _ble_wifi_provision:
 
-BLE Wi-Fi Provision sample
-##########################
+Wi-Fi: Bluetooth LE based provision
+###################################
 
 .. contents::
    :local:
@@ -9,6 +10,7 @@ BLE Wi-Fi Provision sample
 
 This sample demonstrates how to provision a Wi-Fi® device over a Bluetooth® Low Energy link.
 
+.. _wifi_provisioning_app:
 .. _ble_wifi_provision_app:
 
 Requirements
