@@ -885,6 +885,57 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 
 	return 0;
 }
+
+static int nrf_wifi_util_dump_rpu_lockup_recovery_stats(const struct shell *shell,
+							size_t argc,
+							const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct rpu_op_stats stats;
+	enum rpu_stats_type stats_type = RPU_STATS_TYPE_ALL;
+
+	if (argc == 2) {
+		const char *type  = argv[1];
+
+		if (!strcmp(type, "lmac")) {
+			stats_type = RPU_STATS_TYPE_LMAC;
+		} else if (!strcmp(type, "all")) {
+			stats_type = RPU_STATS_TYPE_ALL;
+		} else {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Invalid stats type %s\n",
+				      type);
+			return -ENOEXEC;
+		}
+	}
+
+	fmac_dev_ctx = ctx->rpu_ctx;
+	memset(&stats, 0, sizeof(struct rpu_op_stats));
+	status = nrf_wifi_fmac_dbg_stats_get(fmac_dev_ctx, 0, &stats);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Failed to get Lockup recovery stats\n");
+		return -ENOEXEC;
+	}
+
+	if (stats_type == RPU_STATS_TYPE_LMAC || stats_type == RPU_STATS_TYPE_ALL) {
+		struct rpu_fw_debug_stats *lmac_debug = &stats.fw_debug;
+
+		shell_fprintf(shell, SHELL_INFO,
+			      "LMAC Lockup recovery stats\n"
+				  "======================\n"
+				  "rpu_hw_lockup_count: %u\n"
+				  "rpu_hw_lockup_recovery_done: %u\n\n",
+				  lmac_debug->rpu_hw_lockup_count,
+				  lmac_debug->rpu_hw_lockup_recovery_done);
+	}
+
+	return 0;
+}
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
@@ -979,6 +1030,13 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "Display RPU stats "
 		      "Parameters: umac or lmac or phy or all (default)",
 		      nrf_wifi_util_dump_rpu_stats,
+		      1,
+		      1),
+	SHELL_CMD_ARG(rpu_lockup_recovery_stats,
+		      NULL,
+		      "Display RPU lockup recovery stats "
+		      "Parameters: lmac or all (default)",
+		      nrf_wifi_util_dump_rpu_lockup_recovery_stats,
 		      1,
 		      1),
 #endif /* CONFIG_NRF700X_RADIO_TEST */
