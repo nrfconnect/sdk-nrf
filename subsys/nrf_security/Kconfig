@@ -40,6 +40,12 @@ config NRF_SECURITY
 	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
 	# Generating random requires a CRACEN PSA Crypto driver on nrf54L
 	select PSA_CRYPTO_DRIVER_CRACEN if PSA_WANT_GENERATE_RANDOM && SOC_SERIES_NRF54LX
+	# NCS does not use TF-M's BL2 bootloader, but uses it's own fork
+    # of MCUBoot instead (CONFIG_BOOTLOADER_MCUBOOT).
+	#
+	# Select TFM_BL2_NOT_SUPPORTED to prevent users from enabling
+    # CONFIG_TFM_BL2.
+	select TFM_BL2_NOT_SUPPORTED
 	help
 	  Set this configuration to enable nRF Security. This provides
 	  Arm PSA cryptography APIs with RNG support (optionally).
