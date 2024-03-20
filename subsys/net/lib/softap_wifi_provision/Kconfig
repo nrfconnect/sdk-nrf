@@ -1,0 +1,107 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SOFTAP_WIFI_PROVISION
+	bool "SoftAP Wi-Fi provision library [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	depends on NANOPB
+	depends on NRF700X_AP_MODE
+	depends on WPA_SUPP_AP
+	depends on SMF
+	depends on NET_DHCPV4_SERVER
+	depends on TLS_CREDENTIALS
+	depends on WIFI_CREDENTIALS
+	depends on HTTP_PARSER
+	depends on HTTP_PARSER_URL
+	depends on NET_SOCKETS_SOCKOPT_TLS
+	depends on !NET_CONFIG_AUTO_INIT
+	depends on !NET_CONFIG_SETTINGS
+
+if SOFTAP_WIFI_PROVISION
+
+config SOFTAP_WIFI_PROVISION_SERVER_CERTIFICATE_REGISTER
+	bool "Register server certificate"
+	default y
+	help
+	  If this option is enabled, a self-signed server certificate
+	  will be registered to TLS credentials storage when provisioning starts.
+
+config SOFTAP_WIFI_PROVISION_SERVER_CERTIFICATES_FOLDER
+	string "Server certificate folder"
+	depends on SOFTAP_WIFI_PROVISION_SERVER_CERTIFICATE_REGISTER
+	default "certs"
+	help
+	  The default path for the folder that contains the server certificate,
+	  relative to the application source directory.
+	  By default, the library expects the credentials to be in
+	  Privacy Enhanced Mail (PEM) format.
+
+config SOFTAP_WIFI_PROVISION_RESPONSE_BUFFER_SIZE
+	int "Response buffer size"
+	default 512
+
+config SOFTAP_WIFI_PROVISION_TCP_RECV_BUF_SIZE
+	int "TCP receive buffer size"
+	default 256
+
+config SOFTAP_WIFI_PROVISION_SCAN_RESULT_BUFFER_SIZE
+	int "Scan result buffer size"
+	default 512
+
+config SOFTAP_WIFI_PROVISION_THREAD_STACK_SIZE
+	int "Thread stack size"
+	default 4096
+
+config SOFTAP_WIFI_PROVISION_URL_MAX_SIZE
+	int "URL max size"
+	default 32
+
+config SOFTAP_WIFI_PROVISION_BODY_MAX_SIZE
+	int "HTTP body max size"
+	default 256
+
+config SOFTAP_WIFI_PROVISION_SSID
+	string "SSID"
+	default "nrf-wifiprov"
+	help
+	  The default SSID of the Wi-Fi network that the device will broadcast in softAP mode.
+
+config SOFTAP_WIFI_PROVISION_SOCKET_CLOSE_ON_COMPLETION
+	bool "Close socket on completion"
+	default y
+	help
+	  If this option is disabled, the socket will be kept open after provisioning has completed.
+	  This will keep mDNS SD running, allowing the device to be discovered by other devices
+	  on the registered hostname.
+
+config SOFTAP_WIFI_PROVISION_CERTIFICATE_SEC_TAG
+	int "TLS credentials storage security tag"
+	default 88
+
+config SOFTAP_WIFI_PROVISION_TCP_PORT
+	int "TCP port number"
+	default 443
+
+config SOFTAP_WIFI_PROVISION_IPV4_ADDRESS
+	string "IPv4 address"
+	default "192.168.0.1"
+	help
+	  Network interface static IPv4 address. DHCPv4 will assign addresses starting from
+	  this address to connecting DHCPv4 clients.
+
+config SOFTAP_WIFI_PROVISION_IPV4_NETMASK
+	string "IPv4 address"
+	default "255.255.255.0"
+
+config SOFTAP_WIFI_PROVISION_MESSAGE_QUEUE_ENTRIES
+	int "Message queue entries"
+	default 5
+
+module = SOFTAP_WIFI_PROVISION
+module-str = SoftAP Wi-Fi provision
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # SOFTAP_WIFI_PROVISION

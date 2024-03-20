@@ -1,7 +1,7 @@
 .. _wifi_samples:
 
 Wi-Fi samples
-#################
+#############
 
 .. toctree::
    :maxdepth: 1
@@ -9,4 +9,5 @@ Wi-Fi samples
    :glob:
 
    ../../../samples/wifi/*/README
+   wifi_provisioning
    wifi_zephyr

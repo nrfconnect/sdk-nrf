@@ -695,6 +695,8 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
+* Added the :ref:`softap_wifi_provision_sample` sample.
+
 * :ref:`wifi_shell_sample` sample:
 
   * Modified ``connect`` command to provide better control over connection parameters.
@@ -790,6 +792,8 @@ Modem libraries
 
 Libraries for networking
 ------------------------
+
+* Added the :ref:`lib_softap_wifi_provision` library.
 
 * :ref:`lib_wifi_credentials` library:
 

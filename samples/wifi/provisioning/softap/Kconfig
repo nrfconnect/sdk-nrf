@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "SoftAP Wi-Fi provision sample"
+
+config SOFTAP_WIFI_PROVISION_SAMPLE_PSM_DISABLED_SECONDS
+	int "Wi-Fi PSM disabled seconds"
+	default 120
+	help
+	  Time in seconds that Wi-Fi power saving mode is disabled after completed provisioning.
+	  Disabling Power Save Mode is needed to make the device discoverable reliably via
+	  mDNS post provisioning.
+	  Service Discovery has proven to be unstable in PSM.
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = SOFTAP_WIFI_PROVISION_SAMPLE
+module-str = SoftAP Wi-Fi provision sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu

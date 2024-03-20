@@ -1,0 +1,39 @@
+syntax = "proto2";
+
+enum Band {
+  BAND_ANY = 0;
+  BAND_2_4_GHZ = 1;
+  BAND_5_GHZ = 2;
+}
+
+enum AuthMode {
+  OPEN = 0;
+  WEP = 1;
+  WPA_PSK = 2;
+  WPA2_PSK = 3;
+  WPA_WPA2_PSK = 4;
+  WPA2_ENTERPRISE = 5;
+  WPA3_PSK = 6;
+}
+
+message WifiInfo {
+  required bytes ssid = 1;
+  required bytes bssid = 2;
+  optional Band band = 3;
+  required uint32 channel = 4;
+  optional AuthMode auth = 5;
+}
+
+message WifiConfig {
+  optional WifiInfo wifi = 1;
+  optional bytes passphrase = 2;
+}
+
+message ScanRecord {
+  optional WifiInfo wifi = 1;
+  optional int32 rssi = 2;
+}
+
+message ScanResults {
+  repeated ScanRecord results = 1;
+}

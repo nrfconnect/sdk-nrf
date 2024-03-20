@@ -205,6 +205,7 @@ Kconfig*                                  @tejlmand
 /samples/suit/                            @tomchy @ahasztag
 /samples/suit/flash_companion/            @e-rk @tomchy
 /samples/wifi/provisioning/ble/           @wentong-li @bama-nordic
+/samples/wifi/provisioning/softap/        @nrfconnect/ncs-cia
 /samples/wifi/radio_test/                 @bama-nordic @sachinthegreen
 /samples/wifi/scan/                       @D-Triveni @bama-nordic
 /samples/wifi/shell/                      @krish2718 @sachinthegreen @rado17 @rlubos
@@ -271,6 +272,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/nrf_provisioning/         @SeppoTakalo @juhaylinen
 /subsys/net/lib/zzhc/                     @junqingzou
 /subsys/net/lib/wifi_credentials/         @nrfconnect/ncs-cia
+/subsys/net/lib/softap_wifi_provision/    @nrfconnect/ncs-cia
 /subsys/net/openthread/                   @rlubos @edmont @canisLupus1313 @maciejbaczmanski
 /subsys/nfc/                              @grochu @anangl
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
