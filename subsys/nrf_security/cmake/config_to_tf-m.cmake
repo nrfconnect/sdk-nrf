@@ -37,13 +37,6 @@ if(NOT ${CONFIG_MBEDTLS_USER_CONFIG_FILE} STREQUAL "nrf-config-user-empty.h" )
   )
 endif()
 
-if(CONFIG_TFM_BL2)
-  set_property(TARGET zephyr_property_target
-    APPEND PROPERTY TFM_CMAKE_OPTIONS
-      -DMCUBOOT_MBEDCRYPTO_CONFIG_FILEPATH:STRING=${CONFIG_MBEDTLS_CFG_FILE}
-  )
-endif()
-
 if(CONFIG_PSA_ITS_ENCRYPTED)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS

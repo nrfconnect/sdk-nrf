@@ -56,20 +56,6 @@ target_compile_definitions(platform_ns
         DOMAIN_NS=1
 )
 
-#========================= Platform BL2 =======================================#
-
-if(BL2)
-    target_include_directories(platform_bl2
-        PRIVATE
-            .
-    )
-
-    target_sources(platform_bl2
-        PRIVATE
-            ${mdk_system_source_file}
-    )
-endif()
-
 #========================= Platform region defs ===============================#
 
 target_compile_definitions(platform_region_defs
