@@ -9,9 +9,6 @@
 
 #include "flash_layout.h"
 
-#define BL2_HEAP_SIZE	   (0x00001000)
-#define BL2_MSP_STACK_SIZE (0x00001800)
-
 #ifdef ENABLE_HEAP
 #define S_HEAP_SIZE (0x00001000)
 #endif
@@ -104,17 +101,6 @@
 #define NRF_NS_STORAGE_PARTITION_START (PM_NONSECURE_STORAGE_ADDRESS)
 #define NRF_NS_STORAGE_PARTITION_SIZE  (PM_NONSECURE_STORAGE_SIZE)
 #endif
-
-#ifdef BL2
-/* Bootloader regions */
-#define BL2_CODE_START (FLASH_AREA_BL2_OFFSET)
-#define BL2_CODE_SIZE  (FLASH_AREA_BL2_SIZE)
-#define BL2_CODE_LIMIT (BL2_CODE_START + BL2_CODE_SIZE - 1)
-
-#define BL2_DATA_START (PM_TFM_SRAM_ADDRESS)
-#define BL2_DATA_SIZE  (PM_TFM_SRAM_SIZE)
-#define BL2_DATA_LIMIT (BL2_DATA_START + BL2_DATA_SIZE - 1)
-#endif /* BL2 */
 
 /* Shared data area between bootloader and runtime firmware.
  * Shared data area is allocated at the beginning of the RAM, it is overlapping
