@@ -23,6 +23,8 @@
 
 #include <zephyr/posix/arpa/inet.h>
 
+#include <modem/lte_lc.h>
+
 #include "net_utils.h"
 #include "link_api.h"
 #include "mosh_defines.h"
@@ -51,6 +53,16 @@ enum ping_rai {
 	PING_RAI_ONGOING,
 	PING_RAI_LAST_PACKET
 };
+
+/* When LTE reg status was updated last time:
+ * used to detect the cases when we need to re-read
+ * PDN context info to update ping ip addresses in case of possible
+ * changes.
+ */
+static int64_t network_reg_status_updated_uptime;
+
+static bool icmp_ping_current_conn_info_set(
+	struct icmp_ping_shell_cmd_argv *ping_args, struct icmp_ping_shell_cmd_argv *ping_argv);
 
 /*****************************************************************************/
 
@@ -501,10 +513,9 @@ close_end:
 
 /*****************************************************************************/
 
-static void icmp_ping_tasks_execute(struct icmp_ping_shell_cmd_argv *ping_args)
+int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 {
-	struct addrinfo *si = ping_args->src;
-	struct addrinfo *di = ping_args->dest;
+	struct icmp_ping_shell_cmd_argv current_ping_args;
 	uint32_t sum = 0;
 	uint32_t count = 0;
 	uint32_t rtt_min = 0xFFFFFFFF;
@@ -512,23 +523,48 @@ static void icmp_ping_tasks_execute(struct icmp_ping_shell_cmd_argv *ping_args)
 	int set, res;
 	enum ping_rai rai;
 	uint32_t ping_t;
+	int ret = 0;
 
-	for (int i = 0; i < ping_args->count; i++) {
+	/* All good for ping_args, get the current connection info and start the ping */
+	if (!icmp_ping_current_conn_info_set(ping_args, &current_ping_args)) {
+		return -1;
+	}
+
+	for (int i = 0; i < current_ping_args.count; i++) {
 		rai = PING_RAI_NONE;
-		if (ping_args->rai) {
-			if (i == ping_args->count - 1) {
+		if (current_ping_args.rai) {
+			if (i == current_ping_args.count - 1) {
 				/* For last packet */
 				rai = PING_RAI_LAST_PACKET;
 			} else {
 				rai = PING_RAI_ONGOING;
 			}
 		}
-		ping_t = send_ping_wait_reply(ping_args, rai);
 
-		k_poll_signal_check(ping_args->kill_signal, &set, &res);
+		if (current_ping_args.pdn_ctx_info_read_uptime <
+			network_reg_status_updated_uptime) {
+			/* Re-read PDN context info */
+			ping_print(&current_ping_args, "Re-reading PDN context info...");
+			freeaddrinfo(current_ping_args.dest);
+			current_ping_args.dest = NULL;
+			freeaddrinfo(current_ping_args.src);
+			current_ping_args.src = NULL;
+			if (!icmp_ping_current_conn_info_set(
+				&current_ping_args, &current_ping_args)) {
+				ping_error(
+					&current_ping_args,
+					"Re-reading of PDN context info failed - exiting");
+				ret = -1;
+				break;
+			}
+		}
+
+		ping_t = send_ping_wait_reply(&current_ping_args, rai);
+
+		k_poll_signal_check(current_ping_args.kill_signal, &set, &res);
 		if (set) {
-			k_poll_signal_reset(ping_args->kill_signal);
-			ping_error(ping_args, "KILL signal received - exiting");
+			k_poll_signal_reset(current_ping_args.kill_signal);
+			ping_error(&current_ping_args, "KILL signal received - exiting");
 			break;
 		}
 
@@ -538,31 +574,37 @@ static void icmp_ping_tasks_execute(struct icmp_ping_shell_cmd_argv *ping_args)
 			rtt_max = MAX(rtt_max, ping_t);
 			rtt_min = MIN(rtt_min, ping_t);
 		}
-		k_sleep(K_MSEC(ping_args->interval));
+		k_sleep(K_MSEC(current_ping_args.interval));
 	}
 
-	freeaddrinfo(si);
-	freeaddrinfo(di);
 
-	uint32_t lost = ping_args->count - count;
+	uint32_t lost = current_ping_args.count - count;
 
-	ping_print(ping_args, "Ping statistics for %s:", ping_args->target_name);
+	ping_print(&current_ping_args, "Ping statistics for %s:", current_ping_args.target_name);
 	ping_print(
-		ping_args,
+		&current_ping_args,
 		"    Packets: Sent = %d, Received = %d, Lost = %d (%d%% loss)",
-		ping_args->count,
+		current_ping_args.count,
 		count,
 		lost,
-		lost * 100 / ping_args->count);
+		lost * 100 / current_ping_args.count);
 
 	if (count > 0) {
-		ping_print(ping_args, "Approximate round trip times in milli-seconds:");
+		ping_print(&current_ping_args, "Approximate round trip times in milli-seconds:");
 		ping_print(
-			ping_args,
+			&current_ping_args,
 			"    Minimum = %dms, Maximum = %dms, Average = %dms",
 			rtt_min, rtt_max, sum / count);
 	}
-	ping_print(ping_args, "Pinging DONE");
+
+	freeaddrinfo(current_ping_args.src);
+	current_ping_args.src = NULL;
+	freeaddrinfo(current_ping_args.dest);
+	current_ping_args.dest = NULL;
+
+	ping_print(&current_ping_args, "Pinging DONE");
+
+	return ret;
 }
 
 /*****************************************************************************/
@@ -613,10 +655,18 @@ void icmp_ping_cmd_defaults_set(struct icmp_ping_shell_cmd_argv *ping_args)
 	ping_args->cid = MOSH_ARG_NOT_SET;
 	ping_args->pdn_id_for_cid = MOSH_ARG_NOT_SET;
 }
-
 /*****************************************************************************/
 
-int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
+/**
+ * @brief Read and set current connection parameters.
+ *
+ * @param ping_args In: Current ping parameters.
+ * @param ping_argv Out: Ping parameters with updated connection parameters.
+ *
+ */
+
+static bool icmp_ping_current_conn_info_set(
+	struct icmp_ping_shell_cmd_argv *ping_args, struct icmp_ping_shell_cmd_argv *ping_argv)
 {
 	int st = -1;
 	struct addrinfo *res;
@@ -626,14 +676,13 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 	bool set_flags = false;
 	int ret = 0;
 	struct pdp_context_info_array pdp_context_info_tbl;
-	struct icmp_ping_shell_cmd_argv ping_argv;
 
-	/* All good for args, get the current connection info and start the ping: */
 	ret = link_api_pdp_contexts_read(&pdp_context_info_tbl);
 	if (ret) {
 		ping_error(ping_args, "cannot read current connection info: %d", ret);
 		goto exit;
 	}
+	ping_args->pdn_ctx_info_read_uptime = k_uptime_get();
 	if (pdp_context_info_tbl.size > 0) {
 		/* Default context: */
 		if (ping_args->cid == MOSH_ARG_NOT_SET) {
@@ -678,91 +727,120 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 	}
 
 	/* Finally copy args in local storage here and start pinging */
-	memcpy(&ping_argv, ping_args, sizeof(struct icmp_ping_shell_cmd_argv));
+	memcpy(ping_argv, ping_args, sizeof(struct icmp_ping_shell_cmd_argv));
 
-	ping_print(&ping_argv, "Initiating ping to: %s", ping_argv.target_name);
+	ping_print(ping_argv, "Initiating ping to: %s", ping_argv->target_name);
 
 	/* Sets getaddrinfo hints by using current host address(es): */
 	struct addrinfo hints = {
 		.ai_family = AF_INET,
 	};
 
-	if (ping_argv.cid != MOSH_ARG_NOT_SET) {
-		if (ping_argv.pdn_id_for_cid != MOSH_ARG_NOT_SET) {
-			snprintf(portstr, 6, "%d", ping_argv.pdn_id_for_cid);
+	if (ping_argv->cid != MOSH_ARG_NOT_SET) {
+		if (ping_argv->pdn_id_for_cid != MOSH_ARG_NOT_SET) {
+			snprintf(portstr, 6, "%d", ping_argv->pdn_id_for_cid);
 			set_flags = true;
 			service = portstr;
 			hints.ai_flags = AI_PDNSERV;
 		}
 	}
 
-	inet_ntop(AF_INET, &(ping_argv.current_addr4), src_ipv_addr,
+	inet_ntop(AF_INET, &(ping_argv->current_addr4), src_ipv_addr,
 		  sizeof(src_ipv_addr));
-	if (ping_argv.current_pdp_type == PDP_TYPE_IP4V6) {
-		if (ping_argv.force_ipv6) {
+	if (ping_argv->current_pdp_type == PDP_TYPE_IP4V6) {
+		if (ping_argv->force_ipv6) {
 			hints.ai_family = AF_INET6;
-			inet_ntop(AF_INET6, &(ping_argv.current_addr6),
+			inet_ntop(AF_INET6, &(ping_argv->current_addr6),
 				  src_ipv_addr, sizeof(src_ipv_addr));
 		}
 	}
-	if (ping_argv.current_pdp_type == PDP_TYPE_IPV6) {
+	if (ping_argv->current_pdp_type == PDP_TYPE_IPV6) {
 		hints.ai_family = AF_INET6;
-		inet_ntop(AF_INET6, &(ping_argv.current_addr6), src_ipv_addr,
+		inet_ntop(AF_INET6, &(ping_argv->current_addr6), src_ipv_addr,
 			  sizeof(src_ipv_addr));
 	}
 
 	st = getaddrinfo(src_ipv_addr, service, &hints, &res);
 	if (st != 0) {
-		ping_error(&ping_argv, "getaddrinfo(src) error: %d", st);
+		ping_error(ping_argv, "getaddrinfo(src) error: %d", st);
 		goto exit;
 	}
-	ping_argv.src = res;
+	ping_argv->src = res;
 
 	/* Get destination */
 	res = NULL;
 
-	st = getaddrinfo(ping_argv.target_name, service, &hints, &res);
+	st = getaddrinfo(ping_argv->target_name, service, &hints, &res);
 
 	if (st != 0) {
-		ping_error(&ping_argv, "getaddrinfo(dest) error: %d", st);
-		ping_error(&ping_argv, "Cannot resolve remote host\r\n");
-		freeaddrinfo(ping_argv.src);
+		ping_error(ping_argv, "getaddrinfo(dest) error: %d", st);
+		ping_error(ping_argv, "Cannot resolve remote host\r\n");
+		freeaddrinfo(ping_argv->src);
+		ping_argv->src = NULL;
 		goto exit;
 	}
-	ping_argv.dest = res;
+	ping_argv->dest = res;
 
-	if (ping_argv.src->ai_family != ping_argv.dest->ai_family) {
-		ping_error(&ping_argv, "Source/Destination address family error");
-		freeaddrinfo(ping_argv.dest);
-		freeaddrinfo(ping_argv.src);
+	if (ping_argv->src->ai_family != ping_argv->dest->ai_family) {
+		ping_error(ping_argv, "Source/Destination address family error");
+		freeaddrinfo(ping_argv->dest);
+		ping_argv->dest = NULL;
+		freeaddrinfo(ping_argv->src);
+		ping_argv->src = NULL;
 		goto exit;
 	}
 
 	struct sockaddr *sa;
 
-	sa = ping_argv.src->ai_addr;
-	ping_print(&ping_argv, "Source IP addr: %s", net_utils_sckt_addr_ntop(sa));
-	sa = ping_argv.dest->ai_addr;
-	ping_print(&ping_argv, "Destination IP addr: %s", net_utils_sckt_addr_ntop(sa));
+	sa = ping_argv->src->ai_addr;
+	ping_print(ping_argv, "Source IP addr: %s", net_utils_sckt_addr_ntop(sa));
+	sa = ping_argv->dest->ai_addr;
+	ping_print(ping_argv, "Destination IP addr: %s", net_utils_sckt_addr_ntop(sa));
 
 	/* Now we can check the max payload len for IPv6: */
-	uint32_t ipv6_max_payload_len = ping_argv.mtu - ICMP_IPV6_HDR_LEN - ICMP_HDR_LEN;
+	uint32_t ipv6_max_payload_len = ping_argv->mtu - ICMP_IPV6_HDR_LEN - ICMP_HDR_LEN;
 
-	if (ping_argv.src->ai_family == AF_INET6 &&
-	    ping_argv.len > ipv6_max_payload_len) {
+	if (ping_argv->src->ai_family == AF_INET6 &&
+	    ping_argv->len > ipv6_max_payload_len) {
 		ping_warn(
-			&ping_argv,
+			ping_argv,
 			"Payload size exceeds the link limits: MTU %d - headers %d = %d ",
-			ping_argv.mtu, (ICMP_IPV4_HDR_LEN - ICMP_HDR_LEN),
+			ping_argv->mtu, (ICMP_IPV4_HDR_LEN - ICMP_HDR_LEN),
 			ipv6_max_payload_len);
 		/* Continue still: */
 	}
-
-	icmp_ping_tasks_execute(&ping_argv);
-	return 0;
+	return true;
 exit:
 	if (pdp_context_info_tbl.array != NULL) {
 		free(pdp_context_info_tbl.array);
 	}
-	return -1;
+	return false;
 }
+
+/*****************************************************************************/
+
+static void icmp_ping_lte_lc_evt_handler(const struct lte_lc_evt *const evt)
+{
+	if (evt->type != LTE_LC_EVT_NW_REG_STATUS) {
+		return;
+	}
+
+	switch (evt->nw_reg_status) {
+	case LTE_LC_NW_REG_REGISTERED_HOME:
+	case LTE_LC_NW_REG_REGISTERED_ROAMING:
+		network_reg_status_updated_uptime = k_uptime_get();
+		break;
+	default:
+		break;
+	}
+}
+
+static int icmp_ping_init(void)
+{
+	network_reg_status_updated_uptime = k_uptime_get();
+	lte_lc_register_handler(icmp_ping_lte_lc_evt_handler);
+
+	return 0;
+}
+
+SYS_INIT(icmp_ping_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
