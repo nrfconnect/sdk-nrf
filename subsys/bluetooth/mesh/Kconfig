@@ -129,9 +129,8 @@ endchoice
 
 config BT_MESH_DFU_METADATA_ON_BUILD
 	bool "Generate DFU metadata on build"
-	default y if BT_MESH_DFU_SRV || BT_MESH_DFU_CLI
+	default y if BT_MESH_DFU_SRV
 	depends on SIGN_IMAGES
-	depends on BT_MESH_DFU_METADATA
 	help
 	  Generate a JSON file containing all DFU related metadata upon
 	  application build. The JSON will be added to dfu application zip
