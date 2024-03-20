@@ -8,48 +8,6 @@ common:
       - "\\*\\*\\*\\*\\* PSA Architecture Test Suite - Version .* \\*\\*\\*\\*\\*"
       - "TOTAL FAILED *: 0"
 tests:
-  tfm.psa_test_protected_storage_lvl1:
-    tags: tfm_lvl1
-    extra_args: "CONFIG_TFM_PSA_TEST_PROTECTED_STORAGE=y CONFIG_TFM_ISOLATION_LEVEL=1"
-    timeout: 120
-    platform_allow: >
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf54l15pdk_nrf54l15_cpuapp_ns
-  tfm.psa_test_protected_storage_lvl2:
-    tags: tfm_lvl2
-    extra_args: "CONFIG_TFM_PSA_TEST_PROTECTED_STORAGE=y"
-    timeout: 120
-    platform_allow: >
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf54l15pdk_nrf54l15_cpuapp_ns
-  tfm.psa_test_internal_trusted_storage_lvl1:
-    tags: tfm_lvl1
-    extra_args: "CONFIG_TFM_PSA_TEST_INTERNAL_TRUSTED_STORAGE=y CONFIG_TFM_ISOLATION_LEVEL=1"
-    platform_allow: >
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf54l15pdk_nrf54l15_cpuapp_ns
-  tfm.psa_test_internal_trusted_storage_lvl2:
-    tags: tfm_lvl2
-    extra_args: "CONFIG_TFM_PSA_TEST_INTERNAL_TRUSTED_STORAGE=y"
-    platform_allow: >
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf54l15pdk_nrf54l15_cpuapp_ns
   tfm.psa_test_storage_lvl1:
     tags: tfm_lvl1
     extra_args: "CONFIG_TFM_PSA_TEST_STORAGE=y CONFIG_TFM_ISOLATION_LEVEL=1"
