@@ -81,7 +81,7 @@ iperf_create_streams(struct iperf_test *test, int sender)
 		    saved_errno = errno;
 		    close(s);
 		    errno = saved_errno;
-		    i_errno = IESETCONGESTION;
+		    test->i_errno = IESETCONGESTION;
 		    return -1;
 		} 
 	    }
@@ -92,7 +92,7 @@ iperf_create_streams(struct iperf_test *test, int sender)
 		    saved_errno = errno;
 		    close(s);
 		    errno = saved_errno;
-		    i_errno = IESETCONGESTION;
+		    test->i_errno = IESETCONGESTION;
 		    return -1;
 		}
 		test->congestion_used = strdup(ca);
@@ -159,7 +159,7 @@ create_client_timers(struct iperf_test * test)
     TimerClientData cd;
 
     if (iperf_time_now(&now) < 0) {
-	i_errno = IEINITTEST;
+	test->i_errno = IEINITTEST;
 	return -1;
     }
     cd.p = test;
@@ -168,21 +168,21 @@ create_client_timers(struct iperf_test * test)
 	test->done = 0;
         test->timer = tmr_create(&now, test_timer_proc, cd, ( test->duration + test->omit ) * SEC_TO_US, 0);
         if (test->timer == NULL) {
-            i_errno = IEINITTEST;
+            test->i_errno = IEINITTEST;
             return -1;
 	}
     } 
     if (test->stats_interval != 0) {
         test->stats_timer = tmr_create(&now, client_stats_timer_proc, cd, test->stats_interval * SEC_TO_US, 1);
         if (test->stats_timer == NULL) {
-            i_errno = IEINITTEST;
+            test->i_errno = IEINITTEST;
             return -1;
 	}
     }
     if (test->reporter_interval != 0) {
         test->reporter_timer = tmr_create(&now, client_reporter_timer_proc, cd, test->reporter_interval * SEC_TO_US, 1);
         if (test->reporter_timer == NULL) {
-            i_errno = IEINITTEST;
+            test->i_errno = IEINITTEST;
             return -1;
 	}
     }
@@ -218,14 +218,14 @@ create_client_omit_timer(struct iperf_test * test)
         test->omitting = 0;
     } else {
 	if (iperf_time_now(&now) < 0) {
-	    i_errno = IEINITTEST;
+	    test->i_errno = IEINITTEST;
 	    return -1;
 	}
 	test->omitting = 1;
 	cd.p = test;
 	test->omit_timer = tmr_create(&now, client_omit_timer_proc, cd, test->omit * SEC_TO_US, 0);
 	if (test->omit_timer == NULL) {
-	    i_errno = IEINITTEST;
+	    test->i_errno = IEINITTEST;
 	    return -1;
 	}
     }
@@ -244,10 +244,10 @@ iperf_handle_message_client(struct iperf_test *test)
     /*!!! Why is this read() and not Nread()? */
     if ((rval = read(test->ctrl_sck, (char*) &test->state, sizeof(signed char))) <= 0) {
         if (rval == 0) {
-            i_errno = IECTRLCLOSE;
+            test->i_errno = IECTRLCLOSE;
             return -1;
         } else {
-            i_errno = IERECVMESSAGE;
+            test->i_errno = IERECVMESSAGE;
             return -1;
         }
     }
@@ -324,7 +324,7 @@ iperf_handle_message_client(struct iperf_test *test)
         case IPERF_DONE:
             break;
         case SERVER_TERMINATE:
-            i_errno = IESERVERTERM;
+            test->i_errno = IESERVERTERM;
 
 	    /*
 	     * Temporarily be in DISPLAY_RESULTS phase so we can get
@@ -339,22 +339,22 @@ iperf_handle_message_client(struct iperf_test *test)
 	    test->state = oldstate;
             return -1;
         case ACCESS_DENIED:
-            i_errno = IEACCESSDENIED;
+            test->i_errno = IEACCESSDENIED;
             return -1;
         case SERVER_ERROR:
             if (Nread(test->ctrl_sck, (char*) &err, sizeof(err), Ptcp) < 0) {
-                i_errno = IECTRLREAD;
+                test->i_errno = IECTRLREAD;
                 return -1;
             }
-	    i_errno = ntohl(err);
+	    test->i_errno = ntohl(err);
             if (Nread(test->ctrl_sck, (char*) &err, sizeof(err), Ptcp) < 0) {
-                i_errno = IECTRLREAD;
+                test->i_errno = IECTRLREAD;
                 return -1;
             }
             errno = ntohl(err);
             return -1;
         default:
-            i_errno = IEMESSAGE;
+            test->i_errno = IEMESSAGE;
             return -1;
     }
 
@@ -377,12 +377,12 @@ iperf_connect(struct iperf_test *test)
 	// Create the control channel using an ephemeral port
 	test->ctrl_sck = netdial(test, test->settings->domain, Ptcp, test->bind_address, 0, test->server_hostname, test->server_port, test->settings->connect_timeout);
     if (test->ctrl_sck < 0) {
-        i_errno = IECONNECT;
+        test->i_errno = IECONNECT;
         return -1;
     }
 
     if (Nwrite(test->ctrl_sck, test->cookie, COOKIE_SIZE, Ptcp) < 0) {
-        i_errno = IESENDCOOKIE;
+        test->i_errno = IESENDCOOKIE;
         return -1;
     }
 
@@ -500,8 +500,9 @@ iperf_client_end(struct iperf_test *test)
     }
 
     /* Close control socket */
-    if (test->ctrl_sck)
+    if (test->ctrl_sck) {
         close(test->ctrl_sck);
+    }
 
     return retval;
 }
@@ -519,9 +520,11 @@ iperf_run_client(struct iperf_test * test)
     struct iperf_stream *sp;
 #endif
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-	struct iperf_time connected_time;
+    struct iperf_time test_end_started_time;
+    struct iperf_time connected_time;
     /* wait testing start for max xx sec */
     struct timeval test_start_tout = { .tv_sec = CONFIG_NRF_IPERF3_CLIENT_TEST_START_TIME, .tv_usec = 0 };    
+    struct timeval test_end_tout = { .tv_sec = CONFIG_NRF_IPERF3_CLIENT_TEST_ENDING_TIMEOUT, .tv_usec = 0 };
 #endif
 
     if (test->logfile)
@@ -564,46 +567,65 @@ iperf_run_client(struct iperf_test * test)
 
     startup = 1;
     while (test->state != IPERF_DONE) {
+    memcpy(&read_set, &test->read_set, sizeof(fd_set));
+    memcpy(&write_set, &test->write_set, sizeof(fd_set));
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-	    if (test->kill_signal != NULL) {
-		    int set, res;
+    if (test->state == TEST_END || test->state == EXCHANGE_RESULTS ||
+	    test->state == DISPLAY_RESULTS || test->state == IPERF_DONE) {
+	    struct iperf_time now;
+	    struct iperf_time temp_time;
 
-		    k_poll_signal_check(test->kill_signal, &set, &res);
-		    if (set) {
-			    k_poll_signal_reset(test->kill_signal);
-			    iperf_printf(test,
-					 "Kill signal received - exiting\n");
-			    i_errno = IEKILL;
-			    goto cleanup_and_fail;
-		    }
+	    /* We don't want to hang in TEST_END & later states more than a configured time. */
+	    iperf_time_now(&now);
+	    iperf_time_diff(&test_end_started_time, &now, &temp_time);
+
+	    if (iperf_time_in_secs(&temp_time) > test_end_tout.tv_sec) {
+		    test->i_errno = IETESTENDTIMEOUT;
+		    iperf_printf(test,
+				 "iperf_run_client (1): timeout to wait to test end, config "
+				 "timeout value %d secs\n",
+				 (uint32_t)test_end_tout.tv_sec);
+		    goto cleanup_and_fail;
 	    }
-#endif
-
-	memcpy(&read_set, &test->read_set, sizeof(fd_set));
-	memcpy(&write_set, &test->write_set, sizeof(fd_set));
-	iperf_time_now(&now);
-	timeout = tmr_timeout(&now);
-	result = select(test->max_fd + 1, &read_set, &write_set, NULL, timeout);
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-    if (!test->state) {
-        /* ctrl socket connected but test not yet started: */
-        struct iperf_time now;
-    	struct iperf_time temp_time;
-
-		iperf_time_now(&now);
-		iperf_time_diff(&connected_time, &now, &temp_time);
-		if (iperf_time_in_secs(&temp_time) > test_start_tout.tv_sec) {
-			i_errno = IETESTSTARTTIMEOUT;
-			if (test->debug)
-				iperf_printf(test, "iperf_run_client: timeout to wait to actual test start, config timeout value %d\n", (uint32_t)test_start_tout.tv_sec);
-
-			goto cleanup_and_fail;
-		}
     }
 
+    if (test->kill_signal != NULL) {
+	    int set, res;
+	    k_poll_signal_check(test->kill_signal, &set, &res);
+	    if (set) {
+		    k_poll_signal_reset(test->kill_signal);
+		    iperf_printf(test, "Kill signal received (state %d) - exiting\n", test->state);
+		    test->i_errno = IEKILL;
+		    goto cleanup_and_fail;
+	    }
+    }
+#endif
+
+    iperf_time_now(&now);
+    timeout = tmr_timeout(&now);
+    result = select(test->max_fd + 1, &read_set, &write_set, NULL, timeout);
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+    if (!test->state) {
+	    /* ctrl socket connected but test not yet started: */
+	    struct iperf_time now;
+	    struct iperf_time temp_time;
+
+	    iperf_time_now(&now);
+	    iperf_time_diff(&connected_time, &now, &temp_time);
+	    if (iperf_time_in_secs(&temp_time) > test_start_tout.tv_sec) {
+		    test->i_errno = IETESTSTARTTIMEOUT;
+		    if (test->debug) {
+			    iperf_printf(test,
+					 "iperf_run_client: timeout to wait to actual test start, "
+					 "config timeout value %d secs\n",
+					 (uint32_t)test_start_tout.tv_sec);
+		    }
+		    goto cleanup_and_fail;
+	    }
+    }
 #endif
 	if (result < 0 && errno != EINTR) {
-  	    i_errno = IESELECT;
+        test->i_errno = IESELECT;
         if (test->debug) {
             iperf_printf(test, "iperf_run_client: select failed: %d\n", result);
         }
@@ -623,23 +645,29 @@ iperf_run_client(struct iperf_test * test)
 	}    
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)//added due to early test jamn where rx buffer was full between modem and app
-        if (test->state == TEST_START ||
-            test->state == PARAM_EXCHANGE ||
-            test->state == CREATE_STREAMS /* ||
-          test->state == SERVER_TERMINATE ||
-            test->state == CLIENT_TERMINATE || */) {
-            if (iperf_recv(test, &read_set) < 0)
-                goto cleanup_and_fail;
-        } else if (test->state == EXCHANGE_RESULTS) {
-            int retval = iperf_recv(test, &read_set);
-            if (retval < 0) {
-                /* let's ignore errors from stream/testing sockets */
-                if (test->debug)
-                	iperf_printf(test, "iperf_recv for stream socket in EXCHANGE_RESULTS failed %d but ignored\n", retval);
-            }
-        } else
+	if (test->state == TEST_START ||
+        test->state == PARAM_EXCHANGE ||
+        test->state == CREATE_STREAMS /* ||
+      test->state == SERVER_TERMINATE ||
+        test->state == CLIENT_TERMINATE || */) {
+		if (iperf_recv(test, &read_set) < 0) {
+			goto cleanup_and_fail;
+		}
+	} else if (test->state == EXCHANGE_RESULTS || test->state == DISPLAY_RESULTS ||
+		   test->state == IPERF_DONE) {
+		int retval = iperf_recv(test, &read_set);
+		if (retval < 0) {
+			/* let's ignore errors from stream/testing sockets */
+			if (test->debug) {
+				iperf_printf(test,
+					     "iperf_recv for stream socket in EXCHANGE_RESULTS "
+					     "failed %d but ignored\n",
+					     retval);
+			}
+		}
+	} else
 #endif
-	if (test->state == TEST_RUNNING) {
+		if (test->state == TEST_RUNNING) {
 
 	    /* Is this our first time really running? */
 	    if (startup) {
@@ -720,7 +748,10 @@ iperf_run_client(struct iperf_test * test)
                 iperf_printf(test, "iperf_run_client: TEST_END SENDING FAILED\n");
             }               
             goto cleanup_and_fail;
-        }                    
+        }
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+		iperf_time_now(&test_end_started_time);
+#endif
 	}
 	} /* test->state == TEST_RUNNING */
 	// If we're in reverse or bidirectional mode, continue draining the data
@@ -729,15 +760,32 @@ iperf_run_client(struct iperf_test * test)
 	// and gets blocked, so it can't receive state changes
 	// from the client side.
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-	else if (test->state == TEST_END &&
-             (test->mode == BIDIRECTIONAL || test->mode == RECEIVER)) {
-	    if (iperf_recv(test, &read_set) < 0) {
-            if (test->debug) {
-                iperf_printf(test,
-                    "iperf_run_client: RECEIVER/BIDIRECTIONAL TEST_END iperf_recv failed\n");
-            }
-    		goto cleanup_and_fail;
-        }
+	else if (test->state == TEST_END) {
+		struct iperf_time now;
+		struct iperf_time temp_time;
+
+		if (test->mode == BIDIRECTIONAL || test->mode == RECEIVER) {
+			if (iperf_recv(test, &read_set) < 0) {
+				if (test->debug) {
+					iperf_printf(test,
+						     "iperf_run_client: RECEIVER/BIDIRECTIONAL "
+						     "TEST_END iperf_recv failed\n");
+				}
+				goto cleanup_and_fail;
+			}
+		}
+
+		/* We don't want to hang in TEST_END more than a configured time*/
+		iperf_time_now(&now);
+		iperf_time_diff(&test_end_started_time, &now, &temp_time);
+		if (iperf_time_in_secs(&temp_time) > test_end_tout.tv_sec) {
+			test->i_errno = IETESTENDTIMEOUT;
+			iperf_printf(test,
+				     "iperf_run_client (2): timeout to wait to test end, config "
+				     "timeout value %d secs\n",
+				     (uint32_t)test_end_tout.tv_sec);
+			goto cleanup_and_fail;
+		}
 	}
 #else
     else if (test->mode == RECEIVER && test->state == TEST_END) {
@@ -749,7 +797,7 @@ iperf_run_client(struct iperf_test * test)
             }
         }
 #endif
-    }
+        }
 
     if (test->json_output) {
 	if (iperf_json_finish(test) < 0)

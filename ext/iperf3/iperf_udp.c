@@ -232,9 +232,9 @@ iperf_udp_recv(struct iperf_stream *sp)
     } while (q > 0 && count < MAX_READ_COUNT);
 
     if (q < 0) {
-	r = q;
+        r = q;
     } else {
-	r = total_received;
+        r = total_received;
     }
 #else
     r = Nread(sp->socket, sp->buffer, size, Pudp);
@@ -462,25 +462,25 @@ iperf_udp_buffercheck(struct iperf_test *test, int s)
 
     if ((opt = test->settings->socket_bufsize)) {
         if (setsockopt(s, SOL_SOCKET, SO_RCVBUF, &opt, sizeof(opt)) < 0) {
-            i_errno = IESETBUF;
+            test->i_errno = IESETBUF;
             return -1;
         }
         if (setsockopt(s, SOL_SOCKET, SO_SNDBUF, &opt, sizeof(opt)) < 0) {
-            i_errno = IESETBUF;
+            test->i_errno = IESETBUF;
             return -1;
         }
     }
     /* Read back and verify the sender socket buffer size */
     optlen = sizeof(sndbuf_actual);
     if (getsockopt(s, SOL_SOCKET, SO_SNDBUF, &sndbuf_actual, &optlen) < 0) {
-	i_errno = IESETBUF;
+	test->i_errno = IESETBUF;
 	return -1;
     }
     if (test->debug) {
 	iperf_printf(test, "SNDBUF is %u, expecting %u\n", sndbuf_actual, test->settings->socket_bufsize);
     }
     if (test->settings->socket_bufsize && test->settings->socket_bufsize > sndbuf_actual) {
-	i_errno = IESETBUF2;
+	test->i_errno = IESETBUF2;
 	return -1;
     }
     if (test->settings->blksize > sndbuf_actual) {
@@ -497,14 +497,14 @@ iperf_udp_buffercheck(struct iperf_test *test, int s)
     /* Read back and verify the receiver socket buffer size */
     optlen = sizeof(rcvbuf_actual);
     if (getsockopt(s, SOL_SOCKET, SO_RCVBUF, &rcvbuf_actual, &optlen) < 0) {
-	i_errno = IESETBUF;
+	test->i_errno = IESETBUF;
 	return -1;
     }
     if (test->debug) {
 	iperf_printf(test, "RCVBUF is %u, expecting %u\n", rcvbuf_actual, test->settings->socket_bufsize);
     }
     if (test->settings->socket_bufsize && test->settings->socket_bufsize > rcvbuf_actual) {
-	i_errno = IESETBUF2;
+	test->i_errno = IESETBUF2;
 	return -1;
     }
     if (test->settings->blksize > rcvbuf_actual) {
@@ -555,12 +555,12 @@ iperf_udp_accept(struct iperf_test *test)
      */
     len = sizeof(sa_peer);
     if ((sz = recvfrom(test->prot_listener, &buf, sizeof(buf), 0, (struct sockaddr *) &sa_peer, &len)) < 0) {
-        i_errno = IESTREAMACCEPT;
+        test->i_errno = IESTREAMACCEPT;
         return -1;
     }
 
     if (connect(s, (struct sockaddr *) &sa_peer, len) < 0) {
-        i_errno = IESTREAMACCEPT;
+        test->i_errno = IESTREAMACCEPT;
         return -1;
     }
 
@@ -616,7 +616,7 @@ iperf_udp_accept(struct iperf_test *test)
      */
     test->prot_listener = netannounce(test, test->settings->domain, Pudp, test->bind_address, test->server_port);
     if (test->prot_listener < 0) {
-        i_errno = IESTREAMLISTEN;
+        test->i_errno = IESTREAMLISTEN;
         return -1;
     }
 
@@ -630,7 +630,7 @@ iperf_udp_accept(struct iperf_test *test)
 #else
     if (send(s, &buf, sizeof(buf), 0) < 0) {
 #endif
-        i_errno = IESTREAMWRITE;
+        test->i_errno = IESTREAMWRITE;
         return -1;
     }
 
@@ -651,7 +651,7 @@ iperf_udp_listen(struct iperf_test *test)
     int s;
 
     if ((s = netannounce(test, test->settings->domain, Pudp, test->bind_address, test->server_port)) < 0) {
-        i_errno = IESTREAMLISTEN;
+        test->i_errno = IESTREAMLISTEN;
         return -1;
     }
 
@@ -671,14 +671,11 @@ int
 iperf_udp_connect(struct iperf_test *test)
 {
     int s, buf, sz;
-#ifdef SO_RCVTIMEO
-    struct timeval tv;
-#endif
     int rc;
 
     /* Create and bind our local socket. */
     if ((s = netdial(test, test->settings->domain, Pudp, test->bind_address, test->bind_port, test->server_hostname, test->server_port, -1)) < 0) {
-        i_errno = IESTREAMCONNECT;
+        test->i_errno = IESTREAMCONNECT;
         return -1;
     }
 
@@ -730,13 +727,21 @@ iperf_udp_connect(struct iperf_test *test)
     }
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-#ifdef SO_RCVTIMEO
+    struct timeval tv;
+
     /* 30 sec timeout for a case when there is a network problem. */
     tv.tv_sec = 30;
     tv.tv_usec = 0;
+#ifdef SO_RCVTIMEO
     if (setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv, sizeof(struct timeval)) < 0) {
-		warning(test, "Unable to set socket SO_RCVTIMEO");
+	warning(test, "Unable to set socket SO_RCVTIMEO");
 	}
+#endif
+#ifdef SO_SNDTIMEO
+    if (setsockopt(s, SOL_SOCKET, SO_SNDTIMEO,
+	(struct timeval *)&tv, sizeof(struct timeval)) < 0) {
+        warning(test, "Unable to set socket SO_SNDTIMEO");
+    }
 #endif
 #endif
 
@@ -747,7 +752,7 @@ iperf_udp_connect(struct iperf_test *test)
     buf = 123456789;		/* this can be pretty much anything */
     if (write(s, &buf, sizeof(buf)) < 0) {
         // XXX: Should this be changed to IESTREAMCONNECT?
-        i_errno = IESTREAMWRITE;
+        test->i_errno = IESTREAMWRITE;
         return -1;
     }
 
@@ -755,7 +760,7 @@ iperf_udp_connect(struct iperf_test *test)
      * Wait until the server replies back to us.
      */
     if ((sz = recv(s, &buf, sizeof(buf), 0)) < 0) {
-        i_errno = IESTREAMREAD;
+        test->i_errno = IESTREAMREAD;
         return -1;
     }
 

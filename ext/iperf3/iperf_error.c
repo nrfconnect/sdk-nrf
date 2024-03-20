@@ -161,8 +161,7 @@ iperf_errexit(struct iperf_test *test, const char *format, ...)
 
 int i_errno;
 
-char *
-iperf_strerror(int int_errno)
+char *iperf_strerror(int int_errno)
 {
     static char errstr[256];
     int len, perr, herr;
@@ -262,6 +261,9 @@ iperf_strerror(int int_errno)
             break;
         case IETESTSTARTTIMEOUT:
             snprintf(errstr, len, "timeout for waiting actual test to be started");
+            break;
+        case IETESTENDTIMEOUT:
+            snprintf(errstr, len, "timeout for waiting actual test to be ended");
             break;
         case IEKILL:
             snprintf(errstr, len, "kill signal received - aborting");

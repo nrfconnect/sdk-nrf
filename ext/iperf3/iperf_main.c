@@ -130,7 +130,7 @@ iperf_main(int argc, char **argv)
         }
         else
         {
-            iperf_err(test, "parameter error - %s", iperf_strerror(i_errno));
+            iperf_err(test, "parameter error - %s", iperf_strerror(test->i_errno));
             fprintf(stderr, "\n");
             nrf_iperf3_usage();
             retval = -1;
@@ -139,7 +139,7 @@ iperf_main(int argc, char **argv)
     }
 
     if (retval == 0 && run(test) < 0) {
-        iperf_errexit(test, "error - %s", iperf_strerror(i_errno));
+        iperf_errexit(test, "error - %s", iperf_strerror(test->i_errno));
         retval = -1;
     }
 
@@ -163,14 +163,14 @@ exit:
     iperf_defaults(test);	/* sets defaults */
 
     if (iperf_parse_arguments(test, argc, argv) < 0) {
-        iperf_err(test, "parameter error - %s", iperf_strerror(i_errno));
+        iperf_err(test, "parameter error - %s", iperf_strerror(test->i_errno));
         fprintf(stderr, "\n");
         usage_long(stdout);
         exit(1);
     }
 
     if (run(test) < 0)
-        iperf_errexit(test, "error - %s", iperf_strerror(i_errno));
+        iperf_errexit(test, "error - %s", iperf_strerror(test->i_errno));
 
     iperf_free_test(test);
 
@@ -223,14 +223,14 @@ run(struct iperf_test *test)
 		int rc;
 		rc = daemon(0, 0);
 		if (rc < 0) {
-		    i_errno = IEDAEMON;
-		    iperf_errexit(test, "error - %s", iperf_strerror(i_errno));
+		    test->i_errno = IEDAEMON;
+		    iperf_errexit(test, "error - %s", iperf_strerror(test->i_errno));
             return -1;
 		}
 	    }
 	    if (iperf_create_pidfile(test) < 0) {
-		    i_errno = IEPIDFILE;
-		    iperf_errexit(test, "error - %s", iperf_strerror(i_errno));
+		    test->i_errno = IEPIDFILE;
+		    iperf_errexit(test, "error - %s", iperf_strerror(test->i_errno));
             return -1;
 	    }
 #endif
@@ -238,7 +238,7 @@ run(struct iperf_test *test)
 		int rc;
 		rc = iperf_run_server(test);
 		if (rc < 0) {
-		    iperf_err(test, "error - %s", iperf_strerror(i_errno));
+		    iperf_err(test, "error - %s", iperf_strerror(test->i_errno));
 		    if (rc < -1) {
 		        iperf_errexit(test, "exiting");
                 return -1;
@@ -247,7 +247,7 @@ run(struct iperf_test *test)
                 iperf_reset_test(test);
                 if (iperf_get_test_one_off(test)) {
 		    /* Authentication failure doesn't count for 1-off test */
-		    if (rc < 0 && i_errno == IEAUTHTEST) {
+		    if (rc < 0 && test->i_errno == IEAUTHTEST) {
 			continue;
 		    }
 		    break;
@@ -259,7 +259,7 @@ run(struct iperf_test *test)
             break;
 	case 'c':
 	    if (iperf_run_client(test) < 0) {
-		    iperf_errexit(test, "error - %s", iperf_strerror(i_errno));
+		    iperf_errexit(test, "error - %s", iperf_strerror(test->i_errno));
             return -1;
         }
             break;

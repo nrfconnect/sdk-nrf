@@ -467,6 +467,7 @@ enum {
     IENOMEMORY = 302,         // no dynamic memory from heap
     IETESTSTARTTIMEOUT = 303, // testing start timeout
     IEKILL = 304,             // not an error but testing was killed
+    IETESTENDTIMEOUT = 305,   // testing end timeout
 #endif
 };
 
