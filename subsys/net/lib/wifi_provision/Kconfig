@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig WIFI_PROVISION
+	bool "Wifi provision"
+	select NANOPB
+	select NRF700X_AP_MODE
+	select WPA_SUPP_AP
+	select SMF
+	select NET_DHCPV4_SERVER
+	select NET_CONFIG_SETTINGS
+	select TLS_CREDENTIALS
+	select WIFI_CREDENTIALS
+	select HTTP_PARSER
+	select HTTP_PARSER_URL
+	select NET_SOCKETS_SOCKOPT_TLS
+
+if WIFI_PROVISION
+
+config WIFI_PROVISION_SSID
+	string "SSID"
+	default "mobileappsrules"
+
+config WIFI_PROVISION_CERTIFICATE_SEC_TAG
+	int "TLS credentials storage security tag"
+	default 88
+
+config WIFI_PROVISION_TCP_PORT
+	int "TCP port number"
+	default 443
+
+module = WIFI_PROVISION
+module-str = Wi-Fi provision
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # WIFI_PROVISION
