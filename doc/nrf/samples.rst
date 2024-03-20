@@ -43,6 +43,7 @@ If you want to list samples available for one or more specific boards, `use the 
    samples/nrf5340
    samples/peripheral
    samples/pmic
+   samples/sdfw
    samples/sensor
    samples/tfm
    samples/thread
