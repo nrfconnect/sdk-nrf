@@ -60,7 +60,8 @@ config TFM_PARTITION_INITIAL_ATTESTATION
 	# The identity key is a secp256r1 key pair.
 	# The ECDSA algorithm and the cc3xx boot seed requires RNG.
 	select PSA_WANT_ALG_SHA_256
-	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
 	select PSA_WANT_ALG_ECDSA
 	select PSA_WANT_ECC_SECP_R1_256
 	select PSA_WANT_GENERATE_RANDOM
