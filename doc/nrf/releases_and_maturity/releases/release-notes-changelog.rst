@@ -135,7 +135,10 @@ Asset Tracker v2
 Serial LTE modem
 ----------------
 
-|no_changes_yet_note|
+* Added:
+
+  * New behavior for when a connection with data mode is closed unexpectedly.
+    SLM now sends the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` string when this happens.
 
 nRF5340 Audio
 -------------
