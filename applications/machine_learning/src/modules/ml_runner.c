@@ -67,8 +67,10 @@ static void submit_result(void)
 
 	int err = ei_wrapper_get_next_classification_result(&evt->label, &evt->value, NULL);
 
-	if (!err) {
+	if (!err && ei_wrapper_classifier_has_anomaly()) {
 		err = ei_wrapper_get_anomaly(&evt->anomaly);
+	} else {
+		evt->anomaly = 0.0;
 	}
 
 	__ASSERT_NO_MSG(!err);
