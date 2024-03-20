@@ -83,7 +83,7 @@ iperf_server_listen(struct iperf_test *test)
 	    test->settings->domain = AF_INET;
 	    goto retry;
 	} else {
-	    i_errno = IELISTEN;
+	    test->i_errno = IELISTEN;
 	    return -1;
 	}
     }
@@ -135,7 +135,7 @@ iperf_accept(struct iperf_test *test)
     }
 
     if ((s = accept(test->listener, (struct sockaddr *)&addr, &len)) < 0) {
-        i_errno = IEACCEPT;
+        test->i_errno = IEACCEPT;
         return -1;
     }
 #ifdef SO_RCVTIMEO
@@ -154,7 +154,7 @@ iperf_accept(struct iperf_test *test)
 
     len = sizeof(addr);
     if ((s = accept(test->listener, (struct sockaddr *) &addr, &len)) < 0) {
-        i_errno = IEACCEPT;
+        test->i_errno = IEACCEPT;
         return -1;
     }
 #endif
@@ -162,7 +162,7 @@ iperf_accept(struct iperf_test *test)
         /* Server free, accept new client */
         test->ctrl_sck = s;
         if (Nread(test->ctrl_sck, test->cookie, COOKIE_SIZE, Ptcp) < 0) {
-            i_errno = IERECVCOOKIE;
+            test->i_errno = IERECVCOOKIE;
             return -1;
         }
 	FD_SET(test->ctrl_sck, &test->read_set);
@@ -183,7 +183,7 @@ iperf_accept(struct iperf_test *test)
 	 * Just send ACCESS_DENIED.
 	 */
         if (Nwrite(s, (char*) &rbuf, sizeof(rbuf), Ptcp) < 0) {
-            i_errno = IESENDMESSAGE;
+            test->i_errno = IESENDMESSAGE;
             return -1;
         }
         close(s);
@@ -211,11 +211,11 @@ iperf_handle_message_server(struct iperf_test *test)
     if ((rval = Nread(test->ctrl_sck, (char*) &test->state, sizeof(signed char), Ptcp)) <= 0) {
         if (rval == 0) {
 	    iperf_err(test, "the client has unexpectedly closed the connection");
-            i_errno = IECTRLCLOSE;
+            test->i_errno = IECTRLCLOSE;
             test->state = IPERF_DONE;
             return 0;
         } else {
-            i_errno = IERECVMESSAGE;
+            test->i_errno = IERECVMESSAGE;
             return -1;
         }
     }
@@ -247,7 +247,7 @@ iperf_handle_message_server(struct iperf_test *test)
         case IPERF_DONE:
             break;
         case CLIENT_TERMINATE:
-            i_errno = IECLIENTTERM;
+            test->i_errno = IECLIENTTERM;
 
 	    // Temporarily be in DISPLAY_RESULTS phase so we can get
 	    // ending summary statistics.
@@ -269,7 +269,7 @@ iperf_handle_message_server(struct iperf_test *test)
             test->state = IPERF_DONE;
             break;
         default:
-            i_errno = IEMESSAGE;
+            test->i_errno = IEMESSAGE;
             return -1;
     }
 
@@ -328,7 +328,7 @@ create_server_timers(struct iperf_test * test)
     int grace_period = max_rtt * state_transitions;
 
     if (iperf_time_now(&now) < 0) {
-	i_errno = IEINITTEST;
+	test->i_errno = IEINITTEST;
 	return -1;
     }
     cd.p = test;
@@ -337,7 +337,7 @@ create_server_timers(struct iperf_test * test)
         test->done = 0;
         test->timer = tmr_create(&now, server_timer_proc, cd, (test->duration + test->omit + grace_period) * SEC_TO_US, 0);
         if (test->timer == NULL) {
-            i_errno = IEINITTEST;
+            test->i_errno = IEINITTEST;
             return -1;
         }
     }
@@ -346,14 +346,14 @@ create_server_timers(struct iperf_test * test)
     if (test->stats_interval != 0) {
         test->stats_timer = tmr_create(&now, server_stats_timer_proc, cd, test->stats_interval * SEC_TO_US, 1);
         if (test->stats_timer == NULL) {
-            i_errno = IEINITTEST;
+            test->i_errno = IEINITTEST;
             return -1;
 	}
     }
     if (test->reporter_interval != 0) {
         test->reporter_timer = tmr_create(&now, server_reporter_timer_proc, cd, test->reporter_interval * SEC_TO_US, 1);
         if (test->reporter_timer == NULL) {
-            i_errno = IEINITTEST;
+            test->i_errno = IEINITTEST;
             return -1;
 	}
     }
@@ -389,14 +389,14 @@ create_server_omit_timer(struct iperf_test * test)
 	test->omitting = 0;
     } else {
 	if (iperf_time_now(&now) < 0) {
-	    i_errno = IEINITTEST;
+	    test->i_errno = IEINITTEST;
 	    return -1; 
 	}
 	test->omitting = 1;
 	cd.p = test;
 	test->omit_timer = tmr_create(&now, server_omit_timer_proc, cd, test->omit * SEC_TO_US, 0); 
 	if (test->omit_timer == NULL) {
-	    i_errno = IEINITTEST;
+	    test->i_errno = IEINITTEST;
 	    return -1;
 	}
     }
@@ -513,7 +513,7 @@ iperf_run_server(struct iperf_test *test)
                 k_poll_signal_reset(test->kill_signal);
                 iperf_printf(test, "Kill signal received - exiting\n");
                 cleanup_server(test);
-                i_errno = IEKILL;
+                test->i_errno = IEKILL;
                 return -2;
             }
         }
@@ -522,7 +522,7 @@ iperf_run_server(struct iperf_test *test)
         // Check if average transfer rate was exceeded (condition set in the callback routines)
 	if (test->bitrate_limit_exceeded) {
 	    cleanup_server(test);
-            i_errno = IETOTALRATE;
+            test->i_errno = IETOTALRATE;
             return -1;	
 	}
 
@@ -535,7 +535,7 @@ iperf_run_server(struct iperf_test *test)
 
         if (result < 0 && errno != EINTR) {
 	    cleanup_server(test);
-            i_errno = IESELECT;
+            test->i_errno = IESELECT;
             return -1;
         }
 	if (result > 0) {
@@ -599,7 +599,7 @@ iperf_run_server(struct iperf_test *test)
 				    close(s);
 				    cleanup_server(test);
 				    errno = saved_errno;
-				    i_errno = IESETCONGESTION;
+				    test->i_errno = IESETCONGESTION;
 				    return -1;
 				}
 			    } 
@@ -612,7 +612,7 @@ iperf_run_server(struct iperf_test *test)
 				close(s);
 				cleanup_server(test);
 				errno = saved_errno;
-				i_errno = IESETCONGESTION;
+				test->i_errno = IESETCONGESTION;
 				return -1;
 			    }
 			    test->congestion_used = strdup(ca);
@@ -679,7 +679,7 @@ iperf_run_server(struct iperf_test *test)
 			    test->listener = 0;
                             if ((s = netannounce(test, test->settings->domain, Ptcp, test->bind_address, test->server_port)) < 0) {
 				cleanup_server(test);
-                                i_errno = IELISTEN;
+                                test->i_errno = IELISTEN;
                                 return -1;
                             }
                             test->listener = s;
@@ -695,7 +695,7 @@ iperf_run_server(struct iperf_test *test)
 			iperf_err(test, "Client total requested throughput rate of %" PRIu64 " bps exceeded %" PRIu64 " bps limit",
 				total_requested_rate, test->settings->bitrate_limit);
 			cleanup_server(test);
-			i_errno = IETOTALRATE;
+			test->i_errno = IETOTALRATE;
 			return -1;
 		    }
 

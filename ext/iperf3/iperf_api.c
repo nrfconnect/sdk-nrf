@@ -711,7 +711,7 @@ struct protocol *get_protocol(struct iperf_test *test, int prot_id)
 	}
 
 	if (prot == NULL)
-		i_errno = IEPROTOCOL;
+		test->i_errno = IEPROTOCOL;
 
 	return prot;
 }
@@ -729,7 +729,7 @@ int set_protocol(struct iperf_test *test, int prot_id)
 		}
 	}
 
-	i_errno = IEPROTOCOL;
+	test->i_errno = IEPROTOCOL;
 	return -1;
 }
 
@@ -1042,14 +1042,14 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		case 'p':
 			portno = atoi(optarg);
 			if (portno < 1 || portno > 65535) {
-				i_errno = IEBADPORT;
+				test->i_errno = IEBADPORT;
 				return -1;
 			}
 			test->server_port = portno;
 			break;
 		case 'f':
 			if (!optarg) {
-				i_errno = IEBADFORMAT;
+				test->i_errno = IEBADFORMAT;
 				return -1;
 			}
 			test->settings->unit_format = *optarg;
@@ -1063,7 +1063,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			    test->settings->unit_format == 'T') {
 				break;
 			} else {
-				i_errno = IEBADFORMAT;
+				test->i_errno = IEBADFORMAT;
 				return -1;
 			}
 			break;
@@ -1075,7 +1075,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			if ((test->stats_interval < MIN_INTERVAL ||
 			     test->stats_interval > MAX_INTERVAL) &&
 			    test->stats_interval != 0) {
-				i_errno = IEINTERVAL;
+				test->i_errno = IEINTERVAL;
 				return -1;
 			}
 			break;
@@ -1105,14 +1105,14 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 #endif
 		case 's':
 			if (test->role == 'c') {
-				i_errno = IESERVCLIENT;
+				test->i_errno = IESERVCLIENT;
 				return -1;
 			}
 			iperf_set_test_role(test, 's');
 			break;
 		case 'c':
 			if (test->role == 's') {
-				i_errno = IESERVCLIENT;
+				test->i_errno = IESERVCLIENT;
 				return -1;
 			}
 			iperf_set_test_role(test, 'c');
@@ -1128,7 +1128,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			client_flag = 1;
 			break;
 #else /* HAVE_SCTP_H */
-			i_errno = IEUNIMP;
+			test->i_errno = IEUNIMP;
 			return -1;
 #endif /* HAVE_SCTP_H */
 
@@ -1137,7 +1137,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->settings->num_ostreams = unit_atoi(optarg);
 			client_flag = 1;
 #else /* linux */
-			i_errno = IEUNIMP;
+			test->i_errno = IEUNIMP;
 			return -1;
 #endif /* linux */
 		case 'b':
@@ -1148,7 +1148,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 				test->settings->burst = atoi(slash);
 				if (test->settings->burst <= 0 ||
 				    test->settings->burst > MAX_BURST) {
-					i_errno = IEBURST;
+					test->i_errno = IEBURST;
 					return -1;
 				}
 			}
@@ -1169,7 +1169,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 					     MIN_INTERVAL ||
 				     test->settings->bitrate_limit_interval >
 					     MAX_INTERVAL)) {
-					i_errno = IETOTALINTERVAL;
+					test->i_errno = IETOTALINTERVAL;
 					return -1;
 				}
 			}
@@ -1179,7 +1179,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		case 't':
 			test->duration = atoi(optarg);
 			if (test->duration > MAX_TIME) {
-				i_errno = IEDURATION;
+				test->i_errno = IEDURATION;
 				return -1;
 			}
 			duration_flag = 1;
@@ -1200,14 +1200,14 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		case 'P':
 			test->num_streams = atoi(optarg);
 			if (test->num_streams > MAX_STREAMS) {
-				i_errno = IENUMSTREAMS;
+				test->i_errno = IENUMSTREAMS;
 				return -1;
 			}
 			client_flag = 1;
 			break;
 		case 'R':
 			if (test->bidirectional) {
-				i_errno = IEREVERSEBIDIR;
+				test->i_errno = IEREVERSEBIDIR;
 				return -1;
 			}
 			iperf_set_test_reverse(test, 1);
@@ -1219,7 +1219,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		case OPT_BIDIRECTIONAL:
 #endif
 			if (test->reverse) {
-				i_errno = IEREVERSEBIDIR;
+				test->i_errno = IEREVERSEBIDIR;
 				return -1;
 			}
 			iperf_set_test_bidirectional(test, 1);
@@ -1231,7 +1231,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			// to avoid possible integer overflows.
 			farg = unit_atof(optarg);
 			if (farg > (double)MAX_TCP_BUFFER) {
-				i_errno = IEBUFSIZE;
+				test->i_errno = IEBUFSIZE;
 				return -1;
 			}
 			test->settings->socket_bufsize = (int)farg;
@@ -1243,7 +1243,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		case OPT_CLIENT_PORT:
 			portno = atoi(optarg);
 			if (portno < 1 || portno > 65535) {
-				i_errno = IEBADPORT;
+				test->i_errno = IEBADPORT;
 				return -1;
 			}
 			test->bind_port = portno;
@@ -1251,7 +1251,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		case 'M':
 			test->settings->mss = atoi(optarg);
 			if (test->settings->mss > MAX_MSS) {
-				i_errno = IEMSS;
+				test->i_errno = IEMSS;
 				return -1;
 			}
 			client_flag = 1;
@@ -1270,7 +1270,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->settings->tos = strtol(optarg, &endptr, 0);
 			if (endptr == optarg || test->settings->tos < 0 ||
 			    test->settings->tos > 255) {
-				i_errno = IEBADTOS;
+				test->i_errno = IEBADTOS;
 				return -1;
 			}
 			client_flag = 1;
@@ -1278,7 +1278,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		case OPT_DSCP:
 			test->settings->tos = parse_qos(optarg);
 			if (test->settings->tos < 0) {
-				i_errno = IEBADTOS;
+				test->i_errno = IEBADTOS;
 				return -1;
 			}
 			client_flag = 1;
@@ -1292,12 +1292,12 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->settings->flowlabel = strtol(optarg, &endptr, 0);
 			if (endptr == optarg || test->settings->flowlabel < 1 ||
 			    test->settings->flowlabel > 0xfffff) {
-				i_errno = IESETFLOW;
+				test->i_errno = IESETFLOW;
 				return -1;
 			}
 			client_flag = 1;
 #else /* HAVE_FLOWLABEL */
-			i_errno = IEUNIMP;
+			test->i_errno = IEUNIMP;
 			return -1;
 #endif /* HAVE_FLOWLABEL */
 			break;
@@ -1305,20 +1305,20 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			xbe = (struct xbind_entry *)malloc(
 				sizeof(struct xbind_entry));
 			if (!xbe) {
-				i_errno = IESETSCTPBINDX;
+				test->i_errno = IESETSCTPBINDX;
 				return -1;
 			}
 			memset(xbe, 0, sizeof(*xbe));
 			xbe->name = strdup(optarg);
 			if (!xbe->name) {
-				i_errno = IESETSCTPBINDX;
+				test->i_errno = IESETSCTPBINDX;
 				return -1;
 			}
 			TAILQ_INSERT_TAIL(&test->xbind_addrs, xbe, link);
 			break;
 		case 'Z':
 			if (!has_sendfile()) {
-				i_errno = IENOSENDFILE;
+				test->i_errno = IENOSENDFILE;
 				return -1;
 			}
 			test->zerocopy = 1;
@@ -1340,7 +1340,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		case 'O':
 			test->omit = atoi(optarg);
 			if (test->omit < 0 || test->omit > 60) {
-				i_errno = IEOMIT;
+				test->i_errno = IEOMIT;
 				return -1;
 			}
 			client_flag = 1;
@@ -1353,7 +1353,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->affinity = strtol(optarg, &endptr, 0);
 			if (endptr == optarg || test->affinity < 0 ||
 			    test->affinity > 1024) {
-				i_errno = IEAFFINITY;
+				test->i_errno = IEAFFINITY;
 				return -1;
 			}
 			comma = strchr(optarg, ',');
@@ -1361,13 +1361,13 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 				test->server_affinity = atoi(comma + 1);
 				if (test->server_affinity < 0 ||
 				    test->server_affinity > 1024) {
-					i_errno = IEAFFINITY;
+					test->i_errno = IEAFFINITY;
 					return -1;
 				}
 				client_flag = 1;
 			}
 #else /* HAVE_CPU_AFFINITY */
-			i_errno = IEUNIMP;
+			test->i_errno = IEUNIMP;
 			return -1;
 #endif /* HAVE_CPU_AFFINITY */
 			break;
@@ -1380,7 +1380,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->congestion = strdup(optarg);
 			client_flag = 1;
 #else /* HAVE_TCP_CONGESTION */
-			i_errno = IEUNIMP;
+			test->i_errno = IEUNIMP;
 			return -1;
 #endif /* HAVE_TCP_CONGESTION */
 			break;
@@ -1398,7 +1398,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 				test->pdn_id_str = strdup(optarg);
 				if (test->pdn_id_str == NULL) {
 					printk("strdup failed for setting the PDN ID %s\n", optarg);
-					i_errno = IENOMEMORY;
+					test->i_errno = IENOMEMORY;
 					return -1;
 				}
 			}
@@ -1428,7 +1428,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->settings->fqrate = 0;
 			client_flag = 1;
 #else /* HAVE_SO_MAX_PACING_RATE */
-			i_errno = IEUNIMP;
+			test->i_errno = IEUNIMP;
 			return -1;
 #endif
 			break;
@@ -1437,7 +1437,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->settings->fqrate = unit_atof_rate(optarg);
 			client_flag = 1;
 #else /* HAVE_SO_MAX_PACING_RATE */
-			i_errno = IEUNIMP;
+			test->i_errno = IEUNIMP;
 			return -1;
 #endif
 			break;
@@ -1490,23 +1490,23 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 
 	/* Check flag / role compatibility. */
 	if (test->role == 'c' && server_flag) {
-		i_errno = IESERVERONLY;
+		test->i_errno = IESERVERONLY;
 		return -1;
 	}
 	if (test->role == 's' && client_flag) {
-		i_errno = IECLIENTONLY;
+		test->i_errno = IECLIENTONLY;
 		return -1;
 	}
 
 #if defined(HAVE_SSL)
 
 	if (test->role == 's' && (client_username || client_rsa_public_key)) {
-		i_errno = IECLIENTONLY;
+		test->i_errno = IECLIENTONLY;
 		return -1;
 	} else if (test->role == 'c' &&
 		   (client_username || client_rsa_public_key) &&
 		   !(client_username && client_rsa_public_key)) {
-		i_errno = IESETCLIENTAUTH;
+		test->i_errno = IESETCLIENTAUTH;
 		return -1;
 	} else if (test->role == 'c' &&
 		   (client_username && client_rsa_public_key)) {
@@ -1516,11 +1516,11 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		if ((client_password = getenv("IPERF3_PASSWORD")) != NULL)
 			client_password = strdup(client_password);
 		else if (iperf_getpass(&client_password, &s, stdin) < 0) {
-			i_errno = IESETCLIENTAUTH;
+			test->i_errno = IESETCLIENTAUTH;
 			return -1;
 		}
 		if (test_load_pubkey_from_file(client_rsa_public_key) < 0) {
-			i_errno = IESETCLIENTAUTH;
+			test->i_errno = IESETCLIENTAUTH;
 			return -1;
 		}
 
@@ -1534,18 +1534,18 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 
 	if (test->role == 'c' &&
 	    (server_rsa_private_key || test->server_authorized_users)) {
-		i_errno = IESERVERONLY;
+		test->i_errno = IESERVERONLY;
 		return -1;
 	} else if (test->role == 's' &&
 		   (server_rsa_private_key || test->server_authorized_users) &&
 		   !(server_rsa_private_key && test->server_authorized_users)) {
-		i_errno = IESETSERVERAUTH;
+		test->i_errno = IESETSERVERAUTH;
 		return -1;
 	} else if (test->role == 's' && server_rsa_private_key) {
 		test->server_rsa_private_key =
 			load_privkey_from_file(server_rsa_private_key);
 		if (test->server_rsa_private_key == NULL) {
-			i_errno = IESETSERVERAUTH;
+			test->i_errno = IESETSERVERAUTH;
 			return -1;
 		}
 		free(server_rsa_private_key);
@@ -1563,13 +1563,13 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 	}
 	if ((test->protocol->id != Pudp && blksize <= 0) ||
 	    blksize > MAX_BLOCKSIZE) {
-		i_errno = IEBLOCKSIZE;
+		test->i_errno = IEBLOCKSIZE;
 		return -1;
 	}
 	if (test->protocol->id == Pudp &&
 	    (blksize > 0 &&
 	     (blksize < MIN_UDP_BLOCKSIZE || blksize > MAX_UDP_BLOCKSIZE))) {
-		i_errno = IEUDPBLOCKSIZE;
+		test->i_errno = IEUDPBLOCKSIZE;
 		return -1;
 	}
 	test->settings->blksize = blksize;
@@ -1590,7 +1590,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 	if ((duration_flag && test->settings->bytes != 0) ||
 	    (duration_flag && test->settings->blocks != 0) ||
 	    (test->settings->bytes != 0 && test->settings->blocks != 0)) {
-		i_errno = IEENDCONDITIONS;
+		test->i_errno = IEENDCONDITIONS;
 		return -1;
 	}
 
@@ -1601,7 +1601,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 	optind = 0;
 
 	if ((test->role != 'c') && (test->role != 's')) {
-		i_errno = IENOROLE;
+		test->i_errno = IENOROLE;
 		return -1;
 	}
 
@@ -1663,7 +1663,7 @@ int iperf_open_logfile(struct iperf_test *test)
 #if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 	test->outfile = fopen(test->logfile, "a+");
 	if (test->outfile == NULL) {
-		i_errno = IELOGFILE;
+		test->i_errno = IELOGFILE;
 		return -1;
 	}
 #endif
@@ -1694,7 +1694,7 @@ int iperf_set_send_state(struct iperf_test *test, signed char state)
 			SLIST_FOREACH(sp, &test->streams, streams) {
 				FD_SET(sp->socket, &flush_read_set);
 			}*/
-            memcpy(&flush_read_set, &test->read_set, sizeof(fd_set));
+			memcpy(&flush_read_set, &test->read_set, sizeof(fd_set));
 
 			ret = select(test->max_fd + 1, &flush_read_set, NULL, NULL, &timeout);
 			if (test->debug) {
@@ -1720,7 +1720,7 @@ int iperf_set_send_state(struct iperf_test *test, signed char state)
 
         ret = Nwrite(test->ctrl_sck, (char*) &state, sizeof(state), Ptcp);
         if (ret < 0) {
-            i_errno = IESENDMESSAGE;
+            test->i_errno = IESENDMESSAGE;
 			if (test->debug)
 				iperf_printf(test, "iperf_set_send_state failed of sending state: %d, ret: %d\n", state, ret);
 
@@ -1746,7 +1746,7 @@ int iperf_set_send_state(struct iperf_test *test, signed char state)
 	if (Nwrite(test->ctrl_sck, (char *)&state, sizeof(state), Ptcp) < 0) {
 		if (test->debug)
 			iperf_printf(test, "iperf_set_send_state failed of sending char: %c\n", state);
-		i_errno = IESENDMESSAGE;
+		test->i_errno = IESENDMESSAGE;
 		return -1;
 	}
 	return 0;
@@ -1853,7 +1853,7 @@ int iperf_send(struct iperf_test *test, fd_set *write_setP)
 				if ((r = sp->snd(sp)) < 0) {
 					if (r == NET_SOFTERROR)
 						break;
-					i_errno = IESTREAMWRITE;
+					test->i_errno = IESTREAMWRITE;
 					return r;
 				}
 				streams_active = 1;
@@ -1899,7 +1899,7 @@ int iperf_recv(struct iperf_test *test, fd_set *read_setP)
         {
             if ((r = sp->rcv(sp)) < 0)
             {
-                i_errno = IESTREAMREAD;
+                test->i_errno = IESTREAMREAD;
                 return r;
             }
             test->bytes_received += r;
@@ -1923,7 +1923,7 @@ int iperf_init_test(struct iperf_test *test)
 
 	/* Init each stream. */
 	if (iperf_time_now(&now) < 0) {
-		i_errno = IEINITTEST;
+		test->i_errno = IEINITTEST;
 		return -1;
 	}
 	SLIST_FOREACH(sp, &test->streams, streams)
@@ -1956,7 +1956,7 @@ int iperf_create_send_timers(struct iperf_test *test)
 	TimerClientData cd;
 
 	if (iperf_time_now(&now) < 0) {
-		i_errno = IEINITTEST;
+		test->i_errno = IEINITTEST;
 		return -1;
 	}
 	SLIST_FOREACH(sp, &test->streams, streams)
@@ -1968,7 +1968,7 @@ int iperf_create_send_timers(struct iperf_test *test)
 				tmr_create(NULL, send_timer_proc, cd,
 					   test->settings->pacing_timer, 1);
 			if (sp->send_timer == NULL) {
-				i_errno = IEINITTEST;
+				test->i_errno = IEINITTEST;
 				return -1;
 			}
 		}
@@ -2035,11 +2035,11 @@ int iperf_exchange_parameters(struct iperf_test *test)
 		if (test_is_authorized(test) < 0) {
 			if (iperf_set_send_state(test, SERVER_ERROR) != 0)
 				return -1;
-			i_errno = IEAUTHTEST;
-			err = htonl(i_errno);
+			test->i_errno = IEAUTHTEST;
+			err = htonl(test->i_errno);
 			if (Nwrite(test->ctrl_sck, (char *)&err, sizeof(err),
 				   Ptcp) < 0) {
-				i_errno = IECTRLWRITE;
+				test->i_errno = IECTRLWRITE;
 				return -1;
 			}
 			return -1;
@@ -2049,16 +2049,16 @@ int iperf_exchange_parameters(struct iperf_test *test)
 		if ((s = test->protocol->listen(test)) < 0) {
 			if (iperf_set_send_state(test, SERVER_ERROR) != 0)
 				return -1;
-			err = htonl(i_errno);
+			err = htonl(test->i_errno);
 			if (Nwrite(test->ctrl_sck, (char *)&err, sizeof(err),
 				   Ptcp) < 0) {
-				i_errno = IECTRLWRITE;
+				test->i_errno = IECTRLWRITE;
 				return -1;
 			}
 			err = htonl(errno);
 			if (Nwrite(test->ctrl_sck, (char *)&err, sizeof(err),
 				   Ptcp) < 0) {
-				i_errno = IECTRLWRITE;
+				test->i_errno = IECTRLWRITE;
 				return -1;
 			}
 			return -1;
@@ -2111,7 +2111,7 @@ static int send_parameters(struct iperf_test *test)
 
 	j = cJSON_CreateObject();
 	if (j == NULL) {
-		i_errno = IESENDPARAMS;
+		test->i_errno = IESENDPARAMS;
 		r = -1;
 	} else {
 		if (test->protocol->id == Ptcp)
@@ -2198,7 +2198,7 @@ static int send_parameters(struct iperf_test *test)
 
 			if (rc) {
 				cJSON_Delete(j);
-				i_errno = IESENDPARAMS;
+				test->i_errno = IESENDPARAMS;
 				return -1;
 			}
 
@@ -2215,7 +2215,7 @@ static int send_parameters(struct iperf_test *test)
 		}
 
 		if (JSON_write(test->ctrl_sck, j) < 0) {
-			i_errno = IESENDPARAMS;
+			test->i_errno = IESENDPARAMS;
 			r = -1;
 		}
 		cJSON_Delete(j);
@@ -2233,7 +2233,7 @@ static int get_parameters(struct iperf_test *test)
 
 	j = JSON_read(test->ctrl_sck);
 	if (j == NULL) {
-		i_errno = IERECVPARAMS;
+		test->i_errno = IERECVPARAMS;
 		r = -1;
 	} else {
 		if (test->debug) {
@@ -2344,7 +2344,7 @@ static int send_results(struct iperf_test *test)
 
 	j = cJSON_CreateObject();
 	if (j == NULL) {
-		i_errno = IEPACKAGERESULTS;
+		test->i_errno = IEPACKAGERESULTS;
 		r = -1;
 	} else {
 		cJSON_AddNumberToObject(j, "cpu_util_total", test->cpu_util[0]);
@@ -2398,7 +2398,7 @@ static int send_results(struct iperf_test *test)
 
 		j_streams = cJSON_CreateArray();
 		if (j_streams == NULL) {
-			i_errno = IEPACKAGERESULTS;
+			test->i_errno = IEPACKAGERESULTS;
 			r = -1;
 		} else {
 			cJSON_AddItemToObject(j, "streams", j_streams);
@@ -2406,7 +2406,7 @@ static int send_results(struct iperf_test *test)
 			{
 				j_stream = cJSON_CreateObject();
 				if (j_stream == NULL) {
-					i_errno = IEPACKAGERESULTS;
+					test->i_errno = IEPACKAGERESULTS;
 					r = -1;
 				} else {
 					cJSON_AddItemToArray(j_streams,
@@ -2467,20 +2467,20 @@ static int send_results(struct iperf_test *test)
 			/* non blocking mode client when sending results, due to several jamning problems */
 			if (test->role == 's') {
 				if (r == 0 && JSON_write(test->ctrl_sck, j) < 0) {
-					i_errno = IESENDRESULTS;
+					test->i_errno = IESENDRESULTS;
 					r = -1;
 				}
 			}
 			else {
 				if (r == 0 && JSON_write_nonblock(test, j) < 0) {
-					i_errno = IESENDRESULTS;
+					test->i_errno = IESENDRESULTS;
 					r = -1;
 				}
 			}
 #else
             if (r == 0 && JSON_write(test->ctrl_sck, j) < 0)
             {
-                i_errno = IESENDRESULTS;
+                test->i_errno = IESENDRESULTS;
                 r = -1;
             }
 #endif
@@ -2529,7 +2529,7 @@ static int get_results(struct iperf_test *test)
 	j = JSON_read(test->ctrl_sck);
 #endif
 	if (j == NULL) {
-		i_errno = IERECVRESULTS;
+		test->i_errno = IERECVRESULTS;
 		if (test->debug) {
 			iperf_printf(test, "get_results: IERECVRESULTS 1\n");
 		}
@@ -2543,7 +2543,7 @@ static int get_results(struct iperf_test *test)
 		if (j_cpu_util_total == NULL || j_cpu_util_user == NULL ||
 		    j_cpu_util_system == NULL ||
 		    j_sender_has_retransmits == NULL) {
-			i_errno = IERECVRESULTS;
+			test->i_errno = IERECVRESULTS;
 			r = -1;
 			if (test->debug) {
 				iperf_printf(test, "get_results: IERECVRESULTS 2\n");
@@ -2575,7 +2575,7 @@ static int get_results(struct iperf_test *test)
 				if (test->debug) {
 					iperf_printf(test, "get_results: IERECVRESULTS 3\n");
 				}
-				i_errno = IERECVRESULTS;
+				test->i_errno = IERECVRESULTS;
 				r = -1;
 			} else {
 				n = cJSON_GetArraySize(j_streams);
@@ -2583,7 +2583,7 @@ static int get_results(struct iperf_test *test)
 					j_stream = cJSON_GetArrayItem(j_streams,
 								      i);
 					if (j_stream == NULL) {
-						i_errno = IERECVRESULTS;
+						test->i_errno = IERECVRESULTS;
 						if (test->debug) {
 							iperf_printf(test, "get_results: IERECVRESULTS 4\n");
 						}
@@ -2617,7 +2617,7 @@ static int get_results(struct iperf_test *test)
 						    j_jitter == NULL ||
 						    j_errors == NULL ||
 						    j_packets == NULL) {
-							i_errno = IERECVRESULTS;
+							test->i_errno = IERECVRESULTS;
 							if (test->debug) {
 								iperf_printf(test, "get_results: IERECVRESULTS 5\n");
 							}
@@ -2643,7 +2643,7 @@ static int get_results(struct iperf_test *test)
 							if (sp->id == sid)
 								break;
 							if (sp == NULL) {
-								i_errno =
+								test->i_errno =
 									IESTREAMID;
 								r = -1;
 							} else {
@@ -2806,7 +2806,7 @@ JSON_write_nonblock(struct iperf_test *test, cJSON *json)
 		iperf_time_now(&now);
 		iperf_time_diff(&start_time, &now, &temp_time);
 		if (iperf_time_in_secs(&temp_time) > tout.tv_sec) {
-			i_errno = IESENDRESULTS;
+			test->i_errno = IESENDRESULTS;
 			if (test->debug)
 				iperf_printf(test, "JSON_write_nonblock: breaking the select send loop due to timeout\n");
 			break;
@@ -2855,7 +2855,7 @@ JSON_write_nonblock(struct iperf_test *test, cJSON *json)
         else if (sel_ret <= 0)
         {
 			if (sel_ret < 0) { //seems that select is timeoutting before the set time limit (i.e. = =0)? thus, let it timeout and don't care
-		        i_errno = IESENDRESULTS;
+		        test->i_errno = IESENDRESULTS;
 				if (test->debug)
 					iperf_printf(test, "JSON_write_nonblock: IERECVRESULTS %d\n", ret);
 				break;
@@ -2879,7 +2879,7 @@ exit:
 
     if (r < 0)
     {
-        i_errno = IESENDRESULTS;
+        test->i_errno = IESENDRESULTS;
     }
 
     return r;
@@ -2994,7 +2994,7 @@ static cJSON
 		iperf_time_now(&now);
 		iperf_time_diff(&start_time, &now, &temp_time);
 		if (iperf_time_in_secs(&temp_time) > tout.tv_sec) {
-			i_errno = IERECVRESULTS;
+			test->i_errno = IERECVRESULTS;
 			if (test->debug)
 				iperf_printf(test, "JSON_read_nonblock: breaking the select recv loop due to timeout\n");
 			break;
@@ -3030,7 +3030,7 @@ static cJSON
 					test, 
 					"ERROR: No memory for parsing json results of len %d\n",
 					hsize);
-				i_errno = IERECVRESULTS;
+				test->i_errno = IERECVRESULTS;
 				break;
 			} else {
 				if (test->debug) {
@@ -3042,7 +3042,7 @@ static cJSON
 			}
                     } else if (rc < 0) {
                 	iperf_printf(test, "ERROR: Cannot read json length, err %d\n", rc);
-			i_errno = IERECVRESULTS;
+			test->i_errno = IERECVRESULTS;
 			break;
 		    }
                 }
@@ -3073,7 +3073,7 @@ static cJSON
 					}
 					iperf_printf(test, "\n");
 				}
-			    	i_errno = IERECVRESULTS;
+				test->i_errno = IERECVRESULTS;
 			    	break;
 			    }
                         } else {
@@ -3082,13 +3082,13 @@ static cJSON
 				"WARNING:  Size of data read does not correspond"
 				"to offered length, rc: %d hsize: %d\n",
 				rc, hsize);
-			    i_errno = IERECVRESULTS;
+			    test->i_errno = IERECVRESULTS;
 			    break;
                         }
                     } else if (rc < 0)
                     {
                         iperf_printf(test, "read() failed: rc %d, errno %d", rc, errno);
-			i_errno = IERECVRESULTS;
+			test->i_errno = IERECVRESULTS;
                         break;
                     }
                 }
@@ -3104,7 +3104,7 @@ static cJSON
         else if (ret <= 0)
         {
 			if (ret != 0) { //seems that select is timeoutting before the set time limit (i.e. = =0)? thus, let it timeout and don't care
-		        i_errno = IERECVRESULTS;
+		        test->i_errno = IERECVRESULTS;
 				if (test->debug)
 					iperf_printf(test, "JSON_read_nonblock: IERECVRESULTS %d\n", ret);
 				break;
@@ -5454,7 +5454,7 @@ struct iperf_stream *iperf_new_stream(struct iperf_test *test, int s,
 
 	sp = (struct iperf_stream *)malloc(sizeof(struct iperf_stream));
 	if (!sp) {
-		i_errno = IECREATESTREAM;
+		test->i_errno = IECREATESTREAM;
 		return NULL;
 	}
 
@@ -5467,7 +5467,7 @@ struct iperf_stream *iperf_new_stream(struct iperf_test *test, int s,
 		sizeof(struct iperf_stream_result));
 	if (!sp->result) {
 		free(sp);
-		i_errno = IECREATESTREAM;
+		test->i_errno = IECREATESTREAM;
 		return NULL;
 	}
 
@@ -5478,7 +5478,7 @@ struct iperf_stream *iperf_new_stream(struct iperf_test *test, int s,
 	sp->buffer = (char *)malloc(test->settings->blksize);
 	if (sp->buffer == NULL) {
 		iperf_printf(test, "iperf_new_stream: no memory for buffer\n");
-		i_errno = IENOMEMORY;
+		test->i_errno = IENOMEMORY;
 		free(sp->result);
 		free(sp);
 		return NULL;
@@ -5487,19 +5487,19 @@ struct iperf_stream *iperf_new_stream(struct iperf_test *test, int s,
 	/* Create and randomize the buffer */
 	sp->buffer_fd = mkstemp(template);
 	if (sp->buffer_fd == -1) {
-		i_errno = IECREATESTREAM;
+		test->i_errno = IECREATESTREAM;
 		free(sp->result);
 		free(sp);
 		return NULL;
 	}
 	if (unlink(template) < 0) {
-		i_errno = IECREATESTREAM;
+		test->i_errno = IECREATESTREAM;
 		free(sp->result);
 		free(sp);
 		return NULL;
 	}
 	if (ftruncate(sp->buffer_fd, test->settings->blksize) < 0) {
-		i_errno = IECREATESTREAM;
+		test->i_errno = IECREATESTREAM;
 		free(sp->result);
 		free(sp);
 		return NULL;
@@ -5508,7 +5508,7 @@ struct iperf_stream *iperf_new_stream(struct iperf_test *test, int s,
 				  PROT_READ | PROT_WRITE, MAP_PRIVATE,
 				  sp->buffer_fd, 0);
 	if (sp->buffer == MAP_FAILED) {
-		i_errno = IECREATESTREAM;
+		test->i_errno = IECREATESTREAM;
 		free(sp->result);
 		free(sp);
 		return NULL;
@@ -5527,7 +5527,7 @@ struct iperf_stream *iperf_new_stream(struct iperf_test *test, int s,
 			     sender ? O_RDONLY : (O_WRONLY | O_CREAT | O_TRUNC),
 			     S_IRUSR | S_IWUSR);
 		if (sp->diskfile_fd == -1) {
-			i_errno = IEFILE;
+			test->i_errno = IEFILE;
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 			free(sp->buffer);
 #else
@@ -5596,7 +5596,7 @@ int iperf_init_stream(struct iperf_stream *sp, struct iperf_test *test)
 	/* Not available, mocked one used instead */
 	if (nrf_iperf3_mock_getsockname(test, sp->socket, (struct sockaddr *)&sp->local_addr, &len) <
 	    0) {
-		i_errno = IEINITSTREAM;
+		test->i_errno = IEINITSTREAM;
 		return -1;
 	}
 	len = sizeof(struct sockaddr_storage);
@@ -5604,17 +5604,17 @@ int iperf_init_stream(struct iperf_stream *sp, struct iperf_test *test)
 	/* Not available, mocked one used instead */
 	if (nrf_iperf3_mock_getpeername(test, sp->socket, (struct sockaddr *)&sp->remote_addr, &len) <
 	    0) {
-		i_errno = IEINITSTREAM;
+		test->i_errno = IEINITSTREAM;
 		return -1;
 	}
 #else
     if (getsockname(sp->socket, (struct sockaddr *) &sp->local_addr, &len) < 0) {
-        i_errno = IEINITSTREAM;
+        test->i_errno = IEINITSTREAM;
         return -1;
     }
     len = sizeof(struct sockaddr_storage);
     if (getpeername(sp->socket, (struct sockaddr *) &sp->remote_addr, &len) < 0) {
-        i_errno = IEINITSTREAM;
+        test->i_errno = IEINITSTREAM;
         return -1;
     }
 #endif
@@ -5633,11 +5633,11 @@ int iperf_init_stream(struct iperf_stream *sp, struct iperf_test *test)
 #ifdef IPV6_TCLASS
 			if (setsockopt(sp->socket, IPPROTO_IPV6, IPV6_TCLASS,
 				       &opt, sizeof(opt)) < 0) {
-				i_errno = IESETCOS;
+				test->i_errno = IESETCOS;
 				return -1;
 			}
 #else
-			i_errno = IESETCOS;
+			test->i_errno = IESETCOS;
 			return -1;
 #endif
 		} else {
@@ -5645,7 +5645,7 @@ int iperf_init_stream(struct iperf_stream *sp, struct iperf_test *test)
 			if (setsockopt(sp->socket, IPPROTO_IP, IP_TOS, &opt,
 				       sizeof(opt)) < 0) {
 #endif
-				i_errno = IESETTOS;
+				test->i_errno = IESETTOS;
 				return -1;
 #if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 			}
@@ -5797,8 +5797,8 @@ void iperf_got_sigend(struct iperf_test *test)
 		(void)Nwrite(test->ctrl_sck, (char *)&test->state,
 			     sizeof(signed char), Ptcp);
 	}
-	i_errno = (test->role == 'c') ? IECLIENTTERM : IESERVERTERM;
-	iperf_errexit(test, "interrupt - %s", iperf_strerror(i_errno));
+	test->i_errno = (test->role == 'c') ? IECLIENTTERM : IESERVERTERM;
+	iperf_errexit(test, "interrupt - %s", iperf_strerror(test->i_errno));
 }
 
 /* Try to write a PID file if requested, return -1 on an error. */
@@ -5938,7 +5938,7 @@ int iperf_setaffinity(struct iperf_test *test, int affinity)
 	CPU_ZERO(&cpu_set);
 	CPU_SET(affinity, &cpu_set);
 	if (sched_setaffinity(0, sizeof(cpu_set_t), &cpu_set) != 0) {
-		i_errno = IEAFFINITY;
+		test->i_errno = IEAFFINITY;
 		return -1;
 	}
 	return 0;
@@ -5947,7 +5947,7 @@ int iperf_setaffinity(struct iperf_test *test, int affinity)
 
 	if (cpuset_getaffinity(CPU_LEVEL_WHICH, CPU_WHICH_PID, -1,
 			       sizeof(cpuset_t), &test->cpumask) != 0) {
-		i_errno = IEAFFINITY;
+		test->i_errno = IEAFFINITY;
 		return -1;
 	}
 
@@ -5956,7 +5956,7 @@ int iperf_setaffinity(struct iperf_test *test, int affinity)
 
 	if (cpuset_setaffinity(CPU_LEVEL_WHICH, CPU_WHICH_PID, -1,
 			       sizeof(cpuset_t), &cpumask) != 0) {
-		i_errno = IEAFFINITY;
+		test->i_errno = IEAFFINITY;
 		return -1;
 	}
 	return 0;
@@ -5965,12 +5965,12 @@ int iperf_setaffinity(struct iperf_test *test, int affinity)
 	DWORD_PTR processAffinityMask = 1 << affinity;
 
 	if (SetProcessAffinityMask(process, processAffinityMask) == 0) {
-		i_errno = IEAFFINITY;
+		test->i_errno = IEAFFINITY;
 		return -1;
 	}
 	return 0;
 #else /* neither HAVE_SCHED_SETAFFINITY nor HAVE_CPUSET_SETAFFINITY nor HAVE_SETPROCESSAFFINITYMASK */
-	i_errno = IEAFFINITY;
+	test->i_errno = IEAFFINITY;
 	return -1;
 #endif /* neither HAVE_SCHED_SETAFFINITY nor HAVE_CPUSET_SETAFFINITY nor HAVE_SETPROCESSAFFINITYMASK */
 }
@@ -5985,14 +5985,14 @@ int iperf_clearaffinity(struct iperf_test *test)
 	for (i = 0; i < CPU_SETSIZE; ++i)
 		CPU_SET(i, &cpu_set);
 	if (sched_setaffinity(0, sizeof(cpu_set_t), &cpu_set) != 0) {
-		i_errno = IEAFFINITY;
+		test->i_errno = IEAFFINITY;
 		return -1;
 	}
 	return 0;
 #elif defined(HAVE_CPUSET_SETAFFINITY)
 	if (cpuset_setaffinity(CPU_LEVEL_WHICH, CPU_WHICH_PID, -1,
 			       sizeof(cpuset_t), &test->cpumask) != 0) {
-		i_errno = IEAFFINITY;
+		test->i_errno = IEAFFINITY;
 		return -1;
 	}
 	return 0;
@@ -6004,12 +6004,12 @@ int iperf_clearaffinity(struct iperf_test *test)
 	if (GetProcessAffinityMask(process, &processAffinityMask,
 				   &lpSystemAffinityMask) == 0 ||
 	    SetProcessAffinityMask(process, lpSystemAffinityMask) == 0) {
-		i_errno = IEAFFINITY;
+		test->i_errno = IEAFFINITY;
 		return -1;
 	}
 	return 0;
 #else /* neither HAVE_SCHED_SETAFFINITY nor HAVE_CPUSET_SETAFFINITY nor HAVE_SETPROCESSAFFINITYMASK */
-	i_errno = IEAFFINITY;
+	test->i_errno = IEAFFINITY;
 	return -1;
 #endif /* neither HAVE_SCHED_SETAFFINITY nor HAVE_CPUSET_SETAFFINITY nor HAVE_SETPROCESSAFFINITYMASK */
 }

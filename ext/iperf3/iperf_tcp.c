@@ -168,18 +168,18 @@ iperf_tcp_accept(struct iperf_test * test)
 #endif
     len = sizeof(addr);
     if ((s = accept(test->listener, (struct sockaddr *) &addr, &len)) < 0) {
-        i_errno = IESTREAMCONNECT;
+        test->i_errno = IESTREAMCONNECT;
         return -1;
     }
 
     if (Nread(s, cookie, COOKIE_SIZE, Ptcp) < 0) {
-        i_errno = IERECVCOOKIE;
+        test->i_errno = IERECVCOOKIE;
         return -1;
     }
 
     if (strcmp(test->cookie, cookie) != 0) {
         if (Nwrite(s, (char*) &rbuf, sizeof(rbuf), Ptcp) < 0) {
-            i_errno = IESENDMESSAGE;
+            test->i_errno = IESENDMESSAGE;
             return -1;
         }
         close(s);
@@ -251,13 +251,13 @@ iperf_tcp_listen(struct iperf_test *test)
         hints.ai_flags = AI_PASSIVE;
 
         if ((gerror = getaddrinfo(test->bind_address, portstr, &hints, &res)) != 0) {
-            i_errno = IESTREAMLISTEN;
+            test->i_errno = IESTREAMLISTEN;
             return -1;
         }
 
         if ((s = socket(res->ai_family, SOCK_STREAM, 0)) < 0) {
 	    freeaddrinfo(res);
-            i_errno = IESTREAMLISTEN;
+            test->i_errno = IESTREAMLISTEN;
             return -1;
         }
 
@@ -267,7 +267,7 @@ iperf_tcp_listen(struct iperf_test *test)
             int ret = iperf_util_socket_pdn_id_set(s, test->pdn_id_str);
             if (ret != 0) {
                 iperf_printf(test, "iperf_tcp_listen: cannot bind socket with PDN ID %s\n", test->pdn_id_str);
-                i_errno = IESTREAMLISTEN;
+                test->i_errno = IESTREAMLISTEN;
                 return -1;
             }				
         }
@@ -279,7 +279,7 @@ iperf_tcp_listen(struct iperf_test *test)
 		close(s);
 		freeaddrinfo(res);
 		errno = saved_errno;
-                i_errno = IESETNODELAY;
+                test->i_errno = IESETNODELAY;
                 return -1;
             }
         }
@@ -292,7 +292,7 @@ iperf_tcp_listen(struct iperf_test *test)
 		close(s);
 		freeaddrinfo(res);
 		errno = saved_errno;
-                i_errno = IESETMSS;
+                test->i_errno = IESETMSS;
                 return -1;
 #if !defined(CONFIG_NRF_IPERF3_INTEGRATION) /* not supported */
             }
@@ -306,7 +306,7 @@ iperf_tcp_listen(struct iperf_test *test)
 		close(s);
 		freeaddrinfo(res);
 		errno = saved_errno;
-                i_errno = IESETBUF;
+                test->i_errno = IESETBUF;
                 return -1;
 #if !defined(CONFIG_NRF_IPERF3_INTEGRATION) /* not supported */
             }
@@ -317,7 +317,7 @@ iperf_tcp_listen(struct iperf_test *test)
 		close(s);
 		freeaddrinfo(res);
 		errno = saved_errno;
-                i_errno = IESETBUF;
+                test->i_errno = IESETBUF;
                 return -1;
             }
 #endif            
@@ -353,7 +353,7 @@ iperf_tcp_listen(struct iperf_test *test)
             close(s);
 	    freeaddrinfo(res);
 	    errno = saved_errno;
-            i_errno = IEREUSEADDR;
+            test->i_errno = IEREUSEADDR;
             return -1;
         }
 
@@ -375,7 +375,7 @@ iperf_tcp_listen(struct iperf_test *test)
 		close(s);
 		freeaddrinfo(res);
 		errno = saved_errno;
-		i_errno = IEV6ONLY;
+		test->i_errno = IEV6ONLY;
 		return -1;
 	    }
 	}
@@ -386,14 +386,14 @@ iperf_tcp_listen(struct iperf_test *test)
             close(s);
 	    freeaddrinfo(res);
 	    errno = saved_errno;
-            i_errno = IESTREAMLISTEN;
+            test->i_errno = IESTREAMLISTEN;
             return -1;
         }
 
         freeaddrinfo(res);
 
         if (listen(s, INT_MAX) < 0) {
-            i_errno = IESTREAMLISTEN;
+            test->i_errno = IESTREAMLISTEN;
             return -1;
         }
 
@@ -407,14 +407,14 @@ iperf_tcp_listen(struct iperf_test *test)
 	saved_errno = errno;
 	close(s);
 	errno = saved_errno;
-	i_errno = IESETBUF;
+	test->i_errno = IESETBUF;
 	return -1;
     }
     if (test->debug) {
 	printf("SNDBUF is %u, expecting %u\n", sndbuf_actual, test->settings->socket_bufsize);
     }
     if (test->settings->socket_bufsize && test->settings->socket_bufsize > sndbuf_actual) {
-	i_errno = IESETBUF2;
+	test->i_errno = IESETBUF2;
 	return -1;
     }
 #endif
@@ -426,14 +426,14 @@ iperf_tcp_listen(struct iperf_test *test)
 	saved_errno = errno;
 	close(s);
 	errno = saved_errno;
-	i_errno = IESETBUF;
+	test->i_errno = IESETBUF;
 	return -1;
     }
     if (test->debug) {
 	printf("RCVBUF is %u, expecting %u\n", rcvbuf_actual, test->settings->socket_bufsize);
     }
     if (test->settings->socket_bufsize && test->settings->socket_bufsize > rcvbuf_actual) {
-	i_errno = IESETBUF2;
+	test->i_errno = IESETBUF2;
 	return -1;
     }
 
@@ -476,7 +476,7 @@ iperf_tcp_connect(struct iperf_test *test)
         hints.ai_family = test->settings->domain;
         hints.ai_socktype = SOCK_STREAM;
         if ((gerror = getaddrinfo(test->bind_address, NULL, &hints, &local_res)) != 0) {
-            i_errno = IESTREAMCONNECT;
+            test->i_errno = IESTREAMCONNECT;
             return -1;
         }
     }
@@ -498,7 +498,7 @@ iperf_tcp_connect(struct iperf_test *test)
     if ((gerror = getaddrinfo(test->server_hostname, portstr, &hints, &server_res)) != 0) {
 	if (test->bind_address)
 	    freeaddrinfo(local_res);
-        i_errno = IESTREAMCONNECT;
+        test->i_errno = IESTREAMCONNECT;
         return -1;
     }
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION) //wildcard not supported
@@ -509,7 +509,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	if (test->bind_address)
 	    freeaddrinfo(local_res);
 	freeaddrinfo(server_res);
-        i_errno = IESTREAMCONNECT;
+        test->i_errno = IESTREAMCONNECT;
         return -1;
     }
 
@@ -519,7 +519,7 @@ iperf_tcp_connect(struct iperf_test *test)
         int ret = iperf_util_socket_pdn_id_set(s, test->pdn_id_str);
         if (ret != 0) {
             iperf_printf(test, "iperf_tcp_connect: cannot bind socket with PDN ID %s\n", test->pdn_id_str);
-            i_errno = IESTREAMLISTEN;
+            test->i_errno = IESTREAMLISTEN;
             return -1;
         }				
     }
@@ -540,7 +540,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	    freeaddrinfo(local_res);
 	    freeaddrinfo(server_res);
 	    errno = saved_errno;
-            i_errno = IESTREAMCONNECT;
+            test->i_errno = IESTREAMCONNECT;
             return -1;
         }
         freeaddrinfo(local_res);
@@ -572,7 +572,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	    close(s);
 	    freeaddrinfo(server_res);
 	    errno = saved_errno;
-            i_errno = IEPROTOCOL;
+            test->i_errno = IEPROTOCOL;
             return -1;
 	}
 
@@ -581,7 +581,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	    close(s);
 	    freeaddrinfo(server_res);
 	    errno = saved_errno;
-            i_errno = IESTREAMCONNECT;
+            test->i_errno = IESTREAMCONNECT;
             return -1;
         }
     }
@@ -594,7 +594,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	    close(s);
 	    freeaddrinfo(server_res);
 	    errno = saved_errno;
-            i_errno = IESETNODELAY;
+            test->i_errno = IESETNODELAY;
             return -1;
         }
     }
@@ -606,7 +606,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	    close(s);
 	    freeaddrinfo(server_res);
 	    errno = saved_errno;
-            i_errno = IESETMSS;
+            test->i_errno = IESETMSS;
             return -1;
 #if !defined(CONFIG_NRF_IPERF3_INTEGRATION) /* not supported */
         }
@@ -619,7 +619,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	    close(s);
 	    freeaddrinfo(server_res);
 	    errno = saved_errno;
-            i_errno = IESETBUF;
+            test->i_errno = IESETBUF;
             return -1;
         }
 
@@ -628,7 +628,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	    close(s);
 	    freeaddrinfo(server_res);
 	    errno = saved_errno;
-            i_errno = IESETBUF;
+            test->i_errno = IESETBUF;
             return -1;
         }
 #else
@@ -646,14 +646,14 @@ iperf_tcp_connect(struct iperf_test *test)
 	close(s);
 	freeaddrinfo(server_res);
 	errno = saved_errno;
-	i_errno = IESETBUF;
+	test->i_errno = IESETBUF;
 	return -1;
     }
     if (test->debug) {
 	printf("SNDBUF is %u, expecting %u\n", sndbuf_actual, test->settings->socket_bufsize);
     }
     if (test->settings->socket_bufsize && test->settings->socket_bufsize > sndbuf_actual) {
-	i_errno = IESETBUF2;
+	test->i_errno = IESETBUF2;
 	return -1;
     }
 #endif
@@ -666,14 +666,14 @@ iperf_tcp_connect(struct iperf_test *test)
 	close(s);
 	freeaddrinfo(server_res);
 	errno = saved_errno;
-	i_errno = IESETBUF;
+	test->i_errno = IESETBUF;
 	return -1;
     }
     if (test->debug) {
 	printf("RCVBUF is %u, expecting %u\n", rcvbuf_actual, test->settings->socket_bufsize);
     }
     if (test->settings->socket_bufsize && test->settings->socket_bufsize > rcvbuf_actual) {
-	i_errno = IESETBUF2;
+	test->i_errno = IESETBUF2;
 	return -1;
     }
 #endif
@@ -691,7 +691,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	    close(s);
 	    freeaddrinfo(server_res);
 	    errno = saved_errno;
-            i_errno = IESETFLOW;
+            test->i_errno = IESETFLOW;
             return -1;
 	} else {
 	    struct sockaddr_in6* sa6P = (struct sockaddr_in6*) server_res->ai_addr;
@@ -711,7 +711,7 @@ iperf_tcp_connect(struct iperf_test *test)
                 close(s);
                 freeaddrinfo(server_res);
 		errno = saved_errno;
-                i_errno = IESETFLOW;
+                test->i_errno = IESETFLOW;
                 return -1;
             }
             sa6P->sin6_flowinfo = freq->flr_label;
@@ -722,7 +722,7 @@ iperf_tcp_connect(struct iperf_test *test)
                 close(s);
                 freeaddrinfo(server_res);
 		errno = saved_errno;
-                i_errno = IESETFLOW;
+                test->i_errno = IESETFLOW;
                 return -1;
             } 
 	}
@@ -760,7 +760,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	close(s);
 	freeaddrinfo(server_res);
 	errno = saved_errno;
-        i_errno = IESTREAMCONNECT;
+        test->i_errno = IESTREAMCONNECT;
         return -1;
     }
 
@@ -771,7 +771,7 @@ iperf_tcp_connect(struct iperf_test *test)
 	saved_errno = errno;
 	close(s);
 	errno = saved_errno;
-        i_errno = IESENDCOOKIE;
+        test->i_errno = IESENDCOOKIE;
         return -1;
     }
 

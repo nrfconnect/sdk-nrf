@@ -267,6 +267,7 @@ struct iperf_test
     struct sockaddr remote_addr;
     char *resp_std_out_buff;
     int resp_std_out_buff_len;
+    int i_errno;
 #endif
 
     TAILQ_HEAD(xbind_addrhead, xbind_entry) xbind_addrs; /* all -X opts */
