@@ -16,13 +16,6 @@ config PM_PARTITION_SIZE_TFM_SRAM
 	help
 	  Memory set aside for the TFM_SRAM partition.
 
-config PM_PARTITION_SIZE_BL2
-	hex "Memory reserved for BL2"
-	default 0x8000 if TFM_BL2
-	default 0
-	help
-	  Memory set aside for the BL2 partition.
-
 config PM_PARTITION_SIZE_TFM
 	hex
 	prompt  "Memory reserved for TFM" if !TFM_PROFILE_TYPE_MINIMAL

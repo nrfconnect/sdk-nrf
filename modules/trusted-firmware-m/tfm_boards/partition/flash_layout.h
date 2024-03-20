@@ -41,9 +41,6 @@
  */
 #define FLASH_TOTAL_SIZE (CONFIG_FLASH_SIZE * 1024)
 
-/* Flash layout info for BL2 bootloader */
-#define FLASH_BASE_ADDRESS (0x00000000)
-
 #if !defined(MCUBOOT_IMAGE_NUMBER) || (MCUBOOT_IMAGE_NUMBER == 1)
 /* Secure image primary slot */
 #define FLASH_AREA_0_ID	    (1)
@@ -104,7 +101,7 @@
 #define NON_SECURE_IMAGE_OFFSET	  (SECURE_IMAGE_OFFSET + SECURE_IMAGE_MAX_SIZE)
 #define NON_SECURE_IMAGE_MAX_SIZE FLASH_NS_PARTITION_SIZE
 
-/* Flash device name used by BL2
+/*
  * Name is defined in flash driver file: Driver_Flash.c
  */
 #define FLASH_DEV_NAME Driver_FLASH0
