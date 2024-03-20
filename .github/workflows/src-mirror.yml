@@ -1,0 +1,34 @@
+name: src-mirror
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  zip-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: nordicbuilder/action-checkout-west-update@main
+        with:
+          git-fetch-depth: 0
+          path: workspace/nrf
+
+      - name: Create tar
+        run: >
+          tar -C ./workspace -cvf src.tar.gz .
+
+      - name: Set up JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
+
+      - name: Configure and Upload to Artifactory
+        env:
+          ARTIFACTORY_URL: https://eu.files.nordicsemi.com/artifactory
+          REPOSITORY: ncs-src-mirror
+          FILE_PATH: src.tar.gz
+          TARGET_PATH: external/${{ github.ref_name }}/
+        run: >
+          jfrog rt u $FILE_PATH $REPOSITORY/$TARGET_PATH
+          --url=$ARTIFACTORY_URL
+          --user=${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
+          --password=${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
