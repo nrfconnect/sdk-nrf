@@ -3407,6 +3407,14 @@ In addition to the known issues listed here, see also :ref:`softdevice_controlle
 
 .. rst-class:: v2-6-0
 
+DRGN-21619: The controller might assert if the CIS peripheral stops receiving packets from the CIS central
+  This only occurs when the window widening reaches at least half of the ISO interval in magnitude.
+  Assuming worst case clock accuracies on both the central and the peripheral, this could occur with a supervision timeout of 2.4, 3.7, or 4.9 seconds, corresponding to an ISO interval of 5, 7.5, or 10 milliseconds, respectively.
+
+  **Workaround:** Set the supervision timeout to a value lower than those mentioned above.
+
+.. rst-class:: v2-6-0
+
 DRGN-21605: Value read by HCI ISO Read TX Timestamp is off by 40 µs
   The HCI command ``Iso Read Tx Tmestamp`` returns the last assigned sync reference for the ISO TX path and the value might be off by 40 µs.
 
