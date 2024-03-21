@@ -19,7 +19,7 @@ NRF_RPC_IPC_TRANSPORT(ot_group_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "ot_rpc_ep
 NRF_RPC_UART_TRANSPORT(ot_group_tr, DEVICE_DT_GET(DT_NODELABEL(uart1)));
 #endif
 NRF_RPC_GROUP_DEFINE(ot_group, "ot", &ot_group_tr, NULL, NULL, NULL);
-LOG_MODULE_REGISTER(ot_rpc, LOG_LEVEL_ERR);
+LOG_MODULE_REGISTER(ot_rpc, LOG_LEVEL_DBG);
 
 #ifdef CONFIG_OPENTHREAD_RPC_INITIALIZE_NRF_RPC
 static void err_handler(const struct nrf_rpc_err_report *report)

@@ -24,6 +24,7 @@ choice OPENTHREAD_RPC_ROLE_CHOICE
 
 config OPENTHREAD_RPC_CLIENT
 	bool "OpenThread over RPC client"
+	depends on NETWORKING
 	help
 	  Enables OpenThread over RPC client role that uses nRF RPC library to
 	  invoke OpenThread functions on the remote core.
