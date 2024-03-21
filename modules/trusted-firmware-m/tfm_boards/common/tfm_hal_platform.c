@@ -36,8 +36,8 @@
 static enum tfm_hal_status_t crypto_platform_init(void)
 {
 	int err = 0;
-#ifdef CONFIG_HAS_HW_NRF_CC3XX
 
+#ifdef CONFIG_HAS_HW_NRF_CC3XX
 	/* Initialize the nrf_cc3xx runtime */
 #if !CRYPTO_RNG_MODULE_ENABLED
 	err = nrf_cc3xx_platform_init_no_rng();
@@ -65,7 +65,7 @@ static enum tfm_hal_status_t crypto_platform_init(void)
 		SPMLOG_INFMSG("Success\r\n");
 	}
 #endif /* CONFIG_HW_UNIQUE_KEY_RANDOM */
-
+	(void)err;
 	return TFM_HAL_SUCCESS;
 }
 #endif /* defined(TFM_PARTITION_CRYPTO) */

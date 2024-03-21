@@ -46,6 +46,11 @@
 
 #endif /* NRF_FICR_S_BASE */
 
+#ifdef NRF_APPLICATION_CPUC_S_BASE
+#define CPUC_CPUID_ADDR (NRF_APPLICATION_CPUC_S_BASE + offsetof(NRF_CPUC_Type, CPUID))
+#define CPUC_CPUID_SIZE (sizeof(uint32_t))
+#endif /* NRF_APPLICATION_CPUC_S_BASE */
+
 static const struct tfm_read_service_range ranges[] = {
 #ifdef PM_MCUBOOT_ADDRESS
 	/* Allow reads of mcuboot metadata */
@@ -65,6 +70,9 @@ static const struct tfm_read_service_range ranges[] = {
 #endif
 #if defined(FICR_SIPINFO_ADDR)
 	{.start = FICR_SIPINFO_ADDR, .size = FICR_SIPINFO_SIZE},
+#endif
+#if defined(NRF_APPLICATION_CPUC_S)
+	{.start = CPUC_CPUID_ADDR, .size = CPUC_CPUID_SIZE},
 #endif
 };
 

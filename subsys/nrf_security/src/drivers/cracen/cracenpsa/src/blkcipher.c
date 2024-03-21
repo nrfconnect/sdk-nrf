@@ -548,7 +548,6 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t *output,
 				  size_t output_size, size_t *output_length)
 {
-	__ASSERT_NO_MSG(output != NULL);
 	__ASSERT_NO_MSG(output_length != NULL);
 
 	int sx_status;
@@ -558,6 +557,8 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 	if (operation->unprocessed_input_bytes == 0 && operation->alg != PSA_ALG_CBC_PKCS7) {
 		return PSA_SUCCESS;
 	}
+
+	__ASSERT_NO_MSG(output != NULL);
 
 	sx_status = SX_ERR_UNINITIALIZED_OBJ;
 

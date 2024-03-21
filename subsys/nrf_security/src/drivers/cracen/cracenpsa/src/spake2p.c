@@ -24,8 +24,6 @@
 #include <silexpk/sxops/rsa.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <zephyr/logging/log_output.h>
-#include <zephyr/sys/__assert.h>
 
 #define MAKE_SX_POINT(name, ptr, point_size)                                                       \
 	sx_pk_affine_point name = {{.bytes = (ptr), .sz = (point_size) / 2},                       \

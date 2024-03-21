@@ -898,7 +898,8 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
-		int slot_id = CRACEN_PSA_GET_KMU_SLOT(psa_get_key_id(attributes));
+		int slot_id = CRACEN_PSA_GET_KMU_SLOT(
+			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
 		psa_key_attributes_t stored_attributes;
 
 		if (key_buffer_size < cracen_get_opaque_size(attributes)) {
@@ -1239,6 +1240,8 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 	}
 }
 
+/* TODO: This function is defined also by TF-M, we will handle this properly with NCSDK-22600 */
+#if !CONFIG_BUILD_WITH_TFM
 psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 						  psa_key_lifetime_t *lifetime,
 						  psa_drv_slot_number_t *slot_number)
@@ -1266,6 +1269,7 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 
 	return PSA_SUCCESS;
 }
+#endif /* !CONFIG_BUILD_WITH_TFM */
 
 psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 			       size_t key_buffer_size, uint8_t *data, size_t data_size,
@@ -1304,7 +1308,8 @@ psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
-		uint32_t slot_id = CRACEN_PSA_GET_KMU_SLOT(psa_get_key_id(attributes));
+		uint32_t slot_id = CRACEN_PSA_GET_KMU_SLOT(
+			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
 		psa_status_t status = cracen_kmu_revoke_key_slot(slot_id++);
 
 		if (status != PSA_SUCCESS) {
@@ -1316,8 +1321,8 @@ psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		if (CRACEN_PSA_GET_KEY_USAGE_SCHEME(psa_get_key_id(attributes)) ==
-		    KMU_METADATA_SCHEME_ENCRYPTED) {
+		if (CRACEN_PSA_GET_KEY_USAGE_SCHEME(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(
+			    psa_get_key_id(attributes))) == KMU_METADATA_SCHEME_ENCRYPTED) {
 			status = cracen_kmu_revoke_key_slot(slot_id++);
 			if (status == PSA_SUCCESS) {
 				status = cracen_kmu_revoke_key_slot(slot_id++);
