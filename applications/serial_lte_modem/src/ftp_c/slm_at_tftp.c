@@ -50,8 +50,7 @@ static int do_tftp_get(int family, const char *server, uint16_t port, const char
 	struct tftpc client = {
 		.callback = tftp_callback
 	};
-	ret = util_resolve_host(0, server, port, family,
-		Z_LOG_OBJECT_PTR(slm_tftp), &client.server);
+	ret = util_resolve_host(0, server, port, family, &client.server);
 	if (ret) {
 		return -EAGAIN;
 	}
@@ -94,8 +93,7 @@ static int do_tftp_put(int family, const char *server, uint16_t port, const char
 		.callback = tftp_callback
 	};
 
-	ret = util_resolve_host(0, server, port, family,
-		Z_LOG_OBJECT_PTR(slm_tftp), &client.server);
+	ret = util_resolve_host(0, server, port, family, &client.server);
 	if (ret) {
 		return -EAGAIN;
 	}

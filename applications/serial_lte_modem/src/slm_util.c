@@ -348,8 +348,7 @@ int util_str_to_int(const char *str_buf, int base, int *output)
 #define PORT_MAX_SIZE    5 /* 0xFFFF = 65535 */
 #define PDN_ID_MAX_SIZE  2 /* 0..10 */
 
-int util_resolve_host(int cid, const char *host, uint16_t port, int family,
-	LOG_INSTANCE_PTR_DECLARE(log_inst), struct sockaddr *sa)
+int util_resolve_host(int cid, const char *host, uint16_t port, int family, struct sockaddr *sa)
 {
 	int err;
 	char service[PORT_MAX_SIZE + PDN_ID_MAX_SIZE + 2];
@@ -384,7 +383,7 @@ int util_resolve_host(int cid, const char *host, uint16_t port, int family,
 		} else {
 			errstr = gai_strerror(err);
 		}
-		LOG_INST_ERR(log_inst, "getaddrinfo() error (%d): %s", err, errstr);
+		LOG_ERR("getaddrinfo() error (%d): %s", err, errstr);
 	}
 	return err;
 }
