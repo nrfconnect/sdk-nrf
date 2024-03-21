@@ -320,7 +320,7 @@ enum nrf_wifi_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->tx_mode = 1;
 	conf_params->tx_pkt_num = -1;
 	conf_params->tx_pkt_len = 1400;
-	conf_params->tx_pkt_preamble = 1;
+	conf_params->tx_pkt_preamble = 0;
 	conf_params->tx_pkt_rate = 6;
 	conf_params->he_ltf = 2;
 	conf_params->he_gi = 2;
@@ -2245,8 +2245,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 	SHELL_CMD_ARG(tx_pkt_preamble,
 		      NULL,
-		      "0 - Short preamble\n"
-		      "1 - Long preamble\n"
+		      "0 - Long preamble\n"
+		      "1 - Short preamble\n"
 		      "2 - Mixed preamble                                   ",
 		      nrf_wifi_radio_test_set_tx_pkt_preamble,
 		      2,
