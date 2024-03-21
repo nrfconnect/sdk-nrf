@@ -20,6 +20,7 @@ tests:
   sample.tfm.hello_world.bootloaders:
     tags: tfm ci_build
     extra_args: CONFIG_BOOTLOADER_MCUBOOT=y CONFIG_SECURE_BOOT=y
+      CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y
     platform_exclude: nrf54l15pdk_nrf54l15_cpuapp_ns
 
   sample.tfm.hello_world.bootloaders_debug:
