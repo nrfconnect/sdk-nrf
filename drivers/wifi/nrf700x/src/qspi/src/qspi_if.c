@@ -19,6 +19,7 @@
 #include <zephyr/drivers/pinctrl.h>
 
 #include <soc.h>
+#include <nrf_erratas.h>
 #include <nrfx_qspi.h>
 #include <hal/nrf_clock.h>
 #include <hal/nrf_gpio.h>
@@ -58,11 +59,11 @@ BUILD_ASSERT(INST_0_SCK_FREQUENCY >= (NRF_QSPI_BASE_CLOCK_FREQ / 16),
  * PCLK192M frequency"), but after that operation is complete, the default
  * divider needs to be restored to avoid increased current consumption.
  */
-/* Use divider /2 for HFCLK192M. */
-#define BASE_CLOCK_DIV NRF_CLOCK_HFCLK_DIV_2
+/* To prevent anomaly 159, use only divider /1 for HFCLK192M. */
+#define BASE_CLOCK_DIV NRF_CLOCK_HFCLK_DIV_1
 #if (INST_0_SCK_FREQUENCY >= (NRF_QSPI_BASE_CLOCK_FREQ / 4))
-/* For requested SCK >= 24 MHz, use HFCLK192M / 2 / (2*2) = 24 MHz */
-#define INST_0_SCK_CFG NRF_QSPI_FREQ_DIV2
+/* For requested SCK >= 24 MHz, use HFCLK192M / 1 / (2*4) = 24 MHz */
+#define INST_0_SCK_CFG NRF_QSPI_FREQ_DIV4
 #else
 /* For requested SCK < 24 MHz, calculate the configuration value. */
 #define INST_0_SCK_CFG (DIV_ROUND_UP(NRF_QSPI_BASE_CLOCK_FREQ / 2, \
@@ -300,6 +301,12 @@ static inline int qspi_get_zephyr_ret_code(nrfx_err_t res)
 		return -EINVAL;
 	case NRFX_ERROR_INVALID_STATE:
 		return -ECANCELED;
+#if NRF53_ERRATA_159_ENABLE_WORKAROUND
+	case NRFX_ERROR_FORBIDDEN:
+		LOG_ERR("nRF5340 anomaly 159 conditions detected");
+		LOG_ERR("Set the CPU clock to 64 MHz before starting QSPI operation");
+		return -ECANCELED;
+#endif
 	case NRFX_ERROR_BUSY:
 	case NRFX_ERROR_TIMEOUT:
 	default:
