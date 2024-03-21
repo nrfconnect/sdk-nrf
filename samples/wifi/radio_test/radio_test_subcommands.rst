@@ -88,10 +88,10 @@ Wi-Fi radio test subcommands
      - Configuration
      - Enable/Disable Short guard interval (GI) while transmitting the packet.
    * - tx_pkt_preamble
-     - | 0 - Short Preamble
-       | 1 - Long Preamble
+     - | 0 - Long Preamble
+       | 1 - Short Preamble
        | 2 - Mixed Preamble
-     - 1
+     - 0
      - Configuration
      - Type of preamble to be used for each packet. Short/Long Preamble are applicable only when tx_pkt_tput_mode is set to Legacy and Mixed Preamble is applicable only when tx_pkt_tput_mode is set to HT/VHT.
    * - tx_pkt_mcs
