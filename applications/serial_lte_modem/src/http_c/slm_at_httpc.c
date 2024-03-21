@@ -304,8 +304,7 @@ static int do_http_connect(void)
 	}
 
 	/* Connect to HTTP server */
-	ret = util_resolve_host(0, httpc.host, httpc.port, httpc.family,
-		Z_LOG_OBJECT_PTR(slm_httpc), &sa);
+	ret = util_resolve_host(0, httpc.host, httpc.port, httpc.family, &sa);
 	if (ret) {
 		goto exit_cli;
 	}

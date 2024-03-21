@@ -624,7 +624,7 @@ static int do_connect(const char *url, uint16_t port)
 	};
 
 	LOG_DBG("connect %s:%d", url, port);
-	ret = util_resolve_host(sock.cid, url, port, sock.family, Z_LOG_OBJECT_PTR(slm_sock), &sa);
+	ret = util_resolve_host(sock.cid, url, port, sock.family, &sa);
 	if (ret) {
 		return -EAGAIN;
 	}
@@ -817,7 +817,7 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 	};
 
 	LOG_DBG("sendto %s:%d", url, port);
-	ret = util_resolve_host(sock.cid, url, port, sock.family, Z_LOG_OBJECT_PTR(slm_sock), &sa);
+	ret = util_resolve_host(sock.cid, url, port, sock.family, &sa);
 	if (ret) {
 		return -EAGAIN;
 	}
@@ -855,8 +855,7 @@ static int do_sendto_datamode(const uint8_t *data, int datalen)
 	};
 
 	LOG_DBG("sendto %s:%d", udp_url, udp_port);
-	ret = util_resolve_host(sock.cid, udp_url, udp_port, sock.family,
-		Z_LOG_OBJECT_PTR(slm_sock), &sa);
+	ret = util_resolve_host(sock.cid, udp_url, udp_port, sock.family, &sa);
 	if (ret) {
 		return -EAGAIN;
 	}

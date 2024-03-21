@@ -228,7 +228,7 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 	}
 
 	/* Connect to remote host */
-	ret = util_resolve_host(0, url, port, proxy.family, Z_LOG_OBJECT_PTR(slm_udp), &sa);
+	ret = util_resolve_host(0, url, port, proxy.family, &sa);
 	if (ret) {
 		goto cli_exit;
 	}
