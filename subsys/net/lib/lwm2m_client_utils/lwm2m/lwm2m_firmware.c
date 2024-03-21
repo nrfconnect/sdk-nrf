@@ -1010,12 +1010,12 @@ static void lwm2m_firmware_object_pull_protocol_init(int instance_id)
 #endif
 }
 
-static bool modem_has_credentials(int sec_tag)
+static bool modem_has_credentials(int sec_tag, enum modem_key_mgmt_cred_type cred_type)
 {
 	bool exist;
 	int ret;
 
-	ret = modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exist);
+	ret = modem_key_mgmt_exists(sec_tag, cred_type, &exist);
 	if (ret < 0) {
 		return false;
 	}
@@ -1032,12 +1032,22 @@ static void lwm2m_firware_pull_protocol_support_resource_init(int instance_id)
 		lwm2m_firmware_object_pull_protocol_init(instance_id);
 	}
 
-	if (modem_has_credentials(CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG)) {
-		/* Enable non-security &  Security protocols for download client */
-		supported_protocol_count = 4;
+	int tag = CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG;
+
+	/* Check which protocols from pull_protocol_support[] may work.
+	 * Order in that list is CoAP, HTTP, CoAPS, HTTPS.
+	 * So unsecure protocols are first, those should always work.
+	 */
+
+	if (modem_has_credentials(tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN)) {
+		/* CA chain means that HTTPS and CoAPS might work, support all */
+		supported_protocol_count = ARRAY_SIZE(pull_protocol_support);
+	} else if (modem_has_credentials(tag, MODEM_KEY_MGMT_CRED_TYPE_PSK)) {
+		/* PSK might work on CoAPS, not HTTPS. Drop it from the list */
+		supported_protocol_count = ARRAY_SIZE(pull_protocol_support) - 1;
 	} else {
-		/* Enable non-security protocols for download client */
-		supported_protocol_count = 2;
+		/* Drop both secure protocols from list as we don't have credentials */
+		supported_protocol_count = ARRAY_SIZE(pull_protocol_support) - 2;
 	}
 
 	for (int i = 0; i < supported_protocol_count; i++) {
