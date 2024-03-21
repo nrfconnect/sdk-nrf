@@ -31,3 +31,6 @@ zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_WIFI_AP_SCANNER location/
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT lwm2m/visible_wifi_ap.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LTE_CONNEVAL lwm2m/lwm2m_conneval.c)
 zephyr_include_directories(lwm2m/include)
+
+# For strnlen()
+zephyr_library_compile_definitions(_POSIX_C_SOURCE=200809L)
