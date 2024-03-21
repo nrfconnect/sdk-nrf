@@ -19,6 +19,7 @@ LOG_MODULE_REGISTER(memfault_ncs_metrics, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 #include "memfault_ncs_metrics.h"
 #include "memfault_lte_metrics.h"
 #include "memfault_bt_metrics.h"
+#include "memfault_location_metrics.h"
 
 #define HEX_NAME_LENGTH 11
 
@@ -126,5 +127,9 @@ void memfault_ncs_metrics_init(void)
 
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_BT_METRICS)) {
 		memfault_bt_metrics_init();
+	}
+
+	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_LOCATION_METRICS)) {
+		memfault_location_metrics_init();
 	}
 }
