@@ -1010,12 +1010,12 @@ static void lwm2m_firmware_object_pull_protocol_init(int instance_id)
 #endif
 }
 
-static bool modem_has_credentials(int sec_tag)
+static bool modem_has_credentials(int sec_tag, enum modem_key_mgmt_cred_type cred_type)
 {
 	bool exist;
 	int ret;
 
-	ret = modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exist);
+	ret = modem_key_mgmt_exists(sec_tag, cred_type, &exist);
 	if (ret < 0) {
 		return false;
 	}
@@ -1032,9 +1032,14 @@ static void lwm2m_firware_pull_protocol_support_resource_init(int instance_id)
 		lwm2m_firmware_object_pull_protocol_init(instance_id);
 	}
 
-	if (modem_has_credentials(CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG)) {
-		/* Enable non-security &  Security protocols for download client */
+	int tag = CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG;
+
+	if (modem_has_credentials(tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN)) {
+		/* CA chain means that HTTPS and CoAPS might work */
 		supported_protocol_count = 4;
+	} else if (modem_has_credentials(tag, MODEM_KEY_MGMT_CRED_TYPE_PSK)) {
+		/* PSK might work on CoAPS but not on HTTP */
+		supported_protocol_count = 3;
 	} else {
 		/* Enable non-security protocols for download client */
 		supported_protocol_count = 2;
