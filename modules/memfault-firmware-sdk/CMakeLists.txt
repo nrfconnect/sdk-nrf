@@ -23,6 +23,11 @@ zephyr_library_sources_ifdef(
 )
 
 zephyr_library_sources_ifdef(
+        CONFIG_MEMFAULT_NCS_LOCATION_METRICS
+        memfault_location_metrics.c
+)
+
+zephyr_library_sources_ifdef(
         CONFIG_MEMFAULT_NCS_BT_METRICS
         memfault_bt_metrics.c)
 

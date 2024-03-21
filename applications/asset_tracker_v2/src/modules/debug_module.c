@@ -25,7 +25,6 @@
 #include "events/data_module_event.h"
 #include "events/sensor_module_event.h"
 #include "events/util_module_event.h"
-#include "events/location_module_event.h"
 #include "events/modem_module_event.h"
 #include "events/ui_module_event.h"
 #include "events/debug_module_event.h"
@@ -41,7 +40,6 @@ struct debug_msg_data {
 		struct sensor_module_event sensor;
 		struct data_module_event data;
 		struct app_module_event app;
-		struct location_module_event location;
 		struct modem_module_event modem;
 	} module;
 };
@@ -138,15 +136,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		struct cloud_module_event *event = cast_cloud_module_event(aeh);
 		struct debug_msg_data debug_msg = {
 			.module.cloud = *event
-		};
-
-		message_handler(&debug_msg);
-	}
-
-	if (is_location_module_event(aeh)) {
-		struct location_module_event *event = cast_location_module_event(aeh);
-		struct debug_msg_data debug_msg = {
-			.module.location = *event
 		};
 
 		message_handler(&debug_msg);
@@ -257,38 +246,6 @@ static void send_memfault_data(void)
 	}
 }
 
-static void add_location_metrics(uint8_t satellites, uint32_t search_time,
-				 enum location_module_event_type event)
-{
-	int err;
-
-	switch (event) {
-	case LOCATION_MODULE_EVT_GNSS_DATA_READY:
-		err = MEMFAULT_METRIC_SET_UNSIGNED(gnss_time_to_fix_ms, search_time);
-		if (err) {
-			LOG_ERR("Failed updating gnss_time_to_fix_ms metric, error: %d", err);
-		}
-		break;
-	case LOCATION_MODULE_EVT_TIMEOUT:
-		err = MEMFAULT_METRIC_SET_UNSIGNED(location_timeout_search_time_ms, search_time);
-		if (err) {
-			LOG_ERR("Failed updating location_timeout_search_time_ms metric, error: %d",
-				err);
-		}
-		break;
-	default:
-		LOG_ERR("Unknown location module event.");
-		return;
-	}
-
-	err = MEMFAULT_METRIC_SET_UNSIGNED(gnss_satellites_tracked_count, satellites);
-	if (err) {
-		LOG_ERR("Failed updating gnss_satellites_tracked_count metric, error: %d", err);
-	}
-
-	memfault_metrics_heartbeat_debug_trigger();
-}
-
 static void memfault_handle_event(struct debug_msg_data *msg)
 {
 	if (IS_EVENT(msg, app, APP_EVT_START)) {
@@ -349,14 +306,6 @@ static void memfault_handle_event(struct debug_msg_data *msg)
 		send_memfault_data();
 		return;
 	}
-
-	if ((IS_EVENT(msg, location, LOCATION_MODULE_EVT_TIMEOUT)) ||
-	    (IS_EVENT(msg, location, LOCATION_MODULE_EVT_GNSS_DATA_READY))) {
-		add_location_metrics(msg->module.location.data.location.satellites_tracked,
-				msg->module.location.data.location.search_time,
-				msg->module.location.type);
-		return;
-	}
 }
 #endif /* defined(CONFIG_MEMFAULT) */
 
@@ -388,7 +337,6 @@ APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-APP_EVENT_SUBSCRIBE_EARLY(MODULE, location_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);

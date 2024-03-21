@@ -705,7 +705,10 @@ Common Application Framework
 Debug libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`mod_memfault` library:
+
+  * Added location metrics, including GNSS, cellular, and Wi-Fi specific metrics.
+    The metrics are enabled with the :kconfig:option`CONFIG_MEMFAULT_NCS_LOCATION_METRICS` Kconfig option.
 
 DFU libraries
 -------------

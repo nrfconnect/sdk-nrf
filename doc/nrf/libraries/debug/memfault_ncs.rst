@@ -97,6 +97,7 @@ The Kconfig options for Memfault that are defined in |NCS| provide some addition
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_LTE_METRICS`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_LOCATION_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS`
 
