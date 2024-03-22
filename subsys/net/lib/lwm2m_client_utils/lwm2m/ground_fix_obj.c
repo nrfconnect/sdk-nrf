@@ -17,6 +17,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include "lwm2m_engine.h"
 #include <net/lwm2m_client_utils_location.h>
 #include "ground_fix_obj.h"
+#include "lwm2m_engine.h"
 
 #define GROUND_FIX_VERSION_MAJOR 1
 #define GROUND_FIX_VERSION_MINOR 0
@@ -169,7 +170,7 @@ static int lwm2m_ground_fix_init(void)
 	return 0;
 }
 
-SYS_INIT(lwm2m_ground_fix_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+LWM2M_OBJ_INIT(lwm2m_ground_fix_init);
 
 void ground_fix_set_report_back(bool report_back)
 {

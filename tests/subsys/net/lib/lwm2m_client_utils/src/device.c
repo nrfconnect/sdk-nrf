@@ -55,13 +55,10 @@ static void setup(void)
 
 ZTEST(lwm2m_client_utils_device, test_init_device)
 {
-	int rc;
-
 	setup();
 	lwm2m_register_exec_callback_fake.custom_fake =
 		lwm2m_register_exec_callback_copy;
 
-	rc = lwm2m_init_device();
-	zassert_equal(rc, 0, "wrong return value");
+	call_lwm2m_init_callbacks();
 	zassert_not_null(reboot_cb, "NULL");
 }

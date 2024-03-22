@@ -195,8 +195,6 @@ static void cloud_lwm2m_init(void)
 	snprintk(endpoint_name, sizeof(endpoint_name), "%s%s", CONFIG_MOSH_LWM2M_ENDPOINT_PREFIX,
 		 imei_buf);
 
-	lwm2m_init_device();
-
 	cloud_lwm2m_init_device(imei_buf);
 	lwm2m_init_security(&client, endpoint_name, NULL);
 
