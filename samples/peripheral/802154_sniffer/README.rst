@@ -147,6 +147,10 @@ After programming the sample to your development kit, complete the following ste
 
    The **LED 1** will start blinking with longer intervals.
 
+Running with Wireshark
+==================
+The shell and USB descriptor are a little different in this application and the official 802.15.4 sniffer binary. For that purpose a slightly modified version of `nrf_802154_sniffer.py`. With the modified script the same instructions apply.
+
 Dependencies
 ************
 
