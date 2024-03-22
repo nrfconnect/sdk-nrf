@@ -14,6 +14,7 @@
 #include <mpsl/mpsl_assert.h>
 #include <mpsl/mpsl_work.h>
 #include "multithreading_lock.h"
+#include <nrfx.h>
 #if defined(CONFIG_NRFX_DPPI)
 #include <nrfx_dppi.h>
 #endif
@@ -72,8 +73,8 @@ BUILD_ASSERT(MPSL_RTC_IRQn != DT_IRQN(DT_NODELABEL(grtc)), "MPSL requires a dedi
 
 BUILD_ASSERT(MPSL_IRQ_IN_DT, "The MPSL GRTC IRQ is not in the device tree");
 
-BUILD_ASSERT((NRFX_CONFIG_GRTC_MASK_DT(child_owned_channels) & MPSL_RESERVED_GRTC_CHANNELS) ==
-		     MPSL_RESERVED_GRTC_CHANNELS,
+BUILD_ASSERT((NRFX_CONFIG_MASK_DT(DT_NODELABEL(grtc), child_owned_channels) &
+	      MPSL_RESERVED_GRTC_CHANNELS) == MPSL_RESERVED_GRTC_CHANNELS,
 	     "The GRTC channels used by MPSL must not be used by zephyr");
 
 /* check the GRTC source channels.
