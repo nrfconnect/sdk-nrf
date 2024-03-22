@@ -54,7 +54,7 @@ static const char *location_details_event_str(enum location_event_id event_id)
 		event_str = "fallback";
 		break;
 	default:
-		event_str = "BUG";
+		event_str = "invalid";
 		break;
 	}
 
@@ -67,19 +67,16 @@ static int location_details_position_encode(const struct location_data *location
 
 	position_data_obj = cJSON_CreateObject();
 	if (position_data_obj == NULL) {
-		mosh_error("No memory to create json obj for position");
 		goto cleanup;
 	}
 
 	if (json_add_num_cs(position_data_obj, "lng", location->longitude) ||
 	    json_add_num_cs(position_data_obj, "lat", location->latitude) ||
 	    json_add_num_cs(position_data_obj, "acc", location->accuracy)) {
-		mosh_error("Failed to encode position data");
 		goto cleanup;
 	}
 
 	if (!cJSON_AddItemToObject(root_obj, "position", position_data_obj)) {
-		mosh_error("No memory to add json obj position");
 		goto cleanup;
 	}
 
@@ -99,7 +96,6 @@ static int location_details_pvt_data_encode(
 
 	pvt_data_obj = cJSON_CreateObject();
 	if (pvt_data_obj == NULL) {
-		mosh_error("No memory create json obj for details pvt_data_obj");
 		goto cleanup;
 	}
 
@@ -140,7 +136,6 @@ static int location_details_pvt_data_encode(
 				    round(mdm_pvt->vdop * 1000) / 1000) ||
 		    json_add_num_cs(pvt_data_obj, "tdop",
 				    round(mdm_pvt->tdop * 1000) / 1000)) {
-			mosh_error("Failed to encode GNSS PVT data");
 			goto cleanup;
 		}
 	}
@@ -151,7 +146,6 @@ static int location_details_pvt_data_encode(
 	/* SV data */
 	sat_info_array = cJSON_AddArrayToObjectCS(pvt_data_obj, "sv_info");
 	if (!sat_info_array) {
-		mosh_error("Cannot create json array for satellites");
 		goto cleanup;
 	}
 	for (uint32_t i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
@@ -160,12 +154,10 @@ static int location_details_pvt_data_encode(
 		}
 		sat_info_obj = cJSON_CreateObject();
 		if (sat_info_obj == NULL) {
-			mosh_error("No memory create json obj for satellite data");
 			goto cleanup;
 		}
 
 		if (!cJSON_AddItemToArray(sat_info_array, sat_info_obj)) {
-			mosh_error("Cannot add sat info json object to sat array");
 			cJSON_Delete(sat_info_obj);
 			goto cleanup;
 		}
@@ -180,13 +172,11 @@ static int location_details_pvt_data_encode(
 		    json_add_num_cs(
 			    sat_info_obj, "unhealthy",
 			    (mdm_pvt->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY ? 1 : 0))) {
-			mosh_error("Failed to encode detailed PVT data for sv array[%d]", i);
 			goto cleanup;
 		}
 	}
 
 	if (!cJSON_AddItemToObject(root_obj, "pvt_data", pvt_data_obj)) {
-		mosh_error("No memory to add json obj pvt_data");
 		goto cleanup;
 	}
 
@@ -206,17 +196,14 @@ static int location_details_location_req_info_encode(
 
 	location_req_info_obj = cJSON_CreateObject();
 	if (location_req_info_obj == NULL) {
-		mosh_error("No memory create json obj for location_req_info_obj");
 		goto cleanup;
 	}
 
 	if (!cJSON_AddStringToObjectCS(location_req_info_obj, "mosh_cmd", mosh_cmd)) {
-		mosh_error("Failed to encode mosh_cmd");
 		goto cleanup;
 	}
 
 	if (!cJSON_AddItemToObject(root_obj, "location_req_info", location_req_info_obj)) {
-		mosh_error("No memory to add json obj location_req_info");
 		goto cleanup;
 	}
 
@@ -238,13 +225,12 @@ static int location_details_modem_details_encode(cJSON *root_obj)
 
 	err = link_api_xmonitor_read(&xmonitor_resp);
 	if (err) {
-		mosh_error("link_api_xmonitor_read failed, result: ret %d", err);
+		mosh_error("link_api_xmonitor_read failed, err %d", err);
 		return err;
 	}
 
 	modem_details_obj = cJSON_CreateObject();
 	if (modem_details_obj == NULL) {
-		mosh_error("No memory create json obj modem_details_obj");
 		goto cleanup;
 	}
 
@@ -256,7 +242,6 @@ static int location_details_modem_details_encode(cJSON *root_obj)
 		strncpy(tmp_str, xmonitor_resp.full_name_str + 1, len - 2);
 	}
 	if (!cJSON_AddStringToObjectCS(modem_details_obj, "operator_full_name", tmp_str)) {
-		mosh_error("No memory create json obj operator_full_name");
 		goto cleanup;
 	}
 
@@ -267,7 +252,6 @@ static int location_details_modem_details_encode(cJSON *root_obj)
 		strncpy(tmp_str, xmonitor_resp.plmn_str + 1, len - 2);
 	}
 	if (!cJSON_AddStringToObjectCS(modem_details_obj, "plmn", tmp_str)) {
-		mosh_error("No memory create json obj plmn");
 		goto cleanup;
 	}
 
@@ -278,7 +262,6 @@ static int location_details_modem_details_encode(cJSON *root_obj)
 	    json_add_num_cs(modem_details_obj, "rsrp_dbm", RSRP_IDX_TO_DBM(xmonitor_resp.rsrp)) ||
 	    json_add_num_cs(modem_details_obj, "snr_db",
 			    xmonitor_resp.snr - LINK_SNR_OFFSET_VALUE)) {
-		mosh_error("No memory create modem details json obj");
 		goto cleanup;
 	}
 
@@ -288,7 +271,6 @@ static int location_details_modem_details_encode(cJSON *root_obj)
 	} else {
 		if (!cJSON_AddStringToObjectCS(modem_details_obj, "sysmode",
 					       link_shell_sysmode_to_string(sysmode, tmp_str))) {
-			mosh_error("No memory create json obj sysmode");
 			goto cleanup;
 		}
 	}
@@ -317,49 +299,43 @@ static int location_details_location_data_encode(
 
 	details = location_details_get(loc_evt_data);
 	if (details == NULL) {
+		err = -EFAULT;
 		goto cleanup;
 	}
 
 	location_data_obj = cJSON_CreateObject();
 	if (location_data_obj == NULL) {
-		mosh_error("No memory create json obj for details location_data_obj");
 		goto cleanup;
 	}
 
 	if (!cJSON_AddStringToObjectCS(location_data_obj, "method",
 				       location_method_str(loc_evt_data->method))) {
-		mosh_error("No memory create json obj method");
 		goto cleanup;
 	}
 
 	if (!cJSON_AddStringToObjectCS(location_data_obj, "event",
 				       location_details_event_str(loc_evt_data->id))) {
-		mosh_error("No memory create json obj event");
 		goto cleanup;
 	}
 
 	if (!cJSON_AddNumberToObjectCS(location_data_obj, "elapsed_time_method_sec",
 				       (double)details->elapsed_time_method / 1000)) {
-		mosh_error("No memory create json obj elapsed_time_method_sec");
 		goto cleanup;
 	}
 
 	if (loc_evt_data->id == LOCATION_EVT_LOCATION) {
 		err = location_details_position_encode(&loc_evt_data->location, location_data_obj);
 		if (err) {
-			mosh_error("Failed to encode position data for nrf cloud to json");
 			goto cleanup;
 		}
 	}
 
 	method_details_obj = cJSON_CreateObject();
 	if (method_details_obj == NULL) {
-		mosh_error("No memory create json obj for details method_details_obj");
 		goto cleanup;
 	}
 
 	if (!cJSON_AddItemToObject(location_data_obj, "method_details", method_details_obj)) {
-		mosh_error("No memory to add json obj method_details");
 		cJSON_Delete(method_details_obj);
 		goto cleanup;
 	}
@@ -368,19 +344,16 @@ static int location_details_location_data_encode(
 	if (loc_evt_data->method == LOCATION_METHOD_GNSS) {
 		if (json_add_num_cs(method_details_obj, "tracked_satellites",
 				    details->gnss.satellites_tracked)) {
-			mosh_error("No memory create json obj tracked_satellites");
 			goto cleanup;
 		}
 
 		if (json_add_num_cs(method_details_obj, "used_satellites",
 				    details->gnss.satellites_used)) {
-			mosh_error("No memory create json obj used_satellites");
 			goto cleanup;
 		}
 
 		if (json_add_num_cs(method_details_obj, "elapsed_time_gnss",
 				    (double)details->gnss.elapsed_time_gnss / 1000)) {
-			mosh_error("No memory create json obj used_satellites");
 			goto cleanup;
 		}
 
@@ -388,7 +361,6 @@ static int location_details_location_data_encode(
 			&details->gnss.pvt_data,
 			method_details_obj);
 		if (err) {
-			mosh_error("Failed to encode PVT data for nrf cloud to json");
 			goto cleanup;
 		}
 	}
@@ -398,12 +370,10 @@ static int location_details_location_data_encode(
 	    loc_evt_data->method == LOCATION_METHOD_WIFI_CELLULAR) {
 		if (json_add_num_cs(method_details_obj, "cellular_ncells_count",
 				    details->cellular.ncells_count)) {
-			mosh_error("No memory create json obj cellular_ncells_count");
 			goto cleanup;
 		}
 		if (json_add_num_cs(method_details_obj, "cellular_gci_cells_count",
 				    details->cellular.gci_cells_count)) {
-			mosh_error("No memory create json obj cellular_gci_cells_count");
 			goto cleanup;
 		}
 	}
@@ -413,13 +383,11 @@ static int location_details_location_data_encode(
 	    loc_evt_data->method == LOCATION_METHOD_WIFI_CELLULAR) {
 		if (json_add_num_cs(method_details_obj, "wifi_ap_cnt",
 				    details->wifi.ap_count)) {
-			mosh_error("No memory create json obj wifi_ap_cnt");
 			goto cleanup;
 		}
 	}
 #endif
 	if (!cJSON_AddItemToObject(root_obj, "location_data", location_data_obj)) {
-		mosh_error("No memory to add json obj location_data");
 		goto cleanup;
 	}
 
@@ -442,14 +410,12 @@ static int location_details_root_encode(
 	/* Fill location_req_info */
 	err = location_details_location_req_info_encode(mosh_cmd, root_obj);
 	if (err) {
-		mosh_warn("Failed to encode location_req_info data to json, err %d", err);
 		return err;
 	}
 
 	/* Fill actual location_data */
 	err = location_details_location_data_encode(loc_evt_data, root_obj);
 	if (err) {
-		mosh_warn("Failed to encode location_data to json, err %d", err);
 		return err;
 	}
 
@@ -666,6 +632,9 @@ int location_details_json_payload_encode(
 	enum location_event_id event_id;
 
 	details = location_details_get(loc_evt_data);
+	if (details == NULL) {
+		return -EFAULT;
+	}
 	elapsed_time_method_sec = (double)details->elapsed_time_method / 1000;
 
 	/* Used time for a location request as a root "key"
@@ -681,9 +650,12 @@ int location_details_json_payload_encode(
 	case LOCATION_METHOD_WIFI:
 		strcpy(app_id_str, "LOC_WIFI_TTF");
 		break;
-	default:
-		__ASSERT_NO_MSG(loc_evt_data->method == LOCATION_METHOD_WIFI_CELLULAR);
+	case LOCATION_METHOD_WIFI_CELLULAR:
 		strcpy(app_id_str, "LOC_WIFI_CELLULAR_TTF");
+		break;
+	default:
+		__ASSERT_NO_MSG(false);
+		strcpy(app_id_str, "invalid");
 		break;
 	}
 
@@ -706,7 +678,6 @@ int location_details_json_payload_encode(
 
 	root_obj = cJSON_CreateObject();
 	if (root_obj == NULL) {
-		mosh_error("Failed to create root json obj");
 		err = -ENOMEM;
 		goto cleanup;
 	}
@@ -715,25 +686,25 @@ int location_details_json_payload_encode(
 	    !cJSON_AddStringToObjectCS(root_obj, "appId", app_id_str) ||
 	    !cJSON_AddStringToObjectCS(root_obj, "messageType", "DATA") ||
 	    !cJSON_AddNumberToObjectCS(root_obj, "ts", timestamp_ms)) {
-		mosh_error("Cannot add metadata json objects");
 		err = -ENOMEM;
 		goto cleanup;
 	}
 
 	err = location_details_root_encode(loc_evt_data, mosh_cmd, root_obj);
 	if (err) {
-		mosh_error("Failed to encode details data to json");
 		goto cleanup;
 	}
 	*json_str_out = cJSON_PrintUnformatted(root_obj);
 	if (*json_str_out == NULL) {
-		mosh_error("location details: failed to print json objects to string");
 		err = -ENOMEM;
 	}
 
 cleanup:
-	if (root_obj) {
-		cJSON_Delete(root_obj);
+	if (err != 0) {
+		mosh_error("JSON encoding for location details failed, err=%d", err);
 	}
+
+	cJSON_Delete(root_obj);
+
 	return err;
 }
