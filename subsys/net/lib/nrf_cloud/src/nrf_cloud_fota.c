@@ -99,6 +99,11 @@ static bool fota_dl_initialized;
 /** Flag to indicate that a pending FOTA job was validated and a reboot is required */
 static bool reboot_on_init;
 
+/** Flag to indicate that the device is waiting on an ACK after sending a job status
+ * update to the cloud
+ */
+static bool fota_report_ack_pending;
+
 static void send_fota_done_event_if_done(void)
 {
 	/* This event should cause reboot or modem-reinit.
@@ -237,6 +242,8 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 	} else {
 		LOG_ERR("Failed to process pending FOTA job, error: %d", ret);
 	}
+
+	fota_report_ack_pending = false;
 
 	initialized = true;
 	return ret;
@@ -381,6 +388,7 @@ static int publish_validated_job_status(void)
 	}
 
 	if (job.info.type != NRF_CLOUD_FOTA_TYPE__INVALID) {
+		LOG_DBG("Sending job update for validated (%d) job", saved_job.validate);
 		ret = publish_job_status(&job);
 		if (ret) {
 			LOG_ERR("Error sending job update: %d", ret);
@@ -407,6 +415,10 @@ int nrf_cloud_fota_endpoint_set_and_report(struct mqtt_client *const client,
 		 */
 		ret = publish_job_status(&current_fota);
 		if (ret < 0) {
+			/* If the job update fails to be sent here, proceed to inform
+			 * the application of a complete job so it can be validated.
+			 * Job update will be sent on reboot/re-init.
+			 */
 			send_fota_done_event_if_done();
 		}
 	} else {
@@ -630,6 +642,8 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 		break;
 
 	case FOTA_DOWNLOAD_EVT_ERROR:
+		LOG_DBG("FOTA_DOWNLOAD_EVT_ERROR cause: %d", evt->cause);
+
 		nrf_cloud_download_end();
 		current_fota.status = NRF_CLOUD_FOTA_FAILED;
 
@@ -642,17 +656,14 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 			current_fota.error = NRF_CLOUD_FOTA_ERROR_DOWNLOAD;
 		}
 
-		/* Save as ERROR status in case send_job_update() fails
-		 * so that the job status can be updated later.
+		/* Save validate status as ERROR in case the cloud does not
+		 * receive the job status update; it can be sent later.
 		 */
 		save_validate_status(current_fota.info.id,
 				     current_fota.info.type,
 				     NRF_CLOUD_FOTA_VALIDATE_ERROR);
 		ret = publish_job_status(&current_fota);
 		send_event(NRF_CLOUD_FOTA_EVT_ERROR, &current_fota);
-		if (ret == 0) {
-			cleanup_job(&current_fota);
-		}
 		break;
 
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
@@ -821,11 +832,6 @@ static int start_job(struct nrf_cloud_fota_job *const job, const bool send_evt)
 	/* Send job status to the cloud */
 	(void)publish_job_status(job);
 
-	/* Cleanup if the job failed to start */
-	if (ret) {
-		cleanup_job(job);
-	}
-
 	return ret;
 }
 
@@ -898,6 +904,11 @@ static int publish_and_free_obj(struct nrf_cloud_obj *const pub_data,
 		pub_param->message.payload.data = (uint8_t *)pub_data->encoded_data.ptr;
 		pub_param->message.payload.len = pub_data->encoded_data.len;
 		err = publish(pub_param);
+
+		if ((!err) && (pub_param->message_id == NCT_MSG_ID_FOTA_REPORT)) {
+			fota_report_ack_pending = true;
+		}
+
 		(void)nrf_cloud_obj_cloud_encoded_free(pub_data);
 	}
 
@@ -942,14 +953,7 @@ static int publish_job_status(struct nrf_cloud_fota_job *const job)
 		return -ENOMEM;
 	}
 
-	ret = publish_and_free_obj(&update_obj, &topic_updt, &param);
-	if (ret == 0 && is_job_status_terminal(job->status)) {
-		/* If job was updated to terminal status, save job ID */
-		strncpy(last_job, job->info.id, sizeof(last_job) - 1);
-		last_job[sizeof(last_job) - 1] = '\0';
-	}
-
-	return ret;
+	return publish_and_free_obj(&update_obj, &topic_updt, &param);
 }
 
 int nrf_cloud_fota_update_check(void)
@@ -1116,12 +1120,31 @@ int nrf_cloud_fota_mqtt_evt_handler(const struct mqtt_evt *evt)
 	}
 	case MQTT_EVT_SUBACK:
 	{
+		int ret = -1;
+
 		if (evt->param.suback.message_id != NCT_MSG_ID_FOTA_SUB) {
 			return 1;
 		}
 		LOG_DBG("MQTT_EVT_SUBACK");
 
-		nrf_cloud_fota_update_check();
+		if (fota_report_ack_pending) {
+			if (current_fota.info.type != NRF_CLOUD_FOTA_TYPE__INVALID) {
+				LOG_DBG("Sending job updated due to missing ACK");
+				ret = publish_job_status(&current_fota);
+			} else {
+				/* No current job info, check for a validated job */
+				ret = publish_validated_job_status();
+				if (ret == 1) {
+					/* No validated job either, clear flag */
+					fota_report_ack_pending = false;
+				}
+			}
+		}
+
+		if (ret != 0) {
+			/* Check for an update if job status was not published */
+			nrf_cloud_fota_update_check();
+		}
 
 		break;
 	}
@@ -1135,11 +1158,11 @@ int nrf_cloud_fota_mqtt_evt_handler(const struct mqtt_evt *evt)
 	}
 	case MQTT_EVT_PUBACK:
 	{
-		bool do_update_check = false;
+		bool fota_report_ack = false;
 
 		switch (evt->param.puback.message_id) {
 		case NCT_MSG_ID_FOTA_REPORT:
-			do_update_check = true;
+			fota_report_ack = true;
 		case NCT_MSG_ID_FOTA_REQUEST:
 		case NCT_MSG_ID_FOTA_BLE_REPORT:
 		case NCT_MSG_ID_FOTA_BLE_REQUEST:
@@ -1151,18 +1174,28 @@ int nrf_cloud_fota_mqtt_evt_handler(const struct mqtt_evt *evt)
 		LOG_DBG("MQTT_EVT_PUBACK: msg id %d",
 			evt->param.puback.message_id);
 
-		if (!do_update_check) {
+		if (!fota_report_ack) {
 			/* Nothing to do */
 			break;
 		}
 
+		/* Job status updated on the cloud, now process the local saved status */
+		fota_report_ack_pending = false;
+
+		/* If job was updated to terminal status, save job ID and cleanup*/
+		if (is_job_status_terminal(current_fota.status)) {
+			strncpy(last_job, current_fota.info.id, sizeof(last_job) - 1);
+			last_job[sizeof(last_job) - 1] = '\0';
+			cleanup_job(&current_fota);
+		}
+
 		switch (saved_job.validate) {
+		case NRF_CLOUD_FOTA_VALIDATE_ERROR:
 		case NRF_CLOUD_FOTA_VALIDATE_PASS:
 		case NRF_CLOUD_FOTA_VALIDATE_UNKNOWN:
 		case NRF_CLOUD_FOTA_VALIDATE_FAIL:
-		case NRF_CLOUD_FOTA_VALIDATE_ERROR:
 			save_validate_status(saved_job.id, saved_job.type,
-					NRF_CLOUD_FOTA_VALIDATE_DONE);
+					     NRF_CLOUD_FOTA_VALIDATE_DONE);
 			break;
 		case NRF_CLOUD_FOTA_VALIDATE_PENDING:
 			send_fota_done_event_if_done();
@@ -1170,6 +1203,7 @@ int nrf_cloud_fota_mqtt_evt_handler(const struct mqtt_evt *evt)
 		default:
 			break;
 		}
+
 		break;
 	}
 	case MQTT_EVT_DISCONNECT:

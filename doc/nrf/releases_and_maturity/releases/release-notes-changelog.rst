@@ -516,6 +516,10 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST` Kconfig option to enable including Wi-Fi anchor names in the location callback.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE` Kconfig option to control the buffer size used for the anchor names.
 
+  * Updated:
+
+    * Improved FOTA job status reporting.
+
 * :ref:`lib_mqtt_helper` library:
 
   * Changed the library to read certificates as standard PEM format. Previously the certificates had to be manually converted to string format before compiling the application.
