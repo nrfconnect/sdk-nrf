@@ -18,6 +18,13 @@ FILE(GLOB app_sources src/main.c)
 endif()
 target_sources(app PRIVATE ${app_sources})
 
+if (NOT CONFIG_NRF_CLOUD_FOTA)
+	target_sources(app
+		PRIVATE
+		${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_fota_common.c
+	)
+endif()
+
 target_include_directories(app
 	PRIVATE
 	src
