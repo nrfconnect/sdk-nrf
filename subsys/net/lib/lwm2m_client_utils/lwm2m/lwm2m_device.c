@@ -9,7 +9,7 @@
 #include <zephyr/sys/reboot.h>
 #include <zephyr/net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
-
+#include "lwm2m_engine.h"
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_device, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
@@ -45,7 +45,9 @@ int lwm2m_device_reboot_cb(uint16_t obj_inst_id, uint8_t *args,
 	return k_work_schedule(&reboot_work, REBOOT_DELAY);
 }
 
-int lwm2m_init_device(void)
+static int lwm2m_init_reboot_cb(void)
 {
 	return lwm2m_register_exec_callback(&LWM2M_OBJ(3, 0, 4), lwm2m_device_reboot_cb);
 }
+
+LWM2M_APP_INIT(lwm2m_init_reboot_cb);

@@ -133,4 +133,4 @@ static int lwm2m_visible_wifi_ap_init(void)
 	return 0;
 }
 
-SYS_INIT(lwm2m_visible_wifi_ap_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+LWM2M_OBJ_INIT(lwm2m_visible_wifi_ap_init);

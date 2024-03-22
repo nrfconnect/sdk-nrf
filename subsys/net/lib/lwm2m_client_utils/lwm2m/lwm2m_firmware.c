@@ -1298,10 +1298,6 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 	return 0;
 }
 
-int lwm2m_init_firmware(void)
-{
-	return lwm2m_init_firmware_cb(NULL);
-}
 
 int lwm2m_init_image(void)
 {

@@ -399,6 +399,17 @@ Libraries for networking
 
   * Added the :c:func:`nrf_cloud_coap_shadow_desired_update` function to allow devices to reject invalid shadow deltas.
 
+* :ref:`lib_lwm2m_client_utils` library:
+
+  * The following initialization functions have been deprecated as these modules are now initialized automatically on boot:
+
+    * :c:func:`lwm2m_init_location`
+    * :c:func:`lwm2m_init_device`
+    * :c:func:`lwm2m_init_cellular_connectivity_object`
+    * :c:func:`lwm2m_init_connmon`
+
+  * :c:func:`lwm2m_init_firmware` is deprecated in favour of :c:func:`lwm2m_init_firmware_cb` that allows application to set a callback to receive FOTA events.
+
 Libraries for NFC
 -----------------
 

@@ -118,11 +118,6 @@ bool lwm2m_security_needs_bootstrap(void);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)
 /**
- * @brief Initialize Device object
- */
-int lwm2m_init_device(void);
-
-/**
  * @brief Reboot handler for a device object
  *
  * All arguments are ignored.
@@ -135,15 +130,6 @@ int lwm2m_init_device(void);
  */
 int lwm2m_device_reboot_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args_len);
 #endif
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT)
-/**
- * @brief Initialize Location object
- */
-int lwm2m_init_location(void);
-#endif
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 
 /** Firmware update callback events. */
 enum lwm2m_fota_event_id {
@@ -253,13 +239,6 @@ typedef int (*lwm2m_firmware_event_cb_t)(struct lwm2m_fota_event *event);
 void *firmware_read_cb(uint16_t obj_inst_id, size_t *data_len);
 
 /**
- * @brief Initialize Firmware update utils library
- *
- * @return Zero if success, negative error code otherwise.
- */
-int lwm2m_init_firmware(void);
-
-/**
  * @brief Initialize Firmware update utils library with callback
  *
  * @param[in] cb A callback function to receive firmware update state changes.
@@ -274,21 +253,8 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb);
  * @return Zero if success, negative error code otherwise.
  */
 int lwm2m_init_image(void);
-#endif
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
-/**
- * @brief Initialize Connectivity Monitoring object. Called in SYS_INIT.
- *
- * @return Zero if success, negative error code otherwise.
- */
-int lwm2m_init_connmon(void);
-#endif
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)
 #define LWM2M_OBJECT_CELLULAR_CONNECTIVITY_ID 10
-int lwm2m_init_cellular_connectivity_object(void);
-#endif
 
 enum lwm2m_rai_mode {
 	LWM2M_RAI_MODE_DISABLED	= 0,
@@ -410,6 +376,18 @@ int lwm2m_adv_firmware_create_inst(const char *component,
 #define LWM2M_ADV_FOTA_CURRENT_VERSION_ID 15
 #define LWM2M_ADV_FOTA_LINKED_INSTANCES_ID 16
 #define LWM2M_ADV_FOTA_CONFLICTING_INSTANCES_ID 17
+
+/********** DEPRECATED FUNCTIONS *************/
+/** @deprecated */
+__deprecated static inline int lwm2m_init_firmware(void) {return lwm2m_init_firmware_cb(NULL); }
+/** @deprecated */
+__deprecated static inline int lwm2m_init_device(void) {return 0; }
+/** @deprecated */
+__deprecated static inline int lwm2m_init_cellular_connectivity_object(void) {return 0; }
+/** @deprecated */
+__deprecated static inline int lwm2m_init_connmon(void) {return 0; }
+/** @deprecated */
+__deprecated static inline int lwm2m_init_location(void) {return 0; }
 
 #ifdef __cplusplus
 }
