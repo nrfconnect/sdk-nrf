@@ -56,6 +56,8 @@ struct lpuart_int_driven {
 	bool tx_enabled;
 	bool rx_enabled;
 	bool err_enabled;
+
+	struct k_timer trampoline_timer;
 };
 #endif
 
@@ -838,6 +840,24 @@ static void int_driven_rx_feed(const struct device *dev,
 	__ASSERT_NO_MSG(err >= 0);
 }
 
+static void trampoline_timeout(struct k_timer *timer)
+{
+	const struct device *dev = k_timer_user_data_get(timer);
+	struct lpuart_data *data = get_dev_data(dev);
+
+	data->int_driven.callback(dev, data->int_driven.user_data);
+
+	/* If RX was disabled and there were pending data, it may have been
+	 * processed above after re-enabling. If whole data has been processed
+	 * we must feed the buffer back to the uart to allow reception of the
+	 * next packet.
+	 */
+	if (!int_driven_rd_available(data) && data->rx_state == RX_BLOCKED) {
+		/* Whole packet read, RX can be re-enabled. */
+		int_driven_rx_feed(dev, data);
+	}
+}
+
 static void int_driven_evt_handler(const struct device *lpuart,
 				   struct uart_event *evt,
 				   void *user_data)
@@ -934,7 +954,8 @@ static void api_irq_tx_enable(const struct device *dev)
 
 	data->int_driven.tx_enabled = true;
 	if (data->tx_buf == NULL) {
-		data->int_driven.callback(dev, data->int_driven.user_data);
+		/* We need to move to the interrupt context of the same priority as UARTE. */
+		k_timer_start(&data->int_driven.trampoline_timer, K_NO_WAIT, K_NO_WAIT);
 	}
 }
 
@@ -968,17 +989,8 @@ static void api_irq_rx_enable(const struct device *dev)
 
 	data->int_driven.rx_enabled = true;
 	if (int_driven_rd_available(data)) {
-		data->int_driven.callback(dev, data->int_driven.user_data);
-	}
-
-	/* If RX was disabled and there were pending data, it may have been
-	 * processed above after re-enabling. If whole data has been processed
-	 * we must feed the buffer back to the uart to allow reception of the
-	 * next packet.
-	 */
-	if (!int_driven_rd_available(data) && data->rx_state == RX_BLOCKED) {
-		/* Whole packet read, RX can be re-enabled. */
-		int_driven_rx_feed(dev, data);
+		/* We need to move to the interrupt context of the same priority as UARTE. */
+		k_timer_start(&data->int_driven.trampoline_timer, K_NO_WAIT, K_NO_WAIT);
 	}
 }
 
@@ -1060,6 +1072,9 @@ static int lpuart_init(const struct device *dev)
 	}
 
 #if CONFIG_NRF_SW_LPUART_INT_DRIVEN
+	k_timer_init(&data->int_driven.trampoline_timer, trampoline_timeout, NULL);
+	k_timer_user_data_set(&data->int_driven.trampoline_timer, (void *)dev);
+
 	err = uart_callback_set(dev, int_driven_evt_handler, NULL);
 	if (err < 0) {
 		return -EINVAL;
@@ -1190,6 +1205,17 @@ static const struct uart_driver_api lpuart_api = {
 		     DT_IRQ(DT_PARENT(DT_NODELABEL(lpuart)), priority) == \
 		     DT_IRQ(GPIOTE_NODE(gpio_node), priority),		  \
 		     "UARTE and GPIOTE interrupt priority must match.");))
+
+#if CONFIG_NRF_SW_LPUART_INT_DRIVEN
+/* UARTE interrupt priority must be the same as system timer priority. */
+#if CONFIG_NRFX_GRTC
+BUILD_ASSERT(DT_IRQ(DT_PARENT(DT_NODELABEL(lpuart)), priority) ==
+	     DT_IRQ(DT_NODELABEL(grtc), priority));
+#else
+BUILD_ASSERT(DT_IRQ(DT_PARENT(DT_NODELABEL(lpuart)), priority) ==
+	     DT_IRQ(DT_NODELABEL(rtc1), priority));
+#endif
+#endif
 
 DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, CHECK_GPIOTE_IRQ_PRIORITY)
 DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, CHECK_GPIOTE_AVAILABLE)
