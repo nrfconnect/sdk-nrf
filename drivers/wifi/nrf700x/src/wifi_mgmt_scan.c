@@ -137,10 +137,31 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 		}
 
 		scan_info->scan_params.bands = params->bands;
-		scan_info->scan_params.dwell_time_active = params->dwell_time_active;
-		scan_info->scan_params.dwell_time_passive = params->dwell_time_passive;
 
-		vif_ctx_zep->max_bss_cnt = params->max_bss_cnt;
+		if (params->dwell_time_active < 0) {
+			LOG_ERR("%s: Invalid dwell_time_active %d", __func__,
+				params->dwell_time_active);
+			goto out;
+		} else {
+			scan_info->scan_params.dwell_time_active = params->dwell_time_active;
+		}
+
+		if (params->dwell_time_passive < 0) {
+			LOG_ERR("%s: Invalid dwell_time_passive %d", __func__,
+				params->dwell_time_passive);
+			goto out;
+		} else {
+			scan_info->scan_params.dwell_time_passive = params->dwell_time_passive;
+		}
+
+		if ((params->max_bss_cnt < 0) ||
+		    (params->max_bss_cnt > WIFI_MGMT_SCAN_MAX_BSS_CNT)) {
+			LOG_ERR("%s: Invalid max_bss_cnt %d", __func__,
+				params->max_bss_cnt);
+			goto out;
+		} else {
+			vif_ctx_zep->max_bss_cnt = params->max_bss_cnt;
+		}
 
 		for (i = 0; i < NRF_WIFI_SCAN_MAX_NUM_SSIDS; i++) {
 			if (!(params->ssids[i]) || !strlen(params->ssids[i])) {
