@@ -6,3 +6,11 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - thingy53_nrf5340_cpuapp
+  mcuboot.external_flash.sysbuild:
+    sysbuild: true
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp thingy53_nrf5340_cpuapp
+    tags: mcuboot external_flash sysbuild
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - thingy53_nrf5340_cpuapp

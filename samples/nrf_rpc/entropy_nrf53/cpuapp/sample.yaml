@@ -7,3 +7,10 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
+  sample.nrf_rpc.entropy_cpuapp.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: sysbuild

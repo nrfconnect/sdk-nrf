@@ -4,3 +4,9 @@ tests:
     tags: bluetooth ci_build
     integration_platforms:
       - native_posix
+  bluetooth.mesh.time_model.sysbuild:
+    sysbuild: true
+    platform_allow: native_posix
+    tags: bluetooth ci_build sysbuild
+    integration_platforms:
+      - native_posix

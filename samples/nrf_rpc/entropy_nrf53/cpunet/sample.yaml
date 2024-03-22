@@ -7,3 +7,10 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpunet
     platform_allow: nrf5340dk_nrf5340_cpunet
+  sample.nrf_rpc.entropy_cpunet.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpunet
+    platform_allow: nrf5340dk_nrf5340_cpunet
+    tags: sysbuild

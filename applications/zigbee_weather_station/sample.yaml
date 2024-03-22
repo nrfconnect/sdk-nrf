@@ -9,8 +9,22 @@ tests:
     extra_args: CONF_FILE=prj_release.conf
     integration_platforms:
       - thingy53_nrf5340_cpuapp
+  applications.zigbee_weather_station.sysbuild:
+    sysbuild: true
+    build_only: true
+    platform_allow: thingy53_nrf5340_cpuapp
+    tags: ci_build sysbuild
+    extra_args: CONF_FILE=prj_release.conf
+    integration_platforms:
+      - thingy53_nrf5340_cpuapp
   applications.zigbee_weather_station.debug:
     build_only: true
     platform_allow: thingy53_nrf5340_cpuapp
     tags: ci_build debug
+    extra_args: CONF_FILE=prj.conf
+  applications.zigbee_weather_station.debug.sysbuild:
+    sysbuild: true
+    build_only: true
+    platform_allow: thingy53_nrf5340_cpuapp
+    tags: ci_build debug sysbuild
     extra_args: CONF_FILE=prj.conf

@@ -4,3 +4,9 @@ tests:
     integration_platforms:
       - native_posix
     tags: unittest
+  subsys.net.lib.mcumgr_smp_client.unittest.sysbuild:
+    sysbuild: true
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    tags: unittest sysbuild

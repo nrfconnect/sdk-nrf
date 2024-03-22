@@ -4,3 +4,9 @@ tests:
     integration_platforms:
       - native_posix
     tags: b0 bl_validation unittest
+  bootloader.bl_validation.unittest.sysbuild:
+    sysbuild: true
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    tags: b0 bl_validation unittest sysbuild

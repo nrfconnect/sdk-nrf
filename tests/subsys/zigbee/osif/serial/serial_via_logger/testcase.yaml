@@ -6,3 +6,11 @@ tests:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
       - nrf5340dk_nrf5340_cpuapp
+  zigbee.osif.serial.logger.sysbuild:
+    sysbuild: true
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
+    tags: osif_logger sysbuild
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
+      - nrf5340dk_nrf5340_cpuapp

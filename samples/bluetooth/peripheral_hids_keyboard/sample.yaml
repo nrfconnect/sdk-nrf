@@ -9,6 +9,14 @@ tests:
       - nrf52840dk_nrf52840
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
     tags: bluetooth
+  sample.bluetooth.peripheral_hids_keyboard.sysbuild:
+    sysbuild: true
+    harness: bluetooth
+    integration_platforms:
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
+    tags: bluetooth sysbuild
   sample.bluetooth.peripheral_hids_keyboard.build:
     build_only: true
     integration_platforms:
@@ -19,3 +27,14 @@ tests:
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns
     tags: bluetooth ci_build
+  sample.bluetooth.peripheral_hids_keyboard.build.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      nrf5340dk_nrf5340_cpuapp_ns
+    tags: bluetooth ci_build sysbuild

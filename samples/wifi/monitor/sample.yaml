@@ -9,6 +9,13 @@ tests:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
+  sample.nrf7002.monitor.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf7002dk_nrf5340_cpuapp
+    tags: ci_build sysbuild
   sample.nrf7002_eks.monitor:
     build_only: true
     extra_args: SHIELD=nrf7002ek
@@ -16,6 +23,14 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build
+  sample.nrf7002_eks.monitor.sysbuild:
+    sysbuild: true
+    build_only: true
+    extra_args: SHIELD=nrf7002ek
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ci_build sysbuild
   sample.nrf7000.monitor:
     build_only: true
     extra_args:
@@ -24,9 +39,25 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build
+  sample.nrf7000.monitor.sysbuild:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      SHIELD=nrf7002ek_nrf7000
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ci_build sysbuild
   sample.nrf7001.monitor:
     build_only: true
     integration_platforms:
       - nrf7002dk_nrf7001_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf7001_nrf5340_cpuapp
     tags: ci_build
+  sample.nrf7001.monitor.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk_nrf7001_nrf5340_cpuapp
+    platform_allow: nrf7002dk_nrf7001_nrf5340_cpuapp
+    tags: ci_build sysbuild

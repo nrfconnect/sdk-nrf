@@ -9,3 +9,10 @@ tests:
       - nrf5340dk_nrf5340_cpunet
     platform_allow: nrf5340dk_nrf5340_cpunet
     tags: ci_build
+  sample.nrf5340.multiprotocol_rpmsg.build.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpunet
+    platform_allow: nrf5340dk_nrf5340_cpunet
+    tags: ci_build sysbuild

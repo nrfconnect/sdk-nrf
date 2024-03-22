@@ -34,12 +34,16 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     list(APPEND dfu_multi_image_targets mcuboot_extra_byproducts mcuboot_signed_kernel_hex_target s1_image_extra_byproducts s1_image_signed_kernel_hex_target mcuboot_signed_packaged_target s1_image_signed_packaged_target)
   endif()
 
-  dfu_multi_image_package(dfu_multi_image_pkg
-    IMAGE_IDS ${dfu_multi_image_ids}
-    IMAGE_PATHS ${dfu_multi_image_paths}
-    OUTPUT ${PROJECT_BINARY_DIR}/dfu_multi_image.bin
-    DEPENDS ${dfu_multi_image_targets}
-    )
+  if(DEFINED dfu_multi_image_targets)
+    dfu_multi_image_package(dfu_multi_image_pkg
+      IMAGE_IDS ${dfu_multi_image_ids}
+      IMAGE_PATHS ${dfu_multi_image_paths}
+      OUTPUT ${PROJECT_BINARY_DIR}/dfu_multi_image.bin
+      DEPENDS ${dfu_multi_image_targets}
+      )
+  else()
+    message(WARNING "No images enabled for multi image build, multi image output will not be created.")
+  endif()
 endif()
 
 sysbuild_get(CONFIG_ZIGBEE IMAGE ${DEFAULT_IMAGE} VAR CONFIG_ZIGBEE KCONFIG)
@@ -64,24 +68,26 @@ if(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
     set(firmware_binary "${PROJECT_BINARY_DIR}/dfu_multi_image.bin")
     set(legacy_cmd)
   else()
-    message(FATAL_ERROR "No Zigbee FOTA image format selected. Please enable either legacy or the multi-image format.")
+    message(WARNING "No Zigbee FOTA image format selected. Please enable either legacy or the multi-image format.")
   endif()
 
-  add_custom_target(zigbee_ota_image ALL
-    COMMAND
-    ${PYTHON_EXECUTABLE}
-      ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/zb_add_ota_header.py
-      --application ${firmware_binary}
-      --application-version-string ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}
-      --zigbee-manufacturer-id ${CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID}
-      --zigbee-image-type ${CONFIG_ZIGBEE_FOTA_IMAGE_TYPE}
-      --zigbee-comment ${CONFIG_ZIGBEE_FOTA_COMMENT}
-      --zigbee-ota-min-hw-version ${CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION}
-      --zigbee-ota-max-hw-version ${CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION}
-      --out-directory ${PROJECT_BINARY_DIR}
-      ${legacy_cmd}
+  if(CONFIG_ZIGBEE_FOTA_GENERATE_LEGACY_IMAGE_TYPE OR SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
+    add_custom_target(zigbee_ota_image ALL
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+        ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/zb_add_ota_header.py
+        --application ${firmware_binary}
+        --application-version-string ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}
+        --zigbee-manufacturer-id ${CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID}
+        --zigbee-image-type ${CONFIG_ZIGBEE_FOTA_IMAGE_TYPE}
+        --zigbee-comment ${CONFIG_ZIGBEE_FOTA_COMMENT}
+        --zigbee-ota-min-hw-version ${CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION}
+        --zigbee-ota-max-hw-version ${CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION}
+        --out-directory ${PROJECT_BINARY_DIR}
+        ${legacy_cmd}
 
-    DEPENDS
-    ${firmware_binary}
-  )
+      DEPENDS
+      ${firmware_binary}
+    )
+  endif()
 endif(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)

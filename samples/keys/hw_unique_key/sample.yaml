@@ -23,3 +23,6 @@ common:
 tests:
   sample.keys.hw_unique_key:
     tags: huk ci_build
+  sample.keys.hw_unique_key.sysbuild:
+    sysbuild: true
+    tags: huk ci_build sysbuild
