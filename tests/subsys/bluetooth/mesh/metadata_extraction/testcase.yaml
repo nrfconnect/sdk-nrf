@@ -1,0 +1,16 @@
+common:
+  build_only: true
+  platform_allow: nrf52840dk_nrf52840
+  tags: bluetooth ci_build
+  integration_platforms:
+    - nrf52840dk_nrf52840
+tests:
+  bluetooth.mesh.metadata_extraction_single:
+    extra_configs:
+      - CONFIG_COMP_DATA_LAYOUT_SINGLE=y
+  bluetooth.mesh.metadata_extraction_multiple:
+    extra_configs:
+      - CONFIG_COMP_DATA_LAYOUT_MULTIPLE=y
+  bluetooth.mesh.metadata_extraction_array:
+    extra_configs:
+      - CONFIG_COMP_DATA_LAYOUT_ARRAY=y
