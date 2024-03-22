@@ -129,11 +129,15 @@ if(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP)
 zephyr_code_relocate(FILES src/fw_load.c LOCATION EXTFLASH_RODATA NOCOPY)
 endif()
 
+zephyr_compile_definitions_ifdef(CONFIG_NRF700X_ON_QSPI
 # These are XIP related anomalies and aren't applicable for nRF7002 and cause
 # throughput issues.
-zephyr_compile_definitions_ifdef(CONFIG_NRF700X_ON_QSPI
   -DNRF53_ERRATA_43_ENABLE_WORKAROUND=0
   -DNRF52_ERRATA_215_ENABLE_WORKAROUND=0
+# nRF70 QSPI doesn't use 192MHz clock and most samples use 128MHz, this can cause anomaly 159
+# but as its rare and not seen in most cases, we can disable it.
+# Alternative is 128MHz CPU should be disabled that impacts Wi-Fi performance.
+  -DNRF53_ERRATA_159_ENABLE_WORKAROUND=0
 )
 
 # RPU FW patch binaries based on the selected configuration
