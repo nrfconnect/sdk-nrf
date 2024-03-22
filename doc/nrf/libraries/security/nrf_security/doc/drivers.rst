@@ -83,7 +83,7 @@ To enable the :ref:`nrf_oberon_readme` PSA driver, set the :kconfig:option:`CONF
 CRACEN driver
 *************
 
-The CRACEN driver provides hardware-accelerated cryptography using the CRACEN (Crypto Accelerator Engine) peripheral.
+The CRACEN driver provides entropy and hardware-accelerated cryptography using the CRACEN (Crypto Accelerator Engine) peripheral.
 This driver is only available on nRF54L Series devices.
 
 Enabling the CRACEN driver
@@ -92,6 +92,10 @@ Enabling the CRACEN driver
 The CRACEN driver can be enabled by setting the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option.
 
 The nrf_oberon driver may then be disabled by using the Kconfig option :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_OBERON` (``CONFIG_PSA_CRYPTO_DRIVER_OBERON=n``).
+
+.. note::
+   On nRF54L Series devices, CRACEN is the only source of entropy.
+   Therefore, it is not possible to disable the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` option when the Zephyr entropy driver is enabled.
 
 Legacy Mbed TLS
 ***************
