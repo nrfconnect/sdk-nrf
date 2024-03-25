@@ -52,17 +52,12 @@ By using the following Kconfig options, you can configure the sample for differe
 
   To configure the sample in connected Station mode, you must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
 
-  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_SSID`: Sets the name of your Wi-Fi network.
-  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_NONE`: Selects open security.
-  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA2`: Selects PSK security.
-  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA2_256`: Selects PSK-256 security.
-  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_KEY_MGMT_WPA3`: Selects SAE security (default).
-  * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_PASSWORD`: Sets the password of your Wi-Fi network.
+.. include:: /includes/wifi_credentials_static.txt
 
-  .. note::
-     You can also use ``menuconfig`` to enable the ``Key management`` option.
+.. note::
+   You can also use ``menuconfig`` to configure ``Wi-Fi credentials``.
 
-  See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
+See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
 * For non-connected Station mode
 

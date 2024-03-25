@@ -72,113 +72,50 @@ Configuration options
 
 The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/ble_coex/Kconfig`):
 
-.. _CONFIG_COEX_SEP_ANTENNAS:
+.. options-from-kconfig::
+   :show-type:
 
-CONFIG_COEX_SEP_ANTENNAS
-   This option specifies whether the antennas are shared or separate for Bluetooth and WLAN.
-
-.. _CONFIG_TEST_TYPE_WLAN_ONLY:
-
-CONFIG_TEST_TYPE_WLAN_ONLY
-   This option enables the WLAN test type.
-
-.. _CONFIG_TEST_TYPE_BLE_ONLY:
-
-CONFIG_TEST_TYPE_BLE_ONLY
-   This option enables the Bluetooth LE test type.
-
-.. _CONFIG_TEST_TYPE_WLAN_BLE:
-
-CONFIG_TEST_TYPE_WLAN_BLE
-   This option enables concurrent WLAN and Bluetooth LE tests.
-
-.. _CONFIG_WIFI_TEST_DURATION:
-
-CONFIG_WIFI_TEST_DURATION
-   This option sets the Wi-Fi test duration in milliseconds.
-
-.. _CONFIG_BLE_TEST_DURATION:
-
-CONFIG_BLE_TEST_DURATION
-   This option sets the Bluetooth test duration in milliseconds.
-
-.. _CONFIG_INTERVAL_MIN:
-
-CONFIG_INTERVAL_MIN
-   This option sets the Bluetooth minimum connection interval (each unit is 1.25 milliseconds).
-
-.. _CONFIG_INTERVAL_MAX:
-
-CONFIG_INTERVAL_MAX
-   This option sets the Bluetooth maximum connection interval (each unit is 1.25 milliseconds).
-
-.. _CONFIG_STA_SAMPLE_SSID:
-
-CONFIG_STA_SAMPLE_SSID
-   This option specifies the SSID to connect.
-
-.. _CONFIG_STA_SAMPLE_PASSWORD:
-
-CONFIG_STA_SAMPLE_PASSWORD
-   This option specifies the passphrase (WPA2) or password WPA3 to connect.
-
-.. _CONFIG_STA_KEY_MGMT_*:
-
-CONFIG_STA_KEY_MGMT_*
-   These options specify the key security option.
-
-.. _CONFIG_BT_THROUGHPUT_FILE:
-
-CONFIG_BT_THROUGHPUT_FILE
-   This option selects the type of the throughput test.
-
-.. _CONFIG_BT_THROUGHPUT_DURATION:
-
-CONFIG_BT_THROUGHPUT_DURATION
-   This option sets the Bluetooth throughput test duration in milliseconds.
-
-Configuration files
-===================
+Additional configuration
+========================
 
 To enable different test modes, set up the following configuration parameters in the :file:`prj.conf` file:
 
-* Antenna configuration: Use the :ref:`CONFIG_COEX_SEP_ANTENNAS <CONFIG_COEX_SEP_ANTENNAS>` Kconfig option to select the antenna configuration.
+* Antenna configuration: Use the :kconfig:option:`CONFIG_COEX_SEP_ANTENNAS` Kconfig option to select the antenna configuration.
   Set it to ``y`` to enable separate antennas and ``n`` to enable shared antenna.
 * Test modes: Use the following Kconfig options to select the required test case:
 
-  * :ref:`CONFIG_TEST_TYPE_WLAN_ONLY <CONFIG_TEST_TYPE_WLAN_ONLY>` for Wi-Fi only test
-  * :ref:`CONFIG_TEST_TYPE_BLE_ONLY <CONFIG_TEST_TYPE_BLE_ONLY>` for Bluetooth LE only test
-  * :ref:`CONFIG_TEST_TYPE_WLAN_BLE <CONFIG_TEST_TYPE_WLAN_BLE>` for concurrent Wi-Fi and Bluetooth LE test.
+  * :kconfig:option:`CONFIG_TEST_TYPE_WLAN_ONLY` for Wi-Fi only test
+  * :kconfig:option:`CONFIG_TEST_TYPE_BLE_ONLY` for Bluetooth LE only test
+  * :kconfig:option:`CONFIG_TEST_TYPE_WLAN_BLE` for concurrent Wi-Fi and Bluetooth LE test.
 
   Based on the required test, set only one of these to ``y``.
-* Test duration: Use the :ref:`CONFIG_WIFI_TEST_DURATION <CONFIG_WIFI_TEST_DURATION>` Kconfig option to set the duration of the Wi-Fi test and :ref:`CONFIG_BLE_TEST_DURATION <CONFIG_BLE_TEST_DURATION>` for the Bluetooth LE test.
+* Test duration: Use the :kconfig:option:`CONFIG_WIFI_TEST_DURATION` Kconfig option to set the duration of the Wi-Fi test and :kconfig:option:`CONFIG_BLE_TEST_DURATION` for the Bluetooth LE test.
   The units are in milliseconds.
   For example, to set the tests for 20 seconds, set the respective values to ``20000``.
   For the concurrent Wi-Fi and Bluetooth LE test, make sure that both are set to the same duration to ensure maximum overlap.
-* Bluetooth LE configuration: Set the Bluetooth LE connection interval limits using the :ref:`CONFIG_INTERVAL_MIN <CONFIG_INTERVAL_MIN>` and :ref:`CONFIG_INTERVAL_MAX <CONFIG_INTERVAL_MAX>` Kconfig options.
+* Bluetooth LE configuration: Set the Bluetooth LE connection interval limits using the :kconfig:option:`CONFIG_INTERVAL_MIN` and :kconfig:option:`CONFIG_INTERVAL_MAX` Kconfig options.
   The units are 1.25 milliseconds.
   For example, ``CONFIG_INTERVAL_MIN=80`` corresponds to an interval of 100 ms (80 x 1.25).
-* Wi-Fi connection: Set the following options appropriately as per the credentials of the access point used for this testing:
+* Wi-Fi connection: Use the :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR` Kconfig option to establish a connection to a peer host.
 
-  * :ref:`CONFIG_STA_SAMPLE_SSID <CONFIG_STA_SAMPLE_SSID>`
-  * :ref:`CONFIG_STA_SAMPLE_PASSWORD <CONFIG_STA_SAMPLE_PASSWORD>`
-  * :ref:`CONFIG_STA_KEY_MGMT_* <CONFIG_STA_KEY_MGMT_*>`
-  * :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR`
+You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+
+.. include:: /includes/wifi_credentials_static.txt
 
 .. note::
-   ``menuconfig`` can also be used to enable the ``Key management`` option.
+   You can also use ``menuconfig`` to configure ``Wi-Fi credentials``.
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
 Set up the following configuration parameters in the :file:`prj_nrf5340dk_nrf5340_cpuapp.conf` file:
 
-* File or time-based throughput: Use :ref:`CONFIG_BT_THROUGHPUT_FILE <CONFIG_BT_THROUGHPUT_FILE>` to select file or time-based throughput test.
+* File or time-based throughput: Use :kconfig:option:`CONFIG_BT_THROUGHPUT_FILE` to select file or time-based throughput test.
   Set it to ``n`` to enable time-based throughput test only when running Bluetooth LE throughput in central role.
-* Test duration: Use :ref:`CONFIG_BT_THROUGHPUT_DURATION <CONFIG_BT_THROUGHPUT_DURATION>` to set the duration of the Bluetooth LE throughput test only when running Bluetooth LE throughput in central role.
+* Test duration: Use :kconfig:option:`CONFIG_BT_THROUGHPUT_DURATION` to set the duration of the Bluetooth LE throughput test only when running Bluetooth LE throughput in central role.
   The units are in milliseconds.
 
 .. note::
-   Use the same test duration value for :ref:`CONFIG_WIFI_TEST_DURATION <CONFIG_WIFI_TEST_DURATION>`, :ref:`CONFIG_BLE_TEST_DURATION <CONFIG_BLE_TEST_DURATION>`, and :ref:`CONFIG_BT_THROUGHPUT_DURATION <CONFIG_BT_THROUGHPUT_DURATION>`.
+   Use the same test duration value for :kconfig:option:`CONFIG_WIFI_TEST_DURATION`, :kconfig:option:`CONFIG_BLE_TEST_DURATION`, and :kconfig:option:`CONFIG_BT_THROUGHPUT_DURATION`.
 
 Building and running
 ********************
