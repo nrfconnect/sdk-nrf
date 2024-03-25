@@ -111,38 +111,38 @@ The sample can be built for the following configurations:
 * Continuous raw 802.11 packet transmission in the non-connected Station mode.
 * Fixed number of raw 802.11 packet transmission in the non-connected Station mode.
 
-To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
+To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
 The following are examples of the CLI commands:
 
 * Continuous raw 802.11 packet transmission in the connected Station mode:
 
   .. code-block:: console
 
-     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_CONTINUOUS=y
+     west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_CONTINUOUS=y
 
 * Fixed number of raw 802.11 packet transmission in the connected Station mode:
 
   .. code-block:: console
 
-     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_FIXED=y -DCONFIG_RAW_TX_PKT_SAMPLE_FIXED_NUM_PACKETS=<number of packets to be sent>
+     west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_FIXED=y -DCONFIG_RAW_TX_PKT_SAMPLE_FIXED_NUM_PACKETS=<number of packets to be sent>
 
 * Continuous raw 802.11 packet transmission in the non-connected Station mode:
 
   .. code-block:: console
 
-     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_CONTINUOUS=y
+     west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_CONTINUOUS=y
 
 * Fixed number of raw 802.11 packet transmission in the non-connected Station mode:
 
   .. code-block:: console
 
-     west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_FIXED=y -DCONFIG_RAW_TX_PKT_SAMPLE_FIXED_NUM_PACKETS=<number of packets to be sent>
+     west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_FIXED=y -DCONFIG_RAW_TX_PKT_SAMPLE_FIXED_NUM_PACKETS=<number of packets to be sent>
 
 Change the build target as given below for the nRF7002 EK.
 
 .. code-block:: console
 
-   nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek
+   nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek
 
 Testing
 =======
@@ -163,7 +163,7 @@ Testing
       [00:00:00.618,713] <inf> net_config: Waiting interface 1 (0x20001570) to be up...
       [00:00:00.618,835] <inf> net_config: IPv4 address: 192.168.1.99
       [00:00:00.618,896] <inf> net_config: Running dhcpv4 client...
-      [00:00:00.619,140] <inf> raw_tx_packet: Starting nrf7002dk_nrf5340_cpuapp with CPU frequency: 64 MHz
+      [00:00:00.619,140] <inf> raw_tx_packet: Starting nrf7002dk/nrf5340/cpuapp with CPU frequency: 64 MHz
       [00:00:01.619,293] <inf> raw_tx_packet: Static IP address (overridable): 192.168.1.99/255.255.255.0 -> 192.168.1.1
       [00:00:01.632,507] <inf> raw_tx_packet: Wi-Fi channel set to 6
       [00:00:01.632,598] <inf> raw_tx_packet: Sending 25 number of raw tx packets

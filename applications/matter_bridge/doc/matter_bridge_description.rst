@@ -94,7 +94,7 @@ For example:
 
 .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
 
 For information about how to upgrade the device firmware using a PC or a smartphone, see the :ref:`matter_bridge_app_dfu` section.
 
@@ -516,7 +516,7 @@ Build the target using the following command in the project directory to enable 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dhci_ipc_EXTRA_CONF_FILE="*absoule_path*/overlay-bt_max_connections_net.conf"
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dhci_ipc_EXTRA_CONF_FILE="*absoule_path*/overlay-bt_max_connections_net.conf"
 
 Replace *absolute_path* with the absolute path to the Matter bridge application on your local disk.
 
@@ -594,7 +594,7 @@ For example:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -p -- -DSHIELD=nrf7002ek -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
+      west build -b nrf5340dk/nrf5340/cpuapp -p -- -DSHIELD=nrf7002ek -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
 
 Selecting a build type
 ======================

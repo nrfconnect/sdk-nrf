@@ -1,0 +1,14 @@
+identifier: nrf52833dongle/nrf52833
+name: nRF52833-Dongle-NRF52833
+type: mcu
+arch: arm
+ram: 128
+flash: 512
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+supported:
+  - gpio
+  - watchdog
+  - netif:openthread

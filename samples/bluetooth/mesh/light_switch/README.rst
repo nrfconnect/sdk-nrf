@@ -41,11 +41,11 @@ Low Power node requirements
 
 The configuration overlay :file:`overlay-lpn.conf` is optimized for the following boards:
 
-* nrf52dk_nrf52832
+* nrf52dk/nrf52832
 
-* nrf52840dk_nrf52840
+* nrf52840dk/nrf52840
 
-* nrf52833dk_nrf52833
+* nrf52833dk/nrf52833
 
 However, the same configuration can be applied to other platforms that support the Bluetooth Mesh Light Switch sample, as long as the device supports at least four buttons.
 
@@ -137,9 +137,9 @@ The following table shows a list of the supported boards for the LPN configurati
    ===================  ========================  ====================
    Board                Avg. consumption non-LPN  Avg. consumption LPN
    ===================  ========================  ====================
-   nrf52dk_nrf52832     7.14 mA                    13.69 µA
-   nrf52840dk_nrf52840  6.71 mA                    14.63 µA
-   nrf52833dk_nrf52833  6.10 mA                    14.43 µA
+   nrf52dk/nrf52832     7.14 mA                    13.69 µA
+   nrf52840dk/nrf52840  6.71 mA                    14.63 µA
+   nrf52833dk/nrf52833  6.10 mA                    14.43 µA
    ===================  ========================  ====================
 
 The following applies to the LPN measurements presented in this table:

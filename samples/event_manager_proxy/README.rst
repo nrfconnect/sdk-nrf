@@ -58,7 +58,7 @@ To provide the ICMSG backend configuration, specify the ``-DFILE_SUFFIX=icmsg`` 
 
    .. code-block:: console
 
-      west build -p -b nrf5340dk_nrf5340_cpuapp -- -DFILE_SUFFIX=icmsg
+      west build -p -b nrf5340dk/nrf5340/cpuapp -- -DFILE_SUFFIX=icmsg
 
 Building and running
 ********************
@@ -74,7 +74,7 @@ Complete the following steps to program the sample:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp
+      west build -b nrf5340dk/nrf5340/cpuapp
 
 #. Program both the cores:
 

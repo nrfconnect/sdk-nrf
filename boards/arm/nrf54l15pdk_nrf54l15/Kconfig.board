@@ -1,9 +1,0 @@
-# Copyright (c) 2022 Nordic Semiconductor ASA
-# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
-
-if SOC_NRF54L15_ENGA_CPUAPP
-
-config BOARD_NRF54L15PDK_NRF54L15_CPUAPP_NS
-	bool "nRF54L15 DK nRF54L15 Application MCU non-secure"
-
-endif # SOC_NRF54L15_CPUAPP

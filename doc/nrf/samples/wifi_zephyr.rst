@@ -51,18 +51,18 @@ See :ref:`building` for other building scenarios, :ref:`programming` for program
 
 An overlay file, ``overlay-nrf700x.conf`` is provided to all Zephyr samples, which configures the sample to run with the Wi-Fi driver.
 
-To build Zephyr samples for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
+To build Zephyr samples for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-nrf700x.conf
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-nrf700x.conf
 
-To build for the nRF7002 EK with nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
+To build for the nRF7002 EK with nRF5340 DK, use the ``nrf5340dk/nrf5340/cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf700x.conf
+   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf700x.conf
 
 For additional details about running a sample, refer to the respective sample in Zephyr’s Samples and Demos documentation.

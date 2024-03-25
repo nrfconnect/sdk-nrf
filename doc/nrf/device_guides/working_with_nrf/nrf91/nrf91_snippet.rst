@@ -25,10 +25,10 @@ To change the partition size, the project needs to configure the :kconfig:option
 
 The following build targets have support for this snippet:
 
-* ``nrf9151dk_nrf9151_ns``
-* ``nrf9161dk_nrf9161_ns``
-* ``nrf9160dk_nrf9160_ns``
-* ``nrf9131ek_nrf9131_ns``
+* ``nrf9151dk/nrf9151/ns``
+* ``nrf9161dk/nrf9161/ns``
+* ``nrf9160dk/nrf9160/ns``
+* ``nrf9131ek/nrf9131/ns``
 
 To enable modem traces with the flash backend, use the following command:
 

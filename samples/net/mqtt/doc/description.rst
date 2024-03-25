@@ -127,13 +127,13 @@ For example, when building with the command line, the following commands can be 
 
 .. code-block:: console
 
-   west build -b nrf9160dk_nrf9160_ns -- -DEXTRA_CONF_FILE=overlay-tls-nrf91.conf
+   west build -b nrf9160dk/nrf9160/ns -- -DEXTRA_CONF_FILE=overlay-tls-nrf91.conf
 
 For Thingy:91, with TLS and debug logging enabled for the :ref:`lib_mqtt_helper` library (for more information, see the related :ref:`sample output <mqtt_sample_output_IPv6>`):
 
 .. code-block:: console
 
-   west build -b thingy91_nrf9160_ns -- -DEXTRA_CONF_FILE=overlay-tls-nrf91.conf -DCONFIG_MQTT_HELPER_LOG_LEVEL_DBG=y
+   west build -b thingy91/nrf9160/ns -- -DEXTRA_CONF_FILE=overlay-tls-nrf91.conf -DCONFIG_MQTT_HELPER_LOG_LEVEL_DBG=y
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start

@@ -5,16 +5,16 @@ sample:
 
 common:
   integration_platforms:
-    - nrf52dk_nrf52832
-    - nrf52840dk_nrf52840
-    - nrf5340dk_nrf5340_cpuapp
-    - nrf9160dk_nrf9160
-  platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160
+    - nrf52dk/nrf52832
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf9160dk/nrf9160
+  platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf9160dk/nrf9160
   tags: pmic
 
 tests:
   samples.npm1300_fuel_gauge:
-    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp
     harness: console
     harness_config:
       fixture: nPM1300_setup_eng_b
@@ -26,7 +26,7 @@ tests:
         - "SoC: [0-9.]+, TTE: ([0-9.]+|nan), TTF: ([0-9.]+|nan)"
 
   samples.compile:
-    platform_allow: nrf9160dk_nrf9160
+    platform_allow: nrf9160dk/nrf9160
     harness: shield
     tags: shield
     extra_args: SHIELD=npm1300_ek

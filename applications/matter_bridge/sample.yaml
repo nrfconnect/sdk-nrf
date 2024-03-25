@@ -8,51 +8,51 @@ tests:
       CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
     integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp
   applications.matter_bridge.debug:
     build_only: true
     extra_args: CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
     integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp
   applications.matter_bridge.smp_dfu:
     build_only: true
     extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y
       CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
     integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp
   applications.matter_bridge.release.br_ble:
     build_only: true
     extra_args: CONF_FILE=prj_release.conf CONFIG_BRIDGED_DEVICE_BT=y
       CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
     integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp
   applications.matter_bridge.smp_dfu.br_ble:
     build_only: true
     extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y CONFIG_BRIDGED_DEVICE_BT=y
       CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
     integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp
   applications.matter_bridge.nrf70ek:
     build_only: true
     extra_args: SHIELD=nrf7002ek CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y
       mcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
   applications.matter_bridge.memory_profiling:
     build_only: true
     extra_args: CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
       CONFIG_CHIP_MEMORY_PROFILING=y
     integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp

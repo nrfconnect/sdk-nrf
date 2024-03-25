@@ -30,7 +30,7 @@ function(ExternalNcsVariantProject_Add)
 
   get_cmake_property(sysbuild_cache CACHE_VARIABLES)
   foreach(var_name ${sysbuild_cache})
-    if("${var_name}" MATCHES "^(${}_.*)$")
+    if("${var_name}" MATCHES "^(${VBUILD_APPLICATION}_.*)$")
       string(LENGTH "${VBUILD_APPLICATION}" tmplen)
       string(SUBSTRING "${var_name}" ${tmplen} -1 tmp)
       set(${VBUILD_VARIANT}${tmp} "${${var_name}}" CACHE UNINITIALIZED "" FORCE)

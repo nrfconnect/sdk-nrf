@@ -19,7 +19,7 @@ target_compile_definitions(app PRIVATE
 # nrfxlib_crypto is linked in here because it can't be linked
 # in Zigbee subsys CMakeLists.txt.
 
-if("${BOARD}" STREQUAL "nrf5340dk_nrf5340_cpuapp")
+if(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP)
   target_compile_definitions(app PRIVATE
   CONFIG_ZIGBEE_USE_SOFTWARE_AES=1
   )

@@ -73,14 +73,14 @@ MCUboot recovery mode
 
 .. code-block:: console
 
-   west build --pristine -b nrf9160dk_nrf52840 -- -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_recovery.overlay"
+   west build --pristine -b nrf9160dk/nrf52840 -- -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_recovery.overlay"
 
 MCUmgr server image management
 ==============================
 
 .. code-block:: console
 
-   west build --pristine -b nrf9160dk_nrf52840 -- -DEXTRA_CONF_FILE="overlay-serial.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_mcumgr_srv.overlay"
+   west build --pristine -b nrf9160dk/nrf52840 -- -DEXTRA_CONF_FILE="overlay-serial.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_mcumgr_srv.overlay"
 
 Testing
 =======

@@ -8,21 +8,24 @@
 
 menuconfig PARTITION_MANAGER
 	bool "Partition Manager"
-	default y if ($(BOARD) != "qemu_cortex_m0" && \
-		      $(BOARD) != "qemu_cortex_m3" && \
-		      $(BOARD) != "native_posix" && \
-		      $(BOARD) != "native_posix_64" && \
-		      $(BOARD) != "mps2_an521" && \
-		      $(BOARD) != "qemu_x86" && \
-		      $(BOARD) != "nrf52_bsim" && \
-		      $(BOARD) != "nrf5340bsim_nrf5340_cpuapp" && \
-		      $(BOARD) != "nrf5340bsim_nrf5340_cpunet" && \
-		      $(BOARD) != "nrf54h20dk_nrf54h20_cpuapp")
+	default y if (!BOARD_QEMU_CORTEX_M0 && \
+		      !BOARD_QEMU_CORTEX_M3 && \
+		      !BOARD_NATIVE_POSIX && \
+		      !BOARD_NATIVE_POSIX_NATIVE_64 && \
+		      !BOARD_NATIVE_SIM && \
+		      !BOARD_NATIVE_SIM_NATIVE_64 && \
+		      !BOARD_MPS2 && \
+		      !BOARD_QEMU_X86 && \
+		      !BOARD_QEMU_X86_64 && \
+		      !BOARD_QEMU_X86_TINY && \
+		      !BOARD_NRF52_BSIM && \
+		      !BOARD_NRF5340BSIM && \
+		      !BOARD_NRF54H20DK_NRF54H20_CPUAPP)
 	depends on !EXTERNAL_CONFIGURED_NETCORE
 
 config PM_MCUBOOT_PAD
 	hex "Memory reserved for MCUBOOT_PAD"
-	default 0x800 if $(BOARD) = "nrf54l15pdk_nrf54l15_cpuapp"
+	default 0x800 if BOARD_NRF54L15PDK_NRF54L15_CPUAPP
 	default 0x200
 	depends on BOOTLOADER_MCUBOOT
 	depends on PARTITION_MANAGER

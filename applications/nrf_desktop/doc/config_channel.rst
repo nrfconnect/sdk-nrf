@@ -194,7 +194,7 @@ Module discovery operations
     The Hardware ID is represented as 8 bytes.
   * ``CONFIG_STATUS_GET_BOARD_NAME`` - Obtain the device's board name.
     The board name is part of the Zephyr board name (:kconfig:option:`CONFIG_BOARD`) from a beginning to the first underscore (``_``) character.
-    For example, the ``nrf52840gmouse_nrf52840`` build target would return ``nrf52840gmouse`` as the board name.
+    For example, the ``nrf52840gmouse/nrf52840`` build target would return ``nrf52840gmouse`` as the board name.
 
   .. note::
      You must use :ref:`nrf_desktop_info` for every device that is configurable with the configuration channel.

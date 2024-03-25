@@ -6,30 +6,30 @@ tests:
   # applications on Thingy53.
   applications.matter_weather_station.debug.no_fd:
     build_only: true
-    platform_allow: thingy53_nrf5340_cpuapp
-    platform_exclude: thingy53_nrf5340_cpuapp_ns
+    platform_allow: thingy53/nrf5340/cpuapp
+    platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
-      - thingy53_nrf5340_cpuapp
+      - thingy53/nrf5340/cpuapp
   applications.matter_weather_station.debug:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-factory_data.conf
       PM_STATIC_YML_FILE=${CMAKE_CURRENT_SOURCE_DIR}/pm_static_factory_data.yml
-    platform_allow: thingy53_nrf5340_cpuapp
-    platform_exclude: thingy53_nrf5340_cpuapp_ns
+    platform_allow: thingy53/nrf5340/cpuapp
+    platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
-      - thingy53_nrf5340_cpuapp
+      - thingy53/nrf5340/cpuapp
   applications.matter_weather_station.release:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-factory_data.conf CONF_FILE=prj_release.conf
       PM_STATIC_YML_FILE=${CMAKE_CURRENT_SOURCE_DIR}/pm_static_factory_data.yml
-    platform_allow: thingy53_nrf5340_cpuapp
-    platform_exclude: thingy53_nrf5340_cpuapp_ns
+    platform_allow: thingy53/nrf5340/cpuapp
+    platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
-      - thingy53_nrf5340_cpuapp
+      - thingy53/nrf5340/cpuapp
   applications.matter_weather_station.nrf7002eb:
     build_only: true
     extra_args: SHIELD=nrf7002eb CONF_FILE=prj_release.conf
-    platform_allow: thingy53_nrf5340_cpuapp
-    platform_exclude: thingy53_nrf5340_cpuapp_ns
+    platform_allow: thingy53/nrf5340/cpuapp
+    platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
-      - thingy53_nrf5340_cpuapp
+      - thingy53/nrf5340/cpuapp

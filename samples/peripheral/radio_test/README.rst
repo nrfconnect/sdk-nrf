@@ -204,14 +204,14 @@ For example, when building on the command line, use the following command:
 
 .. code-block:: console
 
-   west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DCONFIG_RADIO_TEST_USB=y
+   west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet -- -DCONFIG_RADIO_TEST_USB=y
 
 You can also build this sample with the remote IPC Service Shell and support for the front-end module.
 You can use the following command:
 
 .. code-block:: console
 
-   west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540ek -DCONFIG_RADIO_TEST_USB=y
+   west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DCONFIG_RADIO_TEST_USB=y
 
 .. note::
    You can also build the sample with the remote IPC Service Shell for the |nRF7002DKnoref| using the ``nrf7002dk_nrf5340_cpunet`` build target in the commands.

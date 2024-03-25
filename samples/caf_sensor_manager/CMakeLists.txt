@@ -14,6 +14,7 @@ target_sources(app PRIVATE src/main.c)
 # Add include directory for board specific CAF def files
 zephyr_include_directories(
   configuration/
-  configuration/${BOARD})
+  configuration/${NORMALIZED_BOARD_TARGET}
+)
 
 add_subdirectory(src/modules)

@@ -186,7 +186,7 @@ To enable full modem FOTA, add the following parameter to your build command:
 Also, specify your development kit version by appending it to the board name.
 For example, if you are using an nRF9160 DK version 1.0.1, use the following board name in your build command:
 
-``nrf9160dk_nrf9160_ns@1.0.1``
+``nrf9160dk@1.0.1/nrf9160/ns``
 
 This sample also supports placement of the MCUboot secondary partition in external flash for the nRF91x1 DKs, and for nRF9160 DK version 0.14.0 and higher.
 To enable this, add the following parameter to your build command:
@@ -204,7 +204,7 @@ Temperature sensing is mostly implemented in the :file:`src/temperature.c` file.
 This includes generation of false temperature readings on your nRF91 Series DK, which does not have a built-in temperature sensor.
 
 Using the built-in temperature sensor of the `Nordic Thingy:91`_ requires a `devicetree overlay <Zephyr Devicetree Overlays_>`_ file, namely the :file:`boards/thingy91_nrf9160_ns.overlay` file, as well as enabling the Kconfig options :kconfig:option:`CONFIG_SENSOR` and :kconfig:option:`CONFIG_BME680`.
-The devicetree overlay file is automatically applied during compilation whenever the ``thingy91_nrf9160_ns`` target is selected.
+The devicetree overlay file is automatically applied during compilation whenever the ``thingy91/nrf9160/ns`` target is selected.
 The required Kconfig options are implicitly enabled by :ref:`CONFIG_TEMP_DATA_USE_SENSOR <CONFIG_TEMP_DATA_USE_SENSOR>`.
 
 .. note::
@@ -243,7 +243,7 @@ To enable this, add the following parameter to your build command:
 Also, specify your development kit version by appending it to the board name.
 For example, if you are using an nRF9160 development kit version 1.0.1, use the following board name in your build command:
 
-``nrf9160dk_nrf9160_ns@1.0.1``
+``nrf9160dk@1.0.1/nrf9160/ns``
 
 .. _nrf_cloud_multi_service_remote_at:
 
@@ -428,9 +428,9 @@ To disable LED indication, enable the :ref:`CONFIG_LED_INDICATION_DISABLED <CONF
 
 For examples of how to set up devicetree entries compatible with the Zephyr ``gpio-leds`` and ``pwm-leds`` drivers, see the following files, depending on the DK you are using:
 
-* :file:`zephyr/boards/arm/nrf9161dk_nrf9151/nrf9151dk_nrf9151_common.dts`
-* :file:`zephyr/boards/arm/nrf9161dk_nrf9161/nrf9161dk_nrf9161_common.dts`
-* :file:`zephyr/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_common.dts`
+* :file:`zephyr/boards/nordic/nrf9161dk/nrf9151dk_nrf9151_common.dts`
+* :file:`zephyr/boards/nordic/nrf9161dk/nrf9161dk_nrf9161_common.dts`
+* :file:`zephyr/boards/nordic/nrf9160dk/nrf9160dk_nrf9160_common.dts`
 * :file:`zephyr/boards/arm/thingy91_nrf9160/thingy91_nrf9160_common.dts`
 
 Search for nodes with ``compatible = "gpio-leds";`` and ``compatible = "pwm-leds";`` respectively.
@@ -754,7 +754,7 @@ You can enable support for this service by building the sample as follows:
 
       .. code-block:: console
 
-         west build -p -b nrf9161dk_nrf9161_ns -- -DEXTRA_CONF_FILE="overlay-http_nrf_provisioning.conf"
+         west build -p -b nrf9161dk/nrf9161/ns -- -DEXTRA_CONF_FILE="overlay-http_nrf_provisioning.conf"
 
       The :file:`overlay-http_nrf_provisioning.conf` overlay enables the :ref:`lib_nrf_provisioning` library, and its shell interface to use HTTP for communication.
       A side-effect of this is that the sample will use the :ref:`lib_at_shell` library instead of the :ref:`lib_at_host` library, so AT commands must be issued using the ``at`` shell command.
@@ -765,7 +765,7 @@ You can enable support for this service by building the sample as follows:
 
       .. code-block:: console
 
-         west build -p -b nrf9161dk_nrf9161_ns -- -DEXTRA_CONF_FILE="overlay-coap_nrf_provisioning.conf;overlay_coap.conf"
+         west build -p -b nrf9161dk/nrf9161/ns -- -DEXTRA_CONF_FILE="overlay-coap_nrf_provisioning.conf;overlay_coap.conf"
 
       The :file:`overlay-coap_nrf_provisioning.conf` overlay enables the :ref:`lib_nrf_provisioning` library to use CoAP for communication.
       It does not enable the shell.
@@ -819,7 +819,7 @@ See the :file:`src/prj.conf` configuration file and the :file:`overlay_nrf7002ek
 
 This overlay also enables the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credential installation.
 
-If you are certain you understand the risks, you can configure your build to use Wi-Fi connectivity on the nRF5340 DK with the nRF7002 EK shield by using the ``--board nrf5340dk_nrf5340_cpuapp_ns`` target and the ``-DSHIELD=nrf7002ek`` and ``-DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf`` options.
+If you are certain you understand the risks, you can configure your build to use Wi-Fi connectivity on the nRF5340 DK with the nRF7002 EK shield by using the ``--board nrf5340dk/nrf5340/cpuapp/ns`` target and the ``-DSHIELD=nrf7002ek`` and ``-DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf`` options.
 
 You must also configure a (globally unique) device ID at build time by enabling the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and setting :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` to the device ID.
 
@@ -831,13 +831,13 @@ For example, for a device with the device ID ``698d4c11-0ccc-4f04-89cd-6882724e3
 
       .. code-block:: console
 
-        west build --board nrf5340dk_nrf5340_cpuapp_ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
+        west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
 
    .. group-tab:: PowerShell
 
       .. code-block:: console
 
-         west build --board nrf5340dk_nrf5340_cpuapp_ns -p always -- -DSHIELD=nrf7002ek "-DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf" -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+         west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek "-DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf" -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
 

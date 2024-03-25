@@ -29,7 +29,7 @@ The TF-M implementation in |NCS| is currently demonstrated in the following samp
 - All :ref:`cryptography samples <crypto_samples>` in this SDK
 - A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
 - The :ref:`https_client` sample for nRF91 Series devices in this SDK
-- The :ref:`openthread_samples` that support the ``nrf5340dk_nrf5340_cpuapp_ns`` build target in this SDK
+- The :ref:`openthread_samples` that support the ``nrf5340dk/nrf5340/cpuapp/ns`` build target in this SDK
 
 Building
 ********

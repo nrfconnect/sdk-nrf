@@ -212,7 +212,7 @@ See the *Image Slots* section in the :doc:`MCUboot documentation <mcuboot:design
 
 The |NCS| variant of MCUboot uses the :ref:`partition_manager` to configure the flash memory partitions for these image slots.
 In the default configuration, defined in :file:`bootloader/mcuboot/boot/zephyr/pm.yml`, the partition manager dynamically sets up the partitions as required for MCUboot.
-For example, the partition layout for :file:`zephyr/samples/hello_world` using MCUboot on the ``nrf52840dk_nrf52840`` board would look like the following:
+For example, the partition layout for :file:`zephyr/samples/hello_world` using MCUboot on the ``nrf52840dk`` board would look like the following:
 
 .. code-block:: console
 

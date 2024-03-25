@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <nrf9160dk_nrf52840_reset_on_if5.dtsi>
+#include <nrf9160/nrf9160dk_nrf52840_reset_on_if5.dtsi>
 
 &gpiote {
 	interrupts = <13 NRF_DEFAULT_IRQ_PRIORITY>;

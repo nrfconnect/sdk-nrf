@@ -99,7 +99,7 @@ This application implements full modem FOTA for the nRF91x1 DKs and for the nRF9
 To enable full modem FOTA, add the ``-DEXTRA_CONF_FILE=overlay-full_modem_fota.conf`` parameter to your build command.
 
 Also, specify your development kit version by appending it to the board name.
-For example, if your development kit version is 1.0.1, use the board name ``nrf9160dk_nrf9160_ns@1_0_1`` in your build command.
+For example, if your development kit version is 1.0.1, use the board name ``nrf9160dk@1.0.1/nrf9160/ns`` in your build command.
 
 Connection awareness
 ====================

@@ -87,13 +87,13 @@ To program the nRF device with the RCP application, complete the following steps
 
          .. code-block:: console
 
-            west build -p always -b nrf52840dongle_nrf52840 nrf/samples/openthread/coprocessor/
+            west build -p always -b nrf52840dongle/nrf52840 nrf/samples/openthread/coprocessor/
 
       .. tab:: nRF52840 Development Kit (UART transport)
 
          .. code-block:: console
 
-            west build -p always -b nrf52840dk_nrf52840 nrf/samples/openthread/coprocessor/
+            west build -p always -b nrf52840dk/nrf52840 nrf/samples/openthread/coprocessor/
 
 #. Depending on the hardware platform, complete the following steps:
 

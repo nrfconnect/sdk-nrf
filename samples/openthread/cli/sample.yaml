@@ -7,101 +7,101 @@ tests:
     build_only: true
     tags: ci_build
     platform_allow: >
-      nrf52840dk_nrf52840
-      nrf52840dongle_nrf52840
-      nrf21540dk_nrf52840
-      nrf5340dk_nrf5340_cpuapp
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf54l15pdk_nrf54l15_cpuapp
-      nrf54l15pdk_nrf54l15_cpuapp@0.3.0
+      nrf52840dk/nrf52840
+      nrf52840dongle/nrf52840
+      nrf21540dk/nrf52840
+      nrf5340dk/nrf5340/cpuapp
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf54l15pdk/nrf54l15/cpuapp
+      nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     extra_args: >
       SNIPPET="ci;logging;multiprotocol;tcp"
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf52840dongle_nrf52840
-      - nrf21540dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf54l15pdk_nrf54l15_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
+      - nrf52840dk/nrf52840
+      - nrf52840dongle/nrf52840
+      - nrf21540dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
 
   sample.openthread.cli.singleprotocol:
     build_only: true
     tags: ci_build
     platform_allow: >
-      nrf52840dk_nrf52840
-      nrf21540dk_nrf52840
-      nrf5340dk_nrf5340_cpuapp
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf54l15pdk_nrf54l15_cpuapp
-      nrf54l15pdk_nrf54l15_cpuapp@0.3.0
+      nrf52840dk/nrf52840
+      nrf21540dk/nrf52840
+      nrf5340dk/nrf5340/cpuapp
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf54l15pdk/nrf54l15/cpuapp
+      nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     extra_args: >
       SNIPPET="ci;logging;tcp"
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf21540dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf54l15pdk_nrf54l15_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
+      - nrf52840dk/nrf52840
+      - nrf21540dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
 
   sample.openthread.cli.usb:
     build_only: true
     tags: ci_build
     platform_allow: >
-      nrf52840dk_nrf52840
-      nrf21540dk_nrf52840
-      nrf5340dk_nrf5340_cpuapp
-      nrf5340dk_nrf5340_cpuapp_ns
+      nrf52840dk/nrf52840
+      nrf21540dk/nrf52840
+      nrf5340dk/nrf5340/cpuapp
+      nrf5340dk/nrf5340/cpuapp/ns
     extra_args: >
       SNIPPET="ci;logging;multiprotocol;tcp;usb"
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf21540dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf5340dk_nrf5340_cpuapp_ns
+      - nrf52840dk/nrf52840
+      - nrf21540dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
 
   sample.openthread.cli.low_power:
     build_only: true
     tags: ci_build
     platform_allow: >
-      nrf52840dk_nrf52840
-      nrf5340dk_nrf5340_cpuapp
+      nrf52840dk/nrf52840
+      nrf5340dk/nrf5340/cpuapp
     extra_args: >
       SNIPPET="ci;low_power"
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
 
   # Build integration regression protection.
   sample.nrf_security.openthread.integration:
     build_only: true
     platform_allow: >
-      nrf52840dk_nrf52840
-      nrf5340dk_nrf5340_cpuapp_ns
+      nrf52840dk/nrf52840
+      nrf5340dk/nrf5340/cpuapp/ns
     extra_args: >
       SNIPPET=ci
       CONFIG_NRF_SECURITY=y
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf52840dk_nrf52840
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf52840dk/nrf52840
 
   sample.openthread.cli.tcat:
     build_only: true
     tags: ci_build
     platform_allow: >
-      nrf52840dk_nrf52840
-      nrf21540dk_nrf52840
-      nrf5340dk_nrf5340_cpuapp
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf54l15pdk_nrf54l15_cpuapp
-      nrf54l15pdk_nrf54l15_cpuapp@0.3.0
+      nrf52840dk/nrf52840
+      nrf21540dk/nrf52840
+      nrf5340dk/nrf5340/cpuapp
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf54l15pdk/nrf54l15/cpuapp
+      nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     extra_args: >
       SNIPPET="ci;tcat;tcp"
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf21540dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf54l15pdk_nrf54l15_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
+      - nrf52840dk/nrf52840
+      - nrf21540dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp

@@ -26,7 +26,7 @@ Enable the module with the :ref:`CONFIG_DESKTOP_WHEEL_ENABLE <config_desktop_app
 
 For detecting rotation, the wheel module uses Zephyr's QDEC driver.
 You can enable the module only when QDEC is configured in DTS and the Zephyr's QDEC driver is enabled with the :kconfig:option:`CONFIG_QDEC_NRFX` Kconfig option.
-If your board supports multiple QDEC instances (for example ``nrf54l15pdk_nrf54l15_cpuapp``), you also need to specify the used QDEC instance with the ``nrfdesktop-wheel-qdec`` DT alias.
+If your board supports multiple QDEC instances (for example ``nrf54l15pdk/nrf54l15/cpuapp``), you also need to specify the used QDEC instance with the ``nrfdesktop-wheel-qdec`` DT alias.
 If your board supports only one QDEC instance, the module relies on the ``qdec`` DT label and you do not need to define the DT alias.
 
 The QDEC DTS configuration specifies how many steps are done during one full angle.

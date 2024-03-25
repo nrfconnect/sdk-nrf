@@ -135,14 +135,14 @@ With west
 
 .. code-block:: console
 
-    west build -p -b nrf5340dk_nrf5340_cpuapp -S nrf70-fw-patch-ext-flash samples/wifi/shell -- -DSHIELD=nrf7002ek
+    west build -p -b nrf5340dk/nrf5340/cpuapp -S nrf70-fw-patch-ext-flash samples/wifi/shell -- -DSHIELD=nrf7002ek
 
 With CMake
 ^^^^^^^^^^
 
 .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf5340dk_nrf5340_cpuapp -DSHIELD=nrf7002ek -DSNIPPET=nrf70-fw-patch-ext-flash samples/wifi/shell
+    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -DSHIELD=nrf7002ek -DSNIPPET=nrf70-fw-patch-ext-flash samples/wifi/shell
     ninja -C build
 
 For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` option enabled, run the following commands:
@@ -152,14 +152,14 @@ With west
 
 .. code-block:: console
 
-    west build -p -b nrf5340dk_nrf5340_cpuapp samples/wifi/shell -- -DSHIELD=nrf7002ek -DCONFIG_PARTITION_MANAGER_ENABLED=y -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y
+    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -DSHIELD=nrf7002ek -DCONFIG_PARTITION_MANAGER_ENABLED=y -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y
 
 With CMake
 ^^^^^^^^^^
 
 .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf5340dk_nrf5340_cpuapp -DSHIELD=nrf7002ek -DCONFIG_PARTITION_MANAGER_ENABLED=y -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y samples/wifi/shell
+    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -DSHIELD=nrf7002ek -DCONFIG_PARTITION_MANAGER_ENABLED=y -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y samples/wifi/shell
     ninja -C build
 
 Programming

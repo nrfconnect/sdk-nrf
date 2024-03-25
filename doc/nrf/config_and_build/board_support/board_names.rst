@@ -19,8 +19,8 @@ The build target column uses several entries for multi-core hardware platforms:
 
 * For usage of Cortex-M Security Extensions (CMSE):
 
-  * Entries without ``*_ns`` (``cpuapp``) - When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
-  * Entries with ``*_ns`` (for example, ``cpuapp_ns``) - When you choose this target, you build the application with CMSE.
+  * Entries without ``*/ns`` (``cpuapp``) - When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
+  * Entries with ``*/ns`` (for example, ``cpuapp/ns``) - When you choose this target, you build the application with CMSE.
     The application core firmware is placed in Non-Secure Processing Environment (NSPE) and uses Secure Processing Environment (SPE) for security features.
     By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
 
@@ -31,7 +31,7 @@ Read more about separation of processing environments on the :ref:`app_boards_sp
 Boards included in sdk-zephyr
 *****************************
 
-The following boards are defined in the :file:`zephyr/boards/arm/` folder.
+The following boards are defined in the :file:`zephyr/boards/nordic/` folder.
 Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 
 .. note::
@@ -42,114 +42,114 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
 | Hardware platform | PCA number | Board name                                                        | Build target                          |
 +===================+============+===================================================================+=======================================+
-| nRF9161 DK        | PCA10153   | :ref:`nrf9161dk_nrf9161 <zephyr:nrf9161dk_nrf9161>`               | ``nrf9161dk_nrf9161``                 |
+| nRF9161 DK        | PCA10153   | :ref:`nrf9161dk <zephyr:nrf9161dk_nrf9161>`                       | ``nrf9161dk/nrf9161``                 |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf9161dk_nrf9161_ns``              |
+|                   |            |                                                                   | ``nrf9161dk/nrf9161/ns``              |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF9160 DK        | PCA10090   | :ref:`nrf9160dk_nrf9160 <zephyr:nrf9160dk_nrf9160>`               | ``nrf9160dk_nrf9160``                 |
+| nRF9160 DK        | PCA10090   | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>`                       | ``nrf9160dk/nrf9160``                 |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf9160dk_nrf9160_ns``              |
+|                   |            |                                                                   | ``nrf9160dk/nrf9160/ns``              |
 |                   |            +-------------------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`nrf9160dk_nrf52840 <zephyr:nrf9160dk_nrf52840>`             | ``nrf9160dk_nrf52840``                |
+|                   |            | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf52840>`                      | ``nrf9160dk/nrf52840``                |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF9151 DK        | PCA10171   | :ref:`nrf9151dk_nrf9151 <zephyr:nrf9151dk_nrf9151>`               | ``nrf9151dk_nrf9151``                 |
+| nRF9151 DK        | PCA10171   | :ref:`nrf9151dk <zephyr:nrf9151dk_nrf9151>`                       | ``nrf9151dk/nrf9151``                 |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf9151dk_nrf9151_ns``              |
+|                   |            |                                                                   | ``nrf9151dk/nrf9151/ns``              |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF9131 EK        | PCA10165   | :ref:`nrf9131ek_nrf9131 <zephyr:nrf9131ek_nrf9131>`               | ``nrf9131ek_nrf9131``                 |
+| nRF9131 EK        | PCA10165   | :ref:`nrf9131ek <zephyr:nrf9131ek_nrf9131>`                       | ``nrf9131ek/nrf9131``                 |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf9131ek_nrf9131_ns``              |
+|                   |            |                                                                   | ``nrf9131ek/nrf9131/ns``              |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF54H20 DK       | PCA10175   | :ref:`nrf54h20dk_nrf54h20 <zephyr:nrf54h20dk_nrf54h20>`           | ``nrf54h20dk_nrf54h20_cpuapp``        |
+| nRF54H20 DK       | PCA10175   | :ref:`nrf54h20dk <zephyr:nrf54h20dk_nrf54h20>`                    | ``nrf54h20dk/nrf54h20/cpuapp``        |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf54h20dk_nrf54h20_cpurad``        |
+|                   |            |                                                                   | ``nrf54h20dk/nrf54h20/cpurad``        |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf54h20dk_nrf54h20_cpuppr``        |
+|                   |            |                                                                   | ``nrf54h20dk/nrf54h20/cpuppr``        |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF54L15 PDK      | PCA10156   | :ref:`nrf54l15pdk_nrf54l15 <zephyr:nrf54l15pdk_nrf54l15>`         | ``nrf54l15pdk_nrf54l15_cpuapp``       |
+| nRF54L15 PDK      | PCA10156   | :ref:`nrf54l15pdk <zephyr:nrf54l15pdk_nrf54l15>`                  | ``nrf54l15pdk/nrf54l15/cpuapp``       |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf54l15pdk_nrf54l15_cpuapp@0.3.0`` |
+|                   |            |                                                                   | ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf54l15pdk_nrf54l15_cpuapp_ns``    |
+|                   |            |                                                                   | ``nrf54l15pdk/nrf54l15/cpuapp/ns``    |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF5340 DK        | PCA10095   | :ref:`nrf5340dk_nrf5340 <zephyr:nrf5340dk_nrf5340>`               | ``nrf5340dk_nrf5340_cpunet``          |
+| nRF5340 DK        | PCA10095   | :ref:`nrf5340dk <zephyr:nrf5340dk_nrf5340>`                       | ``nrf5340dk/nrf5340/cpunet``          |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf5340dk_nrf5340_cpuapp``          |
+|                   |            |                                                                   | ``nrf5340dk/nrf5340/cpuapp``          |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf5340dk_nrf5340_cpuapp_ns``       |
+|                   |            |                                                                   | ``nrf5340dk/nrf5340/cpuapp/ns``       |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF5340 Audio     | PCA10121   | :ref:`nrf5340_audio_dk_nrf5340 <zephyr:nrf5340_audio_dk_nrf5340>` |  ``nrf5340_audio_dk_nrf5340_cpuapp``  |
+| nRF5340 Audio     | PCA10121   | :ref:`nrf5340_audio_dk <zephyr:nrf5340_audio_dk_nrf5340>`         |  ``nrf5340_audio_dk/nrf5340/cpuapp``  |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| Thingy:53         | PCA20053   | :ref:`thingy53_nrf5340 <zephyr:thingy53_nrf5340>`                 | ``thingy53_nrf5340_cpunet``           |
+| Thingy:53         | PCA20053   | :ref:`thingy53 <zephyr:thingy53_nrf5340>`                         | ``thingy53/nrf5340/cpunet``           |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``thingy53_nrf5340_cpuapp``           |
+|                   |            |                                                                   | ``thingy53/nrf5340/cpuapp``           |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``thingy53_nrf5340_cpuapp_ns``        |
+|                   |            |                                                                   | ``thingy53/nrf5340/cpuapp/ns``        |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF52840 DK       | PCA10056   | :ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`           | ``nrf52840dk_nrf52840``               |
+| nRF52840 DK       | PCA10056   | :ref:`nrf52840dk <zephyr:nrf52840dk_nrf52840>`                    | ``nrf52840dk/nrf52840``               |
 |                   |            +-------------------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`nrf52840dk_nrf52811 <zephyr:nrf52840dk_nrf52811>`           | ``nrf52840dk_nrf52811``               |
+|                   |            | :ref:`nrf52840dk <zephyr:nrf52840dk_nrf52811>`                    | ``nrf52840dk/nrf52811``               |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF52840 Dongle   | PCA10059   | :ref:`nrf52840dongle_nrf52840 <zephyr:nrf52840dongle_nrf52840>`   | ``nrf52840dongle_nrf52840``           |
+| nRF52840 Dongle   | PCA10059   | :ref:`nrf52840dongle <zephyr:nrf52840dongle_nrf52840>`            | ``nrf52840dongle/nrf52840``           |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF52833 DK       | PCA10100   | :ref:`nrf52833dk_nrf52833 <zephyr:nrf52833dk_nrf52833>`           | ``nrf52833dk_nrf52833``               |
+| nRF52833 DK       | PCA10100   | :ref:`nrf52833dk <zephyr:nrf52833dk_nrf52833>`                    | ``nrf52833dk/nrf52833``               |
 |                   |            +-------------------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`nrf52833dk_nrf52820 <zephyr:nrf52833dk_nrf52820>`           | ``nrf52833dk_nrf52820``               |
+|                   |            | :ref:`nrf52833dk <zephyr:nrf52833dk_nrf52820>`                    | ``nrf52833dk/nrf52820``               |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF52 DK          | PCA10040   | :ref:`nrf52dk_nrf52832 <zephyr:nrf52dk_nrf52832>`                 | ``nrf52dk_nrf52832``                  |
+| nRF52 DK          | PCA10040   | :ref:`nrf52dk <zephyr:nrf52dk_nrf52832>`                          | ``nrf52dk/nrf52832``                  |
 | (nRF52832)        |            +-------------------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`nrf52dk_nrf52810 <zephyr:nrf52dk_nrf52810>`                 | ``nrf52dk_nrf52810``                  |
+|                   |            | :ref:`nrf52dk <zephyr:nrf52dk_nrf52810>`                          | ``nrf52dk/nrf52810``                  |
 |                   |            +-------------------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`nrf52dk_nrf52805 <zephyr:nrf52dk_nrf52805>`                 | ``nrf52dk_nrf52805``                  |
+|                   |            | :ref:`nrf52dk <zephyr:nrf52dk_nrf52805>`                          | ``nrf52dk/nrf52805``                  |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| nRF21540 DK       | PCA10112   | :ref:`nrf21540dk_nrf52840 <zephyr:nrf21540dk_nrf52840>`           | ``nrf21540dk_nrf52840``               |
+| nRF21540 DK       | PCA10112   | :ref:`nrf21540dk <zephyr:nrf21540dk_nrf52840>`                    | ``nrf21540dk/nrf52840``               |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
 
 .. note::
    In |NCS| releases before v1.6.1:
 
-   * The build target ``nrf9160dk_nrf9160_ns`` was named ``nrf9160dk_nrf9160ns``.
-   * The build target ``nrf5340dk_nrf5340_cpuapp_ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
+   * The build target ``nrf9160dk/nrf9160/ns`` was named ``nrf9160dk_nrf9160ns``.
+   * The build target ``nrf5340dk/nrf5340/cpuapp/ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
 
 .. _app_boards_names_nrf:
 
 Boards included in sdk-nrf
 **************************
 
-The following boards are defined in the :file:`nrf/boards/arm/` folder.
+The following boards are defined in the :file:`nrf/boards/nordic/` folder.
 
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
 | Hardware platform | PCA number | Board name                                               | Build target                          |
 +===================+============+==========================================================+=======================================+
-| nRF Desktop       | PCA20041   | :ref:`nrf52840gmouse_nrf52840 <nrf_desktop>`             | ``nrf52840gmouse_nrf52840``           |
+| nRF Desktop       | PCA20041   | :ref:`nrf52840gmouse <nrf_desktop>`                      | ``nrf52840gmouse/nrf52840``           |
 | Gaming Mouse      |            |                                                          |                                       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA20044   | :ref:`nrf52dmouse_nrf52832 <nrf_desktop>`                | ``nrf52dmouse_nrf52832``              |
+| nRF Desktop       | PCA20044   | :ref:`nrf52dmouse <nrf_desktop>`                         | ``nrf52dmouse/nrf52832``              |
 | Mouse             |            |                                                          |                                       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA20045   | :ref:`nrf52810dmouse_nrf52810 <nrf_desktop>`             | ``nrf52810dmouse_nrf52810``           |
+| nRF Desktop       | PCA20045   | :ref:`nrf52810dmouse <nrf_desktop>`                      | ``nrf52810dmouse/nrf52810``           |
 | Mouse             |            |                                                          |                                       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA20037   | :ref:`nrf52kbd_nrf52832 <nrf_desktop>`                   | ``nrf52kbd_nrf52832``                 |
+| nRF Desktop       | PCA20037   | :ref:`nrf52kbd <nrf_desktop>`                            | ``nrf52kbd/nrf52832``                 |
 | Keyboard          |            |                                                          |                                       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA10111   | :ref:`nrf52833dongle_nrf52833 <nrf_desktop>`             | ``nrf52833dongle_nrf52833``           |
+| nRF Desktop       | PCA10111   | :ref:`nrf52833dongle <nrf_desktop>`                      | ``nrf52833dongle/nrf52833``           |
 | Dongle            |            |                                                          |                                       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA10114   | :ref:`nrf52820dongle_nrf52820 <nrf_desktop>`             | ``nrf52820dongle_nrf52820``           |
+| nRF Desktop       | PCA10114   | :ref:`nrf52820dongle <nrf_desktop>`                      | ``nrf52820dongle/nrf52820``           |
 | Dongle            |            |                                                          |                                       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| Thingy:91         | PCA20035   | :ref:`thingy91_nrf9160 <ug_thingy91>`                    | ``thingy91_nrf9160``                  |
+| Thingy:91         | PCA20035   | :ref:`thingy91 <ug_thingy91>`                            | ``thingy91/nrf9160``                  |
 |                   |            |                                                          |                                       |
-|                   |            |                                                          | ``thingy91_nrf9160_ns``               |
+|                   |            |                                                          | ``thingy91/nrf9160/ns``               |
 |                   |            +----------------------------------------------------------+---------------------------------------+
-|                   |            | :ref:`thingy91_nrf52840 <ug_thingy91>`                   | ``thingy91_nrf52840``                 |
+|                   |            | :ref:`thingy91 <ug_thingy91>`                            | ``thingy91/nrf52840``                 |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF7002 DK        | PCA10143   | :ref:`nrf7002dk_nrf5340 <nrf7002dk_nrf5340>`             | ``nrf7002dk_nrf5340_cpunet``          |
+| nRF7002 DK        | PCA10143   | :ref:`nrf7002dk <nrf7002dk_nrf5340>`                     | ``nrf7002dk/nrf5340/cpunet``          |
 |                   |            |                                                          |                                       |
-|                   |            |                                                          | ``nrf7002dk_nrf5340_cpuapp``          |
+|                   |            |                                                          | ``nrf7002dk/nrf5340/cpuapp``          |
 |                   |            |                                                          |                                       |
-|                   |            |                                                          | ``nrf7002dk_nrf5340_cpuapp_ns``       |
+|                   |            |                                                          | ``nrf7002dk/nrf5340/cpuapp/ns``       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
 
 .. _shield_names_nrf:
