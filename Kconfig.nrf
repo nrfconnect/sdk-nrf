@@ -118,5 +118,6 @@ rsource "lib/Kconfig"
 rsource "drivers/Kconfig"
 rsource "ext/Kconfig"
 rsource "tests/Kconfig"
+rsource "suit_provisioning/Kconfig"
 
 endmenu

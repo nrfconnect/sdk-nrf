@@ -271,6 +271,7 @@ Kconfig*                                  @tejlmand
 /subsys/uart_async_adapter/               @rakons
 /subsys/net_core_monitor/                 @maje-emb
 /subsys/zigbee/                           @milewr
+/suit_provisioning/                       @tomchy
 /tests/                                   @PerMac @katgiadla
 /tests/bluetooth/tester/                  @carlescufi @ludvigsj
 /tests/bluetooth/iso/                     @koffes @alexsven @erikrobstad @rick1082 @gWacey @Frodevan
