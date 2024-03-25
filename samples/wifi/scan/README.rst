@@ -55,26 +55,26 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
+To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
 The following are examples of the CLI commands:
 
 * Build to fetch only Device scan results
 
   .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp
+   west build -b nrf7002dk/nrf5340/cpuapp
 
 * Build to fetch only Raw scan results
 
   .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS_ONLY=y
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS_ONLY=y
 
 * Build to fetch both Raw and Device scan results
 
   .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y
 
 Testing
 =======

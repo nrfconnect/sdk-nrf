@@ -4,33 +4,33 @@ sample:
 tests:
   applications.ipc_radio.hci:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpunet thingy53_nrf5340_cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
     tags: bluetooth ci_build
     integration_platforms:
-      - nrf5340dk_nrf5340_cpunet
-      - thingy53_nrf5340_cpunet
+      - nrf5340dk/nrf5340/cpunet
+      - thingy53/nrf5340/cpunet
     extra_args: EXTRA_CONF_FILE=overlay-bt_hci_ipc.conf
   applications.ipc_radio.rpc:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpunet thingy53_nrf5340_cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
     tags: bluetooth ci_build
     integration_platforms:
-      - nrf5340dk_nrf5340_cpunet
-      - thingy53_nrf5340_cpunet
+      - nrf5340dk/nrf5340/cpunet
+      - thingy53/nrf5340/cpunet
     extra_args: EXTRA_CONF_FILE=overlay-bt_rpc.conf
   applications.ipc_radio.802154:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpunet thingy53_nrf5340_cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
     tags: ci_build
     integration_platforms:
-      - nrf5340dk_nrf5340_cpunet
-      - thingy53_nrf5340_cpunet
+      - nrf5340dk/nrf5340/cpunet
+      - thingy53/nrf5340/cpunet
     extra_args: EXTRA_CONF_FILE=overlay-802154.conf
   applications.ipc_radio.hci802154:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpunet thingy53_nrf5340_cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
     tags: bluetooth ci_build
     integration_platforms:
-      - nrf5340dk_nrf5340_cpunet
-      - thingy53_nrf5340_cpunet
+      - nrf5340dk/nrf5340/cpunet
+      - thingy53/nrf5340/cpunet
     extra_args: EXTRA_CONF_FILE="overlay-bt_hci_ipc.conf;overlay-802154.conf"

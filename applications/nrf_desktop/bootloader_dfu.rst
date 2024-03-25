@@ -153,14 +153,14 @@ The pin is configured with the ``mcuboot-button0`` alias.
 The ``mcuboot-led0`` alias can be used to define the LED activated in the serial recovery mode.
 You must select the ``CONFIG_MCUBOOT_INDICATION_LED`` Kconfig option to enable the LED.
 By default, both the GPIO pin and the LED are defined in the board's DTS file.
-See :file:`boards/arm/nrf52833dongle_nrf52833/nrf52833dongle_nrf52833.dts` for an example of board's DTS file used by the nRF Desktop application.
+See :file:`boards/nordic/nrf52833dongle/nrf52833dongle_nrf52833.dts` for an example of board's DTS file used by the nRF Desktop application.
 
 For an example of bootloader Kconfig configuration file defined by the application, see the MCUboot bootloader ``debug`` configuration defined for nRF52833 dongle (:file:`applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/child_image/mcuboot/prj.conf`).
 
 .. note::
   The nRF Desktop devices use either the serial recovery DFU with a single application slot or the background DFU.
   Both mentioned firmware upgrade methods are not used simultaneously by any of the configurations.
-  For example, the ``nrf52840dk_nrf52840`` board in ``prj_mcuboot_smp.conf`` uses only the background DFU and does not enable the serial recovery feature.
+  For example, the ``nrf52840dk/nrf52840`` board in ``prj_mcuboot_smp.conf`` uses only the background DFU and does not enable the serial recovery feature.
 
 .. _nrf_desktop_bootloader_background_dfu:
 
@@ -291,6 +291,6 @@ For example, the following line starts the upload of the new image to the device
 
 .. code-block:: console
 
-  mcumgr -t 60 --conntype serial --connstring=/dev/ttyACM0 image upload build-nrf52833dongle_nrf52833/zephyr/app_update.bin
+  mcumgr -t 60 --conntype serial --connstring=/dev/ttyACM0 image upload build-nrf52833dongle/zephyr/app_update.bin
 
 The command assumes that ``/dev/ttyACM0`` serial device is used by the MCUboot bootloader for the serial recovery.

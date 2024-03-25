@@ -37,7 +37,7 @@ Build and flash the provisioning image sample to provision the device with the P
 
 .. code-block:: console
 
-    west build -b nrf5340dk_nrf5340_cpuapp nrf/samples/tfm/provisioning_image -d build_provisioning_image
+    west build -b nrf5340dk/nrf5340/cpuapp nrf/samples/tfm/provisioning_image -d build_provisioning_image
     west flash --erase -d build_provisioning_image
 
 Build and flash the TF-M PSA template sample.
@@ -45,7 +45,7 @@ Do not flash with ``--erase`` as this will erase the PSA platform security param
 
 .. code-block:: console
 
-    west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_psa_template
+    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template
     west flash
 
 Testing
@@ -160,7 +160,7 @@ To upload a new application image, build an application with an updated image ve
 
 .. code-block:: console
 
-    west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_psa_template -d build_update \
+    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
     -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\"1.2.3\"
 
 Then upload the new application image to the device.
@@ -194,7 +194,7 @@ The bootloader is placed in slot 0 by default, so enable building of the slot 1 
 
 .. code-block:: console
 
-    west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_psa_template \
+    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template \
     -DCONFIG_BUILD_S1_VARIANT=y \
     -Dmcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
 

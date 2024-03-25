@@ -130,14 +130,14 @@ The sample can be built for the following configurations:
 * Bluetooth LE throughput only
 * Concurrent Wi-Fi and Bluetooth LE throughput (with coexistence enabled and disabled mode)
 
-To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
+To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
 The following are examples of the CLI commands:
 
 * Build with coexistence disabled:
 
   .. code-block:: console
 
-     west build -p -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_MPSL_CX=n -Dhci_ipc_CONFIG_MPSL_CX=n
+     west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=n -Dhci_ipc_CONFIG_MPSL_CX=n
 
 Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or concurrent Wi-Fi and Bluetooth LE throughput with coexistence disabled tests.
 
@@ -145,7 +145,7 @@ Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or con
 
   .. code-block:: console
 
-     west build -p -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_MPSL_CX=y -Dhci_ipc_CONFIG_MPSL_CX=y
+     west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=y -Dhci_ipc_CONFIG_MPSL_CX=y
 
 Use this command for concurrent Wi-Fi and Bluetooth LE throughput with coexistence enabled test.
 
@@ -155,13 +155,13 @@ Change the build target as given below for the nRF7001 DK, nRF7002 EK and nRF700
 
   .. code-block:: console
 
-     nrf7002dk_nrf7001_nrf5340_cpuapp
+     nrf7002dk/nrf5340/cpuapp/nrf7001
 
 * Build target for nRF7002 EK and nRF7001 EK:
 
   .. code-block:: console
 
-     nrf5340dk_nrf5340_cpuapp
+     nrf5340dk/nrf5340/cpuapp
 
 Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
@@ -185,7 +185,7 @@ Build for the nRF5340 DK:
 
 .. code-block:: console
 
-   west build -p -b nrf5340dk_nrf5340_cpuapp
+   west build -p -b nrf5340dk/nrf5340/cpuapp
 
 The generated HEX file to be used is :file:`throughput/build/zephyr/merged_domains.hex`.
 

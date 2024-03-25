@@ -43,9 +43,9 @@ IPv6 network support
 
 The development kits for this sample offer the following IPv6 network support for Matter:
 
-* Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, and ``nrf21540dk_nrf52840``.
-* Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached (2.4 GHz and 5 GHz), for ``nrf7002dk_nrf5340_cpuapp`` (2.4 GHz and 5 GHz), or for ``nrf7002dk_nrf7001_nrf5340_cpuapp`` (2.4 GHz only).
-* :ref:`Switching between Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached, using the ``thread_wifi_switched`` build type.
+* Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, and ``nrf21540dk/nrf52840``.
+* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached (2.4 GHz and 5 GHz), for ``nrf7002dk/nrf5340/cpuapp`` (2.4 GHz and 5 GHz), or for ``nrf7002dk/nrf5340/cpuapp/nrf7001`` (2.4 GHz only).
+* :ref:`Switching between Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached, using the ``thread_wifi_switched`` build type.
 
 Overview
 ********
@@ -113,7 +113,7 @@ For example:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -p -- -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex -DCONF_FILE=prj_thread_wifi_switched.conf -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
+      west build -b nrf5340dk/nrf5340/cpuapp -p -- -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex -DCONF_FILE=prj_thread_wifi_switched.conf -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
 
 .. _matter_lock_sample_ble_nus:
 
@@ -224,7 +224,7 @@ For example:
 
 .. code-block:: console
 
-   west build -b nrf52840dk_nrf52840 -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
+   west build -b nrf52840dk/nrf52840 -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
 
 .. matter_door_lock_sample_build_with_dfu_end
 
@@ -474,7 +474,7 @@ To test this feature, complete the following steps:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex
+      west build -b nrf5340dk/nrf5340/cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex
 
 #. |connect_terminal_ANSI|
 #. Program the application to the kit using the following command:
@@ -505,11 +505,11 @@ To test the :ref:`matter_lock_sample_ble_nus` feature, complete the following st
 
 #. Install `nRF Toolbox`_ on your Android (Android 11 or newer) or iOS smartphone (iOS 16.1 or newer).
 #. Build the door lock application for Matter over Thread with the :kconfig:option:`CONFIG_CHIP_NUS` set to ``y``.
-   For example, if you build from command line for the ``nrf52840dk_nrf52840``, use the following command:
+   For example, if you build from command line for the ``nrf52840dk/nrf52840``, use the following command:
 
    .. code-block:: console
 
-      west build -b nrf52840dk_nrf52840 -- -DCONFIG_CHIP_NUS=y
+      west build -b nrf52840dk/nrf52840 -- -DCONFIG_CHIP_NUS=y
 
 #. Program the application to the kit using the following command:
 

@@ -1,7 +1,7 @@
 common:
   platform_allow:
-    nrf52840dk_nrf52840
-    nrf5340dk_nrf5340_cpuapp
+    nrf52840dk/nrf52840
+    nrf5340dk/nrf5340/cpuapp
     # NB: It's not yet supported to boot TF-M from NSIB without
     # MCUBoot enabled as well
   harness: console
@@ -18,15 +18,15 @@ tests:
     extra_args:
       CONFIG_BOOTLOADER_MCUBOOT=y
     platform_allow:
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf9160dk/nrf9160/ns
   boot_chains.secure_boot_and_bootloader_mcuboot:
     extra_args:
       CONFIG_SECURE_BOOT=y
       CONFIG_BOOTLOADER_MCUBOOT=y
     platform_allow:
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf9160dk/nrf9160/ns
   boot_chains.bootloader_mcuboot_and_nv_counters:
     extra_args:
       CONFIG_BOOTLOADER_MCUBOOT=y

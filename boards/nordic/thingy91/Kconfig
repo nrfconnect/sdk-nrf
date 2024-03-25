@@ -1,0 +1,73 @@
+# Thingy:91 nRF52840 board configuration
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if BOARD_THINGY91_NRF52840
+
+config BOARD_ENABLE_DCDC
+	bool "Enable DCDC mode"
+	select SOC_DCDC_NRF52X
+	default y
+
+endif # BOARD_THINGY91_NRF52840
+
+if BOARD_THINGY91_NRF9160 || BOARD_THINGY91_NRF9160_NS
+
+config BOARD_INIT_PRIORITY
+	int "Initialization priority for board configuration"
+	default 80
+	help
+	  The Thingy:91 board contains an ADP5360 PMIC that needs to be configured to
+	  set up the power domains on the board correctly. This happens during sys_init,
+	  and the PMIC setup must happen before the sensors are initialized in order
+	  to power them up in time.
+
+if BOARD_THINGY91_NRF9160_NS
+
+choice
+	prompt "Pre-defined Thingy:91 partition layout"
+	default THINGY91_STATIC_PARTITIONS_SECURE_BOOT if SECURE_BOOT
+	default THINGY91_STATIC_PARTITIONS_LWM2M_CARRIER if LWM2M_CARRIER
+	default THINGY91_STATIC_PARTITIONS_FACTORY
+
+config THINGY91_STATIC_PARTITIONS_FACTORY
+	bool "Factory Thingy:91 partition layout"
+	help
+	   The default Thingy:91 partition layout used in the factory firmware. This ensures
+	   firmware updates are compatible with Thingy:91 when flashing firmware over USB or over
+	   the air.
+
+config THINGY91_STATIC_PARTITIONS_SECURE_BOOT
+	bool "Secure boot Thingy:91 partition layout [EXPERIMENTAL]"
+	depends on SECURE_BOOT
+	select EXPERIMENTAL
+	help
+	   Similar to the factory partition layout, but also has space for the Immutable Bootloader
+	   and two MCUboot slots. A debugger is needed to flash Thingy:91 the first time.
+	   This layout is still under development and should not be used in production.
+
+config THINGY91_STATIC_PARTITIONS_LWM2M_CARRIER
+	bool "LWM2M Carrier  partition layout"
+	depends on LWM2M_CARRIER
+	help
+	  Use a partition layout including a storage partition needed for the lwm2m carrier library.
+
+config THINGY91_NO_PREDEFINED_LAYOUT
+	bool "None [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	   Disable pre-defined static partition layout. This allows the application to use a dynamic
+	   layout or define a custom static partition layout for the application. A debugger is
+	   needed to flash Thingy:91 with a different partition layout.
+
+endchoice
+endif # if BOARD_THINGY91_NRF9160_NS
+
+endif # BOARD_THINGY91_NRF9160 || BOARD_THINGY91_NRF9160_NS
+
+module=BOARD
+module-dep=LOG
+module-str=Log level for board
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

@@ -18,8 +18,8 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - Documentation
    * - :ref:`zephyr:nrf54l15pdk_nrf54l15`
      - PCA10156
-     - | ``nrf54l15pdk_nrf54l15_cpuapp`` for the PDK revision v0.2.1, AB0-ES7 (Engineering A).
-       | ``nrf54l15pdk_nrf54l15_cpuapp@0.3.0`` for the PDK revisions v0.3.0 and v0.7.0 (Engineering A).
+     - | ``nrf54l15pdk/nrf54l15/cpuapp`` for the PDK revision v0.2.1, AB0-ES7 (Engineering A).
+       | ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` for the PDK revisions v0.3.0 and v0.7.0 (Engineering A).
      - --
 
 .. note::

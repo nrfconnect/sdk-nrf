@@ -1,0 +1,13 @@
+identifier: thingy91x/nrf5340/cpunet
+name: Thingy91X-NRF5340-network-MCU
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+  - xtools
+  - zephyr
+ram: 64
+flash: 256
+supported:
+  - watchdog
+  - gpio

@@ -20,7 +20,7 @@ The nRF5340 Audio applications use the following files as board configuration so
   See :ref:`kconfig_tips_and_tricks` for information about how to configure them.
 * Memory layout configuration files - These define the memory layout of the application.
 
-You can see the :file:`zephyr/boards/arm/nrf5340_audio_dk_nrf5340` directory as an example of how these files are structured.
+You can see the :file:`zephyr/boards/nordic/nrf5340_audio_dk` directory as an example of how these files are structured.
 
 For information about differences between DTS and Kconfig, see :ref:`zephyr:dt_vs_kconfig`.
 For detailed instructions for adding Zephyr support to a custom board, see Zephyr's :ref:`zephyr:board_porting_guide`.
@@ -54,8 +54,8 @@ To use the nRF5340 Audio application with your custom board:
 
 1. Define the board files for your custom board:
 
-   a. Create a new directory in the :file:`nrf/boards/arm/` directory with the name of the new board.
-   #. Copy the nRF5340 Audio board files from the :file:`nrf5340_audio_dk_nrf5340` directory located in the :file:`zephyr/boards/arm/` folder to the newly created directory.
+   a. Create a new directory in the :file:`nrf/boards/<vendor>/` directory with the name of the new board.
+   #. Copy the nRF5340 Audio board files from the :file:`nrf5340_audio_dk` directory located in the :file:`zephyr/boards/nordic/` folder to the newly created directory.
 
 #. Edit the DTS files to make sure they match the hardware configuration.
    Pay attention to the following elements:

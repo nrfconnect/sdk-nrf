@@ -72,7 +72,7 @@ See :ref:`configure_application` for information about how to configure a sample
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONFIG_BT_RPC_STACK=y
+      west build -b nrf5340dk/nrf5340/cpuapp -- -DCONFIG_BT_RPC_STACK=y
 
 You can also build the :ref:`peripheral_hids_mouse` sample using the above command.
 This sample requires some additional configuration in the :file:`samples/bluetooth/peripheral_hids_mouse/child_image/rpc_host.conf` file.

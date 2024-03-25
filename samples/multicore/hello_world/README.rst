@@ -46,20 +46,20 @@ nRF5340 DK
 
   .. code-block:: console
 
-     west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.multicore.hello_world.nrf5340dk_cpuapp_cpunet .
+     west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.multicore.hello_world.nrf5340dk_cpuapp_cpunet .
 
 nRF54H20 DK
   You can build the sample for application and radio cores as follows:
 
   .. code-block:: console
 
-     west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad .
+     west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad .
 
   You can build the sample for application and PPR cores as follows:
 
   .. code-block:: console
 
-     west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr .
+     west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr .
 
   Note that :ref:`zephyr:nordic-ppr` is used in the configuration above to automatically launch PPR core from the application core.
 
@@ -69,7 +69,7 @@ nRF54H20 DK
 
   .. code-block:: console
 
-     west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr_xip .
+     west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr_xip .
 
 Testing
 =======
@@ -85,8 +85,8 @@ After programming the sample to your development kit, complete the following ste
             .. code-block:: console
 
                *** Booting nRF Connect SDK zephyr-v3.5.0-3517-g9458a1aaf744 ***
-               Hello world from nrf5340dk_nrf5340_cpuapp
-               Hello world from nrf5340dk_nrf5340_cpuapp
+               Hello world from nrf5340dk/nrf5340/cpuapp
+               Hello world from nrf5340dk/nrf5340/cpuapp
                ...
 
          * For the remote core, the output should be as follows:
@@ -94,6 +94,6 @@ After programming the sample to your development kit, complete the following ste
             .. code-block:: console
 
                *** Booting nRF Connect SDK zephyr-v3.5.0-3517-g9458a1aaf744 ***
-               Hello world from nrf5340dk_nrf5340_cpunet
-               Hello world from nrf5340dk_nrf5340_cpunet
+               Hello world from nrf5340dk/nrf5340/cpunet
+               Hello world from nrf5340dk/nrf5340/cpunet
                ...

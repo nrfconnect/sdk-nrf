@@ -111,8 +111,8 @@ Make sure to select a suitable build target when building your application.
 
 In Zephyr, the firmware for the application core of :ref:`zephyr:nrf9161dk_nrf9161` is divided into two different build targets:
 
-* ``nrf9161dk_nrf9161`` for build targets that have Cortex-M Security Extensions (CMSE) disabled.
-* ``nrf9161dk_nrf9161_ns`` for build targets that have CMSE enabled and have the Secure Processing Environment (SPE) firmware alongside the Non-Secure Processing Environment (NSPE) firmware.
+* ``nrf9161dk/nrf9161`` for build targets that have Cortex-M Security Extensions (CMSE) disabled.
+* ``nrf9161dk/nrf9161/ns`` for build targets that have CMSE enabled and have the Secure Processing Environment (SPE) firmware alongside the Non-Secure Processing Environment (NSPE) firmware.
 
 For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
@@ -238,7 +238,7 @@ Complete the following steps to build and program using the |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`ncs/nrf/applications/asset_tracker_v2`
 
-.. |vsc_sample_board_target_line| replace:: you must use the build target ``nrf9161dk_nrf9161_ns`` when building the application code for the nRF9161 DK
+.. |vsc_sample_board_target_line| replace:: you must use the build target ``nrf9161dk/nrf9161/ns`` when building the application code for the nRF9161 DK
 
 .. include:: ../../../includes/vsc_build_and_run.txt
 
@@ -266,7 +266,7 @@ Building and programming on the command line
 
 .. |cmd_folder_path| replace:: on the nRF9161 DK
 
-.. |cmd_build_target| replace:: ``nrf9161dk_nrf9161_ns`` when building the application code for the nRF9161 DK
+.. |cmd_build_target| replace:: ``nrf9161dk/nrf9161/ns`` when building the application code for the nRF9161 DK
 
 
 .. include:: ../../../includes/cmd_build_and_run.txt

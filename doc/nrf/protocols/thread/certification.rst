@@ -73,7 +73,7 @@ Complete the following steps to prepare for the certification tests:
      .. code-block::
 
         cd ncs/nrf/samples/openthread/cli/
-        west build -b nrf52840dk_nrf52840 -S ci -S multiprotocol -- -DCONFIG_OPENTHREAD_LIBRARY=y
+        west build -b nrf52840dk/nrf52840 -S ci -S multiprotocol -- -DCONFIG_OPENTHREAD_LIBRARY=y
 
    * If building using Visual Studio Code, you must first `create and build the application <How to build an application_>`_ using the CLI sample.
      Add the following lines to the **Additional CMake arguments** text field:

@@ -54,7 +54,7 @@ Building and running
     For programming, use the :ref:`programming command without --erase <programming_params_no_erase>`.
     Programming with ``--erase`` or ``--recover`` (or similar parameters) will erase the PSA platform security parameters.
 
-You can indicate the desired test suite by using a configuration flag when building (replace ``<build_target>`` with your board name, for example ``nrf5340dk_nrf5340_cpuapp_ns``):
+You can indicate the desired test suite by using a configuration flag when building (replace ``<build_target>`` with your board name, for example ``nrf5340dk/nrf5340/cpuapp/ns``):
 
 .. code-block:: console
 

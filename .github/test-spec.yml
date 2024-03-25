@@ -266,10 +266,9 @@
 
 "CI-desktop-test":
   - "applications/nrf_desktop/**/*"
-  - "boards/arm/*dmouse*/**/*"
-  - "boards/arm/*kbd*/**/*"
-  - "boards/arm/*dongle*/**/*"
-  - "boards/arm/*gmouse*/**/*"
+  - "boards/nordic/*mouse/**/*"
+  - "boards/nordic/*kbd/**/*"
+  - "boards/nordic/*dongle/**/*"
   - "cmake/*"
   - "drivers/sensor/pmw3360/**/*"
   - "drivers/sensor/paw3212/**/*"

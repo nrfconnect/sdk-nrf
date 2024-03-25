@@ -1,7 +1,7 @@
 tests:
   emds.flash:
-    platform_allow: nrf52840dk_nrf52840 nrf54l15pdk_nrf54l15_cpuapp
+    platform_allow: nrf52840dk/nrf52840 nrf54l15pdk/nrf54l15/cpuapp
     tags: emds
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf52840dk/nrf52840
+      - nrf54l15pdk/nrf54l15/cpuapp

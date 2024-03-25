@@ -29,5 +29,5 @@
 - scenarios:
     - applications.asset_tracker_v2.*.sysbuild
   platforms:
-    - nrf9160dk_nrf9160_ns
+    - nrf9160dk/nrf9160/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-26461"

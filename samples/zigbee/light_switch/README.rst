@@ -110,7 +110,7 @@ For example, when building from the command line, use the following command:
 
 .. code-block:: console
 
-   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DFILE_SUFFIX=fota
+   west build samples/zigbee/light_switch -b nrf52840dk/nrf52840 -- -DFILE_SUFFIX=fota
 
 Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
 
@@ -122,10 +122,10 @@ For example, when building from the command line, use the following command:
 
 .. code-block:: console
 
-   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DEXTRA_CONF_FILE='overlay-multiprotocol_ble.conf'
+   west build samples/zigbee/light_switch -b nrf52840dk/nrf52840 -- -DEXTRA_CONF_FILE='overlay-multiprotocol_ble.conf'
 
 
-For the board name to use instead of the ``nrf52840dk_nrf52840``, see :ref:`programming_board_names`.
+For the board name to use instead of the ``nrf52840dk/nrf52840``, see :ref:`programming_board_names`.
 
 See :ref:`cmake_options` for instructions on how to add flags to your build.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.

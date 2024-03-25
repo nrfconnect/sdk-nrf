@@ -4,40 +4,40 @@ tests:
   sample.net.http_server.wifi:
     build_only: true
     integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp_ns
-    platform_allow: nrf7002dk_nrf5340_cpuapp_ns
+      - nrf7002dk/nrf5340/cpuapp/ns
+    platform_allow: nrf7002dk/nrf5340/cpuapp/ns
     tags: ci_build
   sample.net.http_server.wifi.tls:
     build_only: true
     integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp_ns
-    platform_allow: nrf7002dk_nrf5340_cpuapp_ns
+      - nrf7002dk/nrf5340/cpuapp/ns
+    platform_allow: nrf7002dk/nrf5340/cpuapp/ns
     extra_args: OVERLAY_CONFIG=overlay-tls-nrf7002dk.conf
     tags: ci_build
   sample.net.http_server.lte:
     build_only: true
     integration_platforms:
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - thingy91_nrf9160_ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - thingy91/nrf9160/ns
     platform_allow:
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - thingy91_nrf9160_ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - thingy91/nrf9160/ns
     tags: ci_build
   sample.net.http_server.lte.tls:
     build_only: true
     integration_platforms:
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - thingy91_nrf9160_ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - thingy91/nrf9160/ns
     platform_allow:
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - thingy91_nrf9160_ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - thingy91/nrf9160/ns
     extra_args: OVERLAY_CONFIG=overlay-tls-nrf91.conf
     tags: ci_build

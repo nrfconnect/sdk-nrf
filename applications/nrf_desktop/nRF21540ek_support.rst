@@ -9,7 +9,7 @@ nRF Desktop: Adding nRF21540 EK shield support
 
 You can use the nRF Desktop application with the :ref:`ug_radio_fem_nrf21540ek` shield, an RF front-end module (FEM) for the 2.4 GHz range extension.
 You can use the shield with any nRF Desktop HID application configured for a development kit that is fitted with Arduino-compatible connector (see the :guilabel:`DK` tab in :ref:`nrf_desktop_requirements`).
-This means that the shield support is not available for nRF Desktop's dedicated boards, such as ``nrf52840gmouse_nrf52840``, ``nrf52kbd_nrf52832``, or ``nrf52840dongle_nrf52840``.
+This means that the shield support is not available for nRF Desktop's dedicated boards, such as ``nrf52840gmouse``, ``nrf52kbd``, or ``nrf52840dongle``.
 
 Low Latency Packet mode
 ***********************
@@ -22,19 +22,19 @@ Building with EK shield support
 
 To build the application with the shield support, pass the ``SHIELD`` parameter to the build command.
 Make sure to also disable the LLPM support.
-For example, you can build the application for ``nrf52840dk_nrf52840`` with ``nrf21540ek`` shield using the following command:
+For example, you can build the application for ``nrf52840dk/nrf52840`` with ``nrf21540ek`` shield using the following command:
 
 .. code-block:: console
 
-   west build -b nrf52840dk_nrf52840 -- -DSHIELD=nrf21540ek -DCONFIG_CAF_BLE_USE_LLPM=n
+   west build -b nrf52840dk/nrf52840 -- -DSHIELD=nrf21540ek -DCONFIG_CAF_BLE_USE_LLPM=n
 
 For the multi-core build, you need to pass the ``SHIELD`` parameter to images built on both application and network core.
 The network core controls the FEM, but the application core needs to forward the needed pins to the network core.
 Use ``hci_ipc_`` as the *childImageName* parameter, because in the nRF Desktop application, network core runs using ``hci_ipc_``.
-The command for ``nrf5340dk_nrf5340_cpuapp`` with ``nrf21540ek`` shield would look as follows:
+The command for ``nrf5340dk/nrf5340/cpuapp`` with ``nrf21540ek`` shield would look as follows:
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540ek_fwd -Dhci_ipc_SHIELD=nrf21540ek -DCONFIG_CAF_BLE_USE_LLPM=n
+   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf21540ek_fwd -Dhci_ipc_SHIELD=nrf21540ek -DCONFIG_CAF_BLE_USE_LLPM=n
 
 For detailed information about building an application using the nRF21540 EK, see the :ref:`ug_radio_fem_nrf21540ek_programming` section in the Working with RF Front-end modules documentation.

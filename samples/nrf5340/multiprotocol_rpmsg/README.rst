@@ -61,7 +61,7 @@ To see an example of this multi-image build on the command line, run the followi
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf5340dk_nrf5340_cpuapp -p -- -DEXTRA_CONF_FILE="overlay-802154.conf;overlay-bt.conf"
+   west build -b nrf5340dk/nrf5340/cpuapp -p -- -DEXTRA_CONF_FILE="overlay-802154.conf;overlay-bt.conf"
 
 .. include:: /includes/build_and_run.txt
 

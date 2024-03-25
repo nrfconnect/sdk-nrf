@@ -13,66 +13,66 @@ tests:
     extra_args: "CONFIG_TFM_PSA_TEST_STORAGE=y CONFIG_TFM_ISOLATION_LEVEL=1"
     timeout: 130
     platform_allow: >
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
-      nrf54l15pdk_nrf54l15_cpuapp_ns
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf9160dk/nrf9160/ns
+      nrf54l15pdk/nrf54l15/cpuapp/ns
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf54l15pdk_nrf54l15_cpuapp_ns
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf54l15pdk/nrf54l15/cpuapp/ns
   tfm.psa_test_storage_lvl2:
     tags: tfm_lvl2
     extra_args: "CONFIG_TFM_PSA_TEST_STORAGE=y"
     timeout: 130
     platform_allow: >
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
-      nrf54l15pdk_nrf54l15_cpuapp_ns
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf9160dk/nrf9160/ns
+      nrf54l15pdk/nrf54l15/cpuapp/ns
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf54l15pdk_nrf54l15_cpuapp_ns
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf54l15pdk/nrf54l15/cpuapp/ns
   tfm.psa_test_crypto_lvl1:
     tags: tfm_lvl1
     extra_args: "CONFIG_TFM_PSA_TEST_CRYPTO=y CONFIG_TFM_ISOLATION_LEVEL=1"
     timeout: 120
     platform_allow: >
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
-      nrf54l15pdk_nrf54l15_cpuapp_ns
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf9160dk/nrf9160/ns
+      nrf54l15pdk/nrf54l15/cpuapp/ns
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf54l15pdk_nrf54l15_cpuapp_ns
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf54l15pdk/nrf54l15/cpuapp/ns
   tfm.psa_test_crypto_lvl2:
     tags: tfm_lvl2
     extra_args: "CONFIG_TFM_PSA_TEST_CRYPTO=y"
     timeout: 120
     platform_allow: >
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf9160dk/nrf9160/ns
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9160dk/nrf9160/ns
   tfm.psa_test_initial_attestation_lvl1:
     tags: tfm_lvl1
     extra_args: >
       CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y CONFIG_TFM_ISOLATION_LEVEL=1
       CONFIG_TFM_PARTITION_INITIAL_ATTESTATION=y CONFIG_TFM_NRF_PROVISIONING=y
     platform_allow: >
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf9160dk/nrf9160/ns
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9160dk/nrf9160/ns
   tfm.psa_test_initial_attestation_lvl2:
     tags: tfm_lvl2
     extra_args: >
       CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y
       CONFIG_TFM_PARTITION_INITIAL_ATTESTATION=y CONFIG_TFM_NRF_PROVISIONING=y
     platform_allow: >
-      nrf5340dk_nrf5340_cpuapp_ns
-      nrf9160dk_nrf9160_ns
+      nrf5340dk/nrf5340/cpuapp/ns
+      nrf9160dk/nrf9160/ns
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9160dk/nrf9160/ns

@@ -1,6 +1,6 @@
 tests:
   suit-platform.integration.cache_sink:
-    platform_allow: nrf54h20dk_nrf54h20_cpuapp native_posix native_posix_64
+    platform_allow: nrf54h20dk/nrf54h20/cpuapp native_posix native_posix/native/64
     tags: suit suit_cache
     integration_platforms:
       - native_posix

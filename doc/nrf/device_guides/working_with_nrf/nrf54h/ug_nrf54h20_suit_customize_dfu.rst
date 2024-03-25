@@ -41,7 +41,7 @@ For this user guide, the following development kit is required:
 +------------------------+----------+--------------------------------+-------------------------------+
 | **Hardware platforms** | **PCA**  | **Board name**                 | **Build target**              |
 +========================+==========+================================+===============================+
-| nRF54H20 DK            | PCA10175 | ``nrf54h20dk_nrf54h20_cpuapp`` | ``nrf54h20dk_nrf54h20_cpuapp``|
+| nRF54H20 DK            | PCA10175 | ``nrf54h20dk``                 | ``nrf54h20dk/nrf54h20/cpuapp``|
 +------------------------+----------+--------------------------------+-------------------------------+
 
 Software requirements
@@ -93,7 +93,7 @@ Let us assume that you would like to store the editable manifest templates in th
 
       .. code-block:: console
 
-         west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk_nrf54h20_cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="C:/my_templates"
+         west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="C:/my_templates"
 
    .. group-tab:: Linux
 
@@ -101,7 +101,7 @@ Let us assume that you would like to store the editable manifest templates in th
 
       .. code-block:: console
 
-         west build -b nrf54h20dk_nrf54h20_cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="/home/my_user/my_templates"
+         west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="/home/my_user/my_templates"
 
 The source of the manifest templates can be configured by setting the following Kconfig options:
 
@@ -159,7 +159,7 @@ To build the described example with the provided manifest templates taken from y
 
         .. code-block:: console
 
-            west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk_nrf54h20_cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="c:/my_templates" -DCONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE="c:/my_default_templates/root.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_APP_TEMPLATE="c:/my_default_templates/app.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE="c:/my_default_templates/radio.yaml.jinja2"
+            west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="c:/my_templates" -DCONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE="c:/my_default_templates/root.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_APP_TEMPLATE="c:/my_default_templates/app.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE="c:/my_default_templates/radio.yaml.jinja2"
 
     .. group-tab:: Linux
 
@@ -167,7 +167,7 @@ To build the described example with the provided manifest templates taken from y
 
         .. code-block:: console
 
-            west build -b nrf54h20dk_nrf54h20_cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="/home/my_user/my_templates" -DCONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE="/home/my_user/my_default_templates/root.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_APP_TEMPLATE="/home/my_user/my_default_templates/app.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE="/home/my_user/my_default_templates/radio.yaml.jinja2"
+            west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="/home/my_user/my_templates" -DCONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE="/home/my_user/my_default_templates/root.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_APP_TEMPLATE="/home/my_user/my_default_templates/app.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE="/home/my_user/my_default_templates/radio.yaml.jinja2"
 
 Editable manifest copied into the sample directory (or in the directory configured using the :kconfig:option:`CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION` Kconfig option) can be modified to edit the contents of the envelopes and modify the DFU process.
 These files will not be overwritten by the build system during the next builds or in consecutive SDK releases.

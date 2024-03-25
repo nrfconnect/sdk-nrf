@@ -37,9 +37,9 @@ DFU requirements
 
 The configuration overlay :file:`overlay-dfu.conf` enables DFU support in the application, and applies for the following platforms:
 
-* nrf52840dk_nrf52840
-* nrf21540dk_nrf52840
-* nrf54l15pdk_nrf54l15_cpuapp
+* nrf52840dk/nrf52840
+* nrf21540dk/nrf52840
+* nrf54l15pdk/nrf54l15/cpuapp
 
 While this overlay configuration is only applicable for the mentioned platforms in this sample, DFU over Bluetooth Low Energy may be used on other platforms as well.
 

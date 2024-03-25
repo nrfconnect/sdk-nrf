@@ -5,13 +5,13 @@
 #
 
 config NRF_DEFAULT_MULTIPROTOCOL
-	default y if ("$(BOARD)" = "thingy53_nrf5340_cpuapp")
+	default y if BOARD_THINGY53_NRF5340_CPUAPP
 
 choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT
 endchoice
 
-if BOOTLOADER_MCUBOOT && ("$(BOARD)" = "thingy53_nrf5340_cpuapp")
+if BOOTLOADER_MCUBOOT && BOARD_THINGY53_NRF5340_CPUAPP
 
 config MCUBOOT_UPDATEABLE_IMAGES
 	default 2

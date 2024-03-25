@@ -11,7 +11,7 @@ For example, to build the sample from the command line for an nRF5340 DK with an
 
 .. code-block:: console
 
-  west build -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540ek
+  west build -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek
 
 For more details refer to the following documentation:
 

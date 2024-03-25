@@ -53,7 +53,7 @@ Application
 ===========
 
 The user application runs in NSPE.
-Therefore, it must be built for the ``nrf9161dk_nrf9161_ns``, ``nrf9160dk_nrf9160_ns``, or ``thingy91_nrf9160_ns`` build target.
+Therefore, it must be built for the ``nrf9161dk/nrf9161/ns``, ``nrf9160dk/nrf9160/ns``, or ``thingy91/nrf9160/ns`` build target.
 
 The application image might require other images to be present.
 Some samples include the :ref:`bootloader` sample (:kconfig:option:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index-ncs` (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`).

@@ -4,25 +4,25 @@ tests:
     filter: CONFIG_HAS_NRFX
     tags: drivers ci_build
     platform_allow:
-      - nrf52840dk_nrf52840
-      - nrf9160dk_nrf9160
-      - nrf9160dk_nrf9160_ns
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf5340dk_nrf5340_cpunet
-      - nrf54l15pdk_nrf54l15_cpuapp
-      - nrf54h20dk_nrf54h20_cpuapp
-      - nrf54h20dk_nrf54h20_cpurad
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf9160/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf9160dk_nrf9160
-      - nrf9160dk_nrf9160_ns
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf5340dk_nrf5340_cpunet
-      - nrf54l15pdk_nrf54l15_cpuapp
-      - nrf54h20dk_nrf54h20_cpuapp
-      - nrf54h20dk_nrf54h20_cpurad
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf9160/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
   nrfx_integration_test.build.bt.softdevice:
     build_only: true
     filter: CONFIG_HAS_NRFX and CONFIG_BT_LL_SOFTDEVICE
@@ -30,11 +30,11 @@ tests:
     extra_configs:
       - CONFIG_NRFX_AND_BT_LL_SOFTDEVICE=y
     platform_allow:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpunet
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpunet
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
   nrfx_integration_test.build.bt.sw_split:
     build_only: true
     filter: CONFIG_HAS_NRFX and CONFIG_BT_LL_SW_SPLIT
@@ -42,8 +42,8 @@ tests:
     extra_configs:
       - CONFIG_NRFX_AND_BT_LL_SW_SPLIT=y
     platform_allow:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpunet
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpunet
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet

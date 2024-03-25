@@ -5,8 +5,8 @@ tests:
   sample.mpsl.timeslot:
     build_only: true
     integration_platforms:
-      - nrf52dk_nrf52832
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpunet
-    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpunet
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpunet
     tags: ci_build

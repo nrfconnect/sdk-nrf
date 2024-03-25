@@ -16,7 +16,7 @@ Measurements methodology
 
 The measurement setup consists of:
 
-* An nrf52840dk_nrf52840 board used as a Thread leader.
+* An nrf52840dk board used as a Thread leader.
 * A DUT board used as a Thread child.
 * A `Power Profiler Kit II (PPK2)`_ attached to the DUT according to the instructions in its Quick start guide.
 
@@ -25,7 +25,7 @@ The leader board is flashed with the regular :ref:`Thread CLI sample <ot_cli_sam
    .. code-block::
 
       cd ncs/nrf/samples/openthread/cli/
-      west build -b nrf52840dk_nrf52840 -S ci -S logging
+      west build -b nrf52840dk/nrf52840 -S ci -S logging
 
 The DUT board is flashed with the :ref:`Thread CLI sample low power mode <ot_cli_sample_low_power>` firmware.
 In the build command below, replace ``build-target`` with the build target name of the DUT.
@@ -60,7 +60,7 @@ The following tables show the power consumption measured with the configuration 
       .. table:: Configuration
 
          +--------------------------+---------------------+--------------------------+
-         | Parameter                | nrf52840dk_nrf52840 | nrf5340dk_nrf5340_cpuapp |
+         | Parameter                | nrf52840dk/nrf52840 | nrf5340dk/nrf5340/cpuapp |
          +==========================+=====================+==========================+
          | Board revision           |              v3.0.1 |                   v2.0.1 |
          +--------------------------+---------------------+--------------------------+
@@ -74,7 +74,7 @@ The following tables show the power consumption measured with the configuration 
       .. table:: Power consumption
 
          +-------------------------------+-----------------------+----------------------------+
-         | Parameter                     |   nrf52840dk_nrf52840 |   nrf5340dk_nrf5340_cpuapp |
+         | Parameter                     |   nrf52840dk/nrf52840 |   nrf5340dk/nrf5340/cpuapp |
          +===============================+=======================+============================+
          | Total charge per minute [μC]  |               1136.00 |                    1203.00 |
          +-------------------------------+-----------------------+----------------------------+
@@ -89,7 +89,7 @@ The following tables show the power consumption measured with the configuration 
       .. table:: Configuration
 
          +--------------------------------+---------------------+--------------------------+
-         | Parameter                      | nrf52840dk_nrf52840 | nrf5340dk_nrf5340_cpuapp |
+         | Parameter                      | nrf52840dk/nrf52840 | nrf5340dk/nrf5340/cpuapp |
          +================================+=====================+==========================+
          | Board revision                 |              v3.0.1 |                   v2.0.1 |
          +--------------------------------+---------------------+--------------------------+
@@ -109,7 +109,7 @@ The following tables show the power consumption measured with the configuration 
       .. table:: Power consumption
 
          +---------------------------------+-----------------------+----------------------------+
-         | Parameter                       |   nrf52840dk_nrf52840 |   nrf5340dk_nrf5340_cpuapp |
+         | Parameter                       |   nrf52840dk/nrf52840 |   nrf5340dk/nrf5340/cpuapp |
          +=================================+=======================+============================+
          | Total charge per minute [μC]    |               1042.20 |                    1148.60 |
          +---------------------------------+-----------------------+----------------------------+

@@ -5,20 +5,20 @@
 config EXTERNAL_CONFIGURED_NETCORE
 	bool
 	default y
-	select NETCORE_REMOTE_NRF5340_CPUNET if NET_CORE_BOARD = "nrf5340dk_nrf5340_cpunet"
+	select NETCORE_REMOTE_NRF5340_CPUNET if NET_CORE_BOARD = "nrf5340dk/nrf5340/cpunet"
 	depends on NET_CORE_IMAGE_HCI_IPC # Zephyr Kconfig enabling HCI IPC on netcore
 
 config SUPPORT_NETCORE
 	bool
-	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns" || $(BOARD) = "nrf54h20dk_nrf54h20_cpuapp")
+	default y if (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS || BOARD_THINGY53_NRF5340_CPUAPP || BOARD_THINGY53_NRF5340_CPUAPP_NS || BOARD_NRF7002DK_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF5340_CPUAPP_NS || BOARD_NRF54H20DK_NRF54H20_CPUAPP)
 
 config NETCORE_REMOTE_BOARD_NAME
 	string
-	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
-	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns"
-	default "thingy53_nrf5340_cpunet"  if $(BOARD) = "thingy53_nrf5340_cpuapp"
-	default "thingy53_nrf5340_cpunet"  if $(BOARD) = "thingy53_nrf5340_cpuapp_ns"
-	default "nrf54h20dk_nrf54h20_cpurad"  if $(BOARD) = "nrf54h20dk_nrf54h20_cpuapp"
+	default "nrf5340dk/nrf5340/cpunet" if BOARD_NRF5340DK_NRF5340_CPUAPP
+	default "nrf5340dk/nrf5340/cpunet" if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
+	default "thingy53/nrf5340/cpunet"  if BOARD_THINGY53_NRF5340_CPUAPP
+	default "thingy53/nrf5340/cpunet"  if BOARD_THINGY53_NRF5340_CPUAPP_NS
+	default "nrf54h20dk/nrf54h20/cpurad"  if BOARD_NRF54H20DK_NRF54H20_CPUAPP
 
 config NETCORE_REMOTE_DOMAIN
 	string

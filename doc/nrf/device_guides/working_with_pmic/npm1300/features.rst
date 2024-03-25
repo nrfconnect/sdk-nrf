@@ -39,28 +39,28 @@ nPM1300 is supported by the following boards in the `Zephyr`_ open source projec
    * - nRF52 DK
      - nPM1300 EK
      - PCA10040
-     - ``nrf52dk_nrf52832``
+     - ``nrf52dk/nrf52832``
      - | `Product Specification <nRF52832 Product Specification_>`_
        | :ref:`Getting started <ug_nrf52_gs>`
        | `User Guide <nRF52 DK User Guide_>`_
    * - nRF52840 DK
      - nPM1300 EK
      - PCA10056
-     - ``nrf52840dk_nrf52840``
+     - ``nrf52840dk/nrf52840``
      - | `Product Specification <nRF52840 Product Specification_>`_
        | :ref:`Getting started <ug_nrf52_gs>`
        | `User Guide <nRF52840 DK User Guide_>`_
    * - nRF5340 DK
      - nPM1300 EK
      - PCA10095
-     - ``nrf5340dk_nrf5340_cpuapp``
+     - ``nrf5340dk/nrf5340/cpuapp``
      - | `Product Specification <nRF5340 Product Specification_>`_
        | :ref:`Getting started <ug_nrf5340_gs>`
        | `User Guide <nRF5340 DK User Guide_>`_
    * - nRF9160 DK
      - nPM1300 EK
      - PCA10090
-     - ``nrf9160dk_nrf9160_ns``
+     - ``nrf9160dk/nrf9160/ns``
      - | `Product Specification <nRF9160 Product Specification_>`_
        | :ref:`Getting started <ug_nrf9160_gs>`
        | `User Guide <nRF9160 DK Hardware_>`_
