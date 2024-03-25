@@ -187,7 +187,7 @@ static int __wifi_args_to_params(struct wifi_connect_req_params *params)
 	return 0;
 }
 
-static int cmd_wifi_status(void)
+static void cmd_wifi_status(void)
 {
 	struct net_if *iface;
 	struct wifi_iface_status status = { 0 };
@@ -195,13 +195,13 @@ static int cmd_wifi_status(void)
 	iface = net_if_get_first_wifi();
 	if (!iface) {
 		LOG_ERR("Failed to get Wi-FI interface");
-		return -ENOEXEC;
+		return;
 	}
 
 	if (net_mgmt(NET_REQUEST_WIFI_IFACE_STATUS, iface, &status,
 				sizeof(struct wifi_iface_status))) {
 		LOG_ERR("Status request failed");
-		return -ENOEXEC;
+		return;
 	}
 
 	LOG_INF("Status: successful");
@@ -227,30 +227,28 @@ static int cmd_wifi_status(void)
 		LOG_INF("TWT: %s",
 			status.twt_capable ? "Supported" : "Not supported");
 	}
-
-	return 0;
 }
 
-static void wifi_softap_enable(void)
+static int wifi_softap_enable(void)
 {
 	struct net_if *iface;
 	static struct wifi_connect_req_params cnx_params;
-	int ret;
+	int ret = -1;
 
 	iface = net_if_get_first_wifi();
 	if (!iface) {
 		LOG_ERR("Failed to get Wi-Fi iface");
-		return;
+		goto out;
 	}
 
 	if (__wifi_args_to_params(&cnx_params)) {
-		return;
+		goto out;
 	}
 
 	if (!wifi_utils_validate_chan(cnx_params.band, cnx_params.channel)) {
 		LOG_ERR("Invalid channel %d in %d band",
 			cnx_params.channel, cnx_params.band);
-		return;
+		goto out;
 	}
 
 	ret = net_mgmt(NET_REQUEST_WIFI_AP_ENABLE, iface, &cnx_params,
@@ -260,18 +258,21 @@ static void wifi_softap_enable(void)
 	} else {
 		LOG_INF("AP mode enabled");
 	}
+
+out:
+	return ret;
 }
 
-static void wifi_set_reg_domain(void)
+static int wifi_set_reg_domain(void)
 {
 	struct net_if *iface;
 	struct wifi_reg_domain regd = {0};
-	int ret;
+	int ret = -1;
 
 	iface = net_if_get_first_wifi();
 	if (!iface) {
 		LOG_ERR("Failed to get Wi-Fi iface");
-		return;
+		return ret;
 	}
 
 	regd.oper = WIFI_MGMT_SET;
@@ -285,23 +286,25 @@ static void wifi_set_reg_domain(void)
 	} else {
 		LOG_INF("Regulatory domain set to %s", CONFIG_SOFTAP_SAMPLE_REG_DOMAIN);
 	}
+
+	return ret;
 }
 
-static void configure_dhcp_server(void)
+static int configure_dhcp_server(void)
 {
 	struct net_if *iface;
 	struct in_addr pool_start;
-	int ret;
+	int ret = -1;
 
 	iface = net_if_get_first_wifi();
 	if (!iface) {
 		LOG_ERR("Failed to get Wi-Fi interface");
-		return;
+		goto out;
 	}
 
 	if (net_addr_pton(AF_INET, CONFIG_SOFTAP_SAMPLE_DHCPV4_POOL_START, &pool_start.s_addr)) {
 		LOG_ERR("Invalid address: %s", CONFIG_SOFTAP_SAMPLE_DHCPV4_POOL_START);
-		return;
+		goto out;
 	}
 
 	ret = net_dhcpv4_server_start(iface, &pool_start);
@@ -313,21 +316,34 @@ static void configure_dhcp_server(void)
 		LOG_INF("DHCPv4 server started and pool address starts from %s",
 			CONFIG_SOFTAP_SAMPLE_DHCPV4_POOL_START);
 	}
+out:
+	return ret;
 }
+
+#define CHECK_RET(func, ...) \
+	do { \
+		ret = func(__VA_ARGS__); \
+		if (ret) { \
+			LOG_ERR("Failed to configure %s", #func); \
+			return -1; \
+		} \
+	} while (0)
 
 int main(void)
 {
+	int ret;
+
 	net_mgmt_init_event_callback(&wifi_sap_mgmt_cb,
 				     wifi_mgmt_event_handler,
 				     WIFI_SAP_MGMT_EVENTS);
 
 	net_mgmt_add_event_callback(&wifi_sap_mgmt_cb);
 
-	wifi_set_reg_domain();
+	CHECK_RET(wifi_set_reg_domain);
 
-	configure_dhcp_server();
+	CHECK_RET(configure_dhcp_server);
 
-	wifi_softap_enable();
+	CHECK_RET(wifi_softap_enable);
 
 	cmd_wifi_status();
 
