@@ -10,7 +10,7 @@ config EXTERNAL_CONFIGURED_NETCORE
 
 config SUPPORT_NETCORE
 	bool
-	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
+	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns" || $(BOARD) = "nrf54h20dk_nrf54h20_cpuapp")
 
 config NETCORE_REMOTE_BOARD_NAME
 	string
@@ -18,6 +18,7 @@ config NETCORE_REMOTE_BOARD_NAME
 	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns"
 	default "thingy53_nrf5340_cpunet"  if $(BOARD) = "thingy53_nrf5340_cpuapp"
 	default "thingy53_nrf5340_cpunet"  if $(BOARD) = "thingy53_nrf5340_cpuapp_ns"
+	default "nrf54h20dk_nrf54h20_cpurad"  if $(BOARD) = "nrf54h20dk_nrf54h20_cpuapp"
 
 config NETCORE_REMOTE_DOMAIN
 	string
