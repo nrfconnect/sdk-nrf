@@ -8,6 +8,7 @@
 # Extension                       | NCS | Kconfig | Matter | MCUboot | nrfx | nrfxlib | TF-M | Zephyr |
 azure-storage-blob              # |  X  |         |        |         |      |         |      |        |
 breathe                         # |  X  |         |        |         |      |    X    |      |   X    |
+doxmlparser                     # |     |         |        |         |      |         |      |   X    |
 m2r2                            # |     |         |        |         |  X   |         |      |        |
 PyYAML                          # |  X  |         |        |         |      |         |      |   X    |
 pykwalify                       # |     |         |        |         |      |         |      |   X    |
