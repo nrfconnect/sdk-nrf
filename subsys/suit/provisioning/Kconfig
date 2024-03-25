@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "SUIT provisioning"
+
+config SUIT_MPI_GENERATE
+	bool "Generate SUIT Manifest Provisioning Information binary"
+
+if SUIT_MPI_GENERATE
+
+rsource "soc/Kconfig.nrf54h20"
+
+endif # SUIT_MPI_GENERATE
+
+endmenu
