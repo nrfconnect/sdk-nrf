@@ -6,6 +6,16 @@
 
 #include <stdio.h>
 #include <string.h>
+
+#if defined(CONFIG_POSIX_API)
+#include <zephyr/posix/arpa/inet.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/posix/sys/socket.h>
+#include <zephyr/posix/poll.h>
+#else
+#include <zephyr/net/socket.h>
+#endif /* CONFIG_POSIX_API */
+
 #include <zephyr/kernel.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/net/coap.h>
