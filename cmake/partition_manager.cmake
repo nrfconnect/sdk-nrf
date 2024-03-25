@@ -34,11 +34,18 @@ if(DEFINED PM_STATIC_YML_FILE)
   string(CONFIGURE "${PM_STATIC_YML_FILE}" user_def_pm_static)
 endif()
 
-ncs_file(CONF_FILES ${APPLICATION_CONFIG_DIR}
-         PM conf_dir_pm_static
-         DOMAIN ${DOMAIN}
-         BUILD ${CONF_FILE_BUILD_TYPE}
-)
+zephyr_get(COMMON_CHILD_IMAGE_CONFIG_DIR)
+string(CONFIGURE "${COMMON_CHILD_IMAGE_CONFIG_DIR}" COMMON_CHILD_IMAGE_CONFIG_DIR)
+foreach(config_dir ${APPLICATION_CONFIG_DIR} ${COMMON_CHILD_IMAGE_CONFIG_DIR})
+  ncs_file(CONF_FILES ${config_dir}
+           PM conf_dir_pm_static
+           DOMAIN ${DOMAIN}
+           BUILD ${CONF_FILE_BUILD_TYPE}
+  )
+  if(EXISTS ${conf_dir_pm_static})
+    break()
+  endif()
+endforeach()
 
 ncs_file(CONF_FILES ${BOARD_DIR}
          PM board_dir_pm_static

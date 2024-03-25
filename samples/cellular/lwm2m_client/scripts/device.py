@@ -42,9 +42,9 @@ class Device:
     def build_at_client(self):
         logging.info("Building AT client")
         if str(self.sid).startswith(SEGGER_HEADER_9161):
-            cmd = f"west build --board nrf9161dk_nrf9161_ns --build-dir build --pristine always {self.sample_path}"
+            cmd = f"west build --board nrf9161dk/nrf9161/ns --build-dir build --pristine always {self.sample_path}"
         else:
-            cmd = f"west build --board nrf9160dk_nrf9160_ns --build-dir build --pristine always {self.sample_path}"
+            cmd = f"west build --board nrf9160dk/nrf9160/ns --build-dir build --pristine always {self.sample_path}"
         logging.info(f"{cmd}")
         subprocess.run(cmd.split(), cwd=self.sample_path, check=True, capture_output=True)
         logging.info("Done!")

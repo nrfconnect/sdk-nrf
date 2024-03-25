@@ -2,7 +2,8 @@
 # be executed for all images in the build, also for the child image being
 # added below.
 
-if (CONFIG_APP_INCLUDE_REMOTE_IMAGE)
+if(CONFIG_APP_INCLUDE_REMOTE_IMAGE)
+  set(remote_FILE_SUFFIX ${FILE_SUFFIX})
   add_child_image(
     NAME remote
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../remote

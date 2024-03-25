@@ -401,14 +401,14 @@ Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk_nrf5340_cpunet -- -DCONFIG_DTM_USB=y
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DCONFIG_DTM_USB=y
 
 You can also build this sample with support for the front-end module.
 Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540ek -DCONFIG_DTM_USB=y
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DCONFIG_DTM_USB=y
 
 .. _dtm_testing:
 

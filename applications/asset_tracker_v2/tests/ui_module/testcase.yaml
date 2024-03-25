@@ -1,7 +1,7 @@
 tests:
   asset_tracker_v2.ui_module_test.tester:
-    platform_allow: native_sim nrf9160dk_nrf9160_ns
+    platform_allow: native_sim nrf9160dk/nrf9160/ns
     integration_platforms:
       - native_sim
-      - nrf9160dk_nrf9160_ns
+      - nrf9160dk/nrf9160/ns
     tags: ui_module

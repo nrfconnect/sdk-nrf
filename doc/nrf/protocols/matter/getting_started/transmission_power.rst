@@ -22,53 +22,53 @@ The following table lists the default TX power values.
 +--------------------------------------------------------------+--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 | Sample                                                       | Board name               | Output power for Thread (dBm; range from -40 to 20)  | Output power for Bluetooth® LE (dBm; range from -40 to 3 or 8)  |
 +==============================================================+==========================+======================================================+=================================================================+
-| :ref:`Light Bulb (FTD) <matter_light_bulb_sample>`           | nrf52840dk_nrf52840      | 8                                                    | 0                                                               |
+| :ref:`Light Bulb (FTD) <matter_light_bulb_sample>`           | nrf52840dk               | 8                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf5340dk_nrf5340        | 3                                                    | 0                                                               |
+|                                                              | nrf5340dk                | 3                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf7002dk_nrf5340        | 3                                                    | 0                                                               |
+|                                                              | nrf7002dk                | 3                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf21540dk_nrf52840      | 20                                                   | 0                                                               |
+|                                                              | nrf21540dk               | 20                                                   | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf54l15pdk_nrf54l15     | 0                                                    | 0                                                               |
+|                                                              | nrf54l15pdk              | 0                                                    | 0                                                               |
 +--------------------------------------------------------------+--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-| :ref:`Light Switch (SED) <matter_light_switch_sample>`       | nrf52840dk_nrf52840      | 0                                                    | 0                                                               |
+| :ref:`Light Switch (SED) <matter_light_switch_sample>`       | nrf52840dk               | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf5340dk_nrf5340        | 0                                                    | 0                                                               |
+|                                                              | nrf5340dk                | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf7002dk_nrf5340        | 0                                                    | 0                                                               |
+|                                                              | nrf7002dk                | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf21540dk_nrf52840      | 0                                                    | 0                                                               |
+|                                                              | nrf21540dk               | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf54l15pdk_nrf54l15     | 0                                                    | 0                                                               |
+|                                                              | nrf54l15pdk              | 0                                                    | 0                                                               |
 +--------------------------------------------------------------+--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-| :ref:`Lock (SED) <matter_lock_sample>`                       | nrf52840dk_nrf52840      | 0                                                    | 0                                                               |
+| :ref:`Lock (SED) <matter_lock_sample>`                       | nrf52840dk               | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf5340dk_nrf5340        | 0                                                    | 0                                                               |
+|                                                              | nrf5340dk                | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf7002dk_nrf5340        | 0                                                    | 0                                                               |
+|                                                              | nrf7002dk                | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf21540dk_nrf52840      | 0                                                    | 0                                                               |
+|                                                              | nrf21540dk               | 0                                                    | 0                                                               |
 +--------------------------------------------------------------+--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-| :ref:`Template (MTD) <matter_template_sample>`               | nrf52840dk_nrf52840      | 8                                                    | 0                                                               |
+| :ref:`Template (MTD) <matter_template_sample>`               | nrf52840dk               | 8                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf5340dk_nrf5340        | 3                                                    | 0                                                               |
+|                                                              | nrf5340dk                | 3                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf7002dk_nrf5340        | 3                                                    | 0                                                               |
+|                                                              | nrf7002dk                | 3                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf21540dk_nrf52840      | 20                                                   | 0                                                               |
+|                                                              | nrf21540dk               | 20                                                   | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf54l15pdk_nrf54l15     | 0                                                    | 0                                                               |
+|                                                              | nrf54l15pdk              | 0                                                    | 0                                                               |
 +--------------------------------------------------------------+--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-| :ref:`Widow Covering (SSED) <matter_window_covering_sample>` | nrf52840dk_nrf52840      | 0                                                    | 0                                                               |
+| :ref:`Widow Covering (SSED) <matter_window_covering_sample>` | nrf52840dk               | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf5340dk_nrf5340        | 0                                                    | 0                                                               |
+|                                                              | nrf5340dk                | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf7002dk_nrf5340        | 0                                                    | 0                                                               |
+|                                                              | nrf7002dk                | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf21540dk_nrf52840      | 0                                                    | 0                                                               |
+|                                                              | nrf21540dk               | 0                                                    | 0                                                               |
 |                                                              +--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
-|                                                              | nrf54l15pdk_nrf54l15     | 0                                                    | 0                                                               |
+|                                                              | nrf54l15pdk              | 0                                                    | 0                                                               |
 +--------------------------------------------------------------+--------------------------+------------------------------------------------------+-----------------------------------------------------------------+
 
 .. _ug_matter_gs_transmission_power_thread:
@@ -84,13 +84,13 @@ The maximum value of 20 dBm is only recommended for devices that are using :ref:
 +--------------------------+-----------------------------------------------------------------------------+
 | Board name               | Min - max TX power (dBm)                                                    |
 +==========================+=============================================================================+
-| nrf52840dk_nrf52840      | -40 to +8                                                                   |
+| nrf52840dk               | -40 to +8                                                                   |
 +--------------------------+-----------------------------------------------------------------------------+
-| nrf5340dk_nrf5340        | -40 to +3                                                                   |
+| nrf5340dk                | -40 to +3                                                                   |
 +--------------------------+-----------------------------------------------------------------------------+
-| nrf7002dk_nrf5340        | -40 to +3                                                                   |
+| nrf7002dk                | -40 to +3                                                                   |
 +--------------------------+-----------------------------------------------------------------------------+
-| nrf21540dk_nrf52840      | -40 to +20 (:ref:`more information <ug_matter_gs_transmission_power_fem>`)  |
+| nrf21540dk               | -40 to +20 (:ref:`more information <ug_matter_gs_transmission_power_fem>`)  |
 +--------------------------+-----------------------------------------------------------------------------+
 | nrf54l15pdk_nrf54l15     | -8 to +8                                                                    |
 +--------------------------+-----------------------------------------------------------------------------+
@@ -102,18 +102,18 @@ You can provide the desired value also as a CMake argument when building the sam
    .. group-tab:: nRF Connect for VS Code
 
       To build a Matter sample with a custom Thread TX power in the nRF Connect for VS Code IDE, add the :kconfig:option:`CONFIG_OPENTHREAD_DEFAULT_TX_POWER` Kconfig option variable and the dBm value to the :term:`build configuration`'s :guilabel:`Extra CMake arguments` and rebuild the build configuration.
-      For example, if you want to build for the ``nrf52840dk_nrf52840`` build target with the default Thread TX power equal to 2 dBm, add ``-DCONFIG_OPENTHREAD_DEFAULT_TX_POWER=2``.
+      For example, if you want to build for the ``nrf52840dk/nrf52840`` build target with the default Thread TX power equal to 2 dBm, add ``-DCONFIG_OPENTHREAD_DEFAULT_TX_POWER=2``.
 
       See `nRF Connect for VS Code extension pack <How to work with build configurations_>`_ documentation for more information.
 
    .. group-tab:: Command line
 
       To build a Matter sample with a custom Thread TX power from the command line, add the :kconfig:option:`CONFIG_OPENTHREAD_DEFAULT_TX_POWER` Kconfig option variable and the dBm value to the build command.
-      For example, if you want to build for the ``nrf52840dk_nrf52840`` build target with the default Thread TX power equal to 2 dBm, run the following command:
+      For example, if you want to build for the ``nrf52840dk/nrf52840`` build target with the default Thread TX power equal to 2 dBm, run the following command:
 
       .. code-block:: console
 
-         west build -b nrf52840dk_nrf52840 -- -DCONFIG_OPENTHREAD_DEFAULT_TX_POWER=2
+         west build -b nrf52840dk/nrf52840 -- -DCONFIG_OPENTHREAD_DEFAULT_TX_POWER=2
 
 ..
 
@@ -134,15 +134,15 @@ The following table lists the minimum and maximum output power values in dBm for
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
 | Board name               | Min - max TX power (dBm)                                                                                        |
 +==========================+=================================================================================================================+
-| nrf52840dk_nrf52840      | -40 to +8 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_8`)  |
+| nrf52840dk               | -40 to +8 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_8`)  |
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
-| nrf5340dk_nrf5340        | -40 to +3 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_3`)  |
+| nrf5340dk                | -40 to +3 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_3`)  |
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
-| nrf7002dk_nrf5340        | -40 to +3 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_3`)  |
+| nrf7002dk                | -40 to +3 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_3`)  |
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
-| nrf54l15pdk_nrf54l15     | -40 to +8 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_3`)  |
+| nrf54l15pdk              | -40 to +8 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_3`)  |
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
-| nrf21540dk_nrf52840      | :ref:`Handled automatically by the FEM driver <ug_matter_gs_transmission_power_fem>`                            |
+| nrf21540dk               | :ref:`Handled automatically by the FEM driver <ug_matter_gs_transmission_power_fem>`                            |
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
 
 For multicore boards, the configuration must be applied to the network core image.
@@ -157,8 +157,8 @@ You can do this by either editing the :file:`prj.conf` file or building the samp
       The parameter name varies depending on the devices you are building for.
       For example:
 
-      * If you want to build for Thread devices for the ``nrf5340dk_nrf5340_cpuapp`` build target with a Bluetooth LE TX power equal to 3 dBm, add ``-Dmultiprotocol_rpmsg_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y`` as the CMake argument.
-      * If you want to build for Wi-Fi® devices for the ``nrf7002dk_nrf5340_cpuapp`` build target with a Bluetooth LE TX power equal to 3 dBm, add ``-Dhci_ipc_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y`` as the CMake argument.
+      * If you want to build for Thread devices for the ``nrf5340dk/nrf5340/cpuapp`` build target with a Bluetooth LE TX power equal to 3 dBm, add ``-Dmultiprotocol_rpmsg_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y`` as the CMake argument.
+      * If you want to build for Wi-Fi® devices for the ``nrf7002dk/nrf5340/cpuapp`` build target with a Bluetooth LE TX power equal to 3 dBm, add ``-Dhci_ipc_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y`` as the CMake argument.
 
       See `nRF Connect for VS Code extension pack <How to work with build configurations_>`_ documentation for more information.
 
@@ -169,17 +169,17 @@ You can do this by either editing the :file:`prj.conf` file or building the samp
       The parameter name varies depending on the devices you are building for.
       For example:
 
-      * If you want to build for Thread devices for the ``nrf5340dk_nrf5340_cpuapp`` build target with a Bluetooth LE TX power equal to 3 dBm, run the following command:
+      * If you want to build for Thread devices for the ``nrf5340dk/nrf5340/cpuapp`` build target with a Bluetooth LE TX power equal to 3 dBm, run the following command:
 
         .. code-block:: console
 
-           west build -b nrf5340dk_nrf5340_cpuapp -- -Dmultiprotocol_rpmsg_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y
+           west build -b nrf5340dk/nrf5340/cpuapp -- -Dmultiprotocol_rpmsg_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y
 
-      * If you want to build for Wi-Fi® devices for the ``nrf7002dk_nrf5340_cpuapp`` build target with a Bluetooth LE TX power equal to 3 dBm, run the following command:
+      * If you want to build for Wi-Fi® devices for the ``nrf7002dk/nrf5340/cpuapp`` build target with a Bluetooth LE TX power equal to 3 dBm, run the following command:
 
         .. code-block:: console
 
-           west build -b nrf7002dk_nrf5340_cpuapp -- -Dhci_ipc_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y
+           west build -b nrf7002dk/nrf5340/cpuapp -- -Dhci_ipc_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y
 
 ..
 

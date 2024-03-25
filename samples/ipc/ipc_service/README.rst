@@ -69,8 +69,8 @@ You can build the sample using either the RPMsg or ICMSG backends, as follows:
 
 .. code-block:: console
 
-   west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_default .
-   west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_default .
+   west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_default .
+   west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_default .
 
 A set of overlays is available for the sample to verify the throughput when only one core is sending the data.
 Use these overlays when building the IPC sample to test the following scenarios:
@@ -79,15 +79,15 @@ Use these overlays when building the IPC sample to test the following scenarios:
 
   .. code-block:: console
 
-     west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_cpuapp_sending .
-     west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_cpunet_sending .
+     west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_cpuapp_sending .
+     west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_cpunet_sending .
 
 * Either the network or application core is sending data through the IPC service using the :ref:`zephyr:ipc_service_backend_icmsg` backend:
 
   .. code-block:: console
 
-     west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpuapp_sending .
-     west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpunet_sending .
+     west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpuapp_sending .
+     west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpunet_sending .
 
 **nRF54H20 DK**
 
@@ -95,13 +95,13 @@ You can build the sample to test IPC between the application and PPR core using 
 
 .. code-block:: console
 
-   west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpuppr_icmsg .
+   west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpuppr_icmsg .
 
 You can build the sample to test IPC between the application and radio domains using the :ref:`zephyr:ipc_service_backend_icbmsg` backend, as follows:
 
 .. code-block:: console
 
-   west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_icmsg .
+   west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_icmsg .
 
 Testing
 =======
@@ -119,7 +119,7 @@ After programming the sample to your development kit, test it by performing the 
     .. code-block:: console
 
        *** Booting Zephyr OS build v3.0.99-ncs1  ***
-       IPC-service nrf5340dk_nrf5340_cpuapp demo started
+       IPC-service nrf5340dk/nrf5340/cpuapp demo started
        Δpkt: 9391 (100 B/pkt) | throughput: 7512800 bit/s
        Δpkt: 9389 (100 B/pkt) | throughput: 7511200 bit/s
        Δpkt: 9388 (100 B/pkt) | throughput: 7510400 bit/s
@@ -131,7 +131,7 @@ After programming the sample to your development kit, test it by performing the 
     .. code-block:: console
 
        *** Booting Zephyr OS build v3.0.99-ncs1  ***
-       IPC-service nrf5340dk_nrf5340_cpunet demo started
+       IPC-service nrf5340dk/nrf5340/cpunet demo started
        Δpkt: 6665 (100 B/pkt) | throughput: 5332000 bit/s
        Δpkt: 6664 (100 B/pkt) | throughput: 5331200 bit/s
        Δpkt: 6658 (100 B/pkt) | throughput: 5326400 bit/s

@@ -9,17 +9,17 @@ tests:
     sysbuild: true
     build_only: false
     platform_allow:
-      - nrf52840dk_nrf52840
-      - nrf52dk_nrf52832
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf52dk_nrf52832
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     tags: ci_build
     harness: console
     harness_config:
@@ -33,9 +33,9 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow:
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
     tags: ci_build
     extra_args: EXTRA_CONF_FILE="prj_heap_memory.conf"
                 coremark_nrf5340dk_nrf5340_cpunet_EXTRA_CONF_FILE="prj_heap_memory.conf"
@@ -43,29 +43,29 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow:
-      - nrf52840dk_nrf52840
-      - nrf52dk_nrf52832
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf52dk_nrf52832
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp
     tags: ci_build
     extra_args: EXTRA_CONF_FILE="prj_static_memory.conf"
   sample.benchmark.coremark_multithread:
     sysbuild: true
     build_only: true
     platform_allow:
-      - nrf52840dk_nrf52840
-      - nrf52dk_nrf52832
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf52dk_nrf52832
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp
     tags: ci_build
     extra_args: EXTRA_CONF_FILE="prj_multiple_threads.conf"

@@ -28,14 +28,14 @@ With west
 
 .. code-block:: console
 
-    west build -p -b nrf7002dk_nrf5340_cpuapp -S nrf70-debug samples/wifi/shell
+    west build -p -b nrf7002dk/nrf5340/cpuapp -S nrf70-debug samples/wifi/shell
 
 With CMake
 ----------
 
 .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf7002dk_nrf5340_cpuapp -DSNIPPET=nrf70-debug samples/wifi/shell
+    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -DSNIPPET=nrf70-debug samples/wifi/shell
     ninja -C build
 
 Statistics

@@ -10,19 +10,19 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
 
    * - DK or Prototype platform
      - PCA number
-     - Build target
+     - Build target/s
      - Documentation
      - Product pages
    * - :ref:`zephyr:nrf9161dk_nrf9161`
      - PCA10153
-     - ``nrf9161dk_nrf9161_ns``
+     - ``nrf9161dk/nrf9161``, ``nrf9161dk/nrf9161/ns``
      - | `Product Specification <nRF9161 Product Specification_>`_
        | `User Guide <nRF9161 DK Hardware_>`_
      - | `nRF9161 DK product page`_
        | `nRF9161 System in Package (SiP) <nRF9161 product website_>`_
    * - :ref:`zephyr:nrf9160dk_nrf9160`
      - PCA10090
-     - ``nrf9160dk_nrf9160_ns``
+     - ``nrf9160dk/nrf9160``, ``nrf9160dk/nrf9160/ns``
      - | `Product Specification <nRF9160 Product Specification_>`_
        | :ref:`Getting started <ug_nrf9160_gs>`
        | `User Guide <nRF9160 DK Hardware_>`_
@@ -30,7 +30,7 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
        | `nRF9160 System in Package (SiP) <nRF9160 product website_>`_
    * - Thingy91
      - PCA20035
-     - ``thingy91_nrf9160_ns``
+     - ``thingy91/nrf9160``, ``thingy91/nrf9160/ns``
      - | :ref:`Getting started <ug_thingy91_gsg>`
        | `User Guide <Nordic Thingy:91 User Guide_>`_
      - | `Thingy\:91 product page`_

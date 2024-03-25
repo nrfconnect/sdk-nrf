@@ -39,8 +39,8 @@ IPv6 network support
 
 The development kits for this sample offer the following IPv6 network support for Matter:
 
-* Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, ``nrf21540dk_nrf52840``, and ``nrf54l15pdk_nrf54l15``.
-* Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached or for ``nrf7002dk_nrf5340_cpuapp``.
+* Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, and ``nrf54l15pdk/nrf54l15``.
+* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached or for ``nrf7002dk/nrf5340/cpuapp``.
 
 Overview
 ********
@@ -171,7 +171,7 @@ To set up an AWS IoT instance and configure the sample, complete the following s
 
    .. code-block:: console
 
-      west build -p -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
+      west build -p -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
 
 #. Flash the firmware and boot the sample.
 #. |connect_kit|

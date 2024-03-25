@@ -1,7 +1,7 @@
 tests:
   suit-processor.integration.suit_storage:
-    platform_allow: nrf52840dk_nrf52840 native_posix native_posix_64
+    platform_allow: nrf52840dk/nrf52840 native_posix native_posix/native/64
     tags: suit-processor suit_storage
     integration_platforms:
-      - nrf52840dk_nrf52840
+      - nrf52840dk/nrf52840
       - native_posix

@@ -11,8 +11,8 @@ common:
 tests:
   sample.mcumgr.smp_svr.ext_xip:
     platform_allow:
-      - nrf5340dk_nrf5340_cpuapp
-      - thingy53_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-      - thingy53_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp

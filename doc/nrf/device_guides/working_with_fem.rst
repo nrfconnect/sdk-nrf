@@ -628,7 +628,7 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540ek_fwd -Dmultiprotocol_rpmsg_SHIELD=nrf21540ek
+   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf21540ek_fwd -Dmultiprotocol_rpmsg_SHIELD=nrf21540ek
 
 In this command, the *childImageName_* parameter has the ``multiprotocol_rpmsg_`` value and builds a multiprotocol application with support for 802.15.4 and Bluetooth.
 The *childImageName_* parameter can take the following values:

@@ -20,7 +20,7 @@
 /*
  *  Use this file to only run a small set of test vectors.
  *  This file will only be relevant if the correct option is set with cmake:
- *  cmake -GNinja -DBOARD=nrf52840dk_nrf52840 -DREDUCED_TEST_SUITE=1 ..
+ *  cmake -GNinja -DBOARD=nrf52840dk/nrf52840 -DREDUCED_TEST_SUITE=1 ..
  */
 
 #if defined(MBEDTLS_CCM_C)

@@ -1,0 +1,29 @@
+# Enable MPU
+CONFIG_ARM_MPU=y
+
+# Enable TrustZone-M
+CONFIG_ARM_TRUSTZONE_M=y
+
+# This Board implies building Non-Secure firmware
+CONFIG_TRUSTED_EXECUTION_NONSECURE=y
+
+# Enable PINCTRL
+CONFIG_PINCTRL=y
+
+# Enable GPIO
+CONFIG_GPIO=y
+
+# Enable UARTE
+CONFIG_SERIAL=y
+
+# Enable console
+CONFIG_CONSOLE=y
+CONFIG_UART_CONSOLE=y
+
+# Enable SPI
+CONFIG_SPI=y
+
+# Disable entropy driver, as it's not yet implemented for nRF9160
+CONFIG_ENTROPY_NRF5_RNG=n
+
+CONFIG_BOOTLOADER_MCUBOOT=y

@@ -6,40 +6,40 @@ tests:
     build_only: true
     extra_args: CONF_FILE=prj_release.conf
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf7002dk_nrf5340_cpuapp
-      - nrf7002dk_nrf7001_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
-      nrf7002dk_nrf7001_nrf5340_cpuapp
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp/nrf7001
+    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
+      nrf7002dk/nrf5340/cpuapp/nrf7001
   sample.matter.lock.smp_dfu:
     build_only: true
     extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf7002dk_nrf5340_cpuapp
-      - nrf7002dk_nrf7001_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
-      nrf7002dk_nrf7001_nrf5340_cpuapp
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp/nrf7001
+    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
+      nrf7002dk/nrf5340/cpuapp/nrf7001
   sample.matter.lock.no_dfu.no_fd:
     build_only: true
     integration_platforms:
-      - nrf21540dk_nrf52840
+      - nrf21540dk/nrf52840
     platform_allow: >
-      nrf21540dk_nrf52840
+      nrf21540dk/nrf52840
   sample.matter.lock.thread_wifi_switched.smp_dfu:
     build_only: true
     extra_args: SHIELD=nrf7002ek multiprotocol_rpmsg_SHIELD=nrf7002ek_coex
       CONF_FILE=prj_thread_wifi_switched.conf CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y
       mcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3 CONFIG_CHIP_DFU_OVER_BT_SMP=y
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
   sample.matter.lock.nus:
     build_only: true
     extra_args: CONFIG_CHIP_NUS=y CONFIG_BT_FIXED_PASSKEY=y CONFIG_CHIP_NUS_FIXED_PASSKEY=112233
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp

@@ -332,7 +332,7 @@ Modem traces can be enabled by providing a snippet with the west build command u
 
 .. code-block:: console
 
-   west build -p -b nrf9161dk_nrf9161_ns -S nrf91-modem-trace-uart
+   west build -p -b nrf9161dk/nrf9161/ns -S nrf91-modem-trace-uart
 
 Dependencies
 ************

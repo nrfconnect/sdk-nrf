@@ -5,17 +5,17 @@ tests:
   sample.ei_data_forwarder:
     build_only: true
     platform_allow:
-      - nrf52dk_nrf52832
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
-      - thingy91x_nrf9151_ns
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9160dk/nrf9160/ns
+      - thingy91x/nrf9151/ns
     integration_platforms:
-      - nrf52dk_nrf52832
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf5340dk_nrf5340_cpuapp_ns
-      - nrf9160dk_nrf9160_ns
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9160dk/nrf9160/ns
     platform_exclude: native_posix qemu_x86 qemu_cortex_m3
     tags: ci_build

@@ -59,7 +59,7 @@ When the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` Kconfig option is en
 The nRF Desktop configurations use static configurations of partitions to ensure that the partition layout does not change between builds.
 
 Add the :file:`pm_static_${BUILD_TYPE}.yml` file to the project's board configuration directory to define the static Partition Manager configuration for given board and build type.
-For example, to define the static partition layout for the ``nrf52840dk_nrf52840`` board and ``release`` build type, you would need to add the :file:`pm_static_release.yml` file into the :file:`applicatons/nrf_desktop/configuration/nrf52840dk_nrf52840` directory.
+For example, to define the static partition layout for the ``nrf52840dk/nrf52840`` board and ``release`` build type, you would need to add the :file:`pm_static_release.yml` file into the :file:`applicatons/nrf_desktop/configuration/nrf52840dk_nrf52840` directory.
 
 Take into account the following points:
 

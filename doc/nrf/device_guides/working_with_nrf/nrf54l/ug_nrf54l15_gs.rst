@@ -28,8 +28,8 @@ Hardware
 
       For commands, use the correct build target depending on your PDK version:
 
-      * For the PDK revision v0.2.1, AB0-ES7 (Engineering A), use the ``nrf54l15pdk_nrf54l15_cpuapp`` build target.
-      * For the PDK revisions v0.3.0 and v0.7.0 (Engineering A), use the ``nrf54l15pdk_nrf54l15_cpuapp@0.3.0`` build target.
+      * For the PDK revision v0.2.1, AB0-ES7 (Engineering A), use the ``nrf54l15pdk/nrf54l15/cpuapp`` build target.
+      * For the PDK revisions v0.3.0 and v0.7.0 (Engineering A), use the ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` build target.
 
 * USB-C cable
 
@@ -92,7 +92,7 @@ To make sure the device sees the environment, all the commands related to the |N
 Programming the Hello World! sample
 ***********************************
 
-The :ref:`zephyr:hello_world_user` Zephyr sample uses the ``nrf54l15pdk_nrf54l15_cpuapp`` build target.
+The :ref:`zephyr:hello_world_user` Zephyr sample uses the ``nrf54l15pdk/nrf54l15/cpuapp`` build target.
 
 To build and program the sample to the nRF54L15 PDK, complete the following steps:
 
@@ -102,7 +102,7 @@ To build and program the sample to the nRF54L15 PDK, complete the following step
 
    .. code-block:: console
 
-      west build -b nrf54l15pdk_nrf54l15_cpuapp
+      west build -b nrf54l15pdk/nrf54l15/cpuapp
 
 #. Program the sample by running the standard |NCS| command:
 
@@ -133,7 +133,7 @@ To read the logs from the :ref:`zephyr:hello_world_user` sample programmed to th
    .. code-block:: console
 
     *** Booting Zephyr OS build 06af494ba663  ***
-    Hello world! nrf54l15dk_nrf54l15_cpuapp
+    Hello world! nrf54l15dk/nrf54l15/cpuapp
 
    .. note::
       If no output is shown when using the nRF Serial Terminal, select a different serial port in the terminal application.

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nrf9160dk_uart1_on_if0_3.dtsi>
+#include <nrf9160/nrf9160dk_uart1_on_if0_3.dtsi>
 
 / {
 	chosen {

@@ -5,16 +5,16 @@
 #
 
 config NRF_DEFAULT_MULTIPROTOCOL
-	default y if ("$(BOARD)" = "nrf5340dk_nrf5340_cpuapp")
+	default y if BOARD_NRF5340DK_NRF5340_CPUAPP
 
 config NRF_DEFAULT_BLUETOOTH
-	default y if ("$(BOARD)" = "nrf7002dk_nrf5340_cpuapp")
+	default y if BOARD_NRF7002DK_NRF5340_CPUAPP
 
 choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT
 endchoice
 
-if "$(BOARD)" = "nrf21540dk_nrf52840"
+if BOARD_NRF21540DK
 
 config BOOTLOADER_MCUBOOT
 	default n
@@ -24,7 +24,7 @@ config BOOTLOADER_NONE
 
 endif
 
-if BOOTLOADER_MCUBOOT && (("$(BOARD)" = "nrf5340dk_nrf5340_cpuapp") || ("$(BOARD)" = "nrf7002dk_nrf5340_cpuapp"))
+if BOOTLOADER_MCUBOOT && (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF5340_CPUAPP)
 
 config MCUBOOT_UPDATEABLE_IMAGES
 	default 2

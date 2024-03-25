@@ -15,7 +15,7 @@ zephyr_include_directories(include/)
 # NORDIC SDK APP START
 # Add include directory for board specific CAF def files
 zephyr_include_directories(
-  include/${BOARD}
+  include/${NORMALIZED_BOARD_TARGET}
   )
 target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END

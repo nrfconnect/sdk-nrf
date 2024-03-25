@@ -1,0 +1,43 @@
+# Copyright (c) 2024 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+# Enable MPU
+CONFIG_ARM_MPU=y
+
+# Enable TrustZone-M
+CONFIG_ARM_TRUSTZONE_M=y
+
+# This Board implies building Non-Secure firmware
+CONFIG_TRUSTED_EXECUTION_NONSECURE=y
+
+# Enable PINCTRL
+CONFIG_PINCTRL=y
+
+# Enable GPIO
+CONFIG_GPIO=y
+
+# Enable UARTE
+CONFIG_SERIAL=y
+
+# Enable console
+CONFIG_CONSOLE=y
+CONFIG_UART_CONSOLE=y
+
+# Enable I2C
+CONFIG_I2C=y
+
+# Enable SPI
+CONFIG_SPI=y
+
+# Enable Flash
+CONFIG_FLASH=y
+CONFIG_SPI_NOR=y
+CONFIG_SPI_NOR_SFDP_DEVICETREE=y
+CONFIG_SPI_NOR_FLASH_LAYOUT_PAGE_SIZE=4096
+CONFIG_SPI_NOR_IDLE_IN_DPD=y
+
+# Enable sensor (for nPM1300 charger)
+CONFIG_SENSOR=y
+
+# Disable entropy driver, as it's not yet implemented for nRF9151
+CONFIG_ENTROPY_NRF5_RNG=n
