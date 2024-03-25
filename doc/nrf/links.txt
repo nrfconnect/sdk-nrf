@@ -40,7 +40,7 @@
 .. _`Zephyr issue #27356`: https://github.com/zephyrproject-rtos/zephyr/issues/27356
 .. _`Zephyr issue #38516`: https://github.com/zephyrproject-rtos/zephyr/issues/38516
 .. _`Zephyr SDK`: https://github.com/zephyrproject-rtos/sdk-ng/releases
-.. _`BSEC license`: https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2023_04/license_terms_bme688_bme680_bsec.pdf
+
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
@@ -65,7 +65,7 @@
 
 .. _`Ethernet over RTT for Linux`: https://github.com/doki-nordic/experimental-eth-rtt-link/
 
-.. _`Memfault firmware SDK`: https://github.com/memfault/memfault-firmware-sdk
+
 .. _`Memfault entry in the manifest`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L170-L173
 .. _`ANT entry in the manifest`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L182-L187
 
@@ -170,8 +170,6 @@
 
 .. _`Azure SDK for Embedded C IoT client libraries`: https://github.com/nrfconnect/azure-sdk-for-c/blob/main/sdk/docs/iot/README.md
 
-.. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
-
 .. _`cJSON`: https://github.com/nrfconnect/sdk-cjson
 
 .. _`pc-ble-driver-py`: https://github.com/NordicSemiconductor/pc-ble-driver-py
@@ -181,6 +179,13 @@
 .. _`zcbor 0.8.0 release notes`: https://github.com/zephyrproject-rtos/zcbor/blob/0.8.0/RELEASE_NOTES.md
 .. _`zcbor 0.8.1 release notes`: https://github.com/zephyrproject-rtos/zcbor/blob/0.8.1/RELEASE_NOTES.md
 
+.. _`nRF Asset Tracker Memfault integration for AWS IoT`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-aws-js
+.. _`nRF Asset Tracker Memfault integration for Azure IoT Hub`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-azure-js
+
+.. _`Memfault firmware SDK`: https://github.com/memfault/memfault-firmware-sdk
+.. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
+.. _`Memfault-SDK`: https://github.com/memfault/memfault-firmware-sdk
+
 .. ### Source: github.io
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
@@ -188,8 +193,6 @@
 .. _`nRF Asset Tracker project`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/project/Index.html
 .. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/aws/GettingStarted/Index.html
 .. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/azure/GettingStarted/Index.html
-.. _`nRF Asset Tracker Memfault integration for AWS IoT`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-aws-js
-.. _`nRF Asset Tracker Memfault integration for Azure IoT Hub`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-azure-js
 .. _`nRF Asset Tracker Memfault integration`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/memfault/Index.html
 
 .. _`latest release notes for nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect/release_notes/connect/2022.11.140.html
@@ -232,6 +235,16 @@
 
 .. _`PSA Cryptography API 1.0.1`: https://armmbed.github.io/mbed-crypto/1.0.1/html/index.html
 .. _`PSA functions for key management`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/management.html
+
+.. _`Sidewalk documentation`: https://nrfconnect.github.io/sdk-sidewalk/
+.. _`Setting up the SDK for Amazon Sidewalk`: https://nrfconnect.github.io/sdk-sidewalk/setting_up_sidewalk_environment/setting_up_sdk.html
+
+.. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
+
+.. ### Source: githubusercontent.com
+
+.. _`raw XML`: https://raw.githubusercontent.com/OpenMobileAlliance/lwm2m-registry/prod/version_history/3300-1_0.xml
+.. _`Amazon license`: https://raw.githubusercontent.com/nrfconnect/sdk-sidewalk/main/LICENSE.txt
 
 .. ### Source: developer.nordicsemi.com
 
@@ -477,10 +490,6 @@
 
 .. _`iBasis network coverage spreadsheet`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/3rd-party/iBasis-simplified-coverage-map-for-web.pdf?la=en&hash=CA7DBF400243D8A7A7BDA94873B50E73C26B4FAC
 
-.. _`Onomondo LTE-M coverage`: https://onomondo.com/product/coverage/lte-m-networks/
-
-.. _`Onomondo NB-IoT coverage`: https://onomondo.com/product/coverage/nb-iot-networks/
-
 .. _`Contact Us`: https://www.nordicsemi.com/About-us/Contact-Us
 
 .. _`Nordic Semiconductor Wi-Fi products`: https://www.nordicsemi.com/Products/WiFi
@@ -488,7 +497,6 @@
 .. _`Nordic third-party modules`: https://www.nordicsemi.com/Nordic-Partners/3rd-party-modules
 
 .. #### Source: www.nordicsemi.com/Events/
-
 
 .. _`nRF Connect SDK v2.6.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v260
 .. _`nRF Connect SDK v2.5.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v250
@@ -544,7 +552,17 @@
 .. _`Programming the nRF52840 Dongle`:
 .. _`Programming a Development Kit`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html
 
+.. _`nRF Thread Topology Monitor`: https://docs.nordicsemi.com/bundle/ug_nrf_ttm/page/UG/nrf_ttm/ttm_introduction.html
+.. _`nRF Sniffer for 802.15.4`: https://docs.nordicsemi.com/bundle/ug_sniffer_802154/page/UG/sniffer_802154/intro_802154.html
+.. _`Configuring Wireshark for Zigbee`: https://docs.nordicsemi.com/bundle/ug_sniffer_802154/page/UG/sniffer_802154/configuring_sniffer_802154_zigbee.html
+
+.. _`Power Profiler Kit II (PPK2)`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/ppk/PPK_user_guide_Intro.html
+.. _`Install the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/common/nrf_connect_app_installing.html
+.. _`Using the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/ppk/PPK_user_guide_Running_the_software.html
+
 .. _`sysbuild support`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_overview.html#system-build-sysbuild
+
+.. _`Electrical specification for nRF7002`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/elspec/doc/electrical_specification.html
 
 .. ### Source: infocenter.nordicsemi.com
 
@@ -693,13 +711,6 @@
 .. _`Generating DFU packages`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_pkg.html
 .. _`DFU over a serial USB connection`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_serial_usb.html
 
-.. _`nRF Thread Topology Monitor`: https://docs.nordicsemi.com/bundle/ug_nrf_ttm/page/UG/nrf_ttm/ttm_introduction.html
-.. _`nRF Sniffer for 802.15.4`: https://docs.nordicsemi.com/bundle/ug_sniffer_802154/page/UG/sniffer_802154/intro_802154.html
-.. _`Configuring Wireshark for Zigbee`: https://infocenter.nordicsemi.com/topic/ug_sniffer_802154/UG/sniffer_802154/configuring_sniffer_802154_zigbee.html
-
-.. _`Power Profiler Kit II (PPK2)`: https://infocenter.nordicsemi.com/topic/ug_ppk2/UG/ppk/PPK_user_guide_Intro.html
-.. _`Install the Power Profiler app`: https://infocenter.nordicsemi.com/topic/ug_ppk2/UG/common/nrf_connect_app_installing.html
-.. _`Using the Power Profiler app`: https://infocenter.nordicsemi.com/topic/ug_ppk2/UG/ppk/PPK_user_guide_Running_the_software.html
 .. _`anomaly 19`: https://infocenter.nordicsemi.com/topic/errata_nRF5340_EngA/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
 .. _`nRF5 SDK Bootloader`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html
@@ -717,22 +728,15 @@
 
 .. _`access port protection mechanism`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf52840%2Fdif.html&anchor=concept_udr_mns_1s
 
-.. _`Electrical specification for nRF7002`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/elspec/doc/electrical_specification.html
-
 .. _`Wi-Fi Alliance Certification for nRF70 Series`: https://infocenter.nordicsemi.com/pdf/nwp_045.pdf
 
 .. _`Errata 254`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52840_Rev3%2FERR%2FnRF52840%2FRev3%2Flatest%2Fconfig_840_254.html
-
 .. _`Errata 255`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52833_Rev2%2FERR%2FnRF52833%2FRev2%2Flatest%2Fconfig_833_255.html
-
 .. _`Errata 256`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52820_Rev3%2FERR%2FnRF52820%2FRev3%2Flatest%2Fconfig_820_256.html
-
 .. _`Errata 257`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52811_Rev2%2FERR%2FnRF52811%2FRev2%2Flatest%2Fconfig_811_257.html
-
 .. _`Errata 117`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF5340_Rev1%2FERR%2FnRF5340%2FRev1%2Flatest%2Fanomaly_340_117.html
 
 .. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://infocenter.nordicsemi.com/pdf/SA-2023-234-v1_1.pdf
-
 
 .. ### Source: academy.nordicsemi.com
 
@@ -749,7 +753,6 @@
 .. _`Power saving techniques`: https://academy.nordicsemi.com/courses/cellular-iot-fundamentals/lessons/lesson-1-cellular-fundamentals/topic/lesson-1-power-saving-techniques/
 .. _`Bluetooth LE Fundamentals course`: https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/
 .. _`Wi-Fi Fundamentals course`: https://academy.nordicsemi.com/courses/wi-fi-fundamentals/
-
 
 .. ### Source: devzone.nordicsemi.com
 
@@ -784,6 +787,8 @@
 .. _`nRF Wi-Fi Provisioner mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.wifi.provisioning
 
 .. _`Bluetooth 5.4 DevZone blog`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/whats-new-in-bluetooth-v5-4-an-overview
+
+.. _`Certifying a cellular IoT device`: https://blog.nordicsemi.com/getconnected/certifying-a-cellular-iot-device/
 
 .. ### Source: www.segger.com
 
@@ -849,7 +854,7 @@
 
 .. _`OMA LwM2M Object and Resource Registry`: https://technical.openmobilealliance.org/OMNA/LwM2M/LwM2MRegistry.html
 
-.. ### Source: wikipedia
+.. ### Source: en.wikipedia.org
 
 .. _`GNSS`: https://en.wikipedia.org/wiki/Satellite_navigation
 .. _`GPS`: https://en.wikipedia.org/wiki/Global_Positioning_System
@@ -983,10 +988,6 @@
 .. _`Matter Simple Setup for Thread Overview`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-for-thread-overview.html
 .. _`Amazon Alexa integration with Matter`: https://developer.amazon.com/en-US/docs/alexa/smarthome/matter-support.html
 
-.. ### Source: *.amazontrust.com
-
-.. _`Amazon Root CA 1`: https://www.amazontrust.com/repository/AmazonRootCA1.pem
-
 .. ### Source: openthread.io
 
 .. _`OpenThread.io`: https://openthread.io/
@@ -1074,7 +1075,7 @@
 .. _`Nordic Semi Thingy:53 page`: https://docs.edgeimpulse.com/docs/development-platforms/officially-supported-mcu-targets/nordic-semi-thingy53
 .. _`Nordic Semi nRF5340 DK page`: https://docs.edgeimpulse.com/docs/nordic-semi-nrf5340-dk
 
-.. ### Source: memfault.com
+.. ### Source: *.memfault.com
 
 .. _`Memfault`: https://memfault.com/
 
@@ -1089,19 +1090,16 @@
 .. _`Memfault: Collecting Device Metrics`: https://docs.memfault.com/docs/embedded/metrics-api
 .. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/
 .. _`Memfault Demo CLI`: https://docs.memfault.com/docs/mcu/demo-cli/
-.. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
-.. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
-.. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
+
 .. _`Memfault Dashboards`: https://app.memfault.com
 .. _`Memfault debugging`: https://docs.memfault.com/docs/platform/introduction#debugging
 .. _`Memfault OTA`: https://docs.memfault.com/docs/platform/introduction#ota
 .. _`Memfault monitoring`: https://docs.memfault.com/docs/platform/introduction#metrics
 .. _`Memfault introduction`: https://docs.memfault.com/docs/platform/introduction
-.. _`Memfault-SDK`: https://github.com/memfault/memfault-firmware-sdk
+
 .. _`Memfault MCU Guide`: https://docs.memfault.com/docs/mcu/introduction
 .. _`Memfault: Reboot tracking`: https://docs.memfault.com/docs/mcu/reboot-reason-tracking
 .. _`Memfault: Coredumps`: https://docs.memfault.com/docs/mcu/coredumps
-
 
 .. ### Source: *.nrfcloud.com
 
@@ -1286,34 +1284,51 @@
 .. _`mosquitto.org server CA`: https://test.mosquitto.org/ssl/mosquitto.org.crt
 .. _`test.mosquitto.org`: https://test.mosquitto.org
 
-.. ### visualstudio.com
+.. ### Source: visualstudio.com
 
 .. _`nRF Connect for VS Code Extension Pack`: https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-connect-extension-pack
 .. _`VSMQTT`: https://marketplace.visualstudio.com/items?itemName=rpdswtk.vsmqtt
 .. _`Visual Studio Code download page`: https://code.visualstudio.com/download
 
-.. ### python.org
+.. ### Source: python.org
 
 .. _`Python virtual environments`: https://docs.python.org/3/library/venv.html
 .. _`Windows Python Path`: https://docs.python.org/3/using/windows.html#finding-the-python-executable
 .. _`Python's Path.glob`: https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob
 
-.. ### youtube.com
+.. ### Source: youtube.com
 
 .. _`Developing Matter 1.0 products with nRF Connect SDK`: https://www.youtube.com/watch?v=9Ar13rMxGIk
 .. _`Accelerate cellular product development`: https://youtu.be/b1YW1J4aUps
 .. _`How nRF9160 enables cellular IoT asset tracking`: https://webinars.nordicsemi.com/how-nrf9160-enables-cellular-iot-4
 
-.. ### Source: other (2 links or less from the same URL)
+.. ### Source: onomondo.com
 
-.. _`MQTT getting started`: https://mqtt.org/getting-started/
+.. _`Onomondo LTE-M coverage`: https://onomondo.com/product/coverage/lte-m-networks/
+.. _`Onomondo NB-IoT coverage`: https://onomondo.com/product/coverage/nb-iot-networks/
+.. _`Onomondo SoftSIM integration with the nRF91 Series`: https://help.onomondo.com/en/how-to-integrate-the-onomondo-softsim-with-the-nrf9160-from-nordic-semiconductor
 
-.. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
-
-.. _`iBasis IoT network coverage`: https://ibasis.com/solutions/iot-connectivity/network-coverage/
+.. ### Source: bosch-sensortec.com
 
 .. _`BME680`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme680/
 .. _`Bosch BSEC`: https://www.bosch-sensortec.com/software-tools/software/bsec/
+.. _`BSEC license`: https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2023_04/license_terms_bme688_bme680_bsec.pdf
+
+.. ### Source: wireshark.org
+
+.. _`Wireshark`: https://www.wireshark.org
+.. _`Wireshark with Lua`: https://wiki.wireshark.org/Lua
+.. _`Wireshark Unix Build setup`: https://www.wireshark.org/docs/wsdg_html_chunked/ChapterSetup.html#ChSetupUNIX
+
+.. ### Source: other (2 links or less from the same URL)
+
+.. _`Amazon Root CA 1`: https://www.amazontrust.com/repository/AmazonRootCA1.pem
+
+.. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
+
+.. _`MQTT getting started`: https://mqtt.org/getting-started/
+
+.. _`iBasis IoT network coverage`: https://ibasis.com/solutions/iot-connectivity/network-coverage/
 
 .. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
 .. _`ADXL372`: https://www.analog.com/en/products/adxl372.html#product-overview
@@ -1341,7 +1356,6 @@
 
 .. _`Azure Portal`: https://portal.azure.com/
 
-
 .. _`Verizon's Thingspace`: https://thingspace.verizon.com
 
 .. _`Verizon's Get certified program`: https://opendevelopment.verizonwireless.com/get-certified
@@ -1366,7 +1380,6 @@
 .. _`POSIX Programmer's Manual`: https://man7.org/linux/man-pages/dir_section_3.html
 .. _`LwM2M`: https://omaspecworks.org/what-is-oma-specworks/iot/lightweight-m2m-lwm2m/
 .. _`IPSO objects`: https://omaspecworks.org/develop-with-oma-specworks/ipso-smart-objects/
-.. _`raw XML`: https://raw.githubusercontent.com/OpenMobileAlliance/lwm2m-registry/prod/version_history/3300-1_0.xml
 
 .. _`DLPTest.com`: https://dlptest.com/ftp-test/
 
@@ -1389,15 +1402,12 @@
 
 .. _`BH1749NUC-E`: https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1749nuc-e.pdf
 
-
-
 .. _`CMock`: https://www.throwtheswitch.org/cmock
 .. _`Unity`: https://www.throwtheswitch.org/unity
 
 .. _`NMEA`: https://www.gpsworld.com/what-exactly-is-gps-nmea-data/
 
 .. _`Baltimore CyberTrust Root certificate`: https://cacerts.digicert.com/BaltimoreCyberTrustRoot.crt.pem
-
 .. _`DigiCert Global Root G2`: https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
@@ -1437,18 +1447,6 @@
 
 .. _`Samsung SmartThings integration with Matter`: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-
 
-.. _`Wireshark`: https://www.wireshark.org
-
-.. _`Wireshark with Lua`: https://wiki.wireshark.org/Lua
-
-.. _`Wireshark Unix Build setup`: https://www.wireshark.org/docs/wsdg_html_chunked/ChapterSetup.html#ChSetupUNIX
-
-.. _`Amazon license`: https://raw.githubusercontent.com/nrfconnect/sdk-sidewalk/main/LICENSE.txt
-
-.. _`Sidewalk documentation`: https://nrfconnect.github.io/sdk-sidewalk/
-
-.. _`Setting up the SDK for Amazon Sidewalk`: https://nrfconnect.github.io/sdk-sidewalk/setting_up_sidewalk_environment/setting_up_sdk.html
-
 .. _`Community Best Practice for Copyright Notice`: https://www.linuxfoundation.org/blog/copyright-notices-in-open-source-software-projects/
 
 .. _`HTTPie`: https://httpie.io/
@@ -1456,10 +1454,6 @@
 .. _`Devicetree Specification`: https://www.devicetree.org/
 
 .. _`Mobile IoT deployment map`: https://www.gsma.com/iot/deployment-map/
-
-.. _`Onomondo SoftSIM integration with the nRF91 Series`: https://help.onomondo.com/en/how-to-integrate-the-onomondo-softsim-with-the-nrf9160-from-nordic-semiconductor
-
-.. _`Certifying a cellular IoT device`: https://blog.nordicsemi.com/getconnected/certifying-a-cellular-iot-device/
 
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 
@@ -1512,7 +1506,6 @@
 
 .. _`10.23.3_ec macOS, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-osx.zip
 
-
 .. _`10.22.3_cs3 64-bit Windows, executable`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nRF-Command-Line-Tools-10.23.3-x64.exe
 .. _`10.22.3_cs3 macOS, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-osx.zip
 
@@ -1525,7 +1518,7 @@
 
 .. _`10.22.3_cs3 ARMHF system, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-armhf-linux.zip
 
-.. _`nRF Sniffer for Bluetooth LE`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_sniffer_ble%2FUG%2Fsniffer_ble%2Fintro.html
+.. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`Git for Windows`: https://git-scm.com/download/win
 .. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html
 
