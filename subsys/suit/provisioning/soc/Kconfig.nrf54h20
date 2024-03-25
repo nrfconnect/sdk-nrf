@@ -142,7 +142,7 @@ rsource "Kconfig.template.manifest_config"
 
 config SUIT_MPI_RAD_AREA_PATH
 	string "Path to the file with all radio domain MPI configurations"
-	default "suit_mpi_radiocore_merged.hex"
+	default "suit_mpi_radio_merged.hex"
 
 config SUIT_MPI_RAD_AREA_ADDRESS
 	hex

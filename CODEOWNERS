@@ -40,7 +40,7 @@
 /applications/zigbee_weather_station/     @milewr
 # Boards
 /boards/                                  @anangl
-/boards/arm/thingy91*                     @anangl @nrfconnect/ncs-cia
+/boards/nordic/thingy91*                  @anangl @nrfconnect/ncs-cia
 # All cmake related files
 /cmake/                                   @tejlmand
 /CMakeLists.txt                           @tejlmand
