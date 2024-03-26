@@ -74,7 +74,7 @@
 
 .. nrf52833dongle_nrf52833
 
-| nRF52833 Dongle | PCA10111 | nrf52833dongle_nrf52833 | ``nrf52833dongle_nrf52833`` |
+| nRF52833 Dongle | PCA10111 | nrf52833dongle | ``nrf52833dongle/nrf52833`` |
 
 .. nrf52833dk_nrf52820
 
