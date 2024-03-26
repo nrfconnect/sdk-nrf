@@ -19,3 +19,4 @@ set(thingy91_nrf9160ns_DEPRECATED thingy91_nrf9160_ns)
 
 set(nrf52810dmouse_nrf52810_DEPRECATED nrf52810dmouse/nrf52810)
 set(nrf52820dongle_nrf52820_DEPRECATED nrf52820dongle/nrf52820)
+set(nrf52833dongle_nrf52833_DEPRECATED nrf52833dongle/nrf52833)

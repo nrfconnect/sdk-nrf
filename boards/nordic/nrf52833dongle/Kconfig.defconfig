@@ -4,10 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if BOARD_NRF52833DONGLE_NRF52833
-
-config BOARD
-	default "nrf52833dongle_nrf52833"
+if BOARD_NRF52833DONGLE
 
 config BT_CTLR
 	default BT
@@ -15,4 +12,4 @@ config BT_CTLR
 config HW_STACK_PROTECTION
 	default ARCH_HAS_STACK_PROTECTION
 
-endif # BOARD_NRF52833DONGLE_NRF52833
+endif # BOARD_NRF52833DONGLE
