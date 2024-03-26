@@ -103,7 +103,7 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 Boards included in sdk-nrf
 **************************
 
-The following boards are defined in the :file:`nrf/boards/arm/` folder.
+The following boards are defined in the :file:`nrf/boards/nordic/` folder.
 
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
 | Hardware platform | PCA number | Board name                                               | Build target                          |
