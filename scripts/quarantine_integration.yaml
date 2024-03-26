@@ -414,7 +414,7 @@
   platforms:
     - nrf52833dk_nrf52833
     - nrf52833dongle/nrf52833
-    - nrf52kbd_nrf52832
+    - nrf52kbd/nrf52832
     - nrf52840dongle_nrf52840
     - nrf52840gmouse/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
