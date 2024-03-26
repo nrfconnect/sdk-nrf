@@ -416,7 +416,7 @@
     - nrf52833dongle/nrf52833
     - nrf52kbd_nrf52832
     - nrf52840dongle_nrf52840
-    - nrf52840gmouse_nrf52840
+    - nrf52840gmouse/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -436,7 +436,7 @@
     - applications.nrf_desktop.zdebug_mcuboot_smp
     - applications.nrf_desktop.zrelease_fast_pair.gmouse
   platforms:
-    - nrf52840gmouse_nrf52840
+    - nrf52840gmouse/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:

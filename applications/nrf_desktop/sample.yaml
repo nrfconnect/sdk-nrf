@@ -7,7 +7,7 @@ tests:
     platform_allow: >
       nrf52dmouse_nrf52832 nrf52kbd_nrf52832 nrf52810dmouse/nrf52810 nrf52820dongle/nrf52820
       nrf52833dk_nrf52820 nrf52833dk_nrf52833 nrf52833dongle/nrf52833 nrf52840dk_nrf52840
-      nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840 nrf5340dk_nrf5340_cpuapp
+      nrf52840dongle_nrf52840 nrf52840gmouse/nrf52840 nrf5340dk_nrf5340_cpuapp
       nrf54l15pdk_nrf54l15_cpuapp
     integration_platforms:
       - nrf52dmouse_nrf52832
@@ -19,7 +19,7 @@ tests:
       - nrf52833dongle/nrf52833
       - nrf52840dk_nrf52840
       - nrf52840dongle_nrf52840
-      - nrf52840gmouse_nrf52840
+      - nrf52840gmouse/nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf54l15pdk_nrf54l15_cpuapp
     tags: bluetooth ci_build
@@ -32,10 +32,10 @@ tests:
     extra_args: CONF_FILE=prj_wwcb.conf
   applications.nrf_desktop.zdebug_fast_pair.gmouse:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf52840gmouse_nrf52840
+    platform_allow: nrf52840dk_nrf52840 nrf52840gmouse/nrf52840
     integration_platforms:
       - nrf52840dk_nrf52840
-      - nrf52840gmouse_nrf52840
+      - nrf52840gmouse/nrf52840
     tags: bluetooth ci_build
     extra_args: CONF_FILE=prj_fast_pair.conf
                 FP_MODEL_ID=0x8E717D
@@ -49,24 +49,24 @@ tests:
     extra_args: CONF_FILE=prj_mcuboot_qspi.conf
   applications.nrf_desktop.zdebug_mcuboot_smp:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf52840gmouse_nrf52840
+    platform_allow: nrf52840dk_nrf52840 nrf52840gmouse/nrf52840
     integration_platforms:
       - nrf52840dk_nrf52840
-      - nrf52840gmouse_nrf52840
+      - nrf52840gmouse/nrf52840
     tags: bluetooth ci_build
     extra_args: CONF_FILE=prj_mcuboot_smp.conf
   applications.nrf_desktop.zdebugwithshell:
     build_only: true
     platform_allow: >
       nrf52kbd_nrf52832 nrf52833dk_nrf52833 nrf52833dongle/nrf52833 nrf52840dk_nrf52840
-      nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840
+      nrf52840dongle_nrf52840 nrf52840gmouse/nrf52840
     integration_platforms:
       - nrf52kbd_nrf52832
       - nrf52833dk_nrf52833
       - nrf52833dongle/nrf52833
       - nrf52840dk_nrf52840
       - nrf52840dongle_nrf52840
-      - nrf52840gmouse_nrf52840
+      - nrf52840gmouse/nrf52840
     tags: bluetooth ci_build
     extra_configs:
       - CONFIG_DESKTOP_SHELL=y
@@ -123,7 +123,7 @@ tests:
     platform_allow: >
       nrf52dmouse_nrf52832 nrf52kbd_nrf52832 nrf52810dmouse/nrf52810 nrf52820dongle/nrf52820
       nrf52833dk_nrf52820 nrf52833dk_nrf52833 nrf52833dongle/nrf52833 nrf52840dk_nrf52840
-      nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840 nrf5340dk_nrf5340_cpuapp
+      nrf52840dongle_nrf52840 nrf52840gmouse/nrf52840 nrf5340dk_nrf5340_cpuapp
       nrf54l15pdk_nrf54l15_cpuapp
     integration_platforms:
       - nrf52dmouse_nrf52832
@@ -135,7 +135,7 @@ tests:
       - nrf52833dongle/nrf52833
       - nrf52840dk_nrf52840
       - nrf52840dongle_nrf52840
-      - nrf52840gmouse_nrf52840
+      - nrf52840gmouse/nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf54l15pdk_nrf54l15_cpuapp
     tags: bluetooth ci_build
@@ -151,9 +151,9 @@ tests:
                 FP_ANTI_SPOOFING_KEY=8E8ulwhSIp/skZeg27xmWv2SxRxTOagypHrf2OdrhGY=
   applications.nrf_desktop.zrelease_fast_pair.gmouse:
     build_only: true
-    platform_allow: nrf52840gmouse_nrf52840
+    platform_allow: nrf52840gmouse/nrf52840
     integration_platforms:
-      - nrf52840gmouse_nrf52840
+      - nrf52840gmouse/nrf52840
     tags: bluetooth ci_build
     extra_args: CONF_FILE=prj_release_fast_pair.conf
                 FP_MODEL_ID=0x8E717D
