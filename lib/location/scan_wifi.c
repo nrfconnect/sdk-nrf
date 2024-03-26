@@ -59,6 +59,42 @@ void scan_wifi_details_get(struct location_data_details *details)
 }
 #endif
 
+static int scan_wifi_shutdown_interface(struct net_if *iface)
+{
+	LOG_DBG("Shutting down Wi-Fi interface");
+	int ret;
+
+	if (!net_if_is_admin_up(iface)) {
+		return 0;
+	}
+
+	ret = net_if_down(iface);
+	if (ret) {
+		LOG_ERR("Cannot bring down wifi iface (%d)", ret);
+		return ret;
+	}
+
+	LOG_DBG("Interface down");
+
+	return 0;
+}
+
+static int scan_wifi_startup_interface(struct net_if *iface)
+{
+	LOG_DBG("Starting up Wi-Fi interface");
+	int ret;
+
+	if (!net_if_is_admin_up(iface)) {
+		ret = net_if_up(iface);
+		if (ret) {
+			LOG_ERR("Cannot bring up wifi iface (%d)", ret);
+			return ret;
+		}
+		LOG_DBG("Interface up");
+	}
+	return 0;
+}
+
 void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
 {
 	int ret;
@@ -70,6 +106,12 @@ void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
 	scan_wifi_info.cnt = 0;
 
 	__ASSERT_NO_MSG(wifi_iface != NULL);
+
+	ret = scan_wifi_startup_interface(wifi_iface);
+	if (ret) {
+		return;
+	}
+
 	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wifi_iface, NULL, 0);
 	if (ret) {
 		LOG_ERR("Failed to initiate Wi-Fi scanning: %d", ret);
@@ -143,6 +185,10 @@ void scan_wifi_net_mgmt_event_handler(
 			break;
 		}
 	}
+
+	if (mgmt_event == NET_EVENT_WIFI_SCAN_DONE) {
+		scan_wifi_shutdown_interface(wifi_iface);
+	}
 }
 
 int scan_wifi_cancel(void)
@@ -185,7 +231,7 @@ int scan_wifi_init(void)
 				     (NET_EVENT_WIFI_SCAN_RESULT | NET_EVENT_WIFI_SCAN_DONE));
 	net_mgmt_add_event_callback(&scan_wifi_net_mgmt_cb);
 
-	return 0;
+	return scan_wifi_shutdown_interface(wifi_iface);
 }
 
 static void scan_wifi_timeout_work_fn(struct k_work *work)

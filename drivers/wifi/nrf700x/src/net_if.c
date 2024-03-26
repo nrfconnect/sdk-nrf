@@ -518,6 +518,20 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 	return;
 }
 
+/* Board-specific wifi startup code to run before the wifi device is started */
+__weak int nrf_wifi_if_zep_start_board(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+	return 0;
+}
+
+/* Board-specific wifi shutdown code to run after the wifi device is stopped */
+__weak int nrf_wifi_if_zep_stop_board(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+	return 0;
+}
+
 int nrf_wifi_if_start_zep(const struct device *dev)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -540,6 +554,13 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	if (!device_is_ready(dev)) {
 		LOG_ERR("%s: Device %s is not ready",
 			__func__, dev->name);
+		goto out;
+	}
+
+	ret = nrf_wifi_if_zep_start_board(dev);
+	if (ret) {
+		LOG_ERR("nrf_wifi_if_zep_start_board failed with error: %d",
+			ret);
 		goto out;
 	}
 
@@ -768,6 +789,12 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 	ret = 0;
 unlock:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+
+	ret = nrf_wifi_if_zep_stop_board(dev);
+	if (ret) {
+		LOG_ERR("nrf_wifi_if_zep_stop_board failed with error: %d",
+			ret);
+	}
 out:
 	return ret;
 }
