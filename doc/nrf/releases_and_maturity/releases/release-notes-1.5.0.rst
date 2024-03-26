@@ -869,7 +869,7 @@ The following list summarizes the most important changes inherited from upstream
   * Added :ref:`zephyr:nrf-ieee802154-rpmsg-sample`.
   * Added :zephyr:code-sample:`tagoio-http-post`.
   * Added Civetweb WebSocket Server sample.
-  * :zephyr:code-sample:`led-ws2812`: Updated to force SPIM on nRF52 DK.
+  * :zephyr:code-sample:`led-strip`: Updated to force SPIM on nRF52 DK.
   * :zephyr:code-sample:`cfb-custom-fonts`: Added support for ssd1306fb.
   * :zephyr:code-sample:`gsm-modem`: Added suspend/resume shell commands.
   * :zephyr:code-sample:`updatehub-fota`: Added support for Bluetooth LE IPSP, 802.15.4, modem, and Wi-Fi.
