@@ -4,10 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if BOARD_NRF52840GMOUSE_NRF52840
-
-config BOARD
-	default "nrf52840gmouse_nrf52840"
+if BOARD_NRF52840GMOUSE
 
 if USB
 
@@ -32,4 +29,4 @@ config BT_CTLR
 config HW_STACK_PROTECTION
 	default ARCH_HAS_STACK_PROTECTION
 
-endif # BOARD_NRF52840GMOUSE_NRF52840
+endif # BOARD_NRF52840GMOUSE

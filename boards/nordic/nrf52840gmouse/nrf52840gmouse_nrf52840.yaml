@@ -1,4 +1,4 @@
-identifier: nrf52840gmouse_nrf52840
+identifier: nrf52840gmouse/nrf52840
 name: nRF52840-GMouse-NRF52840
 type: mcu
 arch: arm
