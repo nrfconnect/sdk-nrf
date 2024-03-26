@@ -118,7 +118,7 @@
 
 .. nrf52810dmouse_nrf52810
 
-| nRF52810 Desktop Mouse | PCA20045 | nrf52810dmouse_nrf52810 | ``nrf52810dmouse_nrf52810`` |
+| nRF52810 Desktop Mouse | PCA20045 | nrf52810dmouse | ``nrf52810dmouse/nrf52810`` |
 
 .. thingy91_nrf52840
 
