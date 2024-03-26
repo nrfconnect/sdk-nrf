@@ -1,4 +1,4 @@
-identifier: nrf52dmouse_nrf52832
+identifier: nrf52dmouse/nrf52832
 name: nRF52-DMouse-NRF52832
 type: mcu
 arch: arm
