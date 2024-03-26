@@ -294,6 +294,10 @@ Networking samples
 
   *  The networking samples to support import of certificates in valid PEM formats.
 
+* :ref:`http_server` sample:
+
+  * Added ``DNS_SD_REGISTER_TCP_SERVICE`` so that mDNS services can locate and address the server using its hostname.
+
 NFC samples
 -----------
 
