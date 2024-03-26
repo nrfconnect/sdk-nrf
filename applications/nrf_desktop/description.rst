@@ -206,7 +206,7 @@ All of these reports use predefined report format and provide the given informat
 For example, the mouse motion is forwarded as HID mouse report.
 
 An nRF Desktop device supports the selected subset of the HID input reports.
-For example, the nRF Desktop keyboard reference design (``nrf52kbd_nrf52832``) supports HID keyboard report, HID consumer control report and HID system control report.
+For example, the nRF Desktop keyboard reference design (``nrf52kbd``) supports HID keyboard report, HID consumer control report and HID system control report.
 
 As an example, the following section describes handling HID mouse report data.
 
@@ -408,7 +408,7 @@ The application supports the following build types:
      - Debug version of the application with `Fast Pair`_ support.
    * - Release Fast Pair
      - :file:`prj_release_fast_pair.conf`
-     - ``nrf52kbd_nrf52832``, ``nrf52840gmouse/nrf52840``
+     - ``nrf52kbd/nrf52832``, ``nrf52840gmouse/nrf52840``
      - Release version of the application with `Fast Pair`_ support.
    * - Dongle
      - :file:`prj_dongle.conf`

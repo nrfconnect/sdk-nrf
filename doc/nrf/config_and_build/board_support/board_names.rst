@@ -117,7 +117,7 @@ The following boards are defined in the :file:`nrf/boards/arm/` folder.
 | nRF Desktop       | PCA20045   | :ref:`nrf52810dmouse <nrf_desktop>`                      | ``nrf52810dmouse/nrf52810``           |
 | Mouse             |            |                                                          |                                       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA20037   | :ref:`nrf52kbd_nrf52832 <nrf_desktop>`                   | ``nrf52kbd_nrf52832``                 |
+| nRF Desktop       | PCA20037   | :ref:`nrf52kbd <nrf_desktop>`                            | ``nrf52kbd/nrf52832``                 |
 | Keyboard          |            |                                                          |                                       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
 | nRF Desktop       | PCA10111   | :ref:`nrf52833dongle <nrf_desktop>`                      | ``nrf52833dongle/nrf52833``           |

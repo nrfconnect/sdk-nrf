@@ -102,7 +102,7 @@
 
 .. nrf52kbd_nrf52832
 
-| nRF52832 Desktop Keyboard | PCA20037 | nrf52kbd_nrf52832 | ``nrf52kbd_nrf52832`` |
+| nRF52832 Desktop Keyboard | PCA20037 | nrf52kbd | ``nrf52kbd/nrf52832`` |
 
 .. nrf52840dk_nrf52811
 

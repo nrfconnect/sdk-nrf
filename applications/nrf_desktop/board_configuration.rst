@@ -75,8 +75,8 @@ Sample dongle (``nrf52833dk_nrf52820``)
         Input data comes from Bluetooth and is retransmitted to USB.
       * |preconfigured_build_types|
 
-nRF52832 Desktop Keyboard (``nrf52kbd_nrf52832``)
-      * The reference design used is defined in :file:`nrf/boards/arm/nrf52kbd_nrf52832` for the project-specific hardware.
+nRF52832 Desktop Keyboard (``nrf52kbd``)
+      * The reference design used is defined in :file:`nrf/boards/nordic/nrf52kbd` for the project-specific hardware.
       * The application is configured to act as a keyboard, with the Bluetooth LE transport enabled.
       * Bluetooth is configured to use Nordic Semiconductor's SoftDevice link layer.
       * The preconfigured build types configure the device without the bootloader in debug mode and with B0 bootloader in release mode due to memory size limits.
