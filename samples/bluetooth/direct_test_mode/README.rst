@@ -455,7 +455,7 @@ Testing with nRF Connect for Desktop
 ------------------------------------
 
 1. |connect_kit|
-#. |connect_terminal|
+#. Connect the kit with a terminal emulator that supports encoding and decoding in the HEX format.
    See `Direct Test Mode terminal connection`_ for the required settings.
 #. Start the ``TRANSMITTER_TEST`` by sending the ``0x80 0x96`` DTM command to the connected development kit.
    This command triggers TX activity on 2402 MHz frequency (1st channel) with ``10101010`` packet pattern and 37-byte packet length.
