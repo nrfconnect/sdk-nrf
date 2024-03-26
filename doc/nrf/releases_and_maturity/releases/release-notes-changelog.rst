@@ -211,6 +211,10 @@ Bluetooth samples
 
   * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
 
+* :ref:`central_and_peripheral_hrs` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
 Bluetooth Mesh samples
 ----------------------
 
