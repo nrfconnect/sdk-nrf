@@ -160,3 +160,7 @@
     - nrf52840dk_nrf52840
     - nrf5340dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - libraries.cmsis_dsp.*
+  comment: "Configurations excluded to limit resources usage in integration builds"
