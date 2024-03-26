@@ -160,6 +160,9 @@ nRF Desktop
     You must use the alias to specify the QDEC instance used for scroll wheel, if your board supports multiple QDEC instances (for example ``nrf54l15pdk_nrf54l15_cpuapp``).
     You do not need to define the alias if your board supports only one QDEC instance, because in that case, the wheel module can rely on the ``qdec`` DT label provided by the board.
 
+* Updated the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option value in the nRF52840 Gaming Mouse configurations with the Fast Pair support.
+  The value is now aligned with the Fast Pair requirements.
+
 Thingy:53: Matter weather station
 ---------------------------------
 
