@@ -49,7 +49,11 @@ def argument_parser():
         default="ca/root-ca-cert.pem",
         help="Filename to save the root CA certificate"
     )
-
+    root_ca_parser.add_argument(
+        "--common-name",
+        default="Test Root CA",
+        help="Common Name for the Root CA certificate"
+    )
     sub_ca_parser = subparsers.add_parser(
         "sub_ca",
         help="Generate Subordinate CA certificate for testing purposes"
@@ -212,7 +216,7 @@ def handle_root_ca_action(args):
         x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "Test"),
         x509.NameAttribute(NameOID.LOCALITY_NAME, "Test"),
         x509.NameAttribute(NameOID.ORGANIZATION_NAME, "Test Organization"),
-        x509.NameAttribute(NameOID.COMMON_NAME, "Test Root CA"),
+        x509.NameAttribute(NameOID.COMMON_NAME, args.common_name),
     ])
     generate_signed_certificate(
         subject_name,
