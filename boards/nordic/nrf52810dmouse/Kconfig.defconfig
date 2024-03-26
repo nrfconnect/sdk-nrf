@@ -4,10 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if BOARD_NRF52810DMOUSE_NRF52810
-
-config BOARD
-	default "nrf52810dmouse_nrf52810"
+if BOARD_NRF52810DMOUSE
 
 config BT_CTLR
 	default BT
@@ -15,4 +12,4 @@ config BT_CTLR
 config HW_STACK_PROTECTION
 	default ARCH_HAS_STACK_PROTECTION
 
-endif # BOARD_NRF52810DMOUSE_NRF52810
+endif # BOARD_NRF52810DMOUSE

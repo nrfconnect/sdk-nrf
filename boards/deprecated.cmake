@@ -16,3 +16,5 @@ set(nrf52840_pca20035_DEPRECATED thingy91_nrf52840)
 set(nrf9160_pca20035_DEPRECATED thingy91_nrf9160)
 set(nrf9160_pca20035ns_DEPRECATED thingy91_nrf9160_ns)
 set(thingy91_nrf9160ns_DEPRECATED thingy91_nrf9160_ns)
+
+set(nrf52810dmouse_nrf52810_DEPRECATED nrf52810dmouse/nrf52810)
