@@ -391,6 +391,14 @@ Modem libraries
 Libraries for networking
 ------------------------
 
+* :ref:`lib_wifi_credentials` library:
+
+  * Added:
+
+    * Function :c:func:`wifi_credentials_delete_all` to delete all stored Wi-Fi credentials.
+    * Function :c:func:`wifi_credentials_is_empty` to check if the Wi-Fi credentials storage is empty.
+    * New parameter ``channel`` to the structure :c:struct:`wifi_credentials_header` to store the channel information of the Wi-Fi network.
+
 * :ref:`lib_nrf_cloud` library:
 
   * Added:
