@@ -383,7 +383,7 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_EAPOL
 	IEEE8021X_EAPOL
 )
 
-zephyr_library_compile_definitions_ifdef(WPA_SUPP_NW_SEL_RELIABILITY
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_NW_SEL_RELIABILITY
 	CONFIG_NW_SEL_RELIABILITY
 )
 endif()
