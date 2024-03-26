@@ -35,8 +35,8 @@ nRF Desktop board configuration files
 
 The nRF Desktop application comes with configuration files for the following reference designs:
 
-nRF52840 Gaming Mouse (``nrf52840gmouse_nrf52840``)
-      * The reference design is defined in :file:`nrf/boards/arm/nrf52840gmouse_nrf52840` for the project-specific hardware.
+nRF52840 Gaming Mouse (``nrf52840gmouse``)
+      * The reference design is defined in :file:`nrf/boards/nordic/nrf52840gmouse` for the project-specific hardware.
       * To achieve gaming-grade performance:
 
         * The application is configured to act as a gaming mouse, with both Bluetooth LE and USB transports enabled.

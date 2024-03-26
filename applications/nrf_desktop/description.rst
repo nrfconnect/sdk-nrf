@@ -404,11 +404,11 @@ The application supports the following build types:
      - Release version of the application with no debugging features.
    * - Debug Fast Pair
      - :file:`prj_fast_pair.conf`
-     - ``nrf52840dk_nrf52840``, ``nrf52840gmouse_nrf52840``
+     - ``nrf52840dk_nrf52840``, ``nrf52840gmouse/nrf52840``
      - Debug version of the application with `Fast Pair`_ support.
    * - Release Fast Pair
      - :file:`prj_release_fast_pair.conf`
-     - ``nrf52kbd_nrf52832``, ``nrf52840gmouse_nrf52840``
+     - ``nrf52kbd_nrf52832``, ``nrf52840gmouse/nrf52840``
      - Release version of the application with `Fast Pair`_ support.
    * - Dongle
      - :file:`prj_dongle.conf`
@@ -424,7 +424,7 @@ The application supports the following build types:
      - Debug version of the application that uses MCUboot with the secondary slot in the external QSPI FLASH.
    * - MCUboot SMP
      - :file:`prj_mcuboot_smp.conf`
-     - ``nrf52840dk_nrf52840``, ``nrf52840gmouse_nrf52840``
+     - ``nrf52840dk_nrf52840``, ``nrf52840gmouse/nrf52840``
      - | Debug version of the application that enables MCUmgr with DFU support and offers support for the MCUboot DFU procedure over SMP.
        | See the :ref:`nrf_desktop_bootloader_background_dfu` section for more information.
    * - WWCB

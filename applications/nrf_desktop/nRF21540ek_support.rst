@@ -9,7 +9,7 @@ nRF Desktop: Adding nRF21540 EK shield support
 
 You can use the nRF Desktop application with the :ref:`ug_radio_fem_nrf21540ek` shield, an RF front-end module (FEM) for the 2.4 GHz range extension.
 You can use the shield with any nRF Desktop HID application configured for a development kit that is fitted with Arduino-compatible connector (see the :guilabel:`DK` tab in :ref:`nrf_desktop_requirements`).
-This means that the shield support is not available for nRF Desktop's dedicated boards, such as ``nrf52840gmouse_nrf52840``, ``nrf52kbd_nrf52832``, or ``nrf52840dongle_nrf52840``.
+This means that the shield support is not available for nRF Desktop's dedicated boards, such as ``nrf52840gmouse``, ``nrf52kbd_nrf52832``, or ``nrf52840dongle_nrf52840``.
 
 Low Latency Packet mode
 ***********************

@@ -156,7 +156,7 @@ Set used by application (nRF Desktop - Gaming Mouse)
 +-----------------------+-----------+-------------------------+---------------------------+
 |Hardware platforms     |PCA        |Board name               |Build target               |
 +=======================+===========+=========================+===========================+
-|nRF52840 Gaming Mouse  |PCA20041   |nrf52840gmouse_nrf52840  |``nrf52840gmouse_nrf52840``|
+|nRF52840 Gaming Mouse  |PCA20041   |nrf52840gmouse           |``nrf52840gmouse/nrf52840``|
 +-----------------------+-----------+-------------------------+---------------------------+
 
 .. set11_end

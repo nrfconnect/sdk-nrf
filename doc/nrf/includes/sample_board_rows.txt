@@ -110,7 +110,7 @@
 
 .. nrf52840gmouse_nrf52840
 
-| nRF52840 Gaming Mouse | PCA20041 | nrf52840gmouse_nrf52840 | ``nrf52840gmouse_nrf52840`` |
+| nRF52840 Gaming Mouse | PCA20041 | nrf52840gmouse | ``nrf52840gmouse/nrf52840`` |
 
 .. nrf52dmouse_nrf52832
 
