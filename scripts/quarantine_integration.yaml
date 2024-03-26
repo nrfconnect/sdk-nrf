@@ -405,7 +405,7 @@
     - nrf52810dmouse/nrf52810
     - nrf52840dk_nrf52840
     - nrf52833dk_nrf52833
-    - nrf52833dongle_nrf52833
+    - nrf52833dongle/nrf52833
     - nrf52dmouse_nrf52832
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -413,7 +413,7 @@
     - applications.nrf_desktop.zdebugwithshell
   platforms:
     - nrf52833dk_nrf52833
-    - nrf52833dongle_nrf52833
+    - nrf52833dongle/nrf52833
     - nrf52kbd_nrf52832
     - nrf52840dongle_nrf52840
     - nrf52840gmouse_nrf52840

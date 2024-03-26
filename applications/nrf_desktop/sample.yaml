@@ -6,7 +6,7 @@ tests:
     build_only: true
     platform_allow: >
       nrf52dmouse_nrf52832 nrf52kbd_nrf52832 nrf52810dmouse/nrf52810 nrf52820dongle/nrf52820
-      nrf52833dk_nrf52820 nrf52833dk_nrf52833 nrf52833dongle_nrf52833 nrf52840dk_nrf52840
+      nrf52833dk_nrf52820 nrf52833dk_nrf52833 nrf52833dongle/nrf52833 nrf52840dk_nrf52840
       nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840 nrf5340dk_nrf5340_cpuapp
       nrf54l15pdk_nrf54l15_cpuapp
     integration_platforms:
@@ -16,7 +16,7 @@ tests:
       - nrf52820dongle/nrf52820
       - nrf52833dk_nrf52820
       - nrf52833dk_nrf52833
-      - nrf52833dongle_nrf52833
+      - nrf52833dongle/nrf52833
       - nrf52840dk_nrf52840
       - nrf52840dongle_nrf52840
       - nrf52840gmouse_nrf52840
@@ -58,12 +58,12 @@ tests:
   applications.nrf_desktop.zdebugwithshell:
     build_only: true
     platform_allow: >
-      nrf52kbd_nrf52832 nrf52833dk_nrf52833 nrf52833dongle_nrf52833 nrf52840dk_nrf52840
+      nrf52kbd_nrf52832 nrf52833dk_nrf52833 nrf52833dongle/nrf52833 nrf52840dk_nrf52840
       nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840
     integration_platforms:
       - nrf52kbd_nrf52832
       - nrf52833dk_nrf52833
-      - nrf52833dongle_nrf52833
+      - nrf52833dongle/nrf52833
       - nrf52840dk_nrf52840
       - nrf52840dongle_nrf52840
       - nrf52840gmouse_nrf52840
@@ -122,7 +122,7 @@ tests:
     build_only: true
     platform_allow: >
       nrf52dmouse_nrf52832 nrf52kbd_nrf52832 nrf52810dmouse/nrf52810 nrf52820dongle/nrf52820
-      nrf52833dk_nrf52820 nrf52833dk_nrf52833 nrf52833dongle_nrf52833 nrf52840dk_nrf52840
+      nrf52833dk_nrf52820 nrf52833dk_nrf52833 nrf52833dongle/nrf52833 nrf52840dk_nrf52840
       nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840 nrf5340dk_nrf5340_cpuapp
       nrf54l15pdk_nrf54l15_cpuapp
     integration_platforms:
@@ -132,7 +132,7 @@ tests:
       - nrf52820dongle/nrf52820
       - nrf52833dk_nrf52820
       - nrf52833dk_nrf52833
-      - nrf52833dongle_nrf52833
+      - nrf52833dongle/nrf52833
       - nrf52840dk_nrf52840
       - nrf52840dongle_nrf52840
       - nrf52840gmouse_nrf52840
