@@ -4,37 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Redefine the partition map. */
-&rram0 {
-	/delete-node/ partitions;
-
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-		app_partition: partition@0 {
-			label = "application";
-			reg = <0x0 0x177000>;
-		};
-
-		storage_partition: partition@177000 {
-			label = "storage";
-			reg = <0x177000 0x6000>;
-		};
-	};
-};
-
 /* For nRF54L, watchdog status is disabled by default. Needs to be enabled in DTS overlay. */
 &wdt30 {
 	status = "okay";
 };
 
 / {
-	chosen {
-		zephyr,flash = &rram0;
-		zephyr,code-partition = &app_partition;
-	};
-
 	/* Disable leds and redefine them to align configuration with CAF LEDs requirements. */
 	leds {
 		status = "disabled";

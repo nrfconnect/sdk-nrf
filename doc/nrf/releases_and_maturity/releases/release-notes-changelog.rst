@@ -164,6 +164,7 @@ nRF Desktop
   * Support for the nRF54L15 PDK with the ``nrf54l15pdk_nrf54l15_cpuapp`` board target.
     The PDK can act as a sample mouse or keyboard.
     It supports the Bluetooth LE HID data transport and uses SoftDevice Link Layer with Low Latency Packet Mode (LLPM) enabled.
+    The PDK uses MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and supports firmware updates using the :ref:`nrf_desktop_dfu`.
   * The ``nrfdesktop-wheel-qdec`` DT alias support to :ref:`nrf_desktop_wheel`.
     You must use the alias to specify the QDEC instance used for scroll wheel, if your board supports multiple QDEC instances (for example ``nrf54l15pdk_nrf54l15_cpuapp``).
     You do not need to define the alias if your board supports only one QDEC instance, because in that case, the wheel module can rely on the ``qdec`` DT label provided by the board.

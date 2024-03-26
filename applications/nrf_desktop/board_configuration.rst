@@ -112,4 +112,4 @@ Sample mouse or keyboard (``nrf54l15pdk_nrf54l15_cpuapp``)
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
       * In debug configurations, logs are provided through the UART.
         For detailed information on working with the nRF54L15 PDK, see the :ref:`ug_nrf54l15_gs` documentation.
-      * Configurations do not enable bootloader and do not support a firmware update.
+      * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
