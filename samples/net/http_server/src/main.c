@@ -12,6 +12,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/net/net_ip.h>
+#include <zephyr/net/dns_sd.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/sys/reboot.h>
 
@@ -52,6 +53,12 @@ LOG_MODULE_REGISTER(http_server, CONFIG_HTTP_SERVER_SAMPLE_LOG_LEVEL);
 				  " Rebooting the device" : "");		\
 	LOG_PANIC();								\
 	IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)))
+
+#if defined(CONFIG_NET_HOSTNAME)
+/* Register service */
+DNS_SD_REGISTER_TCP_SERVICE(http_server_sd, CONFIG_NET_HOSTNAME, "_http", "local",
+			    DNS_SD_EMPTY_TXT, SERVER_PORT);
+#endif /* CONFIG_NET_HOSTNAME */
 
 /* Zephyr NET management event callback structures. */
 static struct net_mgmt_event_callback l4_cb;
