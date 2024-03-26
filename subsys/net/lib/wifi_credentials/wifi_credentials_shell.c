@@ -66,6 +66,11 @@ static void print_network_info(void *cb_arg, const char *ssid, size_t ssid_len)
 		shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, ", band: 5GHz");
 	}
 
+	if (creds.header.channel) {
+		shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, ", channel: %d",
+			      creds.header.channel);
+	}
+
 	if (creds.header.flags & WIFI_CREDENTIALS_FLAG_FAVORITE) {
 		shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, ", favorite");
 	}
@@ -187,6 +192,16 @@ static int cmd_add_network(const struct shell *shell, size_t argc, char *argv[])
 	}
 
 	if (arg_idx < argc) {
+		/* look for channel */
+		char *end;
+
+		creds.header.channel = strtol(argv[arg_idx], &end, 10);
+		if (*end == '\0') {
+			++arg_idx;
+		}
+	}
+
+	if (arg_idx < argc) {
 		/* look for favorite flag */
 		if (strncmp("favorite", argv[arg_idx], strlen("favorite")) == 0) {
 			creds.header.flags |= WIFI_CREDENTIALS_FLAG_FAVORITE;
@@ -218,6 +233,7 @@ help:
 		    " [psk/password]"
 		    " [bssid]"
 		    " [{2.4GHz, 5GHz}]"
+		    " [channel]"
 		    " [favorite]"
 		    " [mfp_disabled|mfp_required]");
 	return -EINVAL;
