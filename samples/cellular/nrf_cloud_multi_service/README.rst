@@ -1139,7 +1139,7 @@ Then, complete the following steps for each device you wish to onboard:
 
    This script also installs any nRF Cloud root CA certificates required in a single chain to the :kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG` security tag (``sec_tag``).
    CoAP connections use one root CA certificate, whereas HTTPS and MQTT use another.
-   Devices using CoAP need both installed, since HTTPS is used for FOTA and PGPS on CoAP devices.
+   Devices using CoAP need both installed, since HTTPS is used for FOTA and P-GPS on CoAP devices.
 
    If the script succeeds, you should see the following output:
 

@@ -231,7 +231,7 @@ Before testing, ensure that your device is configured with the project key of yo
 Dependencies
 ************
 
-The sample requires the Memfault SDK, which is part of |NCS|'s West manifest, and will be downloaded automatically when ``west update`` is run.
+The sample requires the Memfault SDK, which is part of |NCS|'s west manifest, and will be downloaded automatically when ``west update`` is run.
 
 This sample uses the following |NCS| libraries and drivers:
 

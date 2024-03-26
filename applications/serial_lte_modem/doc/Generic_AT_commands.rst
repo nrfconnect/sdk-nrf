@@ -440,7 +440,7 @@ The ``<type>`` parameter can have the following integer values:
 * ``0`` - Root CA certificate (PEM format)
 * ``1`` - Certificate (PEM format)
 * ``2`` - Private key (PEM format)
-* ``3`` - Pre-shared Key (PSK) (ASCII text)
+* ``3`` - Pre-shared key (PSK) (ASCII text)
 * ``4`` - PSK identity (ASCII text)
 
 It is mandatory for *write* and *delete* operations.

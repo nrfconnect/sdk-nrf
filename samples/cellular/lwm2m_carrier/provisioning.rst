@@ -40,7 +40,7 @@ To pre-program the certificates, use one of the following methods:
 
 Other samples and applications like :ref:`asset_tracker_v2` and :ref:`modem_shell_application` with the carrier library integration do not write any certificates in the application.
 
-Pre-shared Key (PSK)
+Pre-shared key (PSK)
 ********************
 
 In live (production) environment, the correct PSK is generated and stored in the modem depending on which operator network the device is in.
