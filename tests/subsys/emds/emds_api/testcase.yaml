@@ -1,6 +1,7 @@
 tests:
   emds.api:
-    platform_allow: nrf52840dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840 nrf54l15pdk_nrf54l15_cpuapp
     tags: emds
     integration_platforms:
       - nrf52840dk_nrf52840
+      - nrf54l15pdk_nrf54l15_cpuapp

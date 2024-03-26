@@ -11,13 +11,25 @@
 #include <zephyr/sys/crc.h>
 #include <zephyr/logging/log.h>
 #include "emds_flash.h"
-#include <nrfx_nvmc.h>
 #include <nrf_erratas.h>
+
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+#include <hal/nrf_rramc.h>
+#include <zephyr/sys/barrier.h>
+#define RRAM                  DT_INST(0, soc_nv_flash)
+#define RRAM_START            DT_REG_ADDR(RRAM)
+#define RRAM_SIZE             DT_REG_SIZE(RRAM)
+#define EMDS_FLASH_BLOCK_SIZE DT_PROP(RRAM, write_block_size)
+#define WRITE_BUFFER_SIZE     NRF_RRAMC_CONFIG_WRITE_BUFF_SIZE_MAX
+#else
+#include <nrfx_nvmc.h>
+#define FLASH                 DT_INST(0, soc_nv_flash)
+#define EMDS_FLASH_BLOCK_SIZE DT_PROP(FLASH, write_block_size)
+#endif
 
 LOG_MODULE_REGISTER(emds_flash, CONFIG_EMDS_LOG_LEVEL);
 
 #define ADDR_OFFS_MASK 0x0000FFFF
-#define EMDS_FLASH_BLOCK_SIZE 4
 
 /* Allocation Table Entry */
 struct emds_ate {
@@ -107,19 +119,46 @@ static inline bool is_within_bounds(off_t addr, size_t len, off_t boundary_start
 
 static inline bool is_regular_addr_valid(off_t addr, size_t len)
 {
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+	return is_within_bounds(addr, len, RRAM_START, RRAM_START + RRAM_SIZE);
+#else
 	return is_within_bounds(addr, len, 0, nrfx_nvmc_flash_size_get());
+#endif
 }
 
 static void nvmc_wait_ready(void)
 {
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+	while (!nrf_rramc_ready_check(NRF_RRAMC)) {
+	}
+#else
 	while (!nrfx_nvmc_write_done_check()) {
 	}
+#endif
 }
+
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+static void commit_changes(size_t len)
+{
+	if (nrf_rramc_empty_buffer_check(NRF_RRAMC)) {
+		/* The internal write-buffer has been committed to RRAM and is now empty. */
+		return;
+	}
+
+	if ((len % WRITE_BUFFER_SIZE) == 0) {
+		/* Our last operation was buffer size-aligned, so we're done. */
+		return;
+	}
+
+	nrf_rramc_task_trigger(NRF_RRAMC, NRF_RRAMC_TASK_COMMIT_WRITEBUF);
+
+	barrier_dmem_fence_full();
+}
+#endif
 
 static int flash_direct_write(const struct device *dev, off_t offset, const void *data, size_t len)
 {
 	uint32_t flash_addr = offset;
-	uint32_t data_addr = (uint32_t)data;
 
 	ARG_UNUSED(dev);
 
@@ -143,6 +182,20 @@ static int flash_direct_write(const struct device *dev, off_t offset, const void
 		return -ECANCELED;
 	}
 
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+	nrf_rramc_config_t config = {.mode_write = true, .write_buff_size = WRITE_BUFFER_SIZE};
+
+	nrf_rramc_config_set(NRF_RRAMC, &config);
+	memcpy((void *)flash_addr, data, len);
+
+	barrier_dmem_fence_full(); /* Barrier following our last write. */
+	commit_changes(len);
+
+	config.mode_write = false;
+	nrf_rramc_config_set(NRF_RRAMC, &config);
+#else
+	uint32_t data_addr = (uint32_t)data;
+
 	while (len >= sizeof(uint32_t)) {
 		nrfx_nvmc_word_write(flash_addr, UNALIGNED_GET((uint32_t *)data_addr));
 
@@ -150,6 +203,7 @@ static int flash_direct_write(const struct device *dev, off_t offset, const void
 		data_addr += sizeof(uint32_t);
 		len -= sizeof(uint32_t);
 	}
+#endif
 
 	RESUME_POFWARN();
 
@@ -170,7 +224,9 @@ static size_t align_size(struct emds_fs *fs, size_t len)
 
 static int ate_wrt(struct emds_fs *fs, const struct emds_ate *entry)
 {
-	if (sizeof(struct emds_ate) % fs->flash_params->write_block_size) {
+	size_t ate_size = align_size(fs, sizeof(struct emds_ate));
+
+	if (ate_size % fs->flash_params->write_block_size) {
 		return -EINVAL;
 	}
 
@@ -180,7 +236,7 @@ static int ate_wrt(struct emds_fs *fs, const struct emds_ate *entry)
 		return rc;
 	}
 
-	fs->ate_wra -= fs->ate_size;
+	fs->ate_wra -= ate_size;
 	return 0;
 }
 
@@ -282,23 +338,24 @@ static int entry_wrt(struct emds_fs *fs, uint16_t id, const void *data, size_t l
 
 static enum ate_type ate_check(struct emds_fs *fs, uint32_t addr, struct emds_ate *entry)
 {
-	uint8_t cmp_buf[fs->ate_size];
-	int rc = flash_read(fs->flash_dev, addr, entry, fs->ate_size);
+	uint8_t read_buf[fs->ate_size];
+	int rc = flash_read(fs->flash_dev, addr, read_buf, fs->ate_size);
 
 	if (rc) {
 		return ATE_TYPE_UNKNOWN;
 	}
 
-	memset(cmp_buf, 0, sizeof(cmp_buf));
-	if (!memcmp(entry, cmp_buf, fs->ate_size)) {
+	memset(entry, 0, sizeof(struct emds_ate));
+	if (!memcmp(entry, read_buf, sizeof(struct emds_ate))) {
 		return ATE_TYPE_INVALIDATED;
 	}
 
-	memset(cmp_buf, fs->flash_params->erase_value, sizeof(cmp_buf));
-	if (!memcmp(entry, cmp_buf, fs->ate_size)) {
+	memset(entry, fs->flash_params->erase_value, sizeof(struct emds_ate));
+	if (!memcmp(entry, read_buf, sizeof(struct emds_ate))) {
 		return ATE_TYPE_ERASED;
 	}
 
+	memcpy(entry, read_buf, sizeof(struct emds_ate));
 	if (is_ate_valid(entry)) {
 		return ATE_TYPE_VALID;
 	}
@@ -308,7 +365,7 @@ static enum ate_type ate_check(struct emds_fs *fs, uint32_t addr, struct emds_at
 
 static int ate_last_recover(struct emds_fs *fs)
 {
-	struct emds_ate end_ate = { 0 };
+	struct emds_ate end_ate;
 	enum ate_type type = 0;
 	uint8_t expect_field = 0xFF;
 
@@ -402,7 +459,7 @@ int emds_flash_init(struct emds_fs *fs)
 
 	if (fs->flash_params->write_block_size > EMDS_FLASH_BLOCK_SIZE ||
 	    fs->flash_params->write_block_size == 0) {
-		LOG_ERR("Unsupported write block size");
+		LOG_ERR("Unsupported write block size: %i", fs->flash_params->write_block_size);
 		return -EINVAL;
 	}
 
@@ -426,7 +483,7 @@ int emds_flash_init(struct emds_fs *fs)
 
 	k_mutex_lock(&fs->emds_lock, K_FOREVER);
 	fs->ate_size = align_size(fs, sizeof(struct emds_ate));
-	__ASSERT(fs->ate_size == 8, "ATE size not aligned with documented value");
+
 	rc = ate_last_recover(fs);
 	k_mutex_unlock(&fs->emds_lock);
 	if (rc) {
