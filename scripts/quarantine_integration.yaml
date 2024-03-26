@@ -402,7 +402,7 @@
 - scenarios:
     - applications.nrf_desktop.zrelease
   platforms:
-    - nrf52810dmouse_nrf52810
+    - nrf52810dmouse/nrf52810
     - nrf52840dk_nrf52840
     - nrf52833dk_nrf52833
     - nrf52833dongle_nrf52833
