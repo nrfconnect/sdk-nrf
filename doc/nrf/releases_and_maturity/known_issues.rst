@@ -2799,7 +2799,7 @@ The combination of nRF Secure Immutable Bootloader and MCUboot fails to upgrade 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NRF91-989: Unable to bootstrap after changing SIMs
-  In some cases, swapping the SIM card might trigger the bootstrap Pre-Shared Key to be deleted from the device.
+  In some cases, swapping the SIM card might trigger the bootstrap pre-shared key (PSK) to be deleted from the device.
   This can prevent future bootstraps from succeeding.
 
   **Affected platforms:** nRF9160

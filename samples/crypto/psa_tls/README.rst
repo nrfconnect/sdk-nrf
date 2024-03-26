@@ -11,7 +11,7 @@ The PSA TLS sample shows how to perform a TLS handshake and send encrypted messa
 
 .. note::
 
-   Datagram Transport Layer Security (DTLS) and Pre-shared key (PSK) are currently not supported.
+   Datagram Transport Layer Security (DTLS) and pre-shared key (PSK) are currently not supported.
 
 For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 

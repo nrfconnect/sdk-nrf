@@ -936,15 +936,15 @@ Glossary
       See :ref:`zephyr:west`.
 
    West manifest file
-      The main file describing the contents of a :term:`West` workspace, which is located in the :term:`West manifest repository`.
+      The main file describing the contents of a :term:`west <West>` workspace, which is located in the :term:`west manifest repository <West manifest repository>`.
       In the |NCS| and Zephyr, it is named :file:`west.yml`.
 
    West manifest repository
-      A :term:`repository <Repository>` that contains a :term:`West manifest file` and can be used to configure a west workspace.
+      A :term:`repository <Repository>` that contains a :term:`west manifest file <West manifest file>` and can be used to configure a west workspace.
       See :ref:`dm_repo_types`.
 
    West project
-      Any of the listed :term:`repositories <Repository>` inside a :term:`West manifest file`.
+      Any of the listed :term:`repositories <Repository>` inside a :term:`west manifest file <West manifest file>`.
 
    Wi-Fi Protected Access® (WPA)
       A security protocol developed by Wi-Fi Alliance.
