@@ -11,9 +11,10 @@
 #include <hal/nrf_dppi.h>
 #include <hal/nrf_ppib.h>
 
+#include <assert.h>
 #include <zephyr/drivers/timer/nrf_grtc_timer.h>
 
-#define GRTC_CC_CHANNEL_SHARED_WITH_MPSL 9U
+static int32_t m_timestamp_cc_channel;
 
 #if defined(NRF54H_SERIES)
 /* To trigger GRTC.TASKS_CAPTURE[#cc] with RADIO.EVENT_{?}, the following connection chain must be
@@ -103,7 +104,7 @@ void nrf_802154_platform_timestamper_cross_domain_connections_setup(void)
 
 	/* {h} DPPIC_132 --> GRTC.CC */
 	nrf_grtc_task_t capture_task =
-		nrfy_grtc_sys_counter_capture_task_get(GRTC_CC_CHANNEL_SHARED_WITH_MPSL);
+		nrfy_grtc_sys_counter_capture_task_get(m_timestamp_cc_channel);
 	NRF_DPPI_ENDPOINT_SETUP(
 		nrfy_grtc_task_address_get(NRF_GRTC, capture_task), DPPIC_G2_TS_CHANNEL);
 
@@ -156,7 +157,7 @@ void nrf_802154_platform_timestamper_cross_domain_connections_setup(void)
 
 void nrf_802154_platform_timestamper_local_domain_connections_setup(uint32_t dppi_ch)
 {
-	z_nrf_grtc_timer_capture_prepare(GRTC_CC_CHANNEL_SHARED_WITH_MPSL);
+	z_nrf_grtc_timer_capture_prepare(m_timestamp_cc_channel);
 
 	/* {a} RADIO.EVENT_{?} --> DPPIC_10
 	 * It is the responsibility of the user of this platform to make the {a} connection
@@ -175,7 +176,7 @@ void nrf_802154_platform_timestamper_local_domain_connections_setup(uint32_t dpp
 
 	/* {e} DPPIC_20[dppi_ch] --> GRTC.CC[cc_channel] */
 	nrf_grtc_task_t capture_task =
-		nrfy_grtc_sys_counter_capture_task_get(GRTC_CC_CHANNEL_SHARED_WITH_MPSL);
+		nrfy_grtc_sys_counter_capture_task_get(m_timestamp_cc_channel);
 	NRF_DPPI_ENDPOINT_SETUP(nrfy_grtc_task_address_get(NRF_GRTC, capture_task), dppi_ch);
 
 	nrfy_dppi_channels_enable(DPPIC_P_INST, 1UL << dppi_ch);
@@ -183,10 +184,16 @@ void nrf_802154_platform_timestamper_local_domain_connections_setup(uint32_t dpp
 
 #endif
 
+void nrf_802154_platform_timestamper_init(void)
+{
+	m_timestamp_cc_channel = z_nrf_grtc_timer_chan_alloc();
+	assert(m_timestamp_cc_channel >= 0);
+}
+
 void nrf_802154_platform_timestamper_cross_domain_connections_clear(void)
 {
 	nrf_grtc_task_t capture_task =
-		nrfy_grtc_sys_counter_capture_task_get(GRTC_CC_CHANNEL_SHARED_WITH_MPSL);
+		nrfy_grtc_sys_counter_capture_task_get(m_timestamp_cc_channel);
 
 	NRF_DPPI_ENDPOINT_CLEAR(nrfy_grtc_task_address_get(NRF_GRTC, capture_task));
 }
@@ -200,12 +207,12 @@ bool nrf_802154_platform_timestamper_captured_timestamp_read(uint64_t *p_capture
 {
 	/* @todo: check if this can be replaced with:
 	 *
-	 * z_nrf_grtc_timer_capture_read(GRTC_CC_CHANNEL_SHARED_WITH_MPSL, p_captured);
+	 * z_nrf_grtc_timer_capture_read(m_timestamp_cc_channel, p_captured);
 	 */
-	if (nrf_grtc_sys_counter_cc_enable_check(NRF_GRTC, GRTC_CC_CHANNEL_SHARED_WITH_MPSL)) {
+	if (nrf_grtc_sys_counter_cc_enable_check(NRF_GRTC, m_timestamp_cc_channel)) {
 		return false;
 	}
 
-	*p_captured = nrfy_grtc_sys_counter_cc_get(NRF_GRTC, GRTC_CC_CHANNEL_SHARED_WITH_MPSL);
+	*p_captured = nrfy_grtc_sys_counter_cc_get(NRF_GRTC, m_timestamp_cc_channel);
 	return true;
 }
