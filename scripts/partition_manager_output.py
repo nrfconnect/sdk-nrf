@@ -7,8 +7,16 @@
 
 import argparse
 import yaml
+import sys
+import os
+import re
 from os import path
+
+sys.path.insert(0, os.path.join(os.getenv('ZEPHYR_BASE'), 'scripts/dts', 'python-devicetree',
+                                'src'))
+
 from partition_manager import PartitionError
+from devicetree import edtlib
 
 
 def get_header_guard_start(filename):
@@ -23,7 +31,7 @@ def get_header_guard_end(filename):
 
 DEST_HEADER = 1
 DEST_KCONFIG = 2
-
+fixed_partition_ids = {}
 
 def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=None):
     config_lines = list()
@@ -85,16 +93,28 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
                     add_line(f'{name_upper}_EXTRA_PARAM_{epkey}', extra_params[epkey])
 
             if partition_has_device(partition):
-                add_line(f'{name_upper}_ID', str(partition_id))
+                if name_upper in fixed_partition_ids.keys():
+                    add_line(f'{name_upper}_ID', str(fixed_partition_ids[name_upper]))
+                else:
+                    while partition_id in fixed_partition_ids.values():
+                        #avoid collititons with fixed_partitions
+                        partition_id += 1
+                    add_line(f'{name_upper}_ID', str(partition_id))
                 # Used to support lowercase access. See flash_map.h.
                 add_line(f'{name_lower}_ID', f'PM_{name_upper}_ID')
                 # Used for IS_ENABLED access, see flash_map_pm.h
                 add_line(f'{name_lower}_IS_ENABLED', "1")
 
                 if current_domain is None or domain == current_domain:
-                    add_line(f'{partition_id}_LABEL', name_upper)
+                    if name_upper in fixed_partition_ids.keys():
+                        add_line(f'{fixed_partition_ids[name_upper]}_LABEL', name_upper)
+                    else:
+                        add_line(f'{partition_id}_LABEL', name_upper)
                 else:
-                    add_line(f'{partition_id}_LABEL', f'{domain}_{name_upper}')
+                    if name_upper in fixed_partition_ids.keys():
+                        add_line(f'{fixed_partition_ids[name_upper]}_LABEL', f'{domain}_{name_upper}')
+                    else:
+                        add_line(f'{partition_id}_LABEL', f'{domain}_{name_upper}')
                 partition_id += 1
 
             if dest is DEST_HEADER:
@@ -210,14 +230,85 @@ def parse_args():
                         help='Paths to the output header files files.'
                              'These will be matched to the --images.')
 
+    parser.add_argument("--dts-file", required=True, help="DTS file")
+    parser.add_argument("--dtc-flags",
+                        help="'dtc' devicetree compiler flags, some of which "
+                             "might be respected here")
+    parser.add_argument("--bindings-dirs", nargs='+', required=True,
+                        help="directory with bindings in YAML format, "
+                        "we allow multiple")
+    parser.add_argument("--vendor-prefixes", action='append', default=[],
+                        help="vendor-prefixes.txt path; used for validation; "
+                             "may be given multiple times")
+    parser.add_argument("--edtlib-Werror", action="store_true",
+                        help="if set, edtlib-specific warnings become errors. "
+                             "(this does not apply to warnings shared "
+                             "with dtc.)")
     return parser.parse_args()
 
+def get_slot_number(slot):
+    match = re.search(r'slot(\d+)', str(slot))
+    if match:
+        return int(match.group(1))
+    else:
+        return None
 
 def main():
+
     args = parse_args()
 
     gpm_config = dict()  # GLOBAL pm_config
     greg_config = dict()  # GLOBAL pm_regions
+
+    # Copied from gen_defines.py
+    vendor_prefixes = {}
+    for prefixes_file in args.vendor_prefixes:
+        vendor_prefixes.update(edtlib.load_vendor_prefixes_txt(prefixes_file))
+
+    try:
+        edt = edtlib.EDT(args.dts_file, args.bindings_dirs,
+                         # Suppress this warning if it's suppressed in dtc
+                         warn_reg_unit_address_mismatch=
+                         "-Wno-simple_bus_reg" not in args.dtc_flags,
+                         default_prop_types=True,
+                         infer_binding_for_paths=["/zephyr,user"],
+                         werror=args.edtlib_Werror,
+                         vendor_prefixes=vendor_prefixes)
+    except edtlib.EDTError as e:
+        sys.exit(f"devicetree error: {e}")
+
+    for compat, nodes in edt.compat2nodes.items():
+        edt.compat2nodes[compat] = sorted(
+                nodes, key=lambda node: 0 if node.status == "okay" else 1)
+    #end
+
+    flash_area_num = 0
+    mcuboot_partitions = ["PRIMARY", "SECONDARY"]
+    slot_string = "MCUBOOT_{type}_{image_number}"
+    for compat, nodes in edt.compat2nodes.items():
+        for node in nodes:
+            if compat == "fixed-partitions":
+                image_number = 0
+                slot_counter = 0
+                for child in node.children.values():
+                    if "slot" in str(child.labels):
+                        slot_number = get_slot_number(child.labels)
+                        key = slot_string.format(type=mcuboot_partitions[slot_counter % 2],
+                                                 image_number = image_number if image_number > 0 else "").rstrip("_")
+                        if (slot_counter % 2):
+                            image_number += 1
+                        fixed_partition_ids[key] = flash_area_num
+                        slot_counter += 1
+
+                    if "boot" in str(child.labels):
+                        key = "MCUBOOT"
+                        fixed_partition_ids[key] = flash_area_num
+
+                    if "storage" in str(child.labels):
+                        key = "STORAGE"
+                        fixed_partition_ids[key] = flash_area_num
+
+                    flash_area_num += 1
 
     for partition in args.input_partitions:
         fn = path.basename(partition)
@@ -241,6 +332,9 @@ def main():
 
     if args.config_file:
         write_kconfig_file(gpm_config, greg_config, args.config_file)
+
+    if args.dts_file:
+        print(args.dts_file)
 
     if args.header_files:
         for name, header_file in zip(args.images, args.header_files):
