@@ -70,8 +70,8 @@ The AT commands are documented in the `nRF91x1 AT Commands Reference Guide`_  an
 
 The firmware for the modem is available as a precompiled binary.
 You can download the firmware from the `nRF9161 product website (compatible downloads)`_ or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
-The zip file contains the release notes, and both the full firmware and patches to upgrade from one version to another.
-A delta patch can only upgrade the modem firmware from one specific version to another version (for example, v1.2.1 to v1.2.2).
+The zip file contains the release notes, and both the full firmware and patches to update from one version to another.
+A delta patch can only update the modem firmware from one specific version to another version (for example, v1.2.1 to v1.2.2).
 If you need to perform a major version update (for example, v1.2.x to v1.3.x), you need an external flash with a minimum size of 4 MB.
 
 Different versions of the LTE modem firmware are available, and these versions are certified for the mobile network operators having their own certification programs.
@@ -85,13 +85,13 @@ See the `Mobile network operator certifications`_ for more information.
 .. _nrf91_update_modem_fw:
 .. _nrf9160_update_modem_fw:
 
-Modem firmware upgrade
-======================
+Modem firmware update
+=====================
 
 There are two ways to update the modem firmware:
 
-Full upgrade
-  You can use either a wired or a wireless connection to do a full upgrade of the modem firmware:
+Full update
+  You can use either a wired or a wireless connection to do a full update of the modem firmware:
 
   * When using a wired connection, you can use either the `nRF Connect Programmer`_, which is part of `nRF Connect for Desktop`_, or the `nRF pynrfjprog`_ Python package.
     Both methods use the Simple Management Protocol (SMP) to provide an interface over UART, which enables the device to perform the update.
@@ -102,16 +102,16 @@ Full upgrade
     * You can also use the nRF pynrfjprog Python package to perform the update, as long as a custom application image integrating the ``lib_fmfu_mgmt`` subsystem is included in the existing firmware of the device.
       See the :ref:`fmfu_smp_svr_sample` sample for an example on how to integrate the :ref:`subsystem <lib_fmfu_mgmt>` in your custom application.
 
-  * When using a wireless connection, the upgrade is applied over-the-air (OTA).
+  * When using a wireless connection, the update is applied over-the-air (OTA).
     See :ref:`nrf91_fota` for more information.
 
  See :ref:`nrfxlib:nrf_modem_bootloader` for more information on the full firmware updates of modem using :ref:`nrfxlib:nrf_modem`.
 
 Delta patches
-  Delta patches are upgrades that contain only the difference from the last version.
+  Delta patches are updates that contain only the difference from the last version.
   See :ref:`nrfxlib:nrf_modem_delta_dfu` for more information on delta firmware updates of modem using :ref:`nrfxlib:nrf_modem`.
   When applying a delta patch, you must therefore ensure that this patch works with the current firmware version on your device.
-  Delta patches are applied as firmware over-the-air (FOTA) upgrades.
+  Delta patches are applied as firmware over-the-air (FOTA) updates.
   See :ref:`nrf91_fota` for more information.
 
 .. _nrf91_ug_band_lock:
@@ -190,34 +190,34 @@ For more information on the implementation of a custom trace backend, see :ref:`
 .. _nrf91_fota:
 .. _nrf9160_fota:
 
-FOTA upgrades
-*************
+FOTA updates
+************
 
 |fota_upgrades_def|
-FOTA upgrades can be used to apply delta patches to the :ref:`lte_modem` firmware, full :ref:`lte_modem` firmware upgrades, and to replace the upgradable bootloader or the application.
+FOTA updates can be used to apply delta patches to the :ref:`lte_modem` firmware, full :ref:`lte_modem` firmware updates, and to replace the upgradable bootloader or the application.
 
 .. note::
-   Even though the Trusted Firmware-M and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware upgrades.
+   Even though the Trusted Firmware-M and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware updates.
    Any reference to the application in this section is meant to indicate the application including the Trusted Firmware-M.
 
-To perform a FOTA upgrade, complete the following steps:
+To perform a FOTA updates, complete the following steps:
 
-1. Make sure that your application supports FOTA upgrades.
+1. Make sure that your application supports FOTA updates.
 
-   To download and apply FOTA upgrades, your application must use the :ref:`lib_fota_download` library.
-   This library determines the type of upgrade by inspecting the header of the firmware and invokes the :ref:`lib_dfu_target` library to apply the firmware upgrade.
-   In its default configuration, the DFU target library is set to support all the types of FOTA upgrades except full modem firmware upgrades, but you can freely enable or disable the support for specific targets.
+   To download and apply FOTA updates, your application must use the :ref:`lib_fota_download` library.
+   This library determines the type of update by inspecting the header of the firmware and invokes the :ref:`lib_dfu_target` library to apply the firmware update.
+   In its default configuration, the DFU target library is set to support all the types of FOTA updates except full modem firmware updates, but you can freely enable or disable the support for specific targets.
    In addition, the following requirements apply:
 
    * To upgrade the application, you must use :doc:`mcuboot:index-ncs` as the upgradable bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
    * If you want to upgrade the upgradable bootloader, you must use the :ref:`bootloader` (:kconfig:option:`CONFIG_SECURE_BOOT must be enabled`).
-   * If you want to upgrade the modem firmware through modem delta updates, you do not need to use MCUboot or the immutable bootloader, because the modem firmware upgrade is handled by the modem itself.
-   * If you want to perform a full modem firmware upgrade, an |external_flash_size| is required.
+   * If you want to update the modem firmware through modem delta updates, you do not need to use MCUboot or the immutable bootloader, because the modem firmware update is handled by the modem itself.
+   * If you want to perform a full modem firmware update, an |external_flash_size| is required.
 
 #. Create a binary file that contains the new image.
 
    .. note::
-      This step does not apply for upgrades of the modem firmware.
+      This step does not apply for updates of the modem firmware.
       You can download delta patches and full binaries of the modem firmware from the `nRF9161 product website (compatible downloads)`_ or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
 
    |fota_upgrades_building|
@@ -232,10 +232,10 @@ To perform a FOTA upgrade, complete the following steps:
 
 The full FOTA procedure depends on where the binary files are hosted for download.
 
-FOTA upgrades using nRF Cloud
-=============================
+FOTA updates using nRF Cloud
+============================
 
-FOTA upgrades can be managed through a comprehensive management portal on `nRF Cloud`_, either fully hosted on nRF Cloud or accessible from a customer cloud using the `nRF Cloud REST API`_.
+FOTA updates can be managed through a comprehensive management portal on `nRF Cloud`_, either fully hosted on nRF Cloud or accessible from a customer cloud using the `nRF Cloud REST API`_.
 If you are using nRF Cloud, see the `nRF Cloud Getting Started FOTA documentation`_ for instructions.
 
 Currently, delta modem firmware FOTA files are available in nRF Cloud under :guilabel:`Firmware Updates` in the :guilabel:`Device Management` tab on the left.
@@ -244,10 +244,10 @@ If you intend to obtain FOTA files from nRF Cloud, see the additional requiremen
 You can upload custom application binaries to nRF Cloud for application FOTA updates.
 After :ref:`nrf9160_gs_connecting_dk_to_cloud`, you can upload the files to your nRF Cloud account as a bundle after navigating to :guilabel:`Device Management` on the left and clicking :guilabel:`Firmware Updates`.
 
-FOTA upgrades using other cloud services
+FOTA updates using other cloud services
 ========================================
 
-FOTA upgrades can alternatively be hosted from a customer-developed cloud services such as solutions based on AWS and Azure.
+FOTA updates can alternatively be hosted from a customer-developed cloud services such as solutions based on AWS and Azure.
 If you are uploading the files to an Amazon Web Services Simple Storage Service (AWS S3) bucket, see the :ref:`lib_aws_fota` documentation for instructions.
 Samples are provided in |NCS| for AWS (:ref:`aws_iot` sample) and Azure (:ref:`azure_iot_hub` sample).
 

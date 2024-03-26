@@ -53,7 +53,7 @@ The application integrates LwM2M through the following APIs:
 Bootstrapping and credential handling
 -------------------------------------
 
-When the option :kconfig:option:`CONFIG_LWM2M_INTEGRATION_PSK` is enabled, the modem is provisioned at run time after boot with a `Pre-Shared Key (PSK)`_ set by :kconfig:option:`CONFIG_LWM2M_INTEGRATION_PSK`.
+When the option :kconfig:option:`CONFIG_LWM2M_INTEGRATION_PSK` is enabled, the modem is provisioned at run time after boot with a `pre-shared key (PSK) <Pre-Shared Key (PSK)_>`_ set by :kconfig:option:`CONFIG_LWM2M_INTEGRATION_PSK`.
 
 If :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP` is enabled, the PSK is provisioned to a security tag dedicated to the bootstrap server connection.
 During bootstrapping, the application receives a separate newly generated key from the bootstrap server that is provisioned to a security tag dedicated to the management server connection.

@@ -86,7 +86,7 @@ Server options
 
 .. _CONFIG_CARRIER_APP_PSK:
 
-CONFIG_CARRIER_APP_PSK - Configuration for Pre-Shared Key
+CONFIG_CARRIER_APP_PSK - Configuration for a pre-shared key (PSK)
    The sample configuration is used to set the hexadecimal representation of the PSK used when registering the device with the server.
    The PSK is stored in the security tag specified in :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG`.
 

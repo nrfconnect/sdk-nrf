@@ -477,7 +477,7 @@ DTLS client
 
 The DTLS client requires connection-based UDP to trigger the DTLS establishment.
 
-Before completing this test, you must update the Pre-shared Key (PSK) and the PSK identity to be used for the TLS connection in the modem.
+Before completing this test, you must update the pre-shared key (PSK) and the PSK identity to be used for the TLS connection in the modem.
 The credentials must use the security tag 16842756.
 
 To store the credentials in the modem, enter the following AT commands:

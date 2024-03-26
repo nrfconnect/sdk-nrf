@@ -266,7 +266,7 @@ The Bluetooth Mesh profile specification defines a range of out-of-band authenti
 
 * Blinking of lights
 * Output and input of passphrases
-* Static authentication against a pre-shared key
+* Static authentication against a pre-shared key (PSK)
 
 To secure the provisioning procedure, elliptic curve Diffie-Helman (ECDH) public key cryptography is used.
 After a device has been provisioned, it is part of the network and all its messages are considered authenticated.
