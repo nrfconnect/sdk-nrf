@@ -114,7 +114,7 @@
 
 .. nrf52dmouse_nrf52832
 
-| nRF52832 Desktop Mouse | PCA20044 | nrf52dmouse_nrf52832 | ``nrf52dmouse_nrf52832`` |
+| nRF52832 Desktop Mouse | PCA20044 | nrf52dmouse | ``nrf52dmouse/nrf52832`` |
 
 .. nrf52810dmouse_nrf52810
 

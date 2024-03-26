@@ -46,12 +46,12 @@ nRF52840 Gaming Mouse (``nrf52840gmouse``)
       * The board supports ``debug`` (:file:`prj_fast_pair.conf`) and ``release`` (:file:`prj_release_fast_pair.conf`) :ref:`nrf_desktop_bluetooth_guide_fast_pair` configurations.
         Both configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and they support the firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
-nRF52832 Desktop Mouse (``nrf52dmouse_nrf52832``) and nRF52810 Desktop Mouse (``nrf52810dmouse``)
-      * Both reference designs are meant for the project-specific hardware and are defined in :file:`nrf/boards/arm/nrf52dmouse_nrf52832` and :file:`nrf/boards/nordic/nrf52810dmouse`, respectively.
+nRF52832 Desktop Mouse (``nrf52dmouse``) and nRF52810 Desktop Mouse (``nrf52810dmouse``)
+      * Both reference designs are meant for the project-specific hardware and are defined in :file:`nrf/boards/nordic/nrf52dmouse` and :file:`nrf/boards/nordic/nrf52810dmouse`, respectively.
       * The application is configured to act as a mouse.
       * Only the Bluetooth LE transport is enabled.
-        Bluetooth uses either Zephyr's software link layer (``nrf52810dmouse``) or Nordic's SoftDevice link layer (``nrf52dmouse_nrf52832``).
-      * The preconfigured build types for both ``nrf52dmouse_nrf52832`` and ``nrf52810dmouse`` boards are without the bootloader due to memory size limits on the ``nrf52810dmouse`` board.
+        Bluetooth uses either Zephyr's software link layer (``nrf52810dmouse``) or Nordic's SoftDevice link layer (``nrf52dmouse``).
+      * The preconfigured build types for both ``nrf52dmouse`` and ``nrf52810dmouse`` boards are without the bootloader due to memory size limits on the ``nrf52810dmouse`` board.
 
 Sample mouse, keyboard or dongle (``nrf52840dk_nrf52840``)
       * The configuration uses the nRF52840 Development Kit.
