@@ -43,7 +43,7 @@ To add TF-M to your build, enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` co
    If you use menuconfig to enable :kconfig:option:`CONFIG_BUILD_WITH_TFM`, you must also enable its dependencies.
 
 By default, TF-M is configured to build the :ref:`minimal version <tfm_minimal_build>`.
-To use the full TF-M, you must disable the :kconfig:option:`CONFIG_TFM_MINIMAL` option.
+To use the full TF-M, you must disable the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` option.
 
 You must build TF-M using a non-secure build target.
 The following platforms are currently supported:
@@ -52,7 +52,7 @@ The following platforms are currently supported:
 * nRF91 Series
 
 TF-M uses UART1 for logging from the secure application.
-To disable logging, enable the :kconfig:option:`TFM_LOG_LEVEL_SILENCE` option.
+To disable logging, enable the :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` option.
 When building TF-M with logging enabled, UART1 must be disabled in the non-secure application, otherwise the non-secure application will fail to run.
 The recommended way to do this is to copy the .overlay file from the :ref:`tfm_hello_world` sample.
 
@@ -62,7 +62,7 @@ Enabling secure services
 When using the :ref:`nrf_security`, if :kconfig:option:`CONFIG_BUILD_WITH_TFM` is enabled together with :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND`, the TF-M secure image will enable the use of the hardware acceleration of Arm CryptoCell.
 In such case, the Kconfig configurations in the Nordic Security Backend control the features enabled through TF-M.
 
-You can configure what crypto modules to include in TF-M by using the ``TFM_CRYPTO_`` Kconfig options found in file :file:`zephyr/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules`.
+You can configure what crypto modules to include in TF-M by using the ``CONFIG_TFM_CRYPTO_*`` Kconfig options found in file :file:`zephyr/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules`.
 
 TF-M utilizes :ref:`hardware unique keys <lib_hw_unique_key>` when the PSA Crypto key derivation APIs are used, and ``psa_key_derivation_setup`` is called with the algorithm ``TFM_CRYPTO_ALG_HUK_DERIVATION``.
 For more information about the PSA cryptography and the API, see `PSA Cryptography API 1.0.1`_.
