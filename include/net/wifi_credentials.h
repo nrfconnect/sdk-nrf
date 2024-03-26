@@ -51,6 +51,7 @@ struct wifi_credentials_header {
 	size_t ssid_len;
 	uint8_t bssid[WIFI_MAC_ADDR_LEN];
 	uint32_t flags;
+	uint8_t channel;
 };
 
 /**
@@ -123,6 +124,7 @@ int wifi_credentials_get_by_ssid_personal(
  * @param[in] password		password
  * @param[in] password_len		length of password
  * @param[in] flags			flags
+ * @param[in] channel			Channel
  *
  * @return 0			Success. Credentials are stored in persistent storage.
  * @return -EINVAL		A required buffer was NULL or security type is not supported.
@@ -137,7 +139,8 @@ int wifi_credentials_set_personal(
 	size_t bssid_len,
 	const char *password,
 	size_t password_len,
-	uint32_t flags
+	uint32_t flags,
+	uint8_t channel
 );
 
 /**
@@ -177,6 +180,23 @@ int wifi_credentials_set_personal_struct(const struct wifi_credentials_personal 
  * @return			0 on success, otherwise a negative error code
  */
 int wifi_credentials_delete_by_ssid(const char *ssid, size_t ssid_len);
+
+/**
+ * @brief Check if credentials storage is empty.
+ *
+ * @return			true if credential storage is empty, otherwise false
+ */
+bool wifi_credentials_is_empty(void);
+
+/**
+ * @brief Deletes all stored Wi-Fi credentials.
+ *
+ * This function deletes all Wi-Fi credentials that have been stored in the system.
+ * It is typically used when you want to clear all saved networks.
+ *
+ * @return			0 on successful, otherwise a negative error code
+ */
+int wifi_credentials_delete_all(void);
 
 /**
  * @brief Callback type for wifi_credentials_for_each_ssid.
