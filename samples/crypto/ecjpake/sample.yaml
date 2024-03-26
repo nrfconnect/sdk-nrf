@@ -5,20 +5,20 @@ tests:
   sample.ecjpake:
     tags: introduction psa oberon
     platform_allow: >
-      nrf5340dk_nrf5340_cpuapp
-      nrf9160dk_nrf9160 nrf52840dk_nrf52840
-      nrf9161dk_nrf9161
-      nrf54l15pdk_nrf54l15_cpuapp
-      nrf54h20dk_nrf54h20_cpuapp
+      nrf5340dk/nrf5340/cpuapp
+      nrf9160dk/nrf9160 nrf52840dk/nrf52840
+      nrf9161dk/nrf9161
+      nrf54l15pdk/nrf54l15/cpuapp
+      nrf54h20dk/nrf54h20/cpuapp
     harness: console
     harness_config:
       type: multi_line
       regex:
         - ".*Example finished successfully!.*"
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf9160dk_nrf9160
-      - nrf9161dk_nrf9161
-      - nrf52840dk_nrf52840
-      - nrf54l15pdk_nrf54l15_cpuapp
-      - nrf54h20dk_nrf54h20_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf9160dk/nrf9160
+      - nrf9161dk/nrf9161
+      - nrf52840dk/nrf52840
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp

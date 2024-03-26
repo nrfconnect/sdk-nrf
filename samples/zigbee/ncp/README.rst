@@ -170,7 +170,7 @@ Bootloader support
 The bootloader support in the NCP sample depends on the development kit, its respective build target, and `Serial communication setup`_:
 
 * For the ``nrf52840dongle_nrf52840`` build target, the `nRF5 SDK Bootloader`_ is used by default because the dongle comes with this bootloader preinstalled.
-* For the ``nrf52840dk_nrf52840``, ``nrf52833dk_nrf52833``, and ``nrf21540dk_nrf52840`` build targets, the following scenarios are possible when building for them:
+* For the ``nrf52840dk_nrf52840``, ``nrf52833dk_nrf52833``, and ``nrf21540dk/nrf52840`` build targets, the following scenarios are possible when building for them:
 
   * If you select `Communication through USB`_, `MCUboot`_ is enabled by default.
   * If you use the default UART serial communication channel, the bootloader support is not enabled, but you can enable MCUboot.

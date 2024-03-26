@@ -5,6 +5,6 @@ tests:
   sample.bluetooth.rpc_host:
     build_only: true
     integration_platforms:
-      - nrf5340dk_nrf5340_cpunet
-    platform_allow: nrf5340dk_nrf5340_cpunet
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet
     tags: bluetooth ci_build

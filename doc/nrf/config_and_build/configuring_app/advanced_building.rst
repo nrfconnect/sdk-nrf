@@ -65,12 +65,12 @@ The devicetree configuration is not affected by the build type.
 
          -- -DCONF_FILE=prj_\ *selected_build_type*\.conf
 
-      For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``nrf52840dk_nrf52840`` by running the following command in the project directory:
+      For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``nrf52840dk/nrf52840`` by running the following command in the project directory:
 
       .. parsed-literal::
          :class: highlight
 
-         west build -b nrf52840dk_nrf52840 -d build_nrf52840dk_nrf52840 -- -DCONF_FILE=prj_release.conf
+         west build -b nrf52840dk/nrf52840 -d build_nrf52840dk_nrf52840 -- -DCONF_FILE=prj_release.conf
 
       The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for the build files.
 

@@ -1,9 +1,9 @@
 tests:
   net.lib.aws_fota.aws_fota_json:
-    platform_allow: native_posix nrf52840dk_nrf52840 nrf9160dk_nrf9160 qemu_cortex_m3
+    platform_allow: native_posix nrf52840dk/nrf52840 nrf9160dk/nrf9160 qemu_cortex_m3
     integration_platforms:
       - native_posix
-      - nrf52840dk_nrf52840
-      - nrf9160dk_nrf9160
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160
       - qemu_cortex_m3
     tags: aws fota json

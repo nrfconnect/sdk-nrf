@@ -1,9 +1,9 @@
 tests:
   lib.sfloat:
     platform_allow:
-      nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp
     integration_platforms:
-      - nrf52dk_nrf52832
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
     tags: sfloat

@@ -13,16 +13,16 @@ tests:
     build_only: true
     extra_args: SHIELD=nrf7002ek
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: ci_build
   sample.nrf7000.monitor:
     build_only: true
     extra_args:
       SHIELD=nrf7002ek_nrf7000
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: ci_build
   sample.nrf7001.monitor:
     build_only: true

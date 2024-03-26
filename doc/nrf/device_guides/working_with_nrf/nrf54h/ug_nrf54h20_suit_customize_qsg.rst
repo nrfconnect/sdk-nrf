@@ -61,7 +61,7 @@ For this quick start guide, you need the following development kit:
 +------------------------+----------+--------------------------------+-------------------------------+
 | **Hardware platforms** | **PCA**  | **Board name**                 | **Build target**              |
 +========================+==========+================================+===============================+
-| nRF54H20 DK            | PCA10175 | ``nrf54h20dk_nrf54h20_cpuapp`` | ``nrf54h20dk_nrf54h20_cpuapp``|
+| nRF54H20 DK            | PCA10175 | ``nrf54h20dk``                 | ``nrf54h20dk/nrf54h20/cpuapp``|
 +------------------------+----------+--------------------------------+-------------------------------+
 
 Software requirements
@@ -82,7 +82,7 @@ Start by building the SUIT sample:
 
 .. code-block:: console
 
-   west build -b nrf54h20dk_nrf54h20_cpuapp nrf/samples/suit/smp_transfer
+   west build -b nrf54h20dk/nrf54h20/cpuapp nrf/samples/suit/smp_transfer
 
 This command builds the SUIT sample for the nRF54H20 SoC.
 

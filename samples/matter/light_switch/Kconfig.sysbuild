@@ -14,7 +14,7 @@ choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT
 endchoice
 
-if "$(BOARD)" = "nrf21540dk_nrf52840"
+if BOARD_NRF21540DK
 
 config BOOTLOADER_MCUBOOT
 	default n

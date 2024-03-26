@@ -58,12 +58,12 @@ config BOOT_USE_NRF_EXTERNAL_CRYPTO
 
 config MCUBOOT_NRF_CLEANUP_PERIPHERAL
 	bool "Perform peripheral cleanup before chain-load the application"
-	depends on SOC_FAMILY_NRF
+	depends on SOC_FAMILY_NORDIC_NRF
 	default y
 
 config MCUBOOT_NRF_CLEANUP_NONSECURE_RAM
 	bool "Perform non-secure RAM cleanup before chain-load the application"
-	depends on SOC_FAMILY_NRF && ARM_TRUSTZONE_M
+	depends on SOC_FAMILY_NORDIC_NRF && ARM_TRUSTZONE_M
 	default y if MCUBOOT_USE_ALL_AVAILABLE_RAM
 
 config BOOT_SIGNATURE_KEY_FILE
@@ -94,7 +94,7 @@ endchoice
 
 config BOOT_ERASE_PROGRESSIVELY
 	bool "Erase flash progressively when receiving new firmware"
-	default y if SOC_FAMILY_NRF
+	default y if SOC_FAMILY_NORDIC_NRF
 	help
 	 If enabled, flash is erased as necessary when receiving new firmware,
 	 instead of erasing the whole image slot at once. This is necessary

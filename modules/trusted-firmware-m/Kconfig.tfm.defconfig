@@ -16,7 +16,7 @@ config TFM_BOARD
 if BUILD_WITH_TFM
 
 config TFM_ISOLATION_LEVEL
-	default 1 if SOC_FAMILY_NRF
+	default 1 if SOC_FAMILY_NORDIC_NRF
 
 config TFM_BL2
 	bool

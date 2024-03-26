@@ -10,20 +10,20 @@ common:
 tests:
   sample.event_manager_proxy:
     platform_allow:
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-  sample.event_manager_proxy.nrf5340dk_nrf5340_cpuapp.icmsg:
+      - nrf5340dk/nrf5340/cpuapp
+  sample.event_manager_proxy.nrf5340dk/nrf5340/cpuapp.icmsg:
     platform_allow:
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
     extra_args: CONF_FILE=prj_icmsg.conf
   sample.event_manager_proxy.nrf54h20dk_cpuapp.icmsg:
     platform_allow:
-      - nrf54h20dk_nrf54h20_cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
-      - nrf54h20dk_nrf54h20_cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       event_manager_proxy_SNIPPET=nordic-ppr
       event_manager_proxy_CONF_FILE=prj_icmsg.conf

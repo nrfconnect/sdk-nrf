@@ -335,7 +335,7 @@ The application supports the following build types:
 
    * - Build type
      - File name
-     - Supported board
+     - Supported build target
      - Description
    * - Debug (default)
      - :file:`prj.conf`
@@ -343,15 +343,15 @@ The application supports the following build types:
      - Debug version of the application; can be used to verify if the application works correctly.
    * - Release
      - :file:`prj_release.conf`
-     - ``nrf52840dk_nrf52840``
+     - ``nrf52840dk/nrf52840``
      - Release version of the application; can be used to achieve better performance and reduce memory consumption.
    * - NUS
      - :file:`prj_nus.conf`
-     - ``nrf52840dk_nrf52840``
+     - ``nrf52840dk/nrf52840``
      - Debug version of the application that uses :ref:`nus_service_readme` instead of :ref:`zephyr:uart_api` for data forwarding.
    * - RTT
      - :file:`prj_rtt.conf`
-     - ``thingy53_nrf5340_cpuapp`` and ``thingy53_nrf5340_cpuapp_ns``
+     - ``thingy53/nrf5340/cpuapp`` and ``thingy53/nrf5340/cpuapp/ns``
      - Debug version of the application that uses RTT for printing logs instead of USB CDC.
 
 Building and running

@@ -392,7 +392,7 @@ The application supports the following build types:
 
    * - Build type
      - File name
-     - Supported board
+     - Supported build target
      - Description
    * - Debug (default)
      - :file:`prj.conf`
@@ -404,7 +404,7 @@ The application supports the following build types:
      - Release version of the application with no debugging features.
    * - Debug Fast Pair
      - :file:`prj_fast_pair.conf`
-     - ``nrf52840dk_nrf52840``, ``nrf52840gmouse/nrf52840``
+     - ``nrf52840dk/nrf52840``, ``nrf52840gmouse/nrf52840``
      - Debug version of the application with `Fast Pair`_ support.
    * - Release Fast Pair
      - :file:`prj_release_fast_pair.conf`
@@ -412,36 +412,36 @@ The application supports the following build types:
      - Release version of the application with `Fast Pair`_ support.
    * - Dongle
      - :file:`prj_dongle.conf`
-     - ``nrf52840dk_nrf52840``
+     - ``nrf52840dk/nrf52840``
      - Debug version of the application that lets you generate the application with the dongle role.
    * - Keyboard
      - :file:`prj_keyboard.conf`
-     - ``nrf52840dk_nrf52840``
+     - ``nrf52840dk/nrf52840``
      - Debug version of the application that lets you generate the application with the keyboard role.
    * - MCUboot QSPI
      - :file:`prj_mcuboot_qspi.conf`
-     - ``nrf52840dk_nrf52840``
+     - ``nrf52840dk/nrf52840``
      - Debug version of the application that uses MCUboot with the secondary slot in the external QSPI FLASH.
    * - MCUboot SMP
      - :file:`prj_mcuboot_smp.conf`
-     - ``nrf52840dk_nrf52840``, ``nrf52840gmouse/nrf52840``
+     - ``nrf52840dk/nrf52840``, ``nrf52840gmouse/nrf52840``
      - | Debug version of the application that enables MCUmgr with DFU support and offers support for the MCUboot DFU procedure over SMP.
        | See the :ref:`nrf_desktop_bootloader_background_dfu` section for more information.
    * - WWCB
      - :file:`prj_wwcb.conf`
-     - ``nrf52840dk_nrf52840``
+     - ``nrf52840dk/nrf52840``
      - Debug version of the application with the support for the B0 bootloader enabled for `Works With ChromeBook (WWCB)`_.
    * - Triple Bluetooth LE connection
      - :file:`prj_3bleconn.conf`
-     - ``nrf52840dongle_nrf52840``
+     - ``nrf52840dongle/nrf52840``
      - Debug version of the application with the support for up to three simultaneous Bluetooth LE connections.
    * - Quadruple LLPM connection
      - :file:`prj_4llpmconn.conf`
-     - ``nrf52840dongle_nrf52840``
+     - ``nrf52840dongle/nrf52840``
      - Debug version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
    * - Release quadruple LLPM connection
      - :file:`prj_release_4llpmconn.conf`
-     - ``nrf52840dongle_nrf52840``
+     - ``nrf52840dongle/nrf52840``
      - Release version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
 
 .. note::
