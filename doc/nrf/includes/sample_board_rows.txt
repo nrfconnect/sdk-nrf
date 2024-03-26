@@ -82,7 +82,7 @@
 
 .. nrf52820dongle_nrf52820
 
-| nRF52820 Dongle | PCA10114 | nrf52820dongle_nrf52820 | ``nrf52820dongle_nrf52820`` |
+| nRF52820 Dongle | PCA10114 | nrf52820dongle | ``nrf52820dongle/nrf52820`` |
 
 .. thingy91_nrf9160
 

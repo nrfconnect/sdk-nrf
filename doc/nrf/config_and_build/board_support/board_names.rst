@@ -123,7 +123,7 @@ The following boards are defined in the :file:`nrf/boards/arm/` folder.
 | nRF Desktop       | PCA10111   | :ref:`nrf52833dongle_nrf52833 <nrf_desktop>`             | ``nrf52833dongle_nrf52833``           |
 | Dongle            |            |                                                          |                                       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| nRF Desktop       | PCA10114   | :ref:`nrf52820dongle_nrf52820 <nrf_desktop>`             | ``nrf52820dongle_nrf52820``           |
+| nRF Desktop       | PCA10114   | :ref:`nrf52820dongle <nrf_desktop>`                      | ``nrf52820dongle/nrf52820``           |
 | Dongle            |            |                                                          |                                       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
 | Thingy:91         | PCA20035   | :ref:`thingy91_nrf9160 <ug_thingy91>`                    | ``thingy91_nrf9160``                  |
