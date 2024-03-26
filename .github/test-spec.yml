@@ -57,7 +57,6 @@
 
 "CI-audio-test":
   - "applications/nrf5340_audio/**/*"
-  - "boards/arm/nrf5340_audio_dk_nrf5340/**/*"
   - "tests/nrf5340_audio/**/*"
   - "tests/lib/contin_array/**/*"
   - "tests/lib/pcm_mix/**/*"
