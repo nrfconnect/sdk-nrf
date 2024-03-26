@@ -18,6 +18,14 @@
 #include <sdc.h>
 #endif
 
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+#define RRAM DT_INST(0, soc_nv_flash)
+#define EMDS_FLASH_BLOCK_SIZE DT_PROP(RRAM, write_block_size)
+#else
+#define FLASH DT_INST(0, soc_nv_flash)
+#define EMDS_FLASH_BLOCK_SIZE DT_PROP(FLASH, write_block_size)
+#endif
+
 #define ADDR_OFFS_MASK 0x0000FFFF
 
 static struct {
@@ -96,7 +104,7 @@ static int flash_cmp_const(uint32_t addr, uint8_t value, size_t len)
 
 static inline size_t align_size(size_t len)
 {
-	return (len + (4 - 1U)) & ~(4 - 1U);
+	return (len + (EMDS_FLASH_BLOCK_SIZE - 1U)) & ~(EMDS_FLASH_BLOCK_SIZE - 1U);
 }
 
 static int data_write(const void *data, size_t len)
@@ -177,7 +185,8 @@ static void *fs_init(void)
 	m_test_fd.fd = m_fa->fa_dev;
 	m_test_fd.offset = m_fa->fa_off;
 	m_test_fd.size = hw_flash_sector.fs_size;
-	m_test_fd.ate_idx_start = m_fa->fa_off + hw_flash_sector.fs_size - sizeof(struct test_ate);
+	m_test_fd.ate_idx_start =
+		m_fa->fa_off + hw_flash_sector.fs_size - align_size(sizeof(struct test_ate));
 	m_test_fd.data_wra_offset = 0;
 
 	return NULL;
@@ -312,7 +321,7 @@ ZTEST(emds_flash_tests, test_flash_recovery)
 	 */
 	idx = m_test_fd.ate_idx_start;
 	entry_write(idx, 1, data_in1, sizeof(data_in1));
-	idx -= sizeof(struct test_ate);
+	idx -= align_size(sizeof(struct test_ate));
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in1)) > 0, "Could not read");
 	(void)emds_flash_read(&ctx, 1, data_out, sizeof(data_in1));
@@ -333,9 +342,9 @@ ZTEST(emds_flash_tests, test_flash_recovery)
 	 */
 	idx = m_test_fd.ate_idx_start;
 	ate_invalidate_write(idx);
-	idx -= sizeof(struct test_ate);
+	idx -= align_size(sizeof(struct test_ate));
 	entry_write(idx, 2, data_in2, sizeof(data_in2));
-	idx -= sizeof(struct test_ate);
+	idx -= align_size(sizeof(struct test_ate));
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_false(ctx.force_erase, "Expected false");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
@@ -354,9 +363,9 @@ ZTEST(emds_flash_tests, test_flash_recovery)
 	 * Expect:  Unexpected behavior
 	 */
 	ate_invalidate_write(idx);
-	idx -= sizeof(struct test_ate);
+	idx -= align_size(sizeof(struct test_ate));
 	entry_write(idx, 3, data_in3, sizeof(data_in3));
-	idx -= sizeof(struct test_ate);
+	idx -= align_size(sizeof(struct test_ate));
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Expected true");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
@@ -381,12 +390,12 @@ ZTEST(emds_flash_tests, test_flash_recovery)
 	idx = m_test_fd.ate_idx_start;
 	for (size_t i = 0; i < 3; i++) {
 		ate_invalidate_write(idx);
-		idx -= sizeof(struct test_ate);
+		idx -= align_size(sizeof(struct test_ate));
 	}
 
-	idx -= sizeof(struct test_ate);
+	idx -= align_size(sizeof(struct test_ate));
 	ate_corrupt_write(idx);
-	idx -= sizeof(struct test_ate);
+	idx -= align_size(sizeof(struct test_ate));
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Expected true");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
@@ -420,7 +429,7 @@ ZTEST(emds_flash_tests, test_invalidate_on_prepare)
 
 	for (size_t i = 0; i < 5; i++) {
 		entry_write(idx, i, data_in, sizeof(data_in));
-		idx -= sizeof(struct test_ate);
+		idx -= align_size(sizeof(struct test_ate));
 	}
 
 	zassert_false(emds_flash_init(&ctx), "Error when initializing");
@@ -554,7 +563,9 @@ ZTEST(emds_flash_tests, test_overflow)
 	zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
 
 	zassert_equal(emds_flash_free_space_get(&ctx),
-		      m_test_fd.size - (sizeof(data_out) + sizeof(struct test_ate) * 2), "");
+		      m_test_fd.size - (align_size(sizeof(data_out)) +
+					align_size(sizeof(struct test_ate)) * 2),
+		      "");
 }
 
 
@@ -581,8 +592,8 @@ ZTEST(emds_flash_tests, test_full_corrupt_recovery)
 	zassert_equal(0, emds_flash_free_space_get(&ctx), "Expected no free space");
 
 	zassert_false(emds_flash_prepare(&ctx, 0), "Prepare failed");
-	zassert_equal(m_test_fd.size - sizeof(struct test_ate), emds_flash_free_space_get(&ctx),
-		      "Expected no free space");
+	zassert_equal(m_test_fd.size - align_size(sizeof(struct test_ate)),
+		      emds_flash_free_space_get(&ctx), "Expected no free space");
 
 	zassert_false(flash_cmp_const(m_test_fd.offset, 0xff, m_test_fd.size), "Flash not cleared");
 	device_reset();

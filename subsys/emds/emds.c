@@ -75,16 +75,16 @@ static int emds_entries_size(uint32_t *size)
 	*size = 0;
 
 	STRUCT_SECTION_FOREACH(emds_entry, ch) {
-		*size += NRFX_CEIL_DIV(ch->len, block_size) * block_size;
-		*size += NRFX_CEIL_DIV(emds_flash.ate_size, block_size) * block_size;
+		*size += DIV_ROUND_UP(ch->len, block_size) * block_size;
+		*size += DIV_ROUND_UP(emds_flash.ate_size, block_size) * block_size;
 		entries++;
 	}
 
 	struct emds_dynamic_entry *ch;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
-		*size += NRFX_CEIL_DIV(ch->entry.len, block_size) * block_size;
-		*size += NRFX_CEIL_DIV(emds_flash.ate_size, block_size) * block_size;
+		*size += DIV_ROUND_UP(ch->entry.len, block_size) * block_size;
+		*size += DIV_ROUND_UP(emds_flash.ate_size, block_size) * block_size;
 		entries++;
 	}
 
@@ -269,9 +269,9 @@ uint32_t emds_store_time_get(void)
 
 
 	STRUCT_SECTION_FOREACH(emds_entry, ch) {
-		store_time_us += NRFX_CEIL_DIV(ch->len, block_size) *
+		store_time_us += DIV_ROUND_UP(ch->len, block_size) *
 					CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US
-			       + NRFX_CEIL_DIV(emds_flash.ate_size, block_size) *
+			       + DIV_ROUND_UP(emds_flash.ate_size, block_size) *
 					CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US
 			       + CONFIG_EMDS_FLASH_TIME_ENTRY_OVERHEAD_US;
 	}
@@ -279,9 +279,9 @@ uint32_t emds_store_time_get(void)
 	struct emds_dynamic_entry *ch;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
-		store_time_us += NRFX_CEIL_DIV(ch->entry.len, block_size) *
+		store_time_us += DIV_ROUND_UP(ch->entry.len, block_size) *
 					CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US
-			       + NRFX_CEIL_DIV(emds_flash.ate_size, block_size) *
+			       + DIV_ROUND_UP(emds_flash.ate_size, block_size) *
 					CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US
 			       + CONFIG_EMDS_FLASH_TIME_ENTRY_OVERHEAD_US;
 	}
