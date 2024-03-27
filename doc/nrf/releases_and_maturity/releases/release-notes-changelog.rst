@@ -104,7 +104,7 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-|no_changes_yet_note|
+* Initial experimental support for nRF54L15 for Thread CLI and Co-processor samples.
 
 Zigbee
 ------
@@ -425,7 +425,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Initial experimental support for nRF54L15 for Thread CLI and Co-processor samples.
 
 Sensor samples
 --------------
