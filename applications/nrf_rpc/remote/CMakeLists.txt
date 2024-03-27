@@ -14,4 +14,4 @@ target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END
 
 # Link OpenThread CLI even though OPENTHREAD_SHELL is not selected
-zephyr_link_libraries(openthread-cli-ftd)
+#zephyr_link_libraries(openthread-cli-ftd)

@@ -19,7 +19,7 @@ static K_MUTEX_DEFINE(mutex);
 #error "Too many callback proxy output slots"
 #endif
 
-#if __ARM_ARCH != 8 || __ARM_ARCH_ISA_THUMB != 2 || !defined(__GNUC__)
+#if (__ARM_ARCH != 8 && __ARM_ARCH != 7) || __ARM_ARCH_ISA_THUMB != 2 || !defined(__GNUC__)
 #error Callback proxy output is implemented only for Cortex-M33 and GCC. \
 	Set CONFIG_CBKPROXY_OUT_SLOTS to 0 to disable them.
 #endif

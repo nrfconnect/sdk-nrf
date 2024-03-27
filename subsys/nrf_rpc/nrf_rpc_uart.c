@@ -158,7 +158,7 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 {
 	LOG_HEXDUMP_DBG(data, length, "Sending frame");
 	struct nrf_rpc_uart *uart_tr = transport->ctx;
-	uint16_t crc;
+	// uint16_t crc;
 
 	// crc = crc16_ccitt(0xffff, data, length);
 	uart_poll_out(uart_tr->uart, hdlc_char_delimiter);
