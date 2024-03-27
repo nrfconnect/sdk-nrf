@@ -271,6 +271,11 @@ Networking samples
 
   *  The networking samples to support import of certificates in valid PEM formats.
 
+* Fixed:
+
+  * Increased the :kconfig:option:`CONFIG_POSIX_MAX_FDS` value to 25 in the :ref:`networking_http_server` sample to get TLS working.
+  * Decreased the :kconfig:option:`HTTP_SERVER_SAMPLE_CLIENTS_MAX` default to 1 in the :ref:`networking_http_server` sample.
+
 NFC samples
 -----------
 
