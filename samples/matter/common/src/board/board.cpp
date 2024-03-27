@@ -312,19 +312,22 @@ void Board::DefaultMatterEventHandler(const ChipDeviceEvent *event, intptr_t /* 
 #if defined(CONFIG_NET_L2_OPENTHREAD)
 	case DeviceEventType::kThreadStateChange:
 		isNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned() && ConnectivityMgr().IsThreadEnabled();
-#elif defined(CONFIG_CHIP_WIFI)
+	break;
+#endif /* CONFIG_NET_L2_OPENTHREAD */
+#if defined(CONFIG_CHIP_WIFI)
 	case DeviceEventType::kWiFiConnectivityChange:
 		isNetworkProvisioned =
 			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
-#endif /* CONFIG_NET_L2_OPENTHREAD */
-		if (isNetworkProvisioned) {
-			sInstance.UpdateDeviceState(DeviceState::DeviceProvisioned);
-		} else {
-			sInstance.UpdateDeviceState(DeviceState::DeviceDisconnected);
-		}
 		break;
+#endif /* CONFIG_CHIP_WIFI */
 	default:
 		break;
+	}
+
+	if (isNetworkProvisioned) {
+		sInstance.UpdateDeviceState(DeviceState::DeviceProvisioned);
+	} else {
+		sInstance.UpdateDeviceState(DeviceState::DeviceDisconnected);
 	}
 }
 
