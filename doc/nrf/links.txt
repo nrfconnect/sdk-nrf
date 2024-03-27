@@ -296,7 +296,7 @@
 .. _`known issues for nRF Connect SDK v1.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-4-1
 .. _`known issues for nRF Connect SDK v1.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-4-0
 
-.. _`connecting to nRF Cloud`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/networking/nrf_cloud.html#connecting
+.. _`connecting to nRF Cloud`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/libraries/networking/nrf_cloud.html#connecting
 
 .. _`API documentation`:
 .. _`external ZBOSS development guide and API documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.3.0/zigbee_devguide.html
@@ -342,103 +342,101 @@
 .. _`ZB_BDB_FINDING_N_BINDING`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.3.0/group__zboss__bdb__comm__start.html#gga9c44bbce9f6f6b19b623837914959c02ad9bcb56a6668b6ba6f37edc73a796b58
 .. _`zb_bdb_finding_binding_initiator()`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.3.0/group__zboss__bdb__comm__fb.html#gae6fd60a050559ef0aa3c3e5ec32bc515
 
-.. _`TF-M documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/index.html
-.. _`TF-M secure partition integration guide`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/integration_guide/services/tfm_secure_partition_addition.html
-.. _`TF-M ITS`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/integration_guide/services/tfm_its_integration_guide.html
+.. _`TF-M documentation`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/index.html
+.. _`TF-M secure partition integration guide`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_secure_partition_addition.html
+.. _`TF-M ITS`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_its_integration_guide.html
 
-.. _`nRF socket options`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/sockets.html#socket-options
+.. _`nRF socket options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/nrf_modem/doc/sockets.html
 
 .. _`Repositories and revisions for v2.6.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrf/releases_and_maturity/repository_revisions.html
-.. _`Repositories and revisions for v2.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.6.0/nrf/releases_and_maturity/repository_revisions.html
+.. _`Repositories and revisions for v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-2.6.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrf/releases_and_maturity/repository_revisions.html
-.. _`Repositories and revisions for v2.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.2/nrf/releases_and_maturity/repository_revisions.html
-.. _`Repositories and revisions for v2.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/nrf/releases_and_maturity/repository_revisions.html
-.. _`Repositories and revisions for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrf/releases_and_maturity/repository_revisions.html
-.. _`Repositories and revisions for v2.4.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.3/nrf/introduction.html#ncs-repository-revisions
-.. _`Repositories and revisions for v2.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.2/nrf/introduction.html#ncs-repository-revisions
-.. _`Repositories and revisions for v2.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.1/nrf/introduction.html#ncs-repository-revisions
-.. _`Repositories and revisions for v2.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.0/nrf/introduction.html#ncs-repository-revisions
-.. _`Repositories and revisions for v2.3.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.3.0/nrf/introduction.html#ncs-repository-revisions
-.. _`Repositories and revisions for v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.2.0/nrf/introduction.html#ncs-repository-revisions
-.. _`Repositories and revisions for v2.1.4`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.4/nrf/introduction.html#repositories-and-revisions
-.. _`Repositories and revisions for v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.3/nrf/introduction.html#repositories-and-revisions
-.. _`Repositories and revisions for v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.2/nrf/introduction.html#repositories-and-revisions
-.. _`Repositories and revisions for v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.1/nrf/introduction.html#repositories-and-revisions
-.. _`Repositories and revisions for v2.1.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.0/nrf/introduction.html#repositories-and-revisions
-.. _`Repositories and revisions for v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.2/nrf/introduction.html#repositories-and-revisions
-.. _`Repositories and revisions for v2.0.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.1/nrf/introduction.html#repositories-and-revisions
-.. _`Repositories and revisions for v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.0/nrf/introduction.html#repositories-and-revisions
-.. _`Repositories and revisions for v1.9.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.2/nrf/introduction.html#repositories-and-revisions
-.. _`Repositories and revisions for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrf/introduction.html#repositories-and-revisions
-.. _`Repositories and revisions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrf/introduction.html#repositories-and-revisions
+.. _`Repositories and revisions for v2.5.2`: https://docs.nordicsemi.com/bundle/ncs-2.5.2/page/nrf/releases_and_maturity/repository_revisions.html
+.. _`Repositories and revisions for v2.5.1`: https://docs.nordicsemi.com/bundle/ncs-2.5.1/page/nrf/releases_and_maturity/repository_revisions.html
+.. _`Repositories and revisions for v2.5.0`: https://docs.nordicsemi.com/bundle/ncs-2.5.0/page/nrf/releases_and_maturity/repository_revisions.html
+.. _`Repositories and revisions for v2.4.3`: https://docs.nordicsemi.com/bundle/ncs-2.4.3/page/nrf/introduction.html#nrf_connect_sdk_repository_revisions
+.. _`Repositories and revisions for v2.4.2`: https://docs.nordicsemi.com/bundle/ncs-2.4.2/page/nrf/introduction.html#nrf_connect_sdk_repository_revisions
+.. _`Repositories and revisions for v2.4.1`: https://docs.nordicsemi.com/bundle/ncs-2.4.1/page/nrf/introduction.html#nrf_connect_sdk_repository_revisions
+.. _`Repositories and revisions for v2.4.0`: https://docs.nordicsemi.com/bundle/ncs-2.4.0/page/nrf/introduction.html#nrf_connect_sdk_repository_revisions
+.. _`Repositories and revisions for v2.3.0`: https://docs.nordicsemi.com/bundle/ncs-2.3.0/page/nrf/introduction.html#nrf_connect_sdk_repository_revisions
+.. _`Repositories and revisions for v2.2.0`: https://docs.nordicsemi.com/bundle/ncs-2.2.0/page/nrf/introduction.html#nrf_connect_sdk_repository_revisions
+.. _`Repositories and revisions for v2.1.4`: https://docs.nordicsemi.com/bundle/ncs-2.1.4/page/nrf/introduction.html#repositories_and_revisions
+.. _`Repositories and revisions for v2.1.3`: https://docs.nordicsemi.com/bundle/ncs-2.1.3/page/nrf/introduction.html#repositories_and_revisions
+.. _`Repositories and revisions for v2.1.2`: https://docs.nordicsemi.com/bundle/ncs-2.1.2/page/nrf/introduction.html#repositories_and_revisions
+.. _`Repositories and revisions for v2.1.1`: https://docs.nordicsemi.com/bundle/ncs-2.1.1/page/nrf/introduction.html#repositories_and_revisions
+.. _`Repositories and revisions for v2.1.0`: https://docs.nordicsemi.com/bundle/ncs-2.1.0/page/nrf/introduction.html#repositories_and_revisions
+.. _`Repositories and revisions for v2.0.2`: https://docs.nordicsemi.com/bundle/ncs-2.0.2/page/nrf/introduction.html#repositories_and_revisions
+.. _`Repositories and revisions for v2.0.1`: https://docs.nordicsemi.com/bundle/ncs-2.0.1/page/nrf/introduction.html#repositories_and_revisions
+.. _`Repositories and revisions for v2.0.0`: https://docs.nordicsemi.com/bundle/ncs-2.0.0/page/nrf/introduction.html#repositories_and_revisions
+.. _`Repositories and revisions for v1.9.2`: https://docs.nordicsemi.com/bundle/ncs-1.9.2/page/nrf/introduction.html#repositories_and_revisions
+.. _`Repositories and revisions for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrf/introduction.html#repositories_and_revisions
+.. _`Repositories and revisions`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/introduction.html#repositories_and_revisions
 
 .. _`Modem library changelog for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.6.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
+.. _`Modem library changelog for v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-2.6.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 .. _`Modem library changelog for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.4.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.3/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.3.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.3.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.2.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.1.4`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.4/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.3/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.1.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.0.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v1.9.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`Modem library changelog for v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
+.. _`Modem library changelog for v2.5.2`: https://docs.nordicsemi.com/bundle/ncs-2.5.2/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.5.1`: https://docs.nordicsemi.com/bundle/ncs-2.5.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.5.0`: https://docs.nordicsemi.com/bundle/ncs-2.5.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.4.3`: https://docs.nordicsemi.com/bundle/ncs-2.4.3/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.4.2`: https://docs.nordicsemi.com/bundle/ncs-2.4.2/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.4.1`: https://docs.nordicsemi.com/bundle/ncs-2.4.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.4.0`: https://docs.nordicsemi.com/bundle/ncs-2.4.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.3.0`: https://docs.nordicsemi.com/bundle/ncs-2.3.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.2.0`: https://docs.nordicsemi.com/bundle/ncs-2.2.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.1.4`: https://docs.nordicsemi.com/bundle/ncs-2.1.4/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.1.3`: https://docs.nordicsemi.com/bundle/ncs-2.1.3/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.1.2`: https://docs.nordicsemi.com/bundle/ncs-2.1.2/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.1.1`: https://docs.nordicsemi.com/bundle/ncs-2.1.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.1.0`: https://docs.nordicsemi.com/bundle/ncs-2.1.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.0.2`: https://docs.nordicsemi.com/bundle/ncs-2.0.2/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.0.1`: https://docs.nordicsemi.com/bundle/ncs-2.0.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v2.0.0`: https://docs.nordicsemi.com/bundle/ncs-2.0.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v1.9.2`: https://docs.nordicsemi.com/bundle/ncs-1.9.2/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
+.. _`Modem library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 
 .. _`LwM2M carrier library changelog for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.6.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
+.. _`LwM2M carrier library changelog for v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-2.6.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
 .. _`LwM2M carrier library changelog for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.4.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.3/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.3.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.3.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.2.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.1.4`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.4/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.3/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.1.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.0.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v1.9.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
+.. _`LwM2M carrier library changelog for v2.5.2`: https://docs.nordicsemi.com/bundle/ncs-2.5.2/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.5.1`: https://docs.nordicsemi.com/bundle/ncs-2.5.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.5.0`: https://docs.nordicsemi.com/bundle/ncs-2.5.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.4.3`: https://docs.nordicsemi.com/bundle/ncs-2.4.3/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.4.2`: https://docs.nordicsemi.com/bundle/ncs-2.4.2/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.4.1`: https://docs.nordicsemi.com/bundle/ncs-2.4.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.4.0`: https://docs.nordicsemi.com/bundle/ncs-2.4.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.3.0`: https://docs.nordicsemi.com/bundle/ncs-2.3.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.2.0`: https://docs.nordicsemi.com/bundle/ncs-2.2.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.1.4`: https://docs.nordicsemi.com/bundle/ncs-2.1.4/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.1.3`: https://docs.nordicsemi.com/bundle/ncs-2.1.3/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.1.2`: https://docs.nordicsemi.com/bundle/ncs-2.1.2/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.1.1`: https://docs.nordicsemi.com/bundle/ncs-2.1.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.1.0`: https://docs.nordicsemi.com/bundle/ncs-2.1.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.0.2`: https://docs.nordicsemi.com/bundle/ncs-2.0.2/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.0.1`: https://docs.nordicsemi.com/bundle/ncs-2.0.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v2.0.0`: https://docs.nordicsemi.com/bundle/ncs-2.0.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v1.9.2`: https://docs.nordicsemi.com/bundle/ncs-1.9.2/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
+.. _`LwM2M carrier library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
 
 .. _`Migration guide for nRF Connect SDK v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.6.html
 .. _`Migration guide for nRF Connect SDK v2.5.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.5.html
 .. _`Migration guide for nRF Connect SDK v2.0.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_1.x_to_2.x.html
 
-.. _`Matter weather station application from the v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.1/nrf/applications/matter_weather_station/README.html
+.. _`Matter weather station application from the v2.1.1`: https://docs.nordicsemi.com/bundle/ncs-2.1.1/page/nrf/applications/matter_weather_station/README.html
 
-.. _`CONFIG_BT_CTLR_TX_PWR_MINUS`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_MINUS
-.. _`CONFIG_BT_CTLR_TX_PWR_PLUS`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_PLUS
+.. _`CONFIG_BT_CTLR_TX_PWR_MINUS`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_MINUS
+.. _`CONFIG_BT_CTLR_TX_PWR_PLUS`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_PLUS
 
-.. _`Threads`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/kernel/services/threads/index.html#threads
+.. _`Threads`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/kernel/services/threads/index.html
 
-.. _`Network Traffic Generator`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/connectivity/networking/api/zperf.html#zperf-network-traffic-generator
+.. _`Network Traffic Generator`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/connectivity/networking/api/zperf.html
 
-.. _`Zephyr Logging`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/services/logging/index.html
-.. _`Dictionary-based Logging`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/services/logging/index.html#dictionary-based-logging
-.. _`Run-time Filtering`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/services/logging/index.html#run-time-filtering
-
-.. _`Capabilities for the LE Audio Controller Subsystem for nRF5340`: https://developer.nordicsemi.com/nRF_Connect_SDK/nrf5340_audio/bt_ll_acs_nrf53/bt_ll_acs_nrf53_capabilities.pdf
+.. _`Zephyr Logging`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html
+.. _`Dictionary-based Logging`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html#dictionary-based_logging
+.. _`Run-time Filtering`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html#runtime_filtering
 
 .. _`nRF9160: GPS with SUPL client library`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/samples/nrf9160/gps/README.html
 
@@ -477,7 +475,7 @@
 
 .. _`nRF5340 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF5340-DK/Download?lang=en#infotabs
 .. _`nRF5340 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF5340-DK/
-
+.. _`nRF70 Series product page`: https://www.nordicsemi.com/Products/WiFi/Products#infotabs
 .. _`nRF7002 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF7002-DK/Download?lang=en#infotabs
 
 .. _`Nordic Thingy:53`:
@@ -546,19 +544,24 @@
 
 .. _`nRF Edge Impulse mobile app`: https://cm.nordicsemi.com/Products/Development-tools/nrf-edge-impulse
 
+.. ### Source: infocenter.nordicsemi.com
+
+.. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
+
 .. ### Source: docs.nordicsemi.com
 
 .. _`Nordic Semiconductor TechDocs`: https://docs.nordicsemi.com
 
 .. _`nRF Connect Board Configurator`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
 
+.. _`Serial Terminal from nRF Connect for Desktop`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
 .. _`nRF Connect Serial Terminal`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
 .. _`Connecting using Serial Terminal`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/connecting.html
 .. _`Serial Terminal configuration`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/configuration.html
-
+.. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`nRF Connect Bluetooth Low Energy`: https://docs.nordicsemi.com/bundle/nrf-connect-ble/page/index.html
-
 .. _`Cellular Monitor`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
+
 .. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
 
 .. _`nRF Connect Direct Test Mode`: https://docs.nordicsemi.com/bundle/nrf-connect-direct-test-mode/page/index.html
@@ -582,180 +585,176 @@
 
 .. _`Electrical specification for nRF7002`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/elspec/doc/electrical_specification.html
 
-.. ### Source: infocenter.nordicsemi.com
+.. _`nRF pynrfjprog`: https://docs.nordicsemi.com/bundle/ug_pynrfjprog/page/UG/pynrfjprog/pynrfjprog_lpage.html
 
-.. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
+.. _`nRF9160 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/nRF9160_html5_keyfeatures.html
+.. _`nRF9160 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
+.. _`nRF9160 SiP pin configuration`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
+.. _`Measuring current on nRF9160 DK`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/hw_measure_current.html
 
-.. _`nRF pynrfjprog`: https://infocenter.nordicsemi.com/topic/ug_pynrfjprog/UG/pynrfjprog/pynrfjprog_lpage.html
+.. _`nRF9160 DK GPS`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/gps.html
 
-.. _`nRF9160 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/nRF9160_html5_keyfeatures.html
-.. _`nRF9160 GPS receiver specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/gps.html
-.. _`nRF9160 SiP pin configuration`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
-.. _`Measuring current on nRF9160 DK`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/hw_measure_current.html
+.. _`nWP044 - Best practices for cellular IoT development`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/lte_technology.html
+.. _`Security protocol for cellular IoT`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/security_protocols.html
 
-.. _`nRF9160 DK GPS`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/gps.html
+.. _`nRF9160 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/intro.html
+.. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/board_controller.html
+.. _`External memory section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/external_memory.html
+.. _`Device programming section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/mcu_device_programming.html
+.. _`VDD supply rail section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/power_sources_vdd.html
 
-.. _`nWP044 - Best practices for cellular IoT development`: https://infocenter.nordicsemi.com/topic/nwp_044/WP/nwp_044/lte_technology.html
-.. _`Security protocol for cellular IoT`: https://infocenter.nordicsemi.com/topic/nwp_044/WP/nwp_044/security_protocols.html
+.. _`nRF9161 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/nRF9161_html5_keyfeatures.html
+.. _`nRF9161 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/gps.html
 
-.. _`nRF9160 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/intro.html
-.. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/board_controller.html
-.. _`External memory section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/external_memory.html
-.. _`Device programming section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/mcu_device_programming.html
-.. _`VDD supply rail section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/power_sources_vdd.html
-
-.. _`nRF9161 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9161/nRF9161_html5_keyfeatures.html
-.. _`nRF9161 GPS receiver specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9161/gps.html
-
-.. _`nRF9161 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf9161_dk/UG/nrf91_DK/intro.html
-.. _`Measuring current on nRF9161 DK`: https://infocenter.nordicsemi.com/topic/ug_nrf9161_dk/UG/nrf91_DK/measuring_current/hw_measure_current.html
+.. _`nRF9161 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/intro.html
+.. _`Measuring current on nRF9161 DK`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/measuring_current/hw_measure_current.html
 
 .. _`AT Commands Reference Guide`:
-.. _`nRF9160 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/intro_nrf9160.html
+.. _`nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/intro_nrf9160.html
 .. _`band lock section in the AT Commands reference document`:
-.. _`band lock section in the nRF9160 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
+.. _`band lock section in the nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
 .. _`system mode section in the AT Commands reference document`:
-.. _`system mode section in the nRF9160 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
-.. _`Credential storage management %CMNG`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/security/cmng.html
-.. _`Packet Domain AT commands`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/packet_domain/packet_domain.html
-.. _`3GPP Release 14 features AT command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/rel14feat_read.html
-.. _`AT+CNEC set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mobile_termination_errors/cnec_set.html
-.. _`AT+CGEREP set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/packet_domain/cgerep_set.html
-.. _`AT%CONEVAL`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/coneval.html
+.. _`system mode section in the nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
+.. _`Credential storage management %CMNG`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/security/cmng.html
+.. _`Packet Domain AT commands`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/packet_domain/packet_domain.html
+.. _`3GPP Release 14 features AT command`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/nw_service/rel14feat.html
+.. _`AT+CNEC set command`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/mobile_termination_errors/cnec_set.html
+.. _`AT+CGEREP set command`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/packet_domain/cgerep_set.html
+.. _`AT%CONEVAL`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/mob_termination_ctrl_status/coneval_set.html
 .. _`Modem trace AT command documentation`:
-.. _`modem trace activation %XMODEMTRACE`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
-.. _`Battery voltage low level %XVBATLOWLVL`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xvbatlowlvl.html
-.. _`Power saving mode setting`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/cpsms.html
-.. _`Release Assistance Indication (RAI)`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/xrai.html
+.. _`modem trace activation %XMODEMTRACE`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/mob_termination_ctrl_status/xmodemtrace_set.html
+.. _`Battery voltage low level %XVBATLOWLVL`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/mob_termination_ctrl_status/xvbatlowlvl.html
+.. _`Power saving mode setting`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/nw_service/cpsms.html
+.. _`Release Assistance Indication (RAI)`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/nw_service/xrai.html
 
-.. _`nRF91x1 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/intro_nrf91x1.html
-.. _`band lock section in the nRF91x1 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
-.. _`system mode section in the nRF91x1 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
-.. _`nRF91x1 battery voltage low level %XVBATLOWLVL`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mob_termination_ctrl_status/xvbatlowlvl.html
-.. _`nRF91x1 credential storage management %CMNG`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/security/cmng.html
-.. _`nRF91x1 AT+CGEREP set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/packet_domain/cgerep_set.html
-.. _`nRF91x1 packet Domain AT commands`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/packet_domain/packet_domain.html
-.. _`nRF91x1 AT+CNEC set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mobile_termination_errors/cnec_set.html
-.. _`nRF91x1 Power saving mode setting`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/nw_service/cpsms.html
-.. _`nRF91x1 modem trace activation %XMODEMTRACE`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
+.. _`nRF91x1 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/intro_nrf91x1.html
+.. _`band lock section in the nRF91x1 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
+.. _`system mode section in the nRF91x1 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
+.. _`nRF91x1 battery voltage low level %XVBATLOWLVL`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/mob_termination_ctrl_status/xvbatlvl.html
+.. _`nRF91x1 credential storage management %CMNG`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/security/cmng.html
+.. _`nRF91x1 AT+CGEREP set command`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/packet_domain/cgerep.html
+.. _`nRF91x1 packet Domain AT commands`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/packet_domain/packet_domain.html
+.. _`nRF91x1 AT+CNEC set command`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/mobile_termination_errors/cnec_set.html
+.. _`nRF91x1 Power saving mode setting`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/nw_service/cpsms.html
+.. _`nRF91x1 modem trace activation %XMODEMTRACE`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
 
 .. _`nRF53 Series`: https://docs.nordicsemi.com/category/nrf-53-series
-.. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
-.. _`nRF5340 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_dk/UG/dk/intro.html
-.. _`Execute in place page in the nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/qspi.html#execute_in_place
+
+.. _`nRF5340 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/keyfeatures_html5.html
+.. _`nRF5340 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf5340_dk/page/UG/dk/intro.html
+.. _`Execute in place page in the nRF5340 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/qspi.html#d1789e363
 .. _`nRF5340 DK Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf5340/page/COMP/nrf5340/nrf5340_comp_matrix.html
 
-.. _`nRF5340 Audio DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_audio/UG/nrf5340_audio/intro.html
-.. _`Requirements for external flash memory DFU`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_audio/UG/nrf5340_audio/hw_external_memory.html
+.. _`nRF5340 Audio DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf5340_audio/page/UG/nrf5340_audio/intro.html
+.. _`Requirements for external flash memory DFU`: https://docs.nordicsemi.com/bundle/ug_nrf5340_audio/page/UG/nrf5340_audio/hw_external_memory.html
 
-.. _`RESETREAS`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf5340%2Fchapters%2Freset%2Fdoc%2Freset.html&cp=4_0_0_3_9_10_0&anchor=register.RESETREAS
+.. _`RESETREAS`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/chapters/reset/doc/reset.html#ariaid-title13
 
-.. _`nRF52840 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/keyfeatures_html5.html
-.. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html?cp=5_0_0_4_2_2#unique_220399309
-.. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/dk/intro.html
-.. _`nRF52840 Dongle User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dongle/UG/nrf52840_Dongle/intro.html
+.. _`nRF52840 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/keyfeatures_html5.html
+.. _`System OFF mode`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/power.html#ariaid-title10
+.. _`nRF52840 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dk/page/UG/dk/intro.html
+.. _`nRF52840 Dongle User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dongle/page/UG/nrf52840_Dongle/intro.html
 .. _`nRF52840 DK Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf52840/page/COMP/nrf52840/nrf52840_comp_matrix.html
 
-.. _`nRF52833 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52833/keyfeatures_html5.html
-.. _`nRF52833 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52833_dk/UG/dk/intro.html
+.. _`nRF52833 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52833&labelkey=product-specification
+.. _`nRF52833 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52833_dk/page/UG/dk/intro.html
 
-.. _`nRF52 Series`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52.html
-.. _`nRF52832 Product Specification`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52832_ps.html
-.. _`nRF52832 Temperature Sensor Electrical Specification`: https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.nrf52832.ps.v1.1/temp.html?cp=4_2_0_26_1_0#unique_339758917
+.. _`nRF52 Series`: https://docs.nordicsemi.com/category/nrf-52-series
+.. _`nRF52832 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf52832/page/nrf52832_ps.html
+.. _`nRF52832 Temperature Sensor Electrical Specification`: https://docs.nordicsemi.com/bundle/ps_nrf52832/page/temp.html#d949e9367
 
-.. _`nRF52 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52832_dk/UG/nrf52_DK/intro.html
+.. _`nRF52 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52832_dk/page/UG/dk/intro.html
 
-.. _`nRF52820 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52820/keyfeatures_html5.html
+.. _`nRF52820 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf52820/page/keyfeatures_html5.html
 
-.. _`nRF52811 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52811/keyfeatures_html5.html
+.. _`nRF52811 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52811&labelkey=product-specification
 
-.. _`nRF52810 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52810/keyfeatures_html5.html
+.. _`nRF52810 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52810&labelkey=product-specification
 
-.. _`nRF52805 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52805/keyfeatures_html5.html
+.. _`nRF52805 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52805&labelkey=product-specification
 
-.. _`nRF21540`: https://infocenter.nordicsemi.com/topic/struct_fem/struct/nrf21540.html
-.. _`nRF21540 Product Specification`: https://infocenter.nordicsemi.com/topic/struct_fem/struct/nrf21540_ps.html
+.. _`nRF21540`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/intro.html
+.. _`nRF21540 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf21540/page/keyfeatures_html5.html
 
-.. _`nRF7001 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf7001/keyfeatures_html5.html
+.. _`nRF7001 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf7001/page/keyfeatures_html5.html
 .. _`nRF7002 Product Specification`:
-.. _`Product specification for nRF70 Series devices`: https://infocenter.nordicsemi.com/topic/ps_nrf7002/keyfeatures_html5.html
-.. _`nRF7002 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf7002_dk/UG/nrf7002_DK/intro.html
+.. _`Product specification for nRF70 Series devices`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/keyfeatures_html5.html
+.. _`nRF7002 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf7002_dk/page/UG/nrf7002_DK/intro.html
 .. _`nRF70 Series hardware documentation`:
-.. _`nRF70 Series`: https://infocenter.nordicsemi.com/topic/struct_nrf70/struct/nrf70.html
-.. _`nRF70 Series product page`: https://www.nordicsemi.com/Products/WiFi/Products#infotabs
-.. _`Measuring current`: https://infocenter.nordicsemi.com/topic/ug_nrf7002_dk/UG/nrf7002_DK/hw_measure_current.html
+.. _`nRF70 Series`: https://docs.nordicsemi.com/category/nrf-70-series
 
-.. _`Guidelines and application notes for nRF70 Series devices`: https://infocenter.nordicsemi.com/topic/struct_nrf70/struct/nrf70_guidelines.html
+.. _`Measuring current`: https://docs.nordicsemi.com/bundle/ug_nrf7002_dk/page/UG/nrf7002_DK/hw_measure_current.html
 
-.. _`nRF70 Series power states`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf7002%2Fchapters%2Ffunctional%2Fdoc%2Fpower_states.html&cp=3_0_0_4_0
+.. _`Guidelines and application notes for nRF70 Series devices`: https://docs.nordicsemi.com/category/nrf-70-series
 
-.. _`nRF7002 EK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf7002_ek/UG/nrf7002_EK/intro.html
-.. _`nRF7002 EB User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf7002_eb/UG/nrf7002_EB/intro.html
+.. _`nRF70 Series power states`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/functional/doc/power_states.html
 
-.. _`Programming SoCs with nrfjprog`: https://infocenter.nordicsemi.com/topic/ug_nrf_cltools/UG/cltools/nrf_nrfjprogexe.html
+.. _`nRF7002 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf7002_ek/page/UG/nrf7002_EK/intro.html
+.. _`nRF7002 EB User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf7002_eb/page/UG/nrf7002_EB/intro.html
+.. _`nRF7002 EK`: https://docs.nordicsemi.com/bundle/ug_nrf7002_ek/page/UG/nrf7002_EK/intro.html
 
-.. _`Nordic Thingy:53 Hardware`: https://infocenter.nordicsemi.com/topic/ug_thingy53/UG/thingy53/intro/frontpage.html
-.. _`Nordic Thingy:53 Regulatory notices`: https://infocenter.nordicsemi.com/topic/ug_thingy53/UG/thingy53/regulatory/regulatory_notices.html
+.. _`Programming SoCs with nrfjprog`: https://docs.nordicsemi.com/bundle/ug_nrf_cltools/page/UG/cltools/nrf_nrfjprogexe.html
 
-.. _`Nordic Thingy:91 User Guide`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/intro/frontpage.html
+.. _`Nordic Thingy:53 Hardware`: https://docs.nordicsemi.com/bundle/ug_thingy53/page/UG/thingy53/intro/frontpage.html
+.. _`Nordic Thingy:53 Regulatory notices`: https://docs.nordicsemi.com/bundle/ug_thingy53/page/UG/thingy53/regulatory/regulatory_notices.html
 
-.. _`Programming application and modem firmware on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91_gsg/UG/thingy91_gsg/updating_fw.html
+.. _`Nordic Thingy:91 User Guide`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/intro/frontpage.html
 
-.. _`Measuring Current on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/hw_power_current_measurement.html
+.. _`Measuring Current on Thingy:91`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/hw_description/hw_power_current_measurement.html
 
-.. _`nPM1300`: https://infocenter.nordicsemi.com/topic/struct_pmic/struct/npm1300.html
-.. _`nPM1300 EK User Guide`: https://infocenter.nordicsemi.com/topic/ug_npm1300_ek/UG/nPM1300_EK/intro.html
+.. _`nPM1300`: https://docs.nordicsemi.com/category/npm1300-category
+.. _`nPM1300 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/intro.html
 
-.. _`AP-Protect for nRF9161`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf9161%2Fdif.html&anchor=ariaid-title3
-.. _`Debugger access protection for nRF9160`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/dif.html#debugger_access
-.. _`AP-Protect for nRF5340`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/debugandtrace.html#access_port_protection
-.. _`AP-Protect for nRF52840`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF9161`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dif.html#ariaid-title3
+.. _`Debugger access protection for nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/dif.html#ariaid-title2
+.. _`AP-Protect for nRF5340`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/debugandtrace.html#ariaid-title9
+.. _`AP-Protect for nRF52840`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF52833`: https://infocenter.nordicsemi.com/topic/ps_nrf52833/dif.html#concept_udr_mns_1s
-.. _`AP-Protect for nRF52832`: https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.nrf52832.ps.v1.1/dif.html#concept_udr_mns_1s
-.. _`AP-Protect for nRF52820`: https://infocenter.nordicsemi.com/topic/ps_nrf52820/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52832`: https://docs.nordicsemi.com/bundle/ps_nrf52832/page/dif.html#d913e149
+.. _`AP-Protect for nRF52820`: https://docs.nordicsemi.com/bundle/ps_nrf52820/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF52811`: https://infocenter.nordicsemi.com/topic/ps_nrf52811/dif.html#concept_udr_mns_1s
 .. _`AP-Protect for nRF52810`: https://infocenter.nordicsemi.com/topic/ps_nrf52810/dif.html#concept_udr_mns_1s
 .. _`AP-Protect for nRF52805`: https://infocenter.nordicsemi.com/topic/ps_nrf52805/dif.html#concept_udr_mns_1s
 
-.. _`Mobile network operator certifications`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_operator_certifications.html
-.. _`Modem firmware compatibility matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_modem_fw.html
+.. _`Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_operator_certifications.html
+.. _`Modem firmware compatibility matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_modem_fw.html
 
-.. _`Electrical specification of nRF9160`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/_tmp/alta.nRF9160/autodita/CURRENT/parameters.frontpage.html#
+.. _`Electrical specification of nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/_tmp/alta.nRF9160/autodita/APPLICATION.CURRENT/parameters.frontpage.html
 
-.. _`nAN34`: https://infocenter.nordicsemi.com/pdf/nan_34.pdf
+.. _`nAN34`: https://docs.nordicsemi.com/bundle/Application-Notes/resource/nan_34.pdf
 
-.. _`nRF Util`: https://infocenter.nordicsemi.com/topic/ug_nrfutils/UG/nrfutils/nrfutil_intro.html
-.. _`Installing nRF Util for nRF5 SDK`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_installing.html
-.. _`DFU over Zigbee`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_zigbee.html
-.. _`Generating DFU packages`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_pkg.html
-.. _`DFU over a serial USB connection`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_serial_usb.html
+.. _`nRF Util`: https://docs.nordicsemi.com/bundle/nrfutil/page/README.html
+.. _`Installing nRF Util for nRF5 SDK`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/installing.html
+.. _`DFU over Zigbee`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/dfu_performing.html#dfu-over-zigbee
+.. _`Generating DFU packages`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/dfu_generating_packages.html
+.. _`DFU over a serial USB connection`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/dfu_performing.html#dfu-over-a-serial-usb-connection
 
-.. _`anomaly 19`: https://infocenter.nordicsemi.com/topic/errata_nRF5340_EngA/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
+.. _`anomaly 19`: https://docs.nordicsemi.com/bundle/errata_nRF5340_EngA/page/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
 .. _`nRF5 SDK Bootloader`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html
 .. _`nRF5 Bootloader DFU Mode`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html#lib_bootloader_dfu_mode
 
-.. _`System Protection Unit`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/spu.html
+.. _`System Protection Unit`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/spu.html
 
-.. _`nRF9160 Hardware Verification Guidelines - UART interface`: https://infocenter.nordicsemi.com/topic/nwp_034/WP/nwp_034/nwp_034_uart_if.html
-.. _`nRF9160 Antenna and RF Interface Guidelines`: https://infocenter.nordicsemi.com/topic/nwp_033/WP/nwp_033/nwp_033_intro.html
-.. _`GPS interface and antenna`: https://infocenter.nordicsemi.com/topic/nwp_033/WP/nwp_033/nwp_033_gps.html
+.. _`nRF9160 Hardware Verification Guidelines - UART interface`: https://docs.nordicsemi.com/bundle/nwp_034/page/WP/nwp_034/uart_if.html
+.. _`nRF9160 Antenna and RF Interface Guidelines`: https://docs.nordicsemi.com/bundle/nwp_033/page/WP/nwp_033/nwp_033_intro.html
+.. _`GPS interface and antenna`: https://docs.nordicsemi.com/bundle/nwp_033/page/WP/nwp_033/nwp_033_gps.html
 
-.. _`nRF9160 SiP revisions and variants`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_ic_revision_overview.html
+.. _`nRF9160 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_ic_revision_overview.html
 
-.. _`SWD Select`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/programming_debugging_interface.html
+.. _`SWD Select`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/hw_description/programming_debugging_interface.html
 
-.. _`access port protection mechanism`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf52840%2Fdif.html&anchor=concept_udr_mns_1s
+.. _`access port protection mechanism`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/dif.html#ariaid-title3
 
-.. _`Wi-Fi Alliance Certification for nRF70 Series`: https://infocenter.nordicsemi.com/pdf/nwp_045.pdf
+.. _`Wi-Fi Alliance Certification for nRF70 Series`: https://docs.nordicsemi.com/bundle/nwp_045/page/WP/nwp_045/intro.html
 
-.. _`Errata 254`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52840_Rev3%2FERR%2FnRF52840%2FRev3%2Flatest%2Fconfig_840_254.html
-.. _`Errata 255`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52833_Rev2%2FERR%2FnRF52833%2FRev2%2Flatest%2Fconfig_833_255.html
-.. _`Errata 256`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52820_Rev3%2FERR%2FnRF52820%2FRev3%2Flatest%2Fconfig_820_256.html
-.. _`Errata 257`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF52811_Rev2%2FERR%2FnRF52811%2FRev2%2Flatest%2Fconfig_811_257.html
-.. _`Errata 117`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Ferrata_nRF5340_Rev1%2FERR%2FnRF5340%2FRev1%2Flatest%2Fanomaly_340_117.html
+.. _`Errata 254`: https://docs.nordicsemi.com/bundle/errata_nRF52840_Rev3/page/ERR/nRF52840/Rev3/latest/config_840_254.html
+.. _`Errata 255`: https://docs.nordicsemi.com/bundle/errata_nRF52833_Rev2/page/ERR/nRF52833/Rev2/latest/config_833_255.html
+.. _`Errata 256`: https://docs.nordicsemi.com/bundle/errata_nRF52820_Rev3/page/ERR/nRF52820/Rev3/latest/config_820_256.html
+.. _`Errata 257`: https://docs.nordicsemi.com/bundle/errata_nRF52811_Rev2/page/ERR/nRF52811/Rev2/latest/config_811_257.html
+.. _`Errata 117`: https://docs.nordicsemi.com/bundle/errata_nRF5340_Rev1/page/ERR/nRF5340/Rev1/latest/anomaly_340_117.html
 
-.. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://infocenter.nordicsemi.com/pdf/SA-2023-234-v1_1.pdf
+.. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://docs.nordicsemi.com/bundle/SA/resource/SA-2023-234-v1_1.pdf
 
 .. ### Source: academy.nordicsemi.com
 
@@ -1127,33 +1126,33 @@
 .. _`Provision Devices`: http://nrfcloud.com/#/provision-devices
 
 .. _`nRF Cloud documentation`:
-.. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/
-.. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/Devices/MessagesAndAlerts/DeviceMessages.html
-.. _`nRF Cloud Device ID`: https://docs.nrfcloud.com/Devices/Properties/DeviceId.html
-.. _`nRF Cloud Device Shadows`: https://docs.nrfcloud.com/Devices/Properties/Shadows.html
-.. _`nRF Cloud Security`: https://docs.nrfcloud.com/Devices/Security/Security.html
-.. _`nRF Cloud Auto-onboarding`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html#auto-onboarding
+.. _`nRF Connect for Cloud documentation`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/index.html
+.. _`nRF Cloud Device Messages`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/MessagesAndAlerts/DeviceMessages.html
+.. _`nRF Cloud Device ID`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Properties/DeviceId.html
+.. _`nRF Cloud Device Shadows`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Properties/Shadows.html
+.. _`nRF Cloud Security`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Security/Security.html
+.. _`nRF Cloud Auto-onboarding`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Provisioning.html#auto-onboarding
 .. _`nRF Cloud device claiming`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ClaimingDevices/ClaimingDeviceOwnershipPortal.html
-.. _`nRF Cloud Preconnect Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html#preconnect-provisioning
-.. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html#just-in-time-provisioning
+.. _`nRF Cloud Preconnect Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Provisioning.html#preconnect-provisioning
+.. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Provisioning.html#just-in-time-provisioning
 .. _`nRF Cloud Onboarding`:
-.. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html
-.. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTAOverview.html
-.. _`nRF Cloud MQTT FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTAOverview.html#mqtt-job-execution-notifications
-.. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTATutorial.html
-.. _`Securely generating credentials`: https://docs.nrfcloud.com/Devices/Security/Credentials.html
-.. _`nRF Cloud provisioning configuration`: https://docs.nrfcloud.com/SecurityServices/ProvisioningService/ProvisioningConfiguration/ProvisioningConfigurationPortal.html
-.. _`nRF Cloud Provisioning Service`: https://docs.nrfcloud.com/SecurityServices/ProvisioningService/ProvisioningOverview.html
-.. _`nRF Cloud Verifying device authenticity`: https://docs.nrfcloud.com/SecurityServices/IdentityService/VerifyAttestationToken.html
-.. _`nRF Cloud Generating attestation tokens`: https://docs.nrfcloud.com/SecurityServices/IdentityService/VerifyAttestationToken.html#generating-attestation-tokens
+.. _`nRF Cloud Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Provisioning.html
+.. _`nRF Cloud FOTA`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTAOverview.html
+.. _`nRF Cloud MQTT FOTA`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTAOverview.html#mqtt-job-execution-notifications
+.. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTATutorial.html
+.. _`Securely generating credentials`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Security/Credentials.html
+.. _`nRF Cloud provisioning configuration`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ProvisioningConfiguration/ProvisioningConfigurationPortal.html
+.. _`nRF Cloud Provisioning Service`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ProvisioningOverview.html
+.. _`nRF Cloud Verifying device authenticity`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/IdentityService/VerifyAttestationToken.html
+.. _`nRF Cloud Generating attestation tokens`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/IdentityService/VerifyAttestationToken.html#generating-attestation-tokens
 
 
 .. _`nRF Cloud REST API`:
-.. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/APIs/REST/RESTOverview.html
-.. _`nRF Cloud REST API key`: https://docs.nrfcloud.com/APIs/REST/RESTOverview.html#api-key
-.. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/LocationServices/LSOverview.html
-.. _`nRF Cloud MQTT API`: https://docs.nrfcloud.com/APIs/MQTT/MQTTOverview.html
-.. _`nRF Cloud MQTT Topics`: https://docs.nrfcloud.com/APIs/MQTT/Topics.html
+.. _`nRF Connect for Cloud REST API`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/REST/RESTOverview.html
+.. _`nRF Cloud REST API key`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/REST/RESTOverview.html#api-key
+.. _`nRF Cloud Location Services documentation`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/LocationServices/LSOverview.html
+.. _`nRF Cloud MQTT API`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/MQTT/MQTTOverview.html
+.. _`nRF Cloud MQTT Topics`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/MQTT/Topics.html
 
 .. _`nRF Cloud REST API (v1)`: https://api.nrfcloud.com/v1
 .. _`nRF Cloud Patch Device State`:
@@ -1508,8 +1507,6 @@
 .. _`Homebrew`: https://brew.sh/
 .. _`sdk-find-my-next repository`: https://github.com/nrfconnect/sdk-find-my-next
 
-.. _`Serial Terminal from nRF Connect for Desktop`: https://infocenter.nordicsemi.com/topic/ug_serial_terminal/UG/serial_terminal/intro.html
-
 .. _`10.23.3_ec 64-bit Windows, executable`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nRF-Command-Line-Tools-10.23.3-x64.exe
 
 .. _`10.23.3_ec x86 system, deb format`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools_10.23.3_amd64.deb
@@ -1526,5 +1523,3 @@
 
 .. _`Git for Windows`: https://git-scm.com/download/win
 .. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html
-
-.. _`nRF7002 EK`: https://infocenter.nordicsemi.com/topic/ug_nrf7002_ek/UG/nrf7002_EK/intro.html
