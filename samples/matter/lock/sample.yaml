@@ -9,7 +9,9 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk_nrf7001_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
+      nrf7002dk_nrf7001_nrf5340_cpuapp
   sample.matter.lock.smp_dfu:
     build_only: true
     extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y
@@ -17,7 +19,9 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf7002dk_nrf5340_cpuapp
+      - nrf7002dk_nrf7001_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
+      nrf7002dk_nrf7001_nrf5340_cpuapp
   sample.matter.lock.no_dfu.no_fd:
     build_only: true
     extra_args: CONF_FILE=prj_no_dfu.conf CONFIG_CHIP_FACTORY_DATA=n

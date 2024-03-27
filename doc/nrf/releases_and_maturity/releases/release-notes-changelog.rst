@@ -221,7 +221,9 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`matter_lock_sample` sample:
+
+   * Added support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
 
 Multicore samples
 -----------------
