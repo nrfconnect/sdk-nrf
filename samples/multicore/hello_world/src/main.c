@@ -15,7 +15,7 @@ int main(void)
 
 	while (1) {
 		LOG_INF("test %d", cnt++);
-		printk("Hello world from %s\n", CONFIG_BOARD);
+		printk("Hello world from %s\n", CONFIG_BOARD_TARGET);
 		k_msleep(1000);
 	}
 
