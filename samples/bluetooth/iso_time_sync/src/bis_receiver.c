@@ -123,10 +123,7 @@ void bis_receiver_start(uint8_t bis_index_to_sync_to)
 	bt_le_scan_cb_register(&scan_callbacks);
 	bt_le_per_adv_sync_cb_register(&sync_callbacks);
 
-	err = bt_le_scan_start(
-			BT_LE_SCAN_PARAM(BT_LE_SCAN_TYPE_PASSIVE, BT_LE_SCAN_OPT_FILTER_DUPLICATE,
-					 BT_GAP_SCAN_FAST_INTERVAL, BT_GAP_SCAN_FAST_INTERVAL),
-			NULL);
+	err = bt_le_scan_start(BT_LE_SCAN_PASSIVE_CONTINUOUS, NULL);
 	if (err) {
 		printk("Scan start failed (err %d)\n", err);
 		return;
