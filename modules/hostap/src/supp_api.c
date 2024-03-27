@@ -398,6 +398,11 @@ static int wpas_add_and_config_network(struct wpa_supplicant *wpa_s,
 		}
 	}
 
+	if (params->bssid[0] != 0) {
+		_wpa_cli_cmd_v("set_network %d bssid %s",
+				resp.network_id, params->bssid);
+	}
+
 	/* enable and select network */
 	_wpa_cli_cmd_v("enable_network %d", resp.network_id);
 	_wpa_cli_cmd_v("select_network %d", resp.network_id);
