@@ -12,6 +12,8 @@
 
 LOG_MODULE_DECLARE(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
+NRF_MODEM_LIB_ON_INIT(cfun_init_hook, on_modem_init, NULL);
+
 static void cfun_callback(int mode)
 {
 	STRUCT_SECTION_FOREACH(nrf_modem_lib_at_cfun_cb, e) {
@@ -20,11 +22,7 @@ static void cfun_callback(int mode)
 	}
 }
 
-static int nrf_modem_lib_cfun_hooks_init(void)
+static void on_modem_init(int err, void *ctx)
 {
 	nrf_modem_at_cfun_handler_set(cfun_callback);
-
-	return 0;
 }
-
-SYS_INIT(nrf_modem_lib_cfun_hooks_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
