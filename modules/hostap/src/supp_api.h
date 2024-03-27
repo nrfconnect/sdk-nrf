@@ -12,6 +12,7 @@
 
 #define MAX_SSID_LEN 32
 #define MAC_ADDR_LEN 6
+#define MAC_STR_LEN 18 /* for ':' or '-' separated MAC address string */
 #define CHAN_NUM_LEN 6 /* for space-separated channel numbers string */
 
 /**
