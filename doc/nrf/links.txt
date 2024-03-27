@@ -545,12 +545,18 @@
 .. _`Connecting using Serial Terminal`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/connecting.html
 .. _`Serial Terminal configuration`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/configuration.html
 
+.. _`nRF Connect Bluetooth Low Energy`: https://docs.nordicsemi.com/bundle/nrf-connect-ble/page/index.html
+
 .. _`Cellular Monitor`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
 .. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
+
+.. _`nRF Connect Direct Test Mode`: https://docs.nordicsemi.com/bundle/nrf-connect-direct-test-mode/page/index.html
 
 .. _`nRF Connect Programmer`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/index.html
 .. _`Programming the nRF52840 Dongle`:
 .. _`Programming a Development Kit`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html
+
+.. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 
 .. _`nRF Thread Topology Monitor`: https://docs.nordicsemi.com/bundle/ug_nrf_ttm/page/UG/nrf_ttm/ttm_introduction.html
 .. _`nRF Sniffer for 802.15.4`: https://docs.nordicsemi.com/bundle/ug_sniffer_802154/page/UG/sniffer_802154/intro_802154.html
@@ -559,6 +565,7 @@
 .. _`Power Profiler Kit II (PPK2)`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/ppk/PPK_user_guide_Intro.html
 .. _`Install the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/common/nrf_connect_app_installing.html
 .. _`Using the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/ppk/PPK_user_guide_Running_the_software.html
+.. _`nRF Connect Power Profiler`: https://docs.nordicsemi.com/bundle/nrf-connect-ppk/page/index.html
 
 .. _`sysbuild support`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_overview.html#system-build-sysbuild
 
@@ -1518,7 +1525,6 @@
 
 .. _`10.22.3_cs3 ARMHF system, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-armhf-linux.zip
 
-.. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`Git for Windows`: https://git-scm.com/download/win
 .. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html
 

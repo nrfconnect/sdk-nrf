@@ -106,7 +106,7 @@ If you want to reset the network core while debugging, make sure to first reset 
 Debugging secure and non-secure firmware
 ****************************************
 
-When using a build target with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` (``_ns``), by default you can only debug firmware in the non-secure environment of the application core firmware.
+When using a :ref:`build target <app_boards_names>` with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` (``_ns``), by default you can only debug firmware in the non-secure environment of the application core firmware.
 
 To debug firmware running in the secure environment, you need to build Trusted Firmware-M with debug symbols enabled and load the symbols during the debugging session.
 To build Trusted Firmware-M with debug symbols, set the :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_RELWITHDEBINFO` Kconfig option.
@@ -133,10 +133,42 @@ Use the following steps to enable monitor-mode debugging in the |NCS|:
 
 For more information about monitor-mode debugging, see Zephyr's :ref:`zephyr:debugmon` documentation and SEGGER's `Monitor-mode Debugging <Monitor-mode Debugging_>`_ documentation.
 
-Other debugging tools
-*********************
+.. _debugging_tools:
 
-In addition to nRF Debug, a useful tool for debugging the communication over Bluetooth and mesh networking protocols, such as :ref:`ug_thread` or :ref:`ug_zigbee`, is the `nRF Sniffer for 802.15.4`_.
-The nRF Sniffer allows you to look into data exchanged over-the-air between devices.
+Debugging tools
+***************
 
-Check also the different `nRF Connect for Desktop`_ apps, which you can use to test and optimize your application for different use cases.
+In addition to nRF Debug, you can use several other standalone tools to debug the |NCS| applications.
+
+The following debugging tools are most commonly used in different areas of the |NCS|:
+
+.. list-table:: Most common debugging tools in the |NCS|
+   :header-rows: 1
+
+   * - Tool
+     - Purpose
+     - Area
+   * - `nRF Connect Bluetooth Low Energy`_
+     - Configure and test Bluetooth Low Energy devices. Available from `nRF Connect for Desktop`_.
+     - :ref:`ug_bt`
+   * - `Cellular Monitor`_
+     - Capture and analyze modem traces to evaluate communication and view network parameters. Available from `nRF Connect for Desktop`_.
+     - :ref:`ug_lte`
+   * - `nRF Connect Direct Test Mode`_
+     - Perform RF PHY checks of Bluetooth Low Energy devices using a GUI for the Bluetooth-specified Direct Test Mode. Available from `nRF Connect for Desktop`_.
+     - :ref:`ug_bt`
+   * - `nRF Connect Power Profiler`_
+     - Measure the real-time power consumption of your designs. Available from `nRF Connect for Desktop`_.
+     - :ref:`ug_bt`, :ref:`ug_lte`, :ref:`ug_matter`, :ref:`ug_thread`, :ref:`ug_wifi`, :ref:`ug_zigbee`
+   * - `Online Power Profiler (OPP)`_
+     - Calculate the current consumption online.
+     - :ref:`ug_bt`, :ref:`ug_lte`, :ref:`ug_wifi`
+   * - `nRF Sniffer for 802.15.4`_
+     - Debug the communication over networking protocols by look into data exchanged over-the-air between devices.
+     - :ref:`ug_bt_mesh`, :ref:`ug_matter`, :ref:`ug_thread`, :ref:`ug_zigbee`
+   * - `nRF Sniffer for Bluetooth LE`_
+     - Debug Bluetooth packets that are sent between a selected Bluetooth Low Energy device and the device it is communicating with, even when the connection is encrypted. Available from `nRF Util`_.
+     - :ref:`ug_bt`, :ref:`ug_matter`
+   * - `nRF Thread Topology Monitor`_
+     - Visualize Thread mesh network topology in real time.
+     - :ref:`ug_thread`
