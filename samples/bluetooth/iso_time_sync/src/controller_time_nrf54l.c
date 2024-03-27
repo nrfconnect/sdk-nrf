@@ -24,12 +24,6 @@ int controller_time_init(void)
 			       ret - NRFX_ERROR_BASE_NUM);
 			return -ENODEV;
 		}
-
-		/* TODO: Remove workaround. */
-		if (grtc_channel != 8 && grtc_channel != 9 && grtc_channel != 10 &&
-		    grtc_channel != 11) {
-			break;
-		}
 	}
 
 	nrf_grtc_sys_counter_compare_event_enable(NRF_GRTC, grtc_channel);
