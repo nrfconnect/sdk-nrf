@@ -13,6 +13,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
+#include <soc.h>
 #include <hal/nrf_rtc.h>
 #include <nrfx_gpiote.h>
 #include <helpers/nrfx_gppi.h>
