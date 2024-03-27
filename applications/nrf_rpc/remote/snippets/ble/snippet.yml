@@ -4,6 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-name: multiprotocol
+name: ble
 append:
-  EXTRA_CONF_FILE: multiprotocol.conf
+  EXTRA_CONF_FILE: ble.conf

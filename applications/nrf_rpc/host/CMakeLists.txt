@@ -12,6 +12,7 @@ project(nrf_rpc_host)
 # NORDIC SDK APP START
 target_sources(app PRIVATE
     src/main.c
-    src/shell.c
 )
+
+zephyr_library_sources_ifdef(CONFIG_OPENTHREAD_RPC src/shell.c)
 # NORDIC SDK APP START

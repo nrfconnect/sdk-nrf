@@ -2,12 +2,30 @@ sample:
   name: nRF RPC application
   description: Test nRF RPC application
 tests:
-  sample.basic.rpc:
+  sample.host.rpc_ble:
     build_only: true
     platform_allow: >
       nrf52840dk_nrf52840
     tags: ci_build
     extra_args: >
-      SNIPPET="multiprotocol"
+      SNIPPET="ble"
+    integration_platforms:
+      - nrf52840dk_nrf52840
+  sample.host.rpc_ot:
+    build_only: true
+    platform_allow: >
+      nrf52840dk_nrf52840
+    tags: ci_build
+    extra_args: >
+      SNIPPET="openthread"
+    integration_platforms:
+      - nrf52840dk_nrf52840
+  sample.host.rpc:
+    build_only: true
+    platform_allow: >
+      nrf52840dk_nrf52840
+    tags: ci_build
+    extra_args: >
+      SNIPPET="ble;openthread"
     integration_platforms:
       - nrf52840dk_nrf52840
