@@ -161,7 +161,7 @@ int main(void)
 
 	psa_pake_operation_t server_op = PSA_PAKE_OPERATION_INIT;
 
-	status = pake_setup(&server_op, PSA_PAKE_ROLE_SERVER, key, &cipher_suite);
+	status = pake_setup(&server_op, PSA_PAKE_ROLE_SERVER, key_server, &cipher_suite);
 	if (status != PSA_SUCCESS) {
 		goto error;
 	}
