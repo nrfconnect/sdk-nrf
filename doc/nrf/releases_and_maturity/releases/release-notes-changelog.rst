@@ -262,6 +262,10 @@ Matter samples
 
   To get started with using test event triggers in your Matter samples and to understand the capabilities of this feature, refer to the :ref:`ug_matter_test_event_triggers` page.
 
+* :ref:`matter_lock_sample` sample:
+
+   * Added support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
+
 Multicore samples
 -----------------
 

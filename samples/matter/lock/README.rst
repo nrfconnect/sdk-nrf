@@ -44,7 +44,7 @@ IPv6 network support
 The development kits for this sample offer the following IPv6 network support for Matter:
 
 * Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, and ``nrf21540dk_nrf52840``.
-* Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached or for ``nrf7002dk_nrf5340_cpuapp``.
+* Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached (2.4 GHz and 5 GHz), for ``nrf7002dk_nrf5340_cpuapp`` (2.4 GHz and 5 GHz), or for ``nrf7002dk_nrf7001_nrf5340_cpuapp`` (2.4 GHz only).
 * :ref:`Switching between Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached, using the ``thread_wifi_switched`` build type.
 
 Overview
