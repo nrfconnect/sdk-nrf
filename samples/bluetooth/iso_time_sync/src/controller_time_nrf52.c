@@ -17,6 +17,7 @@
 #include <nrfx_timer.h>
 #include <helpers/nrfx_gppi.h>
 #include <hal/nrf_egu.h>
+#include <soc.h>
 #include "iso_time_sync.h"
 
 static const nrfx_rtc_t app_rtc_instance = NRFX_RTC_INSTANCE(2);
@@ -58,8 +59,15 @@ static int rtc_config(void)
 		printk("Failed initializing RTC (ret: %d)\n", ret - NRFX_ERROR_BASE_NUM);
 		return -ENODEV;
 	}
+
+#ifndef BT_CTLR_SDC_BSIM_BUILD
 	IRQ_CONNECT(NRFX_IRQ_NUMBER_GET(NRF_RTC_INST_GET(2)), IRQ_PRIO_LOWEST,
 		    NRFX_RTC_INST_HANDLER_GET(2), NULL, 0);
+#else
+	IRQ_CONNECT(NRFX_IRQ_NUMBER_GET(NRF_RTC_INST_GET(2)), 0,
+		    (void *)NRFX_RTC_INST_HANDLER_GET(2), NULL, 0);
+#endif
+
 	nrfx_rtc_overflow_enable(&app_rtc_instance, true);
 	nrfx_rtc_tick_enable(&app_rtc_instance, false);
 	nrfx_rtc_enable(&app_rtc_instance);
