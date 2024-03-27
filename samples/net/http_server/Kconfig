@@ -21,7 +21,7 @@ config HTTP_SERVER_SAMPLE_PORT
 
 config HTTP_SERVER_SAMPLE_CLIENTS_MAX
 	int "Maximum clients"
-	default 2
+	default 1
 	help
 	  This option sets the maximum number of concurrent clients.
 	  Increasing this option will impact the performance of the server and increase the
