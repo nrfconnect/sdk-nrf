@@ -360,6 +360,11 @@ Networking samples
 
   * Added ``DNS_SD_REGISTER_TCP_SERVICE`` so that mDNS services can locate and address the server using its hostname.
 
+  * Updated:
+
+    * Set the value of the :kconfig:option:`CONFIG_POSIX_MAX_FDS` Kconfig option to ``25`` to get the Transport Layer Security (TLS) working.
+    * Set the default value of the :kconfig:option:`HTTP_SERVER_SAMPLE_CLIENTS_MAX` Kconfig option to ``1``.
+
 NFC samples
 -----------
 
