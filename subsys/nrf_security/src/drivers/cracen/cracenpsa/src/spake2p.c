@@ -607,8 +607,26 @@ psa_status_t cracen_spake2p_set_context(cracen_spake2p_operation_t *operation,
 	return cracen_update_hash_with_length(&operation->hash_op, context, context_len, 0);
 }
 
+static psa_status_t cracen_spake2p_get_L_from_w1(cracen_spake2p_operation_t *operation,
+						 uint8_t *w1_buf, uint8_t *L_buf)
+{
+	int sx_status;
+
+	struct sx_buf w1 = {.sz = operation->curve->sz, .bytes = w1_buf};
+
+	sx_pk_affine_point L_pnt = {.x = {.sz = w1.sz, .bytes = L_buf},
+				    .y = {.sz = w1.sz, .bytes = L_buf + w1.sz}};
+
+	sx_status = sx_ecp_ptmult(operation->curve, &w1, SX_PTMULT_CURVE_GENERATOR, &L_pnt);
+
+	return silex_statuscodes_to_psa(sx_status);
+}
+
 psa_status_t cracen_spake2p_set_role(cracen_spake2p_operation_t *operation, psa_pake_role_t role)
 {
+	psa_status_t status;
+	const size_t L_half_len = sizeof(operation->w1_or_L) / 2;
+
 	switch (role) {
 	case PSA_PAKE_ROLE_CLIENT:
 		operation->MN = SPAKE2P_POINT_M;
@@ -617,6 +635,18 @@ psa_status_t cracen_spake2p_set_role(cracen_spake2p_operation_t *operation, psa_
 	case PSA_PAKE_ROLE_SERVER:
 		operation->MN = SPAKE2P_POINT_N;
 		operation->NM = SPAKE2P_POINT_M;
+
+		/* When the password contains "w0 || w1" we need to generate L based on w1. */
+		if (constant_memcmp_is_zero(&operation->w1_or_L[L_half_len], L_half_len)) {
+			/* We can reuse the w1_or_L buffer since the server role doesn't use w1
+			 * afterwards.
+			 */
+			status = cracen_spake2p_get_L_from_w1(operation, operation->w1_or_L,
+							      operation->w1_or_L);
+			if (status != PSA_SUCCESS) {
+				return status;
+			}
+		}
 		break;
 	default:
 		return PSA_ERROR_NOT_SUPPORTED;
