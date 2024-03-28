@@ -128,17 +128,13 @@ static void le_audio_event_publish(enum le_audio_evt_type event)
 
 static void print_codec(const struct audio_codec_info *codec)
 {
-	if (codec->id == BT_HCI_CODING_FORMAT_LC3) {
-		LOG_INF("Codec config for LC3:");
-		LOG_INF("\tFrequency: %d Hz", codec->frequency);
-		LOG_INF("\tFrame Duration: %d us", codec->frame_duration_us);
-		LOG_INF("\tOctets per frame: %d (%d kbps)", codec->octets_per_sdu, codec->bitrate);
-		LOG_INF("\tFrames per SDU: %d", codec->blocks_per_sdu);
-		if (codec->chan_allocation >= 0) {
-			LOG_INF("\tChannel allocation: 0x%x", codec->chan_allocation);
-		}
-	} else {
-		LOG_WRN("Codec is not LC3, codec_id: 0x%2hhx", codec->id);
+	LOG_INF("Codec config for LC3:");
+	LOG_INF("\tFrequency: %d Hz", codec->frequency);
+	LOG_INF("\tFrame Duration: %d us", codec->frame_duration_us);
+	LOG_INF("\tOctets per frame: %d (%d kbps)", codec->octets_per_sdu, codec->bitrate);
+	LOG_INF("\tFrames per SDU: %d", codec->blocks_per_sdu);
+	if (codec->chan_allocation >= 0) {
+		LOG_INF("\tChannel allocation: 0x%x", codec->chan_allocation);
 	}
 }
 
@@ -147,51 +143,34 @@ static void get_codec_info(const struct bt_audio_codec_cfg *codec,
 {
 	int ret;
 
-	if (codec->id == BT_HCI_CODING_FORMAT_LC3) {
-		/* LC3 uses the generic LTV format - other codecs might do as well */
-		LOG_DBG("Retrieve the codec configuration for LC3");
-		codec_info->id = codec->id;
-		codec_info->cid = codec->cid;
-		codec_info->vid = codec->vid;
+	ret = le_audio_freq_hz_get(codec, &codec_info->frequency);
+	if (ret) {
+		LOG_DBG("Failed retrieving sampling frequency: %d", ret);
+	}
 
-		ret = le_audio_freq_hz_get(codec, &codec_info->frequency);
-		if (ret) {
-			LOG_ERR("Error retrieving sampling frequency: %d", ret);
-			return;
-		}
+	ret = le_audio_duration_us_get(codec, &codec_info->frame_duration_us);
+	if (ret) {
+		LOG_DBG("Failed retrieving frame duration: %d", ret);
+	}
 
-		ret = le_audio_duration_us_get(codec, &codec_info->frame_duration_us);
-		if (ret) {
-			LOG_ERR("Error retrieving frame duration: %d", ret);
-			return;
-		}
+	ret = bt_audio_codec_cfg_get_chan_allocation(codec, &codec_info->chan_allocation);
+	if (ret) {
+		LOG_DBG("Failed retrieving channel allocation: %d", ret);
+	}
 
-		ret = bt_audio_codec_cfg_get_chan_allocation(codec, &codec_info->chan_allocation);
-		if (ret) {
-			LOG_ERR("Error retrieving channel allocation: %d", ret);
-			return;
-		}
+	ret = le_audio_octets_per_frame_get(codec, &codec_info->octets_per_sdu);
+	if (ret) {
+		LOG_DBG("Failed retrieving octets per frame: %d", ret);
+	}
 
-		ret = le_audio_octets_per_frame_get(codec, &codec_info->octets_per_sdu);
-		if (ret) {
-			LOG_ERR("Error retrieving octets per frame: %d", ret);
-			return;
-		}
+	ret = le_audio_bitrate_get(codec, &codec_info->bitrate);
+	if (ret) {
+		LOG_DBG("Failed calculating bitrate: %d", ret);
+	}
 
-		ret = le_audio_bitrate_get(codec, &codec_info->bitrate);
-		if (ret) {
-			LOG_ERR("Error calculating bitrate: %d", ret);
-			return;
-		}
-
-		ret = le_audio_frame_blocks_per_sdu_get(codec, &codec_info->blocks_per_sdu);
-		if (codec_info->octets_per_sdu < 0) {
-			LOG_ERR("Error retrieving frame blocks per SDU: %d",
-				codec_info->octets_per_sdu);
-			return;
-		}
-	} else {
-		LOG_WRN("Codec is not LC3, codec_id: 0x%2hhx", codec->id);
+	ret = le_audio_frame_blocks_per_sdu_get(codec, &codec_info->blocks_per_sdu);
+	if (codec_info->octets_per_sdu < 0) {
+		LOG_DBG("Failed retrieving frame blocks per SDU: %d", codec_info->octets_per_sdu);
 	}
 }
 
@@ -302,6 +281,8 @@ static bool base_subgroup_bis_cb(const struct bt_bap_base_subgroup_bis *bis, voi
 			ret);
 		return true;
 	}
+
+	get_codec_info(&codec_cfg, &audio_codec_info[bis->index - 1]);
 
 	ret = bt_audio_codec_cfg_get_chan_allocation(&codec_cfg, &chan_allocation);
 	if (ret != 0) {

@@ -42,13 +42,11 @@ int le_audio_freq_hz_get(const struct bt_audio_codec_cfg *codec, int *freq_hz)
 
 	ret = bt_audio_codec_cfg_get_freq(codec);
 	if (ret < 0) {
-		*freq_hz = 0;
 		return ret;
 	}
 
 	ret = bt_audio_codec_cfg_freq_to_freq_hz(ret);
 	if (ret < 0) {
-		*freq_hz = 0;
 		return ret;
 	}
 
@@ -63,13 +61,11 @@ int le_audio_duration_us_get(const struct bt_audio_codec_cfg *codec, int *frame_
 
 	ret = bt_audio_codec_cfg_get_frame_dur(codec);
 	if (ret < 0) {
-		*frame_dur_us = 0;
 		return ret;
 	}
 
 	ret = bt_audio_codec_cfg_frame_dur_to_frame_dur_us(ret);
 	if (ret < 0) {
-		*frame_dur_us = 0;
 		return ret;
 	}
 
@@ -84,7 +80,6 @@ int le_audio_octets_per_frame_get(const struct bt_audio_codec_cfg *codec, uint32
 
 	ret = bt_audio_codec_cfg_get_octets_per_frame(codec);
 	if (ret < 0) {
-		*octets_per_sdu = 0;
 		return ret;
 	}
 
@@ -100,7 +95,6 @@ int le_audio_frame_blocks_per_sdu_get(const struct bt_audio_codec_cfg *codec,
 
 	ret = bt_audio_codec_cfg_get_frame_blocks_per_sdu(codec, true);
 	if (ret < 0) {
-		*frame_blks_per_sdu = 0;
 		return ret;
 	}
 
@@ -116,7 +110,6 @@ int le_audio_bitrate_get(const struct bt_audio_codec_cfg *const codec, uint32_t 
 
 	ret = le_audio_duration_us_get(codec, &dur_us);
 	if (ret) {
-		*bitrate = 0;
 		return ret;
 	}
 
@@ -125,7 +118,6 @@ int le_audio_bitrate_get(const struct bt_audio_codec_cfg *const codec, uint32_t 
 
 	ret = le_audio_octets_per_frame_get(codec, &octets_per_sdu);
 	if (ret) {
-		*bitrate = 0;
 		return ret;
 	}
 
