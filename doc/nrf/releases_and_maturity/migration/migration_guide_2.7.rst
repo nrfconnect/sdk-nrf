@@ -51,6 +51,14 @@ Serial LTE Modem (SLM)
     If you have introduced custom AT commands to the SLM, you need to update the command parsing to use the new library.
     See the :ref:`slm_extending` page for more information.
 
+Peripheral samples
+------------------
+
+* :ref:`radio_test` sample:
+
+  * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
+    This change applies to the sample built with the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` set to ``n``.
+
 Libraries
 =========
 

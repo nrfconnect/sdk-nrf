@@ -43,7 +43,7 @@ nRF21540 front-end module
 
 .. include:: /includes/sample_dtm_radio_test_fem.txt
 
-You can configure the nRF21540 front-end module (FEM) transmitted power gain, antenna output and activation delay using the main shell commands of the :ref:`radio_test_ui`.
+You can configure the nRF21540 front-end module (FEM) transmitted power control, antenna output and activation delay using the main shell commands of the :ref:`radio_test_ui`.
 
 Skyworks front-end module
 =========================
@@ -152,13 +152,13 @@ The behavior of the commands vary depending on the hardware configuration and Kc
 
   * The ``output_power`` command sets the total output power, including front-end module gain.
   * The ``total_output_power`` command sets the total output power, including front-end module gain with a value in dBm unit provided by user.
-  * For these commands, the radio peripheral and FEM gain is calculated and set automatically to meet your requirements.
+  * For these commands, the radio peripheral and FEM transmit power control is calculated and set automatically to meet your requirements.
   * If an exact output power value cannot be set, a lower value is used.
 
 * Radio Test with front-end module support and manual Tx output power control (the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is disabled):
 
   * The ``output_power`` command sets the SoC output command with a subcommands set.
-  * The ``fem`` command with the ``tx_gain`` subcommand sets the front-end module gain to an arbitrary value for given front-end module.
+  * The ``fem`` command with the ``tx_power_control`` subcommand sets the front-end module transmit power control to a value for given specific front-end module.
   * You can use this configuration to perform tests on your hardware design.
 
 Building and running
