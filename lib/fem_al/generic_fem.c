@@ -148,7 +148,7 @@ static int generic_fem_power_down(void)
 	return err;
 }
 
-static uint32_t tx_default_gain_get(void)
+static int8_t default_tx_output_power_get(void)
 {
 	return DT_PROP(DT_NODELABEL(nrf_radio_fem), tx_gain_db);
 }
@@ -188,7 +188,7 @@ static const struct fem_interface_api generic_fem_api = {
 	.power_up = generic_fem_power_up,
 	.power_down = generic_fem_power_down,
 	.antenna_select = generic_fem_antenna_select,
-	.tx_default_gain_get = tx_default_gain_get,
+	.default_tx_output_power_get = default_tx_output_power_get,
 };
 
 static int generic_fem_setup(void)

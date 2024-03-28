@@ -56,7 +56,14 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+FEM abstraction layer
+---------------------
+
+.. toggle::
+
+  * For applications using :ref:`fem_al_lib`:
+    The function :c:func:`fem_tx_power_control_set` replaces the function :c:func:`fem_tx_gain_set`.
+    The function :c:func:`fem_default_tx_output_power_get` replaces the function :c:func:`fem_default_tx_gain_get`.
 
 Recommended changes
 *******************

@@ -64,16 +64,16 @@ static int nrf21540_init(void)
 	return 0;
 }
 
-static int tx_gain_validate(uint32_t gain)
+static int tx_power_control_validate(fem_tx_power_control tx_power_control)
 {
 	if (IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_GPIO_SPI)) {
-		return (gain > NRF21540_TX_GAIN_MAX) ? -EINVAL : 0;
+		return (tx_power_control > NRF21540_TX_GAIN_MAX) ? -EINVAL : 0;
 	} else {
-		return ((gain == 0) || (gain == 1)) ? 0 : -EINVAL;
+		return ((tx_power_control == 0) || (tx_power_control == 1)) ? 0 : -EINVAL;
 	}
 }
 
-static uint32_t tx_default_gain_get(void)
+static int8_t default_tx_output_power_get(void)
 {
 	return CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB;
 }
@@ -108,8 +108,8 @@ static int nrf21540_antenna_select(enum fem_antenna ant)
 #endif /* DT_NODE_HAS_PROP(NRF21540_NODE, ant_sel_gpios) */
 
 static const struct fem_interface_api nrf21540_api = {
-	.tx_gain_validate = tx_gain_validate,
-	.tx_default_gain_get = tx_default_gain_get,
+	.tx_power_control_validate = tx_power_control_validate,
+	.default_tx_output_power_get = default_tx_output_power_get,
 	.antenna_select = nrf21540_antenna_select
 };
 

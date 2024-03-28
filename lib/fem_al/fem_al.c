@@ -198,37 +198,26 @@ int fem_rx_configure(uint32_t ramp_up_time)
 	return 0;
 }
 
-int fem_tx_gain_set(uint32_t gain)
+int fem_tx_power_control_set(fem_tx_power_control tx_power_control)
 {
 	int32_t err;
-	mpsl_fem_gain_t fem_gain = { 0 };
+	mpsl_fem_pa_power_control_t fem_pa_power_control = 0;
 
 	/* Fallback to FEM specific function. It can be used for checking the valid output power
 	 * range.
 	 */
-	if (fem_api->tx_gain_validate) {
-		err = fem_api->tx_gain_validate(gain);
+	if (fem_api->tx_power_control_validate) {
+		err = fem_api->tx_power_control_validate(tx_power_control);
 		if (err) {
 			return err;
 		}
 	}
 
-	if (!fem_api->tx_default_gain_get) {
-		/* Should not happen. */
-		__ASSERT(false, "Missing FEM specific function for getting default Tx gain");
-		return -EFAULT;
-	}
+	fem_pa_power_control = tx_power_control;
 
-	/* We need to pass valid gain db value for given front-end module to have possibility to set
-	 * gain value directly in arbitrary value defined in your front-end module
-	 * product specification. In this case the default Tx gain value will be used.
-	 */
-	fem_gain.gain_db = fem_api->tx_default_gain_get();
-	fem_gain.private_setting = gain;
-
-	err = mpsl_fem_pa_gain_set(&fem_gain);
+	err = mpsl_fem_pa_power_control_set(fem_pa_power_control);
 	if (err) {
-		printk("Failed to set front-end module gain (err %d)\n", err);
+		printk("Failed to set front-end module Tx power control (err %d)\n", err);
 		return -EINVAL;
 	}
 
@@ -268,10 +257,10 @@ int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_
 
 	*radio_tx_power = power_split.radio_tx_power;
 
-	err = mpsl_fem_pa_gain_set(&power_split.fem);
+	err = mpsl_fem_pa_power_control_set(power_split.fem_pa_power_control);
 	if (err) {
 		/* Should not happen */
-		printk("Failed to set front-end module gain (err %d)\n", err);
+		printk("Failed to set front-end module Tx power control (err %d)\n", err);
 		__ASSERT_NO_MSG(false);
 	}
 
@@ -285,10 +274,10 @@ int8_t fem_tx_output_power_check(int8_t power, uint16_t freq_mhz, bool tx_power_
 	return mpsl_fem_tx_power_split(power, &power_split, freq_mhz, tx_power_ceiling);
 }
 
-uint32_t fem_default_tx_gain_get(void)
+int8_t fem_default_tx_output_power_get(void)
 {
-	if (fem_api->tx_default_gain_get) {
-		return fem_api->tx_default_gain_get();
+	if (fem_api->default_tx_output_power_get) {
+		return fem_api->default_tx_output_power_get();
 	}
 
 	return 0;

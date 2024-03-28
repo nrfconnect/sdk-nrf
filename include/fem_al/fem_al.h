@@ -34,6 +34,12 @@ enum fem_antenna {
 	FEM_ANTENNA_2
 };
 
+/**@brief Type holding Tx power control to be applied to front-end module.
+ *
+ * @note The value stored in this type is specific to the FEM type in use.
+ */
+typedef uint8_t fem_tx_power_control;
+
 /**@brief Initialize the front-end module.
  *
  * @param[in] timer_instance Pointer to a 1-us resolution timer instance.
@@ -68,17 +74,18 @@ int fem_power_up(void);
  */
 int fem_power_down(void);
 
-/**@brief Configure Tx gain of the front-end module in arbitrary units.
+/**@brief Configure Tx power control of the front-end module.
  *
- * @param[in] gain Tx gain in arbitrary units specific for used front-end module implementation.
+ * @param[in] tx_power_control Tx power control specific to the front-end module implementation.
  *                 For nRF21540 GPIO/SPI, this is a register value.
  *                 For nRF21540 GPIO, this is MODE pin value.
- *                 Check your front-end module product specification for gain value range.
+ *                 Check your front-end module product specification for Tx power control value
+ *                 range.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int fem_tx_gain_set(uint32_t gain);
+int fem_tx_power_control_set(fem_tx_power_control tx_power_control);
 
 /**@brief Get the default radio ramp-up time for reception or transmission with a given data rate
  *        and modulation.
@@ -145,11 +152,11 @@ uint32_t fem_radio_tx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
  */
 uint32_t fem_radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
 
-/**@brief Set the front-end module gain and returns output power to be set on the radio peripheral
- *        to get requested output power.
+/**@brief Set the front-end module Tx power control and returns output power
+ *        to be set on the radio peripheral to get requested output power.
  *
  * This function calculates power value for RADIO peripheral register and
- * sets front-end module gain value.
+ * sets front-end module Tx power control value.
  *
  * @note If the exact value of @p power cannot be achieved, this function attempts to use less
  *       power to not exceed the limits.
@@ -204,11 +211,11 @@ static inline int8_t fem_tx_output_power_max_get(uint16_t freq_mhz)
 	return fem_tx_output_power_check(INT8_MAX, freq_mhz, true);
 }
 
-/**@brief Get the front-end module default Tx gain.
+/**@brief Get the front-end module default Tx output power.
  *
- * @return The front-end module default Tx gain value.
+ * @return The front-end module default Tx output power value.
  */
-uint32_t fem_default_tx_gain_get(void);
+int8_t fem_default_tx_output_power_get(void);
 
 /**@brief Apply the workaround for the Errata 254, 255, 256, 257 when appropriate.
  *
