@@ -28,8 +28,8 @@ extern "C" {
 struct fem_interface_api {
 	int (*power_up)(void);
 	int (*power_down)(void);
-	int (*tx_gain_validate)(uint32_t gain);
-	uint32_t (*tx_default_gain_get)(void);
+	int (*tx_power_control_validate)(fem_tx_power_control tx_power_control);
+	int8_t (*default_tx_output_power_get)(void);
 	uint32_t (*default_active_delay_calculate)(bool rx, nrf_radio_mode_t mode);
 	int (*antenna_select)(enum fem_antenna ant);
 };
