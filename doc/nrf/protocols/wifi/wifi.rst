@@ -1,7 +1,7 @@
+.. _ug_wifi_overview:
+
 Wi-Fi overview
 ##############
-
-.. _ug_wifi_overview:
 
 .. contents::
    :local:
@@ -139,16 +139,3 @@ The range of supported rates is vast, ranging from 86 Mbps for a single antenna 
 Wi-Fi has traditionally been single user (SU) based, which means that during any particular on-air packet transmission, the communication is between two users (excluding broadcast/multicast scenarios where the same information is delivered to multiple users).
 With the advent of Wi-Fi 6 (and to some extent Wi-Fi 5), multiuser (MU) support has been introduced.
 Through both MIMO and Orthogonal Frequency Division Multiple Access (OFDMA) techniques (and even a combination of both), it is now possible to send unique information to multiple users in the same on-air packet transmission, both in the downlink and uplink direction.
-
-.. _ug_wifi_certification:
-
-Wi-Fi certification
-*******************
-
-The Wi-Fi Alliance offers full `certification program <Wi-Fi Certification_>`_ that validates the interoperability of a Wi-Fi end product with other Wi-Fi Certified equipment.
-The program offers three different paths of certification to Contributor-level `members of the Wi-Fi Alliance <Join Wi-Fi Alliance_>`_.
-Implementer-level members can take advantage of the program by implementing Wi-Fi modules that have been previously certified by a Contributor-level member, for example one of the `Nordic third-party modules`_.
-
-For details about the Wi-Fi certification program and the available paths for the nRF70 Series, read the `Wi-Fi Alliance Certification for nRF70 Series`_ document.
-
-For instructions on how to specifically use the QuickTrack certification path, see the :ref:`wifi_wfa_qt_app_sample` page.
