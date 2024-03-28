@@ -574,6 +574,9 @@ config WIFI_NRF700X_SCAN_TIMEOUT_S
 	int "Scan timeout in seconds"
 	default 30
 
+menu "nRF Wi-Fi operation band(s)"
+	visible if !NRF70_2_4G_ONLY
+
 config NRF_WIFI_2G_BAND
 	bool "Set operation band to 2.4GHz"
 	default y if NRF70_2_4G_ONLY
@@ -592,6 +595,7 @@ config NRF_WIFI_OP_BAND
 	  1 - 2.4GHz
 	  2 - 5GHz
 	  3 - All ( 2.4GHz and 5GHz )
+endmenu
 
 config NRF_WIFI_IFACE_MTU
 	int "MTU for Wi-Fi interface"
