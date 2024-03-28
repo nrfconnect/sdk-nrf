@@ -15,6 +15,16 @@
 
 K_PIPE_DEFINE(event_pipe, 10, _Alignof(struct download_client_evt));
 static struct download_client client;
+static const struct sockaddr_in addr_coap_me_http = {
+	.sin_family = AF_INET,
+	.sin_port = htons(80),
+	.sin_addr.s4_addr = {134, 102, 218, 18},
+};
+static const struct sockaddr_in addr_example_com = {
+	.sin_family = AF_INET,
+	.sin_port = htons(5683),
+	.sin_addr.s4_addr = {93, 184, 216, 34},
+};
 
 static int download_client_callback(const struct download_client_evt *event)
 {
@@ -90,7 +100,7 @@ static void init(void)
 
 static void dl_coap_start(void)
 {
-	static const char host[] = "coap://10.1.0.10";
+	static const char host[] = "coap://example.com";
 	int err;
 
 	init();
@@ -110,7 +120,8 @@ ZTEST(download_client, test_download_simple)
 	int32_t recvfrom_params[] = {25, 25, 25};
 	int32_t sendto_params[] = {20, 20, 20};
 
-	z_ztest_returns_value("mock_socket_offload_connect", 0);
+	ztest_expect_data(mock_socket_offload_connect, addr, &addr_example_com);
+	ztest_returns_value(mock_socket_offload_connect, 0);
 
 	dl_coap_init(75, 20);
 
@@ -127,7 +138,8 @@ ZTEST(download_client, test_download_simple)
 
 ZTEST(download_client, test_connection_failed)
 {
-	z_ztest_returns_value("mock_socket_offload_connect", ENETUNREACH);
+	ztest_expect_data(mock_socket_offload_connect, addr, &addr_example_com);
+	ztest_returns_value(mock_socket_offload_connect, ENETUNREACH);
 
 	dl_coap_init(75, 20);
 
@@ -141,29 +153,79 @@ ZTEST(download_client, test_connection_failed)
 	de_init(&client);
 }
 
-ZTEST(download_client, test_wrong_address)
+ZTEST(download_client, test_getaddr_failed)
 {
 	int err;
+	struct download_client_evt evt;
 
 	init();
 
+	err = download_client_get(&client, "http://unknown_domain.com/file..bin", &config, NULL, 0);
+	zassert_ok(err, NULL);
+	evt = get_next_event(K_FOREVER);
+
+	zassert_equal(evt.id, DOWNLOAD_CLIENT_EVT_ERROR);
+	zassert_equal(evt.error, -EHOSTUNREACH);
+
+	de_init(&client);
+}
+
+ZTEST(download_client, test_default_proto_http)
+{
+	int err;
+	struct download_client_evt evt;
+
+	init();
+	ztest_expect_data(mock_socket_offload_connect, addr, &addr_coap_me_http);
+	ztest_returns_value(mock_socket_offload_connect, EHOSTUNREACH);
+	err = download_client_get(&client, "coap.me/file..bin", &config, NULL, 0);
+	zassert_ok(err, NULL);
+	evt = get_next_event(K_FOREVER);
+
+	zassert_equal(evt.id, DOWNLOAD_CLIENT_EVT_ERROR);
+	zassert_equal(evt.error, -EHOSTUNREACH);
+
+	de_init(&client);
+}
+
+ZTEST(download_client, test_wrong_address)
+{
+	int err;
+	struct download_client_evt evt;
+
+	init();
+
+	/* No host or config */
 	err = download_client_get(&client, NULL, NULL, NULL, 0);
 	zassert_equal(err, -EINVAL);
 
+	/* Host, but no config */
 	err = download_client_get(&client, "host", NULL, NULL, 0);
 	zassert_equal(err, -EINVAL);
 
+	/* Try twice to see client does not go into unusable mode */
 	err = download_client_get(&client, "host", NULL, NULL, 0);
 	zassert_equal(err, -EINVAL);
 
+	/* Correct host+config buf fails to resolve */
 	err = download_client_get(&client, "host", &config, NULL, 0);
 	zassert_equal(err, 0);
-	wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, K_SECONDS(1));
+	evt = wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, K_SECONDS(1));
+	zassert_equal(evt.error, -EHOSTUNREACH);
 	de_init(&client);
 
+	/* IP that fails to convert */
 	err = download_client_get(&client, "0.0.a", &config, NULL, 0);
 	zassert_equal(err, 0);
-	wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, K_SECONDS(1));
+	evt = wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, K_SECONDS(1));
+	zassert_equal(evt.error, -EHOSTUNREACH);
+	de_init(&client);
+
+	/* Unsupported protocol */
+	err = download_client_get(&client, "telnet://192.0.0.1/file.bin", &config, NULL, 0);
+	zassert_equal(err, 0);
+	evt = wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, K_SECONDS(1));
+	zassert_equal(evt.error, -EPROTONOSUPPORT);
 	de_init(&client);
 
 }
@@ -174,8 +236,10 @@ ZTEST(download_client, test_download_reconnect_on_socket_error)
 	int32_t sendto_params[] = {20, 20, 20, 20};
 	struct download_client_evt evt;
 
-	z_ztest_returns_value("mock_socket_offload_connect", 0);
-	z_ztest_returns_value("mock_socket_offload_connect", 0);
+	ztest_expect_data(mock_socket_offload_connect, addr, &addr_example_com);
+	ztest_expect_data(mock_socket_offload_connect, addr, &addr_example_com);
+	ztest_returns_value(mock_socket_offload_connect, 0);
+	ztest_returns_value(mock_socket_offload_connect, 0);
 
 	dl_coap_init(75, 20);
 
@@ -201,8 +265,10 @@ ZTEST(download_client, test_download_reconnect_on_peer_close)
 	int32_t sendto_params[] = {20, 20, 20, 20};
 	struct download_client_evt evt;
 
-	z_ztest_returns_value("mock_socket_offload_connect", 0);
-	z_ztest_returns_value("mock_socket_offload_connect", 0);
+	ztest_expect_data(mock_socket_offload_connect, addr, &addr_example_com);
+	ztest_expect_data(mock_socket_offload_connect, addr, &addr_example_com);
+	ztest_returns_value(mock_socket_offload_connect, 0);
+	ztest_returns_value(mock_socket_offload_connect, 0);
 
 	dl_coap_init(75, 20);
 
@@ -231,7 +297,8 @@ ZTEST(download_client, test_download_ignore_duplicate_block)
 	int32_t coap_parse_retv[] = {0, 0, 1, 0};
 	struct download_client_evt evt;
 
-	z_ztest_returns_value("mock_socket_offload_connect", 0);
+	ztest_expect_data(mock_socket_offload_connect, addr, &addr_example_com);
+	ztest_returns_value(mock_socket_offload_connect, 0);
 
 	dl_coap_init(75, 20);
 
@@ -258,7 +325,8 @@ ZTEST(download_client, test_download_abort_on_invalid_block)
 	int32_t sendto_params[] = {20, 20, 20};
 	int32_t coap_parse_retv[] = {0, 0, -1};
 
-	z_ztest_returns_value("mock_socket_offload_connect", 0);
+	ztest_expect_data(mock_socket_offload_connect, addr, &addr_example_com);
+	ztest_returns_value(mock_socket_offload_connect, 0);
 
 	dl_coap_init(75, 20);
 
@@ -281,7 +349,8 @@ ZTEST(download_client, test_get)
 	int32_t recvfrom_params[] = {25, 25, 25};
 	int32_t sendto_params[] = {20, 20, 20};
 
-	z_ztest_returns_value("mock_socket_offload_connect", 0);
+	ztest_expect_data(mock_socket_offload_connect, addr, &addr_example_com);
+	ztest_returns_value(mock_socket_offload_connect, 0);
 
 	dl_coap_init(75, 20);
 
@@ -289,7 +358,7 @@ ZTEST(download_client, test_get)
 			   ARRAY_SIZE(recvfrom_params));
 	mock_return_values("mock_socket_offload_sendto", sendto_params, ARRAY_SIZE(sendto_params));
 
-	err = download_client_get(&client, "coap://192.168.1.2/large", &config, NULL, 0);
+	err = download_client_get(&client, "coap://example.com/large", &config, NULL, 0);
 	zassert_ok(err, NULL);
 	wait_for_event(DOWNLOAD_CLIENT_EVT_DONE, K_SECONDS(1));
 	wait_for_event(DOWNLOAD_CLIENT_EVT_CLOSED, K_SECONDS(1));

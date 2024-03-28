@@ -91,6 +91,7 @@ static int mock_socket_offload_bind(void *obj, const struct sockaddr *addr, sock
 
 static int mock_socket_offload_connect(void *obj, const struct sockaddr *addr, socklen_t addrlen)
 {
+	ztest_check_expected_data(addr, addrlen);
 	k_sleep(K_MSEC(50));
 	errno = ztest_get_return_value();
 	return errno ? -1 : 0;
@@ -203,17 +204,25 @@ static int mock_socket_offload_getaddrinfo(const char *node, const char *service
 
 	ai_addr->sin_family = ai->ai_family;
 	ai_addr->sin_port = htons(port);
-
-	if (!net_ipaddr_parse(node, strlen(node), (struct sockaddr *)ai_addr)) {
-		free(ai_addr);
-		free(*res);
-		return -1;
-	}
-
 	ai->ai_addrlen = sizeof(*ai_addr);
 	ai->ai_addr = (struct sockaddr *)ai_addr;
 
-	return 0;
+	if (net_ipaddr_parse(node, strlen(node), (struct sockaddr *)ai_addr)) {
+		return 0;
+	}
+	if (strncmp(node, "example.com", 11) == 0) {
+		ai_addr->sin_addr = (struct in_addr){.s4_addr = {93, 184, 216, 34}};
+		return 0;
+	}
+	if (strncmp(node, "coap.me", 7) == 0) {
+		ai_addr->sin_addr = (struct in_addr){.s4_addr = {134, 102, 218, 18}};
+		return 0;
+	}
+
+
+	free(ai_addr);
+	free(*res);
+	return -1;
 }
 
 static void mock_socket_offload_freeaddrinfo(struct zsock_addrinfo *res)
