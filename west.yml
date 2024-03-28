@@ -235,6 +235,18 @@ manifest:
           upstream-url: https://github.com/openthread/openthread
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
+    - name: suit-generator
+      revision: pull/103/head
+      path: modules/lib/suit-generator
+      groups:
+        - suit-generator
+        - suit
+    - name: suit-processor
+      revision: 869d22a795c4219f8e5019d44e1fbfdeadc251ab
+      path: modules/lib/suit-processor
+      groups:
+        - suit-processor
+        - suit
 
     # Other third-party repositories.
     - name: cmock
