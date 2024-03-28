@@ -230,8 +230,10 @@ struct location_data_details {
 	 */
 	uint32_t elapsed_time_method;
 
+#if defined(CONFIG_LOCATION_METHOD_GNSS)
 	/** Location details for GNSS. */
 	struct location_data_details_gnss gnss;
+#endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 	/** Location details for cellular. */
 	struct location_data_details_cellular cellular;
@@ -692,6 +694,21 @@ void location_config_defaults_set(
  * @return Location method in string format. Returns "Unknown" if given method is not known.
  */
 const char *location_method_str(enum location_method method);
+
+/**
+ * @brief Get location data details from the location event data.
+ *
+ * @details The :c:struct:`location_data_details` structure is located in a different place in the
+ * :c:struct:`location_event_data` structure depending on the event ID. This is a helper function
+ * to provide the :c:struct:`location_data_details` structure.
+ *
+ * @param[in] event_data Event data.
+ *
+ * @return Location data details. NULL if there is no :c:struct:`location_data_details` structure
+ *         for the provided event.
+ */
+const struct location_data_details *location_details_get(
+	const struct location_event_data *event_data);
 
 /**
  * @brief Feed in A-GNSS data to be processed by library.

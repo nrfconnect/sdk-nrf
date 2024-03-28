@@ -7,6 +7,17 @@
 #ifndef MOSH_STR_UTILS_H
 #define MOSH_STR_UTILS_H
 
+/* Generate shell command from argv.
+ * cmd_prefix is set into the out_buf first and then the generated string.
+ */
+char *shell_command_str_from_argv(
+	size_t argc,
+	char **argv,
+	const char *cmd_prefix,
+	char *out_buf,
+	uint16_t out_buf_len);
+
+/* Convert hexadecimal string to byte buffer. */
 int str_hex_to_bytes(char *str, uint32_t str_length, uint8_t *buf, uint16_t buf_length);
 
 /* strdup() C-library function implemented here because there's no such function in newlibc. */
