@@ -23,6 +23,8 @@ Overview
 ********
 
 The nRF7002 DK (PCA10143) is a single-board development kit for evaluation and development on the nRF7002, a Wi-Fi companion :term:`Integrated Circuit (IC)` to Nordic Semiconductor's nRF5340 System-on-Chip (SoC) host processor.
+It is certified for the Wi-Fi Alliance® `certification program <Wi-Fi Certification_>`_ in the Connectivity, Security, and Optimization categories.
+See :ref:`ug_wifi_certification` for detailed information.
 
 The nRF7002 is an IEEE 802.11ax (Wi-Fi 6) compliant solution that implements the Wi-Fi physical layer and Medium Access Control (MAC) layer protocols.
 It implements the nRF Wi-Fi driver software on the nRF5340 host processor communicating over the QSPI bus.
