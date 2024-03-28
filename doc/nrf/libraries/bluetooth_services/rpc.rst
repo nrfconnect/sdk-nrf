@@ -7,35 +7,33 @@ Bluetooth Low Energy Remote Procedure Call
    :local:
    :depth: 2
 
-The |NCS| supports Bluetooth® Low Energy (LE) stack serialization.
-The full Bluetooth LE stack can run on another device or CPU, such as the nRF5340 DK network core using the :ref:`nrfxlib:nrf_rpc`.
+The Bluetooth® Low Energy Remote Procedure Call library allows the full Bluetooth Low Energy stack to run on another device or CPU such as the nRF5340 DK network core.
 
-Network core
-************
+Overview
+********
 
-The :ref:`ble_rpc_host` sample is designed specifically to enable the Bluetooth LE stack functionality on a remote MCU (for example, the nRF5340 network core) using the :ref:`nrfxlib:nrf_rpc`.
-You can program this sample to the network core to run standard Bluetooth Low Energy samples on the nRF5340 DK.
-You can use either the SoftDevice Controller or the Zephyr Bluetooth LE Controller for this sample.
+The library allows to use the Bluetooth Low Energy API from a different CPU or device.
+This is accomplished by running a full Bluetooth Low Energy stack on one device and serializing the API from another device.
 
-Application core
-****************
+Implementation
+==============
 
-To use the Bluetooth LE stack through nRF RPC, an additional configuration is needed.
-When building samples for the application core, enable the :kconfig:option:`CONFIG_BT_RPC_STACK` Kconfig option to run the Bluetooth LE stack on the network core.
-This option builds :ref:`ble_rpc_host` automatically as a child image.
-For more details, see :ref:`ug_nrf5340_building`.
+The library encloses the configured Bluetooth Low Energy stack and the serialization on the host (network core) side.
+The client (application core) side contains the serialization used to access the host side.
 
-Open a command prompt in the build folder of the application sample and enter the following command to build the application for the application core, with :ref:`ble_rpc_host` as child image:
+Supported backends
+==================
 
-.. code-block:: console
+The library supports the following two Bluetooth Low Energy controllers:
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DCONFIG_BT_RPC_STACK=y
+  * :ref:`zephyr:bluetooth-ctlr-arch`
+  * :ref:`softdevice_controller`
 
 Requirements
 ************
 
-Some configuration options related to Bluetooth LE must be the same on the host (network core) and client (application core).
-Set the following options in the same way for the :ref:`ble_rpc_host` and application core sample:
+Some configuration options related to Bluetooth Low Energy must be the same on the host and client.
+Set the following options in the same way for the :ref:`ble_rpc_host` and application core:
 
    * :kconfig:option:`CONFIG_BT_CENTRAL`
    * :kconfig:option:`CONFIG_BT_PERIPHERAL`
@@ -81,21 +79,52 @@ Then, you can invoke build command like this:
 
    west build -b *board* -- -DOVERLAY_CONFIG=my_overlay_file.conf
 
-.. _ble_rpc_api:
+Configuration
+*************
 
-API documentation
-*****************
+Set the :kconfig:option:`CONFIG_BT_RPC_STACK` Kconfig option to enable the Bluetooth RPC library.
 
-This library does not define a new API.
-Instead, it uses Zephyr's Bluetooth API.
-The |NCS| currently supports serialization of the following:
+Additionally, you can use the following options:
+
+  * :kconfig:option:`CONFIG_BT_RPC`
+  * :kconfig:option:`CONFIG_BT_RPC_CLIENT`
+  * :kconfig:option:`CONFIG_BT_RPC_HOST`
+  * :kconfig:option:`CONFIG_BT_RPC_STACK`
+  * :kconfig:option:`CONFIG_BT_RPC_INITIALIZE_NRF_RPC`
+  * :kconfig:option:`CONFIG_BT_RPC_GATT_SRV_MAX`
+  * :kconfig:option:`CONFIG_BT_RPC_GATT_BUFFER_SIZE`
+  * :kconfig:option:`CONFIG_BT_RPC_INTERNAL_FUNCTIONS`
+  * :kconfig:option:`CONFIG_CBKPROXY_OUT_SLOTS`
+  * :kconfig:option:`CONFIG_CBKPROXY_IN_SLOTS`
+
+For more details, see the Kconfig option description.
+
+Samples using the library
+*************************
+
+The following |NCS| sample and application use this library:
+
+* :ref:`ble_rpc_host`
+* :ref:`ipc_radio`
+
+The :ref:`ble_rpc_host` sample enables the Bluetooth LE stack functionality on a remote MCU (for example, the nRF5340 network core) using the :ref:`nrfxlib:nrf_rpc`.
+When building samples for the application core, enable the :kconfig:option:`CONFIG_BT_RPC_STACK` Kconfig option to run the Bluetooth LE stack on the network core.
+This option builds :ref:`ble_rpc_host` automatically as a child image.
+For more details, see :ref:`ug_nrf5340_building`.
+
+The :ref:`ipc_radio` application is an alternative to the :ref:`ble_rpc_host` sample.
+
+Limitations
+***********
+
+The library currently supports serialization of the following:
 
 * :ref:`zephyr:bt_gap`
 * :ref:`zephyr:bluetooth_connection_mgmt`
 * :ref:`zephyr:bt_gatt`
 * :ref:`Bluetooth Cryptography <zephyr:bt_crypto>`
 
-The behavior of the implementation is almost the same as Zephyr's with the following exceptions:
+The behavior of the Bluetooth implementation is almost the same as Zephyr's with the following exceptions:
 
 * The latency is longer because of the overhead for exchanging messages between cores.
 * The :c:func:`bt_gatt_cancel` function is not implemented.
@@ -105,3 +134,19 @@ The behavior of the implementation is almost the same as Zephyr's with the follo
   * All ``flags`` are sent to the network core when either the :c:func:`bt_gatt_subscribe` or :c:func:`bt_gatt_resubscribe` function is called.
     This covers most of the cases, because the ``flags`` are normally set once before those functions calls.
   * If you want to read or write the ``flags`` after the subscription, you have to call :c:func:`bt_rpc_gatt_subscribe_flag_set`, :c:func:`bt_rpc_gatt_subscribe_flag_clear` or :c:func:`bt_rpc_gatt_subscribe_flag_get`.
+
+Dependencies
+************
+
+The library has the following dependencies:
+
+  * :ref:`nrf_rpc`
+  * :ref:`bluetooth`
+
+.. _ble_rpc_api:
+
+API documentation
+*****************
+
+This library does not define a new API.
+Instead, it uses Zephyr's :ref:`zephyr:bluetooth_api`.
