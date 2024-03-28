@@ -169,6 +169,31 @@ done:
 		} \
 	} while (0)
 
+static int fill_resp_to_ctrl(struct packet_wrapper *req, struct packet_wrapper *resp,
+			     int status, char *message, char *data, int tlv_type)
+{
+	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
+	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
+	if (tlv_type != TLV_DUT_MAC_ADDR) {
+		fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
+	}
+
+	if (status == TLV_VALUE_STATUS_OK && data != NULL && tlv_type != -1) {
+		if (tlv_type == TLV_DUT_MAC_ADDR) {
+			fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(data), data);
+		}
+		fill_wrapper_tlv_bytes(resp, tlv_type, strlen(data), data);
+	}
+
+	return 0;
+}
+
+#define FILL_RESP_SUCCESS(data, tlv_type) \
+	fill_resp_to_ctrl(req, resp, TLV_VALUE_STATUS_OK, TLV_VALUE_OK, data, tlv_type)
+
+#define FILL_RESP_FAIL(message) \
+	fill_resp_to_ctrl(req, resp, TLV_VALUE_STATUS_NOT_OK, message, NULL, -1)
+
 static int get_control_app_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
 {
 	char ipAddress[INET_ADDRSTRLEN];
@@ -185,12 +210,9 @@ static int get_control_app_handler(struct packet_wrapper *req, struct packet_wra
 			      "Tool Control IP address on DUT network path: %s", ipAddress);
 	}
 
+	return FILL_RESP_SUCCESS(buffer, TLV_CONTROL_APP_VERSION);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, TLV_VALUE_STATUS_OK);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(TLV_VALUE_OK), TLV_VALUE_OK);
-	fill_wrapper_tlv_bytes(resp, TLV_CONTROL_APP_VERSION, strlen(buffer), buffer);
-	return 0;
+	return FILL_RESP_FAIL(TLV_VALUE_NOT_OK);
 }
 
 static int reset_device_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -256,12 +278,10 @@ static int reset_device_handler(struct packet_wrapper *req, struct packet_wrappe
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_RESET_OK;
 
-done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
+	return FILL_RESP_SUCCESS(NULL, -1);
 
-	return 0;
+done:
+	return FILL_RESP_FAIL(message);
 }
 
 
@@ -286,16 +306,15 @@ static int stop_ap_handler(struct packet_wrapper *req, struct packet_wrapper *re
 
 	/* TODO: Add functionality to stop Hostapd */
 
+	status = TLV_VALUE_STATUS_OK;
+	message = TLV_VALUE_HOSTAPD_STOP_OK;
+
 	/* reset interfaces info */
 	clear_interfaces_resource();
 	memset(band_transmitter, 0, sizeof(band_transmitter));
 	memset(band_first_wlan, 0, sizeof(band_first_wlan));
 
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-
-	return 0;
+	return FILL_RESP_FAIL(NULL, -1);
 }
 
 #ifdef _RESERVED_
@@ -916,12 +935,10 @@ static int configure_ap_handler(struct packet_wrapper *req, struct packet_wrappe
 	}
 	show_wireless_interface_info();
 
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS,
-			      len > 0 ? TLV_VALUE_STATUS_OK : TLV_VALUE_STATUS_NOT_OK);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-
-	return 0;
+	if (len > 0) {
+		return FILL_RESP_SUCCESS(NULL, -1);
+	}
+	return FILL_RESP_FAIL(message);
 }
 
 #ifdef HOSTAPD_SUPPORT_MBSSID_WAR
@@ -966,13 +983,12 @@ static int start_ap_handler(struct packet_wrapper *req, struct packet_wrapper *r
 
 	bridge_init(get_wlans_bridge());
 
-done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS,
-			      len == 0 ? TLV_VALUE_STATUS_OK : TLV_VALUE_STATUS_NOT_OK);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
+	if (len == 0) {
+		return FILL_RESP_SUCCESS(NULL, -1);
+	}
 
-	return 0;
+done:
+	return FILL_RESP_FAIL(message);
 }
 
 /* RESP: {<ResponseTLV.STATUS: 40961>: '0', */
@@ -1106,15 +1122,10 @@ static int configure_ap_wsc_handler(struct packet_wrapper *req, struct packet_wr
 	}
 	/* Start hostapd [End] */
 
+	if (len_1 == 0 || len_2 > 0 || len_3 == 0) {
+		return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp,
-			      TLV_STATUS,
-			      (len_1 == 0 || len_2 > 0 || len_3 == 0) ?
-			      TLV_VALUE_STATUS_OK : TLV_VALUE_STATUS_NOT_OK);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 #ifdef CONFIG_WNM
@@ -1232,11 +1243,10 @@ static int send_ap_btm_handler(struct packet_wrapper *req, struct packet_wrapper
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
+
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 #endif /* End Of CONFIG_WNM */
 #endif /* End Of CONFIG_AP */
@@ -1267,13 +1277,11 @@ static int create_bridge_network_handler(struct packet_wrapper *req, struct pack
 
 	set_interface_ip(get_wlans_bridge(), static_ip);
 
+	if (err >= 0) {
+		return FILL_RESP_SUCCESS(NULL, -1);
+	}
 response:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS,
-			      err >= 0 ? TLV_VALUE_STATUS_OK : TLV_VALUE_STATUS_NOT_OK);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 /* Bytes to DUT : 01 50 06 00 ed ff ff 00 55 0c 31 39 32 2e 31 36 38 2e 31 30 2e 33 */
@@ -1293,7 +1301,7 @@ static int assign_static_ip_handler(struct packet_wrapper *req, struct packet_wr
 		memcpy(buffer, tlv->value, sizeof(buffer));
 	} else {
 		message = "Failed.";
-		goto response;
+		goto done;
 	}
 
 	if (is_bridge_created()) {
@@ -1313,13 +1321,12 @@ static int assign_static_ip_handler(struct packet_wrapper *req, struct packet_wr
 		message = TLV_VALUE_ASSIGN_STATIC_IP_NOT_OK;
 	}
 
-response:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS,
-			      len == 0 ? TLV_VALUE_STATUS_OK : TLV_VALUE_STATUS_NOT_OK);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
+	if (len == 0) {
+		return FILL_RESP_SUCCESS(NULL, -1);
+	}
 
-	return 0;
+done:
+	return FILL_RESP_FAIL(message);
 }
 
 /* Bytes to DUT : 01 50 01 00 ee ff ff
@@ -1350,11 +1357,13 @@ static int get_mac_addr_handler(struct packet_wrapper *req, struct packet_wrappe
 	char buff[S_BUFFER_LEN];
 
 	if (req->tlv_num == 0) {
+		indigo_logger(LOG_LEVEL_INFO, "Print0");
 		get_mac_address(mac_addr, sizeof(mac_addr), get_wireless_interface());
 		status = TLV_VALUE_STATUS_OK;
 		message = TLV_VALUE_OK;
-		goto done;
+		goto response;
 	} else {
+		indigo_logger(LOG_LEVEL_INFO, "Print1");
 		/* TLV: TLV_ROLE */
 		memset(role, 0, sizeof(role));
 		tlv = find_wrapper_tlv_by_id(req, TLV_ROLE);
@@ -1404,7 +1413,7 @@ static int get_mac_addr_handler(struct packet_wrapper *req, struct packet_wrappe
 		}
 		status = TLV_VALUE_STATUS_OK;
 		message = TLV_VALUE_OK;
-		goto done;
+		goto response;
 #endif /* End Of CONFIG_P2P */
 	} else {
 #ifdef CONFIG_AP
@@ -1412,6 +1421,7 @@ static int get_mac_addr_handler(struct packet_wrapper *req, struct packet_wrappe
 #endif /* End Of CONFIG_AP */
 	}
 
+	indigo_logger(LOG_LEVEL_INFO, "Print2");
 	ret = run_qt_command("STATUS");
 	CHECK_RET();
 
@@ -1443,7 +1453,7 @@ static int get_mac_addr_handler(struct packet_wrapper *req, struct packet_wrappe
 		indigo_logger(LOG_LEVEL_DEBUG, "Get mac_addr %s\n", mac_addr);
 		status = TLV_VALUE_STATUS_OK;
 		message = TLV_VALUE_OK;
-		goto done;
+		goto response;
 	}
 
 	/* Check band and connected freq*/
@@ -1482,16 +1492,12 @@ static int get_mac_addr_handler(struct packet_wrapper *req, struct packet_wrappe
 
 	/* TODO: BSSID */
 
+response:
+	indigo_logger(LOG_LEVEL_INFO, "Print3");
+	return FILL_RESP_SUCCESS(mac_addr, TLV_DUT_MAC_ADDR);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	if (status == TLV_VALUE_STATUS_OK) {
-		fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(mac_addr), mac_addr);
-		fill_wrapper_tlv_bytes(resp, TLV_DUT_MAC_ADDR, strlen(mac_addr), mac_addr);
-	} else {
-		fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	}
-	return 0;
+	indigo_logger(LOG_LEVEL_INFO, "Print4");
+	return FILL_RESP_FAIL(message);
 }
 
 static int start_loopback_server(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -1532,14 +1538,11 @@ static int start_loopback_server(struct packet_wrapper *req, struct packet_wrapp
 		status = TLV_VALUE_STATUS_OK;
 		message = TLV_VALUE_LOOPBACK_SVR_START_OK;
 	}
-done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	fill_wrapper_tlv_bytes(resp, TLV_LOOP_BACK_SERVER_PORT,
-			       strlen(tool_udp_port), tool_udp_port);
 
-	return 0;
+	return FILL_RESP_SUCCESS(tool_udp_port, TLV_LOOP_BACK_SERVER_PORT);
+done:
+	return FILL_RESP_FAIL(message);
+
 }
 
 /* RESP: {<ResponseTLV.STATUS: 40961>: '0', */
@@ -1550,12 +1553,8 @@ static int stop_loop_back_server_handler(struct packet_wrapper *req, struct pack
 	if (loopback_server_status()) {
 		loopback_server_stop();
 	}
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, TLV_VALUE_STATUS_OK);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE,
-			       strlen(TLV_VALUE_LOOP_BACK_STOP_OK), TLV_VALUE_LOOP_BACK_STOP_OK);
 
-	return 0;
+	return FILL_RESP_SUCCESS(NULL, -1);
 }
 
 #ifdef CONFIG_AP
@@ -1588,11 +1587,10 @@ static int send_ap_disconnect_handler(struct packet_wrapper *req, struct packet_
 
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_HOSTAPD_STOP_OK;
+
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int set_ap_parameter_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -1632,11 +1630,10 @@ static int set_ap_parameter_handler(struct packet_wrapper *req, struct packet_wr
 
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
+
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int trigger_ap_channel_switch(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -1693,11 +1690,10 @@ static int trigger_ap_channel_switch(struct packet_wrapper *req, struct packet_w
 
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
+
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 #endif /* End Of CONFIG_AP */
 
@@ -1740,13 +1736,7 @@ static int get_ip_addr_handler(struct packet_wrapper *req, struct packet_wrapper
 		message = TLV_VALUE_NOT_OK;
 	}
 
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	if (status == TLV_VALUE_STATUS_OK) {
-		fill_wrapper_tlv_bytes(resp, TLV_DUT_WLAN_IP_ADDR, strlen(buffer), buffer);
-	}
-	return 0;
+	return FILL_RESP_SUCCESS(buffer, TLV_DUT_WLAN_IP_ADDR);
 }
 
 static int stop_sta_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -1761,12 +1751,10 @@ static int stop_sta_handler(struct packet_wrapper *req, struct packet_wrapper *r
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_WPA_S_STOP_OK;
 
-done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
+	return FILL_RESP_SUCCESS(NULL, -1);
 
-	return 0;
+done:
+	return FILL_RESP_FAIL(message);
 }
 
 #ifdef _RESERVED_
@@ -1811,7 +1799,7 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 {
 	char buffer[128];
 	struct tlv_hdr *tlv = NULL;
-	int status = TLV_VALUE_STATUS_OK, ret;
+	int ret;
 	char *message = "DUT configured as STA";
 	char psk[64];
 
@@ -1892,17 +1880,15 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 		ret = run_qt_command(buffer);
 		CHECK_RET();
 	}
-done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
 
-	return 0;
+	return FILL_RESP_SUCCESS(NULL, -1);
+done:
+	return FILL_RESP_FAIL(message);
 }
 
 static int associate_sta_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
 {
-	int status = TLV_VALUE_STATUS_OK, ret;
+	int ret;
 	char *message = TLV_VALUE_WPA_S_START_UP_OK;
 
 	ret = run_qt_command("ENABLE_NETWORK 0");
@@ -1911,12 +1897,9 @@ static int associate_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 	CHECK_RET();
 	k_sleep(K_SECONDS(2));
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int send_sta_disconnect_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -1930,12 +1913,9 @@ static int send_sta_disconnect_handler(struct packet_wrapper *req, struct packet
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_WPA_S_DISCONNECT_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int send_sta_reconnect_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -1949,12 +1929,9 @@ static int send_sta_reconnect_handler(struct packet_wrapper *req, struct packet_
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_WPA_S_RECONNECT_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int set_sta_parameter_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -1987,12 +1964,10 @@ static int set_sta_parameter_handler(struct packet_wrapper *req, struct packet_w
 
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
-done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
 
-	return 0;
+	return FILL_RESP_SUCCESS(NULL, -1);
+done:
+	return FILL_RESP_FAIL(message);
 }
 
 #ifdef CONFIG_WNM
@@ -2031,12 +2006,9 @@ static int send_sta_btm_query_handler(struct packet_wrapper *req, struct packet_
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 #endif /* End Of CONFIG_WNM */
 
@@ -2068,11 +2040,10 @@ static int start_up_p2p_handler(struct packet_wrapper *req, struct packet_wrappe
 
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_WPA_S_START_UP_OK;
+
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int p2p_find_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2087,11 +2058,10 @@ static int p2p_find_handler(struct packet_wrapper *req, struct packet_wrapper *r
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
+
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int p2p_listen_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2104,11 +2074,9 @@ static int p2p_listen_handler(struct packet_wrapper *req, struct packet_wrapper 
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int add_p2p_group_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2145,11 +2113,9 @@ static int add_p2p_group_handler(struct packet_wrapper *req, struct packet_wrapp
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int stop_p2p_group_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2187,11 +2153,9 @@ static int stop_p2p_group_handler(struct packet_wrapper *req, struct packet_wrap
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int p2p_start_wps_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2224,11 +2188,9 @@ static int p2p_start_wps_handler(struct packet_wrapper *req, struct packet_wrapp
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int get_p2p_intent_value_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2240,14 +2202,9 @@ static int get_p2p_intent_value_handler(struct packet_wrapper *req, struct packe
 	memset(response, 0, sizeof(response));
 	CHECK_SNPRINTF(response, sizeof(response), ret, "%d", P2P_GO_INTENT);
 
+	return FILL_RESP_SUCCESS(response, TLV_P2P_INTENT_VALUE);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	if (status == TLV_VALUE_STATUS_OK) {
-		fill_wrapper_tlv_bytes(resp, TLV_P2P_INTENT_VALUE, strlen(response), response);
-	}
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int p2p_invite_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2315,11 +2272,9 @@ static int p2p_invite_handler(struct packet_wrapper *req, struct packet_wrapper 
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int p2p_connect_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2406,11 +2361,10 @@ static int p2p_connect_handler(struct packet_wrapper *req, struct packet_wrapper
 
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
+
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 #endif /* End Of CONFIG_P2P */
 
@@ -2426,11 +2380,9 @@ static int sta_scan_handler(struct packet_wrapper *req, struct packet_wrapper *r
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 #ifdef CONFIG_HS20
@@ -2513,11 +2465,9 @@ static int send_sta_anqp_query_handler(struct packet_wrapper *req, struct packet
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int set_sta_hs2_associate_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2542,11 +2492,10 @@ static int set_sta_hs2_associate_handler(struct packet_wrapper *req, struct pack
 
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
+
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int sta_add_credential_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2610,11 +2559,9 @@ static int sta_add_credential_handler(struct packet_wrapper *req, struct packet_
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_WPA_S_ADD_CRED_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int set_sta_install_ppsmo_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2670,12 +2617,9 @@ static int start_dhcp_handler(struct packet_wrapper *req, struct packet_wrapper 
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int stop_dhcp_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -2718,12 +2662,9 @@ static int stop_dhcp_handler(struct packet_wrapper *req, struct packet_wrapper *
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 #ifdef CONFIG_WPS
@@ -2764,14 +2705,9 @@ static int get_wsc_pin_handler(struct packet_wrapper *req, struct packet_wrapper
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(wsc_pin, TLV_WSC_PIN_CODE);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	if (status == TLV_VALUE_STATUS_OK) {
-		fill_wrapper_tlv_bytes(resp, TLV_WSC_PIN_CODE, strlen(wsc_pin), wsc_pin);
-	}
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 #ifdef CONFIG_AP
@@ -2824,11 +2760,9 @@ static int start_wps_ap_handler(struct packet_wrapper *req, struct packet_wrappe
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 #endif /* End Of CONFIG_AP */
 
@@ -2870,14 +2804,11 @@ static int start_wps_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
-done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	if (status == TLV_VALUE_STATUS_OK && use_dynamic_pin) {
-		fill_wrapper_tlv_bytes(resp, TLV_WSC_PIN_CODE, strlen(wsc_pin), wsc_pin);
+	if (use_dynamic_pin) {
+		return FILL_RESP_SUCCESS(wsc_pin, TLV_WSC_PIN_CODE);
 	}
-	return 0;
+done:
+	return FILL_RESP_FAIL(message);
 }
 
 struct _cfg_cred {
@@ -2979,20 +2910,19 @@ static int get_wsc_cred_handler(struct packet_wrapper *req, struct packet_wrappe
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	if (data) {
+		free(data);
+	}
+	return FILL_RESP_SUCCESS(NULL, -1);
+	for (i = 0; i < count; i++) {
+		fill_wrapper_tlv_bytes(resp, p_cfg[i].tid,
+					strlen(p_cfg[i].val), p_cfg[i].val);
+	}
 done:
 	if (data) {
 		free(data);
 	}
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	if (status == TLV_VALUE_STATUS_OK) {
-		for (i = 0; i < count; i++) {
-			fill_wrapper_tlv_bytes(resp, p_cfg[i].tid,
-					       strlen(p_cfg[i].val), p_cfg[i].val);
-		}
-	}
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int enable_wsc_sta_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -3062,11 +2992,9 @@ static int enable_wsc_sta_handler(struct packet_wrapper *req, struct packet_wrap
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_WPA_S_START_UP_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 #endif /* End Of CONFIG_WPS */
 
@@ -3116,11 +3044,9 @@ static int set_p2p_serv_disc_handler(struct packet_wrapper *req, struct packet_w
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 
 static int set_p2p_ext_listen_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -3134,10 +3060,8 @@ static int set_p2p_ext_listen_handler(struct packet_wrapper *req, struct packet_
 	status = TLV_VALUE_STATUS_OK;
 	message = TLV_VALUE_OK;
 
+	return FILL_RESP_SUCCESS(NULL, -1);
 done:
-	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
-	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
-	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
-	return 0;
+	return FILL_RESP_FAIL(message);
 }
 #endif /* End OF CONFIG_P2P */
