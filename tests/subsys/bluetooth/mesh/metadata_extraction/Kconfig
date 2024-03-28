@@ -1,0 +1,16 @@
+choice COMP_DATA_LAYOUT
+	prompt "Composition data layout"
+	default COMP_DATA_LAYOUT_SINGLE
+
+config COMP_DATA_LAYOUT_SINGLE
+	bool "Single composition data"
+
+config COMP_DATA_LAYOUT_MULTIPLE
+	bool "Multiple composition data as separate variables"
+
+config COMP_DATA_LAYOUT_ARRAY
+	bool "Multiple composition data as an array"
+
+endchoice
+
+source "Kconfig.zephyr"
