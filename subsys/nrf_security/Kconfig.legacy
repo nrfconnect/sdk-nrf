@@ -268,7 +268,6 @@ config MBEDTLS_MPI_MAX_SIZE
 config MBEDTLS_LEGACY_CRYPTO_C
 	bool
 	prompt "Enable (legacy) mbed TLS crypto APIs"
-	default y if BUILD_WITH_TFM
 	help
 	  Enable support for legacy mbed TLS APIs.
 	  Note that this is a configuration that may be removed at some point.
