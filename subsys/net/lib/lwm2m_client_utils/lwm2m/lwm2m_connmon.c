@@ -9,9 +9,9 @@
 #include <stdlib.h>
 #include <zephyr/net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
-
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
+#include "lwm2m_engine.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_connmon, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
@@ -194,7 +194,7 @@ static void connmon_lte_notify_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-int lwm2m_init_connmon(void)
+static int lwm2m_init_connmon_cb(void)
 {
 	int ret;
 
@@ -218,4 +218,4 @@ int lwm2m_init_connmon(void)
 	return 0;
 }
 
-SYS_INIT(lwm2m_init_connmon, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+LWM2M_APP_INIT(lwm2m_init_connmon_cb);

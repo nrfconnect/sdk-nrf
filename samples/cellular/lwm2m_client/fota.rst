@@ -97,9 +97,8 @@ Initializing
 
 The Advanced Firmware Update functionality is implemented in :file:`lwm2m_firmware.c` and :file:`lwm2m_adv_firmware.c`.
 The Advanced Firmware Update object shares the same API with the standard LwM2M Firmware Update object as implemented in the :ref:`lib_lwm2m_client_utils` library.
-This object is initialized by calling the :c:func:`lwm2m_init_firmware` function and by confirming the currently booted application image as valid by calling the :c:func:`lwm2m_init_image` function.
-The validation of the image marks the FOTA process as complete, and the result is reported to the server.
-The modem FOTA process is automatically validated.
+The image is automatically confirmed to be valid on the boot and that marks the FOTA process as completed.
+The modem FOTA process is automatically validated during update; it does not reboot the device.
 
 LwM2M Client utilities library setup
 ====================================

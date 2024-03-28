@@ -8,13 +8,14 @@
 #include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 #include "lwm2m_app_utils.h"
+#include "lwm2m_engine.h"
 
 static char host_device_id[40] = "Host Device ID #1";
 static char manufacturer_id[40] = "Host Develce Manufacturer #1";
 static char device_model[40] = "Host Device Model #1";
 static char software_version_id[40] = "Host Device Software Version #1";
 
-int lwm2m_init_portfolio_object(void)
+static int lwm2m_init_portfolio_object(void)
 {
 	/* create switch1 object */
 	lwm2m_create_object_inst(&LWM2M_OBJ(16, 0));
@@ -29,3 +30,5 @@ int lwm2m_init_portfolio_object(void)
 
 	return 0;
 }
+
+LWM2M_APP_INIT(lwm2m_init_portfolio_object);

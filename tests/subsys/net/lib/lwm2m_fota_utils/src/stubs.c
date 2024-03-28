@@ -110,3 +110,10 @@ static int lwm2m_engine_init(void)
 }
 
 SYS_INIT(lwm2m_engine_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+
+FUNC_NORETURN void sys_reboot(int types)
+{
+	while (1) {
+		k_sleep(K_SECONDS(1));
+	}
+}

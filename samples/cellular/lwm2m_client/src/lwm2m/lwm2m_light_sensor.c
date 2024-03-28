@@ -9,6 +9,7 @@
 #include <lwm2m_resource_ids.h>
 #include "light_sensor.h"
 #include "lwm2m_app_utils.h"
+#include "lwm2m_engine.h"
 
 #define LIGHT_OBJ_INSTANCE_ID 0
 #define COLOUR_OBJ_INSTANCE_ID 1
@@ -34,7 +35,7 @@ static int update_timestamp_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t r
 	return 0;
 }
 
-int lwm2m_init_light_sensor(void)
+static int lwm2m_init_light_sensor(void)
 {
 	light_sensor_init();
 
@@ -81,3 +82,5 @@ int lwm2m_init_light_sensor(void)
 
 	return 0;
 }
+
+LWM2M_APP_INIT(lwm2m_init_light_sensor);

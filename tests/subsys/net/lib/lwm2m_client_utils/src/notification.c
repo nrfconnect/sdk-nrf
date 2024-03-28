@@ -45,13 +45,6 @@ static void setup(void)
 	FFF_RESET_HISTORY();
 }
 
-static lte_lc_evt_handler_t handler;
-
-static void copy_event_handler(lte_lc_evt_handler_t hd)
-{
-	handler = hd;
-}
-
 ZTEST_SUITE(lwm2m_client_utils_lte_notification, NULL, NULL, NULL, NULL, NULL);
 
 
@@ -64,16 +57,15 @@ ZTEST(lwm2m_client_utils_lte_notification, test_ncell_schedule_measurement)
 	lwm2m_ncell_schedule_measurement();
 	zassert_equal(lte_lc_neighbor_cell_measurement_fake.call_count, 0,
 		      "Cell_measurement call count should be 0");
-	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
 	rc = lwm2m_ncell_handler_register();
 	zassert_equal(rc, 0, "Wrong return value");
 	evt.type = LTE_LC_EVT_RRC_UPDATE;
 	evt.rrc_mode = LTE_LC_RRC_MODE_CONNECTED;
-	handler(&evt);
+	call_lte_handlers(&evt);
 	zassert_equal(lte_lc_neighbor_cell_measurement_fake.call_count, 0,
 		      "No call to lte_lc_neighbor_cell_measurement()");
 	evt.rrc_mode = LTE_LC_RRC_MODE_IDLE;
-	handler(&evt);
+	call_lte_handlers(&evt);
 	zassert_equal(lte_lc_neighbor_cell_measurement_fake.call_count, 1,
 		      "No call to lte_lc_neighbor_cell_measurement()");
 	lwm2m_ncell_schedule_measurement();
@@ -87,16 +79,15 @@ ZTEST(lwm2m_client_utils_lte_notification, test_tau_prewarning)
 
 	setup();
 
-	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
 	rc = lwm2m_ncell_handler_register();
 	zassert_equal(rc, 0, "Wrong return value");
 	evt.type = LTE_LC_EVT_TAU_PRE_WARNING;
-	handler(&evt);
+	call_lte_handlers(&evt);
 	zassert_equal(lwm2m_rd_client_update_fake.call_count, 0,
 		      "LwM2M RD client update call count should be 0");
 
 	lwm2m_rd_client_ctx_fake.return_val = &ctx;
-	handler(&evt);
+	call_lte_handlers(&evt);
 	zassert_equal(lwm2m_rd_client_update_fake.call_count, 1,
 		      "LwM2M RD client not updated");
 }
@@ -110,11 +101,10 @@ ZTEST(lwm2m_client_utils_lte_notification, test_neighbor_cell_meas)
 
 	setup();
 
-	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
 	rc = lwm2m_ncell_handler_register();
 	zassert_equal(rc, 0, "Wrong return value");
 	evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
-	handler(&evt);
+	call_lte_handlers(&evt);
 
 	zassert_equal(lwm2m_set_s32_fake.call_count, 15,
 		      "Cell info not updated, was %d", lwm2m_set_s32_fake.call_count);

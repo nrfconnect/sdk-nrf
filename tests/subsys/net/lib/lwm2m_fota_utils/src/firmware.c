@@ -338,12 +338,12 @@ static void *init_firmware(void)
 
 	settings_register_fake.custom_fake = NULL;
 	settings_subsys_init_fake.return_val = -1;
-	rc = lwm2m_init_firmware();
+	rc = lwm2m_init_firmware_cb(NULL);
 	zassert_equal(rc, -1, "wrong return value");
 	settings_subsys_init_fake.return_val = 0;
 	settings_register_fake.return_val = -1;
 
-	rc = lwm2m_init_firmware();
+	rc = lwm2m_init_firmware_cb(NULL);
 	zassert_equal(rc, -1, "wrong return value");
 	init_firmware_success();
 	return NULL;

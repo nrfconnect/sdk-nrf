@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <adp536x.h>
 #include "lwm2m_app_utils.h"
-
+#include "lwm2m_engine.h"
 #include "accelerometer.h"
 #include "env_sensor.h"
 #include "light_sensor.h"
@@ -184,7 +184,7 @@ static void pmic_work_cb(struct k_work *work)
 	k_work_schedule(&pmic_work, PERIOD);
 }
 
-int sensor_module_init(void)
+static int sensor_module_init(void)
 {
 	if (IS_ENABLED(CONFIG_SENSOR_MODULE_ACCEL)) {
 		k_work_init_delayable(&accel_work, accel_work_cb);
@@ -228,3 +228,5 @@ int sensor_module_init(void)
 
 	return 0;
 }
+
+LWM2M_APP_INIT(sensor_module_init);

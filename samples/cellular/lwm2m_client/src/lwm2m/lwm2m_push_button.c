@@ -11,6 +11,7 @@
 #include "ui_input.h"
 #include "ui_input_event.h"
 #include "lwm2m_app_utils.h"
+#include "lwm2m_engine.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
@@ -24,7 +25,7 @@ LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 
 static time_t lwm2m_timestamp[2];
 
-int lwm2m_init_push_button(void)
+static int lwm2m_init_push_button(void)
 {
 	ui_input_init();
 
@@ -67,6 +68,7 @@ int lwm2m_init_push_button(void)
 
 	return 0;
 }
+LWM2M_APP_INIT(lwm2m_init_push_button);
 
 static bool app_event_handler(const struct app_event_header *aeh)
 {

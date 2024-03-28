@@ -231,4 +231,4 @@ static int lwm2m_signal_meas_info_init(void)
 	return 0;
 }
 
-SYS_INIT(lwm2m_signal_meas_info_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+LWM2M_OBJ_INIT(lwm2m_signal_meas_info_init);

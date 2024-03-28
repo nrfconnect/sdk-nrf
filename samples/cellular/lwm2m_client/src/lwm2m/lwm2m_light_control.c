@@ -8,7 +8,7 @@
 #include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 #include <stdlib.h>
-
+#include "lwm2m_engine.h"
 #include "lwm2m_app_utils.h"
 #include "ui_led.h"
 
@@ -201,7 +201,7 @@ static int lc_dimmer_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 	return 0;
 }
 
-int lwm2m_init_light_control(void)
+static int lwm2m_init_light_control(void)
 {
 	int ret = 0;
 	uint8_t intensity;
@@ -263,3 +263,5 @@ int lwm2m_init_light_control(void)
 
 	return ret;
 }
+
+LWM2M_APP_INIT(lwm2m_init_light_control);

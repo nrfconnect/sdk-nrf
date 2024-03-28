@@ -18,6 +18,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_event.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include "lwm2m_engine.h"
 
 #define VISIBLE_WIFI_AP_MAC_ADDRESS_ID		0
 #define VISIBLE_WIFI_AP_CHANNEL_ID		1
@@ -134,4 +135,4 @@ static int lwm2m_wifi_scan_init(void)
 	return 0;
 }
 
-SYS_INIT(lwm2m_wifi_scan_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+LWM2M_APP_INIT(lwm2m_wifi_scan_init);

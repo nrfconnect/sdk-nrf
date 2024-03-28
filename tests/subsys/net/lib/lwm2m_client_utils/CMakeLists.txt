@@ -14,6 +14,7 @@ target_sources(app
     ${app_sources}
     ${ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_util.c
 )
+zephyr_linker_sources(SECTIONS src/iterables.ld)
 
 set(options
   -DCONFIG_LWM2M_ENGINE_MAX_PENDING=5

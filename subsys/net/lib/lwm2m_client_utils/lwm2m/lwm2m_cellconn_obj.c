@@ -150,22 +150,6 @@ static struct lwm2m_engine_obj_inst *cellconn_create(uint16_t obj_inst_id)
 	return &inst;
 }
 
-static int lwm2m_cellconn_init(void)
-{
-	cellconn.obj_id = LWM2M_OBJECT_CELLULAR_CONNECTIVITY_ID;
-	cellconn.version_major = CELLCONN_VERSION_MAJOR;
-	cellconn.version_minor = CELLCONN_VERSION_MINOR;
-	cellconn.is_core = false;
-	cellconn.fields = fields;
-	cellconn.field_count = ARRAY_SIZE(fields);
-	cellconn.max_instance_count = 1U;
-	cellconn.create_cb = cellconn_create;
-	lwm2m_register_obj(&cellconn);
-
-	LOG_DBG("Init LwM2M cellular connectivity instance");
-	return 0;
-}
-
 #define PSM_ONLY_MODE 1
 #define EDRX_ONLY_MODE 2
 #define PSM_AND_EDRX_MODE 3
@@ -643,7 +627,7 @@ static int lwm2m_lte_handler_register(void)
 	return 0;
 }
 
-int lwm2m_init_cellular_connectivity_object(void)
+static int lwm2m_cellular_connectivity_init(void)
 {
 	uint16_t data_len;
 	uint8_t data_flags;
@@ -697,4 +681,21 @@ int lwm2m_init_cellular_connectivity_object(void)
 	return 0;
 }
 
-SYS_INIT(lwm2m_cellconn_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+static int lwm2m_cellconn_obj_init(void)
+{
+	cellconn.obj_id = LWM2M_OBJECT_CELLULAR_CONNECTIVITY_ID;
+	cellconn.version_major = CELLCONN_VERSION_MAJOR;
+	cellconn.version_minor = CELLCONN_VERSION_MINOR;
+	cellconn.is_core = false;
+	cellconn.fields = fields;
+	cellconn.field_count = ARRAY_SIZE(fields);
+	cellconn.max_instance_count = 1U;
+	cellconn.create_cb = cellconn_create;
+	lwm2m_register_obj(&cellconn);
+
+	LOG_DBG("Init LwM2M cellular connectivity object");
+	return 0;
+}
+
+LWM2M_OBJ_INIT(lwm2m_cellconn_obj_init);
+LWM2M_APP_INIT(lwm2m_cellular_connectivity_init);

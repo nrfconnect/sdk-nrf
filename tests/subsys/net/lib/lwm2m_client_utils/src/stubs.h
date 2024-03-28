@@ -62,7 +62,6 @@ DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_param_set, enum lte_lc_lte_mode, const 
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_req, bool);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, struct lte_lc_ncellmeas_params *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_psm_param_set_seconds, int, int);
-DECLARE_FAKE_VOID_FUNC(lte_lc_register_handler, lte_lc_evt_handler_t);
 DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_agnss_process, const char *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_begin_update);
 DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_process_update, uint8_t *, size_t);
@@ -105,7 +104,13 @@ DECLARE_FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd_async, nrf_modem_at_resp_ha
 			       const char *, ...);
 DECLARE_FAKE_VALUE_FUNC(int, at_params_list_init, struct at_param_list *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, z_impl_zsock_setsockopt, int, int, int, const void *, socklen_t);
-DECLARE_FAKE_VOID_FUNC(lwm2m_utils_rai_event_cb, struct lwm2m_ctx *, enum lwm2m_rd_client_event *)
+DECLARE_FAKE_VOID_FUNC(lwm2m_utils_rai_event_cb, struct lwm2m_ctx *, enum lwm2m_rd_client_event *);
+DECLARE_FAKE_VALUE_FUNC(uint8_t, lwm2m_firmware_get_update_state_inst, uint16_t);
+DECLARE_FAKE_VOID_FUNC(lwm2m_firmware_set_update_result_inst, uint16_t, uint8_t);
+DECLARE_FAKE_VOID_FUNC(lwm2m_registry_lock);
+DECLARE_FAKE_VOID_FUNC(lwm2m_registry_unlock);
+DECLARE_FAKE_VOID_FUNC(boot_is_img_confirmed);
+DECLARE_FAKE_VOID_FUNC(boot_write_img_confirmed);
 
 /* List of fakes used by this unit tester */
 #define DO_FOREACH_FAKE(FUNC) do { \
@@ -153,7 +158,6 @@ DECLARE_FAKE_VOID_FUNC(lwm2m_utils_rai_event_cb, struct lwm2m_ctx *, enum lwm2m_
 	FUNC(lte_lc_edrx_param_set)                     \
 	FUNC(lte_lc_edrx_req)                           \
 	FUNC(lte_lc_neighbor_cell_measurement)          \
-	FUNC(lte_lc_register_handler)                   \
 	FUNC(lte_lc_psm_param_set_seconds)              \
 	FUNC(nrf_cloud_agnss_process)			\
 	FUNC(nrf_cloud_pgps_begin_update)		\
@@ -180,6 +184,15 @@ DECLARE_FAKE_VOID_FUNC(lwm2m_utils_rai_event_cb, struct lwm2m_ctx *, enum lwm2m_
 	FUNC(at_params_list_init)                       \
 	FUNC(z_impl_zsock_setsockopt)                   \
 	FUNC(lwm2m_utils_rai_event_cb)                  \
+	FUNC(lwm2m_firmware_get_update_state_inst)	\
+	FUNC(lwm2m_firmware_set_update_result_inst)	\
+	FUNC(lwm2m_registry_lock)			\
+	FUNC(lwm2m_registry_unlock)			\
+	FUNC(boot_is_img_confirmed)			\
+	FUNC(boot_write_img_confirmed)			\
 	} while (0)
+
+int call_lwm2m_init_callbacks(void);
+void call_lte_handlers(const struct lte_lc_evt *const evt);
 
 #endif

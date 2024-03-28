@@ -16,7 +16,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include <zephyr/net/lwm2m_path.h>
 #include <net/lwm2m_client_utils_location.h>
 #include <zephyr/net/lwm2m.h>
-
+#include "lwm2m_engine.h"
 #include "gnss_assistance_obj.h"
 #include "ground_fix_obj.h"
 #include "location_assistance.h"
@@ -471,4 +471,4 @@ static int location_assistance_init(void)
 	return 0;
 }
 
-SYS_INIT(location_assistance_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+LWM2M_APP_INIT(location_assistance_init);

@@ -24,7 +24,6 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 #include "lwm2m_client_app.h"
 #include "lwm2m_app_utils.h"
-#include "sensor_module.h"
 #include "gnss_module.h"
 #include "location_events.h"
 
@@ -261,11 +260,8 @@ static int lwm2m_firmware_event_cb(struct lwm2m_fota_event *event)
 
 static int lwm2m_setup(void)
 {
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)
-	/* Manufacturer independent */
-	lwm2m_init_device();
+	/* Save power by not updating timestamp on device object */
 	lwm2m_update_device_service_period(0);
-#endif
 
 	/* Manufacturer dependent */
 	/* use IMEI as serial number */
@@ -283,45 +279,9 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	lwm2m_init_firmware_cb(lwm2m_firmware_event_cb);
 #endif
-#if defined(CONFIG_LWM2M_APP_LIGHT_CONTROL)
-	lwm2m_init_light_control();
-#endif
-#if defined(CONFIG_LWM2M_APP_TEMP_SENSOR)
-	lwm2m_init_temp_sensor();
-#endif
-#if defined(CONFIG_LWM2M_APP_PRESS_SENSOR)
-	lwm2m_init_press_sensor();
-#endif
-#if defined(CONFIG_LWM2M_APP_HUMID_SENSOR)
-	lwm2m_init_humid_sensor();
-#endif
-#if defined(CONFIG_LWM2M_APP_GAS_RES_SENSOR)
-	lwm2m_init_gas_res_sensor();
-#endif
-#if defined(CONFIG_LWM2M_APP_BUZZER)
-	lwm2m_init_buzzer();
-#endif
-#if defined(CONFIG_LWM2M_APP_PUSH_BUTTON)
-	lwm2m_init_push_button();
-#endif
-#if defined(CONFIG_LWM2M_APP_ONOFF_SWITCH)
-	lwm2m_init_onoff_switch();
-#endif
-#if defined(CONFIG_LWM2M_APP_ACCELEROMETER)
-	lwm2m_init_accel();
-#endif
-#if defined(CONFIG_LWM2M_APP_LIGHT_SENSOR)
-	lwm2m_init_light_sensor();
-#endif
-#if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
-	lwm2m_init_portfolio_object();
-#endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE)
 	location_event_handler_init(&client);
 	location_assistance_retry_init(true);
-#endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)
-	lwm2m_init_cellular_connectivity_object();
 #endif
 	if (IS_ENABLED(CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS) ||
 	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)) {
@@ -652,25 +612,10 @@ int main(void)
 		return 0;
 	}
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	ret = lwm2m_init_image();
-	if (ret < 0) {
-		LOG_ERR("Failed to setup image properties (%d)", ret);
-		return 0;
-	}
-#endif
-
 	modem_connect();
 
 #if defined(CONFIG_APP_GNSS)
 	initialise_gnss();
-#endif
-
-#ifdef CONFIG_SENSOR_MODULE
-	ret = sensor_module_init();
-	if (ret) {
-		LOG_ERR("Could not initialize sensor module (%d)", ret);
-	}
 #endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
