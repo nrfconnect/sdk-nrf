@@ -172,6 +172,18 @@ int nrfc_dtls_setup(int sock)
 		LOG_ERR("Failed to enable session cache, errno: %d", -errno);
 		err = -errno;
 	}
+
+	int dummy = 1;
+
+	err = setsockopt(sock, SOL_SOCKET, SO_KEEPOPEN, &dummy, sizeof(dummy));
+	if (err) {
+		if ((errno == EINVAL) && IS_ENABLED(CONFIG_SOC_NRF9160_SICA)) {
+			err = 0; /* Expected error; not supported. */
+		} else {
+			LOG_ERR("Failed to set SO_KEEPOPEN: %d", -errno);
+			err = -errno;
+		}
+	}
 	return err;
 }
 
