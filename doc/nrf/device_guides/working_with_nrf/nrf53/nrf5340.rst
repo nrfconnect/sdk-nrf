@@ -145,6 +145,8 @@ The following table lists performance numbers that were measured under different
 | 128 MHz         | External flash  | Yes    | 48 MHz       | Quad   | 36.4      | 8.85               | 13.9               | 966                      | 911                      |
 +-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
 
+.. _ug_nrf5340_protocols:
+
 Protocols and use cases
 ***********************
 
@@ -235,6 +237,7 @@ The sample implements the RPMsg transport using the `OpenAMP`_ library to commun
 For the application core, the |NCS| provides a series of samples for the :ref:`Thread <ug_thread>`, :ref:`Zigbee <ug_zigbee>`, and :ref:`Matter <ug_matter>` protocols.
 |multi_image|
 
+.. _ug_nrf5340_protocols_multiprotocol:
 
 Multiprotocol (Thread or Zigbee in combination with Bluetooth LE)
 =================================================================
