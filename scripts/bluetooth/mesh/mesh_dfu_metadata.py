@@ -246,6 +246,18 @@ def find_comp_data_from_dwarf(elf_path):
                 opcode = location.value[0]
                 if opcode != DW_OP_addr:
                     continue
+
+                addr = int.from_bytes(die.attributes.get('DW_AT_location').value[1:5], 'little')
+
+                if 'DW_AT_abstract_origin' in die.attributes and \
+                    die.attributes.get('DW_AT_abstract_origin').form == 'DW_FORM_ref_addr':
+                    # If address is moved to another die, find original variable through the
+                    # reference and continue with the new die.
+                    value = die.attributes.get('DW_AT_abstract_origin').value
+                    die = dwarf_info.get_DIE_from_refaddr(value)
+                    if die is None:
+                        continue
+
                 # Check that the variable type is either `const struct bt_mesh_comp` or
                 # `const struct bt_mesh_comp[]`.
                 exp_tags = [
@@ -274,7 +286,6 @@ def find_comp_data_from_dwarf(elf_path):
                 except Exception:
                     continue
 
-                addr = int.from_bytes(die.attributes.get('DW_AT_location').value[1:5], 'little')
                 comp_data_arr.append(addr)
 
         if comp_data_arr is None or len(comp_data_arr) == 0:
