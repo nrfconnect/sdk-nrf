@@ -195,6 +195,26 @@ Bluetooth samples
 
 * Added the :ref:`bluetooth_isochronous_time_synchronization` sample showcasing time-synchronized processing of isochronous data.
 
+* :ref:`peripheral_lbs` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
+* :ref:`bluetooth_central_hids` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
+* :ref:`peripheral_hids_mouse` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
+* :ref:`peripheral_hids_keyboard` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
+* :ref:`central_and_peripheral_hrs` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
 Bluetooth Mesh samples
 ----------------------
 
