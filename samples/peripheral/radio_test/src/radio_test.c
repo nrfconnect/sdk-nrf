@@ -286,12 +286,12 @@ static int fem_configure(bool rx, nrf_radio_mode_t mode,
 	}
 
 	if ((!IS_ENABLED(CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC)) &&
-	    (fem->gain != FEM_USE_DEFAULT_GAIN) &&
+	    (fem->tx_power_control != FEM_USE_DEFAULT_TX_POWER_CONTROL) &&
 	    !sweep_processing) {
-		err = fem_tx_gain_set(fem->gain);
+		err = fem_tx_power_control_set(fem->tx_power_control);
 		if (err) {
-			printk("%d: out of range FEM gain value or setting gain is not supported\n",
-				fem->gain);
+			printk("%u: out of range FEM Tx power control value or setting Tx power control is not supported\n",
+				fem->tx_power_control);
 			return err;
 		}
 	}
@@ -644,8 +644,8 @@ static void radio_sweep_start(uint8_t channel, uint32_t delay_ms)
 	(void)fem_power_up();
 
 	if ((!IS_ENABLED(CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC)) &&
-	    fem.gain != FEM_USE_DEFAULT_GAIN) {
-		(void)fem_tx_gain_set(fem.gain);
+	    fem.tx_power_control != FEM_USE_DEFAULT_TX_POWER_CONTROL) {
+		(void)fem_tx_power_control_set(fem.tx_power_control);
 	}
 #endif /* CONFIG_FEM */
 
@@ -725,8 +725,7 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 void radio_test_start(const struct radio_test_config *config)
 {
 #if CONFIG_FEM
-	fem.ramp_up_time = config->fem.ramp_up_time;
-	fem.gain = config->fem.gain;
+	fem = config->fem;
 #endif /* CONFIG_FEM */
 
 	switch (config->type) {
