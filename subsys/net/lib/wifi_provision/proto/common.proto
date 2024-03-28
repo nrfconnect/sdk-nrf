@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+enum Band {
+  BAND_UNSPECIFIED = 0;
+  BAND_2_4_GHZ = 1;
+  BAND_5_GHZ = 2;
+  BAND_6_GHZ = 3;
+}
+
+enum AuthMode {
+  AUTH_MODE_UNSPECIFIED = 0;
+  OPEN = 1;
+  WEP = 2;
+  WPA_PSK = 3;
+  WPA2_PSK = 4;
+  WPA_WPA2_PSK = 5;
+  WPA2_ENTERPRISE = 6;
+  WPA3_PSK = 7;
+}
+
+message WifiScanResult {
+  string ssid = 1;
+  string bssid = 2;
+  Band band = 3;
+  uint32 channel = 4;
+  AuthMode authMode = 5;
+  int32 rssi = 6;
+}
+
+message ScanResults {
+  repeated WifiScanResult results = 1;
+}
+
+message WifiConfig {
+  string ssid = 1;
+  string passphrase = 2;
+  Band band = 3;
+  uint32 channel = 4;
+  AuthMode authMode = 5;
+}

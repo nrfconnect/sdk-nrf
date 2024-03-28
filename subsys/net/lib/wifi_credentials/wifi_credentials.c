@@ -191,7 +191,8 @@ exit:
 
 int wifi_credentials_set_personal(const char *ssid, size_t ssid_len, enum wifi_security_type type,
 				  const uint8_t *bssid, size_t bssid_len, const char *password,
-				  size_t password_len, uint32_t flags)
+				  size_t password_len, uint32_t flags,
+				  uint8_t channel)
 {
 	int ret = 0;
 	uint8_t buf[ENTRY_MAX_LEN] = { 0 };
@@ -219,6 +220,7 @@ int wifi_credentials_set_personal(const char *ssid, size_t ssid_len, enum wifi_s
 	memcpy(header->ssid, ssid, ssid_len);
 	header->ssid_len = ssid_len;
 	header->flags = flags;
+	header->channel = channel;
 
 	if (flags & WIFI_CREDENTIALS_FLAG_BSSID) {
 		memcpy(header->bssid, bssid, WIFI_MAC_ADDR_LEN);
@@ -351,6 +353,40 @@ void wifi_credentials_for_each_ssid(wifi_credentials_ssid_cb cb, void *cb_arg)
 		}
 	}
 	k_mutex_unlock(&wifi_credentials_mutex);
+}
+
+bool wifi_credentials_is_empty(void)
+{
+	k_mutex_lock(&wifi_credentials_mutex, K_FOREVER);
+	for (size_t i = 0; i < CONFIG_WIFI_CREDENTIALS_MAX_ENTRIES; ++i) {
+		if (is_entry_used(i)) {
+			k_mutex_unlock(&wifi_credentials_mutex);
+			return false;
+		}
+	}
+	k_mutex_unlock(&wifi_credentials_mutex);
+	return true;
+}
+
+int wifi_credentials_delete_all(void)
+{
+	int ret = 0;
+
+	k_mutex_lock(&wifi_credentials_mutex, K_FOREVER);
+	for (size_t i = 0; i < CONFIG_WIFI_CREDENTIALS_MAX_ENTRIES; ++i) {
+		if (is_entry_used(i)) {
+			ret = wifi_credentials_delete_entry(i);
+			if (ret) {
+				LOG_ERR("Failed to delete WiFi credentials index %d, err: %d", i, ret);
+				goto exit;
+			}
+			wifi_credentials_uncache_ssid(i);
+		}
+	}
+
+exit:
+	k_mutex_unlock(&wifi_credentials_mutex);
+	return ret;
 }
 
 SYS_INIT(init, POST_KERNEL, CONFIG_APPLICATION_INIT_PRIORITY);
