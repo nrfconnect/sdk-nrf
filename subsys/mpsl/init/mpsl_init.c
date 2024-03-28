@@ -21,6 +21,18 @@
 #if defined(CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START)
 #include <hal/nrf_ipc.h>
 #endif
+/* CONFIG_MPSL_USE_ZEPHYR_PM needs to be changed to correct config*/
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
+#include <mpsl_pm.h>
+#include <zephyr/pm/policy.h>
+
+/* These values are still arbritrary*/
+#define MAX_DELAY_SINCE_READING_PARAMS 50
+#define TIME_TO_REGISTER_EVENT_IN_ZEPHYR 1000
+
+static void mpsl_pm_work_handler(struct k_work *work);
+static K_WORK_DELAYABLE_DEFINE(pm_work, mpsl_pm_work_handler);
+#endif
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
@@ -141,6 +153,16 @@ static struct k_work mpsl_low_prio_work;
 struct k_work_q mpsl_work_q;
 static K_THREAD_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
 
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
+
+#define PM_MAX_LATENCY_IDLE_US 4999999
+
+static uint8_t	m_pm_prev_flag_value;
+static bool		m_pm_latency_idle_set;
+static bool		m_pm_event_is_scheduled;
+
+#endif
+
 #define MPSL_TIMESLOT_SESSION_COUNT (\
 	CONFIG_MPSL_TIMESLOT_SESSION_COUNT + \
 	CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL_TIMESLOT_SESSION_COUNT)
@@ -154,9 +176,86 @@ BUILD_ASSERT(MPSL_TIMESLOT_SESSION_COUNT <= MPSL_TIMESLOT_CONTEXT_COUNT_MAX,
 static uint8_t __aligned(4) timeslot_context[TIMESLOT_MEM_SIZE];
 #endif
 
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
+static bool m_check_if_pm_work_is_needed(void)
+{
+	mpsl_pm_params_t params;
+
+	mpsl_pm_params_get(&params);
+	return (m_pm_prev_flag_value != params.mpsl_pm_cnt_flag);
+}
+
+static bool m_check_if_pm_latency_needs_updating(uint32_t lat_value_us)
+{
+	/* After event or In Event */
+	return (((lat_value_us/* == PM_MAX_LATENCY_IDLE_US*/) &&
+			 (m_pm_latency_idle_set == false)) ||
+			((lat_value_us == 0) && (m_pm_latency_idle_set == true)));
+}
+
+static void m_update_latency_pm(uint32_t lat_value_us)
+{
+	if (m_check_if_pm_latency_needs_updating(lat_value_us)) {
+		pm_policy_latency_request_update(&pm_policy_latency_request, lat_value_us);
+		m_pm_latency_idle_set = lat_value_us ? true : false;
+	}
+}
+
+static void m_pm_work(void)
+{
+	mpsl_pm_params_t params = {0};
+	uint32_t lat_value_us   = 0;
+	bool no_param_update    = mpsl_pm_params_get(&params);
+
+	/* High prio did not change mpsl_pm_params, while we read the params. */
+	if (no_param_update) {
+		if (params.event_state == MPSL_PM_EVENT_STATE_NO_EVENTS_LEFT) {
+			/* No event scheduled, so set latency to restrict deepest sleep states*/
+			/* Note: The core running sdc should have it's PM state definitions, like
+			 * https://github.com/nrfconnect/sdk-sysctrl/blob/master/sysctrl/conf/boards/pm.dtsi#L26
+			 */
+
+			lat_value_us = PM_MAX_LATENCY_IDLE_US;
+			m_update_latency_pm(lat_value_us);
+			/* Note: While m_pm_latency_idle_set is also true before the event,
+			 * the else already excludes that case.
+			 */
+			pm_policy_event_unregister(&pm_policy_events);
+			m_pm_event_is_scheduled = false;
+		} else if (params.event_state == MPSL_PM_EVENT_STATE_BEFORE_EVENT) {
+			/* Event scheduled */
+			uint64_t wakeup_latency_us = params.event_time_rel_us -
+			                             MAX_DELAY_SINCE_READING_PARAMS;
+
+			if (wakeup_latency_us > UINT32_MAX) {
+				uint32_t retry_time_us = UINT32_MAX -
+							 TIME_TO_REGISTER_EVENT_IN_ZEPHYR;
+
+				k_work_schedule_for_queue(&mpsl_work_q, &pm_work,
+							  K_MSEC(retry_time_us));
+				return;
+			}
+
+			if (m_pm_event_is_scheduled) {
+				pm_policy_event_update(&pm_policy_event, wakeup_latency_us);
+			} else {
+				pm_policy_event_register(&pm_policy_event, wakeup_latency_us);
+			}
+			m_pm_event_is_scheduled = true;
+		} else {
+			/* Event started */
+			/* we are in and event, set latency 0*/
+			lat_value_us = 0;
+			m_update_latency_pm(lat_value_us);
+		}
+	}
+	m_pm_prev_flag_value = params.mpsl_pm_cnt_flag;
+}
+#endif
+
 static void mpsl_low_prio_irq_handler(const void *arg)
 {
-	k_work_submit_to_queue(&mpsl_work_q, &mpsl_low_prio_work);
+	mpsl_work_submit(&mpsl_low_prio_work);
 }
 
 static void mpsl_low_prio_work_handler(struct k_work *item)
@@ -167,6 +266,13 @@ static void mpsl_low_prio_work_handler(struct k_work *item)
 
 	errcode = MULTITHREADING_LOCK_ACQUIRE();
 	__ASSERT_NO_MSG(errcode == 0);
+
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
+	if (m_check_if_pm_work_is_needed()) {
+		m_pm_work();
+	}
+#endif
+
 	mpsl_low_priority_process();
 	MULTITHREADING_LOCK_RELEASE();
 }
@@ -325,6 +431,29 @@ static void mpsl_calibration_work_handler(struct k_work *work)
 }
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
+static void mpsl_pm_work_handler(struct k_work *work)
+{
+	ARG_UNUSED(work);
+	m_pm_work();
+}
+
+static void m_pm_init(void)
+{
+	mpsl_pm_params_t params = {0};
+	/* So that PM doesn't shut us off power when we are idle.*/
+	/* see min. residency times: https://github.com/nrfconnect/sdk-sysctrl/blob/master/sysctrl/conf/pm.overlay#L19*/
+	/* we want max sleep?? -> PM_MAX_LATENCY_IDLE_US < 5000000us*/
+	pm_policy_latency_request_add(&pm_policy_latency_request, PM_MAX_LATENCY_IDLE_US);
+	m_pm_latency_idle_set = true;
+
+	mpsl_pm_init();
+	mpsl_pm_params_get(&params);
+	m_pm_prev_flag_value = params.mpsl_pm_cnt_flag;
+	m_pm_event_is_scheduled = false;
+}
+#endif
+
 static int32_t mpsl_lib_init_internal(void)
 {
 	int err = 0;
@@ -396,6 +525,10 @@ static int mpsl_lib_init_sys(void)
 	if (err) {
 		return err;
 	}
+
+#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
+	m_pm_init();
+#endif
 
 #if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
 	/* Ensure IRQs are disabled before attaching. */
