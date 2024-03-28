@@ -312,13 +312,20 @@ set(pm_cmd
   ${region_arguments}
   )
 
+
+set(DTS_ROOT_BINDINGS ${CACHED_DTS_ROOT_BINDINGS})
+
 set(pm_output_cmd
   ${PYTHON_EXECUTABLE}
   ${ZEPHYR_NRF_MODULE_DIR}/scripts/partition_manager_output.py
   --input-partitions ${pm_out_partition_file}
   --input-regions ${pm_out_region_file}
   --config-file ${pm_out_dotconf_file}
+  --dts-file ${ZEPHYR_DTS}
+  --dtc-flags '${EXTRA_DTC_FLAGS_RAW}'
+  --bindings-dirs ${DTS_ROOT_BINDINGS}
   )
+
 
 # Run the partition manager algorithm.
 execute_process(
@@ -688,6 +695,9 @@ to the external flash")
     --input-regions ${pm_out_region_file}
     --header-files ${header_files}
     --images ${prefixed_images}
+    --dts-file ${ZEPHYR_DTS}
+    --dtc-flags '${EXTRA_DTC_FLAGS_RAW}'
+    --bindings-dirs ${DTS_ROOT_BINDINGS}
     )
 
   execute_process(
