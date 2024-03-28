@@ -53,6 +53,7 @@ enum download_client_evt_id {
 	 * - EPROTONOSUPPORT: Protocol is not supported
 	 * - EINVAL: Invalid configuration
 	 * - EAFNOSUPPORT: Unsupported address family (IPv4/IPv6)
+	 * - EHOSTUNREACH: Failed to resolve the target address
 	 *
 	 * In case of errors on the socket during send() or recv() (ECONNRESET),
 	 * returning zero from the callback will let the library attempt
