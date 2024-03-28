@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+/* Wi-Fi needs more flash (1M) and RAM (512K) */
+&cpuapp_slot0_partition {
+	reg = <0xa6000 DT_SIZE_K(1024)>;
+};
+
+&cpuapp_data {
+	reg = <0x1000 DT_SIZE_K(512)>;
+};
+
+/{
+	chosen {
+		zephyr,shell-uart = &uart136;
+	};
+};
