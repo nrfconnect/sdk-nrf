@@ -23,9 +23,9 @@ Running the unit test
 
 To run the unit test, you must navigate to the test directory of the respective internal module.
 For example, to run the unit test for :ref:`asset_tracker_v2_debug_module`, navigate to :file:`asset_tracker_v2/tests/debug_module`.
-The unit tests can be executed using West or Twister.
+The unit tests can be executed using west or Twister.
 
-Running unit tests using West
+Running unit tests using west
 =============================
 
 Enter the following west commands to execute the tests on different board targets:

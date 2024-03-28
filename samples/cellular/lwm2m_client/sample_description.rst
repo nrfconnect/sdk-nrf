@@ -164,7 +164,7 @@ You need to provide the following information to the LwM2M Server before you can
 
 * Client endpoint
 * Identity
-* `Pre-Shared Key (PSK)`_
+* `Pre-shared key (PSK) <Pre-Shared Key (PSK)_>`_
 
 See :ref:`server setup <server_setup_lwm2m_client>` for instructions on providing the information to the server.
 
@@ -312,7 +312,7 @@ Server options
 
 .. _CONFIG_APP_LWM2M_PSK:
 
-CONFIG_APP_LWM2M_PSK - Configuration for Pre-Shared Key
+CONFIG_APP_LWM2M_PSK - Configuration for the PSK
    The sample configuration sets the hexadecimal representation of the PSK used when registering the device with the server.
    To prevent provisioning of the key to the modem, set this option to an empty string.
 
