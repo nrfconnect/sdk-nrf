@@ -113,13 +113,11 @@ int nrf_cloud_coap_disconnect(void);
  * @param[in]     request Data to be provided in API call.
  * @param[in,out] result Structure pointing to caller-provided buffer in which to store A-GNSS data.
  *
- *  @retval -EINVAL will be returned, and an error message printed, if invalid parameters
- *          are given.
- *  @retval -ENOENT will be returned if there was no A-GNSS data requested for the specified
- *          request type.
- *  @retval -ENOBUFS will be returned, and an error message printed, if there is not enough
- *          buffer space to store retrieved A-GNSS data.
- * @return 0 If successful. Positive values are cloud-side errors (CoAP result codes)
+ * @retval -EACCES No CoAP connection.
+ * @retval -EAGAIN Timeout, data was not received from the cloud.
+ * @return 0 If successful, nonzero if failed.
+ *           Negative values are device-side errors defined in errno.h.
+ *           Positive values are cloud-side errors (CoAP result codes)
  *           defined in zephyr/net/coap.h.
  */
 int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *const request,
@@ -142,6 +140,23 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *con
  */
 int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const request,
 				 struct nrf_cloud_pgps_result *file_location);
+
+/**
+ * @brief Download and process P-GPS data.
+ *
+ *  This function is called by @ref nrf_cloud_pgps_update(). If using this function directly,
+ *  first call @ref nrf_cloud_pgps_begin_update().
+ *
+ * @param[in] file_location Pointer to structure containing the host and path to
+ *                          the prediction file.
+ * @retval -EACCES No CoAP connection.
+ * @retval -EIO P-GPS processing error.
+ * @return 0 If successful, nonzero if failed.
+ *           Negative values are device-side errors defined in errno.h.
+ *           Positive values are cloud-side errors (CoAP result codes)
+ *           defined in zephyr/net/coap.h.
+ */
+int nrf_cloud_coap_pgps_data_get(struct nrf_cloud_pgps_result const *const file_location);
 
 /**
  * @brief Send a sensor value to nRF Cloud.

@@ -69,6 +69,28 @@ int nrf_cloud_coap_get(const char *resource, const char *query,
 		       enum coap_content_format fmt_in, bool reliable,
 		       coap_client_response_cb_t cb, void *user);
 
+/**@brief Perform CoAP GET request to the nRF Cloud CoAP proxy resource.
+ *
+ * The function will block until the response or an error have been returned.
+ *
+ * @param host String containing the host name.
+ * @param path String containing file path.
+ * @param query Optional string containing REST-style query parameters.
+ * @param fmt_out CoAP content format for the Content-Format message option of the payload.
+ * @param reliable True to use a Confirmable message, otherwise, a Non-confirmable message.
+ * @param cb Pointer to a callback function to receive the results.
+ * @param user Pointer to user-specific data to be passed back to the callback.
+ * @retval -E2BIG The host and path are too large.
+ *                Increase the value of @kconfig{CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE}.
+ * @return 0 if the request succeeded, a positive value indicating a CoAP result code,
+ * or a negative error number.
+ */
+int nrf_cloud_coap_proxy_get(char const *const host, char const *const path,
+			     const char *query,
+			     enum coap_content_format fmt_out,
+			     bool reliable,
+			     coap_client_response_cb_t cb, void *user);
+
 /**@brief Perform CoAP POST request.
  *
  * The function will block until the response or an error have been returned. Use this
