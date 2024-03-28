@@ -385,7 +385,7 @@ static int client_connect(struct download_client *dl)
 	uint16_t port;
 
 	err = url_parse_proto(dl->host, &dl->proto, &type);
-	if (err) {
+	if (err == -EINVAL) {
 		LOG_DBG("Protocol not specified, defaulting to HTTP(S)");
 		type = SOCK_STREAM;
 		if (dl->config.sec_tag_list && (dl->config.sec_tag_count > 0)) {
@@ -393,6 +393,8 @@ static int client_connect(struct download_client *dl)
 		} else {
 			dl->proto = IPPROTO_TCP;
 		}
+	} else if (err) {
+		goto cleanup;
 	}
 
 	if (dl->proto == IPPROTO_UDP || dl->proto == IPPROTO_DTLS_1_2) {
