@@ -31,26 +31,26 @@ tests:
   sample.nrf7002ek.ble_coex:
     build_only: true
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
     extra_args: SHIELD=nrf7002ek hci_ipc_SHIELD=nrf7002ek_coex
                 CONFIG_MPSL_CX=y hci_ipc_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: ci_build
   sample.nrf7001ek.ble_coex:
     build_only: true
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
     extra_args: SHIELD=nrf7002ek_nrf7001 hci_ipc_SHIELD=nrf7002ek_nrf7001_coex
                 CONFIG_MPSL_CX=y hci_ipc_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
   sample.nrf7002_eb.thingy53.ble_coex:
     build_only: true
     extra_args: SHIELD=nrf7002eb hci_ipc_SHIELD=nrf7002eb_coex
                 CONFIG_MPSL_CX=y hci_ipc_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
     integration_platforms:
-      - thingy53_nrf5340_cpuapp
-    platform_allow: thingy53_nrf5340_cpuapp
+      - thingy53/nrf5340/cpuapp
+    platform_allow: thingy53/nrf5340/cpuapp
     tags: ci_build

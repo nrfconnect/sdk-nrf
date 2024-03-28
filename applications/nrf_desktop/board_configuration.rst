@@ -35,8 +35,8 @@ nRF Desktop board configuration files
 
 The nRF Desktop application comes with configuration files for the following reference designs:
 
-nRF52840 Gaming Mouse (``nrf52840gmouse_nrf52840``)
-      * The reference design is defined in :file:`nrf/boards/arm/nrf52840gmouse_nrf52840` for the project-specific hardware.
+nRF52840 Gaming Mouse (``nrf52840gmouse``)
+      * The reference design is defined in :file:`nrf/boards/nordic/nrf52840gmouse` for the project-specific hardware.
       * To achieve gaming-grade performance:
 
         * The application is configured to act as a gaming mouse, with both Bluetooth LE and USB transports enabled.
@@ -46,12 +46,12 @@ nRF52840 Gaming Mouse (``nrf52840gmouse_nrf52840``)
       * The board supports ``debug`` (:file:`prj_fast_pair.conf`) and ``release`` (:file:`prj_release_fast_pair.conf`) :ref:`nrf_desktop_bluetooth_guide_fast_pair` configurations.
         Both configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and they support the firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
-nRF52832 Desktop Mouse (``nrf52dmouse_nrf52832``) and nRF52810 Desktop Mouse (``nrf52810dmouse_nrf52810``)
-      * Both reference designs are meant for the project-specific hardware and are defined in :file:`nrf/boards/arm/nrf52dmouse_nrf52832` and :file:`nrf/boards/arm/nrf52810dmouse_nrf52810`, respectively.
+nRF52832 Desktop Mouse (``nrf52dmouse``) and nRF52810 Desktop Mouse (``nrf52810dmouse``)
+      * Both reference designs are meant for the project-specific hardware and are defined in :file:`nrf/boards/nordic/nrf52dmouse` and :file:`nrf/boards/nordic/nrf52810dmouse`, respectively.
       * The application is configured to act as a mouse.
       * Only the Bluetooth LE transport is enabled.
-        Bluetooth uses either Zephyr's software link layer (``nrf52810dmouse_nrf52810``) or Nordic's SoftDevice link layer (``nrf52dmouse_nrf52832``).
-      * The preconfigured build types for both ``nrf52dmouse_nrf52832`` and ``nrf52810dmouse_nrf52810`` boards are without the bootloader due to memory size limits on the ``nrf52810dmouse_nrf52810`` board.
+        Bluetooth uses either Zephyr's software link layer (``nrf52810dmouse``) or Nordic's SoftDevice link layer (``nrf52dmouse``).
+      * The preconfigured build types for both ``nrf52dmouse`` and ``nrf52810dmouse`` boards are without the bootloader due to memory size limits on the ``nrf52810dmouse`` board.
 
 Sample mouse, keyboard or dongle (``nrf52840dk_nrf52840``)
       * The configuration uses the nRF52840 Development Kit.
@@ -75,22 +75,22 @@ Sample dongle (``nrf52833dk_nrf52820``)
         Input data comes from Bluetooth and is retransmitted to USB.
       * |preconfigured_build_types|
 
-nRF52832 Desktop Keyboard (``nrf52kbd_nrf52832``)
-      * The reference design used is defined in :file:`nrf/boards/arm/nrf52kbd_nrf52832` for the project-specific hardware.
+nRF52832 Desktop Keyboard (``nrf52kbd``)
+      * The reference design used is defined in :file:`nrf/boards/nordic/nrf52kbd` for the project-specific hardware.
       * The application is configured to act as a keyboard, with the Bluetooth LE transport enabled.
       * Bluetooth is configured to use Nordic Semiconductor's SoftDevice link layer.
       * The preconfigured build types configure the device without the bootloader in debug mode and with B0 bootloader in release mode due to memory size limits.
       * The board supports ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration (:file:`prj_release_fast_pair.conf`).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
-nRF52840 USB Dongle (``nrf52840dongle_nrf52840``) and nRF52833 USB Dongle (``nrf52833dongle_nrf52833``)
+nRF52840 USB Dongle (``nrf52840dongle_nrf52840``) and nRF52833 USB Dongle (``nrf52833dongle``)
       * Since the nRF52840 Dongle is generic and defined in Zephyr, project-specific changes are applied in the DTS overlay file.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Nordic Semiconductor's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
-      * The configuration with the B0 bootloader is set as default for the ``nrf52840dongle_nrf52840`` board and with the MCUboot bootloader is set as default for the ``nrf52833dongle_nrf52833`` board.
+      * The configuration with the B0 bootloader is set as default for the ``nrf52840dongle_nrf52840`` board and with the MCUboot bootloader is set as default for the ``nrf52833dongle`` board.
 
-nRF52820 USB Dongle (``nrf52820dongle_nrf52820``)
+nRF52820 USB Dongle (``nrf52820dongle``)
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.

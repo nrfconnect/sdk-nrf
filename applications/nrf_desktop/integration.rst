@@ -44,7 +44,7 @@ Make sure that the following conditions are met:
 
 .. tip::
    You can define the new board by copying the nRF Desktop reference design files that are the closest match for your hardware and then aligning the configuration to your hardware.
-   For example, for gaming mouse use :file:`nrf/boards/arm/nrf52840gmouse_nrf52840`.
+   For example, for gaming mouse use :file:`nrf/boards/nordic/nrf52840gmouse`.
 
 nRF Desktop support for a board
 ===============================
@@ -68,7 +68,7 @@ Perform the following steps to add nRF Desktop application configuration for a b
    Apply the following changes, depending on the module:
 
    Motion module
-     * The ``nrf52840gmouse_nrf52840`` uses the PMW3360 optical motion sensor.
+     * The ``nrf52840gmouse`` uses the PMW3360 optical motion sensor.
        The sensor is configured in DTS, and the sensor type is selected in the application configuration.
        To add a new sensor, expand the application configuration.
    Wheel module
@@ -149,7 +149,7 @@ To define the binding, edit the DTS file that describes the board.
 For more information, see :ref:`devicetree-intro`.
 
 As an example, take a look at the PMW3360 sensor that is already available in the |NCS|.
-The following code excerpt is taken from :file:`boards/arm/nrf52840gmouse_nrf52840/nrf52840gmouse_nrf52840.dts`:
+The following code excerpt is taken from :file:`boards/nordic/nrf52840gmouse/nrf52840gmouse_nrf52840.dts`:
 
 .. code-block:: none
 

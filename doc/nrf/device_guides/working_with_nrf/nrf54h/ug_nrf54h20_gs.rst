@@ -77,7 +77,7 @@ Programming the sample
 **********************
 
 The :ref:`multicore_hello_world` sample is a multicore sample running on both the Application core (``cpuapp``) and the Peripheral Processor (PPR, ``cpuppr``).
-It uses the ``nrf54h20dk_nrf54h20_cpuapp`` build target.
+It uses the ``nrf54h20dk/nrf54h20/cpuapp`` build target.
 
 To build and program the sample to the nRF54H20 DK, complete the following steps:
 
@@ -85,11 +85,11 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 #. Navigate to the :file:`nrf/samples/multicore/hello_world` folder containing the sample.
 #. Build the sample for application and radio cores by running the following command::
 
-      west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad .
+      west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad .
 
 #. Alternatively, build the sample for the application and PPR cores by running the following command::
 
-      west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr .
+      west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr .
 
 #. Program the sample using nrfjprog.
    If you have multiple Nordic Semiconductor devices, make sure that only the nRF54H20 DK you want to program is connected.
@@ -119,8 +119,8 @@ To read the logs from the :ref:`multicore_hello_world` sample programmed to the 
      .. code-block:: console
 
         *** Booting nRF Connect SDK zephyr-v3.5.0-3517-g9458a1aaf744 ***
-        Hello world from nrf54h20dk_nrf54h20_cpuapp
-        Hello world from nrf54h20dk_nrf54h20_cpuapp
+        Hello world from nrf54h20dk/nrf54h20/cpuapp
+        Hello world from nrf54h20dk/nrf54h20/cpuapp
         ...
 
    * For the remote core, e.g. PPR, the output should be as follows:
@@ -128,8 +128,8 @@ To read the logs from the :ref:`multicore_hello_world` sample programmed to the 
      .. code-block:: console
 
         *** Booting nRF Connect SDK zephyr-v3.5.0-3517-g9458a1aaf744 ***
-        Hello world from nrf54h20dk_nrf54h20_cpuppr
-        Hello world from nrf54h20dk_nrf54h20_cpuppr
+        Hello world from nrf54h20dk/nrf54h20/cpuppr
+        Hello world from nrf54h20dk/nrf54h20/cpuppr
         ...
 
 .. note::

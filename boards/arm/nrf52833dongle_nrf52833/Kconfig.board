@@ -1,9 +1,0 @@
-#
-# Copyright (c) 2020 Nordic Semiconductor ASA
-#
-# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
-#
-
-config BOARD_NRF52833DONGLE_NRF52833
-	bool "NRF52833 DONGLE NRF52833"
-	depends on SOC_NRF52833_QIAA

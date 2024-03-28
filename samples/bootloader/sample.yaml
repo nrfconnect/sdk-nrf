@@ -4,12 +4,12 @@ tests:
   sample.bootloader:
     build_only: true
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf9160dk_nrf9160
-      - nrf52833dk_nrf52833
-      - nrf52840dk_nrf52840
-      - nrf52dk_nrf52832
-      - nrf21540dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160 nrf52840dk_nrf52840
-      nrf52833dk_nrf52833 nrf52dk_nrf52832 nrf21540dk_nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf9160dk/nrf9160
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf21540dk/nrf52840
+    platform_allow: nrf5340dk/nrf5340/cpuapp nrf9160dk/nrf9160 nrf52840dk/nrf52840
+      nrf52833dk/nrf52833 nrf52dk/nrf52832 nrf21540dk/nrf52840
     tags: ci_build

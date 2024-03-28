@@ -1,0 +1,8 @@
+# Enable MPU
+CONFIG_ARM_MPU=y
+
+# Enable PINCTRL:
+CONFIG_PINCTRL=y
+
+# enable GPIO
+CONFIG_GPIO=y

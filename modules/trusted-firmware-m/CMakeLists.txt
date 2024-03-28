@@ -8,7 +8,7 @@ zephyr_library()
 zephyr_include_directories(.)
 zephyr_library_sources_ifdef(CONFIG_TFM_ALLOW_NON_SECURE_FAULT_HANDLING fault.c)
 
-if (CONFIG_TFM_PARTITION_PLATFORM AND CONFIG_SOC_FAMILY_NRF)
+if (CONFIG_TFM_PARTITION_PLATFORM AND CONFIG_SOC_FAMILY_NORDIC_NRF)
   zephyr_library_named(tfm_api_nrf)
 
   # The non-secure API files are located in a folder associated with the TF-M

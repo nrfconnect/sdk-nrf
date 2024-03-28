@@ -27,38 +27,38 @@ tests:
     build_only: true
     extra_args: SHIELD=nrf7002ek
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf52840dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf52840dk/nrf52840
+    platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
     tags: ci_build
   sample.nrf7001_eks.shell:
     build_only: true
     extra_args: SHIELD=nrf7002ek_nrf7001
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf52840dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf52840dk/nrf52840
+    platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
     tags: ci_build
   sample.nrf7002_eks_cpunet.shell:
     build_only: true
     extra_args: SHIELD=nrf7002ek CONFIG_BOARD_ENABLE_CPUNET=y
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: ci_build
   sample.nrf7000_eks_cpunet.shell:
     build_only: true
     extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_BOARD_ENABLE_CPUNET=y CONFIG_WPA_SUPP=n
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: ci_build
   sample.nrf7001_eks_cpunet.shell:
     build_only: true
     extra_args: SHIELD=nrf7002ek_nrf7001 CONFIG_BOARD_ENABLE_CPUNET=y
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: ci_build
   sample.nrf7002.shell.zperf:
     build_only: true
@@ -99,12 +99,12 @@ tests:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-scan-only.conf SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
     integration_platforms:
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
     tags: ci_build
   sample.nrf7002.shell.scan_only_thingy91x:
     build_only: true
@@ -129,14 +129,14 @@ tests:
   sample.nrf7002_ns.shell:
     build_only: true
     integration_platforms:
-      - nrf7002dk_nrf5340_cpuapp_ns
-    platform_allow: nrf7002dk_nrf5340_cpuapp_ns
+      - nrf7002dk_nrf5340_cpuapp/ns
+    platform_allow: nrf7002dk_nrf5340_cpuapp/ns
   sample.nrf7002_eb.thingy53.shell:
     build_only: true
     extra_args: SHIELD=nrf7002eb CONFIG_BOARD_ENABLE_CPUNET=y
     integration_platforms:
-      - thingy53_nrf5340_cpuapp
-    platform_allow: thingy53_nrf5340_cpuapp
+      - thingy53/nrf5340/cpuapp
+    platform_allow: thingy53/nrf5340/cpuapp
     tags: ci_build
   sample.qspi.ext_flash_xip:
     build_only: true
@@ -144,9 +144,9 @@ tests:
       SHIELD=nrf7002ek
       CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP=y
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf52840dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf52840dk/nrf52840
+    platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
     tags: ci_build
   sample.qspi.ext_flash_store:
     build_only: true
@@ -154,9 +154,9 @@ tests:
       SHIELD=nrf7002ek
       SNIPPET=nrf70-fw-patch-ext-flash
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf52840dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf52840dk/nrf52840
+    platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
     tags: ci_build
   # Used by QA and also acts as a memory stress test
   sample.nrf7001.superset:
@@ -182,8 +182,8 @@ tests:
       CONFIG_NET_IPV4_FRAGMENT=y
       CONFIG_NET_IPV4_FRAGMENT_MAX_PKT=24
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: ci_build_superset
   # Used by QA and also acts as a memory stress test
   sample.nrf7002.superset:
@@ -209,8 +209,8 @@ tests:
       CONFIG_NET_IPV4_FRAGMENT=y
       CONFIG_NET_IPV4_FRAGMENT_MAX_PKT=24
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: ci_build_superset
   sample.nrf7002.superset.debug:
     build_only: true

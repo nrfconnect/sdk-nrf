@@ -1,0 +1,5 @@
+# Copyright (c) 2019 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config BOARD_NRF52KBD
+	select SOC_NRF52832_QFAA

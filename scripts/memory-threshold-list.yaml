@@ -2,7 +2,7 @@
     - sample.matter.lock.release
     - sample.matter.light_bulb.release
   platforms:
-    - nrf52840dk_nrf52840
+    - nrf52840dk/nrf52840
   ram_size: 241664
   rom_size: 778240
   codeowners:
@@ -13,7 +13,7 @@
     - sample.matter.lock.debug
     - sample.matter.light_bulb.debug
   platforms:
-    - nrf52840dk_nrf52840
+    - nrf52840dk/nrf52840
   ram_size: 241664
   rom_size: 931840
   codeowners:
@@ -52,7 +52,7 @@
 - scenarios:
     - sample.nrf5340.multiprotocol_rpmsg
   platforms:
-    - nrf5340dk_nrf5340_cpunet
+    - nrf5340dk/nrf5340/cpunet
   ram_size: 55296
   rom_size: 235929
   codeowners:

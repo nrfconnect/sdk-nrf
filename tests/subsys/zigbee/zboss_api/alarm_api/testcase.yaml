@@ -1,8 +1,8 @@
 tests:
   zigbee.zboss_api.alarm_api:
-    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk/nrf52840 nrf52833dk/nrf52833 nrf5340dk/nrf5340/cpuapp
     tags: zboss_api_alarm
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf52833dk_nrf52833
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk/nrf52840
+      - nrf52833dk/nrf52833
+      - nrf5340dk/nrf5340/cpuapp

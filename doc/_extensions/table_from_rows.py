@@ -7,7 +7,7 @@ from docutils import io, statemachine
 from docutils.utils.error_reporting import ErrorString
 from docutils.parsers.rst import directives
 from sphinx.util.docutils import SphinxDirective
-from typing import Dict, Set
+from typing import Dict, Set, List
 import os
 import yaml
 import re
@@ -167,6 +167,10 @@ class TableFromSampleYaml(TableFromRows):
             rows.remove(row)
 
     @staticmethod
+    def _normalize_boards(boards: List[str]) -> List[str]:
+        return [board.replace("/", "_") for board in boards]
+
+    @staticmethod
     def _find_shields(shields: Dict[str, Set[str]], sample_data: dict):
         """Associate all integration platforms for a sample with any shield used.
         """
@@ -227,11 +231,19 @@ class TableFromSampleYaml(TableFromRows):
                 data = yaml.safe_load(sample_yaml)
 
             if 'common' in data and 'integration_platforms' in data['common']:
-                boards.update(data['common']['integration_platforms'])
+                boards.update(
+                   TableFromSampleYaml._normalize_boards(
+                       data['common']['integration_platforms']
+                    )
+                )
                 self._find_shields(shields, data['common'])
             for test in data['tests'].values():
                 if 'integration_platforms' in test:
-                    boards.update(test['integration_platforms'])
+                    boards.update(
+                        TableFromSampleYaml._normalize_boards(
+                            test['integration_platforms']
+                        )
+                    )
                     self._find_shields(shields, test)
 
         boards = list(filter(

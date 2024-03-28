@@ -1,10 +1,10 @@
 tests:
   bootloader.bl_validation.negative:
-    platform_allow: nrf9160dk_nrf9160
-      nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf9160dk/nrf9160
+      nrf5340dk/nrf5340/cpuapp
     integration_platforms:
-      - nrf9160dk_nrf9160
-      - nrf5340dk_nrf5340_cpuapp
+      - nrf9160dk/nrf9160
+      - nrf5340dk/nrf5340/cpuapp
     tags: b0 bl_validation negative bl_validation_negative
     harness: console
     harness_config:
@@ -27,10 +27,10 @@ tests:
         - "Failed to validate, permanently invalidating!"
         - "No bootable image found. Aborting boot."
   bootloader.bl_validation.negative.nrf52:
-    platform_allow: nrf52840dk_nrf52840 nrf52dk_nrf52832
+    platform_allow: nrf52840dk/nrf52840 nrf52dk/nrf52832
     integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf52dk_nrf52832
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
     tags: b0 bl_validation negative bl_validation_negative
     harness: console
     harness_config:

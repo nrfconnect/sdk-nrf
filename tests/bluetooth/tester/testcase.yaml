@@ -1,7 +1,7 @@
 tests:
   bluetooth.general.tester.build:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840
+    platform_allow: nrf52840dk/nrf52840
     tags: bluetooth ci_build
     integration_platforms:
-      - nrf52840dk_nrf52840
+      - nrf52840dk/nrf52840

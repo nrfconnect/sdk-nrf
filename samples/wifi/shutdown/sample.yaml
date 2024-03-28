@@ -20,18 +20,18 @@ tests:
     build_only: true
     extra_args: SHIELD=nrf7002ek
     integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf52840dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf52840dk/nrf52840
+    platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
     tags: ci_build
   sample.nrf7000_location.shutdown:
     build_only: true
     extra_args: SHIELD=nrf7002ek_nrf7000
     integration_platforms:
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
     tags: ci_build

@@ -19,7 +19,7 @@ config NORDIC_SECURITY_BACKEND
 	prompt "Use nRF Security with Mbed TLS legacy crypto APIs support" \
 		if !NORDIC_SECURITY_PROMPTLESS
 	default y if BUILD_WITH_TFM
-	depends on SOC_FAMILY_NRF
+	depends on SOC_FAMILY_NORDIC_NRF
 	select NRF_SECURITY
 	select MBEDTLS_LEGACY_CRYPTO_C
 	select OBERON_BACKEND if BUILD_WITH_TFM
@@ -33,7 +33,7 @@ config NORDIC_SECURITY_BACKEND
 config NRF_SECURITY
 	bool
 	prompt "Enable nRF Security" if !PSA_PROMPTLESS
-	depends on SOC_FAMILY_NRF
+	depends on SOC_FAMILY_NORDIC_NRF
 	default y if BUILD_WITH_TFM
 	# entropy is provided by PSA and NRF_SECURITY on NRF54LX
 	default y if ENTROPY_PSA_CRYPTO_RNG && SOC_SERIES_NRF54LX

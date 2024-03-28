@@ -1,0 +1,5 @@
+board:
+  name: nrf52dmouse
+  vendor: nordic
+  socs:
+    - name: nrf52832

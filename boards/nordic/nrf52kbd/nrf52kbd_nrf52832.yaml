@@ -1,0 +1,13 @@
+identifier: nrf52kbd/nrf52832
+name: nRF52-Kbd-NRF52832
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+ram: 64
+flash: 512
+supported:
+  - ble
+  - gpio
+  - watchdog
