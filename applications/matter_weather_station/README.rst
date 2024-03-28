@@ -160,7 +160,7 @@ Matter weather station build configuration overlays
 
 The application comes with the following overlays:
 
-* ``overlay-factory_data`` - factory data storage support enabled.
+* :file:`overlay-factory_data.conf` - Factory data storage support enabled.
   You can use this optional configuration overlay to enable reading necessary factory data from a separate partition in the device non-volatile memory.
   This way, you can read information such as product information, keys, and certificates, useful for example for Matter certification.
   See `Generating factory data`_ to learn how to put factory data into device's storage.
@@ -168,15 +168,12 @@ The application comes with the following overlays:
 
   This overlay requires providing of the :file:`pm_static_factory_data.yml` Partition Manager static configuration file.
 
-  To build the example with the factory data support, run the following command:
+  To enable the factory data support, build the application with the :makevar:`EXTRA_CONF_FILE` variable set to the :file:`overlay-factory_data.conf` file and the :makevar:`PM_STATIC_YML_FILE` variable set to :file:`pm_static_factory_data.yml`.
+  See :ref:`cmake_options` for instructions on how to provide these build variables.
 
-  .. code-block:: console
-
-      west build -b thingy53_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-factory_data.conf -DPM_STATIC_YML_FILE=pm_static_factory_data.yml
-
-.. note::
-   Matter factory data support requires the dedicated partition layout.
-   This means that if you build the application using the ``overlay-factory_data`` configuration overlay, it will not be compatible with other :ref:`Thingy:53 applications and samples <thingy53_compatible_applications>`.
+  .. note::
+      Matter factory data support requires the dedicated partition layout.
+      This means that if you build the application using the :file:`overlay-factory_data.conf` configuration overlay file, it will not be compatible with other :ref:`Thingy:53 applications and samples <thingy53_compatible_applications>`.
 
 Building and running
 ********************
@@ -189,7 +186,7 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the :ref:`matter_weather_station_app_build_types`.
-See :ref:`modifying_build_types` for detailed steps how to select a build type.
+See :ref:`modifying_build_types` and :ref:`cmake_options` for detailed steps how to select a build type.
 
 Building for the nRF7002 Wi-Fi expansion board
 ==============================================
@@ -197,35 +194,22 @@ Building for the nRF7002 Wi-Fi expansion board
 To build this application to work with the nRF7002 Wi-Fi expansion board:
 
 1. Connect the nRF7002 EB to the **P9** connector on Thingy:53.
-#. Build the application:
-
-   .. tabs::
-
-      .. group-tab:: nRF Connect for VS Code
-
-         To build the application in the nRF Connect for VS Code IDE for Thingy:53 with the nRF7002 EB attached, add the expansion board and the build type variables in the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
-         For example: ``-- -DSHIELD=nrf7002eb -DCONF_FILE=prj_release.conf``.
-
-      .. group-tab:: Command line
-
-         To build the sample from the command line for Thingy:53 with the nRF7002 EB attached, use the following command within the sample directory:
-
-         .. code-block:: console
-
-            west build -b thingy53_nrf5340_cpuapp -- -DSHIELD=nrf7002eb -DCONF_FILE=prj_release.conf
+#. Build the application with the :makevar:`EXTRA_CONF_FILE` variable set to the :file:`prj_release.conf` file and the :makevar:`SHIELD` variable set to ``nrf7002eb``.
+   See :ref:`cmake_options` for instructions on how to provide these build variables.
 
 Generating factory data
 =======================
 
-To enable factory data support, you need to select the ``overlay-factory_data`` configuration overlay from the available application :ref:`build configuration overlays <matter_weather_station_app_build_configuration_overlays>`.
-You can generate new factory data set when building for the target board by invoking the following command:
+.. |variable_feature| replace:: factory data support
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-factory_data.conf
+.. |board_name| replace:: thingy53_nrf5340_cpuapp
 
-.. parsed-literal::
-   :class: highlight
+.. include:: /includes/apply_cmake_variable.txt
 
-   west build -b thingy53_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-factory_data.conf
+See also the :ref:`matter_weather_station_app_build_configuration_overlays` section for more information on the overlay file.
+Using this file will build the application with default certificates.
 
-This command builds the application with default certificates.
 After building the target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the :ref:`regular command to flash it to the device <programming>`.
 
 If you want to use Vendor ID, Product ID or other data that is not reserved for tests, you need custom test certificates.

@@ -120,20 +120,12 @@ In addition, the sample provides the following overlay configuration files, whic
 
 They are located in :file:`samples/net/mqtt` folder.
 
-To add a specific overlay configuration file to the build, add the ``-- -DOVERLAY_CONFIG=<overlay_config_file>`` flag to your build.
+.. |variable_feature| replace:: any of these configuration files
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: <overlay_config_file>.overlay
+.. |board_name| replace:: nrf9160dk_nrf9160_ns
 
-See :ref:`cmake_options` for instructions on how to add this option to your build.
-For example, when building with the command line, the following commands can be used for the nRF9160 DK:
-
-.. code-block:: console
-
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-tls-nrf91.conf
-
-For Thingy:91, with TLS and debug logging enabled for the :ref:`lib_mqtt_helper` library (for more information, see the related :ref:`sample output <mqtt_sample_output_IPv6>`):
-
-.. code-block:: console
-
-   west build -b thingy91_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-tls-nrf91.conf -DCONFIG_MQTT_HELPER_LOG_LEVEL_DBG=y
+.. include:: /includes/apply_cmake_variable.txt
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
@@ -145,6 +137,27 @@ Building and running
 .. |sample path| replace:: :file:`samples/net/mqtt`
 
 .. include:: /includes/build_and_run_ns.txt
+
+Building for Thingy:91 with TLS and debug logging
+=================================================
+
+Build using the following variables to enable the :ref:`lib_mqtt_helper` library with TLS and debug logging on a Thingy:91:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Build target
+     - Files and Kconfig options to use
+     - Build variables
+   * - ``thingy91_nrf9160_ns``
+     - * :kconfig:option:`CONFIG_MQTT_HELPER_LOG_LEVEL_DBG`
+       * :file:`overlay-tls-nrf91.conf`
+     - * ``-DCONFIG_MQTT_HELPER_LOG_LEVEL_DBG=y``
+       * ``-DEXTRA_CONF_FILE=overlay-tls-nrf91.conf``
+
+See :ref:`cmake_options` for instructions on how to provide these build variables.
+
+See also the related :ref:`sample output <mqtt_sample_output_IPv6>`.
 
 Testing
 =======

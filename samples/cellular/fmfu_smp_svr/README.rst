@@ -49,16 +49,15 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To use the UART overlay for increasing the transfer speed, add the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag to your build.
-See :ref:`cmake_options` for instructions on how to add this flag.
-When building on the command line add the UART overlay in the following way, depending on the DK you are using:
+Activating sample extensions
+============================
 
-.. parsed-literal::
-   :class: highlight
+.. |variable_feature| replace:: the UART support that increases the transfer speed
+.. |makevar| replace:: EXTRA_DTC_OVERLAY_FILE
+.. |cmake_file_name| replace:: uart.overlay
+.. |board_name| replace:: nrf9160dk_nrf9160_ns
 
-   west build -b *build_target* -- -DDTC_OVERLAY_FILE=uart.overlay
-
-|build_target|
+.. include:: /includes/apply_cmake_variable.txt
 
 Testing
 =======

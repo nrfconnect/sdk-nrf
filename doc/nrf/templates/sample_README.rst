@@ -153,6 +153,38 @@ Additional configuration*
    * Add this section to describe and link to any library configuration options that might be important to run this sample.
      You can link to options with ``:kconfig:option:`CONFIG_XXX```.
    * You do not need to list all possible configuration options, but only the ones that are relevant.
+   * If you need to provide specific steps with configuration variables, include them in a table and provide a link to :ref:`cmake_options` for instructions on how to provide these build variables.
+     This is to avoid duplicating building instructions.
+     The column entries for hardware platform and build target are optional.
+     For example:
+
+     .. list-table::
+        :header-rows: 1
+
+        * - Hardware platform*
+          - Build target*
+          - Files to use
+          - Build variables
+        * - nRF7002 DK
+          - ``nrf7002dk_nrf5340_cpuapp``
+          - :file:`overlay-nrf700x.conf`
+          - ``-DEXTRA_CONF_FILE=overlay-nrf700x.conf``
+        * - nRF7002 EK with nRF5340 DK
+          - ``nrf5340dk_nrf5340_cpuapp``
+          - :file:`overlay-nrf700x.conf`
+          - * ``-DEXTRA_CONF_FILE=overlay-nrf700x.conf``
+            * ``-DSHIELD=nrf7002ek``
+
+     Include the following lines after the table to provide the basic example of setting a variable and the link to :ref:`cmake_options`:
+
+     .. code-block::
+
+        .. |variable_feature| replace:: the first of the provided variants
+        .. |makevar| replace:: EXTRA_CONF_FILE
+        .. |cmake_file_name| replace:: overlay-nrf700x.conf
+        .. |board_name| replace:: nrf7002dk_nrf5340_cpuapp
+
+        .. include:: /includes/apply_cmake_variable.txt
 
 Check and configure the following library options that are used by the sample:
 
@@ -191,13 +223,50 @@ Building and running
 Note that this sample enables the :ref:`XXX <nrfxlib:nrfxlib>` stack.
 See REF for more information.
 
+Activating sample extensions*
+=============================
+
+.. note::
+   Add this section if the sample has features that can be enabled by :ref:`cmake_options`.
+   This is to avoid duplicating build commands and refer to one place with the information about the CMake options.
+
+   The column entries for hardware platform and build target are optional.
+
+   The ``include`` with the replace arguments after the table is mandatory, as it contains the basic example of how to provide the variable.
+
+You can enable the following optional extensions during the sample build process:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Hardware platform*
+     - Build target*
+     - Files to use
+     - Build variables
+   * - nRF7002 DK
+     - ``nrf7002dk_nrf5340_cpuapp``
+     - :file:`overlay-nrf700x.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-nrf700x.conf``
+   * - nRF7002 EK with nRF5340 DK
+     - ``nrf5340dk_nrf5340_cpuapp``
+     - :file:`overlay-nrf700x.conf`
+     - * ``-DEXTRA_CONF_FILE=overlay-nrf700x.conf``
+       * ``-DSHIELD=nrf7002ek``
+
+.. |variable_feature| replace:: the first of the provided variants
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-nrf700x.conf
+.. |board_name| replace:: nrf7002dk_nrf5340_cpuapp
+
+.. include:: /includes/apply_cmake_variable.txt
+
 Some title*
 ===========
 
 .. note::
-   If required, add subsections for additional build instructions.
+   If required, add subsections for additional build instructions *that cannot be covered by standard CMake options*.
    Use these subsections sparingly and only if the content does not fit into other sections (mainly Configuration).
-   If the additional build instructions are valid for other samples as well, consider adding them to the :ref:`configuration_and_build` section instead and linking to them.
+   If the additional build instructions are valid for other samples as well, consider adding them to the :ref:`building_advanced` section instead and linking to them.
 
 
 Testing

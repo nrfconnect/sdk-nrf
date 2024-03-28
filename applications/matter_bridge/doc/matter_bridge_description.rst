@@ -395,14 +395,30 @@ Since the Matter stack uses one Bluetooth LE connection for commissioning, the m
 Increasing the number of Bluetooth LE connections affects the RAM usage on both the application and network cores.
 The current maximum number of Bluetooth LE connections that can be selected using the default configuration is ``10``.
 You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
-Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
+Build the target using the following variables to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
 
-.. parsed-literal::
-   :class: highlight
+.. list-table::
+  :header-rows: 1
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dhci_ipc_EXTRA_CONF_FILE="*absoule_path*/overlay-bt_max_connections_net.conf"
+  * - Build target
+    - Files and Kconfig options to use
+    - Build variables
+  * - ``nrf7002dk_nrf5340_cpuapp``
+    - * :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT`
+      * :file:`overlay-bt_max_connections_app.conf`
+      * :file:`absolute_path/overlay-bt_max_connections_net.conf`
+    - * ``-DCONFIG_BRIDGED_DEVICE_BT=y``
+      * ``-DEXTRA_CONF_FILE=overlay-bt_max_connections_app.conf``
+      * ``-Dhci_ipc_EXTRA_CONF_FILE=absolute_path/overlay-bt_max_connections_net.conf``
 
-Replace *absolute_path* with the absolute path to the Matter bridge application on your local disk.
+.. |variable_feature| replace:: support for several Bluetooth LE bridged devices
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-bt_max_connections_app.conf
+.. |board_name| replace:: nrf7002dk_nrf5340_cpuapp
+
+.. include:: /includes/apply_cmake_variable.txt
+
+Remember to replace *absolute_path* with the absolute path to the Matter bridge application on your local disk.
 
 Configuring the Bluetooth LE security
 -------------------------------------
@@ -482,7 +498,7 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the :ref:`matter_bridge_app_build_types`.
-See :ref:`modifying_build_types` for detailed steps how to select a build type.
+See :ref:`modifying_build_types` and :ref:`cmake_options` for detailed steps how to select a build type.
 
 .. _matter_bridge_testing:
 

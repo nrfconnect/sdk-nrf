@@ -95,6 +95,8 @@ Configuration
 *************
 |config|
 
+The configuration files for this sample are located in :file:`samples/cellular/nrf_cloud_rest_device_message`.
+
 Configuration options
 =====================
 
@@ -119,36 +121,13 @@ CONFIG_REST_DEVICE_MESSAGE_DO_JITP - Enable prompt to perform JITP over REST
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 
-Building and running
-********************
-
-.. |sample path| replace:: :file:`samples/cellular/nrf_cloud_rest_device_message`
-
-.. include:: /includes/build_and_run_ns.txt
-
-The configuration file for this sample is located in :file:`samples/cellular/nrf_cloud_rest_device_message`.
-See :ref:`configure_application` for information on how to configure the parameters.
-
-nRF Cloud logging overlay
-=========================
-
-To enable `Zephyr Logging`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` library, add the following parameter to your build command:
-
-``-DOVERLAY_CONFIG=overlay_nrfcloud_logging.conf``
-
-This overlay allows the sample and various subsystems that have logging enabled to send their logs to nRF Cloud.
-Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` option to the log level of messages to send to nRF Cloud, such as ``4`` for debug log messages.
-Set the :kconfig:option:`CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL_DBG` option so that log messages are generated on each button press.
-
 .. _nrf_cloud_rest_device_message_remote_provisioning_overlay:
 
 Remote provisioning overlay
 ===========================
 
 This overlay is for use with nRF91x1-based devices only.
-To enable remote provisioning with the `nRF Cloud Provisioning Service`_ add the following parameter to your build command:
-
-``-DOVERLAY_CONFIG=overlay-nrf_provisioning.conf``
+See `Activating sample extensions`_ for information about how to enable remote provisioning with the `nRF Cloud Provisioning Service`_.
 
 This overlay enables the :ref:`lib_nrf_provisioning` library and its provisioning shell.
 It configures the device ID to use the UUID format, not the legacy 'nrf-\ *IMEI*\ ' format.
@@ -166,6 +145,42 @@ Press **Button 1** to have a message sent to nRF Cloud:
         "data": "1",
         "timestamp": "4/19/2023 12:34:21 PM"
       }
+
+Building and running
+********************
+
+.. |sample path| replace:: :file:`samples/cellular/nrf_cloud_rest_device_message`
+
+.. include:: /includes/build_and_run_ns.txt
+
+Activating sample extensions
+============================
+
+You can enable the following optional extensions during the sample build process:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Extension
+     - Files and Kconfig options to use
+     - Build variables
+   * - `Zephyr Logging`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` library
+     - * :file:`overlay_nrfcloud_logging.conf`
+       * :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` (optional; set to the desired log level)
+       * :kconfig:option:`CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL_DBG` (optional)
+     - * ``-DEXTRA_CONF_FILE=overlay_nrfcloud_logging.conf``
+       * ``-DCONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL=4`` (for debug log messages)
+       * ``-DCONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL_DBG=y`` (log messages on each button press)
+   * - :ref:`nrf_cloud_rest_device_message_remote_provisioning_overlay`
+     - :file:`overlay-nrf_provisioning.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-nrf_provisioning.conf``
+
+.. |variable_feature| replace:: the :ref:`nrf_cloud_rest_device_message_remote_provisioning_overlay`
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-nrf_provisioning.conf
+.. |board_name| replace:: nrf9160dk_nrf9160_ns
+
+.. include:: /includes/apply_cmake_variable.txt
 
 Querying Device Messages over REST API
 **************************************

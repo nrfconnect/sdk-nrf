@@ -163,16 +163,34 @@ Building and running
 Activating sample extensions
 ============================
 
-To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
+You can enable the following optional extensions during the sample build process:
 
-* For the minimal build variant, set :file:`prj_minimal.conf`.
-* For the USB CDC ACM extension, set :file:`prj_cdc.conf`.
-  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to the :file:`usb.overlay` file.
-* For the MCUboot with serial recovery of the networking core image feature, set the :file:`nrf5340dk_app_sr_net.conf` file.
-  You also need to set the :makevar:`mcuboot_OVERLAY_CONFIG` variant to the :file:`nrf5340dk_mcuboot_sr_net.conf` file.
+.. list-table::
+   :header-rows: 1
 
-See :ref:`cmake_options` for instructions on how to add this option.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+   * - Extension
+     - Files to use
+     - Build variables
+   * - Minimal build variant
+     - :file:`prj_minimal.conf`
+     - ``-DEXTRA_CONF_FILE=prj_minimal.conf``
+   * - USB CDC ACM extension
+     - * :file:`prj_cdc.conf`
+       * :file:`usb.overlay`
+     - * ``-DEXTRA_CONF_FILE=prj_cdc.conf``
+       * ``-DEXTRA_DTC_OVERLAY_FILE=usb.overlay``
+   * - MCUboot with serial recovery of the networking core image
+     - * :file:`nrf5340dk_app_sr_net.conf`
+       * :file:`nrf5340dk_mcuboot_sr_net.conf`
+     - * ``-DEXTRA_CONF_FILE=nrf5340dk_app_sr_net.conf``
+       * ``-Dmcuboot_EXTRA_CONF_FILE=nrf5340dk_mcuboot_sr_net.conf``
+
+.. |variable_feature| replace:: the minimal build variant
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: prj_minimal.conf
+.. |board_name| replace:: nrf52840dk_nrf52840
+
+.. include:: /includes/apply_cmake_variable.txt
 
 .. _peripheral_uart_testing:
 

@@ -89,16 +89,24 @@ Check and configure the following library options that are used by the sample:
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Sets the Azure IoT Hub device ID. Alternatively, the device ID can be provided at run time.
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. If DPS is used, the sample assumes that the IoT hub host name is unknown, and the configuration is ignored. The configuration can also be omitted and the hostname provided at run time.
 
-If DPS is used, use the Kconfig fragment found in the :file:`overlay-dps.conf` file and change the desired configurations there.
-As an example, the following compiles with DPS for the nRF9160 DK:
+Configuration for DPS
+---------------------
 
-.. code-block:: console
+.. |variable_feature| replace:: the usage of DPS
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-dps.conf
+.. |board_name| replace:: nrf9160dk_nrf9160_ns
 
-	west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-dps.conf
+.. include:: /includes/apply_cmake_variable.txt
+
+For DPS, check and configure the following library Kconfig options:
 
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS` - Enables Azure IoT Hub DPS.
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_REG_ID` - Sets the Azure IoT Hub DPS registration ID. It can be provided at run time. By default, the sample uses the device ID as the registration ID and sets it at run time.
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` - Sets the DPS ID scope of the Azure IoT Hub. This can be provided at run time.
+
+Configuration for FOTA
+----------------------
 
 For FOTA, check and configure the following library Kconfig options:
 

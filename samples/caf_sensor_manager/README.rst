@@ -44,11 +44,12 @@ For the MCU with multiple cores, the default configuration uses one core to simu
 The multicore MCUs can also support a single-core configuration, where the sensor is simulated and processed on a single, selected core.
 The configuration is placed in the :file:`boards/<board>_singlecore.conf` file.
 
-To use this configuration, run the following command:
+.. |variable_feature| replace:: the single-core configuration for the chosen build target
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: boards/<board_target>_singlecore.conf
+.. |board_name| replace:: nrf52840dk_nrf52840
 
-.. code-block:: console
-
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=boards/nrf5340dk_nrf5340_cpuapp_nrf5340_singlecore.conf
+.. include:: /includes/apply_cmake_variable.txt
 
 Building and running
 ********************

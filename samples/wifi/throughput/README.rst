@@ -53,55 +53,40 @@ Building and running
    The sample is supported on the nRF7002 DK with QSPI as the interface between the nRF5340 host and the nRF7002 device.
 
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
-The following is an example of the CLI command:
 
-.. code-block:: console
+Activating sample extensions
+============================
 
-   west build -b nrf7002dk_nrf5340_cpuapp
+You can enable the following optional extensions during the sample build process:
 
-To build for the nRF7002 DK with different profiles for Station mode, use the following CLI commands:
+.. list-table::
+   :header-rows: 1
 
-.. tabs::
+   * - Extension (Station mode profiles)
+     - Files to use
+     - Build variables
+   * - IoT devices
+     - :file:`overlay-iot-devices.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-iot-devices.conf``
+   * - Memory-optimized
+     - :file:`overlay-memory-optimized.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-memory-optimized.conf``
+   * - High performance
+     - :file:`overlay-high-performance.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-high-performance.conf``
+   * - TX prioritized
+     - :file:`overlay-tx-prio.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-tx-prio.conf``
+   * - RX prioritized
+     - :file:`overlay-rx-prio.conf`
+     - ``-DEXTRA_CONF_FILE=overlay-rx-prio.conf``
 
-   .. group-tab:: IoT devices
+.. |variable_feature| replace:: the IoT device extension
+.. |makevar| replace:: EXTRA_CONF_FILE
+.. |cmake_file_name| replace:: overlay-iot-devices.conf
+.. |board_name| replace:: nrf7002dk_nrf5340_cpuapp
 
-      To build for the nRF7002 DK, with the IoT device profile for Station mode, use the ``iot-devices`` overlay configuration.
-
-      .. code-block:: console
-
-         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-iot-devices.conf
-
-   .. group-tab:: Memory-optimized
-
-      To build for the nRF7002 DK, with the memory-optimized profile for Station mode, use the ``memory-optimized`` overlay configuration.
-
-      .. code-block:: console
-
-         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-memory-optimized.conf
-
-   .. group-tab:: High performance
-
-      To build for the nRF7002 DK, with the high performance profile for Station mode, use the ``high-performance`` overlay configuration.
-
-      .. code-block:: console
-
-         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-high-performance.conf
-
-   .. group-tab:: TX prioritized
-
-      To build for the nRF7002 DK, with the TX prioritized profile for Station mode, use the ``tx-prio`` overlay configuration.
-
-      .. code-block:: console
-
-         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-tx-prio.conf
-
-   .. group-tab:: RX prioritized
-
-      To build for the nRF7002 DK, with the RX prioritized profile for Station mode, use the ``rx-prio`` overlay configuration.
-
-      .. code-block:: console
-
-         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-rx-prio.conf
+.. include:: /includes/apply_cmake_variable.txt
 
 Supported CLI commands
 ======================
