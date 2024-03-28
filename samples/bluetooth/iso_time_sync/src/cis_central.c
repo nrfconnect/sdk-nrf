@@ -98,10 +98,7 @@ static void scan_start(void)
 {
 	int err;
 
-	err = bt_le_scan_start(
-			BT_LE_SCAN_PARAM(BT_LE_SCAN_TYPE_ACTIVE, BT_LE_SCAN_OPT_FILTER_DUPLICATE,
-					 BT_GAP_SCAN_FAST_INTERVAL, BT_GAP_SCAN_FAST_INTERVAL),
-			NULL);
+	err = bt_le_scan_start(BT_LE_SCAN_ACTIVE_CONTINUOUS, NULL);
 	if (err) {
 		printk("Scanning failed to start (err %d)\n", err);
 		return;

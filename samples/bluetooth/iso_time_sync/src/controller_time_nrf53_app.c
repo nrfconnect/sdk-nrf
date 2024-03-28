@@ -51,8 +51,8 @@ static int rtc_config(void)
 		return -ENODEV;
 	}
 
-	IRQ_CONNECT(NRFX_IRQ_NUMBER_GET(NRF_RTC_INST_GET(0)), IRQ_PRIO_LOWEST,
-		    NRFX_RTC_INST_HANDLER_GET(0), NULL, 0);
+	IRQ_CONNECT(NRFX_IRQ_NUMBER_GET(NRF_RTC_INST_GET(0)), 0,
+		    (void *)NRFX_RTC_INST_HANDLER_GET(0), NULL, 0);
 	nrfx_rtc_overflow_enable(&app_rtc_instance, true);
 	nrfx_rtc_tick_enable(&app_rtc_instance, false);
 	nrfx_rtc_enable(&app_rtc_instance);

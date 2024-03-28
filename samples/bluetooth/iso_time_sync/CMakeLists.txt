@@ -35,7 +35,7 @@ if (CONFIG_BT_ISO_RX_BUF_COUNT)
     target_sources(app PRIVATE src/iso_rx.c)
 endif()
 
-if (CONFIG_SOC_SERIES_NRF52X)
+if (CONFIG_SOC_COMPATIBLE_NRF52X)
     target_sources(app PRIVATE src/controller_time_nrf52.c)
 elseif (CONFIG_SOC_COMPATIBLE_NRF5340_CPUAPP)
     target_sources(app PRIVATE src/controller_time_nrf53_app.c)
