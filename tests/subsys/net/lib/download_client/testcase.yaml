@@ -1,6 +1,6 @@
 tests:
   net.lib.download_client:
     tags: fota
-    platform_allow: native_posix nrf9160dk_nrf9160 nrf9160dk_nrf9160_ns
+    platform_allow: native_sim nrf9160dk_nrf9160 nrf9160dk_nrf9160_ns
     integration_platforms:
-      - native_posix
+      - native_sim
