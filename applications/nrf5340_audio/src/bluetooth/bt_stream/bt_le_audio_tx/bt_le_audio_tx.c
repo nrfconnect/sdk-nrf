@@ -12,6 +12,7 @@
 
 #include "nrf5340_audio_common.h"
 #include "audio_sync_timer.h"
+#include "sdc_hci_vs.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_le_audio_tx, CONFIG_BLE_LOG_LEVEL);
@@ -126,6 +127,54 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_bap
 	return 0;
 }
 
+static int get_tx_sync_non_bt_ll_acs_nrf53(struct bt_bap_stream *stream,
+					   struct bt_iso_tx_info *info)
+{
+	struct net_buf *buf;
+	struct net_buf *rsp;
+	sdc_hci_cmd_vs_iso_read_tx_timestamp_t *cmd_read_tx_timestamp;
+	uint16_t conn_handle;
+
+	int ret = bt_hci_get_conn_handle(stream->conn, &conn_handle);
+
+	if (ret) {
+		LOG_ERR("Failed obtaining conn_handle (ret:%d)", ret);
+		return ret;
+	}
+
+	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_ISO_READ_TX_TIMESTAMP,
+				sizeof(*cmd_read_tx_timestamp));
+	if (!buf) {
+		LOG_ERR("Could not allocate command buffer");
+		return -ENOBUFS;
+	}
+
+	cmd_read_tx_timestamp = net_buf_add(buf, sizeof(*cmd_read_tx_timestamp));
+	cmd_read_tx_timestamp->conn_handle = conn_handle;
+
+	ret = bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_ISO_READ_TX_TIMESTAMP, buf, &rsp);
+	if (ret) {
+		return ret;
+	}
+
+	sdc_hci_cmd_vs_iso_read_tx_timestamp_return_t *return_params = (void *)&rsp->data[1];
+
+	info->ts = return_params->tx_time_stamp;
+	info->seq_num = return_params->packet_sequence_number;
+	info->offset = 0;
+
+	return 0;
+}
+
+static int get_tx_sync(struct bt_bap_stream *stream, struct bt_iso_tx_info *info)
+{
+	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
+		return bt_bap_stream_get_tx_sync(stream, info);
+	} else {
+		return get_tx_sync_non_bt_ll_acs_nrf53(stream, info);
+	}
+}
+
 int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_encoded_audio enc_audio,
 			uint8_t streams_to_tx)
 {
@@ -221,7 +270,7 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 		 * to get the timestamp which is sent to all other channels. However, to be able to
 		 * detect errors, this is called on each TX.
 		 */
-		ret = bt_bap_stream_get_tx_sync(bap_streams[i], &tx_info_arr[i].iso_tx_readback);
+		ret = get_tx_sync(bap_streams[i], &tx_info_arr[i].iso_tx_readback);
 		if (ret) {
 			if (ret != -ENOTCONN) {
 				LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
