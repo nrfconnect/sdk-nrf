@@ -516,3 +516,5 @@ Documentation
 =============
 
 * Recommend the use of a :file:`VERSION` file for :ref:`ug_fw_update_image_versions_mcuboot` in the :ref:`ug_fw_update_image_versions` user guide.
+
+* Added in the :ref:`app_bootloaders` page information on which protocols are supported for using MCUboot with SMP for Device Firmware Updates (DFU).
