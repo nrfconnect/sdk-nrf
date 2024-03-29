@@ -1,0 +1,358 @@
+;
+; Copyright (c) 2023 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+
+; Cache info structure, represented as a list
+suit_cache_info_entry = (
+	addr: uint,
+	size: uint,
+)
+
+; Trigger update request
+suit_trigger_update_req = (
+	1,
+	addr: uint,
+	size: uint,
+	; The maximum number of allowed cache info entries should be aligned
+	; with the update candidate structure in SUIT storage.
+	caches: [ 0*6 suit_cache_info_entry ],
+)
+
+; Trigger update response
+suit_trigger_update_rsp = (
+	1,
+	ret: int,
+)
+
+
+; Validate component ID and digest request
+suit_check_installed_component_digest_req = (
+	2,
+	component_id: bstr,
+	alg_id: int,
+	digest: bstr,
+)
+
+; Validate component ID and digest response
+suit_check_installed_component_digest_rsp = (
+	2,
+	ret: int,
+)
+
+
+; Get installed manifest info request
+suit_get_installed_manifest_info_req = (
+	3,
+	; Changed to use manifest class ID.
+	; For end-user it is easier to manage Class IDs than construct component
+	; IDs, based on Class IDs.
+	; Right now, we do not see a valid case, in which a manifest with the
+	; same class ID should be installed using two, different component IDs,
+	; so passing Class ID is sufficient to locate the manifest within
+	; the SUIT storage.
+	manifest_class_id: bstr,
+)
+
+; Get installed manifest info response
+suit_get_installed_manifest_info_rsp = (
+	3,
+	ret: int,
+	seq_num: uint,
+	; Semantic versioning, encoded the same way as proposed in
+	; suit-update-management.
+	; At this moment, it is allowed to use values larger than 255.
+	; Negative numbers are used to represent pre-release indicators.
+	; If the array length is zero, the manifest does not define semantic
+	; version.
+	semver: [ 0*5 int ],
+	; Digest verification status.
+	; This value may be calculated inside the request handler.
+	; This field was added to inform if the digest value was
+	; cryptographically verified.
+	; Represented states:
+	; - Digest value does not match
+	; - Digest value match, signature verification skipped (not required)
+	; - Digest value match, signature verification failed
+	; - Digest value match, signature verification passed
+	digest_status: int,
+	; Algorithm ID, used to calculated the manifest digest.
+	; Set to zero if digest value does not match.
+	alg_id: int,
+	; Digest of the manifest.
+	; The value is set (non-empty byte string) only if the digest value
+	; match.
+	digest: bstr,
+)
+
+
+; Get install candidate info request
+suit_get_install_candidate_info_req = (
+	4,
+)
+
+; Get install candidate info response
+suit_get_install_candidate_info_rsp = (
+	4,
+	ret: int,
+	; Changed to the Class ID to use the same type of identification as the
+	; suit_get_installed_manifest_info_rsp.
+	manifest_class_id: bstr,
+	seq_num: uint,
+	; Semantic versioning, encoded the same way as proposed in
+	; suit-update-management.
+	; If the array length is zero, the manifest does not define semantic
+	; version.
+	semver: [ 0*5 int ],
+	alg_id: int,
+	digest: bstr,
+)
+
+
+; Authenticate manifest request
+suit_authenticate_manifest_req = (
+	10,
+	; Left as component ID since this value is a part of the manifest,
+	; which signature is authenticated.
+	; It is incorrect to authenticate any component ID with the same
+	; class ID.
+	manifest_component_id: bstr,
+	alg_id: uint,
+	key_id: bstr,
+	signature: bstr,
+	data_addr: uint,
+	data_size: uint,
+)
+
+; Authenticate manifest response
+suit_authenticate_manifest_rsp = (
+	10,
+	ret: int,
+)
+
+; Authorize unsigned manifest request
+suit_authorize_unsigned_manifest_req = (
+	11,
+	; Left as component ID since this value is a part of the manifest,
+	; which is authorized.
+	; It is incorrect to authorize any component ID with the same
+	; class ID.
+	manifest_component_id: bstr,
+)
+
+; Authorize unsigned manifest response
+suit_authorize_unsigned_manifest_rsp = (
+	11,
+	ret: int,
+)
+
+
+; Authorize sequence number request
+suit_authorize_seq_num_req = (
+	12,
+	manifest_component_id: bstr,
+	command_seq: uint,
+	seq_num: uint,
+)
+
+; Authorize sequence number response
+suit_authorize_seq_num_rsp = (
+	12,
+	ret: int,
+)
+
+
+; Check component compatibility request
+suit_check_component_compatibility_req = (
+	13,
+	; API changed for a more generic one, so both VID/CID as well as
+	; component list validation may be implemented using this function.
+	manifest_class_id: bstr,
+	component_id: bstr,
+)
+
+; Check component compatibility response
+suit_check_component_compatibility_rsp = (
+	13,
+	ret: int,
+)
+
+; Get supported manifest roles request
+suit_get_supported_manifest_roles_req = (
+	18,
+)
+
+; Get supported manifest roles response
+suit_get_supported_manifest_roles_rsp = (
+	18,
+	ret: int,
+	roles: [ 0*20 int ]
+)
+
+; Get supported manifest info based on manifest role request
+suit_get_supported_manifest_info_req = (
+	19,
+	role: int,
+)
+
+; Get supported manifest info based on manifest role response
+suit_get_supported_manifest_info_rsp = (
+	19,
+	ret: int,
+	role: int,
+	vendor_id: bstr,
+	class_id: bstr,
+	downgrade_prevention_policy: int,
+	independent_updateability_policy: int,
+	signature_verification_policy: int,
+)
+
+; Removed the API to get the parent manifest class ID.
+; In current proposal, it is not sufficient to authorize one static manifest
+; topology.
+
+; The static topology - which describes which manifests may be defined as
+; dependency components can be verified through suit_plat_authorize_component_id
+
+; The dynamic topology (separate for update and boot scenarios) needs to be
+; extended with the information about currently processed SUIT sequence.
+; This data allows to use different policies for update and boot scenarios.
+; The authorization should be a part of suit-directive-process-dependency,
+; because that's the first moment, in which the dependent manifest contents
+; (and the class ID) is known.
+
+; Authorize processing a dependency manifest request
+suit_authorize_process_dependency_req = (
+	21,
+	; Dependee (parent) manifest Class ID.
+	dependee_class_id: bstr,
+	; Dependent (child) manifest Class ID.
+	dependent_class_id: bstr,
+	; ID of executed SUIT sequence, with the suit-directive-process-dependency.
+	seq_id: int,
+)
+
+; Authorize processing a dependency manifest response
+suit_authorize_process_dependency_rsp = (
+	21,
+	ret: int,
+)
+
+
+; Missing image event notification message
+suit_evt_sub_req = (
+	40,
+	subscribe: bool, ; True for subscribe, false for unsubscribe
+)
+
+suit_evt_sub_rsp = (
+	40,
+	ret: int,
+)
+
+
+suit_missing_image_evt_nfy = (
+	41,
+	resource_id: bstr,
+	stream_session_id: uint,
+)
+
+
+suit_chunk_status_evt_nfy = (
+	42,
+	stream_session_id: uint,
+)
+
+
+; Image chunk enqueue request
+suit_chunk_enqueue_req = (
+	43,
+	stream_session_id: uint,
+	chunk_id: uint,
+	offset: uint,
+	last_chunk: bool,
+	addr: uint,
+	size: uint,
+)
+
+; Image chunk enqueue response
+suit_chunk_enqueue_rsp = (
+	43,
+	ret: int,
+)
+
+
+; Image chunk info structure, represented as a list
+suit_chunk_info_entry = (
+	chunk_id: uint,
+	status: uint, ; 0-pending, 1-successfully processed, 2-refused
+)
+
+suit_chunk_status_req = (
+	44,
+	stream_session_id: uint,
+)
+
+suit_chunk_status_rsp = (
+	44,
+	ret: int,
+	chunk_info: [ 0*3 suit_chunk_info_entry],
+)
+
+
+suit_req = [
+	; Union of different requests
+	msg: (
+		suit_trigger_update_req /
+		suit_check_installed_component_digest_req /
+		suit_get_installed_manifest_info_req /
+		suit_get_install_candidate_info_req /
+
+		suit_authenticate_manifest_req /
+		suit_authorize_unsigned_manifest_req /
+		suit_authorize_seq_num_req /
+		suit_check_component_compatibility_req /
+
+		suit_get_supported_manifest_roles_req /
+		suit_get_supported_manifest_info_req /
+		suit_authorize_process_dependency_req /
+
+		suit_evt_sub_req /
+		suit_chunk_enqueue_req /
+		suit_chunk_status_req
+	),
+]
+
+suit_rsp = [
+	; Union of different responses
+	msg: (
+		suit_trigger_update_rsp /
+		suit_check_installed_component_digest_rsp /
+		suit_get_installed_manifest_info_rsp /
+		suit_get_install_candidate_info_rsp /
+
+		suit_authenticate_manifest_rsp /
+		suit_authorize_unsigned_manifest_rsp /
+		suit_authorize_seq_num_rsp /
+		suit_check_component_compatibility_rsp /
+
+		suit_get_supported_manifest_roles_rsp /
+		suit_get_supported_manifest_info_rsp /
+		suit_authorize_process_dependency_rsp /
+
+		suit_evt_sub_rsp /
+		suit_chunk_enqueue_rsp /
+		suit_chunk_status_rsp
+	),
+]
+
+
+suit_nfy = [
+	; Union of different notifications
+	msg: (
+		suit_missing_image_evt_nfy /
+		suit_chunk_status_evt_nfy
+	),
+]
