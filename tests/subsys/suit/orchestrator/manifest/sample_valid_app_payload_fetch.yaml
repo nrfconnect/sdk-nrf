@@ -1,0 +1,104 @@
+SUIT_Envelope_Tagged:
+  suit-authentication-wrapper:
+    SuitDigest:
+      suit-digest-algorithm-id: cose-alg-sha-256
+  suit-manifest:
+    suit-manifest-version: 1
+    suit-manifest-sequence-number: 1
+    suit-common:
+      suit-components:
+      - - MEM
+        - 0
+        - 524288
+        - 4096
+      - - CAND_IMG
+        - 0
+      - - CACHE_POOL
+        - 0
+      - - CACHE_POOL
+        - 1
+      - - CACHE_POOL
+        - 3
+      suit-shared-sequence:
+      - suit-directive-set-component-index: 0
+      - suit-directive-override-parameters:
+          suit-parameter-vendor-identifier:
+            RFC4122_UUID: nordicsemi.com
+          suit-parameter-class-identifier:
+            RFC4122_UUID:
+              namespace: nordicsemi.com
+              name: nRF54H20_sample_app
+      - suit-condition-vendor-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-condition-class-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+    suit-validate:
+    - suit-directive-set-component-index: 0
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    suit-invoke:
+    - suit-directive-set-component-index: 0
+    - suit-directive-invoke:
+      - suit-send-record-failure
+    suit-payload-fetch:
+    - suit-directive-set-component-index: 2
+    - suit-directive-override-parameters:
+        suit-parameter-uri: 'payload1.bin'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-directive-set-component-index: 3
+    - suit-directive-override-parameters:
+        suit-parameter-uri: 'payload2.bin'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-directive-set-component-index: 4
+    - suit-directive-override-parameters:
+        suit-parameter-uri: 'payload3.bin'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    suit-install:
+    - suit-directive-set-component-index: 1
+    - suit-directive-override-parameters:
+        suit-parameter-uri: 'payload1.bin'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-set-component-index: 0
+    - suit-directive-override-parameters:
+        suit-parameter-source-component: 1
+    - suit-directive-copy:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    suit-text:
+      suit-digest-algorithm-id: cose-alg-sha-256
+    suit-manifest-component-id:
+    - INSTLD_MFST
+    - RFC4122_UUID:
+        namespace: nordicsemi.com
+        name: nRF54H20_sample_app
+  suit-text:
+    en:
+      '["MEM", 2, 235560960, 458752]':
+        suit-text-vendor-name: Nordic Semiconductor ASA
+        suit-text-model-name: nRF54H20_cpuapp
+        suit-text-vendor-domain: nordicsemi.com
+        suit-text-model-info: The nRF54H20 application core
+        suit-text-component-description: Sample application core FW
+        suit-text-component-version: v1.0.0

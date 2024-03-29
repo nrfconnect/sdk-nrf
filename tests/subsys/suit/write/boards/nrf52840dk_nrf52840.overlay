@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* Use the last 8KB of NVM as dfu_partition. */
+		dfu_partition: partition@fe000 {
+			reg = <0xfe000 DT_SIZE_K(8)>;
+		};
+	};
+};

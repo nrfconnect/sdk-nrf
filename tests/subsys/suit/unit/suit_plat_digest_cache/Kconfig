@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Include and define MOCK_* Kconfigs
+rsource "../mocks/Kconfig"
+
+config SUIT_DIGEST_CACHE_SIZE
+	int "Maximum number of entries in the digest cache"
+	default 3
+
+source "Kconfig.zephyr"

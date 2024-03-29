@@ -1,0 +1,74 @@
+SUIT_Envelope_Tagged:
+  suit-authentication-wrapper:
+    SuitDigest:
+      suit-digest-algorithm-id: cose-alg-sha-256
+  suit-manifest:
+    suit-manifest-version: 1
+    suit-manifest-sequence-number: 1
+    suit-common:
+      suit-components:
+      - - MEM
+        - 0x03
+        - 0x0E054000
+        - 0x00055800
+      suit-shared-sequence:
+      - suit-directive-override-parameters:
+          suit-parameter-vendor-identifier:
+            RFC4122_UUID: nordicsemi.com
+          suit-parameter-class-identifier:
+            RFC4122_UUID:
+              namespace: nordicsemi.com
+              name: nRF54H20_sample_rad
+          suit-parameter-image-digest:
+            suit-digest-algorithm-id: cose-alg-sha-256
+            suit-digest-bytes:
+              file: file.bin
+          suit-parameter-image-size:
+            file: file.bin
+      - suit-condition-vendor-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-condition-class-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+    suit-validate:
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    suit-invoke:
+    - suit-directive-invoke:
+      - suit-send-record-failure
+    suit-install:
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#file.bin'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    suit-text:
+      suit-digest-algorithm-id: cose-alg-sha-256
+    suit-manifest-component-id:
+    - INSTLD_MFST
+    - RFC4122_UUID:
+        namespace: nordicsemi.com
+        name: nRF54H20_sample_rad
+  suit-text:
+    en:
+      '["MEM", 3, 235225088, 350208]':
+        suit-text-vendor-name: Nordic Semiconductor ASA
+        suit-text-model-name: nRF54H20_cpurad
+        suit-text-vendor-domain: nordicsemi.com
+        suit-text-model-info: The nRF54H20 radio core
+        suit-text-component-description: Sample radio core FW
+        suit-text-component-version: v1.0.0
+  suit-integrated-payloads:
+    '#file.bin': file.bin
