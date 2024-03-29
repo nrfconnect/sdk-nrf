@@ -1,0 +1,92 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "SUIT-based Firmware Update Management"
+
+config MGMT_SUITFU
+	bool "Serial SUIT Firmware Update support"
+	depends on MCUMGR
+	depends on SSF_SUIT_SERVICE_ENABLED
+	depends on FLASH
+	depends on MCUMGR_SMP_LEGACY_RC_BEHAVIOUR
+	select MCUMGR_SMP_CBOR_MIN_DECODING_LEVEL_5
+
+
+config MGMT_SUITFU_TRIGGER_UPDATE_RESET_DELAY_MS
+	int "Delay between update trigger and the last firmware chunk, in ms"
+	default 100
+	help
+	  The delay allows the application to send the SMP response before the update is triggered.
+
+config MGMT_SUITFU_AUTO_REGISTER_HANDLERS
+	bool "Automatically register SUIT Firmware Update handlers during boot"
+	default y
+	help
+	  Use MCUMGR_HANDLER_DEFINE to automatically register SUIT Firmware
+	  Update handlers during boot.
+
+config MGMT_SUITFU_GRP_IMG
+	bool "SUIT over Application, software image management group"
+	default y
+	# The IMG MGMT group is substituted, not extended by the SUIT variant
+	depends on !MCUMGR_GRP_IMG
+
+
+if MGMT_SUITFU_GRP_IMG
+
+config MGMT_SUITFU_IMAGE_NUMBER
+	int "Image number representing SUIT envelope"
+	default 0
+
+endif # MGMT_SUITFU_GRP_IMG
+
+
+config MGMT_SUITFU_GRP_SUIT
+	bool "Extended SUIT commands over USER group"
+	default n
+
+if MGMT_SUITFU_GRP_SUIT
+
+config MGMT_GROUP_ID_SUIT
+	int "SUIT Management Group ID"
+	default 66
+
+config MGMT_SUITFU_GRP_SUIT_MFSTS_STATE
+	bool "Manifests state get"
+	default y
+	help
+	  Gets information about UUIDs of manifests supported by the device
+	  and selected attributes of installed manifests.
+
+config MGMT_SUITFU_GRP_SUIT_MFSTS_STATE_MFSTS_COUNT
+	int "Amount manifest entries for Manifests state get"
+	default 15
+	help
+	  Shall not be lower than amount of manifests supported by the device
+
+config MGMT_SUITFU_GRP_SUIT_CAND_ENV_UPLOAD
+	bool "Candidate envelope upload"
+	default y
+
+config MGMT_SUITFU_GRP_SUIT_IMAGE_FETCH
+	bool "Candidate image fetch"
+	depends on SUIT_STREAM_FETCH_SOURCE_MGR
+	default y
+
+config MGMT_SUITFU_GRP_SUIT_IMAGE_FETCH_TIMEOUT_MS
+	int "Inter-chunk timeout for image fetching, in ms"
+	default 5000
+
+
+endif # MGMT_SUITFU_GRP_SUIT
+
+
+module=MGMT_SUITFU
+module-dep=LOG
+module-str=SUIT-based Firmware Update Management
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
