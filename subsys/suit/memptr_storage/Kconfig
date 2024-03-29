@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SUIT_MEMPTR_STORAGE
+	bool "Enable module for holding pointer to the memory"
+
+if SUIT_MEMPTR_STORAGE
+
+config SUIT_MAX_NUMBER_OF_INTEGRATED_PAYLOADS
+	int "The maximum number of envelope reference components that will be handled"
+	range 0 255
+	help
+		Index is of type uint8_t, which restricts number of components of this type to 255.
+		Default value is 8 and minimal 0. Where 0 means that Envelope Reference component is disabled.
+	default 8
+
+endif # SUIT_MEMPTR_STORAGE

@@ -1,0 +1,8 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SUIT_EXECUTION_MODE
+	bool "Enable SUIT execution mode module"

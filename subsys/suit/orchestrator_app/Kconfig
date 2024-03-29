@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SUIT_ORCHESTRATOR_APP
+	bool "Enable SUIT application orchestrator"
+
+if SUIT_ORCHESTRATOR_APP
+
+config SUIT_ORCHESTRATOR_APP_CANDIDATE_PROCESSING
+	bool "Enable processing of the candidate envelope by the SUIT application orchestrator"
+	depends on SUIT_ENVELOPE_INFO
+
+endif # SUIT_ORCHESTRATOR_APP
