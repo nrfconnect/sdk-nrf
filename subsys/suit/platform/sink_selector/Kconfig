@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SUIT_SINK_SELECTOR
+	bool "Enable SUIT sink_selector module"
+	depends on SUIT_STREAM
