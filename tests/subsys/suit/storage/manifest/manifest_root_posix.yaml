@@ -1,0 +1,113 @@
+SUIT_Envelope_Tagged:
+  suit-authentication-wrapper:
+    SuitDigest:
+      suit-digest-algorithm-id: cose-alg-sha-256
+  suit-manifest:
+    suit-manifest-version: 1
+    suit-manifest-sequence-number: 1
+    suit-common:
+      suit-components:
+      - - CAND_MFST
+        - 0
+      - - INSTLD_MFST
+        - RFC4122_UUID:
+            namespace: nordicsemi.com
+            name: test_sample_app
+      suit-shared-sequence:
+      - suit-directive-set-component-index: 1
+      - suit-directive-override-parameters:
+          suit-parameter-vendor-identifier:
+            RFC4122_UUID: nordicsemi.com
+          suit-parameter-class-identifier:
+            RFC4122_UUID:
+              namespace: nordicsemi.com
+              name: test_sample_app
+
+      - suit-directive-set-component-index: 1
+      - suit-condition-vendor-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-condition-class-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      suit-dependencies:
+        # Key is the index of suit-components that describe the dependency manifest
+        "0": {}
+        "1": {}
+
+    suit-validate:
+    - suit-directive-set-component-index: 1
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+
+    suit-invoke:
+    - suit-directive-set-component-index: 1
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+
+    suit-install:
+    - suit-directive-set-component-index: 0
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#app.suit'
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            file: app_posix.suit
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    # Manifest copied to I/APP s a result of sequence completion
+
+    # Manifest copied to I/ROOT s a result of sequence completion
+    suit-text:
+      suit-digest-algorithm-id: cose-alg-sha-256
+    suit-manifest-component-id:
+    - INSTLD_MFST
+    - RFC4122_UUID:
+        namespace: nordicsemi.com
+        name: test_sample_root
+  suit-text:
+    en:
+      '["CAND_MFST", 0]':
+        suit-text-vendor-name: Nordic Semiconductor ASA
+        suit-text-model-name: posix
+        suit-text-vendor-domain: nordicsemi.com
+        suit-text-model-info: The POSIX root manifest
+        suit-text-component-description: Sample root manifest
+        suit-text-component-version: v1.0.0
+  suit-integrated-payloads:
+    '#app.suit': app_posix.suit

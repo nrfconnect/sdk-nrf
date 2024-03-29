@@ -1,0 +1,86 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig MOCK_SUIT_MCI
+	bool "Include SUIT MCI mocks"
+
+if MOCK_SUIT_MCI
+config MOCK_SUIT_MCI_GENERIC_IDS
+	bool "Mock suit_generic_ids.c implementation"
+	default y
+	help
+	  If not enabled, the module implementation will be included.
+
+config MOCK_SUIT_MCI_UTILS
+	bool "Mock utils.c implementation"
+	default y
+	help
+	  If not enabled, the module implementation will be included.
+endif # MOCK_SUIT_MCI
+
+config MOCK_SUIT_STORAGE
+	bool "Include SUIT storage mocks"
+
+menuconfig MOCK_SUIT_UTILS
+	bool "Include SUIT utils mocks"
+
+if MOCK_SUIT_UTILS
+config MOCK_SUIT_PLAT_DECODE_UTIL
+	bool "Mock suit_plat_decode_util.c implementation"
+	default y
+	help
+	  If not enabled, the module implementation will be included.
+
+endif # MOCK_SUIT_UTILS
+
+config MOCK_SUIT_METADATA
+	bool "Include SUIT manifest metadata types and conversion mocks"
+
+config MOCK_SUIT_PROCESSOR
+	bool "Include SUIT processor mocks"
+
+config MOCK_SUIT_LOG
+	bool "Include minimal logging support in SUIT components"
+	default y if LOG
+
+config MOCK_SUIT_CRYPTO
+	bool "Mock PSA crypto API"
+
+config MOCK_SUIT_KERNEL
+	bool "Mock zephyr kernel API"
+
+config MOCK_SUIT_PLAT_CHECK_COMPONENT_COMPATIBILITY
+	bool "Mock suit_plat_component_compatibility_check"
+
+config MOCK_SUIT_MEMPTR_STORAGE
+	bool "Include memory pointer storage headers"
+
+config MOCK_SUIT_PLATFORM_INTERNAL
+	bool "Mock suit_platform_internal"
+
+config MOCK_SUIT_PLATFORM
+	bool "Mock suit_plat_retrieve_manifest"
+
+config MOCK_DIGEST_SINK
+	bool "Mock stream sinks"
+
+config MOCK_GENERIC_ADDRESS_STREAMER
+	bool "Mock stream sources"
+
+config MOCK_DFU_CACHE_STREAMER
+	bool "Mock dfu cache streamer"
+
+config MOCK_FETCH_SOURCE_STREAMER
+	bool "Mock fetch source streamer"
+
+config MOCK_DFU_CACHE_SINK
+	bool "Mock dfu cache sink"
+
+config MOCK_SDFW_BUILTIN_KEYS
+	bool "Mock SDFW builtin keys handling"
+
+config MOCK_SUIT_MEMORY_LAYOUT
+	bool "Mock SUIT memory layout module"

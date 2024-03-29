@@ -344,6 +344,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
 /tests/subsys/sdfw_services/              @anhmolt @hakonfam @jonathannilsen
 /tests/subsys/zigbee/                     @milewr
+/tests/subsys/suit/                       @tomchy @ahasztag @robertstypa
 /tests/tfm/                               @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
 /zephyr/                                  @carlescufi
