@@ -243,6 +243,7 @@ Kconfig*                                  @tejlmand
 /subsys/dm/                               @maje-emb
 /subsys/ieee802154/                       @rlubos @ankuns @jciupis @ahasztag
 /subsys/mgmt/                             @hakonfam @sigvartmh
+/subsys/mgmt/suitfu/                      @tomchy @ahasztag
 /subsys/emds/                             @balaklaka
 /subsys/esb/                              @lemrey
 /subsys/app_event_manager/                @pdunaj
