@@ -350,6 +350,17 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-6-0
+
+KRKNWK-18769: :ref:`matter_bridge_app` application does not print the hyperlink for displaying the setup QR code in the log.
+  This happens, because the log module that displays this log entry has been disabled.
+
+  **Workaround:** Remove the following line from the :file:`src/chip_project_config.h` header file:
+
+  .. code-block:: C
+
+     #define CHIP_CONFIG_LOG_MODULE_AppServer_PROGRESS 0
+
 .. rst-class:: v2-6-0 v2-5-2 v2-5-1 v2-5-0
 
 KRKNWK-18556: While creating multiple subscriptions, the persistent subscriptions resumption feature works only for the first created subscriptions
