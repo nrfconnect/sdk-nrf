@@ -13,7 +13,6 @@ config BT_LL_SOFTDEVICE
 	select MPSL
 	select ZERO_LATENCY_IRQS if !SOC_SERIES_BSIM_NRFXX
 	select BT_CTLR_LE_ENC_SUPPORT
-	select BT_CTLR_ECDH_SUPPORT
 	select BT_CTLR_EXT_REJ_IND_SUPPORT
 	select BT_CTLR_PRIVACY_SUPPORT
 	select BT_CTLR_EXT_SCAN_FP_SUPPORT
@@ -44,6 +43,14 @@ config BT_LL_SOFTDEVICE
 	  Use SoftDevice Link Layer implementation.
 
 endchoice
+
+config BT_CTLR_SDC_ECDH
+	prompt "Support for DH key generation in SDC"
+	bool
+	default y if BT_SMP
+	select BT_CTLR_ECDH_SUPPORT
+	help
+		Adds support for DH key generation to SDC.
 
 config BT_CTLR_DF_SUPPORT
 	select BT_CTLR_DF_CTE_TX_SUPPORT
