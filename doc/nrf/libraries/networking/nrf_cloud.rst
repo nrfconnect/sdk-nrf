@@ -210,20 +210,6 @@ Sending sensor data
 *******************
 The library offers two functions, :c:func:`nrf_cloud_sensor_data_send` and :c:func:`nrf_cloud_sensor_data_stream` (lowest QoS), for sending sensor data to the cloud.
 
-To view sensor data on nRF Cloud, the device must first inform the cloud what types of sensor data to display.
-The device passes this information by writing a ``ui`` field, containing an array of sensor types, into the ``serviceInfo`` field in the device's shadow.
-The :c:func:`nrf_cloud_service_info_json_encode` function can be used to generate the proper JSON data to enable FOTA.
-Additionally, the :c:func:`nrf_cloud_shadow_device_status_update` function can be used to generate the JSON data and perform the shadow update.
-
-Following are the supported UI types on nRF Cloud:
-
-* ``GNSS``
-* ``FLIP``
-* ``TEMP``
-* ``HUMIDITY``
-* ``AIR_PRESS``
-* ``RSRP``
-
 .. _lib_nrf_cloud_unlink:
 
 Removing the link between device and user

@@ -519,6 +519,9 @@ Libraries for networking
   * Updated:
 
     * Improved FOTA job status reporting.
+    * Deprecated :kconfig:option:`NRF_CLOUD_SEND_SERVICE_INFO_UI` and its related UI Kconfig options.
+    * Deprecated the :c:struct:`nrf_cloud_svc_info_ui` structure contained in the :c:struct:`nrf_cloud_svc_info` structure.
+      nRF Cloud no longer uses the UI section in the shadow.
 
 * :ref:`lib_mqtt_helper` library:
 

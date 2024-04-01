@@ -439,7 +439,7 @@ struct nrf_cloud_svc_info_fota {
 	uint8_t _rsvd:4;
 };
 
-/** @brief Controls which values are added to the UI array in the "serviceInfo" shadow section */
+/** @brief DEPRECATED - No longer used by nRF Cloud */
 struct nrf_cloud_svc_info_ui {
 	/* Items with UI support on nRF Cloud */
 	/** Temperature */
@@ -504,7 +504,8 @@ struct nrf_cloud_modem_info {
 struct nrf_cloud_svc_info {
 	/** Specify FOTA components to enable, set to NULL to remove the FOTA entry */
 	struct nrf_cloud_svc_info_fota *fota;
-	/** Specify UI components to enable, set to NULL to remove the UI entry */
+
+	/** DEPRECATED - nRF Cloud no longer requires the device to set UI values in the shadow */
 	struct nrf_cloud_svc_info_ui *ui;
 };
 

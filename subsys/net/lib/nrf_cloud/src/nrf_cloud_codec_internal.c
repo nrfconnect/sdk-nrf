@@ -350,7 +350,6 @@ static int enabled_info_sections_get(struct nrf_cloud_device_status *const ds)
 
 	struct nrf_cloud_modem_info *modem =	ds->modem;
 	struct nrf_cloud_svc_info_fota *fota =	ds->svc ? ds->svc->fota : NULL;
-	struct nrf_cloud_svc_info_ui *ui =	ds->svc ? ds->svc->ui : NULL;
 
 	/* Modem info */
 	if (modem) {
@@ -376,19 +375,6 @@ static int enabled_info_sections_get(struct nrf_cloud_device_status *const ds)
 		fota->application = IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_APP_SUPPORTED);
 		fota->modem =	    IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_MODEM_DELTA_SUPPORTED);
 		fota->modem_full =  IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_MODEM_FULL_SUPPORTED);
-	}
-
-	/* Service info: UI */
-	if (ui && IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI)) {
-		ui->temperature =    IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_TEMP);
-		ui->gnss =	     IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_MAP);
-		ui->flip =	     IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_ORIENTATION);
-		ui->humidity =	     IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_HUMID);
-		ui->air_pressure =   IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_AIR_PRESSURE);
-		ui->rsrp =	     IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_RSRP);
-		ui->log =	     IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_LOGS);
-		ui->dictionary_log = IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_BIN_LOGS);
-		ui->air_quality =    IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_AIR_QUALITY);
 	}
 
 	return 0;
@@ -1106,79 +1092,8 @@ static int nrf_cloud_encode_service_info_ui(const struct nrf_cloud_svc_info_ui *
 		return -EINVAL;
 	}
 
-	if (ui == NULL) {
-		if (json_add_null_cs(svc_inf_obj, NRF_CLOUD_JSON_KEY_SRVC_INFO_UI) != 0) {
-			return -ENOMEM;
-		}
-	} else {
-		int item_cnt = 0;
-		cJSON *array = cJSON_AddArrayToObjectCS(svc_inf_obj,
-							NRF_CLOUD_JSON_KEY_SRVC_INFO_UI);
-
-		if (!array) {
-			return -ENOMEM;
-		}
-		if (ui->air_pressure) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_AIR_PRESS]));
-			++item_cnt;
-		}
-		if (ui->air_quality) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_AIR_QUAL]));
-			++item_cnt;
-		}
-		if (ui->gnss) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_GNSS]));
-			++item_cnt;
-		}
-		if (ui->flip) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_FLIP]));
-			++item_cnt;
-		}
-		if (ui->button) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_BUTTON]));
-			++item_cnt;
-		}
-		if (ui->temperature) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_TEMP]));
-			++item_cnt;
-		}
-		if (ui->humidity) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_HUMID]));
-			++item_cnt;
-		}
-		if (ui->light_sensor) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_SENSOR_LIGHT]));
-			++item_cnt;
-		}
-		if (ui->rsrp) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_LTE_LINK_RSRP]));
-			++item_cnt;
-		}
-		if (ui->log) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_LOG]));
-			++item_cnt;
-		}
-		if (ui->dictionary_log) {
-			cJSON_AddItemToArray(array,
-				cJSON_CreateString(sensor_type_str[NRF_CLOUD_DICTIONARY_LOG]));
-			++item_cnt;
-		}
-
-		if (cJSON_GetArraySize(array) != item_cnt) {
-			cJSON_DeleteItemFromObject(svc_inf_obj, NRF_CLOUD_JSON_KEY_SRVC_INFO_UI);
-			return -ENOMEM;
-		}
-	}
+	/* The UI section is no longer used by the cloud, remove it */
+	(void)json_add_null_cs(svc_inf_obj, NRF_CLOUD_JSON_KEY_SRVC_INFO_UI);
 
 	return 0;
 }
@@ -1666,10 +1581,9 @@ int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info *const mo
 int nrf_cloud_enabled_info_sections_json_encode(cJSON * const obj, const char * const app_ver)
 {
 	struct nrf_cloud_svc_info_fota fota = {0};
-	struct nrf_cloud_svc_info_ui ui = {0};
-	/* Only set service info items if they are enabled */
+	/* Only set FOTA service info if enabled */
 	struct nrf_cloud_svc_info svc_inf = {
-		.ui = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI) ? &ui : NULL,
+		.ui = NULL,
 		.fota = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA) ? &fota : NULL
 	};
 	struct nrf_cloud_modem_info mdm_inf = {
@@ -1708,8 +1622,8 @@ int nrf_cloud_enabled_info_sections_json_encode(cJSON * const obj, const char * 
 		ret = shadow_connection_info_update(device_obj);
 	}
 
-	/* Encode FOTA/UI service info if set */
-	if ((ds.svc->fota || ds.svc->ui)) {
+	/* Encode FOTA service info if set */
+	if (ds.svc->fota) {
 		cJSON *svc_inf_obj = cJSON_AddObjectToObjectCS(device_obj,
 							       NRF_CLOUD_JSON_KEY_SRVC_INFO);
 
@@ -1724,11 +1638,9 @@ int nrf_cloud_enabled_info_sections_json_encode(cJSON * const obj, const char * 
 			return -ENOMEM;
 		}
 
-		if (ds.svc->ui) {
-			ret = nrf_cloud_encode_service_info_ui(ds.svc->ui, svc_inf_obj);
-		}
-		if (ret) {
-			return -ENOMEM;
+		/* The UI section is no longer used by the cloud, remove it */
+		if (IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI)) {
+			(void)nrf_cloud_encode_service_info_ui(NULL, svc_inf_obj);
 		}
 	}
 
@@ -1742,13 +1654,9 @@ int nrf_cloud_service_info_json_encode(const struct nrf_cloud_svc_info *const sv
 		return -EINVAL;
 	}
 
-	int err = nrf_cloud_encode_service_info_fota(svc_inf->fota, svc_inf_obj);
+	(void)nrf_cloud_encode_service_info_ui(NULL, svc_inf_obj);
 
-	if (err) {
-		return err;
-	}
-
-	return nrf_cloud_encode_service_info_ui(svc_inf->ui, svc_inf_obj);
+	return nrf_cloud_encode_service_info_fota(svc_inf->fota, svc_inf_obj);
 }
 
 void nrf_cloud_device_status_free(struct nrf_cloud_data *status)
