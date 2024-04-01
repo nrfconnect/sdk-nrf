@@ -2277,6 +2277,32 @@ out:
 	return ret;
 }
 
+
+static enum nrf_wifi_chan_width wpa_supp_chan_width_to_nrf(enum hostapd_hw_mode mode,
+	int bandwidth, int cfreq1, int cfreq2)
+{
+	switch (bandwidth) {
+	case 20:
+		if (mode == HOSTAPD_MODE_IEEE80211B) {
+			return NRF_WIFI_CHAN_WIDTH_20_NOHT;
+		} else {
+			return NRF_WIFI_CHAN_WIDTH_20;
+		};
+	case 40:
+		return NRF_WIFI_CHAN_WIDTH_40;
+	case 80:
+		if (cfreq2) {
+			return NRF_WIFI_CHAN_WIDTH_80P80;
+		} else {
+			return NRF_WIFI_CHAN_WIDTH_80;
+		}
+	case 160:
+		return NRF_WIFI_CHAN_WIDTH_160;
+	};
+
+	return NRF_WIFI_CHAN_WIDTH_20;
+}
+
 int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *params)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -2284,6 +2310,7 @@ int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *param
 	int ret = -1;
 	struct nrf_wifi_umac_start_ap_info start_ap_info = {0};
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	int ch_width = 0;
 
 	if (!if_priv || !params) {
 		LOG_ERR("%s: Invalid params", __func__);
@@ -2321,8 +2348,11 @@ int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *param
 		}
 	}
 
+	ch_width = wpa_supp_chan_width_to_nrf(params->freq->mode, params->freq->bandwidth,
+			params->freq->center_freq1, params->freq->center_freq2);
+
 	start_ap_info.freq_params.frequency = params->freq->freq;
-	start_ap_info.freq_params.channel_width = params->freq->bandwidth;
+	start_ap_info.freq_params.channel_width = ch_width;
 	start_ap_info.freq_params.center_frequency1 = params->freq->center_freq1;
 	start_ap_info.freq_params.center_frequency2 = params->freq->center_freq2;
 	start_ap_info.freq_params.channel_type = params->freq->ht_enabled ? NRF_WIFI_CHAN_HT20 :
