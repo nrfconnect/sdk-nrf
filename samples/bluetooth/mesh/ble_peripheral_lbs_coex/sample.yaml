@@ -9,5 +9,7 @@ tests:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
+      - nrf54l15pdk_nrf54l15_cpuapp
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
+        nrf54l15pdk_nrf54l15_cpuapp
     tags: bluetooth ci_build
