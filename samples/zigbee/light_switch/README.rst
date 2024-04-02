@@ -110,7 +110,7 @@ For example, when building from the command line, use the following command:
 
 .. code-block:: console
 
-   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DCONF_FILE='prj_fota.conf'
+   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DFILE_SUFFIX='fota'
 
 Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
 
