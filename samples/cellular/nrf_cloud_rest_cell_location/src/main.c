@@ -114,11 +114,6 @@ static enum lte_lc_rrc_mode cur_rrc_mode = LTE_LC_RRC_MODE_IDLE;
 /* Flag to indicate that a neighbor cell measurement should be taken once RRC mode is idle */
 static bool rrc_idle_wait;
 
-/* Flag to indicate if the device shadow should be updated so that the location card
- * is displayed on nrfcloud.com
- */
-static bool location_card_enable;
-
 #if defined(CONFIG_REST_CELL_LOCATION_DO_JITP)
 /* Flag to indicate if the user requested JITP to be performed */
 static bool jitp_requested;
@@ -334,8 +329,6 @@ static void request_jitp(void)
 	if (err == 0) {
 		jitp_requested = true;
 		LOG_INF("JITP will be performed after network connection is obtained");
-		/* Enable the location card for a newly JITP'd device */
-		location_card_enable = true;
 	} else {
 		if (err != -EAGAIN) {
 			LOG_ERR("k_sem_take error: %d", err);
@@ -367,51 +360,9 @@ static void do_jitp(void)
 }
 #endif
 
-#define REQ_CARD "---> Press button %d to enable the location card for this device on nrfcloud.com"
-static void request_location_card_enable(void)
-{
-	if (!location_card_enable) {
-		int err;
-
-		k_sem_reset(&button_press_sem);
-
-		LOG_INF(REQ_CARD, BTN_NUM);
-		LOG_INF("     This only needs to be done once per device");
-		LOG_INF("     Waiting %d seconds...", UI_REQ_WAIT_SEC);
-
-		err = k_sem_take(&button_press_sem, K_SECONDS(UI_REQ_WAIT_SEC));
-
-		if (err == 0) {
-			location_card_enable = true;
-		} else {
-			if (err != -EAGAIN) {
-				LOG_ERR("k_sem_take error: %d", err);
-			}
-		}
-	}
-
-	if (location_card_enable) {
-		LOG_INF("Location card will be enabled after network connection is obtained");
-	} else {
-		LOG_INF("Location card will not be enabled");
-	}
-}
-
-static void do_location_card_enable(void)
+static void send_device_status(void)
 {
 	int err;
-
-	struct nrf_cloud_svc_info_ui ui = {
-		.gnss = 1,
-		.log = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND) &&
-		       IS_ENABLED(CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT),
-		.dictionary_log = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND) &&
-				  IS_ENABLED(CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY)
-	};
-	struct nrf_cloud_svc_info svc_inf = {
-		.fota = NULL,
-		.ui = &ui
-	};
 
 	struct nrf_cloud_modem_info mdm_inf = {
 		/* Include all available modem info. Change to NRF_CLOUD_INFO_NO_CHANGE to
@@ -428,7 +379,8 @@ static void do_location_card_enable(void)
 
 	struct nrf_cloud_device_status dev_status = {
 		.modem = &mdm_inf,
-		.svc = &svc_inf,
+		/* Deprecated: The service info "ui" section is no longer used by nRF Cloud */
+		.svc = NULL,
 		.conn_inf = NRF_CLOUD_INFO_SET
 	};
 
@@ -437,12 +389,11 @@ static void do_location_card_enable(void)
 	 */
 	rest_ctx.keep_alive = true;
 
-	LOG_INF("Enabling location card...");
 	err = nrf_cloud_rest_shadow_device_status_update(&rest_ctx, device_id, &dev_status);
 	if (err) {
-		LOG_ERR("Failed to enable location card, error: %d", err);
+		LOG_ERR("Failed to send device status, error: %d", err);
 	} else {
-		LOG_INF("Location card enabled in device shadow");
+		LOG_INF("Device status sent to nRF Cloud");
 	}
 
 	/* Set keep alive to false so the connection is closed after the initial
@@ -610,9 +561,6 @@ static void connect_to_network(void)
 		k_sleep(K_FOREVER);
 	}
 
-	/* While waiting, ask about the location card */
-	request_location_card_enable();
-
 	err = k_sem_take(&lte_connected_sem, K_MINUTES(NET_CONN_WAIT_MIN));
 	if (err == 0) {
 		LOG_INF("Connected to network");
@@ -670,8 +618,12 @@ int main(void)
 		do_jitp();
 	}
 #endif
-	if (location_card_enable) {
-		do_location_card_enable();
+
+	/* Send the device status which contains HW/FW version info and
+	 * details about the network connection.
+	 */
+	if (IS_ENABLED(CONFIG_REST_CELL_SEND_DEVICE_STATUS)) {
+		send_device_status();
 	}
 
 	/* Initialized, connected, and ready to send cellular location requests */

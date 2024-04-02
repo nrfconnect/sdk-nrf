@@ -206,7 +206,7 @@ static void send_device_status(void)
 
 	struct nrf_cloud_svc_info svc_inf = {
 		.fota = &fota,
-		/* No UI components are required for this sample */
+		/* Deprecated: The "ui" section is no longer used by nRF Cloud */
 		.ui = NULL
 	};
 

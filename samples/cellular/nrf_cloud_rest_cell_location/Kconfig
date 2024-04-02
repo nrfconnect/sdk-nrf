@@ -41,6 +41,10 @@ config REST_CELL_DEFAULT_FALLBACK_VAL
 config REST_CELL_DEFAULT_HICONF_VAL
 	bool "Default value for the hi_conf configuration flag"
 
+config REST_CELL_SEND_DEVICE_STATUS
+	bool "Send device status to nRF Cloud on initial connection"
+	default y
+
 endmenu
 
 menu "Zephyr Kernel"
