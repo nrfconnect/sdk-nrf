@@ -221,6 +221,14 @@ Cellular samples
 
   * Updated the :file:`.pem` certificate for example.com.
 
+* :ref:`location_sample` sample:
+
+  * Removed ESP8266 Wi-Fi DTC and Kconfig overlay files.
+
+* :ref:`modem_shell_application` sample:
+
+  * Removed ESP8266 Wi-Fi DTC and Kconfig overlay files.
+
 Cryptography samples
 --------------------
 
