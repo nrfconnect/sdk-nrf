@@ -558,6 +558,7 @@ Modem libraries
   * Added:
 
     * Convenience function to get :c:struct:`location_data_details` from the :c:struct:`location_event_data`.
+    * Location data details for event :c:enum:`LOCATION_EVT_RESULT_UNKNOWN`.
 
 Libraries for networking
 ------------------------
