@@ -272,7 +272,7 @@ After building the sample and programming it to your development kit, complete t
       I: Turn Off Action has been initiated
       I: Turn Off Action has been completed
 
-#. Press **Button 1** to initiate the factory reset of the device.
+#. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
 
 .. _matter_light_bulb_sample_light_switch_tests:
 

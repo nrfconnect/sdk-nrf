@@ -351,7 +351,7 @@ To check if the sensor device is working, complete the following steps:
 
 .. include:: ../../../../../samples/matter/template/README.rst
    :start-after: matter_template_sample_testing_start
-   :end-before: #. Press **Button 1**
+   :end-before: #. Keep the **Button 1**
 
 #. Activate the sensor by running the following command on the On/off cluster with the correct *node_ID* assigned during commissioning:
 

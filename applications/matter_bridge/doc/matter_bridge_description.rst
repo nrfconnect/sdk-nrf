@@ -144,7 +144,7 @@ Button 1:
     * If pressed for less than three seconds:
 
       * If the device is not provisioned to the Matter network, it initiates the SMP server (Simple Management Protocol) and Bluetooth LE advertising for Matter commissioning.
-        After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
+        After that, the Device Firmware Update (DFU) over Bluetooth Low Energy can be started.
         (See `Updating the device firmware`_.)
         Bluetooth LE advertising makes the device discoverable over Bluetooth LE for the predefined period of time (15 minutes by default).
 

@@ -209,7 +209,7 @@ After building the sample and programming it to your development kit, complete t
 #. Observe the UART terminal.
    The sample starts automatically printing the simulated temperature data to the terminal with 30-second intervals.
 #. Press **Button 2** to print the most recent temperature data to the terminal.
-#. Press **Button 1** for six seconds to initiate the factory reset of the device.
+#. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
 
 The device reboots after all its settings are erased.
 
