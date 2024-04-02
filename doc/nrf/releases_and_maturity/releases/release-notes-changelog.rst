@@ -326,6 +326,10 @@ Cellular samples
 
   * Removed sending GNSS UI service info to nRF Cloud; this is no longer required by the cloud.
 
+* :ref:`nrf_cloud_multi_service` sample:
+
+  * Fixed issue that prevented network connectivity when using Wi-Fi scanning with the nRF91xx.
+
 Cryptography samples
 --------------------
 
