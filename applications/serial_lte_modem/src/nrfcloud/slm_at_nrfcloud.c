@@ -19,9 +19,6 @@
 
 LOG_MODULE_REGISTER(slm_nrfcloud, CONFIG_SLM_LOG_LEVEL);
 
-#define SERVICE_INFO_GNSS \
-	"{\"state\":{\"reported\":{\"device\": {\"serviceInfo\":{\"ui\":[\"GNSS\"]}}}}}"
-
 #define MODEM_AT_RSP \
 	"{\"appId\":\"MODEM\", \"messageType\":\"RSP\", \"data\":\"%s\"}"
 
@@ -298,23 +295,6 @@ static int do_cloud_send_msg(const char *message, int len)
 
 static void on_cloud_evt_ready(void)
 {
-	int err;
-
-	if (slm_nrf_cloud_send_location) {
-		struct nrf_cloud_tx_data msg = {
-			.data.ptr = SERVICE_INFO_GNSS,
-			.data.len = strlen(SERVICE_INFO_GNSS),
-			.topic_type = NRF_CLOUD_TOPIC_STATE,
-			.qos = MQTT_QOS_0_AT_MOST_ONCE
-		};
-
-		/* Update nRF Cloud with GPS service info signifying GPS capabilities. */
-		err = nrf_cloud_send(&msg);
-		if (err) {
-			LOG_WRN("Failed to send message to cloud, error: %d", err);
-		}
-	}
-
 	slm_nrf_cloud_ready = true;
 	rsp_send("\r\n#XNRFCLOUD: %d,%d\r\n", slm_nrf_cloud_ready, slm_nrf_cloud_send_location);
 #if defined(CONFIG_NRF_CLOUD_LOCATION)

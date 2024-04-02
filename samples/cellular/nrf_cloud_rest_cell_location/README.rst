@@ -53,13 +53,6 @@ If you have the option :ref:`CONFIG_REST_CELL_LOCATION_DO_JITP <CONFIG_REST_CELL
 This is useful when initially provisioning and associating a device on nRF Cloud.
 You only need to do this once for each device.
 
-If you have not requested for JITP before starting up your device, the sample asks if the location card on the nRF Cloud portal should be enabled in the device's shadow.
-This is only valid for provisioned devices.
-Press **button 1** to perform the shadow update.
-The location card displays the device's location on a map.
-This is not required for the sample to function.
-You only need to do this once for each device.
-
 After the sample completes any requested JITP or shadow updates, pressing the **button 1** toggles between single-cell and multi-cell mode.
 
 Set the :ref:`CONFIG_REST_CELL_CHANGE_CONFIG <CONFIG_REST_CELL_CHANGE_CONFIG>` Kconfig config value to try all combinations of the :c:struct:`nrf_cloud_location_config` structure values ``hi_conf`` and ``fallback``.
@@ -99,6 +92,11 @@ CONFIG_REST_CELL_DEFAULT_FALLBACK_VAL - Enable fallback to coarse location
 
 CONFIG_REST_CELL_DEFAULT_HICONF_VAL - Enable high confidence result
    Enable a 95% confidence interval for the location, instead of the default 68%.
+
+.. _CONFIG_REST_CELL_SEND_DEVICE_STATUS:
+
+CONFIG_REST_CELL_SEND_DEVICE_STATUS - Send device status
+   Send device status to nRF Cloud on initial connection.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start

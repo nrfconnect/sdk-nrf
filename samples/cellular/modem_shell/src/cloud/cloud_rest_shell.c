@@ -66,12 +66,6 @@ static int cmd_cloud_rest_shadow_device_status_update(const struct shell *shell,
 						      char **argv)
 {
 	int err;
-	struct nrf_cloud_svc_info_ui ui_info = {
-		.gnss = IS_ENABLED(CONFIG_MOSH_LOCATION), /* Show map on nrf cloud */
-	};
-	struct nrf_cloud_svc_info service_info = {
-		.ui = &ui_info
-	};
 	struct nrf_cloud_modem_info modem_info = {
 		.device = NRF_CLOUD_INFO_SET,
 		.network = NRF_CLOUD_INFO_SET,
@@ -80,7 +74,8 @@ static int cmd_cloud_rest_shadow_device_status_update(const struct shell *shell,
 	};
 	struct nrf_cloud_device_status device_status = {
 		.modem = &modem_info,
-		.svc = &service_info
+		/* Deprecated: The service info "ui" section is no longer used by nRF Cloud */
+		.svc = NULL
 	};
 	char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 #define REST_RX_BUF_SZ 300 /* No payload in response, "just" headers */

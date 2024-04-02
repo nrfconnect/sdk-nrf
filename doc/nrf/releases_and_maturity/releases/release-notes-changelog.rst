@@ -146,8 +146,11 @@ Asset Tracker v2
 Serial LTE modem
 ----------------
 
-* Removed mention of Termite and Teraterm terminal emulators from the documentation.
-  The recommended approach is to use one of the emulators listed on the :ref:`test_and_optimize` page.
+* Removed:
+
+  * Mention of Termite and Teraterm terminal emulators from the documentation.
+    The recommended approach is to use one of the emulators listed on the :ref:`test_and_optimize` page.
+  * Sending GNSS UI service info to nRF Cloud; this is no longer required by the cloud.
 
 * Updated:
 
@@ -294,6 +297,21 @@ Cellular samples
 * :ref:`modem_shell_application` sample:
 
   * Removed ESP8266 Wi-Fi DTC and Kconfig overlay files.
+
+* :ref:`nrf_cloud_rest_cell_pos_sample` sample:
+
+  * Removed:
+
+    * The button press interface for enabling the device location card on the nRF Cloud website.
+      The card is now automatically displayed.
+
+  * Added:
+
+    * The :kconfig:option:`CONFIG_REST_CELL_SEND_DEVICE_STATUS` Kconfig option to control sending device status on initial connection.
+
+* :ref:`modem_shell_application` sample:
+
+  * Removed sending GNSS UI service info to nRF Cloud; this is no longer required by the cloud.
 
 Cryptography samples
 --------------------
