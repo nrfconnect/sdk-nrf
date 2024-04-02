@@ -825,7 +825,9 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  "scan_complete: %u\n"
 				  "scan_abort_req: %u\n"
 				  "scan_abort_complete: %u\n"
-				  "internal_buf_pool_null: %u\n\n",
+				  "internal_buf_pool_null: %u\n"
+				  "rpu_hw_lockup_count: %u\n"
+				  "rpu_hw_lockup_recovery_done: %u\n\n",
 				  lmac->reset_cmd_cnt,
 				  lmac->reset_complete_event_cnt,
 				  lmac->unable_gen_event,
@@ -860,7 +862,9 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  lmac->scan_complete,
 				  lmac->scan_abort_req,
 				  lmac->scan_abort_complete,
-				  lmac->internal_buf_pool_null);
+				  lmac->internal_buf_pool_null,
+				  lmac->rpu_hw_lockup_count,
+				  lmac->rpu_hw_lockup_recovery_done);
 	}
 
 	if (stats_type == RPU_STATS_TYPE_PHY || stats_type == RPU_STATS_TYPE_ALL) {
