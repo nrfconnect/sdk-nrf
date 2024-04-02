@@ -321,6 +321,9 @@ const struct location_data_details *location_details_get(
 	case LOCATION_EVT_ERROR:
 		details = &event_data->error.details;
 		break;
+	case LOCATION_EVT_RESULT_UNKNOWN:
+		details = &event_data->unknown.details;
+		break;
 	case LOCATION_EVT_FALLBACK:
 		details = &event_data->fallback.details;
 		break;

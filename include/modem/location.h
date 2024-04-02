@@ -269,6 +269,12 @@ struct location_data_error {
 	struct location_data_details details;
 };
 
+/** Information for an unknown location result. */
+struct location_data_unknown {
+	/** Data details at the time of an unknown location result. */
+	struct location_data_details details;
+};
+
 /** Location fallback information. */
 struct location_data_fallback {
 	/** New location method that is tried next. */
@@ -314,9 +320,13 @@ struct location_event_data {
 		 * Used with events @ref LOCATION_EVT_TIMEOUT and @ref LOCATION_EVT_ERROR.
 		 */
 		struct location_data_error error;
-#endif
 
-#if defined(CONFIG_LOCATION_DATA_DETAILS)
+		/**
+		 * Relevant location data when an unknown result occurs.
+		 * Used with event @ref LOCATION_EVT_RESULT_UNKNOWN.
+		 */
+		struct location_data_unknown unknown;
+
 		/**
 		 * Relevant location data when a fallback to another method occurs
 		 * due to a timeout or an error.
@@ -698,13 +708,13 @@ const char *location_method_str(enum location_method method);
 /**
  * @brief Get location data details from the location event data.
  *
- * @details The :c:struct:`location_data_details` structure is located in a different place in the
- * :c:struct:`location_event_data` structure depending on the event ID. This is a helper function
- * to provide the :c:struct:`location_data_details` structure.
+ * @details The @ref location_data_details structure is located in a different place in the
+ * @ref location_event_data structure depending on the event ID. This is a helper function
+ * to provide the @ref location_data_details structure.
  *
  * @param[in] event_data Event data.
  *
- * @return Location data details. NULL if there is no :c:struct:`location_data_details` structure
+ * @return Location data details. NULL if there is no @ref location_data_details structure
  *         for the provided event.
  */
 const struct location_data_details *location_details_get(
