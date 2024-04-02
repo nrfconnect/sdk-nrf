@@ -1,44 +1,81 @@
 - scenarios:
-    - sample.matter.lock.release
-    - sample.matter.light_bulb.release
+    - sample.matter.template.release
   platforms:
     - nrf52840dk_nrf52840
-  ram_size: 241664
-  rom_size: 778240
+  ram_size: 196608  # 25% free
+  rom_size: 828928  # 150kB free
+  rom_related_usage: 1024
+  ram_related_usage: 512
   codeowners:
     - kkasperczyk-no
     - ArekBalysNordic
+    - markaj-nordic
 
 - scenarios:
-    - sample.matter.lock.debug
-    - sample.matter.light_bulb.debug
+    - sample.matter.template.debug
   platforms:
     - nrf52840dk_nrf52840
-  ram_size: 241664
-  rom_size: 931840
+  ram_size: 196608  # 25% free
+  rom_size: 880128  # 100kB free
+  rom_related_usage: 2048
+  ram_related_usage: 1024
   codeowners:
     - kkasperczyk-no
     - ArekBalysNordic
+    - markaj-nordic
 
 - scenarios:
-    - sample.matter.lock.release
+    - sample.matter.template.release
   platforms:
-    - nrf7002dk_nrf5340_cpuapp
-  ram_size: 503808
-  rom_size: 778240
+    - nrf5340dk_nrf5340_cpuapp
+  ram_size: 393216  # 25% free
+  rom_size: 824832  # 150kB free
+  rom_related_usage: 1024
+  ram_related_usage: 512
   codeowners:
     - kkasperczyk-no
     - ArekBalysNordic
+    - markaj-nordic
 
 - scenarios:
-    - sample.matter.lock.debug
+    - sample.matter.template.debug
   platforms:
-    - nrf7002dk_nrf5340_cpuapp
-  ram_size: 503808
-  rom_size: 942080
+    - nrf5340dk_nrf5340_cpuapp
+  ram_size: 393216  # 25% free
+  rom_size: 876032  # 100kB free
+  rom_related_usage: 2048
+  ram_related_usage: 1024
   codeowners:
     - kkasperczyk-no
     - ArekBalysNordic
+    - markaj-nordic
+
+
+- scenarios:
+    - sample.matter.template.release
+  platforms:
+    - nrf7002dk_nrf5340_cpuapp
+  ram_size: 393216  # 25% free
+  rom_size: 808448  # 150kB free
+  rom_related_usage: 1024
+  ram_related_usage: 512
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
+    - markaj-nordic
+
+- scenarios:
+    - sample.matter.template.debug
+  platforms:
+    - nrf7002dk_nrf5340_cpuapp
+  ram_size: 393216  # 25% free
+  rom_size: 910848  # 50kB free
+  rom_related_usage: 2048
+  ram_related_usage: 1024
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
+    - markaj-nordic
 
 - scenarios:
     - applications.nrf_desktop.z.*
