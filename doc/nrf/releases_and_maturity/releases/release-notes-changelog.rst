@@ -195,6 +195,10 @@ Bluetooth samples
 
 * Added the :ref:`bluetooth_isochronous_time_synchronization` sample showcasing time-synchronized processing of isochronous data.
 
+* :ref:`fast_pair_input_device` sample:
+
+    * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
 Bluetooth Mesh samples
 ----------------------
 
