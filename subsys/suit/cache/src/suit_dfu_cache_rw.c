@@ -512,7 +512,7 @@ static suit_plat_err_t slot_in_cache_partition_allocate(const struct zcbor_strin
 		}
 
 		zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), output_ptr,
-				MAX_URI_ENCODE_BUFFER_LENGTH, 1);
+				MAX_URI_ENCODE_BUFFER_LENGTH, 1, NULL, 0);
 
 		if (!zcbor_tstr_encode(states, uri)) {
 			return SUIT_PLAT_ERR_CRASH;

@@ -17,7 +17,7 @@ suit_plat_err_t suit_plat_decode_component_id(struct zcbor_string *component_id,
 	}
 
 	ZCBOR_STATE_D(state, 2, component_id->value, component_id->len,
-		      SUIT_PLAT_MAX_NUM_COMPONENT_ID_PARTS);
+		      SUIT_PLAT_MAX_NUM_COMPONENT_ID_PARTS, 0);
 	struct zcbor_string component_type;
 	bool res;
 
@@ -51,7 +51,7 @@ suit_plat_err_t suit_plat_decode_component_type(struct zcbor_string *component_i
 	}
 
 	ZCBOR_STATE_D(state, 2, component_id->value, component_id->len,
-		      SUIT_PLAT_MAX_NUM_COMPONENT_ID_PARTS);
+		      SUIT_PLAT_MAX_NUM_COMPONENT_ID_PARTS, 0);
 	struct zcbor_string tmp;
 	bool res;
 
@@ -98,7 +98,7 @@ suit_plat_err_t suit_plat_decode_address_size(struct zcbor_string *component_id,
 	}
 
 	ZCBOR_STATE_D(state, 2, component_id->value, component_id->len,
-		      SUIT_PLAT_MAX_NUM_COMPONENT_ID_PARTS);
+		      SUIT_PLAT_MAX_NUM_COMPONENT_ID_PARTS, 0);
 	struct zcbor_string component_type;
 	bool res;
 	uint8_t cpu_id;
@@ -132,7 +132,7 @@ suit_plat_err_t suit_plat_decode_component_number(struct zcbor_string *component
 	}
 
 	ZCBOR_STATE_D(state, 2, component_id->value, component_id->len,
-		      SUIT_PLAT_MAX_NUM_COMPONENT_ID_PARTS);
+		      SUIT_PLAT_MAX_NUM_COMPONENT_ID_PARTS, 0);
 	struct zcbor_string component_type;
 
 	bool res = zcbor_list_start_decode(state);
@@ -157,7 +157,7 @@ suit_plat_err_t suit_plat_decode_key_id(struct zcbor_string *key_id, uint32_t *i
 		return SUIT_PLAT_SUCCESS;
 	}
 
-	ZCBOR_STATE_D(state, 2, key_id->value, key_id->len, 1);
+	ZCBOR_STATE_D(state, 2, key_id->value, key_id->len, 1, 0);
 
 	if (zcbor_uint32_decode(state, integer_key_id)) {
 		return SUIT_PLAT_SUCCESS;
@@ -179,7 +179,7 @@ suit_plat_err_t suit_plat_decode_manifest_class_id(struct zcbor_string *componen
 	}
 
 	ZCBOR_STATE_D(state, 2, component_id->value, component_id->len,
-		      SUIT_PLAT_MAX_NUM_COMPONENT_ID_PARTS);
+		      SUIT_PLAT_MAX_NUM_COMPONENT_ID_PARTS, 0);
 
 	res = zcbor_list_start_decode(state);
 	res = res && zcbor_bstr_start_decode(state, NULL);
