@@ -89,12 +89,12 @@ uint64_t nrf_802154_platform_sl_lptimer_lpticks_to_us_convert(uint64_t lpticks)
 void nrf_802154_platform_sl_lptimer_schedule_at(uint64_t fire_lpticks)
 {
 	/* This function is not required to be reentrant, hence no critical section. */
+	atomic_set_bit(&m_enabled, 0);
+
 	z_nrf_grtc_timer_set(m_callbacks_cc_channel,
 			     fire_lpticks,
 			     timer_compare_handler,
 			     NULL);
-
-	atomic_set_bit(&m_enabled, 0);
 }
 
 void nrf_802154_platform_sl_lptimer_disable(void)
