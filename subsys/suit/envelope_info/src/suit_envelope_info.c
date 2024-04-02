@@ -44,7 +44,8 @@ suit_plat_err_t suit_envelope_info_candidate_stored(const uint8_t *address, size
 		return SUIT_PLAT_ERR_INVAL;
 	}
 
-	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), address, max_size, 1);
+	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), address, max_size, 1, NULL,
+			0);
 
 	/* Expect SUIT envelope tag (107) and skip until the end of the envelope */
 	if (!zcbor_tag_expect(states, 107) || !zcbor_any_skip(states, NULL)) {

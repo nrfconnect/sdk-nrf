@@ -30,7 +30,7 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
 
 	LOG_DBG("Foreach on cache %p(size:%u)", (void *)cache_pool->address, cache_pool->size);
 
-	zcbor_new_decode_state(states, ZCBOR_ARRAY_SIZE(states), NULL, 0, 1);
+	zcbor_new_decode_state(states, ZCBOR_ARRAY_SIZE(states), NULL, 0, 1, NULL, 0);
 
 	do {
 		uintptr_t current_address = (uintptr_t)cache_pool->address + current_offset;
@@ -107,7 +107,7 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
 			result = result &&
 				 zcbor_process_backup(states,
 						      ZCBOR_FLAG_RESTORE | ZCBOR_FLAG_CONSUME |
-							      ZCBOR_FLAG_TRANSFER_PAYLOAD,
+							      ZCBOR_FLAG_KEEP_PAYLOAD,
 						      ZCBOR_MAX_ELEM_COUNT);
 		}
 

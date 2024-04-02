@@ -122,7 +122,7 @@ suit_plat_err_t suit_storage_decode_envelope_header(const uint8_t *buf, size_t l
 	struct zcbor_string envelope_bstr;
 	uint32_t class_id_offset;
 
-	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), buf, len, 1);
+	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), buf, len, 1, NULL, 0);
 
 	ok = (zcbor_map_start_decode(states) &&
 	      zcbor_uint32_expect(states, SUIT_STORAGE_ENVELOPE_TAG_VERSION) &&
@@ -168,7 +168,7 @@ suit_plat_err_t suit_storage_encode_envelope_header(suit_envelope_hdr_t *envelop
 	bool ok = false;
 	zcbor_state_t states[3];
 
-	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), buf, *len, 1);
+	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), buf, *len, 1, NULL, 0);
 
 	ok = (zcbor_map_start_encode(states, 3) &&
 	      zcbor_uint32_put(states, SUIT_STORAGE_ENVELOPE_TAG_VERSION) &&
@@ -224,7 +224,7 @@ suit_plat_err_t suit_storage_decode_suit_envelope_severed(const uint8_t *buf, si
 	bool ok = false;
 	zcbor_state_t states[3];
 
-	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), buf, len, 1);
+	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), buf, len, 1, NULL, 0);
 
 	if (zcbor_tag_expect(states, 107) && zcbor_map_start_decode(states) == true) {
 		/* Parse authentication wrapper and manifest. */
@@ -249,7 +249,8 @@ suit_plat_err_t suit_storage_decode_suit_envelope_severed(const uint8_t *buf, si
 
 	if (ok) {
 		zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t),
-				envelope->suit_manifest.value, envelope->suit_manifest.len, 1);
+				envelope->suit_manifest.value, envelope->suit_manifest.len, 1, NULL,
+				0);
 		ok = zcbor_map_start_decode(states);
 
 		while (ok) {
