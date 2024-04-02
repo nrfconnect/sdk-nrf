@@ -370,6 +370,7 @@ config BT_CTLR_ECDH_STACK_SIZE
 config BT_CTLR_ECDH_IN_MPSL_WORK
 	bool "ECDH processing in MPSL workqueue"
 	depends on BT_CTLR_ECDH_LIB_OBERON
+	default y if !BT_SMP
 	help
 	  Run the ECDH processing in the MPSL workqueue instead of in a
 	  dedicated pre-emptible thread.
