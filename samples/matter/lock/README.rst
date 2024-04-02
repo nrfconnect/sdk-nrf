@@ -307,13 +307,19 @@ LED 2:
 Button 1:
     Depending on how long you press the button:
 
-    * If the device is not provisioned to the Matter network, it initiates the SMP server (Simple Management Protocol) and Bluetooth LE advertising for Matter commissioning.
-      After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
-      (See `Upgrading the device firmware`_.)
-      Bluetooth LE advertising makes the device discoverable over Bluetooth LE for the predefined period of time (15 minutes by default).
-    * If the device is already provisioned to the Matter network it re-enables the SMP server.
-      After that, the DFU over Bluetooth Low Energy can be started.
-      (See `Upgrading the device firmware`_.)
+    * If pressed for less than three seconds:
+
+      * If the device is not provisioned to the Matter network, it initiates the SMP server (Simple Management Protocol) and Bluetooth LE advertising for Matter commissioning.
+        After that, the Device Firmware Update (DFU) over Bluetooth Low Energy can be started.
+        (See `Upgrading the device firmware`_.)
+        Bluetooth LE advertising makes the device discoverable over Bluetooth LE for the predefined period of time (15 minutes by default).
+
+      * If the device is already provisioned to the Matter network it re-enables the SMP server.
+        After that, the DFU over Bluetooth Low Energy can be started.
+        (See `Upgrading the device firmware`_.)
+
+    * If pressed for more than three seconds, it initiates the factory reset of the device.
+      Releasing the button within a 3-second window of the initiation cancels the factory reset procedure.
 
 .. matter_door_lock_sample_button1_end
 
@@ -376,7 +382,7 @@ After building the sample and programming it to your development kit, complete t
       I: Lock Action has been initiated
       I: Lock Action has been completed
 
-#. Press **Button 1** to initiate factory reset of the device.
+#. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
 
 The device reboots after all its settings are erased.
 

@@ -188,7 +188,7 @@ After building the sample and programming it to your development kit, complete t
    **LED 3** light up and its brightness increases with each button press until it reaches full brightness.
 #. Press **Button 2** 20 times to fully tilt the cover into the open position.
    The brightness of **LED 3** decreases with each button press until the LED turns off.
-#. Press **Button 1** to initiate the factory reset of the device.
+#. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
 
 The device reboots after all its settings are erased.
 
