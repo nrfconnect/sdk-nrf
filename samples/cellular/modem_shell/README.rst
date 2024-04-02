@@ -1067,18 +1067,6 @@ For example:
 
 See :ref:`cmake_options` for more instructions on how to add these options.
 
-ESP8266 Wi-Fi support
-=====================
-
-To build the MoSh sample with ESP8266 Wi-Fi chip support, use the ``-DDTC_OVERLAY_FILE=esp_8266_nrf9160ns.overlay`` and  ``-DOVERLAY_CONFIG=overlay-esp-wifi.conf`` options.
-For example:
-
-.. code-block:: console
-
-   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DDTC_OVERLAY_FILE=esp_8266_nrf9160ns.overlay -DOVERLAY_CONFIG=overlay-esp-wifi.conf
-
-See :ref:`cmake_options` for more instructions on how to add these options.
-
 PPP support
 ===========
 
