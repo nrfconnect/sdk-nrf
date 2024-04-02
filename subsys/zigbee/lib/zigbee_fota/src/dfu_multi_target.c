@@ -91,9 +91,10 @@ static int dfu_multi_target_done_0(bool success)
 
 	if (success) {
 		images_to_download &= ~(1 << 0);
+		return dfu_target_done(success);
+	} else {
+		return dfu_target_reset();
 	}
-
-	return dfu_target_done(success);
 }
 
 #if CONFIG_UPDATEABLE_IMAGE_NUMBER > 1
@@ -103,9 +104,10 @@ static int dfu_multi_target_done_1(bool success)
 
 	if (success) {
 		images_to_download &= ~(1 << 1);
+		return dfu_target_done(success);
+	} else {
+		return dfu_target_reset();
 	}
-
-	return dfu_target_done(success);
 }
 #endif
 
@@ -116,9 +118,10 @@ static int dfu_multi_target_done_2(bool success)
 
 	if (success) {
 		images_to_download &= ~(1 << 2);
+		return dfu_target_done(success);
+	} else {
+		return dfu_target_reset();
 	}
-
-	return dfu_target_done(success);
 }
 #endif
 
