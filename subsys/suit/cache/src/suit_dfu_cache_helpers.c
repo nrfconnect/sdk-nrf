@@ -13,6 +13,7 @@
 #include <suit_address_streamer_selector.h>
 #include "suit_dfu_cache_internal.h"
 #include "suit_ram_sink.h"
+#include "zcbor_noncanonical_decode.h"
 
 LOG_MODULE_REGISTER(dfu_cache_helpers, CONFIG_SUIT_LOG_LEVEL);
 
@@ -86,7 +87,7 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
 
 		zcbor_update_state(states, partition_header_storage, read_size);
 		if (first_iteration) {
-			result = zcbor_map_start_decode(states);
+			result = zcbor_noncanonical_map_start_decode(states);
 			first_iteration = false;
 			if (!result) {
 				err = SUIT_PLAT_ERR_CBOR_DECODING;
@@ -103,7 +104,8 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
 
 		if (result) {
 			LOG_HEXDUMP_DBG(uri.value, uri.len, "Currently iterated URI");
-			result = zcbor_bstr_start_decode_fragment(states, &data_fragment);
+			result = zcbor_noncanonical_bstr_start_decode_fragment(states,
+									       &data_fragment);
 			result = result &&
 				 zcbor_process_backup(states,
 						      ZCBOR_FLAG_RESTORE | ZCBOR_FLAG_CONSUME |
