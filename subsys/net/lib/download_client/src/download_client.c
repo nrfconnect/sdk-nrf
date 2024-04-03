@@ -22,6 +22,7 @@
 #include <zephyr/net/tls_credentials.h>
 #include <net/download_client.h>
 #include <zephyr/logging/log.h>
+#include "download_client_internal.h"
 
 LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
@@ -29,19 +30,6 @@ LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 #define SIN(A) ((struct sockaddr_in *)(A))
 
 #define HOSTNAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
-
-int url_parse_port(const char *url, uint16_t *port);
-int url_parse_proto(const char *url, int *proto, int *type);
-int url_parse_host(const char *url, char *host, size_t len);
-
-int http_parse(struct download_client *client, size_t len);
-int http_get_request_send(struct download_client *client);
-
-int coap_block_init(struct download_client *client, size_t from);
-int coap_get_recv_timeout(struct download_client *dl);
-int coap_initiate_retransmission(struct download_client *dl);
-int coap_parse(struct download_client *client, size_t len);
-int coap_request_send(struct download_client *client);
 
 static int handle_disconnect(struct download_client *client);
 static int error_evt_send(const struct download_client *dl, int error);

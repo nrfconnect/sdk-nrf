@@ -11,6 +11,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/__assert.h>
 #include <net/download_client.h>
+#include "download_client_internal.h"
 
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
@@ -41,10 +42,6 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 	"\r\n"
 
 extern char *strnstr(const char *haystack, const char *needle, size_t haystack_sz);
-
-int url_parse_host(const char *url, char *host, size_t len);
-int url_parse_file(const char *url, char *file, size_t len);
-int socket_send(const struct download_client *client, size_t len, int timeout);
 
 int http_get_request_send(struct download_client *client)
 {
