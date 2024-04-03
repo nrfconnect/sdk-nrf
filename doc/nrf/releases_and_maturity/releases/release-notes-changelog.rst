@@ -297,7 +297,34 @@ Networking samples
 NFC samples
 -----------
 
-|no_changes_yet_note|
+* :ref:`record_launch_app` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`record_text` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`nfc_shell` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`nrf-nfc-system-off-sample` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
+* :ref:`nfc_tnep_tag` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`writable_ndef_msg` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 nRF5340 samples
 ---------------
