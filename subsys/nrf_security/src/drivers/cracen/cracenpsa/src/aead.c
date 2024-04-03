@@ -391,6 +391,12 @@ static psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operati
 			memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes,
 			       input, input_length);
 			operation->unprocessed_input_bytes += input_length;
+			/* The output_length can be NULL when we process the additional data because
+			 * the value is not needed by any of the supported algorithms.
+			 */
+			if (output_length != NULL) {
+				*output_length = 0;
+			}
 			return PSA_SUCCESS;
 		}
 
