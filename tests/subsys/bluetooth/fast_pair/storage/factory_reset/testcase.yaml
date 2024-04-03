@@ -6,11 +6,13 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
+      - nrf54l15pdk_nrf54l15_cpuapp
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
+      - nrf54l15pdk_nrf54l15_cpuapp
   fast_pair.storage.factory_reset.no_reboot:
     platform_allow:
       - native_posix
