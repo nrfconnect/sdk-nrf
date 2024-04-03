@@ -45,9 +45,11 @@ LOG_MODULE_REGISTER(nrf_provisioning_coap, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 
 #define RETRY_AMOUNT 10
 static const char *resp_path = "p/rsp";
+static const char *dtls_suspend = "/.dtls/suspend";
 
 static struct addrinfo *address;
 static struct coap_client client;
+static bool socket_keep_open;
 
 static K_SEM_DEFINE(coap_response, 0, 1);
 
@@ -140,6 +142,18 @@ static int dtls_setup(int fd)
 	if (err) {
 		LOG_ERR("Failed to enable connection ID, err %d", errno);
 		return err;
+	}
+
+	if (IS_ENABLED(CONFIG_SOC_NRF9120)) {
+		uint32_t val = 1;
+
+		err = zsock_setsockopt(fd, SOL_SOCKET, SO_KEEPOPEN, &val, sizeof(val));
+		if (err) {
+			LOG_ERR("Failed to set socket option SO_KEEPOPEN, err %d", errno);
+			socket_keep_open = false;
+			return err;
+		}
+		socket_keep_open = true;
 	}
 
 	return 0;
@@ -286,13 +300,13 @@ static void coap_callback(int16_t code, size_t offset, const uint8_t *payload, s
 
 static int send_coap_request(struct coap_client *client, uint8_t method, const char *path,
 			     const uint8_t *payload, size_t len,
-			     struct nrf_provisioning_coap_context *const coap_ctx)
+			     struct nrf_provisioning_coap_context *const coap_ctx, bool confirmable)
 {
 	int retries = 0;
 
 	struct coap_client_request client_request = {
 		.method = method,
-		.confirmable = true,
+		.confirmable = confirmable,
 		.path = path,
 		.fmt = COAP_CONTENT_FORMAT_APP_CBOR,
 		.payload = NULL,
@@ -425,7 +439,7 @@ static int authenticate(struct coap_client *client, const char *auth_token,
 
 	LOG_DBG("Path: %s", path);
 	ret = send_coap_request(client, COAP_METHOD_POST, path, auth_token, strlen(auth_token),
-				coap_ctx);
+				coap_ctx, true);
 	if (ret < 0) {
 		LOG_ERR("Failed to send CoAP request");
 		return ret;
@@ -471,7 +485,7 @@ static int request_commands(struct coap_client *client,
 	}
 
 	LOG_DBG("Path: %s", cmd);
-	ret = send_coap_request(client, COAP_METHOD_GET, cmd, NULL, 0, coap_ctx);
+	ret = send_coap_request(client, COAP_METHOD_GET, cmd, NULL, 0, coap_ctx, true);
 	if (ret < 0) {
 		LOG_ERR("Failed to send CoAP request");
 		return ret;
@@ -489,7 +503,7 @@ static int send_response(struct coap_client *client,
 	LOG_DBG("Response size %d", cdc_ctx->opkt_sz);
 	LOG_HEXDUMP_DBG(cdc_ctx->opkt, cdc_ctx->opkt_sz, "Response to server");
 	ret = send_coap_request(client, COAP_METHOD_POST, resp_path, cdc_ctx->opkt,
-				cdc_ctx->opkt_sz, coap_ctx);
+				cdc_ctx->opkt_sz, coap_ctx, true);
 	if (ret < 0) {
 		LOG_ERR("Failed to send CoAP request");
 		return ret;
@@ -509,6 +523,25 @@ static int send_response(struct coap_client *client,
 	}
 
 	return 0;
+}
+
+static void suspend_dtls_session(struct coap_client *client,
+				struct nrf_provisioning_coap_context *const coap_ctx)
+{
+	int ret;
+
+	/* Send a request to suspend DTLS session */
+	ret = send_coap_request(client, COAP_METHOD_POST, dtls_suspend, NULL, 0, coap_ctx, false);
+	if (ret < 0) {
+		LOG_WRN("Failed to send CoAP request");
+		socket_keep_open = false;
+	}
+
+	LOG_DBG("Response code %d", coap_ctx->code);
+	if (coap_ctx->code == COAP_RESPONSE_CODE_NOT_FOUND) {
+		LOG_WRN("DTLS session suspension not supported");
+		socket_keep_open = false;
+	}
 }
 
 int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_ctx)
@@ -555,7 +588,9 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 		}
 
 		LOG_DBG("Response code %d", coap_ctx->code);
-		socket_close(&coap_ctx->connect_socket);
+		if (!socket_keep_open) {
+			socket_close(&coap_ctx->connect_socket);
+		}
 
 		if (coap_ctx->code == COAP_RESPONSE_CODE_CONTENT) {
 			if (!coap_ctx->response_len) {
@@ -571,6 +606,11 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 			cdc_ctx.opkt = tx_buf.coap;
 			cdc_ctx.opkt_sz = sizeof(tx_buf);
 
+			if (socket_keep_open) {
+				LOG_DBG("Requesting DTLS session suspension");
+				suspend_dtls_session(&client, coap_ctx);
+			}
+
 			LOG_INF("Processing commands");
 			ret = nrf_provisioning_codec_process_commands();
 			if (ret < 0) {
@@ -582,15 +622,17 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 				finished = true;
 			}
 
-			ret = socket_connect(&coap_ctx->connect_socket);
-			if (ret < 0) {
-				LOG_ERR("Failed to connect socket, error: %d", ret);
-				break;
-			}
+			if (!socket_keep_open) {
+				ret = socket_connect(&coap_ctx->connect_socket);
+				if (ret < 0) {
+					LOG_ERR("Failed to connect socket, error: %d", ret);
+					break;
+				}
 
-			ret = authenticate(&client, auth_token, coap_ctx);
-			if (ret < 0) {
-				break;
+				ret = authenticate(&client, auth_token, coap_ctx);
+				if (ret < 0) {
+					break;
+				}
 			}
 
 			LOG_INF("Sending response to server");
