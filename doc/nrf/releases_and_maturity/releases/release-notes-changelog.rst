@@ -102,7 +102,7 @@ Thread
 Zigbee
 ------
 
-|no_changes_yet_note|
+* Fixed an issue with Zigbee FOTA updates failing after a previous attempt was interrupted.
 
 Gazell
 ------
