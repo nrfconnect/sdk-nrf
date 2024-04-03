@@ -20,3 +20,5 @@ zephyr_library_sources_ifdef(
 	CONFIG_DOWNLOAD_CLIENT_SHELL
 	src/shell.c
 )
+
+zephyr_include_directories(./include)
