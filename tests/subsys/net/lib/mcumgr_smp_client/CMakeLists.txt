@@ -17,10 +17,12 @@ target_sources(app
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/mcumgr_smp_client/src/mcumgr_smp_client.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/fota_download/src/util/fota_download_util.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/fota_download/src/util/fota_download_smp.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/src/parse.c
   )
 
 set(includes
 "src/"
+${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/include
 )
 
 target_include_directories(app
