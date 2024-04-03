@@ -13,6 +13,7 @@
     - sample.matter.thermostat.release
     - sample.matter.window_cover.release
     - sample.matter.thermostat.ext_temp
+    - sample.matter.light_bulb.memory_profiling
   platforms:
     - nrf52840dk_nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -30,6 +31,7 @@
     - sample.matter.thermostat.release
     - sample.matter.window_cover.release
     - sample.matter.thermostat.ext_temp
+    - sample.matter.light_bulb.memory_profiling
   platforms:
     - nrf5340dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -50,6 +52,8 @@
     - sample.matter.thermostat.release
     - applications.matter_bridge.release
     - sample.matter.thermostat.ext_temp
+    - applications.matter_bridge.memory_profiling
+    - sample.matter.light_bulb.memory_profiling
   platforms:
     - nrf7002dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
