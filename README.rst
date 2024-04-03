@@ -6,14 +6,13 @@ nRF Connect SDK: sdk-nrf
    :depth: 2
 
 This repository contains the core of nRF Connect SDK, including subsystems,
-libraries, samples and applications.
+libraries, samples, and applications.
 It is also the SDK's west manifest repository, containing the nRF Connect SDK
 manifest (west.yml).
 
 Documentation
 *************
 
-Official documentation at:
+Official latest documentation at https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html
 
-* Latest: http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest
-* All versions: http://developer.nordicsemi.com/nRF_Connect_SDK/doc/
+For earlier versions, open the latest version and use the drop-down under the title header.
