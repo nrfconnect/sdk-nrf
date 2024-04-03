@@ -251,6 +251,10 @@ Bluetooth Mesh samples
 
   * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
 
+* :ref:`ble_mesh_dfu_target` sample:
+
+  * Added a note on how to compile the sample with new Composition Data.
+
 Cellular samples
 ----------------
 

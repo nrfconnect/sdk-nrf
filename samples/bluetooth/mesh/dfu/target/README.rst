@@ -167,6 +167,9 @@ Only 2 options are supported by this sample:
    In this case, the device unprovisions itself before programming the new firmware.
    The unprovisioning happens before the device reboots, so if the MCUboot fails to validate the new firmware, the device will boot unprovisioned anyway.
 
+.. note::
+   To create the new Composition Data and see the :c:enum:`BT_MESH_DFU_EFFECT_UNPROV` effect, you can, for example, turn off the Friend feature in the :file:`prj.conf` file by setting the :kconfig:option:`CONFIG_BT_MESH_FRIEND` option to ``n``.
+
 In this sample, the device flash is split into partitions using the :ref:`partition_manager`.
 When the DFU transfer starts, the sample stores the new firmware at the MCUboot secondary slot using the :ref:`zephyr:flash_map_api`.
 
