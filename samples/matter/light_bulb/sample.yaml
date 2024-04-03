@@ -9,7 +9,9 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf7002dk_nrf5340_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp
   sample.matter.light_bulb.ffs:
     build_only: true
     extra_args: >
@@ -19,7 +21,9 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf7002dk_nrf5340_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp
   sample.matter.light_bulb.debug.nrf21540ek:
     build_only: true
     extra_args: SHIELD=nrf21540ek
@@ -37,10 +41,12 @@ tests:
     build_only: true
     extra_args: CONFIG_CHIP_PERSISTENT_SUBSCRIPTIONS=y
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf7002dk_nrf5340_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp
   sample.matter.light_bulb.aws:
     build_only: true
     extra_args: EXTRA_CONF_FILE="overlay-aws-iot-integration.conf"

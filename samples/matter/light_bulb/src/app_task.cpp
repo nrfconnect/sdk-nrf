@@ -12,7 +12,10 @@
 
 #include "app/matter_init.h"
 #include "app/task_executor.h"
+
+#if defined(CONFIG_PWM)
 #include "pwm/pwm_device.h"
+#endif
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
@@ -47,7 +50,9 @@ Identify sIdentify = { kLightEndpointId, AppTask::IdentifyStartHandler, AppTask:
 
 bool sIsTriggerEffectActive = false;
 
+#if defined(CONFIG_PWM)
 const struct pwm_dt_spec sLightPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
+#endif
 
 // Define a custom attribute persister which makes actual write of the CurrentLevel attribute value
 // to the non-volatile storage only when it has remained constant for 5 seconds. This is to reduce
@@ -73,7 +78,10 @@ void AppTask::IdentifyStopHandler(Identify *)
 {
 	Nrf::PostTask([] {
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
+
+#if defined(CONFIG_PWM)
 		Instance().mPWMDevice.ApplyLevel();
+#endif
 	});
 }
 
@@ -84,7 +92,10 @@ void AppTask::TriggerEffectTimerTimeoutCallback(k_timer *timer)
 	sIsTriggerEffectActive = false;
 
 	Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
+
+#if defined(CONFIG_PWM)
 	Instance().mPWMDevice.ApplyLevel();
+#endif
 }
 
 void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
@@ -103,7 +114,9 @@ void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
 		k_timer_stop(&sTriggerEffectTimer);
 		k_timer_start(&sTriggerEffectTimer, K_MSEC(kTriggerEffectTimeout), K_NO_WAIT);
 
+#if defined(CONFIG_PWM)
 		Instance().mPWMDevice.SuppressOutput();
+#endif
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms);
 
 		break;
@@ -119,7 +132,10 @@ void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
 			k_timer_stop(&sTriggerEffectTimer);
 
 			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
+
+#if defined(CONFIG_PWM)
 			Instance().mPWMDevice.ApplyLevel();
+#endif
 		}
 		break;
 	default:
@@ -130,12 +146,10 @@ void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
 
 void AppTask::LightingActionEventHandler(const LightingEvent &event)
 {
+#if defined(CONFIG_PWM)
 	Nrf::PWMDevice::Action_t action = Nrf::PWMDevice::INVALID_ACTION;
 	int32_t actor = 0;
-	if (event.Actor == LightingActor::Remote) {
-		action = static_cast<Nrf::PWMDevice::Action_t>(event.Action);
-		actor = static_cast<int32_t>(event.Actor);
-	} else if (event.Actor == LightingActor::Button) {
+	if (event.Actor == LightingActor::Button) {
 		action = Instance().mPWMDevice.IsTurnedOn() ? Nrf::PWMDevice::OFF_ACTION : Nrf::PWMDevice::ON_ACTION;
 		actor = static_cast<int32_t>(event.Actor);
 	}
@@ -143,6 +157,9 @@ void AppTask::LightingActionEventHandler(const LightingEvent &event)
 	if (action == Nrf::PWMDevice::INVALID_ACTION || !Instance().mPWMDevice.InitiateAction(action, actor, NULL)) {
 		LOG_INF("An action could not be initiated.");
 	}
+#else
+	Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(!Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).GetState());
+#endif
 }
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
@@ -186,6 +203,7 @@ bool AppTask::AWSIntegrationCallback(struct aws_iot_integration_cb_data *data)
 }
 #endif /* CONFIG_AWS_IOT_INTEGRATION */
 
+#if defined(CONFIG_PWM)
 void AppTask::ActionInitiated(Nrf::PWMDevice::Action_t action, int32_t actor)
 {
 	if (action == Nrf::PWMDevice::ON_ACTION) {
@@ -211,20 +229,34 @@ void AppTask::ActionCompleted(Nrf::PWMDevice::Action_t action, int32_t actor)
 		Instance().UpdateClusterState();
 	}
 }
+#endif /* CONFIG_PWM */
 
 void AppTask::UpdateClusterState()
 {
 	SystemLayer().ScheduleLambda([this] {
+#if defined(CONFIG_PWM)
 		/* write the new on/off value */
 		EmberAfStatus status =
 			Clusters::OnOff::Attributes::OnOff::Set(kLightEndpointId, mPWMDevice.IsTurnedOn());
-
+#else
+		EmberAfStatus status = Clusters::OnOff::Attributes::OnOff::Set(
+			kLightEndpointId, Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).GetState());
+#endif
 		if (status != EMBER_ZCL_STATUS_SUCCESS) {
 			LOG_ERR("Updating on/off cluster failed: %x", status);
 		}
 
+#if defined(CONFIG_PWM)
 		/* write the current level */
 		status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, mPWMDevice.GetLevel());
+#else
+		/* write the current level */
+		if (Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).GetState()) {
+			status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, 100);
+		} else {
+			status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, 0);
+		}
+#endif
 
 		if (status != EMBER_ZCL_STATUS_SUCCESS) {
 			LOG_ERR("Updating level cluster failed: %x", status);
@@ -268,11 +300,14 @@ CHIP_ERROR AppTask::Init()
 	uint8_t maxLightLevel = kDefaultMaxLevel;
 	Clusters::LevelControl::Attributes::MaxLevel::Get(kLightEndpointId, &maxLightLevel);
 
+#if defined(CONFIG_PWM)
 	ret = mPWMDevice.Init(&sLightPwmDevice, minLightLevel, maxLightLevel, maxLightLevel);
 	if (ret != 0) {
 		return chip::System::MapErrorZephyr(ret);
 	}
+
 	mPWMDevice.SetCallbacks(ActionInitiated, ActionCompleted);
+#endif
 
 	return Nrf::Matter::StartServer();
 }
