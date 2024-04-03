@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Raw Tx Packet sample"
+
+config PROMISCUOUS_SAMPLE_CONNECTION_TIMEOUT_S
+	int "Wi-Fi connection timeout in seconds"
+	default 30
+
+config PROMISCUOUS_SAMPLE_DHCP_TIMEOUT_S
+	int "DHCP timeout in seconds"
+	default 20
+
+endmenu
