@@ -874,6 +874,14 @@ Zigbee
 
 The issues in this section are related to the :ref:`ug_zigbee` protocol.
 
+.. rst-class:: v2-6-0 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+NCSIDB-1213: Subsequent Zigbee FOTA updates fail
+  Once a Zigbee FOTA update is interrupted for any reason, the subsequent updates will fail until a device reboot.
+  This is because :ref:`lib_dfu_target` resources are not freed.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``cef8a4b0e5afaed08627bcccbe2ac7b4b600978f``).
+
 .. rst-class:: v2-5-2 v2-5-1 v2-5-0
 
 KRKNWK-18572: Bus fault when resetting the Zigbee light switch sample
