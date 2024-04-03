@@ -24,6 +24,10 @@ add_library(download_client STATIC
         ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/src/download_client.c
         ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/src/parse.c
         )
+target_include_directories(download_client
+        PRIVATE
+        ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/include
+        )
 
 target_link_libraries(download_client PUBLIC zephyr_interface)
 target_link_libraries(app PRIVATE download_client)

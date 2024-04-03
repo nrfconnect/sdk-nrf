@@ -828,10 +828,9 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 		LOG_INF("FOTA download failed, target %d", dfu_image_type);
 		target_image_type_store(ongoing_obj_id, dfu_image_type);
 		switch (evt->cause) {
-		/* No error, used when event ID is not FOTA_DOWNLOAD_EVT_ERROR. */
-		case FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR:
-			set_result(ongoing_obj_id, RESULT_CONNECTION_LOST);
-			break;
+		/* Connecting to the FOTA server failed. */
+		case FOTA_DOWNLOAD_ERROR_CAUSE_CONNECT_FAILED:
+			/* FALLTHROUGH */
 		/* Downloading the update failed. The download may be retried. */
 		case FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED:
 			set_result(ongoing_obj_id, RESULT_CONNECTION_LOST);
@@ -894,6 +893,9 @@ static void lwm2m_start_download_image(uint8_t *data, uint16_t obj_instance)
 		break;
 	case -EINVAL:
 		set_result(obj_instance, RESULT_INVALID_URI);
+		break;
+	case -EPROTONOSUPPORT:
+		set_result(obj_instance, RESULT_UNSUP_PROTO);
 		break;
 	case -EBUSY:
 		/* Failed to init MCUBoot or download client */

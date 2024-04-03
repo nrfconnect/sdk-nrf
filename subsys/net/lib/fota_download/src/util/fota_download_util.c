@@ -32,6 +32,8 @@
 #include "fota_download_smp.h"
 #endif
 
+#include "download_client_internal.h"
+
 LOG_MODULE_REGISTER(fota_download_util, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
 /**
@@ -120,7 +122,7 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 static int fota_download_client_url_parse(const char *uri,
 					  struct fota_download_client_url_data *parsed_uri)
 {
-	int len;
+	int len, err, proto, type;
 	char *e, *s;
 
 	len = strlen(uri);
@@ -133,6 +135,12 @@ static int fota_download_client_url_parse(const char *uri,
 		return -EINVAL;
 	}
 	s += strlen("://");
+
+	/* Verify that download client knows the protocol */
+	err = url_parse_proto(uri, &proto, &type);
+	if (err) {
+		return err;
+	}
 
 	/* Find the end of host name, which is start of path */
 	e = strchr(s, '/');
@@ -238,8 +246,9 @@ int fota_download_util_download_start(const char *download_uri,
 		return -EBUSY;
 	}
 
-	if (download_url_parse(download_uri, sec_tag)) {
-		return -EINVAL;
+	ret = download_url_parse(download_uri, sec_tag);
+	if (ret) {
+		return ret;
 	}
 
 	LOG_INF("Download Path %s host %s", fota_path, fota_host);
