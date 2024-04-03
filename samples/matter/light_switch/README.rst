@@ -43,7 +43,7 @@ IPv6 network support
 
 The development kits for this sample offer the following IPv6 network support for Matter:
 
-* Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, and ``nrf21540dk_nrf52840``.
+* Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, ``nrf21540dk_nrf52840``, and ``nrf54l15pdk_nrf54l15``.
 * Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached or for ``nrf7002dk_nrf5340_cpuapp``.
 
 Overview

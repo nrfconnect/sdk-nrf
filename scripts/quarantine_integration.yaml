@@ -51,6 +51,18 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
+    - sample.matter.light_bulb.persistent_subscriptions
+    - sample.matter.light_switch.persistent_subscriptions
+    - sample.matter.light_bulb.release
+    - sample.matter.light_switch.release
+    - sample.matter.template.mgrt_dac
+    - sample.matter.thermostat.debug
+    - sample.matter.thermostat.release
+  platforms:
+    - nrf54l15pdk_nrf54l15_cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
     - sample.nrf7002.iot_devices
     - sample.nrf7002.high_performance
     - sample.nrf7002.memory_optimized
