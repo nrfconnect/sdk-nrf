@@ -23,7 +23,7 @@ The implementation in the |NCS| follows these requirements.
 The Fast Pair service also contains additional GATT characteristics under the following conditions:
 
 * The Additional Data GATT characteristic is enabled when an extension requires it.
-  Currently, only the Personalized Name extension (:kconfig:option:`CONFIG_BT_FAST_PAIR_EXT_PN`) requires this characteristic.
+  Currently, only the Personalized Name extension (:kconfig:option:`CONFIG_BT_FAST_PAIR_PN`) requires this characteristic.
 
 Configuration
 *************

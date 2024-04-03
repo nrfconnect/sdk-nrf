@@ -177,7 +177,7 @@ Apart from the callback registration and enabling the Fast Pair subsystem, no ad
 Personalized Name extension
 ===========================
 
-To support the Personalized Name extension, ensure that the :kconfig:option:`CONFIG_BT_FAST_PAIR_EXT_PN` Kconfig option is enabled in your project.
+To support the Personalized Name extension, ensure that the :kconfig:option:`CONFIG_BT_FAST_PAIR_PN` Kconfig option is enabled in your project.
 This extension is enabled by default.
 
 .. rst-class:: numbered-step
