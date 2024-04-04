@@ -436,14 +436,19 @@ static psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, c
 	size_t bits = psa_get_key_bits(attributes);
 	psa_key_type_t type = psa_get_key_type(attributes);
 
+	/* Check for invalid key bits*/
+	if (bits != 0 && (bits != 256)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	/* We only support 256 bit keys and they PSA APIs does not enforce setting the key bits. */
+	bits = 256;
+
 	switch (type) {
 	case PSA_KEY_TYPE_SPAKE2P_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
 		/* These keys contains w0 and w1. */
 		if (data_length != CRACEN_P256_KEY_SIZE * 2) {
 			return PSA_ERROR_NOT_SUPPORTED;
-		}
-		if (bits != 0 && (bits != 256)) {
-			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		/* Do not allow w0 to be 0. */
 		if (constant_memcmp_is_zero(data, CRACEN_P256_KEY_SIZE)) {
@@ -460,9 +465,6 @@ static psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, c
 		/* These keys contains w0 and L. L is an uncompressed point. */
 		if (data_length != CRACEN_P256_KEY_SIZE + CRACEN_P256_POINT_SIZE + 1) {
 			return PSA_ERROR_NOT_SUPPORTED;
-		}
-		if (bits != 0 && (bits != 256)) {
-			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 
 		/* Do not allow w0 to be 0. */
