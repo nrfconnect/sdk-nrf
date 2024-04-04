@@ -235,6 +235,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 			 const struct bt_audio_codec_cfg *codec, struct bt_bap_stream **stream,
 			 struct bt_audio_codec_qos_pref *const pref, struct bt_bap_ascs_rsp *rsp)
 {
+	int ret;
 	LOG_DBG("LC3 config callback");
 
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
@@ -243,21 +244,15 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 		if (!audio_stream->conn) {
 			LOG_DBG("ASE Codec Config stream %p", (void *)audio_stream);
 
-			int ret;
-			uint32_t octets_per_sdu;
-
-			ret = le_audio_octets_per_frame_get(codec, &octets_per_sdu);
-			if (ret) {
-				LOG_ERR("Error retrieving octets frame:, %d", ret);
-				return ret;
+			ret = le_audio_bitrate_check(codec);
+			if (!ret) {
+				LOG_WRN("Bitrate check failed");
+				return -EINVAL;
 			}
 
-			if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
-				LOG_ERR("Too high bitrate");
-				return -EINVAL;
-			} else if (octets_per_sdu <
-				   LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN)) {
-				LOG_ERR("Too low bitrate");
+			ret = le_audio_freq_check(codec);
+			if (!ret) {
+				LOG_WRN("Sample rate not supported");
 				return -EINVAL;
 			}
 
