@@ -6,3 +6,9 @@
 
 config UNITY
 	bool "Use Unity test framework"
+
+config UNITY_CFG_YAML_TEMPLATE_FILE
+	string "Unity config template file"
+	default "tests/unity/unity_cfg.yaml.template"
+	help
+	  Template file location. Location is relative to the NCS root path.

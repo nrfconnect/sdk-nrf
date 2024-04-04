@@ -11,12 +11,12 @@
 # exclude_word_list: holds list of words that should be placed in strippables.
 # out_config_file:   return setting with path and name to generate config file
 macro(configure_unity_conf_file mock_name exclude_fn_list exclude_word_list out_config_file)
-  set(unity_config_template unity_cfg.yaml.template)
+  set(unity_config_template ${CONFIG_UNITY_CFG_YAML_TEMPLATE_FILE})
   set(unity_config_file_name unity_cfg.yaml)
   set(out_dir ${APPLICATION_BINARY_DIR}/mocks)
 
   if("${mock_name}" STREQUAL "")
-    configure_file(${ZEPHYR_NRF_MODULE_DIR}/tests/unity/${unity_config_template}
+    configure_file(${ZEPHYR_NRF_MODULE_DIR}/${unity_config_template}
                    ${out_dir}/${unity_config_file_name}
     )
     set(${out_config_file} ${out_dir}/${unity_config_file_name})
