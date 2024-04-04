@@ -85,12 +85,8 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define DRIFT_REGULATOR_DIV_FACTOR 2
 
 /* To allow BLE transmission and (host -> HCI -> controller) */
-#if defined(CONFIG_BT_LL_ACS_NRF53)
-#define JUST_IN_TIME_TARGET_DLY_US (CONFIG_AUDIO_FRAME_DURATION_US - 3000)
-#else /* !CONFIG_BT_LL_ACS_NRF53 */
 #define JUST_IN_TIME_TARGET_DLY_US 3000
-#endif /* !CONFIG_BT_LL_ACS_NRF53 */
-#define JUST_IN_TIME_BOUND_US 2500
+#define JUST_IN_TIME_BOUND_US	   2500
 
 /* How often to print under-run warning */
 #define UNDERRUN_LOG_INTERVAL_BLKS 5000
@@ -184,16 +180,6 @@ static size_t test_tone_size;
 static int32_t err_us_calculate(uint32_t sdu_ref_us, uint32_t frame_start_ts_us)
 {
 	bool err_neg = false;
-
-	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53) && IS_ENABLED(CONFIG_TRANSPORT_BIS)) {
-		/* To make the drift compensation work as expected
-		 * when using the LE Audio Controller Subsystem Link Layer
-		 * and BIS we must add CONFIG_AUDIO_FRAME_DURATION_US to
-		 * sdu_ref_us.
-		 * This is a temporary workaround.
-		 */
-		sdu_ref_us += CONFIG_AUDIO_FRAME_DURATION_US;
-	}
 
 	int64_t total_err = ((int64_t)sdu_ref_us - (int64_t)frame_start_ts_us);
 
@@ -807,12 +793,7 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	static int32_t print_count;
 	int64_t diff;
 
-	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
-		/* CONFIG_BT_LL_ACS_NRF53 custom implementation. */
-		diff = (int64_t)curr_ts_us - tx_sync_ts_us;
-	} else {
-		diff = (int64_t)tx_sync_ts_us - curr_ts_us;
-	}
+	diff = (int64_t)tx_sync_ts_us - curr_ts_us;
 
 	/*
 	 * The diff should always be positive. If diff is a large negative number, it is likely
@@ -829,15 +810,8 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
 	}
 
 	if (print_count % 100 == 0) {
-		if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
-			LOG_DBG("JIT diff: %lld us. Target: %u +/- %u",
-				CONFIG_AUDIO_FRAME_DURATION_US - diff,
-				CONFIG_AUDIO_FRAME_DURATION_US - JUST_IN_TIME_TARGET_DLY_US,
-				JUST_IN_TIME_BOUND_US);
-		} else {
-			LOG_DBG("JIT diff: %lld us. Target: %u +/- %u", diff,
-				JUST_IN_TIME_TARGET_DLY_US, JUST_IN_TIME_BOUND_US);
-		}
+		LOG_DBG("JIT diff: %lld us. Target: %u +/- %u", diff, JUST_IN_TIME_TARGET_DLY_US,
+			JUST_IN_TIME_BOUND_US);
 	}
 	print_count++;
 
@@ -1066,16 +1040,7 @@ int audio_datapath_init(void)
 	audio_i2s_init();
 	ctrl_blk.datapath_initialized = true;
 	ctrl_blk.drift_comp.enabled = true;
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) && (CONFIG_AUDIO_DEV == GATEWAY) &&
-	    IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
-		/* Disable presentation compensation feature for microphone return on gateway when
-		 * using Audio Controller Subsystem. Also, since there's only one stream output from
-		 * gateway for now, so no need to have presentation compensation.
-		 */
-		ctrl_blk.pres_comp.enabled = false;
-	} else {
-		ctrl_blk.pres_comp.enabled = true;
-	}
+	ctrl_blk.pres_comp.enabled = true;
 
 	ctrl_blk.pres_comp.pres_delay_us = CONFIG_BT_AUDIO_PRESENTATION_DELAY_US;
 

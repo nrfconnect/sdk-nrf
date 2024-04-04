@@ -69,7 +69,6 @@
   - "lib/data_fifo/**/*"
   - "lib/pcm_stream_channel_modifier/**/*"
   - "lib/tone/**/*"
-  - "lib/bin/bt_ll_acs_nrf53/**/*"
 
 "CI-iot-samples-test":
   - "include/modem/at_monitor.h"

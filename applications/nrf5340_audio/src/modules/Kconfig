@@ -14,7 +14,7 @@ config BUTTON_DEBOUNCE_MS
 
 config AUDIO_SYNC_TIMER_USES_RTC
 	bool
-	default !BT_LL_ACS_NRF53
+	default y
 	select NRFX_RTC0
 
 #----------------------------------------------------------------------------#
