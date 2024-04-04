@@ -14,11 +14,7 @@ set(SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/sd_card.c
 )
 
-if (CONFIG_AUDIO_SYNC_TIMER_USES_RTC)
-  list(APPEND SRCS ${CMAKE_CURRENT_SOURCE_DIR}/audio_sync_timer_rtc.c)
-else()
-  list(APPEND SRCS ${CMAKE_CURRENT_SOURCE_DIR}/audio_sync_timer.c)
-endif()
+list(APPEND SRCS ${CMAKE_CURRENT_SOURCE_DIR}/audio_sync_timer_rtc.c)
 
 if (CONFIG_SD_CARD_PLAYBACK)
   list(APPEND SRCS ${CMAKE_CURRENT_SOURCE_DIR}/sd_card_playback.c)

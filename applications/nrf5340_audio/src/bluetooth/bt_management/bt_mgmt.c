@@ -24,10 +24,6 @@
 #include "bt_mgmt_dfu_internal.h"
 #endif
 
-#if (CONFIG_BT_LL_ACS_NRF53)
-#include "ble_hci_vsc.h"
-#endif /* (CONFIG_BT_LL_ACS_NRF53) */
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt, CONFIG_BT_MGMT_LOG_LEVEL);
 
@@ -131,30 +127,6 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 			LOG_ERR("Failed to resume scanning: %d", ret);
 		}
 	}
-
-#if (CONFIG_BT_LL_ACS_NRF53)
-	enum ble_hci_vs_tx_power conn_tx_pwr;
-	uint16_t conn_handle;
-
-	ret = bt_hci_get_conn_handle(conn, &conn_handle);
-	if (ret) {
-		LOG_ERR("Unable to get conn handle");
-	} else {
-		if (IS_ENABLED(CONFIG_NRF_21540_ACTIVE)) {
-			conn_tx_pwr = CONFIG_NRF_21540_MAIN_DBM;
-		} else {
-			conn_tx_pwr = CONFIG_BLE_CONN_TX_POWER_DBM;
-		}
-
-		ret = ble_hci_vsc_conn_tx_pwr_set(conn_handle, conn_tx_pwr);
-		if (ret) {
-			LOG_ERR("Failed to set TX power for conn");
-		} else {
-			LOG_DBG("TX power set to %d dBm for connection %p", conn_tx_pwr,
-				(void *)conn);
-		}
-	}
-#endif /* (CONFIG_BT_LL_ACS_NRF53) */
 
 	msg.event = BT_MGMT_CONNECTED;
 	msg.conn = conn;

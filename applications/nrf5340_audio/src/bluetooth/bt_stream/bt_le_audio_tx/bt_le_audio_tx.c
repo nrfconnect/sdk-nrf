@@ -106,7 +106,7 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_bap
 
 	atomic_inc(&tx_info->iso_tx_pool_alloc);
 
-	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53) || ts_tx == 0) {
+	if (ts_tx == 0) {
 		ret = bt_bap_stream_send(bap_stream, buf, tx_info->iso_tx.seq_num);
 	} else {
 		ret = bt_bap_stream_send_ts(bap_stream, buf, tx_info->iso_tx.seq_num, ts_tx);
@@ -239,11 +239,6 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 	}
 
 	if (ts_common_acquired) {
-		/*TODO: Disabled for LL_ACS_NRF53 BIS due to timestamp issue */
-		if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53) && IS_ENABLED(CONFIG_TRANSPORT_BIS)) {
-			return 0;
-		}
-
 		struct sdu_ref_msg msg;
 
 		msg.tx_sync_ts_us = common_tx_sync_ts_us;

@@ -21,11 +21,6 @@ config B0N_MINIMAL
 
 if AUDIO_DFU = 1 || AUDIO_DFU = 2
 
-# Empty net core image is needed when DFU is enabled
-config NCS_SAMPLE_EMPTY_NET_CORE_CHILD_IMAGE
-	bool "Dummy Net core application"
-	default y if BT_LL_ACS_NRF53
-
 config AUDIO_DFU_ENABLE
 	bool
 	default y
