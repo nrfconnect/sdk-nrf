@@ -9,7 +9,7 @@
 from threading import Thread
 from os import system, path
 from typing import List
-from nrf5340_audio_dk_devices import DeviceConf, SelectFlags, AudioDevice, Controller
+from nrf5340_audio_dk_devices import DeviceConf, SelectFlags, AudioDevice
 
 MEM_ADDR_UICR_SNR = 0x00FF80F0
 MEM_ADDR_UICR_CH = 0x00FF80F4
@@ -36,14 +36,10 @@ def __populate_UICR(dev):
         return True
 
 
-def _program_cores(dev: DeviceConf, mcuboot_type) -> int:
+def _program_cores(dev: DeviceConf) -> int:
     if dev.core_net_programmed == SelectFlags.TBD:
         if not path.isfile(dev.hex_path_net):
-            if dev.controller == Controller.sdc:
-                print(
-                    "Controller: SDC. NET core hex not found. Built as APP core child image.")
-            if dev.controller == Controller.acs_nrf53:
-                print("Controller: acs_nrf53. NET core hex not found.")
+            print("NET core hex not found. Built as APP core child image.")
             return 1
 
         print(f"Programming net core on: {dev}")
@@ -72,12 +68,8 @@ def _program_cores(dev: DeviceConf, mcuboot_type) -> int:
             return 1
 
     if dev.core_net_programmed != SelectFlags.NOT or dev.core_app_programmed != SelectFlags.NOT:
-        if mcuboot_type == 'external':
-            print(f"Hard resetting {dev}")
-            cmd = f"nrfjprog -p --snr {dev.nrf5340_audio_dk_snr}"
-        else:
-            print(f"Resetting {dev}")
-            cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
+        print(f"Resetting {dev}")
+        cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
         ret_val = system(cmd)
         if ret_val != 0:
             return ret_val
@@ -99,7 +91,7 @@ def _recover(dev: DeviceConf):
         dev.core_app_programmed = SelectFlags.FAIL
 
 
-def __program_thread(dev: DeviceConf, mcuboot_type):
+def __program_thread(dev: DeviceConf):
     if dev.only_reboot == SelectFlags.TBD:
         print(f"Resetting {dev}")
         cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
@@ -107,13 +99,13 @@ def __program_thread(dev: DeviceConf, mcuboot_type):
         dev.only_reboot = SelectFlags.FAIL if ret_val else SelectFlags.DONE
         return
 
-    return_code = _program_cores(dev, mcuboot_type)
+    return_code = _program_cores(dev)
     if return_code != 0 and dev.recover_on_fail:
         _recover(dev)
-        _program_cores(dev, mcuboot_type)
+        _program_cores(dev)
 
 
-def program_threads_run(devices_list: List[DeviceConf], mcuboot_type, sequential: bool = False):
+def program_threads_run(devices_list: List[DeviceConf], sequential: bool = False):
     """Program devices in parallel"""
     threads = []
     # First program net cores if applicable
@@ -123,7 +115,7 @@ def program_threads_run(devices_list: List[DeviceConf], mcuboot_type, sequential
             dev.core_app_programmed = SelectFlags.NOT
             dev.core_net_programmed = SelectFlags.NOT
             continue
-        thread = Thread(target=__program_thread, args=(dev, mcuboot_type))
+        thread = Thread(target=__program_thread, args=(dev,))
         threads.append(thread)
         thread.start()
         if sequential:
