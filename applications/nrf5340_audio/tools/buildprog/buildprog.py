@@ -16,6 +16,7 @@ import json
 import subprocess
 import re
 import getpass
+from pathlib import Path
 from colorama import Fore, Style
 from prettytable import PrettyTable
 from nrf5340_audio_dk_devices import (
@@ -28,7 +29,6 @@ from nrf5340_audio_dk_devices import (
     Core,
 )
 from program import program_threads_run
-from pathlib import Path
 
 
 BUILDPROG_FOLDER = Path(__file__).resolve().parent
@@ -84,9 +84,11 @@ def __print_dev_conf(device_list):
     print(table)
 
 
-def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine, child_image, options):
+def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
+                    pristine, child_image, options):
     if core == Core.app:
-        build_cmd = f"west build {TARGET_CORE_APP_FOLDER} -b {TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME}"
+        build_cmd = (f"west build {TARGET_CORE_APP_FOLDER} "
+                     f"-b {TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME}")
         if device == AudioDevice.headset:
             device_flag = "-DCONFIG_AUDIO_DEV=1"
             dest_folder = TARGET_DEV_HEADSET_FOLDER
@@ -212,8 +214,9 @@ def __main():
             "This script builds and programs the nRF5340 "
             "Audio project on Windows and Linux"
         ),
-        epilog=("If there exists an environmental variable called \"AUDIO_KIT_SERIAL_NUMBERS_JSON\" which contains"
-                "the location of a json file, the program will use this file as a substitute for nrf5340_audio_dk_devices.json"),
+        epilog=("If there exists an environmental variable called \"AUDIO_KIT_SERIAL_NUMBERS_JSON\""
+                "which contains the location of a json file,"
+                "the program will use this file as a substitute for nrf5340_audio_dk_devices.json"),
         allow_abbrev=False
     )
     parser.add_argument(
@@ -268,8 +271,7 @@ def __main():
         action="store_true",
         dest="sequential_prog",
         default=False,
-        help="Run nrfjprog sequentially instead of in \
-                        parallel",
+        help="Run nrfjprog sequentially instead of in parallel",
     )
     parser.add_argument(
         "-f",
@@ -300,7 +302,8 @@ def __main():
         action="store_true",
         dest="user_bt_name",
         default=False,
-        help="Set to generate a user specific Bluetooth device name. Note that this will put the computer user name on air in clear text",
+        help="Set to generate a user specific Bluetooth device name.\
+              Note that this will put the computer user name on air in clear text",
     )
 
     options = parser.parse_args(args=sys.argv[1:])
