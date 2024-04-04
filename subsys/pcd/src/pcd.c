@@ -10,7 +10,9 @@
 #include <zephyr/logging/log.h>
 
 #ifdef CONFIG_PCD_NET
+#ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
 #include <fw_info_bare.h>
+#endif
 #include <zephyr/storage/stream_flash.h>
 #endif
 
