@@ -226,6 +226,10 @@ Bluetooth Mesh samples
 
   * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
 
+* :ref:`bluetooth_mesh_silvair_enocean` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
 Cellular samples
 ----------------
 
