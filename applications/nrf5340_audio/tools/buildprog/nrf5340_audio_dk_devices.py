@@ -15,7 +15,6 @@ from typing import List
 
 class SelectFlags(str, Enum):
     """Holds the available status flags"""
-
     NOT = "Not selected"
     TBD = "Selected"
     DONE = "Done"
@@ -23,24 +22,27 @@ class SelectFlags(str, Enum):
 
 
 class Core(str, Enum):
+    """SoC core"""
     app = "app"
     net = "network"
     both = "both"
 
 
 class AudioDevice(str, Enum):
+    """Audio device"""
     headset = "headset"
     gateway = "gateway"
     both = "both"
 
 
 class BuildType(str, Enum):
+    """Release or debug build"""
     release = "release"
     debug = "debug"
 
 
 class Channel(Enum):
-    # Value represents UICR channel
+    """Left or right Value represents UICR channel"""
     left = 0
     right = 1
     NA = auto()
@@ -84,10 +86,10 @@ class DeviceConf:
             self.core_net_programmed = SelectFlags.TBD
 
     def __str__(self):
-        str = f"{self.nrf5340_audio_dk_snr} {self.nrf5340_audio_dk_dev.name}"
+        result = f"{self.nrf5340_audio_dk_snr} {self.nrf5340_audio_dk_dev.name}"
         if self.nrf5340_audio_dk_dev == AudioDevice.headset:
-            str += f" {self.channel.name}"
-        return str
+            result += f" {self.channel.name}"
+        return result
 
 
 @dataclass
