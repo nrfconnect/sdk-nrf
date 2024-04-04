@@ -32,14 +32,14 @@
 #endif /* CONFIG_SAMPLE_RATE_CONVERTER */
 
 #define BT_BAP_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                            \
-	BT_BAP_LC3_PRESET(                                                                         \
-		BT_AUDIO_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE,                  \
-					  BT_AUDIO_CODEC_CFG_DURATION_10, _loc,                    \
-					  LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1, _stream_context), \
-		BT_AUDIO_CODEC_QOS_UNFRAMED(10000u, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),            \
-					    CONFIG_BT_AUDIO_RETRANSMITS,                           \
-					    CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,              \
-					    CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
+	BT_BAP_LC3_PRESET(BT_AUDIO_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE,        \
+						    BT_AUDIO_CODEC_CFG_DURATION_10, _loc,          \
+						    LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1,         \
+						    _stream_context),                              \
+			  BT_AUDIO_CODEC_QOS_UNFRAMED(10000u, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),  \
+						      CONFIG_BT_AUDIO_RETRANSMITS,                 \
+						      CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,    \
+						      CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
 
 /**
  * @brief Callback for receiving Bluetooth LE Audio data.
@@ -131,9 +131,9 @@ int le_audio_frame_blocks_per_sdu_get(const struct bt_audio_codec_cfg *codec,
 int le_audio_bitrate_get(const struct bt_audio_codec_cfg *const codec, uint32_t *bitrate);
 
 /**
- * @brief	Get the direction of the @p stream provided
+ * @brief	Get the direction of the @p stream provided.
  *
- * @param	stream	Stream to check direction for.
+ * @param[in]	stream	Stream to check direction for.
  *
  * @retval	BT_AUDIO_DIR_SINK	sink direction.
  * @retval	BT_AUDIO_DIR_SOURCE	source direction.
@@ -141,5 +141,25 @@ int le_audio_bitrate_get(const struct bt_audio_codec_cfg *const codec, uint32_t 
  *
  */
 int le_audio_stream_dir_get(struct bt_bap_stream const *const stream);
+
+/**
+ * @brief	Check that the bitrate is within the supported range.
+ *
+ * @param[in]	codec	The audio codec structure.
+ *
+ * retval	true	The bitrate is in the supported range.
+ * retval	false	Otherwise.
+ */
+bool le_audio_bitrate_check(const struct bt_audio_codec_cfg *codec);
+
+/**
+ * @brief	Check that the sample rate is supported.
+ *
+ * @param[in]	codec	The audio codec structure.
+ *
+ * retval	true	The sample rate is supported.
+ * retval	false	Otherwise.
+ */
+bool le_audio_freq_check(const struct bt_audio_codec_cfg *codec);
 
 #endif /* _LE_AUDIO_H_ */

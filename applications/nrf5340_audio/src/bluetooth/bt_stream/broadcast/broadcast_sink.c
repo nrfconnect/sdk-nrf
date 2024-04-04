@@ -174,28 +174,6 @@ static void get_codec_info(const struct bt_audio_codec_cfg *codec,
 	}
 }
 
-static bool bitrate_check(const struct bt_audio_codec_cfg *codec)
-{
-	int ret;
-	uint32_t octets_per_sdu;
-
-	ret = le_audio_octets_per_frame_get(codec, &octets_per_sdu);
-	if (ret) {
-		LOG_ERR("Error retrieving octets per frame: %d", ret);
-		return false;
-	}
-
-	if (octets_per_sdu < LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN)) {
-		LOG_WRN("Bitrate too low");
-		return false;
-	} else if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
-		LOG_WRN("Bitrate too high");
-		return false;
-	}
-
-	return true;
-}
-
 static void stream_started_cb(struct bt_bap_stream *stream)
 {
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING);
@@ -315,9 +293,15 @@ static bool base_subgroup_cb(const struct bt_bap_base_subgroup *subgroup, void *
 		return true;
 	}
 
-	ret = bitrate_check(&codec_cfg);
+	ret = le_audio_bitrate_check(&codec_cfg);
 	if (!ret) {
 		LOG_WRN("Bitrate check failed");
+		return true;
+	}
+
+	ret = le_audio_freq_check(&codec_cfg);
+	if (!ret) {
+		LOG_WRN("Sample rate not supported");
 		return true;
 	}
 
@@ -365,6 +349,16 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 	if (suitable_stream_found) {
 		/* Set the initial active stream based on the defined channel of the device */
 		channel_assignment_get((enum audio_channel *)&active_stream_index);
+
+		/** If the stream matching channel is not present, revert back to first BIS, e.g.
+		 *  mono stream but channel assignment is RIGHT
+		 */
+		if ((active_stream_index + 1) > sync_stream_cnt) {
+			LOG_WRN("BIS index: %d not found, reverting to first BIS",
+				(active_stream_index + 1));
+			active_stream_index = 0;
+		}
+
 		active_stream.stream = &audio_streams[active_stream_index];
 		active_stream.codec = &audio_codec_info[active_stream_index];
 		ret = bt_bap_base_get_pres_delay(base);

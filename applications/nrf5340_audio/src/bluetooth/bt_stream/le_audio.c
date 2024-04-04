@@ -140,3 +140,68 @@ int le_audio_stream_dir_get(struct bt_bap_stream const *const stream)
 
 	return ep_info.dir;
 }
+
+bool le_audio_bitrate_check(const struct bt_audio_codec_cfg *codec)
+{
+	int ret;
+	uint32_t octets_per_sdu;
+
+	ret = le_audio_octets_per_frame_get(codec, &octets_per_sdu);
+	if (ret) {
+		LOG_ERR("Error retrieving octets per frame: %d", ret);
+		return false;
+	}
+
+	if (octets_per_sdu < LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN)) {
+		LOG_WRN("Bitrate too low");
+		return false;
+	} else if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
+		LOG_WRN("Bitrate too high");
+		return false;
+	}
+
+	return true;
+}
+
+bool le_audio_freq_check(const struct bt_audio_codec_cfg *codec)
+{
+	int ret;
+	uint32_t frequency_hz;
+
+	ret = le_audio_freq_hz_get(codec, &frequency_hz);
+	if (ret) {
+		LOG_ERR("Error retrieving sampling rate: %d", ret);
+		return false;
+	}
+
+	switch (frequency_hz) {
+	case 8000U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_8KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 11025U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_11KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 16000U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_16KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 22050U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_22KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 24000U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_24KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 32000U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_32KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 44100U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_44KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 48000U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_48KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 88200U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_88KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 96000U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_96KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 176400U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_176KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 192000U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_192KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	case 384000U:
+		return (BT_AUDIO_CODEC_CAP_FREQ_384KHZ & (BT_AUDIO_CODEC_CAPABILIY_FREQ));
+	default:
+		return false;
+	}
+}
