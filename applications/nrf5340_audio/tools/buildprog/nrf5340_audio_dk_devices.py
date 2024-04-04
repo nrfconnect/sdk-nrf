@@ -46,11 +46,6 @@ class Channel(Enum):
     NA = auto()
 
 
-class Controller(str, Enum):
-    acs_nrf53 = "ACS_nRF53"
-    sdc = "SDC"
-
-
 @dataclass
 class DeviceConf:
     """This config is populated according to connected SEGGER serial numbers
@@ -66,7 +61,6 @@ class DeviceConf:
     cores: InitVar[List[Core]]
     devices: InitVar[List[AudioDevice]]
     _only_reboot: InitVar[SelectFlags]
-    controller: InitVar[List[Controller]]
     # Post init variables
     only_reboot: SelectFlags = field(init=False, default=SelectFlags.NOT)
     hex_path_app: Path = field(init=False, default=None)
@@ -77,11 +71,10 @@ class DeviceConf:
         init=False, default=SelectFlags.NOT)
 
     def __post_init__(
-        self, cores: List[Core], devices: List[AudioDevice], _only_reboot: SelectFlags, controller: Controller,
+        self, cores: List[Core], devices: List[AudioDevice], _only_reboot: SelectFlags,
     ):
         device_selected = self.nrf5340_audio_dk_dev in devices
         self.only_reboot = _only_reboot if device_selected else SelectFlags.NOT
-        self.controller = controller
         if self.only_reboot == SelectFlags.TBD:
             return
 
@@ -105,5 +98,4 @@ class BuildConf:
     device: AudioDevice
     build: BuildType
     pristine: bool
-    controller: Controller
     child_image: bool
