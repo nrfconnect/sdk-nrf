@@ -1,4 +1,6 @@
-/* Definitions for optional metrics. */
+/* Definitions for metrics. */
+
+MEMFAULT_METRICS_STRING_KEY_DEFINE(ncs_version, sizeof("00.00.00") - 1)
 
 #if defined(CONFIG_MODEM_INFO)
 #include <modem/modem_info.h>

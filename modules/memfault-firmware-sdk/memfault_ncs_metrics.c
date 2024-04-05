@@ -11,6 +11,7 @@
 #include <modem/lte_lc_trace.h>
 #include <memfault/metrics/metrics.h>
 #include <memfault/core/platform/overrides.h>
+#include <memfault/ports/ncs/version.h>
 
 #include <zephyr/logging/log.h>
 
@@ -120,6 +121,16 @@ void memfault_metrics_heartbeat_collect_data(void)
 
 void memfault_ncs_metrics_init(void)
 {
+	/* Always collect NCS version */
+	char version[sizeof("00.00.00")];
+
+	/* Ensure null-termination */
+	version[sizeof(version) - 1] = '\0';
+
+	sprintf(version, "%d.%d.%d", NCS_VERSION_MAJOR, NCS_VERSION_MINOR, NCS_PATCHLEVEL);
+	MEMFAULT_METRIC_SET_STRING(ncs_version, version);
+	LOG_DBG("NCS version: %s", version);
+
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_LTE_METRICS)) {
 		memfault_lte_metrics_init();
 	}
