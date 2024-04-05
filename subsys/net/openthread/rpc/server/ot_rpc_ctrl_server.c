@@ -81,6 +81,7 @@ static void ot_rpc_cmd_ip6_get_unicast_addrs(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
+	openthread_api_mutex_lock(openthread_get_default_context());
 	addr = otIp6GetUnicastAddresses(openthread_get_default_instance());
 	addr_count = 0;
 
@@ -109,6 +110,8 @@ static void ot_rpc_cmd_ip6_get_unicast_addrs(const struct nrf_rpc_group *group,
 		zcbor_list_end_encode(rsp_ctx.zs, 4);
 	}
 
+	openthread_api_mutex_unlock(openthread_get_default_context());
+
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -122,7 +125,9 @@ static void ot_state_changed_callback(otChangedFlags aFlags, void *aContext)
 	zcbor_uint32_put(ctx.zs, cb->context);
 	zcbor_uint32_put(ctx.zs, aFlags);
 
+	openthread_api_mutex_unlock(openthread_get_default_context());
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_STATE_CHANGED, &ctx, decode_void, NULL);
+	openthread_api_mutex_lock(openthread_get_default_context());
 }
 
 static void ot_rpc_cmd_set_state_changed_callback(const struct nrf_rpc_group *group,
@@ -151,8 +156,10 @@ static void ot_rpc_cmd_set_state_changed_callback(const struct nrf_rpc_group *gr
 		goto out;
 	}
 
+	openthread_api_mutex_lock(openthread_get_default_context());
 	error = otSetStateChangedCallback(openthread_get_default_instance(),
 					  ot_state_changed_callback, cb);
+	openthread_api_mutex_unlock(openthread_get_default_context());
 
 out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
@@ -184,8 +191,10 @@ static void ot_rpc_cmd_remove_state_changed_callback(const struct nrf_rpc_group 
 		goto out;
 	}
 
+	openthread_api_mutex_lock(openthread_get_default_context());
 	otRemoveStateChangeCallback(openthread_get_default_instance(), ot_state_changed_callback,
 				    cb);
+	openthread_api_mutex_unlock(openthread_get_default_context());
 
 out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
