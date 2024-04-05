@@ -39,6 +39,9 @@ typedef struct nrf_rpc_uart {
 	hdlc_state_t hdlc_state;
 	uint8_t frame_buffer[NRF_RPC_MAX_FRAME_SIZE];
 	size_t frame_len;
+
+	/* UART send semaphore */
+	struct k_sem uart_tx_sem;
 } nrf_rpc_uart;
 
 extern const struct nrf_rpc_tr_api nrf_rpc_uart_service_api;

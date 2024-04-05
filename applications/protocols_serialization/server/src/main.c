@@ -57,7 +57,7 @@ int main(void)
 		LOG_ERR("Init RPC Failed.");
 	}
 
-	printk("Welcome to RPC remote\r\n");
+	printk("Welcome to RPC server\r\n");
 
 	return 0;
 }
