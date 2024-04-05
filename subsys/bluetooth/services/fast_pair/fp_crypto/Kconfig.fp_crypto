@@ -33,6 +33,8 @@ config BT_FAST_PAIR_CRYPTO_MBEDTLS
 	select NORDIC_SECURITY_BACKEND
 	select MBEDTLS_ENABLE_HEAP
 	select ENTROPY_GENERATOR
+	depends on !SOC_SERIES_NRF54LX && !SOC_SERIES_NRF54HX
+	depends on !TRUSTED_EXECUTION_NONSECURE
 	help
 	  Select MbedTLS cryptographic backend for Fast Pair.
 
