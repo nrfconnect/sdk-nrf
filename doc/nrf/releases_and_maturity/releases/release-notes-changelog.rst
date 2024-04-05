@@ -335,14 +335,23 @@ Matter samples
   * The :file:`prj_no_dfu.conf` file.
   * Support for ``no_dfu`` build type for nRF5350 DK, nRF52840 DK and nRF7002 DK.
 
-* Added test event triggers to all Matter samples.
-  By utilizing the test event triggers, you can simulate various operational conditions and responses in your Matter device without the need for external setup.
+* Added:
 
-  To get started with using test event triggers in your Matter samples and to understand the capabilities of this feature, refer to the :ref:`ug_matter_test_event_triggers` page.
+  * Test event triggers to all Matter samples.
+    By utilizing the test event triggers, you can simulate various operational conditions and responses in your Matter device without the need for external setup.
+
+    To get started with using test event triggers in your Matter samples and to understand the capabilities of this feature, refer to the :ref:`ug_matter_test_event_triggers` page.
+
+  * Support for the nRF54L15 PDK with the ``nrf54l15pdk_nrf54l15_cpuapp`` build target to the following Matter samples:
+
+    * :ref:`matter_template_sample` sample.
+    * :ref:`matter_light_bulb_sample` sample.
+    * :ref:`matter_light_switch_sample` sample.
+    * :ref:`matter_thermostat_sample` sample.
 
 * :ref:`matter_lock_sample` sample:
 
-   * Added support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
+  * Added support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
 
 Multicore samples
 -----------------

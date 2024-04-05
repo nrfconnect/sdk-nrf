@@ -60,12 +60,16 @@ The HUK library is supported for both the nRF52840 and nRF5340 platforms, but fo
 
 * For the nRF5340 platform, the HUK is generated at first boot and stored in the Key Management Unit (KMU).
   No changes to the existing partition layout are needed for products in the field.
-* For the nRF52840 platform, AEAD keys are derived with a SHA-256 hash (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
+* For the nRF52840 and nRF54L15 platforms, AEAD keys are derived with a SHA-256 hash (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
   This approach is less secure than using the library for key derivation as it will only provide integrity of sensitive material.
   It is also possible to implement a custom AEAD keys generation method when the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM` Kconfig option is selected.
 
   Using the HUK library with nRF52840 SoC is possible, but it requires employing the :ref:`bootloader` that would generate the AEAD key at first boot and store it in the dedicated HUK partition that can be accessed only by the CryptoCell peripheral.
   Note that adding another partition in the FLASH layout implies breaking the firmware backward compatibility with already deployed devices.
+
+  .. note::
+     Using the HUK library with the nRF54L15 SoC is not possible yet.
+     This means that you need to use AEAD keys derived with a SHA-256 hash.
 
 You can find an overview of the Trusted Storage layer configuration supported for each |NCS| Matter-enabled platform in the :ref:`matter_platforms_security_support` section.
 
@@ -109,9 +113,21 @@ This is a reference configuration that can be modified in the production firmwar
      - Yes
      - ---
      - ---
+   * - nRF54L15 SoC
+     - Thread
+     - PSA
+     - CRACEN + Oberon [2]_
+     - Yes
+     - Trusted Storage backend
+     - SHA-256 hash
+
 .. [1] The CryptoCell backend is used in parallel with the Oberon backend.
        It is only used to implement Random Nuber Generation (RNG), and the AED keys derivation driver (only for Thread networking).
        For all other cryptographic operations, the Oberon backend is used.
+
+.. [2] When the CRACEN driver is used in parallel with the Oberon driver, you need to disable specific CRACEN cryptographic operations to use the Oberon ones.
+       This is because the CRACEN driver has priority when both are enabled.
+       See the :ref:`nrf_security_drivers` documentation for more information.
 
 Securing production devices
 ***************************

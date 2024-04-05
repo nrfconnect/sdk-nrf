@@ -56,17 +56,17 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf54l15pdk_nrf54l15_cpuapp
 
 The design differences between the supported SoCs are the following:
 
-* On the nRF5340 SoC, the network core runs both the Bluetooth LE Controller and the 802.15.4 IEEE Radio Driver.
+* On the nRF5340 and nRF54L15 SoCs, the network core runs both the Bluetooth LE Controller and the 802.15.4 IEEE Radio Driver.
 * On the nRF52840 SoC, all components are located on the application core.
 
 .. figure:: ../../thread/overview/images/thread_platform_design_multi.svg
-   :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52)
+   :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52, nRF54L)
 
-   Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series devices
+   Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series and nRF54L Series devices
 
 .. figure:: ../../thread/overview/images/thread_platform_design_nRF53_multi.svg
    :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF53)

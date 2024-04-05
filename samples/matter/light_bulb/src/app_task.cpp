@@ -281,12 +281,11 @@ CHIP_ERROR AppTask::Init()
 	 * state. */
 	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(Nrf::Board::DefaultMatterEventHandler, 0));
 
-	int ret{};
 #ifdef CONFIG_AWS_IOT_INTEGRATION
-	ret = aws_iot_integration_register_callback(AWSIntegrationCallback);
-	if (ret) {
+	int retAws = aws_iot_integration_register_callback(AWSIntegrationCallback);
+	if (retAws) {
 		LOG_ERR("aws_iot_integration_register_callback() failed");
-		return chip::System::MapErrorZephyr(ret);
+		return chip::System::MapErrorZephyr(retAws);
 	}
 #endif
 
@@ -301,7 +300,7 @@ CHIP_ERROR AppTask::Init()
 	Clusters::LevelControl::Attributes::MaxLevel::Get(kLightEndpointId, &maxLightLevel);
 
 #if defined(CONFIG_PWM)
-	ret = mPWMDevice.Init(&sLightPwmDevice, minLightLevel, maxLightLevel, maxLightLevel);
+	int ret = mPWMDevice.Init(&sLightPwmDevice, minLightLevel, maxLightLevel, maxLightLevel);
 	if (ret != 0) {
 		return chip::System::MapErrorZephyr(ret);
 	}
