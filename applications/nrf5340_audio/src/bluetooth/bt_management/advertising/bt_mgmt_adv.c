@@ -180,15 +180,10 @@ static int extended_adv_create(void)
 		return -ENXIO;
 	}
 
-	if (dir_adv_timed_out) {
-		/* If the directed adv has timed out it means we only need to update the adv data */
-		bt_le_adv_update_data(adv_local, adv_local_size, NULL, 0);
-	} else {
-		ret = bt_le_ext_adv_set_data(ext_adv, adv_local, adv_local_size, NULL, 0);
-		if (ret) {
-			LOG_ERR("Failed to set advertising data: %d", ret);
-			return ret;
-		}
+	ret = bt_le_ext_adv_set_data(ext_adv, adv_local, adv_local_size, NULL, 0);
+	if (ret) {
+		LOG_ERR("Failed to set advertising data: %d", ret);
+		return ret;
 	}
 
 	if (per_adv_local != NULL && IS_ENABLED(CONFIG_BT_PER_ADV)) {
