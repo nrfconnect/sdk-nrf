@@ -60,7 +60,9 @@ static void ot_rpc_cmd_cli_init(const struct nrf_rpc_group *group, struct nrf_rp
 
 	/* Initialize OT CLI */
 
+	openthread_api_mutex_lock(openthread_get_default_context());
 	otCliInit(openthread_get_default_instance(), ot_cli_output_callback, NULL /* aContext*/);
+	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	/* Encode and send the response */
 
@@ -96,7 +98,9 @@ static void ot_rpc_cmd_cli_input_line(const struct nrf_rpc_group *group,
 
 	/* Execute OT CLI command */
 
+	openthread_api_mutex_lock(openthread_get_default_context());
 	otCliInputLine(input_line_buffer);
+	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	/* Encode and send the response */
 
