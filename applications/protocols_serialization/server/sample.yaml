@@ -1,8 +1,8 @@
 sample:
-  name: nRF RPC application
-  description: Test nRF RPC application
+  name: Protocols serialization server application
+  description: Demonstrates serialization of BLE and OpenThread API using nRF RPC
 tests:
-  sample.remote.rpc_ble:
+  applications.protocols_serialization.server.rpc_ble:
     build_only: true
     platform_allow: >
       nrf52840dk_nrf52840
@@ -11,7 +11,7 @@ tests:
       SNIPPET="ble"
     integration_platforms:
       - nrf52840dk_nrf52840
-  sample.remote.rpc_ot:
+  applications.protocols_serialization.server.rpc_ot:
     build_only: true
     platform_allow: >
       nrf52840dk_nrf52840
@@ -20,7 +20,7 @@ tests:
       SNIPPET="openthread"
     integration_platforms:
       - nrf52840dk_nrf52840
-  sample.remote.rpc:
+  applications.protocols_serialization.server.rpc:
     build_only: true
     platform_allow: >
       nrf52840dk_nrf52840
