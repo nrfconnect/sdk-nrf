@@ -61,7 +61,7 @@ int main(void)
 	}
 #endif
 
-	printk("Welcome to RPC host\r\n");
+	printk("Welcome to RPC client\r\n");
 
 	return 0;
 }

@@ -115,6 +115,11 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 {
 	struct nrf_rpc_uart *uart_tr = transport->ctx;
 
+	if(uart_tr->transport != NULL) {
+		LOG_DBG("init not needed");
+		return 0;
+	}
+
 	uart_tr->transport = transport;
 
 	LOG_DBG("init called");
@@ -145,6 +150,8 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 		return 0;
 	}
 
+	k_sem_init(&uart_tr->uart_tx_sem, 1, 1);
+
 	k_work_init(&uart_tr->cb_work, work_handler);
 	ring_buf_init(&uart_tr->rx_ringbuf, sizeof(uart_tr->rx_buffer), uart_tr->rx_buffer);
 	uart_tr->hdlc_state = hdlc_state_unsync;
@@ -159,7 +166,7 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 	LOG_HEXDUMP_DBG(data, length, "Sending frame");
 	struct nrf_rpc_uart *uart_tr = transport->ctx;
 	// uint16_t crc;
-
+	k_sem_take(&uart_tr->uart_tx_sem, K_FOREVER);
 	// crc = crc16_ccitt(0xffff, data, length);
 	uart_poll_out(uart_tr->uart, hdlc_char_delimiter);
 
@@ -179,6 +186,7 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 	uart_poll_out(uart_tr->uart, hdlc_char_delimiter);
 
 	k_free((void*)data);
+	k_sem_give(&uart_tr->uart_tx_sem);
 
 	return 0;
 }
