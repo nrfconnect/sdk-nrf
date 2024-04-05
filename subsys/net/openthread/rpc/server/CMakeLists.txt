@@ -8,6 +8,7 @@ zephyr_library()
 
 zephyr_library_sources(
   ot_rpc_cli_server.c
+  ot_rpc_ctrl_server.c
   ot_rpc_if_server.c
 )
 
