@@ -160,7 +160,11 @@ Serial LTE modem
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * Removed the LE Audio controller for nRF5340 library.
+    The only supported controller for LE Audio is :ref:`ug_ble_controller_softdevice`.
+    This enables use of standard tools for building, configuring, and DFU.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
