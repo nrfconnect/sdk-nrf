@@ -442,6 +442,15 @@ int bt_content_ctrl_media_pause(struct bt_conn *conn)
 	return 0;
 }
 
+bool bt_content_ctlr_media_state_playing(void)
+{
+	if (media_player_state == BT_MCS_MEDIA_STATE_PLAYING) {
+		return true;
+	}
+
+	return false;
+}
+
 int bt_content_ctrl_media_conn_disconnected(struct bt_conn *conn)
 {
 	int idx = mcc_peer_index_get(conn);
@@ -465,9 +474,6 @@ int bt_content_ctrl_media_client_init(void)
 	}
 
 	static struct bt_mcc_cb mcc_cb;
-
-
-
 
 	mcc_cb.discover_mcs = mcc_discover_mcs_cb;
 #if defined(CONFIG_BT_MCC_SET_MEDIA_CONTROL_POINT)

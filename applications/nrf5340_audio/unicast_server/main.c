@@ -88,13 +88,13 @@ static void button_msg_sub_thread(void)
 				break;
 			}
 
-			if (strm_state == STATE_STREAMING) {
+			if (bt_content_ctlr_media_state_playing()) {
 				ret = bt_content_ctrl_stop(NULL);
 				if (ret) {
 					LOG_WRN("Could not stop: %d", ret);
 				}
 
-			} else if (strm_state == STATE_PAUSED) {
+			} else if (!bt_content_ctlr_media_state_playing()) {
 				ret = bt_content_ctrl_start(NULL);
 				if (ret) {
 					LOG_WRN("Could not start: %d", ret);
