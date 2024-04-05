@@ -230,6 +230,14 @@ Bluetooth Mesh samples
 
   * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
 
+* :ref:`bluetooth_mesh_light_dim` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
+* :ref:`bluetooth_mesh_light` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+
 Cellular samples
 ----------------
 
