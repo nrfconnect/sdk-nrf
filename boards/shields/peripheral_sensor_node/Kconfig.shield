@@ -1,0 +1,8 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SHIELD_PERIPHERAL_SENSOR_NODE
+	def_bool $(shields_list_contains,peripheral_sensor_node)
