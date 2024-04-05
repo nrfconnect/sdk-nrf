@@ -54,6 +54,14 @@ This means that this file is available when building the application until you c
       See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run menuconfig or guiconfig.
       To locate a specific configuration option, use the **Jump to** field.
 
+.. _configuration_temporary_change_single_build:
+
+Temporary Kconfig changes for a single build
+============================================
+
+You can also apply temporary Kconfig changes to a single build by :ref:`providing the value of a chosen Kconfig option as a CMake option <cmake_options>`.
+The Kconfig option configuration will be available until you clean the build directory pristinely.
+
 .. _configuration_permanent_change:
 
 Permanent Kconfig changes
@@ -61,9 +69,14 @@ Permanent Kconfig changes
 
 To configure your application and maintain the configuration after you clean the build directory pristinely, you need to specify the configuration in one of the permanent configuration files.
 In most of the cases, this means editing the default :file:`prj.conf` file of the application, but you can also use an extra Kconfig fragment file.
-In these files, you can specify different values for configuration options that are defined by a library or board, and you can add configuration options that are specific to your application.
 
-See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for information on how to change the configuration permanently.
+The Kconfig fragment files are configuration files used for building an application image with or without software support that is enabled by specific Kconfig options.
+In these files, you can specify different values for configuration options that are defined by a library or board, and you can add configuration options that are specific to your application.
+Examples include whether to add networking support or which drivers are needed by the application.
+Kconfig fragments are applied on top of the default :file:`prj.conf` file and use the :file:`.conf` file extension.
+When they are board-specific, they are placed in the :file:`boards` folder, are named :file:`<board>.conf`, and they are applied on top of the default Kconfig file for the specified board.
+
+See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for information on how to change the configuration permanently and :ref:`how the additional files are applied <zephyr:initial-conf>`.
 
 .. tip::
    Reconfiguring through menuconfig only changes the specific setting and the invisible options that are calculated from it.
