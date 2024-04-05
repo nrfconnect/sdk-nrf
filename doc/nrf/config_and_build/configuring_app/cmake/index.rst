@@ -44,6 +44,7 @@ See :ref:`zephyr:zephyr-app-cmakelists` in the Zephyr documentation for more inf
     This tutorial however differs from Zephyr and |NCS| project configurations, so use it only as reference.
 
 .. _cmake_options:
+.. _building_overlay_files:
 
 Providing CMake options
 ***********************
@@ -51,17 +52,75 @@ Providing CMake options
 You can provide additional options for building your application to the CMake process, which can be useful, for example, to switch between different build scenarios.
 These options are specified when CMake is run, thus not during the actual build, but when configuring the build.
 
-For information about what variables can be set and how to add these variables in your project, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+The |NCS| uses the same CMake build variables as Zephyr and they are compatible with both CMake and west.
+
+For the complete list of build variables in Zephyr and more information about them, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+The following table lists the most common ones used in the |NCS|:
+
+.. list-table:: Build system variables in the |NCS|
+   :header-rows: 1
+
+   * - Variable
+     - Purpose
+     - CMake argument to use
+   * - Name of the Kconfig option
+     - Set the given Kconfig option to a specific value :ref:`for a single build <configuration_temporary_change_single_build>`.
+     - ``-D<name_of_Kconfig_option>=<value>``
+   * - :makevar:`EXTRA_CONF_FILE`
+     - Provide additional :ref:`Kconfig fragment files <configuration_permanent_change>`.
+     - ``-DEXTRA_CONF_FILE=<file_name>.conf``
+   * - :makevar:`EXTRA_DTC_OVERLAY_FILE`
+     - Provide additional, custom :ref:`devicetree overlay files <configuring_devicetree>`.
+     - ``-DEXTRA_DTC_OVERLAY_FILE=<file_name>.overlay``
+   * - :makevar:`SHIELD`
+     - Select one of the supported :ref:`shields <shield_names_nrf>` for building the firmware.
+     - ``-DSHIELD=<shield_build_target>``
+   * - :makevar:`CONF_FILE`
+     - Select one of the available :ref:`build types <modifying_build_types>`, if the application or sample supports any.
+     - ``-DCONF_FILE=prj_<build_type_name>.conf``
+   * - ``-S`` (west) or :makevar:`SNIPPET` (CMake)
+     - | Select one of the :ref:`zephyr:snippets` to add to the application firmware during the build.
+       | The west argument ``-S`` is more commonly used.
+     - ``-S <name_of_snippet>`` or ``-DSNIPPET=<name_of_snippet``
+
+You can use these parameters in both the |nRFVSC| and the command line.
+
+The build variables are applied one after another, based on the order you provide them.
+This is how you can specify them:
 
 .. tabs::
 
    .. group-tab:: nRF Connect for VS Code
 
-      If you work with the |nRFVSC|, you can specify project-specific CMake options when you add the :term:`build configuration` for a new |NCS| project.
       See `How to build an application`_ in the |nRFVSC| documentation.
+      You can specify the additional configuration variables when `setting up a build configuration <How to build an application_>`_:
+
+      * :makevar:`CONF_FILE` - Select the build type in the :guilabel:`Configuration` menu.
+      * :makevar:`EXTRA_CONF_FILE` - Add the Kconfig fragment file in the :guilabel:`Kconfig fragments` menu.
+      * :makevar:`EXTRA_DTC_OVERLAY_FILE` - Add the devicetree overlays in the :guilabel:`Devicetree overlays` menu.
+      * Other variables - Provide CMake arguments in the :guilabel:`Extra CMake arguments` field, preceded by ``--``.
+
+      For example, to build the :ref:`location_sample` sample for the nRF9161 DK with the nRF7002 EK Wi-Fi support, select ``nrf9161dk_nrf9161_ns`` in the :guilabel:`Board` menu, :file:`overlay-nrf7002ek-wifi-scan-only.conf` in the :guilabel:`Kconfig fragments` menu, and provide ``-- -DSHIELD=nrf7002ek`` in the :guilabel:`Extra CMake arguments` field.
 
    .. group-tab:: Command line
 
-      If you work on the command line, pass the additional options to the ``west build`` command when :ref:`building`.
-      The options must be added after a ``--`` at the end of the command.
-      See :ref:`zephyr:west-building-cmake-args` for more information.
+      Pass the additional options to the ``west build`` command when :ref:`building`.
+      The CMake arguments must be added after a ``--`` at the end of the command.
+
+      For example, to build the :ref:`location_sample` sample for the nRF9161 DK with the nRF7002 EK Wi-Fi support, the command would look like follows:
+
+      .. code-block::
+
+         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+
+See :ref:`configuration_permanent_change` and Zephyr's :ref:`zephyr:west-building-cmake-args` for more information.
+
+.. _cmake_options_images:
+
+Providing CMake options for specific images
+===========================================
+
+You can prefix the build variable names with the image name if you want the variable to be applied only to a specific image: ``-D<prefix>_<build_variable>=<file_name>``.
+For example, ``-DEXTRA_CONF_FILE=external_crypto.conf`` will be applied to the default image for which you are building (most often, the application image), while ``-Dmcuboot_EXTRA_CONF_FILE=external_crypto.conf`` will be applied to the MCUboot image.
+
+This feature is not available for setting Kconfig options.

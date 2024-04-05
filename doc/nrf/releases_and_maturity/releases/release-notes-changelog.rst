@@ -593,6 +593,7 @@ Documentation
 
 * Updated:
 
+  * The :ref:`cmake_options` section on the :ref:`configuring_cmake` page with the list of most common CMake options and more information about how to provide them.
   * The table listing the :ref:`boards included in sdk-zephyr <app_boards_names_zephyr>` with the nRF54L15 PDK and nRF54H20 DK boards.
   * The :ref:`ug_wifi_overview` page by separating the information about Wi-Fi certification into its own :ref:`ug_wifi_certification` page under :ref:`ug_wifi`.
 
