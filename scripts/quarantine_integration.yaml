@@ -400,6 +400,7 @@
     - fast_pair.crypto.mbedtls
     - fast_pair.crypto.oberon
     - fast_pair.crypto.tinycrypt
+    - fast_pair.crypto.psa
   platforms:
     - nrf52840dk_nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
