@@ -8,7 +8,7 @@
 
 #include <nrf_rpc_cbor.h>
 
-#include <openthread/cli.h>
+#include <openthread/ip6.h>
 
 #include <zephyr/net/net_l2.h>
 #include <zephyr/net/net_if.h>
@@ -75,15 +75,110 @@ out:
 	return (int)len;
 }
 
+void add_ipv6_addr_to_zephyr(struct net_if *iface, const otNetifAddress *addr)
+{
+	struct net_if_addr *if_addr;
+	enum net_addr_type addr_type;
+
+	for (; addr; addr = addr->mNext) {
+		if (addr->mRloc /*|| is_anycast_locator(address)*/) {
+			continue;
+		}
+
+		switch (addr->mAddressOrigin) {
+		case OT_ADDRESS_ORIGIN_THREAD:
+		case OT_ADDRESS_ORIGIN_SLAAC:
+			addr_type = NET_ADDR_AUTOCONF;
+			break;
+		case OT_ADDRESS_ORIGIN_DHCPV6:
+			addr_type = NET_ADDR_DHCP;
+			break;
+		case OT_ADDRESS_ORIGIN_MANUAL:
+			addr_type = NET_ADDR_MANUAL;
+			break;
+		default:
+			NET_ERR("Unknown OpenThread address origin ignored.");
+			continue;
+		}
+
+		if_addr = net_if_ipv6_addr_add(iface, (struct in6_addr *)(&addr->mAddress),
+					       addr_type, 0);
+
+		if (if_addr == NULL) {
+			NET_ERR("Cannot add OpenThread unicast address");
+			continue;
+		}
+
+		if_addr->is_mesh_local = addr->mMeshLocal;
+	}
+}
+
+void rm_ipv6_addr_from_zephyr(struct net_if *iface, const otNetifAddress *ot_addr)
+{
+	struct net_if_ipv6 *ipv6;
+
+	if (net_if_config_ipv6_get(iface, &ipv6) < 0) {
+		return;
+	}
+
+	for (int i = 0; i < NET_IF_MAX_IPV6_ADDR; i++) {
+		struct net_if_addr *if_addr = &ipv6->unicast[i];
+		bool used = false;
+
+		if (!if_addr->is_used) {
+			continue;
+		}
+
+		for (const otNetifAddress *addr = ot_addr; addr; addr = addr->mNext) {
+			if (net_ipv6_addr_cmp((struct in6_addr *)(&addr->mAddress),
+					      &if_addr->address.in6_addr)) {
+				used = true;
+				break;
+			}
+		}
+
+		if (!used) {
+			net_if_ipv6_addr_rm(iface, &if_addr->address.in6_addr);
+		}
+	}
+}
+
+static void update_netif_addrs(struct net_if *iface)
+{
+	const otNetifAddress *addr = otIp6GetUnicastAddresses(NULL);
+
+	rm_ipv6_addr_from_zephyr(iface, addr);
+	add_ipv6_addr_to_zephyr(iface, addr);
+}
+
+static void ot_state_changed_handler(otChangedFlags flags, void *context)
+{
+	struct net_if *iface = context;
+
+	NET_DBG("OpenThread state change: %x", flags);
+
+	if (flags & (OT_CHANGED_IP6_ADDRESS_ADDED | OT_CHANGED_IP6_ADDRESS_REMOVED)) {
+		update_netif_addrs(iface);
+	}
+}
+
 static int ot_rpc_l2_enable(struct net_if *iface, bool state)
 {
 	const size_t cbor_buffer_size = 1;
 	struct nrf_rpc_cbor_ctx ctx;
 
+	if (!state) {
+		otRemoveStateChangeCallback(NULL, ot_state_changed_handler, iface);
+	}
+
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	zcbor_bool_put(ctx.zs, state);
-
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_ENABLE, &ctx, decode_void, NULL);
+
+	if (state) {
+		update_netif_addrs(iface);
+		otSetStateChangedCallback(NULL, ot_state_changed_handler, iface);
+	}
 
 	return 0;
 }
