@@ -57,6 +57,14 @@ int bt_content_ctrl_discover(struct bt_conn *conn);
 int bt_content_ctrl_uuid_populate(struct net_buf_simple *uuid_buf);
 
 /**
+ * @brief	Check if the media player is playing.
+ *
+ * @retval	true	Media player is in a playing state.
+ * @retval	false	Media player is not in a playing state.
+ */
+bool bt_content_ctlr_media_state_playing(void);
+
+/**
  * @brief	Initialize the content control module.
  *
  * @return	0 for success, error otherwise.
