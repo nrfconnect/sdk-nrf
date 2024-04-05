@@ -300,8 +300,8 @@ static psa_status_t cracen_get_confirmation(cracen_spake2p_operation_t *operatio
 	size_t length;
 
 	return psa_driver_wrapper_mac_compute(
-		&attributes, kconf, CRACEN_SPAKE2P_HASH_LEN, PSA_ALG_HMAC(PSA_ALG_SHA_256), share,
-		CRACEN_P256_POINT_SIZE, confirmation, CRACEN_SPAKE2P_HASH_LEN, &length);
+		&attributes, kconf, operation->shared_len, PSA_ALG_HMAC(PSA_ALG_SHA_256), share,
+		CRACEN_P256_POINT_SIZE + 1, confirmation, CRACEN_SPAKE2P_HASH_LEN, &length);
 }
 
 static psa_status_t cracen_p256_reduce(cracen_spake2p_operation_t *operation,
