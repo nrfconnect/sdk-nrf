@@ -80,8 +80,4 @@ You can use one of the following options, depending on how you decide to build t
 
 To set the TX power output, use the ``CONFIG_NRF_21540_MAIN_TX_POWER`` and ``CONFIG_NRF_21540_PRI_ADV_TX_POWER`` Kconfig options.
 
-.. note::
-   When you build the nRF5340 Audio application with the nRF21540 FEM support, the :ref:`lib_bt_ll_acs_nrf53_readme` does not support the +20 dBm setting.
-   This is because of a power class restriction in the controller's QDID.
-
 See :ref:`ug_radio_fem` for more information about FEM in the |NCS|.

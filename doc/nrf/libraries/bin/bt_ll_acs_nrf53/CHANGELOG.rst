@@ -9,6 +9,12 @@ Changelog
 
 Notable changes to this controller are documented in this file.
 
+Controller removed
+******************
+.. note::
+     This controller has been removed from NCS, and is replaced by the :ref:`softdevice_controller`.
+
+
 Controller v18929
 *****************
 

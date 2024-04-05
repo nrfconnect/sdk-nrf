@@ -27,7 +27,3 @@ The following QDIDs are related to the nRF5340 Audio application:
    :docset: nrfxlib
    :start-after: lc3_qdid_start
    :end-before: lc3_qdid_end
-
-.. include:: /libraries/bin/bt_ll_acs_nrf53/index.rst
-   :start-after: le_audio_controller_qdid_start
-   :end-before: le_audio_controller_qdid_end

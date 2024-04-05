@@ -35,8 +35,6 @@ The nRF5340 Audio applications support the following types of DFU flash memory l
 * Internal flash memory layout - which supports only single-image DFU.
 * External flash memory layout - which supports :ref:`multi-image DFU <ug_nrf5340_multi_image_dfu>`.
 
-The LE Audio Controller Subsystem for nRF53 supports both the normal and minimal sizes of the bootloader.
-The minimal size is specified using the :kconfig:option:`CONFIG_NETBOOT_MIN_PARTITION_SIZE`.
 
 Enabling FOTA upgrades
 **********************

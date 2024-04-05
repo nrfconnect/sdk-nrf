@@ -258,7 +258,7 @@ The received audio data in the I2S-based firmware devices follows the following 
 #. The data is sent from the FIFO buffer to the :file:`audio_datapath.c` synchronization module.
    The :file:`audio_datapath.c` module performs the audio synchronization based on the SDU reference timestamps.
    Each package sent from the gateway gets a unique SDU reference timestamp.
-   These timestamps are generated on the headset controllers (in the network core).
+   These timestamps are generated on the headset Bluetooth LE controller (in the network core).
    This enables the creation of True Wireless Stereo (TWS) earbuds where the audio is synchronized in the CIS mode.
    It does also keep the speed of the inter-IC sound (I2S) interface synchronized with the sending and receiving speed of Bluetooth packets.
 #. The :file:`audio_datapath.c` module sends the compressed audio data to the LC3 audio decoder for decoding.
