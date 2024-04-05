@@ -180,12 +180,12 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 {
 	struct sx_pk_acq_req req = {NULL, SX_OK};
 
-	cracen_acquire();
-	nrf_cracen_int_enable(NRF_CRACEN, NRF_CRACEN_INT_PKE_IKG_MASK);
-
 	req.req = &silex_pk_engine.instance;
 	req.req->cmd = cmd;
 	req.req->cnx = &silex_pk_engine;
+
+	cracen_acquire();
+	nrf_cracen_int_enable(NRF_CRACEN, NRF_CRACEN_INT_PKE_IKG_MASK);
 
 	/* Wait until initialized. */
 	while (ba414ep_is_busy(req.req) || ik_is_busy(req.req)) {
