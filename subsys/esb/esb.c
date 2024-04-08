@@ -572,7 +572,7 @@ static void update_radio_tx_power(void)
 	(void)mpsl_fem_tx_power_split(esb_cfg.tx_output_power, &tx_power,
 				      (RADIO_BASE_FREQUENCY + esb_addr.rf_channel), false);
 
-	err = mpsl_fem_pa_gain_set(&tx_power.fem);
+	err = mpsl_fem_pa_power_control_set(tx_power.fem_pa_power_control);
 	if (err) {
 		/* Should not happen. */
 		__ASSERT_NO_MSG(false);
