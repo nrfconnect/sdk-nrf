@@ -102,6 +102,7 @@ Matter
   * Support for the unified Persistent Storage API, including the implementation of the PSA Persistent Storage.
 
 * Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
+* Increased the number of available packet buffers in the Matter stack to avoid packet allocation issues.
 
 Matter fork
 +++++++++++
