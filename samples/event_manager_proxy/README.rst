@@ -54,11 +54,11 @@ By default, the Event Manager Proxy sample uses the OpenAMP backend provided by 
 You can instead select the ICMSG backend configuration, which has smaller memory requirements.
 
 The ICMSG backend configuration is provided in the :file:`prj_icmsg.conf` file.
-To provide the ICMSG backend configuration, specify the ``-DCONF_FILE=prj_icmsg.conf`` parameter along with the build command when building the sample:
+To provide the ICMSG backend configuration, specify the ``-DFILE_SUFFIX=icmsg`` parameter along with the build command when building the sample:
 
    .. code-block:: console
 
-      west build -p -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_icmsg.conf
+      west build -p -b nrf5340dk_nrf5340_cpuapp -- -DFILE_SUFFIX=icmsg
 
 Building and running
 ********************

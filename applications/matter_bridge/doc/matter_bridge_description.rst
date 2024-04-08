@@ -440,7 +440,7 @@ The Matter bridge application does not use a single :file:`prj.conf` file.
 Before you start testing the application, you can select one of the build types supported by the application.
 Not every board supports both mentioned build types.
 
-See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
+See :ref:`app_build_additions_build_types` and :ref:`cmake_options` for more information.
 
 The application supports the following build types:
 
@@ -482,7 +482,7 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the :ref:`matter_bridge_app_build_types`.
-See :ref:`modifying_build_types` for detailed steps how to select a build type.
+See :ref:`cmake_options` for information about how to select a build type.
 
 .. _matter_bridge_testing:
 

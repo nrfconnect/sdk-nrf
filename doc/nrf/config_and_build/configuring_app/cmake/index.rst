@@ -75,13 +75,23 @@ The following table lists the most common ones used in the |NCS|:
    * - :makevar:`SHIELD`
      - Select one of the supported :ref:`shields <shield_names_nrf>` for building the firmware.
      - ``-DSHIELD=<shield_build_target>``
+   * - :makevar:`FILE_SUFFIX`
+     - | Select one of the available :ref:`suffixed configurations <zephyr:application-file-suffixes>`, if the application or sample supports any.
+       | See :ref:`app_build_file_suffixes` for more information about their usage and limitations in the |NCS|.
+       | This variable is gradually replacing :makevar:`CONF_FILE`.
+     - ``-DFILE_SUFFIX=<configuration_suffix>``
    * - :makevar:`CONF_FILE`
-     - Select one of the available :ref:`build types <modifying_build_types>`, if the application or sample supports any.
+     - | Select one of the available :ref:`build types <modifying_build_types>`, if the application or sample supports any.
+       | This variable is deprecated and is being gradually replaced by :makevar:`FILE_SUFFIX`, but :ref:`still required for some applications <modifying_build_types>`.
      - ``-DCONF_FILE=prj_<build_type_name>.conf``
    * - ``-S`` (west) or :makevar:`SNIPPET` (CMake)
      - | Select one of the :ref:`zephyr:snippets` to add to the application firmware during the build.
        | The west argument ``-S`` is more commonly used.
-     - ``-S <name_of_snippet>`` or ``-DSNIPPET=<name_of_snippet``
+     - | ``-S <name_of_snippet>``
+       | ``-DSNIPPET=<name_of_snippet>``
+   * - :makevar:`PM_STATIC_YML_FILE`
+     - Select a :ref:`static configuration file <ug_pm_static>` for the Partition Manager script.
+     - ``-DPM_STATIC_YML_FILE=pm_static_<suffix>.yml``
 
 You can use these parameters in both the |nRFVSC| and the command line.
 
@@ -95,7 +105,7 @@ This is how you can specify them:
       See `How to build an application`_ in the |nRFVSC| documentation.
       You can specify the additional configuration variables when `setting up a build configuration <How to build an application_>`_:
 
-      * :makevar:`CONF_FILE` - Select the build type in the :guilabel:`Configuration` menu.
+      * :makevar:`FILE_SUFFIX` (and :makevar:`CONF_FILE`) - Select the configuration in the :guilabel:`Configuration` menu.
       * :makevar:`EXTRA_CONF_FILE` - Add the Kconfig fragment file in the :guilabel:`Kconfig fragments` menu.
       * :makevar:`EXTRA_DTC_OVERLAY_FILE` - Add the devicetree overlays in the :guilabel:`Devicetree overlays` menu.
       * Other variables - Provide CMake arguments in the :guilabel:`Extra CMake arguments` field, preceded by ``--``.
@@ -114,6 +124,53 @@ This is how you can specify them:
          west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
 
 See :ref:`configuration_permanent_change` and Zephyr's :ref:`zephyr:west-building-cmake-args` for more information.
+
+Examples of commands
+--------------------
+
+**Providing a CMake variable for build types**
+
+  .. toggle::
+
+     .. tabs::
+
+        .. group-tab:: nRF Connect for VS Code
+
+            To select the build type in the |nRFVSC|:
+
+            1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
+            #. In the **Add Build Configuration** screen, select the desired :file:`.conf` file from the :guilabel:`Configuration` drop-down menu.
+            #. Fill in other configuration options, if applicable, and click :guilabel:`Build Configuration`.
+
+        .. group-tab:: Command line
+
+            To select the build type when building the application from command line, specify the build type by adding the following parameter to the ``west build`` command:
+
+            .. parsed-literal::
+              :class: highlight
+
+              -- -DCONF_FILE=prj_\ *selected_build_type*\.conf
+
+            For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``nrf52840dk_nrf52840`` by running the following command in the project directory:
+
+            .. parsed-literal::
+              :class: highlight
+
+              west build -b nrf52840dk_nrf52840 -d build_nrf52840dk_nrf52840 -- -DCONF_FILE=prj_release.conf
+
+            The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for the build files.
+        ..
+
+     ..
+
+     If the selected board does not support the selected build type, the build is interrupted.
+     For example, for the :ref:`nrf_machine_learning_app` application, if the ``nus`` build type is not supported by the selected board, the following notification appears:
+
+     .. code-block:: console
+
+        Configuration file for build type ``nus`` is missing.
+
+  ..
 
 .. _cmake_options_images:
 

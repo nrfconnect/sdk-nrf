@@ -203,3 +203,7 @@
    The generated :file:`.inc` file is then included in the code, where it is provisioned to the modem.
 
 .. |build_target| replace:: Replace the *build_target* with the build target of the nRF91 Series device you are using (see the Requirements section).
+
+.. |file_suffix_partition_manager_exception| replace:: The Partition Manager's :ref:`static configuration <ug_pm_static>` does not yet support the :makevar:`FILE_SUFFIX` variable.
+   To ensure that the file :file:`pm_static_<suffix>.yml` will have precedence over :file:`pm_static.yml` when building for a selected :makevar:`FILE_SUFFIX`, make sure to also provide the :makevar:`PM_STATIC_YML_FILE` variable set to :file:`pm_static_<suffix>.yml`.
+   Alternatively, you can use the previously used :makevar:`CONF_FILE` variable (which is now deprecated), until support for it is removed.

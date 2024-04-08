@@ -26,11 +26,11 @@ Set the following Kconfig options to ``y`` for the images running on the cores y
 * :kconfig:option:`CONFIG_DEBUG_THREAD_INFO` - This option adds additional information to the thread object so that the debugger can discover the threads.
   This will work for any debugger.
 
-Debug build types
-*****************
+Debug configurations
+********************
 
-Some applications and samples provide a specific build type that enables additional debug functionalities.
-You can select build types when you are :ref:`configuring the build settings <gs_modifying_build_types>`.
+Some applications and samples provide a specific configuration that enables additional debug functionalities.
+You can select custom configurations when you are :ref:`configuring the build settings <cmake_options>`.
 
 Debugging multiple cores
 ************************

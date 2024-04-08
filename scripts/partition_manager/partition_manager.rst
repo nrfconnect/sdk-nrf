@@ -772,16 +772,19 @@ This file is similar to the regular :file:`pm.yml` configuration files, except t
 
 You can set ``PM_STATIC_YML_FILE`` to contain exactly the static configuration you want to use.
 
+.. important::
+    |file_suffix_partition_manager_exception|
+
 If you do not set ``PM_STATIC_YML_FILE``, the build system will use the following order to look for files in your application source directory to use as a static configuration layout:
 
-* If build type is used (see :ref:`modifying_build_types`), the following order applies:
+* If a :term:`build type` is used, the following order applies:
 
   1. If the file :file:`pm_static_<board>_<revision>_<buildtype>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static_<board>_<buildtype>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static_<buildtype>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static.yml` exists, it will be used.
 
-* If build type is not used, then the same order as above applies, except that *<buildtype>* is not part of the file name:
+* If a build type is not used, then the same order as above applies, except that *<buildtype>* is not part of the file name:
 
   1. If the file :file:`pm_static_<board>_<revision>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static_<board>.yml` exists, it will be used.

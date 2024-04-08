@@ -110,7 +110,7 @@ The sample does not use a single :file:`prj.conf` file.
 Configuration files are provided for different build types, and they are located in the sample root directory.
 Before you start testing the application, you can select one of the build types supported by the application.
 
-See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
+See :ref:`app_build_additions_build_types` and :ref:`cmake_options` for more information.
 
 The sample supports the following build types:
 
@@ -186,7 +186,7 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the `Matter thermostat build types`_, depending on your building method.
-See :ref:`modifying_build_types` for detailed steps how to select a build type.
+See :ref:`cmake_options` for information about how to select a build type.
 
 .. _matter_thermostat_testing:
 
