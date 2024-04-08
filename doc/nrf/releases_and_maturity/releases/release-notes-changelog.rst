@@ -84,7 +84,7 @@ Bluetooth Mesh
 Matter
 ------
 
-|no_changes_yet_note|
+* Added support for merging the generated factory data HEX file with the firmware HEX file by using the devicetree configuration, when Partition Manager is not enabled in the project.
 
 Matter fork
 +++++++++++
