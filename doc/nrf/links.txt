@@ -1479,12 +1479,6 @@
 .. _`Introduction to nRF54H20`: https://res.developer.nordicsemi.com/res/nrf54H20/intro/Introduction%20to%20nRF54H20%20v1_0_1.pdf
 .. _`nRF54H20 prototype difference`: https://res.developer.nordicsemi.com/res/nrf54H20/other/nRF54H20_proto_diff.pdf
 
-.. _`nRF54L15 PDK schematic and PCB 0.2`: https://res.developer.nordicsemi.com/res/nRF54L15/schematics/pca10156_schematic_and_pcb.pdf
-.. _`nRF54L15 PDK schematic and PCB 0.2.1`: https://res.developer.nordicsemi.com/res/nRF54L15/schematics/pca10156_schematic_and_pcb_0.2.1_2023_09_28.pdf
-
-.. _`nRF54L15 Objective Product Specification 0.5b`: https://res.developer.nordicsemi.com/res/nRF54L15/OPS/nRF54L15_OPS_v0.5b_Confidential.pdf
-.. _`nRF54L15 prototype difference`: https://res.developer.nordicsemi.com/res/nRF54L15/protodiff/nRF54L15_prototype_differences_v1.0_nwp_051.pdf
-
 .. _`BICR register's PDF file`: https://res.developer.nordicsemi.com/res/nrf54H20/BICR/nRF54H20_BICR_0_11_0.pdf
 .. _`nRF Command Line Tools 10.22.1`: https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools/download
 
@@ -1516,18 +1510,6 @@
 .. _`10.23.3_ec ARMHF system, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-armhf-linux.zip
 
 .. _`10.23.3_ec macOS, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-osx.zip
-
-.. _`10.22.3_cs3 64-bit Windows, executable`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nRF-Command-Line-Tools-10.23.3-x64.exe
-.. _`10.22.3_cs3 macOS, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-osx.zip
-
-.. _`10.22.3_cs3 x86 system, deb format`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools_10.23.3_amd64.deb
-.. _`10.22.3_cs3 x86 system, RPM`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-1.x86_64.rpm
-.. _`10.22.3_cs3 x86 system, tar archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3_Linux-amd64.tar.gz
-.. _`10.22.3_cs3 ARM64 system, deb format`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools_10.23.3_arm64.deb
-.. _`10.22.3_cs3 ARM64 system, RPM`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-1.arm64.rpm
-.. _`10.22.3_cs3 ARM64 system, tar archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3_Linux-arm64.tar.gz
-
-.. _`10.22.3_cs3 ARMHF system, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-armhf-linux.zip
 
 .. _`Git for Windows`: https://git-scm.com/download/win
 .. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html

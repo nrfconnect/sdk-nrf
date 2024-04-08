@@ -52,7 +52,7 @@ The following figure demonstrates the architecture.
 
 .. _nrf54l15_platform_single_figure:
 
-.. figure:: images/thread_platform_design_nrf54l15.jpg
+.. figure:: images/thread_platform_design_nrf54l15.svg
    :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF54L15)
 
    Single protocol Thread architecture on the nRF54L15 SoC
@@ -76,7 +76,7 @@ The following figure demonstrates the architecture.
 
 .. _nrf54l15_platform_multi_figure:
 
-.. figure:: images/thread_platform_design_nrf54l15_multi.jpg
+.. figure:: images/thread_platform_design_nrf54l15_multi.svg
    :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF54L15)
 
    Multiprotocol Thread and Bluetooth LE architecture on the nRF54L15 SoC
@@ -106,7 +106,7 @@ Additional requirements on the nRF54L15 PDK
 In addition to the standard requirements for the |NCS|, such as the :ref:`ug_matter_gs_tools_gn` for Matter, you need the following to run Matter-enabled or Thread-enabled applications on the nRF54L15 PDK:
 
 * For DFU - J-Link and a USB cable.
-* The compatible version of the nrfjprog tool, included in the :ref:`nRF Command Line Tools version specific to the limited customer sampling<nRF54L15_install_commandline>`.
+* The compatible version of the nrfjprog tool, included in the nRF Command Line Tools.
 
 Configuring Matter and Thread on the nRF54L15 PDK
 *************************************************
@@ -138,7 +138,7 @@ To read logs for Matter samples on the nRF54L15 PDK, complete the following step
 1. Connect to the nRF54L15 PDK using a USB cable.
 #. Select the first available port to read the logs from.
 
-To read more about the logging see the :ref:`nrf54l15_sample_reading_logs` section.
+To read more about the logging see the :ref:`ug_nrf54l15_sample_reading_logs` section.
 
 .. _ug_nRF54l15_matter_thread_limitations:
 
