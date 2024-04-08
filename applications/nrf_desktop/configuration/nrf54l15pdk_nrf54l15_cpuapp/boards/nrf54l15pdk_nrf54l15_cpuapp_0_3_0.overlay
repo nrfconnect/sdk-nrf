@@ -10,7 +10,9 @@
 };
 
 / {
-	/* Disable leds and redefine them to align configuration with CAF LEDs requirements. */
+	/* Disable leds and redefine them to align configuration with CAF LEDs requirements.
+	 * The configuration needs to match the used board revision (v0.3.0).
+	 */
 	leds {
 		status = "disabled";
 	};
@@ -21,7 +23,7 @@
 		label = "LED System State";
 
 		led0_g: led_0 {
-			gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 0";
 		};
 	};
@@ -32,7 +34,7 @@
 		label = "LED Conn State";
 
 		led1_g: led_1 {
-			gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 1";
 		};
 	};
@@ -43,7 +45,7 @@
 		label = "LED Num Lock";
 
 		led2_g: led_2 {
-			gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 2";
 		};
 	};

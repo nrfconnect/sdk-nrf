@@ -23,8 +23,6 @@ const struct {} hid_keymap_def_include_once;
  */
 static const struct hid_keymap hid_keymap[] = {
 	{ KEY_ID(0x00, 0x00), 0x0004, REPORT_ID_KEYBOARD_KEYS }, /* A */
-	{ KEY_ID(0x00, 0x01), 0x0005, REPORT_ID_KEYBOARD_KEYS }, /* B */
-	{ KEY_ID(0x00, 0x02), 0x00E1, REPORT_ID_KEYBOARD_KEYS }, /* left shift */
 
 	{ KEY_ID(0x00, 0x04), 0x0004, REPORT_ID_KEYBOARD_KEYS }, /* A */
 	{ KEY_ID(0x00, 0x05), 0x0005, REPORT_ID_KEYBOARD_KEYS }, /* B */
