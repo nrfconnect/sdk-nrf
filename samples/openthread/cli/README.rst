@@ -466,7 +466,7 @@ To test the Thread 1.2 and Thread 1.3 features, complete the following steps:
 
       .. code-block:: console
 
-         uart:~$ ot csl period 3125
+         uart:~$ ot csl period 500000
          Done
 
    #. Send an ICMPv6 Echo Request from the leader kit to the link-local address of the router kit:
