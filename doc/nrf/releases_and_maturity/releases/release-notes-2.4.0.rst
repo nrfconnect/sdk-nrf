@@ -390,7 +390,7 @@ nRF5340 Audio
   For more information on the options, see all options prefixed with ``CONFIG_BLE_ACL_PER_ADV_INT_`` and ``CONFIG_BLE_ACL_EXT_ADV_INT_``.
 * Updated:
 
-  * LE Audio controller for the network core has been moved to the standalone :ref:`lib_bt_ll_acs_nrf53_readme` library.
+  * LE Audio controller for the network core has been moved to the standalone LE Audio controller for nRF5340 library.
   * :ref:`zephyr:zbus` is now implemented for handling events from buttons and LE Audio.
   * The supervision timeout has been reduced to reduce reconnection times for CIS.
   * The application documentation with a note about missing support for the |nRFVSC|.
@@ -663,7 +663,7 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-* Added the standalone :ref:`lib_bt_ll_acs_nrf53_readme` library, originally a part of the :ref:`nrf53_audio_app` application.
+* Added the standalone LE Audio controller for nRF5340 library, originally a part of the :ref:`nrf53_audio_app` application.
 * :ref:`liblwm2m_carrier_readme` library:
 
   * Updated to v3.2.0.

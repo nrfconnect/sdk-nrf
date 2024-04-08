@@ -414,7 +414,7 @@ nRF5340 Audio
   * Renderer - This module handles rendering, such as volume up and down.
   * Content Control - This module handles content control, such as play and pause.
 
-* Added back the QDID number for the :ref:`lib_bt_ll_acs_nrf53_readme` to the documentation.
+* Added back the QDID number for the LE Audio controller for nRF5340 to the documentation.
 * Updated the :ref:`application documentation <nrf53_audio_app>` by splitting it into several pages.
 
 nRF Machine Learning (Edge Impulse)
@@ -838,7 +838,7 @@ Debug libraries
 Binary libraries
 ----------------
 
-* :ref:`lib_bt_ll_acs_nrf53_readme` library:
+* LE Audio controller for nRF5340 library:
 
   * Added a limitation about the lack of support for the +20 dBm setting when :ref:`building the nRF5340 Audio application with the nRF21540 FEM support <nrf53_audio_app_adding_FEM_support>`.
 

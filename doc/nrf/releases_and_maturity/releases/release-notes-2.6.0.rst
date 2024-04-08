@@ -515,8 +515,8 @@ nRF5340 Audio applications
 
 * Updated:
 
-  * :ref:`lib_bt_ll_acs_nrf53_readme` from v3424 to v18929.
-  * The default controller has been changed from the :ref:`lib_bt_ll_acs_nrf53_readme` to the :ref:`ug_ble_controller_softdevice`.
+  * LE Audio controller for nRF5340 from v3424 to v18929.
+  * The default controller has been changed from the LE Audio controller for nRF5340 library to the :ref:`ug_ble_controller_softdevice`.
     See the :ref:`nRF5340 Audio applications <nrf5340_audio_migration_notes>` section in the :ref:`migration_2.6` for information about how this affects your application.
   * Sending of the ISO data, which is now done in a single file :file:`bt_le_audio_tx`.
   * Application structure, which is now split into four separate, generic applications with separate :file:`main.c` files.
