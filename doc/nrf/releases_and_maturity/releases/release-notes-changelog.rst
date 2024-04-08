@@ -92,6 +92,13 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
+* Updated:
+
+   * The scripts for factory data generation and related :doc:`matter:nrfconnect_factory_data_configuration` documentation page.
+     Now, you can use a single script to generate both JSON and HEX files that include the factory data.
+     Previously, you would have to do that in two steps using two separate scripts.
+     The older method is still supported for backward compatibility.
+
 |no_changes_yet_note|
 
 Thread
