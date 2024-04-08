@@ -32,10 +32,6 @@ static int hfclock_config_and_start(void)
 		return ret;
 	}
 
-	nrfx_clock_hfclk_start();
-	while (!nrfx_clock_hfclk_is_running()) {
-	}
-
 	return 0;
 }
 
