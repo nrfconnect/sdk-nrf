@@ -169,7 +169,7 @@ Testing
          .. note::
 
             Edge backoff and antenna gain are configured in the Kconfig file.
-            To overwrite these backoffs with user-specified backoffs, use the``set_edge_bo`` and ``set_ant_gain`` commands.
+            To overwrite these backoffs with user-specified backoffs, use the ``set_edge_bo`` and ``set_ant_gain`` commands.
             These backoffs are applied only when the ``bypass_reg_domain`` is set to ``0``.
 
 
