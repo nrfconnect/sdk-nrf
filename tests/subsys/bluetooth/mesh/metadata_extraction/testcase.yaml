@@ -14,3 +14,8 @@ tests:
   bluetooth.mesh.metadata_extraction_array:
     extra_configs:
       - CONFIG_COMP_DATA_LAYOUT_ARRAY=y
+  bluetooth.mesh.metadata_extraction_single_lto:
+    extra_configs:
+      - CONFIG_COMP_DATA_LAYOUT_SINGLE=y
+      - CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
+      - CONFIG_LTO=y
