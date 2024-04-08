@@ -2199,6 +2199,31 @@ psa_driver_wrapper_key_derivation_input_bytes(psa_key_derivation_operation_t *op
 	}
 }
 
+psa_status_t psa_driver_wrapper_key_derivation_input_key(psa_key_derivation_operation_t *operation,
+							 psa_key_derivation_step_t step,
+							 psa_key_attributes_t *attributes,
+							 const uint8_t *data, size_t data_length)
+{
+	switch (operation->id) {
+#if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
+	case PSA_CRYPTO_CRACEN_DRIVER_ID:
+		return cracen_key_derivation_input_key(&operation->ctx.cracen_kdf_ctx, step,
+						       attributes, data, data_length);
+#endif /* PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER */
+#if defined(PSA_NEED_OBERON_KEY_DERIVATION_DRIVER)
+	case PSA_CRYPTO_OBERON_DRIVER_ID:
+		return oberon_key_derivation_input_bytes(&operation->ctx.oberon_kdf_ctx, step, data,
+							 data_length);
+#endif /* PSA_NEED_OBERON_KEY_DERIVATION_DRIVER */
+
+	default:
+		(void)step;
+		(void)data;
+		(void)data_length;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
 psa_status_t
 psa_driver_wrapper_key_derivation_input_integer(psa_key_derivation_operation_t *operation,
 						psa_key_derivation_step_t step, uint64_t value)

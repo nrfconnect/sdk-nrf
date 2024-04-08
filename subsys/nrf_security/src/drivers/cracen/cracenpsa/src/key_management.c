@@ -1217,7 +1217,7 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 							 PSA_KEY_LOCATION_CRACEN));
 		psa_set_key_type(attributes, PSA_KEY_TYPE_AES);
 		psa_set_key_bits(attributes, 256);
-		psa_set_key_algorithm(attributes, PSA_ALG_CMAC);
+		psa_set_key_algorithm(attributes, PSA_ALG_SP800_108_COUNTER_CMAC);
 		psa_set_key_usage_flags(attributes,
 					PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_VERIFY_DERIVATION);
 
