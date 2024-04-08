@@ -24,9 +24,9 @@
  * See "PSA Cryptography API" for documentation.
  */
 
-#define CRACEN_BUILTIN_IDENTITY_KEY_ID ((uint32_t)0x7ffff001)
-#define CRACEN_BUILTIN_MKEK_ID	       ((uint32_t)0x7ffff002)
-#define CRACEN_BUILTIN_MEXT_ID	       ((uint32_t)0x7ffff003)
+#define CRACEN_BUILTIN_IDENTITY_KEY_ID ((uint32_t)0x7fffc001)
+#define CRACEN_BUILTIN_MKEK_ID	       ((uint32_t)0x7fffc002)
+#define CRACEN_BUILTIN_MEXT_ID	       ((uint32_t)0x7fffc003)
 
 #define CRACEN_IDENTITY_KEY_SLOT_NUMBER 0
 #define CRACEN_MKEK_SLOT_NUMBER		1
