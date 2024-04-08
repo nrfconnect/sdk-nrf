@@ -260,4 +260,5 @@ NRF = [
     ("libraries/nrf_security/doc/driver_config", "libraries/security/nrf_security/doc/driver_config"),
     ("libraries/nrf_security/doc/drivers", "libraries/security/nrf_security/doc/drivers"),
     ("libraries/nrf_security/doc/mbed_tls_header", "libraries/security/nrf_security/doc/mbed_tls_header"),
+    ("libraries/bin/bt_ll_acs_nrf53/index", "nrfxlib/softdevice_controller/doc/isochronous_channels"),
 ]
