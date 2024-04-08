@@ -72,7 +72,7 @@ The following additional configuration files are available for the :ref:`nRF5340
 Angle of departure mode
 =======================
 
-To build this sample with AoD mode only, set ``OVERLAY_CONFIG`` to the :file:`overlay-aod.conf` file.
+To build this sample with AoD mode only, set ``EXTRA_CONF_FILE`` to the :file:`overlay-aod.conf` file.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.

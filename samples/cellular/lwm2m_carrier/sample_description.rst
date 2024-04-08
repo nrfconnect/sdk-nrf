@@ -120,12 +120,12 @@ Building and running
 Building with overlay
 =====================
 
-To build with a Kconfig overlay, pass it to the build system using the ``OVERLAY_CONFIG`` CMake variable, as shown in the following example:
+To build with a Kconfig overlay, pass it to the build system using the ``EXTRA_CONF_FILE`` CMake variable, as shown in the following example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DOVERLAY_CONFIG=overlay-shell.conf
+   west build -b *build_target* -- -DEXTRA_CONF_FILE=overlay-shell.conf
 
 |build_target|
 

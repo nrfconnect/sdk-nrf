@@ -48,7 +48,7 @@ To use this configuration, run the following command:
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=boards/nrf5340dk_nrf5340_cpuapp_nrf5340_singlecore.conf
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=boards/nrf5340dk_nrf5340_cpuapp_nrf5340_singlecore.conf
 
 Building and running
 ********************

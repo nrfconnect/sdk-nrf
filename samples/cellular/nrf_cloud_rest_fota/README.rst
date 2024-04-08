@@ -104,11 +104,11 @@ See :ref:`configure_application` for information on how to configure the paramet
 
 To create a FOTA test version of this sample, add the following parameter to your build command:
 
-``-DOVERLAY_CONFIG=overlay_fota_test.conf``
+``-DEXTRA_CONF_FILE=overlay_fota_test.conf``
 
 To enable full modem FOTA, add the following parameter to your build command:
 
-``-DOVERLAY_CONFIG=overlay_full_modem_fota.conf``
+``-DEXTRA_CONF_FILE=overlay_full_modem_fota.conf``
 
 Also, if you are using an nRF9160 DK, specify your development kit version by appending it to the board name.
 For example, if you are using version 1.0.1, use the board name ``nrf9160dk_nrf9160_ns@1_0_1`` in your build command.

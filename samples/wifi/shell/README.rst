@@ -56,7 +56,7 @@ The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-raw-tx.conf
+   west build -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-raw-tx.conf
 
 .. tabs::
 
@@ -67,7 +67,7 @@ The following is an example of the CLI command:
 
       .. code-block:: console
 
-         west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG=overlay-scan-only.conf -DSHIELD=nrf7002ek
+         west build -p -b nrf9161dk_nrf9161_ns -- -DEXTRA_CONF_FILE=overlay-scan-only.conf -DSHIELD=nrf7002ek
 
    .. group-tab:: nRF9160 DK
 
@@ -76,7 +76,7 @@ The following is an example of the CLI command:
 
     .. code-block:: console
 
-       west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-scan-only.conf -DSHIELD=nrf7002ek
+       west build -b nrf9160dk_nrf9160_ns -- -DEXTRA_CONF_FILE=overlay-scan-only.conf -DSHIELD=nrf7002ek
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 

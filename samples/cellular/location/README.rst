@@ -70,13 +70,13 @@ Building and running
 nRF91 Series DK with nRF7002 EK Wi-Fi support
 =============================================
 
-To build the sample with nRF91 Series DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
+To build the sample with nRF91 Series DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek`` and  ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf`` options.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DSHIELD=nrf7002ek -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+   west build -p -b *build_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
 
 |build_target|
 
@@ -90,7 +90,7 @@ To build the Location sample with P-GPS support, use the following commands:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DOVERLAY_CONFIG=overlay-pgps.conf
+   west build -p -b *build_target* -- -DEXTRA_CONF_FILE=overlay-pgps.conf
 
 |build_target|
 

@@ -75,7 +75,7 @@ To build the sample with Mbed TLS and TF-M for the nRF91 Series DKs, add the fol
 
 .. code-block:: none
 
-   -DOVERLAY_CONFIG=overlay-tfm-nrf91.conf
+   -DEXTRA_CONF_FILE=overlay-tfm-nrf91.conf
 
 The default packet data network (PDN) configuration is dual stack, which will use an IPv6 address if available (and IPv4 if not).
 
@@ -83,7 +83,7 @@ On the nRF91 Series DKs, for testing IPv4 only, you might need to configure the 
 
 .. code-block:: none
 
-   -DOVERLAY_CONFIG=overlay-pdn-nrf91-ipv4.conf
+   -DEXTRA_CONF_FILE=overlay-pdn-nrf91-ipv4.conf
 
 Testing
 =======

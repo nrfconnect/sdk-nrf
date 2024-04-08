@@ -154,7 +154,7 @@ You can use the following configuration files to build the test in a specific se
 * :file:`overlay-multi.conf` uses a combination of hardware acceleration, using the Arm CryptoCell, and vanilla Mbed TLS and Oberon software implementations to support functionalities not supported by the CryptoCell.
   This setup uses hardware acceleration as much as possible.
 
-You can use one of the listed overlay configurations by adding the ``-- -DOVERLAY_CONFIG=<overlay_config_file>`` flag to your build. Also see :ref:`cmake_options` for instructions on how to add this option.
+You can use one of the listed overlay configurations by adding the ``-- -DEXTRA_CONF_FILE=<overlay_config_file>`` flag to your build. Also see :ref:`cmake_options` for instructions on how to add this option.
 
 .. _crypto_test_ztest_custom:
 

@@ -48,7 +48,7 @@ Configuration
 Angle of arrival mode
 =====================
 
-To build this sample with AoA mode only, set ``OVERLAY_CONFIG`` to the :file:`overlay-aoa.conf` file.
+To build this sample with AoA mode only, set ``EXTRA_CONF_FILE`` to the :file:`overlay-aoa.conf` file.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.

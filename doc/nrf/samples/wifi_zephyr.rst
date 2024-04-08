@@ -56,13 +56,13 @@ The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-nrf700x.conf
+   west build -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-nrf700x.conf
 
 To build for the nRF7002 EK with nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek -DOVERLAY_CONFIG=overlay-nrf700x.conf
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf700x.conf
 
 For additional details about running a sample, refer to the respective sample in Zephyr’s Samples and Demos documentation.
