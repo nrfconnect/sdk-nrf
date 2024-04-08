@@ -367,8 +367,7 @@ def parse_comp_data(elf_path, kconfigs):
     except Exception as err:
         raise Exception("Failed to extract composition data from .elf file") from err
 
-def encoded_metadata_get(version, comp, binary_size):
-    core_type = 1
+def encoded_metadata_get(version, comp, binary_size, core_type):
     elem_cnt = len(comp.elems)
 
     bytestring = bytearray()
@@ -418,14 +417,16 @@ if __name__ == "__main__":
         comps = parse_comp_data(elf_path, kconfigs)
         version = kconfigs.version_parse()
         binary_size = os.path.getsize(os.path.join(args.bin_path, 'app_update.bin'))
+        core_type = 1
 
         json_data = []
 
         for comp in comps:
-            encoded_metadata = encoded_metadata_get(version, comp, binary_size)
+            encoded_metadata = encoded_metadata_get(version, comp, binary_size, core_type)
             json_data.append({
                 "sign_version": version,
                 "binary_size": binary_size,
+                "core_type": core_type,
                 "composition_data": comp.dict_generate(),
                 "composition_hash": str(hex(comp.hash_generate())),
                 "encoded_metadata": str(encoded_metadata.hex()),

@@ -79,6 +79,7 @@ Bluetooth Mesh
   * The Kconfig option :kconfig:option:`CONFIG_BT_MESH_DFU_METADATA_ON_BUILD` to no longer depend on the Kconfig option :kconfig:option:`CONFIG_BT_MESH_DFU_METADATA`.
   * The Kconfig option :kconfig:option:`CONFIG_BT_MESH_DFU_CLI` to no longer enable the Kconfig option :kconfig:option:`CONFIG_BT_MESH_DFU_METADATA_ON_BUILD` by default.
     The Kconfig option :kconfig:option:`CONFIG_BT_MESH_DFU_METADATA_ON_BUILD` can still be manually enabled.
+  * The JSON file, added to :file:`dfu_application.zip` during the automatic DFU metadata generation, to now contain a field for the ``core_type`` used when encoding the metadata.
 
 Matter
 ------
