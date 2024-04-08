@@ -2109,6 +2109,8 @@ struct dtm_tx_power dtm_setup_set_transmit_power(enum dtm_tx_power_request power
 			dtm_inst.txpower = dtm_radio_nearest_power_get(val, frequency);
 		}
 
+		break;
+
 	default:
 		return tmp;
 	}
