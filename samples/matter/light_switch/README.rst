@@ -254,7 +254,7 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the `Matter light switch build types`_.
-See :ref:`modifying_build_types` for detailed steps how to select a build type.
+See :ref:`cmake_options` for information about how to select a build type.
 
 Testing
 *******

@@ -274,7 +274,7 @@ If your application includes multiple child images, then you can combine all the
   .. parsed-literal::
     :class: highlight
 
-     cmake -DCONFIG_VARIABLEONE=val -D\ *childimageone*\_EXTRA_CONF_FILE=\ *extrafragment.conf*\ -Dquz_CONF_FILE=\ *myfile.conf*\ [...]
+    cmake -DCONFIG_VARIABLEONE=val -D\ *childimageone*\_EXTRA_CONF_FILE=\ *extrafragment.conf*\ -Dquz_CONF_FILE=\ *myfile.conf*\ [...]
 
 See :ref:`ug_bootloader` for more details.
 
@@ -332,7 +332,7 @@ Permanent configuration changes to child images
 -----------------------------------------------
 
 You can make a project automatically pass Kconfig configuration files, fragments, and devicetree overlays to child images by placing them under a predefined path.
-For example, in the |NCS| applications and samples that use different :ref:`build types for configuration <gs_modifying_build_types>`, the :file:`child_image` folder in the application source directory is often used to apply :ref:`permanent configuration changes <configuration_permanent_change>`.
+For example, in the |NCS| applications and samples that use different :ref:`build types <app_build_additions_build_types>`, the :file:`child_image` folder in the application source directory is often used to apply :ref:`permanent configuration changes <configuration_permanent_change>`.
 
 The listing below describes how to leverage this functionality, where ``ACI_NAME`` is the name of the child image to which the configuration will be applied.
 
@@ -341,9 +341,9 @@ The listing below describes how to leverage this functionality, where ``ACI_NAME
     :start-at: It is possible for a sample to use a custom set of Kconfig fragments for a
     :end-before: set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
 
-When you are :ref:`modifying_build_types` and the build type has been inferred, the child image Kconfig overlay file is searched at :file:`child_image/<ACI_NAME>_<buildtype>.conf`.
+When you are using :ref:`app_build_additions_build_types` and the configuration name has been inferred, the child image Kconfig overlay file is searched at :file:`child_image/<ACI_NAME>_<name>.conf`.
 Alternatively, the child image Kconfig configuration file can be introduced as :file:`child_image/<ACI_NAME>/prj.conf` and follow the same pattern as the parent Kconfig.
-For example, :file:`child_image/mcuboot/prj_release.conf` can be used to define ``release`` build type for ``mcuboot`` child image.
+For example, :file:`child_image/mcuboot/prj_release.conf` can be used to define the ``release`` build type for the ``mcuboot`` child image.
 
 Child image targets
 ===================

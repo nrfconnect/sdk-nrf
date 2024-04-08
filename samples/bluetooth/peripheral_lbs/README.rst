@@ -93,14 +93,14 @@ Building and running
 Minimal build
 =============
 
-You can build the sample with a minimum configuration as a demonstration of how to reduce code size and RAM usage, using the ``-DCONF_FILE='prj_minimal.conf'`` flag in your build.
+You can build the sample with a minimum configuration as a demonstration of how to reduce code size and RAM usage, using the ``-DFILE_SUFFIX=minimal`` flag in your build.
 
 See :ref:`cmake_options` for instructions on how to add this option to your build.
 For example, when building on the command line, you can add the option as follows:
 
 .. code-block:: console
 
-   west build samples/bluetooth/peripheral_lbs -- -DCONF_FILE='prj_minimal.conf'
+   west build samples/bluetooth/peripheral_lbs -- -DFILE_SUFFIX=minimal
 
 .. _peripheral_lbs_testing:
 

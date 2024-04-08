@@ -91,13 +91,13 @@ The ``uart0`` pins are configured by devicetree overlay files for each supported
 Communication through USB
 -------------------------
 
-To change the communication channel from the default UART to nRF USB CDC ACM ``cdc_acm_uart0``, use the :file:`prj_usb.conf` configuration file and add the ``-DCONF_FILE='prj_usb.conf'`` flag to the build command.
+To change the communication channel from the default UART to nRF USB CDC ACM ``cdc_acm_uart0``, use the :file:`prj_usb.conf` configuration file and add the ``-DFILE_SUFFIX=usb`` flag to the build command.
 See :ref:`cmake_options` for instructions on how to add this flag to your build.
 For example, when building from the command line, use the following command:
 
 .. code-block:: console
 
-   west build samples/zigbee/ncp -b nrf52840dk_nrf52840 -- -DCONF_FILE='prj_usb.conf'
+   west build samples/zigbee/ncp -b nrf52840dk_nrf52840 -- -DFILE_SUFFIX=usb
 
 The USB device VID and PID are configured by the sample's Kconfig file.
 

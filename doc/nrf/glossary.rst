@@ -103,8 +103,11 @@ Glossary
 
    Build type
       A build type is a feature that defines the way in which the configuration files are to be handled.
-      The |NCS| provides support for :ref:`app_build_additions_build_types`.
-      Selecting a specific build type can result in a different structure of the :term:`build configuration`.
+      The |NCS| provides support for handling :ref:`app_build_additions_build_types`
+      :ref:`Selecting a specific build type <cmake_options>` can result in a different structure of the :term:`build configuration`.
+
+      .. note::
+           Build types are deprecated and are being gradually replaced by Zephyr's :ref:`file suffixes <modifying_build_types>` and :ref:`zephyr:sysbuild`.
 
    Carrier-sense Multiple Access with Collision Avoidance (CSMA/CA)
       A network multiple access method in which carrier sensing is used, but nodes attempt to avoid collisions by beginning transmission only after the channel is sensed to be idle.

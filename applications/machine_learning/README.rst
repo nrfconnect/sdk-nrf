@@ -285,7 +285,7 @@ For example, the configuration files for the Thingy:53 are defined in the :file:
 
 The following configuration files can be defined for any supported board:
 
-* :file:`prj_build_type.conf` - Kconfig configuration file for a build type.
+* :file:`prj_<build_type>.conf` - Kconfig configuration file for a :ref:`custom build type <modifying_build_types>`.
   To support a given build type for the selected board, you must define the configuration file with a proper name.
   See :ref:`nrf_machine_learning_app_configuration_build_types` for more information.
 * :file:`app.overlay` - DTS overlay file specific for the board.
@@ -311,8 +311,8 @@ The Thingy:53 and nRF53 Development Kit use multi-image build with the following
 * Bluetooth HCI RPMsg
 
 You can define the application-specific configuration for the mentioned child images in the board-specific directory in the :file:`applications/machine_learning/configuration/` directory.
-The Kconfig configuration file should be located in subdirectory :file:`child_image/child_image_name` and its name should match the application Kconfig file name, that is contain the build type if necessary
-For example, the :file:`applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/child_image/hci_ipc/prj.conf` file defines configuration of Bluetooth HCI RPMsg for ``debug`` build type on ``thingy53_nrf5340_cpuapp`` board, while the :file:`applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/child_image/hci_ipc/prj_release.conf` file defines configuration of Bluetooth HCI RPMsg for ``release`` build type.
+The Kconfig configuration file should be located in subdirectory :file:`child_image/<child_image_name>` and its name should match the application Kconfig file name, and it should contain the build type if necessary.
+For example, the :file:`applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/child_image/hci_ipc/prj.conf` file defines configuration of Bluetooth HCI RPMsg for the ``debug`` build type on ``thingy53_nrf5340_cpuapp`` board, while the :file:`applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/child_image/hci_ipc/prj_release.conf` file defines configuration of Bluetooth HCI RPMsg for the ``release`` build type.
 See :ref:`ug_multi_image` for detailed information about multi-image builds and child image configuration.
 
 .. _nrf_machine_learning_app_requirements_build_types:
@@ -325,7 +325,7 @@ The nRF Machine Learning application does not use a single :file:`prj.conf` file
 Before you start testing the application, you can select one of the build types supported by the application.
 Not every board supports both mentioned build types.
 
-See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
+See :ref:`app_build_additions_build_types` and :ref:`cmake_options` for more information.
 
 The application supports the following build types:
 
@@ -368,13 +368,13 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the :ref:`nrf_machine_learning_app_requirements_build_types`.
-See :ref:`modifying_build_types` for detailed steps how to select a build type.
+See :ref:`cmake_options` for information about how to select a build type.
 
 Providing API key
 =================
 
 If the URI of the Edge Impulse zip file requires providing an additional API key, you can provide it using the following CMake definition: :c:macro:`EI_API_KEY_HEADER`.
-This definition is set in a similar way as selected build type.
+This definition is set in a similar way as selecting a build type.
 For more detailed information about building the machine learning model in the |NCS|, see :ref:`ug_edge_impulse`.
 
 .. tip::

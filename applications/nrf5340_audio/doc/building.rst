@@ -209,14 +209,14 @@ Complete the following steps to build the application:
    #. Choose the application version by using one of the following options:
 
       * For the debug version: No build flag needed.
-      * For the release version: ``-DCONF_FILE="prj_release.conf"``
+      * For the release version: ``-DFILE_SUFFIX=release``
 
 #. Build the application using the standard :ref:`build steps <building>` for the command line.
    For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command from the :file:`applications/nrf5340_audio/` directory:
 
    .. code-block:: console
 
-      west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DCONF_FILE="prj_release.conf"
+      west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DFILE_SUFFIX=release
 
    Unlike when :ref:`nrf53_audio_app_building_script`, this command creates the build files directly in the :file:`build` directory.
    This means that you first need to program the headset development kits before you build and program gateway development kits.

@@ -186,7 +186,7 @@ To build the sample with Matter over Wi-Fi support run the following command:
 
 .. code-block:: console
 
-   west build -b nrf54h20dk_nrf54h20_cpuapp -- -DCONF_FILE=prj_no_dfu.conf -DSHIELD=nrf700x_nrf54h20dk -DCONFIG_CHIP_WIFI=y
+   west build -b nrf54h20dk_nrf54h20_cpuapp -- -DSHIELD=nrf700x_nrf54h20dk -DCONFIG_CHIP_WIFI=y
 
 
 .. _ug_nrf54h20_matter_thread_suit_dfu:

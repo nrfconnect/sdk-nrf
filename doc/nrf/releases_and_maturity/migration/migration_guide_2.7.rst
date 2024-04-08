@@ -21,6 +21,8 @@ This document describes the changes required or recommended when migrating your 
       * Change1 and description
       * Change2 and description
 
+.. _migration_2.7_required:
+
 Required changes
 ****************
 
@@ -73,6 +75,8 @@ FEM abstraction layer
     The function :c:func:`fem_tx_power_control_set` replaces the function :c:func:`fem_tx_gain_set`.
     The function :c:func:`fem_default_tx_output_power_get` replaces the function :c:func:`fem_default_tx_gain_get`.
 
+.. _migration_2.7_recommended:
+
 Recommended changes
 *******************
 
@@ -81,7 +85,16 @@ The following changes are recommended for your application to work optimally aft
 Samples and applications
 ========================
 
-This section describes the changes related to samples and applications.
+* For applications using build types (without Partition Manager or child images):
+
+  * The :makevar:`CONF_FILE` used for :ref:`app_build_additions_build_types` is now deprecated and is being replaced with the :makevar:`FILE_SUFFIX` variable, inherited from Zephyr.
+    You can read more about it in :ref:`app_build_file_suffixes`, :ref:`cmake_options`, and the :ref:`related Zephyr documentation <zephyr:application-file-suffixes>`.
+
+    If your application uses build types, it is recommended to update the :file:`sample.yaml` to use the new variable instead of :makevar:`CONF_FILE`.
+
+    .. note::
+        :ref:`Partition Manager's static configuration <ug_pm_static>` and :ref:`child image Kconfig configuration <ug_multi_image_permanent_changes>` are not yet compatible with :makevar:`FILE_SUFFIX`.
+        Read more about this in the note in :ref:`app_build_file_suffixes`.
 
 Matter
 ------

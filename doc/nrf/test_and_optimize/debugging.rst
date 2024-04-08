@@ -41,11 +41,11 @@ You can also set these options to ``y`` manually.
 There are many more Kconfig options for debugging that are specific to different modules.
 For details, see the respective documentation pages of the modules.
 
-Debug build types
-=================
+Debug suffixes and build types
+==============================
 
-Some applications and samples provide a specific build type that enables additional debug functionalities.
-You can select build types when you are :ref:`configuring the build settings <modifying_build_types>`.
+Some applications and samples provide a specific configuration that enables additional debug functionalities, either as :ref:`file suffixes <app_build_file_suffixes>` or :ref:`app_build_additions_build_types`.
+You can select custom configurations when you are :ref:`configuring the build settings <cmake_options>`.
 
 Debug logging
 =============

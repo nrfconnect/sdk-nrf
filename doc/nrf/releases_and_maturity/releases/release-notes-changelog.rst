@@ -35,6 +35,11 @@ IDE and tool support
 
 |no_changes_yet_note|
 
+Build and configuration system
+==============================
+
+* Added documentation about the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>` with a related information in the :ref:`migration guide <migration_2.7_recommended>`.
+
 Working with nRF91 Series
 =========================
 
@@ -373,7 +378,7 @@ Matter samples
   * The :file:`configuration` directory which contained the Partition Manager configuration file.
     It has been replaced replace with :file:`pm_static_<BOARD>` Partition Manager configuration files for all required target boards in the samples' directories.
   * The :file:`prj_no_dfu.conf` file.
-  * Support for ``no_dfu`` build type for nRF5350 DK, nRF52840 DK and nRF7002 DK.
+  * Support for the ``no_dfu`` build type for the nRF5350 DK, the nRF52840 DK, and the nRF7002 DK.
 
 * Added:
 

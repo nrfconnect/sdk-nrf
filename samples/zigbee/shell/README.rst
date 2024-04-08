@@ -56,7 +56,7 @@ These interfaces are completely independent one from another and can be used sim
 For information about setup, see :ref:`testing`.
 
 The Zigbee Shell sample uses UART as the default shell backend.
-To change the shell backend from the default UART to the nRF USB CDC ACM, use the :file:`prj_usb.conf` configuration file and add the ``-DCONF_FILE='prj_usb.conf'`` flag when building the sample.
+To change the shell backend from the default UART to the nRF USB CDC ACM, use the :file:`prj_usb.conf` configuration file and add the ``-DFILE_SUFFIX=usb`` flag when building the sample.
 With such configuration, Zephyr logs are printed only to the backend that the shell is using.
 You can enable the UART backend for the logger, so that Zephyr logs are printed to both the shell backend and the UART.
 To do this, enable the :kconfig:option:`CONFIG_LOG_BACKEND_UART` Kconfig option.

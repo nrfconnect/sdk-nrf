@@ -65,7 +65,7 @@ When you start building, a CMake build is executed in two stages: configuration 
 Configuration phase
 ===================
 
-During this phase, CMake executes build scripts from :file:`CMakeLists.txt` and gathers configuration from different sources, for example :ref:`app_build_additions_build_types`, to generate the final build scripts and create a model of the build for the specified build target.
+During this phase, CMake executes build scripts from :file:`CMakeLists.txt` and gathers configuration from different sources, for example :ref:`app_build_file_suffixes`, to generate the final build scripts and create a model of the build for the specified build target.
 The result of this process is a :term:`build configuration`, a set of files that will drive the build process.
 
 For more information about this phase, see the respective sections on Zephyr's :ref:`zephyr:cmake-details` page, which describes in-depth the usage of CMake for Zephyr-based applications.
@@ -150,6 +150,34 @@ Each child image is a separate application.
 
 For more information, see :ref:`ug_multi_image`.
 
+.. _app_build_file_suffixes:
+
+Custom configurations
+---------------------
+
+Zephyr provides the :ref:`zephyr:application-file-suffixes` feature for applications that require a single code base with multiple configurations for different product or build variants (or both).
+When you select a given file suffix for the :ref:`configuration phase <configuration_system_overview_config>`, the build system will use a specific set of files to create a specific build configuration for the application.
+If it does not find files that match the provided suffix, the build system will fall back to the default files without suffix.
+
+The file suffix can be any string, but many applications and samples in the |NCS| use ``release``.
+This suffix can be included in the :file:`prj.conf` file name (for example, :file:`prj_release.conf`), and also in file names for board configurations, child image Kconfig configurations, and others.
+In this way, these files are made dependent on the given configuration and are only used when that build configuration is generated.
+For example, if an application uses a custom :file:`nrf5340dk_nrf5340_cpuapp_release.overlay` overlay file, this file will be used together with the application's :file:`prj_release.conf` when you set :makevar:`FILE_SUFFIX` to ``release`` (``-DFILE_SUFFIX=release``).
+
+Many applications and samples in the |NCS| define even more detailed build configurations.
+For example, the :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample features the ``fota`` configuration.
+See the Configuration section of the given application or sample's documentation for information on if it includes any custom configurations.
+
+.. important::
+    The file suffixes feature is replacing the :ref:`app_build_additions_build_types` that used the :makevar:`CONF_FILE` variable.
+    File suffixes are backward compatible with this variable, but the following software components are not compatible with file suffixes:
+
+    * :ref:`Child image Kconfig configuration <ug_multi_image_permanent_changes>`.
+      Use the :makevar:`CONF_FILE` variable during the deprecation period of the build types.
+    * |file_suffix_partition_manager_exception|
+
+For information about how to provide file suffixes when building an application, see :ref:`cmake_options`.
+
 .. _configuration_system_overview_build:
 
 Building phase
@@ -193,9 +221,17 @@ For example, when building a sample that enables :kconfig:option:`CONFIG_BT_EXT_
 To disable these warnings, disable the :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` Kconfig option.
 
 .. _app_build_additions_build_types:
+.. _gs_modifying_build_types:
+.. _modifying_build_types:
 
 Custom build types
 ==================
+
+.. important::
+    The build types are deprecated and are being replaced by :ref:`suffix-based configurations <app_build_additions_build_types>` and Zephyr's :ref:`zephyr:sysbuild`.
+    You can continue to use the build types feature until the transition is complete in the |NCS|.
+    It is still required for applications that use build types with :ref:`multiple images <ug_multi_image>` or Partition Manager's :ref:`static configuration <ug_pm_static>` (or both).
+    Check the application and sample documentation pages for which variable to use.
 
 A build type is a feature that defines the way in which the configuration files are to be handled.
 For example, selecting a build type lets you generate different build configurations for *release* and *debug* versions of the application.
@@ -213,7 +249,16 @@ The most common build types are ``release`` and ``debug``, which correspond to C
 For example, nRF Desktop features a ``wwcb`` build type, while Matter weather station features the ``factory_data`` build type.
 See the application's Configuration section for information if it includes any build types.
 
-For more information about how to invoke and create build types, see :ref:`modifying_build_types`.
+The following software components can be made dependent on the build type:
+
+* The Partition Manager's :ref:`static configuration <ug_pm_static>`.
+  When the build type has been inferred, the file :file:`pm_static_<buildtype>.yml` will have precedence over :file:`pm_static.yml`.
+* The :ref:`child image Kconfig configuration <ug_multi_image_permanent_changes>`.
+  Certain child image configuration files located in the :file:`child_image/` directory can be defined per build type.
+
+The devicetree configuration is not affected by the build type.
+
+For more information about how to invoke build types, see :ref:`cmake_options`.
 
 .. _app_build_additions_multi_image:
 
@@ -223,7 +268,7 @@ Multi-image builds
 The |NCS| build system extends Zephyr's with support for multi-image builds.
 You can find out more about these in the :ref:`ug_multi_image` section.
 
-The |NCS| allows you to :ref:`create custom build type files <modifying_build_types>` instead of using a single :file:`prj.conf` file.
+The |NCS| allows you to :ref:`build types <app_build_additions_build_types>` instead of using a single :file:`prj.conf` file.
 
 Boilerplate CMake file
 ======================
@@ -234,12 +279,15 @@ The |NCS| provides an additional :file:`boilerplate.cmake` file that is automati
 
    find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
-This file checks if the selected board is supported and, when available, if the selected :ref:`build type <app_build_additions_build_types>` is supported.
+This file checks if the selected board is supported and, when available, if the selected :ref:`file suffix <app_build_file_suffixes>` or :ref:`build type <app_build_additions_build_types>` is supported.
 
 Partition Manager
 =================
 
 The |NCS| adds the :ref:`partition_manager` script, responsible for partitioning the available flash memory and creating the `Memory layout configuration`_.
+
+.. note::
+    |file_suffix_partition_manager_exception|
 
 Binaries and images for nRF Cloud FOTA
 ======================================
