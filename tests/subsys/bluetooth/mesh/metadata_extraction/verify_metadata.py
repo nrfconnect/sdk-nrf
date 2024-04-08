@@ -51,6 +51,7 @@ def expected_metadata(size):
         {
             'sign_version': {'major': 1, 'minor': 2, 'revision': 3, 'build_number': 4},
             'binary_size': size,
+            'core_type': 1,
             'composition_data': {
                 'cid': 1,
                 'pid': 2,
@@ -67,6 +68,7 @@ def expected_metadata(size):
         {
             'sign_version': {'major': 1, 'minor': 2, 'revision': 3, 'build_number': 4},
             'binary_size': size,
+            'core_type': 1,
             'composition_data': {
                 'cid': 4,
                 'pid': 5,
