@@ -189,7 +189,7 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
 .. parsed-literal::
    :class: highlight
 
-    west build -b *build_target* -- -DOVERLAY_CONFIG=overlay-bt.conf
+    west build -b *build_target* -- -DEXTRA_CONF_FILE=overlay-bt.conf
     west flash
 
 Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.

@@ -51,7 +51,7 @@ For example, you can assign the :file:`my-custom-fragment.conf` fragment to the 
    west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
    -DCONFIG_SECURE_BOOT=y \
    -DCONFIG_BOOTLOADER_MCUBOOT=y \
-   -Db0_OVERLAY_CONFIG=my-custom-fragment.conf
+   -Db0_EXTRA_CONF_FILE=my-custom-fragment.conf
 
 In the same way, you can replace ``b0`` with ``mcuboot`` to apply the :file:`my-custom-fragment.conf` fragment to the MCUboot image:
 
@@ -60,7 +60,7 @@ In the same way, you can replace ``b0`` with ``mcuboot`` to apply the :file:`my-
    west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
    -DCONFIG_SECURE_BOOT=y \
    -DCONFIG_BOOTLOADER_MCUBOOT=y \
-   -Dmcuboot_OVERLAY_CONFIG=my-custom-fragment.conf
+   -Dmcuboot_EXTRA_CONF_FILE=my-custom-fragment.conf
 
 You can use this method to apply Kconfig fragments to any child image in the build, as well as to set any Kconfig option that can be set from the command line.
 

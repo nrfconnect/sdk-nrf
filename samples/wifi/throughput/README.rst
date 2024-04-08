@@ -69,7 +69,7 @@ To build for the nRF7002 DK with different profiles for Station mode, use the fo
 
       .. code-block:: console
 
-         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-iot-devices.conf
+         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-iot-devices.conf
 
    .. group-tab:: Memory-optimized
 
@@ -77,7 +77,7 @@ To build for the nRF7002 DK with different profiles for Station mode, use the fo
 
       .. code-block:: console
 
-         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-memory-optimized.conf
+         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-memory-optimized.conf
 
    .. group-tab:: High performance
 
@@ -85,7 +85,7 @@ To build for the nRF7002 DK with different profiles for Station mode, use the fo
 
       .. code-block:: console
 
-         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-high-performance.conf
+         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-high-performance.conf
 
    .. group-tab:: TX prioritized
 
@@ -93,7 +93,7 @@ To build for the nRF7002 DK with different profiles for Station mode, use the fo
 
       .. code-block:: console
 
-         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-tx-prio.conf
+         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-tx-prio.conf
 
    .. group-tab:: RX prioritized
 
@@ -101,7 +101,7 @@ To build for the nRF7002 DK with different profiles for Station mode, use the fo
 
       .. code-block:: console
 
-         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-rx-prio.conf
+         west build -p -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-rx-prio.conf
 
 Supported CLI commands
 ======================

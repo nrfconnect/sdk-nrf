@@ -134,7 +134,7 @@ nRF Cloud logging overlay
 
 To enable `Zephyr Logging`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` library, add the following parameter to your build command:
 
-``-DOVERLAY_CONFIG=overlay_nrfcloud_logging.conf``
+``-DEXTRA_CONF_FILE=overlay_nrfcloud_logging.conf``
 
 This overlay allows the sample and various subsystems that have logging enabled to send their logs to nRF Cloud.
 Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` option to the log level of messages to send to nRF Cloud, such as ``4`` for debug log messages.
@@ -148,7 +148,7 @@ Remote provisioning overlay
 This overlay is for use with nRF91x1-based devices only.
 To enable remote provisioning with the `nRF Cloud Provisioning Service`_ add the following parameter to your build command:
 
-``-DOVERLAY_CONFIG=overlay-nrf_provisioning.conf``
+``-DEXTRA_CONF_FILE=overlay-nrf_provisioning.conf``
 
 This overlay enables the :ref:`lib_nrf_provisioning` library and its provisioning shell.
 It configures the device ID to use the UUID format, not the legacy 'nrf-\ *IMEI*\ ' format.

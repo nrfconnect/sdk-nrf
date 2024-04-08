@@ -223,7 +223,7 @@ You can generate new factory data set when building for the target board by invo
 .. parsed-literal::
    :class: highlight
 
-   west build -b thingy53_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-factory_data.conf
+   west build -b thingy53_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-factory_data.conf
 
 This command builds the application with default certificates.
 After building the target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the :ref:`regular command to flash it to the device <programming>`.

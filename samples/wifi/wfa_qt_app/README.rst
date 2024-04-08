@@ -85,14 +85,14 @@ The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-netusb.conf
+   west build -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-netusb.conf
 
 To build for the nRF7002 DK with the Serial Line Internet Protocol (SLIP) support, use the ``nrf7002dk_nrf5340_cpuapp`` build target with the configuration overlay :file:`overlay-slip.conf` and DTC overlay :file:`nrf7002_uart_pipe.overlay`.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-slip.conf -DDTC_OVERLAY_FILE=nrf7002_uart_pipe.overlay
+   west build -b nrf7002dk_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-slip.conf -DDTC_OVERLAY_FILE=nrf7002_uart_pipe.overlay
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 

@@ -206,12 +206,12 @@ The light switch sample is split into the following source files:
 LPN configuration
 =================
 
-To make the light switch run as an LPN, set :makevar:`OVERLAY_CONFIG` to :file:`overlay-lpn.conf` when building the sample.
+To make the light switch run as an LPN, set :makevar:`EXTRA_CONF_FILE` to :file:`overlay-lpn.conf` when building the sample.
 For example, when building from the command line, use the following command:
 
   .. code-block:: console
 
-     west build -b <BOARD> -p -- -DOVERLAY_CONFIG="overlay-lpn.conf"
+     west build -b <BOARD> -p -- -DEXTRA_CONF_FILE="overlay-lpn.conf"
 
 The configuration overlay :file:`overlay-lpn.conf` enables the LPN feature, and alters certain configuration options to further lower the power consumption.
 To review the specific alterations, open and inspect the :file:`overlay-lpn.conf` file.

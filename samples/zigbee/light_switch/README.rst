@@ -117,12 +117,12 @@ Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuri
 .. note::
    You can use the :file:`prj_fota.conf` file only with a development kit that contains the nRF52840 or nRF5340 SoC.
 
-To activate the Multiprotocol Bluetooth LE extension, set :makevar:`OVERLAY_CONFIG` to the :file:`overlay-multiprotocol_ble.conf`.
+To activate the Multiprotocol Bluetooth LE extension, set :makevar:`EXTRA_CONF_FILE` to the :file:`overlay-multiprotocol_ble.conf`.
 For example, when building from the command line, use the following command:
 
 .. code-block:: console
 
-   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG='overlay-multiprotocol_ble.conf'
+   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DEXTRA_CONF_FILE='overlay-multiprotocol_ble.conf'
 
 
 For the board name to use instead of the ``nrf52840dk_nrf52840``, see :ref:`programming_board_names`.
