@@ -239,6 +239,7 @@ Bluetooth samples
 * :ref:`direct_test_mode` sample:
 
   * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 Bluetooth Mesh samples
 ----------------------
