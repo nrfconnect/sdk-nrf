@@ -106,9 +106,12 @@ static void serial_cb(const struct device *uart, void *user_data)
 			break;
 		}
 
-		k_work_submit(&uart_tr->cb_work);
+		k_work_submit_to_queue(&uart_tr->rx_workq, &uart_tr->cb_work);
 	}
 }
+
+/* TODO: for moving it to uart_tr.*/
+K_THREAD_STACK_DEFINE(uart_tr_workq_stack_area, 4096);
 
 static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t receive_cb,
 		void *context)
@@ -151,6 +154,11 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 	}
 
 	k_sem_init(&uart_tr->uart_tx_sem, 1, 1);
+
+	k_work_queue_init(&uart_tr->rx_workq);
+	k_work_queue_start(&uart_tr->rx_workq, uart_tr_workq_stack_area,
+					K_THREAD_STACK_SIZEOF(uart_tr_workq_stack_area),
+					0, NULL);
 
 	k_work_init(&uart_tr->cb_work, work_handler);
 	ring_buf_init(&uart_tr->rx_ringbuf, sizeof(uart_tr->rx_buffer), uart_tr->rx_buffer);

@@ -7,9 +7,10 @@
 #ifndef NRF_RPC_UART_H_
 #define NRF_RPC_UART_H_
 
-#include <zephyr/device.h>
 #include <nrf_rpc.h>
 #include <nrf_rpc_tr.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
 #include <zephyr/sys/ring_buffer.h>
 
 #define NRF_RPC_MAX_FRAME_SIZE	1536
@@ -42,6 +43,9 @@ typedef struct nrf_rpc_uart {
 
 	/* UART send semaphore */
 	struct k_sem uart_tx_sem;
+
+	/* Workqueue for rx*/
+	struct k_work_q rx_workq;
 } nrf_rpc_uart;
 
 extern const struct nrf_rpc_tr_api nrf_rpc_uart_service_api;
