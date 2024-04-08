@@ -537,7 +537,9 @@ Bluetooth libraries and services
 
   * Updated the :ref:`bt_mesh_light_ctrl_srv_readme` model documentation to explicitly mention the Occupany On event.
 
-|no_changes_yet_note|
+* :ref:`bt_enocean_readme` library:
+
+  * Fixed an issue where the sensor data of a certain length was incorrectly parsed as switch commissioning.
 
 Bootloader libraries
 --------------------

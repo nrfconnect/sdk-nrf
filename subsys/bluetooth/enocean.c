@@ -28,6 +28,9 @@ LOG_MODULE_REGISTER(bt_enocean);
 #define DATA_TYPE_LIGHT_LEVEL_SOLAR_CELL 0x04
 #define DATA_TYPE_OPTIONAL_DATA 0x3c
 
+#define DEVICE_TYPE_SWITCH 0xe215
+#define DEVICE_TYPE_SENSOR 0xe500
+
 #define FLAG_ACTIVE BIT(0)
 #define FLAG_DIRTY BIT(1)
 
@@ -142,18 +145,22 @@ static int auth(const struct bt_enocean_device *dev, uint32_t seq,
 	return 0;
 }
 
-static int handle_switch_commissioning(const struct bt_le_scan_recv_info *info,
-				       struct net_buf_simple *buf,
-				       bool has_short_name)
+static void handle_switch_commissioning(const struct bt_le_scan_recv_info *info,
+					struct net_buf_simple *buf,
+					bool has_short_name)
 {
+	if (!commissioning) {
+		return;
+	}
+
 	uint32_t seq = net_buf_simple_pull_le32(buf);
 	const uint8_t *key = net_buf_simple_pull_mem(buf, 16);
 
 	if (!has_short_name && buf->len != 6) {
-		return -EINVAL;
+		return;
 	}
 
-	return bt_enocean_commission(info->addr, key, seq);
+	(void)bt_enocean_commission(info->addr, key, seq);
 }
 
 static void handle_switch_data(const struct bt_le_scan_recv_info *info,
@@ -215,6 +222,24 @@ static void handle_switch_data(const struct bt_le_scan_recv_info *info,
 	enum bt_enocean_button_action action = status & BIT(0);
 
 	cb->button(dev, action, status >> 1, opt_data, opt_data_len);
+}
+
+static void handle_switch_payload(const struct bt_le_scan_recv_info *info,
+				  struct net_buf_simple *buf, const uint8_t *payload, uint8_t len,
+				  bool has_shortened_name)
+{
+	/* The data format is decided by a mix of lengths and bitfields */
+	if (len == 29 || (has_shortened_name && len == 23)) {
+		handle_switch_commissioning(info, buf, has_shortened_name);
+		return;
+	}
+
+	if (!has_shortened_name && !(payload[8] & (BIT_MASK(3) << 5)) && len >= 12 && len <= 16) {
+		handle_switch_data(info, buf, payload);
+		return;
+	}
+
+	LOG_DBG("Unknown switch payload");
 }
 
 struct data_entry {
@@ -378,13 +403,15 @@ static void adv_recv(const struct bt_le_scan_recv_info *info,
 	uint8_t len = net_buf_simple_pull_u8(buf);
 	uint8_t type = net_buf_simple_pull_u8(buf);
 	bool has_shortened_name = (type == BT_DATA_NAME_SHORTENED);
+	/* Upper two bytes of address indicate device type */
+	uint16_t device_type = sys_get_le16(&info->addr->a.val[4]);
 
 	/* An old version of EnOcean firmware would include the shortened name
 	 * AD type, skip this.
 	 */
 	if (has_shortened_name) {
 
-		if (buf->len < ((len - 1) + 2)) {
+		if (buf->len < ((len - 1) + 2) || device_type != DEVICE_TYPE_SWITCH) {
 			return;
 		}
 
@@ -404,41 +431,16 @@ static void adv_recv(const struct bt_le_scan_recv_info *info,
 		return;
 	}
 
-	/* The data format is decided by a mix of lengths and bitfields */
-
-	if (has_shortened_name) {
-		if (len == 23 && commissioning) {
-			handle_switch_commissioning(info, buf, true);
-		}
-
-		return;
+	switch (device_type) {
+	case DEVICE_TYPE_SENSOR:
+		handle_sensor_data(info, buf, payload, len + 1 - SIGNATURE_LEN);
+		break;
+	case DEVICE_TYPE_SWITCH:
+		handle_switch_payload(info, buf, payload, len, has_shortened_name);
+		break;
+	default:
+		break;
 	}
-
-	if (!(payload[8] & (BIT_MASK(3) << 5)) && len >= 12 && len <= 16) {
-		handle_switch_data(info, buf, payload);
-		return;
-	}
-
-	/* Format is ambiguous, have to rely on trial and error: */
-	struct net_buf_simple_state state;
-	int err;
-
-	if (len == 29 && commissioning) {
-		net_buf_simple_save(buf, &state);
-		err = handle_switch_commissioning(info, buf, false);
-		if (!err) {
-			/* Doing the opposite of the normal error checking
-			 * pattern on purpose here: If the message *wasn't*
-			 * switch commissioning, it could be sensor data, so we
-			 * should keep parsing.
-			 */
-			return;
-		}
-
-		net_buf_simple_restore(buf, &state);
-	}
-
-	handle_sensor_data(info, buf, payload, len + 1 - SIGNATURE_LEN);
 }
 
 static void store_dirty(struct k_work *work)
