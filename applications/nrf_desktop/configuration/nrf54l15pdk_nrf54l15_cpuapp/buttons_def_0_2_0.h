@@ -20,6 +20,7 @@ static const struct gpio_pin col[] = {};
 static const struct gpio_pin row[] = {
 	{ .port = 1, .pin = DT_GPIO_PIN(DT_NODELABEL(button0), gpios) },
 	{ .port = 1, .pin = DT_GPIO_PIN(DT_NODELABEL(button1), gpios) },
-	{ .port = 1, .pin = DT_GPIO_PIN(DT_NODELABEL(button2), gpios) },
-	{ .port = 0, .pin = DT_GPIO_PIN(DT_NODELABEL(button3), gpios) },
+	/* GPIOs assigned to Button 3 and Button 4 on the PDK v0.2.x do not support interrupts.
+	 * Because of this, the GPIOs cannot be used by the CAF buttons module.
+	 */
 };
