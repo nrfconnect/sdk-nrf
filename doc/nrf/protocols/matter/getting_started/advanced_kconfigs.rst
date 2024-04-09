@@ -30,7 +30,7 @@ You can configure when the device will start advertising and how long it will ad
 * Set :kconfig:option:`CONFIG_CHIP_BLE_EXT_ADVERTISING` to ``y`` to enable Extended Announcement (also called Extended Beaconing), which allows a device to advertise for a duration of more than 15 minutes.
   The advertising duration can be extended to a maximum duration of 48 hours, however the set of advertised data is changed to increase the user privacy.
 * Set :kconfig:option:`CONFIG_CHIP_BLE_ADVERTISING_DURATION` to a value of time in minutes to specify how long the device will advertise Matter service over Bluetooth LE.
-  It can not be set to values higher than 15 minutes unless the Extended Announcement feature is enabled.
+  It cannot be set to values higher than 15 minutes unless the Extended Announcement feature is enabled.
 
 .. _ug_matter_configuring_optional_nfc:
 
@@ -263,7 +263,7 @@ The diagnostic logs snippet enables the set of configurations needed for full Ma
 The configuration set consist of devicetree overlays for each supported target board, and a config file that enables all diagnostic logs features by default.
 The devicetree overlays add new RAM partitions which are configured as retained to keep the log data persistent and survive the device reboot.
 They also reduce the SRAM size according to the size of the retained partition.
-The snippet sets the following kconfig options:
+The snippet sets the following Kconfig options:
 
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` to ``y``.
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS` to ``y``.

@@ -565,7 +565,7 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :file:`include/kernel.h`
 
 * :ref:`zephyr:thread_protocol_interface`
 
@@ -575,10 +575,10 @@ The following dependencies are added by the optional multiprotocol Bluetooth® L
 * :ref:`nus_service_readme`
 * Zephyr's :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/gatt.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/uuid.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/uuid.h`
 
 In addition, it uses the following secure firmware component:
 

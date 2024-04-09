@@ -225,7 +225,7 @@ Controlling a simulated On/Off Light bridged device
       uart:~$ matter_bridge onoff 1 3
 
    Note that the above command will only work if the :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL <CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL>` option is selected in the build configuration.
-   If the Kconfig option is not selected, the simulated device changes its state periodically in autonomous manner and can not be controlled by using shell commands.
+   If the Kconfig option is not selected, the simulated device changes its state periodically in autonomous manner and cannot be controlled by using shell commands.
 
 Controlling a simulated On/Off Light Switch bridged device
    Use the following command:
@@ -416,7 +416,7 @@ If you selected the Bluetooth LE device implementation using the :ref:`CONFIG_BR
 .. _CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES:
 
 CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES
-   Set the maximum amount of scanned devices.
+   Set the maximum number of scanned devices.
 
 .. _CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL:
 

@@ -780,7 +780,7 @@ After building the sample with the feature enabled and programming it to your de
 
 
    * *yearday-index* is the index of the new schedule, starting from ``1``.
-     The maximum value is defined by the :kconfig:option:`CONFIG_LOCK_MAX_YEARDAY_SCHEDULES_PER_USER` kconfig option.
+     The maximum value is defined by the :kconfig:option:`CONFIG_LOCK_MAX_YEARDAY_SCHEDULES_PER_USER` Kconfig option.
    * *user-index* is the user index defined for the user created in the previous step.
    * *localtime-start* is the starting time in Epoch Time.
    * *localtime-end* is the ending time in Epoch Time.

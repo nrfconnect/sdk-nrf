@@ -493,7 +493,7 @@ To provision the certificates, use any of the following methods, depending on th
 
          where ``<serial port>`` is the serial port of your device.
 
-      #. Provison the server root CA certificates, which you downloaded previously, by running the following commands:
+      #. Provision the server root CA certificates, which you downloaded previously, by running the following commands:
 
          .. code-block:: console
 

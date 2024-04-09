@@ -193,7 +193,7 @@ Application's network connection will be lost during the recovery process, and i
 Testing
 =======
 
-To test RPU recovery, you must build the sample with :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF700X_UTIL` kconfig options.
+To test RPU recovery, you must build the sample with :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF700X_UTIL` Kconfig options.
 
 #. Trigger RPU recovery using the following command:
 

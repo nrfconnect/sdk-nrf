@@ -68,8 +68,8 @@ You can set the supported radio configurations using the following Kconfig optio
 
 You can select the Bluetooth Low Energy serialization using the :kconfig:option:`CONFIG_IPC_RADIO_BT_SER` Kconfig option:
 
-* :kconfig:option:`CONFIG_IPC_RADIO_BT_HCI_IPC` - For the Bluetooh HCI serialization.
-* :kconfig:option:`CONFIG_IPC_RADIO_BT_RPC` - For the Bluetooh host API serialization.
+* :kconfig:option:`CONFIG_IPC_RADIO_BT_HCI_IPC` - For the Bluetooth HCI serialization.
+* :kconfig:option:`CONFIG_IPC_RADIO_BT_RPC` - For the Bluetooth host API serialization.
 
 The Bluetooth Low Energy and IEEE 802.15.4 functionalities can operate simultaneously and are only limited by available memory.
 
@@ -101,9 +101,9 @@ The following files are available:
 
 .. note::
    When you use sysbuild to build an application which uses the ipc_radio as network core image the preceding configuration files are added automatically to ipc_radio.
-   The selection of specific configuration files is determined by the sysbuild kconfig.
+   The selection of specific configuration files is determined by the sysbuild Kconfig.
 
-   For instance the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154` kconfig enables the :file:`overlay-802154.conf` configuration file to be used with ipc_radio.
+   For instance, the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154` Kconfig option enables the :file:`overlay-802154.conf` configuration file to be used with IPC radio firmware.
 
 Building and running as a single image
 **************************************

@@ -629,7 +629,7 @@ The PSA drivers using the Arm CryptoCell peripheral is enabled by default for nR
 For devices without a hardware-accelerated cryptographic engine, entropy is provided by the nRF RNG peripheral. PRNG support is provided by the Oberon PSA driver, which is implemented using software.
 
 .. note::
-   * When using CryptoCell only 1024 bytes can be requested at a time.
+   When using CryptoCell, only 1024 bytes can be requested at a time.
 
 Hash configurations
 *******************

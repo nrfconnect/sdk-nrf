@@ -20,7 +20,7 @@ It consists of two main concepts: the SUIT envelope and the SUIT manifest.
 * The SUIT envelope acts as a secure container for transporting firmware updates, encapsulating the firmware binary and its manifest.
 * The SUIT manifest is a structured file with metadata essential for the update process, including firmware version, size, and hash for integrity verification.
 
-Default manifest templates are provided by Nordic and used by default during application build.
+Default manifest templates are provided by Nordic Semiconductor and used by default during application build.
 These templates are suitable for simple cases and form the basis for generating SUIT envelopes and manifests tailored to specific application requirements.
 Customization of these templates is crucial for specific use cases and security requirements.
 
@@ -62,7 +62,6 @@ Build system configuration
 
 By default the build system generates SUIT envelopes using predefined manifest templates provided by Nordic Semiconductor.
 These templates can be found in :file:`modules/lib/suit-generator/ncs`, and are suitable for standard development needs.
-.
 
 Three manifests are used in the most common case:
 
@@ -98,7 +97,7 @@ The source of the manifest templates can be configured by setting the following 
 
 * :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE`
 
-* :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE` - for each of the images (application and radio core images)
+* :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE` - For each of the images (application and radio core images)
 
 One example is demonstrated with the following case:
 
@@ -115,9 +114,7 @@ One example is demonstrated with the following case:
 The following files are used to create the SUIT envelope:
 
 * Root envelope - :file:`root.yaml.jinja2`
-
 * Application domain - :file:`app.yaml.jinja2`
-
 * Radio domain - :file:`radio.yaml.jinja2`
 
 To build the described example with the provided user-defined manifest templates:
@@ -188,11 +185,8 @@ Variables and methods available in the manifest templates
 The manifest templates have access to the following:
 
 * Devicetree values (`edtlib`_ object)
-
 * Target names
-
 * Paths to binary artifacts
-
 * Application version
 
 Some of these values are stored in the Python dictionaries that are named after the target name.
@@ -201,23 +195,17 @@ For example, for the :ref:`nrf54h_suit_sample` there will be two variables avail
 The target names (the names of these variables) can be changed using the :kconfig:option:`CONFIG_SUIT_ENVELOPE_TARGET` Kconfig option for a given image.
 Each variable is a Python dictionary type (``dict``) containing the following keys:
 
-* ``name`` - name of the target
-
+* ``name`` - Name of the target
 * ``dt`` -  Devicetree representation (`edtlib`_ object)
-
-* ``binary`` - path to the binary, which holds the firmware for the target
+* ``binary`` - Path to the binary, which holds the firmware for the target
 
 Additionally, the Python dictionary holds a variable called ``version`` that holds the application version.
 With the Python dictionary you are able to, for example:
 
 * Extract the CPU ID by using ``application['dt'].label2node['cpu'].unit_addr``
-
 * Obtain the partition address with ``application['dt'].chosen_nodes['zephyr,code-partition']``
-
 * Obtain the size of partition with ``application['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size``
-
 * Get the pair of URI name and the binary path by using ``'#{{ application['name'] }}': {{ application['binary'] }}``
-
 * Get the application version with ``suit-manifest-sequence-number: {{ sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] }}``
 
 Additionally, the **get_absolute_address** method is available to recalculate the absolute address of the partition.
@@ -406,7 +394,7 @@ To restore a YAML file from a binary SUIT envelope:
 Debug a SUIT envelope
 ---------------------
 
-To debug the a SUIT envelope, by printing their parsed content to the ``stdout``, run the following:
+To debug a SUIT envelope, by printing their parsed content to the ``stdout``, run the following:
 
 .. code-block::
 

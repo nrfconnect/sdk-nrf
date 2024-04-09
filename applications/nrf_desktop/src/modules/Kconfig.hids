@@ -37,7 +37,7 @@ config DESKTOP_HIDS_SUBSCRIBER_PRIORITY
 	range 1 255
 	help
 	  HID Service over GATT reports subscriber priority. The lower value means the lower
-	  priority in subscribtion to HID reports. By default, the HID service uses the lowest
+	  priority in subscription to HID reports. By default, the HID service uses the lowest
 	  possible priority.
 
 choice BT_HIDS_DEFAULT_PERM

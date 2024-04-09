@@ -4,6 +4,10 @@
 Enabling Matter in Kconfig
 ##########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 To use the Matter protocol, set the :kconfig:option:`CONFIG_CHIP` Kconfig option.
 This option enables the Matter protocol stack and other associated features and components, such as C++ support or Zephyr networking layer.
 

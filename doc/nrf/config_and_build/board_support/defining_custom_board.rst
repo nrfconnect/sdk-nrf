@@ -3,6 +3,10 @@
 Defining custom board
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Defining your own board is a very common step in application development, because applications are typically designed to run on boards that are not directly supported by the |NCS|, and are often custom designs not available publicly.
 
 Guidelines for custom boards

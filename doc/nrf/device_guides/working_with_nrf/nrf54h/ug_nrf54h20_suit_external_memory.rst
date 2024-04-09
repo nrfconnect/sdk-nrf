@@ -28,7 +28,7 @@ Overview of external memory in SUIT firmware updates
 To use external memory with SUIT, the fetch model-based firmware upgrade is required.
 The SUIT envelope must always be stored in the non-volatile memory in the MCU.
 The SUIT manifests stored in the envelope contain instructions that the device must perform to fetch other required payloads.
-To store payloads in the external memory, a Device Dirmware Update (DFU) cache partition must be defined in the external memory's devicetree node.
+To store payloads in the external memory, a Device Firmware Update (DFU) cache partition must be defined in the external memory's devicetree node.
 In the SUIT manifest, you can define a component representing the cache partition in the external memory.
 Within the ``suit-payload-fetch`` sequence, you can then store any fetched payload into any ``CACHE_POOL`` component.
 
@@ -77,7 +77,7 @@ To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` arg
          };
       };
 
-   Note that the name of the partition must follow the following formate: ``dfu_cache_partition_<n>``.
+   Note that the name of the partition must follow the following format: ``dfu_cache_partition_<n>``.
    The number at the end determines the ``CACHE_POOL`` ID, which will be used later in the SUIT manifest.
    This number must be between greater than 0 and less than the value of :kconfig:option:`CONFIG_SUIT_CACHE_MAX_CACHES`.
    The Secure Domain firmware supports up to eight DFU cache partitions.

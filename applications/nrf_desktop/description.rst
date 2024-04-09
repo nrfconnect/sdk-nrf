@@ -7,7 +7,7 @@ nRF Desktop: Application description
    :local:
    :depth: 2
 
-The nRF Desktop application supports common input hardware interfaces like motion sensors, rotation sensors, and buttons martixes.
+The nRF Desktop application supports common input hardware interfaces like motion sensors, rotation sensors, and buttons matrixes.
 You can configure the firmware at runtime using a dedicated configuration channel established with the HID feature report.
 The same channel is used to transmit DFU packets.
 

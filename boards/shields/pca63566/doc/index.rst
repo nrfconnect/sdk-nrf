@@ -3,21 +3,27 @@
 PCA63566 shield
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 Overview
 ********
 
 PCA63566 is a testing shield with sensors and transceivers:
-- temperature,
-- humidity,
-- pressure,
-- accelerometer,
-- CAN transceiver
+
+* Temperature
+* Humidity
+* Pressure
+* Accelerometer
+* CAN transceiver
+
 It is targeted for testing I2C, I3C, SPI and CAN protocols drivers.
 
 Requirements
 ************
 
-This shield is pin compatible with nrf54h20dk.
+This shield is pin compatible with nRF54H20 DK.
 
 Usage
 *****

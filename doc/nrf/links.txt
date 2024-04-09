@@ -96,7 +96,7 @@
 
 .. _`tests/unity/example_test/CMakeLists.txt`: https://github.com/nrfconnect/sdk-nrf/blob/main/tests/unity/example_test/CMakeLists.txt
 
-.. _`nRF52820 CMakeLists.txt`: https://github.com/zephyrproject-rtos/zephyr/blob/main/boards/arm/nrf52833dk_nrf52820/CMakeLists.txt
+.. _`nRF52820 CMakeLists.txt`: https://github.com/zephyrproject-rtos/zephyr/blob/main/boards/nordic/nrf52833dk/CMakeLists.txt
 
 .. _`OpenThread CLI Reference`: https://github.com/openthread/openthread/blob/main/src/cli/README.md
 .. _`OpenThread CLI Reference - csl command`: https://github.com/openthread/openthread/blob/main/src/cli/README.md#csl
@@ -134,7 +134,7 @@
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
 .. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
-.. _`Matter factory data Kconfig options`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CHIP_FACTORY_DATA
+.. _`Matter factory data Kconfig options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CHIP_FACTORY_DATA
 
 .. _`CoreMark GitHub`: https://github.com/eembc/coremark
 
@@ -1205,7 +1205,7 @@
 
 .. _`nRF Cloud REST API (v1)`: https://api.nrfcloud.com/v1
 .. _`nRF Cloud Patch Device State`:
-.. _`nRF Connect for Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
+.. _`nRF Connect for Cloud Patch Device State`: https://api.nrfcloud.com/v1#tag/IP-Devices/operation/UpdateDeviceState
 .. _`nRF Cloud REST API ListMessages`: https://api.nrfcloud.com/v1#tag/Messages/operation/ListMessages
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 .. _`nRF Cloud REST API ProvisionDevices`: https://api.nrfcloud.com/v1#tag/IP-Devices/operation/ProvisionDevices

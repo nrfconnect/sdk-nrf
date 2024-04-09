@@ -3,6 +3,10 @@
 Output build files (image files)
 ################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The building process produces each time an :term:`image file`.
 
 The image file can refer to an *executable*, a *program*, or an *ELF file*.
