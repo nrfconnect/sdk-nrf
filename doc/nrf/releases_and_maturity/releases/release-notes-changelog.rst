@@ -517,6 +517,10 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* :ref:`bt_mesh` library:
+
+  * Updated the :ref:`bt_mesh_light_ctrl_srv_readme` model documentation to explicitly mention the Occupany On event.
+
 |no_changes_yet_note|
 
 Bootloader libraries
