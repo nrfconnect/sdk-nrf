@@ -331,11 +331,6 @@ static void iso_sent(struct bt_iso_chan *chan)
 
 	/* Set up a timer to trigger right before the next set of SDUs are to be sent. */
 	uint32_t controller_time_us = controller_time_us_get() & UINT32_MAX;
-	int32_t time_to_next_sdu_us =
-		assigned_timestamp + CONFIG_SDU_INTERVAL_US
-		- controller_time_us
-		- HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US;
-	k_timer_start(&sdu_timer, K_USEC(time_to_next_sdu_us), K_NO_WAIT);
 
 	/* Increment the SDU timestamp with one SDU interval. */
 	tx_sdu_timestamp_us = assigned_timestamp + CONFIG_SDU_INTERVAL_US;
@@ -348,6 +343,12 @@ static void iso_sent(struct bt_iso_chan *chan)
 	}
 
 	num_sdus_sent++;
+
+	int32_t time_to_next_sdu_us =
+		assigned_timestamp + CONFIG_SDU_INTERVAL_US
+		- controller_time_us
+		- HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US;
+	k_timer_start(&sdu_timer, K_USEC(time_to_next_sdu_us), K_NO_WAIT);
 }
 
 static void sdu_timer_expired(struct k_timer *timer)
