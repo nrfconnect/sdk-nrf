@@ -221,7 +221,7 @@ static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum 
 
 	if (err) {
 		LOG_WRN("Security failed: level %d err %d", level, err);
-		ret = bt_conn_disconnect(conn, err);
+		ret = bt_conn_disconnect(conn, BT_HCI_ERR_AUTH_FAIL);
 		if (ret) {
 			LOG_WRN("Failed to disconnect %d", ret);
 		}
