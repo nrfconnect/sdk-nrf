@@ -274,7 +274,10 @@ Bluetooth Mesh samples
 
 * :ref:`bluetooth_mesh_light` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added:
+
+    * Support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+    * Support for DFU over Bluetooth Low Energy for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
 
 * :ref:`ble_mesh_dfu_target` sample:
 
