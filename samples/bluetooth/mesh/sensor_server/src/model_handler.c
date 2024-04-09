@@ -694,13 +694,16 @@ static const double dummy_amb_light_values[] = {
 	167772.13,
 };
 
+#define BUTTON_PRESSED(p, c, b) ((p & b) && (c & b))
+#define BUTTON_RELEASED(p, c, b) (!(p & b) && (c & b))
+
 static void button_handler_cb(uint32_t pressed, uint32_t changed)
 {
 	if (!bt_mesh_is_provisioned()) {
 		return;
 	}
 
-	if (pressed & changed & BIT(0)) {
+	if (BUTTON_PRESSED(pressed, changed, BIT(0))) {
 		int err;
 		static int amb_light_idx;
 		struct bt_mesh_sensor_value val;
@@ -722,7 +725,7 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 		}
 	}
 
-	if (pressed & changed & BIT(1)) {
+	if (BUTTON_PRESSED(pressed, changed, BIT(1))) {
 		int64_t thres_micros;
 		enum bt_mesh_sensor_value_status status;
 
@@ -735,7 +738,7 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 		}
 	}
 
-	if ((!pressed) & changed & BIT(1)) {
+	if (BUTTON_RELEASED(pressed, changed, BIT(1))) {
 		if (!pres_detect) {
 			k_work_cancel_delayable(&presence_detected_work);
 		} else {
