@@ -590,6 +590,8 @@
 
 .. _`Electrical specification for nRF7002`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/elspec/doc/electrical_specification.html
 
+.. _`LwM2M carrier sample for v2.5.2`: https://docs.nordicsemi.com/bundle/ncs-2.5.2/page/nrf/samples/cellular/lwm2m_carrier/README.html
+
 .. _`nRF pynrfjprog`: https://docs.nordicsemi.com/bundle/ug_pynrfjprog/page/UG/pynrfjprog/pynrfjprog_lpage.html
 
 .. _`nRF9160 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/nRF9160_html5_keyfeatures.html
