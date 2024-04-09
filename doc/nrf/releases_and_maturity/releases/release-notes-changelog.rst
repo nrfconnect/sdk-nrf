@@ -260,6 +260,10 @@ Bluetooth Mesh samples
 
   * Added a note on how to compile the sample with new Composition Data.
 
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+  * Added a section about the :ref:`occupancy mode <bluetooth_mesh_light_lc_occupancy_mode>`.
+
 Cellular samples
 ----------------
 

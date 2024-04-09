@@ -225,9 +225,10 @@ You should now see the following actions:
 #. The LED stays at 100% for three seconds **On**.
 #. The LED fades from 100% to :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` over five seconds **On > Prolong**.
 #. The LED stays at :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` for three seconds **Prolong**.
-#. The LED fades from :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` to 0% over five seconds **Prolong > Standby**.
+#. The LED fades from :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` to :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_STANDBY` over five seconds **Prolong > Standby**.
 
 The default value of :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG` is 10000 (~15%).
+The default value of :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_STANDBY` is 0 (0%).
 
 .. figure:: images/bt_mesh_light_ctrl_levels.svg
    :alt: Light level transitions over time
@@ -248,6 +249,45 @@ Configure the Sensor Setup Server model on the **Mesh Sensor** node:
 * Bind the model to **Application Key 1**. Make sure to bind the same application key to the peer Sensor Client.
 
 The Sensor Setup Server model is now configured and able to receive sensor setting messages from the Sensor Client.
+
+.. _bluetooth_mesh_light_lc_occupancy_mode:
+
+Occupancy mode
+--------------
+
+You can combine this sample with the :ref:`bluetooth_mesh_sensor_server` sample to trigger the :ref:`Occupancy On <bt_mesh_light_ctrl_srv_occupancy_on_event>` event on the Light LC Server by the Occupancy sensor.
+
+To do this, first configure the Light LC Server on the **Mesh Light Fixture** node:
+
+* Bind the model to **Application Key 1**.
+* Set the subscription parameters: Create a dedicated group address.
+
+Prepare the :ref:`bluetooth_mesh_sensor_server` sample:
+
+* Build, run and provision the **Occupancy Sensor** node as described in the sample's documentation.
+
+Configure the Occupancy Sensor Server that is instantiated on the Element 2 of the :ref:`bluetooth_mesh_sensor_server` sample:
+
+* Bind the model to **Application Key 1**.
+* Set the publication parameters:
+
+  * Destination/publish address: Select the same group as the Light LC Server is subscribed to.
+
+To evaluate occupancy inputs when light is not in **Standby** state:
+
+* Open the **Mesh Light Fixture** node in the mobile app.
+* Open the Generic OnOff Server in the second element, then tap :guilabel:`ON` at the bottom of the Generic On Off Controls.
+  This will bring the Light LC Server out of **Standby** state.
+* Now, when the Light LC Server is not in the **Standby** state, press ``Button 2`` on the **Occupancy Sensor** node to keep the light in the **On** state.
+* If the Light LC Server enters the **Standby** state, Occupancy sensor inputs will not have any effect because the default value of the Light LC Occupancy Mode state is ``0``.
+
+When using the `nRF Mesh mobile app for iOS`_, you can change the value of the Light LC Occupancy Mode state to ``1``, and see how Occupancy sensor inputs will turn the light ON from the **Standby** state.
+Do this in the following way:
+
+* Open the **Mesh Light Fixture** node in the mobile app for iOS.
+* Go to the Light LC Server configuration that is located on the Element 2.
+* Scroll down to the **OCCUPANCY MODE** and tap :guilabel:`ON` to enable the Occupancy mode in the **Standby** state.
+* When the Light LC Server is in the **Standby** state, press ``Button 2`` on the **Occupancy Sensor** node.
 
 Dependencies
 ************
