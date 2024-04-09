@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <sdfw_services/echo_service.h>
-#include <sdfw_services/prng_service.h>
-#include <sdfw_services/reset_evt_service.h>
-#include <sdfw_services/sdfw_update_service.h>
+#include <sdfw/sdfw_services/echo_service.h>
+#include <sdfw/sdfw_services/prng_service.h>
+#include <sdfw/sdfw_services/reset_evt_service.h>
+#include <sdfw/sdfw_services/sdfw_update_service.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>

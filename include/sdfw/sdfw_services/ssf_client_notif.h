@@ -11,7 +11,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <sdfw_services/ssf_errno.h>
+#include <sdfw/sdfw_services/ssf_errno.h>
 
 /**
  * @brief       SSF notification decode function prototype.

@@ -100,7 +100,7 @@ Kconfig*                                  @tejlmand
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
-/include/sdfw_services/                   @anhmolt @hakonfam @jonathannilsen
+/include/sdfw/                            @anhmolt @hakonfam @jonathannilsen
 /include/shell/                           @nordic-krch
 /lib/bin/                                 @rlubos @lemrey
 /lib/adp536x/                             @nrfconnect/ncs-cia

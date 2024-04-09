@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <sdfw_services/ssf_errno.h>
+#include <sdfw/sdfw_services/ssf_errno.h>
 
 /**
  * @brief       Structure to hold a raw request or response.

@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include <sdfw_services/ssf_errno.h>
+#include <sdfw/sdfw_services/ssf_errno.h>
 
 /* Error code in response from server if an error occurred when performing the request. */
 #define SSF_SDFW_UPDATE_FAILED 0x3dfc0001

@@ -7,7 +7,7 @@
 #ifndef SSF_CLIENT_OS_H__
 #define SSF_CLIENT_OS_H__
 
-#include <sdfw_services/ssf_errno.h>
+#include <sdfw/sdfw_services/ssf_errno.h>
 
 #if defined(__ZEPHYR__)
 #include "ssf_client_zephyr.h"

@@ -8,14 +8,14 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <sdfw_services/reset_evt_service.h>
+#include <sdfw/sdfw_services/reset_evt_service.h>
 
 #include "reset_evt_service_decode.h"
 #include "reset_evt_service_encode.h"
 #include "reset_evt_service_types.h"
-#include <sdfw_services/ssf_client.h>
-#include <sdfw_services/ssf_client_notif.h>
-#include <sdfw_services/ssf_errno.h>
+#include <sdfw/sdfw_services/ssf_client.h>
+#include <sdfw/sdfw_services/ssf_client_notif.h>
+#include <sdfw/sdfw_services/ssf_errno.h>
 #include "ssf_client_os.h"
 
 SSF_CLIENT_LOG_REGISTER(reset_evt_service, CONFIG_SSF_RESET_EVT_SERVICE_LOG_LEVEL);

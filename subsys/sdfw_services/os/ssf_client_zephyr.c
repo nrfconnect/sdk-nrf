@@ -6,8 +6,8 @@
 
 #include "ssf_client_zephyr.h"
 
-#include <sdfw_services/ssf_client.h>
-#include <sdfw_services/ssf_errno.h>
+#include <sdfw/sdfw_services/ssf_client.h>
+#include <sdfw/sdfw_services/ssf_errno.h>
 #include "ssf_client_os.h"
 
 #include <errno.h>

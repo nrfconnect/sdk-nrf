@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #include <nrfx.h>
-#include <sdfw_services/ssf_errno.h>
+#include <sdfw/sdfw_services/ssf_errno.h>
 
 /** Error code in response from server if it failed to register or deregister
  *  the requested subscription.

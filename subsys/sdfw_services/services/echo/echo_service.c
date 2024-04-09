@@ -9,12 +9,12 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <sdfw_services/echo_service.h>
+#include <sdfw/sdfw_services/echo_service.h>
 
 #include "echo_service_decode.h"
 #include "echo_service_encode.h"
 #include "echo_service_types.h"
-#include <sdfw_services/ssf_client.h>
+#include <sdfw/sdfw_services/ssf_client.h>
 #include "ssf_client_os.h"
 
 SSF_CLIENT_SERVICE_DEFINE(echo_srvc, ECHO, cbor_encode_echo_service_req,
