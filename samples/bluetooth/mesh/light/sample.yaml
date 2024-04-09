@@ -22,6 +22,7 @@ tests:
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf21540dk_nrf52840
-    platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840
+      - nrf54l15pdk_nrf54l15_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf54l15pdk_nrf54l15_cpuapp
     extra_args: OVERLAY_CONFIG=overlay-dfu.conf
     tags: bluetooth ci_build
