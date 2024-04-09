@@ -1979,7 +1979,7 @@ NCSDK-18263: |NCS| samples may fail to boot on Thingy:53
 Bluetooth samples
 =================
 
-.. rst-class: v2-6-1 v2-6-0
+.. rst-class:: v2-6-1 v2-6-0
 
 NCSDK-26424: Directed advertising in the :ref:`peripheral_hids_mouse` sample does not start after disconnecting from a bonded peer
   When the sample disconnects from a peer, after successful pairing and subscription to reports, it cannot re-connect because directed advertising does not start.
@@ -2271,7 +2271,9 @@ NCSDK-11033: Dial-up usage not working
 
 Matter samples
 ==============
+
 The issues in this section are related to :ref:`matter_samples`.
+
 .. rst-class:: v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
 KRKNWK-18242: Thermostat sample does support the AUTO system mode
@@ -2407,6 +2409,19 @@ The issues in this section are related to :ref:`libraries`.
 
 Binary libraries
 ================
+
+.. rst-class:: v2-6-1 v2-6-0
+
+NCSDK-26682: In the Verizon network, the :ref:`liblwm2m_carrier_readme` library fails to complete bootstrap process unless the same device has previously completed a bootstrap
+  This is because one of the required pre-shared keys is not generated unless there is a pre-existing one in the modem.
+
+  **Affected platforms:** nRF9161
+
+  **Workaround:** Complete the following steps:
+
+  #. Program any application that uses an earlier |NCS| version of the :ref:`liblwm2m_carrier_readme` library, for example `LwM2M carrier sample for v2.5.2`_.
+  #. Wait till the application receives the :c:macro:`LWM2M_CARRIER_EVENT_BOOTSTRAPPED` event as described on the :ref:`LwM2M carrier sample description <lwm2m_carrier_sample_desc>` page.
+  #. Program your application for |NCS| v2.6.0 .
 
 .. _tnsw_46156:
 
