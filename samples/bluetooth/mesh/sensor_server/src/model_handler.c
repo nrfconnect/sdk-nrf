@@ -149,6 +149,7 @@ static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 
 	tot_temp_samps++;
 
+	printk("Chip temp: %s, total samples: %d\n", bt_mesh_sensor_ch_str(rsp), tot_temp_samps);
 	return 0;
 }
 
@@ -412,7 +413,9 @@ static int presence_detected_get(struct bt_mesh_sensor_srv *srv,
 						  pres_detect * 1000000LL, rsp);
 
 	if (err) {
-		printk("Error encoding presence detected (%d)", err);
+		printk("Error encoding presence detected (%d)\n", err);
+	} else {
+		printk("Presence detected: %d\n", pres_detect);
 	}
 	return err;
 };
@@ -442,6 +445,9 @@ static int time_since_presence_detected_get(struct bt_mesh_sensor_srv *srv,
 
 		err = bt_mesh_sensor_value_from_micro(format, micro_since_detect, rsp);
 		if (err == -ERANGE) {
+			printk("Warning: Time since presence detected (%u) is out of range and was"
+			       " clamped to (%s)\n", (uint32_t)(k_uptime_get() - prev_detect),
+			       bt_mesh_sensor_ch_str(rsp));
 			/* Ignore range error and respond with clamped value */
 			return 0;
 		}
@@ -454,7 +460,10 @@ static int time_since_presence_detected_get(struct bt_mesh_sensor_srv *srv,
 	}
 
 	if (err) {
-		printk("Error encoding time since presence detected (%d)", err);
+		printk("Error encoding time since presence detected (%d)\n", err);
+	} else {
+		printk("Time since presence detected(%d): %s\n", pres_detect,
+		       bt_mesh_sensor_ch_str(rsp));
 	}
 	return err;
 }
@@ -509,7 +518,7 @@ static int amb_light_level_gain_set(struct bt_mesh_sensor_srv *srv,
 	(void)bt_mesh_sensor_value_to_float(value, &value_f);
 
 	amb_light_level_gain_store(value_f);
-	printk("Ambient light level gain: %s\n", bt_mesh_sensor_ch_str(value));
+	printk("Ambient light level gain set: %s\n", bt_mesh_sensor_ch_str(value));
 
 	return 0;
 }
@@ -544,8 +553,8 @@ static int amb_light_level_ref_set(struct bt_mesh_sensor_srv *srv,
 		amb_light_level_gain_store(FLT_MAX);
 	}
 
-	printk("Ambient light level ref(%s) ", bt_mesh_sensor_ch_str(value));
-	printk("gain(%f)\n", (double)amb_light_level_gain);
+	printk("Ambient light level ref set: %s gain(%f)\n", bt_mesh_sensor_ch_str(value),
+	       (double)amb_light_level_gain);
 
 	return 0;
 }
@@ -623,6 +632,7 @@ static int amb_light_level_get(struct bt_mesh_sensor_srv *srv,
 		return err;
 	}
 
+	printk("Ambient light level: %s\n", bt_mesh_sensor_ch_str(rsp));
 	return 0;
 }
 
@@ -680,7 +690,9 @@ static void presence_detected(struct k_work *work)
 	err = bt_mesh_sensor_srv_pub(&occupancy_sensor_srv, NULL, &presence_sensor, &val);
 
 	if (err) {
-		printk("Error publishing end of presence (%d)\n", err);
+		printk("Error publishing presence (%d)\n", err);
+	} else {
+		printk("Publishing presence\n");
 	}
 
 	pres_detect = 1;
@@ -725,6 +737,9 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 					     &present_amb_light_level, &val);
 		if (err) {
 			printk("Error publishing present ambient light level (%d)\n", err);
+		} else {
+			printk("Publishing present ambient light level %s\n",
+			       bt_mesh_sensor_ch_str(&val));
 		}
 	}
 
@@ -735,6 +750,8 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 		status = bt_mesh_sensor_value_to_micro(&pres_mot_thres, &thres_micros);
 		if (bt_mesh_sensor_value_status_is_numeric(status)) {
 			k_work_reschedule(&presence_detected_work, K_MSEC(thres_micros / 10000));
+			printk("Presence will be published in %d ms\n",
+			       (uint16_t)(thres_micros / 10000));
 		} else {
 			/* Value is not known, register presence immediately */
 			k_work_reschedule(&presence_detected_work, K_NO_WAIT);
@@ -743,6 +760,7 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 
 	if (BUTTON_RELEASED(pressed, changed, BIT(1))) {
 		if (!pres_detect) {
+			printk("Publishing presence is aborted\n");
 			k_work_cancel_delayable(&presence_detected_work);
 		} else {
 			int err;
@@ -752,7 +770,9 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 						&presence_sensor, &val);
 
 			if (err) {
-				printk("Error publishing presence (%d)\n", err);
+				printk("Error publishing end of presence (%d)\n", err);
+			} else {
+				printk("Publishing end of presence\n");
 			}
 
 			pres_detect = 0;

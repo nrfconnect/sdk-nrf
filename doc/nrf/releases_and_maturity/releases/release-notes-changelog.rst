@@ -259,6 +259,7 @@ Bluetooth Mesh samples
 
      * Actions of buttons 1 and 2.
        They are swapped to align with the elements order.
+     * Log messages to be more informative.
 
 * :ref:`bluetooth_ble_peripheral_lbs_coex` sample:
 
