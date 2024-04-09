@@ -126,11 +126,14 @@ static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 	err = sensor_channel_get(dev, SENSOR_DATA_TYPE, &channel_val);
 	if (err) {
 		printk("Error getting temperature sensor data (%d)\n", err);
+		return err;
 	}
+
 	err = bt_mesh_sensor_value_from_sensor_value(
 		sensor->type->channels[0].format, &channel_val, rsp);
 	if (err) {
 		printk("Error encoding temperature sensor data (%d)\n", err);
+		return err;
 	}
 
 	if (!BT_MESH_SENSOR_VALUE_IN_RANGE(rsp, &temp_range.start, &temp_range.end)) {
@@ -146,7 +149,7 @@ static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 
 	tot_temp_samps++;
 
-	return err;
+	return 0;
 }
 
 /* Tolerance is based on the nRF52832's temperature sensor's accuracy and range (5/125 = 4%). */
