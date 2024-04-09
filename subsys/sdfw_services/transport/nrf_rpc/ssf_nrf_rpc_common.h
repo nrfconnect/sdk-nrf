@@ -7,7 +7,7 @@
 #ifndef SSF_NRF_RPC_COMMON_H__
 #define SSF_NRF_RPC_COMMON_H__
 
-#include <sdfw_services/ssf_errno.h>
+#include <sdfw/sdfw_services/ssf_errno.h>
 
 #include <nrf_rpc_errno.h>
 

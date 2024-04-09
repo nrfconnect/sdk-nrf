@@ -9,7 +9,7 @@
 
 #include "ssf_client_transport.h"
 
-#include <sdfw_services/ssf_errno.h>
+#include <sdfw/sdfw_services/ssf_errno.h>
 #include "ssf_client_os.h"
 #include "ssf_nrf_rpc_common.h"
 #include <nrf_rpc/nrf_rpc_ipc.h>

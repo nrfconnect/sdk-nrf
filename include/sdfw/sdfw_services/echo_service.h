@@ -9,7 +9,7 @@
 
 #include <stddef.h>
 
-#include <sdfw_services/ssf_errno.h>
+#include <sdfw/sdfw_services/ssf_errno.h>
 
 /** .. include_startingpoint_echo_header_rst */
 /**

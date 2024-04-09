@@ -7,12 +7,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <sdfw_services/sdfw_update_service.h>
+#include <sdfw/sdfw_services/sdfw_update_service.h>
 
 #include "sdfw_update_service_decode.h"
 #include "sdfw_update_service_encode.h"
 #include "sdfw_update_service_types.h"
-#include <sdfw_services/ssf_client.h>
+#include <sdfw/sdfw_services/ssf_client.h>
 #include "ssf_client_os.h"
 
 SSF_CLIENT_LOG_REGISTER(sdfw_update_service, CONFIG_SSF_SDFW_UPDATE_SERVICE_LOG_LEVEL);

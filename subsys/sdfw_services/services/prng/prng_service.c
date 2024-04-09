@@ -8,12 +8,12 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <sdfw_services/prng_service.h>
+#include <sdfw/sdfw_services/prng_service.h>
 
 #include "prng_service_decode.h"
 #include "prng_service_encode.h"
 #include "prng_service_types.h"
-#include <sdfw_services/ssf_client.h>
+#include <sdfw/sdfw_services/ssf_client.h>
 #include "ssf_client_os.h"
 
 SSF_CLIENT_SERVICE_DEFINE(prng_srvc, PRNG, cbor_encode_prng_req, cbor_decode_prng_rsp);

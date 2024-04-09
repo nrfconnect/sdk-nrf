@@ -23,7 +23,7 @@ Overview
 ********
 
 The sample shows how to use Secure Domain services by invoking some of the available services.
-Available Secure Domain Services can be found in :file:`nrf/include/sdfw_services`.
+Available Secure Domain Services can be found in :file:`nrf/include/sdfw/sdfw_services`.
 The service source files are located in :file:`nrf/subsys/sdfw_services/services`.
 
 

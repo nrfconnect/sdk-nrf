@@ -8,10 +8,10 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <sdfw_services/extmem_remote.h>
+#include <sdfw/sdfw_services/extmem_remote.h>
 
-#include <sdfw_services/ssf_client.h>
-#include <sdfw_services/ssf_client_notif.h>
+#include <sdfw/sdfw_services/ssf_client.h>
+#include <sdfw/sdfw_services/ssf_client_notif.h>
 #include "extmem_service_decode.h"
 #include "extmem_service_encode.h"
 #include "extmem_service_types.h"
