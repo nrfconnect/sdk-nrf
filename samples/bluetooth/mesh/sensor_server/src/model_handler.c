@@ -701,38 +701,6 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 	}
 
 	if (pressed & changed & BIT(0)) {
-		int64_t thres_micros;
-		enum bt_mesh_sensor_value_status status;
-
-		status = bt_mesh_sensor_value_to_micro(&pres_mot_thres, &thres_micros);
-		if (bt_mesh_sensor_value_status_is_numeric(status)) {
-			k_work_reschedule(&presence_detected_work, K_MSEC(thres_micros / 10000));
-		} else {
-			/* Value is not known, register presence immediately */
-			k_work_reschedule(&presence_detected_work, K_NO_WAIT);
-		}
-	}
-
-	if ((!pressed) & changed & BIT(0)) {
-		if (!pres_detect) {
-			k_work_cancel_delayable(&presence_detected_work);
-		} else {
-			int err;
-			struct bt_mesh_sensor_value val = BOOLEAN_INIT(false);
-
-			err = bt_mesh_sensor_srv_pub(&occupancy_sensor_srv, NULL,
-						&presence_sensor, &val);
-
-			if (err) {
-				printk("Error publishing presence (%d)\n", err);
-			}
-
-			pres_detect = 0;
-			prev_detect = k_uptime_get_32();
-		}
-	}
-
-	if (pressed & changed & BIT(1)) {
 		int err;
 		static int amb_light_idx;
 		struct bt_mesh_sensor_value val;
@@ -751,6 +719,38 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 					     &present_amb_light_level, &val);
 		if (err) {
 			printk("Error publishing present ambient light level (%d)\n", err);
+		}
+	}
+
+	if (pressed & changed & BIT(1)) {
+		int64_t thres_micros;
+		enum bt_mesh_sensor_value_status status;
+
+		status = bt_mesh_sensor_value_to_micro(&pres_mot_thres, &thres_micros);
+		if (bt_mesh_sensor_value_status_is_numeric(status)) {
+			k_work_reschedule(&presence_detected_work, K_MSEC(thres_micros / 10000));
+		} else {
+			/* Value is not known, register presence immediately */
+			k_work_reschedule(&presence_detected_work, K_NO_WAIT);
+		}
+	}
+
+	if ((!pressed) & changed & BIT(1)) {
+		if (!pres_detect) {
+			k_work_cancel_delayable(&presence_detected_work);
+		} else {
+			int err;
+			struct bt_mesh_sensor_value val = BOOLEAN_INIT(false);
+
+			err = bt_mesh_sensor_srv_pub(&occupancy_sensor_srv, NULL,
+						&presence_sensor, &val);
+
+			if (err) {
+				printk("Error publishing presence (%d)\n", err);
+			}
+
+			pres_detect = 0;
+			prev_detect = k_uptime_get_32();
 		}
 	}
 }

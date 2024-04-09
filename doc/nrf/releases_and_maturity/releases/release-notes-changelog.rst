@@ -255,6 +255,10 @@ Bluetooth Mesh samples
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
    * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+   * Updated:
+
+     * Actions of buttons 1 and 2.
+       They are swapped to align with the elements order.
 
 * :ref:`bluetooth_ble_peripheral_lbs_coex` sample:
 
