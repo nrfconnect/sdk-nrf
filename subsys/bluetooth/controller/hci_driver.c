@@ -1080,6 +1080,12 @@ static int configure_memory_usage(void)
 #endif /* CONFIG_BT_CTLR_SYNC_ISO */
 #endif /* CONFIG_BT_CTLR_BROADCAST_ISO */
 
+#if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT) ||                             \
+	(defined(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT) &&                                   \
+	defined(CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT))
+	memset(&cfg.iso_buffer_cfg, 0, sizeof(cfg.iso_buffer_cfg));
+#endif
+
 #if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT)
 	cfg.iso_buffer_cfg.rx_pdu_buffer_per_stream_count =
 		CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT;
