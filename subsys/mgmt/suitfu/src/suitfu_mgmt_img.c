@@ -200,12 +200,12 @@ static int suitfu_mgmt_img_state_read(struct smp_streamer *ctx)
 
 	if (ok) {
 		installed_vers_str[sizeof(installed_vers_str) - 1] = '\0';
-		ok = zcbor_tstr_put_term(zse, installed_vers_str);
+		ok = zcbor_tstr_put_term(zse, installed_vers_str, sizeof(installed_vers_str));
 		LOG_DBG("Manifest version encoded: %d", ok);
 	}
 
 	if (ok) {
-		ok = zcbor_tstr_put_term(zse, "hash") && zcbor_bstr_encode(zse, &zhash);
+		ok = zcbor_tstr_put_lit(zse, "hash") && zcbor_bstr_encode(zse, &zhash);
 		LOG_DBG("Manifest hash encoded: %d", ok);
 	}
 
