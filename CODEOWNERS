@@ -201,6 +201,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
 /samples/sdfw/                            @hakonfam @jonathannilsen
 /samples/sdfw/ssf_client/                 @anhmolt
+/samples/suit/                            @tomchy @ahasztag
 /samples/wifi/provisioning/               @wentong-li @bama-nordic
 /samples/wifi/radio_test/                 @bama-nordic @sachinthegreen
 /samples/wifi/scan/                       @D-Triveni @bama-nordic
