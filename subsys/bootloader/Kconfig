@@ -32,7 +32,10 @@ config SECURE_BOOT
 	  verifies the signature of the app.
 
 config BOOTLOADER_PROVISION_HEX
-	bool
+	# A conditional prompt here enables users with pre-built B0 binaries
+	# to disable generation and merge of provision.hex and use their own
+	# pre-built provision.hex
+	bool "Generate provision.hex for NSIB" if B0_BUILD_STRATEGY_USE_HEX_FILE
 	default y if SECURE_BOOT
 	default y if MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	help
