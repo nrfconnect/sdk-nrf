@@ -422,7 +422,10 @@ Peripheral samples
     * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
       This change applies to the sample built with the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` set to ``n``.
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added:
+
+    * Support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+    * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 PMIC samples
 ------------
