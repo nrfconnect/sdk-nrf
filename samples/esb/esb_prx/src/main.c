@@ -115,6 +115,9 @@ int esb_initialize(void)
 	config.mode = ESB_MODE_PRX;
 	config.event_handler = event_handler;
 	config.selective_auto_ack = true;
+	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+		config.use_fast_ramp_up = true;
+	}
 
 	err = esb_init(&config);
 	if (err) {
