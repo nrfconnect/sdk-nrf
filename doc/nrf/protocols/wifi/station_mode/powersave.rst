@@ -104,7 +104,7 @@ You must keep the following in mind while choosing the inactivity timer:
 
 .. note::
 
-  The inactivity timer can be configured using the ``NET_REQUEST_WIFI_PS_TIMEOUT`` network management API.
+  The inactivity timer can be configured using the ``NET_REQUEST_WIFI_PS`` network management API.
   The nRF70 Series device consumes less power in Power Save mode, that is, when the inactivity timer value is ``0``, in low traffic scenarios.
 
   However, the downlink throughput is significantly lower in this mode.
