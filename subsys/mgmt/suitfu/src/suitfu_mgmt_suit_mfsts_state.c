@@ -39,8 +39,7 @@ int suitfu_mgmt_suit_manifests_list(struct smp_streamer *ctx)
 		return MGMT_ERR_EBADSTATE;
 	}
 
-	ok = zcbor_tstr_put_term(zse, "manifests") &&
-	     zcbor_list_start_encode(zse, class_info_count);
+	ok = zcbor_tstr_put_lit(zse, "manifests") && zcbor_list_start_encode(zse, class_info_count);
 	if (!ok) {
 		return MGMT_ERR_EMSGSIZE;
 	}
@@ -52,7 +51,7 @@ int suitfu_mgmt_suit_manifests_list(struct smp_streamer *ctx)
 			return MGMT_ERR_EMSGSIZE;
 		}
 
-		ok = zcbor_tstr_put_term(zse, "role") && zcbor_uint32_put(zse, roles[mfst_idx]);
+		ok = zcbor_tstr_put_lit(zse, "role") && zcbor_uint32_put(zse, roles[mfst_idx]);
 		if (!ok) {
 			return MGMT_ERR_EMSGSIZE;
 		}
@@ -106,7 +105,7 @@ int suitfu_mgmt_suit_manifest_state_read(struct smp_streamer *ctx)
 	zcs.value = class_info.class_id.raw;
 	zcs.len = sizeof(class_info.class_id.raw);
 
-	ok = zcbor_tstr_put_term(zse, "class_id") && zcbor_bstr_encode(zse, &zcs);
+	ok = zcbor_tstr_put_lit(zse, "class_id") && zcbor_bstr_encode(zse, &zcs);
 	if (!ok) {
 		return MGMT_ERR_EMSGSIZE;
 	}
@@ -114,24 +113,24 @@ int suitfu_mgmt_suit_manifest_state_read(struct smp_streamer *ctx)
 	zcs.value = class_info.vendor_id.raw;
 	zcs.len = sizeof(class_info.vendor_id.raw);
 
-	ok = zcbor_tstr_put_term(zse, "vendor_id") && zcbor_bstr_encode(zse, &zcs);
+	ok = zcbor_tstr_put_lit(zse, "vendor_id") && zcbor_bstr_encode(zse, &zcs);
 	if (!ok) {
 		return MGMT_ERR_EMSGSIZE;
 	}
 
-	ok = zcbor_tstr_put_term(zse, "downgrade_prevention_policy") &&
+	ok = zcbor_tstr_put_lit(zse, "downgrade_prevention_policy") &&
 	     zcbor_uint32_put(zse, class_info.downgrade_prevention_policy);
 	if (!ok) {
 		return MGMT_ERR_EMSGSIZE;
 	}
 
-	ok = zcbor_tstr_put_term(zse, "independent_updateability_policy") &&
+	ok = zcbor_tstr_put_lit(zse, "independent_updateability_policy") &&
 	     zcbor_uint32_put(zse, class_info.independent_updateability_policy);
 	if (!ok) {
 		return MGMT_ERR_EMSGSIZE;
 	}
 
-	ok = zcbor_tstr_put_term(zse, "signature_verification_policy") &&
+	ok = zcbor_tstr_put_lit(zse, "signature_verification_policy") &&
 	     zcbor_uint32_put(zse, class_info.signature_verification_policy);
 	if (!ok) {
 		return MGMT_ERR_EMSGSIZE;
@@ -147,31 +146,31 @@ int suitfu_mgmt_suit_manifest_state_read(struct smp_streamer *ctx)
 		zcs.value = digest.mem;
 		zcs.len = digest.size;
 
-		ok = zcbor_tstr_put_term(zse, "digest") && zcbor_bstr_encode(zse, &zcs);
+		ok = zcbor_tstr_put_lit(zse, "digest") && zcbor_bstr_encode(zse, &zcs);
 		if (!ok) {
 			return MGMT_ERR_EMSGSIZE;
 		}
 
-		ok = zcbor_tstr_put_term(zse, "digest_algorithm") &&
+		ok = zcbor_tstr_put_lit(zse, "digest_algorithm") &&
 		     zcbor_int32_put(zse, digest_alg_id);
 		if (!ok) {
 			return MGMT_ERR_EMSGSIZE;
 		}
 
-		ok = zcbor_tstr_put_term(zse, "signature_check") &&
+		ok = zcbor_tstr_put_lit(zse, "signature_check") &&
 		     zcbor_uint32_put(zse, digest_status);
 		if (!ok) {
 			return MGMT_ERR_EMSGSIZE;
 		}
 
-		ok = zcbor_tstr_put_term(zse, "sequence_number") && zcbor_uint32_put(zse, seq_num);
+		ok = zcbor_tstr_put_lit(zse, "sequence_number") && zcbor_uint32_put(zse, seq_num);
 		if (!ok) {
 			return MGMT_ERR_EMSGSIZE;
 		}
 
 		if (semver_raw.len > 0 && semver_raw.len <= 5) {
 
-			ok = zcbor_tstr_put_term(zse, "semantic_version") &&
+			ok = zcbor_tstr_put_lit(zse, "semantic_version") &&
 			     zcbor_list_start_encode(zse, semver_raw.len);
 			if (!ok) {
 				return MGMT_ERR_EMSGSIZE;

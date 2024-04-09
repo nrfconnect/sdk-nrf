@@ -270,7 +270,7 @@ int suitfu_mgmt_suit_missing_image_state_read(struct smp_streamer *ctx)
 
 	component_lock();
 	if (session->uri && session->uri_length) {
-		ok = zcbor_tstr_put_term(zse, "stream_session_id") &&
+		ok = zcbor_tstr_put_lit(zse, "stream_session_id") &&
 		     zcbor_uint32_put(zse, session->session_id);
 		if (!ok) {
 			component_unlock();
@@ -279,7 +279,7 @@ int suitfu_mgmt_suit_missing_image_state_read(struct smp_streamer *ctx)
 
 		zcs.value = session->uri;
 		zcs.len = session->uri_length;
-		ok = zcbor_tstr_put_term(zse, "resource_id") && zcbor_bstr_encode(zse, &zcs);
+		ok = zcbor_tstr_put_lit(zse, "resource_id") && zcbor_bstr_encode(zse, &zcs);
 		if (!ok) {
 			component_unlock();
 			return MGMT_ERR_EMSGSIZE;
