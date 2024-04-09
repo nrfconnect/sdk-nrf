@@ -215,7 +215,7 @@ Supported CLI commands
        | management, data and enable all filters
        | [-i, --if-index <idx>] : Interface index
        | [-a, --all] : Enable all packet filter modes
-       | [-m, --mgmt] : Enable management packets to allowed up
+       | [-m, --mgmt] : Enable management packets to be allowed up
        | the stack
        | [-c, --ctrl] : Enable control packets to be allowed up
        | the stack

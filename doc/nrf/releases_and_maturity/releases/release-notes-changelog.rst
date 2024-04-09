@@ -182,7 +182,7 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-* Initial experimental support for nRF54L15 for the Thread CLI and Co-processor samples.
+* Initial experimental support for nRF54L15 to the :ref:`ot_cli_sample` and :ref:`ot_coprocessor_sample` samples.
 * Added new :ref:`feature set <thread_ug_feature_sets>` option :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_RCP`.
 
 Zigbee
@@ -653,7 +653,7 @@ Matter samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`mult
 * Removed:
 
   * The :file:`configuration` directory which contained the Partition Manager configuration file.
-    It has been replaced replace with :file:`pm_static_<BOARD>` Partition Manager configuration files for all required target boards in the samples' directories.
+    It has been replaced with :file:`pm_static_<BOARD>` Partition Manager configuration files for all required target boards in the samples' directories.
   * The :file:`prj_no_dfu.conf` file.
   * Support for the ``no_dfu`` build type for the nRF5350 DK, the nRF52840 DK, and the nRF7002 DK.
 
@@ -793,7 +793,7 @@ Thread samples
 
 Thread samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
 
-* Initial experimental support for nRF54L15 for the Thread CLI and Co-processor samples.
+* Initial experimental support for nRF54L15 to the :ref:`ot_cli_sample` and :ref:`ot_coprocessor_sample` samples.
 * :ref:`ot_coprocessor_sample` sample:
 
   * Changed the default :ref:`feature set <thread_ug_feature_sets>` from Master to RCP.

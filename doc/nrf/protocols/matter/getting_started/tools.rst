@@ -258,7 +258,7 @@ You can use the following optional arguments:
 ``zap-generate`` command
 ------------------------
 
-A Matter application requires data model C++ files generated from the project :file`.zap` file.
+A Matter application requires data model C++ files generated from the project :file:`.zap` file.
 To generate the files, you can use the ``zap-generate`` Matter west command.
 
 If you do not provide an output directory as an argument, the command will create and use a :file:`zap-generated/` directory within the directory containing the source :file:`.zap` file.

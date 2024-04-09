@@ -3,6 +3,10 @@
 Point-to-point DFU over Bluetooth Low Energy
 ############################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Following the instructions described in :ref:`FOTA over Bluetooth Low Energy<ug_nrf52_developing_ble_fota>`, you can enable the support for and perform FOTA updates using a mobile app.
 
 If the device's composition data is going to change after the FOTA update on a Bluetooth Mesh device is performed, unprovision the device before downloading the new image.

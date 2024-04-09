@@ -14,9 +14,9 @@ This page provides information about the amount of power used by Sleepy End Devi
 Measurements methodology
 ************************
 
-The measurement setup consists of:
+The measurement setup consists of the following:
 
-* An nrf52840dk board used as a Thread leader.
+* An nRF52840 DK board used as a Thread leader.
 * A DUT board used as a Thread child.
 * A `Power Profiler Kit II (PPK2)`_ attached to the DUT according to the instructions in its Quick start guide.
 

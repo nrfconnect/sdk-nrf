@@ -91,7 +91,7 @@ CONFIG_RX_PERIOD_S
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/modem_trace_flash`
+.. |sample path| replace:: :file:`samples/dect/dect_phy/hello_dect`
 
 .. include:: /includes/build_and_run_ns.txt
 

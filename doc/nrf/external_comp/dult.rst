@@ -70,7 +70,7 @@ After registration, you should have the following data:
 * Accessory category - Choose the appropriate category value from the `DULT Accessory Category Values table`_.
 * Network ID - Accessory-locating network ID.
   See the `DULT Manufacturer Network ID Registry`_ from the DULT specification for a list of network IDs.
-* A knowledge on how to construct the Identifier Payload - The accessory-locating network defines its own identifier that allows the network to identify the accessory in case of unwanted tracking, and to share obfuscated accessory owner information with a tracked individual.
+* Knowledge on how to construct the Identifier Payload - The accessory-locating network defines its own identifier that allows the network to identify the accessory in case of unwanted tracking, and to share obfuscated accessory owner information with a tracked individual.
 
 .. rst-class:: numbered-step
 

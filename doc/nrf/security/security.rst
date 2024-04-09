@@ -55,7 +55,7 @@ Different storage options have different features.
 One of the options is to use the :ref:`trusted_storage_readme` library.
 
 The trusted storage library enables the users to provide features like integrity, confidentiality and authenticity of the stored data, without using the TF-M Platform Root of Trust (PRoT).
-The library implements the PSA Cerified Secure Storage API.
+The library implements the PSA Certified Secure Storage API.
 It consists of PSA Internal Trusted Storage API and PSA Protected Storage API.
 
 The Internal Trusted Storage and the Protected Storage are designed to work in :ref:`environments both with and without security by separation <app_boards_spe_nspe>`.

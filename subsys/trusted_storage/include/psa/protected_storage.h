@@ -265,7 +265,7 @@ psa_status_t psa_ps_set_extended(psa_storage_uid_t uid, size_t data_offset, size
  *
  * \return                              A bitmask with flags set for all of
  *                                      the optional features supported by the
- *                                      implementation.Currently defined flags
+ *                                      implementation. Currently defined flags
  *                                      are limited to
  *                                      PSA_STORAGE_SUPPORT_SET_EXTENDED
  */

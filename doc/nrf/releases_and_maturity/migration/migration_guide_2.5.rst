@@ -3,6 +3,10 @@
 Migration guide for |NCS| v2.5.0
 ################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 .. HOWTO
 
    Add changes in the following format:

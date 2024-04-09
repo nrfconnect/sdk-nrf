@@ -15,10 +15,8 @@ To mitigate this risk, a specific manifest hierarchy has been introduced.
 Additionally, splitting the system into more than one part (each described by a separated manifest) allows for:
 
 * Assigning different signing authorities per system parts, (a single part is represented by a single SUIT manifest).
-
 * Assigning different access rights to certain memory locations on the device.
-  (Due to security reasons, the manifest representing the radio domain is not be able to install, alter, read-out images or memory locations assigned to the application domain.)
-
+  (Due to security reasons, you cannot use the manifest representing the radio domain to install, alter, read-out images or memory locations assigned to the application domain.)
 * Possibility to assign different downgrade prevention or signing verification policies per single domain.
 
 Manifest topology
@@ -48,14 +46,14 @@ The root manifest bundles all other manifests together and coordinates the entir
 By default, using SUIT’s hierarchical manifest involves using your own generated manifests (OEM-controlled) in combination with manifests provided by Nordic Semiconductor (particularly for the Secure Domain (SecDom) and System Controller).
 An example of how this would be implemented includes:
 
-* OEM-controlled manifests
+* OEM-controlled manifests:
 
    * A root manifest that coordinates update and invocation processes on its dependency manifests.
      It does not belong to any domain or control any local domain resources.
 
    * A dependency manifest for each of the domains, such as the application and radio domains.
 
-* Nordic Semiconductor controlled manifests - for the SecDom, including the System Controller.
+* Nordic Semiconductor controlled manifests - For the SecDom, including the System Controller.
   They will be released by Nordic Semiconductor and can be incorporated into the firmware update package prepared by the OEM.
 
 To perform a DFU procedure on the nRF54H20 SoC, you can use manifest templates provided by Nordic Semiconductor and the **suit-generator** to create an update package.

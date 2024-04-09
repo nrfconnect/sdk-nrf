@@ -376,7 +376,7 @@ struct bt_fast_pair_fmdn_adv_param {
  *  You can use this function to dynamically update advertising parameters
  *  during an ongoing FMDN advertising.
  *
- *  The API user is reponsible for adjusting this configuration to their
+ *  The API user is responsible for adjusting this configuration to their
  *  application requirements. The advertising intervals parameters from
  *  this API have additional constraints when you enable the Fast
  *  Pair advertising together with FMDN advertising (see respective

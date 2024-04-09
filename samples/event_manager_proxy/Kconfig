@@ -15,8 +15,8 @@ config APP_EVENT_MANAGER_REMOTE_WAIT_TO
 	range 10 5000
 	default 1000
 	help
-	  The time to wait for second core to report its readines to transport the events.
-	  The time is given in miliseconds.
+	  The time to wait for second core to report its readiness to transport the events.
+	  The time is given in milliseconds.
 
 rsource "common_events/Kconfig"
 rsource "modules/Kconfig"

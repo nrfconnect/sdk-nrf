@@ -9,7 +9,7 @@ config APP_SENSOR_MANAGER_REMOTE_CORE_INITIALIZATION_TIMEOUT
 	range 10 10000
 	default 1000
 	help
-	  The time to wait for second core to report its readines to transport the events.
+	  The time to wait for second core to report its readiness to transport the events.
 	  The time is given in miliseconds.
 
 

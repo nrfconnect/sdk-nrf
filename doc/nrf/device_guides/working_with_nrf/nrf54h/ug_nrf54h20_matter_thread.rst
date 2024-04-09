@@ -281,7 +281,7 @@ Matter and Thread support has the following limitations on the nRF54H20 DK:
 * The ``west flash --erase`` command is blocked.
   See :ref:`ug_nrf54h20_gs_sample` for more information.
 * The factory reset functionality does not work properly.
-  After clearing all NVM storage, the device can not reboot automatically and falls into a hard fault.
+  After clearing all NVM storage, the device cannot reboot automatically and falls into a hard fault.
 
   As a workaround, press the reset button on the nRF54H20 DK board after performing a factory reset.
 * Matter over Thread commissioning might be unstable due to the lack of true random generator support on nRF54H20.

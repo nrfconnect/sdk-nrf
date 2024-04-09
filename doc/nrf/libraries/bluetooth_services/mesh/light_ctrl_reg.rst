@@ -3,6 +3,10 @@
 Illuminance regulator interface
 ###############################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This module defines an interface for implementation and interaction with an abstract illuminance regulator.
 
 Using the regulator

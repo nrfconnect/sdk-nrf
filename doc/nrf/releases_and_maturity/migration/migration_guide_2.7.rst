@@ -33,17 +33,6 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-* For applications using the :ref:`lib_mqtt_helper` library:
-
-  * The ``CONFIG_MQTT_HELPER_CERTIFICATES_FILE`` is now replaced by :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER`.
-    The new option is a folder path where the certificates are stored.
-    The folder path must be relative to the root of the project.
-
-    If you are using the :ref:`lib_mqtt_helper` library, you must update the Kconfig option to use the new option.
-
-  * When using the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option, the certificate files must be in standard PEM format.
-    This means that the PEM files must not be converted to string format anymore.
-
 Wi-Fi®
 ------
 
@@ -59,17 +48,19 @@ Serial LTE Modem (SLM)
 
 .. toggle::
 
-  * The AT command parsing has been updated to utilize the :ref:`at_cmd_custom_readme` library.
-    If you have introduced custom AT commands to the SLM, you need to update the command parsing to use the new library.
-    See the :ref:`slm_extending` page for more information.
+   The AT command parsing has been updated to utilize the :ref:`at_cmd_custom_readme` library.
+   If you have introduced custom AT commands to the SLM, you need to update the command parsing to use the new library.
+   See the :ref:`slm_extending` page for more information.
 
 Peripheral samples
 ------------------
 
-* :ref:`radio_test` sample:
+.. toggle::
 
-  * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
-    This change applies to the sample built with the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` set to ``n``.
+   * :ref:`radio_test` sample:
+
+     * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
+       This change applies to the sample built with the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` set to ``n``.
 
 Matter
 ------
@@ -92,23 +83,41 @@ Libraries
 
 This section describes the changes related to libraries.
 
+MQTT helper
+-----------
+
+.. toggle::
+
+   * For applications using the :ref:`lib_mqtt_helper` library:
+
+     * The ``CONFIG_MQTT_HELPER_CERTIFICATES_FILE`` Kconfig option is now replaced by :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER`.
+       The new option is a folder path where the certificates are stored.
+       The folder path must be relative to the root of the project.
+
+       If you are using the :ref:`lib_mqtt_helper` library, you must update the Kconfig option to use the new option.
+
+     * When using the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option, the certificate files must be in standard PEM format.
+       This means that the PEM files must not be converted to string format anymore.
+
 FEM abstraction layer
 ---------------------
 
 .. toggle::
 
-  * For applications using :ref:`fem_al_lib`:
-    The function :c:func:`fem_tx_power_control_set` replaces the function :c:func:`fem_tx_gain_set`.
-    The function :c:func:`fem_default_tx_output_power_get` replaces the function :c:func:`fem_default_tx_gain_get`.
+   * For applications using :ref:`fem_al_lib`:
+
+     * The function :c:func:`fem_tx_power_control_set` replaces the function :c:func:`fem_tx_gain_set`.
+       The function :c:func:`fem_default_tx_output_power_get` replaces the function :c:func:`fem_default_tx_gain_get`.
 
 Modem library
 -------------
 
 .. toggle::
 
-  * For applications using :ref:`nrf_modem_lib_readme`:
-    The option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR` is now deprecated.
-    Use the option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` instead.
+
+   * For applications using :ref:`nrf_modem_lib_readme`:
+     The option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR` is now deprecated.
+     Use the option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` instead.
 
 .. _migration_2.7_recommended:
 

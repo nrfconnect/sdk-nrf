@@ -26,7 +26,7 @@ config DESKTOP_USB_SUBSCRIBER_REPORT_PRIORITY
 	range 1 255
 	help
 	  USB reports subscriber priority. The lower value means the lower
-	  priority in subscribtion to HID reports. By default, the USB uses the highest
+	  priority in subscription to HID reports. By default, the USB uses the highest
 	  possible priority.
 
 config DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION

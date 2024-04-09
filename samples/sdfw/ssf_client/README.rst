@@ -47,14 +47,14 @@ Testing
 Dependencies
 ************
 
-It sample uses the following `sdk-nrfxlib`_ library:
+The sample uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_rpc`
 
-It uses the following Zephyr library:
+It uses the following Zephyr libraries:
 
 * :ref:`zephyr:ipc_service_backend_icmsg`
 * :ref:`zephyr:logging_api`
-* :ref:`zephyr:kernel_api`:
+* :ref:`zephyr:kernel_api`
 
 The sample also uses drivers from `nrfx`_.

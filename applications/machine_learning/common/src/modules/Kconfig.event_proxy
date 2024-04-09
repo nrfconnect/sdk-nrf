@@ -11,7 +11,7 @@ menuconfig ML_APP_EVENT_PROXY
 	select APP_EVENT_MANAGER_POSTINIT_HOOK
 	help
 	  Enable and initialize event manager proxy subsystem on application
-	  start. Subscribtion to events is done based on configuration file.
+	  start. Subscription to events is done based on configuration file.
 
 if ML_APP_EVENT_PROXY
 
@@ -20,8 +20,8 @@ config ML_APP_REMOTE_CORE_INITIALIZATION_TIMEOUT
 	range 10 10000
 	default 2000
 	help
-	  The time to wait for remote cores to report its readines. The time is
-	  given in miliseconds.
+	  The time to wait for remote cores to report its readiness. The time is
+	  given in milliseconds.
 
 module = ML_APP_EVENT_PROXY
 module-str = event proxy module

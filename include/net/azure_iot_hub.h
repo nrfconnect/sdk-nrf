@@ -385,7 +385,7 @@ int azure_iot_hub_send(const struct azure_iot_hub_msg *const tx_data);
  *
  *  @retval 0 If successful.
  *  @retval -EINVAL if a NULL pointer was provided.
- *  @retval -ENOTCONN if there was no iot hub connection.
+ *  @retval -ENOTCONN if there was no IoT hub connection.
  *  @retval -EFAULT if there was an error when creating the response message.
  *  @retval -ENXIO if the MQTT library reported an error when publishing the response.
  */

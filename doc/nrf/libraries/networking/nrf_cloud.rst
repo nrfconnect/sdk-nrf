@@ -176,7 +176,7 @@ Following are the supported FOTA types:
 * ``"BOOT"`` - Updates the :ref:`upgradable_bootloader`.
 * ``"MDM_FULL"`` - :ref:`Full modem FOTA <nrf_modem_bootloader>` updates the entire modem firmware image.
   Full modem updates require |external_flash_size| of available space.
-  For the an nRF91 Series device, a full modem firmware image is approximately 2 MB.
+  For an nRF91 Series device, a full modem firmware image is approximately 2 MB.
   Consider the power and network costs before deploying full modem FOTA updates.
 * ``"MODEM"`` - :ref:`Delta modem FOTA <nrf_modem_delta_dfu>` applies incremental changes between specific versions of the modem firmware.
   Delta modem updates are much smaller in size and do not require external memory.
