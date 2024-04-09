@@ -787,8 +787,10 @@ static void le_read_supported_states(uint8_t *buf)
 
 #define ST_SCA (BIT(4)  | BIT(5)  | BIT(8)  | BIT(9)  | BIT(10) | \
 		BIT(11) | BIT(12) | BIT(13) | BIT(14) | BIT(15) | \
-		BIT(22) | BIT(23) | BIT(24) | BIT(25) | BIT(26) | \
+		BIT(24) | BIT(25) | BIT(26) | \
 		BIT(27) | BIT(30) | BIT(31))
+
+#define ST_SCA_INI (BIT(22) | BIT(23))
 
 #define ST_SLA (BIT(2)  | BIT(3)  | BIT(7)  | BIT(10) | BIT(11) | \
 		BIT(14) | BIT(15) | BIT(20) | BIT(21) | BIT(26) | \
@@ -829,11 +831,13 @@ static void le_read_supported_states(uint8_t *buf)
 	states1 &= ~ST_MAS;
 	states2 &= ~ST_MAS2;
 #endif
-	/* All states and combinations supported except:
-	 * Initiating State + Passive Scanning
-	 * Initiating State + Active Scanning
-	 */
-	states1 &= ~(BIT(22) | BIT(23));
+
+#if defined(CONFIG_BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING)
+	states1 |= ST_SCA_INI;
+#else
+	states1 &= ~ST_SCA_INI;
+#endif
+
 	*buf = states1;
 	*(buf + 4) = states2;
 }
