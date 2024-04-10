@@ -1,0 +1,12 @@
+#ifndef _@COMMIT_TYPE@_COMMIT_H_
+#define _@COMMIT_TYPE@_COMMIT_H_
+
+/* @templates@ values come from cmake/version.cmake
+ * BUILD_COMMIT related @template@ values will be 'git rev-parse',
+ * alternatively user defined BUILD_VERSION.
+ */
+
+#define @COMMIT_TYPE@_COMMIT                   @@COMMIT_TYPE@_COMMIT@
+#define @COMMIT_TYPE@_COMMIT_STRING            "@@COMMIT_TYPE@_COMMIT@"
+
+#endif /* _@COMMIT_TYPE@_COMMIT_H_ */

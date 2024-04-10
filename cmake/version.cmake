@@ -19,5 +19,28 @@ add_custom_command(
     DEPENDS ${NRF_DIR}/VERSION ${git_dependency}
 )
 add_custom_target(ncs_version_h DEPENDS ${PROJECT_BINARY_DIR}/include/generated/ncs_version.h)
-
 add_dependencies(version_h ncs_version_h)
+
+add_custom_command(
+  OUTPUT ${PROJECT_BINARY_DIR}/include/generated/ncs_commit.h
+  COMMAND ${CMAKE_COMMAND} -DZEPHYR_BASE=${ZEPHYR_BASE} -DNRF_DIR=${NRF_DIR}
+    -DOUT_FILE=${PROJECT_BINARY_DIR}/include/generated/ncs_commit.h
+    -DCOMMIT_TYPE=NCS
+    -DCOMMIT_PATH=${NRF_DIR}
+    -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/gen_commit_h.cmake
+    DEPENDS ${NRF_DIR}/VERSION ${git_dependency}
+)
+add_custom_target(ncs_commit_h DEPENDS ${PROJECT_BINARY_DIR}/include/generated/ncs_commit.h)
+add_dependencies(version_h ncs_commit_h)
+
+add_custom_command(
+  OUTPUT ${PROJECT_BINARY_DIR}/include/generated/zephyr_commit.h
+  COMMAND ${CMAKE_COMMAND} -DZEPHYR_BASE=${ZEPHYR_BASE} -DNRF_DIR=${NRF_DIR}
+    -DOUT_FILE=${PROJECT_BINARY_DIR}/include/generated/zephyr_commit.h
+    -DCOMMIT_TYPE=ZEPHYR
+    -DCOMMIT_PATH=${ZEPHYR_BASE}
+    -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/gen_commit_h.cmake
+    DEPENDS ${ZEPHYR_BASE}/VERSION ${git_dependency}
+)
+add_custom_target(zephyr_commit_h DEPENDS ${PROJECT_BINARY_DIR}/include/generated/zephyr_commit.h)
+add_dependencies(version_h zephyr_commit_h)
