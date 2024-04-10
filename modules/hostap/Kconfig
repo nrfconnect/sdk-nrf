@@ -202,7 +202,7 @@ config BSS_MAX_IDLE_TIME
 # Control interface is stack heavy (buffers + snprintfs)
 # Making calls to RPU from net_mgmt callbacks (status - RSSI)
 config NET_MGMT_EVENT_STACK_SIZE
-	default 4096
+	default 4200
 
 config NET_SOCKETS_POLL_MAX
 	default 6
