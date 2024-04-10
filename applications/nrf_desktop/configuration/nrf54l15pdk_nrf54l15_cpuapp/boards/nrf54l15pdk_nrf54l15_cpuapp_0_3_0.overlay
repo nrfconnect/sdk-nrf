@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "nrf54l15pdk_nrf54l15_cpuapp_0_3_0_fixup.dtsi"
+
 /* For nRF54L, watchdog status is disabled by default. Needs to be enabled in DTS overlay. */
 &wdt30 {
 	status = "okay";
