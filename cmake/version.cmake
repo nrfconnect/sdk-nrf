@@ -28,7 +28,7 @@ add_custom_command(
     -DCOMMIT_TYPE=NCS
     -DCOMMIT_PATH=${NRF_DIR}
     -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/gen_commit_h.cmake
-    DEPENDS ${NRF_DIR}/VERSION ${git_dependency}
+    DEPENDS ${NRF_DIR}/VERSION ${NRF_DIR}/.git ${NRF_DIR}/.git/index
 )
 add_custom_target(ncs_commit_h DEPENDS ${PROJECT_BINARY_DIR}/include/generated/ncs_commit.h)
 add_dependencies(version_h ncs_commit_h)
@@ -40,7 +40,7 @@ add_custom_command(
     -DCOMMIT_TYPE=ZEPHYR
     -DCOMMIT_PATH=${ZEPHYR_BASE}
     -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/gen_commit_h.cmake
-    DEPENDS ${ZEPHYR_BASE}/VERSION ${git_dependency}
+    DEPENDS ${ZEPHYR_BASE}/VERSION ${ZEPHYR_BASE}/.git ${git_dependency}
 )
 add_custom_target(zephyr_commit_h DEPENDS ${PROJECT_BINARY_DIR}/include/generated/zephyr_commit.h)
 add_dependencies(version_h zephyr_commit_h)
