@@ -100,7 +100,7 @@ Zephyr's cellular modem driver running on the controlling chip will take care of
 However, before flashing the SLM built with the Zephyr-compatible modem configuration, make sure that the nRF91 Series modem has been set to the desired system mode.
 For this, you will need a regular SLM running in the nRF91 Series SiP to be able to run AT commands manually.
 To set the modem to the desired system mode, issue an ``AT%XSYSTEMMODE`` command followed by an ``AT+CFUN=0`` command so that the modem saves the system mode to NVM.
-For example, to enable only LTE-M, issue the following command: ``AT%XSYSTEMMODE=0,1,0,0``
+For example, to enable only LTE-M, issue the following command: ``AT%XSYSTEMMODE=1,0,0,0``
 You need to do this because the modem's system mode is not automatically set at any point, so the one already configured will be used.
 
 Additionally, if the controlling chip is an external MCU:
