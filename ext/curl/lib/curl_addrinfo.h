@@ -40,17 +40,6 @@
 #  include <stdlib.h>
 #endif
 
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-/* zephyr is not having this? normally in netdb.h */
- struct hostent {
-    char    *h_name;
-    char    **h_aliases;
-    int     h_addrtype;
-    int     h_length;
-    char    **h_addr_list;
-  };
-#endif
-
 /*
  * Curl_addrinfo is our internal struct definition that we use to allow
  * consistent internal handling of this data. We use this even when the
