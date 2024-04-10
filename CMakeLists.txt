@@ -11,9 +11,6 @@ set(NRF_DIR ${CMAKE_CURRENT_LIST_DIR} CACHE PATH "NCS root directory")
 # is cached.
 set(CONF_FILE_BUILD_TYPE ${CONF_FILE_BUILD_TYPE} CACHE INTERNAL "The build type")
 
-# Customize the Zephyr kernel version.h using nRF Connect SDK ncs_version.h.
-set(KERNEL_VERSION_CUSTOMIZATION \#include;<ncs_version.h> PARENT_SCOPE)
-
 foreach(runner_ext BIN HEX ELF)
   zephyr_get(NCS_RUNNER_${runner_ext} SYSBUILD)
   if(DEFINED NCS_RUNNER_${runner_ext})
@@ -37,3 +34,4 @@ add_subdirectory(subsys)
 add_subdirectory(modules)
 add_subdirectory(drivers)
 add_subdirectory(tests)
+add_subdirectory(kernel)

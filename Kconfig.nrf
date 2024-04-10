@@ -111,6 +111,7 @@ config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 config GETOPT
 	default n
 
+rsource "kernel/Kconfig"
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
 rsource "modules/Kconfig"
