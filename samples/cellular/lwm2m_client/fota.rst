@@ -286,7 +286,7 @@ Complete the following steps to test the advanced FOTA firmware update with the 
 
       .. tabs::
 
-         .. group-tab:: nRF9160 DK
+         .. group-tab:: nRF91x1 DK
 
             .. code-block:: console
 
