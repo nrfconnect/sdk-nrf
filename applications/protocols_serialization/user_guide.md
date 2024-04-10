@@ -4,6 +4,8 @@
   - [Overview](#overview)
   - [Setting up nRF Connect SDK](#setting-up-nrf-connect-sdk)
   - [Building and flashing applications](#building-and-flashing-applications)
+    - [Building and flashing client](#building-and-flashing-client)
+    - [Building and flashing server](#building-and-flashing-server)
   - [Connecting client and server](#connecting-client-and-server)
   - [Testing](#testing)
     - [Testing BLE](#testing-ble)
@@ -109,8 +111,7 @@ The `uart1` peripheral is configured to use the following pins:
 
 Therefore, in order to enable the communication between the client and the server device, connect the two nRF 52840 DKs using jumper wires according to the following diagram:
 
-![UART wiring](images/uart_wiring.png)
-
+<img src="resources/uart_wiring.png" alt="image" width="300" height="auto">
 
 
 
@@ -147,6 +148,7 @@ Complete the following steps to test Bluetooth LE API serialization:
    ```
 
 7. On mobile phone, open `nRF Connect` app and scan for `Nordic_UART_Service` as in the image below:
+
    <img src="resources/nrf_scan.jpg" alt="image" width="300" height="auto">
 
 8. Tap **CONNECT** button to connect to the client device.
@@ -156,7 +158,8 @@ Complete the following steps to test Bluetooth LE API serialization:
    LE conn param updated: int 0x0027 lat 0 to 42
    ```
 
-9. Tap the arrow next to the RX characteristic to send data:
+9.  Tap the arrow next to the RX characteristic to send data:
+
    <img src="resources/nrf_send.jpg" alt="image" width="300" height="auto">
 
    Observe the following message on the client's console:
@@ -210,9 +213,9 @@ Complete the following steps to test OpenThread API serialization:
    fe80:0:0:0:6c26:956a:813:1e33
    Done
    ...
-   
+
    uart:~$ net iface  show
-   
+
    Interface net0 (0x200012c8) (<unknown type>) [1]
    =========================================
    MTU       : 1280
@@ -228,7 +231,7 @@ Complete the following steps to test OpenThread API serialization:
    uart:~$ ot thread start
    Done
    ...
-   
+
    uart:~$ ot state leader
    Done
    ```
@@ -236,8 +239,8 @@ Complete the following steps to test OpenThread API serialization:
 9. Verify that the Zephyr network interface has automatically received OpenThread's mesh-local addresses:
 
    ```
-   uart:~$ net iface  show 
-   
+   uart:~$ net iface  show
+
    Interface net0 (0x200012c8) (<unknown type>) [1]
    =========================================
    MTU       : 1280
@@ -258,7 +261,7 @@ Complete the following steps to test OpenThread API serialization:
     0e080000000000000000000300000b35060004001fffe00208dead00beef00cafe0708fddead00beef00000510f7893f15a55d8adeacad288c38bf32cc030a4f70656e546872656164010240120410d48d777a474f80e61aa5680de764bd6d0c0402a0f7f8
     Done
     ```
-    
+
 11. To send a UDP packet to a peer device and UDP port 5555, run the following command:
 
     ```
@@ -272,4 +275,4 @@ Complete the following steps to test OpenThread API serialization:
     uart:~$ net udp bind fe80:0:0:0:6c26:956a:813:1e33 5555
     ```
 
-    
+
