@@ -857,6 +857,25 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		goto out;
 	}
 
+	/* Commands without FMAC interaction */
+	if (type == ETHERNET_CONFIG_TYPE_MAC_ADDRESS) {
+		if (!net_eth_is_addr_valid((struct net_eth_addr *)&config->mac_address)) {
+			LOG_ERR("%s: Invalid MAC address",
+				__func__);
+			goto unlock;
+		}
+		memcpy(vif_ctx_zep->mac_addr.addr,
+		       config->mac_address.addr,
+		       sizeof(vif_ctx_zep->mac_addr.addr));
+
+		net_if_set_link_addr(vif_ctx_zep->zep_net_if_ctx,
+				     vif_ctx_zep->mac_addr.addr,
+				     sizeof(vif_ctx_zep->mac_addr.addr),
+				     NET_LINK_ETHERNET);
+		ret = 0;
+		goto unlock;
+	}
+
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
 		LOG_DBG("%s: rpu_ctx_zep or rpu_ctx is NULL",
@@ -872,23 +891,8 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		goto unlock;
 	}
 
-	if (type == ETHERNET_CONFIG_TYPE_MAC_ADDRESS) {
-		if (!net_eth_is_addr_valid((struct net_eth_addr *)&config->mac_address)) {
-			LOG_ERR("%s: Invalid MAC address",
-				__func__);
-			goto unlock;
-		}
-		memcpy(vif_ctx_zep->mac_addr.addr,
-		       config->mac_address.addr,
-		       sizeof(vif_ctx_zep->mac_addr.addr));
-
-		net_if_set_link_addr(vif_ctx_zep->zep_net_if_ctx,
-				     vif_ctx_zep->mac_addr.addr,
-				     sizeof(vif_ctx_zep->mac_addr.addr),
-				     NET_LINK_ETHERNET);
-	}
 #ifdef CONFIG_NRF700X_RAW_DATA_TX
-	else if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
+	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
 		unsigned char mode;
 
 		if (def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode ==
