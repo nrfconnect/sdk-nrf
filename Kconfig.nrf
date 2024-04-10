@@ -51,7 +51,7 @@ config WARN_EXPERIMENTAL
 # Zephyr default is newlib and not newlib-nano for consistency between architectures.
 # To reduce FLASH footprint, newlib-nano is preferred default in NCS when newlib is selected.
 config NEWLIB_LIBC_NANO
-	default y
+	default y if SOC_FAMILY_NORDIC_NRF
 	depends on NEWLIB_LIBC && HAS_NEWLIB_LIBC_NANO
 
 # This is a temporary solution to whitelist
