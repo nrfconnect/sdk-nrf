@@ -293,7 +293,7 @@ suit_plat_err_t suit_storage_installed_envelope_get(const suit_manifest_class_id
 		return err;
 	}
 
-	LOG_INF("Valid envelope with given class ID and role 0x%x found", role);
+	LOG_DBG("Valid envelope with given class ID and role 0x%x found", role);
 
 	return err;
 }

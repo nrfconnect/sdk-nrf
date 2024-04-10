@@ -214,7 +214,7 @@ static int update_path(void)
 		LOG_ERR("Failed to validate update candidate manifest: %d", err);
 		return err;
 	}
-	LOG_DBG("Manifest validated");
+	LOG_INF("Manifest validated");
 
 	err = suit_process_sequence((uint8_t *)update_regions[0].mem, update_regions[0].size,
 				    SUIT_SEQ_CAND_VERIFICATION);
@@ -237,7 +237,7 @@ static int update_path(void)
 		return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 	}
 
-	LOG_DBG("suit-install successful");
+	LOG_INF("suit-install successful");
 
 	return err;
 }
@@ -289,7 +289,7 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 		return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 	}
 
-	LOG_DBG("Processed suit-validate");
+	LOG_INF("Processed suit-validate");
 
 	err = suit_process_sequence(installed_envelope_address, installed_envelope_size,
 				    SUIT_SEQ_LOAD);
@@ -302,7 +302,7 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 			return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 		}
 	}
-	LOG_DBG("Processed suit-load");
+	LOG_INF("Processed suit-load");
 
 	err = suit_process_sequence(installed_envelope_address, installed_envelope_size,
 				    SUIT_SEQ_INVOKE);
@@ -310,7 +310,7 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 		LOG_ERR("Failed to execute suit-invoke: %d", err);
 		return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 	}
-	LOG_DBG("Processed suit-invoke");
+	LOG_INF("Processed suit-invoke");
 
 	return 0;
 }
