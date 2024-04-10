@@ -46,6 +46,66 @@ Syntax
   * ``0`` - Stop PPP.
   * ``1`` - Start PPP.
 
+Unsolicited notification
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. slm_ppp_status_notif_start
+
+::
+
+   #XPPP: <running>,<peer_connected>
+
+* The ``<running>`` parameter is an integer that indicates whether PPP is running.
+  It is ``1`` for running or ``0`` for stopped.
+
+* The ``<peer_connected>`` parameter is an integer that indicates whether a peer is connected to PPP.
+  It is ``1`` for connected or ``0`` for not connected.
+
+.. slm_ppp_status_notif_end
+
+Example
+-------
+
+::
+
+  AT+CFUN=1
+
+  OK
+
+  // PPP is automatically started when the modem is registered to the network.
+  #XPPP: 1,0
+
+  // Stop PPP.
+  AT#XPPP=0
+
+  OK
+
+  #XPPP: 0,0
+
+  // Start PPP.
+  AT#XPPP=1
+
+  OK
+
+  #XPPP: 1,0
+
+  // Have the peer connect to SLM's PPP.
+  #XPPP: 1,1
+
+  // Peer disconnects.
+  #XPPP: 1,0
+
+  // SLM restarts PPP automatically when peer disconnects.
+  #XPPP: 0,0
+
+  #XPPP: 1,0
+
+  AT+CFUN=4
+
+  OK
+
+  #XPPP: 0,0
+
 Read command
 ------------
 
@@ -61,44 +121,9 @@ Syntax
 Response syntax
 ~~~~~~~~~~~~~~~
 
-::
-
-   #XPPP: <running>,<peer_connected>
-
-* The ``<running>`` parameter is an integer that indicates whether PPP is running.
-  It is ``1`` for running or ``0`` for stopped.
-
-* The ``<peer_connected>`` parameter is an integer that indicates whether a peer is connected to PPP.
-  It is ``1`` for connected or ``0`` for not connected.
-
-Example
--------
-
-::
-
-  AT+CFUN=1
-
-  OK
-  // Wait for network registration. PPP is automatically started.
-  AT#XPPP?
-
-  #XPPP: 1,0
-
-  OK
-  // Have the peer connect to SLM's PPP. The read command shows that a peer is connected.
-  AT#XPPP?
-
-  #XPPP: 1,1
-
-  OK
-  AT+CFUN=4
-
-  OK
-  AT#XPPP?
-
-  #XPPP: 0,0
-
-  OK
+.. include:: PPP_AT_commands.rst
+   :start-after: slm_ppp_status_notif_start
+   :end-before: slm_ppp_status_notif_end
 
 Testing on Linux
 ================
@@ -116,8 +141,7 @@ For the process described here, SLM's UARTs must be connected to the Linux host.
 
 1. Get PPP running on SLM.
    To do this, start SLM and issue an ``AT+CFUN=1`` command.
-#. Make sure that the network registration succeeds and that PPP is started successfully.
-   To do this, either look at SLM's logs, or issue an ``AT#XPPP?`` command, which returns ``#XPPP: 1,0`` when PPP has started successfully.
+#. Wait for ``#XPPP: 1,0``, which is sent when the network registration succeeds and PPP has started successfully.
 #. Run the following command on the Linux host:
 
    .. code-block:: console
