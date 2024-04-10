@@ -6,10 +6,6 @@
 
 / {
 	chosen {
-		nordic,nus-uart = &uart30;
+		nordic,nus-uart = &uart20;
 	};
-};
-
-&uart30 {
-	status = "okay";
 };
