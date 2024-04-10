@@ -70,6 +70,8 @@ Extended models
 
 None.
 
+.. _bt_mesh_sensor_srv_persistent_readme:
+
 Persistent storage
 ==================
 

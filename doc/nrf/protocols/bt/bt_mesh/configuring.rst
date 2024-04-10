@@ -190,15 +190,60 @@ In a worst case scenario, the store time can be up to several minutes.
 This can for example happen when storing a large size replay protection list.
 It is recommended to configure the settings subsystem's internal caches to improve the performance.
 
-* The Settings NVS name cache reduces the number of search loops of internal parameter identifiers, keeping them in memory.
+NVS lookup cache reduces the number of search loops within NVS' application table.
 
-  * :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE`.
+* :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE`.
 
-* The size of the Settings NVS name cache is recommended to be set to the maximum number of devices the configured device communicates with.
-  For example, if a device communicates with 255 other devices, it is worth setting the cache to minimum 255.
+The Settings NVS name cache reduces the number of search loops of internal parameter identifiers, keeping them in memory.
 
-  * :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE_SIZE`.
+* :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE`.
 
-* NVS lookup cache reduces the number of search loops within NVS' application table.
+The size of the Settings NVS name cache, :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE_SIZE`, is recommended to be at least equal to the number of settings entries the device is expected to store.
 
-  * :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE`.
+The Bluetooth Mesh stack stores the following data persistently:
+
+* Network information (primary address and device key)
+* Configuration parameters (supported features, default TTL, network transmit and relay retransmit parameters)
+* IV index
+* Sequence number
+* Heartbeat publication information
+* Application key(s) (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_APP_KEY_COUNT`)
+* Network key(s) (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_SUBNET_COUNT`)
+* Label UUIDs for virtual addressing (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_LABEL_COUNT`)
+* RPL entries (the RPL size is controlled by :kconfig:option:`CONFIG_BT_MESH_CRPL`)
+
+The following data is stored for each model by the Bluetooth Mesh stack:
+
+* Model subscription state
+* Model publication state
+* Bound application key(s)
+* Subscription list for group addresses
+* Subscription list for virtual addresses
+* Label UUIDs the model is subscribed to
+* Model-specific data
+
+Model data stored persistently can be found under the ``Persistent storage`` section of the corresponding model documentation.
+
+Using the :ref:`bluetooth_mesh_sensor_server` sample as an example, configured according to the sample's :ref:`configuration guide <bluetooth_mesh_sensor_server_conf_models>`, results in the following list of possible entries (entries mentioned above are not included unless specifying the amount of entries):
+
+* 32 RPL entries - since the default Networked Lighting Control (NLC) configuration is used (:kconfig:option:`CONFIG_BT_MESH_NLC_PERF_DEFAULT` is set), the RPL size is 32.
+* Application keys - three keys are used.
+* Bound application keys - each of the three Sensor Server and Sensor Setup Server models has one bound application key.
+* Network keys - only one key is used.
+* Model subscriptions - each of the three Sensor Server and Sensor Setup Server models subscribes to a group address.
+* Model publication information - each of the three Sensor Server models publishes to a group address.
+* Virtual addressing is not used.
+* :ref:`Sensor Server model data <bt_mesh_sensor_srv_persistent_readme>` - each of the three Sensor Server models stores the following data:
+
+  * Minimum interval
+  * Delta thresholds
+  * Fast period divisor
+  * Fast cadence range
+
+* The following values are stored in the sample:
+
+  * Temperature range
+  * Presence motion threshold
+  * Ambient light level gain
+
+Adding up all entries, it is worth setting the cache size to minimum 71.
