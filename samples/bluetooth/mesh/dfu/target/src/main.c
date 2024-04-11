@@ -14,6 +14,9 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/mesh.h>
 #include "dfu_target.h"
+#if defined(CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU)
+#include "smp_bt.h"
+#endif
 
 static struct bt_mesh_blob_io_flash blob_flash_stream;
 
@@ -116,6 +119,14 @@ static void bt_ready(int err)
 	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 
 	printk("Mesh initialized\n");
+
+#if defined(CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU)
+	/* Start advertising SMP BT service. */
+	err = smp_dfu_init();
+	if (err) {
+		printk("SMP initialization failed (err: %d)\n", err);
+	}
+#endif
 
 	/* Confirm the image and mark it as applied after the mesh started. */
 	dfu_target_image_confirm();

@@ -219,6 +219,8 @@ When the Distributor updates itself, the DFU transfer will end immediately after
 
 When this sample is used as a Target, it behaves as described in :ref:`ble_mesh_dfu_target_upgrade`.
 
+This sample also provides support for :ref:`dfu_over_ble`, so it is possible to self-update using the Simple Management Protocol (SMP).
+
 SMP over Bluetooth authentication
 =================================
 
