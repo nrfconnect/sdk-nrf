@@ -103,8 +103,8 @@ To initialize the defined GPIO pin structures, use the ``GPIO_DT_SPEC_INST_GET_B
 
    #include <zephyr/drivers/gpio.h>
    static const struct gpio_dt_spec pin_dbg0 =
-       GPIO_DT_SPEC_GET_OR(DT_NODELABEL(user_dbg_pin), gpios, 0, {0});
+       GPIO_DT_SPEC_GET_BY_IDX_OR(DT_NODELABEL(user_dbg_pin), gpios, 0, {0});
    static const struct gpio_dt_spec pin_dbg1 =
-	   GPIO_DT_SPEC_GET_OR(DT_NODELABEL(user_dbg_pin), gpios, 1, {0});
+	   GPIO_DT_SPEC_GET_BY_IDX_OR(DT_NODELABEL(user_dbg_pin), gpios, 1, {0});
 
 The rest of the GPIO pin operations follow the same process in case of declaring a single pin.
