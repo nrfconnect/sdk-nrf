@@ -43,7 +43,7 @@ The sample demonstrates using a co-processor target on the MCU to communicate wi
 According to the co-processor architecture, the MCU part must cooperate with user higher layer process to establish the complete full stack application.
 The sample shows how to set up the connection between the co-processor and the host.
 
-This sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
+By default, this sample comes with the :ref:`RCP set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_RCP`).
 
 .. _ot_coprocessor_sample_logging:
 
@@ -160,4 +160,4 @@ This sample uses the following Zephyr libraries:
 
   * ``include/logging/log.h``
 
-* :ref:`zephyr:bluetooth-hci`:
+* :ref:`zephyr:bluetooth-hci`
