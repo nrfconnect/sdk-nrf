@@ -65,8 +65,8 @@ static const uint8_t cap_adv_data[] = {
 #define AVAILABLE_SINK_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
 #endif /* CONFIG_BT_AUDIO_RX */
 
-#if defined(CONFIG_BT_AUDIO_TX)
 static struct bt_bap_stream *bap_tx_streams[CONFIG_BT_ASCS_ASE_SRC_COUNT];
+#if defined(CONFIG_BT_AUDIO_TX)
 #define AVAILABLE_SOURCE_CONTEXT (BT_AUDIO_CONTEXT_TYPE_ANY)
 #else
 #define AVAILABLE_SOURCE_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
@@ -124,15 +124,17 @@ static struct bt_audio_codec_cap lc3_codec_sink = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, AVAILABLE_SINK_CONTEXT);
 
+#if defined(CONFIG_BT_AUDIO_TX)
 static struct bt_audio_codec_cap lc3_codec_source = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAPABILIY_FREQ,
 	(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
 	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, AVAILABLE_SOURCE_CONTEXT);
+#endif /* (CONFIG_BT_AUDIO_TX) */
 
 static enum bt_audio_dir caps_dirs[] = {
 	BT_AUDIO_DIR_SINK,
-#if (CONFIG_BT_AUDIO_TX)
+#if defined(CONFIG_BT_AUDIO_TX)
 	BT_AUDIO_DIR_SOURCE,
 #endif /* (CONFIG_BT_AUDIO_TX) */
 };
@@ -400,7 +402,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 	LOG_INF("Stream %p started", stream);
 
-	if (dir == BT_AUDIO_DIR_SOURCE) {
+	if (dir == BT_AUDIO_DIR_SOURCE && IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
 		ERR_CHK(bt_le_audio_tx_stream_started(0));
 	}
 
@@ -419,7 +421,7 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 
 	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
 
-	if (dir == BT_AUDIO_DIR_SOURCE) {
+	if (dir == BT_AUDIO_DIR_SOURCE && IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
 		ERR_CHK(bt_le_audio_tx_stream_stopped(0));
 	}
 
@@ -505,7 +507,7 @@ int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 
 			*pres_delay_us = audio_streams[0].qos->pd;
 		}
-	} else if (dir == BT_AUDIO_DIR_SOURCE) {
+	} else if (dir == BT_AUDIO_DIR_SOURCE && IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
 		/* If multiple source streams exists, they should have the same configurations,
 		 * hence we only check the first one.
 		 */

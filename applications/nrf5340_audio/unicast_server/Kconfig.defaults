@@ -39,7 +39,8 @@ config BT_ASCS_ASE_SNK_COUNT
 	default 1
 
 config BT_ASCS_ASE_SRC_COUNT
-	default 1
+	default 1 if STREAM_BIDIRECTIONAL
+	default 0 if !STREAM_BIDIRECTIONAL
 
 config BT_VCP_VOL_REND
 	default y
