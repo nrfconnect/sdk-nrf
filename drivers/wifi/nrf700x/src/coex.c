@@ -43,7 +43,7 @@ static struct nrf_wifi_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 #ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
 	#define NRF_RADIO_COEX_NODE DT_NODELABEL(nrf_radio_coex)
 	static const struct gpio_dt_spec sr_rf_switch_spec =
-	GPIO_DT_SPEC_GET(NRF_RADIO_COEX_NODE, btrf_switch_gpios);
+	GPIO_DT_SPEC_GET(NRF_RADIO_COEX_NODE, srrf_switch_gpios);
 #endif /* CONFIG_NRF700X_SR_COEX_RF_SWITCH */
 
 /* PTA registers configuration of Coexistence Hardware */
@@ -289,3 +289,45 @@ int nrf_wifi_coex_hw_reset(void)
 
 	return 0;
 }
+
+#ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
+int sr_gpio_config(void)
+{
+	int ret;
+
+	if (!device_is_ready(sr_rf_switch_spec.port)) {
+		return -ENODEV;
+	}
+
+	ret = gpio_pin_configure_dt(&sr_rf_switch_spec, GPIO_OUTPUT);
+	if (ret) {
+		LOG_ERR("SR GPIO configuration failed %d", ret);
+	}
+
+	return ret;
+}
+
+int sr_gpio_remove(void)
+{
+	int ret;
+
+	ret = gpio_pin_configure_dt(&sr_rf_switch_spec, GPIO_DISCONNECTED);
+	if (ret) {
+		LOG_ERR("SR GPIO remove failed %d", ret);
+	}
+
+	return ret;
+}
+
+int sr_ant_switch(unsigned int ant_switch)
+{
+	int ret;
+
+	ret = gpio_pin_set_dt(&sr_rf_switch_spec, ant_switch & 0x1);
+	if (ret) {
+		LOG_ERR("SR GPIO set failed %d", ret);
+	}
+
+	return ret;
+}
+#endif /* CONFIG_NRF700X_SR_COEX_RF_SWITCH */
