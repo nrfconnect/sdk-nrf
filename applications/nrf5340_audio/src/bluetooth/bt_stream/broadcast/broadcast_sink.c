@@ -154,7 +154,10 @@ static void get_codec_info(const struct bt_audio_codec_cfg *codec,
 	}
 
 	ret = bt_audio_codec_cfg_get_chan_allocation(codec, &codec_info->chan_allocation);
-	if (ret) {
+	if (ret == -ENODATA) {
+		/* Codec channel allocation not set, defaulting to 0 */
+		codec_info->chan_allocation = 0;
+	} else if (ret) {
 		LOG_DBG("Failed retrieving channel allocation: %d", ret);
 	}
 
@@ -251,28 +254,21 @@ static bool base_subgroup_bis_cb(const struct bt_bap_base_subgroup_bis *bis, voi
 {
 	int ret;
 	struct bt_audio_codec_cfg codec_cfg = {0};
-	enum bt_audio_location chan_allocation;
 
 	LOG_DBG("BIS found, index %d", bis->index);
 
 	ret = bt_bap_base_subgroup_bis_codec_to_codec_cfg(bis, &codec_cfg);
 	if (ret != 0) {
-		LOG_WRN("Could not find codec configuration for BIS index %d, ret = %d", bis->index,
-			ret);
+		LOG_WRN("Could not find codec configuration for BIS index %d, ret "
+			"= %d",
+			bis->index, ret);
 		return true;
 	}
 
 	get_codec_info(&codec_cfg, &audio_codec_info[bis->index - 1]);
 
-	ret = bt_audio_codec_cfg_get_chan_allocation(&codec_cfg, &chan_allocation);
-	if (ret == -ENODATA) {
-		LOG_WRN("Channel allocation not available");
-	} else if (ret != 0) {
-		LOG_WRN("Could not find channel allocation, ret = %d", ret);
-	} else {
-		LOG_DBG("Channel allocation: 0x%x for BIS index %d", chan_allocation, bis->index);
-		audio_codec_info[bis->index - 1].chan_allocation = chan_allocation;
-	}
+	LOG_DBG("Channel allocation: 0x%x for BIS index %d",
+		audio_codec_info[bis->index - 1].chan_allocation, bis->index);
 
 	uint32_t chan_bitfield = audio_codec_info[bis->index - 1].chan_allocation;
 	bool single_bit = (chan_bitfield & (chan_bitfield - 1)) == 0;

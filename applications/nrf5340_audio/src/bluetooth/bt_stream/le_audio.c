@@ -244,7 +244,8 @@ void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_
 
 		ret = bt_audio_codec_cfg_get_chan_allocation(codec, &chan_allocation);
 		if (ret == -ENODATA) {
-			LOG_WRN("Channel allocation not available");
+			/* Codec channel allocation not set, defaulting to 0 */
+			chan_allocation = 0;
 		} else if (ret) {
 			LOG_ERR("Error retrieving channel allocation: %d", ret);
 			return;
