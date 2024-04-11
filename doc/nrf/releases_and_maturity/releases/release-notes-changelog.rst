@@ -398,7 +398,10 @@ Networking samples
 
 * :ref:`http_server` sample:
 
-  * Added ``DNS_SD_REGISTER_TCP_SERVICE`` so that mDNS services can locate and address the server using its hostname.
+  * Added:
+
+    * ``DNS_SD_REGISTER_TCP_SERVICE`` so that mDNS services can locate and address the server using its hostname.
+    * Support for the :ref:`native simulator <zephyr:native_sim>` board.
 
   * Updated:
 
