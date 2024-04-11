@@ -14,7 +14,7 @@ This page is included only in the latest documentation, because it might contain
 
    * Changes between releases are tracked on the :ref:`ncs_release_notes_changelog` page, but the main branch might contain additional changes that are not listed on that page.
    * The release note pages that are available in the latest documentation might differ slightly from the release notes that were included in the respective |NCS| release at its release date.
-     Therefore, to see the official version of the release notes for a specific |NCS| release, switch to the documentation for the corresponding |NCS| version using the selector in the upper right-hand corner.
+     Therefore, to see the official version of the release notes for a specific |NCS| release, switch to the documentation for the corresponding |NCS| version using the selector in the upper left corner.
 
 .. toctree::
    :maxdepth: 1

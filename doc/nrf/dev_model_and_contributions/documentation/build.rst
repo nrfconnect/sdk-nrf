@@ -120,8 +120,8 @@ Here, *docset-name* is the name of the documentation set, for example, ``nrf``.
 
 .. _testing_versions:
 
-Testing different versions locally
-**********************************
+Testing locally
+***************
 
 Documentation sets for different versions of the |NCS| are defined in the :file:`doc/versions.json` file.
 This file is used to display the :ref:`version drop-down <doc_structure_versions>`.

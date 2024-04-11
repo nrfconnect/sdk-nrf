@@ -47,8 +47,8 @@ The upstream docsets are pulled using west.
 
 Building and publishing the documentation
 *****************************************
-The |NCS| documentation is currently hosted on ``developer.nordicsemi.com`` under the folder :file:`nRF_Connect_SDK` and is updated with every pull request that is merged into the main branch of the Git repository.
-Every pull request made is also hosted under the :file:`nRF_Connect_SDK_dev` folder if the build workflow is successful.
+The |NCS| documentation is currently hosted on ``docs.nordicsemi.com`` and is updated with every pull request that is merged into the main branch of the Git repository.
+Every pull request made is also hosted under the :file:`nRF_Connect_SDK_dev` folder in ``developer.nordicsemi.com`` if the build workflow is successful.
 This is done through two chained GitHub actions, :file:`docbuild.yml` and :file:`docpublish.yml`.
 
 Docbuild

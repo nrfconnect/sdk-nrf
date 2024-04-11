@@ -7,7 +7,7 @@
 # This boilerplate is automatically included through ZephyrBuildConfig.cmake, found in
 # ${NRF_DIR}/share/zephyrbuild-package/cmake/ZephyrBuildConfig.cmake
 # For more information regarding the Zephyr Build Configuration CMake package, please refer to:
-# https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/zephyr_cmake_package.html#zephyr-build-configuration-cmake-package
+# https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/build/zephyr_cmake_package.html#zephyr_build_configuration_cmake_packages
 
 include(${NRF_DIR}/boards/deprecated.cmake)
 
