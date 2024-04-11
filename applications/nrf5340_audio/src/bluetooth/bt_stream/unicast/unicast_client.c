@@ -406,6 +406,104 @@ static bool sink_parse_cb(struct bt_data *data, void *user_data)
 	return true;
 }
 
+static void set_color_if_supported(char *str, uint16_t bitfield, uint16_t mask)
+{
+	if (bitfield & mask) {
+		strcat(str, COLOR_GREEN);
+	} else {
+		strcat(str, COLOR_RED);
+	}
+}
+
+static bool caps_print_cb(struct bt_data *data, void *user_data)
+{
+	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
+		uint16_t freq_bit = sys_get_le16(data->data);
+		char supported_freq[320] = "";
+
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_8KHZ);
+		strcat(supported_freq, "8, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_11KHZ);
+		strcat(supported_freq, "11.025, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_16KHZ);
+		strcat(supported_freq, "16, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_22KHZ);
+		strcat(supported_freq, "22.05, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_24KHZ);
+		strcat(supported_freq, "24, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_32KHZ);
+		strcat(supported_freq, "32, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_44KHZ);
+		strcat(supported_freq, "44.1, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_48KHZ);
+		strcat(supported_freq, "48, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_88KHZ);
+		strcat(supported_freq, "88.2, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_96KHZ);
+		strcat(supported_freq, "96, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_176KHZ);
+		strcat(supported_freq, "176, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_192KHZ);
+		strcat(supported_freq, "192, ");
+		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_384KHZ);
+		strcat(supported_freq, "384");
+
+		LOG_INF("\tFrequencies kHz: %s", supported_freq);
+	}
+
+	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_DURATION) {
+		uint16_t dur_bit = sys_get_le16(data->data);
+		char supported_dur[30] = "";
+
+		set_color_if_supported(supported_dur, dur_bit, BT_AUDIO_CODEC_CAP_DURATION_7_5);
+		strcat(supported_dur, "7.5, ");
+		set_color_if_supported(supported_dur, dur_bit, BT_AUDIO_CODEC_CAP_DURATION_10);
+		strcat(supported_dur, "10");
+
+		LOG_INF("\tFrame duration ms: %s", supported_dur);
+	}
+
+	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_CHAN_COUNT) {
+		uint16_t chan_bit = sys_get_le16(data->data);
+		char supported_chan[120] = "";
+
+		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_1);
+		strcat(supported_chan, "1, ");
+		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_2);
+		strcat(supported_chan, "2, ");
+		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_3);
+		strcat(supported_chan, "3, ");
+		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_4);
+		strcat(supported_chan, "4, ");
+		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_5);
+		strcat(supported_chan, "5, ");
+		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_6);
+		strcat(supported_chan, "6, ");
+		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_7);
+		strcat(supported_chan, "7, ");
+		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_8);
+		strcat(supported_chan, "8");
+
+		LOG_INF("\tChannels supported: %s", supported_chan);
+	}
+
+	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FRAME_LEN) {
+		uint16_t lc3_min_frame_length = sys_get_le16(data->data);
+		uint16_t lc3_max_frame_length = sys_get_le16(data->data + sizeof(uint16_t));
+
+		LOG_INF("\tFrame length bytes: %d - %d", lc3_min_frame_length,
+			lc3_max_frame_length);
+	}
+
+	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FRAME_COUNT) {
+		uint16_t lc3_frame_per_sdu = sys_get_le16(data->data);
+
+		LOG_INF("\tMax frames per SDU: %d", lc3_frame_per_sdu);
+	}
+
+	return true;
+}
+
 static bool source_parse_cb(struct bt_data *data, void *user_data)
 {
 	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
@@ -474,22 +572,41 @@ static bool source_parse_cb(struct bt_data *data, void *user_data)
  * @param[in]	cap_array	The array of pointers to codec capabilities.
  * @param[in]	num_caps	The size of cap_array.
  * @param[in]	dir		Direction of the capabilities to check.
+ * @param[in]	index		Channel index.
  *
  * @return	True if valid codec capability found, false otherwise.
  */
 static bool valid_codec_cap_check(struct bt_audio_codec_cap cap_array[], uint8_t num_caps,
-				  enum bt_audio_dir dir)
+				  enum bt_audio_dir dir, uint8_t index)
 {
 	bool valid_result = false;
 
 	/* Only the sampling frequency is checked */
 	if (dir == BT_AUDIO_DIR_SINK) {
+		LOG_INF("Discovered %d sink endpoint(s) for device %d", num_caps, index);
 		for (int i = 0; i < num_caps; i++) {
+			if (IS_ENABLED(CONFIG_BT_AUDIO_EP_PRINT)) {
+				LOG_INF("");
+				LOG_INF("Dev: %d Sink EP %d", index, i);
+				(void)bt_audio_data_parse(cap_array[i].data, cap_array[i].data_len,
+							  caps_print_cb, NULL);
+				LOG_INF("__________________________");
+			}
+
 			(void)bt_audio_data_parse(cap_array[i].data, cap_array[i].data_len,
 						  sink_parse_cb, &valid_result);
 		}
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
+		LOG_INF("Discovered %d source endpoint(s) for device %d", num_caps, index);
 		for (int i = 0; i < num_caps; i++) {
+			if (IS_ENABLED(CONFIG_BT_AUDIO_EP_PRINT)) {
+				LOG_INF("");
+				LOG_INF("Dev: %d Source EP %d", index, i);
+				(void)bt_audio_data_parse(cap_array[i].data, cap_array[i].data_len,
+							  caps_print_cb, NULL);
+				LOG_INF("__________________________");
+			}
+
 			(void)bt_audio_data_parse(cap_array[i].data, cap_array[i].data_len,
 						  source_parse_cb, &valid_result);
 		}
@@ -783,7 +900,8 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 
 	if (dir == BT_AUDIO_DIR_SINK) {
 		if (valid_codec_cap_check(headsets[channel_index].sink_codec_cap,
-					  temp_cap[temp_cap_index].num_caps, BT_AUDIO_DIR_SINK)) {
+					  temp_cap[temp_cap_index].num_caps, BT_AUDIO_DIR_SINK,
+					  channel_index)) {
 			if (conn == headsets[AUDIO_CH_L].headset_conn) {
 				bt_audio_codec_allocation_set(&lc3_preset_sink.codec_cfg,
 							      BT_AUDIO_LOCATION_FRONT_LEFT);
@@ -801,7 +919,8 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 		}
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
 		if (valid_codec_cap_check(headsets[channel_index].source_codec_cap,
-					  temp_cap[temp_cap_index].num_caps, BT_AUDIO_DIR_SOURCE)) {
+					  temp_cap[temp_cap_index].num_caps, BT_AUDIO_DIR_SOURCE,
+					  channel_index)) {
 			if (conn == headsets[AUDIO_CH_L].headset_conn) {
 				bt_audio_codec_allocation_set(&lc3_preset_source.codec_cfg,
 							      BT_AUDIO_LOCATION_FRONT_LEFT);
@@ -1263,9 +1382,10 @@ static void work_stream_start(struct k_work *work)
 		}
 	} else if (ret != 0) {
 		LOG_WRN("Failed to establish CIS, ret = %d", ret);
-		/** The connection could have invalid configs, or abnormal behavior cause the CIS
-		 * failed to establish. Sending an event for triggering disconnection could clean up
-		 * the abnormal state and restart the connection.
+		/** The connection could have invalid configs, or abnormal behavior cause
+		 * the CIS failed to establish. Sending an event for triggering
+		 * disconnection could clean up the abnormal state and restart the
+		 * connection.
 		 */
 		le_audio_event_publish(LE_AUDIO_EVT_NO_VALID_CFG,
 				       headsets[work_data.channel_index].headset_conn,
