@@ -115,7 +115,8 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-* Initial experimental support for nRF54L15 for Thread CLI and Co-processor samples.
+* Initial experimental support for nRF54L15 for the Thread CLI and Co-processor samples.
+* Added new :ref:`feature set <thread_ug_feature_sets>` option :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_RCP`.
 
 Zigbee
 ------
@@ -497,7 +498,10 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-* Initial experimental support for nRF54L15 for Thread CLI and Co-processor samples.
+* Initial experimental support for nRF54L15 for the Thread CLI and Co-processor samples.
+* :ref:`ot_coprocessor_sample` sample:
+
+  * Changed the default :ref:`feature set <thread_ug_feature_sets>` from Master to RCP.
 
 Sensor samples
 --------------
