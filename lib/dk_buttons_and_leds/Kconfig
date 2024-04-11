@@ -21,6 +21,8 @@ config DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS
 
 config DK_LIBRARY_BUTTON_NO_ISR
 	bool "Poll buttons unconditionally (no interrupts) [EXPERIMENTAL]"
+	# Workaround for buttons on nRF54L15 PDK in revision 0.2.x.
+	default y if BOARD_NRF54L15PDK_NRF54L15_CPUAPP && (BOARD_REVISION = "0.2.0" || BOARD_REVISION = "0.2.1")
 	select EXPERIMENTAL
 	help
 	  With this option disabled, the module periodically scans all the
