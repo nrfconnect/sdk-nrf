@@ -34,6 +34,7 @@ locals().update(conf)
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
+extensions.remove("sphinx_sitemap")
 extensions = ["sphinx.ext.intersphinx"] + extensions
 
 # Options for HTML output ------------------------------------------------------
