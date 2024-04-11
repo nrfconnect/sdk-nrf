@@ -255,8 +255,6 @@ static bool base_subgroup_bis_cb(const struct bt_bap_base_subgroup_bis *bis, voi
 
 	LOG_DBG("BIS found, index %d", bis->index);
 
-	bis_index_bitfields[bis->index - 1] = BIT(bis->index);
-
 	ret = bt_bap_base_subgroup_bis_codec_to_codec_cfg(bis, &codec_cfg);
 	if (ret != 0) {
 		LOG_WRN("Could not find codec configuration for BIS index %d, ret = %d", bis->index,
@@ -274,6 +272,16 @@ static bool base_subgroup_bis_cb(const struct bt_bap_base_subgroup_bis *bis, voi
 	} else {
 		LOG_DBG("Channel allocation: 0x%x for BIS index %d", chan_allocation, bis->index);
 		audio_codec_info[bis->index - 1].chan_allocation = chan_allocation;
+	}
+
+	uint32_t chan_bitfield = audio_codec_info[bis->index - 1].chan_allocation;
+	bool single_bit = (chan_bitfield & (chan_bitfield - 1)) == 0;
+
+	if (single_bit) {
+		bis_index_bitfields[bis->index - 1] = BIT(bis->index);
+	} else {
+		LOG_WRN("More than one bit set in channel location, we only support 1 channel per "
+			"BIS");
 	}
 
 	return true;
@@ -411,9 +419,6 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, bool encrypted)
 		return;
 	}
 
-	/* NOTE: The string below is used by the Nordic CI system */
-	LOG_INF("Syncing to broadcast stream index %d", active_stream_index);
-
 	if (bis_index_bitfields[active_stream_index] == 0) {
 		LOG_ERR("No bits set in bitfield");
 		return;
@@ -422,6 +427,9 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, bool encrypted)
 		LOG_ERR("Application syncs to only one stream");
 		return;
 	}
+
+	/* NOTE: The string below is used by the Nordic CI system */
+	LOG_INF("Syncing to broadcast stream index %d", active_stream_index);
 
 	ret = bt_bap_broadcast_sink_sync(broadcast_sink, bis_index_bitfields[active_stream_index],
 					 audio_streams_p, bis_encryption_key);
