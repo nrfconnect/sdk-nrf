@@ -385,7 +385,10 @@ Bluetooth Mesh samples
 
 * :ref:`ble_mesh_dfu_target` sample:
 
-  * Added a note on how to compile the sample with new Composition Data.
+  * Added
+
+    * A note on how to compile the sample with new Composition Data.
+    * Point-to-point DFU support with overlay file :file:`overlay-ptp_dfu.conf`.
 
 * :ref:`bluetooth_mesh_light_lc` sample:
 
