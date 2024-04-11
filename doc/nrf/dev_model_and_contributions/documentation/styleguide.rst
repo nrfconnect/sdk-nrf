@@ -29,7 +29,7 @@ Title and headings
 * Add a reference label above the title.
 
   For example, this page has the reference label ``.. _doc_styleguide:``.
-  To see it, click :guilabel:`View page source` in the upper corner of the page.
+  You can see this in the `RST source file <RST source file of Documentation guidelines_>`_ of this page.
 
 * Do not repeat the section name in the titles of subpages, such as *sample* when adding a sample.
 
