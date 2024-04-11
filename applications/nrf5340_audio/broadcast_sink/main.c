@@ -351,7 +351,7 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 
 	switch (msg->event) {
 	case BT_MGMT_PA_SYNCED:
-		LOG_INF("PA synced");
+		LOG_DBG("PA synced");
 
 		ret = broadcast_sink_pa_sync_set(msg->pa_sync, msg->broadcast_id);
 		if (ret) {

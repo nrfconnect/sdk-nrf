@@ -12,6 +12,7 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/sys/byteorder.h>
+#include <hci_core.h>
 
 #include "bt_mgmt.h"
 #include "macros_common.h"
@@ -36,12 +37,13 @@ static bool sync_cb_registered;
 static char const *srch_name;
 static uint32_t srch_brdcast_id = BRDCAST_ID_NOT_USED;
 static struct bt_le_per_adv_sync *pa_sync;
-static uint32_t broadcaster_broadcast_id;
 
 struct broadcast_source {
 	char name[BLE_SEARCH_NAME_MAX_LEN];
-	uint32_t broadcast_id;
+	uint32_t id;
 };
+
+static struct broadcast_source brcast_src_info;
 
 static void scan_restart_worker(struct k_work *work)
 {
@@ -91,7 +93,8 @@ static uint16_t interval_to_sync_timeout(uint16_t interval)
 	return timeout;
 }
 
-static void periodic_adv_sync(const struct bt_le_scan_recv_info *info, uint32_t broadcast_id)
+static void periodic_adv_sync(const struct bt_le_scan_recv_info *info,
+			      struct broadcast_source source)
 {
 	int ret;
 	struct bt_le_per_adv_sync_param param;
@@ -105,8 +108,6 @@ static void periodic_adv_sync(const struct bt_le_scan_recv_info *info, uint32_t 
 	param.skip = PA_SYNC_SKIP;
 	param.timeout = interval_to_sync_timeout(info->interval);
 
-	broadcaster_broadcast_id = broadcast_id;
-
 	/* Set timeout to same value as PA sync timeout in ms */
 	k_timer_start(&pa_sync_timer, K_MSEC(param.timeout * 10), K_NO_WAIT);
 
@@ -119,6 +120,7 @@ static void periodic_adv_sync(const struct bt_le_scan_recv_info *info, uint32_t 
 		}
 		return;
 	}
+	brcast_src_info = source;
 }
 
 /**
@@ -163,7 +165,7 @@ static bool scan_check_broadcast_source(struct bt_data *data, void *user_data)
 		return true;
 	}
 
-	source->broadcast_id = sys_get_le24(data->data + BT_UUID_SIZE_16);
+	source->id = sys_get_le24(data->data + BT_UUID_SIZE_16);
 
 	return true;
 }
@@ -176,7 +178,7 @@ static bool scan_check_broadcast_source(struct bt_data *data, void *user_data)
  */
 static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf_simple *ad)
 {
-	struct broadcast_source source = {.broadcast_id = INVALID_BROADCAST_ID};
+	struct broadcast_source source = {.id = INVALID_BROADCAST_ID};
 
 	/* We are only interested in non-connectable periodic advertisers */
 	if ((info->adv_props & BT_GAP_ADV_PROP_CONNECTABLE) || info->interval == 0) {
@@ -185,10 +187,10 @@ static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 
 	bt_data_parse(ad, scan_check_broadcast_source, (void *)&source);
 
-	if (source.broadcast_id != INVALID_BROADCAST_ID) {
+	if (source.id != INVALID_BROADCAST_ID) {
 		if (srch_brdcast_id < BRDCAST_ID_NOT_USED) {
 			/* Valid srch_brdcast_id supplied */
-			if (source.broadcast_id != srch_brdcast_id) {
+			if (source.id != srch_brdcast_id) {
 				/* Broadcaster does not match src_brdcast_id */
 				return;
 			}
@@ -198,8 +200,8 @@ static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 			return;
 		}
 
-		LOG_INF("Broadcast source %s found, id: 0x%06x", source.name, source.broadcast_id);
-		periodic_adv_sync(info, source.broadcast_id);
+		LOG_DBG("Broadcast source %s found, id: 0x%06x", source.name, source.id);
+		periodic_adv_sync(info, source);
 	}
 }
 
@@ -214,7 +216,10 @@ static void pa_synced_cb(struct bt_le_per_adv_sync *sync,
 		return;
 	}
 
-	LOG_DBG("PA synced");
+	char addr_str[BT_ADDR_LE_STR_LEN];
+	(void)bt_addr_le_to_str(&sync->addr, addr_str, BT_ADDR_LE_STR_LEN);
+	LOG_INF("PA synced to name: %s, id: 0x%06x, addr: %s", brcast_src_info.name,
+		brcast_src_info.id, addr_str);
 
 	k_timer_stop(&pa_sync_timer);
 
@@ -225,7 +230,7 @@ static void pa_synced_cb(struct bt_le_per_adv_sync *sync,
 
 	msg.event = BT_MGMT_PA_SYNCED;
 	msg.pa_sync = sync;
-	msg.broadcast_id = broadcaster_broadcast_id;
+	msg.broadcast_id = brcast_src_info.id;
 
 	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
 	ERR_CHK(ret);
