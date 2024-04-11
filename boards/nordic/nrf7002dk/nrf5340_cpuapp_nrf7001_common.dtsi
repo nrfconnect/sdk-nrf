@@ -104,7 +104,7 @@
 		status0-gpios = <&gpio0 30 GPIO_ACTIVE_HIGH>;
 		grant-gpios = <&gpio0 24 (GPIO_PULL_DOWN | GPIO_ACTIVE_LOW)>;
 		swctrl1-gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;
-		btrf-switch-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+		srrf-switch-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
 	};
 
 	nordic_wlan0: nordic_wlan0 {
