@@ -612,6 +612,14 @@ int main(void)
 		return 0;
 	}
 
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)) {
+		ret = lwm2m_init_image();
+		if (ret < 0) {
+			LOG_ERR("Failed to setup image properties (%d)", ret);
+			return 0;
+		}
+	}
+
 	modem_connect();
 
 #if defined(CONFIG_APP_GNSS)
