@@ -45,7 +45,7 @@ tests:
       - nrf9160dk_nrf9160
       - nrf9160dk_nrf52840
     tags: lpuart
-    build_only: True
+    build_only: true
     extra_configs:
       - CONFIG_TEST_LPUART_TIMEOUT=10
 
@@ -55,7 +55,7 @@ tests:
       - nrf9160dk_nrf9160
       - nrf9160dk_nrf52840
     tags: lpuart
-    build_only: True
+    build_only: true
     extra_configs:
       - CONFIG_TEST_LPUART_TIMEOUT=10
       - CONFIG_TEST_BUSY_SIM=y
@@ -66,7 +66,7 @@ tests:
       - nrf9160dk_nrf9160
       - nrf9160dk_nrf52840
     tags: lpuart
-    build_only: True
+    build_only: true
     extra_args: OVERLAY_CONFIG=dbg.conf
     extra_configs:
       - CONFIG_TEST_LPUART_TIMEOUT=10
