@@ -81,6 +81,13 @@ config BT_AUDIO_PRES_DELAY_SRCH_SOURCE
 	  then it will revert to the closest supported value.
 endchoice
 
+config BT_AUDIO_EP_PRINT
+	bool "Print discovered endpoint capabilities"
+	default n
+	help
+	  Print the supported capabilities of an endpoint when it is discovered.
+
+
 config CODEC_CAP_COUNT_MAX
 	int "Max storage of codec capabilities"
 	default 5
