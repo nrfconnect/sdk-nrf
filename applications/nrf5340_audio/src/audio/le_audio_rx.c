@@ -47,6 +47,7 @@ void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, boo
 	struct ble_iso_data *iso_received = NULL;
 	static struct rx_stats rx_stats[AUDIO_CH_NUM];
 	static uint32_t num_overruns;
+	static uint32_t num_thrown;
 
 	if (!initialized) {
 		ERR_CHK_MSG(-EPERM, "Data received but le_audio_rx is not initialized");
@@ -78,7 +79,11 @@ void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, boo
 
 	if (stream_state_get() != STATE_STREAMING) {
 		/* Throw away data */
-		LOG_WRN("Not in streaming state, throwing data: %d", stream_state_get());
+		num_thrown++;
+		if ((num_thrown % 100) == 1) {
+			LOG_WRN("Not in streaming state (%d), thrown %d packet(s)",
+				stream_state_get(), num_thrown);
+		}
 		return;
 	}
 
