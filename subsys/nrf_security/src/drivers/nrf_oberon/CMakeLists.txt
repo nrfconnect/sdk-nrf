@@ -24,6 +24,8 @@ if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
   )
 endif()
 
+if (COMPILE_PSA_APIS OR CONFIG_NRF_SECURITY_LEGACY_AND_PSA)
+
 if (COMPILE_PSA_APIS)
   list(APPEND src_crypto_oberon
        ${drivers_path}/oberon_helpers.c
@@ -55,6 +57,35 @@ if (COMPILE_PSA_APIS)
   append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_CTR_DRBG_DRIVER              src_crypto_oberon ${drivers_path} oberon_ctr_drbg.c)
   append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_HMAC_DRBG_DRIVER             src_crypto_oberon ${drivers_path} oberon_hmac_drbg.c)
 
+
+elseif(CONFIG_NRF_SECURITY_LEGACY_AND_PSA)
+  # When legacy and PSA are enabled, we need to include all the oberon drivers
+  # since we don't have PSA_NEED_* symbols in Kconfig.
+  list(APPEND src_crypto_oberon
+       ${drivers_path}/oberon_helpers.c
+       ${drivers_path}/oberon_ecdh.c
+       ${drivers_path}/oberon_ecdsa.c
+       ${drivers_path}/oberon_ec_keys.c
+       ${drivers_path}/oberon_jpake.c
+       ${drivers_path}/oberon_spake2p.c
+       ${drivers_path}/oberon_srp.c
+       ${drivers_path}/oberon_rsa.c
+       ${drivers_path}/oberon_key_management.c
+       ${drivers_path}/oberon_aead.c
+       ${drivers_path}/oberon_key_derivation.c
+       ${drivers_path}/oberon_mac.c
+       ${drivers_path}/oberon_cipher.c
+       ${drivers_path}/oberon_hash.c
+       ${drivers_path}/oberon_key_agreement.c
+       ${drivers_path}/oberon_pake.c
+       ${drivers_path}/oberon_asymmetric_signature.c
+       ${drivers_path}/oberon_asymmetric_encrypt.c
+       ${drivers_path}/oberon_ctr_drbg.c
+       ${drivers_path}/oberon_hmac_drbg.c)
+
+
+endif()
+
   target_sources(${mbedcrypto_target} PRIVATE ${src_crypto_oberon})
 
   # Turn off warnings that Oberon are systematically
@@ -66,4 +97,5 @@ if (COMPILE_PSA_APIS)
 	-Wno-uninitialized
 	-Wno-maybe-uninitialized
   )
+
 endif()
