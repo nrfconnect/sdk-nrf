@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Fast Pair Locator tag sample"
+
+choice FAST_PAIR_LOCATOR_TAG_PLATFORM
+	prompt "Locator tag sample platform"
+	default FAST_PAIR_LOCATOR_TAG_PLATFORM_THINGY if BOARD_THINGY53_NRF5340_CPUAPP
+	default FAST_PAIR_LOCATOR_TAG_PLATFORM_DK
+
+config FAST_PAIR_LOCATOR_TAG_PLATFORM_DK
+	bool "Locator tag sample run on the Development Kit"
+
+config FAST_PAIR_LOCATOR_TAG_PLATFORM_THINGY
+	bool "Locator tag sample run on the Thingy:53"
+
+endchoice
+
+rsource "src/ui/Kconfig.ui"
+rsource "src/battery/Kconfig.battery"
+
+endmenu
