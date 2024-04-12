@@ -5,9 +5,11 @@
  */
 
 #include "common.h"
+
 #include <cracen/lib_kmu.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
+#include <hal/nrf_cracen.h>
 #include <mbedtls/asn1.h>
 #include <nrfx.h>
 #include <sicrypto/rsa_keys.h>
@@ -22,10 +24,23 @@
 #include <sxsymcrypt/sha2.h>
 #include <sxsymcrypt/sha3.h>
 #include <zephyr/sys/util.h>
-#include <hal/nrf_cracen.h>
 
 #define NOT_ENABLED_CURVE    (0)
 #define NOT_ENABLED_HASH_ALG (0)
+
+#ifdef NRF54H_SERIES
+/* NCSDK-27273: These defines will come from an external header file. */
+#define DOMAIN_NONE	   0x00
+#define DOMAIN_SECURE	   0x01
+#define DOMAIN_APPLICATION 0x02
+#define DOMAIN_RADIO	   0x03
+#define DOMAIN_CELL	   0x04
+#define DOMAIN_ISIM	   0x05
+#define DOMAIN_WIFI	   0x06
+#define DOMAIN_SYSCTRL	   0x08
+
+#define DEVICE_SECRET_LENGTH 4
+#endif
 
 static const uint8_t RSA_ALGORITHM_IDENTIFIER[] = {0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7,
 						   0x0d, 0x01, 0x01, 0x01, 0x05, 0x00};
@@ -570,7 +585,58 @@ static int cracen_prepare_ik_key(const uint8_t *user_data)
 		nrf_cracen_seedram_lock_enable_set(NRF_CRACEN, true);
 	}
 #endif
-	return sx_pk_ik_derive_keys(NULL);
+
+	struct sx_pk_config_ik cfg = {};
+
+#ifdef NRF54H_SERIES
+	/* NCSDK-27273: Fetch device secret from persistent storage. */
+	uint32_t device_secret[DEVICE_SECRET_LENGTH] = {};
+
+	cfg.device_secret = device_secret;
+	cfg.device_secret_sz = DEVICE_SECRET_LENGTH;
+
+	switch (user_data[1]) {
+		/* Helper macro to set up an array containing the personalization string.
+		 * The array is a multiple of 4, since the IKG takes a number of uint32_t
+		 * as personalization string.
+		 */
+#define SET_STR(x)                                                                                 \
+	{                                                                                          \
+		static const char lstr_##x[((sizeof(#x) + 3) / 4) * 4] = #x;                       \
+		cfg.key_bundle = (uint32_t *)lstr_##x;                                             \
+		cfg.key_bundle_sz = sizeof(lstr_##x) / sizeof(uint32_t);                           \
+	}
+	case DOMAIN_NONE:
+		SET_STR(NONE);
+		break;
+	case DOMAIN_SECURE:
+		SET_STR(SECURE);
+		break;
+	case DOMAIN_APPLICATION:
+		SET_STR(APPLICATION);
+		break;
+	case DOMAIN_RADIO:
+		SET_STR(RADIO);
+		break;
+	case DOMAIN_CELL:
+		SET_STR(CELL);
+		break;
+	case DOMAIN_ISIM:
+		SET_STR(ISIM);
+		break;
+	case DOMAIN_WIFI:
+		SET_STR(WIFI);
+		break;
+	case DOMAIN_SYSCTRL:
+		SET_STR(SYSCTRL);
+		break;
+
+	default:
+		return SX_ERR_INVALID_KEYREF;
+	}
+#endif
+
+	return sx_pk_ik_derive_keys(&cfg);
 }
 
 static int cracen_clean_ik_key(const uint8_t *user_data)
@@ -616,6 +682,7 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 
 		k->prepare_key = cracen_prepare_ik_key;
 		k->clean_key = cracen_clean_ik_key;
+		k->user_data = key_buffer;
 
 		switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
 		case CRACEN_BUILTIN_MKEK_ID:

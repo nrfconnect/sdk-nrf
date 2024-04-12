@@ -669,7 +669,7 @@ psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *
 	memcpy(operation->cmac_ctr.key_buffer, key_buffer,
 	       PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)));
 
-	status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+	status = cracen_load_keyref(attributes, operation->cmac_ctr.key_buffer, key_buffer_size,
 				    &operation->cmac_ctr.keyref);
 	if (status != PSA_SUCCESS) {
 		return status;
