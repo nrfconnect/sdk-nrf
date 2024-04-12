@@ -388,6 +388,7 @@ Matter samples
     * :ref:`matter_light_bulb_sample` sample.
     * :ref:`matter_light_switch_sample` sample.
     * :ref:`matter_thermostat_sample` sample.
+    * :ref:`matter_window_covering_sample` sample.
 
 * :ref:`matter_lock_sample` sample:
 
