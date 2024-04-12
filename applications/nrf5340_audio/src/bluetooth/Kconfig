@@ -97,7 +97,7 @@ config BT_AUDIO_RETRANSMITS
 endmenu # QoS
 endmenu # Bluetooth audio
 
-rsource "bt_renderer/Kconfig"
+rsource "bt_rendering_and_capture/Kconfig"
 rsource "bt_content_control/Kconfig"
 
 #----------------------------------------------------------------------------#
