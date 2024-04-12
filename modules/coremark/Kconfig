@@ -13,7 +13,7 @@ if COREMARK
 config COREMARK_ITERATIONS
 	int "Number of iterations to run"
 	range 10 10000
-	default 1000
+	default 2000
 	help
 	  Specify the number of iterations to run the benchmark.
 	  CoreMark should execute for at least 10 seconds to have valid results.
