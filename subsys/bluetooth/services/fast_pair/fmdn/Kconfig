@@ -139,6 +139,12 @@ config BT_FAST_PAIR_FMDN_VERSION_MAJOR
 	help
 	  Major version number of the FMDN protocol.
 
+config BT_FAST_PAIR_FMDN_CALLBACKS
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN callbacks source file.
+
 # The FMDN extension requires the system workqueue to execute at
 # a cooperative priority.
 config SYSTEM_WORKQUEUE_PRIORITY
