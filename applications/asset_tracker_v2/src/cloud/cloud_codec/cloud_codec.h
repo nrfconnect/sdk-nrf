@@ -38,6 +38,11 @@
 extern "C" {
 #endif
 
+/** Heading accuracy limit for the heading to be considered valid. Heading is only sent to the
+ *  cloud if it is accurate enough.
+ */
+#define CLOUD_GNSS_HEADING_ACC_LIMIT (float)60.0
+
 /** @brief Structure containing battery data published to cloud. */
 struct cloud_data_battery {
 	/** Battery fuel gauge percentage. */
@@ -49,18 +54,24 @@ struct cloud_data_battery {
 };
 
 struct cloud_data_gnss_pvt {
-	/** Longitude. */
-	double longi;
 	/** Latitude. */
 	double lat;
+	/** Longitude. */
+	double lon;
+	/** Position accuracy in (2D 1-sigma) in meters. */
+	float acc;
 	/** Altitude above WGS-84 ellipsoid in meters. */
 	float alt;
-	/** Accuracy in (2D 1-sigma) in meters. */
-	float acc;
-	/** Horizontal speed in meters. */
+	/** Altitude accuracy (1-sigma) in meters. */
+	float alt_acc;
+	/** Horizontal speed in m/s. */
 	float spd;
+	/** Horizontal speed accuracy (1-sigma) in m/s. */
+	float spd_acc;
 	/** Heading of movement in degrees. */
 	float hdg;
+	/** Heading of movement accuracy (1-sigma) in degrees. */
+	float hdg_acc;
 };
 
 /** @brief Structure containing GNSS data published to cloud. */

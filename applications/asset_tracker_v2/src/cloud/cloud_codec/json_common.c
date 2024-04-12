@@ -350,13 +350,13 @@ int json_common_gnss_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	err = json_add_number(gnss_val_obj, DATA_GNSS_LONGITUDE, data->pvt.longi);
+	err = json_add_number(gnss_val_obj, DATA_GNSS_LATITUDE, data->pvt.lat);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
 	}
 
-	err = json_add_number(gnss_val_obj, DATA_GNSS_LATITUDE, data->pvt.lat);
+	err = json_add_number(gnss_val_obj, DATA_GNSS_LONGITUDE, data->pvt.lon);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
@@ -380,10 +380,12 @@ int json_common_gnss_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	err = json_add_number(gnss_val_obj, DATA_GNSS_HEADING, data->pvt.hdg);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (data->pvt.hdg_acc < CLOUD_GNSS_HEADING_ACC_LIMIT) {
+		err = json_add_number(gnss_val_obj, DATA_GNSS_HEADING, data->pvt.hdg);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
 	}
 
 	json_add_obj(gnss_obj, DATA_VALUE, gnss_val_obj);

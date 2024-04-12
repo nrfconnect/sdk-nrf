@@ -1204,12 +1204,18 @@ static void on_all_states(struct data_msg_data *msg)
 			.queued = true
 		};
 
+		new_location_data.pvt.lat = msg->module.location.data.location.pvt.latitude;
+		new_location_data.pvt.lon = msg->module.location.data.location.pvt.longitude;
 		new_location_data.pvt.acc = msg->module.location.data.location.pvt.accuracy;
 		new_location_data.pvt.alt = msg->module.location.data.location.pvt.altitude;
-		new_location_data.pvt.hdg = msg->module.location.data.location.pvt.heading;
-		new_location_data.pvt.lat = msg->module.location.data.location.pvt.latitude;
-		new_location_data.pvt.longi = msg->module.location.data.location.pvt.longitude;
+		new_location_data.pvt.alt_acc =
+			msg->module.location.data.location.pvt.altitude_accuracy;
 		new_location_data.pvt.spd = msg->module.location.data.location.pvt.speed;
+		new_location_data.pvt.spd_acc =
+			msg->module.location.data.location.pvt.speed_accuracy;
+		new_location_data.pvt.hdg = msg->module.location.data.location.pvt.heading;
+		new_location_data.pvt.hdg_acc =
+			msg->module.location.data.location.pvt.heading_accuracy;
 
 		cloud_codec_populate_gnss_buffer(gnss_buf, &new_location_data,
 						&head_gnss_buf,

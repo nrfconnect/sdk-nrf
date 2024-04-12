@@ -156,15 +156,15 @@ static int add_pvt_data(cJSON *parent, struct cloud_data_gnss *gnss)
 		.type = NRF_CLOUD_GNSS_TYPE_PVT,
 		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
 		.pvt = {
-			.lon =		gnss->pvt.longi,
 			.lat =		gnss->pvt.lat,
+			.lon =		gnss->pvt.lon,
 			.accuracy =	gnss->pvt.acc,
 			.alt =		gnss->pvt.alt,
 			.has_alt =	1,
 			.speed =	gnss->pvt.spd,
 			.has_speed =	1,
 			.heading =	gnss->pvt.hdg,
-			.has_heading =	1
+			.has_heading =	gnss->pvt.hdg_acc < CLOUD_GNSS_HEADING_ACC_LIMIT ? 1 : 0
 		}
 	};
 	cJSON *data_obj = cJSON_CreateObject();

@@ -470,12 +470,15 @@ void test_codec_helpers_get_configuration_object(void)
 void test_codec_helpers_set_gnss_data(void)
 {
 	struct cloud_data_gnss gnss = {
-		.pvt.longi = 10,
 		.pvt.lat = 62,
+		.pvt.lon = 10,
 		.pvt.acc = 24,
 		.pvt.alt = 170,
+		.pvt.alt_acc = 10,
 		.pvt.spd = 1,
+		.pvt.spd_acc = 1,
 		.pvt.hdg = 176,
+		.pvt.hdg_acc = 5,
 		.gnss_ts = 1000,
 		.queued = true,
 	};
@@ -490,7 +493,7 @@ void test_codec_helpers_set_gnss_data(void)
 		&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LATITUDE_RID), gnss.pvt.lat, 0);
 
 	__cmock_lwm2m_set_f64_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LONGITUDE_RID), gnss.pvt.longi, 0);
+		&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LONGITUDE_RID), gnss.pvt.lon, 0);
 
 	__cmock_lwm2m_set_f64_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, ALTITUDE_RID), alt, 0);
