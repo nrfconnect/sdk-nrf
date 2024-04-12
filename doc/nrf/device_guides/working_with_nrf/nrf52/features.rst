@@ -71,7 +71,7 @@ See the :ref:`ug_bt_mesh` user guide for information about how to use the suppli
 Enhanced ShockBurst
 ===================
 
-.. include:: ../../../protocols/esb/index.rst
+.. include:: /protocols/esb/index.rst
    :start-after: esb_intro_start
    :end-before: esb_intro_end
 
@@ -81,7 +81,7 @@ To start developing, check out the :ref:`esb_ptx` and :ref:`esb_prx` samples.
 Gazell
 ======
 
-.. include:: ../../../protocols/gazell/index.rst
+.. include:: /protocols/gazell/index.rst
    :start-after: gz_intro_start
    :end-before: gz_intro_end
 
@@ -91,7 +91,7 @@ To start developing, check out the :ref:`gazell_samples`.
 Matter
 ======
 
-.. include:: ../../../protocols/matter/index.rst
+.. include:: /protocols/matter/index.rst
    :start-after: matter_intro_start
    :end-before: matter_intro_end
 
@@ -126,7 +126,7 @@ The nrfx repository is included in the |NCS| as a module of the Zephyr repositor
 Thread
 ======
 
-.. include:: ../../../protocols/thread/index.rst
+.. include:: /protocols/thread/index.rst
    :start-after: thread_intro_start
    :end-before: thread_intro_end
 
@@ -136,7 +136,7 @@ To start developing, refer to the :ref:`openthread_samples`.
 Zigbee
 ======
 
-.. include:: ../../../protocols/zigbee/index.rst
+.. include:: /protocols/zigbee/index.rst
    :start-after: zigbee_ug_intro_start
    :end-before: zigbee_ug_intro_end
 

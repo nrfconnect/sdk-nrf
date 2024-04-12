@@ -1,5 +1,6 @@
 .. _ug_nrf52_group:
 .. _nrf52_supported_boards:
+.. _nrf52_working:
 
 Working with nRF52 Series
 #########################
@@ -64,5 +65,4 @@ See also :ref:`ug_radio_fem_nrf21540ek` to learn how to use the RF front-end mod
    :caption: Subpages:
 
    working_with_nrf/nrf52/features
-   working_with_nrf/nrf52/gs
    working_with_nrf/nrf52/developing

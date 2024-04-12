@@ -1,3 +1,5 @@
+:orphan:
+
 .. _ug_nrf7002eb_gs:
 
 Getting started with nRF7002 EB

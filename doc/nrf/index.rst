@@ -38,6 +38,7 @@ Varied reference designs
    :caption: Contents
    :hidden:
 
+   gsg_guides
    installation
    create_application
    config_and_build

@@ -58,14 +58,14 @@ Make sure you are logged in to the `nRF Cloud`_ portal.
 
 1. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.
 
-   .. figure:: images/nrfcloud_devices.png
+   .. figure:: /gsg_guides/images/nrfcloud_devices.png
       :alt: nRF Cloud - Devices
 
       nRF Cloud - Devices
 
 #. Click :guilabel:`Add Devices`.
 
-   .. figure:: images/nrfcloud_add_devices.png
+   .. figure:: /gsg_guides/images/nrfcloud_add_devices.png
       :alt: nRF Cloud - Add Devices
 
       nRF Cloud - Add Devices
@@ -74,7 +74,7 @@ Make sure you are logged in to the `nRF Cloud`_ portal.
 
 #. Click :guilabel:`LTE Device` in the **Select Device Type** pop-up.
 
-   .. figure:: images/nrfcloud_selectdevicetype.png
+   .. figure:: /gsg_guides/images/nrfcloud_selectdevicetype.png
       :alt: nRF Cloud - Select Device Type
 
       nRF Cloud - Select Device Type

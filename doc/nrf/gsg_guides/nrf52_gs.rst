@@ -7,13 +7,8 @@ Getting started with nRF52 Series
    :local:
    :depth: 2
 
-This section gets you started with your nRF52 Series :term:`Development Kit (DK)` using the |NCS|.
+This guide lets you evaluate the |NCS|'s support for nRF52 Series :term:`Development Kit (DK)` without the need of installing the SDK.
 It tells you how to install the :ref:`peripheral_uart` sample and perform a quick test of your DK.
-
-If you have already set up your nRF52 Series DK and want to learn more, see the following documentation:
-
-* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
-* :ref:`ug_nrf52` documentation for more advanced topics related to the nRF52 Series.
 
 If you want to go through an online training course to familiarize yourself with Bluetooth Low Energy and the development of Bluetooth LE applications, enroll in the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
 
@@ -94,7 +89,7 @@ To program the precompiled sample to your development kit, complete the followin
 
 #. Click **SELECT DEVICE** and select the DK from the drop-down list.
 
-   .. figure:: ../nrf52/images/programmer_select_device1.png
+   .. figure:: images/programmer_select_device1.png
       :alt: Programmer - Select Device
 
       Programmer - Select Device
@@ -166,7 +161,7 @@ To perform tests, complete the following steps:
 
          This example communicates over Bluetooth Low Energy using the Nordic UART Service (NUS).
 
-         .. figure:: ../nrf52/images/nrf52_enable_cccds.png
+         .. figure:: images/nrf52_enable_cccds.png
             :alt: nRF Connect for Mobile - Enable services option
 
             nRF Connect for Mobile - Enable services option
@@ -177,7 +172,7 @@ To perform tests, complete the following steps:
          The text is sent through the |DK| to your mobile device over a Bluetooth LE link.
          The device displays the text in the nRF Connect for Mobile log:
 
-         .. figure:: ../nrf52/images/nrf52_connect_log.png
+         .. figure:: images/nrf52_connect_log.png
             :alt: nRF Connect for Mobile - Text shown in the log
 
             nRF Connect for Mobile - Text shown in the log
@@ -194,7 +189,7 @@ To perform tests, complete the following steps:
 
       #. In the new window, select the **Client** tab and scroll to the bottom so you can see the **Client Characteristic Configuration** entry.
 
-         .. figure:: ../nrf52/images/nrf52_connect_client_ios.png
+         .. figure:: images/nrf52_connect_client_ios.png
             :alt: nRF Connect for Mobile - Client tab
 
             nRF Connect for Mobile - Client tab
@@ -207,7 +202,7 @@ To perform tests, complete the following steps:
 
          This enables messages sent to the DK to show up in nRF Connect for Mobile.
 
-         .. figure:: ../nrf52/images/nrf52_connect_write_ios.png
+         .. figure:: images/nrf52_connect_write_ios.png
             :alt: nRF Connect for Mobile - Write Value window
 
             nRF Connect for Mobile - Write Value window
@@ -222,7 +217,7 @@ To perform tests, complete the following steps:
          The text is sent through the |DK| to your mobile device over a Bluetooth LE link.
          The device displays the text in the nRF Connect for Mobile log:
 
-         .. figure:: ../nrf52/images/nrf52_connect_log_ios.png
+         .. figure:: images/nrf52_connect_log_ios.png
             :alt: nRF Connect for Mobile - Text shown in the log
 
             nRF Connect for Mobile - Text shown in the log
