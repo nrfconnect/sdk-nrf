@@ -1273,9 +1273,9 @@ int method_gnss_location_get(const struct location_request_info *request)
 		return err;
 	}
 
-	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_prepare_work);
-
 	running = true;
+
+	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_prepare_work);
 
 	return 0;
 }
