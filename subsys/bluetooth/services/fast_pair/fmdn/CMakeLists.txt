@@ -14,6 +14,10 @@ if(CONFIG_BT_FAST_PAIR_FMDN_CLOCK)
   target_sources(fmdn PRIVATE clock.c)
 endif()
 
+if(CONFIG_BT_FAST_PAIR_FMDN_DULT_INTEGRATION)
+  target_sources(fmdn PRIVATE dult_integration.c)
+endif()
+
 target_include_directories(fmdn PUBLIC include)
 target_include_directories(fmdn PRIVATE include_priv)
 target_include_directories(fmdn PRIVATE ../include/common)

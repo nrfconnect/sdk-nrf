@@ -175,6 +175,97 @@ config BT_FAST_PAIR_FMDN_CLOCK_NVM_UPDATE_RETRY_TIME
 
 endif # BT_FAST_PAIR_FMDN_CLOCK
 
+config BT_FAST_PAIR_FMDN_DULT
+	bool "Enable Detecting Unwanted Location Trackers (DULT) support in FMDN"
+	default y
+	select DULT
+	help
+	  The DULT support is required for small and not easily discoverable accessories.
+	  For large accessories it is recommended. For details see
+	  https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-applicability.
+
+if BT_FAST_PAIR_FMDN_DULT
+
+config BT_FAST_PAIR_FMDN_DULT_INTEGRATION
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN DULT Integration source file.
+
+if BT_FAST_PAIR_FMDN_DULT_INTEGRATION
+
+config BT_FAST_PAIR_FMDN_DULT_INTEGRATION_INIT_PRIORITY
+	int
+	range 0 9
+	default 4
+	help
+	  Fast Pair FMDN DULT integration module initialization priority.
+	  Used when registering initialization function to Fast Pair activation module.
+
+config BT_FAST_PAIR_FMDN_DULT_INTEGRATION_INIT_PRIORITY_LATE
+	int
+	range 0 9
+	default 6
+	help
+	  Fast Pair FMDN DULT integration module initialization late priority.
+	  Used when registering late initialization function to Fast Pair activation module.
+
+endif # BT_FAST_PAIR_FMDN_DULT_INTEGRATION
+
+config BT_FAST_PAIR_FMDN_DULT_MANUFACTURER_NAME
+	string "Manufacturer name"
+	help
+	  The name should match the value provided in the Google Nearby Console.
+
+config BT_FAST_PAIR_FMDN_DULT_MODEL_NAME
+	string "Model name"
+	help
+	  The name should match the value provided in the Google Nearby Console.
+
+config BT_FAST_PAIR_FMDN_DULT_ACCESSORY_CATEGORY
+	int "The category value from DULT specification the accessory most closely resembles"
+	range 1 167
+	help
+	  See https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-accessory-category-value
+	  for specific category value.
+
+config BT_FAST_PAIR_FMDN_DULT_CAPABILITY_PLAY_SOUND
+	bool
+	default y
+	depends on !BT_FAST_PAIR_FMDN_RING_COMP_NONE
+	help
+	  Support for play sound capability is required.
+
+config BT_FAST_PAIR_FMDN_DULT_CAPABILITY_ID_LOOKUP_BLE
+	bool
+	default y
+	help
+	  Identifier Lookup by BLE support.
+
+menu "Firmware version"
+
+config BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MAJOR
+	int "FMDN Firmware major version"
+	default 1
+	range 0 65535
+	help
+	  Default is set to 1, because Major.Minor.Revision value of 0.0.0 is not supported by
+	  the Fast Pair Validator Android app.
+
+config BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MINOR
+	int "FMDN Firmware major version"
+	default 0
+	range 0 255
+
+config BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_REVISION
+	int "FMDN Firmware revision version"
+	default 0
+	range 0 255
+
+endmenu
+
+endif # BT_FAST_PAIR_FMDN_DULT
+
 # The FMDN extension requires the system workqueue to execute at
 # a cooperative priority.
 config SYSTEM_WORKQUEUE_PRIORITY
