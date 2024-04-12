@@ -21,8 +21,8 @@ config BT_AUDIO_VOL_STEP_SIZE
 #----------------------------------------------------------------------------#
 menu "Log level"
 
-module = BT_REND_VOL
-module-str = bt-rend-vol
+module = BT_VOL
+module-str = bt-vol
 source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # Log level

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _BT_REND_VOL_INTERNAL_H_
-#define _BT_REND_VOL_INTERNAL_H_
+#ifndef _BT_VOL_CTLR_INTERNAL_H_
+#define _BT_VOL_CTLR_INTERNAL_H_
 
 #include <zephyr/bluetooth/conn.h>
 
@@ -18,7 +18,7 @@
  * @retval	-ENXIO	The feature is disabled.
  * @retval	other	Errors from underlying drivers.
  */
-int bt_rend_vol_set(uint8_t volume);
+int bt_vol_ctlr_set(uint8_t volume);
 
 /**
  * @brief	Turn the volume up by one step.
@@ -27,7 +27,7 @@ int bt_rend_vol_set(uint8_t volume);
  * @retval	-ENXIO	The feature is disabled.
  * @retval	other	Errors from underlying drivers.
  */
-int bt_rend_vol_up(void);
+int bt_vol_ctlr_up(void);
 
 /**
  * @brief	Turn the volume down by one step.
@@ -36,7 +36,7 @@ int bt_rend_vol_up(void);
  * @retval	-ENXIO	The feature is disabled.
  * @retval	other	Errors from underlying drivers.
  */
-int bt_rend_vol_down(void);
+int bt_vol_ctlr_down(void);
 
 /**
  * @brief	Mute the output volume of the device.
@@ -45,7 +45,7 @@ int bt_rend_vol_down(void);
  * @retval	-ENXIO	The feature is disabled.
  * @retval	other	Errors from underlying drivers.
  */
-int bt_rend_vol_mute(void);
+int bt_vol_ctlr_mute(void);
 
 /**
  * @brief	Unmute the output volume of the device.
@@ -54,7 +54,7 @@ int bt_rend_vol_mute(void);
  * @retval	-ENXIO	The feature is disabled.
  * @retval	other	Errors from underlying drivers.
  */
-int bt_rend_vol_unmute(void);
+int bt_vol_ctlr_unmute(void);
 
 /**
  * @brief	Discover Volume Control Service and included services.
@@ -67,20 +67,13 @@ int bt_rend_vol_unmute(void);
  *
  * @return	0 for success, error otherwise.
  */
-int bt_rend_vol_discover(struct bt_conn *conn);
+int bt_vol_ctlr_discover(struct bt_conn *conn);
 
 /**
  * @brief	Initialize the Volume Control Service client.
  *
  * @return	0 for success, error otherwise.
  */
-int bt_rend_vol_ctlr_init(void);
+int bt_vol_ctlr_init(void);
 
-/**
- * @brief	Initialize the Volume renderer.
- *
- * @return	0 for success, error otherwise.
- */
-int bt_rend_vol_rend_init(void);
-
-#endif /* _BT_REND_VOL_INTERNAL_H_ */
+#endif /* _BT_VOL_CTLR_INTERNAL_H_ */

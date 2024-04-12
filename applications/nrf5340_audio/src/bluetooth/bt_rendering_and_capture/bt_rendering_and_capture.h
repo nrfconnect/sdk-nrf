@@ -14,14 +14,14 @@
  *
  * @return	0 if success, error otherwise.
  */
-int bt_rend_volume_up(void);
+int bt_r_and_c_volume_up(void);
 
 /**
  * @brief	Adjust volume down by one step.
  *
  * @return	0 if success, error otherwise.
  */
-int bt_rend_volume_down(void);
+int bt_r_and_c_volume_down(void);
 
 /**
  * @brief	Set the volume to the given @p volume value.
@@ -32,7 +32,7 @@ int bt_rend_volume_down(void);
  *
  * @return	0 if success, error otherwise.
  */
-int bt_rend_volume_set(uint8_t volume, bool from_vcp);
+int bt_r_and_c_volume_set(uint8_t volume, bool from_vcp);
 
 /**
  * @brief	Mute the volume.
@@ -42,14 +42,14 @@ int bt_rend_volume_set(uint8_t volume, bool from_vcp);
  *
  * @return	0 if success, error otherwise.
  */
-int bt_rend_volume_mute(bool from_vcp);
+int bt_r_and_c_volume_mute(bool from_vcp);
 
 /**
  * @brief	Unmute the volume.
  *
  * @return	0 if success, error otherwise.
  */
-int bt_rend_volume_unmute(void);
+int bt_r_and_c_volume_unmute(void);
 
 /**
  * @brief	Discover the rendering services.
@@ -58,7 +58,7 @@ int bt_rend_volume_unmute(void);
  *
  * @return	0 if success, error otherwise.
  */
-int bt_rend_discover(struct bt_conn *conn);
+int bt_r_and_c_discover(struct bt_conn *conn);
 
 /**
  * @brief	Put the UUIDs from this module into the buffer.
@@ -69,13 +69,13 @@ int bt_rend_discover(struct bt_conn *conn);
  *
  * @return	0 for success, error otherwise.
  */
-int bt_rend_uuid_populate(struct net_buf_simple *uuid_buf);
+int bt_r_and_c_uuid_populate(struct net_buf_simple *uuid_buf);
 
 /**
  * @brief	Initialize the rendering services or profiles, or both.
  *
  * @return	0 if success, error otherwise.
  */
-int bt_rend_init(void);
+int bt_r_and_c_init(void);
 
 #endif /* _BT_REND_H_ */
