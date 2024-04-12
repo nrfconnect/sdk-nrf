@@ -43,12 +43,12 @@ Build and configuration system
 Working with nRF91 Series
 =========================
 
-|no_changes_yet_note|
+* Moved :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` to the :ref:`gsg_guides` section.
 
 Working with nRF70 Series
 =========================
 
-|no_changes_yet_note|
+* Moved :ref:`ug_nrf7002_gs` to the :ref:`gsg_guides` section.
 
 Working with nRF54L Series
 ==========================
@@ -56,10 +56,15 @@ Working with nRF54L Series
 * Added the :ref:`ug_nrf54l15_gs` page.
 * Changed the default value for the Kconfig option :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_ACCURACY` from 500 to 250 if :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is used.
 
+Working with nRF53 Series
+=========================
+
+* Moved :ref:`ug_nrf5340_gs` to the :ref:`gsg_guides` section.
+
 Working with nRF52 Series
 =========================
 
-|no_changes_yet_note|
+* Moved :ref:`ug_nrf52_gs` to the :ref:`gsg_guides` section.
 
 Working with nRF53 Series
 =========================

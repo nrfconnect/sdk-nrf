@@ -10,5 +10,4 @@ The |NCS| provides support for development with the `nPM1300 Power Management IC
    :caption: Subpages:
 
    working_with_pmic/npm1300/features
-   working_with_pmic/npm1300/gs
    working_with_pmic/npm1300/developing

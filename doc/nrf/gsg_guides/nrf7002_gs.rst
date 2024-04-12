@@ -8,14 +8,8 @@ Getting started with nRF7002 DK
    :local:
    :depth: 4
 
-This page gets you started with your nRF7002 :term:`Development Kit (DK)` using the |NCS|.
+This guide lets you evaluate the |NCS|'s support for nRF7002 :term:`Development Kit (DK)` without the need of installing the SDK.
 It tells you how to install the :ref:`wifi_scan_sample` sample and perform a quick test of your DK.
-
-If you have already set up your nRF7002 DK and want to learn more, see the following documentation:
-
-* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
-* :ref:`ug_nrf70_developing` documentation for more advanced topics related to the nRF70 Series.
-* :ref:`ug_wifi` documentation for information related to Wi-Fi protocol and Wi-Fi modes of operation.
 
 If you want to go through an online training course to familiarize yourself with Wi-Fi® and the development of Wi-Fi applications, enroll in the `Wi-Fi Fundamentals course`_ in the `Nordic Developer Academy`_.
 
@@ -226,7 +220,7 @@ To program the precompiled sample to your development kit, complete the followin
 
 #. Click **SELECT DEVICE** and select the DK from the drop-down list.
 
-   .. figure:: ../nrf70/images/nRF7002_programmer_select_device.png
+   .. figure:: images/nRF7002_programmer_select_device.png
       :alt: Programmer - Select Device
 
       Programmer - Select Device
@@ -274,7 +268,7 @@ The test requires that you have :ref:`connected to the sample <nrf70_gs_connecti
 
 After successful programming of the sample onto the nRF7002 DK, scan results output will be shown in the terminal emulator connected to the sample through CDC-UART.
 
-.. figure:: ../nrf70/images/nRF7002_scan_sample_output.png
+.. figure:: images/nRF7002_scan_sample_output.png
       :alt: Scan sample output
 
       Scan sample output
@@ -348,3 +342,4 @@ See the following links for where to go next:
 
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * :ref:`ug_nrf70_developing` documentation for more advanced topics related to the nRF70 Series.
+* :ref:`ug_wifi` documentation for information related to Wi-Fi protocol and Wi-Fi modes of operation.

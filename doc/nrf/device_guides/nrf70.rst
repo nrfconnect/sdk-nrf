@@ -96,7 +96,4 @@ Applications can be developed on the nRF7002 DK (PCA10143), which includes the n
    :caption: Subpages:
 
    working_with_nrf/nrf70/features
-   working_with_nrf/nrf70/gs
-   working_with_nrf/nrf70/nrf7002ek_gs
-   working_with_nrf/nrf70/nrf7002eb_gs
    working_with_nrf/nrf70/developing/index

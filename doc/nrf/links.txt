@@ -477,6 +477,7 @@
 .. _`nRF5340 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF5340-DK/
 .. _`nRF70 Series product page`: https://www.nordicsemi.com/Products/WiFi/Products#infotabs
 .. _`nRF7002 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF7002-DK/Download?lang=en#infotabs
+.. _`nRF7002 EB get started`: https://www.nordicsemi.com/Products/Development-hardware/nRF7002-Expansion-Board/Get-started?lang=en#infotabs
 
 .. _`Nordic Thingy:53`:
 .. _`Thingy:53 product page`: https://www.nordicsemi.com/thingy53
@@ -492,6 +493,7 @@
 
 .. _`nPM1300 product website`: https://www.nordicsemi.com/products/npm1300
 .. _`nPM1300 EK product page`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK
+.. _`nPM1300 EK get started`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK/Get-started?lang=en#infotabs
 
 .. _`nRF Desktop reference design page`: https://www.nordicsemi.com/Products/Reference-designs/nRF-Desktop
 

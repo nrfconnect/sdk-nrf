@@ -8,13 +8,8 @@ Getting started with Thingy:91
    :depth: 2
 
 
-This guide helps you get started with the Nordic Thingy:91.
+This guide lets you evaluate the |NCS|'s support for Nordic Thingy:91 without the need of installing the SDK.
 It tells you how to update the Thingy:91 application and modem firmware and connect the Thingy:91 to `nRF Cloud`_.
-
-If you have already set up your Thingy:91 and want to learn more, see the following documentation:
-
-* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
-* :ref:`ug_thingy91` for more advanced topics related to the Thingy:91.
 
 If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
 

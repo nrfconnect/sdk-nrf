@@ -7,13 +7,8 @@ Getting started with Thingy:53
    :local:
    :depth: 2
 
-This guide helps you get started with the Nordic Thingy:53.
+This guide lets you evaluate the |NCS|'s support for Nordic Thingy:53 without the need of installing the SDK.
 It tells you how to update the firmware on the nRF5340 :term:`System on Chip (SoC)` on the Nordic Thingy:53, and how to get started with machine learning with Edge Impulse.
-
-If you have already set up your Nordic Thingy:53 and want to learn more, see the following documentation:
-
-* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
-* :ref:`ug_thingy53` for more advanced topics related to the Nordic Thingy:53.
 
 If you want to go through an online training course to familiarize yourself with Bluetooth Low Energy and the development of Bluetooth LE applications, enroll in the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
 
@@ -83,7 +78,7 @@ Complete these steps to update the firmware:
 
    A list of available samples appears.
 
-   .. figure:: images/thingy53_sample_list.png
+   .. figure:: /gsg_guides/images/thingy53_sample_list.png
       :alt: nRF Programmer - list of samples
 
       nRF Programmer - list of samples
@@ -92,7 +87,7 @@ Complete these steps to update the firmware:
 
    Application info appears.
 
-   .. figure:: images/thingy53_application_info.png
+   .. figure:: /gsg_guides/images/thingy53_application_info.png
       :alt: nRF Programmer - Application Info
 
       nRF Programmer - Application Info
@@ -109,7 +104,7 @@ Complete these steps to update the firmware:
 
    The transfer of the firmware image starts, and a progress wheel appears.
 
-   .. figure:: images/thingy53_progress_wheel.png
+   .. figure:: /gsg_guides/images/thingy53_progress_wheel.png
       :alt: nRF Programmer - progress wheel
 
       nRF Programmer - progress wheel
@@ -142,7 +137,7 @@ Complete the following steps to update the firmware:
 #. Take off the top cover of the Nordic Thingy:53 so you can access the **SW2** button in Step 7.
 #. Plug the Nordic Thingy:53 into the computer using a USB-C cable.
 
-   .. figure:: images/thingy53_sw1_usb.svg
+   .. figure:: /gsg_guides/images/thingy53_sw1_usb.svg
       :alt: The Nordic Thingy:53 schematic - **SW1** and USB connector cover
 
       The Nordic Thingy:53 schematic - **SW1** and USB connector cover
@@ -150,7 +145,7 @@ Complete the following steps to update the firmware:
 #. Open nRF Connect for Desktop and launch the Programmer app.
 #. Press **SW2** while moving the power switch **SW1** to the **ON** position.
 
-   .. figure:: images/thingy53_sw1_sw2.svg
+   .. figure:: /gsg_guides/images/thingy53_sw1_sw2.svg
       :alt: The Nordic Thingy:53 schematic - **SW1** and **SW2**
 
       The Nordic Thingy:53 schematic - **SW1** and **SW2**
@@ -170,7 +165,7 @@ Complete the following steps to update the firmware:
 
    The **MCUboot DFU** window appears.
 
-   .. figure:: images/programmer_thingy53_mcuboot_dfu.png
+   .. figure:: /gsg_guides/images/programmer_thingy53_mcuboot_dfu.png
       :alt: Programmer - MCUboot DFU window
 
       Programmer - MCUboot DFU window
@@ -214,7 +209,7 @@ Do no unplug or power off the devices during this process.
    a. Open the connector cover on the side of the Nordic Thingy:53.
    #. Use a JTAG cable to connect the Nordic Thingy:53 to the debug out port on a 10-pin external debug probe.
 
-      .. figure:: images/thingy53_nrf5340_dk.svg
+      .. figure:: /gsg_guides/images/thingy53_nrf5340_dk.svg
          :alt: Nordic Thingy:53 connected to the debug port on a 10-pin external debug probe
 
          Nordic Thingy:53 connected to the debug port on a 10-pin external debug probe
@@ -225,7 +220,7 @@ Do no unplug or power off the devices during this process.
 
       In the Programmer app's navigation bar, :guilabel:`No devices available` changes to :guilabel:`SELECT DEVICE`.
 
-      .. figure:: ../nrf52/images/programmer_select_device1.png
+      .. figure:: images/programmer_select_device1.png
          :alt: Programmer - Select device
 
          Programmer - Select device

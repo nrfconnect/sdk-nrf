@@ -38,9 +38,6 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
 
 The nRF Connect SDK also offers :ref:`samples <cellular_samples>` dedicated to these devices.
 
-To get started with an nRF9161 DK, complete the steps in the Quick Start app in `nRF Connect for Desktop`_.
-For more advanced topics related to the nRF9161 DK, see the :ref:`ug_nrf9161` documentation.
-
 If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
 
 .. toctree::
@@ -49,8 +46,6 @@ If you want to go through a hands-on online training to familiarize yourself wit
 
    working_with_nrf/nrf91/nrf91_features
    working_with_nrf/nrf91/nrf9161
-   working_with_nrf/nrf91/nrf9160_gs
    working_with_nrf/nrf91/nrf9160
-   working_with_nrf/nrf91/thingy91_gsg
    working_with_nrf/nrf91/thingy91
    working_with_nrf/nrf91/nrf91_snippet

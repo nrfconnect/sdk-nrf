@@ -1,4 +1,5 @@
 .. _ug_nrf53:
+.. _nrf53_working:
 
 Working with nRF53 Series
 #########################
@@ -32,8 +33,6 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    :caption: Subpages:
 
    working_with_nrf/nrf53/features_nrf53
-   working_with_nrf/nrf53/nrf5340_gs
    working_with_nrf/nrf53/nrf5340
    working_with_nrf/nrf53/qspi_xip_guide
-   working_with_nrf/nrf53/thingy53_gs
    working_with_nrf/nrf53/thingy53

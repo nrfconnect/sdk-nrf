@@ -265,7 +265,7 @@ Updating the firmware in the nRF52840 SoC
 
             In the Programmer navigation bar, :guilabel:`No devices available` changes to :guilabel:`SELECT DEVICE`.
 
-            .. figure:: ../nrf52/images/programmer_select_device1.png
+            .. figure:: images/programmer_select_device1.png
                :alt: Programmer - Select device
 
                Programmer - SELECT DEVICE

@@ -7,13 +7,8 @@ Getting started with nRF9160 DK
    :local:
    :depth: 2
 
-This section will get you started with your nRF9160 DK.
+This guide lets you evaluate the |NCS|'s support for nRF9160 DK :term:`Development Kit (DK)` without the need of installing the SDK.
 You will update the firmware (both the modem firmware and the application firmware) and the nRF Cloud certificates of the DK, and conduct some initial tests.
-
-If you have already set up your nRF9160 DK and want to learn more, see the following documentation:
-
-* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
-* :ref:`ug_nrf9160` for more advanced topics related to the nRF9160 DK if you are already familiar with the |NCS|.
 
 If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
 

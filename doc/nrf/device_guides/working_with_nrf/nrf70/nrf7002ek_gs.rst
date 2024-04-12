@@ -1,3 +1,5 @@
+:orphan:
+
 .. _ug_nrf7002ek_gs:
 
 Getting started with nRF7002 EK
