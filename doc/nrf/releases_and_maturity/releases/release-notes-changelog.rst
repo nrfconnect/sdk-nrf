@@ -373,7 +373,7 @@ Matter samples
 
 * Added:
 
-  * Test event triggers to all Matter samples.
+  * Test event triggers to all Matter samples and enabled them by default.
     By utilizing the test event triggers, you can simulate various operational conditions and responses in your Matter device without the need for external setup.
 
     To get started with using test event triggers in your Matter samples and to understand the capabilities of this feature, refer to the :ref:`ug_matter_test_event_triggers` page.

@@ -56,6 +56,7 @@ config NCS_SAMPLE_MATTER_SETTINGS_SHELL
 
 config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
 	bool "Test event triggers support"
+	default y
 	help
 	  Enables support for test event triggers for the specific use-cases.
 
@@ -69,6 +70,7 @@ config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX
 config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS
 	bool "Register default triggers for Matter sample"
 	depends on NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	default y
 	help
 	  Automatically register default triggers such as factory reset,
 	  device reboot, OTA start query.
