@@ -102,12 +102,39 @@ const static struct cloud_data_gnss gnss_data_example = {
 	.queued = true,
 	.gnss_ts = 1563968747123,
 	.pvt = {
-		.longi = 30,
 		.lat = 40,
-		.alt = 245,
+		.lon = 30,
 		.acc = 180,
+		.alt = 245,
+		.alt_acc = 10,
 		.spd = 5,
-		.hdg = 39
+		.spd_acc = 1,
+		.hdg = 39,
+		.hdg_acc = 5
+	}
+};
+
+#define GNSS_BATCH_EXAMPLE_NO_HEADING \
+"[{"\
+	"\"appId\":\"GNSS\","\
+	"\"messageType\":\"DATA\","\
+	"\"ts\":1563968747123,"\
+	"\"data\":{\"lng\":30,\"lat\":40,\"acc\":180,\"alt\":245,\"spd\":5}"\
+"}]"
+
+const static struct cloud_data_gnss gnss_data_example_no_heading = {
+	.queued = true,
+	.gnss_ts = 1563968747123,
+	.pvt = {
+		.lat = 40,
+		.lon = 30,
+		.acc = 180,
+		.alt = 245,
+		.alt_acc = 10,
+		.spd = 5,
+		.spd_acc = 1,
+		.hdg = 39,
+		.hdg_acc = 180
 	}
 };
 
@@ -518,6 +545,31 @@ void test_enc_batch_data_gnss(void)
 				1, 1, 1, 1, 1, 1, 1);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	TEST_ASSERT_EQUAL_STRING(GNSS_BATCH_EXAMPLE, codec.buf);
+	TEST_ASSERT_FALSE(gnss_buf.queued);
+}
+
+/* tests batch encoding GNSS data without heading */
+void test_enc_batch_data_gnss_no_heading(void)
+{
+	struct cloud_data_gnss gnss_buf = gnss_data_example_no_heading;
+	struct cloud_data_sensors sensor_buf = {0};
+	struct cloud_data_modem_static modem_stat_buf = {0};
+	struct cloud_data_modem_dynamic modem_dyn_buf = {0};
+	struct cloud_data_ui ui_buf = {0};
+	struct cloud_data_impact impact_buf = {0};
+	struct cloud_data_battery bat_buf = {0};
+
+	ret = cloud_codec_encode_batch_data(&codec,
+				&gnss_buf,
+				&sensor_buf,
+				&modem_stat_buf,
+				&modem_dyn_buf,
+				&ui_buf,
+				&impact_buf,
+				&bat_buf,
+				1, 1, 1, 1, 1, 1, 1);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	TEST_ASSERT_EQUAL_STRING(GNSS_BATCH_EXAMPLE_NO_HEADING, codec.buf);
 	TEST_ASSERT_FALSE(gnss_buf.queued);
 }
 

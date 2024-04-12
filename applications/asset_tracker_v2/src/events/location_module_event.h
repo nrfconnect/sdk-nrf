@@ -94,23 +94,32 @@ enum location_module_event_type {
 
 /** @brief Position, velocity and time (PVT) data. */
 struct location_module_pvt {
-	/** Longitude in degrees. */
-	double longitude;
-
 	/** Latitude in degrees. */
 	double latitude;
 
-	/** Altitude above WGS-84 ellipsoid in meters. */
-	float altitude;
+	/** Longitude in degrees. */
+	double longitude;
 
 	/** Position accuracy (2D 1-sigma) in meters. */
 	float accuracy;
 
+	/** Altitude above WGS-84 ellipsoid in meters. */
+	float altitude;
+
+	/** Altitude accuracy in meters. */
+	float altitude_accuracy;
+
 	/** Horizontal speed in m/s. */
 	float speed;
 
+	/** Horizontal speed accuracy (1-sigma) in m/s. */
+	float speed_accuracy;
+
 	/** Heading of user movement in degrees. */
 	float heading;
+
+	/** Heading of user movement accuracy (1-sigma) in degrees. */
+	float heading_accuracy;
 };
 
 /** @brief Location module data for neighbor cells. */

@@ -154,6 +154,7 @@ Asset Tracker v2
 * Updated:
 
   * The MQTT topic name for A-GNSS requests is changed to ``agnss`` for AWS and Azure backends.
+  * GNSS heading is only sent to the cloud when it is considered accurate enough.
 
 Serial LTE modem
 ----------------

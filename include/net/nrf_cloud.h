@@ -535,10 +535,10 @@ enum nrf_cloud_gnss_type {
 
 /** @brief PVT data */
 struct nrf_cloud_gnss_pvt {
-	/** Longitude in degrees; required. */
-	double lon;
 	/** Latitude in degrees; required. */
 	double lat;
+	/** Longitude in degrees; required. */
+	double lon;
 	/** Position accuracy (2D 1-sigma) in meters; required. */
 	float accuracy;
 

@@ -623,7 +623,7 @@ int lwm2m_codec_helpers_set_gnss_data(struct cloud_data_gnss *gnss)
 	}
 
 	err = lwm2m_set_f64(&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LONGITUDE_RID),
-			    gnss->pvt.longi);
+			    gnss->pvt.lon);
 	if (err) {
 		return err;
 	}

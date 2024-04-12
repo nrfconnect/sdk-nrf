@@ -158,12 +158,15 @@ void test_encode_gnss_data_object(void)
 	 * encoding.
 	 */
 	struct cloud_data_gnss data = {
-		.pvt.longi = 10,
 		.pvt.lat = 62,
+		.pvt.lon = 10,
 		.pvt.acc = 24,
 		.pvt.alt = 170,
+		.pvt.alt_acc = 10,
 		.pvt.spd = 1,
+		.pvt.spd_acc = 1,
 		.pvt.hdg = 176,
+		.pvt.hdg_acc = 5,
 		.queued = true,
 		.gnss_ts = 1000
 	};
@@ -213,12 +216,15 @@ void test_encode_gnss_data_array(void)
 	 * encoding.
 	 */
 	struct cloud_data_gnss data = {
-		.pvt.longi = 10,
 		.pvt.lat = 62,
+		.pvt.lon = 10,
 		.pvt.acc = 24,
 		.pvt.alt = 170,
+		.pvt.alt_acc = 10,
 		.pvt.spd = 1,
+		.pvt.spd_acc = 1,
 		.pvt.hdg = 176,
+		.pvt.hdg_acc = 5,
 		.queued = true,
 		.gnss_ts = 1000
 	};
@@ -231,6 +237,38 @@ void test_encode_gnss_data_array(void)
 	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_GNSS_JSON_SCHEMA,
+				   data.queued);
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+void test_encode_gnss_data_array_no_heading(void)
+{
+	int ret;
+	/* Avoid using high precision floating point values to ease string comparison post
+	 * encoding.
+	 */
+	struct cloud_data_gnss data = {
+		.pvt.lat = 62,
+		.pvt.lon = 10,
+		.pvt.acc = 24,
+		.pvt.alt = 170,
+		.pvt.alt_acc = 10,
+		.pvt.spd = 1,
+		.pvt.spd_acc = 1,
+		.pvt.hdg = 176,
+		.pvt.hdg_acc = 180, /* 180 deg heading accuracy means that heading is unknown */
+		.queued = true,
+		.gnss_ts = 1000
+	};
+
+	ret = json_common_gnss_data_add(dummy.array_obj,
+				       &data,
+				       JSON_COMMON_ADD_DATA_TO_ARRAY,
+				       NULL,
+				       NULL);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_GNSS_NO_HEADING_JSON_SCHEMA,
 				   data.queued);
 	TEST_ASSERT_EQUAL(0, ret);
 }
@@ -874,21 +912,27 @@ void test_encode_batch_data_object(void)
 		[1].queued = true
 	};
 	struct cloud_data_gnss gnss[2] = {
-		[0].pvt.longi = 10,
 		[0].pvt.lat = 62,
+		[0].pvt.lon = 10,
 		[0].pvt.acc = 24,
 		[0].pvt.alt = 170,
+		[0].pvt.alt_acc = 10,
 		[0].pvt.spd = 1,
+		[0].pvt.spd_acc = 1,
 		[0].pvt.hdg = 176,
+		[0].pvt.hdg_acc = 5,
 		[0].gnss_ts = 1000,
 		[0].queued = true,
 		/* Second entry */
-		[1].pvt.longi = 10,
 		[1].pvt.lat = 62,
+		[1].pvt.lon = 10,
 		[1].pvt.acc = 24,
 		[1].pvt.alt = 170,
+		[1].pvt.alt_acc = 10,
 		[1].pvt.spd = 1,
+		[1].pvt.spd_acc = 1,
 		[1].pvt.hdg = 176,
+		[1].pvt.hdg_acc = 5,
 		[1].gnss_ts = 1000,
 		[1].queued = true
 	};
@@ -1038,12 +1082,15 @@ void test_floating_point_encoding_gnss(void)
 	cJSON *decoded_value_obj;
 	struct cloud_data_gnss decoded_values = {0};
 	struct cloud_data_gnss data = {
-		.pvt.longi = 10.417852141870654,
 		.pvt.lat = 63.43278762669529,
+		.pvt.lon = 10.417852141870654,
 		.pvt.acc = 15.455987930297852,
 		.pvt.alt = 53.67230987548828,
+		.pvt.alt_acc = 10.12345298374867,
 		.pvt.spd = 0.4443884789943695,
+		.pvt.spd_acc = 1.12345298374867,
 		.pvt.hdg = 176.12345298374867,
+		.pvt.hdg_acc = 5.12345298374867,
 		.gnss_ts = 1000,
 		.queued = true
 	};
@@ -1068,29 +1115,29 @@ void test_floating_point_encoding_gnss(void)
 	decoded_value_obj = json_object_decode(decoded_gnss_obj, DATA_VALUE);
 	TEST_ASSERT_NOT_NULL(decoded_value_obj);
 
-	cJSON *longitude = cJSON_GetObjectItem(decoded_value_obj, DATA_GNSS_LONGITUDE);
 	cJSON *latitude = cJSON_GetObjectItem(decoded_value_obj, DATA_GNSS_LATITUDE);
+	cJSON *longitude = cJSON_GetObjectItem(decoded_value_obj, DATA_GNSS_LONGITUDE);
 	cJSON *accuracy = cJSON_GetObjectItem(decoded_value_obj, DATA_MOVEMENT);
 	cJSON *altitude = cJSON_GetObjectItem(decoded_value_obj, DATA_GNSS_ALTITUDE);
 	cJSON *speed = cJSON_GetObjectItem(decoded_value_obj, DATA_GNSS_SPEED);
 	cJSON *heading = cJSON_GetObjectItem(decoded_value_obj, DATA_GNSS_HEADING);
 
-	TEST_ASSERT_NOT_NULL(longitude);
 	TEST_ASSERT_NOT_NULL(latitude);
+	TEST_ASSERT_NOT_NULL(longitude);
 	TEST_ASSERT_NOT_NULL(accuracy);
 	TEST_ASSERT_NOT_NULL(altitude);
 	TEST_ASSERT_NOT_NULL(speed);
 	TEST_ASSERT_NOT_NULL(heading);
 
-	decoded_values.pvt.longi = longitude->valuedouble;
 	decoded_values.pvt.lat = latitude->valuedouble;
+	decoded_values.pvt.lon = longitude->valuedouble;
 	decoded_values.pvt.acc = accuracy->valuedouble;
 	decoded_values.pvt.alt = altitude->valuedouble;
 	decoded_values.pvt.spd = speed->valuedouble;
 	decoded_values.pvt.hdg = heading->valuedouble;
 
-	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.pvt.longi, decoded_values.pvt.longi);
 	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.pvt.lat, decoded_values.pvt.lat);
+	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.pvt.lon, decoded_values.pvt.lon);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, data.pvt.acc, decoded_values.pvt.acc);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, data.pvt.alt, decoded_values.pvt.alt);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, data.pvt.spd, decoded_values.pvt.spd);
