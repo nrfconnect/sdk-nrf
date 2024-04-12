@@ -22,7 +22,6 @@ using namespace chip;
 using namespace chip::DeviceLayer;
 
 #if CONFIG_CHIP_OTA_REQUESTOR
-
 namespace
 {
 DefaultOTARequestorStorage sOTARequestorStorage;
@@ -30,9 +29,12 @@ DefaultOTARequestorDriver sOTARequestorDriver;
 chip::BDXDownloader sBDXDownloader;
 chip::DefaultOTARequestor sOTARequestor;
 } /* namespace */
+#endif
 
-namespace Nrf::Matter {
+namespace Nrf::Matter
+{
 
+#if CONFIG_CHIP_OTA_REQUESTOR
 /* compile-time factory method */
 OTAImageProcessorImpl &GetOTAImageProcessor()
 {
@@ -60,7 +62,6 @@ void InitBasicOTARequestor()
 
 void OtaConfirmNewImage()
 {
-
 #ifndef CONFIG_SOC_SERIES_NRF53X
 	/* Check if the image is run in the REVERT mode and eventually
 	confirm it to prevent reverting on the next boot.
@@ -70,13 +71,14 @@ void OtaConfirmNewImage()
 #endif
 
 	OTAImageProcessorImpl &imageProcessor = GetOTAImageProcessor();
-	if(!boot_is_img_confirmed()){
+	if (!boot_is_img_confirmed()) {
 		CHIP_ERROR err = System::MapErrorZephyr(boot_write_img_confirmed());
 		if (CHIP_NO_ERROR == err) {
 			imageProcessor.SetImageConfirmed();
 			ChipLogProgress(SoftwareUpdate, "New firmware image confirmed");
 		} else {
-			ChipLogError(SoftwareUpdate, "Failed to confirm firmware image, it will be reverted on the next boot");
+			ChipLogError(SoftwareUpdate,
+				     "Failed to confirm firmware image, it will be reverted on the next boot");
 		}
 	}
 }

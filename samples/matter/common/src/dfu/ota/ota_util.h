@@ -11,9 +11,12 @@
 #if CONFIG_CHIP_OTA_REQUESTOR
 #include "ota_image_processor_base_impl.h"
 #include <platform/nrfconnect/OTAImageProcessorImpl.h>
+#endif
 
-namespace Nrf::Matter {
+namespace Nrf::Matter
+{
 
+#if CONFIG_CHIP_OTA_REQUESTOR
 /**
  * Select recommended OTA image processor implementation.
  *
