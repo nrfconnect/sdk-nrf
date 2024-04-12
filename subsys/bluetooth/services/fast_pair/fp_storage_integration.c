@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <errno.h>
+#include <zephyr/types.h>
+
 #include <bluetooth/services/fast_pair/fast_pair.h>
 
 #include <zephyr/logging/log.h>
@@ -15,11 +18,22 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 int bt_fast_pair_factory_reset(void)
 {
+	int err;
+
 	/* It is assumed that this function executes in the cooperative thread context. */
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 	__ASSERT_NO_MSG(!k_is_in_isr());
 
-	return fp_storage_factory_reset();
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN) && bt_fast_pair_is_ready()) {
+		return -EOPNOTSUPP;
+	}
+
+	err = fp_storage_factory_reset();
+	if (err) {
+		return err;
+	}
+
+	return 0;
 }
 
 bool bt_fast_pair_has_account_key(void)
