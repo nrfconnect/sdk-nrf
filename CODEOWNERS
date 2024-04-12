@@ -98,6 +98,7 @@ Kconfig*                                  @tejlmand
 /include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
+/include/dult.h                           @alstrzebonski @kapi-no
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
@@ -244,6 +245,7 @@ Kconfig*                                  @tejlmand
 /subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/dfu/dfu_multi_image/              @Damian-Nordic
 /subsys/dm/                               @maje-emb
+/subsys/dult/                             @alstrzebonski @kapi-no
 /subsys/ieee802154/                       @rlubos @ankuns @jciupis @ahasztag
 /subsys/mgmt/                             @hakonfam @sigvartmh
 /subsys/mgmt/suitfu/                      @tomchy @ahasztag
