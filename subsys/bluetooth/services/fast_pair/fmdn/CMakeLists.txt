@@ -14,6 +14,10 @@ if(CONFIG_BT_FAST_PAIR_FMDN_BATTERY)
   target_sources(fmdn PRIVATE battery.c)
 endif()
 
+if(CONFIG_BT_FAST_PAIR_FMDN_BEACON_ACTIONS)
+  target_sources(fmdn PRIVATE beacon_actions.c)
+endif()
+
 if(CONFIG_BT_FAST_PAIR_FMDN_CALLBACKS)
   target_sources(fmdn PRIVATE callbacks.c)
 endif()
