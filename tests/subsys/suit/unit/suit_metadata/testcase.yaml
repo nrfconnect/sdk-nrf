@@ -1,0 +1,7 @@
+tests:
+  suit.unit.metadata:
+    type: unit
+    tags: >-
+      suit
+      suit_metadata
+      suit_metadata_version_from_array

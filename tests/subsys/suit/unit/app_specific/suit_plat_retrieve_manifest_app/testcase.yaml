@@ -1,0 +1,8 @@
+tests:
+  suit.unit.platform_app.retreve_manifest:
+    type: unit
+    tags: >-
+      suit
+      suit_platform
+      suit_plat_app
+      suit_plat_retrieve_manifest_domain_specific

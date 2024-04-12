@@ -10,10 +10,10 @@ target_include_directories(testbinary PRIVATE
 
 if (CONFIG_MOCK_SUIT_PROCESSOR)
   # Include suit-processor directory, so manifest and cose libraries get generated.
-  add_subdirectory(${SUIT_PROCESSOR_DIR} suit_processor)
+  add_subdirectory(${ZEPHYR_SUIT_PROCESSOR_MODULE_DIR} suit_processor)
   target_compile_options(test_interface INTERFACE -DCONFIG_SUIT_PROCESSOR)
   target_include_directories(testbinary PRIVATE
-    ${SUIT_PROCESSOR_DIR}/include
+    ${ZEPHYR_SUIT_PROCESSOR_MODULE_DIR}/include
   )
 endif()
 
@@ -51,7 +51,7 @@ endif()
 if (CONFIG_MOCK_SUIT_UTILS)
   target_compile_options(test_interface INTERFACE -DCONFIG_SUIT_UTILS)
   target_include_directories(testbinary PRIVATE ${SUIT_SUBSYS_DIR}/utils/include)
-  target_include_directories(testbinary PRIVATE $ENV{ZEPHYR_BASE}/../modules/lib/zcbor/include)
+  target_include_directories(testbinary PRIVATE ${ZEPHYR_ZCBOR_MODULE_DIR}/include)
 
   if (NOT CONFIG_MOCK_SUIT_PLAT_DECODE_UTIL)
     target_sources(testbinary PRIVATE
@@ -68,7 +68,7 @@ endif()
 
 if (CONFIG_MOCK_SUIT_CRYPTO)
   target_compile_options(test_interface INTERFACE -DCONFIG_SUIT_CRYPTO)
-  target_include_directories(testbinary PRIVATE $ENV{ZEPHYR_BASE}/../modules/crypto/mbedtls/include)
+  target_include_directories(testbinary PRIVATE ${ZEPHYR_MBEDTLS_MODULE_DIR}/include)
 endif()
 
 if (CONFIG_MOCK_SUIT_PLAT_CHECK_COMPONENT_COMPATIBILITY)
@@ -118,6 +118,6 @@ endif()
 
 if (CONFIG_MOCK_SDFW_BUILTIN_KEYS)
   target_compile_options(test_interface INTERFACE -DCONFIG_SDFW_BUILTIN_KEYS)
-  target_include_directories(testbinary PRIVATE $ENV{ZEPHYR_BASE}/../modules/crypto/mbedtls/include)
-  target_include_directories(testbinary PRIVATE ${ZEPHYR_BASE}/../core_fw/secdom/include)
+  target_include_directories(testbinary PRIVATE ${ZEPHYR_MBEDTLS_MODULE_DIR}/include)
+  target_include_directories(testbinary PRIVATE ${ZEPHYR_SECDOM_MODULE_DIR}/include)
 endif()

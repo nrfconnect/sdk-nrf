@@ -1,0 +1,11 @@
+tests:
+  suit.unit.platform_app.fetch:
+    type: unit
+    tags: >-
+      suit
+      suit_platform
+      suit_platform_app_specific
+      suit_plat_fetch_domain_specific_is_type_supported
+      suit_plat_fetch_integrated_domain_specific_is_type_supported
+      suit_plat_fetch_domain_specific
+      suit_plat_fetch_integrated_domain_specific

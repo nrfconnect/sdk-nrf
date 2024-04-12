@@ -1,0 +1,7 @@
+tests:
+  suit.unit.platform.suit_plat_component_compatibility:
+    type: unit
+    tags: >-
+      suit
+      suit_platform
+      suit_plat_component_compatibility
