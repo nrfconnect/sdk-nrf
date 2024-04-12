@@ -14,8 +14,8 @@ Alert messages are compact JSON documents that indicate a critical event, such a
 Overview
 ********
 
-This library provides an API for either REST-based or MQTT-based applications to send alerts to nRF Cloud.
-For MQTT-based applications, you can enable or disable alerts remotely using the nRF Cloud portal or REST API.
+This library provides an API for MQTT-, REST-, or CoAP-based applications to send alerts to nRF Cloud.
+For MQTT-based applications, you can enable or disable alerts remotely using the nRF Cloud portal or nRF Cloud REST API.
 
 Each alert contains the following elements, as defined in the :c:struct:`nrf_cloud_alert_info` structure :
 
@@ -53,10 +53,10 @@ The :c:func:`nrf_cloud_rest_alert_send` function initiates the connection as nee
 Configuration
 *************
 
-Configure the following options to enable or disable the library and to select the data transport method:
+Configure the following Kconfig options to enable or disable the library and to select the data transport method:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_ALERT`
-* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:option:`CONFIG_NRF_CLOUD_REST`
+* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT`, :kconfig:option:`CONFIG_NRF_CLOUD_REST`, or :kconfig:option:`CONFIG_NRF_CLOUD_COAP`.
 
 See :ref:`configure_application` for information on how to change configuration options.
 
@@ -73,7 +73,8 @@ To use this library, complete the following steps:
    * :c:member:`value` - Use ``0`` if not otherwise needed.
    * :c:member:`description` - Use NULL to suppress transmission of this field.
 
-#. Call the :c:func:`nrf_cloud_alert_send` function when connected to nRF Cloud using MQTT or :c:func:`nrf_cloud_rest_alert_send` when using REST.
+#. Call the :c:func:`nrf_cloud_alert_send` function when connected to nRF Cloud using MQTT or CoAP.
+#. Call the :c:func:`nrf_cloud_rest_alert_send` when using REST.
 
 Samples using the library
 *************************
@@ -95,6 +96,7 @@ This library uses the following |NCS| libraries:
 
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_rest`
+* :ref:`lib_nrf_cloud_coap`
 * :ref:`lib_date_time`
 
 API documentation

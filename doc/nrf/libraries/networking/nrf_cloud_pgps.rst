@@ -186,8 +186,8 @@ The first two steps use the network transport defined by the :kconfig:option:`CO
 The default configuration selects the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT` option if the :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` option is active.
 MQTT use is built into the P-GPS library.
 
-The library uses REST or other transports by means of the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` option.
-REST support is not built into the P-GPS library and must be provided by the application.
+The library uses REST, CoAP, or other transports by means of the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` option.
+REST support is not built into the P-GPS library and must be provided by the application, whereas CoAP support is built into the :ref:`lib_nrf_cloud_coap` nRF Cloud CoAP library.
 The :ref:`gnss_sample` sample is one example of using REST.
 
 The third step uses the network transport defined by the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT` option.
@@ -217,9 +217,15 @@ The library offers two different ways to control the timing of P-GPS cloud reque
 
   * If :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` and :kconfig:option:`CONFIG_NRF_CLOUD_REST` are enabled:
 
-    * Pass a properly initialized :c:struct:`nrf_cloud_rest_pgps_request` structure to the :c:func:`nrf_cloud_rest_pgps_data_get` function.
-    * Pass the response to the :c:func:`nrf_cloud_pgps_process` function.
-    * If either call fails, call the :c:func:`nrf_cloud_pgps_request_reset` function.
+    1. Pass a properly initialized :c:struct:`nrf_cloud_rest_pgps_request` structure to the :c:func:`nrf_cloud_rest_pgps_data_get` function.
+    #. Pass the response to the :c:func:`nrf_cloud_pgps_process` function.
+    #. If either call fails, call the :c:func:`nrf_cloud_pgps_request_reset` function.
+
+  * If :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` and :kconfig:option:`CONFIG_NRF_CLOUD_COAP` are enabled:
+
+    1. Pass a properly initialized :c:struct:`nrf_cloud_rest_pgps_request` structure to the :c:func:`nrf_cloud_coap_pgps_url_get` function.
+    #. Pass the response to the :c:func:`nrf_cloud_pgps_update` function.
+    #. If either call fails, call the :c:func:`nrf_cloud_pgps_request_reset` function.
 
 * Indirect
 
