@@ -30,13 +30,6 @@ config BT_BAP_BROADCAST_16_2_1
 	  Broadcast mandatory codec capability 16_2_1.
 	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 
-config BT_BAP_BROADCAST_24_2_1
-	bool "24_2_1"
-	depends on TRANSPORT_BIS
-	help
-	  Broadcast codec capability 24_2_1.
-	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
-
 config BT_BAP_BROADCAST_16_2_2
 	bool "16_2_2"
 	depends on TRANSPORT_BIS
@@ -44,12 +37,62 @@ config BT_BAP_BROADCAST_16_2_2
 	  Broadcast mandatory codec capability 16_2_2.
 	  16kHz, 32kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay.
 
+config BT_BAP_BROADCAST_24_2_1
+	bool "24_2_1"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast codec capability 24_2_1.
+	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
+
 config BT_BAP_BROADCAST_24_2_2
 	bool "24_2_2"
 	depends on TRANSPORT_BIS
 	help
 	  Broadcast codec capability 24_2_2.
 	  24kHz, 48kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay.
+
+config BT_BAP_BROADCAST_48_2_1
+	bool "48_2_1"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast codec capability 48_2_1.
+	  48kHz, 80kbps, 4 retransmits, 20ms transport latency, and 40ms presentation delay.
+
+config BT_BAP_BROADCAST_48_2_2
+	bool "48_2_2"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast codec capability 48_2_2.
+	  48kHz, 80kbps, 4 retransmits, 65ms transport latency, and 40ms presentation delay.
+
+config BT_BAP_BROADCAST_48_4_1
+	bool "48_4_1"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast codec capability 48_4_1.
+	  48kHz, 96kbps, 4 retransmits, 20ms transport latency, and 40ms presentation delay.
+
+config BT_BAP_BROADCAST_48_4_2
+	bool "48_4_2"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast codec capability 48_4_2.
+	  48kHz, 96kbps, 4 retransmits, 65ms transport latency, and 40ms presentation delay.
+
+
+config BT_BAP_BROADCAST_48_6_1
+	bool "48_6_1"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast codec capability 48_6_1.
+	  48kHz, 124kbps, 4 retransmits, 20ms transport latency, and 40ms presentation delay.
+
+config BT_BAP_BROADCAST_48_6_2
+	bool "48_6_2"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast codec capability 48_6_2.
+	  48kHz, 124kbps, 4 retransmits, 65ms transport latency, and 40ms presentation delay.
 endchoice
 
 config BT_AUDIO_BROADCAST_NAME
@@ -149,6 +192,9 @@ config BT_AUDIO_BITRATE_BROADCAST_SRC
 	default 96000 if BT_AUDIO_BROADCAST_CONFIGURABLE
 	default 32000 if BT_BAP_BROADCAST_16_2_1 || BT_BAP_BROADCAST_16_2_2
 	default 48000 if BT_BAP_BROADCAST_24_2_1 || BT_BAP_BROADCAST_24_2_2
+	default 80000 if BT_BAP_BROADCAST_48_2_1 || BT_BAP_BROADCAST_48_2_2
+	default 96000 if BT_BAP_BROADCAST_48_4_1 || BT_BAP_BROADCAST_48_4_2
+	default 124000 if BT_BAP_BROADCAST_48_6_1 || BT_BAP_BROADCAST_48_6_2
 	help
 	  Bitrate for the broadcast source ISO stream.
 

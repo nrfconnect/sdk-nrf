@@ -34,11 +34,19 @@ config BT_AUDIO_PREF_SAMPLE_RATE_VALUE
 	default 0x08 if BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
 
 choice BT_AUDIO_PREF_SAMPLE_RATE
-	prompt "Preferred audio sample rate"
+	prompt "Preferred BT audio sample rate"
+	default BT_AUDIO_PREF_SAMPLE_RATE_16KHZ if BT_BAP_BROADCAST_16_2_1
+	default BT_AUDIO_PREF_SAMPLE_RATE_16KHZ if BT_BAP_BROADCAST_16_2_2
+	default BT_AUDIO_PREF_SAMPLE_RATE_16KHZ if BT_BAP_UNICAST_16_2_1
 	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if STREAM_BIDIRECTIONAL
+	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if BT_BAP_BROADCAST_24_2_1
+	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if BT_BAP_BROADCAST_24_2_2
+	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if BT_BAP_UNICAST_24_2_1
 	default BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
 	help
-	  Select the preferred sample rate if there are more than one to choose from.
+	  Select the preferred sample rate to stream if there are more than one to choose from.
+	  Only valid when used by unicast_client if CONFIG_SAMPLE_RATE_CONVERTER=y and
+	  CONFIG_AUDIO_SAMPLE_RATE_48000_HZ=y, meaning 16, 24, and 48kHz are supported.
 
 config  BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
 	bool "48 kHz"
