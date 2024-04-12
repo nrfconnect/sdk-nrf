@@ -35,7 +35,6 @@ if (COMPILE_PSA_APIS)
     psa_crypto_client.c
     psa_crypto_slot_management.c
     psa_crypto_storage.c
-    psa_its_file.c
   )
 endif()
 
