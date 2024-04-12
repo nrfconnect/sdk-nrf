@@ -677,6 +677,11 @@ static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
 	cmds->cig_reserved_time_set = 1;
 	cmds->cis_subevent_length_set = 1;
 #endif
+
+#if defined(CONFIG_BT_OBSERVER)
+	cmds->scan_channel_map_set = 1;
+	cmds->scan_accept_ext_adv_packets_set = 1;
+#endif
 }
 #endif	/* CONFIG_BT_HCI_VS */
 
@@ -1652,6 +1657,15 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 	case SDC_HCI_OPCODE_CMD_VS_CIS_SUBEVENT_LENGTH_SET:
 		return sdc_hci_cmd_vs_cis_subevent_length_set(
 			(sdc_hci_cmd_vs_cis_subevent_length_set_t const *)cmd_params);
+#endif
+
+#if defined(CONFIG_BT_OBSERVER)
+	case SDC_HCI_OPCODE_CMD_VS_SCAN_CHANNEL_MAP_SET:
+		return sdc_hci_cmd_vs_scan_channel_map_set(
+			(sdc_hci_cmd_vs_scan_channel_map_set_t const *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_VS_SCAN_ACCEPT_EXT_ADV_PACKETS_SET:
+		return sdc_hci_cmd_vs_scan_accept_ext_adv_packets_set(
+			(sdc_hci_cmd_vs_scan_accept_ext_adv_packets_set_t const *)cmd_params);
 #endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
