@@ -1,0 +1,155 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DULT
+	bool "Detecting Unwanted Location Trackers (DULT) [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	depends on BT
+	help
+	  Enable support for Detecting Unwanted Location Trackers (DULT) specification.
+
+if DULT
+
+config DULT_BATTERY
+	bool "DULT battery information"
+	help
+	  Enable support for battery information such as battery type and battery level.
+	  The battery information is an optional feature in the DULT specification and the
+	  support for it is not required. The battery information can be read by the
+	  connected peer over accessory non-owner service (ANOS).
+
+if DULT_BATTERY
+
+config DULT_BATTERY_LEVEL_CRITICAL_THR
+	int "Battery level upper threshold [%] for entering critical battery state"
+	range 0 100
+	default 10
+	help
+	  This option changes the upper range for the critically low battery state.
+	  The device stays in this battery state when the battery level is within
+	  the following range:
+	  [0; DULT_BATTERY_LEVEL_CRITICAL_THR].
+	  The battery level thresholds are used to encode the correct battery level in the
+	  Battery Level characteristic that is part of accessory non-owner service (ANOS).
+
+config DULT_BATTERY_LEVEL_LOW_THR
+	int "Battery level upper threshold [%] for entering low battery state"
+	range 0 100
+	default 40
+	help
+	  This option changes the upper range for the low battery state. The device
+	  stays in this battery state when the battery level is within the following
+	  range:
+	  (DULT_BATTERY_LEVEL_CRITICAL_THR;
+	   DULT_BATTERY_LEVEL_LOW_THR].
+	  The battery level thresholds are used to encode the correct battery level in the
+	  Battery Level characteristic that is part of accessory non-owner service (ANOS).
+
+config DULT_BATTERY_LEVEL_MEDIUM_THR
+	int "Battery level upper threshold [%] for entering medium battery state"
+	range 0 100
+	default 80
+	help
+	  This option changes the upper range for the medium battery state. The device
+	  stays in this battery state when the battery level is within the following
+	  range:
+	  (DULT_BATTERY_LEVEL_LOW_THR;
+	   DULT_BATTERY_LEVEL_MEDIUM_THR].
+	  The device enters the full battery state once the battery level is greater
+	  than the DULT_BATTERY_LEVEL_MEDIUM_THR threshold.
+	  The battery level thresholds are used to encode the correct battery level in the
+	  Battery Level characteristic that is part of accessory non-owner service (ANOS).
+
+choice DULT_BATTERY_TYPE
+	prompt "DULT battery type"
+	default DULT_BATTERY_TYPE_POWERED
+
+config DULT_BATTERY_TYPE_POWERED
+	bool "Powered"
+
+config DULT_BATTERY_TYPE_NON_RECHARGEABLE
+	bool "Non-rechargeable battery"
+
+config DULT_BATTERY_TYPE_RECHARGEABLE
+	bool "Rechargeable battery"
+
+endchoice
+
+endif # DULT_BATTERY
+
+config DULT_BT_ANOS
+	bool
+	default y
+	help
+	  Add DULT accessory non-owner service source file.
+
+if DULT_BT_ANOS
+
+config DULT_BT_ANOS_ID_PAYLOAD_LEN_MAX
+	int "Maximum length of DULT identifier payload"
+	default 18
+	help
+	  Set this to be higher or equal to the maximum accessory network identifier payload length.
+
+config DULT_BT_ANOS_INDICATION_COUNT
+	int "Number of simultaneously processed GATT indications in ANOS"
+	range 1 32
+	default 2
+	help
+	  Each GATT indication allocates one indicate params instance until the indication
+	  completes. To handle a new GATT indication, there has to be an unallocated indicate params
+	  instance present. Otherwise, an indication is not sent. Setting this Kconfig to n allows
+	  handling up to n simultaneous GATT indications. The default value is set to 2 to
+	  account for one information indication and one asynchronous sound indication at a time.
+
+endif # DULT_BT_ANOS
+
+config DULT_ID
+	bool
+	default y
+	help
+	  Add DULT identifier source files.
+
+if DULT_ID
+
+config DULT_ID_READ_STATE_TIMEOUT
+	int
+	default 5
+	help
+	  Identifier read state timeout in minutes. As stated in the DULT specification:
+	  "The identifier read state MUST be enabled for 5 minutes once the user action on
+	  the accessory is successfully performed.". Changing this value will break the
+	  specification.
+
+endif # DULT_ID
+
+config DULT_NEAR_OWNER_STATE
+	bool
+	default y
+	help
+	  Add DULT near owner state source files.
+
+config DULT_PROTOCOL_IMPLEMENTATION_VERSION
+	hex
+	default 0x00010000
+
+config DULT_SOUND
+	bool
+	default y
+	help
+	  Add DULT sound source files.
+
+config DULT_USER
+	bool
+	default y
+	help
+	  Add DULT user source files.
+
+module = DULT
+module-str = DULT
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # DULT
