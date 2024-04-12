@@ -37,7 +37,7 @@ Default test event triggers
 ***************************
 
 You can use the pre-defined common test event triggers in your application.
-To enable them, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS` Kconfig option to ``y``.
+To disable them, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS` Kconfig option to ``n``.
 
 The following table lists the available triggers and their activation codes:
 
@@ -264,6 +264,9 @@ For example, you can register and use the ``OTATestEventTriggerHandler`` handler
 
 Usage
 *****
+
+The Matter test event triggers feature is enabled by default for all Matter samples.
+To disable it, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS` kconfig option to ``n``.
 
 To trigger a specific event on the device, run the following command:
 
