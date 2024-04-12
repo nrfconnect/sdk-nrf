@@ -113,6 +113,38 @@ Device Firmware Upgrade support
     :start-after: matter_door_lock_sample_build_with_dfu_start
     :end-before: matter_door_lock_sample_build_with_dfu_end
 
+.. matter_template_nrf54l15_build_with_dfu_start
+
+The Device Firmware Upgrade (DFU) for the nRF54L15 PDK is exclusively available for the ``release`` build configuration and is limited to using the internal MRAM for storage.
+This means that both the currently running firmware and the new firmware to be updated must be stored within the device's internal flash memory.
+Currently, there is no support for utilizing external flash memory for this purpose.
+
+To build the sample with DFU support, use the ``-DCONF_FILE=prj_release.conf`` flag in your CMake build command.
+
+The following is an example command to build the sample with support for OTA DFU only:
+
+.. code-block:: console
+
+    west build -b nrf54l15pdk_nrf54l15_cpuapp -- -DCONF_FILE=prj_release.conf
+
+If you want to build the sample with support for both OTA DFU and SMP DFU, use the following command:
+
+.. code-block:: console
+
+    west build -b nrf54l15pdk_nrf54l15_cpuapp -- -DCONF_FILE=prj_release.conf -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
+
+You can disable DFU support for the ``release`` build configuration to double available application memory space.
+Do this by setting the :kconfig:option:`CONFIG_CHIP_DFU_OVER_BT_SMP`, and :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` Kconfig options to ``n``.
+
+For example:
+
+.. code-block:: console
+
+    west build -b nrf54l15pdk_nrf54l15_cpuapp -- -DCONF_FILE=prj_release.conf -DCONFIG_CHIP_DFU_OVER_BT_SMP=n -DCONFIG_CHIP_OTA_REQUESTOR=n
+
+
+.. matter_template_nrf54l15_build_with_dfu_end
+
 FEM support
 ===========
 

@@ -410,6 +410,8 @@ Matter samples
     * :ref:`matter_thermostat_sample` sample.
     * :ref:`matter_window_covering_sample` sample.
 
+    DFU support for the nRF54L15 PDK is available only for the ``release`` build target.
+
 * :ref:`matter_lock_sample` sample:
 
   * Added support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
