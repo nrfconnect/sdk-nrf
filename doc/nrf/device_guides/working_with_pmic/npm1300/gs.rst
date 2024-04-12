@@ -1,3 +1,5 @@
+:orphan:
+
 .. _ug_npm1300_gs:
 
 Getting started with nPM1300 EK
