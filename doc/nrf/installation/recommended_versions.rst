@@ -1,17 +1,26 @@
 .. _gs_recommended_versions:
 .. _requirements:
-.. _gs_supported_OS:
-.. _supported_OS:
 
-Requirements
-############
+Requirements reference
+######################
 
 .. contents::
    :local:
    :depth: 2
 
+This page summarizes the requirements for installing and working with the |NCS|.
+All of these requirements are installed when you :ref:`install the nRF Connect SDK <install_ncs>`.
+
+.. _gs_supported_OS:
+.. _supported_OS:
+
+Supported operating systems
+***************************
+
 The |NCS| supports Microsoft Windows, Linux, and macOS for development.
 The following table shows the operating system versions that support the |NCS| tools:
+
+.. os_table_start
 
 .. list-table::
    :header-rows: 1
@@ -57,6 +66,8 @@ The following table shows the operating system versions that support the |NCS| t
      - Tier 3
      - Not supported
 
+.. os_table_end
+
 Tier definitions
   The table uses several tier definitions to categorize the level of operating system support:
 
@@ -95,6 +106,7 @@ Zephyr features only available on Linux
 ***************
 
 The |NCS| :term:`toolchain` includes the Zephyr SDK and adds the necessary tools and modules to create |NCS| samples and applications on top of it.
+The |NCS| toolchain is installed as one of the steps when :ref:`install_ncs`.
 
 .. note::
 
@@ -187,32 +199,35 @@ Other versions might also work, but are not verified.
          * - :ref:`west <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_DARWIN`
 
-To check the list of installed packages and their versions, run the following command:
+Checking tool versions
+  .. toggle::
 
-.. tabs::
+     To check the list of installed packages and their versions, run the following command:
 
-   .. group-tab:: Windows
+     .. tabs::
 
-      .. code-block:: console
+        .. group-tab:: Windows
 
-         choco list -lo
+           .. code-block:: console
 
-   .. group-tab:: Linux
+              choco list -lo
 
-      .. code-block:: console
+           Chocolatey is installed as part of the Zephyr SDK toolchain when you :ref:`install the nRF Connect SDK <install_ncs>`.
 
-         apt list --installed
+        .. group-tab:: Linux
 
-      This command lists all packages installed on your system.
-      To list the version of a specific package, type its name and add ``--version``.
+           .. code-block:: console
 
-   .. group-tab:: macOS
+               apt list --installed
 
-      .. code-block:: console
+           This command lists all packages installed on your system.
+           To list the version of a specific package, type its name and add ``--version``.
 
-         brew list --versions
+        .. group-tab:: macOS
 
+           .. code-block:: console
 
+              brew list --versions
 
 .. _requirements_toolchain_python_deps:
 
@@ -269,8 +284,8 @@ Building and running applications, samples, and tests
 Building documentation
 ----------------------
 
-Python documentation dependencies are listed in the following table. They can
-all be installed using the ``doc/requirements.txt`` file using ``pip``.
+Python documentation dependencies are listed in the following table.
+They can all be installed using the ``doc/requirements.txt`` file using ``pip``.
 
 .. list-table::
    :header-rows: 1
@@ -322,12 +337,15 @@ Among others, this package includes the following prerequisites for the |NCS|:
 * nrfjprog executable and library, which the west command uses by default to program the development kits.
   For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
 
+It is recommended to use the latest version of the package when you :ref:`installing_vsc`.
+
 .. _toolchain_management_tools:
 
 |NCS| toolchain management tools
 ********************************
 
 Nordic Semiconductor provides proprietary |NCS| toolchain management tools that streamline the process of installing the |NCS| and its toolchain.
+Depending on your development environment, you need to install only some of them when you :ref:`installing_vsc`.
 
 |nRFVSC|
 ========

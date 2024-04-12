@@ -29,6 +29,6 @@ This repository is the manifest repository, because it contains the SDK's :ref:`
    :maxdepth: 2
    :caption: Subpages:
 
-   installation/recommended_versions
    installation/install_ncs
    installation/updating
+   installation/recommended_versions
