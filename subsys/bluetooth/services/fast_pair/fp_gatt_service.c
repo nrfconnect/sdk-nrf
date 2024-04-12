@@ -726,6 +726,13 @@ static ssize_t write_account_key(struct bt_conn *conn,
 		goto finish;
 	}
 
+	err = fp_auth_finalize(conn);
+	if (err) {
+		LOG_WRN("Authentication finalization failed: err=%d (Account Key)", err);
+		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		goto finish;
+	}
+
 	err = fp_keys_decrypt(conn, account_key.key, buf);
 	if (err) {
 		LOG_WRN("Decrypt failed: err=%d (Account Key)", err);

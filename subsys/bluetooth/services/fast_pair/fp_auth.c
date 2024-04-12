@@ -24,10 +24,13 @@ static bool is_enabled;
 
 #if (CONFIG_BT_MAX_CONN <= 8)
 static uint8_t handled_conn_bm;
+static uint8_t pairing_conn_bm;
 #elif (CONFIG_BT_MAX_CONN <= 16)
 static uint16_t handled_conn_bm;
+static uint16_t pairing_conn_bm;
 #elif (CONFIG_BT_MAX_CONN <= 32)
 static uint32_t handled_conn_bm;
+static uint32_t pairing_conn_bm;
 #else
 #error "CONFIG_BT_MAX_CONN must be <= 32"
 #endif
@@ -38,11 +41,29 @@ static bool is_conn_handled(const struct bt_conn *conn)
 	return ((handled_conn_bm & BIT(bt_conn_index(conn))) != 0);
 }
 
+static bool is_conn_in_pairing_state(const struct bt_conn *conn)
+{
+	return ((pairing_conn_bm & BIT(bt_conn_index(conn))) != 0);
+}
+
 static void update_conn_handling(const struct bt_conn *conn, bool handled)
 {
 	size_t conn_idx = bt_conn_index(conn);
 
 	WRITE_BIT(handled_conn_bm, conn_idx, handled);
+}
+
+static void update_conn_pairing_state(const struct bt_conn *conn, bool handled)
+{
+	size_t conn_idx = bt_conn_index(conn);
+
+	WRITE_BIT(pairing_conn_bm, conn_idx, handled);
+}
+
+static void clear_conn_context(const struct bt_conn *conn)
+{
+	update_conn_handling(conn, false);
+	update_conn_pairing_state(conn, false);
 }
 
 static int send_auth_confirm(struct bt_conn *conn)
@@ -77,7 +98,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		return;
 	}
 
-	update_conn_handling(conn, false);
+	clear_conn_context(conn);
 }
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
@@ -96,6 +117,8 @@ static enum bt_security_err auth_pairing_accept(struct bt_conn *conn,
 		LOG_ERR("Invalid conn (pairing accept): %p", (void *)conn);
 		return BT_SECURITY_ERR_UNSPECIFIED;
 	}
+
+	update_conn_pairing_state(conn, true);
 
 	if (feat->io_capability == BT_IO_NO_INPUT_OUTPUT) {
 		LOG_ERR("Invalid IO capability (pairing accept): %p", (void *)conn);
@@ -169,7 +192,7 @@ static void auth_cancel(struct bt_conn *conn)
 	}
 
 	LOG_WRN("Authentication cancel");
-	update_conn_handling(conn, false);
+	clear_conn_context(conn);
 }
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
@@ -194,7 +217,7 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 		LOG_ERR("Invalid conn security level after pairing: %p", (void *)conn);
 	}
 
-	update_conn_handling(conn, false);
+	clear_conn_context(conn);
 }
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
@@ -209,7 +232,7 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	LOG_WRN("Pairing failed");
 	fp_keys_drop_key(conn);
-	update_conn_handling(conn, false);
+	clear_conn_context(conn);
 }
 
 static const struct bt_conn_auth_cb conn_auth_callbacks = {
@@ -232,6 +255,7 @@ static int fp_auth_send_pairing_req(struct bt_conn *conn)
 		LOG_WRN("Initiate pairing failed: err=%d", err);
 	} else {
 		LOG_DBG("Initiated pairing");
+		update_conn_pairing_state(conn, true);
 	}
 
 	return err;
@@ -298,6 +322,38 @@ int fp_auth_cmp_passkey(struct bt_conn *conn, uint32_t gatt_passkey, uint32_t *b
 	return err;
 }
 
+int fp_auth_finalize(struct bt_conn *conn)
+{
+	/* Accept only the standard Fast Pair procedure flow. */
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_REQ_PAIRING)) {
+		return 0;
+	}
+
+	/* Allow special Fast Pair procedure flow without Bluetooth LE pairing
+	 * only for Providers that do not follow the standard flow.
+	 */
+	if (bt_conn_get_security(conn) != BT_SECURITY_L1) {
+		return 0;
+	}
+
+	if (!is_conn_handled(conn)) {
+		LOG_ERR("Invalid conn (finalizing authentication): %p", (void *)conn);
+		return -EINVAL;
+	}
+
+	if (is_conn_in_pairing_state(conn)) {
+		LOG_ERR("Pairing in progress for conn (finalizing authentication): %p",
+			(void *)conn);
+		return -EACCES;
+	}
+
+	fp_keys_bt_auth_progress(conn, true);
+
+	clear_conn_context(conn);
+
+	return 0;
+}
+
 static int fp_auth_init(void)
 {
 	if (is_enabled) {
@@ -309,6 +365,7 @@ static int fp_auth_init(void)
 
 	memset(bt_auth_peer_passkeys, 0, sizeof(bt_auth_peer_passkeys));
 	handled_conn_bm = 0;
+	pairing_conn_bm = 0;
 
 	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 	if (err) {

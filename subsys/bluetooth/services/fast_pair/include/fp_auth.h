@@ -55,6 +55,18 @@ int fp_auth_start(struct bt_conn *conn, bool send_pairing_req);
  */
 int fp_auth_cmp_passkey(struct bt_conn *conn, uint32_t gatt_passkey, uint32_t *bt_auth_passkey);
 
+/** Finalize Fast Pair Bluetooth authentication procedure.
+ *
+ * Finalizes the Bluetooth authentication procedure that has been started with @ref fp_auth_start.
+ * With the @ref CONFIG_BT_FAST_PAIR_REQ_PAIRING option disabled, this API can be used to finalize
+ * the Fast Pair procedure in a special mode that does not involve Bluetooth pairing and bonding.
+ *
+ * @param[in] conn      Pointer to Bluetooth connection (determines Fast Pair Seeker).
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_auth_finalize(struct bt_conn *conn);
+
 #ifdef __cplusplus
 }
 #endif
