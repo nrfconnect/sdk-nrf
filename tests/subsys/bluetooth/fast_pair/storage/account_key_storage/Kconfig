@@ -4,6 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config TEST_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY
+	bool "Enable support for the Owner Account Key in the Storage module to be able to test it"
+	select BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY
+	help
+	  Enable support for the Owner Account Key in the Storage module to be able to test it.
+
 menu "Test configuration"
 source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/bluetooth/services/fast_pair/fp_storage/Kconfig.fp_storage"
 endmenu

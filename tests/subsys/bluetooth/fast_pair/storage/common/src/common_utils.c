@@ -79,6 +79,11 @@ void cu_account_keys_validate_uninitialized(void)
 
 void cu_account_keys_validate_loaded(uint8_t seed_first, uint8_t stored_cnt)
 {
+	if ((ACCOUNT_KEY_MAX_CNT < 2) &&
+	    IS_ENABLED(CONFIG_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY)) {
+		zassert_equal(stored_cnt, 1, "Cannot store more than one owner account key");
+	}
+
 	int res;
 	int key_cnt;
 	struct fp_account_key read_keys[ACCOUNT_KEY_MAX_CNT];
@@ -97,6 +102,11 @@ void cu_account_keys_validate_loaded(uint8_t seed_first, uint8_t stored_cnt)
 
 	seed_min += seed_first;
 	seed_max += seed_first;
+
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY)) {
+		seed_min++;
+		zassert_true(cu_check_account_key_seed(seed_first, &read_keys[0]));
+	}
 
 	for (size_t i = seed_min; i <= seed_max; i++) {
 		bool found = false;
