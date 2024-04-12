@@ -120,7 +120,7 @@ Gazell
 Enhanced ShockBurst (ESB)
 -------------------------
 
-|no_changes_yet_note|
+* Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15pdk_nrf54l15` boards.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
