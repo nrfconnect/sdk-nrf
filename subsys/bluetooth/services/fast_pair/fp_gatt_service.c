@@ -31,6 +31,10 @@ LOG_MODULE_REGISTER(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_auth.h"
 #include "fp_storage_pn.h"
 
+#if defined(CONFIG_BT_FAST_PAIR_FMDN_BEACON_ACTIONS)
+#include "fp_fmdn_beacon_actions.h"
+#endif
+
 /* Make sure that MTU value of at least 83 is used (recommended by the Fast Pair specification). */
 #define FP_RECOMMENDED_MTU			83
 BUILD_ASSERT(BT_L2CAP_TX_MTU >= FP_RECOMMENDED_MTU);
@@ -147,6 +151,9 @@ BT_GATT_PRIMARY_SERVICE(BT_FAST_PAIR_UUID_FPS),
 		NULL, write_additional_data, NULL),
 	BT_GATT_CCC(NULL, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 #endif /* CONFIG_BT_FAST_PAIR_GATT_SERVICE_ADDITIONAL_DATA */
+#if defined(CONFIG_BT_FAST_PAIR_FMDN_BEACON_ACTIONS)
+	FP_FMDN_BEACON_ACTIONS_CHARACTERISTIC,
+#endif /* CONFIG_BT_FAST_PAIR_FMDN_BEACON_ACTIONS */
 );
 
 static int fp_gatt_rsp_notify(struct bt_conn *conn, const struct bt_gatt_attr *attr,

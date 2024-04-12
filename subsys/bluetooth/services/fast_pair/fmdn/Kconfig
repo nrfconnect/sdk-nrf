@@ -193,6 +193,12 @@ config BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR
 
 endif # BT_FAST_PAIR_FMDN_BATTERY
 
+config BT_FAST_PAIR_FMDN_BEACON_ACTIONS
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN Beacon Actions source file.
+
 config BT_FAST_PAIR_FMDN_CALLBACKS
 	bool
 	default y
