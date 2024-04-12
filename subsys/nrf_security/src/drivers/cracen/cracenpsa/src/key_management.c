@@ -1160,13 +1160,13 @@ size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes)
 		case CRACEN_BUILTIN_IDENTITY_KEY_ID:
 			if (psa_get_key_type(attributes) ==
 			    PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
-				return 1;
+				return 2;
 			}
 			break;
 		case CRACEN_BUILTIN_MEXT_ID:
 		case CRACEN_BUILTIN_MKEK_ID:
 			if (psa_get_key_type(attributes) == PSA_KEY_TYPE_AES) {
-				return 1;
+				return 2;
 			}
 		}
 	}
@@ -1203,7 +1203,8 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 		 */
 		if (key_buffer_size >= cracen_get_opaque_size(attributes)) {
 			*key_buffer_length = cracen_get_opaque_size(attributes);
-			*key_buffer = slot_number;
+			key_buffer[0] = slot_number;
+			key_buffer[1] = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));
 			return PSA_SUCCESS;
 		} else {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -1226,7 +1227,8 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 		 */
 		if (key_buffer_size >= cracen_get_opaque_size(attributes)) {
 			*key_buffer_length = cracen_get_opaque_size(attributes);
-			*key_buffer = slot_number;
+			key_buffer[0] = slot_number;
+			key_buffer[1] = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));
 			return PSA_SUCCESS;
 		} else {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
