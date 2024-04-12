@@ -107,6 +107,60 @@ ZTEST(suite_crypto, test_aes128_ctr)
 	zassert_mem_equal(result_buf, plaintext, sizeof(plaintext), "Invalid decryption result.");
 }
 
+ZTEST(suite_crypto, test_aes256_ecb)
+{
+	static const uint8_t aes_ecb_256_input[] = {
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+		0xff, 0xff, 0xff, 0x0a, 0x12, 0x34, 0x54, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x0a, 0x12, 0x34, 0x54, 0x00,
+	};
+	static const uint8_t aes_ecb_256_key[] = {
+		0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+		0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+		0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+		0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+	};
+	static const uint8_t aes_ecb_256_output[] = {
+		0x52, 0xc7, 0x46, 0xbf, 0x4a, 0xb7, 0xc7, 0xc3,
+		0x5f, 0x0d, 0xdb, 0x3b, 0x2c, 0x86, 0x32, 0xd1,
+		0x29, 0xf0, 0xa0, 0x45, 0x3f, 0x76, 0x76, 0x7a,
+		0x29, 0xf0, 0x33, 0xd0, 0x0d, 0xee, 0x96, 0xba,
+	};
+	uint8_t aes_ecb_256_result_buf[FP_CRYPTO_AES256_BLOCK_LEN];
+
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_CRYPTO_AES256_ECB_SUPPORT)) {
+		ztest_test_skip();
+		return;
+	}
+
+	zassert_equal(sizeof(aes_ecb_256_result_buf),
+		      sizeof(aes_ecb_256_output),
+		      "Invalid size of expected result.");
+	zassert_ok(fp_crypto_aes256_ecb_encrypt(
+			aes_ecb_256_result_buf,
+			aes_ecb_256_input,
+			aes_ecb_256_key),
+		   "Error during value encryption.");
+	zassert_mem_equal(aes_ecb_256_result_buf,
+			  aes_ecb_256_output,
+			  sizeof(aes_ecb_256_output),
+			  "Invalid encryption result.");
+
+	zassert_equal(sizeof(aes_ecb_256_result_buf),
+		      sizeof(aes_ecb_256_input),
+		      "Invalid size of expected result.");
+	zassert_ok(fp_crypto_aes256_ecb_decrypt(
+			aes_ecb_256_result_buf,
+			aes_ecb_256_output,
+			aes_ecb_256_key),
+		   "Error during value decryption.");
+	zassert_mem_equal(aes_ecb_256_result_buf,
+			  aes_ecb_256_input,
+			  sizeof(aes_ecb_256_input),
+			  "Invalid decryption result.");
+}
+
 ZTEST(suite_crypto, test_ecdh)
 {
 	static const uint8_t bobs_private_key[] = {0x02, 0xB4, 0x37, 0xB0, 0xED, 0xD6, 0xBB, 0xD4,
@@ -162,6 +216,152 @@ ZTEST(suite_crypto, test_ecdh)
 			  "Invalid key on Bob's side.");
 	zassert_mem_equal(alices_result_buf, shared_key, sizeof(shared_key),
 			  "Invalid key on Alice's side.");
+}
+
+ZTEST(suite_crypto, test_ecc_secp160r1)
+{
+	static const uint8_t ecc_secp160r1_input[] = {
+		0x52, 0xc7, 0x46, 0xbf, 0x4a, 0xb7, 0xc7, 0xc3,
+		0x5f, 0x0d, 0xdb, 0x3b, 0x2c, 0x86, 0x32, 0xd1,
+		0x29, 0xf0, 0xa0, 0x45, 0x3f, 0x76, 0x76, 0x7a,
+		0x29, 0xf0, 0x33, 0xd0, 0x0d, 0xee, 0x96, 0xba,
+	};
+	static const uint8_t secp160r1_mod_output[] = {
+		0xfa, 0x18, 0xa6, 0xbc, 0x13, 0x95, 0x64, 0x3c,
+		0x54, 0x40, 0xde, 0x2b, 0xec, 0x3c, 0x9b, 0xe5,
+		0xd7, 0x18, 0x05, 0xe6,
+	};
+	static const uint8_t secp160r1_x_output[] = {
+		0x7b, 0xf1, 0x49, 0x82, 0x1d, 0xaf, 0xae, 0x98,
+		0x25, 0x9b, 0xfe, 0x53, 0xa8, 0x72, 0x83, 0xc4,
+		0x1d, 0x7b, 0x1b, 0x1c,
+	};
+	uint8_t secp160r1_x_result[FP_CRYPTO_ECC_SECP160R1_KEY_LEN];
+	uint8_t secp160r1_mod_result[FP_CRYPTO_ECC_SECP160R1_MOD_LEN];
+
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_CRYPTO_SECP160R1_SUPPORT)) {
+		ztest_test_skip();
+		return;
+	}
+
+	zassert_equal(sizeof(secp160r1_x_output),
+		      FP_CRYPTO_ECC_SECP160R1_KEY_LEN,
+		      "Invalid size of the expected X-coordinate result.");
+	zassert_equal(sizeof(secp160r1_mod_output),
+		      FP_CRYPTO_ECC_SECP160R1_MOD_LEN,
+		      "Invalid size of the expected modulo result.");
+	zassert_ok(fp_crypto_ecc_secp160r1_calculate(
+			secp160r1_x_result,
+			secp160r1_mod_result,
+			ecc_secp160r1_input,
+			sizeof(ecc_secp160r1_input)),
+		   "Error during ECC computing.");
+	zassert_mem_equal(secp160r1_mod_result,
+			  secp160r1_mod_output,
+			  sizeof(secp160r1_mod_output),
+			  "Invalid intermediate modulo result.");
+	zassert_mem_equal(secp160r1_x_result,
+			  secp160r1_x_output,
+			  sizeof(secp160r1_x_output),
+			  "Invalid X-coordinate of the output point.");
+}
+
+ZTEST(suite_crypto, test_ecc_secp160r1_with_161bit_mod)
+{
+	static const uint8_t ecc_secp160r1_input[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xf4, 0xc8,
+		0xf9, 0x27, 0xae, 0xd3, 0xca, 0x75, 0x22, 0x56,
+	};
+	static const uint8_t secp160r1_mod_output[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x01, 0xf4, 0xc8, 0xf9, 0x27, 0xae, 0xd3,
+		0xca, 0x75, 0x22, 0x56,
+	};
+	static const uint8_t secp160r1_x_output[] = {
+		0x4a, 0x96, 0xb5, 0x68, 0x8e, 0xf5, 0x73, 0x28,
+		0x46, 0x64, 0x69, 0x89, 0x68, 0xc3, 0x8b, 0xb9,
+		0x13, 0xcb, 0xfc, 0x82,
+	};
+	uint8_t secp160r1_x_result[FP_CRYPTO_ECC_SECP160R1_KEY_LEN];
+	uint8_t secp160r1_mod_result[FP_CRYPTO_ECC_SECP160R1_MOD_LEN];
+
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_CRYPTO_SECP160R1_SUPPORT)) {
+		ztest_test_skip();
+		return;
+	}
+
+	zassert_equal(sizeof(secp160r1_x_output),
+		      FP_CRYPTO_ECC_SECP160R1_KEY_LEN,
+		      "Invalid size of the expected X-coordinate result.");
+	zassert_equal(sizeof(secp160r1_mod_output),
+		      FP_CRYPTO_ECC_SECP160R1_MOD_LEN,
+		      "Invalid size of the expected modulo result.");
+	zassert_ok(fp_crypto_ecc_secp160r1_calculate(
+			secp160r1_x_result,
+			secp160r1_mod_result,
+			ecc_secp160r1_input,
+			sizeof(ecc_secp160r1_input)),
+		   "Error during ECC computing.");
+	zassert_mem_equal(secp160r1_mod_result,
+			  secp160r1_mod_output,
+			  sizeof(secp160r1_mod_output),
+			  "Invalid intermediate modulo result.");
+	zassert_mem_equal(secp160r1_x_result,
+			  secp160r1_x_output,
+			  sizeof(secp160r1_x_output),
+			  "Invalid X-coordinate of the output point.");
+}
+
+ZTEST(suite_crypto, test_ecc_secp256r1)
+{
+	static const uint8_t ecc_secp256r1_input[] = {
+		0x52, 0xc7, 0x46, 0xbf, 0x4a, 0xb7, 0xc7, 0xc3,
+		0x5f, 0x0d, 0xdb, 0x3b, 0x2c, 0x86, 0x32, 0xd1,
+		0x29, 0xf0, 0xa0, 0x45, 0x3f, 0x76, 0x76, 0x7a,
+		0x29, 0xf0, 0x33, 0xd0, 0x0d, 0xee, 0x96, 0xba,
+	};
+	static const uint8_t secp256r1_mod_output[] = {
+		0x52, 0xc7, 0x46, 0xbf, 0x4a, 0xb7, 0xc7, 0xc3,
+		0x5f, 0x0d, 0xdb, 0x3b, 0x2c, 0x86, 0x32, 0xd1,
+		0x29, 0xf0, 0xa0, 0x45, 0x3f, 0x76, 0x76, 0x7a,
+		0x29, 0xf0, 0x33, 0xd0, 0x0d, 0xee, 0x96, 0xba,
+	};
+	static const uint8_t secp256r1_x_output[] = {
+		0xac, 0xc5, 0x9d, 0xd9, 0x86, 0x96, 0x06, 0xe1,
+		0xeb, 0x6b, 0x47, 0x9e, 0x34, 0x68, 0x89, 0xd9,
+		0x8f, 0x4e, 0x85, 0x40, 0xbc, 0x41, 0xad, 0xe6,
+		0x56, 0xac, 0xc5, 0x85, 0x4a, 0x4f, 0x90, 0x1c,
+	};
+	uint8_t secp256r1_x_result[FP_CRYPTO_ECC_SECP256R1_KEY_LEN];
+	uint8_t secp256r1_mod_result[FP_CRYPTO_ECC_SECP256R1_MOD_LEN];
+
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_CRYPTO_SECP256R1_SUPPORT)) {
+		ztest_test_skip();
+		return;
+	}
+
+	zassert_equal(sizeof(secp256r1_x_output),
+		      FP_CRYPTO_ECC_SECP256R1_KEY_LEN,
+		      "Invalid size of the expected X-coordinate result.");
+	zassert_equal(sizeof(secp256r1_mod_output),
+		      FP_CRYPTO_ECC_SECP256R1_MOD_LEN,
+		      "Invalid size of the expected modulo result.");
+	zassert_ok(fp_crypto_ecc_secp256r1_calculate(
+			secp256r1_x_result,
+			secp256r1_mod_result,
+			ecc_secp256r1_input,
+			sizeof(ecc_secp256r1_input)),
+		   "Error during ECC computing.");
+	zassert_mem_equal(secp256r1_mod_result,
+			  secp256r1_mod_output,
+			  sizeof(secp256r1_mod_output),
+			  "Invalid intermediate modulo result.");
+	zassert_mem_equal(secp256r1_x_result,
+			  secp256r1_x_output,
+			  sizeof(secp256r1_x_output),
+			  "Invalid X-coordinate of the output point.");
 }
 
 ZTEST(suite_crypto, test_aes_key_from_ecdh_shared_secret)
