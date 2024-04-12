@@ -64,6 +64,16 @@ config BT_FAST_PAIR_CRYPTO_PSA
 
 endchoice
 
+# A backend supporting a given crypto operation selects a related Kconfig option.
+config BT_FAST_PAIR_CRYPTO_AES256_ECB_SUPPORT
+	bool
+
+config BT_FAST_PAIR_CRYPTO_SECP160R1_SUPPORT
+	bool
+
+config BT_FAST_PAIR_CRYPTO_SECP256R1_SUPPORT
+	bool
+
 module = FP_CRYPTO
 module-str = Fast Pair crypto library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
