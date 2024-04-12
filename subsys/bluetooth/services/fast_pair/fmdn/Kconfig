@@ -340,6 +340,14 @@ config BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT
 
 endif # BT_FAST_PAIR_FMDN_RING
 
+config BT_FAST_PAIR_FMDN_STATE
+	bool
+	default y
+	select BT_EXT_ADV
+	select BT_FAST_PAIR_STORAGE_FMDN_EIK
+	help
+	  Add Fast Pair FMDN State source file.
+
 # The FMDN extension requires the system workqueue to execute at
 # a cooperative priority.
 config SYSTEM_WORKQUEUE_PRIORITY

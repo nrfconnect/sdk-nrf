@@ -26,6 +26,10 @@ if(CONFIG_BT_FAST_PAIR_FMDN_RING)
   target_sources(fmdn PRIVATE ring.c)
 endif()
 
+if(CONFIG_BT_FAST_PAIR_FMDN_STATE)
+  target_sources(fmdn PRIVATE state.c)
+endif()
+
 target_include_directories(fmdn PUBLIC include)
 target_include_directories(fmdn PRIVATE include_priv)
 target_include_directories(fmdn PRIVATE ../include/common)
