@@ -314,6 +314,32 @@ endmenu
 
 endif # BT_FAST_PAIR_FMDN_DULT
 
+config BT_FAST_PAIR_FMDN_RING
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN Ring source file.
+
+if BT_FAST_PAIR_FMDN_RING
+
+config BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT
+	int "Timeout in milliseconds in ringing request from DULT GATT source"
+	default 12000
+	depends on BT_FAST_PAIR_FMDN_DULT
+	help
+	  The default timeout parameter in milliseconds is used in the start
+	  ringing request that originates from the Bluetooth GATT DULT source.
+	  The application can override this default parameter and use a different
+	  timeout using the bt_fast_pair_fmdn_ring_state_update API. This Kconfig
+	  value cannot be lower than the minimum timeout (5 seconds) defined in the
+	  DULT specification. Additionally, it is not recommended to set a timeout
+	  value that is lower than 10 seconds, as it can cause a failure of the
+	  "Ringing using the accessory non-owner service" test in the Fast Pair
+	  Validator app. This Kconfig default value (12 seconds) is the recommended
+	  configuration.
+
+endif # BT_FAST_PAIR_FMDN_RING
+
 # The FMDN extension requires the system workqueue to execute at
 # a cooperative priority.
 config SYSTEM_WORKQUEUE_PRIORITY
