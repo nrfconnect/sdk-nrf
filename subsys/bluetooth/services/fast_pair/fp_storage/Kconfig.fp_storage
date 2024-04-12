@@ -74,6 +74,11 @@ config BT_FAST_PAIR_STORAGE_FMDN_CLOCK
 	help
 	  Add Fast Pair storage source files for the Beacon Clock used in the FMDN extension.
 
+config BT_FAST_PAIR_STORAGE_FMDN_EIK
+	bool
+	help
+	  Add Fast Pair storage source files for the EIK used in the FMDN extension.
+
 module = FP_STORAGE
 module-str = Fast Pair storage library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
