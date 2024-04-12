@@ -98,6 +98,8 @@ Additionally, configure the following options for the needs of your application:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE`
 * :kconfig:option:`CONFIG_NRF_CLOUD_REST_HOST_NAME`
+* :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT`
+* :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT_VALID_TIME_S`
 * :kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG`
 
 API documentation
