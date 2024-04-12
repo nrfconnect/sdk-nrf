@@ -145,6 +145,36 @@ config BT_FAST_PAIR_FMDN_CALLBACKS
 	help
 	  Add Fast Pair FMDN callbacks source file.
 
+config BT_FAST_PAIR_FMDN_CLOCK
+	bool
+	default y
+	select BT_FAST_PAIR_STORAGE_FMDN_CLOCK
+	help
+	  Add Fast Pair FMDN Clock source file.
+
+if BT_FAST_PAIR_FMDN_CLOCK
+
+config BT_FAST_PAIR_FMDN_CLOCK_NVM_UPDATE_TIME
+	int "NVM update time of the FMDN Clock in minutes"
+	default 1440
+	help
+	  Use this configuration to change the update frequency of the FMDN
+	  Clock in non-volatile memory. The device recovers the FMDN Clock
+	  from NVM at boot time since Ephemeral Identifier (EID) resolving is
+	  strongly tied to this parameter. With the recommended default value,
+	  updates occur once a day (1440 minutes = 24 hours).
+
+config BT_FAST_PAIR_FMDN_CLOCK_NVM_UPDATE_RETRY_TIME
+	int "NVM update retry time of the FMDN Clock in seconds"
+	default 60
+	help
+	  Use this configuration to change the retry frequency of the FMDN
+	  Clock updates in non-volatile memory. The device uses retry time to
+	  determine the next storage attempt in case of a storage operation
+	  failure.
+
+endif # BT_FAST_PAIR_FMDN_CLOCK
+
 # The FMDN extension requires the system workqueue to execute at
 # a cooperative priority.
 config SYSTEM_WORKQUEUE_PRIORITY

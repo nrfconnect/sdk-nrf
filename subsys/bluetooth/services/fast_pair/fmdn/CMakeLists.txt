@@ -10,6 +10,10 @@ if(CONFIG_BT_FAST_PAIR_FMDN_CALLBACKS)
   target_sources(fmdn PRIVATE callbacks.c)
 endif()
 
+if(CONFIG_BT_FAST_PAIR_FMDN_CLOCK)
+  target_sources(fmdn PRIVATE clock.c)
+endif()
+
 target_include_directories(fmdn PUBLIC include)
 target_include_directories(fmdn PRIVATE include_priv)
 target_include_directories(fmdn PRIVATE ../include/common)
