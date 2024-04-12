@@ -34,40 +34,6 @@ BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT <= 2,
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
-#if CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(                                                            \
-		BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT,                      \
-		BT_AUDIO_CONTEXT_TYPE_MEDIA, CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC)
-
-#elif CONFIG_BT_BAP_BROADCAST_16_2_1
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_BAP_LC3_BROADCAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
-						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#elif CONFIG_BT_BAP_BROADCAST_24_2_1
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_BAP_LC3_BROADCAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
-						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#elif CONFIG_BT_BAP_BROADCAST_16_2_2
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_BAP_LC3_BROADCAST_PRESET_16_2_2(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
-						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#elif CONFIG_BT_BAP_BROADCAST_24_2_2
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_BAP_LC3_BROADCAST_PRESET_24_2_2(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
-						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#else
-#error Unsupported LC3 codec preset for broadcast
-#endif /* CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE */
-
 static struct bt_cap_broadcast_source *broadcast_source;
 static struct bt_cap_stream cap_streams[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 static struct bt_bap_lc3_preset lc3_preset = BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO;

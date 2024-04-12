@@ -45,6 +45,12 @@ config AUDIO_MAX_PRES_DLY_US
 
 choice AUDIO_SYSTEM_SAMPLE_RATE
 	prompt "System audio sample rate"
+	default AUDIO_SAMPLE_RATE_16000_HZ if BT_BAP_BROADCAST_16_2_1
+	default AUDIO_SAMPLE_RATE_16000_HZ if BT_BAP_BROADCAST_16_2_2
+	default AUDIO_SAMPLE_RATE_16000_HZ if BT_BAP_UNICAST_16_2_1
+	default AUDIO_SAMPLE_RATE_24000_HZ if BT_BAP_BROADCAST_24_2_1
+	default AUDIO_SAMPLE_RATE_24000_HZ if BT_BAP_BROADCAST_24_2_2
+	default AUDIO_SAMPLE_RATE_24000_HZ if BT_BAP_UNICAST_24_2_1
 	default AUDIO_SAMPLE_RATE_48000_HZ
 	help
 	  This configuration reflects the system sample rate, but the audio data may be resampled to
@@ -212,7 +218,7 @@ visible if SW_CODEC_LC3
 
 config LC3_BITRATE_MAX
 	int "Max bitrate for LC3"
-	default 96000
+	default 124000
 
 config LC3_BITRATE_MIN
 	int "Min bitrate for LC3"
