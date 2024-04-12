@@ -89,6 +89,19 @@ int fp_storage_ak_get(struct fp_account_key *buf, size_t *key_count);
 int fp_storage_ak_find(struct fp_account_key *account_key,
 		       fp_storage_ak_check_cb account_key_check_cb, void *context);
 
+/** Check if a given Account Key belongs to the Owner.
+ *
+ *  The current implementation assumes that the Owner Account Key is the first Account Key
+ *  that was introduced to the device.
+ *
+ * @param[in] account_key Account Key to be checked.
+ *
+ * @return 1 If the Account Key belongs to the owner.
+ *         0 If the Account Key does not belong to the owner.
+ *         Otherwise, a negative value is returned which indicates an error.
+ */
+int fp_storage_ak_is_owner(const struct fp_account_key *account_key);
+
 #ifdef __cplusplus
 }
 #endif
