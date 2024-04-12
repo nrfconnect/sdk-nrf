@@ -8,5 +8,7 @@ Security libraries
    :glob:
    :caption: Subpages:
 
+   bootloader/index
    nrf_security/index
+   tfm/index
    *
