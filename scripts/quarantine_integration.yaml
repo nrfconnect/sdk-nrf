@@ -381,6 +381,7 @@
     - fast_pair.storage.factory_reset.8keys
     - fast_pair.storage.factory_reset.9keys
     - fast_pair.storage.factory_reset.default
+    - fast_pair.storage.factory_reset.ak_minimal_backend
   platforms:
     - nrf52840dk/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"

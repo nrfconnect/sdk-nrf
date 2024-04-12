@@ -56,3 +56,26 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=10
+  fast_pair.storage.factory_reset.ak_minimal_backend:
+    platform_exclude: native_posix
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf54l15pdk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf54l15pdk/nrf54l15/cpuapp
+    extra_args: CONFIG_TEST_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY=y
+  fast_pair.storage.factory_reset.ak_minimal_backend_no_reboot:
+    platform_allow:
+      - native_posix
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - native_posix
+      - nrf52840dk/nrf52840
+    extra_args: CONFIG_TEST_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY=y CONFIG_REBOOT=n
