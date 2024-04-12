@@ -1,0 +1,6 @@
+tests:
+  suit-platform.integration.cache_pool_digest:
+    platform_allow: nrf54h20dk_nrf54h20_cpuapp native_posix native_posix_64
+    tags: suit suit_cache digest
+    integration_platforms:
+      - native_posix

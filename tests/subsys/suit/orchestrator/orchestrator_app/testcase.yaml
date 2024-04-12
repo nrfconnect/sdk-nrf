@@ -1,0 +1,16 @@
+tests:
+  suit.integration.orchestrator_app.minimal:
+    platform_allow: native_posix
+    tags: suit suit_orchestrator_app suit_orchestrator_app_minimal
+    timeout: 240
+    extra_args: OVERLAY_CONFIG=minimal_processing.conf
+    integration_platforms:
+      - native_posix
+
+  suit.integration.orchestrator_app.full:
+    platform_allow: native_posix
+    tags: suit suit_orchestrator_app suit_orchestrator_app_full
+    timeout: 240
+    extra_args: OVERLAY_CONFIG=full_processing.conf
+    integration_platforms:
+      - native_posix

@@ -1,0 +1,6 @@
+tests:
+  suit-processor.integration.suit_storage_nrf54h20:
+    platform_allow: native_posix
+    tags: suit-processor suit_storage
+    integration_platforms:
+      - native_posix
