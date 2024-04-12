@@ -139,6 +139,12 @@ config BT_FAST_PAIR_FMDN_VERSION_MAJOR
 	help
 	  Major version number of the FMDN protocol.
 
+config BT_FAST_PAIR_FMDN_AUTH
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN Authentication source file.
+
 config BT_FAST_PAIR_FMDN_BATTERY
 	bool
 	default y
