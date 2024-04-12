@@ -320,6 +320,25 @@ endmenu
 
 endif # BT_FAST_PAIR_FMDN_DULT
 
+config BT_FAST_PAIR_FMDN_READ_MODE
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN Read Mode source file.
+
+if BT_FAST_PAIR_FMDN_READ_MODE
+
+config BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY_TIMEOUT
+	int "EIK recovery read mode timeout in minutes"
+	default 1
+	help
+	  EIK recovery read mode timeout in minutes. This option is used to change
+	  the timeout of the EIK recovery mode as the EIK reading capability should
+	  be available only for limited time after the explicit user consent (for
+	  example, upon a physical button press).
+
+endif # BT_FAST_PAIR_FMDN_READ_MODE
+
 config BT_FAST_PAIR_FMDN_RING
 	bool
 	default y
