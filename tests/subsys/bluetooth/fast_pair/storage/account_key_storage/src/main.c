@@ -59,14 +59,12 @@ static void after_fn(void *f)
 	cu_account_keys_validate_uninitialized();
 }
 
-ZTEST(suite_fast_pair_storage, test_settings_unloaded)
+ZTEST(suite_fast_pair_storage_common, test_settings_unloaded)
 {
 	int err;
 
 	/* Check that Account Key storage operations fail when settings are unloaded. */
 	after_fn(NULL);
-
-	cu_account_keys_validate_uninitialized();
 
 	err = fp_storage_init();
 	zassert_not_equal(err, 0, "Expected error before settings load");
@@ -74,7 +72,7 @@ ZTEST(suite_fast_pair_storage, test_settings_unloaded)
 	cu_account_keys_validate_uninitialized();
 }
 
-ZTEST(suite_fast_pair_storage, test_uninitialized)
+ZTEST(suite_fast_pair_storage_common, test_uninitialized)
 {
 	int err;
 
@@ -87,7 +85,7 @@ ZTEST(suite_fast_pair_storage, test_uninitialized)
 	cu_account_keys_validate_uninitialized();
 }
 
-ZTEST(suite_fast_pair_storage, test_one_key)
+ZTEST(suite_fast_pair_storage_common, test_one_key)
 {
 	static const uint8_t seed = 5;
 
@@ -119,10 +117,10 @@ ZTEST(suite_fast_pair_storage, test_one_key)
 	zassert_true(cu_check_account_key_seed(seed, &read_keys[0]), "Invalid key on read");
 }
 
-ZTEST(suite_fast_pair_storage, test_reinitialization)
+ZTEST(suite_fast_pair_storage_common, test_reinitialization)
 {
 	static const uint8_t first_seed;
-	static const size_t test_key_cnt = 5;
+	static const size_t test_key_cnt = MIN(ACCOUNT_KEY_MAX_CNT, 5);
 	int err;
 
 	cu_account_keys_generate_and_store(first_seed, test_key_cnt);
@@ -137,7 +135,7 @@ ZTEST(suite_fast_pair_storage, test_reinitialization)
 	cu_account_keys_validate_loaded(first_seed, test_key_cnt);
 }
 
-ZTEST(suite_fast_pair_storage, test_duplicate)
+ZTEST(suite_fast_pair_storage_common, test_duplicate)
 {
 	static const uint8_t seed = 3;
 
@@ -150,7 +148,11 @@ ZTEST(suite_fast_pair_storage, test_duplicate)
 
 	/* Try to add key duplicate. */
 	err = fp_storage_ak_save(&account_key);
-	zassert_ok(err, "Unexpected error during Account Key save");
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY)) {
+		zassert_ok(err, "Unexpected error during Account Key save");
+	} else {
+		zassert_equal(err, -EALREADY, "Error expected if second key added");
+	}
 
 	struct fp_account_key read_keys[ACCOUNT_KEY_MAX_CNT];
 	size_t read_cnt = ACCOUNT_KEY_MAX_CNT;
@@ -173,10 +175,10 @@ ZTEST(suite_fast_pair_storage, test_duplicate)
 	zassert_true(cu_check_account_key_seed(seed, &read_keys[0]), "Invalid key on read");
 }
 
-ZTEST(suite_fast_pair_storage, test_invalid_calls)
+ZTEST(suite_fast_pair_storage_common, test_invalid_calls)
 {
 	static const uint8_t first_seed = 3;
-	static const uint8_t test_key_cnt = 3;
+	static const uint8_t test_key_cnt = MIN(ACCOUNT_KEY_MAX_CNT, 3);
 
 	int err;
 	struct fp_account_key found_key;
@@ -216,10 +218,10 @@ static bool account_key_find_cb(const struct fp_account_key *account_key, void *
 	return cu_check_account_key_seed(*seed, account_key);
 }
 
-ZTEST(suite_fast_pair_storage, test_find)
+ZTEST(suite_fast_pair_storage_common, test_find)
 {
 	static const uint8_t first_seed = 0;
-	static const size_t test_key_cnt = 3;
+	static const size_t test_key_cnt = MIN(ACCOUNT_KEY_MAX_CNT, 3);
 	int err = 0;
 
 	cu_account_keys_generate_and_store(first_seed, test_key_cnt);
@@ -250,8 +252,28 @@ ZTEST(suite_fast_pair_storage, test_find)
 	zassert_equal(err, -ESRCH, "Expected error when key cannot be found");
 }
 
-ZTEST(suite_fast_pair_storage, test_loop)
+ZTEST(suite_fast_pair_storage_common, test_bt_has_ak)
 {
+	static const uint8_t first_seed = 0;
+	static const size_t test_key_cnt = MIN(ACCOUNT_KEY_MAX_CNT, 3);
+
+	zassert_false(fp_storage_ak_has_account_key(), "No account key should be stored");
+
+	cu_account_keys_generate_and_store(first_seed, test_key_cnt);
+	zassert_true(fp_storage_ak_has_account_key(), "Account key should be stored");
+
+	/* Reload keys from storage and validate them again. */
+	reload_keys_from_storage();
+	zassert_true(fp_storage_ak_has_account_key(), "Account key should be stored after reload");
+}
+
+ZTEST(suite_fast_pair_storage_common, test_loop)
+{
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY) &&
+	   (ACCOUNT_KEY_CNT < 2)) {
+		ztest_test_skip();
+	}
+
 	static const uint8_t first_seed = 0;
 
 	for (uint8_t i = 1; i < UCHAR_MAX; i++) {
@@ -273,5 +295,40 @@ ZTEST(suite_fast_pair_storage, test_loop)
 	}
 }
 
+ZTEST(suite_fast_pair_storage_common, test_owner_key)
+{
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY)) {
+		ztest_test_skip();
+	} else {
+		static const uint8_t seed = 0;
 
-ZTEST_SUITE(suite_fast_pair_storage, NULL, NULL, before_fn, after_fn, NULL);
+		int ret;
+		struct fp_account_key account_key;
+		struct fp_account_key next_account_key;
+
+		cu_generate_account_key(seed, &account_key);
+		ret = fp_storage_ak_is_owner(&account_key);
+		zassert_equal(ret, -ESRCH, "No owner account key should be stored");
+
+		ret = fp_storage_ak_save(&account_key);
+		zassert_ok(ret, "Unexpected error during Account Key save");
+
+		ret = fp_storage_ak_is_owner(&account_key);
+		zassert_equal(ret, 1, "Owner account key should be stored");
+
+		cu_generate_account_key(seed + 1, &next_account_key);
+		ret = fp_storage_ak_is_owner(&next_account_key);
+		zassert_equal(ret, 0, "Owner account key different than questioned");
+
+		/* Reload keys from storage and validate them again. */
+		reload_keys_from_storage();
+
+		ret = fp_storage_ak_is_owner(&account_key);
+		zassert_equal(ret, 1, "Owner account key should be stored");
+
+		ret = fp_storage_ak_is_owner(&next_account_key);
+		zassert_equal(ret, 0, "Owner account key different than questioned");
+	}
+}
+
+ZTEST_SUITE(suite_fast_pair_storage_common, NULL, NULL, before_fn, after_fn, NULL);

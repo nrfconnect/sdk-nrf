@@ -397,6 +397,7 @@
 
 - scenarios:
     - fast_pair.storage.account_key_storage.default
+    - fast_pair.storage.account_key_storage.minimal
   platforms:
     - nrf52840dk/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
