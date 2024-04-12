@@ -11,10 +11,7 @@ set(BOARD unit_testing)
 find_package(Zephyr COMPONENTS unittest REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 # Define common paths
-set(SUIT_PROCESSOR_DIR ${ZEPHYR_BASE}/../modules/lib/suit-processor)
-set(SUIT_SUBSYS_DIR ${ZEPHYR_BASE}/../nrf/subsys/suit)
-set(ZEPHYR_ZCBOR_MODULE_DIR ${ZEPHYR_BASE}/../modules/lib/zcbor)
-
+set(SUIT_SUBSYS_DIR ${ZEPHYR_NRF_MODULE_DIR}/subsys/suit)
 
 # Link manifest library, required by suit_types.h, suit_processor.h and suit_seq_exec.h
 target_link_libraries(testbinary PRIVATE manifest)

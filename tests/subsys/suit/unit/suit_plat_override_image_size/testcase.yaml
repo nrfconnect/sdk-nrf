@@ -1,0 +1,8 @@
+tests:
+  suit.unit.platform.override_image_size:
+    type: unit
+    tags: >-
+      suit
+      suit_platform
+      suit_plat_override_image_size
+      suit_plat_create_component_handle
