@@ -6,6 +6,10 @@
 
 zephyr_library_named(fmdn)
 
+if(CONFIG_BT_FAST_PAIR_FMDN_AUTH)
+  target_sources(fmdn PRIVATE auth.c)
+endif()
+
 if(CONFIG_BT_FAST_PAIR_FMDN_BATTERY)
   target_sources(fmdn PRIVATE battery.c)
 endif()
