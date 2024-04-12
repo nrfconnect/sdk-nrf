@@ -799,6 +799,9 @@
 .. ### Source: App stores (play.google.com & apps.apple.com)
 
 .. _`Fast Pair Validator app`: https://play.google.com/store/apps/details?id=com.google.location.nearby.apps.fastpair.validator
+.. _`Find My Device app`: https://play.google.com/store/apps/details?id=com.google.android.apps.adm
+
+.. _`Google Play Services`: https://play.google.com/store/apps/details?id=com.google.android.gms
 
 .. _`nRF Device Manager mobile app for iOS`: https://apps.apple.com/us/app/nrf-connect-device-manager/id1519423539
 .. _`nRF Device Manager mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfconnectdevicemanager
@@ -1239,6 +1242,10 @@
 .. _`Fast Pair Personalized Name extension`: https://developers.google.com/nearby/fast-pair/specifications/extensions/personalizedname
 .. _`Fast Pair Certification Guidelines for Personalized Name`: https://developers.google.com/nearby/fast-pair/certification-guideline#2_personalized_name
 .. _`Fast Pair Battery Notification extension`: https://developers.google.com/nearby/fast-pair/specifications/extensions/batterynotification
+.. _`Fast Pair Find My Device Network extension`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn
+.. _`Fast Pair FMDN advertising`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#advertised-frames
+.. _`Fast Pair Locator Tag Specific Guidelines`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#locator-tag
+.. _`Fast Pair Unwanted Tracking Prevention Guidelines`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#unwanted-tracking-prevention
 
 .. _`Protocol Buffers`: https://developers.google.com/protocol-buffers
 
