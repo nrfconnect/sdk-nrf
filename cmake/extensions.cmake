@@ -231,47 +231,84 @@ Please provide one of following: CONF_FILES")
   if(NCS_FILE_PM)
     set(PM_FILE_PREFIX pm_static)
 
-    # Prepare search for pm_static_board@ver_build.yml
-    zephyr_build_string(filename
-                        BOARD ${ZEPHYR_FILE_BOARD}
-                        BOARD_REVISION ${ZEPHYR_FILE_BOARD_REVISION}
-                        BUILD ${ZEPHYR_FILE_BUILD}
-    )
-    set(filename_list ${PM_FILE_PREFIX}_${filename})
+    if(DEFINED FILE_SUFFIX)
+      # Prepare search for pm_static_board@ver_suffix.yml
+      zephyr_build_string(filename
+                          BOARD ${ZEPHYR_FILE_BOARD}
+                          BOARD_REVISION ${ZEPHYR_FILE_BOARD_REVISION}
+      )
+      set(filename_list ${PM_FILE_PREFIX}_${filename})
 
-    # Prepare search for pm_static_board_build.yml
-    zephyr_build_string(filename
-                        BOARD ${ZEPHYR_FILE_BOARD}
-                        BUILD ${ZEPHYR_FILE_BUILD}
-    )
-    list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
+      # Prepare search for pm_static_board_suffix.yml
+      zephyr_build_string(filename
+                          BOARD ${ZEPHYR_FILE_BOARD}
+      )
+      list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
 
-    # Prepare search for pm_static_build.yml
-    # Note that BOARD argument is used to position suffix accordingly
-    zephyr_build_string(filename
-                        BOARD ${ZEPHYR_FILE_BUILD}
-    )
-    list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
+      list(APPEND filename_list ${PM_FILE_PREFIX})
+    else()
+      # Prepare search for pm_static_board@ver_build.yml
+      zephyr_build_string(filename
+                          BOARD ${ZEPHYR_FILE_BOARD}
+                          BOARD_REVISION ${ZEPHYR_FILE_BOARD_REVISION}
+                          BUILD ${ZEPHYR_FILE_BUILD}
+      )
+      set(filename_list ${PM_FILE_PREFIX}_${filename})
 
-    # Prepare search for pm_static.yml
-    list(APPEND filename_list ${PM_FILE_PREFIX})
+      # Prepare search for pm_static_board_build.yml
+      zephyr_build_string(filename
+                          BOARD ${ZEPHYR_FILE_BOARD}
+                          BUILD ${ZEPHYR_FILE_BUILD}
+      )
+      list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
+
+      # Prepare search for pm_static_build.yml
+      # Note that BOARD argument is used to position suffix accordingly
+      zephyr_build_string(filename
+                          BOARD ${ZEPHYR_FILE_BUILD}
+      )
+      list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
+
+      # Prepare search for pm_static.yml
+      list(APPEND filename_list ${PM_FILE_PREFIX})
+    endif()
+
     list(REMOVE_DUPLICATES filename_list)
 
     foreach(filename ${filename_list})
       if(DEFINED NCS_FILE_DOMAIN)
-        if(EXISTS ${NCS_FILE_CONF_FILES}/${filename}_${NCS_FILE_DOMAIN}.yml)
-          set(${NCS_FILE_PM} ${NCS_FILE_CONF_FILES}/${filename}_${NCS_FILE_DOMAIN}.yml PARENT_SCOPE)
-          break()
+        if(DEFINED FILE_SUFFIX)
+          set(filename_check ${NCS_FILE_CONF_FILES}/${filename}_${NCS_FILE_DOMAIN}.yml)
+          zephyr_file_suffix(filename_check SUFFIX ${FILE_SUFFIX})
+
+          if(EXISTS ${filename_check})
+            set(${NCS_FILE_PM} ${filename_check} PARENT_SCOPE)
+            break()
+          endif()
+
+        else()
+          if(EXISTS ${NCS_FILE_CONF_FILES}/${filename}_${NCS_FILE_DOMAIN}.yml)
+            set(${NCS_FILE_PM} ${NCS_FILE_CONF_FILES}/${filename}_${NCS_FILE_DOMAIN}.yml PARENT_SCOPE)
+            break()
+          endif()
         endif()
       endif()
 
-      if(EXISTS ${NCS_FILE_CONF_FILES}/${filename}.yml)
-        set(${NCS_FILE_PM} ${NCS_FILE_CONF_FILES}/${filename}.yml PARENT_SCOPE)
-        break()
+      if(DEFINED FILE_SUFFIX)
+        set(filename_check ${NCS_FILE_CONF_FILES}/${filename}.yml)
+        zephyr_file_suffix(filename_check SUFFIX ${FILE_SUFFIX})
+        if(EXISTS ${filename_check})
+          set(${NCS_FILE_PM} ${filename_check} PARENT_SCOPE)
+          break()
+        endif()
+      else()
+        if(EXISTS ${NCS_FILE_CONF_FILES}/${filename}.yml)
+          set(${NCS_FILE_PM} ${NCS_FILE_CONF_FILES}/${filename}.yml PARENT_SCOPE)
+          break()
+        endif()
       endif()
     endforeach()
   endif()
-
 endfunction()
 
 #
