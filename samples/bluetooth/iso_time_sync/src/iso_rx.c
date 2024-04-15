@@ -84,8 +84,8 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 		uint32_t current_time_us = controller_time_us_get() & UINT32_MAX;
 		int32_t time_to_trigger = trigger_time_us - current_time_us;
 
-		printk("Received SDU with counter: %d, btn_val: %d, LED will be set in %d us\n",
-		       counter, btn_pressed, time_to_trigger);
+		printk("Recv SDU counter %u with timestamp %u (controller time %u), btn_val: %d, LED will be set in %d us\n",
+		       counter, info->ts, current_time_us, btn_pressed, time_to_trigger);
 	}
 }
 
