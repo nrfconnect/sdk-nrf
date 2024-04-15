@@ -1275,6 +1275,9 @@
 .. _`Wi-Fi Certification`: https://www.wi-fi.org/certification
 .. _`QuickTrack Test Tool User Manual`: https://www.wi-fi.org/file-member/quicktrack-test-tool-user-manual
 .. _`QuickTrack Test Tool Platform Integration Guide`: https://www.wi-fi.org/file-member/quicktrack-test-tool-platform-integration-guide-v12
+.. _`QuickTrack New Product Application Training`: https://www.wi-fi.org/system/files/members/QuickTrack_New_Product_Application_Training_v1.2.pdf
+.. _`QuickTrack Member Conformance Test Laboratory Setup`: https://www.wi-fi.org/system/files/members/QuickTrack_Member_Conformance_Test_Laboratory_Setup_v1.0.pdf
+.. _`Wi-Fi_CERTIFIED_Derivative_Certifications_Overview`: https://www.wi-fi.org/system/files/Wi-Fi_CERTIFIED_Derivative_Certifications_Overview_v3.3.pdf
 .. _`Platform Intel Ax210 Integration Guide`: https://www.wi-fi.org/file-member/quicktrack-test-tool-platform-intel-ax210-station-integration-guide
 
 .. ### Source: avsystem.com & avsystem.cloud
