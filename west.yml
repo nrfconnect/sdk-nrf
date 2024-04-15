@@ -203,7 +203,7 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: 78c79e7474e499aa4140dffc0e118f4ecd7a0202
+      revision: 3938ec9481a818e0a241fbf198c7d204a4c9a704
       groups:
         - sidewalk
     - name: find-my
