@@ -50,6 +50,11 @@ Working with nRF70 Series
 
 |no_changes_yet_note|
 
+Working with nRF54L Series
+==========================
+
+* Added the :ref:`ug_nrf54l15_gs` page.
+
 Working with nRF52 Series
 =========================
 
@@ -125,7 +130,7 @@ Gazell
 Enhanced ShockBurst (ESB)
 -------------------------
 
-* Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15pdk_nrf54l15` boards.
+* Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
 * Added fast switching between radio states for the nRF54H20 SoC.
 
 nRF IEEE 802.15.4 radio driver
@@ -228,31 +233,31 @@ Bluetooth samples
 
 * :ref:`fast_pair_input_device` sample:
 
-    * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`peripheral_lbs` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`bluetooth_central_hids` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`peripheral_hids_mouse` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`peripheral_hids_keyboard` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`central_and_peripheral_hrs` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`direct_test_mode` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
   * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 Bluetooth Mesh samples
@@ -260,43 +265,43 @@ Bluetooth Mesh samples
 
 * :ref:`bluetooth_mesh_sensor_client` sample:
 
-   * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
-   * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
-   * Updated:
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+  * Updated:
 
-     * Actions of buttons 1 and 2.
-       They are swapped to align with the elements order.
-     * Log messages to be more informative.
+    * Actions of buttons 1 and 2.
+      They are swapped to align with the elements order.
+    * Log messages to be more informative.
 
 * :ref:`bluetooth_ble_peripheral_lbs_coex` sample:
 
-   * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`bt_mesh_chat` sample:
 
-   * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`bluetooth_mesh_light_switch` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`bluetooth_mesh_silvair_enocean` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`bluetooth_mesh_light_dim` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`bluetooth_mesh_light` sample:
 
   * Added:
 
-    * Support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
-    * Support for DFU over Bluetooth Low Energy for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+    * Support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+    * Support for DFU over Bluetooth Low Energy for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`ble_mesh_dfu_target` sample:
 
@@ -426,31 +431,31 @@ NFC samples
 
 * :ref:`record_launch_app` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
   * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 * :ref:`record_text` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
   * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 * :ref:`nfc_shell` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
   * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 * :ref:`nrf-nfc-system-off-sample` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`nfc_tnep_tag` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
   * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 * :ref:`writable_ndef_msg` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
   * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 nRF5340 samples
@@ -470,7 +475,7 @@ Peripheral samples
 
   * Added:
 
-    * Support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+    * Support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
     * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 PMIC samples
@@ -736,7 +741,6 @@ Documentation
 
 * Added:
 
-  * The :ref:`ug_nrf54l` and :ref:`ug_nrf54l15_gs` pages.
   * List of :ref:`debugging_tools` on the :ref:`debugging` page.
 
   * Recommendation for the use of a :file:`VERSION` file for :ref:`ug_fw_update_image_versions_mcuboot` in the :ref:`ug_fw_update_image_versions` user guide.
