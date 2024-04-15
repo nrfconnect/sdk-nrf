@@ -101,12 +101,12 @@ endfunction()
 
 # Convenience macro to add configuration overlays to child image.
 macro(add_overlay_config image overlay_file)
-  add_overlay(${image} ${overlay_file} OVERLAY_CONFIG)
+  add_overlay(${image} ${overlay_file} EXTRA_CONF_FILE)
 endmacro()
 
 # Convenience macro to add device tree overlays to child image.
 macro(add_overlay_dts image overlay_file)
-  add_overlay(${image} ${overlay_file} DTC_OVERLAY_FILE)
+  add_overlay(${image} ${overlay_file} EXTRA_DTC_OVERLAY_FILE)
 endmacro()
 
 # Add a partition manager configuration file to the build.
