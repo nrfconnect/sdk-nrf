@@ -26,6 +26,10 @@ endmacro()
 # Load static configuration if found.
 # Try user defined file first, then file found in configuration directory,
 # finally file from board directory.
+if(SYSBUILD)
+  zephyr_get(PM_STATIC_YML_FILE SYSBUILD GLOBAL)
+endif()
+
 if(DEFINED PM_STATIC_YML_FILE)
   string(CONFIGURE "${PM_STATIC_YML_FILE}" user_def_pm_static)
 endif()
