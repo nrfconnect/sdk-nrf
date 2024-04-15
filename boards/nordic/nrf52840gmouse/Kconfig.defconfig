@@ -6,16 +6,6 @@
 
 if BOARD_NRF52840GMOUSE
 
-if USB
-
-config USB_NRFX
-	def_bool y
-
-config USB_DEVICE_STACK
-	def_bool y
-
-endif # USB
-
 if IEEE802154
 
 config IEEE802154_NRF5
