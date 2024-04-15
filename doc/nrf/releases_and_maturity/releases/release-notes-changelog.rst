@@ -95,7 +95,7 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-|no_changes_yet_note|
+* Fixed ``otPlatCryptoPbkdf2GenerateKey`` API implementation to allow a fallback to legacy MbedTLS implementation instead of returning ``OT_ERROR_NOT_CAPABLE``.
 
 Zigbee
 ------
