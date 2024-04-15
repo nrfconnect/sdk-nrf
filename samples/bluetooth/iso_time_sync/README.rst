@@ -7,27 +7,7 @@ Bluetooth: ISO time synchronization
    :local:
    :depth: 2
 
-Overview
-********
-
 The Bluetooth® isochronous time synchronization sample showcases time-synchronized processing of isochronous data.
-
-The sample demonstrates the following features:
-
- * How to send isochronous data on multiple streams so that the receiving devices and the sending device can process the data at the same time.
- * How the receivers of the isochronous data can process the received data synchronously.
- * How to provide the isochronous data to the controller right before it is sent on-air.
- * How to achieve this for either broadcast (BIS) or over connections (CIS).
-
-This sample configures a single device as a transmitter of its **BUTTON1** state.
-The transmitting and receiving devices toggle **LED1** synchronously with the accuracy of a few microseconds.
-When the :kconfig:option:`LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE` Kconfig option is enabled, **LED2** is toggled upon sending or receiving data.
-This allows you to measure the minimal end-to-end latency.
-
-.. note::
-  This sample requires less hardware resources when it is run on an nRF54L Series device compared to the nRF52 or nRF53 Series devices.
-  On an nRF54L Series device, only one GRTC channel and PPI channel is needed to set up accurate toggling of an LED.
-  On nRF52 and nRF53 Series devices, you also need one RTC peripheral, one TIMER peripheral, one EGU channel, three PPI channels, and one PPI group.
 
 Requirements
 ************
@@ -44,6 +24,54 @@ You can use any combination of the development kits mentioned above, mixing diff
 Additionally, the sample requires a connection to a computer with a serial terminal for each development kit in use.
 
 To observe the toggling of the LEDs, use a logic analyzer or an oscilloscope.
+
+Overview
+********
+
+The sample demonstrates the following features:
+
+ * How to send isochronous data on multiple streams so that the receiving devices and the sending device can process the data at the same time.
+ * How the receivers of the isochronous data can process the received data synchronously.
+ * How to provide the isochronous data to the controller right before it is sent on-air.
+ * How to achieve this for either broadcast (BIS) or over connections (CIS).
+
+This sample configures a single device as a transmitter of its **BUTTON1** state.
+The transmitting and receiving devices toggle **LED1** synchronously with the accuracy of a few microseconds.
+When the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED2** is toggled upon sending or receiving data.
+This allows you to measure the minimal end-to-end latency.
+
+.. note::
+   This sample requires less hardware resources when it is run on an nRF54L Series device compared to the nRF52 or nRF53 Series devices.
+   On an nRF54L Series device, only one GRTC channel and PPI channel is needed to set up accurate toggling of an LED.
+   On nRF52 and nRF53 Series devices, you also need one RTC peripheral, one TIMER peripheral, one EGU channel, three PPI channels, and one PPI group.
+
+Configuration
+*************
+
+|config|
+
+Configuration options
+=====================
+
+Check and configure the following Kconfig options:
+
+.. _CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE:
+
+CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE
+   This configuration option enables immediate toggling of **LED2** when isochronous data is sent or received.
+   It allows for measurement of the minimum end-to-end latency.
+
+.. _CONFIG_SDU_INTERVAL_US:
+
+CONFIG_SDU_INTERVAL_US
+   This configuration option determines how often the button value is transmitted to the receiving devices.
+
+.. _CONFIG_TIMED_LED_PRESENTATION_DELAY_US:
+
+CONFIG_TIMED_LED_PRESENTATION_DELAY_US
+   This configuration option represents the time from the SDU synchronization reference until the value is applied.
+   The application needs to ensure it can process the received SDU within this amount of time.
+   The end-to-end latency will be at least the sum of the configured transport latency and presentation delay.
 
 Isochronous channels
 ********************
@@ -64,7 +92,7 @@ Topology
 SDU interval and size
     The SDU interval specifies how often a service data unit (SDU) is transferred.
     The SDU interval and size as well as the number of streams are limited by the bandwidth of the link layer.
-    In this sample, the SDU interval is configured with the :kconfig:option:`CONFIG_SDU_INTERVAL_US` Kconfig option.
+    In this sample, the SDU interval is configured with the :ref:`CONFIG_SDU_INTERVAL_US <CONFIG_SDU_INTERVAL_US>` Kconfig option.
 
 Maximum transport latency and retransmission count
     Upon setting up an isochronous stream as a central or a broadcaster, the application provides a maximum transport latency and retransmission count.
@@ -75,7 +103,7 @@ Maximum transport latency and retransmission count
 Presentation delay
     The receiver(s) of isochronous data may receive their data at different points in time, but need to render or present it synchronously.
     Presentation delay represents the amount of time that is added to the received timestamp to obtain the presentation time of the data.
-    In this sample, the presentation delay is configured with the :kconfig:option:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US` Kconfig option.
+    In this sample, the presentation delay is configured with the :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` Kconfig option.
 
 For more details about this feature, see `Bluetooth Core Specification Version 5.2 Feature Overview <https://www.bluetooth.com/wp-content/uploads/2020/01/Bluetooth_5.2_Feature_Overview.pdf>`_.
 
@@ -137,9 +165,9 @@ The sample code is divided into multiple source files, which makes it easier to 
 
   When a valid SDU is received, the following operations are performed:
 
-  * If the :kconfig:option:`LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE` Kconfig option is enabled, **LED2** is toggled immediately.
+  * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED2** is toggled immediately.
     You can use this to observe that different receivers may receive the SDU at different points in time.
-  * A timer trigger is configured to toggle **LED1** :kconfig:option:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US` after the received timestamp.
+  * A timer trigger is configured to toggle **LED1** :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` after the received timestamp.
     This ensures that all receivers and the transmitter toggle it at the same time.
 
 ``iso_tx.c``
@@ -154,7 +182,7 @@ The sample code is divided into multiple source files, which makes it easier to 
     The very first SDU is provided without a timestamp, because the timestamp is not known at this point in time.
   * **LED1** is configured to toggle synchronously with the **LED1** on all the receivers.
     The toggle time is determined by the TX timestamp and defined relative to the synchronization reference on the receiver.
-  * If the :kconfig:option:`LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE` Kconfig option is enabled, **LED2** is toggled right before sending the SDU.
+  * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED2** is toggled right before sending the SDU.
     You can use this to observe the end-to-end latency.
 
 ``timed_led_toggle.c``
@@ -209,7 +237,7 @@ After programming the sample to the development kits, perform the following step
    If the central is configured for transmission, it connects to multiple peripherals.
 #. On the other terminal(s), type ``p`` to configure the device(s) as connected isochronous stream peripheral(s).
 #. Select data direction.
-#. Observe that the periphrals(s) connect to the central and start receiving isochronous data.
+#. Observe that the peripheral(s) connect to the central and start receiving isochronous data.
 #. Press **BUTTON1** on the central device.
 #. Observe that **LED1** toggles on both the central and peripheral devices.
 
