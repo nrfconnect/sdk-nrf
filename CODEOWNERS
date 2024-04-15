@@ -103,6 +103,7 @@ Kconfig*                                  @tejlmand
 /include/nfc/                             @anangl @grochu
 /include/sdfw/                            @anhmolt @hakonfam @jonathannilsen
 /include/shell/                           @nordic-krch
+/kernel/                                  @nordicjm
 /lib/bin/                                 @rlubos @lemrey
 /lib/adp536x/                             @nrfconnect/ncs-cia
 /lib/at_cmd_parser/                       @rlubos
