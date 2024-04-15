@@ -15,6 +15,16 @@
 
 #include "derive_key.h"
 
+#if CONFIG_CRACEN_HW_PRESENT
+/* On platforms with Cracen, the HUK is an AES key, suitable for CMAC KDF. */
+#define KDF_ALG	   PSA_ALG_SP800_108_COUNTER_CMAC
+#define INPUT_STEP PSA_KEY_DERIVATION_INPUT_LABEL
+#else
+/* On nrf53 and nRF91 the HUK key is PSA_KEY_TYPE_RAW_DATA, suitable for HKDF. */
+#define KDF_ALG PSA_ALG_HKDF(PSA_ALG_SHA_256)
+#define INPUT_STEP PSA_KEY_DERIVATION_INPUT_INFO
+#endif
+
 LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
 
 psa_status_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
@@ -26,7 +36,7 @@ psa_status_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
 
 	*key_id_out = PSA_KEY_ID_NULL;
 
-	status = psa_key_derivation_setup(&op, PSA_ALG_HKDF(PSA_ALG_SHA_256));
+	status = psa_key_derivation_setup(&op, KDF_ALG);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_key_derivation_setup returned error: %d", status);
 		return status;
@@ -41,9 +51,7 @@ psa_status_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
 	}
 
 	/* Supply the PS key label as an input to the key derivation */
-	status = psa_key_derivation_input_bytes(&op, PSA_KEY_DERIVATION_INPUT_INFO,
-						key_label,
-						key_label_len);
+	status = psa_key_derivation_input_bytes(&op, INPUT_STEP, key_label, key_label_len);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_key_derivation_input_bytes returned error: %d", status);
 		return status;

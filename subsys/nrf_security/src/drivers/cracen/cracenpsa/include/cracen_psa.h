@@ -14,6 +14,7 @@
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
 #include "cracen_psa_kmu.h"
+#include "cracen_psa_key_ids.h"
 #include "sxsymcrypt/keyref.h"
 
 #ifdef __NRF_TFM__
@@ -23,16 +24,6 @@
 /**
  * See "PSA Cryptography API" for documentation.
  */
-
-#define CRACEN_BUILTIN_IDENTITY_KEY_ID ((uint32_t)0x7fffc001)
-#define CRACEN_BUILTIN_MKEK_ID	       ((uint32_t)0x7fffc002)
-#define CRACEN_BUILTIN_MEXT_ID	       ((uint32_t)0x7fffc003)
-
-#define CRACEN_IDENTITY_KEY_SLOT_NUMBER 0
-#define CRACEN_MKEK_SLOT_NUMBER		1
-#define CRACEN_MEXT_SLOT_NUMBER		2
-
-#define PSA_KEY_LOCATION_CRACEN (PSA_KEY_LOCATION_VENDOR_FLAG | ('N' << 8))
 
 psa_status_t cracen_sign_message(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				 size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *input,
