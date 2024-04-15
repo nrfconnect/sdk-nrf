@@ -11,20 +11,6 @@ config HW_STACK_PROTECTION
 
 endif # BOARD_THINGY91
 
-if BOARD_THINGY91_NRF52840
-
-if USB
-
-config USB_NRFX
-	def_bool y
-
-config USB_DEVICE_STACK
-	def_bool y
-
-endif # USB
-
-endif # BOARD_THINGY91_NRF52840
-
 if BOARD_THINGY91_NRF9160 || BOARD_THINGY91_NRF9160_NS
 
 # Enable Zephyr power regulator ADP536x
