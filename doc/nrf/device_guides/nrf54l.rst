@@ -18,6 +18,11 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
        | ``nrf54l15pdk_nrf54l15_cpuapp@0.3.0`` for the PDK revision v0.3.0.
      - --
 
+.. note::
+
+  The v0.2.1 revision of the nRF54L15 PDK has **Button 3** and **Button 4** connected to GPIO port 2 that do not support interrupts.
+  The workaround for this issue is enabled by default with the :kconfig:option:`CONFIG_DK_LIBRARY_BUTTON_NO_ISR` Kconfig option, but it increases the overall power consumption of the system.
+
 .. toctree::
    :maxdepth: 2
    :caption: Subpages:
