@@ -87,17 +87,25 @@ if (${TFM_PARTITION_CRYPTO})
 	tfm_sprt
   )
 
-  if (${CONFIG_HW_UNIQUE_KEY})
-    target_compile_definitions(platform_s PUBLIC
-      CONFIG_HW_UNIQUE_KEY
-      $<$<BOOL:${CONFIG_HW_UNIQUE_KEY_RANDOM}>:CONFIG_HW_UNIQUE_KEY_RANDOM>)
+   if (${CONFIG_HW_UNIQUE_KEY})
+     target_compile_definitions(platform_s PUBLIC
+       CONFIG_HW_UNIQUE_KEY
+       $<$<BOOL:${CONFIG_HW_UNIQUE_KEY_RANDOM}>:CONFIG_HW_UNIQUE_KEY_RANDOM>)
 
-    target_sources(platform_s
-      PRIVATE
-        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key.c
-        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
-    )
-  endif()
+
+       if((NRF_SOC_VARIANT STREQUAL nrf54l15) OR (target STREQUAL nrf54l15))
+          target_sources(platform_crypto_keys
+            PRIVATE
+             ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_cracen.c
+          )
+       else()
+          target_sources(platform_s
+            PRIVATE
+              ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key.c
+              ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
+          )
+       endif()
+   endif()
 
   if (${TFM_PARTITION_INITIAL_ATTESTATION})
     target_sources(platform_s
@@ -187,3 +195,9 @@ endif()
 
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/common
      DESTINATION ${INSTALL_PLATFORM_NS_DIR})
+
+
+if((NRF_SOC_VARIANT STREQUAL nrf54l15) OR (target STREQUAL nrf54l15))
+  file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_key_ids.h
+       DESTINATION ${INSTALL_INTERFACE_INC_DIR})
+endif()

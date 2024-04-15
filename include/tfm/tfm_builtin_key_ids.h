@@ -7,6 +7,16 @@
 #ifndef __TFM_BUILTIN_KEY_IDS_H__
 #define __TFM_BUILTIN_KEY_IDS_H__
 
+#ifdef CONFIG_PSA_CRYPTO_DRIVER_CRACEN
+
+#include <cracen_psa_key_ids.h>
+#define TFM_BUILTIN_KEY_LOADER_KEY_LOCATION PSA_KEY_LOCATION_CRACEN
+enum tfm_builtin_key_id_t {
+	TFM_BUILTIN_KEY_ID_HUK = CRACEN_BUILTIN_MKEK_ID,
+	TFM_BUILTIN_KEY_ID_IAK = CRACEN_BUILTIN_IDENTITY_KEY_ID,
+};
+
+#else
 /**
  * \brief The PSA driver location for TF-M builtin keys. Arbitrary within the
  * ranges documented at
@@ -29,5 +39,6 @@ enum tfm_builtin_key_id_t {
 	/* Platform specific keys here */
 	TFM_BUILTIN_KEY_ID_MAX = 0x7FFF817Bu,
 };
+#endif /* CONFIG_PSA_CRYPTO_DRIVER_CRACEN */
 
 #endif /* __TFM_BUILTIN_KEY_IDS_H__ */

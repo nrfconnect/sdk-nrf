@@ -71,7 +71,7 @@ static psa_status_t get_encryption_key(const uint8_t *context, uint8_t *key)
 	psa_status_t status;
 	psa_key_attributes_t mkek_attr = PSA_KEY_ATTRIBUTES_INIT;
 
-	psa_set_key_id(&mkek_attr, CRACEN_BUILTIN_MKEK_ID);
+	psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(0, CRACEN_BUILTIN_MKEK_ID));
 	psa_set_key_lifetime(&mkek_attr,
 			     PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 				     PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN));
@@ -347,7 +347,8 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 	memset(metadata, 0, sizeof(*metadata));
 	metadata->metadata_version = 0;
 
-	metadata->key_usage_scheme = CRACEN_PSA_GET_KEY_USAGE_SCHEME(psa_get_key_id(key_attr));
+	metadata->key_usage_scheme = CRACEN_PSA_GET_KEY_USAGE_SCHEME(
+		MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(key_attr)));
 
 	switch (metadata->key_usage_scheme) {
 	case KMU_METADATA_SCHEME_PROTECTED:
@@ -462,7 +463,8 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	metadata->key_usage_scheme = CRACEN_PSA_GET_KEY_USAGE_SCHEME(psa_get_key_id(key_attr));
+	metadata->key_usage_scheme = CRACEN_PSA_GET_KEY_USAGE_SCHEME(
+		MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(key_attr)));
 
 	if (metadata->key_usage_scheme == KMU_METADATA_SCHEME_PROTECTED) {
 		if (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_EXPORT) {

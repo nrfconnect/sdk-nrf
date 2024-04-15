@@ -17,9 +17,9 @@ int hw_unique_key_derive_key(enum hw_unique_key_slot key_slot, const uint8_t *co
 	psa_status_t status;
 
 	if (key_slot == HUK_KEYSLOT_MKEK) {
-		psa_set_key_id(&mkek_attr, CRACEN_BUILTIN_MKEK_ID);
+		psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(0, CRACEN_BUILTIN_MKEK_ID));
 	} else if (key_slot == HUK_KEYSLOT_MEXT) {
-		psa_set_key_id(&mkek_attr, CRACEN_BUILTIN_MEXT_ID);
+		psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(0, CRACEN_BUILTIN_MEXT_ID));
 	} else {
 		return -HW_UNIQUE_KEY_ERR_MISSING;
 	}
@@ -66,7 +66,7 @@ bool hw_unique_key_are_any_written(void)
 
 	psa_key_lifetime_t lifetime;
 	psa_drv_slot_number_t slot_number;
-	psa_key_id_t key_id = mbedtls_svc_key_id_make(
+	mbedtls_svc_key_id_t key_id = mbedtls_svc_key_id_make(
 		0, PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_SEED, 0));
 	return cracen_kmu_get_key_slot(key_id, &lifetime, &slot_number) == PSA_SUCCESS;
 }
