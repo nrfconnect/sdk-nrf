@@ -1,15 +1,15 @@
-.. _wifi_provisioning:
+.. _ble_wifi_provision:
 
-Wi-Fi: Provisioning Service
-###########################
+BLE Wi-Fi Provision sample
+##########################
 
 .. contents::
    :local:
    :depth: 2
 
-The Provisioning Service sample demonstrates how to provision a Wi-Fi® device over a Bluetooth® Low Energy link.
+This sample demonstrates how to provision a Wi-Fi® device over a Bluetooth® Low Energy link.
 
-.. _wifi_provisioning_app:
+.. _ble_wifi_provision_app:
 
 Requirements
 ************
@@ -46,7 +46,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/provisioning/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/provisioning/ble/Kconfig`):
 
 .. _CONFIG_WIFI_PROV_ADV_DATA_UPDATE:
 
@@ -97,7 +97,7 @@ If the device is not provisioned, the interval is 100 ms. If it is provisioned, 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/provisioning`
+.. |sample path| replace:: :file:`samples/wifi/provisioning/ble`
 
 .. include:: /includes/build_and_run.txt
 
