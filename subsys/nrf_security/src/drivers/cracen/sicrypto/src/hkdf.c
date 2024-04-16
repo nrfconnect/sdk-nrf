@@ -3,7 +3,6 @@
  * Based on RFC 5869 "HMAC-based Extract-and-Expand Key Derivation
  * Function (HKDF)" and https://en.wikipedia.org/wiki/HKDF.
  *
- * Copyright (c) 2020-2021 Silex Insight
  * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause

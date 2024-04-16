@@ -1,7 +1,6 @@
 /* Generation of a random number in the range from 1 to a given n (excluded).
  * Based on FIPS 186-4 (sections B.1.2, B.2.2, B.4.2 and B.5.2).
  *
- * Copyright (c) 2020-2021 Silex Insight
  * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause

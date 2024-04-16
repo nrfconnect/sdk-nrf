@@ -1,7 +1,6 @@
 /** MAC common defines and structures.
  *
  * @file
- * @copyright Copyright (c) 2020 Silex Insight
  * @copyright Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause

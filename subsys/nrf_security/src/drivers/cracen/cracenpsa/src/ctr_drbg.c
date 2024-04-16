@@ -1,4 +1,4 @@
-/** PSA cryptographic message random driver for Silex Insight offload hardware.
+/**
  *
  * @file
  *

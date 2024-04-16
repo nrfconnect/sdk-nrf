@@ -1,6 +1,5 @@
 /** Cryptomaster DMA (descriptors and control) and hardware detection
  *
- * Copyright (c) 2019-2020 Silex Insight
  * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause

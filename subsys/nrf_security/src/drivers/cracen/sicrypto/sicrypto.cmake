@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# Silex High-level Crypto API library
+# High-level Crypto API library
 list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/coprime_check.c
   ${CMAKE_CURRENT_LIST_DIR}/src/drbgctr.c

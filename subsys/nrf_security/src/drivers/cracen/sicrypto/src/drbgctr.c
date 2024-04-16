@@ -1,6 +1,5 @@
 /* DRBG AES CTR without derivation function, based on NIST SP 800-90A Rev. 1.
  *
- * Copyright (c) 2020-2021 Silex Insight
  * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause

@@ -95,7 +95,7 @@ psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
 					 const sx_pk_affine_point *in_pnt);
 
 /**
- * \brief Tries to extract a Silex RSA key from ASN.1.
+ * \brief Tries to extract an RSA key from ASN.1.
  *
  * \param[out] rsa                 Resulting RSA key.
  * \param[in]  extract_pubkey      true to extract public key. false to extract private key.
