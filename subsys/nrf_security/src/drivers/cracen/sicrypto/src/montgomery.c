@@ -1,5 +1,4 @@
 /*
- *  Copyright (c) 2020-2021 Silex Insight
  *  Copyright (c) 2024 Nordic Semiconductor ASA
  *
  *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause

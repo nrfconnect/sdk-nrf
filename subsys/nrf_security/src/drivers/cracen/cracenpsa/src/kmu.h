@@ -52,7 +52,7 @@ extern uint8_t kmu_push_area[64];
  * @brief Callback function that prepares a key for usage by Cracen.
  *
  * @param[in] user_data
- * @return Silex status code.
+ * @return sxsymcrypt status code.
  */
 int cracen_kmu_prepare_key(const uint8_t *user_data);
 
@@ -60,7 +60,7 @@ int cracen_kmu_prepare_key(const uint8_t *user_data);
  * @brief Callback function that clears transient buffers related to key handling.
  *
  * @param[in] user_data
- * @return Silex status code.
+ * @return sxsymcrypt status code.
  */
 int cracen_kmu_clean_key(const uint8_t *user_data);
 

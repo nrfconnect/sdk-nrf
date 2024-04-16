@@ -3,8 +3,6 @@
  * @file
  */
 /*
- * Copyright (c) 2018-2021 Silex Insight sa
- * Copyright (c) 2014-2021 Beerten Engineering scs
  * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -276,7 +274,7 @@ const char **sx_pk_get_output_ops(sx_pk_req *req);
 void sx_pk_release_req(sx_pk_req *req);
 
 /**
- * @brief Clear interrupt for Silex PK Engine.
+ * @brief Clear interrupt for Cracen PK Engine.
  *
  * @param[in,out] req The acceleration request obtained
  */

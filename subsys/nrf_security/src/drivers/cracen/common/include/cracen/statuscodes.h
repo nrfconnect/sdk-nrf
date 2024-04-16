@@ -1,7 +1,5 @@
 /*
  * Copyright (c) 2023 Nordic Semiconductor ASA
- * Copyright (c) 2018-2020 Silex Insight sa
- * Copyright (c) 2018-2020 Beerten Engineering scs
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */

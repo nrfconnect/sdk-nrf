@@ -6,7 +6,6 @@
  * The current implementation of HMAC does not support context-saving.
  *
  * @file
- * @copyright Copyright (c) 2019-2021 Silex Insight
  * @copyright Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause

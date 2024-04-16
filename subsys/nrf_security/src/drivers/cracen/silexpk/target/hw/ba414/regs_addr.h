@@ -1,10 +1,6 @@
 /**
  * \brief BA414ep hardware register addresses
- * \file
- */
-/*
- * Copyright (c) 2018-2020 Silex Insight sa
- * Copyright (c) 2014-2020 Beerten Engineering scs
+ *
  * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause

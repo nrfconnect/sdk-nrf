@@ -2,7 +2,6 @@
  * Based on FIPS 186-4, section B.4.2 "Key Pair Generation by Testing
  * Candidates".
  *
- * Copyright (c) 2020-2021 Silex Insight
  * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause

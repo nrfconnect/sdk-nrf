@@ -36,7 +36,7 @@
 #define CRACEN_MAX_AEAD_KEY_SIZE   (32u)
 
 /*
- * The Silex driver only supports a key size of exactly 32 bytes for
+ * The low level driver only supports a key size of exactly 32 bytes for
  * CHACHA20 (and for CHACHAPOLY for that sake).
  */
 #define CRACEN_MAX_CHACHA20_KEY_SIZE (32u)
