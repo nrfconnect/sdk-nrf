@@ -365,6 +365,17 @@ static int wpas_add_and_config_network(struct wpa_supplicant *wpa_s,
 				_wpa_cli_cmd_v("set_network %d proto WPA",
 					resp.network_id);
 			}
+		} else if (params->security == WIFI_SECURITY_TYPE_WPA_AUTO_PERSONAL) {
+			if (params->sae_password) {
+				_wpa_cli_cmd_v("set_network %d sae_password \"%s\"",
+						resp.network_id, params->sae_password);
+			}
+			_wpa_cli_cmd_v("set_network %d psk \"%s\"",
+					resp.network_id, params->psk);
+			_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK WPA-PSK-SHA256 SAE",
+					resp.network_id);
+			_wpa_cli_cmd_v("set_network %d proto WPA RSN",
+						resp.network_id);
 		} else {
 			ret = -1;
 			wpa_printf(MSG_ERROR, "Unsupported security type: %d",
