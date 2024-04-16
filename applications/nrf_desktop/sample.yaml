@@ -8,7 +8,7 @@ tests:
       nrf52dmouse_nrf52832 nrf52kbd_nrf52832 nrf52810dmouse_nrf52810 nrf52820dongle_nrf52820
       nrf52833dk_nrf52820 nrf52833dk_nrf52833 nrf52833dongle_nrf52833 nrf52840dk_nrf52840
       nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840 nrf5340dk_nrf5340_cpuapp
-      nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     integration_platforms:
       - nrf52dmouse_nrf52832
       - nrf52kbd_nrf52832
@@ -22,6 +22,7 @@ tests:
       - nrf52840gmouse_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     tags: bluetooth ci_build
   applications.nrf_desktop.zdebug_wwcb:
     build_only: true
@@ -94,9 +95,11 @@ tests:
   applications.nrf_desktop.zdebug_keyboard:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     tags: bluetooth ci_build
     extra_args: CONF_FILE=prj_keyboard.conf
   applications.nrf_desktop.zdebug_nrf21540ek:
@@ -124,7 +127,7 @@ tests:
       nrf52dmouse_nrf52832 nrf52kbd_nrf52832 nrf52810dmouse_nrf52810 nrf52820dongle_nrf52820
       nrf52833dk_nrf52820 nrf52833dk_nrf52833 nrf52833dongle_nrf52833 nrf52840dk_nrf52840
       nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840 nrf5340dk_nrf5340_cpuapp
-      nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     integration_platforms:
       - nrf52dmouse_nrf52832
       - nrf52kbd_nrf52832
@@ -138,6 +141,7 @@ tests:
       - nrf52840gmouse_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     tags: bluetooth ci_build
     extra_args: CONF_FILE=prj_release.conf
   applications.nrf_desktop.zrelease_fast_pair.keyboard:
