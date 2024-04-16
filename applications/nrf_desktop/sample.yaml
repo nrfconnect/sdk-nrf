@@ -244,3 +244,20 @@ tests:
       - nrf52840dongle/nrf52840
     tags: bluetooth ci_build sysbuild
     extra_args: FILE_SUFFIX=release_4llpmconn
+  applications.nrf_desktop.zdebug_nrf54h20:
+    build_only: true
+    sysbuild: true
+    platform_allow: >
+      nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags: bluetooth ci_build sysbuild
+  applications.nrf_desktop.zrelease_nrf54h20:
+    build_only: true
+    sysbuild: true
+    platform_allow: >
+      nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags: bluetooth ci_build sysbuild
+    extra_args: FILE_SUFFIX=release
