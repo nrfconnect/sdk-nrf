@@ -19,6 +19,9 @@ install(FILES       ${Trusted\ Firmware\ M_SOURCE_DIR}/platform/ext/target/nordi
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}/common/nrf9120)
 
 install(FILES       config.cmake
+        DESTINATION ${INSTALL_PLATFORM_NS_DIR})
+
+install(FILES       ../common/config.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}/../common/)
 
 install(DIRECTORY   ${Trusted\ Firmware\ M_SOURCE_DIR}/platform/ext/target/nordic_nrf/nrf9161dk_nrf9161/tests
