@@ -58,6 +58,7 @@ NRF = [
     ("app_dev/pin_control/index", "device_guides/pin_control"),
     ("ug_unity_testing", "test_and_optimize/testing_unity_cmock"),
     ("app_dev/testing_unity_cmock/index", "test_and_optimize/testing_unity_cmock"),
+    ("test_and_optimize/testing_unity_cmock", "test_and_optimize/test_framework/testing_unity_cmock"),
     ("ug_tfm", "security/tfm"),
     ("app_dev/tfm/index", "security/tfm"),
     ("app_build_system", "config_and_build/config_and_build_system"),
