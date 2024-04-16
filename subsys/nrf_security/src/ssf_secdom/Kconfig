@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config PSA_SSF_CRYPTO_CLIENT
+	bool
+	prompt "PSA crypto provided through SSF"
+	default y
+	depends on SSF_CLIENT && SSF_PSA_CRYPTO_SERVICE_ENABLED
