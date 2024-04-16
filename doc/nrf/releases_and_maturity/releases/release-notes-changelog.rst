@@ -750,8 +750,8 @@ Documentation
 
 * Added:
 
+  * The :ref:`test_framework` section for gathering information about unit tests.
   * List of :ref:`debugging_tools` on the :ref:`debugging` page.
-
   * Recommendation for the use of a :file:`VERSION` file for :ref:`ug_fw_update_image_versions_mcuboot` in the :ref:`ug_fw_update_image_versions` user guide.
   * The :ref:`ug_coremark` page.
 
