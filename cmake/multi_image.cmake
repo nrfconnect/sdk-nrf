@@ -341,7 +341,13 @@ function(add_child_image_from_source)
       # Check for configuration fragment. The contents of these are appended
       # to the project configuration, as opposed to the CONF_FILE which is used
       # as the base configuration.
-      if(NOT "${CONF_FILE_BUILD_TYPE}" STREQUAL "")
+      if(DEFINED ${ACI_NAME}_FILE_SUFFIX)
+        # Child/parent image does not support a prefix for the main application, therefore only
+        # use child image configuration with suffixes if specifically commanded with an argument
+        # targeting this child image
+        set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}.conf)
+        zephyr_file_suffix(child_image_conf_fragment SUFFIX ${${ACI_NAME}_FILE_SUFFIX})
+      elseif(NOT "${CONF_FILE_BUILD_TYPE}" STREQUAL "")
         set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}_${CONF_FILE_BUILD_TYPE}.conf)
       else()
         set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}.conf)
