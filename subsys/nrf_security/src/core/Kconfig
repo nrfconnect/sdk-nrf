@@ -6,10 +6,15 @@
 
 choice PSA_CORE
 	prompt "PSA Core implementation"
-	default PSA_CORE_OBERON
+
+config PSA_CORE_DISABLED
+	bool
+	prompt "PSA core-less for SSF crypto client support"
+	depends on SSF_CLIENT && SSF_PSA_CRYPTO_SERVICE_ENABLED
 
 config PSA_CORE_OBERON
-	bool "PSA Core implementation - Oberon"
+	bool
+	prompt "PSA Core implementation - Oberon"
 	select PSA_WANT_AES_KEY_SIZE_128
 	select PSA_WANT_AES_KEY_SIZE_192
 	select PSA_WANT_AES_KEY_SIZE_256

@@ -110,6 +110,10 @@ add_library(${mbedcrypto_target}
     ${src_crypto}
 )
 
+if(CONFIG_PSA_SSF_CRYPTO_CLIENT)
+  add_subdirectory(ssf_secdom)
+endif()
+
 nrf_security_add_zephyr_options(${mbedcrypto_target})
 
 # Base mbed TLS files (not in drivers or builtin's)

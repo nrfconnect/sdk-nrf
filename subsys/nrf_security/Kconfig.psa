@@ -25,6 +25,8 @@ config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 
 rsource "src/core/Kconfig"
 
+rsource "src/ssf_secdom/Kconfig"
+
 comment "PSA Driver Support"
 
 config MBEDTLS_PSA_CRYPTO_DRIVERS
@@ -58,7 +60,7 @@ config MBEDTLS_PSA_CRYPTO_STORAGE_C
 
 config MBEDTLS_USE_PSA_CRYPTO
 	bool "PSA APIs for X.509 and TLS library"
-	default y
+	default y if !MBEDTLS_LEGACY_CRYPTO_C
 	help
 	  Corresponds to MBEDTLS_USE_PSA_CRYPTO setting in mbed TLS config file.
 

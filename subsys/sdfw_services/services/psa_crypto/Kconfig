@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+service_name = PSA_CRYPTO
+service_default_enabled = n
+service_id = 0x71
+service_version = 1
+service_buffer_size = 64
+service_name_str = PSA Crypto
+rsource "../Kconfig.template.service"

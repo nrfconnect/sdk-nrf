@@ -1,0 +1,785 @@
+;
+; Copyright (c) 2024 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+
+
+psa_crypto_init_req = (
+    10,
+)
+
+
+psa_get_key_attributes_req = (
+    11,
+    key: uint,
+    p_attributes: uint,
+)
+
+
+psa_reset_key_attributes_req = (
+    12,
+    p_attributes: uint,
+)
+
+
+psa_purge_key_req = (
+    13,
+    key: uint,
+)
+
+
+psa_copy_key_req = (
+    14,
+    source_key: uint,
+    p_attributes: uint,
+    p_target_key: uint,
+)
+
+
+psa_destroy_key_req = (
+    15,
+    key: uint,
+)
+
+
+psa_import_key_req = (
+    16,
+    p_attributes: uint,
+    p_data: uint,
+    data_length: uint,
+    p_key: uint,
+)
+
+
+psa_export_key_req = (
+    17,
+    key: uint,
+    p_data: uint,
+    data_size: uint,
+    p_data_length: uint,
+)
+
+
+psa_export_public_key_req = (
+    18,
+    key: uint,
+    p_data: uint,
+    data_size: uint,
+    p_data_length: uint,
+)
+
+
+psa_hash_compute_req = (
+    19,
+    alg: uint,
+    p_input: uint,
+    input_length: uint,
+    p_hash: uint,
+    hash_size: uint,
+    p_hash_length: uint,
+)
+
+
+psa_hash_compare_req = (
+    20,
+    alg: uint,
+    p_input: uint,
+    input_length: uint,
+    p_hash: uint,
+    hash_length: uint,
+)
+
+
+psa_hash_setup_req = (
+    21,
+    p_handle: uint,
+    alg: uint,
+)
+
+
+psa_hash_update_req = (
+    22,
+    p_handle: uint,
+    p_input: uint,
+    input_length: uint,
+)
+
+
+psa_hash_finish_req = (
+    23,
+    p_handle: uint,
+    p_hash: uint,
+    hash_size: uint,
+    p_hash_length: uint,
+)
+
+
+psa_hash_verify_req = (
+    24,
+    p_handle: uint,
+    p_hash: uint,
+    hash_length: uint,
+)
+
+
+psa_hash_abort_req = (
+    25,
+    p_handle: uint,
+)
+
+
+psa_hash_clone_req = (
+    26,
+    handle: uint,
+    p_handle: uint,
+)
+
+
+psa_mac_compute_req = (
+    27,
+    key: uint,
+    alg: uint,
+    p_input: uint,
+    input_length: uint,
+    p_mac: uint,
+    mac_size: uint,
+    p_mac_length: uint,
+)
+
+
+psa_mac_verify_req = (
+    28,
+    key: uint,
+    alg: uint,
+    p_input: uint,
+    input_length: uint,
+    p_mac: uint,
+    mac_length: uint,
+)
+
+
+psa_mac_sign_setup_req = (
+    29,
+    p_handle: uint,
+    key: uint,
+    alg: uint,
+)
+
+
+psa_mac_verify_setup_req = (
+    30,
+    p_handle: uint,
+    key: uint,
+    alg: uint,
+)
+
+
+psa_mac_update_req = (
+    31,
+    p_handle: uint,
+    p_input: uint,
+    input_length: uint,
+)
+
+
+psa_mac_sign_finish_req = (
+    32,
+    p_handle: uint,
+    p_mac: uint,
+    mac_size: uint,
+    p_mac_length: uint,
+)
+
+
+psa_mac_verify_finish_req = (
+    33,
+    p_handle: uint,
+    p_mac: uint,
+    mac_length: uint,
+)
+
+
+psa_mac_abort_req = (
+    34,
+    p_handle: uint,
+)
+
+
+psa_cipher_encrypt_req = (
+    35,
+    key: uint,
+    alg: uint,
+    p_input: uint,
+    input_length: uint,
+    p_output: uint,
+    output_size: uint,
+    p_output_length: uint,
+)
+
+
+psa_cipher_decrypt_req = (
+    36,
+    key: uint,
+    alg: uint,
+    p_input: uint,
+    input_length: uint,
+    p_output: uint,
+    output_size: uint,
+    p_output_length: uint,
+)
+
+
+psa_cipher_encrypt_setup_req = (
+    37,
+    p_handle: uint,
+    key: uint,
+    alg: uint,
+)
+
+
+psa_cipher_decrypt_setup_req = (
+    38,
+    p_handle: uint,
+    key: uint,
+    alg: uint,
+)
+
+
+psa_cipher_generate_iv_req = (
+    39,
+    p_handle: uint,
+    p_iv: uint,
+    iv_size: uint,
+    p_iv_length: uint,
+)
+
+
+psa_cipher_set_iv_req = (
+    40,
+    p_handle: uint,
+    p_iv: uint,
+    iv_length: uint,
+)
+
+
+psa_cipher_update_req = (
+    41,
+    p_handle: uint,
+    p_input: uint,
+    input_length: uint,
+    p_output: uint,
+    output_size: uint,
+    p_output_length: uint,
+)
+
+
+psa_cipher_finish_req = (
+    42,
+    p_handle: uint,
+    p_output: uint,
+    output_size: uint,
+    p_output_length: uint,
+)
+
+
+psa_cipher_abort_req = (
+    43,
+    p_handle: uint,
+)
+
+
+psa_aead_encrypt_req = (
+    44,
+    key: uint,
+    alg: uint,
+    p_nonce: uint,
+    nonce_length: uint,
+    p_additional_data: uint,
+    additional_data_length: uint,
+    p_plaintext: uint,
+    plaintext_length: uint,
+    p_ciphertext: uint,
+    ciphertext_size: uint,
+    p_ciphertext_length: uint,
+)
+
+
+psa_aead_decrypt_req = (
+    45,
+    key: uint,
+    alg: uint,
+    p_nonce: uint,
+    nonce_length: uint,
+    p_additional_data: uint,
+    additional_data_length: uint,
+    p_ciphertext: uint,
+    ciphertext_length: uint,
+    p_plaintext: uint,
+    plaintext_size: uint,
+    p_plaintext_length: uint,
+)
+
+
+psa_aead_encrypt_setup_req = (
+    46,
+    p_handle: uint,
+    key: uint,
+    alg: uint,
+)
+
+
+psa_aead_decrypt_setup_req = (
+    47,
+    p_handle: uint,
+    key: uint,
+    alg: uint,
+)
+
+
+psa_aead_generate_nonce_req = (
+    48,
+    p_handle: uint,
+    p_nonce: uint,
+    nonce_size: uint,
+    p_nonce_length: uint,
+)
+
+
+psa_aead_set_nonce_req = (
+    49,
+    p_handle: uint,
+    p_nonce: uint,
+    nonce_length: uint,
+)
+
+
+psa_aead_set_lengths_req = (
+    50,
+    p_handle: uint,
+    ad_length: uint,
+    plaintext_length: uint,
+)
+
+
+psa_aead_update_ad_req = (
+    51,
+    p_handle: uint,
+    p_input: uint,
+    input_length: uint,
+)
+
+
+psa_aead_update_req = (
+    52,
+    p_handle: uint,
+    p_input: uint,
+    input_length: uint,
+    p_output: uint,
+    output_size: uint,
+    p_output_length: uint,
+)
+
+
+psa_aead_finish_req = (
+    53,
+    p_handle: uint,
+    p_ciphertext: uint,
+    ciphertext_size: uint,
+    p_ciphertext_length: uint,
+    p_tag: uint,
+    tag_size: uint,
+    p_tag_length: uint,
+)
+
+
+psa_aead_verify_req = (
+    54,
+    p_handle: uint,
+    p_plaintext: uint,
+    plaintext_size: uint,
+    p_plaintext_length: uint,
+    p_tag: uint,
+    tag_length: uint,
+)
+
+
+psa_aead_abort_req = (
+    55,
+    p_handle: uint,
+)
+
+
+psa_sign_message_req = (
+    56,
+    key: uint,
+    alg: uint,
+    p_input: uint,
+    input_length: uint,
+    p_signature: uint,
+    signature_size: uint,
+    p_signature_length: uint,
+)
+
+
+psa_verify_message_req = (
+    57,
+    key: uint,
+    alg: uint,
+    p_input: uint,
+    input_length: uint,
+    p_signature: uint,
+    signature_length: uint,
+)
+
+
+psa_sign_hash_req = (
+    58,
+    key: uint,
+    alg: uint,
+    p_hash: uint,
+    hash_length: uint,
+    p_signature: uint,
+    signature_size: uint,
+    p_signature_length: uint,
+)
+
+
+psa_verify_hash_req = (
+    59,
+    key: uint,
+    alg: uint,
+    p_hash: uint,
+    hash_length: uint,
+    p_signature: uint,
+    signature_length: uint,
+)
+
+
+psa_asymmetric_encrypt_req = (
+    60,
+    key: uint,
+    alg: uint,
+    p_input: uint,
+    input_length: uint,
+    p_salt: uint,
+    salt_length: uint,
+    p_output: uint,
+    output_size: uint,
+    p_output_length: uint,
+)
+
+
+psa_asymmetric_decrypt_req = (
+    61,
+    key: uint,
+    alg: uint,
+    p_input: uint,
+    input_length: uint,
+    p_salt: uint,
+    salt_length: uint,
+    p_output: uint,
+    output_size: uint,
+    p_output_length: uint,
+)
+
+
+psa_key_derivation_setup_req = (
+    62,
+    p_handle: uint,
+    alg: uint,
+)
+
+
+psa_key_derivation_get_capacity_req = (
+    63,
+    handle: uint,
+    p_capacity: uint,
+)
+
+
+psa_key_derivation_set_capacity_req = (
+    64,
+    p_handle: uint,
+    capacity: uint,
+)
+
+
+psa_key_derivation_input_bytes_req = (
+    65,
+    p_handle: uint,
+    step: uint,
+    p_data: uint,
+    data_length: uint,
+)
+
+
+psa_key_derivation_input_integer_req = (
+    66,
+    p_handle: uint,
+    step: uint,
+    value: uint,
+)
+
+
+psa_key_derivation_input_key_req = (
+    67,
+    p_handle: uint,
+    step: uint,
+    key: uint,
+)
+
+
+psa_key_derivation_key_agreement_req = (
+    68,
+    p_handle: uint,
+    step: uint,
+    private_key: uint,
+    p_peer_key: uint,
+    peer_key_length: uint,
+)
+
+
+psa_key_derivation_output_bytes_req = (
+    69,
+    p_handle: uint,
+    p_output: uint,
+    output_length: uint,
+)
+
+
+psa_key_derivation_output_key_req = (
+    70,
+    p_attributes: uint,
+    p_handle: uint,
+    p_key: uint,
+)
+
+
+psa_key_derivation_abort_req = (
+    71,
+    p_handle: uint,
+)
+
+
+psa_raw_key_agreement_req = (
+    72,
+    alg: uint,
+    private_key: uint,
+    p_peer_key: uint,
+    peer_key_length: uint,
+    p_output: uint,
+    output_size: uint,
+    p_output_length: uint,
+)
+
+
+psa_generate_random_req = (
+    73,
+    p_output: uint,
+    output_size: uint,
+)
+
+
+psa_generate_key_req = (
+    74,
+    p_attributes: uint,
+    p_key: uint,
+)
+
+
+psa_sign_hash_start_req = (
+    75,
+    p_operation: uint,
+    key: uint,
+    alg: uint,
+    p_hash: uint,
+    hash_length: uint,
+)
+
+
+psa_sign_hash_abort_req = (
+    76,
+    p_operation: uint,
+)
+
+
+psa_verify_hash_start_req = (
+    77,
+    p_operation: uint,
+    key: uint,
+    alg: uint,
+    p_hash: uint,
+    hash_length: uint,
+    p_signature: uint,
+    signature_length: uint,
+)
+
+
+psa_verify_hash_abort_req = (
+    78,
+    p_operation: uint,
+)
+
+
+psa_pake_setup_req = (
+    79,
+    p_handle: uint,
+    password_key: uint,
+    p_cipher_suite: uint,
+)
+
+
+psa_pake_set_role_req = (
+    80,
+    p_handle: uint,
+    role: uint,
+)
+
+
+psa_pake_set_user_req = (
+    81,
+    p_handle: uint,
+    p_user_id: uint,
+    user_id_len: uint,
+)
+
+
+psa_pake_set_peer_req = (
+    82,
+    p_handle: uint,
+    p_peer_id: uint,
+    peer_id_len: uint,
+)
+
+
+psa_pake_set_context_req = (
+    83,
+    p_handle: uint,
+    p_context: uint,
+    context_len: uint,
+)
+
+
+psa_pake_output_req = (
+    84,
+    p_handle: uint,
+    step: uint,
+    p_output: uint,
+    output_size: uint,
+    p_output_length: uint,
+)
+
+
+psa_pake_input_req = (
+    85,
+    p_handle: uint,
+    step: uint,
+    p_input: uint,
+    input_length: uint,
+)
+
+
+psa_pake_get_shared_key_req = (
+    86,
+    p_handle: uint,
+    p_attributes: uint,
+    p_key: uint,
+)
+
+
+psa_pake_abort_req = (
+    87,
+    p_handle: uint,
+)
+
+
+psa_crypto_req = [
+	; Union of different requests
+	msg: (
+        psa_crypto_init_req /
+        psa_get_key_attributes_req /
+        psa_reset_key_attributes_req /
+        psa_purge_key_req /
+        psa_copy_key_req /
+        psa_destroy_key_req /
+        psa_import_key_req /
+        psa_export_key_req /
+        psa_export_public_key_req /
+        psa_hash_compute_req /
+        psa_hash_compare_req /
+        psa_hash_setup_req /
+        psa_hash_update_req /
+        psa_hash_finish_req /
+        psa_hash_verify_req /
+        psa_hash_abort_req /
+        psa_hash_clone_req /
+        psa_mac_compute_req /
+        psa_mac_verify_req /
+        psa_mac_sign_setup_req /
+        psa_mac_verify_setup_req /
+        psa_mac_update_req /
+        psa_mac_sign_finish_req /
+        psa_mac_verify_finish_req /
+        psa_mac_abort_req /
+        psa_cipher_encrypt_req /
+        psa_cipher_decrypt_req /
+        psa_cipher_encrypt_setup_req /
+        psa_cipher_decrypt_setup_req /
+        psa_cipher_generate_iv_req /
+        psa_cipher_set_iv_req /
+        psa_cipher_update_req /
+        psa_cipher_finish_req /
+        psa_cipher_abort_req /
+        psa_aead_encrypt_req /
+        psa_aead_decrypt_req /
+        psa_aead_encrypt_setup_req /
+        psa_aead_decrypt_setup_req /
+        psa_aead_generate_nonce_req /
+        psa_aead_set_nonce_req /
+        psa_aead_set_lengths_req /
+        psa_aead_update_ad_req /
+        psa_aead_update_req /
+        psa_aead_finish_req /
+        psa_aead_verify_req /
+        psa_aead_abort_req /
+        psa_sign_message_req /
+        psa_verify_message_req /
+        psa_sign_hash_req /
+        psa_verify_hash_req /
+        psa_asymmetric_encrypt_req /
+        psa_asymmetric_decrypt_req /
+        psa_key_derivation_setup_req /
+        psa_key_derivation_get_capacity_req /
+        psa_key_derivation_set_capacity_req /
+        psa_key_derivation_input_bytes_req /
+        psa_key_derivation_input_integer_req /
+        psa_key_derivation_input_key_req /
+        psa_key_derivation_key_agreement_req /
+        psa_key_derivation_output_bytes_req /
+        psa_key_derivation_output_key_req /
+        psa_key_derivation_abort_req /
+        psa_raw_key_agreement_req /
+        psa_generate_random_req /
+        psa_generate_key_req /
+        psa_sign_hash_start_req /
+        psa_sign_hash_abort_req /
+        psa_verify_hash_start_req /
+        psa_verify_hash_abort_req /
+        psa_pake_setup_req /
+        psa_pake_set_role_req /
+        psa_pake_set_user_req /
+        psa_pake_set_peer_req /
+        psa_pake_set_context_req /
+        psa_pake_output_req /
+        psa_pake_input_req /
+        psa_pake_get_shared_key_req /
+        psa_pake_abort_req
+	),
+]
+
+psa_crypto_rsp = [
+    id: uint,
+    status: int
+]
