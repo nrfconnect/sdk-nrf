@@ -9,8 +9,9 @@ tests:
       - nrf52840dk_nrf52840
       - nrf21540dk_nrf52840
       - nrf5340dk_nrf5340_cpunet
+      - nrf54l15pdk_nrf54l15_cpuapp
     platform_allow: nrf52833dk_nrf52833 nrf52840dk_nrf52840 nrf21540dk_nrf52840
-      nrf5340dk_nrf5340_cpunet
+      nrf5340dk_nrf5340_cpunet nrf54l15pdk_nrf54l15_cpuapp
     tags: ci_build ci_rs_build ci_rs_weekly
   sample.peripheral.802154_phy_test.ant_div_mode_auto:
     build_only: true

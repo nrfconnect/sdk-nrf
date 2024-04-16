@@ -480,6 +480,10 @@ Peripheral samples
     * Support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
     * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
+* :ref:`802154_phy_test` sample:
+
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+
 PMIC samples
 ------------
 

@@ -41,7 +41,11 @@ LOG_MODULE_REGISTER(periph);
 
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
 /* Timer instance used for HFCLK output */
+#if defined(NRF52_SERIES) || defined(NRF53_SERIES)
 #define PTT_CLK_TIMER 2
+#elif defined(NRF54L_SERIES)
+#define PTT_CLK_TIMER 20
+#endif
 
 static nrfx_timer_t clk_timer = NRFX_TIMER_INSTANCE(PTT_CLK_TIMER);
 
@@ -50,12 +54,22 @@ static nrfx_timer_t clk_timer = NRFX_TIMER_INSTANCE(PTT_CLK_TIMER);
 	[DT_PROP(gpio_node, port)] = \
 		NRFX_GPIOTE_INSTANCE(DT_PROP(GPIOTE_NODE(gpio_node), instance)),
 
+#define COND_GPIOTE_INST_AND_COMMA(gpio_node) \
+	COND_CODE_1(DT_NODE_HAS_PROP(gpio_node, gpiote_instance), \
+		(GPIOTE_INST_AND_COMMA(gpio_node)), \
+		())
+
 static const nrfx_gpiote_t gpiote_inst[GPIO_COUNT] = {
-	DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, GPIOTE_INST_AND_COMMA)
+	DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, COND_GPIOTE_INST_AND_COMMA)
 };
 
 #define NRF_GPIOTE_FOR_GPIO(idx)  &gpiote_inst[idx]
 #define NRF_GPIOTE_FOR_PSEL(psel) &gpiote_inst[psel >> 5]
+
+static inline bool gpiote_is_valid(const nrfx_gpiote_t *gpiote)
+{
+	return gpiote->p_reg != NULL;
+}
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
 static const struct gpio_dt_spec led0 = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
@@ -94,6 +108,10 @@ void periph_init(void)
 	for (int i = 0; i < GPIO_COUNT; ++i) {
 		const nrfx_gpiote_t *gpiote = NRF_GPIOTE_FOR_GPIO(i);
 
+		if (!gpiote_is_valid(gpiote)) {
+			continue;
+		}
+
 		if (!nrfx_gpiote_init_check(gpiote)) {
 			err_code = nrfx_gpiote_init(gpiote, 0);
 			NRFX_ASSERT(err_code);
@@ -127,7 +145,7 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 	nrfx_err_t err;
 	const nrfx_gpiote_t *gpiote = NRF_GPIOTE_FOR_PSEL(pin);
 
-	if (!nrf_gpio_pin_present_check(pin)) {
+	if (!nrf_gpio_pin_present_check(pin) || !gpiote_is_valid(gpiote)) {
 		return false;
 	}
 
