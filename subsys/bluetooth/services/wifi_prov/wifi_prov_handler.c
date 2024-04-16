@@ -125,7 +125,7 @@ static void prov_get_status_handler(Request *req, Response *rsp)
 		rsp->device_status.has_connection_info = true;
 		rsp->device_status.connection_info.has_ip4_addr = true;
 		memcpy(rsp->device_status.connection_info.ip4_addr.bytes,
-			ipv4->unicast[0].address.in_addr.s4_addr, 4);
+			ipv4->unicast[0].ipv4.address.in_addr.s4_addr, 4);
 		rsp->device_status.connection_info.ip4_addr.size = 4;
 	} else {
 		rsp->device_status.state = ConnectionState_DISCONNECTED;
