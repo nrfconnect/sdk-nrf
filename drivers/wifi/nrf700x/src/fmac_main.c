@@ -27,6 +27,7 @@
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
 #ifdef CONFIG_NRF700X_STA_MODE
+#include <zephyr/net/wifi_nm.h>
 #include <wifi_mgmt_scan.h>
 #include <wifi_mgmt.h>
 #include <wpa_supp_if.h>
@@ -341,6 +342,26 @@ int nrf_wifi_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_do
 	}
 
 	if (reg_domain->oper == WIFI_MGMT_SET) {
+#ifndef CONFIG_NRF700X_RADIO_TEST
+#ifdef CONFIG_NRF700X_STA_MODE
+		/* Need to check if WPA supplicant is initialized or not.
+		 * Must be checked when CONFIG_WPA_SUPP is enabled.
+		 * Not applicable for RADIO_TEST or when CONFIG_WPA_SUPP is not enabled.
+		 */
+		/* It is possbile that during supplicant initialization driver may
+		 * get the command. lock will try to ensure that supplicant
+		 * initialization is complete.
+		 */
+		k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+		if ((!vif_ctx_zep->supp_drv_if_ctx) ||
+		    (!wifi_nm_get_instance_iface(vif_ctx_zep->zep_net_if_ctx))) {
+			LOG_ERR("%s: WPA supplicant initialization not complete yet", __func__);
+			k_mutex_unlock(&vif_ctx_zep->vif_lock);
+			goto err;
+		}
+		k_mutex_unlock(&vif_ctx_zep->vif_lock);
+#endif /* CONFIG_NRF700X_STA_MODE */
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 		memcpy(reg_domain_info.alpha2, reg_domain->country_code, WIFI_COUNTRY_CODE_LEN);
 
 		reg_domain_info.force = reg_domain->force;

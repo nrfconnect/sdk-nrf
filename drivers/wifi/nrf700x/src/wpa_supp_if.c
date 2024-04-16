@@ -457,11 +457,16 @@ void *nrf_wifi_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
 		return NULL;
 	}
 
+	/* Needed to make sure that during initialization, commands like setting regdomain
+	 * does not access it.
+	 */
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
 	vif_ctx_zep->supp_drv_if_ctx = supp_drv_if_ctx;
 
 	memcpy(&vif_ctx_zep->supp_callbk_fns, supp_callbk_fns,
 	       sizeof(vif_ctx_zep->supp_callbk_fns));
 
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return vif_ctx_zep;
 }
 
