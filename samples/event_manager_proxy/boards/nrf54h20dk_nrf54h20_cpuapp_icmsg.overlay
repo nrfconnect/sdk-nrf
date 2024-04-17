@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* Replace default ipc0 instance */
+/delete-node/ &ipc0;
+
 /* Enabled nodes required by IPC
  * Two mboxes, one for each sides and one ipc instance
  */
