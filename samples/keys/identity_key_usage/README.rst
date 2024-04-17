@@ -56,19 +56,17 @@ Testing
 
 |test_sample|
 
-      1. |connect_terminal_specific|
-      #. Reset the kit.
-      #. Observe the following output:
+1. |connect_terminal_specific|
+#. Reset the kit.
+#. Observe the following output:
 
-         .. code-block:: console
+   .. code-block:: console
 
-             Initializing PSA crypto.
-             Reading the identity key.
-             Importing the identity key into PSA crypto.
-             Exporting the public key corresponding to the identity key.
-             Success!
-
-         If an error occurs, the sample prints a message and raises a kernel panic.
+      Initializing PSA crypto.
+      Reading the identity key.
+      Importing the identity key into PSA crypto.
+      Exporting the public key corresponding to the identity key.
+      Success!
 
    If an error occurs, the sample prints a message and raises a kernel panic.
 
