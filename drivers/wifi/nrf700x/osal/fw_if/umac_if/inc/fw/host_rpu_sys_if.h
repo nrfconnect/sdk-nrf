@@ -821,6 +821,10 @@ struct nrf_wifi_cmd_sys_init {
 	 *  If a user wishes to turn it off, they should set this parameter to 1.
 	 */
 	unsigned int disable_beamforming;
+	/** The RPU uses this value (in seconds) to decide how long to wait
+	 *  without receiving beacons before disconnection.
+	 */
+	unsigned int discon_timeout;
 } __NRF_WIFI_PKD;
 
 /**
