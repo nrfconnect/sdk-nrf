@@ -99,7 +99,7 @@ Application
 ===========
 
 Once you have obtained the test report for your Matter component, you can apply for the certification to CSA.
-You can do this online from the `CSA Member Resources page`_ using the different Certification and Testing tools to submit the required documentation.
+You can do this online from the `CSA Matter Resource Kit`_ using the different Certification and Testing tools to submit the required documentation.
 
 Application requirements
 ------------------------
@@ -129,7 +129,7 @@ Certification document templates from Nordic Semiconductor
 PICS
 ++++
 
-You can generate the PICS in the XML format using CSA's PICS Tool, available from `CSA Member Resources page`_.
+You can generate the PICS in the XML format using the `PICS Tool`_, which is provided by CSA.
 
 Dependent Transport Attestation
 +++++++++++++++++++++++++++++++

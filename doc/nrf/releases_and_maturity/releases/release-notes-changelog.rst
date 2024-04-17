@@ -86,7 +86,7 @@ Bluetooth mesh
 Matter
 ------
 
-* Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
+|no_changes_yet_note|
 
 Matter fork
 +++++++++++
@@ -122,10 +122,7 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
-* Updated:
-
-  * WPA supplicant now reserves libc heap memory rather than using leftover RAM.
-    This doesn't affect the overall memory used, but now the RAM footprint as reported by the build will show higher usage.
+|no_changes_yet_note|
 
 Applications
 ============
@@ -144,7 +141,6 @@ Serial LTE modem
 
 nRF5340 Audio
 -------------
-
 
 |no_changes_yet_note|
 
@@ -221,9 +217,7 @@ Keys samples
 Matter samples
 --------------
 
-* :ref:`matter_lock_sample` sample:
-
-   * Added support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
+|no_changes_yet_note|
 
 Multicore samples
 -----------------
