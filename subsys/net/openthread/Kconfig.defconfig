@@ -31,24 +31,6 @@ choice OPENTHREAD_IMPLEMENTATION
 	default OPENTHREAD_LIBRARY if OPENTHREAD_LIBRARY_AVAILABLE
 endchoice
 
-if SOC_SERIES_NRF54LX
-
-#To be removed
-config OBERON_BACKEND
-	bool
-	default y
-
-#To be removed
-config PSA_CRYPTO_DRIVER_OBERON
-	bool
-	default y
-
-#To be removed
-config PSA_CRYPTO_DRIVER_CRACEN
-	bool
-	default y
-
-endif
 if SOC_NRF54H20_CPUAPP
 
 #To be removed
