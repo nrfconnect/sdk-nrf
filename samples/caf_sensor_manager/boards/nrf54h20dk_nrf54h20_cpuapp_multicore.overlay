@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+ /* Replace default ipc0 instance */
+/delete-node/ &ipc0;
+
 / {
 	sensor_stub: sensor_stub {
 		compatible = "nordic,sensor-stub";
