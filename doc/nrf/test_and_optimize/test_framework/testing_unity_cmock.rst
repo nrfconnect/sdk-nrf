@@ -13,7 +13,8 @@ The |NCS| provides support for writing tests using Unity and CMock.
 Support for CMock is integrated into Unity.
 
 CMake automatically generates the required test runner file and the mock files.
-The test can be executed on the :ref:`zephyr:native_posix` board.
+The test can be executed on the :ref:`zephyr:native_sim` board.
+For more information, see :ref:`running_unit_tests`.
 
 Setting up a unit test
 **********************
@@ -30,22 +31,19 @@ Because of that, all mock functions are prefixed with :code:`__cmock` (for examp
 
 To specify the APIs that should be mocked in a given test, edit :file:`CMakeLists.txt` to call :code:`cmock_handle` with the header file and, optionally, the relative path to the header as arguments.
 The relative path is needed if a file is included as, for example, :code:`#include <zephyr/bluetooth/gatt.h>`.
-In this case, the relative path is ``bluetooth``.
+In this case, the relative path is ``zephyr/bluetooth``.
 
-Add a line similar to the following in :file:`CMakeLists.txt` to generate the mocks::
+Add a line similar to the following in :file:`CMakeLists.txt` to generate the mock files:
 
-     cmock_handle(${ZEPHYR_BASE}/include/bluetooth/gatt.h bluetooth)
+.. code-block::
+
+   cmock_handle(${ZEPHYR_BASE}/include/bluetooth/gatt.h zephyr/bluetooth)
 
 The test runner file must be generated from the file that contains the tests.
 Unity treats all functions that are prefixed with ``test_`` as tests.
 
-Add a line similar to the following in :file:`CMakeLists.txt` to generate the test runner file::
+Add a line similar to the following in :file:`CMakeLists.txt` to generate the test runner file:
 
-     test_runner_generate(src/example_test.c)
+.. code-block::
 
-Running the test
-****************
-
-Enter the following command to generate the test project (including the test runner file and the mocks) and run it::
-
-     west build -b native_posix -t run
+   test_runner_generate(src/example_test.c)
