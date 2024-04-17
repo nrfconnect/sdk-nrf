@@ -222,8 +222,8 @@ Matter Bridge
 
 * Added:
 
-   The :kconfig:option:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES` kconfig option to set the maximum number of scanned Bluetooth LE devices.
-   The :kconfig:option:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS` kconfig option to set the scan timeout.
+   The :ref:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES <CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES>` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
+   The :ref:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS <CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS>` Kconfig option to set the scan timeout.
 
 * Updated the implementation of the persistent storage to leverage ``NonSecure``-prefixed methods from the common Persistent Storage module.
 * Changed data structure of information stored in the persistent storage to use less settings keys.
@@ -351,7 +351,7 @@ Cellular samples
 
   * Added:
 
-    * The :kconfig:option:`CONFIG_REST_CELL_SEND_DEVICE_STATUS` Kconfig option to control sending device status on initial connection.
+    * The :ref:`CONFIG_REST_CELL_SEND_DEVICE_STATUS <CONFIG_REST_CELL_SEND_DEVICE_STATUS>` Kconfig option to control sending device status on initial connection.
 
 * :ref:`modem_shell_application` sample:
 
@@ -444,7 +444,7 @@ Networking samples
   * Updated:
 
     * Set the value of the :kconfig:option:`CONFIG_POSIX_MAX_FDS` Kconfig option to ``25`` to get the Transport Layer Security (TLS) working.
-    * Set the default value of the :kconfig:option:`HTTP_SERVER_SAMPLE_CLIENTS_MAX` Kconfig option to ``1``.
+    * Set the default value of the :ref:`CONFIG_HTTP_SERVER_SAMPLE_CLIENTS_MAX <CONFIG_HTTP_SERVER_SAMPLE_CLIENTS_MAX>` Kconfig option to ``1``.
 
 NFC samples
 -----------
@@ -491,7 +491,7 @@ Peripheral samples
   * Updated:
 
     * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
-      This change applies to the sample built with the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` set to ``n``.
+      This change applies to the sample built with the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` set to ``n``.
 
   * Added:
 
@@ -638,7 +638,7 @@ Libraries for networking
   * Updated:
 
     * Improved FOTA job status reporting.
-    * Deprecated :kconfig:option:`NRF_CLOUD_SEND_SERVICE_INFO_UI` and its related UI Kconfig options.
+    * Deprecated :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI` and its related UI Kconfig options.
     * Deprecated the :c:struct:`nrf_cloud_svc_info_ui` structure contained in the :c:struct:`nrf_cloud_svc_info` structure.
       nRF Cloud no longer uses the UI section in the shadow.
 

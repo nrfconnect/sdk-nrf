@@ -58,7 +58,7 @@ Overview
 To run the tests, connect to the development kit through the serial port and send shell commands.
 Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands.
 At any time during the tests, you can dynamically set the radio parameters, such as output power, bit rate, and channel.
-In sweep mode, you can set the time for which the radio scans each channel from 1 millisecond to 99 milliseconds, in steps of 1 millisecond.
+In sweep mode, you can set the time for which the radio scans each channel from one millisecond to 99 milliseconds, in steps of one millisecond.
 The sample also allows you to send a data pattern to another development kit.
 
 The sample first enables the high frequency crystal oscillator and configures the shell.
@@ -95,7 +95,7 @@ User interface
    * - output_power
      - <sub_cmd>
      - Output power set.
-       If a front-end module is attached and the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled, it has the same effect as the ``total_output_power`` command.
+       If a front-end module is attached and the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` Kconfig option is enabled, it has the same effect as the ``total_output_power`` command.
    * - parameters_print
      -
      - Print current delay, channel, and other parameters.
@@ -137,7 +137,7 @@ User interface
      - Set total output power in dBm.
        This value includes SoC output power and front-end module gain.
 
-Tx output power
+TX output power
 ===============
 
 This sample has a few commands that you can use to test the device output power.
@@ -148,21 +148,45 @@ The behavior of the commands vary depending on the hardware configuration and Kc
   * The ``output_power`` command sets the SoC output command with a subcommand set.
     The output power is set directly in the radio peripheral.
 
-* Radio Test with front-end module support in default configuration (the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is enabled):
+* Radio Test with front-end module support in default configuration (the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` Kconfig option is enabled):
 
   * The ``output_power`` command sets the total output power, including front-end module gain.
   * The ``total_output_power`` command sets the total output power, including front-end module gain with a value in dBm unit provided by user.
   * For these commands, the radio peripheral and FEM transmit power control is calculated and set automatically to meet your requirements.
   * If an exact output power value cannot be set, a lower value is used.
 
-* Radio Test with front-end module support and manual Tx output power control (the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` Kconfig option is disabled):
+* Radio Test with front-end module support and manual TX output power control (the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` Kconfig option is disabled):
 
   * The ``output_power`` command sets the SoC output command with a subcommands set.
   * The ``fem`` command with the ``tx_power_control`` subcommand sets the front-end module transmit power control to a value for given specific front-end module.
   * You can use this configuration to perform tests on your hardware design.
 
+Configuration
+*************
+
+|config|
+
+Configuration options
+=====================
+
+Check and configure the following Kconfig options:
+
+.. _CONFIG_RADIO_TEST_USB:
+
+CONFIG_RADIO_TEST_USB
+   Selects USB instead of UART as the Radio Test shell transport.
+   For nRF5340 the USB from application core is used as the communication interface.
+
+.. _CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC:
+
+CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
+   Sets the SoC output power and front-end module gain to achieve the requested TX output power.
+   If the exact value cannot be achieved, power is set to closest value that does not exceed the limits.
+   If this option is disabled, set the SoC output power and FEM gain with separate commands.
+
 Building and running
 ********************
+
 .. |sample path| replace:: :file:`samples/peripheral/radio_test`
 
 .. include:: /includes/build_and_run.txt
@@ -176,21 +200,21 @@ Remote USB CDC ACM Shell variant
 ================================
 
 This sample can run the remote IPC Service Shell through the USB on the nRF5340 DK application core.
-For example, when building on the command line, you can do so as follows:
+For example, when building on the command line, use the following command:
 
 .. code-block:: console
 
-  west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DCONFIG_RADIO_TEST_USB=y
+   west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DCONFIG_RADIO_TEST_USB=y
 
 You can also build this sample with the remote IPC Service Shell and support for the front-end module.
 You can use the following command:
 
 .. code-block:: console
 
-  west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540ek -DCONFIG_RADIO_TEST_USB=y
+   west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540ek -DCONFIG_RADIO_TEST_USB=y
 
 .. note::
-    You can also build the sample with the remote IPC Service Shell for the |nRF7002DKnoref| using the ``nrf7002dk_nrf5340_cpunet`` build target in the commands.
+   You can also build the sample with the remote IPC Service Shell for the |nRF7002DKnoref| using the ``nrf7002dk_nrf5340_cpunet`` build target in the commands.
 
 .. _radio_test_testing:
 
