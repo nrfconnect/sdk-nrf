@@ -45,11 +45,13 @@
 
 /* Peripherals used for timestamping - located in global "Main power domain" (_G1_) */
 /*   - IPCT_G1 : IPCT130_S */
+#define IPCT_G1_INST                 NRF_IPCT130_S
 #define IPCT_G1_HT_CHANNEL           2
 #define IPCT_G1_TASK_SEND            NRFX_CONCAT_2(NRF_IPCT_TASK_SEND_, IPCT_G1_HT_CHANNEL)
 
 /*   - DPPIC_G1 : DPPIC130_S */
 /* The channel must be in the [0..7] range to satisfy the requirements for the dependent macros */
+#define DPPIC_G1_INST                NRF_DPPIC130_S
 #define DPPIC_G1_HT_CHANNEL          2
 
 /*  - PPIB_G1 : PPIB130_S */
@@ -57,6 +59,7 @@
 
 /* Peripherals used for timestamping - located in global "Active power domain" (_G2_) */
 /*   - PPIB_G2 : PPIB133_S */
+#define DPPIC_G2_INST                NRF_DPPIC132_S
 #define PPIB_G2_HT_CHANNEL           (PPIB_G1_HT_CHANNEL - 8) /* hw-fixed dependency */
 
 /*   - DPPIC_G2 : DPPIC132_S */
