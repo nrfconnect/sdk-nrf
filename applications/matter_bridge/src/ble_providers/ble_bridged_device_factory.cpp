@@ -72,27 +72,30 @@ CHIP_ERROR BleServiceToMatterDeviceType(BleBridgedDeviceFactory::ServiceUuid ser
 
 CHIP_ERROR StoreDevice(MatterBridgedDevice *device, BridgedDeviceDataProvider *provider, uint8_t index)
 {
-	uint16_t endpointId;
 	uint8_t count = 0;
 	uint8_t indexes[BridgeManager::kMaxBridgedDevices] = { 0 };
 	bool deviceRefresh = false;
+	BridgeStorageManager::BridgedDevice bridgedDevice;
 
 	/* Check if a device is already present in the storage. */
-	if (BridgeStorageManager::Instance().LoadBridgedDeviceEndpointId(endpointId, index)) {
+	if (BridgeStorageManager::Instance().LoadBridgedDevice(bridgedDevice, index)) {
 		deviceRefresh = true;
 	}
 
-	if (!BridgeStorageManager::Instance().StoreBridgedDevice(device, index)) {
-		LOG_ERR("Failed to store bridged device");
-		return CHIP_ERROR_INTERNAL;
-	}
-
 	BLEBridgedDeviceProvider *bleProvider = static_cast<BLEBridgedDeviceProvider *>(provider);
-
 	bt_addr_le_t addr = bleProvider->GetBtAddress();
 
-	if (!BridgeStorageManager::Instance().StoreBtAddress(addr, index)) {
-		LOG_ERR("Failed to store bridged device's Bluetooth address");
+	bridgedDevice.mEndpointId = device->GetEndpointId();
+	bridgedDevice.mDeviceType = device->GetDeviceType();
+	bridgedDevice.mNodeLabelLength = strlen(device->GetNodeLabel());
+	memcpy(bridgedDevice.mNodeLabel, device->GetNodeLabel(), strlen(device->GetNodeLabel()));
+
+	/* Fill BT address information as a part of implementation specific user data. */
+	bridgedDevice.mUserDataSize = sizeof(addr);
+	bridgedDevice.mUserData = reinterpret_cast<uint8_t*>(&addr);
+
+	if (!BridgeStorageManager::Instance().StoreBridgedDevice(bridgedDevice, index)) {
+		LOG_ERR("Failed to store bridged device");
 		return CHIP_ERROR_INTERNAL;
 	}
 
@@ -445,21 +448,8 @@ CHIP_ERROR BleBridgedDeviceFactory::RemoveDevice(int endpointId)
 		return CHIP_ERROR_INTERNAL;
 	}
 
-	if (!BridgeStorageManager::Instance().RemoveBridgedDeviceEndpointId(index)) {
-		LOG_ERR("Failed to remove bridged device endpoint id.");
-		return CHIP_ERROR_INTERNAL;
-	}
-
-	/* Ignore error, as node label may not be present in the storage. */
-	BridgeStorageManager::Instance().RemoveBridgedDeviceNodeLabel(index);
-
-	if (!BridgeStorageManager::Instance().RemoveBridgedDeviceType(index)) {
-		LOG_ERR("Failed to remove bridged device type.");
-		return CHIP_ERROR_INTERNAL;
-	}
-
-	if (!BridgeStorageManager::Instance().RemoveBtAddress(index)) {
-		LOG_ERR("Failed to remove bridged device Bluetooth address.");
+	if (!BridgeStorageManager::Instance().RemoveBridgedDevice(index)) {
+		LOG_ERR("Failed to remove bridged device from the storage.");
 		return CHIP_ERROR_INTERNAL;
 	}
 

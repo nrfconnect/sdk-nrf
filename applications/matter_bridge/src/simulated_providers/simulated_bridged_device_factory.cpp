@@ -16,17 +16,22 @@ namespace
 {
 CHIP_ERROR StoreDevice(Nrf::MatterBridgedDevice *device, Nrf::BridgedDeviceDataProvider *provider, uint8_t index)
 {
-	uint16_t endpointId;
 	uint8_t count = 0;
 	uint8_t indexes[Nrf::BridgeManager::kMaxBridgedDevices] = { 0 };
 	bool deviceRefresh = false;
+	Nrf::BridgeStorageManager::BridgedDevice bridgedDevice;
 
 	/* Check if a device is already present in the storage. */
-	if (Nrf::BridgeStorageManager::Instance().LoadBridgedDeviceEndpointId(endpointId, index)) {
+	if (Nrf::BridgeStorageManager::Instance().LoadBridgedDevice(bridgedDevice, index)) {
 		deviceRefresh = true;
 	}
 
-	if (!Nrf::BridgeStorageManager::Instance().StoreBridgedDevice(device, index)) {
+	bridgedDevice.mEndpointId = device->GetEndpointId();
+	bridgedDevice.mDeviceType = device->GetDeviceType();
+	bridgedDevice.mNodeLabelLength = strlen(device->GetNodeLabel());
+	memcpy(bridgedDevice.mNodeLabel, device->GetNodeLabel(), strlen(device->GetNodeLabel()));
+
+	if (!Nrf::BridgeStorageManager::Instance().StoreBridgedDevice(bridgedDevice, index)) {
 		LOG_ERR("Failed to store bridged device");
 		return CHIP_ERROR_INTERNAL;
 	}
@@ -231,16 +236,8 @@ CHIP_ERROR SimulatedBridgedDeviceFactory::RemoveDevice(int endpointId)
 		return CHIP_ERROR_INTERNAL;
 	}
 
-	if (!Nrf::BridgeStorageManager::Instance().RemoveBridgedDeviceEndpointId(index)) {
-		LOG_ERR("Failed to remove bridged device endpoint id.");
-		return CHIP_ERROR_INTERNAL;
-	}
-
-	/* Ignore error, as node label may not be present in the storage. */
-	Nrf::BridgeStorageManager::Instance().RemoveBridgedDeviceNodeLabel(index);
-
-	if (!Nrf::BridgeStorageManager::Instance().RemoveBridgedDeviceType(index)) {
-		LOG_ERR("Failed to remove bridged device type.");
+	if (!Nrf::BridgeStorageManager::Instance().RemoveBridgedDevice(index)) {
+		LOG_ERR("Failed to remove bridged device from the storage.");
 		return CHIP_ERROR_INTERNAL;
 	}
 
