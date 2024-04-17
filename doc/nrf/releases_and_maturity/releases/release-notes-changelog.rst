@@ -767,6 +767,7 @@ Documentation
   * The :ref:`ug_wifi_overview` page by separating the information about Wi-Fi certification into its own :ref:`ug_wifi_certification` page under :ref:`ug_wifi`.
   * The :ref:`ug_bt_mesh_configuring` page with an example of possible entries in the Settings NVS name cache.
   * The :ref:`lib_security` page to include all security-related libraries.
+  * The trusted storage support table in the :ref:`trusted_storage_in_ncs` section by adding nRF52833 and replacing nRF9160 with nRF91 Series.
 
 * Fixed:
 

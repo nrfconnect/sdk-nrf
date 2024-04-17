@@ -74,13 +74,13 @@ The table below gives an overview of the trusted storage support for the product
      - Integrity
      - Authenticity
      - Isolation
-   * - nRF52840
-     - Trusted storage library
-     - Partial [1]_
+   * - nRF91 Series with TF-M
+     - TF-M secure storage service
      - Yes
      - Yes
-     - No
-   * - nRF5340 without TF-M
+     - Yes
+     - Yes
+   * - nRF91 Series without TF-M
      - Trusted storage library
      - Partial [1]_
      - Yes
@@ -92,22 +92,30 @@ The table below gives an overview of the trusted storage support for the product
      - Yes
      - Yes
      - Yes
-   * - nRF9160 without TF-M
+   * - nRF5340 without TF-M
      - Trusted storage library
      - Partial [1]_
      - Yes
      - Yes
      - No
-   * - nRF9160 with TF-M
-     - TF-M secure storage service
+   * - nRF52840
+     - Trusted storage library
+     - Partial [1]_
      - Yes
      - Yes
+     - No
+   * - nRF52833
+     - Trusted storage library
+     - Partial [2]_
      - Yes
      - Yes
+     - No
 .. [1] On systems without the isolation feature, the confidentiality is limited to protection of data at rest in a non-volatile internal or external memory.
        This partial confidentiality is based on a CPU-inaccessible master key used for data encryption.
        When the data is decrypted for usage, there is no mechanism providing access control and protecting its visibility.
        Use of a TrustZone-enabled system provides stronger protection, and is recommended if available.
+.. [2] The use of Hardware Unique Key (HUK) to provide the AEAD key is not available on nRF52833 devices.
+       The trusted storage library offers the use of SHA-256 to generate the key, which does not provide guarantees of security beyond the integrity check of the encrypted data.
 
 The trusted storage library addresses two of the PSA Certified Level 2 and Level 3 optional security functional requirements (SFRs):
 
