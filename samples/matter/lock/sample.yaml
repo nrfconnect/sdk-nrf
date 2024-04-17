@@ -4,7 +4,7 @@ sample:
 tests:
   sample.matter.lock.release:
     build_only: true
-    extra_args: CONF_FILE=prj_release.conf
+    extra_args: FILE_SUFFIX=release
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
@@ -31,7 +31,7 @@ tests:
   sample.matter.lock.thread_wifi_switched.smp_dfu:
     build_only: true
     extra_args: SHIELD=nrf7002ek multiprotocol_rpmsg_SHIELD=nrf7002ek_coex
-      CONF_FILE=prj_thread_wifi_switched.conf CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y
+      FILE_SUFFIX=thread_wifi_switched CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y
       mcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3 CONFIG_CHIP_DFU_OVER_BT_SMP=y
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
