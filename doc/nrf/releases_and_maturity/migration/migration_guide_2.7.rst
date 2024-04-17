@@ -59,7 +59,7 @@ Peripheral samples
 * :ref:`radio_test` sample:
 
   * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
-    This change applies to the sample built with the :kconfig:option:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC` set to ``n``.
+    This change applies to the sample built with the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` set to ``n``.
 
 Libraries
 =========
