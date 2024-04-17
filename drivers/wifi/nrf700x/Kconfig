@@ -395,3 +395,11 @@ config NRF_WIFI_OP_BAND
 	  1 - 2.4GHz
 	  2 - 5GHz
 	  3 - All ( 2.4GHz and 5GHz )
+
+config NRF_WIFI_AP_DEAD_DETECT_TIMEOUT
+	int "Access point dead detection timeout in seconds"
+	range 1 30
+	default 20
+	help
+		The number of seconds after which AP is declared dead if no beacons
+		are received from the AP. Used to detect AP silently going down e.g., power off.
