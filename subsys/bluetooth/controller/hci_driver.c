@@ -171,15 +171,10 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 
 #if defined(CONFIG_BT_CTLR_CONN_ISO)
 #define SDC_MEM_CIG SDC_MEM_PER_CIG(CONFIG_BT_CTLR_CONN_ISO_GROUPS)
-#ifdef SDC_MEM_ISO_RX_SDU_POOL_SIZE_DEPRECATED
 #define SDC_MEM_CIS \
 	SDC_MEM_PER_CIS(CONFIG_BT_CTLR_CONN_ISO_STREAMS) + \
-	SDC_MEM_ISO_RX_SDU_POOL_SIZE_DEPRECATED(CONFIG_BT_CTLR_CONN_ISO_STREAMS)
-#else
-#define SDC_MEM_CIS \
-	SDC_MEM_PER_CIS(CONFIG_BT_CTLR_CONN_ISO_STREAMS) + \
-	SDC_MEM_ISO_RX_SDU_POOL_SIZE(CONFIG_BT_CTLR_CONN_ISO_STREAMS)
-#endif
+	SDC_MEM_ISO_RX_SDU_POOL_SIZE(CONFIG_BT_CTLR_CONN_ISO_STREAMS, \
+				     SDC_DEFAULT_ISO_RX_SDU_BUFFER_SIZE)
 #define SDC_CIS_COUNT CONFIG_BT_CTLR_CONN_ISO_STREAMS
 #else
 #define SDC_MEM_CIG   0
@@ -188,17 +183,11 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #endif
 
 #if defined(CONFIG_BT_CTLR_SYNC_ISO)
-#ifdef SDC_MEM_ISO_RX_SDU_POOL_SIZE_DEPRECATED
 #define SDC_MEM_BIS_SINK \
 	SDC_MEM_PER_BIG(CONFIG_BT_CTLR_SCAN_SYNC_ISO_SET) +					\
 		SDC_MEM_PER_BIS(CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT) +				\
-		SDC_MEM_ISO_RX_SDU_POOL_SIZE_DEPRECATED(CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT)
-#else
-#define SDC_MEM_BIS_SINK \
-	SDC_MEM_PER_BIG(CONFIG_BT_CTLR_SCAN_SYNC_ISO_SET) +					\
-		SDC_MEM_PER_BIS(CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT) +				\
-		SDC_MEM_ISO_RX_SDU_POOL_SIZE(CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT)
-#endif
+		SDC_MEM_ISO_RX_SDU_POOL_SIZE(CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT,              \
+					     SDC_DEFAULT_ISO_RX_SDU_BUFFER_SIZE)
 #define SDC_BIS_SINK_COUNT CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT
 #else
 #define SDC_MEM_BIS_SINK   0
@@ -227,10 +216,12 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #if defined(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT) && \
 	defined(CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT)
 #define SDC_MEM_ISO_TX_POOL                                                            \
-	SDC_MEM_ISO_TX_POOL_SIZE(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT,               \
+	SDC_MEM_ISO_TX_PDU_POOL_SIZE(                                                          \
 		CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT,                         \
 		SDC_CIS_COUNT,                                                                 \
-		SDC_BIS_SOURCE_COUNT)
+		SDC_BIS_SOURCE_COUNT) +							       \
+	SDC_MEM_ISO_TX_SDU_POOL_SIZE(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT,               \
+		SDC_DEFAULT_ISO_TX_SDU_BUFFER_SIZE)
 #else
 #define SDC_MEM_ISO_TX_POOL 0
 #endif
@@ -1105,24 +1096,14 @@ static int configure_memory_usage(void)
 
 	cfg.iso_buffer_cfg.rx_sdu_buffer_count = iso_rx_paths;
 	cfg.iso_buffer_cfg.rx_sdu_buffer_size = SDC_DEFAULT_ISO_RX_SDU_BUFFER_SIZE;
-#else
-	cfg.iso_buffer_cfg.rx_pdu_buffer_per_stream_count =
-		SDC_DEFAULT_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT;
-	cfg.iso_buffer_cfg.rx_sdu_buffer_count = SDC_DEFAULT_ISO_RX_SDU_BUFFER_COUNT;
-	cfg.iso_buffer_cfg.rx_sdu_buffer_size = SDC_DEFAULT_ISO_RX_SDU_BUFFER_SIZE;
 #endif
 
 #if defined(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT) &&                                         \
 	defined(CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT)
-	cfg.iso_buffer_cfg.tx_hci_buffer_count = CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT;
-	cfg.iso_buffer_cfg.tx_hci_buffer_size = SDC_DEFAULT_ISO_TX_HCI_BUFFER_SIZE;
+	cfg.iso_buffer_cfg.tx_sdu_buffer_count = CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT;
+	cfg.iso_buffer_cfg.tx_sdu_buffer_size = SDC_DEFAULT_ISO_TX_SDU_BUFFER_SIZE;
 	cfg.iso_buffer_cfg.tx_pdu_buffer_per_stream_count =
 		CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT;
-#else
-	cfg.iso_buffer_cfg.tx_hci_buffer_count = SDC_DEFAULT_ISO_TX_HCI_BUFFER_COUNT;
-	cfg.iso_buffer_cfg.tx_hci_buffer_size = SDC_DEFAULT_ISO_TX_HCI_BUFFER_SIZE;
-	cfg.iso_buffer_cfg.tx_pdu_buffer_per_stream_count
-		= SDC_DEFAULT_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT;
 #endif
 
 #if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT) ||                             \
