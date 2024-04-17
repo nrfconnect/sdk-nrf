@@ -5,6 +5,7 @@
  */
 
 #include "bridge_manager.h"
+#include "bridge/bridge_storage_manager.h"
 
 #include "binding/binding_handler.h"
 
@@ -43,6 +44,11 @@ CHIP_ERROR BridgeManager::Init(LoadStoredBridgedDevicesCallback loadStoredBridge
 	/* Disable the placeholder endpoint */
 	emberAfEndpointEnableDisable(emberAfEndpointFromIndex(static_cast<uint16_t>(emberAfFixedEndpointCount() - 1)),
 				     false);
+
+	if (!Nrf::BridgeStorageManager::Instance().Init()) {
+		LOG_INF("BridgeStorageManager initialization failed.");
+		return CHIP_ERROR_INTERNAL;
+	}
 
 	Nrf::Matter::BindingHandler::Init();
 

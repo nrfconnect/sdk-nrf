@@ -226,6 +226,10 @@ Matter Bridge
    The :kconfig:option:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS` kconfig option to set the scan timeout.
 
 * Updated the implementation of the persistent storage to leverage ``NonSecure``-prefixed methods from the common Persistent Storage module.
+* Changed data structure of information stored in the persistent storage to use less settings keys.
+  The new structure uses approximately 40% of the memory used by the old structure, and provides a new field to store user-specific data.
+
+  Backward compatibility is kept by using an internal dedicated method that automatically detects the older data format and performs data migration to the new representation.
 
 IPC radio firmware
 ------------------

@@ -106,36 +106,26 @@ CHIP_ERROR AppTask::RestoreBridgedDevices()
 
 	/* Load all devices based on the read count number. */
 	for (size_t i = 0; i < indexesCount; i++) {
-		uint16_t endpointId;
-		char label[Nrf::MatterBridgedDevice::kNodeLabelSize] = { 0 };
-		size_t labelSize;
-		uint16_t deviceType;
+		Nrf::BridgeStorageManager::BridgedDevice device;
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+		bt_addr_le_t btAddr;
+		device.mUserData = reinterpret_cast<uint8_t *>(&btAddr);
+		device.mUserDataSize = sizeof(btAddr);
+#endif
 
-		if (!Nrf::BridgeStorageManager::Instance().LoadBridgedDeviceEndpointId(endpointId, indexes[i])) {
+		if (!Nrf::BridgeStorageManager::Instance().LoadBridgedDevice(device, indexes[i])) {
 			return CHIP_ERROR_NOT_FOUND;
 		}
 
-		/* Ignore an error, as node label is optional, so it may not be found. */
-		Nrf::BridgeStorageManager::Instance().LoadBridgedDeviceNodeLabel(label, sizeof(label), labelSize,
-										 indexes[i]);
-
-		if (!Nrf::BridgeStorageManager::Instance().LoadBridgedDeviceType(deviceType, indexes[i])) {
-			return CHIP_ERROR_NOT_FOUND;
-		}
-
-		LOG_INF("Loaded bridged device on endpoint id %d from the storage", endpointId);
+		LOG_INF("Loaded bridged device on endpoint id %d from the storage", device.mEndpointId);
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-		bt_addr_le_t addr;
-
-		if (!Nrf::BridgeStorageManager::Instance().LoadBtAddress(addr, indexes[i])) {
-			return CHIP_ERROR_NOT_FOUND;
-		}
-
-		BleBridgedDeviceFactory::CreateDevice(deviceType, addr, label, indexes[i], endpointId);
+		BleBridgedDeviceFactory::CreateDevice(device.mDeviceType, btAddr, device.mNodeLabel, indexes[i],
+						      device.mEndpointId);
 #else
-		SimulatedBridgedDeviceFactory::CreateDevice(deviceType, label, chip::Optional<uint8_t>(indexes[i]),
-							    chip::Optional<uint16_t>(endpointId));
+		SimulatedBridgedDeviceFactory::CreateDevice(device.mDeviceType, device.mNodeLabel,
+							    chip::Optional<uint8_t>(indexes[i]),
+							    chip::Optional<uint16_t>(device.mEndpointId));
 #endif
 	}
 	return CHIP_NO_ERROR;
