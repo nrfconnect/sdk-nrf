@@ -34,6 +34,7 @@ Here are some of the possible options you can use:
   For example, if you run the west build command with an additional parameter ``@1.0.0`` for nRF9160 build target, it adds the external flash on the nRF9160 DK that was available since :ref:`board version v0.14.0 <nrf9160_board_revisions>`.
 * You can :ref:`start menuconfig with the west command <configuration_temporary_change>` to configure your application.
 * You can :ref:`reuse an existing build directory <zephyr:west-building-pristine>` for building another application for another board or build target by passing ``-p=auto`` to ``west build``.
+* You can :ref:`run unit tests with the west command <running_unit_tests>` with the ``-t run`` parameter from the unit test directory.
 
 For more information on other optional build parameters, run the ``west build -h`` help text command.
 
