@@ -81,7 +81,7 @@ Bluetooth Mesh
 Matter
 ------
 
-|no_changes_yet_note|
+* Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
 
 Matter fork
 +++++++++++
