@@ -9,7 +9,7 @@
  * Adding them in nrf is better maintainable.
  */
 
-#if defined(CONFIG_BT_TRANSMIT_POWER_CONTROL)
+#include <stdbool.h>
 
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/conn.h>
@@ -18,6 +18,8 @@
 
 #include "hci_types_host_extensions.h"
 #include <bluetooth/nrf/host_extensions.h>
+
+#if defined(CONFIG_BT_TRANSMIT_POWER_CONTROL)
 
 /* Write Remote Transmit Power Level HCI command */
 int bt_conn_set_remote_tx_power_level(struct bt_conn *conn,
@@ -72,3 +74,25 @@ int bt_conn_set_power_control_request_params(struct bt_conn_set_pcr_params *para
 	return bt_hci_cmd_send_sync(BT_HCI_OP_SET_POWER_CONTROL_REQUEST_PARAMS, buf, NULL);
 }
 #endif /* CONFIG_BT_TRANSMIT_POWER_CONTROL */
+
+#if defined(CONFIG_BT_CTLR_ADV_EXT)
+int bt_scan_reduce_scanner_initator_aux_channel_priority(struct bt_ctlr_priority_set *priority_set)
+{
+	struct bt_hci_set_role_priority *cmd;
+	struct net_buf *buf;
+
+	buf = bt_hci_cmd_create(BT_HCI_OP_SET_ROLE_PRIORITY, sizeof(*cmd));
+	if (!buf) {
+		return -ENOBUFS;
+	}
+
+	cmd = net_buf_add(buf, sizeof(*cmd));
+	*cmd = (struct bt_hci_set_role_priority) {
+	  .handle_type = 0x4,
+	  .handle = 0x0,
+	  .priority = (uint8_t) priority_set->scan_init_auxiliary_channel_priority
+    };
+
+	return bt_hci_cmd_send_sync(BT_HCI_OP_SET_ROLE_PRIORITY, buf, NULL);
+}
+#endif /* CONFIG_BT_CTLR_ADV_EXT */

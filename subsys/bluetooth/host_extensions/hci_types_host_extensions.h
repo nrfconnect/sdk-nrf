@@ -39,6 +39,14 @@ struct bt_hci_cp_set_power_control_request_param {
 	uint8_t apr_margin;
 } __packed;
 
+#define BT_HCI_OP_SET_ROLE_PRIORITY	BT_OP(BT_OGF_VS, 0x011B)
+
+struct bt_hci_set_role_priority {
+    uint8_t handle_type;
+    uint16_t handle;
+    uint8_t priority;
+} __packed;
+
 /**
  * @}
  */

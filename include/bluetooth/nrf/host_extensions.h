@@ -107,6 +107,32 @@ struct bt_conn_set_pcr_params {
  */
 int bt_conn_set_power_control_request_params(struct bt_conn_set_pcr_params *params);
 
+enum bt_ctlr_priority_levels {
+  BT_CTLR_PRIORITY_FIRST = 1,
+  BT_CTLR_PRIORITY_SECOND = 2,
+  BT_CTLR_PRIORITY_THIRD = 3,
+  BT_CTLR_PRIORITY_FOURTH = 4,
+  BT_CTLR_PRIORITY_FIFTH = 5,
+
+  BT_CTLR_PRIORITY_DEFAULT = 0xff
+};
+
+struct bt_ctlr_priority_set {
+	enum bt_ctlr_priority_levels scan_init_auxiliary_channel_priority;
+};
+
+#define BT_CTLR_PRIORITY_SET_HIGH_PRIORITY_CONNECT \
+{ \
+	.scan_init_auxiliary_channel_priority = BT_CTLR_PRIORITY_SECOND \
+}
+
+#define BT_CTLR_PRIORITY_DEFAULT \
+{ \
+	.scan_init_auxiliary_channel_priority = BT_CTLR_PRIORITY_DEFAULT \
+}
+
+int bt_scan_reduce_scanner_initator_aux_channel_priority(struct bt_ctlr_priority_set *priority_set);
+
 /**
  * @}
  */
