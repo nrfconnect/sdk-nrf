@@ -160,10 +160,7 @@ Thingy:53: Matter weather station
 Matter Bridge
 -------------
 
-* Added:
-
-   * The :kconfig:option:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES` kconfig option to set the maximum number of scanned Bluetooth LE devices.
-   * The :kconfig:option:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS` kconfig option to set the scan timeout.
+|no_changes_yet_note|
 
 IPC radio firmware
 ------------------

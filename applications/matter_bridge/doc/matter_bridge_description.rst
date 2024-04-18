@@ -449,7 +449,7 @@ CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES
 .. _CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS:
 
 CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS
-   Set the Bluetooth scan tiemout in milliseconds.
+   Set the Bluetooth LE scan timeout in milliseconds.
 
 The following options affect how many bridged devices the application supports.
 See the :ref:`matter_bridge_app_bridged_support_configs` section for more information.
