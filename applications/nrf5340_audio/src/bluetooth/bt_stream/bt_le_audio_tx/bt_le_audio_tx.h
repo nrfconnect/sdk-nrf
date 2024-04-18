@@ -19,13 +19,14 @@
  *		Do not call this for each channel.
  *
  * @param bap_streams	Pointer to an array of BAP streams.
+ * @param channel_mask	Pointer to an array of channel masks.
  * @param enc_audio	Encoded audio data.
  * @param streams_to_tx	Number of streams to send.
  *
  * @return 0 if successful, error otherwise.
  */
-int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_encoded_audio enc_audio,
-			uint8_t streams_to_tx);
+int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, uint8_t *channel_mask,
+			struct le_audio_encoded_audio enc_audio, uint8_t streams_to_tx);
 
 /**
  * @brief Resets TX buffers. Must be called when a TX stream is stopped.

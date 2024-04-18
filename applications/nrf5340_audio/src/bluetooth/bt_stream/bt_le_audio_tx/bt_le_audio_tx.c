@@ -179,8 +179,7 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 			return -EACCES;
 		}
 
-		ret = bt_hci_get_conn_handle(ep_info.iso_chan->iso,
-					     iso_conn_handle);
+		ret = bt_hci_get_conn_handle(ep_info.iso_chan->iso, iso_conn_handle);
 		if (ret) {
 			LOG_ERR("Failed obtaining conn_handle (ret:%d)", ret);
 			return ret;
@@ -192,8 +191,8 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 	return 0;
 }
 
-int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_encoded_audio enc_audio,
-			uint8_t streams_to_tx)
+int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, uint8_t *channel_mask,
+			struct le_audio_encoded_audio enc_audio, uint8_t streams_to_tx)
 {
 	int ret;
 	size_t data_size_pr_stream = 0;
@@ -272,9 +271,10 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 			ret = iso_stream_send(enc_audio.data, data_size_pr_stream, bap_streams[i],
 					      &tx_info_arr[i], common_tx_sync_ts_us);
 		} else {
-			ret = iso_stream_send(&enc_audio.data[data_size_pr_stream * i],
-					      data_size_pr_stream, bap_streams[i], &tx_info_arr[i],
-					      common_tx_sync_ts_us);
+			ret = iso_stream_send(
+				&enc_audio.data[data_size_pr_stream * channel_mask[i]],
+				data_size_pr_stream, bap_streams[i], &tx_info_arr[i],
+				common_tx_sync_ts_us);
 		}
 
 		if (ret) {
