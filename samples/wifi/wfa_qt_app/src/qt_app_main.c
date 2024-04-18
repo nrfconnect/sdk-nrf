@@ -35,7 +35,8 @@ int init_usb(void)
 
 int main(void)
 {
-	struct in_addr addr;
+	struct in_addr addr = {0};
+	struct in_addr mask;
 
 #if defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M
 	/* For now hardcode to 128MHz */
@@ -63,10 +64,10 @@ int main(void)
 	}
 	if (sizeof(CONFIG_NET_CONFIG_MY_IPV4_NETMASK) > 1) {
 		/* If not empty */
-		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_MY_IPV4_NETMASK, &addr)) {
+		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_MY_IPV4_NETMASK, &mask)) {
 			printk("Invalid netmask: %s", CONFIG_NET_CONFIG_MY_IPV4_NETMASK);
 		} else {
-			net_if_ipv4_set_netmask(iface, &addr);
+			net_if_ipv4_set_netmask_by_addr(iface, &addr, &mask);
 		}
 	}
 #endif /* CONFIG_USB_DEVICE_STACK */
@@ -90,10 +91,10 @@ int main(void)
 
 	if (sizeof(CONFIG_NET_CONFIG_SLIP_IPV4_MASK) > 1) {
 		/* If not empty */
-		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_SLIP_IPV4_MASK, &addr)) {
+		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_SLIP_IPV4_MASK, &mask)) {
 			printk("Invalid netmask: %s", CONFIG_NET_CONFIG_SLIP_IPV4_MASK);
 		} else {
-			net_if_ipv4_set_netmask(slip_iface, &addr);
+			net_if_ipv4_set_netmask_by_addr(slip_iface, &addr, &mask);
 		}
 	}
 #endif /* CONFIG_SLIP */
@@ -120,10 +121,10 @@ int main(void)
 	}
 	if (sizeof(CONFIG_NET_CONFIG_MY_IPV4_NETMASK) > 1) {
 		/* If not empty */
-		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_MY_IPV4_NETMASK, &addr)) {
+		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_MY_IPV4_NETMASK, &mask)) {
 			printk("Invalid netmask: %s", CONFIG_NET_CONFIG_MY_IPV4_NETMASK);
 		} else {
-			net_if_ipv4_set_netmask(wifi_iface, &addr);
+			net_if_ipv4_set_netmask_by_addr(wifi_iface, &addr, &mask);
 		}
 	}
 
