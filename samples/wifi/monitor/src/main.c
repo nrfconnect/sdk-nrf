@@ -495,7 +495,8 @@ static int wifi_net_capture(void)
 int main(void)
 {
 #ifdef CONFIG_USB_DEVICE_STACK
-	struct in_addr addr;
+	struct in_addr addr = { 0 };
+	struct in_addr mask;
 #endif
 	int ret;
 
@@ -520,10 +521,10 @@ int main(void)
 
 	if (sizeof(CONFIG_NET_CONFIG_USB_IPV4_MASK) > 1) {
 		/* If not empty */
-		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_USB_IPV4_MASK, &addr)) {
+		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_USB_IPV4_MASK, &mask)) {
 			printk("Invalid netmask: %s", CONFIG_NET_CONFIG_USB_IPV4_MASK);
 		} else {
-			net_if_ipv4_set_netmask(iface, &addr);
+			net_if_ipv4_set_netmask_by_addr(iface, &addr, &mask);
 		}
 	}
 #endif
