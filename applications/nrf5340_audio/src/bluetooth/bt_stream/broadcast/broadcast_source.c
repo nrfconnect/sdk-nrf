@@ -41,6 +41,8 @@ static struct bt_le_ext_adv *adv;
 static bool initialized;
 static bool delete_broadcast_src;
 
+uint8_t audio_mapping_mask[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT] = {UINT8_MAX};
+
 #if (CONFIG_AURACAST)
 /* Make sure pba_buf is large enough for a 16bit UUID and meta data
  * (any addition to pba_buf requires an increase of this value)
@@ -359,7 +361,8 @@ int broadcast_source_send(struct le_audio_encoded_audio enc_audio)
 		bap_tx_streams[i] = &cap_streams[i].bap_stream;
 	}
 
-	ret = bt_le_audio_tx_send(bap_tx_streams, enc_audio, ARRAY_SIZE(cap_streams));
+	ret = bt_le_audio_tx_send(bap_tx_streams, audio_mapping_mask, enc_audio,
+				  ARRAY_SIZE(cap_streams));
 	if (ret) {
 		return ret;
 	}
@@ -433,6 +436,7 @@ int broadcast_source_enable(void)
 		/* The channel allocation is set incrementally */
 		bt_audio_codec_allocation_set(stream_params[i].data, stream_params[i].data_len,
 					      BIT(i));
+		audio_mapping_mask[i] = i;
 	}
 
 	/* Create BIGs */

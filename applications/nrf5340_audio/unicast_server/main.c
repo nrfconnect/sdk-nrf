@@ -352,11 +352,6 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 	case BT_MGMT_SECURITY_CHANGED:
 		LOG_INF("Security changed");
 
-		ret = bt_r_and_c_discover(msg->conn);
-		if (ret) {
-			LOG_WRN("Failed to discover rendering services");
-		}
-
 		ret = bt_content_ctrl_discover(msg->conn);
 		if (ret == -EALREADY) {
 			LOG_DBG("Discovery in progress or already done");
@@ -499,6 +494,8 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 int main(void)
 {
 	int ret;
+	enum bt_audio_location location;
+	enum audio_channel channel;
 	static struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
 
 	LOG_DBG("nRF5340 APP core started");
@@ -520,7 +517,15 @@ int main(void)
 	ret = le_audio_rx_init();
 	ERR_CHK_MSG(ret, "Failed to initialize rx path");
 
-	ret = unicast_server_enable(le_audio_rx_data_handler);
+	channel_assignment_get(&channel);
+
+	if (channel == AUDIO_CH_L) {
+		location = BT_AUDIO_LOCATION_FRONT_LEFT;
+	} else {
+		location = BT_AUDIO_LOCATION_FRONT_RIGHT;
+	}
+
+	ret = unicast_server_enable(le_audio_rx_data_handler, location);
 	ERR_CHK_MSG(ret, "Failed to enable LE Audio");
 
 	ret = bt_r_and_c_init();

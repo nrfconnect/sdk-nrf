@@ -179,8 +179,7 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 			return -EACCES;
 		}
 
-		ret = bt_hci_get_conn_handle(ep_info.iso_chan->iso,
-					     iso_conn_handle);
+		ret = bt_hci_get_conn_handle(ep_info.iso_chan->iso, iso_conn_handle);
 		if (ret) {
 			LOG_ERR("Failed obtaining conn_handle (ret:%d)", ret);
 			return ret;
@@ -192,8 +191,8 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 	return 0;
 }
 
-int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_encoded_audio enc_audio,
-			uint8_t streams_to_tx)
+int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, uint8_t *audio_mapping_mask,
+			struct le_audio_encoded_audio enc_audio, uint8_t streams_to_tx)
 {
 	int ret;
 	size_t data_size_pr_stream = 0;
@@ -215,13 +214,7 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 		return -ENOMEM;
 	}
 
-	if ((enc_audio.num_ch == 1) || (enc_audio.num_ch == streams_to_tx)) {
-		data_size_pr_stream = enc_audio.size / enc_audio.num_ch;
-	} else {
-		LOG_ERR("Num encoded channels: %d must be 1 or equal to num streams: %d",
-			enc_audio.num_ch, streams_to_tx);
-		return -EINVAL;
-	}
+	data_size_pr_stream = enc_audio.size / enc_audio.num_ch;
 
 	/* When sending ISO data, we always send ts = 0 to the first active transmitting channel.
 	 * The controller will populate with a ts which is fetched using bt_iso_chan_get_tx_sync.
@@ -245,6 +238,11 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 
 		if (!le_audio_ep_state_check(bap_streams[i]->ep, BT_BAP_EP_STATE_STREAMING)) {
 			/* This bap_stream is not streaming*/
+			continue;
+		}
+
+		if (audio_mapping_mask[i] > enc_audio.num_ch) {
+			LOG_WRN("Unsupported audio_channel: %d", audio_mapping_mask[i]);
 			continue;
 		}
 
@@ -272,9 +270,10 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, struct le_audio_enco
 			ret = iso_stream_send(enc_audio.data, data_size_pr_stream, bap_streams[i],
 					      &tx_info_arr[i], common_tx_sync_ts_us);
 		} else {
-			ret = iso_stream_send(&enc_audio.data[data_size_pr_stream * i],
-					      data_size_pr_stream, bap_streams[i], &tx_info_arr[i],
-					      common_tx_sync_ts_us);
+			ret = iso_stream_send(
+				&enc_audio.data[data_size_pr_stream * audio_mapping_mask[i]],
+				data_size_pr_stream, bap_streams[i], &tx_info_arr[i],
+				common_tx_sync_ts_us);
 		}
 
 		if (ret) {

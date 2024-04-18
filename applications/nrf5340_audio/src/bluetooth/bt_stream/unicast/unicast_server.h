@@ -70,8 +70,10 @@ int unicast_server_disable(void);
 /**
  * @brief	Enable the Bluetooth LE Audio unicast (CIS) server.
  *
+ * @param[in]	location	Location of the unicast_server to be enabled.
+ *
  * @return	0 for success, error otherwise.
  */
-int unicast_server_enable(le_audio_receive_cb rx_cb);
+int unicast_server_enable(le_audio_receive_cb rx_cb, enum bt_audio_location location);
 
 #endif /* _UNICAST_SERVER_H_ */
