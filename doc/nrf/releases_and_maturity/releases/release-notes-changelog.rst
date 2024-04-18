@@ -95,6 +95,7 @@ Matter
 ------
 
 * Added support for merging the generated factory data HEX file with the firmware HEX file by using the devicetree configuration, when Partition Manager is not enabled in the project.
+* Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
 
 Matter fork
 +++++++++++
