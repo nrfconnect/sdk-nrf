@@ -17,7 +17,6 @@
 
 #include "macros_common.h"
 #include "nrf5340_audio_common.h"
-#include "channel_assignment.h"
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
 
@@ -66,7 +65,9 @@ static const uint8_t cap_adv_data[] = {
 #endif /* CONFIG_BT_AUDIO_RX */
 
 static struct bt_bap_stream *bap_tx_streams[CONFIG_BT_ASCS_ASE_SRC_COUNT];
+
 #if defined(CONFIG_BT_AUDIO_TX)
+static uint8_t audio_mapping_mask[CONFIG_BT_ASCS_ASE_SRC_COUNT] = {UINT8_MAX};
 #define AVAILABLE_SOURCE_CONTEXT (BT_AUDIO_CONTEXT_TYPE_ANY)
 #else
 #define AVAILABLE_SOURCE_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
@@ -118,11 +119,13 @@ struct bt_csip_set_member_register_param csip_param = {
 	.cb = &csip_callbacks,
 };
 
+#if defined(CONFIG_BT_AUDIO_RX)
 static struct bt_audio_codec_cap lc3_codec_sink = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAPABILIY_FREQ,
 	(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
 	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, AVAILABLE_SINK_CONTEXT);
+#endif /* (CONFIG_BT_AUDIO_RX) */
 
 #if defined(CONFIG_BT_AUDIO_TX)
 static struct bt_audio_codec_cap lc3_codec_source = BT_AUDIO_CODEC_CAP_LC3(
@@ -133,7 +136,9 @@ static struct bt_audio_codec_cap lc3_codec_source = BT_AUDIO_CODEC_CAP_LC3(
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
 static enum bt_audio_dir caps_dirs[] = {
+#if defined(CONFIG_BT_AUDIO_RX)
 	BT_AUDIO_DIR_SINK,
+#endif /* CONFIG_BT_AUDIO_RX */
 #if defined(CONFIG_BT_AUDIO_TX)
 	BT_AUDIO_DIR_SOURCE,
 #endif /* (CONFIG_BT_AUDIO_TX) */
@@ -605,7 +610,8 @@ int unicast_server_send(struct le_audio_encoded_audio enc_audio)
 #if (CONFIG_BT_AUDIO_TX)
 	int ret;
 
-	ret = bt_le_audio_tx_send(bap_tx_streams, enc_audio, CONFIG_BT_ASCS_ASE_SRC_COUNT);
+	ret = bt_le_audio_tx_send(bap_tx_streams, audio_mapping_mask, enc_audio,
+				  CONFIG_BT_ASCS_ASE_SRC_COUNT);
 	if (ret) {
 		return ret;
 	}
@@ -621,7 +627,7 @@ int unicast_server_disable(void)
 	return -ENOTSUP;
 }
 
-int unicast_server_enable(le_audio_receive_cb recv_cb)
+int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location location)
 {
 	int ret;
 	static bool initialized;
@@ -631,7 +637,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb)
 		return -EALREADY;
 	}
 
-	if (recv_cb == NULL) {
+	if (recv_cb == NULL && IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
 		LOG_ERR("Receive callback is NULL");
 		return -EINVAL;
 	}
@@ -639,8 +645,6 @@ int unicast_server_enable(le_audio_receive_cb recv_cb)
 	receive_cb = recv_cb;
 
 	bt_bap_unicast_server_register_cb(&unicast_server_cb);
-
-	channel_assignment_get(&channel);
 
 	if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA)) {
 		LOG_WRN("CSIP test sample data is used, must be changed "
@@ -659,39 +663,12 @@ int unicast_server_enable(le_audio_receive_cb recv_cb)
 	for (int i = 0; i < ARRAY_SIZE(caps); i++) {
 		ret = bt_pacs_cap_register(caps_dirs[i], &caps[i]);
 		if (ret) {
-			LOG_ERR("Capability register failed");
+			LOG_ERR("Capability register failed. Err: %d", ret);
 			return ret;
 		}
 	}
 
-	if (channel == AUDIO_CH_L) {
-		csip_param.rank = CSIP_HL_RANK;
-
-		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
-		if (ret) {
-			LOG_ERR("Location set failed");
-			return ret;
-		}
-
-	} else if (channel == AUDIO_CH_R) {
-		csip_param.rank = CSIP_HR_RANK;
-
-		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_RIGHT);
-		if (ret) {
-			LOG_ERR("Location set failed");
-			return ret;
-		}
-
-	} else {
-		LOG_ERR("Channel not supported");
-		return -ECANCELED;
-	}
-
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
-		ret = bt_le_audio_tx_init();
-		if (ret) {
-			return ret;
-		}
+	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
 		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
 
 		if (ret) {
@@ -702,6 +679,27 @@ int unicast_server_enable(le_audio_receive_cb recv_cb)
 		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
 		if (ret) {
 			LOG_ERR("Available context set failed. Err: %d", ret);
+			return ret;
+		}
+		if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
+			csip_param.rank = CSIP_HL_RANK;
+		} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
+			csip_param.rank = CSIP_HR_RANK;
+		} else {
+			LOG_ERR("Channel not supported");
+			return -ECANCELED;
+		}
+
+		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, location);
+		if (ret) {
+			LOG_ERR("Location set failed. Err: %d", ret);
+			return ret;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
+		ret = bt_le_audio_tx_init();
+		if (ret) {
 			return ret;
 		}
 
@@ -718,36 +716,9 @@ int unicast_server_enable(le_audio_receive_cb recv_cb)
 			return ret;
 		}
 
-		if (channel == AUDIO_CH_L) {
-			ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE,
-						   BT_AUDIO_LOCATION_FRONT_LEFT);
-			if (ret) {
-				LOG_ERR("Location set failed");
-				return ret;
-			}
-		} else if (channel == AUDIO_CH_R) {
-			ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE,
-						   BT_AUDIO_LOCATION_FRONT_RIGHT);
-			if (ret) {
-				LOG_ERR("Location set failed");
-				return ret;
-			}
-		} else {
-			LOG_ERR("Channel not supported");
-			return -ECANCELED;
-		}
-	} else {
-		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
-
+		ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE, location);
 		if (ret) {
-			LOG_ERR("Supported context set failed. Err: %d ", ret);
-			return ret;
-		}
-
-		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
-
-		if (ret) {
-			LOG_ERR("Available context set failed. Err: %d", ret);
+			LOG_ERR("Location set failed. Err: %d", ret);
 			return ret;
 		}
 	}
@@ -759,13 +730,13 @@ int unicast_server_enable(le_audio_receive_cb recv_cb)
 	if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER)) {
 		ret = bt_cap_acceptor_register(&csip_param, &csip);
 		if (ret) {
-			LOG_ERR("Failed to register CAP acceptor");
+			LOG_ERR("Failed to register CAP acceptor. Err: %d", ret);
 			return ret;
 		}
 
 		ret = bt_csip_set_member_generate_rsi(csip, csip_rsi_adv_data);
 		if (ret) {
-			LOG_ERR("Failed to generate RSI (ret %d)", ret);
+			LOG_ERR("Failed to generate RSI. Err: %d", ret);
 			return ret;
 		}
 	}

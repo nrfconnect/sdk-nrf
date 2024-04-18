@@ -55,16 +55,13 @@ static int leds_set(void)
 	} else {
 		ret = led_on(LED_APP_RGB, LED_COLOR_MAGENTA);
 	}
+#elif (CONFIG_AUDIO_DEV == GATEWAY)
+	ret = led_on(LED_APP_RGB, LED_COLOR_GREEN);
+#endif /* (CONFIG_AUDIO_DEV == HEADSET) */
 
 	if (ret) {
 		return ret;
 	}
-#elif (CONFIG_AUDIO_DEV == GATEWAY)
-	ret = led_on(LED_APP_RGB, LED_COLOR_GREEN);
-	if (ret) {
-		return ret;
-	}
-#endif /* (CONFIG_AUDIO_DEV == HEADSET) */
 
 	return 0;
 }

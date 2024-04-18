@@ -69,7 +69,9 @@ int unicast_client_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
  * @param[in]	conn	Pointer to the connection.
  * @param[in]	dir	Direction of the stream.
  *
- * @return 0 for success, error otherwise.
+ * @retval	-EALREADY	Device has already been discovered.
+ * @retval	-ENOSPC		No more room in headset list.
+ * @retval	0		Success.
  */
 int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir);
 
@@ -83,16 +85,20 @@ void unicast_client_conn_disconnected(struct bt_conn *conn);
 /**
  * @brief	Start the Bluetooth LE Audio unicast (CIS) client.
  *
+ * @param[in]	dir	Direction of the stream to start.
+ *
  * @return	0 for success, error otherwise.
  */
-int unicast_client_start(void);
+int unicast_client_start(enum bt_audio_dir dir);
 
 /**
  * @brief	Stop the Bluetooth LE Audio unicast (CIS) client.
  *
+ * @param[in]	dir	Direction of the stream to stop.
+ *
  * @return	0 for success, error otherwise.
  */
-int unicast_client_stop(void);
+int unicast_client_stop(enum bt_audio_dir dir);
 
 /**
  * @brief	Send encoded audio using the Bluetooth LE Audio unicast.
