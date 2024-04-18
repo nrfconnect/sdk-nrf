@@ -20,9 +20,9 @@
 extern "C" {
 #endif
 
-/** @brief Set flag in the @a flags field of the @ref bt_gatt_subscribe_params structure.
+/** @brief Set flag in the @a flags field of the bt_gatt_subscribe_params structure.
  *
- * This function must be used instead of @ref atomic_set_bit() if you are using
+ * This function must be used instead of atomic_set_bit() if you are using
  * BLE API over RPC.
  *
  * @param params    Subscribe parameters.
@@ -33,9 +33,9 @@ extern "C" {
  */
 int bt_rpc_gatt_subscribe_flag_set(struct bt_gatt_subscribe_params *params, uint32_t flags_bit);
 
-/** @brief Clear flag in the @a flags field of the @ref bt_gatt_subscribe_params structure.
+/** @brief Clear flag in the @a flags field of the bt_gatt_subscribe_params structure.
  *
- * This function must be used instead of @ref atomic_clear_bit() if you are using
+ * This function must be used instead of atomic_clear_bit() if you are using
  * BLE API over RPC.
  *
  * @param params    Subscribe parameters.
@@ -46,9 +46,9 @@ int bt_rpc_gatt_subscribe_flag_set(struct bt_gatt_subscribe_params *params, uint
  */
 int bt_rpc_gatt_subscribe_flag_clear(struct bt_gatt_subscribe_params *params, uint32_t flags_bit);
 
-/** @brief Get flag value from the @a flags field of the @ref bt_gatt_subscribe_params structure.
+/** @brief Get flag value from the @a flags field of the bt_gatt_subscribe_params structure.
  *
- * This function must be used instead of @ref atomic_test_bit() if you are using
+ * This function must be used instead of atomic_test_bit() if you are using
  * BLE API over RPC.
  *
  * @param params    Subscribe parameters.
