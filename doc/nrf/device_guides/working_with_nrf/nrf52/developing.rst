@@ -20,6 +20,7 @@ To get started with your nRF52 Series DK, follow the steps in the :ref:`ug_nrf52
 If you are not familiar with the |NCS| and its development environment, see :ref:`installation` and :ref:`configuration_and_build` documentation.
 
 .. _ug_nrf52_developing_ble_fota:
+
 .. fota_upgrades_intro_start
 
 FOTA updates
@@ -27,6 +28,7 @@ FOTA updates
 
 |fota_upgrades_def|
 You can also use FOTA updates to replace the application.
+See the :ref:`app_dfu` page for general Device Firmware Update (DFU) information, such as supported methods for sending and receiving updates on the device.
 
 .. note::
    For the possibility of introducing an upgradable bootloader, refer to :ref:`ug_bootloader_adding`.
@@ -61,7 +63,7 @@ To enable support for FOTA updates, do the following:
 .. fota_upgrades_over_ble_mandatory_mcuboot_start
 
 * Use MCUboot as the upgradable bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
-  For more information, go to the :doc:`mcuboot:index-ncs` page.
+  For more information, go to the :ref:`ug_bootloader_adding` page.
 
 .. fota_upgrades_over_ble_mandatory_mcuboot_end
 
