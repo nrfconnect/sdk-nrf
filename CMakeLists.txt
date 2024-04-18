@@ -26,7 +26,9 @@ endforeach()
 
 include(cmake/extensions.cmake)
 include(cmake/version.cmake)
-include(cmake/multi_image.cmake)
+if (NOT SYSBUILD OR CONFIG_PRE_SELECT_PARTITION_MANAGER)
+  include(cmake/multi_image.cmake)
+endif()
 
 zephyr_include_directories(include)
 

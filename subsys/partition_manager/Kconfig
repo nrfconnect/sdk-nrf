@@ -6,8 +6,22 @@
 
 menu "Partition Manager"
 
+config PRE_SELECT_PARTITION_MANAGER
+	bool "Pre-select Partition Manager for project [DO NOT EDIT]"
+	default y
+	help
+	  Use partition manager for specified project.
+	  This should be set from command line before project is built
+	  for the first time, otherwise the Partition Manager and
+	  multi-image support may be already included for a project.
+	  When set to n it directs all partition references to DTS and
+	  disables the multi-image support, so what you will get is
+	  build of the specified project only with partition definitions
+	  taken from the DTS.
+
 config PARTITION_MANAGER_ENABLED
 	bool "Partition manager is enabled (read-only option)"
+	default y if PRE_SELECT_PARTITION_MANAGER
 	help
 	  Option which can be checked to see whether or not the
 	  partition manager is enabled in the current build. Note that this

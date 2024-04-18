@@ -2,9 +2,9 @@ add_subdirectory(${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/bootutil/zephyr
                  ${CMAKE_CURRENT_BINARY_DIR}/boot/bootutil/zephyr
 )
 
-if(SYSBUILD)
+if(SYSBUILD OR NOT CONFIG_PRE_SELECT_PARTITION_MANAGER)
   # Code below is partition manager w/ child image support, thus return when
-  # sysbuild is used.
+  # sysbuild is used or Partition Manager has been disabled.
   return()
 endif()
 

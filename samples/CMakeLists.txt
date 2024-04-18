@@ -4,6 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# If Partition Manager has been disabled, then multi-image is not supported
+# either, as it depends on the Partition Manager to function.
+if (NOT CONFIG_PARTITION_MANAGER_ENABLED)
+  return()
+endif()
+
 if (CONFIG_SECURE_BOOT)
   if (CONFIG_SOC_NRF5340_CPUNET)
     # Share some information which is used when generating the zip file

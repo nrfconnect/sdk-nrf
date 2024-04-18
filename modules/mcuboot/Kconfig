@@ -30,11 +30,13 @@ config BOOT_BUILD_DIRECT_XIP_VARIANT
 	help
 	  Build a variant of the 'app' image which can be used for DIRECT_XIP.
 
-# The name of this configuration needs to match the requirements set by the
-# script `partition_manager.py`. See `pm.yml` in the application directory
-# of MCUBoot.
-module=MCUBOOT
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
+if PRE_SELECT_PARTITION_MANAGER
+	# The name of this configuration needs to match the requirements set by the
+	# script `partition_manager.py`. See `pm.yml` in the application directory
+	# of MCUBoot.
+	module=MCUBOOT
+	source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
+endif
 
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
