@@ -170,5 +170,12 @@ The library has the following dependencies:
 API documentation
 *****************
 
-This library does not define a new API.
+This library does not define a new Bluetooth API except for ``flags`` modification.
 Instead, it uses Zephyr's :ref:`zephyr:bluetooth_api`.
+
+| Header file: :file:`include/bluetooth/bt_rpc.h`
+| Source files: :file:`subsys/bluetooth/rpc/`
+
+.. doxygengroup:: bt_rpc
+   :project: nrf
+   :members:
