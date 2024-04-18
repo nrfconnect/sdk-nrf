@@ -103,8 +103,13 @@ Device-specific DFU guides
 
 See the following pages for device-specific guides related to DFU:
 
-* :ref:`qspi_xip` - for the nRF5340 SoC
-* :ref:`ug_nrf70_fw_patch_update` - for nRF70 Series devices
+* :ref:`Developing with nRF52 Series <ug_nrf52_developing_ble_fota>` - for how to do firmware over-the-air (FOTA) updates with nRF52 Series devices.
+
+* :ref:`Developing with nRF5340 DK <ug_nrf53_developing_ble_fota>` - for how to do FOTA updates and serial recovery with the nRF5340 SoC.
+
+  * :ref:`qspi_xip` - for external execute in place (XIP) for the nRF5340 SoC.
+
+* :ref:`ug_nrf70_fw_patch_update` - for nRF70 Series devices.
 
 See the following user guides for an overview of topics related to general firmware updates with the |NCS|:
 
