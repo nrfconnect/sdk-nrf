@@ -54,6 +54,7 @@ Working with nRF54L Series
 ==========================
 
 * Added the :ref:`ug_nrf54l15_gs` page.
+* Changed the default value for the Kconfig option :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_ACCURACY` from 500 to 250 if :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is used.
 
 Working with nRF52 Series
 =========================
@@ -64,8 +65,7 @@ Working with nRF53 Series
 =========================
 
 * Added the :ref:`features_nrf53` page.
-
-|no_changes_yet_note|
+* Changed the default value for the Kconfig option :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_ACCURACY` from 500 to 250 if :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is used.
 
 Working with RF front-end modules
 =================================
