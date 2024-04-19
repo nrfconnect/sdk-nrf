@@ -8,9 +8,6 @@ This USB interface has the following functions:
 
 COM Ports
 ====================
-This USB interface exposes two COM ports mapped to the physical UART interfaces between the nRF91 and nRF5340 devices.
-When opening these ports manually (without using LTE Link Monitor) be aware that the USB COM port baud rate selection is applied to the UART.
-
 This USB interface exposes two COM ports mapped to the physical UART interfaces between the nRF91 Series and nRF5340 devices.
 When opening these ports manually (without using the LTE Link Monitor), be aware that the USB COM port baud rate selection is applied to the UART.
 
