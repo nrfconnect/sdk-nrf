@@ -141,6 +141,7 @@ Enhanced ShockBurst (ESB)
 
 * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
 * Added fast switching between radio states for the nRF54H20 SoC.
+* Added fast radio channel switching for the nRF54H20 SoC.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------

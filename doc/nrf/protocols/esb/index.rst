@@ -318,10 +318,12 @@ If the ESB connection is established only between nRF52 and/or nRF53 Series devi
 When the value of the ``use_fast_ramp_up`` parameter is ``true``, fast ramp-up is enabled, resulting in reduced ramp-up delay of 40 µs.
 
 Furthermore, for the nRF54H20 SoC, you can activate fast switching using the :kconfig:option:`CONFIG_ESB_FAST_SWITCHING` Kconfig option and enable the ramp-up by setting the ``use_fast_ramp_up`` parameter to ``true``.
-The fast switching option enables direct switching between RX to TX and TX to RX radio states without entering the disable state.
+The fast switching option enables direct switching between RX to TX and TX to RX radio states without entering the ``DISABLED`` state.
 For the PTX node, this switching occurs after transmitting a packet and before waiting for acknowledgment (TX -> RX).
 For the PRX node, this switching occurs after receiving a packet and before transmitting an acknowledgment (RX -> TX).
 Enabling this feature can improve the responsiveness and efficiency of the radio communication system by reducing latency.
+
+Enabling the :kconfig:option:`CONFIG_ESB_FAST_CHANNEL_SWITCHING` Kconfig for the nRF54H20 SoC allows radio channel switching in RX radio state without transitioning to the ``DISABLED`` state.
 
 .. _esb_never_disable_tx:
 

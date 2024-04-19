@@ -107,6 +107,9 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 							 RADIO_SHORTS_NO_FAST_SWITCHING_NO_RSSISTOP)
 #endif  /* !defined(RADIO_SHORTS_DISABLED_RSSISTOP_Msk) */
 
+/* Flag for changing radio channel. */
+#define RF_CHANNEL_UPDATE_FLAG 0
+
 /* Internal Enhanced ShockBurst module state. */
 enum esb_state {
 	ESB_STATE_IDLE,		/* Idle. */
@@ -220,6 +223,7 @@ struct esb_address {
 	uint8_t addr_length;	/* Length of the address plus the prefix. */
 	uint8_t rx_pipes_enabled;	/* Bitfield for enabled pipes. */
 	uint8_t rf_channel;        /* Channel to use (between 0 and 100). */
+	atomic_t rf_channel_flags;	/* Flags for setting the channel. */
 };
 
 static nrfx_timer_t esb_timer = ESB_NRFX_TIMER_INSTANCE;
@@ -1097,6 +1101,7 @@ static void start_tx_transaction(void)
 	nrf_radio_txaddress_set(NRF_RADIO, current_payload->pipe);
 	nrf_radio_rxaddresses_set(NRF_RADIO, BIT(current_payload->pipe));
 	nrf_radio_frequency_set(NRF_RADIO, (RADIO_BASE_FREQUENCY + esb_addr.rf_channel));
+	atomic_clear_bit(&esb_addr.rf_channel_flags, RF_CHANNEL_UPDATE_FLAG);
 
 	update_radio_tx_power();
 
@@ -1487,6 +1492,13 @@ static void on_radio_disabled_rx_ack(void)
 	esb_state = ESB_STATE_PRX;
 }
 
+static void fast_switchinng_set_channel(uint8_t channel)
+{
+	*(volatile uint32_t *)((uint8_t *)(NRF_RADIO) +  0x70C) &= ~(1 << 31);
+	nrf_radio_frequency_set(NRF_RADIO, (RADIO_BASE_FREQUENCY + channel));
+	*(volatile uint32_t *)((uint8_t *)(NRF_RADIO) +  0x07C) = 1;
+}
+
 /* Retrieve interrupt flags and reset them.
  *
  * @param[out] interrupts	Interrupt flags.
@@ -1527,6 +1539,16 @@ static void radio_irq_handler(void)
 		}
 		nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 	}
+
+#if defined(CONFIG_ESB_FAST_CHANNEL_SWITCHING)
+	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_RXREADY_MASK) &&
+	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_RXREADY)) {
+		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_RXREADY);
+		if (atomic_test_and_clear_bit(&esb_addr.rf_channel_flags, RF_CHANNEL_UPDATE_FLAG)) {
+			fast_switchinng_set_channel(esb_addr.rf_channel);
+		}
+	}
+#endif /* defined(CONFIG_ESB_FAST_CHANNEL_SWITCHING) */
 }
 
 static void esb_evt_irq_handler(void)
@@ -1671,6 +1693,10 @@ int esb_init(const struct esb_config *config)
 	disable_event.event.generic.event = esb_ppi_radio_disabled_get();
 
 	nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, esb_cfg.use_fast_ramp_up);
+
+#if defined(CONFIG_ESB_FAST_CHANNEL_SWITCHING)
+		nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_RXREADY_MASK);
+#endif /* defined(CONFIG_ESB_FAST_CHANNEL_SWITCHING) */
 
 #if IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS)
 
@@ -1922,6 +1948,7 @@ int esb_start_rx(void)
 
 	nrf_radio_rxaddresses_set(NRF_RADIO, esb_addr.rx_pipes_enabled);
 	nrf_radio_frequency_set(NRF_RADIO, (RADIO_BASE_FREQUENCY + esb_addr.rf_channel));
+	atomic_clear_bit(&esb_addr.rf_channel_flags, RF_CHANNEL_UPDATE_FLAG);
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
 
 	NVIC_ClearPendingIRQ(ESB_RADIO_IRQ_NUMBER);
@@ -2132,11 +2159,20 @@ int esb_enable_pipes(uint8_t enable_mask)
 
 int esb_set_rf_channel(uint32_t channel)
 {
-	if (esb_state != ESB_STATE_IDLE) {
-		return -EBUSY;
-	}
 	if (channel > 100) {
 		return -EINVAL;
+	}
+
+	if (esb_state != ESB_STATE_IDLE) {
+		if (IS_ENABLED(CONFIG_ESB_FAST_CHANNEL_SWITCHING)) {
+			if (esb_state == ESB_STATE_PRX) {
+				fast_switchinng_set_channel(channel);
+			} else {
+				atomic_set_bit(&esb_addr.rf_channel_flags, RF_CHANNEL_UPDATE_FLAG);
+			}
+		} else {
+			return -EBUSY;
+		}
 	}
 
 	esb_addr.rf_channel = channel;
