@@ -7,7 +7,7 @@ GATT Bond Management Service (BMS)
    :local:
    :depth: 2
 
-This module implements the Bond Management Service with the corresponding set of characteristics defined in the `Bond Management Service Specification`_.
+This library implements the Bond Management Service with the corresponding set of characteristics defined in the `Bond Management Service Specification`_.
 
 You can configure the service to support your desired feature set of bond management operations.
 All the BMS features in the "LE transport only" mode are supported:
@@ -16,7 +16,7 @@ All the BMS features in the "LE transport only" mode are supported:
  * Delete all bonds on the Server.
  * Delete all bonds on the Server except the one of the requesting device.
 
-You can enable each feature when initializing the module.
+You can enable each feature when initializing the library.
 
 Authorization
 *************
@@ -27,7 +27,7 @@ When required, the Client's request to execute a bond management operation must 
 The Server compares the code with its local version and accepts the request only if the codes match.
 
 If you use at least one BMS feature that requires authorization, you need to provide a callback with comparison logic for the authorization codes.
-You can set this callback when initializing the module.
+You can set this callback when initializing the library.
 
 Deleting the bonds
 ******************

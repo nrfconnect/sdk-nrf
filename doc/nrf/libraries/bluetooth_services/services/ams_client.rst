@@ -7,8 +7,8 @@ Apple Media Service (AMS) Client
    :local:
    :depth: 2
 
-This module implements the Apple Media Service (AMS) client.
-This client can be used as a Media Remote (MR) to interact with a Media Source (MS).
+This library implements the Apple Media Service (AMS) client.
+You can use this library as a Media Remote (MR) to interact with a Media Source (MS).
 The MS is typically an iOS device.
 For detailed information about the Apple Media Service, see `Apple Developer Documentation <Apple Media Service Reference_>`_.
 

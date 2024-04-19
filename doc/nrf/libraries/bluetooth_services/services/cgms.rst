@@ -10,7 +10,7 @@ GATT Continuous Glucose Monitoring Service (CGMS)
 Overview
 ********
 
-This module implements the Continuous Glucose Monitoring Service with the corresponding set of characteristics defined in the `Continuous Glucose Monitoring Service Specification`_.
+This library implements the Continuous Glucose Monitoring Service with the corresponding set of characteristics defined in the `Continuous Glucose Monitoring Service Specification`_.
 
 Supported features
 ==================
@@ -21,9 +21,9 @@ Configuration
 *************
 
 Set the maximum number of glucose measurement records stored in the device using the :kconfig:option:`CONFIG_BT_CGMS_MAX_MEASUREMENT_RECORD` Kconfig option.
-The value of should be large enough to hold all records generated in a session.
+The value should be large enough to hold all records generated in a session.
 
-Set the logging level of the CGMS module using the :kconfig:option:`CONFIG_BT_CGMS_LOG_LEVEL_CHOICE` Kconfig option.
+Set the logging level of the CGMS library using the :kconfig:option:`CONFIG_BT_CGMS_LOG_LEVEL_CHOICE` Kconfig option.
 
 Usage
 *****

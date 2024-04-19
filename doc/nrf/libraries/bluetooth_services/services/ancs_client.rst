@@ -7,7 +7,7 @@ Apple Notification Center Service (ANCS) Client
    :local:
    :depth: 2
 
-The ANCS Client module is used for implementation of the Apple Notification Center Service (ANCS) client.
+The ANCS Client library is used for implementation of the Apple Notification Center Service (ANCS) client.
 
 .. note::
 
@@ -21,7 +21,7 @@ The ANCS client can be used as a Notification Consumer (NC) that receives data n
 The NP is typically an iOS device that is acting as a server.
 For detailed information about the Apple Notification Center Service, see `Apple Developer Documentation <Apple Notification Center Service Specification_>`_.
 
-In this module, iOS notifications are received through the GATT notifications.
+In this library, iOS notifications are received through the GATT notifications.
 
 .. note::
 
@@ -35,9 +35,9 @@ In this module, iOS notifications are received through the GATT notifications.
 Configuration
 *************
 
-Upon initializing the module, add different iOS notification attributes you want to receive for iOS notifications (see :c:func:`bt_ancs_register_attr`).
+Upon initializing the library, add different iOS notification attributes you want to receive for iOS notifications (see :c:func:`bt_ancs_register_attr`).
 
-Once a connection is established with a central device, the module needs a service discovery to discover the ANCS server handles.
+Once a connection is established with a central device, the library needs a service discovery to discover the ANCS server handles.
 If this succeeds, the handles for the ANCS server must be assigned to an ANCS client instance using the :c:func:`bt_ancs_handles_assign` function.
 
 The application can now subscribe to iOS notifications with :c:func:`bt_ancs_subscribe_notification_source`.
@@ -82,6 +82,7 @@ Use the following functions to perform activities related to notifications:
 
 Samples using the library
 *************************
+
 The :ref:`peripheral_ancs_client` sample uses this library.
 
 Dependencies

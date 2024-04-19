@@ -7,20 +7,20 @@ Bluetooth LE advertising providers
    :local:
    :depth: 2
 
-The Bluetooth LE advertising providers subsystem manages advertising data and scan response data.
-The subsystem does not control Bluetooth LE advertising by itself.
+The Bluetooth LE advertising providers library manages advertising data and scan response data.
+It does not control Bluetooth LE advertising by itself.
 
 Overview
 ********
 
-The Bluetooth LE advertising providers subsystem acts as a middleware between data providers and a module that controls Bluetooth advertising.
-The module that controls the Bluetooth advertising can use the subsystem's API to get advertising data and scan response data.
-On the API call, the Bluetooth LE advertising providers subsystem gets data from providers and passes the data to the module that controls Bluetooth advertising.
+The Bluetooth LE advertising providers library acts as a middleware between data providers and a module that controls Bluetooth advertising.
+The module that controls the Bluetooth advertising can use the library's API to get advertising data and scan response data.
+On the API call, the Bluetooth LE advertising providers library gets data from providers and passes the data to the module that controls Bluetooth advertising.
 
 Providers
 =========
 
-The subsystem gets both advertising data and scan response data from providers.
+The library gets both advertising data and scan response data from providers.
 A provider manages a single element that is part of either advertising data or scan response data.
 
 The |NCS| provides a set of predefined data providers.
@@ -42,7 +42,7 @@ Apart from filling the Bluetooth data structure, the provider can also perform a
   The error value of ``-ENOENT`` is used to inform that provider desists from providing data.
   In that case, the provider does not fill in the Bluetooth data structure.
   This error code is not forwarded to the module that controls Bluetooth LE advertising.
-  Other negative values denote provider-specific errors, which are forwarded directly to the module that controls Bluetooth LE advertising.
+  Other negative values denote provider-specific errors that are forwarded directly to the module that controls Bluetooth LE advertising.
 
 The provided Bluetooth data can depend on any of the following options:
 
@@ -56,11 +56,11 @@ Examples of provider implementations can be found in the :file:`subsys/bluetooth
 Advertising control
 ===================
 
-The Bluetooth LE advertising providers subsystem does not control Bluetooth LE advertising by itself.
+The Bluetooth LE advertising providers library does not control Bluetooth LE advertising by itself.
 A separate module that controls Bluetooth advertising is mandatory.
 For example, :ref:`caf_ble_adv`, that is available in the |NCS|.
 An application can use this CAF module or implement an application-specific module that controls Bluetooth advertising.
-The application then uses the Bluetooth LE advertising providers subsystem to manage advertising data and scan response data.
+The application then uses the Bluetooth LE advertising providers library to manage advertising data and scan response data.
 
 Custom module
 -------------
@@ -79,7 +79,7 @@ See mentioned structures' documentation for detailed description of individual m
 Configuration
 *************
 
-Set :kconfig:option:`CONFIG_BT_ADV_PROV` to enable the Bluetooth LE advertising providers subsystem.
+Set the :kconfig:option:`CONFIG_BT_ADV_PROV` Kconfig option to enable the Bluetooth LE advertising providers library.
 
 Predefined providers
 ====================

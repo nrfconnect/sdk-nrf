@@ -34,7 +34,7 @@ Configuration
 
 Set the :kconfig:option:`CONFIG_BT_MDS` Kconfig option to enable the service.
 
-The following configuration options are available for this module:
+The following configuration options are available for this service:
 
    * :kconfig:option:`CONFIG_BT_MDS_MAX_URI_LENGTH` sets the maximum length of the URI to which diagnostic data should be forwarded.
      The URI contains the device ID.
@@ -54,7 +54,7 @@ Implementation details
 The implementation uses :c:macro:`BT_GATT_SERVICE_DEFINE` to statically define and register the Memfault Diagnostic GATT service.
 The service automatically checks if there is data available to be sent with the interval defined by the :kconfig:option:`CONFIG_BT_MDS_DATA_POLL_INTERVAL` and sends it using the notification mechanism.
 No application input is required to send diagnostic data.
-However, if you pass :c:struct:`bt_mds_cb` to the :c:func:`bt_mds_cb_register` function, the application needs to confirm that the connected client can access the diagnostic data every time the client performs a read or write operation on the service characteristic.
+However, if you pass :c:struct:`bt_mds_cb` to the :c:func:`bt_mds_cb_register` function, the application needs to confirm that the connected client can access the diagnostic data every time the client performs a ``read`` or ``write`` operation on the service characteristic.
 
 Use the :c:func:`bt_mds_cb_register` function to register callbacks the service.
 

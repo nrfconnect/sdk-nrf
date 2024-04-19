@@ -7,14 +7,14 @@ GATT Human Interface Device (HID) Service
    :local:
    :depth: 2
 
-This module implements the Human Interface Device Service with the corresponding set of characteristics.
+This library implements the Human Interface Device Service (HIDS) with the corresponding set of characteristics.
 When initialized, it adds the HID Service and a set of characteristics, according to the `HID Service Specification`_ and the user requirements, to the Zephyr Bluetooth® stack database.
 
 If enabled, a notification of Input Report characteristics is sent when the application calls the corresponding :c:func:`bt_hids_inp_rep_send` function.
 
 You can register dedicated event handlers for most of the HIDS characteristics to be notified about changes in their values.
 
-The HIDS module must be notified about the incoming connect and disconnect events using the dedicated API.
+The HIDS library must be notified about the incoming connect and disconnect events using the dedicated API.
 This is done to synchronize the connection state of HIDS with the top module that uses it.
 
 .. note::
@@ -37,7 +37,7 @@ In such case, the Bluetooth stack automatically notifies connected peers about t
 Multiclient support
 *******************
 
-The HIDS module can handle multiple connected peers at the same time.
+The HIDS library can handle multiple connected peers at the same time.
 The server allocates context data for each connected client.
 The context data is then used to store the values of HIDS characteristics.
 These values are unique for each connected peer.
@@ -46,7 +46,7 @@ While sending notifications, you can also target a specific client by providing 
 Report masking
 **************
 
-The HIDS module can consist of reports that are used to transmit differential data.
+The HIDS library can consist of reports that are used to transmit differential data.
 One example of such a report type is a mouse report.
 In a mouse report, mouse movement data represents the position change along the X or Y axis and should only be interpreted once by the HID host.
 After receiving a notification from the HID device, the client should not be able to get any non-zero value from the differential data part of the report by using the GATT Read Request on its characteristic.

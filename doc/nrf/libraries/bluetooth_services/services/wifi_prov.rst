@@ -7,10 +7,10 @@ Wi-Fi Provisioning Service
    :local:
    :depth: 2
 
-This module implements a Bluetooth® GATT service for Wi-Fi® provisioning.
-This library is to be used with the :ref:`wifi_provisioning` sample.
+This library implements a Bluetooth® GATT service for Wi-Fi® provisioning.
+It is to be used with the :ref:`wifi_provisioning` sample.
 The Wi-Fi Provisioning Service forms a complete reference solution, together with the mobile application.
-You can find details in the documentation of the :ref:`wifi_provisioning` sample.
+For details, see the :ref:`wifi_provisioning` sample documentation.
 
 Overview
 ********
@@ -146,7 +146,7 @@ The service uses four message types:
   * If the command is ``SET_CONFIG``, when the Wi-Fi status changes (for example, from disconnected to connected), the configurator receives a result message with the new status.
     Meanwhile, the Wi-Fi credentials are stored in the non-volatile memory of the device.
 
-See all definitions in :file:`./common/proto`.
+See all definitions in the :file:`.subsys/bluetooth/services/wifi_prov/proto/common.proto` file.
 
 Operations
 ==========

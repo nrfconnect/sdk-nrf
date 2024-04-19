@@ -7,7 +7,7 @@ Running Speed and Cadence Service (RSCS)
    :local:
    :depth: 2
 
-This module implements the Running Speed and Cadence Service with the corresponding set of characteristics defined in the `Running Speed and Cadence Service Specification`_.
+This library implements the Running Speed and Cadence Service with the corresponding set of characteristics defined in the `Running Speed and Cadence Service Specification`_.
 
 The RSCS is used in the :ref:`peripheral_rscs` sample.
 
