@@ -27,6 +27,9 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - ``thingy53_nrf5340``
      - `Hardware Specification <Nordic Thingy:53 Hardware_>`_
 
+For remote monitoring of fleets running an nRF53 Series SiP, explore :ref:`Memfault <ug_memfault>`.
+The nRF Connect SDK includes out-of-the-box metrics collected with Memfault for monitoring Bluetooth connectivity such as connection time and Bluetooth thread stack usage.
+
 .. toctree::
    :maxdepth: 2
    :caption: Subpages:

@@ -133,6 +133,14 @@ Use the following steps to enable monitor-mode debugging in the |NCS|:
 
 For more information about monitor-mode debugging, see Zephyr's :ref:`zephyr:debugmon` documentation and SEGGER's `Monitor-mode Debugging <Monitor-mode Debugging_>`_ documentation.
 
+Remote Debugging with Memfault
+******************************
+
+To collect coredumps from a remote device that has been deployed to the field, enable :ref:`Memfault <ug_memfault>`.
+Memfault collects device state at the time of a crash for debugging crashes remotely.
+Additionally, you can use Memfault to collect metrics for monitoring device health, including battery life, memory usage, and CPU usage.
+For more information on enabling Memfault for your project, see :ref:`ug_memfault`.
+
 Other debugging tools
 *********************
 

@@ -91,6 +91,8 @@ The following nRF70 Series shields are available and defined in the :file:`nrf/b
 
 Applications can be developed on the nRF7002 DK (PCA10143), which includes the nRF7002 companion IC, or on boards compatible with the nRF7002 EK (PCA63556) or the nRF7002 EB (PCA63561).
 
+For remote monitoring of fleets running an nRF70 Series SiP, explore :ref:`Memfault <ug_memfault>`.
+
 .. toctree::
    :maxdepth: 2
    :caption: Subpages:

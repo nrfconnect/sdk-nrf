@@ -56,6 +56,9 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
 
 See also :ref:`ug_radio_fem_nrf21540ek` to learn how to use the RF front-end module (FEM) with the nRF52 Series devices.
 
+For remote monitoring of fleets running an nRF52 Series SiP, explore :ref:`Memfault <ug_memfault>`.
+The nRF Connect SDK includes out-of-the-box metrics collected with Memfault for monitoring Bluetooth connectivity such as connection time and Bluetooth thread stack usage.
+
 .. note::
     Despite being supported in :ref:`Zephyr <zephyr:thingy52_nrf52832>`, the |NCS| does not support `Nordic Thingy:52`_.
 

@@ -43,6 +43,9 @@ For more advanced topics related to the nRF9161 DK, see the :ref:`ug_nrf9161` do
 
 If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
 
+For remote monitoring of fleets running an nRF91 Series SiP, explore :ref:`Memfault <ug_memfault>`.
+The nRF Connect SDK includes out-of-the-box metrics collected with Memfault for monitoring LTE connectivity such as total bytes sent and received, the network operator, frequency band, and signal quality measurements.
+
 .. toctree::
    :maxdepth: 2
    :caption: Subpages:
