@@ -29,7 +29,7 @@ Hardware
       For commands, use the correct build target depending on your PDK version:
 
       * For the PDK revision v0.2.1, AB0-ES7, use the ``nrf54l15pdk_nrf54l15_cpuapp`` build target.
-      * For the PDK revision v0.3.0, use the ``nrf54l15pdk_nrf54l15_cpuapp@0.3.0`` build target.
+      * For the PDK revisions v0.3.0 and v0.7.0, use the ``nrf54l15pdk_nrf54l15_cpuapp@0.3.0`` build target.
 
 * USB-C cable
 
