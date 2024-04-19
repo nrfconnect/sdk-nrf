@@ -162,6 +162,11 @@ config TRUSTED_STORAGE_STORAGE_BACKEND_SETTINGS
 	help
 	  Use the Settings subsystem with NVS to store the assets
 
+config TRUSTED_STORAGE_STORAGE_BACKEND_CUSTOM
+	bool "Custom storage backend"
+	help
+	  Use a custom-made backend to store data in the non-volatile memory.
+
 endchoice # CONFIG_TRUSTED_STORAGE_STORAGE_BACKEND
 
 endif # TRUSTED_STORAGE
