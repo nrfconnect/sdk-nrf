@@ -162,6 +162,15 @@ config ESB_FAST_SWITCHING
 	  Enabling this feature can improve the responsiveness and efficiency of the radio
 	  communication system by reducing the latency.
 
+config ESB_FAST_CHANNEL_SWITCHING
+	select EXPERIMENTAL
+	depends on SOC_NRF54H20_CPURAD
+	bool "Fast radio channel switching [EXPERIMENTAL]"
+	help
+	  This option enables fast radio channel switching.
+	  Allows the radio channel to be changed in RX radio state
+	  without the need to switch the radio to DISABLE state.
+
 module=ESB
 module-str=ESB
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
