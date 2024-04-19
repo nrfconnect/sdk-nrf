@@ -1,12 +1,13 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "persistent_storage_util.h"
+#include "persistent_storage_settings.h"
 
 #include <zephyr/logging/log.h>
+#include <zephyr/settings/settings.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
@@ -20,8 +21,7 @@ struct ReadEntry {
 };
 
 /* Random magic bytes to represent an empty value.
- It is needed because Zephyr settings subsystem does not distinguish an empty value from no value.
-*/
+   It is needed because Zephyr settings subsystem does not distinguish an empty value from no value. */
 constexpr uint8_t kEmptyValue[] = { 0x22, 0xa6, 0x54, 0xd1, 0x39 };
 constexpr size_t kEmptyValueSize = sizeof(kEmptyValue);
 
@@ -63,38 +63,39 @@ int LoadEntryCallback(const char *name, size_t entrySize, settings_read_cb readC
 }
 } /* namespace */
 
-namespace Nrf {
-
-bool PersistentStorage::Init()
+namespace Nrf
 {
-	return settings_load() ? false : true;
+PSErrorCode PersistentStorageSettings::_NonSecureInit()
+{
+	return settings_load() ? PSErrorCode::Failure : PSErrorCode::Success;
 }
 
-bool PersistentStorage::Store(PersistentStorageNode *node, const void *data, size_t dataSize)
+PSErrorCode PersistentStorageSettings::_NonSecureStore(PersistentStorageNode *node, const void *data, size_t dataSize)
 {
 	if (!data || !node) {
-		return false;
+		return PSErrorCode::Failure;
 	}
 
 	char key[PersistentStorageNode::kMaxKeyNameLength];
 
 	if (!node->GetKey(key)) {
-		return false;
+		return PSErrorCode::Failure;
 	}
 
-	return (0 == settings_save_one(key, data, dataSize));
+	return (settings_save_one(key, data, dataSize) ? PSErrorCode::Failure : PSErrorCode::Success);
 }
 
-bool PersistentStorage::Load(PersistentStorageNode *node, void *data, size_t dataMaxSize, size_t &outSize)
+PSErrorCode PersistentStorageSettings::_NonSecureLoad(PersistentStorageNode *node, void *data, size_t dataMaxSize,
+						      size_t &outSize)
 {
 	if (!data || !node) {
-		return false;
+		return PSErrorCode::Failure;
 	}
 
 	char key[PersistentStorageNode::kMaxKeyNameLength];
 
 	if (!node->GetKey(key)) {
-		return false;
+		return PSErrorCode::Failure;
 	}
 
 	size_t resultSize;
@@ -105,46 +106,46 @@ bool PersistentStorage::Load(PersistentStorageNode *node, void *data, size_t dat
 		outSize = resultSize;
 	}
 
-	return result;
+	return (result ? PSErrorCode::Success : PSErrorCode::Failure);
 }
 
-bool PersistentStorage::HasEntry(PersistentStorageNode *node)
+PSErrorCode PersistentStorageSettings::_NonSecureHasEntry(PersistentStorageNode *node)
 {
 	if (!node) {
-		return false;
+		return PSErrorCode::Failure;
 	}
 
 	char key[PersistentStorageNode::kMaxKeyNameLength];
 
 	if (!node->GetKey(key)) {
-		return false;
+		return PSErrorCode::Failure;
 	}
 
-	return LoadEntry(key);
+	return (LoadEntry(key) ? PSErrorCode::Success : PSErrorCode::Failure);
 }
 
-bool PersistentStorage::Remove(PersistentStorageNode *node)
+PSErrorCode PersistentStorageSettings::_NonSecureRemove(PersistentStorageNode *node)
 {
 	if (!node) {
-		return false;
+		return PSErrorCode::Failure;
 	}
 
 	char key[PersistentStorageNode::kMaxKeyNameLength];
 
 	if (!node->GetKey(key)) {
-		return false;
+		return PSErrorCode::Failure;
 	}
 
 	if (!LoadEntry(key)) {
-		return false;
+		return PSErrorCode::Failure;
 	}
 
 	settings_delete(key);
 
-	return true;
+	return PSErrorCode::Success;
 }
 
-bool PersistentStorage::LoadEntry(const char *key, void *data, size_t dataMaxSize, size_t *outSize)
+bool PersistentStorageSettings::LoadEntry(const char *key, void *data, size_t dataMaxSize, size_t *outSize)
 {
 	ReadEntry entry{ data, dataMaxSize, 0, false };
 	settings_load_subtree_direct(key, LoadEntryCallback, &entry);
@@ -159,34 +160,4 @@ bool PersistentStorage::LoadEntry(const char *key, void *data, size_t dataMaxSiz
 
 	return true;
 }
-
-bool PersistentStorageNode::GetKey(char *key)
-{
-	if (!key || mKeyName[0] == '\0') {
-		return false;
-	}
-
-	/* Recursively call GetKey method for the parents until the full key name including all hierarchy levels will be
-	 * created. */
-	if (mParent != nullptr) {
-		char parentKey[kMaxKeyNameLength];
-
-		if (!mParent->GetKey(parentKey)) {
-			return false;
-		}
-
-		int result = snprintf(key, kMaxKeyNameLength, "%s/%s", parentKey, mKeyName);
-
-		if (result < 0 || result >= kMaxKeyNameLength) {
-			return false;
-		}
-
-	} else {
-		/* In case of not having a parent, return only own key name. */
-		strncpy(key, mKeyName, kMaxKeyNameLength);
-	}
-
-	return true;
-}
-
 } /* namespace Nrf */

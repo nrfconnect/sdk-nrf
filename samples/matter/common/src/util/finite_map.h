@@ -6,9 +6,12 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
-#include <functional>
-#include <map>
+#include <iterator>
+#include <limits>
+#include <type_traits>
+#include <utility>
 
 namespace Nrf
 {
@@ -29,14 +32,16 @@ namespace Nrf
      * iterating though stored item via publicly available mMap member
      * retrieving the first free slot (GetFirstFreeSlot)
 	Prerequisites:
-     * T1 must be trivial and the maximum numeric limit for the T1-type value is reserved and assigned as an invalid key.
+     * T1 must be trivial and the maximum numeric limit for the T1-type value is reserved and assigned as an invalid
+   key.
      * T2 must have move semantics and bool()/==operators implemented
 */
-template <typename T1, typename T2, std::size_t N> struct FiniteMap {
+template <typename T1, typename T2, uint16_t N> struct FiniteMap {
 	static_assert(std::is_trivial_v<T1>);
 
 	static constexpr T1 kInvalidKey{ std::numeric_limits<T1>::max() };
 	static constexpr std::size_t kNoSlotsFound{ N + 1 };
+	using ElementCounterType = uint16_t;
 
 	struct Item {
 		/* Initialize with invalid key (0 is a valid key) */
@@ -47,7 +52,7 @@ template <typename T1, typename T2, std::size_t N> struct FiniteMap {
 	bool Insert(T1 key, T2 &&value)
 	{
 		if (Contains(key)) {
-			/* The key with sane value already exists in the map, return prematurely. */
+			/* The key already exists in the map, return prematurely. */
 			return false;
 		} else if (mElementsCount < N) {
 			std::size_t slot = GetFirstFreeSlot();
@@ -94,11 +99,13 @@ template <typename T1, typename T2, std::size_t N> struct FiniteMap {
 		return false;
 	}
 
-	std::size_t FreeSlots() { return N - mElementsCount; }
+	ElementCounterType FreeSlots() { return N - mElementsCount; }
 
-	std::size_t GetFirstFreeSlot()
+	ElementCounterType Size() { return mElementsCount; }
+
+	ElementCounterType GetFirstFreeSlot()
 	{
-		std::size_t foundIndex = 0;
+		ElementCounterType foundIndex = 0;
 		for (auto &it : mMap) {
 			if (kInvalidKey == it.key)
 				return foundIndex;
@@ -124,7 +131,7 @@ template <typename T1, typename T2, std::size_t N> struct FiniteMap {
 	}
 
 	Item mMap[N];
-	uint16_t mElementsCount{ 0 };
+	ElementCounterType mElementsCount{ 0 };
 };
 
 } /* namespace Nrf */

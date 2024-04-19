@@ -39,7 +39,6 @@ target_sources(app PRIVATE
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_storage_manager.cpp
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridged_device_data_provider.cpp
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/binding/binding_handler.cpp
-    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/persistent_storage/persistent_storage_util.cpp
 )
 
 if(CONFIG_BRIDGED_DEVICE_BT)
