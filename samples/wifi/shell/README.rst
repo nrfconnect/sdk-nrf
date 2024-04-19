@@ -114,16 +114,18 @@ Supported CLI commands
        | 2:1,6-11,14_5:36,149-165,44
        | [-h, --help] : Print out the help for the scan command.
    * - connect
-     - | Connect to a Wi-Fi AP with the following parameters:
-       | "<SSID>"
-       | [channel number/band: > 0:Channel, 0:any channel,
-       | < 0:band (-2:2.4GHz, -5:5GHz, -6:6GHz]
-       | [PSK: valid only for secure SSIDs]
-       | [Security type: valid only for secure SSIDs]
-       | 0:None, 1:WPA2-PSK, 2:WPA2-PSK-256, 3:SAE, 4:WAPI, 5:EAP, 6:WEP, 7:
-       | WPA-PSK
-       | [MFP (optional: needs security type to be specified)]
+     - | Connect to a Wi-Fi AP
+       | <-s --ssid \"<SSID>\">: SSID.
+       | [-c --channel]: Channel that needs to be scanned for connection. 0:any channel
+       | [-b, --band] 0: any band (2:2.4GHz, 5:5GHz, 6:6GHz)
+       | [-p, --psk]: Passphrase (valid only for secure SSIDs)
+       | [-k, --key-mgmt]: Key management type.
+       | 0:None, 1:WPA2-PSK, 2:WPA2-PSK-256, 3:SAE, 4:WAPI, 5:EAP, 6:WEP,
+       | 7:WPA-PSK, 8: WPA-Auto-Personal
+       | [-w, --ieee-80211w]: MFP (optional: needs security type to be specified)
        | : 0:Disable, 1:Optional, 2:Required.
+       | [-m, --bssid]: MAC address of the AP (BSSID).
+       | [-h, --help]: Print out the help for the connect command.
    * - disconnect
      - Disconnect from the Wi-Fi AP
    * - status
