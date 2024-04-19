@@ -261,7 +261,9 @@
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
 .. _`known issues page on the main branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html
+.. _`known issues for nRF Connect SDK v2.6.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-6-1
 .. _`known issues for nRF Connect SDK v2.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-6-0
+.. _`known issues for nRF Connect SDK v2.5.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-5-3
 .. _`known issues for nRF Connect SDK v2.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-5-2
 .. _`known issues for nRF Connect SDK v2.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-5-1
 .. _`known issues for nRF Connect SDK v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-5-0
@@ -346,7 +348,10 @@
 
 .. _`nRF socket options`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/sockets.html#socket-options
 
+.. _`Repositories and revisions for v2.6.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
+.. _`Repositories and revisions for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.6.0/nrf/releases_and_maturity/repository_revisions.html
+.. _`Repositories and revisions for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.2/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrf/releases_and_maturity/repository_revisions.html
@@ -368,7 +373,9 @@
 .. _`Repositories and revisions for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrf/introduction.html#repositories-and-revisions
 
+.. _`Modem library changelog for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.6.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
+.. _`Modem library changelog for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -390,7 +397,9 @@
 .. _`Modem library changelog for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 
+.. _`LwM2M carrier library changelog for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.6.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
+.. _`LwM2M carrier library changelog for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
@@ -412,9 +421,9 @@
 .. _`LwM2M carrier library changelog for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 
-.. _`Migration guide for nRF Connect SDK v2.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/migration/migration_guide_2.6.html
-.. _`Migration guide for nRF Connect SDK v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/migration/migration_guide_2.5.html
-.. _`Migration guide for nRF Connect SDK v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/migration/migration_guide_1.x_to_2.x.html
+.. _`Migration guide for nRF Connect SDK v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.6.html
+.. _`Migration guide for nRF Connect SDK v2.5.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.5.html
+.. _`Migration guide for nRF Connect SDK v2.0.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_1.x_to_2.x.html
 
 .. _`Matter weather station application from the v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.1.1/nrf/applications/matter_weather_station/README.html
 
@@ -1172,9 +1181,9 @@
 .. _`CSA's Certification Team`: https://csa-iot.org/contact-us/
 .. _`Connectivity Standards Alliance members`: https://csa-iot.org/members/
 .. _`Join CSA`: https://csa-iot.org/become-member/
+.. _`PICS Tool`: https://picstool.csa-iot.org/
 .. _`Matter Attestation Form`: https://groups.csa-iot.org/wg/members-all/document/folder/2255
 .. _`Matter Attestation of Security template`: https://groups.csa-iot.org/wg/members-all/document/27432
-.. _`PICS Tool`: https://picstool.csa-iot.org/
 .. _`Connectivity Standards Alliance Certification Web Tool`: https://zigbeecertifiedproducts.knack.com/zigbee-certified#home/
 .. _`CSA Certified Products Database`: https://csa-iot.org/csa-iot_products/
 .. _`CSA blog post`: https://csa-iot.org/newsroom/matter-1-1-release-enhancements-for-developers-and-devices/

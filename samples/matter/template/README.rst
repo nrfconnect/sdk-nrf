@@ -134,7 +134,7 @@ If you want to build the sample with support for both OTA DFU and SMP DFU, use t
     west build -b nrf54l15pdk_nrf54l15_cpuapp -- -DCONF_FILE=prj_release.conf -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
 
 You can disable DFU support for the ``release`` build configuration to double available application memory space.
-Do this by setting the :kconfig:option:`CONFIG_CHIP_DFU_OVER_BT_SMP`, and :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` Kconfig options to ``n``.
+Do this by setting the :kconfig:option:`CONFIG_CHIP_DFU_OVER_BT_SMP` and :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` Kconfig options to ``n``, and removing the :file:`pm_static_nrf54l15pdk_nrf54l15_cpuapp_release.yml` file.
 
 For example:
 
