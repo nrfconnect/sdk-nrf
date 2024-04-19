@@ -659,7 +659,9 @@ Libraries for NFC
 Security libraries
 ------------------
 
-|no_changes_yet_note|
+* :ref:`trusted_storage_readme` library:
+
+  * Added the Kconfig option :kconfig:option:`CONFIG_TRUSTED_STORAGE_STORAGE_BACKEND_CUSTOM` that enables use of custom storage backend.
 
 Other libraries
 ---------------
