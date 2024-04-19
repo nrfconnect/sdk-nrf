@@ -172,3 +172,29 @@ Read Client functionality
 The Read Client functionality is used for reading attributes from another device in the Matter network.
 This functionality is disabled by default for Matter samples in the |NCS|, except for ones that need to read attributes from the bound devices, such as the :ref:`matter_light_switch_sample` and :ref:`matter_thermostat_sample` samples, and the :ref:`matter_bridge_app` application.
 Enable the feature if your device needs to be able to access attributes from a different device within the Matter network using, for example, bindings.
+
+Persistent storage
+==================
+
+The persistent storage module allows for the application data and configuration to survive a device reboot.
+|NCS| Matter applications use one generic Persistent Storage API that can be enabled by the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_PERSISTENT_STORAGE` Kconfig option.
+This API consists of methods with ``Secure`` and ``NonSecure`` prefixes, which handle secure (ARM Platform Security Architecture Persistent Storage) and non-secure (raw Zephyr settings) storage operations, respectively.
+
+You can learn more details about the Persistent Storage API from the :file:`ncs/nrf/samples/matter/common/src/persistent_storage/persistent_storage.h` header file.
+
+The interface is implemented by two available backends.
+Both can be used simultaneously by controlling the following Kconfig options:
+
+* :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` - Activates the implementation that takes advantage of the raw :ref:`Zephyr settings<zephyr:settings_api>`.
+  This backend implements ``NonSecure`` methods of the Persistent Storage API and returns ``PSErrorCode::NotSupported`` for ``Secure`` methods.
+* :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` - Activates the module based on the ARM PSA Protected Storage API implementation from the :ref:`trusted_storage_readme` |NCS| library.
+  This backend implements ``Secure`` methods of the Persistent Storage API and returns ``PSErrorCode::NotSupported`` for ``NonSecure`` methods.
+
+If both backends are activated at the same time (:kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` enabled) all methods of the generic interface are supported.
+
+Similarly to the non-secure backend, the secure backend leverages the Zephyr Settings to interface with the FLASH memory.
+
+Additionally, in case of the secure storage backend, the following Kconfig options control the storage limits:
+
+* :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_MAX_ENTRY_NUMBER` - Defines the maximum number or assets that can be stored in the secure storage.
+* :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE` - Defines the maximum length of the secret that is stored.

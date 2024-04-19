@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
+
+config NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND
+	bool "Settings based storage implementation for Matter samples"
+	depends on SETTINGS
+	default y
+
+config NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
+	bool "Secure storage implementation for Matter samples"
+	select TRUSTED_STORAGE
+	select PSA_PROTECTED_STORAGE
+
+if NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
+
+config NCS_SAMPLE_MATTER_SECURE_STORAGE_MAX_ENTRY_NUMBER
+	int "Maximum number of entries that can be stored securely"
+	default 30
+
+config NCS_SAMPLE_MATTER_SECURE_STORAGE_PSA_KEY_VALUE_OFFSET
+	hex "The PSA key offset dedicated for Matter application"
+	default 0x40000
+
+config TRUSTED_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE
+	default 1024
+
+endif
+
+endif
