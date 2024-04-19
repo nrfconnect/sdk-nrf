@@ -7,7 +7,7 @@ GATT Human Interface Device Service (HIDS) Client
    :local:
    :depth: 2
 
-The HIDS Client uses the :ref:`gatt_dm_readme` module to acquire all attribute handles that are required to interact with the HIDS server.
+The HIDS Client uses the :ref:`gatt_dm_readme` to acquire all attribute handles that are required to interact with the HIDS server.
 
 Overview
 ********
@@ -30,7 +30,7 @@ Use the following Kconfig options to configure the library:
 Usage
 *****
 
-You can use the GATT HIDS Client module to interact with a connected HIDS server.
+You can use the GATT HIDS Client library to interact with a connected HIDS server.
 
 Retrieving the HIDS Client readiness state
 ==========================================

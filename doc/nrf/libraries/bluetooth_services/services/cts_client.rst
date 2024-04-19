@@ -7,7 +7,7 @@ GATT Current Time Service (CTS) Client
    :local:
    :depth: 2
 
-The CTS Client module can be used to retrieve the current time from a connected peer that is running the GATT server with the `Current Time Service <Current Time Service Specification_>`_.
+You can use the CTS Client library to retrieve the current time from a connected peer that is running the GATT server with the `Current Time Service <Current Time Service Specification_>`_.
 
 The CTS Client is used in the :ref:`peripheral_cts_client` sample.
 

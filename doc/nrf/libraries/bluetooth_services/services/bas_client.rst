@@ -7,9 +7,9 @@ GATT Battery Service (BAS) Client
    :local:
    :depth: 2
 
-The Battery Service Client can be used to retrieve information about the battery level from a device that provides a Battery Service Server.
+You can use the Battery Service Client to retrieve information about the battery level from a device that provides a Battery Service Server.
 
-The client supports a simple `Battery Service <Battery Service Specification_>`_ with one characteristic.
+The library supports a simple `Battery Service <Battery Service Specification_>`_ with one characteristic.
 The Battery Level Characteristic holds the battery level in percentage units.
 
 
@@ -47,7 +47,7 @@ Getting the last known value
 
   .. note::
      The internally stored value is updated every time a notification or read response is received.
-     If no value is received from the server, the get function returns :c:macro:`BT_BAS_VAL_INVALID`.
+     If no value is received from the server, the ``get`` function returns :c:macro:`BT_BAS_VAL_INVALID`.
 
 .. _bas_client_readme_periodic:
 

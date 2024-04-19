@@ -7,11 +7,11 @@ GATT DFU SMP Service Client
    :local:
    :depth: 2
 
-This module implements a Simple Management Protocol (SMP) Service Client that can be used in the context of Device Firmware Updates (DFU).
+This library implements a Simple Management Protocol (SMP) Service Client that you can use in the context of Device Firmware Updates (DFU).
 SMP is a basic transfer encoding for use with the `mcumgr`_ management protocol.
 See `SMP over Bluetooth`_ for the service specification.
 
-The SMP Client module can be used to interact with Zephyr's :zephyr:code-sample:`smp-svr`.
+You can use the SMP Client library to interact with Zephyr's :zephyr:code-sample:`smp-svr`.
 
 The SMP Client implements only the service.
 It does not provide any functionality to process or interpret SMP commands and responses.
