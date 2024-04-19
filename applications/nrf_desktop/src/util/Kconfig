@@ -13,6 +13,19 @@ config DESKTOP_HWID
 	  Enable nRF Desktop hardware ID utility. The hardware ID is obtained
 	  from Zephyr hwinfo driver.
 
+config DESKTOP_HWINFO_BLE_ADDRESS_FICR
+	bool
+	default y
+	depends on BOARD_NRF54H20DK_NRF54H20_CPUAPP
+
+config DESKTOP_HWINFO_BLE_ADDRESS_FICR_POSTFIX
+	hex "Postfix for HW ID derived from BLE address"
+	range 0x0000 0xffff
+	default 0x0b1e
+	depends on DESKTOP_HWINFO_BLE_ADDRESS_FICR
+	help
+	  Postfix appended in big-endian to the HW ID derived from the BLE address.
+
 config DESKTOP_ADV_PROV_UUID16_ALL
 	bool "UUID16 advertising provider"
 	depends on BT_ADV_PROV
