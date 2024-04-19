@@ -459,6 +459,28 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
+    - sample.benchmark.coremark
+  platforms:
+    - nrf52dk_nrf52832
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.benchmark.coremark_static
+  platforms:
+    - nrf52dk_nrf52832
+    - nrf5340dk_nrf5340_cpuapp
+    - nrf54l15pdk_nrf54l15_cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.benchmark.coremark_multithread
+  platforms:
+    - nrf52dk_nrf52832
+    - nrf5340dk_nrf5340_cpuapp
+    - nrf54l15pdk_nrf54l15_cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
     - sample.find_my.coexistence.release
   platforms:
     - nrf52dk_nrf52832
