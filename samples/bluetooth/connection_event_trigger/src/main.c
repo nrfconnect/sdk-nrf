@@ -209,7 +209,8 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t l
 			     uint16_t timeout)
 {
 	if (conn == active_conn) {
-		printk("Connection parameters updated. New interval: 1.25 * %u ms\n", interval);
+		printk("Connection parameters updated. New interval: %u ms\n",
+					 interval * 1250 / 1000);
 	}
 }
 

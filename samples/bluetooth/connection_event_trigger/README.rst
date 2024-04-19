@@ -86,7 +86,7 @@ The sample displays the data in the following format::
    Connection established.
    Press any key to switch to a 10ms connection interval and set up connection event trigger:
    Successfully configured connection event trigger
-   Connection parameters updated. New interval: 1.25 * 8 ms
+   Connection parameters updated. New interval: 10 ms
    Successfully configured connection event trigger
    Printing connection event trigger log.
    +-------------+----------------+----------------------------------+
