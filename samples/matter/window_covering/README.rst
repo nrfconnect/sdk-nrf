@@ -113,18 +113,26 @@ Factory data support
 User interface
 **************
 
+.. include:: ../template/README.rst
+   :start-after: matter_template_nrf54l15_0_3_0_interface_start
+   :end-before: matter_template_nrf54l15_0_3_0_interface_end
+
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_led1_start
     :end-before: matter_door_lock_sample_led1_end
 
-LED 2:
+LED 2
     Indicates the lift position of the window cover, which is represented by the brightness of the LED.
     The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (lifted) and the brightness level set to ``255`` indicates a fully closed window cover (lowered).
 
     Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
     The command's argument can be used to specify the duration of the effect.
 
-LED 3:
+LED 3 (nRF52840 DK, nRF5340 DK, and nRF54L15 PDK v0.3.0)
+    Indicates the tilt position of the window cover, which is represented by the brightness of the LED.
+    The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (tilted to a horizontal position) and the brightness level set to ``255`` indicates a fully closed window cover (tilted to a vertical position).
+
+LED 4 (nRF54L15 PDK)
     Indicates the tilt position of the window cover, which is represented by the brightness of the LED.
     The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (tilted to a horizontal position) and the brightness level set to ``255`` indicates a fully closed window cover (tilted to a vertical position).
 

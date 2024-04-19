@@ -128,6 +128,18 @@ Factory data support
 User interface
 **************
 
+.. matter_template_nrf54l15_0_3_0_interface_start
+
+.. note::
+
+    The nRF54L15 PDK revision v0.3.0 uses a different numbering system for buttons and LEDs compared to previous boards.
+    All numbers start from 0 instead of 1, as was the case previously.
+    This means that LED1 in this documentation refers to LED0 on the nRF54L15 PDK board, LED2 refers to LED1, Button 1 refers to Button 0, and so on.
+
+    The numbering of buttons and LEDs on the nRF54L15 PDK revision v0.2.1 is consistent with that of previous nRF52840 DK and nRF5340 DK boards.
+
+.. matter_template_nrf54l15_0_3_0_interface_end
+
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_led1_start
     :end-before: matter_door_lock_sample_led1_end
