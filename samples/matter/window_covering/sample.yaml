@@ -8,8 +8,9 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
-      nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp nrf54l15pdk_nrf54l15_cpuapp@0.3.0
   sample.matter.window_cover.release:
     build_only: true
     extra_args: CONF_FILE=prj_release.conf
@@ -17,5 +18,6 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
-      nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp nrf54l15pdk_nrf54l15_cpuapp@0.3.0

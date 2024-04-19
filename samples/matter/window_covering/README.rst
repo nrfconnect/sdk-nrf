@@ -128,11 +128,14 @@ LED 2
     Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
     The command's argument can be used to specify the duration of the effect.
 
-LED 3 (nRF52840 DK, nRF5340 DK, and nRF54L15 PDK v0.3.0)
+LED 3 (nRF52840 DK and nRF5340 DK)
     Indicates the tilt position of the window cover, which is represented by the brightness of the LED.
     The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (tilted to a horizontal position) and the brightness level set to ``255`` indicates a fully closed window cover (tilted to a vertical position).
 
 LED 4 (nRF54L15 PDK)
+    .. note::
+       This is **LED 3** on the board revision v0.3.0.
+
     Indicates the tilt position of the window cover, which is represented by the brightness of the LED.
     The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (tilted to a horizontal position) and the brightness level set to ``255`` indicates a fully closed window cover (tilted to a vertical position).
 

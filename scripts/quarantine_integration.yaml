@@ -64,6 +64,7 @@
     - sample.matter.thermostat.release
   platforms:
     - nrf54l15pdk_nrf54l15_cpuapp
+    - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:

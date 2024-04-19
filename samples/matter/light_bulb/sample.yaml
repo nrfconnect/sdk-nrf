@@ -10,8 +10,9 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf7002dk_nrf5340_cpuapp
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
-      nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp nrf54l15pdk_nrf54l15_cpuapp@0.3.0
   sample.matter.light_bulb.ffs:
     build_only: true
     extra_args: >
@@ -22,8 +23,9 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf7002dk_nrf5340_cpuapp
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
-      nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp nrf54l15pdk_nrf54l15_cpuapp@0.3.0
   sample.matter.light_bulb.debug.nrf21540ek:
     build_only: true
     extra_args: SHIELD=nrf21540ek
