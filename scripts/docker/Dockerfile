@@ -18,7 +18,7 @@ LABEL org.opencontainers.image.source=https://github.com/nrfconnect/sdk-nrf
 LABEL org.opencontainers.image.description="This image contains toolchain for sdk-nrf."
 
 RUN apt-get update && apt-get install -y \
-    ca-certificates \
+    ca-certificates qemu-system-arm libffi7 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy toolchain
