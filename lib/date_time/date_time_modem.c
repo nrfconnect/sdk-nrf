@@ -10,6 +10,7 @@
 #include <zephyr/sys/timeutil.h>
 #include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 #if defined(CONFIG_DATE_TIME_AUTO_UPDATE)
 #include <modem/at_monitor.h>
@@ -19,9 +20,14 @@
 
 LOG_MODULE_DECLARE(date_time, CONFIG_DATE_TIME_LOG_LEVEL);
 
+extern struct k_work_q date_time_work_q;
+
 #if defined(CONFIG_DATE_TIME_AUTO_UPDATE)
 /* AT monitor for %XTIME notifications */
 AT_MONITOR(xtime, "%XTIME", date_time_at_xtime_handler);
+
+void date_time_modem_xtime_subscribe_work_fn(struct k_work *work_item);
+K_WORK_DEFINE(date_time_modem_xtime_subscribe_work, date_time_modem_xtime_subscribe_work_fn);
 
 /* Indicates whether modem network time has been received with XTIME notification. */
 static bool modem_valid_network_time;
@@ -215,12 +221,29 @@ void date_time_modem_store(struct tm *ltm, int tz)
 	}
 }
 
-void date_time_modem_xtime_subscribe(void)
+#if defined(CONFIG_DATE_TIME_AUTO_UPDATE)
+
+void date_time_modem_xtime_subscribe_work_fn(struct k_work *work_item)
 {
 	/* Subscribe to modem time notifications */
 	int err = nrf_modem_at_printf("AT%%XTIME=1");
 
 	if (err) {
 		LOG_ERR("Subscribing to modem AT%%XTIME notifications failed, err=%d", err);
+	} else {
+		LOG_DBG("Subscribing to modem AT%%XTIME notifications succeeded");
 	}
 }
+
+NRF_MODEM_LIB_ON_CFUN(date_time_cfun_hook, date_time_modem_on_cfun, NULL);
+
+static void date_time_modem_on_cfun(int mode, void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	if (mode == LTE_LC_FUNC_MODE_NORMAL || mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
+		k_work_submit_to_queue(&date_time_work_q, &date_time_modem_xtime_subscribe_work);
+	}
+}
+
+#endif /* defined(CONFIG_DATE_TIME_AUTO_UPDATE) */
