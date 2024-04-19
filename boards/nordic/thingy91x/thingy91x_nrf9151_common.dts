@@ -88,6 +88,10 @@
 
 &gpio0 {
 	status = "okay";
+	exp-board-power-enable {
+		gpio-hog;
+		gpios = <3 GPIO_ACTIVE_HIGH>;
+	};
 };
 
 /* PWM0 is intended for RGB LED control */
