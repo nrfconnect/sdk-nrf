@@ -10,54 +10,98 @@
 };
 
 / {
-	/* Disable leds and redefine them to align configuration with CAF LEDs requirements.
-	 * The configuration needs to match the used board revision (v0.2.0).
-	 */
-	leds {
-		status = "disabled";
-	};
-
-	gpioled0 {
-		compatible = "gpio-leds";
+	pwmleds0 {
+		compatible = "pwm-leds";
 		status = "okay";
-		label = "LED System State";
 
-		led0_g: led_0 {
-			gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
-			label = "Green LED 0";
+		pwm_led0: led_pwm_0 {
+			status = "okay";
+			pwms = <&pwm20 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+			label = "LED System State";
 		};
 	};
 
-	gpioled1 {
-		compatible = "gpio-leds";
+	pwmleds1 {
+		compatible = "pwm-leds";
 		status = "okay";
-		label = "LED Conn State";
 
-		led1_g: led_1 {
-			gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
-			label = "Green LED 1";
+		pwm_led1: led_pwm_1 {
+			status = "okay";
+			pwms = <&pwm21 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+			label = "LED Conn State";
 		};
 	};
 
-	gpioled2 {
-		compatible = "gpio-leds";
+	pwmleds2 {
+		compatible = "pwm-leds";
 		status = "okay";
-		label = "LED Num Lock";
 
-		led2_g: led_2 {
-			gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
-			label = "Green LED 2";
+		pwm_led2: led_pwm_2 {
+			status = "okay";
+			pwms = <&pwm22 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+			label = "LED Num Lock";
+		};
+	};
+};
+
+&pwm20 {
+	status = "okay";
+	pinctrl-0 = <&pwm20_default_alt>;
+	pinctrl-1 = <&pwm20_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm21 {
+	status = "okay";
+	pinctrl-0 = <&pwm21_default_alt>;
+	pinctrl-1 = <&pwm21_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm22 {
+	status = "okay";
+	pinctrl-0 = <&pwm22_default_alt>;
+	pinctrl-1 = <&pwm22_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pinctrl {
+	pwm20_default_alt: pwm20_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 4)>;
 		};
 	};
 
-	gpioled3 {
-		compatible = "gpio-leds";
-		status = "okay";
-		label = "LED Caps Lock";
+	pwm20_sleep_alt: pwm20_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 4)>;
+			low-power-enable;
+		};
+	};
 
-		led3_g: led_3 {
-			gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
-			label = "Green LED 3";
+	pwm21_default_alt: pwm21_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 8)>;
+		};
+	};
+
+	pwm21_sleep_alt: pwm21_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 8)>;
+			low-power-enable;
+		};
+	};
+
+	pwm22_default_alt: pwm22_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 13)>;
+		};
+	};
+
+	pwm22_sleep_alt: pwm22_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 13)>;
+			low-power-enable;
 		};
 	};
 };
