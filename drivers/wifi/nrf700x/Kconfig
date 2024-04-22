@@ -263,7 +263,7 @@ config NRF700X_UTIL
 
 config NRF700X_SR_COEX
 	bool "Enable Wi-Fi and SR coexistence support"
-	default y if SOC_NRF5340_CPUAPP_QKAA
+	def_bool $(dt_nodelabel_enabled,nrf_radio_coex)
 
 config NRF700X_QSPI_LOW_POWER
 	bool "Enable low power mode in QSPI"
