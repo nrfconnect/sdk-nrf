@@ -11,5 +11,3 @@ project(peripheral_cgms)
 target_sources(app PRIVATE
   src/main.c
 )
-
-zephyr_library_include_directories(.)

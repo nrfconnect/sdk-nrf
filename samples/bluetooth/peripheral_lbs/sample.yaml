@@ -12,9 +12,10 @@ tests:
       - thingy53_nrf5340_cpuapp
       - thingy53_nrf5340_cpuapp_ns
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
       nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns thingy53_nrf5340_cpuapp
-      thingy53_nrf5340_cpuapp_ns nrf54l15pdk_nrf54l15_cpuapp
+      thingy53_nrf5340_cpuapp_ns nrf54l15pdk_nrf54l15_cpuapp nrf54h20dk_nrf54h20_cpuapp
     tags: bluetooth ci_build
   sample.bluetooth.peripheral_lbs_minimal:
     build_only: true
@@ -36,9 +37,10 @@ tests:
       - thingy53_nrf5340_cpuapp
       - thingy53_nrf5340_cpuapp_ns
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54h20dk_nrf54h20_cpuapp
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
       nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns thingy53_nrf5340_cpuapp
-      thingy53_nrf5340_cpuapp_ns nrf54l15pdk_nrf54l15_cpuapp
+      thingy53_nrf5340_cpuapp_ns nrf54l15pdk_nrf54l15_cpuapp nrf54h20dk_nrf54h20_cpuapp
     tags: bluetooth ci_build
   sample.bluetooth.peripheral_lbs_bt_ota_dfu:
     build_only: true
