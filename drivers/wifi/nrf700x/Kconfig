@@ -242,7 +242,7 @@ config NRF700X_ON_SPI
 	select SPI
 
 # RF switch based coexistence
-config NRF700X_RADIO_COEX
+config NRF700X_SR_COEX_RF_SWITCH
 	def_bool $(dt_nodelabel_has_prop,nrf_radio_coex,btrf-switch-gpios)
 
 config NRF700X_WORKQ_STACK_SIZE

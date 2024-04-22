@@ -365,14 +365,14 @@ int main(void)
 	LOG_INF("test_wlan = %d and test_ble = %d\n", test_wlan, test_ble);
 
 
-#ifdef CONFIG_NRF700X_RADIO_COEX
+#ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
 	/* Configure SR side (nRF5340 side) switch for nRF700x DK */
 	ret = nrf_wifi_config_sr_switch(separate_antennas);
 	if (ret != 0) {
 		LOG_ERR("Unable to configure SR side switch: %d\n", ret);
 		goto err;
 	}
-#endif /* CONFIG_NRF700X_RADIO_COEX */
+#endif /* CONFIG_NRF700X_SR_COEX_RF_SWITCH */
 
 	if (test_wlan) {
 		/* Wi-Fi connection */
