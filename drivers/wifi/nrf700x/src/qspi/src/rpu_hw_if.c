@@ -35,11 +35,11 @@ GPIO_DT_SPEC_GET(NRF7002_NODE, iovdd_ctrl_gpios);
 static const struct gpio_dt_spec bucken_spec =
 GPIO_DT_SPEC_GET(NRF7002_NODE, bucken_gpios);
 
-#ifdef CONFIG_NRF700X_RADIO_COEX
+#ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
 #define NRF_RADIO_COEX_NODE DT_NODELABEL(nrf_radio_coex)
 static const struct gpio_dt_spec sr_rf_switch_spec =
 GPIO_DT_SPEC_GET(NRF_RADIO_COEX_NODE, btrf_switch_gpios);
-#endif /* CONFIG_NRF700X_RADIO_COEX */
+#endif /* CONFIG_NRF700X_SR_COEX_RF_SWITCH */
 
 char blk_name[][15] = { "SysBus",   "ExtSysBus",	   "PBus",	   "PKTRAM",
 			       "GRAM",	   "LMAC_ROM",	   "LMAC_RET_RAM", "LMAC_SRC_RAM",
@@ -178,7 +178,7 @@ out:
 
 static int sr_gpio_config(void)
 {
-#ifdef CONFIG_NRF700X_RADIO_COEX
+#ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
 	int ret;
 
 	if (!device_is_ready(sr_rf_switch_spec.port)) {
@@ -194,12 +194,12 @@ static int sr_gpio_config(void)
 	return ret;
 #else
 	return 0;
-#endif /* CONFIG_NRF700X_RADIO_COEX */
+#endif /* CONFIG_NRF700X_SR_COEX_RF_SWITCH */
 }
 
 static int sr_gpio_remove(void)
 {
-#ifdef CONFIG_NRF700X_RADIO_COEX
+#ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
 	int ret;
 
 	ret = gpio_pin_configure_dt(&sr_rf_switch_spec, GPIO_DISCONNECTED);
@@ -318,7 +318,7 @@ static int rpu_pwroff(void)
 	return ret;
 }
 
-#ifdef CONFIG_NRF700X_RADIO_COEX
+#ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
 int sr_ant_switch(unsigned int ant_switch)
 {
 	int ret;
@@ -331,7 +331,7 @@ int sr_ant_switch(unsigned int ant_switch)
 
 	return ret;
 }
-#endif /* CONFIG_NRF700X_RADIO_COEX */
+#endif /* CONFIG_NRF700X_SR_COEX_RF_SWITCH */
 
 int rpu_read(unsigned int addr, void *data, int len)
 {

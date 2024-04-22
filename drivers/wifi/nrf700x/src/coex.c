@@ -40,11 +40,11 @@ static struct nrf_wifi_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 /* copied from uccp530_77_registers.h of UCCP toolkit */
 #define ABS_PMB_WLAN_MAC_CTRL_PULSED_SOFTWARE_RESET 0xA5009A00UL
 
-#ifdef CONFIG_NRF700X_RADIO_COEX
+#ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
 	#define NRF_RADIO_COEX_NODE DT_NODELABEL(nrf_radio_coex)
 	static const struct gpio_dt_spec sr_rf_switch_spec =
 	GPIO_DT_SPEC_GET(NRF_RADIO_COEX_NODE, btrf_switch_gpios);
-#endif /* CONFIG_NRF700X_RADIO_COEX */
+#endif /* CONFIG_NRF700X_SR_COEX_RF_SWITCH */
 
 /* PTA registers configuration of Coexistence Hardware */
 /* Separate antenna configuration, WLAN in 2.4GHz. For BLE protocol. */
@@ -229,7 +229,7 @@ int nrf_wifi_coex_config_pta(enum nrf_wifi_pta_wlan_op_band wlan_band, bool sepa
 
 	return 0;
 }
-#ifdef CONFIG_NRF700X_RADIO_COEX
+#ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
 int nrf_wifi_config_sr_switch(bool separate_antennas)
 {
 	int ret;
@@ -255,7 +255,7 @@ int nrf_wifi_config_sr_switch(bool separate_antennas)
 
 	return 0;
 }
-#endif /* CONFIG_NRF700X_RADIO_COEX */
+#endif /* CONFIG_NRF700X_SR_COEX_RF_SWITCH */
 
 int nrf_wifi_coex_hw_reset(void)
 {
