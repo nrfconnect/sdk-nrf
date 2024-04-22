@@ -30,7 +30,7 @@ config HW_UNIQUE_KEY_LOAD
 
 config HW_UNIQUE_KEY_SUPPORTED
 	bool
-	default y if HAS_HW_NRF_CC3XX || CRACEN_HW_PRESENT
+	default y if HAS_HW_NRF_CC3XX || (CRACEN_HW_PRESENT && !TFM_PROFILE_TYPE_MINIMAL)
 
 config HW_UNIQUE_KEY
 	bool "Hardware Unique Keys (HUK)"
