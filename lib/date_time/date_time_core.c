@@ -31,6 +31,8 @@ struct k_work_q date_time_work_q;
 static void date_time_update_work_fn(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(date_time_update_work, date_time_update_work_fn);
 
+static K_WORK_DEFINE(date_time_update_manual_work, date_time_update_work_fn);
+
 static int64_t date_time_last_update_uptime;
 static date_time_evt_handler_t app_evt_handler;
 
@@ -203,7 +205,8 @@ int date_time_core_update_async(date_time_evt_handler_t evt_handler)
 		LOG_DBG("No handler registered");
 	}
 
-	k_work_reschedule_for_queue(&date_time_work_q, &date_time_update_work, K_NO_WAIT);
+	/* Cannot reschedule date_time_update_work because it would mess up normal update cycle */
+	k_work_submit_to_queue(&date_time_work_q, &date_time_update_manual_work);
 
 	return 0;
 }
