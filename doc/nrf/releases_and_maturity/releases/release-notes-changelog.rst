@@ -253,27 +253,90 @@ Bluetooth samples
 
 * :ref:`peripheral_lbs` sample:
 
-  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
 
 * :ref:`bluetooth_central_hids` sample:
 
-  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
 
 * :ref:`peripheral_hids_mouse` sample:
 
-  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
 
 * :ref:`peripheral_hids_keyboard` sample:
 
-  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
 
 * :ref:`central_and_peripheral_hrs` sample:
 
-  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
 
 * :ref:`direct_test_mode` sample:
 
-  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
+
+* :ref:`peripheral_uart` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
+
+* :ref:`central_uart` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
+
+* :ref:`central_bas` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`bluetooth_central_hr_coded` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`multiple_adv_sets` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`peripheral_ams_client` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`peripheral_ancs_client` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`peripheral_bms` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`peripheral_cgms` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`peripheral_cts_client` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`peripheral_gatt_dm` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`peripheral_hr_coded` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`peripheral_nfc_pairing` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`peripheral_rscs` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`peripheral_status` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`shell_bt_nus` sample:
+
   * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 Bluetooth Mesh samples
