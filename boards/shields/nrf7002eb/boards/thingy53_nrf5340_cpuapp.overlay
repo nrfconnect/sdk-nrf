@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+ #include "../nrf7002eb_coex.overlay"
+
  /* The below overlays might not be explicitly required but still
   * kept here to warn of the conflicting pins that could hamper
   * functionality later
