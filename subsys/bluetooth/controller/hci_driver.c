@@ -1330,42 +1330,25 @@ static const struct bt_hci_driver drv = {
 #if !defined(CONFIG_BT_HCI_VS_EXT)
 uint8_t bt_read_static_addr(struct bt_hci_vs_static_addr addrs[], uint8_t size)
 {
-	/* only one supported */
-	ARG_UNUSED(size);
+	uint8_t retval;
+	uint8_t return_buffer[sizeof(sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t)
+			      + sizeof(sdc_hci_vs_zephyr_static_address_t)];
 
-	if (((NRF_FICR->DEVICEADDR[0] != UINT32_MAX) ||
-	    ((NRF_FICR->DEVICEADDR[1] & UINT16_MAX) != UINT16_MAX)) &&
-	     (NRF_FICR->DEVICEADDRTYPE & 0x01)) {
-		sys_put_le32(NRF_FICR->DEVICEADDR[0], &addrs[0].bdaddr.val[0]);
-		sys_put_le16(NRF_FICR->DEVICEADDR[1], &addrs[0].bdaddr.val[4]);
+	sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t *return_params =
+		(sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t *)return_buffer;
 
-		/* The FICR value is a just a random number, with no knowledge
-		 * of the Bluetooth Specification requirements for random
-		 * static addresses.
-		 */
-		BT_ADDR_SET_STATIC(&addrs[0].bdaddr);
+	retval = sdc_hci_cmd_vs_zephyr_read_static_addresses(
+		(sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t *)return_buffer);
+	__ASSERT(retval == 0, "Expect command to succeed");
+	__ASSERT(return_params->num_addresses <= 1, "Avoid buffer overflow");
 
-		/* If no public address is provided and a static address is
-		 * available, then it is recommended to return an identity root
-		 * key (if available) from this command.
-		 */
-		if ((NRF_FICR->IR[0] != UINT32_MAX) &&
-		    (NRF_FICR->IR[1] != UINT32_MAX) &&
-		    (NRF_FICR->IR[2] != UINT32_MAX) &&
-		    (NRF_FICR->IR[3] != UINT32_MAX)) {
-			sys_put_le32(NRF_FICR->IR[0], &addrs[0].ir[0]);
-			sys_put_le32(NRF_FICR->IR[1], &addrs[0].ir[4]);
-			sys_put_le32(NRF_FICR->IR[2], &addrs[0].ir[8]);
-			sys_put_le32(NRF_FICR->IR[3], &addrs[0].ir[12]);
-		} else {
-			/* Mark IR as invalid */
-			(void)memset(addrs[0].ir, 0x00, sizeof(addrs[0].ir));
-		}
-
-		return 1;
+	if (return_params->num_addresses == 1 && size >= 1) {
+		BUILD_ASSERT(sizeof(sdc_hci_vs_zephyr_static_address_t) ==
+			     sizeof(struct bt_hci_vs_static_addr));
+		memcpy(&addrs[0], return_params->addresses, sizeof(struct bt_hci_vs_static_addr));
 	}
 
-	return 0;
+	return return_params->num_addresses;
 }
 #endif /* !defined(CONFIG_BT_HCI_VS_EXT) */
 
