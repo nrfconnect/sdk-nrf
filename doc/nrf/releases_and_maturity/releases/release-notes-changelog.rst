@@ -534,7 +534,10 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`wifi_shell_sample` sample:
+
+  * Modified ``connect`` command to provide better control over connection parameters.
+  * Added ``Auto-Security-Personal`` mode to the ``connect`` command.
 
 Other samples
 -------------
