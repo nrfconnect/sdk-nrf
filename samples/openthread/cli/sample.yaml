@@ -13,6 +13,7 @@ tests:
       nrf5340dk_nrf5340_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns
       nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     extra_args: >
       SNIPPET="ci;logging;multiprotocol;tcp"
     integration_platforms:
@@ -22,6 +23,7 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
 
   sample.openthread.cli.singleprotocol:
     build_only: true
@@ -32,6 +34,7 @@ tests:
       nrf5340dk_nrf5340_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns
       nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     extra_args: >
       SNIPPET="ci;logging;tcp"
     integration_platforms:
@@ -40,6 +43,7 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
 
   sample.openthread.cli.usb:
     build_only: true
@@ -91,6 +95,7 @@ tests:
       nrf5340dk_nrf5340_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns
       nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp@0.3.0
     extra_args: >
       SNIPPET="ci;tcat;tcp"
     integration_platforms:
@@ -99,3 +104,4 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
