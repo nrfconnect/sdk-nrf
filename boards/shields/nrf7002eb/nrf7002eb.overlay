@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <freq.h>
-#include "nrf7002eb_coex.overlay"
 
 / {
         nordic_wlan0: nordic_wlan0 {

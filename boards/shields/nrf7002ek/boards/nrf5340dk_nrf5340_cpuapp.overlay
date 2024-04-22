@@ -2,6 +2,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include "../nrf7002ek_coex.overlay"
 
 /* This node by default forwards the UART1 pins to CPUNET, but as UART1 uses
  * same pins as bucken and iovdd-ctrl, we need these pins to be controlled by
