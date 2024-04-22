@@ -86,7 +86,7 @@ features:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
         - BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP
     Bluetooth LE Co-existence:
-      rule: WIFI_NRF700X && NRF700X_BT_COEX
+      rule: WIFI_NRF700X && NRF700X_SR_COEX
       boards_and_shields:
         - SHIELD_NRF7002EK
         - SHIELD_NRF7002EK_NRF7001
