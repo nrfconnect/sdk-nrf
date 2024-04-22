@@ -298,21 +298,16 @@ void Board::StartBLEAdvertisement()
 void Board::DefaultMatterEventHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
 {
 	static bool isNetworkProvisioned = false;
+	static bool isBleConnected = false;
 
 	switch (event->Type) {
 	case DeviceEventType::kCHIPoBLEAdvertisingChange:
-		if (isNetworkProvisioned) {
-			sInstance.UpdateDeviceState(DeviceState::DeviceProvisioned);
-		} else if (ConnectivityMgr().NumBLEConnections() != 0) {
-			sInstance.UpdateDeviceState(DeviceState::DeviceConnectedBLE);
-		} else {
-			sInstance.UpdateDeviceState(DeviceState::DeviceAdvertisingBLE);
-		}
+		isBleConnected = ConnectivityMgr().NumBLEConnections() != 0;
 		break;
 #if defined(CONFIG_NET_L2_OPENTHREAD)
 	case DeviceEventType::kThreadStateChange:
 		isNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned() && ConnectivityMgr().IsThreadEnabled();
-	break;
+		break;
 #endif /* CONFIG_NET_L2_OPENTHREAD */
 #if defined(CONFIG_CHIP_WIFI)
 	case DeviceEventType::kWiFiConnectivityChange:
@@ -326,6 +321,10 @@ void Board::DefaultMatterEventHandler(const ChipDeviceEvent *event, intptr_t /* 
 
 	if (isNetworkProvisioned) {
 		sInstance.UpdateDeviceState(DeviceState::DeviceProvisioned);
+	} else if (isBleConnected) {
+		sInstance.UpdateDeviceState(DeviceState::DeviceConnectedBLE);
+	} else if (ConnectivityMgr().IsBLEAdvertising()) {
+		sInstance.UpdateDeviceState(DeviceState::DeviceAdvertisingBLE);
 	} else {
 		sInstance.UpdateDeviceState(DeviceState::DeviceDisconnected);
 	}
