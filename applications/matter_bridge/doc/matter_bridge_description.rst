@@ -55,16 +55,16 @@ For information about how to add a new bridged Matter device type to the applica
 Except for the On/Off Light Switch, all of the listed device types are enabled by default.
 To disable one of them, set any of the following configuration options:
 
-* :kconfig:option:`CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE` to ``n`` to disable On/Off Light.
-* :kconfig:option:`CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE` to ``n`` to disable Generic Switch
-* :kconfig:option:`CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE` to ``n`` to disable Temperature Sensor.
-* :kconfig:option:`CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE` to ``n`` to disable Humidity Sensor.
+* :ref:`CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE <CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE>` to ``n`` to disable On/Off Light.
+* :ref:`CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE <CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE>` to ``n`` to disable Generic Switch
+* :ref:`CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE <CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE>` to ``n`` to disable Temperature Sensor.
+* :ref:`CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE <CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE>` to ``n`` to disable Humidity Sensor.
 
 Additionally, you can choose to use the On/Off Light Switch implementation instead of the Generic Switch implementation for a switch device.
 To enable the On/Off Light Switch implementation, set the following configuration options:
 
-* :kconfig:option:`CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE` to ``n`` to disable Generic Switch.
-* :kconfig:option:`CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE` to ``y`` to enable On/Off Light Switch.
+* :ref:`CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE <CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE>` to ``n`` to disable Generic Switch.
+* :ref:`CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE <CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE>` to ``y`` to enable On/Off Light Switch.
 
 The application supports over-the-air (OTA) device firmware upgrade (DFU) using either of the two following protocols:
 
@@ -160,7 +160,7 @@ Button 1:
     :end-before: matter_door_lock_sample_led1_end
 
 LED 2:
-   If the :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` Kconfig option is set to ``y``, shows the current state of Bridge's Bluetooth LE connectivity.
+   If the :ref:`CONFIG_BRIDGED_DEVICE_BT <CONFIG_BRIDGED_DEVICE_BT>` Kconfig option is set to ``y``, shows the current state of Bridge's Bluetooth LE connectivity.
    The following states are possible:
 
    * Turned Off - The Bridge device is in the idle state and has no Bluetooth LE devices paired.
@@ -245,7 +245,7 @@ Controlling a simulated On/Off Light bridged device
 
       uart:~$ matter_bridge onoff 1 3
 
-   Note that the above command will only work if the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` option is selected in the build configuration.
+   Note that the above command will only work if the :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL <CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL>` option is selected in the build configuration.
    If the Kconfig option is not selected, the simulated device changes its state periodically in autonomous manner and can not be controlled by using shell commands.
 
 Controlling a simulated On/Off Light Switch bridged device
@@ -358,6 +358,112 @@ Configuration
 
 |config|
 
+Configuration options
+=====================
+
+Check and configure the following configuration options:
+
+.. _CONFIG_BRIDGED_DEVICE_IMPLEMENTATION:
+
+CONFIG_BRIDGED_DEVICE_IMPLEMENTATION
+   Select bridged device implementation.
+   See the :ref:`matter_bridge_app_bridged_support_configs` section for more information.
+   Accepts the following values:
+
+   .. _CONFIG_BRIDGED_DEVICE_SIMULATED:
+
+   CONFIG_BRIDGED_DEVICE_SIMULATED
+      Implement a simulated bridged device.
+      You must also configure :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION <CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION>`
+
+   .. _CONFIG_BRIDGED_DEVICE_BT:
+
+   CONFIG_BRIDGED_DEVICE_BT
+      Implement a Bluetooth LE bridged device.
+
+.. _CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL:
+
+CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL
+   Set the minimum Bluetooth security level of bridged devices that the bridge device will accept.
+   Bridged devices using this or a higher level will be allowed to connect to the bridge.
+   See the :ref:`matter_bridge_app_bt_security` section for more information.
+
+.. _CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE:
+
+CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+   Enable support for Humidity Sensor bridged device.
+
+.. _CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE:
+
+CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+   Enable support for OnOff Light bridged device.
+
+.. _CONFIG_BRIDGE_SWITCH_BRIDGED_DEVICE:
+
+CONFIG_BRIDGE_SWITCH_BRIDGED_DEVICE
+   Enable support for a switch bridged device.
+   Accepts the following values:
+
+   .. _CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE:
+
+   CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
+      Enable support for Generic Switch bridged device.
+
+   .. _CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE:
+
+   CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+      Enable support for OnOff Light Switch bridged device.
+
+.. _CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE:
+
+CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
+   Enable support for Temperature Sensor bridged device.
+
+If you selected the simulated device implementation using the :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED <CONFIG_BRIDGED_DEVICE_SIMULATED>` Kconfig option, also check and configure the following option:
+
+.. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION:
+
+CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION
+   Select the simulated OnOff device implementation.
+   Accepts the following values:
+
+   .. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC:
+
+   CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC
+      Automatically simulated OnOff device.
+      The simulated device automatically changes its state periodically.
+
+   .. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL:
+
+   CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
+      Shell-controlled simulated OnOff device.
+      The state of the simulated device is changed using shell commands.
+
+If you selected the Bluetooth LE device implementation using the :ref:`CONFIG_BRIDGED_DEVICE_BT <CONFIG_BRIDGED_DEVICE_BT>` Kconfig option, also check and configure the following options:
+
+.. _CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES:
+
+CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES
+   Set the maximum amount of scanned devices.
+
+.. _CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS:
+
+CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS
+   Set the Bluetooth scan tiemout in milliseconds.
+
+The following options affect how many bridged devices the application supports.
+See the :ref:`matter_bridge_app_bridged_support_configs` section for more information.
+
+.. _CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER:
+
+CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER
+   Set the maximum number of physical non-Matter devices supported by the Bridge.
+
+.. _CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER:
+
+CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER
+   Set the maximum number of dynamic endpoints supported by the Bridge.
+
 .. _matter_bridge_app_bridged_support_configs:
 
 Bridged device configuration
@@ -365,15 +471,15 @@ Bridged device configuration
 
 You can enable the :ref:`matter_bridge_app_bridged_support` by using the following Kconfig options:
 
-* :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED` - For the simulated bridged device.
-* :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` - For the Bluetooth LE bridged device.
+* :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED <CONFIG_BRIDGED_DEVICE_SIMULATED>` - For the simulated bridged device.
+* :ref:`CONFIG_BRIDGED_DEVICE_BT <CONFIG_BRIDGED_DEVICE_BT>` - For the Bluetooth LE bridged device.
 
 The simulated On/Off Light bridged device can operate in the following modes:
 
 * Autonomous - The simulated device periodically changes its state.
-  To build the simulated On/Off Light data provider in this mode, select the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC` Kconfig option.
+  To build the simulated On/Off Light data provider in this mode, select the :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC <CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC>` Kconfig option.
 * Controllable - The user can explicitly control the On/Off state by using shell commands.
-  To build the simulated On/Off Light data provider in this mode, select the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` Kconfig option.
+  To build the simulated On/Off Light data provider in this mode, select the :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL <CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL>` Kconfig option.
   This is enabled by default.
 
 Additionally, you can decide how many bridged devices the bridge application will support.
@@ -381,9 +487,9 @@ The decision will make an impact on the flash and RAM memory usage, and is verif
 The application uses dynamic memory allocation and stores bridged device objects on the heap, so it may be necessary to increase the heap size using the :kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP_SIZE` Kconfig option.
 Use the following configuration options to customize the number of supported bridged devices:
 
-* :kconfig:option:`CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER` - For changing the maximum number of non-Matter bridged devices supported by the bridge application
-* :kconfig:option:`CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER` - For changing the maximum number of Matter endpoints used for bridging devices by the bridge application.
-  This option does not have to be equal to :kconfig:option:`CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER`, as it is possible to use non-Matter devices that are represented using more than one Matter endpoint.
+* :ref:`CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER <CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER>` - For changing the maximum number of non-Matter bridged devices supported by the bridge application
+* :ref:`CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER <CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER>` - For changing the maximum number of Matter endpoints used for bridging devices by the bridge application.
+  This option does not have to be equal to :ref:`CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER <CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER>`, as it is possible to use non-Matter devices that are represented using more than one Matter endpoint.
 
 Configuring the number of Bluetooth LE bridged devices
 ------------------------------------------------------
@@ -403,6 +509,8 @@ Build the target using the following command in the project directory to enable 
    west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DOVERLAY_CONFIG="overlay-bt_max_connections_app.conf" -Dhci_ipc_OVERLAY_CONFIG="*absoule_path*/overlay-bt_max_connections_net.conf"
 
 Replace *absolute_path* with the absolute path to the Matter bridge application on your local disk.
+
+.. _matter_bridge_app_bt_security:
 
 Configuring the Bluetooth LE security
 -------------------------------------
@@ -429,7 +537,7 @@ You can select the minimum security level required by the application.
 When selected, the Matter bridge will require setting the selected minimum level from the connected Bluetooth LE bridged device.
 If the bridged device supports also levels higher than the selected minimum, the devices may negotiate using the highest shared security level.
 In case the bridged device does not support the minimum required level, the connection will be terminated.
-To select the minimum security level, set the :kconfig:option:`CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL` Kconfig option to ``2``, ``3`` or ``4``.
+To select the minimum security level, set the :ref:`CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL <CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL>` Kconfig option to ``2``, ``3`` or ``4``.
 
 .. _matter_bridge_app_build_types:
 
