@@ -26,7 +26,7 @@ tests:
   sample.persistent_key_usage.cracen:
     tags: introduction psa cracen
     platform_allow: >
-      nrf54l15pdk_nrf54l15_cpuapp
+      nrf54l15pdk_nrf54l15_cpuapp nrf54l15pdk_nrf54l15_cpuapp_ns
     harness: console
     harness_config:
       type: multi_line
@@ -34,3 +34,4 @@ tests:
         - ".*Example finished successfully!.*"
     integration_platforms:
       - nrf54l15pdk_nrf54l15_cpuapp
+      - nrf54l15pdk_nrf54l15_cpuapp_ns
