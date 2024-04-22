@@ -1214,17 +1214,23 @@ void nrf_wifi_wpa_supp_event_proc_get_sta(void *if_priv,
 
 	if (!if_priv || !info) {
 		LOG_ERR("%s: Invalid params", __func__);
-		k_sem_give(&wait_for_event_sem);
-		return;
+		goto out;
 	}
+
 	vif_ctx_zep = if_priv;
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		goto out;
+	}
+
+#ifdef CONFIG_NRF700X_AP_MODE
+	vif_ctx_zep->inactive_time_sec = info->sta_info.inactive_time;
+#endif /* CONFIG_NRF700X_AP_MODE */
+
 	signal_info = vif_ctx_zep->signal_info;
-
-
 	/* Semaphore timedout */
 	if (!signal_info) {
-		LOG_DBG("%s: Get station Semaphore timedout", __func__);
-		return;
+		goto out;
 	}
 
 	if (info->sta_info.valid_fields & NRF_WIFI_STA_INFO_SIGNAL_VALID) {
@@ -1252,6 +1258,7 @@ void nrf_wifi_wpa_supp_event_proc_get_sta(void *if_priv,
 			signal_info->current_txrate = info->sta_info.tx_bitrate.bitrate * 100;
 		}
 	}
+out:
 	k_sem_give(&wait_for_event_sem);
 }
 
@@ -2738,5 +2745,51 @@ int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
+}
+
+int nrf_wifi_wpa_supp_sta_get_inact_sec(void *if_priv, const u8 *addr)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	int ret = -1, sem_ret;
+	int inactive_time_sec = -1;
+
+	if (!if_priv || !addr) {
+		LOG_ERR("%s: Invalid params", __func__);
+		return ret;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_DBG("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
+	status = nrf_wifi_fmac_get_station(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
+					(unsigned char *) addr);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_get_station failed", __func__);
+		goto out;
+	}
+
+	sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
+	if (sem_ret) {
+		LOG_ERR("%s: Timed out to get station info, ret = %d", __func__, sem_ret);
+		ret = NRF_WIFI_STATUS_FAIL;
+		goto out;
+	}
+
+	inactive_time_sec = vif_ctx_zep->inactive_time_sec;
+out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+	return inactive_time_sec;
 }
 #endif /* CONFIG_NRF700X_AP_MODE */

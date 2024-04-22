@@ -876,6 +876,7 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.sta_remove = nrf_wifi_wpa_supp_sta_remove,
 	.register_mgmt_frame = nrf_wifi_supp_register_mgmt_frame,
 	.sta_set_flags = nrf_wifi_wpa_supp_sta_set_flags,
+	.get_inact_sec = nrf_wifi_wpa_supp_sta_get_inact_sec,
 #endif /* CONFIG_NRF700X_AP_MODE */
 };
 #endif /* CONFIG_NRF700X_STA_MODE */
