@@ -50,12 +50,23 @@ LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 #define VER_STRING_FMT2 "cver=" CDDL_VERSION "&dver=" BUILD_VERSION_STR
 #define BUILD_VERSION_STR STRINGIFY(BUILD_VERSION)
 
-static int sock = -1;
-static bool authenticated;
-static bool cid_saved;
+#define NRF_CLOUD_COAP_AUTH_RSC "auth/jwt"
 
-static struct coap_client coap_client;
-static int nrf_cloud_coap_authenticate(void);
+/* CoAP client transfer data */
+struct cc_xfer_data {
+	struct nrf_cloud_coap_client *const nrfc_cc;
+	coap_client_response_cb_t cb;
+	void *user_data;
+	int result_code;
+	struct k_sem *sem;
+};
+
+/* Semaphore to be used with internal coap_client requests */
+static K_SEM_DEFINE(cb_sem, 0, 1);
+/* Semaphore to be used when doing authorization with an external coap_client */
+static K_SEM_DEFINE(ext_cc_sem, 0, 1);
+
+static struct nrf_cloud_coap_client internal_cc = {0};
 
 #if defined(CONFIG_NRF_CLOUD_COAP_LOG_LEVEL_DBG)
 static const char *const coap_method_str[] = {
@@ -104,7 +115,12 @@ static const char *fmt_name(enum coap_content_format fmt)
 
 bool nrf_cloud_coap_is_connected(void)
 {
-	return authenticated;
+	return internal_cc.authenticated;
+}
+
+static inline bool is_internal(struct nrf_cloud_coap_client const *const client)
+{
+	return client == &internal_cc;
 }
 
 /**@brief Resolves the configured hostname. */
@@ -161,33 +177,28 @@ static int add_creds(void)
 /**@brief Initialize the CoAP client */
 int nrf_cloud_coap_init(void)
 {
-	static bool initialized;
 	int err;
 
-	authenticated = false;
+	internal_cc.authenticated = false;
 
-	if (!initialized) {
+	if (!internal_cc.initialized) {
 		err = add_creds();
 		if (err) {
 			return err;
 		}
 
-		/* Only initialize one time; not idempotent. */
-		LOG_DBG("Initializing async CoAP client");
-		coap_client.fd = sock;
-		err = coap_client_init(&coap_client, NULL);
-		if (err) {
-			LOG_ERR("Failed to initialize CoAP client: %d", err);
-			return err;
-		}
 		(void)nrf_cloud_codec_init(NULL);
+
 #if defined(CONFIG_MODEM_INFO)
 		err = modem_info_init();
 		if (err) {
 			return err;
 		}
 #endif
-		initialized = true;
+		err = nrf_cloud_coap_transport_init(&internal_cc);
+		if (err) {
+			return err;
+		}
 	}
 
 	return 0;
@@ -283,42 +294,21 @@ static void update_control_section(void)
 
 int nrf_cloud_coap_connect(const char * const app_ver)
 {
-	struct sockaddr_storage server;
+	if (!internal_cc.initialized) {
+		LOG_ERR("nRF Cloud CoAP library has not been initialized");
+		return -EACCES;
+	}
+
 	int err;
 
-	err = server_resolve((struct sockaddr_in *)&server);
+	err = nrf_cloud_coap_transport_connect(&internal_cc);
 	if (err) {
-		LOG_ERR("Failed to resolve server name: %d", err);
 		return err;
 	}
 
-	LOG_DBG("Creating socket type IPPROTO_DTLS_1_2");
-	if (sock == -1) {
-		sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_DTLS_1_2);
-	}
-	LOG_DBG("sock = %d", sock);
-	if (sock < 0) {
-		LOG_ERR("Failed to create CoAP socket: %d.", -errno);
-		return -errno;
-	}
-
-	err = nrfc_dtls_setup(sock);
-	if (err < 0) {
-		LOG_ERR("Failed to initialize the DTLS client: %d", err);
-		goto fail;
-	}
-	authenticated = false;
-
-	err = connect(sock, (struct sockaddr *)&server,
-		      sizeof(struct sockaddr_in));
-	if (err < 0) {
-		LOG_ERR("Connect failed : %d", -errno);
-		goto fail;
-	}
-
-	err = nrf_cloud_coap_authenticate();
+	err = nrf_cloud_coap_transport_authenticate(&internal_cc);
 	if (err) {
-		goto fail;
+		return err;
 	}
 
 	/* On initial connect, set the control section in the shadow */
@@ -330,146 +320,28 @@ int nrf_cloud_coap_connect(const char * const app_ver)
 		return 0;
 	}
 
-fail:
-	(void)nrf_cloud_coap_disconnect();
-	return err;
-}
-
-static void auth_cb(int16_t result_code, size_t offset, const uint8_t *payload, size_t len,
-		    bool last_block, void *user_data)
-{
-	LOG_RESULT_CODE_INF("Authorization result_code:", result_code);
-	if (result_code < COAP_RESPONSE_CODE_BAD_REQUEST) {
-		authenticated = true;
-	}
-}
-
-static int nrf_cloud_coap_authenticate(void)
-{
-	int err;
-	char *jwt;
-
-	if (authenticated) {
-		LOG_DBG("Already authenticated");
-		return 0;
-	}
-
-#if defined(CONFIG_MODEM_INFO)
-	char mfw_string[MODEM_INFO_FWVER_SIZE];
-	char ver_string[strlen(VER_STRING_FMT) +
-			MODEM_INFO_FWVER_SIZE +
-			strlen(BUILD_VERSION_STR) +
-			strlen(CDDL_VERSION)];
-
-	err = modem_info_get_fw_version(mfw_string, sizeof(mfw_string));
-	if (!err) {
-		err = snprintf(ver_string, sizeof(ver_string), VER_STRING_FMT,
-			       mfw_string, BUILD_VERSION_STR, CDDL_VERSION);
-		if ((err < 0) || (err >= sizeof(ver_string))) {
-			LOG_ERR("Could not format string");
-			return -ETXTBSY;
-		}
-	} else {
-		LOG_ERR("Unable to obtain the modem firmware version: %d", err);
-	}
-#else
-	char *ver_string = VER_STRING_FMT2;
-#endif
-
-	LOG_DBG("Generate JWT");
-	jwt = nrf_cloud_malloc(JWT_BUF_SZ);
-	if (!jwt) {
-		return -ENOMEM;
-	}
-	err = nrf_cloud_jwt_generate(NRF_CLOUD_JWT_VALID_TIME_S_MAX, jwt, JWT_BUF_SZ);
-	if (err) {
-		LOG_ERR("Error generating JWT with modem: %d", err);
-		nrf_cloud_free(jwt);
-		return err;
-	}
-
-	LOG_INF("Request authorization with JWT");
-	err = nrf_cloud_coap_post("auth/jwt", err ? NULL : ver_string,
-				 (uint8_t *)jwt, strlen(jwt),
-				 COAP_CONTENT_FORMAT_TEXT_PLAIN, true, auth_cb, NULL);
-	nrf_cloud_free(jwt);
-
-	if (err) {
-		return err;
-	}
-	if (!authenticated) {
-		return -EACCES;
-	}
-
-	LOG_INF("Authorized");
-
-	if (nrfc_dtls_cid_is_active(sock)) {
-		LOG_INF("DTLS CID is active");
-	}
+	nrf_cloud_coap_transport_disconnect(&internal_cc);
 	return err;
 }
 
 int nrf_cloud_coap_pause(void)
 {
-	int err = 0;
-
-	cid_saved = false;
-
-	if (nrfc_dtls_cid_is_active(sock) && authenticated) {
-		err = nrfc_dtls_session_save(sock);
-		if (!err) {
-			LOG_DBG("DTLS CID session saved.");
-			cid_saved = true;
-		} else {
-			LOG_ERR("Unable to save DTLS CID session: %d", err);
-		}
-	} else {
-		LOG_WRN("Unable to pause CoAP connection.");
-		err = -EACCES;
-	}
-	return err;
+	return nrf_cloud_coap_transport_pause(&internal_cc);
 }
 
 int nrf_cloud_coap_resume(void)
 {
-	int err = 0;
-
-	if (cid_saved) {
-		err = nrfc_dtls_session_load(sock);
-		cid_saved = false;
-		if (!err) {
-			LOG_DBG("Loaded DTLS CID session");
-			authenticated = true;
-		} else if (err == -EAGAIN) {
-			LOG_INF("Failed to load DTLS CID session");
-		} else if (err == -EINVAL) {
-			LOG_INF("DLTS CID sessions not supported with current modem firmware");
-		} else {
-			LOG_ERR("Error on DTLS CID session load: %d", err);
-		}
-	} else {
-		LOG_WRN("Unable to resume CoAP connection.");
-		err = -EACCES; /* Cannot resume. */
-	}
-
-	return err;
+	return nrf_cloud_coap_transport_resume(&internal_cc);
 }
-
-static K_SEM_DEFINE(serial_sem, 1, 1);
-static K_SEM_DEFINE(cb_sem, 0, 1);
-
-struct user_cb {
-	coap_client_response_cb_t cb;
-	void *user_data;
-	int result_code;
-};
 
 static void client_callback(int16_t result_code, size_t offset, const uint8_t *payload, size_t len,
 			    bool last_block, void *user_data)
 {
-	struct user_cb *user_cb = (struct user_cb *)user_data;
+	__ASSERT_NO_MSG(user_data != NULL);
 
-	user_cb->result_code = result_code;
+	struct cc_xfer_data *xfer = (struct cc_xfer_data *)user_data;
+
+	xfer->result_code = result_code;
 	if (result_code >= 0) {
 		LOG_CB_DBG(result_code, offset, len, last_block);
 	} else {
@@ -481,19 +353,23 @@ static void client_callback(int16_t result_code, size_t offset, const uint8_t *p
 	}
 	if (result_code == COAP_RESPONSE_CODE_UNAUTHORIZED) {
 		LOG_ERR("Device not authenticated; reconnection required.");
-		authenticated = false; /* Lost authorization; need to reconnect. */
+		xfer->nrfc_cc->authenticated = false;
 	} else if ((result_code >= COAP_RESPONSE_CODE_BAD_REQUEST) && len) {
 		LOG_ERR("Unexpected response: %*s", len, payload);
 	}
-	if ((user_cb != NULL) && (user_cb->cb != NULL)) {
-		LOG_DBG("Calling user's callback %p", user_cb->cb);
-		user_cb->cb(result_code, offset, payload, len, last_block, user_cb->user_data);
+	if (xfer->cb != NULL) {
+		LOG_DBG("Calling user's callback %p", xfer->cb);
+		xfer->cb(result_code, offset, payload, len, last_block, xfer->user_data);
 	}
 	if (last_block || (result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
 		LOG_DBG("End of client transfer");
-		k_sem_give(&cb_sem);
+		if (xfer->sem) {
+			k_sem_give(xfer->sem);
+		}
 	}
 }
+
+static K_SEM_DEFINE(serial_sem, 1, 1);
 
 static int client_transfer(enum coap_method method,
 			   const char *resource, const char *query,
@@ -502,19 +378,19 @@ static int client_transfer(enum coap_method method,
 			   enum coap_content_format fmt_in,
 			   bool response_expected,
 			   bool reliable,
-			   coap_client_response_cb_t cb, void *user)
+			   struct cc_xfer_data *const xfer)
 {
 	__ASSERT_NO_MSG(resource != NULL);
+	__ASSERT_NO_MSG(xfer != NULL);
 
-	k_sem_take(&serial_sem, K_FOREVER);
+	/* Use the serial semaphore if this is the internal coap client */
+	if (is_internal(xfer->nrfc_cc)) {
+		k_sem_take(&serial_sem, K_FOREVER);
+	}
 
 	int err;
 	int retry;
 	char path[MAX_COAP_PATH + 1];
-	struct user_cb user_cb = {
-		.cb = cb,
-		.user_data = user
-	};
 	struct coap_client_option options[1] = {{
 		.code = COAP_OPTION_ACCEPT,
 		.len = 1,
@@ -528,8 +404,9 @@ static int client_transfer(enum coap_method method,
 		.payload = (uint8_t *)buf,
 		.len = buf_len,
 		.cb = client_callback,
-		.user_data = &user_cb
+		.user_data = xfer
 	};
+	struct coap_client *const cc = &xfer->nrfc_cc->cc;
 
 	if (response_expected) {
 		request.options = options;
@@ -557,8 +434,8 @@ static int client_transfer(enum coap_method method,
 #endif /* CONFIG_NRF_CLOUD_COAP_LOG_LEVEL_DBG */
 
 	retry = 0;
-	k_sem_reset(&cb_sem);
-	while ((err = coap_client_req(&coap_client, sock, NULL, &request, NULL)) == -EAGAIN) {
+	k_sem_reset(xfer->sem);
+	while ((err = coap_client_req(cc, xfer->nrfc_cc->sock, NULL, &request, NULL)) == -EAGAIN) {
 		/* -EAGAIN means the CoAP client is currently waiting for a response
 		 * to a previous request (likely started in a separate thread).
 		 */
@@ -576,17 +453,21 @@ static int client_transfer(enum coap_method method,
 		if (buf_len) {
 			LOG_HEXDUMP_DBG(buf, MIN(64, buf_len), "Sent");
 		}
-		(void)k_sem_take(&cb_sem, K_FOREVER); /* Wait for coap_client to exhaust retries */
+		/* Wait for coap_client to exhaust retries */
+		(void)k_sem_take(xfer->sem, K_FOREVER);
 	}
 
-	if (!reliable && !err && (user_cb.result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
+	if (!reliable && !err && (xfer->result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
 		/* NON transfers usually do not use a callback,
 		 * so make sure a bad result is not ignored.
 		 */
-		err = user_cb.result_code;
+		err = xfer->result_code;
 	}
 
-	k_sem_give(&serial_sem);
+	if (is_internal(xfer->nrfc_cc)) {
+		k_sem_give(&serial_sem);
+	}
+
 	return err;
 }
 
@@ -596,8 +477,11 @@ int nrf_cloud_coap_get(const char *resource, const char *query,
 		       enum coap_content_format fmt_in, bool reliable,
 		       coap_client_response_cb_t cb, void *user)
 {
+	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
+				       .user_data = user, .sem = &cb_sem };
+
 	return client_transfer(COAP_METHOD_GET, resource, query,
-			   buf, len, fmt_out, fmt_in, true, reliable, cb, user);
+			       buf, len, fmt_out, fmt_in, true, reliable, &xfer);
 }
 
 int nrf_cloud_coap_post(const char *resource, const char *query,
@@ -605,8 +489,11 @@ int nrf_cloud_coap_post(const char *resource, const char *query,
 			enum coap_content_format fmt, bool reliable,
 			coap_client_response_cb_t cb, void *user)
 {
+	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
+				     .user_data = user, .sem = &cb_sem };
+
 	return client_transfer(COAP_METHOD_POST, resource, query,
-			   buf, len, fmt, fmt, false, reliable, cb, user);
+			       buf, len, fmt, fmt, false, reliable, &xfer);
 }
 
 int nrf_cloud_coap_put(const char *resource, const char *query,
@@ -614,8 +501,11 @@ int nrf_cloud_coap_put(const char *resource, const char *query,
 		       enum coap_content_format fmt, bool reliable,
 		       coap_client_response_cb_t cb, void *user)
 {
+	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
+				     .user_data = user, .sem = &cb_sem };
+
 	return client_transfer(COAP_METHOD_PUT, resource, query,
-			   buf, len, fmt, fmt, false, reliable, cb, user);
+			       buf, len, fmt, fmt, false, reliable, &xfer);
 }
 
 int nrf_cloud_coap_delete(const char *resource, const char *query,
@@ -623,8 +513,11 @@ int nrf_cloud_coap_delete(const char *resource, const char *query,
 			  enum coap_content_format fmt, bool reliable,
 			  coap_client_response_cb_t cb, void *user)
 {
+	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
+				     .user_data = user, .sem = &cb_sem };
+
 	return client_transfer(COAP_METHOD_DELETE, resource, query,
-			   buf, len, fmt, fmt, false, reliable, cb, user);
+			       buf, len, fmt, fmt, false, reliable, &xfer);
 }
 
 int nrf_cloud_coap_fetch(const char *resource, const char *query,
@@ -633,8 +526,11 @@ int nrf_cloud_coap_fetch(const char *resource, const char *query,
 			 enum coap_content_format fmt_in, bool reliable,
 			 coap_client_response_cb_t cb, void *user)
 {
+	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
+				     .user_data = user, .sem = &cb_sem };
+
 	return client_transfer(COAP_METHOD_FETCH, resource, query,
-			   buf, len, fmt_out, fmt_in, true, reliable, cb, user);
+			       buf, len, fmt_out, fmt_in, true, reliable, &xfer);
 }
 
 int nrf_cloud_coap_patch(const char *resource, const char *query,
@@ -642,20 +538,314 @@ int nrf_cloud_coap_patch(const char *resource, const char *query,
 			 enum coap_content_format fmt, bool reliable,
 			 coap_client_response_cb_t cb, void *user)
 {
+	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
+				     .user_data = user, .sem = &cb_sem };
+
 	return client_transfer(COAP_METHOD_PATCH, resource, query,
-			   buf, len, fmt, fmt, false, reliable, cb, user);
+			       buf, len, fmt, fmt, false, reliable, &xfer);
+}
+
+static void auth_cb(int16_t result_code, size_t offset, const uint8_t *payload, size_t len,
+		    bool last_block, void *user_data)
+{
+	struct nrf_cloud_coap_client *client = (struct nrf_cloud_coap_client *)user_data;
+
+	LOG_RESULT_CODE_INF("Authorization result_code:", result_code);
+	if (result_code < COAP_RESPONSE_CODE_BAD_REQUEST) {
+		client->authenticated = true;
+	}
+}
+
+static int nrf_cloud_coap_auth_post(struct nrf_cloud_coap_client *const client,
+			     char const *const ver_string,
+			     const uint8_t *jwt, size_t jwt_len)
+{
+	/* Use the nrf_cloud_coap_client as the user data so the auth flag can be set */
+	struct cc_xfer_data xfer = { .nrfc_cc = client, .cb = auth_cb, .user_data = client };
+
+	xfer.sem = is_internal(client) ? &cb_sem : &ext_cc_sem;
+
+	return client_transfer(COAP_METHOD_POST, NRF_CLOUD_COAP_AUTH_RSC,
+			       ver_string, jwt, jwt_len,
+			       COAP_CONTENT_FORMAT_TEXT_PLAIN, COAP_CONTENT_FORMAT_TEXT_PLAIN,
+			       false, true, &xfer);
 }
 
 int nrf_cloud_coap_disconnect(void)
 {
+	return nrf_cloud_coap_transport_disconnect(&internal_cc);
+}
+
+int nrf_cloud_coap_transport_init(struct nrf_cloud_coap_client *const client)
+{
+	if (client->initialized) {
+		return 0;
+	}
+
+	/* Only initialize one time; not idempotent. */
+	LOG_DBG("Initializing %s async CoAP client",
+		is_internal(client) ? "internal" : "external");
+
+	client->cid_saved = false;
+	client->authenticated = false;
+	client->sock =  -1;
+
+	client->cc.fd = client->sock;
+
+	int err = coap_client_init(&client->cc, NULL);
+
+	if (err) {
+		LOG_ERR("Failed to initialize CoAP client: %d", err);
+	} else {
+		client->initialized = true;
+	}
+
+	return err;
+}
+
+int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client)
+{
+	struct sockaddr_storage server;
+	int err;
+
+	err = server_resolve((struct sockaddr_in *)&server);
+	if (err) {
+		LOG_ERR("Failed to resolve server name: %d", err);
+		return err;
+	}
+
+	if (client->sock == -1) {
+		LOG_DBG("Creating socket type IPPROTO_DTLS_1_2");
+		client->sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_DTLS_1_2);
+	} else {
+		LOG_DBG("Using existing socket");
+	}
+
+	LOG_DBG("sock = %d", client->sock);
+	if (client->sock < 0) {
+		LOG_ERR("Failed to create CoAP socket: %d.", -errno);
+		return -errno;
+	}
+
+	err = nrfc_dtls_setup(client->sock);
+	if (err < 0) {
+		LOG_ERR("Failed to initialize the DTLS client: %d", err);
+		goto fail;
+	}
+	client->authenticated = false;
+
+	err = connect(client->sock, (struct sockaddr *)&server, sizeof(struct sockaddr_in));
+	if (err < 0) {
+		LOG_ERR("Connect failed : %d", -errno);
+		goto fail;
+	}
+
+	return 0;
+
+fail:
+	nrf_cloud_coap_transport_disconnect(client);
+	return err;
+}
+
+int nrf_cloud_coap_transport_disconnect(struct nrf_cloud_coap_client *const client)
+{
+	if (!client) {
+		return -EINVAL;
+	}
+
 	int tmp;
 
-	if (sock < 0) {
+	if (client->sock < 0) {
 		return -ENOTCONN;
 	}
 
-	authenticated = false;
-	tmp = sock;
-	coap_client.fd = sock = -1;
+	client->authenticated = false;
+
+	tmp = client->sock;
+	client->sock = client->cc.fd = -1;
+
 	return close(tmp);
+}
+
+int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const client)
+{
+	if (!client) {
+		return -EINVAL;
+	} else if (client->sock < 0) {
+		return -ENOTCONN;
+	}
+
+	if (client->authenticated) {
+		LOG_DBG("Already authenticated");
+		return 0;
+	}
+
+	int err;
+	char *jwt;
+
+#if defined(CONFIG_MODEM_INFO)
+	char mfw_string[MODEM_INFO_FWVER_SIZE];
+	char ver_string[strlen(VER_STRING_FMT) +
+			MODEM_INFO_FWVER_SIZE +
+			strlen(BUILD_VERSION_STR) +
+			strlen(CDDL_VERSION)];
+
+	err = modem_info_get_fw_version(mfw_string, sizeof(mfw_string));
+	if (!err) {
+		err = snprintf(ver_string, sizeof(ver_string), VER_STRING_FMT,
+			       mfw_string, BUILD_VERSION_STR, CDDL_VERSION);
+		if ((err < 0) || (err >= sizeof(ver_string))) {
+			LOG_ERR("Could not format string");
+			err = -ETXTBSY;
+			goto fail;
+		}
+	} else {
+		LOG_ERR("Unable to obtain the modem firmware version: %d", err);
+	}
+#else
+	char *ver_string = VER_STRING_FMT2;
+#endif
+
+	LOG_DBG("Generate JWT");
+	jwt = nrf_cloud_malloc(JWT_BUF_SZ);
+	if (!jwt) {
+		err = -ENOMEM;
+		goto fail;
+	}
+	err = nrf_cloud_jwt_generate(NRF_CLOUD_JWT_VALID_TIME_S_MAX, jwt, JWT_BUF_SZ);
+	if (err) {
+		LOG_ERR("Error generating JWT with modem: %d", err);
+		nrf_cloud_free(jwt);
+		goto fail;
+	}
+
+	LOG_INF("Request authorization with JWT");
+	err = nrf_cloud_coap_auth_post(client, ver_string, (uint8_t *)jwt, strlen(jwt));
+
+	nrf_cloud_free(jwt);
+
+	if (!client->authenticated) {
+		err = -EACCES;
+	}
+
+	if (err) {
+		goto fail;
+	}
+
+	LOG_INF("Authorized");
+
+	if (nrfc_dtls_cid_is_active(client->sock)) {
+		LOG_INF("DTLS CID is active");
+	}
+
+	return 0;
+
+fail:
+	nrf_cloud_coap_transport_disconnect(client);
+	return err;
+}
+
+int nrf_cloud_coap_transport_pause(struct nrf_cloud_coap_client *const client)
+{
+	if (!client) {
+		return -EINVAL;
+	}
+
+	int err = 0;
+
+	client->cid_saved = false;
+
+	if (nrfc_dtls_cid_is_active(client->sock) && client->authenticated) {
+		err = nrfc_dtls_session_save(client->sock);
+		if (!err) {
+			LOG_DBG("DTLS CID session saved.");
+			client->cid_saved = true;
+		} else {
+			LOG_ERR("Unable to save DTLS CID session: %d", err);
+		}
+	} else {
+		LOG_WRN("Unable to pause CoAP connection.");
+		err = -EACCES;
+	}
+	return err;
+}
+
+int nrf_cloud_coap_transport_resume(struct nrf_cloud_coap_client *const client)
+{
+	if (!client) {
+		return -EINVAL;
+	}
+
+	int err = 0;
+
+	if (client->cid_saved) {
+		err = nrfc_dtls_session_load(client->sock);
+		client->cid_saved = false;
+		if (!err) {
+			LOG_DBG("Loaded DTLS CID session");
+			client->authenticated = true;
+		} else if (err == -EAGAIN) {
+			LOG_INF("Failed to load DTLS CID session");
+		} else if (err == -EINVAL) {
+			LOG_INF("DLTS CID sessions not supported with current modem firmware");
+		} else {
+			LOG_ERR("Error on DTLS CID session load: %d", err);
+		}
+	} else {
+		LOG_WRN("Unable to resume CoAP connection.");
+		err = -EACCES; /* Cannot resume. */
+	}
+
+	return err;
+}
+
+#define PROXY_URI_DL_HTTPS		"https://"
+#define PROXY_URI_DL_HTTPS_LEN		(sizeof(PROXY_URI_DL_HTTPS) - 1)
+#define PROXY_URI_DL_SEP		"/"
+#define PROXY_URI_DL_SEP_LEN		(sizeof(PROXY_URI_DL_SEP) - 1)
+#define PROXY_URI_ADDED_LEN		(PROXY_URI_DL_HTTPS_LEN + PROXY_URI_DL_SEP_LEN)
+
+int nrf_cloud_coap_transport_proxy_dl_opts_get(struct coap_client_option *const opt_accept,
+					       struct coap_client_option *const opt_proxy_uri,
+					       char const *const host, char const *const path)
+{
+	__ASSERT_NO_MSG(opt_accept != NULL);
+	__ASSERT_NO_MSG(opt_proxy_uri != NULL);
+	__ASSERT_NO_MSG(host != NULL);
+	__ASSERT_NO_MSG(path != NULL);
+
+	size_t uri_idx = 0;
+	size_t host_len = strlen(host);
+	size_t path_len = strlen(path);
+
+	opt_accept->code = COAP_OPTION_ACCEPT;
+	opt_accept->len = 1;
+	opt_accept->value[0] = COAP_CONTENT_FORMAT_TEXT_PLAIN;
+
+	opt_proxy_uri->code = COAP_OPTION_PROXY_URI;
+	opt_proxy_uri->len = host_len + path_len + PROXY_URI_ADDED_LEN;
+
+	if (opt_proxy_uri->len > CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE) {
+		LOG_ERR("Host and path for CoAP proxy GET is too large: %u bytes",
+			opt_proxy_uri->len);
+		LOG_INF("Increase CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE, current value: %d",
+			CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE);
+		return -E2BIG;
+	}
+
+	/* We don't want a NULL terminated string, so just copy the data to create the full URI */
+	memcpy(&opt_proxy_uri->value[uri_idx], PROXY_URI_DL_HTTPS, PROXY_URI_DL_HTTPS_LEN);
+	uri_idx += PROXY_URI_DL_HTTPS_LEN;
+
+	memcpy(&opt_proxy_uri->value[uri_idx], host, host_len);
+	uri_idx += host_len;
+
+	memcpy(&opt_proxy_uri->value[uri_idx], PROXY_URI_DL_SEP, PROXY_URI_DL_SEP_LEN);
+	uri_idx += PROXY_URI_DL_SEP_LEN;
+
+	memcpy(&opt_proxy_uri->value[uri_idx], path, path_len);
+
+	LOG_DBG("Proxy URI: %.*s", opt_proxy_uri->len, opt_proxy_uri->value);
+
+	return 0;
 }
