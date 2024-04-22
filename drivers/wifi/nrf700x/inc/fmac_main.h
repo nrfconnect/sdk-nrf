@@ -81,6 +81,9 @@ struct nrf_wifi_vif_ctx_zep {
 	unsigned long rssi_record_timestamp_us;
 	signed short rssi;
 #endif /* CONFIG_NRF700X_STA_MODE */
+#ifdef CONFIG_NRF700X_AP_MODE
+	int inactive_time_sec;
+#endif /* CONFIG_NRF700X_AP_MODE */
 };
 
 struct nrf_wifi_vif_ctx_map {
