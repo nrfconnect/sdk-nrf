@@ -23,10 +23,21 @@ static const uint8_t led_map[LED_ID_COUNT] = {
 	[LED_ID_PEER_STATE] = 1
 };
 
+/* On the nRF54L15 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
+ * Because of that, the PDK PCA10156 has the following limitations:
+ *
+ * - On the PDK revision v0.2.1, **LED 1** cannot be used for PWM output.
+ * - On the PDK revision v0.3.0, **LED 0** and **LED 2** cannot be used for PWM output.
+ *
+ * You can still use these LEDs with the PWM LED driver, but you must set the LED color to
+ * ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``. This ensures the PWM peripheral is not
+ * used for the mentioned LEDs.
+ */
+
 static const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT] = {
-	[LED_SYSTEM_STATE_IDLE]     = LED_EFFECT_LED_ON(LED_COLOR(200, 200, 200)),
-	[LED_SYSTEM_STATE_CHARGING] = LED_EFFECT_LED_ON(LED_COLOR(200, 200, 200)),
-	[LED_SYSTEM_STATE_ERROR]    = LED_EFFECT_LED_BLINK(200, LED_COLOR(200, 200, 200)),
+	[LED_SYSTEM_STATE_IDLE]     = LED_EFFECT_LED_ON(LED_COLOR(255, 255, 255)),
+	[LED_SYSTEM_STATE_CHARGING] = LED_EFFECT_LED_ON(LED_COLOR(255, 255, 255)),
+	[LED_SYSTEM_STATE_ERROR]    = LED_EFFECT_LED_BLINK(200, LED_COLOR(255, 255, 255)),
 };
 
 static const struct led_effect led_peer_state_effect[LED_PEER_COUNT][LED_PEER_STATE_COUNT] = {
