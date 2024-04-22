@@ -127,6 +127,10 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 				    const struct bt_mesh_sensor_value *curr)
 {
+	if (!sensor->state.prev.format) {
+		/* prev is uninitialized, return true as this is the first pub. */
+		return true;
+	}
 	return curr->format->cb->delta_check(curr, &sensor->state.prev,
 					     &sensor->state.threshold.deltas);
 }
@@ -785,6 +789,11 @@ bool bt_mesh_sensor_value_in_column(const struct bt_mesh_sensor_value *value,
 void sensor_cadence_update(struct bt_mesh_sensor *sensor,
 			   const sensor_value_type *value)
 {
+	if (!sensor->state.configured) {
+		/* Ignore any update before cadence is configured. */
+		return;
+	}
+
 	enum bt_mesh_sensor_cadence new;
 
 	new = sensor_cadence(&sensor->state.threshold, value);
@@ -985,7 +994,7 @@ int bt_mesh_sensor_value_from_sensor_value(
 enum bt_mesh_sensor_value_status
 bt_mesh_sensor_value_get_status(const struct bt_mesh_sensor_value *sensor_val)
 {
-	return sensor_val->format->cb->to_float(sensor_val, NULL);
+	return bt_mesh_sensor_value_to_float(sensor_val, NULL);
 }
 
 int bt_mesh_sensor_value_from_special_status(
