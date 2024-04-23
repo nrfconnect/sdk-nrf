@@ -17,7 +17,7 @@ tests:
     platform_allow: nrf52840dk/nrf52840 nrf52833dk/nrf52833 nrf21540dk/nrf52840
       nrf52840dongle/nrf52840 nrf5340dk/nrf5340/cpuapp
     tags: ci_build ncp
-    extra_args: FILE_SUFFIX=usb
+    extra_args: FILE_SUFFIX=usb mcuboot_FILE_SUFFIX=usb
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
