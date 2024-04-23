@@ -11,6 +11,7 @@
 #include "../../cmdma.h"
 #include <security/cracen.h>
 #include <cracen/statuscodes.h>
+#include <zephyr/kernel.h>
 
 /* Enable interrupts showing that an operation finished or aborted.
  * For that, we're interested in :
@@ -21,9 +22,12 @@
  */
 #define CMDMA_INTMASK_EN ((1 << 2) | (1 << 5) | (1 << 4))
 
+K_MUTEX_DEFINE(cracen_mutex_symmetric);
+
 void sx_hw_reserve(struct sx_dmactl *dma)
 {
 	cracen_acquire();
+	k_mutex_lock(&cracen_mutex_symmetric, K_FOREVER);
 	dma->hw_acquired = true;
 
 	/* Enable CryptoMaster interrupts. */
@@ -39,6 +43,7 @@ void sx_cmdma_release_hw(struct sx_dmactl *dma)
 {
 	if (dma->hw_acquired) {
 		cracen_release();
+		k_mutex_unlock(&cracen_mutex_symmetric);
 		dma->hw_acquired = false;
 	}
 }

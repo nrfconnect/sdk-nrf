@@ -51,6 +51,8 @@ struct sx_pk_cnx {
 
 struct sx_pk_cnx silex_pk_engine;
 
+K_MUTEX_DEFINE(cracen_mutex_asymmetric);
+
 bool ba414ep_is_busy(sx_pk_req *req)
 {
 	return (bool)(sx_pk_rdreg(&req->regs, PK_REG_STATUS) & PK_BUSY_MASK_BA414EP);
@@ -178,6 +180,7 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 {
 	struct sx_pk_acq_req req = {NULL, SX_OK};
 
+	k_mutex_lock(&cracen_mutex_asymmetric, K_FOREVER);
 	req.req = &silex_pk_engine.instance;
 	req.req->cmd = cmd;
 	req.req->cnx = &silex_pk_engine;
@@ -214,6 +217,7 @@ void sx_pk_release_req(sx_pk_req *req)
 	cracen_release();
 	req->cmd = NULL;
 	req->userctxt = NULL;
+	k_mutex_unlock(&cracen_mutex_asymmetric);
 }
 
 struct sx_regs *sx_pk_get_regs(void)
