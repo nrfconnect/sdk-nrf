@@ -34,7 +34,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define LOCATION_LATITUDE_ID			0
 #define LOCATION_LONGITUDE_ID			1
 #define LOCATION_RADIUS_ID			3
-
+#define LOCATION_TIMESTAMP_ID			5
 
 static bool send_location_back;
 
@@ -99,6 +99,12 @@ static int forward_to_location_obj(uint16_t obj_inst_id,
 
 	switch (res_id) {
 	case GROUND_FIX_LATITUDE:
+		if (IS_ENABLED(CONFIG_POSIX_CLOCK)) {
+			/* Update timestamp as well */
+			lwm2m_set_time(
+				&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_TIMESTAMP_ID),
+				time(NULL));
+		}
 		path = LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_LATITUDE_ID);
 		break;
 	case GROUND_FIX_LONGITUDE:
