@@ -1577,42 +1577,6 @@ int lte_lc_edrx_req(bool enable);
 int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg);
 
 /**
- * Set the RAI value to be used.
- *
- * RAI can be subsequently enabled using lte_lc_rai_req().
- *
- * For reference see 3GPP 24.301 Ch. 9.9.4.25.
- *
- * @deprecated Use @kconfig{CONFIG_LTE_RAI_REQ} and socket option ``SO_RAI`` instead.
- *
- * @note This feature is only supported by modem firmware versions < 2.0.0.
- *
- * @param[in] value RAI value as a null-terminated string.
- *
- * @retval 0 if successful.
- * @retval -EINVAL if an input parameter was invalid.
- */
-__deprecated int lte_lc_rai_param_set(const char *value);
-
-/**
- * Request modem to enable or disable use of RAI.
- *
- * Used RAI value can be set using @kconfig{CONFIG_LTE_RAI_REQ_VALUE} or by calling
- * lte_lc_rai_param_set().
- *
- * @deprecated Use @kconfig{CONFIG_LTE_RAI_REQ} and socket option ``SO_RAI`` instead.
- *
- * @note This feature is only supported by modem firmware versions < 2.0.0.
- *
- * @param[in] enable @c true to enable RAI, @c false to disable RAI.
- *
- * @retval 0 if successful.
- * @retval -EFAULT if AT command failed.
- * @retval -EOPNOTSUPP if RAI is not supported in the current system mode.
- */
-__deprecated int lte_lc_rai_req(bool enable);
-
-/**
  * Get the current network registration status.
  *
  * @param[out] status Network registration status.
