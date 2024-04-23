@@ -761,6 +761,10 @@ Libraries for networking
   * :c:func:`lwm2m_init_firmware` is deprecated in favour of :c:func:`lwm2m_init_firmware_cb` that allows application to set a callback to receive FOTA events.
   * Fixed an issue where the Location Area Code was not updated when the Connection Monitor object version 1.3 was enabled.
 
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Fixed a NULL pointer issue that could occur when there are some valid predictions in flash but not the one required at the current time.
+
 Libraries for NFC
 -----------------
 

@@ -120,6 +120,7 @@ static void cache_pgps_header(const struct nrf_cloud_pgps_header *header);
 static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len);
 static void prediction_work_handler(struct k_work *work);
 static void prediction_timer_handler(struct k_timer *dummy);
+static bool prediction_timer_is_running(void);
 void agnss_print_enable(bool enable);
 static void print_time_details(const char *info,
 			       int64_t sec, uint16_t day, uint32_t time_of_day);
@@ -492,7 +493,7 @@ int nrf_cloud_pgps_notify_prediction(void)
 	 */
 	int err;
 	int pnum;
-	struct nrf_cloud_pgps_prediction *prediction;
+	struct nrf_cloud_pgps_prediction *prediction = NULL;
 	struct nrf_cloud_pgps_event evt = {
 		.type = PGPS_EVT_AVAILABLE,
 	};
@@ -500,6 +501,11 @@ int nrf_cloud_pgps_notify_prediction(void)
 	if (state == PGPS_NONE) {
 		LOG_ERR("P-GPS subsystem is not initialized.");
 		return -EINVAL;
+	}
+
+	if (prediction_timer_is_running()) {
+		LOG_INF("Not time to find next prediction yet.");
+		return 0;
 	}
 	LOG_DBG("num_predictions:%d, replacement threshold:%d",
 		NUM_PREDICTIONS, REPLACEMENT_THRESHOLD);
@@ -529,7 +535,7 @@ int nrf_cloud_pgps_notify_prediction(void)
 		/* the application should now send data to modem with
 		 * nrf_cloud_pgps_inject()
 		 */
-		if (evt_handler) {
+		if (evt_handler && prediction) {
 			evt.prediction = prediction;
 			evt_handler(&evt);
 		}
@@ -539,12 +545,12 @@ int nrf_cloud_pgps_notify_prediction(void)
 
 static void prediction_work_handler(struct k_work *work)
 {
-	struct nrf_cloud_pgps_prediction *p;
+	struct nrf_cloud_pgps_prediction *p = NULL;
 	int ret;
 
 	LOG_DBG("Prediction is expiring; finding next");
 	ret = nrf_cloud_pgps_find_prediction(&p);
-	if (ret >= 0) {
+	if ((ret >= 0) && p) {
 		LOG_DBG("found prediction %d; injecting to modem", ret);
 		ret = nrf_cloud_pgps_inject(p, NULL);
 		if (ret) {
@@ -581,6 +587,11 @@ static void start_expiration_timer(int pnum, int64_t cur_gps_sec)
 	} else {
 		LOG_ERR("Cannot start prediction expiration timer; delta = %d", (int32_t)delta);
 	}
+}
+
+static bool prediction_timer_is_running(void)
+{
+	return k_timer_remaining_ticks(&prediction_timer) > 0;
 }
 
 static void print_time_details(const char *info,
@@ -660,14 +671,14 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 		 * falls before the first valid prediction; default to
 		 * first entry and day and time for it
 		 */
-		LOG_WRN("cannot find prediction; real time not known");
+		LOG_WRN("Cannot find prediction; real time not known");
 		return -ETIMEUNKNOWN;
 	} else if (cur_gps_sec > end_sec) {
 		if ((cur_gps_sec - end_sec) > PGPS_MARGIN_SEC) {
 			index.cur_pnum = 0xff;
 			state = PGPS_EXPIRED;
 			loading_in_progress = false; /* make sure we request it */
-			LOG_WRN("data expired!");
+			LOG_WRN("Data expired!");
 			return -ETIMEDOUT;
 		}
 		margin = true;
@@ -676,7 +687,7 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 	} else {
 		pnum = offset_sec / (SEC_PER_MIN * period_min);
 		if (pnum >= index.header.prediction_count) {
-			LOG_WRN("prediction num:%d -- too large", pnum);
+			LOG_WRN("Prediction num:%d -- too large", pnum);
 			pnum = index.header.prediction_count - 1;
 		}
 	}
@@ -1778,10 +1789,11 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	if (num_valid) {
 		LOG_INF("Checking if P-GPS data is expired...");
 		err = nrf_cloud_pgps_find_prediction(&found_prediction);
-		if (err == -ETIMEDOUT) {
-			LOG_WRN("Predictions expired. Requesting predictions...");
+		if (err < 0) {
+			LOG_ERR("Find prediction returned err: %d", err);
+			LOG_WRN("Requesting predictions...");
 			num_valid = 0;
-		} else if (err >= 0) {
+		} else {
 			LOG_INF("Found valid prediction, day:%u, time:%u",
 				found_prediction->time.date_day,
 				found_prediction->time.time_full_s);
@@ -1833,7 +1845,7 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	} else {
 		state = PGPS_READY;
 		LOG_INF("P-GPS data is up to date.");
-		if (evt_handler) {
+		if (evt_handler && found_prediction) {
 			evt.type = PGPS_EVT_AVAILABLE;
 			evt.prediction = found_prediction;
 			evt_handler(&evt);
