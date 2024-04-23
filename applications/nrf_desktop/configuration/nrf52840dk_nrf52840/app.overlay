@@ -34,7 +34,7 @@
 		pwm_led2: led_pwm_2 {
 			status = "okay";
 			pwms = <&pwm2 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
-			label = "LED Caps Lock";
+			label = "LED Num Lock";
 		};
 	};
 
@@ -45,7 +45,7 @@
 		pwm_led3: led_pwm_3 {
 			status = "okay";
 			pwms = <&pwm3 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
-			label = "LED Num Lock";
+			label = "LED Caps Lock";
 		};
 	};
 };
