@@ -354,9 +354,6 @@ choice BT_CTLR_ECDH_LIB
 
 config BT_CTLR_ECDH_LIB_OBERON
 	select NRF_OBERON
-	# TODO: Fix ocrypto header not available in these configurations
-	depends on !BUILD_WITH_TFM
-	depends on !OBERON_BACKEND
 	depends on !SOC_SERIES_BSIM_NRFXX
 	bool "nRF Oberon (SW)"
 
