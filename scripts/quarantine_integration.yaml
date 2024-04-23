@@ -59,9 +59,12 @@
     - sample.matter.light_switch.persistent_subscriptions
     - sample.matter.light_bulb.release
     - sample.matter.light_switch.release
+    - sample.matter.light_switch.debug
     - sample.matter.template.mgrt_dac
     - sample.matter.thermostat.debug
     - sample.matter.thermostat.release
+    - sample.matter.window_cover.release
+    - sample.matter.window_cover.debug
   platforms:
     - nrf54l15pdk_nrf54l15_cpuapp
     - nrf54l15pdk_nrf54l15_cpuapp@0.3.0
