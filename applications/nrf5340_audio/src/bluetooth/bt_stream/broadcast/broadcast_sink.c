@@ -389,7 +389,7 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 	}
 }
 
-static void syncable_cb(struct bt_bap_broadcast_sink *sink, bool encrypted)
+static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_biginfo *biginfo)
 {
 	int ret;
 	static uint8_t bis_encryption_key[BT_ISO_BROADCAST_CODE_SIZE] = {0};
