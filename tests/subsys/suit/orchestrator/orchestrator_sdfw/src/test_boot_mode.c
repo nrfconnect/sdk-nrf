@@ -285,7 +285,7 @@ ZTEST(orchestrator_boot_tests, test_valid_root_app_envelope)
 	/* WHEN orchestrator is executed */
 	int err = suit_orchestrator_entry();
 
-	/* THEN orchestrator fails succeeds... */
+	/* THEN orchestrator succeeds... */
 	zassert_equal(0, err, "Orchestrator not initialized");
 	/* ... and the emergency flag is not set... */
 	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
