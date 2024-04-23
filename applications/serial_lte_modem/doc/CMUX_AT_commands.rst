@@ -58,8 +58,9 @@ Syntax
    AT#XCMUX[=<AT_channel>]
 
 The ``<AT_channel>`` parameter is an integer used to indicate the address of the AT channel.
-If specified, it must be between 1 and the total number of channels.
 The AT channel denotes the CMUX channel where AT data (commands, responses, notifications) is exchanged.
+If specified, it must be 1, unlesss :ref:`PPP <CONFIG_SLM_PPP>` is enabled.
+If PPP is enabled, it can also be 2 (to allocate the first CMUX channel to PPP).
 If not specified, the previously used address is used.
 If no address has been previously specified, the default address is 1.
 
