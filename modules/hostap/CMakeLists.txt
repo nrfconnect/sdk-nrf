@@ -386,4 +386,13 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_EAPOL
 zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_NW_SEL_RELIABILITY
 	CONFIG_NW_SEL_RELIABILITY
 )
+
+zephyr_library_include_directories_ifdef(CONFIG_WPA_SUPP_CRYPTO_LEGACY_MBEDTLS
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../modules/crypto/mbedtls/include
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../modules/crypto/mbedtls/include/mbedtls
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../modules/crypto/mbedtls/include/mbedtls/configs
+)
+zephyr_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO_LEGACY_MBEDTLS
+	MBEDTLS_CONFIG_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../../zephyr/modules/mbedtls/configs/${CONFIG_MBEDTLS_CFG_FILE}"
+)
 endif()
