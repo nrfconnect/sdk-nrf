@@ -10,6 +10,7 @@
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_ip.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/posix/arpa/inet.h>
 #include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
 
