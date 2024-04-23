@@ -686,6 +686,17 @@ Modem libraries
     * Convenience function to get :c:struct:`location_data_details` from the :c:struct:`location_event_data`.
     * Location data details for event :c:enum:`LOCATION_EVT_RESULT_UNKNOWN`.
 
+* :ref:`lte_lc_readme` library:
+
+  * Added
+
+    * Support for new ``%RAI`` AT notification.
+    * Using the ``AT%RAI=2`` AT command when enabling RAI to order the ``%RAI`` notification.
+      Fallback done to the ``AT%RAI=1`` command.
+
+  * Removed ``AT%XRAI`` related deprecated functions ``lte_lc_rai_param_set()`` and ``lte_lc_rai_req()``, and Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ_VALUE`.
+    The application uses the Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ` and ``SO_RAI`` socket options instead.
+
 Libraries for networking
 ------------------------
 
