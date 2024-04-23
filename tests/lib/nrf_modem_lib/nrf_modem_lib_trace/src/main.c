@@ -8,6 +8,7 @@
 #include <unity.h>
 #include <zephyr/toolchain.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/random/random.h>
 #include <zephyr/fff.h>
 #include <syscalls/random.h>
 #include <modem/nrf_modem_lib.h>
