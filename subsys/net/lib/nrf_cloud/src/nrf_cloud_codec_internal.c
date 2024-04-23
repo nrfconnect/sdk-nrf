@@ -2828,8 +2828,9 @@ static int nrf_cloud_parse_location_json(const cJSON *const loc_obj,
 		LOG_WRN("Location type not found in message");
 	}
 
-	if (anchor) {
+	if (anchor && IS_ENABLED(CONFIG_NRF_CLOUD_LOCATION_PARSE_ANCHORS)) {
 		nrf_cloud_parse_location_anchors_json(loc_obj, location_out);
+
 	}
 
 	return 0;
