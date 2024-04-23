@@ -53,3 +53,36 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+
+  sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad.power_consumption:
+    # copy original configuration
+    platform_allow:
+      - nrf54h20dk_nrf54h20_cpuapp
+    integration_platforms:
+      - nrf54h20dk_nrf54h20_cpuapp
+    extra_args:
+      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+    # to overwrite default build only
+    build_only: false
+    # enable pytest and power measurement
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption"
+
+  sample.multicore.hello_world.nrf54h20dk_cpuapp.power_consumption:
+    # copy original configuration
+    platform_allow:
+      - nrf54h20dk_nrf54h20_cpuapp
+    integration_platforms:
+      - nrf54h20dk_nrf54h20_cpuapp
+    # to overwrite default build only and sysbuild
+    sysbuild: false
+    build_only: false
+    # enable pytest and power measurement
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption"
