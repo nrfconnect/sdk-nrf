@@ -30,7 +30,8 @@ LOG_MODULE_REGISTER(lwm2m_connmon, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 #define CONNMON_CELLID				8
 #define CONNMON_SMNC				9
 #define CONNMON_SMCC				10
-#if defined(CONFIG_LWM2M_CONNMON_OBJECT_VERSION_1_2)
+#if defined(CONFIG_LWM2M_CONNMON_OBJECT_VERSION_1_2) ||                                            \
+	defined(CONFIG_LWM2M_CONNMON_OBJECT_VERSION_1_3)
 #define CONNMON_SIGNAL_SNR			11
 #define CONNMON_LAC				12
 #endif
@@ -106,7 +107,7 @@ static void modem_data_update(struct k_work *work)
 		      modem_param.network.mnc.value);
 	lwm2m_set_u16(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CONNMON_SMCC),
 		      modem_param.network.mcc.value);
-#if defined(CONFIG_LWM2M_CONNMON_OBJECT_VERSION_1_2)
+#if defined(CONNMON_LAC)
 	lwm2m_set_u16(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CONNMON_LAC),
 		      modem_param.network.area_code.value);
 #endif
