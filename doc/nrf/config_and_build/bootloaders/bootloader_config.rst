@@ -65,3 +65,9 @@ In the same way, you can replace ``b0`` with ``mcuboot`` to apply the :file:`my-
 You can use this method to apply Kconfig fragments to any child image in the build, as well as to set any Kconfig option that can be set from the command line.
 
 See :ref:`ug_multi_image_variables` for more information about customizing images using this method.
+
+Customizing partitions
+**********************
+
+With the Partition Manager, you can further customize it if a dynamic partition map has been set.
+For more information, see the :ref:`Configuration <pm_configuration>` section of the :ref:`partition_manager` page.

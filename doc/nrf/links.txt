@@ -46,6 +46,9 @@
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
 .. _`MCUboot Kconfig option`: https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370
 
+.. _`MCUboot Kconfig option documentation`: https://github.com/nrfconnect/sdk-nrf/blob/main/modules/mcuboot/boot/zephyr/Kconfig#L27C11-L27C12
+.. _`Kconfig search results`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PM_PARTITION_SIZE
+
 .. _`sdk-mbedtls`: https://github.com/nrfconnect/sdk-mbedtls
 .. _`Arm Mbed TLS project`: https://github.com/ARMmbed/mbedtls
 
