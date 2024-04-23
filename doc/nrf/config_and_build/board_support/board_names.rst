@@ -66,6 +66,8 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 | nRF54L15 PDK      | PCA10156   | :ref:`nrf54l15pdk_nrf54l15 <zephyr:nrf54l15pdk_nrf54l15>`         | ``nrf54l15pdk_nrf54l15_cpuapp``       |
 |                   |            |                                                                   |                                       |
 |                   |            |                                                                   | ``nrf54l15pdk_nrf54l15_cpuapp@0.3.0`` |
+|                   |            |                                                                   |                                       |
+|                   |            |                                                                   | ``nrf54l15pdk_nrf54l15_cpuapp_ns``    |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
 | nRF5340 DK        | PCA10095   | :ref:`nrf5340dk_nrf5340 <zephyr:nrf5340dk_nrf5340>`               | ``nrf5340dk_nrf5340_cpunet``          |
 |                   |            |                                                                   |                                       |
