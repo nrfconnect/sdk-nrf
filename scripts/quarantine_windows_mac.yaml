@@ -31,9 +31,3 @@
   platforms:
     - nrf9160dk_nrf9160_ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-26461"
-
-- scenarios:
-    - sample.matter.light_bulb.memory_profiling
-  platforms:
-    - nrf7002dk_nrf5340_cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-18792"
