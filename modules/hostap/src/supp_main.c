@@ -16,7 +16,9 @@
 #include <sys/fcntl.h>
 LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 
-#if !defined(CONFIG_WPA_SUPP_CRYPTO_NONE) && !defined(CONFIG_MBEDTLS_ENABLE_HEAP)
+#if defined(CONFIG_MBEDTLS_PLATFORM_C) && \
+	!defined(CONFIG_WPA_SUPP_CRYPTO_NONE) && \
+	!defined(CONFIG_MBEDTLS_ENABLE_HEAP)
 #include <mbedtls/platform.h>
 #endif /* !CONFIG_WPA_SUPP_CRYPTO_NONE && !CONFIG_MBEDTLS_ENABLE_HEAP */
 
@@ -541,7 +543,9 @@ static void z_wpas_start(void)
 		return;
 	}
 
-#if !defined(CONFIG_WPA_SUPP_CRYPTO_NONE) && !defined(CONFIG_MBEDTLS_ENABLE_HEAP)
+#if defined(CONFIG_MBEDTLS_PLATFORM_C) && \
+	!defined(CONFIG_WPA_SUPP_CRYPTO_NONE) && \
+	!defined(CONFIG_MBEDTLS_ENABLE_HEAP)
 	/* Needed for crypto operation as default is no-op and fails */
 	mbedtls_platform_set_calloc_free(calloc, free);
 #endif /* !CONFIG_WPA_SUPP_CRYPTO_NONE && !CONFIG_MBEDTLS_ENABLE_HEAP */
