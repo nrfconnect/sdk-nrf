@@ -160,9 +160,7 @@ static void rx_recovery(void)
 		return;
 	}
 
-	if (atomic_cas(&recovery_state, RECOVERY_ONGOING, RECOVERY_IDLE)) {
-		LOG_DBG("UART RX enabled");
-	}
+	atomic_cas(&recovery_state, RECOVERY_ONGOING, RECOVERY_IDLE);
 }
 
 static void rx_process(struct k_work *work)
@@ -256,11 +254,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 			rx_buf_unref(evt->data.rx_buf.buf);
 		}
 		break;
-	case UART_RX_STOPPED:
-		LOG_DBG("UART_RX_STOPPED (%d)", evt->data.rx_stop.reason);
-		break;
 	case UART_RX_DISABLED:
-		LOG_DBG("UART_RX_DISABLED");
 		if (atomic_cas(&recovery_state, RECOVERY_IDLE, RECOVERY_ONGOING)) {
 			k_work_submit((struct k_work *)&rx_process_work);
 		}
