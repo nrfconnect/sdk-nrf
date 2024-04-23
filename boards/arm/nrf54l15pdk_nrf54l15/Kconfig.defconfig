@@ -3,6 +3,11 @@
 
 if BOARD_NRF54L15PDK_NRF54L15_CPUAPP_NS
 
+# This BT configuration was copied from the secure board's
+# Kconfig.defconfig
+config BT_CTLR
+	default BT
+
 config BOARD
 	default "nrf54l15pdk_nrf54l15_cpuapp"
 
