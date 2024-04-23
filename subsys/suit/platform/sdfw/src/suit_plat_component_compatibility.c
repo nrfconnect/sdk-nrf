@@ -82,8 +82,9 @@ int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *clas
 			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 		}
 
-		/* Validate manifest class ID against supported manifests */
-		ret = suit_mci_manifest_class_id_validate(decoded_class_id);
+		/* Validate parent-child declarative relationship */
+		ret = suit_mci_manifest_parent_child_declaration_validate(class_id,
+									  decoded_class_id);
 		if (ret != SUIT_PLAT_SUCCESS) {
 			return SUIT_ERR_UNAUTHORIZED_COMPONENT;
 		}
