@@ -51,6 +51,33 @@ bool le_audio_ep_state_check(struct bt_bap_ep *ep, enum bt_bap_ep_state state)
 	return false;
 }
 
+bool le_audio_ep_qos_configured(struct bt_bap_ep const *const ep)
+{
+	int ret;
+	struct bt_bap_ep_info ep_info;
+
+	if (ep == NULL) {
+		LOG_DBG("EP is NULL");
+		/* If an endpoint is NULL it is not in any of the states */
+		return false;
+	}
+
+	ret = bt_bap_ep_get_info(ep, &ep_info);
+	if (ret) {
+		LOG_WRN("Unable to get info for ep");
+		return false;
+	}
+
+	if (ep_info.state == BT_BAP_EP_STATE_QOS_CONFIGURED ||
+	    ep_info.state == BT_BAP_EP_STATE_ENABLING ||
+	    ep_info.state == BT_BAP_EP_STATE_STREAMING ||
+	    ep_info.state == BT_BAP_EP_STATE_DISABLING) {
+		return true;
+	}
+
+	return false;
+}
+
 int le_audio_freq_hz_get(const struct bt_audio_codec_cfg *codec, int *freq_hz)
 {
 	int ret;

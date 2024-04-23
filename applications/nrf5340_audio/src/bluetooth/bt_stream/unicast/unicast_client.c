@@ -191,56 +191,82 @@ K_WORK_DEFINE(cap_start_work, cap_start_worker);
  */
 static int device_pres_delay_find(uint8_t index, uint32_t *pres_dly_us)
 {
-	uint32_t pres_dly_min = unicast_servers[index].sink_ep->qos_pref.pd_min;
-	uint32_t pres_dly_max = unicast_servers[index].sink_ep->qos_pref.pd_max;
-	uint32_t pref_dly_min = unicast_servers[index].sink_ep->qos_pref.pref_pd_min;
-	uint32_t pref_dly_max = unicast_servers[index].sink_ep->qos_pref.pref_pd_max;
+	uint32_t pd_min = unicast_servers[index].sink_ep->qos_pref.pd_min;
+	uint32_t pd_max = unicast_servers[index].sink_ep->qos_pref.pd_max;
+	uint32_t pref_pd_min = unicast_servers[index].sink_ep->qos_pref.pref_pd_min;
+	uint32_t pref_pd_max = unicast_servers[index].sink_ep->qos_pref.pref_pd_max;
 
 	LOG_DBG("Index: %d, Pref min: %d, pref max: %d, pres_min: %d, pres_max: %d", index,
-		pref_dly_min, pref_dly_max, pres_dly_min, pres_dly_max);
+		pref_pd_min, pref_pd_max, pd_min, pd_max);
+
+	*pres_dly_us = 0;
 
 	for (int i = 0; i < ARRAY_SIZE(unicast_servers); i++) {
-		if (unicast_servers[i].sink_ep != NULL) {
-			pres_dly_min =
-				MAX(pres_dly_min, unicast_servers[i].sink_ep->qos_pref.pd_min);
-			pres_dly_max =
-				MIN(pres_dly_max, unicast_servers[i].sink_ep->qos_pref.pd_max);
-			pref_dly_min =
-				MAX(pref_dly_min, unicast_servers[i].sink_ep->qos_pref.pref_pd_min);
-			pref_dly_max =
-				MIN(pref_dly_max, unicast_servers[i].sink_ep->qos_pref.pref_pd_max);
+		if (le_audio_ep_qos_configured(unicast_servers[i].sink_ep)) {
+			LOG_DBG("i: %d, Pref min: %d, pref max: %d, pres_min: %d, pres_max: %d", i,
+				unicast_servers[i].sink_ep->qos_pref.pref_pd_min,
+				unicast_servers[i].sink_ep->qos_pref.pref_pd_max,
+				unicast_servers[i].sink_ep->qos_pref.pd_min,
+				unicast_servers[i].sink_ep->qos_pref.pd_max);
+
+			pd_min = MAX(pd_min, unicast_servers[i].sink_ep->qos_pref.pd_min);
+			pref_pd_min =
+				MAX(pref_pd_min, unicast_servers[i].sink_ep->qos_pref.pref_pd_min);
+
+			if (unicast_servers[i].sink_ep->qos_pref.pd_max) {
+				pd_max = MIN(pd_max, unicast_servers[i].sink_ep->qos_pref.pd_max);
+			}
+
+			if (unicast_servers[i].sink_ep->qos_pref.pref_pd_max) {
+				pref_pd_max = MIN(pref_pd_max,
+						  unicast_servers[i].sink_ep->qos_pref.pref_pd_max);
+			}
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_PRES_DELAY_SRCH_MIN)) {
-		*pres_dly_us = pres_dly_min;
+		*pres_dly_us = pd_min;
 
 		return 0;
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_PRES_DELAY_SRCH_MAX)) {
-		*pres_dly_us = pres_dly_max;
+		*pres_dly_us = pd_max;
 
 		return 0;
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_PRES_DELAY_SRCH_PREF_MIN)) {
-		/* Preferred min is 0, so we set min supported */
-		if (pref_dly_min == 0) {
-			*pres_dly_us = pres_dly_min;
+		if (pref_pd_min == 0) {
+			*pres_dly_us = pd_min;
+		} else if (pref_pd_min < pd_min) {
+			*pres_dly_us = pd_min;
+			LOG_WRN("pref_pd_min < pd_min (%d < %d), pres delay set to %d", pref_pd_min,
+				pd_min, *pres_dly_us);
+		} else if (pref_pd_min <= pd_max) {
+			*pres_dly_us = pref_pd_min;
 		} else {
-			*pres_dly_us = pref_dly_min;
+			*pres_dly_us = pd_max;
+			LOG_WRN("pref_pd_min > pd_max (%d > %d), pres delay set to %d", pref_pd_min,
+				pd_max, *pres_dly_us);
 		}
 
 		return 0;
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_PRES_DELAY_SRCH_PREF_MAX)) {
-		/* Preferred max is 0, so we set max supported */
-		if (pref_dly_max == 0) {
-			*pres_dly_us = pres_dly_max;
+		if (pref_pd_max == 0) {
+			*pres_dly_us = pd_max;
+		} else if (pref_pd_max > pd_max) {
+			*pres_dly_us = pd_max;
+			LOG_WRN("pref_pd_max > pd_max (%d > %d), pres delay set to %d", pref_pd_max,
+				pd_max, *pres_dly_us);
+		} else if (pref_pd_max >= pd_min) {
+			*pres_dly_us = pref_pd_max;
 		} else {
-			*pres_dly_us = pref_dly_max;
+			*pres_dly_us = pd_min;
+			LOG_WRN("pref_pd_max < pd_min (%d < %d), pres delay set to %d", pref_pd_max,
+				pd_min, *pres_dly_us);
 		}
 
 		return 0;
