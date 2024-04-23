@@ -18,6 +18,7 @@
 		zephyr,shell-uart = &uart20;
 		zephyr,flash = &rram0;
 		zephyr,sram = &sram0;
+		zephyr,ieee802154 = &ieee802154;
 	};
 
 	leds {
@@ -95,5 +96,37 @@
 };
 
 &grtc {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&gpiote30 {
+	status = "okay";
+};
+
+&ieee802154 {
+	status = "okay";
+};
+
+&temp {
+	status = "okay";
+};
+
+&clock {
 	status = "okay";
 };
