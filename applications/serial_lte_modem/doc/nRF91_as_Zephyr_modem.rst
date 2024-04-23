@@ -20,8 +20,8 @@ This is only possible on the nRF9160 DK, not on the other nRF91 Series DKs.
 
 .. note::
 
-   As of |NCS| |release|, Zephyr's GNSS driver does not support the nRF91 Series running SLM.
-   This functionality is part of planned future work.
+   As of |NCS| |release|, it is not yet possible to make use of the nRF91 Series' GNSS functionality when Zephyr's cellular modem driver controls the SiP.
+   Also, the driver's support of power saving features is quite limited, only allowing complete power off of the SiP.
 
 Configuration
 *************

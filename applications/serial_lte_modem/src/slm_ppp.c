@@ -234,7 +234,7 @@ static int ppp_start_internal(void)
 	}
 
 #if defined(CONFIG_SLM_CMUX)
-	ppp_pipe = slm_cmux_reserve_ppp_channel();
+	ppp_pipe = slm_cmux_reserve(CMUX_PPP_CHANNEL);
 	/* The pipe opening is managed by CMUX. */
 #endif
 
@@ -298,7 +298,7 @@ static void ppp_stop_internal(void)
 	modem_ppp_release(&ppp_module);
 
 #if defined(CONFIG_SLM_CMUX)
-	slm_cmux_release_ppp_channel();
+	slm_cmux_release(CMUX_PPP_CHANNEL);
 #endif
 
 	net_if_carrier_off(ppp_iface);
