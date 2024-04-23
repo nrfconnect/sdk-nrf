@@ -14,6 +14,7 @@
 #include <modem/lte_lc.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
+#include <nrf_modem_at.h>
 #include <zephyr/logging/log.h>
 
 #include "lte_lc_helpers.h"
@@ -150,6 +151,48 @@ static int string_param_to_int(struct at_param_list *resp_list,
 
 	if (string_to_int(str_buf, base, output)) {
 		return -ENODATA;
+	}
+
+	return 0;
+}
+
+/* Converts PLMN string to integer type MCC and MNC.
+ * Returns zero on success, otherwise negative error on failure.
+ */
+static int plmn_param_string_to_mcc_mnc(
+	struct at_param_list *resp_list,
+	size_t idx,
+	int *mcc,
+	int *mnc)
+{
+	int err;
+	char str_buf[7];
+	size_t len = sizeof(str_buf) - 1;
+
+	err = at_params_string_get(resp_list, idx, str_buf, &len);
+	if (err) {
+		LOG_ERR("Could not get PLMN, error: %d", err);
+		return err;
+	}
+
+	str_buf[len] = '\0';
+
+	/* Read MNC and store as integer. The MNC starts as the fourth character
+	 * in the string, following three characters long MCC.
+	 */
+	err = string_to_int(&str_buf[3], 10, mnc);
+	if (err) {
+		LOG_ERR("Could not get MNC, error: %d", err);
+		return err;
+	}
+
+	/* Null-terminate MCC, read and store it. */
+	str_buf[3] = '\0';
+
+	err = string_to_int(str_buf, 10, mcc);
+	if (err) {
+		LOG_ERR("Could not get MCC, error: %d", err);
+		return err;
 	}
 
 	return 0;
@@ -894,11 +937,10 @@ uint32_t neighborcell_count_get(const char *at_response)
  */
 int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 {
-	int err, status, tmp, len;
+	int err, status, tmp;
 	struct at_param_list resp_list;
 	char  response_prefix[sizeof(AT_NCELLMEAS_RESPONSE_PREFIX)] = {0};
 	size_t response_prefix_len = sizeof(response_prefix);
-	char tmp_str[7];
 	bool incomplete = false;
 	/* Count the actual number of parameters in the AT response before
 	 * allocating heap for it. This may save quite a bit of heap as the
@@ -943,7 +985,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		goto clean_exit;
 	}
 
-	/* Status code. */
+	/* Status code */
 	err = at_params_int_get(&resp_list, AT_NCELLMEAS_STATUS_INDEX, &status);
 	if (err) {
 		goto clean_exit;
@@ -954,7 +996,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		goto clean_exit;
 	}
 
-	/* Current cell ID. */
+	/* Current cell ID */
 	err = string_param_to_int(&resp_list, AT_NCELLMEAS_CELL_ID_INDEX, &tmp, 16);
 	if (err) {
 		goto clean_exit;
@@ -966,33 +1008,14 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	cells->current_cell.id = tmp;
 
 	/* PLMN */
-	len = sizeof(tmp_str);
-
-	err = at_params_string_get(&resp_list, AT_NCELLMEAS_PLMN_INDEX,
-				   tmp_str, &len);
+	err = plmn_param_string_to_mcc_mnc(
+		&resp_list, AT_NCELLMEAS_PLMN_INDEX,
+		&cells->current_cell.mcc, &cells->current_cell.mnc);
 	if (err) {
 		goto clean_exit;
 	}
 
-	tmp_str[len] = '\0';
-
-	/* Read MNC and store as integer. The MNC starts as the fourth character
-	 * in the string, following three characters long MCC.
-	 */
-	err = string_to_int(&tmp_str[3], 10, &cells->current_cell.mnc);
-	if (err) {
-		goto clean_exit;
-	}
-
-	/* Null-terminated MCC, read and store it. */
-	tmp_str[3] = '\0';
-
-	err = string_to_int(tmp_str, 10, &cells->current_cell.mcc);
-	if (err) {
-		goto clean_exit;
-	}
-
-	/* Tracking area code. */
+	/* Tracking area code */
 	err = string_param_to_int(&resp_list, AT_NCELLMEAS_TAC_INDEX, &tmp, 16);
 	if (err) {
 		goto clean_exit;
@@ -1016,7 +1039,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		goto clean_exit;
 	}
 
-	/* Physical cell ID. */
+	/* Physical cell ID */
 	err = at_params_short_get(&resp_list, AT_NCELLMEAS_PHYS_CELL_ID_INDEX,
 				&cells->current_cell.phys_cell_id);
 	if (err) {
@@ -1039,14 +1062,14 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 	cells->current_cell.rsrq = tmp;
 
-	/* Measurement time. */
+	/* Measurement time */
 	err = at_params_int64_get(&resp_list, AT_NCELLMEAS_MEASUREMENT_TIME_INDEX,
 				  &cells->current_cell.measurement_time);
 	if (err) {
 		goto clean_exit;
 	}
 
-	/* Neighbor cell count. */
+	/* Neighbor cell count */
 	cells->ncells_count = neighborcell_count_get(at_response);
 
 	/* Starting from modem firmware v1.3.1, timing advance measurement time
@@ -1069,7 +1092,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		goto clean_exit;
 	}
 
-	/* Neighboring cells. */
+	/* Neighboring cells */
 	for (size_t i = 0; i < cells->ncells_count; i++) {
 		size_t start_idx = AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT +
 				   i * AT_NCELLMEAS_N_PARAMS_COUNT;
@@ -1082,7 +1105,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 			goto clean_exit;
 		}
 
-		/* Physical cell ID. */
+		/* Physical cell ID */
 		err = at_params_short_get(&resp_list,
 					  start_idx + AT_NCELLMEAS_N_PHYS_CELL_ID_INDEX,
 					  &cells->neighbor_cells[i].phys_cell_id);
@@ -1110,7 +1133,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 		cells->neighbor_cells[i].rsrq = tmp;
 
-		/* Time difference. */
+		/* Time difference */
 		err = at_params_int_get(&resp_list,
 					start_idx + AT_NCELLMEAS_N_TIME_DIFF_INDEX,
 					&cells->neighbor_cells[i].time_diff);
@@ -1134,11 +1157,10 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 {
 	struct at_param_list resp_list;
 	struct lte_lc_ncell *ncells = NULL;
-	int err, status, tmp_int, len;
+	int err, status, tmp_int;
 	int16_t tmp_short;
 	char response_prefix[sizeof(AT_NCELLMEAS_RESPONSE_PREFIX)] = {0};
 	size_t response_prefix_len = sizeof(response_prefix);
-	char tmp_str[7];
 	bool incomplete = false;
 	int curr_index;
 	size_t i = 0, j = 0, k = 0;
@@ -1216,7 +1238,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 		goto clean_exit;
 	}
 
-	/* Status code. */
+	/* Status code */
 	curr_index = AT_NCELLMEAS_STATUS_INDEX;
 	err = at_params_int_get(&resp_list, curr_index, &status);
 	if (err) {
@@ -1232,7 +1254,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 		LOG_WRN("NCELLMEAS measurements interrupted; results incomplete");
 	}
 
-	/* Go through the cells. */
+	/* Go through the cells */
 	for (i = 0; curr_index < (param_count - (AT_NCELLMEAS_GCI_CELL_PARAMS_COUNT + 1)) &&
 			i < params->gci_count; i++) {
 		struct lte_lc_cell parsed_cell;
@@ -1256,34 +1278,10 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 		parsed_cell.id = tmp_int;
 
 		/* <plmn> */
-		len = sizeof(tmp_str);
-
 		curr_index++;
-		err = at_params_string_get(&resp_list, curr_index, tmp_str, &len);
+		err = plmn_param_string_to_mcc_mnc(
+			&resp_list, curr_index, &parsed_cell.mcc, &parsed_cell.mnc);
 		if (err) {
-			LOG_ERR("Could not parse plmn, error: %d", err);
-			goto clean_exit;
-		}
-		/* A successful call to `at_params_string_get` guarantees `len` to be set to
-		 * a value lower than the totalt size of `tmp_str`.
-		 */
-		tmp_str[len] = '\0';
-
-		/* Read MNC and store as integer. The MNC starts as the fourth character
-		 * in the string, following three characters long MCC.
-		 */
-		err = string_to_int(&tmp_str[3], 10, &parsed_cell.mnc);
-		if (err) {
-			LOG_ERR("string_to_int, error: %d", err);
-			goto clean_exit;
-		}
-
-		/* Null-terminated MCC, read and store it. */
-		tmp_str[3] = '\0';
-
-		err = string_to_int(tmp_str, 10, &parsed_cell.mcc);
-		if (err) {
-			LOG_ERR("string_to_int, error: %d", err);
 			goto clean_exit;
 		}
 
@@ -1561,6 +1559,79 @@ int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 	return -ENODATA;
 }
 
+int parse_rai(const char *at_response, struct lte_lc_rai_cfg *rai_cfg)
+{
+	struct at_param_list resp_list;
+	int err;
+	int tmp_int;
+
+	if (at_response == NULL || rai_cfg == NULL) {
+		return -EINVAL;
+	}
+
+	if (!response_is_valid(at_response, sizeof(AT_RAI_RESPONSE_PREFIX) - 1,
+			       AT_RAI_RESPONSE_PREFIX)) {
+		LOG_ERR("Invalid RAI response: %s", at_response);
+		return -EIO;
+	}
+
+	err = at_params_list_init(&resp_list, AT_RAI_PARAMS_COUNT_MAX);
+	if (err) {
+		LOG_ERR("Could not init AT params list, error: %d", err);
+		return err;
+	}
+
+	/* Parse RAI response and populate AT parameter list */
+	err = at_parser_params_from_str(at_response, NULL, &resp_list);
+	if (err) {
+		LOG_ERR("Could not parse %%RAI response, error: %d", err);
+		goto clean_exit;
+	}
+
+	/* Cell Id */
+	err = string_param_to_int(&resp_list, AT_RAI_CELL_ID_INDEX, &tmp_int, 16);
+	if (err) {
+		LOG_ERR("Could not parse cell_id, error: %d", err);
+		goto clean_exit;
+	}
+
+	if (tmp_int > LTE_LC_CELL_EUTRAN_ID_MAX) {
+		LOG_WRN("cell_id = %d which is > LTE_LC_CELL_EUTRAN_ID_MAX; "
+			"marking invalid", tmp_int);
+		tmp_int = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	}
+	rai_cfg->cell_id = tmp_int;
+
+	/* PLMN, that is, MCC and MNC */
+	err = plmn_param_string_to_mcc_mnc(
+		&resp_list, AT_RAI_PLMN_INDEX,
+		&rai_cfg->mcc, &rai_cfg->mnc);
+	if (err) {
+		goto clean_exit;
+	}
+
+	/* AS RAI configuration */
+	err = at_params_int_get(&resp_list, AT_RAI_AS_INDEX, &tmp_int);
+	if (err) {
+		LOG_ERR("Could not get AS RAI, error: %d", err);
+		goto clean_exit;
+	}
+	rai_cfg->as_rai = tmp_int;
+
+	/* CP RAI configuration */
+	err = at_params_int_get(&resp_list, AT_RAI_CP_INDEX, &tmp_int);
+	if (err) {
+		LOG_ERR("Could not get CP RAI, error: %d", err);
+		goto clean_exit;
+	}
+	rai_cfg->cp_rai = tmp_int;
+
+clean_exit:
+	at_params_list_free(&resp_list);
+	return err;
+}
+
+
 char *periodic_search_pattern_get(char *const buf, size_t buf_size,
 				  const struct lte_lc_periodic_search_pattern *const pattern)
 {
@@ -1689,4 +1760,30 @@ int parse_periodic_search_pattern(const char *const pattern_str,
 	}
 
 	return 0;
+}
+
+int lte_lc_rai_set(void)
+{
+	int err;
+
+	if (IS_ENABLED(CONFIG_LTE_RAI_REQ)) {
+		LOG_DBG("Enabling RAI with notifications");
+	} else {
+		LOG_DBG("Disabling RAI");
+	}
+
+	err = nrf_modem_at_printf("AT%%RAI=%d", IS_ENABLED(CONFIG_LTE_RAI_REQ) ? 2 : 0);
+	if (err) {
+		if (IS_ENABLED(CONFIG_LTE_RAI_REQ)) {
+			LOG_DBG("Failed to enable RAI with notifications so trying without them");
+			/* If AT%RAI=2 failed, modem might not support it so using older API */
+			err = nrf_modem_at_printf("AT%%RAI=1");
+		}
+		if (err) {
+			LOG_ERR("Failed to configure RAI, err %d", err);
+			return -EFAULT;
+		}
+	}
+
+	return err;
 }

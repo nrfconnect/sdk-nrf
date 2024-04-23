@@ -11,6 +11,10 @@ project(lte_lc)
 
 test_runner_generate(src/main.c)
 
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
+	     FUNC_EXCLUDE ".*nrf_modem_at_scanf"
+	     FUNC_EXCLUDE ".*nrf_modem_at_printf")
+
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})
 
