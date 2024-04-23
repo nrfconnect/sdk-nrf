@@ -73,10 +73,6 @@ static char psm_param_rptau[9] = CONFIG_LTE_PSM_REQ_RPTAU;
 static const char psm_disable[] = "AT+CPSMS=";
 /* Enable CSCON (RRC mode) notifications */
 static const char cscon[] = "AT+CSCON=1";
-/* Disable RAI */
-static const char rai_disable[] = "AT%%XRAI=0";
-/* Default RAI setting */
-static char rai_param[2] = CONFIG_LTE_RAI_REQ_VALUE;
 
 /* Requested NCELLMEAS params */
 static struct lte_lc_ncellmeas_params ncellmeas_params;
@@ -1126,61 +1122,6 @@ int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg)
 	if (err) {
 		LOG_ERR("Failed to parse eDRX parameters, error: %d", err);
 		return -EBADMSG;
-	}
-
-	return 0;
-}
-
-int lte_lc_rai_req(bool enable)
-{
-	int err;
-	enum lte_lc_system_mode mode;
-
-	err = lte_lc_system_mode_get(&mode, NULL);
-	if (err) {
-		return -EFAULT;
-	}
-
-	switch (mode) {
-	case LTE_LC_SYSTEM_MODE_LTEM:
-	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
-		LOG_ERR("RAI not supported for LTE-M networks");
-		return -EOPNOTSUPP;
-	case LTE_LC_SYSTEM_MODE_NBIOT:
-	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
-	case LTE_LC_SYSTEM_MODE_LTEM_NBIOT:
-	case LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS:
-		break;
-	default:
-		LOG_ERR("Unknown system mode");
-		LOG_ERR("Cannot request RAI for unknown system mode");
-		return -EOPNOTSUPP;
-	}
-
-	if (enable) {
-		err = nrf_modem_at_printf("AT%%XRAI=%s", rai_param);
-	} else {
-		err = nrf_modem_at_printf(rai_disable);
-	}
-
-	if (err) {
-		LOG_ERR("nrf_modem_at_printf failed, reported error: %d", err);
-		return -EFAULT;
-	}
-
-	return 0;
-}
-
-int lte_lc_rai_param_set(const char *value)
-{
-	if (value == NULL || strlen(value) != 1) {
-		return -EINVAL;
-	}
-
-	if (value[0] == '3' || value[0] == '4') {
-		memcpy(rai_param, value, 2);
-	} else {
-		return -EINVAL;
 	}
 
 	return 0;
