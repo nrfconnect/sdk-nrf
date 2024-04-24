@@ -772,26 +772,25 @@ This file is similar to the regular :file:`pm.yml` configuration files, except t
 
 You can set ``PM_STATIC_YML_FILE`` to contain exactly the static configuration you want to use.
 
-.. important::
-    |file_suffix_partition_manager_exception|
-
 If you do not set ``PM_STATIC_YML_FILE``, the build system will use the following order to look for files in your application source directory to use as a static configuration layout:
 
-* If a :term:`build type` is used, the following order applies:
+* If a :ref:`file suffix <app_build_file_suffixes>` is used, the following order applies:
 
-  1. If the file :file:`pm_static_<board>_<revision>_<buildtype>.yml` exists, it will be used.
-  #. Otherwise, if the file :file:`pm_static_<board>_<buildtype>.yml` exists, it will be used.
-  #. Otherwise, if the file :file:`pm_static_<buildtype>.yml` exists, it will be used.
+  1. If the file :file:`pm_static_<board>_<revision>_<suffix>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<board>_<revision>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<board>_<suffix>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<board>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<suffix>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static.yml` exists, it will be used.
 
-* If a build type is not used, then the same order as above applies, except that *<buildtype>* is not part of the file name:
+* If a suffixed configuration is not used, then the same order as above applies, except that *<suffix>* is not part of the file name:
 
   1. If the file :file:`pm_static_<board>_<revision>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static_<board>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static.yml` exists, it will be used.
 
 For :ref:`ug_multi_image` where the image targets a different domain, :ref:`ug_multi_image_build_scripts` uses the same search algorithm, but a domain specific configuration file is also searched.
-For example, :file:`pm_static_<board>_<buildtype>_<domain>.yml` or :file:`pm_static_<board>_<domain>.yml`.
+For example, :file:`pm_static_<board>_<suffix>_<domain>.yml` or :file:`pm_static_<board>_<domain>.yml`.
 
 Use a static partition layout to ensure consistency between builds, as the settings storage will be at the same location after the DFU.
 
