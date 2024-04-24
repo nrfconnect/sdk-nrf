@@ -34,6 +34,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: nrfconnect/action-checkout-west-update@main
+        with:
+          west-token: ${{ secrets.WEST_UPDATE_TOKEN }}
 
       - name: cache-pip
         uses: actions/cache@v3

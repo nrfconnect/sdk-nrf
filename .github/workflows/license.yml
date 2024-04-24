@@ -7,3 +7,4 @@ jobs:
     uses: ./.github/workflows/license-reusable.yml
     with:
       path: nrf
+    secrets: inherit

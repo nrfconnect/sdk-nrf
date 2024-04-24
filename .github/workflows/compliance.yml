@@ -16,6 +16,7 @@ jobs:
       with:
         git-fetch-depth: 0
         git-ref: ${{ github.event.pull_request.head.sha }}
+        west-token: ${{ secrets.WEST_UPDATE_TOKEN }}
 
     - name: cache-pip
       uses: actions/cache@v3
