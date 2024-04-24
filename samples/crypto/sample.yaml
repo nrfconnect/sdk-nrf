@@ -1,9 +1,10 @@
 sample:
   description: |
-    This app provides an example of signing/verifying using EdDSA signatures
-  name: EdDSA example
+    This app provides an example of performing AES encryption and decryption
+    using AES CBC mode
+  name: AES CBC example
 tests:
-  sample.eddsa.cc3xx:
+  sample.aes_cbc.cc3xx:
     sysbuild: true
     tags: introduction psa cc3xx sysbuild
     platform_allow: >
@@ -25,11 +26,11 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
-  sample.eddsa.cracen:
+  sample.aes_cbc.cracen:
     sysbuild: true
     tags: introduction psa cracen sysbuild
     platform_allow: >
-      nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk/nrf54l15/cpuapp/ns
+      nrf54h20dk/nrf54h20/cpuapp nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk/nrf54l15/cpuapp/ns
     harness: console
     required_snippets:
       - crypto_service
@@ -40,3 +41,4 @@ tests:
     integration_platforms:
       - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp/ns
+      - nrf54h20dk/nrf54h20/cpuapp
