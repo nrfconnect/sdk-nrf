@@ -17,7 +17,7 @@ enum PSErrorCode : uint8_t { Failure, Success, NotSupported };
  */
 class PersistentStorageNode {
 public:
-	static constexpr uint8_t kMaxKeyNameLength{ 16 };
+	static constexpr uint8_t kMaxKeyNameLength{ CONFIG_NCS_SAMPLE_MATTER_STORAGE_MAX_KEY_LEN };
 
 	/**
 	 * @brief Constructor assigns name of a key for this node and sets parent node address in the tree
@@ -57,7 +57,8 @@ public:
 
 			int result = snprintf(key, kMaxKeyNameLength, "%s/%s", parentKey, mKeyName);
 
-			if (result < 0 || result >= kMaxKeyNameLength) {
+			/* snprintf() returns the number of characters written not counting the terminating null. */
+			if (result < 0 || result + 1 > kMaxKeyNameLength) {
 				return false;
 			}
 

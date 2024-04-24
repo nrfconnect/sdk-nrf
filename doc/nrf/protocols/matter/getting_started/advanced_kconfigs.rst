@@ -190,6 +190,9 @@ Both can be used simultaneously by controlling the following Kconfig options:
 * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` - Activates the module based on the ARM PSA Protected Storage API implementation from the :ref:`trusted_storage_readme` |NCS| library.
   This backend implements ``Secure`` methods of the Persistent Storage API and returns ``PSErrorCode::NotSupported`` for ``NonSecure`` methods.
 
+Both backends allow you to control the maximum length of a string-type key under which an asset can be stored.
+You can do this using the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_STORAGE_MAX_KEY_LEN` Kconfig option.
+
 If both backends are activated at the same time (:kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` enabled) all methods of the generic interface are supported.
 
 Similarly to the non-secure backend, the secure backend leverages the Zephyr Settings to interface with the FLASH memory.
