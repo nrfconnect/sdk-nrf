@@ -610,6 +610,7 @@ Wi-Fi samples
 
   * Modified ``connect`` command to provide better control over connection parameters.
   * Added ``Auto-Security-Personal`` mode to the ``connect`` command.
+  * Added support for the ``WPA-PSK`` security mode to the ``wifi_mgmt_ext`` library.
 
 Other samples
 -------------
