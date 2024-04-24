@@ -8,3 +8,6 @@ source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 
 config REMOTE_BOARD
 	string "The board used for remote target"
+
+config REMOTE_BOARD_2
+	string "The board used for remote target"
