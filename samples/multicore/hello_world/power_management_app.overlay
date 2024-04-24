@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ /delete-node/ &cpuppr_ram3x_region;
+ /delete-node/ &cpuapp_cpuppr_ipc;
+
+ / {
+         reserved-memory {
+                 cpuppr_ram3x_region: memory@2fc00000 {
+                         compatible = "nordic,owned-memory";
+                         reg = < 0x2fc00000 0x10000 >;
+                         status = "okay";
+                         perm-read;
+                         perm-write;
+                         perm-execute;
+                         #address-cells = < 0x1 >;
+                         #size-cells = < 0x1 >;
+                         ranges = < 0x0 0x2fc00000 0x10000 >;
+                 };
+         };
+ };

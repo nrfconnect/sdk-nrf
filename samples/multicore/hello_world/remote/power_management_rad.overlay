@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	chosen {
+		/delete-property/ zephyr,console;
+	};
+};
+
+&uart135 {
+        status = "disabled";
+};
+
+&cpurad_dma_region {
+        status = "disabled";
+};
