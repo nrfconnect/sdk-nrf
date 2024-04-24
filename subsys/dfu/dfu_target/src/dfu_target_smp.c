@@ -5,7 +5,6 @@
  */
 
 #include <zephyr/kernel.h>
-#include <pm_config.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>

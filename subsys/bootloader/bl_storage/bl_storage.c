@@ -10,7 +10,6 @@
 #include <nrf.h>
 #include <assert.h>
 #include <nrfx_nvmc.h>
-#include <pm_config.h>
 
 #define TYPE_COUNTERS 1 /* Type referring to counter collection. */
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */

@@ -7,7 +7,6 @@
 #include <platform/include/tfm_platform_system.h>
 #include <cmsis.h>
 #include <stdio.h>
-#include <pm_config.h>
 #include <tfm_ioctl_api.h>
 #include <string.h>
 #include <arm_cmse.h>
