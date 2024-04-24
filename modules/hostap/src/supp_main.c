@@ -400,10 +400,35 @@ static void z_wpas_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
 	}
 
 	if (msg.data) {
-		if (msg.event == EVENT_AUTH) {
-			union wpa_event_data *data = msg.data;
+		union wpa_event_data *data = msg.data;
 
+		/* Free up deep copied data */
+		if (msg.event == EVENT_AUTH) {
 			os_free((char *)data->auth.ies);
+		} else if (msg.event == EVENT_RX_MGMT) {
+			os_free((char *)data->rx_mgmt.frame);
+		} else if (msg.event == EVENT_TX_STATUS) {
+			os_free((char *)data->tx_status.data);
+		} else if (msg.event == EVENT_ASSOC) {
+			os_free((char *)data->assoc_info.addr);
+			os_free((char *)data->assoc_info.req_ies);
+			os_free((char *)data->assoc_info.resp_ies);
+			os_free((char *)data->assoc_info.resp_frame);
+		} else if (msg.event == EVENT_ASSOC_REJECT) {
+			os_free((char *)data->assoc_reject.bssid);
+			os_free((char *)data->assoc_reject.resp_ies);
+		} else if (msg.event == EVENT_DEAUTH) {
+			os_free((char *)data->deauth_info.addr);
+			os_free((char *)data->deauth_info.ie);
+		} else if (msg.event == EVENT_DISASSOC) {
+			os_free((char *)data->disassoc_info.addr);
+			os_free((char *)data->disassoc_info.ie);
+		} else if (msg.event == EVENT_UNPROT_DEAUTH) {
+			os_free((char *)data->unprot_deauth.sa);
+			os_free((char *)data->unprot_deauth.da);
+		} else if (msg.event == EVENT_UNPROT_DISASSOC) {
+			os_free((char *)data->unprot_disassoc.sa);
+			os_free((char *)data->unprot_disassoc.da);
 		}
 		os_free(msg.data);
 	}
