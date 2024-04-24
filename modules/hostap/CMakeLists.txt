@@ -303,72 +303,15 @@ zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_CRYPTO_ENTERPRISE
 	${COMMON_SRC_BASE}/eap_peer/eap_tls.c
 	${COMMON_SRC_BASE}/eap_peer/eap_tls_common.c
 
-
-	${COMMON_SRC_BASE}/eap_peer/eap_peap.c
-	${COMMON_SRC_BASE}/eap_common/eap_peap_common.c
-	${COMMON_SRC_BASE}/eap_peer/eap_ttls.c
-	${COMMON_SRC_BASE}/eap_peer/eap_md5.c
-	${COMMON_SRC_BASE}/eap_peer/eap_mschapv2.c
-	${COMMON_SRC_BASE}/eap_common/chap.c
-	${COMMON_SRC_BASE}/eap_peer/mschapv2.c
-	${COMMON_SRC_BASE}/eap_peer/eap_leap.c
-
-	${COMMON_SRC_BASE}/eap_peer/eap_psk.c
-	${COMMON_SRC_BASE}/eap_common/eap_psk_common.c
-
-	${COMMON_SRC_BASE}/eap_peer/eap_fast.c
-	${COMMON_SRC_BASE}/eap_peer/eap_fast_pac.c
-	${COMMON_SRC_BASE}/eap_common/eap_fast_common.c
-
-	${COMMON_SRC_BASE}/eap_peer/eap_pax.c
-	${COMMON_SRC_BASE}/eap_common/eap_pax_common.c
-
-	${COMMON_SRC_BASE}/eap_peer/eap_sake.c
-	${COMMON_SRC_BASE}/eap_common/eap_sake_common.c
-
-	${COMMON_SRC_BASE}/eap_peer/eap_gpsk.c
-	${COMMON_SRC_BASE}/eap_common/eap_gpsk_common.c
-
-	${COMMON_SRC_BASE}/eap_peer/eap_pwd.c
-	${COMMON_SRC_BASE}/eap_common/eap_pwd_common.c
-
-	${COMMON_SRC_BASE}/eap_peer/eap_eke.c
-	${COMMON_SRC_BASE}/eap_common/eap_eke_common.c
-
-	${COMMON_SRC_BASE}/eap_peer/eap_ikev2.c
-	${COMMON_SRC_BASE}/eap_peer/ikev2.c
-	${COMMON_SRC_BASE}/eap_common/eap_ikev2_common.c
-	${COMMON_SRC_BASE}/eap_common/ikev2_common.c
-
-	# common
-	${COMMON_SRC_BASE}/crypto/sha384-tlsprf.c
-	${COMMON_SRC_BASE}/crypto/sha256-tlsprf.c
-	${COMMON_SRC_BASE}/crypto/sha1-tlsprf.c
-	${COMMON_SRC_BASE}/crypto/sha1-tprf.c
-	${COMMON_SRC_BASE}/crypto/ms_funcs.c
-	${COMMON_SRC_BASE}/crypto/aes-eax.c
-	# MD4 removed from MbedTLS
-	${COMMON_SRC_BASE}/crypto/md4-internal
-	${COMMON_SRC_BASE}/crypto/aes-encblock.c
-
+#	${COMMON_SRC_BASE}/eap_peer/eap_peap.c
+#	${COMMON_SRC_BASE}/eap_common/eap_peap_common.c
+#	${COMMON_SRC_BASE}/eap_peer/eap_ttls.c
 )
 
 zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO_ENTERPRISE
 	CONFIG_EAP_TLS
-	CONFIG_IEEE8021X_EAPOL
-	CONFIG_EAP_PEAP
-	CONFIG_EAP_TTLS
-	CONFIG_EAP_MD5
-	CONFIG_EAP_MSCHAPv2
-	CONFIG_EAP_LEAP
-	CONFIG_EAP_PSK
-	CONFIG_EAP_FAST
-	CONFIG_EAP_PAX
-	CONFIG_EAP_SAKE
-	CONFIG_EAP_GPSK
-	CONFIG_EAP_PWD
-	CONFIG_EAP_EKE
-	CONFIG_EAP_IKEv2
+#	CONFIG_EAP_PEAP
+#	CONFIG_EAP_TTLS
 )
 
 zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_EAPOL
