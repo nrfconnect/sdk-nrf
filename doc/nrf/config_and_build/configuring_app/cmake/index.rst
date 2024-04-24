@@ -90,7 +90,8 @@ The following table lists the most common ones used in the |NCS|:
      - | ``-S <name_of_snippet>``
        | ``-DSNIPPET=<name_of_snippet>``
    * - :makevar:`PM_STATIC_YML_FILE`
-     - Select a :ref:`static configuration file <ug_pm_static>` for the Partition Manager script.
+     - | Select a :ref:`static configuration file <ug_pm_static>` for the Partition Manager script.
+       | For applications that *do not* use multiple images, the static configuration can be selected with :makevar:`FILE_SUFFIX` (see above).
      - ``-DPM_STATIC_YML_FILE=pm_static_<suffix>.yml``
 
 You can use these parameters in both the |nRFVSC| and the command line.

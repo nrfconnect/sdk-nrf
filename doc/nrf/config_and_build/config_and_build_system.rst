@@ -174,7 +174,6 @@ See the Configuration section of the given application or sample's documentation
 
     * :ref:`Child image Kconfig configuration <ug_multi_image_permanent_changes>`.
       Use the :makevar:`CONF_FILE` variable during the deprecation period of the build types.
-    * |file_suffix_partition_manager_exception|
 
 For information about how to provide file suffixes when building an application, see :ref:`cmake_options`.
 
@@ -230,7 +229,7 @@ Custom build types
 .. important::
     The build types are deprecated and are being replaced by :ref:`suffix-based configurations <app_build_additions_build_types>` and Zephyr's :ref:`zephyr:sysbuild`.
     You can continue to use the build types feature until the transition is complete in the |NCS|.
-    It is still required for applications that use build types with :ref:`multiple images <ug_multi_image>` or Partition Manager's :ref:`static configuration <ug_pm_static>` (or both).
+    It is still required for applications that use build types with :ref:`multiple images <ug_multi_image>`.
     Check the application and sample documentation pages for which variable to use.
 
 A build type is a feature that defines the way in which the configuration files are to be handled.
@@ -285,9 +284,6 @@ Partition Manager
 =================
 
 The |NCS| adds the :ref:`partition_manager` script, responsible for partitioning the available flash memory and creating the `Memory layout configuration`_.
-
-.. note::
-    |file_suffix_partition_manager_exception|
 
 Binaries and images for nRF Cloud FOTA
 ======================================
