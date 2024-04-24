@@ -13,7 +13,6 @@
 #include <zephyr/net/tls_credentials.h>
 #include <zephyr/net/http/parser_url.h>
 #include <zephyr/device.h>
-#include <zephyr/storage/stream_flash.h>
 #include <zephyr/sys/reboot.h>
 #include <net/fota_download.h>
 #include <fota_download_util.h>
@@ -23,7 +22,6 @@
 #include "slm_settings.h"
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
-#include "pm_config.h"
 
 LOG_MODULE_REGISTER(slm_fota, CONFIG_SLM_LOG_LEVEL);
 
