@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#if defined(CONFIG_SOC_NRF54H20)
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
 #include <suit_types.h>
 
 /** @brief SUIT envelope generated using the manifest/manifest_54.yaml input file.
@@ -70,4 +70,4 @@ uint8_t manifest_buf[] = {
 	0xD0, 0xB8, 0x2C, 0x0F, 0x6A, 0xA9, 0x11, 0xB0, 0xE8, 0x57, 0x8C, 0x92, 0x53, 0x81};
 
 const size_t manifest_len = sizeof(manifest_buf);
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* CONFIG_SOC_SERIES_NRF54HX */

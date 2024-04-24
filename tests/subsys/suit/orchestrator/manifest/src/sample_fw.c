@@ -7,13 +7,13 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#if defined(CONFIG_SOC_NRF54H20)
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
 #define SAMPLE_FW_ADDRESS	   0x0E0AA000
 #define SAMPLE_RECOVERY_FW_ADDRESS 0x0E0AB000
-#else /* CONFIG_SOC_NRF54H20 */
+#else /* CONFIG_SOC_SERIES_NRF54HX */
 #define SAMPLE_FW_ADDRESS	   0x80000
 #define SAMPLE_RECOVERY_FW_ADDRESS 0x81000
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* CONFIG_SOC_SERIES_NRF54HX */
 
 /** @brief Sample firmware payload, attached as file.bin during manifest generation.
  *

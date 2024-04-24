@@ -14,15 +14,15 @@ ZTEST_SUITE(invoke_tests, NULL, NULL, NULL, NULL, NULL);
 ZTEST(invoke_tests, test_invoke_OK)
 {
 	suit_component_t handle;
-#ifdef CONFIG_SOC_NRF54H20
+#ifdef CONFIG_SOC_SERIES_NRF54HX
 	/* [h'MEM', h'02', h'1A00080000', h'09'] */
 	uint8_t valid_value[] = {0x84, 0x44, 0x63, 'M',	 'E',  'M',  0x41, 0x00,
 				 0x45, 0x1A, 0x00, 0x08, 0x00, 0x00, 0x41, 0x08};
-#else  /* CONFIG_SOC_NRF54H20 */
+#else  /* CONFIG_SOC_SERIES_NRF54HX */
 	/* [h'MEM', h'00', h'1A00080000', h'08'] */
 	uint8_t valid_value[] = {0x84, 0x44, 0x63, 'M',	 'E',  'M',  0x41, 0x00,
 				 0x45, 0x1A, 0x00, 0x08, 0x00, 0x00, 0x41, 0x08};
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* CONFIG_SOC_SERIES_NRF54HX */
 
 	struct zcbor_string valid_component_id = {
 		.value = valid_value,

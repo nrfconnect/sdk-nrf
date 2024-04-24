@@ -25,7 +25,7 @@ config SUIT_DIGEST
 config MAX_NUMBER_OF_MANIFEST_CLASS_IDS
 	int  "Maximum number of supported manifest class IDs that can be handled"
 	range 1 200
-	default 11 if SOC_NRF54H20
+	default 11 if SOC_SERIES_NRF54HX
 	default 5 if SOC_NRF52840
 	default 5 if SOC_POSIX
 	help

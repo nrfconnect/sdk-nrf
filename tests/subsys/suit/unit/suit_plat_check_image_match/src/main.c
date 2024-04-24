@@ -580,12 +580,12 @@ ZTEST(suit_plat_check_image_match_tests, test_soc_spec_OK)
 	int ret = suit_plat_check_image_match(valid_component_handle, suit_cose_sha256,
 					      &valid_digest);
 
-#ifdef CONFIG_SOC_NRF54H20
+#ifdef CONFIG_SOC_SERIES_NRF54HX
 	zassert_equal(SUIT_SUCCESS, ret, "Check have failed: %i", ret);
-#else  /* CONFIG_SOC_NRF54H20 */
+#else  /* CONFIG_SOC_SERIES_NRF54HX */
 	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret,
 		      "Check should have failed for HW other than NRF54H20");
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* CONFIG_SOC_SERIES_NRF54HX */
 
 	/* Check expected call counts for fake functions */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,

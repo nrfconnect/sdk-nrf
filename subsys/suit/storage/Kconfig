@@ -17,8 +17,8 @@ if SUIT_STORAGE
 
 choice SUIT_STORAGE_LAYOUT
 	prompt "MCU-specific layout of the SUIT storage"
-	default SUIT_STORAGE_LAYOUT_NRF54H20 if SOC_NRF54H20
-	default SUIT_STORAGE_LAYOUT_TEST if !SOC_NRF54H20
+	default SUIT_STORAGE_LAYOUT_NRF54H20 if SOC_SERIES_NRF54HX
+	default SUIT_STORAGE_LAYOUT_TEST if !SOC_SERIES_NRF54HX
 
 config SUIT_STORAGE_LAYOUT_NRF54H20
 	bool "nRF54H20"
@@ -40,7 +40,7 @@ config SUIT_STORAGE_N_UPDATE_REGIONS
 
 config SUIT_STORAGE_N_ENVELOPES
 	int "Number of envelopes, possible to store in SUIT storage"
-	default 11 if SOC_NRF54H20
+	default 11 if SOC_SERIES_NRF54HX
 	default 5 if SOC_NRF52840
 	default 5 if SOC_POSIX
 	help
