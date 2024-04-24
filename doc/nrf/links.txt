@@ -1127,6 +1127,7 @@
 .. _`Memfault MCU Guide`: https://docs.memfault.com/docs/mcu/introduction
 .. _`Memfault: Reboot tracking`: https://docs.memfault.com/docs/mcu/reboot-reason-tracking
 .. _`Memfault: Coredumps`: https://docs.memfault.com/docs/mcu/coredumps
+.. _`Memfault Sandbox`: https://mflt.io/demo
 
 .. ### Source: *.nrfcloud.com
 

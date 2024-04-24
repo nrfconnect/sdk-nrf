@@ -190,6 +190,24 @@ For more information on the implementation of a custom trace backend, see :ref:`
 .. _nrf91_fota:
 .. _nrf9160_fota:
 
+Remote observability using Memfault
+***********************************
+
+The |NCS| bundles support for remotely monitoring and debugging device fleets.
+This support enables quicker identification and triage of issues in the field, and optimizes connection quality and battery life for global deployments.
+The collection system has been optimized to work in intermittent connectivity environments and has extremely low overhead.
+
+The cellular stack consists of out-of-the-box collection of the following key connectivity health vitals:
+
+* Total bytes sent and received
+* The network operator
+* Frequency band
+* Signal quality measurements
+
+For debugging, any system crashes and modem traces can be remotely collected for further analysis.
+
+See the :ref:`ug_memfault` page for more information on how to enable Memfault in your |NCS| project on an nRF91 Series SiP to visualize the data across the fleet and by device.
+
 FOTA updates
 ************
 

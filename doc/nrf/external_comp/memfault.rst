@@ -15,7 +15,7 @@ Memfault integration provides the following features to |NCS|:
 * `Continuous monitoring <Memfault monitoring_>`_ - Monitors device and fleet-level metrics like connectivity and low power state in real-time dashboards and displays prepopulated metrics for your devices.
   You can access device level data to resolve bugs faster.
 
-See the `Memfault documentation <Memfault introduction_>`_ for more details.
+See the `Memfault sandbox <Memfault Sandbox_>`_ for a self-guided tour of the platform as well as the `Memfault documentation <Memfault introduction_>`_ for more details.
 
 .. note::
    Memfault has been integrated in |NCS| since the v1.6.0 release.
