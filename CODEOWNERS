@@ -250,6 +250,7 @@ Kconfig*                                  @tejlmand
 /snippets/nrf70-fw-patch-ext-flash/       @krish2718 @sachinthegreen
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
 /snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
+/snippets/crypto_service/                 @anhmolt @hakonfam @jonathannilsen
 /snippets/zperf/                          @nrfconnect/ncs-protocols-serialization
 /subsys/audio_module/                     @nrfconnect/ncs-audio
 /subsys/bluetooth/                        @alwa-nordic @jori-nordic @carlescufi @KAGA164
