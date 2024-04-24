@@ -12,24 +12,6 @@ target_include_directories(mbedcrypto_common
 
 # Add regular includes
 # Note, the order of include matters
-if(CONFIG_BUILD_WITH_TFM)
-  # It is not supported to have a PSA core in the non-secure
-  # image. PSA should be provided by TF-M, not an Oberon core inside
-  # the non-secure image.
-  #
-  # But it is supported to have legacy mbedtls in the non-secure
-  # image. We therefore need to add the legacy mbedtls header files to
-  # the build. The TF-M PSA header files will be added elsewhere.
-target_include_directories(mbedcrypto_common
-  INTERFACE
-    # Nordic PSA headers
-    ${NRF_SECURITY_ROOT}/include
-    # Mbed TLS (mbedcrypto) PSA headers
-    ${ARM_MBEDTLS_PATH}/library
-    ${ARM_MBEDTLS_PATH}/include
-    ${ARM_MBEDTLS_PATH}/include/library
-)
-else()
 target_include_directories(mbedcrypto_common
   INTERFACE
     # Nordic PSA headers
@@ -38,10 +20,10 @@ target_include_directories(mbedcrypto_common
     ${OBERON_PSA_PATH}/include
     ${OBERON_PSA_PATH}/library
     # Mbed TLS (mbedcrypto) PSA headers
-    ${ARM_MBEDTLS_PATH}/include
     ${ARM_MBEDTLS_PATH}/library
+    ${ARM_MBEDTLS_PATH}/include
+    ${ARM_MBEDTLS_PATH}/include/library
 )
-endif()
 
 append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_PATH}/library/
   platform.c
