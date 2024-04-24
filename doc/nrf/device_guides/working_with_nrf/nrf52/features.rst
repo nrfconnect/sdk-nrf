@@ -150,3 +150,14 @@ The nRF52 Series devices support running another protocol in parallel with the S
 See the :ref:`ug_multiprotocol_support` user guide on how to enable multiprotocol support for Thread or Zigbee in combination with Bluetooth.
 
 The :ref:`nrfxlib:mpsl` library provides services for multiprotocol applications.
+
+Remote observability using Memfault
+***********************************
+
+The |NCS| bundles support for remotely monitoring and debugging device fleets.
+This support enables quicker identification and triage of issues in the field and optimizes connection quality and battery life for global deployments.
+The collection system has been optimized to work in intermittent connectivity environments and has extremely low overhead.
+
+The |NCS| includes out-of-the-box metrics collected for monitoring Bluetooth connectivity, such as connection time and Bluetooth thread stack usage on nRF52 Series SoCs as well as a GATT profile and example apps for easily sending the data through a mobile phone gateway.
+
+See the :ref:`ug_memfault` page for more information on how to enable Memfault in your |NCS| project on an nRF52 Series device and visualize the data across the fleet and by device.

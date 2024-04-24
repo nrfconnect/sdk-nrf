@@ -133,6 +133,17 @@ Use the following steps to enable monitor-mode debugging in the |NCS|:
 
 For more information about monitor-mode debugging, see Zephyr's :ref:`zephyr:debugmon` documentation and SEGGER's `Monitor-mode Debugging <Monitor-mode Debugging_>`_ documentation.
 
+
+Remote debugging using Memfault
+*******************************
+
+The |NCS| provides remote observability support to maintain optimal device performance and reliability in ever-changing device ecosystems.
+As you start to rollout a fleet, you can debug and monitor devices remotely.
+
+This functionality allows you to efficiently collect crash information and get the same data from remote devices as you would when using a debugger.
+
+For more information on enabling remote debugging with the |NCS| see :ref:`ug_memfault`.
+
 .. _debugging_tools:
 
 Debugging tools
