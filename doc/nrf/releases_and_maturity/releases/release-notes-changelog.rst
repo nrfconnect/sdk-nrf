@@ -103,6 +103,7 @@ Matter
 
 * Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
 * Increased the number of available packet buffers in the Matter stack to avoid packet allocation issues.
+* Optimized the size of packet buffers in the Matter stack to reduce the RAM utilization.
 
 Matter fork
 +++++++++++
