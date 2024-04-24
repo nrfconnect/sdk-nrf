@@ -40,24 +40,6 @@ config SUIT_STREAM_SINK_EXTMEM
 	depends on SSF_EXTMEM_SERVICE_ENABLED
 	select SUIT_STREAM_SINK_COMPONENT_MEM_SUPPORTED
 
-if SUIT_STREAM_SINK_EXTMEM
-
-config SUIT_STREAM_SINK_EXTMEM_ADDRESS_RANGE_START
-	hex
-	default 0x60000000 if SOC_SERIES_NRF54HX
-	help
-	  Start address of the extended memory range.
-	  This value is SOC specific and is not meant to be changed.
-
-config SUIT_STREAM_SINK_EXTMEM_ADDRESS_RANGE_SIZE
-	hex
-	default 0x40000000 if SOC_SERIES_NRF54HX
-	help
-	  Size of the extended memory range.
-	  This value is SOC specific and is not meant to be changed.
-
-endif # SUIT_STREAM_SINK_EXTMEM
-
 menuconfig SUIT_STREAM_SINK_SDFW
 	bool "Enable SDFW sink"
 	depends on SUIT_UTILS
