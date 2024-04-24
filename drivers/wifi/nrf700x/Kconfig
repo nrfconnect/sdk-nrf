@@ -348,7 +348,7 @@ config HEAP_MEM_POOL_SIZE
 	default 153000
 
 config SYSTEM_WORKQUEUE_STACK_SIZE
-	default 4096
+	default 5120
 
 config NET_TX_STACK_SIZE
 	default 4096
