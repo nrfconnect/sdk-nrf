@@ -27,7 +27,7 @@ static uint8_t test_data[] = {0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12
 static void test_setup_flash(void *arg)
 {
 	/* Erase the area, to met the preconditions in the next test. */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to erase area");
 

@@ -73,7 +73,7 @@ uint8_t nvv_sample[64] = {
 void erase_area_nordic(void)
 {
 	/* Clear the whole nordic area */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -85,7 +85,7 @@ void erase_area_nordic(void)
 void erase_area_rad(void)
 {
 	/* Clear the whole radio area */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -97,7 +97,7 @@ void erase_area_rad(void)
 void erase_area_app(void)
 {
 	/* Clear the whole application area */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -108,7 +108,7 @@ void erase_area_app(void)
 
 void erase_area_app_nvv(void)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -119,7 +119,7 @@ void erase_area_app_nvv(void)
 
 void erase_area_app_nvv_backup(void)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -131,7 +131,7 @@ void erase_area_app_nvv_backup(void)
 
 void write_area_app_empty_nvv_backup(void)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -143,7 +143,7 @@ void write_area_app_empty_nvv_backup(void)
 
 void write_area_app_nvv_backup(void)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -155,7 +155,7 @@ void write_area_app_nvv_backup(void)
 
 void write_area_app_nvv(void)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -175,7 +175,7 @@ void write_empty_area_app(void)
 	};
 
 	/* Write the digest of application area filled with 0xFF */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -196,7 +196,7 @@ void write_empty_area_rad(void)
 	};
 
 	/* Write the digest of radio area filled with 0xFF */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -232,7 +232,7 @@ void write_area_app_root(void)
 	};
 
 	/* Write the sample application area (just the root MPI) and corresponding digest */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -272,7 +272,7 @@ void write_area_rad(void)
 	};
 
 	/* Write the sample radio area (just one MPI entry) and corresponding digest */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -313,7 +313,7 @@ void write_area_nordic_root(void)
 	};
 
 	/* Write the sample application backup area (just the root MPI) and corresponding digest */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -355,7 +355,7 @@ void write_area_nordic_rad(void)
 	};
 
 	/* Write the sample radio backup area (just one MPI entry) and corresponding digest */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -398,7 +398,7 @@ void write_area_nordic_old_root(void)
 	/* Write the sample application backup area (just the root MPI with altered class) and
 	 * corresponding digest
 	 */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 
@@ -441,7 +441,7 @@ void write_area_nordic_old_rad(void)
 	/* Write the sample radio backup area (just the sample MPI with altered class) and
 	 * corresponding digest
 	 */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
 

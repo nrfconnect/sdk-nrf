@@ -395,7 +395,7 @@ static suit_plat_err_t sha256_get(const uint8_t *addr, size_t size, suit_storage
  */
 static suit_plat_err_t flash_cpy(uint8_t *dst_addr, uint8_t *src_addr, size_t size)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	if (!device_is_ready(fdev)) {
 		return SUIT_PLAT_ERR_HW_NOT_READY;
@@ -535,7 +535,7 @@ static suit_plat_err_t digest_struct_validate(uint8_t *area_addr, uint8_t *backu
 static suit_plat_err_t digest_struct_commit(uint8_t *area_addr, uint8_t *backup_addr,
 					    size_t area_size)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 	const suit_storage_digest_t *area_digest = NULL;
 	suit_storage_digest_t digest;
 

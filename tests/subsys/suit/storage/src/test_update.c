@@ -26,7 +26,7 @@ static void test_suite_before(void *f)
 	zassert_equal(SUIT_PLAT_SUCCESS, err, "Failed to init and backup suit storage (%d)", err);
 
 	/* Clear the whole application area */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to erase storage area");
 
