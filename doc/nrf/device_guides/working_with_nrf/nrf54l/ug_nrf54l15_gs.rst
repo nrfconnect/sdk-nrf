@@ -57,7 +57,7 @@ Go to the :file:`ncs/v2.6.0/nrf` folder and run the following commands:
    :class: highlight
 
    git fetch
-   git checkout 8206081397428457926b075cfa67fdd4394fc067
+   git checkout 2.6.99-cs
    west update
 
 .. _ug_nrf54l15_gs_test_sample:
