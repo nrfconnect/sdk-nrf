@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#if defined(CONFIG_SOC_NRF54H20)
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
 #include <stdint.h>
 #include <stddef.h>
 
@@ -103,4 +103,4 @@ const uint8_t manifest_manipulated_buf[] = {
 
 const size_t manifest_manipulated_len = sizeof(manifest_manipulated_buf);
 
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* CONFIG_SOC_SERIES_NRF54HX */

@@ -240,7 +240,7 @@ ZTEST(check_image_match_tests, test_cand_img_mismatch)
 		      err);
 }
 
-#ifndef CONFIG_SOC_NRF54H20
+#ifndef CONFIG_SOC_SERIES_NRF54HX
 ZTEST(check_image_match_tests, test_soc_spec_1)
 {
 	/* GIVEN SOC_SPEC component 1 - SDFW */
@@ -368,7 +368,7 @@ ZTEST(check_image_match_tests, test_soc_spec_none)
 	zassert_equal(SUIT_SUCCESS, err, "test error - failed to cleanup component handle: %d",
 		      err);
 }
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* CONFIG_SOC_SERIES_NRF54HX */
 
 ZTEST(check_image_match_tests, test_unhandled_component)
 {
