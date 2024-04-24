@@ -11,6 +11,7 @@ menuconfig SUIT_STORAGE
 	depends on SUIT_METADATA
 	depends on SUIT_UTILS
 	depends on FLASH
+	depends on SUIT_PLATFORM_VARIANT_SDFW
 
 if SUIT_STORAGE
 

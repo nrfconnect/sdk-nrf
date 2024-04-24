@@ -6,6 +6,7 @@
 
 menuconfig SUIT_ORCHESTRATOR_APP
 	bool "Enable SUIT application orchestrator"
+	depends on SUIT_PLATFORM_VARIANT_APP
 
 if SUIT_ORCHESTRATOR_APP
 

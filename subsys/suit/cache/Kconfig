@@ -37,7 +37,7 @@ config SUIT_CACHE_RW
 	bool "Enable write mode for SUIT cache"
 	depends on FLASH
 	depends on SUIT_UTILS
-	depends on !IS_SECURE_DOMAIN_FW
+	depends on !SUIT_PLATFORM_VARIANT_SDFW
 
 config SUIT_CACHE0_ERASE_ON_ENVELOPE_STORED
 	bool "Always erase the DFU cache partition 0 after the envelope is stored"
