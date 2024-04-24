@@ -2123,7 +2123,6 @@ static inline void psa_pake_cs_set_key_confirmation(
     cipher_suite->key_confirmation = key_confirmation;
 }
 
-
 #ifdef __cplusplus
 }
 #endif
