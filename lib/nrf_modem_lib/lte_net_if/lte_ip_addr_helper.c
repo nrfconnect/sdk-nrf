@@ -63,18 +63,18 @@ static int ip_addr_get(char *addr4, char *addr6)
 	}
 
 	/* inet_pton() is used to check the type of returned address(es). */
-	if ((addr4 != NULL) && (inet_pton(AF_INET, addr1, tmp) == 1)) {
+	if ((addr4 != NULL) && (zsock_inet_pton(AF_INET, addr1, tmp) == 1)) {
 		strcpy(addr4, addr1);
 		return strlen(addr4);
 	}
 
-	if ((addr6 != NULL) && (inet_pton(AF_INET6, addr1, tmp) == 1)) {
+	if ((addr6 != NULL) && (zsock_inet_pton(AF_INET6, addr1, tmp) == 1)) {
 		strcpy(addr6, addr1);
 		return strlen(addr6);
 	}
 
 	/* If two addresses are provided, the IPv6 address is in the second address argument. */
-	if ((addr6 != NULL) && (ret > 1) && (inet_pton(AF_INET6, addr2, tmp) == 1)) {
+	if ((addr6 != NULL) && (ret > 1) && (zsock_inet_pton(AF_INET6, addr2, tmp) == 1)) {
 		strcpy(addr6, addr2);
 		return strlen(addr6);
 	}
