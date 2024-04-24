@@ -41,7 +41,7 @@ static suit_plat_err_t save_envelope_partial(uint8_t *area_addr, size_t area_siz
 	static size_t offset;
 	static uint8_t *current_area_addr;
 	static size_t envelope_offset = -1;
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	if (!device_is_ready(fdev)) {
 		fdev = NULL;

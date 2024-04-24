@@ -17,7 +17,7 @@ typedef struct {
 
 suit_plat_err_t suit_storage_nvv_init(void)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	if (!device_is_ready(fdev)) {
 		return SUIT_PLAT_ERR_HW_NOT_READY;
@@ -28,7 +28,7 @@ suit_plat_err_t suit_storage_nvv_init(void)
 
 suit_plat_err_t suit_storage_nvv_erase(uint8_t *area_addr, size_t area_size)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 	uint8_t nvv_buf[EB_SIZE(suit_storage_nvv_t)];
 
 	if (area_addr == NULL) {
@@ -89,7 +89,7 @@ suit_plat_err_t suit_storage_nvv_get(const uint8_t *area_addr, size_t area_size,
 suit_plat_err_t suit_storage_nvv_set(uint8_t *area_addr, size_t area_size, size_t index,
 				     uint32_t value)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 	uint8_t nvv_buf[EB_SIZE(suit_storage_nvv_t)];
 	suit_storage_nvv_t *vars = (suit_storage_nvv_t *)&nvv_buf;
 

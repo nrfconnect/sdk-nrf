@@ -27,7 +27,7 @@ LOG_MODULE_REGISTER(suit_storage_update, CONFIG_SUIT_LOG_LEVEL);
 static suit_plat_err_t save_update_info(const struct update_candidate_info *info, uint8_t *addr,
 					size_t size)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	if (!device_is_ready(fdev)) {
 		return SUIT_PLAT_ERR_HW_NOT_READY;
@@ -49,7 +49,7 @@ static suit_plat_err_t save_update_info(const struct update_candidate_info *info
 
 suit_plat_err_t suit_storage_update_init(void)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	if (!device_is_ready(fdev)) {
 		fdev = NULL;

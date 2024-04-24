@@ -113,7 +113,7 @@ void setup_dfu_test_cache(void *f)
 void setup_dfu_test_corrupted_cache(const uint8_t *corrupted_cache, size_t corrupted_cache_size)
 {
 	/* Erase the area, to met the preconditions in the next test. */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to erase area");
 
@@ -136,7 +136,7 @@ void setup_dfu_test_corrupted_cache(const uint8_t *corrupted_cache, size_t corru
 void clear_dfu_test_partitions(void *f)
 {
 	/* Erase the area, to meet the preconditions in the next test. */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to erase area");
 

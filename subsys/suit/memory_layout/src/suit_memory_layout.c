@@ -27,12 +27,12 @@
 
 #if IS_ENABLED(CONFIG_FLASH)
 #if (DT_NODE_EXISTS(DT_CHOSEN(zephyr_flash_controller)))
-#define INTERNAL_NVM_DEV DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller))
+#define SUIT_PLAT_INTERNAL_NVM_DEV DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller))
 #else
-#define INTERNAL_NVM_DEV DEVICE_DT_GET(DT_CHOSEN(zephyr_flash))
+#define SUIT_PLAT_INTERNAL_NVM_DEV DEVICE_DT_GET(DT_CHOSEN(zephyr_flash))
 #endif
 #else
-#define INTERNAL_NVM_DEV NULL
+#define SUIT_PLAT_INTERNAL_NVM_DEV NULL
 #endif
 
 #if (DT_NODE_EXISTS(DT_ALIAS(spi_flash0)))
@@ -52,7 +52,7 @@ static const struct nvm_area nvm_area_map[] = {
 	{
 		.na_start = INTERNAL_NVM_START,
 		.na_size = INTERNAL_NVM_SIZE,
-		.na_fdev = INTERNAL_NVM_DEV,
+		.na_fdev = SUIT_PLAT_INTERNAL_NVM_DEV,
 	},
 	{
 		.na_start = CONFIG_SUIT_MEMORY_LAYOUT_EXTMEM_ADDRESS_RANGE_START,

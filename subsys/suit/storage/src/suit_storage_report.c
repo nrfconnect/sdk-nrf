@@ -22,7 +22,7 @@ LOG_MODULE_REGISTER(suit_storage_report, CONFIG_SUIT_LOG_LEVEL);
 
 suit_plat_err_t suit_storage_report_internal_init(void)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	if (!device_is_ready(fdev)) {
 		return SUIT_PLAT_ERR_HW_NOT_READY;
@@ -33,7 +33,7 @@ suit_plat_err_t suit_storage_report_internal_init(void)
 
 suit_plat_err_t suit_storage_report_internal_clear(uint8_t *area_addr, size_t area_size)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	if (area_addr == NULL) {
 		return SUIT_PLAT_ERR_INVAL;
@@ -81,7 +81,7 @@ suit_plat_err_t suit_storage_report_internal_read(const uint8_t *area_addr, size
 suit_plat_err_t suit_storage_report_internal_save(uint8_t *area_addr, size_t area_size,
 						  const uint8_t *buf, size_t len)
 {
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 	uint32_t magic = REPORT_SLOT_MAGIC_EMPTY;
 	uint8_t report_magic_buf[WRITE_ALIGN(sizeof(magic))];
 	size_t buffered_size = MIN(len, sizeof(report_magic_buf) - sizeof(magic));

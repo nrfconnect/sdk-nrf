@@ -29,6 +29,16 @@ extern "C" {
 #define EMPTY_STORAGE_VALUE 0xFFFFFFFF
 #endif
 
+#if IS_ENABLED(CONFIG_FLASH)
+#if (DT_NODE_EXISTS(DT_CHOSEN(zephyr_flash_controller)))
+#define SUIT_PLAT_INTERNAL_NVM_DEV DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller))
+#else
+#define SUIT_PLAT_INTERNAL_NVM_DEV DEVICE_DT_GET(DT_CHOSEN(zephyr_flash))
+#endif
+#else
+#define SUIT_PLAT_INTERNAL_NVM_DEV NULL
+#endif
+
 /** @brief Convert address from SUIT component ID to memory pointer.
  *
  * @note This function is used to hide the fact that on POSIX platform the flash

@@ -58,7 +58,7 @@ void setup_dfu_test_cache(void *f)
 void clear_dfu_test_partitions(void *f)
 {
 	/* Erase the area, to meet the preconditions in the next test. */
-	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
 
 	zassert_not_null(fdev, "Unable to find a driver to erase area");
 
