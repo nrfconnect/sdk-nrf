@@ -62,8 +62,6 @@ menuconfig SUIT_STREAM_SINK_SDFW
 	bool "Enable SDFW sink"
 	depends on SUIT_UTILS
 	depends on SOC_NRF54H20
-	depends on !HW_REVISION_SOC1
-	default y if IS_SECURE_DOMAIN_FW
 	select PSA_WANT_ALG_SHA_512
 	select SUIT_STREAM_SINK_DIGEST
 

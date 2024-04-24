@@ -28,7 +28,7 @@ zephyr_library_sources(src/suit_plat_invoke.c)
 if(${CONFIG_ZTEST})
   zephyr_library_sources(src/runners/suit_run_posix.c)
 else ()
-  zephyr_library_sources_ifdef(CONFIG_SOC_NRF54H20_CPUSEC src/runners/suit_run_nrf54h20.c)
+  zephyr_library_sources_ifdef(CONFIG_SUIT_PLATFORM_VARIANT_SDFW src/runners/suit_run_nrf54h20.c)
 endif ()
 
 zephyr_library_link_libraries_ifdef(CONFIG_SUIT_STREAM suit_stream_sinks_interface)
