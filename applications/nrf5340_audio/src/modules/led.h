@@ -92,9 +92,6 @@ int led_off(uint8_t led_unit);
  *
  * @note This will parse the .dts files and configure all LEDs.
  *
- * @param[in]	led_override	Override the default center LED color.
- * @param[in]	color		The color to set center LED to.
- *
  * @return	0 on success.
  *		-EPERM if already initialized.
  *		-ENXIO if a LED is missing unit number in dts.
