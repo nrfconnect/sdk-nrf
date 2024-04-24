@@ -61,7 +61,34 @@ tests:
     integration_platforms:
       - nrf54h20dk_nrf54h20_cpuapp
     extra_args:
+      CONFIG_PM=y CONFIG_PM_S2RAM=y CONFIG_POWEROFF=y CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      remote_CONFIG_PM=y remote_CONFIG_PM_S2RAM=y remote_CONFIG_POWEROFF=y
+      remote_CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+    # to overwrite default build only
+    build_only: false
+    # enable pytest and power measurement
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption"
+
+  sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad.power_consumption.no_logging:
+    # copy original configuration
+    platform_allow:
+      - nrf54h20dk_nrf54h20_cpuapp
+    integration_platforms:
+      - nrf54h20dk_nrf54h20_cpuapp
+    extra_args:
+      CONFIG_PM=y CONFIG_PM_S2RAM=y CONFIG_POWEROFF=y CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_SERIAL=n CONFIG_GPIO=n CONFIG_BOOT_BANNER=n
+      remote_CONFIG_PM=y remote_CONFIG_PM_S2RAM=y remote_CONFIG_POWEROFF=y
+      remote_CONFIG_PM_S2RAM_CUSTOM_MARKING=y remote_CONFIG_CONSOLE=n remote_CONFIG_UART_CONSOLE=n
+      remote_CONFIG_SERIAL=n remote_CONFIG_GPIO=n remote_CONFIG_BOOT_BANNER=n
+      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      remote_DTC_OVERLAY_FILE=power_management_rad.overlay
+      hello_world_DTC_OVERLAY_FILE=power_management_app.overlay
     # to overwrite default build only
     build_only: false
     # enable pytest and power measurement
@@ -77,6 +104,29 @@ tests:
       - nrf54h20dk_nrf54h20_cpuapp
     integration_platforms:
       - nrf54h20dk_nrf54h20_cpuapp
+    extra_args:
+      CONFIG_PM=y CONFIG_PM_S2RAM=y CONFIG_POWEROFF=y CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+    # to overwrite default build only and sysbuild
+    sysbuild: false
+    build_only: false
+    # enable pytest and power measurement
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption"
+
+  sample.multicore.hello_world.nrf54h20dk_cpuapp.power_consumption.no_logging:
+    # copy original configuration
+    platform_allow:
+      - nrf54h20dk_nrf54h20_cpuapp
+    integration_platforms:
+      - nrf54h20dk_nrf54h20_cpuapp
+    extra_args:
+      CONFIG_PM=y CONFIG_PM_S2RAM=y CONFIG_POWEROFF=y CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_SERIAL=n CONFIG_GPIO=n CONFIG_BOOT_BANNER=n
+      remote_DTC_OVERLAY_FILE=power_management_rad.overlay
+      hello_world_DTC_OVERLAY_FILE=power_management_app.overlay
     # to overwrite default build only and sysbuild
     sysbuild: false
     build_only: false
@@ -93,6 +143,39 @@ tests:
     integration_platforms:
       - nrf54h20dk_nrf54h20_cpuapp
     extra_args:
+      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad_ppr.conf
+      hello_world_SNIPPET=nordic-ppr-xip
+      remote_2_DTC_OVERLAY_FILE=power_management_ppr.overlay
+      remote_DTC_OVERLAY_FILE=power_management_rad.overlay
+      hello_world_DTC_OVERLAY_FILE=power_management_app.overlay
+      CONFIG_PM=y CONFIG_PM_S2RAM=y CONFIG_POWEROFF=y CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      remote_CONFIG_PM=y remote_CONFIG_PM_S2RAM=y remote_CONFIG_POWEROFF=y
+      remote_CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad_ppr.conf
+      hello_world_SNIPPET=nordic-ppr-xip
+      remote_2_DTC_OVERLAY_FILE=power_management_ppr.overlay
+      remote_DTC_OVERLAY_FILE=power_management_rad.overlay
+      hello_world_DTC_OVERLAY_FILE=power_management_app.overlay
+    build_only: false
+    # enable pytest and power measurement
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption"
+
+
+  sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad_ppr.power_consumption.no_logging:
+    platform_allow:
+      - nrf54h20dk_nrf54h20_cpuapp
+    integration_platforms:
+      - nrf54h20dk_nrf54h20_cpuapp
+    extra_args:
+      CONFIG_PM=y CONFIG_PM_S2RAM=y CONFIG_POWEROFF=y CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_SERIAL=n CONFIG_GPIO=n CONFIG_BOOT_BANNER=n
+      remote_CONFIG_PM=y remote_CONFIG_PM_S2RAM=y remote_CONFIG_POWEROFF=y
+      remote_CONFIG_PM_S2RAM_CUSTOM_MARKING=y remote_CONFIG_CONSOLE=n remote_CONFIG_UART_CONSOLE=n
+      remote_CONFIG_SERIAL=n remote_CONFIG_GPIO=n remote_CONFIG_BOOT_BANNER=n
       SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad_ppr.conf
       hello_world_SNIPPET=nordic-ppr-xip
       remote_2_DTC_OVERLAY_FILE=power_management_ppr.overlay
