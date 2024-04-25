@@ -257,7 +257,7 @@ Matter Bridge
 IPC radio firmware
 ------------------
 
-|no_changes_yet_note|
+* Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 Samples
 =======
