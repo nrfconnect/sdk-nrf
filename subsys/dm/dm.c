@@ -105,7 +105,6 @@ struct {
 /* Timeslot request */
 static mpsl_timeslot_request_t timeslot_request_earliest = {
 	.request_type = MPSL_TIMESLOT_REQ_TYPE_EARLIEST,
-	.params.earliest.hfclk = MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE,
 	.params.earliest.priority = MPSL_TIMESLOT_PRIORITY_HIGH,
 	.params.earliest.length_us = MPSL_TIMESLOT_LENGTH_MIN_US,
 	.params.earliest.timeout_us = 70000,
@@ -113,7 +112,6 @@ static mpsl_timeslot_request_t timeslot_request_earliest = {
 
 static mpsl_timeslot_request_t timeslot_request_normal = {
 	.request_type = MPSL_TIMESLOT_REQ_TYPE_NORMAL,
-	.params.normal.hfclk = MPSL_TIMESLOT_HFCLK_CFG_XTAL_GUARANTEED,
 	.params.normal.priority = MPSL_TIMESLOT_PRIORITY_HIGH,
 };
 

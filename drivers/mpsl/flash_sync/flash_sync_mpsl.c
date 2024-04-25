@@ -183,7 +183,6 @@ int nrf_flash_sync_exe(struct flash_op_desc *op_desc)
 
 	mpsl_timeslot_request_t *req = &_context.timeslot_request;
 	req->request_type = MPSL_TIMESLOT_REQ_TYPE_EARLIEST;
-	req->params.earliest.hfclk = MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE;
 	req->params.earliest.priority = MPSL_TIMESLOT_PRIORITY_NORMAL;
 	req->params.earliest.length_us =
 		_context.request_length_us + TIMESLOT_LENGTH_SLACK_US;
