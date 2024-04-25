@@ -341,19 +341,26 @@ static void iso_sent(struct bt_iso_chan *chan)
 		assigned_timestamp + CONFIG_SDU_INTERVAL_US
 		- controller_time_us
 		- HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US;
+
+	/** Update the sent SDU counter before starting
+	 * the timer that triggers when the next SDU is sent.
+	 * This is done to ensure that counter is updated in time.
+	 */
+	uint32_t prev_sent_sdu = num_sdus_sent;
+
+	num_sdus_sent++;
+
 	k_timer_start(&sdu_timer, K_USEC(time_to_next_sdu_us), K_NO_WAIT);
 
 	/* Increment the SDU timestamp with one SDU interval. */
 	tx_sdu_timestamp_us = assigned_timestamp + CONFIG_SDU_INTERVAL_US;
 
-	if (num_sdus_sent % 100 == 0) {
+	if (prev_sent_sdu % 100 == 0) {
 		int32_t time_to_trigger = trigger_time_us - controller_time_us;
 
 		printk("Sent SDU, counter: %d, btn_val: %d, LED will be set in %d us\n",
-		       num_sdus_sent, btn_pressed, time_to_trigger);
+		       prev_sent_sdu, btn_pressed, time_to_trigger);
 	}
-
-	num_sdus_sent++;
 }
 
 static void sdu_timer_expired(struct k_timer *timer)
