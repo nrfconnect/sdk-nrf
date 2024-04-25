@@ -14,7 +14,7 @@
 	hid_dev_0: hid_dev_0 {
 		compatible = "zephyr,hid-device";
 		interface-name = "HID0";
-		protocol-code = "mouse";
+		protocol-code = "keyboard";
 		in-polling-rate = <1000>;
 		in-report-size = <64>;
 	};
