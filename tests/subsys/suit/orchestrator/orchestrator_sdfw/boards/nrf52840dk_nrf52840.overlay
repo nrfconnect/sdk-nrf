@@ -12,7 +12,6 @@
 
 		/* Use the last 40KB of NVM as suit storage. */
 		suit_storage: partition@f6000 {
-			label = "suit_storage";
 			reg = <0xf6000 DT_SIZE_K(40)>;
 		};
 	};
