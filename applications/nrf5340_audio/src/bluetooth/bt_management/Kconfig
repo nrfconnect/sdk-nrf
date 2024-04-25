@@ -158,7 +158,7 @@ menu "Thread priorities"
 
 config CTLR_POLL_WORK_Q_PRIO
 	int "Work queue priority for controller poll"
-	default 6
+	default 2
 	help
 	  This is a preemptible work queue.
 	  This work queue will poll the controller to check it is alive.
