@@ -943,6 +943,7 @@ Libraries for networking
     * The :c:func:`nrf_cloud_coap_shadow_desired_update` function to allow devices to reject invalid shadow deltas.
     * Support for IPv6 connections.
     * The ``SO_KEEPOPEN`` socket option to keep the socket open even during PDN disconnect and reconnect.
+    * The experimental Kconfig option :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` that enables downloading FOTA and P-GPS data using CoAP instead of HTTP.
 
 * :ref:`lib_lwm2m_client_utils` library:
 

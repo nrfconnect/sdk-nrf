@@ -156,6 +156,15 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
 		LOG_DBG("FOTA download percent: %d%%", evt->progress);
 		break;
+	case FOTA_DOWNLOAD_EVT_RESUME_OFFSET:
+		/* TODO: for now, just fail the download.
+		 * Unable to resume with CoAP until NRFCDP-423 is complete.
+		 */
+		nrf_cloud_download_end();
+		fota_status = NRF_CLOUD_FOTA_FAILED;
+		fota_status_details = FOTA_STATUS_DETAILS_DL_ERR;
+		k_sem_give(&fota_download_sem);
+		break;
 	default:
 		break;
 	}
@@ -360,7 +369,10 @@ static int start_download(void)
 			.pdn_id = 0,
 			.frag_size_override = FOTA_DL_FRAGMENT_SZ,
 		},
-		.fota = { .expected_type = img_type }
+		.fota = {
+			.expected_type = img_type,
+			.img_sz = job.file_size
+		}
 	};
 
 	ret = nrf_cloud_download_start(&dl);
