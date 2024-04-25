@@ -28,6 +28,7 @@ enum nrf_cloud_download_type {
 struct nrf_cloud_download_fota {
 	/* FOTA update type */
 	enum dfu_target_image_type expected_type;
+	int img_sz;
 };
 
 struct nrf_cloud_download_data {

@@ -147,6 +147,8 @@ config NRF_CLOUD_FOTA_TYPE_MODEM_FULL_SUPPORTED
 
 config NRF_CLOUD_FOTA_POLL
 	bool "Enable FOTA job polling helpers"
+	depends on FOTA_DOWNLOAD
+	select FOTA_DOWNLOAD_EXTERNAL_DL if NRF_CLOUD_COAP_DOWNLOADS
 	help
 	  When enabled, nRF Cloud FOTA job polling helpers will be built.  These
 	  functions make it easy to request, download, and handle modem, boot,
