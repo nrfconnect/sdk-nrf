@@ -67,7 +67,7 @@ static const uint8_t cap_adv_data[] = {
 static struct bt_bap_stream *bap_tx_streams[CONFIG_BT_ASCS_ASE_SRC_COUNT];
 
 #if defined(CONFIG_BT_AUDIO_TX)
-static uint8_t audio_mapping_mask[CONFIG_BT_ASCS_ASE_SRC_COUNT] = {UINT8_MAX};
+static uint8_t audio_mapping_mask[CONFIG_BT_ASCS_ASE_SRC_COUNT] = {0};
 #define AVAILABLE_SOURCE_CONTEXT (BT_AUDIO_CONTEXT_TYPE_ANY)
 #else
 #define AVAILABLE_SOURCE_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
