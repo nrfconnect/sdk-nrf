@@ -6,9 +6,14 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include <zephyr/device.h>
+#include <zephyr/sys/iterable_sections.h>
 #include <zephyr/types.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/util.h>
+
+#include <zephyr/usb/usbd.h>
+#include <zephyr/usb/usbd_msg.h>
 
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/usb/usb_ch9.h>
@@ -76,6 +81,8 @@ BUILD_ASSERT(DT_PROP(DT_NODELABEL(usbd), num_in_endpoints) > ARRAY_SIZE(usb_hid_
 BUILD_ASSERT(!IS_ENABLED(CONFIG_DESKTOP_HID_STATE_ENABLE) ||
 	     IS_ENABLED(CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION) ||
 	     (ARRAY_SIZE(usb_hid_device) <= 1));
+
+static struct usbd_contex *usbd_ctx;
 
 static struct config_channel_transport cfg_chan_transport;
 
@@ -480,8 +487,8 @@ static void usb_wakeup(void)
 {
 	int err = 0;
 
-	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT)) {
-		LOG_WRN("usb_wakeup not integrated for USB next");
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT) && usbd_ctx) {
+		err = usbd_wakeup_request(usbd_ctx);
 	} else {
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY));
 		err = usb_wakeup_request();
@@ -804,6 +811,236 @@ static int usb_init_legacy(void)
 	return 0;
 }
 
+static void usb_init_next_status_cb(struct usbd_contex *const contex,
+				    const struct usbd_msg *const msg)
+{
+	static enum usb_state before_suspend;
+	enum usb_state new_state = state;
+
+	LOG_DBG("USBD msg: %s", usbd_msg_type_string(msg->type));
+
+	switch (msg->type) {
+	case USBD_MSG_VBUS_READY:
+		if (state != USB_STATE_DISCONNECTED) {
+			LOG_WRN("USBD_MSG_VBUS_READY while USB is not disconnected");
+		}
+		new_state = USB_STATE_POWERED;
+		break;
+
+	case USBD_MSG_VBUS_REMOVED:
+		new_state = USB_STATE_DISCONNECTED;
+		break;
+
+	case USBD_MSG_RESUME:
+		if (state == USB_STATE_SUSPENDED) {
+			new_state = before_suspend;
+		}
+		break;
+
+	case USBD_MSG_SUSPEND:
+		before_suspend = state;
+		new_state = USB_STATE_SUSPENDED;
+		break;
+
+	case USBD_MSG_RESET:
+		if (state != USB_STATE_DISCONNECTED) {
+			new_state = USB_STATE_POWERED;
+		} else {
+			LOG_WRN("Reset while disconnected");
+		}
+		break;
+
+	case USBD_MSG_UDC_ERROR:
+		LOG_ERR("Non-correctable UDC error message");
+		module_set_state(MODULE_STATE_ERROR);
+		break;
+
+	case USBD_MSG_STACK_ERROR:
+		LOG_ERR("Unrecoverable USB device stack error");
+		module_set_state(MODULE_STATE_ERROR);
+		break;
+
+	case USBD_MSG_CDC_ACM_LINE_CODING:
+	case USBD_MSG_CDC_ACM_CONTROL_LINE_STATE:
+		/* Ignore */
+		break;
+
+	default:
+		LOG_ERR("Unexpected USB device message type: %d", msg->type);
+		break;
+	}
+
+	if (new_state != state) {
+		broadcast_usb_state(new_state);
+		state = new_state;
+	}
+}
+
+static int usb_init_next_register_fs_classes(struct usbd_contex *usbd)
+{
+	int err = 0;
+
+	STRUCT_SECTION_FOREACH_ALTERNATE(usbd_class_fs, usbd_class_node, c_nd) {
+		err = usbd_register_class(usbd, c_nd->c_data->name, USBD_SPEED_FS, 1);
+		if (err) {
+			LOG_ERR("usbd_register_class failed for %s (err: %d)",
+				c_nd->c_data->name, err);
+			return err;
+		}
+	}
+
+	return err;
+}
+
+static int usb_init_next_register_hs_classes(struct usbd_contex *usbd)
+{
+	int err = 0;
+
+	STRUCT_SECTION_FOREACH_ALTERNATE(usbd_class_hs, usbd_class_node, c_nd) {
+		err = usbd_register_class(usbd, c_nd->c_data->name, USBD_SPEED_HS, 1);
+		if (err) {
+			LOG_ERR("usbd_register_class failed for %s (err: %d)",
+				c_nd->c_data->name, err);
+			return err;
+		}
+	}
+
+	return err;
+}
+
+static int usb_init_next_add_configuration(struct usbd_contex *usbd,
+					   const enum usbd_speed speed,
+					   struct usbd_config_node *config)
+{
+	int err;
+
+	err = usbd_add_configuration(usbd, speed, config);
+	if (err) {
+		LOG_ERR("usbd_add_configuration failed (err: %d)", err);
+		return err;
+	}
+
+	if (speed == USBD_SPEED_FS) {
+		err = usb_init_next_register_fs_classes(usbd);
+	} else if (speed == USBD_SPEED_HS) {
+		err = usb_init_next_register_hs_classes(usbd);
+	}
+
+	if (err) {
+		return err;
+	}
+
+	/* Always use class code information from Interface Descriptors */
+	if (IS_ENABLED(CONFIG_USBD_CDC_ACM_CLASS)) {
+		BUILD_ASSERT(!IS_ENABLED(CONFIG_USBD_CDC_ECM_CLASS));
+		BUILD_ASSERT(!IS_ENABLED(CONFIG_USBD_AUDIO2_CLASS));
+		/*
+		 * Class with multiple interfaces have an Interface
+		 * Association Descriptor available, use an appropriate triple
+		 * to indicate it.
+		 */
+		usbd_device_set_code_triple(usbd, speed, USB_BCC_MISCELLANEOUS, 0x02, 0x01);
+	} else {
+		usbd_device_set_code_triple(usbd, speed, 0, 0, 0);
+	}
+
+	return 0;
+}
+
+static struct usbd_contex *usb_init_next_usbd_init(void)
+{
+	int err;
+
+	USBD_DEVICE_DEFINE(usbd, DEVICE_DT_GET(DT_NODELABEL(usbd)),
+			   CONFIG_DESKTOP_DEVICE_VID, CONFIG_DESKTOP_DEVICE_PID);
+
+	USBD_DESC_LANG_DEFINE(lang);
+	USBD_DESC_MANUFACTURER_DEFINE(manufacturer, CONFIG_DESKTOP_DEVICE_MANUFACTURER);
+	USBD_DESC_PRODUCT_DEFINE(product, CONFIG_DESKTOP_DEVICE_PRODUCT);
+	USBD_DESC_SERIAL_NUMBER_DEFINE(serial_number);
+
+	/* Maximum power consumption of a device: 250 * 2 mA = 500 mA. */
+	static const uint8_t max_power = 250;
+	static const uint8_t attributes = IS_ENABLED(CONFIG_DESKTOP_USB_REMOTE_WAKEUP) ?
+					  (USB_SCD_REMOTE_WAKEUP) : (0);
+
+	USBD_CONFIGURATION_DEFINE(fs_config, attributes, max_power);
+	USBD_CONFIGURATION_DEFINE(hs_config, attributes, max_power);
+
+	err = usbd_add_descriptor(&usbd, &lang);
+	if (err) {
+		LOG_ERR("usbd_add_descriptor(lang) failed (err: %d)", err);
+		return NULL;
+	}
+
+	err = usbd_add_descriptor(&usbd, &manufacturer);
+	if (err) {
+		LOG_ERR("usbd_add_descriptor(manufacturer) failed (err: %d)", err);
+		return NULL;
+	}
+
+	err = usbd_add_descriptor(&usbd, &product);
+	if (err) {
+		LOG_ERR("usbd_add_descriptor(product) failed (err: %d)", err);
+		return NULL;
+	}
+
+	err = usbd_add_descriptor(&usbd, &serial_number);
+	if (err) {
+		LOG_ERR("usbd_add_descriptor(serial_number) failed (err: %d)", err);
+		return NULL;
+	}
+
+	if (usbd_caps_speed(&usbd) == USBD_SPEED_HS) {
+		err = usb_init_next_add_configuration(&usbd, USBD_SPEED_HS, &hs_config);
+		if (err) {
+			LOG_ERR("usb_init_next_add_configuration failed (err: %d)", err);
+			return NULL;
+		}
+	}
+
+	err = usb_init_next_add_configuration(&usbd, USBD_SPEED_FS, &fs_config);
+	if (err) {
+		LOG_ERR("usb_init_next_add_configuration failed (err: %d)", err);
+		return NULL;
+	}
+
+	err = usbd_init(&usbd);
+	if (err) {
+		LOG_ERR("usbd_init (err: %d)", err);
+		return NULL;
+	}
+
+	return &usbd;
+}
+
+static int usb_init_next(void)
+{
+	struct usbd_contex *usbd = usb_init_next_usbd_init();
+
+	if (!usbd) {
+		LOG_ERR("usb_init_next_usbd_init failed");
+		return -ENXIO;
+	}
+
+	int err = usbd_msg_register_cb(usbd, usb_init_next_status_cb);
+
+	if (err) {
+		LOG_ERR("usbd_msg_register_cb failed (err: %d)", err);
+		return err;
+	}
+
+	err = usbd_enable(usbd);
+	if (err) {
+		LOG_ERR("usbd_enable failed (err: %d)", err);
+		return err;
+	}
+
+	usbd_ctx = usbd;
+
+	return 0;
+}
+
 static int usb_init(void)
 {
 	int err = 0;
@@ -815,7 +1052,7 @@ static int usb_init(void)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT)) {
-		LOG_WRN("USB next stack APIs are not yet in use");
+		err = usb_init_next();
 	} else {
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY));
 		err = usb_init_legacy();
