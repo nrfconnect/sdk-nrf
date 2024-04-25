@@ -34,5 +34,5 @@ private:
 	app::DataModel::Nullable<int16_t> mOutdoorTempCelsius;
 	int16_t mCoolingCelsiusSetPoint;
 	int16_t mHeatingCelsiusSetPoint;
-	uint8_t mThermMode;
+	app::Clusters::Thermostat::SystemModeEnum mThermMode;
 };

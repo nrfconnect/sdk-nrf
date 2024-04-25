@@ -186,6 +186,9 @@ Smart Plugs/Outlets device types
 |                   | built-in sensors and a regulation mechanism. It is typically used            |                     |                                       |
 |                   | for pumping fluids like water.                                               |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Water Valve       | A Water Valve is a device that is capable of being switched on and off       | Certifiable         |                                       |
+|                   | and performing flow measurements.                                            |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_switches_controls:
 
@@ -269,6 +272,20 @@ Sensor device types
 |                   | a diagnostic of the primary sensor and issuing a cycle of the audible        |                     |                                       |
 |                   | and visual life safety alarm indications.                                    |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Air Quality       | An Air Quality Sensor is a device designed to monitor and measure various    | Certifiable         |                                       |
+| Sensor            | parameters related to the quality of ambient air in indoor or outdoor        |                     |                                       |
+|                   | environments.                                                                |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Water Freeze      | A Water Freeze Detector is capable of rating and reporting the risk of water | Certifiable         |                                       |
+| Detector          | freeze based on the external factors such as temperature, humidity or        |                     |                                       |
+|                   | pressure.                                                                    |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Water Leak        | A Water Leak Detector is capable of sensing and reporting if a water leak    | Certifiable         |                                       |
+| Detector          | was detected or not.                                                         |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Rain Sensor       | A Rain Sensor is capable of sensing and reporting if rain fall was           | Certifiable         |                                       |
+|                   | detected not.                                                                |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_closures:
 
@@ -317,10 +334,6 @@ HVAC device types
 |                   | a room. It has a fan to control the air speed while it is operating.         |                     |                                       |
 |                   | Optionally, it can report on the condition of its filters.                   |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Air Quality       | An Air Quality Sensor is a device designed to monitor and measure various    | Certifiable         |                                       |
-| Sensor            | parameters related to the quality of ambient air in indoor or outdoor        |                     |                                       |
-|                   | environments.                                                                |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_appliance:
 
@@ -350,6 +363,28 @@ Appliance device types
 |                    | with food preparation and consumption. The device can be permanently         |                     |                                       |
 |                    | installed or portable and can have variety of filling and draining methods.  |                     |                                       |
 +--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Laundry Dryer      | A Laundry Dryer represents a device that is capable of drying laundry items. | Certifiable         |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Cook Surface       | A Cook Surface device type represents a heating object on a cooktop          | Certifiable         |                                       |
+|                    | or other similar device.                                                     |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Cooktop            | A Cooktop is a cooking surface that heats food either by transferring        | Certifiable         |                                       |
+|                    | currents from an electromagnetic field located below the glass surface       |                     |                                       |
+|                    | directly to the magnetic induction cookware placed above or through          |                     |                                       |
+|                    | traditional gas or electric burners.                                         |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Oven               | An Oven represents a device that contains one or more cabinets,              | Certifiable         |                                       |
+|                    | and optionally a single cooktop, that are all capable of heating food.       |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Extractor Hood     | An Extractor Hood is a device that is generally installed above a cooking    | Certifiable         |                                       |
+|                    | surface in residential kitchens. An Extractor Hood’s primary purpose is to   |                     |                                       |
+|                    | reduce odors that arise during the cooking process by either extracting      |                     |                                       |
+|                    | the air above the cooking surface or by recirculating and filtering it. It   |                     |                                       |
+|                    | may also contain a light for illuminating the cooking surface.               |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Microwave Oven     | A Microwave Oven is a device with the primary function of heating foods      | Certifiable         |                                       |
+|                    | and beverages using a magnetron.                                             |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_robotic:
 
@@ -361,6 +396,19 @@ Robotic device types
 +====================+==============================================================================+=====================+=======================================+
 | Robotic Vacuum     | A Robotic Vacuum Cleaner is a device that is capable of cleaning consumer    | Certifiable         |                                       |
 | Cleaner            | floor.                                                                       |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+
+.. _ug_matter_device_types_energy:
+
+Energy device types
+===================
+
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Device type        | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
++====================+==============================================================================+=====================+=======================================+
+| Electric Vehicle   | An EVSE (Electric Vehicle Supply Equipment) is a device that allows an EV    | Certifiable         |                                       |
+| Supply Equipment   | (Electric Vehicle) to be connected to the mains electricity supply to allow  |                     |                                       |
+|                    | it to be charged                                                             |                     |                                       |
 +--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_utility:

@@ -118,16 +118,39 @@ Matter
 Matter fork
 +++++++++++
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.2.0.1`` tag.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.3.0.0`` tag.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
+* Added:
+
+   * Support for the Scenes cluster.
+     This enables users to control the state for devices, rooms, or their whole home, by performing multiple actions on the devices that can be triggered with a single command.
+   * Support for command batching.
+     This allows a controller to batch multiple commands into a single message, which minimizes the delay between execution of the subsequent commands.
+   * Extended beaconing feature that allows an accessory device to advertise Matter service over Bluetooth LE for a period longer than maximum time of 15 minutes.
+     This can be enabled using the :kconfig:option:`CONFIG_CHIP_BLE_EXT_ADVERTISING` Kconfig option.
+   * The Kconfig options :kconfig:option:`CONFIG_CHIP_ICD_LIT_SUPPORT`, :kconfig:option:`CONFIG_CHIP_ICD_CHECK_IN_SUPPORT`, and :kconfig:option:`CONFIG_CHIP_ICD_UAT_SUPPORT` to manage ICD configuration.
+   * New device types:
+
+     * Device energy management
+     * Microwave oven
+     * Oven
+     * Cooktop
+     * Cook surface
+     * Extractor hood
+     * Laundry dryer
+     * Electric vehicle supply equipment
+     * Water valve
+     * Water freeze detector
+     * Water leak detector
+     * Rain sensor
+
 * Updated:
 
-   * The scripts for factory data generation and related :doc:`matter:nrfconnect_factory_data_configuration` documentation page.
-     Now, you can use a single script to generate both JSON and HEX files that include the factory data.
-     Previously, you would have to do that in two steps using two separate scripts.
-     The older method is still supported for backward compatibility.
+   * Network commissioning to provide more information related to the used networking technologies.
+     For Wi-Fi devices, they can now report which Wi-Fi band they support and they have to perform Wi-Fi directed scanning.
+     For Thread devices, the Network Commissioning cluster now includes Thread version and supported Thread features attributes.
 
 |no_changes_yet_note|
 

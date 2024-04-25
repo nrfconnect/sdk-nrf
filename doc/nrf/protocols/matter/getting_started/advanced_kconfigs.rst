@@ -15,6 +15,23 @@ Defining path to project-specific Matter settings
 You can use the :kconfig:option:`CONFIG_CHIP_PROJECT_CONFIG` Kconfig option to define the path to the configuration file that contains project-specific Matter settings in the form of C preprocessor macros.
 These macros cannot be altered using dedicated Kconfig options.
 
+.. _ug_matter_configuring_optional_ble_advertising:
+
+Bluetooth LE advertising
+========================
+
+The Matter specification requires the accessory device to advertise Matter service over Bluetooth® Low Energy (LE) for commissioning purposes.
+By default, the Bluetooth LE advertising start has to be requested by the application (for example, as a result of a button press) and lasts for a maximum duration of 15 minutes.
+This is appropriate for a device with high security requirements that should not advertise its service without a direct trigger, for example a door lock.
+
+You can configure when the device will start advertising and how long it will advertise with the following Kconfig options:
+
+* Set :kconfig:option:`CONFIG_CHIP_ENABLE_PAIRING_AUTOSTART` to ``y`` to open the commissioning window and start the Bluetooth LE advertising automatically at application boot, if the device is not already commissioned.
+* Set :kconfig:option:`CONFIG_CHIP_BLE_EXT_ADVERTISING` to ``y`` to enable Extended Announcement (also called Extended Beaconing), which allows a device to advertise for a duration of more than 15 minutes.
+  The advertising duration can be extended to a maximum duration of 48 hours, however the set of advertised data is changed to increase the user privacy.
+* Set :kconfig:option:`CONFIG_CHIP_BLE_ADVERTISING_DURATION` to a value of time in minutes to specify how long the device will advertise Matter service over Bluetooth LE.
+  It can not be set to values higher than 15 minutes unless the Extended Announcement feature is enabled.
+
 .. _ug_matter_configuring_optional_nfc:
 
 Commissioning with NFC
