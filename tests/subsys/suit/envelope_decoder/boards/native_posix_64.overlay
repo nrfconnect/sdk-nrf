@@ -12,13 +12,11 @@
 
 		/* Use the last 40KB of NVM as suit storage. */
 		suit_storage: partition@f6000 {
-			label = "suit_storage";
 			reg = <0xf6000 DT_SIZE_K(40)>;
 		};
 
 		/* Use the second half of NVM as DFU partition. */
 		dfu_partition: partition@80000 {
-			label = "dfu_partition";
 			reg = <0x80000 DT_SIZE_K(472)>;
 		};
 	};

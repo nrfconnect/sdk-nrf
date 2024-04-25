@@ -11,7 +11,6 @@
 		#size-cells = < 0x1 >;
 
 		dfu_partition: partition@f5000 {
-			label = "dfu_partition";
 			reg = < 0xf5000 DT_SIZE_K(4) >;
 		};
 
@@ -25,7 +24,6 @@
 
 		/* Use the last 8KB of NVM as suit storage. */
 		suit_storage: partition@fe000 {
-			label = "suit_storage";
 			reg = <0xfe000 DT_SIZE_K(8)>;
 		};
 	};

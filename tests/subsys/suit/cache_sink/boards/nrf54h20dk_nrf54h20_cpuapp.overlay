@@ -18,7 +18,6 @@
 		#size-cells = < 0x1 >;
 
 		dfu_partition: partition@19d000 {
-			label = "dfu_partition";
 			reg = < 0x19d000 DT_SIZE_K(1) >;
 		};
 
