@@ -125,7 +125,7 @@ static int button_init(void)
 
 int main(void)
 {
-	LOG_INF("CoreMark sample for %s", CONFIG_BOARD);
+	LOG_INF("CoreMark sample for %s", CONFIG_BOARD_TARGET);
 
 	if (IS_ENABLED(CONFIG_APP_MODE_FLASH_AND_RUN)) {
 		(void)atomic_set(&coremark_in_progress, true);
