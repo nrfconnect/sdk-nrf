@@ -25,7 +25,7 @@ ZTEST(suit_execution_mode_tests, test_suit_execution_mode_set_NOK)
 	zassert_equal(err, SUIT_PLAT_ERR_INVAL,
 		      "suit_execution_mode_set should have failed - invalid input");
 
-	err = suit_execution_mode_set(EXECUTION_MODE_POST_INVOKE_RECOVERY + 1);
+	err = suit_execution_mode_set(EXECUTION_MODE_FAIL_MPI_UNSUPPORTED + 1);
 	zassert_equal(err, SUIT_PLAT_ERR_INVAL,
 		      "suit_execution_mode_set should have failed - invalid input");
 }

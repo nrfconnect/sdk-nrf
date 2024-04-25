@@ -14,10 +14,6 @@ ZTEST_SUITE(suit_storage_nrf54h20_init_tests, NULL, NULL, NULL, NULL, NULL);
 
 ZTEST(suit_storage_nrf54h20_init_tests, test_empty_storage)
 {
-	uint8_t nvv_erased[SUIT_STORAGE_APP_NVV_SIZE];
-
-	memset(nvv_erased, 0xff, sizeof(nvv_erased));
-
 	/* GIVEN the whole SUIT storage area is erased (unprovisioned device) */
 	erase_area_nordic();
 	erase_area_rad();
@@ -27,21 +23,21 @@ ZTEST(suit_storage_nrf54h20_init_tests, test_empty_storage)
 	int err = suit_storage_init();
 
 	/* THEN digest of the application MPI and it's backup does not match... */
-	int exp_err = SUIT_PLAT_ERR_CRASH;
+	int exp_err = SUIT_PLAT_ERR_AUTHENTICATION;
 	/* ... and an error code is returned */
 	zassert_equal(err, exp_err, "Unexpected error code returned (%d).", err);
-	/* ... and NVV area is not initialized */
-	zassert_mem_equal(SUIT_STORAGE_APP_NVV_ADDRESS, nvv_erased, SUIT_STORAGE_APP_NVV_SIZE);
+	/* ... and NVV area digest does not match */
+	/* ... and NVV area is initialized with default values (0xFF) and digest */
+	zassert_mem_equal(SUIT_STORAGE_APP_NVV_ADDRESS, nvv_empty, SUIT_STORAGE_APP_NVV_SIZE / 2);
+	/* ... and NVV area is copied into NVV backup area */
+	zassert_mem_equal(SUIT_STORAGE_APP_NVV_ADDRESS + SUIT_STORAGE_APP_NVV_SIZE / 2, nvv_empty,
+			  SUIT_STORAGE_APP_NVV_SIZE / 2);
 	/* ... and Nordic class IDs are supported */
 	assert_nordic_classes();
 }
 
 ZTEST(suit_storage_nrf54h20_init_tests, test_empty_app_rad_with_digest)
 {
-	uint8_t nvv_erased[SUIT_STORAGE_APP_NVV_SIZE];
-
-	memset(nvv_erased, 0xff, sizeof(nvv_erased));
-
 	/* GIVEN the device is provisioned with empty application and radio MPI */
 	erase_area_nordic();
 	erase_area_rad();
@@ -69,8 +65,12 @@ ZTEST(suit_storage_nrf54h20_init_tests, test_empty_app_rad_with_digest)
 	int exp_err = SUIT_PLAT_ERR_NOT_FOUND;
 	/* ... and an error code is returned */
 	zassert_equal(err, exp_err, "Unexpected error code returned (%d).", err);
-	/* ... and NVV area is not initialized */
-	zassert_mem_equal(SUIT_STORAGE_APP_NVV_ADDRESS, nvv_erased, SUIT_STORAGE_APP_NVV_SIZE);
+	/* ... and NVV area digest does not match */
+	/* ... and NVV area is initialized with default values (0xFF) and digest */
+	zassert_mem_equal(SUIT_STORAGE_APP_NVV_ADDRESS, nvv_empty, SUIT_STORAGE_APP_NVV_SIZE / 2);
+	/* ... and NVV area is copied into NVV backup area */
+	zassert_mem_equal(SUIT_STORAGE_APP_NVV_ADDRESS + SUIT_STORAGE_APP_NVV_SIZE / 2, nvv_empty,
+			  SUIT_STORAGE_APP_NVV_SIZE / 2);
 	/* ... and Nordic class IDs are supported */
 	assert_nordic_classes();
 }
