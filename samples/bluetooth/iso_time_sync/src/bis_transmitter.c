@@ -22,7 +22,7 @@ void bis_transmitter_start(uint8_t retransmission_number, uint16_t max_transport
 	struct bt_le_ext_adv *adv;
 	struct bt_iso_big *big;
 
-	iso_tx_init(retransmission_number);
+	iso_tx_init(retransmission_number, NULL);
 
 	/* Create a non-connectable non-scannable advertising set */
 	err = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN_NAME, NULL, &adv);

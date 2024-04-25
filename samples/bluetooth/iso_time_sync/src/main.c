@@ -204,7 +204,7 @@ int main(void)
 			retransmission_number = sdu_retransmission_number_get();
 			max_transport_latency_ms = sdu_max_transport_latency_get();
 
-			printk("Starting CIS peripheral, dir: %s, RTN: %d, max transport latency %d ms\n",
+			printk("Starting CIS central, dir: %s, RTN: %d, max transport latency %d ms\n",
 			       direction == DIR_TX ? "tx" : "rx",
 			       retransmission_number, max_transport_latency_ms);
 			cis_central_start(direction == DIR_TX,
