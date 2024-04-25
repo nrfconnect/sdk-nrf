@@ -108,13 +108,12 @@ config NETCORE_MULTIPROTOCOL_RPMSG
 	  Include multiprotocol_rpmsg as the netcore image to use
 
 config NETCORE_IPC_RADIO
-	bool "ipc_radio [Experimental]"
+	bool "ipc_radio"
 	depends on SUPPORT_NETCORE_IPC_RADIO
-	select EXPERIMENTAL
 	help
 	  Add ipc_radio as a netcore image to use.
-	  The image can be configured as Bluetooth radio,
-	  IEEE 802.15.4 radio or left empty.
+	  The image can be configured as Bluetooth radio
+	  and/or IEEE 802.15.4 radio.
 
 endchoice
 
@@ -165,17 +164,17 @@ config NETCORE_APP_UPDATE
 if NETCORE_IPC_RADIO
 
 config NETCORE_IPC_RADIO_BT_HCI_IPC
-	bool
+	bool "HCI serialization for Bluetooth"
 	help
 	  Use HCI serialization for Bluetooth
 
 config NETCORE_IPC_RADIO_BT_RPC
-	bool
+	bool "nRF RPC serialization for Bluetooth"
 	help
 	  Use nRF RPC serialization for Bluetooth
 
 config NETCORE_IPC_RADIO_IEEE802154
-	bool
+	bool "Spinel serialization for IEEE 802.15.4"
 	help
 	  Use Spinel serialization for IEEE 802.15.4
 

@@ -6,5 +6,8 @@
 
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 
-config NRF_DEFAULT_802154
+config NRF_DEFAULT_IPC_RADIO
+	default y
+
+config NETCORE_IPC_RADIO_IEEE802154
 	default y

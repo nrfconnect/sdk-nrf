@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config NRF_DEFAULT_MULTIPROTOCOL
+config NRF_DEFAULT_IPC_RADIO
 	default y if BOARD_THINGY53_NRF5340_CPUAPP
 
 choice BOOTLOADER

@@ -4,8 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config NRF_DEFAULT_BLUETOOTH
-	default y if BOARD_NRF7002DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP
+config NRF_DEFAULT_IPC_RADIO
+	default y
 
 choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT
