@@ -468,12 +468,13 @@ static uint8_t *digest_struct_find(uint8_t *area_addr, uint8_t *backup_addr, siz
  * @param[in,out]  backup_addr  Address of the backup.
  * @param[in]      area_size    Size of the area.
  *
- * @retval SUIT_PLAT_SUCCESS           if area is successfully verified or fixed.
- * @retval SUIT_PLAT_ERR_INVAL         if one of the input arguments is not correct (i.e. NULL).
- * @retval SUIT_PLAT_ERR_HW_NOT_READY  if the flash controller device is not available.
- * @retval SUIT_PLAT_ERR_IO            if unable to modify the area or the backup using flash
- *                                     controller device.
- * @retval SUIT_PLAT_ERR_CRASH         if both the area and the backup are invalid.
+ * @retval SUIT_PLAT_SUCCESS             if area is successfully verified or fixed.
+ * @retval SUIT_PLAT_ERR_INVAL           if one of the input arguments is not correct (i.e. NULL).
+ * @retval SUIT_PLAT_ERR_HW_NOT_READY    if the flash controller device is not available.
+ * @retval SUIT_PLAT_ERR_IO              if unable to modify the area or the backup using flash
+ *                                       controller device.
+ * @retval SUIT_PLAT_ERR_CRASH           if failed to calculate digest value.
+ * @retval SUIT_PLAT_ERR_AUTHENTICATION  if both the area and the backup are invalid.
  */
 static suit_plat_err_t digest_struct_validate(uint8_t *area_addr, uint8_t *backup_addr,
 					      size_t area_size)
@@ -516,7 +517,7 @@ static suit_plat_err_t digest_struct_validate(uint8_t *area_addr, uint8_t *backu
 	}
 
 	/* Both regular and backup entries broken - fail. */
-	return SUIT_PLAT_ERR_CRASH;
+	return SUIT_PLAT_ERR_AUTHENTICATION;
 }
 
 /** @brief Update the area digest value and create a new backup of the digest-protected area in NVM.
@@ -572,7 +573,12 @@ static suit_plat_err_t digest_struct_commit(uint8_t *area_addr, uint8_t *backup_
 	}
 
 	/* Verify the new area value and backup if digest is correct. */
-	return digest_struct_validate(area_addr, backup_addr, area_size);
+	err = digest_struct_validate(area_addr, backup_addr, area_size);
+	if (err == SUIT_PLAT_ERR_AUTHENTICATION) {
+		err = SUIT_PLAT_ERR_CRASH;
+	}
+
+	return err;
 }
 
 /** @brief Initialize NVV area with default values.
@@ -777,6 +783,26 @@ suit_plat_err_t suit_storage_init(void)
 		return ret;
 	}
 
+	ret = suit_storage_nvv_init();
+	if (ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Failed to init NVV: %d", ret);
+		return ret;
+	}
+
+	ret = digest_struct_validate((uint8_t *)&app_storage->app.nvv,
+				     (uint8_t *)&app_storage->app.nvv_bak,
+				     offsetof(struct suit_storage_nvv, digest));
+	if (ret == SUIT_PLAT_ERR_AUTHENTICATION) {
+		LOG_WRN("Failed to verify NVV (%d), load default values", ret);
+		ret = nvv_init((uint8_t *)&app_storage->app.nvv,
+			       (uint8_t *)&app_storage->app.nvv_bak);
+	}
+
+	if (ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Failed to initialize NVV with default values: %d", ret);
+		return ret;
+	}
+
 	/* Bootstrap Nordic MPI entries. */
 	ret = configure_manifests(nordic_roles, ARRAY_SIZE(nordic_roles), false);
 	if (ret != SUIT_PLAT_SUCCESS) {
@@ -834,26 +860,6 @@ suit_plat_err_t suit_storage_init(void)
 		 * In such case, the system is unable to boot anything except manifests controlled
 		 * by Nordic.
 		 */
-		return ret;
-	}
-
-	ret = suit_storage_nvv_init();
-	if (ret != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Failed to init NVV: %d", ret);
-		return ret;
-	}
-
-	ret = digest_struct_validate((uint8_t *)&app_storage->app.nvv,
-				     (uint8_t *)&app_storage->app.nvv_bak,
-				     offsetof(struct suit_storage_nvv, digest));
-	if (ret == SUIT_PLAT_ERR_CRASH) {
-		LOG_WRN("Failed to verify NVV (%d), load default values", ret);
-		ret = nvv_init((uint8_t *)&app_storage->app.nvv,
-			       (uint8_t *)&app_storage->app.nvv_bak);
-	}
-
-	if (ret != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Failed to initialize NVV with default values: %d", ret);
 		return ret;
 	}
 
