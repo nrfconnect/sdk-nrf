@@ -4,13 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
+if BOARD_NRF5340DK_NRF5340_CPUAPP
 
 config APP_CPUNET_RUN
 	bool "Run the CoreMark benchmark on the nRF5340 Network Core"
 	default y
 
 config IMAGE_2_BOARD
-	default "nrf5340dk_nrf5340_cpunet" if APP_CPUNET_RUN
+	default "nrf5340dk/nrf5340/cpunet" if APP_CPUNET_RUN
 
 endif
