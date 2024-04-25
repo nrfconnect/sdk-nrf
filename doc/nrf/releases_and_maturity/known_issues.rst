@@ -352,6 +352,13 @@ The issues in this section are related to the :ref:`ug_matter` protocol.
 
 .. rst-class:: v2-6-1 v2-6-0
 
+KRKNWK-18673: Bridged Light Bulb device type reports a failure when reading or writing specific ``onoff`` cluster attributes
+  The Bridge has defined ZAP clusters properly for a bridged Light Bulb, but handling of specific ``onoff`` cluster attributes has not been implemented.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-nrf`` (commit hash: ``79f3a901dd0787df9327640cb3bb889ccb023005``).
+
+.. rst-class:: v2-6-1 v2-6-0
+
 KRKNWK-18769: :ref:`matter_bridge_app` application does not print the hyperlink for displaying the setup QR code in the log.
   This happens, because the log module that displays this log entry has been disabled.
 
