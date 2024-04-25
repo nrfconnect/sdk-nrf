@@ -38,7 +38,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     tags: ci_build
     extra_args: EXTRA_CONF_FILE="prj_heap_memory.conf"
-                coremark_nrf5340dk_nrf5340_cpunet_EXTRA_CONF_FILE="prj_heap_memory.conf"
+                coremark_image_2_board_EXTRA_CONF_FILE="prj_heap_memory.conf"
   sample.benchmark.coremark_static:
     sysbuild: true
     build_only: true
