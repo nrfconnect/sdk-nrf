@@ -81,12 +81,29 @@ For devices with a short Slow Polling Interval, using this functionality can lea
 Short idle time and long idle time devices
 ==========================================
 
-The Matter v1.2 specification divides ICD into short idle time (SIT) and long idle time (LIT) devices.
+The Matter specification divides ICD into short idle time (SIT) and long idle time (LIT) devices.
 The division is based on the Slow Polling Interval parameter: equal to or shorter than 15 seconds for SIT, and longer than 15 seconds for LIT.
 
-The SIT device behavior is aligned with what was called SED in Matter v1.1 specification.
-The LIT device implementation requires multiple new features, such as Check-In protocol support and ICD client registration.
-The division of ICD types and related features were not finalized for Matter v1.2 and they are marked as provisional, so it is not recommended to use them, though you can find some of the LIT implementation in the Matter SDK and Matter specification.
+The typical use case for a SIT device are actuators, meaning devices such as door locks or window coverings, where the controller usually initiates communication and the accessory device is expected to answer with a small latency.
+Conversely, LIT devices are designed to be used for sensors or light switches, devices that only report data and are not controllable.
+In such scenarios, the LIT device initiates communication and it is not able to answer with a small latency, but it can sleep for extended periods of time and achieve much lower power consumption than an SIT.
+
+The LIT device implementation requires multiple new features, such as Check-In protocol (CIP) support, ICD client registration, and User Active Mode Trigger (UAT).
+These features are not required for SIT device implementation, but can be optionally enabled.
+
+To configure the LIT, CIP or UAT, use the following Kconfig options:
+
+* :kconfig:option:`CONFIG_CHIP_ICD_LIT_SUPPORT` to enable the Long Idle Time device support.
+* :kconfig:option:`CONFIG_CHIP_ICD_CHECK_IN_SUPPORT` to enable the Check-In protocol support.
+  The Check-In protocol provides a way for an accessory device (ICD server) to notify the registered controller (ICD client) that it is available for communication.
+  This option is by default enabled for the LIT device.
+* :kconfig:option:`CONFIG_CHIP_ICD_CLIENTS_PER_FABRIC` to set the number of ICD clients that can be registered to an ICD server and benefit from CIP functionality.
+* :kconfig:option:`CONFIG_CHIP_ICD_UAT_SUPPORT` to enable the User Active Mode Trigger support.
+  The User Active Mode Trigger allows triggering the ICD device to move from the idle to active state and make it immediately responsive, for example to change its configuration.
+  This option is by default enabled for the LIT device.
+
+The LIT, CIP and UAT features were not finalized for Matter v1.3 and they are marked as provisional, so it is not recommended to use them, though you can find some of the LIT implementation in the Matter SDK and Matter specification.
+You can still enable them for testing purposes.
 
 Enable low power mode for the selected networking technology
 ************************************************************

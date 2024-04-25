@@ -116,7 +116,7 @@ void AppTask::IdentifyTimerHandler()
 void AppTask::UpdateTemperatureClusterState()
 {
 	struct sensor_value sTemperature;
-	EmberAfStatus status;
+	Protocols::InteractionModel::Status status;
 	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_AMBIENT_TEMP, &sTemperature);
 	if (result == 0) {
 		/* Defined by cluster temperature measured value = 100 x temperature in degC with resolution of
@@ -132,8 +132,8 @@ void AppTask::UpdateTemperatureClusterState()
 
 		status = Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Set(
 			kTemperatureMeasurementEndpointId, newValue);
-		if (status != EMBER_ZCL_STATUS_SUCCESS) {
-			LOG_ERR("Updating temperature measurement %x", status);
+		if (status != Protocols::InteractionModel::Status::Success) {
+			LOG_ERR("Updating temperature measurement %x", to_underlying(status));
 		}
 	} else {
 		LOG_ERR("Getting temperature measurement data from BME688 failed with: %d", result);
@@ -143,7 +143,7 @@ void AppTask::UpdateTemperatureClusterState()
 void AppTask::UpdatePressureClusterState()
 {
 	struct sensor_value sPressure;
-	EmberAfStatus status;
+	Protocols::InteractionModel::Status status;
 	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_PRESS, &sPressure);
 	if (result == 0) {
 		/* Defined by cluster pressure measured value = 10 x pressure in kPa with resolution of 0.1 kPa.
@@ -159,8 +159,8 @@ void AppTask::UpdatePressureClusterState()
 
 		status = Clusters::PressureMeasurement::Attributes::MeasuredValue::Set(kPressureMeasurementEndpointId,
 										       newValue);
-		if (status != EMBER_ZCL_STATUS_SUCCESS) {
-			LOG_ERR("Updating pressure measurement %x", status);
+		if (status != Protocols::InteractionModel::Status::Success) {
+			LOG_ERR("Updating pressure measurement %x", to_underlying(status));
 		}
 	} else {
 		LOG_ERR("Getting pressure measurement data from BME688 failed with: %d", result);
@@ -170,7 +170,7 @@ void AppTask::UpdatePressureClusterState()
 void AppTask::UpdateRelativeHumidityClusterState()
 {
 	struct sensor_value sHumidity;
-	EmberAfStatus status;
+	Protocols::InteractionModel::Status status;
 	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_HUMIDITY, &sHumidity);
 	if (result == 0) {
 		/* Defined by cluster humidity measured value = 100 x humidity in %RH with resolution of 0.01 %.
@@ -186,8 +186,8 @@ void AppTask::UpdateRelativeHumidityClusterState()
 
 		status = Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Set(
 			kHumidityMeasurementEndpointId, newValue);
-		if (status != EMBER_ZCL_STATUS_SUCCESS) {
-			LOG_ERR("Updating relative humidity measurement %x", status);
+		if (status != Protocols::InteractionModel::Status::Success) {
+			LOG_ERR("Updating relative humidity measurement %x", to_underlying(status));
 		}
 	} else {
 		LOG_ERR("Getting humidity measurement data from BME688 failed with: %d", result);
@@ -196,7 +196,7 @@ void AppTask::UpdateRelativeHumidityClusterState()
 
 void AppTask::UpdatePowerSourceClusterState()
 {
-	EmberAfStatus status;
+	Protocols::InteractionModel::Status status;
 	int32_t voltage = BatteryMeasurementReadVoltageMv();
 	/* Value is expressed in half percent units ranging from 0 to 200. */
 	uint8_t batteryPercentage;
@@ -244,38 +244,38 @@ void AppTask::UpdatePowerSourceClusterState()
 	}
 
 	status = Clusters::PowerSource::Attributes::BatVoltage::Set(kPowerSourceEndpointId, voltage);
-	if (status != EMBER_ZCL_STATUS_SUCCESS) {
-		LOG_ERR("Updating battery voltage failed %x", status);
+	if (status != Protocols::InteractionModel::Status::Success) {
+		LOG_ERR("Updating battery voltage failed %x", to_underlying(status));
 	}
 
 	status = Clusters::PowerSource::Attributes::BatPercentRemaining::Set(kPowerSourceEndpointId, batteryPercentage);
-	if (status != EMBER_ZCL_STATUS_SUCCESS) {
-		LOG_ERR("Updating battery percentage failed %x", status);
+	if (status != Protocols::InteractionModel::Status::Success) {
+		LOG_ERR("Updating battery percentage failed %x", to_underlying(status));
 	}
 
 	status = Clusters::PowerSource::Attributes::BatTimeRemaining::Set(kPowerSourceEndpointId, batteryTimeRemaining);
-	if (status != EMBER_ZCL_STATUS_SUCCESS) {
-		LOG_ERR("Updating battery time remaining failed %x", status);
+	if (status != Protocols::InteractionModel::Status::Success) {
+		LOG_ERR("Updating battery time remaining failed %x", to_underlying(status));
 	}
 
 	status = Clusters::PowerSource::Attributes::BatChargeLevel::Set(kPowerSourceEndpointId, batteryChargeLevel);
-	if (status != EMBER_ZCL_STATUS_SUCCESS) {
-		LOG_ERR("Updating battery charge level failed %x", status);
+	if (status != Protocols::InteractionModel::Status::Success) {
+		LOG_ERR("Updating battery charge level failed %x", to_underlying(status));
 	}
 
 	status = Clusters::PowerSource::Attributes::Status::Set(kPowerSourceEndpointId, batteryStatus);
-	if (status != EMBER_ZCL_STATUS_SUCCESS) {
-		LOG_ERR("Updating battery status failed %x", status);
+	if (status != Protocols::InteractionModel::Status::Success) {
+		LOG_ERR("Updating battery status failed %x", to_underlying(status));
 	}
 
 	status = Clusters::PowerSource::Attributes::BatPresent::Set(kPowerSourceEndpointId, batteryPresent);
-	if (status != EMBER_ZCL_STATUS_SUCCESS) {
-		LOG_ERR("Updating battery present failed %x", status);
+	if (status != Protocols::InteractionModel::Status::Success) {
+		LOG_ERR("Updating battery present failed %x", to_underlying(status));
 	}
 
 	status = Clusters::PowerSource::Attributes::BatChargeState::Set(kPowerSourceEndpointId, batteryCharged);
-	if (status != EMBER_ZCL_STATUS_SUCCESS) {
-		LOG_ERR("Updating battery charge failed %x", status);
+	if (status != Protocols::InteractionModel::Status::Success) {
+		LOG_ERR("Updating battery charge failed %x", to_underlying(status));
 	}
 }
 

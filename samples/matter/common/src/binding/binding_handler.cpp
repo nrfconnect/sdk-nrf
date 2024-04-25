@@ -69,14 +69,14 @@ namespace Nrf::Matter
 		VerifyOrReturn(context != nullptr, LOG_ERR("Invalid context for device handler"));
 		BindingData *data = static_cast<BindingData *>(context);
 
-		if (binding.type == EMBER_MULTICAST_BINDING) {
+		if (binding.type == MATTER_MULTICAST_BINDING) {
 
 			if (data->IsGroup.HasValue() && !data->IsGroup.Value()) {
 				return;
 			}
 
 			data->InvokeCommandFunc(binding, nullptr, *data);
-		} else if (binding.type == EMBER_UNICAST_BINDING) {
+		} else if (binding.type == MATTER_UNICAST_BINDING) {
 
 			if (data->IsGroup.HasValue() && data->IsGroup.Value()) {
 				return;
@@ -116,7 +116,7 @@ namespace Nrf::Matter
 		uint8_t i = 0;
 		for (auto &entry : bindingTable) {
 			switch (entry.type) {
-			case EMBER_UNICAST_BINDING:
+			case MATTER_UNICAST_BINDING:
 				LOG_INF("[%d] UNICAST:", i++);
 				LOG_INF("\t\t+ Fabric: %d\n \
             \t+ LocalEndpoint %d \n \
@@ -126,7 +126,7 @@ namespace Nrf::Matter
 					(int)entry.fabricIndex, (int)entry.local, (int)entry.clusterId.Value(),
 					(int)entry.remote, (int)entry.nodeId);
 				break;
-			case EMBER_MULTICAST_BINDING:
+			case MATTER_MULTICAST_BINDING:
 				LOG_INF("[%d] GROUP:", i++);
 				LOG_INF("\t\t+ Fabric: %d\n \
             \t+ LocalEndpoint %d \n \
@@ -135,7 +135,7 @@ namespace Nrf::Matter
 					(int)entry.fabricIndex, (int)entry.local, (int)entry.remote,
 					(int)entry.groupId);
 				break;
-			case EMBER_UNUSED_BINDING:
+			case MATTER_UNUSED_BINDING:
 				LOG_INF("[%d] UNUSED", i++);
 				break;
 			default:

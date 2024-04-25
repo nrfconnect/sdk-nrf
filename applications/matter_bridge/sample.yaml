@@ -33,14 +33,6 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-  applications.matter_bridge.smp_dfu.br_ble:
-    build_only: true
-    extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y CONFIG_BRIDGED_DEVICE_BT=y
-      CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
-      CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
-    integration_platforms:
-      - nrf7002dk/nrf5340/cpuapp
-    platform_allow: nrf7002dk/nrf5340/cpuapp
   applications.matter_bridge.nrf70ek:
     build_only: true
     extra_args: SHIELD=nrf7002ek CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y

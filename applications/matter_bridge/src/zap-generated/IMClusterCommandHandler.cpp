@@ -190,6 +190,16 @@ namespace app
 						}
 						break;
 					}
+					case Commands::TimeSnapshot::Id: {
+						Commands::TimeSnapshot::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled =
+								emberAfGeneralDiagnosticsClusterTimeSnapshotCallback(
+									apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
 					default: {
 						// Unrecognized command ID, error status will apply.
 						apCommandObj->AddStatus(

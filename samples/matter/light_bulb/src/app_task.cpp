@@ -178,23 +178,23 @@ bool AppTask::AWSIntegrationCallback(struct aws_iot_integration_cb_data *data)
 {
 	LOG_INF("Attribute change requested from AWS IoT: %d", data->value);
 
-	EmberAfStatus status;
+	Protocols::InteractionModel::Status status;
 
 	VerifyOrDie(data->error == 0);
 
 	if (data->attribute_id == ATTRIBUTE_ID_ONOFF) {
 		/* write the new on/off value */
 		status = Clusters::OnOff::Attributes::OnOff::Set(kLightEndpointId, data->value);
-		if (status != EMBER_ZCL_STATUS_SUCCESS) {
-			LOG_ERR("Updating on/off cluster failed: %x", status);
+		if (status != Protocols::InteractionModel::Status::Success) {
+			LOG_ERR("Updating on/off cluster failed: %x", to_underlying(status));
 			return false;
 		}
 	} else if (data->attribute_id == ATTRIBUTE_ID_LEVEL_CONTROL) {
 		/* write the current level */
 		status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, data->value);
 
-		if (status != EMBER_ZCL_STATUS_SUCCESS) {
-			LOG_ERR("Updating level cluster failed: %x", status);
+		if (status != Protocols::InteractionModel::Status::Success) {
+			LOG_ERR("Updating level cluster failed: %x", to_underlying(status));
 			return false;
 		}
 	}
@@ -236,14 +236,14 @@ void AppTask::UpdateClusterState()
 	SystemLayer().ScheduleLambda([this] {
 #if defined(CONFIG_PWM)
 		/* write the new on/off value */
-		EmberAfStatus status =
+		Protocols::InteractionModel::Status status =
 			Clusters::OnOff::Attributes::OnOff::Set(kLightEndpointId, mPWMDevice.IsTurnedOn());
 #else
-		EmberAfStatus status = Clusters::OnOff::Attributes::OnOff::Set(
+		Protocols::InteractionModel::Status status = Clusters::OnOff::Attributes::OnOff::Set(
 			kLightEndpointId, Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).GetState());
 #endif
-		if (status != EMBER_ZCL_STATUS_SUCCESS) {
-			LOG_ERR("Updating on/off cluster failed: %x", status);
+		if (status != Protocols::InteractionModel::Status::Success) {
+			LOG_ERR("Updating on/off cluster failed: %x", to_underlying(status));
 		}
 
 #if defined(CONFIG_PWM)
@@ -258,8 +258,8 @@ void AppTask::UpdateClusterState()
 		}
 #endif
 
-		if (status != EMBER_ZCL_STATUS_SUCCESS) {
-			LOG_ERR("Updating level cluster failed: %x", status);
+		if (status != Protocols::InteractionModel::Status::Success) {
+			LOG_ERR("Updating level cluster failed: %x", to_underlying(status));
 		}
 	});
 }

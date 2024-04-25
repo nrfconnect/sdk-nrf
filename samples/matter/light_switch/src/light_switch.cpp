@@ -80,7 +80,7 @@ void LightSwitch::DimmerChangeBrightness()
 void LightSwitch::SwitchChangedHandler(const EmberBindingTableEntry &binding, OperationalDeviceProxy *deviceProxy,
 				       Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
-	if (binding.type == EMBER_MULTICAST_BINDING) {
+	if (binding.type == MATTER_MULTICAST_BINDING) {
 		switch (bindingData.ClusterId) {
 		case Clusters::OnOff::Id:
 			OnOffProcessCommand(bindingData.CommandId, binding, nullptr, bindingData);
@@ -92,7 +92,7 @@ void LightSwitch::SwitchChangedHandler(const EmberBindingTableEntry &binding, Op
 			ChipLogError(NotSpecified, "Invalid binding group command data");
 			break;
 		}
-	} else if (binding.type == EMBER_UNICAST_BINDING) {
+	} else if (binding.type == MATTER_UNICAST_BINDING) {
 		switch (bindingData.ClusterId) {
 		case Clusters::OnOff::Id:
 			OnOffProcessCommand(bindingData.CommandId, binding, deviceProxy, bindingData);

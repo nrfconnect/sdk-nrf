@@ -52,7 +52,7 @@ CHIP_ERROR TemperatureManager::Init()
 void TemperatureManager::LogThermostatStatus()
 {
 	LOG_INF("Thermostat:");
-	LOG_INF("	Mode - %d", mThermMode);
+	LOG_INF("	Mode - %d", static_cast<uint8_t>(mThermMode));
 	if (!(GetLocalTemp().IsNull())) {
 		int16_t tempValue = GetLocalTemp().Value();
 		LOG_INF("	LocalTemperature - %d,%d'C", ReturnCompleteValue(tempValue),
@@ -96,7 +96,7 @@ void TemperatureManager::AttributeChangeHandler(EndpointId endpointId, Attribute
 	} break;
 
 	case Thermostat::Attributes::SystemMode::Id: {
-		mThermMode = (*value);
+		mThermMode = static_cast<app::Clusters::Thermostat::SystemModeEnum>(*value);
 	} break;
 
 	default: {
