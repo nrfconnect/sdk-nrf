@@ -297,7 +297,8 @@ gpio1: gpio@d8200 {
 gpiote20: gpiote@da000 {
 	compatible = "nordic,nrf-gpiote";
 	reg = <0xda000 0x1000>;
-	interrupts = <219 NRF_DEFAULT_IRQ_PRIORITY>;
+	/* nrfx assigns irq 218 to non-secure, and 219 to secure */
+	interrupts = <218 NRF_DEFAULT_IRQ_PRIORITY>;
 	status = "disabled";
 	instance = <20>;
 };
@@ -396,7 +397,8 @@ gpio0: gpio@10a000 {
 gpiote30: gpiote@10c000 {
 	compatible = "nordic,nrf-gpiote";
 	reg = <0x10c000 0x1000>;
-	interrupts = <269 NRF_DEFAULT_IRQ_PRIORITY>;
+	/* nrfx assigns IRQ 268 to non-secure, and 269 to secure */
+	interrupts = <268 NRF_DEFAULT_IRQ_PRIORITY>;
 	status = "disabled";
 	instance = <30>;
 };
