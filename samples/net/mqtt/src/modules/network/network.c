@@ -95,13 +95,13 @@ static void network_task(void)
 		return;
 	}
 
-	/* Resend connection status if the sample is built for Native Posix.
+	/* Resend connection status if the sample is built for Native Sim.
 	 * This is necessary because the network interface is automatically brought up
 	 * at SYS_INIT() before main() is called.
 	 * This means that NET_EVENT_L4_CONNECTED fires before the
 	 * appropriate handler l4_event_handler() is registered.
 	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_POSIX)) {
+	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
 		conn_mgr_mon_resend_status();
 	}
 }
