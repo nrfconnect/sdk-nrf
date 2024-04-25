@@ -129,7 +129,8 @@ The following snippets are available:
 * ``multiprotocol_ble`` - Enables the Multiprotocol Bluetooth LE extension.
 
   .. note::
-    When building with ``multiprotocol_ble`` snippet, for the ``nrf5340dk/nrf5340/cpuapp`` build target, additional :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` option has to be set.
+    When building with the ``multiprotocol_ble`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` board target, set the additional :makevar:`FILE_SUFFIX` CMake option to ``ble``.
+    See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
 
 FEM support
 ===========

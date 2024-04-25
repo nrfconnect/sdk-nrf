@@ -105,7 +105,8 @@ The following snippets are available:
   Not compatible with the ``tcat`` snippet.
 
   .. note::
-    When building with the ``multiprotocol`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` build target, the :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` Kconfig option has to be set to ``y``.
+    When building with the ``multiprotocol`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` board target, set the :makevar:`FILE_SUFFIX` CMake option to ``ble``.
+    See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
 
 * ``tcat`` - Enables support for Thread commissioning over authenticated TLS.
   Not compatible with the ``multiprotocol`` snippet.

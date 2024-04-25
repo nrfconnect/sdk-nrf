@@ -46,7 +46,7 @@ tests:
       nrf5340dk/nrf5340/cpuapp/ns
     extra_args: >
       coap_client_SNIPPET="ci;logging;mtd;multiprotocol_ble"
-      SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG=y
+      FILE_SUFFIX=ble
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840

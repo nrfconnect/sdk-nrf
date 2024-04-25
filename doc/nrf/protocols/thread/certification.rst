@@ -67,7 +67,8 @@ Complete the following steps to prepare for the certification tests:
 #. Build the certification image.
 
    Use the :ref:`ot_cli_sample` sample as a base and apply the ``ci`` and ``multiprotocol`` :ref:`app_build_snippets`.
-   If you are building for the ``nrf5340dk/nrf5340/cpuapp`` target, also set the :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` Kconfig option to ``y``.
+   If you are building for the ``nrf5340dk/nrf5340/cpuapp`` target, also set the additional :makevar:`FILE_SUFFIX` CMake option to ``ble``.
+   See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
 
    * If building on the command line, use the following command:
 
@@ -86,7 +87,7 @@ Complete the following steps to prepare for the certification tests:
 
    .. note::
       The configuration option selects the precompiled OpenThread libraries.
-      The ``multiprotocol`` snippet and the :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` Kconfig option enable :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth® LE advertising.
+      The ``multiprotocol`` snippet and the :makevar:`FILE_SUFFIX` CMake option set to ``ble`` enables the :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth® LE advertising.
 
 #. Prepare Thread Test Harness.
 

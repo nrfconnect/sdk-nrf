@@ -203,6 +203,8 @@ Applications
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
+Applications that used :ref:`zephyr:bluetooth-hci-ipc-sample`, :ref:`zephyr:nrf-ieee802154-rpmsg-sample`, or :ref:`multiprotocol-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
+
 Asset Tracker v2
 ----------------
 
@@ -312,6 +314,8 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
+Bluetooth samples that used the :ref:`zephyr:bluetooth-hci-ipc-sample` radio core firmware now use the :ref:`ipc_radio`.
+
 * Added the :ref:`bluetooth_iso_combined_bis_cis` sample showcasing forwarding isochronous data from CIS to BIS.
 * Added the :ref:`bluetooth_isochronous_time_synchronization` sample showcasing time-synchronized processing of isochronous data.
 
@@ -412,6 +416,8 @@ Bluetooth samples
 
 Bluetooth Mesh samples
 ----------------------
+
+Bluetooth Mesh samples that used the :ref:`zephyr:bluetooth-hci-ipc-sample` radio core firmware now use the :ref:`ipc_radio`.
 
 * :ref:`bluetooth_mesh_sensor_client` sample:
 
@@ -565,6 +571,8 @@ Keys samples
 Matter samples
 --------------
 
+Matter samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
+
 * Removed:
 
   * The :file:`configuration` directory which contained the Partition Manager configuration file.
@@ -697,6 +705,8 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
+Thread samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
+
 * Initial experimental support for nRF54L15 for the Thread CLI and Co-processor samples.
 * :ref:`ot_coprocessor_sample` sample:
 
@@ -710,7 +720,7 @@ Sensor samples
 Zigbee samples
 --------------
 
-|no_changes_yet_note|
+Zigbee samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
 
 Wi-Fi samples
 -------------

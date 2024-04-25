@@ -16,7 +16,7 @@ tests:
       nrf54l15pdk/nrf54l15/cpuapp
     extra_args: >
       cli_SNIPPET="ci;logging;multiprotocol;tcp"
-      SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG=y
+      FILE_SUFFIX=ble
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52840dongle/nrf52840
@@ -53,7 +53,7 @@ tests:
       nrf5340dk/nrf5340/cpuapp/ns
     extra_args: >
       cli_SNIPPET="ci;logging;multiprotocol;tcp;usb"
-      SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG=y
+      FILE_SUFFIX=ble
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
