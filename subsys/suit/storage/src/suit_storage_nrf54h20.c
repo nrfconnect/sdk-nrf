@@ -13,14 +13,14 @@
 LOG_MODULE_REGISTER(suit_storage, CONFIG_SUIT_LOG_LEVEL);
 
 #define SUIT_STORAGE_NORDIC_ADDRESS suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_NORDIC_OFFSET)
-#define SUIT_STORAGE_NORDIC_OFFSET  FIXED_PARTITION_OFFSET(suit_storage_nordic)
-#define SUIT_STORAGE_NORDIC_SIZE    FIXED_PARTITION_SIZE(suit_storage_nordic)
+#define SUIT_STORAGE_NORDIC_OFFSET  FIXED_PARTITION_OFFSET(cpusec_suit_storage)
+#define SUIT_STORAGE_NORDIC_SIZE    FIXED_PARTITION_SIZE(cpusec_suit_storage)
 #define SUIT_STORAGE_RAD_ADDRESS    suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_RAD_OFFSET)
-#define SUIT_STORAGE_RAD_OFFSET	    FIXED_PARTITION_OFFSET(suit_storage_rad)
-#define SUIT_STORAGE_RAD_SIZE	    FIXED_PARTITION_SIZE(suit_storage_rad)
+#define SUIT_STORAGE_RAD_OFFSET	    FIXED_PARTITION_OFFSET(cpurad_suit_storage)
+#define SUIT_STORAGE_RAD_SIZE	    FIXED_PARTITION_SIZE(cpurad_suit_storage)
 #define SUIT_STORAGE_APP_ADDRESS    suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_APP_OFFSET)
-#define SUIT_STORAGE_APP_OFFSET	    FIXED_PARTITION_OFFSET(suit_storage_app)
-#define SUIT_STORAGE_APP_SIZE	    FIXED_PARTITION_SIZE(suit_storage_app)
+#define SUIT_STORAGE_APP_OFFSET	    FIXED_PARTITION_OFFSET(cpuapp_suit_storage)
+#define SUIT_STORAGE_APP_SIZE	    FIXED_PARTITION_SIZE(cpuapp_suit_storage)
 
 typedef uint8_t suit_storage_digest_t[32];
 

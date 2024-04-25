@@ -15,17 +15,17 @@
 
 		/* Use the last 32 kB of SecDom SUIT NVM storage. */
 		/* Use the first 4kB as area reserved for Secure domain. */
-		suit_storage_nordic: partition@1e7000 {
+		cpusec_suit_storage: partition@1e7000 {
 			reg = <0x1e7000 DT_SIZE_K(4)>;
 		};
 
 		/* Use the next 4kB as area reserved for Radio domain. */
-		suit_storage_rad: partition@1e8000 {
+		cpurad_suit_storage: partition@1e8000 {
 			reg = <0x1e8000 DT_SIZE_K(4)>;
 		};
 
 		/* Use the next 8kB as area reserved for Application domain. */
-		suit_storage_app: partition@1e9000 {
+		cpuapp_suit_storage: partition@1e9000 {
 			reg = <0x1e9000 DT_SIZE_K(8)>;
 		};
 	};

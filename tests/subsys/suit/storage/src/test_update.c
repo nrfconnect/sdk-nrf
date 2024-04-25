@@ -9,9 +9,9 @@
 #include <suit_plat_mem_util.h>
 #include <update_magic_values.h>
 
-#if DT_NODE_EXISTS(DT_NODELABEL(suit_storage_app))
-#define SUIT_STORAGE_OFFSET FIXED_PARTITION_OFFSET(suit_storage_app)
-#define SUIT_STORAGE_SIZE   FIXED_PARTITION_SIZE(suit_storage_app)
+#if DT_NODE_EXISTS(DT_NODELABEL(cpuapp_suit_storage))
+#define SUIT_STORAGE_OFFSET FIXED_PARTITION_OFFSET(cpuapp_suit_storage)
+#define SUIT_STORAGE_SIZE   FIXED_PARTITION_SIZE(cpuapp_suit_storage)
 #else
 #define SUIT_STORAGE_OFFSET FIXED_PARTITION_OFFSET(suit_storage)
 #define SUIT_STORAGE_SIZE   FIXED_PARTITION_SIZE(suit_storage)

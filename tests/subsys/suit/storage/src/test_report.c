@@ -8,9 +8,9 @@
 #include <suit_storage.h>
 #include <suit_plat_mem_util.h>
 
-#if DT_NODE_EXISTS(DT_NODELABEL(suit_storage_nordic))
-#define SUIT_STORAGE_OFFSET	      FIXED_PARTITION_OFFSET(suit_storage_nordic)
-#define SUIT_STORAGE_SIZE	      FIXED_PARTITION_SIZE(suit_storage_nordic)
+#if DT_NODE_EXISTS(DT_NODELABEL(cpusec_suit_storage))
+#define SUIT_STORAGE_OFFSET	      FIXED_PARTITION_OFFSET(cpusec_suit_storage)
+#define SUIT_STORAGE_SIZE	      FIXED_PARTITION_SIZE(cpusec_suit_storage)
 #define SUIT_STORAGE_REPORT_SLOTS     1
 #define SUIT_STORAGE_REPORT_SLOT_SIZE (160 - SUIT_STORAGE_REPORT_FLAG_SIZE)
 #else
