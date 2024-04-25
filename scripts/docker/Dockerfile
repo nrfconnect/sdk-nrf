@@ -18,14 +18,21 @@ LABEL org.opencontainers.image.source=https://github.com/nrfconnect/sdk-nrf
 LABEL org.opencontainers.image.description="This image contains toolchain for sdk-nrf."
 
 RUN apt-get update && apt-get install -y \
-    ca-certificates qemu-system-arm libffi7 \
+    ca-certificates qemu-system-arm libffi7 git \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy toolchain
 COPY --from=nrfutil-builder /opt/ncs/toolchains /opt/ncs/toolchains
 COPY --from=nrfutil-builder /opt/toolchain-env.sh /opt/toolchain-env.sh
 
-# Add entrypoint which calls toolchain-env.sh
+## Add entrypoint which calls toolchain-env.sh
 COPY entrypoint.sh /opt/entrypoint.sh
 ENTRYPOINT ["/opt/entrypoint.sh"]
+
+RUN cat /opt/entrypoint.sh >> /tmp.sh
+RUN cat /etc/bash.bashrc >> /tmp.sh
+RUN cat /tmp.sh > /etc/bash.bashrc
+ENV BASH_ENV=/etc/bash.bashrc
+
+SHELL ["/bin/bash", "-c"]
 CMD ["bin/bash"]
