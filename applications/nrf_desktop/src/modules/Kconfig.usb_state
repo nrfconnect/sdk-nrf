@@ -6,8 +6,6 @@
 
 menuconfig DESKTOP_USB_ENABLE
 	bool "Enable USB module"
-	select USB_DEVICE_STACK
-	select USB_DEVICE_HID
 	help
 	  Enables USB module. The module allows to transfer HID reports over
 	  USB.
@@ -17,7 +15,6 @@ if DESKTOP_USB_ENABLE
 config DESKTOP_USB_REMOTE_WAKEUP
 	bool "Enable USB remote wakeup"
 	default y
-	select USB_DEVICE_REMOTE_WAKEUP
 	depends on CAF_PM_EVENTS
 	help
 	  Enable USB remote wakeup functionality. The USB wakeup request is
@@ -49,6 +46,29 @@ config DESKTOP_USB_PM_ENABLE
 	default y
 	help
 	  This enables small module that blocks power down if the USB is active.
+
+choice DESKTOP_USB_STACK
+	prompt "USB stack"
+	default DESKTOP_USB_STACK_LEGACY
+
+config DESKTOP_USB_STACK_NEXT
+	bool "USB next stack [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	select USB_DEVICE_STACK_NEXT
+	help
+	  Use experimental integration of USB next stack. The USB next API is
+	  not yet integrated by the module's implementation. The option only
+	  disables the legacy USB stack and builds with the USB next stack.
+
+config DESKTOP_USB_STACK_LEGACY
+	bool "USB legacy stack"
+	select USB_DEVICE_STACK
+	select USB_DEVICE_HID
+	select USB_DEVICE_REMOTE_WAKEUP if DESKTOP_USB_REMOTE_WAKEUP
+
+endchoice
+
+if DESKTOP_USB_STACK_LEGACY
 
 config USB_HID_POLL_INTERVAL_MS
 	default 1
@@ -118,6 +138,24 @@ choice USB_HID_LOG_LEVEL_CHOICE
 	help
 	  Reduce USB HID log level to avoid flooding logs on USB state changes.
 endchoice
+
+endif # DESKTOP_USB_STACK_LEGACY
+
+if DESKTOP_USB_STACK_NEXT
+
+choice USBD_LOG_LEVEL_CHOICE
+	default USBD_LOG_LEVEL_WRN
+	help
+	  Reduce USBD log level to avoid flooding logs.
+endchoice
+
+choice UDC_DRIVER_LOG_LEVEL_CHOICE
+	default UDC_DRIVER_LOG_LEVEL_WRN
+	help
+	  Reduce USB driver log level to avoid flooding logs.
+endchoice
+
+endif # DESKTOP_USB_STACK_NEXT
 
 module = DESKTOP_USB_STATE
 module-str = USB state
