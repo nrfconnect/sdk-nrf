@@ -36,6 +36,8 @@ static void iso_sent(struct bt_iso_chan *chan);
 static void iso_connected(struct bt_iso_chan *chan);
 static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason);
 
+static void (*iso_chan_connected_cb)(void);
+
 NET_BUF_POOL_FIXED_DEFINE(tx_pool, CONFIG_BT_ISO_MAX_CHAN,
 			  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU),
 			  CONFIG_BT_CONN_TX_USER_DATA_SIZE, NULL);
@@ -251,6 +253,10 @@ static void iso_connected(struct bt_iso_chan *chan)
 	printk("ISO channel index %d connected: ", chan_index);
 	iso_chan_info_print(&iso_infos[chan_index], roles[chan_index]);
 
+	if (iso_chan_connected_cb) {
+		iso_chan_connected_cb();
+	}
+
 	if (!first_sdu_sent) {
 		/* Send the first SDU immediately.
 		 * The following SDUs will be sent time-aligned with the controller clock.
@@ -356,9 +362,10 @@ static void sdu_timer_expired(struct k_timer *timer)
 	send_next_sdu_on_all_channels();
 }
 
-void iso_tx_init(uint8_t retransmission_number)
+void iso_tx_init(uint8_t retransmission_number, void (*iso_connected_cb)(void))
 {
 	int err;
+	iso_chan_connected_cb = iso_connected_cb;
 
 	iso_tx_qos.rtn = retransmission_number;
 

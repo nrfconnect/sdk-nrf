@@ -80,7 +80,7 @@ void cis_peripheral_start(bool do_tx)
 
 	/* It is the central that sets the RTN */
 	if (do_tx) {
-		iso_tx_init(unused_rtn);
+		iso_tx_init(unused_rtn, NULL);
 	} else {
 		iso_rx_init(unused_rtn);
 	}
