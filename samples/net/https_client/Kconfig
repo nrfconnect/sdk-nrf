@@ -13,6 +13,10 @@ config SAMPLE_TFM_MBEDTLS
 	  Use TF-M and MbedTLS in this sample instead of using
 	  the offloaded TLS stack in the modem.
 
+config HTTPS_HOSTNAME
+	string "HTTPS hostname"
+	default "example.com"
+
 endmenu
 
 menu "Zephyr Kernel"

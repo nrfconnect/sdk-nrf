@@ -10,6 +10,7 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 #include <net/download_client.h>
 
 #if CONFIG_MODEM_KEY_MGMT
@@ -285,6 +286,16 @@ int main(void)
 	if (err) {
 		printk("conn_mgr_all_if_connect, error: %d\n", err);
 		return err;
+	}
+
+	/* Resend connection status if the sample is built for NATIVE_SIM.
+	 * This is necessary because the network interface is automatically brought up
+	 * at SYS_INIT() before main() is called.
+	 * This means that NET_EVENT_L4_CONNECTED fires before the
+	 * appropriate handler l4_event_handler() is registered.
+	 */
+	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
+		conn_mgr_mon_resend_status();
 	}
 
 	k_sem_take(&network_connected_sem, K_FOREVER);

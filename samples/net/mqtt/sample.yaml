@@ -16,7 +16,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - thingy91/nrf9160/ns
       - nrf7002dk/nrf5340/cpuapp/ns
-      - native_posix
+      - native_sim
     tags: ci_build
   sample.net.mqtt.nrf70.tls:
     build_only: true
@@ -41,9 +41,9 @@ tests:
       - thingy91/nrf9160/ns
     tags: ci_build
     extra_args: EXTRA_CONF_FILE=overlay-tls-nrf91.conf
-  sample.net.mqtt.native_posix.tls:
+  sample.net.mqtt.native_sim.tls:
     build_only: true
     build_on_all: true
-    platform_allow: native_posix
+    platform_allow: native_sim
     tags: ci_build
-    extra_args: EXTRA_CONF_FILE=overlay-tls-native_posix.conf
+    extra_args: EXTRA_CONF_FILE=overlay-tls-native_sim.conf

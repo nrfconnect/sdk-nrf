@@ -228,6 +228,16 @@ int main(void)
 		return err;
 	}
 
+	/* Resend connection status if the sample is built for NATIVE_SIM.
+	 * This is necessary because the network interface is automatically brought up
+	 * at SYS_INIT() before main() is called.
+	 * This means that NET_EVENT_L4_CONNECTED fires before the
+	 * appropriate handler l4_event_handler() is registered.
+	 */
+	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
+		conn_mgr_mon_resend_status();
+	}
+
 	wait_for_network();
 
 	err = periodic_coap_request_loop();

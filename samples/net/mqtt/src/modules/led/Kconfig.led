@@ -7,7 +7,7 @@
 menuconfig MQTT_SAMPLE_LED
 	bool "LED"
 	select LED
-	default y if !BOARD_NATIVE_POSIX
+	default y if !BOARD_NATIVE_SIM
 
 if MQTT_SAMPLE_LED
 
