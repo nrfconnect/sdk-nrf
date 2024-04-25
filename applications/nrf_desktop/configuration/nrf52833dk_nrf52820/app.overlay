@@ -1,4 +1,20 @@
 / {
+	/* Configure DTS nodes used for USB next HID support. */
+	hid_dev_0: hid_dev_0 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID0";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+	hid_dev_1: hid_dev_1 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID1";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+
 	gpioled0 {
 		compatible = "gpio-leds";
 		status = "okay";

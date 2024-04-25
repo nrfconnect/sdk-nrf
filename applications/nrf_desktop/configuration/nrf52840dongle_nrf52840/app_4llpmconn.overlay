@@ -25,6 +25,34 @@
 		in-polling-rate = <1000>;
 		in-report-size = <64>;
 	};
+	hid_dev_2: hid_dev_2 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID2";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+	hid_dev_3: hid_dev_3 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID3";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+	hid_dev_4: hid_dev_4 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID4";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+	hid_dev_5: hid_dev_5 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID5";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
 
 	pwmleds {
 		red_pwm_led: pwm_led_0 {
