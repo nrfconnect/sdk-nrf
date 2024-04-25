@@ -8,7 +8,7 @@ Developing with nRF52 Series
    :local:
    :depth: 2
 
-The |NCS| provides support for developing on all nRF52 Series devices and contains board definitions for all development kits and reference design hardware.
+The |NCS| provides support for developing on all nRF52 Series devices using Bluetooth®, and other supported protocols, and contains board definitions for all development kits and reference design hardware.
 
 See one of the following guides for detailed information about the corresponding nRF52 Series development kit (DK) hardware:
 
@@ -57,6 +57,10 @@ To enable support for FOTA updates, do the following:
    * All of the SMP command handlers mentioned in the previous paragraph.
    * SMP BT reassembly feature.
    * The :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` Kconfig option automatically extends the Bluetooth buffers, which allows to speed up the FOTA transfer over Bluetooth, but also increases RAM usage.
+
+.. note::
+   The :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option can be used devices to enable MCUmgr to perform firmware over-the-air (FOTA) updates using Bluetooth LE.
+   It can be used along with other samples, and is meant as a demonstration of the default DFU configuration over Bluetooth.
 
 .. fota_upgrades_over_ble_intro_end
 

@@ -19,6 +19,9 @@ General information about samples in the |NCS|
      You can change the default behavior by updating the configuration option :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR`.
    * All samples in the |NCS| are tested and verified in accordance with their :ref:`maturity level <software_maturity>`.
 
+.. note::
+   |common_sample_components_desc|
+
 If you want to list samples available for one or more specific boards, `use the nRF Connect for Visual Studio Code extension to filter them <Browse samples_>`_.
 
 .. toctree::

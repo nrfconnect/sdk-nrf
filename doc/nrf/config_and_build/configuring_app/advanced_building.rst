@@ -22,6 +22,15 @@ For example, to turn off optimizations, select :kconfig:option:`CONFIG_NO_OPTIMI
 
 Compiler options not controlled by the Zephyr build system can be controlled through the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option.
 
+.. _common_sample_components:
+
+Common sample components for development
+****************************************
+
+|common_sample_components_desc|
+
+To learn more about how to use the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option, see the respective device guides for :ref:`nRF52 Series <ug_nrf52_developing_ble_fota>` and the :ref:`nRF5340 DK <ug_nrf53_developing_ble_fota>`.
+
 Optional build parameters
 *************************
 

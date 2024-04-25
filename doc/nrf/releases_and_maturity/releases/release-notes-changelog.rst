@@ -557,6 +557,11 @@ Cryptography samples
     * Support for the :ref:`zephyr:nrf9151dk_nrf9151` board for all crypto samples.
     * Support for the :ref:`nRF9161 DK <ug_nrf9161>` board for the :ref:`crypto_test` sample.
 
+Common samples
+--------------
+
+* Added a description about :file:`samples/common` and their purpose in the :ref:`samples` and :ref:`building_advanced` pages (:ref:`common_sample_components`).
+
 Debug samples
 -------------
 

@@ -164,6 +164,10 @@
 .. |application_sample_long_path_windows| replace:: On Windows, because of the `Windows path length limitations`_, the build can fail with errors related to permissions or missing files if some paths in the build are too long.
    To avoid this issue, shorten the build folder name, for example to ``build``, or shorten the path to the build folder in some other way.
 
+.. |common_sample_components_desc| replace:: Code found in the :file:`samples/common` are not intended to be used independently, but in addition to other compatible samples for development purposes.
+   For example, the file path :file:`samples/common/mcumgr_bt_ota_dfu` contains the source for the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option.
+   This Kconfig option can be used with specific Nordic Semiconductor devices to enable MCUmgr to perform firmware over-the-air (FOTA) updates using Bluetooth® Low Energy.
+
 .. |NSIB| replace:: nRF Secure Immutable Bootloader
 
 .. |external_flash_size| replace:: external flash memory with minimum 4 MB
