@@ -10,6 +10,7 @@
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/drivers/watchdog.h>
 #include <zephyr/task_wdt/task_wdt.h>
+#include <zephyr/logging/log_ctrl.h>
 
 #include "macros_common.h"
 
@@ -18,8 +19,8 @@ LOG_MODULE_REGISTER(bt_mgmt_ctlr_cfg, CONFIG_BT_MGMT_CTLR_CFG_LOG_LEVEL);
 
 #define COMPANY_ID_NORDIC 0x0059
 
-#define WDT_TIMEOUT_MS	      1500
-#define CTLR_POLL_INTERVAL_MS (WDT_TIMEOUT_MS - 500)
+#define WDT_TIMEOUT_MS	      3000
+#define CTLR_POLL_INTERVAL_MS (WDT_TIMEOUT_MS - 1000)
 
 static struct k_work work_ctlr_poll;
 
