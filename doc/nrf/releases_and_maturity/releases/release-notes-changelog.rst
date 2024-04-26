@@ -72,6 +72,11 @@ Working with RF front-end modules
 
 |no_changes_yet_note|
 
+Security
+========
+
+* Added information about the default Kconfig option setting for :ref:`enabling access port protection mechanism in the nRF Connect SDK<app_approtect_ncs>`.
+
 Protocols
 =========
 

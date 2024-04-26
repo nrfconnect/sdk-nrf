@@ -61,6 +61,7 @@ NRF = [
     ("test_and_optimize/testing_unity_cmock", "test_and_optimize/test_framework/testing_unity_cmock"),
     ("ug_tfm", "security/tfm"),
     ("app_dev/tfm/index", "security/tfm"),
+    ("app_dev/ap_protect/index", "security/ap_protect"),
     ("app_build_system", "config_and_build/config_and_build_system"),
     ("app_dev/build_and_config_system/index", "config_and_build/config_and_build_system"),
     ("ug_radio_coex", "device_guides/wifi_coex"),
