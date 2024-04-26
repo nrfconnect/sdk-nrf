@@ -12,8 +12,6 @@ This guide demonstrates how to create your custom board files for your PCB for t
 Prepare your PCB
 ****************
 
-.. to review
-
 First, you need to create your PCB for the nRF54H20 SoC.
 
 We highly recommend using the PCB layouts and component values provided by Nordic Semiconductor, especially for clock and power sources.
@@ -34,8 +32,6 @@ However, if you plan to select your own power sources, consider the following li
 
 Prepare the configuration files for your custom board in the |NCS|
 ******************************************************************
-
-.. to review
 
 The nRF54H20 DK uses multiple board files for its configuration:
 
@@ -64,8 +60,6 @@ See the following documentation pages for more information:
 
 Configure, generate, and flash BICR
 ***********************************
-
-.. to review
 
 The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including the information about the power and clock delivery to the SoC.
 The power and clock control firmware uses this information to apply the proper regulator and oscillator configurations.
@@ -96,8 +90,6 @@ Each subsequent start will use this initial calibration as the starting point.
 BICR configuration
 ==================
 
-.. to review
-
 The nRF54H20 PDK BICR configuration can be found in the board configuration directory as :file:`boards/arm/nrf54h20dk_nrf54h20/nrf54h20soc1_pdk_bicr.dtsi`.
 This file is used by the |NCS| build system to generate a corresponding HEX file.
 You can start from this file when editing the values of the devicetree properties inside your custom board folder (:file:`boards/arm/your_custom_board`), according to your board configuration.
@@ -120,8 +112,6 @@ The presence of a ``bicr`` node in the application devicetree will automatically
 Flashing the BICR binary
 ========================
 
-.. to review
-
 After the |NCS| build system generates the BICR binary, you must flash this binary manually.
 The content of BICR should be loaded to the SoC only once and should not be erased nor modified unless the PCB layout changes.
 To manually flash the generated :file:`bicr.hex` file to the SoC, use nRF Util as follows::
@@ -130,12 +120,33 @@ To manually flash the generated :file:`bicr.hex` file to the SoC, use nRF Util a
 
 You need to follow this flashing process only one time, as the PCB configuration will not change.
 
-.. Missing FICR update?
+Programming the SDFW and SCFW
+=============================
+
+After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.3.3.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
+To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the firmware bundle to the nRF54H20 DK, do the following:
+
+1. Download the `nRF54H20 firmware bundle`_.
+#. Move the :file:`ZIP` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
+
+      nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
+
+Updating the FICR
+=================
+
+After programming the SDFW and SCFW from the firmware bundle, you must update the Factory Information Configuration Registers (FICR) to correctly configure some trims of the nRF54H20 SoC.
+To update the FICR, you must run a J-Link script:
+
+1. Get the J-link script that updates the FICR::
+
+      curl -LO https://files.nordicsemi.com/artifactory/swtools/external/scripts/nrf54h20es_trim_adjust.jlink
+
+#. Run the script::
+
+      JLinkExe -CommanderScript nrf54h20es_trim_adjust.jlink
 
 Verify the LCS and transition to RoT
 ************************************
-
-.. to review
 
 To successfully run your custom application on your custom board, the SoC must have its Lifecycle State (LCS) set to ``RoT`` (meaning Root of Trust).
 If the LCS is set to ``EMPTY``, you must transition it to ``RoT``.
@@ -205,8 +216,6 @@ To transition the LCS to ``RoT``, do the following:
 
 Create or modify your application for your custom board
 *******************************************************
-
-.. to review
 
 You can now create or modify your application for your custom board.
 When doing so, consider the following:

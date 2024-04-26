@@ -1,36 +1,40 @@
-.. _ug_nrf54h20_gs:
+:orphan:
 
-Getting started with the nRF54H20 DK
-####################################
+.. _migration_cs3_to_2_6_99_cs2_env:
+
+Update your development environment for |NCS| v2.6.99_cs2 (for v2.4.99-cs3 users)
+#################################################################################
 
 .. contents::
    :local:
    :depth: 2
 
-This section gets you started with your nRF54H20 Development Kit (DK) using the |NCS|.
-It tells you how to install the :ref:`multicore_hello_world` sample and perform a quick test of your DK.
+This document describes how to update your development environment from |NCS| v2.4.99-cs3 to |NCS| v2.6.99-cs2.
 
-If you have already set up your nRF54H20 DK and want to learn more, see the following documentation:
+The main development environment changes introduced by 2.6.99-cs2 for the nRF54H20 DK are the following:
 
-* :ref:`configuration_and_build` documentation to learn more about the |NCS| development environment.
-* :ref:`ug_nrf54h` documentation for more advanced topics related to the nRF54H20.
-
-If you want to go through an online training course to familiarize yourself with Bluetooth® Low Energy and the development of Bluetooth LE applications, enroll in the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
-
-.. _ug_nrf54h20_gs_requirements:
+* The |NCS| toolchain has been updated.
+  A bootstrap script specific to the nRF54H20 DK is now available to install and update the toolchain.
+* nRF Util has now replaced nRF Command Line Tools.
+  The bootstrap script will now install and update nRF Util.
+* SDFW and SCFW are now provided as precompiled binaries.
+  The Secure Domain Firmware (SDFW) and System Controller Firmware (SCFW) are no longer built from the source during the application build process, but they must be provisioned as binaries from the provided firmware bundle before the DK can be used.
+  See the details in the `nRF54H20 DK bring-up`_ section below.
+* The nRF54H20 SoC lifecycle state must now be set to Root of Trust (RoT).
+  See the details in the `Transitioning the nRF54H20 SoC to RoT`_ section.
 
 Minimum requirements
 ********************
 
-Make sure you have all the required hardware and that your computer has one of the supported operating systems.
+Make sure you have all the required hardware, software, and that your computer has one of the supported operating systems.
 
 Hardware
 ========
 
 * nRF54H20 DK version PCA10175 v0.7.x or v0.8.0 (ES3).
+  These are the only versions of the nRF54H20 DK compatible with |NCS| 2.6.99-cs2.
   Check the version number on your DK's sticker to verify its compatibility with |NCS| version 2.6.99-cs2.
 * USB-C cable.
-
 
 Software
 ========
@@ -47,45 +51,27 @@ You also need the following:
 
 * `Git`_ or `Git for Windows`_ (on Linux and Mac, or Windows, respectively)
 * `curl`_
-* On Windows, SEGGER USB Driver for J-Link included in `J-Link version 7.88j`_
+* On Windows, SEGGER USB Driver for J-Link
 * SEGGER `J-Link version 7.94e`_
 
 .. note::
-   The SEGGER USB Driver for J-Link is not included in J-Link v7.94e.
-   To install the driver, do the following:
+   The SEGGER USB Driver for J-Link was included, on Windows, in the nRF Command Line Tools bundle required by the |NCS| v2.4.99-cs3.
+   When updating SEGGER J-Link to version 7.94e on Windows, select :guilabel:`Update existing installation` under :guilabel:`Choose destination` in the :guilabel:`choose optional components` window.
 
-   1. Install `J-Link version 7.88j`_
-      When installing SEGGER J-Link 7.88j on Windows, select the following optional components in the installer:
-
-      * :guilabel:`Install USB Driver for J-Link (requires admin rights)`.
-      * Under :guilabel:`Choose destination`, select :guilabel:`Install a new instance`.
-
-      See the following screenshot:
-
-      .. figure:: images/jlink788j_install.png
-         :alt: Optional components in the J-Link v7.88j installation
-
-   #. Update to `J-Link version 7.94e`_
-      When updating SEGGER J-Link to version 7.94e on Windows, select :guilabel:`Update existing installation` under :guilabel:`Choose destination` in the :guilabel:`choose optional components` window.
-
-      See the following screenshot:
+   See the following screenshot:
 
       .. figure:: images/jlink794e_install.png
-         :alt: Optional components in the J-Link v7.94e installation
+         :alt: Optional components in the J-Link installation
 
-.. _ug_nrf54h20_gs_installing_software:
+Preliminary step
+****************
 
-Installing the required software
-********************************
+Before updating the toolchain, rename your existing ``ncs-lcs`` and ``.west`` folders (for example as ``ncs-lcs_old`` and ``.west_old``) to backup their files.
 
-To work with the nRF54H20 DK, follow the instructions in the next sections to install the required tools.
+Updating the toolchain
+**********************
 
-.. _ug_nrf54h20_install_toolchain:
-
-Installing the toolchain
-========================
-
-You can install the toolchain for the customer sampling of the |NCS| by running an installation script.
+You can update the toolchain for the |NCS| v2.6.99-cs2 by running an installation script.
 Follow these steps:
 
 .. tabs::
@@ -116,7 +102,7 @@ Follow these steps:
          Copy-paste the output into the terminal and execute it to enable the use of west directly in that window.
 
          .. note::
-            WWhen working with west in the customer sampling release, you must always use a terminal window with the |NCS| toolchain environment.
+            When working with west in the customer sampling release, you must always use a terminal window with the |NCS| toolchain environment.
 
       If you run into errors during the installation process, delete the :file:`.west` folder inside the :file:`C:\\ncs-lcs` directory, and start over.
 
@@ -207,12 +193,10 @@ Follow these steps:
 
 We recommend adding the nRF Util path to your environmental variables.
 
-.. _ug_nrf54h20_install_ncs:
+Updating to the |NCS| 2.6.99-cs2
+********************************
 
-Installing the |NCS|
-====================
-
-After you have installed the toolchain, complete the following steps to get the customer sampling version of the |NCS|:
+After you have updated the toolchain, complete the following steps to get the |NCS| v2.6.99-cs2:
 
 1. In the terminal window opened during the toolchain installation, initialize west with the revision of the |NCS| from the customer sampling:
 
@@ -232,27 +216,35 @@ After you have installed the toolchain, complete the following steps to get the 
 
       west zephyr-export
 
-Your directory structure now looks similar to this::
+   Your directory structure now looks similar to this::
 
-    ncs-lcs/work-dir
-    |___ .west
-    |___ bootloader
-    |___ modules
-    |___ nrf
-    |___ nrfxlib
-    |___ zephyr
-    |___ ...
+      ncs-lcs/work-dir
+      |___ .west
+      |___ bootloader
+      |___ modules
+      |___ nrf
+      |___ nrfxlib
+      |___ zephyr
+      |___ ...
 
-Note that there are additional folders, and that the structure might change.
-The full set of repositories and folders is defined in the manifest file.
+   Note that there are additional folders, and that the structure might change.
+   The full set of repositories and folders is defined in the manifest file.
 
-Installing the Terminal application
-***********************************
+#. if you have any existing custom applications created for 2.4.99-cs3 that you would like to migrate, move its files from the previous ``ncs-lcs_old`` folder to the newly created ``ncs-lcs`` folder.
 
-On your computer, install `nRF Connect for Desktop`_.
-You must also install a terminal emulator, such as `nRF Connect Serial Terminal`_ (from the nRF Connect for Desktop application) or the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension).
+Updating the Terminal application
+*********************************
 
-.. _ug_nrf54h20_gs_bringup:
+To update `Serial Terminal from nRF Connect for Desktop`, follow these steps:
+
+1. On your computer, open `nRF Connect for Desktop`_
+   If there is an update available, a pop up will notify you of its availability.
+#. If available, install the update from the pop up screen.
+#. Update `Serial Terminal from nRF Connect for Desktop`.
+
+If you are using the nRF Terminal application part of the `nRF Connect for Visual Studio Code`_ extension, open Visual Studio Code instead and ensure you are running the newest version of both the editor and the extension.
+
+.. _migration_cs3_to_2_6_99_cs2_env_bringup:
 
 nRF54H20 DK bring-up
 ********************
@@ -304,6 +296,8 @@ To update the FICR, you must run a J-Link script:
 #. Run the script::
 
       JLinkExe -CommanderScript nrf54h20es_trim_adjust.jlink
+
+.. _migration_cs3_to_2_6_99_cs2_env_lcsrot:
 
 .. rst-class:: numbered-step
 
@@ -376,79 +370,10 @@ To transition the LCS to ``RoT``, do the following:
 
       nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
 
-.. _ug_nrf54h20_gs_sample:
-
-Programming the sample
-**********************
-
-The :ref:`multicore_hello_world` sample is a multicore sample running on both the Application Core (``cpuapp``) and the Peripheral Processor (PPR, ``cpuppr``).
-It uses the ``nrf54h20dk_nrf54h20_cpuapp`` board target.
-
-To build and program the sample to the nRF54H20 DK, complete the following steps:
-
-1. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
-#. Navigate to the :file:`nrf/samples/multicore/hello_world` folder containing the sample.
-#. Build the sample for application and radio cores by running the following command::
-
-      west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpurad .
-
-#. Alternatively, build the sample for the application and PPR cores by running the following command::
-
-      west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr .
-
-#. Program the sample.
-   If you have multiple Nordic Semiconductor devices, make sure that only the nRF54H20 DK you want to program is connected.
-
-   .. code-block:: console
-
-      west flash
-
-The sample will be automatically built and programmed on both the Application Core and the Peripheral Processor (PPR) of the nRF54H20.
-
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
-.. _ug_nrf54h20_sample_reading_logs:
-
-Reading the logs
-****************
-
-With the :ref:`multicore_hello_world` sample programmed, the nRF54H20 DK outputs logs for the Application Core and the configured remote processor.
-The logs are output over UART.
-
-To read the logs from the :ref:`multicore_hello_world` sample programmed to the nRF54H20 DK, complete the following steps:
-
-1. Connect to the DK with a terminal emulator (for example, `nRF Connect Serial Terminal`_) using the :ref:`default serial port connection settings <test_and_optimize>`.
-#. Press the **Reset** button on the PCB to reset the DK.
-#. Observe the console output for both cores:
-
-   * For the Application Core, the output should look like the following:
-
-     .. code-block:: console
-
-        *** Booting nRF Connect SDK zephyr-v3.5.0-3517-g9458a1aaf744 ***
-        Hello world from nrf54h20dk_nrf54h20_cpuapp
-        Hello world from nrf54h20dk_nrf54h20_cpuapp
-        ...
-
-   * For the remote core, like PPR, the output should be as follows:
-
-     .. code-block:: console
-
-        *** Booting nRF Connect SDK zephyr-v3.5.0-3517-g9458a1aaf744 ***
-        Hello world from nrf54h20dk_nrf54h20_cpuppr
-        Hello world from nrf54h20dk_nrf54h20_cpuppr
-        ...
-
-.. note::
-   If no output is shown when using nRF Serial Terminal, select a different serial port in the terminal application.
-
-For more information on how logging works in the |NCS|, consult the :ref:`ug_logging` and :ref:`zephyr:logging_api` documentation pages.
-
 Next steps
 **********
 
-You are now all set to use the nRF54H20 DK.
-See the following links for where to go next:
+Your environment is now set to use the |NCS| v2.6.99-cs2 with the nRF54H20 DK:
 
-* :ref:`ug_nrf54h20_architecture` for information about the multicore System on Chip, such as the responsibilities of the cores and their interprocessor interactions, the memory mapping, and the boot sequence.
-* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
+* If you want to modify your existing custom applications previously developed for |NCS| v2.4.99-cs3 to be compatible with v2.6.99-cs2, consult :ref:`migration_cs3_to_2_6_99_cs2_app`.
+* If you want to build and program a sample application on your nRF54H20 DK, consult the building and programming section in the `nRF54H20 DK getting started guide for the nRF Connect SDK v2.6.99-cs2`_.

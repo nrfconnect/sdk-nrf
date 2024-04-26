@@ -11,7 +11,7 @@ The Secure Domain ROM firmware defines the lifecycle states (LCS) for the nRF54H
 The states are based on the Arm PSA Security Model and allow for programming and safely erasing the device assets.
 
 .. note::
-    During the lcustomer sampling, the LCS of the nRF54H20 SoC must be set to Root of Trust (RoT).
+    During the customer sampling, the LCS of the nRF54H20 SoC must be set to Root of Trust (RoT).
     If the LCS is set to ``EMPTY``, it must be transitioned to ``RoT``.
     For more information, see :ref:`ug_nrf54h20_gs_bringup`.
 

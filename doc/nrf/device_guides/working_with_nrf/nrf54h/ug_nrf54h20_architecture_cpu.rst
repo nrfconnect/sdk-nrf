@@ -86,7 +86,8 @@ The Radio Core has 192 kB of local RAM, making single-cycle memory accesses poss
 For performance reasons, the Radio Core includes its own AES-128 hardware accelerator for implementing link-layer encryption.
 For asymmetric cryptography, it relies on services provided by the Secure Domain.
 
-The Radio Core is user-programmable, if you want to add or modify code, but it is also possible to leave the core running Nordic's default protocol stack software and only engage with its high-level interface.
+The Radio Core is user-programmable, allowing you to modify or add code.
+You can also leave the core running Nordic's default protocol stack software and only engage with its high-level interface.
 Since the Radio Core is physically separate from the Application Core, a separation of concerns exists.
 
 While the Radio CPU or any peripheral in Radio's local APB2 bus (including the radio) is active, the 32 MHz crystal oscillator is enabled, and the radio itself is clocked from this clock source.
