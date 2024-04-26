@@ -5,7 +5,7 @@ Working with nRF54H Series
 
 .. note::
 
-   All software for the nRF54H20 SoC is experimental and hardware availability is restricted to the participants in the limited sampling program.
+   All software for the nRF54H20 SoC is experimental, and hardware availability is restricted to the participants in the customer sampling program.
 
 Zephyr and the |NCS| provide support and contain board definitions for developing on the following nRF54H Series device:
 
