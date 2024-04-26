@@ -12,24 +12,39 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(le_audio, CONFIG_BLE_LOG_LEVEL);
 
-/*TODO: Create helper function in host to perform this action. */
-bool le_audio_ep_state_check(struct bt_bap_ep *ep, enum bt_bap_ep_state state)
+int le_audio_ep_state_get(struct bt_bap_ep *ep, uint8_t *state)
 {
 	int ret;
 	struct bt_bap_ep_info ep_info;
 
 	if (ep == NULL) {
 		/* If an endpoint is NULL it is not in any of the states */
-		return false;
+		return -EINVAL;
 	}
 
 	ret = bt_bap_ep_get_info(ep, &ep_info);
 	if (ret) {
 		LOG_WRN("Unable to get info for ep");
+		return ret;
+	}
+
+	*state = ep_info.state;
+
+	return 0;
+}
+
+/*TODO: Create helper function in host to perform this action. */
+bool le_audio_ep_state_check(struct bt_bap_ep *ep, enum bt_bap_ep_state state)
+{
+	int ret;
+	uint8_t ep_state;
+
+	ret = le_audio_ep_state_get(ep, &ep_state);
+	if (ret) {
 		return false;
 	}
 
-	if (ep_info.state == state) {
+	if (ep_state == state) {
 		return true;
 	}
 

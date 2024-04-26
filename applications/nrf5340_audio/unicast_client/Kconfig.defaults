@@ -29,6 +29,12 @@ config BT_ISO_MAX_CHAN
 config BT_BAP_UNICAST_CLIENT
 	default y
 
+config BT_CAP_INITIATOR
+	default y
+
+config BT_CSIP_SET_COORDINATOR
+	default y
+
 config BT_ISO_TX_BUF_COUNT
 	default 2
 

@@ -216,6 +216,8 @@ Serial LTE modem
 nRF5340 Audio
 -------------
 
+* Added CAP initiator for the Bluetooth LE Audio unicast (CIS) client.
+
 * Removed:
 
   * The LE Audio controller for nRF5340 library.

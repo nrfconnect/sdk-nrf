@@ -669,18 +669,6 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
-		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
-
-		if (ret) {
-			LOG_ERR("Supported context set failed. Err: %d", ret);
-			return ret;
-		}
-
-		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
-		if (ret) {
-			LOG_ERR("Available context set failed. Err: %d", ret);
-			return ret;
-		}
 		if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
 			csip_param.rank = CSIP_HL_RANK;
 		} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
@@ -703,24 +691,37 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 			return ret;
 		}
 
-		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
-
-		if (ret) {
-			LOG_ERR("Supported context set failed. Err: %d", ret);
-			return ret;
-		}
-
-		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
-		if (ret) {
-			LOG_ERR("Available context set failed. Err: %d", ret);
-			return ret;
-		}
-
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE, location);
 		if (ret) {
 			LOG_ERR("Location set failed. Err: %d", ret);
 			return ret;
 		}
+	}
+
+	ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
+
+	if (ret) {
+		LOG_ERR("Supported context set failed. Err: %d", ret);
+		return ret;
+	}
+
+	ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
+	if (ret) {
+		LOG_ERR("Available context set failed. Err: %d", ret);
+		return ret;
+	}
+
+	ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
+
+	if (ret) {
+		LOG_ERR("Supported context set failed. Err: %d", ret);
+		return ret;
+	}
+
+	ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
+	if (ret) {
+		LOG_ERR("Available context set failed. Err: %d", ret);
+		return ret;
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {

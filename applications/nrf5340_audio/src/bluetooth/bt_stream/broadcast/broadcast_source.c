@@ -427,8 +427,6 @@ int broadcast_source_enable(void)
 		stream_params[i].stream = &cap_streams[i];
 
 		bt_cap_stream_ops_register(stream_params[i].stream, &stream_ops);
-		/* TODO: Remove this once the fixed call above has been upstreamed */
-		bt_bap_stream_cb_register(&stream_params[i].stream->bap_stream, &stream_ops);
 
 		stream_params[i].data_len = ARRAY_SIZE(bis_codec_data[i]);
 		stream_params[i].data = bis_codec_data[i];
