@@ -263,13 +263,13 @@ The result should look similar to the following output:
    ISO channel index 0 connected: interval: 10 ms, NSE: 3, BN: 1, IRC: 2, PTO: 1, transport latency: 12418 us
    ISO channel index 1 connected: interval: 10 ms, NSE: 3, BN: 1, IRC: 2, PTO: 1, transport latency: 12418 us
    ISO channel index 2 connected: interval: 10 ms, NSE: 3, BN: 1, IRC: 2, PTO: 1, transport latency: 12418 us
+   Sent SDU counter 0 with timestamp 2329536 us, controller_time 2330444 us, btn_val: 0 LED will be set in 16510 us
    ISO channel index 3 connected: interval: 10 ms, NSE: 3, BN: 1, IRC: 2, PTO: 1, transport latency: 12418 us
-   Sent SDU, counter: 0, btn_val: 0, LED will be set in 30264 us
-   Sent SDU, counter: 100, btn_val: 0, LED will be set in 22177 us
-   Sent SDU, counter: 200, btn_val: 0, LED will be set in 22177 us
-   Sent SDU, counter: 300, btn_val: 0, LED will be set in 22177 us
-   Sent SDU, counter: 400, btn_val: 0, LED will be set in 22208 us
-   Sent SDU, counter: 500, btn_val: 0, LED will be set in 22208 us
+   Sent SDU counter 100 with timestamp 3329536 us, controller_time 3331085 us, btn_val: 0 LED will be set in 15869 us
+   Sent SDU counter 200 with timestamp 4329536 us, controller_time 4331085 us, btn_val: 0 LED will be set in 15869 us
+   Sent SDU counter 300 with timestamp 5329536 us, controller_time 5331085 us, btn_val: 0 LED will be set in 15869 us
+   Sent SDU counter 400 with timestamp 6329536 us, controller_time 6331085 us, btn_val: 0 LED will be set in 15869 us
+   Sent SDU counter 500 with timestamp 7329536 us, controller_time 7331085 us, btn_val: 0 LED will be set in 15869 us
 
 * For the isochronous broadcast receiver::
 
@@ -283,12 +283,13 @@ The result should look similar to the following output:
    BigInfo received
    Syncing to BIG index 2
    ISO Channel connected: interval: 10 ms, NSE: 3, BN: 1, IRC: 2, PTO: 1, transport latency: 12418 us
-   Received SDU with counter: 51500, btn_val: 0, LED will be set in 21035 us
-   Received SDU with counter: 51600, btn_val: 0, LED will be set in 21044 us
-   Received SDU with counter: 51700, btn_val: 0, LED will be set in 21024 us
-   Received SDU with counter: 51800, btn_val: 0, LED will be set in 21034 us
-   Received SDU with counter: 51900, btn_val: 0, LED will be set in 21045 us
-   Received SDU with counter: 52000, btn_val: 0, LED will be set in 21024 us
+   Recv SDU counter 1000 with timestamp 11851325 us, controller_time 11839813 us, btn_val: 0, LED will be set in 16512 us
+   Recv SDU counter 1100 with timestamp 12851327 us, controller_time 12839813 us, btn_val: 0, LED will be set in 16514 us
+   Recv SDU counter 1200 with timestamp 13851331 us, controller_time 13839813 us, btn_val: 0, LED will be set in 16518 us
+   Recv SDU counter 1300 with timestamp 14851334 us, controller_time 14839813 us, btn_val: 0, LED will be set in 16521 us
+   Recv SDU counter 1400 with timestamp 15851337 us, controller_time 15839813 us, btn_val: 0, LED will be set in 16524 us
+   Recv SDU counter 1500 with timestamp 16851342 us, controller_time 16839843 us, btn_val: 0, LED will be set in 16499 us
+
 
 * For the connected isochronous stream central configured for transmission::
 
@@ -297,18 +298,22 @@ The result should look similar to the following output:
    Choose direction - TX (t) / RX (r) : t
    Choose retransmission number [0..30] : 3
    Choose max transport latency in ms [5..4000] : 20
-   Starting CIS peripheral, dir: tx, RTN: 3, max transport latency 20 ms
+   Starting CIS central, dir: tx, RTN: 3, max transport latency 20 ms
    CIS central started scanning for peripheral(s)
    Connected: FA:BB:79:57:D6:45 (random)
    Connecting ISO channel
-   Continue scanning for more peripherals...
-   ISO channel index 0 connected: interval: 10 ms, NSE: 2, BN: 1, FT: 2, transport latency: 13696 us
-   Sent SDU, counter: 0, btn_val: 0, LED will be set in 30854 us
-   Sent SDU, counter: 100, btn_val: 0, LED will be set in 24232 us
-   Sent SDU, counter: 200, btn_val: 0, LED will be set in 24232 us
-   Sent SDU, counter: 300, btn_val: 0, LED will be set in 24232 us
-   Sent SDU, counter: 400, btn_val: 0, LED will be set in 24232 us
-   Sent SDU, counter: 500, btn_val: 0, LED will be set in 24232 us
+   ISO channel index 0 connected: interval: 10 ms, NSE: 2, BN: 1, FT: 2, transport latency: 13536 us
+   CIS Central started scanning
+   Sent SDU counter 0 with timestamp 3072152 us, controller_time 3070617 us, btn_val: 0 LED will be set in 20071 us
+   Connected: D2:52:1C:B7:DC:2A (random)
+   Connecting ISO channel
+   ISO channel index 1 connected: interval: 10 ms, NSE: 2, BN: 1, FT: 2, transport latency: 13536 us
+   CIS Central started scanning
+   Sent SDU counter 100 with timestamp 4072152 us, controller_time 4072753 us, btn_val: 0 LED will be set in 17935 us
+   Sent SDU counter 200 with timestamp 5072152 us, controller_time 5072631 us, btn_val: 0 LED will be set in 18057 us
+   Sent SDU counter 300 with timestamp 6072152 us, controller_time 6072784 us, btn_val: 0 LED will be set in 17904 us
+   Sent SDU counter 400 with timestamp 7072152 us, controller_time 7072631 us, btn_val: 0 LED will be set in 18057 us
+   Sent SDU counter 500 with timestamp 8072152 us, controller_time 8072937 us, btn_val: 0 LED will be set in 17751 us
 
 * For the connected isochronous stream peripheral configured for reception::
 
@@ -320,12 +325,11 @@ The result should look similar to the following output:
    Connected: E8:DC:8D:B3:47:69 (random)
    Incoming request from 0x20002440
    ISO Channel connected: interval: 10 ms, NSE: 2, BN: 1, FT: 2, transport latency: 13696 us
-   Received SDU with counter: 0, btn_val: 0, LED will be set in 20237 us
-   Received SDU with counter: 100, btn_val: 0, LED will be set in 20715 us
-   Received SDU with counter: 200, btn_val: 0, LED will be set in 20705 us
-   Received SDU with counter: 300, btn_val: 0, LED will be set in 20696 us
-   Received SDU with counter: 400, btn_val: 0, LED will be set in 20715 us
-   Received SDU with counter: 500, btn_val: 0, LED will be set in 20706 us
+   Recv SDU counter 100 with timestamp 3584552 us, controller_time 3573333 us, btn_val: 0, LED will be set in 16219 us
+   Recv SDU counter 200 with timestamp 4584555 us, controller_time 4573333 us, btn_val: 0, LED will be set in 16222 us
+   Recv SDU counter 300 with timestamp 5584559 us, controller_time 5573333 us, btn_val: 0, LED will be set in 16226 us
+   Recv SDU counter 400 with timestamp 6584562 us, controller_time 6573333 us, btn_val: 0, LED will be set in 16229 us
+   Recv SDU counter 500 with timestamp 7584567 us, controller_time 7573760 us, btn_val: 0, LED will be set in 15807 us
 
 * For the connected isochronous stream central configured for reception::
 
@@ -338,13 +342,13 @@ The result should look similar to the following output:
    CIS central started scanning for peripheral(s)
    Connected: FA:BB:79:57:D6:45 (random)
    Connecting ISO channel
-   ISO Channel connected: interval: 10 ms, NSE: 2, BN: 1, FT: 2, transport latency: 10924 us
-   Received SDU with counter: 0, btn_val: 0, LED will be set in 9493 us
-   Received SDU with counter: 100, btn_val: 0, LED will be set in 9493 us
-   Received SDU with counter: 200, btn_val: 0, LED will be set in 9493 us
-   Received SDU with counter: 300, btn_val: 0, LED will be set in 9493 us
-   Received SDU with counter: 400, btn_val: 0, LED will be set in 9493 us
-   Received SDU with counter: 500, btn_val: 0, LED will be set in 9493 us
+   ISO Channel connected: interval: 10 ms, NSE: 2, BN: 1, FT: 2, transport latency: 10884 us
+   Recv SDU counter 0 with timestamp 2144246 us, controller_time 2144897 us, btn_val: 0, LED will be set in 4349 us
+   Recv SDU counter 100 with timestamp 3144246 us, controller_time 3144897 us, btn_val: 0, LED will be set in 4349 us
+   Recv SDU counter 200 with timestamp 4144246 us, controller_time 4144897 us, btn_val: 0, LED will be set in 4349 us
+   Recv SDU counter 300 with timestamp 5144246 us, controller_time 5144897 us, btn_val: 0, LED will be set in 4349 us
+   Recv SDU counter 400 with timestamp 6144246 us, controller_time 6144897 us, btn_val: 0, LED will be set in 4349 us
+   Recv SDU counter 500 with timestamp 7144246 us, controller_time 7144897 us, btn_val: 0, LED will be set in 4349 us
 
 * For the connected isochronous stream peripheral configured for transmission::
 
@@ -355,13 +359,13 @@ The result should look similar to the following output:
    CIS peripheral started advertising
    Connected: E8:DC:8D:B3:47:69 (random)
    Incoming request from 0x20002440
-   ISO channel index 0 connected: interval: 10 ms, NSE: 2, BN: 1, FT: 2, transport latency: 10924 us
-   Sent SDU, counter: 0, btn_val: 0, LED will be set in 20308 us
-   Sent SDU, counter: 100, btn_val: 0, LED will be set in 10470 us
-   Sent SDU, counter: 200, btn_val: 0, LED will be set in 10460 us
-   Sent SDU, counter: 300, btn_val: 0, LED will be set in 10450 us
-   Sent SDU, counter: 400, btn_val: 0, LED will be set in 10470 us
-   Sent SDU, counter: 500, btn_val: 0, LED will be set in 10460 us
+   ISO channel index 0 connected: interval: 10 ms, NSE: 2, BN: 1, FT: 2, transport latency: 10884 us
+   Sent SDU counter 0 with timestamp 2649643 us, controller_time 2640289 us, btn_val: 0 LED will be set in 14354 us
+   Sent SDU counter 100 with timestamp 3649638 us, controller_time 3649627 us, btn_val: 0 LED will be set in 5011 us
+   Sent SDU counter 200 with timestamp 4649635 us, controller_time 4649627 us, btn_val: 0 LED will be set in 5008 us
+   Sent SDU counter 300 with timestamp 5649631 us, controller_time 5649627 us, btn_val: 0 LED will be set in 5004 us
+   Sent SDU counter 400 with timestamp 6649626 us, controller_time 6649627 us, btn_val: 0 LED will be set in 4999 us
+   Sent SDU counter 500 with timestamp 7649623 us, controller_time 7649627 us, btn_val: 0 LED will be set in 4996 us
 
 Dependencies
 *************
