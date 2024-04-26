@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_architecture_lifecycle:
 
 nRF54H20 lifecycle states
@@ -12,11 +10,13 @@ nRF54H20 lifecycle states
 The Secure Domain ROM firmware defines the lifecycle states (LCS) for the nRF54H20 SoC.
 The states are based on the Arm PSA Security Model and allow for programming and safely erasing the device assets.
 
-.. caution::
-    The device must be kept to Root of Trust (RoT) during the initial limited sampling.
-    Changing the lifecycle state of the nRF54H20 devices during the initial limited sampling will brick your devices.
+.. note::
+    During the customer sampling, the LCS of the nRF54H20 SoC must be set to Root of Trust (RoT).
+    If the LCS is set to ``EMPTY``, it must be transitioned to ``RoT``.
+    For more information, see :ref:`ug_nrf54h20_gs_bringup`.
 
-    The lifecycle state will be changeable only in the final silicon.
+    However, the forward transition to LCS ``RoT`` is permanent.
+    After the transition, it is not possible to transition backward to LCS ``EMPTY``.
 
 The LCS available are the following:
 
@@ -51,8 +51,7 @@ See the following diagram:
 
    nRF54H20 lifecycle states and transitions available on the final silicon.
 
-This figure shows the states and transitions that will be available on the final silicon.
-Black arrows illustrate forward unauthenticated transitions and red arrows illustrate backward authenticated transitions.
+This figure shows the states and transitions (both forward and backward ones) that will be available on the final silicon.
 
 Changing the lifecycle state will be useful during development.
 Test devices in their final configuration would require the device to be in the deployed state, however, updating the Secure Domain firmware and the System Controller firmware will be easier with the device in RoT state.

@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_architecture_cpu:
 
 nRF54H20 Domains
@@ -32,7 +30,7 @@ The CPU cores in the nRF54H20 are based on two types of CPU architectures:
 Application Core
 ****************
 
-The following image shows the Application Core in the final silicon:
+The following image shows the Application Core:
 
 .. figure:: images/nRF54H20_appcore.svg
    :alt: Application Core
@@ -61,14 +59,14 @@ This can be used by timing-sensitive code that cannot tolerate variable latency 
 Radio Core
 **********
 
-The following image shows the Radio Core in the final silicon:
+The following image shows the Radio Core:
 
 .. figure:: images/nRF54H20_radiocore.svg
    :alt: Radio Core
 
    Radio Core
 
-The Radio Core is intended to run the radio protocol stacks, such as Bluetooth Low Energy, IEEE 802.15.4, Thread, Enhanced ShockBurst (ESB), or other proprietary protocols.
+The Radio Core is intended to run the radio protocol stacks, such as Bluetooth® Low Energy, IEEE 802.15.4, Thread, Enhanced ShockBurst (ESB), or other proprietary protocols.
 It is also possible to implement a combination of protocols that use multiprotocol support.
 
 .. note::
@@ -85,26 +83,16 @@ Other workloads with similar characteristics are also well suited for running on
 
 The Radio Core has 192 kB of local RAM, making single-cycle memory accesses possible.
 
-.. note::
-   In the prototype silicon provided for the initial limited sampling, the size of the local RAM is 64 kB.
-
 For performance reasons, the Radio Core includes its own AES-128 hardware accelerator for implementing link-layer encryption.
 For asymmetric cryptography, it relies on services provided by the Secure Domain.
 
-The Radio Core is user-programmable, if you want to add or modify code, but it is also possible to leave the core running Nordic’s default protocol stack software and only engage with its high-level interface.
-Since the Radio Core is physically separate from the Application Core, a separation of concerns exists, and, unlike single-core implementations, the protocol stack software running on the Radio Core will not influence the execution of application code running on the Application Core.
+The Radio Core is user-programmable, allowing you to modify or add code.
+You can also leave the core running Nordic's default protocol stack software and only engage with its high-level interface.
 
-While any peripheral in Radio's local APB2 bus (including the radio) is active, the 32 MHz crystal oscillator will be enabled, and the radio itself will be clocked from this clock source.
+While the Radio CPU or any peripheral in Radio's local APB2 bus (including the radio) is active, the 32 MHz crystal oscillator is enabled, and the radio itself is clocked from this clock source.
 
 Global Domain
 *************
-
-The following image shows the Global Domain in the final silicon:
-
-.. figure:: images/nRF54H20_globaldomain.svg
-   :alt: Global Domain
-
-   Global Domain
 
 The Global Domain contains most of the memory and peripherals of the nRF54H20.
 This offers flexibility to assign memory regions and peripherals to different cores.
@@ -138,7 +126,7 @@ The Fast Lightweight Processor (FLPR, pronounced Flipper) is a VPR core running 
 This CPU is intended to implement software-defined peripherals.
 
 .. note::
-   FLPR firmware support will not be available during the initial limited sampling.
+   FLPR firmware support is not available during the customer sampling.
 
 Secure Domain
 *************
@@ -165,16 +153,16 @@ In the nRF54H20, the cores can be divided into the following groups: cores that 
 Cores managed by Nordic Semiconductor
    Secure Domain and System Controller are cores that are exclusively managed by Nordic Semiconductor.
 
-   The firmware for cores managed by Nordic will come as part of the nRF Connect SDK.
+   The firmware for cores managed by Nordic will come as part of the |NCS|.
    This means that the components can be modified by Nordic Semiconductor only.
 
 Cores managed by the user and Nordic Semiconductor
-   Firmware for the Radio Core will come as part of the nRF Connect SDK.
+   Firmware for the Radio Core will come as part of the |NCS|.
    You can either use the default Nordic’s Radio Core firmware, modify it, or provide a custom implementation.
    If you rely on Nordic to provide the firmware, the default correct controller library will be used depending on the short-range protocol selected in the software configuration.
 
 Cores managed by the user
    Although there are multiple distinctive cores in the system, you will be responsible mostly for preparing the firmware for the Application Core.
-   If the application firmware is executed in non-secure mode, the secure firmware (TF-M) is delivered as part of the nRF Connect SDK.
+   If the application firmware is executed in non-secure mode, the secure firmware (TF-M) is delivered as part of the |NCS|.
 
    You can choose to move some of the processing from the Application Core to the Peripheral Processor (PPR) or to the Fast Lightweight Processor (FLPR).

@@ -1543,4 +1543,6 @@
 
 .. _`J-Link version 7.94e`: https://www.segger.com/downloads/jlink/
 
+.. _`J-Link version 7.88j`: https://www.segger.com/downloads/jlink/
+
 .. _`nRF54H20 DK getting started guide for the nRF Connect SDK v2.6.99-cs2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.6.99-cs2/nrf/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs.html

@@ -191,6 +191,8 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. include:: /includes/nRF54H20_erase_UICR.txt
+
 .. note::
    On the nRF5340 or nRF7002 development kit, the Radio Test sample requires the :ref:`nrf5340_remote_shell` sample on the application core.
    The Remote IPC shell sample is built and programmed automatically by default.

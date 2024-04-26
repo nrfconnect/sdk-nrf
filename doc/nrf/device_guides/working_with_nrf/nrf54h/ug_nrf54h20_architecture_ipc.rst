@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_architecture_ipc:
 
 Interprocessor Communication in nRF54H20
@@ -107,16 +105,18 @@ MAC, Network, Transport
 The layers responsible for maintaining a stable full-duplex stream of data between two cores (MAC, Network, Transport) are implemented in an IPC transport library.
 The default IPC transport library for nRF54H20 is :ref:`ICMsg <zephyr:ipc_service_backend_icmsg>`.
 This lightweight library maintains the connection between a pair of cores for each IPC instance with minimal memory overhead.
-Each IPC instance requires an instance of the icmsg library.
-Each icmsg library instance requires the following:
+Each IPC instance between the Application Core and the PPR core requires an instance of the ICMsg library.
+Each IPC instance between the Application Core and cores other than PPR (like the Radio Core) requires an instance of the ICBMsg library.
 
-   * One memory buffer for A->B messages
-   * One memory buffer for B->A messages
+Each ICMsg library instance requires the following:
+
+   * One memory buffer for A->B messages.
+   * One memory buffer for B->A messages.
    * A pair of signaling channels (one for A->B, one for B->A).
 
-The icmsg library is designed to efficiently send short messages to a peer.
+The ICMsg library is designed to efficiently send short messages to a peer.
 Its buffer allocation is not optimized for bulk transfer of long messages and it does not provide a zero-copy model.
-To transfer bigger amount of data (like network packets) between two cores, icmsg can be used as control plane.
+To transfer bigger amount of data (like network packets) between two cores, ICMsg can be used as control plane.
 However, you must use as data plane memory allocation mechanisms optimized for bigger data and supporting flexible memory allocation and a zero-copy model (like Zephyr's :ref:`zephyr:net_buf_interface`).
 
 .. note::
@@ -124,7 +124,9 @@ However, you must use as data plane memory allocation mechanisms optimized for b
    It does not have to involve another IPC transport.
    The ownership of the shared buffers is passed between the cores using the control plane, but only one of the cores is responsible for managing (allocating, resizing, freeing) the buffers.
 
-For more information, consult the :ref:`ICMsg <zephyr:ipc_service_backend_icmsg>` backend documentation.
+For more information on ICMsg, consult the :ref:`ICMsg <zephyr:ipc_service_backend_icmsg>` backend documentation.
+For more information on ICBMsg, consult the :ref:`ICMsg <zephyr:ipc_multi_endpoint_sample>` page.
+
 
 Session
 =======
@@ -144,7 +146,7 @@ Presentation and Application layers
 The presentation and application layers are connection specific.
 Each connection has other requirements regarding the type and the nature of the exchanged messages.
 
-The solutions selected for each connection are listed in the table below:
+The solutions selected for each connection are listed in the following table:
 
 ======================  =====================
 Connection              Communication library
@@ -173,7 +175,7 @@ Radio core
 The Radio core exposes radio communication services to the Application Core through IPC.
 These services include:
 
-   * Bluetooth (HCI or host API)
+   * Bluetooth® (HCI or host API)
    * IEEE 802.15.4 radio driver API
 
 These services are hidden behind Zephyr APIs available in the Application Core, like the Bluetooth host API or the IEEE 802.15.4 driver API.

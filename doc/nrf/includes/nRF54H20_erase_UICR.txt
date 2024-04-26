@@ -1,0 +1,12 @@
+.. note::
+   Programming the nRF54H20 SoC can sometimes fail due to conflicts in the resource configuration.
+   This can happen if, for example, an application programmed to the nRF54H20 SoC configured the UICRs for one or more cores in a way that is incompatible with the configuration required by the application you are trying to program on the SoC.
+
+   To fix this error and erase the UICRs, run the following commands::
+
+      nrfutil device x-boot-mode-set --boot-mode safe --serial-number <serial_number>
+      nrfutil device erase --all --serial-number <serial_number> --core Application
+      nrfutil device erase --all --serial-number <serial_number> --core Network
+      nrfutil device x-boot-mode-set --boot-mode normal --serial-number <serial_number>
+
+   You can then run ``west flash`` to program your application.

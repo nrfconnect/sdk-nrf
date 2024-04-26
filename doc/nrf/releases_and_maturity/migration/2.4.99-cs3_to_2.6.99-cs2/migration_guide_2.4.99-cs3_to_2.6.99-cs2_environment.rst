@@ -49,7 +49,22 @@ You also need the following:
 
 * `Git`_ or `Git for Windows`_ (on Linux and Mac, or Windows, respectively)
 * `curl`_
+* On Windows, SEGGER USB Driver for J-Link
 * SEGGER `J-Link version 7.94e`_
+
+.. note::
+   The SEGGER USB Driver for J-Link was included, on Windows, in the nRF Command Line Tools bundle required by the |NCS| v2.4.99-cs3.
+   When updating SEGGER J-Link to version 7.94e on Windows, select :guilabel:`Update existing installation` under :guilabel:`Choose destination` in the :guilabel:`choose optional components` window.
+
+   See the following screenshot:
+
+      .. figure:: images/jlink794e_install.png
+         :alt: Optional components in the J-Link installation
+
+Preliminary step
+****************
+
+Before updating the toolchain, rename your existing ``ncs-lcs`` and ``.west`` folders (for example as ``ncs-lcs_old`` and ``.west_old``) to backup their files.
 
 Updating the toolchain
 **********************
@@ -181,7 +196,14 @@ Updating to the |NCS| 2.6.99-cs2
 
 After you have updated the toolchain, complete the following steps to get the |NCS| v2.6.99-cs2:
 
-1. In the terminal window opened during the toolchain update, enter the following command to clone the project repositories::
+1. In the terminal window opened during the toolchain installation, initialize west with the revision of the |NCS| from the customer sampling:
+
+   .. parsed-literal::
+      :class: highlight
+
+      west init -m https://github.com/nrfconnect/sdk-nrf --mr v2.6.99-cs2
+
+#. Enter the following command to clone the project repositories::
 
       west update
 
@@ -192,19 +214,21 @@ After you have updated the toolchain, complete the following steps to get the |N
 
       west zephyr-export
 
-Your directory structure now looks similar to this::
+   Your directory structure now looks similar to this::
 
-    ncs-lcs/work-dir
-    |___ .west
-    |___ bootloader
-    |___ modules
-    |___ nrf
-    |___ nrfxlib
-    |___ zephyr
-    |___ ...
+      ncs-lcs/work-dir
+      |___ .west
+      |___ bootloader
+      |___ modules
+      |___ nrf
+      |___ nrfxlib
+      |___ zephyr
+      |___ ...
 
-Note that there are additional folders, and that the structure might change.
-The full set of repositories and folders is defined in the manifest file.
+   Note that there are additional folders, and that the structure might change.
+   The full set of repositories and folders is defined in the manifest file.
+
+#. if you have any existing custom applications created for 2.4.99-cs3 that you would like to migrate, move its files from the previous ``ncs-lcs_old`` folder to the newly created ``ncs-lcs`` folder.
 
 Updating the Terminal application
 *********************************
@@ -260,13 +284,16 @@ To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the Sys
 Updating the FICR
 =================
 
-After programming the SDFW and SCFW from the firmware bundle, you must update the FICR registers to configure correctly some trims of the nRF54H20 SoC.
-To update the FICR, run the following commands::
+After programming the SDFW and SCFW from the firmware bundle, you must update the Factory Information Configuration Registers (FICR) to correctly configure some trims of the nRF54H20 SoC.
+To update the FICR, you must run a J-Link script:
 
-   curl -LO https://files.nordicsemi.com/artifactory/swtools/external/scripts/nrf54h20es_trim_adjust.jlink
-   JLinkExe -CommanderScript nrf54h20es_trim_adjust.jlink
+1. Get the Jlink script that updates the FICR::
 
-These commands will download and run a J-Link script that will correctly configure the trims.
+      curl -LO https://files.nordicsemi.com/artifactory/swtools/external/scripts/nrf54h20es_trim_adjust.jlink
+
+#. Run the script::
+
+      JLinkExe -CommanderScript nrf54h20es_trim_adjust.jlink
 
 .. _migration_cs3_to_2_6_99_cs2_env_lcsrot:
 
@@ -346,5 +373,5 @@ Next steps
 
 Your environment is now set to use the |NCS| v2.6.99-cs2 with the nRF54H20 DK:
 
-* If you want to migrate your existing applications previously developed for |NCS| 2.4.99-cs3, consult :ref:`migration_cs3_to_2_6_99_cs2_app`.
+* If you want to modify your existing custom applications previously developed for |NCS| v2.4.99-cs3 to be compatible with v2.6.99-cs2, consult :ref:`migration_cs3_to_2_6_99_cs2_app`.
 * If you want to build and program a sample application on your nRF54H20 DK, consult the building and programming section in the `nRF54H20 DK getting started guide for the nRF Connect SDK v2.6.99-cs2`_.
