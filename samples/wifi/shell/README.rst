@@ -426,7 +426,7 @@ To test the SAP mode, the sample must be built using the configuration overlay :
 
       wifi reg_domain <ISO/IEC 3166-1 alpha2>
 
-   For example, to set the regulatory domain to US, use the following command:
+   For example, to set the regulatory domain to IN, use the following command:
 
    .. code-block:: console
 
