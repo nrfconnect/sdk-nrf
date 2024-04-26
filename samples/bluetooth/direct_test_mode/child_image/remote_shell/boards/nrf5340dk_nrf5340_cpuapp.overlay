@@ -24,3 +24,7 @@
 		<&gpio0 7 0>;
 	};
 };
+
+#if NRF21540EK
+#include "nrf21540ek.overlay"
+#endif

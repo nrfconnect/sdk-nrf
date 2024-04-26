@@ -385,13 +385,7 @@ To build the sample with an HCI interface, use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b board_name -- -DEXTRA_CONF_FILE=overlay-hci.conf
-
-On the |nRF5340DKnoref| the sample with HCI interface can also be built with the `remote_hci` image using the following command:
-
-.. code-block:: console
-
-   west build samples/bluetooth/direct_test_mode -b board_name -- -DEXTRA_CONF_FILE=overlay-hci-nrf53.conf
+   west build samples/bluetooth/direct_test_mode -b board_name -- -DFILE_SUFFIX=hci
 
 USB CDC ACM transport variant
 =============================
@@ -401,14 +395,14 @@ Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DCONFIG_DTM_USB=y
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb
 
 You can also build this sample with support for the front-end module.
 Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DCONFIG_DTM_USB=y
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
 
 .. _dtm_testing:
 
