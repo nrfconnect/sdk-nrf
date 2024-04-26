@@ -45,7 +45,7 @@ Lifecycle State changes
   This means that once set to ``RoT``, it is no longer possible to revert to LCS state ``EMPTY``.
 
 ..
-   ### Add DTS changes
+   ### Add DTS changes ###
 
 .. note::
    Not all the features supported in |NCS| v2.4.99-cs3 have been ported to v2.6.99-cs2 (for example, the nRF54H20 support for the nRF Desktop and nRF Machine Learning applications).

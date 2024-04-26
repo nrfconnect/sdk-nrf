@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_architecture_boot:
 
 nRF54H20 Boot Sequence
@@ -9,13 +7,7 @@ nRF54H20 Boot Sequence
    :local:
    :depth: 2
 
-The nRF54H20 startup procedure can be performed in two scenarios:
-
- * Cold boot
- * Warm boot
-
-During cold boot the system has no state retained in its RAM memory or hardware registers and performs full initialization.
-This procedure is performed on following events:
+The nRF54H20 SoC performs its startup procedure from cold boot on the following events:
 
  * Power on reset
  * Pin reset
@@ -25,11 +17,7 @@ This procedure is performed on following events:
  * Secure Domain watchdog reset
  * Tamper detection
 
-Warm boot is performed when system is being woken up from a deep sleep (system off with RAM retention).
-The state of the system is retained in RAM.
-This procedure is faster than cold boot, because content of the memories represents operational state of the system.
-The procedure requires only restoring the state of hardware peripherals and registers.
-The triggers of the warm boot procedure are:
+If the system was active and entered the Soft Off sleep state, the system performs the cold boot procedure on the following events:
 
   * GPIO event
   * LPCOMP event
@@ -38,12 +26,14 @@ The triggers of the warm boot procedure are:
   * Entering the debug interface mode
   * GRTC event
 
+During cold boot the system has no (or little application-defined) state retained in its RAM memory or hardware registers and performs full initialization.
+
 Cold Boot Sequence
 ******************
 
-The nRF54H20 boot sequence has two key characteristics:
+The nRF54H20 boot sequence has two key features:
 
-* An immutable boot ROM provides the initial root-of-trust (RoT).
+* An immutable boot ROM provides the initial :term:`Root of Trust (RoT)`.
   This boot ROM is responsible for verifying the secure domain firmware signature before allowing the code to be executed.
 * The secure domain acts as the boot master in the system.
   It completes the allocation of all the global resources before any other local domain is allowed to execute.
@@ -53,9 +43,11 @@ The nRF54H20 boot sequence has two key characteristics:
 Boot stages
 ***********
 
+.. to review
+
 The Secure Domain boots the System Controller, the Application Core, and the Radio Core:
 
-* VPRs (PPR, FLPR, BBPROC) are started by their owners when the owners decide.
+* VPRs (PPR, FLPR) are started by their owners when the owners decide.
 * PPR and FLPR are owned by the Application Core in most applications, but any of them can be reassigned to the Radio Core.
 
 See the following overview of the boot sequence, where the left-most block indicates what starts first from when power-on reset is applied.
