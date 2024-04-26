@@ -8,7 +8,14 @@ Features of nRF91 Series
    :depth: 2
 
 The nRF91 Series SiPs integrate an application MCU, a full LTE modem, an RF front end, and power management.
-With built-in GNSS support, it is a great choice for asset tracking applications.
+
+* The nRF9160 DK is a hardware development platform used to design and develop application firmware on the nRF9160 LTE Cat-M1 and Cat-NB1 :term:`System in Package (SiP)`.
+* The nRF9161 DK is a hardware development platform used to design and develop application firmware on the nRF9161 :term:`System in Package (SiP)`.
+  The nRF9161 SiP is a low power SiP with integrated DECT NR+ modem and 3GPP Release 14 LTE-M/NB-IoT with GNSS.
+* Nordic Thingy:91 is a battery-operated prototyping platform for cellular IoT systems, designed especially for asset tracking applications and environmental monitoring.
+  Thingy:91 integrates an nRF9160 SiP that supports LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS) and an nRF52840 SoC that supports Bluetooth® Low Energy, Near Field Communication (NFC) and USB.
+
+With built-in GNSS support, these devices are a great choice for asset tracking applications.
 
 The following figure illustrates the conceptual layout when targeting an nRF91 Series Cortex-M33 application MCU with TrustZone:
 
@@ -137,6 +144,10 @@ The band lock mask allows you to set the bands on which you want the modem to op
 Each bit in the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` option represents one band.
 The maximum length of the string is 88 characters (bit string, 88 bits).
 
+For Thingy:91, you can configure the modem to use specific LTE bands by using the band lock AT command.
+The preprogrammed firmware configures the modem to use the bands currently certified on the Thingy:91 hardware.
+When building the firmware, you can configure which bands must be enabled.
+
 For more detailed information, see the `band lock section in the nRF9160 AT Commands Reference Guide`_ or the `band lock section in the nRF91x1 AT Commands Reference Guide`_, depending on the SiP you are using.
 
 .. _nrf91_ug_network_mode:
@@ -154,6 +165,14 @@ When the :ref:`lte_lc_readme` library is not used, the modem starts in LTE-M mod
 You can change the system mode and the LTE system mode preference using the ``AT%XSYSTEMMODE`` AT command.
 
 For more detailed information, see the `system mode section in the nRF9160 AT Commands Reference Guide`_ or the `system mode section in the nRF91x1 AT Commands Reference Guide`_, depending on the SiP you are using.
+
+
+LTE-M / NB-IoT switching
+------------------------
+
+Thingy:91 has a multimode modem, which enables it to support automatic switching between LTE-M and NB-IoT.
+A built-in parameter in the Thingy:91 firmware determines whether the modem first attempts to connect in LTE-M or NB-IoT mode.
+If the modem fails to connect using this preferred mode within the default timeout period (10 minutes), the modem switches to the other mode.
 
 Modem library
 *************
@@ -187,9 +206,6 @@ See :ref:`modem_trace_module` for other backend options.
 If the existing trace backends are not sufficient, it is possible to implement custom trace backends.
 For more information on the implementation of a custom trace backend, see :ref:`adding_custom_modem_trace_backends`.
 
-.. _nrf91_fota:
-.. _nrf9160_fota:
-
 Remote observability using Memfault
 ***********************************
 
@@ -207,82 +223,6 @@ The cellular stack consists of out-of-the-box collection of the following key co
 For debugging, any system crashes and modem traces can be remotely collected for further analysis.
 
 See the :ref:`ug_memfault` page for more information on how to enable Memfault in your |NCS| project on an nRF91 Series SiP to visualize the data across the fleet and by device.
-
-FOTA updates
-************
-
-|fota_upgrades_def|
-FOTA updates can be used to apply delta patches to the :ref:`lte_modem` firmware, full :ref:`lte_modem` firmware updates, and to replace the upgradable bootloader or the application.
-
-.. note::
-   Even though the Trusted Firmware-M and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware updates.
-   Any reference to the application in this section is meant to indicate the application including the Trusted Firmware-M.
-
-To perform a FOTA updates, complete the following steps:
-
-1. Make sure that your application supports FOTA updates.
-
-   To download and apply FOTA updates, your application must use the :ref:`lib_fota_download` library.
-   This library determines the type of update by inspecting the header of the firmware and invokes the :ref:`lib_dfu_target` library to apply the firmware update.
-   In its default configuration, the DFU target library is set to support all the types of FOTA updates except full modem firmware updates, but you can freely enable or disable the support for specific targets.
-   In addition, the following requirements apply:
-
-   * To upgrade the application, you must use :doc:`mcuboot:index-ncs` as the upgradable bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
-   * If you want to upgrade the upgradable bootloader, you must use the :ref:`bootloader` (:kconfig:option:`CONFIG_SECURE_BOOT must be enabled`).
-   * If you want to update the modem firmware through modem delta updates, you do not need to use MCUboot or the immutable bootloader, because the modem firmware update is handled by the modem itself.
-   * If you want to perform a full modem firmware update, an |external_flash_size| is required.
-
-#. Create a binary file that contains the new image.
-
-   .. note::
-      This step does not apply for updates of the modem firmware.
-      You can download delta patches and full binaries of the modem firmware from the `nRF9161 product website (compatible downloads)`_ or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
-
-   |fota_upgrades_building|
-   The :file:`app_update.bin` file is the file that should be uploaded to the server.
-
-   To create binary files for a bootloader upgrade, make sure that :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
-   The build will create a binary file for each variant of the upgradable bootloader, one for each bootloader slot.
-   See :ref:`upgradable_bootloader` for more information.
-
-#. Make the binary file (or files) available for download.
-   Upload the serialized :file:`.cbor` binary file or files to a web server that is compatible with the :ref:`lib_download_client` library.
-
-The full FOTA procedure depends on where the binary files are hosted for download.
-
-FOTA updates using nRF Cloud
-============================
-
-FOTA updates can be managed through a comprehensive management portal on `nRF Cloud`_, either fully hosted on nRF Cloud or accessible from a customer cloud using the `nRF Cloud REST API`_.
-If you are using nRF Cloud, see the `nRF Cloud Getting Started FOTA documentation`_ for instructions.
-
-Currently, delta modem firmware FOTA files are available in nRF Cloud under :guilabel:`Firmware Updates` in the :guilabel:`Device Management` tab on the left.
-If you intend to obtain FOTA files from nRF Cloud, see the additional requirements in :ref:`lib_nrf_cloud_fota`.
-
-You can upload custom application binaries to nRF Cloud for application FOTA updates.
-After :ref:`nrf9160_gs_connecting_dk_to_cloud`, you can upload the files to your nRF Cloud account as a bundle after navigating to :guilabel:`Device Management` on the left and clicking :guilabel:`Firmware Updates`.
-
-FOTA updates using other cloud services
-========================================
-
-FOTA updates can alternatively be hosted from a customer-developed cloud services such as solutions based on AWS and Azure.
-If you are uploading the files to an Amazon Web Services Simple Storage Service (AWS S3) bucket, see the :ref:`lib_aws_fota` documentation for instructions.
-Samples are provided in |NCS| for AWS (:ref:`aws_iot` sample) and Azure (:ref:`azure_iot_hub` sample).
-
-Your application must be able to retrieve the host and file name for the binary file.
-See the :ref:`lib_fota_download` library documentation for information about the format of this information, especially when providing two files for a bootloader upgrade.
-You can hardcode the information in the application, or you can use a functionality like AWS jobs to provide the URL dynamically.
-
-Samples and applications implementing FOTA
-==========================================
-
-* :ref:`http_modem_full_update_sample` sample - Performs a full firmware OTA update of the modem.
-* :ref:`http_modem_delta_update_sample` sample - Performs a delta OTA update of the modem firmware.
-* :ref:`http_application_update_sample` sample - Performs a basic application FOTA update.
-* :ref:`aws_iot` sample - Performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
-* :ref:`azure_iot_hub` sample - Performs a FOTA update from the Azure IoT Hub.
-* :ref:`asset_tracker_v2` application - Performs FOTA updates of the application, modem (delta), and boot (if enabled).
-  It also supports nRF Cloud FOTA as well as AWS or Azure FOTA. Only one must be configured at a time.
 
 .. _nrf91_ug_gnss:
 .. _nrf9160_ug_gnss:
@@ -302,6 +242,9 @@ Therefore, the performance is not ideal when there are obstructions overhead or 
 
 Customers who are developing their own hardware with the nRF9160 are strongly recommended to use the `nRF9160 Antenna and RF Interface Guidelines`_ as a reference.
 See `GPS interface and antenna`_ for more details on GNSS interface and antenna.
+
+Thingy:91 has a GNSS receiver, which allows the device to be located globally using GNSS signals if it is activated.
+In :ref:`asset_tracker_v2`, the GNSS receiver is activated by default.
 
 .. note::
 
@@ -408,3 +351,8 @@ Following is a list of the samples and applications with some information about 
   The application displays tracking and GNSS fix information in the serial console.
 * The :ref:`gnss_sample` sample does not use assistance by default but can be configured to use nRF Cloud A-GNSS, P-GPS, or a combination of both.
   The sample displays tracking and fix information as well as NMEA strings in the serial console.
+
+Operating modes
+***************
+
+nRF91 Series devices can display multiple LED patterns that indicate the operating state of the device as described in the :ref:`LED indication <led_indication>` section of the :ref:`asset_tracker_v2_ui_module` of the Asset Tracker v2 documentation.

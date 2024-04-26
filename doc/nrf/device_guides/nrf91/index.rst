@@ -1,7 +1,12 @@
 .. _ug_nrf91:
+.. _ug_nrf9160:
+.. _ug_nrf9161:
+.. _ug_thingy91:
+.. _thingy91_ug_intro:
 
-Working with nRF91 Series
-#########################
+
+Developing with nRF91 Series
+############################
 
 Zephyr and the |NCS| provide support for developing cellular applications using the following nRF91 Series devices:
 
@@ -36,7 +41,7 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
      - | `Thingy\:91 product page`_
        | `nRF9160 System in Package (SiP) <nRF9160 product website_>`_
 
-The nRF Connect SDK also offers :ref:`samples <cellular_samples>` dedicated to these devices.
+The nRF Connect SDK also offers :ref:`samples <cellular_samples>` dedicated to these devices, as well as compatible :ref:`drivers` and :ref:`libraries`.
 
 If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
 
@@ -44,8 +49,13 @@ If you want to go through a hands-on online training to familiarize yourself wit
    :maxdepth: 2
    :caption: Subpages:
 
-   working_with_nrf/nrf91/nrf91_features
-   working_with_nrf/nrf91/nrf9161
-   working_with_nrf/nrf91/nrf9160
-   working_with_nrf/nrf91/thingy91
-   working_with_nrf/nrf91/nrf91_snippet
+   nrf91_features
+   nrf91_board_controllers
+   nrf91_cloud_certificate
+   thingy91_connecting
+   nrf91_updating_fw_programmer
+   nrf91_building
+   nrf91_programming
+   nrf91_testing_at_client
+   nrf91_snippet
+   nrf9160_external_flash

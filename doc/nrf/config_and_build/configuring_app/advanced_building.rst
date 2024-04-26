@@ -29,6 +29,8 @@ Here are some of the possible options you can use:
 
 * You can provide :ref:`custom CMake options <cmake_options>` to the build command.
 * You can include the *directory_name* parameter to build from a directory other than the current directory.
+* You can specify a *destination_directory_name* parameter to choose where the build files are generated.
+  If not specified, the build files are automatically generated in :file:`build/zephyr/`.
 * You can :ref:`start menuconfig with the west command <configuration_temporary_change>` to configure your application.
 * You can :ref:`reuse an existing build directory <zephyr:west-building-pristine>` for building another application for another board or board target by passing ``-p=auto`` to ``west build``.
 * You can :ref:`run unit tests with the west command <running_unit_tests>` with the ``-t run`` parameter from the unit test directory.

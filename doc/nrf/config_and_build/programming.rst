@@ -14,47 +14,9 @@ Programming an application
 
 To program the :ref:`output build files <app_build_output_files>` to your device, which in most of the cases will be :file:`zephyr.hex` or :file:`merged.hex`, use the steps for the development environment.
 
-.. tabs::
+.. |exceptions_step| replace:: Make sure you are familiar with :ref:`programming_hw`.
 
-   .. group-tab:: nRF Connect for VS Code
-
-      You need to set up a build configuration before you program a device in the |nRFVSC|.
-
-      Complete the following steps:
-
-      1. Connect the development kit to your PC using a USB cable.
-      #. Power on the development kit.
-      #. Make sure you are familiar with :ref:`programming_hw`.
-      #. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
-      #. In the extension's :guilabel:`Actions View`, click on :guilabel:`Flash`.
-
-      For instructions about programming with the |nRFVSC|, see `How to flash an application`_.
-
-      If you want to program with custom options or scripts, read about `Binding custom tasks to actions`_ in the extension documentation.
-
-      For information about how to flash and erase in the |nRFVSC|, read about the `Application-specific flash options`_.
-
-   .. group-tab:: Command line
-
-      Complete the following steps:
-
-      1. Connect the development kit to your PC using a USB cable.
-      #. Power on the development kit.
-      #. Make sure you are familiar with :ref:`programming_hw`.
-      #. Program the application to the kit using the following command:
-
-         .. code-block:: console
-
-            west flash --erase
-
-         This command erases the full flash memory before programming, which is the recommended approach.
-         If the application depends on other flash memory areas (for example, if it uses the :ref:`zephyr:settings_api` partition where bonding information is stored), erasing the full kit before programming ensures that these areas are updated with the new content.
-         You can also :ref:`program without erasing <programming_params_no_erase>`.
-
-         The ``west flash`` command automatically resets the kit and starts the application.
-
-      For more information on programming using the command line, see :ref:`Flashing <zephyr:west-flashing>` in the Zephyr documentation.
-
+.. include:: ../includes/vsc_build_and_run_series.txt
 
 .. _programming_hw:
 
