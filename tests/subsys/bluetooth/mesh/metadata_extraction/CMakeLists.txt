@@ -14,12 +14,16 @@ target_sources(app PRIVATE ${app_sources})
 set(script_args ${PROJECT_BINARY_DIR})
 
 if(CONFIG_COMP_DATA_LAYOUT_SINGLE)
-    list(PREPEND script_args --single)
+  list(PREPEND script_args --single)
 else()
-    list(PREPEND script_args --multiple)
+  list(PREPEND script_args --multiple)
 endif()
 
-add_custom_target(verify_metadata ALL
+list(APPEND script_args childparent)
+
+if(NOT SYSBUILD)
+  add_custom_target(verify_metadata ALL
     ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/verify_metadata.py ${script_args}
     DEPENDS parse_mesh_metadata
-)
+  )
+endif()
