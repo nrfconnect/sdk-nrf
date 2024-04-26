@@ -13,7 +13,16 @@ Overview
 ********
 
 The sample application tests throughput of the IPC service with available backends.
-Currently, the sample supports OpenAMP RPMSG and ICMSG backends.
+Currently, the sample supports the following backends:
+
+* :ref:`zephyr:nrf5340dk_nrf5340` board:
+
+  * `OpenAMP`_ library
+  * :ref:`zephyr:ipc_service_backend_icmsg`
+
+* :ref:`zephyr:nrf54h20dk_nrf54h20` board:
+
+  * :ref:`zephyr:ipc_service_backend_icbmsg`
 
 Each core periodically prints out data throughput in bytes per second.
 
@@ -73,7 +82,7 @@ Use these overlays when building the IPC sample to test the following scenarios:
      west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_cpuapp_sending .
      west build -p -b nrf5340dk_nrf5340_cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_cpunet_sending .
 
-* Either the network or application core is sending data through the IPC service using the ICMSG backend:
+* Either the network or application core is sending data through the IPC service using the :ref:`zephyr:ipc_service_backend_icmsg` backend:
 
   .. code-block:: console
 
@@ -82,17 +91,16 @@ Use these overlays when building the IPC sample to test the following scenarios:
 
 **nRF54H20 DK**
 
-You can build the sample to test IPC between the application and PPR core using the ICMSG backend, as follows:
+You can build the sample to test IPC between the application and PPR core using the :ref:`zephyr:ipc_service_backend_icmsg` backend, as follows:
 
 .. code-block:: console
 
    west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpuppr_icmsg .
 
-You can build the sample to test IPC between the application and radio domains using either the RPMsg or the ICMSG backend, as follows:
+You can build the sample to test IPC between the application and radio domains using the :ref:`zephyr:ipc_service_backend_icbmsg` backend, as follows:
 
 .. code-block:: console
 
-   west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_rpmsg .
    west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_icmsg .
 
 Testing
