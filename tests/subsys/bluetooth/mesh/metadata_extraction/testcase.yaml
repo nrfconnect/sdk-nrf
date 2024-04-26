@@ -8,22 +8,23 @@ tests:
   bluetooth.mesh.metadata_extraction_single:
     sysbuild: true
     tags: sysbuild
-    extra_configs:
-      - CONFIG_COMP_DATA_LAYOUT_SINGLE=y
+    extra_args:
+      - SB_CONFIG_COMP_DATA_LAYOUT_SINGLE=y
   bluetooth.mesh.metadata_extraction_multiple:
     sysbuild: true
     tags: sysbuild
-    extra_configs:
-      - CONFIG_COMP_DATA_LAYOUT_MULTIPLE=y
+    extra_args:
+      - SB_CONFIG_COMP_DATA_LAYOUT_MULTIPLE=y
   bluetooth.mesh.metadata_extraction_array:
     sysbuild: true
     tags: sysbuild
-    extra_configs:
-      - CONFIG_COMP_DATA_LAYOUT_ARRAY=y
+    extra_args:
+      - SB_CONFIG_COMP_DATA_LAYOUT_ARRAY=y
   bluetooth.mesh.metadata_extraction_single_lto:
     sysbuild: true
     tags: sysbuild
+    extra_args:
+      - SB_CONFIG_COMP_DATA_LAYOUT_SINGLE=y
     extra_configs:
-      - CONFIG_COMP_DATA_LAYOUT_SINGLE=y
       - CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
       - CONFIG_LTO=y

@@ -398,10 +398,22 @@ if __name__ == "__main__":
     try:
         args = input_parse()
 
-        zip_path = os.path.abspath(os.path.join(args.bin_path, 'dfu_application.zip'))
+        sysbuild_config_path = os.path.abspath(os.path.join(args.bin_path, '.config.sysbuild'))
+
+        if os.path.isfile(sysbuild_config_path):
+            # Sysbuild
+            zip_path = os.path.abspath(os.path.join(args.bin_path, '..', '..', 'dfu_application.zip'))
+            sysbuild = True
+        else:
+            # Child/parent image
+            zip_path = os.path.abspath(os.path.join(args.bin_path, 'dfu_application.zip'))
+            sysbuild = False
+
         metadata_path = os.path.abspath(os.path.join(args.bin_path, FILE_NAME))
-        elf_path = os.path.abspath(os.path.join(args.bin_path, 'zephyr.elf'))
         config_path = os.path.abspath(os.path.join(args.bin_path, '.config'))
+        kconfigs = KConfig.from_file(config_path)
+        kernel_name = kconfigs['CONFIG_KERNEL_BIN_NAME'].replace("\"", "")
+        elf_path = os.path.abspath(os.path.join(args.bin_path, (kernel_name + '.elf')))
 
         if args.print_metadata:
             # Caller requests already generated metadata
@@ -413,12 +425,14 @@ if __name__ == "__main__":
             # Mesh metadata already present in zip file
             sys.exit(0)
 
-        kconfigs = KConfig.from_file(config_path)
         comps = parse_comp_data(elf_path, kconfigs)
         version = kconfigs.version_parse()
-        binary_size = os.path.getsize(os.path.join(args.bin_path, 'app_update.bin'))
-        core_type = 1
 
+        if sysbuild:
+            binary_size = os.path.getsize(os.path.join(args.bin_path, (kernel_name + '.signed.bin')))
+        else:
+            binary_size = os.path.getsize(os.path.join(args.bin_path, 'app_update.bin'))
+        core_type = 1
         json_data = []
 
         for comp in comps:

@@ -7,31 +7,37 @@
 find_package(Python3 REQUIRED)
 
 function(mesh_dfu_metadata)
-    add_custom_command(
-        OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip_ble_mesh_metadata.json
-        COMMAND
-        ${PYTHON_EXECUTABLE}
-        ${ZEPHYR_NRF_MODULE_DIR}/scripts/bluetooth/mesh/mesh_dfu_metadata.py
-        --bin-path ${PROJECT_BINARY_DIR}
-        DEPENDS
-        ${PROJECT_BINARY_DIR}/dfu_application.zip
-    )
+  if(SYSBUILD)
+    set(metadata_dir ${PROJECT_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr)
+  else()
+    set(metadata_dir ${PROJECT_BINARY_DIR})
+  endif()
 
-    add_custom_target(
-        parse_mesh_metadata
-        ALL
-        DEPENDS ${PROJECT_BINARY_DIR}/dfu_application.zip_ble_mesh_metadata.json
-    )
+  set(metadata_depends ${PROJECT_BINARY_DIR}/dfu_application.zip)
 
-    add_custom_target(
-        # Prints already generated metadata
-        ble_mesh_dfu_metadata
-        COMMAND
-        ${PYTHON_EXECUTABLE}
-        ${ZEPHYR_NRF_MODULE_DIR}/scripts/bluetooth/mesh/mesh_dfu_metadata.py
-        --bin-path ${PROJECT_BINARY_DIR}
-        --print-metadata
-        COMMAND_EXPAND_LISTS
-        )
+  add_custom_command(
+    OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip_ble_mesh_metadata.json
+    COMMAND
+    ${PYTHON_EXECUTABLE}
+    ${ZEPHYR_NRF_MODULE_DIR}/scripts/bluetooth/mesh/mesh_dfu_metadata.py
+    --bin-path ${metadata_dir}
+    DEPENDS ${metadata_depends}
+  )
 
+  add_custom_target(
+    parse_mesh_metadata
+    ALL
+    DEPENDS ${PROJECT_BINARY_DIR}/dfu_application.zip_ble_mesh_metadata.json
+  )
+
+  add_custom_target(
+    # Prints already generated metadata
+    ble_mesh_dfu_metadata
+    COMMAND
+    ${PYTHON_EXECUTABLE}
+    ${ZEPHYR_NRF_MODULE_DIR}/scripts/bluetooth/mesh/mesh_dfu_metadata.py
+    --bin-path ${PROJECT_BINARY_DIR}
+    --print-metadata
+    COMMAND_EXPAND_LISTS
+  )
 endfunction()

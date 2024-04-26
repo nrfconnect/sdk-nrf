@@ -1,0 +1,18 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menuconfig DFU_ZIP
+	bool "Create DFU zip package"
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  Build DFU zip package that contains a manifest file and selected update images.
+
+if DFU_ZIP
+
+config DFU_ZIP_BLUETOOTH_MESH_METADATA
+	bool "Bluetooth mesh metadata"
+	help
+	  Includes metadata for bluetooth mesh.
+
+endif # DFU_ZIP
