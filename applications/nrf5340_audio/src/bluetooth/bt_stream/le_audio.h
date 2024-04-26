@@ -67,6 +67,16 @@ struct le_audio_encoded_audio {
 };
 
 /**
+ * @brief	Get the current state of an endpoint.
+ *
+ * @param[in]	ep       The endpoint to check.
+ * @param[out]	state    The state of the endpoint.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int le_audio_ep_state_get(struct bt_bap_ep *ep, uint8_t *state);
+
+/**
  * @brief	Check if an endpoint is in the given state.
  *		If the endpoint is NULL, it is not in the
  *		given state, and this function returns false.
