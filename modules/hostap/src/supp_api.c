@@ -434,6 +434,12 @@ static int wpas_add_and_config_network(struct wpa_supplicant *wpa_s,
 				resp.network_id, bssid_str);
 	}
 
+	/* Set the default maximum inactivity time for the BSS to
+	 * as configured by user.
+	 */
+	_wpa_cli_cmd_v("set_network %d ap_max_inactivity %d",
+			resp.network_id, CONFIG_WIFI_MGMT_AP_STA_INACTIVITY_TIMEOUT);
+
 	/* enable and select network */
 	_wpa_cli_cmd_v("enable_network %d", resp.network_id);
 	_wpa_cli_cmd_v("select_network %d", resp.network_id);
@@ -928,4 +934,42 @@ out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
 	return ret;
 }
+
+int z_wpa_supplicant_ap_config_params(const struct device *dev,
+				      struct wifi_ap_config_params *params)
+{
+	struct wpa_supplicant *wpa_s;
+	int ret = -1;
+	struct wpa_ssid *ssid = NULL;
+
+	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
+
+	if (!params) {
+		wpa_printf(MSG_ERROR, "AP config param NULL");
+		goto out;
+	}
+
+	wpa_s = get_wpa_s_handle(dev);
+	if (!wpa_s) {
+		wpa_printf(MSG_ERROR, "Interface %s not found", dev->name);
+		goto out;
+	}
+
+	ssid = wpa_s->current_ssid;
+	if (!ssid) {
+		wpa_printf(MSG_ERROR, "AP is not operational");
+		goto out;
+	}
+
+	if (params->type & WIFI_AP_CONFIG_PARAM_MAX_INACTIVITY) {
+		_wpa_cli_cmd_v("set_network %d ap_max_inactivity %d",
+			       ssid->id, params->max_inactivity);
+	}
+
+out:
+	k_mutex_unlock(&wpa_supplicant_mutex);
+
+	return ret;
+}
+
 #endif /* CONFIG_AP */
