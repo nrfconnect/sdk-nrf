@@ -498,7 +498,9 @@ Matter samples
 Multicore samples
 -----------------
 
-|no_changes_yet_note|
+* :ref:`ipc_service_sample` sample:
+
+  * Removed support for the `OpenAMP`_ library backend on the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 Networking samples
 ------------------
