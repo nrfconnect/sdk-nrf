@@ -73,6 +73,11 @@ function(include_mesh_dfu_metadata)
   mesh_dfu_metadata()
 endfunction()
 
+function(include_matter_factory_data)
+  include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data_sysbuild.cmake)
+  nrfconnect_generate_factory_data()
+endfunction()
+
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   cmake_parse_arguments(PRE_CMAKE "" "" "IMAGES" ${ARGN})
   restore_ncs_vars()
@@ -327,8 +332,31 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include_provision_hex()
   endif()
 
+<<<<<<< Updated upstream
+=======
+  if(SB_CONFIG_MATTER_FACTORY_DATA AND SB_CONFIG_PARTITION_MANAGER)
+    include_matter_factory_data()
+  endif()
+
+  if(SB_CONFIG_MATTER_OTA)
+    include_matter_ota()
+  endif()
+
+  if(SB_CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
+    include_nrf700x()
+  endif()
+
+  if(SB_CONFIG_DFU_ZIP)
+    include_fw_zip()
+  endif()
+
+>>>>>>> Stashed changes
   if(SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA)
     include_mesh_dfu_metadata()
+  endif()
+
+  if(SB_CONFIG_MATTER_FACTORY_DATA)
+    include_matter_factory_data()
   endif()
 
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/extensions.cmake)
@@ -339,6 +367,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     # Set PM variables up that applications need prior to PM having ran
     get_property(PM_MCUBOOT_PRIMARY_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_SIZE)
     get_property(PM_MCUBOOT_PAD_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PAD_SIZE)
+
+    if(SB_CONFIG_MATTER_FACTORY_DATA)
+      get_property(PM_FACTORY_DATA_ADDRESS TARGET partition_manager PROPERTY PM_FACTORY_DATA_ADDRESS)
+      get_property(PM_FACTORY_DATA_OFFSET TARGET partition_manager PROPERTY PM_FACTORY_DATA_OFFSET)
+    endif()
 
     if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_EMPTY)
       get_property(PM_MCUBOOT_PRIMARY_1_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_1_SIZE)
