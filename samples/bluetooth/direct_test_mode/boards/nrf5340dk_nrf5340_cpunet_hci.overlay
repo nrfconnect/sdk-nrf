@@ -4,20 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	chosen {
-		ncs,dtm-uart = &uart0;
-	};
-};
-
-&uart0 {
-	status = "okay";
-	compatible = "nordic,nrf-ipc-uart";
-	ipc = <&ipc0>;
-	ept-name = "remote shell";
-	current-speed = <19200>;
-};
-
 &radio {
 	status = "okay";
 	/* This is a number of antennas that are available on antenna matrix
