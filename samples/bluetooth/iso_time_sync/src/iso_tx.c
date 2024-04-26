@@ -358,8 +358,10 @@ static void iso_sent(struct bt_iso_chan *chan)
 	if (prev_sent_sdu % 100 == 0) {
 		int32_t time_to_trigger = trigger_time_us - controller_time_us;
 
-		printk("Sent SDU, counter: %d, btn_val: %d, LED will be set in %d us\n",
-		       prev_sent_sdu, btn_pressed, time_to_trigger);
+		printk("Sent SDU counter %u with timestamp %u us, controller_time %u us, ",
+			   prev_sent_sdu, assigned_timestamp, controller_time_us);
+		printk("btn_val: %d LED will be set in %d us\n",
+			   btn_pressed, time_to_trigger);
 	}
 }
 
