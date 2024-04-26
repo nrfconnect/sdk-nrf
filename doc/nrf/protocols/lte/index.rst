@@ -179,7 +179,7 @@ The following sections explain the different applications, libraries, and sample
 Modem library
 =============
 
-.. include:: ../../device_guides/working_with_nrf/nrf91/nrf91_features.rst
+.. include:: ../../device_guides/nrf91/nrf91_features.rst
     :start-after: nrf91_modem_lib_start
     :end-before: nrf91_modem_lib_end
 

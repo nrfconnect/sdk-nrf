@@ -86,7 +86,7 @@ You must also update the modem firmware.
 
 .. tip::
    For a more compact nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
-   See the :ref:`building_pgming` section of the :ref:`ug_thingy91` page for more information.
+   See the :ref:`building_pgming` section for more information.
 
 You can update the application and modem firmware on a Thingy:91 through a :term:`Universal Serial Bus (USB)` cable using MCUboot.
 MCUboot is a secure bootloader that is used to update applications if you do not have an external debugger.
