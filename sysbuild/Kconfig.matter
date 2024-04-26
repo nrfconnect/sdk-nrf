@@ -1,0 +1,25 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "Matter"
+
+config MATTER_FACTORY_DATA
+	bool "Create matter factory data"
+	help
+	  Include matter factory data.
+
+if MATTER_FACTORY_DATA
+
+config MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE
+	bool "Merge generated factory data with merged.hex output"
+	default y
+	help
+	  Enables merging the generated factory data with the merged.hex output
+	  build file. As a result, the merged.hex build output file, which is used
+	  when flashing the firmware using the west tool, includes the factory data
+	  as well.
+
+endif # MATTER_FACTORY_DATA
+
+endmenu
