@@ -15,7 +15,7 @@
 
 config SUIT_MPI_SOC_NRF54H20
 	bool
-	default y if SOC_NRF54H20
+	default y if SOC_SERIES_NRF54HX
 
 if SUIT_MPI_SOC_NRF54H20
 
