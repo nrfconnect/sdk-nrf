@@ -7,14 +7,28 @@ nRF5340 Audio overview and firmware architecture
    :local:
    :depth: 2
 
-Each nRF5340 Audio application corresponds to one specific LE Audio role: unicast client (gateway), unicast server (headset), broadcast source (gateway), or broadcast sink (headset).
-The gateway receives the audio data from external sources (USB or line input/I2S) and forwards it to one or more headsets.
-The headset is a receiver device that plays back the audio it gets from the gateway, and will act as earbuds, headphones, a speaker, hearing aids, or similar.
+Each nRF5340 Audio application corresponds to one of two LE Audio modes and one of four specific LE Audio roles:
 
-Each nRF5340 Audio application is configured for one specific LE Audio mode: the *connected isochronous stream* (CIS, unicast) mode or in the *broadcast isochronous stream* (BIS) mode.
+* For the *connected isochronous stream* (CIS) mode:
+
+  * Unicast client
+  * Unicast server
+
+* For the *broadcast isochronous stream* (BIS) mode:
+
+  * Broadcast source
+  * Broadcast sink
+
+Unicast client (CIS) and broadcast source (BIS) receive the audio data from external sources (USB or line input/I2S) and forward it to one or more unicast servers or broadcast sinks, thus becoming source devices for them.
+Unicast servers (CIS) and broadcast sinks (BIS) are receiver devices that play back the audio they get from source devices, and will act as earbuds, headphones, speakers, hearing aids, or similar.
+Unicast servers can also send audio back to the unicast client.
 See :ref:`nrf53_audio_app_overview_modes` for more information.
 
-The applications use the same code base, but use different :file:`main.c` files and include different modules and libraries depending on the configuration.
+The nRF5340 Audio applications use the same code base, but use different :file:`main.c` files and include different modules and libraries depending on the configuration.
+
+.. important::
+    Before the |NCS| v2.6.0, there was a single nRF53 Audio application with different configuration options for gateway (currently, unicast client and broadcast source) and headset (currently, unicast server and broadcast sink).
+    For this reason, until it is cleaned up, the code and documentation of the nRF5340 Audio applications still make references to gateway and headset.
 
 You might need to configure and program two applications for testing the interoperability, depending on your use case.
 See the testing steps for each of the application for more information.
@@ -32,31 +46,30 @@ Each application works either in the *connected isochronous stream* (CIS) mode o
    CIS and BIS mode overview
 
 Connected Isochronous Stream (CIS)
-  CIS is a bidirectional communication protocol that allows for sending separate connected audio streams from a source device to one or more receivers.
-  The gateway can send the audio data using both the left and the right ISO channels at the same time, allowing for stereophonic sound reproduction with synchronized playback.
+  CIS is a bidirectional (connected) communication protocol that allows for sending separate connected audio streams from a source device to one or more receivers.
+  The source can send the audio data using both the left and the right ISO channels at the same time, allowing for stereophonic sound reproduction with synchronized playback.
 
-  This is the mode available for the unicast applications (:ref:`unicast client<nrf53_audio_unicast_client_app>` and :ref:`unicast server<nrf53_audio_unicast_server_app>`).
-  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway, the left headset, or the right headset.
+  This is the mode available for the unicast applications (:ref:`unicast client<nrf53_audio_unicast_client_app>` as source and :ref:`unicast server<nrf53_audio_unicast_server_app>` as receivers).
 
   In the current version of the nRF5340 Audio unicast client, the application offers both unidirectional and bidirectional communication.
-  In the bidirectional communication, the headset device will send audio from the on-board PDM microphone.
+  In the bidirectional communication, the receiver device will send audio from the on-board PDM microphone.
   See :ref:`nrf53_audio_app_configuration_select_bidirectional` in the application description for more information.
 
   You can also enable a walkie-talkie demonstration.
-  In this demonstration, the gateway device will send audio from the on-board PDM microphone instead of using USB or the line-in.
+  In this demonstration, the source device will send audio from the on-board PDM microphone instead of using USB or the line-in.
   See :ref:`nrf53_audio_app_configuration_enable_walkie_talkie` in the application description for more information.
 
 Broadcast Isochronous Stream (BIS)
-  BIS is a unidirectional communication protocol that allows for broadcasting one or more audio streams from a source device to an unlimited number of receivers that are not connected to the source.
+  BIS is a unidirectional (broadcast/disconnected) communication protocol that allows for broadcasting one or more audio streams from a source device to an unlimited number of receivers that are not connected to the source.
 
-  This is the mode available for the broadcast applications (:ref:`broadcast source<nrf53_audio_broadcast_source_app>` for headset and :ref:`broadcast sink<nrf53_audio_broadcast_sink_app>` for gateway).
-  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway or as one of the headsets.
-  Use multiple nRF5340 Audio development kits to test BIS having multiple receiving headsets.
+  This is the mode available for the broadcast applications (:ref:`broadcast source<nrf53_audio_broadcast_source_app>` for receivers and :ref:`broadcast sink<nrf53_audio_broadcast_sink_app>` for source devices).
+  In this mode, you can use the nRF5340 Audio development kit in the role of the source or as one of the receivers.
+  Use multiple nRF5340 Audio development kits to test BIS having multiple receivers.
 
   .. note::
      In the BIS mode, you can use any number of nRF5340 Audio development kits as receivers.
 
-The audio quality for both modes does not change, although the processing time for stereo can be longer.
+CIS and BIS configurations can achieve the same audio quality, and there are numerous configurations to change key parameters that influence quality, delay, and noise immunity.
 
 .. _nrf53_audio_app_overview_architecture:
 
@@ -96,7 +109,7 @@ These modules include the following major ones:
   * Renderer - This module handles rendering, such as volume up and down.
   * Content Control - This module handles content control, such as play and pause.
 
-* Application-specific custom modules, including the synchronization module (part of `I2S-based firmware for gateway and headsets`_) - See `Synchronization module overview`_ for more information.
+* Application-specific custom modules, including the synchronization module (part of `I2S-based firmware for source and receivers`_) - See `Synchronization module overview`_ for more information.
 
 Since the application architecture is the same for all applications and the code before compilation is shared to a significant degree, the set of modules in use depends on the chosen audio inputs and outputs (USB or analog jack).
 
@@ -112,8 +125,8 @@ Communication between modules is primarily done through Zephyr's :ref:`zephyr:zb
 
 .. _nrf53_audio_app_overview_architecture_usb:
 
-USB-based firmware for gateway
-==============================
+USB-based firmware for source
+=============================
 
 The following figures show an overview of the modules currently included in the firmware of applications that use USB.
 
@@ -138,7 +151,7 @@ Unicast client USB-based firmware
 
 .. _nrf53_audio_app_overview_architecture_i2s:
 
-I2S-based firmware for gateway and headsets
+I2S-based firmware for source and receivers
 ===========================================
 
 The following figure shows an overview of the modules currently included in the firmware of applications that use I2S.
@@ -188,16 +201,16 @@ To synchronize the audio, it executes the following types of adjustments:
 * Presentation compensation
 * Drift compensation
 
-The presentation compensation makes all the headsets play audio at the same time, even if the packets containing the audio frames are not received at the same time on the different headsets.
+The presentation compensation makes all the receivers play audio at the same time, even if the packets containing the audio frames are not received at the same time on the different receivers.
 In practice, it moves the audio data blocks in the FIFO forward or backward a few blocks, adding blocks of *silence* when needed.
 
 The drift compensation adjusts the frequency of the audio clock to adjust the speed at which the audio is played.
-This is required in the CIS mode, where the gateway and headsets must keep the audio playback synchronized to provide True Wireless Stereo (TWS) audio playback.
+This is required in the CIS mode, where the source and receiver devices must keep the audio playback synchronized to provide True Wireless Stereo (TWS) audio playback.
 As such, it provides both larger adjustments at the start and then continuous small adjustments to the audio synchronization.
 This compensation method counters any drift caused by the differences in the frequencies of the quartz crystal oscillators used in the development kits.
 Development kits use quartz crystal oscillators to generate a stable clock frequency.
 However, the frequency of these crystals always slightly differs.
-The drift compensation makes the inter-IC sound (I2S) interface on the headsets run as fast as the Bluetooth packets reception.
+The drift compensation makes the inter-IC sound (I2S) interface on the receivers run as fast as the Bluetooth packets reception.
 This prevents I2S overruns or underruns, both in the CIS mode and the BIS mode.
 
 See the following figure for an overview of the synchronization module.
@@ -208,9 +221,9 @@ See the following figure for an overview of the synchronization module.
    nRF5340 Audio synchronization module overview
 
 Both synchronization methods use the SDU reference timestamps (:c:type:`sdu_ref`) as the reference variable.
-If the device is a gateway that is :ref:`using I2S as audio source <nrf53_audio_app_overview_architecture_i2s>` and the stream is unidirectional (gateway to headsets), :c:type:`sdu_ref` is continuously being extracted from the LE Audio Controller Subsystem for nRF53 on the gateway.
+If the device is a source device that is :ref:`using I2S as audio source <nrf53_audio_app_overview_architecture_i2s>` and the stream is unidirectional (source to receivers), :c:type:`sdu_ref` is continuously being extracted from the LE Audio Controller Subsystem for nRF53 on the source device.
 The extraction happens inside the :file:`unicast_client.c` and :file:`broadcast_source.c` files' send function.
-The :c:type:`sdu_ref` values are then sent to the gateway's synchronization module, and used to do drift compensation.
+The :c:type:`sdu_ref` values are then sent to the source device's synchronization module, and used to do drift compensation.
 
 .. note::
    Inside the synchronization module (:file:`audio_datapath.c`), all time-related variables end with ``_us`` (for microseconds).
@@ -239,7 +252,7 @@ The following external factors can affect the presentation compensation:
   When the drift compensation is not in the locked state, the presentation compensation does not leave the init state (:c:enumerator:`PRES_STATE_INIT`).
   Also, if the drift compensation loses synchronization, moving out of :c:enumerator:`DRIFT_STATE_LOCKED`, the presentation compensation moves back to :c:enumerator:`PRES_STATE_INIT`.
 * When audio is being played, it is expected that a new audio frame is received in each ISO connection interval.
-  If this does not occur, the headset might have lost its connection with the gateway.
+  If this does not occur, the receiver might have lost its connection with the source device.
   When the connection is restored, the application receives a :c:type:`sdu_ref` not consecutive with the previously received :c:type:`sdu_ref`.
   Then the presentation compensation is put into :c:enumerator:`PRES_STATE_WAIT` to ensure that the audio is still in sync.
 
@@ -257,8 +270,8 @@ The received audio data in the I2S-based firmware devices follows the following 
 #. The data is sent to a FIFO buffer.
 #. The data is sent from the FIFO buffer to the :file:`audio_datapath.c` synchronization module.
    The :file:`audio_datapath.c` module performs the audio synchronization based on the SDU reference timestamps.
-   Each package sent from the gateway gets a unique SDU reference timestamp.
-   These timestamps are generated on the headset Bluetooth LE controller (in the network core).
+   Each package sent from the source device gets a unique SDU reference timestamp.
+   These timestamps are generated on the receiver's Bluetooth LE controller (in the network core).
    This enables the creation of True Wireless Stereo (TWS) earbuds where the audio is synchronized in the CIS mode.
    It does also keep the speed of the inter-IC sound (I2S) interface synchronized with the sending and receiving speed of Bluetooth packets.
 #. The :file:`audio_datapath.c` module sends the compressed audio data to the LC3 audio decoder for decoding.
