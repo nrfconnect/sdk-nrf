@@ -9,7 +9,7 @@ Working with the nRF54H20 DK and the nRF7002 EK
    :local:
    :depth: 2
 
-The `nRF7002 EK`_ is an evaluation kit featuring the nRF7002 Wi-Fi® 6 companion IC.
+The nRF7002 EK is an evaluation kit featuring the nRF7002 Wi-Fi® 6 companion IC.
 The kit can be used to provide Wi-Fi connectivity to the nRF54H20 DK.
 
 .. figure:: images/nRF7002ek.png
