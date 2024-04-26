@@ -106,7 +106,7 @@ Sample mouse or keyboard (``nrf54l15pdk_nrf54l15_cpuapp``)
       * The configuration uses the nRF54L15 Preview Development Kit (PDK).
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
-        On the PDK PCA10156, revision v0.2.1 AB0-ES5, GPIOs assigned to **Button 3** and **Button 4** do not support interrupts.
+        On the PDK PCA10156, revision v0.2.1, GPIOs assigned to **Button 3** and **Button 4** do not support interrupts.
         Because of this, the application cannot use those buttons.
       * On the nRF54L15 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
         Because of that, the PDK PCA10156 has the following limitations:
