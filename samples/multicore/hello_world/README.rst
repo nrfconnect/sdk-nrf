@@ -71,6 +71,8 @@ nRF54H20 DK
 
      west build -p -b nrf54h20dk_nrf54h20_cpuapp -T sample.multicore.hello_world.nrf54h20dk_cpuapp_cpuppr_xip .
 
+.. include:: /includes/nRF54H20_erase_UICR.txt
+
 Testing
 =======
 

@@ -83,6 +83,9 @@ Glossary
       Every board has a software support package in a file system directory.
       The support package includes a :term:`devicetree <Devicetree>` describing the hardware, :term:`Kconfig files <Kconfig file>` and :term:`fragments <Kconfig fragment>` defining its default software configuration, and may include target-specific source files, documentation, and other metadata.
 
+   Board Information Configuration Registers (BICR)
+      Non-volatile memory (NVM) registers that contain information on how the SoC must interact with other board elements, including the information about the power and clock delivery to the SoC.
+
    Branch
       A line of development composed of a sequence of Git :term:`commits <Commit>`.
 

@@ -1523,3 +1523,11 @@
 
 .. _`Git for Windows`: https://git-scm.com/download/win
 .. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html
+
+.. _`curl`: https://curl.se/
+
+.. _`nRF54H20 firmware bundle`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.3.3.zip
+
+.. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
+
+.. _`J-Link version 7.94e`: https://www.segger.com/downloads/jlink/

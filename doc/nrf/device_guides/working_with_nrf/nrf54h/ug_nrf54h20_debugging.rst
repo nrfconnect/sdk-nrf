@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_debugging:
 
 nRF54H20 debugging
@@ -14,7 +12,7 @@ The main recommended tool for debugging in the |NCS| for the limited sampling of
 When working from the command line, you can use west with the GDB tool.
 For details, read the :ref:`Debugging with west debug <zephyr:west-debugging>` section on the :ref:`zephyr:west-build-flash-debug` page in the Zephyr documentation.
 
-A useful tool for debugging the communication over Bluetooth is the `nRF Sniffer for Bluetooth LE`_.
+A useful tool for debugging the communication over Bluetooth® is the `nRF Sniffer for Bluetooth LE`_.
 The nRF Sniffer allows you to look into data exchanged over-the-air between devices.
 
 Debug configuration
@@ -32,14 +30,19 @@ Debug configurations
 Some applications and samples provide a specific configuration that enables additional debug functionalities.
 You can select custom configurations when you are :ref:`configuring the build settings <cmake_options>`.
 
-Debugging multiple cores
-************************
 
-To debug only the Application core firmware, a single debug session is sufficient.
-To debug the firmware running also on the other cores, you need to set up a separate debug session for each one of the cores you want to debug.
-When debugging another core, the application core debug session runs in the background and you can debug both cores if needed.
+Debugging single-core applications
+**********************************
 
-If you want to reset the other cores while debugging, make sure to first reset the application core and execute the code.
+To debug single-core applications, you can use the ``west debug`` command to start a single debug session with GDB.
+
+Debugging multi-core applications
+*********************************
+
+To debug the firmware running also on cores other than the Application Core, you need to set up a separate debug session for each one of the cores you want to debug.
+When debugging another core, the Application Core debug session runs in the background and you can debug both cores if needed.
+
+If you want to reset the other cores while debugging, make sure to first reset the Application Core and execute the code.
 
 Using GDB as an external debugger
 *********************************
@@ -49,7 +52,7 @@ The DAP is a standard Arm® CoreSight™ serial wire debug port (SWJ-DP) that im
 
 There are several access ports that connect to different parts of the system:
 
-   * AHB-AP 0: Application core access port ID
+   * AHB-AP 0: Application Core access port ID
    * AHB-AP 1: Radio core access port ID
    * AHB-AP 2: Secure domain access port ID
    * AHB-AP 3: Auxiliary access port ID
@@ -58,15 +61,12 @@ There are several access ports that connect to different parts of the system:
 
 The following sections describe how to debug the nRF54H20 using GDB as the external debugger with J-link.
 
-.. note::
-    J-Link version 7.80c is required.
-
 Selecting the core
 ==================
 
 To debug a specific core using ``JLinkExe`` do the following:
 
-1. Run J-Link on the Application core::
+1. Run J-Link on the Application Core::
 
       JLinkExe -USB <SEGGER-ID> -if SWD -Device Cortex-M33
 
@@ -82,7 +82,7 @@ To debug a specific core using ``JLinkExe`` do the following:
    .. note::
       PPR core debugging is not functional in the initial limited sampling.
 
-#. Connect to the Application core::
+#. Connect to the Application Core::
 
       exec CORESIGHT_SetIndexAHBAPToUse = <Domain AP index>
       connect
