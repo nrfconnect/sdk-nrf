@@ -297,27 +297,99 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_WPS
 	EAP_WSC
 )
 
-zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_CRYPTO_ENTERPRISE
-	${COMMON_SRC_BASE}/crypto/tls_mbedtls.c
+#zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_CRYPTO_ENTERPRISE
+#	${COMMON_SRC_BASE}/crypto/tls_mbedtls.c
 
-	${COMMON_SRC_BASE}/eap_peer/eap_tls.c
-	${COMMON_SRC_BASE}/eap_peer/eap_tls_common.c
+#	${COMMON_SRC_BASE}/eap_peer/eap_tls.c
+#	${COMMON_SRC_BASE}/eap_peer/eap_tls_common.c
 
 #	${COMMON_SRC_BASE}/eap_peer/eap_peap.c
 #	${COMMON_SRC_BASE}/eap_common/eap_peap_common.c
 #	${COMMON_SRC_BASE}/eap_peer/eap_ttls.c
-)
+#)
 
 zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO_ENTERPRISE
 	CONFIG_EAP_TLS
-#	CONFIG_EAP_PEAP
-#	CONFIG_EAP_TTLS
+	#CONFIG_EAP_PEAP
+	#CONFIG_EAP_TTLS
 )
 
-zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_EAPOL
+zephyr_library_sources_ifdef(CONFIG_EAP_TLS
+	${COMMON_SRC_BASE}/eap_peer/eap_tls.c
+	${COMMON_SRC_BASE}/eap_peer/eap_tls_common.c
+)
+
+zephyr_library_sources_ifdef(CONFIG_EAP_PEAP
+	${COMMON_SRC_BASE}/eap_peer/eap_peap.c
+	${COMMON_SRC_BASE}/eap_common/eap_peap_common.c
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_EAP_PEAP
+	EAP_PEAP
+)
+
+zephyr_library_sources_ifdef(CONFIG_EAP_TTLS
+	${COMMON_SRC_BASE}/eap_peer/eap_ttls.c
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_EAP_TTLS
+	EAP_TTLS
+)
+
+zephyr_library_sources_ifdef(CONFIG_TLS_FUNCS
+	${COMMON_SRC_BASE}/eap_peer/eap_tls_common.c
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_TLS_FUNCS
+	CONFIG_DES
+)
+
+zephyr_library_sources_ifdef(CONFIG_NEED_TLS_PRF
+	${COMMON_SRC_BASE}/crypto/sha1-tlsprf.c
+	${COMMON_SRC_BASE}/crypto/sha384-tlsprf.c
+	${COMMON_SRC_BASE}/crypto/sha256-tlsprf.c
+)
+
+zephyr_library_sources_ifdef(CONFIG_NEED_SHA1
+	${COMMON_SRC_BASE}/crypto/sha1.c
+)
+
+zephyr_library_sources_ifdef(CONFIG_MS_FUNCS
+	${COMMON_SRC_BASE}/crypto/ms_funcs.c
+	${COMMON_SRC_BASE}/crypto/des-internal.c
+	${COMMON_SRC_BASE}/crypto/md4-internal.c
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_MS_FUNCS
+	CONFIG_DES
+)
+
+zephyr_library_sources_ifdef(CONFIG_CHAP
+	${COMMON_SRC_BASE}/eap_common/chap.c
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_IEEE8021X_EAPOL
+	IEEE8021X_EAPOL
+)
+
+zephyr_library_sources_ifdef(CONFIG_IEEE8021X_EAPOL
 	${COMMON_SRC_BASE}/eapol_supp/eapol_supp_sm.c
 	${COMMON_SRC_BASE}/eap_peer/eap.c
 	${COMMON_SRC_BASE}/eap_peer/eap_methods.c
+)
+
+zephyr_library_sources_ifdef(CONFIG_NEED_EAP_COMMON
+	${COMMON_SRC_BASE}/eap_common/eap_common.c
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_EAP_TLS
+	EAP_TLS
+	#CONFIG_EAP_PEAP
+	#CONFIG_EAP_TTLS
+)
+
+zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_EAPOL
+	${COMMON_SRC_BASE}/crypto/tls_mbedtls.c
 	${COMMON_SRC_BASE}/eap_common/eap_common.c
 	${COMMON_SRC_BASE}/rsn_supp/pmksa_cache.c
 )
