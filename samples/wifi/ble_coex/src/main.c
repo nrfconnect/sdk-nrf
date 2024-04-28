@@ -478,6 +478,10 @@ int main(void)
 		LOG_INF("Disconnecting BLE\n");
 		bt_throughput_test_exit();
 	}
+
+	/* Disable coexistence hardware */
+	nrf_wifi_coex_hw_reset();
+
 	LOG_INF("\nCoexistence test complete\n");
 
 	return 0;
