@@ -225,6 +225,10 @@ nRF Desktop
     The output report is also enabled for the ``nrf52kbd_nrf52832`` build target in the debug configuration to maintain consistency with the release configuration.
   * Replaced the :kconfig:option:`CONFIG_BT_L2CAP_TX_BUF_COUNT` Kconfig option with :kconfig:option:`CONFIG_BT_ATT_TX_COUNT` in nRF Desktop dongle configurations.
     This update is needed to align with the new approach introduced in ``sdk-zephyr`` by commit ``a05a47573a11ba8a78dadc5d3229659f24ddd32f``.
+  * The :ref:`nrf_desktop_hid_forward` no longer uses a separate HID report queue for a HID peripheral connected over Bluetooth LE.
+    The module relies only on the HID report queue of a HID subscriber.
+    This is done to simplify implementation, reduce memory consumption and speed up retrieving enqueued HID reports.
+    You can modify the enqueued HID report limit through the :ref:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS <config_desktop_app_options>` Kconfig option.
 
 Thingy:53: Matter weather station
 ---------------------------------
