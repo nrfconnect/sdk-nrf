@@ -145,8 +145,10 @@ int location_request(const struct location_config *config)
 
 		if (config != NULL) {
 			/* Top level configs are given and must be taken from given config */
-			LOG_DBG("No method configuration given. "
-				"Using default method configuration.");
+
+			LOG_DBG("Storing received configuration as default.");
+			LOG_DBG("Interval = %d, Timeout = %d, Mode = %d",
+				config->interval, config->timeout, config->mode);
 			default_config.interval = config->interval;
 			default_config.timeout = config->timeout;
 			default_config.mode = config->mode;
