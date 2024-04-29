@@ -596,6 +596,14 @@ if NETWORKING
 config HEAP_MEM_POOL_SIZE
 	default 153000
 
+config NRF_WIFI_CONFIG_HEAP_MEM_POOL_SIZE
+	int "Dedicated memory pool for configuration"
+	default 20480
+
+config NRF_WIFI_DATA_HEAP_MEM_POOL_SIZE
+	int "Dedicated memory pool for data plane"
+	default 61440
+
 config SYSTEM_WORKQUEUE_STACK_SIZE
 	default 4096
 

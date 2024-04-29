@@ -18,6 +18,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/__assert.h>
+#include <zephyr/sys/math_extras.h>
 
 #include "rpu_hw_if.h"
 #include "shim.h"
@@ -27,19 +28,79 @@
 #include "qspi_if.h"
 
 LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
+#if defined(CONFIG_NOCACHE_MEMORY)
+K_HEAP_DEFINE_NOCACHE(wifi_drv_ctrl_mem_pool, CONFIG_NRF_WIFI_CONFIG_HEAP_MEM_POOL_SIZE);
+K_HEAP_DEFINE_NOCACHE(wifi_drv_data_mem_pool, CONFIG_NRF_WIFI_DATA_HEAP_MEM_POOL_SIZE);
+#else
+K_HEAP_DEFINE(wifi_drv_ctrl_mem_pool, CONFIG_NRF_WIFI_CONFIG_HEAP_MEM_POOL_SIZE);
+K_HEAP_DEFINE(wifi_drv_data_mem_pool, CONFIG_NRF_WIFI_DATA_HEAP_MEM_POOL_SIZE);
+#endif /* CONFIG_NOCACHE_MEMORY */
+#define WORD_SIZE 4
 
 struct zep_shim_intr_priv *intr_priv;
 
 static void *zep_shim_mem_alloc(size_t size)
 {
 	size = (size + 4) & 0xfffffffc;
-	return k_malloc(size);
+	return k_heap_aligned_alloc(&wifi_drv_ctrl_mem_pool, WORD_SIZE, size, K_FOREVER);
+}
+
+static void *zep_shim_data_mem_alloc(size_t size)
+{
+	size = (size + 4) & 0xfffffffc;
+	return k_heap_aligned_alloc(&wifi_drv_data_mem_pool, WORD_SIZE, size, K_FOREVER);
 }
 
 static void *zep_shim_mem_zalloc(size_t size)
 {
+	void *ret;
+	size_t bounds;
+
 	size = (size + 4) & 0xfffffffc;
-	return k_calloc(size, sizeof(char));
+
+	if (size_mul_overflow(size, sizeof(char), &bounds)) {
+		return NULL;
+	}
+
+	ret = zep_shim_mem_alloc(bounds);
+	if (ret != NULL) {
+		(void)memset(ret, 0, bounds);
+	}
+
+	return ret;
+}
+
+static void *zep_shim_data_mem_zalloc(size_t size)
+{
+	void *ret;
+	size_t bounds;
+
+	size = (size + 4) & 0xfffffffc;
+
+	if (size_mul_overflow(size, sizeof(char), &bounds)) {
+		return NULL;
+	}
+
+	ret = zep_shim_data_mem_alloc(bounds);
+	if (ret != NULL) {
+		(void)memset(ret, 0, bounds);
+	}
+
+	return ret;
+}
+
+static void zep_shim_mem_free(void *buf)
+{
+	if (buf) {
+		k_heap_free(&wifi_drv_ctrl_mem_pool, buf);
+	}
+}
+
+static void zep_shim_data_mem_free(void *buf)
+{
+	if (buf) {
+		k_heap_free(&wifi_drv_data_mem_pool, buf);
+	}
 }
 
 static void *zep_shim_mem_cpy(void *dest, const void *src, size_t count)
@@ -884,7 +945,9 @@ static unsigned int zep_shim_strlen(const void *str)
 static const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
 	.mem_alloc = zep_shim_mem_alloc,
 	.mem_zalloc = zep_shim_mem_zalloc,
-	.mem_free = k_free,
+	.data_mem_zalloc = zep_shim_data_mem_zalloc,
+	.mem_free = zep_shim_mem_free,
+	.data_mem_free = zep_shim_data_mem_free,
 	.mem_cpy = zep_shim_mem_cpy,
 	.mem_set = zep_shim_mem_set,
 	.mem_cmp = zep_shim_mem_cmp,
