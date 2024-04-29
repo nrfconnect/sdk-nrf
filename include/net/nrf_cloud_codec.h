@@ -261,6 +261,23 @@ int nrf_cloud_obj_str_get(const struct nrf_cloud_obj *const obj, const char *con
 			  char **str);
 
 /**
+ * @brief Get the boolean value associated with the provided key.
+ *
+ * @param[in] obj Object containing the key and value.
+ * @param[in] key Key.
+ * @param[out] val Boolean value associated with the provided key.
+ *
+ * @retval -EINVAL Invalid parameter.
+ * @retval -ENODEV Object does not contain the provided key.
+ * @retval -ENOENT Object is not initialized.
+ * @retval -ENOTSUP Action not supported for the object's type.
+ * @retval -ENOMSG Value associated with the key is not a boolean.
+ * @retval 0 Success; boolean found.
+ */
+int nrf_cloud_obj_bool_get(const struct nrf_cloud_obj *const obj, const char *const key,
+			   bool *val);
+
+/**
  * @brief Get and detach the object associated with the provided key.
  *
  * @details If successful, the object data specified by the given key is removed from obj

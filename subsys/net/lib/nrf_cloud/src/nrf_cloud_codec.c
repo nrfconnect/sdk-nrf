@@ -133,6 +133,25 @@ int nrf_cloud_obj_str_get(const struct nrf_cloud_obj *const obj, const char *con
 	return -ENOTSUP;
 }
 
+int nrf_cloud_obj_bool_get(const struct nrf_cloud_obj *const obj, const char *const key,
+	bool *val)
+{
+	if (!obj || !key || !val) {
+		return -EINVAL;
+	}
+
+	switch (obj->type) {
+	case NRF_CLOUD_OBJ_TYPE_JSON:
+	{
+		return get_bool_from_obj(obj->json, key, val);
+	}
+	default:
+		break;
+	}
+
+	return -ENOTSUP;
+}
+
 int nrf_cloud_obj_object_detach(struct nrf_cloud_obj *const obj, const char *const key,
 			     struct nrf_cloud_obj *const obj_out)
 {
