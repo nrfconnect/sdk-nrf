@@ -22,6 +22,7 @@
 #include "fota_support.h"
 #include "location_tracking.h"
 #include "led_control.h"
+#include "shadow_config.h"
 
 LOG_MODULE_REGISTER(cloud_connection, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
@@ -115,6 +116,8 @@ static void clear_readiness_timeout(void)
 static void cloud_connected(void)
 {
 	LOG_INF("Connected to nRF Cloud");
+
+	shadow_config_cloud_connected();
 
 	/* Notify that the nRF Cloud connection is established. */
 	k_event_post(&cloud_events, CLOUD_CONNECTED);
@@ -317,15 +320,26 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 
 	int err;
 
-	if (shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
+	if ((shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) && shadow->delta) {
 		LOG_DBG("Shadow: Delta - version: %d, timestamp: %lld",
 			shadow->delta->ver,
 			shadow->delta->ts);
 
-		/* Always accept since this sample, by default,
-		 * doesn't have any application specific shadow handling
-		 */
-		err = nrf_cloud_obj_shadow_delta_response_encode(&shadow->delta->state, true);
+		bool accept = true;
+
+		err = shadow_config_delta_process(&shadow->delta->state);
+		if (err == -EBADF) {
+			LOG_INF("Rejecting shadow delta");
+			accept = false;
+		} else if (err == -ENOMEM) {
+			LOG_ERR("Error handling shadow delta");
+			return;
+		} else if (err == -EAGAIN) {
+			LOG_ERR("Ignoring delta until accepted shadow is received");
+			return;
+		}
+
+		err = nrf_cloud_obj_shadow_delta_response_encode(&shadow->delta->state, accept);
 		if (err) {
 			LOG_ERR("Failed to encode shadow response: %d", err);
 			return;
@@ -335,8 +349,14 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 		if (err) {
 			LOG_ERR("Failed to send shadow response, error: %d", err);
 		}
-	} else if (shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) {
+
+	} else if ((shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) && shadow->accepted) {
 		LOG_DBG("Shadow: Accepted");
+		err = shadow_config_accepted_process(&shadow->accepted->config);
+		if (err) {
+			/* Send the config on an error */
+			(void)shadow_config_reported_send();
+		}
 	}
 }
 
