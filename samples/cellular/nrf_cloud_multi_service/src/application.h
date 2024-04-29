@@ -20,4 +20,7 @@
  */
 void main_application_thread_fn(void);
 
+void test_counter_enable_set(const bool enable);
+bool test_counter_enable_get(void);
+
 #endif /* _APPLICATION_H_ */

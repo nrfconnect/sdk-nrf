@@ -432,7 +432,13 @@ Cellular samples
 
 * :ref:`nrf_cloud_multi_service` sample:
 
-  * Fixed issue that prevented network connectivity when using Wi-Fi scanning with the nRF91xx.
+  * Fixed:
+
+    * An issue that prevented network connectivity when using Wi-Fi scanning with the nRF91xx.
+
+  * Added:
+
+    * The ability to control the state of the test counter using the config section in the device shadow.
 
 Cryptography samples
 --------------------

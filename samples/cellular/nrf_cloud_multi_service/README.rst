@@ -318,11 +318,23 @@ See :ref:`nrf_cloud_multi_service_led_third_party` for details on configuring LE
 Test counter
 ============
 
-You can enable a test counter by enabling the :ref:`CONFIG_TEST_COUNTER <CONFIG_TEST_COUNTER>` option.
 Every time a sensor sample is sent, this counter is incremented by one, and its current value is sent to `nRF Cloud`_.
 A plot of the value of the counter over time is automatically shown in the nRF Cloud portal.
 This plot is useful for tracking, visualizing, and debugging connection loss, resets, and re-establishment behavior.
 
+You can enable or disable the test counter using the device shadow.
+In the desired config section, set ``"counterEnable"`` to ``true`` to enable or ``false`` to disable the test counter.
+
+.. code-block:: json
+
+   "desired": {
+      "config": {
+         "counterEnable": true
+      }
+   }
+
+You can perform the shadow update by clicking the :guilabel:`View Config` button on the **Device** page in the nRF Cloud portal or through the ``UpdateDeviceState`` endpoint in the `nRF Cloud Rest API`_.
+To ignore the shadow setting so that the test counter is always active, enable the :ref:`CONFIG_TEST_COUNTER <CONFIG_TEST_COUNTER>` Kconfig option.
 
 .. _nrf_cloud_multi_service_device_message_formatting:
 
@@ -619,7 +631,8 @@ CONFIG_LED_CONTINUOUS_INDICATION - Continuous LED status indication
 .. _CONFIG_TEST_COUNTER:
 
 CONFIG_TEST_COUNTER - Enable test counter
-   Enables the test counter.
+   Enable the test counter.
+   When enabled, the test counter configuration setting in the shadow is ignored.
 
 .. _CONFIG_AT_CMD_REQUESTS:
 
