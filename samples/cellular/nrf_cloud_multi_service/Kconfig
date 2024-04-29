@@ -215,6 +215,8 @@ config GNSS_FIX_TIMEOUT_SECONDS
 
 config TEST_COUNTER
 	bool "Sets whether the test counter is enabled"
+	help
+	  When enabled, the test counter configuration setting in the shadow is ignored.
 
 config AT_CMD_REQUESTS
 	depends on !NRF_CLOUD_COAP

@@ -22,6 +22,7 @@ target_sources(app PRIVATE src/temperature.c)
 target_sources(app PRIVATE src/fota_support.c)
 target_sources(app PRIVATE src/led_control.c)
 target_sources(app PRIVATE src/sample_reboot.c)
+target_sources(app PRIVATE src/shadow_config.c)
 
 if(CONFIG_LOCATION_TRACKING)
 target_sources(app PRIVATE src/location_tracking.c)

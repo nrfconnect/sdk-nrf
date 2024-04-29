@@ -25,6 +25,7 @@
 #include "message_queue.h"
 #include "led_control.h"
 #include "at_commands.h"
+#include "shadow_config.h"
 
 LOG_MODULE_REGISTER(application, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
@@ -41,6 +42,9 @@ BUILD_ASSERT(CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH >= AT_CMD_REQUEST_ERR_
 #define TEMP_ALERT_LIMIT ((double)CONFIG_TEMP_ALERT_LIMIT)
 #define TEMP_ALERT_HYSTERESIS 1.5
 #define TEMP_ALERT_LOWER_LIMIT (TEMP_ALERT_LIMIT - TEMP_ALERT_HYSTERESIS)
+
+/* State of the test counter. This can be changed using the configuration in the shadow */
+static bool test_counter_enabled;
 
 /**
  * @brief Construct a device message object with automatically generated timestamp
@@ -371,7 +375,7 @@ void main_application_thread_fn(void)
 			}
 		}
 
-		if (IS_ENABLED(CONFIG_TEST_COUNTER)) {
+		if (test_counter_enable_get()) {
 			LOG_INF("Sent test counter = %d", counter);
 			(void)send_sensor_sample("COUNT", counter++);
 		}
@@ -379,4 +383,20 @@ void main_application_thread_fn(void)
 		/* Wait out any remaining time on the sample interval timer. */
 		k_timer_status_sync(&sensor_sample_timer);
 	}
+}
+
+void test_counter_enable_set(const bool enable)
+{
+	if (IS_ENABLED(CONFIG_TEST_COUNTER)) {
+		LOG_DBG("CONFIG_TEST_COUNTER is enabled, ignoring state change request");
+	} else {
+		LOG_DBG("Test counter %s", enable ? "enabled" : "disabled");
+		test_counter_enabled = enable;
+	}
+}
+
+bool test_counter_enable_get(void)
+{
+	/* When CONFIG_TEST_COUNTER is enabled the test counter is always enabled */
+	return (test_counter_enabled || IS_ENABLED(CONFIG_TEST_COUNTER));
 }
