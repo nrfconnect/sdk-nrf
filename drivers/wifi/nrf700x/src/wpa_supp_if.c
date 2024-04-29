@@ -383,7 +383,7 @@ void nrf_wifi_wpa_supp_event_proc_deauth(void *if_priv,
 	mgmt = (const struct ieee80211_mgmt *)frame;
 
 	if (frame_len < 24 + sizeof(mgmt->u.deauth)) {
-		LOG_ERR("%s: Association response frame too short", __func__);
+		LOG_ERR("%s: Deauthentication frame too short", __func__);
 		return;
 	}
 
@@ -419,7 +419,7 @@ void nrf_wifi_wpa_supp_event_proc_disassoc(void *if_priv,
 	mgmt = (const struct ieee80211_mgmt *)frame;
 
 	if (frame_len < 24 + sizeof(mgmt->u.disassoc)) {
-		LOG_ERR("%s: Association response frame too short", __func__);
+		LOG_ERR("%s: Disassociation frame too short", __func__);
 		return;
 	}
 
@@ -609,7 +609,7 @@ int nrf_wifi_wpa_supp_scan_abort(void *if_priv)
 	status = nrf_wifi_fmac_abort_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: Scan trigger failed", __func__);
+		LOG_ERR("%s: nrf_wifi_fmac_abort_scan failed", __func__);
 		goto out;
 	}
 
@@ -701,7 +701,7 @@ int nrf_wifi_wpa_supp_deauthenticate(void *if_priv, const char *addr, unsigned s
 	status = nrf_wifi_fmac_deauth(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &deauth_info);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_scan_res_get failed", __func__);
+		LOG_ERR("%s: nrf_wifi_fmac_deauth failed", __func__);
 		goto out;
 	}
 
@@ -1864,13 +1864,13 @@ int nrf_wifi_supp_get_conn_info(void *if_priv, struct wpa_conn_info *info)
 	vif_ctx_zep->conn_info = info;
 	ret = nrf_wifi_fmac_get_conn_info(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
 	if (ret != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: Failed to get beacon info", __func__);
+		LOG_ERR("%s: nrf_wifi_fmac_get_conn_info failed", __func__);
 		goto out;
 	}
 
 	sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
 	if (sem_ret) {
-		LOG_ERR("%s: Failed to get station info, ret = %d", __func__, sem_ret);
+		LOG_ERR("%s: Timeout: failed to get connection info, ret = %d", __func__, sem_ret);
 		ret = NRF_WIFI_STATUS_FAIL;
 		goto out;
 	}
