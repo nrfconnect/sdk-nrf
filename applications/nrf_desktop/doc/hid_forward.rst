@@ -107,8 +107,8 @@ Enqueuing incoming HID input reports
 The |hid_forward| forwards only one HID input report to the HID-class USB device at a time.
 Another HID input report may be received from a peripheral connected over Bluetooth before the previous one was sent.
 In that case, ``hid_report_event`` is enqueued and submitted later.
-Up to the number of reports specified in :ref:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS <config_desktop_app_options>` reports can be enqueued at a time for each report type and for each connected peripheral.
-If there is not enough space to enqueue a new event, the module drops the oldest enqueued event that was received from this peripheral (of the same type).
+Up to the number of reports specified in :ref:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS <config_desktop_app_options>` Kconfig option can be enqueued at a time for each report type and for each HID subscriber (HID-class USB device).
+If there is not enough space to enqueue a new event, the module drops the oldest enqueued event (of the same type) that was enqueued for a given HID subscriber.
 
 Upon receiving the ``hid_report_sent_event``, the |hid_forward| submits the ``hid_report_event`` enqueued for the peripheral that is associated with the HID-class USB device.
 The enqueued report to be sent is chosen by the |hid_forward| in the round-robin fashion.
