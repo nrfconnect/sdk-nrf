@@ -13,6 +13,17 @@
 #include <zephyr/device.h>
 #include <zephyr/sys/ring_buffer.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @defgroup nrf_rpc_uart nRF RPC UART transport
+ * @brief nRF RPC UART transport.
+ *
+ * @{
+ */
+
 #define NRF_RPC_MAX_FRAME_SIZE	1536
 #define NRF_RPC_RX_RINGBUF_SIZE 64
 
@@ -61,4 +72,12 @@ extern const struct nrf_rpc_tr_api nrf_rpc_uart_service_api;
 		.ctx = &_name##_instance                                     \
 	}
 
+/**
+ * @}
+ */
+
+#ifdef __cplusplus
+}
 #endif
+
+#endif /* NRF_RPC_UART_H_ */
