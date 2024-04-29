@@ -11,6 +11,9 @@
 
 #include "storage_mock.h"
 
+/* Ensure 'strnlen' is available even with -std=c99. */
+size_t strnlen(const char *buf, size_t bufsz);
+
 struct settings_data {
 	sys_snode_t node;
 	char *name;
