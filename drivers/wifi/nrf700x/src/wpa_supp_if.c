@@ -521,6 +521,12 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	scan_info = k_calloc(sizeof(*scan_info) + (num_freqs * sizeof(unsigned int)),
 			     sizeof(char));
 
+	if (!scan_info) {
+		LOG_ERR("%s: Unable to allocate memory for scan info", __func__);
+		ret = -ENOMEM;
+		goto out;
+	}
+
 	memset(scan_info, 0x0, sizeof(*scan_info));
 
 	if (params->freqs) {
