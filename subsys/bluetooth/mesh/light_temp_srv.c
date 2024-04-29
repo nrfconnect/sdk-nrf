@@ -179,9 +179,10 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_light_temp_srv *srv =
 		CONTAINER_OF(lvl_srv, struct bt_mesh_light_temp_srv, lvl);
 	struct bt_mesh_light_temp_status status = { 0 };
+	uint16_t temp = lvl_to_temp(srv, lvl_set->lvl);
 	struct bt_mesh_light_temp_set set = {
 		.params = {
-			.temp = lvl_to_temp(srv, lvl_set->lvl),
+			.temp = temp,
 			.delta_uv = srv->transient.last.delta_uv,
 		},
 		.transition = lvl_set->transition,
@@ -194,8 +195,15 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	}
 
 	if (rsp) {
-		rsp->current = temp_to_lvl(srv, status.current.temp);
-		rsp->target = temp_to_lvl(srv, status.target.temp);
+		/* This helps to avoid weird situation when client sets exact level value
+		 * but after conversion to temperature and back from temperature to level,
+		 * the level value is changed in Status.
+		 * It happens due to the division results rounding in both conversions.
+		 */
+		rsp->current = temp == status.current.temp ? lvl_set->lvl
+							   : temp_to_lvl(srv, status.current.temp);
+		rsp->target = temp == status.target.temp ? lvl_set->lvl
+							 : temp_to_lvl(srv, status.target.temp);
 		rsp->remaining_time = status.remaining_time;
 	}
 }
