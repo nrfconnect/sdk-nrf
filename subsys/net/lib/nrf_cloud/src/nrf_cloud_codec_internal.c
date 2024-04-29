@@ -2357,6 +2357,26 @@ int get_num_from_obj(const cJSON *const obj, const char *const key,
 	return 0;
 }
 
+int get_bool_from_obj(const cJSON * const obj, const char * const key,
+		     bool *bool_out)
+{
+	__ASSERT_NO_MSG(bool_out != NULL);
+
+	if (!obj) {
+		return -ENOENT;
+	}
+
+	cJSON * item = cJSON_GetObjectItem(obj, key);
+
+	if (!cJSON_IsBool(item)) {
+		return item ? -ENOMSG : -ENODEV;
+	}
+
+	*bool_out = (bool)cJSON_IsTrue(item);
+
+	return 0;
+}
+
 static int add_ncells(cJSON * const lte_obj, const uint8_t ncells_count,
 	const struct lte_lc_ncell *const neighbor_cells)
 {

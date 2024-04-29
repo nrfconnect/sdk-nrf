@@ -324,6 +324,10 @@ int get_string_from_obj(const cJSON * const obj, const char * const key,
 int get_num_from_obj(const cJSON *const obj, const char *const key,
 		     double *num_out);
 
+/** @brief Get the boolean value of the specified key in the cJSON object. */
+int get_bool_from_obj(const cJSON * const obj, const char * const key,
+		     bool *bool_out);
+
 /** @brief Send the cJSON object to nRF Cloud on the d2c topic */
 int json_send_to_cloud(cJSON * const request);
 
