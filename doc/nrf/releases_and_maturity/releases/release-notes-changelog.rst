@@ -716,6 +716,7 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST` Kconfig option to enable including Wi-Fi anchor names in the location callback.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE` Kconfig option to control the buffer size used for the anchor names.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_PARSE_ANCHORS` Kconfig option to control if anchor names are parsed.
+    * The :c:func:`nrf_cloud_obj_bool_get` function to get a boolean value from an object.
 
   * Updated:
 
