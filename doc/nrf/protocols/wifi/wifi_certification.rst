@@ -32,10 +32,13 @@ For instructions on how to specifically use the QuickTrack certification path, s
 Recertification process after end product software upgrade
 **********************************************************
 
-When a customer’s Wi-Fi CERTIFIED end product receives an update with new software corresponding to a newer |NCS| release, the customer must initiate the Wi-Fi CERTIFIED end product variant process.
+When your Wi-Fi CERTIFIED end product receives an update with new software corresponding to a newer |NCS| release, you must initiate the Wi-Fi CERTIFIED end product variant process.
 The certification process is controlled by the Wi-Fi Alliance.
 
 Under the QuickTrack certification path, the recertification process involves rerunning the QuickTrack Wi-Fi certification testing on the end product with the updated software and basing it on the Qualified Solution or variant from Nordic Semiconductor corresponding to that version of the |NCS| software.
+
+Under the Derivative certification path, the recertification process does not involve any additional certification testing on the end product.
+You need to reapply for the new derivative certification, basing it on the new qualified product variant as required.
 
 See the following links for more information on the certification process:
 
