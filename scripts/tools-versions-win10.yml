@@ -15,8 +15,8 @@ west:
 nanopb:
   version: 0.4.6
 zephyr-sdk:
-  version: 0.16.8
-  architectures: # https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.16.8
+  version: 0.17.0
+  architectures: # https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.17.0
     - arm-zephyr-eabi
     - riscv64-zephyr-elf
 doxygen:
