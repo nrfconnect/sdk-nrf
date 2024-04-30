@@ -60,6 +60,9 @@ static int settings_set_err;
 
 static bool storage_reset_pass;
 
+/* Account Key storage bond management feature is not yet supported by the unit test. */
+BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_FAST_PAIR_STORAGE_AK_BOND));
+
 
 static int settings_load_stage(size_t len, settings_read_cb read_cb, void *cb_arg)
 {
