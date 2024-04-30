@@ -12,6 +12,11 @@
 };
 
 / {
+	/* Disable pwmleds and redefine them to align configuration with CAF LEDs requirements.
+	 * The configuration needs to match the used board revision (v0.3.0).
+	 */
+	/delete-node/ pwmleds;
+
 	pwmleds0 {
 		compatible = "pwm-leds";
 		status = "okay";
