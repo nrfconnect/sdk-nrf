@@ -72,10 +72,12 @@ target_sources(tfm_sprt
 )
 
 if (${TFM_PARTITION_CRYPTO})
-  target_sources(platform_crypto_keys
-    PRIVATE
-      ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
-  )
+  if(CRYPTO_TFM_BUILTIN_KEYS_DRIVER)
+    target_sources(platform_crypto_keys
+      PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
+    )
+  endif()
 
   target_link_libraries(platform_crypto_keys
 	PUBLIC
