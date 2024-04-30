@@ -46,6 +46,20 @@ extern "C" {
 #define SETTINGS_AK_NAME_MAX_SIZE \
 	(sizeof(SETTINGS_AK_FULL_PREFIX) + SETTINGS_AK_NAME_MAX_SUFFIX_LEN)
 
+/** Settings key name prefix for bond. */
+#define SETTINGS_BOND_NAME_PREFIX "bond"
+
+/** Full settings key name prefix for bond (including subtree name). */
+#define SETTINGS_BOND_FULL_PREFIX \
+	(SETTINGS_AK_SUBTREE_NAME SETTINGS_NAME_SEPARATOR_STR SETTINGS_BOND_NAME_PREFIX)
+
+/** Max length of suffix (bond index) in settings key name for bond. */
+#define SETTINGS_BOND_NAME_MAX_SUFFIX_LEN 2
+
+/** Max length of settings key for bond. */
+#define SETTINGS_BOND_NAME_MAX_SIZE \
+	(sizeof(SETTINGS_BOND_FULL_PREFIX) + SETTINGS_BOND_NAME_MAX_SUFFIX_LEN)
+
 /** Settings key name for Account Key order. */
 #define SETTINGS_AK_ORDER_KEY_NAME "order"
 
@@ -74,6 +88,7 @@ extern "C" {
 
 BUILD_ASSERT(ACCOUNT_KEY_MAX_ID < UINT8_MAX);
 BUILD_ASSERT(ACCOUNT_KEY_CNT <= 10);
+BUILD_ASSERT(CONFIG_BT_MAX_PAIRED + CONFIG_BT_MAX_CONN <= 100);
 BUILD_ASSERT(SETTINGS_NAME_SEPARATOR == '/');
 
 /* Account Key Metadata */

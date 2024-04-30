@@ -9,6 +9,7 @@
 
 #include <sys/types.h>
 #include <stdbool.h>
+#include <zephyr/bluetooth/conn.h>
 
 #include "fp_common.h"
 
@@ -41,10 +42,13 @@ typedef bool (*fp_storage_ak_check_cb)(const struct fp_account_key *account_key,
 /** Save Account Key.
  *
  * @param[in] account_key Account Key to be saved.
+ * @param[in] conn Connection object associated with the Account Key. It is used to associate
+ *		   Bluetooth bond with the Account Key. It can be set to NULL if this information is
+ *		   irrelevant.
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_storage_ak_save(const struct fp_account_key *account_key);
+int fp_storage_ak_save(const struct fp_account_key *account_key, const struct bt_conn *conn);
 
 /** Get number of stored Account Keys.
  *
@@ -101,6 +105,24 @@ int fp_storage_ak_find(struct fp_account_key *account_key,
  *         Otherwise, a negative value is returned which indicates an error.
  */
 int fp_storage_ak_is_owner(const struct fp_account_key *account_key);
+
+/** Save potential bond.
+ *  The bond will be deleted if the pairing fails or the Fast Pair Procedure is incomplete.
+ *
+ * @param[in] conn Potential bond's connection object.
+ * @param[in] account_key Account Key that the bond is associated with. It can be set to NULL in
+ *			  case of the initial pairing Procedure, when the Account Key is not known.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_storage_ak_bond_save(const struct bt_conn *conn, const struct fp_account_key *account_key);
+
+/** Indicate that the bonding process has been completed.
+ *  It confirms the potential bond that was saved earlier with the @ref fp_storage_ak_bond_save.
+ *
+ * @param[in] conn Bond's connection object.
+ */
+void fp_storage_ak_bonding_complete(const struct bt_conn *conn);
 
 #ifdef __cplusplus
 }

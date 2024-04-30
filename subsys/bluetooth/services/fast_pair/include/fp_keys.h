@@ -179,6 +179,16 @@ void fp_keys_bt_auth_progress(const struct bt_conn *conn, bool authenticated);
  */
 void fp_keys_drop_key(const struct bt_conn *conn);
 
+/** Save potential bond in the Account Key storage module.
+ *  The Keys module adds the Account Key information to the bond.
+ *  The bond will be deleted if the pairing fails or the Fast Pair Procedure is incomplete.
+ *
+ * @param[in] conn Potential bond's connection object.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_keys_bond_save(const struct bt_conn *conn);
+
 #ifdef __cplusplus
 }
 #endif

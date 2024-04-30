@@ -29,8 +29,9 @@ extern "C" {
 /** Start Fast Pair Bluetooth authentication procedure.
  *
  * The Fast Pair authentication subsystem takes over Zephyr Bluetooth authentication callbacks to
- * perform Bluetooth pairing according to the Fast Pair procedure. The procedure can be used only
- * if connected peer is Fast Pair Seeker. Otherwise regular pairing must be used.
+ * perform Bluetooth pairing according to the Fast Pair procedure. The subsystem also saves provided
+ * Bluetooth address to keep track of Fast Pair bonds. The procedure can be used only if connected
+ * peer is Fast Pair Seeker. Otherwise regular pairing must be used.
  *
  * @param[in] conn		Pointer to Bluetooth connection (determines Fast Pair Seeker).
  * @param[in] send_pairing_req	Boolean informing if Provider should send pairing request.
