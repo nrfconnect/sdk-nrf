@@ -16,6 +16,9 @@ tests:
   sample.matter.template.release:
     build_only: true
     extra_args: CONF_FILE=prj_release.conf
+      CONFIG_RESET_ON_ASSERT=n
+      hci_ipc_CONFIG_RESET_ON_ASSERT=n
+      multiprotocol_rpmsg_CONFIG_RESET_ON_ASSERT=n
       CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS=y
     integration_platforms:
       - nrf52840dk_nrf52840

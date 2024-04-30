@@ -7,6 +7,8 @@ tests:
     extra_args: CONF_FILE=prj_release.conf
       CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      CONFIG_RESET_ON_ASSERT=n
+      hci_ipc_CONFIG_RESET_ON_ASSERT=n
     integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp
@@ -30,6 +32,8 @@ tests:
     extra_args: CONF_FILE=prj_release.conf CONFIG_BRIDGED_DEVICE_BT=y
       CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      CONFIG_RESET_ON_ASSERT=n
+      hci_ipc_CONFIG_RESET_ON_ASSERT=n
     integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp

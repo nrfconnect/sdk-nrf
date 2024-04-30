@@ -22,6 +22,8 @@ tests:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-factory_data.conf CONF_FILE=prj_release.conf
       PM_STATIC_YML_FILE=${CMAKE_CURRENT_SOURCE_DIR}/pm_static_factory_data.yml
+      CONFIG_RESET_ON_ASSERT=n
+      multiprotocol_rpmsg_CONFIG_RESET_ON_ASSERT=n
     platform_allow: thingy53_nrf5340_cpuapp
     platform_exclude: thingy53_nrf5340_cpuapp_ns
     integration_platforms:
