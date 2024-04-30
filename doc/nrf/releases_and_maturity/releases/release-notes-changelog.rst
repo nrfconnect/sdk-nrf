@@ -877,7 +877,8 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-|no_changes_yet_note|
+* Added the :file:`thingy91x_dfu.py` script in the :file:`scripts/west_commands` folder.
+  The script adds the west commands ``west thingy91x-dfu`` and ``west thingy91x-reset`` for convenient use of the serial recovery functionality.
 
 MCUboot
 =======
