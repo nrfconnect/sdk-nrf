@@ -16,3 +16,11 @@ west-commands:
       - name: ncs-sbom
         class: NcsSbom
         help: generate Software Bill Of Materials including license information
+  - file: scripts/west_commands/thingy91x_dfu.py
+    commands:
+      - name: thingy91x-dfu
+        class: Thingy91XDFU
+        help: Flash the Thingy:91 X with a new firmware
+      - name: thingy91x-reset
+        class: Thingy91XReset
+        help: Reset the Thingy:91 X
