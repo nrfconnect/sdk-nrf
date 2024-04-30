@@ -21,7 +21,7 @@ static void bt_ready(int err)
 		return;
 	}
 
-	printk("Bluetooth initialized\n");
+	printk("Bluetooth initialized - test pr\n");
 
 	err = dk_leds_init();
 	if (err) {
