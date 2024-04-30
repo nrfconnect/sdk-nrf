@@ -6,3 +6,4 @@ jinja2>=3.1.4 # https://github.com/pallets/jinja/security/advisories/GHSA-h75v-3
 zcbor>=0.8.0
 nrfcredstore>=1.0.0,<2
 idna>=3.7 # https://github.com/advisories/GHSA-jjg7-2v4v-x38h
+libusb>=1.0.26
