@@ -41,10 +41,13 @@ typedef bool (*fp_storage_ak_check_cb)(const struct fp_account_key *account_key,
 /** Save Account Key.
  *
  * @param[in] account_key Account Key to be saved.
+ * @param[in] conn_ctx Connection object associated with the Account Key. It is used to associate
+ *		       the Bluetooth bond with the Account Key if
+ *		       the CONFIG_BT_FAST_PAIR_STORAGE_AK_BOND Kconfig option is enabled.
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_storage_ak_save(const struct fp_account_key *account_key);
+int fp_storage_ak_save(const struct fp_account_key *account_key, const void *conn_ctx);
 
 /** Get number of stored Account Keys.
  *
