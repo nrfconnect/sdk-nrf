@@ -15,6 +15,12 @@
 #include "common.h"
 #include "microcode_binary.h"
 
+#if !defined(CONFIG_BUILD_WITH_TFM)
+#define LOG_ERR_MSG(msg) LOG_ERR(msg)
+#define LOG_INF_MSG(msg) LOG_INF(msg)
+#define LOG_DBG_MSG(msg) LOG_DBG(msg)
+#endif
+
 static int users;
 
 K_MUTEX_DEFINE(cracen_mutex);
@@ -50,8 +56,8 @@ void cracen_acquire(void)
 		nrf_cracen_module_enable(NRF_CRACEN, CRACEN_ENABLE_CRYPTOMASTER_Msk |
 							     CRACEN_ENABLE_RNG_Msk |
 							     CRACEN_ENABLE_PKEIKG_Msk);
-		LOG_DBG("Power on CRACEN.");
 		irq_enable(CRACEN_IRQn);
+		LOG_DBG_MSG("Power on CRACEN.");
 	}
 
 	k_mutex_unlock(&cracen_mutex);
@@ -92,8 +98,7 @@ void cracen_release(void)
 
 		/* Clear pending IRQs at the ARM NVIC */
 		NVIC_ClearPendingIRQ(CRACEN_IRQn);
-
-		LOG_DBG("Powered off CRACEN.");
+		LOG_DBG_MSG("Powered off CRACEN.");
 	}
 
 	k_mutex_unlock(&cracen_mutex);
