@@ -75,6 +75,8 @@ static struct bt_iso_chan *iso_channel_pointers[] = {
 	LISTIFY(CONFIG_BT_ISO_MAX_CHAN, _ISO_CHANNEL_PTR, (,))
 };
 
+static bool iso_channels_awaiting_iso_sent_cb[CONFIG_BT_ISO_MAX_CHAN];
+
 /* Store info about the ISO channels in use. */
 static uint8_t roles[CONFIG_BT_ISO_MAX_CHAN];
 static struct bt_iso_info iso_infos[CONFIG_BT_ISO_MAX_CHAN];
@@ -217,6 +219,9 @@ static void send_next_sdu_on_all_channels(void)
 			return;
 		}
 
+		/* Toggle that we are awaiting iso_sent callback on this channel */
+		iso_channels_awaiting_iso_sent_cb[i] = true;
+
 		if (!first_sdu_sent) {
 			/* The first time we send an SDU, we send it without timestamp.
 			 * After that we always send SDUs with timestamps to ensure they
@@ -267,8 +272,12 @@ static void iso_connected(struct bt_iso_chan *chan)
 
 static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason)
 {
+	uint32_t chan_index = ARRAY_INDEX(iso_channels, chan);
+
 	printk("ISO Channel index %d disconnected with reason 0x%02x\n",
-	       ARRAY_INDEX(iso_channels, chan), reason);
+	       chan_index, reason);
+
+	iso_channels_awaiting_iso_sent_cb[chan_index] = false;
 }
 
 static bool send_more_sdus_with_same_timestamp(struct bt_iso_chan *chan)
@@ -276,8 +285,12 @@ static bool send_more_sdus_with_same_timestamp(struct bt_iso_chan *chan)
 	if (first_sdu_sent) {
 		struct bt_iso_chan *last_chan = NULL;
 
+		/** Check if this is the last ISO channel where we are awaiting
+		 * an iso_sent callback. If that is the case, that callback will
+		 * be used to send SDUs on all ISO channels.
+		 */
 		for (size_t i = 0; i < CONFIG_BT_ISO_MAX_CHAN; i++) {
-			if (iso_channels[i].state == BT_ISO_STATE_CONNECTED) {
+			if (iso_channels_awaiting_iso_sent_cb[i]) {
 				last_chan = &iso_channels[i];
 			}
 		}
@@ -329,10 +342,12 @@ static void iso_sent(struct bt_iso_chan *chan)
 		return;
 	}
 
+	uint8_t chan_index = ARRAY_INDEX(iso_channels, chan);
+
 	/* Set the LED to toggle in sync with all the receivers. */
 	bool btn_pressed = (bool)gpio_pin_get_dt(&button);
 	uint32_t trigger_time_us = trigger_time_us_get(assigned_timestamp,
-						       ARRAY_INDEX(iso_channels, chan));
+						       chan_index);
 	timed_led_toggle_trigger_at(btn_pressed, trigger_time_us);
 
 	/* Set up a timer to trigger right before the next set of SDUs are to be sent. */
@@ -349,6 +364,8 @@ static void iso_sent(struct bt_iso_chan *chan)
 	uint32_t prev_sent_sdu = num_sdus_sent;
 
 	num_sdus_sent++;
+
+	iso_channels_awaiting_iso_sent_cb[chan_index] = false;
 
 	k_timer_start(&sdu_timer, K_USEC(time_to_next_sdu_us), K_NO_WAIT);
 
