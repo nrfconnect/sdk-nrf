@@ -49,6 +49,7 @@ The DTM sample includes two parts:
 * A sample that provides an external interface to the library.
 
 You can find the source code of both parts in :file:`samples/bluetooth/direct_test_mode/src`.
+If you use the experimental HCI interface on the |nRF5340DKnoref|, you can find additional source code in :file:`samples/bluetooth/direct_test_mode/remote_hci/src` and :file:`samples/bluetooth/direct_test_mode/rpc`.
 
 This sample contains a driver for a 2-wire UART interface and an experimental HCI UART interface.
 Unless otherwise stated, all following commands and references describe the 2-wire interface.
@@ -324,7 +325,7 @@ The :file:`dtm_hci.c` and :file:`hci_uart.c` files are an implementation of the 
 
 The default selection of UART pins is defined in :file:`zephyr/boards/arm/board_name/board_name.dts`.
 You can change the defaults using the symbols ``tx-pin`` and ``rx-pin`` in the DTS overlay file of the child image at the project level.
-The overlay files for the :ref:`nrf5340_remote_shell` child image are located in the :file:`child_image/remote_shell` directory.
+The configuration files for the :ref:`nrf5340_remote_shell` subimage are located in the :file:`child_image/remote_shell` or :file:`sysbuild/remote_shell` directory.
 The HCI interface allows for a custom ``remote_hci`` image to be used with |nRF5340DKnoref|.
 
 .. note::
@@ -367,7 +368,6 @@ Building and running
 .. note::
    On the nRF5340 development kit, this sample requires the :ref:`nrf5340_remote_shell` sample on the application core.
    The Remote IPC shell sample is built and programmed automatically by default.
-   If you want to program your custom solution for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE` Kconfig option.
 
 Disabling Direction Finding feature
 ===================================
@@ -376,7 +376,7 @@ To build the sample without support for the Direction Finding feature, use the f
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b board_name -- -DEXTRA_DTC_OVERLAY_FILE=no-dfe.overlay
+   west build samples/bluetooth/direct_test_mode -b board_name --sysbuild -- -DSB_CONFIG_DTM_NO_DFE=y
 
 Experimental HCI interface
 ==========================
@@ -385,7 +385,9 @@ To build the sample with an HCI interface, use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b board_name -- -DFILE_SUFFIX=hci
+   west build samples/bluetooth/direct_test_mode -b board_name --sysbuild -- -DFILE_SUFFIX=hci
+
+On the |nRF5340DKnoref|, you can build the sample with HCI interface with the ``remote_hci`` image using the same command.
 
 USB CDC ACM transport variant
 =============================
@@ -395,14 +397,14 @@ Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet --sysbuild -- -DFILE_SUFFIX=usb
 
 You can also build this sample with support for the front-end module.
 Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet --sysbuild -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
 
 .. _dtm_testing:
 
