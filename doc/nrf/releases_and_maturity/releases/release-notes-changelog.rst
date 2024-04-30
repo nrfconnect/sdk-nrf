@@ -340,7 +340,10 @@ Bluetooth samples
 
 * :ref:`direct_test_mode` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
+  * Added:
+
+    * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
+    * Support for the :ref:`zephyr:sysbuild`.
 
 * :ref:`peripheral_uart` sample:
 

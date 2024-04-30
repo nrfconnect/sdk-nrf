@@ -36,23 +36,11 @@ config ANOMALY_172_TIMER_IRQ_PRIORITY
 
 config DTM_USB
 	bool "DTM over USB CDC ACM class"
-	depends on SOC_NRF5340_CPUNET && DTM_TRANSPORT_TWOWIRE
+	depends on SOC_NRF5340_CPUNET && !DTM_TRANSPORT_HCI
 	select EXPERIMENTAL
 	help
 	  Use USB instead of UART as the DTM interface. For nRF5340 the USB from application core
 	  is used as communication interface.
-
-choice DTM_TRANSPORT
-	default DTM_TRANSPORT_TWOWIRE
-	prompt "Transport layer to use with DTM"
-	help
-	  Transport interface to use with the DTM.
-
-config DTM_TRANSPORT_TWOWIRE
-	bool "DTM over Two Wire UART"
-	depends on SERIAL
-	help
-	  Use the Two Wire transport interface as the DTM transport layer.
 
 config DTM_TRANSPORT_HCI
 	bool "DTM over HCI UART [EXPERIMENTAL]"
@@ -61,8 +49,7 @@ config DTM_TRANSPORT_HCI
 	select EXPERIMENTAL
 	help
 	  Use the HCI UART transport interface as the DTM transport layer.
-
-endchoice # DTM_TRANSPORT
+	  This option is inherited from SB_CONFIG_DTM_TRANSPORT_HCI.
 
 if DTM_TRANSPORT_HCI
 
