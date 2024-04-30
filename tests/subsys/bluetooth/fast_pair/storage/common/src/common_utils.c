@@ -28,7 +28,7 @@ void cu_account_keys_generate_and_store(uint8_t first_seed, uint8_t gen_count)
 	for (uint8_t i = 0; i < gen_count; i++) {
 		cu_generate_account_key(i + first_seed, &account_key);
 
-		err = fp_storage_ak_save(&account_key);
+		err = fp_storage_ak_save(&account_key, NULL);
 		zassert_ok(err, "Failed to store Account Key");
 	}
 }
@@ -64,7 +64,7 @@ void cu_account_keys_validate_uninitialized(void)
 	size_t read_cnt = ACCOUNT_KEY_MAX_CNT;
 
 	cu_generate_account_key(seed, &account_key);
-	err = fp_storage_ak_save(&account_key);
+	err = fp_storage_ak_save(&account_key, NULL);
 	zassert_equal(err, -EACCES, "Expected error before initialization");
 
 	err = fp_storage_ak_count();
