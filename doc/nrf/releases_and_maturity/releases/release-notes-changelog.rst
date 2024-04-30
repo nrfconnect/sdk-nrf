@@ -223,6 +223,8 @@ nRF Desktop
   * Enabled the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT <config_desktop_app_options>` Kconfig option for the nRF Desktop peripherals with :ref:`nrf_desktop_dfu`.
     The option mitigates HID report rate drops during DFU image transfer through the nRF Desktop dongle.
     The output report is also enabled for the ``nrf52kbd_nrf52832`` build target in the debug configuration to maintain consistency with the release configuration.
+  * Replaced the :kconfig:option:`CONFIG_BT_L2CAP_TX_BUF_COUNT` Kconfig option with :kconfig:option:`CONFIG_BT_ATT_TX_COUNT` in nRF Desktop dongle configurations.
+    This update is needed to align with the new approach introduced in ``sdk-zephyr`` by commit ``a05a47573a11ba8a78dadc5d3229659f24ddd32f``.
 
 Thingy:53: Matter weather station
 ---------------------------------
