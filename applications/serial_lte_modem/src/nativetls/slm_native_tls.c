@@ -133,7 +133,7 @@ static int list_credentials_cb(const char *key, size_t len, settings_read_cb rea
 		ptr++;
 	}
 
-	slm_at_send_str(buf);
+	err = slm_at_send_str(buf);
 	if (err) {
 		LOG_ERR("Failed slm_at_send: %d", err);
 	}
