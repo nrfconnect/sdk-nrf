@@ -38,8 +38,8 @@ config TFM_LOG_LEVEL_SILENCE
 		   $(dt_nodelabel_has_prop,uart1,pinctrl-names) || \
 		   SOC_SERIES_NRF54LX # TODO: NCSDK-25009: Use pin-ctrl-names for 54L
 
-
 choice TFM_PROFILE_TYPE
+	default TFM_PROFILE_TYPE_NOT_SET if SOC_SERIES_NRF54LX
 	default TFM_PROFILE_TYPE_MINIMAL
 endchoice
 
