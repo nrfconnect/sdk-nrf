@@ -226,6 +226,11 @@ Serial LTE modem
 
   * AT command parsing to utilize the :ref:`at_cmd_custom_readme` library.
 
+Connectivity Bridge
+-------------------
+
+* Updated to make the Bluetooth LE feature work for Thingy:91 X by using the load switch.
+
 nRF5340 Audio
 -------------
 

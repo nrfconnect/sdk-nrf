@@ -92,6 +92,10 @@
 
 | :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91 | ``thingy91/nrf9160/ns`` |
 
+.. thingy91x_nrf5340_cpuapp
+
+| Thingy:91 x | PCA20065 | thingy91x | ``thingy91x/nrf5340/cpuapp`` |
+
 .. nrf52dk_nrf52810
 
 | :ref:`nRF52 DK (emulating nRF52810) <ug_nrf52>` | PCA10040 | :ref:`nrf52dk <nrf52dk_nrf52810>` | ``nrf52dk/nrf52810`` |

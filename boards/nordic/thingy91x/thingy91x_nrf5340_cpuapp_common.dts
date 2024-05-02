@@ -44,6 +44,7 @@
 
 	zephyr,user {
 		button1-gpios = <&gpio1 15 (GPIO_PULL_UP | GPIO_OPEN_DRAIN)>;
+		short-range-rf-fe-enable-gpios = <&gpio0 18 GPIO_ACTIVE_LOW>;
 	};
 
 	/* These aliases are provided for compatibility with samples */
