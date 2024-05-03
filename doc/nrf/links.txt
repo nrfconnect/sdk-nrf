@@ -41,7 +41,6 @@
 .. _`Zephyr issue #38516`: https://github.com/zephyrproject-rtos/zephyr/issues/38516
 .. _`Zephyr SDK`: https://github.com/zephyrproject-rtos/sdk-ng/releases
 
-
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
 .. _`MCUboot Kconfig option`: https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370
@@ -68,6 +67,7 @@
 
 .. _`Ethernet over RTT for Linux`: https://github.com/doki-nordic/experimental-eth-rtt-link/
 
+.. _`nrf-udev`: https://github.com/NordicSemiconductor/nrf-udev
 
 .. _`Memfault entry in the manifest`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L170-L173
 .. _`ANT entry in the manifest`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L182-L187
