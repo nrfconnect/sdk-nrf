@@ -361,9 +361,9 @@ Testing STA mode
 
    .. code-block:: console
 
-      wifi connect <SSID> <passphrase>
+      wifi connect -s <SSID> -p <passphrase> -k <key_management>
 
-   ``<SSID>`` is the SSID of the network you want to connect to, and ``<passphrase>`` is its passphrase.
+   ``<SSID>`` is the SSID of the network you want to connect to, ``<passphrase>`` is its passphrase, and the key management is the security type used by the network.
 
 #. Check the connection status after a while, using the following command:
 
