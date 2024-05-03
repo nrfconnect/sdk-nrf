@@ -4,10 +4,6 @@
 Device Firmware Updates
 #######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Device Firmware Update (DFU) is the procedure of upgrading the application firmware version on a device.
 It consists of two primary steps:
 
@@ -25,10 +21,7 @@ It consists of two primary steps:
 
   This distinction is crucial for developing your firmware update strategy and selecting the appropriate bootloader for your device's needs.
 
-Bootloader and application roles in DFU
-***************************************
-
-The testing and booting process depends on the choice of bootloader and the application design.
+Regarding bootloader and application roles, the testing and booting process depends on the choice of bootloader and the application design.
 Generally, bootloaders support two types of updates:
 
 * Direct updates, with an in-place substitution of the image.
@@ -41,10 +34,7 @@ The relation can be explained as follows:
 * The bootloader manages the final steps of the DFU process and has ability to receive, verify, and activate either new or already-received firmware images.
 * The application manages firmware updates by receiving and staging new firmware or candidate images, especially when using SMP, and then prepares them for installation by the bootloader.
 
-Methods of transferring updated images
-**************************************
-
-You can transfer the updated images to the device in two ways:
+With DFUs, you can transfer the updated images to the device in two ways:
 
 * Wired, where updates are sent through a wired connection, like UART, or delivered by connecting a flash device.
 * Over-the-air (OTA), where updates are sent through a wireless connection, like Bluetooth® Low Energy.
@@ -98,10 +88,7 @@ Based on these criteria, the |NCS| offers support for the following DFU alternat
       - Library in the |NCS| that provides functions for downloading a firmware file as an upgrade candidate to the DFU target. The library is often used by IoT libraries, such as the :ref:`lib_nrf_cloud` library.
       - OTA (LTE, Wi-Fi)
 
-Device-specific DFU guides
-**************************
-
-See the following pages for device-specific guides related to DFU:
+For device-specific guides related to DFU, see the following pages:
 
 * :ref:`Developing with nRF52 Series <ug_nrf52_developing_ble_fota>` - for how to do firmware over-the-air (FOTA) updates with nRF52 Series devices.
 
