@@ -6,12 +6,26 @@
 get_property(PM_DOMAINS GLOBAL PROPERTY PM_DOMAINS)
 if(SB_CONFIG_SECURE_BOOT)
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
+    # Calculate the network board target
+    string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
+    list(GET split_board_qualifiers 1 target_soc)
+    list(GET split_board_qualifiers 2 target_cpucluster)
+
+    if(DEFINED BOARD_REVISION)
+      set(board_target_netcore "${BOARD}@${BOARD_REVISION}/${target_soc}/${SB_CONFIG_SECURE_BOOT_NETWORK_BOARD_TARGET_CPUCLUSTER}")
+    else()
+      set(board_target_netcore "${BOARD}/${target_soc}/${SB_CONFIG_SECURE_BOOT_NETWORK_BOARD_TARGET_CPUCLUSTER}")
+    endif()
+
+    set(target_soc)
+    set(target_cpucluster)
+
     set(secure_boot_source_dir ${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/netboot)
 
     ExternalZephyrProject_Add(
       APPLICATION b0n
       SOURCE_DIR ${secure_boot_source_dir}
-      BOARD ${SB_CONFIG_SECURE_BOOT_NETWORK_BOARD}
+      BOARD ${board_target_netcore}
       BUILD_ONLY true
     )
     set_target_properties(b0n PROPERTIES
