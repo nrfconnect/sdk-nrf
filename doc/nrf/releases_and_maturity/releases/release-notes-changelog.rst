@@ -806,7 +806,11 @@ Bootloader libraries
 Debug libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`mod_memfault` library:
+
+  * Fixed an issue where the library resets the LTE connectivity statistics after each read.
+    This could lead to an accumulated error over time because of the byte counter resolution.
+    The connectivity statistics are now only reset when the library is initialized and will be cumulative after that.
 
 DFU libraries
 -------------
