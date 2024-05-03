@@ -609,13 +609,13 @@ int main(void)
 	work_init();
 	cJSON_Init();
 
-	/* Resend connection status if the sample is built for QEMU x86.
+	/* Resend connection status if the sample is built for NATIVE SIM.
 	 * This is necessary because the network interface is automatically brought up
 	 * at SYS_INIT() before main() is called.
 	 * This means that NET_EVENT_L4_CONNECTED fires before the
 	 * appropriate handler l4_event_handler() is registered.
 	 */
-	if (IS_ENABLED(CONFIG_BOARD_QEMU_X86) || IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
+	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
 		conn_mgr_mon_resend_status();
 	}
 
