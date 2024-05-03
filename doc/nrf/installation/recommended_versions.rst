@@ -175,6 +175,8 @@ Other versions might also work, but are not verified.
          * - :ref:`west <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_LINUX`
 
+      Additionally, you need to install `nrf-udev`_ rules for accessing USB ports on Nordic Semiconductor devices and programming the firmware.
+
    .. group-tab:: macOS
 
       .. list-table::

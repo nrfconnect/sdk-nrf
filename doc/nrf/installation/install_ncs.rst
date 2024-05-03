@@ -49,6 +49,7 @@ Depending on your preferred development environment, install the following requi
         Download it from the `nRF Command Line Tools`_ page.
       * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
       * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
+      * Linux users: `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
 
    .. group-tab:: Command line
 
@@ -63,6 +64,8 @@ Depending on your preferred development environment, install the following requi
 
         .. note::
             After downloading and installing the tools, add nrfjprog to the system :envvar:`PATH` in the environment variables.
+
+      * Linux users: `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
 
 .. _gs_installing_toolchain:
 .. _gs_installing_tools:
@@ -369,7 +372,11 @@ It gives you more control over each of the required tools, but requires more fam
 
 To install the |NCS| system-wide, complete the following steps:
 
-1. Follow steps 1 and 2 in Zephyr's :ref:`zephyr:getting_started` to update your operating system and install dependencies.
+1. Follow the steps in the following sections of Zephyr's :ref:`zephyr:getting_started` to update your operating system and install dependencies:
+
+   * :ref:`zephyr:host_setup`
+   * :ref:`zephyr:install-required-tools`
+
 #. Install west.
    Expand the section below to see the commands.
 
@@ -565,7 +572,7 @@ To install the |NCS| system-wide, complete the following steps:
 
    ..
 
-#. Follow step 4 in Zephyr's :ref:`zephyr:getting_started` to install the Zephyr SDK.
+#. Follow the steps in the "Install the Zephyr SDK" section in Zephyr's :ref:`zephyr:getting_started` to install the Zephyr SDK.
 #. Depending on your preferred development environment:
 
    * If you want to work with |VSC|, install the |nRFVSC| (the default IDE for the |NCS|).
