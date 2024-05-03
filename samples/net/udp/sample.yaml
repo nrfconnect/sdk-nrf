@@ -19,7 +19,7 @@ tests:
   sample.net.udp.emulation:
     build_only: true
     integration_platforms:
-      - qemu_x86
+      - native_sim
     platform_allow:
-      - qemu_x86
+      - native_sim
     tags: ci_build

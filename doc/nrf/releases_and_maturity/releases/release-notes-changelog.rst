@@ -525,16 +525,14 @@ Multicore samples
 Networking samples
 ------------------
 
-* Updated:
-
-  *  The networking samples to support import of certificates in valid PEM formats.
+* Updated the networking samples to support import of certificates in valid PEM formats.
+* Removed QEMU x86 emulation support and added support for the :ref:`native simulator <zephyr:native_sim>` board.
 
 * :ref:`http_server` sample:
 
   * Added:
 
     * ``DNS_SD_REGISTER_TCP_SERVICE`` so that mDNS services can locate and address the server using its hostname.
-    * Support for the :ref:`native simulator <zephyr:native_sim>` board.
 
   * Updated:
 
