@@ -8,7 +8,7 @@ Bluetooth Mesh: Sensor
    :depth: 2
 
 The Bluetooth® Mesh sensor sample demonstrates how to set up a basic mesh Sensor Server model application that provides sensor data to one :ref:`bt_mesh_sensor_cli_readme` model.
-Five different sensor types are used to showcase different ways for the server to publish data.
+Eight different sensor types are used to showcase different ways for the server to publish data.
 In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
 
 .. note::
@@ -47,7 +47,7 @@ The following Bluetooth Mesh sensor types, and their settings, are used in this 
 
 * On Sensor Server instance on Element 1:
 
-  * :c:var:`bt_mesh_sensor_present_amb_light_level` - Periodically requested by the client.
+  * :c:var:`bt_mesh_sensor_present_amb_light_level` - Periodically requested by the client, and published when a button is pressed on the server.
 
     * :c:var:`bt_mesh_sensor_gain` - Used as a setting for the :c:var:`bt_mesh_sensor_present_amb_light_level` sensor type to set the gain the ambient light sensor value is multiplied with.
     * :c:var:`bt_mesh_sensor_present_amb_light_level` - Used as a setting for the :c:var:`bt_mesh_sensor_present_amb_light_level` sensor type to calculate sensor gain based on measured reference ambient light level. This value does only have a set command.
@@ -55,11 +55,21 @@ The following Bluetooth Mesh sensor types, and their settings, are used in this 
 * On Sensor Server instance on Element 2:
 
   * :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server.
-  * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
 
     * :c:var:`bt_mesh_sensor_motion_threshold` - Used as a setting for the :c:var:`bt_mesh_sensor_presence_detected` sensor type to set the time (0-10 seconds) before the presence is detected.
 
+  * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
+
 * On Sensor Server instance on Element 3:
+
+  * :c:var:`bt_mesh_sensor_motion_sensed` - Published when a button is pressed on the server.
+  * :c:var:`bt_mesh_sensor_time_since_motion_sensed` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
+
+* On Sensor Server instance on Element 4:
+
+  * :c:var:`bt_mesh_sensor_people_count` - Periodically requested by the client, and published when a button is pressed on the server.
+
+* On Sensor Server instance on Element 5:
 
   * :c:var:`bt_mesh_sensor_present_dev_op_temp` - Published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`), or periodically requested by the client.
 
@@ -71,6 +81,11 @@ The following Bluetooth Mesh sensor types, and their settings, are used in this 
    These values can be requested through shell commands by the :ref:`bluetooth_mesh_sensor_client`.
 
 Moreover, the on-chip ``TEMP_NRF5`` temperature sensor is used for the nRF52 series, and the ``BME680`` temperature sensor for Thingy:53.
+
+.. note::
+  When running this sample on Thingy:53, some functionality will not be available as the device only has two buttons.
+  The two buttons on Thingy:53 will be used for the ambient light sensor and presence detected sensor functionality as described for **Button 1** and **Button 2** in this documentation.
+  **Button 2** can be accessed by removing the top part of the casing.
 
 Provisioning
 ============
@@ -88,14 +103,14 @@ The following table shows the Bluetooth Mesh sensor composition data for this sa
 .. table::
    :align: center
 
-   ===================  ===================  ===================
-   Element 1            Element 2            Element 3
-   ===================  ===================  ===================
-   Config Server        Sensor Server        Sensor Server
-   Health Server        Sensor Setup Server  Sensor Setup Server
+   ===================  ===================  ===================  ===================  ===================
+   Element 1            Element 2            Element 3            Element 4            Element 5
+   ===================  ===================  ===================  ===================  ===================
+   Config Server        Sensor Server        Sensor Server        Sensor Server        Sensor Server
+   Health Server        Sensor Setup Server  Sensor Setup Server  Sensor Setup Server  Sensor Setup Server
    Sensor Server
    Sensor Setup Server
-   ===================  ===================  ===================
+   ===================  ===================  ===================  ===================  ===================
 
 The models are used for the following purposes:
 
@@ -136,6 +151,13 @@ Button 2:
    Simulates presence detected.
    For how long the button has to be pressed before the presence is detected depends on the motion threshold.
    The motion threshold has five steps from 0 % (representing 0 seconds) to 100 % (representing 10 seconds) separated by 25 %-steps.
+
+Button 3:
+   Simulates motion sensed.
+
+Button 4:
+   Simulates different people count sensor values.
+   These dummy values represent raw values coming from a people count sensor.
 
 Configuration
 *************

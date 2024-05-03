@@ -400,11 +400,18 @@ Bluetooth Mesh samples
 
 * :ref:`bluetooth_mesh_sensor_client` sample:
 
-  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+  * Added:
+
+    * Support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+    * Motion sensing, time since motion sensed and people count occupancy sensor types.
 
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
-  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+  * Added:
+
+    * Support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+    * Motion sensing, time since motion sensed and people count occupancy sensor types.
+
   * Updated:
 
     * Actions of buttons 1 and 2.
