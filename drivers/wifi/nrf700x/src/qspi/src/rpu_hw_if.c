@@ -286,12 +286,13 @@ static int rpu_pwron(void)
 	}
 	/* Settling time for iovdd nRF7002 DK/EK - switch (TCK106AG): ~600us */
 	k_msleep(1);
-#ifdef CONFIG_SHIELD_NRF7002EB
-	/* For nRF7002 Expansion board, we need a total wait time after bucken assertion
-	 * to be 6ms (1ms + 1ms + 4ms).
-	 */
-	k_msleep(4);
-#endif /* SHIELD_NRF7002EB */
+
+	if (IS_ENABLED(CONFIG_SHIELD_NRF7002EB) || IS_ENABLED(CONFIG_SHIELD_NRF700X_NRF54L15PDK)) {
+		/* For nRF7002 Expansion board, we need a total wait time after bucken assertion
+		 * to be 6ms (1ms + 1ms + 4ms).
+		 */
+		k_msleep(4);
+	}
 
 	LOG_DBG("Bucken = %d, IOVDD = %d", gpio_pin_get_dt(&bucken_spec),
 			gpio_pin_get_dt(&iovdd_ctrl_spec));
