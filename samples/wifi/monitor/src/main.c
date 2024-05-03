@@ -543,6 +543,8 @@ int main(void)
 
 	net_config_init_app(dev, "Initializing network");
 #endif
+	/* TODO: Add proper synchronization to wait for WPA supplicant initialization */
+	k_sleep(K_SECONDS(2));
 
 	ret = wifi_set_mode();
 	if (ret) {
