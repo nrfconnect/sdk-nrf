@@ -339,6 +339,9 @@ int main(void)
 
 	net_mgmt_add_event_callback(&wifi_sap_mgmt_cb);
 
+	/* TODO: Add proper synchronization to wait for WPA supplicant initialization */
+	k_sleep(K_SECONDS(2));
+
 	CHECK_RET(wifi_set_reg_domain);
 
 	CHECK_RET(configure_dhcp_server);
