@@ -595,7 +595,7 @@ static int cracen_prepare_ik_key(const uint8_t *user_data)
 	cfg.device_secret = device_secret;
 	cfg.device_secret_sz = DEVICE_SECRET_LENGTH;
 
-	switch (user_data[1]) {
+	switch (((uint32_t *)user_data)[0]) {
 		/* Helper macro to set up an array containing the personalization string.
 		 * The array is a multiple of 4, since the IKG takes a number of uint32_t
 		 * as personalization string.
@@ -682,7 +682,8 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 
 		k->prepare_key = cracen_prepare_ik_key;
 		k->clean_key = cracen_clean_ik_key;
-		k->user_data = key_buffer;
+		k->owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));
+		k->user_data = (uint8_t *)&k->owner_id;
 
 		switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
 		case CRACEN_BUILTIN_MKEK_ID:
