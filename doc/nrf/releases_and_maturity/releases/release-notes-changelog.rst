@@ -945,6 +945,7 @@ Documentation
   * The trusted storage support table in the :ref:`trusted_storage_in_ncs` section by adding nRF52833 and replacing nRF9160 with nRF91 Series.
 
   * Reworked the :ref:`ble_rpc` page to be more informative and aligned with the library template.
+  * Improved the :ref:`ug_radio_fem` user guide to be up-to-date and more informative.
 
 * Fixed:
 
