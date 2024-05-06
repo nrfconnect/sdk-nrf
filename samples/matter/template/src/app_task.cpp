@@ -9,6 +9,8 @@
 #include "app/matter_init.h"
 #include "app/task_executor.h"
 #include "board/board.h"
+#include "lib/core/CHIPError.h"
+#include "lib/support/CodeUtils.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"

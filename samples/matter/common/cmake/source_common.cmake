@@ -58,3 +58,7 @@ if(CONFIG_NCS_SAMPLE_MATTER_PERSISTENT_STORAGE)
     target_sources_ifdef(CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND app PRIVATE
             ${MATTER_COMMONS_SRC_DIR}/persistent_storage/backends/persistent_storage_secure.cpp)
 endif()
+
+if(CONFIG_NCS_SAMPLE_MATTER_WATCHDOG)
+    target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/watchdog/watchdog.cpp)
+endif()
