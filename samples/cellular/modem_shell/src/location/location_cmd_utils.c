@@ -76,9 +76,19 @@ int location_cmd_utils_gnss_loc_to_cloud_payload_json_encode(
 			.lon		= location_data->longitude,
 			.lat		= location_data->latitude,
 			.accuracy	= location_data->accuracy,
+#if defined(CONFIG_LOCATION_DATA_DETAILS) && defined(CONFIG_LOCATION_METHOD_GNSS)
+			/* Detailed GNSS data is available, send those as well */
+			.has_alt	= 1,
+			.alt		= location_data->details.gnss.pvt_data.altitude,
+			.has_speed	= 1,
+			.speed		= location_data->details.gnss.pvt_data.speed,
+			.has_heading	= 1,
+			.heading	= location_data->details.gnss.pvt_data.heading
+#else
 			.has_alt	= 0,
 			.has_speed	= 0,
 			.has_heading	= 0
+#endif
 		}
 	};
 	char nmea_buf[64];
