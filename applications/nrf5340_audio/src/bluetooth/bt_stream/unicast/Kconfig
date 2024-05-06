@@ -97,7 +97,7 @@ config CODEC_CAP_COUNT_MAX
 config BT_AUDIO_PREFERRED_MIN_PRES_DLY_US
 	int "The preferred minimum presentation delay"
 	range AUDIO_MIN_PRES_DLY_US AUDIO_MAX_PRES_DLY_US
-	default 10000
+	default 3000
 	help
 	  The preferred minimum presentation delay in microseconds. This can not
 	  be less than the absolute minimum presentation delay.

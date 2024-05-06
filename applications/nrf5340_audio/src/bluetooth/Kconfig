@@ -70,7 +70,7 @@ menu "QoS"
 config BT_AUDIO_PRESENTATION_DELAY_US
 	int "Presentation delay"
 	range AUDIO_MIN_PRES_DLY_US AUDIO_MAX_PRES_DLY_US
-	default 10000
+	default 3000
 	help
 	  The audio source/client defined presentation delay if within
 	  AUDIO_MIN_PRES_DLY_US and AUDIO_MAX_PRES_DLY_US range. This will
@@ -82,7 +82,7 @@ config BT_AUDIO_PRESENTATION_DELAY_US
 config BT_AUDIO_MAX_TRANSPORT_LATENCY_MS
 	int "Max transport latency"
 	range 5 4000
-	default 20
+	default 10
 	help
 	  Max transport latency for the ISO link.
 
