@@ -15,39 +15,30 @@ Some FEMs, like the nRF21540, also provide a power down (PDN) control that power
 
 For testing purposes, a FEM is usually integrated in either a development kit or a shield that you can connect to a development kit.
 
-This guide describes how to add support for 2 different front-end module (FEM) implementations to your application in |NCS|.
+This guide describes how to add support for different front-end module (FEM) implementations to your application in |NCS|.
 
 .. _ug_radio_fem_sw_support:
 
 Software support
 ****************
 
-To use radio protocols and a FEM with your application, enable :ref:`nrfxlib:mpsl_fem` in the :ref:`nrfxlib:mpsl` (MPSL) library.
-
-The following test samples support FEM control:
-
-* :ref:`radio_test`
-* :ref:`direct_test_mode`
-
-You can also use your own FEM driver when required.
-
-.. _ug_radio_fem_sw_support_mpsl:
-
-Using MPSL
-==========
-
-The MPSL library provides the following GPIO interface implementations:
+The following implementations are available in the |NCS|:
 
 * :ref:`ug_radio_fem_nrf21540_spi_gpio` - For the nRF21540 GPIO+SPI implementation that uses a 3-pin interface and an SPI interface with the nRF21540.
 * :ref:`ug_radio_fem_nrf21540_gpio` - For the nRF21540 GPIO implementation that uses a 3-pin interface with the nRF21540.
-* :ref:`ug_radio_fem_skyworks` - For the implementation that uses a 2-pin interface with the SKY66112-11 device and other compatible front-end modules.
+* :ref:`Simple GPIO interface <ug_radio_fem_skyworks>` - For the implementation that uses a 2-pin interface with the SKY66112-11 device and other compatible front-end modules.
 
-To use these implementations, your application must use a protocol driver that enables the FEM feature.
+To use any of these implementations with your application, first complete the following steps:
 
-The library provides multiprotocol support, but you can also use it in applications that require only one protocol.
-To avoid conflicts, check the protocol documentation to see if the protocol uses the FEM support provided by MPSL.
+1. Enable the :ref:`nrfxlib:mpsl_fem` in the :ref:`nrfxlib:mpsl` (MPSL) library.
+   It provides implementations of drivers for supported Front-end modules.
 
-.. note::
+   * Enable support for MPSL by setting the :kconfig:option:`CONFIG_MPSL` Kconfig option to ``y``. For radio protocol drivers based on MPSL, this option is selected by default.
+   * Enable support for the FEM subsystem by setting the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option to ``y``.
+     This option is selected automatically if a supported FEM is provided in the application's devicetree file.
+
+   If your application cannot use MPSL but you wish to use only the FEM driver provided by MPSL, refer to :ref:`ug_radio_fem_direct_support` for details.
+#. Use a radio protocol driver that uses the FEM driver described in the previous step.
    Currently, the following protocols use the FEM support provided by MPSL:
 
    * :ref:`ug_thread`
@@ -55,40 +46,43 @@ To avoid conflicts, check the protocol documentation to see if the protocol uses
    * :ref:`ug_ble_controller`
    * :ref:`ug_multiprotocol_support`
 
-.. _ug_radio_fem_requirements:
+   For applications based on these protocols, the FEM driver provided by MPSL is used to correctly control the FEM depending on the current radio operation.
+   For other radio protocol implementations and applications that control the radio directly, you must use the FEM driver according to the :ref:`nrfxlib:mpsl_api_fem` API.
+   For reference, see the following samples that are not based on any of the radio protocol drivers listed above and support FEM control:
 
-Enabling FEM and MPSL
----------------------
+   * :ref:`radio_test`
+   * :ref:`direct_test_mode`
 
-Before you add the devicetree node in your application, complete the following steps:
+#. Define the FEM in the devicetree file of the application.
+   Depending on the use case, you can do this by either providing a devicetree overlay to the build, defining the value of the :makevar:`SHIELD` CMake variable, or modifying the target board devicetree file directly.
+   Refer to the :ref:`ug_radio_fem_hw_desc` section for details.
+#. Select the FEM driver implementation by setting one of the following Kconfig options:
 
-1. Add support for the MPSL library in your application.
-   The MPSL library provides API to configure FEM.
-   See :ref:`nrfxlib:mpsl_lib` in the nrfxlib documentation for details.
-#. Enable support for MPSL implementation in |NCS| by setting the :kconfig:option:`CONFIG_MPSL` Kconfig option to ``y``.
-#. Enable support for the FEM subsystem in |NCS| by setting the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option to ``y``.
-#. Choose the used FEM implementation by selecting the appropriate Kconfig option.
+   * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO` Kconfig option to ``y`` to use the :ref:`nRF21540 GPIO <ug_radio_fem_nrf21540_gpio>` implementation.
+     This Kconfig option is enabled by default if the `nRF21540`_ node is provided in devicetree.
+   * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO_SPI` Kconfig option to ``y`` to use the :ref:`nRF21540 GPIO+SPI <ug_radio_fem_nrf21540_spi_gpio>`.
+   * :kconfig:option:`CONFIG_MPSL_FEM_SIMPLE_GPIO` Kconfig option to ``y`` to use the :ref:`2-pin simple GPIO <ug_radio_fem_skyworks>` implementation.
+     This Kconfig option is enabled by default if a FEM compatible with generic two control pins is provided in devicetree.
 
-The following FEM implementations are supported:
+.. _ug_radio_fem_direct_support:
 
-* The nRF21540 GPIO implementation, see :ref:`ug_radio_fem_nrf21540_gpio`.
-  To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO` Kconfig option to ``y``.
-* The nRF21540 GPIO+SPI implementation, see :ref:`ug_radio_fem_nrf21540_spi_gpio`.
-  To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO_SPI` Kconfig option to ``y``.
-* The 2-pin simple GPIO implementation.
-  To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_SIMPLE_GPIO` Kconfig option to ``y``.
+MPSL FEM-only configuration
+===========================
 
-It is possible to only use the :ref:`nrfxlib:mpsl_fem` API if your application does not require other MPSL features.
-This could be useful when you want to run simple radio protocols that are not intended to be used concurrently with other protocols.
-You can do that by setting the :kconfig:option:`CONFIG_MPSL_FEM_ONLY` Kconfig option to ``y``.
+If your application cannot use MPSL, you can use only the FEM driver provided by MPSL by enabling the following Kconfig options:
 
-Some applications can perform calls to the :ref:`nrfxlib:mpsl_fem` API even though no RF Front-End module is physically connected to the device and the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option is set to ``n``.
+   * :kconfig:option:`CONFIG_MPSL`
+   * :kconfig:option:`CONFIG_MPSL_FEM_ONLY`
+
+You can use the FEM-only configuration to run simple radio protocols that are not intended to be used concurrently with other protocols.
+
+Some applications might perform calls to the :ref:`nrfxlib:mpsl_fem` API even though no RF Front-End module is physically connected to the device and the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option is set to ``n``.
 In that case, ensure that the :kconfig:option:`CONFIG_MPSL_FEM_API_AVAILABLE` Kconfig option is set to ``y``.
 
 .. _ug_radio_fem_sw_support_mpsl_fem_output:
 
 Setting the FEM output power
-----------------------------
+============================
 
 The ``tx_gain_db`` property in devicetree provides the FEM gain value to use with the simple GPIO FEM implementation.
 The property must represent the real gain of the FEM.
@@ -107,7 +101,7 @@ For the nRF21540 GPIO implementation, you must enable the **MODE** pin in device
 For the nRF21540 GPIO+SPI implementation, no additional configuration is needed as the gain setting is transmitted over the SPI bus to the nRF21540.
 
 Using FEM power models
-----------------------
+======================
 
 When a protocol driver requests a given transmission power to be output, MPSL splits the power into the following components: the SoC Power and the FEM gain.
 This gain is considered constant and accurate even if external conditions, such as temperature, might affect the effective gain achieved by the Front-End Module.
@@ -122,7 +116,7 @@ To use FEM power models, set the :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` K
 .. _ug_radio_fem_nrf21540_gpio_spi_builtin_power_model:
 
 Using nRF21540 GPIO+SPI built-in power model
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------------------------
 
 The nRF21540 GPIO+SPI built-in power model attempts to keep the nRF21540's gain constant and as close to the currently selected value of gain as possible.
 The model compensates varying external conditions, which results in the nRF21540 gain being independent of their changes.
@@ -192,7 +186,7 @@ The figures are divided into three groups, each of the group representing perfor
 
 
 Adding custom power models
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------
 
 If the way MPSL splits the TX power into components does not meet your requirements, or if you wish to implement a custom compensation model, you can provide one as follows:
 
@@ -228,30 +222,19 @@ For more details, see the ``mpsl_fem_power_model_output_t`` type documentation.
    The ``soc_power`` field value must be one of the output power values supported by the given nRF SoC, otherwise the behavior is undefined.
    The user can meet this requirement by converting the requested SoC power using the ``mpsl_tx_power_radio_supported_power_adjust`` function.
 
-.. _ug_radio_fem_direct_support:
-
-Direct support
-==============
-
-If your application cannot use MPSL or if the FEM driver in MPSL does not support all features you need, you can implement your own driver for the nRF21540.
-The other solution is to use only the :ref:`nrfxlib:mpsl_fem` API from the MPSL.
-Enable the following Kconfig options:
-
-* :kconfig:option:`CONFIG_MPSL`
-* :kconfig:option:`CONFIG_MPSL_FEM_ONLY`
-
-See the :ref:`direct_test_mode` sample for an example use case.
+.. _ug_radio_fem_hw_desc:
 
 Hardware description
 ********************
 
-The |NCS| provides a wrapper that configures FEM based on devicetree (DTS) and Kconfig information.
-To enable FEM support, you must add an ``nrf_radio_fem`` node in the devicetree file.
-The node can also be provided by the devicetree file of the target development kit or by an overlay file.
+The |NCS| provides code that configures FEM based on devicetree (DTS) and Kconfig information using MPSL.
+The FEM hardware description in the application's devicetree file is an essential part of the configuration.
+To enable FEM support, an ``nrf_radio_fem`` node must be present in the application's devicetree file.
+The node can be provided by the devicetree file of the target board, by an overlay file or through the :makevar:`SHIELD` CMake variable.
 See :ref:`zephyr:dt-guide` for more information about the DTS data structure, and :ref:`zephyr:dt_vs_kconfig` for information about differences between DTS and Kconfig.
 
-Adding support for nRF21540
-===========================
+Enabling support for nRF21540
+=============================
 
 The nRF21540 device is a range extender that you can use with nRF52 and nRF53 Series devices.
 For more information about nRF21540, see the `nRF21540`_ documentation.
@@ -311,14 +294,14 @@ To use nRF21540 in GPIO mode, complete the following steps:
 
 .. _ug_radio_fem_nrf21540_spi_gpio:
 
-SPI/GPIO mode
+GPIO+SPI mode
 -------------
 
 The nRF21540 features an SPI interface.
 You can use it to fully control your front-end module or you can use a combination of SPI and GPIO interface.
 The SPI interface enables you, for example, to set the output power of the nRF21540.
 
-To use nRF21540 in SPI or mixed mode, complete the following steps:
+To use nRF21540 in GPIO+SPI mode, complete the following steps:
 
 1. Add the following node in the devicetree file:
 
@@ -387,9 +370,43 @@ To use nRF21540 in SPI or mixed mode, complete the following steps:
       };
 
    In this example, the nRF21540 is controlled by the ``spi3`` bus.
-   Replace the SPI bus according to your hardware design.
+   Replace the SPI bus according to your hardware design, and create alternative entries for SPI3 with different ``pinctrl-N`` and ``pinctrl-names`` properties.
+#. On nRF53 devices, the devicetree nodes described above must be added to the network core.
+   For the application core, you must also add a GPIO forwarder node to its devicetree file:
 
-#. Create alternative pinctrl entries for SPI3 and replace the ``pinctrl-N`` and ``pinctrl-names`` properties.
+   .. code-block:: devicetree
+
+      &gpio_fwd {
+         nrf21540-gpio-if {
+            gpios = <&gpio0 11 0>,   /* tx-en-gpios */
+                    <&gpio0 12 0>,   /* rx-en-gpios */
+                    <&gpio0 13 0>,   /* pdn-gpios */
+                    <&gpio0 14 0>,   /* ant-sel-gpios */
+                    <&gpio0 15 0>;   /* mode-gpios */
+         };
+         nrf21540-spi-if {
+            gpios = <&gpio0 21 0>,   /* cs-gpios */
+                    <&gpio1 15 0>,   /* SPIM_SCK */
+                    <&gpio1 14 0>,   /* SPIM_MISO */
+                    <&gpio1 13 0>;   /* SPIM_MOSI */
+         };
+      };
+
+   The pins defined in the GPIO forwarder node in the application core's devicetree file must match the pins defined in the FEM nodes in the network core's devicetree file.
+
+#. On nRF53 devices, ``SPIM0`` and ``UARTE0`` are mutually exclusive AHB bus masters on the network core as described in the `Product Specification <nRF5340 Product Specification_>`_, Section 6.4.3.1, Table 22.
+   As a result, they cannot be used simultaneously.
+   For the SPI part of the nRF21540 interface to be functional, you must disable the ``UARTE0`` node in the network core's devicetree file.
+
+   .. code-block:: devicetree
+
+      &uart0 {
+         status = "disabled";
+      };
+
+.. note::
+   The nRF21540 GPIO-only mode of operation is selected by default in Kconfig when an nRF21540 node is provided in devicetree, as mentioned in the :ref:`ug_radio_fem_sw_support` section.
+   To enable the GPIO+SPI mode of operation, you must explicitly set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO_SPI` Kconfig option to ``y``.
 
 Optional properties
 -------------------
@@ -437,8 +454,8 @@ The following properties are optional and you can add them to the devicetree nod
 
 .. _ug_radio_fem_skyworks:
 
-Adding support for front-end modules using Simple GPIO interface
-================================================================
+Enabling support for front-end modules using Simple GPIO interface
+==================================================================
 
 You can use the Skyworks range extenders with nRF52 and nRF53 Series devices.
 SKY66112-11 is one of many FEM devices that support the 2-pin PA/LNA interface.
@@ -478,6 +495,18 @@ To use the Simple GPIO implementation of FEM with SKY66112-11, complete the foll
 
    The state of the other control pins should be set according to the SKY66112-11 documentation.
    See the official `SKY66112-11 page`_ for more information.
+#. On nRF53 devices, you must also apply the same devicetree node to the network core.
+
+   Create a devicetree overlay file with the same information as you used in Steps 1 to 3.
+   To apply the overlay to the correct network core child image, create the file in the :file:`child image` directory of your application directory, and name it :file:`*childImageName*.overlay`, for example :file:`child_image/multiprotocol_rpmsg.overlay`.
+   The ``*childImageName*`` string must be one of the following values:
+
+   *  ``multiprotocol_rpmsg`` for multiprotocol applications with support for 802.15.4 and Bluetooth.
+   *  ``802154_rpmsg`` for applications with support for 802.15.4, but without support for Bluetooth.
+   *  ``hci_ipc`` for applications with support for Bluetooth, but without support for 802.15.4.
+
+   .. note::
+       This step is not needed when testing with the :ref:`direct_test_mode` or :ref:`radio_test` samples on nRF53 Series devices.
 
 Optional properties
 -------------------
@@ -636,6 +665,17 @@ The *childImageName_* parameter can take the following values:
 *  ``multiprotocol_rpmsg_`` for multiprotocol applications with support for 802.15.4 and Bluetooth
 *  ``802154_rpmsg_`` for applications with support for 802.15.4, but without support for Bluetooth
 *  ``hci_ipc_`` for application with support for Bluetooth, but without support for 802.15.4
+
+.. note::
+   On nRF53 devices, ``SPIM0`` and ``UARTE0`` are mutually exclusive AHB bus masters on the network core as described in the `Product Specification <nRF5340 Product Specification_>`_, Section 6.4.3.1, Table 22.
+   As a result, they cannot be used simultaneously.
+   For the SPI part of the nRF21540 interface to be functional, you must disable the ``UARTE0`` node in the network core's devicetree file.
+
+   .. code-block:: devicetree
+
+      &uart0 {
+         status = "disabled";
+      };
 
 References
 ^^^^^^^^^^

@@ -221,7 +221,7 @@ Working with nRF53 Series
 Working with RF front-end modules
 =================================
 
-* Added a clarification that the Simple GPIO implementation is intended for multiple front-end modules (not just one specific device) in the :ref:`ug_radio_fem_sw_support_mpsl` section of the :ref:`ug_radio_fem` guide.
+* Added a clarification that the Simple GPIO implementation is intended for multiple front-end modules (not just one specific device) in the :ref:`ug_radio_fem_sw_support` section of the :ref:`ug_radio_fem` guide.
 
 Protocols
 =========
