@@ -30,9 +30,6 @@ config RESET_ON_FATAL_ERROR
 	default n
 
 # Default Config for Debug and Release build
-config HW_CODEC_CIRRUS_LOGIC
-	default y
-
 config BT
 	default y
 
