@@ -50,8 +50,8 @@ ZTEST_SUITE(check_image_match_tests, NULL, NULL, NULL, NULL, NULL);
 ZTEST(check_image_match_tests, test_mem_valid)
 {
 	/* GIVEN a MEM component pointing to the data */
-	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',  0x41, 0x02, 0x45, 0x1A,
-					0x00, 0x00, 0x00, 0x00, 0x45, 0x1A, 0x00, 0x00, 0x00, 0x00};
+	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',
+					0x41, 0x02, 0x41, 0x00, 0x41, 0x00};
 
 	struct zcbor_string valid_src_component_id = {
 		.value = component_id_value,
@@ -86,8 +86,8 @@ ZTEST(check_image_match_tests, test_mem_valid)
 ZTEST(check_image_match_tests, test_mem_wrong_size)
 {
 	/* GIVEN a MEM component pointing to the data... */
-	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',  0x41, 0x02, 0x45, 0x1A,
-					0x00, 0x00, 0x00, 0x00, 0x45, 0x1A, 0x00, 0x00, 0x00, 0x00};
+	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',
+					0x41, 0x02, 0x41, 0x00, 0x41, 0x00};
 
 	struct zcbor_string valid_src_component_id = {
 		.value = component_id_value,
@@ -124,8 +124,8 @@ ZTEST(check_image_match_tests, test_mem_wrong_size)
 ZTEST(check_image_match_tests, test_mem_wrong_digest)
 {
 	/* GIVEN a MEM component pointing to the data */
-	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',  0x41, 0x02, 0x45, 0x1A,
-					0x00, 0x00, 0x00, 0x00, 0x45, 0x1A, 0x00, 0x00, 0x00, 0x00};
+	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',
+					0x41, 0x02, 0x41, 0x00, 0x41, 0x00};
 
 	struct zcbor_string valid_src_component_id = {
 		.value = component_id_value,
@@ -160,9 +160,8 @@ ZTEST(check_image_match_tests, test_mem_wrong_digest)
 ZTEST(check_image_match_tests, test_mem_invalid_component)
 {
 	/* GIVEN a MEM component with invalid component id, pointing to the data */
-	uint8_t invalid_component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',  0x41,
-						0x02, 0x45, 0x1A, 0x00, 0x00, 0x00, 0x00,
-						0x45, 0xFF, 0x00, 0x00, 0x00, 0x00};
+	uint8_t invalid_component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',  0x41, 0x02,
+						0x41, 0x00, 0x45, 0xFF, 0x00, 0x00, 0x00, 0x00};
 
 	struct zcbor_string invalid_src_component_id = {
 		.value = invalid_component_id_value,
