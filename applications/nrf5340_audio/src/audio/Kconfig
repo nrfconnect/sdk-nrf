@@ -32,7 +32,7 @@ config AUDIO_FRAME_DURATION_US
 
 config AUDIO_MIN_PRES_DLY_US
 	int "The minimum presentation delay"
-	default 4000
+	default 3000
 	help
 	  The minimum presentation delay in micro seconds determined by
 	  the audio system processing and the minimum buffering.
