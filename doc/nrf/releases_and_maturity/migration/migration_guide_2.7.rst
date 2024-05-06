@@ -143,4 +143,11 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+LwM2M carrier library
+---------------------
+
+.. toggle::
+
+   * Many event defines have received new values.
+     If you are using the values directly in your application, you need to check the events listed in :file:`lwm2m_carrier.h`.
+     The most likely place these changes are needed is :ref:`serial_lte_modem` application, where :ref:`SLM_AT_CARRIER` are relying on the value of the defines instead of the names.

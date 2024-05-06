@@ -14,6 +14,73 @@ Certification status
 
 For certification status of the released versions, see `Mobile network operator certifications`_.
 
+liblwm2m_carrier 3.5.0
+**********************
+
+Release for modem firmware version 1.3.6 and 2.0.1.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 79062         | 19685      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 99404         | 34280      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Added the new event :c:macro:`LWM2M_CARRIER_EVENT_ERROR_CODE_RESET`.
+
+  * This event allows the application to re-evaluate any error codes and issue them again.
+    The errors can be updated using the function API :c:func:`lwm2m_carrier_error_code_add` and :c:func:`lwm2m_carrier_error_code_remove`.
+
+* Added the :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA` which allows the carrier to handle the proprietary SoftBank FOTA images.
+
+  * The glue layer now handles the image type :c:macro:`LWM2M_OS_DFU_IMG_TYPE_APPLICATION_FILE`, which allows an update to be split into several files.
+
+* Added a callback for the modem functional mode changes (``AT+CFUN``).
+  For more information see :ref:`mlil_callbacks`.
+
+  * This allows the LwM2M carrier library to resume AT notification subscriptions after the application powers off the modem.
+
+* Changed the ``server_binding`` parameter to use :c:macro:`LWM2M_CARRIER_SERVER_BINDING_UDP` or :c:macro:`LWM2M_CARRIER_SERVER_BINDING_NONIP` (instead of ``U`` or ``N``).
+* Changed the LwM2M carrier library Kconfig menu to clarify some the option dependencies.
+
+* Added new events related to the Binary App Data Container object:
+
+  * :c:macro:`LWM2M_CARRIER_APP_DATA_EVENT_OBSERVE_START`, :c:macro:`LWM2M_CARRIER_APP_DATA_EVENT_OBSERVE_STOP`.
+    This enables a use case in which the device wants to start and stop intensive operations (for example sampling a sensor), based on if the data is required by the server or not.
+
+  * :c:macro:`LWM2M_CARRIER_APP_DATA_EVENT_DATA_WRITE`. This allows the device to use incoming data written to the data resource by the server.
+
+* Added the new request types to the :c:func:`lwm2m_carrier_request` to allow the application to register and deregister manually. (:c:macro:`LWM2M_CARRIER_REQUEST_REGISTER`, :c:macro:`LWM2M_CARRIER_REQUEST_DEREGISTER`).
+  This functionality is only needed in the SoftBank network.
+
+* Added more error codes to :c:func:`lwm2m_carrier_request` in case the request fails to be made or is already in progress  (``EPERM``, ``EBADR``, ``EALREADY``).
+
+* Added the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_AUTO_REGISTER` to stop the LwM2M carrier library from registering with the LwM2M server automatically. (added :c:macro:`disable_auto_register` to :c:macro:`lwm2m_carrier_config_t`).
+
+  * This option is meant to be used for SoftBank, but can also be toggled when operating in Generic mode (connecting to a custom URI instead of the predetermined carrier servers).
+  * The application must manually trigger the operation of disabling auto_register using the new :c:func:`lwm2m_carrier_request` API.
+    This also applies to situations where the client has been deregistered by the server, for example if network coverage is lost.
+
+* Added a new error code :c:macro:`LWM2M_CARRIER_ERROR_CONNECT` to clarify when the LwM2M carrier library has exhausted the attempts to connect to the device management server.
+  New attempts at connecting will only be made after restarting the application, for example by rebooting the device.
+
+* Added support for the Mute Send resource in the Server object.
+
+  * Added a new error ``ECANCELED`` to the function :c:func:`lwm2m_carrier_data_send`, in case send is muted by the server.
+
+* Added a dependency on :ref:`modem_key_mgmt` (:kconfig:option:`CONFIG_MODEM_KEY_MGMT`) for the LwM2M carrier library shell.
+
 liblwm2m_carrier 3.4.0
 **********************
 

@@ -95,6 +95,32 @@ void lwm2m_print_deferred(const lwm2m_carrier_event_t *evt)
 	mosh_error("Reason: %s, timeout: %d seconds\n", strdef[def->reason], def->timeout);
 }
 
+void lwm2m_print_app_data(const lwm2m_carrier_event_t *evt)
+{
+	const uint16_t *path = evt->data.app_data->path;
+	const uint8_t event_type = evt->data.app_data->type;
+
+	static const char *const app_data_event_types[] = {
+		[LWM2M_CARRIER_APP_DATA_EVENT_DATA_WRITE] = "DATA_WRITE",
+		[LWM2M_CARRIER_APP_DATA_EVENT_OBSERVE_START] = "OBSERVE_START",
+		[LWM2M_CARRIER_APP_DATA_EVENT_OBSERVE_STOP] = "OBSERVE_STOP",
+	};
+
+	char path_string[sizeof("/65535/65535/65535/65535")];
+	uint32_t offset = 0;
+
+	for (int i = 0; i < evt->data.app_data->path_len; i++) {
+		offset += snprintf(&path_string[offset], sizeof(path_string) - offset,
+				   "/%hu", path[i]);
+		if (offset >= sizeof(path_string)) {
+			break;
+		}
+	}
+
+	mosh_print("App data event type: %s, path: %s\n",
+		app_data_event_types[event_type], path_string);
+}
+
 int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 {
 	int err = 0;
@@ -149,6 +175,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		break;
 	case LWM2M_CARRIER_EVENT_APP_DATA:
 		mosh_print("LwM2M carrier event: app data");
+		lwm2m_print_app_data(event);
 		break;
 	case LWM2M_CARRIER_EVENT_MODEM_INIT:
 		mosh_print("LwM2M carrier event: modem init");
@@ -157,6 +184,9 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	case LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN:
 		mosh_print("LwM2M carrier event: modem shutdown");
 		err = nrf_modem_lib_shutdown();
+		break;
+	case LWM2M_CARRIER_EVENT_ERROR_CODE_RESET:
+		mosh_print("LWM2M_CARRIER_EVENT_ERROR_CODE_RESET");
 		break;
 	case LWM2M_CARRIER_EVENT_ERROR:
 		mosh_print("LwM2M carrier event: error");

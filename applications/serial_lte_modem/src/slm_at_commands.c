@@ -59,6 +59,9 @@
 #if defined(CONFIG_SLM_CARRIER)
 #include "slm_at_carrier.h"
 #endif
+#if defined(CONFIG_LWM2M_CARRIER_SETTINGS)
+#include "slm_at_carrier_cfg.h"
+#endif
 #if defined(CONFIG_SLM_PPP)
 #include "slm_ppp.h"
 #endif
@@ -454,6 +457,13 @@ int slm_at_init(void)
 #endif
 #if defined(CONFIG_SLM_CARRIER)
 	err = slm_at_carrier_init();
+	if (err) {
+		LOG_ERR("LwM2M carrier could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
+#if defined(CONFIG_LWM2M_CARRIER_SETTINGS)
+	err = slm_at_carrier_cfg_init();
 	if (err) {
 		LOG_ERR("LwM2M carrier could not be initialized: %d", err);
 		return -EFAULT;

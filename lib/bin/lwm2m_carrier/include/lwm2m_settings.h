@@ -83,22 +83,6 @@ bool lwm2m_settings_bootstrap_from_smartcard_get(void);
 int lwm2m_settings_bootstrap_from_smartcard_set(bool new_bootstrap_from_smartcard);
 
 /**
- * @brief Determines whether the LwM2M custom server settings are enabled.
- *
- * @retval  true if LwM2M custom server settings are enabled.
- */
-bool lwm2m_settings_enable_custom_server_config_get(void);
-
-/**
- * @brief Enable or disable the LwM2M Server custom settings.
- *
- * @param new_enable_custom_server_config Whether to enable LwM2M custom server settings or not.
- *
- * @retval 0 on success, non-zero on failure.
- */
-int lwm2m_settings_enable_custom_server_config_set(bool new_enable_custom_server_config);
-
-/**
  * @brief Determines whether @c server_uri is an LwM2M Bootstrap-Server or an LwM2M Server.
  *
  * @retval true if @c server_uri is an LwM2M Bootstrap-Server, false if  @c server_uri is
@@ -403,6 +387,22 @@ bool lwm2m_settings_queue_mode_get(void);
  * @retval 0 on success, non-zero on failure.
  */
 int lwm2m_settings_queue_mode_set(bool new_queue_mode);
+
+/**
+ * @brief Determines whether automatic registration on LTE Attach is disabled.
+ *
+ * @retval true if automatic registration on LTE Attach enabled.
+ */
+bool lwm2m_settings_auto_register_get(void);
+
+/**
+ * @brief Enable or disable automatic registration on LTE Attach.
+ *
+ * @param new_auto_register Whether to enable automatic registration on LTE Attach or not.
+ *
+ * @retval 0 on success, non-zero on failure.
+ */
+int lwm2m_settings_auto_register_set(bool new_auto_register);
 
 /** @} */
 

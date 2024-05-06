@@ -42,6 +42,7 @@ SLM_AT_CMD_CUSTOM(xcarriercfg_auto_startup, "AT#XCARRIERCFG=\"auto_startup\"", d
 static int do_cfg_auto_startup(enum at_cmd_type, const struct at_param_list *param_list,
 			       uint32_t param_count)
 {
+#if !defined(CONFIG_SLM_CARRIER_AUTO_STARTUP)
 	if (param_count == 2) {
 		rsp_send("\r\n#XCARRIERCFG: %u\r\n", lwm2m_settings_auto_startup_get());
 		return 0;
@@ -63,6 +64,41 @@ static int do_cfg_auto_startup(enum at_cmd_type, const struct at_param_list *par
 	}
 
 	return lwm2m_settings_auto_startup_set(auto_startup);
+#else
+	LOG_ERR("AT#XCARRIERCFG=\"auto_startup\" not available when"
+		" CONFIG_SLM_CARRIER_AUTO_STARTUP is enabled");
+
+	return -1;
+#endif
+}
+
+/* AT#XCARRIERCFG="auto_register"[,<0|1>] */
+SLM_AT_CMD_CUSTOM(xcarriercfg_auto_register, "AT#XCARRIERCFG=\"auto_register\"",
+		  do_cfg_auto_register);
+static int do_cfg_auto_register(enum at_cmd_type, const struct at_param_list *param_list,
+				uint32_t param_count)
+{
+	if (param_count == 2) {
+		rsp_send("\r\n#XCARRIERCFG: %u\r\n", lwm2m_settings_auto_register_get());
+		return 0;
+	} else if (param_count != 3) {
+		return -EINVAL;
+	}
+
+	int ret;
+	uint16_t auto_register;
+
+	ret = at_params_unsigned_short_get(param_list, 2, &auto_register);
+	if (ret) {
+		return ret;
+	}
+
+	if (auto_register > 1) {
+		LOG_ERR("AT#XCARRIERCFG=\"auto_register\" failed: must be 0 or 1");
+		return -EINVAL;
+	}
+
+	return lwm2m_settings_auto_register_set(auto_register);
 }
 
 /* AT#XCARRIERCFG="bootstrap_smartcard"[,<0|1>] */
@@ -560,58 +596,46 @@ SLM_AT_CMD_CUSTOM(xcarriercfg_binding, "AT#XCARRIERCFG=\"binding\"", do_cfg_bind
 static int do_cfg_binding(enum at_cmd_type, const struct at_param_list *param_list,
 			  uint32_t param_count)
 {
+	int ret;
+	int size = sizeof("UN");
+	char binding_string[size];
+	uint8_t binding_mask = 0;
+
 	if (param_count == 2) {
-		rsp_send("\r\n#XCARRIERCFG: %c\r\n", lwm2m_settings_server_binding_get());
+		binding_mask = lwm2m_settings_server_binding_get();
+		memset(binding_string, 0, sizeof(binding_string));
+
+		if (binding_mask & LWM2M_CARRIER_SERVER_BINDING_UDP) {
+			strcat(binding_string, "U");
+		}
+
+		if (binding_mask & LWM2M_CARRIER_SERVER_BINDING_NONIP) {
+			strcat(binding_string, "N");
+		}
+
+		rsp_send("\r\n#XCARRIERCFG: %s\r\n", binding_string);
 		return 0;
 	} else if (param_count != 3) {
 		return -EINVAL;
 	}
 
-	int ret;
-	int size = sizeof("U");
-	char binding[size];
-
-	ret = util_string_get(param_list, 2, binding, &size);
+	ret = util_string_get(param_list, 2, binding_string, &size);
 	if (ret) {
 		return ret;
 	}
 
-	if ((binding[0] != 'U') && (binding[0] != 'N')) {
-		LOG_ERR("AT#XCARRIERCFG=\"binding\" failed: binding must be U or N");
-		return -EINVAL;
+	for (int i = 0; i < strlen(binding_string); i++) {
+		if (binding_string[i] == 'U') {
+			binding_mask |= LWM2M_CARRIER_SERVER_BINDING_UDP;
+		} else if (binding_string[i] == 'N') {
+			binding_mask |= LWM2M_CARRIER_SERVER_BINDING_NONIP;
+		} else {
+			LOG_ERR("AT#XCARRIERCFG=\"binding\" failed: binding must be U or N");
+			return -EINVAL;
+		}
 	}
 
-	return lwm2m_settings_server_binding_set(binding[0]);
-}
-
-/* AT#XCARRIERCFG="server_enable"[,<0|1>] */
-SLM_AT_CMD_CUSTOM(xcarriercfg_server_enable, "AT#XCARRIERCFG=\"server_enable\"",
-		  do_cfg_server_enable);
-static int do_cfg_server_enable(enum at_cmd_type, const struct at_param_list *param_list,
-				uint32_t param_count)
-{
-	if (param_count == 2) {
-		rsp_send("\r\n#XCARRIERCFG: %u\r\n",
-			 lwm2m_settings_enable_custom_server_config_get());
-		return 0;
-	} else if (param_count != 3) {
-		return -EINVAL;
-	}
-
-	int ret;
-	uint16_t enabled;
-
-	ret = at_params_unsigned_short_get(param_list, 2, &enabled);
-	if (ret) {
-		return ret;
-	}
-
-	if (enabled > 1) {
-		LOG_ERR("AT#XCARRIERCFG=\"server_enable\" failed: must be 0 or 1");
-		return -EINVAL;
-	}
-
-	return lwm2m_settings_enable_custom_server_config_set(enabled);
+	return lwm2m_settings_server_binding_set(binding_mask);
 }
 
 /* AT#XCARRIERCFG="is_bootstrap"[,<0|1>] */
@@ -715,4 +739,13 @@ static int do_cfg_uri(enum at_cmd_type, const struct at_param_list *param_list,
 	}
 
 	return lwm2m_settings_server_uri_set(server_uri);
+}
+
+int slm_at_carrier_cfg_init(void)
+{
+	if (IS_ENABLED(CONFIG_SLM_CARRIER_AUTO_STARTUP)) {
+		return lwm2m_settings_auto_startup_set(true);
+	}
+
+	return 0;
 }

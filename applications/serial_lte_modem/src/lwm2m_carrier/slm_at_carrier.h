@@ -8,7 +8,6 @@
 #define SLM_AT_CARRIER_
 
 #include <stdint.h>
-#include <modem/at_cmd_parser.h>
 
 /**@file slm_at_carrier.h
  *

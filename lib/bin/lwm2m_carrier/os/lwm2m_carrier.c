@@ -14,6 +14,7 @@
 #define LWM2M_CARRIER_THREAD_PRIORITY K_LOWEST_APPLICATION_THREAD_PRIO
 
 NRF_MODEM_LIB_ON_INIT(lwm2m_carrier_init_hook, on_modem_lib_init, NULL);
+NRF_MODEM_LIB_ON_CFUN(lwm2m_carrier_cfun_hook, on_modem_lib_cfun, NULL);
 NRF_MODEM_LIB_ON_SHUTDOWN(lwm2m_carrier_shutdown_hook, on_modem_lib_shutdown, NULL);
 NRF_MODEM_LIB_ON_DFU_RES(lwm2m_carrier_dfu_hook, on_modem_lib_dfu, NULL);
 
@@ -145,6 +146,13 @@ static void on_modem_lib_init(int ret, void *ctx)
 	lwm2m_carrier_on_modem_init(result);
 }
 
+static void on_modem_lib_cfun(int mode, void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	lwm2m_carrier_on_modem_cfun(mode);
+}
+
 static void on_modem_lib_shutdown(void *ctx)
 {
 	ARG_UNUSED(ctx);
@@ -190,6 +198,10 @@ void lwm2m_carrier_thread_run(void)
 	config.carriers_enabled |= LWM2M_CARRIER_BELL_CA;
 #endif
 
+#ifndef CONFIG_LWM2M_CARRIER_AUTO_REGISTER
+	config.disable_auto_register = true;
+#endif
+
 #ifndef CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD
 	config.disable_bootstrap_from_smartcard = true;
 #endif
@@ -202,15 +214,22 @@ void lwm2m_carrier_thread_run(void)
 
 #ifdef CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER
 	config.is_bootstrap_server = true;
-#else
-	config.server_lifetime = CONFIG_LWM2M_CARRIER_SERVER_LIFETIME;
 #endif
 
+	config.server_lifetime = CONFIG_LWM2M_CARRIER_SERVER_LIFETIME;
 	config.server_sec_tag = CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG;
 	config.apn = CONFIG_LWM2M_CARRIER_CUSTOM_APN;
 	config.pdn_type = CONFIG_LWM2M_CARRIER_PDN_TYPE;
 	config.coap_con_interval = CONFIG_LWM2M_CARRIER_COAP_CON_INTERVAL;
-	config.server_binding = CONFIG_LWM2M_SERVER_BINDING;
+
+#ifdef CONFIG_LWM2M_CARRIER_SERVER_BINDING_UDP
+	config.server_binding |= LWM2M_CARRIER_SERVER_BINDING_UDP;
+#endif
+
+#ifdef CONFIG_LWM2M_CARRIER_SERVER_BINDING_NONIP
+	config.server_binding |= LWM2M_CARRIER_SERVER_BINDING_NONIP;
+#endif
+
 	config.manufacturer = CONFIG_LWM2M_CARRIER_DEVICE_MANUFACTURER;
 	config.model_number = CONFIG_LWM2M_CARRIER_DEVICE_MODEL_NUMBER;
 	config.device_type = CONFIG_LWM2M_CARRIER_DEVICE_TYPE;
@@ -230,19 +249,12 @@ void lwm2m_carrier_thread_run(void)
 	}
 #endif
 
-#ifdef CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT
 	config.session_idle_timeout = CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT;
-#endif
 
 	err = lwm2m_carrier_custom_init(&config);
 	if (err != 0) {
 		printk("Failed to initialize custom config settings. Error %d\n", err);
 		return;
-	}
-
-	/* Prevent an illegal configuration of the LwM2M carrier library. */
-	if (config.server_binding == 'N') {
-		config.server_uri = "";
 	}
 
 	/* Run the LwM2M carrier library.

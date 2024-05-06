@@ -38,7 +38,7 @@ typedef int lwm2m_os_timer_t;
 /**
  * @brief Maximum number of semaphores that the system must support.
  */
-#define LWM2M_OS_MAX_SEM_COUNT (6 + (LWM2M_OS_MAX_WORK_QS * 2))
+#define LWM2M_OS_MAX_SEM_COUNT (6 + (LWM2M_OS_MAX_WORK_QS * 1))
 
 typedef int lwm2m_os_sem_t;
 
@@ -494,27 +494,48 @@ int lwm2m_os_nrf_errno(void);
  * @defgroup lwm2m_os_dfu_img_type LwM2M OS DFU image types.
  * @{
  */
-#define LWM2M_OS_DFU_IMG_TYPE_NONE        0
+#define LWM2M_OS_DFU_IMG_TYPE_NONE             0
 /**
  * MCUboot-style upgrades
  */
-#define LWM2M_OS_DFU_IMG_TYPE_APPLICATION 1
+#define LWM2M_OS_DFU_IMG_TYPE_APPLICATION      1
 /**
  * Modem delta upgrades
  */
-#define LWM2M_OS_DFU_IMG_TYPE_MODEM_DELTA 2
+#define LWM2M_OS_DFU_IMG_TYPE_MODEM_DELTA      2
+/**
+ * MCUboot-style upgrades over multiple files.
+ */
+#define LWM2M_OS_DFU_IMG_TYPE_APPLICATION_FILE 3
 /** @} */
+
+struct __attribute__((__packed__)) lwm2m_os_dfu_header {
+	/* Number of the image file in the sequence. */
+	uint8_t number;
+	/* Flag indicating if the image file is the last in the sequence. */
+	uint8_t is_last;
+	/* Offset within the whole image in bytes. */
+	uint32_t offset;
+	/* Null-terminated image version. */
+	char version[32];
+};
+
+#define LWM2M_OS_DFU_HEADER_MAGIC     0x424ad2dc
+#define LWM2M_OS_DFU_HEADER_MAGIC_LEN sizeof(uint32_t)
+#define LWM2M_OS_DFU_HEADER_LEN (LWM2M_OS_DFU_HEADER_MAGIC_LEN + sizeof(struct lwm2m_os_dfu_header))
 
 /**
  * @brief Find the image type for the buffer of bytes received.
  *
- * @param[in] buf A buffer of bytes which are the start of a binary firmware image.
- * @param[in] len The length of the provided buffer.
+ * @param[in]  buf     A buffer of bytes which are the start of a binary firmware image.
+ * @param[in]  len     The length of the provided buffer.
+ * @param[out] header  DFU image header descriptor. Only applicable to MCUboot-style upgrades over
+ *                     multiple files.
  *
  * @return Identifier for a supported image type or LWM2M_OS_DFU_IMG_TYPE_NONE if
- *         image type is not recognized.
+ *         image type is not recognized or not supported.
  **/
-int lwm2m_os_dfu_img_type(const void *const buf, size_t len);
+int lwm2m_os_dfu_img_type(const void *const buf, size_t len, struct lwm2m_os_dfu_header **header);
 
 /**
  * @brief Start a firmware upgrade.
