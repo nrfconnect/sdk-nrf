@@ -118,7 +118,7 @@ void bis_receiver_start(uint8_t bis_index_to_sync_to)
 
 	uint8_t unused_rtn = 0;
 
-	iso_rx_init(unused_rtn);
+	iso_rx_init(unused_rtn, NULL);
 
 	bt_le_scan_cb_register(&scan_callbacks);
 	bt_le_per_adv_sync_cb_register(&sync_callbacks);

@@ -59,8 +59,10 @@ void iso_tx_init(uint8_t retransmission_number, void (*iso_connected_cb)(void));
 /** Initialize RX path channel.
  *
  * @param retransmission_number Requested retransmission number (if central).
+ * @param Callback that is triggered when an ISO RX channel disconnects.
+ *                 This can be set to NULL.
  */
-void iso_rx_init(uint8_t retransmission_number);
+void iso_rx_init(uint8_t retransmission_number, void (*iso_disconnected_cb)(void));
 
 /** Obtain pointer to TX channels.
  *

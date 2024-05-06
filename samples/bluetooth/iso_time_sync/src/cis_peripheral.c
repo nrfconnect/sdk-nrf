@@ -82,7 +82,7 @@ void cis_peripheral_start(bool do_tx)
 	if (do_tx) {
 		iso_tx_init(unused_rtn, NULL);
 	} else {
-		iso_rx_init(unused_rtn);
+		iso_rx_init(unused_rtn, NULL);
 	}
 
 	bt_conn_cb_register(&conn_callbacks);
