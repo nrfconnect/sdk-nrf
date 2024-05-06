@@ -424,25 +424,6 @@ static void check_app_fota_status(void)
 	slm_fota_stage = FOTA_STAGE_COMPLETE;
 }
 
-#if defined(CONFIG_LWM2M_CARRIER)
-static atomic_t app_fota_status_checked;
-
-bool lwm2m_os_dfu_application_update_validate(void)
-{
-	if (atomic_cas(&app_fota_status_checked, false, true)) {
-		check_app_fota_status();
-	}
-
-	if ((slm_fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) &&
-	    (slm_fota_status == FOTA_STATUS_OK) &&
-	    (slm_fota_stage == FOTA_STAGE_COMPLETE)) {
-		return true;
-	}
-
-	return false;
-}
-#endif /* CONFIG_LWM2M_CARRIER */
-
 int lte_auto_connect(void)
 {
 	int err = 0;
@@ -579,16 +560,7 @@ int main(void)
 		}
 	}
 
-#if defined(CONFIG_LWM2M_CARRIER)
-	/* If LwM2M Carrier library is enabled, the library might have already validated the
-	 * running application image; this should only be performed once.
-	 */
-	if (atomic_cas(&app_fota_status_checked, false, true)) {
-		check_app_fota_status();
-	}
-#else
 	check_app_fota_status();
-#endif /* CONFIG_LWM2M_CARRIER */
 
 #if defined(CONFIG_SLM_START_SLEEP)
 

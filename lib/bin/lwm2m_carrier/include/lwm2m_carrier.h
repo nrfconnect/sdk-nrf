@@ -27,36 +27,40 @@ extern "C" {
  * @{
  */
 /** Request connect to the LTE network. */
-#define LWM2M_CARRIER_EVENT_LTE_LINK_UP	   1
+#define LWM2M_CARRIER_EVENT_LTE_LINK_UP	     1
 /**
  * Request disconnect from the LTE network.
  * The link must be offline until a subsequent LWM2M_CARRIER_EVENT_LTE_LINK_UP event.
  */
-#define LWM2M_CARRIER_EVENT_LTE_LINK_DOWN  2
+#define LWM2M_CARRIER_EVENT_LTE_LINK_DOWN    2
 /** Request power off LTE network. */
-#define LWM2M_CARRIER_EVENT_LTE_POWER_OFF  3
+#define LWM2M_CARRIER_EVENT_LTE_POWER_OFF    3
 /** LwM2M carrier bootstrapped. */
-#define LWM2M_CARRIER_EVENT_BOOTSTRAPPED   4
+#define LWM2M_CARRIER_EVENT_BOOTSTRAPPED     4
 /** LwM2M carrier registered. */
-#define LWM2M_CARRIER_EVENT_REGISTERED	   5
+#define LWM2M_CARRIER_EVENT_REGISTERED	     5
+/** LwM2M carrier deregistered. */
+#define LWM2M_CARRIER_EVENT_DEREGISTERED     6
 /** LwM2M carrier operation is deferred. */
-#define LWM2M_CARRIER_EVENT_DEFERRED	   6
+#define LWM2M_CARRIER_EVENT_DEFERRED	     7
 /** Firmware update started. */
-#define LWM2M_CARRIER_EVENT_FOTA_START	   7
+#define LWM2M_CARRIER_EVENT_FOTA_START	     8
 /** Firmware update succeeded. */
-#define LWM2M_CARRIER_EVENT_FOTA_SUCCESS   8
+#define LWM2M_CARRIER_EVENT_FOTA_SUCCESS     9
 /** Application will reboot. */
-#define LWM2M_CARRIER_EVENT_REBOOT	   9
+#define LWM2M_CARRIER_EVENT_REBOOT	     10
 /** Modem domain event received. */
-#define LWM2M_CARRIER_EVENT_MODEM_DOMAIN   10
+#define LWM2M_CARRIER_EVENT_MODEM_DOMAIN     11
 /** Data received through the App Data Container object or the Binary App Data Container object. */
-#define LWM2M_CARRIER_EVENT_APP_DATA       11
+#define LWM2M_CARRIER_EVENT_APP_DATA	     12
 /** Request to initialize the modem. */
-#define LWM2M_CARRIER_EVENT_MODEM_INIT     12
+#define LWM2M_CARRIER_EVENT_MODEM_INIT	     13
 /** Request to shut down the modem. */
-#define LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN 13
+#define LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN   14
+/** The device error codes have been reset. */
+#define LWM2M_CARRIER_EVENT_ERROR_CODE_RESET 15
 /** An error occurred. */
-#define LWM2M_CARRIER_EVENT_ERROR	   20
+#define LWM2M_CARRIER_EVENT_ERROR	     20
 /** @} */
 
 /**
@@ -107,6 +111,18 @@ typedef uint32_t lwm2m_carrier_event_modem_domain_t;
 /** @} */
 
 /**
+ * @name LwM2M carrier library app data event types.
+ * @{
+ */
+/** Data was written to a resource in an app data container object. */
+#define LWM2M_CARRIER_APP_DATA_EVENT_DATA_WRITE    0
+/** An observation has started on a resource in an app data container object. */
+#define LWM2M_CARRIER_APP_DATA_EVENT_OBSERVE_START 1
+/** An observation has stopped on a resource in an app data container object. */
+#define LWM2M_CARRIER_APP_DATA_EVENT_OBSERVE_STOP  2
+/** @} */
+
+/**
  * @brief LwM2M carrier library app data event structure.
  */
 typedef struct {
@@ -121,6 +137,8 @@ typedef struct {
 	uint16_t path[4];
 	/** Length of the path. */
 	uint8_t path_len;
+	/** Type of app data event. */
+	uint8_t type;
 } lwm2m_carrier_event_app_data_t;
 
 /**
@@ -185,6 +203,9 @@ typedef struct {
 #define LWM2M_CARRIER_ERROR_INIT		6
 /** LwM2M carrier run failed. */
 #define LWM2M_CARRIER_ERROR_RUN			7
+/** LwM2M carrier connect failed. */
+#define LWM2M_CARRIER_ERROR_CONNECT		8
+
 /** @} */
 
 /**
@@ -293,9 +314,11 @@ typedef struct {
  * @name LwM2M carrier requests.
  * @{
  */
-#define LWM2M_CARRIER_REQUEST_REBOOT    0
-#define LWM2M_CARRIER_REQUEST_LINK_UP   1
-#define LWM2M_CARRIER_REQUEST_LINK_DOWN 2
+#define LWM2M_CARRIER_REQUEST_REBOOT     0
+#define LWM2M_CARRIER_REQUEST_LINK_UP    1
+#define LWM2M_CARRIER_REQUEST_LINK_DOWN  2
+#define LWM2M_CARRIER_REQUEST_REGISTER   3
+#define LWM2M_CARRIER_REQUEST_DEREGISTER 4
 /** @} */
 
 /**
@@ -324,6 +347,14 @@ typedef struct {
 /** @} */
 
 /**
+ * @brief LwM2M binding.
+ * @{
+ */
+#define LWM2M_CARRIER_SERVER_BINDING_UDP	0x01
+#define LWM2M_CARRIER_SERVER_BINDING_NONIP	0x02
+/** @} */
+
+/**
  * @brief Structure holding LwM2M carrier library initialization parameters.
  */
 typedef struct {
@@ -331,6 +362,8 @@ typedef struct {
 	 *  or if all bits are set.
 	 */
 	uint32_t carriers_enabled;
+	/** Disable automatic registration upon LTE Attach. */
+	bool disable_auto_register;
 	/** Disable bootstrap from Smartcard mode when this is enabled by the carrier. */
 	bool disable_bootstrap_from_smartcard;
 	/** Disable queue mode. */
@@ -341,7 +374,9 @@ typedef struct {
 	const char *server_uri;
 	/** Optional security tag when using a custom PSK. */
 	uint32_t server_sec_tag;
-	/** Optional server binding. Valid values: 'U' or 'N'. */
+	/** Optional server binding. Valid values: LWM2M_CARRIER_SERVER_BINDING_UDP or
+	 *  LWM2M_CARRIER_SERVER_BINDING_NONIP.
+	 */
 	uint8_t server_binding;
 	/** Default server lifetime (in seconds). Used only for an LwM2M Server. */
 	int32_t server_lifetime;
@@ -398,6 +433,15 @@ int lwm2m_carrier_main(const lwm2m_carrier_config_t *config);
 void lwm2m_carrier_on_modem_init(int result);
 
 /**
+ * @brief LwM2M carrier library modem functional mode handler.
+ *
+ * @param[in] mode Modem functional mode.
+ *
+ * @note This function must be called whenever modem functional mode is changed.
+ */
+void lwm2m_carrier_on_modem_cfun(int mode);
+
+/**
  * @brief LwM2M carrier library modem shutdown handler.
  *
  * @note This function must be called whenever the modem is shut down, as it will shut down the
@@ -408,6 +452,8 @@ void lwm2m_carrier_on_modem_shutdown(void);
 /**
  * @brief Request the LwM2M carrier library to perform an action.
  *
+ * @note Some actions are not supported for all carriers.
+ *
  * @note This function will behave differently depending on the chosen @c request.
  *       @c LWM2M_CARRIER_REQUEST_REBOOT shall request a system reboot.
  *       @c LWM2M_CARRIER_REQUEST_LINK_UP shall indicate to the LwM2M carrier library that the
@@ -416,11 +462,19 @@ void lwm2m_carrier_on_modem_shutdown(void);
  *       @c LWM2M_CARRIER_REQUEST_LINK_DOWN shall indicate to the LwM2M carrier library that the
  *          application is about to go offline, so that a @c LWM2M_CARRIER_EVENT_LTE_LINK_DOWN shall
  *          be generated once the library is ready.
+ *       @c LWM2M_CARRIER_REQUEST_REGISTER shall schedule a register operation to all configured
+ *          LwM2M servers. If the server is already registered, a registration update will be
+ *          scheduled instead.
+ *       @c LWM2M_CARRIER_REQUEST_DEREGISTER shall schedule a deregister operation to all connected
+ *          LwM2M servers.
  *
  * @param[in] request Request to be sent to the LwM2M carrier library.
  *
- * @retval  0      If success.
- * @retval -EINVAL If an invalid @c request was selected.
+ * @retval  0        If all requests were scheduled successfully.
+ * @retval -EINVAL   If an invalid @c request was selected.
+ * @retval -EPERM    If the selected @c request is not supported for the carrier.
+ * @retval -EBADR    If the selected @c request was not scheduled.
+ * @retval -EALREADY If a registration was requested when a registration was already scheduled.
  */
 int lwm2m_carrier_request(int request);
 
@@ -776,9 +830,11 @@ int lwm2m_carrier_app_data_set(const uint16_t *path, uint16_t path_len, const ui
  * @param[in]  path_len The length of the path. Must be 3 or 4.
  *
  * @retval  0           If the data has been sent successfully.
+ * @retval -EPERM       If the operation was attempted on a resource that is not readable.
  * @retval -ENOENT      If the path points to something that is not yet initialized.
  * @retval -EINVAL      If the operation was attempted on an unsupported resource.
  * @retval -EINPROGRESS If the operation was attempted while a send request was already in progress.
+ * @retval -ECANCELED   If the Mute Send resource is enabled for the LwM2M server.
  */
 int lwm2m_carrier_data_send(const uint16_t *path, uint8_t path_len);
 

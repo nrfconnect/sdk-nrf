@@ -45,7 +45,6 @@ menu "Enabled Carriers"
 
 config LWM2M_CARRIER_GENERIC
 	bool "Generic"
-	default y
 	help
 	  Enable Carrier Library to connect using the LWM2M_CARRIER_CUSTOM_URI and
 	  LWM2M_CARRIER_SERVER_SEC_TAG. Generic mode is applied when outside the selected carriers.
@@ -54,7 +53,9 @@ config LWM2M_CARRIER_VERIZON
 	bool "Verizon"
 	default y
 	help
-	  Enable Carrier Library when the SIM Subscriber ID is Verizon.
+	  If the Verizon SIM Subscriber ID is detected (device is in the Verizon network),
+	  the LwM2M Carrier library will connect to a LwM2M Device Management server specified by
+	  Verizon.
 
 config LWM2M_CARRIER_LG_UPLUS
 	bool "LG U+"
@@ -62,7 +63,9 @@ config LWM2M_CARRIER_LG_UPLUS
 	depends on FLASH_MAP
 	default y
 	help
-	  Enable Carrier Library when the SIM Subscriber ID is LG U+.
+	  If the LG U+ SIM Subscriber ID is detected (device is in the LG U+ network),
+	  the LwM2M Carrier library will connect to a LwM2M Device Management server specified by
+	  LG U+.
 if LWM2M_CARRIER_LG_UPLUS
 
 config LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE
@@ -93,27 +96,64 @@ config LWM2M_CARRIER_T_MOBILE
 	bool "T-Mobile"
 	default y
 	help
-	  Enable Carrier Library when the SIM Subscriber ID is T-Mobile.
+	  If the T-Mobile SIM Subscriber ID is detected (device is in the T-Mobile network),
+	  the LwM2M Carrier library will connect to a LwM2M Device Management server specified by
+	  T-Mobile.
 
 config LWM2M_CARRIER_SOFTBANK
 	bool "SoftBank"
 	default y
 	help
-	  Enable Carrier Library when the SIM Subscriber ID is SoftBank.
+	  If the Softbank SIM Subscriber ID is detected (device is in the Softbank network),
+	  the LwM2M Carrier library will connect to a LwM2M Device Management server specified by
+	  Softbank.
+
+if LWM2M_CARRIER_SOFTBANK
+
+config LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA
+	bool "SoftBank divided application FOTA support"
+	depends on DFU_TARGET_MCUBOOT
+	help
+	  Enable support for SoftBank proprietary divided FOTA.
+
+endif
 
 config LWM2M_CARRIER_BELL_CA
 	bool "Bell Canada"
 	default y
 	help
-	  Enable Carrier Library when the SIM Subscriber ID is Bell Canada.
+	  If the Bell Canada SIM Subscriber ID is detected (device is in the Bell Canada network),
+	  the LwM2M Carrier library will connect to a LwM2M Device Management server specified by
+	  Bell Canada.
 
-endmenu
+menu "Server settings"
+
+if LWM2M_CARRIER_GENERIC
+comment "Server settings configure a generic server"
+endif
+if !LWM2M_CARRIER_GENERIC && LWM2M_CARRIER_VERIZON && !LWM2M_CARRIER_LG_UPLUS && !LWM2M_CARRIER_T_MOBILE && !LWM2M_CARRIER_SOFTBANK && !LWM2M_CARRIER_BELL_CA
+comment "Server settings override the Verizon server"
+endif
+if !LWM2M_CARRIER_GENERIC && !LWM2M_CARRIER_VERIZON && LWM2M_CARRIER_LG_UPLUS && !LWM2M_CARRIER_T_MOBILE && !LWM2M_CARRIER_SOFTBANK && !LWM2M_CARRIER_BELL_CA
+comment "Server settings override the LG U+ server"
+endif
+if !LWM2M_CARRIER_GENERIC && !LWM2M_CARRIER_VERIZON && !LWM2M_CARRIER_LG_UPLUS && LWM2M_CARRIER_T_MOBILE && !LWM2M_CARRIER_SOFTBANK && !LWM2M_CARRIER_BELL_CA
+comment "Server settings override the T-Mobile server"
+endif
+if !LWM2M_CARRIER_GENERIC && !LWM2M_CARRIER_VERIZON && !LWM2M_CARRIER_LG_UPLUS && !LWM2M_CARRIER_T_MOBILE && LWM2M_CARRIER_SOFTBANK && !LWM2M_CARRIER_BELL_CA
+comment "Server settings override the Softbank server"
+endif
+if !LWM2M_CARRIER_GENERIC && !LWM2M_CARRIER_VERIZON && !LWM2M_CARRIER_LG_UPLUS && !LWM2M_CARRIER_T_MOBILE && !LWM2M_CARRIER_SOFTBANK && LWM2M_CARRIER_BELL_CA
+comment "Server settings override the Bell Canada server"
+endif
 
 config LWM2M_CARRIER_CUSTOM_URI
 	string "LwM2M carrier custom URI"
 	default ""
 	help
 	  URI of the custom server.
+
+if LWM2M_CARRIER_CUSTOM_URI != ""
 
 config LWM2M_CARRIER_IS_BOOTSTRAP_SERVER
 	bool "Bootstrap-Server"
@@ -122,15 +162,27 @@ config LWM2M_CARRIER_IS_BOOTSTRAP_SERVER
 	  Configure whether the custom server is a LwM2M Bootstrap-Server
 	  or a standard LwM2M Server.
 
-if !LWM2M_CARRIER_IS_BOOTSTRAP_SERVER
+endif # LWM2M_CARRIER_CUSTOM_URI
 
 config LWM2M_CARRIER_SERVER_LIFETIME
 	int "Server lifetime"
-	default 60
+	default 0
 	help
-	  Default server lifetime (seconds).
+	  Default server lifetime in seconds (Not used for bootstrap server).
 
-endif # !LWM2M_CARRIER_IS_BOOTSTRAP_SERVER
+menu "Server Binding"
+
+config LWM2M_CARRIER_SERVER_BINDING_UDP
+	bool "UDP"
+	help
+	  Set server binding to UDP (Not used for bootstrap server).
+
+config LWM2M_CARRIER_SERVER_BINDING_NONIP
+	bool "Non-IP"
+	help
+	  Set server binding to Non-IP (Not used for bootstrap server).
+
+endmenu
 
 config LWM2M_CARRIER_SERVER_SEC_TAG
 	int "LwM2M carrier custom server security tag"
@@ -138,6 +190,11 @@ config LWM2M_CARRIER_SERVER_SEC_TAG
 	help
 	  Custom server security tag. Stores the PSK of the LwM2M
 	  Bootstrap-Server.
+
+endmenu # Server settings
+endmenu # Enabled servers
+
+menu "Custom APN"
 
 config LWM2M_CARRIER_CUSTOM_APN
 	string "LwM2M carrier custom APN"
@@ -163,6 +220,8 @@ config LWM2M_CARRIER_PDN_NONIP
 
 endchoice
 
+endmenu # Custom APN
+
 config LWM2M_CARRIER_PDN_TYPE
 	int
 	default 0 if LWM2M_CARRIER_PDN_IPV4V6
@@ -171,25 +230,6 @@ config LWM2M_CARRIER_PDN_TYPE
 	default 3 if LWM2M_CARRIER_PDN_NONIP
 	help
 	  PDN type for custom APN.
-
-choice LWM2M_SERVER_BINDING_CHOICE
-	prompt "Server Binding"
-
-config LWM2M_CARRIER_SERVER_BINDING_U
-	bool "UDP"
-
-config LWM2M_CARRIER_SERVER_BINDING_N
-	bool "Non-IP"
-
-endchoice
-
-config LWM2M_SERVER_BINDING
-	int
-	default 85 if LWM2M_CARRIER_SERVER_BINDING_U
-	default 78 if LWM2M_CARRIER_SERVER_BINDING_N
-	help
-	  Server binding. Valid values: 'U' (UDP) or 'N' (Non-IP).
-	  Leaving this value empty will default to 'U'.
 
 config LWM2M_CARRIER_BOOTSTRAP_SMARTCARD
 	bool "Allow bootstrap from Smartcard"
@@ -203,6 +243,8 @@ config LWM2M_CARRIER_QUEUE_MODE
 	help
 	  Configure whether the LwM2M device is to inform the LwM2M server that
 	  it may be disconnected for an extended period of time.
+
+menu "Device info"
 
 config LWM2M_CARRIER_DEVICE_MANUFACTURER
 	string "Device manufacturer"
@@ -241,11 +283,13 @@ config LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION
 	  Set the LwM2M device software version.
 	  Some carriers may override this value.
 
+endmenu # Device info
+
 config LWM2M_CARRIER_SESSION_IDLE_TIMEOUT
-	int "DTLS session idle timeout"
+	int "UDP session idle timeout"
 	default 60
 	help
-	  Number of seconds, for which a DTLS session used by this library can be idle
+	  Number of seconds, for which a UDP session used by this library can be idle
 	  before it is closed. Setting this to 0 will use the default value (60 seconds).
 	  Setting this to -1 disables the session idle timeout.
 
@@ -269,6 +313,17 @@ config LWM2M_CARRIER_FIRMWARE_DOWNLOAD_TIMEOUT
 	  the download shall be aborted. This configuration is currently only supported for
 	  PUSH delivery method of firmware images.
 	  Setting this to 0 will disable the use of this timer.
+
+config LWM2M_CARRIER_AUTO_REGISTER
+	bool "Auto registration on LTE Attach"
+	default y
+	help
+	  Configure whether the LwM2M device is to automatically register to the LwM2M Server
+	  upon connecting to the cellular network or after finalizing a bootstrap. Setting this
+	  to false will require the operations in the registration interface to be triggered
+	  manually. Consequently, registrations must be triggered manually after network
+	  coverage is lost.
+
 
 config LWM2M_CARRIER_WORKQ_STACK_SIZE
 	int "LwM2M carrier work queue stack size"
@@ -306,6 +361,7 @@ config LWM2M_CARRIER_SHELL
 	bool "LwM2M carrier shell"
 	depends on SHELL
 	depends on LWM2M_CARRIER_SETTINGS
+	depends on MODEM_KEY_MGMT
 	help
 	  Include LwM2M carrier shell
 

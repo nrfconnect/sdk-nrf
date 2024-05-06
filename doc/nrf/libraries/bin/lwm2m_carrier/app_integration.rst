@@ -134,6 +134,11 @@ Following are some of the general Kconfig options that you can configure:
 
   * This configuration specifies whether the LwM2M device is to inform the LwM2M Server that it may be disconnected for an extended period of time.
 
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_AUTO_REGISTER`:
+
+  * This configuration specifies if the LwM2M carrier library will register with the LwM2M server automatically once connected.
+  * Auto register is disabled for the SoftBank Subscriber ID, and enabled for other Subscriber IDs.
+  * Auto register can be disabled if the library is operating in Generic mode (connecting to a custom URI instead of the predetermined carrier servers).
 
 .. _server_options_lwm2m:
 
@@ -170,7 +175,7 @@ The server settings can put the LwM2M carrier library either in the normal mode 
 
 * :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE`:
 
-  * The binding can be either ``U`` (UDP) or ``N`` (non-IP).
+  * The binding can be either :c:macro:`LWM2M_CARRIER_SERVER_BINDING_UDP` or :c:macro:`LWM2M_CARRIER_SERVER_BINDING_NONIP`.
   * Leaving this configuration empty selects the default binding (UDP).
   * If non-IP binding is configured, :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` is not used and must be left empty.
 
@@ -223,6 +228,10 @@ Following are the various LwM2M carrier library events that are also listed in :
 
   * This event indicates that the device has registered successfully to the carrier's device management servers.
 
+* :c:macro:`LWM2M_CARRIER_EVENT_REGISTERED`:
+
+  * This event indicates that the device has deregistered successfully from the carrier's device management servers.
+
 * :c:macro:`LWM2M_CARRIER_EVENT_DEFERRED`:
 
   * This event indicates that the connection to the device management server has failed.
@@ -244,14 +253,15 @@ Following are the various LwM2M carrier library events that are also listed in :
       This typically happens if the bootstrap sequence has failed on the carrier side.
     * :c:macro:`LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION` - The server registration has not completed, and the server does not recognize the connecting device.
       If this event persists, contact the carrier.
-    * :c:macro:`LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE` - The server is unavailable due to maintenance.
+    * :c:macro:`LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE` - The server is unavailable, for example due to maintenance.
+      In the Verizon network, this event can be triggered by the server to block excessive numbers of bootstrap and connections.
     * :c:macro:`LWM2M_CARRIER_DEFERRED_SIM_MSISDN` - The device is waiting for the SIM MSISDN to be available to read.
 * :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START`:
 
   * This event indicates that the modem update has started.
   * The application must immediately terminate any open TLS and DTLS sessions.
   * See :ref:`req_appln_limitations`.
-* :c:macro:`LWM2M_CARRIER_EVENT_FOTA_SUCCESS`
+* :c:macro:`LWM2M_CARRIER_EVENT_FOTA_SUCCESS`:
 
   * This event indicates that the FOTA procedure is successful.
 * :c:macro:`LWM2M_CARRIER_EVENT_REBOOT`:
@@ -266,6 +276,11 @@ Following are the various LwM2M carrier library events that are also listed in :
 
   * This event indicates that the application must shut down the modem for the LwM2M carrier library to proceed.
   * This event is indicated during FOTA procedures to reinitialize the :ref:`nrf_modem_lib_readme`.
+* :c:macro:`LWM2M_CARRIER_EVENT_ERROR_CODE_RESET`
+
+  * This event indicates that the server has reset the error codes resource of the LwM2M carrier library.
+  * The errors should be re-evaluated and set again if they still apply.
+  * The relevant APIs for setting the error codes are :c:func:`lwm2m_carrier_error_code_add` and :c:func:`lwm2m_carrier_error_code_remove`.
 * :c:macro:`LWM2M_CARRIER_EVENT_ERROR`:
 
   * This event indicates an error.
@@ -310,6 +325,9 @@ Following are the various LwM2M carrier library events that are also listed in :
     * :c:macro:`LWM2M_CARRIER_ERROR_INIT` - This error indicates that the LwM2M carrier library has failed to initialize.
     * :c:macro:`LWM2M_CARRIER_ERROR_RUN` - This error indicates that the library configuration is invalid.
       Ensure that the :c:struct:`lwm2m_carrier_config_t` structure is configured correctly.
+    * :c:macro:`LWM2M_CARRIER_ERROR_CONNECT` - This error indicates that LwM2M carrier connect failed.
+      The LwM2M carrier library has exhausted its attempts to connect to the device management server.
+      New attempts at connecting will only be made after restarting the application (for example by rebooting the device).
 
 .. _lwm2m_carrier_shell:
 
@@ -343,30 +361,32 @@ Use the ``print`` command to display the configurations that are written with ``
 
 .. code-block:: console
 
-    > carrier_config print
+    uart:~$ carrier_config print
     Automatic startup                No
 
     Custom carrier settings          Yes
-      Carriers enabled               All
+      Carriers enabled               Verizon (1), T-Mobile (3), SoftBank (4), Bell Canada (5)
+      Server settings
+        Server URI
+          Is bootstrap server        No  (Not used without server URI)
+        PSK security tag             0
+        Server lifetime              0
+        Server binding               not set
+      Auto register                  Yes
       Bootstrap from smartcard       Yes
-      Session idle timeout           0
-      CoAP confirmable interval      0
+      Queue mode                     Yes
+      Session idle timeout           60
+      CoAP confirmable interval      86400
       APN
-      PDN type                       IPv4v6
+        PDN type                     IPv4v6
       Service code
-      Device Serial Number type      0
-
-    Custom carrier server settings   No
-      Is bootstrap server            No  (Not used without server URI)
-      Server URI
-      PSK security tag               0
-      Server lifetime                0
-      Server binding                 U
+      Device Serial Number type      1
+      Firmware download timeout      0 (disabled)
 
     Custom carrier device settings   No
       Manufacturer
       Model number
-      Device type
+      Device type                    Module
       Hardware version
       Software version
 

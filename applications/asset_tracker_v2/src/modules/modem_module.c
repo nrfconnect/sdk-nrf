@@ -377,6 +377,37 @@ static void print_carrier_deferred_reason(const lwm2m_carrier_event_t *evt)
 	LOG_ERR("Reason: %s, timeout: %d seconds\n", strdef[def->reason], def->timeout);
 }
 
+static void print_carrier_app_data(const lwm2m_carrier_event_t *evt)
+{
+		uint16_t *path = evt->data.app_data->path;
+		uint8_t event_type = evt->data.app_data->type;
+
+		static const char *const app_data_event_types[] = {
+		[LWM2M_CARRIER_APP_DATA_EVENT_DATA_WRITE] = "DATA_WRITE",
+		[LWM2M_CARRIER_APP_DATA_EVENT_OBSERVE_START] = "OBSERVE_START",
+		[LWM2M_CARRIER_APP_DATA_EVENT_OBSERVE_STOP] = "OBSERVE_STOP",
+		};
+
+		char path_string[sizeof("/65535/65535/65535/65535")];
+		uint32_t offset = 0;
+
+		for (int i = 0; i < evt->data.app_data->path_len; i++) {
+			offset += snprintf(&path_string[offset], sizeof(path_string) - offset,
+					   "/%hu", path[i]);
+			if (offset >= sizeof(path_string)) {
+				break;
+			}
+		}
+
+		LOG_INF("App data event type: %s, path: %s",
+			app_data_event_types[event_type], path_string);
+
+		if (event_type == LWM2M_CARRIER_APP_DATA_EVENT_DATA_WRITE) {
+			LOG_HEXDUMP_INF(evt->data.app_data->buffer,
+					evt->data.app_data->buffer_len, "Received data:");
+		}
+}
+
 int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 {
 	int err = 0;
@@ -402,6 +433,9 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 		break;
 	case LWM2M_CARRIER_EVENT_REGISTERED:
 		LOG_INF("LWM2M_CARRIER_EVENT_REGISTERED");
+		break;
+	case LWM2M_CARRIER_EVENT_DEREGISTERED:
+		LOG_INF("LWM2M_CARRIER_EVENT_DEREGISTERED");
 		break;
 	case LWM2M_CARRIER_EVENT_DEFERRED:
 		LOG_INF("LWM2M_CARRIER_EVENT_DEFERRED");
@@ -431,6 +465,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 		break;
 	case LWM2M_CARRIER_EVENT_APP_DATA:
 		LOG_INF("LWM2M_CARRIER_EVENT_APP_DATA");
+		print_carrier_app_data(evt);
 		break;
 	case LWM2M_CARRIER_EVENT_MODEM_INIT:
 		LOG_INF("LWM2M_CARRIER_EVENT_MODEM_INIT");
@@ -439,6 +474,9 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 	case LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN:
 		LOG_INF("LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN");
 		err = nrf_modem_lib_shutdown();
+		break;
+	case LWM2M_CARRIER_EVENT_ERROR_CODE_RESET:
+		LOG_INF("LWM2M_CARRIER_EVENT_ERROR_CODE_RESET");
 		break;
 	case LWM2M_CARRIER_EVENT_ERROR: {
 		LOG_ERR("LWM2M_CARRIER_EVENT_ERROR");

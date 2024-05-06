@@ -11,11 +11,18 @@ config SLM_CARRIER
 if SLM_CARRIER
 
 config SLM_CARRIER_APP_DATA_BUFFER_LEN
-	int "Size of the buffer for setting application data"
-	default 768
-	range 128 768
+	int "Size of the buffer for setting application data in hexadecimal string format"
+	default 1536
+	range 128 1536
 	help
-	  Specifies maximum application data size to be set in the App Data Container,
-	  the Binary App Data Container or the Event Log objects.
+	  Specifies maximum application data size (in hexadecimal string format) to be set in the
+	  App Data Container, the Binary App Data Container or the Event Log objects.
+
+config SLM_CARRIER_AUTO_STARTUP
+	bool "Enable automatic startup on boot"
+	depends on LWM2M_CARRIER_SETTINGS
+	help
+	  Enable automatic startup of the library on device boot. If this configuration is
+	  disabled, automatic startup is controlled through a dedicated AT command.
 
 endif # SLM_CARRIER

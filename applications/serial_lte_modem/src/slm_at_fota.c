@@ -425,8 +425,34 @@ void slm_fota_init_state(void)
 	slm_fota_info = 0;
 }
 
+#if defined(CONFIG_LWM2M_CARRIER)
+static K_SEM_DEFINE(carrier_app_fota_status, 0, 1);
+static bool carrier_app_fota_success;
+
+bool lwm2m_os_dfu_application_update_validate(void)
+{
+	/* Wait for the application FOTA status to be checked by the main thread. This can
+	 * trigger an AT notification, so the UART backend must also be initialized.
+	 */
+	if (k_sem_take(&carrier_app_fota_status, K_SECONDS(10)) != 0) {
+		return false;
+	}
+
+	return carrier_app_fota_success;
+}
+#endif /* CONFIG_LWM2M_CARRIER */
+
 void slm_fota_post_process(void)
 {
+#if defined(CONFIG_LWM2M_CARRIER)
+	if ((slm_fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) &&
+	    (slm_fota_status == FOTA_STATUS_OK) &&
+	    (slm_fota_stage == FOTA_STAGE_COMPLETE)) {
+		carrier_app_fota_success = true;
+	}
+
+	k_sem_give(&carrier_app_fota_status);
+#endif /* CONFIG_LWM2M_CARRIER */
 	if (slm_fota_stage != FOTA_STAGE_COMPLETE && slm_fota_stage != FOTA_STAGE_ACTIVATE) {
 		return;
 	}
