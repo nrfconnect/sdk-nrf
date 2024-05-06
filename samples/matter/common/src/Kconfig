@@ -89,3 +89,4 @@ config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
 	  Matter persistent storage support with the configurable backend.
 
 rsource "persistent_storage/Kconfig"
+rsource "watchdog/Kconfig"

@@ -16,15 +16,29 @@ namespace Nrf::Matter::DefaultTestEventTriggers
 {
 enum Ids : TestEventTrigger::EventTriggerId {
 
+	/* Values of EventTrigger in the range 0xFFFF_FFFF_0000_0000 through 0xFFFF_FFFF_FFFF_FFFF are reserved for
+	   testing use by manufactures */
+
 	/* System */
-	FactoryReset = 0xF000'0000'0000'0000,
-	Reboot = 0xF000'0001'0000'0000,
+	FactoryReset = 0xFFFF'FFFF'0000'0000,
+	Reboot = 0xFFFF'FFFF'1000'0000,
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_EVENT_TRIGGERS
+	/* Watchdog */
+	BlockMatterThread = 0xFFFF'FFFF'2000'0000,
+	BlockMainThread = 0xFFFF'FFFF'3000'0000,
+#endif
 };
 
 enum ValueMasks : TestEventTrigger::TriggerValueMask {
 	/* System */
 	FactoryResetDelayMs = 0xFFFF,
 	RebootDelayMs = 0xFFFF,
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_EVENT_TRIGGERS
+	/* Watchdog */
+	BlockingTimeMs = 0xFFFF,
+#endif
 };
 
 /**

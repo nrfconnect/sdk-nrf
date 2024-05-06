@@ -55,6 +55,12 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
+    - applications.matter_bridge.smp_dfu.br_ble
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "Configuration excluded due to a lack of free flash memory"
+
+- scenarios:
     - sample.matter.light_bulb.persistent_subscriptions
     - sample.matter.light_switch.persistent_subscriptions
     - sample.matter.light_bulb.release

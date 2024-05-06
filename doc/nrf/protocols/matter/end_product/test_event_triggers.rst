@@ -53,27 +53,43 @@ The following table lists the available triggers and their activation codes:
   * - Factory reset
     - None
     - Perform a factory reset of the device with a delay.
-    - `0xF000000000000000` - `0xF00000000000FFFF`
-    - The range of `0x0000` - `0xFFFF` represents the delay in ms to wait until the factory reset occurs.
-      The maximum time delay is UINT32_MAX ms.
+    - ``0xFFFFFFFF00000000`` - ``0xFFFFFFFFF0000FFFF``
+    - The range of ``0x0000`` - ``0xFFFF`` represents the delay in ms to wait until the factory reset occurs.
+      The maximum time delay is UINT16_MAX ms.
       The value is provided in HEX format.
   * - Reboot
     - None
     - Reboot the device.
-    - `0xF000000000000000` - `0xF00000000000FFFF`
-    - The range of `0x0000` - `0xFFFF` represents the delay in ms to wait until the reboot occurs.
-      The maximum time delay is UINT32_MAX ms.
+    - ``0xFFFFFFFF10000000`` - ``0xFFFFFFFF1000FFFF``
+    - The range of ``0x0000`` - ``0xFFFF`` represents the delay in ms to wait until the reboot occurs.
+      The maximum time delay is UINT16_MAX ms.
+      The value is provided in HEX format.
+  * - Block the Matter thread
+    - :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` = ``y``, and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT` = ``y``
+    - Block the Matter thread for specific amount of time.
+      You can use this event trigger to check the :ref:`Matter Watchdog <ug_matter_device_watchdog>` functionality.
+    - ``0xFFFFFFFF20000000`` - ``0xFFFFFFFF2000FFFF``
+    - The range of ``0x0000`` - ``0xFFFF`` represents the time in ms to block the Matter thread.
+      The maximum time is UINT16_MAX ms.
+      The value is provided in HEX format.
+  * - Block the Main thread
+    - :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` = ``y``, and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT` = ``y``
+    - Block the Main thread for specific amount of time.
+      You can use this event trigger to check the :ref:`Matter Watchdog <ug_matter_device_watchdog>` functionality.
+    - ``0xFFFFFFFF30000000`` - ``0xFFFFFFFF3000FFFF``
+    - The range of ``0x0000`` - ``0xFFFF`` represents the time in ms to block the Main thread.
+      The maximum time is UINT16_MAX ms.
       The value is provided in HEX format.
   * - OTA query
     - :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` = ``y``
     - Trigger an OTA firmware update.
-    - `0x002a000000000100` - `0x01000000000001FF`
-    - The range of `0x00` - `0xFF` is the fabric index value.
+    - ``0x002a000000000100`` - ``0x01000000000001FF``
+    - The range of ``0x00`` - ``0xFF`` is the fabric index value.
       The maximum fabric index value depends on the current device's settings.
   * - Door lock jammed
     - :kconfig:option:`CONFIG_CHIP_DEVICE_PRODUCT_ID` = ``32774``
     - Simulate the jammed lock state.
-    - `0x3277400000000000`
+    - ``0xFFFFFFFF32774000``
     - This activation code does not contain any value.
 
 .. _matter_test_event_triggers_setting_enable_key:

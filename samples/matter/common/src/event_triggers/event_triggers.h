@@ -36,7 +36,7 @@ public:
 	constexpr static uint8_t kDisableEventTriggersKey[chip::TestEventTriggerDelegate::kEnableKeyLength] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
-	constexpr static EventTriggerId kEventTriggerMask = 0xFFFFFFFF00000000;
+	constexpr static EventTriggerId kEventTriggerMask = 0xFFFFFFFFFFFF0000;
 
 	/**
 	 * @brief Struct of event trigger

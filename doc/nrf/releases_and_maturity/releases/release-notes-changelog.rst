@@ -110,6 +110,7 @@ Matter
 
   * Support for merging the generated factory data HEX file with the firmware HEX file by using the devicetree configuration, when Partition Manager is not enabled in the project.
   * Support for the unified Persistent Storage API, including the implementation of the PSA Persistent Storage.
+  * Watchdog timer implementation for creating multiple :ref:`ug_matter_device_watchdog` sources and monitoring the time of executing specific parts of the code.
 
 * Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
 * Increased the number of available packet buffers in the Matter stack to avoid packet allocation issues.

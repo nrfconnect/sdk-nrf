@@ -37,3 +37,4 @@ Finally, we discuss topics related to Matter certification (:ref:`ug_matter_devi
    versioning
    last_fabric_removal_delegate
    test_event_triggers
+   watchdog
