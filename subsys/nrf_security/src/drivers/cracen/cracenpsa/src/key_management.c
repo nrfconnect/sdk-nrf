@@ -7,6 +7,7 @@
 #include "common.h"
 #include <cracen/mem_helpers.h>
 #include "cracen_psa.h"
+#include "platform_keys/platform_keys.h"
 
 #include <sicrypto/drbghash.h>
 #include <sicrypto/ecc.h>
@@ -1168,6 +1169,11 @@ size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes)
 			if (psa_get_key_type(attributes) == PSA_KEY_TYPE_AES) {
 				return 2;
 			}
+			break;
+#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+		default:
+			return cracen_platform_keys_get_size(attributes);
+#endif
 		}
 	}
 
@@ -1238,6 +1244,9 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 #if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 		return cracen_kmu_get_builtin_key(slot_number, attributes, key_buffer,
 						  key_buffer_size, key_buffer_length);
+#elif CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+		return cracen_platform_get_builtin_key(slot_number, attributes, key_buffer,
+						       key_buffer_size, key_buffer_length);
 #else
 		return PSA_ERROR_DOES_NOT_EXIST;
 #endif
@@ -1261,6 +1270,8 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 	default:
 #if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 		return cracen_kmu_get_key_slot(key_id, lifetime, slot_number);
+#elif CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+		return cracen_platform_get_key_slot(key_id, lifetime, slot_number);
 #else
 		return PSA_ERROR_DOES_NOT_EXIST;
 #endif

@@ -268,6 +268,7 @@ psa_status_t psa_driver_wrapper_verify_message(const psa_key_attributes_t *attri
 		 * cycle through all known transparent accelerators
 		 */
 #if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN:
 		status = cracen_verify_message(attributes, key_buffer, key_buffer_size, alg, input,
 					       input_length, signature, signature_length);
 		/* Declared with fallback == true */
@@ -384,6 +385,7 @@ psa_status_t psa_driver_wrapper_verify_hash(const psa_key_attributes_t *attribut
 		 * cycle through all known transparent accelerators
 		 */
 #if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
+		case PSA_KEY_LOCATION_CRACEN:
 		status = cracen_verify_hash(attributes, key_buffer, key_buffer_size, alg, hash,
 					    hash_length, signature, signature_length);
 
@@ -451,6 +453,12 @@ psa_driver_wrapper_get_key_buffer_size_from_key_data(const psa_key_attributes_t 
 
 	*key_buffer_size = 0;
 	switch (location) {
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN:
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+		*key_buffer_size = cracen_get_opaque_size(attributes);
+		return *key_buffer_size != 0 ? PSA_SUCCESS : PSA_ERROR_INVALID_ARGUMENT;
+#endif
 	default:
 		(void)key_type;
 		(void)data;
