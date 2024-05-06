@@ -8,15 +8,14 @@
 #include <mocks.h>
 #include <suit_platform.h>
 
-uint8_t valid_mem_component_id_value[] = {0x84, 0x44, 0x63, 'M', 'E', 'M', 0x41, 0x02, 0x45, 0x1A,
-					  0x00, 0x00, 0x00, 0x00, 0x45, 0x1A, 0x00, 0x00, 0x00,
-					  0x00};
+uint8_t valid_mem_component_id_value[] = {0x84, 0x44, 0x63, 'M',  'E',	'M',
+					  0x41, 0x02, 0x41, 0x00, 0x41, 0x00};
 
 uint8_t valid_cand_img_id_value[] = {0x82, 0x49, 0x68, 'C', 'A',  'N', 'D',
-				     '_',  'I',	'M', 'G', 0x41, 0x02};
+				     '_',  'I',	 'M',  'G', 0x41, 0x02};
 
-uint8_t valid_cand_mfst_id_value[] = {0x82, 0x49, 0x68, 'C', 'A',  'N', 'D',
-				      '_', 'M', 'F', 'S', 'T', 0x41, 0x02};
+uint8_t valid_cand_mfst_id_value[] = {0x82, 0x49, 0x68, 'C', 'A', 'N',	'D',
+				      '_',  'M',  'F',	'S', 'T', 0x41, 0x02};
 
 struct zcbor_string valid_mem_component_id = {
 	.value = valid_mem_component_id_value,

@@ -11,8 +11,8 @@
 #define TEST_FAKE_ADDRESS ((intptr_t)0xDEADBEEF)
 #define TEST_FAKE_SIZE	  ((size_t)42)
 
-static uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',  'E',  'M',  0x41, 0x02, 0x45, 0x1A,
-				       0xC0, 0xFE, 0x00, 0x00, 0x45, 0x1A, 0x00, 0x00, 0x00, 0x04};
+static uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',  'E',  'M',  0x41, 0x02,
+				       0x45, 0x1A, 0xC0, 0xFE, 0x00, 0x00, 0x41, 0x04};
 
 static struct zcbor_string component_id = {
 	.value = component_id_value,
@@ -52,14 +52,14 @@ static suit_plat_err_t suit_plat_decode_address_size_fake_ok(struct zcbor_string
 }
 
 static int suit_memptr_storage_ptr_get_fake_invalid_record(memptr_storage_handle_t handle,
-							   uint8_t **payload_ptr,
+							   const uint8_t **payload_ptr,
 							   size_t *payload_size)
 {
 	return SUIT_MEMPTR_STORAGE_ERR_UNALLOCATED_RECORD;
 }
 
 static int suit_memptr_storage_ptr_store_fake_unallocated_record(memptr_storage_handle_t handle,
-								 uint8_t *payload_ptr,
+								 const uint8_t *payload_ptr,
 								 size_t payload_size)
 {
 	return SUIT_MEMPTR_STORAGE_ERR_UNALLOCATED_RECORD;

@@ -9,6 +9,7 @@ menuconfig SSF_SUIT_SERVICE_ENABLED
 	depends on SDFW_SERVICES_ENABLED
 	depends on SUIT_UTILS
 	depends on SUIT_METADATA
+	depends on ZCBOR_CANONICAL
 
 if SSF_SUIT_SERVICE_ENABLED
 
