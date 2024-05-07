@@ -1,0 +1,72 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "SUIT"
+
+# 'default y if SOC_SERIES_NRF54HX' to be added when SUIT is to be enabled globally.
+menuconfig SUIT_ENVELOPE
+	bool "Create SUIT envelope"
+	help
+	  Enable DFU SUIT envelope creation
+
+if SUIT_ENVELOPE
+
+config SUIT_ENVELOPE_SIGN
+	bool "Sign created SUIT envelope"
+	help
+	  Sign created SUIT envelope by external script
+
+config SUIT_ENVELOPE_SEQUENCE_NUM
+	int "Sequence number of the generated SUIT manifest"
+	range 0 2147483647
+	default 1
+
+config SUIT_ENVELOPE_ROOT_TEMPLATE
+	string "Path to the default root envelope template"
+	default "${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}/ncs/root_with_binary_nordic_top.yaml.jinja2"
+	help
+	  Path to the default root envelope template, that is used if the application directory does not
+	  contain an input envelope template file.
+	  You can use either absolute or relative path.
+	  In case relative path is used, the build system uses CMAKE_SOURCE_DIR directory.
+
+config SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION
+	string "Path to the folder with envelope templates"
+	default "../"
+	help
+	  Path to the folder containing editable templates used to create binary envelopes.
+	  Input templates are created by the build system during first build from the SUIT_ENVELOPE_DEFAULT_TEMPLATE.
+	  You can use either absolute or relative path.
+	  In case relative path is used, the build system uses CMAKE_SOURCE_DIR directory.
+
+config SUIT_ENVELOPE_SIGN_SCRIPT
+	string "Location of SUIT sign script"
+	depends on SUIT_ENVELOPE_SIGN
+	help
+	  Python script called to sign SUIT envelope.
+	  You can use either absolute or relative path.
+	  In case relative path is used, the build system uses NRF parent directory.
+	  Script need to accept two arguments:
+	  - --input-file <STRING> - location of unsigned envelope in the build system
+	  - --output-file <STRING> - location of signed envelope to create by script
+	default "modules/lib/suit-generator/ncs/sign_script.py"
+
+config SUIT_ENVELOPE_ROOT_ARTIFACT_NAME
+	string "Name of the root SUIT artifact."
+	default "root"
+	help
+	  Name of the root SUIT artifact.
+
+config SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY
+	string "Path to the folder with nordic top artifacts"
+	default ""
+	help
+	  Path to the folder containing nordic-top.suit envelope.
+	  nordic_top.suit won't be included in the root manifest if value is empty.
+
+endif # SUIT_ENVELOPE
+
+endmenu

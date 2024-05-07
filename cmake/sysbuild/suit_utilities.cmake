@@ -75,7 +75,7 @@ function(suit_create_envelope input_file output_file create_signature)
     --input-file ${input_file}
     --output-file ${output_file}
   )
-  if (create_signature)
+  if (create_signature AND SB_CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT)
     suit_sign_envelope(${output_file} ${output_file})
   endif()
 endfunction()
