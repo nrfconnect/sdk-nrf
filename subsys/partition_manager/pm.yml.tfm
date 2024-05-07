@@ -26,21 +26,21 @@ tfm_storage:
 tfm_ps:
   placement:
     before: end
-    align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
+    align: {start: CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE}
   inside: tfm_storage
   size: CONFIG_PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE
 
 tfm_its:
   placement:
     before: end
-    align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
+    align: {start: CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE}
   inside: tfm_storage
   size: CONFIG_PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE
 
 tfm_otp_nv_counters:
   placement:
     before: end
-    align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
+    align: {start: CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE}
   inside: tfm_storage
   size: CONFIG_PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS
 #endif
