@@ -29,4 +29,27 @@ config DFU_MULTI_IMAGE_PACKAGE_MCUBOOT
 
 endif # SECURE_BOOT
 
+config DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH
+	bool "nRF70 firmware patch"
+	depends on PARTITION_MANAGER
+	depends on BOOTLOADER_MCUBOOT
+	depends on WIFI_NRF700X
+	depends on (WIFI_PATCHES_EXT_FLASH_XIP || WIFI_PATCHES_EXT_FLASH_STORE)
+	help
+	  Enabling this option adds support for Device Firmware Update (DFU) for the nRF70 Series
+	  Firmware Patch.
+
+	  This feature requires the addition of an MCUBoot partition pair: a primary and a
+	  secondary partition. These partitions are used to store the new firmware patch. The
+	  specific partition numbers to be used depend on the number of partitions already in use.
+
+	  The "nrf70_wifi_fw" partition must be added to the newly created MCUBoot primary
+	  partition. Once this Kconfig option is enabled, the nRF70.hex file will be signed by
+	  MCUBoot. The signed image will then be merged with the application image and flashed onto
+	  the target board.
+
+	  Ensure that the required MCUBoot partitions are properly configured before enabling this
+	  option. Refer to the documentation for detailed instructions on partition configuration
+	  and the DFU process.
+
 endif # DFU_MULTI_IMAGE_PACKAGE_BUILD

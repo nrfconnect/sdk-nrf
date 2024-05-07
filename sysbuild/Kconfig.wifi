@@ -1,0 +1,65 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "Wi-Fi"
+
+menuconfig WIFI_NRF700X
+	bool "nRF700x"
+
+if WIFI_NRF700X
+
+choice WIFI_NRF700X_OPER_MODES
+	bool "nRF700x operating mode"
+	default WIFI_NRF700X_SYSTEM_MODE
+	help
+	  Select the operating mode of the nRF700x driver
+
+config WIFI_NRF700X_SYSTEM_MODE
+	bool "Enable nRF700X system mode"
+	help
+	  Select this option to enable system mode of the nRF700x driver
+
+config WIFI_NRF700X_SCAN_ONLY
+	bool "Enable nRF700X scan only mode"
+	help
+	  Select this option to enable scan only mode of the nRF700x driver
+
+config WIFI_NRF700X_RADIO_TEST
+	bool "Radio test mode of the nRF700x driver"
+
+config WIFI_NRF700X_SYSTEM_WITH_RAW_MODES
+	bool "Enable nRF700X system mode with raw modes"
+	help
+	  Select this option to enable system mode of the nRF700x driver with raw modes
+
+endchoice
+
+choice WIFI_PATCHES_EXT_FLASH_SUPPORT
+	bool "nRF700x FW patch location"
+	help
+	  Use this option to select where the nRF700x firmware patches are stored, this allows
+	  moving them to external flash which can help reduce the code memory size of the
+	  application, but requires external memory to be available for storing the patches.
+
+config WIFI_PATCHES_EXT_FLASH_DISABLED
+	bool "RAM"
+
+config WIFI_PATCHES_EXT_FLASH_XIP
+	bool "Relocate to external memory and execute from there"
+	# nRF7002 supports SPI based external flash access with no XIP
+	depends on !BOARD_NRF7002DK_NRF5340_CPUAPP && !BOARD_NRF7002DK_NRF5340_CPUAPP_NS
+	# Disable until Matter DFU changes are ready
+	# default y if BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF52840DK_NRF52840
+
+config WIFI_PATCHES_EXT_FLASH_STORE
+	bool "Relocate to external memory but execute from RAM"
+	# nRF7002 supports SPI based external memory access but missing tools support
+	# TODO: Enable when tools support is available (NRFJPROG-157)
+	depends on !BOARD_NRF7002DK_NRF5340_CPUAPP && !BOARD_NRF7002DK_NRF5340_CPUAPP_NS
+
+endchoice
+
+endif # WIFI_NRF700X
+
+endmenu
