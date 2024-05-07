@@ -173,6 +173,8 @@ The Read Client functionality is used for reading attributes from another device
 This functionality is disabled by default for Matter samples in the |NCS|, except for ones that need to read attributes from the bound devices, such as the :ref:`matter_light_switch_sample` and :ref:`matter_thermostat_sample` samples, and the :ref:`matter_bridge_app` application.
 Enable the feature if your device needs to be able to access attributes from a different device within the Matter network using, for example, bindings.
 
+.. _ug_matter_persistent_storage:
+
 Persistent storage
 ==================
 

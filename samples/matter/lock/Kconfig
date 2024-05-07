@@ -6,17 +6,44 @@
 
 mainmenu "Matter Lock sample application"
 
-config LOCK_NUM_USERS
-	int "Maximum number of users supported by lock"
+config LOCK_MAX_NUM_USERS
+	int "Maximum number of users supported by the lock"
 	default 10
 
-config LOCK_NUM_CREDENTIALS
-	int "Maximum number of credentials supported by lock"
-	default 20
+config LOCK_MAX_NUM_CREDENTIALS_PER_USER
+	int "Maximum total number of credentials per one user supported by the lock"
+	default 4
 
-config LOCK_NUM_CREDENTIALS_PER_USER
-	int "Maximum number of credentials per user supported by lock"
-	default 3
+config LOCK_MAX_NUM_CREDENTIALS_PER_TYPE
+	int "Maximum number of credentials of given type supported by the lock"
+	default 15
+
+config LOCK_MAX_CREDENTIAL_LENGTH
+	int "Maximum length of the single credential supported by the lock"
+	default 10
+
+config LOCK_ENABLE_DEBUG
+	bool "Enable debug features to print users and credentials"
+	depends on SHELL
+	help
+	  Debug features allows to checking and printing current users, their state, and
+	  associated credentials. Use these with shell commands combinations to read saved credentials
+	  or users, and manage them (add, clear, read).
+
+if LOCK_ENABLE_DEBUG
+
+# This should be deterined based on the maximum possible command length that depends on the LOCK_MAX_CREDENTIAL_LENGTH
+config SHELL_CMD_BUFF_SIZE
+	default 300
+
+endif
+
+config LOCK_LEAVE_FABRIC_CLEAR_CREDENTIAL
+	bool "Clear all credentials assigned to given fabric index"
+	default y
+	help
+	  This feature allows to remove all credentials which were created or modified
+	  within the fabric which is being removed from the door lock.
 
 config STATE_LEDS
 	bool "Use LEDs to indicate the device state"
@@ -78,6 +105,15 @@ config NRF_WIFI_LOW_POWER
 	default y
 
 endif # CHIP_WIFI
+
+config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
+	default y
+
+config NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
+	default y if !CHIP_WIFI
+
+config NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND
+	default n if !CHIP_WIFI
 
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"

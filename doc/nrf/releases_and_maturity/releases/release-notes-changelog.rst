@@ -512,6 +512,8 @@ Matter samples
 * :ref:`matter_lock_sample` sample:
 
   * Added support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
+  * Added a door lock credentials manager module.
+    The module is used to implement support for refined handling and persistent storage of PIN codes.
 
 Multicore samples
 -----------------
