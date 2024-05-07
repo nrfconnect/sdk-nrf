@@ -22,6 +22,8 @@ void test_parse_edrx(void)
 {
 	int err;
 	struct lte_lc_edrx_cfg cfg;
+	char edrx_str[5];
+	char ptw_str[5];
 	char *at_response_none = "+CEDRXP: 0";
 	char *at_response_fail = "+CEDRXP: 1,\"1000\",\"0101\",\"1011\"";
 	char *at_response_ltem = "+CEDRXP: 4,\"1000\",\"0101\",\"1011\"";
@@ -29,38 +31,46 @@ void test_parse_edrx(void)
 	char *at_response_nbiot = "+CEDRXP: 5,\"1000\",\"1101\",\"0111\"";
 	char *at_response_nbiot_2 = "+CEDRXP: 5,\"1000\",\"1101\",\"0101\"";
 
-	err = parse_edrx(at_response_none, &cfg);
+	err = parse_edrx(at_response_none, &cfg, edrx_str, ptw_str);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(0, cfg.edrx);
 	TEST_ASSERT_EQUAL(0, cfg.ptw);
 	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NONE, cfg.mode);
 
-	err = parse_edrx(at_response_fail, &cfg);
+	err = parse_edrx(at_response_fail, &cfg, edrx_str, ptw_str);
 	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, err, "parse_edrx should have failed");
 
-	err = parse_edrx(at_response_ltem, &cfg);
+	err = parse_edrx(at_response_ltem, &cfg, edrx_str, ptw_str);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, 81.92, cfg.edrx);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, 15.36, cfg.ptw);
 	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, cfg.mode);
+	TEST_ASSERT_EQUAL_STRING("0101", edrx_str);
+	TEST_ASSERT_EQUAL_STRING("1011", ptw_str);
 
-	err = parse_edrx(at_response_ltem_2, &cfg);
+	err = parse_edrx(at_response_ltem_2, &cfg, edrx_str, ptw_str);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, 20.48, cfg.edrx);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, 19.2, cfg.ptw);
 	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, cfg.mode);
+	TEST_ASSERT_EQUAL_STRING("0010", edrx_str);
+	TEST_ASSERT_EQUAL_STRING("1110", ptw_str);
 
-	err = parse_edrx(at_response_nbiot, &cfg);
+	err = parse_edrx(at_response_nbiot, &cfg, edrx_str, ptw_str);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, 2621.44, cfg.edrx);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, 20.48, cfg.ptw);
 	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, cfg.mode);
+	TEST_ASSERT_EQUAL_STRING("1101", edrx_str);
+	TEST_ASSERT_EQUAL_STRING("0111", ptw_str);
 
-	err = parse_edrx(at_response_nbiot_2, &cfg);
+	err = parse_edrx(at_response_nbiot_2, &cfg, edrx_str, ptw_str);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, 2621.44, cfg.edrx);
 	TEST_ASSERT_FLOAT_WITHIN(0.1, 15.36, cfg.ptw);
 	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, cfg.mode);
+	TEST_ASSERT_EQUAL_STRING("1101", edrx_str);
+	TEST_ASSERT_EQUAL_STRING("0101", ptw_str);
 }
 
 void test_parse_cereg(void)

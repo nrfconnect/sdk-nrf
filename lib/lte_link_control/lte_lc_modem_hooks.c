@@ -128,7 +128,7 @@ static void on_modem_shutdown(void *ctx)
 	}
 }
 
-#if CONFIG_UNITY
+#if defined(CONFIG_UNITY)
 void lte_lc_on_modem_cfun(int mode, void *ctx)
 #else
 NRF_MODEM_LIB_ON_CFUN(lte_lc_cfun_hook, lte_lc_on_modem_cfun, NULL);
