@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "credentials/credentials_manager.h"
+
 #include <app/clusters/door-lock-server/door-lock-server.h>
 #include <lib/core/ClusterEnums.h>
 
@@ -28,7 +30,7 @@ public:
 
 	struct UserData {
 		char mName[DOOR_LOCK_USER_NAME_BUFFER_SIZE];
-		CredentialStruct mCredentials[CONFIG_LOCK_NUM_CREDENTIALS_PER_USER];
+		CredentialStruct mCredentials[CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_USER];
 	};
 
 	struct CredentialData {
@@ -45,24 +47,28 @@ public:
 	State GetState() const { return mState; }
 	bool IsLocked() const { return mState == State::kLockingCompleted; }
 
-	bool GetUser(uint16_t userIndex, EmberAfPluginDoorLockUserInfo &user) const;
+	bool GetUser(uint16_t userIndex, EmberAfPluginDoorLockUserInfo &user);
 	bool SetUser(uint16_t userIndex, chip::FabricIndex creator, chip::FabricIndex modifier,
 		     const chip::CharSpan &userName, uint32_t uniqueId, UserStatusEnum userStatus,
 		     UserTypeEnum userType, CredentialRuleEnum credentialRule, const CredentialStruct *credentials,
 		     size_t totalCredentials);
 
 	bool GetCredential(uint16_t credentialIndex, CredentialTypeEnum credentialType,
-			   EmberAfPluginDoorLockCredentialInfo &credential) const;
+			   EmberAfPluginDoorLockCredentialInfo &credential);
 	bool SetCredential(uint16_t credentialIndex, chip::FabricIndex creator, chip::FabricIndex modifier,
 			   DlCredentialStatus credentialStatus, CredentialTypeEnum credentialType,
 			   const chip::ByteSpan &secret);
 
-	bool ValidatePIN(const Optional<chip::ByteSpan> &pinCode, OperationErrorEnum &err) const;
+	bool ValidatePIN(const Optional<chip::ByteSpan> &pinCode, OperationErrorEnum &err);
 
 	void Lock(OperationSource source);
 	void Unlock(OperationSource source);
 
+	void SetRequirePIN(bool require);
+	bool GetRequirePIN();
+
 private:
+	using PinManager = CredentialsManager<DoorLockData::PIN>;
 	friend class AppTask;
 
 	void SetState(State state, OperationSource source);
@@ -75,12 +81,6 @@ private:
 	StateChangeCallback mStateChangeCallback = nullptr;
 	OperationSource mActuatorOperationSource = OperationSource::kButton;
 	k_timer mActuatorTimer = {};
-
-	UserData mUserData[CONFIG_LOCK_NUM_USERS];
-	EmberAfPluginDoorLockUserInfo mUsers[CONFIG_LOCK_NUM_USERS] = {};
-
-	CredentialData mCredentialData[CONFIG_LOCK_NUM_CREDENTIALS];
-	EmberAfPluginDoorLockCredentialInfo mCredentials[CONFIG_LOCK_NUM_CREDENTIALS] = {};
 
 	static BoltLockManager sLock;
 };

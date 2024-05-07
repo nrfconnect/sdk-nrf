@@ -73,6 +73,27 @@ For details, see the `Commissioning the device`_ section.
 
 .. matter_door_lock_sample_remote_testing_end
 
+Door lock credentials
+=====================
+
+By default, the application supports only PIN code credentials, but it is possible to implement support for other door lock credential types by using the ``CredentialsManager`` module.
+The credentials can be used to control remote access to the bolt lock.
+The PIN code assigned by the Matter controller is stored persistently, which means that it can survive a device reboot.
+Depending on the IPv6 network technology in use, the following storage backends are supported by default to store the PIN code credential:
+
+* Matter over Thread - secure storage backend (:kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` Kconfig option enabled by default).
+* Matter over Wi-Fi - non-secure storage backend (:kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` Kconfig option enabled by default).
+
+You can learn more about the |NCS| Matter persistent storage module and its configuration in the :ref:`ug_matter_persistent_storage` section of the :ref:`ug_matter_device_advanced_kconfigs` documentation.
+
+The application supports multiple door lock users and PIN code credentials.
+The following Kconfig options control the limits of the users and credentials that can be added to the door lock:
+
+* :kconfig:option:`CONFIG_LOCK_MAX_NUM_USERS` - Maximum number of users supported by the door lock.
+* :kconfig:option:`CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_USER` - Maximum number of credentials that can be assigned to one user.
+* :kconfig:option:`CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_TYPE` - Maximum number of credentials in total.
+* :kconfig:option:`CONFIG_LOCK_MAX_CREDENTIAL_LENGTH` - Maximum length of a single credential in bytes.
+
 .. _matter_lock_sample_wifi_thread_switching:
 
 Thread and Wi-Fi switching
@@ -459,6 +480,61 @@ Upgrading the device firmware
 =============================
 
 To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
+
+.. _matter_lock_sample_remote_access_with_pin:
+
+Testing remote access with PIN code credential
+==============================================
+
+.. note::
+   You can test the PIN code credential support with any Matter compatible controller.
+   The following steps use the CHIP Tool controller as an example.
+   For more information about setting user credentials, see the Saving users and credentials on door lock devices section of the :doc:`matter:chip_tool_guide` page in the :doc:`Matter documentation set <matter:index>`.
+
+After building the sample and programming it to your development kit, complete the following steps to test remote access with PIN code credential:
+
+1. |connect_kit|
+#. |connect_terminal_ANSI|
+#. Wait until the device boots.
+#. Commission an accessory with node ID equal to 10 to the Matter network by following the steps described in the `Commissioning the device`_ section.
+#. Make the door lock require a PIN code for remote operations:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock write require-pinfor-remote-operation 1 10 1 --timedInteractionTimeoutMs 5000
+
+#. Add the example ``Home`` door lock user:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock set-user 0 2 Home 123 1 0 0 10 1 --timedInteractionTimeoutMs 5000
+
+   This command creates a ``Home`` user with a unique ID of ``123`` and an index of ``2``.
+   The new user's status is set to ``1``, and both its type and credential rule to ``0``.
+   The user is assigned to the door lock cluster residing on endpoint ``1`` of the node with ID ``10``.
+
+#. Add the example ``12345678`` PIN code credential to the ``Home`` user:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock set-credential 0 '{"credentialType": 1, "credentialIndex": 1}' 12345678 2 null null 10 1 --timedInteractionTimeoutMs 5000
+
+#. Unlock the door lock with the given PIN code:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock unlock-door 10 1 --PINCode 12345678 --timedInteractionTimeoutMs 5000
+
+#. Reboot the device.
+#. Wait until the device it rebooted and attached back to the Matter network.
+#. Unlock the door lock with the PIN code provided before the reboot:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock unlock-door 10 1 --PINCode 12345678 --timedInteractionTimeoutMs 5000
+
+.. note::
+   Accessing the door lock remotely without a valid PIN code credential will fail.
 
 .. _matter_lock_sample_switching_thread_wifi:
 
