@@ -1,4 +1,4 @@
-# The west manifest file (west.yml) for the nRF Connect SDK (NCS).
+# tHe west manifest file (west.yml) for the nRF Connect SDK (NCS).
 #
 # The per-workspace west configuration file, ncs/.west/config,
 # specifies the location of this manifest file like this:
@@ -63,7 +63,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 00266aa3b56f75168d14892728a7525e55d6b2ee
+      revision: e16bd76f8752ef7a77a691158019510926b53057
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
