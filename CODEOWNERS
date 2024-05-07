@@ -202,6 +202,7 @@ Kconfig*                                  @tejlmand
 /samples/sdfw/                            @hakonfam @jonathannilsen
 /samples/sdfw/ssf_client/                 @anhmolt
 /samples/suit/                            @tomchy @ahasztag
+/samples/suit/flash_companion/            @e-rk @tomchy
 /samples/wifi/provisioning/               @wentong-li @bama-nordic
 /samples/wifi/radio_test/                 @bama-nordic @sachinthegreen
 /samples/wifi/scan/                       @D-Triveni @bama-nordic
