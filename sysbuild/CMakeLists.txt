@@ -365,5 +365,6 @@ endif()
 
 include(${CMAKE_CURRENT_LIST_DIR}/netcore.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/suit.cmake)
 
 store_ncs_vars()

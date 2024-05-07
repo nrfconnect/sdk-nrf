@@ -35,8 +35,8 @@
 #define SUIT_PLAT_INTERNAL_NVM_DEV NULL
 #endif
 
-#if (DT_NODE_EXISTS(DT_ALIAS(spi_flash0)))
-#define EXTERNAL_NVM_DEV DEVICE_DT_GET(DT_ALIAS(spi_flash0))
+#if (DT_NODE_EXISTS(DT_CHOSEN(extmem_device)))
+#define EXTERNAL_NVM_DEV DEVICE_DT_GET(DT_CHOSEN(extmem_device))
 #else
 #define EXTERNAL_NVM_DEV NULL
 #endif

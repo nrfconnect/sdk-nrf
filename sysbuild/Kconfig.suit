@@ -69,4 +69,20 @@ config SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY
 
 endif # SUIT_ENVELOPE
 
+config SUIT_BUILD_FLASH_COMPANION
+	bool "Build SUIT flash companion firmware"
+	help
+	  Build the flash companion firmware, which acts as a proxy for the secure domain
+	  firmware to read and write to the external memory.
+
+if SUIT_BUILD_FLASH_COMPANION
+
+config FLASH_COMPANION_TARGET_CPUCLUSTER
+	string "Flash companion target cluster"
+	default "cpuapp"  if SOC_SERIES_NRF54HX
+	help
+	  Set the target CPU cluster on which the companion firmware will run.
+
+endif # SUIT_BUILD_FLASH_COMPANION
+
 endmenu

@@ -174,6 +174,18 @@ function(suit_create_package)
   )
 
   foreach(image ${IMAGES})
+    sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
+    sysbuild_get(BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+
+    set(BINARY_FILE "${BINARY_FILE}.bin")
+
+    list(APPEND CORE_ARGS
+      --core ${image},${SUIT_ROOT_DIRECTORY}${image}.bin,${BINARY_DIR}/zephyr/edt.pickle,${BINARY_DIR}/zephyr/.config
+    )
+    suit_copy_artifact_to_output_directory(${image} ${BINARY_DIR}/zephyr/${BINARY_FILE})
+  endforeach()
+
+  foreach(image ${IMAGES})
     sysbuild_get(GENERATE_LOCAL_ENVELOPE IMAGE ${image} VAR CONFIG_SUIT_LOCAL_ENVELOPE_GENERATE KCONFIG)
     if(NOT DEFINED GENERATE_LOCAL_ENVELOPE)
       continue()
