@@ -78,6 +78,10 @@ function(include_matter_factory_data)
   nrfconnect_generate_factory_data()
 endfunction()
 
+function(include_nrf700x)
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf700x.cmake)
+endfunction()
+
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   cmake_parse_arguments(PRE_CMAKE "" "" "IMAGES" ${ARGN})
   restore_ncs_vars()
@@ -325,6 +329,32 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   else()
     set_config_bool(${DEFAULT_IMAGE} CONFIG_BT_FAST_PAIR n)
   endif()
+
+  if(SB_CONFIG_WIFI_NRF700X)
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_WIFI_NRF700X y)
+
+    foreach(config WIFI_PATCHES_EXT_FLASH_DISABLED WIFI_PATCHES_EXT_FLASH_XIP
+            WIFI_PATCHES_EXT_FLASH_STORE)
+      if(${SB_CONFIG_${config}})
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_NRF_${config} ${SB_CONFIG_${config}})
+      endif()
+    endforeach()
+
+    foreach(config NRF700X_SYSTEM_MODE NRF700X_SCAN_ONLY NRF700X_RADIO_TEST
+            NRF700X_SYSTEM_WITH_RAW_MODES)
+      if(${SB_CONFIG_WIFI_${config}})
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_${config} ${SB_CONFIG_WIFI_${config}})
+      endif()
+    endforeach()
+
+    if(NOT DEFINED SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH)
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_NRF_WIFI_FW_PATCH_DFU n)
+    else()
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_NRF_WIFI_FW_PATCH_DFU ${SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH})
+    endif()
+  else()
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_WIFI_NRF700X n)
+  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 # Sysbuild function hooks used by nRF Connect SDK
@@ -353,7 +383,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include_matter_ota()
   endif()
 
-  if(SB_CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
+  if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
     include_nrf700x()
   endif()
 
@@ -368,6 +398,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   if(SB_CONFIG_MATTER_FACTORY_DATA)
     include_matter_factory_data()
+  endif()
+
+  if(SB_CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
+    include_nrf700x()
   endif()
 
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/extensions.cmake)
@@ -386,6 +420,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
     if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_EMPTY)
       get_property(PM_MCUBOOT_PRIMARY_1_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_1_SIZE)
+    endif()
+
+    if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
+      get_property(PM_NRF70_WIFI_FW_OFFSET TARGET partition_manager PROPERTY PM_NRF70_WIFI_FW_OFFSET)
+      get_property(PM_NRF70_WIFI_FW_SIZE TARGET partition_manager PROPERTY PM_NRF70_WIFI_FW_SIZE)
     endif()
   endif()
   foreach(image ${IMAGES})

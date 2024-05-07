@@ -34,6 +34,17 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     list(APPEND dfu_multi_image_targets mcuboot_extra_byproducts mcuboot_signed_kernel_hex_target s1_image_extra_byproducts s1_image_signed_kernel_hex_target mcuboot_signed_packaged_target s1_image_signed_packaged_target)
   endif()
 
+  if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH)
+    if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET)
+      list(APPEND dfu_multi_image_ids 2)
+    else()
+      list(APPEND dfu_multi_image_ids 1)
+    endif()
+
+    list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/nrf70.signed.hex")
+    list(APPEND dfu_multi_image_targets nrf70_wifi_fw_patch_target)
+  endif()
+
   if(DEFINED dfu_multi_image_targets)
     dfu_multi_image_package(dfu_multi_image_pkg
       IMAGE_IDS ${dfu_multi_image_ids}
