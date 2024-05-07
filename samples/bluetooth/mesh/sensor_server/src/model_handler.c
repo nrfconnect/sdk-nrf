@@ -157,7 +157,7 @@ static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 
 	err = bt_mesh_sensor_value_from_sensor_value(
 		sensor->type->channels[0].format, &channel_val, rsp);
-	if (err) {
+	if (err && err != -ERANGE) {
 		printk("Error encoding temperature sensor data (%d)\n", err);
 		return err;
 	}
@@ -277,14 +277,16 @@ static int relative_runtime_in_chip_temp_series_get(struct bt_mesh_sensor_srv *s
 
 		err = bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
 						      percent_micros, &value[0]);
-		if (err) {
+		if (err && err != -ERANGE) {
 			printk("Error encoding relative runtime in chip temp series (%d)\n", err);
+			return err;
 		}
 	} else {
 		err = bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
 						      0, &value[0]);
-		if (err) {
+		if (err && err != -ERANGE) {
 			printk("Error encoding relative runtime in chip temp series (%d)\n", err);
+			return err;
 		}
 	}
 
@@ -296,8 +298,9 @@ static int relative_runtime_in_chip_temp_series_get(struct bt_mesh_sensor_srv *s
 	(void)bt_mesh_sensor_value_to_micro(&columns[column_index].width, &width_micro);
 	err = bt_mesh_sensor_value_from_micro(columns[column_index].start.format,
 					      start_micro + width_micro, &value[2]);
-	if (err) {
+	if (err && err != -ERANGE) {
 		printk("Error encoding column end (%d)\n", err);
+		return err;
 	}
 
 	return 0;
@@ -317,14 +320,16 @@ static int relative_runtime_in_chip_temp_get(struct bt_mesh_sensor_srv *srv,
 
 		err = bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
 						      percent_micros, &rsp[0]);
-		if (err) {
+		if (err && err != -ERANGE) {
 			printk("Error encoding relative runtime in chip temp (%d)\n", err);
+			return err;
 		}
 	} else {
 		err = bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
 						      BASE_UNITS_TO_MICRO(100), &rsp[0]);
-		if (err) {
+		if (err && err != -ERANGE) {
 			printk("Error encoding relative runtime in chip temp series (%d)\n", err);
+			return err;
 		}
 	}
 
@@ -460,12 +465,12 @@ static int presence_detected_get(struct bt_mesh_sensor_srv *srv,
 	int err = bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
 						  BASE_UNITS_TO_MICRO(pres_detect ? 1 : 0), rsp);
 
-	if (err) {
+	if (err && err != -ERANGE) {
 		printk("Error encoding presence detected (%d)\n", err);
-	} else {
-		printk("Presence detected: %d\n", pres_detect);
+		return err;
 	}
-	return err;
+	printk("Presence detected: %d\n", pres_detect);
+	return 0;
 };
 
 static struct bt_mesh_sensor presence_sensor = {
@@ -584,7 +589,7 @@ static void amb_light_level_gain_get(struct bt_mesh_sensor_srv *srv,
 	int err = bt_mesh_sensor_value_from_float(setting->type->channels[0].format,
 						  amb_light_level_gain, rsp);
 
-	if (err) {
+	if (err && err != -ERANGE) {
 		printk("Error encoding ambient light level gain (%d)\n", err);
 	} else {
 		printk("Ambient light level gain: %s\n", bt_mesh_sensor_ch_str(rsp));
@@ -944,8 +949,9 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 		err = bt_mesh_sensor_value_from_float(
 			present_amb_light_level.type->channels[0].format,
 			dummy_ambient_light_value, &val);
-		if (err) {
+		if (err && err != -ERANGE) {
 			printk("Error getting ambient light level sensor data (%d)\n", err);
+			return;
 		}
 
 		err = bt_mesh_sensor_srv_pub(&ambient_light_sensor_srv, NULL,
