@@ -61,7 +61,7 @@ rsource "Kconfig.template.partition_region"
 
 config PM_PARTITION_ALIGN_SETTINGS_STORAGE
 	hex "Settings storage partition alignment"
-	default NRF_SPU_FLASH_REGION_SIZE if BUILD_WITH_TFM
+	default NRF_TRUSTZONE_FLASH_REGION_SIZE if BUILD_WITH_TFM
 	default FPROTECT_BLOCK_SIZE
 	help
 	  Alignment of the settings storage partition.
@@ -107,7 +107,7 @@ rsource "Kconfig.template.partition_region"
 
 config PM_PGPS_ALIGN
 	hex
-	default NRF_SPU_FLASH_REGION_SIZE if BUILD_WITH_TFM
+	default NRF_TRUSTZONE_FLASH_REGION_SIZE if BUILD_WITH_TFM
 	default NRF_CLOUD_PGPS_PARTITION_ALIGN
 	depends on PM_PARTITION_REGION_PGPS_EXTERNAL && BUILD_WITH_TFM
 
