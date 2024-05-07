@@ -20,6 +20,7 @@
 #include <sdc_hci_vs.h>
 #endif /* CONFIG_BT_LL_SOFTDEVICE */
 
+#include "hci_types_host_extensions.h"
 #include <bluetooth/nrf/host_extensions.h>
 
 #if defined(CONFIG_BT_TRANSMIT_POWER_CONTROL)
