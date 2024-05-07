@@ -106,8 +106,8 @@ The application provides predefined configuration files for typical use cases.
 
 Following are the available configuration files:
 
-* :file:`prj.conf` - Configuration file for all build targets.
-* :file:`boards/<BOARD>.conf` - Configuration file specific for a build target specified with **<BOARD>**, where **<BOARD>** is the build target, for example ``nrf9161dk/nrf9161/ns``.
+* :file:`prj.conf` - Configuration file for all board targets.
+* :file:`boards/<BOARD>.conf` - Configuration file specific for a board target specified with **<BOARD>**, where **<BOARD>** is the board target, for example ``nrf9161dk/nrf9161/ns``.
   This file is automatically merged with the :file:`prj.conf` file when you build for that target.
 
 The :file:`include/<BOARD>/led_state_def.h` header file describes the LED behavior of the CAF LEDs module.
@@ -135,10 +135,10 @@ Multiple overlay files can be included to enable multiple features at the same t
 
    Generally, Kconfig overlays have an ``overlay-`` prefix and a :file:`.conf` extension.
    Board-specific configuration files are placed in the :file:`boards` folder and are named as :file:`<BOARD>.conf`.
-   DTS overlay files are named the same as the build target and use the file extension :file:`.overlay`.
-   When they are placed in the :file:`boards` folder and the DTS overlay filename matches the build target,
-   the build system automatically selects and applies the overlay.
-   You can give the custom DTS overlay files as a compiler option ``-DEXTRA_DTC_OVERLAY_FILE=<dtc_filename>.overlay``.
+
+   The devicetree overlay files use the :ref:`normalized board target name <app_boards_names>` and the file extension :file:`.overlay` (for example, ``nrf9160dk/nrf9160`` becomes :file:`nrf9160dk_nrf9160.overlay`).
+   When they are placed in the :file:`boards` folder and the DTS overlay filename matches the board target (after normalization), the build system automatically selects and applies the overlay.
+   To select them manually, see :ref:`cmake_options`.
 
 Optional library configurations
 ===============================

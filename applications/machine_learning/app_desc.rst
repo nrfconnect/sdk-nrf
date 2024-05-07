@@ -326,7 +326,7 @@ The application supports the following build types:
 
    * - Build type
      - File name
-     - Supported build target
+     - Supported board target
      - Description
    * - Debug (default)
      - :file:`prj.conf`

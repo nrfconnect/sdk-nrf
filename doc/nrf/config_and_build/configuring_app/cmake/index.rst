@@ -74,7 +74,7 @@ The following table lists the most common ones used in the |NCS|:
      - ``-DEXTRA_DTC_OVERLAY_FILE=<file_name>.overlay``
    * - :makevar:`SHIELD`
      - Select one of the supported :ref:`shields <shield_names_nrf>` for building the firmware.
-     - ``-DSHIELD=<shield_build_target>``
+     - ``-DSHIELD=<shield>``
    * - :makevar:`FILE_SUFFIX`
      - | Select one of the available :ref:`suffixed configurations <zephyr:application-file-suffixes>`, if the application or sample supports any.
        | See :ref:`app_build_file_suffixes` for more information about their usage and limitations in the |NCS|.

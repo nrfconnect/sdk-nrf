@@ -162,7 +162,7 @@
 
 .. |application_sample_definition| replace:: For simplicity, this guide will refer to both :ref:`samples<samples>` and :ref:`applications<applications>` as "applications".
 .. |application_sample_long_path_windows| replace:: On Windows, because of the `Windows path length limitations`_, the build can fail with errors related to permissions or missing files if some paths in the build are too long.
-   To avoid this issue, shorten the build folder name, for example, from ``build_nrf5340dk_nrf5340_cpuapp_ns`` to ``build``, or shorten the path to the build folder in some other way.
+   To avoid this issue, shorten the build folder name, for example to ``build``, or shorten the path to the build folder in some other way.
 
 .. |NSIB| replace:: nRF Secure Immutable Bootloader
 
@@ -202,6 +202,6 @@
 .. |hex_format| replace:: The certificate is automatically converted to a HEX format in the :file:`CMakeLists.txt` file.
    The generated :file:`.inc` file is then included in the code, where it is provisioned to the modem.
 
-.. |build_target| replace:: Replace the *build_target* with the build target of the nRF91 Series device you are using (see the Requirements section).
+.. |board_target| replace:: Replace the *board_target* with the board target of the nRF91 Series device you are using (see the Requirements section).
 
 .. |thingy52_not_supported_note| replace:: Despite being supported in :ref:`Zephyr <zephyr:thingy52_nrf52832>`, the |NCS| does not support `Nordic Thingy:52`_.

@@ -7,7 +7,7 @@ Processing environments
    :local:
    :depth: 2
 
-The :ref:`boards supported by the SDK <app_boards_names>` distinguish entries according to the CPU to target (for multi-core SoCs) and whether Cortex-M Security Extensions (CMSE) are used or not (addition of ``_ns`` if they are used).
+The :ref:`boards supported by the SDK <app_boards_names>` distinguish entries according to the CPU to target (for multi-core SoCs) and whether Cortex-M Security Extensions (CMSE) are used or not (addition of the ``*/ns`` :ref:`variant <app_boards_names>` if they are used).
 
 When CMSE is used, the firmware is split in accordance with the security by separation architecture principle to better protect sensitive assets and code.
 With CMSE, the firmware is stored in one of two security environments (flash partitions), either Secure Processing Environment (SPE) or Non-Secure Processing Environment (NSPE).
@@ -19,22 +19,22 @@ This isolation of firmware is only possible if the underlying hardware supports 
    Processing environments in the |NCS|
 
 In Zephyr and the |NCS|, SPE and NSPE are used exclusively in the context of the application core of a multi-core SoC.
-Building follows the security by separation principle and depends on the build target.
+Building follows the security by separation principle and depends on the board target.
 
 .. _app_boards_spe_nspe_cpuapp:
 
 Building for ``cpuapp`` (CMSE disabled)
 ***************************************
 
-When you build for ``cpuapp``, you build the firmware for the application core without CMSE.
+When you build for a board target that uses the ``cpuapp`` :ref:`CPU cluster <app_boards_names>`, but does not use the ``*/ns`` :ref:`variant <app_boards_names>`, you build the firmware for the application core without CMSE.
 Because CMSE is disabled, TF-M is not used and there is no separation of firmware.
 
 .. _app_boards_spe_nspe_cpuapp_ns:
 
-Building for ``*_ns`` (CMSE enabled)
+Building for ``*/ns`` (CMSE enabled)
 ************************************
 
-When you build for ``*_ns``, you build firmware with CMSE.
+When you build for a board target that uses the ``*/ns`` :ref:`variant <app_boards_names>`, you build firmware with CMSE.
 Firmware is separated in the following way:
 
 * SPE implements security-critical functionality and data (including bootloaders) and isolates them from the application software in NSPE.

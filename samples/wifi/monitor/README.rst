@@ -43,14 +43,14 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
+To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
    west build -b nrf7002dk/nrf5340/cpuapp
 
-Change the build target as given below for the nRF7002 EK.
+Change the board target as given below for the nRF7002 EK.
 
 .. code-block:: console
 

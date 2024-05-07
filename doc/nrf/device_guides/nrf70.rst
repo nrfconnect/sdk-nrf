@@ -11,7 +11,7 @@ Zephyr and the |NCS| provide support for developing networking applications with
    * - DK or Prototype platform
      - Companion module
      - PCA number
-     - Build target
+     - Board target
      - Documentation
    * - nRF7002 DK
      - Not applicable
@@ -66,7 +66,7 @@ The following nRF70 Series shields are available and defined in the :file:`nrf/b
 
    * - Hardware platform
      - PCA number
-     - Build target
+     - Board target
      - Documentation
    * - nRF7002 :term:`Evaluation Kit (EK)`
      - PCA63556
@@ -75,12 +75,12 @@ The following nRF70 Series shields are available and defined in the :file:`nrf/b
        | `User Guide <nRF7002 EK User Guide_>`_
    * - nRF7002 EK with emulated support for the nRF7001 IC
      - PCA63556
-     - ``nrf7002ek_nrf7001``
+     - ``nrf7002ek/nrf7001``
      - | :ref:`Getting started <ug_nrf7002ek_gs>`
        | `User Guide <nRF7002 EK User Guide_>`_
    * - nRF7002 EK with emulated support for the nRF7000 IC
      - PCA63556
-     - ``nrf7002ek_nrf7000``
+     - ``nrf7002ek/nrf7000``
      - | :ref:`Getting started <ug_nrf7002ek_gs>`
        | `User Guide <nRF7002 EK User Guide_>`_
    * - nRF7002 :term:`Expansion Board (EB)`

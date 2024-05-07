@@ -34,7 +34,7 @@ nPM1300 is supported by the following boards in the `Zephyr`_ open source projec
    * - DK or Prototype platform
      - Companion module
      - PCA number
-     - Build target
+     - Board target
      - Documentation
    * - nRF52 DK
      - nPM1300 EK

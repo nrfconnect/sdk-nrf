@@ -56,9 +56,9 @@ When building on the command line add the UART overlay in the following way, dep
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DDTC_OVERLAY_FILE=uart.overlay
+   west build -b *board_target* -- -DDTC_OVERLAY_FILE=uart.overlay
 
-|build_target|
+|board_target|
 
 Testing
 =======

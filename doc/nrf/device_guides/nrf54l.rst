@@ -14,7 +14,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
 
    * - DK
      - PCA number
-     - Build target
+     - Board target
      - Documentation
    * - :ref:`zephyr:nrf54l15pdk_nrf54l15`
      - PCA10156

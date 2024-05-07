@@ -46,8 +46,8 @@ IPv6 network support
 
 The development kits for this sample offer the following IPv6 network support for Matter:
 
-* Matter over Thread is supported for ``thingy53_nrf5340_cpuapp``.
-* Matter over Wi-Fi is supported for ``thingy53_nrf5340_cpuapp`` with the ``nrf7002`` expansion board attached, for the :file:`prj_release.conf` build type only.
+* Matter over Thread is supported for ``thingy53/nrf5340/cpuapp``.
+* Matter over Wi-Fi is supported for ``thingy53/nrf5340/cpuapp`` with the ``nrf7002`` expansion board attached, for the :file:`prj_release.conf` build type only.
   See `Building for the nRF7002 Wi-Fi expansion board`_ for more information.
 
 Overview
@@ -172,7 +172,7 @@ The application comes with the following overlays:
 
   .. code-block:: console
 
-      west build -b thingy53_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-factory_data.conf -DPM_STATIC_YML_FILE=pm_static_factory_data.yml
+      west build -b thingy53/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-factory_data.conf -DPM_STATIC_YML_FILE=pm_static_factory_data.yml
 
 .. note::
    Matter factory data support requires the dedicated partition layout.
@@ -212,21 +212,21 @@ To build this application to work with the nRF7002 Wi-Fi expansion board:
 
          .. code-block:: console
 
-            west build -b thingy53_nrf5340_cpuapp -- -DSHIELD=nrf7002eb -DFILE_SUFFIX=release
+            west build -b thingy53/nrf5340/cpuapp -- -DSHIELD=nrf7002eb -DFILE_SUFFIX=release
 
 Generating factory data
 =======================
 
 To enable factory data support, you need to select the ``overlay-factory_data`` configuration overlay from the available application :ref:`build configuration overlays <matter_weather_station_app_build_configuration_overlays>`.
-You can generate new factory data set when building for the target board by invoking the following command:
+You can generate new factory data set when building for the given board target by invoking the following command:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b thingy53_nrf5340_cpuapp -- -DEXTRA_CONF_FILE=overlay-factory_data.conf
+   west build -b thingy53/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-factory_data.conf
 
 This command builds the application with default certificates.
-After building the target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the :ref:`regular command to flash it to the device <programming>`.
+After building for the board target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the :ref:`regular command to flash it to the device <programming>`.
 
 If you want to use Vendor ID, Product ID or other data that is not reserved for tests, you need custom test certificates.
 To build with custom certificates, you need to :ref:`install CHIP Certificate Tool <ug_matter_gs_tools_cert_installation>`.

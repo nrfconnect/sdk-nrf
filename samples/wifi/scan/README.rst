@@ -55,7 +55,7 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
+To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following are examples of the CLI commands:
 
 * Build to fetch only Device scan results

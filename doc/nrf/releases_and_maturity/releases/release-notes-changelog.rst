@@ -43,6 +43,8 @@ Build and configuration system
   * Documentation section about the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>` with a related information in the :ref:`migration guide <migration_2.7_recommended>`.
   * Documentation section about :ref:`app_build_snippets`.
 
+* Updated all board targets for Zephyr's :ref:`Hardware Model v2 <zephyr:hw_model_v2>`, with additional information added on the :ref:`app_boards_names` page.
+
 Working with nRF91 Series
 =========================
 
@@ -249,12 +251,12 @@ nRF Desktop
 
 * Added:
 
-  * Support for the nRF54L15 PDK with the ``nrf54l15pdk_nrf54l15_cpuapp`` board target.
+  * Support for the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
     The PDK can act as a sample mouse or keyboard.
     It supports the Bluetooth LE HID data transport and uses SoftDevice Link Layer with Low Latency Packet Mode (LLPM) enabled.
     The PDK uses MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and supports firmware updates using the :ref:`nrf_desktop_dfu`.
   * The ``nrfdesktop-wheel-qdec`` DT alias support to :ref:`nrf_desktop_wheel`.
-    You must use the alias to specify the QDEC instance used for scroll wheel, if your board supports multiple QDEC instances (for example ``nrf54l15pdk_nrf54l15_cpuapp``).
+    You must use the alias to specify the QDEC instance used for scroll wheel, if your board supports multiple QDEC instances (for example ``nrf54l15pdk/nrf54l15/cpuapp``).
     You do not need to define the alias if your board supports only one QDEC instance, because in that case, the wheel module can rely on the ``qdec`` DT label provided by the board.
   * A warning log for handling ``-EACCES`` error code returned by functions that send GATT notification with HID report in :ref:`nrf_desktop_hids`.
     The error code might be returned if an HID report is sent right after a remote peer unsubscribes.
@@ -266,7 +268,7 @@ nRF Desktop
     The value is now aligned with the Fast Pair requirements.
   * Enabled the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT <config_desktop_app_options>` Kconfig option for the nRF Desktop peripherals with :ref:`nrf_desktop_dfu`.
     The option mitigates HID report rate drops during DFU image transfer through the nRF Desktop dongle.
-    The output report is also enabled for the ``nrf52kbd_nrf52832`` build target in the debug configuration to maintain consistency with the release configuration.
+    The output report is also enabled for the ``nrf52kbd/nrf52832`` board target in the debug configuration to maintain consistency with the release configuration.
   * Replaced the :kconfig:option:`CONFIG_BT_L2CAP_TX_BUF_COUNT` Kconfig option with :kconfig:option:`CONFIG_BT_ATT_TX_COUNT` in nRF Desktop dongle configurations.
     This update is needed to align with the new approach introduced in ``sdk-zephyr`` by commit ``a05a47573a11ba8a78dadc5d3229659f24ddd32f``.
   * The :ref:`nrf_desktop_hid_forward` no longer uses a separate HID report queue for a HID peripheral connected over Bluetooth LE.
@@ -570,7 +572,7 @@ Matter samples
 
     To get started with using test event triggers in your Matter samples and to understand the capabilities of this feature, refer to the :ref:`ug_matter_test_event_triggers` page.
 
-  * Support for the nRF54L15 PDK with the ``nrf54l15pdk_nrf54l15_cpuapp`` build target to the following Matter samples:
+  * Support for the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target to the following Matter samples:
 
     * :ref:`matter_template_sample` sample.
     * :ref:`matter_light_bulb_sample` sample.
@@ -578,7 +580,7 @@ Matter samples
     * :ref:`matter_thermostat_sample` sample.
     * :ref:`matter_window_covering_sample` sample.
 
-    DFU support for the nRF54L15 PDK is available only for the ``release`` build target.
+    DFU support for the nRF54L15 PDK is available only for the ``release`` build type.
 
 * Enabled the Bluetooth® LE Extended Announcement feature for all samples, and increased advertising timeout from 15 minutes to 1 hour.
 

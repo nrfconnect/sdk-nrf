@@ -388,12 +388,12 @@ You can use the CMake environment variables `VERBOSE`_ and `CMAKE_BUILD_PARALLEL
 
 When using the command line or |VSC| terminal window, you must set them before invoking west.
 They apply to both the parent and child images.
-For example, to build with verbose output and one parallel job, use the following command, where *build_target* is the target for the development kit for which you are building:
+For example, to build with verbose output and one parallel job, use the following command, where *board_target* is the target for the development kit for which you are building:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_PARALLEL_LEVEL=1
+   west build -b *board_target* -- -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_PARALLEL_LEVEL=1
 
 Memory placement
 ****************

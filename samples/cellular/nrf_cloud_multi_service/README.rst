@@ -286,7 +286,7 @@ This is performed by a background thread implemented in the :file:`src/led_contr
 Other threads may request either a temporary or indefinite LED pattern.
 This wakes up the ``led_thread``, which begins animating the requested pattern, sleeping for 100 milliseconds at a time between animation frames, until the requested pattern has completed (if it is temporary), or until a new pattern is requested in its place.
 
-This feature is enabled by default for the *build_target* mentioned in the `Requirements`_ sections.
+This feature is enabled by default for the *board_target* mentioned in the `Requirements`_ sections.
 
 The patterns displayed, the states they describe, and the options required for them to appear are as follows:
 
@@ -402,9 +402,9 @@ For examples, see the related minimal overlays in the :ref:`nrf_cloud_multi_serv
 Customizing GNSS antenna configuration
 ======================================
 
-This sample uses the :ref:`lib_modem_antenna` library, which is enabled by default for the *build_target* mentioned in the `Requirements`_ sections.
+This sample uses the :ref:`lib_modem_antenna` library, which is enabled by default for the *board_target* mentioned in the `Requirements`_ sections.
 
-If you are using a different board or build target, or would like to use a custom or external GNSS antenna, see the :ref:`lib_modem_antenna` library documentation for configuration instructions.
+If you are using a different board or board target, or would like to use a custom or external GNSS antenna, see the :ref:`lib_modem_antenna` library documentation for configuration instructions.
 
 Enable :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` to use an external antenna.
 
@@ -731,9 +731,9 @@ You can build the sample to connect over LTE as follows:
       .. parsed-literal::
          :class: highlight
 
-         west build -p -b *build_target*
+         west build -p -b *board_target*
 
-      |build_target|
+      |board_target|
 
    .. group-tab:: CoAP
 
@@ -742,9 +742,9 @@ You can build the sample to connect over LTE as follows:
       .. parsed-literal::
          :class: highlight
 
-         west build -p -b *build_target* -- -DEXTRA_CONF_FILE="overlay_coap.conf"
+         west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay_coap.conf"
 
-      |build_target|
+      |board_target|
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
 
@@ -800,9 +800,9 @@ This enables the Wi-Fi location tracking method automatically.
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
+   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
 
-|build_target|
+|board_target|
 
 See also :ref:`the paragraphs on the Wi-Fi location tracking method <nrf_cloud_multi_service_wifi_location_tracking>`.
 

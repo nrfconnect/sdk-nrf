@@ -167,10 +167,10 @@ For more configuration options, see :ref:`Zigbee stack logs <zigbee_ug_logging_s
 Bootloader support
 ==================
 
-The bootloader support in the NCP sample depends on the development kit, its respective build target, and `Serial communication setup`_:
+The bootloader support in the NCP sample depends on the development kit, its respective board target, and `Serial communication setup`_:
 
-* For the ``nrf52840dongle/nrf52840`` build target, the `nRF5 SDK Bootloader`_ is used by default because the dongle comes with this bootloader preinstalled.
-* For the ``nrf52840dk/nrf52840``, ``nrf52833dk/nrf52833``, and ``nrf21540dk/nrf52840`` build targets, the following scenarios are possible when building for them:
+* For the ``nrf52840dongle/nrf52840`` board target, the `nRF5 SDK Bootloader`_ is used by default because the dongle comes with this bootloader preinstalled.
+* For the ``nrf52840dk/nrf52840``, ``nrf52833dk/nrf52833``, and ``nrf21540dk/nrf52840`` board targets, the following scenarios are possible when building for them:
 
   * If you select `Communication through USB`_, `MCUboot`_ is enabled by default.
   * If you use the default UART serial communication channel, the bootloader support is not enabled, but you can enable MCUboot.
@@ -185,7 +185,7 @@ To use the same MCUboot configuration as in `Communication through USB`_, you ne
 See :ref:`ug_multi_image_variables` to learn how to set the required options.
 
 MCUboot with the USB DFU requires a larger partition.
-To increase the partition, define the ``PM_STATIC_YML_FILE`` variable that provides the path to the :file:`pm_static.yml` static configuration file in the :file:`configuration` directory for the build target of your choice.
+To increase the partition, define the ``PM_STATIC_YML_FILE`` variable that provides the path to the :file:`pm_static.yml` static configuration file in the :file:`configuration` directory for the board target of your choice.
 
 For instructions on how to set these additional options and configuration at build time, see :ref:`cmake_options` and :ref:`configure_application`.
 

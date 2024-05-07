@@ -520,26 +520,26 @@ Building and programming from the source code
 You can also program the Thingy:91 by using the images obtained by building the code in an |NCS| environment.
 
 To set up your system to be able to build a compatible firmware image, follow the :ref:`installation` guide for the |NCS| and read the :ref:`configuration_and_build` documentation.
-The build targets of interest for Thingy:91 in |NCS| are as follows:
+The board targets of interest for Thingy:91 in |NCS| are as follows:
 
 +---------------+---------------------------------------------------+
-|Component      |  Build target                                     |
+|Component      |  Board target                                     |
 +===============+===================================================+
 |nRF9160 SiP    |``thingy91/nrf9160/ns``                            |
 +---------------+---------------------------------------------------+
 |nRF52840 SoC   |``thingy91/nrf52840``                              |
 +---------------+---------------------------------------------------+
 
-You must use the build target ``thingy91/nrf9160/ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91/nrf52840`` when building the application code for the onboard nRF52840 SoC.
+You must use the board target ``thingy91/nrf9160/ns`` when building the application code for the nRF9160 SiP and the board target ``thingy91/nrf52840`` when building the application code for the onboard nRF52840 SoC.
 
 .. note::
 
-   * In |NCS| releases before v1.3.0, these build targets were named ``nrf9160_pca20035``, ``nrf9160_pca20035ns``, and ``nrf52840_pca20035``.
-   * In |NCS| releases ranging from v1.3.0 to v1.6.1, the build target ``thingy91/nrf9160/ns`` was named ``thingy91_nrf9160ns``.
+   * In |NCS| releases before v1.3.0, these board targets were named ``nrf9160_pca20035``, ``nrf9160_pca20035ns``, and ``nrf52840_pca20035``.
+   * In |NCS| releases ranging from v1.3.0 to v1.6.1, the board target ``thingy91/nrf9160/ns`` was named ``thingy91_nrf9160ns``.
 
 .. note::
 
-   LTE/GNSS features can only be used with :ref:`Cortex-M Security Extensions enabled <app_boards_spe_nspe_cpuapp_ns>` (``_ns`` build target).
+   LTE/GNSS features can only be used with :ref:`Cortex-M Security Extensions enabled <app_boards_spe_nspe_cpuapp_ns>` (board target with the ``*/ns`` :ref:`variant <app_boards_names>`).
 
 The table below shows the different types of build files that are generated and the different scenarios in which they are used:
 
@@ -581,7 +581,7 @@ Complete the following steps to build and program using the |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`ncs/nrf/applications/asset_tracker_v2`
 
-.. |vsc_sample_board_target_line| replace:: you must use the build target ``thingy91/nrf9160/ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91/nrf52840`` when building the application code for the onboard nRF52840 SoC
+.. |vsc_sample_board_target_line| replace:: you must use the board target ``thingy91/nrf9160/ns`` when building the application code for the nRF9160 SiP and the board target ``thingy91/nrf52840`` when building the application code for the onboard nRF52840 SoC
 
 .. include:: ../../../includes/vsc_build_and_run.txt
 
@@ -616,7 +616,7 @@ Building and programming on the command line
 
 .. |cmd_folder_path| replace:: on the nRF9160 SiP component and ``ncs/nrf/applications/connectivity_bridge`` when building the source code for the :ref:`connectivity_bridge` application on the nRF52840 SoC component
 
-.. |cmd_build_target| replace:: ``thingy91/nrf9160/ns`` if building for the nRF9160 SiP component and ``thingy91/nrf52840`` if building for the nRF52840 SoC component
+.. |cmd_board_target| replace:: ``thingy91/nrf9160/ns`` if building for the nRF9160 SiP component and ``thingy91/nrf52840`` if building for the nRF52840 SoC component
 
 .. include:: ../../../includes/cmd_build_and_run.txt
 

@@ -65,7 +65,7 @@ When you start building, a CMake build is executed in two stages: configuration 
 Configuration phase
 ===================
 
-During this phase, CMake executes build scripts from :file:`CMakeLists.txt` and gathers configuration from different sources, for example :ref:`app_build_file_suffixes`, to generate the final build scripts and create a model of the build for the specified build target.
+During this phase, CMake executes build scripts from :file:`CMakeLists.txt` and gathers configuration from different sources, for example :ref:`app_build_file_suffixes`, to generate the final build scripts and create a model of the build for the specified board target.
 The result of this process is a :term:`build configuration`, a set of files that will drive the build process.
 
 For more information about this phase, see the respective sections on Zephyr's :ref:`zephyr:cmake-details` page, which describes in-depth the usage of CMake for Zephyr-based applications.
@@ -199,7 +199,7 @@ The build phase begins when the user invokes ``make`` or `ninja <Ninja documenta
 The compiler (for example, `GCC compiler`_) then creates object files used to create the final executables.
 You can customize this stage by :ref:`cmake_options` and using :ref:`compiler_settings`.
 
-The result of this process is a complete application in a format suitable for flashing on the desired target board.
+The result of this process is a complete application in a format suitable for flashing on the desired board target.
 See :ref:`output build files <app_build_output_files>` for details.
 
 The build phase can be broken down, conceptually, into four stages: the pre-build, first-pass binary, final binary, and post-processing.

@@ -36,23 +36,23 @@ To set up your system to be able to build a firmware image, follow the :ref:`ins
 
 .. _thingy53_build_pgm_targets:
 
-Build targets
+Board targets
 =============
 
-The build targets of interest for Thingy:53 in the |NCS| are listed in the following table:
+The board targets of interest for Thingy:53 in the |NCS| are listed in the following table:
 
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------+
-|Component                       |  Build target                                                                                                                    |
+|Component                       |  Board target                                                                                                                    |
 +================================+==================================================================================================================================+
-| nRF5340 SoC - Application core |``thingy53_nrf5340_cpuapp`` for :ref:`Cortex-M Security Extensions (CMSE) disabled <app_boards_spe_nspe_cpuapp>`                  |
+| nRF5340 SoC - Application core |``thingy53/nrf5340/cpuapp`` for :ref:`Cortex-M Security Extensions (CMSE) disabled <app_boards_spe_nspe_cpuapp>`                  |
 |                                |                                                                                                                                  |
-|                                |``thingy53_nrf5340_cpuapp_ns`` for :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>`                                            |
+|                                |``thingy53/nrf5340/cpuapp/ns`` for :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>`                                            |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------+
-| nRF5340 SoC - Network core     |``thingy53_nrf5340_cpunet``                                                                                                       |
+| nRF5340 SoC - Network core     |``thingy53/nrf5340/cpunet``                                                                                                       |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------+
 
 The |NCS| uses :ref:`ug_multi_image` for Thingy:53 by default.
-When you choose ``thingy53_nrf5340_cpuapp`` or ``thingy53_nrf5340_cpuapp_ns`` as the build target when building a sample or application, you will generate firmware for both the application core and network core:
+When you choose ``thingy53/nrf5340/cpuapp`` or ``thingy53/nrf5340/cpuapp/ns`` as the board target when building a sample or application, you will generate firmware for both the application core and network core:
 
 * The application core firmware consists of MCUboot bootloader and an application image.
 * The network core firmware consists of network core bootloader (B0n) and application firmware of the network core.
@@ -80,12 +80,12 @@ Building Wi-Fi applications on Thingy:53
 You can use the Nordic Thingy:53 with the nRF7002 Expansion Board (EB) for Wi-Fi development.
 Connect the nRF7002 EB to the **P9** connector on Thingy:53.
 
-To build for the nRF7002 EB with Thingy:53, use the ``thingy53_nrf5340_cpuapp`` build target with the CMake ``SHIELD`` variable set to ``nrf7002eb``.
+To build for the nRF7002 EB with Thingy:53, use the ``thingy53/nrf5340/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf7002eb``.
 For example, you can use the following command when building on the command line:
 
 .. code-block::
 
-   west build -b thingy53_nrf5340_cpuapp -- -DSHIELD=nrf7002eb
+   west build -b thingy53/nrf5340/cpuapp -- -DSHIELD=nrf7002eb
 
 .. building_wi_fi_applications_on_thingy_53_end
 
@@ -100,7 +100,7 @@ Complete the following steps to build and program using the |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`nrf/samples/bluetooth/peripheral_lbs`
 
-.. |vsc_sample_board_target_line| replace:: select ``thingy53_nrf5340_cpuapp`` as the target board
+.. |vsc_sample_board_target_line| replace:: select ``thingy53/nrf5340/cpuapp`` as the board target
 
 .. include:: ../../../includes/vsc_build_and_run.txt
 
@@ -135,10 +135,10 @@ To build and program the source code from the command line, complete the followi
    .. parsed-literal::
       :class: highlight
 
-      west build -b *build_target* -d *destination_directory_name*
+      west build -b *board_target* -d *destination_directory_name*
 
-   The build target should be ``thingy53_nrf5340_cpuapp`` or ``thingy53_nrf5340_cpuapp_ns`` when building samples for the application core.
-   The proper child image for ``thingy53_nrf5340_cpunet`` will be built automatically.
+   The board target should be ``thingy53/nrf5340/cpuapp`` or ``thingy53/nrf5340/cpuapp/ns`` when building samples for the application core.
+   The proper child image for ``thingy53/nrf5340/cpunet`` will be built automatically.
    See :ref:`thingy53_build_pgm_targets` for details.
 
 #. Program the sample or application:

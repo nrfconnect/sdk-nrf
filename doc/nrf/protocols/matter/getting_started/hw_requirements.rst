@@ -179,7 +179,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF54L15 PDK
 
-      The following table lists memory requirements for samples running on the :ref:`nRF54L15 PDK <programming_board_names>` (:ref:`nrf54l15pdk_nrf54l15 <zephyr:nrf54l15pdk_nrf54l15>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF54L15 PDK <programming_board_names>` (:ref:`nrf54l15pdk/nrf54l15/cpuapp <zephyr:nrf54l15pdk_nrf54l15>`).
 
       +-------------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                            |   MCUboot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -564,7 +564,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
   .. tab:: nRF54L15 PDK
 
-      The following memory map is valid for Matter applications running on the :ref:`nRF54L15 PDK <programming_board_names>` (:ref:`nrf54l15pdk_nrf54l15 <zephyr:nrf54l15pdk_nrf54l15>`).
+      The following memory map is valid for Matter applications running on the :ref:`nRF54L15 PDK <programming_board_names>` (:ref:`nrf54l15pdk/nrf54l15/cpuapp <zephyr:nrf54l15pdk_nrf54l15>`).
 
       Application core flash (size: 0x17D000 = 1524kB)
 
@@ -589,13 +589,13 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
 ..
 
-You can generate :ref:`Partition Manager's ASCII representation <pm_partition_reports>` of these tables by running the following command for your respective *<build_target>*:
+You can generate :ref:`Partition Manager's ASCII representation <pm_partition_reports>` of these tables by running the following command for your respective *<board_target>*:
 
 .. code-block:: console
 
-   west build -b <build_target> -t partition_manager_report
+   west build -b <board_target> -t partition_manager_report
 
-For example, for the ``nrf7002dk/nrf5340/cpuapp`` build target, the command is as follows:
+For example, for the ``nrf7002dk/nrf5340/cpuapp`` board target, the command is as follows:
 
 .. code-block:: console
 
@@ -603,4 +603,4 @@ For example, for the ``nrf7002dk/nrf5340/cpuapp`` build target, the command is a
 
 .. note::
 
-  Partition Manager report generation is not available on the :ref:`nRF54L15 PDK <programming_board_names>` (:ref:`nrf54l15pdk_nrf54l15 <zephyr:nrf54l15pdk_nrf54l15>`).
+  Partition Manager report generation is not available on the :ref:`nRF54L15 PDK <programming_board_names>` (:ref:`nrf54l15pdk/nrf54l15/cpuapp <zephyr:nrf54l15pdk_nrf54l15>`).

@@ -52,7 +52,7 @@ Building and running
 .. note::
    The sample is supported on the nRF7002 DK with QSPI as the interface between the nRF5340 host and the nRF7002 device.
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
+To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following is an example of the CLI command:
 
 .. code-block:: console

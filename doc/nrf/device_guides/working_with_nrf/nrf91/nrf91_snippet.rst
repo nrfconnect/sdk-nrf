@@ -23,7 +23,7 @@ nRF91 modem traces with flash backend using snippets
 Snippet enables modem tracing, the flash backend, and external flash and configures them to store modem traces to a dedicated partition on the external flash for supported boards.
 To change the partition size, the project needs to configure the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE` Kconfig option.
 
-The following build targets have support for this snippet:
+The following board targets have support for this snippet:
 
 * ``nrf9151dk/nrf9151/ns``
 * ``nrf9161dk/nrf9161/ns``
@@ -35,7 +35,7 @@ To enable modem traces with the flash backend, use the following command:
 .. parsed-literal::
    :class: highlight
 
-   west build --board *build target* -S nrf91-modem-trace-ext-flash
+   west build --board *board target* -S nrf91-modem-trace-ext-flash
 
 .. _nrf91_modem_trace_uart_snippet:
 
@@ -81,4 +81,4 @@ To activate both modem traces and TF-M logs, use the following command:
 .. parsed-literal::
    :class: highlight
 
-   west build --board *build target* -S nrf91-modem-trace-uart -S tfm-enable-share-uart
+   west build --board *board target* -S nrf91-modem-trace-uart -S tfm-enable-share-uart

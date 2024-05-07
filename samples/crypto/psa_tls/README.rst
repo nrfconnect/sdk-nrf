@@ -69,7 +69,7 @@ During the sample initialization, the certificates and keys are fetched from TF-
 
 .. note::
    Currently, applications with CMSE enabled only support ECDSA certificates.
-   This is automatically enforced in the configuration files for build targets with CMSE enabled (``*_ns``).
+   This is automatically enforced in the configuration files for board targets with CMSE enabled (``*/ns`` :ref:`variant <app_boards_names>`).
 
 Supported cipher suites
 =======================

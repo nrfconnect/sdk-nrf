@@ -32,7 +32,7 @@ Replace the full EUI-64
      .. parsed-literal::
       :class: highlight
 
-       west build -b nrf52840dk_nrf52840 -p always
+       west build -b nrf52840dk/nrf52840 -p always
        west flash --snr *serial_number* --erase
 
   #. Program the registers UICR->CUSTOMER[0] and UICR->CUSTOMER[1] with your EUI-64 value (replace *serial_number* with the serial number of your debugger):

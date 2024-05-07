@@ -44,7 +44,7 @@ Network core
 The network core is an Arm Cortex-M33 processor with a reduced feature set, designed for ultra-low-power operation.
 Use this core for radio communication and for real-time processing tasks involving low-level radio protocol layers.
 
-The build target for the network core in Zephyr is ``nrf5340dk/nrf5340/cpunet``.
+The board target for the network core in Zephyr is ``nrf5340dk/nrf5340/cpunet``.
 
 .. _ug_nrf5340_intro_app_core:
 
@@ -57,10 +57,10 @@ Use this core for tasks that require high performance and for application-level 
 The M33 TrustZone, one of Cortex-M Security Extensions (CMSE), divides the application MCU into Secure Processing Environment (SPE) and Non-Secure Processing Environment (NSPE).
 When the MCU boots, it always starts executing from the secure area.
 
-In Zephyr, the firmware of the application core is built using one of the following build targets:
+In Zephyr, the firmware of the application core is built using one of the following board targets:
 
-* ``nrf5340dk/nrf5340/cpuapp`` for build targets with CMSE disabled.
-* ``nrf5340dk/nrf5340/cpuapp/ns`` for build targets that have CMSE enabled and have the SPE firmware alongside the NSPE firmware.
+* ``nrf5340dk/nrf5340/cpuapp`` for board targets with CMSE disabled.
+* ``nrf5340dk/nrf5340/cpuapp/ns`` for board targets that have CMSE enabled and have the SPE firmware alongside the NSPE firmware.
 
 For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
@@ -391,9 +391,9 @@ You can build and program separate images or combined images using the |nRFVSC|.
 Separate images
 ---------------
 
-To build and program the application core, follow the instructions in `How to build an application`_ and use ``nrf5340dk/nrf5340/cpuapp`` or ``nrf5340dk/nrf5340/cpuapp/ns`` as the build target.
+To build and program the application core, follow the instructions in `How to build an application`_ and use ``nrf5340dk/nrf5340/cpuapp`` or ``nrf5340dk/nrf5340/cpuapp/ns`` as the board target.
 
-To build and program the network core, follow the instructions in `How to build an application`_ and use ``nrf5340dk/nrf5340/cpunet`` as the build target.
+To build and program the network core, follow the instructions in `How to build an application`_ and use ``nrf5340dk/nrf5340/cpunet`` as the board target.
 
 .. _ug_nrf5340_VSC_multi_image:
 

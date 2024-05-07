@@ -29,7 +29,7 @@ I2C interface:
 Requirements
 ************
 
-This shield is pin compatible with nrf54l15pdk (tested with PCA10156 rev.0.2.1).
+This shield is pin compatible with the nRF54L15 PDK (tested with PCA10156 rev.0.2.1).
 
 Usage
 *****

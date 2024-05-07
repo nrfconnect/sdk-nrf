@@ -19,9 +19,9 @@ To build and program the source code from the command line, complete the followi
    .. parsed-literal::
       :class: highlight
 
-      west build -b *build_target*
+      west build -b *board_target*
 
-   The parameter *build_target* must be |cmd_build_target|.
+   The parameter *board_target* must be |cmd_board_target|.
 
    .. note::
 
