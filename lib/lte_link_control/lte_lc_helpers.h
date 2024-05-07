@@ -185,12 +185,14 @@ int parse_rrc_mode(const char *at_response,
  * @note It is assumed that the network only reports valid eDRX values when
  *	 in each mode (LTE-M and NB1). There is no sanity check of these values.
  *
- * @param at_response Pointer to buffer with AT response.
- * @param cfg Pointer to where the eDRX configuration is stored.
+ * @param[in] at_response Pointer to buffer with AT response.
+ * @param[in] cfg Pointer to where the eDRX configuration is stored.
+ * @param[out] edrx_str eDRX value as a string. Must be 5 characters long buffer.
+ * @param[out] ptw_str PTW as a string. Must be 5 characters long buffer.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
-int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg);
+int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_str, char *ptw_str);
 
 /* @brief Parses PSM configuration from periodic TAU timer and active time strings.
  *

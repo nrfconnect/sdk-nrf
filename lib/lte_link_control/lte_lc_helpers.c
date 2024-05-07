@@ -295,7 +295,7 @@ int string_to_int(const char *str_buf, int base, int *output)
 }
 
 /* Parses eDRX parameters from a +CEDRXS notification or a +CEDRXRDP response. */
-int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg)
+int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_str, char *ptw_str)
 {
 	int err, tmp_int;
 	uint8_t idx;
@@ -373,6 +373,8 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg)
 	}
 
 	tmp_buf[len] = '\0';
+	__ASSERT_NO_MSG(edrx_str != NULL);
+	strcpy(edrx_str, tmp_buf);
 
 	/* The eDRX value is a multiple of 10.24 seconds, except for the
 	 * special case of idx == 0 for LTE-M, where the value is 5.12 seconds.
@@ -404,6 +406,8 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg)
 	}
 
 	tmp_buf[len] = '\0';
+	__ASSERT_NO_MSG(ptw_str != NULL);
+	strcpy(ptw_str, tmp_buf);
 
 	/* Value can be a maximum of 15, as there are 16 entries in the table
 	 * for paging time window (both for LTE-M and NB1).

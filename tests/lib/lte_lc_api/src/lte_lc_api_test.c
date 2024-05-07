@@ -60,8 +60,8 @@ static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
 
 	case LTE_LC_EVT_EDRX_UPDATE:
 		TEST_ASSERT_EQUAL(test_event_data[index].edrx_cfg.mode, evt->edrx_cfg.mode);
-		TEST_ASSERT_EQUAL(test_event_data[index].edrx_cfg.edrx, evt->edrx_cfg.edrx);
-		TEST_ASSERT_EQUAL(test_event_data[index].edrx_cfg.ptw, evt->edrx_cfg.ptw);
+		TEST_ASSERT_EQUAL_FLOAT(test_event_data[index].edrx_cfg.edrx, evt->edrx_cfg.edrx);
+		TEST_ASSERT_EQUAL_FLOAT(test_event_data[index].edrx_cfg.ptw, evt->edrx_cfg.ptw);
 		break;
 
 	case LTE_LC_EVT_RRC_UPDATE:
@@ -835,17 +835,6 @@ void test_lte_lc_edrx_req_enable_fail2(void)
 	int ret;
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,4,\"0000\"", EXIT_SUCCESS);
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XPTW=4,\"0000\"", -NRF_ENOMEM);
-	ret = lte_lc_edrx_req(true);
-	TEST_ASSERT_EQUAL(-EFAULT, ret);
-}
-
-void test_lte_lc_edrx_req_enable_fail3(void)
-{
-	int ret;
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,4,\"0000\"", EXIT_SUCCESS);
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XPTW=4,\"0000\"", EXIT_SUCCESS);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,5,\"1001\"", -NRF_ENOMEM);
 	ret = lte_lc_edrx_req(true);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
@@ -854,12 +843,40 @@ void test_lte_lc_edrx_req_enable_fail3(void)
 void test_lte_lc_edrx_req_enable_success(void)
 {
 	int ret;
+	strcpy(at_notif, "+CEDRXP: 4,\"1000\",\"0010\",\"1110\"\r\n");
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,4,\"0000\"", EXIT_SUCCESS);
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XPTW=4,\"0000\"", EXIT_SUCCESS);
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,5,\"1001\"", EXIT_SUCCESS);
+	lte_lc_callback_count_expected = 2;
+
+	test_event_data[0].type = LTE_LC_EVT_EDRX_UPDATE;
+	test_event_data[0].edrx_cfg.mode = LTE_LC_LTE_MODE_LTEM;
+	test_event_data[0].edrx_cfg.edrx = 20.48;
+	test_event_data[0].edrx_cfg.ptw = 19.2;
+
+	test_event_data[1].type = LTE_LC_EVT_EDRX_UPDATE;
+	test_event_data[1].edrx_cfg.mode = LTE_LC_LTE_MODE_LTEM;
+	test_event_data[1].edrx_cfg.edrx = 20.48;
+	test_event_data[1].edrx_cfg.ptw = 5.12;
+
+	ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_LTEM, "0010");
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NBIOT, "0100");
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_LTEM, "0011");
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,4,\"0010\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,5,\"0100\"", EXIT_SUCCESS);
 	ret = lte_lc_edrx_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XPTW=4,\"0011\"", EXIT_SUCCESS);
+	at_monitor_dispatch(at_notif);
+	k_sleep(K_MSEC(1));
+
+	strcpy(at_notif, "+CEDRXP: 4,\"1000\",\"0010\",\"0011\"\r\n");
+	at_monitor_dispatch(at_notif);
+	k_sleep(K_MSEC(1));
 }
 
 void test_lte_lc_func_mode_get_null(void)
