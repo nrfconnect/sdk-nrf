@@ -73,7 +73,7 @@ After the first build of the ``nrf54h_suit_sample``, three additional files are 
 * Application Domain manifest - :file:`app_envelope.yaml.jinja2`
 * Radio Domain manifest - :file:`rad_envelope.yaml.jinja2`
 
-The destination directory for these :file:`jinja2` file templates can be changed by setting the :kconfig:option:`CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION` Kconfig option.
+The destination directory for these :file:`jinja2` file templates can be changed by setting the :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION` Kconfig option.
 
 .. note::
    The Radio Domain manifest template is available only for the Bluetooth® Low Energy version of the ``nrf54h_suit_sample``, not the UART version.
@@ -93,7 +93,7 @@ Let us assume that you would like to store the editable manifest templates in th
 
       .. code-block:: console
 
-         west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="C:/my_templates"
+         west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="C:/my_templates"
 
    .. group-tab:: Linux
 
@@ -101,11 +101,11 @@ Let us assume that you would like to store the editable manifest templates in th
 
       .. code-block:: console
 
-         west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="/home/my_user/my_templates"
+         west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="/home/my_user/my_templates"
 
 The source of the manifest templates can be configured by setting the following Kconfig options:
 
-* :kconfig:option:`CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE`
+* :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE`
 
 * :kconfig:option:`CONFIG_SUIT_ENVELOPE_APP_TEMPLATE`
 
@@ -159,7 +159,7 @@ To build the described example with the provided manifest templates taken from y
 
         .. code-block:: console
 
-            west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="c:/my_templates" -DCONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE="c:/my_default_templates/root.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_APP_TEMPLATE="c:/my_default_templates/app.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE="c:/my_default_templates/radio.yaml.jinja2"
+            west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="c:/my_templates" -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE="c:/my_default_templates/root.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_APP_TEMPLATE="c:/my_default_templates/app.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE="c:/my_default_templates/radio.yaml.jinja2"
 
     .. group-tab:: Linux
 
@@ -167,9 +167,9 @@ To build the described example with the provided manifest templates taken from y
 
         .. code-block:: console
 
-            west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DCONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="/home/my_user/my_templates" -DCONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE="/home/my_user/my_default_templates/root.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_APP_TEMPLATE="/home/my_user/my_default_templates/app.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE="/home/my_user/my_default_templates/radio.yaml.jinja2"
+            west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="/home/my_user/my_templates" -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE="/home/my_user/my_default_templates/root.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_APP_TEMPLATE="/home/my_user/my_default_templates/app.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE="/home/my_user/my_default_templates/radio.yaml.jinja2"
 
-Editable manifest copied into the sample directory (or in the directory configured using the :kconfig:option:`CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION` Kconfig option) can be modified to edit the contents of the envelopes and modify the DFU process.
+Editable manifest copied into the sample directory (or in the directory configured using the :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION` Kconfig option) can be modified to edit the contents of the envelopes and modify the DFU process.
 These files will not be overwritten by the build system during the next builds or in consecutive SDK releases.
 
 For more information about the Kconfig options used in this example, see the `SUIT Kconfig options <https://res.developer.nordicsemi.com/ncs/doc/latest/kconfig/index.html#!suit_envelope>`__.
