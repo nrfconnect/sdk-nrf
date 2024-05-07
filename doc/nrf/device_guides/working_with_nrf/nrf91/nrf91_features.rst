@@ -43,7 +43,7 @@ Trusted Firmware-M (TF-M)
 
 Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
 It has replaced Secure Partition Manager as the solution used by |NCS| applications and samples.
-This means that when you build your application for ``_ns`` build targets, TF-M is automatically included in the build.
+This means that when you build your application for board targets with the ``*/ns`` :ref:`variant <app_boards_names>`, TF-M is automatically included in the build.
 TF-M is a framework for functions and use cases beyond the scope of Secure Partition Manager.
 
 For more information about the TF-M, see :ref:`ug_tfm`.
@@ -53,7 +53,7 @@ Application
 ===========
 
 The user application runs in NSPE.
-Therefore, it must be built for the ``nrf9161dk/nrf9161/ns``, ``nrf9160dk/nrf9160/ns``, or ``thingy91/nrf9160/ns`` build target.
+Therefore, it must be built for the ``nrf9161dk/nrf9161/ns``, ``nrf9160dk/nrf9160/ns``, or ``thingy91/nrf9160/ns`` board target.
 
 The application image might require other images to be present.
 Some samples include the :ref:`bootloader` sample (:kconfig:option:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index-ncs` (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`).

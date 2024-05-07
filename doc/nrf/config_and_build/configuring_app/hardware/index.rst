@@ -11,8 +11,8 @@ Follow the steps in `How to create devicetree files`_ and use one of the followi
 * `Devicetree language support`_
 
 Like Kconfig fragment files, devicetree files can also be provided as overlays.
-The devicetree overlay files are named the same as the build target and use the file extension :file:`.overlay`.
-When they are placed in the :file:`boards` folder and the devicetree overlay file name matches the build target, the build system automatically selects and applies the overlay.
+The devicetree overlay files use the :ref:`normalized board target name <app_boards_names>` and the file extension :file:`.overlay` (for example, ``nrf54h20dk/nrf54h20/cpuapp`` becomes :file:`nrf54h20dk_nrf54h20_cpuapp.overlay`).
+When they are placed in the :file:`boards` folder and the devicetree overlay file name matches the board target (after normalization), the build system automatically selects and applies the overlay.
 To select them manually, see :ref:`cmake_options`.
 
 The following guides provide information about configuring specific aspects of hardware support related to devicetree.

@@ -111,7 +111,7 @@ The sample can be built for the following configurations:
 * Continuous raw 802.11 packet transmission in the non-connected Station mode.
 * Fixed number of raw 802.11 packet transmission in the non-connected Station mode.
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
+To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following are examples of the CLI commands:
 
 * Continuous raw 802.11 packet transmission in the connected Station mode:
@@ -138,7 +138,7 @@ The following are examples of the CLI commands:
 
      west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE=y -DCONFIG_RAW_TX_PKT_SAMPLE_TX_MODE_FIXED=y -DCONFIG_RAW_TX_PKT_SAMPLE_FIXED_NUM_PACKETS=<number of packets to be sent>
 
-Change the build target as given below for the nRF7002 EK.
+Change the board target as given below for the nRF7002 EK.
 
 .. code-block:: console
 

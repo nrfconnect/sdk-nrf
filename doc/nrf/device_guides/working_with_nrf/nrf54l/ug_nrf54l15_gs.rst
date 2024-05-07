@@ -26,10 +26,10 @@ Hardware
 
    .. note::
 
-      For commands, use the correct build target depending on your PDK version:
+      For commands, use the correct board target depending on your PDK version:
 
-      * For the PDK revision v0.2.1, AB0-ES7 (Engineering A), use the ``nrf54l15pdk/nrf54l15/cpuapp`` build target.
-      * For the PDK revisions v0.3.0 and v0.7.0 (Engineering A), use the ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` build target.
+      * For the PDK revision v0.2.1, AB0-ES7 (Engineering A), use the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
+      * For the PDK revisions v0.3.0 and v0.7.0 (Engineering A), use the ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` board target.
 
 * USB-C cable
 
@@ -92,7 +92,7 @@ To make sure the device sees the environment, all the commands related to the |N
 Programming the Hello World! sample
 ***********************************
 
-The :ref:`zephyr:hello_world_user` Zephyr sample uses the ``nrf54l15pdk/nrf54l15/cpuapp`` build target.
+The :ref:`zephyr:hello_world_user` Zephyr sample uses the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
 
 To build and program the sample to the nRF54L15 PDK, complete the following steps:
 

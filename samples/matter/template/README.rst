@@ -32,8 +32,8 @@ IPv6 network support
 
 The development kits for this sample offer the following IPv6 network support for Matter:
 
-* Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, ``nrf21540dk_nrf52840``, and ``nrf54l15pdk_nrf54l15``.
-* Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached or for ``nrf7002dk/nrf5340/cpuapp``.
+* Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, and ``nrf54l15pdk/nrf54l15/cpuapp``.
+* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached or for ``nrf7002dk/nrf5340/cpuapp``.
 
 Overview
 ********
@@ -125,13 +125,13 @@ The following is an example command to build the sample with support for OTA DFU
 
 .. code-block:: console
 
-    west build -b nrf54l15pdk_nrf54l15_cpuapp -- -DFILE_SUFFIX=release
+    west build -b nrf54l15pdk/nrf54l15/cpuapp -- -DFILE_SUFFIX=release
 
 If you want to build the sample with support for both OTA DFU and SMP DFU, use the following command:
 
 .. code-block:: console
 
-    west build -b nrf54l15pdk_nrf54l15_cpuapp -- -DFILE_SUFFIX=release -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
+    west build -b nrf54l15pdk/nrf54l15/cpuapp -- -DFILE_SUFFIX=release -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
 
 You can disable DFU support for the ``release`` build configuration to double available application memory space.
 Do this by setting the :kconfig:option:`CONFIG_CHIP_DFU_OVER_BT_SMP` and :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` Kconfig options to ``n``, and removing the :file:`pm_static_nrf54l15pdk_nrf54l15_cpuapp_release.yml` file.
@@ -140,7 +140,7 @@ For example:
 
 .. code-block:: console
 
-    west build -b nrf54l15pdk_nrf54l15_cpuapp -- -DFILE_SUFFIX=release -DCONFIG_CHIP_DFU_OVER_BT_SMP=n -DCONFIG_CHIP_OTA_REQUESTOR=n
+    west build -b nrf54l15pdk/nrf54l15/cpuapp -- -DFILE_SUFFIX=release -DCONFIG_CHIP_DFU_OVER_BT_SMP=n -DCONFIG_CHIP_OTA_REQUESTOR=n
 
 
 .. matter_template_nrf54l15_build_with_dfu_end

@@ -66,28 +66,28 @@ Currently, the following configurations are supported:
 * nRF7002 DK + QSPI
 * nRF7002 EK + SPI
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
+To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
    west build -b nrf7002dk/nrf5340/cpuapp
 
-To build for the nRF7002 EK with the nRF5340 DK, use the ``nrf5340dk/nrf5340/cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
+To build for the nRF7002 EK with the nRF5340 DK, use the ``nrf5340dk/nrf5340/cpuapp`` board target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
    west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek
 
-To build for the nRF7002 DK with the netusb support, use the ``nrf7002dk/nrf5340/cpuapp`` build target with the configuration overlay :file:`overlay-netusb.conf`.
+To build for the nRF7002 DK with the netusb support, use the ``nrf7002dk/nrf5340/cpuapp`` board target with the configuration overlay :file:`overlay-netusb.conf`.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
    west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-netusb.conf
 
-To build for the nRF7002 DK with the Serial Line Internet Protocol (SLIP) support, use the ``nrf7002dk/nrf5340/cpuapp`` build target with the configuration overlay :file:`overlay-slip.conf` and DTC overlay :file:`nrf7002_uart_pipe.overlay`.
+To build for the nRF7002 DK with the Serial Line Internet Protocol (SLIP) support, use the ``nrf7002dk/nrf5340/cpuapp`` board target with the configuration overlay :file:`overlay-slip.conf` and DTC overlay :file:`nrf7002_uart_pipe.overlay`.
 The following is an example of the CLI command:
 
 .. code-block:: console

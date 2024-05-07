@@ -174,12 +174,12 @@ After installing and starting the application, install the Programmer app.
 Building and programming
 ************************
 
-To build for the nRF7002 EB with Thingy:53, use the ``thingy53_nrf5340_cpuapp`` build target with the CMake ``SHIELD`` variable set to ``nrf7002eb``.
+To build for the nRF7002 EB with Thingy:53, use the ``thingy53/nrf5340/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf7002eb``.
 For example, you can use the following command when building on the command line:
 
 .. code-block:: console
 
-   west build -b thingy53_nrf5340_cpuapp -- -DSHIELD=nrf7002eb
+   west build -b thingy53/nrf5340/cpuapp -- -DSHIELD=nrf7002eb
 
 To build for a custom target, set ``-DSHIELD=nrf7002eb`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
 

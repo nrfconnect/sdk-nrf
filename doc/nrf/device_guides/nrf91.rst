@@ -10,7 +10,7 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
 
    * - DK or Prototype platform
      - PCA number
-     - Build target/s
+     - Board targets
      - Documentation
      - Product pages
    * - :ref:`zephyr:nrf9161dk_nrf9161`

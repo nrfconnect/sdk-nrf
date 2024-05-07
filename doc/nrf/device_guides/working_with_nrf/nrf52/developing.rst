@@ -77,7 +77,7 @@ Here is an example of how you can build for the :ref:`peripheral_lbs` sample:
 .. parsed-literal::
    :class: highlight
 
-    west build -b *build_target* -- -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
+    west build -b *board_target* -- -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
 
 When you connect to the device after the build has completed and the firmware has been programmed to it, the SMP Service is enabled with the ``UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84``.
 If you want to add SMP Service to advertising data, refer to the :zephyr:code-sample:`smp-svr`.
@@ -106,7 +106,7 @@ See how to build the :ref:`peripheral_lbs` sample with MCUboot in the direct-xip
 .. parsed-literal::
    :class: highlight
 
-    west build -b *build_target* -- -Dmcuboot_CONFIG_BOOT_DIRECT_XIP=y -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y -DCONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP=y
+    west build -b *board_target* -- -Dmcuboot_CONFIG_BOOT_DIRECT_XIP=y -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y -DCONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP=y
 
 Optionally, if you want to enable the revert mechanism support, complete the following:
 
@@ -118,7 +118,7 @@ See how to build the :ref:`peripheral_lbs` sample with MCUboot in direct-xip mod
 .. parsed-literal::
    :class: highlight
 
-    west build -b *build_target* -- -Dmcuboot_CONFIG_BOOT_DIRECT_XIP=y -Dmcuboot_CONFIG_BOOT_DIRECT_XIP_REVERT=y -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y -DCONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT=y
+    west build -b *board_target* -- -Dmcuboot_CONFIG_BOOT_DIRECT_XIP=y -Dmcuboot_CONFIG_BOOT_DIRECT_XIP_REVERT=y -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y -DCONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT=y
 
 .. note::
    When building the application for the first time with MCUboot in direct-xip mode and the revert mechanism support, use an additional option ``-DCONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS=\"--confirm\"``.
@@ -191,7 +191,7 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
 .. parsed-literal::
    :class: highlight
 
-    west build -b *build_target* -- -DEXTRA_CONF_FILE=overlay-bt.conf
+    west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-bt.conf
     west flash
 
 Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.
@@ -315,7 +315,7 @@ Complete the following steps to build and program using the |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`nrf/applications/nrf_desktop`
 
-.. |vsc_sample_board_target_line| replace:: see the :ref:`list of supported boards <nrf52_supported_boards>` for the build target corresponding to the nRF52 Series DK you are using
+.. |vsc_sample_board_target_line| replace:: see the :ref:`list of supported boards <nrf52_supported_boards>` for the board target corresponding to the nRF52 Series DK you are using
 
 .. include:: ../../../includes/vsc_build_and_run.txt
 
@@ -358,9 +358,9 @@ To build and program the source code from the command line, complete the followi
    .. parsed-literal::
       :class: highlight
 
-      west build -b *build_target* -d *destination_directory_name*
+      west build -b *board_target* -d *destination_directory_name*
 
-   For the *build_target* parameter, see the :ref:`list of supported boards <nrf52_supported_boards>` for the build target corresponding to the nRF52 Series DK you are using.
+   For the *board_target* parameter, see the :ref:`list of supported boards <nrf52_supported_boards>` for the board target corresponding to the nRF52 Series DK you are using.
 
    .. note::
 

@@ -29,7 +29,7 @@ The TF-M implementation in |NCS| is currently demonstrated in the following samp
 - All :ref:`cryptography samples <crypto_samples>` in this SDK
 - A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
 - The :ref:`https_client` sample for nRF91 Series devices in this SDK
-- The :ref:`openthread_samples` that support the ``nrf5340dk/nrf5340/cpuapp/ns`` build target in this SDK
+- The :ref:`openthread_samples` that support the ``nrf5340dk/nrf5340/cpuapp/ns`` board target in this SDK
 
 Building
 ********
@@ -45,7 +45,7 @@ To add TF-M to your build, enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` co
 By default, TF-M is configured to build the :ref:`minimal version <tfm_minimal_build>`.
 To use the full TF-M, you must disable the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` option.
 
-You must build TF-M using a non-secure build target.
+You must build TF-M using a non-secure board target.
 The following platforms are currently supported:
 
 * nRF5340

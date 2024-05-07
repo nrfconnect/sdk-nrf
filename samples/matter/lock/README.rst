@@ -234,12 +234,12 @@ The following configuration arguments are available during the build process for
 
 See :ref:`cmake_options` for instructions on how to add these options to your build.
 
-When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* replaced with the desired DFU build flag:
+When building on the command line, run the following command with *board_target* replaced with the board target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* replaced with the desired DFU build flag:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- *dfu_build_flag*
+   west build -b *board_target* -- *dfu_build_flag*
 
 For example:
 

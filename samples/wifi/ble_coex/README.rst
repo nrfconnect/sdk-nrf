@@ -130,7 +130,7 @@ The sample can be built for the following configurations:
 * Bluetooth LE throughput only
 * Concurrent Wi-Fi and Bluetooth LE throughput (with coexistence enabled and disabled mode)
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
+To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following are examples of the CLI commands:
 
 * Build with coexistence disabled:
@@ -149,15 +149,15 @@ Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or con
 
 Use this command for concurrent Wi-Fi and Bluetooth LE throughput with coexistence enabled test.
 
-Change the build target as given below for the nRF7001 DK, nRF7002 EK and nRF7001 EK.
+Change the board target as given below for the nRF7001 DK, nRF7002 EK and nRF7001 EK.
 
-* Build target for nRF7001 DK:
+* Board target for nRF7001 DK:
 
   .. code-block:: console
 
      nrf7002dk/nrf5340/cpuapp/nrf7001
 
-* Build target for nRF7002 EK and nRF7001 EK:
+* Board target for nRF7002 EK and nRF7001 EK:
 
   .. code-block:: console
 

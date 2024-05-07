@@ -81,7 +81,7 @@ However, the Co-processor and CLI samples use different commands for the module,
 Rebooting to bootloader
 =======================
 
-The Co-processor sample enables rebooting to bootloader for the ``nrf52840dongle_nrf52840`` build target, similar to what is described in the :ref:`ot_cli_sample_bootloader` section of the :ref:`ot_cli_sample` sample documentation.
+The Co-processor sample enables rebooting to bootloader for the ``nrf52840dongle/nrf52840`` board target, similar to what is described in the :ref:`ot_cli_sample_bootloader` section of the :ref:`ot_cli_sample` sample documentation.
 However, the Co-processor and CLI samples use different commands, as described in the :ref:`ot_coprocessor_testing` section.
 Additionally, the :ref:`ug_thread_tools_ot_apps` should be built with ``-DOT_PLATFORM_BOOTLOADER_MODE=ON`` option.
 

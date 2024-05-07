@@ -54,11 +54,11 @@ Building and running
     For programming, use the :ref:`programming command without --erase <programming_params_no_erase>`.
     Programming with ``--erase`` or ``--recover`` (or similar parameters) will erase the PSA platform security parameters.
 
-You can indicate the desired test suite by using a configuration flag when building (replace ``<build_target>`` with your board name, for example ``nrf5340dk/nrf5340/cpuapp/ns``):
+You can indicate the desired test suite by using a configuration flag when building (replace ``<board_target>`` with your board name, for example ``nrf5340dk/nrf5340/cpuapp/ns``):
 
 .. code-block:: console
 
-    west build -b <build_target> nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_STORAGE=y
+    west build -b <board_target> nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_STORAGE=y
 
 Note that not all test suites are valid on all boards.
 

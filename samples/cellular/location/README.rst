@@ -77,9 +77,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
 
-|build_target|
+|board_target|
 
 See :ref:`cmake_options` for more instructions on how to add these options.
 
@@ -103,9 +103,9 @@ To build the Location sample with P-GPS support, use the following commands:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DEXTRA_CONF_FILE=overlay-pgps.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-pgps.conf
 
-|build_target|
+|board_target|
 
 See :ref:`cmake_options` for more instructions on how to add this option.
 

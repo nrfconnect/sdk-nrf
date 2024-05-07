@@ -637,9 +637,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DEXTRA_CONF_FILE=overlay-leshan-bootstrap.conf
+   west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-leshan-bootstrap.conf
 
-|build_target|
+|board_target|
 
 In bootstrap mode, application does not overwrite the PSK key from the modem so :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` is not used.
 Please refer to :ref:`lwm2m_client_provisioning` for instructions how to provision bootstrap keys.

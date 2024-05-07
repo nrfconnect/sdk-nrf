@@ -130,7 +130,7 @@ Matter samples
   * :ref:`matter_thermostat_sample` sample
   * :ref:`matter_window_covering_sample` sample
 
-  DFU support for the nRF54L15 PDK is available only for the ``release`` build target.
+  DFU support for the nRF54L15 PDK is available only for the ``release`` build type.
 
 NFC samples
 -----------

@@ -33,7 +33,7 @@ Requirements
 
 .. note::
    * Supported kits are listed in a table, which is composed of rows from the :file:`doc/nrf/includes/sample_board_rows.txt` file.
-     Select the required rows in the ``:rows:`` configuration, or use the ``.. table-from-sample-yaml::`` directive to include all build targets specified in the :file:`sample.yaml` file.
+     Select the required rows in the ``:rows:`` configuration, or use the ``.. table-from-sample-yaml::`` directive to include all board targets specified in the :file:`sample.yaml` file.
    * If only one kit is supported, replace the introduction text with "The sample supports the following development kit:".
    * If several kits are required to test the sample, state it after the table (for example, "You can use one or more of the development kits listed above and mix different development kits.").
    * Mention additional requirements after the table.
@@ -177,7 +177,7 @@ Building and running
 ********************
 
 .. note::
-   * Include the standard text for building - either ``.. include:: /includes/build_and_run.txt`` or ``.. include:: /includes/build_and_run_ns.txt`` for the build targets that use :ref:`Cortex-M Security Extensions <app_boards_spe_nspe>`.
+   * Include the standard text for building - either ``.. include:: /includes/build_and_run.txt`` or ``.. include:: /includes/build_and_run_ns.txt`` for the board targets that use :ref:`Cortex-M Security Extensions <app_boards_spe_nspe>`.
    * The main supported IDE for |NCS| is |VSC|, with the |nRFVSC| installed.
      Therefore, build instructions for the |nRFVSC| are required.
      Build instructions for the command line are optional.

@@ -392,7 +392,7 @@ The application supports the following build types:
 
    * - Build type
      - File name
-     - Supported build target
+     - Supported board target
      - Description
    * - Debug (default)
      - :file:`prj.conf`
@@ -1023,7 +1023,7 @@ To build an application for evaluating HID report rate, run the following comman
    .. parsed-literal::
       :class: highlight
 
-      west build -p -b *build_target* -- \
+      west build -p -b *board_target* -- \
       -DFILE_SUFFIX=release \
       -DCONFIG_DESKTOP_MOTION_SIMULATED_ENABLE=y \
 

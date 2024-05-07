@@ -1003,10 +1003,10 @@ To program the certificates and connect to nRF Cloud, complete the following ste
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -d build
+   west build -p -b *board_target* -d build
    west flash -d build
 
-|build_target|
+|board_target|
 
 #. Get certificates from nRF Cloud as explained in the documentation for the :ref:`nRF91x1 DK <downloading_cloud_certificate_nRF91x1>` or the :ref:`nRF9160 DK <downloading_cloud_certificate_nRF9160>`, depending on the DK you are using.
 #. In the MoSH terminal, power off the modem and start the AT command mode:
@@ -1072,9 +1072,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
 
-|build_target|
+|board_target|
 
 See :ref:`cmake_options` for more instructions on how to add these options.
 
@@ -1087,9 +1087,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DDTC_OVERLAY_FILE=ppp.overlay -DEXTRA_CONF_FILE=overlay-ppp.conf
+   west build -p -b *board_target* -- -DDTC_OVERLAY_FILE=ppp.overlay -DEXTRA_CONF_FILE=overlay-ppp.conf
 
-|build_target|
+|board_target|
 
 After programming the development kit, test it in the Linux environment by performing the following steps:
 
@@ -1154,9 +1154,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -d build -- -DEXTRA_CONF_FILE=overlay-app_fota.conf
+   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-app_fota.conf
 
-|build_target|
+|board_target|
 
 nRF91 Series DK with full modem FOTA support
 ============================================
@@ -1177,9 +1177,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -d build -- -DEXTRA_CONF_FILE=overlay-carrier.conf
+   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-carrier.conf
 
-|build_target|
+|board_target|
 
 P-GPS support
 =============
@@ -1190,9 +1190,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -d build -- -DEXTRA_CONF_FILE=overlay-pgps.conf
+   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-pgps.conf
 
-|build_target|
+|board_target|
 
 .. _cloud_build:
 
@@ -1205,9 +1205,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -d build -- -DEXTRA_CONF_FILE=overlay-cloud_mqtt.conf
+   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-cloud_mqtt.conf
 
-|build_target|
+|board_target|
 
 Cloud over CoAP
 ===============
@@ -1218,9 +1218,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -d build -- -DEXTRA_CONF_FILE=overlay-cloud_coap.conf
+   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-cloud_coap.conf
 
-|build_target|
+|board_target|
 
 Location service handled in application
 =======================================
@@ -1233,9 +1233,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -d build -- -DEXTRA_CONF_FILE=overlay-cloud_mqtt.conf -DCONFIG_LOCATION_SERVICE_EXTERNAL=y
+   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-cloud_mqtt.conf -DCONFIG_LOCATION_SERVICE_EXTERNAL=y
 
-|build_target|
+|board_target|
 
 To add P-GPS on top of that, use the ``-DEXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf"``, ``-DCONFIG_LOCATION_SERVICE_EXTERNAL=y`` and ``-DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y`` options.
 For example:
@@ -1243,9 +1243,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -d build -- -DEXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y -DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
+   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y -DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
 
-|build_target|
+|board_target|
 
 Remote control using nRF Cloud over MQTT
 ========================================
@@ -1262,9 +1262,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DEXTRA_CONF_FILE=overlay-non-offloading.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-non-offloading.conf
 
-|build_target|
+|board_target|
 
 BT shell support
 ================
@@ -1340,9 +1340,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DEXTRA_CONF_FILE=overlay-rtt.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-rtt.conf
 
-|build_target|
+|board_target|
 
 LwM2M support
 =============
@@ -1367,7 +1367,7 @@ To build the sample with LwM2M support, use the following command:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DEXTRA_CONF_FILE=overlay-lwm2m.conf -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-lwm2m.conf -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
 
 
 To also enable P-GPS, use the following command:
@@ -1375,9 +1375,9 @@ To also enable P-GPS, use the following command:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DEXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf" -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf" -DCONFIG_MOSH_LWM2M_PSK=\"000102030405060708090a0b0c0d0e0f\"
 
-|build_target|
+|board_target|
 
 Use the following command to establish connection to the LwM2M Server:
 
@@ -1408,9 +1408,9 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -S nrf91-modem-trace-ext-flash
+   west build -p -b *board_target* -S nrf91-modem-trace-ext-flash
 
-|build_target|
+|board_target|
 
 References
 **********

@@ -87,9 +87,9 @@ When building on the command line, run the following command:
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- *dfu_build_flag*
+   west build -b *board_target* -- *dfu_build_flag*
 
-Replace *build_target* with the build target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* with the desired DFU build flag.
+Replace *board_target* with the board target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* with the desired DFU build flag.
 For example:
 
 .. code-block:: console
