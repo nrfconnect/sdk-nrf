@@ -258,22 +258,6 @@ int download_client_set_host(struct download_client *client, const char *host,
 			    const struct download_client_cfg *config);
 
 /**
- * @brief Set a target hostname.
- *
- * @deprecated Use download_client_set_host() instead.
- *
- * @param[in] client	Client instance.
- * @param[in] host	Name of the host to connect to, null-terminated.
- *			Can include scheme and port number, defaults to
- *			HTTP or HTTPS if no scheme is provided.
- * @param[in] config	Configuration options.
- *
- * @retval int Zero on success, a negative error code otherwise.
- */
-__deprecated int download_client_connect(struct download_client *client, const char *host,
-			    const struct download_client_cfg *config);
-
-/**
  * @brief Download a file.
  *
  * The download is carried out in fragments of up to

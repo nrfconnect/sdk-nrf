@@ -48,7 +48,7 @@ Configuring HTTP and HTTPS (TLS 1.2)
 
 Set the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_BUF_SIZE` and :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` Kconfig options, so that the buffer is large enough to accommodate the entire HTTP header of the request and the response.
 
-Moreover, the application must provision the TLS credentials and pass the security tag to the library when using HTTPS and calling the :c:func:`download_client_connect` function.
+Moreover, the application must provision the TLS credentials and pass the security tag to the library when using HTTPS and calling the :c:func:`download_client_set_host` function.
 To provision a TLS certificate to the modem, use :c:func:`modem_key_mgmt_write` and other :ref:`modem_key_mgmt` APIs.
 
 Configuring CoAP and CoAPS (DTLS 1.2)
@@ -56,7 +56,7 @@ Configuring CoAP and CoAPS (DTLS 1.2)
 
 Make sure to configure the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_BUF_SIZE` and :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE` Kconfig options, so that the buffer is large enough to accommodate the entire CoAP header and the CoAP block.
 
-The application must provision the TLS credentials and pass the security tag to the library when using CoAPS and calling :c:func:`download_client_connect`.
+The application must provision the TLS credentials and pass the security tag to the library when using CoAPS and calling :c:func:`download_client_set_host`.
 
 When you have modem firmware v1.3.5 or newer, you can use the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_CID` Kconfig option to enable the DTLS Connection Identifier feature in this library.
 
