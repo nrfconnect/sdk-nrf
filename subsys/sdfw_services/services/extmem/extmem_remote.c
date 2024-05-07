@@ -25,7 +25,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(extmem_srvc, CONFIG_SSF_EXTMEM_SERVICE_LOG_LEVEL);
 
-#define FLASH_DEVICE DEVICE_DT_GET(DT_ALIAS(spi_flash0))
+#define FLASH_DEVICE DEVICE_DT_GET(DT_CHOSEN(extmem_device))
 
 #define SSF_CLIENT_SERVICE_DEFINE_GLOBAL(_name, _srvc_name, _req_encode, _rsp_decode)              \
 	const struct ssf_client_srvc _name = {                                                     \

@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		extmem-device = &mx25uw63;
+	};
+};
+
+&cpusec_cpuapp_ipc {
+	status = "okay";
+};
+
+&cpusec_bellboard {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&mx25uw63 {
+	status = "okay";
+};
