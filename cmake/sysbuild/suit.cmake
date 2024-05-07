@@ -103,10 +103,9 @@ endfunction()
 #   'output_file' - path to output signed envelope
 function(suit_sign_envelope input_file output_file)
   cmake_path(GET ZEPHYR_NRF_MODULE_DIR PARENT_PATH NRF_DIR_PARENT)
-  sysbuild_get(CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT KCONFIG)
-  suit_set_absolute_or_relative_path(${CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT} ${NRF_DIR_PARENT} SIGN_SCRIPT)
+  suit_set_absolute_or_relative_path(${SB_CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT} ${NRF_DIR_PARENT} SIGN_SCRIPT)
   if(NOT EXISTS ${SIGN_SCRIPT})
-    message(SEND_ERROR "DFU: ${CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT} does not exist. Corrupted configuration?")
+    message(SEND_ERROR "DFU: ${SB_CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT} does not exist. Corrupted configuration?")
     return()
   endif()
   set_property(
@@ -164,14 +163,23 @@ function(suit_create_package)
   set(CORE_ARGS)
   set(STORAGE_BOOT_ARGS)
 
-  sysbuild_get(CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION KCONFIG)
-  suit_set_absolute_or_relative_path(${CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION} ${PROJECT_BINARY_DIR} INPUT_TEMPLATES_DIRECTORY)
-  sysbuild_get(ENVELOPE_SHALL_BE_SIGNED IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_ENVELOPE_SIGN KCONFIG)
+  suit_set_absolute_or_relative_path(${SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION} ${PROJECT_BINARY_DIR} INPUT_TEMPLATES_DIRECTORY)
+  set(ENVELOPE_SHALL_BE_SIGNED ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
   if(NOT DEFINED ENVELOPE_SHALL_BE_SIGNED)
     set(ENVELOPE_SHALL_BE_SIGNED FALSE)
   endif()
 
+  list(APPEND CORE_ARGS
+    --core sysbuild,,,${CMAKE_BINARY_DIR}/zephyr/.config
+  )
+
   foreach(image ${IMAGES})
+    sysbuild_get(GENERATE_LOCAL_ENVELOPE IMAGE ${image} VAR CONFIG_SUIT_LOCAL_ENVELOPE_GENERATE KCONFIG)
+    if(NOT DEFINED GENERATE_LOCAL_ENVELOPE)
+      continue()
+    endif()
+    unset(GENERATE_LOCAL_ENVELOPE)
+
     sysbuild_get(INPUT_ENVELOPE_JINJA_FILE IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TEMPLATE KCONFIG)
     sysbuild_get(target IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
     sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
@@ -185,10 +193,9 @@ function(suit_create_package)
     set(BINARY_FILE "${BINARY_FILE}.bin")
 
     list(APPEND CORE_ARGS
-      --core ${target},${SUIT_ROOT_DIRECTORY}${target}.bin,${BINARY_DIR}/zephyr/edt.pickle
+      --core ${target},${SUIT_ROOT_DIRECTORY}${target}.bin,${BINARY_DIR}/zephyr/edt.pickle,${BINARY_DIR}/zephyr/.config
     )
 
-    sysbuild_get(CONFIG_SUIT_ENVELOPE_ROOT_ARTIFACT_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_ENVELOPE_ROOT_ARTIFACT_NAME KCONFIG)
     set(ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${target}.yaml)
     set(ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${target}.suit)
 
@@ -200,14 +207,11 @@ function(suit_create_package)
     )
   endforeach()
 
-  sysbuild_get(INPUT_ROOT_ENVELOPE_JINJA_FILE IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE KCONFIG)
+  set(INPUT_ROOT_ENVELOPE_JINJA_FILE ${SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE})
 
   # create root envelope if defined
   if(DEFINED INPUT_ROOT_ENVELOPE_JINJA_FILE AND NOT INPUT_ROOT_ENVELOPE_JINJA_FILE STREQUAL "")
-    sysbuild_get(ROOT_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_ENVELOPE_ROOT_ARTIFACT_NAME KCONFIG)
-    if(NOT DEFINED ROOT_NAME OR ROOT_NAME STREQUAL "")
-      set(ROOT_NAME "root")
-    endif()
+    set(ROOT_NAME ${SB_CONFIG_SUIT_ENVELOPE_ROOT_ARTIFACT_NAME})
     suit_copy_input_template(${INPUT_TEMPLATES_DIRECTORY} "${INPUT_ROOT_ENVELOPE_JINJA_FILE}" ROOT_ENVELOPE_JINJA_FILE)
     suit_check_template_digest(${INPUT_TEMPLATES_DIRECTORY} "${INPUT_ROOT_ENVELOPE_JINJA_FILE}")
     set(ROOT_ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${ROOT_NAME}.yaml)
@@ -242,6 +246,13 @@ function(suit_setup_merge)
   sysbuild_get(BINARY_DIR IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_BINARY_DIR CACHE)
   foreach(image ${IMAGES})
     set(ARTIFACTS_TO_MERGE)
+
+    sysbuild_get(GENERATE_LOCAL_ENVELOPE IMAGE ${image} VAR CONFIG_SUIT_LOCAL_ENVELOPE_GENERATE KCONFIG)
+    if(NOT DEFINED GENERATE_LOCAL_ENVELOPE)
+      continue()
+    endif()
+    unset(GENERATE_LOCAL_ENVELOPE)
+
     sysbuild_get(IMAGE_BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
     sysbuild_get(IMAGE_BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
     sysbuild_get(IMAGE_TARGET_NAME IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
@@ -275,8 +286,6 @@ function(suit_setup_merge)
   endforeach()
 endfunction()
 
-# Enable SUIT envelope generation only if DEFAULT_IMAGE has it enabled.
-sysbuild_get(CONFIG_SUIT_ENVELOPE IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_ENVELOPE KCONFIG)
-if(CONFIG_SUIT_ENVELOPE)
+if(SB_CONFIG_SUIT_ENVELOPE)
   suit_create_package()
 endif()
