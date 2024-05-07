@@ -217,7 +217,7 @@ To build the firmware with the SUIT DFU support, run the following command with 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf54h20dk/nrf54h20/cpuapp -- -DCONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=*number*
+   west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=*number*
 
 You can perform a DFU using the nRF Connect Device Manager mobile application or the :ref:`Mcumgr command-line tool <zephyr:mcumgr_cli>`.
 After building the sample you can find two SUIT envelopes created in the build directory and depending on the core type you can search for:
