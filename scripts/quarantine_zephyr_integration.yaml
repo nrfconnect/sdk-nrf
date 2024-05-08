@@ -164,3 +164,80 @@
 - scenarios:
     - libraries.cmsis_dsp.*
   comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - mgmt.mcumgr.os.info
+    - mgmt.mcumgr.os.info.build_date
+    - mgmt.mcumgr.os.info.limited_size
+    - mgmt.mcumgr.os.info.no_hooks
+  platforms:
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpunet
+    - nrf9160dk/nrf9160
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - mgmt.mcumgr.os.info
+    - mgmt.mcumgr.os.info.build_date
+    - mgmt.mcumgr.os.info.limited_size
+    - mgmt.mcumgr.os.info.net
+    - mgmt.mcumgr.os.info.no_hooks
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk/nrf9160/ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - mgmt.mcumgr.fs.mgmt.hash.supported.all
+    - mgmt.mcumgr.fs.mgmt.hash.supported.crc32
+    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
+  platforms:
+    - mps2_an521
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf5340dk/nrf5340/cpunet
+    - nrf9160dk/nrf9160
+    - nrf9160dk/nrf9160/ns
+    - qemu_cortex_m3
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - mgmt.mcumgr.smp.version
+    - mgmt.mcumgr.smp.version_no_legacy
+  platforms:
+    - mps2_an521
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf5340dk/nrf5340/cpunet
+    - nrf9160dk/nrf9160
+    - nrf9160dk/nrf9160/ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - mgmt.mcumgr.os.echo
+  platforms:
+    - mps2_an521
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf5340dk/nrf5340/cpunet
+    - nrf9160dk/nrf9160
+    - nrf9160dk/nrf9160/ns
+    - qemu_cortex_m3
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.usb.dfu
+    - sample.usb.dfu.permanent.download
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.mcumgr.smp_svr.bt
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "Configurations excluded to limit resources usage in integration builds"
