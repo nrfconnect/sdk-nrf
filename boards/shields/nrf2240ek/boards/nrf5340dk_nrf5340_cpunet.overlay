@@ -1,0 +1,9 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* On nrf5340_cpunet the uart0 conflicts with nrf_radio_fem_twi and must be disabled. */
+&uart0 {
+	status = "disabled";
+};
