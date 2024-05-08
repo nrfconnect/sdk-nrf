@@ -350,6 +350,23 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-6-1 v2-6-0
+
+KRKNWK-18965: Malformed group messages can cause memory leak
+  Matter accessories utilizing group communication may experience memory leaks if the secure group message is malformed.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``bdf3e6e183cba3d13bc5103bf014b47841a14de1`` from the `upstream Matter SDK repo <https://github.com/project-chip/connectedhomeip>`_).
+
+.. rst-class::v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
+
+KRKNWK-18966: Malformed messages may cause crash of device
+  Matter accessories may use already freed memory or perform a double free operation when a malformed message is received while waiting for a response to an ongoing exchange.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip``:
+
+   * For |NCS| v2.6.1 and v2.6.0, commit hash ``a836887c9f8ac277ed02a184c8fe82f8365f5353`` from the `upstream Matter SDK repo <https://github.com/project-chip/connectedhomeip>`_.
+   * For |NCS| v2.5.3, v2.5.2, v2.5.1, and v2.5.0, commit hash ``3c808ab05f1fe9c2452ac285c2cad559c060b8f6`` from the `upstream Matter SDK repo <https://github.com/project-chip/connectedhomeip>`_.
+
 .. rst-class:: v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
 KRKNWK-18916: Issues related to the  :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START` Kconfig option
