@@ -1003,8 +1003,8 @@ To program the certificates and connect to nRF Cloud, complete the following ste
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -d build
-   west flash -d build
+   west build -p -b *board_target*
+   west flash
 
 |board_target|
 
@@ -1066,15 +1066,27 @@ To program the certificates and connect to nRF Cloud, complete the following ste
 nRF91 Series DK with nRF7002 EK Wi-Fi support
 =============================================
 
-To build the MoSh sample for an nRF91 Series DK with nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek`` and  ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf`` options.
+To build the MoSh sample for an nRF91 Series DK with nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek``, ``-DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf``, ``-DSB_CONFIG_WIFI_NRF700X=y`` and ``-DSB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y`` options.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf -DSB_CONFIG_WIFI_NRF700X=y -DSB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
 
 |board_target|
+
+See :ref:`cmake_options` for more instructions on how to add these options.
+
+Thingy:91 X Wi-Fi support
+=========================
+
+To build the MoSh sample with Thingy:91 X Wi-Fi support, use the ``-DDTC_OVERLAY_FILE=thingy91x_wifi.overlay``, ``-DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf``, ``-DSB_CONFIG_WIFI_NRF700X=y``, and ``-DSB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y`` options.
+For example:
+
+.. code-block:: console
+
+   west build -p -b thingy91x/nrf9151/ns -- -DDTC_OVERLAY_FILE=thingy91x_wifi.overlay -DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf -DSB_CONFIG_WIFI_NRF700X=y -DSB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
 
 See :ref:`cmake_options` for more instructions on how to add these options.
 
@@ -1148,13 +1160,13 @@ After programming the development kit, test it in the Linux environment by perfo
 Application FOTA support
 ========================
 
-To build the MoSh sample with application FOTA support, use the ``-DEXTRA_CONF_FILE=overlay-app_fota.conf`` option.
+To build the MoSh sample with application FOTA support, use the ``-DEXTRA_CONF_FILE=overlay-app_fota.conf`` and ``-DSB_CONFIG_BOOTLOADER_MCUBOOT=y`` options.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-app_fota.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-app_fota.conf -DSB_CONFIG_BOOTLOADER_MCUBOOT=y
 
 |board_target|
 
@@ -1166,7 +1178,7 @@ The following is an example for the nRF9161 DK:
 
 .. code-block:: console
 
-   west build -p -b nrf9161dk/nrf9161/ns -d build -- -DEXTRA_CONF_FILE=overlay-modem_fota_full.conf -DDTC_OVERLAY_FILE=nrf9161dk_ext_flash.overlay
+   west build -p -b nrf9161dk/nrf9161/ns -- -DEXTRA_CONF_FILE=overlay-modem_fota_full.conf -DDTC_OVERLAY_FILE=nrf9161dk_ext_flash.overlay
 
 LwM2M carrier library support
 =============================
@@ -1177,7 +1189,7 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-carrier.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-carrier.conf
 
 |board_target|
 
@@ -1190,7 +1202,7 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-pgps.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-pgps.conf
 
 |board_target|
 
@@ -1205,7 +1217,7 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-cloud_mqtt.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-cloud_mqtt.conf
 
 |board_target|
 
@@ -1218,7 +1230,7 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-cloud_coap.conf
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-cloud_coap.conf
 
 |board_target|
 
@@ -1233,7 +1245,7 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE=overlay-cloud_mqtt.conf -DCONFIG_LOCATION_SERVICE_EXTERNAL=y
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE=overlay-cloud_mqtt.conf -DCONFIG_LOCATION_SERVICE_EXTERNAL=y
 
 |board_target|
 
@@ -1243,7 +1255,7 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -d build -- -DEXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y -DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf" -DCONFIG_LOCATION_SERVICE_EXTERNAL=y -DCONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
 
 |board_target|
 

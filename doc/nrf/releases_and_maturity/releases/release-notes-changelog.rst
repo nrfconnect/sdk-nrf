@@ -503,7 +503,11 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
-  * Added support for sending location data details into nRF Cloud with ``--cloud_details`` command-line option in the ``location`` command.
+  * Added:
+
+    * Support for sending location data details into nRF Cloud with ``--cloud_details`` command-line option in the ``location`` command.
+    * Support for Thingy:91 X Wi-Fi scanning.
+
   * Removed ESP8266 Wi-Fi DTC and Kconfig overlay files.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
