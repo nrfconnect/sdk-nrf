@@ -1175,3 +1175,11 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - dfu.target_stream
+    - dfu.target_stream.store_progress
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf9160dk/nrf9160
+  comment: "Configurations excluded to limit resources usage in integration builds"
