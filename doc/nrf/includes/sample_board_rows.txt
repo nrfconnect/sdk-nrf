@@ -92,6 +92,14 @@
 
 | :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91 | ``thingy91/nrf9160/ns`` |
 
+.. thingy91x_nrf9151
+
+| Thingy:91 X | PCA20065 | thingy91x | ``thingy91x/nrf9151`` |
+
+.. thingy91x_nrf9151_ns
+
+| Thingy:91 X | PCA20065 | thingy91x | ``thingy91x/nrf9151/ns`` |
+
 .. thingy91x_nrf5340_cpuapp
 
 | Thingy:91 x | PCA20065 | thingy91x | ``thingy91x/nrf5340/cpuapp`` |
