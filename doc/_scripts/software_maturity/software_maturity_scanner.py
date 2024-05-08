@@ -159,7 +159,7 @@ UPLOAD_FILENAME = UPLOAD_PREFIX + "/{}.yaml"
 NRF_SAMPLE_DIR = Path(__file__).absolute().parents[3]
 """Directory containing samples/ and applications/ subfolders."""
 
-BOARD_FILTER = lambda b: re.search(r"_nrf[0-9]+", b) and not b.startswith("nrf51")
+BOARD_FILTER = lambda b: re.search(r"/nrf[0-9]+", b) and not b.startswith("nrf51")
 """Function to filter non-relevant boards."""
 
 
@@ -295,7 +295,7 @@ def find_all_socs(all_samples: List[str]) -> List[str]:
 
     # Only use nRF boards, but not nRF51 series
     all_boards = set(filter(BOARD_FILTER, all_boards))
-    all_socs = {re.findall(r"_(nrf[0-9]+[hlHL]?[0-9]+)", b)[-1] for b in all_boards}
+    all_socs = {b.split("/")[1] for b in all_boards}
     return list(sorted(all_socs))
 
 
