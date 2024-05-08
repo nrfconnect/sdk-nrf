@@ -90,11 +90,11 @@ static void print_hex_number(uint8_t *num, size_t len)
 
 int main(void)
 {
-	char hello_string[sizeof(HELLO_PATTERN) + sizeof(CONFIG_BOARD)];
+	char hello_string[sizeof(HELLO_PATTERN) + sizeof(CONFIG_BOARD_TARGET)];
 	size_t len;
 
 	len = snprintf(hello_string, sizeof(hello_string),
-		HELLO_PATTERN, CONFIG_BOARD);
+		HELLO_PATTERN, CONFIG_BOARD_TARGET);
 
 	printk("%s\n", hello_string);
 
