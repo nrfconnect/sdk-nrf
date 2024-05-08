@@ -177,6 +177,18 @@ See the Configuration section of the given application or sample's documentation
 
 For information about how to provide file suffixes when building an application, see :ref:`cmake_options`.
 
+.. _app_build_snippets:
+
+Snippets
+--------
+
+Snippets are a Zephyr mechanism for defining portable build system overrides that could be applied to any application.
+Read Zephyr's :ref:`zephyr:snippets` documentation for more information.
+
+You can set snippets for use with your application when you :ref:`set up your build configuration <building>` by :ref:`providing them as CMake options <cmake_options>`.
+
+Usage of snippets is optional.
+
 .. _configuration_system_overview_build:
 
 Building phase

@@ -66,7 +66,7 @@ Complete the following steps to prepare for the certification tests:
 
 #. Build the certification image.
 
-   Use the :ref:`ot_cli_sample` sample as a base and apply the ``ci`` and ``multiprotocol`` snippets.
+   Use the :ref:`ot_cli_sample` sample as a base and apply the ``ci`` and ``multiprotocol`` :ref:`app_build_snippets`.
    If you are building for the ``nrf5340dk/nrf5340/cpuapp`` target, also set the :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` Kconfig option to ``y``.
 
    * If building on the command line, use the following command:

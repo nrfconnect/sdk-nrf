@@ -38,7 +38,10 @@ IDE and tool support
 Build and configuration system
 ==============================
 
-* Added documentation about the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>` with a related information in the :ref:`migration guide <migration_2.7_recommended>`.
+* Added:
+
+  * Documentation section about the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>` with a related information in the :ref:`migration guide <migration_2.7_recommended>`.
+  * Documentation section about :ref:`app_build_snippets`.
 
 Working with nRF91 Series
 =========================
