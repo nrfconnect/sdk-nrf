@@ -65,7 +65,7 @@ Besides applying `General recommendations`_, you can also complete the following
   * :kconfig:option:`CONFIG_BT_BUF_ACL_TX_COUNT`
   * :kconfig:option:`CONFIG_BT_BUF_ACL_TX_SIZE`
 
-For reference, you can find minimal footprint configurations of the :ref:`peripheral_lbs` sample in :file:`nrf/samples/bluetooth/peripheral_lbs/minimal.conf` and the :ref:`peripheral_uart` sample in :file:`nrf/samples/bluetooth/peripheral_uart/minimal.conf`.
+For reference, you can find minimal footprint configurations of the :ref:`peripheral_lbs` sample in :file:`nrf/samples/bluetooth/peripheral_lbs/prj_minimal.conf` and the :ref:`peripheral_uart` sample in :file:`nrf/samples/bluetooth/peripheral_uart/prj_minimal.conf`.
 
 .. _app_memory_bt_mesh:
 
