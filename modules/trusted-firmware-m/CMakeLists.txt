@@ -105,6 +105,30 @@ if (CONFIG_TFM_SECURE_UART1)
   )
 endif()
 
+if (CONFIG_TFM_SECURE_UART00)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_SECURE_UART_INSTANCE=00
+  )
+endif()
+
+if (CONFIG_TFM_SECURE_UART20)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_SECURE_UART_INSTANCE=20
+  )
+endif()
+
+if (CONFIG_TFM_SECURE_UART21)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_SECURE_UART_INSTANCE=21
+  )
+endif()
+
+if (CONFIG_TFM_SECURE_UART22)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_SECURE_UART_INSTANCE=22
+  )
+endif()
+
 if (CONFIG_TFM_SECURE_UART30)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_SECURE_UART_INSTANCE=30

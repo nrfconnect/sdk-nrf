@@ -33,11 +33,18 @@
 
 #define RTE_USART0 1
 
-#else /* NRF_UARTE0 */
+#else /* NRF_UARTE0_S - 54L15 devices*/
 
+/* Only UART20 and UART30 are supported for TF-M tests, which are the
+ * Non-secure applications build via the TF-M build system
+ */
+#if defined(CONFIG_TFM_SECURE_UART30)
 #define RTE_USART20 1
+#else
+#define RTE_USART30 1
+#endif
 
-#endif /* NRF_UARTE0 */
+#endif /* NRF_UARTE0_S */
 
 #endif /* DOMAIN_NS == 1U */
 
@@ -54,12 +61,22 @@
 #define RTE_USART1 1
 #endif
 
-#if defined(CONFIG_TFM_SECURE_UART20)
-/* TODO: NCSDK-25009: Support configuring which UART instance is enabled */
-#error "It is not yet supported to use UART20 from a secure TF-M image"
+#if defined(CONFIG_TFM_SECURE_UART00)
+#define RTE_USART00 1
 #endif
 
-/* TODO: NCSDK-25009: Support configuring which UART instance is enabled */
+#if defined(CONFIG_TFM_SECURE_UART20)
+#define RTE_USART20 1
+#endif
+
+#if defined(CONFIG_TFM_SECURE_UART21)
+#define RTE_USART21 1
+#endif
+
+#if defined(CONFIG_TFM_SECURE_UART22)
+#define RTE_USART22 1
+#endif
+
 #if defined(CONFIG_TFM_SECURE_UART30)
 #define RTE_USART30 1
 #endif
@@ -72,16 +89,10 @@
 #define RTE_USART0_PINS RTE_USART_PINS(0)
 #define RTE_USART1_PINS RTE_USART_PINS(1)
 
-/* TODO: NCSDK-25009: Note that we don't use the macro like the above
- * defines do because these defines don't use DT
- */
-#define RTE_USART20_PINS                                                                           \
-	{                                                                                          \
-		NRF_PSEL(UART_TX, 1, 4), NRF_PSEL(UART_RX, 1, 5),                                  \
-	}
-#define RTE_USART30_PINS                                                                           \
-	{                                                                                          \
-		NRF_PSEL(UART_TX, 0, 0), NRF_PSEL(UART_RX, 0, 1),                                  \
-	}
+#define RTE_USART00_PINS RTE_USART_PINS(00)
+#define RTE_USART20_PINS RTE_USART_PINS(20)
+#define RTE_USART21_PINS RTE_USART_PINS(21)
+#define RTE_USART22_PINS RTE_USART_PINS(22)
+#define RTE_USART30_PINS RTE_USART_PINS(30)
 
 #endif /* __RTE_DEVICE_H */
