@@ -55,62 +55,64 @@ After programming the sample, the following output is displayed in the console:
 
 .. code-block:: console
 
-    *** Booting Zephyr OS build v3.2.0-rc3-510-g7c71945d42f6  ***
+    *** Booting nRF Connect SDK v2.6.99-27b5931e8742 ***
+    *** Using Zephyr OS v3.6.99-b5cf30402984 ***
     Attempting to boot slot 0.
     Attempting to boot from address 0x8200.
     Verifying signature against key 0.
-    Hash: 0xde...4b
+    Hash: 0x43...7f
     Firmware signature verified.
     Firmware version 1
-    *** Booting Zephyr OS build v3.2.0-rc3-510-g7c71945d42f6  ***
-    I: Starting bootloader
-    I: Swap type: none
-    I: Swap type: none
-    I: Bootloader chainload address offset: 0x28000
-    *** Booting Zephyr OS build v3.2.0-rc3-510-g7c71945d42f6  ***
-    build time: Nov  2 2022 16:26:33
+    *** Booting My Application v2.1.0-dev-0b5810de95eb ***
+    *** Using nRF Connect SDK v2.6.99-27b5931e8742 ***
+    *** Using Zephyr OS v3.6.99-b5cf30402984 ***
+    *** Booting nRF Connect SDK v2.6.99-27b5931e8742 ***
+    *** Using Zephyr OS v3.6.99-b5cf30402984 ***
+    build time: May 13 2024 17:13:28
 
     FW info S0:
     Magic: 0x281ee6de8fcebb4c00003502
     Total Size: 60
-    Size: 0x00009658
+    Size: 0x000081c8
     Version: 1
-    address: 0x00008200
-    boot address: 0x00008200
+    Address: 0x00008200
+    Boot address: 0x00008200
     Valid: 0x9102ffff (CONFIG_FW_INFO_VALID_VAL=0x9102ffff)
 
     FW info S1:
-    Failed to retrieve fw_info for address 0x00018000
+    Magic: 0x281ee6de8fcebb4c00003502
+    Total Size: 60
+    Size: 0x000081c8
+    Version: 1
+    Address: 0x00014200
+    Boot address: 0x00014200
+    Valid: 0x9102ffff (CONFIG_FW_INFO_VALID_VAL=0x9102ffff)
 
     Active slot: S0
 
-    Requesting initial attestation token with 64 byte challenge
-    Received initial attestation token of 360 bytes.
+    Requesting initial attestation token with 64 byte challenge.
+    Received initial attestation token of 303 bytes.
 
     0  1  2  3  4  5  6  7   8  9  A  B  C  D  E  F
-    D2 84 43 A1 01 26 A0 59  01 1C AA 3A 00 01 24 FF  |  ..C..&.Y...:..$.
-    58 40 00 11 22 33 44 55  66 77 88 99 AA BB CC DD  |  X@.."3DUfw......
-    EE FF 00 11 22 33 44 55  66 77 88 99 AA BB CC DD  |  ...."3DUfw......
-    EE FF 00 11 22 33 44 55  66 77 88 99 AA BB CC DD  |  ...."3DUfw......
-    EE FF 00 11 22 33 44 55  66 77 88 99 AA BB CC DD  |  ...."3DUfw......
-    EE FF 3A 00 01 24 FB 58  20 26 0A 95 20 6B F8 17  |  ..:..$.X &.. k..
-    3C 65 E9 12 C1 7F 12 57  C2 26 85 56 0E 27 FE 37  |  <e.....W.&.V.'.7
-    90 B7 67 FD 07 86 D8 E5  3A 3A 00 01 25 00 58 21  |  ..g.....::..%.X!
-    01 8B A0 C3 7E 96 62 29  C3 90 14 D9 E1 CF B6 6F  |  ....~.b).......o
-    71 07 37 76 BF B8 E3 96  94 7D 09 1E 37 07 21 DB  |  q.7v.....}..7.!.
-    84 3A 00 01 24 FA 58 20  AA AA AA AA AA AA AA AA  |  .:..$.X ........
-    BB BB BB BB BB BB BB BB  CC CC CC CC CC CC CC CC  |  ................
-    DD DD DD DD DD DD DD DD  3A 00 01 24 F8 20 3A 00  |  ........:..$. :.
-    01 24 F9 19 30 00 3A 00  01 24 FE 01 3A 00 01 25  |  .$..0.:..$..:..%
-    01 77 77 77 77 2E 74 72  75 73 74 65 64 66 69 72  |  .wwww.trustedfir
-    6D 77 61 72 65 2E 6F 72  67 3A 00 01 24 F7 71 50  |  mware.org:..$.qP
-    53 41 5F 49 4F 54 5F 50  52 4F 46 49 4C 45 5F 31  |  SA_IOT_PROFILE_1
-    3A 00 01 24 FC 70 30 36  30 34 35 36 35 32 37 32  |  :..$.p0604565272
-    38 32 39 31 30 30 58 40  BD 2F 65 4C 56 5A 9F 01  |  829100X@./eLVZ..
-    F2 D4 9C FB F4 25 9D C5  11 D0 57 B6 23 F1 D9 99  |  .....%....W.#...
-    2D A0 AC 39 F8 D8 39 A6  81 A7 E0 DC 8B BA A6 9F  |  -..9..9.........
-    EB AE 50 55 C3 DD 1F 6A  FF E3 AB 98 5D CC 2F E9  |  ..PU...j....]./.
-    54 77 40 BE D9 FF AE 7F                           |  Tw@.....
+    D2 84 43 A1 01 26 A0 58  E4 AA 3A 00 01 24 FF 58  |  ..C..&.X..:..$.X
+    40 00 11 22 33 44 55 66  77 88 99 AA BB CC DD EE  |  @.."3DUfw.......
+    FF 00 11 22 33 44 55 66  77 88 99 AA BB CC DD EE  |  ..."3DUfw.......
+    FF 00 11 22 33 44 55 66  77 88 99 AA BB CC DD EE  |  ..."3DUfw.......
+    FF 00 11 22 33 44 55 66  77 88 99 AA BB CC DD EE  |  ..."3DUfw.......
+    FF 3A 00 01 24 FB 58 20  3B 32 D3 C6 4F E0 9E 44  |  .:..$.X ;2..O..D
+    85 33 05 C0 7E 1B 14 39  C0 73 22 2E AE 63 68 8C  |  .3..~..9.s"..ch.
+    26 66 52 D2 84 50 EF 56  3A 00 01 25 00 58 21 01  |  &fR..P.V:..%.X!.
+    70 7D AE 14 A9 68 1F 77  99 6F F8 02 CF 69 C2 47  |  p}...h.w.o...i.G
+    BF 3A 10 DD EA C3 74 6E  0B F7 45 CF 2A 25 A9 DA  |  .:....tn..E.*%..
+    3A 00 01 24 FA 58 20 AA  AA AA AA AA AA AA AA BB  |  :..$.X .........
+    BB BB BB BB BB BB BB CC  CC CC CC CC CC CC CC DD  |  ................
+    DD DD DD DD DD DD DD 3A  00 01 24 F8 20 3A 00 01  |  .......:..$. :..
+    24 F9 19 30 00 3A 00 01  24 FE 01 3A 00 01 24 F7  |  $..0.:..$..:..$.
+    60 3A 00 01 25 01 60 3A  00 01 24 FC 60 58 40 00  |  `:..%.`:..$.`X@.
+    E0 AB 97 6B C1 24 8D AF  C9 E1 1C 77 E4 5E 1D 8E  |  ...k.$.....w.^..
+    0D 44 61 76 28 A5 0D A1  BE A3 2D B2 A0 35 77 0E  |  .Dav(.....-..5w.
+    78 72 7D E6 BE A1 10 A2  DC 7C ED 87 76 C7 33 E4  |  xr}......|..v.3.
+    4E 8C 39 3D AA EC 40 EB  31 4B D5 68 80 53 77     |  N.9=..@.1K.h.Sw
 
 Firmware update
 ***************
@@ -127,8 +129,9 @@ Generate security keys if needed:
 
 .. code-block:: console
 
-    python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k /home/user/ncs/_keys/mcuboot_priv.pem
-    python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k /home/user/ncs/_keys/nsib_priv.pem
+    mkdir _keys
+    python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k ~/ncs/_keys/mcuboot_priv.pem
+    python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k ~/ncs/_keys/nsib_priv.pem
 
 Update the :file:`child_image/mcuboot/prj.conf` file to set the private signing key for MCUboot:
 
@@ -167,8 +170,8 @@ Then upload the new application image to the device.
 
 .. code-block:: console
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 image list
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 image upload \
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
     build_update/zephyr/app_update.bin
 
 Once the new application image is uploaded, the hash of the image is shown in the image list.
@@ -176,34 +179,32 @@ Flag the image to be tested on next reboot using its hash.
 
 .. code-block:: console
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 image list
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 image test <hash>
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image test <hash>
 
 Trigger the application update by initiating a reset.
 The verification of the image will happen during the update process.
 
 .. code-block:: console
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 reset
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
 
 Bootloader firmware update
 ==========================
 
 To upload a new bootloader image, build a bootloader targeting the correct bootloader slot with an updated firmware image version.
-The bootloader is placed in slot 0 by default, so enable building of the slot 1 bootloader.
 
 .. code-block:: console
 
     west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template \
-    -DCONFIG_BUILD_S1_VARIANT=y \
     -Dmcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
 
 List the current firmware images and upload a bootloader image that targets the non-active bootloader slot.
 
 .. code-block:: console
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 image list
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 image upload \
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
     build/zephyr/signed_by_mcuboot_and_b0_s1_image_update.bin
 
 Once the new bootloader image is uploaded, the hash of the image is shown in the image list.
@@ -211,15 +212,15 @@ Flag the image to be tested on next reboot using its hash.
 
 .. code-block:: console
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 image list
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 image test <hash>
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image test <hash>
 
 Trigger the bootloader update by initiating a reset.
 The verification of the image will happen during the update process.
 
 .. code-block:: console
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 reset
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
 
 Dependencies
 *************

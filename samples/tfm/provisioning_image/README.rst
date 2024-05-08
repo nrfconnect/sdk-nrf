@@ -70,21 +70,21 @@ Building and running
 Testing
 =======
 
-|test_sample|
+After programming the sample, the following output is displayed in the console:
 
-      1. |connect_terminal_specific|
-      #. Reset the kit.
-      #. Observe the following output:
+.. code-block:: console
 
-         .. code-block:: console
+    Successfully verified PSA lifecycle state ASSEMBLY!
+    Successfully switched to PSA lifecycle state PROVISIONING!
+    Generating random HUK keys (including MKEK)
+    Writing the identity key to KMU
+    Success!
 
-             Successfully verified PSA lifecycle state ASSEMBLY!
-             Successfully switched to PSA lifecycle state PROVISIONING!
-             Generating random HUK keys (including MKEK)
-             Writing the identity key to KMU
-             Success!
+If an error occurs, the sample prints a message and raises a kernel panic.
 
-         If an error occurs, the sample prints a message and raises a kernel panic.
+.. note::
+   The device cannot transition from the PRoT security lifecycle state **PRoT Provisioning** to the **Device Assembly and Test** state.
+   To reproduce the sample, you must program the device with the ``--erase`` option to erase the flash memory.
 
 Dependencies
 ************

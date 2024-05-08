@@ -27,7 +27,7 @@
 #if defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP_NS)
 #define SCK_PIN         47 /* P1.15 */
 #define MOSI_PIN        45 /* P1.13 */
-#elif defined(CONFIG_BOARD_NRF9160DK_NRF9160_NS) || defined(CONFIG_BOARD_NRF9161DK_NRF9161_NS)
+#elif defined(CONFIG_SOC_SERIES_NRF91X) && defined(CONFIG_BUILD_WITH_TFM)
 #define SCK_PIN         13 /* P0.13 */
 #define MOSI_PIN        11 /* P0.11 */
 #endif
