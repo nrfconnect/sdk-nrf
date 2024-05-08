@@ -37,10 +37,10 @@ function(partition_manager)
   cmake_parse_arguments(PM "" "DOMAIN" "IN_FILES;REGIONS" ${ARGN})
 
   if(DEFINED PM_DOMAIN)
+    string(CONFIGURE "${${image_name}_PM_STATIC_YML_FILE}" user_def_pm_static)
     get_property(image_name GLOBAL PROPERTY DOMAIN_APP_${PM_DOMAIN})
-    set(user_def_pm_static ${${image_name}_PM_STATIC_YML_FILE})
   else()
-    set(user_def_pm_static ${PM_STATIC_YML_FILE})
+    string(CONFIGURE "${PM_STATIC_YML_FILE}" user_def_pm_static)
     get_property(image_name GLOBAL PROPERTY DOMAIN_APP_APP)
   endif()
 
