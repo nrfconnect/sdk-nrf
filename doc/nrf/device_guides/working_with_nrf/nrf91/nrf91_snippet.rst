@@ -8,7 +8,7 @@ Snippets for an nRF91 Series device
    :depth: 2
 
 
-:ref:`snippets` are tailored for tracing on the nRF91 Series devices but can work with other boards as well.
+nRF91 Series' :ref:`app_build_snippets` are tailored for tracing on the nRF91 Series devices but can work with other boards as well.
 On nRF91 Series devices, snippets are used for the following functionalities:
 
 * Modem tracing with the flash backend

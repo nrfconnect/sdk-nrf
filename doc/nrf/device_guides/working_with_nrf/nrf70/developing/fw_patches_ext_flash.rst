@@ -80,7 +80,7 @@ In this case the upload of the firmware patch from the external memory to the nR
 1. The firmware patch is loaded from the external memory onto internal RAM.
 #. The firmware patch is uploaded to the nRF70 device.
 
-This feature can be enabled using DTS or :ref:`snippets` feature or by using :ref:`partition_manager`.
+This feature can be enabled using DTS or the :ref:`app_build_snippets` feature, or by using :ref:`partition_manager`.
 
 Configuration
 -------------
