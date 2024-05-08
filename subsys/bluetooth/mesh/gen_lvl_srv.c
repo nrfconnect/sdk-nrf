@@ -152,7 +152,7 @@ static int move_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *c
 		rsp_status(model, ctx, &status);
 	}
 
-	(void)bt_mesh_lvl_srv_pub(srv, ctx, &status);
+	(void)bt_mesh_lvl_srv_pub(srv, NULL, &status);
 
 	return 0;
 }
