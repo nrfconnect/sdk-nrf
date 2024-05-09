@@ -277,6 +277,13 @@ config MPSL_FEM_USE_TWIM_STUB
 			   (MPSL_FEM_NRF2240 && !MPSL_FEM_NRF2240_TWI_SUPPORT)
 	default y
 
+config MPSL_FEM_INIT_PRIORITY
+	int "Init priority of the Front-End Module support code"
+	depends on MPSL_FEM
+	default 49 if (MPSL_FEM_NRF2220 && MPSL_FEM_NRF2220_TWI_SUPPORT) || \
+		      (MPSL_FEM_NRF2240 && MPSL_FEM_NRF2240_TWI_SUPPORT)
+	default KERNEL_INIT_PRIORITY_DEVICE
+
 module=MPSL_FEM
 module-str=MPSL_FEM
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
