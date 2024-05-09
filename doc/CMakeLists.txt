@@ -29,7 +29,7 @@ separate_arguments(SPHINXOPTS_EXTRA)
 #-------------------------------------------------------------------------------
 # Dependencies
 
-find_package(PythonInterp 3.4)
+find_package(Python 3.8)
 set(DOXYGEN_SKIP_DOT True)
 find_package(Doxygen 1.8.18 REQUIRED)
 
