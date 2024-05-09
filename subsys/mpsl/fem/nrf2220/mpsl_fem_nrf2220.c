@@ -225,6 +225,12 @@ static int mpsl_fem_init(void)
 	return fem_nrf2220_configure();
 }
 
-SYS_INIT(mpsl_fem_init, POST_KERNEL, 49);
+#if defined(CONFIG_I2C) && \
+	DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if)
+BUILD_ASSERT(CONFIG_MPSL_FEM_INIT_PRIORITY < CONFIG_I2C_INIT_PRIORITY,
+	"The initialization of nRF2220 Front-End Module must happen before initialization of I2C");
+#endif
+
+SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_MPSL_FEM_INIT_PRIORITY);
 
 #endif /* defined(CONFIG_MPSL_FEM_NRF2220) */
