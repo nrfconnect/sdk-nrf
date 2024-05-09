@@ -220,7 +220,7 @@ static bool account_key_find_cb(const struct fp_account_key *account_key, void *
 
 ZTEST(suite_fast_pair_storage_common, test_find)
 {
-	static const uint8_t first_seed = 0;
+	static const uint8_t first_seed;
 	static const size_t test_key_cnt = MIN(ACCOUNT_KEY_MAX_CNT, 3);
 	int err = 0;
 
@@ -254,7 +254,7 @@ ZTEST(suite_fast_pair_storage_common, test_find)
 
 ZTEST(suite_fast_pair_storage_common, test_bt_has_ak)
 {
-	static const uint8_t first_seed = 0;
+	static const uint8_t first_seed;
 	static const size_t test_key_cnt = MIN(ACCOUNT_KEY_MAX_CNT, 3);
 
 	zassert_false(fp_storage_ak_has_account_key(), "No account key should be stored");
@@ -274,7 +274,7 @@ ZTEST(suite_fast_pair_storage_common, test_loop)
 		ztest_test_skip();
 	}
 
-	static const uint8_t first_seed = 0;
+	static const uint8_t first_seed;
 
 	for (uint8_t i = 1; i < UCHAR_MAX; i++) {
 		/* Triggering before function twice in a row would lead to assertion failure.
@@ -300,7 +300,7 @@ ZTEST(suite_fast_pair_storage_common, test_owner_key)
 	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY)) {
 		ztest_test_skip();
 	} else {
-		static const uint8_t seed = 0;
+		static const uint8_t seed;
 
 		int ret;
 		struct fp_account_key account_key;
