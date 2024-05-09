@@ -163,6 +163,30 @@
 
 - scenarios:
     - libraries.cmsis_dsp.*
+    - libraries.libc.*
+    - cpp.main.*
+    - cpp.libcxx.*
+    - libraries.cbprintf.*
+    - libraries.spsc_pbuf.*
+    - libraries.hash_map.*
+    - libraries.devicetree.*
+    - libraries.hash_function.*
+    - libraries.smf.*
+    - libraries.linear_range
+    - libraries.mem_blocks
+    - libraries.ring_buffer
+    - libraries.cmsis_nn
+    - libraries.mem_blocks.*
+    - libraries.heap
+    - libraries.fdtable
+    - libraries.p4wq
+    - libraries.heap_align
+    - libraries.data_structures
+    - libraries.sys_util
+    - libraries.onoff
+    - libraries.libc.time
+    - libraries.mpsc_pbuf.*
+    - libraries.encoding.*
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
