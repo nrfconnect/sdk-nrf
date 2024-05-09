@@ -6,9 +6,9 @@
 
 menu "SUIT"
 
-# 'default y if SOC_SERIES_NRF54HX' to be added when SUIT is to be enabled globally.
 menuconfig SUIT_ENVELOPE
 	bool "Create SUIT envelope"
+	default y if SOC_SERIES_NRF54HX
 	help
 	  Enable DFU SUIT envelope creation
 
