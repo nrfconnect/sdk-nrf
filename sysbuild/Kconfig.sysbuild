@@ -23,12 +23,13 @@ menuconfig PARTITION_MANAGER
 		      !BOARD_NRF54H20DK_NRF54H20_CPUAPP)
 	depends on !EXTERNAL_CONFIGURED_NETCORE
 
+if PARTITION_MANAGER
+
 config PM_MCUBOOT_PAD
 	hex "Memory reserved for MCUBOOT_PAD"
 	default 0x800 if BOARD_NRF54L15PDK_NRF54L15_CPUAPP
 	default 0x200
 	depends on BOOTLOADER_MCUBOOT
-	depends on PARTITION_MANAGER
 	help
 	  MCUBOOT_PAD size in partition file.
 	  This value is default 0x200 but if using static partitions having a
@@ -37,11 +38,25 @@ config PM_MCUBOOT_PAD
 
 config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 	bool "Override external driver check"
-	depends on PARTITION_MANAGER
 	help
 	  When enabled, will include all external flash stroage areas without
 	  being gated on the NORDIC_QSPI_NOR Kconfig, can be enabled to use
 	  non-QSPI external flash chips from partition manager.
+
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	bool "Place MCUboot secondary in external flash"
+	depends on BOOTLOADER_MCUBOOT
+	# Only depend on the chosen for the parent image. The value of this
+	# option is propagated to the MCUboot child imag#e automatically.
+#	 depends on PM_EXTERNAL_FLASH_ENABLED || MCUBOOT
+#	 default y if BOOTLOADER_MCUBOOT
+#	 imply ADD_MCUBOOT_MEDIATE_SIM_FLASH_DTS
+	help
+	  Place the secondary partition of MCUboot in the external flash instead
+	  of the internal flash. This option should only be enabled by the user
+	  in the parent image.
+
+endif # PARTITION_MANAGER
 
 config BUILD_OUTPUT_BIN
 	bool "Build a binary in BIN format"
