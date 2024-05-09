@@ -217,6 +217,7 @@ Kconfig*                                  @tejlmand
 /samples/wifi/raw_tx_packet/              @D-Triveni
 /samples/wifi/softap/                     @D-Triveni @krish2718
 /samples/wifi/monitor/                    @chiranjeevi2776 @krish2718
+/samples/wifi/promiscuous/                @D-Triveni
 /samples/benchmarks/coremark/             @zycz
 /scripts/                                 @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @MarekPieta
