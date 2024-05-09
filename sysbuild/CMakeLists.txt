@@ -85,6 +85,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   foreach(image ${PRE_CMAKE_IMAGES})
     if(SB_CONFIG_PARTITION_MANAGER)
       set_config_bool(${image} CONFIG_PARTITION_MANAGER_ENABLED y)
+
+      if(SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
+        set_config_bool(${image} CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY y)
+      else()
+        set_config_bool(${image} CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY n)
+      endif()
     else()
       set_config_bool(${image} CONFIG_PARTITION_MANAGER_ENABLED n)
     endif()
@@ -187,8 +193,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endforeach()
 
     # A v1 board doesn't define board qualifiers, thus below test will just test the pure board
-    # name for a v1 board. A v2 board will match agains the board qualifier.
-    if("${BOARD}${BOARD_QUALIFIER}" MATCHES "(_|/)ns$")
+    # name for a v1 board. A v2 board will match against the board qualifier.
+    if("${BOARD}${BOARD_QUALIFIERS}" MATCHES "(_|/)ns$")
       # Configure MCUboot before application so that TF-M can read MCUboot configuration
       sysbuild_add_dependencies(CONFIGURE ${DEFAULT_IMAGE} mcuboot)
 
@@ -208,6 +214,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     if(SB_CONFIG_PARTITION_MANAGER)
       # Use NCS signing script with support for PM
       set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+
+      if(SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)
+        add_overlay_config(mcuboot ${CMAKE_CURRENT_SOURCE_DIR}/override_external_mcuboot.conf)
+      endif()
+
+      if(SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
+        add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/ext_flash_mcuboot_secondary.conf)
+      endif()
     endif()
 
     set(imgtool_extra)
@@ -354,10 +368,6 @@ if(SB_CONFIG_SECURE_BOOT)
       add_overlay_config(mcuboot ${secure_boot_image_dir}/fw_info.conf)
 
       add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/log_minimal.conf)
-
-      if(SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)
-        add_overlay_config(mcuboot ${CMAKE_CURRENT_SOURCE_DIR}/override_external_mcuboot.conf)
-      endif()
     else()
       # Include a kconfig file which enables CONFIG_FW_INFO in the image
       # which is booted by B0.
