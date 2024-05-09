@@ -237,7 +237,13 @@ function(suit_create_package)
 
   sysbuild_get(DEFAULT_BINARY_DIR IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_BINARY_DIR CACHE)
   # create all storages in the DEFAULT_IMAGE output directory
-  list(APPEND STORAGE_BOOT_ARGS --storage-output-directory "${DEFAULT_BINARY_DIR}/zephyr" --zephyr-base ${ZEPHYR_BASE} ${CORE_ARGS})
+  list(APPEND STORAGE_BOOT_ARGS
+    --storage-output-directory
+    "${DEFAULT_BINARY_DIR}/zephyr"
+    --zephyr-base ${ZEPHYR_BASE}
+    --config-file "${DEFAULT_BINARY_DIR}/zephyr/.config"
+    ${CORE_ARGS}
+  )
   set_property(
     GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
     COMMAND ${PYTHON_EXECUTABLE}
