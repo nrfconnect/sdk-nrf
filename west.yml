@@ -39,6 +39,8 @@ manifest:
       url-base: https://github.com/BabbleSim
     - name: bosch
       url-base: https://github.com/boschsensortec
+    - name: damian
+      url-base: https://github.com/Damian-Nordic
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -140,9 +142,10 @@ manifest:
       repo-path: sdk-mbedtls
       revision: v3.5.2-ncs1
     - name: nrfxlib
+      remote: damian
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: v2.6.0
+      revision: bfcc03ea713372998a1ad7bf811b354532d8091d
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
