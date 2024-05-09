@@ -720,6 +720,8 @@ Wi-Fi samples
   * Added ``Auto-Security-Personal`` mode to the ``connect`` command.
   * Added support for the ``WPA-PSK`` security mode to the ``wifi_mgmt_ext`` library.
 
+* Added the :ref:`wifi_promiscuous_sample` sample that demonstrates how to set Promiscuous mode, establish a connection to an Access Point (AP), analyze incoming Wi-Fi packets, and print packet statistics.
+
 Other samples
 -------------
 
