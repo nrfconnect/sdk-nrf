@@ -744,7 +744,6 @@ Other samples
 -------------
 
 * Added the :ref:`coremark_sample` sample that demonstrates how to easily measure a performance of the supported SoCs by running the Embedded Microprocessor Benchmark Consortium (EEMBC) CoreMark benchmark.
-  Included support for the nRF52840 DK, nRF5340 DK, and nRF54L15 PDK.
 
 * :ref:`bootloader` sample:
 

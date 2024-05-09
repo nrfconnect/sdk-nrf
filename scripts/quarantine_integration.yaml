@@ -502,11 +502,18 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
+    - sample.benchmark.coremark_heap
+  platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
     - sample.benchmark.coremark_static
   platforms:
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
     - nrf54l15pdk/nrf54l15/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -515,6 +522,7 @@
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
     - nrf54l15pdk/nrf54l15/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
