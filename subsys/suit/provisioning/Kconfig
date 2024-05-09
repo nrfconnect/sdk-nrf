@@ -8,6 +8,7 @@ menu "SUIT provisioning"
 
 config SUIT_MPI_GENERATE
 	bool "Generate SUIT Manifest Provisioning Information binary"
+	default y if SOC_SERIES_NRF54HX
 
 if SUIT_MPI_GENERATE
 
