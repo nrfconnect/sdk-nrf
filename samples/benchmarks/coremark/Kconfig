@@ -7,12 +7,12 @@
 menu "CoreMark sample"
 
 config APP_MODE_FLASH_AND_RUN
-	bool "Run CoreMark benchmark on start up"
-	default y if SOC_NRF54H20_CPUPPR
+	bool "Run CoreMark benchmark on start up" if !(SOC_NRF54H20_CPURAD || SOC_NRF54H20_CPUPPR)
+	default y if SOC_NRF54H20_CPURAD || SOC_NRF54H20_CPUPPR
 	help
-	  If enabled, CoreMark will start execution immediately after CPU start up.
+	  If enabled, CoreMark will start execution immediately after the CPU starts up.
 	  It also disables LEDs and buttons.
-	  Otherwise, it will wait button to be pressed.
+	  Otherwise, it will wait for the button press.
 
 endmenu
 

@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ #include "app_aliases_common.overlay"
+
+/ {
+	chosen {
+		zephyr,sram = &cpuapp_ram0;
+	};
+};
+
+&button0 {
+	label = "Push button 0";
+};
+
+&gpiote130 {
+	/* Select the only free channel. */
+	owned-channels = <7>;
+	status = "okay";
+};
