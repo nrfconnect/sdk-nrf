@@ -146,6 +146,7 @@ manifest:
       repo-path: sdk-oberon-psa-crypto
       revision: e0800ec5283ba89b2619919ef1889d98a9a79132
     - name: nrfxlib
+      remote: damian
       repo-path: sdk-nrfxlib
       path: nrfxlib
       revision: d5c17de4a2edeb6a71e63c551ddd8f47e53905c1
