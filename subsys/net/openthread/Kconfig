@@ -33,7 +33,7 @@ endchoice
 config OPENTHREAD_NRF_SECURITY_PSA
 	bool
 	select NRF_SECURITY
-	select MBEDTLS_ENABLE_HEAP
+	select MBEDTLS_ENABLE_HEAP if !OPENTHREAD_COPROCESSOR_RCP
 	select MBEDTLS_TLS_LIBRARY if (OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
 	select PSA_WANT_ALG_HKDF
 	select PSA_WANT_ALG_CCM
@@ -69,7 +69,7 @@ config OPENTHREAD_NRF_SECURITY_PSA
 	# TRUSTED_STORAGE requires Settings
 	select SETTINGS
 	select HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT if SOC_NRF5340_CPUAPP
-	depends on !BUILD_WITH_TFM
+	depends on (!BUILD_WITH_TFM && !OPENTHREAD_COPROCESSOR_RCP)
 
 if (OPENTHREAD_NRF_SECURITY_PSA && (BUILD_WITH_TFM || !SOC_NRF5340_CPUAPP))
 # Temporarily use hash of UID as AEAD Key implementation for non nRF5340 and TFM builds
@@ -120,18 +120,30 @@ config OPENTHREAD_MBEDTLS_DEBUG
 
 config OPENTHREAD_THREAD_STACK_SIZE
 	int "OpenThread thread stack size"
+	default 1224 if OPENTHREAD_COPROCESSOR_RCP
 	default 6240 if OPENTHREAD_COMMISSIONER || OPENTHREAD_JOINER
 	default 3168
 
 config OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE
 	int "OpenThread radio transmit workqueue stack size"
+	default 512 if OPENTHREAD_COPROCESSOR_RCP
 	default 1084 if SOC_NRF5340_CPUAPP
 	default 1024
+
+if OPENTHREAD_COPROCESSOR_RCP
+
+config OPENTHREAD_COPROCESSOR_UART_RING_BUFFER_SIZE
+	int "Set Co-Processor UART ring buffer size"
+	default 2048
+	help
+	  TX buffer size for the OpenThread Co-Processor UART.
+
+endif # OPENTHREAD_COPROCESSOR_RCP
 
 choice TFM_PROFILE_TYPE
 	default TFM_PROFILE_TYPE_NOT_SET
 endchoice
 
-endmenu
+endmenu # "OpenThread"
 
-endif
+endif # NET_L2_OPENTHREAD
