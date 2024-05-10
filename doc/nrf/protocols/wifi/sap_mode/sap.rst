@@ -57,6 +57,8 @@ The SAP mode can be configured using the following shell commands:
        - Displays the status of the SAP mode interface.
      * - ``wifi ap stations``
        - Displays the list of stations connected to the SAP mode interface.
+     * - ``net dhcpv4 server start``
+       - Starts the DHCPv4 server.
 
 Wi-Fi configuration APIs
 ------------------------
@@ -113,8 +115,4 @@ For a typical SAP mode operation, the nRF70 Series device acts as a virtual rout
 The SAP interface needs to be configured with a valid IP address and a subnet mask.
 Without this configuration, the Wi-Fi station device might disconnect from the SAP interface.
 But the station devices use :abbr:`DHCP (Dynamic Host Configuration Protocol)` to get an IP address from the virtual router.
-Currently, the Zephyr networking stack does not support DHCP server functionality.
-So, the station devices must be configured with static IP addresses in the same subnet as the nRF70 Series device.
-
-.. note::
-    The procedure to configure static IP addresses varies from device to device and is not covered in this documentation.
+See `Zephyr net DHCPv4 server`_ for more information.

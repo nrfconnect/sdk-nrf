@@ -22,6 +22,7 @@
 .. _`Zephyr Wi-Fi management API`: https://docs.zephyrproject.org/apidoc/latest/group__wifi__mgmt.html
 .. _`Zephyr net capture`: https://docs.zephyrproject.org/latest/samples/net/capture/README.html
 .. _`Zephyr net capture Linux setup`: https://docs.zephyrproject.org/latest/connectivity/networking/usbnet_setup.html#usb-device-networking-setup
+.. _`Zephyr net DHCPv4 server`: https://docs.zephyrproject.org/apidoc/latest/group__dhcpv4__server.html
 
 .. ### Source: github.com
 
