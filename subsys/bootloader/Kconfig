@@ -147,7 +147,7 @@ config SB_MONOTONIC_COUNTER
 
 config SB_NUM_VER_COUNTER_SLOTS
 	int "Number of monotonic counter slots used for the firmware version"
-	default 20 if BOOTLOADER_MCUBOOT
+	default 20 if BOOTLOADER_MCUBOOT || MCUBOOT
 	default 240
 	range 2 300 if SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X
 	range 2 1800 if SOC_SERIES_NRF52X
