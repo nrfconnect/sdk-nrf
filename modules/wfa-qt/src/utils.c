@@ -697,7 +697,7 @@ int send_broadcast_arp(char *target_ip, int *send_count, int rate)
 
 void set_netmask(char *ifname)
 {
-	const struct device *dev = device_get_binding(ifname);
+	const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
 	struct net_if *iface = net_if_lookup_by_dev(dev);
 	struct in_addr addr;
 
