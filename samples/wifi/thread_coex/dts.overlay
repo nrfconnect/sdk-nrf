@@ -1,0 +1,4 @@
+&uart0 {
+	/* Disabling hardware flow control to free up pins for other purposes. */
+     /delete-property/ hw-flow-control;
+};
