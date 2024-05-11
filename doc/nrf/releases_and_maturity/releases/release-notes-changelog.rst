@@ -731,6 +731,7 @@ Wi-Fi samples
 -------------
 
 * Added the :ref:`softap_wifi_provision_sample` sample.
+* Added the :ref:`wifi_thread_coex_sample` sample that demonstrates Wi-Fi and Thread coexistence.
 
 * :ref:`wifi_shell_sample` sample:
 
