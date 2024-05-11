@@ -18,7 +18,6 @@ config BT_HIDS_SECURITY_ENABLED
 	select FLASH_MAP
 	select NVS
 	select SETTINGS
-	select CONFIG_BT_HIDS_DEFAULT_PERM_RW_ENCRYPT
 	help
 	  "Enable BLE security for the HIDS service"
 
