@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2020 Nordic Semiconductor ASA
+# Copyright (c) 2020-2024 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
@@ -25,6 +25,8 @@ def parse_args():
     parser.add_argument('--output', required=True, type=argparse.FileType(mode='w'), help='Output zip path')
     parser.add_argument('--bin-files', required=True, type=argparse.FileType(mode='r'), nargs='+',
                         help='Bin files to be stored in zip')
+    parser.add_argument('--zip-names', required=False, nargs='+',
+                        help='(Optional) names to use for the files stored in the output zip')
     parser.add_argument('--meta-info-file', required=False,
                         help='''File containg build meta info for an nRF Connect
                         SDK build. The Zephyr and nRF Connect SDK revisions
@@ -77,7 +79,17 @@ if __name__ == '__main__':
 
     shared_info = dict()
     special_info = dict()
-    name_to_path = {get_name(f): f.name for f in args.bin_files}
+
+    if args.zip_names is not None:
+        if len(args.zip_names) != len(args.bin_files):
+            raise OSError(errno.EINVAL, "Number of zip names arguments must match number of bin file arguments")
+
+        name_to_path = {}
+
+        for i in range(len(args.zip_names)): # pylint: disable=consider-using-enumerate
+            name_to_path[args.zip_names[i]] = args.bin_files[i].name
+    else:
+        name_to_path = {get_name(f): f.name for f in args.bin_files}
 
     for i in info:
         special = False
