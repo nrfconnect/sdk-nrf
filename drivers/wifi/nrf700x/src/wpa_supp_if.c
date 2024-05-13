@@ -1779,6 +1779,8 @@ int nrf_wifi_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 		return -1;
 	}
 
+	memset(capa, 0, sizeof(*capa));
+
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	if (!rpu_ctx_zep) {
@@ -1793,7 +1795,6 @@ int nrf_wifi_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 	}
 
 	/* TODO: Get these from RPU*/
-	memset(capa, 0, sizeof(*capa));
 	/* Use SME */
 	capa->flags = 0;
 	capa->flags |= WPA_DRIVER_FLAGS_SME;
