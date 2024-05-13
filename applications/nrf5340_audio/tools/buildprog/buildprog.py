@@ -102,7 +102,7 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
             release_flag = ""
             dest_folder /= TARGET_DEBUG_FOLDER
         elif build == BuildType.release:
-            release_flag = " -DCONF_FILE=prj_release.conf"
+            release_flag = " -DFILE_SUFFIX=release"
             dest_folder /= TARGET_RELEASE_FOLDER
         else:
             raise Exception("Invalid build type!")
