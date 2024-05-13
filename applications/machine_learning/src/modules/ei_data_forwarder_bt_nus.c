@@ -12,6 +12,7 @@
 
 #include <caf/events/ble_common_event.h>
 #include <caf/events/sensor_event.h>
+#include <caf/events/sensor_data_aggregator_event.h>
 #include "ml_app_mode_event.h"
 
 #define MODULE ei_data_forwarder
@@ -209,24 +210,10 @@ static void send_queued_fn(struct k_work *w)
 	}
 }
 
-static bool handle_sensor_event(const struct sensor_event *event)
+static bool send_data_block(const struct sensor_value *data_ptr, size_t data_cnt)
 {
-	if ((event->descr != handled_sensor_event_descr) &&
-	    strcmp(event->descr, handled_sensor_event_descr)) {
-		return false;
-	}
-
-	if ((state != STATE_ACTIVE) || !is_nus_conn_valid(nus_conn, conn_state)) {
-		return false;
-	}
-
-	__ASSERT_NO_MSG(sensor_event_get_data_cnt(event) > 0);
-
 	static uint8_t buf[DATA_BUF_SIZE];
-	int pos = ei_data_forwarder_parse_data(sensor_event_get_data_ptr(event),
-					       sensor_event_get_data_cnt(event),
-					       (char *)buf,
-					       sizeof(buf));
+	int pos = ei_data_forwarder_parse_data(data_ptr, data_cnt, (char *)buf, sizeof(buf));
 
 	if (pos < 0) {
 		LOG_ERR("EI data forwader parsing error: %d", pos);
@@ -252,6 +239,44 @@ static bool handle_sensor_event(const struct sensor_event *event)
 			packet->size = pos;
 			sys_slist_append(&send_queue, &packet->node);
 		}
+	}
+
+	return false;
+}
+
+static bool handle_sensor_event(const struct sensor_event *event)
+{
+	if ((state != STATE_ACTIVE) || !is_nus_conn_valid(nus_conn, conn_state)) {
+		return false;
+	}
+
+	if ((event->descr != handled_sensor_event_descr) &&
+	    strcmp(event->descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
+	__ASSERT_NO_MSG(sensor_event_get_data_cnt(event) > 0);
+
+	return send_data_block(sensor_event_get_data_ptr(event), sensor_event_get_data_cnt(event));
+}
+
+static bool handle_sensor_data_aggregator_event(const struct sensor_data_aggregator_event *event)
+{
+	if ((state != STATE_ACTIVE) || !is_nus_conn_valid(nus_conn, conn_state)) {
+		return false;
+	}
+
+	if ((event->sensor_descr != handled_sensor_event_descr) &&
+	    strcmp(event->sensor_descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
+	__ASSERT_NO_MSG(event->sample_cnt > 0);
+	__ASSERT_NO_MSG(event->values_in_sample > 0);
+
+	for (size_t i = 0; i < event->sample_cnt; ++i) {
+		size_t pos = i * event->values_in_sample;
+		(void)send_data_block(event->samples + pos, event->values_in_sample);
 	}
 
 	return false;
@@ -413,6 +438,11 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return handle_sensor_event(cast_sensor_event(aeh));
 	}
 
+	if (IS_ENABLED(CONFIG_CAF_SENSOR_DATA_AGGREGATOR_EVENTS) &&
+	    is_sensor_data_aggregator_event(aeh)) {
+		return handle_sensor_data_aggregator_event(cast_sensor_data_aggregator_event(aeh));
+	}
+
 	if (ML_APP_MODE_CONTROL &&
 	    is_ml_app_mode_event(aeh)) {
 		return handle_ml_app_mode_event(cast_ml_app_mode_event(aeh));
@@ -439,6 +469,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE(MODULE, sensor_event);
+APP_EVENT_SUBSCRIBE(MODULE, sensor_data_aggregator_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
 #if ML_APP_MODE_CONTROL

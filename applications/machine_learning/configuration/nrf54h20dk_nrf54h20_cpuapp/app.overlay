@@ -1,0 +1,85 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,console = &uart136;
+	};
+
+	sensor_sim: sensor-sim {
+		compatible = "nordic,sensor-sim";
+		acc-signal = "wave";
+	};
+
+	/* Redefine leds to fit CAF requirements. */
+	/delete-node/ leds;
+
+	leds012 {
+		compatible = "gpio-leds";
+		status = "okay";
+		label = "ML State LED";
+
+		led0: led_0 {
+			gpios = < &gpio9 0 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 0";
+		};
+
+		led1: led_1 {
+			gpios = < &gpio9 1 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 1";
+		};
+
+		led2: led_2 {
+			gpios = < &gpio9 2 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 2";
+		};
+	};
+
+	leds3 {
+		compatible = "gpio-leds";
+		led3: led_3 {
+			gpios = < &gpio9 3 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 3";
+		};
+	};
+};
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+ipc1: &cpuapp_cpuppr_ipc {
+	status = "okay";
+};
+
+/*
+ * Expand PPR memory region.
+ * Place aggregator buffers in PPR memory region.
+ */
+
+/delete-node/ &cpuppr_code_data;
+/delete-node/ &cpuapp_cpuppr_ipc_shm;
+/delete-node/ &cpuppr_cpuapp_ipc_shm;
+
+&cpuppr_ram3x_region {
+	reg = <0x2fc00000 DT_SIZE_K(68)>;
+	ranges = <0x0 0x2fc00000 0x11000>;
+
+	cpuppr_code_data: memory@0 {
+		reg = <0x0 DT_SIZE_K(64)>;
+	};
+
+	cpuapp_cpuppr_ipc_shm: memory@10000 {
+		reg = <0x10000 DT_SIZE_K(1)>;
+	};
+
+	cpuppr_cpuapp_ipc_shm: memory@10400 {
+		reg = <0x10400 DT_SIZE_K(1)>;
+	};
+	ram3x_agg_area0: memory@10800{
+		reg = <0x10800 0x600>;
+	};
+};

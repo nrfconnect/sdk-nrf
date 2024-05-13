@@ -5,9 +5,11 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/drivers/sensor.h>
 #include <ei_wrapper.h>
 
 #include <caf/events/sensor_event.h>
+#include <caf/events/sensor_data_aggregator_event.h>
 #include "ml_app_mode_event.h"
 #include "ml_result_event.h"
 
@@ -213,6 +215,36 @@ static bool handle_sensor_event(const struct sensor_event *event)
 	return false;
 }
 
+static bool handle_sensor_data_aggregator_event(const struct sensor_data_aggregator_event *event)
+{
+	if (state != STATE_ACTIVE) {
+		return false;
+	}
+
+	if ((event->sensor_descr != handled_sensor_event_descr) &&
+	    strcmp(event->sensor_descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
+	size_t sensor_value_cnt = (size_t)event->sample_cnt * (size_t)event->values_in_sample;
+
+	float float_data[sensor_value_cnt];
+	const struct sensor_value *data_ptr = event->samples;
+
+	for (size_t i = 0; i < sensor_value_cnt; i++) {
+		float_data[i] = sensor_value_to_double(&data_ptr[i]);
+	}
+
+	int err = ei_wrapper_add_data(float_data, sensor_value_cnt);
+
+	if (err) {
+		LOG_ERR("Cannot add data for EI wrapper (err %d)", err);
+		report_error();
+	}
+
+	return false;
+}
+
 static bool handle_ml_app_mode_event(const struct ml_app_mode_event *event)
 {
 	if ((event->mode == ML_APP_MODE_MODEL_RUNNING) && (state == STATE_SUSPENDED)) {
@@ -251,6 +283,11 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return handle_sensor_event(cast_sensor_event(aeh));
 	}
 
+	if (IS_ENABLED(CONFIG_CAF_SENSOR_DATA_AGGREGATOR_EVENTS) &&
+	    is_sensor_data_aggregator_event(aeh)) {
+		return handle_sensor_data_aggregator_event(cast_sensor_data_aggregator_event(aeh));
+	}
+
 	if (APP_CONTROLS_ML_MODE &&
 	    is_ml_app_mode_event(aeh)) {
 		return handle_ml_app_mode_event(cast_ml_app_mode_event(aeh));
@@ -269,6 +306,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE(MODULE, sensor_event);
+#if CONFIG_CAF_SENSOR_DATA_AGGREGATOR_EVENTS
+APP_EVENT_SUBSCRIBE(MODULE, sensor_data_aggregator_event);
+#endif /* CONFIG_CAF_SENSOR_DATA_AGGREGATOR_EVENTS */
 #if APP_CONTROLS_ML_MODE
 APP_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
 #endif /* APP_CONTROLS_ML_MODE */

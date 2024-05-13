@@ -344,16 +344,46 @@ The application supports the following build types:
      - :file:`prj_rtt.conf`
      - ``thingy53/nrf5340/cpuapp`` and ``thingy53/nrf5340/cpuapp/ns``
      - Debug version of the application that uses RTT for printing logs instead of USB CDC.
+   * - Single-core
+     - :file:`prj_singlecore.conf`
+     - ``nrf54h20dk/nrf54h20/cpuapp``
+     - Configuration that does not use :term:`Peripheral Processor (PPR) <Peripheral Processor (PPR, pronounced “Pepper”)>` for data sampling.
+       Data is collected with the application CPU instead.
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`applications/machine_learning`
-
 The nRF Machine Learning application is built the same way as any other |NCS| application or sample.
 Building the default configurations requires an Internet connection, because the machine learning model source files are downloaded from the web during the application build.
 
-.. include:: /includes/build_and_run_ns.txt
+.. |application path| replace:: :file:`applications/machine_learning`
+
+.. include:: /includes/application_build_and_run.txt
+
+nRF54H20 DK
+  To build the application for the nRF54H20 DK with the sensor sampling done by the Application core (single-core application), run the following command:
+
+  .. code-block:: console
+
+     west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSHIELD=pca63566 -DFILE_SUFFIX="singlecore"
+
+  or use twister test case:
+
+    .. code-block:: console
+
+      west build -b nrf54h20dk/nrf54h20/cpuapp -T applications.machine_learning.sensor_hub.zdebug.singlecore .
+
+  To build the application for the nRF54H20 DK with the simulated sensor on the PPR core (dual-core application), run the following command:
+
+  .. code-block:: console
+
+     west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_ML_APP_INCLUDE_REMOTE_IMAGE=y -Dmachine_learning_SNIPPET=nordic-ppr
+
+  or use twister test case:
+
+  .. code-block:: console
+
+     west build -b nrf54h20dk/nrf54h20/cpuapp -T applications.machine_learning.sensor_hub.zdebug .
 
 Selecting a build type
 ======================

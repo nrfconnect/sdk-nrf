@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+target_sources_ifdef(CONFIG_ML_APP_DATA_AGGREGATOR_RELEASE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/data_aggregator_release.c)
+
 target_sources_ifdef(CONFIG_ML_APP_EI_DATA_FORWARDER_UART
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ei_data_forwarder_uart.c)
 

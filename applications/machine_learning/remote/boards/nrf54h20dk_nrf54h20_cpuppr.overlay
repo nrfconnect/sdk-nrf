@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	chosen {
+		zephyr,console = &uart135;
+	};
+
+	sensor_sim: sensor-sim {
+		compatible = "nordic,sensor-sim";
+		acc-signal = "wave";
+	};
+
+	agg0: agg0 {
+		compatible = "caf,aggregator";
+		sensor_descr = "accel_xyz";
+		buf_data_length = <240>;
+		sample_size = <3>;
+		buf_count = <6>;
+		memory-region = <&ram3x_agg_area0>;
+		status = "okay";
+	};
+};
+
+/*
+ * Expand PPR memory region.
+ * Place aggregator buffers in PPR memory region.
+ */
+
+/delete-node/ &cpuppr_code_data;
+/delete-node/ &cpuapp_cpuppr_ipc_shm;
+/delete-node/ &cpuppr_cpuapp_ipc_shm;
+
+&cpuppr_ram3x_region {
+	reg = <0x2fc00000 DT_SIZE_K(68)>;
+	ranges = <0x0 0x2fc00000 0x11000>;
+
+	cpuppr_code_data: memory@0 {
+		reg = <0x0 DT_SIZE_K(64)>;
+	};
+
+	cpuapp_cpuppr_ipc_shm: memory@10000 {
+		reg = <0x10000 DT_SIZE_K(1)>;
+	};
+
+	cpuppr_cpuapp_ipc_shm: memory@10400 {
+		reg = <0x10400 DT_SIZE_K(1)>;
+	};
+	ram3x_agg_area0: memory@10800{
+		reg = <0x10800 0x600>;
+	};
+};
+
+&uart135 {
+	status = "okay";
+};
+
+ipc1: &cpuapp_cpuppr_ipc {
+	status = "okay";
+};
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};

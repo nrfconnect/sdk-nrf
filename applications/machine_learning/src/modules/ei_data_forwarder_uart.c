@@ -11,6 +11,7 @@
 #include "ei_data_forwarder_event.h"
 
 #include <caf/events/sensor_event.h>
+#include <caf/events/sensor_data_aggregator_event.h>
 #include "ml_app_mode_event.h"
 
 #define MODULE ei_data_forwarder
@@ -86,19 +87,8 @@ static void report_error(void)
 	module_set_state(MODULE_STATE_ERROR);
 }
 
-static bool handle_sensor_event(const struct sensor_event *event)
+static bool send_data_block(const struct sensor_value *data_ptr, size_t sample_cnt, size_t val_cnt)
 {
-	if ((event->descr != handled_sensor_event_descr) &&
-	    strcmp(event->descr, handled_sensor_event_descr)) {
-		return false;
-	}
-
-	if (state != STATE_ACTIVE) {
-		return false;
-	}
-
-	__ASSERT_NO_MSG(sensor_event_get_data_cnt(event) > 0);
-
 	/* Ensure that previous sensor_event was sent. */
 	if (!atomic_cas(&uart_busy, false, true)) {
 		LOG_WRN("UART not ready");
@@ -108,17 +98,20 @@ static bool handle_sensor_event(const struct sensor_event *event)
 	}
 
 	static uint8_t buf[UART_BUF_SIZE];
+	int pos = 0;
 
-	int pos = ei_data_forwarder_parse_data(sensor_event_get_data_ptr(event),
-					       sensor_event_get_data_cnt(event),
-					       (char *)buf,
-					       sizeof(buf));
+	for (size_t i = 0; i < sample_cnt; ++i) {
+		int ret = ei_data_forwarder_parse_data(data_ptr, val_cnt,
+						      (char *)buf + pos,
+						      sizeof(buf) - pos);
 
-	if (pos < 0) {
-		(void)atomic_set(&uart_busy, false);
-		LOG_ERR("EI data forwader parsing error: %d", pos);
-		report_error();
-		return false;
+		if (ret < 0) {
+			(void)atomic_set(&uart_busy, false);
+			LOG_ERR("EI data forwader parsing error: %d", ret);
+			report_error();
+			return false;
+		}
+		pos += ret;
 	}
 
 	int err = uart_tx(dev, buf, pos, SYS_FOREVER_MS);
@@ -130,6 +123,40 @@ static bool handle_sensor_event(const struct sensor_event *event)
 	}
 
 	return false;
+}
+
+static bool handle_sensor_event(const struct sensor_event *event)
+{
+	if (state != STATE_ACTIVE) {
+		return false;
+	}
+
+	if ((event->descr != handled_sensor_event_descr) &&
+	    strcmp(event->descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
+	__ASSERT_NO_MSG(sensor_event_get_data_cnt(event) > 0);
+
+	return send_data_block(sensor_event_get_data_ptr(event),
+			       1, sensor_event_get_data_cnt(event));
+}
+
+static bool handle_sensor_data_aggregator_event(const struct sensor_data_aggregator_event *event)
+{
+	if (state != STATE_ACTIVE) {
+		return false;
+	}
+
+	if ((event->sensor_descr != handled_sensor_event_descr) &&
+	    strcmp(event->sensor_descr, handled_sensor_event_descr)) {
+		return false;
+	}
+
+	__ASSERT_NO_MSG(event->sample_cnt > 0);
+	__ASSERT_NO_MSG(event->values_in_sample > 0);
+
+	return send_data_block(event->samples, event->sample_cnt, event->values_in_sample);
 }
 
 static bool handle_ml_app_mode_event(const struct ml_app_mode_event *event)
@@ -201,6 +228,11 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return handle_sensor_event(cast_sensor_event(aeh));
 	}
 
+	if (IS_ENABLED(CONFIG_CAF_SENSOR_DATA_AGGREGATOR_EVENTS) &&
+	    is_sensor_data_aggregator_event(aeh)) {
+		return handle_sensor_data_aggregator_event(cast_sensor_data_aggregator_event(aeh));
+	}
+
 	if (ML_APP_MODE_CONTROL &&
 	    is_ml_app_mode_event(aeh)) {
 		return handle_ml_app_mode_event(cast_ml_app_mode_event(aeh));
@@ -218,6 +250,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, sensor_data_aggregator_event);
 APP_EVENT_SUBSCRIBE(MODULE, sensor_event);
 #if ML_APP_MODE_CONTROL
 APP_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);

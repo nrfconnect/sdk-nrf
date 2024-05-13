@@ -20,7 +20,7 @@ project("Machine learning"
 # NORDIC SDK APP START
 target_sources(app PRIVATE
   src/main.c
-  )
+)
 # NORDIC SDK APP END
 
 # Include application events and configuration headers
@@ -35,6 +35,7 @@ zephyr_include_directories(
 )
 
 # Application sources
+add_subdirectory(common/src/modules)
 add_subdirectory(src/events)
 add_subdirectory(src/modules)
 add_subdirectory(src/util)
