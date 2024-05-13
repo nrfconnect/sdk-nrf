@@ -171,7 +171,7 @@ Protocol support
 The following table indicates the software maturity levels of the support for each :ref:`protocol <protocols>`:
 
 .. sml-table:: top_level
-   :insert-values: [("Bluetooth","nRF54L15","Experimental"), ("Bluetooth Mesh","nRF54L15","-"), ("Matter","nRF54L15","Experimental"), ("Sidewalk","nRF54L15","Experimental"), ("Thread","nRF54L15","Experimental")]
+   :insert-values: [("Bluetooth","nRF54L15","Experimental"), ("Bluetooth Mesh","nRF54L15","-"), ("Matter","nRF54L15","Experimental"), ("Sidewalk","nRF54L15","Experimental"), ("Thread","nRF54L15","Experimental"), ("Bluetooth","nRF54H20","Experimental"), ("Wi-Fi","nRF54H20","-")]
 
 Amazon Sidewalk features support
 ********************************
@@ -190,6 +190,7 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: bluetooth
+     :insert-values: [("Bluetooth LE Peripheral/Central","nRF54H20","Experimental"), ("Connectionless/Connected CTE Transmitter","nRF54H20","Experimental"), ("LE Coded PHY","nRF54H20","Experimental"), ("LLPM","nRF54H20","Experimental")]
 
 Thread features support
 ***********************
@@ -228,6 +229,7 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: wifi
+     :insert-values: [("STA Mode","nRF54H20","-")]
 
 Security Feature Support
 ************************
@@ -253,6 +255,7 @@ PSA Crypto support
 .. toggle::
 
   .. sml-table:: psa_crypto
+     :insert-values: [("PSA Crypto APIs","nRF54H20","-")]
 
 |NSIB|
 ======

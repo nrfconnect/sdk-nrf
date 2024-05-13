@@ -73,8 +73,6 @@ nRF54H20 DK
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 Testing
 =======
 
