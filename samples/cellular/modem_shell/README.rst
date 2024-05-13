@@ -929,12 +929,23 @@ LED indications
 
 The LEDs have the following functions:
 
-LED 1 (nRF91 Series DKs)/Purple LED (Thingy:91):
-   Lit for five seconds when the current location has been successfully retrieved by using the ``location get`` command.
-LED 2 (nRF91 Series DKs):
-   Indicates the state of the GPIO pin when pulse counting has been enabled using the ``gpio_count enable`` command.
-LED 3 (nRF91 Series DKs)/Blue LED (Thingy:91):
-   Indicates the LTE registration status.
+nRF91 Series DKs:
+
+* **LED 2** indicates the state of the GPIO pin when pulse counting has been enabled using the ``gpio_count enable`` command.
+* **LED 3** indicates the LTE registration status.
+* **LED 4** is lit for five seconds when the current location has been successfully retrieved by using the ``location get`` command.
+
+Thingy:91 and Thingy:91 X RGB LED:
+
+* LTE connected:
+
+  * Default state constant blue.
+  * Lit purple for five seconds when the current location has been successfully retrieved by using the ``location get`` command.
+
+* LTE disconnected:
+
+  * Default state OFF.
+  * Lit red for five seconds when the current location has been successfully retrieved by using the ``location get`` command.
 
 Power measurements
 ==================
