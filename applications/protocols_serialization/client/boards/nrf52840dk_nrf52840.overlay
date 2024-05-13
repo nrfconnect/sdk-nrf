@@ -6,6 +6,7 @@
 &uart1 {
 	status = "okay";
 	hw-flow-control;
+	current-speed = <1000000>;
 };
 
 &uart1_default {
