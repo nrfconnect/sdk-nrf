@@ -1024,7 +1024,7 @@ To build an application for evaluating HID report rate, run the following comman
       :class: highlight
 
       west build -p -b *build_target* -- \
-      -DCONF_FILE=prj_release.conf \
+      -DFILE_SUFFIX=release \
       -DCONFIG_DESKTOP_MOTION_SIMULATED_ENABLE=y \
 
 Report rate measuring tips
