@@ -269,6 +269,11 @@ nRF Machine Learning (Edge Impulse)
   The ``ml_runner`` application module to allow running a machine learning model without anomaly support.
   The :ref:`application documentation <nrf_machine_learning_app>` by splitting it into several pages.
 
+* Added:
+
+  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` boards.
+  * Support for the :ref:`zephyr:sysbuild`.
+
 nRF Desktop
 -----------
 

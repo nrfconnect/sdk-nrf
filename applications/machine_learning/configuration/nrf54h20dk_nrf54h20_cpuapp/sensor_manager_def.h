@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -22,7 +22,7 @@ static struct sm_trigger sensor_trigger = {
 	},
 	.activation = {
 		.type = ACT_TYPE_ABS,
-		.thresh = FLOAT_TO_SENSOR_VALUE (CONFIG_ADXL362_ACTIVITY_THRESHOLD *
+		.thresh = FLOAT_TO_SENSOR_VALUE(CONFIG_ADXL362_ACTIVITY_THRESHOLD *
 			(IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_8G) ? 8.0 :
 			 IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_4G) ? 4.0 :
 			 IS_ENABLED(CONFIG_ADXL362_ACCEL_RANGE_2G) ? 2.0 : 1.0)
@@ -40,7 +40,7 @@ static const struct caf_sampled_channel accel_chan[] = {
 
 static const struct sm_sensor_config sensor_configs[] = {
 	{
-		.dev = DEVICE_DT_GET(DT_NODELABEL(adxl362)),
+		.dev = DEVICE_DT_GET(DT_ALIAS(accel0)),
 		.event_descr = CONFIG_ML_APP_SENSOR_EVENT_DESCR,
 		.chans = accel_chan,
 		.chan_cnt = ARRAY_SIZE(accel_chan),

@@ -6,6 +6,7 @@
 
 menu "Application modules"
 
+rsource "Kconfig.data_aggregator_release"
 rsource "Kconfig.ei_data_forwarder"
 rsource "Kconfig.led_state"
 rsource "Kconfig.ml_app_mode"

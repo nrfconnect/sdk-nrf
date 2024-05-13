@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Common"
+
+rsource "src/Kconfig.ml_app"
+rsource "src/modules/Kconfig"
+
+endmenu
