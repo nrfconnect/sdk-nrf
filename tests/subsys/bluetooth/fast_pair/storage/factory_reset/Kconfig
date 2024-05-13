@@ -4,6 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config BT_FAST_PAIR_STORAGE_FMDN_CLOCK
+	default y
+	help
+	  Unit test enables this option to be able to use API of the Beacon Clock used in the FMDN
+	  extension.
+
 config BT_FAST_PAIR_STORAGE_PN
 	default y
 	help
