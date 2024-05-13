@@ -5,11 +5,6 @@
  */
 
 / {
-	chosen {
-		zephyr,console = &uart30;
-		zephyr,shell-uart = &uart30;
-	};
-
 	aliases {
 		factory-data = &factory_data;
 		factory-data-memory-region = &rram0;
@@ -54,10 +49,6 @@
 			};
 		};
 	};
-};
-
-&uart30 {
-	status = "okay";
 };
 
 &pwm20 {
