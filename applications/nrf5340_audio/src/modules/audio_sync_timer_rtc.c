@@ -215,7 +215,7 @@ static int audio_sync_timer_init(void)
 		return -ENOMEM;
 	}
 
-	nrf_rtc_subscribe_set(audio_sync_lf_timer_instance.p_reg, NRF_RTC_TASK_START,
+	nrf_rtc_subscribe_set(audio_sync_lf_timer_instance.p_reg, NRF_RTC_TASK_CLEAR,
 			      dppi_channel_rtc_start);
 	nrf_timer_subscribe_set(audio_sync_hf_timer_instance.p_reg, NRF_TIMER_TASK_START,
 				dppi_channel_rtc_start);
@@ -249,6 +249,8 @@ static int audio_sync_timer_init(void)
 		LOG_ERR("nrfx DPPI channel enable error (timer clear): %d", ret);
 		return -EIO;
 	}
+
+	nrfx_rtc_enable(&audio_sync_lf_timer_instance);
 
 	LOG_DBG("Audio sync timer initialized");
 
