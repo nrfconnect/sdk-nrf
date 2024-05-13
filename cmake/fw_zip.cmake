@@ -6,7 +6,7 @@
 
 function(generate_dfu_zip)
   set(oneValueArgs OUTPUT TYPE TARGET IMAGE)
-  set(multiValueArgs BIN_FILES SCRIPT_PARAMS DEPENDS)
+  set(multiValueArgs BIN_FILES SCRIPT_PARAMS DEPENDS EXCLUDE INCLUDE ZIP_NAMES)
   cmake_parse_arguments(GENZIP "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if (NOT(
@@ -38,12 +38,34 @@ function(generate_dfu_zip)
     endif()
   endif()
 
+  if(DEFINED GENZIP_ZIP_NAMES)
+    set(GENZIP_ZIP_NAMES --zip-names ${GENZIP_ZIP_NAMES})
+  endif()
+
+  if(DEFINED GENZIP_EXCLUDE)
+    set(depend_bin_files)
+    foreach(file ${GENZIP_BIN_FILES})
+      list(FIND GENZIP_EXCLUDE ${file} found)
+
+      if(found EQUAL "-1")
+        list(APPEND depend_bin_files ${file})
+      endif()
+    endforeach()
+  else()
+    set(depend_bin_files ${GENZIP_BIN_FILES})
+  endif()
+
+  if(DEFINED GENZIP_INCLUDE)
+    set(depend_bin_files ${depend_bin_files};${GENZIP_INCLUDE})
+  endif()
+
   add_custom_command(
     OUTPUT ${GENZIP_OUTPUT}
     COMMAND
     ${PYTHON_EXECUTABLE}
     ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/generate_zip.py
     --bin-files ${GENZIP_BIN_FILES}
+    ${GENZIP_ZIP_NAMES}
     --output ${GENZIP_OUTPUT}
     --name "${APPNAME}"
     ${meta_argument}
@@ -51,7 +73,7 @@ function(generate_dfu_zip)
     "type=${GENZIP_TYPE}"
     "board=${CONFIG_BOARD}"
     "soc=${CONFIG_SOC}"
-    DEPENDS ${GENZIP_DEPENDS} ${GENZIP_BIN_FILES} ${meta_info_file}
+    DEPENDS ${GENZIP_DEPENDS} ${depend_bin_files} ${meta_info_file}
     )
 
   get_filename_component(TARGET_NAME ${GENZIP_OUTPUT} NAME)

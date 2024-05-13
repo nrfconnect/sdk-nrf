@@ -5,10 +5,38 @@
 menuconfig DFU_ZIP
 	bool "Create DFU zip package"
 	depends on BOOTLOADER_MCUBOOT
+	depends on PARTITION_MANAGER
+	default y
 	help
 	  Build DFU zip package that contains a manifest file and selected update images.
 
 if DFU_ZIP
+
+config DFU_ZIP_APP
+	bool "Application update"
+	default y
+	help
+	  Include application update in DFU zip.
+
+config DFU_ZIP_NET
+	bool "Network core update"
+	depends on SUPPORT_NETCORE
+	depends on !NETCORE_NONE
+	depends on !NETCORE_EMPTY
+	depends on SECURE_BOOT_NETCORE
+	depends on NETCORE_APP_UPDATE
+	default y
+	help
+	  Include network-core update in DFU zip.
+
+config DFU_ZIP_WIFI_FW_PATCH
+	bool "nRF70 firmware patch"
+	depends on PARTITION_MANAGER
+	depends on WIFI_NRF700X
+	depends on (WIFI_PATCHES_EXT_FLASH_XIP || WIFI_PATCHES_EXT_FLASH_STORE)
+	default y
+	help
+	  Include nRF7x firmware patch in DFU zip.
 
 config DFU_ZIP_BLUETOOTH_MESH_METADATA
 	bool "Bluetooth mesh metadata"
