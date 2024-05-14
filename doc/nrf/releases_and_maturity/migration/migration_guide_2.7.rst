@@ -44,6 +44,16 @@ This section describes the changes related to samples and applications.
   * When using the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option, the certificate files must be in standard PEM format.
     This means that the PEM files must not be converted to string format anymore.
 
+Wi-Fi®
+------
+
+.. toggle::
+
+   * :ref:`wifi_shell_sample` sample:
+
+     * The parameters of the ``connect`` and ``ap enable`` commands have been updated.
+       Check the updated parameters using the ``-h`` help option of the command.
+
 Serial LTE Modem (SLM)
 ----------------------
 
