@@ -1171,7 +1171,9 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 
 	/* Check if the other streams are streaming, send event if not */
 	for (int i = 0; i < ARRAY_SIZE(headsets); i++) {
-		if (le_audio_ep_state_check(headsets[i].source_stream.ep,
+		if (le_audio_ep_state_check(headsets[i].sink_stream.ep,
+					    BT_BAP_EP_STATE_STREAMING) ||
+		    le_audio_ep_state_check(headsets[i].source_stream.ep,
 					    BT_BAP_EP_STATE_STREAMING)) {
 			return;
 		}
