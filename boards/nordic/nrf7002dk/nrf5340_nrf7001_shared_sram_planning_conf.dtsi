@@ -22,9 +22,9 @@
 		#size-cells = <1>;
 		ranges;
 
-		sram0_shared: memory@20070010 {
+		sram0_shared: memory@20070000 {
 			/* SRAM allocated to shared memory */
-			reg = <0x20070010 0x10000>;
+			reg = <0x20070000 0x10000>;
 		};
 	};
 };
