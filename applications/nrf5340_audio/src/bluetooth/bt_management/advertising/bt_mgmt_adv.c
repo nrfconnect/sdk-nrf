@@ -317,7 +317,11 @@ void bt_mgmt_dir_adv_timed_out(void)
 	}
 
 	/* Restart normal advertising */
-	bt_mgmt_adv_start(NULL, 0, NULL, 0, true);
+	ret = bt_mgmt_adv_start(NULL, 0, NULL, 0, true);
+	if (ret) {
+		LOG_ERR("Unable start advertising: %d", ret);
+		return;
+	}
 }
 
 int bt_mgmt_manufacturer_uuid_populate(struct net_buf_simple *uuid_buf, uint16_t company_id)
