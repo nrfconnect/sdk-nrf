@@ -727,6 +727,7 @@ Libraries for networking
     * The JSON string representing longitude in ``PVT`` reports from ``lng`` to ``lon`` to align with nRF Cloud.
       nRF Cloud still accepts ``lng`` for backward compatibility.
     * The handling of MQTT JITP device association to improve speed and reliability.
+    * To use nRF Cloud's custom MQTT topics instead of the default AWS topics.
 
   * Fixed an issue in the :c:func:`nrf_cloud_send` function that prevented data in the provided :c:struct:`nrf_cloud_obj` structure from being sent to the bulk and bin topics.
 
