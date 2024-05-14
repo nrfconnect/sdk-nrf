@@ -150,6 +150,10 @@ peripheral=TIMER0
 peripheral_depends=$(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
 rsource "Kconfig.template.peripheral_secure"
 
+peripheral=TIMER00
+peripheral_depends=$(dt_nodelabel_has_compat,timer00,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
 peripheral=TIMER1
 peripheral_depends=$(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
 rsource "Kconfig.template.peripheral_secure"
