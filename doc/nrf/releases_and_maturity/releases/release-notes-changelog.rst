@@ -519,9 +519,7 @@ Matter samples
 Multicore samples
 -----------------
 
-* :ref:`ipc_service_sample` sample:
-
-  * Removed support for the `OpenAMP`_ library backend on the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+|no_changes_yet_note|
 
 Networking samples
 ------------------
@@ -643,6 +641,10 @@ Other samples
 
 * Added the :ref:`coremark_sample` sample that demonstrates how to easily measure a performance of the supported SoCs by running the Embedded Microprocessor Benchmark Consortium (EEMBC) CoreMark benchmark.
   Included support for the nRF52840 DK, nRF5340 DK, and nRF54L15 PDK.
+
+* :ref:`ipc_service_sample` sample:
+
+  * Removed support for the `OpenAMP`_ library backend on the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 Drivers
 =======
