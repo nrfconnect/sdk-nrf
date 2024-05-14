@@ -32,6 +32,7 @@ function(b0_gen_keys)
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM)
     set(SIGNATURE_PUBLIC_KEY_FILE ${SB_CONFIG_SECURE_BOOT_SIGNING_PUBLIC_KEY})
     set(SIGNATURE_PUBLIC_KEY_FILE ${SB_CONFIG_SECURE_BOOT_SIGNING_PUBLIC_KEY} PARENT_SCOPE)
+
     if(NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE} OR IS_DIRECTORY ${SIGNATURE_PUBLIC_KEY_FILE})
       message(WARNING "Invalid public key file: ${SIGNATURE_PUBLIC_KEY_FILE}")
     endif()
@@ -40,22 +41,21 @@ function(b0_gen_keys)
     return()
   endif()
 
-# TODO: this config is gone
-#if(SB_CONFIG_SECURE_BOOT_PRIVATE_KEY_PROVIDED)
-  add_custom_command(
-    OUTPUT
-    ${SIGNATURE_PUBLIC_KEY_FILE}
-    COMMAND
-    ${PUB_GEN_CMD}
-    DEPENDS
-    ${SIGNATURE_PRIVATE_KEY_FILE}
-    COMMENT
-    "Creating public key from private key used for signing"
-    WORKING_DIRECTORY
-    ${PROJECT_BINARY_DIR}
-    USES_TERMINAL
-    )
-#endif()
+  if(NOT SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM)
+    add_custom_command(
+        OUTPUT
+        ${SIGNATURE_PUBLIC_KEY_FILE}
+        COMMAND
+        ${PUB_GEN_CMD}
+        DEPENDS
+        ${SIGNATURE_PRIVATE_KEY_FILE}
+        COMMENT
+        "Creating public key from private key used for signing"
+        WORKING_DIRECTORY
+        ${PROJECT_BINARY_DIR}
+        USES_TERMINAL
+      )
+  endif()
 
   # Public key file target is required for all signing options
   add_custom_target(
@@ -67,7 +67,6 @@ endfunction()
 
 function(b0_sign_image slot)
   set(GENERATED_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
-  set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_PATH}/public.pem)
 
   # Get variables for secure boot usage
   sysbuild_get(${slot}_sb_validation_info_version IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_VERSION KCONFIG)
