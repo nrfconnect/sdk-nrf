@@ -361,9 +361,9 @@ Testing STA mode
 
    .. code-block:: console
 
-      wifi connect <SSID> <passphrase>
+      wifi connect -s <SSID> -k <key_management> -p <passphrase>
 
-   ``<SSID>`` is the SSID of the network you want to connect to, and ``<passphrase>`` is its passphrase.
+   ``<SSID>`` is the SSID of the network you want to connect to, ``<passphrase>`` is its passphrase, and the ``<key_management>`` is the security type used by the network.
 
 #. Check the connection status after a while, using the following command:
 
@@ -441,9 +441,9 @@ To test the SAP mode, the sample must be built using the configuration overlay :
 
    .. code-block:: console
 
-      wifi ap enable <SSID> <channel> <psk>
+      wifi ap enable -s <SSID> -c <channel> -k <key_management> -p <psk>
 
-   ``<SSID>`` is the SSID of the network you want to connect to, and ``<psk>`` is its passphrase.
+   ``<SSID>`` is the SSID of the network you want to connect to, ``<psk>`` is its passphrase, and the ``<key_management>`` is the security type used by the network.
 
 #. Check the SAP status after a while, using the following command:
 
