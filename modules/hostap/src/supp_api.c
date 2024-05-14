@@ -864,6 +864,8 @@ int z_wpa_supplicant_ap_enable(const struct device *dev,
 
 	/* No need to check for existing network to join for SoftAP*/
 	wpa_s->conf->ap_scan = 2;
+	/* Set BSS parameter max_num_sta to default configured value */
+	wpa_s->conf->max_num_sta = CONFIG_WIFI_MGMT_AP_MAX_NUM_STA;
 
 	ret = wpas_add_and_config_network(wpa_s, params, true);
 	if (ret) {
@@ -966,6 +968,20 @@ int z_wpa_supplicant_ap_config_params(const struct device *dev,
 			       ssid->id, params->max_inactivity);
 	}
 
+	if (params->type & WIFI_AP_CONFIG_PARAM_MAX_NUM_STA) {
+		/* Build time value has higher precedence than runtime configuration value.
+		 * Check if build time value is exceeded.
+		 */
+		if (params->max_num_sta > CONFIG_WIFI_MGMT_AP_MAX_NUM_STA) {
+			ret = -EINVAL;
+			wpa_printf(MSG_ERROR, "Invalid max_num_sta: %d",
+				   params->max_num_sta);
+			goto out;
+		} else {
+			_wpa_cli_cmd_v("set max_num_sta %d", params->max_num_sta);
+			ret = 0;
+		}
+	}
 out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
 
