@@ -58,6 +58,7 @@ static struct lwm2m_engine_res_inst pull_protocol_buff[FOTA_PULL_SUPPORTED_COUNT
 
 static lwm2m_firmware_event_cb_t firmware_fota_event_cb;
 static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
+static K_SEM_DEFINE(fw_buf_sem, 1, 1);
 
 /* Supported Protocols */
 static uint8_t pull_protocol_support[FOTA_PULL_SUPPORTED_COUNT] = { FOTA_PULL_COAP, FOTA_PULL_HTTP,
@@ -79,21 +80,10 @@ static K_THREAD_STACK_MEMBER(thread_stack,
 #define UNUSED_OBJ_ID 0xffff
 #define PENDING_DELAY K_MSEC(10)
 static uint16_t ongoing_obj_id;
-static uint8_t percent_downloaded;
-static uint32_t bytes_downloaded;
 static int application_obj_id;
 static int modem_obj_id;
 static int smp_obj_id;
 static int target_image_type[FOTA_INSTANCE_COUNT];
-
-
-static void dfu_target_cb(enum dfu_target_evt_id evt);
-static void start_pending_fota_download(struct k_work *work);
-static bool firmware_update_check_linked_instances(int instance_id, bool *reconnect);
-static int target_image_type_get(uint16_t instance);
-static uint8_t get_state(uint16_t id);
-static void set_result(uint16_t id, uint8_t result);
-static K_WORK_DELAYABLE_DEFINE(pending_download_work, start_pending_fota_download);
 static struct update_data {
 	struct k_work_delayable work;
 	enum {APP, MODEM_DELTA, MODEM_FULL, SMP} type;
@@ -101,7 +91,26 @@ static struct update_data {
 	bool update_accepted;
 } update_data;
 
-void client_acknowledge(void);
+static struct push_data {
+	struct k_work work;
+	int return_code;
+	enum dfu_target_image_type image_type;
+	uint32_t bytes_downloaded;
+	size_t total_size;
+	size_t offset;
+	uint8_t *data;
+	uint16_t data_len;
+	bool last_block;
+} push_data;
+
+static void dfu_target_cb(enum dfu_target_evt_id evt);
+static void start_pending_fota_download(struct k_work *work);
+static bool firmware_update_check_linked_instances(int instance_id, bool *reconnect);
+static int target_image_type_get(uint16_t instance);
+static uint8_t get_state(uint16_t id);
+static void set_result(uint16_t id, uint8_t result);
+static void push_data_handler(struct k_work *work);
+static K_WORK_DELAYABLE_DEFINE(pending_download_work, start_pending_fota_download);
 
 static void apply_firmware_update(enum dfu_target_image_type type, uint16_t instance_id)
 {
@@ -591,6 +600,11 @@ static int firmware_update_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args
 static void *firmware_get_buf(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 			      size_t *data_len)
 {
+	while (k_sem_take(&fw_buf_sem, K_SECONDS(1)) != 0) {
+		if (!k_work_is_pending(&push_data.work)) {
+			break;
+		}
+	}
 	*data_len = sizeof(firmware_buf);
 	return firmware_buf;
 }
@@ -611,9 +625,7 @@ static int firmware_update_result(uint16_t obj_inst_id, uint16_t res_id, uint16_
 static void init_firmware_variables(void)
 {
 	int ret;
-
-	percent_downloaded = 0;
-	bytes_downloaded = 0;
+	push_data = (struct push_data) {.work = push_data.work};
 	ongoing_obj_id = UNUSED_OBJ_ID;
 	ret = k_work_schedule(&pending_download_work, PENDING_DELAY);
 	if (ret < 0) {
@@ -674,97 +686,124 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 				      uint8_t *data, uint16_t data_len, bool last_block,
 				      size_t total_size, size_t offset)
 {
-	uint8_t curent_percent;
-	uint32_t current_bytes;
-	size_t target_offset;
-	size_t skip = 0;
-	int ret = 0;
-	int image_type;
+	enum dfu_target_image_type image_type;
 
 	if (!data_len) {
+		k_sem_give(&fw_buf_sem);
 		return -EINVAL;
 	}
+	if (ongoing_obj_id != UNUSED_OBJ_ID && ongoing_obj_id != obj_inst_id) {
+		LOG_INF("DFU is allocated already");
+		k_sem_give(&fw_buf_sem);
+		return -EAGAIN;
+	}
 
-	if (bytes_downloaded == 0) {
-		if (ongoing_obj_id != UNUSED_OBJ_ID) {
-			LOG_INF("DFU is allocated already");
-			return -EAGAIN;
-		}
-
-		ongoing_obj_id = obj_inst_id;
-		client_acknowledge();
-
+	if (offset == 0) {
 		image_type = dfu_target_img_type(data, data_len);
 		if (image_type == DFU_TARGET_IMAGE_TYPE_NONE) {
-			ret = -ENOMSG; /* Translates to unsupported image type */
-			goto cleanup;
+			k_sem_give(&fw_buf_sem);
+			return -ENOMSG; /* Translates to unsupported image type */
 		}
 		LOG_INF("Image type %d", image_type);
-		ret = fota_download_util_dfu_target_init(image_type);
+		push_data = (struct push_data){
+			.work = push_data.work,
+			.total_size = total_size,
+			.offset = offset,
+			.image_type = image_type,
+			.data = data,
+			.data_len = data_len,
+			.last_block = last_block,
+			.bytes_downloaded =
+				(ongoing_obj_id == obj_inst_id) ? push_data.bytes_downloaded : 0,
+		};
+	} else {
+		if (push_data.return_code) {
+			/* If previous write was not succesfull, do not continue */
+			k_sem_give(&fw_buf_sem);
+			return push_data.return_code;
+		}
+		push_data.data = data;
+		push_data.data_len = data_len;
+		push_data.last_block = last_block;
+		push_data.offset = offset;
+	}
+	ongoing_obj_id = obj_inst_id;
+
+	if (!last_block) {
+		/* Handle initialization, erasing and flash writing on background */
+		k_work_submit(&push_data.work);
+	} else {
+		/* Last block must be handled directly, so we get correct return code */
+		push_data_handler(&push_data.work);
+		return push_data.return_code;
+	}
+	return 0;
+}
+
+static void push_data_handler(struct k_work *work)
+{
+	uint8_t current_percent;
+	uint32_t current_bytes;
+	size_t dfu_offset = 0;
+	int ret = 0;
+
+	if (push_data.offset == 0 && push_data.bytes_downloaded == 0) {
+		ret = fota_download_util_dfu_target_init(push_data.image_type);
 		if (ret) {
 			goto cleanup;
 		}
 
+		LOG_INF("%s firmware download started.",
+			push_data.image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ||
+					push_data.image_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM
+				? "Modem"
+				: "Application");
+
 		/* Store Started DFU type */
-		target_image_type_store(obj_inst_id, image_type);
-		ret = dfu_target_init(image_type, 0, total_size, dfu_target_cb);
+		target_image_type_store(ongoing_obj_id, push_data.image_type);
+		ret = dfu_target_init(push_data.image_type, 0, push_data.total_size, dfu_target_cb);
 		if (ret < 0) {
 			LOG_ERR("Failed to init DFU target, err: %d", ret);
 			goto cleanup;
 		}
-
-		LOG_INF("%s firmware download started.",
-			image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ||
-					image_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM ?
-				"Modem" :
-				"Application");
 	}
 
-	ret = dfu_target_offset_get(&target_offset);
+	ret = dfu_target_offset_get(&dfu_offset);
 	if (ret < 0) {
 		LOG_ERR("Failed to obtain current offset, err: %d", ret);
 		goto cleanup;
 	}
 
+	if (push_data.bytes_downloaded > push_data.offset) {
+		LOG_INF("Skipping downloaded data");
+		k_sem_give(&fw_buf_sem);
+		return;
+	}
+
+	push_data.bytes_downloaded += push_data.data_len;
+
+
 	/* Display a % downloaded or byte progress, if no total size was
 	 * provided (this can happen in PULL mode FOTA)
 	 */
-	if (total_size > 0) {
-		curent_percent = bytes_downloaded * 100 / total_size;
-		if (curent_percent > percent_downloaded) {
-			percent_downloaded = curent_percent;
-			LOG_INF("Downloaded %d%%", percent_downloaded);
-		}
+	if (push_data.total_size > 0) {
+		current_percent = push_data.bytes_downloaded * 100 / push_data.total_size;
+		LOG_INF("Downloaded %d%%", current_percent);
 	} else {
-		current_bytes = bytes_downloaded + data_len;
-		if (current_bytes / BYTE_PROGRESS_STEP > bytes_downloaded / BYTE_PROGRESS_STEP) {
-			LOG_INF("Downloaded %d kB", current_bytes / 1024);
-		}
+		current_bytes = push_data.bytes_downloaded + push_data.data_len;
+		LOG_INF("Downloaded %d kB", current_bytes / 1024);
 	}
 
-	if (bytes_downloaded < target_offset) {
-		skip = MIN(data_len, target_offset - bytes_downloaded);
-
-		LOG_INF("Skipping bytes %d-%d, already written.", bytes_downloaded,
-			bytes_downloaded + skip);
-	}
-
-	bytes_downloaded += data_len;
-
-	if (skip == data_len) {
-		/* Nothing to do. */
-		return 0;
-	}
-
-	ret = dfu_target_write(data + skip, data_len - skip);
+	ret = dfu_target_write(push_data.data, push_data.data_len);
 	if (ret < 0) {
 		LOG_ERR("dfu_target_write error, err %d", ret);
 		goto cleanup;
 	}
 
-	if (!last_block) {
+	if (!push_data.last_block) {
 		/* Keep going */
-		return 0;
+		k_sem_give(&fw_buf_sem);
+		return;
 	}
 	/* Last write to flash should be flush write */
 	ret = dfu_target_done(true);
@@ -776,22 +815,26 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 		LOG_ERR("dfu_target_done error, err %d", ret);
 		goto cleanup;
 	}
-	LOG_INF("Firmware downloaded, %d bytes in total", bytes_downloaded);
+	LOG_INF("Firmware downloaded, %d bytes in total", push_data.bytes_downloaded);
 
-	if (total_size && (bytes_downloaded != total_size)) {
-		LOG_ERR("Early last block, downloaded %d, expecting %d", bytes_downloaded,
-			total_size);
+	if (push_data.total_size && (push_data.bytes_downloaded != push_data.total_size)) {
+		LOG_ERR("Early last block, downloaded %d, expecting %d", push_data.bytes_downloaded,
+			push_data.total_size);
 		ret = -EIO;
 	}
 
 cleanup:
 	if (ret < 0) {
-		if (dfu_target_reset() < 0) {
+		if (dfu_target_done(false) < 0) {
+			LOG_ERR("Failed to erase DFU target");
+		}
+		if (firmware_target_reset(ongoing_obj_id) < 0) {
 			LOG_ERR("Failed to reset DFU target");
 		}
 	}
-
-	return ret;
+	push_data.return_code = ret;
+	ongoing_obj_id = UNUSED_OBJ_ID;
+	k_sem_give(&fw_buf_sem);
 }
 
 static void fota_download_callback(const struct fota_download_evt *evt)
@@ -1258,10 +1301,12 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 		target_image_type[i] = DFU_TARGET_IMAGE_TYPE_NONE;
 	}
 
+	k_work_init(&push_data.work, push_data_handler);
 	k_work_init_delayable(&update_data.work, update_work_handler);
 	update_data.object_instance = UNUSED_OBJ_ID;
 	update_data.update_accepted = false;
 	ongoing_obj_id = UNUSED_OBJ_ID;
+	push_data.return_code = 0;
 	firmware_fota_event_cb = cb;
 #ifdef CONFIG_DFU_TARGET_SMP
 	tid = k_thread_create(&thread, thread_stack, K_THREAD_STACK_SIZEOF(thread_stack),

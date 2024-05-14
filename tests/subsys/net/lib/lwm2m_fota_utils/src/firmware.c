@@ -84,6 +84,19 @@ static int post_write_to_resource(uint16_t instance_id, uint16_t resource_id, ui
 				  total_size, offset);
 }
 
+static void *pre_write_to_resource(uint16_t instance_id, uint16_t resource_id)
+{
+	struct lwm2m_engine_res *res;
+	size_t data_len;
+
+	res = lwm2m_resource_get(instance_id, resource_id);
+	if (!res || !res->pre_write_cb) {
+		return NULL;
+	}
+
+	return res->pre_write_cb(instance_id, res->res_id, 0, &data_len);
+}
+
 static void tear_down_test(void *fixie)
 {
 	uint8_t result, state;
@@ -521,9 +534,7 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_pull)
 
 ZTEST(lwm2m_client_utils_firmware, test_firmware_pull_failures_cb)
 {
-	int rc;
 	uint8_t result, state;
-	uint8_t test_dummy_data[32];
 
 	prepare_firmware_pull(app_instance, DFU_TARGET_IMAGE_TYPE_MCUBOOT);
 	state = get_app_state();
@@ -556,20 +567,9 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_pull_failures_cb)
 	zassert_equal(state, STATE_DOWNLOADING, "wrong result value");
 	zassert_not_null(firmware_fota_download_cb, "Fota client cb is NULL");
 
-	/* Test FOTA PUSH return EAGAIN progress report. */
-	dfu_target_mcuboot_identify_fake.return_val = true;
-	rc = post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID, test_dummy_data, 32, false,
-				    64, 0);
-	state = get_app_state();
-	printf("RC %d state %d\r\n", rc, state);
-	zassert_equal(rc, -EAGAIN, "wrong return value");
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	zassert_equal(state, STATE_DOWNLOADING, "wrong result value");
 #else
-	result = get_app_result();
-	zassert_equal(result, RESULT_UPDATE_FAILED, "wrong result value");
-	zassert_equal(state, STATE_IDLE, "wrong result value");
-	prepare_firmware_pull(app_instance, DFU_TARGET_IMAGE_TYPE_MCUBOOT);
 	state = get_app_state();
 	printf("State %d\r\n", state);
 	zassert_equal(state, STATE_DOWNLOADING, "wrong result value");
@@ -709,14 +709,17 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_push_update)
 #else
 	inavalid_cancel = -EINVAL;
 #endif
+	pre_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID);
 	dfu_target_mcuboot_identify_fake.return_val = false;
 	rc = post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID, NULL, 0, false, 0, 0);
 	zassert_equal(rc, inavalid_cancel, "wrong return value");
 
+	pre_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID);
 	rc = post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID, test_dummy_data, 32, false,
 				    64, 0);
 	zassert_equal(rc, -ENOMSG, "wrong return value");
 	dfu_target_mcuboot_identify_fake.return_val = true;
+	pre_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID);
 	rc = post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID, test_dummy_data, 32, false,
 				    64, 0);
 	state = get_app_state();
@@ -724,6 +727,7 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_push_update)
 	zassert_equal(state, STATE_DOWNLOADING, "wrong result value");
 
 	target_offset = 32;
+	pre_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID);
 	rc = post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID, test_dummy_data, 32, true,
 				    64, target_offset);
 	state = get_app_state();
