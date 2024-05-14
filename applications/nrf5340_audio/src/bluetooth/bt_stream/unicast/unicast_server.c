@@ -20,16 +20,11 @@
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
 
-#include <../subsys/bluetooth/audio/bap_endpoint.h>
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_server, CONFIG_UNICAST_SERVER_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_ASCS_ASE_SRC_COUNT <= 1,
 	     "A maximum of one source stream is currently supported");
-
-BUILD_ASSERT(strlen(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SET_SIRK_SIZE,
-	     "SIRK incorrect size, must be 16 bytes");
 
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
@@ -631,6 +626,9 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 {
 	int ret;
 	static bool initialized;
+
+	__ASSERT(strlen(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SET_SIRK_SIZE,
+		 "SIRK incorrect size, must be 16 bytes");
 
 	if (initialized) {
 		LOG_WRN("Already initialized");

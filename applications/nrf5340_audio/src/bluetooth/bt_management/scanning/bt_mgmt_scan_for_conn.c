@@ -33,23 +33,24 @@ static void bond_check(const struct bt_bond_info *info, void *user_data)
 	bonded_num++;
 }
 
-static void bond_connect(const struct bt_bond_info *info, void *user_data)
+static void bond_connect(const struct bt_bond_info *bond_info, void *user_data)
 {
 	int ret;
 	const bt_addr_le_t *adv_addr = user_data;
 	struct bt_conn *conn;
 	char addr_string[BT_ADDR_LE_STR_LEN];
 
-	if (!bt_addr_le_cmp(&info->addr, adv_addr)) {
+	if (!bt_addr_le_cmp(&bond_info->addr, adv_addr)) {
 		LOG_DBG("Found bonded device");
 
 		/* Check if the device is still connected due to waiting for ACL timeout */
-		struct bt_conn *bonded_conn = bt_conn_lookup_addr_le(BT_ID_DEFAULT, &info->addr);
-		struct bt_conn_info info;
+		struct bt_conn *bonded_conn =
+			bt_conn_lookup_addr_le(BT_ID_DEFAULT, &bond_info->addr);
+		struct bt_conn_info conn_info;
 
 		if (bonded_conn != NULL) {
-			ret = bt_conn_get_info(bonded_conn, &info);
-			if (ret == 0 && info.state == BT_CONN_STATE_CONNECTED) {
+			ret = bt_conn_get_info(bonded_conn, &conn_info);
+			if (ret == 0 && conn_info.state == BT_CONN_STATE_CONNECTED) {
 				LOG_DBG("Trying to connect to an already connected conn");
 				bt_conn_unref(bonded_conn);
 				return;

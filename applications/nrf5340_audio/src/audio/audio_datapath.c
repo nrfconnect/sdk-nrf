@@ -24,7 +24,6 @@
 #include "contin_array.h"
 #include "pcm_mix.h"
 #include "streamctrl.h"
-#include "audio_sync_timer.h"
 #include "sd_card_playback.h"
 
 #include <zephyr/logging/log.h>
