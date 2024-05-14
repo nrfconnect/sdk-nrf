@@ -17,6 +17,7 @@
 #include "extmem_service_types.h"
 
 #include <errno.h>
+#include <zephyr/cache.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/util.h>
@@ -72,9 +73,21 @@ struct server_state {
 	} action_data;
 };
 
-static uint8_t flash_op_buffer[CONFIG_SSF_EXTMEM_READ_BUFFER_SIZE];
+static uint8_t
+	flash_op_buffer[CONFIG_SSF_EXTMEM_READ_BUFFER_SIZE] __aligned(CONFIG_DCACHE_LINE_SIZE);
 
 static struct server_state server;
+
+static size_t cache_size_adjust(size_t size)
+{
+	size_t line_size = sys_cache_data_line_size_get();
+
+	if (line_size == 0) {
+		return size;
+	}
+
+	return ROUND_UP(size, line_size);
+}
 
 static void handle_extmem_read_fn(struct server_state *state,
 				  struct extmem_read_pending_notify *data)
@@ -126,6 +139,10 @@ static void read_worker_fn(struct server_state *state, struct extmem_req *req)
 		result = EXTMEM_RESULT_SUCCESS;
 	}
 
+	size_t flush_size = cache_size_adjust(state->action_data.read.len);
+
+	sys_cache_data_flush_range(flash_op_buffer, flush_size);
+
 	LOG_HEXDUMP_DBG(flash_op_buffer, state->action_data.read.len, "Read data");
 
 	req->extmem_req_msg_choice = extmem_req_msg_extmem_read_done_req_m_c;
@@ -154,6 +171,10 @@ static void write_worker_fn(struct server_state *state, struct extmem_req *req)
 	int ret = ssf_client_send_request(&extmem_srvc, req, &rsp, NULL);
 
 	if (ret == 0) {
+		size_t invd_size = cache_size_adjust(state->action_data.read.len);
+
+		sys_cache_data_invd_range(flash_op_buffer, invd_size);
+
 		ret = flash_write(fdev, state->action_data.write.offset, flash_op_buffer,
 				  state->action_data.write.len);
 	}
