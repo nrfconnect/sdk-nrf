@@ -33,7 +33,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout sources
-        uses: nordicbuilder/action-checkout-west-update@main
+        uses: nrfconnect/action-checkout-west-update@main
 
       - name: cache-pip
         uses: actions/cache@v3

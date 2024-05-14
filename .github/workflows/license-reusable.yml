@@ -37,7 +37,7 @@ jobs:
     name: Run license checks on patch series (PR)
     steps:
     - name: Checkout sources
-      uses: nordicbuilder/action-checkout-west-update@main
+      uses: nrfconnect/action-checkout-west-update@main
       with:
         git-fetch-depth: 0
         git-ref: ${{ github.event.pull_request.head.sha }}

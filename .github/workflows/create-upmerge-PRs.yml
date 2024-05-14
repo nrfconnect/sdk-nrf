@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: nordicbuilder/action-checkout-west-update@main
+        uses: nrfconnect/action-checkout-west-update@main
         with:
           git-fetch-depth: 0
           west-update-args: 'zephyr bsim mcuboot'
