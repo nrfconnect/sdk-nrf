@@ -1,4 +1,4 @@
-mcuboot:
+addmcuboot:
   address: 0x0
   region: flash_primary
   size: 0x7000

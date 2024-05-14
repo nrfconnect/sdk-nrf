@@ -78,6 +78,14 @@ function(include_matter_factory_data)
   nrfconnect_generate_factory_data()
 endfunction()
 
+function(include_matter_ota)
+  include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/zephyr/ota-image_sysbuild.cmake)
+  chip_ota_image(chip-ota-image
+    INPUT_FILES ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
+    OUTPUT_FILE ${CMAKE_BINARY_DIR}/${SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME}
+  )
+endfunction()
+
 function(include_nrf700x)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf700x.cmake)
 endfunction()
@@ -367,6 +375,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
   else()
     set_config_bool(${DEFAULT_IMAGE} CONFIG_WIFI_NRF700X n)
+  endif()
+
+  if(SB_CONFIG_MATTER)
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP y)
+  else()
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP n)
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 

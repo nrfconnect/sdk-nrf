@@ -2,7 +2,11 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-menu "Matter"
+menuconfig MATTER
+	bool "Matter"
+	depends on ZEPHYR_CONNECTEDHOMEIP_MODULE
+
+if MATTER
 
 config MATTER_FACTORY_DATA
 	bool "Create matter factory data"
@@ -22,4 +26,21 @@ config MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE
 
 endif # MATTER_FACTORY_DATA
 
-endmenu
+config MATTER_OTA
+	bool "Matter OTA Software Update"
+	depends on PARTITION_MANAGER
+	depends on DFU_MULTI_IMAGE_PACKAGE_BUILD
+	default y
+	help
+	  Enables over-the-air (OTA) Requestor role that allows the node to perform
+	  Device Firmware Upgrade by querying and downloading a new firmware image
+	  from a peer OTA Provider node.
+
+config MATTER_OTA_IMAGE_FILE_NAME
+	string "OTA image file name"
+	default "matter.ota"
+	depends on MATTER_OTA
+	help
+	  Provides the file name of the generated Matter OTA image.
+
+endif
