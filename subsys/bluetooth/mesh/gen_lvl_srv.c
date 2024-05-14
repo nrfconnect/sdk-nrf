@@ -77,7 +77,9 @@ static int set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		rsp_status(model, ctx, &status);
 	}
 
-	(void)bt_mesh_lvl_srv_pub(srv, NULL, &status);
+	if (set.new_transaction) {
+		(void)bt_mesh_lvl_srv_pub(srv, NULL, &status);
+	}
 
 	return 0;
 }
