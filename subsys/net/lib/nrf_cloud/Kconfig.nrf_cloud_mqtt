@@ -97,7 +97,6 @@ config NRF_CLOUD_CONNECTION_POLL_THREAD
 	bool "Poll cloud connection in a separate thread"
 	default y
 
-
 if NRF_CLOUD_CONNECTION_POLL_THREAD
 
 config NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE
@@ -122,5 +121,10 @@ config NRF_CLOUD_MQTT_UA_WAIT_KEEPALIVE
 	  Keep alive time for MQTT connection to nRF Cloud, in seconds.
 	  Default is set to a short time so device receives notification of association
 	  more rapidly for better user experience.
+
+config NRF_CLOUD_MQTT_SHADOW_TRANSFORMS
+	bool "Enable requesting shadow data using a JSONata expression"
+	help
+	  This feature allows the device to request specific parts of its shadow.
 
 endif # NRF_CLOUD_MQTT

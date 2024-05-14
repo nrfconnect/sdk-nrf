@@ -819,6 +819,8 @@ Libraries for networking
     * The functions :c:func:`nrf_cloud_print_details` and :c:func:`nrf_cloud_print_cloud_details` to log common nRF Cloud connection information in a uniform way.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_PRINT_DETAILS` Kconfig option to enable the above functions.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_VERBOSE_DETAILS` Kconfig option to print all details instead of only the device ID.
+    * Experimental support for shadow transform requests over MQTT using the :c:func:`nrf_cloud_shadow_transform_request` function.
+      This functionality is enabled by the :kconfig:option:`CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS` Kconfig option.
 
   * Updated:
 
