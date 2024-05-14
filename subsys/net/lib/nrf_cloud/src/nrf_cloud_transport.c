@@ -43,21 +43,36 @@ BUILD_ASSERT((sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1) <= NRF_CLOUD_CLIENT_ID_MAX
 #define NRF_CLOUD_AF_FAMILY AF_INET
 #endif /* defined(CONFIG_NRF_CLOUD_IPV6) */
 
-#define AWS "$aws/things/"
-/*
- * Note that this topic is intentionally not using the AWS Shadow get/accepted
- * topic ("$aws/things/<deviceId>/shadow/get/accepted").
- * Messages on the AWS topic contain the entire shadow, including metadata and
- * they can become too large for the modem to handle.
- * Messages on the topic below are published by nRF Cloud and
- * contain only a part of the original message so it can be received by the
- * device.
+/* nRF Cloud's custom update topic (device PUB).
+ * Functionally identical to the AWS shadow update topic.
  */
-#define NCT_ACCEPTED_TOPIC "%s/shadow/get/accepted"
-#define NCT_REJECTED_TOPIC AWS "%s/shadow/get/rejected"
-#define NCT_UPDATE_DELTA_TOPIC AWS "%s/shadow/update/delta"
-#define NCT_UPDATE_TOPIC AWS "%s/shadow/update"
-#define NCT_SHADOW_GET AWS "%s/shadow/get"
+#define NCT_SHDW_TPC_UPDATE		"%s/shadow/update"
+
+/* nRF Cloud's custom rejected topic (device SUB).
+ * Functionally identical to the AWS get/rejected topic.
+ */
+#define NCT_SHDW_TPC_GET_REJECT		"%s/shadow/get/rejected"
+
+/* nRF Cloud's custom delta update topic (device SUB).
+ * Functionally identical to the AWS update/delta topic.
+ */
+#define NCT_SHDW_TPC_DELTA_FULL		"%s/shadow/update/delta/full"
+
+/* nRF Cloud's custom trimmed shadow request topic (device PUB).
+ * Request only the shadow data needed (no metadata) for nrf_cloud library functionality.
+ */
+#define NCT_SHDW_TPC_GET_TRIM		"%s/shadow/get/trim"
+
+/* nRF Cloud's custom trimmed shadow topic (device SUB).
+ * Receives the trimmed shadow data.
+ */
+#define NCT_SHDW_TPC_GET_ACCEPT_TRIM	"%s/shadow/get/accepted/trim"
+
+/* nRF Cloud's custom trimmed delta topic (device SUB).
+ * Returns the delta without the metadata.
+ * Not currently used by the nrf_cloud library.
+ */
+#define NCT_SHDW_TPC_DELTA_TRIM		"%s/shadow/update/delta/trim"
 
 /* Buffers to hold stage and tenant strings. */
 static char stage[NRF_CLOUD_STAGE_ID_MAX_LEN];
@@ -391,23 +406,23 @@ static int nct_topics_populate(void)
 
 	nct_reset_topics();
 
-	ret = allocate_and_format_topic(&nct.cc_eps.accepted, NCT_ACCEPTED_TOPIC);
+	ret = allocate_and_format_topic(&nct.cc_eps.accepted, NCT_SHDW_TPC_GET_ACCEPT_TRIM);
 	if (ret) {
 		goto err_cleanup;
 	}
-	ret = allocate_and_format_topic(&nct.cc_eps.rejected, NCT_REJECTED_TOPIC);
+	ret = allocate_and_format_topic(&nct.cc_eps.rejected, NCT_SHDW_TPC_GET_REJECT);
 	if (ret) {
 		goto err_cleanup;
 	}
-	ret = allocate_and_format_topic(&nct.cc_eps.delta, NCT_UPDATE_DELTA_TOPIC);
+	ret = allocate_and_format_topic(&nct.cc_eps.delta, NCT_SHDW_TPC_DELTA_FULL);
 	if (ret) {
 		goto err_cleanup;
 	}
-	ret = allocate_and_format_topic(&nct.cc_eps.update, NCT_UPDATE_TOPIC);
+	ret = allocate_and_format_topic(&nct.cc_eps.update, NCT_SHDW_TPC_UPDATE);
 	if (ret) {
 		goto err_cleanup;
 	}
-	ret = allocate_and_format_topic(&nct.cc_eps.get, NCT_SHADOW_GET);
+	ret = allocate_and_format_topic(&nct.cc_eps.get, NCT_SHDW_TPC_GET_TRIM);
 	if (ret) {
 		goto err_cleanup;
 	}
@@ -1100,9 +1115,7 @@ void nct_dc_endpoint_set(const struct nct_dc_endpoints *const eps)
 
 	LOG_DBG("Setting endpoints");
 
-	/* In case the endpoint was previous set, free and reset
-	 * before copying new one.
-	 */
+	/* In case the endpoint was previous set, free and reset before copying new one */
 	dc_endpoint_free();
 
 	nct.dc_eps = *eps;
