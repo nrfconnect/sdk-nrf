@@ -38,12 +38,6 @@ struct stream_iface {
 };
 
 const struct stream_iface ifaces[] = {
-#if IS_ENABLED(CONFIG_SUIT_STREAM_SOURCE_EXTMEM)
-	{
-		.stream = suit_extmem_streamer_stream,
-		.address_check = suit_extmem_streamer_address_in_range
-	},
-#endif
 #if IS_ENABLED(CONFIG_SUIT_STREAM_SOURCE_FLASH)
 	{
 		.stream = suit_flash_streamer_stream,
@@ -54,6 +48,12 @@ const struct stream_iface ifaces[] = {
 	{
 		.stream = suit_memptr_streamer_stream,
 		.address_check = suit_memptr_streamer_address_in_range
+	},
+#endif
+#if IS_ENABLED(CONFIG_SUIT_STREAM_SOURCE_EXTMEM)
+	{
+		.stream = suit_extmem_streamer_stream,
+		.address_check = suit_extmem_streamer_address_in_range
 	},
 #endif
 };
