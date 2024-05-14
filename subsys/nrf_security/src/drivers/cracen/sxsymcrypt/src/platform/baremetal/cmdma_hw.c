@@ -11,8 +11,10 @@
 #include "../../cmdma.h"
 #include <security/cracen.h>
 #include <cracen/statuscodes.h>
-#include <zephyr/kernel.h>
 
+#include <nrf_security_mutexes.h>
+
+#include <zephyr/kernel.h>
 /* Enable interrupts showing that an operation finished or aborted.
  * For that, we're interested in :
  *     - Fetcher DMA error (bit: 2)
@@ -22,12 +24,13 @@
  */
 #define CMDMA_INTMASK_EN ((1 << 2) | (1 << 5) | (1 << 4))
 
-K_MUTEX_DEFINE(cracen_mutex_symmetric);
+
+NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_symmetric);
 
 void sx_hw_reserve(struct sx_dmactl *dma)
 {
 	cracen_acquire();
-	k_mutex_lock(&cracen_mutex_symmetric, K_FOREVER);
+	nrf_security_mutex_lock(cracen_mutex_symmetric);
 	dma->hw_acquired = true;
 
 	/* Enable CryptoMaster interrupts. */
@@ -43,7 +46,7 @@ void sx_cmdma_release_hw(struct sx_dmactl *dma)
 {
 	if (dma->hw_acquired) {
 		cracen_release();
-		k_mutex_unlock(&cracen_mutex_symmetric);
+		nrf_security_mutex_unlock(cracen_mutex_symmetric);
 		dma->hw_acquired = false;
 	}
 }

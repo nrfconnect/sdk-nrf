@@ -13,6 +13,7 @@
 #include "cracen_psa.h"
 #include "cracen_psa_primitives.h"
 #include <cracen/statuscodes.h>
+#include <security/cracen.h>
 #include <sicrypto/sicrypto.h>
 #include <sicrypto/util.h>
 #include <sxsymcrypt/trng.h>
@@ -20,6 +21,7 @@
 #include <sxsymcrypt/keyref.h>
 
 #include <zephyr/kernel.h>
+#include <nrf_security_mutexes.h>
 
 #define MAX_BITS_PER_REQUEST (1 << 19)		 /* NIST.SP.800-90Ar1:Table 3 */
 #define RESEED_INTERVAL	     ((uint64_t)1 << 48) /* 2^48 as per NIST spec */
@@ -35,7 +37,8 @@
  * will cause trouble in the future and so we simplify the driver here.
  */
 static cracen_prng_context_t prng;
-K_MUTEX_DEFINE(cracen_prng_context_mutex);
+
+NRF_SECURITY_MUTEX_DEFINE(cracen_prng_context_mutex);
 
 /*
  * @brief Internal function to enable TRNG and get entropy for initial seed and
@@ -131,7 +134,7 @@ psa_status_t cracen_init_random(cracen_prng_context_t *context)
 		return PSA_SUCCESS;
 	}
 
-	k_mutex_lock(&cracen_prng_context_mutex, K_FOREVER);
+	nrf_security_mutex_lock(cracen_prng_context_mutex);
 	safe_memset(&prng, sizeof(prng), 0, sizeof(prng));
 
 	/* Get the entropy used to seed the DRBG */
@@ -155,7 +158,7 @@ psa_status_t cracen_init_random(cracen_prng_context_t *context)
 	prng.initialized = CRACEN_PRNG_INITIALIZED;
 
 exit:
-	k_mutex_unlock(&cracen_prng_context_mutex);
+	nrf_security_mutex_unlock(cracen_prng_context_mutex);
 
 	return silex_statuscodes_to_psa(sx_err);
 }
@@ -176,7 +179,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	k_mutex_lock(&cracen_prng_context_mutex, K_FOREVER);
+	nrf_security_mutex_lock(cracen_prng_context_mutex);
 
 	if (prng.reseed_counter == 0) {
 		status = cracen_init_random(context);
@@ -245,7 +248,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 	prng.reseed_counter += 1;
 
 exit:
-	k_mutex_unlock(&cracen_prng_context_mutex);
+	nrf_security_mutex_unlock(cracen_prng_context_mutex);
 	return status;
 }
 
