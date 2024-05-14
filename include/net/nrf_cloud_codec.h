@@ -100,7 +100,9 @@ enum nrf_cloud_obj_shadow_type {
 	/* A shadow delta, when there is a mismatch between "desired" and "reported" sections. */
 	NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA,
 	/* The accepted shadow data. nRF Cloud provides a trimmed report to reduce overhead. */
-	NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED
+	NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED,
+	/* The shadow data received in response to a JSONata transform request. */
+	NRF_CLOUD_OBJ_SHADOW_TYPE_TF_RESULT,
 };
 
 /** @brief Object containing shadow delta data */
@@ -125,6 +127,11 @@ struct nrf_cloud_obj_shadow_accepted {
 	struct nrf_cloud_obj config;
 };
 
+struct nrf_cloud_obj_shadow_transform {
+	/** The transform response */
+	struct nrf_cloud_obj tf;
+};
+
 /** @brief Object containing shadow update data */
 struct nrf_cloud_obj_shadow_data {
 	/** The type of shadow data provided in the union */
@@ -134,6 +141,8 @@ struct nrf_cloud_obj_shadow_data {
 		struct nrf_cloud_obj_shadow_accepted *accepted;
 		/** Delta data; for type = NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA */
 		struct nrf_cloud_obj_shadow_delta *delta;
+		/** Transform result; for type = NRF_CLOUD_OBJ_SHADOW_TYPE_TF_RESULT */
+		struct nrf_cloud_obj_shadow_transform *transform;
 	};
 };
 

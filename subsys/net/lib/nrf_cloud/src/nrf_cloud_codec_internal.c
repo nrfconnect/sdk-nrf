@@ -733,6 +733,10 @@ int nrf_cloud_shadow_data_state_decode(const struct nrf_cloud_obj_shadow_data *c
 	__ASSERT_NO_MSG(requested_state != NULL);
 	__ASSERT_NO_MSG(input != NULL);
 
+	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF_RESULT) {
+		return -ENOMSG;
+	}
+
 	cJSON *desired_obj = NULL;
 	cJSON *pairing_obj = NULL;
 	cJSON *pairing_state_obj = NULL;
@@ -3801,8 +3805,9 @@ bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const inp
 {
 	__ASSERT_NO_MSG(input != NULL);
 
-	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) {
-		/* Always send accepted shadow */
+	if ((input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) ||
+	    (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF_RESULT)) {
+		/* Always send accepted shadow and transform results */
 		return true;
 	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
 		/* Check delta: if anything is in state, send to app */
@@ -3828,6 +3833,12 @@ void nrf_cloud_obj_shadow_delta_free(struct nrf_cloud_obj_shadow_delta *const de
 	}
 }
 
+void nrf_cloud_obj_shadow_transform_free(struct nrf_cloud_obj_shadow_transform *const tf)
+{
+	if (tf) {
+		(void)nrf_cloud_obj_free(&tf->tf);
+	}
+}
 int nrf_cloud_obj_shadow_accepted_decode(struct nrf_cloud_obj *const shadow_obj,
 					 struct nrf_cloud_obj_shadow_accepted *const accepted)
 {
