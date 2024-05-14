@@ -12,7 +12,7 @@ jobs:
         echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     - name: Checkout sources
-      uses: nordicbuilder/action-checkout-west-update@main
+      uses: nrfconnect/action-checkout-west-update@main
       with:
         git-fetch-depth: 0
         git-ref: ${{ github.event.pull_request.head.sha }}

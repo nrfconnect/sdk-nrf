@@ -7,7 +7,7 @@ jobs:
     name: Check OSS history
     steps:
       - name: Checkout sources
-        uses: nordicbuilder/action-checkout-west-update@main
+        uses: nrfconnect/action-checkout-west-update@main
         with:
           git-fetch-depth: 0
           west-update-args: ''
