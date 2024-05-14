@@ -31,13 +31,18 @@ enum nct_evt_type {
 };
 
 enum nct_cc_opcode {
-	/* State (shadow) request */
-	NCT_CC_OPCODE_GET_REQ,
-	/* Shadow update: accepted (trimmed) */
-	NCT_CC_OPCODE_UPDATE_ACCEPTED,
-	/* Shadow update: rejected */
+	/* NOTE: Explicitly enumerated values are used as an array index */
+	/* State (shadow) request - TX */
+	NCT_CC_OPCODE_GET_REQ = 0,
+	/* Shadow update: accepted (trimmed) - RX/TX */
+	NCT_CC_OPCODE_UPDATE_ACCEPTED = 1,
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	/* Shadow transform - RX/TX */
+	NCT_CC_OPCODE_TRANSFORM = 2,
+#endif
+	/* Shadow update: rejected - RX */
 	NCT_CC_OPCODE_UPDATE_REJECTED,
-	/* Shadow update: delta */
+	/* Shadow update: delta - RX */
 	NCT_CC_OPCODE_UPDATE_DELTA,
 };
 
@@ -73,6 +78,13 @@ enum cc_ep_type {
 	/* Publish topics */
 	CC_TX_UPDATE,
 	CC_TX_GET,
+
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	/* Shadow transform: subscribe */
+	CC_RX_ACCEPT_TF,
+	/* Shadow transform: publish */
+	CC_TX_GET_TF,
+#endif
 
 	CC__COUNT
 };

@@ -134,6 +134,15 @@ int nrf_cloud_obj_shadow_delta_decode(struct nrf_cloud_obj *const shadow_obj,
 /** @brief Free the delta shadow data. */
 void nrf_cloud_obj_shadow_delta_free(struct nrf_cloud_obj_shadow_delta *const delta);
 
+/** @brief Decode the transform response.
+ * Decoded data should be freed with @ref nrf_cloud_obj_shadow_transform_free.
+ */
+int nrf_cloud_obj_shadow_transform_decode(struct nrf_cloud_obj *const shadow_obj,
+					  struct nrf_cloud_obj_shadow_transform *const tf);
+
+/** @brief Free the transform result data. */
+void nrf_cloud_obj_shadow_transform_free(struct nrf_cloud_obj_shadow_transform *const tf);
+
 /** @brief Check if the shadow data should be sent to the application. */
 bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const input);
 

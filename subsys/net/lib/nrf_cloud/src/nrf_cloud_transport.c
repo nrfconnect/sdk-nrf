@@ -73,6 +73,17 @@ BUILD_ASSERT((sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1) <= NRF_CLOUD_CLIENT_ID_MAX
  */
 #define NCT_SHDW_TPC_DELTA_TRIM		"%s/shadow/update/delta/trim"
 
+/* nRF Cloud's custom shadow transform (JSONata expression) request topic (device PUB).
+ * Request shadow data according to the provided transform.
+ */
+#define NCT_SHDW_TPC_GET_TF		"%s/shadow/get/tf"
+
+/* nRF Cloud's custom shadow transform topic (device SUB).
+ * Receives the shadow data from a requested transform.
+ */
+#define NCT_SHDW_TPC_GET_ACCEPT_TF	"%s/shadow/get/accepted/tf"
+
+
 /* Buffers to hold stage and tenant strings. */
 static char stage[NRF_CLOUD_STAGE_ID_MAX_LEN];
 static char tenant[NRF_CLOUD_TENANT_ID_MAX_LEN];
@@ -111,18 +122,26 @@ static struct nct {
 	uint8_t payload_buf[CONFIG_NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN + 1];
 } nct;
 
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+#define CC_RX_LIST_CNT 4
+#define CC_TX_LIST_CNT 3
+#else
 #define CC_RX_LIST_CNT 3
+#define CC_TX_LIST_CNT 2
+#endif
 static uint32_t const nct_cc_rx_opcode_map[CC_RX_LIST_CNT] = {
 	NCT_CC_OPCODE_UPDATE_ACCEPTED,
 	NCT_CC_OPCODE_UPDATE_REJECTED,
-	NCT_CC_OPCODE_UPDATE_DELTA
+	NCT_CC_OPCODE_UPDATE_DELTA,
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	NCT_CC_OPCODE_TRANSFORM
+#endif
 };
 static struct mqtt_topic nct_cc_rx_list[CC_RX_LIST_CNT];
 
 BUILD_ASSERT(ARRAY_SIZE(nct_cc_rx_opcode_map) == ARRAY_SIZE(nct_cc_rx_list),
 	"nct_cc_rx_opcode_map should be the same size as nct_cc_rx_list");
 
-#define CC_TX_LIST_CNT 2
 static struct mqtt_topic nct_cc_tx_list[CC_TX_LIST_CNT];
 
 /* Internal routine to reset data endpoint information. */
@@ -211,12 +230,6 @@ static int endp_send(const struct nct_dc_data *dc_data, struct mqtt_utf8 *endp, 
 	return mqtt_publish(&nct.client, &publish);
 }
 
-static bool strings_compare(const char *s1, const char *s2, uint32_t s1_len,
-			    uint32_t s2_len)
-{
-	return (strncmp(s1, s2, MIN(s1_len, s2_len))) ? false : true;
-}
-
 /* Verify if the RX topic is a control channel topic or not. */
 static bool nrf_cloud_cc_rx_topic_decode(const struct mqtt_topic *topic, enum nct_cc_opcode *opcode)
 {
@@ -225,11 +238,12 @@ static bool nrf_cloud_cc_rx_topic_decode(const struct mqtt_topic *topic, enum nc
 	const uint32_t topic_sz = topic->topic.size;
 
 	for (uint32_t index = 0; index < list_size; ++index) {
-		const char *list_topic = (const char *)nct_cc_rx_list[index].topic.utf8;
-		uint32_t list_topic_sz = nct_cc_rx_list[index].topic.size;
+		if (topic_sz != nct_cc_rx_list[index].topic.size) {
+			continue;
+		}
 
 		/* Compare incoming topic with the entry in the RX topic list */
-		if (strings_compare(topic_str, list_topic, topic_sz, list_topic_sz)) {
+		if (strncmp(topic_str, (char *)nct_cc_rx_list[index].topic.utf8, topic_sz) == 0) {
 			*opcode = nct_cc_rx_opcode_map[index];
 			return true;
 		}
@@ -380,6 +394,12 @@ static void nct_topic_lists_populate(void)
 			nct_cc_rx_list[idx].qos = MQTT_QOS_1_AT_LEAST_ONCE;
 			nct_cc_rx_list[idx].topic = nct.cc.e[CC_RX_DELTA];
 			break;
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+		case NCT_CC_OPCODE_TRANSFORM:
+			nct_cc_rx_list[idx].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+			nct_cc_rx_list[idx].topic = nct.cc.e[CC_RX_ACCEPT_TF];
+			break;
+#endif
 		default:
 			__ASSERT(false, "Op code not added to RX list");
 			break;
@@ -387,11 +407,16 @@ static void nct_topic_lists_populate(void)
 	}
 
 	/* Add TX topics */
-	nct_cc_tx_list[0].qos = MQTT_QOS_1_AT_LEAST_ONCE;
-	nct_cc_tx_list[0].topic = nct.cc.e[CC_TX_GET];
+	nct_cc_tx_list[NCT_CC_OPCODE_GET_REQ].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	nct_cc_tx_list[NCT_CC_OPCODE_GET_REQ].topic = nct.cc.e[CC_TX_GET];
 
-	nct_cc_tx_list[1].qos = MQTT_QOS_1_AT_LEAST_ONCE;
-	nct_cc_tx_list[1].topic = nct.cc.e[CC_TX_UPDATE];
+	nct_cc_tx_list[NCT_CC_OPCODE_UPDATE_ACCEPTED].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	nct_cc_tx_list[NCT_CC_OPCODE_UPDATE_ACCEPTED].topic = nct.cc.e[CC_TX_UPDATE];
+
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	nct_cc_tx_list[NCT_CC_OPCODE_TRANSFORM].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	nct_cc_tx_list[NCT_CC_OPCODE_TRANSFORM].topic = nct.cc.e[CC_TX_GET_TF];
+#endif
 }
 
 static int nct_topics_populate(void)
@@ -422,6 +447,17 @@ static int nct_topics_populate(void)
 	if (ret) {
 		goto err_cleanup;
 	}
+
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	ret = allocate_and_format_topic(&nct.cc.e[CC_TX_GET_TF], NCT_SHDW_TPC_GET_TF);
+	if (ret) {
+		goto err_cleanup;
+	}
+	ret = allocate_and_format_topic(&nct.cc.e[CC_RX_ACCEPT_TF], NCT_SHDW_TPC_GET_ACCEPT_TF);
+	if (ret) {
+		goto err_cleanup;
+	}
+#endif
 
 	LOG_DBG("CC topics:");
 	for (int cnt = 0; cnt < CC__COUNT; ++cnt) {

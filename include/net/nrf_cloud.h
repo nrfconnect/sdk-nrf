@@ -277,7 +277,11 @@ enum nrf_cloud_topic_type {
 	 *  nrf_cloud_codec.h - struct nrf_cloud_bin_hdr.  A unique format value
 	 *  should be included to distinguish this data from binary logging.
 	 */
-	NRF_CLOUD_TOPIC_BIN
+	NRF_CLOUD_TOPIC_BIN,
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	/** Endpoint used to request device shadow data using a transform (JSONata expression). */
+	NRF_CLOUD_TOPIC_STATE_TF,
+#endif
 };
 
 /** @brief FOTA status reported to nRF Cloud and notified in @ref nrf_cloud_fota_poll_handler_t */
@@ -866,6 +870,26 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg);
  * @return A negative value indicates an error.
  */
 int nrf_cloud_obj_shadow_update(struct nrf_cloud_obj *const shadow_obj);
+
+/**
+ * @brief Request shadow data over MQTT using a JSONata expression.
+ *        For example, to request the reported device info section, the transform would be:
+ *        "state.reported.device.deviceInfo".
+ *        The application will receive response data in an
+ *        @ref NRF_CLOUD_EVT_RX_DATA_SHADOW event.
+ *        The @ref nrf_cloud_obj_shadow_data will be of the type @ref NRF_CLOUD_OBJ_SHADOW_TYPE_TF.
+ *
+ * @param transform The JSONata expression.
+ * @param max_response_len The maximum allowable length of the cloud's response.
+ *                         Set to 0 to use the default length:
+ *                         @ref NRF_CLOUD_TRANSFORM_MAX_RESPONSE_LEN.
+ *
+ * @retval 0        Request was sent successfully.
+ * @retval -ENOTSUP Error; @kconfig{CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS} is not enabled.
+ * @retval -EINVAL  Error; invalid parameter.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_shadow_transform_request(char const *const transform, const size_t max_response_len);
 
 /**
  * @brief Disconnect from the cloud.
