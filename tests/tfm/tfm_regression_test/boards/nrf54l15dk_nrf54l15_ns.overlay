@@ -1,16 +1,16 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-&uart0 {
+ &uart20 {
         compatible = "nordic,nrf-uarte";
         current-speed = <115200>;
         status = "okay";
         hw-flow-control;
 };
 
-&uart1 {
+&uart30 {
         compatible = "nordic,nrf-uarte";
         current-speed = <115200>;
         /* Set to disabled in application, since TF-M will be using it. */
