@@ -93,6 +93,7 @@ static void print_deferred(const lwm2m_carrier_event_t *evt)
 
 static void on_event_app_data(const lwm2m_carrier_event_t *event)
 {
+	int ret;
 	lwm2m_carrier_event_app_data_t *app_data = event->data.app_data;
 
 	if (app_data->path_len > ARRAY_SIZE(app_data->path)) {
@@ -112,11 +113,16 @@ static void on_event_app_data(const lwm2m_carrier_event_t *event)
 		}
 	}
 
-	rsp_send("\r\n#XCARRIEREVT: %d,%d,\"%s\"\r\n", event->type, app_data->buffer_len, uri_path);
+	ret = slm_util_htoa(app_data->buffer, app_data->buffer_len,
+			    slm_data_buf, sizeof(slm_data_buf));
+	if (ret < 0) {
+		LOG_ERR("hex convert error: %d", ret);
+		return;
+	}
 
-	memcpy(slm_data_buf, app_data->buffer, app_data->buffer_len);
+	rsp_send("\r\n#XCARRIEREVT: %d,%d,\"%s\"\r\n", event->type, ret, uri_path);
 
-	data_send(slm_data_buf, app_data->buffer_len);
+	data_send(slm_data_buf, ret);
 }
 
 static void reconnect_wk(struct k_work *work)
@@ -207,10 +213,19 @@ static int carrier_datamode_callback(uint8_t op, const uint8_t *data, int len, u
 			(void)exit_datamode_handler(-EOVERFLOW);
 			return -EOVERFLOW;
 		}
+
+		size_t size = CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN / 2;
+
+		ret = slm_util_atoh(data, len, slm_data_buf, size);
+		if (ret < 0) {
+			LOG_ERR("Fail to decode hex string to hex array");
+			return ret;
+		}
+
 		uint16_t path[3] = { LWM2M_CARRIER_OBJECT_APP_DATA_CONTAINER, 0, 0 };
 		uint8_t path_len = 3;
 
-		ret = lwm2m_carrier_app_data_set(path, path_len, data, len);
+		ret = lwm2m_carrier_app_data_set(path, path_len, slm_data_buf, ret);
 		LOG_INF("datamode send: %d", ret);
 		if (ret < 0) {
 			(void)exit_datamode_handler(ret);
@@ -247,7 +262,13 @@ static int do_carrier_appdata_set(enum at_cmd_type, const struct at_param_list *
 			return ret;
 		}
 
-		ret = lwm2m_carrier_app_data_set(path, path_len, data, size);
+		ret = slm_util_atoh(data, size, slm_data_buf, size / 2);
+		if (ret < 0) {
+			LOG_ERR("Fail to decode hex string to hex array");
+			return ret;
+		}
+
+		ret = lwm2m_carrier_app_data_set(path, path_len, slm_data_buf, ret);
 	} else if (param_count == 4 || param_count == 5) {
 		uint8_t *data = NULL;
 		char buffer[CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN] = {0};
@@ -279,7 +300,14 @@ static int do_carrier_appdata_set(enum at_cmd_type, const struct at_param_list *
 				return ret;
 			}
 
-			data = buffer;
+			ret = slm_util_atoh(buffer, size, slm_data_buf, size / 2);
+			if (ret < 0) {
+				LOG_ERR("Fail to decode hex string to hex array");
+				return ret;
+			}
+
+			data = slm_data_buf;
+			size = ret;
 		}
 
 		ret = lwm2m_carrier_app_data_set(path, path_len, data, size);
