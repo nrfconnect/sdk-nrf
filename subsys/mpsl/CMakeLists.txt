@@ -12,9 +12,7 @@ if (CONFIG_MPSL_FEM OR CONFIG_MPSL_FEM_PIN_FORWARDER OR CONFIG_MPSL_FEM_API_AVAI
   add_subdirectory(fem)
 endif()
 
-if (CONFIG_MPSL_CX AND NOT CONFIG_MPSL_FEM_ONLY)
-  add_subdirectory(cx)
-endif()
+add_subdirectory(cx)
 
 if (CONFIG_MPSL_USE_ZEPHYR_PM)
   add_subdirectory(pm)
