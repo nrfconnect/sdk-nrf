@@ -12,20 +12,16 @@ The TF-M platform security architecture test sample provides a basis for validat
 Requirements
 ************
 
-When the Kconfig option :kconfig:option:`CONFIG_TFM_PSA_TEST_ATTESTATION` is enabled, it is required that the device is provisioned with the PSA root-of-trust security parameters using the :ref:`provisioning image <provisioning_image>` sample.
-To provision the device, build and flash the provisioning image sample before using the test sample.
-
 The test supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160_ns
+   :rows: nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160_ns, nrf9151dk_nrf9151_ns
 
 Overview
 ********
 
-The PSA tests are implemented in the psa-arch-tests repo: https://github.com/ARM-software/psa-arch-tests.
-Run PSA test suites tests with Zephyr and TFM.
+Run the PSA test suite tests with Zephyr and TF-M.
 
 To choose a test suite, use the ``CONFIG_TFM_PSA_TEST_*`` Kconfig options.
 Only one of these suites can be run at a time.
@@ -60,7 +56,24 @@ You can indicate the desired test suite by using a configuration flag when build
 
     west build -b <board_target> nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_STORAGE=y
 
-Note that not all test suites are valid on all boards.
+When the test suite :kconfig:option:`CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION` is selected, it is required that the device is provisioned with the PSA root-of-trust security parameters using the :ref:`provisioning image <provisioning_image>` sample.
+To provision the device, build and flash the provisioning image sample.
+Then run the PSA test suite with the following command:
+
+.. code-block:: console
+
+    west build -b <build_target> nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y -DCONFIG_TFM_PARTITION_INITIAL_ATTESTATION=y -DCONFIG_TFM_NRF_PROVISIONING=y
+
+Not all test suites are valid on all boards.
+See the :file:`testcase.yaml` file for the list of valid test suites for each board.
+
+.. note::
+   The following test cases are currently failing:
+    - 216: Testing crypto generator functions APIs
+    - 601: Testing attestation initial attestation APIs
+
+Test files can be found under :file:`/modules/tee/tf-m/psa-arch-tests` in the |NCS| folder structure.
+They are checked out from `nrfconnect/sdk-psa-arch-tests <https://github.com/nrfconnect/sdk-psa-arch-tests>`_, a fork of the `zephyrproject-rtos/psa-arch-tests <https://github.com/zephyrproject-rtos/psa-arch-tests>`_ repository, which in turn is a fork of the `ARM-software/psa-arch-tests <https://github.com/ARM-software/psa-arch-tests>`_  source repository.
 
 Output
 ======

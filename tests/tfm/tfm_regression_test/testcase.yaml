@@ -1,10 +1,11 @@
 common:
   tags: tfm
   build_only: true
-  platform_allow: nrf5340dk/nrf5340/cpuapp/ns nrf9160dk/nrf9160/ns
+  platform_allow: nrf5340dk/nrf5340/cpuapp/ns nrf9160dk/nrf9160/ns nrf9151dk/nrf9151/ns
   integration_platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk/nrf9160/ns
+    - nrf9151dk/nrf9151/ns
   harness: console
   harness_config:
     type: multi_line
