@@ -986,6 +986,13 @@ enum nrf_wifi_status nrf_wifi_fmac_set_listen_interval(void *fmac_dev_ctx,
 enum nrf_wifi_status nrf_wifi_fmac_set_ps_wakeup_mode(void *fmac_dev_ctx,
 							unsigned char if_idx,
 							bool ps_wakeup_mode);
+#if defined(CONFIG_NRF_WIFI_RPU_RECOVERY) || defined(__DOXYGEN__)
+/** @cond INTERNAL_HIDDEN */
+enum nrf_wifi_status nrf_wifi_fmac_rpu_recovery_callback(void *mac_dev_ctx,
+						void *event_data,
+						unsigned int len);
+/** @endcond */
+#endif /* CONFIG_NRF_RPU_RECOVERY */
 /**
  * @}
  */

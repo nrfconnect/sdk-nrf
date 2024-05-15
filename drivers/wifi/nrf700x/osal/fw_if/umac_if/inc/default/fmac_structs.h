@@ -82,6 +82,11 @@ enum nrf_wifi_fmac_if_carr_state {
  * the UMAC IF layer needs to invoke for various events.
  */
 struct nrf_wifi_fmac_callbk_fns {
+	/** Callback function to be called when RPU recovery is required. */
+	void (*rpu_recovery_callbk_fn)(void *os_vif_ctx,
+		void *event_data,
+		unsigned int event_len);
+
 	/** Callback function to be called when a scan is started. */
 	void (*scan_start_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_umac_event_trigger_scan *scan_start_event,

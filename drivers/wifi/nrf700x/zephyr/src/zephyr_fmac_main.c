@@ -628,6 +628,7 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 	rx_buf_pools[1].buf_sz = rx2_buf_sz;
 	rx_buf_pools[2].buf_sz = rx3_buf_sz;
 
+	callbk_fns.rpu_recovery_callbk_fn = nrf_wifi_rpu_recovery_cb;
 	callbk_fns.scan_start_callbk_fn = nrf_wifi_event_proc_scan_start_zep;
 	callbk_fns.scan_done_callbk_fn = nrf_wifi_event_proc_scan_done_zep;
 #ifdef CONFIG_NET_L2_WIFI_MGMT
