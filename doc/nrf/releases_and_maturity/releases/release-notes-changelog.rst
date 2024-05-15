@@ -243,6 +243,9 @@ nRF Desktop
   * The ``nrfdesktop-wheel-qdec`` DT alias support to :ref:`nrf_desktop_wheel`.
     You must use the alias to specify the QDEC instance used for scroll wheel, if your board supports multiple QDEC instances (for example ``nrf54l15pdk_nrf54l15_cpuapp``).
     You do not need to define the alias if your board supports only one QDEC instance, because in that case, the wheel module can rely on the ``qdec`` DT label provided by the board.
+  * A warning log for handling ``-EACCES`` error code returned by functions that send GATT notification with HID report in :ref:`nrf_desktop_hids`.
+    The error code might be returned if an HID report is sent right after a remote peer unsubscribes.
+    The warning log prevents displaying an error log in a use case that does not indicate an error.
 
 * Updated:
 
