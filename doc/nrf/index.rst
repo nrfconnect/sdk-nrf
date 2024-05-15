@@ -22,7 +22,7 @@ Pre-certified libraries
 
 Robust connectivity support
   The |NCS| supports a wide range of connectivity technologies.
-  In addition to connectivity technologies :ref:`provided by Zephyr <zephyr:connectivity>`, such as Bluetooth® Low Energy, IPv6, TCP/IP, UDP, LoRa and LoRaWAN, the |NCS| supports ANT, Bluetooth Mesh, Apple Find My, LTE-M/NB-IoT/GPS, Matter, Amazon Sidewalk, Thread, and Wi-Fi®, among others.
+  In addition to connectivity technologies :ref:`provided by Zephyr <zephyr:connectivity>`, such as Bluetooth® Low Energy, IPv6, TCP/IP, UDP, LoRa and LoRaWAN, the |NCS| supports ANT, Bluetooth Mesh, Apple Find My, LTE-M/NB-IoT/GPS, DECT NR+, Matter, Amazon Sidewalk, Thread, and Wi-Fi®, among others.
 
 Remote observability
   The |NCS| provides remote observability support to maintain optimal device performance and reliability in ever-changing device ecosystems after devices are deployed.
