@@ -58,7 +58,8 @@ int nrf_cloud_coap_transport_init(struct nrf_cloud_coap_client *const client);
 /**@brief Connect to the cloud.
  *
  * @param client Client to connect.
- *
+
+ * @retval 1 Socket is already open.
  * @return 0 if successful, otherwise a negative error code.
  */
 int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client);
