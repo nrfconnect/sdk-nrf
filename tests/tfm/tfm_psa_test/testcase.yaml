@@ -18,10 +18,12 @@ tests:
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
       nrf9160dk/nrf9160/ns
+      nrf9151dk/nrf9151/ns
       nrf54l15pdk/nrf54l15/cpuapp/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
       - nrf54l15pdk/nrf54l15/cpuapp/ns
   tfm.psa_test_storage_lvl2:
     sysbuild: true
@@ -32,10 +34,12 @@ tests:
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
       nrf9160dk/nrf9160/ns
+      nrf9151dk/nrf9151/ns
       nrf54l15pdk/nrf54l15/cpuapp/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
       - nrf54l15pdk/nrf54l15/cpuapp/ns
   tfm.psa_test_crypto_lvl1:
     sysbuild: true
@@ -47,10 +51,12 @@ tests:
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
       nrf9160dk/nrf9160/ns
+      nrf9151dk/nrf9151/ns
       nrf54l15pdk/nrf54l15/cpuapp/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
       - nrf54l15pdk/nrf54l15/cpuapp/ns
   tfm.psa_test_crypto_lvl2:
     sysbuild: true
@@ -61,9 +67,11 @@ tests:
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
       nrf9160dk/nrf9160/ns
+      nrf9151dk/nrf9151/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
   tfm.psa_test_initial_attestation_lvl1:
     sysbuild: true
     tags: tfm_lvl1 sysbuild
@@ -75,9 +83,11 @@ tests:
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
       nrf9160dk/nrf9160/ns
+      nrf9151dk/nrf9151/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
   tfm.psa_test_initial_attestation_lvl2:
     sysbuild: true
     tags: tfm_lvl2 sysbuild
@@ -88,6 +98,8 @@ tests:
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
       nrf9160dk/nrf9160/ns
+      nrf9151dk/nrf9151/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
+      - nrf9151dk/nrf9151/ns
