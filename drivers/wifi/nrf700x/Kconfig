@@ -437,4 +437,8 @@ config NRF_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS
 		before powering it up. This delay is required to ensure that the recovery
 		is propagted to all the applications and stack and have enough time to
 		clean up the resources.
+
+config NET_MGMT_EVENT_QUEUE_SIZE
+	# Doing interface down and up even with delay puts a lot of events in the queue
+	default 16
 endif
