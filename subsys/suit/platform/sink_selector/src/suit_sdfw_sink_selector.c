@@ -23,6 +23,9 @@
 #ifdef CONFIG_SUIT_STREAM_SINK_SDFW
 #include <suit_sdfw_sink.h>
 #endif /* CONFIG_SUIT_STREAM_SINK_SDFW */
+#ifdef CONFIG_SUIT_STREAM_SINK_SDFW_RECOVERY
+#include <suit_sdfw_recovery_sink.h>
+#endif /* CONFIG_SUIT_STREAM_SINK_SDFW_RECOVERY */
 #ifdef CONFIG_SUIT_STREAM_SINK_EXTMEM
 #include <suit_extmem_sink.h>
 #endif /* CONFIG_SUIT_STREAM_SINK_EXTMEM */
@@ -155,13 +158,20 @@ int suit_sink_select(suit_component_t dst_handle, struct stream_sink *sink)
 			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 		}
 
-		if (number == 1) {
+		if (number == (uint32_t)SUIT_SECDOM_COMPONENT_NUMBER_SDFW) {
 			if (IS_ENABLED(CONFIG_SUIT_STREAM_SINK_SDFW)) {
 				sink_get_err = suit_sdfw_sink_get(sink);
 				return suit_plat_err_to_processor_err_convert(sink_get_err);
 			}
 
 			LOG_ERR("SDFW sink not enabled");
+		} else if (number == (uint32_t)SUIT_SECDOM_COMPONENT_NUMBER_SDFW_RECOVERY) {
+			if (IS_ENABLED(CONFIG_SUIT_STREAM_SINK_SDFW_RECOVERY)) {
+				sink_get_err = suit_sdfw_recovery_sink_get(sink);
+				return suit_plat_err_to_processor_err_convert(sink_get_err);
+			}
+
+			LOG_ERR("SDFW Recovery sink not enabled");
 		}
 
 		LOG_ERR("Unsupported special component %d", number);
