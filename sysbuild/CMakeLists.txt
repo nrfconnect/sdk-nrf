@@ -338,6 +338,25 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   foreach(image ${IMAGES})
     configure_cache(IMAGE ${image})
   endforeach()
+
+  # Add a dependency on the main image's .config file to ensure Kconfig values that have been read
+  # and used to generate tasks are not stale, add similar dependencies on other images which have
+  # configuration that is read if required options are enabled
+  ExternalProject_Get_Property(${DEFAULT_IMAGE} BINARY_DIR)
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
+
+  if(NCS_SYSBUILD_PARTITION_MANAGER)
+    if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE AND SB_CONFIG_BOOTLOADER_MCUBOOT)
+      ExternalProject_Get_Property(mcuboot BINARY_DIR)
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
+    endif()
+
+    if(SB_CONFIG_SECURE_BOOT_NETCORE)
+      get_property(main_app GLOBAL PROPERTY DOMAIN_APP_CPUNET)
+      ExternalProject_Get_Property(${main_app} BINARY_DIR)
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
+    endif()
+  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
 # Enable use of partition manager with sysbuild.
