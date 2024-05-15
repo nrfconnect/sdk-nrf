@@ -38,6 +38,61 @@ static struct net_mgmt_event_callback ip_maddr4_cb;
 static struct net_mgmt_event_callback ip_maddr6_cb;
 #endif /* CONFIG_NRF700X_STA_MODE */
 
+static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
+								struct nrf_wifi_vif_ctx_zep,
+								nrf_wifi_rpu_recovery_work);
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return;
+	}
+
+	if (!vif_ctx_zep->zep_net_if_ctx) {
+		LOG_ERR("%s: zep_net_if_ctx is NULL", __func__);
+		return;
+	}
+
+	LOG_DBG("%s: Bringing the interface down", __func__);
+	/* This indirectly does a cold-boot of RPU */
+	net_if_down(vif_ctx_zep->zep_net_if_ctx);
+	k_msleep(10);
+	LOG_DBG("%s: Bringing the interface up", __func__);
+	net_if_up(vif_ctx_zep->zep_net_if_ctx);
+}
+
+void nrf_wifi_rpu_recovery_cb(void *vif_ctx_handle,
+		void *event_data,
+		unsigned int event_len)
+{
+	struct nrf_wifi_fmac_vif_ctx *vif_ctx = vif_ctx_handle;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!vif_ctx) {
+		LOG_ERR("%s: vif_ctx is NULL",
+			__func__);
+		goto out;
+	}
+
+	fmac_dev_ctx = vif_ctx->fmac_dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	if (!def_dev_ctx) {
+		LOG_ERR("%s: def_dev_ctx is NULL",
+			__func__);
+		goto out;
+	}
+
+	vif_ctx_zep = vif_ctx->os_vif_ctx;
+	(void)event_data;
+
+	k_work_submit(&vif_ctx_zep->nrf_wifi_rpu_recovery_work);
+out:
+	return;
+}
+
 #ifdef CONFIG_NRF700X_DATA_TX
 static void nrf_wifi_net_iface_work_handler(struct k_work *work)
 {
@@ -407,6 +462,8 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 		    nrf_wifi_net_iface_work_handler);
 #endif /* CONFIG_NRF700X_DATA_TX */
 
+	k_work_init(&vif_ctx_zep->nrf_wifi_rpu_recovery_work,
+		    nrf_wifi_rpu_recovery_work_handler);
 #if !defined(CONFIG_NRF_WIFI_IF_AUTO_START)
 	net_if_flag_set(iface, NET_IF_NO_AUTO_START);
 #endif /* CONFIG_NRF_WIFI_IF_AUTO_START */
