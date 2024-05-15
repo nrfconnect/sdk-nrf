@@ -23,6 +23,10 @@ LOG_MODULE_REGISTER(shadow_support_coap, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 static int process_delta(struct nrf_cloud_data *const delta)
 {
+	if (delta->len == 0) {
+		return -ENODATA;
+	}
+
 	int err;
 	bool update_desired = false;
 	struct nrf_cloud_obj delta_obj = {0};
@@ -86,14 +90,13 @@ static int check_shadow(void)
 	}
 
 	in_data.len = strlen(buf);
-	if (in_data.len) {
-		err = process_delta(&in_data);
-		if (err == -ENODATA) {
-			/* There was no application specific delta data to process.
-			 * Return -EAGAIN so the thread sleeps for a longer duration.
-			 */
-			err = -EAGAIN;
-		}
+
+	err = process_delta(&in_data);
+	if (err == -ENODATA) {
+		/* There was no application specific delta data to process.
+		 * Return -EAGAIN so the thread sleeps for a longer duration.
+		 */
+		err = -EAGAIN;
 	}
 
 	if (!config_sent) {
