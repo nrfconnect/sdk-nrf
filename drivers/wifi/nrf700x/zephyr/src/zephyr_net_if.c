@@ -38,6 +38,7 @@ static struct net_mgmt_event_callback ip_maddr4_cb;
 static struct net_mgmt_event_callback ip_maddr6_cb;
 #endif /* CONFIG_NRF700X_STA_MODE */
 
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
@@ -101,6 +102,7 @@ void nrf_wifi_rpu_recovery_cb(void *vif_ctx_handle,
 out:
 	return;
 }
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
 #ifdef CONFIG_NRF700X_DATA_TX
 static void nrf_wifi_net_iface_work_handler(struct k_work *work)
@@ -471,8 +473,11 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 		    nrf_wifi_net_iface_work_handler);
 #endif /* CONFIG_NRF700X_DATA_TX */
 
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	k_work_init(&vif_ctx_zep->nrf_wifi_rpu_recovery_work,
 		    nrf_wifi_rpu_recovery_work_handler);
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+
 #if !defined(CONFIG_NRF_WIFI_IF_AUTO_START)
 	net_if_flag_set(iface, NET_IF_NO_AUTO_START);
 #endif /* CONFIG_NRF_WIFI_IF_AUTO_START */

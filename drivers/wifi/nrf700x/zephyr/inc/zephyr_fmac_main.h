@@ -82,7 +82,9 @@ struct nrf_wifi_vif_ctx_zep {
 	unsigned long rssi_record_timestamp_us;
 	signed short rssi;
 #endif /* CONFIG_NRF700X_STA_MODE */
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	struct k_work nrf_wifi_rpu_recovery_work;
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 };
 
 struct nrf_wifi_vif_ctx_map {
