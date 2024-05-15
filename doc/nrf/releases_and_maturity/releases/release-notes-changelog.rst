@@ -439,6 +439,10 @@ Bluetooth Mesh samples
 
   * Added a section about the :ref:`occupancy mode <bluetooth_mesh_light_lc_occupancy_mode>`.
 
+* :ref:`ble_mesh_dfu_distributor` sample:
+
+  * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+
 Cellular samples
 ----------------
 
