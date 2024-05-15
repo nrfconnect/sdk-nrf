@@ -14,8 +14,24 @@ config AT_MONITOR_HEAP_SIZE
 	range 64 4096
 	default 256
 
-config SYSTEM_WORKQUEUE_STACK_SIZE
-	default 1152 if (LTE_LINK_CONTROL && LOG)
+config AT_MONITOR_USE_DEDICATED_WORKQUEUE
+	bool "Use dedicated workqueue to dispatch notifications"
+	default y
+
+if AT_MONITOR_USE_DEDICATED_WORKQUEUE
+
+config AT_MONITOR_WORKQ_STACK_SIZE
+	int "Workqueue stack size"
+	default 768
+
+config AT_MONITOR_WORKQ_PRIO_OVERRIDE
+	bool "Override default workqueue priority"
+
+config AT_MONITOR_WORKQ_PRIO
+	int "Workqueue priority" if AT_MONITOR_WORKQ_PRIO_OVERRIDE
+	default -1
+
+endif # AT_MONITOR_USE_DEDICATED_WORKQUEUE
 
 module=AT_MONITOR
 module-dep=LOG

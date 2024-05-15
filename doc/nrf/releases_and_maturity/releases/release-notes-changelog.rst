@@ -751,6 +751,10 @@ DFU libraries
 Modem libraries
 ---------------
 
+* :ref:`at_monitor_readme`:
+
+  * Added the :kconfig:option:`CONFIG_AT_MONITOR_USE_DEDICATED_WORKQUEUE` to dispatch AT notifications from a dedicated workqueue, instead of the system workqueue. This is option enabled by default.
+
 * :ref:`nrf_modem_lib_readme`:
 
   * Fixed an issue with the CFUN hooks when the Modem library is initialized during ``SYS_INIT`` at kernel level and makes calls to the :ref:`nrf_modem_at` interface before the application level initialization is done.

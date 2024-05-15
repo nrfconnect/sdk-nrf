@@ -20,11 +20,20 @@ struct at_notif_fifo {
 	char data[]; /* Null-terminated AT notification string */
 };
 
+/* Workqueue task to dispatch notifications */
 static void at_monitor_task(struct k_work *work);
+static K_WORK_DEFINE(at_monitor_work, at_monitor_task);
+
+/* Workqueue to dispatch notifications from */
+#if defined(CONFIG_AT_MONITOR_USE_DEDICATED_WORKQUEUE)
+static K_THREAD_STACK_DEFINE(at_monitor_work_q_stack, CONFIG_AT_MONITOR_WORKQ_STACK_SIZE);
+static struct k_work_q at_monitor_work_q;
+#else
+extern struct k_work_q k_sys_work_q;
+#endif
 
 static K_FIFO_DEFINE(at_monitor_fifo);
 static K_HEAP_DEFINE(at_monitor_heap, CONFIG_AT_MONITOR_HEAP_SIZE);
-static K_WORK_DEFINE(at_monitor_work, at_monitor_task);
 
 static bool is_paused(const struct at_monitor_entry *mon)
 {
@@ -83,7 +92,13 @@ void at_monitor_dispatch(const char *notif)
 	strcpy(at_notif->data, notif);
 
 	k_fifo_put(&at_monitor_fifo, at_notif);
+
+	/* Dispatch to queue */
+#if defined(CONFIG_AT_MONITOR_USE_DEDICATED_WORKQUEUE)
+	k_work_submit_to_queue(&at_monitor_work_q, &at_monitor_work);
+#else
 	k_work_submit(&at_monitor_work);
+#endif
 }
 
 static void at_monitor_task(struct k_work *work)
@@ -106,6 +121,19 @@ static void at_monitor_task(struct k_work *work)
 static int at_monitor_sys_init(void)
 {
 	int err;
+
+#if defined(CONFIG_AT_MONITOR_USE_DEDICATED_WORKQUEUE)
+	/* Default to a cooperative priority to avoid being preempted */
+#define THREAD_PRIORITY                                                                            \
+	COND_CODE_1(CONFIG_AT_MONITOR_WORKQ_PRIO_OVERRIDE, (CONFIG_AT_MONITOR_WORKQ_PRIO), (-1))
+
+	const struct k_work_queue_config cfg = {.name = "at_monitor_work_q"};
+
+	k_work_queue_start(&at_monitor_work_q,
+			   at_monitor_work_q_stack,
+			   K_THREAD_STACK_SIZEOF(at_monitor_work_q_stack),
+			   THREAD_PRIORITY, &cfg);
+#endif
 
 	err = nrf_modem_at_notif_handler_set(at_monitor_dispatch);
 	if (err) {
