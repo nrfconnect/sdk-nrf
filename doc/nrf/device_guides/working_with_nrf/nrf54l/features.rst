@@ -27,7 +27,7 @@ Amazon Sidewalk is a shared network designed to provide a stable and reliable co
 Ring and Echo device can act as a gateway, meaning they can share a portion of internet bandwidth providing the connection and services to Sidewalk end devices.
 Amazon Sidewalk for the nRF Connect SDK is based on two variants, one using Bluetooth® LE (more suited for home applications) and the other one using sub-GHz with the Semtech radio transceiver (for applications requiring longer range).
 
-To learn more about the Amazon Sidewalk solution, see the `Sidewalk documentation`_ page.
+To learn more about the Amazon Sidewalk solution, see the `Amazon Sidewalk documentation`_ page.
 
 Bluetooth Low Energy
 ====================
