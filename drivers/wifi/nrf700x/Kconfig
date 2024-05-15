@@ -651,3 +651,14 @@ config NRF_WIFI_AP_DEAD_DETECT_TIMEOUT
 	help
 		The number of seconds after which AP is declared dead if no beacons
 		are received from the AP. Used to detect AP silently going down e.g., power off.
+
+config NRF_WIFI_RPU_RECOVERY
+	bool "Enable RPU recovery mechanism"
+	select EXPERIMENTAL
+	default y
+	help
+		Enable RPU recovery mechanism to recover from RPU (nRF70) hang.
+		This feature performs an interface reset (down and up) which triggers
+		a RPU coldboot. Application's network connection will be lost during
+		the recovery process and it is application's responsibility to
+		re-establish the network connection.

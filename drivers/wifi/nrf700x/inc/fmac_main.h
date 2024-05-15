@@ -84,7 +84,9 @@ struct nrf_wifi_vif_ctx_zep {
 #ifdef CONFIG_NRF700X_AP_MODE
 	int inactive_time_sec;
 #endif /* CONFIG_NRF700X_AP_MODE */
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	struct k_work nrf_wifi_rpu_recovery_work;
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 };
 
 struct nrf_wifi_vif_ctx_map {
