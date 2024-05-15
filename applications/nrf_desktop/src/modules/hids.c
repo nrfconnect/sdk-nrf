@@ -479,6 +479,8 @@ static void send_hid_report(const struct hid_report_event *event)
 			LOG_WRN("Cannot send report: device disconnected");
 		} else if (err == -EBADF) {
 			LOG_WRN("Cannot send report: incompatible mode");
+		} else if (err == -EACCES) {
+			LOG_WRN("Cannot send report: peer unsubscribed");
 		} else {
 			LOG_ERR("Cannot send report (%d)", err);
 		}
