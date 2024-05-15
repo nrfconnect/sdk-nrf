@@ -66,7 +66,7 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	LOG_DBG("%s: Bringing the interface down", __func__);
 	/* This indirectly does a cold-boot of RPU */
 	net_if_down(vif_ctx_zep->zep_net_if_ctx);
-	k_msleep(10);
+	k_msleep(CONFIG_NRF_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS);
 	LOG_DBG("%s: Bringing the interface up", __func__);
 	net_if_up(vif_ctx_zep->zep_net_if_ctx);
 	k_mutex_unlock(&rpu_ctx_zep->rpu_lock);
