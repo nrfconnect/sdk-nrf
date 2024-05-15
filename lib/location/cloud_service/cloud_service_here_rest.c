@@ -500,17 +500,19 @@ int cloud_service_here_rest_pos_get(
 	req_ctx.body = body;
 
 	err = rest_client_request(&req_ctx, &resp_ctx);
-	if (err) {
-		LOG_ERR("Error from rest client lib, err: %d", err);
-		goto end;
-	}
 
-	if (resp_ctx.http_status_code != REST_CLIENT_HTTP_STATUS_OK) {
+	if (resp_ctx.http_status_code != 0 &&
+	    resp_ctx.http_status_code != REST_CLIENT_HTTP_STATUS_OK) {
 		LOG_ERR("HTTP status: %d", resp_ctx.http_status_code);
 		/* Let it fail in parsing */
 	}
 
 	LOG_DBG("Received response body:\r\n%s", resp_ctx.response);
+
+	if (err) {
+		LOG_ERR("Error from rest client lib, err: %d", err);
+		goto end;
+	}
 
 	err = cloud_service_here_rest_parse_response(resp_ctx.response, location);
 	if (err) {
