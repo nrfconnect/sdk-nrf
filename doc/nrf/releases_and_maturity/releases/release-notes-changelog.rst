@@ -808,7 +808,10 @@ Libraries for networking
 
   * Updated to request proprietary PSM mode for ``SOC_NRF9151_LACA`` and ``SOC_NRF9131_LACA`` in addition to ``SOC_NRF9161_LACA``.
 
-  * Added the :c:func:`nrf_cloud_coap_shadow_desired_update` function to allow devices to reject invalid shadow deltas.
+  * Added:
+
+    * The :c:func:`nrf_cloud_coap_shadow_desired_update` function to allow devices to reject invalid shadow deltas.
+    * Support for IPv6 connections.
 
 * :ref:`lib_lwm2m_client_utils` library:
 

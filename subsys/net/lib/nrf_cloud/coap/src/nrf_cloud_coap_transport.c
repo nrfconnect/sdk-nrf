@@ -123,47 +123,6 @@ static inline bool is_internal(struct nrf_cloud_coap_client const *const client)
 	return client == &internal_cc;
 }
 
-/**@brief Resolves the configured hostname. */
-static int server_resolve(struct sockaddr_in *server4)
-{
-	int err;
-	struct addrinfo *result;
-	struct addrinfo hints = {
-		.ai_family = AF_INET,
-		.ai_socktype = SOCK_DGRAM
-	};
-	char ipv4_addr[NET_IPV4_ADDR_LEN];
-
-	LOG_DBG("Looking up server %s", CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME);
-	err = getaddrinfo(CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME, NULL, &hints, &result);
-	if (err != 0) {
-		LOG_ERR("ERROR: getaddrinfo for %s failed: %d, errno:%d",
-			CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME, err, -errno);
-		return -EIO;
-	}
-
-	if (result == NULL) {
-		LOG_ERR("ERROR: Address not found");
-		return -ENOENT;
-	}
-
-	/* IPv4 Address. */
-	server4->sin_addr.s_addr = ((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
-	server4->sin_family = AF_INET;
-	server4->sin_port = htons(CONFIG_NRF_CLOUD_COAP_SERVER_PORT);
-
-	inet_ntop(AF_INET, &server4->sin_addr.s_addr, ipv4_addr,
-		  sizeof(ipv4_addr));
-	LOG_DBG("Server %s IP address: %s, port: %u",
-		CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME, ipv4_addr,
-		CONFIG_NRF_CLOUD_COAP_SERVER_PORT);
-
-	/* Free the address. */
-	freeaddrinfo(result);
-
-	return 0;
-}
-
 static int add_creds(void)
 {
 	int err = 0;
@@ -302,7 +261,7 @@ int nrf_cloud_coap_connect(const char * const app_ver)
 	int err;
 
 	err = nrf_cloud_coap_transport_connect(&internal_cc);
-	if (err) {
+	if (err < 0) {
 		return err;
 	}
 
@@ -605,45 +564,85 @@ int nrf_cloud_coap_transport_init(struct nrf_cloud_coap_client *const client)
 
 int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client)
 {
-	struct sockaddr_storage server;
+	if (client->sock != -1) {
+		LOG_DBG("Socket already open: %d", client->sock);
+		return 1;
+	}
+
 	int err;
+	const char *const host_name = CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME;
+	uint16_t port = htons(CONFIG_NRF_CLOUD_COAP_SERVER_PORT);
+	struct addrinfo *info;
+	struct addrinfo hints = {
+		.ai_family = AF_UNSPEC, /* Both IPv4 and IPv6 addresses accepted. */
+		.ai_socktype = SOCK_DGRAM
+	};
 
-	err = server_resolve((struct sockaddr_in *)&server);
+	err = getaddrinfo(host_name, NULL, &hints, &info);
 	if (err) {
-		LOG_ERR("Failed to resolve server name: %d", err);
-		return err;
+		LOG_ERR("ERROR: getaddrinfo for %s failed: %d, errno: %d", host_name, err, errno);
+		return -EADDRNOTAVAIL;
 	}
 
-	if (client->sock == -1) {
+	/* Try to connect with whatever IP addresses we get.
+	 * Not all carriers support both IPv4 and IPv6, though DNS lookups sometimes return both.
+	 */
+	for (; info != NULL; info = info->ai_next) {
+		char ip[INET6_ADDRSTRLEN] = { 0 };
+		struct sockaddr *const sa = info->ai_addr;
+
+		switch (sa->sa_family) {
+		case AF_INET6:
+			((struct sockaddr_in6 *)sa)->sin6_port = port;
+			break;
+		case AF_INET:
+			((struct sockaddr_in *)sa)->sin_port = port;
+			break;
+		}
+
+		inet_ntop(sa->sa_family, (void *)&((struct sockaddr_in *)sa)->sin_addr,
+			  ip, sizeof(ip));
+
+		LOG_DBG("Server %s IP address: %s, port: %u",
+			host_name, ip, CONFIG_NRF_CLOUD_COAP_SERVER_PORT);
+
+		if (client->sock != -1) {
+			close(client->sock);
+		}
+
+		client->authenticated = false;
+
 		LOG_DBG("Creating socket type IPPROTO_DTLS_1_2");
-		client->sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_DTLS_1_2);
-	} else {
-		LOG_DBG("Using existing socket");
+		client->sock = socket(sa->sa_family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
+
+		if (client->sock < 0) {
+			LOG_INF("Failed to create CoAP socket, errno: %d", errno);
+			err = -ENOTSOCK;
+			continue;
+		}
+
+		LOG_DBG("sock = %d", client->sock);
+
+		err = nrfc_dtls_setup(client->sock);
+		if (err < 0) {
+			LOG_INF("Failed to initialize the DTLS client: %d", err);
+			err = -EPROTO;
+			continue;
+		}
+
+		err = connect(client->sock, sa, info->ai_addrlen);
+		if (err == 0) {
+			break;
+		}
+
+		LOG_INF("Connect failed, errno: %d", errno);
+		err = -ECONNREFUSED;
 	}
 
-	LOG_DBG("sock = %d", client->sock);
-	if (client->sock < 0) {
-		LOG_ERR("Failed to create CoAP socket: %d.", -errno);
-		return -errno;
+	if (err) {
+		nrf_cloud_coap_transport_disconnect(client);
 	}
 
-	err = nrfc_dtls_setup(client->sock);
-	if (err < 0) {
-		LOG_ERR("Failed to initialize the DTLS client: %d", err);
-		goto fail;
-	}
-	client->authenticated = false;
-
-	err = connect(client->sock, (struct sockaddr *)&server, sizeof(struct sockaddr_in));
-	if (err < 0) {
-		LOG_ERR("Connect failed : %d", -errno);
-		goto fail;
-	}
-
-	return 0;
-
-fail:
-	nrf_cloud_coap_transport_disconnect(client);
 	return err;
 }
 
