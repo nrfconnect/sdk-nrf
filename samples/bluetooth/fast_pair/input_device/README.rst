@@ -60,6 +60,10 @@ Fast Pair device registration
 Before you can use your device as a Fast Pair Provider, the device model must be registered with Google.
 This is required to obtain Model ID and Anti-Spoofing Private Key.
 You can register your own device or use the debug Model ID and Anti-Spoofing Public/Private Key pair obtained by Nordic for development purposes.
+
+.. note::
+   To support the input device use case, you must select :guilabel:`Input Device` option in the **Device Type** list when registering your device model.
+
 By default, if Model ID and Anti-Spoofing Private Key are not specified, the following debug Fast Pair provider is used:
 
 * NCS input device - The input device Fast Pair provider:

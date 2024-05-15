@@ -1026,6 +1026,7 @@ int nct_connect(void)
 		.ai_socktype = SOCK_STREAM
 	};
 
+	LOG_DBG("Connecting to host: %s", NRF_CLOUD_HOSTNAME);
 	err = getaddrinfo(NRF_CLOUD_HOSTNAME, NULL, &hints, &result);
 	if (err) {
 		LOG_DBG("getaddrinfo failed %d", err);
@@ -1102,6 +1103,11 @@ int nct_cc_connect(void)
 		.message_id = NCT_MSG_ID_CC_SUB
 	};
 
+	LOG_DBG("Subscribing to:");
+	for (int i = 0; i < subscription_list.list_count; i++) {
+		LOG_DBG("%.*s", subscription_list.list[i].topic.size,
+			(const char *)subscription_list.list[i].topic.utf8);
+	}
 	return mqtt_subscribe(&nct.client, &subscription_list);
 }
 
@@ -1249,6 +1255,11 @@ int nct_dc_connect(void)
 		.message_id = NCT_MSG_ID_DC_SUB
 	};
 
+	LOG_DBG("Subscribing to:");
+	for (int i = 0; i < subscription_list.list_count; i++) {
+		LOG_DBG("%.*s", subscription_list.list[i].topic.size,
+			(const char *)subscription_list.list[i].topic.utf8);
+	}
 	return mqtt_subscribe(&nct.client, &subscription_list);
 }
 

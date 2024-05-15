@@ -140,7 +140,7 @@ static int mpsl_fem_init(void)
 	return fem_simple_gpio_configure();
 }
 
-SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_MPSL_FEM_INIT_PRIORITY);
 
 #else /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
 

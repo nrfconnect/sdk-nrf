@@ -1,8 +1,8 @@
 tests:
   suit.integration.check_image_match:
-    platform_allow: nrf52840dk_nrf52840 native_posix
+    platform_allow: nrf52840dk/nrf52840 native_posix
     tags: suit suit_plat_check_image_match
     timeout: 240
     integration_platforms:
-      - nrf52840dk_nrf52840
+      - nrf52840dk/nrf52840
       - native_posix

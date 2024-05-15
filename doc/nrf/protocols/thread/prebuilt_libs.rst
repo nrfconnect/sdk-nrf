@@ -278,7 +278,7 @@ Use the following command:
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840dk_nrf52840 -t install_openthread_libraries -- -DOPENTHREAD_BUILD_OUTPUT_STRIPPED=y
+   west build -b nrf52840dk/nrf52840 -t install_openthread_libraries -- -DOPENTHREAD_BUILD_OUTPUT_STRIPPED=y
 
 This command builds two versions of the libraries, with and without debug symbols, and installs only the version without debug symbols.
 |board_note_for_updating_libs|
@@ -297,7 +297,7 @@ Use the following command:
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840dk_nrf52840 -t install_openthread_libraries
+   west build -b nrf52840dk/nrf52840 -t install_openthread_libraries
 
 |board_note_for_updating_libs|
 

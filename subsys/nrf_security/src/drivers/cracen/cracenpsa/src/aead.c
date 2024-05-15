@@ -172,7 +172,7 @@ static psa_status_t initialize_or_resume_context(cracen_aead_operation_t *operat
 	case CRACEN_NOT_INITIALIZED:
 		status = initialize_ctx(operation);
 
-		operation->context_state = CRACEN_CONTEXT_INITIALIZED;
+		operation->context_state = CRACEN_HW_RESERVED;
 		break;
 	case CRACEN_CONTEXT_INITIALIZED:
 		status = silex_statuscodes_to_psa(sx_aead_resume_state(&operation->ctx));
@@ -290,8 +290,8 @@ static psa_status_t setup(cracen_aead_operation_t *operation, enum cipher_operat
 
 	memcpy(operation->key_buffer, key_buffer, key_buffer_size);
 
-	psa_status_t status =
-		cracen_load_keyref(attributes, key_buffer, key_buffer_size, &operation->keyref);
+	psa_status_t status = cracen_load_keyref(attributes, operation->key_buffer, key_buffer_size,
+						 &operation->keyref);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

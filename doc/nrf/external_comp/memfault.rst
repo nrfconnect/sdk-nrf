@@ -93,7 +93,7 @@ See the following example on how to set an overlay configuration for Memfault in
 
 .. code-block:: console
 
-   west build -b nrf9160dk_nrf9160_ns -- -DEXTRA_CONF_FILE=overlay-memfault.conf
+   west build -b nrf9160dk/nrf9160/ns -- -DEXTRA_CONF_FILE=overlay-memfault.conf
 
 .. rst-class:: numbered-step
 

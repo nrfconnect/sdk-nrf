@@ -116,7 +116,7 @@ Building and running
 Testing
 =======
 
-This sample has been tested with the nRF52840 DK (nrf52840dk_nrf52840) board.
+This sample has been tested with the nRF52840 DK (nrf52840dk/nrf52840) board.
 
 .. _ble_mesh_dfu_distributor_provisioning:
 
@@ -170,7 +170,7 @@ The management subsystem uses the Simple Management Protocol (SMP), provided by 
 This sample supports Bluetooth Low Energy and UART as the SMP transport.
 See :ref:`zephyr:device_mgmt` for more information about Mcumgr and SMP.
 
-In this sample, the device flash is split into fixed partitions using devicetree as defined in :zephyr_file:`nrf52840dk_nrf52840.dts<boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts>`.
+In this sample, the device flash is split into fixed partitions using devicetree as defined in :zephyr_file:`nrf52840dk_nrf52840.dts<boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts>`.
 The firmware image that is to be distributed over Bluetooth Mesh network should be stored at slot-1.
 The sample uses :ref:`zephyr:flash_map_api` to read the firmware image from slot-1 when distributes it to Target nodes.
 

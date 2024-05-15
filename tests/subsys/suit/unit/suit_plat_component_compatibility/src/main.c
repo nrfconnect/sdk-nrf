@@ -62,6 +62,26 @@ suit_mci_manifest_class_id_validate_correct_fake_func(const suit_manifest_class_
 	return SUIT_PLAT_SUCCESS;
 }
 
+static int suit_mci_manifest_parent_child_declaration_validate_correct_fake_func(
+	const suit_manifest_class_id_t *parent_class_id,
+	const suit_manifest_class_id_t *child_class_id)
+{
+	zassert_equal(parent_class_id, &sample_class_id, "Invalid parent manifest class ID value");
+	zassert_equal(child_class_id, &sample_class_id, "Invalid child manifest class ID value");
+
+	return SUIT_PLAT_SUCCESS;
+}
+
+static int suit_mci_manifest_parent_child_declaration_validate_invalid_fake_func(
+	const suit_manifest_class_id_t *parent_class_id,
+	const suit_manifest_class_id_t *child_class_id)
+{
+	zassert_equal(parent_class_id, &sample_class_id, "Invalid parent manifest class ID value");
+	zassert_equal(child_class_id, &sample_class_id, "Invalid child manifest class ID value");
+
+	return SUIT_ERR_UNAUTHORIZED_COMPONENT;
+}
+
 static int
 suit_mci_manifest_class_id_validate_invalid_fake_func(const suit_manifest_class_id_t *class_id)
 {
@@ -805,9 +825,12 @@ ZTEST(suit_plat_component_compatibility_tests,
 		"Incorrect number of suit_mci_platform_specific_component_rights_validate() calls");
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 1,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
+	zassert_equal(
+		suit_mci_manifest_parent_child_declaration_validate_fake.call_count, 0,
+		"Incorrect number of suit_mci_manifest_parent_child_declaration_validate() calls");
 }
 
-ZTEST(suit_plat_component_compatibility_tests, test_instld_mfst_type_OK)
+ZTEST(suit_plat_component_compatibility_tests, test_instld_mfst_type_invalid_relationship)
 {
 	suit_mci_manifest_class_id_validate_fake.custom_fake =
 		suit_mci_manifest_class_id_validate_correct_fake_func;
@@ -815,14 +838,16 @@ ZTEST(suit_plat_component_compatibility_tests, test_instld_mfst_type_OK)
 		suit_plat_decode_component_type_instld_mfst_correct_fake_func;
 	suit_plat_decode_manifest_class_id_fake.custom_fake =
 		suit_plat_decode_manifest_class_id_correct_fake_func;
+	suit_mci_manifest_parent_child_declaration_validate_fake.custom_fake =
+		suit_mci_manifest_parent_child_declaration_validate_invalid_fake_func;
 
 	int ret = suit_plat_component_compatibility_check(&sample_class_id, &valid_component_id);
 
-	/* Manifest authentication succeeds */
-	zassert_equal(SUIT_SUCCESS, ret, "Authorization should have succeeded");
+	/* Manifest authentication fails */
+	zassert_equal(SUIT_ERR_UNAUTHORIZED_COMPONENT, ret, "Authorization should have failed");
 
 	/* Check expected call counts for fake functions */
-	zassert_equal(suit_mci_manifest_class_id_validate_fake.call_count, 2,
+	zassert_equal(suit_mci_manifest_class_id_validate_fake.call_count, 1,
 		      "Incorrect number of suit_mci_manifest_class_id_validate() calls");
 	zassert_equal(suit_plat_decode_component_type_fake.call_count, 1,
 		      "Incorrect number of suit_plat_decode_component_type() calls");
@@ -839,6 +864,48 @@ ZTEST(suit_plat_component_compatibility_tests, test_instld_mfst_type_OK)
 		"Incorrect number of suit_mci_platform_specific_component_rights_validate() calls");
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 1,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
+	zassert_equal(
+		suit_mci_manifest_parent_child_declaration_validate_fake.call_count, 1,
+		"Incorrect number of suit_mci_manifest_parent_child_declaration_validate() calls");
+}
+
+ZTEST(suit_plat_component_compatibility_tests, test_instld_mfst_type_OK)
+{
+	suit_mci_manifest_class_id_validate_fake.custom_fake =
+		suit_mci_manifest_class_id_validate_correct_fake_func;
+	suit_plat_decode_component_type_fake.custom_fake =
+		suit_plat_decode_component_type_instld_mfst_correct_fake_func;
+	suit_plat_decode_manifest_class_id_fake.custom_fake =
+		suit_plat_decode_manifest_class_id_correct_fake_func;
+	suit_mci_manifest_parent_child_declaration_validate_fake.custom_fake =
+		suit_mci_manifest_parent_child_declaration_validate_correct_fake_func;
+
+	int ret = suit_plat_component_compatibility_check(&sample_class_id, &valid_component_id);
+
+	/* Manifest authentication succeeds */
+	zassert_equal(SUIT_SUCCESS, ret, "Authorization should have succeeded");
+
+	/* Check expected call counts for fake functions */
+	zassert_equal(suit_mci_manifest_class_id_validate_fake.call_count, 1,
+		      "Incorrect number of suit_mci_manifest_class_id_validate() calls");
+	zassert_equal(suit_plat_decode_component_type_fake.call_count, 1,
+		      "Incorrect number of suit_plat_decode_component_type() calls");
+	zassert_equal(suit_plat_decode_component_id_fake.call_count, 0,
+		      "Incorrect number of suit_plat_decode_component_id() calls");
+	zassert_equal(suit_mci_processor_start_rights_validate_fake.call_count, 0,
+		      "Incorrect number of suit_mci_processor_start_rights_validate() calls");
+	zassert_equal(suit_mci_memory_access_rights_validate_fake.call_count, 0,
+		      "Incorrect number of suit_mci_memory_access_rights_validate() calls");
+	zassert_equal(suit_plat_decode_component_number_fake.call_count, 0,
+		      "Incorrect number of suit_plat_decode_component_number() calls");
+	zassert_equal(
+		suit_mci_platform_specific_component_rights_validate_fake.call_count, 0,
+		"Incorrect number of suit_mci_platform_specific_component_rights_validate() calls");
+	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 1,
+		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
+	zassert_equal(
+		suit_mci_manifest_parent_child_declaration_validate_fake.call_count, 1,
+		"Incorrect number of suit_mci_manifest_parent_child_declaration_validate() calls");
 }
 
 ZTEST(suit_plat_component_compatibility_tests, test_unsupported_type_err)

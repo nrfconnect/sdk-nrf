@@ -370,6 +370,13 @@ int suit_mci_manifest_parent_child_declaration_validate(
 		return SUIT_PLAT_SUCCESS;
 	}
 
+	if ((SUIT_PLAT_SUCCESS ==
+	     suit_metadata_uuid_compare(&nordic_recovery_manifest_class_id, parent_class_id)) &&
+	    (SUIT_PLAT_SUCCESS ==
+	     suit_metadata_uuid_compare(&nordic_app_manifest_class_id, child_class_id))) {
+		return SUIT_PLAT_SUCCESS;
+	}
+
 	return MCI_ERR_NOACCESS;
 }
 
@@ -383,6 +390,13 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 
 	if ((SUIT_PLAT_SUCCESS ==
 	     suit_metadata_uuid_compare(&nordic_root_manifest_class_id, parent_class_id)) &&
+	    (SUIT_PLAT_SUCCESS ==
+	     suit_metadata_uuid_compare(&nordic_app_manifest_class_id, child_class_id))) {
+		return SUIT_PLAT_SUCCESS;
+	}
+
+	if ((SUIT_PLAT_SUCCESS ==
+	     suit_metadata_uuid_compare(&nordic_recovery_manifest_class_id, parent_class_id)) &&
 	    (SUIT_PLAT_SUCCESS ==
 	     suit_metadata_uuid_compare(&nordic_app_manifest_class_id, child_class_id))) {
 		return SUIT_PLAT_SUCCESS;

@@ -6,6 +6,8 @@
 
 DT_COMPAT_NORDIC_NRF21540_GPIO := nordic,nrf21540-fem
 DT_COMPAT_GENERIC_FEM_2_CTRL_PIN := generic-fem-two-ctrl-pins
+DT_COMPAT_NORDIC_NRF2220 := nordic,nrf2220-fem
+DT_COMPAT_NORDIC_NRF2240 := nordic,nrf2240-fem
 
 config MPSL_FEM_ANY_SUPPORT
 	bool
@@ -23,6 +25,24 @@ config MPSL_FEM_NRF21540_GPIO_SPI_SUPPORT
 config MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
 	bool
 	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_GENERIC_FEM_2_CTRL_PIN))
+
+config MPSL_FEM_NRF2220_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF2220))
+
+config MPSL_FEM_NRF2220_TWI_SUPPORT
+	bool
+	depends on MPSL_FEM_NRF2220_SUPPORT
+	default $(dt_nodelabel_has_prop,nrf_radio_fem,twi-if)
+
+config MPSL_FEM_NRF2240_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF2240))
+
+config MPSL_FEM_NRF2240_TWI_SUPPORT
+	bool
+	depends on MPSL_FEM_NRF2240_SUPPORT
+	default $(dt_nodelabel_has_prop,nrf_radio_fem,twi-if)
 
 config MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool
@@ -95,6 +115,32 @@ config MPSL_FEM_SIMPLE_GPIO
 	  This option was originally designed to support the SKY66112-11,
 	  but is potentially compatible with other devices with the same
 	  control method.
+
+config MPSL_FEM_NRF2220
+	depends on MPSL_FEM_NRF2220_SUPPORT
+	select EXPERIMENTAL
+	select NRFX_GPIOTE
+	select NRFX_PPI if SOC_SERIES_NRF52X
+	select NRFX_DPPI if SOC_SERIES_NRF53X
+	select NRFX_TWIM0 if MPSL_FEM_NRF2220_TWI_SUPPORT
+	select PINCTRL
+	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
+	bool "nRF2220 front-end module"
+	help
+	  FEM device is nRF2220.
+
+config MPSL_FEM_NRF2240
+	depends on MPSL_FEM_NRF2240_SUPPORT
+	select EXPERIMENTAL
+	select NRFX_GPIOTE
+	select NRFX_PPI if SOC_SERIES_NRF52X
+	select NRFX_DPPI if SOC_SERIES_NRF53X
+	select NRFX_TWIM0 if MPSL_FEM_NRF2240_TWI_SUPPORT
+	select PINCTRL
+	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
+	bool "nRF2240 front-end module"
+	help
+	  FEM device is nRF2240.
 
 endchoice	# MPSL_FEM_CHOICE
 
@@ -223,6 +269,20 @@ config MPSL_FEM_DEVICE_CONFIG_254
 	  Specification, especially when an external PA is present.
 	  Device configuration 254 may be required to improve RX blocking,
 	  especially when an external LNA is present.
+
+config MPSL_FEM_USE_TWIM_STUB
+	bool
+	depends on !NRFX_TWIM
+	depends on (MPSL_FEM_NRF2220 && !MPSL_FEM_NRF2220_TWI_SUPPORT) || \
+			   (MPSL_FEM_NRF2240 && !MPSL_FEM_NRF2240_TWI_SUPPORT)
+	default y
+
+config MPSL_FEM_INIT_PRIORITY
+	int "Init priority of the Front-End Module support code"
+	depends on MPSL_FEM
+	default 49 if (MPSL_FEM_NRF2220 && MPSL_FEM_NRF2220_TWI_SUPPORT) || \
+		      (MPSL_FEM_NRF2240 && MPSL_FEM_NRF2240_TWI_SUPPORT)
+	default KERNEL_INIT_PRIORITY_DEVICE
 
 module=MPSL_FEM
 module-str=MPSL_FEM

@@ -43,12 +43,12 @@ Build and configuration system
 Working with nRF91 Series
 =========================
 
-|no_changes_yet_note|
+* Moved :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` to the :ref:`gsg_guides` section.
 
 Working with nRF70 Series
 =========================
 
-|no_changes_yet_note|
+* Moved :ref:`ug_nrf7002_gs` to the :ref:`gsg_guides` section.
 
 Working with nRF54L Series
 ==========================
@@ -56,10 +56,15 @@ Working with nRF54L Series
 * Added the :ref:`ug_nrf54l15_gs` page.
 * Changed the default value for the Kconfig option :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_ACCURACY` from 500 to 250 if :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is used.
 
+Working with nRF53 Series
+=========================
+
+* Moved :ref:`ug_nrf5340_gs` to the :ref:`gsg_guides` section.
+
 Working with nRF52 Series
 =========================
 
-|no_changes_yet_note|
+* Moved :ref:`ug_nrf52_gs` to the :ref:`gsg_guides` section.
 
 Working with nRF53 Series
 =========================
@@ -105,6 +110,7 @@ Matter
 
   * Support for merging the generated factory data HEX file with the firmware HEX file by using the devicetree configuration, when Partition Manager is not enabled in the project.
   * Support for the unified Persistent Storage API, including the implementation of the PSA Persistent Storage.
+  * Watchdog timer implementation for creating multiple :ref:`ug_matter_device_watchdog` sources and monitoring the time of executing specific parts of the code.
 
 * Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
 * Increased the number of available packet buffers in the Matter stack to avoid packet allocation issues.
@@ -218,6 +224,12 @@ nRF Desktop
   * Enabled the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT <config_desktop_app_options>` Kconfig option for the nRF Desktop peripherals with :ref:`nrf_desktop_dfu`.
     The option mitigates HID report rate drops during DFU image transfer through the nRF Desktop dongle.
     The output report is also enabled for the ``nrf52kbd_nrf52832`` build target in the debug configuration to maintain consistency with the release configuration.
+  * Replaced the :kconfig:option:`CONFIG_BT_L2CAP_TX_BUF_COUNT` Kconfig option with :kconfig:option:`CONFIG_BT_ATT_TX_COUNT` in nRF Desktop dongle configurations.
+    This update is needed to align with the new approach introduced in ``sdk-zephyr`` by commit ``a05a47573a11ba8a78dadc5d3229659f24ddd32f``.
+  * The :ref:`nrf_desktop_hid_forward` no longer uses a separate HID report queue for a HID peripheral connected over Bluetooth LE.
+    The module relies only on the HID report queue of a HID subscriber.
+    This is done to simplify implementation, reduce memory consumption and speed up retrieving enqueued HID reports.
+    You can modify the enqueued HID report limit through the :ref:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS <config_desktop_app_options>` Kconfig option.
 
 Thingy:53: Matter weather station
 ---------------------------------
@@ -251,6 +263,7 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
+* Added the :ref:`bluetooth_iso_combined_bis_cis` sample showcasing forwarding isochronous data from CIS to BIS.
 * Added the :ref:`bluetooth_isochronous_time_synchronization` sample showcasing time-synchronized processing of isochronous data.
 
 * :ref:`fast_pair_input_device` sample:
@@ -432,7 +445,13 @@ Cellular samples
 
 * :ref:`nrf_cloud_multi_service` sample:
 
-  * Fixed issue that prevented network connectivity when using Wi-Fi scanning with the nRF91xx.
+  * Fixed:
+
+    * An issue that prevented network connectivity when using Wi-Fi scanning with the nRF91xx.
+
+  * Added:
+
+    * The ability to control the state of the test counter using the config section in the device shadow.
 
 Cryptography samples
 --------------------
@@ -443,6 +462,11 @@ Debug samples
 -------------
 
 |no_changes_yet_note|
+
+DECT NR+ samples
+----------------
+
+* Added the :ref:`nrf_modem_dect_phy_hello` sample.
 
 Edge Impulse samples
 --------------------
@@ -494,6 +518,8 @@ Matter samples
 * :ref:`matter_lock_sample` sample:
 
   * Added support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
+  * Added a door lock credentials manager module.
+    The module is used to implement support for refined handling and persistent storage of PIN codes.
 
 Multicore samples
 -----------------
@@ -503,16 +529,14 @@ Multicore samples
 Networking samples
 ------------------
 
-* Updated:
-
-  *  The networking samples to support import of certificates in valid PEM formats.
+* Updated the networking samples to support import of certificates in valid PEM formats.
+* Removed QEMU x86 emulation support and added support for the :ref:`native simulator <zephyr:native_sim>` board.
 
 * :ref:`http_server` sample:
 
   * Added:
 
     * ``DNS_SD_REGISTER_TCP_SERVICE`` so that mDNS services can locate and address the server using its hostname.
-    * Support for the :ref:`native simulator <zephyr:native_sim>` board.
 
   * Updated:
 
@@ -623,6 +647,10 @@ Other samples
 * Added the :ref:`coremark_sample` sample that demonstrates how to easily measure a performance of the supported SoCs by running the Embedded Microprocessor Benchmark Consortium (EEMBC) CoreMark benchmark.
   Included support for the nRF52840 DK, nRF5340 DK, and nRF54L15 PDK.
 
+* :ref:`ipc_service_sample` sample:
+
+  * Removed support for the `OpenAMP`_ library backend on the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
 Drivers
 =======
 
@@ -690,6 +718,11 @@ Modem libraries
     * Convenience function to get :c:struct:`location_data_details` from the :c:struct:`location_event_data`.
     * Location data details for event :c:enum:`LOCATION_EVT_RESULT_UNKNOWN`.
 
+* :ref:`lte_lc_readme` library:
+
+  * Removed ``AT%XRAI`` related deprecated functions ``lte_lc_rai_param_set()`` and ``lte_lc_rai_req()``, and Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ_VALUE`.
+    The application uses the Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ` and ``SO_RAI`` socket option instead.
+
 Libraries for networking
 ------------------------
 
@@ -709,6 +742,7 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST` Kconfig option to enable including Wi-Fi anchor names in the location callback.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE` Kconfig option to control the buffer size used for the anchor names.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_PARSE_ANCHORS` Kconfig option to control if anchor names are parsed.
+    * The :c:func:`nrf_cloud_obj_bool_get` function to get a boolean value from an object.
 
   * Updated:
 
@@ -743,6 +777,14 @@ Libraries for networking
 
   * :c:func:`lwm2m_init_firmware` is deprecated in favour of :c:func:`lwm2m_init_firmware_cb` that allows application to set a callback to receive FOTA events.
   * Fixed an issue where the Location Area Code was not updated when the Connection Monitor object version 1.3 was enabled.
+
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Fixed a NULL pointer issue that could occur when there are some valid predictions in flash but not the one required at the current time.
+
+* :ref:`lib_download_client` library:
+
+  * Removed the deprecated ``download_client_connect`` function.
 
 Libraries for NFC
 -----------------

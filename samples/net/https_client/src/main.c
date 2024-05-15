@@ -24,10 +24,9 @@
 #endif
 
 #define HTTPS_PORT		"443"
-#define HTTPS_HOSTNAME		"example.com"
 #define HTTP_HEAD		\
 				"HEAD / HTTP/1.1\r\n"	\
-				"Host: " HTTPS_HOSTNAME ":" HTTPS_PORT "\r\n"		\
+				"Host: " CONFIG_HTTPS_HOSTNAME ":" HTTPS_PORT "\r\n"		\
 				"Connection: close\r\n\r\n"
 
 #define HTTP_HEAD_LEN		(sizeof(HTTP_HEAD) - 1)
@@ -157,7 +156,9 @@ int tls_setup(int fd)
 		return err;
 	}
 
-	err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, HTTPS_HOSTNAME, sizeof(HTTPS_HOSTNAME) - 1);
+	err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME,
+			CONFIG_HTTPS_HOSTNAME,
+			sizeof(CONFIG_HTTPS_HOSTNAME) - 1);
 	if (err) {
 		printk("Failed to setup TLS hostname, err %d\n", errno);
 		return err;
@@ -217,9 +218,9 @@ static void send_http_request(void)
 	};
 	char peer_addr[INET6_ADDRSTRLEN];
 
-	printk("Looking up %s\n", HTTPS_HOSTNAME);
+	printk("Looking up %s\n", CONFIG_HTTPS_HOSTNAME);
 
-	err = getaddrinfo(HTTPS_HOSTNAME, HTTPS_PORT, &hints, &res);
+	err = getaddrinfo(CONFIG_HTTPS_HOSTNAME, HTTPS_PORT, &hints, &res);
 	if (err) {
 		printk("getaddrinfo() failed, err %d\n", errno);
 		return;
@@ -245,7 +246,7 @@ static void send_http_request(void)
 		goto clean_up;
 	}
 
-	printk("Connecting to %s:%d\n", HTTPS_HOSTNAME,
+	printk("Connecting to %s:%d\n", CONFIG_HTTPS_HOSTNAME,
 	       ntohs(((struct sockaddr_in *)(res->ai_addr))->sin_port));
 	err = connect(fd, res->ai_addr, res->ai_addrlen);
 	if (err) {
@@ -336,6 +337,16 @@ int main(void)
 	if (err) {
 		printk("conn_mgr_all_if_connect, error: %d\n", err);
 		return 0;
+	}
+
+	/* Resend connection status if the sample is built for NATIVE_SIM.
+	 * This is necessary because the network interface is automatically brought up
+	 * at SYS_INIT() before main() is called.
+	 * This means that NET_EVENT_L4_CONNECTED fires before the
+	 * appropriate handler l4_event_handler() is registered.
+	 */
+	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
+		conn_mgr_mon_resend_status();
 	}
 
 	k_sem_take(&network_connected_sem, K_FOREVER);

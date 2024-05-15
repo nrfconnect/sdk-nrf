@@ -33,11 +33,14 @@ target_include_directories(app PRIVATE
     src
 )
 
+FILE(GLOB cred_srcs src/credentials/*.cpp)
+
 target_sources(app PRIVATE
     src/app_task.cpp
     src/bolt_lock_manager.cpp
     src/main.cpp
     src/zcl_callbacks.cpp
+    ${cred_srcs}
 )
 
 if(CONFIG_THREAD_WIFI_SWITCHING)

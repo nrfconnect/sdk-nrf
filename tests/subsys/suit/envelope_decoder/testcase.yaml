@@ -1,5 +1,5 @@
 tests:
   suit-processor.integration.envelope_decoder:
-    platform_allow: native_posix native_posix_64
+    platform_allow: native_posix native_posix/native/64
     build_only: true
     tags: suit-processor envelope-decoder

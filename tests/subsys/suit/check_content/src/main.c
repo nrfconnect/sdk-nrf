@@ -41,8 +41,8 @@ ZTEST_SUITE(suit_check_content_tests, NULL, NULL, NULL, NULL, NULL);
 ZTEST(suit_check_content_tests, test_mem_matching)
 {
 	/* GIVEN a MEM component pointing to the data */
-	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',  0x41, 0x02, 0x45, 0x1A,
-					0x00, 0x00, 0x00, 0x00, 0x45, 0x1A, 0x00, 0x00, 0x00, 0x00};
+	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',
+					0x41, 0x02, 0x41, 0x00, 0x41, 0x00};
 
 	struct zcbor_string matching_src_component_id = {
 		.value = component_id_value,
@@ -79,8 +79,8 @@ ZTEST(suit_check_content_tests, test_mem_matching)
 ZTEST(suit_check_content_tests, test_mem_different_size)
 {
 	/* GIVEN a MEM component pointing to the data... */
-	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',  0x41, 0x02, 0x45, 0x1A,
-					0x00, 0x00, 0x00, 0x00, 0x45, 0x1A, 0x00, 0x00, 0x00, 0x00};
+	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',
+					0x41, 0x02, 0x41, 0x00, 0x41, 0x00};
 
 	struct zcbor_string valid_src_component_id = {
 		.value = component_id_value,
@@ -118,8 +118,8 @@ ZTEST(suit_check_content_tests, test_mem_different_size)
 ZTEST(suit_check_content_tests, test_mem_not_matching)
 {
 	/* GIVEN a MEM component pointing to the data */
-	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',  0x41, 0x02, 0x45, 0x1A,
-					0x00, 0x00, 0x00, 0x00, 0x45, 0x1A, 0x00, 0x00, 0x00, 0x00};
+	uint8_t component_id_value[] = {0x84, 0x44, 0x63, 'M',	'E',  'M',
+					0x41, 0x02, 0x41, 0x00, 0x41, 0x00};
 
 	struct zcbor_string not_matching_src_component_id = {
 		.value = component_id_value,

@@ -98,10 +98,23 @@ static void scan_start(void)
 {
 	int err;
 
-	err = bt_le_scan_start(BT_LE_SCAN_ACTIVE_CONTINUOUS, NULL);
-	if (err) {
-		printk("Scanning failed to start (err %d)\n", err);
-		return;
+	if (free_iso_chan_find()) {
+		err = bt_le_scan_start(BT_LE_SCAN_ACTIVE_CONTINUOUS, NULL);
+		if (err == -EALREADY) {
+			/** If the central is RXing, both the ISO and the ACL
+			 * disconnection callbacks try to enable the scanner.
+			 * If the ISO channel disconnects before the ACL
+			 * connection, the application will attempt to enable
+			 * the scanner again.
+			 */
+			printk("Scanning did not start because it has already started (err %d)\n",
+				   err);
+		} else if (err) {
+			printk("Scanning failed to start (err %d)\n", err);
+			return;
+		}
+
+		printk("CIS Central started scanning\n");
 	}
 }
 
@@ -141,11 +154,6 @@ static void connected(struct bt_conn *conn, uint8_t err)
 		return;
 	}
 	printk("Connecting ISO channel\n");
-
-	if (free_iso_chan_find()) {
-		printk("Continue scanning for more peripherals...\n");
-		scan_start();
-	}
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
@@ -174,9 +182,23 @@ void cis_central_start(bool do_tx, uint8_t retransmission_number, uint16_t max_t
 
 	configured_for_tx = do_tx;
 	if (do_tx) {
-		iso_tx_init(retransmission_number);
+		/** scan_start is registered as a callback that is triggered when an
+		 * ISO channel connects to avoid a situation where the
+		 * LE HCI Create CIS command is called while there is a pending CIS
+		 * connection. The CIS central starts scanning for a new connection only after a
+		 * pending CIS connection has completed. This must be done because the
+		 * LE HCI Create CIS command is disallowed while a CIS connection is
+		 * pending. See Core Specification Version 5.4, Vol 6, Part B, section 7.8.99.
+		 */
+		iso_tx_init(retransmission_number, &scan_start);
 	} else {
-		iso_rx_init(retransmission_number);
+		/** scan_start is registered as a callback that is triggered when an
+		 * ISO channel disconnects. This is needed because the ISO channel might
+		 * disconnect after the ACL has completed its disconnection callback. If
+		 * this is the case, there are no RX ISO channels available during the
+		 * ACL disconnection callback, which will prevent scanning from starting.
+		 */
+		iso_rx_init(retransmission_number, &scan_start);
 	}
 
 	bt_le_scan_cb_register(&scan_callbacks);

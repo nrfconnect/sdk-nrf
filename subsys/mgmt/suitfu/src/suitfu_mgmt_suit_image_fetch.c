@@ -61,7 +61,7 @@ static suit_plat_err_t suitfu_mgmt_suit_missing_image_request(const uint8_t *uri
 	stream_session_t *session = &stream_session;
 	int64_t current_ts = k_uptime_get();
 
-	LOG_INF("Request for image: %s", uri);
+	LOG_HEXDUMP_INF(uri, uri_length, "Request for image");
 
 	if (strncmp(uri, "file://", strlen("file://"))) {
 		return SUIT_PLAT_ERR_NOT_FOUND;

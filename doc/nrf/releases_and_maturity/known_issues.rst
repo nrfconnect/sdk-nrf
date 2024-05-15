@@ -350,6 +350,43 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
+
+KRKNWK-18916: Issues related to the  :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START` Kconfig option
+  When the Kconfig option is selected, there are two issues:
+
+  * An assert may occur after removing the last fabric because the OpenThread interface is still active despite the Thread stack being disabled.
+  * The device cannot be commissioned to the Matter network because the device's IEEE 802.15.4 Extended address is the same as the one saved in the SRP server.
+
+  **Workaround:** Add the following lines to the :file:`fabric_table_delegate` file:
+
+    * After Line 54 (After the ``DoFactoryReset()`` function) to provide a workaround for potential assert:
+
+      .. code-block:: C++
+
+        chip::DeviceLayer::ThreadStackMgrImpl().LockThreadStack();
+        otIp6SetEnabled(chip::DeviceLayer::ThreadStackMgrImpl().OTInstance(), false);
+        chip::DeviceLayer::ThreadStackMgrImpl().UnlockThreadStack();
+
+    * After Line 56 (After the ``ErasePersistentInfo()`` function) to generate the new IEEE 802.15.4 Extended address and set it to avoid duplication:
+
+      .. code-block:: C++
+
+        otExtAddress newOtAddr = {};
+        chip::Crypto::DRBG_get_bytes(reinterpret_cast<uint8_t*>(&newOtAddr), sizeof(newOtAddr));
+        otLinkSetExtendedAddress(chip::DeviceLayer::ThreadStackMgrImpl().OTInstance(), &newOtAddr);
+
+  .. note::
+
+    For |NCS| versions v2.5.3, v2.5.2, v2.5.1, and v2.5.0, the :file:`fabric_table_delegate.h` file is located in the :file:`samples/matter/common/src/` directory, whereas for |NCS| versions v2.6.1 and v2.6.0, the file is located in the :file:`samples/matter/common/src/app` directory.
+
+.. rst-class:: v2-6-1 v2-6-0
+
+KRKNWK-18673: Bridged Light Bulb device type reports a failure when reading or writing specific ``onoff`` cluster attributes
+  The Bridge has defined ZAP clusters properly for a bridged Light Bulb, but handling of specific ``onoff`` cluster attributes has not been implemented.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-nrf`` (commit hash: ``79f3a901dd0787df9327640cb3bb889ccb023005``).
+
 .. rst-class:: v2-6-1 v2-6-0
 
 KRKNWK-18769: :ref:`matter_bridge_app` application does not print the hyperlink for displaying the setup QR code in the log.

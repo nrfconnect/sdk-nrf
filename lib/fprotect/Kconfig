@@ -45,7 +45,7 @@ config FPROTECT_BLOCK_SIZE
 
 menuconfig FPROTECT
 	bool "Enable FPROTECT"
-	depends on SOC_FAMILY_NRF
+	depends on SOC_FAMILY_NORDIC_NRF
 	help
 	  Enable the software library FPROTECT that may or may not be used
 	  by other systems to protect flash from writes and possibly also

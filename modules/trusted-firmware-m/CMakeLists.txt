@@ -8,7 +8,7 @@ zephyr_library()
 zephyr_include_directories(.)
 zephyr_library_sources_ifdef(CONFIG_TFM_ALLOW_NON_SECURE_FAULT_HANDLING fault.c)
 
-if (CONFIG_TFM_PARTITION_PLATFORM AND CONFIG_SOC_FAMILY_NRF)
+if (CONFIG_TFM_PARTITION_PLATFORM AND CONFIG_SOC_FAMILY_NORDIC_NRF)
   zephyr_library_named(tfm_api_nrf)
 
   # The non-secure API files are located in a folder associated with the TF-M
@@ -102,6 +102,30 @@ endif()
 if (CONFIG_TFM_SECURE_UART1)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_SECURE_UART_INSTANCE=1
+  )
+endif()
+
+if (CONFIG_TFM_SECURE_UART00)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_SECURE_UART_INSTANCE=00
+  )
+endif()
+
+if (CONFIG_TFM_SECURE_UART20)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_SECURE_UART_INSTANCE=20
+  )
+endif()
+
+if (CONFIG_TFM_SECURE_UART21)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_SECURE_UART_INSTANCE=21
+  )
+endif()
+
+if (CONFIG_TFM_SECURE_UART22)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_SECURE_UART_INSTANCE=22
   )
 endif()
 

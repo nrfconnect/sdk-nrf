@@ -16,11 +16,13 @@ target_sources(app PRIVATE src/main.c)
 
 # Generate a C header file with the readme text as a string variable
 set(OUTPUT_README_HEADER_FILE "${CMAKE_BINARY_DIR}/generated/readme/readme.h")
-set(INPUT_README_FILE ${CMAKE_SOURCE_DIR}/boards/${BOARD}_readme.txt)
+set(INPUT_README_FILE ${CMAKE_SOURCE_DIR}/boards/${NORMALIZED_BOARD_TARGET}_readme.txt)
+
 if(NOT EXISTS ${INPUT_README_FILE})
-message(WARNING "${INPUT_README_FILE} does not exist")
-set(INPUT_README_FILE ${CMAKE_SOURCE_DIR}/README_TEMPLATE.txt)
+  message(WARNING "${INPUT_README_FILE} does not exist")
+  set(INPUT_README_FILE ${CMAKE_SOURCE_DIR}/README_TEMPLATE.txt)
 endif()
+
 file(READ ${INPUT_README_FILE} README_CONTENT)
 if(GIT_FOUND)
   execute_process(

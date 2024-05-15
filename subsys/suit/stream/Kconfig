@@ -37,7 +37,6 @@ config SUIT_STREAM_SINK_RAM
 
 config SUIT_STREAM_SINK_EXTMEM
 	bool "Enable external memory sink"
-	depends on SSF_EXTMEM_SERVICE_ENABLED
 	select SUIT_STREAM_SINK_COMPONENT_MEM_SUPPORTED
 
 menuconfig SUIT_STREAM_SINK_SDFW
@@ -80,7 +79,7 @@ endif # SUIT_STREAM_SINK_SDFW
 
 config SUIT_STREAM_SINK_DIGEST
 	bool "Enable digest sink"
-	select PSA_WANT_ALG_SHA_256 if SOC_FAMILY_NRF
+	select PSA_WANT_ALG_SHA_256 if SOC_FAMILY_NORDIC_NRF
 
 if SUIT_STREAM_SINK_DIGEST
 	config SUIT_STREAM_SINK_DIGEST_CONTEXT_COUNT
@@ -105,7 +104,6 @@ config SUIT_STREAM_FETCH_MAX_SOURCES
 
 config SUIT_STREAM_SOURCE_EXTMEM
 	bool "Enable external memory storage source"
-	depends on SSF_EXTMEM_SERVICE_ENABLED
 
 config SUIT_STREAM_SOURCE_FLASH
 	bool "Enable flash memory storage source"

@@ -1,0 +1,122 @@
+# Thingy:91 X nRF9151 board configuration
+#
+# Copyright (c) 2024 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if BOARD_THINGY91X_NRF9151 || BOARD_THINGY91X_NRF9151_NS
+
+DT_COMPAT_NORDIC_NRF700X_SPI := nordic,nrf700x-spi
+config NRF7002_ON_SPI
+	def_bool $(dt_compat_enabled,$(DT_COMPAT_NORDIC_NRF700X_SPI))
+
+# By default, if we build for a Non-Secure version of the board,
+# enable building with TF-M as the Secure Execution Environment.
+config BUILD_WITH_TFM
+	default y if BOARD_THINGY91X_NRF9151_NS
+
+if BUILD_WITH_TFM
+
+# By default, if we build with TF-M, instruct build system to
+# flash the combined TF-M (Secure) & Zephyr (Non Secure) image
+config TFM_FLASH_MERGED_BINARY
+	bool
+	default y
+
+config PM_PARTITION_SIZE_TFM_SRAM
+	hex
+	default 0xa000
+
+endif # BUILD_WITH_TFM
+
+# For the secure version of the board the firmware is linked at the beginning
+# of the flash, or into the code-partition defined in DT if it is intended to
+# be loaded by MCUboot. If the secure firmware is to be combined with a non-
+# secure image (TRUSTED_EXECUTION_SECURE=y), the secure FW image shall always
+# be restricted to the size of its code partition.
+# For the non-secure version of the board, the firmware
+# must be linked into the code-partition (non-secure) defined in DT, regardless.
+# Apply this configuration below by setting the Kconfig symbols used by
+# the linker according to the information extracted from DT partitions.
+
+if BOARD_THINGY91X && TRUSTED_EXECUTION_SECURE
+
+config FLASH_LOAD_SIZE
+	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
+
+endif # BOARD_THINGY91X && TRUSTED_EXECUTION_SECURE
+
+if BOARD_THINGY91X_NRF9151_NS
+
+config FLASH_LOAD_OFFSET
+	default $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
+
+config FLASH_LOAD_SIZE
+	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
+
+endif # BOARD_THINGY91X_NRF9151_NS
+
+config BT_HCI_VS
+	default y if BT
+
+config HW_STACK_PROTECTION
+	default ARCH_HAS_STACK_PROTECTION
+
+# check if we are building for any bootloader
+if !IS_BOOTLOADER_IMG
+
+config SECURE_BOOT
+	default y
+
+config BOOTLOADER_MCUBOOT
+	default y
+
+# Do not use these keys for own custom boards!
+# These are meant as examples and therefore public.
+# The documentation of the nRF Secure Immutable Bootloader and MCUBoot detail on how
+# to set up your own keys.
+
+config SB_SIGNING_KEY_FILE
+	default "$(ZEPHYR_NRF_MODULE_DIR)/boards/nordic/thingy91x/nsib_signing_key.pem"
+
+config I2C
+	default y
+
+config MODEM_ANTENNA
+	depends on NRF_MODEM_LIB
+	default y
+
+if MODEM_ANTENNA
+
+config MODEM_ANTENNA_AT_MIPIRFFEDEV
+	default "AT%XMIPIRFFEDEV=1,4,71,198,248"
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_INIT
+	default "AT%XMIPIRFFECTRL=1,0,1,28,248"
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_ON
+	default "AT%XMIPIRFFECTRL=1,1,1,28,56,13,0,0,8,8,715,4,4,770,12,12,829,11,11,863,130,130,892,1,1,939,129,129,978,26,26,1042,8,8,1118,4,4,1270,12,12,1386,14,14,1523,130,130,2200"
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_OFF
+	default "AT%XMIPIRFFECTRL=1,2,1,28,184"
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_PWROFF
+	default "AT%XMIPIRFFECTRL=1,3,1,28,184"
+config MODEM_ANTENNA_AT_COEX0
+	default "AT\%XCOEX0=1,1,1565,1586"
+
+endif # MODEM_ANTENNA
+
+# For on-board regulators
+config REGULATOR
+	default y
+
+# nPM6001 must be initialized after it is powered from nPM1300 (REGULATOR_NPM1300_INIT_PRIORITY)
+config MFD_NPM6001_INIT_PRIORITY
+	default 87
+config REGULATOR_NPM6001_INIT_PRIORITY
+	default 88
+config WIFI_INIT_PRIORITY
+	default 89
+
+# GPIO hogs must be initialized after nPM1300 (GPIO_NPM1300_INIT_PRIORITY)
+config GPIO_HOGS_INIT_PRIORITY
+	default 86
+
+endif # !IS_BOOTLOADER_IMG
+endif # BOARD_THINGY91X_NRF9151 || BOARD_THINGY91X_NRF9151_NS

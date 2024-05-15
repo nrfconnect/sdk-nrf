@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NCS_SAMPLE_MATTER_WATCHDOG
+	bool "Watchdog for Matter applications"
+	select WATCHDOG
+
+if NCS_SAMPLE_MATTER_WATCHDOG
+
+config NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT
+    bool "Use watchdog object dedicated for Main and Matter threads"
+    default y
+    help
+        The default watchdog objects are created in the matter_init.cpp file.
+        The watchdog objects are dedicated for Main and Matter threads and are initialized
+        using the NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT_FEED_TIME value.
+
+config NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT
+    int "Default maximum window time in milliseconds for receiving the feeding signal"
+    default 600000 # 10 minutes
+    help
+        The default maximum window time defines a time within which the feeding signal must be received
+        from all created Watchdog sources to reset the watchdog object's timer.
+        If the signals come after elapsing this time, the watchdog timer will not be reset and the
+        reboot occur.
+
+config NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT_FEED_TIME
+    int "Default interval of feeding time in milliseconds"
+    default 300000 # 5 minutes
+    help
+	  The default interval in milliseconds for calling the feeding callback if it exists.
+
+config NCS_SAMPLE_MATTER_WATCHDOG_EVENT_TRIGGERS
+    bool "Enables default event triggers for watchdog purposes"
+    default y
+    depends on NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+    help
+        Enables test event triggers to block Main and Matter stacks for the specific amount of time
+        and test Watchdog in this way.
+
+endif # NCS_SAMPLE_MATTER_WATCHDOG

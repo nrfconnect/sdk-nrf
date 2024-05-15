@@ -132,7 +132,7 @@ The implementation is located in the :file:`samples/cellular/gnss/src/` director
 The various callback functions implemented in the SUPL client library and their purposes are listed below.
 
 A-GNSS handler
-   Callback function to handle nRF assistance data types defined in `A-GNSS data type enumerator <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/api.html#a-gnss-data-type-enumerator>`_.
+   Callback function to handle nRF assistance data types defined in :ref:`agnss_data_type_enum_api`.
    This callback writes the A-GNSS data to the GNSS module.
    The `LTE Positioning Protocol (LPP)`_ data contained within the SUPL payload is converted to nRF A-GNSS data structures defined in :file:`nrf_modem_gnss.h` that can be written directly using the GNSS API.
 

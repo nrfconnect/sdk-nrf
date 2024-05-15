@@ -102,6 +102,8 @@ kconfig_check_and_set_base(MBEDTLS_MEMORY_DEBUG)
 kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_SPM)
 
 kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_C)
+kconfig_check_and_set_base(MBEDTLS_USE_PSA_CRYPTO)
+kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_CLIENT)
 
 kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_EXIT_ALT)
 kconfig_check_and_set_base_to_one(MBEDTLS_PLATFORM_FPRINTF_ALT)

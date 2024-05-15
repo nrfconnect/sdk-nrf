@@ -957,12 +957,6 @@ int download_client_set_host(struct download_client *client, const char *host,
 	return 0;
 }
 
-int download_client_connect(struct download_client *client, const char *host,
-			    const struct download_client_cfg *config)
-{
-	return download_client_set_host(client, host, config);
-}
-
 int download_client_disconnect(struct download_client *const client)
 {
 	if (client == NULL || is_idle(client)) {

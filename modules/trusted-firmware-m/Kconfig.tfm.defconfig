@@ -16,7 +16,7 @@ config TFM_BOARD
 if BUILD_WITH_TFM
 
 config TFM_ISOLATION_LEVEL
-	default 1 if SOC_FAMILY_NRF
+	default 1 if SOC_FAMILY_NORDIC_NRF
 
 config TFM_BL2
 	bool
@@ -34,12 +34,16 @@ config TFM_LOG_LEVEL_SILENCE
 	# Overrule zephyr disable TF-M secure output if the uart1 node has not
 	# assigned GPIO pins using pinctrl.
 	default n
-	depends on $(dt_nodelabel_has_prop,uart0,pinctrl-names) || \
-		   $(dt_nodelabel_has_prop,uart1,pinctrl-names) || \
-		   SOC_SERIES_NRF54LX # TODO: NCSDK-25009: Use pin-ctrl-names for 54L
-
+	depends on $(dt_nodelabel_has_prop,uart0,pinctrl-names)  || \
+		   $(dt_nodelabel_has_prop,uart1,pinctrl-names)  || \
+		   $(dt_nodelabel_has_prop,uart00,pinctrl-names) || \
+		   $(dt_nodelabel_has_prop,uart20,pinctrl-names) || \
+		   $(dt_nodelabel_has_prop,uart21,pinctrl-names) || \
+		   $(dt_nodelabel_has_prop,uart22,pinctrl-names) || \
+		   $(dt_nodelabel_has_prop,uart30,pinctrl-names)
 
 choice TFM_PROFILE_TYPE
+	default TFM_PROFILE_TYPE_NOT_SET if SOC_SERIES_NRF54LX
 	default TFM_PROFILE_TYPE_MINIMAL
 endchoice
 

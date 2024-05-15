@@ -34,10 +34,6 @@ config HIDE_CHILD_PARENT_CONFIG
 	default y if "$(HIDE_CHILD_PARENT_CONFIG)" = "True"
 	default n
 
-# Override boot banner
-config BOOT_BANNER_STRING
-	default "Booting nRF Connect SDK"
-
 # Override configuration from zephyr which sets this to 0x200 if MCUboot is
 # enabled (CONFIG_BOOTLOADER_MCUBOOT), since NCS use partition_manager to
 # get this offset intsead.
@@ -51,7 +47,7 @@ config WARN_EXPERIMENTAL
 # Zephyr default is newlib and not newlib-nano for consistency between architectures.
 # To reduce FLASH footprint, newlib-nano is preferred default in NCS when newlib is selected.
 config NEWLIB_LIBC_NANO
-	default y
+	default y if SOC_FAMILY_NORDIC_NRF
 	depends on NEWLIB_LIBC && HAS_NEWLIB_LIBC_NANO
 
 # This is a temporary solution to whitelist
@@ -111,6 +107,7 @@ config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 config GETOPT
 	default n
 
+rsource "kernel/Kconfig"
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
 rsource "modules/Kconfig"

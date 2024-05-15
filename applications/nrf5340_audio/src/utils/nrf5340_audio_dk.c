@@ -7,7 +7,6 @@
 #include "led.h"
 #include "button_handler.h"
 #include "button_assignments.h"
-#include "nrfx_clock.h"
 #include "sd_card.h"
 #include "board_version.h"
 #include "channel_assignment.h"
@@ -19,21 +18,6 @@
 LOG_MODULE_REGISTER(nrf5340_audio_dk, CONFIG_MODULE_NRF5340_AUDIO_DK_LOG_LEVEL);
 
 static struct board_version board_rev;
-
-static int hfclock_config_and_start(void)
-{
-	int ret;
-
-	/* Use this to turn on 128 MHz clock for cpu_app */
-	ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
-
-	ret -= NRFX_ERROR_BASE_NUM;
-	if (ret) {
-		return ret;
-	}
-
-	return 0;
-}
 
 static int leds_set(void)
 {
@@ -100,11 +84,6 @@ int nrf5340_audio_dk_init(void)
 {
 	int ret;
 
-	ret = hfclock_config_and_start();
-	if (ret) {
-		return ret;
-	}
-
 	ret = led_init();
 	if (ret) {
 		LOG_ERR("Failed to initialize LED module");
@@ -116,8 +95,6 @@ int nrf5340_audio_dk_init(void)
 		LOG_ERR("Failed to initialize button handler");
 		return ret;
 	}
-
-	channel_assignment_init();
 
 	ret = channel_assign_check();
 	if (ret) {
@@ -155,12 +132,6 @@ int nrf5340_audio_dk_init(void)
 			LOG_ERR("Failed to initialize SD card playback");
 			return ret;
 		}
-	}
-
-	ret = audio_system_init();
-	if (ret) {
-		LOG_ERR("Failed to initialize the audio system");
-		return ret;
 	}
 
 	return 0;

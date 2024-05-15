@@ -43,9 +43,9 @@ IPv6 network support
 
 The development kits for this sample offer the following IPv6 network support for Matter:
 
-* Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, and ``nrf21540dk_nrf52840``.
-* Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached (2.4 GHz and 5 GHz), for ``nrf7002dk_nrf5340_cpuapp`` (2.4 GHz and 5 GHz), or for ``nrf7002dk_nrf7001_nrf5340_cpuapp`` (2.4 GHz only).
-* :ref:`Switching between Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached, using the ``thread_wifi_switched`` build type.
+* Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, and ``nrf21540dk/nrf52840``.
+* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached (2.4 GHz and 5 GHz), for ``nrf7002dk/nrf5340/cpuapp`` (2.4 GHz and 5 GHz), or for ``nrf7002dk/nrf5340/cpuapp/nrf7001`` (2.4 GHz only).
+* :ref:`Switching between Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached, using the ``thread_wifi_switched`` build type.
 
 Overview
 ********
@@ -72,6 +72,27 @@ The controller must get the `Onboarding information`_ from the Matter accessory 
 For details, see the `Commissioning the device`_ section.
 
 .. matter_door_lock_sample_remote_testing_end
+
+Door lock credentials
+=====================
+
+By default, the application supports only PIN code credentials, but it is possible to implement support for other door lock credential types by using the ``CredentialsManager`` module.
+The credentials can be used to control remote access to the bolt lock.
+The PIN code assigned by the Matter controller is stored persistently, which means that it can survive a device reboot.
+Depending on the IPv6 network technology in use, the following storage backends are supported by default to store the PIN code credential:
+
+* Matter over Thread - secure storage backend (:kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` Kconfig option enabled by default).
+* Matter over Wi-Fi - non-secure storage backend (:kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` Kconfig option enabled by default).
+
+You can learn more about the |NCS| Matter persistent storage module and its configuration in the :ref:`ug_matter_persistent_storage` section of the :ref:`ug_matter_device_advanced_kconfigs` documentation.
+
+The application supports multiple door lock users and PIN code credentials.
+The following Kconfig options control the limits of the users and credentials that can be added to the door lock:
+
+* :kconfig:option:`CONFIG_LOCK_MAX_NUM_USERS` - Maximum number of users supported by the door lock.
+* :kconfig:option:`CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_USER` - Maximum number of credentials that can be assigned to one user.
+* :kconfig:option:`CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_TYPE` - Maximum number of credentials in total.
+* :kconfig:option:`CONFIG_LOCK_MAX_CREDENTIAL_LENGTH` - Maximum length of a single credential in bytes.
 
 .. _matter_lock_sample_wifi_thread_switching:
 
@@ -113,7 +134,7 @@ For example:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -p -- -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex -DCONF_FILE=prj_thread_wifi_switched.conf -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
+      west build -b nrf5340dk/nrf5340/cpuapp -p -- -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex -DCONF_FILE=prj_thread_wifi_switched.conf -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
 
 .. _matter_lock_sample_ble_nus:
 
@@ -224,7 +245,7 @@ For example:
 
 .. code-block:: console
 
-   west build -b nrf52840dk_nrf52840 -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
+   west build -b nrf52840dk/nrf52840 -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
 
 .. matter_door_lock_sample_build_with_dfu_end
 
@@ -460,6 +481,61 @@ Upgrading the device firmware
 
 To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
 
+.. _matter_lock_sample_remote_access_with_pin:
+
+Testing remote access with PIN code credential
+==============================================
+
+.. note::
+   You can test the PIN code credential support with any Matter compatible controller.
+   The following steps use the CHIP Tool controller as an example.
+   For more information about setting user credentials, see the Saving users and credentials on door lock devices section of the :doc:`matter:chip_tool_guide` page in the :doc:`Matter documentation set <matter:index>`.
+
+After building the sample and programming it to your development kit, complete the following steps to test remote access with PIN code credential:
+
+1. |connect_kit|
+#. |connect_terminal_ANSI|
+#. Wait until the device boots.
+#. Commission an accessory with node ID equal to 10 to the Matter network by following the steps described in the `Commissioning the device`_ section.
+#. Make the door lock require a PIN code for remote operations:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock write require-pinfor-remote-operation 1 10 1 --timedInteractionTimeoutMs 5000
+
+#. Add the example ``Home`` door lock user:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock set-user 0 2 Home 123 1 0 0 10 1 --timedInteractionTimeoutMs 5000
+
+   This command creates a ``Home`` user with a unique ID of ``123`` and an index of ``2``.
+   The new user's status is set to ``1``, and both its type and credential rule to ``0``.
+   The user is assigned to the door lock cluster residing on endpoint ``1`` of the node with ID ``10``.
+
+#. Add the example ``12345678`` PIN code credential to the ``Home`` user:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock set-credential 0 '{"credentialType": 1, "credentialIndex": 1}' 12345678 2 null null 10 1 --timedInteractionTimeoutMs 5000
+
+#. Unlock the door lock with the given PIN code:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock unlock-door 10 1 --PINCode 12345678 --timedInteractionTimeoutMs 5000
+
+#. Reboot the device.
+#. Wait until the device it rebooted and attached back to the Matter network.
+#. Unlock the door lock with the PIN code provided before the reboot:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock unlock-door 10 1 --PINCode 12345678 --timedInteractionTimeoutMs 5000
+
+.. note::
+   Accessing the door lock remotely without a valid PIN code credential will fail.
+
 .. _matter_lock_sample_switching_thread_wifi:
 
 Testing switching between Thread and Wi-Fi
@@ -474,7 +550,7 @@ To test this feature, complete the following steps:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex
+      west build -b nrf5340dk/nrf5340/cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex
 
 #. |connect_terminal_ANSI|
 #. Program the application to the kit using the following command:
@@ -505,11 +581,11 @@ To test the :ref:`matter_lock_sample_ble_nus` feature, complete the following st
 
 #. Install `nRF Toolbox`_ on your Android (Android 11 or newer) or iOS smartphone (iOS 16.1 or newer).
 #. Build the door lock application for Matter over Thread with the :kconfig:option:`CONFIG_CHIP_NUS` set to ``y``.
-   For example, if you build from command line for the ``nrf52840dk_nrf52840``, use the following command:
+   For example, if you build from command line for the ``nrf52840dk/nrf52840``, use the following command:
 
    .. code-block:: console
 
-      west build -b nrf52840dk_nrf52840 -- -DCONFIG_CHIP_NUS=y
+      west build -b nrf52840dk/nrf52840 -- -DCONFIG_CHIP_NUS=y
 
 #. Program the application to the kit using the following command:
 

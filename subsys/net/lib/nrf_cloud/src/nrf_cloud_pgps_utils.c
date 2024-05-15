@@ -483,6 +483,15 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 		return -EINVAL;
 	}
 
+#if defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4)
+	int family = AF_UNSPEC;
+#elif defined(CONFIG_NET_IPV6)
+	int family = AF_INET6;
+#elif defined(CONFIG_NET_IPV4)
+	int family = AF_INET;
+#else
+	int family = AF_UNSPEC;
+#endif /* defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4) */
 	int err;
 	struct nrf_cloud_download_data dl = {
 		.type = NRF_CLOUD_DL_TYPE_DL_CLIENT,
@@ -494,7 +503,7 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 			.pdn_id = pdn_id,
 			.frag_size_override = fragment_size,
 			.set_tls_hostname = false,
-			.family = AF_INET
+			.family = family
 		},
 		.dlc = &dlc
 	};

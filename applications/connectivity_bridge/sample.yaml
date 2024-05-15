@@ -5,8 +5,8 @@ tests:
   applications.connectivity_bridge:
     build_only: true
     platform_allow:
-      - thingy91_nrf52840
-      - thingy91x_nrf5340_cpuapp
+      - thingy91/nrf52840
+      - thingy91x/nrf5340/cpuapp
     integration_platforms:
-      - thingy91_nrf52840
+      - thingy91/nrf52840
     tags: ci_build

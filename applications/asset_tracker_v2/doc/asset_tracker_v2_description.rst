@@ -107,7 +107,7 @@ The application provides predefined configuration files for typical use cases.
 Following are the available configuration files:
 
 * :file:`prj.conf` - Configuration file for all build targets.
-* :file:`boards/<BOARD>.conf` - Configuration file specific for a build target specified with **<BOARD>**, where **<BOARD>** is the build target, for example ``nrf9161dk_nrf9161_ns``.
+* :file:`boards/<BOARD>.conf` - Configuration file specific for a build target specified with **<BOARD>**, where **<BOARD>** is the build target, for example ``nrf9161dk/nrf9161/ns``.
   This file is automatically merged with the :file:`prj.conf` file when you build for that target.
 
 The :file:`include/<BOARD>/led_state_def.h` header file describes the LED behavior of the CAF LEDs module.

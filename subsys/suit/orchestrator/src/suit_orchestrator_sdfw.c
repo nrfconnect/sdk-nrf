@@ -214,7 +214,7 @@ static int update_path(void)
 		LOG_ERR("Failed to validate update candidate manifest: %d", err);
 		return err;
 	}
-	LOG_DBG("Manifest validated");
+	LOG_INF("Manifest validated");
 
 	err = suit_process_sequence((uint8_t *)update_regions[0].mem, update_regions[0].size,
 				    SUIT_SEQ_CAND_VERIFICATION);
@@ -237,7 +237,7 @@ static int update_path(void)
 		return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 	}
 
-	LOG_DBG("suit-install successful");
+	LOG_INF("suit-install successful");
 
 	return err;
 }
@@ -289,7 +289,7 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 		return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 	}
 
-	LOG_DBG("Processed suit-validate");
+	LOG_INF("Processed suit-validate");
 
 	err = suit_process_sequence(installed_envelope_address, installed_envelope_size,
 				    SUIT_SEQ_LOAD);
@@ -302,7 +302,7 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 			return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 		}
 	}
-	LOG_DBG("Processed suit-load");
+	LOG_INF("Processed suit-load");
 
 	err = suit_process_sequence(installed_envelope_address, installed_envelope_size,
 				    SUIT_SEQ_INVOKE);
@@ -310,7 +310,7 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 		LOG_ERR("Failed to execute suit-invoke: %d", err);
 		return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 	}
-	LOG_DBG("Processed suit-invoke");
+	LOG_INF("Processed suit-invoke");
 
 	return 0;
 }
@@ -364,8 +364,35 @@ int suit_orchestrator_init(void)
 	suit_plat_err_t plat_err = suit_storage_init();
 
 	if (plat_err != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Failed to init suit storage: %d", plat_err);
-		return SUIT_PLAT_ERR_TO_ZEPHYR_ERR(plat_err);
+		switch (plat_err) {
+		case SUIT_PLAT_ERR_AUTHENTICATION:
+			LOG_ERR("Failed to load MPI: invalid digest");
+			plat_err = suit_execution_mode_set(EXECUTION_MODE_FAIL_NO_MPI);
+			break;
+		case SUIT_PLAT_ERR_NOT_FOUND:
+			LOG_ERR("Failed to load MPI: essential (Nordic, root) roles unconfigured");
+			plat_err = suit_execution_mode_set(EXECUTION_MODE_FAIL_MPI_INVALID_MISSING);
+			break;
+		case SUIT_PLAT_ERR_OUT_OF_BOUNDS:
+			LOG_ERR("Failed to load MPI: invalid MPI format (i.e. version, values)");
+			plat_err = suit_execution_mode_set(EXECUTION_MODE_FAIL_MPI_INVALID);
+			break;
+		case SUIT_PLAT_ERR_UNSUPPORTED:
+			LOG_ERR("Failed to load MPI: unsupported configuration");
+			plat_err = suit_execution_mode_set(EXECUTION_MODE_FAIL_MPI_UNSUPPORTED);
+			break;
+		default:
+			LOG_ERR("Failed to init suit storage: %d", plat_err);
+			return SUIT_PLAT_ERR_TO_ZEPHYR_ERR(plat_err);
+		}
+
+		if (plat_err != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Setting execution mode failed state failed: %d", plat_err);
+			return SUIT_PLAT_ERR_TO_ZEPHYR_ERR(plat_err);
+		}
+
+		LOG_WRN("Execution mode in a FAILED state");
+		return SUIT_PLAT_SUCCESS;
 	}
 
 	mci_err_t mci_err = suit_mci_init();
@@ -432,6 +459,12 @@ static int suit_orchestrator_run(void)
 	case EXECUTION_MODE_INSTALL_RECOVERY:
 		state = STATE_INSTALL_RECOVERY;
 		break;
+
+	case EXECUTION_MODE_FAIL_NO_MPI:
+	case EXECUTION_MODE_FAIL_MPI_INVALID:
+	case EXECUTION_MODE_FAIL_MPI_INVALID_MISSING:
+	case EXECUTION_MODE_FAIL_MPI_UNSUPPORTED:
+		return -EFAULT;
 
 	case EXECUTION_MODE_STARTUP:
 	case EXECUTION_MODE_POST_INVOKE:

@@ -36,6 +36,8 @@ static void iso_sent(struct bt_iso_chan *chan);
 static void iso_connected(struct bt_iso_chan *chan);
 static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason);
 
+static void (*iso_chan_connected_cb)(void);
+
 NET_BUF_POOL_FIXED_DEFINE(tx_pool, CONFIG_BT_ISO_MAX_CHAN,
 			  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU),
 			  CONFIG_BT_CONN_TX_USER_DATA_SIZE, NULL);
@@ -72,6 +74,8 @@ static struct bt_iso_chan iso_channels[] = {
 static struct bt_iso_chan *iso_channel_pointers[] = {
 	LISTIFY(CONFIG_BT_ISO_MAX_CHAN, _ISO_CHANNEL_PTR, (,))
 };
+
+static bool iso_channels_awaiting_iso_sent_cb[CONFIG_BT_ISO_MAX_CHAN];
 
 /* Store info about the ISO channels in use. */
 static uint8_t roles[CONFIG_BT_ISO_MAX_CHAN];
@@ -215,6 +219,9 @@ static void send_next_sdu_on_all_channels(void)
 			return;
 		}
 
+		/* Toggle that we are awaiting iso_sent callback on this channel */
+		iso_channels_awaiting_iso_sent_cb[i] = true;
+
 		if (!first_sdu_sent) {
 			/* The first time we send an SDU, we send it without timestamp.
 			 * After that we always send SDUs with timestamps to ensure they
@@ -251,6 +258,10 @@ static void iso_connected(struct bt_iso_chan *chan)
 	printk("ISO channel index %d connected: ", chan_index);
 	iso_chan_info_print(&iso_infos[chan_index], roles[chan_index]);
 
+	if (iso_chan_connected_cb) {
+		iso_chan_connected_cb();
+	}
+
 	if (!first_sdu_sent) {
 		/* Send the first SDU immediately.
 		 * The following SDUs will be sent time-aligned with the controller clock.
@@ -261,8 +272,12 @@ static void iso_connected(struct bt_iso_chan *chan)
 
 static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason)
 {
+	uint32_t chan_index = ARRAY_INDEX(iso_channels, chan);
+
 	printk("ISO Channel index %d disconnected with reason 0x%02x\n",
-	       ARRAY_INDEX(iso_channels, chan), reason);
+	       chan_index, reason);
+
+	iso_channels_awaiting_iso_sent_cb[chan_index] = false;
 }
 
 static bool send_more_sdus_with_same_timestamp(struct bt_iso_chan *chan)
@@ -270,8 +285,12 @@ static bool send_more_sdus_with_same_timestamp(struct bt_iso_chan *chan)
 	if (first_sdu_sent) {
 		struct bt_iso_chan *last_chan = NULL;
 
+		/** Check if this is the last ISO channel where we are awaiting
+		 * an iso_sent callback. If that is the case, that callback will
+		 * be used to send SDUs on all ISO channels.
+		 */
 		for (size_t i = 0; i < CONFIG_BT_ISO_MAX_CHAN; i++) {
-			if (iso_channels[i].state == BT_ISO_STATE_CONNECTED) {
+			if (iso_channels_awaiting_iso_sent_cb[i]) {
 				last_chan = &iso_channels[i];
 			}
 		}
@@ -323,10 +342,12 @@ static void iso_sent(struct bt_iso_chan *chan)
 		return;
 	}
 
+	uint8_t chan_index = ARRAY_INDEX(iso_channels, chan);
+
 	/* Set the LED to toggle in sync with all the receivers. */
 	bool btn_pressed = (bool)gpio_pin_get_dt(&button);
 	uint32_t trigger_time_us = trigger_time_us_get(assigned_timestamp,
-						       ARRAY_INDEX(iso_channels, chan));
+						       chan_index);
 	timed_led_toggle_trigger_at(btn_pressed, trigger_time_us);
 
 	/* Set up a timer to trigger right before the next set of SDUs are to be sent. */
@@ -335,19 +356,30 @@ static void iso_sent(struct bt_iso_chan *chan)
 		assigned_timestamp + CONFIG_SDU_INTERVAL_US
 		- controller_time_us
 		- HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US;
+
+	/** Update the sent SDU counter before starting
+	 * the timer that triggers when the next SDU is sent.
+	 * This is done to ensure that counter is updated in time.
+	 */
+	uint32_t prev_sent_sdu = num_sdus_sent;
+
+	num_sdus_sent++;
+
+	iso_channels_awaiting_iso_sent_cb[chan_index] = false;
+
 	k_timer_start(&sdu_timer, K_USEC(time_to_next_sdu_us), K_NO_WAIT);
 
 	/* Increment the SDU timestamp with one SDU interval. */
 	tx_sdu_timestamp_us = assigned_timestamp + CONFIG_SDU_INTERVAL_US;
 
-	if (num_sdus_sent % 100 == 0) {
+	if (prev_sent_sdu % 100 == 0) {
 		int32_t time_to_trigger = trigger_time_us - controller_time_us;
 
-		printk("Sent SDU, counter: %d, btn_val: %d, LED will be set in %d us\n",
-		       num_sdus_sent, btn_pressed, time_to_trigger);
+		printk("Sent SDU counter %u with timestamp %u us, controller_time %u us, ",
+			   prev_sent_sdu, assigned_timestamp, controller_time_us);
+		printk("btn_val: %d LED will be set in %d us\n",
+			   btn_pressed, time_to_trigger);
 	}
-
-	num_sdus_sent++;
 }
 
 static void sdu_timer_expired(struct k_timer *timer)
@@ -356,9 +388,10 @@ static void sdu_timer_expired(struct k_timer *timer)
 	send_next_sdu_on_all_channels();
 }
 
-void iso_tx_init(uint8_t retransmission_number)
+void iso_tx_init(uint8_t retransmission_number, void (*iso_connected_cb)(void))
 {
 	int err;
+	iso_chan_connected_cb = iso_connected_cb;
 
 	iso_tx_qos.rtn = retransmission_number;
 

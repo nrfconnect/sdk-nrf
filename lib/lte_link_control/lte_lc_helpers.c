@@ -585,7 +585,7 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	uint32_t timer_unit, timer_value;
 
 	if (strlen(active_time_str) != 8 || strlen(tau_ext_str) != 8 ||
-	    strlen(tau_legacy_str) != 8) {
+	    (tau_legacy_str != NULL && strlen(tau_legacy_str) != 8)) {
 		return -EINVAL;
 	}
 
@@ -602,8 +602,10 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	timer_value = strtoul(tau_ext_str + unit_str_len, NULL, 2);
 	psm_cfg->tau = timer_unit ? timer_unit * timer_value : -1;
 
-	/* If T3412-extended is disabled, periodic TAU is reported using the T3412 legacy timer */
-	if (psm_cfg->tau == -1) {
+	/* If T3412-extended is disabled, periodic TAU is reported using the T3412 legacy timer
+	 * if the caller requests for it
+	 */
+	if (psm_cfg->tau == -1 && tau_legacy_str != NULL) {
 		memcpy(unit_str, tau_legacy_str, unit_str_len);
 
 		lut_idx = strtoul(unit_str, NULL, 2);
@@ -699,7 +701,8 @@ int parse_cereg(const char *at_response,
 		bool is_notif,
 		enum lte_lc_nw_reg_status *reg_status,
 		struct lte_lc_cell *cell,
-		enum lte_lc_lte_mode *lte_mode)
+		enum lte_lc_lte_mode *lte_mode,
+		struct lte_lc_psm_cfg *psm_cfg)
 {
 	int err, status;
 	struct at_param_list resp_list;
@@ -813,6 +816,62 @@ int parse_cereg(const char *at_response,
 
 			LOG_DBG("LTE mode: %d", *lte_mode);
 		}
+	}
+
+	/* Check PSM parameters only if we are connected */
+	if ((*reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
+	    (*reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+		goto clean_exit;
+	}
+
+	if (psm_cfg != NULL) {
+		char active_time_str[9] = {0};
+		char tau_ext_str[9] = {0};
+		int str_len = 8;
+		int err_active_time;
+		int err_tau;
+
+		psm_cfg->active_time = -1;
+		psm_cfg->tau = -1;
+
+		/* Get active time */
+		err_active_time = at_params_string_get(
+				&resp_list,
+				is_notif ? AT_CEREG_ACTIVE_TIME_INDEX :
+					   AT_CEREG_READ_ACTIVE_TIME_INDEX,
+				active_time_str, &str_len);
+		if (err_active_time) {
+			LOG_DBG("Active time not found, error: %d", err_active_time);
+		} else {
+			LOG_DBG("Active time: %s", active_time_str);
+		}
+
+		/* Get Periodic-TAU-ext */
+		err_tau = at_params_string_get(
+				&resp_list,
+				is_notif ? AT_CEREG_TAU_INDEX :
+					   AT_CEREG_READ_TAU_INDEX,
+				tau_ext_str, &str_len);
+		if (err_tau) {
+			LOG_DBG("TAU not found, error: %d", err_tau);
+		} else {
+			LOG_DBG("TAU: %s", tau_ext_str);
+		}
+
+		if (err_active_time == 0 && err_tau == 0) {
+			/* Legacy TAU is not requested because we do not get it from CEREG.
+			 * If extended TAU is not set, TAU will be set to inactive so
+			 * caller can then make its conclusions.
+			 */
+			err = parse_psm(active_time_str, tau_ext_str, NULL, psm_cfg);
+			if (err) {
+				LOG_ERR("Failed to parse PSM configuration, error: %d", err);
+			}
+		}
+		/* The notification does not always contain PSM parameters,
+		 * so this is not considered an error
+		 */
+		err = 0;
 	}
 
 clean_exit:

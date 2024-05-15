@@ -70,6 +70,8 @@ static psa_status_t error_to_psa_error(int errorno)
 	switch (errorno) {
 	case 0:
 		return PSA_SUCCESS;
+	case -ENOSPC:
+		return PSA_ERROR_INSUFFICIENT_STORAGE;
 	case -ENOENT:
 		return PSA_ERROR_DOES_NOT_EXIST;
 	case -ENODATA:

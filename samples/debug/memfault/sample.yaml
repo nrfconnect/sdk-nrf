@@ -6,18 +6,18 @@ tests:
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
     integration_platforms:
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
-      - thingy91_nrf9160_ns
-      - nrf7002dk_nrf5340_cpuapp
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - thingy91/nrf9160/ns
+      - nrf7002dk/nrf5340/cpuapp
     platform_allow:
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
-      - thingy91_nrf9160_ns
-      - thingy91x_nrf9151_ns
-      - nrf7002dk_nrf5340_cpuapp
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
+      - nrf7002dk/nrf5340/cpuapp
     tags: ci_build
   sample.debug.memfault.etb:
     build_only: true
@@ -25,14 +25,14 @@ tests:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
     extra_args: OVERLAY_CONFIG=overlay-etb.conf
     integration_platforms:
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
-      - thingy91_nrf9160_ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - thingy91/nrf9160/ns
     platform_allow:
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
-      - thingy91_nrf9160_ns
-      - thingy91x_nrf9151_ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
     tags: ci_build

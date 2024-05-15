@@ -12,11 +12,12 @@
 #define MODULE info
 #include <caf/events/module_state_event.h>
 
-#define BOARD_NAME_SEPARATOR	'_'
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_INFO_LOG_LEVEL);
 
+/* Board name is defined by CONFIG_BOARD Kconfig option. Null-terminator character is excluded. */
+#define BOARD_NAME	CONFIG_BOARD
+#define BOARD_NAME_LEN	(sizeof(CONFIG_BOARD) - 1)
 
 static struct config_event *generate_response(const struct config_event *event,
 					      size_t dyndata_size)
@@ -68,18 +69,12 @@ static bool handle_config_event(const struct config_event *event)
 
 	case CONFIG_STATUS_GET_BOARD_NAME:
 	{
-		const char *start_ptr = CONFIG_BOARD;
-		const char *end_ptr = strchr(start_ptr, BOARD_NAME_SEPARATOR);
+		BUILD_ASSERT(BOARD_NAME_LEN > 0);
+		BUILD_ASSERT(BOARD_NAME_LEN <= CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE);
 
-		__ASSERT_NO_MSG(end_ptr != NULL);
-		size_t name_len = end_ptr - start_ptr;
+		struct config_event *rsp = generate_response(event, BOARD_NAME_LEN);
 
-		__ASSERT_NO_MSG((name_len > 0) &&
-			(name_len <= CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE));
-
-		struct config_event *rsp = generate_response(event, name_len);
-
-		strncpy((char *)rsp->dyndata.data, start_ptr, name_len);
+		memcpy(rsp->dyndata.data, BOARD_NAME, BOARD_NAME_LEN);
 		submit_response(rsp);
 		return true;
 	}

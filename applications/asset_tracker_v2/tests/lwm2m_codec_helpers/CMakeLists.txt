@@ -27,7 +27,6 @@ cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/lwm2m.h lwm2m)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/lwm2m_client_utils.h lwm2m_client_utils)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/lwm2m_client_utils_location.h lwm2m_client_utils)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h lte_lc
-	FUNC_EXCLUDE ".*(lte_lc_rai_req|lte_lc_rai_param_set)"
 	WORD_EXCLUDE "__deprecated")
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/date_time.h date_time)
 

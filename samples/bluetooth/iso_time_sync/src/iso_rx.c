@@ -24,6 +24,8 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 static void iso_connected(struct bt_iso_chan *chan);
 static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason);
 
+static void (*iso_chan_disconnected_cb)(void);
+
 static struct gpio_dt_spec led_sdu_received = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led1), gpios, {0});
 
 static struct bt_iso_chan_ops iso_ops = {
@@ -84,8 +86,8 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 		uint32_t current_time_us = controller_time_us_get() & UINT32_MAX;
 		int32_t time_to_trigger = trigger_time_us - current_time_us;
 
-		printk("Received SDU with counter: %d, btn_val: %d, LED will be set in %d us\n",
-		       counter, btn_pressed, time_to_trigger);
+		printk("Recv SDU counter %u with timestamp %u us, controller_time %u us, btn_val: %d, LED will be set in %d us\n",
+		       counter, info->ts, current_time_us, btn_pressed, time_to_trigger);
 	}
 }
 
@@ -114,11 +116,17 @@ static void iso_connected(struct bt_iso_chan *chan)
 static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason)
 {
 	printk("ISO Channel disconnected with reason 0x%02x\n", reason);
+
+	if (iso_chan_disconnected_cb) {
+		iso_chan_disconnected_cb();
+	}
 }
 
-void iso_rx_init(uint8_t retransmission_number)
+void iso_rx_init(uint8_t retransmission_number, void (*iso_disconnected_cb)(void))
 {
 	int err;
+
+	iso_chan_disconnected_cb = iso_disconnected_cb;
 
 	iso_rx_qos.rtn = retransmission_number;
 

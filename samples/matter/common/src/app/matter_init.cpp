@@ -28,6 +28,11 @@
 #endif
 #endif
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT
+#include "app/task_executor.h"
+#include "watchdog/watchdog.h"
+#endif
+
 #include <app/InteractionModelEngine.h>
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <app/server/OnboardingCodesUtil.h>
@@ -103,6 +108,22 @@ struct InitGuard {
 };
 
 /* Local helper functions. */
+#ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT
+void FeedFromApp(Nrf::Watchdog::WatchdogSource *watchdogSource)
+{
+	if (watchdogSource) {
+		Nrf::PostTask([watchdogSource] { watchdogSource->Feed(); });
+	}
+}
+
+void FeedFromMatter(Nrf::Watchdog::WatchdogSource *watchdogSource)
+{
+	if (watchdogSource) {
+		chip::DeviceLayer::SystemLayer().ScheduleLambda([watchdogSource] { watchdogSource->Feed(); });
+	}
+}
+#endif
+
 #if defined(CONFIG_NET_L2_OPENTHREAD)
 CHIP_ERROR ConfigureThreadRole()
 {
@@ -226,6 +247,24 @@ void DoInitChipServer(intptr_t /* unused */)
 	VerifyInitResultOrReturn(sInitResult, "MoveOperationalKeysFromKvsToIts() failed");
 #endif
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT
+	/* Create and start Watchdog objects for Main and Matter threads */
+	static Nrf::Watchdog::WatchdogSource sAppWatchdog(CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT_FEED_TIME,
+							  FeedFromApp);
+	static Nrf::Watchdog::WatchdogSource sMatterWatchdog(CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT_FEED_TIME,
+							     FeedFromMatter);
+
+	if (!Nrf::Watchdog::InstallSource(sAppWatchdog)) {
+		sInitResult = CHIP_ERROR_INTERNAL;
+		VerifyInitResultOrReturn(sInitResult, "Cannot install Application watchdog source");
+	}
+
+	if (!Nrf::Watchdog::InstallSource(sMatterWatchdog)) {
+		sInitResult = CHIP_ERROR_INTERNAL;
+		VerifyInitResultOrReturn(sInitResult, "Cannot install Matter watchdog source");
+	}
+#endif
+
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 	Nrf::Matter::AppFabricTableDelegate::Init();
@@ -234,6 +273,11 @@ void DoInitChipServer(intptr_t /* unused */)
 		sInitResult = sLocalInitData.mPostServerInitClbk();
 		VerifyInitResultOrReturn(sInitResult, "Custom post server initialization failed");
 	}
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT
+	sInitResult = Nrf::Watchdog::Enable() ? CHIP_NO_ERROR : CHIP_ERROR_INTERNAL;
+	VerifyInitResultOrReturn(sInitResult, "Cannot enable global Watchdog");
+#endif
 }
 
 CHIP_ERROR WaitForReadiness()
@@ -265,6 +309,7 @@ CHIP_ERROR StartServer()
 {
 	CHIP_ERROR err = PlatformMgr().StartEventLoopTask();
 	VerifyInitResultOrReturnError(err, "PlatformMgr().StartEventLoopTask() failed");
+
 	return WaitForReadiness();
 }
 

@@ -116,7 +116,7 @@ See the following samples and applications for details about the debug Fast Pair
 Device type
 -----------
 
-When registering the device in the Google Nearby Devices console, go to the **Fast Pair** protocol configuration panel, and in the **Device Type** field select an option that matches your application's use case.
+When registering the device in the Google Nearby Devices console, go to the **Fast Pair** protocol configuration panel, and in the **Device Type** list select an option that matches your application's use case.
 The chosen device type also determines the optional feature set that you can support in your use case.
 You declare support for each feature by selecting the **true** option.
 

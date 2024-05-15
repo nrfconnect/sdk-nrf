@@ -137,5 +137,6 @@ int nrf_wifi_supp_register_mgmt_frame(void *if_priv,
 int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 			unsigned int total_flags, unsigned int flags_or,
 			unsigned int flags_and);
+int nrf_wifi_wpa_supp_sta_get_inact_sec(void *if_priv, const u8 *addr);
 #endif /* CONFIG_NRF700X_AP_MODE */
 #endif /*  __ZEPHYR_WPA_SUPP_IF_H__ */

@@ -19,6 +19,10 @@
 #include <zephyr/linker/linker-defs.h>
 #include <zephyr/linker/linker-tool.h>
 
+
+/* Let SystemInit() be called in place of z_arm_platform_init() by default. */
+PROVIDE(z_arm_platform_init = SystemInit);
+
 /*
  * nRF5340dk and thingy53 are shipping QSPI external flashes.
  * These memories are mapped beginning from 0x1000_0000 internal SoC memory

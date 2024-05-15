@@ -64,14 +64,11 @@ struct subscriber {
 	struct enqueued_reports enqueued_reports;
 	struct report_data out_reports[ARRAY_SIZE(output_reports)];
 	uint32_t saved_out_reports_bm;
-
 	bool busy;
-	uint8_t last_peripheral_id;
 };
 
 struct hids_peripheral {
 	struct bt_hogp hogp;
-	struct enqueued_reports enqueued_reports;
 	uint32_t enqueued_out_reports_bm;
 
 	struct k_work_delayable read_rsp;
@@ -229,17 +226,6 @@ static bool is_report_enqueued(struct enqueued_reports *enqueued_reports,
 	return true;
 }
 
-static bool is_any_report_enqueued(struct enqueued_reports *enqueued_reports)
-{
-	for (size_t irep_idx = 0; irep_idx < ARRAY_SIZE(enqueued_reports->reports); irep_idx++) {
-		if (is_report_enqueued(enqueued_reports, irep_idx)) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
 static struct enqueued_report *get_enqueued_report(struct enqueued_reports *enqueued_reports,
 						   size_t irep_idx)
 {
@@ -299,48 +285,6 @@ static struct enqueued_report *get_next_enqueued_report(struct enqueued_reports 
 	}
 
 	return item;
-}
-
-static void migrate_enqueued_reports(struct enqueued_reports *dst_reports,
-				     struct enqueued_reports *src_reports)
-{
-	/* Migrate only up to MAX_ENQUEUED_ITEMS newest items.
-	 * As per can hold up only up to MAX_ENQUEUED_ITEMS at a time,
-	 * migration from per to sub will affect entire list.
-	 * When migrating from sub to par we will never get more items
-	 * then the defined limit.
-	 * Leaving the oldest items at sub will allow them to be sent
-	 * out first.
-	 */
-	for (size_t irep_idx = 0; irep_idx < ARRAY_SIZE(dst_reports->reports); irep_idx++) {
-		if (is_report_enqueued(src_reports, irep_idx)) {
-			struct counted_list *dst = &dst_reports->reports[irep_idx];
-			struct counted_list *src = &src_reports->reports[irep_idx];
-
-			sys_slist_t tmp_list;
-			size_t count = 0;
-
-			sys_slist_init(&tmp_list);
-
-			/* Move excessive items to a temporary list. */
-			while (src->count > MAX_ENQUEUED_ITEMS) {
-				sys_snode_t *node = sys_slist_get(&src->list);
-				src->count--;
-
-				sys_slist_append(&tmp_list, node);
-				count++;
-			}
-
-			/* Source hold MAX_ENQUEUED_ITEMS items max.
-			 * Migrate the entire list. */
-			sys_slist_merge_slist(&dst->list, &src->list);
-			dst->count += src->count;
-
-			/* Bring back excessive items to the source list. */
-			src->list = tmp_list;
-			src->count = count;
-		}
-	}
 }
 
 static void enqueue_hid_report(struct enqueued_reports *enqueued_reports,
@@ -410,13 +354,13 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 	memcpy(&report->dyndata.data[1], data, size);
 
 	if (!sub->busy) {
-		__ASSERT_NO_MSG(!is_report_enqueued(&per->enqueued_reports, irep_idx));
+		__ASSERT_NO_MSG(!is_report_enqueued(&sub->enqueued_reports, irep_idx));
 
 		APP_EVENT_SUBMIT(report);
-		per->enqueued_reports.last_idx = irep_idx;
+		sub->enqueued_reports.last_idx = irep_idx;
 		sub->busy = true;
 	} else {
-		enqueue_hid_report(&per->enqueued_reports, irep_idx, report);
+		enqueue_hid_report(&sub->enqueued_reports, irep_idx, report);
 	}
 }
 
@@ -556,15 +500,6 @@ static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
 	}
 
 	per->sub_id = sub_id;
-
-	/* Migrate part of the unsent reports to this peripheral.
-	 * This is needed to make sure that at any time number of
-	 * allocated reports is within configured bounds.
-	 */
-	__ASSERT_NO_MSG(!is_any_report_enqueued(&per->enqueued_reports));
-	ARG_UNUSED(is_any_report_enqueued);
-	migrate_enqueued_reports(&per->enqueued_reports,
-				 &get_subscriber(per)->enqueued_reports);
 
 	__ASSERT_NO_MSG(hwid_len == HWID_LEN);
 	memcpy(per->hwid, hwid, hwid_len);
@@ -1005,10 +940,6 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 		}
 	}
 
-	migrate_enqueued_reports(&get_subscriber(per)->enqueued_reports,
-				 &per->enqueued_reports);
-	__ASSERT_NO_MSG(!is_any_report_enqueued(&per->enqueued_reports));
-
 	per->enqueued_out_reports_bm = 0;
 
 	bt_hogp_release(&per->hogp);
@@ -1067,11 +998,8 @@ static void disable_subscription(struct subscriber *sub, uint8_t report_id)
 		if (sub_disconnected) {
 			send_empty_hid_out_reports(per, sub);
 		}
-
-		drop_enqueued_reports(&per->enqueued_reports, irep_idx);
 	}
 
-	/* And also this subscriber. */
 	drop_enqueued_reports(&sub->enqueued_reports, irep_idx);
 
 	if (sub_disconnected) {
@@ -1175,7 +1103,6 @@ static void init(void)
 		per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
 
 		per->enqueued_out_reports_bm = 0;
-		init_enqueued_reports(&per->enqueued_reports);
 	}
 
 	reset_peripheral_address();
@@ -1200,27 +1127,6 @@ static void send_enqueued_report(struct subscriber *sub)
 
 	/* First try to send report left at subscriber. */
 	item = get_next_enqueued_report(&sub->enqueued_reports);
-
-	if (!item) {
-		/* Look for any report to sent at linked peripherals. */
-		for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
-			size_t per_id = next_id(sub->last_peripheral_id + i,
-						ARRAY_SIZE(peripherals));
-			struct hids_peripheral *per = &peripherals[per_id];
-
-			/* Check if peripheral is linked with the subscriber. */
-			if (sub != get_subscriber(per)) {
-				continue;
-			}
-
-			item = get_next_enqueued_report(&per->enqueued_reports);
-
-			if (item) {
-				sub->last_peripheral_id = per_id;
-				break;
-			}
-		}
-	}
 
 	if (item) {
 		APP_EVENT_SUBMIT(item->report);

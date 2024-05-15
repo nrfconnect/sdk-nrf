@@ -82,7 +82,7 @@ config BT_HCI_TX_STACK_SIZE
 
 config BT_RX_STACK_SIZE
 	int
-	depends on BT_HCI_HOST || BT_RECV_BLOCKING
+	depends on BT_HCI_HOST
 	default 512 if BT_HCI_RAW
 	default 2600 if BT_MESH
 	default 2200 if BT_SETTINGS

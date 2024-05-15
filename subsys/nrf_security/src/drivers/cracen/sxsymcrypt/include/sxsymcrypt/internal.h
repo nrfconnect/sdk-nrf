@@ -78,6 +78,7 @@ struct sxkeyref {
 	int (*prepare_key)(const uint8_t *arg0);
 	int (*clean_key)(const uint8_t *arg0);
 	const uint8_t *user_data;
+	uint32_t owner_id;
 };
 
 /** An AEAD operation

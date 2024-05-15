@@ -51,14 +51,18 @@ void cis_peripheral_start(bool do_tx);
 /** Initialize TX path channels.
  *
  * @param retransmission_number Requested retransmission number (if central or broadcaster).
+ * @param iso_connected_cb Callback that is triggered when the ISO channel connects.
+ *						   This can be set to NULL.
  */
-void iso_tx_init(uint8_t retransmission_number);
+void iso_tx_init(uint8_t retransmission_number, void (*iso_connected_cb)(void));
 
 /** Initialize RX path channel.
  *
  * @param retransmission_number Requested retransmission number (if central).
+ * @param Callback that is triggered when an ISO RX channel disconnects.
+ *                 This can be set to NULL.
  */
-void iso_rx_init(uint8_t retransmission_number);
+void iso_rx_init(uint8_t retransmission_number, void (*iso_disconnected_cb)(void));
 
 /** Obtain pointer to TX channels.
  *

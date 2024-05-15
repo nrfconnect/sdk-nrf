@@ -157,7 +157,7 @@ After programming the sample to your development kit, complete the following ste
       .. code-block:: console
 
          *** Booting Zephyr OS build bf606fc00ec1  ***
-         [00:00:00.502,166] <inf> app: Coremark sample for nrf52dk_nrf52832. Call address: 00007fa1
+         [00:00:00.502,166] <inf> app: Coremark sample for nrf52dk/nrf52832. Call address: 00007fa1
          [00:00:00.502,197] <inf> app: Press Push button switch 0 to start the test ...
          [00:00:14.483,764] <inf> app: Push button switch 0 pressed!
          [00:00:14.511,627] <inf> app: Coremark started!

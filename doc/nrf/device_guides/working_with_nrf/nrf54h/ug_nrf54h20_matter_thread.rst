@@ -186,7 +186,7 @@ To build the sample with Matter over Wi-Fi support run the following command:
 
 .. code-block:: console
 
-   west build -b nrf54h20dk_nrf54h20_cpuapp -- -DSHIELD=nrf700x_nrf54h20dk -DCONFIG_CHIP_WIFI=y
+   west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSHIELD=nrf700x_nrf54h20dk -DCONFIG_CHIP_WIFI=y
 
 
 .. _ug_nrf54h20_matter_thread_suit_dfu:
@@ -217,7 +217,7 @@ To build the firmware with the SUIT DFU support, run the following command with 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf54h20dk_nrf54h20_cpuapp -- -DCONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=*number*
+   west build -b nrf54h20dk/nrf54h20/cpuapp -- -DCONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=*number*
 
 You can perform a DFU using the nRF Connect Device Manager mobile application or the :ref:`Mcumgr command-line tool <zephyr:mcumgr_cli>`.
 After building the sample you can find two SUIT envelopes created in the build directory and depending on the core type you can search for:

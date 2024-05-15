@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <nrf9160dk_nrf52840_reset_on_if9.dtsi>
-#include <nrf9160dk_uart1_on_if0_3.dtsi>
+#include <nrf52840/nrf9160dk_nrf52840_reset_on_if9.dtsi>
+#include <nrf52840/nrf9160dk_uart1_on_if0_3.dtsi>
 
 / {
 	board-control {

@@ -697,18 +697,28 @@ int send_broadcast_arp(char *target_ip, int *send_count, int rate)
 
 void set_netmask(char *ifname)
 {
-	const struct device *dev = device_get_binding(ifname);
+	const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
 	struct net_if *iface = net_if_lookup_by_dev(dev);
 	struct in_addr addr;
+	struct in_addr mask;
+
+	if (sizeof(CONFIG_NET_CONFIG_MY_IPV4_ADDR) > 1) {
+		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_MY_IPV4_ADDR, &addr)) {
+			indigo_logger(LOG_LEVEL_ERROR, "Invalid address: %s",
+				      CONFIG_NET_CONFIG_MY_IPV4_ADDR);
+		} else {
+			net_if_ipv4_addr_add(iface, &addr, NET_ADDR_MANUAL, 0);
+		}
+	}
 
 	if (sizeof(CONFIG_NET_CONFIG_MY_IPV4_NETMASK) > 1) {
 		/* If not empty */
 		if (net_addr_pton(AF_INET,
-		    CONFIG_NET_CONFIG_MY_IPV4_NETMASK, &addr)) {
+		    CONFIG_NET_CONFIG_MY_IPV4_NETMASK, &mask)) {
 			indigo_logger(LOG_LEVEL_ERROR, "Invalid netmask: %s",
 				      CONFIG_NET_CONFIG_MY_IPV4_NETMASK);
 		} else {
-			net_if_ipv4_set_netmask(iface, &addr);
+			net_if_ipv4_set_netmask_by_addr(iface, &addr, &mask);
 		}
 	}
 }

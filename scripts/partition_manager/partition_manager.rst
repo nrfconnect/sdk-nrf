@@ -745,8 +745,8 @@ The sizes of each partition are determined by the associated :file:`pm.yml` file
 
 .. _ug_pm_static:
 
-Static configuration
-********************
+Static and dynamic configuration
+********************************
 
 By default, the Partition Manager dynamically places the partitions in memory.
 However, there are cases where a deployed product can consist of multiple images, and only a subset of these images can be upgraded through a firmware update mechanism.
@@ -772,26 +772,25 @@ This file is similar to the regular :file:`pm.yml` configuration files, except t
 
 You can set ``PM_STATIC_YML_FILE`` to contain exactly the static configuration you want to use.
 
-.. important::
-    |file_suffix_partition_manager_exception|
-
 If you do not set ``PM_STATIC_YML_FILE``, the build system will use the following order to look for files in your application source directory to use as a static configuration layout:
 
-* If a :term:`build type` is used, the following order applies:
+* If a :ref:`file suffix <app_build_file_suffixes>` is used, the following order applies:
 
-  1. If the file :file:`pm_static_<board>_<revision>_<buildtype>.yml` exists, it will be used.
-  #. Otherwise, if the file :file:`pm_static_<board>_<buildtype>.yml` exists, it will be used.
-  #. Otherwise, if the file :file:`pm_static_<buildtype>.yml` exists, it will be used.
+  1. If the file :file:`pm_static_<board>_<revision>_<suffix>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<board>_<revision>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<board>_<suffix>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<board>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<suffix>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static.yml` exists, it will be used.
 
-* If a build type is not used, then the same order as above applies, except that *<buildtype>* is not part of the file name:
+* If a suffixed configuration is not used, then the same order as above applies, except that *<suffix>* is not part of the file name:
 
   1. If the file :file:`pm_static_<board>_<revision>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static_<board>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static.yml` exists, it will be used.
 
 For :ref:`ug_multi_image` where the image targets a different domain, :ref:`ug_multi_image_build_scripts` uses the same search algorithm, but a domain specific configuration file is also searched.
-For example, :file:`pm_static_<board>_<buildtype>_<domain>.yml` or :file:`pm_static_<board>_<domain>.yml`.
+For example, :file:`pm_static_<board>_<suffix>_<domain>.yml` or :file:`pm_static_<board>_<domain>.yml`.
 
 Use a static partition layout to ensure consistency between builds, as the settings storage will be at the same location after the DFU.
 
@@ -811,6 +810,37 @@ You can add or remove partitions as described in the following sections.
 
 .. note::
   If the static configuration contains an entry for the ``app`` partition, this entry is ignored.
+
+.. _ug_pm_config_dynamic:
+
+Configuring dynamic partitions
+==============================
+
+For child images that use dynamic partition sizing, the Partition Manager allows you to use the ``CONFIG_PM_PARTITION_SIZE_<CHILD_IMAGE>`` Kconfig option to adjust the partition size.
+This is particularly useful when you want to optimize the memory usage of MCUboot to the smallest possible size by enabling cryptographic functionalities.
+
+.. note::
+   To match the reduced size, you need to set the ``CONFIG_PM_PARTITION_SIZE_<CHILD_IMAGE>`` Kconfig option in the child image's configuration.
+   For example, ``CONFIG_PM_PARTITION_SIZE_MCUBOOT`` must be set for the MCUboot child image.
+
+The ``CONFIG_PM_PARTITION_SIZE_<CHILD_IMAGE>`` Kconfig option allows you to specify the memory size for each child image's partition directly in the Kconfig file.
+This allows for precise control over memory allocation which is crucial for system performance optimization.
+
+Common variants of this Kconfig's option include the following:
+
+* ``CONFIG_PM_PARTITION_SIZE_MCUBOOT`` - Sets the partition size for the MCUboot image, and only used for dynamic partition maps.
+  You can read more about this option in the `MCUboot Kconfig option documentation`_.
+
+* :kconfig:option:`CONFIG_PM_PARTITION_SIZE_PROVISION` - Allocates space for the provision partition used in secure boot scenarios.
+
+* :kconfig:option:`CONFIG_PM_PARTITION_SIZE_SETTINGS` - Defines the size of the settings storage partition, typically used for persistent configuration data.
+
+* :kconfig:option:`CONFIG_PM_PARTITION_SIZE_SETTINGS_STORAGE` - Sets the size of the settings storage partition.
+
+* :kconfig:option:`CONFIG_PM_PARTITION_SIZE_NVS_STORAGE` - Configures the size of the non-volatile storage partition.
+
+You must adjust each variant according to the specific requirements and memory constraints of the project, ensuring optimal usage of available flash memory.
+For a full list of the ``CONFIG_PM_PARTITION_SIZE`` variants, see the related `Kconfig search results`_.
 
 .. _ug_pm_static_add_dynamic:
 

@@ -63,7 +63,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 634bfae60938f9b005f6a14aa15e88798458fbd3
+      revision: 987b5d17c3db527e91eb7d7677b021b47fda6980
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -114,7 +114,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 2cc138102a0332caf8fd241869d330e39fb5008c
+      revision: 3ac5008029de16f83d585d2735768ada53c5b05e
       userdata:
         ncs:
           upstream-url: https://w1.fi/cgit/hostap/
@@ -131,7 +131,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 78bc87c46a9501cacd57003271968a554d30e0ee
+      revision: 0b5810de95eb93bbd4fba8e20a2152b33880fc43
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -140,19 +140,19 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: c99e53f8bacdce37db400e5c46b26ee26937234c
+      revision: 72868c6f1421afa92cba9f6fe6d1a3f108c174b7
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: 51af9c47069d24b0794b31a0b4392a90e219ca50
+      revision: d83d1e73d306c19df2eecd63bbbf64bba103218a
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: pull/1312/head
+      revision: d7d48b6cd217a1806ef31fb7d00e0dcb9e9e1fb0
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 7b734feaad68ae53d98dbdd916d80d45ffda9a9f
+      revision: fb1c0db8d32a7a100210e31871461e0bb33ac3af
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -160,7 +160,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: e734b7924bf2b6bdc78e20d8416267f42ba95675
+      revision: 9605b5684577825ee0ee2a3a4638a2090e85cb48
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -181,14 +181,14 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: b23a4e2711ec9b00b53cdaba5869cb4587a5d420
+      revision: d28f2f4f8e6c3c19256136ee69bf1f6c08ed2a41
       groups:
         - nrf-802154
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 89cef72a786f96b8f2b144abb6e47aff4fc34efb
+      revision: 41dc7d3303c9ca8ae53747c8b9831d749fe8ec58
       submodules: true
       groups:
         - dragoon
@@ -203,12 +203,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: ac2a8c2e1591155096fb84d67693b537488b9ed7
+      revision: 2f8856f408f4c9ae466d33fa7f6230e3bd6f30a8
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: 5e81c8f7e960410f737416b06d6bd9202134e45a
+      revision: 68a3f93bffcd844a90630d4e70f323f327bdf33f
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -232,14 +232,14 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: ade9c2b2573a8898844d4c4c1f14d377d35a21e2
+      revision: 226f239c5d85bfc0eb02cd771ddca65a34ca8f73
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: 60afbb26d3a00e5b2243f1304ba2bc4a6722960d
+      revision: c0165159dac566fafbf67be75d86ca64a34834f0
       path: modules/lib/suit-generator
     - name: suit-processor
       revision: 5603911b75f037dc3822fd95542c3435c0bf812d
@@ -264,7 +264,7 @@ manifest:
     - name: bsim
       repo-path: bsim_west
       remote: babblesim
-      revision: 384a091445c57b44ac8cbd18ebd245b47c71db94
+      revision: 68f6282c6a7f54641b75f5f9fc953c85e272a983
       import:
         path-prefix: tools
     - name: bme68x

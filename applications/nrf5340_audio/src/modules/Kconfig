@@ -18,7 +18,12 @@ config AUDIO_SYNC_TIMER_USES_RTC
 	select NRFX_RTC0
 
 #----------------------------------------------------------------------------#
-menu "Power measurement"
+menuconfig NRF5340_AUDIO_POWER_MEASUREMENT
+	bool "Power measurement"
+	help
+	  Include the power measurement driver for the nRF5340 Audio DK
+
+if NRF5340_AUDIO_POWER_MEASUREMENT
 
 config POWER_MEAS_INTERVAL_MS
 	int "Power measurement interval in milliseconds"
@@ -36,7 +41,7 @@ config POWER_MEAS_START_ON_BOOT
 	  the voltage, current consumption, and power usage for the
 	  following rails: VBAT, VDD1_CODEC, VDD2_CODEC, and VDD2_NRF
 
-endmenu # Power measurement
+endif # NRF5340_AUDIO_POWER_MEASUREMENT
 
 #----------------------------------------------------------------------------#
 menu "I2S"
@@ -147,8 +152,14 @@ config VOLUME_MSG_SUB_QUEUE_SIZE
 endmenu # Zbus
 
 #----------------------------------------------------------------------------#
+config NRF5340_AUDIO_SD_CARD_MODULE
+	bool "Audio SD Card Module"
+	help
+	  Include the audio SD card module to support streaming audio files from an SD card.
+
 menuconfig SD_CARD_PLAYBACK
 	bool "Enable playback from SD card"
+	depends on NRF5340_AUDIO_SD_CARD_MODULE
 	select EXPERIMENTAL
 	default n
 	select RING_BUFFER

@@ -1,0 +1,372 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "thingy91x_nrf9151_common-pinctrl.dtsi"
+#include <dt-bindings/regulator/npm1300.h>
+#include <dt-bindings/regulator/npm6001.h>
+
+/ {
+	model = "Nordic Thingy:91 X nRF9151";
+	compatible = "nordic,thingy91x-nrf9151";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,uart-mcumgr = &uart0;
+		nordic,pm-ext-flash = &flash_ext;
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio0 26 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 1";
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		red_led: led_1 {
+			gpios = <&gpio0 29 0>;
+			label = "RGB red channel";
+		};
+		green_led: led_2 {
+			gpios = <&gpio0 30 0>;
+			label = "RGB green channel";
+		};
+		blue_led: led_3 {
+			gpios = <&gpio0 31 0>;
+			label = "RGB blue channel";
+		};
+	};
+
+	pwmleds {
+		compatible = "pwm-leds";
+		pwm_led0: pwm_led_0 {
+			pwms = <&pwm0 0 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
+		};
+		pwm_led1: pwm_led_1 {
+			pwms = <&pwm0 1 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
+		};
+		pwm_led2: pwm_led_2 {
+			pwms = <&pwm0 2 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
+		};
+	};
+	zephyr,user {
+		nrf5340-reset-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+	};
+
+	nordic_wlan0: nordic_wlan0 {
+		compatible = "nordic,wlan0";
+		status = "okay";
+	};
+
+	aliases {
+		sw0 = &button0;
+		led0 = &red_led;
+		led1 = &green_led;
+		led2 = &blue_led;
+		pwm-led0 = &pwm_led0;
+		pwm-led1 = &pwm_led1;
+		pwm-led2 = &pwm_led2;
+		rgb-pwm = &pwm0;
+		mcuboot-button0 = &button0;
+		spi-flash0 = &flash_ext;
+	};
+};
+
+&adc {
+	status = "okay";
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+	exp-board-power-enable {
+		gpio-hog;
+		gpios = <3 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+/* PWM0 is intended for RGB LED control */
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c2 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+
+	pinctrl-0 = <&i2c2_default>;
+	pinctrl-1 = <&i2c2_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	bme680: bme680@76 {
+		status = "disabled";
+		compatible = "bosch,bme680";
+		reg = <0x76>;
+	};
+
+	pmic_main: npm1300@6b {
+		compatible = "nordic,npm1300";
+		host-int-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+		pmic-int-pin = <3>;
+		reg = <0x6b>;
+
+		gpios_pmic: npm1300_gpios {
+			compatible = "nordic,npm1300-gpio";
+			gpio-controller;
+			#gpio-cells = <2>;
+			ngpios = <5>;
+			npm13_button: GPIO0 {
+				gpio-hog;
+				gpios = <0 GPIO_ACTIVE_HIGH>;
+			};
+			/* GPIO1 switches power to the short range RF front end */
+			ldsw_rf_fe_sr_en: GPIO1 {
+				gpio-hog;
+				output-low;
+				gpios = <1 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN | GPIO_PULL_UP)>;
+			};
+			power_switch: GPIO2 {
+				gpio-hog;
+				gpios = <2 GPIO_ACTIVE_HIGH>;
+			};
+			npm60_ready: GPIO4 {
+				gpio-hog;
+				gpios = <4 GPIO_ACTIVE_HIGH>;
+			};
+		};
+
+		regulators {
+			compatible = "nordic,npm1300-regulator";
+			/* Main 3.3 V regulator, enabled by GPIO2 (power switch) */
+			reg_3v3: BUCK2 {
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				enable-gpios = <&gpios_pmic 2 GPIO_ACTIVE_HIGH>;
+			};
+			/* LDO1 is used as a load switch pulling the nPM60 enable line to VSYS */
+			ldsw_nPM60_en: LDO1 {
+				regulator-initial-mode = <NPM1300_LDSW_MODE_LDSW>;
+				regulator-allowed-modes = <NPM1300_LDSW_MODE_LDSW>;
+			};
+			/* LDO2 is used as a load switch for sensor power supply */
+			ldsw_sensors: LDO2 {
+				regulator-initial-mode = <NPM1300_LDSW_MODE_LDSW>;
+				regulator-allowed-modes = <NPM1300_LDSW_MODE_LDSW>;
+				regulator-boot-on;
+			};
+		};
+
+		npm1300_charger: charger {
+			compatible = "nordic,npm1300-charger";
+			vbus-limit-microamp = <500000>;
+			/* Battery specs from LiPol LP803448 datasheet (Dwg. nr. FD_3245_70) */
+			term-microvolt = <4200000>;
+			current-microamp = <675000>; /* 0.5C charging current */
+			dischg-limit-microamp = <1340000>; /* Maximum value for PMIC */
+			thermistor-cold-millidegrees = <0>;
+			thermistor-cool-millidegrees = <0>;
+			thermistor-warm-millidegrees = <45000>;
+			thermistor-hot-millidegrees = <45000>;
+			thermistor-ohms = <10000>;
+			thermistor-beta = <3435>;
+			charging-enable;
+		};
+	};
+
+	pmic_wifi: npm6001@70 {
+		/* refer to thingy91x_wifi.dtsi for enabling wifi */
+		status = "disabled";
+
+		compatible = "nordic,npm6001";
+		reg = <0x70>;
+
+		regulators {
+		compatible = "nordic,npm6001-regulator";
+			pmic_wifi_buck0: BUCK0 {
+				regulator-boot-off;
+			};
+			pmic_wifi_buck1: BUCK1 {
+				regulator-boot-off;
+			};
+			pmic_wifi_buck2: BUCK2 {
+				regulator-boot-off;
+			};
+			/* Dedicated 3.3 V regulator for nRF70 */
+			reg_wifi: BUCK3 {
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-initial-mode = <NPM6001_MODE_HYS>;
+				regulator-boot-on;
+			};
+		};
+	};
+
+	accel: accelerometer_lp: adxl367@1d {
+		status = "disabled";
+		compatible = "adi,adxl367";
+		odr = <3>;
+		reg = <0x1d>;
+		int1-gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
+	};
+
+	magnetometer: bmm150@10 {
+		status = "disabled";
+		compatible = "bosch,bmm150";
+		reg = <0x10>;
+		drdy-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&spi3 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	cs-gpios = <&gpio0 12 GPIO_ACTIVE_LOW>,
+		<&gpio0 17 GPIO_ACTIVE_LOW>, <&gpio0 10 GPIO_ACTIVE_LOW>;
+
+	pinctrl-0 = <&spi3_default>;
+	pinctrl-1 = <&spi3_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	flash_ext: GD25LE255E@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <8000000>;
+		size = <268435456>;
+		has-dpd;
+		t-enter-dpd = <3000>;
+		t-exit-dpd = <20000>;
+		sfdp-bfp = [e5 20 f3 ff  ff ff ff 0f  44 eb 08 6b  08 3b 42 bb
+			    fe ff ff ff  ff ff 00 ff  ff ff 42 eb  0c 20 0f 52
+			    10 d8 00 ff  d4 31 a5 fe  84 df 14 4f  ec 62 16 33
+			    7a 75 7a 75  04 b3 d5 5c  19 06 14 00  08 50 00 01];
+		jedec-id = [c8 60 19];
+	};
+
+	nrf700x: nrf7000@1 {
+		compatible = "nordic,nrf700x-spi";
+		status = "disabled";
+		reg = <1>;
+		spi-max-frequency = <DT_FREQ_M(8)>;
+
+		iovdd-ctrl-gpios = <&gpio0 27 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+		bucken-gpios = <&gpio0 28 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+		host-irq-gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
+	};
+
+	accelerometer_hp: bmi270@2 {
+		compatible = "bosch,bmi270";
+		status = "disabled";
+		reg = <2>;
+		spi-max-frequency = <DT_FREQ_M(10)>;
+		irq-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
+	};
+
+};
+
+&timer0 {
+	status = "okay";
+};
+
+&timer1 {
+	status = "okay";
+};
+
+&timer2 {
+	status = "okay";
+};
+
+&uart0 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	status = "okay";
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&uart1 {
+	current-speed = <1000000>;
+	status = "okay";
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-1 = <&uart1_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+/* This is not the layout that's actually used! It's overridden by Partition Manager. */
+&flash0 {
+	/*
+	 * For more information, see:
+	 * http://docs.zephyrproject.org/devices/dts/flash_partitions.html
+	 */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0x10000>;
+		};
+		slot0_partition: partition@10000 {
+			label = "image-0";
+			reg = <0x00010000 0x30000>;
+		};
+		slot0_ns_partition: partition@40000 {
+			label = "image-0-nonsecure";
+			reg = <0x00040000 0x40000>;
+		};
+		slot1_partition: partition@80000 {
+			label = "image-1";
+			reg = <0x00080000 0x30000>;
+		};
+		slot1_ns_partition: partition@b0000 {
+			label = "image-1-nonsecure";
+			reg = <0x000b0000 0x40000>;
+		};
+		scratch_partition: partition@f0000 {
+			label = "image-scratch";
+			reg = <0x000f0000 0xa000>;
+		};
+		storage_partition: partition@fa000 {
+			label = "storage";
+			reg = <0x000fa000 0x00006000>;
+		};
+	};
+};
+
+/ {
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		sram0_s: image_s@20000000 {
+			/* Secure image memory */
+			reg = <0x20000000 DT_SIZE_K(64)>;
+		};
+
+		sram0_bsd: image_bsd@20010000 {
+			/* BSD (shared) memory */
+			reg = <0x20010000 DT_SIZE_K(64)>;
+		};
+
+		sram0_ns: image_ns@20020000 {
+			/* Non-Secure image memory */
+			reg = <0x20020000 DT_SIZE_K(128)>;
+		};
+	};
+};

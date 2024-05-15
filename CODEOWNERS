@@ -25,7 +25,7 @@
 /scripts/quarantine.yaml                  @nrfconnect/ncs-test-leads
 
 # VS Code Configuration files
-/.vscode/                                 @trond-snekvik
+/.vscode/                                 @FilipZajdel
 
 # Applications
 /applications/asset_tracker_v2/           @nrfconnect/ncs-cia @coderbyheart
@@ -40,6 +40,7 @@
 /applications/zigbee_weather_station/     @milewr
 # Boards
 /boards/                                  @anangl
+/boards/nordic/thingy91*                  @anangl @nrfconnect/ncs-cia
 # All cmake related files
 /cmake/                                   @tejlmand
 /CMakeLists.txt                           @tejlmand
@@ -102,6 +103,7 @@ Kconfig*                                  @tejlmand
 /include/nfc/                             @anangl @grochu
 /include/sdfw/                            @anhmolt @hakonfam @jonathannilsen
 /include/shell/                           @nordic-krch
+/kernel/                                  @nordicjm
 /lib/bin/                                 @rlubos @lemrey
 /lib/adp536x/                             @nrfconnect/ncs-cia
 /lib/at_cmd_parser/                       @rlubos
@@ -123,7 +125,7 @@ Kconfig*                                  @tejlmand
 /lib/modem_key_mgmt/                      @rlubos
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
 /lib/pdn/                                 @lemrey @rlubos
-/lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
+/lib/ram_pwrdn/                           @MarekPorwisz
 /lib/fatal_error/                         @KAGA164 @nordic-krch
 /lib/sfloat/                              @kapi-no @maje-emb
 /lib/sms/                                 @trantanen @tokangas
@@ -199,6 +201,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
 /samples/sdfw/                            @hakonfam @jonathannilsen
 /samples/sdfw/ssf_client/                 @anhmolt
+/samples/suit/                            @tomchy @ahasztag
 /samples/wifi/provisioning/               @wentong-li @bama-nordic
 /samples/wifi/radio_test/                 @bama-nordic @sachinthegreen
 /samples/wifi/scan/                       @D-Triveni @bama-nordic
@@ -207,7 +210,7 @@ Kconfig*                                  @tejlmand
 /samples/wifi/ble_coex/                   @muraliThokala @bama-nordic
 /samples/wifi/shutdown/                   @krish2718 @sachinthegreen
 /samples/wifi/twt/                        @chiranjeevi2776 @krish2718
-/samples/wifi/throughput/                 @SusanGRapaka @D-Triveni
+/samples/wifi/throughput/                 @D-Triveni
 /samples/wifi/raw_tx_packet/              @D-Triveni
 /samples/wifi/softap/                     @D-Triveni @krish2718
 /samples/wifi/monitor/                    @chiranjeevi2776 @krish2718
@@ -273,6 +276,7 @@ Kconfig*                                  @tejlmand
 /subsys/nrf_profiler/                     @pdunaj
 /subsys/shell/                            @nordic-krch
 /subsys/sdfw_services/                    @anhmolt @hakonfam @jonathannilsen
+/subsys/sdfw_services/services/extmem/    @e-rk @tomchy
 /subsys/suit/                             @tomchy @ahasztag
 /subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /subsys/trusted_storage/                  @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
@@ -331,6 +335,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/event_manager_proxy/        @rakons
 /tests/subsys/app_event_manager/          @pdunaj @MarekPieta @rakons
 /tests/subsys/fw_info/                    @oyvindronningstad
+/tests/subsys/mpsl/                       @nrfconnect/ncs-dragoon
 /tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
 /tests/subsys/net/lib/azure_iot_hub/      @nrfconnect/ncs-cia
 /tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh

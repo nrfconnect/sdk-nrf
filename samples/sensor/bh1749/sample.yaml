@@ -5,6 +5,6 @@ tests:
     depends_on: i2c
     harness: sensor
     integration_platforms:
-      - thingy91_nrf9160
-    platform_allow: thingy91_nrf9160
+      - thingy91/nrf9160
+    platform_allow: thingy91/nrf9160
     tags: sensors

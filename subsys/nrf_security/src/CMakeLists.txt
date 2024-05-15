@@ -27,6 +27,7 @@ target_compile_definitions(mbedcrypto_common
     -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
     -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
     -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
+    -DMBEDTLS_PSA_CRYPTO_CONFIG
 )
 
 # Add the user config only if it is set
@@ -109,6 +110,10 @@ add_library(${mbedcrypto_target}
   STATIC
     ${src_crypto}
 )
+
+if(CONFIG_PSA_SSF_CRYPTO_CLIENT)
+  add_subdirectory(ssf_secdom)
+endif()
 
 nrf_security_add_zephyr_options(${mbedcrypto_target})
 

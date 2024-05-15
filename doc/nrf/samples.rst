@@ -32,6 +32,7 @@ If you want to list samples available for one or more specific boards, `use the 
    samples/cellular
    samples/crypto
    samples/debug
+   samples/dect
    samples/edge
    samples/esb
    samples/gazell

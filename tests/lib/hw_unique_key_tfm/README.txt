@@ -14,4 +14,4 @@ This means that the SEGGER id of the development kit must be passed both to west
 
 Here is an example of passing the id to the build:
 
-  west build -b nrf9160dk_nrf9160_ns -- -DCONFIG_HUK_TEST_BOARD_SNR=\"901234567\"
+  west build -b nrf9160dk/nrf9160/ns -- -DCONFIG_HUK_TEST_BOARD_SNR=\"901234567\"

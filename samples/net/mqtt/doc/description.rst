@@ -20,7 +20,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Additionally, the sample supports emulation using :ref:`Native Posix <zephyr:native_posix>`.
+Additionally, the sample supports emulation using the :ref:`native simulator <zephyr:native_sim>`.
 
 Overview
 *********
@@ -71,7 +71,7 @@ CONFIG_MQTT_SAMPLE_TRANSPORT_BROKER_HOSTNAME - MQTT broker hostname
 
 CONFIG_MQTT_SAMPLE_TRANSPORT_CLIENT_ID - MQTT client ID
 	This configuration sets the MQTT client ID name.
-	If not set, the client ID will default to the modem's IMEI number for nRF91 Series devices, MAC address for nRF70 Series devices, or a random number for Native Posix.
+	If not set, the client ID will default to the modem's IMEI number for nRF91 Series devices, MAC address for nRF70 Series devices, or a random number for native simulator.
 
 .. _CONFIG_MQTT_SAMPLE_TRANSPORT_PUBLISH_TOPIC:
 
@@ -108,7 +108,7 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
-* :file:`boards/native_posix.conf` - Configuration file for Native Posix.
+* :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
 
 Files that are located under the :file:`/boards` folder is automatically merged with the :file:`prj.conf` file when you build for corresponding target.
 
@@ -116,7 +116,7 @@ In addition, the sample provides the following overlay configuration files, whic
 
 * :file:`overlay-tls-nrf91.conf` - TLS overlay configuration file for nRF91 Series devices.
 * :file:`overlay-tls-nrf70.conf` - TLS overlay configuration file for nRF70 Series devices.
-* :file:`overlay-tls-native_posix.conf` - TLS overlay configuration file for Native Posix.
+* :file:`overlay-tls-native_sim.conf` - TLS overlay configuration file for the native simulator board.
 
 They are located in :file:`samples/net/mqtt` folder.
 
@@ -127,13 +127,13 @@ For example, when building with the command line, the following commands can be 
 
 .. code-block:: console
 
-   west build -b nrf9160dk_nrf9160_ns -- -DEXTRA_CONF_FILE=overlay-tls-nrf91.conf
+   west build -b nrf9160dk/nrf9160/ns -- -DEXTRA_CONF_FILE=overlay-tls-nrf91.conf
 
 For Thingy:91, with TLS and debug logging enabled for the :ref:`lib_mqtt_helper` library (for more information, see the related :ref:`sample output <mqtt_sample_output_IPv6>`):
 
 .. code-block:: console
 
-   west build -b thingy91_nrf9160_ns -- -DEXTRA_CONF_FILE=overlay-tls-nrf91.conf -DCONFIG_MQTT_HELPER_LOG_LEVEL_DBG=y
+   west build -b thingy91/nrf9160/ns -- -DEXTRA_CONF_FILE=overlay-tls-nrf91.conf -DCONFIG_MQTT_HELPER_LOG_LEVEL_DBG=y
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
@@ -267,14 +267,14 @@ If this occurs, the sample's transport module has built-in reconnection logic th
 Emulation
 =========
 
-The sample can be run in :ref:`Native Posix <zephyr:native_posix>` that simplifies development and testing and removes the need for hardware.
-Before you can build and run Native Posix, you need to perform the steps included in this link: :ref:`networking_with_native_sim`.
+The sample can be run in :ref:`native simulator <zephyr:native_sim>` that simplifies development and testing and removes the need for hardware.
+Before you can build and the run native simulator, you need to perform the steps included in this link: :ref:`networking_with_native_sim`.
 
 When the aforementioned steps are completed, you can build and run the sample by using the following commands:
 
 .. code-block:: console
 
-   west build -b native_posix samples/net/mqtt
+   west build -b native_sim samples/net/mqtt
    west build -t run
 
 Troubleshooting

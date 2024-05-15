@@ -7,7 +7,7 @@
 #pragma once
 
 #include "../persistent_storage_common.h"
-#include "finite_map.h"
+#include "util/finite_map.h"
 
 #include <protected_storage.h>
 

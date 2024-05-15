@@ -73,7 +73,7 @@ To run the unit test for the :ref:`asset_tracker_v2_debug_module`, complete the 
 1. |connect_kit|
    Take note of the serial port where you receive logs from the DK (this will be ``serial_port`` in the following command).
 #. Navigate to :file:`asset_tracker_v2/tests/debug_module`, where the :file:`testcase.yaml` is located.
-   If you check this file, it includes ``nrf9160dk_nrf9160_ns`` in the ``platform_allow:`` entry.
+   If you check this file, it includes ``nrf9160dk/nrf9160/ns`` in the ``platform_allow:`` entry.
 #. Enter the following command to execute the unit tests on nRF9160 DK:
 
    .. tabs::
@@ -82,16 +82,16 @@ To run the unit test for the :ref:`asset_tracker_v2_debug_module`, complete the 
 
          .. code-block:: console
 
-            <Zephyr_path>/scripts/twister -T . -p nrf9160dk_nrf9160_ns --device-testing --device-serial <serial_port>
+            <Zephyr_path>/scripts/twister -T . -p nrf9160dk/nrf9160/ns --device-testing --device-serial <serial_port>
 
       .. group-tab:: Twister (Linux)
 
          .. code-block:: console
 
-            <Zephyr_path>/scripts/twister -T . -p nrf9160dk_nrf9160_ns --device-testing --device-serial <serial_port>
+            <Zephyr_path>/scripts/twister -T . -p nrf9160dk/nrf9160/ns --device-testing --device-serial <serial_port>
 
       .. group-tab:: west
 
          .. code-block:: console
 
-            west build -b nrf9160dk_nrf9160_ns -t run
+            west build -b nrf9160dk/nrf9160/ns -t run

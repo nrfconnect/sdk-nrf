@@ -234,7 +234,7 @@ int suit_plat_override_image_size(suit_component_t handle, size_t size)
 			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 		}
 
-		LOG_INF("%s, component size: %u, input size %u", __func__, component_size, size);
+		LOG_DBG("%s, component size: %u, input size %u", __func__, component_size, size);
 
 		if (size > component_size) {
 			LOG_ERR("Input size exceeds component size");

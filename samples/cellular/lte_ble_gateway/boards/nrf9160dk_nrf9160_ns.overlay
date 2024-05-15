@@ -1,4 +1,4 @@
-#include <nrf9160dk_nrf52840_reset_on_if5.dtsi>
+#include <nrf9160/nrf9160dk_nrf52840_reset_on_if5.dtsi>
 
 / {
 	chosen {

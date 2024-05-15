@@ -76,7 +76,7 @@ You can use one of the following options, depending on how you decide to build t
 
   .. code-block:: console
 
-     west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DSHIELD=nrf21540ek_fwd -DFILE_SUFFIX=release
+     west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DSHIELD=nrf21540ek_fwd -DFILE_SUFFIX=release
 
 To set the TX power output, use the ``CONFIG_NRF_21540_MAIN_TX_POWER`` and ``CONFIG_NRF_21540_PRI_ADV_TX_POWER`` Kconfig options.
 

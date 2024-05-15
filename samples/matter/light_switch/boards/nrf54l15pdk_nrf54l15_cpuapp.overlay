@@ -49,3 +49,7 @@
 &uart30 {
 	status = "okay";
 };
+
+&wdt30 {
+	status = "okay";
+};

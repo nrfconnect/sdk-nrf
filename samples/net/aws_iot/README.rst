@@ -24,7 +24,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Additionally, the sample supports emulation using :ref:`QEMU x86 <zephyr:qemu_x86>`.
+Additionally, the sample supports emulation using the :ref:`native simulator <zephyr:native_sim>`.
 
 .. include:: /includes/tfm.txt
 
@@ -152,7 +152,7 @@ The sample includes pre-configured configuration files for the development kits 
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
-* :file:`boards/qemu_x86.conf` - Configuration file for QEMU x86.
+* :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
 
 The following configuration and DTS overlay files are included to host the MCUboot secondary image slot on external flash for the nRF7002 DK:
 
@@ -217,15 +217,15 @@ To observe incoming messages in the AWS IoT console, follow the steps documented
 Emulation
 =========
 
-The sample can run on :ref:`QEMU x86 <zephyr:qemu_x86>`, which simplifies development and testing and removes the need for hardware.
-Before you build and run on QEMU x86, you need to perform the steps documented in :ref:`networking_with_qemu`.
+The sample can run on the :ref:`native simulator <zephyr:native_sim>`, which simplifies development and testing and removes the need for hardware.
+Before you build and run on the ``native_sim`` board, you need to perform the steps documented in :ref:`networking_with_native_sim`.
 
 When these steps are completed, you can build and run the sample by using the following commands:
 
 .. code-block:: console
 
-   west build -b qemu_x86 samples/net/mqtt
-   west build -t run
+   west build -b native_sim samples/net/mqtt
+   ./samples/net/mqtt/build/zephyr/zephyr.exe
 
 Troubleshooting
 ===============

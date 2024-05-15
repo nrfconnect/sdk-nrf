@@ -39,7 +39,7 @@ choice NRF_CLOUD_CLIENT_ID_SRC
 endchoice
 
 config NRF_CLOUD_LOCATION
-	default y if !BOARD_QEMU_X86
+	default y
 
 # The dynamic network info is updated by the application using device messages.
 config NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK

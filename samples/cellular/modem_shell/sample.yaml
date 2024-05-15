@@ -4,37 +4,37 @@ tests:
   sample.cellular.modem_shell:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell_debug:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-debug.conf
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.cloud_mqtt_only:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-cloud_mqtt.conf
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.cloud_mqtt_rest:
     build_only: true
@@ -42,85 +42,85 @@ tests:
       - CONFIG_MOSH_CLOUD_MQTT=y
       - CONFIG_MOSH_CLOUD_REST=y
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.cloud_coap_only:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-cloud_coap.conf
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.non_offloading_ip:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-non-offloading.conf
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.nrf7002ek_wifi:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
     tags: ci_build
   sample.cellular.modem_shell.nrf7000ek_wifi:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_args: SHIELD=nrf7002ek_nrf7000 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
                 CONFIG_WPA_SUPP=n
     tags: ci_build
   sample.cellular.modem_shell.nrf7001ek_wifi:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_args: SHIELD=nrf7002ek_nrf7001 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
     tags: ci_build
   sample.cellular.modem_shell.nrf7002ek_wifi-debug:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_args: SHIELD=nrf7002ek
                 OVERLAY_CONFIG="overlay-nrf7002ek-wifi-scan-only.conf;overlay-debug.conf"
     tags: ci_build
@@ -128,44 +128,44 @@ tests:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-app_fota.conf
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.modem_fota_full.nrf9160:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-modem_fota_full.conf
                 DTC_OVERLAY_FILE="nrf9160dk_ext_flash.overlay"
     integration_platforms:
-      - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
+      - nrf9160dk/nrf9160/ns
+    platform_allow: nrf9160dk/nrf9160/ns
     tags: ci_build
   sample.cellular.modem_shell.modem_fota_full.nrf91x1:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-modem_fota_full.conf
                 DTC_OVERLAY_FILE="nrf9161dk_ext_flash.overlay"
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.carrier:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-carrier.conf
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.lwm2m:
     build_only: true
@@ -173,13 +173,13 @@ tests:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
     extra_args: OVERLAY_CONFIG=overlay-lwm2m.conf
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.lwm2m_bootstrap:
     build_only: true
@@ -187,13 +187,13 @@ tests:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
     extra_args: OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-lwm2m_bootstrap.conf"
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.lwm2m_pgps:
     build_only: true
@@ -201,25 +201,25 @@ tests:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
     extra_args: OVERLAY_CONFIG="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf"
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.pgps:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-pgps.conf
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.location_service_ext:
     build_only: true
@@ -227,13 +227,13 @@ tests:
       - CONFIG_LOCATION_SERVICE_EXTERNAL=y
     extra_args: OVERLAY_CONFIG=overlay-cloud_mqtt.conf
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.location_service_ext_pgps_nrf7002ek_wifi:
     build_only: true
@@ -243,63 +243,63 @@ tests:
     extra_args: SHIELD=nrf7002ek
                 OVERLAY_CONFIG="overlay-cloud_mqtt.conf;overlay-pgps.conf;overlay-nrf7002ek-wifi-scan-only.conf"
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.ppp:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-ppp.conf DTC_OVERLAY_FILE="ppp.overlay"
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.bt:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-bt.conf DTC_OVERLAY_FILE="bt.overlay"
     integration_platforms:
-      - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
+      - nrf9160dk/nrf9160/ns
+    platform_allow: nrf9160dk/nrf9160/ns
     tags: ci_build
   sample.cellular.modem_shell.rtt:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-rtt.conf
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.thingy91:
     build_only: true
     integration_platforms:
-      - thingy91_nrf9160_ns
+      - thingy91/nrf9160/ns
     platform_allow:
-      - thingy91_nrf9160_ns
-      - thingy91x_nrf9151_ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
     tags: ci_build
   sample.cellular.modem_shell.modem_trace_shell_ext_flash:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_args: SNIPPET="nrf91-modem-trace-ext-flash"
     extra_configs:
       - CONFIG_NRF_MODEM_LIB_SHELL_TRACE=y
@@ -307,13 +307,13 @@ tests:
   sample.cellular.modem_shell.modem_trace_ram:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_args: OVERLAY_CONFIG="overlay-modem-trace-ram.conf"
     tags: ci_build
 
@@ -321,13 +321,13 @@ tests:
   sample.cellular.modem_shell.location_gnss_wifi_no_cellular:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_configs:
       - CONFIG_LOCATION_METHOD_GNSS=y
       - CONFIG_LOCATION_METHOD_CELLULAR=n
@@ -337,13 +337,13 @@ tests:
   sample.cellular.modem_shell.location_wifi_cellular_no_gnss:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_configs:
       - CONFIG_LOCATION_METHOD_GNSS=n
       - CONFIG_LOCATION_METHOD_CELLULAR=y
@@ -353,13 +353,13 @@ tests:
   sample.cellular.modem_shell.location_wifi_no_cellular_no_gnss:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_configs:
       - CONFIG_LOCATION_METHOD_GNSS=n
       - CONFIG_LOCATION_METHOD_CELLULAR=n
@@ -369,13 +369,13 @@ tests:
   sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_configs:
       - CONFIG_LOCATION_METHOD_GNSS=y
       - CONFIG_LOCATION_METHOD_CELLULAR=n
@@ -384,13 +384,13 @@ tests:
   sample.cellular.modem_shell.location_cellular_no_wifi_no_gnss:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_configs:
       - CONFIG_LOCATION_METHOD_GNSS=n
       - CONFIG_LOCATION_METHOD_CELLULAR=y
@@ -401,13 +401,13 @@ tests:
   sample.cellular.modem_shell.location_gnss_wifi_cellular_details:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_configs:
       - CONFIG_LOCATION_DATA_DETAILS=y
       - CONFIG_LOCATION_METHOD_GNSS=y
@@ -418,13 +418,13 @@ tests:
   sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular_details:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_configs:
       - CONFIG_LOCATION_DATA_DETAILS=y
       - CONFIG_LOCATION_METHOD_GNSS=y
@@ -434,13 +434,13 @@ tests:
   sample.cellular.modem_shell.location_wifi_cellular_no_gnss_details:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_configs:
       - CONFIG_LOCATION_DATA_DETAILS=y
       - CONFIG_LOCATION_METHOD_GNSS=n
@@ -451,13 +451,13 @@ tests:
   sample.cellular.modem_shell.location_gnss_cellular_no_wifi_details:
     build_only: true
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     extra_configs:
       - CONFIG_LOCATION_DATA_DETAILS=y
       - CONFIG_LOCATION_METHOD_GNSS=y
@@ -471,34 +471,34 @@ tests:
     build_only: true
     extra_args: SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.non_offloading_ip_modem_uart_trace:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-non-offloading.conf SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build
   sample.cellular.modem_shell.thingy91_modem_uart_trace:
     build_only: true
     extra_args: SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
-      - thingy91_nrf9160_ns
+      - thingy91/nrf9160/ns
     platform_allow:
-      - thingy91_nrf9160_ns
-      - thingy91x_nrf9151_ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
     tags: ci_build
 
   # Configuration which will be used by the CI integration job to verify PRs
@@ -509,10 +509,10 @@ tests:
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
     extra_args: SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
     platform_allow:
-      - nrf9151dk_nrf9151_ns
-      - nrf9160dk_nrf9160_ns
-      - nrf9161dk_nrf9161_ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: ci_build

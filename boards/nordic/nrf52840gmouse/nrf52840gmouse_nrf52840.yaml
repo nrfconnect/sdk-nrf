@@ -1,0 +1,16 @@
+identifier: nrf52840gmouse/nrf52840
+name: nRF52840-GMouse-NRF52840
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+ram: 256
+flash: 1024
+supported:
+  - usb_device
+  - ble
+  - gpio
+  - watchdog
+  - ieee802154
+  - netif:openthread

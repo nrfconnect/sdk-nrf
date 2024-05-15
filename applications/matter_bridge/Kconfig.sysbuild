@@ -5,15 +5,15 @@
 #
 
 config NRF_DEFAULT_BLUETOOTH
-	default y if ("$(BOARD)" = "nrf7002dk_nrf5340_cpuapp") || ("$(BOARD)" = "nrf5340dk_nrf5340_cpuapp")
+	default y if BOARD_NRF7002DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP
 
 choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT
 endchoice
 
-if BOOTLOADER_MCUBOOT && (("$(BOARD)" = "nrf5340dk_nrf5340_cpuapp") || ("$(BOARD)" = "nrf7002dk_nrf5340_cpuapp"))
+if BOOTLOADER_MCUBOOT && (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF5340_CPUAPP)
 
-if ("$(BOARD)" = "nrf5340dk_nrf5340_cpuapp")
+if BOARD_NRF5340DK_NRF5340_CPUAPP
 
 config NRF_WIFI_PATCHES_EXT_FLASH_STORE
 	default y
@@ -29,7 +29,7 @@ config DFU_MULTI_IMAGE_MAX_IMAGE_COUNT
 
 endif
 
-if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp")
+if BOARD_NRF7002DK_NRF5340_CPUAPP
 
 config MCUBOOT_UPDATEABLE_IMAGES
 	default 2

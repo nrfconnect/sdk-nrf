@@ -9,6 +9,5 @@
 
 int date_time_modem_get(int64_t *date_time_ms, int *tz);
 void date_time_modem_store(struct tm *ltm, int tz);
-void date_time_modem_xtime_subscribe(void);
 
 #endif /* DATE_TIME_MODEM_H_ */

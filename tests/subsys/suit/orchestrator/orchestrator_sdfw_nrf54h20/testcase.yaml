@@ -1,0 +1,6 @@
+tests:
+  suit.integration.orchestrator.nrf54h20:
+    platform_allow: native_posix
+    tags: suit suit_orchestrator nrf54h20
+    integration_platforms:
+      - native_posix

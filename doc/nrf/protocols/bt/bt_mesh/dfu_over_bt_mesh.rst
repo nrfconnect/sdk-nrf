@@ -55,7 +55,7 @@ Optionally, you can provide firmware ID, metadata and Unique Resource Identifier
 
 For example, to allocate a slot for the :ref:`ble_mesh_dfu_target` sample with image size of 241236 bytes, with firmware ID set to ``0200000000000000``, and metadata generated as described in :ref:`bluetooth_mesh_dfu_eval_md` section below, type the following command::
 
-  mesh models dfu slot add 241236 0200000000000000 020000000100000094cf24017c26f3710100
+  mesh models dfu slot add 241236 0200000000000000 020000000000000094cf24017c26f3710100
 
 When the slot is added, the shell will print the slot ID.
 Take note of this ID as it will then be needed to start the DFU transfer::
@@ -201,7 +201,7 @@ The file is placed in the :file:`dfu_application.zip` archive in the build folde
 Additionally, the metadata string required by the ``mesh models dfu slot add`` command will be printed in the command line window when the application is built::
 
   Bluetooth Mesh Composition metadata generated:
-    Encoded metadata: 020000000100000094cf24017c26f3710100
+    Encoded metadata: 020000000000000094cf24017c26f3710100
     Full metadata written to: APPLICATION_FOLDER\build\zephyr\dfu_application.zip
 
 .. note::
@@ -249,7 +249,7 @@ For this particular example, the following output is generated:
           ]
         },
         "composition_hash": "0x71f3267c",
-        "encoded_metadata": "020000000100000094cf24017c26f3710100"
+        "encoded_metadata": "020000000000000094cf24017c26f3710100"
       }
 
 Manual metadata generation
@@ -306,4 +306,4 @@ The output of the command will be the following::
           Composition data hash: 0x71f3267c
           Elements: 1
           User data length: 0
-  Encoded metadata: 020000000100000094cf24017c26f3710100
+  Encoded metadata: 020000000000000094cf24017c26f3710100

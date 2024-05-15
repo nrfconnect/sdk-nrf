@@ -98,7 +98,7 @@ Program the board controller as follows:
 
 1. Set the **SW10** switch, marked as *debug/prog*, in the **NRF52** position.
    On nRF9160 DK board version 0.9.0 and earlier versions, the switch was called **SW5**.
-#. Build the :ref:`bluetooth-hci-lpuart-sample` sample for the nrf9160dk_nrf52840 build target and program the board controller with it.
+#. Build the :ref:`bluetooth-hci-lpuart-sample` sample for the nrf9160dk/nrf52840 build target and program the board controller with it.
 
    .. note::
       To build the sample successfully, you must specify the board version along with the build target.
@@ -108,7 +108,7 @@ Program the board controller as follows:
       .. parsed-literal::
          :class: highlight
 
-         west build --board nrf9160dk_nrf52840@1.1.0
+         west build --board nrf9160dk@1.1.0/nrf52840
 
 #. Verify that the programming was successful.
    Use a terminal emulator, like `nRF Connect Serial Terminal`_, to connect to the second serial port and check the output.
@@ -119,7 +119,7 @@ Program the main controller as follows:
 
 1. Set the **SW10** switch, marked as *debug/prog*, in the **NRF91** position.
    On nRF9160 DK board version 0.9.0 and earlier versions, the switch was called **SW5**.
-#. Build the LTE Sensor Gateway sample (this sample) for the nrf9160dk_nrf9160_ns build target and program the main controller with it.
+#. Build the LTE Sensor Gateway sample (this sample) for the nrf9160dk/nrf9160/ns build target and program the main controller with it.
 
    .. note::
       To build the sample successfully, you must specify the board version along with the build target.
@@ -128,7 +128,7 @@ Program the main controller as follows:
       .. parsed-literal::
          :class: highlight
 
-         west build --board nrf9160dk_nrf9160_ns@1.1.0
+         west build --board nrf9160dk@1.1.0/nrf9160/ns
 
 #. Verify that the programming was successful.
    To do so, use a terminal emulator, like nRF Connect Serial Terminal, to connect to the first serial port and check the output.

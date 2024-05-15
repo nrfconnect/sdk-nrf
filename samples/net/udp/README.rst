@@ -21,7 +21,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Additionally, the sample supports emulation using :ref:`QEMU x86 <zephyr:qemu_x86>`.
+Additionally, the sample supports emulation using the :ref:`native simulator <zephyr:native_sim>`.
 
 Overview
 ********
@@ -74,7 +74,7 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
-* :file:`boards/qemu_x86.conf` - Configuration file for QEMU x86 emulation.
+* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
 
 Building and running
 ********************
