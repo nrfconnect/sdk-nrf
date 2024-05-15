@@ -179,7 +179,8 @@ struct nrf_wifi_fmac_priv *nrf_wifi_fmac_init_rt(void)
 
 	fpriv->hpriv = nrf_wifi_hal_init(opriv,
 					 &hal_cfg_params,
-					 &nrf_wifi_fmac_event_callback);
+					 &nrf_wifi_fmac_event_callback,
+					 NULL);
 
 	if (!fpriv->hpriv) {
 		nrf_wifi_osal_log_err(opriv,
