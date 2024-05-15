@@ -43,6 +43,7 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
 								struct nrf_wifi_vif_ctx_zep,
 								nrf_wifi_rpu_recovery_work);
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
@@ -54,12 +55,20 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 		return;
 	}
 
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return;
+	}
+
+	k_mutex_lock(&rpu_ctx_zep->rpu_lock, K_FOREVER);
 	LOG_DBG("%s: Bringing the interface down", __func__);
 	/* This indirectly does a cold-boot of RPU */
 	net_if_down(vif_ctx_zep->zep_net_if_ctx);
 	k_msleep(10);
 	LOG_DBG("%s: Bringing the interface up", __func__);
 	net_if_up(vif_ctx_zep->zep_net_if_ctx);
+	k_mutex_unlock(&rpu_ctx_zep->rpu_lock);
 }
 
 void nrf_wifi_rpu_recovery_cb(void *vif_ctx_handle,
