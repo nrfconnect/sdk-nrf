@@ -236,6 +236,15 @@ function(suit_create_package)
   endif()
 
   sysbuild_get(DEFAULT_BINARY_DIR IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_BINARY_DIR CACHE)
+
+  # Read SUIT storage addresses, set during MPI generation
+  sysbuild_get(SUIT_STORAGE_ADDRESS IMAGE ${DEFAULT_IMAGE} VAR SUIT_STORAGE_ADDRESS CACHE)
+  if (DEFINED SUIT_STORAGE_ADDRESS)
+    list(APPEND STORAGE_BOOT_ARGS --storage-address ${SUIT_STORAGE_ADDRESS})
+  else()
+    message(WARNING "Using default value of the SUIT storage address")
+  endif()
+
   # create all storages in the DEFAULT_IMAGE output directory
   list(APPEND STORAGE_BOOT_ARGS
     --storage-output-directory
