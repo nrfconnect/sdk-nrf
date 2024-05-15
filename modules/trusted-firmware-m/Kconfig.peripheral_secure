@@ -295,6 +295,7 @@ config NRF_GPIOTE0_SECURE
 
 config NRF_GPIO0_PIN_MASK_SECURE
 	hex "Set GPIO0 PERM mask for Secure"
+	default 0x00000003 if TFM_SECURE_UART30 # P0.0 and P0.1 are used by default when TFM_SECURE_UART30
 	default 0x00000000
 	depends on $(dt_nodelabel_has_compat,gpio0,$(DT_COMPAT_NORDIC_NRF_GPIO)) && !NRF_GPIO0_SECURE
 	help
@@ -306,6 +307,7 @@ config NRF_GPIO0_PIN_MASK_SECURE
 
 config NRF_GPIO1_PIN_MASK_SECURE
 	hex "Set GPIO1 PERM mask for Secure"
+	default 0x00000003 if TFM_SECURE_UART1 # P1.0 and P1.1 are used by default when TFM_SECURE_UART1
 	default 0x00000000
 	depends on $(dt_nodelabel_has_compat,gpio1,$(DT_COMPAT_NORDIC_NRF_GPIO)) && !NRF_GPIO1_SECURE
 	help
