@@ -582,10 +582,12 @@
 
 .. _`nRF9161 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/nRF9161_html5_keyfeatures.html
 .. _`nRF9161 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/gps.html
+.. _`nRF9161 DECT NR+ specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dect.html
 
 .. _`nRF9161 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/intro.html
 .. _`nRF9161 DK board control section in the nRF9161 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/hw_description/nrf9161_board_controller.html
 .. _`Measuring current on nRF9161 DK`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/measuring_current/hw_measure_current.html
+.. _`nRF9151 DECT NR+ specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/dect.html
 
 .. _`AT Commands Reference Guide`:
 .. _`nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/intro_nrf9160.html

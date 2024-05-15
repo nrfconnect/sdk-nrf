@@ -12,6 +12,7 @@ They introduce you to concepts that are important to work with the protocol and 
 
    protocols/amazon_sidewalk/index
    protocols/bt/index
+   protocols/dect/index
    protocols/esb/index
    protocols/gazell/index
    protocols/lte/index
@@ -19,6 +20,6 @@ They introduce you to concepts that are important to work with the protocol and 
    protocols/multiprotocol/index
    protocols/nfc/index
    protocols/thread/index
-   protocols/zigbee/index
    protocols/wifi/index
    protocols/coexistence/index
+   protocols/zigbee/index
