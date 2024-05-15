@@ -241,9 +241,6 @@
 .. _`PSA Cryptography API 1.0.1`: https://armmbed.github.io/mbed-crypto/1.0.1/html/index.html
 .. _`PSA functions for key management`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/management.html
 
-.. _`Sidewalk documentation`: https://nrfconnect.github.io/sdk-sidewalk/
-.. _`Setting up the SDK for Amazon Sidewalk`: https://nrfconnect.github.io/sdk-sidewalk/setting_up_sidewalk_environment/setting_up_sdk.html
-
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 
 .. ### Source: githubusercontent.com
@@ -591,6 +588,9 @@
 .. _`Electrical specification for nRF7002`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/elspec/doc/electrical_specification.html
 
 .. _`nRF pynrfjprog`: https://docs.nordicsemi.com/bundle/ug_pynrfjprog/page/UG/pynrfjprog/pynrfjprog_lpage.html
+
+.. _`Amazon Sidewalk documentation`: https://docs.nordicsemi.com/bundle/sidewalk_2.6.0/page/index.html
+.. _`Setting up the SDK for Amazon Sidewalk`: https://docs.nordicsemi.com/bundle/sidewalk_2.6.0/page/setting_up_sidewalk_environment/setting_up_sdk.html
 
 .. _`nRF9160 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/nRF9160_html5_keyfeatures.html
 .. _`nRF9160 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
