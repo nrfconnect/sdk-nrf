@@ -84,7 +84,18 @@ static enum gnss_operation_mode operation_mode = GNSS_OP_MODE_CONTINUOUS;
 static uint32_t periodic_fix_interval;
 static uint32_t periodic_fix_retry;
 static bool nmea_mask_set;
-static struct nrf_modem_gnss_agnss_data_frame agnss_need;
+/* A-GNSS need is initially set, because event PGPS_EVT_AVAILABLE may be received before the
+ * assistance request from GNSS. If A-GNSS need would be initially empty, no time or predictions
+ * would be injected.
+ */
+static struct nrf_modem_gnss_agnss_data_frame agnss_need = {
+	.data_flags = NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST,
+	.system_count = 1,
+	.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+	.system[0].sv_mask_ephe = 0xffffffff,
+	.system[0].sv_mask_alm = 0x00000000,
+};
+
 static uint8_t gnss_elevation = 5; /* init to modem default threshold angle */
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_SUPL_CLIENT_LIB)
