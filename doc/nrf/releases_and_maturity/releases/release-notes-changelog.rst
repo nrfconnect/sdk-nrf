@@ -411,6 +411,7 @@ Bluetooth Mesh samples
 
     * A note on how to compile the sample with new Composition Data.
     * Point-to-point DFU support with overlay file :file:`overlay-ptp_dfu.conf`.
+    * Support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
 * :ref:`bluetooth_mesh_light_lc` sample:
 
