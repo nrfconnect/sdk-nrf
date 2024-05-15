@@ -168,6 +168,10 @@ Glossary
    Contribution
       A change to the codebase sent to a remote :term:`repository <Repository>` for inclusion.
 
+   Convergence Layer (CVG)
+      The CVG layer is not always present in all protocol stacks.
+      It can be found above the :term:`Data Link Control Layer (DLC)` and acts as an abstraction layer between the network layer and the lower layers (PHY, MAC, DLC).
+
    Core
       Subsets of :term:`domains <Domain>`.
       Most memory and peripherals can be flexibly allocated to cores at compile time.
@@ -184,6 +188,10 @@ Glossary
 
    Data Terminal Ready (DTR)
       A control signal in RS-232 serial communications transmitted from data terminal equipment, such as a computer, to data communication equipment.
+
+   Data Link Control Layer (DLC)
+      The DLC layer resides above the :term:`Medium Access Control layer (MAC)` in a protocol stack.
+      It is responsible for reliable and error-free data transfer between network entities.
 
    Delivery Traffic Indication Message (DTIM)
       A type of :term:`Traffic Indication Map (TIM)` that informs the clients about the presence of buffered multicast or broadcast data on the access point.
@@ -492,6 +500,10 @@ Glossary
    Media Access Control address (MAC address)
       The unique 48-bit serial number in the network circuitry of every Ethernet and Wi-Fi device.
 
+   Medium Access Control layer (MAC)
+      The MAC layer sits above the :term:`Physical layer (PHY)` in a protocol stack.
+      It is responsible for managing access to the shared physical medium and ensuring orderly communication between devices.
+
    Memory Privilege Controller (MPC)
       Performs security configuration, enforcement, and bus decoding.
       It implements security filtering, checking bus accesses against the configured access properties and blocking any unauthorized accesses.
@@ -641,6 +653,10 @@ Glossary
 
    Personal Unblocking Key (PUK)
       A key used to reset a PIN that has been lost or forgotten for a SIM card.
+
+   Physical layer (PHY)
+      The PHY layer resides at the bottom of a protocol stack.
+      It is responsible for the physical transmission and reception of data bits across the physical medium (for example, cables, radio waves).
 
    Physically Unclonable Function (PUF)
       A function device that exploits inherent randomness introduced during manufacturing to give a physical entity a unique "fingerprint" or a trust anchor.
