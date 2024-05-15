@@ -106,6 +106,7 @@ struct nrf_wifi_ctx_zep {
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 	unsigned char *extended_capa, *extended_capa_mask;
 	unsigned int extended_capa_len;
+	struct k_mutex rpu_lock;
 };
 
 struct nrf_wifi_drv_priv_zep {

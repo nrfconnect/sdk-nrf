@@ -576,6 +576,8 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 		LOG_ERR("%s: nrf_wifi_fmac_dev_init failed\n", __func__);
 		goto out;
 	}
+
+	k_mutex_init(&rpu_ctx_zep->rpu_lock);
 out:
 	return status;
 }
