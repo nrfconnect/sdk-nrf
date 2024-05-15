@@ -961,7 +961,7 @@ static void report_issued(const void *subscriber_id, uint8_t report_id, bool err
 			/* To maintain the sanity of HID state, clear
 			 * all recorded events and items.
 			 */
-			LOG_ERR("Error while sending report");
+			LOG_WRN("Error while sending report");
 
 			clear_report_data(rs->linked_rd);
 

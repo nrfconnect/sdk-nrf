@@ -261,6 +261,9 @@ nRF Desktop
     The module relies only on the HID report queue of a HID subscriber.
     This is done to simplify implementation, reduce memory consumption and speed up retrieving enqueued HID reports.
     You can modify the enqueued HID report limit through the :ref:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS <config_desktop_app_options>` Kconfig option.
+  * ``Error while sending report`` log level in :ref:`nrf_desktop_hid_state` from error to warning.
+    The log might appear, for example, during the disconnection of a HID transport.
+    In that case, it does not denote an actual error.
 
 Thingy:53: Matter weather station
 ---------------------------------
