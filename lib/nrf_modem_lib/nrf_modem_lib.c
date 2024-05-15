@@ -4,16 +4,26 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nrfx_ipc.h>
+#include <modem/nrf_modem_lib.h>
 #include <nrf_modem.h>
 #include <nrf_modem_at.h>
 #include <zephyr/init.h>
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
-#include <zephyr/logging/log.h>
 #include <zephyr/toolchain.h>
-#include <modem/nrf_modem_lib.h>
+
+#include <zephyr/logging/log.h>
+LOG_MODULE_DECLARE(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
+
+#define AT_CFUN_READ "AT+CFUN?"
+#define AT_CFUN0_VAL 0
+#define AT_CFUN4_VAL 4
+
+static void nrf_modem_lib_dfu_handler(uint32_t dfu_res);
+
+#ifdef CONFIG_SOC_SERIES_NRF91X
 #include <modem/nrf_modem_lib_trace.h>
+#include <nrfx_ipc.h>
 #include <pm_config.h>
 
 #ifndef CONFIG_TRUSTED_EXECUTION_NONSECURE
@@ -21,22 +31,14 @@
 	Are you building for the correct board ?
 #endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
 
-LOG_MODULE_DECLARE(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
-
 /* Interrupt used for communication with the network layer. */
 #define NRF_MODEM_IPC_IRQ DT_IRQ_BY_IDX(DT_NODELABEL(ipc), 0, irq)
 BUILD_ASSERT(IPC_IRQn == NRF_MODEM_IPC_IRQ, "NRF_MODEM_IPC_IRQ mismatch");
-
-#define AT_CFUN_READ "AT+CFUN?"
-#define AT_CFUN0_VAL 0
-#define AT_CFUN4_VAL 4
 
 /* The heap implementation in `nrf_modem_os.c` require some overhead
  * to allow allocating up to `NRF_MODEM_LIB_SHMEM_TX_SIZE` bytes.
  */
 #define NRF_MODEM_LIB_SHMEM_TX_HEAP_OVERHEAD_SIZE 128
-
-static void nrf_modem_lib_dfu_handler(uint32_t dfu_res);
 
 static const struct nrf_modem_init_params init_params = {
 	.ipc_irq_prio = CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
@@ -69,6 +71,27 @@ static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
 	.shmem.size = PM_NRF_MODEM_LIB_SRAM_SIZE,
 	.fault_handler = nrf_modem_fault_handler
 };
+#endif /* CONFIG_SOC_SERIES_NRF91X */
+
+#ifdef CONFIG_SOC_SERIES_NRF92X
+
+static const struct nrf_modem_init_params init_params = {
+	.shmem.ctrl = {
+		.base = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm)),
+		.size = CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE,
+	},
+	.shmem.tx = {
+		.base = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)),
+		.size = DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)),
+	},
+	.shmem.rx = {
+		.base = DT_REG_ADDR(DT_NODELABEL(cpucell_cpuapp_ipc_shm_heap)),
+		.size = DT_REG_SIZE(DT_NODELABEL(cpucell_cpuapp_ipc_shm_heap)),
+	},
+	.fault_handler = nrf_modem_fault_handler,
+	.dfu_handler = nrf_modem_lib_dfu_handler,
+};
+#endif /* CONFIG_SOC_SERIES_NRF92X */
 
 #if CONFIG_NRF_MODEM_LIB_TRACE
 extern void nrf_modem_lib_trace_init(void);
@@ -129,11 +152,13 @@ int nrf_modem_lib_init(void)
 {
 	int err;
 
+#ifdef CONFIG_SOC_SERIES_NRF91X
 	/* Setup the network IRQ used by the Modem library.
 	 * Note: No call to irq_enable() here, that is done through nrf_modem_init().
 	 */
 	IRQ_CONNECT(NRF_MODEM_IPC_IRQ, CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
 		    nrfx_isr, nrfx_ipc_irq_handler, 0);
+#endif /* CONFIG_SOC_SERIES_NRF91X */
 
 	err = nrf_modem_init(&init_params);
 	if (err) {
@@ -161,7 +186,11 @@ int nrf_modem_lib_init(void)
 
 int nrf_modem_lib_bootloader_init(void)
 {
+#ifdef CONFIG_SOC_SERIES_NRF91X
 	return nrf_modem_bootloader_init(&bootloader_init_params);
+#else
+	return -ENOSYS;
+#endif
 }
 
 int nrf_modem_lib_shutdown(void)
