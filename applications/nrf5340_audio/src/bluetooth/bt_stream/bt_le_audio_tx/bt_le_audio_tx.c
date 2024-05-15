@@ -20,16 +20,6 @@ LOG_MODULE_REGISTER(bt_le_audio_tx, CONFIG_BLE_LOG_LEVEL);
 ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
-#ifdef CONFIG_BT_BAP_UNICAST_SERVER
-#define SRC_STREAM_COUNT CONFIG_BT_ASCS_ASE_SRC_COUNT
-#elif CONFIG_BT_BAP_UNICAST_CLIENT
-#define SRC_STREAM_COUNT CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT
-#elif CONFIG_BT_BAP_BROADCAST_SOURCE
-#define SRC_STREAM_COUNT CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT
-#else
-#define SRC_STREAM_COUNT 0
-#endif
-
 #define HANDLE_INVALID 0xFFFF
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
@@ -39,9 +29,9 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
 				  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
 #define NET_BUF_POOL_PTR_ITERATE(i, ...) IDENTITY(&iso_tx_pool_##i)
-LISTIFY(SRC_STREAM_COUNT, NET_BUF_POOL_ITERATE, (;))
+LISTIFY(CONFIG_BT_ISO_MAX_CHAN, NET_BUF_POOL_ITERATE, (;))
 /* clang-format off */
-static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(SRC_STREAM_COUNT,
+static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
 						       NET_BUF_POOL_PTR_ITERATE, (,)) };
 /* clang-format on */
 
@@ -55,7 +45,7 @@ struct tx_inf {
 };
 
 static bool initialized;
-static struct tx_inf tx_info_arr[SRC_STREAM_COUNT];
+static struct tx_inf tx_info_arr[CONFIG_BT_ISO_MAX_CHAN];
 
 /**
  * @brief Sends audio data over a single BAP stream.
@@ -210,7 +200,7 @@ int bt_le_audio_tx_send(struct bt_bap_stream **bap_streams, uint8_t *audio_mappi
 		return 0;
 	}
 
-	if (streams_to_tx > SRC_STREAM_COUNT) {
+	if (streams_to_tx > CONFIG_BT_ISO_MAX_CHAN) {
 		return -ENOMEM;
 	}
 
@@ -365,7 +355,7 @@ int bt_le_audio_tx_init(void)
 		return -EALREADY;
 	}
 
-	for (int i = 0; i < SRC_STREAM_COUNT; i++) {
+	for (int i = 0; i < CONFIG_BT_ISO_MAX_CHAN; i++) {
 		tx_info_arr[i].iso_tx_pool = iso_tx_pools[i];
 		tx_info_arr[i].hci_wrn_printed = false;
 		tx_info_arr[i].iso_conn_handle = HANDLE_INVALID;

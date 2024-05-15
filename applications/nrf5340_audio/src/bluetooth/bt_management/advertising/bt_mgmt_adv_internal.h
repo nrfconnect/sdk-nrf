@@ -19,7 +19,9 @@ void bt_mgmt_adv_init(void);
  *
  *		This function deletes the old ext_adv and creates a new one.
  *		It also sets the dir_adv_timed_out flag and restarts advertisement.
+ *
+ * @param[in]	ext_adv_index	Index of the ext_adv to restart.
  */
-void bt_mgmt_dir_adv_timed_out(void);
+void bt_mgmt_dir_adv_timed_out(uint8_t ext_adv_index);
 
 #endif /* _BT_MGMT_ADV_INTERNAL_H_ */

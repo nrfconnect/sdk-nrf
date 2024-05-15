@@ -61,6 +61,7 @@ enum bt_mgmt_evt_type {
 struct bt_mgmt_msg {
 	enum bt_mgmt_evt_type event;
 	struct bt_conn *conn;
+	uint8_t index;
 	struct bt_le_ext_adv *ext_adv;
 	struct bt_le_per_adv_sync *pa_sync;
 	uint32_t broadcast_id;
