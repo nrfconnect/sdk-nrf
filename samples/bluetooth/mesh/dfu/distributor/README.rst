@@ -10,8 +10,6 @@ Bluetooth Mesh: Device Firmware Update (DFU) distributor
 The Bluetooth® Mesh DFU distributor sample demonstrates how device firmware can be distributed over a Bluetooth Mesh network.
 The sample implements the Firmware Distribution role of the :ref:`Bluetooth Mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
 
-The specification that the Bluetooth Mesh DFU subsystem is based on is not adopted yet, and therefore this feature should be used for experimental purposes only.
-
 Requirements
 ************
 
