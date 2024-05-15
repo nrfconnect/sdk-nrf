@@ -886,6 +886,39 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 }
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+static int nrf_wifi_util_trigger_rpu_recovery(const struct shell *shell,
+					      size_t argc,
+					      const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	if (!ctx || !ctx->rpu_ctx) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "RPU context not initialized\n");
+		return -ENOEXEC;
+	}
+
+	fmac_dev_ctx = ctx->rpu_ctx;
+
+	status = nrf_wifi_fmac_rpu_recovery_callback(fmac_dev_ctx, NULL, 0);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Failed to trigger RPU recovery\n");
+		return -ENOEXEC;
+	}
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "RPU recovery triggered\n");
+
+	return 0;
+}
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_util_subcmds,
 	SHELL_CMD_ARG(he_ltf,
@@ -981,6 +1014,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      1,
 		      1),
 #endif /* CONFIG_NRF700X_RADIO_TEST */
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+	SHELL_CMD_ARG(rpu_recovery_test,
+		      NULL,
+		      "Trigger RPU recovery",
+		      nrf_wifi_util_trigger_rpu_recovery,
+		      1,
+		      0),
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 	SHELL_SUBCMD_SET_END);
 
 
