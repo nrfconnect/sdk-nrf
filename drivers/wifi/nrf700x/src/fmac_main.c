@@ -653,6 +653,8 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 		goto err;
 	}
 
+	k_mutex_init(&rpu_ctx_zep->rpu_lock);
+
 	return status;
 err:
 	if (rpu_ctx) {
