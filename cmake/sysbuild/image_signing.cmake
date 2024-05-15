@@ -120,6 +120,9 @@ function(zephyr_mcuboot_tasks)
 
     list(APPEND byproducts ${output}.bin)
     zephyr_runner_file(bin ${output}.bin)
+    set(BYPRODUCT_KERNEL_SIGNED_BIN_NAME "${output}.signed.bin"
+        CACHE FILEPATH "Signed kernel bin file" FORCE
+    )
 
     # Add the west sign calls and their byproducts to the post-processing
     # steps for zephyr.elf.
@@ -140,7 +143,9 @@ function(zephyr_mcuboot_tasks)
       endif()
 
       list(APPEND byproducts ${output}.encrypted.bin)
-      zephyr_runner_file(bin ${output}.encrypted.bin)
+      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_BIN_NAME "${output}.signed.encrypted.bin"
+          CACHE FILEPATH "Signed and encrypted kernel bin file" FORCE
+      )
 
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
         ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${unconfirmed_args})
@@ -151,8 +156,13 @@ function(zephyr_mcuboot_tasks)
   if(CONFIG_BUILD_OUTPUT_HEX)
     set(unconfirmed_args ${input}.hex ${output}.hex)
     list(APPEND byproducts ${output}.hex)
+
     # Do not run zephyr_runner_file here as PM will provide the merged hex file from
-    # sysbuild's scope
+    # sysbuild's scope unless this is a variant image
+    if(CONFIG_NCS_IS_VARIANT_IMAGE)
+      zephyr_runner_file(hex ${output}.hex)
+    endif()
+
     set(BYPRODUCT_KERNEL_SIGNED_HEX_NAME "${output}.hex"
         CACHE FILEPATH "Signed kernel hex file" FORCE
     )
@@ -170,7 +180,9 @@ function(zephyr_mcuboot_tasks)
     if(NOT "${keyfile_enc}" STREQUAL "")
       set(unconfirmed_args ${input}.hex ${output}.encrypted.hex)
       list(APPEND byproducts ${output}.encrypted.hex)
-      zephyr_runner_file(hex ${output}.encrypted.hex)
+      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output}.signed.encrypted.hex"
+          CACHE FILEPATH "Signed and encrypted kernel hex file" FORCE
+      )
 
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
         ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${unconfirmed_args})
