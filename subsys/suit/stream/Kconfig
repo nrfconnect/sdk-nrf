@@ -77,6 +77,44 @@ config SUIT_SDFW_UPDATE_MAX_SIZE
 
 endif # SUIT_STREAM_SINK_SDFW
 
+menuconfig SUIT_STREAM_SINK_SDFW_RECOVERY
+	bool "Enable SDFW Recovery sink"
+	depends on SUIT_UTILS
+	depends on SOC_SERIES_NRF54HX
+	select PSA_WANT_ALG_SHA_512
+	select SUIT_STREAM_SINK_DIGEST
+
+if SUIT_STREAM_SINK_SDFW_RECOVERY
+
+config SUIT_SDFW_RECOVERY_UPDATE_SIGNED_MANIFEST_OFFSET
+	hex "Offset between start of the SDFW Recovery update candidate image and Signed Manifest section"
+	default 0
+
+config SUIT_SDFW_RECOVERY_UPDATE_DIGEST_OFFSET
+	hex "Offset between start of the SDFW Recovery update candidate image and SM.TBS.FW.DIGEST section"
+	default 0x20
+
+config SUIT_SDFW_RECOVERY_UPDATE_PUBLIC_KEY_OFFSET
+	hex "Offset between start of the SDFW Recovery update candidate image and Public Key section"
+	default 0x100
+
+config SUIT_SDFW_RECOVERY_UPDATE_SIGNATURE_OFFSET
+	hex "Offset between start of the SDFW Recovery update candidate image and Signature section"
+	default 0x120
+
+config SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET
+	hex "Offset between start of the SDFW Recovery update candidate image and Firmware section"
+	default 0x160
+
+config SUIT_SDFW_RECOVERY_UPDATE_MAX_SIZE
+	hex "Maximum size of SDFW Recovery update"
+	range 0x00000080 0x000FD000
+	default 0x000FD000
+	help
+	  Range is based on documentation of register UROT.SM.TBS.LAYOUT.RSLOT.MAX
+
+endif # SUIT_STREAM_SINK_SDFW_RECOVERY
+
 config SUIT_STREAM_SINK_DIGEST
 	bool "Enable digest sink"
 	select PSA_WANT_ALG_SHA_256 if SOC_FAMILY_NORDIC_NRF
