@@ -43,9 +43,9 @@ config SUIT_MPI_$(manifest)_SIGNATURE_CHECK_ENABLED_ON_UPDATE_AND_BOOT
 
 endchoice # SUIT_MPI_$(manifest)_SIGNATURE_CHECK
 
-config SUIT_MPI_$(manifest)_ADDRESS
+config SUIT_MPI_$(manifest)_OFFSET
 	hex # Constant for all devices using Nordic's SDFW
-	default $(manifest-mpi-address)
+	default $(manifest-mpi-offset)
 
 config SUIT_MPI_$(manifest)_PATH
 	string "Path to the output MPI HEX file"
