@@ -493,6 +493,7 @@ int nrf_cloud_pgps_notify_prediction(void)
 	 */
 	int err;
 	int pnum;
+	struct nrf_modem_gnss_agnss_data_frame processed;
 	struct nrf_cloud_pgps_prediction *prediction = NULL;
 	struct nrf_cloud_pgps_event evt = {
 		.type = PGPS_EVT_AVAILABLE,
@@ -503,7 +504,12 @@ int nrf_cloud_pgps_notify_prediction(void)
 		return -EINVAL;
 	}
 
-	if (prediction_timer_is_running()) {
+	nrf_cloud_agnss_processed(&processed);
+
+	/* If the prediction timer is running and a prediction has already been injected,
+	 * there's no need to find the next prediction yet.
+	 */
+	if (prediction_timer_is_running() && processed.system[0].sv_mask_ephe != 0) {
 		LOG_INF("Not time to find next prediction yet.");
 		return 0;
 	}
