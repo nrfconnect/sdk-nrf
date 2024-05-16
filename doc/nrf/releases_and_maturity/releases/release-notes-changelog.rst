@@ -762,6 +762,11 @@ Modem libraries
     * Convenience function to get :c:struct:`location_data_details` from the :c:struct:`location_event_data`.
     * Location data details for event :c:enum:`LOCATION_EVT_RESULT_UNKNOWN`.
 
+* :ref:`pdn_readme` library:
+
+  * Updated the ``dns4_pri``, ``dns4_sec``, and ``ipv4_mtu`` parameters of the :c:func:`pdn_dynamic_params_get` function to be optional.
+    If the MTU is not reported by the SIM card, the ``ipv4_mtu`` parameter is set to zero.
+
 * :ref:`lte_lc_readme` library:
 
   * Removed ``AT%XRAI`` related deprecated functions ``lte_lc_rai_param_set()`` and ``lte_lc_rai_req()``, and Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ_VALUE`.
