@@ -7,3 +7,4 @@
    signed_images.md
    readme-zephyr.md
    testplan-zephyr.md
+   PORTING.md
