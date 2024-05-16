@@ -152,8 +152,6 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 /* Update the LED states. Returns 0 if it was updated, otherwise -1. */
 static int led_update(uint8_t index, uint8_t state)
 {
-	int ret;
-
 	if (state <= 1) {
 		led_states[index] = state;
 	} else {
@@ -162,6 +160,8 @@ static int led_update(uint8_t index, uint8_t state)
 	}
 
 #if defined(CONFIG_DK_LIBRARY)
+	int ret;
+
 	ret = dk_set_led(index, led_states[index]);
 	if (ret) {
 		LOG_ERR("Failed to update LED %d state to %d", index, led_states[index]);

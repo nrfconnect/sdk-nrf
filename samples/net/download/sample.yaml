@@ -5,8 +5,10 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9161dk/nrf9161/ns
+      - native_sim
     platform_allow:
       - nrf9161dk/nrf9161/ns
+      - native_sim
     tags: ci_build
   sample.net.download_client.ci:
     build_only: true

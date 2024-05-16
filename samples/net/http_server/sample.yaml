@@ -41,3 +41,10 @@ tests:
       - thingy91/nrf9160/ns
     extra_args: OVERLAY_CONFIG=overlay-tls-nrf91.conf
     tags: ci_build
+  sample.net.http_server.emulation:
+    build_only: true
+    integration_platforms:
+      - native_sim
+    platform_allow:
+      - native_sim
+    tags: ci_build
