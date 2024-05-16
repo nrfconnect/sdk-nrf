@@ -964,6 +964,13 @@ Libraries for networking
 
   * Removed the deprecated ``download_client_connect`` function.
 
+* :ref:`lib_fota_download` library:
+
+  * Added:
+
+    * The function :c:func:`fota_download_b1_file_parse` to parse a bootloader update file path.
+    * Experimental support for performing FOTA updates using an external download client with the Kconfig option :kconfig:option:`CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL` and functions :c:func:`fota_download_external_start` and Function :c:func:`fota_download_external_evt_handle`.
+
 Libraries for NFC
 -----------------
 
