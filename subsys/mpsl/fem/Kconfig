@@ -122,7 +122,6 @@ config MPSL_FEM_NRF2220
 	select NRFX_GPIOTE
 	select NRFX_PPI if SOC_SERIES_NRF52X
 	select NRFX_DPPI if SOC_SERIES_NRF53X
-	select NRFX_TWIM0 if MPSL_FEM_NRF2220_TWI_SUPPORT
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "nRF2220 front-end module"
@@ -135,7 +134,6 @@ config MPSL_FEM_NRF2240
 	select NRFX_GPIOTE
 	select NRFX_PPI if SOC_SERIES_NRF52X
 	select NRFX_DPPI if SOC_SERIES_NRF53X
-	select NRFX_TWIM0 if MPSL_FEM_NRF2240_TWI_SUPPORT
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "nRF2240 front-end module"
@@ -270,17 +268,17 @@ config MPSL_FEM_DEVICE_CONFIG_254
 	  Device configuration 254 may be required to improve RX blocking,
 	  especially when an external LNA is present.
 
-config MPSL_FEM_USE_TWIM_STUB
+config MPSL_FEM_USE_TWI_DRV
 	bool
-	depends on !NRFX_TWIM
-	depends on (MPSL_FEM_NRF2220 && !MPSL_FEM_NRF2220_TWI_SUPPORT) || \
-			   (MPSL_FEM_NRF2240 && !MPSL_FEM_NRF2240_TWI_SUPPORT)
+	depends on (MPSL_FEM_NRF2220 && MPSL_FEM_NRF2220_TWI_SUPPORT) || \
+		   (MPSL_FEM_NRF2240 && MPSL_FEM_NRF2240_TWI_SUPPORT)
+	select I2C
 	default y
 
 config MPSL_FEM_INIT_PRIORITY
 	int "Init priority of the Front-End Module support code"
 	depends on MPSL_FEM
-	default 49 if (MPSL_FEM_NRF2220 && MPSL_FEM_NRF2220_TWI_SUPPORT) || \
+	default 51 if (MPSL_FEM_NRF2220 && MPSL_FEM_NRF2220_TWI_SUPPORT) || \
 		      (MPSL_FEM_NRF2240 && MPSL_FEM_NRF2240_TWI_SUPPORT)
 	default KERNEL_INIT_PRIORITY_DEVICE
 
