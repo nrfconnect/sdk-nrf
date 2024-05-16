@@ -79,7 +79,7 @@ struct hids_peripheral {
 	uint8_t sub_id;
 };
 
-static struct subscriber subscribers[CONFIG_USB_HID_DEVICE_COUNT];
+static struct subscriber subscribers[CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT];
 static bt_addr_le_t peripheral_address[CONFIG_BT_MAX_PAIRED];
 static struct hids_peripheral peripherals[CONFIG_BT_MAX_CONN];
 static uint8_t peripheral_cache[CONFIG_BT_MAX_CONN];
@@ -90,7 +90,7 @@ static void hogp_out_rep_write_cb(struct bt_hogp *hogp, struct bt_hogp_rep_info 
 static int send_hid_out_report(struct bt_hogp *hogp, const uint8_t *data, size_t size);
 static void send_empty_hid_out_reports(struct hids_peripheral *per, struct subscriber *sub);
 
-#if CONFIG_USB_HID_DEVICE_COUNT > 1
+#if CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT > 1
 static void verify_data(const struct bt_bond_info *info, void *user_data)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(peripheral_address); i++) {
@@ -138,7 +138,7 @@ static int verify_peripheral_address(void)
 
 SETTINGS_STATIC_HANDLER_DEFINE(hid_forward, MODULE_NAME, NULL, settings_set,
 			       verify_peripheral_address, NULL);
-#endif /* CONFIG_USB_HID_DEVICE_COUNT > 1 */
+#endif /* CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT > 1 */
 
 static int store_peripheral_address(void)
 {
