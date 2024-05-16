@@ -78,6 +78,7 @@ external_content_contents = [
     (MCUBOOT_BASE / "docs", "encrypted_images.md"),
     (MCUBOOT_BASE / "docs", "imgtool.md"),
     (MCUBOOT_BASE / "docs", "ecdsa.md"),
+    (MCUBOOT_BASE / "docs", "PORTING.md"),
     (MCUBOOT_BASE / "docs", "readme-zephyr.md"),
     (MCUBOOT_BASE / "docs", "testplan-mynewt.md"),
     (MCUBOOT_BASE / "docs", "testplan-zephyr.md"),
