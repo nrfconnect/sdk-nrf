@@ -15,7 +15,7 @@
 #include "nrf_fuel_gauge.h"
 
 /* nPM1300 CHARGER.BCHGCHARGESTATUS.CONSTANTCURRENT register bitmask */
-#define NPM1300_CHG_STATUS_CC_MASK BIT_MASK(3)
+#define NPM1300_CHG_STATUS_CC_MASK BIT(3)
 
 static float max_charge_current;
 static float term_charge_current;
