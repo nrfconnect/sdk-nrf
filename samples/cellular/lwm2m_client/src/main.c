@@ -385,7 +385,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_FAILURE:
 		LOG_WRN("Registration failure!");
-		state_trigger_and_unlock(NETWORK_ERROR);
+		state_trigger_and_unlock(CONNECTING);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
@@ -395,7 +395,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_REG_TIMEOUT:
 		LOG_DBG("Registration update failure!");
-		state_trigger_and_unlock(NETWORK_ERROR);
+		state_trigger_and_unlock(CONNECTING);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE:
