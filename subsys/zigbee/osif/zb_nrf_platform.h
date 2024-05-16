@@ -94,4 +94,17 @@ uint32_t zigbee_event_poll(uint32_t timeout_us);
  */
 zb_bool_t zigbee_is_nvram_initialised(void);
 
+/**@brief Clears the PAN_ID value held in the Zigbee PIB cache.
+ *
+ * @details The value set is consistent with the behavior of
+ *          @c zb_nwk_nib_init() from Zigbee stack NWK layer.
+ *
+ * Function can be used to ensure that the PIB cache does not store any valid
+ * PAN_ID value in scenarios where the device is in "absent from the network"
+ * phase (not yet joined or has already left).
+ *
+ * @return    The newly set PAN_ID value.
+ */
+uint32_t zigbee_pibcache_pan_id_clear(void);
+
 #endif /* ZB_NRF_PLATFORM_H__ */
