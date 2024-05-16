@@ -14,6 +14,7 @@ LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
 
 #define UART_DEVICE_NODE DT_CHOSEN(nordic_modem_trace_uart)
 #define TRACE_UART_BAUD_REQUIRED 1000000
+#define CHUNK_SZ CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_CHUNK_SZ
 
 static const struct device *const uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
 
@@ -131,9 +132,7 @@ int trace_backend_write(const void *data, size_t len)
 	int err;
 	int ret;
 
-	/* Split RAM buffer into smaller chunks to be transferred using DMA. */
 	uint8_t *buf = (uint8_t *)data;
-	const size_t MAX_BUF_LEN = (1 << UARTE1_EASYDMA_MAXCNT_SIZE) - 1;
 	size_t remaining_bytes = len;
 
 	if (suspended) {
@@ -143,7 +142,8 @@ int trace_backend_write(const void *data, size_t len)
 	k_sem_take(&tx_sem, K_FOREVER);
 
 	while (remaining_bytes) {
-		size_t transfer_len = MIN(remaining_bytes, MAX_BUF_LEN);
+		/* Split buffer into smaller DMA-able chunks */
+		size_t transfer_len = MIN(remaining_bytes, CHUNK_SZ);
 		size_t idx = len - remaining_bytes;
 
 		ret = uart_send(&buf[idx], transfer_len);

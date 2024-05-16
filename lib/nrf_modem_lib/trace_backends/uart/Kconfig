@@ -16,6 +16,16 @@ config NRF_MODEM_LIB_TRACE_BACKEND_UART
 
 if NRF_MODEM_LIB_TRACE_BACKEND_UART
 
+config NRF_MODEM_LIB_TRACE_BACKEND_UART_CHUNK_SZ
+	int "Trace chunk size"
+	# This default is the max DMA transfer length
+	default 8191
+	range 8 8191
+	help
+	  Trace data is processed in chunks. Every time a whole chunk of trace data is processed, it is freed from the shared memory.
+	  By reducing the chunk size, it is possible to free the shared memory more often, albeit by a smaller amount.
+	  This, however, can improve the availability of shared memory, thus reducing the chance of losing traces.
+
 choice NRF_MODEM_LIB_TRACE_BACKEND_UART_VERSION
 	prompt "UART trace backend version [DEPRECATED]"
 	optional
