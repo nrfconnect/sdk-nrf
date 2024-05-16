@@ -21,7 +21,14 @@
 #include <mpsl/mpsl_lib.h>
 #endif
 
-#define EMDS_DEV_IRQ 26
+#if defined(CONFIG_SOC_SERIES_NRF52X)
+	#define EMDS_DEV_IRQ SWI1_EGU1_IRQn
+#elif defined(CONFIG_SOC_SERIES_NRF53X)
+	#define EMDS_DEV_IRQ EGU1_IRQn
+#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+	#define EMDS_DEV_IRQ SWI01_IRQn
+#endif
+
 #define EMDS_DEV_PRIO 0
 #define EMDS_ISR_ARG 0
 #define EMDS_IRQ_FLAGS 0
