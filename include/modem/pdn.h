@@ -169,12 +169,12 @@ int pdn_deactivate(uint8_t cid);
 int pdn_id_get(uint8_t cid);
 
 /**
- * @brief Retrieves dynamic parameters of a given PDP context.
+ * @brief Retrieve dynamic parameters of a given PDP context.
  *
  * @param cid The PDP context ID.
- * @param[out] dns4_pri The address of the primary IPv4 DNS server.
- * @param[out] dns4_sec The address of the secondary IPv4 DNS server.
- * @param[out] ipv4_mtu The IPv4 MTU.
+ * @param[out] dns4_pri The address of the primary IPv4 DNS server. Optional, can be NULL.
+ * @param[out] dns4_sec The address of the secondary IPv4 DNS server. Optional, can be NULL.
+ * @param[out] ipv4_mtu The IPv4 MTU. Optional, can be NULL.
  *
  * @return Zero on success or an error code on failure.
  */

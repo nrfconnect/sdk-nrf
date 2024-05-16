@@ -212,8 +212,14 @@ static int ppp_start_internal(void)
 		return ret;
 	}
 
-	/* Set the PPP MTU to that of the LTE link. */
-	mtu = MIN(mtu, sizeof(ppp_data_buf));
+	if (mtu) {
+		/* Set the PPP MTU to that of the LTE link. */
+		mtu = MIN(mtu, sizeof(ppp_data_buf));
+	} else {
+		LOG_DBG("Could not retrieve MTU, using default.");
+		mtu = sizeof(ppp_data_buf);
+	}
+
 	net_if_set_mtu(ppp_iface, mtu);
 	LOG_DBG("MTU set to %u.", mtu);
 
