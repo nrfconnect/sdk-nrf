@@ -1802,6 +1802,11 @@ int lte_lc_factory_reset(enum lte_lc_factory_reset_type type)
 	return nrf_modem_at_printf("AT%%XFACTORYRESET=%d", type) ? -EFAULT : 0;
 }
 
+#define LTE_LC_EVENT_STACK_SIZE 1024 /* TODO: Make size Kconfig option */
+K_THREAD_STACK_DEFINE(lte_lc_event_stack, LTE_LC_EVENT_STACK_SIZE);
+
+struct k_work_q lte_lc_event_work_q;
+
 static int lte_lc_sys_init(void)
 {
 	struct k_work_queue_config cfg = {
@@ -1814,6 +1819,17 @@ static int lte_lc_sys_init(void)
 		K_THREAD_STACK_SIZEOF(lte_lc_psm_get_stack),
 		K_LOWEST_APPLICATION_THREAD_PRIO,
 		&cfg);
+
+	struct k_work_queue_config cfg_event = {
+		.name = "lte_lc_event_work_q",
+	};
+
+	k_work_queue_start(
+		&lte_lc_event_work_q,
+		lte_lc_event_stack,
+		K_THREAD_STACK_SIZEOF(lte_lc_event_stack),
+		K_LOWEST_APPLICATION_THREAD_PRIO,
+		&cfg_event);
 
 	return 0;
 }

@@ -30,6 +30,23 @@ struct event_handler {
 
 static sys_slist_t handler_list;
 
+struct lte_lc_event_fifo_item {
+	void *fifo_reserved;
+	struct lte_lc_evt evt;
+	struct lte_lc_ncell *neighbor_cells;
+	struct lte_lc_cell *gci_cells;
+};
+
+static void lte_lc_event_work_fn(struct k_work *work);
+
+#define LTE_LC_EVENT_HEAP_SIZE 512 /* TODO: Make size Kconfig option */
+
+static K_FIFO_DEFINE(lte_lc_event_fifo);
+static K_HEAP_DEFINE(lte_lc_event_heap, LTE_LC_EVENT_HEAP_SIZE);
+static K_WORK_DEFINE(lte_lc_event_work, lte_lc_event_work_fn);
+
+extern struct k_work_q lte_lc_event_work_q;
+
 /**
  * @brief Find the handler from the event handler list.
  *
@@ -108,28 +125,105 @@ int event_handler_list_remove_handler(lte_lc_evt_handler_t handler)
 	return 0;
 }
 
+struct lte_lc_event_fifo_item *lte_lc_event_allocate(const struct lte_lc_evt *const evt)
+{
+	struct lte_lc_event_fifo_item *lte_lc_event_item;
+
+	lte_lc_event_item = k_heap_alloc(
+				&lte_lc_event_heap,
+				sizeof(struct lte_lc_event_fifo_item),
+				K_NO_WAIT);
+	if (!lte_lc_event_item) {
+		LOG_ERR("No heap space for lte_lc event type=%d", evt->type);
+		__ASSERT(lte_lc_event_item, "No heap space for lte_lc event type=%d", evt->type);
+		return NULL;
+	}
+
+	memcpy(&lte_lc_event_item->evt, evt, sizeof(struct lte_lc_evt));
+
+	if (evt->type == LTE_LC_EVT_NEIGHBOR_CELL_MEAS) {
+		lte_lc_event_item->neighbor_cells = NULL;
+		lte_lc_event_item->gci_cells = NULL;
+		if (evt->cells_info.ncells_count > 0) {
+			lte_lc_event_item->neighbor_cells = k_malloc(
+				evt->cells_info.ncells_count * sizeof(struct lte_lc_ncell));
+			if (!lte_lc_event_item->neighbor_cells) {
+				LOG_WRN("No heap space for neighbor cells");
+				goto cleanup_ncellmeas;
+			}
+			memcpy(lte_lc_event_item->neighbor_cells,
+			       evt->cells_info.neighbor_cells,
+			       evt->cells_info.ncells_count * sizeof(struct lte_lc_ncell));
+		}
+		if (evt->cells_info.gci_cells_count > 0) {
+			lte_lc_event_item->gci_cells = k_malloc(
+				evt->cells_info.gci_cells_count * sizeof(struct lte_lc_cell));
+			if (!lte_lc_event_item->gci_cells) {
+				LOG_WRN("No heap space for GCI cells");
+				goto cleanup_ncellmeas;
+			}
+			memcpy(lte_lc_event_item->gci_cells,
+			       evt->cells_info.gci_cells,
+			       evt->cells_info.gci_cells_count * sizeof(struct lte_lc_cell));
+		}
+	}
+
+	return lte_lc_event_item;
+
+cleanup_ncellmeas:
+	k_free(lte_lc_event_item->neighbor_cells);
+	k_free(lte_lc_event_item->gci_cells);
+	k_heap_free(&lte_lc_event_heap, lte_lc_event_item);
+
+	return NULL;
+}
+
+void lte_lc_event_free(struct lte_lc_event_fifo_item *lte_lc_event_item)
+{
+	if (lte_lc_event_item->evt.type == LTE_LC_EVT_NEIGHBOR_CELL_MEAS) {
+		k_free(lte_lc_event_item->neighbor_cells);
+		k_free(lte_lc_event_item->gci_cells);
+	}
+	k_heap_free(&lte_lc_event_heap, lte_lc_event_item);
+}
+
 /**@brief dispatch events. */
 void event_handler_list_dispatch(const struct lte_lc_evt *const evt)
 {
-	struct event_handler *curr, *tmp;
+	struct lte_lc_event_fifo_item *lte_lc_event_item;
 
 	if (event_handler_list_is_empty()) {
 		return;
 	}
 
-	k_mutex_lock(&list_mtx, K_FOREVER);
+	lte_lc_event_item = lte_lc_event_allocate(evt);
 
-	/* Dispatch events to all registered handlers */
-	LOG_DBG("Dispatching event: type=%d", evt->type);
-	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&handler_list, curr, tmp, node) {
-		LOG_DBG(" - handler=0x%08X", (uint32_t)curr->handler);
-		curr->handler(evt);
-	}
-	LOG_DBG("Done");
-
-	k_mutex_unlock(&list_mtx);
+	k_fifo_put(&lte_lc_event_fifo, lte_lc_event_item);
+	k_work_submit_to_queue(&lte_lc_event_work_q, &lte_lc_event_work);
 }
 
+static void lte_lc_event_work_fn(struct k_work *work)
+{
+	struct lte_lc_event_fifo_item *lte_lc_event_item;
+	struct event_handler *curr, *tmp;
+
+	k_mutex_lock(&list_mtx, K_FOREVER);
+
+	while ((lte_lc_event_item = k_fifo_get(&lte_lc_event_fifo, K_NO_WAIT))) {
+		struct lte_lc_evt *evt = &lte_lc_event_item->evt;
+
+		/* Dispatch events to all registered handlers */
+		LOG_DBG("Dispatching event: type=%d", evt->type);
+		SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&handler_list, curr, tmp, node) {
+			LOG_DBG(" - handler=0x%08X", (uint32_t)curr->handler);
+			curr->handler(evt);
+		}
+		LOG_DBG("Done");
+
+		lte_lc_event_free(lte_lc_event_item);
+	}
+	k_mutex_unlock(&list_mtx);
+}
 
 /* Converts integer on string format to integer type.
  * Returns zero on success, otherwise negative error on failure.
