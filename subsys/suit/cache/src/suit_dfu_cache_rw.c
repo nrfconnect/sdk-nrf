@@ -88,7 +88,7 @@ static struct dfu_cache_partition_ext dfu_partitions_ext[] = {
 	},
 	LISTIFY(CONFIG_SUIT_CACHE_MAX_CACHES, PARTITION_DEFINE, (), dfu_cache_partition_)};
 
-static suit_plat_err_t partition_initialize(struct dfu_cache_partition_ext *part);
+static suit_plat_err_t partition_initialize(struct dfu_cache_partition_ext *part, bool force_erase);
 static suit_plat_err_t cache_0_update(uint8_t *address, size_t size);
 static struct dfu_cache_partition_ext *cache_partition_get(uint8_t partition_id);
 static suit_plat_err_t slot_in_cache_partition_allocate(const struct zcbor_string *uri,
@@ -184,7 +184,9 @@ suit_plat_err_t suit_dfu_cache_rw_initialize(void *addr, size_t size)
 
 	for (size_t i = 1; i < ARRAY_SIZE(dfu_partitions_ext); i++) {
 		/* Check if partition already has valid cache and if not initialize */
-		ret = partition_initialize(&dfu_partitions_ext[i]);
+		bool force_erase = IS_ENABLED(CONFIG_SUIT_CACHEX_ERASE_ON_INIT);
+
+		ret = partition_initialize(&dfu_partitions_ext[i], force_erase);
 
 		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_WRN("suit_cache_%u initialization failed: %i", dfu_partitions_ext[i].id,
@@ -341,9 +343,10 @@ static suit_plat_err_t erase_on_sink(uint8_t *address, size_t size)
  * @brief Creates indefinite map at given offset by adding appropriate header and end marker
  *
  * @param part Pointer to cache partition structure
+ * @param force_erase Erase the cache partition, if it's not already erased.
  * @return SUIT_PLAT_SUCCESS on success, otherwise error code
  */
-static suit_plat_err_t partition_initialize(struct dfu_cache_partition_ext *part)
+static suit_plat_err_t partition_initialize(struct dfu_cache_partition_ext *part, bool force_erase)
 {
 	struct dfu_cache_pool cache_pool = {
 		.address = part->address,
@@ -361,7 +364,15 @@ static suit_plat_err_t partition_initialize(struct dfu_cache_partition_ext *part
 				return ret;
 			}
 
-			if (ret == SUIT_PLAT_ERR_NOMEM) {
+			if (ret == SUIT_PLAT_ERR_NOMEM && force_erase) {
+				LOG_INF("Erasing partition %p(size:%d) on init",
+					(void *)part->address, part->size);
+				ret = erase_on_sink(part->address, part->size);
+
+				if (ret != SUIT_PLAT_SUCCESS) {
+					return ret;
+				}
+			} else if (ret == SUIT_PLAT_ERR_NOMEM) {
 				ret = suit_dfu_cache_partition_is_initialized(&cache_pool);
 
 				if (ret == SUIT_PLAT_SUCCESS) {
@@ -597,16 +608,9 @@ static suit_plat_err_t cache_0_update(uint8_t *address, size_t size)
 	}
 
 	if (dfu_partitions_ext[0].size > 0) {
-		suit_plat_err_t ret = SUIT_PLAT_SUCCESS;
-#if CONFIG_SUIT_CACHE0_ERASE_ON_ENVELOPE_STORED
-		ret = erase_on_sink(dfu_partitions_ext[0].address, dfu_partitions_ext[0].size);
+		bool force_erase = IS_ENABLED(CONFIG_SUIT_CACHE0_ERASE_ON_ENVELOPE_STORED);
 
-		if (ret != SUIT_PLAT_SUCCESS) {
-			return ret;
-		}
-#endif /* CONFIG_SUIT_CACHE0_ERASE_ON_ENVELOPE_STORED */
-
-		return partition_initialize(&dfu_partitions_ext[0]);
+		return partition_initialize(&dfu_partitions_ext[0], force_erase);
 	}
 
 	return SUIT_PLAT_SUCCESS;
