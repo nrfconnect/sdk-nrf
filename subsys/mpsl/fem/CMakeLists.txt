@@ -14,7 +14,7 @@ if (CONFIG_MPSL_FEM_NCS_SUPPORTED_FEM_USED)
 
     zephyr_library_include_directories_ifdef(CONFIG_MPSL_FEM common/include)
     zephyr_library_sources_ifdef(CONFIG_MPSL_FEM common/mpsl_fem_utils.c)
-    zephyr_library_sources_ifdef(CONFIG_MPSL_FEM_USE_TWIM_STUB common/nrfx_twim_stub.c)
+    zephyr_library_sources_ifdef(CONFIG_MPSL_FEM_USE_TWI_DRV common/mpsl_fem_twi_drv.c)
 
     zephyr_library_sources_ifdef(CONFIG_MPSL_FEM_NRF21540_GPIO nrf21540_gpio/mpsl_fem_nrf21540_gpio.c)
 

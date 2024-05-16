@@ -15,8 +15,8 @@
 
 #include <mpsl_fem_config_nrf2240.h>
 #include <nrfx_gpiote.h>
-#include <nrfx_twim.h>
 #include <mpsl_fem_utils.h>
+#include <mpsl_fem_twi_drv.h>
 
 #if IS_ENABLED(CONFIG_HAS_HW_NRF_PPI)
 #include <nrfx_ppi.h>
@@ -41,11 +41,6 @@
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if)
 #define MPSL_FEM_TWI_IF     DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), twi_if)
-#define MPSL_FEM_TWI_BUS    DT_BUS(MPSL_FEM_TWI_IF)
-#define MPSL_FEM_TWI_REG    ((NRF_TWIM_Type *) DT_REG_ADDR(MPSL_FEM_TWI_BUS))
-#define MPSL_FEM_TWI_ADDR   ((uint8_t) DT_REG_ADDR(MPSL_FEM_TWI_IF))
-#define MPSL_FEM_TWI_FREQ   DT_PROP(MPSL_FEM_TWI_BUS, clock_frequency)
-static nrfx_twim_t m_twim = NRFX_TWIM_INSTANCE(0);
 #endif
 
 #define FEM_OUTPUT_POWER_DBM     DT_PROP(DT_NODELABEL(nrf_radio_fem), output_power_dbm)
@@ -84,46 +79,7 @@ static void fem_nrf2240_twi_init_regs_configure(mpsl_fem_nrf2240_interface_confi
 
 static void fem_nrf2240_twi_configure(mpsl_fem_nrf2240_interface_config_t *cfg)
 {
-	cfg->twi_config = (mpsl_fem_twi_config_t) {
-		.p_twim = MPSL_FEM_TWI_REG,
-		.freq_hz = MPSL_FEM_TWI_FREQ,
-		.address = MPSL_FEM_TWI_ADDR,
-	};
-
-	static const uint8_t fem_twi_pin_nums[] = {
-		DT_FOREACH_CHILD_VARGS(
-			DT_PINCTRL_BY_NAME(MPSL_FEM_TWI_BUS, default, 0),
-			DT_FOREACH_PROP_ELEM, psels, PIN_NUM
-		)
-	};
-
-	static const uint8_t fem_twi_pin_funcs[] = {
-		DT_FOREACH_CHILD_VARGS(
-			DT_PINCTRL_BY_NAME(MPSL_FEM_TWI_BUS, default, 0),
-			DT_FOREACH_PROP_ELEM, psels, PIN_FUNC
-		)
-	};
-
-	for (size_t i = 0U; i < ARRAY_SIZE(fem_twi_pin_nums); i++) {
-		switch (fem_twi_pin_funcs[i]) {
-		case NRF_FUN_TWIM_SCL:
-			mpsl_fem_extended_pin_to_mpsl_fem_pin(fem_twi_pin_nums[i],
-							      &cfg->twi_config.scl);
-			break;
-		case NRF_FUN_TWIM_SDA:
-			mpsl_fem_extended_pin_to_mpsl_fem_pin(fem_twi_pin_nums[i],
-							      &cfg->twi_config.sda);
-			break;
-		default:
-			break;
-		}
-	}
-}
-#else /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if) */
-
-static void fem_nrf2240_twi_configure_disabled(mpsl_fem_nrf2240_interface_config_t *cfg)
-{
-	cfg->twi_config.p_twim = NULL;
+	cfg->twi_if = MPSL_FEM_TWI_DRV_IF_INITIALIZER(MPSL_FEM_TWI_IF);
 }
 #endif /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if) */
 
@@ -202,8 +158,6 @@ static int fem_nrf2240_configure(void)
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if)
 	fem_nrf2240_twi_configure(&cfg);
-#else
-	fem_nrf2240_twi_configure_disabled(&cfg);
 #endif
 
 #if DT_NODE_HAS_PROP(MPSL_FEM_TWI_IF, init_regs)
@@ -234,10 +188,6 @@ static int fem_nrf2240_configure(void)
 
 	err = mpsl_fem_nrf2240_interface_config_set(&cfg);
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if)
-	nrfx_twim_uninit(&m_twim);
-#endif
-
 	return err;
 }
 
@@ -250,8 +200,8 @@ static int mpsl_fem_init(void)
 
 #if defined(CONFIG_I2C) && \
 	DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if)
-BUILD_ASSERT(CONFIG_MPSL_FEM_INIT_PRIORITY < CONFIG_I2C_INIT_PRIORITY,
-	"The initialization of nRF2240 Front-End Module must happen before initialization of I2C");
+BUILD_ASSERT(CONFIG_MPSL_FEM_INIT_PRIORITY > CONFIG_I2C_INIT_PRIORITY,
+	"The initialization of nRF2240 Front-End Module must happen after initialization of I2C");
 #endif
 
 SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_MPSL_FEM_INIT_PRIORITY);
