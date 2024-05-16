@@ -62,7 +62,12 @@ enum fota_download_evt_id {
 	FOTA_DOWNLOAD_EVT_ERROR,
 
 	/** FOTA download abandoned due to a cancellation request. */
-	FOTA_DOWNLOAD_EVT_CANCELLED
+	FOTA_DOWNLOAD_EVT_CANCELLED,
+
+	/** Resume the download at offset.
+	 *  Only generated if @kconfig{CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL} is enabled.
+	 */
+	FOTA_DOWNLOAD_EVT_RESUME_OFFSET,
 };
 
 /**
@@ -96,6 +101,8 @@ struct fota_download_evt {
 		enum fota_download_error_cause cause;
 		/** Download progress %. */
 		int progress;
+		/** Resume at offset @ref FOTA_DOWNLOAD_EVT_RESUME_OFFSET */
+		size_t resume_offset;
 	};
 };
 
@@ -259,6 +266,46 @@ int fota_download_target(void);
  *           Otherwise, a (negative) error code is returned.
  */
 int fota_download_s0_active_get(bool *const s0_active);
+
+/**@brief Parse and modify the provided file path so that it points to the bootloader file that
+ *        should be used for a bootloader (B1) FOTA update.
+ *
+ * @param s0_s1_files	Null-terminated file path that may contain two files separated by a space.
+ *                      On successful return of this function, this file path will be modified.
+ *
+ * @retval -EIO		Failed to determine the active bootloader (B1) slot, s0 or s1.
+ * @retval -ENOEXEC	Failed to parse file path.
+ * @retval -EOPNOTSUPP	B1 upgrade is not supported by the build configuration.
+ * @retval -ENOMSG	No delimeter (space) was found in the file path.
+ * @retval 0		File path was modified and now points to the correct bootloader file to be
+ *                      downloaded.
+ */
+int fota_download_b1_file_parse(char *s0_s1_files);
+
+/**@brief Start a FOTA download using an external download client.
+ *        Requires @kconfig{CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL} to be enabled.
+ *
+ * @param host		Name of host.
+ * @param file		File path of the firmware image.
+ * @param expected_type Type of firmware image to be installed.
+ * @param image_size	Size of the firmware image.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_external_start(const char *host, const char *file,
+				 const enum dfu_target_image_type expected_type,
+				 const size_t image_size);
+
+/**@brief Handle a download event from an external download client.
+ *        Requires @kconfig{CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL} to be enabled.
+ *
+ * @param evt Download event.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_external_evt_handle(struct download_client_evt const *const evt);
 
 #ifdef __cplusplus
 }
