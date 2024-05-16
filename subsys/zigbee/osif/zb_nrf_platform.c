@@ -30,6 +30,8 @@
 
 /* Value that is returned while reading a single byte from the erased flash page .*/
 #define FLASH_EMPTY_BYTE 0xFF
+/* Broadcast Pan ID value */
+#define ZB_BROADCAST_PAN_ID 0xFFFFU
 /* The number of bytes to be checked before concluding that the ZBOSS NVRAM is not initialized. */
 #define ZB_PAGE_INIT_CHECK_LEN 32
 
@@ -590,6 +592,15 @@ void zb_osif_abort(void)
 	if (IS_ENABLED(CONFIG_ZBOSS_HALT_ON_ASSERT)) {
 		k_fatal_halt(K_ERR_KERNEL_PANIC);
 	}
+}
+
+uint32_t zigbee_pibcache_pan_id_clear(void)
+{
+	/* For consistency with zb_nwk_nib_init(), the 0xFFFFU is used,
+	 * i.e. ZB_BROADCAST_PAN_ID.
+	 */
+	ZB_PIBCACHE_PAN_ID() = ZB_BROADCAST_PAN_ID;
+	return ZB_BROADCAST_PAN_ID;
 }
 
 void zb_reset(zb_uint8_t param)

@@ -84,6 +84,7 @@ extern struct zb_aps_device_key_pair_set_s  *zb_secur_get_link_key_by_address(
 struct factory_reset_context_t {
 	uint32_t button;
 	bool reset_done;
+	bool pibcache_pan_id_needs_reset;
 	struct k_timer timer;
 };
 static struct factory_reset_context_t factory_reset_context;
@@ -447,6 +448,10 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 
 			if (zb_get_network_role() ==
 			    ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+				if (factory_reset_context.pibcache_pan_id_needs_reset) {
+					zigbee_pibcache_pan_id_clear();
+					factory_reset_context.pibcache_pan_id_needs_reset = false;
+				}
 				/* For coordinator node,
 				 * start network formation.
 				 */
@@ -984,6 +989,7 @@ static void factory_reset_timer_expired(struct k_timer *timer_id)
 			 * from ZBOSS scheduler context
 			 */
 			LOG_DBG("Schedule Factory Reset; stop timer; set factory_reset_done flag");
+			factory_reset_context.pibcache_pan_id_needs_reset = true;
 			ZB_SCHEDULE_APP_CALLBACK(zb_bdb_reset_via_local_action, 0);
 			k_timer_stop(timer_id);
 			factory_reset_context.reset_done = true;
@@ -998,6 +1004,7 @@ void register_factory_reset_button(uint32_t button)
 {
 	factory_reset_context.button = button;
 	factory_reset_context.reset_done = false;
+	factory_reset_context.pibcache_pan_id_needs_reset = false;
 
 	k_timer_init(&factory_reset_context.timer, factory_reset_timer_expired, NULL);
 }
@@ -1009,6 +1016,7 @@ void check_factory_reset_button(uint32_t button_state, uint32_t has_changed)
 
 		/* Reset flag indicating that Factory Reset was initiated */
 		factory_reset_context.reset_done = false;
+		factory_reset_context.pibcache_pan_id_needs_reset = false;
 
 		/* Start timer checking button press time */
 		k_timer_start(&factory_reset_context.timer,
