@@ -62,6 +62,8 @@ template <typename T1, typename T2, uint16_t N> struct FiniteMap {
 			mMap[slot].key = key;
 			mMap[slot].value = std::move(value);
 			mElementsCount++;
+		} else {
+			return false;
 		}
 		return true;
 	}
