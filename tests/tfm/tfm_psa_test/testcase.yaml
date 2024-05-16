@@ -17,14 +17,16 @@ tests:
     timeout: 130
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
-      nrf9160dk/nrf9160/ns
-      nrf9151dk/nrf9151/ns
       nrf54l15pdk/nrf54l15/cpuapp/ns
+      nrf9151dk/nrf9151/ns
+      nrf9160dk/nrf9160/ns
+      nrf9161dk/nrf9161/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9151dk/nrf9151/ns
       - nrf54l15pdk/nrf54l15/cpuapp/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
   tfm.psa_test_storage_lvl2:
     sysbuild: true
     tags: tfm_lvl2 sysbuild
@@ -33,14 +35,16 @@ tests:
     timeout: 130
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
-      nrf9160dk/nrf9160/ns
-      nrf9151dk/nrf9151/ns
       nrf54l15pdk/nrf54l15/cpuapp/ns
+      nrf9151dk/nrf9151/ns
+      nrf9160dk/nrf9160/ns
+      nrf9161dk/nrf9161/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9151dk/nrf9151/ns
       - nrf54l15pdk/nrf54l15/cpuapp/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
   tfm.psa_test_crypto_lvl1:
     sysbuild: true
     tags: tfm_lvl1 sysbuild
@@ -50,14 +54,16 @@ tests:
     timeout: 120
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
-      nrf9160dk/nrf9160/ns
-      nrf9151dk/nrf9151/ns
       nrf54l15pdk/nrf54l15/cpuapp/ns
+      nrf9151dk/nrf9151/ns
+      nrf9160dk/nrf9160/ns
+      nrf9161dk/nrf9161/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9151dk/nrf9151/ns
       - nrf54l15pdk/nrf54l15/cpuapp/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
   tfm.psa_test_crypto_lvl2:
     sysbuild: true
     tags: tfm_lvl2 sysbuild
@@ -66,12 +72,14 @@ tests:
     timeout: 120
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
-      nrf9160dk/nrf9160/ns
       nrf9151dk/nrf9151/ns
+      nrf9160dk/nrf9160/ns
+      nrf9161dk/nrf9161/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
   tfm.psa_test_initial_attestation_lvl1:
     sysbuild: true
     tags: tfm_lvl1 sysbuild
@@ -82,12 +90,14 @@ tests:
       - CONFIG_TFM_NRF_PROVISIONING=y
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
-      nrf9160dk/nrf9160/ns
       nrf9151dk/nrf9151/ns
+      nrf9160dk/nrf9160/ns
+      nrf9161dk/nrf9161/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
   tfm.psa_test_initial_attestation_lvl2:
     sysbuild: true
     tags: tfm_lvl2 sysbuild
@@ -97,9 +107,11 @@ tests:
       - CONFIG_TFM_NRF_PROVISIONING=y
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
-      nrf9160dk/nrf9160/ns
       nrf9151dk/nrf9151/ns
+      nrf9160dk/nrf9160/ns
+      nrf9161dk/nrf9161/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
