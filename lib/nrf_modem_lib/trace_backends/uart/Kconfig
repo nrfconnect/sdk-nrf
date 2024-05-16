@@ -6,39 +6,29 @@
 
 # Adds UART to the trace backend choice.
 choice NRF_MODEM_LIB_TRACE_BACKEND
+	default NRF_MODEM_LIB_TRACE_BACKEND_UART if $(dt_chosen_enabled,$(DT_CHOSEN_NORDIC_MODEM_TRACE_UART))
 
 config NRF_MODEM_LIB_TRACE_BACKEND_UART
 	bool "UART"
+	depends on SERIAL
+	depends on UART_ASYNC_API
+	select UART_USE_RUNTIME_CONFIGURE
 
 if NRF_MODEM_LIB_TRACE_BACKEND_UART
 
 choice NRF_MODEM_LIB_TRACE_BACKEND_UART_VERSION
-	prompt "UART trace backend version"
-	default NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR if $(dt_chosen_enabled,$(DT_CHOSEN_NORDIC_MODEM_TRACE_UART))
-	default NRF_MODEM_LIB_TRACE_BACKEND_UART_ASYNC
-
-config NRF_MODEM_LIB_TRACE_BACKEND_UART_ASYNC
-	bool "UARTE1 ASYNC"
-	select NRFX_UARTE1
-	select DEPRECATED
-	help
-	  Enable asynchronous processing for UARTE1 trace backend.
-
-config NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC
-	bool "UARTE1 SYNC"
-	select NRFX_UARTE1
-	select DEPRECATED
-	help
-	  Enable synchronous processing for UARTE1 trace backend.
+	prompt "UART trace backend version [DEPRECATED]"
+	optional
 
 config NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR
 	bool "UART"
 	depends on SERIAL
 	depends on UART_ASYNC_API
 	select UART_USE_RUNTIME_CONFIGURE
+	select DEPRECATED
 	help
-	  Modem tracing with UART require the chosen `nordic,modem-trace-uart`
-	  to be set in the Device tree.
+	  Modem tracing with UART require the chosen `nordic,modem-trace-uart` to be set in the Device tree.
+	  Deprecated. Use NRF_MODEM_LIB_TRACE_BACKEND_UART directly instead.
 
 endchoice
 

@@ -85,6 +85,15 @@ FEM abstraction layer
     The function :c:func:`fem_tx_power_control_set` replaces the function :c:func:`fem_tx_gain_set`.
     The function :c:func:`fem_default_tx_output_power_get` replaces the function :c:func:`fem_default_tx_gain_get`.
 
+Modem library
+-------------
+
+.. toggle::
+
+  * For applications using :ref:`nrf_modem_lib_readme`:
+    The option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR` is now deprecated.
+    Use the option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` instead.
+
 .. _migration_2.7_recommended:
 
 Recommended changes
