@@ -290,7 +290,7 @@ function(suit_setup_merge)
 
     set(OUTPUT_HEX_FILE "${IMAGE_BINARY_DIR}/zephyr/${CONFIG_SUIT_ENVELOPE_OUTPUT_ARTIFACT}")
 
-    list(APPEND ARTIFACTS_TO_MERGE ${BINARY_DIR}/zephyr/storage_${IMAGE_TARGET_NAME}.hex)
+    list(APPEND ARTIFACTS_TO_MERGE ${BINARY_DIR}/zephyr/suit_installed_envelopes_${IMAGE_TARGET_NAME}_merged.hex)
     list(APPEND ARTIFACTS_TO_MERGE ${IMAGE_BINARY_DIR}/zephyr/${IMAGE_BINARY_FILE}.hex)
     if(CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE)
       list(APPEND ARTIFACTS_TO_MERGE ${BINARY_DIR}/zephyr/suit_mpi_${IMAGE_TARGET_NAME}_merged.hex)
