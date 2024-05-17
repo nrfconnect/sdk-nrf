@@ -161,6 +161,20 @@ For more information about the Wi-Fi power save mechanism, see the :ref:`Wi-Fi M
 
 To enable the Wi-Fi power save mode, set the :kconfig:option:`CONFIG_NRF_WIFI_LOW_POWER` Kconfig option to ``y``.
 
+Configure Bluetooth LE advertising duration
+*******************************************
+
+A Matter device uses Bluetooth® Low Energy (LE) to advertise its service for device commissioning purposes.
+The duration of this advertising is configurable and can last up to 15 minutes in the standard mode and up to 48 hours in the Extended Announcement mode.
+An extended advertising duration may improve the user experience, as it gives more time for the user to setup the device, but it also increases the energy consumption.
+
+Selecting the optimal advertising duration is a compromise and depends on the specific application use case.
+Use the following Kconfig options to configure the advertising and reduce the consumed energy:
+
+* :kconfig:option:`CONFIG_CHIP_BLE_EXT_ADVERTISING` -  Set to ``n`` to disable Extended Announcement (also called Extended Beaconing).
+  When disabled, the device is not allowed to advertise for a duration of more than 15 minutes.
+* :kconfig:option:`CONFIG_CHIP_BLE_ADVERTISING_DURATION` - Set how long the device advertises (in minutes).
+
 Disable serial logging
 **********************
 
