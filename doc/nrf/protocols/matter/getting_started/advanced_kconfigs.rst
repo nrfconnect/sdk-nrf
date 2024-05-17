@@ -251,11 +251,6 @@ Only the latest crash data will be stored in the device's memory, meaning that i
 After receiving the read request from the Matter controller, the device reads the crash data and creates human readable logs at runtime.
 The device sends converted logs to the Matter controller as a response.
 
-By default, the :ref:`ug_matter_diagnostic_logs_snippet` enables copying the crash data to Zephyr's settings storage at the first boot after a crash.
-This operation allows the device to keep crash data even if a power breakdown occurs, but it will use some space within the settings storage partition and you need to take it into account while setting the partition size.
-If the new crash data is the same as the previous one, the entry will not be updated.
-You can disable saving crash data to the settings storage by setting the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS` Kconfig option to ``n``.
-
 After the crash data is successfully read, it will be removed and further read attempts will notify the user that there is no available data to read.
 To keep the crash log in the memory after reading it, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ` Kconfig option to ``n``.
 
@@ -272,7 +267,6 @@ The snippet sets the following kconfig options:
 
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` to ``y``.
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS` to ``y``.
-  * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS` to ``y``.
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ` to ``y``.
 
 To use the snippet when building a sample, add ``-S diagnostic-logs`` to the west arguments list.

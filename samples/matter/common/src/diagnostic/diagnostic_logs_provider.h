@@ -6,12 +6,6 @@
 
 #pragma once
 
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
-#include "diagnostic_logs_crash.h"
-#include <zephyr/device.h>
-#endif
-
-#include "persistent_storage/persistent_storage.h"
 #include "util/finite_map.h"
 
 #include <app/clusters/diagnostic-logs-server/DiagnosticLogsProviderDelegate.h>
@@ -19,6 +13,74 @@
 
 namespace Nrf::Matter
 {
+
+class DiagnosticLogsIntentIface {
+public:
+	/**
+	 * @brief Get the captured logs size.
+	 *
+	 * @return size of captured logs in bytes
+	 */
+	virtual size_t GetLogsSize() = 0;
+
+	/**
+	 * @brief Get the captured logs.
+	 *
+	 * @param outBuffer output buffer to store the logs
+	 * @param outIsEndOfLog flag informing whether the stored data is complete log or one of the few chunks
+	 *
+	 * @return size of captured logs in bytes
+	 */
+	virtual CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog) = 0;
+
+	/**
+	 * @brief Finish the log capturing. This method is used to perform potential clean up after session.
+	 */
+	virtual CHIP_ERROR FinishLogs() = 0;
+};
+
+struct IntentData {
+	chip::app::Clusters::DiagnosticLogs::IntentEnum mIntent =
+		chip::app::Clusters::DiagnosticLogs::IntentEnum::kUnknownEnumValue;
+	DiagnosticLogsIntentIface *mIntentImpl = nullptr;
+
+	IntentData() {}
+
+	/* Disable copy semantics and implement move, bool and == semantics according to the FiniteMap
+	 * requirements. */
+	IntentData(const IntentData &other) = delete;
+	IntentData &operator=(const IntentData &other) = delete;
+
+	IntentData(IntentData &&other)
+	{
+		mIntent = other.mIntent;
+		mIntentImpl = other.mIntentImpl;
+		/* Nullptr the copied data to prevent from deleting it by the source. */
+		other.mIntentImpl = nullptr;
+	}
+
+	IntentData &operator=(IntentData &&other)
+	{
+		if (this != &other) {
+			Clear();
+			mIntent = other.mIntent;
+			mIntentImpl = other.mIntentImpl;
+			/* Nullptr the copied data to prevent from deleting it by the source. */
+			other.mIntentImpl = nullptr;
+		}
+		return *this;
+	}
+
+	operator bool() const { return true; }
+	bool operator==(const IntentData &other)
+	{
+		return mIntent == other.mIntent && mIntentImpl == other.mIntentImpl;
+	}
+
+	void Clear();
+
+	~IntentData() { Clear(); }
+};
 
 class DiagnosticLogProvider : public chip::app::Clusters::DiagnosticLogs::DiagnosticLogsProviderDelegate {
 public:
@@ -35,9 +97,6 @@ public:
 
 	/**
 	 * @brief Initialize the diagnostic log provider module
-	 *
-	 * @note This method moves the crash log from the retained memory to the settings NVS if the
-			 CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS option is set.
 	 *
 	 * @retval CHIP_ERROR_READ_FAILED if the NVS storage contains a crash log entry, but it cannot be loaded.
 	 * @retval CHIP_ERROR_WRITE_FAILED if a new crash data could not be stored in the NVS storage.
@@ -77,30 +136,10 @@ private:
 	DiagnosticLogProvider(DiagnosticLogProvider &&) = delete;
 	DiagnosticLogProvider &operator=(DiagnosticLogProvider &&) = delete;
 
-	/* Crash logs */
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
-	CHIP_ERROR LoadCrashData(CrashData *crashData);
-	CHIP_ERROR GetCrashLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog);
-	CHIP_ERROR FinishCrashLogs();
-	size_t GetCrashLogsSize();
-
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS
-	DiagnosticLogProvider()
-		: mDiagnosticLogsStorageNode("dl", strlen("dl")),
-		  mCrashLogsStorageNode("cl", strlen("cl"), &mDiagnosticLogsStorageNode)
-	{
-	}
-	CHIP_ERROR MoveCrashLogsToNVS();
-
-	Nrf::PersistentStorageNode mDiagnosticLogsStorageNode;
-	Nrf::PersistentStorageNode mCrashLogsStorageNode;
-#endif
-	Nrf::CrashData *mCrashData = nullptr;
-#endif
-
-#ifndef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS
 	DiagnosticLogProvider() = default;
-#endif
+
+	CHIP_ERROR SetIntentImplementation(chip::app::Clusters::DiagnosticLogs::IntentEnum intent,
+					   IntentData &intentData);
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
 	size_t GetTestingLogsSize(chip::app::Clusters::DiagnosticLogs::IntentEnum intent);
@@ -116,7 +155,8 @@ private:
 	size_t mReadNetworkLogsOffset = 0;
 #endif
 
-	Nrf::FiniteMap<chip::app::Clusters::DiagnosticLogs::LogSessionHandle, chip::app::Clusters::DiagnosticLogs::IntentEnum, kMaxLogSessionHandle> mIntentMap;
+	Nrf::FiniteMap<chip::app::Clusters::DiagnosticLogs::LogSessionHandle, IntentData, kMaxLogSessionHandle>
+		mIntentMap;
 };
 
 } /* namespace Nrf::Matter */
