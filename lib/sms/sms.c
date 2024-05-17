@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <modem/at_monitor.h>
 #include <nrf_modem_at.h>
+#include <nrf_errno.h>
 #if defined(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
 #endif
@@ -40,7 +41,7 @@ static struct sms_data sms_data_info;
  * @brief Worker handling SMS acknowledgements because we cannot call
  * nrf_modem_at_printf from AT monitor callback.
  */
-static struct k_work sms_ack_work;
+static struct k_work_delayable sms_ack_work;
 /**
  * @brief Worker handling notifying SMS subscribers about received messages because we cannot
  * notify subscribers in ISR context where AT notifications are received.
@@ -79,6 +80,15 @@ AT_MONITOR_ISR(sms_at_handler_cmt, "+CMT", sms_at_cmd_handler_cmt, PAUSED);
 AT_MONITOR_ISR(sms_at_handler_cds, "+CDS", sms_at_cmd_handler_cds, PAUSED);
 AT_MONITOR_ISR(sms_at_handler_cms, "+CMS", sms_at_cmd_handler_cms, PAUSED);
 
+/* Keep this function public so that it can be called by tests. */
+void sms_ack_resp_handler(const char *resp)
+{
+	/* No need to do anything really */
+	if (strlen(resp) < 2 || (resp[0] != 'O' && resp[1] != 'K')) {
+		LOG_WRN("AT+CNMA=1 response not OK: %s", resp);
+	}
+}
+
 /**
  * @brief Acknowledge SMS messages towards network.
  *
@@ -86,9 +96,12 @@ AT_MONITOR_ISR(sms_at_handler_cms, "+CMS", sms_at_cmd_handler_cms, PAUSED);
  */
 static void sms_ack(struct k_work *work)
 {
-	int ret = nrf_modem_at_printf(AT_SMS_PDU_ACK);
+	int ret = nrf_modem_at_cmd_async(sms_ack_resp_handler, AT_SMS_PDU_ACK);
 
-	if (ret != 0) {
+	if (ret == -NRF_EINPROGRESS) {
+		LOG_DBG("Another AT command ongoing. Retrying to ACK the SMS PDU in a second");
+		k_work_reschedule(&sms_ack_work, K_SECONDS(1));
+	} else if (ret != 0) {
 		LOG_ERR("Unable to ACK the SMS PDU");
 	}
 }
@@ -173,7 +186,7 @@ static void sms_at_cmd_handler_cmt(const char *at_notif)
 	k_work_submit(&sms_notify_work);
 
 sms_ack_send:
-	k_work_submit(&sms_ack_work);
+	k_work_reschedule(&sms_ack_work, K_NO_WAIT);
 }
 
 /**
@@ -191,7 +204,7 @@ static void sms_at_cmd_handler_cds(const char *at_notif)
 	sms_data_info.type = SMS_TYPE_STATUS_REPORT;
 
 	k_work_submit(&sms_notify_work);
-	k_work_submit(&sms_ack_work);
+	k_work_reschedule(&sms_ack_work, K_NO_WAIT);
 }
 
 /**
@@ -222,7 +235,7 @@ static int sms_init(void)
 	uint32_t cnmi_value4 = 0xFFFFFFFF;
 	int ret;
 
-	k_work_init(&sms_ack_work, &sms_ack);
+	k_work_init_delayable(&sms_ack_work, &sms_ack);
 	k_work_init(&sms_notify_work, &sms_notify);
 	k_work_init(&sms_reregister_work, &sms_reregister);
 
