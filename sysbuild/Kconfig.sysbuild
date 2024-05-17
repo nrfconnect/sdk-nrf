@@ -59,15 +59,6 @@ config BUILD_OUTPUT_HEX
 	  The name of this file can be customized with CONFIG_KERNEL_BIN_NAME.
 	  This will be applied to all target images.
 
-if BOOTLOADER_MCUBOOT
-
-choice BOOT_SIGNATURE_TYPE
-	default BOOT_SIGNATURE_TYPE_ECDSA_P256
-
-endchoice
-
-endif
-
 rsource "Kconfig.netcore"
 rsource "Kconfig.secureboot"
 rsource "Kconfig.mcuboot"
