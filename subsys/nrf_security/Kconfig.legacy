@@ -421,6 +421,12 @@ config MBEDTLS_AES_ROM_TABLES
 
 endmenu # CBC cipher padding modes
 
+config MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH
+	bool
+	prompt "Enable MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH"
+	help
+	   Enable AES operations to support only 128-bit keys to reduce ROM usage.
+
 config MBEDTLS_CIPHER_MODE_CTR
 	bool "AES-CTR - AES Counter Block Cipher mode"
 	default y
