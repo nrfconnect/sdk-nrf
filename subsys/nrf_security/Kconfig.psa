@@ -19,10 +19,6 @@ config MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 
 osource "modules/mbedtls/Kconfig.psa"
 
-config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
-	bool
-	default y
-
 rsource "src/core/Kconfig"
 
 rsource "src/ssf_secdom/Kconfig"
