@@ -98,7 +98,7 @@ if (NOT static_configuration AND CONFIG_PM_IMAGE_NOT_BUILT_FROM_SOURCE)
 endif()
 
 if (NOT static_configuration AND
-  (CONFIG_BOOTLOADER_MCUBOOT OR CONFIG_SECURE_BOOT))
+  (CONFIG_BOOTLOADER_MCUBOOT OR CONFIG_SECURE_BOOT) AND NOT SYSBUILD)
       message(WARNING "
         ---------------------------------------------------------------------
         --- WARNING: Using a bootloader without pm_static.yml.            ---

@@ -83,6 +83,21 @@ function(partition_manager)
       place the image correctly in flash.")
   endif()
 
+  if(NOT "${PM_DOMAIN}" STREQUAL "CPUNET" AND NOT static_configuration AND
+     (SB_CONFIG_BOOTLOADER_MCUBOOT OR SB_CONFIG_SECURE_BOOT))
+    message(WARNING "
+      ---------------------------------------------------------------------
+      --- WARNING: Using a bootloader without pm_static.yml.            ---
+      --- There are cases where a deployed product can consist of       ---
+      --- multiple images, and only a subset of these images can be     ---
+      --- upgraded through a firmware update mechanism. In such cases,  ---
+      --- the upgradable images must have partitions that are static    ---
+      --- and are matching the partition map used by the bootloader     ---
+      --- programmed onto the device.                                   ---
+      ---------------------------------------------------------------------
+      \n"
+    )
+  endif()
 
 # We must set this when running for the domain, so how is the domain name partition handled in settings ?
   if("${PM_DOMAIN}" STREQUAL "CPUNET")
