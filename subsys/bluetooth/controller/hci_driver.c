@@ -1334,31 +1334,6 @@ static const struct bt_hci_driver drv = {
 	.send = hci_driver_send,
 };
 
-#if !defined(CONFIG_BT_HCI_VS_EXT)
-uint8_t bt_read_static_addr(struct bt_hci_vs_static_addr addrs[], uint8_t size)
-{
-	uint8_t retval;
-	uint8_t return_buffer[sizeof(sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t)
-			      + sizeof(sdc_hci_vs_zephyr_static_address_t)];
-
-	sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t *return_params =
-		(sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t *)return_buffer;
-
-	retval = sdc_hci_cmd_vs_zephyr_read_static_addresses(
-		(sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t *)return_buffer);
-	__ASSERT(retval == 0, "Expect command to succeed");
-	__ASSERT(return_params->num_addresses <= 1, "Avoid buffer overflow");
-
-	if (return_params->num_addresses == 1 && size >= 1) {
-		BUILD_ASSERT(sizeof(sdc_hci_vs_zephyr_static_address_t) ==
-			     sizeof(struct bt_hci_vs_static_addr));
-		memcpy(&addrs[0], return_params->addresses, sizeof(struct bt_hci_vs_static_addr));
-	}
-
-	return return_params->num_addresses;
-}
-#endif /* !defined(CONFIG_BT_HCI_VS_EXT) */
-
 void bt_ctlr_set_public_addr(const uint8_t *addr)
 {
 	const sdc_hci_cmd_vs_zephyr_write_bd_addr_t *bd_addr = (void *)addr;
