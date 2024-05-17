@@ -226,7 +226,8 @@ Commissioning the device
     :end-before: matter_light_bulb_sample_commissioning_end
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
-Press **Button 1** to enable the Bluetooth LE advertising.
+The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (1 hour by default).
+If the Bluetooth LE advertising times out, press **Button 1** to enable it again.
 
 Onboarding information
 ++++++++++++++++++++++

@@ -336,7 +336,7 @@ If you are new to Matter, the recommended approach is to use :ref:`CHIP Tool for
 .. matter_light_bulb_sample_commissioning_end
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
-The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
+The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (1 hour by default).
 If the Bluetooth LE advertising times out, press **Button 1** to enable it again.
 
 Onboarding information

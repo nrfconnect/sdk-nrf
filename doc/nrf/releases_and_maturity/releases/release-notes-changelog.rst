@@ -551,6 +551,8 @@ Matter samples
 
     DFU support for the nRF54L15 PDK is available only for the ``release`` build target.
 
+* Enabled the Bluetooth® LE Extended Announcement feature for all samples, and increased advertising timeout from 15 minutes to 1 hour.
+
 * :ref:`matter_lock_sample` sample:
 
   * Added support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
