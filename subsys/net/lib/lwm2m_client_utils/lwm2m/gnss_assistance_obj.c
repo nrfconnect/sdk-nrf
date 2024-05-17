@@ -162,7 +162,7 @@ static int gnss_assist_write_pgps(uint8_t *data, uint16_t data_len, bool last_bl
 
 static int gnss_assist_write_cb(uint16_t obj_inst_id, uint16_t res_id,
 			    uint16_t res_inst_id, uint8_t *data, uint16_t data_len,
-			    bool last_block, size_t total_size)
+			    bool last_block, size_t total_size, size_t offset)
 {
 	int err = 0;
 
@@ -218,7 +218,7 @@ void gnss_assistance_set_result_code_cb(gnss_assistance_get_result_code_cb_t cb)
 static int gnss_assistance_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
 					  uint16_t res_inst_id, uint8_t *data,
 					  uint16_t data_len, bool last_block,
-					  size_t total_size)
+					  size_t total_size, size_t offset)
 {
 	int32_t resdata;
 

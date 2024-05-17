@@ -46,7 +46,8 @@ static void reset_on_time(uint16_t obj_inst_id)
 }
 
 static int rgb_lc_on_off_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
-			uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+			uint8_t *data, uint16_t data_len, bool last_block,
+			size_t total_size, size_t offset)
 {
 	int ret = 0;
 	bool new_state = *(bool *)data;
@@ -93,7 +94,8 @@ static uint8_t calculate_intensity(uint8_t colour_value, uint8_t brightness_valu
 }
 
 static int rgb_lc_colour_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
-			uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+			uint8_t *data, uint16_t data_len, bool last_block,
+			size_t total_size, size_t offset)
 {
 	int ret = 0;
 	uint32_t colour_values = strtoul(data, NULL, 0);
@@ -125,7 +127,8 @@ static int rgb_lc_colour_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_
 }
 
 static int rgb_lc_dimmer_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
-			uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+			uint8_t *data, uint16_t data_len, bool last_block,
+			size_t total_size, size_t offset)
 {
 	int ret = 0;
 	uint8_t new_brightness = *data;
@@ -147,7 +150,7 @@ static int rgb_lc_dimmer_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_
 }
 
 static int lc_on_off_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
-			uint16_t data_len, bool last_block, size_t total_size)
+			uint16_t data_len, bool last_block, size_t total_size, size_t offset)
 {
 	int ret = 0;
 	bool new_state = *(bool *)data;
@@ -182,7 +185,7 @@ static int lc_on_off_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 }
 
 static int lc_dimmer_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
-			uint16_t data_len, bool last_block, size_t total_size)
+			uint16_t data_len, bool last_block, size_t total_size, size_t offset)
 {
 	int ret;
 	uint8_t new_brightness = *data;
