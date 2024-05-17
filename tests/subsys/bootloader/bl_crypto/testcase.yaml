@@ -10,3 +10,15 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52833dk/nrf52833
     tags: b0 sysbuild
+  # Deprecated child and parent build to ensure feature does not break until it is removed
+  bootloader.bl_crypto.child_parent:
+    sysbuild: false
+    platform_allow: nrf52840dk/nrf52840 nrf52dk/nrf52832 nrf9160dk/nrf9160
+      nrf5340dk/nrf5340/cpuapp nrf52833dk/nrf52833
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf9160dk/nrf9160
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf52833dk/nrf52833
+    tags: b0 child_parent deprecated
