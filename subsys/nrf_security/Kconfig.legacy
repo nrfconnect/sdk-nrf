@@ -343,10 +343,6 @@ config MBEDTLS_HMAC_DRBG_C
 	  This setting will enable HMAC_DRBG APIs in mbed TLS.
 	  Corresponds to MBEDTLS_HMAC_DRBG_C setting in mbed TLS config file.
 
-config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
-	bool
-	default y
-
 config MBEDTLS_ENTROPY_C
 	bool
 	prompt "Entropy gathering"

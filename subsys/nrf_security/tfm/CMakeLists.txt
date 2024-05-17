@@ -86,6 +86,8 @@ set(CONFIG_BUILD_WITH_TFM                           False)
 # Enable the MBEDTLS_ENABLE_HEAP configuration since TF-M implements heap in crypto_init.c
 set(CONFIG_MBEDTLS_ENABLE_HEAP                      True)
 
+set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG          True)
+
 # TF-M build require that PSA Crypto APIs are compiled
 set(COMPILE_PSA_APIS True)
 
