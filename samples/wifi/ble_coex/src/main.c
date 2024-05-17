@@ -280,6 +280,9 @@ static void udp_upload_results_cb(enum zperf_status status,
 	case ZPERF_SESSION_STARTED:
 		LOG_INF("New UDP session started");
 		break;
+	case ZPERF_SESSION_PERIODIC_RESULT:
+		/* Ignored. */
+		break;
 	case ZPERF_SESSION_FINISHED:
 		LOG_INF("Wi-Fi benchmark: Upload completed!");
 		if (result->client_time_in_us != 0U) {
