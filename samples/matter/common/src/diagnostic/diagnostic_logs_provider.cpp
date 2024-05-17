@@ -11,7 +11,7 @@
 #endif
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
-#include <zephyr/retention/retention.h>
+#include "diagnostic_logs_crash.h"
 #endif
 
 #include "diagnostic_logs_provider.h"
@@ -25,9 +25,6 @@ using namespace Nrf::Matter;
 
 namespace
 {
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
-const struct device *kCrashDataMem = DEVICE_DT_GET(DT_NODELABEL(crash_retention));
-#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
 
 bool IsValidIntent(IntentEnum intent)
 {
@@ -54,6 +51,45 @@ const char *GetIntentStr(IntentEnum intent)
 
 } /* namespace */
 
+void IntentData::Clear()
+{
+	if (!mIntentImpl) {
+		return;
+	}
+
+	switch (mIntent) {
+	case chip::app::Clusters::DiagnosticLogs::IntentEnum::kCrashLogs:
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
+		chip::Platform::Delete(reinterpret_cast<CrashData *>(mIntentImpl));
+		break;
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
+	case chip::app::Clusters::DiagnosticLogs::IntentEnum::kNetworkDiag:
+	case chip::app::Clusters::DiagnosticLogs::IntentEnum::kEndUserSupport:
+	default:
+		break;
+	}
+}
+
+CHIP_ERROR DiagnosticLogProvider::SetIntentImplementation(IntentEnum intent, IntentData &intentData)
+{
+	switch (intent) {
+	case IntentEnum::kCrashLogs:
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
+		intentData.mIntentImpl = Platform::New<CrashData>();
+		if (!intentData.mIntentImpl) {
+			return CHIP_ERROR_NO_MEMORY;
+		}
+		break;
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
+	case IntentEnum::kNetworkDiag:
+	case IntentEnum::kEndUserSupport:
+	default:
+		intentData.mIntentImpl = nullptr;
+		break;
+	}
+	return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR DiagnosticLogProvider::StartLogCollection(IntentEnum intent, LogSessionHandle &outHandle,
 						     Optional<uint64_t> &outTimeStamp,
 						     Optional<uint64_t> &outTimeSinceBoot)
@@ -63,7 +99,13 @@ CHIP_ERROR DiagnosticLogProvider::StartLogCollection(IntentEnum intent, LogSessi
 	uint16_t freeSlot = mIntentMap.GetFirstFreeSlot();
 	VerifyOrReturnError(freeSlot < kMaxLogSessionHandle, CHIP_ERROR_NO_MEMORY);
 
-	mIntentMap.Insert(freeSlot, std::move(intent));
+	IntentData intentData;
+	intentData.mIntent = intent;
+	CHIP_ERROR err = SetIntentImplementation(intent, intentData);
+
+	VerifyOrReturnError(err == CHIP_NO_ERROR, err);
+
+	mIntentMap.Insert(freeSlot, std::move(intentData));
 	outHandle = freeSlot;
 
 	ChipLogDetail(Zcl, "Starting Log collection for %s with session handle %d", GetIntentStr(intent), outHandle);
@@ -78,36 +120,40 @@ CHIP_ERROR DiagnosticLogProvider::EndLogCollection(LogSessionHandle sessionHandl
 
 	CHIP_ERROR err = CHIP_NO_ERROR;
 
-	IntentEnum intent = mIntentMap[sessionHandle];
-
-	/* Old intent is no needed anymore*/
-	mIntentMap.Erase(sessionHandle);
-
 	/* Do the specific action for the removing intent */
-	switch (intent) {
+	switch (mIntentMap[sessionHandle].mIntent) {
 	case IntentEnum::kEndUserSupport:
 #ifndef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
 		/* TODO: add support for End User Intent */
-		return CHIP_ERROR_NOT_IMPLEMENTED;
+		err = CHIP_ERROR_NOT_IMPLEMENTED;
+		break;
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST */
 	case IntentEnum::kNetworkDiag:
 #ifndef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
 		/* TODO: add support for Network Diagnostics */
-		return CHIP_ERROR_NOT_IMPLEMENTED;
+		err = CHIP_ERROR_NOT_IMPLEMENTED;
+		break;
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST */
 	case IntentEnum::kCrashLogs:
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
-		err = FinishCrashLogs();
+		if (mIntentMap[sessionHandle].mIntentImpl) {
+			err = mIntentMap[sessionHandle].mIntentImpl->FinishLogs();
+		}
 		break;
 #else
-		return CHIP_ERROR_NOT_IMPLEMENTED;
+		err = CHIP_ERROR_NOT_IMPLEMENTED;
+		break;
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
 	default:
-		return CHIP_ERROR_INVALID_ARGUMENT;
+		err = CHIP_ERROR_INVALID_ARGUMENT;
+		break;
 	}
 
 	ChipLogDetail(Zcl, "Ending Log collection for %s with session handle %d",
-		      GetIntentStr(mIntentMap[sessionHandle]), sessionHandle);
+		      GetIntentStr(mIntentMap[sessionHandle].mIntent), sessionHandle);
+
+	/* Old intent is not needed anymore*/
+	mIntentMap.Erase(sessionHandle);
 
 	return err;
 }
@@ -120,7 +166,7 @@ CHIP_ERROR DiagnosticLogProvider::CollectLog(LogSessionHandle sessionHandle, Mut
 	VerifyOrReturnError(sessionHandle < kMaxLogSessionHandle, CHIP_ERROR_NO_MEMORY);
 	VerifyOrReturnError(mIntentMap.Contains(sessionHandle), CHIP_ERROR_INTERNAL);
 
-	switch (mIntentMap[sessionHandle]) {
+	switch (mIntentMap[sessionHandle].mIntent) {
 	case IntentEnum::kEndUserSupport:
 #ifndef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
 		/* TODO: add support for End User Intent */
@@ -128,14 +174,14 @@ CHIP_ERROR DiagnosticLogProvider::CollectLog(LogSessionHandle sessionHandle, Mut
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST */
 	case IntentEnum::kNetworkDiag:
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
-		err = GetTestingLogs(mIntentMap[sessionHandle], outBuffer, outIsEndOfLog);
+		err = GetTestingLogs(mIntentMap[sessionHandle].mIntent, outBuffer, outIsEndOfLog);
 		break;
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST */
 		/* TODO: add support for Network Diag Intent */
 		return CHIP_ERROR_NOT_IMPLEMENTED;
 	case IntentEnum::kCrashLogs:
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
-		err = GetCrashLogs(outBuffer, outIsEndOfLog);
+		err = mIntentMap[sessionHandle].mIntentImpl->GetLogs(outBuffer, outIsEndOfLog);
 		break;
 #else
 		return CHIP_ERROR_NOT_IMPLEMENTED;
@@ -164,9 +210,11 @@ size_t DiagnosticLogProvider::GetSizeForIntent(IntentEnum intent)
 		/* TODO: add support for Network Diag Intent */
 		break;
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
-	case IntentEnum::kCrashLogs:
-		logSize = GetCrashLogsSize();
+	case IntentEnum::kCrashLogs: {
+		Platform::UniquePtr<CrashData> crashData(Platform::New<CrashData>());
+		logSize = crashData->GetLogsSize();
 		break;
+	}
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
 	default:
 		break;
@@ -202,10 +250,6 @@ exit:
 
 CHIP_ERROR DiagnosticLogProvider::Init()
 {
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS
-	ReturnErrorOnFailure(MoveCrashLogsToNVS());
-#endif
-
 	return CHIP_NO_ERROR;
 }
 
@@ -215,133 +259,6 @@ void emberAfDiagnosticLogsClusterInitCallback(chip::EndpointId endpoint)
 
 	DiagnosticLogsServer::Instance().SetDiagnosticLogsProviderDelegate(endpoint, &logProvider);
 }
-
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
-
-CHIP_ERROR DiagnosticLogProvider::LoadCrashData(CrashData *crashData)
-{
-	VerifyOrReturnError(crashData, CHIP_ERROR_INVALID_ARGUMENT);
-
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS
-	VerifyOrReturnError(Nrf::GetPersistentStorage().NonSecureHasEntry(&mCrashLogsStorageNode),
-			    CHIP_ERROR_NOT_FOUND);
-	size_t outSize = 0;
-	VerifyOrReturnError(Nrf::GetPersistentStorage().NonSecureLoad(
-				    &mCrashLogsStorageNode, reinterpret_cast<void *>(crashData->GetDescription()),
-				    sizeof(*crashData->GetDescription()), outSize),
-			    CHIP_ERROR_INTERNAL);
-	VerifyOrReturnError(outSize == sizeof(*crashData->GetDescription()), CHIP_ERROR_INTERNAL);
-#else
-	int ret = retention_is_valid(kCrashDataMem);
-	VerifyOrReturnError(ret == 1, CHIP_ERROR_NOT_FOUND);
-	ret = retention_read(kCrashDataMem, 0, reinterpret_cast<uint8_t *>(crashData->GetDescription()),
-			     sizeof(*crashData->GetDescription()));
-	VerifyOrReturnError(0 == ret, System::MapErrorZephyr(ret));
-#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS */
-
-	return CHIP_NO_ERROR;
-}
-
-size_t DiagnosticLogProvider::GetCrashLogsSize()
-{
-	CrashData *crashData = Platform::New<CrashData>();
-	if (!crashData) {
-		return 0;
-	}
-
-	size_t outSize = 0;
-
-	VerifyOrExit(CHIP_NO_ERROR == LoadCrashData(crashData), );
-
-	outSize = crashData->CalculateSize();
-
-exit:
-	Platform::Delete(crashData);
-
-	return outSize;
-}
-
-CHIP_ERROR DiagnosticLogProvider::GetCrashLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog)
-{
-	size_t convertedSize = 0;
-	CHIP_ERROR err = CHIP_NO_ERROR;
-
-	/* if mCrashData is not Null then it means that it is the following data bunch */
-	if (!mCrashData) {
-		/* mCrashData is not initialized, so this is the first bunch - allocate the memory */
-		mCrashData = Platform::New<CrashData>();
-		if (!mCrashData) {
-			return CHIP_ERROR_NO_MEMORY;
-		}
-		err = LoadCrashData(mCrashData);
-		VerifyOrExit(CHIP_NO_ERROR == err, );
-	}
-
-	convertedSize = mCrashData->ProcessConversionToLog(reinterpret_cast<char *>(outBuffer.data()), outBuffer.size(),
-							   outIsEndOfLog);
-	outBuffer.reduce_size(convertedSize);
-
-	ChipLogDetail(Zcl, "Getting log with size %zu. Is end of log: %s", convertedSize,
-		      outIsEndOfLog ? "true" : "false");
-
-exit:
-	/* If it is the end of the log message we can release allocated memory, otherwise, we need to keep Esf data for
-	 * the following bunch */
-	if (outIsEndOfLog || convertedSize == 0 || err != CHIP_NO_ERROR) {
-		Platform::Delete(mCrashData);
-		mCrashData = nullptr;
-	}
-
-	return err;
-}
-
-CHIP_ERROR DiagnosticLogProvider::FinishCrashLogs()
-{
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS
-	VerifyOrReturnError(Nrf::GetPersistentStorage().NonSecureRemove(&mCrashLogsStorageNode), CHIP_ERROR_INTERNAL);
-#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS */
-	int ret = retention_clear(kCrashDataMem);
-	VerifyOrReturnError(0 == ret, System::MapErrorZephyr(ret));
-#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ */
-
-	return CHIP_NO_ERROR;
-}
-
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS
-CHIP_ERROR DiagnosticLogProvider::MoveCrashLogsToNVS()
-{
-	/* Check if something is in the retained memory */
-	CrashDescription description;
-	if (1 == retention_is_valid(kCrashDataMem)) {
-		int ret = retention_read(kCrashDataMem, 0, reinterpret_cast<uint8_t *>(&description),
-					 sizeof(description));
-		VerifyOrReturnError(0 == ret, System::MapErrorZephyr(ret));
-		/* Check whether the entry already exists */
-		CrashDescription descriptionToCompare;
-		size_t outSize = 0;
-		if (Nrf::GetPersistentStorage().NonSecureHasEntry(&mCrashLogsStorageNode)) {
-			VerifyOrReturnError(Nrf::GetPersistentStorage().NonSecureLoad(
-						    &mCrashLogsStorageNode,
-						    reinterpret_cast<void *>(&descriptionToCompare),
-						    sizeof(descriptionToCompare), outSize),
-					    CHIP_ERROR_READ_FAILED);
-			if (0 == memcmp(&descriptionToCompare, &description, sizeof(description))) {
-				ret = retention_clear(kCrashDataMem);
-				VerifyOrReturnError(0 == ret, System::MapErrorZephyr(ret));
-				return CHIP_NO_ERROR;
-			}
-		}
-
-		VerifyOrReturnError(Nrf::GetPersistentStorage().NonSecureStore(&mCrashLogsStorageNode, &description,
-									       sizeof(description)),
-				    CHIP_ERROR_WRITE_FAILED);
-	}
-
-	return CHIP_NO_ERROR;
-}
-#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS */
-#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
 
@@ -412,7 +329,7 @@ CHIP_ERROR DiagnosticLogProvider::GetTestingLogs(IntentEnum intent, chip::Mutabl
 	}
 
 	ChipLogDetail(Zcl, "Sending %zu B of logs, left bytes: %zu, is the end of logs: %d", sizeToRead,
-			*currentBufferSize, outIsEndOfLog);
+		      *currentBufferSize, outIsEndOfLog);
 
 	outBuffer.reduce_size(sizeToRead);
 

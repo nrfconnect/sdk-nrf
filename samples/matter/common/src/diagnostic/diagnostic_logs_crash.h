@@ -6,8 +6,15 @@
 
 #pragma once
 
+#include <lib/core/CHIPError.h>
+#include <lib/support/Span.h>
+
+#include "diagnostic_logs_provider.h"
+
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
+
+using namespace chip;
 
 namespace Nrf
 {
@@ -46,9 +53,24 @@ static_assert(DT_REG_SIZE(DT_NODELABEL(crash_retention)) - 4 > sizeof(CrashDescr
 	* MultithreadDump converts the information about the the thread from which the error occurred.
 	  Can be disabled using CONFIG_MULTITHREADING.
  */
-class CrashData {
+class CrashData : public Nrf::Matter::DiagnosticLogsIntentIface {
 public:
 	constexpr static size_t MaxSingleDumpSize = 100;
+
+	CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog) override;
+	CHIP_ERROR FinishLogs() override;
+	size_t GetLogsSize() override;
+
+private:
+	/* The source is obtained based on values from ARM Cortex vector table set in the ICSR register. */
+	enum FaultSource {
+		HardFault = 3,
+		MemManageFault = 4,
+		BusFault = 5,
+		UsageFault = 6,
+		SecureFault = 7,
+		DebugMonitor = 12
+	};
 
 	/**
 	 * @brief Convert CrashDat to output string buffer that will contain a crash message.
@@ -81,23 +103,15 @@ public:
 	 */
 	size_t CalculateSize();
 
-private:
-	/* The source is obtained based on values from ARM Cortex vector table set in the ICSR register. */
-	enum FaultSource {
-		HardFault = 3,
-		MemManageFault = 4,
-		BusFault = 5,
-		UsageFault = 6,
-		SecureFault = 7,
-		DebugMonitor = 12
-	};
-
 	const char *FaultSourceToStr(uint32_t source);
 
 	bool Collect(const char *format, ...);
 
 	bool BasicDump();
 	bool ReasonDump();
+
+	CHIP_ERROR LoadCrashData();
+	void ClearState();
 
 	/* Actual crash data to be filled */
 	CrashDescription mDescription = {};

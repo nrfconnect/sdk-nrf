@@ -10,7 +10,16 @@
 #include <zephyr/kernel.h>
 #include <zephyr/retention/retention.h>
 
+#include <lib/support/CodeUtils.h>
+#include <system/SystemError.h>
+
 using namespace Nrf;
+using namespace chip;
+
+namespace
+{
+const struct device *kCrashDataMem = DEVICE_DT_GET(DT_NODELABEL(crash_retention));
+} // namespace
 
 #define Verify(expr, value)                                                                                            \
 	do {                                                                                                           \
@@ -125,6 +134,70 @@ bool CrashData::Collect(const char *format, ...)
 	mOffset += size;
 
 	return true;
+}
+
+void CrashData::ClearState()
+{
+	mLastLine = 0;
+}
+
+CHIP_ERROR CrashData::LoadCrashData()
+{
+	int ret = retention_is_valid(kCrashDataMem);
+	VerifyOrReturnError(ret == 1, CHIP_ERROR_NOT_FOUND);
+	ret = retention_read(kCrashDataMem, 0, reinterpret_cast<uint8_t *>(GetDescription()),
+			     sizeof(*GetDescription()));
+	VerifyOrReturnError(0 == ret, System::MapErrorZephyr(ret));
+
+	return CHIP_NO_ERROR;
+}
+
+size_t CrashData::GetLogsSize()
+{
+	size_t outSize = 0;
+
+	VerifyOrExit(CHIP_NO_ERROR == LoadCrashData(), );
+	outSize = CalculateSize();
+
+exit:
+	/* Size calculation requires collecting all logs to get the summarized size. Clear state after that to start
+	 * exact log collection from the beginning when requested. */
+	ClearState();
+
+	return outSize;
+}
+
+CHIP_ERROR CrashData::GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog)
+{
+	size_t convertedSize = 0;
+	CHIP_ERROR err = LoadCrashData();
+	VerifyOrExit(CHIP_NO_ERROR == err, );
+
+	convertedSize =
+		ProcessConversionToLog(reinterpret_cast<char *>(outBuffer.data()), outBuffer.size(), outIsEndOfLog);
+	outBuffer.reduce_size(convertedSize);
+
+	ChipLogDetail(Zcl, "Getting log with size %zu. Is end of log: %s", convertedSize,
+		      outIsEndOfLog ? "true" : "false");
+
+exit:
+	/* If it is the end of the log message we can clear the state, otherwise, we need to keep Esf data for
+	 * the following bunch */
+	if (outIsEndOfLog || convertedSize == 0 || err != CHIP_NO_ERROR) {
+		ClearState();
+	}
+
+	return err;
+}
+
+CHIP_ERROR CrashData::FinishLogs()
+{
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ
+	int ret = retention_clear(kCrashDataMem);
+	VerifyOrReturnError(0 == ret, System::MapErrorZephyr(ret));
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ */
+
+	return CHIP_NO_ERROR;
 }
 
 extern "C" {

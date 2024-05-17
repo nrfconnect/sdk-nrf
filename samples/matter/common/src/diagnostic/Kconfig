@@ -6,7 +6,7 @@
 
 menuconfig NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
 	bool "Enable diagnostics logs support"
-	select CHIP_ENABLE_BDX_LOG_TRANSFER
+	imply CHIP_ENABLE_BDX_LOG_TRANSFER
 	help
 	  Provides support for diagnostics logs. Diagnostics logs allow the Matter controller to read end-user,
 	  network and crash logs from the Matter device.
@@ -39,14 +39,6 @@ config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ
 	help
 	  Removes the last crash data after reading it by Matter controller.
 	  Disable this option to read the last crash multiple times.
-
-config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_SAVE_CRASH_TO_SETTINGS
-	bool "Save crash logs to settings storage"
-	select NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
-	help
-	  Saves crash logs to settings storage at the boot time if there is an entry in the retention memory.
-	  If this option is disabled crash logs will be saved only in the retention memory and can be lost
-	  during physical power down.
 
 endif # NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
 
