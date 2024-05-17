@@ -193,7 +193,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf_profiler/                    @pdunaj
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
 /samples/peripheral/lpuart/               @nordic-krch
-/samples/peripheral/802154_phy_test/      @ankuns @jciupis @ahasztag
+/samples/peripheral/802154_phy_test/      @ankuns @piotrkoziar
 /samples/peripheral/802154_sniffer/       @e-rk
 /samples/tfm/                             @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /samples/zigbee/                          @milewr
@@ -247,7 +247,7 @@ Kconfig*                                  @tejlmand
 /subsys/dfu/dfu_multi_image/              @Damian-Nordic
 /subsys/dm/                               @maje-emb
 /subsys/dult/                             @alstrzebonski @kapi-no
-/subsys/ieee802154/                       @rlubos @ankuns @jciupis @ahasztag
+/subsys/ieee802154/                       @rlubos @ankuns @piotrkoziar
 /subsys/mgmt/                             @hakonfam @sigvartmh
 /subsys/mgmt/suitfu/                      @tomchy @ahasztag
 /subsys/emds/                             @balaklaka
@@ -258,8 +258,8 @@ Kconfig*                                  @tejlmand
 /subsys/fw_info/                          @hakonfam
 /subsys/gazell/                           @leewkb4567
 /subsys/mpsl/                             @nrfconnect/ncs-dragoon
-/subsys/mpsl/cx/                          @jciupis @martintv
-/subsys/mpsl/fem/                         @jciupis @martintv
+/subsys/mpsl/cx/                          @ankuns @martintv
+/subsys/mpsl/fem/                         @ankuns @martintv
 /subsys/net/                              @rlubos
 /subsys/net/lib/mqtt_helper/              @nrfconnect/ncs-cia
 /subsys/net/lib/azure_*                   @nrfconnect/ncs-cia @coderbyheart
