@@ -72,7 +72,7 @@ void ground_fix_set_result_code_cb(ground_fix_get_result_code_cb_t cb)
 static int ground_fix_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
 				     uint16_t res_inst_id, uint8_t *data,
 				     uint16_t data_len, bool last_block,
-				     size_t total_size)
+				     size_t total_size, size_t offset)
 {
 	if (data_len != sizeof(int32_t)) {
 		return -EINVAL;
@@ -93,7 +93,8 @@ static int ground_fix_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
 static int forward_to_location_obj(uint16_t obj_inst_id,
 					  uint16_t res_id, uint16_t res_inst_id,
 					  uint8_t *data, uint16_t data_len,
-					  bool last_block, size_t total_size)
+					  bool last_block, size_t total_size,
+					  size_t offset)
 {
 	struct lwm2m_obj_path path;
 

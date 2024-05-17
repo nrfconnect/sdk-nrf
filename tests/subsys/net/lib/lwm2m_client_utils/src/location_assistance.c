@@ -107,7 +107,7 @@ static void gnss_result_set(int32_t result)
 	void *ptr = &result;
 
 	gnss_obj->resources[GNSS_ASSIST_RESULT_CODE].post_write_cb(0, GNSS_ASSIST_RESULT_CODE, 0,
-								   ptr, 4, true, 4);
+								   ptr, 4, true, 4, 0);
 }
 
 static void ground_result_set(int32_t result)
@@ -115,14 +115,14 @@ static void ground_result_set(int32_t result)
 	void *ptr = &result;
 
 	ground_obj->resources[GROUND_FIX_RESULT_CODE].post_write_cb(0, GROUND_FIX_RESULT_CODE, 0,
-								   ptr, 4, true, 4);
+								   ptr, 4, true, 4, 0);
 
 }
 
 static void gnss_assist_data_write(uint8_t *buf, int length)
 {
 	gnss_obj->resources[GNSS_ASSIST_ASSIST_DATA].post_write_cb(0, GNSS_ASSIST_ASSIST_DATA, 0,
-								   buf, length, true, length);
+								   buf, length, true, length, 0);
 }
 
 static void *loaction_assist_suite_setup(void)
