@@ -4,8 +4,8 @@
     - nrf52840dk/nrf52840
   ram_size: 196608  # 25% free
   rom_size: 828928  # 150kB free
-  rom_related_usage: 1024
-  ram_related_usage: 512
+  rom_increase: 1024
+  ram_increase: 512
   codeowners:
     - kkasperczyk-no
     - ArekBalysNordic
@@ -17,8 +17,8 @@
     - nrf52840dk/nrf52840
   ram_size: 196608  # 25% free
   rom_size: 880128  # 100kB free
-  rom_related_usage: 2048
-  ram_related_usage: 1024
+  rom_increase: 2048
+  ram_increase: 1024
   codeowners:
     - kkasperczyk-no
     - ArekBalysNordic
@@ -30,8 +30,8 @@
     - nrf5340dk/nrf5340/cpuapp
   ram_size: 393216  # 25% free
   rom_size: 824832  # 150kB free
-  rom_related_usage: 1024
-  ram_related_usage: 512
+  rom_increase: 1024
+  ram_increase: 512
   codeowners:
     - kkasperczyk-no
     - ArekBalysNordic
@@ -43,8 +43,8 @@
     - nrf5340dk/nrf5340/cpuapp
   ram_size: 393216  # 25% free
   rom_size: 876032  # 100kB free
-  rom_related_usage: 2048
-  ram_related_usage: 1024
+  rom_increase: 2048
+  ram_increase: 1024
   codeowners:
     - kkasperczyk-no
     - ArekBalysNordic
@@ -57,8 +57,8 @@
     - nrf7002dk/nrf5340/cpuapp
   ram_size: 393216  # 25% free
   rom_size: 808448  # 150kB free
-  rom_related_usage: 1024
-  ram_related_usage: 512
+  rom_increase: 1024
+  ram_increase: 512
   codeowners:
     - kkasperczyk-no
     - ArekBalysNordic
@@ -70,8 +70,8 @@
     - nrf7002dk/nrf5340/cpuapp
   ram_size: 393216  # 25% free
   rom_size: 910848  # 50kB free
-  rom_related_usage: 2048
-  ram_related_usage: 1024
+  rom_increase: 2048
+  ram_increase: 1024
   codeowners:
     - kkasperczyk-no
     - ArekBalysNordic
@@ -81,8 +81,8 @@
     - applications.nrf_desktop.z.*
   platforms:
     - all
-  rom_related_usage: 512
-  ram_related_usage: 256
+  rom_increase: 512
+  ram_increase: 256
   codeowners:
     - MarekPieta
 
