@@ -252,7 +252,8 @@ void lwm2m_adv_firmware_set_update_result(uint16_t obj_inst_id, uint8_t result)
 }
 
 static int package_write_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
-			    uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+			    uint8_t *data, uint16_t data_len, bool last_block, size_t total_size,
+			    size_t offset)
 {
 	uint8_t state;
 	int ret = 0;
@@ -279,7 +280,7 @@ static int package_write_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_
 	callback = lwm2m_adv_firmware_get_write_cb(obj_inst_id);
 	if (callback) {
 		ret = callback(obj_inst_id, res_id, res_inst_id, data, data_len, last_block,
-			       total_size);
+			       total_size, offset);
 	}
 
 	if (ret >= 0) {

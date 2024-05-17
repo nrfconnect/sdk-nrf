@@ -54,7 +54,8 @@ static int date_time_now_stub(int64_t *unix_time_ms, int no_of_calls)
  * test_codec_helpers_setup_configuration_object_handler.
  */
 static int callback(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
-		    uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+		    uint8_t *data, uint16_t data_len, bool last_block,
+		    size_t total_size, size_t offset)
 {
 	ARG_UNUSED(obj_inst_id);
 	ARG_UNUSED(res_id);

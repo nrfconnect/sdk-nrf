@@ -597,7 +597,7 @@ static void *firmware_get_buf(uint16_t obj_inst_id, uint16_t res_id, uint16_t re
 
 static int firmware_update_result(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 				  uint8_t *data, uint16_t data_len, bool last_block,
-				  size_t total_size)
+				  size_t total_size, size_t offset)
 {
 	/* Store state to pernament memory */
 	write_resource_to_settings(obj_inst_id, res_id, data, data_len);
@@ -630,7 +630,7 @@ static void init_firmware_variables(void)
 
 static int firmware_update_state(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 				 uint8_t *data, uint16_t data_len, bool last_block,
-				 size_t total_size)
+				 size_t total_size, size_t offset)
 {
 	int ret;
 
@@ -672,11 +672,11 @@ static void dfu_target_cb(enum dfu_target_evt_id evt)
 
 static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 				      uint8_t *data, uint16_t data_len, bool last_block,
-				      size_t total_size)
+				      size_t total_size, size_t offset)
 {
 	uint8_t curent_percent;
 	uint32_t current_bytes;
-	size_t offset;
+	size_t target_offset;
 	size_t skip = 0;
 	int ret = 0;
 	int image_type;
@@ -720,7 +720,7 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 				"Application");
 	}
 
-	ret = dfu_target_offset_get(&offset);
+	ret = dfu_target_offset_get(&target_offset);
 	if (ret < 0) {
 		LOG_ERR("Failed to obtain current offset, err: %d", ret);
 		goto cleanup;
@@ -742,8 +742,8 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 		}
 	}
 
-	if (bytes_downloaded < offset) {
-		skip = MIN(data_len, offset - bytes_downloaded);
+	if (bytes_downloaded < target_offset) {
+		skip = MIN(data_len, target_offset - bytes_downloaded);
 
 		LOG_INF("Skipping bytes %d-%d, already written.", bytes_downloaded,
 			bytes_downloaded + skip);
@@ -942,7 +942,7 @@ static void start_pending_fota_download(struct k_work *work)
 }
 
 static int write_dl_uri(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
-			uint16_t data_len, bool last_block, size_t total_size)
+			uint16_t data_len, bool last_block, size_t total_size, size_t offset)
 {
 	uint8_t state;
 	char *package_uri = (char *)data;
