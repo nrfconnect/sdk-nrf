@@ -14,7 +14,8 @@
 #include <platform/nrfconnect/wifi/WiFiManager.h>
 #endif
 
-namespace Nrf::Matter {
+namespace Nrf::Matter
+{
 
 class AppFabricTableDelegate : public chip::FabricTable::Delegate {
 public:
@@ -50,6 +51,9 @@ private:
 				chip::Server::GetInstance().ScheduleFactoryReset();
 #elif defined(CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_ONLY) ||                                                           \
 	defined(CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START)
+#if CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
+				chip::DeviceLayer::ThreadStackMgr().ClearAllSrpHostAndServices();
+#endif // CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
 				/* Erase Matter data */
 				chip::DeviceLayer::PersistedStorage::KeyValueStoreMgrImpl().DoFactoryReset();
 				/* Erase Network credentials and disconnect */
