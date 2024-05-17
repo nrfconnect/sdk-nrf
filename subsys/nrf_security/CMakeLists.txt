@@ -94,6 +94,8 @@ else()
   endif()
 endif()
 
+set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG  True)
+
 # Finally adding the crypto lib
 add_subdirectory(${NRFXLIB_DIR}/crypto crypto_copy)
 
