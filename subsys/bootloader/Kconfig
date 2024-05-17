@@ -209,7 +209,7 @@ if IS_SECURE_BOOTLOADER
 
 menuconfig SECURE_BOOT_DEBUG
 	bool "Printing"
-	select BOOT_BANNER
+	select NCS_BOOT_BANNER
 	select PRINTK
 	select CONSOLE
 	select SERIAL
