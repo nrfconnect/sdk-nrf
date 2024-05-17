@@ -8,7 +8,7 @@ add_subdirectory(bl_boot)
 
 zephyr_include_directories(include)
 
-if (NOT IMAGE_NAME)
+if (NOT IMAGE_NAME AND NOT SYSBUILD)
   message(WARNING "Building bootloader without associated application. "
           "Dummy values will be used for partition configuration."
           "The idiomatic way of including the immutable bootloader is to set "
