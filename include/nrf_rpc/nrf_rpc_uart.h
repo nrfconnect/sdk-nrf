@@ -25,7 +25,7 @@ extern "C" {
  */
 
 #define NRF_RPC_MAX_FRAME_SIZE	1536
-#define NRF_RPC_RX_RINGBUF_SIZE 64
+#define NRF_RPC_RX_RINGBUF_SIZE 2048
 
 typedef enum {
 	hdlc_state_unsync,
