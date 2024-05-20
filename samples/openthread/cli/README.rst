@@ -90,6 +90,8 @@ Configuration
 Snippets
 ========
 
+.. |snippet| replace:: :makevar:`cli_SNIPPET`
+
 .. include:: /includes/sample_snippets.txt
 
 The following snippets are available:
@@ -101,6 +103,10 @@ The following snippets are available:
 * ``ci`` - Disables boot banner and shell prompt.
 * ``multiprotocol`` - Enables Bluetooth LE support in this sample.
   Not compatible with the ``tcat`` snippet.
+
+  .. note::
+    When building with the ``multiprotocol`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` build target, the :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` Kconfig option has to be set to ``y``.
+
 * ``tcat`` - Enables support for Thread commissioning over authenticated TLS.
   Not compatible with the ``multiprotocol`` snippet.
   For using TCAT, refer to the :ref:`thread_tcat` page.

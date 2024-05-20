@@ -66,26 +66,27 @@ Complete the following steps to prepare for the certification tests:
 
 #. Build the certification image.
 
-   Use the :ref:`ot_cli_sample` sample as a base, and apply the ``ci`` and ``multiprotocol`` snippets.
+   Use the :ref:`ot_cli_sample` sample as a base and apply the ``ci`` and ``multiprotocol`` snippets.
+   If you are building for the ``nrf5340dk/nrf5340/cpuapp`` target, also set the :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` Kconfig option to ``y``.
 
    * If building on the command line, use the following command:
 
      .. code-block::
 
         cd ncs/nrf/samples/openthread/cli/
-        west build -b nrf52840dk/nrf52840 -S ci -S multiprotocol -- -DCONFIG_OPENTHREAD_LIBRARY=y
+        west build -b nrf52840dk/nrf52840 -- -Dcli_SNIPPET="ci;multiprotocol"  -DCONFIG_OPENTHREAD_LIBRARY=y
 
    * If building using Visual Studio Code, you must first `create and build the application <How to build an application_>`_ using the CLI sample.
      Add the following lines to the **Additional CMake arguments** text field:
 
      .. code-block::
 
-        -DSNIPPET="ci;multiprotocol"
+        -Dcli_SNIPPET="ci;multiprotocol"
         -DCONFIG_OPENTHREAD_LIBRARY=y
 
    .. note::
       The configuration option selects the precompiled OpenThread libraries.
-      The ``multiprotocol`` snippet enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth® LE advertising.
+      The ``multiprotocol`` snippet and the :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` Kconfig option enable :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth® LE advertising.
 
 #. Prepare Thread Test Harness.
 
