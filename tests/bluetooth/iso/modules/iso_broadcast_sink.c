@@ -198,8 +198,9 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 	static uint32_t counts_fail;
 	static uint32_t counts_success;
 
-	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
+	if (!(info->flags & BT_ISO_FLAGS_VALID) && (buf->len != 0)) {
 		LOG_ERR("bad frame");
+		return;
 	}
 
 	if (buf->len >= sizeof(count)) {
@@ -266,7 +267,7 @@ static struct bt_iso_big_sync_param big_sync_param = {
 	.bis_channels = bis,
 	.num_bis = 1,
 	.bis_bitfield = (BIT_MASK(1) << 1),
-	.mse = 1,
+	.mse = BT_ISO_SYNC_MSE_ANY,
 	.sync_timeout = 100, /* in 10 ms units */
 	.encryption = false,
 };
