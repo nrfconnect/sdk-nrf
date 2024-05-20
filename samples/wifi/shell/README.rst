@@ -125,6 +125,7 @@ Supported CLI commands
        | [-w, --ieee-80211w]: MFP (optional: needs security type to be specified)
        | : 0:Disable, 1:Optional, 2:Required.
        | [-m, --bssid]: MAC address of the AP (BSSID).
+       | [-t, --timeout]: Duration after which connection attempt needs to fail.
        | [-h, --help]: Print out the help for the connect command.
    * - disconnect
      - Disconnect from the Wi-Fi AP
