@@ -113,6 +113,18 @@ config DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION
 	select PM_PARTITION_REGION_FMFU_STORAGE_EXTERNAL
 	bool "Use a dedicated FMFU partition on the external flash device"
 
+config DFU_TARGET_SUIT
+	bool "SUIT DFU target support"
+	default y
+	depends on SUIT
+	imply MPU_ALLOW_FLASH_WRITE
+	select SUIT_UTILS
+	select ZCBOR
+	select ZCBOR_CANONICAL
+	select DFU_TARGET_STREAM
+	help
+	  Enable support for updates using DFU target based on SUIT
+
 module=DFU_TARGET
 module-dep=LOG
 module-str=Device Firmware Upgrade
