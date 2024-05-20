@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "credentials_data_types.h"
+#include "access_data_types.h"
 
 namespace DoorLockData
 {
@@ -175,5 +175,155 @@ CHIP_ERROR User::Deserialize(const void *buff, size_t buffSize)
 
 	return CHIP_NO_ERROR;
 }
+
+#ifdef CONFIG_LOCK_SCHEDULES
+
+CHIP_ERROR WeekDaySchedule::FillFromPlugin(EmberAfPluginDoorLockWeekDaySchedule &plugin)
+{
+	static_assert(sizeof(EmberAfPluginDoorLockWeekDaySchedule) == RequiredBufferSize());
+
+	mData.mFields.mDaysMask = static_cast<uint8_t>(plugin.daysMask);
+	mData.mFields.mStartHour = plugin.startHour;
+	mData.mFields.mStartMinute = plugin.startMinute;
+	mData.mFields.mEndHour = plugin.endHour;
+	mData.mFields.mEndMinute = plugin.endMinute;
+
+	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR YearDaySchedule::FillFromPlugin(EmberAfPluginDoorLockYearDaySchedule &plugin)
+{
+	static_assert(sizeof(EmberAfPluginDoorLockYearDaySchedule) == RequiredBufferSize());
+
+	mData.mFields.mLocalStartTime = plugin.localStartTime;
+	mData.mFields.mLocalEndTime = plugin.localEndTime;
+
+	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR HolidaySchedule::FillFromPlugin(EmberAfPluginDoorLockHolidaySchedule &plugin)
+{
+	static_assert(sizeof(EmberAfPluginDoorLockHolidaySchedule) == RequiredBufferSize());
+
+	mData.mFields.mLocalStartTime = plugin.localStartTime;
+	mData.mFields.mLocalEndTime = plugin.localEndTime;
+	mData.mFields.mOperatingMode = static_cast<uint8_t>(plugin.operatingMode);
+
+	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR WeekDaySchedule::ConvertToPlugin(EmberAfPluginDoorLockWeekDaySchedule &plugin) const
+{
+	static_assert(sizeof(EmberAfPluginDoorLockWeekDaySchedule) == RequiredBufferSize());
+
+	plugin.daysMask = static_cast<DaysMaskMap>(mData.mFields.mDaysMask);
+	plugin.startHour = mData.mFields.mStartHour;
+	plugin.startMinute = mData.mFields.mStartMinute;
+	plugin.endHour = mData.mFields.mEndHour;
+	plugin.endMinute = mData.mFields.mEndMinute;
+
+	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR YearDaySchedule::ConvertToPlugin(EmberAfPluginDoorLockYearDaySchedule &plugin) const
+{
+	static_assert(sizeof(EmberAfPluginDoorLockYearDaySchedule) == RequiredBufferSize());
+
+	plugin.localStartTime = mData.mFields.mLocalStartTime;
+	plugin.localEndTime = mData.mFields.mLocalEndTime;
+
+	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR HolidaySchedule::ConvertToPlugin(EmberAfPluginDoorLockHolidaySchedule &plugin) const
+{
+	static_assert(sizeof(EmberAfPluginDoorLockHolidaySchedule) == RequiredBufferSize());
+
+	plugin.localStartTime = mData.mFields.mLocalStartTime;
+	plugin.localEndTime = mData.mFields.mLocalEndTime;
+	plugin.operatingMode = static_cast<OperatingModeEnum>(mData.mFields.mOperatingMode);
+
+	return CHIP_NO_ERROR;
+}
+
+size_t WeekDaySchedule::Serialize(void *buff, size_t buffSize)
+{
+	if (!buff || buffSize < RequiredBufferSize()) {
+		return 0;
+	}
+
+	memcpy(buff, mData.mRaw, sizeof(mData.mRaw));
+
+	return sizeof(mData.mRaw);
+}
+
+size_t YearDaySchedule::Serialize(void *buff, size_t buffSize)
+{
+	if (!buff || buffSize < RequiredBufferSize()) {
+		return 0;
+	}
+
+	memcpy(buff, mData.mRaw, sizeof(mData.mRaw));
+
+	return sizeof(mData.mRaw);
+}
+
+size_t HolidaySchedule::Serialize(void *buff, size_t buffSize)
+{
+	if (!buff || buffSize < RequiredBufferSize()) {
+		return 0;
+	}
+
+	memcpy(buff, mData.mRaw, sizeof(mData.mRaw));
+
+	return sizeof(mData.mRaw);
+}
+
+CHIP_ERROR WeekDaySchedule::Deserialize(const void *buff, size_t buffSize)
+{
+	if (!buff) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (buffSize > RequiredBufferSize()) {
+		return CHIP_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	memcpy(mData.mRaw, buff, sizeof(mData.mRaw));
+
+	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR YearDaySchedule::Deserialize(const void *buff, size_t buffSize)
+{
+	if (!buff) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (buffSize > RequiredBufferSize()) {
+		return CHIP_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	memcpy(mData.mRaw, buff, sizeof(mData.mRaw));
+
+	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR HolidaySchedule::Deserialize(const void *buff, size_t buffSize)
+{
+	if (!buff) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (buffSize > RequiredBufferSize()) {
+		return CHIP_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	memcpy(mData.mRaw, buff, sizeof(mData.mRaw));
+
+	return CHIP_NO_ERROR;
+}
+
+#endif /* CONFIG_LOCK_SCHEDULES */
 
 } /* namespace DoorLockData */
