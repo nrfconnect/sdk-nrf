@@ -169,7 +169,6 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 	case NRF_RPC_IPC_STATE_WAITING:
 		if (!k_event_wait(&endpoint->ept_bond, 0x01, false,
 				ipc_config->endpoint.timeout)) {
-			ipc_config->state = NRF_RPC_IPC_STATE_ERROR;
 			LOG_ERR("IPC endpoint bond timeout");
 			return -NRF_EPIPE;
 		}
