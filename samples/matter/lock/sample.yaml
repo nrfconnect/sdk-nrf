@@ -2,6 +2,20 @@ sample:
   description: Matter Lock example
   name: Matter Lock
 tests:
+  sample.matter.lock.debug:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp/nrf7001
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
+    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
+      nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15pdk/nrf54l15/cpuapp
+      nrf54l15pdk@0.3.0/nrf54l15/cpuapp
+    tags: sysbuild
   sample.matter.lock.release:
     sysbuild: true
     build_only: true
@@ -11,8 +25,25 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp/nrf7001
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf7002dk/nrf5340/cpuapp/nrf7001
+      nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15pdk/nrf54l15/cpuapp
+      nrf54l15pdk@0.3.0/nrf54l15/cpuapp
+    tags: sysbuild
+  sample.matter.lock.lto:
+    sysbuild: true
+    build_only: true
+    extra_args: CONFIG_LTO=y CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp/nrf7001
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
+    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
+      nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     tags: sysbuild
   sample.matter.lock.smp_dfu:
     sysbuild: true
@@ -23,8 +54,10 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp/nrf7001
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf7002dk/nrf5340/cpuapp/nrf7001
+      nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     tags: sysbuild
   sample.matter.lock.no_dfu.no_fd:
     sysbuild: true
@@ -34,7 +67,7 @@ tests:
     platform_allow: >
       nrf21540dk/nrf52840
     tags: sysbuild
-  sample.matter.lock.thread_wifi_switched.smp_dfu:
+  sample.matter.lock.thread_wifi_switched.lto.smp_dfu:
     sysbuild: true
     build_only: true
     extra_args: lock_SHIELD=nrf7002ek multiprotocol_rpmsg_SHIELD=nrf7002ek_coex
