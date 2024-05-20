@@ -4,8 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "nrf54h20dk_nrf54h20_memory_map.dtsi"
-
-&uart135 {
-	status = "disabled";
-};
+#include "../boards/nrf54h20dk_nrf54h20_cpuapp_common.dtsi"

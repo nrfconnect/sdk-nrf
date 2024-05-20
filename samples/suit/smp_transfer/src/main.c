@@ -53,9 +53,9 @@ int main(void)
 	}
 #endif
 
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-	start_smp_bluetooth_adverts();
-#endif
+	if (IS_ENABLED(CONFIG_MCUMGR_TRANSPORT_BT)) {
+		start_smp_bluetooth_adverts();
+	}
 
 	while (1) {
 		for (int i = 0; i < CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM; i++) {
