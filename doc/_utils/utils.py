@@ -135,11 +135,9 @@ def add_announcement_banner(options: dict) -> None:
         options: html theme options.
     """
 
-    msg = "<b>Important: </b>We're excited to introduce our new technical documentation " \
-           "platform <a href=\"https://docs.nordicsemi.com/\">docs.nordicsemi.com</a>, " \
-           "currently in Beta version. We invite you to explore it and share your feedback. " \
-           "Read more on our " \
-           "<a href=\"https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/introducing-the-unified-documentation-portal/\">DevZone blog</a>. " \
+    msg = "<b>Important: </b>This website will be taken offline by 2024-06-18 and replaced " \
+           "with <a href=\"https://docs.nordicsemi.com/\">docs.nordicsemi.com</a>, " \
+           "where all Nordic technical documentation is already accessible. " \
 
     options["set_default_announcement"] = True
     options["default_announcement_message"] = msg
