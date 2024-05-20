@@ -27,8 +27,8 @@ static struct k_thread broadcaster_thread;
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 
 #define BUF_ALLOC_TIMEOUT_MS	       (10)
-#define BROADCAST_PERIODIC_ADV_INT_MIN (32)	/* Periodic ADV min interval = 40ms */
-#define BROADCAST_PERIODIC_ADV_INT_MAX (32)	/* Periodic ADV max interval = 40ms */
+#define BROADCAST_PERIODIC_ADV_INT_MIN (32) /* Periodic ADV min interval = 40ms */
+#define BROADCAST_PERIODIC_ADV_INT_MAX (32) /* Periodic ADV max interval = 40ms */
 #define BROADCAST_PERIODIC_ADV                                                                     \
 	BT_LE_PER_ADV_PARAM(BROADCAST_PERIODIC_ADV_INT_MIN, BROADCAST_PERIODIC_ADV_INT_MAX,        \
 			    BT_LE_PER_ADV_OPT_NONE)
@@ -117,7 +117,10 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 	while (1) {
 		int ret;
 
-		k_sleep(K_USEC(big_create_param.interval));
+		/* Wake up earlier to reduce the time skewing
+		 * Use the ISO interval minus 200 uS to keep the buffer full.
+		 */
+		k_sleep(K_USEC(big_create_param.interval - 200));
 		if (!running) {
 			k_msleep(100);
 			initial_send = 2;
