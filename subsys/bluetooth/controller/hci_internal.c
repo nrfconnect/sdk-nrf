@@ -65,6 +65,7 @@ static bool command_generates_command_complete_event(uint16_t hci_opcode)
 	case SDC_HCI_OPCODE_CMD_LE_CREATE_BIG:
 	case SDC_HCI_OPCODE_CMD_LE_CREATE_BIG_TEST:
 	case SDC_HCI_OPCODE_CMD_LE_TERMINATE_BIG:
+	case SDC_HCI_OPCODE_CMD_LE_SUBRATE_REQUEST:
 		return false;
 	default:
 		return true;
@@ -611,6 +612,13 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_ISO_RX_BUFFERS)
 	cmds->hci_le_iso_receive_test = 1;
 #endif
+
+#if defined(CONFIG_BT_CTLR_SUBRATING)
+#if defined(CONFIG_BT_CENTRAL)
+	cmds->hci_le_set_default_subrate_command = 1;
+#endif
+	cmds->hci_le_subrate_request_command = 1;
+#endif /* CONFIG_BT_CTLR_SUBRATING */
 }
 
 #if defined(CONFIG_BT_HCI_VS)
@@ -784,6 +792,10 @@ void hci_internal_le_supported_features(
 
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
 	features->params.periodic_advertising_with_responses_scanner = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_SUBRATING)
+	features->params.connection_subrating = 1;
 #endif
 }
 
@@ -1533,6 +1545,15 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_le_set_periodic_sync_subevent((void *)cmd_params,
 									(void *)event_out_params);
 #endif
+
+#if defined(CONFIG_BT_CTLR_SUBRATING)
+#if defined(CONFIG_BT_CENTRAL)
+	case SDC_HCI_OPCODE_CMD_LE_SET_DEFAULT_SUBRATE:
+		return sdc_hci_cmd_le_set_default_subrate((void *)cmd_params);
+#endif
+	case SDC_HCI_OPCODE_CMD_LE_SUBRATE_REQUEST:
+		return sdc_hci_cmd_le_subrate_request((void *)cmd_params);
+#endif /* CONFIG_BT_CTLR_SUBRATING */
 
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
