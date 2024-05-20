@@ -14,4 +14,13 @@
 
 &mx25uw63 {
 	status = "okay";
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		dfu_cache_partition_1: partition@0 {
+			reg = <0x0 DT_SIZE_K(1024)>;
+		};
+	};
 };
