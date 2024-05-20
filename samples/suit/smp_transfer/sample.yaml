@@ -13,49 +13,53 @@ common:
   sysbuild: true
 tests:
   subsys.suit.smp_transfer.v1:
-    extra_configs:
-      - CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
+    extra_args:
+      - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
     tags: suit
 
   subsys.suit.smp_transfer.bt.v1:
-    extra_args: FILE_SUFFIX=bt
-    extra_configs:
-      - CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
+    extra_args:
+      - FILE_SUFFIX=bt
+      - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
     tags: suit bluetooth
 
   subsys.suit.smp_transfer.v2:
-    extra_configs:
-      - CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+    extra_args:
+      - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
     tags: suit
 
   subsys.suit.smp_transfer.bt.v2:
-    extra_args: FILE_SUFFIX=bt
-    extra_configs:
-      - CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+    extra_args:
+      - FILE_SUFFIX=bt
+      - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
     tags: suit bluetooth
 
   subsys.suit.smp_transfer.full.v1:
+    extra_args:
+      - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
     extra_configs:
-      - CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
     tags: suit
 
   subsys.suit.smp_transfer.full.v2:
+    extra_args:
+      - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
     extra_configs:
-      - CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
     tags: suit
 
   subsys.suit.smp_transfer.full.bt.v1:
-    extra_args: FILE_SUFFIX=bt
+    extra_args:
+      - FILE_SUFFIX=bt
+      - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
     extra_configs:
-      - CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
     tags: suit bluetooth
 
   subsys.suit.smp_transfer.full.bt.v2:
-    extra_args: FILE_SUFFIX=bt
+    extra_args:
+      - FILE_SUFFIX=bt
+      - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
     extra_configs:
-      - CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
     tags: suit bluetooth
