@@ -18,6 +18,7 @@
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/usb/usb_ch9.h>
 #include <zephyr/usb/class/usb_hid.h>
+#include <zephyr/usb/class/usbd_hid.h>
 
 #define MODULE usb_state
 #include <caf/events/module_state_event.h>
@@ -58,6 +59,7 @@ struct usb_hid_device {
 	uint32_t report_bm;
 	uint8_t hid_protocol;
 	uint8_t sent_report_id;
+	uint32_t idle_duration[REPORT_ID_COUNT];
 	bool report_enabled[REPORT_ID_COUNT];
 	bool enabled;
 };
@@ -70,7 +72,16 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT) ||
 	     "Unsupported USB stack");
 
 #if CONFIG_DESKTOP_USB_STACK_NEXT
-static struct usb_hid_device usb_hid_device[0];
+#define USB_NEXT_USB_HID_DEVICE_INIT(node_id)	\
+{						\
+	.dev = DEVICE_DT_GET(node_id),		\
+	.hid_protocol = HID_PROTOCOL_REPORT,	\
+	.sent_report_id = REPORT_ID_COUNT,	\
+},
+
+static struct usb_hid_device usb_hid_device[] = {
+	DT_FOREACH_STATUS_OKAY(zephyr_hid_device, USB_NEXT_USB_HID_DEVICE_INIT)
+};
 #else
 static struct usb_hid_device usb_hid_device[CONFIG_USB_HID_DEVICE_COUNT];
 #endif
@@ -220,11 +231,6 @@ static void report_sent(const struct device *dev, bool error)
 	usb_hid->sent_report_id = REPORT_ID_COUNT;
 }
 
-static void report_sent_cb(const struct device *dev)
-{
-	report_sent(dev, false);
-}
-
 static void send_hid_report(const struct hid_report_event *event)
 {
 	struct usb_hid_device *usb_hid = NULL;
@@ -288,7 +294,15 @@ static void send_hid_report(const struct hid_report_event *event)
 	int err = 0;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT)) {
-		LOG_WRN("send_hid_report not integrated for USB next");
+		/* USB next stack expects buffer alignment. */
+		if (IS_ALIGNED(report_buffer, sizeof(void *))) {
+			err = hid_device_submit_report(usb_hid->dev, report_size, report_buffer);
+		} else {
+			uint8_t temp[report_size] __aligned(sizeof(void *));
+
+			memcpy(temp, report_buffer, report_size);
+			err = hid_device_submit_report(usb_hid->dev, report_size, temp);
+		}
 	} else {
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY));
 		err = hid_int_ep_write(usb_hid->dev, report_buffer, report_size, NULL);
@@ -300,11 +314,11 @@ static void send_hid_report(const struct hid_report_event *event)
 	}
 }
 
-static void broadcast_usb_state(void)
+static void broadcast_usb_state(enum usb_state broadcast_state)
 {
 	struct usb_state_event *event = new_usb_state_event();
 
-	event->state = state;
+	event->state = broadcast_state;
 
 	APP_EVENT_SUBMIT(event);
 }
@@ -633,6 +647,11 @@ static int set_report_legacy(const struct device *dev, struct usb_setup_packet *
 	return err;
 }
 
+static void report_sent_cb_legacy(const struct device *dev)
+{
+	report_sent(dev, false);
+}
+
 static int usb_init_legacy_hid_device_init(struct usb_hid_device *usb_hid_dev,
 					   const struct device *dev,
 					   uint32_t report_bm)
@@ -640,7 +659,7 @@ static int usb_init_legacy_hid_device_init(struct usb_hid_device *usb_hid_dev,
 	static const struct hid_ops hid_ops = {
 		.get_report = get_report_legacy,
 		.set_report = set_report_legacy,
-		.int_in_ready = report_sent_cb,
+		.int_in_ready = report_sent_cb_legacy,
 		.protocol_change = protocol_change,
 	};
 
@@ -754,7 +773,7 @@ static void usb_init_legacy_status_cb(enum usb_dc_status_code cb_status, const u
 
 	/* Update state. */
 	state = new_state;
-	broadcast_usb_state();
+	broadcast_usb_state(state);
 
 	/* HID subscribe when entering active state. */
 	if (state == USB_STATE_ACTIVE) {
@@ -809,6 +828,122 @@ static int usb_init_legacy(void)
 	}
 
 	return 0;
+}
+
+static bool is_usb_active_next(void)
+{
+	bool usb_active = false;
+
+	for (size_t i = 0; i < ARRAY_SIZE(usb_hid_device); i++) {
+		if (usb_hid_device[i].enabled) {
+			usb_active = true;
+			break;
+		}
+	}
+
+	return usb_active;
+}
+
+static void iface_ready_next(const struct device *dev, const bool ready)
+{
+	struct usb_hid_device *usb_hid = dev_to_hid(dev);
+	bool was_usb_active = is_usb_active_next();
+
+	update_usb_hid(usb_hid, ready);
+
+	bool is_usb_active = is_usb_active_next();
+
+	if (state == USB_STATE_SUSPENDED) {
+		/* USB state update is delayed if USB is suspended. */
+		return;
+	}
+
+	if (!was_usb_active && is_usb_active) {
+		broadcast_usb_state(USB_STATE_ACTIVE);
+	} else if (was_usb_active && !is_usb_active) {
+		broadcast_usb_state(state);
+	}
+}
+
+static int get_report_next(const struct device *dev, const uint8_t type, const uint8_t id,
+			   const uint16_t len, uint8_t *const buf)
+{
+	/* Omit the first byte - HID report ID. */
+	buf[0] = id;
+	return get_report(dev, type, id, buf + 1, len - 1);
+}
+
+static int set_report_next(const struct device *dev, const uint8_t type, const uint8_t id,
+			   const uint16_t len, const uint8_t *const buf)
+{
+	/* Omit the first byte - HID report ID. */
+	return set_report(dev, type, id, buf + 1, len - 1);
+}
+
+static void set_idle_next(const struct device *dev, const uint8_t id, const uint32_t duration)
+{
+	struct usb_hid_device *usb_hid = dev_to_hid(dev);
+
+	usb_hid->idle_duration[id] = duration;
+}
+
+static uint32_t get_idle_next(const struct device *dev, const uint8_t id)
+{
+	struct usb_hid_device *usb_hid = dev_to_hid(dev);
+
+	return usb_hid->idle_duration[id];
+}
+
+static void report_sent_cb_next(const struct device *dev)
+{
+	struct usb_hid_device *usb_hid = dev_to_hid(dev);
+
+	/* USB next stack does not explicitly indicate failed transfers. */
+	if (usb_hid->enabled) {
+		report_sent(dev, false);
+	} else {
+		report_sent(dev, true);
+	}
+}
+
+static int usb_init_next_hid_device_init(struct usb_hid_device *usb_hid_dev, uint32_t report_bm)
+{
+	static const struct hid_device_ops hid_ops = {
+		.iface_ready = iface_ready_next,
+		.get_report = get_report_next,
+		.set_report = set_report_next,
+		.set_idle = set_idle_next,
+		.get_idle = get_idle_next,
+		.set_protocol = protocol_change,
+		.input_report_done = report_sent_cb_next,
+	};
+
+	usb_hid_dev->report_bm = report_bm;
+
+	int err = hid_device_register(usb_hid_dev->dev, hid_report_desc, hid_report_desc_size,
+				      &hid_ops);
+
+	if (err) {
+		LOG_ERR("hid_device_register failed for %p (err: %d)",
+			(void *)usb_hid_dev->dev, err);
+	}
+
+	return err;
+}
+
+static int usb_init_next_hids_init(void)
+{
+	int err = 0;
+
+	for (size_t i = 0; i < ARRAY_SIZE(usb_hid_device); i++) {
+		err = usb_init_next_hid_device_init(&usb_hid_device[i], get_report_bm(i));
+		if (err) {
+			LOG_ERR("usb_init_next_hid_device_init failed (err: %d)", err);
+			break;
+		}
+	}
+
+	return err;
 }
 
 static void usb_init_next_status_cb(struct usbd_contex *const contex,
@@ -871,7 +1006,11 @@ static void usb_init_next_status_cb(struct usbd_contex *const contex,
 	}
 
 	if (new_state != state) {
-		broadcast_usb_state(new_state);
+		if ((state == USB_STATE_SUSPENDED) && is_usb_active_next()) {
+			broadcast_usb_state(USB_STATE_ACTIVE);
+		} else {
+			broadcast_usb_state(new_state);
+		}
 		state = new_state;
 	}
 }
@@ -1016,6 +1155,13 @@ static struct usbd_contex *usb_init_next_usbd_init(void)
 
 static int usb_init_next(void)
 {
+	int err = usb_init_next_hids_init();
+
+	if (err) {
+		LOG_ERR("usb_init_next_hids_init failed (err: %d)", err);
+		return err;
+	}
+
 	struct usbd_contex *usbd = usb_init_next_usbd_init();
 
 	if (!usbd) {
@@ -1023,8 +1169,7 @@ static int usb_init_next(void)
 		return -ENXIO;
 	}
 
-	int err = usbd_msg_register_cb(usbd, usb_init_next_status_cb);
-
+	err = usbd_msg_register_cb(usbd, usb_init_next_status_cb);
 	if (err) {
 		LOG_ERR("usbd_msg_register_cb failed (err: %d)", err);
 		return err;
