@@ -99,6 +99,8 @@ Check and configure the following library option that is used by the sample:
 Snippets
 ========
 
+.. |snippet| replace:: :makevar:`coprocessor_SNIPPET`
+
 .. include:: /includes/sample_snippets.txt
 
 The following snippets are available:
