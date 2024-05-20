@@ -28,14 +28,23 @@ target_include_directories(app PRIVATE
     src
 )
 
-FILE(GLOB cred_srcs src/credentials/*.cpp)
+SET(access_srcs src/access/access_data_types.cpp
+              src/access/access_manager_credentials.cpp
+              src/access/access_manager_users.cpp
+              src/access/access_manager.cpp
+              src/access/access_storage.cpp
+              )
+
+if(CONFIG_LOCK_SCHEDULES)
+    LIST(APPEND access_srcs src/access/access_manager_schedules.cpp)
+endif()
 
 target_sources(app PRIVATE
     src/app_task.cpp
     src/bolt_lock_manager.cpp
     src/main.cpp
     src/zcl_callbacks.cpp
-    ${cred_srcs}
+    ${access_srcs}
 )
 
 if(CONFIG_THREAD_WIFI_SWITCHING)

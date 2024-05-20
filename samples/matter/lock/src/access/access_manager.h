@@ -9,9 +9,9 @@
 #include <app/clusters/door-lock-server/door-lock-server.h>
 #include <lib/core/ClusterEnums.h>
 
-#include "credentials_data_types.h"
+#include "access_data_types.h"
 
-template <DoorLockData::CredentialsBits CRED_BIT_MASK> class CredentialsManager {
+template <DoorLockData::CredentialsBits CRED_BIT_MASK> class AccessManager {
 public:
 	/**
 	 * @brief Signature of the callback fired when the credential is set.
@@ -55,9 +55,9 @@ public:
 	 *
 	 * @return CredentialManager single instance
 	 */
-	static CredentialsManager &Instance()
+	static AccessManager &Instance()
 	{
-		static CredentialsManager sInstance;
+		static AccessManager sInstance;
 		return sInstance;
 	}
 
@@ -134,6 +134,101 @@ public:
 			   DlCredentialStatus credentialStatus, CredentialTypeEnum credentialType,
 			   const chip::ByteSpan &secret);
 
+#ifdef CONFIG_LOCK_SCHEDULES
+
+	/**
+	 * @brief Get the Week Day Schedule.
+	 *
+	 * @param weekdayIndex schedule index that was saved utilizing setWeekDaySchedule method.
+	 * @param userIndex user index that contains the specific Week day schedule.
+	 * @param schedule Schedule data to be retrieved.
+	 * @retval DlStatus::kNotFound if schedule has not been found.
+	 * @retval DlStatus::kFailure if userIndex or weekdayIndex is out of scope.
+	 * @retval DlStatus::kSuccess if schedule has been retrieved.
+	 */
+	DlStatus GetWeekDaySchedule(uint8_t weekdayIndex, uint16_t userIndex,
+				    EmberAfPluginDoorLockWeekDaySchedule &schedule);
+
+	/**
+	 * @brief Set the Week Day Schedule object
+	 *
+	 * @param weekdayIndex Schedule index to be set starting from 1.
+	 * @param userIndex User index to be set starting from 1
+	 * @param status New status of the schedule slot (occupied/available).
+	 * @param daysMask Indicates the days of the week the Week Day schedule applies for.
+	 * @param startHour Starting hour for the Week Day schedule.
+	 * @param startMinute Starting minute for the Week Day schedule
+	 * @param endHour Ending hour for the Week Day schedule.
+	 * @param endMinute Ending minute for the Week Day schedule.
+	 * @retval DlStatus::kFailure if userIndex or weekdayIndex is out of scope.
+	 * @retval DlStatus::kSuccess if schedule has been set.
+	 */
+	DlStatus SetWeekDaySchedule(uint8_t weekdayIndex, uint16_t userIndex, DlScheduleStatus status,
+				    DaysMaskMap daysMask, uint8_t startHour, uint8_t startMinute, uint8_t endHour,
+				    uint8_t endMinute);
+
+	/**
+	 * @brief Get the Year Day Schedule.
+	 *
+	 * @param yearDayIndex ndex of the year day schedule to access. It is guaranteed to be within limits declared
+	 * in the spec for year day schedule (from 1 up to NumberOfYearDaySchedulesSupportedPerUser)
+	 * @param userIndex Index of the user to get year day schedule.
+	 * @param schedule Schedule data to be retrieved.
+	 * @retval DlStatus::kNotFound if schedule has not been found.
+	 * @retval DlStatus::kFailure if userIndex or weekdayIndex is out of scope.
+	 * @retval DlStatus::kSuccess if schedule has been retrieved.
+	 */
+	DlStatus GetYearDaySchedule(uint8_t yearDayIndex, uint16_t userIndex,
+				    EmberAfPluginDoorLockYearDaySchedule &schedule);
+
+	/**
+	 * @brief Set the Year Day Schedule object
+	 *
+	 * @param yearDayIndex Index of the year day schedule to access. It is guaranteed to be within limits declared
+	 * in the spec for year day schedule (from 1 up to NumberOfYearDaySchedulesSupportedPerUser)
+	 * @param userIndex Index of the user to get year day schedule.
+	 * @param status New status of the schedule slot (occupied/available).
+	 * @param localStartTime The starting time for the Year Day schedule in Epoch Time in Seconds with local time
+	 * offset based on the local timezone and DST offset on the day represented by the value.
+	 * @param localEndTime The ending time for the Year Day schedule in Epoch Time in Seconds with local time offset
+	 * based on the local timezone and DST offset on the day represented by the value
+	 * @retval DlStatus::kFailure if userIndex or weekdayIndex is out of scope.
+	 * @retval DlStatus::kSuccess if schedule has been set.
+	 */
+	DlStatus SetYearDaySchedule(uint8_t yearDayIndex, uint16_t userIndex, DlScheduleStatus status,
+				    uint32_t localStartTime, uint32_t localEndTime);
+
+	/**
+	 * @brief Get the Holiday Schedule object
+	 *
+	 * @param holidayIndex Index of the holiday schedule to access. It is guaranteed to be within limits declared in
+	 * the spec for holiday schedule (from 1 up to NumberOfHolidaySchedulesSupported)
+	 * @param schedule Schedule data to be retrieved.
+	 * @retval DlStatus::kNotFound if schedule has not been found.
+	 * @retval DlStatus::kFailure if weekdayIndex is out of scope.
+	 * @retval DlStatus::kSuccess if schedule has been retrieved.
+	 */
+	DlStatus GetHolidaySchedule(uint8_t holidayIndex, EmberAfPluginDoorLockHolidaySchedule &schedule);
+
+	/**
+	 * @brief Set the Holiday Schedule object
+	 *
+	 * @param holidayIndex Index of the holiday schedule to access. It is guaranteed to be within limits declared in
+	 * the spec for holiday schedule (from 1 up to NumberOfHolidaySchedulesSupported).
+	 * @param status New status of the schedule slot (occupied/available).
+	 * @param localStartTime The starting time for the Year Day schedule in Epoch Time in Seconds with local time
+	 * offset based on the local timezone and DST offset on the day represented by the value.
+	 * @param localEndTime The ending time for the Year Day schedule in Epoch Time in Seconds with local time offset
+	 * based on the local timezone and DST offset on the day represented by the value.
+	 * @param operatingMode The operating mode to use during this Holiday schedule start/end time.
+	 * @retval DlStatus::kFailure if weekdayIndex is out of scope.
+	 * @retval DlStatus::kSuccess if schedule has been set.
+	 */
+	DlStatus SetHolidaySchedule(uint8_t holidayIndex, DlScheduleStatus status, uint32_t localStartTime,
+				    uint32_t localEndTime, OperatingModeEnum operatingMode);
+
+#endif /* CONFIG_LOCK_SCHEDULES */
+
 	/**
 	 * @brief PIN code validator.
 	 *
@@ -183,7 +278,12 @@ public:
 	void PrintCredential(CredentialTypeEnum type, uint16_t index);
 	const char *GetCredentialName(CredentialTypeEnum type);
 	void PrintUser(uint16_t userIndex);
-#endif
+#ifdef CONFIG_LOCK_SCHEDULES
+	enum class ScheduleType : uint8_t { WeekDay, YearDay, Holiday };
+	/* @param userIndex is only needed for ScheduleType WeekDay and YearDay */
+	void PrintSchedule(ScheduleType scheduleType, uint16_t scheduleIndex, uint16_t userIndex = 0);
+#endif /* CONFIG_LOCK_SCHEDULES */
+#endif /* CONFIG_LOCK_ENABLE_DEBUG */
 
 private:
 	struct CredentialsIndexes {
@@ -195,14 +295,37 @@ private:
 
 	using UsersIndexes = DoorLockData::IndexList<CONFIG_LOCK_MAX_NUM_USERS>;
 
-	CredentialsManager() = default;
-	~CredentialsManager() = default;
-	CredentialsManager(const CredentialsManager &) = delete;
-	CredentialsManager(CredentialsManager &&) = delete;
-	CredentialsManager &operator=(CredentialsManager &) = delete;
+#ifdef CONFIG_LOCK_SCHEDULES
+	struct WeekDayScheduleIndexes {
+		using ScheduleList = DoorLockData::IndexList<CONFIG_LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER>;
+		ScheduleList mScheduleIndexes[CONFIG_LOCK_MAX_NUM_USERS];
+
+		ScheduleList &Get(uint16_t userIndex) { return mScheduleIndexes[userIndex - 1]; }
+	};
+
+	struct YearDayScheduleIndexes {
+		using ScheduleList = DoorLockData::IndexList<CONFIG_LOCK_MAX_YEARDAY_SCHEDULES_PER_USER>;
+		ScheduleList mScheduleIndexes[CONFIG_LOCK_MAX_NUM_USERS];
+
+		ScheduleList &Get(uint16_t userIndex) { return mScheduleIndexes[userIndex - 1]; }
+	};
+
+	using HolidayScheduleIndexes = DoorLockData::IndexList<CONFIG_LOCK_MAX_HOLIDAY_SCHEDULES>;
+#endif /* CONFIG_LOCK_SCHEDULES */
+
+	AccessManager() = default;
+	~AccessManager() = default;
+	AccessManager(const AccessManager &) = delete;
+	AccessManager(AccessManager &&) = delete;
+	AccessManager &operator=(AccessManager &) = delete;
 
 	void InitializeUsers();
-	void LoadFromPersistentStorage();
+	void LoadUsersFromPersistentStorage();
+	void LoadCredentialsFromPersistentStorage();
+#ifdef CONFIG_LOCK_SCHEDULES
+	void InitializeSchedules();
+	void LoadSchedulesFromPersistentStorage();
+#endif
 
 	static CHIP_ERROR GetCredentialUserId(uint16_t credentialIndex, CredentialTypeEnum credentialType,
 					      uint32_t &userId);
@@ -226,6 +349,19 @@ private:
 
 	DoorLockData::User mUsers[CONFIG_LOCK_MAX_NUM_USERS] = {};
 	UsersIndexes mUsersIndexes{};
+
+#ifdef CONFIG_LOCK_SCHEDULES
+	DoorLockData::WeekDaySchedule mWeekDaySchedule[CONFIG_LOCK_MAX_NUM_USERS]
+						      [CONFIG_LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER] = {};
+	WeekDayScheduleIndexes mWeekDayScheduleIndexes = {};
+
+	DoorLockData::YearDaySchedule mYearDaySchedule[CONFIG_LOCK_MAX_NUM_USERS]
+						      [CONFIG_LOCK_MAX_YEARDAY_SCHEDULES_PER_USER] = {};
+	YearDayScheduleIndexes mYearDayScheduleIndexes = {};
+
+	DoorLockData::HolidaySchedule mHolidaySchedule[CONFIG_LOCK_MAX_HOLIDAY_SCHEDULES];
+	HolidayScheduleIndexes mHolidayScheduleIndexes = {};
+#endif /* CONFIG_LOCK_SCHEDULES */
 
 	bool mRequirePINForRemoteOperation{ false };
 };

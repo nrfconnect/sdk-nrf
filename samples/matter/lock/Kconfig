@@ -22,6 +22,30 @@ config LOCK_MAX_CREDENTIAL_LENGTH
 	int "Maximum length of the single credential supported by the lock"
 	default 10
 
+config LOCK_SCHEDULES
+	bool "Support for WeekDay, YearDay and Holiday schedules in lock"
+	help
+	  This option adds support for an optional Timed Schedule Access Lock feature.
+	  You can use Week Day, Year Day and Holiday schedules to restrict access for a
+	  specific user for a defined time window. For example, use it to
+	  give the user access only for three days in week.
+
+if LOCK_SCHEDULES
+
+config LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER
+	int "Maximum number of WeekDay schedules per one user supported by the lock"
+	default 5
+
+config LOCK_MAX_YEARDAY_SCHEDULES_PER_USER
+	int "Maximum number of YearDay schedules per one user supported by the lock"
+	default 5
+
+config LOCK_MAX_HOLIDAY_SCHEDULES
+	int "Maximum number of Holiday schedules supported by the lock"
+	default 5
+
+endif
+
 config LOCK_ENABLE_DEBUG
 	bool "Enable debug features to print users and credentials"
 	depends on SHELL
@@ -31,6 +55,15 @@ config LOCK_ENABLE_DEBUG
 	  or users, and manage them (add, clear, read).
 
 if LOCK_ENABLE_DEBUG
+
+config LOCK_PRINT_STORAGE_STATUS
+	bool "Print storage status after each store call"
+	help
+	  Debug feature to print the debug-level log that contains information of the entry being stored
+	  to persistent storage and how many bytes are left to store the new entry. It can be used to verify
+	  whether credential, schedule or user entries are written properly to persistent storage.
+	  This option should be disabled in production firmware
+	  version.
 
 # This should be deterined based on the maximum possible command length that depends on the LOCK_MAX_CREDENTIAL_LENGTH
 config SHELL_CMD_BUFF_SIZE

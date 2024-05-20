@@ -76,7 +76,7 @@ For details, see the `Commissioning the device`_ section.
 Door lock credentials
 =====================
 
-By default, the application supports only PIN code credentials, but it is possible to implement support for other door lock credential types by using the ``CredentialsManager`` module.
+By default, the application supports only PIN code credentials, but it is possible to implement support for other door lock credential types by using the ``AccessManager`` module.
 The credentials can be used to control remote access to the bolt lock.
 The PIN code assigned by the Matter controller is stored persistently, which means that it can survive a device reboot.
 Depending on the IPv6 network technology in use, the following storage backends are supported by default to store the PIN code credential:
@@ -481,6 +481,115 @@ Upgrading the device firmware
 
 To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
 
+.. _matter_lock_scheduled_timed_access:
+
+Scheduled timed access
+======================
+
+The scheduled timed access feature is an optional Matter lock feature that can be applicable to all available lock users.
+You can use the scheduled timed access feature to allow guest users of the home to access the lock at the specific scheduled times.
+To use this feature, you need to create at least one user on the lock device, and assign credentials.
+For more information about setting user credentials, see the Saving users and credentials on door lock devices section of the :doc:`matter:chip_tool_guide` page in the :doc:`Matter documentation set <matter:index>`, and the :ref:`matter_lock_sample_remote_access_with_pin` section of this sample.
+
+You can schedule the following types of timed access:
+
+   - ``Week-day`` - Restricts access to a specified time window on certain days of the week for a specific user.
+     This schedule grants repeated access each week.
+     When the schedule is cleared, the user is granted unrestricted access.
+
+   - ``Year-day`` - Restricts access to a specified time window on a specific date window.
+     This schedule grants access only once, and does not repeat.
+     When the schedule is cleared, the user is granted unrestricted access.
+
+   - ``Holiday`` - Sets up a holiday operating mode in the lock device.
+     You can choose one of the following operating modes:
+
+     - ``Normal`` - The lock operates normally.
+     - ``Vacation`` - Only remote operations are enabled.
+     - ``Privacy`` - All external interactions with the lock are disabled.
+       Can only be used if the lock is in the locked state.
+       Manually unlocking the lock changes the mode to ``Normal``.
+     - ``NoRemoteLockUnlock`` - All remote operations with the lock are disabled.
+     - ``Passage`` - The lock can be operated without providing a PIN.
+       This option can be used, for example, for employees during working hours.
+
+To enable the scheduled timed access feature, complete the following steps:
+
+1. Enable all needed scheduled timed access types in the ZAP file:
+
+   a. Open the :file:`lock.zap` file using the following west command:
+
+      .. code-block:: console
+
+         west zap-gui
+
+   #. Select the endpoint that contains the Matter Door Lock cluster.
+      By default, this is `Endpoint-1`.
+
+   #. Click the :guilabel:`Configure` symbol for the ``Door Lock`` cluster entry.
+   #. In the **Door Lock** context window, go to the **Attributes** tab and enable all required attributes:
+
+      * ``NumberOfWeekDaySchedulesSupportedPerUser`` for the ``Week-day`` schedule support.
+      * ``NumberOfYearDaySchedulesSupportedPerUser`` for the ``Year-day`` schedule support.
+      * ``NumberOfHolidaySchedulesSupported`` for the ``Holiday`` schedule support.
+
+   #. In the **Door Lock** context window, go to the **Attribute Reporting** page and enable all required attribute reporting entries:
+
+      * ``NumberOfWeekDaySchedulesSupportedPerUser`` for the ``Week-day`` schedule support.
+      * ``NumberOfYearDaySchedulesSupportedPerUser`` for the ``Year-day`` schedule support.
+      * ``NumberOfHolidaySchedulesSupported`` for the ``Holiday`` schedule support.
+
+   #. In the **Door Lock** context window, go to the **Commands** page and enable all required command entries:
+
+      * For the ``Week-day`` schedule support:
+
+        * ``SetWeekDaySchedule``
+        * ``GetWeekDaySchedule``
+        * ``GetWeekDayScheduleResponse``
+        * ``ClearWeekDaySchedule``
+
+      * For the ``Year-day`` schedule support:
+
+         * ``SetYearDaySchedule``
+         * ``GetYearDaySchedule``
+         * ``GetYearDayScheduleResponse``
+         * ``ClearYearDaySchedule``
+
+      * For the ``Holiday`` schedule support:
+
+         * ``SetHolidaySchedule``
+         * ``GetHolidaySchedule``
+         * ``GetHolidayScheduleResponse``
+         * ``ClearHolidaySchedule``
+
+#. In the **Door Lock** context window, go to the **Attributes** tab and set the proper bits for the ``FeatureMap`` attribute:
+
+   * For the ``Week-day`` schedule support set the ``5th`` bit of the feature map bit map.
+   * For the ``Year-day`` schedule support set the ``11th`` bit of the feature map bit map.
+   * For the ``Holiday`` schedule support set the ``12th`` bit of the feature map bit map.
+
+#. Save the :file:`lock.zap` file, and close ZAP-tool.
+#. Generate new ZAP files with the changes in the Door Lock cluster using the following west command:
+
+   .. code-block:: console
+
+         west zap-generate
+
+#. Enable the feature in the |NCS| Matter Lock sample by setting the :kconfig:option:`CONFIG_LOCK_SCHEDULES` Kconfig option to ``y``.
+#. Use the following Kconfig options to modify the maximum number of specific schedule types:
+
+   - :kconfig:option:`CONFIG_LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER` to define the maximum number of ``Week-day`` schedules for one user.
+   - :kconfig:option:`CONFIG_LOCK_MAX_YEARDAY_SCHEDULES_PER_USER` to define the maximum number of ``Year-day`` schedules for one user.
+   - :kconfig:option:`CONFIG_LOCK_MAX_HOLIDAY_SCHEDULES` to define the maximum number of ``Holiday`` schedules.
+
+To learn more about configuring the Door Lock cluster, see the :ref:`ug_matter_creating_accessory` user guide.
+
+All scheduled timed access entries are saved to non-volatile memory and loaded automatically after device reboot.
+To disable the feature, you need to revert all changes in the :file:`lock.zap` file, re-generate the ZAP files and set the :kconfig:option:`CONFIG_LOCK_SCHEDULES` Kconfig option to ``n``.
+
+.. note::
+   Adding a single schedule for a user contributes to the settings partition memory occupancy increase.
+
 .. _matter_lock_sample_remote_access_with_pin:
 
 Testing remote access with PIN code credential
@@ -535,6 +644,119 @@ After building the sample and programming it to your development kit, complete t
 
 .. note::
    Accessing the door lock remotely without a valid PIN code credential will fail.
+
+.. _matter_lock_sample_schedule_testing:
+
+Testing scheduled timed access
+==============================
+
+.. note::
+   You can test :ref:`matter_lock_scheduled_timed_access` using any Matter compatible controller.
+   The following steps use the CHIP Tool controller as an example.
+
+After building the sample with the feature enabled and programming it to your development kit, complete the following steps to test scheduled timed access:
+
+1. |connect_kit|
+#. |connect_terminal_ANSI|
+#. Wait until the device boots.
+#. Commission an accessory with node ID equal to 10 to the Matter network by following the steps described in the `Commissioning the device`_ section.
+#. Add the example ``Home`` door lock user:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock set-user 0 2 Home 123 1 0 0 10 1 --timedInteractionTimeoutMs 5000
+
+   This command creates a ``Home`` user with a unique ID of ``123`` and an index of ``2``.
+   The new user's status is set to ``1``, and both its type and credential rule to ``0``.
+   The user is assigned to the door lock cluster residing on endpoint ``1`` of the node with ID ``10``.
+
+#. Set the example ``Week-day`` schedule using the following command:
+
+   .. parsed-literal::
+      :class: highlight
+
+      ./chip-tool doorlock set-week-day-schedule *weekday-index* *user-index* *days-mask* *start-hour* *start-minute* *end-hour* *end-minute* *destination-id* *endpoint-id*
+
+   * *weekday-index* is the index of the new schedule, starting from ``1``.
+     The maximum value is defined by the :kconfig:option:`CONFIG_LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER` Kconfig option.
+   * *user-index* is the user index defined for the user created in the previous step.
+   * *days-mask* is a bitmap of numbers of the week days starting from ``0`` as a Sunday and finishing at ``6`` as a Saturday.
+     For example, to assign this schedule to Tuesday, Thursday and Saturday you need to provide ``84`` because it is equivalent to the ``01010100`` bitmap.
+   * *start-hour* is the starting hour for the week day schedule.
+   * *start-minute* is the starting minute for the week day schedule.
+   * *end-hour* is the ending hour for the week day schedule.
+   * *end-minute* is the ending hour for the week day schedule.
+   * *destination-id* is the device node ID.
+   * *endpoint-id* is the Matter door lock endpoint, in this sample assigned to ``1``.
+
+   For example, use the following command to set a ``Week-day`` schedule with index ``1`` for Tuesday, Thursday and Saturday to start at 7:30 AM and finish at 10:30 AM, dedicated for user with ID ``2``:
+
+   .. code-block:: console
+
+      ./chip-tool doorlock set-week-day-schedule 1 2 84 7 30 10 30 1 1
+
+
+#. Set the example ``Year-day`` schedule using the following command:
+
+   .. parsed-literal::
+      :class: highlight
+
+      ./chip-tool doorlock set-year-day-schedule *yearday-index* *user-index* *localtime-start* *localtime-end* *destination-id* *endpoint-id*
+
+
+   * *yearday-index* is the index of the new schedule, starting from ``1``.
+     The maximum value is defined by the :kconfig:option:`CONFIG_LOCK_MAX_YEARDAY_SCHEDULES_PER_USER` kconfig option.
+   * *user-index* is the user index defined for the user created in the previous step.
+   * *localtime-start* is the starting time in Epoch Time.
+   * *localtime-end* is the ending time in Epoch Time.
+   * *destination-id* is the device node ID.
+   * *endpoint-id* is the Matter door lock endpoint, in this sample assigned to ``1``.
+
+   Both ``localtime-start`` and ``localtime-end`` are in seconds with the local time offset based on the local timezone and DST offset on the day represented by the value.
+
+   For example, use the following command to set a ``Year-day`` schedule with index ``1`` to start on Monday, May 27, 2024, at 7:00:00 AM GMT+02:00 DST and finish on Thursday, May 30, 2024, at 7:00:00 AM GMT+02:00 DST dedicated for user with ID ``2``::
+
+   .. code-block:: console
+
+      ./chip-tool doorlock set-year-day-schedule 1 2 1716786000 1717045200 1 1
+
+#. Set the example ``Holiday`` schedule using the following command:
+
+   .. parsed-literal::
+      :class: highlight
+
+      ./chip-tool doorlock set-holiday-schedule *holiday-index* *localtime-start* *localtime-end* *operating-mode* *destination-id* *endpoint-id*
+
+   * *holiday-index* is the index of the new schedule, starting from ``1``.
+   * *localtime-start* is the starting time in Epoch Time.
+   * *localtime-end* is the ending time in Epoch Time.
+   * *operating-mode* is the operating mode described in the :ref:`matter_lock_scheduled_timed_access` section of this guide.
+   * *destination-id* is the device node ID.
+   * *endpoint-id* is the Matter door lock endpoint, in this sample assigned to ``1``.
+
+   For example, use the following command to setup a ``Holiday`` schedule with the operating mode ``Vacation`` to start on Monday, May 27, 2024, at 7:00:00 AM GMT+02:00 DST and finish on Thursday, May 30, 2024, at 7:00:00 AM GMT+02:00 DST:
+
+   .. parsed-literal::
+      :class: highlight
+
+      ./chip-tool doorlock set-holiday-schedule 1 1716786000 1717045200 1 1 1
+
+#. Read saved schedules using the following commands and providing the same arguments you used in the earlier steps:
+
+   .. parsed-literal::
+      :class: highlight
+
+      ./chip-tool doorlock get-week-day-schedule *weekday-index* *user-index* *destination-id* *endpoint-id*
+
+   .. parsed-literal::
+      :class: highlight
+
+      ./chip-tool doorlock get-year-day-schedule *yearday-index* *user-index* *destination-id* *endpoint-id*
+
+   .. parsed-literal::
+      :class: highlight
+
+      ./chip-tool doorlock get-holiday-schedule *holiday-index* *destination-id* *endpoint-id*
 
 .. _matter_lock_sample_switching_thread_wifi:
 
