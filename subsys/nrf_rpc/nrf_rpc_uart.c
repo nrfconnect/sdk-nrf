@@ -26,8 +26,6 @@ enum {
 
 static int hdlc_input_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
 {
-	//uint16_t crc, frame_crc;
-
 	/* TODO: handle frame buffer overflow */
 
 	if (uart_tr->hdlc_state == hdlc_state_escape) {
@@ -45,13 +43,6 @@ static int hdlc_input_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
 	}
 
 	if (uart_tr->hdlc_state == hdlc_state_frame_found) {
-		//crc = crc16_ccitt(0xffff, frame_buffer, frame_len-1);
-		//frame_crc = ((uint16_t)frame_buffer[frame_len-2] << 8) & frame_buffer[frame_len-1];
-		/*if (crc == frame_crc) {
-			LOG_DBG("frame crc match.");
-		} else {
-			LOG_DBG("frame crc MISmatch.");
-		}*/
 		LOG_HEXDUMP_DBG(uart_tr->frame_buffer, uart_tr->frame_len, "Received frame");
 	}
 
@@ -60,52 +51,63 @@ static int hdlc_input_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
 
 static void work_handler(struct k_work *work)
 {
-
 	struct nrf_rpc_uart *uart_tr = CONTAINER_OF(work, struct nrf_rpc_uart, cb_work);
 	const struct nrf_rpc_tr *transport = uart_tr->transport;
 	uint8_t *data;
 	size_t len;
 	int ret;
-
-	len = ring_buf_get_claim(&uart_tr->rx_ringbuf, &data, NRF_RPC_MAX_FRAME_SIZE);
-
-	for (size_t i = 0; i < len; i++) {
-		if (hdlc_input_byte(uart_tr, data[i]) == 0) {
-			if (uart_tr->hdlc_state == hdlc_state_frame_found) {
-				uart_tr->receive_callback(transport, uart_tr->frame_buffer,
-							  uart_tr->frame_len, uart_tr->receive_ctx);
-				uart_tr->frame_len = 0;
-				uart_tr->hdlc_state = hdlc_state_unsync;
+	while (!ring_buf_is_empty(&uart_tr->rx_ringbuf)) {
+		len = ring_buf_get_claim(&uart_tr->rx_ringbuf, &data, NRF_RPC_MAX_FRAME_SIZE);
+		for (size_t i = 0; i < len; i++) {
+			if (hdlc_input_byte(uart_tr, data[i]) == 0) {
+				if (uart_tr->hdlc_state == hdlc_state_frame_found) {
+					uart_tr->receive_callback(transport, uart_tr->frame_buffer,
+								  uart_tr->frame_len,
+								  uart_tr->receive_ctx);
+					uart_tr->frame_len = 0;
+					uart_tr->hdlc_state = hdlc_state_unsync;
+				}
 			}
 		}
-	}
 
-	ret = ring_buf_get_finish(&uart_tr->rx_ringbuf, len);
-	if (ret < 0) {
-		LOG_DBG("Cannot flush ring buffer (%d)", ret);
+		ret = ring_buf_get_finish(&uart_tr->rx_ringbuf, len);
+		if (ret < 0) {
+			LOG_DBG("Cannot flush ring buffer (%d)", ret);
+		}
 	}
 }
 
 static void serial_cb(const struct device *uart, void *user_data)
 {
 	struct nrf_rpc_uart *uart_tr = user_data;
-	int rx_len, ret;
-	uint8_t rx_buffer[8];
+	uint32_t rx_len;
+	uint8_t *rx_buffer;
+	bool new_data = false;
 
 	while (uart_irq_update(uart) && uart_irq_rx_ready(uart)) {
-		rx_len = uart_fifo_read(uart, rx_buffer, sizeof(rx_buffer));
-		if (rx_len <= 0) {
-			continue;
-		}
+		rx_len = ring_buf_put_claim(&uart_tr->rx_ringbuf, &rx_buffer,
+					    uart_tr->rx_ringbuf.size);
+		if (rx_len > 0) {
+			rx_len = uart_fifo_read(uart, rx_buffer, rx_len);
+			int err = ring_buf_put_finish(&uart_tr->rx_ringbuf, rx_len);
+			(void)err; /*silence the compiler*/
+			__ASSERT_NO_MSG(err == 0);
+			if (rx_len <= 0) {
+				continue;
+			} else {
+				new_data = true;
+			}
+		} else {
+			uint8_t dummy;
 
-		ret = ring_buf_put(&uart_tr->rx_ringbuf, rx_buffer, (uint32_t)rx_len);
-		if (ret < rx_len) {
-			LOG_ERR("Rx buffer doesn't have enough space. "
-				"Bytes pending: %d, written: %d",
-				rx_len, ret);
-			break;
-		}
+			/* No space in the ring buffer - consume byte. */
+			LOG_WRN("RX ring buffer full.");
 
+			rx_len = uart_fifo_read(uart, &dummy, 1);
+		}
+	}
+
+	if (new_data) {
 		k_work_submit_to_queue(&uart_tr->rx_workq, &uart_tr->cb_work);
 	}
 }
@@ -118,7 +120,7 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 {
 	struct nrf_rpc_uart *uart_tr = transport->ctx;
 
-	if(uart_tr->transport != NULL) {
+	if (uart_tr->transport != NULL) {
 		LOG_DBG("init not needed");
 		return 0;
 	}
@@ -157,11 +159,11 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 
 	k_work_queue_init(&uart_tr->rx_workq);
 	k_work_queue_start(&uart_tr->rx_workq, uart_tr_workq_stack_area,
-					K_THREAD_STACK_SIZEOF(uart_tr_workq_stack_area),
-					0, NULL);
+			   K_THREAD_STACK_SIZEOF(uart_tr_workq_stack_area), 0, NULL);
 
 	k_work_init(&uart_tr->cb_work, work_handler);
 	ring_buf_init(&uart_tr->rx_ringbuf, sizeof(uart_tr->rx_buffer), uart_tr->rx_buffer);
+
 	uart_tr->hdlc_state = hdlc_state_unsync;
 	uart_tr->frame_len = 0;
 	uart_irq_rx_enable(uart_tr->uart);
@@ -173,12 +175,12 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 {
 	LOG_HEXDUMP_DBG(data, length, "Sending frame");
 	struct nrf_rpc_uart *uart_tr = transport->ctx;
-	// uint16_t crc;
+
 	k_sem_take(&uart_tr->uart_tx_sem, K_FOREVER);
-	// crc = crc16_ccitt(0xffff, data, length);
+
 	uart_poll_out(uart_tr->uart, hdlc_char_delimiter);
 
-	for(size_t i = 0; i < length; i++) {
+	for (size_t i = 0; i < length; i++) {
 		uint8_t byte = data[i];
 
 		if (data[i] == hdlc_char_delimiter || data[i] == hdlc_char_escape) {
@@ -189,11 +191,9 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 		uart_poll_out(uart_tr->uart, byte);
 	}
 
-//	uart_poll_out(uart_tr->uart, (crc >> 8) & 0xff);
-//	uart_poll_out(uart_tr->uart, crc & 0xff);
 	uart_poll_out(uart_tr->uart, hdlc_char_delimiter);
 
-	k_free((void*)data);
+	k_free((void *)data);
 	k_sem_give(&uart_tr->uart_tx_sem);
 
 	return 0;
