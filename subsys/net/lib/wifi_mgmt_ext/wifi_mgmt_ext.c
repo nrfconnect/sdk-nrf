@@ -73,7 +73,8 @@ static int __stored_creds_to_params(struct wifi_credentials_personal *creds,
 
 	/* If channel is set to 0 we default to ANY. 0 is not a valid Wi-Fi channel. */
 	params->channel = (creds->header.channel != 0) ? creds->header.channel : WIFI_CHANNEL_ANY;
-	params->timeout = CONFIG_WIFI_MGMT_EXT_CONNECTION_TIMEOUT;
+	params->timeout = (creds->header.timeout != 0) ? creds->header.timeout :
+							 CONFIG_WIFI_MGMT_EXT_CONNECTION_TIMEOUT;
 
 	/* Security type (optional) */
 	if (creds->header.type > WIFI_SECURITY_TYPE_MAX) {

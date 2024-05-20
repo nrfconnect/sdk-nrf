@@ -83,6 +83,12 @@ static void print_network_info(void *cb_arg, const char *ssid, size_t ssid_len)
 	} else {
 		shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, ", MFP_OPTIONAL");
 	}
+
+	if (creds.header.timeout) {
+		shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, ", timeout: %d",
+			      creds.header.timeout);
+	}
+
 	shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, "\n");
 }
 
@@ -225,6 +231,16 @@ static int cmd_add_network(const struct shell *shell, size_t argc, char *argv[])
 		}
 	}
 
+	if (arg_idx < argc) {
+		/* look for timeout */
+		char *end;
+
+		creds.header.timeout = strtol(argv[arg_idx], &end, 10);
+		if (*end == '\0') {
+			++arg_idx;
+		}
+	}
+
 	if (arg_idx != argc) {
 		for (size_t i = arg_idx; i < argc; ++i) {
 			shell_warn(shell, "Unparsed arg: [%s]", argv[i]);
@@ -240,7 +256,8 @@ help:
 		    " [{2.4GHz, 5GHz}]"
 		    " [channel]"
 		    " [favorite]"
-		    " [mfp_disabled|mfp_required]");
+		    " [mfp_disabled|mfp_required]"
+		    " [timeout]");
 	return -EINVAL;
 }
 

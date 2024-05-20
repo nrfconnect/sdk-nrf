@@ -192,7 +192,8 @@ exit:
 
 int wifi_credentials_set_personal(const char *ssid, size_t ssid_len, enum wifi_security_type type,
 				  const uint8_t *bssid, size_t bssid_len, const char *password,
-				  size_t password_len, uint32_t flags, uint8_t channel)
+				  size_t password_len, uint32_t flags, uint8_t channel,
+				  uint32_t timeout)
 {
 	int ret = 0;
 	uint8_t buf[ENTRY_MAX_LEN] = { 0 };
@@ -221,6 +222,7 @@ int wifi_credentials_set_personal(const char *ssid, size_t ssid_len, enum wifi_s
 	header->ssid_len = ssid_len;
 	header->flags = flags;
 	header->channel = channel;
+	header->timeout = timeout;
 
 	if (flags & WIFI_CREDENTIALS_FLAG_BSSID) {
 		memcpy(header->bssid, bssid, WIFI_MAC_ADDR_LEN);
@@ -256,7 +258,7 @@ int wifi_credentials_get_by_ssid_personal(const char *ssid, size_t ssid_len,
 					  enum wifi_security_type *type, uint8_t *bssid_buf,
 					  size_t bssid_buf_len, char *password_buf,
 					  size_t password_buf_len, size_t *password_len,
-					  uint32_t *flags, uint8_t *channel)
+					  uint32_t *flags, uint8_t *channel, uint32_t *timeout)
 {
 	int ret = 0;
 	uint8_t buf[ENTRY_MAX_LEN] = { 0 };
@@ -289,6 +291,7 @@ int wifi_credentials_get_by_ssid_personal(const char *ssid, size_t ssid_len,
 	*type = header->type;
 	*flags = header->flags;
 	*channel = header->channel;
+	*timeout = header->timeout;
 
 	if (header->flags & WIFI_CREDENTIALS_FLAG_BSSID) {
 		memcpy(bssid_buf, header->bssid, WIFI_MAC_ADDR_LEN);

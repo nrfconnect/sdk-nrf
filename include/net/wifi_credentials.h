@@ -52,6 +52,7 @@ struct wifi_credentials_header {
 	uint8_t bssid[WIFI_MAC_ADDR_LEN];
 	uint32_t flags;
 	uint8_t channel;
+	uint32_t timeout;
 };
 
 /**
@@ -112,7 +113,8 @@ int wifi_credentials_get_by_ssid_personal(
 	size_t password_buf_len,
 	size_t *password_len,
 	uint32_t *flags,
-	uint8_t *channel
+	uint8_t *channel,
+	uint32_t *timeout
 );
 
 /**
@@ -142,7 +144,8 @@ int wifi_credentials_set_personal(
 	const char *password,
 	size_t password_len,
 	uint32_t flags,
-	uint8_t channel
+	uint8_t channel,
+	uint32_t timeout
 );
 
 /**
