@@ -34,6 +34,10 @@ DEF_DFU_TARGET(full_modem);
 #include "dfu/dfu_target_smp.h"
 DEF_DFU_TARGET(smp);
 #endif
+#ifdef CONFIG_DFU_TARGET_SUIT
+#include "dfu/dfu_target_suit.h"
+DEF_DFU_TARGET(suit);
+#endif
 
 #define MIN_SIZE_IDENTIFY_BUF 32
 
@@ -102,6 +106,11 @@ int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_call
 #ifdef CONFIG_DFU_TARGET_SMP
 	if (img_type == DFU_TARGET_IMAGE_TYPE_SMP) {
 		new_target = &dfu_target_smp;
+	}
+#endif
+#ifdef CONFIG_DFU_TARGET_SUIT
+	if (img_type == DFU_TARGET_IMAGE_TYPE_SUIT) {
+		new_target = &dfu_target_suit;
 	}
 #endif
 
