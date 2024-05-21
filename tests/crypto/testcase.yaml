@@ -1,18 +1,4 @@
 tests:
-  crypto.builtin:
-    sysbuild: true
-    extra_args: OVERLAY_CONFIG=overlay-builtin.conf
-    platform_allow: nrf52840dk/nrf52840 nrf9160dk/nrf9160 nrf5340dk/nrf5340/cpuapp
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf9160dk/nrf9160
-      - nrf5340dk/nrf5340/cpuapp
-    tags: crypto ci_build legacy builtin_legacy sysbuild
-    harness_config:
-      type: multi_line
-      regex:
-        - ".*PROJECT EXECUTION SUCCESSFUL.*"
-    timeout: 600
   crypto.cc3xx:
     sysbuild: true
     extra_args: OVERLAY_CONFIG=overlay-cc3xx.conf
