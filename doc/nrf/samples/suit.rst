@@ -1,3 +1,5 @@
+:orphan:
+
 .. _suit_samples:
 
 SUIT samples
