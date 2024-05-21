@@ -81,6 +81,8 @@ static int workqueue_init(void)
 						CONFIG_NRF700X_BH_WQ_PRIORITY,
 						NULL);
 
+	k_thread_name_set(&zep_wifi_bh_q.thread, "nrf700x_bh_wq");
+
 	k_work_queue_init(&zep_wifi_intr_q);
 
 	k_work_queue_start(&zep_wifi_intr_q,
@@ -88,6 +90,8 @@ static int workqueue_init(void)
 						K_THREAD_STACK_SIZEOF(irq_wq_stack_area),
 						CONFIG_NRF700X_IRQ_WQ_PRIORITY,
 						NULL);
+
+	k_thread_name_set(&zep_wifi_intr_q.thread, "nrf700x_intr_wq");
 #ifdef CONFIG_NRF700X_TX_DONE_WQ_ENABLED
 	k_work_queue_init(&zep_wifi_tx_done_q);
 
@@ -96,6 +100,8 @@ static int workqueue_init(void)
 						K_THREAD_STACK_SIZEOF(tx_done_wq_stack_area),
 						CONFIG_NRF700X_TX_DONE_WQ_PRIORITY,
 						NULL);
+
+	k_thread_name_set(&zep_wifi_tx_done_q.thread, "nrf700x_tx_done_wq");
 #endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
 
 #ifdef CONFIG_NRF700X_RX_WQ_ENABLED
@@ -106,6 +112,8 @@ static int workqueue_init(void)
 						K_THREAD_STACK_SIZEOF(rx_wq_stack_area),
 						CONFIG_NRF700X_RX_WQ_PRIORITY,
 						NULL);
+
+	k_thread_name_set(&zep_wifi_rx_q.thread, "nrf700x_rx_wq");
 #endif /* CONFIG_NRF700X_RX_WQ_ENABLED */
 
 	return 0;
