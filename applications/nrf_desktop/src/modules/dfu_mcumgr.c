@@ -4,8 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/kernel.h>
+
+#if defined CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT
 #include <zephyr/dfu/mcuboot.h>
 #include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
+#elif defined CONFIG_DESKTOP_DFU_BACKEND_SUIT
+#include <sdfw/sdfw_services/suit_service.h>
+#include <dfu/suit_dfu.h>
+#endif
+
 #include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <zephyr/sys/math_extras.h>
@@ -37,7 +45,16 @@ static void dfu_lock_owner_changed(const struct dfu_lock_owner *new_owner)
 	/* The function declaration is not included in MCUmgr's header file if the mutex locking
 	 * of the image management state object is disabled.
 	 */
+#if defined CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT
 	img_mgmt_reset_upload();
+#elif defined CONFIG_DESKTOP_DFU_BACKEND_SUIT
+	int err = suit_dfu_cleanup();
+
+	if (err) {
+		module_set_state(MODULE_STATE_ERROR);
+		LOG_ERR("Failed to cleanup SUIT DFU: %d", err);
+	}
+#endif
 #endif /* CONFIG_DESKTOP_DFU_LOCK */
 }
 
@@ -110,6 +127,41 @@ static struct mgmt_callback cmd_recv_cb = {
 	.event_id = MGMT_EVT_OP_CMD_RECV,
 };
 
+#if CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT
+static void dfu_backend_init(void)
+{
+	if (!IS_ENABLED(CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP)) {
+		int err = boot_write_img_confirmed();
+
+		if (err) {
+			LOG_ERR("Cannot confirm a running image: %d", err);
+		}
+	}
+
+	LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION);
+}
+#elif CONFIG_DESKTOP_DFU_BACKEND_SUIT
+static void dfu_backend_init(void)
+{
+	unsigned int seq_num = 0;
+	suit_ssf_manifest_class_info_t class_info;
+
+	int err = suit_get_supported_manifest_info(SUIT_MANIFEST_APP_ROOT, &class_info);
+
+	if (!err) {
+		err = suit_get_installed_manifest_info(&(class_info.class_id),
+				&seq_num, NULL, NULL, NULL, NULL);
+	}
+	if (!err) {
+		LOG_INF("SUIT sequence number: %d", seq_num);
+	} else {
+		LOG_ERR("suit retrieve manifest seq num failed (err: %d)", err);
+	}
+}
+#else
+#error "The DFU backend choice is not supported"
+#endif /* CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT */
+
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (IS_ENABLED(CONFIG_MCUMGR_TRANSPORT_BT) &&
@@ -127,15 +179,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			if (!IS_ENABLED(CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP)) {
-				int err = boot_write_img_confirmed();
+			dfu_backend_init();
 
-				if (err) {
-					LOG_ERR("Cannot confirm a running image: %d", err);
-				}
-			}
-
-			LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION);
 			k_work_init_delayable(&dfu_timeout, dfu_timeout_handler);
 
 			mgmt_callback_register(&cmd_recv_cb);
