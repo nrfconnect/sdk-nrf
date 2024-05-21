@@ -12,16 +12,16 @@
 
 	aliases {
 		factory-data = &factory_data;
-		factory-data-memory-region = &rram0;
+		factory-data-memory-region = &cpuapp_rram;
 	};
 };
 
-/delete-node/ &rram0;
+/delete-node/ &cpuapp_rram;
 
 &rram_controller {
 	reg = < 0x5004b000 0x17d000 >;
 
-	rram0: rram@0 {
+	cpuapp_rram: rram@0 {
 		compatible = "soc-nv-flash";
 		erase-block-size = < 0x1000 >;
 		write-block-size = < 0x10 >;
