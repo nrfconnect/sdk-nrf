@@ -7,8 +7,6 @@
 # High-level Crypto API library
 list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/coprime_check.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/drbgctr.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/drbghash.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ecdsa.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c

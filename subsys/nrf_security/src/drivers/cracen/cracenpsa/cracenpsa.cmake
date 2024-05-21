@@ -15,8 +15,9 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/common.c
   ${CMAKE_CURRENT_LIST_DIR}/src/mem_helpers.c
 
-  # Note: We always need to have ctr_drbg.c since it
+  # Note: We always need to have blkcipher.c and ctr_drbg.c since it
   # is used directly by many Cracen drivers.
+  ${CMAKE_CURRENT_LIST_DIR}/src/blkcipher.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ctr_drbg.c
   ${CMAKE_CURRENT_LIST_DIR}/src/prng_pool.c
 )
@@ -42,12 +43,6 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
   list(APPEND cracen_driver_sources
 	${CMAKE_CURRENT_LIST_DIR}/src/sign.c
-	)
-endif()
-
-if(CONFIG_PSA_NEED_CRACEN_CIPHER_DRIVER)
-  list(APPEND cracen_driver_sources
-	${CMAKE_CURRENT_LIST_DIR}/src/blkcipher.c
 	)
 endif()
 

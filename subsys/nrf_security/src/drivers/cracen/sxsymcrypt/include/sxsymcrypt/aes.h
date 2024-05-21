@@ -95,7 +95,6 @@ int sx_blkcipher_create_aesxts_dec(struct sxblkcipher *c, const struct sxkeyref 
  * @param[in] key key used for the block cipher operation, expected size
  *                16, 24 or 32 bytes
  * @param[in] iv initialization vector, size must be 16 bytes
- * @param[in] aes_countermeasures  Enable the side channel counter-measures for AES
  * @return ::SX_OK
  * @return ::SX_ERR_INVALID_KEYREF
  * @return ::SX_ERR_INVALID_KEY_SZ
@@ -106,7 +105,7 @@ int sx_blkcipher_create_aesxts_dec(struct sxblkcipher *c, const struct sxkeyref 
  *        sx_keyref_load_material() or sx_keyref_load_by_id()
  */
 int sx_blkcipher_create_aesctr_enc(struct sxblkcipher *c, const struct sxkeyref *key,
-				   const char *iv, bool aes_countermeasures);
+				   const char *iv);
 
 /** Prepares an AES CTR block cipher decryption
  *
@@ -145,6 +144,7 @@ int sx_blkcipher_create_aesctr_dec(struct sxblkcipher *c, const struct sxkeyref 
  * @param[out] c block cipher operation context
  * @param[in] key key used for the block cipher operation, expected size is
  *                16, 24 or 32 bytes
+ * @param[in] aes_countermeasures  Enable the side channel counter-measures for AES
  * @return ::SX_OK
  * @return ::SX_ERR_INVALID_KEYREF
  * @return ::SX_ERR_INVALID_KEY_SZ
@@ -156,7 +156,8 @@ int sx_blkcipher_create_aesctr_dec(struct sxblkcipher *c, const struct sxkeyref 
  *
  * @remark - AES ECB does not support context saving.
  */
-int sx_blkcipher_create_aesecb_enc(struct sxblkcipher *c, const struct sxkeyref *key);
+int sx_blkcipher_create_aesecb_enc(struct sxblkcipher *c, const struct sxkeyref *key,
+				   bool aes_countermeasures);
 
 /** Prepares an AES ECB block cipher decryption
  *

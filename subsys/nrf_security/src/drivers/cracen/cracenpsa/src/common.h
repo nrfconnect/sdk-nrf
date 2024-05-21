@@ -156,3 +156,13 @@ void cracen_xorbytes(char *a, const char *b, size_t sz);
  */
 psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				size_t key_buffer_size, struct sxkeyref *k);
+
+/**
+ * @brief Do ECB operation.
+ *
+ * @return psa_status_t
+ */
+psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *input,
+				     size_t input_length, uint8_t *output, size_t output_size,
+				     size_t *output_length, enum cipher_operation dir,
+				     bool aes_countermeasures);
