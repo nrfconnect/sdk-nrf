@@ -22,6 +22,12 @@ config BT_GATT_AUTO_SEC_REQ
 
 
 ## ISO related configs ##
+config BT_ISO_PERIPHERAL
+	default y
+
+config BT_BAP_UNICAST
+	default y
+
 config BT_BAP_UNICAST_SERVER
 	default y
 
@@ -34,6 +40,9 @@ config BT_DEVICE_APPEARANCE
 
 config BT_GAP_PERIPHERAL_PREF_PARAMS
 	default n
+
+config BT_ASCS
+	default y
 
 config BT_ASCS_ASE_SNK_COUNT
 	default 1
