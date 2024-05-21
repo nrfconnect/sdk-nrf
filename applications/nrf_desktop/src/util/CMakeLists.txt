@@ -20,6 +20,9 @@ endif()
 target_sources_ifdef(CONFIG_DESKTOP_ADV_PROV_UUID16_ALL
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/bt_le_adv_prov_uuid16.c)
 
+         target_sources_ifdef(CONFIG_DESKTOP_DFU_BACKEND_SUIT
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/desktop_suit.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_DFU_LOCK
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dfu_lock.c)
 

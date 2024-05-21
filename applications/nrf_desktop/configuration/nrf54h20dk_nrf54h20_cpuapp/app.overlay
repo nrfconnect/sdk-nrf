@@ -52,3 +52,18 @@
 		};
 	};
 };
+
+&cpuapp_rw_partitions {
+		dfu_partition: partition@13c000 {
+			label = "dfu_partition";
+			reg = <0x13c000 DT_SIZE_K(676)>;
+		};
+};
+
+&cpusec_cpuapp_ipc {
+	status = "okay";
+};
+
+&cpusec_bellboard {
+	status = "okay";
+};
