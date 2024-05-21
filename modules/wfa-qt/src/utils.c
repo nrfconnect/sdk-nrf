@@ -75,20 +75,21 @@ void debug_print_timestamp(void)
 	printf("%s ", buffer);
 }
 
+#define MAX_FORMAT_LEN 256
+static char format[MAX_FORMAT_LEN];
+/* to avoid jumble of logs from multiple threads */
+K_MUTEX_DEFINE(logging_mutex);
+
 void indigo_logger(int level, const char *fmt, ...)
 {
-	char *format, *log_type;
-	int maxlen, ret;
+	char *log_type;
+	int ret;
 #ifdef _SYSLOG_
 	int priority;
 #endif
 	va_list ap;
 
-	maxlen = strlen(fmt) + 100;
-	format = malloc(maxlen);
-	if (!format) {
-		goto done;
-	}
+	k_mutex_lock(&logging_mutex, K_FOREVER);
 
 	switch (level) {
 	case LOG_LEVEL_DEBUG_VERBOSE:
@@ -111,7 +112,8 @@ void indigo_logger(int level, const char *fmt, ...)
 		break;
 	}
 
-	CHECK_SNPRINTF(format, maxlen, ret, "controlappc.%8s  %s", log_type, fmt);
+	memset(format, 0, MAX_FORMAT_LEN);
+	CHECK_SNPRINTF(format, MAX_FORMAT_LEN, ret, "controlappc.%8s  %s", log_type, fmt);
 
 	if (level >= stdout_level) {
 		debug_print_timestamp();
@@ -146,8 +148,8 @@ void indigo_logger(int level, const char *fmt, ...)
 		va_end(ap);
 	}
 #endif
-
 done:
+	k_mutex_unlock(&logging_mutex);
 	return;
 }
 
