@@ -17,6 +17,7 @@
 /* TODO: Remove when a get_info function is implemented in host */
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 
+#include "bt_mgmt.h"
 #include "macros_common.h"
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
@@ -27,6 +28,17 @@ LOG_MODULE_REGISTER(broadcast_source, CONFIG_BROADCAST_SOURCE_LOG_LEVEL);
 
 /* Length-type-value size for channel allocation */
 #define LTV_CHAN_ALLOC_SIZE 6
+
+#if (CONFIG_AURACAST)
+/* Index values into the PBA advertising data format.
+ *
+ * See Table 4.1 of the Public Broadcast Profile, Bluetooth® Profile Specification, v1.0.
+ */
+#define PBA_UUID_INDEX		 (0)
+#define PBA_FEATURES_INDEX	 (2)
+#define PBA_METADATA_SIZE_INDEX	 (3)
+#define PBA_METADATA_START_INDEX (4)
+#endif /* CONFIG_AURACAST */
 
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
@@ -42,19 +54,6 @@ static struct bt_bap_lc3_preset lc3_preset = BT_BAP_LC3_BROADCAST_PRESET_NRF5340
 
 static bool initialized;
 static bool delete_broadcast_src[CONFIG_BT_ISO_MAX_BIG];
-
-#if (CONFIG_AURACAST)
-/* Make sure pba_buf is large enough for a 16bit UUID and meta data
- * (any addition to pba_buf requires an increase of this value)
- */
-NET_BUF_SIMPLE_DEFINE(pba_buf, BT_UUID_SIZE_16 + 8);
-NET_BUF_SIMPLE_DEFINE(pba_buf2, BT_UUID_SIZE_16 + 8);
-static struct bt_data ext_ad[CONFIG_BT_ISO_MAX_BIG][5];
-#else
-static struct bt_data ext_ad[CONFIG_BT_ISO_MAX_BIG][4];
-#endif /* (CONFIG_AURACAST) */
-
-static struct bt_data per_ad[CONFIG_BT_ISO_MAX_BIG][1];
 
 static void le_audio_event_publish(enum le_audio_evt_type event)
 {
@@ -191,42 +190,40 @@ static void public_broadcast_features_set(uint8_t *features)
 }
 #endif /* (CONFIG_AURACAST) */
 
-/* Broadcast Audio Streaming Endpoint advertising data */
-NET_BUF_SIMPLE_DEFINE_STATIC(brdcst_id_buf, BT_UUID_SIZE_16 + BT_AUDIO_BROADCAST_ID_SIZE);
-/* Buffer for Appearance */
-NET_BUF_SIMPLE_DEFINE_STATIC(brdcst_appearance_buf, BT_UUID_SIZE_16);
-/* Buffer for manufacturer ID */
-NET_BUF_SIMPLE_DEFINE_STATIC(manufacturer_id_buf, BT_UUID_SIZE_16);
-/* Buffer for Public Broadcast Announcement */
-NET_BUF_SIMPLE_DEFINE_STATIC(base_buf, 128);
-
-/* Broadcast Audio Streaming Endpoint advertising data */
-NET_BUF_SIMPLE_DEFINE_STATIC(brdcst_id_buf2, BT_UUID_SIZE_16 + BT_AUDIO_BROADCAST_ID_SIZE);
-/* Buffer for Appearance */
-NET_BUF_SIMPLE_DEFINE_STATIC(brdcst_appearance_buf2, BT_UUID_SIZE_16);
-/* Buffer for manufacturer ID */
-NET_BUF_SIMPLE_DEFINE_STATIC(manufacturer_id_buf2, BT_UUID_SIZE_16);
-/* Buffer for Public Broadcast Announcement */
-NET_BUF_SIMPLE_DEFINE_STATIC(base_buf2, 128);
-
-static int adv_create(uint8_t big_index)
+int broadcast_source_ext_adv_populate(uint8_t big_index,
+				      struct broadcast_source_ext_adv_data *ext_adv_data,
+				      struct bt_data *ext_adv_buf, size_t ext_adv_buf_vacant)
 {
 	int ret;
 	uint32_t broadcast_id = 0;
+	size_t ext_adv_buf_cnt = 0;
+	size_t brdcst_name_size;
 
-	if (big_index == 0) {
-		net_buf_simple_add_le16(&manufacturer_id_buf, CONFIG_BT_DEVICE_MANUFACTURER_ID);
-
-		ext_ad[big_index][0].data_len = manufacturer_id_buf.len;
-		ext_ad[big_index][0].type = BT_DATA_UUID16_SOME;
-		ext_ad[big_index][0].data = manufacturer_id_buf.data;
-	} else {
-		net_buf_simple_add_le16(&manufacturer_id_buf2, CONFIG_BT_DEVICE_MANUFACTURER_ID);
-		ext_ad[big_index][0].data_len = manufacturer_id_buf2.len;
-		ext_ad[big_index][0].type = BT_DATA_UUID16_SOME;
-		ext_ad[big_index][0].data = manufacturer_id_buf2.data;
+	if (ext_adv_data == NULL || ext_adv_buf == NULL || ext_adv_buf_vacant == 0) {
+		LOG_ERR("Advertising populate failed.");
+		return -EINVAL;
 	}
 
+	sys_put_le16(BT_UUID_BROADCAST_AUDIO_VAL, ext_adv_data->brdcst_id_buf);
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT)) {
+		brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT) - 1;
+		memcpy(ext_adv_data->brdcst_name_buf, CONFIG_BT_AUDIO_BROADCAST_NAME_ALT,
+		       brdcst_name_size);
+	} else {
+		brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1;
+		memcpy(ext_adv_data->brdcst_name_buf, CONFIG_BT_AUDIO_BROADCAST_NAME,
+		       brdcst_name_size);
+	}
+
+	ret = bt_mgmt_adv_buffer_put(ext_adv_buf, &ext_adv_buf_cnt, ext_adv_buf_vacant,
+				     brdcst_name_size, BT_DATA_BROADCAST_NAME,
+				     (void *)ext_adv_data->brdcst_name_buf);
+	if (ret) {
+		return ret;
+	}
+
+	/* Setup extended advertising data */
 	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_ID_RANDOM)) {
 		ret = bt_cap_initiator_broadcast_get_id(broadcast_source[big_index], &broadcast_id);
 		if (ret) {
@@ -237,127 +234,96 @@ static int adv_create(uint8_t big_index)
 		broadcast_id = CONFIG_BT_AUDIO_BROADCAST_ID_FIXED;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT)) {
-		ext_ad[big_index][1] = (struct bt_data)BT_DATA(
-			BT_DATA_BROADCAST_NAME, CONFIG_BT_AUDIO_BROADCAST_NAME_ALT,
-			sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT) - 1);
-	} else {
-		ext_ad[big_index][1] = (struct bt_data)BT_DATA(
-			BT_DATA_BROADCAST_NAME, CONFIG_BT_AUDIO_BROADCAST_NAME,
-			sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1);
+	sys_put_le24(broadcast_id, &ext_adv_data->brdcst_id_buf[BROADCAST_SOURCE_ADV_ID_START]);
+
+	ret = bt_mgmt_adv_buffer_put(ext_adv_buf, &ext_adv_buf_cnt, ext_adv_buf_vacant,
+				     sizeof(ext_adv_data->brdcst_id_buf), BT_DATA_SVC_DATA16,
+				     (void *)ext_adv_data->brdcst_id_buf);
+	if (ret) {
+		return ret;
 	}
 
-	/* Setup extended advertising data */
-	if (big_index == 0) {
-		net_buf_simple_add_le16(&brdcst_id_buf, BT_UUID_BROADCAST_AUDIO_VAL);
-		net_buf_simple_add_le24(&brdcst_id_buf, broadcast_id);
-		ext_ad[big_index][2].data_len = brdcst_id_buf.len;
-		ext_ad[big_index][2].type = BT_DATA_SVC_DATA16;
-		ext_ad[big_index][2].data = brdcst_id_buf.data;
-	} else {
-		net_buf_simple_add_le16(&brdcst_id_buf2, BT_UUID_BROADCAST_AUDIO_VAL);
-		net_buf_simple_add_le24(&brdcst_id_buf2, broadcast_id);
-		ext_ad[big_index][2].data_len = brdcst_id_buf2.len;
-		ext_ad[big_index][2].type = BT_DATA_SVC_DATA16;
-		ext_ad[big_index][2].data = brdcst_id_buf2.data;
-	}
+	sys_put_le16(CONFIG_BT_DEVICE_APPEARANCE, ext_adv_data->brdcst_appearance_buf);
 
-	if (big_index == 0) {
-		net_buf_simple_add_le16(&brdcst_appearance_buf, CONFIG_BT_DEVICE_APPEARANCE);
-		ext_ad[big_index][3].data_len = brdcst_appearance_buf.len;
-		ext_ad[big_index][3].type = BT_DATA_GAP_APPEARANCE;
-		ext_ad[big_index][3].data = brdcst_appearance_buf.data;
-	} else {
-		net_buf_simple_add_le16(&brdcst_appearance_buf2, CONFIG_BT_DEVICE_APPEARANCE);
-		ext_ad[big_index][3].data_len = brdcst_appearance_buf2.len;
-		ext_ad[big_index][3].type = BT_DATA_GAP_APPEARANCE;
-		ext_ad[big_index][3].data = brdcst_appearance_buf2.data;
+	ret = bt_mgmt_adv_buffer_put(ext_adv_buf, &ext_adv_buf_cnt, ext_adv_buf_vacant,
+				     sizeof(ext_adv_data->brdcst_appearance_buf),
+				     BT_DATA_GAP_APPEARANCE,
+				     (void *)ext_adv_data->brdcst_appearance_buf);
+	if (ret) {
+		return ret;
 	}
 
 #if (CONFIG_AURACAST)
-	uint8_t pba_features = 0;
-	public_broadcast_features_set(&pba_features);
+	size_t meta_data_buf_cnt = 0;
 
-	if (big_index == 0) {
-		net_buf_simple_add_le16(&pba_buf, 0x1856);
-		net_buf_simple_add_u8(&pba_buf, pba_features);
+	sys_put_le16(BT_UUID_PBA_VAL, &ext_adv_data->pba_buf[PBA_UUID_INDEX]);
+	public_broadcast_features_set(&ext_adv_data->pba_buf[PBA_FEATURES_INDEX]);
 
-		/* Metadata */
-		/* 3 bytes for parental_rating and 3 bytes for active_flag LTVs */
-		net_buf_simple_add_u8(&pba_buf, 0x06);
-
-		/* Parental rating*/
-		/* Length */
-		net_buf_simple_add_u8(&pba_buf, 0x02);
-		/* Type */
-		net_buf_simple_add_u8(&pba_buf, BT_AUDIO_METADATA_TYPE_PARENTAL_RATING);
-		/* Value */
-		net_buf_simple_add_u8(&pba_buf, CONFIG_BT_AUDIO_BROADCAST_PARENTAL_RATING);
-
-		/* Active flag */
-		/* Length */
-		net_buf_simple_add_u8(&pba_buf, 0x02);
-		/* Type */
-		net_buf_simple_add_u8(&pba_buf, BT_AUDIO_METADATA_TYPE_AUDIO_STATE);
-		/* Value */
-		net_buf_simple_add_u8(&pba_buf, BT_AUDIO_ACTIVE_STATE_ENABLED);
-		ext_ad[big_index][4].data_len = pba_buf.len;
-		ext_ad[big_index][4].type = BT_DATA_SVC_DATA16;
-		ext_ad[big_index][4].data = pba_buf.data;
-	} else {
-		net_buf_simple_add_le16(&pba_buf2, 0x1856);
-		net_buf_simple_add_u8(&pba_buf2, pba_features);
-
-		/* Metadata */
-		/* 3 bytes for parental_rating and 3 bytes for active_flag LTVs */
-		net_buf_simple_add_u8(&pba_buf2, 0x06);
-
-		/* Parental rating*/
-		/* Length */
-		net_buf_simple_add_u8(&pba_buf2, 0x02);
-		/* Type */
-		net_buf_simple_add_u8(&pba_buf2, BT_AUDIO_METADATA_TYPE_PARENTAL_RATING);
-		/* Value */
-		net_buf_simple_add_u8(&pba_buf2, CONFIG_BT_AUDIO_BROADCAST_PARENTAL_RATING);
-
-		/* Active flag */
-		/* Length */
-		net_buf_simple_add_u8(&pba_buf2, 0x02);
-		/* Type */
-		net_buf_simple_add_u8(&pba_buf2, BT_AUDIO_METADATA_TYPE_AUDIO_STATE);
-		/* Value */
-		net_buf_simple_add_u8(&pba_buf2, BT_AUDIO_ACTIVE_STATE_ENABLED);
-		ext_ad[big_index][4].data_len = pba_buf2.len;
-		ext_ad[big_index][4].type = BT_DATA_SVC_DATA16;
-		ext_ad[big_index][4].data = pba_buf2.data;
+	/* Metadata */
+	/* Parental rating */
+	ret = bt_mgmt_adv_buffer_put(
+		(struct bt_data *)&ext_adv_data->pba_buf[PBA_METADATA_START_INDEX],
+		&meta_data_buf_cnt, ext_adv_data->pba_metadata_vacant_cnt, sizeof(uint8_t),
+		BT_AUDIO_METADATA_TYPE_PARENTAL_RATING,
+		(void *)CONFIG_BT_AUDIO_BROADCAST_PARENTAL_RATING);
+	if (ret) {
+		return ret;
 	}
-	/* If any additional data is to be added, remember to increase NET_BUF size */
+
+	/* Active flag */
+	ret = bt_mgmt_adv_buffer_put(
+		(struct bt_data *)&ext_adv_data->pba_buf[PBA_METADATA_START_INDEX],
+		&meta_data_buf_cnt, ext_adv_data->pba_metadata_vacant_cnt, sizeof(uint8_t),
+		BT_AUDIO_METADATA_TYPE_AUDIO_STATE, (void *)BT_AUDIO_ACTIVE_STATE_ENABLED);
+	if (ret) {
+		return ret;
+	}
+
+	/* Metadata size */
+	ext_adv_data->pba_buf[PBA_METADATA_SIZE_INDEX] = meta_data_buf_cnt * sizeof(struct bt_data);
+
+	/* Add PBA buffer to extended advertising data */
+	ret = bt_mgmt_adv_buffer_put(ext_adv_buf, &ext_adv_buf_cnt, ext_adv_buf_vacant,
+				     BROADCAST_SOURCE_PBA_HEADER_SIZE +
+					     ext_adv_data->pba_buf[PBA_METADATA_SIZE_INDEX],
+				     BT_DATA_SVC_DATA16, (void *)ext_adv_data->pba_buf);
+	if (ret) {
+		return ret;
+	}
 
 #endif /* (CONFIG_AURACAST) */
 
-	/* Setup periodic advertising data */
+	return ext_adv_buf_cnt;
+}
 
-	if (big_index == 0) {
-		ret = bt_cap_initiator_broadcast_get_base(broadcast_source[big_index], &base_buf);
-		if (ret) {
-			LOG_ERR("Failed to get encoded BASE: %d", ret);
-			return ret;
-		}
-		per_ad[big_index][0].data_len = base_buf.len;
-		per_ad[big_index][0].type = BT_DATA_SVC_DATA16;
-		per_ad[big_index][0].data = base_buf.data;
-	} else {
-		ret = bt_cap_initiator_broadcast_get_base(broadcast_source[big_index], &base_buf2);
-		if (ret) {
-			LOG_ERR("Failed to get encoded BASE: %d", ret);
-			return ret;
-		}
-		per_ad[big_index][0].data_len = base_buf2.len;
-		per_ad[big_index][0].type = BT_DATA_SVC_DATA16;
-		per_ad[big_index][0].data = base_buf2.data;
+int broadcast_source_per_adv_populate(uint8_t big_index,
+				      struct broadcast_source_per_adv_data *per_adv_data,
+				      struct bt_data *per_adv_buf, size_t per_adv_buf_vacant)
+{
+	int ret;
+	size_t per_adv_buf_cnt = 0;
+
+	if (per_adv_data == NULL || per_adv_buf == NULL || per_adv_buf_vacant == 0) {
+		LOG_ERR("Periodic advertising populate failed.");
+		return -EINVAL;
 	}
 
-	return 0;
+	/* Setup periodic advertising data */
+	ret = bt_cap_initiator_broadcast_get_base(broadcast_source[big_index],
+						  per_adv_data->base_buf);
+	if (ret) {
+		LOG_ERR("Failed to get encoded BASE: %d", ret);
+		return ret;
+	}
+
+	ret = bt_mgmt_adv_buffer_put(per_adv_buf, &per_adv_buf_cnt, per_adv_buf_vacant,
+				     per_adv_data->base_buf->len, BT_DATA_SVC_DATA16,
+				     (void *)per_adv_data->base_buf->data);
+	if (ret) {
+		return ret;
+	}
+
+	return per_adv_buf_cnt;
 }
 
 /**
@@ -462,16 +428,6 @@ static int create_param_produce(uint8_t big_index,
 	}
 
 	return 0;
-}
-
-void broadcast_source_adv_get(uint8_t big_index, const struct bt_data **ext_adv,
-			      size_t *ext_adv_size, const struct bt_data **per_adv,
-			      size_t *per_adv_size)
-{
-	*ext_adv = ext_ad[big_index];
-	*ext_adv_size = ARRAY_SIZE(ext_ad[big_index]);
-	*per_adv = per_ad[big_index];
-	*per_adv_size = ARRAY_SIZE(per_ad[big_index]);
 }
 
 int broadcast_source_start(uint8_t big_index, struct bt_le_ext_adv *ext_adv)
@@ -720,13 +676,6 @@ int broadcast_source_enable(struct broadcast_source_big const *const broadcast_p
 							      &broadcast_source[i]);
 		if (ret) {
 			LOG_ERR("Failed to create broadcast source, ret: %d", ret);
-			return ret;
-		}
-
-		/* Create advertising set */
-		ret = adv_create(i);
-		if (ret) {
-			LOG_ERR("Failed to create advertising set");
 			return ret;
 		}
 	}

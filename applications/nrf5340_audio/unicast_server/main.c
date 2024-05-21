@@ -411,6 +411,18 @@ static int zbus_link_producers_observers(void)
 	return 0;
 }
 
+/*
+ * @brief  The following configures the data for the extended advertising. This includes the
+ *         Audio Stream Control Service requirements [BAP 3.7.2.1.1] in the AUX_ADV_IND Extended
+ *         Announcements.
+ *
+ * @param  ext_adv_buf       Pointer to the bt_data used for extended advertising.
+ * @param  ext_adv_buf_size  Size of @p ext_adv_buf.
+ * @param  ext_adv_count     Pointer to the number of elements added to @p adv_buf.
+ *
+ * @return  0 for success, error otherwise.
+ */
+
 static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size,
 			    size_t *ext_adv_count)
 {
@@ -420,7 +432,6 @@ static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size
 	NET_BUF_SIMPLE_DEFINE_STATIC(uuid_buf, CONFIG_EXT_ADV_UUID_BUF_MAX);
 
 	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_UUID16_SOME;
-	ext_adv_buf[ext_adv_buf_cnt].data_len = 0;
 	ext_adv_buf[ext_adv_buf_cnt].data = uuid_buf.data;
 	ext_adv_buf_cnt++;
 
