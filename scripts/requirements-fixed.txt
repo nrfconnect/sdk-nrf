@@ -43,7 +43,7 @@ grpcio==1.58.0            # via grpcio-tools
 grpcio-tools==1.58.0      # via -r zephyr/scripts/requirements-extras.txt
 idna==3.4                 # via requests
 imagesize==1.4.1          # via -r nrf/scripts/requirements-build.txt
-imgtool==1.10.0           # via -r zephyr/scripts/requirements-extras.txt
+imgtool==2.1.0            # via -r zephyr/scripts/requirements-extras.txt
 importlib-metadata==6.8.0  # via pyocd
 importlib-resources==6.1.0  # via libusb-package, pyocd
 iniconfig==2.0.0          # via pytest
@@ -69,7 +69,7 @@ msgpack==1.0.5            # via python-can
 mypy==1.5.1               # via -r zephyr/scripts/requirements-build-test.txt
 mypy-extensions==1.0.0    # via mypy
 natsort==8.4.0            # via pyocd
-nrf-regtool==5.1.0        # via -r nrf/scripts/requirements-build.txt
+nrf-regtool==5.3.0        # via -r nrf/scripts/requirements-build.txt
 nrfcredstore==1.0.0       # via -r nrf/scripts/requirements-extra.txt
 numpy==1.26.4             # via svada
 packaging==23.1           # via -r zephyr/scripts/requirements-base.txt, pytest, python-can, setuptools-scm, west
@@ -104,7 +104,7 @@ python-magic==0.4.27      # via -r zephyr/scripts/requirements-compliance.txt
 python-stdnum==1.19       # via -r nrf/scripts/requirements-ci.txt
 pytz==2023.3.post1        # via -r nrf/scripts/requirements-ci.txt
 pyusb==1.2.1              # via -r nrf/scripts/requirements-ci.txt, pyocd
-pyyaml==6.0.1             # via -r zephyr/scripts/requirements-base.txt, cmsis-pack-manager, devicetree, pyocd, west, yamllint, zcbor
+pyyaml==6.0.1             # via -r bootloader/mcuboot/scripts/requirements.txt, -r zephyr/scripts/requirements-base.txt, cmsis-pack-manager, devicetree, pyocd, west, yamllint, zcbor
 qrcode==7.4.2             # via -r nrf/scripts/requirements-ci.txt
 referencing==0.30.2       # via jsonschema, jsonschema-specifications
 regex==2023.8.8           # via zcbor
