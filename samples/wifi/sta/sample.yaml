@@ -29,6 +29,7 @@ tests:
     extra_configs:
       - CONFIG_NET_TX_STACK_SIZE=3700
       - CONFIG_NET_RX_STACK_SIZE=3700
+      - CONFIG_WPA_SUPP_THREAD_STACK_SIZE=6144
     tags: ci_build sysbuild
   sample.nrf7001_eks.sta:
     sysbuild: true
@@ -41,6 +42,7 @@ tests:
     extra_configs:
       - CONFIG_NET_TX_STACK_SIZE=3700
       - CONFIG_NET_RX_STACK_SIZE=3700
+      - CONFIG_WPA_SUPP_THREAD_STACK_SIZE=6144
     tags: ci_build sysbuild
   sample.nrf7002_eb.thingy53.sta:
     sysbuild: true
