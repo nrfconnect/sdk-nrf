@@ -649,6 +649,10 @@ Peripheral samples
 
   * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
 
+* :ref:`802154_sniffer` sample:
+
+  * The sample no longer exposes two USB CDC ACM endpoints on the nRF52840 Dongle.
+
 PMIC samples
 ------------
 
