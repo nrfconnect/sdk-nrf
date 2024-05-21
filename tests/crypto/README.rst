@@ -16,10 +16,10 @@ The tests support the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160, nrf52840dk_nrf52840
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160, nrf9151dk_nrf9151, nrf52840dk_nrf52840
 
 .. note::
-   Nordic Semiconductor devices such as nRF51, nRF52810, or nRF52811 cannot run the full test suite because of limited flash capacity.
+   Nordic Semiconductor devices for nRF51 Series, nRF52810, or nRF52811 cannot run the full test suite because of limited flash capacity.
    A recommended approach in such case is to run subsets of the tests one by one.
 
 Overview
