@@ -56,6 +56,7 @@ include(ExternalProject)
 
 ExternalProject_Add(tfm_regression_test_app
     SOURCE_DIR ${TFM_TEST_REPO_PATH}/tests_reg
+    PATCH_COMMAND git apply "${CMAKE_CURRENT_LIST_DIR}/psa_crypto_config_patch.diff"
     BINARY_DIR ${PROJECT_BINARY_DIR}/tfm_ns
     CONFIGURE_COMMAND
         ${CMAKE_COMMAND}

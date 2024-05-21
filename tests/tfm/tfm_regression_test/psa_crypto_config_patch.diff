@@ -1,0 +1,12 @@
+diff --git a/tests_reg/test/ns_regression/CMakeLists.txt b/tests_reg/test/ns_regression/CMakeLists.txt
+index f780357..1d7e951 100644
+--- a/tests_reg/test/ns_regression/CMakeLists.txt
++++ b/tests_reg/test/ns_regression/CMakeLists.txt
+@@ -36,6 +36,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/test/framework ${CMAKE_CURRENT_BINARY_DIR}/
+
+ add_library(tfm_ns_tests INTERFACE)
+ add_library(tfm_test_framework_ns INTERFACE)
++add_library(psa_crypto_config INTERFACE)
+
+ target_compile_definitions(tfm_test_framework_ns
+     INTERFACE
