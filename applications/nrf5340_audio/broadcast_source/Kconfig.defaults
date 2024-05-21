@@ -30,6 +30,9 @@ config BT_BAP_BROADCAST_SRC_STREAM_COUNT
 config BT_ISO_MAX_CHAN
 	default 2
 
+config BT_ISO_MAX_BIG
+	default 2
+
 config BT_AUDIO_TX
 	default y
 

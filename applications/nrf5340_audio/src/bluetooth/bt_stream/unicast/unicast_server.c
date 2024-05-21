@@ -7,6 +7,7 @@
 #include "unicast_server.h"
 
 #include <zephyr/zbus/zbus.h>
+#include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/audio.h>
@@ -17,6 +18,7 @@
 
 #include "macros_common.h"
 #include "zbus_common.h"
+#include "bt_mgmt.h"
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
 
@@ -42,9 +44,9 @@ static struct bt_csip_set_member_svc_inst *csip;
 /* Advertising data for peer connection */
 static uint8_t csip_rsi_adv_data[BT_CSIP_RSI_SIZE];
 
-static uint8_t flags_adv_data[] = {BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR};
+static uint8_t flags_adv_data;
 
-static uint8_t gap_appear_adv_data[] = {BT_BYTES_LIST_LE16(CONFIG_BT_DEVICE_APPEARANCE)};
+static uint8_t gap_appear_adv_data[BT_UUID_SIZE_16];
 
 static const uint8_t cap_adv_data[] = {
 	BT_UUID_16_ENCODE(BT_UUID_CAS_VAL),
@@ -446,21 +448,6 @@ static struct bt_bap_stream_ops stream_ops = {
 	.released = stream_released_cb,
 };
 
-static int adv_buf_put(struct bt_data *adv_buf, uint8_t adv_buf_vacant, int *index, uint8_t type,
-		       size_t data_len, const uint8_t *data)
-{
-	if ((adv_buf_vacant - *index) <= 0) {
-		return -ENOMEM;
-	}
-
-	adv_buf[*index].type = type;
-	adv_buf[*index].data_len = data_len;
-	adv_buf[*index].data = data;
-	(*index)++;
-
-	return 0;
-}
-
 int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
 			      uint32_t *sampling_rate_hz, uint32_t *pres_delay_us)
 {
@@ -549,7 +536,6 @@ int unicast_server_uuid_populate(struct net_buf_simple *uuid_buf)
 	if (net_buf_simple_tailroom(uuid_buf) >= (BT_UUID_SIZE_16 * 2)) {
 		net_buf_simple_add_le16(uuid_buf, BT_UUID_ASCS_VAL);
 		net_buf_simple_add_le16(uuid_buf, BT_UUID_PACS_VAL);
-
 	} else {
 		LOG_ERR("Not enough space for UUIDS");
 		return -ENOMEM;
@@ -563,34 +549,42 @@ int unicast_server_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant)
 	int ret;
 	int adv_buf_cnt = 0;
 
-	ret = adv_buf_put(adv_buf, adv_buf_vacant, &adv_buf_cnt, BT_DATA_SVC_DATA16,
-			  ARRAY_SIZE(unicast_server_adv_data), &unicast_server_adv_data[0]);
+	ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant,
+				     sizeof(unicast_server_adv_data), BT_DATA_SVC_DATA16,
+				     unicast_server_adv_data);
 	if (ret) {
 		return ret;
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER)) {
-		ret = adv_buf_put(adv_buf, adv_buf_vacant, &adv_buf_cnt, BT_DATA_CSIS_RSI,
-				  ARRAY_SIZE(csip_rsi_adv_data), &csip_rsi_adv_data[0]);
+		ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant,
+					     sizeof(csip_rsi_adv_data), BT_DATA_CSIS_RSI,
+					     (void *)csip_rsi_adv_data);
 		if (ret) {
 			return ret;
 		}
 	}
 
-	ret = adv_buf_put(adv_buf, adv_buf_vacant, &adv_buf_cnt, BT_DATA_GAP_APPEARANCE,
-			  ARRAY_SIZE(gap_appear_adv_data), &gap_appear_adv_data[0]);
+	sys_put_le16(CONFIG_BT_DEVICE_APPEARANCE, &gap_appear_adv_data[0]);
+
+	ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant,
+				     sizeof(gap_appear_adv_data), BT_DATA_GAP_APPEARANCE,
+				     (void *)gap_appear_adv_data);
 	if (ret) {
 		return ret;
 	}
 
-	ret = adv_buf_put(adv_buf, adv_buf_vacant, &adv_buf_cnt, BT_DATA_FLAGS,
-			  ARRAY_SIZE(flags_adv_data), &flags_adv_data[0]);
+	flags_adv_data = BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR;
+
+	ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant, sizeof(uint8_t),
+				     BT_DATA_FLAGS, (void *)&flags_adv_data);
 	if (ret) {
 		return ret;
 	}
 
-	ret = adv_buf_put(adv_buf, adv_buf_vacant, &adv_buf_cnt, BT_DATA_SVC_DATA16,
-			  ARRAY_SIZE(cap_adv_data), &cap_adv_data[0]);
+	ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant,
+				     ARRAY_SIZE(cap_adv_data), BT_DATA_SVC_DATA16,
+				     (void *)cap_adv_data);
 	if (ret) {
 		return ret;
 	}

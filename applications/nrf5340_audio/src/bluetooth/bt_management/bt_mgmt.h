@@ -72,6 +72,21 @@ void bt_mgmt_set_size_filled_get(uint8_t *num_filled);
 void bt_mgmt_scan_sirk_set(uint8_t const *const sirk);
 
 /**
+ * @brief	Load advertising data into an advertising buffer.
+ *
+ * @param[out]     adv_buf         Pointer to the advertising  buffer to load.
+ * @param[in,out]  index           Next free index in the advertising buffer.
+ * @param[in]      adv_buf_vacant  Number of free advertising buffers.
+ * @param[in]      data_len        Length of the data.
+ * @param[in]      type            Type of the data.
+ * @param[in]      data            Data to store in the buffer, can be a pointer or value.
+ *
+ * @return	0 if success, error otherwise.
+ */
+int bt_mgmt_adv_buffer_put(struct bt_data *const adv_buf, int *index, size_t adv_buf_vacant,
+			   size_t data_len, uint8_t type, void *data);
+
+/**
  * @brief	Start scanning for advertisements.
  *
  * @param[in]	scan_intvl	Scan interval in units of 0.625ms.

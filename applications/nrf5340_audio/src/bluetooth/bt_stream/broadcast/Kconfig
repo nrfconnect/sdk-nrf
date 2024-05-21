@@ -147,6 +147,16 @@ config BT_AUDIO_BROADCAST_ID_FIXED
 	  Fixed broadcast ID; 3 octets. Will only be used if BT_AUDIO_USE_BROADCAST_ID_RANDOM=n.
 	  Only use for debugging.
 
+config BT_AUDIO_BROADCAST_PBA_METADATA_SIZE
+	int "Configure PBA meta data buffer size"
+	depends on TRANSPORT_BIS && AURACAST
+	default 16
+	help
+	  Configure the maximum size of the Public Broadcast Announcement meata data buffer in octets.
+	  This is the number of meta data LVT records, or the number of meta data items multiplied by
+	  the size of the LTV (sizeof(bt_data)). Configurable option that doesn't follow any preset.
+	  Allows for more flexibility.
+
 config BT_AUDIO_BROADCAST_PARENTAL_RATING
 	hex "Parental rating"
 	depends on TRANSPORT_BIS

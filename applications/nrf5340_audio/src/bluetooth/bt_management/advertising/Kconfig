@@ -52,7 +52,7 @@ config EXT_ADV_BUF_MAX
 
 config EXT_ADV_UUID_BUF_MAX
 	int "Maximum number of UUIDs to add to extended advertisements"
-	default 20
+	default 40
 
 config BT_DEVICE_MANUFACTURER_ID
 	hex "Manufacturer ID"
