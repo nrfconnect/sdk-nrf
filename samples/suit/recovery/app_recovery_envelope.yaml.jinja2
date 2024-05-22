@@ -2,9 +2,9 @@
 {%- set component_list = [] %}
 {%- set dependencies_list = [] %}
 {%- set mpi_app_recovery_vendor_name = application['config']['CONFIG_SUIT_MPI_APP_RECOVERY_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_app_recovery_class_name = application['config']['CONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME']|default('nRF54H20_sample_app_recovery') %}
+{%- set mpi_app_recovery_class_name = application['config']['CONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME']|default('nRF54H20_app_recovery') %}
 {%- set mpi_rad_recovery_vendor_name = application['config']['CONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_rad_recovery_class_name = application['config']['CONFIG_SUIT_MPI_RAD_RECOVERY_CLASS_NAME']|default('nRF54H20_sample_rad_recovery') %}
+{%- set mpi_rad_recovery_class_name = application['config']['CONFIG_SUIT_MPI_RAD_RECOVERY_CLASS_NAME']|default('nRF54H20_rad_recovery') %}
 {%- set sequence_number = sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] %}
 SUIT_Envelope_Tagged:
   suit-authentication-wrapper:

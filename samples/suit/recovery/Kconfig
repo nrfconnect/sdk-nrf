@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SUIT_MPI_APP_RECOVERY_VENDOR_NAME
+	string "Vendor name to generate vendor UUID"
+	default "nordicsemi.com"
+
+config SUIT_MPI_APP_RECOVERY_CLASS_NAME
+	string "Vendor name to generate class UUID"
+	default "nRF54H20_app_recovery"
+
+config SUIT_MPI_RAD_RECOVERY_VENDOR_NAME
+	string "Vendor name to generate vendor UUID"
+	default "nordicsemi.com"
+
+config SUIT_MPI_RAD_RECOVERY_CLASS_NAME
+	string "Vendor name to generate class UUID"
+	default "nRF54H20_rad_recovery"
+
+source "Kconfig.zephyr"
