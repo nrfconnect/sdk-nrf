@@ -219,9 +219,8 @@ static void store(void)
 
 	printf("Store time: Actual %lldus, Worst case:  %dus\n",
 	       store_time_us, estimate_store_time_us);
-#if !defined CONFIG_SOC_FLASH_NRF_RRAM /* TODO: Fix it with NCSDK-26922 */
+
 	zassert_true((store_time_us < estimate_store_time_us), "Store takes to long time");
-#endif
 }
 
 static void clear(void)
