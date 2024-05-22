@@ -110,6 +110,10 @@ static struct bt_iso_big *big;
 static uint32_t iso_send_count;
 static uint8_t iso_data[CONFIG_BT_ISO_TX_MTU] = {0};
 
+static const struct bt_data ad[] = {
+	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
+};
+
 static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 {
 	static uint8_t initial_send = 2;
@@ -227,10 +231,17 @@ int iso_broadcast_src_start(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	/* Create a non-connectable non-scannable advertising set */
-	ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN_NAME, NULL, &adv);
+	ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN, NULL, &adv);
 	if (ret) {
 		LOG_ERR("Failed to create advertising set (ret %d)", ret);
 		return ret;
+	}
+
+	/* Set advertising data to have complete local name set */
+	ret = bt_le_ext_adv_set_data(adv, ad, ARRAY_SIZE(ad), NULL, 0);
+	if (ret) {
+		LOG_ERR("Failed to set advertising data (ret %d)", ret);
+		return 0;
 	}
 
 	/* Set periodic advertising parameters */
