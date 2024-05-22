@@ -8,7 +8,6 @@ if BUILD_WITH_TFM
 
 menu "Peripheral Secure mapping"
 
-# TODO: NCSDK-22597: port this file (add peripherals) to 54L
 peripheral=UARTE00
 peripheral_depends=$(dt_nodelabel_has_compat,uart00,$(DT_COMPAT_NORDIC_NRF_UARTE))
 rsource "Kconfig.template.peripheral_secure"
@@ -24,7 +23,6 @@ rsource "Kconfig.template.peripheral_secure"
 peripheral=UARTE30
 peripheral_depends=$(dt_nodelabel_has_compat,uart30,$(DT_COMPAT_NORDIC_NRF_UARTE))
 rsource "Kconfig.template.peripheral_secure"
-# end TODO
 
 peripheral=FPU
 peripheral_depends=CPU_HAS_FPU
@@ -60,6 +58,30 @@ rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIM0
 peripheral_depends=$(dt_nodelabel_has_compat,spi0,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM00
+peripheral_depends=$(dt_nodelabel_has_compat,spi00,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM20
+peripheral_depends=$(dt_nodelabel_has_compat,spi20,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM21
+peripheral_depends=$(dt_nodelabel_has_compat,spi21,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM22
+peripheral_depends=$(dt_nodelabel_has_compat,spi22,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM23
+peripheral_depends=$(dt_nodelabel_has_compat,spi23,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM30
+peripheral_depends=$(dt_nodelabel_has_compat,spi30,$(DT_COMPAT_NORDIC_NRF_SPIM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIS0
@@ -158,6 +180,34 @@ peripheral=TIMER2
 peripheral_depends=$(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
 rsource "Kconfig.template.peripheral_secure"
 
+peripheral=TIMER00
+peripheral_depends=$(dt_nodelabel_has_compat,timer00,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER10
+peripheral_depends=$(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER20
+peripheral_depends=$(dt_nodelabel_has_compat,timer20,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER21
+peripheral_depends=$(dt_nodelabel_has_compat,timer21,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER22
+peripheral_depends=$(dt_nodelabel_has_compat,timer22,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER23
+peripheral_depends=$(dt_nodelabel_has_compat,timer23,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER24
+peripheral_depends=$(dt_nodelabel_has_compat,timer24,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
 peripheral=RTC0
 peripheral_depends=$(dt_nodelabel_has_compat,rtc0,$(DT_COMPAT_NORDIC_NRF_RTC))
 rsource "Kconfig.template.peripheral_secure"
@@ -214,6 +264,14 @@ peripheral=EGU5
 peripheral_depends=$(dt_nodelabel_has_compat,egu5,$(DT_COMPAT_NORDIC_NRF_EGU))
 rsource "Kconfig.template.peripheral_secure"
 
+peripheral=EGU10
+peripheral_depends=$(dt_nodelabel_has_compat,egu10,$(DT_COMPAT_NORDIC_NRF_EGU))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU20
+peripheral_depends=$(dt_nodelabel_has_compat,egu20,$(DT_COMPAT_NORDIC_NRF_EGU))
+rsource "Kconfig.template.peripheral_secure"
+
 peripheral=PWM0
 peripheral_depends=$(dt_nodelabel_has_compat,pwm0,$(DT_COMPAT_NORDIC_NRF_PWM))
 rsource "Kconfig.template.peripheral_secure"
@@ -228,6 +286,18 @@ rsource "Kconfig.template.peripheral_secure"
 
 peripheral=PWM3
 peripheral_depends=$(dt_nodelabel_has_compat,pwm3,$(DT_COMPAT_NORDIC_NRF_PWM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM20
+peripheral_depends=$(dt_nodelabel_has_compat,pwm20,$(DT_COMPAT_NORDIC_NRF_PWM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM21
+peripheral_depends=$(dt_nodelabel_has_compat,pwm21,$(DT_COMPAT_NORDIC_NRF_PWM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM22
+peripheral_depends=$(dt_nodelabel_has_compat,pwm22,$(DT_COMPAT_NORDIC_NRF_PWM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=PDM
@@ -280,6 +350,10 @@ rsource "Kconfig.template.peripheral_secure"
 
 peripheral=GPIO1
 peripheral_depends=$(dt_nodelabel_has_compat,gpio1,$(DT_COMPAT_NORDIC_NRF_GPIO))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=GPIO2
+peripheral_depends=$(dt_nodelabel_has_compat,gpio2,$(DT_COMPAT_NORDIC_NRF_GPIO))
 rsource "Kconfig.template.peripheral_secure"
 
 config NRF_GPIOTE0_SECURE
