@@ -136,8 +136,8 @@ In the |NCS|, the provisioning data is generated as a hexadecimal file using the
 If Fast Pair is enabled with the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option, the Fast Pair provision script is called automatically by the build system and the resulting hexadecimal file is automatically added to the firmware (that is, to the :file:`merged.hex` file).
 You must provide the following CMake options:
 
-* :c:macro:`FP_MODEL_ID` - Fast Pair Model ID in format ``0xXXXXXX``,
-* :c:macro:`FP_ANTI_SPOOFING_KEY` - base64-encoded Fast Pair Anti-Spoofing Private Key.
+* ``FP_MODEL_ID`` - Fast Pair Model ID in format ``0xXXXXXX``,
+* ``FP_ANTI_SPOOFING_KEY`` - base64-encoded Fast Pair Anti-Spoofing Private Key.
 
 The ``bt_fast_pair`` partition address is provided automatically by the build system.
 
