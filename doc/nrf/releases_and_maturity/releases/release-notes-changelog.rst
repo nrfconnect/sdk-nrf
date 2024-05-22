@@ -514,6 +514,10 @@ Cellular samples
 
     * The ability to control the state of the test counter using the config section in the device shadow.
 
+* :ref:`udp` sample:
+
+  * Updated the sample to use the :c:macro:`SO_RAI` socket option with values :c:macro:`RAI_LAST` and :c:macro:`RAI_ONGOING` instead of the deprecated socket options :c:macro:`SO_RAI_LAST` and :c:macro:`SO_RAI_ONGOING`.
+
 Cryptography samples
 --------------------
 
