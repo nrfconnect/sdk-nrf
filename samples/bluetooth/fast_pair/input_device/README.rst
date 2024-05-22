@@ -9,7 +9,7 @@ Bluetooth: Fast Pair input device
 
 The Fast Pair input device sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>`.
 
-Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth and Bluetooth LE devices with as little user interaction required as possible.
+Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth® and Bluetooth LE devices with as little user interaction required as possible.
 Google also provides additional features built upon the Fast Pair standard.
 For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
 
