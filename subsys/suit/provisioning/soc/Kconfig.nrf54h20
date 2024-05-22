@@ -39,7 +39,7 @@ rsource "Kconfig.template.manifest_config"
 endmenu
 
 manifest=APP_RECOVERY
-manifest-class=nRF54H20_sample_app_recovery
+manifest-class=nRF54H20_app_recovery
 manifest-downgrade-prevention-enabled=n
 manifest-independent-updates=y
 manifest-signature-check=DISABLED
@@ -105,7 +105,7 @@ config SUIT_MPI_APP_AREA_SIZE
 	  Size of the application domain MPI configurations
 
 manifest=RAD_RECOVERY
-manifest-class=nRF54H20_sample_rad_recovery
+manifest-class=nRF54H20_rad_recovery
 manifest-downgrade-prevention-enabled=n
 manifest-independent-updates=n
 manifest-signature-check=DISABLED

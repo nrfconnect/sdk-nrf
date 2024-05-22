@@ -401,6 +401,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   else()
     set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP n)
   endif()
+
+  if(SB_CONFIG_SUIT_BUILD_RECOVERY)
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_SUIT_MPI_APP_RECOVERY y)
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_SUIT_MPI_RAD_RECOVERY y)
+  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 # Sysbuild function hooks used by nRF Connect SDK

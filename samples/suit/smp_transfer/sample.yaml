@@ -76,3 +76,21 @@ tests:
       - FILE_SUFFIX=extflash
       - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
     tags: suit
+
+  subsys.suit.smp_transfer.recovery.v1:
+    extra_args:
+      - FILE_SUFFIX=bt
+      - SB_CONFIG_SUIT_BUILD_RECOVERY=y
+    extra_configs:
+      - CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
+      - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
+    tags: suit bluetooth
+
+  subsys.suit.smp_transfer.recovery.v2:
+    extra_args:
+      - FILE_SUFFIX=bt
+      - SB_CONFIG_SUIT_BUILD_RECOVERY=y
+    extra_configs:
+      - CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+      - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
+    tags: suit bluetooth
