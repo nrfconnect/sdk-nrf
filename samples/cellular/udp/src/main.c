@@ -25,7 +25,6 @@ static void socket_transmission_work_fn(struct k_work *work)
 {
 	int err;
 	char buffer[CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES] = {"\0"};
-	int rai;
 
 	printk("Transmitting UDP/IP payload of %d bytes to the ",
 	       CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES + UDP_IP_HEADER_SIZE);
@@ -37,7 +36,8 @@ static void socket_transmission_work_fn(struct k_work *work)
 	/* Let the modem know that this is the last packet for now and we do not
 	 * wait for a response.
 	 */
-	rai = RAI_LAST;
+	int rai = RAI_LAST;
+
 	err = setsockopt(client_fd, SOL_SOCKET, SO_RAI, &rai, sizeof(rai));
 	if (err) {
 		printk("Failed to set socket option, error: %d\n", errno);
@@ -47,7 +47,9 @@ static void socket_transmission_work_fn(struct k_work *work)
 #if defined(CONFIG_UDP_RAI_ONGOING)
 	/* Let the modem know that we expect to keep the network up longer.
 	 */
-	err = setsockopt(client_fd, SOL_SOCKET, SO_RAI_ONGOING, NULL, 0);
+	int rai = RAI_ONGOING;
+
+	err = setsockopt(client_fd, SOL_SOCKET, SO_RAI, &rai, sizeof(rai));
 	if (err) {
 		printk("Failed to set socket option, error: %d\n", errno);
 	}
@@ -61,7 +63,9 @@ static void socket_transmission_work_fn(struct k_work *work)
 #if defined(CONFIG_UDP_RAI_NO_DATA)
 	/* Let the modem know that there will be no upcoming data transmission anymore.
 	 */
-	err = setsockopt(client_fd, SOL_SOCKET, SO_RAI_NO_DATA, NULL, 0);
+	int rai = RAI_NO_DATA;
+
+	err = setsockopt(client_fd, SOL_SOCKET, SO_RAI, &rai, sizeof(rai));
 	if (err) {
 		printk("Failed to set socket option, error: %d\n", errno);
 	}
