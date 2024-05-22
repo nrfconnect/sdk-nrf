@@ -8,7 +8,7 @@ aenum==3.1.15             # via -r nrf/scripts/requirements-ci.txt
 anytree==2.9.0            # via -r zephyr/scripts/requirements-base.txt, -r zephyr/scripts/requirements-extras.txt
 appdirs==1.4.4            # via cmsis-pack-manager
 arrow==1.2.1              # via gitlint-core
-astroid==2.15.6           # via pylint
+astroid==3.0.1            # via pylint
 attrs==23.1.0             # via jsonschema, referencing
 bitarray==2.8.1           # via -r nrf/scripts/requirements-ci.txt
 bz==1.0                   # via -r zephyr/scripts/requirements-run-test.txt
@@ -57,7 +57,6 @@ jsonschema-specifications==2023.7.1  # via jsonschema
 junit2html==30.1.3        # via -r zephyr/scripts/requirements-extras.txt
 junitparser==3.1.0        # via -r zephyr/scripts/requirements-compliance.txt
 lark==1.1.7               # via pyocd
-lazy-object-proxy==1.9.0  # via astroid
 libusb==1.0.27            # via -r nrf/scripts/requirements-extra.txt
 libusb-package==1.0.26.2  # via pyocd
 lpc-checksum==2.2.0       # via -r zephyr/scripts/requirements-extras.txt
@@ -94,7 +93,7 @@ pygments==2.16.1          # via gcovr
 pyjwt==2.8.0              # via pygithub
 pykwalify==1.8.0          # via -r zephyr/scripts/requirements-base.txt, west
 pylink-square==1.2.0      # via -r zephyr/scripts/requirements-base.txt, pyocd
-pylint==2.17.5            # via -r nrf/scripts/requirements-build.txt, -r zephyr/scripts/requirements-compliance.txt
+pylint==3.0.2             # via -r nrf/scripts/requirements-build.txt, -r zephyr/scripts/requirements-compliance.txt
 pynacl==1.5.0             # via pygithub
 pyocd==0.35.1             # via -r zephyr/scripts/requirements-run-test.txt
 pyparsing==3.1.1          # via -r nrf/scripts/requirements-ci.txt
@@ -132,7 +131,7 @@ urllib3==2.0.7            # via requests
 wcwidth==0.2.6            # via prettytable
 west==1.2.0               # via -r nrf/scripts/requirements-base.txt, -r zephyr/scripts/requirements-base.txt
 wget==3.2                 # via -r nrf/scripts/requirements-ci.txt
-wrapt==1.15.0             # via astroid, deprecated, python-can
+wrapt==1.15.0             # via deprecated, python-can
 yamllint==1.32.0          # via -r zephyr/scripts/requirements-compliance.txt
 zcbor==0.8.1              # via -r nrf/scripts/requirements-build.txt, -r nrf/scripts/requirements-extra.txt, -r zephyr/scripts/requirements-extras.txt
 zipp==3.17.0              # via importlib-metadata, importlib-resources
