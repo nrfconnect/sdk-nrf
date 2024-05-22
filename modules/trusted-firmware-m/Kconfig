@@ -349,25 +349,25 @@ config TFM_SECURE_UART00
 	bool "TF-M logging will use UART00 instance"
 	depends on $(dt_nodelabel_has_prop,uart00,pinctrl-names)
 	select NRF_UARTE00_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE30 || HAS_HW_NRF_UARTE30
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE00 || HAS_HW_NRF_UARTE00
 
 config TFM_SECURE_UART20
 	bool "TF-M logging will use UART20 instance"
 	depends on $(dt_nodelabel_has_prop,uart20,pinctrl-names)
 	select NRF_UARTE20_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE30 || HAS_HW_NRF_UARTE30
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE20 || HAS_HW_NRF_UARTE20
 
 config TFM_SECURE_UART21
 	bool "TF-M logging will use UART21 instance"
 	depends on $(dt_nodelabel_has_prop,uart21,pinctrl-names)
 	select NRF_UARTE21_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE30 || HAS_HW_NRF_UARTE30
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE21 || HAS_HW_NRF_UARTE21
 
 config TFM_SECURE_UART22
 	bool "TF-M logging will use UART22 instance"
 	depends on $(dt_nodelabel_has_prop,uart22,pinctrl-names)
 	select NRF_UARTE22_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE30 || HAS_HW_NRF_UARTE30
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE22 || HAS_HW_NRF_UARTE22
 
 config TFM_SECURE_UART30
 	bool "TF-M logging will use UART30 instance"
