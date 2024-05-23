@@ -355,7 +355,7 @@ class Thingy91XDFU(WestCommand):
         )
         add_args_to_parser(parser)
         parser.add_argument("--image", type=str, help="application update file",
-                            default="build/dfu_application.zip")
+                            default="build/zephyr/dfu_application.zip")
 
         return parser
 
