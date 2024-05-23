@@ -5,7 +5,6 @@
  */
 
 #include <sdfw/sdfw_services/echo_service.h>
-#include <sdfw/sdfw_services/prng_service.h>
 #include <sdfw/sdfw_services/reset_evt_service.h>
 #include <sdfw/sdfw_services/sdfw_update_service.h>
 
@@ -33,20 +32,6 @@ static void echo_request(void)
 	} else {
 		LOG_INF("ssf_echo response: %s", rsp_str);
 	}
-}
-
-static void prng_request(void)
-{
-	int err;
-	uint8_t rng_buf[CONFIG_PRNG_BYTES_TO_GET];
-
-	err = ssf_prng_get_random(rng_buf, sizeof(rng_buf));
-	if (err != 0) {
-		LOG_ERR("PRNG failed, err %d", err);
-		return;
-	}
-
-	LOG_HEXDUMP_INF(rng_buf, CONFIG_PRNG_BYTES_TO_GET, "PRNG data:");
 }
 
 static int reset_evt_callback(uint32_t domains, uint32_t delay_ms, void *user_data)
@@ -91,10 +76,6 @@ int main(void)
 
 	if (IS_ENABLED(CONFIG_ENABLE_ECHO_REQUEST)) {
 		echo_request();
-	}
-
-	if (IS_ENABLED(CONFIG_ENABLE_PRNG_REQUEST)) {
-		prng_request();
 	}
 
 	if (IS_ENABLED(CONFIG_ENABLE_RESET_EVT_SUBSCRIBE_REQUEST)) {

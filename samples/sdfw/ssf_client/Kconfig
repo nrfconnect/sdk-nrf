@@ -16,11 +16,6 @@ config ENABLE_ECHO_REQUEST
 	depends on SSF_ECHO_SERVICE_ENABLED
 	default y
 
-config ENABLE_PRNG_REQUEST
-	bool "Enable the PRNG request service"
-	depends on SSF_PRNG_SERVICE_ENABLED
-	default y
-
 config ENABLE_RESET_EVT_SUBSCRIBE_REQUEST
 	bool "Enable the reset event subscription service"
 	depends on SSF_RESET_EVT_SERVICE_ENABLED
@@ -41,11 +36,6 @@ config UPDATE_REQUEST_CHECK_DATA
 	help
 	  Safety option to abort the update request if the download data is invalid
 	  or not programmed at all.
-
-config PRNG_BYTES_TO_GET
-	int "Number of PRNG bytes to request"
-	range 1 100
-	default 32
 
 module = SSF_CLIENT_SAMPLE
 module-str = SSF Client Sample
