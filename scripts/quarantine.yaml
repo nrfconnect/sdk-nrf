@@ -16,3 +16,9 @@
   platforms:
     - nrf54l15pdk/nrf54l15/cpuapp
   comment: "Till Wi-Fi RAM optimizations are merged"
+
+- scenarios:
+    - sample.nrf54h20dk_nrf7002ek.shell
+  platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+  comment: "Till nRF54H memory layout is revised"
