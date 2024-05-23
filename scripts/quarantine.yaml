@@ -2,7 +2,11 @@
 # will be skipped if quarantine is used. More details here:
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 # To have an empty list use:
+
+
 - scenarios:
-    - None
+    - applications.matter_bridge.memory_profiling
+    - sample.matter.light_bulb.memory_profiling
   platforms:
-    - all
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-19027"
