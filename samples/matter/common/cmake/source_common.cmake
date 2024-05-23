@@ -70,4 +70,8 @@ if(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS)
         target_link_options(app INTERFACE -Wl,--wrap=z_fatal_error)
         target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/diagnostic/diagnostic_logs_crash.cpp)
     endif()
+
+    if(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS)
+        target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/diagnostic/diagnostic_logs_end_user.cpp)
+    endif()
 endif()

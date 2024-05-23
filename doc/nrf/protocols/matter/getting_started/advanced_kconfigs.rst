@@ -259,21 +259,22 @@ To keep the crash log in the memory after reading it, set the :kconfig:option:`C
 Diagnostic logs snippet
 -----------------------
 
-The diagnostic logs snippet enables the set of configurations needed for full diagnostic logs support, such as crash logs.
+The diagnostic logs snippet enables the set of configurations needed for full Matter diagnostic logs support.
 The configuration set consist of devicetree overlays for each supported target board, and a config file that enables all diagnostic logs features by default.
-The devicetree overlays add a new RAM partition which is configured as retained to keep the crash data.
+The devicetree overlays add new RAM partitions which are configured as retained to keep the log data persistent and survive the device reboot.
 They also reduce the SRAM size according to the size of the retained partition.
 The snippet sets the following kconfig options:
 
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` to ``y``.
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS` to ``y``.
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ` to ``y``.
+  * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS` to ``y``.
 
-To use the snippet when building a sample, add ``-S diagnostic-logs`` to the west arguments list.
+To use the snippet when building a sample, add ``-D<application_name>_SNIPPET=diagnostic-logs`` to the west arguments list.
 
-Example for the ``nrf52840dk_nrf52840`` target board:
+Example for the ``nrf52840dk_nrf52840`` target board and ``light_bulb`` sample:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840dk_nrf52840 -S diagnostic-logs
+   west build -b nrf52840dk_nrf52840 -- -Dlight_bulb_SNIPPET=diagnostic-logs
