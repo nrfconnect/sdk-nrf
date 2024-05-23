@@ -8,12 +8,8 @@
 /delete-node/ &ipc0;
 
 /* Enabled nodes required by IPC
- * Two mboxes, one for each sides and one ipc instance
+ * Mbox for PPR target, one for each side and one IPC instance
  */
-
-&cpuapp_bellboard {
-	status = "okay";
-};
 
 &cpuppr_vevif {
        status = "okay";
