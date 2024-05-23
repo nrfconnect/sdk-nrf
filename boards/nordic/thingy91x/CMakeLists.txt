@@ -12,7 +12,7 @@ if(CONFIG_BOARD_THINGY91X_NRF9151_NS)
   # Use static partition layout to ensure the partition layout remains
   # unchanged after DFU. This needs to be made globally available
   # because it is used in other CMake files.
-  set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/thingy91x_pm_static.yml CACHE INTERNAL "")
+  set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/thingy91x_nrf9151_pm_static.yml CACHE INTERNAL "")
 endif()
 
 if(CONFIG_BOARD_THINGY91X_NRF5340_CPUAPP OR CONFIG_BOARD_THINGY91X_NRF5340_CPUAPP_NS)
