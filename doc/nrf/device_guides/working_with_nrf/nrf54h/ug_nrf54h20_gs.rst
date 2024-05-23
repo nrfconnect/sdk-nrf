@@ -382,7 +382,7 @@ Programming the sample
 **********************
 
 The :ref:`multicore_hello_world` sample is a multicore sample running on both the Application Core (``cpuapp``) and the Peripheral Processor (PPR, ``cpuppr``).
-It uses the ``nrf54h20dk_nrf54h20_cpuapp`` build target.
+It uses the ``nrf54h20dk_nrf54h20_cpuapp`` board target.
 
 To build and program the sample to the nRF54H20 DK, complete the following steps:
 
