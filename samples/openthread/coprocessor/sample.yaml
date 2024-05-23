@@ -12,7 +12,6 @@ tests:
       nrf52840dongle/nrf52840
       nrf21540dk/nrf52840
       nrf54l15pdk/nrf54l15/cpuapp
-      nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     extra_args: >
       SNIPPET="ci;logging;vendor_hook"
     integration_platforms:
@@ -21,7 +20,6 @@ tests:
       - nrf21540dk/nrf52840
       - nrf52840dongle/nrf52840
       - nrf54l15pdk/nrf54l15/cpuapp
-      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     tags: ci_build sysbuild
   sample.openthread.coprocessor.usb:
     sysbuild: true
