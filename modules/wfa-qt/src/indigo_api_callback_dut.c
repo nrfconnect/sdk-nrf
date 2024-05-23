@@ -104,23 +104,25 @@ void register_apis(void)
 
 static int handle_response(char *buffer, char *response)
 {
-	if (strncmp(buffer, "ADD_CRED", strlen("ADD_CRED")) == 0) {
+	if (strncmp(buffer, "FAIL", strlen("FAIL")) == 0) {
+		goto err;
+	} else if (strncmp(buffer, "ADD_CRED", strlen("ADD_CRED")) == 0) {
 		cred_id = atoi(response);
 	} else if ((strstr(buffer, "WPS_AP_PIN")) ||
 		   (strstr(buffer, "WPS_PIN")) ||
 		   (strstr(buffer, "WPS_PBC"))) {
 		memset(wsc_pin, 0, sizeof(wsc_pin));
 		if (strncpy(wsc_pin, response, sizeof(wsc_pin)) == NULL) {
-			goto done;
+			goto err;
 		}
 	} else if (strncmp(buffer, "STATUS", strlen("STATUS") == 0)) {
 		memset(status_res, 0, sizeof(status_res));
 		if (strncpy(status_res, response, sizeof(status_res)) == NULL) {
-			goto done;
+			goto err;
 		}
 	}
 	return 0;
-done:
+err:
 	return -1;
 }
 
