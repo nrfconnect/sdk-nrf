@@ -58,6 +58,7 @@ junit2html==30.1.3        # via -r zephyr/scripts/requirements-extras.txt
 junitparser==3.1.0        # via -r zephyr/scripts/requirements-compliance.txt
 lark==1.1.7               # via pyocd
 lazy-object-proxy==1.9.0  # via astroid
+libusb==1.0.27            # via -r nrf/scripts/requirements-extra.txt
 libusb-package==1.0.26.2  # via pyocd
 lpc-checksum==2.2.0       # via -r zephyr/scripts/requirements-extras.txt
 lxml==4.9.3               # via -r zephyr/scripts/requirements-compliance.txt, gcovr, svada
@@ -73,9 +74,10 @@ natsort==8.4.0            # via pyocd
 nrf-regtool==5.3.0        # via -r nrf/scripts/requirements-build.txt
 nrfcredstore==1.0.0       # via -r nrf/scripts/requirements-extra.txt
 numpy==1.26.4             # via svada
-packaging==23.1           # via -r zephyr/scripts/requirements-base.txt, pytest, python-can, setuptools-scm, west
+packaging==24.0           # via -r zephyr/scripts/requirements-base.txt, pkg-about, pytest, python-can, setuptools-scm, west
 pathspec==0.11.2          # via yamllint
 pillow==10.3.0            # via -r nrf/scripts/requirements-extra.txt, -r zephyr/scripts/requirements-extras.txt
+pkg-about==1.1.5          # via libusb
 platformdirs==3.10.0      # via pylint
 pluggy==1.3.0             # via pytest
 ply==3.11                 # via -r zephyr/scripts/requirements-build-test.txt
@@ -122,7 +124,7 @@ stringcase==1.2.0         # via -r nrf/scripts/requirements-ci.txt
 svada==2.0.2              # via nrf-regtool
 tabulate==0.9.0           # via -r zephyr/scripts/requirements-run-test.txt
 toml==0.10.2              # via -r nrf/scripts/requirements-ci.txt
-tomli==2.0.1              # via mypy, nrf-regtool, pylint, pytest, setuptools-scm
+tomli==2.0.1              # via mypy, nrf-regtool, pkg-about, pylint, pytest, setuptools-scm
 tomlkit==0.12.1           # via pylint
 typed-ast==1.5.5          # via -r nrf/scripts/requirements-ci.txt
 typing-extensions==4.8.0  # via astroid, mypy, pylint, pyocd, python-can, qrcode, setuptools-scm, svada
@@ -136,4 +138,4 @@ zcbor==0.8.1              # via -r nrf/scripts/requirements-build.txt, -r nrf/sc
 zipp==3.17.0              # via importlib-metadata, importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
-setuptools==68.2.2        # via grpcio-tools, python-can, setuptools-scm, west
+setuptools==68.2.2        # via grpcio-tools, libusb, pkg-about, python-can, setuptools-scm, west
