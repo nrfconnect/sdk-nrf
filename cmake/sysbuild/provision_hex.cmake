@@ -47,7 +47,7 @@ function(provision application prefix_name)
         --public-key-files "${PUBLIC_KEY_FILES}"
       )
 
-      set(PROVISION_DEPENDS signature_public_key_file_target ${application}_extra_byproducts ${application}/zephyr/.config)
+      set(PROVISION_DEPENDS signature_public_key_file_target ${application}_extra_byproducts ${application}/zephyr/.config ${SIGNATURE_PUBLIC_KEY_FILE} zephyr/.config)
     endif()
 
     # Adjustment to be able to load into sysbuild
