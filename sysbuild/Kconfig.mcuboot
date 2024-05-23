@@ -79,6 +79,14 @@ config MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT
 	  to downgrade running application, but note that MCUboot may do that
 	  if application with higher version will not get confirmed.
 
+config MCUBOOT_MODE_FIRMWARE_UPDATER
+	bool "Firmware updater"
+	help
+	  MCUboot will only boot slot0_partition for the main application but has
+	  an entrance mechanism defined for entering the slot1_partition which is
+	  a dedicated firmware updater application used to update the slot0_partition
+	  application.
+
 endchoice
 
 config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
