@@ -229,3 +229,18 @@ const struct nrf_rpc_tr_api nrf_rpc_uart_service_api = {
 	.tx_buf_alloc = tx_buf_alloc,
 	.tx_buf_free = tx_buf_free,
 };
+
+#define NRF_RPC_UART_INSTANCE(node_id) _CONCAT(nrf_rpc_inst_, DT_DEP_ORD(node_id))
+
+#define NRF_RPC_UART_TRANSPORT_DEFINE(node_id)                                                     \
+	struct nrf_rpc_uart NRF_RPC_UART_INSTANCE(node_id) = {                                     \
+		.uart = DEVICE_DT_GET(node_id),                                                    \
+		.receive_callback = NULL,                                                          \
+		.transport = NULL,                                                                 \
+	};                                                                                         \
+	const struct nrf_rpc_tr NRF_RPC_UART_TRANSPORT(node_id) = {                                \
+		.api = &nrf_rpc_uart_service_api,                                                  \
+		.ctx = &NRF_RPC_UART_INSTANCE(node_id),                                            \
+	};
+
+DT_FOREACH_STATUS_OKAY(nordic_nrf_uarte, NRF_RPC_UART_TRANSPORT_DEFINE);
