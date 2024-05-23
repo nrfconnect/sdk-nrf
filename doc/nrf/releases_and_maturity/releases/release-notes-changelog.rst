@@ -539,7 +539,8 @@ Cryptography samples
 * Added:
 
     * :ref:`crypto_spake2p` sample.
-    *  Support for the :ref:`zephyr:nrf9151dk_nrf9151` board for all crypto samples.
+    * Support for the :ref:`zephyr:nrf9151dk_nrf9151` board for all crypto samples.
+    * Support for the :ref:`nRF9161 DK <ug_nrf9161>` board for the :ref:`crypto_test` sample.
 
 Debug samples
 -------------
@@ -704,7 +705,7 @@ Sensor samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-* Added support for the :ref:`zephyr:nrf9151dk_nrf9151` board for all TF-M samples.
+* Added support for the :ref:`zephyr:nrf9151dk_nrf9151` and the :ref:`nRF9161 DK <ug_nrf9161>` boards for all TF-M samples (except for the :ref:`provisioning_image_net_core` sample).
 
 Thread samples
 --------------
