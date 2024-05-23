@@ -196,8 +196,8 @@ def __populate_hex_paths(dev, options, child_image):
         Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, child_image, options
     )
 
-    dev.hex_path_app = temp_dest_folder / "zephyr/zephyr.hex"
-    dev.hex_path_net = temp_dest_folder / "hci_ipc/zephyr/zephyr.hex"
+    dev.hex_path_app = temp_dest_folder / "merged.hex"
+    dev.hex_path_net = temp_dest_folder / "merged_CPUNET.hex"
 
 
 def __finish(device_list):
