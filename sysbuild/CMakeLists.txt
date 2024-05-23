@@ -335,10 +335,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       if(SB_CONFIG_NETCORE_APP_UPDATE)
         set_config_bool(mcuboot CONFIG_PCD_APP y)
 
-        add_overlay_config(
-          mcuboot
-          ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/ext_flash_mcuboot_secondary.conf
-          )
         add_overlay_dts(
           mcuboot
           ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim.overlay
