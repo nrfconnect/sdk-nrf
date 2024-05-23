@@ -10,7 +10,7 @@
 # Since this file is brought in via include(), we do the work in a
 # function to avoid polluting the top-level scope.
 
-function(ncs_secure_boot_mcuboot_sign application output_name bin_files signed_targets prefix)
+function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefix)
   set(keyfile "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}")
 
   # Find imgtool. Even though west is installed, imgtool might not be.
@@ -46,7 +46,7 @@ function(ncs_secure_boot_mcuboot_sign application output_name bin_files signed_t
   endif()
 
   # Extensionless prefix of any output file.
-  set(output ${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_${output_name})
+  set(output ${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_${application})
 
   # List of additional build byproducts.
   set(byproducts)
@@ -125,11 +125,13 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
   if(SB_CONFIG_SECURE_BOOT_APPCORE)
     set(bin_files)
     set(signed_targets)
+    set(extra_bin_data)
 
-    ncs_secure_boot_mcuboot_sign(mcuboot s0_image "${bin_files}" "${signed_targets}" "")
+    ncs_secure_boot_mcuboot_sign(mcuboot "${bin_files}" "${signed_targets}" "")
 
     if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-      ncs_secure_boot_mcuboot_sign(s1_image s1_image "${bin_files}" "${signed_targets}" "")
+      ncs_secure_boot_mcuboot_sign(s1_image "${bin_files}" "${signed_targets}" "")
+      set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>")
     endif()
 
     if(bin_files)
@@ -143,8 +145,8 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
         TYPE mcuboot
         IMAGE mcuboot
         SCRIPT_PARAMS
-        "signed_by_mcuboot_and_b0_s0_image.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>"
-        "signed_by_mcuboot_and_b0_s1_image.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>"
+        "signed_by_mcuboot_and_b0_mcuboot.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>"
+        ${extra_bin_data}
         "version_MCUBOOT=${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION}"
         "version_B0=${mcuboot_fw_info_firmware_version}"
         DEPENDS ${signed_targets}
@@ -154,11 +156,12 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
 
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
     get_property(image_name GLOBAL PROPERTY DOMAIN_APP_CPUNET)
-    ncs_secure_boot_mcuboot_sign(${image_name} ${image_name} "${bin_files}" "${signed_targets}" CPUNET_)
+    ncs_secure_boot_mcuboot_sign(${image_name} "${bin_files}" "${signed_targets}" CPUNET_)
   endif()
 
   # Clear temp variables
   set(image_name)
   set(bin_files)
   set(signed_targets)
+  set(extra_bin_data)
 endif()
