@@ -88,6 +88,7 @@ static void allow_nonsecure_reset(void)
 	SCB->AIRCR = reg_value;
 }
 
+#if CONFIG_NRF_GPIO0_PIN_MASK_SECURE || CONFIG_NRF_GPIO1_PIN_MASK_SECURE
 static void maybe_log_for_gpio_port(uint32_t gpio_port, uint32_t secure_pin_mask)
 {
 	if (secure_pin_mask == 0) {
@@ -103,11 +104,11 @@ static void maybe_log_for_gpio_port(uint32_t gpio_port, uint32_t secure_pin_mask
 		}
 	}
 }
+#endif
 
 static void log_pin_security_configuration(void)
 {
 #if CONFIG_NRF_GPIO0_PIN_MASK_SECURE || CONFIG_NRF_GPIO1_PIN_MASK_SECURE
-
 	maybe_log_for_gpio_port(0, CONFIG_NRF_GPIO0_PIN_MASK_SECURE);
 	maybe_log_for_gpio_port(1, CONFIG_NRF_GPIO1_PIN_MASK_SECURE);
 #else
