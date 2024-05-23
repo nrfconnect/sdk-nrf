@@ -4,16 +4,17 @@
  */
 
 / {
-	sram@2007FF40 {
+	sram@2007EF40 {
 		compatible = "zephyr,memory-region", "mmio-sram";
-		reg = <0x2007FF40 0xC0>;
-		zephyr,memory-region = "CrashLogMem";
+		reg = <0x2007EF40 0x10C0>;
+		zephyr,memory-region = "DiagnosticLogMem";
 		status = "okay";
 		retainedmem {
 			compatible = "zephyr,retained-ram";
 			status = "okay";
 			#address-cells = <1>;
 			#size-cells = <1>;
+			/* Reserve 192 B for the crash logs. */
 			crash_retention: retention@0 {
 					compatible = "zephyr,retention";
 					status = "okay";
@@ -21,11 +22,20 @@
 					prefix = [08 04];
 					checksum = <2>;
 			};
+
+			/* Reserve 4 kB for the end user logs. */
+			end_user_logs_retention: retention@c0 {
+					compatible = "zephyr,retention";
+					status = "okay";
+					reg = <0xC0 0x1000>;
+					prefix = [06 03];
+					checksum = <2>;
+			};
 		};
 	};
 };
 
-/* Reduce SRAM0 usage by 192B to account for non-init area */
+/* Reduce SRAM0 usage by 4288B to account for non-init area */
 &sram0 {
-	reg = <0x20000000 0x7FF40>;
+	reg = <0x20000000 0x7EF40>;
 };

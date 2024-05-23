@@ -250,16 +250,17 @@ CHIP_ERROR Register()
 #endif
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS
 	ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTrigger(
 		Ids::DiagnosticLogsUserData,
 		TestEventTrigger::EventTrigger{ ValueMasks::NumberOfBytes, DiagnosticLogsUserDataCallback }));
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
 	ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTrigger(
 		Ids::DiagnosticLogsNetworkData,
 		TestEventTrigger::EventTrigger{ ValueMasks::NumberOfBytes, DiagnosticLogsNetworkDataCallback }));
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
 	ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTrigger(
-		Ids::DiagnosticLogsCrash,
-		TestEventTrigger::EventTrigger{ 0, DiagnosticLogsCrashCallback }));
+		Ids::DiagnosticLogsCrash, TestEventTrigger::EventTrigger{ 0, DiagnosticLogsCrashCallback }));
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST */
 

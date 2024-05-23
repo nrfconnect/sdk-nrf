@@ -117,6 +117,8 @@ public:
 				   chip::MutableByteSpan &outBuffer, chip::Optional<uint64_t> &outTimeStamp,
 				   chip::Optional<uint64_t> &outTimeSinceBoot) override;
 
+	void ClearLogs();
+
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
 	bool StoreTestingLog(chip::app::Clusters::DiagnosticLogs::IntentEnum intent, char *text, size_t textSize);
 	void ClearTestingBuffer(chip::app::Clusters::DiagnosticLogs::IntentEnum intent);

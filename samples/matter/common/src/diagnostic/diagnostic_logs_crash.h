@@ -32,9 +32,9 @@ static_assert(DT_REG_SIZE(DT_NODELABEL(crash_retention)) - 4 > sizeof(CrashDescr
 #endif
 
 /**
- * @brief Class for creating log from the CrashData data.
+ * @brief Class for creating log from the DiagnosticLogsCrash data.
  *
- * CrashData data can be obtained from the fatal error ISR and converted to human-readable
+ * DiagnosticLogsCrash data can be obtained from the fatal error ISR and converted to human-readable
    format.
  *
  * This class takes care on the conversion from ESF data to Log and
@@ -53,13 +53,14 @@ static_assert(DT_REG_SIZE(DT_NODELABEL(crash_retention)) - 4 > sizeof(CrashDescr
 	* MultithreadDump converts the information about the the thread from which the error occurred.
 	  Can be disabled using CONFIG_MULTITHREADING.
  */
-class CrashData : public Nrf::Matter::DiagnosticLogsIntentIface {
+class DiagnosticLogsCrash : public Nrf::Matter::DiagnosticLogsIntentIface {
 public:
 	constexpr static size_t MaxSingleDumpSize = 100;
 
 	CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog) override;
 	CHIP_ERROR FinishLogs() override;
 	size_t GetLogsSize() override;
+	static CHIP_ERROR Clear();
 
 private:
 	/* The source is obtained based on values from ARM Cortex vector table set in the ICSR register. */
@@ -80,7 +81,7 @@ private:
 	 *
 	 * @param outBuffer output string buffer
 	 * @param bufferSize size of the output string buffer.
-	 * @param end Assign that this is end of the whole CrashData stored.
+	 * @param end Assign that this is end of the whole DiagnosticLogsCrash stored.
 	 * @return size_t as the actual length of the converted data.
 	 */
 	size_t ProcessConversionToLog(char *outBuffer, size_t bufferSize, bool &end);

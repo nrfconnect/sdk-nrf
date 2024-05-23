@@ -28,13 +28,13 @@ const struct device *kCrashDataMem = DEVICE_DT_GET(DT_NODELABEL(crash_retention)
 		}                                                                                                      \
 	} while (false)
 
-size_t CrashData::CalculateSize()
+size_t DiagnosticLogsCrash::CalculateSize()
 {
 	bool unusedOut;
 	return ProcessConversionToLog(nullptr, 0, unusedOut);
 }
 
-size_t CrashData::ProcessConversionToLog(char *outBuffer, size_t bufferSize, bool &end)
+size_t DiagnosticLogsCrash::ProcessConversionToLog(char *outBuffer, size_t bufferSize, bool &end)
 {
 	/* Allow to enter outBuffer as nullptr to calculate actual size.
 	if buffer is available, its size cannot be 0 */
@@ -55,7 +55,7 @@ size_t CrashData::ProcessConversionToLog(char *outBuffer, size_t bufferSize, boo
 	return mOffset;
 }
 
-bool CrashData::BasicDump()
+bool DiagnosticLogsCrash::BasicDump()
 {
 	Verify(Collect("Faulting instruction address (r15/pc): 0x%08x\n", mDescription.Esf.basic.pc), false);
 	Verify(Collect("r0/a1:  0x%08x  r1/a2:  0x%08x  r2/a3:  0x%08x\n", mDescription.Esf.basic.a1,
@@ -69,7 +69,7 @@ bool CrashData::BasicDump()
 	return true;
 }
 
-bool CrashData::ReasonDump()
+bool DiagnosticLogsCrash::ReasonDump()
 {
 	Verify(Collect("***** %s *****\n", FaultSourceToStr(mDescription.Source)), false);
 	Verify(Collect("ZEPHYR FATAL ERROR %d on CPU %d\n", mDescription.Reason, _current_cpu->id), false);
@@ -77,7 +77,7 @@ bool CrashData::ReasonDump()
 	return true;
 }
 
-const char *CrashData::FaultSourceToStr(uint32_t source)
+const char *DiagnosticLogsCrash::FaultSourceToStr(uint32_t source)
 {
 	switch (source) {
 	case FaultSource::HardFault:
@@ -97,7 +97,7 @@ const char *CrashData::FaultSourceToStr(uint32_t source)
 	}
 }
 
-bool CrashData::Collect(const char *format, ...)
+bool DiagnosticLogsCrash::Collect(const char *format, ...)
 {
 	/* Skip the line until reaching the last known one */
 	if (mLastLine >= mLine && mLastLine != 0) {
@@ -136,12 +136,12 @@ bool CrashData::Collect(const char *format, ...)
 	return true;
 }
 
-void CrashData::ClearState()
+void DiagnosticLogsCrash::ClearState()
 {
 	mLastLine = 0;
 }
 
-CHIP_ERROR CrashData::LoadCrashData()
+CHIP_ERROR DiagnosticLogsCrash::LoadCrashData()
 {
 	int ret = retention_is_valid(kCrashDataMem);
 	VerifyOrReturnError(ret == 1, CHIP_ERROR_NOT_FOUND);
@@ -152,7 +152,7 @@ CHIP_ERROR CrashData::LoadCrashData()
 	return CHIP_NO_ERROR;
 }
 
-size_t CrashData::GetLogsSize()
+size_t DiagnosticLogsCrash::GetLogsSize()
 {
 	size_t outSize = 0;
 
@@ -167,7 +167,7 @@ exit:
 	return outSize;
 }
 
-CHIP_ERROR CrashData::GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog)
+CHIP_ERROR DiagnosticLogsCrash::GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog)
 {
 	size_t convertedSize = 0;
 	CHIP_ERROR err = LoadCrashData();
@@ -190,14 +190,18 @@ exit:
 	return err;
 }
 
-CHIP_ERROR CrashData::FinishLogs()
+CHIP_ERROR DiagnosticLogsCrash::FinishLogs()
 {
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ
-	int ret = retention_clear(kCrashDataMem);
-	VerifyOrReturnError(0 == ret, System::MapErrorZephyr(ret));
+	return Clear();
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ */
 
 	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR DiagnosticLogsCrash::Clear()
+{
+	return System::MapErrorZephyr(retention_clear(kCrashDataMem));
 }
 
 extern "C" {

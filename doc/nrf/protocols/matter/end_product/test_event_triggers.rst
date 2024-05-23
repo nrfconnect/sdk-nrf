@@ -81,7 +81,7 @@ The following table lists the available triggers and their activation codes:
       The maximum time is UINT16_MAX s.
       The value is provided in HEX format.
   * - Diagnostic Logs User Data
-    - :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST` = ``y``, and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y``, and enabled ``Diagnostic Logs`` cluster.
+    - Enabled ``Diagnostic Logs`` cluster, and either the snippet `diagnostic-logs` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y`` and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS` = ``y``.
     - Trigger writing a specific amount of ``u`` characters to the user diagnostics logs.
       The amount of characters is determined by the value at the end of the event trigger value.
       The current supported maximum is 1023 bytes for single trigger call, and 4096 bytes of total data written.
@@ -95,7 +95,7 @@ The following table lists the available triggers and their activation codes:
     - ``0xFFFFFFFF50000000`` - ``0xFFFFFFFF50000400``
     - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
   * - Diagnostic Crash Logs
-    - Either the snippet `diagnostic-logs` attached (``-S diagnostic-logs``) or both :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y`` and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS` = ``y``, and enabled ``Diagnostic Logs`` cluster.
+    - Either the snippet `diagnostic-logs` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y`` and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS` = ``y``, and enabled ``Diagnostic Logs`` cluster.
     - Trigger a simple crash that relies on execution of the undefined instruction attempt.
     - ``0xFFFFFFFF60000000``
     - No additional value supported.

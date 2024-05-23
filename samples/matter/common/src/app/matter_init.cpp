@@ -157,8 +157,17 @@ CHIP_ERROR ConfigureThreadRole()
 void DoInitChipServer(intptr_t /* unused */)
 {
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
-	/* Initialize Diagnostic Log Provider and try to retrieve retained crash data */
-	Nrf::Matter::DiagnosticLogProvider::GetInstance().Init();
+	uint32_t count = 0;
+
+	if (ConfigurationMgr().GetRebootCount(count) == CHIP_NO_ERROR) {
+		/* Remove diagnostic logs on the first boot, as retention RAM is not cleared during erase/factory reset.
+		 */
+		if (count == 1) {
+			Nrf::Matter::DiagnosticLogProvider::GetInstance().ClearLogs();
+		}
+
+		Nrf::Matter::DiagnosticLogProvider::GetInstance().Init();
+	}
 #endif
 
 	InitGuard guard;
