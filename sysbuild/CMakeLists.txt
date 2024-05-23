@@ -94,6 +94,10 @@ function(include_fw_zip)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/zip.cmake)
 endfunction()
 
+function(include_b0_packaging)
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/b0_packaging.cmake)
+endfunction()
+
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   cmake_parse_arguments(PRE_CMAKE "" "" "IMAGES" ${ARGN})
   restore_ncs_vars()
@@ -311,6 +315,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
           mcuboot
           ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
           )
+      else()
+        add_overlay_config(
+          ${DEFAULT_IMAGE}
+          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/mcuboot_enable_secure_bootloader.overlay
+          )
       endif()
     endif()
 
@@ -398,6 +407,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   if(SB_CONFIG_SECURE_BOOT OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     include_provision_hex()
+
+    if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT AND SB_CONFIG_SECURE_BOOT_APPCORE AND SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
+      include_b0_packaging()
+    endif()
   endif()
 
   if(SB_CONFIG_MATTER_FACTORY_DATA AND SB_CONFIG_PARTITION_MANAGER)
