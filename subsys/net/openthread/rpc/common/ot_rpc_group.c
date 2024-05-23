@@ -13,14 +13,12 @@
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
 
-#if CONFIG_NRF_RPC_IPC_SERVICE
-NRF_RPC_IPC_TRANSPORT(ot_group_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "ot_rpc_ept");
-#elif CONFIG_NRF_RPC_UART_TRANSPORT && !CONFIG_BT_RPC
-NRF_RPC_UART_TRANSPORT(rpc_tr, DEVICE_DT_GET(DT_NODELABEL(uart1)));
-#elif CONFIG_NRF_RPC_UART_TRANSPORT && CONFIG_BT_RPC
-extern const struct nrf_rpc_tr rpc_tr;
+#ifdef CONFIG_NRF_RPC_IPC_SERVICE
+NRF_RPC_IPC_TRANSPORT(ot_rpc_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "ot_rpc_ept");
+#elif defined(CONFIG_NRF_RPC_UART_TRANSPORT)
+#define ot_rpc_tr NRF_RPC_UART_TRANSPORT(DT_NODELABEL(uart1))
 #endif
-NRF_RPC_GROUP_DEFINE(ot_group, "ot", &rpc_tr, NULL, NULL, NULL);
+NRF_RPC_GROUP_DEFINE(ot_group, "ot", &ot_rpc_tr, NULL, NULL, NULL);
 LOG_MODULE_REGISTER(ot_rpc, LOG_LEVEL_DBG);
 
 #ifdef CONFIG_OPENTHREAD_RPC_INITIALIZE_NRF_RPC

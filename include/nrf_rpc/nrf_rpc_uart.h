@@ -59,18 +59,17 @@ typedef struct nrf_rpc_uart {
 	struct k_work_q rx_workq;
 } nrf_rpc_uart;
 
-extern const struct nrf_rpc_tr_api nrf_rpc_uart_service_api;
+/**
+ * @brief Returns nRF RPC UART transport object name for the given devicetree node.
+ *
+ * @param uart Devicetree node of the selected UART peripheral (e.g. DT_NODELABEL(uart0)).
+ */
+#define NRF_RPC_UART_TRANSPORT(node_id) _CONCAT(nrf_rpc_tr_, DT_DEP_ORD(node_id))
 
-#define NRF_RPC_UART_TRANSPORT(_name, _uart)                        \
-	static struct nrf_rpc_uart _name##_instance = {                       \
-	       .uart = _uart,               \
-		   .receive_callback = NULL,                                    \
-		   .transport = NULL,                   \
-	};                                                                   \
-	const struct nrf_rpc_tr _name = {                                    \
-		.api = &nrf_rpc_uart_service_api,                             \
-		.ctx = &_name##_instance                                     \
-	}
+#define _NRF_RPC_UART_TRANSPORT_DECLARE(node_id)                                                   \
+	extern const struct nrf_rpc_tr NRF_RPC_UART_TRANSPORT(node_id);
+
+DT_FOREACH_STATUS_OKAY(nordic_nrf_uarte, _NRF_RPC_UART_TRANSPORT_DECLARE);
 
 /**
  * @}
