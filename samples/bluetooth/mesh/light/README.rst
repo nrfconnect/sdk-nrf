@@ -35,7 +35,7 @@ The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobil
 DFU requirements
 ================
 
-The configuration overlay :file:`overlay-dfu.conf` enables DFU support in the application, and applies for the following platforms:
+The configuration files with the suffix ``dfu`` enable DFU support in the application, and applies for the following platforms:
 
 * nrf52840dk/nrf52840
 * nrf21540dk/nrf52840
@@ -132,16 +132,16 @@ This sample is split into the following source files:
 DFU configuration
 =================
 
-To enable the DFU feature for the supported development kits, set :makevar:`EXTRA_CONF_FILE` to :file:`overlay-dfu.conf` when building the sample.
+To enable the DFU feature for the supported development kits, set :makevar:`FILE_SUFFIX` to ``dfu`` when building the sample.
 For example, when building from the command line, use the following command:
 
   .. code-block:: console
 
-     west build -b <BOARD> -p -- -DEXTRA_CONF_FILE="overlay-dfu.conf"
+     west build -b <BOARD> -p -- -DFILE_SUFFIX=dfu
 
-The configuration overlay :file:`overlay-dfu.conf` enables the DFU feature.
-To review the required configuration alterations, open and inspect the :file:`overlay-dfu.conf` file.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+The configuration files with the suffix ``dfu`` enable the DFU feature.
+To review the required configuration alterations, open and inspect the files :file:`prj_dfu.conf` and :file:`sysbuild_dfu.conf`.
+For more information about using file suffixes, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 FEM support
 ===========
@@ -187,7 +187,7 @@ Make sure to complete the configuration on each of the elements on the node to e
 Running DFU
 ===========
 
-After the sample is built with the :file:`overlay-dfu.conf` and programmed to your development kit, support for FOTA update is enabled.
+After the sample is built with the file suffix set to ``dfu`` and programmed to your development kit, support for FOTA update is enabled.
 See :ref:`FOTA over Bluetooth Low Energy<ug_nrf52_developing_ble_fota>` for instructions on how to perform FOTA update and initiate the DFU process.
 
 Dependencies
