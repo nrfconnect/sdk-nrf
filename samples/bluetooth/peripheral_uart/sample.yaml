@@ -8,7 +8,7 @@ tests:
     platform_allow: nrf52dk/nrf52832 nrf52833dk/nrf52833 nrf52840dk/nrf52840
       nrf5340dk/nrf5340/cpuapp nrf5340dk/nrf5340/cpuapp/ns thingy53/nrf5340/cpuapp
       thingy53/nrf5340/cpuapp/ns nrf21540dk/nrf52840 nrf54l15pdk/nrf54l15/cpuapp
-      nrf54l15pdk@0.3.0/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp
+      nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
@@ -19,7 +19,6 @@ tests:
       - thingy53/nrf5340/cpuapp/ns
       - nrf21540dk/nrf52840
       - nrf54l15pdk/nrf54l15/cpuapp
-      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     tags: bluetooth ci_build sysbuild
   sample.bluetooth.peripheral_uart_cdc:

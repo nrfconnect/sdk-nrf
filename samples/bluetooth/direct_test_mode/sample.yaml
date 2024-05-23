@@ -10,10 +10,9 @@ tests:
       - nrf21540dk/nrf52840
       - nrf52840dk/nrf52840
       - nrf54l15pdk/nrf54l15/cpuapp
-      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     platform_allow: nrf5340dk/nrf5340/cpunet nrf21540dk/nrf52840 nrf52840dk/nrf52840
-                    nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk@0.3.0/nrf54l15/cpuapp
+                    nrf54l15pdk/nrf54l15/cpuapp
                     nrf54h20dk/nrf54h20/cpurad
     tags: bluetooth ci_build sysbuild
   sample.bluetooth.direct_test_mode.hci:
@@ -25,11 +24,9 @@ tests:
       - nrf21540dk/nrf52840
       - nrf52840dk/nrf52840
       - nrf54l15pdk/nrf54l15/cpuapp
-      - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     platform_allow: nrf5340dk/nrf5340/cpunet nrf21540dk/nrf52840 nrf52840dk/nrf52840
-                    nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk@0.3.0/nrf54l15/cpuapp
-                    nrf54h20dk/nrf54h20/cpurad
+                    nrf54l15pdk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpurad
     tags: bluetooth ci_build sysbuild
   sample.bluetooth.direct_test_mode.nrf5340_nrf21540:
     sysbuild: true
