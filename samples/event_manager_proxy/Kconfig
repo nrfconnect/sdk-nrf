@@ -18,19 +18,6 @@ config APP_EVENT_MANAGER_REMOTE_WAIT_TO
 	  The time to wait for second core to report its readines to transport the events.
 	  The time is given in miliseconds.
 
-config APP_INCLUDE_REMOTE_IMAGE
-	bool "Include remote image as sub image"
-	depends on SOC_NRF5340_CPUAPP || SOC_NRF54H20_CPUAPP
-	default y if (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS || BOARD_NRF54H20DK_NRF54H20_CPUAPP)
-	select PARTITION_MANAGER_ENABLED if SOC_NRF5340_CPUAPP
-	select BOARD_ENABLE_CPUNET if (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS)
-
-config APP_REMOTE_BOARD
-	string "The name of the CORE to be used by remote image"
-	depends on APP_INCLUDE_REMOTE_IMAGE
-	default DOMAIN_CPUNET_BOARD if (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS)
-	default "nrf54h20dk/nrf54h20/cpuppr" if BOARD_NRF54H20DK_NRF54H20_CPUAPP
-
 rsource "common_events/Kconfig"
 rsource "modules/Kconfig"
 endmenu
