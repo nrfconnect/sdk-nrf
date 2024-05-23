@@ -207,8 +207,11 @@ bool suit_memory_global_address_is_in_nvm(uintptr_t address)
 
 bool suit_memory_global_address_range_is_in_nvm(uintptr_t address, size_t size)
 {
+	/* Zero-sized ranges are treated as if they were one byte in size. */
+	size = MAX(1, size);
+
 	const struct nvm_area *start = find_area(address);
-	const struct nvm_area *end = find_area(address + size);
+	const struct nvm_area *end = find_area(address + size - 1);
 
 	return start != NULL && start == end;
 }
@@ -239,12 +242,15 @@ uintptr_t suit_memory_global_address_to_ram_address(uintptr_t address)
 
 bool suit_memory_global_address_range_is_in_ram(uintptr_t address, size_t size)
 {
+	/* Zero-sized ranges are treated as if they were one byte in size. */
+	size = MAX(1, size);
+
 	if (IS_ENABLED(CONFIG_BOARD_NATIVE_POSIX)) {
 		return !suit_memory_global_address_range_is_in_nvm(address, size);
 	}
 
 	const struct ram_area *start = find_ram_area(address);
-	const struct ram_area *end = find_ram_area(address + size);
+	const struct ram_area *end = find_ram_area(address + size - 1);
 
 	return start != NULL && start == end;
 }
@@ -262,7 +268,10 @@ bool suit_memory_global_address_is_in_external_memory(uintptr_t address)
 
 bool suit_memory_global_address_range_is_in_external_memory(uintptr_t address, size_t size)
 {
-	uintptr_t end_addr = address + size;
+	/* Zero-sized ranges are treated as if they were one byte in size. */
+	size = MAX(1, size);
+
+	uintptr_t end_addr = address + size - 1;
 
 	return suit_memory_global_address_is_in_external_memory(address) &&
 	       suit_memory_global_address_is_in_external_memory(end_addr) &&
