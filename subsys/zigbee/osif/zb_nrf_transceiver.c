@@ -495,7 +495,7 @@ zb_uint8_t zb_trans_get_next_packet(zb_bufid_t buf)
 	zb_macll_metadata_t *metadata = ZB_MACLL_GET_METADATA(buf);
 
 	metadata->lqi = net_pkt_ieee802154_lqi(pkt);
-	metadata->power = net_pkt_ieee802154_rssi(pkt);
+	metadata->power = net_pkt_ieee802154_rssi_dbm(pkt);
 
 	/* Put timestamp (usec) into the packet tail */
 	*ZB_BUF_GET_PARAM(buf, zb_time_t) =
