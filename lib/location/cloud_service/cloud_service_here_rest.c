@@ -52,7 +52,7 @@ BUILD_ASSERT(sizeof(CONFIG_LOCATION_SERVICE_HERE_API_KEY) > 1,
 
 #define HTTP_REQUEST_BODY						\
 	"{"								\
-		"\"lte\":["						\
+		"\"lteCatM\":["						\
 			"{"						\
 				"\"mcc\":%d,"				\
 				"\"mnc\":%d,"				\
@@ -70,7 +70,7 @@ BUILD_ASSERT(sizeof(CONFIG_LOCATION_SERVICE_HERE_API_KEY) > 1,
 
 #define HTTP_REQUEST_BODY_NO_NEIGHBORS					\
 	"{"								\
-		"\"lte\":["						\
+		"\"lteCatM\":["						\
 			"{"						\
 				"\"mcc\":%d,"				\
 				"\"mnc\":%d,"				\
