@@ -143,6 +143,13 @@ config MCUBOOT_UPDATEABLE_IMAGES
 	help
 	  The number of images that MCUboot will be built with.
 
+config MCUBOOT_APP_SYNC_UPDATEABLE_IMAGES
+	bool "Sync updateable image value to main application"
+	default y
+	help
+	  If enabled then will synchronise the value of ``MCUBOOT_UPDATEABLE_IMAGES`` to MCUboot
+	  and the main application, if disable then will only set this value to MCUboot
+
 config SECURE_BOOT_MCUBOOT_VERSION
 	string "MCUboot S0/S1 image update version"
 	default "0.0.0+0"
