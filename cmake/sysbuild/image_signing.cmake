@@ -68,7 +68,15 @@ function(zephyr_mcuboot_tasks)
     return()
   endif()
 
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ CACHE STRING "imgtool sign command")
+  if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
+    # XIP image, need to use the fixed address for this slot
+    if(CONFIG_NCS_IS_VARIANT_IMAGE)
+      set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_ADDRESS@)
+    else()
+      set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_ADDRESS@)
+    endif()
+  endif()
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign command")
 
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
