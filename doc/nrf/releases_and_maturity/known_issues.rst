@@ -922,6 +922,14 @@ Zigbee
 
 The issues in this section are related to the :ref:`ug_zigbee` protocol.
 
+
+.. rst-class:: v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
+
+KRKNWK-19026: Wrong RSSI values reported
+  The Zephyr API to get the RSSI value from the radio driver was modified and adaptation is needed in the Zigbee integration.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``7ca42b219d1333b911d7671cf2a714bd93cbac45``).
+
 .. rst-class:: v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 NCSIDB-1213: Subsequent Zigbee FOTA updates fail

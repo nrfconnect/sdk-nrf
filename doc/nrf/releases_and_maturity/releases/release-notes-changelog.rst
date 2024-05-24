@@ -174,6 +174,7 @@ Zigbee
 ------
 
 * Fixed an issue with Zigbee FOTA updates failing after a previous attempt was interrupted.
+* Fixed the RSSI level value reported to the MAC layer in the Zigbee stack.
 
 Gazell
 ------
