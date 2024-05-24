@@ -32,8 +32,8 @@
 /applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
 /applications/ipc_radio/                  @dchat-nordic
 /applications/machine_learning/           @pdunaj
-/applications/matter_bridge/              @Damian-Nordic @kkasperczyk-no
-/applications/matter_weather_station/     @Damian-Nordic @kkasperczyk-no
+/applications/matter_bridge/              @nrfconnect/ncs-matter
+/applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf_desktop/                @MarekPieta
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/serial_lte_modem/           @SeppoTakalo @MarkusLassila @rlubos @tomi-font
@@ -163,7 +163,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga-nordic
 /samples/bluetooth/fast_pair/             @alstrzebonski @MarekPieta @kapi-no
 /samples/bootloader/                      @hakonfam @oyvindronningstad
-/samples/matter/                          @Damian-Nordic @kkasperczyk-no
+/samples/matter/                          @nrfconnect/ncs-matter
 /samples/crypto/                          @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /samples/debug/memfault/                  @nrfconnect/ncs-cia
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
