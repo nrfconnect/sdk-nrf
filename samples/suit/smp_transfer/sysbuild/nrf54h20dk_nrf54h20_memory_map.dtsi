@@ -4,31 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/delete-node/ &cpuapp_rw_partitions;
-
-&mram1x {
-	erase-block-size = < 0x10 >;
-	/* Hardcoded inside the soc_flash_nrf_mram.c (MRAM_WORD_SIZE) */
-	write-block-size = < 0x10 >;
-
-	cpuapp_rw_partitions: cpuapp-rw-partitions {
-		compatible = "nordic,owned-partitions", "fixed-partitions";
-		status = "okay";
-		perm-read;
-		perm-write;
-		#address-cells = < 0x1 >;
-		#size-cells = < 0x1 >;
-
-		dfu_partition: partition@136000 {
-			reg = < 0x136000 DT_SIZE_K(656) >;
-		};
-
-		storage_partition: partition@1da000 {
-			reg = < 0x1da000 DT_SIZE_K(24) >;
-		};
-	};
-};
-
 &cpuapp_rx_partitions {
 	/delete-node/ partition@a6000;
 	cpuapp_slot0_partition: partition@a5000 {
