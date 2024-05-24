@@ -521,10 +521,13 @@ Cellular samples
   * Fixed:
 
     * An issue that prevented network connectivity when using Wi-Fi scanning with the nRF91xx.
+    * An issue that caused the CoAP shadow polling thread to run too often if no data received.
 
   * Added:
 
     * The ability to control the state of the test counter using the config section in the device shadow.
+    * Handling of L4 disconnect where CoAP connection is paused and socket is kept open, then resumed when L4 reconnects.
+    * Checking in CoAP FOTA and shadow polling threads to improve recovery from communications failures.
 
 * :ref:`udp` sample:
 
@@ -878,6 +881,7 @@ Libraries for networking
 
     * The :c:func:`nrf_cloud_coap_shadow_desired_update` function to allow devices to reject invalid shadow deltas.
     * Support for IPv6 connections.
+    * The ``SO_KEEPOPEN`` socket option to keep the socket open even during PDN disconnect and reconnect.
 
 * :ref:`lib_lwm2m_client_utils` library:
 
