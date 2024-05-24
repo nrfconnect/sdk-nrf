@@ -64,9 +64,11 @@ config NET_SOCKETS_OFFLOAD_TLS
 # nRF Connect SDK needs a larger default stacks in certain configurations
 #  - For running tests.
 #  - For CC3XX RNG
+#  - For Cracen RNG
 config MAIN_STACK_SIZE
 	default 2048 if ZTEST
 	default 2048 if ENTROPY_CC3XX && !BUILD_WITH_TFM
+	default 2048 if PSA_NEED_CRACEN_CTR_DRBG_DRIVER && !BUILD_WITH_TFM
 
 config ZTEST_STACK_SIZE
 	default 2048 if ZTEST
