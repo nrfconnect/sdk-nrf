@@ -566,7 +566,7 @@ Gazell samples
 Keys samples
 ------------
 
-|no_changes_yet_note|
+* Added support for the :ref:`zephyr:nrf9151dk_nrf9151` and the :ref:`nRF9161 DK <ug_nrf9161>` boards for all keys samples.
 
 Matter samples
 --------------
