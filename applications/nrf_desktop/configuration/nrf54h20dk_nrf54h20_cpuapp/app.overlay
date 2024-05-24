@@ -51,6 +51,14 @@
 			label = "Green LED 3";
 		};
 	};
+
+	hid_dev_0: hid_dev_0 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID0";
+		protocol-code = "mouse";
+		in-polling-rate = <125>;
+		in-report-size = <64>;
+	};
 };
 
 &cpusec_cpuapp_ipc {
