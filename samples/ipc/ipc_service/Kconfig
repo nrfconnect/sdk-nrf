@@ -6,17 +6,3 @@
 
 source "Kconfig.zephyr"
 rsource "Kconfig.common"
-
-if SOC_SERIES_NRF53X
-
-config APP_INCLUDE_REMOTE_IMAGE
-	bool "Include remote image as sub image"
-	default y
-	select PARTITION_MANAGER_ENABLED
-
-config APP_REMOTE_BOARD
-	string "The name of the CORE to be used by remote image"
-	default "nrf5340dk/nrf5340/cpunet"
-	depends on APP_INCLUDE_REMOTE_IMAGE
-
-endif # SOC_SERIES_NRF53X
