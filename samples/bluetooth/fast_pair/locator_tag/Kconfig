@@ -10,14 +10,14 @@ menu "Nordic Fast Pair Locator tag sample"
 
 choice APP_PLATFORM
 	prompt "Application platform"
-	default APP_PLATFORM_THINGY if BOARD_THINGY53_NRF5340_CPUAPP
-	default APP_PLATFORM_DK
 
 config APP_PLATFORM_DK
 	bool "Application runs on the Development Kit"
+	depends on !BOARD_THINGY53
 
 config APP_PLATFORM_THINGY
 	bool "Application runs on the Thingy:53"
+	depends on BOARD_THINGY53
 
 endchoice
 
