@@ -5,7 +5,7 @@
 menu "Secure Bootloader"
 
 config SECURE_BOOT
-	bool "Secure Bootloader"
+	bool
 	help
 	  This option will be set if the first stage bootloader which
 	  verifies the signature of the app is enabled
