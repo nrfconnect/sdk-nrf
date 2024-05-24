@@ -47,7 +47,6 @@ tests:
                 SB_CONFIG_BOOTLOADER_MCUBOOT=y
                 SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
                 SB_CONFIG_SECURE_BOOT_APPCORE=n
-                SB_CONFIG_SECURE_BOOT=n
                 SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=n
   applications.nrf_desktop.zdebug_mcuboot_qspi:
     sysbuild: true
@@ -59,7 +58,6 @@ tests:
     extra_args: FILE_SUFFIX=mcuboot_qspi
                 SB_CONFIG_BOOTLOADER_MCUBOOT=y
                 SB_CONFIG_SECURE_BOOT_APPCORE=n
-                SB_CONFIG_SECURE_BOOT=n
   applications.nrf_desktop.zdebug_mcuboot_smp.nrf52840gmouse:
     sysbuild: true
     build_only: true
@@ -70,7 +68,6 @@ tests:
     extra_args: FILE_SUFFIX=mcuboot_smp
                 SB_CONFIG_BOOTLOADER_MCUBOOT=y
                 SB_CONFIG_SECURE_BOOT_APPCORE=n
-                SB_CONFIG_SECURE_BOOT=n
                 SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=n
                 SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
   applications.nrf_desktop.zdebug_mcuboot_smp.nrf52840dk:
@@ -83,7 +80,6 @@ tests:
     extra_args: FILE_SUFFIX=mcuboot_smp
                 SB_CONFIG_BOOTLOADER_MCUBOOT=y
                 SB_CONFIG_SECURE_BOOT_APPCORE=n
-                SB_CONFIG_SECURE_BOOT=n
                 SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=n
   applications.nrf_desktop.zdebugwithshell:
     sysbuild: true
@@ -185,7 +181,7 @@ tests:
     integration_platforms:
       - nrf52kbd/nrf52832
     tags: bluetooth ci_build sysbuild
-    extra_args: FILE_SUFFIX=release SB_CONFIG_SECURE_BOOT=y SB_CONFIG_SECURE_BOOT_APPCORE=y
+    extra_args: FILE_SUFFIX=release SB_CONFIG_SECURE_BOOT_APPCORE=y
   applications.nrf_desktop.zrelease.sysbuild.nrf52820dongle_nrf52820:
     sysbuild: true
     build_only: true
@@ -233,7 +229,6 @@ tests:
                 SB_CONFIG_BT_FAST_PAIR=y
                 SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=n
                 SB_CONFIG_SECURE_BOOT_APPCORE=n
-                SB_CONFIG_SECURE_BOOT=n
   applications.nrf_desktop.zrelease_4llpmconn:
     sysbuild: true
     build_only: true
