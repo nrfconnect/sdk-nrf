@@ -11,14 +11,14 @@ target_include_directories(app_ui PRIVATE include_priv)
 
 target_sources(app_ui PRIVATE common.c)
 
-target_sources_ifdef(CONFIG_FAST_PAIR_LOCATOR_TAG_PLATFORM_DK
+target_sources_ifdef(CONFIG_APP_PLATFORM_DK
                      app_ui PRIVATE
                      platform_dk.c)
 
-target_sources_ifdef(CONFIG_FAST_PAIR_LOCATOR_TAG_PLATFORM_THINGY
+target_sources_ifdef(CONFIG_APP_PLATFORM_THINGY
                      app_ui PRIVATE
                      platform_thingy.c)
-target_sources_ifdef(CONFIG_FAST_PAIR_LOCATOR_TAG_PLATFORM_THINGY
+target_sources_ifdef(CONFIG_APP_PLATFORM_THINGY
                      app_ui PRIVATE
                      platform_thingy_speaker.c)
 

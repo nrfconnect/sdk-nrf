@@ -13,12 +13,12 @@ target_include_directories(app_battery PRIVATE include_priv)
 target_sources(app_battery PRIVATE common.c)
 
 # DK specific
-if(CONFIG_FAST_PAIR_LOCATOR_TAG_PLATFORM_DK)
+if(CONFIG_APP_PLATFORM_DK)
   target_sources(app_battery PRIVATE platform_dk.c)
   target_link_libraries(app_battery PRIVATE app_ui)
 endif()
 
 # Thingy specific
-if(CONFIG_FAST_PAIR_LOCATOR_TAG_PLATFORM_THINGY)
+if(CONFIG_APP_PLATFORM_THINGY)
   target_sources(app_battery PRIVATE platform_thingy.c)
 endif()

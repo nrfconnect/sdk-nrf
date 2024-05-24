@@ -8,16 +8,16 @@ source "Kconfig.zephyr"
 
 menu "Nordic Fast Pair Locator tag sample"
 
-choice FAST_PAIR_LOCATOR_TAG_PLATFORM
-	prompt "Locator tag sample platform"
-	default FAST_PAIR_LOCATOR_TAG_PLATFORM_THINGY if BOARD_THINGY53_NRF5340_CPUAPP
-	default FAST_PAIR_LOCATOR_TAG_PLATFORM_DK
+choice APP_PLATFORM
+	prompt "Application platform"
+	default APP_PLATFORM_THINGY if BOARD_THINGY53_NRF5340_CPUAPP
+	default APP_PLATFORM_DK
 
-config FAST_PAIR_LOCATOR_TAG_PLATFORM_DK
-	bool "Locator tag sample run on the Development Kit"
+config APP_PLATFORM_DK
+	bool "Application runs on the Development Kit"
 
-config FAST_PAIR_LOCATOR_TAG_PLATFORM_THINGY
-	bool "Locator tag sample run on the Thingy:53"
+config APP_PLATFORM_THINGY
+	bool "Application runs on the Thingy:53"
 
 endchoice
 
