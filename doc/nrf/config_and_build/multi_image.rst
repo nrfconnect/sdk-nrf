@@ -7,6 +7,9 @@ Multi-image builds
    :local:
    :depth: 2
 
+.. important::
+    |sysbuild_related_deprecation_note|
+
 The firmware programmed to a device can be composed of either one application or several separate images.
 In the latter case, the *parent* :term:`image file` requires one or more other images (the *child images*) to be present.
 The child image then *chain-loads*, or *boots*, the parent image, which could also be a child image to another parent image, and boots that one.
