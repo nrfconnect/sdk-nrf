@@ -191,6 +191,39 @@ void disconnect_cloud(void)
 	k_event_post(&cloud_events, CLOUD_DISCONNECTED);
 }
 
+static void network_disconnected(void)
+{
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+	disconnect_cloud();
+#elif !defined(CONFIG_NRF_CLOUD_COAP_KEEPOPEN)
+	disconnect_cloud();
+#else
+	/* When using CoAP we keep the socket open during brief network outages.
+	 * There is no need to fully disconnect and cause additional network traffic.
+	 */
+	if (k_event_test(&cloud_events, CLOUD_DISCONNECTED)) {
+		return;
+	}
+	clear_readiness_timeout();
+	k_event_clear(&cloud_events, CLOUD_READY | CLOUD_CONNECTED);
+	k_event_post(&cloud_events, CLOUD_DISCONNECTED);
+	int err = nrf_cloud_coap_pause();
+
+	if (err) {
+		LOG_ERR("Error pausing connection: %d", err);
+	}
+#endif
+}
+
+void cloud_transport_error_detected(void)
+{
+	/* We could do some kind of ping to verify the connection, but for now,
+	 * just assume the detector was correct and force a reconnect.
+	 */
+	LOG_INF("Communication error detected.");
+	network_disconnected();
+}
+
 /**
  * @brief Attempt to connect to nRF Cloud and update internal state accordingly.
  *
@@ -295,8 +328,8 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 		/* Clear the network ready flag */
 		k_event_clear(&cloud_events, NETWORK_READY);
 
-		/* Disconnect from cloud as well. */
-		disconnect_cloud();
+		/* Network is now disconnected */
+		network_disconnected();
 	}
 }
 
@@ -624,7 +657,7 @@ void cloud_connection_thread_fn(void)
 
 		/* Attempt to connect to nRF Cloud. */
 		if (connect_cloud()) {
-			LOG_DBG("Awaiting disconnection from nRF Cloud");
+			LOG_DBG("Monitoring nRF Cloud connection");
 
 			/* and then wait patiently for a connection problem. */
 			(void)await_cloud_disconnected(K_FOREVER);

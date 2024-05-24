@@ -84,9 +84,12 @@ int coap_fota_thread_fn(void)
 			LOG_DBG("Retrying in %d minute(s)",
 				CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES);
 			k_sleep(K_MINUTES(CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES));
-		} else {
-			k_sleep(K_SECONDS(FOTA_THREAD_DELAY_S));
+			continue;
 		}
+		if (err == -ENOENT) {
+			cloud_transport_error_detected();
+		}
+		k_sleep(K_SECONDS(FOTA_THREAD_DELAY_S));
 	}
 	return 0;
 }

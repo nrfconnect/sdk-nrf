@@ -68,6 +68,12 @@ void register_general_dev_msg_handler(dev_msg_handler_cb_t handler_cb);
 void disconnect_cloud(void);
 
 /**
+ * @brief Report a communications error so the cloud_connection can evaluate and
+ * recover.
+ */
+void cloud_transport_error_detected(void);
+
+/**
  * @brief Cloud connection thread function.
  *
  * This function manages the cloud connection thread. Once called, it begins monitoring network

@@ -158,9 +158,13 @@ int coap_shadow_thread_fn(void)
 			LOG_INF("Checking shadow again in %d seconds",
 				CONFIG_COAP_SHADOW_CHECK_RATE_SECONDS);
 			k_sleep(K_SECONDS(CONFIG_COAP_SHADOW_CHECK_RATE_SECONDS));
-		} else {
-			k_sleep(K_SECONDS(SHADOW_THREAD_DELAY_S));
+			continue;
 		}
+		if (err == -ETIMEDOUT) {
+			cloud_transport_error_detected();
+		}
+		LOG_DBG("check_shadow() returned %d", err);
+		k_sleep(K_SECONDS(SHADOW_THREAD_DELAY_S));
 	}
 	return 0;
 }
