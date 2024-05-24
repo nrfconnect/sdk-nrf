@@ -282,10 +282,6 @@ peripheral=GPIO1
 peripheral_depends=$(dt_nodelabel_has_compat,gpio1,$(DT_COMPAT_NORDIC_NRF_GPIO))
 rsource "Kconfig.template.peripheral_secure"
 
-peripheral=VMC
-peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_VMC))
-rsource "Kconfig.template.peripheral_secure"
-
 config NRF_GPIOTE0_SECURE
 	bool "GPIOTE configured as secure peripheral"
 	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
@@ -327,6 +323,14 @@ config NRF_DPPI_CHANNEL_MASK_SECURE
 	  A bitmask can be set to configure a subset of the DPPI channels as
 	  secure to prevent non-secure from accessing these channels. Secure
 	  accesses can be made to the DPPI pins configured as non-secure.
+
+config NRF_VMC_SECURE
+	bool
+	default y
+	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_VMC))
+	help
+	  The Non-secure app should not be able to turn off the RAM block of TF-M
+	  Therefore it needs to be configured as secure peripheral.
 
 endmenu # Peripheral Secure mapping
 
