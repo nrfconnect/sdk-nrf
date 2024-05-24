@@ -1,7 +1,8 @@
 .. _ug_nrf70:
+.. _ug_nrf70_developing:
 
-Working with nRF70 Series
-#########################
+Developing with nRF70 Series
+############################
 
 Zephyr and the |NCS| provide support for developing networking applications with Wi-Fi® connectivity using the following nRF70 Series companion IC devices:
 
@@ -71,29 +72,37 @@ The following nRF70 Series shields are available and defined in the :file:`nrf/b
    * - nRF7002 :term:`Evaluation Kit (EK)`
      - PCA63556
      - ``nrf7002ek``
-     - | :ref:`Getting started <ug_nrf7002ek_gs>`
+     - | :ref:`Development guide <ug_nrf7002ek_gs>`
        | `User Guide <nRF7002 EK User Guide_>`_
    * - nRF7002 EK with emulated support for the nRF7001 IC
      - PCA63556
      - ``nrf7002ek/nrf7001``
-     - | :ref:`Getting started <ug_nrf7002ek_gs>`
+     - | :ref:`Development guide <ug_nrf7002ek_gs>`
        | `User Guide <nRF7002 EK User Guide_>`_
    * - nRF7002 EK with emulated support for the nRF7000 IC
      - PCA63556
      - ``nrf7002ek/nrf7000``
-     - | :ref:`Getting started <ug_nrf7002ek_gs>`
+     - | :ref:`Development guide <ug_nrf7002ek_gs>`
        | `User Guide <nRF7002 EK User Guide_>`_
    * - nRF7002 :term:`Expansion Board (EB)`
      - PCA63561
      - ``nrf7002eb``
-     - | :ref:`Getting started <ug_nrf7002eb_gs>`
+     - | :ref:`Development guide <ug_nrf7002eb_gs>`
        | `User Guide <nRF7002 EB User Guide_>`_
 
 Applications can be developed on the nRF7002 DK (PCA10143), which includes the nRF7002 companion IC, or on boards compatible with the nRF7002 EK (PCA63556) or the nRF7002 EB (PCA63561).
+
+The following subpages cover topics related to developing applications with the nRF70 Series ICs using the respective development and evaluation boards.
 
 .. toctree::
    :maxdepth: 2
    :caption: Subpages:
 
-   working_with_nrf/nrf70/features
-   working_with_nrf/nrf70/developing/index
+   features
+   stack_partitioning
+   constrained
+   fw_patches_ext_flash
+   nrf70_fw_patch_update
+   power_profiling
+   nrf7002ek_dev_guide
+   nrf7002eb_dev_guide

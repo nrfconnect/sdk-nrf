@@ -12,7 +12,7 @@ You can also find here guides that are strictly related to hardware features.
    :caption: Subpages:
 
    device_guides/nrf91/index
-   device_guides/nrf70
+   device_guides/nrf70/index
    device_guides/nrf54l
    device_guides/nrf54h
    device_guides/nrf53
