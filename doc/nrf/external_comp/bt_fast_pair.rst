@@ -133,7 +133,7 @@ Provisioning registration data onto device
 The Fast Pair standard requires provisioning the device with Model ID and Anti-Spoofing Private Key obtained during device model registration.
 In the |NCS|, the provisioning data is generated as a hexadecimal file using the :ref:`bt_fast_pair_provision_script`.
 
-If Fast Pair is enabled with the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option, the Fast Pair provision script is called automatically by the build system and the resulting hexadecimal file is automatically added to the firmware (that is, to the :file:`merged.hex` file).
+If Fast Pair is enabled with the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option, the build system automatically calls the Fast Pair provision script and includes the resulting hexadecimal file in the firmware (the :file:`merged.hex` file).
 You must provide the following CMake options:
 
 * ``FP_MODEL_ID`` - Fast Pair Model ID in format ``0xXXXXXX``,
@@ -357,7 +357,7 @@ Required scripts
 ****************
 
 The :ref:`bt_fast_pair_provision_script` is required to generate the provisioning data for the device.
-The script is automatically invoked by the build system during application build when the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option is enabled.
+When the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option is enabled, the build system automatically invokes the script during the application build.
 
 Terms and licensing
 *******************
