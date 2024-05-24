@@ -144,6 +144,9 @@ This process also creates a set of header files that provides defines, which can
 Child images
 ------------
 
+.. important::
+    |sysbuild_related_deprecation_note|
+
 The |NCS| build system allows the application project to become a root for the sub-applications known in the |NCS| as child images.
 Examples of child images are bootloader images, network core images, or security-related images.
 Each child image is a separate application.
@@ -170,10 +173,8 @@ See the Configuration section of the given application or sample's documentation
 
 .. important::
     The file suffixes feature is replacing the :ref:`app_build_additions_build_types` that used the :makevar:`CONF_FILE` variable.
-    File suffixes are backward compatible with this variable, but the following software components are not compatible with file suffixes:
-
-    * :ref:`Child image Kconfig configuration <ug_multi_image_permanent_changes>`.
-      Use the :makevar:`CONF_FILE` variable during the deprecation period of the build types.
+    File suffixes are backward compatible with this variable.
+    Some applications might still require using the :makevar:`CONF_FILE` variable during the deprecation period of the build types.
 
 For information about how to provide file suffixes when building an application, see :ref:`cmake_options`.
 
@@ -204,6 +205,26 @@ See :ref:`output build files <app_build_output_files>` for details.
 
 The build phase can be broken down, conceptually, into four stages: the pre-build, first-pass binary, final binary, and post-processing.
 To read about each of these stages, see :ref:`zephyr:cmake-details` in the Zephyr documentation.
+
+.. _configuration_system_overview_sysbuild:
+
+Sysbuild
+========
+
+The |NCS| supports Zephyr's System Build (Sysbuild).
+
+.. ncs-include:: build/sysbuild/index.rst
+   :docset: zephyr
+   :start-after: #######################
+   :end-before: Definitions
+
+To distinguish CMake variables and Kconfig options specific to the underlying build systems, sysbuild uses namespacing.
+For example, sysbuild-specific Kconfig options are preceded by `SB_` before `CONFIG` and application-specific CMake options are preceded by the application name.
+
+Sysbuild is integrated with west.
+The sysbuild build configuration is generated using the sysbuild's :file:`CMakeLists.txt` file (which provides information about each underlying build system and CMake variables) and the sysbuild's Kconfig options (which are gathered in the :file:`sysbuild.conf` file).
+
+For more information about sysbuild, see the :ref:`documentation in Zephyr <zephyr:sysbuild>`.
 
 .. _app_build_additions:
 
@@ -239,9 +260,8 @@ Custom build types
 ==================
 
 .. important::
-    The build types are deprecated and are being replaced by :ref:`suffix-based configurations <app_build_additions_build_types>` and Zephyr's :ref:`zephyr:sysbuild`.
-    You can continue to use the build types feature until the transition is complete in the |NCS|.
-    It is still required for applications that use build types with :ref:`multiple images <ug_multi_image>`.
+    |file_suffix_related_deprecation_note|
+    It is still required for some applications that use build types with :ref:`multiple images <ug_multi_image>`.
     Check the application and sample documentation pages for which variable to use.
 
 A build type is a feature that defines the way in which the configuration files are to be handled.
@@ -275,6 +295,9 @@ For more information about how to invoke build types, see :ref:`cmake_options`.
 
 Multi-image builds
 ==================
+
+.. important::
+    |sysbuild_related_deprecation_note|
 
 The |NCS| build system extends Zephyr's with support for multi-image builds.
 You can find out more about these in the :ref:`ug_multi_image` section.
