@@ -46,7 +46,6 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 
 static void app_emds_cb(void)
 {
-	printk("SAMPLE HALTED!!!\n");
 	dk_set_leds(DK_LED2_MSK | DK_LED3_MSK | DK_LED4_MSK);
 	k_fatal_halt(K_ERR_CPU_EXCEPTION);
 }
