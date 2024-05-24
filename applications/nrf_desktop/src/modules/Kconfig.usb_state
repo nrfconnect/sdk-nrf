@@ -47,6 +47,37 @@ config DESKTOP_USB_PM_ENABLE
 	help
 	  This enables small module that blocks power down if the USB is active.
 
+config DESKTOP_USB_INIT_THREAD
+	bool
+	default y if SOC_SERIES_NRF54HX
+	help
+	  Initialize USB stack in a separate thread instead of doing it in
+	  the context of the system workqueue.
+	  For the nRF54HX SoC use-case, the usbd_init() function blocks while
+	  waiting for a synchronization object that is received after the system
+	  controller sends the USB service event through the NRFS and IPC with
+	  the ICMSG backend to the application core.
+	  The ICMSG backend uses the system workqueue context for both
+	  initialization and on the incoming message handling, so calling the
+	  usbd_init() function from the same context causes deadlock during
+	  application boot.
+
+config DESKTOP_USB_INIT_THREAD_STACK_SIZE
+	int
+	default 2048
+
+config DESKTOP_USB_INIT_THREAD_PRIORITY
+	int
+	default 0
+
+config DESKTOP_USB_INIT_THREAD_DELAY_MS
+	int
+	default 1
+	help
+	  Due to an issue in the USB stack initialization on the nRF54HX SoC,
+	  the usbd_init() cannot be called too early. The delay is introduced
+	  to delay this call.
+
 choice DESKTOP_USB_STACK
 	prompt "USB stack"
 	default DESKTOP_USB_STACK_LEGACY

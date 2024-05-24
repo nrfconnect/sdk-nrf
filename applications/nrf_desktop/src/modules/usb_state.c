@@ -86,7 +86,17 @@ static struct usb_hid_device usb_hid_device[] = {
 static struct usb_hid_device usb_hid_device[CONFIG_USB_HID_DEVICE_COUNT];
 #endif
 
-BUILD_ASSERT(DT_PROP(DT_NODELABEL(usbd), num_in_endpoints) > ARRAY_SIZE(usb_hid_device),
+#if CONFIG_DESKTOP_USB_STACK_NEXT && DT_NODE_EXISTS(DT_NODELABEL(usbhs))
+#define USB_DT_NODELABEL	DT_NODELABEL(usbhs)
+#define NUM_IN_ENDPOINTS	DT_PROP(USB_DT_NODELABEL, num_in_eps)
+#elif DT_NODE_EXISTS(DT_NODELABEL(usbd))
+#define USB_DT_NODELABEL	DT_NODELABEL(usbd)
+#define NUM_IN_ENDPOINTS	DT_PROP(USB_DT_NODELABEL, num_in_endpoints)
+#else
+#error USB device tree node is not defined.
+#endif
+
+BUILD_ASSERT(NUM_IN_ENDPOINTS > ARRAY_SIZE(usb_hid_device),
 	     "Too few USB IN Endpoints enabled. Modify dts.overlay file.");
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_DESKTOP_HID_STATE_ENABLE) ||
@@ -96,6 +106,9 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_DESKTOP_HID_STATE_ENABLE) ||
 static struct usbd_context *usbd_ctx;
 
 static struct config_channel_transport cfg_chan_transport;
+
+static struct k_thread usb_init_thread;
+static K_THREAD_STACK_DEFINE(usb_init_thread_stack, CONFIG_DESKTOP_USB_INIT_THREAD_STACK_SIZE);
 
 
 static struct usb_hid_device *dev_to_hid(const struct device *dev)
@@ -1093,7 +1106,7 @@ static struct usbd_context *usb_init_next_usbd_init(void)
 {
 	int err;
 
-	USBD_DEVICE_DEFINE(usbd, DEVICE_DT_GET(DT_NODELABEL(usbd)),
+	USBD_DEVICE_DEFINE(usbd, DEVICE_DT_GET(USB_DT_NODELABEL),
 			   CONFIG_DESKTOP_DEVICE_VID, CONFIG_DESKTOP_DEVICE_PID);
 
 	USBD_DESC_LANG_DEFINE(lang);
@@ -1208,9 +1221,24 @@ static int usb_init(void)
 
 	if (err) {
 		LOG_ERR("Cannot enable USB (err: %d)", err);
+	} else {
+		LOG_DBG("USB enabled");
 	}
 
 	return err;
+}
+
+static void usb_init_thread_fn(void *dummy0, void *dummy1, void *dummy2)
+{
+	ARG_UNUSED(dummy0);
+	ARG_UNUSED(dummy1);
+	ARG_UNUSED(dummy2);
+
+	if (usb_init()) {
+		module_set_state(MODULE_STATE_ERROR);
+	} else {
+		module_set_state(MODULE_STATE_READY);
+	}
 }
 
 static bool app_event_handler(const struct app_event_header *aeh)
@@ -1230,11 +1258,17 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			if (usb_init()) {
-				LOG_ERR("USB stack initialization failed");
-				module_set_state(MODULE_STATE_ERROR);
+			if (IS_ENABLED(CONFIG_DESKTOP_USB_INIT_THREAD)) {
+				(void) k_thread_create(
+					&usb_init_thread,
+					usb_init_thread_stack,
+					K_THREAD_STACK_SIZEOF(usb_init_thread_stack),
+					usb_init_thread_fn,
+					NULL, NULL, NULL,
+					CONFIG_DESKTOP_USB_INIT_THREAD_PRIORITY, 0,
+					K_MSEC(CONFIG_DESKTOP_USB_INIT_THREAD_DELAY_MS));
 			} else {
-				module_set_state(MODULE_STATE_READY);
+				usb_init_thread_fn(NULL, NULL, NULL);
 			}
 		}
 
