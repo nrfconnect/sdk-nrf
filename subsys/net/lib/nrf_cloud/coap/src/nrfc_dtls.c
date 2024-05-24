@@ -172,16 +172,23 @@ int nrfc_dtls_setup(int sock)
 		LOG_ERR("Failed to enable session cache, errno: %d", -errno);
 		err = -errno;
 	}
+
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP_KEEPOPEN)) {
+		err = setsockopt(sock, SOL_SOCKET, SO_KEEPOPEN, &(int){1}, sizeof(int));
+		if (err) {
+			LOG_ERR("Failed to set SO_KEEPOPEN: %d", -errno);
+			err = -errno;
+		}
+	}
 	return err;
 }
 
 int nrfc_dtls_session_save(int sock)
 {
-	int dummy = 0;
 	int err;
 
 	LOG_DBG("Save DTLS CID session");
-	err = setsockopt(sock, SOL_TLS, TLS_DTLS_CONN_SAVE, &dummy, sizeof(dummy));
+	err = setsockopt(sock, SOL_TLS, TLS_DTLS_CONN_SAVE, &(int){0}, sizeof(int));
 	if (err) {
 		LOG_DBG("Failed to save DTLS CID session, errno %d", -errno);
 		err = -errno;
@@ -191,11 +198,10 @@ int nrfc_dtls_session_save(int sock)
 
 int nrfc_dtls_session_load(int sock)
 {
-	int dummy = 1;
 	int err;
 
 	LOG_DBG("Load DTLS CID session");
-	err = setsockopt(sock, SOL_TLS, TLS_DTLS_CONN_LOAD, &dummy, sizeof(dummy));
+	err = setsockopt(sock, SOL_TLS, TLS_DTLS_CONN_LOAD, &(int){1}, sizeof(int));
 	if (err) {
 		LOG_DBG("Failed to load DTLS CID session, errno %d", -errno);
 		err = -errno;

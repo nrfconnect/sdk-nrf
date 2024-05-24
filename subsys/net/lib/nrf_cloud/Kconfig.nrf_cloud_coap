@@ -36,6 +36,14 @@ config NRF_CLOUD_COAP_GF_CONF
 	  configuration values do_reply, fallback, and hi_conf. When the cloud
 	  support is ready, NRF_CLOUD_COAP_GF_CONF can be set true.
 
+config NRF_CLOUD_COAP_KEEPOPEN
+	bool "Enable SO_KEEPOPEN to prevent unnecessary socket closures"
+	default y
+	depends on SOC_NRF9161_LACA || SOC_NRF9151_LACA || SOC_NRF9131_LACA
+	help
+	  Improve benefit from using DTLS Connection ID by keeping the socket
+	  open when temporary LTE PDN connection loss occurs.
+
 if WIFI
 
 config NRF_CLOUD_COAP_SEND_SSIDS

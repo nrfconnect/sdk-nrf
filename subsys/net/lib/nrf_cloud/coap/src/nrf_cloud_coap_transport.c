@@ -49,16 +49,19 @@ LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 #define VER_STRING_FMT "mver=%s&cver=%s&dver=%s"
 #define VER_STRING_FMT2 "cver=" CDDL_VERSION "&dver=" BUILD_VERSION_STR
 #define BUILD_VERSION_STR STRINGIFY(BUILD_VERSION)
+#define NON_RESP_WAIT_S 3
+#define MAX_XFERS (CONFIG_COAP_CLIENT_MAX_INSTANCES * CONFIG_COAP_CLIENT_MAX_REQUESTS)
 
 #define NRF_CLOUD_COAP_AUTH_RSC "auth/jwt"
 
 /* CoAP client transfer data */
 struct cc_xfer_data {
-	struct nrf_cloud_coap_client *const nrfc_cc;
+	struct nrf_cloud_coap_client *nrfc_cc;
 	coap_client_response_cb_t cb;
 	void *user_data;
 	int result_code;
 	struct k_sem *sem;
+	atomic_t used;
 };
 
 /* Semaphore to be used with internal coap_client requests */
@@ -113,9 +116,52 @@ static const char *fmt_name(enum coap_content_format fmt)
 }
 #endif /* CONFIG_NRF_CLOUD_COAP_LOG_LEVEL_DBG */
 
+/* Create a pool of CoAP transfer structures. Memory passed to coap_client needs to
+ * persist after any calls to client_transfer() in case a server response to a NON message
+ * returns after timeout in client_transfer(), or in case nrf_cloud_coap_transport_disconnect
+ * is called while coap_client is waiting for a packet or timeout from the socket.
+ */
+static struct cc_xfer_data xfer_ctx_pool[MAX_XFERS];
+
+static struct cc_xfer_data *xfer_ctx_take(void)
+{
+	for (int i = 0; i < ARRAY_SIZE(xfer_ctx_pool); i++) {
+		if (!atomic_test_and_set_bit(&xfer_ctx_pool[i].used, 0)) {
+			return &xfer_ctx_pool[i];
+		}
+	}
+	return NULL;
+}
+
+static void xfer_ctx_release(struct cc_xfer_data *ctx)
+{
+	if (ctx) {
+		atomic_clear_bit(&ctx->used, 0);
+	}
+}
+
+static struct cc_xfer_data *xfer_data_init(struct nrf_cloud_coap_client *cc,
+					   coap_client_response_cb_t cb,
+					   void *user,
+					   struct k_sem *sem)
+{
+	struct cc_xfer_data *xfer = xfer_ctx_take();
+
+	if (!xfer) {
+		LOG_ERR("Maximum number of CoAP transfers are already in progress");
+		return NULL;
+	}
+	xfer->nrfc_cc = cc;
+	xfer->cb = cb;
+	xfer->user_data = user;
+	xfer->result_code = -ECANCELED;
+	xfer->sem = sem;
+	return xfer;
+}
+
 bool nrf_cloud_coap_is_connected(void)
 {
-	return internal_cc.authenticated;
+	return internal_cc.authenticated && !internal_cc.paused;
 }
 
 static inline bool is_internal(struct nrf_cloud_coap_client const *const client)
@@ -300,7 +346,6 @@ static void client_callback(int16_t result_code, size_t offset, const uint8_t *p
 
 	struct cc_xfer_data *xfer = (struct cc_xfer_data *)user_data;
 
-	xfer->result_code = result_code;
 	if (result_code >= 0) {
 		LOG_CB_DBG(result_code, offset, len, last_block);
 	} else {
@@ -316,9 +361,16 @@ static void client_callback(int16_t result_code, size_t offset, const uint8_t *p
 	} else if ((result_code >= COAP_RESPONSE_CODE_BAD_REQUEST) && len) {
 		LOG_ERR("Unexpected response: %*s", len, payload);
 	}
-	if (xfer->cb != NULL) {
-		LOG_DBG("Calling user's callback %p", xfer->cb);
-		xfer->cb(result_code, offset, payload, len, last_block, xfer->user_data);
+	/* Sanitize the xfer struct to ensure callback is valid, in case transfer
+	 * was cancelled or timed out.
+	 */
+	if (atomic_test_bit(&xfer->used, 0)) {
+		xfer->result_code = result_code;
+		if (xfer->cb) {
+			LOG_DBG("Calling user's callback %p", xfer->cb);
+			xfer->cb(result_code, offset, payload, len, last_block,
+				 xfer->user_data);
+		}
 	}
 	if (last_block || (result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
 		LOG_DBG("End of client transfer");
@@ -337,10 +389,12 @@ static int client_transfer(enum coap_method method,
 			   enum coap_content_format fmt_in,
 			   bool response_expected,
 			   bool reliable,
-			   struct cc_xfer_data *const xfer)
+			   struct cc_xfer_data *xfer)
 {
+	if (xfer == NULL) {
+		return -ENOBUFS;
+	}
 	__ASSERT_NO_MSG(resource != NULL);
-	__ASSERT_NO_MSG(xfer != NULL);
 
 	/* Use the serial semaphore if this is the internal coap client */
 	if (is_internal(xfer->nrfc_cc)) {
@@ -382,7 +436,8 @@ static int client_transfer(enum coap_method method,
 		err = snprintf(path, MAX_COAP_PATH, "%s?%s", resource, query);
 		if ((err < 0) || (err >= MAX_COAP_PATH)) {
 			LOG_ERR("Could not format string");
-			return -ETXTBSY;
+			err = -ETXTBSY;
+			goto transfer_end;
 		}
 	}
 
@@ -395,12 +450,17 @@ static int client_transfer(enum coap_method method,
 	retry = 0;
 	k_sem_reset(xfer->sem);
 	while ((err = coap_client_req(cc, xfer->nrfc_cc->sock, NULL, &request, NULL)) == -EAGAIN) {
+		if (!nrf_cloud_coap_is_connected()) {
+			err = -EACCES;
+			break;
+		}
 		/* -EAGAIN means the CoAP client is currently waiting for a response
 		 * to a previous request (likely started in a separate thread).
 		 */
 		if (retry++ > MAX_RETRIES) {
 			LOG_ERR("Timeout waiting for CoAP client to be available");
-			return -ETIMEDOUT;
+			err = -ETIMEDOUT;
+			goto transfer_end;
 		}
 		LOG_DBG("CoAP client busy");
 		k_sleep(K_MSEC(500));
@@ -412,8 +472,17 @@ static int client_transfer(enum coap_method method,
 		if (buf_len) {
 			LOG_HEXDUMP_DBG(buf, MIN(64, buf_len), "Sent");
 		}
-		/* Wait for coap_client to exhaust retries */
-		(void)k_sem_take(xfer->sem, K_FOREVER);
+		/* Wait for coap_client to exhaust retries when reliable transfer selected,
+		 * otherwise wait a finite time because response might never come.
+		 */
+		err = k_sem_take(xfer->sem, reliable ? K_FOREVER : K_SECONDS(NON_RESP_WAIT_S));
+		if (!err) {
+			LOG_DBG("Got callback");
+		} else {
+			LOG_DBG("Got timeout: %d", err);
+			/* Ignore, since caller selected non-reliable transfer. */
+			err = 0;
+		}
 	}
 
 	if (!reliable && !err && (xfer->result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
@@ -423,10 +492,11 @@ static int client_transfer(enum coap_method method,
 		err = xfer->result_code;
 	}
 
+transfer_end:
 	if (is_internal(xfer->nrfc_cc)) {
 		k_sem_give(&serial_sem);
 	}
-
+	xfer_ctx_release(xfer);
 	return err;
 }
 
@@ -436,11 +506,10 @@ int nrf_cloud_coap_get(const char *resource, const char *query,
 		       enum coap_content_format fmt_in, bool reliable,
 		       coap_client_response_cb_t cb, void *user)
 {
-	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
-				       .user_data = user, .sem = &cb_sem };
+	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
 	return client_transfer(COAP_METHOD_GET, resource, query,
-			       buf, len, fmt_out, fmt_in, true, reliable, &xfer);
+			       buf, len, fmt_out, fmt_in, true, reliable, xfer);
 }
 
 int nrf_cloud_coap_post(const char *resource, const char *query,
@@ -448,11 +517,10 @@ int nrf_cloud_coap_post(const char *resource, const char *query,
 			enum coap_content_format fmt, bool reliable,
 			coap_client_response_cb_t cb, void *user)
 {
-	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
-				     .user_data = user, .sem = &cb_sem };
+	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
 	return client_transfer(COAP_METHOD_POST, resource, query,
-			       buf, len, fmt, fmt, false, reliable, &xfer);
+			       buf, len, fmt, fmt, false, reliable, xfer);
 }
 
 int nrf_cloud_coap_put(const char *resource, const char *query,
@@ -460,11 +528,10 @@ int nrf_cloud_coap_put(const char *resource, const char *query,
 		       enum coap_content_format fmt, bool reliable,
 		       coap_client_response_cb_t cb, void *user)
 {
-	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
-				     .user_data = user, .sem = &cb_sem };
+	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
 	return client_transfer(COAP_METHOD_PUT, resource, query,
-			       buf, len, fmt, fmt, false, reliable, &xfer);
+			       buf, len, fmt, fmt, false, reliable, xfer);
 }
 
 int nrf_cloud_coap_delete(const char *resource, const char *query,
@@ -472,11 +539,10 @@ int nrf_cloud_coap_delete(const char *resource, const char *query,
 			  enum coap_content_format fmt, bool reliable,
 			  coap_client_response_cb_t cb, void *user)
 {
-	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
-				     .user_data = user, .sem = &cb_sem };
+	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
 	return client_transfer(COAP_METHOD_DELETE, resource, query,
-			       buf, len, fmt, fmt, false, reliable, &xfer);
+			       buf, len, fmt, fmt, false, reliable, xfer);
 }
 
 int nrf_cloud_coap_fetch(const char *resource, const char *query,
@@ -485,11 +551,10 @@ int nrf_cloud_coap_fetch(const char *resource, const char *query,
 			 enum coap_content_format fmt_in, bool reliable,
 			 coap_client_response_cb_t cb, void *user)
 {
-	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
-				     .user_data = user, .sem = &cb_sem };
+	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
 	return client_transfer(COAP_METHOD_FETCH, resource, query,
-			       buf, len, fmt_out, fmt_in, true, reliable, &xfer);
+			       buf, len, fmt_out, fmt_in, true, reliable, xfer);
 }
 
 int nrf_cloud_coap_patch(const char *resource, const char *query,
@@ -497,11 +562,10 @@ int nrf_cloud_coap_patch(const char *resource, const char *query,
 			 enum coap_content_format fmt, bool reliable,
 			 coap_client_response_cb_t cb, void *user)
 {
-	struct cc_xfer_data xfer = { .nrfc_cc = &internal_cc, .cb = cb,
-				     .user_data = user, .sem = &cb_sem };
+	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
 	return client_transfer(COAP_METHOD_PATCH, resource, query,
-			       buf, len, fmt, fmt, false, reliable, &xfer);
+			       buf, len, fmt, fmt, false, reliable, xfer);
 }
 
 static void auth_cb(int16_t result_code, size_t offset, const uint8_t *payload, size_t len,
@@ -510,7 +574,7 @@ static void auth_cb(int16_t result_code, size_t offset, const uint8_t *payload, 
 	struct nrf_cloud_coap_client *client = (struct nrf_cloud_coap_client *)user_data;
 
 	LOG_RESULT_CODE_INF("Authorization result_code:", result_code);
-	if (result_code < COAP_RESPONSE_CODE_BAD_REQUEST) {
+	if (result_code == COAP_RESPONSE_CODE_CREATED) {
 		client->authenticated = true;
 	}
 }
@@ -520,14 +584,13 @@ static int nrf_cloud_coap_auth_post(struct nrf_cloud_coap_client *const client,
 			     const uint8_t *jwt, size_t jwt_len)
 {
 	/* Use the nrf_cloud_coap_client as the user data so the auth flag can be set */
-	struct cc_xfer_data xfer = { .nrfc_cc = client, .cb = auth_cb, .user_data = client };
-
-	xfer.sem = is_internal(client) ? &cb_sem : &ext_cc_sem;
+	void *xfer = xfer_data_init(client, auth_cb, client,
+				    is_internal(client) ? &cb_sem : &ext_cc_sem);
 
 	return client_transfer(COAP_METHOD_POST, NRF_CLOUD_COAP_AUTH_RSC,
 			       ver_string, jwt, jwt_len,
 			       COAP_CONTENT_FORMAT_TEXT_PLAIN, COAP_CONTENT_FORMAT_TEXT_PLAIN,
-			       false, true, &xfer);
+			       false, true, xfer);
 }
 
 int nrf_cloud_coap_disconnect(void)
@@ -545,8 +608,12 @@ int nrf_cloud_coap_transport_init(struct nrf_cloud_coap_client *const client)
 	LOG_DBG("Initializing %s async CoAP client",
 		is_internal(client) ? "internal" : "external");
 
+	k_mutex_init(&client->mutex);
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
 	client->cid_saved = false;
 	client->authenticated = false;
+	client->paused = false;
 	client->sock =  -1;
 
 	client->cc.fd = client->sock;
@@ -558,18 +625,29 @@ int nrf_cloud_coap_transport_init(struct nrf_cloud_coap_client *const client)
 	} else {
 		client->initialized = true;
 	}
+	k_mutex_unlock(&client->mutex);
 
 	return err;
 }
 
 int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client)
 {
+	int err;
+	int tmp;
+
 	if (client->sock != -1) {
-		LOG_DBG("Socket already open: %d", client->sock);
-		return 1;
+		LOG_DBG("Socket already open: sock = %d", client->sock);
+		/* Connection was paused, so resume it. */
+		err = nrf_cloud_coap_transport_resume(client);
+		if (!err) {
+			return 0;
+		}
+		/* Could not resume. Try with a full handshake. */
+		tmp = client->sock;
+		client->sock = client->cc.fd = -1;
+		close(tmp);
 	}
 
-	int err;
 	const char *const host_name = CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME;
 	uint16_t port = htons(CONFIG_NRF_CLOUD_COAP_SERVER_PORT);
 	struct addrinfo *info;
@@ -652,18 +730,26 @@ int nrf_cloud_coap_transport_disconnect(struct nrf_cloud_coap_client *const clie
 		return -EINVAL;
 	}
 
-	int tmp;
-
 	if (client->sock < 0) {
 		return -ENOTCONN;
 	}
 
-	client->authenticated = false;
+	coap_client_cancel_requests(&client->cc);
+	LOG_DBG("Cancelled requests");
 
+	int tmp;
+	int err;
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
+	client->cid_saved = false;
+	client->authenticated = false;
+	client->paused = false;
 	tmp = client->sock;
 	client->sock = client->cc.fd = -1;
+	err = close(tmp);
+	k_mutex_unlock(&client->mutex);
 
-	return close(tmp);
+	return err;
 }
 
 int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const client)
@@ -746,26 +832,39 @@ fail:
 
 int nrf_cloud_coap_transport_pause(struct nrf_cloud_coap_client *const client)
 {
-	if (!client) {
-		return -EINVAL;
-	}
-
 	int err = 0;
-
-	client->cid_saved = false;
+	int tmp;
 
 	if (nrfc_dtls_cid_is_active(client->sock) && client->authenticated) {
+		LOG_DBG("Cancelling requests");
+		coap_client_cancel_requests(&client->cc);
+
+		k_mutex_lock(&client->mutex, K_FOREVER);
+		client->cid_saved = false;
+		client->paused = true;
+
+		LOG_DBG("CID active and authenticated; pausing...");
 		err = nrfc_dtls_session_save(client->sock);
 		if (!err) {
 			LOG_DBG("DTLS CID session saved.");
 			client->cid_saved = true;
 		} else {
 			LOG_ERR("Unable to save DTLS CID session: %d", err);
+			client->authenticated = false;
+			client->paused = false;
+			tmp = client->sock;
+			client->sock = client->cc.fd = -1;
+			close(tmp);
+			LOG_DBG("Closed socket and marked as unauthenticated.");
 		}
 	} else {
+		k_mutex_lock(&client->mutex, K_FOREVER);
+		client->cid_saved = false;
+		client->paused = false;
 		LOG_WRN("Unable to pause CoAP connection.");
 		err = -EACCES;
 	}
+	k_mutex_unlock(&client->mutex);
 	return err;
 }
 
@@ -777,23 +876,31 @@ int nrf_cloud_coap_transport_resume(struct nrf_cloud_coap_client *const client)
 
 	int err = 0;
 
+	k_mutex_lock(&client->mutex, K_FOREVER);
 	if (client->cid_saved) {
 		err = nrfc_dtls_session_load(client->sock);
 		client->cid_saved = false;
+		client->paused = false;
 		if (!err) {
 			LOG_DBG("Loaded DTLS CID session");
 			client->authenticated = true;
-		} else if (err == -EAGAIN) {
+			k_mutex_unlock(&client->mutex);
+			return 0;
+		}
+		/* We cannot reuse the CID so we just re-authenticate. */
+		client->authenticated = false;
+		if (err == -EAGAIN) {
 			LOG_INF("Failed to load DTLS CID session");
 		} else if (err == -EINVAL) {
 			LOG_INF("DLTS CID sessions not supported with current modem firmware");
 		} else {
 			LOG_ERR("Error on DTLS CID session load: %d", err);
 		}
-	} else {
+	} else if (!client->paused) {
 		LOG_WRN("Unable to resume CoAP connection.");
 		err = -EACCES; /* Cannot resume. */
 	}
+	k_mutex_unlock(&client->mutex);
 
 	return err;
 }
