@@ -424,7 +424,9 @@ static void get_location_callback(int16_t result_code,
 		struct nrf_cloud_location_result *result = user;
 
 		loc_err = 0;
-		result->type = LOCATION_TYPE__INVALID;
+		if (result) {
+			result->type = LOCATION_TYPE__INVALID;
+		}
 	}
 }
 
@@ -585,6 +587,7 @@ static void get_shadow_callback(int16_t result_code,
 				size_t offset, const uint8_t *payload, size_t len,
 				bool last_block, void *user)
 {
+	__ASSERT_NO_MSG(user != NULL);
 	struct get_shadow_data *data = (struct get_shadow_data *)user;
 
 	if (result_code != COAP_RESPONSE_CODE_CONTENT) {

@@ -35,11 +35,13 @@ struct coap_client_option {};
 #endif
 
 struct nrf_cloud_coap_client {
+	struct k_mutex mutex;
 	struct coap_client cc;
 	int sock;
 	bool initialized;
 	bool authenticated;
 	bool cid_saved;
+	bool paused;
 };
 
 #define NRF_CLOUD_COAP_PROXY_RSC "proxy"
