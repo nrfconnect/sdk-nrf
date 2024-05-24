@@ -69,7 +69,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
         # Hence, if a programmer is given this hex file, it will flash it
         # to the secondary slot, and upon reboot mcuboot will swap in the
         # contents of the hex file.
-        ${imgtool_sign} ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.bin ${output}.bin
+        ${imgtool_sign} ${imgtool_extra} ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.bin ${output}.bin
 
         DEPENDS
         ${application}_extra_byproducts
@@ -92,7 +92,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
         # Hence, if a programmer is given this hex file, it will flash it
         # to the secondary slot, and upon reboot mcuboot will swap in the
         # contents of the hex file.
-        ${imgtool_sign} ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.hex ${output}.hex
+        ${imgtool_sign} ${imgtool_extra} ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.hex ${output}.hex
 
         DEPENDS
         ${application}_extra_byproducts
