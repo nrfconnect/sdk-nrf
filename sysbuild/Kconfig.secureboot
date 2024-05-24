@@ -2,24 +2,28 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-menuconfig SECURE_BOOT
+menu "Secure Bootloader"
+
+config SECURE_BOOT
 	bool "Secure Bootloader"
 	help
-	  Set this option to enable the first stage bootloader which
-	  verifies the signature of the app.
-
-if SECURE_BOOT
+	  This option will be set if the first stage bootloader which
+	  verifies the signature of the app is enabled
 
 config SECURE_BOOT_APPCORE
 	bool "Appcore"
+	select SECURE_BOOT
 	help
 	  Locate first stage bootloader on application core.
 
 config SECURE_BOOT_NETCORE
 	bool "Netcore"
 	depends on SUPPORT_NETCORE
+	select SECURE_BOOT
 	help
 	  Locate first stage bootloader on network core.
+
+if SECURE_BOOT
 
 config SECURE_BOOT_NETWORK_BOARD_TARGET_CPUCLUSTER
 	string
@@ -123,3 +127,5 @@ config SECURE_BOOT_DEBUG_NO_VERIFY_HASHES
 	  Use this only in (negative) tests!
 
 endif
+
+endmenu
