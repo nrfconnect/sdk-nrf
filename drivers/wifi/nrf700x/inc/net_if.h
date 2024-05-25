@@ -18,6 +18,9 @@
 #include <fmac_structs.h>
 #include <zephyr/net/wifi_mgmt.h>
 
+#define UNICAST_MASK GENMASK(7, 1)
+#define LOCAL_BIT BIT(1)
+
 void nrf_wifi_if_init_zep(struct net_if *iface);
 
 int nrf_wifi_if_start_zep(const struct device *dev);
