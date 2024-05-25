@@ -25,6 +25,7 @@ typedef uint32_t u_int32_t;
 #include "eloop.h"
 #include "common.h"
 
+#include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi.h>
 
 #define ICMP_ECHO 8
@@ -740,7 +741,7 @@ int find_interface_ip(char *ipaddr, int ipaddr_len, char *name)
 
 		ipv4 = wifi_iface->config.ip.ipv4;
 		memcpy(ipaddr, net_addr_ntop(AF_INET,
-		       &ipv4->unicast[0].address.in_addr.s_addr,
+		       &ipv4->unicast[0].ipv4.address.in_addr.s_addr,
 		       tmp, sizeof(tmp)), ipaddr_len);
 		indigo_logger(LOG_LEVEL_INFO, "%s - %d: IPv4 address:%s",
 			      __func__, __LINE__, ipaddr);
