@@ -203,7 +203,7 @@ For example the ``0xFFFFFFFF00011234`` activation code stands for a trigger ID e
 
 .. note::
 
-Activation codes in range from ``0x0000000000000000`` to ``0xFFFFFFFF00000000`` are reserved for Matter stack purposes and should not be defined as custom event triggers.
+   Activation codes in range from ``0x0000000000000000`` to ``0xFFFFFFFF00000000`` are reserved for Matter stack purposes and should not be defined as custom event triggers.
 
 A new event trigger consists of two fields: ``Mask``, and ``Callback``.
 
@@ -262,7 +262,7 @@ To register a new test event trigger, follow these steps:
 
    If the returning `CHIP_ERROR` code is equal to `CHIP_ERROR_NO_MEMORY`, you need to increase the :kconfig:option:`NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX` kconfig option to the higher value.
 
-   Here's an example to handle the ``0xFFFFFFFF00010000`` activation code, where 1234 is the event trigger value field:
+   Here's an example to handle the ``0xFFFFFFFF00011234`` activation code, where 1234 is the event trigger value field:
 
    .. code-block:: c++
 
