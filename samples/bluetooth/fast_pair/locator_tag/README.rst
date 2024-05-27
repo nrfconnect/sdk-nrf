@@ -340,6 +340,30 @@ See :ref:`ug_bt_fast_pair_provisioning` for details.
    You cannot use the sample without the Fast Pair provisioning data.
    Programming the device with the sample firmware without providing the proper Fast Pair provisioning data results in assertion failure during boot.
 
+Release build
+=============
+
+To build the sample in a release variant, set the ``FILE_SUFFIX=release`` CMake option.
+The build will use the :file:`prj_release.conf` configuration file instead of :file:`prj.conf`.
+Check the contents of both files to learn which configuration changes you should apply when preparing the production build of your end product.
+
+.. note::
+   The sample does not support the DFU functionality.
+
+The release build reduces the code size and RAM usage of the sample by disabling logging functionality and performing other optimizations.
+Additionally, it enables the Link Time Optimization (LTO) configuration through the :kconfig:option:`CONFIG_LTO` Kconfig option, which further reduces the code size.
+LTO is an advanced compilation technique that optimizes across all compiled units of an application at the link stage, rather than optimizing each unit separately.
+
+.. note::
+   Support for the LTO is experimental.
+
+See :ref:`cmake_options` for detailed instructions on how to add the ``FILE_SUFFIX=release`` option to your build.
+For example, when building from the command line, you can add it as follows:
+
+.. code-block:: console
+
+   west build -b <board_name> -- -DFILE_SUFFIX=release
+
 .. _fast_pair_locator_tag_testing:
 
 Testing
