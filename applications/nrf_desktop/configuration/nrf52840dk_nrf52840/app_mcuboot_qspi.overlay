@@ -1,5 +1,11 @@
 / {
 	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
+
+/ {
+	chosen {
 		/*
 		 * In some default configurations within the nRF Connect SDK,
 		 * e.g. on nRF52840 and nRF9160, the chosen zephyr,entropy node
@@ -76,6 +82,10 @@
 	status = "okay";
 	pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
 	label = "LED System State";
+};
+
+&qspi {
+	status = "okay";
 };
 
 &pinctrl {
