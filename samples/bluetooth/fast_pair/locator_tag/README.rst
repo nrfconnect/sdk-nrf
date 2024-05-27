@@ -330,7 +330,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/fast_pair/locator_tag`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 When building the sample, you can provide the Fast Pair Model ID (``FP_MODEL_ID``) and the Fast Pair Anti-Spoofing Key (``FP_ANTI_SPOOFING_KEY``) as CMake options.
 If the data is not provided, the sample uses the default provisioning data obtained for the *NCS locator tag* (the locator tag debug Fast Pair Provider).
