@@ -283,7 +283,9 @@ tests:
   sample.nrf7002.with_overlay_raw_tx_packet:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-raw-tx.conf
+    extra_args:
+      OVERLAY_CONFIG=overlay-raw-tx.conf
+      SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -291,7 +293,9 @@ tests:
   sample.nrf7002.with_overlay_monitor:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-monitor-mode.conf
+    extra_args:
+      OVERLAY_CONFIG=overlay-monitor-mode.conf
+      SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -299,7 +303,9 @@ tests:
   sample.nrf7002.promiscuous_mode:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-promiscuous-mode.conf
+    extra_args:
+      OVERLAY_CONFIG=overlay-promiscuous-mode.conf
+      SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -307,7 +313,9 @@ tests:
   sample.nrf7001.promiscuous_mode_7001:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-promiscuous-mode.conf
+    extra_args:
+      OVERLAY_CONFIG=overlay-promiscuous-mode.conf
+      SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
