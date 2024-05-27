@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
+# dummy change for triggers
 
 sample:
   name: SUIT update through SMP sample
