@@ -464,6 +464,7 @@ static int suit_orchestrator_run(void)
 	case EXECUTION_MODE_FAIL_MPI_INVALID:
 	case EXECUTION_MODE_FAIL_MPI_INVALID_MISSING:
 	case EXECUTION_MODE_FAIL_MPI_UNSUPPORTED:
+	case EXECUTION_MODE_FAIL_INVOKE_RECOVERY:
 		return -EFAULT;
 
 	case EXECUTION_MODE_STARTUP:
@@ -523,11 +524,7 @@ static int suit_orchestrator_run(void)
 		case STATE_INVOKE_RECOVERY:
 			LOG_INF("Recovery boot path");
 			ret = boot_path(true);
-			if (ret == 0) {
-				state = STATE_POST_INVOKE_RECOVERY;
-			} else {
-				return ret;
-			}
+			state = STATE_POST_INVOKE_RECOVERY;
 			break;
 
 		case STATE_ENTER_RECOVERY:
@@ -553,9 +550,18 @@ static int suit_orchestrator_run(void)
 			return ret;
 
 		case STATE_POST_INVOKE_RECOVERY:
-			if (suit_execution_mode_set(EXECUTION_MODE_POST_INVOKE_RECOVERY) !=
-			    SUIT_PLAT_SUCCESS) {
-				LOG_WRN("Unable to change execution mode to INVOKE RECOVERY");
+			if (ret == 0) {
+				if (suit_execution_mode_set(EXECUTION_MODE_POST_INVOKE_RECOVERY) !=
+				    SUIT_PLAT_SUCCESS) {
+					LOG_WRN("Unable to change execution mode to INVOKE "
+						"RECOVERY");
+				}
+			} else {
+				if (suit_execution_mode_set(EXECUTION_MODE_FAIL_INVOKE_RECOVERY) !=
+				    SUIT_PLAT_SUCCESS) {
+					LOG_WRN("Unable to change execution mode to FAIL INVOKE "
+						"RECOVERY");
+				}
 			}
 			return ret;
 
