@@ -1166,16 +1166,20 @@ enum nrf_wifi_status (nrf_wifi_fmac_tx_done_event_process)(
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	if (!fmac_dev_ctx) {
-		goto out;
-	}
-
-	if (!config) {
+	if (!fmac_dev_ctx ||!config) {
 		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Invalid parameters\n",
 				      __func__);
 
 		goto out;
+	}
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	if (!def_dev_ctx || !def_dev_ctx->tx_config.tx_lock) {
+		/* This is a valid case when the TX_DONE event is received
+		* during the driver deinit, so, silently ignore the failure.
+		*/
+		return NRF_WIFI_STATUS_SUCCESS;
 	}
 
 	nrf_wifi_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
