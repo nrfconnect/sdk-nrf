@@ -217,6 +217,15 @@ config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
 
 endchoice # NRF_MODEM_LIB_ON_FAULT
 
+if NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
+
+config NRF_MODEM_LIB_FAULT_THREAD_STACK_SIZE
+	int "Modem fault thread stack size"
+	default 768 if SIZE_OPTIMIZATIONS
+	default 2048
+
+endif
+
 config NRF_MODEM_LIB_CFUN_HOOKS
 	bool "Modem CFUN hooks"
 	default y

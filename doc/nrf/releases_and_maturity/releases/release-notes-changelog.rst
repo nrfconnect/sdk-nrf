@@ -807,8 +807,13 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
-  * Added the Kconfig option  :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_CHUNK_SZ` to process traces in chunks.
-    This can improve the availability of trace memory, and thus reduce the chances of losing traces.
+
+  * Added
+
+    * The Kconfig option  :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_CHUNK_SZ` to process traces in chunks.
+      This can improve the availability of trace memory, and thus reduce the chances of losing traces.
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_FAULT_THREAD_STACK_SIZE` Kconfig option to allow the application to set the modem fault thread stack size.
+
   * Deprecated the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`.
   * Fixed an issue with the CFUN hooks when the Modem library is initialized during ``SYS_INIT`` at kernel level and makes calls to the :ref:`nrf_modem_at` interface before the application level initialization is done.
   * Removed the deprecated options ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ASYNC`` and ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC``.
