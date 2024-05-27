@@ -192,14 +192,18 @@ You can define and register custom test event triggers to initiate specific acti
 
 An activation code is 64 bits in length, and consist of two components: the event trigger ID and the event trigger value.
 
-* The event trigger ID is 32 bits long and uniquely identifies the trigger.
-  It is supplied as the first 32 bits of the activation code.
+* The event trigger ID is 64 bits long and uniquely identifies the trigger.
+  It is supplied as the first 48 bits of the activation code.
 * The event trigger value is specific to a given trigger.
-  It is supplied as the last 32 bits of the activation code.
+  It is supplied as the last 24 bits of the activation code.
 
-This means that the activation code has the pattern ``0xIIIIIIIIVVVVVVVV``, where ``I`` represents the ID part and ``V`` represents the value part.
+This means that the activation code has the pattern ``0xIIIIIIIIIIIIVVVV``, where ``I`` represents the ID part and ``V`` represents the value part.
 
-For example the ``0x1000000000001234`` activation code stands for a trigger ID equal to ``0x1000000000000000`` and a specific value of ``0x1234``.
+For example the ``0xFFFFFFFF00011234`` activation code stands for a trigger ID equal to ``0xFFFFFFFF00010000`` and a specific value of ``0x1234``.
+
+.. note::
+
+Activation codes in range from ``0x0000000000000000`` to ``0xFFFFFFFF00000000`` are reserved for Matter stack purposes and should not be defined as custom event triggers.
 
 A new event trigger consists of two fields: ``Mask``, and ``Callback``.
 
@@ -258,12 +262,12 @@ To register a new test event trigger, follow these steps:
 
    If the returning `CHIP_ERROR` code is equal to `CHIP_ERROR_NO_MEMORY`, you need to increase the :kconfig:option:`NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX` kconfig option to the higher value.
 
-   Here's an example to handle the ``0xF000F00000001234`` activation code, where 1234 is the event trigger value field:
+   Here's an example to handle the ``0xFFFFFFFF00010000`` activation code, where 1234 is the event trigger value field:
 
    .. code-block:: c++
 
      Nrf::Matter::TestEventTrigger::EventTrigger myEventTrigger;
-     uint64_t myTriggerID = 0xF000F0000000;
+     uint64_t myTriggerID = 0xFFFFFFFF0001;
      myEventTrigger.Mask = 0xFFFF;
      myEventTrigger.Callback = MyFunctionCallback;
 
@@ -315,4 +319,4 @@ The following is an example of the Reboot activation code with a 5 ms delay for 
 
 .. code-block:: console
 
-  ./chip-tool generaldiagnostics test-event-trigger hex:00112233445566778899AABBCCDDEEFF 0xF000000100000005 1 0
+  ./chip-tool generaldiagnostics test-event-trigger hex:00112233445566778899AABBCCDDEEFF 0xFFFFFFFF10000005 1 0
