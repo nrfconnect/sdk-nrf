@@ -37,6 +37,8 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
+    extra_configs:
+      - CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND=y
     extra_args: OVERLAY_CONFIG=overlay-cloud_mqtt.conf
     tags: ci_build sysbuild
   sample.cellular.modem_shell.cloud_mqtt_rest:
@@ -65,6 +67,8 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
+    extra_configs:
+      - CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND=y
     extra_args: OVERLAY_CONFIG=overlay-cloud_coap.conf
     tags: ci_build sysbuild
   sample.cellular.modem_shell.non_offloading_ip:
