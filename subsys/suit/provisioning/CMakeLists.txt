@@ -191,7 +191,9 @@ function (generate_mpi_area area)
   message(INFO " Generate merged MPI for ${area} (${output})")
 endfunction()
 
+if(DEFINED CONFIG_SOC_SERIES_NRF54HX)
 configure_storage_address_cache()
+endif() # CONFIG_SOC_SERIES_NRF54HX
 
 if(DEFINED CONFIG_SUIT_MPI_GENERATE)
 
