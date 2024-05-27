@@ -389,6 +389,8 @@ static int parse_and_store_credentials(const char *body, size_t body_len)
 
 	pb_istream_t stream = pb_istream_from_buffer((const pb_byte_t *)body, body_len);
 
+	LOG_HEXDUMP_DBG(body, body_len, "HTTP body");
+
 	if (!pb_decode(&stream, WifiConfig_fields, &creds)) {
 		LOG_ERR("Decoding credentials failed");
 		return -1;
