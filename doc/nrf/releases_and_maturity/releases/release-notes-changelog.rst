@@ -834,6 +834,7 @@ Modem libraries
 
     * Convenience function to get :c:struct:`location_data_details` from the :c:struct:`location_event_data`.
     * Location data details for event :c:enum:`LOCATION_EVT_RESULT_UNKNOWN`.
+    * Sending GNSS coordinates to nRF Cloud when the :kconfig:option:`CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND` Kconfig option is set.
 
 * :ref:`pdn_readme` library:
 
