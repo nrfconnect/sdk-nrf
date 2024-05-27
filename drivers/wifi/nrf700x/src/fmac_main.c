@@ -726,7 +726,7 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
 	callbk_fns.rx_bcn_prb_resp_callbk_fn = nrf_wifi_rx_bcn_prb_resp_frm;
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
-#ifdef CONFIG_NRF700X_SYSTEM_MODE
+#if defined(CONFIG_NRF700X_SYSTEM_MODE) || defined(CONFIG_NRF700X_SYSTEM_WITH_RAW_MODES)
 	callbk_fns.set_if_callbk_fn = nrf_wifi_set_iface_event_handler;
 #endif /* CONFIG_NRF700X_SYSTEM_MODE */
 #ifdef CONFIG_NRF700X_STA_MODE
