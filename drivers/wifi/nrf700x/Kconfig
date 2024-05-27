@@ -17,8 +17,8 @@ menuconfig WIFI_NRF700X
 	select EXPERIMENTAL if !SOC_SERIES_NRF53X && !SOC_SERIES_NRF91X
 	help
 	  Nordic Wi-Fi Driver
-if WIFI_NRF700X
 
+if WIFI_NRF700X
 module = WIFI_NRF700X_BUS
 module-dep = LOG
 module-str = Log level for Wi-Fi nRF700x bus layers
@@ -60,7 +60,6 @@ config NRF700X_SYSTEM_WITH_RAW_MODES
 endchoice
 
 if NRF700X_SYSTEM_MODE || NRF700X_SYSTEM_WITH_RAW_MODES
-
 config NRF700X_STA_MODE
 	bool "Enable nRF700X STA mode"
 	default y
@@ -143,7 +142,6 @@ config NRF_WIFI_PATCHES_EXT_FLASH_STORE
 endchoice
 
 if NRF_WIFI_PATCHES_EXT_FLASH_STORE
-
 config NRF_WIFI_FW_FLASH_CHUNK_SIZE
 	int "Chunk size for nRF70 FW patches to be read from external flash"
 	default 8192
@@ -207,7 +205,7 @@ config NRF700X_TCP_IP_CHECKSUM_OFFLOAD
 
 config NRF700X_REG_DOMAIN
 	string "The ISO/IEC alpha2 country code for the country in which this device is currently operating. Default 00 (World regulatory)"
-# 00 is used for World regulatory
+	# 00 is used for World regulatory
 	default "00"
 
 # Making calls to RPU from net_mgmt callbacks.
@@ -488,7 +486,6 @@ config NRF700X_RX_WQ_STACK_SIZE
 endif
 
 if NRF_WIFI_LOW_POWER
-
 config NRF700X_RPU_PS_IDLE_TIMEOUT_MS
 	int "RPU power save idle timeout in milliseconds"
 	default 10
@@ -533,7 +530,6 @@ config NRF700X_RSSI_STALE_TIMEOUT_MS
 	  info.
 
 if NETWORKING
-
 # Finetune defaults for certain system components used by the driver
 config HEAP_MEM_POOL_SIZE
 	default 153000
@@ -601,6 +597,7 @@ config NRF_WIFI_IFACE_MTU
 	range 576 2304 if NET_IPV4
 	range 1280 2304 if NET_IPV6
 	default 1500
+
 config WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC
 	bool "Suppress networks with non-individual MAC address as BSSID in the scan results"
 	help
@@ -610,6 +607,7 @@ config WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC
 	  that has globally unique MAC address.
 
 	  So, to save resources, this option drops such networks from the scan results.
+
 config WIFI_NRF700X_SCAN_DISABLE_DFS_CHANNELS
 	bool "Disables DFS channels in scan operation"
 	help
