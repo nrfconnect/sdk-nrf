@@ -145,16 +145,6 @@ if (CONFIG_NRF_TRACE_PORT)
   target_compile_definitions(platform_s PUBLIC ENABLE_TRACE)
 endif()
 
-if (CRYPTO_STORAGE_DISABLED AND TFM_PARTITION_CRYPTO AND NOT TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
-  # Added here to satisfy the following requirement from tfm_crypto.yaml:
-  #
-  # "dependencies": [
-  #   "TFM_INTERNAL_TRUSTED_STORAGE_SERVICE"
-  # ]
-  target_compile_definitions(platform_s PUBLIC
-    TFM_INTERNAL_TRUSTED_STORAGE_SERVICE_SID=0x00000070)
-endif()
-
 if(BL2)
   message(FATAL_ERROR "BL2 is not supported")
 endif()
