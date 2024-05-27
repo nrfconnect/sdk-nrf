@@ -30,13 +30,13 @@ static K_WORK_DEFINE(advertising_work, advertising_work_handle);
 
 static struct bt_le_ext_adv *ext_adv[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
 static const struct bt_le_adv_param *non_connectable_adv_param =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_USE_NAME,
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE,
 			0x140, /* 200 ms */
 			0x190, /* 250 ms */
 			NULL);
 
 static const struct bt_le_adv_param *connectable_adv_param =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME,
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE,
 			BT_GAP_ADV_FAST_INT_MIN_2, /* 100 ms */
 			BT_GAP_ADV_FAST_INT_MAX_2, /* 150 ms */
 			NULL);
@@ -47,12 +47,14 @@ static const struct bt_data non_connectable_data[] = {
 		      0x17, /* UTF-8 code point for “https:” */
 		      '/', '/', 'w', 'w', 'w', '.',
 		      'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.',
-		      'c', 'o', 'm')
+		      'c', 'o', 'm'),
+	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
 static const struct bt_data connectable_data[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL))
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL)),
+	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
 static void adv_connected_cb(struct bt_le_ext_adv *adv,

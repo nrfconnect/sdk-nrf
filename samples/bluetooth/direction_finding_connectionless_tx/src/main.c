@@ -20,6 +20,10 @@
 /* Number of CTE send in single periodic advertising train */
 #define PER_ADV_EVENT_CTE_COUNT 5
 
+static const struct bt_data ad[] = {
+	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
+};
+
 static void adv_sent_cb(struct bt_le_ext_adv *adv,
 			struct bt_le_ext_adv_sent_info *info);
 
@@ -30,8 +34,7 @@ const static struct bt_le_ext_adv_cb adv_callbacks = {
 static struct bt_le_ext_adv *adv_set;
 
 const static struct bt_le_adv_param param =
-		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_EXT_ADV |
-				     BT_LE_ADV_OPT_USE_NAME,
+		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_EXT_ADV,
 				     BT_GAP_ADV_FAST_INT_MIN_2,
 				     BT_GAP_ADV_FAST_INT_MAX_2,
 				     NULL);
@@ -94,6 +97,14 @@ int main(void)
 
 	printk("Advertising set create...");
 	err = bt_le_ext_adv_create(&param, &adv_callbacks, &adv_set);
+	if (err) {
+		printk("failed (err %d)\n", err);
+		return 0;
+	}
+	printk("success\n");
+
+	printk("Set advertising data...");
+	err = bt_le_ext_adv_set_data(adv_set, ad, ARRAY_SIZE(ad), NULL, 0);
 	if (err) {
 		printk("failed (err %d)\n", err);
 		return 0;
