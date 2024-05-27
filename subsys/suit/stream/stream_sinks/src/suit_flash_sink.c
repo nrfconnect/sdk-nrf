@@ -10,7 +10,7 @@
 #include <suit_memory_layout.h>
 
 #define SWAP_BUFFER_SIZE 16
-#define WRITE_OFFSET(a) (a->ptr + a->offset)
+#define WRITE_OFFSET(a)	 (a->ptr + a->offset)
 
 /* Set to more than one to allow multiple contexts in case of parallel execution */
 #define SUIT_MAX_FLASH_COMPONENTS 1
@@ -88,7 +88,7 @@ static size_t flash_write_size_get(const struct device *fdev)
 bool suit_flash_sink_is_address_supported(uint8_t *address)
 {
 	if (!suit_memory_global_address_is_in_nvm((uintptr_t)address)) {
-		LOG_INF("Failed to find nvm area corresponding to address: %p", address);
+		LOG_INF("Failed to find nvm area corresponding to address: %p", (void *)address);
 		return false;
 	}
 
