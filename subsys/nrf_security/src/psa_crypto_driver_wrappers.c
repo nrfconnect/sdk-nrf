@@ -19,8 +19,7 @@
 
 #if defined(MBEDTLS_PSA_CRYPTO_C)
 
-#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && \
-	!defined(CONFIG_BUILD_WITH_TFM)
+#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && !defined(CONFIG_BUILD_WITH_TFM)
 #include <hw_unique_key.h>
 #endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT && !CONFIG_BUILD_WITH_TFM */
 
@@ -140,8 +139,7 @@
 psa_status_t prng_test_generate_random(uint8_t *output, size_t output_size);
 #endif
 
-#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && \
-	!defined(CONFIG_BUILD_WITH_TFM)
+#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && !defined(CONFIG_BUILD_WITH_TFM)
 static psa_status_t hw_unique_key_provisioning(void)
 {
 	if (!hw_unique_key_are_any_written()) {
@@ -175,8 +173,7 @@ psa_status_t psa_driver_wrapper_init(void)
 	}
 #endif /* PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER */
 
-#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && \
-	!defined(CONFIG_BUILD_WITH_TFM)
+#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && !defined(CONFIG_BUILD_WITH_TFM)
 	status = hw_unique_key_provisioning();
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -385,7 +382,7 @@ psa_status_t psa_driver_wrapper_verify_hash(const psa_key_attributes_t *attribut
 		 * cycle through all known transparent accelerators
 		 */
 #if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
-		case PSA_KEY_LOCATION_CRACEN:
+	case PSA_KEY_LOCATION_CRACEN:
 		status = cracen_verify_hash(attributes, key_buffer, key_buffer_size, alg, hash,
 					    hash_length, signature, signature_length);
 
@@ -493,6 +490,7 @@ psa_status_t psa_driver_wrapper_get_key_buffer_size(const psa_key_attributes_t *
 	switch (location) {
 #if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN:
+	case PSA_KEY_LOCATION_CRACEN_KMU:
 		*key_buffer_size = cracen_get_opaque_size(attributes);
 		return *key_buffer_size != 0 ? PSA_SUCCESS : PSA_ERROR_NOT_SUPPORTED;
 #endif
@@ -520,6 +518,9 @@ psa_status_t psa_driver_wrapper_generate_key(const psa_key_attributes_t *attribu
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
 #endif /* defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER) */
+#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER */
 		/* Transparent drivers are limited to generating asymmetric keys */
 		if (PSA_KEY_TYPE_IS_ASYMMETRIC(attributes->core.type)) {
 			/* Cycle through all known transparent accelerators */
@@ -553,6 +554,13 @@ psa_status_t psa_driver_wrapper_generate_key(const psa_key_attributes_t *attribu
 		status = psa_generate_key_internal(attributes, key_buffer, key_buffer_size,
 						   key_buffer_length);
 		break;
+
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+		status = cracen_generate_key(attributes, key_buffer, key_buffer_size,
+					     key_buffer_length);
+		return status;
+#endif
 
 	default:
 		/* Key is declared with a lifetime not known to us */
@@ -611,6 +619,14 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 		 */
 		return psa_import_key_into_slot(attributes, data, data_length, key_buffer,
 						key_buffer_size, key_buffer_length, bits);
+
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+		status = cracen_import_key(attributes, data, data_length, key_buffer,
+					   key_buffer_size, key_buffer_length, bits);
+		return status;
+#endif
+
 	default:
 		(void)status;
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -633,6 +649,11 @@ psa_status_t psa_driver_wrapper_export_key(const psa_key_attributes_t *attribute
 #endif /* defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER) */
 		return psa_export_key_internal(attributes, key_buffer, key_buffer_size, data,
 					       data_size, data_length);
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+		return cracen_export_key(attributes, key_buffer, key_buffer_size, data, data_size,
+					 data_length);
+#endif
 	default:
 		/* Key is declared with a lifetime not known to us */
 		return status;
@@ -707,6 +728,9 @@ psa_status_t psa_driver_wrapper_get_builtin_key(psa_drv_slot_number_t slot_numbe
 
 	switch (location) {
 #if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif
 	case PSA_KEY_LOCATION_CRACEN:
 		return (cracen_get_builtin_key(slot_number, attributes, key_buffer, key_buffer_size,
 					       key_buffer_length));
@@ -2801,4 +2825,17 @@ psa_status_t psa_driver_wrapper_get_entropy(uint32_t flags, size_t *estimate_bit
 	return PSA_ERROR_INSUFFICIENT_ENTROPY;
 }
 
+psa_status_t psa_driver_wrapper_destroy_builtin_key(const psa_key_attributes_t *attributes)
+{
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+
+	switch (location) {
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+		return cracen_destroy_key(attributes);
+#endif
+	}
+
+	return PSA_ERROR_NOT_SUPPORTED;
+}
 #endif /* MBEDTLS_PSA_CRYPTO_C */
