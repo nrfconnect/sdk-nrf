@@ -119,4 +119,19 @@ config GPIO_HOGS_INIT_PRIORITY
 	default 86
 
 endif # !IS_BOOTLOADER_IMG
+
+# disable interfaces that should not be included in bootloaders
+if IS_BOOTLOADER_IMG
+
+config I2C
+	default n
+
+config GPIO_HOGS
+	default n
+
+config GPIO_NPM1300
+	default n
+
+endif # IS_BOOTLOADER_IMG
+
 endif # BOARD_THINGY91X_NRF9151 || BOARD_THINGY91X_NRF9151_NS
