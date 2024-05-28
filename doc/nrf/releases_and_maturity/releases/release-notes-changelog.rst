@@ -225,6 +225,7 @@ Serial LTE modem
 
   * New behavior for when a connection is closed unexpectedly while SLM is in data mode.
     SLM now sends the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` string when this happens.
+  * Sending of GNSS data to carrier library when the library is enabled.
 
 * Removed:
 
