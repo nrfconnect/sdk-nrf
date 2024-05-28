@@ -282,6 +282,10 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
+* :ref:`modem_shell_application` sample:
+
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+
 * :ref:`nrf_cloud_rest_fota` sample:
 
   * Added support for setting the FOTA update check interval using the config section in the shadow.

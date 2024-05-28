@@ -34,8 +34,6 @@
 #include "mosh_defines.h"
 
 #include <nrf_modem_at.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
 
 extern bool uart_shell_disable_during_sleep_requested;
 extern struct k_work_q mosh_common_work_q;
