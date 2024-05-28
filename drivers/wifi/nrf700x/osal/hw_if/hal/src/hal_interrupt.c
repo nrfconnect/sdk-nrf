@@ -564,33 +564,27 @@ enum nrf_wifi_status hal_rpu_irq_process(struct nrf_wifi_hal_dev_ctx *hal_dev_ct
 	 */
 	num_events = hal_rpu_event_get_all(hal_dev_ctx);
 
-	/* If we received an interrupt without any associated event(s) it is a
-	 * likely indication that the RPU is stuck and this interrupt has been
-	 * raised by the watchdog
+	/* Check the if this interrupt has been raised by the
+	 * RPU watchdog
 	 */
-	if (!num_events) {
-		/* Check the if this interrupt has been raised by the
-		 * RPU watchdog
-		 */
-		if (hal_rpu_irq_wdog_chk(hal_dev_ctx)) {
-			nrf_wifi_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
-					      "Received watchdog interrupt\n");
+	if (hal_rpu_irq_wdog_chk(hal_dev_ctx)) {
+		nrf_wifi_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
+						"Received watchdog interrupt\n");
 
-			status = hal_rpu_process_wdog(hal_dev_ctx, do_rpu_recovery);
-			if (status == NRF_WIFI_STATUS_FAIL) {
-				nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
-						      "%s: hal_rpu_process_wdog failed",
-						      __func__);
-				goto out;
-			}
+		status = hal_rpu_process_wdog(hal_dev_ctx, do_rpu_recovery);
+		if (status == NRF_WIFI_STATUS_FAIL) {
+			nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
+							"%s: hal_rpu_process_wdog failed",
+							__func__);
+			goto out;
+		}
 
-			status = hal_rpu_irq_wdog_ack(hal_dev_ctx);
-			if (status == NRF_WIFI_STATUS_FAIL) {
-				nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
-						      "%s: hal_rpu_irq_wdog_ack failed\n",
-						      __func__);
-				goto out;
-			}
+		status = hal_rpu_irq_wdog_ack(hal_dev_ctx);
+		if (status == NRF_WIFI_STATUS_FAIL) {
+			nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
+							"%s: hal_rpu_irq_wdog_ack failed\n",
+							__func__);
+			goto out;
 		}
 	}
 
