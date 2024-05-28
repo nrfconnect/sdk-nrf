@@ -9,8 +9,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
 #include <zephyr/logging/log.h>
 
 #define LC_MAX_READ_LENGTH			128
@@ -65,7 +63,7 @@
 /* XT3412 command parameters */
 #define AT_XT3412_SUB				"AT%%XT3412=1,%d,%d"
 #define AT_XT3412_PARAMS_COUNT_MAX		4
-#define AT_XT3412_TIME_INDEX			2
+#define AT_XT3412_TIME_INDEX			1
 #define T3412_MAX				35712000000
 
 /* NCELLMEAS notification parameters */
