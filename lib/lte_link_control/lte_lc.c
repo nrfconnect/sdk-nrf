@@ -15,8 +15,6 @@
 #include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
 #include <modem/lte_lc_trace.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
 #include <modem/at_monitor.h>
 #include <modem/nrf_modem_lib.h>
 #include <zephyr/logging/log.h>

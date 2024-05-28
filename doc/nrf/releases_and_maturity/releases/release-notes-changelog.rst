@@ -941,6 +941,7 @@ Modem libraries
 
   * Removed ``AT%XRAI`` related deprecated functions ``lte_lc_rai_param_set()`` and ``lte_lc_rai_req()``, and Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ_VALUE`.
     The application uses the Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ` and ``SO_RAI`` socket option instead.
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
 
 * :ref:`at_cmd_parser_readme` library:
 
