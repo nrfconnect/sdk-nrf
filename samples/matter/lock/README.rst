@@ -568,6 +568,40 @@ To enable the scheduled timed access feature, complete the following steps:
    * For the ``Year-day`` schedule support set the ``11th`` bit of the feature map bit map.
    * For the ``Holiday`` schedule support set the ``12th`` bit of the feature map bit map.
 
+#. Enable Time Synchronization cluster with all needed types in the ZAP file:
+
+   #. In ZAP Tool GUI, select the endpoint 0 and enable the ``Time Synchronization`` cluster, with both server and client roles, for that endpoint.
+
+   #. Click the :guilabel:`Configure` symbol for the ``Time Synchronization`` cluster entry.
+   #. In the **Time Synchronization** context window, go to the **Attributes** tab and enable all required attributes:
+
+      * ``UTCTime``.
+      * ``Granularity``.
+      * ``TimeZone``.
+      * ``DSTOffset``.
+      * ``LocalTime``.
+      * ``TimeZoneDatabase``.
+      * ``TimeZoneListMaxSize``.
+      * ``DSTOffsetListMaxSize``.
+      * ``TrustedTimeSource``.
+
+   #. In the **Time Synchronization** context window, go to the **Attribute Reporting** page and enable all available attribute reporting entries.
+
+   #. In the **Time Synchronization** context window, go to the **Commands** page and enable all required command entries:
+
+      * ``SetUTCTime``.
+      * ``SetTimeZone``.
+      * ``SetTimeZoneResponse``.
+      * ``SetDSTOffset``.
+      * ``SetTrustedTimeSource``.
+
+#. In the **Time Synchronization** context window, go to the **Attributes** tab and set the proper bits for the ``FeatureMap`` attribute:
+
+   * For the ``TimeZone`` support, set the ``0th`` bit of the feature map bit map.
+   * For the ``TimeSyncClient`` support, set the ``3rd`` bit of the feature map bit map.
+
+   As a result, the default decimal value of the ``FeatureMap`` should be `9`.
+
 #. Save the :file:`lock.zap` file, and close ZAP-tool.
 #. Generate new ZAP files with the changes in the Door Lock cluster using the following west command:
 
@@ -575,14 +609,15 @@ To enable the scheduled timed access feature, complete the following steps:
 
          west zap-generate
 
-#. Enable the feature in the |NCS| Matter Lock sample by setting the :kconfig:option:`CONFIG_LOCK_SCHEDULES` Kconfig option to ``y``.
+#. Enable the Lock Schedules feature in the |NCS| Matter Lock sample by setting the :kconfig:option:`CONFIG_LOCK_SCHEDULES` Kconfig option to ``y``.
+#. Enable the Read Client support in the |NCS| Matter Lock sample by setting the :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option to ``y``.
 #. Use the following Kconfig options to modify the maximum number of specific schedule types:
 
    - :kconfig:option:`CONFIG_LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER` to define the maximum number of ``Week-day`` schedules for one user.
    - :kconfig:option:`CONFIG_LOCK_MAX_YEARDAY_SCHEDULES_PER_USER` to define the maximum number of ``Year-day`` schedules for one user.
    - :kconfig:option:`CONFIG_LOCK_MAX_HOLIDAY_SCHEDULES` to define the maximum number of ``Holiday`` schedules.
 
-To learn more about configuring the Door Lock cluster, see the :ref:`ug_matter_creating_accessory` user guide.
+To learn more about configuring the Matter clusters, see the :ref:`ug_matter_creating_accessory` user guide.
 
 All scheduled timed access entries are saved to non-volatile memory and loaded automatically after device reboot.
 To disable the feature, you need to revert all changes in the :file:`lock.zap` file, re-generate the ZAP files and set the :kconfig:option:`CONFIG_LOCK_SCHEDULES` Kconfig option to ``n``.
