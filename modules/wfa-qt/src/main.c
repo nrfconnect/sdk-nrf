@@ -71,7 +71,7 @@ void qt_main(void)
 	if (service_socket >= 0) {
 		qt_eloop_run();
 	} else {
-		LOG_ERR("Failed to initiate the UDP socket");
+		LOG_ERR("Failed to initiate the UDP socket: %s", strerror(errno));
 	}
 
 	/* Stop eloop */
