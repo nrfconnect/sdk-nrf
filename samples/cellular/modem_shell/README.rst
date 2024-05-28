@@ -1434,7 +1434,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`at_cmd_parser_readme`
+* :ref:`at_parser_readme`
 * :ref:`lib_date_time`
 * :ref:`lib_location`
 * :ref:`lte_lc_readme`
