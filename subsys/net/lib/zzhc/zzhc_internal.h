@@ -58,7 +58,6 @@ struct zzhc {
 
 	void *thread;                   /**< Pointer to FSM thread */
 	void *sem;                      /**< Pointer to Semophore */
-	void *at_list;                  /**< List of AT-parameters */
 };
 
 #ifndef LOG_DBG
