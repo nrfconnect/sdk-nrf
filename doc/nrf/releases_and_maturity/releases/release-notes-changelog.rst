@@ -819,11 +819,6 @@ Bluetooth libraries and services
 
   * Added experimental support for a new cryptographical backend that relies on the PSA crypto APIs (:kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA`).
 
-Bootloader libraries
---------------------
-
-|no_changes_yet_note|
-
 Debug libraries
 ---------------
 
@@ -1035,7 +1030,10 @@ zcbor
 Trusted Firmware-M
 ==================
 
-* Support PSA PAKE APIs from the PSA Crypto API specification 1.2.
+* Added:
+
+  * Support for PSA PAKE APIs from the PSA Crypto API specification 1.2.
+  * Support for PBKDF2 algorithms as of |NCS| v2.6.0.
 
 cJSON
 =====
