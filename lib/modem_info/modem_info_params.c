@@ -8,7 +8,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <modem/modem_info.h>
-#include <modem/at_params.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(modem_info_params);
