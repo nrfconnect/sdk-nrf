@@ -28,6 +28,11 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event);
 
 #endif /* CONFIG_SLM_NRF_CLOUD */
 
+#if defined(CONFIG_SLM_CARRIER)
+#include <time.h>
+#include <lwm2m_carrier.h>
+#endif
+
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_gnss.h"
@@ -582,14 +587,7 @@ static void gnss_fix_sender(struct k_work *)
 		}
 	}
 
-#if defined(CONFIG_SLM_NRF_CLOUD)
-
-	if (slm_nrf_cloud_send_location && slm_nrf_cloud_ready) {
-		/* Report to nRF Cloud by best-effort */
-		send_location(&pvt);
-	}
-
-#if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_SLM_PGPS_INJECT_FIX_DATA)
+#if defined(CONFIG_SLM_PGPS_INJECT_FIX_DATA) || defined(CONFIG_SLM_CARRIER)
 	struct tm gps_time = {
 		.tm_year = pvt.datetime.year - 1900,
 		.tm_mon  = pvt.datetime.month - 1,
@@ -598,7 +596,16 @@ static void gnss_fix_sender(struct k_work *)
 		.tm_min  = pvt.datetime.minute,
 		.tm_sec  = pvt.datetime.seconds,
 	};
+#endif
 
+#if defined(CONFIG_SLM_NRF_CLOUD)
+
+	if (slm_nrf_cloud_send_location && slm_nrf_cloud_ready) {
+		/* Report to nRF Cloud by best-effort */
+		send_location(&pvt);
+	}
+
+#if defined(CONFIG_SLM_PGPS_INJECT_FIX_DATA)
 	/* help date_time to save SNTP transactions */
 	date_time_set(&gps_time);
 	/* help nrf_cloud_pgps as most recent known location */
@@ -606,6 +613,19 @@ static void gnss_fix_sender(struct k_work *)
 #endif
 
 #endif /* CONFIG_SLM_NRF_CLOUD */
+
+#if defined(CONFIG_SLM_CARRIER)
+	lwm2m_carrier_location_set(pvt.latitude,
+				   pvt.longitude,
+				   pvt.altitude,
+				   (uint32_t)mktime(&gps_time),
+				   pvt.accuracy);
+	lwm2m_carrier_velocity_set(pvt.heading,
+				   pvt.speed,
+				   pvt.vertical_speed,
+				   pvt.speed_accuracy,
+				   pvt.vertical_speed_accuracy);
+#endif /* CONFIG_SLM_CARRIER */
 }
 
 static void on_gnss_evt_fix(void)
