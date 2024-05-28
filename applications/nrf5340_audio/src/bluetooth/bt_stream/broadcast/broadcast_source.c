@@ -20,7 +20,7 @@
 #include "macros_common.h"
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
-#include "nrf5340_audio_common.h"
+#include "zbus_common.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(broadcast_source, CONFIG_BROADCAST_SOURCE_LOG_LEVEL);

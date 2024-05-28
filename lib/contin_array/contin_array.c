@@ -3,8 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-#include "contin_array.h"
+#include <contin_array.h>
 
 #include <zephyr/kernel.h>
 #include <stdio.h>

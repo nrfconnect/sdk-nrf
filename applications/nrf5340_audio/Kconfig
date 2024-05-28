@@ -71,10 +71,6 @@ module = MAIN
 module-str = main
 source "subsys/logging/Kconfig.template.log_config"
 
-module = NRF5340_AUDIO_COMMON
-module-str = nrf5340_audio_common
-source "subsys/logging/Kconfig.template.log_config"
-
 config PRINT_STACK_USAGE_MS
 	depends on THREAD_ANALYZER && INIT_STACKS
 	int "Print stack usage every x milliseconds"

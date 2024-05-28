@@ -10,8 +10,8 @@
 #include <zephyr/kernel.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <data_fifo.h>
 
-#include "data_fifo.h"
 #include "sw_codec_select.h"
 
 /**

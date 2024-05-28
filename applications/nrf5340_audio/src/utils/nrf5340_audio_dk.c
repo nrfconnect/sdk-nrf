@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <nrfx_clock.h>
+
 #include "led.h"
 #include "button_handler.h"
 #include "button_assignments.h"
 #include "sd_card.h"
 #include "board_version.h"
 #include "channel_assignment.h"
-#include "audio_system.h"
 
 #include "sd_card_playback.h"
 
@@ -132,6 +133,13 @@ int nrf5340_audio_dk_init(void)
 			LOG_ERR("Failed to initialize SD card playback");
 			return ret;
 		}
+	}
+
+	/* Use this to turn on 128 MHz clock for cpu_app */
+	ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
+	ret -= NRFX_ERROR_BASE_NUM;
+	if (ret) {
+		return ret;
 	}
 
 	return 0;

@@ -16,7 +16,7 @@
 #include <zephyr/bluetooth/audio/lc3.h>
 
 #include "macros_common.h"
-#include "nrf5340_audio_common.h"
+#include "zbus_common.h"
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
 

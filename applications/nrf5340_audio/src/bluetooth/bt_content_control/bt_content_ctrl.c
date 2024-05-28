@@ -10,7 +10,7 @@
 #include <zephyr/bluetooth/uuid.h>
 
 #include "bt_content_ctrl_media_internal.h"
-#include "nrf5340_audio_common.h"
+#include "zbus_common.h"
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>

@@ -16,7 +16,7 @@
 #include <zephyr/zbus/zbus.h>
 
 #include "macros_common.h"
-#include "nrf5340_audio_common.h"
+#include "zbus_common.h"
 #include "cs47l63.h"
 #include "cs47l63_spec.h"
 #include "cs47l63_reg_conf.h"

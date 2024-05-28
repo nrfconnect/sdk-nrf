@@ -5,6 +5,7 @@
  */
 
 #include "uicr.h"
+
 #include <stdint.h>
 #include <errno.h>
 #include <nrfx_nvmc.h>

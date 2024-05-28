@@ -8,16 +8,16 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
+#include <data_fifo.h>
+#include <contin_array.h>
+#include <pcm_stream_channel_modifier.h>
+#include <tone.h>
 
 #include "macros_common.h"
 #include "sw_codec_select.h"
 #include "audio_datapath.h"
 #include "audio_i2s.h"
-#include "data_fifo.h"
 #include "hw_codec.h"
-#include "tone.h"
-#include "contin_array.h"
-#include "pcm_stream_channel_modifier.h"
 #include "audio_usb.h"
 #include "streamctrl.h"
 

@@ -19,8 +19,8 @@ extern "C" {
 #endif
 
 #include <zephyr/kernel.h>
+#include <data_fifo.h>
 
-#include "data_fifo.h"
 #include "audio_defines.h"
 
 /**

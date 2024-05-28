@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _NRF5340_AUDIO_COMMON_H_
-#define _NRF5340_AUDIO_COMMON_H_
+#ifndef _ZBUS_COMMON_H_
+#define _ZBUS_COMMON_H_
 
 #include <zephyr/bluetooth/audio/audio.h>
 
@@ -93,11 +93,4 @@ struct content_control_msg {
 	enum content_control_evt_type event;
 };
 
-/**
- * @brief	Initialize the software modules that are common for all the audio samples.
- *
- * @return	0 if successful, error otherwise.
- */
-int nrf5340_audio_common_init(void);
-
-#endif /* _NRF5340_AUDIO_COMMON_H_ */
+#endif /* _ZBUS_COMMON_H_ */

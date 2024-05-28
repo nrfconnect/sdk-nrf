@@ -7,7 +7,7 @@
 #ifndef _AUDIO_USB_H_
 #define _AUDIO_USB_H_
 
-#include "data_fifo.h"
+#include <data_fifo.h>
 
 #if (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ)
 /* Only 48kHz is supported when using USB */

@@ -9,9 +9,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/zbus/zbus.h>
 
-#include "nrf5340_audio_common.h"
-#include "nrf5340_audio_dk.h"
 #include "broadcast_sink.h"
+#include "zbus_common.h"
+#include "nrf5340_audio_dk.h"
 #include "led.h"
 #include "button_assignments.h"
 #include "macros_common.h"
@@ -20,6 +20,7 @@
 #include "bt_rendering_and_capture.h"
 #include "audio_datapath.h"
 #include "le_audio_rx.h"
+#include "fw_info_app.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
@@ -449,12 +450,18 @@ int main(void)
 {
 	int ret;
 
-	LOG_DBG("nRF5340 APP core started");
+	LOG_DBG("Main started");
 
 	ret = nrf5340_audio_dk_init();
 	ERR_CHK(ret);
 
-	ret = nrf5340_audio_common_init();
+	ret = fw_info_app_print();
+	ERR_CHK(ret);
+
+	ret = bt_mgmt_init();
+	ERR_CHK(ret);
+
+	ret = audio_system_init();
 	ERR_CHK(ret);
 
 	ret = zbus_subscribers_create();

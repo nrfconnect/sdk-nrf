@@ -6,9 +6,9 @@
 
 #include <zephyr/ztest.h>
 #include <zephyr/fff.h>
+#include <data_fifo.h>
 
 #include "audio_module_test_common.h"
-#include "data_fifo.h"
 #include "fakes.h"
 
 /* Overload the message buffer pointer with a point to one of the an arrays below */

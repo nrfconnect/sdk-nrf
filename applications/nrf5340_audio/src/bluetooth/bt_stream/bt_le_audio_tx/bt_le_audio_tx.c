@@ -10,7 +10,7 @@
 #include <zephyr/zbus/zbus.h>
 #include <../subsys/bluetooth/audio/bap_stream.h>
 
-#include "nrf5340_audio_common.h"
+#include "zbus_common.h"
 #include "audio_sync_timer.h"
 #include "sdc_hci_vs.h"
 
