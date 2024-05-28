@@ -316,7 +316,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       if(SB_CONFIG_BOOTLOADER_MCUBOOT)
         add_overlay_config(
           mcuboot
-          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/mcuboot_enable_secure_bootloader.overlay
+          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/enable_secure_bootloader.conf
           )
 
         add_overlay_config(
@@ -326,7 +326,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       else()
         add_overlay_config(
           ${DEFAULT_IMAGE}
-          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/mcuboot_enable_secure_bootloader.overlay
+          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/enable_secure_bootloader.conf
           )
       endif()
     endif()
