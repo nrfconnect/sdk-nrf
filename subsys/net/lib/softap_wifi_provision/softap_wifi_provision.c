@@ -403,12 +403,14 @@ static int parse_and_store_credentials(const char *body, size_t body_len)
 			       bssid_str, sizeof(bssid_str));
 
 	LOG_DBG("Received Wi-Fi credentials: "
-		"ssid: %.*s, bssid: %s, passphrase: xxxxxx, sectype: %d, channel: %d, band: %d",
+		"ssid: %.*s, bssid: %s, passphrase: xxxxxx, sectype: %d, channel: %d, band: %d "
+		"timeout: %d",
 		creds.wifi.ssid.size, creds.wifi.ssid.bytes,
 		bssid_str,
 		creds.wifi.auth,
 		creds.wifi.channel,
-		creds.wifi.band);
+		creds.wifi.band,
+		creds.wifi.timeout);
 
 	enum wifi_security_type sec_type =
 		creds.wifi.auth == AuthMode_WPA_WPA2_PSK ? WIFI_SECURITY_TYPE_PSK :
@@ -424,7 +426,7 @@ static int parse_and_store_credentials(const char *body, size_t body_len)
 	ret = wifi_credentials_set_personal(creds.wifi.ssid.bytes, creds.wifi.ssid.size,
 					    sec_type, creds.wifi.bssid.bytes, creds.wifi.bssid.size,
 					    creds.passphrase.bytes, creds.passphrase.size,
-					    flag, creds.wifi.channel);
+					    flag, creds.wifi.channel, creds.wifi.timeout);
 	if (ret) {
 		LOG_ERR("Storing credentials failed, error: %d", ret);
 		return ret;

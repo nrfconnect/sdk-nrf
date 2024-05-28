@@ -22,6 +22,7 @@ message WifiInfo {
   optional Band band = 3;
   required uint32 channel = 4;
   optional AuthMode auth = 5;
+  optional uint32 timeout = 6;
 }
 
 message WifiConfig {
