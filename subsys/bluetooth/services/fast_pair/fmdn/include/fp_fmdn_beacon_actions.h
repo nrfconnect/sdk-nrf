@@ -10,6 +10,7 @@
 #include <zephyr/bluetooth/gatt.h>
 
 #include <bluetooth/services/fast_pair/fmdn.h>
+#include <bluetooth/services/fast_pair/uuid.h>
 
 /**
  * @defgroup fp_fmdn_beacon_actions Fast Pair FMDN Beacon Actions
@@ -26,13 +27,9 @@
 extern "C" {
 #endif
 
-/* Beacon Actions GATT Characteristic UUID defined by the FMDN Accessory specification. */
-#define FP_FMDN_BEACON_ACTIONS_UUID \
-	BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xFE2C1238, 0x8366, 0x4814, 0x8EB0, 0x01DE32100BEA))
-
 /* Beacon Actions GATT Characteristic definition for the Fast Pair service. */
 #define FP_FMDN_BEACON_ACTIONS_CHARACTERISTIC                                 \
-	BT_GATT_CHARACTERISTIC(FP_FMDN_BEACON_ACTIONS_UUID,                   \
+	BT_GATT_CHARACTERISTIC(BT_FAST_PAIR_UUID_BEACON_ACTIONS,              \
 		BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE | BT_GATT_CHRC_NOTIFY, \
 		BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,                       \
 		fp_fmdn_beacon_actions_read,                                  \
