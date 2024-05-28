@@ -26,5 +26,7 @@ tests:
       - nrf21540dk/nrf52840
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf21540dk/nrf52840 nrf54l15pdk/nrf54l15/cpuapp
-    extra_args: FILE_SUFFIX=dfu
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-dfu.conf
+      - SB_CONF_FILE=sysbuild-dfu.conf
     tags: bluetooth ci_build sysbuild
