@@ -767,6 +767,10 @@ DFU libraries
 Modem libraries
 ---------------
 
+* :ref:`lib_at_host`:
+
+   * Updated to set the default termination mode to the :kconfig:option:`CONFIG_CR_LF_TERMINATION` Kconfig option instead of the :kconfig:option:`CONFIG_CR_TERMINATION` Kconfig option.
+
 * :ref:`nrf_modem_lib_readme`:
 
   * Fixed an issue with the CFUN hooks when the Modem library is initialized during ``SYS_INIT`` at kernel level and makes calls to the :ref:`nrf_modem_at` interface before the application level initialization is done.
