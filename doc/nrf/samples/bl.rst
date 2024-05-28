@@ -9,4 +9,3 @@ Bluetooth samples
    :glob:
 
    ../../../samples/bluetooth/*/README
-   ../../../samples/bluetooth/fast_pair/*/README
