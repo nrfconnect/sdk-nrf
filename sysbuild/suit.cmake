@@ -20,6 +20,5 @@ if(SB_CONFIG_SUIT_BUILD_FLASH_COMPANION)
     APPLICATION flash_companion
     SOURCE_DIR "${ZEPHYR_NRF_MODULE_DIR}/samples/suit/flash_companion"
     BOARD ${board_target}
-    BUILD_ONLY TRUE
   )
 endif()
