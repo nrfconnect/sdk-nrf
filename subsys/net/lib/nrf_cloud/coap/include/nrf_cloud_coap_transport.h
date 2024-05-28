@@ -30,6 +30,8 @@ extern "C" {
 enum coap_content_format {
 	dummy
 };
+struct coap_client {};
+struct coap_client_option {};
 #endif
 
 struct nrf_cloud_coap_client {
