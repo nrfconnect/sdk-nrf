@@ -7,6 +7,10 @@ AT command parser
    :local:
    :depth: 2
 
+.. note::
+
+   This library is deprecated in favor of the :ref:`at_parser_readme` library.
+
 The AT command parser is a library which parses any of the following:
 
 * A string response returned after issuing an AT command

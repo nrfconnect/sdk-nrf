@@ -7,3 +7,7 @@
 config AT_CMD_PARSER
 	bool "AT command parser library"
 	depends on NEWLIB_LIBC || EXTERNAL_LIBC || PICOLIBC
+	select DEPRECATED
+	help
+	  This option is deprecated and will be removed in
+	  a future version.

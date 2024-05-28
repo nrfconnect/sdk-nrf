@@ -113,7 +113,7 @@ static int nping_callback(char *buf, size_t len, char *at_cmd)
 		goto exit;
 	}
 
-	err = at_cmd_ping_handle(&at_params, at_parser_cmd_type_get(at_cmd));
+	err = at_cmd_ping_handle(&at_params, at_parser_at_cmd_type_get(at_cmd));
 
 exit:
 	at_params_list_free(&at_params);

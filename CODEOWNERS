@@ -111,6 +111,7 @@ Kconfig*                                  @tejlmand
 /lib/boot_banner/                         @nordicjm
 /lib/adp536x/                             @nrfconnect/ncs-cia
 /lib/at_cmd_parser/                       @rlubos
+/lib/at_parser/                           @MirkoCovizzi
 /lib/at_cmd_custom/                       @eivindj-nordic
 /lib/at_host/                             @rlubos
 /lib/at_monitor/                          @lemrey @rlubos
@@ -313,6 +314,7 @@ Kconfig*                                  @tejlmand
 /tests/drivers/nrfx_integration_test/     @anangl
 /tests/drivers/pwm/gpio_loopback/         @nrfconnect/ncs-low-level-test
 /tests/lib/at_cmd_parser/                 @rlubos
+/tests/lib/at_parser/                     @MirkoCovizzi
 /tests/lib/at_cmd_custom/                 @eivindj-nordic
 /tests/lib/date_time/                     @trantanen @tokangas
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
