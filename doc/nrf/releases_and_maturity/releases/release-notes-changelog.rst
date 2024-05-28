@@ -278,6 +278,10 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
+* :ref:`fmfu_smp_svr_sample` sample:
+
+  * Removed the unused :ref:`at_cmd_parser_readme` library.
+
 * :ref:`modem_shell_application` sample:
 
   * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
