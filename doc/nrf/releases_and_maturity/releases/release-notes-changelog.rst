@@ -806,6 +806,10 @@ DFU libraries
 Modem libraries
 ---------------
 
+* :ref:`lib_at_host`:
+
+   * Updated to set the default termination mode to the :kconfig:option:`CONFIG_CR_LF_TERMINATION` Kconfig option instead of the :kconfig:option:`CONFIG_CR_TERMINATION` Kconfig option.
+
 * :ref:`nrf_modem_lib_readme`:
 
   * Added the Kconfig option  :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_CHUNK_SZ` to process traces in chunks.
