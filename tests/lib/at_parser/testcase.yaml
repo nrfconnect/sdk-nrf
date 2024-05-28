@@ -1,0 +1,6 @@
+tests:
+  at_parser.at_parser:
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags: at_parser

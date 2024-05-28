@@ -430,7 +430,7 @@ int at_parser_max_params_from_str(const char *at_params_str,
 	return err;
 }
 
-enum at_cmd_type at_parser_cmd_type_get(const char *at_cmd)
+enum at_cmd_type at_parser_at_cmd_type_get(const char *at_cmd)
 {
 	enum at_cmd_type type;
 

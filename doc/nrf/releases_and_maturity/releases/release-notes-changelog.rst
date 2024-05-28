@@ -897,6 +897,13 @@ DFU libraries
 Modem libraries
 ---------------
 
+* Added:
+
+   * :ref:`at_parser_readme` library.
+     The :ref:`at_parser_readme` is a library that parses AT command responses, notifications, or events.
+     Compared to the deprecated :ref:`at_cmd_parser_readme` library, it does not allocate memory dynamically and has a smaller footprint.
+     More information on how to transition from the :ref:`at_cmd_parser_readme` library to the :ref:`at_parser_readme` library in the :ref:`migration guide <migration_2.8_recommended>`.
+
 * :ref:`nrf_modem_lib_readme`:
 
   * Added:
@@ -934,6 +941,13 @@ Modem libraries
 
   * Removed ``AT%XRAI`` related deprecated functions ``lte_lc_rai_param_set()`` and ``lte_lc_rai_req()``, and Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ_VALUE`.
     The application uses the Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ` and ``SO_RAI`` socket option instead.
+
+* :ref:`at_cmd_parser_readme` library:
+
+  * Deprecated:
+    * The :ref:`at_cmd_parser_readme` library in favor of the :ref:`at_parser_readme` library. The :ref:`at_cmd_parser_readme` library will be removed in a future version. More information on how to transition from the :ref:`at_cmd_parser_readme` library to the :ref:`at_parser_readme` library in the :ref:`migration guide <migration_2.8_recommended>`.
+    * The :kconfig:option:`CONFIG_AT_CMD_PARSER`. This option will be removed in a future version.
+  * Renamed the :c:func:`at_parser_cmd_type_get` function to :c:func:`at_parser_at_cmd_type_get` to prevent a name collision.
 
 Libraries for networking
 ------------------------

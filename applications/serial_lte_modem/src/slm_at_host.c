@@ -871,7 +871,7 @@ int slm_at_cb_wrapper(char *buf, size_t len, char *at_cmd, slm_at_callback *cb)
 	if (err) {
 		return err;
 	}
-	err = cb(at_parser_cmd_type_get(at_cmd), list, at_params_valid_count_get(list));
+	err = cb(at_parser_at_cmd_type_get(at_cmd), list, at_params_valid_count_get(list));
 	if (!err) {
 		err = at_cmd_custom_respond(buf, len, "OK\r\n");
 		if (err) {
