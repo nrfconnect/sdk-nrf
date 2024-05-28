@@ -60,6 +60,13 @@ extern "C" {
 #define BT_FAST_PAIR_UUID_ADDITIONAL_DATA \
 	BT_UUID_DECLARE_128(BT_FAST_PAIR_UUID_ADDITIONAL_DATA_VAL)
 
+/** Fast Pair Beacon Actions Characteristic UUID value (used in the FMDN extension) */
+#define BT_FAST_PAIR_UUID_BEACON_ACTIONS_VAL \
+	BT_UUID_128_ENCODE(0xFE2C1238, 0x8366, 0x4814, 0x8EB0, 0x01DE32100BEA)
+/** Fast Pair Beacon Actions Characteristic UUID (used in the FMDN extension) */
+#define BT_FAST_PAIR_UUID_BEACON_ACTIONS \
+	BT_UUID_DECLARE_128(BT_FAST_PAIR_UUID_BEACON_ACTIONS_VAL)
+
 #ifdef __cplusplus
 }
 #endif
