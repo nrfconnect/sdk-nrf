@@ -229,8 +229,6 @@ To enable key derivation function (KDF) support, set one or more of the Kconfig 
 | TLS 1.2 EC J-PAKE to PMS | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS`    |
 +--------------------------+---------------------------------------------------------------+
 
-.. note::
-   PBKDF2 algorithms are not supported with TF-M.
 
 Key derivation function support
 ===============================
