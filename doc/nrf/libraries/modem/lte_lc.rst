@@ -13,6 +13,8 @@ The LTE link can be controlled through library configurations and API calls to e
 
 The library also provides functionality that enables the application to receive notifications regarding LTE link parameters such as Radio Resource Control (RRC) connection state, cell information, and the provided PSM or eDRX timer values.
 
+To use the LTE link control library, the :ref:`nrfxlib:nrf_modem` is required.
+
 Configuration
 *************
 
@@ -226,6 +228,13 @@ The following code snippet shows how to use the :c:macro:`LTE_LC_ON_CFUN` macro:
            lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
            return 0;
    }
+
+Dependencies
+************
+
+This library uses the following |NCS| library:
+
+* :ref:`nrfxlib:nrf_modem`
 
 API documentation
 *****************
