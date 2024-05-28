@@ -950,6 +950,10 @@ Modem libraries
     * The :kconfig:option:`CONFIG_AT_CMD_PARSER`. This option will be removed in a future version.
   * Renamed the :c:func:`at_parser_cmd_type_get` function to :c:func:`at_parser_at_cmd_type_get` to prevent a name collision.
 
+* :ref:`modem_info_readme` library:
+
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+
 Libraries for networking
 ------------------------
 
