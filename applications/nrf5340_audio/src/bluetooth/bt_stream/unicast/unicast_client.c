@@ -56,6 +56,7 @@ struct le_audio_unicast_server {
 	uint8_t num_source_eps;
 	struct bt_bap_ep *source_ep;
 	struct bt_cap_stream cap_source_stream;
+	const struct bt_csip_set_coordinator_set_member *member;
 };
 
 struct discover_dir {
@@ -1091,7 +1092,7 @@ static void stream_qos_set_cb(struct bt_bap_stream *stream)
 
 static void stream_enabled_cb(struct bt_bap_stream *stream)
 {
-	LOG_WRN("Stream enabled: %p", (void *)stream);
+	LOG_DBG("Stream enabled: %p", (void *)stream);
 }
 
 static void stream_started_cb(struct bt_bap_stream *stream)
@@ -1252,13 +1253,34 @@ static void unicast_discovery_complete_cb(struct bt_conn *conn, int err,
 					  const struct bt_csip_set_coordinator_set_member *member,
 					  const struct bt_csip_set_coordinator_csis_inst *csis_inst)
 {
-	if (err) {
-		LOG_WRN("Got err: %d from conn: %p", err, (void *)conn);
+	int ret;
+	struct le_audio_msg msg;
+	uint8_t index;
+
+	ret = device_index_get(conn, &index);
+	if (ret) {
+		return;
 	}
 
-	LOG_WRN("Unicast discovery complete cb");
-	LOG_WRN("\tErr: %d, set_size: %d, key: %s", err, csis_inst->info.set_size,
-		csis_inst->info.set_sirk);
+	if (err || csis_inst == NULL) {
+		LOG_WRN("Got err: %d from conn: %p", err, (void *)conn);
+		msg.set_size = 0;
+		msg.sirk = NULL;
+	} else {
+		LOG_DBG("\tErr: %d, set_size: %d, key: %s", err, csis_inst->info.set_size,
+			csis_inst->info.set_sirk);
+		unicast_servers[index].member = member;
+		msg.set_size = csis_inst->info.set_size;
+		msg.sirk = csis_inst->info.set_sirk;
+	}
+
+	LOG_DBG("Unicast discovery complete cb");
+
+	msg.event = LE_AUDIO_EVT_COORD_SET_DISCOVERED;
+	msg.conn = conn;
+
+	ret = zbus_chan_pub(&le_audio_chan, &msg, LE_AUDIO_ZBUS_EVENT_WAIT_TIME);
+	ERR_CHK(ret);
 }
 
 static void unicast_start_complete_cb(int err, struct bt_conn *conn)

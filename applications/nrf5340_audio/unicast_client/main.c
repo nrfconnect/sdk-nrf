@@ -292,6 +292,37 @@ static void le_audio_msg_sub_thread(void)
 
 			break;
 
+		case LE_AUDIO_EVT_COORD_SET_DISCOVERED:
+			uint8_t num_conn = 0;
+			uint8_t num_filled = 0;
+
+			bt_mgmt_num_conn_get(&num_conn);
+
+			if (msg.set_size > 0) {
+				/* Check how many active connections we have for the given set */
+				LOG_DBG("Setting SIRK");
+				bt_mgmt_scan_sirk_set(msg.sirk);
+				bt_mgmt_set_size_filled_get(&num_filled);
+
+				LOG_INF("Set members found: %d/%d", num_filled, msg.set_size);
+
+				if (num_filled == msg.set_size) {
+					/* All devices in set found, clear SIRK before scanning */
+					bt_mgmt_scan_sirk_set(NULL);
+				}
+			}
+
+			if (num_conn < CONFIG_BT_MAX_CONN) {
+				/* Room for more connections, start scanning again */
+				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL,
+							 BRDCAST_ID_NOT_USED);
+				if (ret) {
+					LOG_ERR("Failed to resume scanning: %d", ret);
+				}
+			}
+
+			break;
+
 		default:
 			LOG_WRN("Unexpected/unhandled le_audio event: %d", msg.event);
 			break;

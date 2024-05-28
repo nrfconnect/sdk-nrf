@@ -35,12 +35,6 @@ ZBUS_CHAN_DEFINE(bt_mgmt_chan, struct bt_mgmt_msg, NULL, NULL, ZBUS_OBSERVERS_EM
  */
 #define BT_ENABLE_TIMEOUT_MS 100
 
-#ifndef CONFIG_BT_MAX_CONN
-#define MAX_CONN_NUM 0
-#else
-#define MAX_CONN_NUM CONFIG_BT_MAX_CONN
-#endif
-
 K_SEM_DEFINE(sem_bt_enabled, 0, 1);
 
 /**
@@ -72,7 +66,6 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 {
 	int ret;
 	char addr[BT_ADDR_LE_STR_LEN] = {0};
-	uint8_t num_conn = 0;
 	struct bt_mgmt_msg msg;
 
 	if (err == BT_HCI_ERR_ADV_TIMEOUT && IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
@@ -108,19 +101,9 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 		return;
 	}
 
-	bt_conn_foreach(BT_CONN_TYPE_LE, conn_state_connected_check, (void *)&num_conn);
-
 	/* ACL connection established */
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Connected: %s", addr);
-
-	if (IS_ENABLED(CONFIG_BT_CENTRAL) && (num_conn < MAX_CONN_NUM)) {
-		/* Room for more connections, start scanning again */
-		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL, BRDCAST_ID_NOT_USED);
-		if (ret) {
-			LOG_ERR("Failed to resume scanning: %d", ret);
-		}
-	}
 
 	msg.event = BT_MGMT_CONNECTED;
 	msg.conn = conn;
@@ -319,6 +302,11 @@ static int local_identity_addr_print(void)
 	}
 
 	return 0;
+}
+
+void bt_mgmt_num_conn_get(uint8_t *num_conn)
+{
+	bt_conn_foreach(BT_CONN_TYPE_LE, conn_state_connected_check, (void *)num_conn);
 }
 
 int bt_mgmt_bonding_clear(void)
