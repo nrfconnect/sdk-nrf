@@ -30,6 +30,7 @@ enum le_audio_evt_type {
 	LE_AUDIO_EVT_NOT_STREAMING,
 	LE_AUDIO_EVT_SYNC_LOST,
 	LE_AUDIO_EVT_NO_VALID_CFG,
+	LE_AUDIO_EVT_COORD_SET_DISCOVERED,
 };
 
 struct le_audio_msg {
@@ -37,6 +38,8 @@ struct le_audio_msg {
 	struct bt_conn *conn;
 	struct bt_le_per_adv_sync *pa_sync;
 	enum bt_audio_dir dir;
+	uint8_t set_size;
+	uint8_t const *sirk;
 };
 
 /**

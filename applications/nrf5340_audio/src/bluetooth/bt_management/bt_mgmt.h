@@ -56,6 +56,22 @@ enum bt_mgmt_scan_type {
 #define BRDCAST_ID_NOT_USED (BT_AUDIO_BROADCAST_ID_MAX + 1)
 
 /**
+ * @brief	Get the numbers of connected members of a given 'Set Identity Resolving Key' (SIRK).
+ *		The SIRK shall be set through bt_mgmt_scan_sirk_set() before calling this function.
+ *
+ * @param[out]	num_filled	The number of connected set members.
+ */
+void bt_mgmt_set_size_filled_get(uint8_t *num_filled);
+
+/**
+ * @brief	Set 'Set Identity Resolving Key' (SIRK).
+ *		Used for searching for other member of the same set.
+ *
+ * @param[in]	sirk	Pointer to the Set Identity Resolving Key to store.
+ */
+void bt_mgmt_scan_sirk_set(uint8_t const *const sirk);
+
+/**
  * @brief	Start scanning for advertisements.
  *
  * @param[in]	scan_intvl	Scan interval in units of 0.625ms.
@@ -108,6 +124,13 @@ int bt_mgmt_manufacturer_uuid_populate(struct net_buf_simple *uuid_buf, uint16_t
  */
 int bt_mgmt_adv_start(const struct bt_data *ext_adv, size_t ext_adv_size,
 		      const struct bt_data *per_adv, size_t per_adv_size, bool connectable);
+
+/**
+ * @brief	Get the number of active connections.
+ *
+ * @param[out]	num_conn	The number of active connections.
+ */
+void bt_mgmt_num_conn_get(uint8_t *num_conn);
 
 /**
  * @brief	Clear all bonded devices.
