@@ -17,7 +17,7 @@
 #include <ctype.h>
 
 #include "macros_common.h"
-#include "nrf5340_audio_common.h"
+#include "zbus_common.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(button_handler, CONFIG_MODULE_BUTTON_HANDLER_LOG_LEVEL);

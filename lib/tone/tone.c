@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "tone.h"
+#include <tone.h>
 
 #include <zephyr/kernel.h>
 #include <math.h>

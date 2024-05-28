@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "data_fifo.h"
+#include <data_fifo.h>
 
 #include <zephyr/kernel.h>
 

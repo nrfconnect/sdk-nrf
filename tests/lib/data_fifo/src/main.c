@@ -6,7 +6,7 @@
 
 #include <zephyr/ztest.h>
 #include <errno.h>
-#include "data_fifo.h"
+#include <data_fifo.h>
 
 /* Catch asserts to fail test */
 void assert_post_action(const char *file, unsigned int line)

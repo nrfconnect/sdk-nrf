@@ -11,14 +11,15 @@
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/sys/byteorder.h>
 
-#include "nrf5340_audio_common.h"
-#include "nrf5340_audio_dk.h"
 #include "broadcast_source.h"
+#include "zbus_common.h"
+#include "nrf5340_audio_dk.h"
 #include "led.h"
 #include "button_assignments.h"
 #include "macros_common.h"
 #include "audio_system.h"
 #include "bt_mgmt.h"
+#include "fw_info_app.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
@@ -379,12 +380,18 @@ int main(void)
 	size_t ext_ad_size = 0;
 	size_t per_ad_size = 0;
 
-	LOG_DBG("nRF5340 APP core started");
+	LOG_DBG("Main started");
 
 	ret = nrf5340_audio_dk_init();
 	ERR_CHK(ret);
 
-	ret = nrf5340_audio_common_init();
+	ret = fw_info_app_print();
+	ERR_CHK(ret);
+
+	ret = bt_mgmt_init();
+	ERR_CHK(ret);
+
+	ret = audio_system_init();
 	ERR_CHK(ret);
 
 	ret = zbus_subscribers_create();

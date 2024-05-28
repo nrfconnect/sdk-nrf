@@ -13,16 +13,16 @@
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
 #include <nrfx_clock.h>
+#include <contin_array.h>
+#include <tone.h>
+#include <pcm_mix.h>
 
-#include "nrf5340_audio_common.h"
+#include "zbus_common.h"
 #include "macros_common.h"
 #include "led.h"
 #include "audio_i2s.h"
 #include "sw_codec_select.h"
 #include "audio_system.h"
-#include "tone.h"
-#include "contin_array.h"
-#include "pcm_mix.h"
 #include "streamctrl.h"
 #include "sd_card_playback.h"
 

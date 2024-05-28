@@ -9,9 +9,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/usb/class/usb_audio.h>
+#include <data_fifo.h>
 
 #include "macros_common.h"
-#include "data_fifo.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_usb, CONFIG_MODULE_AUDIO_USB_LOG_LEVEL);

@@ -15,31 +15,30 @@
 #include <nrfx_timer.h>
 #include <nrfx_egu.h>
 
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_sync_timer, CONFIG_AUDIO_SYNC_TIMER_LOG_LEVEL);
 
-#define AUDIO_SYNC_TIMER_NET_APP_IPC_EVT_CHANNEL                4
-#define AUDIO_SYNC_TIMER_NET_APP_IPC_EVT                        NRF_IPC_EVENT_RECEIVE_4
+#define AUDIO_SYNC_TIMER_NET_APP_IPC_EVT_CHANNEL 4
+#define AUDIO_SYNC_TIMER_NET_APP_IPC_EVT	 NRF_IPC_EVENT_RECEIVE_4
 
-#define AUDIO_SYNC_HF_TIMER_INSTANCE_NUMBER                     1
+#define AUDIO_SYNC_HF_TIMER_INSTANCE_NUMBER 1
 
 #define AUDIO_SYNC_HF_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL 0
-#define AUDIO_SYNC_HF_TIMER_I2S_FRAME_START_EVT_CAPTURE         NRF_TIMER_TASK_CAPTURE0
-#define AUDIO_SYNC_HF_TIMER_CURR_TIME_CAPTURE_CHANNEL           1
-#define AUDIO_SYNC_HF_TIMER_CURR_TIME_CAPTURE                   NRF_TIMER_TASK_CAPTURE1
+#define AUDIO_SYNC_HF_TIMER_I2S_FRAME_START_EVT_CAPTURE		NRF_TIMER_TASK_CAPTURE0
+#define AUDIO_SYNC_HF_TIMER_CURR_TIME_CAPTURE_CHANNEL		1
+#define AUDIO_SYNC_HF_TIMER_CURR_TIME_CAPTURE			NRF_TIMER_TASK_CAPTURE1
 
 static const nrfx_timer_t audio_sync_hf_timer_instance =
 	NRFX_TIMER_INSTANCE(AUDIO_SYNC_HF_TIMER_INSTANCE_NUMBER);
 
 static uint8_t dppi_channel_i2s_frame_start;
 
-#define AUDIO_SYNC_LF_TIMER_INSTANCE_NUMBER                     0
+#define AUDIO_SYNC_LF_TIMER_INSTANCE_NUMBER 0
 
 #define AUDIO_SYNC_LF_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL 0
-#define AUDIO_SYNC_LF_TIMER_I2S_FRAME_START_EVT_CAPTURE         NRF_RTC_TASK_CAPTURE_0
-#define AUDIO_SYNC_LF_TIMER_CURR_TIME_CAPTURE_CHANNEL           1
-#define AUDIO_SYNC_LF_TIMER_CURR_TIME_CAPTURE                   NRF_RTC_TASK_CAPTURE_1
+#define AUDIO_SYNC_LF_TIMER_I2S_FRAME_START_EVT_CAPTURE		NRF_RTC_TASK_CAPTURE_0
+#define AUDIO_SYNC_LF_TIMER_CURR_TIME_CAPTURE_CHANNEL		1
+#define AUDIO_SYNC_LF_TIMER_CURR_TIME_CAPTURE			NRF_RTC_TASK_CAPTURE_1
 
 static uint8_t dppi_channel_curr_time_capture;
 
@@ -64,8 +63,7 @@ static uint32_t timestamp_from_rtc_and_timer_get(uint32_t ticks, uint32_t remain
 	const uint32_t rtc_overflow_time_us = 512000000UL;
 
 	return ((ticks * rtc_ticks_in_femto_units) / 1000000000UL) +
-		(num_rtc_overflows * rtc_overflow_time_us) +
-		remainder_us;
+	       (num_rtc_overflows * rtc_overflow_time_us) + remainder_us;
 }
 
 uint32_t audio_sync_timer_capture(void)
@@ -102,8 +100,8 @@ uint32_t audio_sync_timer_capture(void)
 	}
 
 	/* Read captured TIMER value */
-	uint32_t remainder_us = nrf_timer_cc_get(NRF_TIMER1,
-						 AUDIO_SYNC_HF_TIMER_CURR_TIME_CAPTURE_CHANNEL);
+	uint32_t remainder_us =
+		nrf_timer_cc_get(NRF_TIMER1, AUDIO_SYNC_HF_TIMER_CURR_TIME_CAPTURE_CHANNEL);
 
 	return timestamp_from_rtc_and_timer_get(tick, remainder_us);
 }

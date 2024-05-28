@@ -7,7 +7,7 @@
 #include <zephyr/ztest.h>
 #include <errno.h>
 #include <zephyr/tc_util.h>
-#include "contin_array.h"
+#include <contin_array.h>
 
 /* clang-format off */
 static const uint8_t test_arr[] = {

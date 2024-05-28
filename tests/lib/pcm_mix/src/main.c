@@ -6,7 +6,7 @@
 
 #include <zephyr/ztest.h>
 #include <errno.h>
-#include "pcm_mix.h"
+#include <pcm_mix.h>
 
 #define ZEQ(a, b) zassert_equal(a, b, "fail")
 

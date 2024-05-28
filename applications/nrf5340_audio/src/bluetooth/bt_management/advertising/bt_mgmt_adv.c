@@ -11,7 +11,7 @@
 #include <zephyr/bluetooth/conn.h>
 
 #include "macros_common.h"
-#include "nrf5340_audio_common.h"
+#include "zbus_common.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt_adv, CONFIG_BT_MGMT_ADV_LOG_LEVEL);

@@ -14,7 +14,7 @@
 #include <zephyr/sys/byteorder.h>
 
 #include "macros_common.h"
-#include "nrf5340_audio_common.h"
+#include "zbus_common.h"
 #include "button_handler.h"
 #include "button_assignments.h"
 #include "bt_mgmt_ctlr_cfg_internal.h"

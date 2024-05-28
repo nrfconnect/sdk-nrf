@@ -7,7 +7,7 @@
 #include <zephyr/ztest.h>
 #include <errno.h>
 #include <audio_defines.h>
-#include "pcm_stream_channel_modifier.h"
+#include <pcm_stream_channel_modifier.h>
 
 #define ZEQ(a, b) zassert_equal(b, a, "fail")
 

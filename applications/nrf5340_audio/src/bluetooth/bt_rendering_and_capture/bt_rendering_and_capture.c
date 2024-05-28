@@ -12,7 +12,7 @@
 
 #include "bt_vol_rend_internal.h"
 #include "bt_vol_ctlr_internal.h"
-#include "nrf5340_audio_common.h"
+#include "zbus_common.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_r_c, CONFIG_BT_RENDERING_AND_CAPTURE_LOG_LEVEL);

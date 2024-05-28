@@ -11,8 +11,7 @@
 #include <ctype.h>
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
-
-#include "data_fifo.h"
+#include <data_fifo.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_module, CONFIG_AUDIO_MODULE_LOG_LEVEL);
