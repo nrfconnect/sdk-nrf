@@ -568,6 +568,8 @@ Cellular samples
 
   * Removed ESP8266 Wi-Fi DTC and Kconfig overlay files.
 
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
   * Removed:

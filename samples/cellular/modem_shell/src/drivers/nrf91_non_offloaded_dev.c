@@ -23,8 +23,7 @@
 
 #include <modem/pdn.h>
 #include <nrf_modem_at.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
+#include <modem/at_parser.h>
 
 #include "link_shell_pdn.h"
 #include "net_utils.h"
@@ -107,9 +106,8 @@ struct pdn_conn_dyn_params {
 
 static int util_get_pdn_conn_dyn_params(int cid, struct pdn_conn_dyn_params *ret_dyn_info)
 {
-	struct at_param_list param_list = { 0 };
+	struct at_parser parser;
 	size_t param_str_len;
-	char *next_param_str;
 	char at_cmd_str[16];
 	char at_cmd_response_str[512];
 	char dns_addr_str[128];
@@ -130,9 +128,9 @@ static int util_get_pdn_conn_dyn_params(int cid, struct pdn_conn_dyn_params *ret
 	}
 
 	/* Parse the response */
-	ret = at_params_list_init(&param_list, AT_CMD_PDP_CONTEXT_READ_DYN_INFO_PARAM_COUNT);
+	ret = at_parser_init(&parser, at_ptr);
 	if (ret) {
-		mosh_error("Could not init AT params list, error: %d\n", ret);
+		mosh_error("Could not init AT parser, error: %d\n", ret);
 		return ret;
 	}
 
@@ -140,22 +138,9 @@ static int util_get_pdn_conn_dyn_params(int cid, struct pdn_conn_dyn_params *ret
 	ret_dyn_info->ipv4_mtu = NRF91_MTU;
 	ret_dyn_info->ipv6_mtu = NRF91_MTU;
 	while (resp_continues) {
-		resp_continues = false;
-		ret = at_parser_max_params_from_str(at_ptr, &next_param_str, &param_list,
-						    AT_CMD_PDP_CONTEXT_READ_DYN_INFO_PARAM_COUNT);
-		if (ret == -EAGAIN) {
-			resp_continues = true;
-		} else if (ret == -E2BIG) {
-			mosh_error("E2BIG, error: %d\n", ret);
-		} else if (ret != 0) {
-			mosh_error("Could not parse AT response for %s, error: %d\n", at_cmd_str,
-				   ret);
-			goto clean_exit;
-		}
-
 		/* Read primary DNS address */
 		param_str_len = sizeof(dns_addr_str);
-		ret = at_params_string_get(&param_list,
+		ret = at_parser_string_get(&parser,
 					   AT_CMD_PDP_CONTEXT_READ_DYN_INFO_DNS_ADDR_PRIMARY_INDEX,
 					   dns_addr_str, &param_str_len);
 		if (ret) {
@@ -178,8 +163,8 @@ static int util_get_pdn_conn_dyn_params(int cid, struct pdn_conn_dyn_params *ret
 		/* Read secondary DNS address */
 		param_str_len = sizeof(dns_addr_str);
 
-		ret = at_params_string_get(
-			&param_list, AT_CMD_PDP_CONTEXT_READ_DYN_INFO_DNS_ADDR_SECONDARY_INDEX,
+		ret = at_parser_string_get(
+			&parser, AT_CMD_PDP_CONTEXT_READ_DYN_INFO_DNS_ADDR_SECONDARY_INDEX,
 			dns_addr_str, &param_str_len);
 		if (ret) {
 			mosh_error("Could not parse dns str, err: %d", ret);
@@ -197,7 +182,7 @@ static int util_get_pdn_conn_dyn_params(int cid, struct pdn_conn_dyn_params *ret
 		}
 
 		/* Read link MTU if exists: */
-		ret = at_params_int_get(&param_list,
+		ret = at_parser_num_get(&parser,
 					AT_CMD_PDP_CONTEXT_READ_DYN_INFO_MTU_INDEX,
 					&mtu);
 		if (ret) {
@@ -215,15 +200,14 @@ static int util_get_pdn_conn_dyn_params(int cid, struct pdn_conn_dyn_params *ret
 			}
 		}
 
-		if (resp_continues) {
-			at_ptr = next_param_str;
+		resp_continues = false;
+		if (at_parser_cmd_next(&parser) == 0) {
+			resp_continues = true;
 			iterator++;
 		}
 	}
 
 clean_exit:
-	at_params_list_free(&param_list);
-
 	return ret;
 }
 
