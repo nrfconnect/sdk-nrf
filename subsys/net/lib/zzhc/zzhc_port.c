@@ -10,7 +10,7 @@ LOG_MODULE_REGISTER(zzhc_port, CONFIG_ZZHC_LOG_LEVEL);
 #include <zephyr/kernel.h>
 #include <zephyr/sys/base64.h>
 #include <zephyr/data/json.h>
-#include <modem/at_cmd_parser.h>
+#include <modem/at_parser.h>
 #include "zzhc_internal.h"
 
 #define AT_PARAMS_MAX     11        /** Max. # of AT-params to parse */
@@ -85,18 +85,6 @@ int zzhc_ext_init(struct zzhc *ctx)
 		return -ENOBUFS;
 	}
 
-	ctx->at_list = zzhc_malloc(sizeof(struct at_param_list));
-	if (ctx->at_list == NULL) {
-		return -ENOBUFS;
-	}
-
-	/* Initialize AT-command list, which is used in parser */
-	rc = at_params_list_init(ctx->at_list, AT_PARAMS_MAX);
-	if (rc) {
-		LOG_DBG("at_params_list_init() = %d", rc);
-		return rc;
-	}
-
 	/* Initialize settings (run-once). */
 	if (settings_fn.name == NULL) {
 		rc = settings_subsys_init();
@@ -126,8 +114,6 @@ int zzhc_ext_init(struct zzhc *ctx)
 void zzhc_ext_uninit(struct zzhc *ctx)
 {
 	zzhc_free(ctx->sem);
-	at_params_list_free(ctx->at_list);
-	zzhc_free(ctx->at_list);
 }
 
 bool zzhc_check_http_payload(struct zzhc *ctx)
@@ -159,24 +145,25 @@ bool zzhc_check_http_payload(struct zzhc *ctx)
 int zzhc_get_at_param_short(struct zzhc *ctx, const char *data, int idx)
 {
 	int rc;
-	uint16_t evt;
-	struct at_param_list *at_list = (struct at_param_list *)ctx->at_list;
+	uint16_t evt = 0;
+	struct at_parser parser;
+	size_t count = 0;
 
-	rc = at_parser_max_params_from_str(data, NULL, at_list, AT_PARAMS_MAX);
-	if (rc != 0 && rc != -EAGAIN) {
-		LOG_DBG("at_parser_max_params_from_str()=%d", rc);
+	rc = at_parser_init(&parser, data);
+	if (rc < 0) {
+		LOG_DBG("at_parser_init()=%d", rc);
 		return rc;
 	}
 
-	rc = at_params_valid_count_get(at_list);
-	if (rc < idx + 2) {
-		LOG_DBG("at_params_valid_count_get()=%d", rc);
+	rc = at_parser_cmd_count_get(&parser, &count);
+	if (rc < 0 || count < idx + 2) {
+		LOG_DBG("at_parser_cmd_count_get()=%d, count=%d", rc, count);
 		return rc;
 	}
 
-	rc = at_params_short_get(at_list, idx + 1, &evt);
-	if (rc != 0) {
-		LOG_DBG("at_params_short_get()=%d, evt=%d", rc, evt);
+	rc = at_parser_num_get(&parser, idx + 1, &evt);
+	if (rc < 0) {
+		LOG_DBG("at_parser_num_get()=%d, evt=%d", rc, evt);
 		return rc;
 	}
 
