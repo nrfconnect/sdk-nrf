@@ -484,6 +484,9 @@ static int slm_at_send_indicate(const uint8_t *data, size_t len,
 	if (k_is_in_isr()) {
 		LOG_ERR("FIXME: Attempt to send AT response (of size %u) in ISR.", len);
 		return -EINTR;
+	} else if (at_backend.send == NULL) {
+		LOG_ERR("Attempt to send via an uninitialized AT backend");
+		return -EFAULT;
 	}
 
 	if (indicate) {
