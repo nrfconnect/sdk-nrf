@@ -35,7 +35,9 @@ If the remaining empty flash area is smaller than the required data size, the fl
 
 The storage is done in deterministic time, so it is possible to know how long it takes to store all registered entries.
 However, this is chip-dependent, so it is important to measure the time.
-The `Nordic Semiconductor Infocenter`_ contains chip information and datasheet, and timing values can be found under the "Electrical specification" for the Non-volatile memory controller.
+Find timing values under the "Electrical specification" section for the non-volatile memory controller in the Product Specification for the relevant SoC or the SiP you are using.
+For example, for the nRF9160 SiP, see the `Electrical specification of nRF9160`_ page.
+
 The following Kconfig options can be configured:
 
 * :kconfig:option:`CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US`
