@@ -23,3 +23,10 @@ set(nrf52833dongle_nrf52833_DEPRECATED nrf52833dongle/nrf52833)
 set(nrf52840gmouse_nrf52840_DEPRECATED nrf52840gmouse/nrf52840)
 set(nrf52dmouse_nrf52832_DEPRECATED nrf52dmouse/nrf52832)
 set(nrf52kbd_nrf52832_DEPRECATED nrf52kbd/nrf52832)
+
+# Wi-Fi boards
+set(nrf7002dk_nrf5340_cpuapp_DEPRECATED nrf7002dk/nrf5340/cpuapp)
+set(nrf7002dk_nrf5340_cpuapp_ns_DEPRECATED nrf7002dk/nrf5340/cpuapp_ns)
+
+set(nrf7002dk_nrf7001_nrf5340_cpuapp_DEPRECATED nrf7002dk/nrf5340/cpuapp/nrf7001)
+set(nrf7002dk_nrf7001_nrf5340_cpuapp_ns_DEPRECATED nrf7002dk/nrf5340/cpuapp_ns/nrf7001)
