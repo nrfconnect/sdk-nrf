@@ -6,7 +6,7 @@
 
 menuconfig LTE_LINK_CONTROL
 	bool "LTE link control library"
-	select AT_CMD_PARSER
+	select AT_PARSER
 	select AT_MONITOR
 
 if LTE_LINK_CONTROL
