@@ -42,33 +42,6 @@ static struct sdfw_sink_context *get_new_context(void)
 	return NULL;
 }
 
-static digest_sink_err_t verify_digest(uint8_t *buf, size_t buf_size, psa_algorithm_t algorithm,
-				       uint8_t *expected_digest)
-{
-	struct stream_sink digest_sink;
-	suit_plat_err_t err = suit_digest_sink_get(&digest_sink, algorithm, expected_digest);
-
-	if (err != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Failed to get digest sink: %d", err);
-		return err;
-	}
-
-	err = digest_sink.write(digest_sink.ctx, buf, buf_size);
-	if (err != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Failed to write to stream: %d", err);
-		return err;
-	}
-
-	digest_sink_err_t ret = suit_digest_sink_digest_match(digest_sink.ctx);
-
-	err = digest_sink.release(digest_sink.ctx);
-	if (err != SUIT_PLAT_SUCCESS) {
-		LOG_WRN("Failed to release stream: %d", err);
-	}
-
-	return ret;
-}
-
 static suit_plat_err_t clear_urot_update_status(void)
 {
 	mram_erase((uintptr_t)&NRF_SICR->UROT.UPDATE,
@@ -125,48 +98,30 @@ static suit_plat_err_t schedule_sdfw_update(const uint8_t *buf, size_t size)
 
 static sdf_sink_err_t check_update_candidate(const uint8_t *buf, size_t size)
 {
-	uint8_t *candidate_binary_start =
-		(uint8_t *)(buf + CONFIG_SUIT_SDFW_UPDATE_FIRMWARE_OFFSET);
 	uint8_t *candidate_digest_in_manifest =
 		(uint8_t *)(buf + CONFIG_SUIT_SDFW_UPDATE_DIGEST_OFFSET);
 	uint8_t *current_sdfw_digest = (uint8_t *)(NRF_SICR->UROT.SM.TBS.FW.DIGEST);
 
-	/* First check if calculated digest of candidate matches the digest from Signed Manifest */
-	digest_sink_err_t err = verify_digest(
-		candidate_binary_start, size - (size_t)CONFIG_SUIT_SDFW_UPDATE_FIRMWARE_OFFSET,
-		PSA_ALG_SHA_512, candidate_digest_in_manifest);
+	sdf_sink_err_t err = SUIT_PLAT_SUCCESS;
 
-	if (err != SUIT_PLAT_SUCCESS) {
-		if (err == DIGEST_SINK_ERR_DIGEST_MISMATCH) {
-			LOG_ERR("Candidate inconsistent");
-		} else {
-			LOG_ERR("Failed to calculate digest: %d", err);
-		}
+	bool digests_match =
+		memcmp(candidate_digest_in_manifest, current_sdfw_digest,
+		       PSA_HASH_LENGTH(PSA_ALG_SHA_512))
+		       == 0;
 
-		return SUIT_PLAT_ERR_CRASH;
-	}
-
-	LOG_DBG("Candidate consistent");
-
-	/* Then compare candidate's digest with current SDFW digest */
-	err = verify_digest(candidate_binary_start,
-			    size - (size_t)CONFIG_SUIT_SDFW_UPDATE_FIRMWARE_OFFSET, PSA_ALG_SHA_512,
-			    current_sdfw_digest);
-	if (err == SUIT_PLAT_SUCCESS) {
+	if (digests_match) {
 		LOG_INF("Same candidate - skip update");
 		return SUIT_PLAT_SUCCESS;
-	} else if (err == DIGEST_SINK_ERR_DIGEST_MISMATCH) {
+	} else {
 		LOG_INF("Different candidate");
 		err = schedule_sdfw_update(buf, size);
 		if (err == SUIT_PLAT_SUCCESS) {
 			LOG_DBG("Update scheduled");
 			err = SDFW_SINK_ERR_AGAIN;
 		}
-		return err;
 	}
 
-	LOG_ERR("Failed to calculate digest: %d", err);
-	return SUIT_PLAT_ERR_CRASH;
+	return err;
 }
 
 static void reboot_to_continue(void)
@@ -212,26 +167,23 @@ static suit_plat_err_t check_urot_none(const uint8_t *buf, size_t size)
 
 static suit_plat_err_t check_urot_activated(const uint8_t *buf, size_t size)
 {
-	uint8_t *candidate_binary_start =
-		(uint8_t *)(buf + CONFIG_SUIT_SDFW_UPDATE_FIRMWARE_OFFSET);
 	uint8_t *current_sdfw_digest = (uint8_t *)(NRF_SICR->UROT.SM.TBS.FW.DIGEST);
+	uint8_t *candidate_digest_in_manifest =
+		(uint8_t *)(buf + CONFIG_SUIT_SDFW_UPDATE_DIGEST_OFFSET);
 
-	/* Compare candidate's digest with current SDFW digest */
-	digest_sink_err_t err = verify_digest(
-		candidate_binary_start, size - (size_t)CONFIG_SUIT_SDFW_UPDATE_FIRMWARE_OFFSET,
-		PSA_ALG_SHA_512, current_sdfw_digest);
-	if (err != SUIT_PLAT_SUCCESS) {
-		if (err == DIGEST_SINK_ERR_DIGEST_MISMATCH) {
-			LOG_ERR("Digest mismatch - update failure");
-			return SUIT_PLAT_ERR_AUTHENTICATION;
-		}
+	bool digests_match =
+		memcmp(candidate_digest_in_manifest, current_sdfw_digest,
+		       PSA_HASH_LENGTH(PSA_ALG_SHA_512))
+		       == 0;
 
-		LOG_ERR("Failed to calculate digest: %d", err);
-		return SUIT_PLAT_ERR_CRASH;
+	if (digests_match) {
+		LOG_DBG("Digest match - update success");
+		return SUIT_PLAT_SUCCESS;
 	}
 
-	LOG_DBG("Digest match - update success");
-	return SUIT_PLAT_SUCCESS;
+	LOG_ERR("Digest mismatch - update failure");
+	return SUIT_PLAT_ERR_AUTHENTICATION;
+
 }
 
 /* NOTE: Size means size of the SDFW binary to be updated,
