@@ -2,15 +2,6 @@ sample:
   description: Matter Bridge
   name: Matter Bridge application
 tests:
-  applications.matter_bridge.debug:
-    sysbuild: true
-    build_only: true
-    extra_args: CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
-      CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
-    integration_platforms:
-      - nrf7002dk/nrf5340/cpuapp
-    platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: sysbuild
   applications.matter_bridge.release:
     sysbuild: true
     build_only: true
@@ -26,12 +17,11 @@ tests:
     build_only: true
     extra_args: CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
-      CONFIG_LTO=y CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
     tags: sysbuild
-  applications.matter_bridge.smp_dfu:
+  applications.matter_bridge.lto.smp_dfu:
     sysbuild: true
     build_only: true
     extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y
@@ -41,7 +31,7 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
     tags: sysbuild
-  applications.matter_bridge.br_ble:
+  applications.matter_bridge.lto.br_ble:
     sysbuild: true
     build_only: true
     extra_args: CONFIG_BRIDGED_DEVICE_BT=y
@@ -61,18 +51,7 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
     tags: sysbuild
-  applications.matter_bridge.lto.br_ble:
-    sysbuild: true
-    build_only: true
-    extra_args: CONFIG_BRIDGED_DEVICE_BT=y
-      CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
-      CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
-      CONFIG_LTO=y CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
-    integration_platforms:
-      - nrf7002dk/nrf5340/cpuapp
-    platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: sysbuild
-  applications.matter_bridge.nrf70ek:
+  applications.matter_bridge.lto.nrf70ek:
     sysbuild: true
     build_only: true
     extra_args: matter_bridge_SHIELD=nrf7002ek SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y
@@ -83,7 +62,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: sysbuild
-  applications.matter_bridge.memory_profiling:
+  applications.matter_bridge.lto.memory_profiling:
     sysbuild: true
     build_only: true
     extra_args: CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
