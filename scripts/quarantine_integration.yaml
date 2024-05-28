@@ -68,12 +68,9 @@
     - sample.matter.thermostat.release
     - sample.matter.thermostat.lto
     - applications.matter_bridge.release
-    - applications.matter_bridge.debug
     - applications.matter_bridge.lto
-    - applications.matter_bridge.br_ble
-    - applications.matter_bridge.lto.br_ble
     - sample.matter.thermostat.ext_temp
-    - applications.matter_bridge.memory_profiling
+    - applications.matter_bridge.lto.memory_profiling
     - sample.matter.light_bulb.memory_profiling
   platforms:
     - nrf7002dk/nrf5340/cpuapp

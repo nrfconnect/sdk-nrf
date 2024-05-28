@@ -5,7 +5,6 @@
 
 
 - scenarios:
-    - applications.matter_bridge.memory_profiling
     - sample.matter.light_bulb.memory_profiling
   platforms:
     - nrf7002dk/nrf5340/cpuapp
