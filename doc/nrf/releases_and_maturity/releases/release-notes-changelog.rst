@@ -603,6 +603,10 @@ Cellular samples
 
   * Updated the sample to use the :c:macro:`SO_RAI` socket option with values :c:macro:`RAI_LAST` and :c:macro:`RAI_ONGOING` instead of the deprecated socket options :c:macro:`SO_RAI_LAST` and :c:macro:`SO_RAI_ONGOING`.
 
+* :ref:`fmfu_smp_svr_sample` sample:
+
+  * Removed the unused :ref:`at_cmd_parser_readme` library.
+
 Cryptography samples
 --------------------
 
