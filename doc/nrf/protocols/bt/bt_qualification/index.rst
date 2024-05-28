@@ -90,11 +90,9 @@ Switching to another SDK version
 
 If you want to switch to another |NCS| version for an existing product, complete the following steps:
 
-1. Go to the `Nordic Semiconductor Infocenter`_ and search for the SoC or SiP model you use.
+1. Go to the Compatibility Matrix relevant for the SoC or SiP model you use.
 
-#. Navigate to the relevant Compatibility Matrix directory.
-
-#. Open the Bluetooth QDIDs article and, based on the table, confirm the following:
+#. Open the Bluetooth QDIDs section and, based on the table, confirm the following:
 
    * The version you want to use must be compatible with versions of other Subsystems you want to keep for your product.
    * Relevant Host and SoftDevice Controller Subsystems implemented in the |NCS| version you want to use must be pre-qualified.

@@ -85,7 +85,7 @@ Peripherals other than the serial ports can also cause elevated currents.
 The power management of the Nordic SoCs automatically switches in and out the resources that are needed by the active peripherals.
 Peripherals that need a high frequency clock like UART, PWM, PDM or high frequency timers will show similar currents if enabled.
 
-You can check the current consumption in peripherals for the SoC you are using in the "Power and clock management" section of the Product Specification for your SoC on `Nordic Semiconductor Infocenter`_.
+You can check the current consumption in peripherals for the SoC or the SiP you are using in the relevant Product Specification's "Power and clock management" section.
 For example, for the nRF9160 SiP, see the `Electrical specification of nRF9160`_ page.
 
 .. note::

@@ -40,7 +40,7 @@ nRF5340 Audio development kit
 *****************************
 
 The nRF5340 Audio development kit is a hardware development platform that demonstrates the nRF5340 Audio applications.
-Read the `nRF5340 Audio DK Hardware`_ documentation on Nordic Semiconductor Infocenter for more information about this development kit.
+Read the `nRF5340 Audio DK Hardware`_ documentation for more information about this development kit.
 
 You can :ref:`test the DK out of the box <nrf53_audio_app_dk_testing_out_of_the_box>` before you program it.
 
