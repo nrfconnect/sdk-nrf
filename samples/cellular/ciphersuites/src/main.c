@@ -29,7 +29,9 @@ struct lookup_ciphersuite {
 	bool supported;
 };
 
-/* Taken from the IANA register */
+/* Transport Layer Security (TLS) Parameters taken from the IANA register:
+ * https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml
+ */
 static struct lookup_ciphersuite ciphersuites[] = {
 	{ "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384", 0xC024 },
 	{ "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA", 0xC00A },
