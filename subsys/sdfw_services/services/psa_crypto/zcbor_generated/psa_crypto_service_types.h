@@ -5,7 +5,7 @@
  */
 
 /*
- * Generated using zcbor version 0.8.1
+ * Generated using zcbor version 0.8.99
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 3
  */
@@ -485,32 +485,6 @@ struct psa_generate_key_req {
 	uint32_t psa_generate_key_req_p_key;
 };
 
-struct psa_sign_hash_start_req {
-	uint32_t psa_sign_hash_start_req_p_operation;
-	uint32_t psa_sign_hash_start_req_key;
-	uint32_t psa_sign_hash_start_req_alg;
-	uint32_t psa_sign_hash_start_req_p_hash;
-	uint32_t psa_sign_hash_start_req_hash_length;
-};
-
-struct psa_sign_hash_abort_req {
-	uint32_t psa_sign_hash_abort_req_p_operation;
-};
-
-struct psa_verify_hash_start_req {
-	uint32_t psa_verify_hash_start_req_p_operation;
-	uint32_t psa_verify_hash_start_req_key;
-	uint32_t psa_verify_hash_start_req_alg;
-	uint32_t psa_verify_hash_start_req_p_hash;
-	uint32_t psa_verify_hash_start_req_hash_length;
-	uint32_t psa_verify_hash_start_req_p_signature;
-	uint32_t psa_verify_hash_start_req_signature_length;
-};
-
-struct psa_verify_hash_abort_req {
-	uint32_t psa_verify_hash_abort_req_p_operation;
-};
-
 struct psa_pake_setup_req {
 	uint32_t psa_pake_setup_req_p_handle;
 	uint32_t psa_pake_setup_req_password_key;
@@ -644,10 +618,6 @@ struct psa_crypto_req {
 		struct psa_raw_key_agreement_req psa_crypto_req_msg_psa_raw_key_agreement_req_m;
 		struct psa_generate_random_req psa_crypto_req_msg_psa_generate_random_req_m;
 		struct psa_generate_key_req psa_crypto_req_msg_psa_generate_key_req_m;
-		struct psa_sign_hash_start_req psa_crypto_req_msg_psa_sign_hash_start_req_m;
-		struct psa_sign_hash_abort_req psa_crypto_req_msg_psa_sign_hash_abort_req_m;
-		struct psa_verify_hash_start_req psa_crypto_req_msg_psa_verify_hash_start_req_m;
-		struct psa_verify_hash_abort_req psa_crypto_req_msg_psa_verify_hash_abort_req_m;
 		struct psa_pake_setup_req psa_crypto_req_msg_psa_pake_setup_req_m;
 		struct psa_pake_set_role_req psa_crypto_req_msg_psa_pake_set_role_req_m;
 		struct psa_pake_set_user_req psa_crypto_req_msg_psa_pake_set_user_req_m;
@@ -724,10 +694,6 @@ struct psa_crypto_req {
 		psa_crypto_req_msg_psa_raw_key_agreement_req_m_c,
 		psa_crypto_req_msg_psa_generate_random_req_m_c,
 		psa_crypto_req_msg_psa_generate_key_req_m_c,
-		psa_crypto_req_msg_psa_sign_hash_start_req_m_c,
-		psa_crypto_req_msg_psa_sign_hash_abort_req_m_c,
-		psa_crypto_req_msg_psa_verify_hash_start_req_m_c,
-		psa_crypto_req_msg_psa_verify_hash_abort_req_m_c,
 		psa_crypto_req_msg_psa_pake_setup_req_m_c,
 		psa_crypto_req_msg_psa_pake_set_role_req_m_c,
 		psa_crypto_req_msg_psa_pake_set_user_req_m_c,
