@@ -11,6 +11,7 @@
 #include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
 #elif defined CONFIG_DESKTOP_DFU_BACKEND_SUIT
 #include <sdfw/sdfw_services/suit_service.h>
+#include <dfu/suit_dfu.h>
 #include "desktop_suit.h"
 #endif
 

@@ -96,8 +96,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 		     "SUIT DFU is supported only without Partition Manager");
 	BUILD_ASSERT(DT_NODE_EXISTS(DT_NODELABEL(dfu_partition)),
 		     "DFU partition must be defined in devicetree");
-	#include <sdfw_services/suit_service.h>
+	#include <sdfw/sdfw_services/suit_service.h>
 	#include <suit_plat_mem_util.h>
+	#include "desktop_suit.h"
 	#define BOOTLOADER_NAME	"SUIT"
 	#define DFU_SLOT_ID		FIXED_PARTITION_ID(dfu_partition)
 	#define UPDATE_CANDIDATE_CNT	1
@@ -333,7 +334,8 @@ static void complete_dfu_data_store(void)
 			LOG_ERR("Cannot request the image upgrade (err:%d)", err);
 		}
 #elif CONFIG_SUIT
-		update_candidate.mem = suit_plat_get_nvm_ptr(FIXED_PARTITION_OFFSET(dfu_partition));
+		update_candidate.mem
+			= suit_plat_mem_nvm_ptr_get(FIXED_PARTITION_OFFSET(dfu_partition));
 		update_candidate.size = img_length;
 		LOG_INF("DFU update candidate stored in DFU partition");
 		LOG_INF("Update will be performed on configuration channel reboot request");
@@ -808,37 +810,9 @@ static void handle_image_info_request(uint8_t *data, size_t *size)
 #elif CONFIG_SUIT
 static void handle_image_info_request(uint8_t *data, size_t *size)
 {
-	/* CBOR encoded Manifest Component ID
-	 * nRF Desktop uses default SUIT manifest file (default namespace and name).
-	 */
-	const uint8_t component_id[] = {
-		0x82, /* CBOR type: list, length: 2 */
-		  0x4c, /* CBOR type: byte string, length: 12 */
-		    0x6b, /* CBOR type: text string, length: 11 */
-		      'I', 'N', 'S', 'T',  'L', 'D',  '_',  'M',  'F',   'S',  'T',
-		  0x50, /* CBOR type: byte string, length: 16 */
-		    /* RFC4122 uuid5(uuid5(uuid.NAMESPACE_DNS, 'nordicsemi.com'),
-		     *               'nRF54H20_sample_root')
-		     */
-		    0x3f, 0x6a, 0x3a, 0x4d, 0xcd, 0xfa, 0x58, 0xc5,
-		    0xac, 0xce, 0xf9, 0xf5, 0x84, 0xc4, 0x11, 0x24
-	};
-	/* SUIT uses hash with length of 32 bytes. */
-	uint8_t hash[32] = {0};
-	int alg_id = 0;
 	unsigned int seq_num = 0;
 
-	suit_plat_mreg_t hash_mreg = {
-		.mem = hash,
-		.size = sizeof(hash)
-	};
-	suit_plat_mreg_t manifest_component_id = {
-		.mem = component_id,
-		.size = sizeof(component_id),
-	};
-
-	int err = suit_get_installed_manifest_info(&manifest_component_id, &seq_num, &alg_id,
-						   &hash_mreg);
+	int err = suit_get_installed_manifest_seq_num(&seq_num);
 
 	if (!err) {
 		uint8_t flash_area_id = 0;
