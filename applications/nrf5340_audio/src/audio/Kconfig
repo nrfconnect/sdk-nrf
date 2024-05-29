@@ -189,6 +189,7 @@ choice SW_CODEC_DEFAULT
 config SW_CODEC_LC3
 	bool "LC3"
 	select SW_CODEC_LC3_T2_SOFTWARE
+	select AUDIO_MODULE_T2_LC3_DECODER
 	help
 	  LC3 is the mandatory codec for LE Audio.
 
@@ -302,6 +303,12 @@ config ENCODER_THREAD_PRIO
 	help
 	  This is a preemptible thread.
 
+config LC3_DECODER_THREAD_PRIO
+	int "Priority for the decoder thread"
+	default 3
+	help
+	  This is a preemptible thread.
+
 config AUDIO_DATAPATH_THREAD_PRIO
 	int "Priority for audio datapath thread"
 	default 4
@@ -336,6 +343,11 @@ menu "Stack sizes"
 
 config ENCODER_STACK_SIZE
 	int "Stack size for encoder thread"
+	default 11000 if AUDIO_BIT_DEPTH_16
+	default 21400 if AUDIO_BIT_DEPTH_32
+
+config LC3_DECODER_STACK_SIZE
+	int "Stack size for the decoder thread"
 	default 11000 if AUDIO_BIT_DEPTH_16
 	default 21400 if AUDIO_BIT_DEPTH_32
 

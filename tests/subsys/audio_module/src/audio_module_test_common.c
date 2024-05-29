@@ -95,9 +95,11 @@ int test_data_process_function(struct audio_module_handle_private *handle,
 {
 	ARG_UNUSED(handle);
 
-	memcpy(audio_data_tx, audio_data_rx, sizeof(struct audio_data));
-	memcpy(audio_data_tx->data, audio_data_rx->data, audio_data_rx->data_size);
-	audio_data_tx->data_size = audio_data_rx->data_size;
+	if (audio_data_tx->data != NULL && audio_data_rx->data_size != 0) {
+		memcpy(audio_data_tx, audio_data_rx, sizeof(struct audio_data));
+		memcpy(audio_data_tx->data, audio_data_rx->data, audio_data_rx->data_size);
+		audio_data_tx->data_size = audio_data_rx->data_size;
+	}
 
 	return 0;
 }

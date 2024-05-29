@@ -10,3 +10,10 @@ target_sources(app PRIVATE
 	       ${CMAKE_CURRENT_SOURCE_DIR}/sw_codec_select.c
 	       ${CMAKE_CURRENT_SOURCE_DIR}/le_audio_rx.c
 )
+
+zephyr_include_directories(
+	${ZEPHYR_NRFXLIB_MODULE_DIR}/lc3/include
+	${ZEPHYR_NRFXLIB_MODULE_DIR}/lc3/codec/inc
+	${ZEPHYR_NRFXLIB_MODULE_DIR}/lc3/platform/os/inc
+	${ZEPHYR_NRFXLIB_MODULE_DIR}/lc3/platform/os/baremetal/inc
+)

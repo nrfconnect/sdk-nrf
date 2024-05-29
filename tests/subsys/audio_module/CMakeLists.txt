@@ -17,4 +17,7 @@ target_sources(app PRIVATE
 	src/functional_test.c
 )
 
+target_sources_ifdef(CONFIG_AUDIO_MODULE_TEMPLATE_TEST app
+                     PRIVATE src/template_test.c)
+
 target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/subsys/audio_module)
