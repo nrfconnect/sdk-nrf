@@ -164,6 +164,14 @@ int nrf_modem_lib_bootloader_init(void)
 	return nrf_modem_bootloader_init(&bootloader_init_params);
 }
 
+static void trace_wait(void)
+{
+#if CONFIG_NRF_MODEM_LIB_TRACE
+	/* Make sure that there isn't any pending trace data */
+	nrf_modem_lib_trace_processing_done_wait(K_FOREVER);
+#endif
+}
+
 int nrf_modem_lib_shutdown(void)
 {
 	int ret;
@@ -175,25 +183,26 @@ int nrf_modem_lib_shutdown(void)
 		e->callback(e->context);
 	}
 
-	/* The application must disable both transmit and receive RF circuits, and deactivate
-	 *  LTE and GNSS services, before calling nrf_modem_shutdown.
-	 */
-	ret = nrf_modem_at_scanf(AT_CFUN_READ, "+CFUN: %hu", &mode);
-	if (ret == 1 && (mode != AT_CFUN0_VAL && mode != AT_CFUN4_VAL)) {
-		LOG_WRN("Application should set minimal functional mode (CFUN=0) before "
-			"shutting down modem library");
-		nrf_modem_at_printf("AT+CFUN=0");
+	if (nrf_modem_is_initialized()) {
+		/* The application must disable both transmit and receive RF circuits, and
+		 * deactivate LTE and GNSS services, before calling nrf_modem_shutdown.
+		 */
+		ret = nrf_modem_at_scanf(AT_CFUN_READ, "+CFUN: %hu", &mode);
+		if (ret == 1 && (mode != AT_CFUN0_VAL && mode != AT_CFUN4_VAL)) {
+			LOG_WRN("Application should set minimal functional mode (CFUN=0) before "
+				"shutting down modem library");
+			nrf_modem_at_printf("AT+CFUN=0");
+		}
+
+		nrf_modem_shutdown();
+		trace_wait();
+	} else {
+		/* On a modem fault we need to wait for the trace to complete before turning off
+		 * the Modem.
+		 */
+		trace_wait();
+		nrf_modem_shutdown();
 	}
-
-	nrf_modem_shutdown();
-
-#if CONFIG_NRF_MODEM_LIB_TRACE
-	/* Before returning, make sure that there isn't any
-	 * pending trace data when the library is
-	 * re-initialized.
-	 */
-	nrf_modem_lib_trace_processing_done_wait(K_FOREVER);
-#endif
 
 	return 0;
 }

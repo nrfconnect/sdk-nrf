@@ -299,7 +299,10 @@ trace_reset:
 			LOG_INF("Modem was turned off, no more traces");
 			goto deinit;
 		case -NRF_ENODATA:
-			LOG_INF("No more trace data");
+			LOG_INF("Coredump complete, no more traces");
+			goto deinit;
+		case -NRF_ENOTSUP:
+			LOG_INF("Tracing not supported");
 			goto deinit;
 		case -NRF_EINPROGRESS:
 			__ASSERT(0, "Error in transport backend");

@@ -847,8 +847,12 @@ Modem libraries
     * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_LTE_NET_IF` Kconfig option for sending modem faults to the :ref:`nrf_modem_lib_lte_net_if` when it is enabled.
     * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_FAULT_THREAD_STACK_SIZE` Kconfig option to allow the application to set the modem fault thread stack size.
 
+  * Fixed:
+
+    * An issue with the CFUN hooks when the Modem library is initialized during ``SYS_INIT`` at kernel level and makes calls to the :ref:`nrf_modem_at` interface before the application level initialization is done.
+    * A potential issue where the Modem library would not wait for the modem to complete the coredump before shutting it down after a modem fault.
+
   * Deprecated the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`.
-  * Fixed an issue with the CFUN hooks when the Modem library is initialized during ``SYS_INIT`` at kernel level and makes calls to the :ref:`nrf_modem_at` interface before the application level initialization is done.
   * Removed the deprecated options ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ASYNC`` and ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC``.
 
   * :ref:`nrf_modem_lib_lte_net_if`:
