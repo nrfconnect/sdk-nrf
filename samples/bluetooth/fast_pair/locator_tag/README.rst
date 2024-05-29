@@ -1,13 +1,13 @@
 .. _fast_pair_locator_tag:
 
-Bluetooth: Fast Pair locator tag
+Bluetooth Fast Pair: Locator tag
 ################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Fast Pair locator tag demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>` to create a locator tag device that is compatible with the Android `Find My Device app`_.
+This sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>` to create a locator tag device that is compatible with the Android `Find My Device app`_.
 Locator tag is a small electronic device that can be attached to an object or a person, and is designed to help locate them in case they are missing.
 
 Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth® and Bluetooth LE devices with as little user interaction required as possible.

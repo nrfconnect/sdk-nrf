@@ -1,7 +1,7 @@
-.. _fast_pair_samples:
+.. _bt_fast_pair_samples:
 
-Fast Pair samples
-#################
+Bluetooth Fast Pair samples
+###########################
 
 .. toctree::
    :maxdepth: 1
