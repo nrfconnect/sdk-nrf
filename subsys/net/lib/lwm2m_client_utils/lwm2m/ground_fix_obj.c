@@ -69,6 +69,22 @@ void ground_fix_set_result_code_cb(ground_fix_get_result_code_cb_t cb)
 	result_code_cb = cb;
 }
 
+static const char *gfix_result_str(int32_t result)
+{
+	switch (result) {
+	case LOCATION_ASSIST_RESULT_CODE_OK:
+		return "OK";
+	case LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR:
+		return "Permanent error";
+	case LOCATION_ASSIST_RESULT_CODE_TEMP_ERR:
+		return "Temporary error";
+	case LOCATION_ASSIST_RESULT_CODE_NO_RESP_ERR:
+		return "No response";
+	default:
+		return "Unknown";
+	}
+}
+
 static int ground_fix_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
 				     uint16_t res_inst_id, uint8_t *data,
 				     uint16_t data_len, bool last_block,
@@ -80,13 +96,16 @@ static int ground_fix_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
 
 	result =  *(int32_t *)data;
 
+	if (result != LOCATION_ASSIST_RESULT_CODE_OK) {
+		LOG_ERR("Ground Fix result %s (%d)", gfix_result_str(result), result);
+	} else {
+		LOG_INF("Ground Fix result %s (%d)", gfix_result_str(result), result);
+	}
+
 	if (result_code_cb) {
 		result_code_cb(result);
 	}
 
-	if (result != LOCATION_ASSIST_RESULT_CODE_OK) {
-		LOG_ERR("Result code %d", result);
-	}
 	return 0;
 }
 
