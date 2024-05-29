@@ -91,7 +91,7 @@ The sample shows the following output:
    TLS ciphersuites sample started
    certificate match
    waiting for network.. OK
-   trying all ciphersuites to find which ones are supported...
+   trying all ciphersuites to find out which ones are supported...
    trying ciphersuite: TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
    connecting to example.com... connect() failed, err: 95, Operation not supported on socket
    trying ciphersuite: TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
