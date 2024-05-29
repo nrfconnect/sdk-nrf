@@ -1,0 +1,131 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Audio Modules"
+
+config AUDIO_MODULE_LC3_DECODER_T2
+	bool "Select the T2 software LC3 Decoder"
+	depends on AUDIO_MODULE
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
+module = AUDIO_MODULE_LC3_DECODER_T2
+module-str = lc3_decoder_t2
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+#----------------------------------------------------------------------------#
+
+menu "LC3"
+visible if SW_CODEC_LC3
+
+config SW_LC3_PLC_DISABLED
+	bool "Skip PLC on a bad frame and fill the output buffer(s) with zeros instead"
+	default n
+	select LC3_PLC_DISABLED
+
+config SW_LC3_BITRATE_MAX
+	int "Max bitrate"
+	default 124000
+
+config SW_LC3_BITRATE_MIN
+	int "Min bitrate"
+	default 32000
+
+config SW_LC3_BITRATE
+	int
+	range SW_LC3_BITRATE_MIN SW_LC3_BITRATE_MAX
+	default 96000
+
+choice SW_LC3_FRAME_DURATION
+	prompt "Select frame duration - 7.5 ms frame duration is not tested"
+	default SW_LC3_FRAME_DURATION_10_MS
+	help
+	  LC3 supports frame duration of 7.5 and 10 ms.
+	  If USB is selected as audio source, we should
+	  have a frame duration of 10 ms since USB sends 1ms at a time.
+
+config SW_LC3_FRAME_DURATION_7_5_MS
+	bool "7.5 ms"
+
+config SW_LC3_FRAME_DURATION_10_MS
+	bool "10 ms"
+endchoice
+
+config SW_LC3_FRAME_DURATION_US
+	int
+	default 7500 if SW_LC3_FRAME_DURATION_7_5_MS
+	default 10000 if SW_LC3_FRAME_DURATION_10_MS
+	help
+	  Audio frame duration in µs.
+
+choice SW_LC3_SAMPLE_RATE
+	prompt "Audio sample rate"
+	default SW_LC3_SAMPLE_RATE_16000_HZ if BT_BAP_BROADCAST_16_2_1 || BT_BAP_BROADCAST_16_2_2 || BT_BAP_UNICAST_16_2_1
+	default SW_LC3_SAMPLE_RATE_24000_HZ if BT_BAP_BROADCAST_24_2_1 || BT_BAP_BROADCAST_24_2_2 || BT_BAP_UNICAST_24_2_1
+	default SW_LC3_SAMPLE_RATE_48000_HZ
+	help
+	  This will be selected based on the BAP settings.
+
+config SW_LC3_SAMPLE_RATE_16000_HZ
+	bool "16 kHz"
+	help
+	  Sample rate of 16kHz is currently only valid for I2S/line-in.
+
+config SW_LC3_SAMPLE_RATE_24000_HZ
+	bool "24 kHz"
+	help
+	  Sample rate of 24kHz is currently only valid for I2S/line-in.
+
+config SW_LC3_SAMPLE_RATE_48000_HZ
+	bool "48 kHz"
+	help
+	  Sample rate of 48kHz is valid for both I2S/line-in and USB.
+endchoice
+
+config SW_LC3_SAMPLE_RATE_HZ
+	int
+	default 16000 if SW_LC3_SAMPLE_RATE_16000_HZ
+	default 24000 if SW_LC3_SAMPLE_RATE_24000_HZ
+	default 48000 if SW_LC3_SAMPLE_RATE_48000_HZ
+	help
+	  I2S supports 16, 24, and 48 kHz sample rates for both input and output.
+	  USB supports only 48 kHz for input.
+
+choice SW_LC3_BIT_DEPTH
+	prompt "Audio bit depth"
+	default SW_LC3_BIT_DEPTH_16
+	help
+	  Select the bit depth for audio.
+
+config SW_LC3_BIT_DEPTH_16
+	bool "16 bit audio"
+
+config SW_LC3_BIT_DEPTH_32
+	bool "32 bit audio"
+endchoice
+
+config SW_LC3_BIT_DEPTH_BITS
+	int
+	default 16 if SW_LC3_BIT_DEPTH_16
+	default 32 if SW_LC3_BIT_DEPTH_32
+	help
+	  Bit depth of one sample in storage.
+
+config SW_LC3_BIT_DEPTH_OCTETS
+	int
+	default 2 if SW_LC3_BIT_DEPTH_16
+	default 4 if SW_LC3_BIT_DEPTH_32
+	help
+	  Bit depth of one sample in storage given in octets.
+
+#----------------------------------------------------------------------------#
+
+osource "../nrfxlib/lc3/Kconfig"
+
+endmenu # LC3
+endmenu # Audio Modules

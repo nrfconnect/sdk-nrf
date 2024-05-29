@@ -1,0 +1,147 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Audio Modules"
+
+config AUDIO_MODULE_T2_LC3_DECODER
+	bool "Enable the T2 LC3 decoder"
+	default y
+	help
+	  Enable the T2 LC3 decoder audio module in test mode.
+
+config AUDIO_MODULE_T2_LC3_DECODER_TEST
+	bool "Enable the T2 LC3 decoder"
+	default n
+	help
+	  Enable the T2 LC3 decoder audio module in test mode.
+
+
+config LC3_DEC_CHANNELS_MAX
+	int "Maximum audio channels"
+	default 2
+	help
+	  The maximum audio channels the decoder can support.
+	  
+choice LC3_DECODER_FRAME_DURATION
+	prompt "Select frame duration - 7.5 ms frame duration is not tested"
+	default LC3_DECODER_FRAME_DURATION_10_MS
+	help
+	  LC3 supports frame duration of 7.5 and 10 ms.
+	  
+config LC3_DECODER_FRAME_DURATION_7_5_MS
+	bool "7.5 ms"
+
+config LC3_DECODER_FRAME_DURATION_10_MS
+	bool "10 ms"
+endchoice
+
+config LC3_DECODER_FRAME_DURATION_US
+	int
+	default 7500 if LC3_DECODER_FRAME_DURATION_7_5_MS
+	default 10000 if LC3_DECODER_FRAME_DURATION_10_MS
+	help
+	  Audio frame duration in µs.
+
+choice LC3_DECODER_SYSTEM_SAMPLE_RATE
+	prompt "System audio sample rate"
+	default LC3_DECODER_SAMPLE_RATE_48000_HZ
+	help
+	  This configuration reflects the decoding sample rate.
+
+config LC3_DECODER_SAMPLE_RATE_8000_HZ
+	bool "8 kHz"
+	help
+	  Sample rate of 16kHz.
+
+config LC3_DECODER_SAMPLE_RATE_16000_HZ
+	bool "16 kHz"
+	help
+	  Sample rate of 16kHz.
+
+config LC3_DECODER_SAMPLE_RATE_24000_HZ
+	bool "24 kHz"
+	help
+	  Sample rate of 24kHz.
+
+config LC3_DECODER_SAMPLE_RATE_32000_HZ
+	bool "32 kHz"
+	help
+	  Sample rate of 16kHz.
+
+config LC3_DECODER_SAMPLE_RATE_44100_HZ
+	bool "44.1 kHz"
+	help
+	  Sample rate of 16kHz.
+
+config LC3_DECODER_SAMPLE_RATE_48000_HZ
+	bool "48 kHz"
+	help
+	  Sample rate of 48kHz.
+endchoice
+
+config LC3_DECODER_SAMPLE_RATE_HZ
+	int
+	default 8000  if LC3_DECODER_SAMPLE_RATE_8000_HZ
+	default 16000 if LC3_DECODER_SAMPLE_RATE_16000_HZ
+	default 24000 if LC3_DECODER_SAMPLE_RATE_24000_HZ
+	default 32000 if LC3_DECODER_SAMPLE_RATE_32000_HZ
+	default 44100 if LC3_DECODER_SAMPLE_RATE_44100_HZ
+	default 48000 if LC3_DECODER_SAMPLE_RATE_48000_HZ
+	help
+	  I2S supports 16, 24, and 48 kHz sample rates for both input and output.
+	  USB supports only 48 kHz for input.
+
+choice LC3_DECODER_BIT_DEPTH
+	prompt "Audio bit depth"
+	default LC3_DECODER_BIT_DEPTH_16
+	help
+	  Select the bit depth for audio.
+
+config LC3_DECODER_BIT_DEPTH_16
+	bool "16 bit audio"
+
+config LC3_DECODER_BIT_DEPTH_32
+	bool "32 bit audio"
+endchoice
+
+config LC3_DECODER_BIT_DEPTH_BITS
+	int
+	default 16 if LC3_DECODER_BIT_DEPTH_16
+	default 32 if LC3_DECODER_BIT_DEPTH_32
+	help
+	  Bit depth of one sample in storage.
+
+config LC3_DECODER_BIT_DEPTH_OCTETS
+	int
+	default 2 if LC3_DECODER_BIT_DEPTH_16
+	default 4 if LC3_DECODER_BIT_DEPTH_32
+	help
+	  Bit depth of one sample in storage given in octets.
+
+config LC3_DECODER_THREAD_PRIO
+	int "Priority for the decoder thread"
+	default 3
+	help
+	  This is a preemptible thread.
+
+config LC3_DECODER_STACK_SIZE
+	int "Stack size for the decoder thread"
+	default 11000 if LC3_DECODER_BIT_DEPTH_16
+	default 21400 if LC3_DECODER_BIT_DEPTH_32
+	help
+	  The modules thread stack size.
+
+osource "../nrfxlib/lc3/Kconfig"
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
+module = AUDIO_MODULE_LC3_DECODER
+module-str = t2_lc3_decoder
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+endmenu # Audio Modules

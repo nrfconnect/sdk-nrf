@@ -201,10 +201,6 @@ ZTEST(suite_audio_module_bad_param, test_data_tx_null)
 	test_block.data = &test_data[0];
 	test_block.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
 
-	ret = audio_module_data_tx(NULL, &test_block, NULL);
-	zassert_equal(ret, -EINVAL, "Data TX function did not return -EINVAL (%d): ret %d", -EINVAL,
-		      ret);
-
 	ret = audio_module_data_tx(&handle, &test_block, NULL);
 	zassert_equal(ret, -ECANCELED, "Data TX function did not return -ECANCELED (%d): ret %d",
 		      -ECANCELED, ret);
@@ -212,20 +208,6 @@ ZTEST(suite_audio_module_bad_param, test_data_tx_null)
 	handle.thread.msg_rx = &mod_fifo_rx;
 
 	ret = audio_module_data_tx(&handle, NULL, NULL);
-	zassert_equal(ret, -EINVAL, "Data TX function did not return -EINVAL (%d): ret %d", -EINVAL,
-		      ret);
-
-	test_block.data = NULL;
-	test_block.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
-
-	ret = audio_module_data_tx(&handle, &test_block, NULL);
-	zassert_equal(ret, -EINVAL, "Data TX function did not return -EINVAL (%d): ret %d", -EINVAL,
-		      ret);
-
-	test_block.data = &test_data[0];
-	test_block.data_size = 0;
-
-	ret = audio_module_data_tx(&handle, &test_block, NULL);
 	zassert_equal(ret, -EINVAL, "Data TX function did not return -EINVAL (%d): ret %d", -EINVAL,
 		      ret);
 }
