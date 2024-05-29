@@ -13,6 +13,7 @@
 		pressure-sensor = &bme680;
 		iaq-sensor = &bme680;
 		accelerometer = &accelerometer_lp;
+		ext-flash = &flash_ext;
 	};
 };
 
