@@ -112,6 +112,10 @@ enum cracen_kd_state {
 	/* TLS12 PSK TO MS states: */
 	CRACEN_KD_STATE_TLS12_PSK_TO_MS_INIT = 0x100,
 	CRACEN_KD_STATE_TLS12_PSK_TO_MS_OUTPUT,
+
+	/* TLS12 EC J-PAKE to PMS state: */
+	CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT = 0x200,
+	CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_OUTPUT
 };
 
 /* States to keep track of when the AEAD sxsymcrypt context has been initialized with xxx_create and
