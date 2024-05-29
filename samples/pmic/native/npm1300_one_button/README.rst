@@ -7,8 +7,7 @@ nPM1300: One button
    :local:
    :depth: 2
 
-The One button sample demonstrates how to support wake-up, shutdown and user interactions through
-a single button connected to the `nPM1300 <nPM1300 product website_>`_.
+The One button sample demonstrates how to support wake-up, shutdown, and user interactions of `nPM1300 <nPM1300 product website_>`_ using a single button on a compatible development kit that is connected to the PMIC.
 
 Requirements
 ************
@@ -17,19 +16,22 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_.
+The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_ that you need to connect to the development kit as described in `Wiring`_.
 
 Overview
 ********
 
-The nPM1300 **SHPHLD/RESET** button controls the device state.
+The nPM1300's **SHPHLD/RESET** button controls the device state.
 The sample controls an LED, load switch and nPM1300 power mode based on button press duration.
 
-The nPM1300 **GPIO3** pin is configured as an interrupt output, and is used to signal button press
-and USB detection events to the host.
+The nPM1300's **GPIO3** pin is configured as an interrupt output, and is used to signal button press and USB detection events to the host.
+
+.. _npm1300_one_button_wiring:
 
 Wiring
 ******
+
+To connect your DK to the nPM1300 EK, complete the following steps:
 
 #. Make the following connections on the nPM1300 EK:
 
@@ -120,8 +122,7 @@ In a production design, this will power off any device that is powered from an n
 The long press reset performs a full power cycle of the nPM1300 and resets all setting to powerup defaults.
 In a production design, this will reset any device that is powered from an nPM1300 output.
 
-When using a separately powered development kit, you must restart the application to reconfigure
-the nPM1300 after exiting ship mode or long press reset.
+When using a separately powered development kit, you must restart the application to reconfigure the nPM1300 after exiting ship mode or long press reset.
 
 Dependencies
 ************

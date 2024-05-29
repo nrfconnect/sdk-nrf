@@ -1,0 +1,133 @@
+.. _ug_npm1300_developing:
+.. _ug_npm1300_gs:
+
+Developing with the nPM1300 PMIC
+################################
+
+.. contents::
+   :local:
+   :depth: 2
+
+The |NCS| provides support for development with the `nPM1300 Power Management IC (PMIC) <nPM1300 product website_>`_, using the `nPM1300 Evaluation Kit (PCA10152) <nPM1300 EK product page_>`_.
+
+.. _ug_npm1300_features:
+
+nPM1300 features
+****************
+
+nPM1300 is a PMIC with a linear-mode lithium-ion, lithium-polymer, and lithium ferro-phosphate battery charger.
+It has two dual-mode buck regulators, two dual purpose LDO/load switches, three LED drivers, and five GPIOs.
+
+nPM1300 is the perfect companion for nRF52, nRF53, and nRF54 Series SoCs, and the nRF91 Series SiP.
+It is ideal for compact and advanced IoT products, such as wearables and portable medical applications.
+
+For additional information on the nPM1300 PMIC and associated kits, see the `nPM1300`_ technical documentation, especially the `nPM1300 EK User Guide`_.
+
+.. _ug_npm1300_compatible_boards:
+
+Boards compatible with nPM1300
+******************************
+
+The following boards in the `Zephyr`_ open source project and in the |NCS| are compatible with nPM1300 PMIC through the nPM1300 EK:
+
+.. list-table::
+   :header-rows: 1
+
+   * - DK or Prototype platform
+     - Companion module
+     - PCA number
+     - Board target
+     - Documentation
+   * - :ref:`zephyr:nrf9160dk_nrf9160`
+     - nPM1300 EK
+     - PCA10090
+     - ``nrf9160dk/nrf9160/ns``
+     - | `Product Specification <nRF9160 Product Specification_>`_
+       | :ref:`Getting started <ug_nrf9160_gs>`
+       | `User Guide <nRF9160 DK Hardware_>`_
+   * - :ref:`zephyr:nrf54h20dk_nrf54h20`
+     - nPM1300 EK
+     - PCA10175
+     - | ``nrf54h20dk_nrf54h20_cpuapp``
+       | ``nrf54h20dk_nrf54h20_cpurad``
+       | ``nrf54h20dk_nrf54h20_cpuppr``
+     - | `Objective Product Specification <nRF54H20 Objective Product Specification 0.3.1_>`_
+       | :ref:`Getting started <ug_nrf54h20_gs>`
+   * - :ref:`zephyr:nrf54l15pdk_nrf54l15`
+     - nPM1300 EK
+     - PCA10156
+     - | ``nrf54l15pdk/nrf54l15/cpuapp`` for the PDK revision v0.2.1, AB0-ES7 (Engineering A).
+       | ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` for the PDK revisions v0.3.0 and v0.7.0 (Engineering A).
+     - --
+   * - :ref:`zephyr:nrf5340dk_nrf5340`
+     - nPM1300 EK
+     - PCA10095
+     - ``nrf5340dk/nrf5340/cpuapp``
+     - | `Product Specification <nRF5340 Product Specification_>`_
+       | :ref:`Getting started <ug_nrf5340_gs>`
+       | `User Guide <nRF5340 DK User Guide_>`_
+   * - :ref:`zephyr:nrf52840dk_nrf52840`
+     - nPM1300 EK
+     - PCA10056
+     - ``nrf52840dk/nrf52840``
+     - | `Product Specification <nRF52840 Product Specification_>`_
+       | :ref:`Getting started <ug_nrf52_gs>`
+       | `User Guide <nRF52840 DK User Guide_>`_
+   * - :ref:`zephyr:nrf52dk_nrf52832`
+     - nPM1300 EK
+     - PCA10040
+     - ``nrf52dk/nrf52832``
+     - | `Product Specification <nRF52832 Product Specification_>`_
+       | :ref:`Getting started <ug_nrf52_gs>`
+       | `User Guide <nRF52 DK User Guide_>`_
+
+PMIC samples and libraries
+**************************
+
+The |NCS| provides several :ref:`pmic_samples` that demonstrate the features and capabilities of nPM1300 using the nPM1300 EK.
+
+The |NCS| also provides the :ref:`nrfxlib:nrf_fuel_gauge` that processes battery measurements made by PMICs and provides a state-of-charge (SOC) prediction, along with other metrics.
+
+PMIC tools
+**********
+
+The :ref:`nrfxlib:nrf_fuel_gauge` is supported by the `nPM PowerUP`_ application from `nRF Connect for Desktop`_.
+You can use this application together with the library to derive a battery model for your product.
+For this purpose, you can use the nPM1300 EK either alone (to use the built-in battery models) or together with the additional `nPM Fuel Gauge Board`_ (to generate a custom battery model).
+See `Evaluate nPM1300 using nPM PowerUP`_ in the `nPM1300 EK User Guide`_ for more information.
+
+.. _ug_npm1300_developing_overlay_import:
+
+Importing an overlay from nPM PowerUP
+=====================================
+
+The nPM PowerUP application from nRF Connect for Desktop supports exporting a full configuration of the nPM1300 in devicetree overlay format.
+You can use this exported overlay file to quickly configure the nPM1300 in your application.
+
+If there is no overlay file for your project, include the file directly in your application folder with the name :file:`app.overlay`.
+
+If an overlay already exists, append the contents of the generated overlay to the existing file.
+
+For more information about devicetree overlays, see :ref:`zephyr:use-dt-overlays`.
+
+.. _npm1300_building:
+
+Building and programming for nPM1300
+************************************
+
+There is no firmware for nPM1300 that can be built and programmed onto the PMIC.
+
+Instead, you need to connect the compatible development kit to nPM1300 and program that kit with the firmware.
+
+Connecting the development kit to nPM1300
+=========================================
+
+If you are using the nRF5340 DK, follow the steps in `Use the nPM1300 EK with an nRF5340 DK`_ in the `nPM1300 EK User Guide`_.
+For other Nordic Semiconductor kits, use the wiring steps in the documentation for :ref:`pmic_samples` as reference (:ref:`wiring for the Fuel gauge sample <npm1300_fuel_gauge_wiring>` and :ref:`wiring for the One button sample <npm1300_one_button_wiring>`, respectively).
+
+If you are using custom hardware, the wiring process is similar to the `one for the nRF5340 DK <Use the nPM1300 EK with an nRF5340 DK_>`_, but board-specific steps will be different.
+
+Programming the development kit with nPM1300-compatible firmware
+================================================================
+
+Follow the detailed instructions in the building and programming sections of the :ref:`pmic_samples` documentation to build the sample and flash it to the compatible DK.
