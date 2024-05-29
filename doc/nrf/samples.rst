@@ -28,6 +28,7 @@ If you want to list samples available for one or more specific boards, `use the 
 
    samples/amazon_sidewalk
    samples/bl
+   samples/fast_pair
    samples/mesh
    samples/cellular
    samples/crypto
@@ -35,7 +36,6 @@ If you want to list samples available for one or more specific boards, `use the 
    samples/dect
    samples/edge
    samples/esb
-   samples/fast_pair
    samples/gazell
    samples/keys
    samples/matter
