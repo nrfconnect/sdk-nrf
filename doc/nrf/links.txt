@@ -201,37 +201,7 @@
 .. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/azure/GettingStarted/Index.html
 .. _`nRF Asset Tracker Memfault integration`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/memfault/Index.html
 
-.. _`latest release notes for nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect/release_notes/connect/2022.11.140.html
-.. _`nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect
-.. _`Configuring with nRF Kconfig`: https://nrfconnect.github.io/vscode-nrf-connect/guides/work_with_kconfig.html
-.. _`How to create devicetree files`: https://nrfconnect.github.io/vscode-nrf-connect/guides/how_to_create_dt_files.html
-.. _`How to work with Devicetree Visual Editor`: https://nrfconnect.github.io/vscode-nrf-connect/guides/work_with_devicetree_editor.html
-.. _`Devicetree support overview`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html#devicetree-overview
-.. _`Devicetree language support`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html#devicetree-language-support
-.. _`How to work with boards and devices`: https://nrfconnect.github.io/vscode-nrf-connect/guides/bd_work_with_boards.html
-.. _`How to install the extension`:
-.. _`Installing on Linux`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/install.html
-.. _`How to build an application`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/build_app_ncs.html
-.. _`Migrating IDE`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#open-an-existing-application
-.. _`How to change SDK and toolchain versions`: https://nrfconnect.github.io/vscode-nrf-connect/guides/extension_migrate_sdk.html
-.. _`How to flash an application`:
-.. _`How to debug an application`:
-.. _`How to connect to the terminal`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/quick_debug.html
-.. _`Debugging overview`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_concepts.html
-.. _`How to debug`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_use.html
-.. _`How to debug applications for a multi-core System on Chip`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_use.html#how-to-debug-applications-for-a-multi-core-system-on-chip
-.. _`source control with west`: https://nrfconnect.github.io/vscode-nrf-connect/guides/west_about.html
-.. _`west module management`: https://nrfconnect.github.io/vscode-nrf-connect/guides/west_module_management.html
-.. _`Custom launch and debug configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_advanced.html#custom-launch-and-debug-configurations
-.. _`Binding custom tasks to actions`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_bind_tasks.html
-.. _`Application-specific flash options`: https://nrfconnect.github.io/vscode-nrf-connect/guides/bd_work_with_boards.html#how-to-flash-boards
-.. _`CMake build system`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_overview.html#cmake-build-system
-.. _`How to work with build configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_config.html
-.. _`Details View`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_details.html
-.. _`Memory report`: https://nrfconnect.github.io/vscode-nrf-connect/guides/memory_overview.html
-.. _`Kconfig action in the Actions View`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_actions.html
-.. _`Create a new application`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#create-a-new-application
-.. _`Browse samples`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#browse-samples
+
 
 .. _`SPAKE2+ Python Tool page`: https://project-chip.github.io/connectedhomeip-doc/scripts/tools/spake2p/README.html
 
@@ -764,6 +734,39 @@
 .. _`Errata 117`: https://docs.nordicsemi.com/bundle/errata_nRF5340_Rev1/page/ERR/nRF5340/Rev1/latest/anomaly_340_117.html
 
 .. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://docs.nordicsemi.com/bundle/SA/resource/SA-2023-234-v1_1.pdf
+
+.. _`latest release notes for nRF Connect for Visual Studio Code`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/release_notes/connect/2024.2.214.html
+.. _`nRF Connect for Visual Studio Code`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/index.html
+.. _`Configuring with nRF Kconfig`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/work_with_kconfig.html
+.. _`How to create devicetree files`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/how_to_create_dt_files.html
+.. _`How to work with Devicetree Visual Editor`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/work_with_devicetree_editor.html
+.. _`Devicetree support overview`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/ncs_configure_app.html#devicetree-overview
+.. _`Devicetree language support`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/ncs_configure_app.html#devicetree-language-support
+.. _`How to work with boards and devices`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/bd_work_with_boards.html
+.. _`How to install the extension`:
+.. _`Installing on Linux`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/get_started/install.html
+.. _`How to build an application`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/get_started/build_app_ncs.html
+.. _`Migrating IDE`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#open-an-existing-application
+.. _`How to change SDK and toolchain versions`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/extension_migrate_sdk.html
+.. _`How to flash an application`:
+.. _`How to debug an application`:
+.. _`How to connect to the terminal`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/get_started/quick_debug.html
+.. _`Debugging overview`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_concepts.html
+.. _`How to debug`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_use.html
+.. _`How to debug applications for a multi-core System on Chip`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_use.html#how-to-debug-applications-for-a-multi-core-system-on-chip
+.. _`source control with west`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/west_about.html
+.. _`west module management`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/west_module_management.html
+.. _`Custom launch and debug configurations`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_custom.html
+.. _`Binding custom tasks to actions`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_bind_tasks.html
+.. _`Application-specific flash options`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/bd_work_with_boards.html#how-to-flash-boards
+.. _`CMake build system`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_overview.html#cmake-build-system
+.. _`How to work with build configurations`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_config.html
+.. _`Details View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_details.html
+.. _`Memory report`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/memory_overview.html
+.. _`Kconfig action in the Actions View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_actions.html
+.. _`Create a new application`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#create-a-new-application
+.. _`Browse samples`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#browse-samples
+.. _`nRF Terminal documentation`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_panel.html#nrf-connect-and-nrf-terminal-profiles
 
 .. ### Source: academy.nordicsemi.com
 
@@ -1541,7 +1544,7 @@
 .. _`10.23.3_ec macOS, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-osx.zip
 
 .. _`Git for Windows`: https://git-scm.com/download/win
-.. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html
+
 
 .. _`curl`: https://curl.se/
 
