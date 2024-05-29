@@ -6,10 +6,6 @@
 	};
 };
 
-&cpuapp_dma_region {
-	status="okay";
-};
-
 &pinctrl {
 	i2c130_default: i2c130_default {
 		group1 {
@@ -28,7 +24,7 @@
 		};
 	};
 
-	spi130_default: spi130_default {
+	spi131_default: spi131_default {
 		group1 {
 			psels = <NRF_PSEL(SPIM_MISO, 1, 6)>,
 				<NRF_PSEL(SPIM_MOSI, 1, 5)>,
@@ -36,7 +32,7 @@
 		};
 	};
 
-	spi130_sleep: spi130_sleep {
+	spi131_sleep: spi131_sleep {
 		group1 {
 			psels = <NRF_PSEL(SPIM_MISO, 1, 6)>,
 				<NRF_PSEL(SPIM_MOSI, 1, 5)>,
@@ -59,15 +55,28 @@
 		status = "okay";
 		reg = <0x76>;
 	};
+	zephyr,concat-buf-size = <255>;
 };
 
-&spi130 {
+&gpio1 {
 	status = "okay";
-	pinctrl-0 = <&spi130_default>;
-	pinctrl-1 = <&spi130_sleep>;
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <7>;
+};
+
+&spi131 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi131_default>;
+	pinctrl-1 = <&spi131_sleep>;
 	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
 	cs-gpios = <&gpio0 4 GPIO_ACTIVE_LOW>,
 				<&gpio1 2 GPIO_ACTIVE_LOW>;
+	memory-regions = <&cpuapp_dma_region>;
 
 
 	bmi270: bmi270@0 {
