@@ -124,6 +124,11 @@ Matter
 
 * Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
 * Increased the number of available packet buffers in the Matter stack to avoid packet allocation issues.
+* Removed the :file:`Kconfig.mcuboot.defaults`, :file:`Kconfig.hci_ipc.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` Kconfig files that stored a default configuration for the child images.
+  This was done because of the sysbuild integration and the child images deprecation.
+  The configurations are now applied using the configuration files located in the sample's or application's directory.
+
+  To see how to migrate an application from the previous to the current approach, see the :ref:`migration guide <migration_2.7>`.
 
 Matter fork
 +++++++++++

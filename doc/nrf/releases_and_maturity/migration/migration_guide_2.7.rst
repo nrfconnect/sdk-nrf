@@ -125,6 +125,15 @@ Matter
       * All Partition Manager configuration files (:file:`pm_static` files) have been removed from the :file:`configuration` directory.
         Instead, a :file:`pm_static_<BOARD>` file has been created for each target board and placed in the samples' directories.
         Setting the ``PM_STATIC_YML_FILE`` argument in the :file:`CMakeLists.txt` file has been removed, as it is no longer needed.
+      * Configuration files :file:`Kconfig.mcuboot.defaults`, :file:`Kconfig.hci_ipc.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` that stored a default configuration for the child images have been removed.
+        This was done because of the sysbuild integration and child images deprecation.
+
+        The Matter samples and applications have been migrated to use sysbuild, though you can still use the child images.
+        To migrate an application from the previous to the new version and keep using child images, complete the following steps:
+
+        1. Copy the content of the image configuration file :file:`prj.conf` located in the `sysbuild/<image_name>` directory (for example,  :file:`sysbuild/mcuboot`) to the :file:`prj.conf` file located in the :file:`child_image/<image_name>` directory.
+        #. Copy the content of the board configuration file located in the :file:`sysbuild/<image_name>/boards` directory (for example, :file:`sysbuild/mcuboot/boards/nrf52840dk_nrf52840.conf`) to the board file located in the :file:`child_image/<image_name>/boards` directory.
+
 
 Libraries
 =========
