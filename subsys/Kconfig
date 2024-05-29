@@ -39,4 +39,5 @@ rsource "trusted_storage/Kconfig"
 rsource "sdfw_services/Kconfig"
 rsource "suit/Kconfig"
 rsource "dult/Kconfig"
+rsource "audio_modules/lc3/t2/decoder/Kconfig"
 endmenu

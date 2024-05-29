@@ -3,12 +3,11 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-
-menu "Audio Module"
+menu "Audio Modules"
 
 config AUDIO_MODULE
 	tristate "Enable the audio module"
-	depends on DATA_FIFO || AUDIO_MODULE_TEST
+	depends on DATA_FIFO || AUDIO_MODULE_TEST || AUDIO_MODULE_TEMPLATE_TEST
 
 config AUDIO_MODULE_TEST
 	bool "Enable test mode"
@@ -16,12 +15,26 @@ config AUDIO_MODULE_TEST
 	help
 	  Enable the test mode for the audio module.
 
+config AUDIO_MODULE_TEMPLATE_TEST
+	bool "Enable template test mode"
+	default n
+	help
+	  Enable the test mode for the audio module template.
+
 config AUDIO_MODULE_NAME_SIZE
 	int "Maximum size for module naming in characters"
 	default 20
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
 
 module = AUDIO_MODULE
 module-str = audio_module
 source "subsys/logging/Kconfig.template.log_config"
 
-endmenu # Audio Module
+module = AUDIO_MODULE_TEMPLATE
+module-str = audio_module
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+endmenu # Audio Modules

@@ -249,6 +249,7 @@ static void test_close(const struct audio_module_functions *test_fnct,
 	handle.context = (struct audio_module_context *)&mod_context;
 
 	/* Fake internal empty data FIFO success */
+	data_fifo_deinit_fake.custom_fake = fake_data_fifo_deinit__succeeds;
 	data_fifo_init_fake.custom_fake = fake_data_fifo_init__succeeds;
 	data_fifo_empty_fake.custom_fake = fake_data_fifo_empty__succeeds;
 
@@ -257,7 +258,7 @@ static void test_close(const struct audio_module_functions *test_fnct,
 		data_fifo_init(&mod_fifo_rx);
 		handle.thread.msg_rx = &mod_fifo_rx;
 
-		empty_call_count++;
+		empty_call_count += 2;
 	} else {
 		handle.thread.msg_rx = NULL;
 	}
@@ -267,7 +268,7 @@ static void test_close(const struct audio_module_functions *test_fnct,
 		data_fifo_init(&mod_fifo_tx);
 		handle.thread.msg_tx = &mod_fifo_tx;
 
-		empty_call_count++;
+		empty_call_count += 2;
 	} else {
 		handle.thread.msg_tx = NULL;
 	}
@@ -947,6 +948,18 @@ ZTEST(suite_audio_module_functional, test_data_tx_fnct)
 	for (int i = 0; i < TEST_MOD_DATA_SIZE; i++) {
 		test_data[i] = TEST_MOD_DATA_SIZE - i;
 	}
+
+	audio_data.data = NULL;
+	audio_data.data_size = TEST_MOD_DATA_SIZE;
+
+	ret = audio_module_data_tx(&handle, &audio_data, NULL);
+	zassert_equal(ret, 0, "Data TX function did not return successfully: ret %d", ret);
+
+	audio_data.data = &test_data[0];
+	audio_data.data_size = 0;
+
+	ret = audio_module_data_tx(&handle, &audio_data, NULL);
+	zassert_equal(ret, -EINVAL, "Data TX function did not return successfully: ret %d", ret);
 
 	audio_data.data = &test_data[0];
 	audio_data.data_size = TEST_MOD_DATA_SIZE;

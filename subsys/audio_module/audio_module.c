@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "audio_module/audio_module.h"
+#include "audio_module.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -153,8 +153,10 @@ static void audio_data_release_cb(struct audio_module_handle_private *handle,
 	}
 
 	if (k_sem_count_get(&hdl->sem) == 0) {
+		LOG_DBG("Audio data has been consumed in module %s", hdl->name);
+
 		/* Audio data has been consumed by all modules so now can free the data memory. */
-		k_mem_slab_free(hdl->thread.data_slab, (void **)&audio_data->data);
+		k_mem_slab_free(hdl->thread.data_slab, (void **)audio_data->data);
 	}
 }
 
@@ -185,14 +187,14 @@ static int data_tx(struct audio_module_handle *tx_handle, struct audio_module_ha
 		}
 
 		/* Copy. The audio data itself will remain in its original location. */
-		memcpy(&data_msg_rx->audio_data, audio_data, sizeof(struct audio_data));
+		memcpy((char *)&(data_msg_rx->audio_data), audio_data, sizeof(struct audio_data));
 		data_msg_rx->tx_handle = tx_handle;
 		data_msg_rx->response_cb = data_in_response_cb;
 
 		ret = data_fifo_block_lock(rx_handle->thread.msg_rx, (void **)&data_msg_rx,
 					   sizeof(struct audio_module_message));
 		if (ret) {
-			data_fifo_block_free(rx_handle->thread.msg_rx, (void **)&data_msg_rx);
+			data_fifo_block_free(rx_handle->thread.msg_rx, (void *)data_msg_rx);
 
 			LOG_WRN("Module %s failed to queue audio data, ret %d", rx_handle->name,
 				ret);
@@ -244,7 +246,7 @@ static int tx_fifo_put(struct audio_module_handle *handle,
 		LOG_ERR("Failed to send audio data to output of module %s, ret %d", handle->name,
 			ret);
 
-		data_fifo_block_free(handle->thread.msg_tx, (void **)&data_msg_tx);
+		data_fifo_block_free(handle->thread.msg_tx, (void *)data_msg_tx);
 
 		ret = k_sem_take(&handle->sem, K_NO_WAIT);
 		if (ret) {
@@ -253,6 +255,8 @@ static int tx_fifo_put(struct audio_module_handle *handle,
 
 		return ret;
 	}
+
+	LOG_DBG("Sent audio data to output of module %s", handle->name);
 
 	return 0;
 }
@@ -332,6 +336,8 @@ static int send_to_connected_modules(struct audio_module_handle *handle,
 
 			return ret;
 		}
+
+		LOG_DBG("Sent audio data to TX message queue for module %s", handle->name);
 	}
 
 	return 0;
@@ -367,7 +373,7 @@ static void module_thread_input(struct audio_module_handle *handle, void *p2, vo
 		 * will control the data flow.
 		 */
 		ret = k_mem_slab_alloc(handle->thread.data_slab, (void **)&data, K_NO_WAIT);
-		__ASSERT(ret, "No free data for module %s, ret %d", handle->name, ret);
+		__ASSERT(ret == 0, "No free data for module %s, ret %d", handle->name, ret);
 
 		/* Configure new audio data. */
 		audio_data.data = data;
@@ -426,7 +432,7 @@ static void module_thread_output(struct audio_module_handle *handle, void *p2, v
 		 */
 		ret = data_fifo_pointer_last_filled_get(handle->thread.msg_rx, (void **)&msg_rx,
 							&size, K_FOREVER);
-		__ASSERT(ret, "Module %s error in getting last filled", handle->name);
+		__ASSERT(ret == 0, "Module %s error in getting last filled", handle->name);
 
 		LOG_DBG("Module %s new audio data received", handle->name);
 
@@ -449,7 +455,7 @@ static void module_thread_output(struct audio_module_handle *handle, void *p2, v
 					    &msg_rx->audio_data);
 		}
 
-		data_fifo_block_free(handle->thread.msg_rx, (void **)&msg_rx);
+		data_fifo_block_free(handle->thread.msg_rx, (void *)msg_rx);
 	}
 
 	CODE_UNREACHABLE;
@@ -481,21 +487,17 @@ static void module_thread_in_out(struct audio_module_handle *handle, void *p2, v
 	while (1) {
 		data = NULL;
 
-		LOG_DBG("Module %s is waiting for audio data", handle->name);
-
 		/* Get a new input message.
 		 * Since this input message is queued outside the module, this will then control the
 		 * data flow.
 		 */
 		ret = data_fifo_pointer_last_filled_get(handle->thread.msg_rx, (void **)&msg_rx,
 							&size, K_FOREVER);
-		__ASSERT(ret, "Module %s error in getting last filled", handle->name);
-
-		LOG_DBG("Module %s new audio data received", handle->name);
+		__ASSERT(ret == 0, "Module %s error in getting last filled %d", handle->name, ret);
 
 		/* Get a new output buffer. */
 		ret = k_mem_slab_alloc(handle->thread.data_slab, (void **)&data, K_NO_WAIT);
-		__ASSERT(ret, "No free data buffer for module %s, dropping input, ret %d",
+		__ASSERT(ret == 0, "No free data buffer for module %s, dropping input, ret %d",
 			 handle->name, ret);
 
 		/* Configure new audio audio_data. */
@@ -513,7 +515,7 @@ static void module_thread_in_out(struct audio_module_handle *handle, void *p2, v
 					&msg_rx->audio_data);
 			}
 
-			data_fifo_block_free(handle->thread.msg_rx, (void **)(&msg_rx));
+			data_fifo_block_free(handle->thread.msg_rx, (void *)(msg_rx));
 
 			k_mem_slab_free(handle->thread.data_slab, (void **)(&data));
 
@@ -529,7 +531,7 @@ static void module_thread_in_out(struct audio_module_handle *handle, void *p2, v
 					    &msg_rx->audio_data);
 		}
 
-		data_fifo_block_free(handle->thread.msg_rx, (void **)&msg_rx);
+		data_fifo_block_free(handle->thread.msg_rx, (void *)msg_rx);
 	}
 
 	CODE_UNREACHABLE;
@@ -562,7 +564,7 @@ int audio_module_open(struct audio_module_parameters const *const parameters,
 	/* Clear handle to known state. */
 	memset(handle, 0, sizeof(struct audio_module_handle));
 
-	/* Allocate the context memory. */
+	/* Store poimter to the context. */
 	handle->context = context;
 
 	memcpy(handle->name, name, CONFIG_AUDIO_MODULE_NAME_SIZE);
@@ -660,11 +662,11 @@ int audio_module_close(struct audio_module_handle *handle)
 	}
 
 	if (handle->thread.msg_rx != NULL) {
-		data_fifo_empty(handle->thread.msg_rx);
+		data_fifo_deinit(handle->thread.msg_rx);
 	}
 
 	if (handle->thread.msg_tx != NULL) {
-		data_fifo_empty(handle->thread.msg_tx);
+		data_fifo_deinit(handle->thread.msg_tx);
 	}
 
 	/*
@@ -673,6 +675,9 @@ int audio_module_close(struct audio_module_handle *handle)
 	 */
 
 	k_thread_abort(handle->thread_id);
+
+	/* Ensure module handle data is fully cleared. */
+	memset(handle, 0, sizeof(struct audio_module_handle));
 
 	LOG_DBG("Closed module %s", handle->name);
 
@@ -828,6 +833,8 @@ int audio_module_connect(struct audio_module_handle *handle_from,
 		LOG_ERR("Failed to release MUTEX lock");
 		return ret;
 	}
+
+	LOG_DBG("Connection(s) created");
 
 	return 0;
 }
@@ -1011,8 +1018,8 @@ int audio_module_data_tx(struct audio_module_handle *handle,
 		return -ECANCELED;
 	}
 
-	if (audio_data == NULL || audio_data->data == NULL || audio_data->data_size == 0) {
-		LOG_ERR("Data parameter error for module %s", handle->name);
+	if (audio_data == NULL) {
+		LOG_ERR("Output audio data for module %s has a NULL pointer", handle->name);
 		return -EINVAL;
 	}
 
@@ -1024,8 +1031,8 @@ int audio_module_data_rx(struct audio_module_handle *handle, struct audio_data *
 {
 	int ret;
 
-	struct audio_module_message *msg_tx;
-	size_t msg_tx_size;
+	struct audio_module_message *msg_rx;
+	size_t msg_rx_size;
 
 	if (handle == NULL) {
 		LOG_ERR("Module handle is NULL");
@@ -1048,31 +1055,40 @@ int audio_module_data_rx(struct audio_module_handle *handle, struct audio_data *
 		return -ECANCELED;
 	}
 
-	if (audio_data == NULL || audio_data->data == NULL || audio_data->data_size == 0) {
-		LOG_ERR("Input audio data for module %s has NULL pointer or a zero size buffer",
-			handle->name);
+	if (audio_data == NULL) {
+		LOG_ERR("Input audio data for module %s has a NULL pointer", handle->name);
 		return -EINVAL;
 	}
 
-	ret = data_fifo_pointer_last_filled_get(handle->thread.msg_tx, (void **)&msg_tx,
-						&msg_tx_size, timeout);
+	ret = data_fifo_pointer_last_filled_get(handle->thread.msg_tx, (void **)&msg_rx,
+						&msg_rx_size, timeout);
 	if (ret) {
 		LOG_ERR("Failed to retrieve data from module %s, ret %d", handle->name, ret);
 		return ret;
 	}
 
-	if (msg_tx->audio_data.data == NULL ||
-	    msg_tx->audio_data.data_size > audio_data->data_size) {
-		LOG_ERR("Data output pointer NULL or not enough room for buffer from module %s",
-			handle->name);
-		ret = -EINVAL;
-	} else {
-		memcpy(&audio_data->meta, &msg_tx->audio_data.meta, sizeof(struct audio_metadata));
-		memcpy((uint8_t *)audio_data->data, (uint8_t *)msg_tx->audio_data.data,
-		       msg_tx->audio_data.data_size);
+	if (msg_rx == NULL) {
+		LOG_ERR("Failed to retrieve message from %s", handle->name);
+		return -ECANCELED;	
 	}
 
-	data_fifo_block_free(handle->thread.msg_tx, (void **)&msg_tx);
+	if (msg_rx->audio_data.data == NULL ||
+	    msg_rx->audio_data.data_size > audio_data->data_size) {
+		LOG_ERR("Data output pointer NULL or not enough room for buffer from module %s",
+			handle->name);
+		return -ECANCELED;
+	} else {
+		memcpy(&audio_data->meta, &msg_rx->audio_data.meta, sizeof(struct audio_metadata));
+		memcpy((uint8_t *)audio_data->data, (uint8_t *)msg_rx->audio_data.data,
+		       msg_rx->audio_data.data_size);
+	}
+
+	if (msg_rx->response_cb != NULL) {
+		msg_rx->response_cb((struct audio_module_handle_private *)msg_rx->tx_handle,
+				    &msg_rx->audio_data);
+	}
+
+	data_fifo_block_free(handle->thread.msg_tx, (void *)msg_rx);
 
 	return ret;
 }
@@ -1117,24 +1133,16 @@ int audio_module_data_tx_rx(struct audio_module_handle *handle_tx,
 		return -EINVAL;
 	}
 
-	if (audio_data_tx->data == NULL || audio_data_tx->data_size == 0 ||
-	    audio_data_rx->data == NULL || audio_data_rx->data_size == 0) {
-		LOG_ERR("One or both of the have invalid output audio data");
-		return -EINVAL;
-	}
-
-	ret = data_tx(NULL, handle_tx, audio_data_tx, NULL);
+	ret = data_tx(NULL, handle_rx, audio_data_tx, NULL);
 	if (ret) {
 		LOG_ERR("Failed to send audio data to module %s, ret %d", handle_tx->name, ret);
 		return ret;
 	}
 
-	LOG_DBG("Wait for message on module %s TX queue", handle_rx->name);
-
-	ret = data_fifo_pointer_last_filled_get(handle_rx->thread.msg_rx, (void **)&msg_rx,
+	ret = data_fifo_pointer_last_filled_get(handle_rx->thread.msg_tx, (void **)&msg_rx,
 						&msg_rx_size, timeout);
 	if (ret) {
-		LOG_ERR("Failed to retrieve audio data from module %s, ret %d", handle_rx->name,
+		LOG_ERR("Failed to retrieve audio data from module %s, ret %d", handle_tx->name,
 			ret);
 		return ret;
 	}
@@ -1142,7 +1150,10 @@ int audio_module_data_tx_rx(struct audio_module_handle *handle_tx,
 	if (msg_rx->audio_data.data == NULL || msg_rx->audio_data.data_size == 0) {
 		LOG_ERR("Data output buffer too small for received buffer from module %s "
 			"(%d)",
-			handle_rx->name, msg_rx->audio_data.data_size);
+			handle_tx->name, msg_rx->audio_data.data_size);
+
+		data_fifo_block_free(handle_tx->thread.msg_tx, (void *)msg_rx);
+
 		ret = -EINVAL;
 	} else {
 		memcpy(&audio_data_rx->meta, &msg_rx->audio_data.meta,
@@ -1151,7 +1162,12 @@ int audio_module_data_tx_rx(struct audio_module_handle *handle_tx,
 		       msg_rx->audio_data.data_size);
 	}
 
-	data_fifo_block_free(handle_rx->thread.msg_rx, (void **)&msg_rx);
+	if (msg_rx->response_cb != NULL) {
+		msg_rx->response_cb((struct audio_module_handle_private *)msg_rx->tx_handle,
+				    &msg_rx->audio_data);
+	}
+
+	data_fifo_block_free(handle_tx->thread.msg_tx, (void *)msg_rx);
 
 	return ret;
 };

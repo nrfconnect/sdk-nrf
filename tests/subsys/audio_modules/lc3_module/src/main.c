@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -21,6 +21,4 @@ static void run_before(void *fixture)
 	FFF_RESET_HISTORY();
 }
 
-ZTEST_SUITE(suite_audio_module_bad_param, NULL, NULL, run_before, NULL, NULL);
-ZTEST_SUITE(suite_audio_module_functional, NULL, NULL, run_before, NULL, NULL);
-ZTEST_SUITE(suite_audio_module_template, NULL, NULL, run_before, NULL, NULL);
+ZTEST_SUITE(suite_lc3_decoder_functional, NULL, NULL, run_before, NULL, NULL);
