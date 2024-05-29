@@ -57,6 +57,15 @@ The delay should not be taken into account when calculating the remaining transi
 Server models are taking care of publishing of status messages, when receiving a state changing message, as well as sending a response back to a client, when an acknowledged message is received.
 If a state change is non-instantaneous, for example when :c:func:`bt_mesh_model_transition_time` returns a nonzero value, the application is responsible for publishing a new value of the state at the end of the transition.
 
+.. _bt_mesh_models_common_blocking_api_rule:
+
+Common rule for the model's blocking API
+****************************************
+
+Some client APIs can be called as blocking if the response buffer is set to non-NULL.
+Blocking calls must only be made from threads where they do not disrupt Zephyr’s system services.
+Thus, do not make blocking calls in interrupt handlers, such as button handlers, or kernel services, such as system work queue handlers.
+
 .. _bt_mesh_models_common_types:
 
 Common types for all models
