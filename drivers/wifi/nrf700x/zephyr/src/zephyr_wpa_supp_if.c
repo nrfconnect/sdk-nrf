@@ -1421,41 +1421,6 @@ enum nrf_wifi_status nrf_wifi_parse_sband(
 	return WLAN_STATUS_SUCCESS;
 }
 
-void *nrf_wifi_memdup(const void *src, size_t len)
-{
-	void *r = malloc(len);
-
-	if (r && src) {
-		memcpy(r, src, len);
-	}
-	return r;
-}
-
-static void nrf_wifi_wiphy_info_extended_capab_cfg(struct nrf_wifi_ext_capa *capa,
-						   struct nrf_wifi_event_get_wiphy *wiphy_info)
-{
-	unsigned int len;
-
-	capa->iftype = NRF_WIFI_IFTYPE_STATION;
-
-	len = wiphy_info->extended_capabilities_len;
-
-	capa->ext_capa = nrf_wifi_memdup(&wiphy_info->extended_capabilities[0], len);
-
-	if (!capa->ext_capa)
-		return;
-
-	capa->ext_capa_len = len;
-
-	len = wiphy_info->extended_capabilities_len;
-
-	capa->ext_capa_mask =
-	nrf_wifi_memdup(&wiphy_info->extended_capabilities_mask[0], len);
-
-	if (!capa->ext_capa_mask)
-		return;
-}
-
 void nrf_wifi_wpa_supp_event_get_wiphy(void *if_priv,
 		struct nrf_wifi_event_get_wiphy *wiphy_info,
 		unsigned int event_len)
@@ -1506,8 +1471,6 @@ void nrf_wifi_wpa_supp_event_get_wiphy(void *if_priv,
 			rpu_ctx_zep->extended_capa_len = 0;
 		}
 	}
-
-	nrf_wifi_wiphy_info_extended_capab_cfg(&vif_ctx_zep->iface_ext_capa, wiphy_info);
 
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.get_wiphy_res) {
 		vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx, NULL);
@@ -1635,10 +1598,6 @@ int nrf_wifi_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 		capa->extended_capa = rpu_ctx_zep->extended_capa;
 		capa->extended_capa_mask = rpu_ctx_zep->extended_capa_mask;
 		capa->extended_capa_len = rpu_ctx_zep->extended_capa_len;
-
-		capa->extended_capa = vif_ctx_zep->iface_ext_capa.ext_capa;
-		capa->extended_capa_mask = vif_ctx_zep->iface_ext_capa.ext_capa_mask;
-		capa->extended_capa_len = vif_ctx_zep->iface_ext_capa.ext_capa_len;
 	}
 out:
 	return status;
