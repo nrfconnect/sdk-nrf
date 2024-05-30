@@ -27,8 +27,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: >
-      FILE_SUFFIX=fota SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD=y
-      SB_CONFIG_BOOTLOADER_MCUBOOT=y SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP=y
+      FILE_SUFFIX=fota
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
@@ -38,9 +37,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: >
-      FILE_SUFFIX=fota SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD=y SB_CONFIG_NETCORE_APP_UPDATE=y
-      SB_CONFIG_BOOTLOADER_MCUBOOT=y SB_CONFIG_SECURE_BOOT=y SB_CONFIG_SECURE_BOOT_NETCORE=y
-      SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP=y SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET=y
+      FILE_SUFFIX=fota
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
@@ -50,8 +47,6 @@ tests:
     build_only: true
     extra_args: >
       FILE_SUFFIX=fota OVERLAY_CONFIG=overlay-multiprotocol_ble.conf
-      SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD=y SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP=y
     integration_platforms:
       - nrf52840dk/nrf52840
     platform_allow: nrf52840dk/nrf52840
@@ -60,10 +55,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: >
-      FILE_SUFFIX=fota OVERLAY_CONFIG=overlay-multiprotocol_ble.conf SB_CONFIG_NETCORE_APP_UPDATE=y
-      SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD=y SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      SB_CONFIG_SECURE_BOOT=y SB_CONFIG_SECURE_BOOT_NETCORE=y
-      SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP=y SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET=y
+      FILE_SUFFIX=fota OVERLAY_CONFIG=overlay-multiprotocol_ble.conf
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
