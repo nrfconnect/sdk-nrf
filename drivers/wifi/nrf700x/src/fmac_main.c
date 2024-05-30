@@ -681,9 +681,9 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv
 	nrf_wifi_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 
-	free(rpu_ctx_zep->extended_capa);
+	k_free(rpu_ctx_zep->extended_capa);
 	rpu_ctx_zep->extended_capa = NULL;
-	free(rpu_ctx_zep->extended_capa_mask);
+	k_free(rpu_ctx_zep->extended_capa_mask);
 	rpu_ctx_zep->extended_capa_mask = NULL;
 
 	rpu_ctx_zep->rpu_ctx = NULL;

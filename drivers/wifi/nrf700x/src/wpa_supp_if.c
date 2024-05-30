@@ -1599,14 +1599,14 @@ void nrf_wifi_wpa_supp_event_get_wiphy(void *if_priv,
 	if ((wiphy_info->params_valid & NRF_WIFI_GET_WIPHY_VALID_EXTENDED_CAPABILITIES) &&
 	    rpu_ctx_zep->extended_capa == NULL) {
 
-		rpu_ctx_zep->extended_capa = malloc(wiphy_info->extended_capabilities_len);
+		rpu_ctx_zep->extended_capa = k_malloc(wiphy_info->extended_capabilities_len);
 
 		if (rpu_ctx_zep->extended_capa) {
 			memcpy(rpu_ctx_zep->extended_capa, wiphy_info->extended_capabilities,
 			       wiphy_info->extended_capabilities_len);
 		}
 
-		rpu_ctx_zep->extended_capa_mask = malloc(wiphy_info->extended_capabilities_len);
+		rpu_ctx_zep->extended_capa_mask = k_malloc(wiphy_info->extended_capabilities_len);
 
 		if (rpu_ctx_zep->extended_capa_mask) {
 			memcpy(rpu_ctx_zep->extended_capa_mask,
