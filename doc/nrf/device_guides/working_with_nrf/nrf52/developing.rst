@@ -170,10 +170,18 @@ To perform a FOTA update, complete the following steps:
    #. Switch to the :guilabel:`Image` tab.
    #. Tap the :guilabel:`SELECT FILE` button and select the :file:`dfu_application.zip` archive.
    #. Tap the :guilabel:`START` button.
+
+      .. note::
+         When performing a FOTA update with the iOS app for samples using random HCI identities, ensure that the :guilabel:`Erase application settings` option is deselected before starting the procedure.
+         Otherwise, the new image will boot with random IDs, causing communication issues between the app and the device.
+
    #. Initiate the DFU process of transferring the image to the device:
 
       * If you are using an Android device, select a mode in the dialog window, and tap the :guilabel:`START` button.
       * If you are using an iOS device, tap the selected mode in the pop-up window.
+
+      .. note::
+         For samples using random HCI identities, the Test and Confirm mode should not be used.
 
    #. Wait for the DFU to finish and then verify that the application works properly.
 
@@ -215,6 +223,8 @@ When performing a FOTA update when working with the Bluetooth Mesh protocol, use
 
 * DFU over Bluetooth Mesh using the Zephyr Bluetooth Mesh DFU subsystem.
 * Point-to-point DFU over Bluetooth Low Energy as described in `FOTA over Bluetooth Low Energy`_ above.
+  The Bluetooth Mesh samples use random HCI identities.
+  See the related notes in the `Testing steps`_ section.
 
 For more information about both methods, see :ref:`ug_bt_mesh_fota`.
 
