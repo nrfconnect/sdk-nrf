@@ -334,6 +334,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/audio_module/               @nrfconnect/ncs-audio
 /tests/subsys/bluetooth/gatt_dm/          @doki-nordic
 /tests/subsys/bluetooth/mesh/             @ludvigsj
+/tests/subsys/bluetooth/enocean/          @ludvigsj
 /tests/subsys/bluetooth/fast_pair/        @alstrzebonski @MarekPieta @kapi-no
 /tests/subsys/bootloader/                 @hakonfam
 /tests/subsys/caf/                        @zycz

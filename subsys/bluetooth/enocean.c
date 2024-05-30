@@ -251,7 +251,7 @@ struct data_entry {
 	};
 };
 
-static void data_entry_pull(struct net_buf_simple *buf,
+static int data_entry_pull(struct net_buf_simple *buf,
 			    struct data_entry *entry)
 {
 	uint8_t header = net_buf_simple_pull_u8(buf);
@@ -260,31 +260,34 @@ static void data_entry_pull(struct net_buf_simple *buf,
 
 	if ((header >> 6) == 0x03 || entry->type == DATA_TYPE_OPTIONAL_DATA) {
 		entry->len = net_buf_simple_pull_u8(buf);
+		if (buf->len < entry->len) {
+			LOG_WRN("Malformed data");
+			return -EINVAL;
+		}
 		entry->pointer = net_buf_simple_pull_mem(buf, entry->len);
-		return;
+		return 0;
 	}
 
 	/* Commissioning is special */
 	if (entry->type == DATA_TYPE_COMMISSIONING) {
+		if (buf->len < 22) {
+			LOG_WRN("Malformed data");
+			return -EINVAL;
+		}
 		entry->len = 22;
 		entry->pointer = net_buf_simple_pull_mem(buf, 22);
-		return;
+		return 0;
 	}
 
 	entry->len = 1 << (header >> 6);
-	switch (entry->len) {
-	case 1:
-		entry->value = net_buf_simple_pull_u8(buf);
-		break;
-	case 2:
-		entry->value = net_buf_simple_pull_le16(buf);
-		break;
-	case 4:
-		entry->value = net_buf_simple_pull_le32(buf);
-		break;
-	default:
-		CODE_UNREACHABLE;
+	if (entry->len == 8 || buf->len < entry->len) {
+		LOG_WRN("Malformed data");
+		return -EINVAL;
 	}
+
+	entry->value = 0;
+	memcpy(&entry->value, net_buf_simple_pull_mem(buf, entry->len), entry->len);
+	return 0;
 }
 
 static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
@@ -304,8 +307,8 @@ static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
 
 	dev = device_find(info->addr);
 	if (!dev) {
-		data_entry_pull(buf, &entry);
-		if (entry.type != DATA_TYPE_COMMISSIONING || !commissioning) {
+		err = data_entry_pull(buf, &entry);
+		if (entry.type != DATA_TYPE_COMMISSIONING || !commissioning || err) {
 			return;
 		}
 
@@ -328,7 +331,10 @@ static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
 
 	LOG_DBG("Sensor data:");
 	while (buf->len >= 2 + SIGNATURE_LEN) {
-		data_entry_pull(buf, &entry);
+		err = data_entry_pull(buf, &entry);
+		if (err) {
+			return;
+		}
 
 		switch (entry.type) {
 		case DATA_TYPE_BATTERY:
@@ -402,6 +408,12 @@ static void adv_recv(const struct bt_le_scan_recv_info *info,
 	uint8_t *payload = buf->data;
 	uint8_t len = net_buf_simple_pull_u8(buf);
 	uint8_t type = net_buf_simple_pull_u8(buf);
+
+	if (len < 1 || buf->len < (len - 1)) {
+		LOG_WRN("Malformed data");
+		return;
+	}
+
 	bool has_shortened_name = (type == BT_DATA_NAME_SHORTENED);
 	/* Upper two bytes of address indicate device type */
 	uint16_t device_type = sys_get_le16(&info->addr->a.val[4]);
@@ -421,7 +433,8 @@ static void adv_recv(const struct bt_le_scan_recv_info *info,
 		type = net_buf_simple_pull_u8(buf);
 	}
 
-	if ((type != BT_DATA_MANUFACTURER_DATA) || (buf->len < 2)) {
+	if ((type != BT_DATA_MANUFACTURER_DATA) || (len == 0) ||
+	    (buf->len < 2) || (buf->len < len - 1)) {
 		return;
 	}
 
