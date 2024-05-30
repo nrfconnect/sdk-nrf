@@ -212,7 +212,7 @@ Kconfig*                                  @tejlmand
 /samples/wifi/sta/                        @D-Triveni @bama-nordic
 /samples/wifi/ble_coex/                   @muraliThokala @bama-nordic
 /samples/wifi/shutdown/                   @krish2718 @sachinthegreen
-/samples/wifi/twt/                        @chiranjeevi2776 @krish2718
+/samples/wifi/twt/                        @D-Triveni
 /samples/wifi/throughput/                 @D-Triveni
 /samples/wifi/raw_tx_packet/              @D-Triveni
 /samples/wifi/softap/                     @D-Triveni @krish2718
