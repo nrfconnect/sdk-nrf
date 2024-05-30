@@ -69,7 +69,7 @@ config WPA_SUPP_THREAD_STACK_SIZE
 
 config WPA_SUPP_WQ_STACK_SIZE
 	int "Stack size for wpa_supplicant workqueue"
-	default 4096
+	default 4400
 
 config WPA_SUPP_WQ_PRIORITY
 	int "Priority for wpa_supplicant workqueue"
@@ -192,7 +192,7 @@ config BSS_MAX_IDLE_TIME
 # Control interface is stack heavy (buffers + snprintfs)
 # Making calls to RPU from net_mgmt callbacks (status - RSSI)
 config NET_MGMT_EVENT_STACK_SIZE
-	default 4200
+	default 4400
 
 config NET_SOCKETS_POLL_MAX
 	default 6
