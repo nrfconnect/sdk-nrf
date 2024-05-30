@@ -70,11 +70,6 @@ struct nrf_wifi_vif_ctx_zep {
 	struct wifi_ps_config *ps_info;
 	bool ps_config_info_evnt;
 	bool authorized;
-	struct nrf_wifi_ext_capa {
-		enum nrf_wifi_iftype iftype;
-		unsigned char *ext_capa, *ext_capa_mask;
-		unsigned int ext_capa_len;
-	} iface_ext_capa;
 	bool cookie_resp_received;
 #ifdef CONFIG_NRF700X_DATA_TX
 	struct k_work nrf_wifi_net_iface_work;
