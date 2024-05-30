@@ -1102,6 +1102,37 @@ error_exit:
 #endif /* PSA_MAX_RSA_KEY_BITS > 0*/
 }
 
+psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
+				  size_t key_buffer_size, size_t *key_buffer_length)
+{
+	psa_key_type_t key_type = psa_get_key_type(attributes);
+	uint8_t key[CRACEN_KMU_MAX_KEY_SIZE];
+	size_t key_bits;
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+	if (PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)) > sizeof(key)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type) &&
+	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE)) {
+		status = generate_ecc_private_key(attributes, key, sizeof(key), key_buffer_length);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+	} else if (key_type == PSA_KEY_TYPE_AES) {
+		status = psa_generate_random(key, PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)));
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+	} else {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	return cracen_import_key(attributes, key, PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)),
+				 key_buffer, key_buffer_size, key_buffer_length, &key_bits);
+}
+
 psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
 				 size_t key_buffer_size, size_t *key_buffer_length)
 {
@@ -1114,19 +1145,8 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 
 #if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
-		uint8_t key[CRACEN_KMU_MAX_KEY_SIZE];
-		size_t key_bits;
-		if (PSA_BITS_TO_BYTES(psa_get_key_bits(attributes) > sizeof(key))) {
-			return PSA_ERROR_NOT_SUPPORTED;
-		}
-		psa_status_t status =
-			psa_generate_random(key, PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)));
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-		return cracen_import_key(attributes, key,
-					 PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)),
-					 key_buffer, key_buffer_size, key_buffer_length, &key_bits);
+		return generate_key_for_kmu(attributes, key_buffer, key_buffer_size,
+					    key_buffer_length);
 	}
 #endif
 
@@ -1179,7 +1199,11 @@ size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes)
 
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN_KMU) {
-		return sizeof(kmu_opaque_key_buffer);
+		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+			return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
+		} else {
+			return sizeof(kmu_opaque_key_buffer);
+		}
 	}
 	return 0;
 }
@@ -1292,6 +1316,15 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
+		/* The keys will already be in the key buffer as they got loaded their by a previous
+		 * call to cracen_get_builtin_key or cached in the memory.
+		 */
+		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes)) ==
+		    PSA_ECC_FAMILY_TWISTED_EDWARDS) {
+			memcpy(data, key_buffer, key_buffer_size);
+			return PSA_SUCCESS;
+		}
+
 		int status = cracen_kmu_prepare_key(key_buffer);
 
 		if (status != SX_OK) {
