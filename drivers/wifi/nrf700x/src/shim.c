@@ -796,11 +796,18 @@ out:
 
 static void zep_shim_bus_qspi_intr_unreg(void *os_qspi_dev_ctx)
 {
+	struct k_work_sync sync;
+	int ret;
+
 	ARG_UNUSED(os_qspi_dev_ctx);
 
-	k_work_cancel_delayable(&intr_priv->work);
+	ret = rpu_irq_remove(&intr_priv->gpio_cb_data);
+	if (ret) {
+		LOG_ERR("%s: rpu_irq_remove failed", __func__);
+		return;
+	}
 
-	rpu_irq_remove(&intr_priv->gpio_cb_data);
+	k_work_cancel_delayable_sync(&intr_priv->work, &sync);
 
 	k_free(intr_priv);
 	intr_priv = NULL;
