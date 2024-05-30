@@ -10,7 +10,12 @@
 #include <string.h>
 #include <zephyr/types.h>
 #include <drivers/nrfx_common.h>
+#ifdef CONFIG_NRFX_NVMC
 #include <nrfx_nvmc.h>
+#endif
+#ifdef CONFIG_NRFX_RRAMC
+#include <nrfx_rramc.h>
+#endif
 #include <errno.h>
 #include <pm_config.h>
 
@@ -35,6 +40,7 @@ extern "C" {
  */
 #define BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0 0x2
 
+#ifndef NRFX_RRAMC
 /** Storage for the PRoT Security Lifecycle state, that consists of 4 states:
  *  - Device assembly and test
  *  - PRoT Provisioning
@@ -56,6 +62,17 @@ struct life_cycle_state_data {
 	uint16_t reserved_for_padding;
 	uint16_t decommissioned;
 };
+#else
+/*
+ * nRF54L15 only supports word writes
+ */
+struct life_cycle_state_data {
+	uint32_t provisioning;
+	uint32_t secure;
+	uint32_t decommissioned;
+};
+#endif
+
 
 /** The first data structure in the bootloader storage. It has unknown length
  *  since 'key_data' is repeated. This data structure is immediately followed by
@@ -155,7 +172,11 @@ int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots);
  * @retval -EINVAL  Cannot find counters with description @p counter_desc or the pointer to
  *                  @p counter_value is NULL.
  */
+#ifdef CONFIG_NRFX_NVMC
 int get_monotonic_counter(uint16_t counter_desc, uint16_t *counter_value);
+#else
+int get_monotonic_counter(uint16_t counter_desc, uint32_t *counter_value);
+#endif
 
 /**
  * @brief Set the current HW monotonic counter.
@@ -174,7 +195,11 @@ int get_monotonic_counter(uint16_t counter_desc, uint16_t *counter_value);
  * @retval -ENOMEM  There are no more free counter slots (see
  *                  @kconfig{CONFIG_SB_NUM_VER_COUNTER_SLOTS}).
  */
+#ifdef CONFIG_NRFX_NVMC
 int set_monotonic_counter(uint16_t counter_desc, uint16_t new_counter);
+#else
+int set_monotonic_counter(uint16_t counter_desc, uint32_t new_counter);
+#endif
 
 /**
  * @brief The PSA life cycle states a device can be in.
@@ -189,6 +214,27 @@ enum lcs {
 	BL_STORAGE_LCS_DECOMMISSIONED = 4,
 };
 
+static inline uint32_t bl_storage_word_read(uint32_t address)
+{
+#ifdef CONFIG_NRFX_RRAMC
+	return nrfx_rramc_word_read(address);
+#endif
+#ifdef CONFIG_NRFX_NVMC
+	return nrfx_nvmc_uicr_word_read(address);
+#endif
+}
+
+static inline uint32_t bl_storage_word_write(uint32_t address, uint32_t value)
+{
+#ifdef CONFIG_NRFX_RRAMC
+	nrfx_rramc_word_write(address, value);
+	return 0;
+#endif
+#ifdef CONFIG_NRFX_NVMC
+	return nrfx_nvmc_uicr_word_write(address, value);
+#endif
+}
+
 /**
  * Copies @p src into @p dst. Reads from @p src are done 32 bits at a
  * time. Writes to @p dst are done a byte at a time.
@@ -202,7 +248,7 @@ NRFX_STATIC_INLINE void otp_copy32(uint8_t *restrict dst, uint32_t volatile * re
 {
 	for (int i = 0; i < size / 4; i++) {
 		/* OTP is in UICR */
-		uint32_t val = nrfx_nvmc_uicr_word_read(src + i);
+		uint32_t val = bl_storage_word_read((uint32_t)(src + i));
 
 		for (int j = 0; j < 4; j++) {
 			dst[i * 4 + j] = (val >> 8 * j) & 0xFF;
@@ -238,6 +284,24 @@ NRFX_STATIC_INLINE void read_implementation_id_from_otp(uint8_t *buf)
  * This is a temporary solution until TF-M has access to NSIB functions.
  */
 
+NRFX_STATIC_INLINE uint32_t index_from_address(uint32_t address){
+	return ((address - (uint32_t)BL_STORAGE)/sizeof(uint32_t));
+}
+
+NRFX_STATIC_INLINE uint16_t bl_storage_otp_halfword_read(uint32_t address){
+#ifdef CONFIG_NRFX_RRAMC
+		if (!(address & 0x3)) {
+			return (uint16_t)(nrfx_rramc_otp_word_read(index_from_address(address)) & 0x0000FFFF);
+		} else {
+			return (uint16_t)(nrfx_rramc_otp_word_read(index_from_address(address)) >> 16);
+		}
+#endif
+
+#ifdef CONFIG_NRFX_NVMC
+		return nrfx_nvmc_otp_halfword_read(address);
+#endif
+}
+
 /**
  * @brief Read the current life cycle state the device is in from OTP,
  *
@@ -252,11 +316,19 @@ NRFX_STATIC_INLINE int read_life_cycle_state(enum lcs *lcs)
 		return -EINVAL;
 	}
 
+#ifdef CONFIG_NRFX_NVMC
 	uint16_t provisioning = nrfx_nvmc_otp_halfword_read(
 		(uint32_t) &BL_STORAGE->lcs.provisioning);
 	uint16_t secure = nrfx_nvmc_otp_halfword_read((uint32_t) &BL_STORAGE->lcs.secure);
 	uint16_t decommissioned = nrfx_nvmc_otp_halfword_read(
 		(uint32_t) &BL_STORAGE->lcs.decommissioned);
+#else
+	uint32_t provisioning = nrfx_rramc_otp_word_read(
+		index_from_address((uint32_t) &BL_STORAGE->lcs.provisioning));
+	uint32_t secure = nrfx_rramc_otp_word_read(index_from_address((uint32_t) &BL_STORAGE->lcs.secure));
+	uint32_t decommissioned = nrfx_rramc_otp_word_read(index_from_address(
+		(uint32_t) &BL_STORAGE->lcs.decommissioned));
+#endif
 
 	if (provisioning == STATE_NOT_ENTERED
 		&& secure == STATE_NOT_ENTERED
@@ -281,6 +353,7 @@ NRFX_STATIC_INLINE int read_life_cycle_state(enum lcs *lcs)
 
 	return 0;
 }
+#else
 
 /**
  * @brief Update the life cycle state in OTP.

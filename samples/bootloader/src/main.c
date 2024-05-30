@@ -13,7 +13,12 @@
 #include <bl_storage.h>
 #include <bl_boot.h>
 #include <bl_validation.h>
+#ifdef CONFIG_NRFX_RRAMC
+#include <nrfx_rramc.h>
+#else
 #include <nrfx_nvmc.h>
+#endif
+
 
 #if defined(CONFIG_HW_UNIQUE_KEY_LOAD)
 #include <zephyr/init.h>
@@ -113,7 +118,11 @@ static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 
 int main(void)
 {
-	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+	int err = 0;
+
+	if(IS_ENABLED(CONFIG_FPROTECT)){
+		err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+	}
 
 	if (err) {
 		printk("Failed to protect B0 flash, cancel startup.\n\r");

@@ -15,7 +15,11 @@
  * into the least significant bit.
  */
 
+#ifdef CONFIG_NRFX_NVMC
 int set_monotonic_version(uint16_t version, uint16_t slot)
+#else
+int set_monotonic_version(uint32_t version, uint16_t slot)
+#endif
 {
 	__ASSERT(version <= 0x7FFF, "version too large.\r\n");
 	__ASSERT(slot <= 1, "Slot must be either 0 or 1.\r\n");
@@ -47,7 +51,11 @@ int set_monotonic_version(uint16_t version, uint16_t slot)
 
 int get_monotonic_version(uint16_t *version_out)
 {
+#ifdef CONFIG_NRFX_NVMC
 	uint16_t monotonic_version_and_slot;
+#else
+	uint32_t monotonic_version_and_slot;
+#endif
 	int err;
 
 	if (version_out == NULL) {
@@ -66,7 +74,11 @@ int get_monotonic_version(uint16_t *version_out)
 
 int get_monotonic_slot(uint16_t *slot_out)
 {
+#ifdef CONFIG_NRFX_NVMC
 	uint16_t monotonic_version_and_slot;
+#else
+	uint32_t monotonic_version_and_slot;
+#endif
 	int err;
 
 	if (slot_out == NULL) {

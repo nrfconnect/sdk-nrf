@@ -18,10 +18,11 @@ config FW_INFO_API
 
 config FW_INFO_OFFSET
 	hex "The location of firmware info inside this firmware"
+	default 0x600 if SOC_SERIES_NRF54LX
 	default 0x200
 	help
 	  The location of firmware information inside the current firmware
-	  image. Valid values are 0x0, 0x200, 0x400, 0x800, and 0x1000.
+	  image. Valid values are 0x0, 0x200, 0x400, 0x600, 0x800, and 0x1000.
 	  Compatible readers of firmware information should search all possible
 	  offsets. Note that all space between the vector table and this address
 	  is unused.
@@ -77,6 +78,7 @@ config FW_INFO_HARDWARE_ID
 	default 53 if SOC_SERIES_NRF53X
 	default 91 if SOC_SERIES_NRF91X
 	default 0 if BOARD_NATIVE_POSIX
+	default 54
 	help
 	  Used to ensure binary compatibility.
 	  For more information, see FW_INFO_MAGIC_COMMON.

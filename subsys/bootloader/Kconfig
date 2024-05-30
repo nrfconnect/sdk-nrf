@@ -200,7 +200,8 @@ menuconfig IS_SECURE_BOOTLOADER
 	select SECURE_BOOT_VALIDATION
 	select SECURE_BOOT_STORAGE
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
-	select NRFX_NVMC
+	select NRFX_NVMC if SOC_SERIES_NRF51X || SOC_SERIES_NRF52X || SOC_SERIES_NRF91X || SOC_NRF5340_CPUAPP
+	select NRFX_RRAMC if !(SOC_SERIES_NRF51X || SOC_SERIES_NRF52X || SOC_SERIES_NRF91X || SOC_NRF5340_CPUAPP)
 	help
 	  This option is set by the first stage bootloader app to include all
 	  files and set all the options required.
