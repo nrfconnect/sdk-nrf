@@ -288,14 +288,17 @@ To use the **ANT2** antenna, disable the :kconfig:option:`CONFIG_MPSL_FEM` Kconf
 
 .. _thingy53_app_fota_smp:
 
-.. include:: ../nrf52/developing.rst
+FOTA over Bluetooth Low Energy
+==============================
+
+.. include:: /device_guides/nrf52/fota_update.rst
    :start-after: fota_upgrades_over_ble_intro_start
    :end-before: fota_upgrades_over_ble_intro_end
 
 Bluetooth buffers configuration introduced by the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` Kconfig option is also automatically applied to the network core child image by the dedicated overlay file.
 Thingy:53 supports network core upgrade out of the box.
 
-.. include:: ../nrf52/developing.rst
+.. include:: /device_guides/nrf52/fota_update.rst
    :start-after: fota_upgrades_over_ble_additional_information_start
    :end-before: fota_upgrades_over_ble_additional_information_end
 

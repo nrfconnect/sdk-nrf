@@ -1,9 +1,11 @@
 .. _ug_nrf52_group:
 .. _nrf52_supported_boards:
 .. _nrf52_working:
+.. _ug_nrf52:
+.. _ug_nrf52_developing:
 
-Working with nRF52 Series
-#########################
+Developing with nRF52 Series
+############################
 
 Zephyr and the |NCS| provide support and contain board definitions for developing on the following nRF52 Series devices:
 
@@ -64,5 +66,7 @@ See also :ref:`ug_radio_fem_nrf21540ek` to learn how to use the RF front-end mod
    :maxdepth: 2
    :caption: Subpages:
 
-   working_with_nrf/nrf52/features
-   working_with_nrf/nrf52/developing
+   features
+   building
+   testing
+   fota_update

@@ -7,7 +7,7 @@ Configuring and building with nRF91 Series
    :local:
    :depth: 2
 
-Configuring and building applicationg for the nRF91 Series devices follows the processes described in the :ref:`building` section, with several exceptions specific to the nRF91 Series that are listed below.
+Configuring and building application for the nRF91 Series devices follows the processes described in the :ref:`building` section, with several exceptions specific to the nRF91 Series that are listed below.
 
 .. _nrf9160_board_revisions:
 

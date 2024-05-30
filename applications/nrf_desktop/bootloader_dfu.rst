@@ -238,11 +238,11 @@ The `nRF Connect Device Manager`_ application transfers the image update files o
 
 To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the following steps:
 
-.. include:: /device_guides/working_with_nrf/nrf52/developing.rst
+.. include:: /device_guides/nrf52/fota_update.rst
    :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
    :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
 
-.. include:: /device_guides/working_with_nrf/nrf52/developing.rst
+.. include:: /device_guides/nrf52/fota_update.rst
    :start-after: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_start
    :end-before: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_end
 
