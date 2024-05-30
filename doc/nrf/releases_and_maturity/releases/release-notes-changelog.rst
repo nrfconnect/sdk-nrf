@@ -1038,6 +1038,8 @@ Documentation
   * Reworked the :ref:`ble_rpc` page to be more informative and aligned with the library template.
   * Improved the :ref:`ug_radio_fem` user guide to be up-to-date and more informative.
 
+  * The :ref:`ug_nrf52_developing` and :ref:`ug_nrf5340` by adding notes about how to perform FOTA updates with samples using random HCI identities, some specifically relevant when using the iOS app.
+
 * Fixed:
 
   * Replaced the occurrences of the outdated :makevar:`OVERLAY_CONFIG` with the currently used :makevar:`EXTRA_CONF_FILE`.
