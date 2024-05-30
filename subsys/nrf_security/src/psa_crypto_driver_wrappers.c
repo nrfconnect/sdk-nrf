@@ -207,6 +207,9 @@ psa_status_t psa_driver_wrapper_sign_message(const psa_key_attributes_t *attribu
 		 * cycle through all known transparent accelerators
 		 */
 #if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 		status = cracen_sign_message(attributes, key_buffer, key_buffer_size, alg, input,
 					     input_length, signature, signature_size,
 					     signature_length);
@@ -266,6 +269,9 @@ psa_status_t psa_driver_wrapper_verify_message(const psa_key_attributes_t *attri
 		 */
 #if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN:
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 		status = cracen_verify_message(attributes, key_buffer, key_buffer_size, alg, input,
 					       input_length, signature, signature_length);
 		/* Declared with fallback == true */
@@ -518,9 +524,6 @@ psa_status_t psa_driver_wrapper_generate_key(const psa_key_attributes_t *attribu
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
 #endif /* defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER) */
-#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
-	case PSA_KEY_LOCATION_CRACEN_KMU:
-#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER */
 		/* Transparent drivers are limited to generating asymmetric keys */
 		if (PSA_KEY_TYPE_IS_ASYMMETRIC(attributes->core.type)) {
 			/* Cycle through all known transparent accelerators */
@@ -678,6 +681,9 @@ psa_status_t psa_driver_wrapper_export_public_key(const psa_key_attributes_t *at
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif /* defined(PSA_NEED_CRACEN_KMU_DRIVER) */
 #if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
 		status = cracen_export_public_key(attributes, key_buffer, key_buffer_size, data,
 						  data_size, data_length);

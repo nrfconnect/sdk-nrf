@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#pragma once
 
 #include <stdint.h>
 #include "cracen_psa.h"
@@ -10,12 +11,14 @@
 #define CRACEN_KMU_MAX_KEY_SIZE	 32
 #define CRACEN_KMU_SLOT_KEY_SIZE 16
 
-/* This can be converted to bits by (value + 1) << 6 */
 enum kmu_metadata_key_bits {
 	METADATA_ALG_KEY_BITS_128 = 1,
 	METADATA_ALG_KEY_BITS_192 = 2,
-	METADATA_ALG_KEY_BITS_256 = 3,
-	METADATA_ALG_KEY_BITS_384_SEED = 4,
+	METADATA_ALG_KEY_BITS_255 = 3,
+	METADATA_ALG_KEY_BITS_256 = 4,
+	METADATA_ALG_KEY_BITS_384_SEED = 5,
+	METADATA_ALG_KEY_BITS_RESERVED_1 = 6,
+	METADATA_ALG_KEY_BITS_RESERVED_2 = 7,
 };
 
 typedef struct {
