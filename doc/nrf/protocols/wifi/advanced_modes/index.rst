@@ -9,6 +9,7 @@ The following subpages cover topics related to the transmission and reception of
    :maxdepth: 1
    :caption: Subpages:
 
+   mem_requirements_raw
    raw_tx_operation
    sniffer_rx_operation
    promiscuous_operation
