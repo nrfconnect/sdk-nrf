@@ -295,6 +295,9 @@ static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 		on_pdn_ipv6_down();
 		break;
 #endif /* CONFIG_NET_IPV6 */
+	case PDN_EVENT_CTX_DESTROYED:
+		LOG_DBG("PDN context destroyed");
+		break;
 	default:
 		LOG_ERR("Unexpected PDN event: %d", event);
 		break;

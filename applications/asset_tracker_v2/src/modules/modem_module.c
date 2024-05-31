@@ -290,6 +290,8 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 	case PDN_EVENT_NETWORK_DETACH:
 		LOG_DBG("PDN_EVENT_NETWORK_DETACH");
 		break;
+	case PDN_EVENT_CTX_DESTROYED:
+		LOG_DBG("PDN_EVENT_CTX_DESTROYED");
 	default:
 		LOG_WRN("Unexpected PDN event!");
 		break;
