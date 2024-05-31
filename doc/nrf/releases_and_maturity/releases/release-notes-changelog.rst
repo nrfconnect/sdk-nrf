@@ -502,6 +502,10 @@ Modem libraries
 
   * Fixed a potential issue with scanf in the :c:func:`modem_info_get_current_band` function, which could lead to memory corruption.
 
+* :ref:`pdn_readme` library:
+
+  * Added the event ``PDN_EVENT_CTX_DESTROYED`` to indicate when a PDNs PDP context is destroyed. This happens when the modem is switched to minimum functionality mode (``CFUN=0``).
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
