@@ -196,13 +196,6 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
-.. _`nRF Asset Tracker project`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/project/Index.html
-.. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/aws/GettingStarted/Index.html
-.. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/azure/GettingStarted/Index.html
-.. _`nRF Asset Tracker Memfault integration`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/memfault/Index.html
-
-
-
 .. _`SPAKE2+ Python Tool page`: https://project-chip.github.io/connectedhomeip-doc/scripts/tools/spake2p/README.html
 
 .. _`Azure SDK for Embedded C`: https://azure.github.io/azure-sdk-for-c/
@@ -525,6 +518,11 @@
 
 .. _`Nordic Semiconductor TechDocs`: https://docs.nordicsemi.com
 
+.. _`nRF Asset Tracker project`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/index.html
+.. _`Getting started guide for nRF Asset Tracker for AWS`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/aws/GettingStarted/Index.html
+.. _`Getting started guide for nRF Asset Tracker for Azure`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/azure/GettingStarted/Index.html
+.. _`nRF Asset Tracker Memfault integration`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/memfault/Index.html
+
 .. _`nRF Connect Board Configurator`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
 
 .. _`Serial Terminal from nRF Connect for Desktop`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
@@ -688,12 +686,12 @@
 .. _`Debugger access protection for nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/dif.html#ariaid-title2
 .. _`AP-Protect for nRF5340`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/debugandtrace.html#ariaid-title9
 .. _`AP-Protect for nRF52840`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/dif.html#ariaid-title3
-.. _`AP-Protect for nRF52833`: https://infocenter.nordicsemi.com/topic/ps_nrf52833/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52833`: https://docs.nordicsemi.com/bundle/ps_nrf52833/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF52832`: https://docs.nordicsemi.com/bundle/ps_nrf52832/page/dif.html#d913e149
 .. _`AP-Protect for nRF52820`: https://docs.nordicsemi.com/bundle/ps_nrf52820/page/dif.html#ariaid-title3
-.. _`AP-Protect for nRF52811`: https://infocenter.nordicsemi.com/topic/ps_nrf52811/dif.html#concept_udr_mns_1s
-.. _`AP-Protect for nRF52810`: https://infocenter.nordicsemi.com/topic/ps_nrf52810/dif.html#concept_udr_mns_1s
-.. _`AP-Protect for nRF52805`: https://infocenter.nordicsemi.com/topic/ps_nrf52805/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52811`: https://docs.nordicsemi.com/bundle/ps_nrf52811/page/dif.html#ariaid-title3
+.. _`AP-Protect for nRF52810`: https://docs.nordicsemi.com/bundle/ps_nrf52810/page/dif.html#ariaid-title3
+.. _`AP-Protect for nRF52805`: https://docs.nordicsemi.com/bundle/ps_nrf52805/page/dif.html#ariaid-title3
 
 .. _`Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_operator_certifications.html
 .. _`Modem firmware compatibility matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_modem_fw.html
