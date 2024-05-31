@@ -1,0 +1,9 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Included because partitions must be moved on both cores App and Rad cores to avoid memory
+ * regions overlapping.
+ */
+#include "nrf54h20dk_nrf54h20-mem-map-move.dtsi"
