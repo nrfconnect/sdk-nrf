@@ -68,6 +68,8 @@ config MCTL_LOCAL_PLAYER_CONTROL
 config MCTL_LOCAL_PLAYER_REMOTE_CONTROL
 	default y
 
+config BT_AUDIO_PRESENTATION_DELAY_US
+	default 10000
 
 ## LC3 related configs ##
 config LC3_BITRATE
