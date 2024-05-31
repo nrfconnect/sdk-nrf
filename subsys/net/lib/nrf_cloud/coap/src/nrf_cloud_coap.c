@@ -442,16 +442,12 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
 	static uint8_t buffer[LOCATION_GET_CBOR_MAX_SIZE];
 	size_t len = sizeof(buffer);
 	int err;
-	const struct nrf_cloud_location_config *conf = IS_ENABLED(CONFIG_NRF_CLOUD_COAP_GF_CONF) ?
-						       request->config : NULL;
+	const struct nrf_cloud_location_config *conf = request->config;
 	size_t url_size = nrf_cloud_ground_fix_url_encode(NULL, 0, COAP_GND_FIX_RSC, conf);
 
 	__ASSERT_NO_MSG(url_size > 0);
 	char url[url_size + 1];
 
-	if (!IS_ENABLED(CONFIG_NRF_CLOUD_COAP_GF_CONF) && (request->config != NULL)) {
-		LOG_WRN("Use of location configuration parameters not enabled; ignored.");
-	}
 	(void)nrf_cloud_ground_fix_url_encode(url, url_size, COAP_GND_FIX_RSC, conf);
 
 	err = coap_codec_ground_fix_req_encode(request->cell_info,

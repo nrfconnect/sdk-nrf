@@ -115,7 +115,8 @@ int cloud_service_nrf_pos_get(
 #endif
 	const struct nrf_cloud_rest_location_request loc_req = {
 		.cell_info = params->cell_data,
-		.wifi_info = params->wifi_data
+		.wifi_info = params->wifi_data,
+		.config = NULL
 	};
 	struct nrf_cloud_location_result result;
 

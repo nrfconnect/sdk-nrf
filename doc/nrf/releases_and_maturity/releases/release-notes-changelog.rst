@@ -917,6 +917,7 @@ Libraries for networking
 * :ref:`lib_nrf_cloud_coap` library:
 
   * Updated to request proprietary PSM mode for ``SOC_NRF9151_LACA`` and ``SOC_NRF9131_LACA`` in addition to ``SOC_NRF9161_LACA``.
+  * Removed the :kconfig:option:`CONFIG_NRF_CLOUD_COAP_GF_CONF` Kconfig option.
 
   * Added:
 
