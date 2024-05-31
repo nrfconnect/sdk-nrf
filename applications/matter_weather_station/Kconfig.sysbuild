@@ -4,18 +4,21 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+#### Radio core
 config NRF_DEFAULT_IPC_RADIO
-	default y if BOARD_THINGY53_NRF5340_CPUAPP
+	default y
+
+config NETCORE_IPC_RADIO_BT_HCI_IPC
+	default y
+
+config NETCORE_IPC_RADIO_IEEE802154
+	default y if !WIFI_NRF700X
 
 choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT
 endchoice
 
-if BOOTLOADER_MCUBOOT && BOARD_THINGY53_NRF5340_CPUAPP
-
-config MCUBOOT_UPDATEABLE_IMAGES
-	default 2
-
+#### Bootloader
 choice MCUBOOT_MODE
 	default MCUBOOT_MODE_OVERWRITE_ONLY
 endchoice
@@ -30,6 +33,7 @@ config SECURE_BOOT_NETCORE
 config NETCORE_APP_UPDATE
 	default y
 
+#### DFU multi-image support
 config DFU_MULTI_IMAGE_PACKAGE_BUILD
 	default y
 
@@ -39,6 +43,7 @@ config DFU_MULTI_IMAGE_PACKAGE_APP
 config DFU_MULTI_IMAGE_PACKAGE_NET
 	default y
 
-endif
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	default y
 
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

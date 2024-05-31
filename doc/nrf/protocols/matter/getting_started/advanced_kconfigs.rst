@@ -271,11 +271,11 @@ The snippet sets the following kconfig options:
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS` to ``y``.
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS` to ``y``.
 
-To use the snippet when building a sample, add ``-D<application_name>_SNIPPET=diagnostic-logs`` to the west arguments list.
+To use the snippet when building a sample, add ``-D<project_name>_SNIPPET=diagnostic-logs`` to the west arguments list.
 
-Example for the ``nrf52840dk_nrf52840`` target board and ``light_bulb`` sample:
+Example for the ``nrf52840dk_nrf52840`` target board and the :ref:`matter_lock_sample` sample:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840dk_nrf52840 -- -Dlight_bulb_SNIPPET=diagnostic-logs
+   west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=diagnostic-logs

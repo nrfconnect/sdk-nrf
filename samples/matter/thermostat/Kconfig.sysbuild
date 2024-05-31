@@ -4,31 +4,37 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+#### Radio core selection
 config NRF_DEFAULT_IPC_RADIO
 	default y
 
+# Enable IEEE802.15.4 serialization to network core
 config NETCORE_IPC_RADIO_IEEE802154
-	default y if BOARD_NRF5340DK_NRF5340_CPUAPP
+	default y if SOC_SERIES_NRF53X && !WIFI_NRF700X
 
+# Enable Bluetooth serialization to network core
 config NETCORE_IPC_RADIO_BT_HCI_IPC
-	default y if (BOARD_NRF7002DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP)
+	default y if SOC_SERIES_NRF53X
 
-config MATTER_FACTORY_DATA_GENERATE
-	default y if !BOARD_NRF21540DK
-
+#### Bootloader
 choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT
 endchoice
 
 if BOOTLOADER_MCUBOOT
 
+#### DFU multi-image support
 config DFU_MULTI_IMAGE_PACKAGE_BUILD
 	default y
 
 config DFU_MULTI_IMAGE_PACKAGE_APP
 	default y
 
-if (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF5340_CPUAPP)
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	default y
+
+#### DFU network core configuration
+if SOC_SERIES_NRF53X
 
 config MCUBOOT_UPDATEABLE_IMAGES
 	default 2
@@ -50,11 +56,11 @@ config NETCORE_APP_UPDATE
 config DFU_MULTI_IMAGE_PACKAGE_NET
 	default y
 
-endif # (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF5340_CPUAPP)
-
+endif # SOC_SERIES_NRF53X
 endif # BOOTLOADER_MCUBOOT
 
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	default y if BOARD_NRF52840DK_NRF52840 || BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF5340_CPUAPP || BOARD_NRF54L15PDK_NRF54L15_CPUAPP
+#### Enable generating factory data
+config MATTER_FACTORY_DATA_GENERATE
+	default y
 
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

@@ -6,8 +6,6 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-list(APPEND SNIPPET_ROOT "../common")
-
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-light-switch)

@@ -162,7 +162,7 @@ Nordic Matter platform additions
 ================================
 
 When building a Matter application for :doc:`nRF Connect platform <matter:nrfconnect_platform_overview>`, the Matter OTA image is one of the build :ref:`output files <app_build_output_files>`.
-The default location of the software image is :file:`zephyr/matter.ota` in the build directory.
+The default location of the software image is :file:`matter.ota` in the build directory.
 The `Payload` field of the software image includes :file:`dfu_multi_image.bin` file, which is :ref:`another output file <app_build_output_files_other>` of the build process.
 
 The :file:`dfu_multi_image.bin` file is an archive file that includes a CBOR manifest and a collection of user-selected update components.
