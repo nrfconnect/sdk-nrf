@@ -3486,6 +3486,11 @@ In addition to the known issues listed here, see also :ref:`softdevice_controlle
 
 .. rst-class:: v2-6-1 v2-6-0
 
+DRGN-22024: The controller might assert when the peripheral receives a connection update indication.
+  This only occurs when the central uses a wide receive window for the connection update, and both sends at the end of the receive window and sends a lot of data in the connection event with the connection update instant.
+
+.. rst-class:: v2-6-1 v2-6-0
+
 DRGN-21619: The controller might assert if the CIS peripheral stops receiving packets from the CIS central
   This only occurs when the window widening reaches at least half of the ISO interval in magnitude.
   Assuming worst case clock accuracies on both the central and the peripheral, this could occur with a supervision timeout of 2.4, 3.7, or 4.9 seconds, corresponding to an ISO interval of 5, 7.5, or 10 milliseconds, respectively.
