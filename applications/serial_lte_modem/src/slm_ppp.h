@@ -6,7 +6,6 @@
 #ifndef SLM_PPP_
 #define SLM_PPP_
 
-#include <modem/at_cmd_parser.h>
 #include <stdbool.h>
 
 /* Whether to forward CGEV notifications to the SLM UART. */

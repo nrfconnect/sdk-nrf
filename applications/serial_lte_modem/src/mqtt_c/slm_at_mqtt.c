@@ -486,7 +486,7 @@ static int do_mqtt_subscribe(uint16_t op,
 }
 
 SLM_AT_CMD_CUSTOM(xmqttcfg, "AT#XMQTTCFG", handle_at_mqtt_config);
-static int handle_at_mqtt_config(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_mqtt_config(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 				 uint32_t param_count)
 {
 	int err = -EINVAL;
@@ -494,21 +494,21 @@ static int handle_at_mqtt_config(enum at_cmd_type cmd_type, const struct at_para
 	uint16_t clean_session = CONFIG_MQTT_CLEAN_SESSION;
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
+	case AT_PARSER_CMD_TYPE_SET:
 		size_t clientid_sz = sizeof(mqtt_clientid);
 
-		err = util_string_get(param_list, 1, mqtt_clientid, &clientid_sz);
+		err = util_string_get(parser, 1, mqtt_clientid, &clientid_sz);
 		if (err) {
 			return err;
 		}
 		if (param_count > 2) {
-			err = at_params_unsigned_short_get(param_list, 2, &keep_alive);
+			err = at_parser_num_get(parser, 2, &keep_alive);
 			if (err) {
 				return err;
 			}
 		}
 		if (param_count > 3) {
-			err = at_params_unsigned_short_get(param_list, 3, &clean_session);
+			err = at_parser_num_get(parser, 3, &clean_session);
 			if (err) {
 				return err;
 			}
@@ -516,13 +516,13 @@ static int handle_at_mqtt_config(enum at_cmd_type cmd_type, const struct at_para
 		err = do_mqtt_config(keep_alive, (uint8_t)clean_session);
 		break;
 
-	case AT_CMD_TYPE_READ_COMMAND:
+	case AT_PARSER_CMD_TYPE_READ:
 		rsp_send("\r\n#XMQTTCFG: \"%s\",%d,%d\r\n",
 			 mqtt_clientid, client.keepalive, client.clean_session);
 		err = 0;
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 		rsp_send("\r\n#XMQTTCFG: <client_id>,<keep_alive>,<clean_session>\r\n");
 		err = 0;
 		break;
@@ -535,15 +535,15 @@ static int handle_at_mqtt_config(enum at_cmd_type cmd_type, const struct at_para
 }
 
 SLM_AT_CMD_CUSTOM(xmqttcon, "AT#XMQTTCON", handle_at_mqtt_connect);
-static int handle_at_mqtt_connect(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_mqtt_connect(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 				  uint32_t param_count)
 {
 	int err = -EINVAL;
 	uint16_t op;
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(param_list, 1, &op);
+	case AT_PARSER_CMD_TYPE_SET:
+		err = at_parser_num_get(parser, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -552,31 +552,31 @@ static int handle_at_mqtt_connect(enum at_cmd_type cmd_type, const struct at_par
 			size_t password_sz = sizeof(mqtt_password);
 			size_t url_sz = sizeof(mqtt_broker_url);
 
-			err = util_string_get(param_list, 2, mqtt_username, &username_sz);
+			err = util_string_get(parser, 2, mqtt_username, &username_sz);
 			if (err) {
 				return err;
 			} else {
 				ctx.username.utf8 = mqtt_username;
 				ctx.username.size = strlen(mqtt_username);
 			}
-			err = util_string_get(param_list, 3, mqtt_password, &password_sz);
+			err = util_string_get(parser, 3, mqtt_password, &password_sz);
 			if (err) {
 				return err;
 			} else {
 				ctx.password.utf8 = mqtt_password;
 				ctx.password.size = strlen(mqtt_password);
 			}
-			err = util_string_get(param_list, 4, mqtt_broker_url, &url_sz);
+			err = util_string_get(parser, 4, mqtt_broker_url, &url_sz);
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(param_list, 5, &mqtt_broker_port);
+			err = at_parser_num_get(parser, 5, &mqtt_broker_port);
 			if (err) {
 				return err;
 			}
 			ctx.sec_tag = INVALID_SEC_TAG;
 			if (param_count > 6) {
-				err = at_params_unsigned_int_get(param_list, 6, &ctx.sec_tag);
+				err = at_parser_num_get(parser, 6, &ctx.sec_tag);
 				if (err) {
 					return err;
 				}
@@ -590,7 +590,7 @@ static int handle_at_mqtt_connect(enum at_cmd_type cmd_type, const struct at_par
 		}
 		break;
 
-	case AT_CMD_TYPE_READ_COMMAND:
+	case AT_PARSER_CMD_TYPE_READ:
 		if (ctx.connected) {
 			if (ctx.sec_tag != INVALID_SEC_TAG) {
 				rsp_send("\r\n#XMQTTCON: %d,\"%s\",\"%s\",%d,%d\r\n",
@@ -607,7 +607,7 @@ static int handle_at_mqtt_connect(enum at_cmd_type cmd_type, const struct at_par
 		err = 0;
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 		rsp_send("\r\n#XMQTTCON: (%d,%d,%d),<username>,"
 			 "<password>,<url>,<port>,<sec_tag>\r\n",
 			 MQTTC_DISCONNECT, MQTTC_CONNECT, MQTTC_CONNECT6);
@@ -641,7 +641,7 @@ static int mqtt_datamode_callback(uint8_t op, const uint8_t *data, int len, uint
 }
 
 SLM_AT_CMD_CUSTOM(xmqttpub, "AT#XMQTTPUB", handle_at_mqtt_publish);
-static int handle_at_mqtt_publish(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_mqtt_publish(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 				  uint32_t param_count)
 {
 	int err = -EINVAL;
@@ -657,26 +657,26 @@ static int handle_at_mqtt_publish(enum at_cmd_type cmd_type, const struct at_par
 	}
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
-		err = util_string_get(param_list, 1, pub_topic, &topic_sz);
+	case AT_PARSER_CMD_TYPE_SET:
+		err = util_string_get(parser, 1, pub_topic, &topic_sz);
 		if (err) {
 			return err;
 		}
 		pub_msg[0] = '\0';
 		if (param_count > 2) {
-			err = util_string_get(param_list, 2, pub_msg, &msg_sz);
+			err = util_string_get(parser, 2, pub_msg, &msg_sz);
 			if (err) {
 				return err;
 			}
 		}
 		if (param_count > 3) {
-			err = at_params_unsigned_short_get(param_list, 3, &qos);
+			err = at_parser_num_get(parser, 3, &qos);
 			if (err) {
 				return err;
 			}
 		}
 		if (param_count > 4) {
-			err = at_params_unsigned_short_get(param_list, 4, &retain);
+			err = at_parser_num_get(parser, 4, &retain);
 			if (err) {
 				return err;
 			}
@@ -708,7 +708,7 @@ static int handle_at_mqtt_publish(enum at_cmd_type cmd_type, const struct at_par
 		}
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 		rsp_send("\r\n#XMQTTPUB: <topic>,<msg>,(0,1,2),(0,1)\r\n");
 		err = 0;
 		break;
@@ -721,8 +721,8 @@ static int handle_at_mqtt_publish(enum at_cmd_type cmd_type, const struct at_par
 }
 
 SLM_AT_CMD_CUSTOM(xmqttsub, "AT#XMQTTSUB", handle_at_mqtt_subscribe);
-static int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type,
-				    const struct at_param_list *param_list, uint32_t param_count)
+static int handle_at_mqtt_subscribe(enum at_parser_cmd_type cmd_type,
+				    struct at_parser *parser, uint32_t param_count)
 {
 	int err = -EINVAL;
 	uint16_t qos;
@@ -734,13 +734,13 @@ static int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type,
 	}
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
+	case AT_PARSER_CMD_TYPE_SET:
 		if (param_count == 3) {
-			err = util_string_get(param_list, 1, topic, &topic_sz);
+			err = util_string_get(parser, 1, topic, &topic_sz);
 			if (err < 0) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(param_list, 2, &qos);
+			err = at_parser_num_get(parser, 2, &qos);
 			if (err < 0) {
 				return err;
 			}
@@ -750,7 +750,7 @@ static int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type,
 		}
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 		rsp_send("\r\n#XMQTTSUB: <topic>,(0,1,2)\r\n");
 		err = 0;
 		break;
@@ -763,8 +763,8 @@ static int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type,
 }
 
 SLM_AT_CMD_CUSTOM(xmqttunsub, "AT#XMQTTUNSUB", handle_at_mqtt_unsubscribe);
-static int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type,
-				      const struct at_param_list *param_list, uint32_t param_count)
+static int handle_at_mqtt_unsubscribe(enum at_parser_cmd_type cmd_type,
+				      struct at_parser *parser, uint32_t param_count)
 {
 	int err = -EINVAL;
 	char topic[MQTT_MAX_TOPIC_LEN];
@@ -775,9 +775,9 @@ static int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type,
 	}
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
+	case AT_PARSER_CMD_TYPE_SET:
 		if (param_count == 2) {
-			err = util_string_get(param_list, 1, topic, &topic_sz);
+			err = util_string_get(parser, 1, topic, &topic_sz);
 			if (err < 0) {
 				return err;
 			}
@@ -788,7 +788,7 @@ static int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type,
 		}
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 		rsp_send("\r\n#XMQTTUNSUB: <topic>\r\n");
 		err = 0;
 		break;

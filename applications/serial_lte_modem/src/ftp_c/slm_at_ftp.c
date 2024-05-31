@@ -108,7 +108,7 @@ void ftp_data_callback(const uint8_t *msg, uint16_t len)
 /* AT#XFTP="open",<username>,<password>,<hostname>[,<port>[,<sec_tag>]] */
 /* similar to ftp://<user>:<password>@<host>:<port> */
 SLM_AT_CMD_CUSTOM(xftp_open, "AT#XFTP=\"open\"", do_ftp_open);
-static int do_ftp_open(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int do_ftp_open(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 		       uint32_t param_count)
 {
 	int ret = 0;
@@ -122,28 +122,28 @@ static int do_ftp_open(enum at_cmd_type cmd_type, const struct at_param_list *pa
 	sec_tag_t sec_tag = INVALID_SEC_TAG;
 
 	/* Parse AT command */
-	ret = util_string_get(param_list, 2, username, &sz_username);
+	ret = util_string_get(parser, 2, username, &sz_username);
 	if (ret || strlen(username) == 0) {
 		strcpy(username, FTP_USER_ANONYMOUS);
 		strcpy(password, FTP_PASSWORD_ANONYMOUS);
 	} else {
-		ret = util_string_get(param_list, 3, password, &sz_password);
+		ret = util_string_get(parser, 3, password, &sz_password);
 		if (ret) {
 			return -EINVAL;
 		}
 	}
-	ret = util_string_get(param_list, 4, hostname, &sz_hostname);
+	ret = util_string_get(parser, 4, hostname, &sz_hostname);
 	if (ret) {
 		return ret;
 	}
 	if (param_count > 5) {
-		ret = at_params_unsigned_short_get(param_list, 5, &port);
+		ret = at_parser_num_get(parser, 5, &port);
 		if (ret) {
 			return ret;
 		}
 	}
 	if (param_count > 6) {
-		ret = at_params_unsigned_int_get(param_list, 6, &sec_tag);
+		ret = at_parser_num_get(parser, 6, &sec_tag);
 		if (ret) {
 			return ret;
 		}
@@ -165,7 +165,7 @@ static int do_ftp_open(enum at_cmd_type cmd_type, const struct at_param_list *pa
 }
 
 SLM_AT_CMD_CUSTOM(xftp_close, "AT#XFTP=\"close\"", do_ftp_close);
-static int do_ftp_close(enum at_cmd_type, const struct at_param_list *, uint32_t)
+static int do_ftp_close(enum at_parser_cmd_type, struct at_parser *, uint32_t)
 {
 	int ret = ftp_close();
 
@@ -173,7 +173,7 @@ static int do_ftp_close(enum at_cmd_type, const struct at_param_list *, uint32_t
 }
 
 SLM_AT_CMD_CUSTOM(xftp_status, "AT#XFTP=\"status\"", do_ftp_status);
-static int do_ftp_status(enum at_cmd_type, const struct at_param_list *, uint32_t)
+static int do_ftp_status(enum at_parser_cmd_type, struct at_parser *, uint32_t)
 {
 	int ret = ftp_status();
 
@@ -181,7 +181,7 @@ static int do_ftp_status(enum at_cmd_type, const struct at_param_list *, uint32_
 }
 
 SLM_AT_CMD_CUSTOM(xftp_ascii, "AT#XFTP=\"ascii\"", do_ftp_ascii);
-static int do_ftp_ascii(enum at_cmd_type, const struct at_param_list *, uint32_t)
+static int do_ftp_ascii(enum at_parser_cmd_type, struct at_parser *, uint32_t)
 {
 	int ret = ftp_type(FTP_TYPE_ASCII);
 
@@ -189,7 +189,7 @@ static int do_ftp_ascii(enum at_cmd_type, const struct at_param_list *, uint32_t
 }
 
 SLM_AT_CMD_CUSTOM(xftp_binary, "AT#XFTP=\"binary\"", do_ftp_binary);
-static int do_ftp_binary(enum at_cmd_type, const struct at_param_list *, uint32_t)
+static int do_ftp_binary(enum at_parser_cmd_type, struct at_parser *, uint32_t)
 {
 	int ret = ftp_type(FTP_TYPE_BINARY);
 
@@ -197,13 +197,13 @@ static int do_ftp_binary(enum at_cmd_type, const struct at_param_list *, uint32_
 }
 
 SLM_AT_CMD_CUSTOM(xftp_verbose, "AT#XFTP=\"verbose\"", do_ftp_verbose);
-static int do_ftp_verbose(enum at_cmd_type, const struct at_param_list *param_list, uint32_t)
+static int do_ftp_verbose(enum at_parser_cmd_type, struct at_parser *parser, uint32_t)
 {
 	int ret = 0;
 	char vb_mode[4];
 	int sz_mode = 4;
 
-	ret = util_string_get(param_list, 2, vb_mode, &sz_mode);
+	ret = util_string_get(parser, 2, vb_mode, &sz_mode);
 	if (ret) {
 		return ret;
 	}
@@ -222,7 +222,7 @@ static int do_ftp_verbose(enum at_cmd_type, const struct at_param_list *param_li
 }
 
 SLM_AT_CMD_CUSTOM(xftp_pwd, "AT#XFTP=\"pwd\"", do_ftp_pwd);
-static int do_ftp_pwd(enum at_cmd_type, const struct at_param_list *, uint32_t)
+static int do_ftp_pwd(enum at_parser_cmd_type, struct at_parser *, uint32_t)
 {
 	int ret = ftp_pwd();
 
@@ -231,14 +231,14 @@ static int do_ftp_pwd(enum at_cmd_type, const struct at_param_list *, uint32_t)
 
 /* AT#XFTP="ls"[,<options>[,<folder>]] */
 SLM_AT_CMD_CUSTOM(xftp_ls, "AT#XFTP=\"ls\"", do_ftp_ls);
-static int do_ftp_ls(enum at_cmd_type, const struct at_param_list *param_list, uint32_t param_count)
+static int do_ftp_ls(enum at_parser_cmd_type, struct at_parser *parser, uint32_t param_count)
 {
 	int ret;
 	char options[FTP_MAX_OPTION] = "";
 	int sz_options = FTP_MAX_OPTION;
 
 	if (param_count > 2) {
-		ret = util_string_get(param_list, 2, options, &sz_options);
+		ret = util_string_get(parser, 2, options, &sz_options);
 		if (ret) {
 			return ret;
 		}
@@ -246,7 +246,7 @@ static int do_ftp_ls(enum at_cmd_type, const struct at_param_list *param_list, u
 	memset(filepath, 0x00, SLM_MAX_FILEPATH);
 	sz_filepath = SLM_MAX_FILEPATH;
 	if (param_count > 3) {
-		ret = util_string_get(param_list, 3, filepath, &sz_filepath);
+		ret = util_string_get(parser, 3, filepath, &sz_filepath);
 		if (ret) {
 			return ret;
 		}
@@ -263,12 +263,12 @@ static int do_ftp_ls(enum at_cmd_type, const struct at_param_list *param_list, u
 }
 
 SLM_AT_CMD_CUSTOM(xftp_cd, "AT#XFTP=\"cd\"", do_ftp_cd);
-static int do_ftp_cd(enum at_cmd_type, const struct at_param_list *param_list, uint32_t)
+static int do_ftp_cd(enum at_parser_cmd_type, struct at_parser *parser, uint32_t)
 {
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(parser, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -278,12 +278,12 @@ static int do_ftp_cd(enum at_cmd_type, const struct at_param_list *param_list, u
 }
 
 SLM_AT_CMD_CUSTOM(xftp_mkdir, "AT#XFTP=\"mkdir\"", do_ftp_mkdir);
-static int do_ftp_mkdir(enum at_cmd_type, const struct at_param_list *param_list, uint32_t)
+static int do_ftp_mkdir(enum at_parser_cmd_type, struct at_parser *parser, uint32_t)
 {
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(parser, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -293,12 +293,12 @@ static int do_ftp_mkdir(enum at_cmd_type, const struct at_param_list *param_list
 }
 
 SLM_AT_CMD_CUSTOM(xftp_rmdir, "AT#XFTP=\"rmdir\"", do_ftp_rmdir);
-static int do_ftp_rmdir(enum at_cmd_type, const struct at_param_list *param_list, uint32_t)
+static int do_ftp_rmdir(enum at_parser_cmd_type, struct at_parser *parser, uint32_t)
 {
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(parser, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -308,18 +308,18 @@ static int do_ftp_rmdir(enum at_cmd_type, const struct at_param_list *param_list
 }
 
 SLM_AT_CMD_CUSTOM(xftp_rename, "AT#XFTP=\"rename\"", do_ftp_rename);
-static int do_ftp_rename(enum at_cmd_type, const struct at_param_list *param_list, uint32_t)
+static int do_ftp_rename(enum at_parser_cmd_type, struct at_parser *parser, uint32_t)
 {
 	int ret;
 	char file_new[SLM_MAX_FILEPATH];
 	int sz_file_new = SLM_MAX_FILEPATH;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(parser, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
-	ret = util_string_get(param_list, 3, file_new, &sz_file_new);
+	ret = util_string_get(parser, 3, file_new, &sz_file_new);
 	if (ret) {
 		return ret;
 	}
@@ -329,12 +329,12 @@ static int do_ftp_rename(enum at_cmd_type, const struct at_param_list *param_lis
 }
 
 SLM_AT_CMD_CUSTOM(xftp_delete, "AT#XFTP=\"delete\"", do_ftp_delete);
-static int do_ftp_delete(enum at_cmd_type, const struct at_param_list *param_list, uint32_t)
+static int do_ftp_delete(enum at_parser_cmd_type, struct at_parser *parser, uint32_t)
 {
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(parser, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -344,12 +344,12 @@ static int do_ftp_delete(enum at_cmd_type, const struct at_param_list *param_lis
 }
 
 SLM_AT_CMD_CUSTOM(xftp_get, "AT#XFTP=\"get\"", do_ftp_get);
-static int do_ftp_get(enum at_cmd_type, const struct at_param_list *param_list, uint32_t)
+static int do_ftp_get(enum at_parser_cmd_type, struct at_parser *parser, uint32_t)
 {
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(parser, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -401,13 +401,13 @@ static int ftp_put_handler(const uint8_t *data, int len, uint8_t flags)
 }
 
 SLM_AT_CMD_CUSTOM(xftp_put, "AT#XFTP=\"put\"", do_ftp_put);
-static int do_ftp_put(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_ftp_put(enum at_parser_cmd_type, struct at_parser *parser,
 		      uint32_t param_count)
 {
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(parser, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -424,7 +424,7 @@ static int do_ftp_put(enum at_cmd_type, const struct at_param_list *param_list,
 		int size = sizeof(data);
 		int err;
 
-		err = util_string_get(param_list, 3, data, &size);
+		err = util_string_get(parser, 3, data, &size);
 		if (err) {
 			return err;
 		}
@@ -454,7 +454,7 @@ static int ftp_uput_handler(const uint8_t *data, int len, uint8_t flags)
 }
 
 SLM_AT_CMD_CUSTOM(xftp_uput, "AT#XFTP=\"uput\"", do_ftp_uput);
-static int do_ftp_uput(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_ftp_uput(enum at_parser_cmd_type, struct at_parser *parser,
 		       uint32_t param_count)
 {
 	int ret = -1;
@@ -471,7 +471,7 @@ static int do_ftp_uput(enum at_cmd_type, const struct at_param_list *param_list,
 		int size = sizeof(data);
 		int err;
 
-		err = util_string_get(param_list, 2, data, &size);
+		err = util_string_get(parser, 2, data, &size);
 		if (err) {
 			return err;
 		}
@@ -497,13 +497,13 @@ static int ftp_mput_handler(const uint8_t *data, int len, uint8_t flags)
 }
 
 SLM_AT_CMD_CUSTOM(xftp_mput, "AT#XFTP=\"mput\"", do_ftp_mput);
-static int do_ftp_mput(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_ftp_mput(enum at_parser_cmd_type, struct at_parser *parser,
 		       uint32_t param_count)
 {
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(parser, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -520,7 +520,7 @@ static int do_ftp_mput(enum at_cmd_type, const struct at_param_list *param_list,
 		int size = sizeof(data);
 		int err;
 
-		err = util_string_get(param_list, 3, data, &size);
+		err = util_string_get(parser, 3, data, &size);
 		if (err) {
 			return err;
 		}

@@ -15,8 +15,7 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/types.h>
 #include <dfu/dfu_target.h>
-#include <modem/at_cmd_custom.h>
-#include <modem/at_cmd_parser.h>
+#include <modem/at_parser.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_jwt.h>
 #include <modem/nrf_modem_lib.h>
@@ -78,9 +77,6 @@ enum sleep_modes {
 	SLEEP_MODE_IDLE
 };
 
-/** @brief AT command handler type. */
-typedef int (*slm_at_handler_t) (enum at_cmd_type);
-
 #if POWER_PIN_IS_ENABLED
 static struct {
 	struct k_work_delayable work;
@@ -109,11 +105,11 @@ int slm_power_off_modem(void)
 }
 
 SLM_AT_CMD_CUSTOM(xslmver, "AT#XSLMVER", handle_at_slmver);
-static int handle_at_slmver(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
+static int handle_at_slmver(enum at_parser_cmd_type cmd_type, struct at_parser *, uint32_t)
 {
 	int ret = -EINVAL;
 
-	if (cmd_type == AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type == AT_PARSER_CMD_TYPE_SET) {
 		char *libmodem = nrf_modem_build_version();
 
 		if (strlen(CONFIG_SLM_CUSTOMER_VERSION) > 0) {
@@ -146,13 +142,13 @@ static void go_sleep_wk(struct k_work *)
 }
 
 SLM_AT_CMD_CUSTOM(xsleep, "AT#XSLEEP", handle_at_sleep);
-static int handle_at_sleep(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_sleep(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			   uint32_t)
 {
 	int ret = -EINVAL;
 
-	if (cmd_type == AT_CMD_TYPE_SET_COMMAND) {
-		ret = at_params_unsigned_int_get(param_list, 1, &sleep.mode);
+	if (cmd_type == AT_PARSER_CMD_TYPE_SET) {
+		ret = at_parser_num_get(parser, 1, &sleep.mode);
 		if (ret) {
 			return -EINVAL;
 		}
@@ -161,7 +157,7 @@ static int handle_at_sleep(enum at_cmd_type cmd_type, const struct at_param_list
 		} else {
 			ret = -EINVAL;
 		}
-	} else if (cmd_type == AT_CMD_TYPE_TEST_COMMAND) {
+	} else if (cmd_type == AT_PARSER_CMD_TYPE_TEST) {
 		rsp_send("\r\n#XSLEEP: (%d,%d)\r\n", SLEEP_MODE_DEEP, SLEEP_MODE_IDLE);
 		ret = 0;
 	}
@@ -189,9 +185,9 @@ static void slm_shutdown(void)
 }
 
 SLM_AT_CMD_CUSTOM(xshutdown, "AT#XSHUTDOWN", handle_at_shutdown);
-static int handle_at_shutdown(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
+static int handle_at_shutdown(enum at_parser_cmd_type cmd_type, struct at_parser *, uint32_t)
 {
-	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type != AT_PARSER_CMD_TYPE_SET) {
 		return -EINVAL;
 	}
 
@@ -208,9 +204,9 @@ FUNC_NORETURN void slm_reset(void)
 }
 
 SLM_AT_CMD_CUSTOM(xreset, "AT#XRESET", handle_at_reset);
-static int handle_at_reset(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
+static int handle_at_reset(enum at_parser_cmd_type cmd_type, struct at_parser *, uint32_t)
 {
-	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type != AT_PARSER_CMD_TYPE_SET) {
 		return -EINVAL;
 	}
 
@@ -255,9 +251,9 @@ out:
 }
 
 SLM_AT_CMD_CUSTOM(xmodemreset, "AT#XMODEMRESET", handle_at_modemreset);
-static int handle_at_modemreset(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
+static int handle_at_modemreset(enum at_parser_cmd_type cmd_type, struct at_parser *, uint32_t)
 {
-	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type != AT_PARSER_CMD_TYPE_SET) {
 		return -EINVAL;
 	}
 
@@ -270,11 +266,11 @@ static int handle_at_modemreset(enum at_cmd_type cmd_type, const struct at_param
 }
 
 SLM_AT_CMD_CUSTOM(xuuid, "AT#XUUID", handle_at_uuid);
-static int handle_at_uuid(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
+static int handle_at_uuid(enum at_parser_cmd_type cmd_type, struct at_parser *, uint32_t)
 {
 	int ret;
 
-	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type != AT_PARSER_CMD_TYPE_SET) {
 		return -EINVAL;
 	}
 
@@ -291,15 +287,15 @@ static int handle_at_uuid(enum at_cmd_type cmd_type, const struct at_param_list 
 }
 
 SLM_AT_CMD_CUSTOM(xdatactrl, "AT#XDATACTRL", handle_at_datactrl);
-static int handle_at_datactrl(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_datactrl(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			      uint32_t)
 {
 	int ret = 0;
 	uint16_t time_limit, time_limit_min;
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
-		ret = at_params_unsigned_short_get(param_list, 1, &time_limit);
+	case AT_PARSER_CMD_TYPE_SET:
+		ret = at_parser_num_get(parser, 1, &time_limit);
 		if (ret) {
 			return ret;
 		}
@@ -310,12 +306,12 @@ static int handle_at_datactrl(enum at_cmd_type cmd_type, const struct at_param_l
 		}
 		break;
 
-	case AT_CMD_TYPE_READ_COMMAND:
+	case AT_PARSER_CMD_TYPE_READ:
 		(void)verify_datamode_control(slm_datamode_time_limit, &time_limit_min);
 		rsp_send("\r\n#XDATACTRL: %d,%d\r\n", slm_datamode_time_limit, time_limit_min);
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 		rsp_send("\r\n#XDATACTRL=<time_limit>\r\n");
 		break;
 
@@ -327,9 +323,9 @@ static int handle_at_datactrl(enum at_cmd_type cmd_type, const struct at_param_l
 }
 
 SLM_AT_CMD_CUSTOM(xclac, "AT#XCLAC", handle_at_clac);
-static int handle_at_clac(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
+static int handle_at_clac(enum at_parser_cmd_type cmd_type, struct at_parser *, uint32_t)
 {
-	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
+	if (cmd_type != AT_PARSER_CMD_TYPE_SET) {
 		return -EINVAL;
 	}
 

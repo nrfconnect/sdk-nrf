@@ -518,7 +518,7 @@ static int ping_test_handler(const char *target)
 }
 
 SLM_AT_CMD_CUSTOM(xping, "AT#XPING", handle_at_icmp_ping);
-static int handle_at_icmp_ping(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_icmp_ping(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			       uint32_t param_count)
 {
 	int err = -EINVAL;
@@ -526,36 +526,36 @@ static int handle_at_icmp_ping(enum at_cmd_type cmd_type, const struct at_param_
 	int size = SLM_MAX_URL;
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
-		err = util_string_get(param_list, 1, target, &size);
+	case AT_PARSER_CMD_TYPE_SET:
+		err = util_string_get(parser, 1, target, &size);
 		if (err < 0) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(param_list, 2, &ping_argv.len);
+		err = at_parser_num_get(parser, 2, &ping_argv.len);
 		if (err < 0) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(param_list, 3, &ping_argv.waitms);
+		err = at_parser_num_get(parser, 3, &ping_argv.waitms);
 		if (err < 0) {
 			return err;
 		}
 		ping_argv.count = 1; /* default 1 */
 		if (param_count > 4) {
-			err = at_params_unsigned_short_get(param_list, 4, &ping_argv.count);
+			err = at_parser_num_get(parser, 4, &ping_argv.count);
 			if (err < 0) {
 				return err;
 			};
 		}
 		ping_argv.interval = 1000; /* default 1s */
 		if (param_count > 5) {
-			err = at_params_unsigned_short_get(param_list, 5, &ping_argv.interval);
+			err = at_parser_num_get(parser, 5, &ping_argv.interval);
 			if (err < 0) {
 				return err;
 			};
 		}
 		ping_argv.pdn = 0; /* default 0 primary PDN */
 		if (param_count > 6) {
-			err = at_params_unsigned_short_get(param_list, 6, &ping_argv.pdn);
+			err = at_parser_num_get(parser, 6, &ping_argv.pdn);
 			if (err < 0) {
 				return err;
 			};
