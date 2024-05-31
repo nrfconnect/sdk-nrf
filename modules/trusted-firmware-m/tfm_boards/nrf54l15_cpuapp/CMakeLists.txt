@@ -15,6 +15,24 @@ target_include_directories(platform_s
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include
   )
 
+target_sources(platform_s
+  PRIVATE
+  ${ZEPHYR_BASE}/soc/nordic/nrf54l/soc.c
+  )
+
+target_include_directories(platform_s
+  PRIVATE
+  ${ZEPHYR_BASE}/modules/cmsis/
+  ${ZEPHYR_BASE}/soc/nordic/nrf54l
+  ${ZEPHYR_BASE}/soc/nordic/common
+  )
+
+# nrf54l15_enga_application.h should be defining __ICACHE_PRESENT, but
+# it is not, until this is fixed we define it here.
+target_compile_definitions(platform_s
+  PRIVATE
+  __ICACHE_PRESENT=1
+  )
 
 install(FILES       ${CMAKE_CURRENT_LIST_DIR}/ns/cpuarch_ns.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}
