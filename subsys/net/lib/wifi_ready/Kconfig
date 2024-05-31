@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig WIFI_READY_LIB
+	bool "Wi-Fi ready event handling library"
+	select EXPERIMENTAL
+	depends on WPA_SUPP
+	depends on NET_MGMT
+	help
+	  Enable WiFi ready management subsystem that allows the application to
+	  register callbacks that are called when the WiFi is ready to be used and
+	  when the WiFi is not ready to be used.
+
+if WIFI_READY_LIB
+
+module = WIFI_READY_LIB
+module-str = wifi_ready_event_handling
+source "subsys/logging/Kconfig.template.log_config"
+
+config WIFI_READY_MAX_CALLBACKS
+	int "Maximum number of Wi-Fi ready callbacks"
+	default 2
+	help
+	  Set the maximum number of Wi-Fi ready callbacks that can be registered
+	  by the application.
+
+config WIFI_READY_INIT_PRIORITY
+	int "Wi-Fi ready initialization priority"
+	default 90
+	help
+	  Set the initialization priority of the Wi-Fi ready subsystem.
+endif
