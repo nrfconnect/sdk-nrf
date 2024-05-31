@@ -24,10 +24,10 @@ LOG_MODULE_DECLARE(bt_mgmt_scan);
 /* Any value above 0xFFFFFF is invalid, so one can use 0xFFFFFFFF to denote
  * an invalid broadcast ID.
  */
-#define INVALID_BROADCAST_ID 0xFFFFFFFF
-#define PA_SYNC_SKIP	     2
+#define INVALID_BROADCAST_ID		  0xFFFFFFFF
+#define PA_SYNC_SKIP			  2
 /* Similar to retries for connections */
-#define SYNC_RETRY_COUNT     6
+#define PA_SYNC_INTERVAL_TO_TIMEOUT_RATIO 20
 
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 
@@ -79,18 +79,17 @@ K_TIMER_DEFINE(pa_sync_timer, pa_sync_timeout, NULL);
 
 static uint16_t interval_to_sync_timeout(uint16_t interval)
 {
-	uint16_t timeout;
+	uint32_t interval_ms;
+	uint32_t timeout;
 
-	/* Ensure that the following calculation does not overflow silently */
-	__ASSERT(SYNC_RETRY_COUNT < 10, "SYNC_RETRY_COUNT shall be less than 10");
-
-	/* Add retries and convert to unit in 10s of ms */
-	timeout = ((uint32_t)interval * SYNC_RETRY_COUNT) / 10;
+	/* Add retries and convert to unit in 10's of ms */
+	interval_ms = BT_GAP_PER_ADV_INTERVAL_TO_MS(interval);
+	timeout = (interval_ms * PA_SYNC_INTERVAL_TO_TIMEOUT_RATIO) / 10;
 
 	/* Enforce restraints */
 	timeout = CLAMP(timeout, BT_GAP_PER_ADV_MIN_TIMEOUT, BT_GAP_PER_ADV_MAX_TIMEOUT);
 
-	return timeout;
+	return (uint16_t)timeout;
 }
 
 static void periodic_adv_sync(const struct bt_le_scan_recv_info *info,
