@@ -296,7 +296,7 @@ static void location_print_data_details(
 #if defined(CONFIG_LOCATION_METHOD_GNSS)
 	if (method == LOCATION_METHOD_GNSS) {
 		mosh_print("  satellites tracked: %d", details->gnss.satellites_tracked);
-		mosh_print("  satellites used: %d", details->gnss.satellites_tracked);
+		mosh_print("  satellites used: %d", details->gnss.satellites_used);
 		mosh_print("  elapsed GNSS time: %d ms", details->gnss.elapsed_time_gnss);
 		mosh_print("  GNSS execution time: %d ms", details->gnss.pvt_data.execution_time);
 	}
