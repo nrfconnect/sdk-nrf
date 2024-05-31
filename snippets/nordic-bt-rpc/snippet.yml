@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: nordic-bt-rpc
+
+boards:
+  nrf54h20dk/nrf54h20/cpurad:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54h20dk_nrf54h20_cpurad.overlay
+  nrf54h20dk/nrf54h20/cpuapp:
+    append:
+      EXTRA_CONF_FILE: boards/nrf54h20dk_nrf54h20_cpuapp.conf
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54h20dk_nrf54h20_cpuapp.overlay
+  nrf5340dk/nrf5340/cpuapp:
+    append:
+      EXTRA_CONF_FILE: boards/nrf5340dk_nrf5340_cpuapp.conf
