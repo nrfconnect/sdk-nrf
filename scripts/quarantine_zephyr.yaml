@@ -92,6 +92,7 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk/nrf9160/ns
+    - nrf54l15pdk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24928"
 
 - scenarios:
@@ -212,3 +213,17 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk/nrf9160/ns
   comment: "Same reason as in https://nordicsemi.atlassian.net/browse/NCSDK-22771"
+
+- scenarios:
+    - sample.net.sockets.big_http_download
+    - sample.net.sockets.big_http_download.ci
+  platforms:
+    - nrf54l15pdk/nrf54l15/cpuapp
+  comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
+
+- scenarios:
+    - sample.mcumgr.smp_svr.bt.nrf54l15pdk.ext_flash
+    - sample.mcumgr.smp_svr.bt.nrf54l15pdk.ext_flash.pure_dts
+  platforms:
+    - nrf54l15pdk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27817"
