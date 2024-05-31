@@ -463,9 +463,43 @@ static int nrf_modem_at_printf_cgact_deactivate(const char *cmd, va_list args)
 	return 0;
 }
 
-static int nrf_modem_at_printf_xepco(const char *cmd, va_list args)
+static int nrf_modem_at_printf_on_cfun_pwr_off(const char *cmd, va_list args)
 {
-	TEST_ASSERT_EQUAL_STRING("AT%%XEPCO=1", cmd);
+	TEST_ASSERT_EQUAL_STRING("AT+CGDCONT=%u,%s,%s", cmd);
+
+	return 0;
+}
+
+static int nrf_modem_at_printf_on_cfun_lte_on(const char *cmd, va_list args)
+{
+	switch (nrf_modem_at_printf_fake.call_count) {
+	case 1:
+		TEST_ASSERT_EQUAL_STRING("AT+CNEC=16", cmd);
+		break;
+	case 2:
+		TEST_ASSERT_EQUAL_STRING("AT+CGEREP=1", cmd);
+		break;
+	default:
+		TEST_ASSERT_TRUE(false);
+		break;
+	}
+
+	return 0;
+}
+
+static int nrf_modem_at_printf_on_init(const char *cmd, va_list args)
+{
+	switch (nrf_modem_at_printf_fake.call_count) {
+	case 1:
+		TEST_ASSERT_EQUAL_STRING("AT%%XEPCO=1", cmd);
+		break;
+	case 2:
+		TEST_ASSERT_EQUAL_STRING("AT+CGDCONT=%u,%s,%s", cmd);
+		break;
+	default:
+		TEST_ASSERT_TRUE(false);
+		break;
+	}
 
 	return 0;
 }
@@ -626,6 +660,11 @@ void test_pdn_pdn_default_ctx_cb_reg(void)
 
 	ret = pdn_default_ctx_cb_reg(pdn_event_handler);
 	TEST_ASSERT_EQUAL(0, ret);
+
+	/* If already registered we should allow tha call but not register again */
+	ret = pdn_default_ctx_cb_reg(pdn_event_handler);
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_EQUAL(1, k_malloc_fake.call_count);
 }
 
 void test_pdn_default_ctx_cb_dereg_efault(void)
@@ -1229,6 +1268,48 @@ void test_pdn_esm_strerror(void)
 	TEST_ASSERT_EQUAL_STRING("<unknown>", str);
 }
 
+extern void pdn_on_modem_cfun(int mode, void *ctx);
+void test_on_modem_cfun_pwr_off(void)
+{
+	int ret;
+
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_on_cfun_pwr_off;
+
+	/* we don't expect anything to happen in this case. */
+	pdn_on_modem_cfun(0, NULL);
+
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_printf_fake.call_count);
+
+
+	RESET_FAKE(nrf_modem_at_printf);
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_on_cfun_pwr_off;
+	test_pdn_ctx_create_cid1();
+
+	pdn_on_modem_cfun(0, NULL);
+
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_printf_fake.call_count);
+
+	/* Context destroyed on FCUN=0 */
+	ret = pdn_ctx_destroy(1);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_on_modem_cfun_lte_on(void)
+{
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_on_cfun_lte_on;
+
+	pdn_on_modem_cfun(1, NULL);
+
+	TEST_ASSERT_EQUAL(2, nrf_modem_at_printf_fake.call_count);
+
+	RESET_FAKE(nrf_modem_at_printf);
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_on_cfun_lte_on;
+	pdn_on_modem_cfun(21, NULL);
+
+	TEST_ASSERT_EQUAL(2, nrf_modem_at_printf_fake.call_count);
+
+}
+
 extern void on_modem_init(int ret, void *ctx);
 void test_on_modem_init(void)
 {
@@ -1239,9 +1320,15 @@ void test_on_modem_init(void)
 
 	on_modem_init(0, NULL);
 
-	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_xepco;
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_printf_fake.call_count);
+
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_on_init;
+
+	RESET_FAKE(nrf_modem_at_printf);
 
 	on_modem_init(0, NULL);
+
+	TEST_ASSERT_EQUAL(2, nrf_modem_at_printf_fake.call_count);
 }
 
 /* It is required to be added to each test. That is because unity's

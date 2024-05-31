@@ -30,6 +30,7 @@ static const char * const event_str[] = {
 	[PDN_EVENT_IPV6_UP] = "IPv6 up",
 	[PDN_EVENT_IPV6_DOWN] = "IPv6 down",
 	[PDN_EVENT_NETWORK_DETACH] = "network detach",
+	[PDN_EVENT_CTX_DESTROYED] = "context destroyed",
 };
 
 static void snprintaddr(char *str, size_t size, struct nrf_sockaddr *addr)

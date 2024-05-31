@@ -56,14 +56,26 @@ struct pdn_pdp_opt {
 
 /** @brief PDN library event */
 enum pdn_event {
-	PDN_EVENT_CNEC_ESM,		/**< +CNEC ESM error code */
-	PDN_EVENT_ACTIVATED,		/**< PDN connection activated */
-	PDN_EVENT_DEACTIVATED,		/**< PDN connection deactivated */
-	PDN_EVENT_IPV6_UP,		/**< PDN has IPv6 connectivity */
-	PDN_EVENT_IPV6_DOWN,		/**< PDN has lost IPv6 connectivity */
-	PDN_EVENT_NETWORK_DETACH,	/**< Network detached */
-	PDN_EVENT_APN_RATE_CONTROL_ON,	/**< APN rate control is ON for given PDN */
-	PDN_EVENT_APN_RATE_CONTROL_OFF, /**< APN rate control is OFF for given PDN */
+	/** +CNEC ESM error code */
+	PDN_EVENT_CNEC_ESM,
+	/** PDN connection activated */
+	PDN_EVENT_ACTIVATED,
+	/** PDN connection deactivated */
+	PDN_EVENT_DEACTIVATED,
+	/** PDN has IPv6 connectivity */
+	PDN_EVENT_IPV6_UP,
+	/** PDN has lost IPv6 connectivity */
+	PDN_EVENT_IPV6_DOWN,
+	/** Network detached */
+	PDN_EVENT_NETWORK_DETACH,
+	/** APN rate control is ON for given PDN */
+	PDN_EVENT_APN_RATE_CONTROL_ON,
+	/** APN rate control is OFF for given PDN */
+	PDN_EVENT_APN_RATE_CONTROL_OFF,
+	/** PDP context is destroyed for given PDN.
+	 *  This happens if modem is switched to minimum functionality mode.
+	 */
+	PDN_EVENT_CTX_DESTROYED,
 };
 
 /** @brief PDN authentication method */
