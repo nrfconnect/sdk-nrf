@@ -60,7 +60,7 @@ config LED_THREAD_STACK_SIZE
 
 config MAX_OUTGOING_MESSAGES
 	int "Outgoing message maximum"
-	default 50
+	default 25
 	help
 	  Sets the maximum number of device messages which may be enqueued
 	  before further messages are dropped.
