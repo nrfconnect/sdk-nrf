@@ -126,7 +126,7 @@ You can program a portion of the application code related to the nRF70 Series' W
 This option is available only when building for the nRF5340 DK with the nRF7002 EK shield attached.
 To prepare an application to use this feature, you need to create additional MCUboot partitions.
 To learn how to configure MCUboot partitions, see the :ref:`nrf70_fw_patch_update_adding_partitions` guide.
-To enable this feature for Matter, set the :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU` Kconfig option to ``y`` for the application (in the application :file:`prj.conf`) and the :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` Kconfig option to ``3`` for the MCUBoot child image (in its own :file:`prj.conf`).
+To enable this feature for Matter, set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE`, :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` Kconfig options to ``y``, and set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option to ``3``.
 
 .. matter_door_lock_sample_nrf70_firmware_patch_end
 
@@ -134,7 +134,7 @@ For example:
 
    .. code-block:: console
 
-      west build -b nrf5340dk/nrf5340/cpuapp -p -- -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex -DFILE_SUFFIX=thread_wifi_switched -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
+      west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dlock_SHIELD=nrf7002ek -Dipc_radio_SHIELD=nrf7002ek_coex -DFILE_SUFFIX=thread_wifi_switched -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3 -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DSB_CONFIG_WIFI_NRF700X=y -DSB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y
 
 .. _matter_lock_sample_ble_nus:
 
@@ -325,7 +325,7 @@ This means that a new factory data set will be automatically generated when buil
 To disable factory data support, set the following Kconfig options to ``n``:
 
    * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA`
-   * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD`
+   * :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`
 
 To learn more about factory data, read the :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
 
@@ -847,7 +847,7 @@ To test this feature, complete the following steps:
 
    .. code-block:: console
 
-      west build -b nrf5340dk/nrf5340/cpuapp -- -DFILE_SUFFIX=thread_wifi_switched -DSHIELD=nrf7002ek -Dmultiprotocol_rpmsg_SHIELD=nrf7002ek_coex
+      west build -b nrf5340dk/nrf5340/cpuapp -- -DFILE_SUFFIX=thread_wifi_switched -Dlock_SHIELD=nrf7002ek -Dipc_radio_SHIELD=nrf7002ek_coex -DSB_CONFIG_WIFI_NRF700X=y
 
 #. |connect_terminal_ANSI|
 #. Program the application to the kit using the following command:

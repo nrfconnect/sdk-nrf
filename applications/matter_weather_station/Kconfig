@@ -30,11 +30,6 @@ config IEEE802154_NRF5_RX_STACK_SIZE
 config CHIP_ENABLE_ICD_SUPPORT
 	default y
 
-# # Reduce Thread TX output power to 0 dBm for SED device
-# config OPENTHREAD_DEFAULT_TX_POWER
-# 	int
-# 	default 0
-
 endif # NET_L2_OPENTHREAD
 
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"

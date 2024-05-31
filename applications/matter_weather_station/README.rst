@@ -204,7 +204,7 @@ To build this application to work with the nRF7002 Wi-Fi expansion board:
       .. group-tab:: nRF Connect for VS Code
 
          To build the application in the nRF Connect for VS Code IDE for Thingy:53 with the nRF7002 EB attached, add the expansion board and the build type variables in the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
-         For example: ``-- -DSHIELD=nrf7002eb -DFILE_SUFFIX=release``.
+         For example: ``-- -Dmatter_weather_station_SHIELD=nrf7002eb -DFILE_SUFFIX=release -DSB_CONFIG_WIFI_NRF700X=y``.
 
       .. group-tab:: Command line
 
@@ -212,18 +212,17 @@ To build this application to work with the nRF7002 Wi-Fi expansion board:
 
          .. code-block:: console
 
-            west build -b thingy53/nrf5340/cpuapp -- -DSHIELD=nrf7002eb -DFILE_SUFFIX=release
+            west build -b thingy53/nrf5340/cpuapp -- -Dmatter_weather_station_SHIELD=nrf7002eb -DFILE_SUFFIX=release -DSB_CONFIG_WIFI_NRF700X=y
 
 Generating factory data
 =======================
 
-To enable factory data support, you need to select the ``overlay-factory_data`` configuration overlay from the available application :ref:`build configuration overlays <matter_weather_station_app_build_configuration_overlays>`.
+To enable factory data support, you need to select the ``overlay-factory_data`` configuration overlay from the available application :ref:`build configuration overlays <matter_weather_station_app_build_configuration_overlays>`, set the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` kconfig option to ``y``, and use the ``factory_data`` file suffix.
 You can generate new factory data set when building for the given board target by invoking the following command:
 
-.. parsed-literal::
-   :class: highlight
+.. code-block:: console
 
-   west build -b thingy53/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-factory_data.conf
+   west build -b thingy53/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-factory_data.conf -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y -DFILE_SUFFIX=factory_data
 
 This command builds the application with default certificates.
 After building for the board target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the :ref:`regular command to flash it to the device <programming>`.

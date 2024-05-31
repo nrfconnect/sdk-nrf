@@ -71,6 +71,22 @@ Peripheral samples
   * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
     This change applies to the sample built with the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` set to ``n``.
 
+Matter
+------
+
+  * With the inheritance of Zephyr's :ref:`zephyr:sysbuild` in the |NCS|, some changes are provided to the Matter samples and applications:
+
+    * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig option is deprecated and you need to use the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option instead to enable or disable creating the factory data set during building a Matter sample.
+      To enable factory data support on your device, you still need to set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` to ``y``.
+    * Factory data output files are now located in the ``<application_name>/zephyr/`` directory within the build directory.
+    * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option is deprecated in sysbuild and you need to use the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option instead to enable or disable merging the factory data HEX file with the final firmware HEX file.
+    * :kconfig:option:`SB_CONFIG_MATTER_OTA` Kconfig option has been added to enable or disable generating Matter OTA package during the building process.
+    * :kconfig:option:`CONFIG_CHIP_OTA_IMAGE_FILE_NAME` Kconfig option is deprecated and you need to use the :kconfig:option:`SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME` Kconfig option instead to define Matter OTA output filename.
+
+  .. note::
+
+    If you want to build a sample without using sysbuild, you need to use the old Kconfig options.
+
 Libraries
 =========
 
@@ -128,6 +144,7 @@ Matter
       * All Partition Manager configuration files (:file:`pm_static` files) have been removed from the :file:`configuration` directory.
         Instead, a :file:`pm_static_<BOARD>` file has been created for each target board and placed in the samples' directories.
         Setting the ``PM_STATIC_YML_FILE`` argument in the :file:`CMakeLists.txt` file has been removed, as it is no longer needed.
+
       * Configuration files :file:`Kconfig.mcuboot.defaults`, :file:`Kconfig.hci_ipc.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` that stored a default configuration for the child images have been removed.
         This was done because of the sysbuild integration and child images deprecation.
 
@@ -137,6 +154,11 @@ Matter
         1. Copy the content of the image configuration file :file:`prj.conf` located in the `sysbuild/<image_name>` directory (for example,  :file:`sysbuild/mcuboot`) to the :file:`prj.conf` file located in the :file:`child_image/<image_name>` directory.
         #. Copy the content of the board configuration file located in the :file:`sysbuild/<image_name>/boards` directory (for example, :file:`sysbuild/mcuboot/boards/nrf52840dk_nrf52840.conf`) to the board file located in the :file:`child_image/<image_name>/boards` directory.
 
+      * All Partition Manager configuration files (:file:`pm_static` files) with the suffix ``release`` have been removed from all samples.
+        Those files are now redundant, since the new build system allows using the file without the additional suffix if you use :makevar:`FILE_SUFFIX` and it is available in the project's directory.
+        For example, if you add ``-DFILE_SUFFIX=release`` to the CMake arguments while building an |NCS| Matter sample on the ``nrf52840dk/nrf52840`` target, the file :file:`pm_static_nrf52840dk_nrf52840.yaml` will be used as a fallback.
+        This means that the file :file:`pm_static_nrf52840dk_nrf52840_release.yaml` with the exact same contents is not needed anymore.
+        The :makevar:`CONF_FILE` argument is deprecated, but if you want to keep using it within your project, you need to create the :file:`pm_static_nrf52840dk_nrf52840_release.yaml` file and copy the content of the :file:`pm_static_nrf52840dk_nrf52840.yaml` file to it.
 
 Libraries
 =========

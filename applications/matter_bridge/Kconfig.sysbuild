@@ -4,28 +4,18 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+#### Radio core
 config NRF_DEFAULT_IPC_RADIO
 	default y
 
+# Enable Bluetooth serialization to network core
+config NETCORE_IPC_RADIO_BT_HCI_IPC
+	default y
+
+#### Bootloader
 choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT
 endchoice
-
-if BOOTLOADER_MCUBOOT && (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF5340_CPUAPP)
-
-if BOARD_NRF5340DK_NRF5340_CPUAPP
-
-config MCUBOOT_UPDATEABLE_IMAGES
-	default 3
-
-endif
-
-if BOARD_NRF7002DK_NRF5340_CPUAPP
-
-config MCUBOOT_UPDATEABLE_IMAGES
-	default 2
-
-endif
 
 choice MCUBOOT_MODE
 	default MCUBOOT_MODE_OVERWRITE_ONLY
@@ -41,6 +31,10 @@ config SECURE_BOOT_NETCORE
 config NETCORE_APP_UPDATE
 	default y
 
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	default y
+
+#### DFU multi-image support
 config DFU_MULTI_IMAGE_PACKAGE_BUILD
 	default y
 
@@ -50,9 +44,16 @@ config DFU_MULTI_IMAGE_PACKAGE_APP
 config DFU_MULTI_IMAGE_PACKAGE_NET
 	default y
 
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	default y
+#### Support for WiFi patch on external flash memory.
+if BOARD_NRF5340DK_NRF5340_CPUAPP
+
+config MCUBOOT_UPDATEABLE_IMAGES
+	default 3
 
 endif
+
+#### Enable generating factory data
+config MATTER_FACTORY_DATA_GENERATE
+	default y
 
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
