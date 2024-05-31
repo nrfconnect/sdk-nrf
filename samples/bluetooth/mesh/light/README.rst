@@ -132,15 +132,35 @@ This sample is split into the following source files:
 DFU configuration
 =================
 
-To enable the DFU feature for the supported development kits, set :makevar:`SB_CONF_FILE` to :file:`sysbuild-dfu.conf` and set :makevar:`EXTRA_CONF_FILE` to :file:`overlay-dfu.conf` when building the sample.
-For example, when building from the command line, use the following command:
+.. tabs::
 
-  .. code-block:: console
+   .. tab:: nRF52840 DK and nRF54L15 PDK
 
-     west build -b <BOARD> -p -- -DSB_CONF_FILE="sysbuild-dfu.conf" -DEXTRA_CONF_FILE="overlay-dfu.conf"
+      To enable the DFU feature for the nRF52840 and nRF54L15 development kits, set :makevar:`SB_CONF_FILE` to :file:`sysbuild-dfu.conf` and :makevar:`EXTRA_CONF_FILE` to :file:`overlay-dfu.conf` when building the sample.
+      For example, when building from the command line, use the following command:
 
-The configuration overlay file :file:`overlay-dfu.conf` and the sysbuild configuration file :file:`sysbuild-dfu.conf` enable the DFU feature.
-To review the required configuration alterations, open and inspect the two files.
+      .. code-block:: console
+
+         west build -b <BOARD> -p -- -DSB_CONF_FILE="sysbuild-dfu.conf" -DEXTRA_CONF_FILE="overlay-dfu.conf"
+
+      The configuration overlay file :file:`overlay-dfu.conf` and the sysbuild configuration file :file:`sysbuild-dfu.conf` enable the DFU feature.
+      To review the required configuration alterations, open and inspect the two files.
+
+   .. tab:: nRF5340 DK
+
+      To enable the DFU feature for the nRF5340 development kit, set :makevar:`SB_CONF_FILE` to :file:`sysbuild-dfu.conf` and :makevar:`EXTRA_CONF_FILE` to :file:`overlay-dfu.conf` when building the sample.
+      Additionally, you need to set the :makevar:`EXTRA_CONF_FILE` for the ipc_radio network image to :file:`overlay-dfu.conf` as well.
+      This is an additional network image specific configuration overlay file, which allocates the necessary resources to enable the DFU feature.
+      For example, when building from the command line, use the following command:
+
+      .. code-block:: console
+
+         west build -b <BOARD> -p -- -DSB_CONF_FILE="sysbuild-dfu.conf" -DEXTRA_CONF_FILE="overlay-dfu.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-dfu.conf"
+
+      .. note::
+         Currently, the nRF5340 development kit only supports DFU for the application core.
+         This implies that all application DFU images must be compatible with the network core image running on the device.
+
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 For more information about selecting a sysbuild configuration file, see the Sysbuild Kconfig file section on the :ref:`zephyr:sysbuild` page in the Zephyr documentation.
 
