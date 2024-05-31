@@ -672,11 +672,17 @@ int pdn_default_apn_get(char *buf, size_t len)
 	return 0;
 }
 
-NRF_MODEM_LIB_ON_CFUN(pdn_cfun_hook, on_cfun, NULL);
+#if defined(CONFIG_UNITY)
+void pdn_on_modem_cfun(int mode, void *ctx)
+#else
+NRF_MODEM_LIB_ON_CFUN(pdn_cfun_hook, pdn_on_modem_cfun, NULL);
 
-static void on_cfun(int mode, void *ctx)
+static void pdn_on_modem_cfun(int mode, void *ctx)
+#endif
 {
 	int err;
+	struct pdn *pdn;
+	struct pdn *tmp;
 
 	if (mode == MODEM_CFUN_NORMAL ||
 	    mode == MODEM_CFUN_ACTIVATE_LTE) {
@@ -692,6 +698,17 @@ static void on_cfun(int mode, void *ctx)
 	}
 
 	if (mode == MODEM_CFUN_POWER_OFF) {
+		k_mutex_lock(&list_mutex, K_FOREVER);
+		SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&pdn_contexts, pdn, tmp, node) {
+			if (pdn->callback) {
+				pdn->callback(pdn->context_id, PDN_EVENT_CTX_DESTROYED, 0);
+			}
+
+			sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
+			k_free(pdn);
+		}
+		k_mutex_unlock(&list_mutex);
+
 #if defined(CONFIG_PDN_DEFAULTS_OVERRIDE)
 		pdn_defaults_override();
 #endif

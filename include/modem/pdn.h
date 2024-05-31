@@ -64,6 +64,7 @@ enum pdn_event {
 	PDN_EVENT_NETWORK_DETACH,	/**< Network detached */
 	PDN_EVENT_APN_RATE_CONTROL_ON,	/**< APN rate control is ON for given PDN */
 	PDN_EVENT_APN_RATE_CONTROL_OFF, /**< APN rate control is OFF for given PDN */
+	PDN_EVENT_CTX_DESTROYED,	/**< Context is destroyed for given PDN */
 };
 
 /** @brief PDN authentication method */

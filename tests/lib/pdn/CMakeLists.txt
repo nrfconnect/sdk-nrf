@@ -25,3 +25,6 @@ zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/modem/)
 zephyr_include_directories(${ZEPHYR_BASE}/subsys/testsuite/include)
 
 add_compile_definitions(CONFIG_PDN_ESM_TIMEOUT=1000)
+add_compile_definitions(CONFIG_PDN_DEFAULTS_OVERRIDE)
+add_compile_definitions(CONFIG_PDN_DEFAULT_APN="apn0")
+add_compile_definitions(CONFIG_PDN_DEFAULT_FAM=2)
