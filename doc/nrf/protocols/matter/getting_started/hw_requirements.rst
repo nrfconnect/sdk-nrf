@@ -562,7 +562,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
         | OTP Memory (otp)                        | 0kB (0x0)           | 764B (0x2fc)      |-                    |-                |-                |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-----------------+
 
-  .. tab:: nRF54L15 PDK
+   .. tab:: nRF54L15 PDK
 
       The following memory map is valid for Matter applications running on the :ref:`nRF54L15 PDK <programming_board_names>` (:ref:`nrf54l15pdk/nrf54l15/cpuapp <zephyr:nrf54l15pdk_nrf54l15>`).
 
