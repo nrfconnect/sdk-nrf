@@ -164,132 +164,123 @@ For more information about the ZAP tool, see the official `ZCL Advanced Platform
 Installing the ZAP tool
 =======================
 
-To install the ZAP tool using the recommended method, complete the following steps:
+You can install the ZAP tool either automatically or manually:
 
-1. Download the ZAP package containing pre-compiled executables and libraries and extract it:
+.. tabs::
 
-   a. Open your installation directory for the |NCS| in a command line.
-   #. Navigate to :file:`modules/lib/matter`.
-   #. Run the helper script to download and extract the ZAP package:
+   .. tab:: Automatic installation
 
-      .. parsed-literal::
-         :class: highlight
+      You can use the Matter west commands to automatically download and install the appropriate ZAP tool version dedicated to your current Matter revision.
+      This tool checks the version of the Matter stack, which is located in the default location based on the ``ZEPHYR_BASE`` variable.
+      The ``zap-gui`` and ``zap-generate`` commands automatically install the right version of the ZAP tool in the ``.zap-install`` directory within the |NCS|.
+      After the first installation, if the version of the Matter SDK did not change, the installed version will be used for all command invocations.
 
-         python scripts/setup/nrfconnect/get_zap.py -l *zap_location* -o
+      To install the ZAP tool according to the default Matter SDK location, use the following command:
 
-      In this command:
+      .. code-block:: console
 
-      *  *zap_location* corresponds to the directory where the ZAP tool package is to be extracted.
-      *  The `-o` argument in the command is used to allow overwriting files, if they already exist in the given location.
-         Otherwise the script will display prompt during download and ask for user consent to overwrite the files directly.
+         west zap-gui
 
-#. Verify the ZAP tool version by comparing the script output with the following possible cases:
+      If you need to install the ZAP tool for a specific Matter version, provide the path to the desired Matter SDK location using the ``-m`` or ``--matter-path`` command argument and specify the *path_to_Matter_SDK*:
 
-   * Case 1: If your currently installed ZAP version matches the recommended one, you will see a message similar to the following one:
+      .. code-block:: console
 
-     .. code-block::
+         west zap-gui -m <path_to_Matter_SDK>
 
-        Your currently installed ZAP tool version: 2022.12.20 matches the recommended one.
+      .. note::
 
-     This means that your ZAP version is correct and the tool executable can be accessed from the operating system environment, so you can skip the following step about adding the ZAP tool to the system :envvar:`PATH` environment variable.
+         Providing a path to a version of the Matter SDK that is incompatible with the |NCS| revision may cause unpredictable errors.
 
-   * Case 2: If your currently installed ZAP version does not match the recommended one or no ZAP version is installed on your device, you will see a message similar to the following one:
+      After the installation is done, you can close the ZAP tool GUI window.
 
-     .. code-block::
+      To read more about Matter west commands, see the :ref:`ug_matter_gs_tools_matter_west_commands` section.
 
-        Your currently installed ZAP tool version 2022.12.19 does not match the recommended one: 2022.12.20.
+   .. tab:: Manual installation
 
-     Alternatively, this message can look like the following one:
+      You can manually install the ZAP tool using one of the following methods:
 
-     .. code-block::
+      * Download the ZAP tool package in a compatible version manually from the Assets section in `ZCL Advanced Platform releases`_.
+      * Configure the tool and manually compile it using the instructions in the official `ZCL Advanced Platform`_ documentation.
 
-        No ZAP tool version was found installed on this device.
+      Both of these methods require you to add the ZAP tool location to the system :envvar:`PATH` environment variables.
 
-     In this case, the package download process will start automatically:
+..
 
-     .. parsed-literal::
-        :class: highlight
+.. _ug_matter_gs_tools_matter_west_commands:
 
-        Trying to download ZAP tool package matching your system and recommended version.
-        100% [......................................................................] 150136551 / 150136551
-        ZAP tool package was downloaded and extracted in the given location.
+Matter west commands
+********************
 
-     Depending on your operating system, the download will conclude with the following message, with updated *zap_cli_location* and *zap_location* paths, which you will need in the following step:
+Matter west commands are a set of commands dedicated for Matter-related purposes and integrated with :ref:`zephyr:west`.
+You can use them to simplify work with the Matter application project.
 
-     .. tabs::
+.. _ug_matter_gs_tools_matter_west_commands_zap_tool:
 
-        .. group-tab:: Windows
+ZAP tool west commands
+======================
 
-           .. parsed-literal::
-              :class: highlight
+To simplify work with the :ref:`ug_matter_gs_tools_zap`, there are two commands implemented within the Matter west commands set:
 
-              #######################################################################################
-              # Please add the following location(s) to the system PATH:                            #
-              # *zap_location*                                                                      #
-              #######################################################################################
+* ``zap-gui``
+* ``zap-generate``
 
-        .. group-tab:: Linux
+By default, both commands look for a :file:`.zap` file in the current directory.
+You can also specify the path to the :file:`.zap` file explicitly.
 
-           .. parsed-literal::
-              :class: highlight
+.. _ug_matter_gs_tools_matter_west_commands_zap_tool_gui:
 
-              #######################################################################################
-              # Please add the following location(s) to the system PATH:                            #
-              # *zap_location*                                                                      #
-              ######################################################################################
+``zap-gui`` command
+-------------------
 
-        .. group-tab:: macOS
+ZAP tool GUI is a Node.js application used to configure the data model of a Matter application.
+It allows you to define endpoints, clusters, commands, attributes, and events for a specific application.
+The ``zap-gui`` command installs the appropriate version of the ZAP tool on your host machine and launches the ZAP tool GUI.
 
-           .. parsed-literal::
-              :class: highlight
+This is the base command invocation:
 
-              #######################################################################################
-              # Please add the following location(s) to the system PATH:                            #
-              # *zap_cli_location*                                                                  #
-              # *zap_location*                                                                      #
-              #######################################################################################
-     ..
+.. code-block:: console
 
-#. Add the ZAP packages location to the system :envvar:`PATH` environment variables.
-   This is not needed if your currently installed ZAP version matches the recommended one (case 1 from the previous step).
+   west zap-gui
 
-   .. tabs::
+You can use the following optional arguments:
 
-      .. group-tab:: Windows
+* ``-z`` or ``--zap-file`` to provide a path to the :file:`.zap` file.
+  Use this option if you invoke the ``zap-gui`` command outside the project directory.
 
-         For the detailed instructions for adding :envvar:`PATH` environment variables on Windows, see :ref:`zephyr:env_vars`.
+* ``-j`` or ``--zcl-json`` to provide a path to the data model definition file (:file:`zcl.json`).
+  If the argument is not provided, the :file:`<default Matter SDK location>/src/app/zap-templates/zcl/zcl.json` file will be used.
 
-      .. group-tab:: Linux
+* ``-m`` or ``--matter-path`` to provide a path to a different Matter SDK location than the default one.
+  The command will use this path to read the required ZAP tool version.
 
-         For example, if you are using bash, run the following commands, with *zap_location* updated with your path:
+.. _ug_matter_gs_tools_matter_west_commands_zap_tool_generate:
 
-         .. parsed-literal::
-            :class: highlight
+``zap-generate`` command
+------------------------
 
-            echo 'export PATH=zap_location:"$PATH"' >> ${HOME}/.bashrc
-            source ${HOME}/.bashrc
+A Matter application requires data model C++ files generated from the project :file`.zap` file.
+To generate the files, you can use the ``zap-generate`` Matter west command.
 
-      .. group-tab:: macOS
+If you do not provide an output directory as an argument, the command will create and use a :file:`zap-generated/` directory within the directory containing the source :file:`.zap` file.
+All generated C++ files will be stored in this directory.
 
-         For example, if you are using bash, run the following commands, with *zap_cli_location* and *zap_location* updated with your paths:
+This is the base command invocation:
 
-         .. parsed-literal::
-            :class: highlight
+.. code-block:: console
 
-            echo 'export PATH=zap_cli_location:"$PATH"' >> ${HOME}/.bash_profile
-            echo 'export PATH=zap_location:"$PATH"' >> ${HOME}/.bash_profile
-            source ${HOME}/.bash_profile
-   ..
+   west zap-generate
 
-Alternative installation methods
-================================
+You can use the following optional arguments:
 
-You can also install the ZAP tool using one of the following methods:
+* ``-z`` or ``--zap-file`` to provide a path to the :file:`.zap` file.
+  Use this option if you call the ``zap-generate`` command outside the project directory.
 
-* Download the ZAP tool package in a compatible version manually from the Assets section in `ZCL Advanced Platform releases`_.
-* Configure the tool and manually compile it using the instructions in the official `ZCL Advanced Platform`_ documentation.
+* ``-o`` or ``--output`` to provide a path to the directory where output C++ files will be stored.
+  Use this option if you call the ``zap-generate`` command outside the project directory.
 
-Both these methods still require adding the ZAP tool location to the system :envvar:`PATH` environment variables, as detailed in the step 3 above.
+* ``-m`` or ``--matter-path`` to provide a path to a different Matter SDK location than the default one.
+  The command will use this path to read the required ZAP tool version and use the generation script from it.
+
 
 .. _ug_matter_gs_tools_cert:
 

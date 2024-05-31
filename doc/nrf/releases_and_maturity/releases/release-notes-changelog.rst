@@ -121,8 +121,13 @@ Matter
   * Diagnostic logs provider that collects the diagnostic logs and sends them to the Matter controller.
     To learn more about the diagnostic logs module, see :ref:`ug_matter_configuration_diagnostic_logs`.
   * :ref:`ug_matter_diagnostic_logs_snippet` to add support for all features of the diagnostic log provider.
+  * :ref:`ug_matter_gs_tools_matter_west_commands` to simplify the process of editing the ZAP files and generated the C++ Matter data model files.
 
-* Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
+* Updated:
+
+  * Default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
+  * The `ug_matter_gs_adding_cluster` user guide with the new :ref:`ug_matter_gs_tools_matter_west_commands` section.
+
 * Increased the number of available packet buffers in the Matter stack to avoid packet allocation issues.
 * Removed the :file:`Kconfig.mcuboot.defaults`, :file:`Kconfig.hci_ipc.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` Kconfig files that stored a default configuration for the child images.
   This was done because of the sysbuild integration and the child images deprecation.
