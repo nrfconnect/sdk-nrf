@@ -179,6 +179,13 @@ Asset Tracker v2
 
 |no_changes_yet_note|
 
+Serial LTE modem
+----------------
+
+* Updated:
+
+  * AT string parsing to utilize the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+
 Connectivity Bridge
 -------------------
 
