@@ -485,6 +485,7 @@ Bluetooth Mesh samples that used the :ref:`zephyr:bluetooth-hci-ipc-sample` radi
 
     * Support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
     * Support for DFU over Bluetooth Low Energy for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` board.
+    * Support for DFU over Bluetooth Low Energy for the :ref:`nRF5340 DK <ug_nrf5340>` board.
 
 * :ref:`ble_mesh_dfu_target` sample:
 
