@@ -13,7 +13,7 @@
  * @{
  */
 #include "slm_trap_macros.h"
-#include <modem/at_cmd_parser.h>
+#include <modem/at_parser.h>
 #include <modem/lte_lc.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/net/socket.h>
@@ -109,8 +109,8 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len, uint8_t *hex, uint16_t 
  * @p len must be bigger than the string length, or an error is returned.
  * The copied string is null-terminated.
  *
- * @param[in]     list    Parameter list.
- * @param[in]     index   Parameter index in the list.
+ * @param[in]     parser  AT parser.
+ * @param[in]     index   Parameter index in the AT parser.
  * @param[out]    value   Pointer to the buffer where to copy the value.
  * @param[in,out] len     Available space in @p value, returns actual length
  *                        copied into string buffer in bytes, excluding the
@@ -119,35 +119,35 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len, uint8_t *hex, uint16_t 
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int util_string_get(const struct at_param_list *list, size_t index, char *value, size_t *len);
+int util_string_get(struct at_parser *parser, size_t index, char *value, size_t *len);
 
 /**
  * @brief Get float value from string value input in AT command.
  *
  * @note The string cannot be larger than 32.
  *
- * @param[in]     list    Parameter list.
- * @param[in]     index   Parameter index in the list.
+ * @param[in]     parser  AT parser.
+ * @param[in]     index   Parameter index in the AT parser.
  * @param[out]    value   Pointer to the float where to store the value.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int util_string_to_float_get(const struct at_param_list *list, size_t index, float *value);
+int util_string_to_float_get(struct at_parser *parser, size_t index, float *value);
 
 /**
  * @brief Get double value from string value input in AT command.
  *
  * @note The string cannot be larger than 32.
  *
- * @param[in]     list    Parameter list.
- * @param[in]     index   Parameter index in the list.
+ * @param[in]     parser  AT parser.
+ * @param[in]     index   Parameter index in the AT parser.
  * @param[out]    value   Pointer to the double where to store the value.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int util_string_to_double_get(const struct at_param_list *list, size_t index, double *value);
+int util_string_to_double_get(struct at_parser *parser, size_t index, double *value);
 
 /**
  * @brief use AT command to get IPv4 and IPv6 addresses for specified PDN

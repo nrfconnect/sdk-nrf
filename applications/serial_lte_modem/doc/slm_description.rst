@@ -621,7 +621,7 @@ Dependencies
 
 This application uses the following |NCS| libraries:
 
-* :ref:`at_cmd_parser_readme`
+* :ref:`at_parser_readme`
 * :ref:`at_monitor_readme`
 * :ref:`nrf_modem_lib_readme`
 * :ref:`lib_modem_jwt`

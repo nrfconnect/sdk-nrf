@@ -269,18 +269,18 @@ static void cmux_starter(struct k_work *)
 }
 
 SLM_AT_CMD_CUSTOM(xcmux, "AT#XCMUX", handle_at_cmux);
-static int handle_at_cmux(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_cmux(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			  uint32_t param_count)
 {
 	static struct k_work_delayable cmux_start_work;
 	unsigned int at_dlci;
 	int ret;
 
-	if (cmd_type == AT_CMD_TYPE_READ_COMMAND) {
+	if (cmd_type == AT_PARSER_CMD_TYPE_READ) {
 		rsp_send("\r\n#XCMUX: %u,%u\r\n", cmux.at_channel + 1, CHANNEL_COUNT);
 		return 0;
 	}
-	if (cmd_type != AT_CMD_TYPE_SET_COMMAND || param_count > 2) {
+	if (cmd_type != AT_PARSER_CMD_TYPE_SET || param_count > 2) {
 		return -EINVAL;
 	}
 
@@ -289,7 +289,7 @@ static int handle_at_cmux(enum at_cmd_type cmd_type, const struct at_param_list 
 	}
 
 	if (param_count == 2) {
-		ret = at_params_unsigned_int_get(param_list, 1, &at_dlci);
+		ret = at_parser_num_get(parser, 1, &at_dlci);
 		if (ret || (at_dlci != 1 && (!IS_ENABLED(CONFIG_SLM_PPP) || at_dlci != 2))) {
 			return -EINVAL;
 		}
