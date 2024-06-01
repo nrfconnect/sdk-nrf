@@ -266,6 +266,26 @@ config NRF700X_QSPI_LOW_POWER
 	bool "Enable low power mode in QSPI"
 	default y if NRF_WIFI_LOW_POWER
 
+config NRF700X_PCB_LOSS_2G
+	int "PCB loss for 2.4 GHz band"
+	default 0
+	range 0 4
+
+config NRF700X_PCB_LOSS_5G_BAND1
+	int "PCB loss for 5 GHz band (5150 MHz - 5350 MHz)"
+	default 0
+	range 0 4
+
+config NRF700X_PCB_LOSS_5G_BAND2
+	int "PCB loss for 5 GHz band (5470 MHz - 5730 MHz)"
+	default 0
+	range 0 4
+
+config NRF700X_PCB_LOSS_5G_BAND3
+	int "PCB loss for 5 GHz band (5730 MHz - 5895 MHz)"
+	default 0
+	range 0 4
+
 config NRF700X_ANT_GAIN_2G
 	int "Antenna gain for 2.4 GHz band"
 	default 0
