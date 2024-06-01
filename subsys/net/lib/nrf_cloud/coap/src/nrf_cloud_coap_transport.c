@@ -164,6 +164,11 @@ bool nrf_cloud_coap_is_connected(void)
 	return internal_cc.authenticated && !internal_cc.paused;
 }
 
+bool nrf_cloud_coap_keepopen_is_supported(void)
+{
+	return nrfc_keepopen_is_supported();
+}
+
 static inline bool is_internal(struct nrf_cloud_coap_client const *const client)
 {
 	return client == &internal_cc;
@@ -834,6 +839,13 @@ int nrf_cloud_coap_transport_pause(struct nrf_cloud_coap_client *const client)
 {
 	int err = 0;
 	int tmp;
+
+	if (!client) {
+		return -EINVAL;
+	}
+	if (client->sock == -1) {
+		return -EBADF; /* Device is disconnected. */
+	}
 
 	if (nrfc_dtls_cid_is_active(client->sock) && client->authenticated) {
 		LOG_DBG("Cancelling requests");

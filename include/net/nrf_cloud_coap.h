@@ -94,6 +94,15 @@ int nrf_cloud_coap_pause(void);
  */
 int nrf_cloud_coap_resume(void);
 
+/**@brief Check if you can pause and resume safely.
+ *
+ * Check if the device can avoid performing a full handshake after a temporary network outage ends.
+ *
+ * @retval false if SO_KEEPOPEN is not supported.
+ * @retval true if it is supported.
+ */
+bool nrf_cloud_coap_keepopen_is_supported(void);
+
 /**
  * @brief Disconnect the nRF Cloud CoAP connection.
  *
