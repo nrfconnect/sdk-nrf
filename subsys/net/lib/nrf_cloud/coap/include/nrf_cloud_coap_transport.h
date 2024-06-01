@@ -89,6 +89,9 @@ int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const cl
  *
  * @param client Client to pause.
  *
+ * @retval -EINVAL Client cannot be NULL.
+ * @retval -EBADF Device is disconnected.
+ * @retval -EACCES Unable to pause; device was not using CID or not authenticated.
  * @return 0 if successful, otherwise a negative error code.
  */
 int nrf_cloud_coap_transport_pause(struct nrf_cloud_coap_client *const client);
@@ -97,6 +100,9 @@ int nrf_cloud_coap_transport_pause(struct nrf_cloud_coap_client *const client);
  *
  * @param client Client to resume.
  *
+ * @retval -EINVAL Client cannot be NULL or DTLS CID not supported with current mfw.
+ * @retval -EAGAIN Failed to load DTLS CID session.
+ * @retval -EACCES Unable to resume because DTLS CID was not previously saved.
  * @return 0 if successful, otherwise a negative error code.
  */
 int nrf_cloud_coap_transport_resume(struct nrf_cloud_coap_client *const client);

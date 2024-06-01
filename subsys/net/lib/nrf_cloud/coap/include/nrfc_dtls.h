@@ -54,4 +54,13 @@ int nrfc_dtls_session_save(int sock);
  */
 int nrfc_dtls_session_load(int sock);
 
+/** @brief Check if you can use SO_KEEPOPEN.
+ *
+ * Modem firmware < 2.0.1 does not support this.
+ *
+ * @retval true - SO_KEEPOPEN can be used.
+ * @retval false - it cannot be used.
+ */
+bool nrfc_keepopen_is_supported(void);
+
 #endif /* NRFC_DTLS_H_ */

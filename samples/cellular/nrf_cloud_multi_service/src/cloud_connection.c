@@ -195,9 +195,11 @@ static void network_disconnected(void)
 {
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 	disconnect_cloud();
-#elif !defined(CONFIG_NRF_CLOUD_COAP_KEEPOPEN)
-	disconnect_cloud();
-#else
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	if (!nrf_cloud_coap_keepopen_is_supported()) {
+		disconnect_cloud();
+		return;
+	}
 	/* When using CoAP we keep the socket open during brief network outages.
 	 * There is no need to fully disconnect and cause additional network traffic.
 	 */
@@ -209,7 +211,8 @@ static void network_disconnected(void)
 	k_event_post(&cloud_events, CLOUD_DISCONNECTED);
 	int err = nrf_cloud_coap_pause();
 
-	if (err) {
+	if ((err < 0) && (err != -EBADF)) {
+		/* -EBADF means it was disconnected, for example by FOTA. */
 		LOG_ERR("Error pausing connection: %d", err);
 	}
 #endif
