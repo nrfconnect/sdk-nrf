@@ -39,9 +39,9 @@ struct monotonic_counter {
 	/* Counter description. What the counter is used for. See
 	 * BL_MONOTONIC_COUNTERS_DESC_x.
 	 */
-	uint16_t description;
+	uint32_t description;
 	/* Number of entries in 'counter_slots' list. */
-	uint16_t num_counter_slots;
+	uint32_t num_counter_slots;
 #ifdef CONFIG_NRFX_NVMC
 	uint16_t counter_slots[1];
 #elif CONFIG_NRFX_RRAMC
@@ -55,8 +55,8 @@ struct monotonic_counter {
  *  entries beyond the first cannot be accessed via array indices.
  */
 struct counter_collection {
-	uint16_t type; /* Must be "monotonic counter". */
-	uint16_t num_counters; /* Number of entries in 'counters' list. */
+	uint32_t type; /* Must be "monotonic counter". */
+	uint32_t num_counters; /* Number of entries in 'counters' list. */
 	struct monotonic_counter counters[1];
 };
 

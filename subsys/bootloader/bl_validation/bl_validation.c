@@ -49,7 +49,11 @@ int set_monotonic_version(uint32_t version, uint16_t slot)
 	return err;
 }
 
+#ifdef CONFIG_NRFX_NVMC
 int get_monotonic_version(uint16_t *version_out)
+#else
+int get_monotonic_version(uint16_t *version_out)
+#endif
 {
 #ifdef CONFIG_NRFX_NVMC
 	uint16_t monotonic_version_and_slot;
@@ -64,6 +68,7 @@ int get_monotonic_version(uint16_t *version_out)
 
 	err = get_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_NSIB, &monotonic_version_and_slot);
 	if (err) {
+		printk("Error getting monotonic counter\r\n");
 		return err;
 	}
 
@@ -349,6 +354,8 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 			fwinfo->valid);
 		return false;
 	}
+
+	PRINT("Trying to get Firmware version");
 
 	uint16_t stored_version;
 

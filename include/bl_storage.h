@@ -289,17 +289,24 @@ NRFX_STATIC_INLINE uint32_t index_from_address(uint32_t address){
 }
 
 NRFX_STATIC_INLINE uint16_t bl_storage_otp_halfword_read(uint32_t address){
+uint32_t word;
+uint16_t halfword;
 #ifdef CONFIG_NRFX_RRAMC
-		if (!(address & 0x3)) {
-			return (uint16_t)(nrfx_rramc_otp_word_read(index_from_address(address)) & 0x0000FFFF);
-		} else {
-			return (uint16_t)(nrfx_rramc_otp_word_read(index_from_address(address)) >> 16);
-		}
+	word = nrfx_rramc_otp_word_read(index_from_address(address)-18);
+#else
+	uint32_t aligned_address = address & ~(0x03UL);
+	word = nrf_nvmc_word_read(aligned_address);
 #endif
-
-#ifdef CONFIG_NRFX_NVMC
-		return nrfx_nvmc_otp_halfword_read(address);
-#endif
+	printk("\n\rIndex: %d, address: 0x%x\n\r", index_from_address(address), address);
+	printk("Address val: %d\n\r", word);
+	if (!(address & 0x3)) {
+		halfword = (uint16_t)(word & 0x0000FFFF); // C truncates the upper bits
+		printk("Address upper val: %d\n\r", halfword); 
+	} else {
+		halfword = (uint16_t)(word >> 16); // Shift the upper half down
+		printk("Address lower val: %d\n\r", halfword); 
+	}
+	return halfword; //nrfx_nvmc_otp_halfword_read(address);
 }
 
 /**

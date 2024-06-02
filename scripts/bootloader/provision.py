@@ -14,7 +14,7 @@ from hashlib import sha256
 import os
 
 # Size of LCS storage and implementation ID in OTP in bytes
-LCS_STATE_SIZE = 0x8
+LCS_STATE_SIZE = 0x8 # 4*3 bytes
 IMPLEMENTATION_ID_SIZE = 0x20
 NUM_BYTES_PROVISIONED_ELSEWHERE = LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
 
@@ -41,17 +41,17 @@ def add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_
     assert num_counter_slots_version % 2 == 0, "--num-counters-slots-version must be an even number"
     assert mcuboot_counters_slots    % 2 == 0, "--mcuboot-counters-slots     must be an even number"
 
-    provision_data += struct.pack('H', 1) # Type "counter collection"
-    provision_data += struct.pack('H', num_counters) # Could be 0, 1, or 2
+    provision_data += struct.pack('I', 1) # Type "counter collection"
+    provision_data += struct.pack('I', num_counters) # Could be 0, 1, or 2
 
     if num_counter_slots_version > 0:
-        provision_data += struct.pack('H', BL_MONOTONIC_COUNTERS_DESC_NSIB)
-        provision_data += struct.pack('H', num_counter_slots_version)
+        provision_data += struct.pack('I', BL_MONOTONIC_COUNTERS_DESC_NSIB)
+        provision_data += struct.pack('I', num_counter_slots_version)
         provision_data += bytes(2 * num_counter_slots_version * [0xFF])
 
     if mcuboot_counters_slots > 0:
-        provision_data += struct.pack('H', BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0)
-        provision_data += struct.pack('H', mcuboot_counters_slots)
+        provision_data += struct.pack('I', BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0)
+        provision_data += struct.pack('I', mcuboot_counters_slots)
         provision_data += bytes(2 * mcuboot_counters_slots * [0xFF])
 
     return provision_data
