@@ -6,6 +6,8 @@
 #include <freq.h>
 
 / {
+	/* Wi-Fi doesn't needs this and it frees up 68K RAM */
+	/delete-node/ cpuflpr_sram;
 	nordic_wlan0: nordic_wlan0 {
 			compatible = "nordic,wlan0";
 			status = "okay";
@@ -28,6 +30,11 @@
 		max-pwr-5g-high-mcs0 = <0x30>;
 		max-pwr-5g-high-mcs7 = <0x30>;
 	};
+};
+
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(256)>;
+	ranges = <0x0 0x20000000 0x20040000>;
 };
 
 &pinctrl {
