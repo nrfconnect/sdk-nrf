@@ -16,8 +16,6 @@
 #include <zephyr/posix/time.h>
 #endif
 
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
 #include <net/nrf_cloud.h>
 #include <modem/location.h>
 
@@ -26,7 +24,6 @@
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 #define AT_CMD_PDP_ACT_READ "AT+CGACT?"
-#define MODEM_PARAM_STR_MAX_LEN 16
 
 /* For having a numeric constant in scanf string length */
 #define L_(x) #x

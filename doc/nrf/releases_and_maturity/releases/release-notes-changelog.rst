@@ -558,6 +558,7 @@ Cellular samples
 * :ref:`location_sample` sample:
 
   * Removed ESP8266 Wi-Fi DTC and Kconfig overlay files.
+  * Removed the unused :ref:`at_cmd_parser_readme` library.
 
 * :ref:`modem_shell_application` sample:
 
