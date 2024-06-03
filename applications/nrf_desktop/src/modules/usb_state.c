@@ -93,7 +93,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_DESKTOP_HID_STATE_ENABLE) ||
 	     IS_ENABLED(CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION) ||
 	     (ARRAY_SIZE(usb_hid_device) <= 1));
 
-static struct usbd_contex *usbd_ctx;
+static struct usbd_context *usbd_ctx;
 
 static struct config_channel_transport cfg_chan_transport;
 
@@ -870,7 +870,10 @@ static int get_report_next(const struct device *dev, const uint8_t type, const u
 {
 	/* Omit the first byte - HID report ID. */
 	buf[0] = id;
-	return get_report(dev, type, id, buf + 1, len - 1);
+
+	int err = get_report(dev, type, id, buf + 1, len - 1);
+
+	return err ? err : len;
 }
 
 static int set_report_next(const struct device *dev, const uint8_t type, const uint8_t id,
@@ -946,7 +949,7 @@ static int usb_init_next_hids_init(void)
 	return err;
 }
 
-static void usb_init_next_status_cb(struct usbd_contex *const contex,
+static void usb_init_next_status_cb(struct usbd_context *const usbd,
 				    const struct usbd_msg *const msg)
 {
 	static enum usb_state before_suspend;
@@ -1015,7 +1018,7 @@ static void usb_init_next_status_cb(struct usbd_contex *const contex,
 	}
 }
 
-static int usb_init_next_register_fs_classes(struct usbd_contex *usbd)
+static int usb_init_next_register_fs_classes(struct usbd_context *usbd)
 {
 	int err = 0;
 
@@ -1031,7 +1034,7 @@ static int usb_init_next_register_fs_classes(struct usbd_contex *usbd)
 	return err;
 }
 
-static int usb_init_next_register_hs_classes(struct usbd_contex *usbd)
+static int usb_init_next_register_hs_classes(struct usbd_context *usbd)
 {
 	int err = 0;
 
@@ -1047,7 +1050,7 @@ static int usb_init_next_register_hs_classes(struct usbd_contex *usbd)
 	return err;
 }
 
-static int usb_init_next_add_configuration(struct usbd_contex *usbd,
+static int usb_init_next_add_configuration(struct usbd_context *usbd,
 					   const enum usbd_speed speed,
 					   struct usbd_config_node *config)
 {
@@ -1086,7 +1089,7 @@ static int usb_init_next_add_configuration(struct usbd_contex *usbd,
 	return 0;
 }
 
-static struct usbd_contex *usb_init_next_usbd_init(void)
+static struct usbd_context *usb_init_next_usbd_init(void)
 {
 	int err;
 
@@ -1162,7 +1165,7 @@ static int usb_init_next(void)
 		return err;
 	}
 
-	struct usbd_contex *usbd = usb_init_next_usbd_init();
+	struct usbd_context *usbd = usb_init_next_usbd_init();
 
 	if (!usbd) {
 		LOG_ERR("usb_init_next_usbd_init failed");
