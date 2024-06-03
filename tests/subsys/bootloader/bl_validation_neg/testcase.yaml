@@ -1,11 +1,16 @@
 tests:
   bootloader.bl_validation.negative:
     sysbuild: true
-    platform_allow: nrf9160dk/nrf9160
-      nrf5340dk/nrf5340/cpuapp
-    integration_platforms:
-      - nrf9160dk/nrf9160
+    platform_allow:
       - nrf5340dk/nrf5340/cpuapp
+      - nrf9151dk/nrf9151
+      - nrf9160dk/nrf9160
+      - nrf9161dk/nrf9161
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf9151dk/nrf9151
+      - nrf9160dk/nrf9160
+      - nrf9161dk/nrf9161
     tags: b0 bl_validation negative bl_validation_negative sysbuild
     harness: console
     harness_config:
@@ -29,7 +34,9 @@ tests:
         - "No bootable image found. Aborting boot."
   bootloader.bl_validation.negative.nrf52:
     sysbuild: true
-    platform_allow: nrf52840dk/nrf52840 nrf52dk/nrf52832
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
