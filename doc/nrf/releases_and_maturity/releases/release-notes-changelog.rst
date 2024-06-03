@@ -523,6 +523,10 @@ Modem libraries
 
   * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
 
+* :ref:`lib_location` library:
+
+  * Removed the unused :ref:`at_cmd_parser_readme` library.
+
 * :ref:`lib_zzhc` library:
 
   * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
