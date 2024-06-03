@@ -137,7 +137,7 @@ The following are examples of the CLI commands:
 
   .. code-block:: console
 
-     west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=n -Dhci_ipc_CONFIG_MPSL_CX=n
+     west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=n -Dipc_radio_CONFIG_MPSL_CX=n
 
 Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or concurrent Wi-Fi and Bluetooth LE throughput with coexistence disabled tests.
 
@@ -145,7 +145,7 @@ Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or con
 
   .. code-block:: console
 
-     west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=y -Dhci_ipc_CONFIG_MPSL_CX=y
+     west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=y -Dipc_radio_CONFIG_MPSL_CX=y
 
 Use this command for concurrent Wi-Fi and Bluetooth LE throughput with coexistence enabled test.
 
@@ -169,13 +169,13 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
   .. code-block:: console
 
-     -DSHIELD=nrf7002ek -Dhci_ipc_SHIELD=nrf7002ek_coex
+     -DSHIELD=nrf7002ek -Dipc_radio_SHIELD=nrf7002ek_coex
 
 * For nRF7001 EK:
 
   .. code-block:: console
 
-     -DSHIELD=nrf7002ek_nrf7001 -Dhci_ipc_SHIELD=nrf7002ek_nrf7001_coex
+     -DSHIELD=nrf7002ek_nrf7001 -Dipc_radio_SHIELD=nrf7002ek_nrf7001_coex
 
 The generated HEX file to be used is :file:`ble_coex/build/zephyr/merged_domains.hex`.
 
