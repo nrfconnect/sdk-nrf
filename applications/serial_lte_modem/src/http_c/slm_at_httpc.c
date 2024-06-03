@@ -276,17 +276,17 @@ static int do_http_connect(void)
 			ret = -errno;
 			goto exit_cli;
 		}
-#if !defined(CONFIG_SLM_NATIVE_TLS)
-		int session_cache = TLS_SESSION_CACHE_ENABLED;
+		if (!IS_ENABLED(CONFIG_SLM_NATIVE_TLS)) {
+			int session_cache = TLS_SESSION_CACHE_ENABLED;
 
-		ret = setsockopt(httpc.fd, SOL_TLS, TLS_SESSION_CACHE, &session_cache,
-				 sizeof(session_cache));
-		if (ret) {
-			LOG_ERR("setsockopt(TLS_SESSION_CACHE) error: %d", -errno);
-			ret = -errno;
-			goto exit_cli;
+			ret = setsockopt(httpc.fd, SOL_TLS, TLS_SESSION_CACHE, &session_cache,
+					 sizeof(session_cache));
+			if (ret) {
+				LOG_ERR("setsockopt(TLS_SESSION_CACHE) error: %d", -errno);
+				ret = -errno;
+				goto exit_cli;
+			}
 		}
-#endif
 	}
 
 	LOG_DBG("Configuring socket timeout (%lld s)", timeo.tv_sec);

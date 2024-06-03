@@ -343,14 +343,16 @@ The following configuration files are provided:
 Native TLS
 ----------
 
-By default, the secure socket (TLS) is offloaded to the modem.
-If you need customized TLS features that are not supported by the modem firmware, you can use native TLS instead.
+By default, the secure socket (TLS/DTLS) is offloaded to the modem.
+If you need customized TLS/DTLS features that are not supported by the modem firmware, you can use native TLS instead.
 Native TLS uses the Mbed TLS library in Zephyr to establish secure connectivity.
 Currently, the SLM application can be built to use native TLS for the following services:
 
 * Secure socket
 * TLS Proxy client
 * TLS Proxy server
+* DTLS Proxy client
+* DTLS Proxy server
 * HTTPS client
 
 With native TLS, the credentials are stored in the Zephyr settings storage with the ``AT#XCMNG`` command.

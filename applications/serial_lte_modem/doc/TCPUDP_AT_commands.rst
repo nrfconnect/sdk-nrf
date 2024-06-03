@@ -41,7 +41,7 @@ Syntax
   It is mandatory to set it when starting the server.
 * The ``<sec_tag>`` parameter is an integer.
   If it is given, a TLS server will be started.
-  It indicates to the modem the credential of the security tag used for establishing a secure connection.
+  It indicates to the modem which credentials are used for establishing a secure connection.
   Can only be used when the :file:`overlay-native_tls.conf` configuration file is used.
 
 Response syntax
@@ -190,7 +190,7 @@ Syntax
   It represents the TCP/TLS service port on the remote server.
 * The ``<sec_tag>`` parameter is an integer.
   If it is given, a TLS client will be started.
-  It indicates to the modem the credential of the security tag used for establishing a secure connection.
+  It indicates to the modem which credentials are used for establishing a secure connection.
 * The ``<peer_verify>`` parameter accepts the following values:
 
   * ``0`` - None.
@@ -427,7 +427,7 @@ TCP receive data
 UDP server #XUDPSVR
 ===================
 
-The ``#XUDPSVR`` command allows you to start and stop the UDP server.
+The ``#XUDPSVR`` command allows you to start and stop the UDP/DTLS server.
 
 .. note::
    DTLS server functionality is not supported by nRF91 Series devices.
@@ -435,14 +435,14 @@ The ``#XUDPSVR`` command allows you to start and stop the UDP server.
 Set command
 -----------
 
-The set command allows you to start and stop the UDP server.
+The set command allows you to start and stop the UDP/DTLS server.
 
 Syntax
 ~~~~~~
 
 ::
 
-   #XUDPSVR=<op>[,<port>]
+   #XUDPSVR=<op>[,<port>[,<sec_tag>]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -453,6 +453,11 @@ Syntax
 * The ``<port>`` parameter is an unsigned 16-bit integer (0 - 65535).
   It represents the UDP service port.
   It is mandatory for starting the server.
+* The ``<sec_tag>`` parameter is an integer.
+  If it is given, a DTLS server will be started.
+  It indicates to the modem which credentials are used for establishing a secure connection.
+  Can only be used when the :file:`overlay-native_tls.conf` configuration file is used.
+
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -518,7 +523,7 @@ Response syntax
 
 ::
 
-   #XUDPSVR: <list of ops>,<port>
+   #XUDPSVR: <list of ops>,<port>,<sec_tag>
 
 Examples
 ~~~~~~~~
@@ -526,7 +531,7 @@ Examples
 ::
 
    AT#XUDPSVR=?
-   #XUDPSVR: (0,1,2),<port>
+   #XUDPSVR: (0,1,2),<port>,<sec_tag>
    OK
 
 UDP/DTLS client #XUDPCLI
@@ -563,12 +568,11 @@ Syntax
   It represents the UDP/DTLS service port on the remote server.
 * The ``<sec_tag>`` parameter is an integer.
   If it is given, a DTLS client will be started.
-  It indicates to the modem the credential of the security tag used for establishing a secure connection.
+  It indicates to the modem which credentials are used for establishing a secure connection.
 * The ``<use_dtls_cid>`` parameter is an integer.
   It indicates whether to use DTLS's connection identifier.
   This parameter is only supported with modem firmware 1.3.5 and newer.
   See :ref:`SLM_AT_SSOCKETOPT` for more details regarding the allowed values.
-  The command will fail (with ``<error>`` equal to ``-134`` (``-ENOTSUP``) if the requested connection identifier is not accepted by the server.
 * The ``<peer_verify>`` parameter accepts the following values:
 
   * ``0`` - None.
@@ -712,9 +716,20 @@ UDP receive data
 
 ::
 
-   #XUDPDATA: <size>
+   #XUDPDATA notification comes only when SLM is not operating in :ref:`data mode <slm_data_mode>`.
+
+   #XUDPDATA: <size>,<ip_addr>,<port>
    <data>
 
-* The ``<size>`` parameter is an integer that indicates the size of the received data.
-  This notification comes only when SLM is not operating in :ref:`data mode <slm_data_mode>`.
-* The ``<data>`` parameter is a string that contains the data received.
+* The ``<size>`` value is an integer that represents the actual number of bytes received.
+* The ``<ip_addr>`` value is a string that represents the IPv4 or IPv6 address of the remote peer.
+* The ``<port>`` value is an integer that represents the UDP port of the remote peer.
+* The ``<data>`` value is a string that contains the data being received.
+
+Example
+~~~~~~~~
+
+::
+
+   #XUDPDATA: 7,"192.168.1.100",24210
+   Test OK

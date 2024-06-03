@@ -52,7 +52,7 @@ static char udp_url[SLM_MAX_URL];
 static uint16_t udp_port;
 
 static struct slm_socket {
-	uint16_t type;     /* SOCK_STREAM or SOCK_DGRAM */
+	int type;          /* SOCK_STREAM or SOCK_DGRAM */
 	uint16_t role;     /* Client or Server */
 	sec_tag_t sec_tag; /* Security tag of the credential */
 	int family;        /* Socket address family */
@@ -198,19 +198,17 @@ static int do_secure_socket_open(int peer_verify)
 	sock.fd = ret;
 
 #if defined(CONFIG_SLM_NATIVE_TLS)
-	if (sock.type == SOCK_STREAM) {
-		ret = slm_native_tls_load_credentials(sock.sec_tag);
-		if (ret < 0) {
-			LOG_ERR("Failed to load sec tag: %d (%d)", sock.sec_tag, ret);
-			goto error;
-		}
-		int tls_native = 1;
+	ret = slm_native_tls_load_credentials(sock.sec_tag);
+	if (ret < 0) {
+		LOG_ERR("Failed to load sec tag: %d (%d)", sock.sec_tag, ret);
+		goto error;
+	}
+	int tls_native = 1;
 
-		/* Must be the first socket option to set. */
-		ret = setsockopt(sock.fd, SOL_TLS, TLS_NATIVE, &tls_native, sizeof(tls_native));
-		if (ret) {
-			goto error;
-		}
+	/* Must be the first socket option to set. */
+	ret = setsockopt(sock.fd, SOL_TLS, TLS_NATIVE, &tls_native, sizeof(tls_native));
+	if (ret) {
+		goto error;
 	}
 #endif
 	struct timeval tmo = {.tv_sec = SOCKET_SEND_TMO_SEC};
@@ -559,17 +557,17 @@ static int sec_sockopt_get(enum at_sec_sockopt at_option)
 	return ret;
 }
 
-static int do_bind(uint16_t port)
+int slm_bind_to_local_addr(int socket, int family, uint16_t port)
 {
 	int ret;
 
-	if (sock.family == AF_INET) {
+	if (family == AF_INET) {
 		char ipv4_addr[INET_ADDRSTRLEN];
 
 		util_get_ip_addr(0, ipv4_addr, NULL);
 		if (!*ipv4_addr) {
 			LOG_ERR("Get local IPv4 address failed");
-			return -EINVAL;
+			return -ENETDOWN;
 		}
 
 		struct sockaddr_in local = {
@@ -579,22 +577,22 @@ static int do_bind(uint16_t port)
 
 		if (inet_pton(AF_INET, ipv4_addr, &local.sin_addr) != 1) {
 			LOG_ERR("Parse local IPv4 address failed: %d", -errno);
-			return -EAGAIN;
+			return -EINVAL;
 		}
 
-		ret = bind(sock.fd, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
+		ret = bind(socket, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
 		if (ret) {
-			LOG_ERR("bind() failed: %d", -errno);
+			LOG_ERR("bind() sock %d failed: %d", socket, -errno);
 			return -errno;
 		}
-		LOG_DBG("bind to %s", ipv4_addr);
-	} else if (sock.family == AF_INET6) {
+		LOG_DBG("bind sock %d to %s", socket, ipv4_addr);
+	} else if (family == AF_INET6) {
 		char ipv6_addr[INET6_ADDRSTRLEN];
 
 		util_get_ip_addr(0, NULL, ipv6_addr);
 		if (!*ipv6_addr) {
 			LOG_ERR("Get local IPv6 address failed");
-			return -EINVAL;
+			return -ENETDOWN;
 		}
 
 		struct sockaddr_in6 local = {
@@ -604,14 +602,14 @@ static int do_bind(uint16_t port)
 
 		if (inet_pton(AF_INET6, ipv6_addr, &local.sin6_addr) != 1) {
 			LOG_ERR("Parse local IPv6 address failed: %d", -errno);
-			return -EAGAIN;
+			return -EINVAL;
 		}
-		ret = bind(sock.fd, (struct sockaddr *)&local, sizeof(struct sockaddr_in6));
+		ret = bind(socket, (struct sockaddr *)&local, sizeof(struct sockaddr_in6));
 		if (ret) {
-			LOG_ERR("bind() failed: %d", -errno);
+			LOG_ERR("bind() sock %d failed: %d", socket, -errno);
 			return -errno;
 		}
-		LOG_DBG("bind to %s", ipv6_addr);
+		LOG_DBG("bind sock %d to %s", socket, ipv6_addr);
 	} else {
 		return -EINVAL;
 	}
@@ -912,17 +910,7 @@ static int do_recvfrom(int timeout, int flags)
 		char peer_addr[INET6_ADDRSTRLEN] = {0};
 		uint16_t peer_port = 0;
 
-		if (remote.sa_family == AF_INET) {
-			(void)inet_ntop(AF_INET, &((struct sockaddr_in *)&remote)->sin_addr,
-					peer_addr, sizeof(peer_addr));
-			peer_port = ntohs(((struct sockaddr_in *)&remote)->sin_port);
-
-		} else if (remote.sa_family == AF_INET6) {
-			(void)inet_ntop(AF_INET6, &((struct sockaddr_in6 *)&remote)->sin6_addr,
-					peer_addr, sizeof(peer_addr));
-			peer_port = ntohs(((struct sockaddr_in6 *)&remote)->sin6_port);
-		}
-
+		util_get_peer_addr(&remote, peer_addr, &peer_port);
 		rsp_send("\r\n#XRECVFROM: %d,\"%s\",%d\r\n", ret, peer_addr, peer_port);
 		data_send(slm_data_buf, ret);
 	}
@@ -1026,7 +1014,7 @@ static int handle_at_socket(enum at_cmd_type cmd_type, const struct at_param_lis
 				return -EINVAL;
 			}
 			INIT_SOCKET(sock);
-			err = at_params_unsigned_short_get(param_list, 2, &sock.type);
+			err = at_params_int_get(param_list, 2, &sock.type);
 			if (err) {
 				return err;
 			}
@@ -1103,7 +1091,7 @@ static int handle_at_secure_socket(enum at_cmd_type cmd_type,
 				return -EINVAL;
 			}
 			INIT_SOCKET(sock);
-			err = at_params_unsigned_short_get(param_list, 2, &sock.type);
+			err = at_params_int_get(param_list, 2, &sock.type);
 			if (err) {
 				return err;
 			}
@@ -1337,7 +1325,7 @@ static int handle_at_bind(enum at_cmd_type cmd_type, const struct at_param_list 
 		if (err < 0) {
 			return err;
 		}
-		err = do_bind(port);
+		err = slm_bind_to_local_addr(sock.fd, sock.family, port);
 		break;
 
 	default:

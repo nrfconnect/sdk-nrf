@@ -225,6 +225,7 @@ Serial LTE modem
 * Updated:
 
   * AT command parsing to utilize the :ref:`at_cmd_custom_readme` library.
+  * ``#XUDPCLI``, ``#XUDPSVR`` and ``#XSSOCKET`` (UDP) AT commands to use Zephyr's Mbed TLS when ``<sec_tag>`` is provided and the :file:`overlay-native_tls.conf` overlay file is used.
 
 nRF5340 Audio
 -------------
