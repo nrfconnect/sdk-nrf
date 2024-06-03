@@ -57,13 +57,13 @@ enum dult_accessory_capability {
 
 /** DULT firmware version. */
 struct dult_firmware_version {
-	/* Major firmware version. */
+	/** Major firmware version. */
 	uint16_t major;
 
-	/* Minor firmware version. */
+	/** Minor firmware version. */
 	uint8_t minor;
 
-	/* Firmware revision. */
+	/** Firmware revision. */
 	uint8_t revision;
 };
 
@@ -74,22 +74,22 @@ struct dult_user {
 	 */
 	const uint8_t *product_data;
 
-	/* Manufacturer name. */
+	/** Manufacturer name. */
 	const char *manufacturer_name;
 
-	/* Model name. */
+	/** Model name. */
 	const char *model_name;
 
-	/* Accessory category. */
+	/** Accessory category. */
 	uint8_t accessory_category;
 
-	/* Accessory capabilities bitmask. See @ref dult_accessory_capability for more details. */
+	/** Accessory capabilities bitmask. See @ref dult_accessory_capability for more details. */
 	uint32_t accessory_capabilities;
 
-	/* Network ID. See @ref dult_network_id for more details. */
+	/** Network ID. See @ref dult_network_id for more details. */
 	enum dult_network_id network_id;
 
-	/* Firmware version. */
+	/** Firmware version. */
 	struct dult_firmware_version firmware_version;
 };
 
@@ -182,15 +182,15 @@ int dult_id_read_state_cb_register(const struct dult_user *user,
  */
 int dult_id_read_state_enter(const struct dult_user *user);
 
-/* Minimum duration in milliseconds for the DULT sound action. */
+/** Minimum duration in milliseconds for the DULT sound action. */
 #define DULT_SOUND_DURATION_MIN_MS (5000U)
 
 /** DULT sound source types. */
 enum dult_sound_src {
-	/* Sound source type originating from the Bluetooth accessory non-owner service. */
+	/** Sound source type originating from the Bluetooth accessory non-owner service. */
 	DULT_SOUND_SRC_BT_GATT,
 
-	/* External source type originating from the unknown location to the DULT module. */
+	/** External source type originating from the unknown location to the DULT module. */
 	DULT_SOUND_SRC_EXTERNAL,
 };
 
@@ -236,17 +236,17 @@ int dult_sound_cb_register(const struct dult_user *user, const struct dult_sound
 
 /** Sound state parameters */
 struct dult_sound_state_param {
-	/* Sound state change flag.
-	 * True when the sound state is activated.
-	 * False: when the sound state is deactivated.
+	/** Sound state change flag.
+	 *  True when the sound state is activated.
+	 *  False: when the sound state is deactivated.
 	 */
 	bool active;
 
-	/* Sound source type.
-	 * The source can change during the sound-playing operation. For example, the
-	 * @ref DULT_SOUND_SRC_EXTERNAL source can override the @ref DULT_SOUND_SRC_BT_GATT
-	 * source). In the typical flow, the source for sound activation is also the source
-	 * for sound deactivation.
+	/** Sound source type.
+	 *  The source can change during the sound-playing operation. For example, the
+	 *  @ref DULT_SOUND_SRC_EXTERNAL source can override the @ref DULT_SOUND_SRC_BT_GATT
+	 *  source). In the typical flow, the source for sound activation is also the source
+	 *  for sound deactivation.
 	 */
 	enum dult_sound_src src;
 };
