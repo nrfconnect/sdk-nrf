@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_suit_customize_dfu:
 
 How to customize the SUIT DFU process
@@ -9,7 +7,7 @@ How to customize the SUIT DFU process
    :local:
    :depth: 2
 
-Nordic Semiconductor provides a Software Update Internet of Things (SUIT) sample (```nrf54h_suit_sample``) which uses predefined configurations in the build system.
+Nordic Semiconductor provides a Software Update Internet of Things (SUIT) sample (:ref:`ug_nrf54h20_suit_intro`) which uses predefined configurations in the build system.
 The specified Kconfig options in the sample can be used to customize the DFU process and integrate the DFU solution with external build systems.
 This guide provides a comprehensive set of instructions for modifying values in the :ref:`SUIT manifest <ug_nrf54h20_suit_manifest_overview>`.
 
@@ -22,7 +20,7 @@ It consists of two main concepts: the SUIT envelope and the SUIT manifest.
 * The SUIT envelope acts as a secure container for transporting firmware updates, encapsulating the firmware binary and its manifest.
 * The SUIT manifest is a structured file with metadata essential for the update process, including firmware version, size, and hash for integrity verification.
 
-During the first build of the ``nrf54h_suit_sample``, default manifest templates are provided.
+During the first build of the :ref:`nrf54h_suit_sample`, default manifest templates are provided.
 These templates form the basis for generating SUIT envelopes and manifests tailored to specific application requirements.
 Customization of these templates is crucial for specific use cases and security requirements.
 
@@ -67,16 +65,16 @@ These templates, suitable for standard development needs, are automatically plac
 Customizing UUIDs in the manifest templates enhances security and is recommended for specific use cases.
 For information about adding custom UUID values, refer to the :ref:`ug_suit_using_manifest_gen` section.
 
-After the first build of the ``nrf54h_suit_sample``, three additional files are created in the :file:`nrf/samples/suit/smp_transfer` directory (or two levels above the build directory when using the ``west -d`` parameter):
+After the first build of the :ref:`nrf54h_suit_sample`, three additional files are created in the :file:`nrf/samples/suit/smp_transfer` directory (or two levels above the build directory when using the ``west -d`` parameter):
 
 * Root manifest - :file:`root_hierarchical_envelope.yaml.jinja2`
-* Application Domain manifest - :file:`app_envelope.yaml.jinja2`
-* Radio Domain manifest - :file:`rad_envelope.yaml.jinja2`
+* Application domain manifest - :file:`app_envelope.yaml.jinja2`
+* Radio domain manifest - :file:`rad_envelope.yaml.jinja2`
 
 The destination directory for these :file:`jinja2` file templates can be changed by setting the :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION` Kconfig option.
 
 .. note::
-   The Radio Domain manifest template is available only for the Bluetooth® Low Energy version of the ``nrf54h_suit_sample``, not the UART version.
+   The radio domain manifest template is available only for the Bluetooth® Low Energy version of the :ref:`nrf54h_suit_sample`, not the UART version.
 
 .. _ug_suit_change_manifest_location:
 
@@ -140,9 +138,9 @@ The following files should be used to create DFU envelope:
 
 * Root envelope - :file:`root.yaml.jinja2`
 
-* Application Domain - :file:`app.yaml.jinja2`
+* Application domain - :file:`app.yaml.jinja2`
 
-* Radio Domain - :file:`radio.yaml.jinja2`
+* Radio domain - :file:`radio.yaml.jinja2`
 
 .. figure:: images/nrf54h20_suit_example_update_process.png
    :alt: Example update process
@@ -197,7 +195,7 @@ The component values are filled out automatically by the build system during the
 Variables in the provided templates, like memory ranges and paths to binaries, are filled out by the build system.
 However, values like ``class-identifier`` and ``vendor-identifier`` should be customized manually.
 
-An example of a YAML representation for a basic installation and invoke-process of the Application firmware could look like the following:
+An example of a YAML representation for a basic installation and invoke-process of the application firmware could look like the following:
 
 .. code-block::
 
@@ -247,7 +245,7 @@ An example of a YAML representation for a basic installation and invoke-process 
         '#app': ``/path/to/application_fw.bin``
 
 .. note::
-    Default values of OEM-controlled manifests (related to the Application and Radio Domains) are hardcoded in the SDFW, but you can overwrite these values and this is strongly recommended.
+    Default values of OEM-controlled manifests (related to the application and radio domains) are hardcoded in the SDFW, but you can overwrite these values and this is strongly recommended.
 
 The ``class-identifier`` and ``vendor-identifier`` values in the manifest templates, like :file:`app_envelope_yam.jinja2`, can be modified to suit specific requirements.
 For example, changing these values from `nordicsemi.com` to a custom vendor or class identifier enhances the specificity and security of the DFU process.
@@ -308,7 +306,7 @@ The manifest templates have access to the following:
 
 Some of these values are stored in the Python dictionaries that are named after the target name.
 (Therefore, Python is used within the ``.jinja2`` files to fill in the necessary values in the manifest(s).)
-For example, for the ``nrf54h_suit_sample`` there will be two variables available: ``app`` and ``hci_rpmsg_subimage``.
+For example, for the :ref:`nrf54h_suit_sample` there will be two variables available: ``app`` and ``hci_rpmsg_subimage``.
 Each variable is a Python dictionary type (``dict``) containing the following keys:
 
 * ``name`` - name of the target
@@ -375,7 +373,7 @@ For more information, see the file available in the sample and `Jinja <https://j
 
    {%- set component_index = 0 %}                                                  # Initialize the `component_index variable`.
                                                                                    # This variable will be used to assign component indexes dynamically depending on
-                                                                                   # how many cores have been built.
+                                                                                   # How many cores have been built.
 
 
    {%- set component_list = [] %}                                                  # Initialize the `component_list variable`.
@@ -393,7 +391,7 @@ For more information, see the file available in the sample and `Jinja <https://j
             suit-components:
             - - CAND_MFST
             - 0
-   {%- if hci_rpmsg_subimage is defined %}                                         # Add section below only, in case the Radio Core has been already been built.
+   {%- if hci_rpmsg_subimage is defined %}                                         # Add section below only, in case the radio core has been already been built.
       {%- set component_index = component_index + 1 %}                             # Increment `component_index`.
       {%- set hci_rpmsg_subimage_component_index = component_index %}              # Store the current component index for further use.
       {{- component_list.append( hci_rpmsg_subimage_component_index ) or ""}}      # Append the current component index to the common list.
@@ -478,7 +476,7 @@ Executing the Python script from the command line:
 Edit build artifacts
 --------------------
 
-The ``nrf54h_suit_sample`` :file:`/build` directory contains several artifacts related to the SUIT process:
+The :ref:`nrf54h_suit_sample` :file:`/build` directory contains several artifacts related to the SUIT process:
 
 * :file:`./build/hci_rpmsg/zephyr/hci_rpmsg_subimage.yaml`
 * :file:`./build/zephyr/app.yaml`

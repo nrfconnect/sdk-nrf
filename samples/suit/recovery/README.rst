@@ -1,5 +1,3 @@
-:orphan:
-
 .. _suit_recovery:
 
 SUIT recovery application
