@@ -27,8 +27,7 @@ tests:
   sample.peripheral.radio_test.nrf5340_usb:
     sysbuild: true
     build_only: true
-    extra_configs:
-      - CONFIG_RADIO_TEST_USB=y
+    extra_args: FILE_SUFFIX=usb
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -36,9 +35,7 @@ tests:
   sample.peripheral.radio_test.nrf5340_nrf21540_usb:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf21540ek
-    extra_configs:
-      - CONFIG_RADIO_TEST_USB=y
+    extra_args: SHIELD=nrf21540ek FILE_SUFFIX=usb
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
