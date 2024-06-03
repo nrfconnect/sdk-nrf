@@ -147,6 +147,14 @@ mci_err_t suit_mci_independent_update_policy_get(const suit_manifest_class_id_t 
 			*policy = SUIT_INDEPENDENT_UPDATE_DENIED;
 		}
 		break;
+
+	case EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP:
+		/* In this state, only the Nordic top manifest is accepted as an update candidate.*/
+		if (role != SUIT_MANIFEST_SEC_TOP) {
+			*policy = SUIT_INDEPENDENT_UPDATE_DENIED;
+		}
+		break;
+
 	default:
 		break;
 	}
@@ -639,6 +647,15 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 		      (child_role <= SUIT_MANIFEST_APP_LOCAL_3)) ||
 		     ((child_role >= SUIT_MANIFEST_RAD_LOCAL_1) &&
 		      (child_role <= SUIT_MANIFEST_RAD_LOCAL_2)))) {
+			return SUIT_PLAT_SUCCESS;
+		}
+		break;
+
+	case EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP:
+		/* In this state it is prohibited to process OEM manifests. */
+		if ((parent_role == SUIT_MANIFEST_SEC_TOP) &&
+		    ((child_role == SUIT_MANIFEST_SEC_SYSCTRL) ||
+		     (child_role == SUIT_MANIFEST_SEC_SDFW))) {
 			return SUIT_PLAT_SUCCESS;
 		}
 		break;
