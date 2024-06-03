@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_suit_external_memory:
 
 Firmware upgrade with external memory
@@ -9,8 +7,9 @@ Firmware upgrade with external memory
    :local:
    :depth: 2
 
-Storing firmware upgrade data in external memory poses a unique challenge on nRF54H20 DK, because the secure domain is unable to access the external memory by itself.
-The application domain is used as a proxy for the secure domain to access the external memory.
+The Secure Domain firmware is unable to access the external memory by itself.
+However, the application domain can implement an IPC service, which allows the Secure Domain firmware to access the external memory with application domain serving as a proxy.
+This guide explains how to prepare the application domain firmware and the SUIT envelope to perform SUIT firmware upgrade with external memory.
 
 .. note::
    The prerequisite to this guide is the :ref:`ug_nrf54h20_suit_fetch` user guide, as this guide assumes that the application uses the fetch model to obtain the candidate images.
@@ -18,10 +17,10 @@ The application domain is used as a proxy for the secure domain to access the ex
 
 The following terms are used in this guide:
 
-* External memory (extmem) service - IPC service allowing the secure domain to use the application domain as a proxy when accessing external memory.
+* External memory (extmem) service - IPC service allowing the Secure Domain to use the application domain as a proxy when accessing external memory.
 
 * Companion image - Application domain firmware implementing the extmem service and external memory driver.
-  The IPC service allows the secure domain to access the external memory.
+  The IPC service allows the Secure Domain to access the external memory.
 
 Overview of external memory in SUIT firmware updates
 ****************************************************
@@ -33,17 +32,17 @@ To store payloads in the external memory, a DFU cache partition must be defined 
 In the SUIT manifest, you can define a component representing the cache partition in the external memory.
 Within the ``suit-payload-fetch`` sequence, you can then store any fetched payload into any ``CACHE_POOL`` component.
 
-When the secure domain processes the ``suit-install`` sequence, issuing ``suit-directive-fetch`` on any non-integrated payload will instruct the secure domain firmware to search for a given URI in all cache partitions in the system.
-However, when such a cache partition is located in the external memory, the secure domain is unable to access the data.
+When the Secure Domain processes the ``suit-install`` sequence, issuing ``suit-directive-fetch`` on any non-integrated payload will instruct the Secure Domain firmware to search for a given URI in all cache partitions in the system.
+However, when such a cache partition is located in the external memory, the Secure Domain is unable to access the data.
 Before any ``suit-directive-fetch`` directive is issued that accesses a payload stored on the external memory, a companion image that implements an external memory device driver must be booted.
 
 The companion image consists of two main parts:
 
 * Device driver adequate for the external memory device
 
-* IPC service exposed towards the secure domain
+* IPC service exposed towards the Secure Domain
 
-When the companion image is booted and a directive that accesses the data on the external memory is issued, such as the ``suit-directive-fetch`` and ``suit-directive-copy`` directives, the secure domain firmware uses the IPC service provided by the companion image to access the contents of the external memory.
+When the companion image is booted and a directive that accesses the data on the external memory is issued, such as the ``suit-directive-fetch`` and ``suit-directive-copy`` directives, the Secure Domain firmware uses the IPC service provided by the companion image to access the contents of the external memory.
 Beyond the booting of the companion image, the update process does not differ from regular fetch model-based update.
 
 Enabling external flash support in SUIT DFU
@@ -133,7 +132,7 @@ Nordic Semiconductor provides a reference companion image in the :file:`samples/
 Limitations
 ***********
 
-* The secure domain and companion image candidates must always be stored in MRAM.
+* The Secure Domain and companion image candidates must always be stored in MRAM.
   Trying to store those candidates in external memory will result in failure during the installation process.
 
 * The companion image needs a dedicated area in the executable region of the MRAM that is assigned to the application domain.

@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_suit_customize_dfu:
 
 How to customize the SUIT DFU process
@@ -70,13 +68,13 @@ For information about adding custom UUID values, refer to the :ref:`ug_suit_usin
 After the first build of the ``nrf54h_suit_sample``, three additional files are created in the :file:`nrf/samples/suit/smp_transfer` directory (or two levels above the build directory when using the ``west -d`` parameter):
 
 * Root manifest - :file:`root_hierarchical_envelope.yaml.jinja2`
-* Application Domain manifest - :file:`app_envelope.yaml.jinja2`
-* Radio Domain manifest - :file:`rad_envelope.yaml.jinja2`
+* Application domain manifest - :file:`app_envelope.yaml.jinja2`
+* Radio domain manifest - :file:`rad_envelope.yaml.jinja2`
 
 The destination directory for these :file:`jinja2` file templates can be changed by setting the :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION` Kconfig option.
 
 .. note::
-   The Radio Domain manifest template is available only for the Bluetooth® Low Energy version of the ``nrf54h_suit_sample``, not the UART version.
+   The radio domain manifest template is available only for the Bluetooth® Low Energy version of the ``nrf54h_suit_sample``, not the UART version.
 
 .. _ug_suit_change_manifest_location:
 
@@ -140,9 +138,9 @@ The following files should be used to create DFU envelope:
 
 * Root envelope - :file:`root.yaml.jinja2`
 
-* Application Domain - :file:`app.yaml.jinja2`
+* Application domain - :file:`app.yaml.jinja2`
 
-* Radio Domain - :file:`radio.yaml.jinja2`
+* Radio domain - :file:`radio.yaml.jinja2`
 
 .. figure:: images/nrf54h20_suit_example_update_process.png
    :alt: Example update process
@@ -197,7 +195,7 @@ The component values are filled out automatically by the build system during the
 Variables in the provided templates, like memory ranges and paths to binaries, are filled out by the build system.
 However, values like ``class-identifier`` and ``vendor-identifier`` should be customized manually.
 
-An example of a YAML representation for a basic installation and invoke-process of the Application firmware could look like the following:
+An example of a YAML representation for a basic installation and invoke-process of the application firmware could look like the following:
 
 .. code-block::
 
@@ -247,7 +245,7 @@ An example of a YAML representation for a basic installation and invoke-process 
         '#app': ``/path/to/application_fw.bin``
 
 .. note::
-    Default values of OEM-controlled manifests (related to the Application and Radio Domains) are hardcoded in the SDFW, but you can overwrite these values and this is strongly recommended.
+    Default values of OEM-controlled manifests (related to the application and radio domains) are hardcoded in the SDFW, but you can overwrite these values and this is strongly recommended.
 
 The ``class-identifier`` and ``vendor-identifier`` values in the manifest templates, like :file:`app_envelope_yam.jinja2`, can be modified to suit specific requirements.
 For example, changing these values from `nordicsemi.com` to a custom vendor or class identifier enhances the specificity and security of the DFU process.
@@ -375,7 +373,7 @@ For more information, see the file available in the sample and `Jinja <https://j
 
    {%- set component_index = 0 %}                                                  # Initialize the `component_index variable`.
                                                                                    # This variable will be used to assign component indexes dynamically depending on
-                                                                                   # how many cores have been built.
+                                                                                   # How many cores have been built.
 
 
    {%- set component_list = [] %}                                                  # Initialize the `component_list variable`.
@@ -393,7 +391,7 @@ For more information, see the file available in the sample and `Jinja <https://j
             suit-components:
             - - CAND_MFST
             - 0
-   {%- if hci_rpmsg_subimage is defined %}                                         # Add section below only, in case the Radio Core has been already been built.
+   {%- if hci_rpmsg_subimage is defined %}                                         # Add section below only, in case the radio core has been already been built.
       {%- set component_index = component_index + 1 %}                             # Increment `component_index`.
       {%- set hci_rpmsg_subimage_component_index = component_index %}              # Store the current component index for further use.
       {{- component_list.append( hci_rpmsg_subimage_component_index ) or ""}}      # Append the current component index to the common list.

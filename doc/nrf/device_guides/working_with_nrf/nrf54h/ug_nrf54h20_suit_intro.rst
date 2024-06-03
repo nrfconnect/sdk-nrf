@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_suit_intro:
 
 Introduction to SUIT
@@ -30,13 +28,13 @@ When it starts execution, it continues the SoC boot sequence according to the ma
 The local domain CPU firmware images are validated and started by the Secure Domain as instructed by the manifest.
 
 Once the invocation process is complete, the SDFW is still active and may serve specific requests from specified domains.
-Therefore, unlike in MCUboot, the Application Core and other cores may use the SDFW services.
+Therefore, unlike in MCUboot, the application core and other cores may use the SDFW services.
 (See the :ref:`ug_nrf54h20_suit_compare_other_dfu` page for more details and further comparison of SUIT with other DFU and bootloader procedures.)
 The bootloader SDFW image provided by Nordic Semiconductor is offered in binary form.
 Along with this, you can compose a final image with your own application image that is signed by your own keys.
 
 .. figure:: images/nrf54h20_suit_example_update_workflow.png
-   :alt: Example of the anticipated workflow for an Application Domain update using SUIT
+   :alt: Example of the anticipated workflow for an application domain update using SUIT
 
 .. _ug_suit_dfu_suit_concepts:
 

@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_suit_dfu:
 
 Device Firmware Update using SUIT
@@ -22,11 +20,12 @@ You can learn about this in the :ref:`ug_nrf54h20_suit_customize_dfu` page, whic
    :maxdepth: 2
    :caption: Subpages:
 
-   ug_nrf54h20_suit_customize_qsg.rst
-   ug_nrf54h20_suit_customize_dfu.rst
    ug_nrf54h20_suit_intro.rst
    ug_nrf54h20_suit_manifest_overview.rst
+   ug_nrf54h20_suit_customize_qsg.rst
+   ug_nrf54h20_suit_customize_dfu.rst
+   ug_nrf54h20_suit_fetch
+   ug_nrf54h20_suit_external_memory
    ug_nrf54h20_suit_components.rst
    ug_nrf54h20_suit_hierarchical_manifests.rst
-   ug_nrf54h20_suit_why.rst
    ug_nrf54h20_suit_compare_other_dfu.rst

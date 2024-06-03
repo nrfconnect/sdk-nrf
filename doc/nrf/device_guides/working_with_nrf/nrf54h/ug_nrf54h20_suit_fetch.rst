@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_suit_fetch:
 
 How to fetch payloads
