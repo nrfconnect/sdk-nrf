@@ -314,6 +314,17 @@ Glossary
    Frequency-locked loop (FLL)
       An electronic control system that generates a signal that is locked to the frequency of an input or "reference" signal.
 
+   Front-End Module (FEM)
+     A device that amplifies the radio frequency (RF) signal, to increase the range distance, the strength, and the robustness of a link connection.
+     A more robust link reduces packet loss, causing fewer retransmissions and increasing the probability of successfully receiving the first packet, resulting in a lower link latency.
+
+     FEMs provide a :term:`Power Amplifier (PA)` that increases the TX power or a :term:`Low-Noise Amplifier (LNA)` that increases the RX sensitivity, or both.
+     Some FEMs, like the nRF21540, also provide a power down (PDN) control that powers down the FEM internal circuits, to reduce energy consumption.
+
+     For testing purposes, a FEM is usually integrated in either a development kit or a shield that you can connect to a development kit.
+
+     See :ref:`ug_radio_fem` for more information about FEM support in the |NCS|.
+
    Fully Depleted Silicon-on-Insulator (FD-SOI)
       A type of SOI technology that uses a thin layer of silicon that is fully depleted of electrons.
 
@@ -812,6 +823,10 @@ Glossary
       A sequence of characters that uniquely names a wireless local area network (WLAN).
       Sometimes referred to as a network name.
       This name allows stations to connect to the desired network when multiple independent networks operate in the same physical area.
+
+   Shield
+      A hardware add-on that you can attach to the development kit to extend its feature and functionalities.
+      See :ref:`shield_names_nrf`.
 
    Signal-to-Noise Ratio (SNR)
       The level of signal power compared to the level of noise power, often expressed in decibels (dB).
