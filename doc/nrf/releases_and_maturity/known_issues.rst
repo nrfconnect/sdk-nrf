@@ -768,6 +768,13 @@ The issues in this section are related to the :ref:`ug_thread` protocol.
 
 .. rst-class:: v2-6-1 v2-6-0
 
+KRKNWK-19036: High power consumption after parent loss
+  After a parent loss, an SED would keep the radio on between reattach attempts.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix to ``sdk-zephyr`` (commit hash: ``6c602a1bbd3b3f7811082bce391c6943663a2c64``).
+
+.. rst-class:: v2-6-1 v2-6-0
+
 KRKNWK-18612: nRF5340 sometimes fails to send a Child Update Response to an SSED child
   After performing an MLE Child Update Request by an SSED child, an nRF5340 parent sometimes does not respond with a Child Update Response.
   This is caused by the CSL transmit request being issued to the nRF 802.15.4 Radio Driver so late that it cannot be handled on time.
