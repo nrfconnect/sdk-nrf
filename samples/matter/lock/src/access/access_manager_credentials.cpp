@@ -151,8 +151,9 @@ template <CredentialsBits CRED_BIT_MASK> bool AccessManager<CRED_BIT_MASK>::Clea
 	return mCredentials.ForEach([](DoorLockData::Credential &credential, uint8_t credIdx) {
 		/* At this point the door-lock-server already invalidated both mCreatedBy and mLastModifiedBy
 		    of all credentials assigned to the fabric which is currently being removed */
-		if (credential.mInfo.mFields.mCreatedBy == kUndefinedFabricIndex ||
-		    credential.mInfo.mFields.mLastModifiedBy == kUndefinedFabricIndex) {
+		if (credential.mInfo.mFields.mCreatedBy == kUndefinedFabricIndex &&
+		    credential.mInfo.mFields.mLastModifiedBy == kUndefinedFabricIndex &&
+		    credential.mSecret.mDataLength != 0) {
 			return Instance().ClearCredential(credential, credIdx);
 		}
 		return true;
