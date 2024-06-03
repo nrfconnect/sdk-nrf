@@ -151,7 +151,7 @@ The following are examples of the CLI commands:
 
   .. code-block:: console
 
-	 west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=n -D802154_rpmsg_CONFIG_MPSL_CX=n
+	 west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=n -Dipc_radio_CONFIG_MPSL_CX=n
 
 
 Use this command for Wi-Fi throughput only, Thread throughput only, or concurrent Wi-Fi and Thread throughput with coexistence disabled tests.
@@ -160,7 +160,7 @@ Use this command for Wi-Fi throughput only, Thread throughput only, or concurren
 
   .. code-block:: console
 
-	 west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=y -D802154_rpmsg_CONFIG_MPSL_CX=y
+	 west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=y -Dipc_radio_CONFIG_MPSL_CX=y
 
 Use this command for concurrent Wi-Fi and Thread throughput with coexistence enabled test.
 
@@ -184,13 +184,13 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
   .. code-block:: console
 
-     -DSHIELD=nrf7002ek 802154_rpmsg_SHIELD=nrf7002ek_coex
+     -DSHIELD=nrf7002ek ipc_radio_SHIELD=nrf7002ek_coex
 
 * For nRF7001 EK:
 
   .. code-block:: console
 
-     -DSHIELD=nrf7002ek_nrf7001 802154_rpmsg_SHIELD=nrf7002ek_nrf7001_coex
+     -DSHIELD=nrf7002ek_nrf7001 ipc_radio_SHIELD=nrf7002ek_nrf7001_coex
 
 * Overlay files
 
