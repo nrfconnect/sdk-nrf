@@ -11,7 +11,7 @@ In the Software Updates for Internet of Things (SUIT), it is possible for a devi
 
 1. The push model - where all necessary candidate images are integrated into the SUIT envelope, and uploaded to a device as a single unit.
 
-#. The fetch model - where the envelope contains 0 or not all necessary candidate images, and is performed by the application firmware.
+#. The fetch model - where the envelope contains 0 or not all necessary candidate images.
    The manifest contains logic that instructs the device to fetch other required candidate images through a user-defined mechanism during the envelope processing.
 
 This guide explains how to reconfigure an application that uses the push model to a fetch model-based upgrade.
@@ -38,7 +38,7 @@ The fetch model has greater flexibility compared to the push model in the follow
   For example, fetching up-to-date firmware can be completely skipped, which saves battery life and transfer costs.
 
 * Custom fetch source can be implemented.
-  Nordic Semiconductor provides a reference fetch source implementation which uses the SMP protocol over serial or BluetoothÂ® LE.
+  Nordic Semiconductor provides a reference fetch source implementation which uses the SMP protocol over serial or Bluetooth® LE.
   You have the option to implement any fetching mechanism needed for the application, such as fetching from an HTTP resource.
 
 * Candidate images can be stored in a different memory partition than the envelope itself.
@@ -54,14 +54,14 @@ To reconfigure the sample to use the fetch model, complete the following steps:
 1. Enable the following three Kconfig options:
 
    * :kconfig:option:`CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL` - This enables SUIT envelope processing in the application firmware.
-     The application firmware will execute the ``suit-payload-fetch`` sequence, if is already in the root manifest.
+     The application firmware will execute the ``suit-payload-fetch`` sequence, if it is defined in the root manifest.
    * :kconfig:option:`CONFIG_MGMT_SUITFU_GRP_SUIT_CAND_ENV_UPLOAD` and :kconfig:option:`CONFIG_MGMT_SUITFU_GRP_SUIT_IMAGE_FETCH`.
      These options enable Nordic Semiconductor's reference implementation of the SMP-based fetch source.
      In this implementation, the SMP server (the device being updated) uses the SMP client (a computer or a mobile phone) as a proxy to fetch the required candidate images.
 
-#. Add the ``suit-payload-fetch`` sequence to the root manifest :file:`root_hierarchical_envelope.yaml.jinja2`:
+#. Add the ``suit-payload-fetch`` sequence to the root manifest :file:`root_with_binary_nordic_top.yaml.jinja2`:
 
-   .. code-block:: console
+   .. code-block:: yaml
 
       suit-payload-fetch:
         - suit-directive-set-component-index: 0
@@ -80,13 +80,13 @@ To reconfigure the sample to use the fetch model, complete the following steps:
           - suit-send-sysinfo-success
           - suit-send-sysinfo-failure
 
-   This instructs the SUIT processor to execute the ``suit-payload-fetch`` in the application manifest, which will be added in the next step.
+   This instructs the SUIT processor to execute the ``suit-payload-fetch`` sequence in the application manifest, which will be added in the next step.
 
 #. Modify the application manifest :file:`app_envelope.yaml.jinja2` by completing the following:
 
    a. Append the ``CACHE_POOL`` component:
 
-      .. code-block:: console
+      .. code-block:: yaml
 
          suit-components:
              ...
@@ -101,7 +101,7 @@ To reconfigure the sample to use the fetch model, complete the following steps:
 
    #. Add the ``suit-payload-fetch`` sequence to the application manifest:
 
-      .. code-block:: console
+      .. code-block:: yaml
 
          suit-payload-fetch:
          - suit-directive-set-component-index: 2
@@ -109,13 +109,6 @@ To reconfigure the sample to use the fetch model, complete the following steps:
              suit-parameter-uri: 'file://{{ app['binary'] }}'
          - suit-directive-fetch:
            - suit-send-record-failure
-
-   #. Modify the ``suit-install`` sequence to use an identical URI, (as in the ``suit-payload-fetch``), instead of the integrated one:
-
-     The SUIT procedure attempts to use all fetch sources registered with :c:func:`suit_dfu_fetch_source_register` until one of them fetches the payload.
-     If no sources are able to fetch the payload, the update process ends with an error.
-
-     The reference SMP fetch source implementation only recognizes URIs that start with ``file://``.
 
    #. Modify the ``suit-install`` sequence to use an identical URI, as in the ``suit-payload-fetch``, instead of the integrated one.
 
@@ -130,8 +123,13 @@ To reconfigure the sample to use the fetch model, complete the following steps:
            - suit-directive-fetch:
              - suit-send-record-failure
 
-     When the secure domain firmware processes the ``suit-install`` sequence, this sequence of directives instructs the secure domain to search for a payload with a given URI in all cache partitions.
-     If no such payload is found, the update process ends with an error.
+      The SUIT procedure attempts to use all fetch sources registered with :c:func:`suit_dfu_fetch_source_register` until one of them fetches the payload.
+      If no sources are able to fetch the payload, the update process ends with an error.
+
+      The reference SMP fetch source implementation only recognizes URIs that start with ``file://``.
+
+      When the secure domain firmware processes the ``suit-install`` sequence, this sequence of directives instructs the secure domain to search for a payload with a given URI in all cache partitions.
+      If no such payload is found, the update process ends with an error.
 
 
    #. Remove the application binary from the integrated payloads:
@@ -142,8 +140,8 @@ To reconfigure the sample to use the fetch model, complete the following steps:
          -   '#{{ app['name'] }}': {{ app['binary'] }}
          + suit-integrated-payloads: {}
 
-     In the fetch model-based firmware upgrade, it is not necessary to integrate the payload into the envelope.
-     However, you may still choose to integrate certain payloads.
+      In the fetch model-based firmware upgrade, it is not necessary to integrate the candidate image into the envelope.
+      However, you may still choose to integrate certain payloads.
 
 Creating a custom fetch source
 ******************************

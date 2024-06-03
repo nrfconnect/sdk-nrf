@@ -48,46 +48,46 @@ Beyond the booting of the companion image, the update process does not differ fr
 Enabling external flash support in SUIT DFU
 *******************************************
 
-The :file:`nrf/samples/suit/smp_transfer` sample contains a premade configuration enabling the external memory in SUIT DFU.
-To enable the external memory, you must apply the :file:`nrf/samples/suit/smp_transfer/overlay-extmem.conf` and :file:`nrf/samples/suit/smp_transfer/ext_flash_nrf54h20dk.overlay` overlays to the sample build or complete the following steps:
+The ``nrf54h_suit_sample`` sample contains a premade configuration enabling the external memory in SUIT DFU.
+To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` argument to the build or complete the following steps:
 
-1. Create a partition named ``companion_partition`` in the executable memory region that is accessible to the application domain by editing the devicetree (DTS) file:
+1. Power-up the external flash chip on nRF54H20 DK using the `nRF Connect Board Configurator`_ app in `nRF Connect for Desktop`_ .
 
-   .. code-block:: devicetree
+   .. note::
+      This step is needed only on nRF54H20 DK. Skip this step if you are using different hardware.
 
-      &mram0 {
-         partitions {
-            companion_partition: partition@116000 {
-               label = "companion-image";
-               reg = <0x116000 DT_SIZE_K(64)>;
-            };
-         };
-      };
-
-   The ``companion_partition`` is the region where the companion image will be executed.
-   Adjust the addresses accordingly to your application.
+#. Enable the :kconfig:option:`SB_CONFIG_SUIT_BUILD_FLASH_COMPANION` Sysbuild Kconfig option, which enables the build of the reference companion image.
+   See :ref:`suit_flash_companion` for instructions on how to configure the companion image using Sysbuild.
 
 #. Define a new DFU cache partition in the external memory in the DTS file:
 
    .. code-block:: devicetree
 
-      mx66um1g: mx66um1g45g@0 {
+      &mx25uw63 {
          ...
+         status = "okay";
          partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+
             dfu_cache_partition_1: partition@0 {
-               reg = <0x0 DT_SIZE_K(512)>;
+               reg = <0x0 DT_SIZE_K(1024)>;
             };
          };
       };
 
    Note the name of the partition.
+   It must follow the ``dfu_cache_partition_<n>`` format.
    The number at the end determines the ``CACHE_POOL`` ID, which will be used later in the SUIT manifest.
+   The number must be between greater than 0 and less than :kconfig:option:`CONFIG_SUIT_CACHE_MAX_CACHES`.
+   The Secure Domain firmware supports up to 8 DFU cache partitions.
 
 #. Modify the application manifest file :file:`app_envelope.yaml.jinja2` by completing the following:
 
    a. Modify the ``CACHE_POOL`` identifier in the SUIT manifest:
 
-      .. code-block:: console
+      .. code-block:: yaml
 
          suit-components:
              ...
@@ -98,21 +98,21 @@ To enable the external memory, you must apply the :file:`nrf/samples/suit/smp_tr
 
    #. Append the ``MEM`` type component that represents the companion image in the same SUIT manifest file:
 
-      .. code-block:: console
+      .. code-block:: yaml
 
          suit-components:
              ...
          - - MEM
-           - {{ flash_companion_subimage['dt'].label2node['cpu'].unit_addr }}
-           - {{ get_absolute_address(flash_companion_subimage['dt'].chosen_nodes['zephyr,code-partition']) }}
-           - {{ flash_companion_subimage['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size }}
+           - {{ flash_companion['dt'].label2node['cpu'].unit_addr }}
+           - {{ get_absolute_address(flash_companion['dt'].chosen_nodes['zephyr,code-partition']) }}
+           - {{ flash_companion['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size }}
 
       In this example, the component index is ``3``.
       In the following steps, the companion image component is selected with ``suit-directive-set-component-index: 3``.
 
    #. Modify the ``suit-install`` sequence to boot the companion image before accessing the candidate images, which are stored in the external memory:
 
-      .. code-block:: console
+      .. code-block:: yaml
 
          suit-install:
          - suit-directive-set-component-index: 3
@@ -121,18 +121,47 @@ To enable the external memory, you must apply the :file:`nrf/samples/suit/smp_tr
 
       The companion image can be optionally upgraded and have its integrity checked.
 
-#. Enable the :kconfig:option:`CONFIG_SUIT_EXTERNAL_MEMORY_SUPPORT` Kconfig option, which enables the build of the reference companion image to be used as a child image of the application firmware.
-   It also enables other additional options that are required for the external memory DFU to work.
+#. Build and flash the application.
+
+   .. code-block:: console
+
+      $ west build -b nrf54h20dk/nrf54h20/cpuapp --sysbuild
+      $ west flash
+
+   The build system will automatically generate :file:`build/suit.zip` archive, which contains the SUIT envelope and candidate images.
+
+#. Build a new version of the application with incremented :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM` value.
+
+#. Download the new :file:`suit.zip` archive to your mobile device.
+
+#. Use the `nRF Connect Device Manager`_ mobile app to update your device with the new firmware.
+
+   a. Ensure that you can access the :file:`suit.zip` archive from your phone or tablet.
+
+   #. In the mobile app, scan and select the device to update.
+
+   #. Switch to the :guilabel:`Image` tab.
+
+   #. Tap the :guilabel:`SELECT FILE` button and select the :file:`suit.zip` archive.
+
+   #. Tap the :guilabel:`UPLOAD` button.
+
+   #. Initiate the DFU process of transferring the image to the device.
+
+      The Device Manager mobile application will unpack the file and upload the SUIT envelope to the device.
+      The firmware images will be uploaded separately by the mobile application to the device, if the device requests it.
+
+   #. Wait for the DFU to finish and then verify that the application works properly.
 
 Create custom companion images
 ******************************
 
-Nordic Semiconductor provides a reference companion image in the :file:`samples/suit/flash_companion` file, which can serve as a base for developing a customized companion image.
+Nordic Semiconductor provides a reference companion image in the :file:`samples/suit/flash_companion` directory, which can serve as a base for developing a customized companion image.
 
 Limitations
 ***********
 
-* The Secure Domain and companion image candidates must always be stored in MRAM.
+* The Secure Domain, System Controller and companion image update candidates must always be stored in MRAM.
   Trying to store those candidates in external memory will result in failure during the installation process.
 
 * The companion image needs a dedicated area in the executable region of the MRAM that is assigned to the application domain.

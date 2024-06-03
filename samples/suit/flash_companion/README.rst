@@ -78,7 +78,7 @@ Perform the following steps in the main application directory:
                reg = <0xa6000 DT_SIZE_K(448)>;
             };
             companion_partition: partition@116000 {
-               reg = <0x116000 DT_SIZE_K(64)>;
+               reg = <0x116000 DT_SIZE_K(36)>;
             };
          };
 
@@ -95,13 +95,14 @@ Perform the following steps in the main application directory:
             status = "okay";
          };
 
-#. Build the main application:
+#. Build and flash the main application:
 
    .. code-block:: console
 
       $ west build -b nrf54h20dk/nrf54h20/cpuapp --sysbuild
+      $ west flash
 
-The flash companion sample will be built automatically by Sysbuild.
+The flash companion sample will be built and flashed automatically by Sysbuild.
 
 Dependencies
 ************
