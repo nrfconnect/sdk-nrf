@@ -68,6 +68,7 @@ NRF = [
     ("app_dev/wifi_coex/index", "device_guides/wifi_coex"),
     ("ug_radio_fem", "device_guides/working_with_fem"),
     ("app_dev/working_with_fem/index", "device_guides/working_with_fem"),
+    ("device_guides/working_with_fem","device_guides/fem/index"),
     ("ug_dev_model", "releases_and_maturity/dev_model"),
     ("dev_model", "releases_and_maturity/dev_model"),
     ("dm_adding_code", "releases_and_maturity/developing/adding_code"),

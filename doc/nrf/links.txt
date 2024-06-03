@@ -453,6 +453,7 @@
 .. _`Thingy:91 product website (downloads)`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91/Download#infotabs
 
 .. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
+.. _`nRF21540 DB product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF21540-DB
 
 .. _`nPM1300 product website`: https://www.nordicsemi.com/products/npm1300
 .. _`nPM1300 EK product page`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK
@@ -655,6 +656,7 @@
 
 .. _`nRF21540`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/intro.html
 .. _`nRF21540 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf21540/page/keyfeatures_html5.html
+.. _`nRF21540 Front-End Module`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/front_end_module.html
 
 .. _`nRF7001 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf7001/page/keyfeatures_html5.html
 .. _`nRF7002 Product Specification`:
@@ -693,6 +695,10 @@
 .. _`Evaluate nPM1300 using nPM PowerUP`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/npm_powerup.html
 .. _`Use the nPM1300 EK with an nRF5340 DK`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/using_nrf5340_DK.html
 .. _`nPM Fuel Gauge Board`: https://www.nordicsemi.com/Products/Development-hardware/nPM-Fuel-Gauge-board
+
+.. _`nRF21540 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf21540/page/keyfeatures_html5.html
+.. _`nRF21540 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/intro.html
+.. _`nRF21540 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_ek/page/UG/nrf21540_DK/intro.html
 
 .. _`AP-Protect for nRF9161`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dif.html#ariaid-title3
 .. _`Debugger access protection for nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/dif.html#ariaid-title2
