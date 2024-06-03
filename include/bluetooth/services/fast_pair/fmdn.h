@@ -32,22 +32,22 @@ enum bt_fast_pair_fmdn_ring_src {
 	 */
 	BT_FAST_PAIR_FMDN_RING_SRC_FMDN_BT_GATT,
 
-	/* Ringing source type originating from the Bluetooth accessory non-owner
-	 * service that is defined in the DULT specification.
-	 * Used only when the CONFIG_BT_FAST_PAIR_FMDN_DULT is enabled.
+	/** Ringing source type originating from the Bluetooth accessory non-owner
+	 *  service that is defined in the DULT specification.
+	 *  Used only when the CONFIG_BT_FAST_PAIR_FMDN_DULT is enabled.
 	 */
 	BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT,
 };
 
 /** Ringing component identifiers */
 enum bt_fast_pair_fmdn_ring_comp {
-	/* Identifier of the right component. */
+	/** Identifier of the right component. */
 	BT_FAST_PAIR_FMDN_RING_COMP_RIGHT = BIT(0),
 
-	/* Identifier of the left component. */
+	/** Identifier of the left component. */
 	BT_FAST_PAIR_FMDN_RING_COMP_LEFT = BIT(1),
 
-	/* Identifier of the case component. */
+	/** Identifier of the case component. */
 	BT_FAST_PAIR_FMDN_RING_COMP_CASE = BIT(2),
 };
 
@@ -65,16 +65,16 @@ enum bt_fast_pair_fmdn_ring_comp {
 
 /** Ringing volume */
 enum bt_fast_pair_fmdn_ring_volume {
-	/* Default level of the ringing volume. */
+	/** Default level of the ringing volume. */
 	BT_FAST_PAIR_FMDN_RING_VOLUME_DEFAULT = 0x00,
 
-	/* Low level of the ringing volume. */
+	/** Low level of the ringing volume. */
 	BT_FAST_PAIR_FMDN_RING_VOLUME_LOW = 0x01,
 
-	/* Medium level of the ringing volume. */
+	/** Medium level of the ringing volume. */
 	BT_FAST_PAIR_FMDN_RING_VOLUME_MEDIUM = 0x02,
 
-	/* High level of the ringing volume. */
+	/** High level of the ringing volume. */
 	BT_FAST_PAIR_FMDN_RING_VOLUME_HIGH = 0x03,
 };
 
@@ -101,15 +101,15 @@ enum bt_fast_pair_fmdn_ring_volume {
 
 /** Ringing request parameters */
 struct bt_fast_pair_fmdn_ring_req_param {
-	/* Bitmask with the active ringing components that is composed of
-	 * the @ref bt_fast_pair_fmdn_ring_comp identifiers.
+	/** Bitmask with the active ringing components that is composed of
+	 *  the @ref bt_fast_pair_fmdn_ring_comp identifiers.
 	 */
 	uint8_t active_comp_bm;
 
-	/* Ringing timeout in deciseconds. */
+	/** Ringing timeout in deciseconds. */
 	uint16_t timeout;
 
-	/* Ringing volume using @ref bt_fast_pair_fmdn_ring_volume values. */
+	/** Ringing volume using @ref bt_fast_pair_fmdn_ring_volume values. */
 	enum bt_fast_pair_fmdn_ring_volume volume;
 };
 
@@ -235,35 +235,35 @@ int bt_fast_pair_fmdn_ring_cb_register(const struct bt_fast_pair_fmdn_ring_cb *c
 
 /** Trigger for the new ringing state */
 enum bt_fast_pair_fmdn_ring_trigger {
-	/* Ringing action started. */
+	/** Ringing action started. */
 	BT_FAST_PAIR_FMDN_RING_TRIGGER_STARTED = 0x00,
 
-	/* Ringing action failed (all requested components are out of range). */
+	/** Ringing action failed (all requested components are out of range). */
 	BT_FAST_PAIR_FMDN_RING_TRIGGER_FAILED = 0x01,
 
-	/* Ringing action stopped due to the timeout. */
+	/** Ringing action stopped due to the timeout. */
 	BT_FAST_PAIR_FMDN_RING_TRIGGER_TIMEOUT_STOPPED = 0x02,
 
-	/* Ringing action stopped due to the UI action (e.g button press, touch sense). */
+	/** Ringing action stopped due to the UI action (e.g button press, touch sense). */
 	BT_FAST_PAIR_FMDN_RING_TRIGGER_UI_STOPPED = 0x03,
 
-	/* Ringing action stopped due to the GATT request. */
+	/** Ringing action stopped due to the GATT request. */
 	BT_FAST_PAIR_FMDN_RING_TRIGGER_GATT_STOPPED = 0x04,
 };
 
 /** Ringing state parameters */
 struct bt_fast_pair_fmdn_ring_state_param {
-	/* Trigger for the new ringing state. */
+	/** Trigger for the new ringing state. */
 	enum bt_fast_pair_fmdn_ring_trigger trigger;
 
-	/* Bitmask with the active ringing components that is composed of
-	 * the @ref bt_fast_pair_fmdn_ring_comp identifiers.
+	/** Bitmask with the active ringing components that is composed of
+	 *  the @ref bt_fast_pair_fmdn_ring_comp identifiers.
 	 */
 	uint8_t active_comp_bm;
 
-	/* Ringing timeout in deciseconds
-	 * Relevant only for the @ref BT_FAST_PAIR_FMDN_RING_TRIGGER_STARTED trigger
-	 * Set to zero to preserve the existing timeout.
+	/** Ringing timeout in deciseconds
+	 *  Relevant only for the @ref BT_FAST_PAIR_FMDN_RING_TRIGGER_STARTED trigger
+	 *  Set to zero to preserve the existing timeout.
 	 */
 	uint16_t timeout;
 };
@@ -345,7 +345,7 @@ int bt_fast_pair_fmdn_battery_level_set(uint8_t percentage_level);
 	.interval_max = (_int_max),                          \
 }
 
-/* Default value of FMDN advertising parameters */
+/** Default value of FMDN advertising parameters */
 #define BT_FAST_PAIR_FMDN_ADV_PARAM_DEFAULT                  \
 	((struct bt_fast_pair_fmdn_adv_param[]) {            \
 		BT_FAST_PAIR_FMDN_ADV_PARAM_INIT(            \
@@ -355,8 +355,8 @@ int bt_fast_pair_fmdn_battery_level_set(uint8_t percentage_level);
 
 /** FMDN advertising parameters */
 struct bt_fast_pair_fmdn_adv_param {
-	/* Minimum Advertising Interval (N * 0.625 milliseconds).
-	 * Range: 0x0020 to 0x4000.
+	/** Minimum Advertising Interval (N * 0.625 milliseconds).
+	 *  Range: 0x0020 to 0x4000.
 	 */
 	uint32_t interval_min;
 
@@ -466,11 +466,11 @@ int bt_fast_pair_fmdn_info_cb_register(struct bt_fast_pair_fmdn_info_cb *cb);
 
 /** Read modes */
 enum bt_fast_pair_fmdn_read_mode {
-	/* EIK recovery read mode. */
+	/** EIK recovery read mode. */
 	BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY,
 
-	/* Identification read mode.
-	 * Used only when the CONFIG_BT_FAST_PAIR_FMDN_DULT is enabled.
+	/** Identification read mode.
+	 *  Used only when the CONFIG_BT_FAST_PAIR_FMDN_DULT is enabled.
 	 */
 	BT_FAST_PAIR_FMDN_READ_MODE_DULT_ID,
 };
