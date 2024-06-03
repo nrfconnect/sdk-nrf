@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_suit_compare_other_dfu:
 
 DFU and bootloader comparison
@@ -10,9 +8,9 @@ It provides a more flexible and tailored DFU experience compared to the MCUboot 
 See the diagram and comparison table below for further comparison.
 
 .. figure:: images/nrf54h20_suit_mcuboot_comparison.png
-   :alt: MCUboot and SUIT architecture comparison
+   :alt: MCUboot and SUIT, and nRF Secure Immutable Bootloader architecture comparison
 
-   MCUboot and SUIT architecture comparison
+   MCUboot, SUIT, and |NSIB| architecture comparison
 
 +--------------------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
 | Characteristic           | MCUboot                                                                 | SUIT                                                                                                              | nRF Secure Immutable Bootloader                                                           |

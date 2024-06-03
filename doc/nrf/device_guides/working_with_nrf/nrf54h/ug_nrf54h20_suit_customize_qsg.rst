@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_suit_customize_dfu_qsg:
 
 Customize SUIT DFU quick start guide
@@ -51,7 +49,6 @@ If you want to learn more about SUIT DFU topics and terminology mentioned in thi
 * :ref:`ug_nrf54h20_suit_intro` page to learn more about SUIT-specific concepts, and an overview of the SUIT DFU procedure
 * :ref:`ug_nrf54h20_suit_manifest_overview` page for more information on how the SUIT manifest works
 * :ref:`ug_nrf54h20_suit_hierarchical_manifests` to learn more about the structure of the SUIT manifests implemented by Nordic Semiconductor
-* :ref:`ug_nrf54h20_suit_why` to learn why SUIT was selected as the DFU procedure for the nRF54H Series devices
 
 Requirements
 ************
@@ -73,7 +70,7 @@ For this quick start guide, we will install the following software:
 * Microsoft's |VSC| - The recommended IDE for the |NCS|.
 * |nRFVSC| - An add-on for |VSC| that allows you to develop applications for the |NCS|.
 * nRF Command Line Tools - A set of mandatory tools for working with the |NCS|.
-* Any additional requirements described in the ``nrf54h_suit_sample` sample``.
+* Any additional requirements described in the :ref:`nrf54h_suit_sample` sample.
 
 Building the SUIT sample
 ************************

@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_suit_hierarchical_manifests:
 
 Hierarchical manifests
@@ -19,7 +17,7 @@ Additionally, splitting the system into more than one part (each described by a 
 * Assigning different signing authorities per system parts, (a single part is represented by a single SUIT manifest).
 
 * Assigning different access rights to certain memory locations on the device.
-  (Due to security reasons, the manifest representing the Radio Domain is not be able to install, alter, read-out images or memory locations assigned to the Application Domain.)
+  (Due to security reasons, the manifest representing the radio domain is not be able to install, alter, read-out images or memory locations assigned to the application domain.)
 
 * Possibility to assign different downgrade prevention or signing verification policies per single domain.
 
@@ -43,7 +41,7 @@ The following image shows the default manifest topology for the nRF54H20 SoC:
 
    Default manifest topology for the nRF54H20 SoC
 
-Manifest located in the lowest positions of the hierarchy (such as the Application Local, Radio Local, System Controller, SDFW, and SDFW_Recovery manifests) contain a specific updatable image for a specific core/domain of the device.
+Manifest located in the lowest positions of the hierarchy (such as the application local, radio local, System Controller, SDFW, and SDFW_Recovery manifests) contain a specific updatable image for a specific core/domain of the device.
 The Nordic Top manifest coordinates update and invocation logic for its dependencies (System Controller and SDFW).
 The root manifest bundles all other manifests together and coordinates the entire DFU process.
 
@@ -55,7 +53,7 @@ An example of how this would be implemented includes:
    * A root manifest that coordinates update and invocation processes on its dependency manifests.
      It does not belong to any domain or control any local domain resources.
 
-   * A dependency manifest for each of the domains, such as the Application and Radio Domains.
+   * A dependency manifest for each of the domains, such as the application and radio domains.
 
 * Nordic Semiconductor controlled manifests - for the SecDom, including the System Controller.
   They will be released by Nordic Semiconductor and can be incorporated into the firmware update package prepared by the OEM.

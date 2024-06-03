@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_suit_manifest_overview:
 
 SUIT manifest overview
@@ -17,14 +15,14 @@ This includes the following:
 
 * A root manifest that contains the main execution instructions for the DFU within the different Domains.
 
-* Two local manifests, one for the Application Domain, another for the Radio Domain.
+* Two local manifests, one for the application domain, another for the radio domain.
 
 * Manifests for the SecDom, which are controlled by Nordic Semiconductor and cannot be modified.
-  This includes a Nordic "Top" manifest, one specifically for the SecDom firmware (SDFW), and the System Controller.
+  This includes a Nordic "Top" manifest, one specifically for the Secure Domain firmware (SDFW), and the System Controller.
 
 You can read more about manifest topology in the :ref:`ug_nrf54h20_suit_hierarchical_manifests` page.
 
-Manifest templates are provided by Nordic Semiconductor, and automatically generated when you build the ``nrf54h_suit_sample`` sample.
+Manifest templates are provided by Nordic Semiconductor, and automatically generated when you build the :ref:`nrf54h_suit_sample` sample.
 These templates work out-of-the-box for development and testing purposes.
 
 This document describes the contents of a SUIT manifest.
