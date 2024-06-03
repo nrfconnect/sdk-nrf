@@ -298,6 +298,11 @@ static int nrf_wifi_util_show_cfg(const struct shell *shell,
 		      "rate_flag = %d,  rate_val = %d\n",
 		      ctx->conf_params.tx_pkt_tput_mode,
 		      ctx->conf_params.tx_pkt_rate);
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "quiet_period = %u\n",
+		      conf_params->quiet_period);
 	return 0;
 }
 
@@ -887,6 +892,42 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 }
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 
+static int nrf_wifi_util_set_quiet_period(const struct shell *shell,
+					  size_t argc,
+					  const char *argv[])
+{
+
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	char *ptr = NULL;
+	unsigned long val = 0;
+
+	val = strtoul(argv[1], &ptr, 10);
+
+	if ((val < 0) || (val > UINT_MAX)) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid value(%lu).\n",
+			      val);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	status = nrf_wifi_fmac_set_quiet_period(ctx->rpu_ctx,
+						0,
+						(unsigned int)val);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Programming uapsd_queue failed\n");
+		return -ENOEXEC;
+	}
+
+	ctx->conf_params.quiet_period = val;
+
+	return 0;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_util_subcmds,
 	SHELL_CMD_ARG(he_ltf,
@@ -982,6 +1023,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      1,
 		      1),
 #endif /* CONFIG_NRF700X_RADIO_TEST */
+	SHELL_CMD_ARG(quiet_period,
+		      NULL,
+		      "<val> - Value > 0 seconds",
+		      nrf_wifi_util_set_quiet_period,
+		      2,
+		      0),
 	SHELL_SUBCMD_SET_END);
 
 
