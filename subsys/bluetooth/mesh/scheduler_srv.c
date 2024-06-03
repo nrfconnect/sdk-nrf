@@ -549,7 +549,7 @@ static void encode_status(struct bt_mesh_scheduler_srv *srv,
 
 	uint16_t status_bitmap = 0;
 
-	for (int i = 0; i < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; i++) {
+	for (uint8_t i = 0; i < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; i++) {
 		if (is_entry_defined(srv, i)) {
 			WRITE_BIT(status_bitmap, i, 1);
 		}
@@ -841,7 +841,7 @@ int bt_mesh_scheduler_srv_time_update(struct bt_mesh_scheduler_srv *srv)
 		return -EINVAL;
 	}
 
-	for (int idx = 0; idx < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; ++idx) {
+	for (uint8_t idx = 0; idx < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; ++idx) {
 		schedule_action(srv, idx);
 	}
 
