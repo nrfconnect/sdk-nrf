@@ -924,6 +924,7 @@ Libraries for networking
     * Deprecated :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI` and its related UI Kconfig options.
     * Deprecated the :c:struct:`nrf_cloud_svc_info_ui` structure contained in the :c:struct:`nrf_cloud_svc_info` structure.
       nRF Cloud no longer uses the UI section in the shadow.
+    * The :c:func:`nrf_cloud_coap_shadow_get` function to include a parameter to specify the content format of the returned payload.
 
 * :ref:`lib_mqtt_helper` library:
 

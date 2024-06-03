@@ -603,23 +603,31 @@ static void get_shadow_callback(int16_t result_code,
 			memcpy(data->buf, payload, cpy_len);
 		}
 		data->buf[cpy_len] = '\0';
+		data->buf_len = cpy_len;
 	}
 }
 
-int nrf_cloud_coap_shadow_get(char *buf, size_t buf_len, bool delta)
+int nrf_cloud_coap_shadow_get(char *buf, size_t *buf_len, bool delta,
+			      enum coap_content_format format)
 {
 	__ASSERT_NO_MSG(buf != NULL);
-	__ASSERT_NO_MSG(buf_len != 0);
+	__ASSERT_NO_MSG(*buf_len != 0);
 	if (!nrf_cloud_coap_is_connected()) {
 		return -EACCES;
 	}
 
+	if ((format != COAP_CONTENT_FORMAT_APP_JSON) &&
+	    (format != COAP_CONTENT_FORMAT_APP_CBOR) &&
+	    (format != COAP_CONTENT_FORMAT_APP_OCTET_STREAM)) {
+		return -EINVAL;
+	}
+
 	get_shadow_data.buf = buf;
-	get_shadow_data.buf_len = buf_len;
+	get_shadow_data.buf_len = *buf_len;
 	int err;
 
 	err = nrf_cloud_coap_get(COAP_SHDW_RSC, delta ? NULL : "delta=false", NULL, 0,
-				  0, COAP_CONTENT_FORMAT_APP_JSON, true, get_shadow_callback,
+				  0, format, true, get_shadow_callback,
 				  &get_shadow_data);
 	if (err) {
 		LOG_ERR("Failed to send get request: %d", err);
@@ -627,6 +635,8 @@ int nrf_cloud_coap_shadow_get(char *buf, size_t buf_len, bool delta)
 		LOG_RESULT_CODE_ERR("Unexpected result code:", shadow_err);
 		err = shadow_err;
 	}
+
+	*buf_len = get_shadow_data.buf_len;
 	return err;
 }
 

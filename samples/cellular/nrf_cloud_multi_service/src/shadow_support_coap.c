@@ -74,13 +74,14 @@ static int check_shadow(void)
 
 	int err;
 	char buf[COAP_SHADOW_MAX_SIZE] = {0};
+	size_t length = sizeof(buf);
 	struct nrf_cloud_data in_data = {
 		.ptr = buf
 	};
 
 	LOG_INF("Checking for shadow delta...");
 
-	err = nrf_cloud_coap_shadow_get(buf, sizeof(buf), true);
+	err = nrf_cloud_coap_shadow_get(buf, &length, true, COAP_CONTENT_FORMAT_APP_JSON);
 	if (err == -EACCES) {
 		LOG_DBG("Not connected yet.");
 		return err;
@@ -89,7 +90,7 @@ static int check_shadow(void)
 		return err;
 	}
 
-	in_data.len = strlen(buf);
+	in_data.len = length;
 
 	err = process_delta(&in_data);
 	if (err == -ENODATA) {
