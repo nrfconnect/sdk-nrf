@@ -759,6 +759,8 @@ Zigbee samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`mult
 Wi-Fi samples
 -------------
 
+Wi-Fi samples that used :ref:`zephyr:bluetooth-hci-ipc-sample` or :ref:`zephyr:nrf-ieee802154-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
+
 * Added the :ref:`softap_wifi_provision_sample` sample.
 * Added the :ref:`wifi_thread_coex_sample` sample that demonstrates Wi-Fi and Thread coexistence.
 
