@@ -139,15 +139,11 @@ int bt_enable(bt_ready_cb_t cb)
 
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		int network_load = 1;
+		buffer_size_max = 0;
+		NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
-		result = settings_subsys_init();
-		if (result) {
-			return result;
-		}
-
-		result = settings_save_one("bt_rpc/network",
-					   &network_load, sizeof(network_load));
+		nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_SETTINGS_LOAD_RPC_CMD,
+					&ctx, ser_rsp_decode_void, NULL);
 	}
 
 	return result;
@@ -2038,32 +2034,3 @@ void bt_foreach_bond(uint8_t id, void (*func)(const struct bt_bond_info *info,
 				&ctx, ser_rsp_decode_void, NULL);
 }
 #endif /* (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) */
-
-static int rpc_settings_set(const char *key, size_t len_rd, settings_read_cb read_cb,
-				    void *cb_arg)
-{
-	struct nrf_rpc_cbor_ctx ctx;
-	size_t buffer_size_max = 0;
-	ssize_t len;
-	const char *next;
-
-	if (!key) {
-		LOG_ERR("Insufficient number of arguments");
-		return -ENOENT;
-	}
-
-	len = settings_name_next(key, &next);
-
-	if (!strncmp(key, "network", len)) {
-		NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-
-		nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_SETTINGS_LOAD_RPC_CMD,
-					&ctx, ser_rsp_decode_void, NULL);
-
-	}
-
-	return 0;
-}
-
-SETTINGS_STATIC_HANDLER_DEFINE(bt_gatt_rpc, "bt_rpc", NULL, rpc_settings_set,
-			       NULL, NULL);
