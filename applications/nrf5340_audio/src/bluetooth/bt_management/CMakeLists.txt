@@ -37,8 +37,8 @@ if (CONFIG_BT_PERIPHERAL OR CONFIG_BT_BROADCASTER)
 	       ${CMAKE_CURRENT_SOURCE_DIR}/advertising/bt_mgmt_adv.c)
 endif()
 
-if (CONFIG_AUDIO_DFU_ENABLE)
+if (CONFIG_AUDIO_BT_MGMT_DFU)
 	target_sources(app PRIVATE
-	       ${CMAKE_CURRENT_SOURCE_DIR}/dfu/bt_mgmt_dfu.c
+		${CMAKE_CURRENT_SOURCE_DIR}/dfu/bt_mgmt_dfu.c
 	)
 endif()
