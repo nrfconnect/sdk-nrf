@@ -4,106 +4,7 @@
  */
 #include <freq.h>
 
-/* Wi-Fi needs more flash (1M) and RAM (512K):
- *
- * To minimize the changes, only necessary nodes are added, so, delete
- * any linked nodes. This was done here as it's applicable to most samples,
- * if a sample needs anything extra, it can override this with a sample specific
- * overlay.
- */
- /delete-node/ &ipc0;
- /delete-node/ &cpuppr_vpr;
- /delete-node/ &mram1x;
- /delete-node/ &cpurad_uicr;
-
 / {
-	/delete-node/ ipc;
-	/delete-node/ reserved-memory;
-
-	/* Shift offsets by 512K */
-	soc {
-		mram1x: mram@e000000 {
-			compatible = "nordic,mram";
-			erase-block-size = <4096>;
-			write-block-size = <16>;
-			reg = <0xe000000 DT_SIZE_K(2048)>;
-			cpuapp_rx_partitions: cpuapp-rx-partitions {
-				compatible = "nordic,owned-partitions", "fixed-partitions";
-				status = "okay";
-				perm-read;
-				perm-execute;
-				perm-secure;
-				#address-cells = <1>;
-				#size-cells = <1>;
-
-				cpuapp_slot0_partition: partition@66000 {
-					reg = <0x66000 DT_SIZE_K(1024)>;
-				};
-			};
-
-			cpuapp_rw_partitions: cpuapp-rw-partitions {
-				compatible = "nordic,owned-partitions", "fixed-partitions";
-				status = "okay";
-				perm-read;
-				perm-write;
-				perm-secure;
-				#address-cells = <1>;
-				#size-cells = <1>;
-
-				storage_partition: partition@166000 {
-					reg = <0x166000 DT_SIZE_K(24)>;
-				};
-			};
-		};
-	};
-
-	reserved-memory {
-		compatible = "reserved-memory";
-		#address-cells = < 0x1 >;
-		#size-cells = < 0x1 >;
-		/* Shift offsets by 256K and remove IPC regions */
-		cpuapp_ram0x_region: memory@2f000000 {
-			compatible = "nordic,owned-memory";
-			reg = <0x2f000000 DT_SIZE_K(512)>;
-			status = "okay";
-			perm-read;
-			perm-write;
-			perm-secure;
-			perm-execute;
-			#address-cells = <1>;
-			#size-cells = <1>;
-			ranges = <0x0 0x2f000000 DT_SIZE_K(512)>;
-
-			cpuapp_data: memory@0 {
-				reg = <0x0 DT_SIZE_K(512)>;
-			};
-		};
-
-		/* Below sections are unchanged, duplicated as delete the entire node */
-		shared_ram3x_region: memory@2fc12000{
-			compatible = "nordic,owned-memory";
-			reg = <0x2fc12000 DT_SIZE_K(4)>;
-			status = "okay";
-			perm-read;
-			perm-write;
-			#address-cells = <1>;
-			#size-cells = <1>;
-			ranges = <0x0 0x2fc12000 0x2000>;
-
-			cpuapp_dma_region: memory@e80 {
-				compatible = "zephyr,memory-region";
-				reg = <0xe80 DT_SIZE_K(4)>;
-				status = "okay";
-				#memory-region-cells = <0>;
-				zephyr,memory-region = "DMA_RAM3x_APP";
-			};
-		};
-
-		cpuapp_uicr_ext: memory@e1ff800 {
-			reg = <0xe1ff800 DT_SIZE_K(2)>;
-		};
-	};
-
 	nordic_wlan0: nordic_wlan0 {
 		compatible = "nordic,wlan0";
 		status = "okay";
@@ -127,7 +28,66 @@
 		zephyr,wifi = &nordic_wlan0;
 		zephyr,bt-hci-ipc = "";
 	};
+
+	cpurad_ram0x_region: memory@2f07d000 {
+		compatible = "nordic,owned-memory";
+		reg = <0x2f07d000 DT_SIZE_K(4)>;
+		status = "disabled";
+		perm-read;
+		perm-write;
+		perm-secure;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x2f07d000 0x1000>;
+
+		cpusec_cpurad_ipc_shm: memory@0 {
+			reg = <0x0 DT_SIZE_K(2)>;
+		};
+
+		cpurad_cpusec_ipc_shm: memory@800 {
+			reg = <0x800 DT_SIZE_K(2)>;
+		};
+	};
 };
+
+/* Wi-Fi needs more flash, so, minimize Radio memory to make room for Wi-Fi */
+/delete-node/ &cpuapp_rx_partitions;
+
+/* For MPC, min. granularity is 4K*/
+&cpurad_slot0_partition {
+	reg = <0x66000 DT_SIZE_K(4)>;
+};
+
+&mram1x {
+	cpuapp_rx_partitions: cpuapp-rx-partitions {
+		compatible = "nordic,owned-partitions", "fixed-partitions";
+		status = "disabled";
+		perm-read;
+		perm-execute;
+		perm-secure;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		cpuapp_slot0_partition: partition@67000 {
+			reg = <0x67000 DT_SIZE_K(764)>;
+		};
+
+		cpuppr_code_partition: partition@126000 {
+			reg = <0x126000 DT_SIZE_K(64)>;
+		};
+	};
+};
+
+/delete-node/ &cpurad_ram0x_region;
+&cpuapp_ram0x_region{
+	status = "okay";
+	reg = <0x2f010000 DT_SIZE_K(436)>;
+	ranges = <0x0 0x2f010000 0x6e000>;
+	cpuapp_data: memory@1000 {
+		reg = <0x1000 DT_SIZE_K(432)>;
+	};
+};
+
 
 &pinctrl {
 	spi130_default: spi130_default {
