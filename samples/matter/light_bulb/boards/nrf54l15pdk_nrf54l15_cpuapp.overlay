@@ -6,10 +6,11 @@
 
 
 / {
-	aliases {
-		factory-data = &factory_data;
-		factory-data-memory-region = &cpuapp_rram;
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
 
+	aliases {
 		// Configure PWM module for led1 (LED2 on the board)
 		pwm-led1 = &pwm_led1;
 
@@ -25,34 +26,23 @@
 	};
 };
 
-/delete-node/ &cpuapp_rram;
+// restore full RRAM and SRAM space - by default some parts are dedicated to FLRP
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(1524)>;
+};
 
-&rram_controller {
-	reg = < 0x5004b000 0x17d000 >;
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(256)>;
+	ranges = <0x0 0x20000000  0x40000>;
+};
 
-	cpuapp_rram: rram@0 {
-		compatible = "soc-nv-flash";
-		erase-block-size = < 0x1000 >;
-		write-block-size = < 0x10 >;
-		reg = < 0x0 0x17d000 >;
-		partitions {
-			compatible = "fixed-partitions";
-			#address-cells = < 0x1 >;
-			#size-cells = < 0x1 >;
-			slot0_partition: partition@0 {
-				label = "image-0";
-				reg = < 0x0 0x174000 >;
-			};
-			factory_data: partition@174000 {
-				label = "factory-data";
-				reg = < 0x174000 0x1000 >;
-			};
-			storage_partition: partition@175000 {
-				label = "storage";
-				reg = < 0x175000 0x8000 >;
-			};
-		};
-	};
+// TODO: re-enable HWFC once it's fixed
+&uart20 {
+	/delete-property/ hw-flow-control;
+};
+
+&mx25r64 {
+	status = "okay";
 };
 
 &pwm20 {

@@ -115,10 +115,6 @@ Device Firmware Upgrade support
     :start-after: matter_door_lock_sample_build_with_dfu_start
     :end-before: matter_door_lock_sample_build_with_dfu_end
 
-.. include:: ../template/README.rst
-    :start-after: matter_template_nrf54l15_build_with_dfu_start
-    :end-before: matter_template_nrf54l15_build_with_dfu_end
-
 FEM support
 ===========
 
