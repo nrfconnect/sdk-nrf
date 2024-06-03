@@ -1133,7 +1133,7 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw)
 
 int lte_lc_edrx_req(bool enable)
 {
-	int err;
+	int err = 0;
 	int actt[] = {AT_CEDRXS_ACTT_WB, AT_CEDRXS_ACTT_NB};
 
 	requested_edrx_enable = enable;
