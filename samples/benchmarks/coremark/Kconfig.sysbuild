@@ -4,13 +4,22 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-rsource "boards/Kconfig.sysbuild_boards"
 source "share/sysbuild/Kconfig"
 
-config IMAGE_2_BOARD
-	string
-	default ""
+config APP_CPUNET_RUN
+	bool "Run the CoreMark benchmark on the network or radio core"
+	depends on SUPPORT_NETCORE
+	default y
 
-config IMAGE_3_BOARD
-	string
-	default ""
+config APP_CPUPPR_RUN
+	bool "Run the CoreMark benchmark on the PPR core"
+	depends on SUPPORT_PPRCORE
+	depends on !BOARD_NRF54H20DK || !APP_CPUNET_RUN
+	help
+	  Due to the limited number of UART ports on the nRF54H20 DK, you can run the CoreMark
+	  benchmark only on two cores at a time; application core and either radio core or PPR
+	  core.
+
+	  PPR code is run from MRAM with the execution in place (XIP) method. You must use the
+	  "nordic-ppr-xip" snippet for the application core to be able to boot the PPR core.
+	  You need to provide the "coremark_SNIPPET=nordic-ppr-xip" build argument.
