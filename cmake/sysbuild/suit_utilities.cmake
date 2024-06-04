@@ -27,7 +27,10 @@ function(suit_copy_artifact_to_output_directory target artifact)
   set_property(
     GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
     COMMAND ${CMAKE_COMMAND} -E copy ${artifact} ${SUIT_ROOT_DIRECTORY}${target}.bin
+    BYPRODUCTS ${SUIT_ROOT_DIRECTORY}${target}.bin
   )
+
+  set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ARTIFACTS ${SUIT_ROOT_DIRECTORY}${target}.bin)
 endfunction()
 
 # Render jinja templates using passed arguments.
@@ -55,6 +58,7 @@ function(suit_render_template input_file output_file core_arguments)
     COMMAND ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_BUILD_SCRIPT}
     template
     ${TEMPLATE_ARGS}
+    BYPRODUCTS ${output_file}
   )
 endfunction()
 
@@ -74,7 +78,11 @@ function(suit_create_envelope input_file output_file create_signature)
     create
     --input-file ${input_file}
     --output-file ${output_file}
+    BYPRODUCTS ${output_file}
   )
+
+  set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ARTIFACTS ${output_file})
+
   if (create_signature AND SB_CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT)
     suit_sign_envelope(${output_file} ${output_file})
   endif()
