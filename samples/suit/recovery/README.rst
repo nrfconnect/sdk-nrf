@@ -10,6 +10,8 @@ SUIT: Recovery application
 The SUIT recovery application is a minimal application that allows recovering the device firmware if the original firmware is damaged.
 It is to be used as a companion firmware to the main application that is using :ref:`Software Update for Internet of Things (SUIT) <ug_nrf54h20_suit_intro>` procedure, rather than a stand-alone application.
 
+.. _suit_recovery_reqs:
+
 Requirements
 ************
 
@@ -18,6 +20,8 @@ The sample supports the following development kit:
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
    :rows: nrf54h20dk_nrf54h20_cpuapp
+
+.. _suit_recovery_overview:
 
 Overview
 ********
@@ -28,6 +32,8 @@ It is optimized for memory usage and only contains the basic necessary functiona
 .. caution::
 
     This firmware is only able to recover from a situation where the application or radio core are damaged. It does not recover from Nordic Semiconductor-controlled firmware failures.
+
+.. _suit_recovery_config:
 
 Configuration
 *************
@@ -41,6 +47,8 @@ To do this, add the :file:`recovery.overlay` and :file:`recovery_hci_ipc.ovelay`
 The former file will be passed automatically to the recovery application image and the latter to the recovery radio image.
 These devicetree files must define the ``cpuapp_recovery_partition`` and ``cpurad_recovery_partition`` nodes respectively.`
 For an example, see the files in the ``samples/suit/smp_transfer`` sample.
+
+.. _suit_recovery_build_run:
 
 Building and running
 ********************

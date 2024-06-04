@@ -9,6 +9,8 @@ SUIT: Flash companion
 
 The SUIT flash companion sample allows the Secure Domain Firmware to access the external memory during the :ref:`Software Updates for Internet of Things (SUIT) <ug_nrf54h20_suit_dfu>` firmware upgrade.
 
+.. _suit_flash_companion_reqs:
+
 Requirements
 ************
 
@@ -17,6 +19,8 @@ The sample supports the following development kit:
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
    :rows: nrf54h20dk_nrf54h20_cpuapp
+
+.. _suit_flash_companion_overview:
 
 Overview
 ********
@@ -27,6 +31,8 @@ The Secure Domain Firmware uses the IPC service to read, erase, or write data to
 The sample is meant to be booted by the Secure Domain while performing the firmware update process using the :ref:`SUIT <ug_nrf54h20_suit_dfu>` firmware upgrade.
 
 The flash companion sample is not a stand-alone firmware, it is intended to be used with the ``nrf54h_suit_sample`` to complete a firmware transfer with external flash.
+
+.. _suit_flash_companion_config:
 
 Configuration
 *************
@@ -53,6 +59,8 @@ Check and configure the following configuration option:
 
 SB_CONFIG_SUIT_BUILD_FLASH_COMPANION - Configuration for the firmware
    This option enables the sample and builds it during the sysbuild.
+
+.. _suit_flash_companion_build_run:
 
 Building and running
 ********************

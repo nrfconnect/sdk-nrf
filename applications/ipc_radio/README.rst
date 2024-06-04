@@ -9,6 +9,8 @@ IPC radio firmware
 
 The IPC radio firmware allows to use the radio peripheral from another core in a multicore device.
 
+.. _ipc_radio_overview:
+
 Application overview
 ********************
 
@@ -40,6 +42,8 @@ IEEE 802.15.4
 
 The firmware exposes radio driver support to another core using the IPC subsystem.
 
+.. _ipc_radio_reqs:
+
 Requirements
 ************
 
@@ -48,6 +52,8 @@ The firmware supports the following development kits:
 .. table-from-sample-yaml::
 
 To automatically attach the firmware image, you need to use :ref:`configuration_system_overview_sysbuild`.
+
+.. _ipc_radio_config:
 
 Configuration
 *************
@@ -104,6 +110,8 @@ The following files are available:
    The selection of specific configuration files is determined by the sysbuild Kconfig.
 
    For instance, the ``SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154`` Kconfig option enables the :file:`overlay-802154.conf` configuration file to be used with the IPC radio firmware.
+
+.. _ipc_radio_build_run:
 
 Building and running as a single image
 **************************************

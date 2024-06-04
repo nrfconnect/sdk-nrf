@@ -161,6 +161,10 @@ Glossary
    Commit tag
       A tag prepended to the first line of the commit message to ease filtering and identification of particular :term:`commit <Commit>` types.
 
+   Companion component
+      A firmware component that is independent from the application and is included in your project as a separate firmware image.
+      The |NCS| provides several :ref:`companion components <companion_components>` tailored for different purposes.
+
    Connected Isochronous Stream (CIS)
       A configuration of the :term:`Isochronous channels (ISO)` feature of the :term:`LE Audio` standard.
       In this configuration, one audio source sends the audio data using both the left and the right ISO channels at the same time, allowing for stereophonic sound reproduction with synchronized playback.
