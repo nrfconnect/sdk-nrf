@@ -1,0 +1,203 @@
+{%- set component_index = 0 %}
+{%- set component_list = [] %}
+{%- if application is not defined %}
+  {%- set main_config = radio %}
+{%- else %}
+  {%- set main_config = application %}
+{%- endif %}
+{%- set mpi_root_vendor_name = main_config['config']['CONFIG_SUIT_MPI_ROOT_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_root_class_name = main_config['config']['CONFIG_SUIT_MPI_ROOT_CLASS_NAME']|default('nRF54H20_sample_root') %}
+{%- set mpi_application_vendor_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_application_class_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
+{%- set mpi_radio_vendor_name = main_config['config']['CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_radio_class_name = main_config['config']['CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_rad') %}
+{%- set sequence_number = sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] %}
+{%- if 'SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY' in sysbuild['config'] and sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY'] != '' %}
+  {%- set nordic_top = True %}
+{%- else %}
+  {%- set nordic_top = False %}
+{%- endif %}
+SUIT_Envelope_Tagged:
+  suit-authentication-wrapper:
+    SuitDigest:
+      suit-digest-algorithm-id: cose-alg-sha-256
+  suit-manifest:
+    suit-manifest-version: 1
+    suit-manifest-sequence-number: {{ sequence_number }}
+    suit-common:
+      suit-components:
+      - - CAND_MFST
+        - 0
+{%- if radio is defined %}
+    {%- set component_index = component_index + 1 %}
+    {%- set rad_component_index = component_index %}
+    {{- component_list.append( rad_component_index ) or ""}}
+      - - INSTLD_MFST
+        - RFC4122_UUID:
+            namespace: {{ mpi_radio_vendor_name }}
+            name: {{ mpi_radio_class_name }}
+{%- endif %}
+{%- if application is defined %}
+    {%- set component_index = component_index + 1 %}
+    {%- set app_component_index = component_index %}
+    {{- component_list.append( app_component_index ) or ""}}
+      - - INSTLD_MFST
+        - RFC4122_UUID:
+            namespace: {{ mpi_application_vendor_name }}
+            name: {{ mpi_application_class_name }}
+{%- endif %}
+
+{%- set component_list_without_top = component_list[:] %}
+{%- if nordic_top %}
+    {%- set component_index = component_index + 1 %}
+    {%- set top_component_index = component_index %}
+    {{- component_list.append( top_component_index ) or ""}}
+      - - INSTLD_MFST
+        - RFC4122_UUID:
+            namespace: nordicsemi.com
+            name: nRF54H20_nordic_top
+{%- endif %}
+
+      suit-shared-sequence:
+      - suit-directive-set-component-index: [{{ component_list|join(',') }}]
+      - suit-directive-override-parameters:
+          suit-parameter-vendor-identifier:
+            RFC4122_UUID: {{ mpi_root_vendor_name }}
+          suit-parameter-class-identifier:
+            RFC4122_UUID:
+              namespace: {{ mpi_root_vendor_name }}
+              name: {{ mpi_root_class_name }}
+      - suit-condition-vendor-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-condition-class-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      suit-dependencies:
+        # Key is the index of suit-components that describe the dependency manifest
+        "0": {}
+{%- for component_element in component_list %}
+        "{{ component_element }}": {}
+{%- endfor %}
+    suit-validate:
+    - suit-directive-set-component-index: [{{ component_list_without_top|join(',') }}]
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+
+    suit-invoke:
+    - suit-directive-set-component-index: [{{ component_list_without_top|join(',') }}]
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+
+    suit-install:
+    - suit-directive-set-component-index: 0
+{%- if radio is defined %}
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ radio['name'] }}'
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            envelope: {{ artifacts_folder ~ radio['name'] }}.suit
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+{%- if application is defined %}
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ application['name'] }}'
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            envelope: {{ artifacts_folder ~ application['name'] }}.suit
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+{%- if nordic_top %}
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#top'
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            envelope: {{ sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY'] }}/nordic_top.suit
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+    suit-manifest-component-id:
+    - INSTLD_MFST
+    - RFC4122_UUID:
+        namespace: {{ mpi_root_vendor_name }}
+        name: {{ mpi_root_class_name }}
+  suit-integrated-dependencies:
+{%- if radio is defined %}
+    '#{{ radio['name'] }}': {{ artifacts_folder ~ radio['name'] }}.suit
+{%- endif %}
+{%- if application is defined %}
+    '#{{ application['name'] }}': {{ artifacts_folder ~ application['name'] }}.suit
+{%- endif %}
+{%- if nordic_top %}
+    '#top': {{ sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY'] }}/nordic_top.suit
+{%- endif %}

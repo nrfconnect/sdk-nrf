@@ -1,0 +1,111 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		/* prepare IPC to HCI Radio core */
+		zephyr,bt-hci-ipc = &ipc0;
+	};
+
+	aliases {
+		factory-data = &factory_data;
+		factory-data-memory-region = &cpuapp_rw_partitions;
+	};
+};
+
+/**************************************************************
+Redefine MRAM memory (Partitions)
+**************************************************************/
+/* We need to redefine partitions to meet Matter requirements */
+/delete-node/ &cpuapp_rx_partitions;
+/delete-node/ &cpuapp_rw_partitions;
+/delete-node/ &cpurad_rx_partitions;
+
+&mram1x {
+	erase-block-size = < 0x1000 >;
+	write-block-size = < 0x10 >;
+
+	cpurad_rx_partitions: cpurad-rx-partitions {
+		compatible = "nordic,owned-partitions", "fixed-partitions";
+		status = "disabled";
+		perm-read;
+		perm-execute;
+		perm-secure;
+		#address-cells = < 0x1 >;
+		#size-cells = < 0x1 >;
+		cpurad_slot0_partition: partition@66000 {
+			reg = < 0x66000 0x32000 >;
+		};
+	};
+
+	cpuapp_rx_partitions: cpuapp-rx-partitions {
+		compatible = "nordic,owned-partitions", "fixed-partitions";
+		status = "okay";
+		perm-read;
+		perm-execute;
+		perm-secure;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		companion_partition: partition@98000 {
+			reg = <0x98000 DT_SIZE_K(64)>;
+		};
+
+		cpuapp_slot0_partition: partition@a8000 {
+			reg = <0xa8000 DT_SIZE_K(900)>;
+		};
+
+		cpuppr_code_partition: partition@189000 {
+			reg = <0x189000 DT_SIZE_K(64)>;
+		};
+	};
+
+	cpuapp_rw_partitions: cpuapp-rw-partitions {
+		compatible = "nordic,owned-partitions", "fixed-partitions";
+		status = "okay";
+		perm-read;
+		perm-write;
+		#address-cells = < 0x1 >;
+		#size-cells = < 0x1 >;
+
+		factory_data: partition@199000 {
+			reg = < 0x199000 DT_SIZE_K(4) >;
+		};
+
+		storage_partition: partition@19A000 {
+			reg = < 0x19A000 DT_SIZE_K(32) >;
+		};
+	};
+};
+
+/**************************************************************
+Redefine RAM memory.
+**************************************************************/
+&cpuapp_ram0x_region{
+	status = "okay";
+	reg = <0x2f010000 DT_SIZE_K(512)>;
+	ranges = <0x0 0x2f010000 0x6e000>;
+	cpuapp_data: memory@1000 {
+		reg = <0x1000 DT_SIZE_K(508)>;
+	};
+};
+
+/**************************************************************
+Enable required peripherals
+**************************************************************/
+/* Communication between Application and Radio Cores */
+ipc0: &cpuapp_cpurad_ipc {
+	status = "okay";
+};
+&cpuapp_cpurad_ram0x_region {
+	status = "okay";
+};
+&cpurad_bellboard {
+	status = "okay";
+};
+&cpuapp_bellboard {
+	status = "okay";
+};
