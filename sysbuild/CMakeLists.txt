@@ -265,10 +265,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
 
       if(SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)
-        add_overlay_config(mcuboot ${CMAKE_CURRENT_SOURCE_DIR}/override_external_mcuboot.conf)
+        add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/bl_override/override_external_mcuboot.conf)
 
         if(NOT SB_CONFIG_MCUBOOT_MODE_SINGLE_APP)
-          add_overlay_config(${DEFAULT_IMAGE} ${CMAKE_CURRENT_SOURCE_DIR}/override_external_mcuboot.conf)
+          add_overlay_config(${DEFAULT_IMAGE} ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/bl_override/override_external_mcuboot.conf)
         endif()
       endif()
 
