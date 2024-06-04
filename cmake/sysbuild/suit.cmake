@@ -149,6 +149,28 @@ function(suit_register_post_build_commands)
   )
 endfunction()
 
+function(suit_generate_dfu_zip)
+  get_property(
+    dfu_artifacts
+    GLOBAL PROPERTY
+    SUIT_DFU_ARTIFACTS
+  )
+
+  set(root_name "${SB_CONFIG_SUIT_ENVELOPE_ROOT_ARTIFACT_NAME}.suit")
+  set(script_params "${root_name}type=suit-envelope")
+
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
+
+  generate_dfu_zip(
+    OUTPUT ${PROJECT_BINARY_DIR}/dfu_suit.zip
+    BIN_FILES ${dfu_artifacts}
+    TYPE bin
+    IMAGE ${DEFAULT_IMAGE}
+    DEPENDS ${create_suit_artifacts}
+    SCRIPT_PARAMS "${script_params}"
+  )
+endfunction()
+
 # Create DFU package/main envelope.
 #
 # Usage:
@@ -402,4 +424,5 @@ endif()
 
 if(SB_CONFIG_SUIT_ENVELOPE)
   suit_create_package()
+  suit_generate_dfu_zip()
 endif()
