@@ -1,0 +1,148 @@
+{%- set mpi_application_vendor_name = application['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_application_class_name = application['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
+{%- set sequence_number = sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] %}
+SUIT_Envelope_Tagged:
+  suit-authentication-wrapper:
+    SuitDigest:
+      suit-digest-algorithm-id: cose-alg-sha-256
+  suit-manifest:
+    suit-manifest-version: 1
+    suit-manifest-sequence-number: {{ sequence_number }}
+    suit-common:
+      suit-components:
+      - - MEM
+        - {{ application['dt'].label2node['cpu'].unit_addr }}
+        - {{ get_absolute_address(application['dt'].chosen_nodes['zephyr,code-partition']) }}
+        - {{ application['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size }}
+      - - CAND_IMG
+        - 0
+{%- if flash_companion is defined %}
+      - - MEM
+        - {{ flash_companion['dt'].label2node['cpu'].unit_addr }}
+        - {{ get_absolute_address(flash_companion['dt'].chosen_nodes['zephyr,code-partition']) }}
+        - {{ flash_companion['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size }}
+{%- endif %}
+      suit-shared-sequence:
+      - suit-directive-set-component-index: 0
+      - suit-directive-override-parameters:
+          suit-parameter-vendor-identifier:
+            RFC4122_UUID: {{ mpi_application_vendor_name }}
+          suit-parameter-class-identifier:
+            RFC4122_UUID:
+              namespace: {{ mpi_application_vendor_name }}
+              name: {{ mpi_application_class_name }}
+          suit-parameter-image-digest:
+            suit-digest-algorithm-id: cose-alg-sha-256
+            suit-digest-bytes:
+              file: {{ application['binary'] }}
+          suit-parameter-image-size:
+            file: {{ application['binary'] }}
+      - suit-condition-vendor-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-condition-class-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-directive-set-component-index: 1
+      - suit-directive-override-parameters:
+          suit-parameter-image-digest:
+            suit-digest-algorithm-id: cose-alg-sha-256
+            suit-digest-bytes:
+              file: {{ application['binary'] }}
+{%- if flash_companion is defined %}
+      - suit-directive-set-component-index: 2
+      - suit-directive-override-parameters:
+          suit-parameter-image-digest:
+            suit-digest-algorithm-id: cose-alg-sha-256
+            suit-digest-bytes:
+              file: {{ flash_companion['binary'] }}
+{%- endif %}
+    suit-validate:
+    - suit-directive-set-component-index: 0
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    suit-invoke:
+    - suit-directive-set-component-index: 0
+    - suit-directive-invoke:
+      - suit-send-record-failure
+    suit-install:
+{%- if flash_companion is defined %}
+    - suit-directive-set-component-index: 1
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ flash_companion['name'] }}'
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            file: {{ flash_companion['binary'] }}
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-set-component-index: 2
+    - suit-directive-override-parameters:
+        suit-parameter-source-component: 1
+    - suit-directive-copy:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-invoke:
+      - suit-send-record-failure
+{%- endif %}
+    - suit-directive-set-component-index: 1
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ application['name'] }}'
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            file: {{ application['binary'] }}
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-set-component-index: 0
+    - suit-directive-override-parameters:
+        suit-parameter-source-component: 1
+    - suit-directive-copy:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    suit-text:
+      suit-digest-algorithm-id: cose-alg-sha-256
+    suit-manifest-component-id:
+    - INSTLD_MFST
+    - RFC4122_UUID:
+        namespace: {{ mpi_application_vendor_name }}
+        name: {{ mpi_application_class_name }}
+  suit-text:
+    en:
+      '["MEM", {{ application['dt'].label2node['cpu'].unit_addr }}, {{ get_absolute_address(application['dt'].chosen_nodes['zephyr,code-partition']) }}, {{ application['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size }}]':
+        suit-text-vendor-name: Nordic Semiconductor ASA
+        suit-text-model-name: nRF54H20_cpuapp
+        suit-text-vendor-domain: nordicsemi.com
+        suit-text-model-info: The nRF54H20 application core
+        suit-text-component-description: Sample application core FW
+        suit-text-component-version: v1.0.0
+  suit-integrated-payloads:
+    '#{{ application['name'] }}': {{ application['binary'] }}
+{%- if flash_companion is defined %}
+    '#{{ flash_companion['name'] }}': {{ flash_companion['binary'] }}
+{%- endif %}

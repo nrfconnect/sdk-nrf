@@ -634,6 +634,15 @@ Matter samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`mult
     * :ref:`matter_thermostat_sample` sample.
     * :ref:`matter_window_covering_sample` sample.
 
+    DFU support for the nRF54L15 PDK is available only for the ``release`` build type.
+
+  * Support for Matter over Thread on the nRF54H20 DK with the ``nrf54h20dk/nrf54h20/cpuapp`` board target to the following Matter samples:
+
+    * :ref:`matter_lock_sample` sample.
+    * :ref:`matter_template_sample` sample.
+
+    DFU, factory data, and PSA Crypto API are not currently supported for the nRF54H20 DK.
+
 * Enabled the Bluetooth® LE Extended Announcement feature for all samples, and increased advertising timeout from 15 minutes to 1 hour.
 
 * :ref:`matter_lock_sample` sample:
