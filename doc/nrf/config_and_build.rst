@@ -39,6 +39,7 @@ Make sure to consider :ref:`app_bootloaders` and :ref:`app_dfu` already at this 
    config_and_build/config_and_build_system
    config_and_build/board_support/index
    config_and_build/configuring_app/index
+   config_and_build/companion_components
    config_and_build/programming
    config_and_build/multi_image
    config_and_build/bootloaders/index
