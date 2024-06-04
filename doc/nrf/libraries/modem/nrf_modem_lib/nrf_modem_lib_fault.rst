@@ -16,6 +16,8 @@ The behavior of the :c:func:`nrf_modem_fault_handler` function is controlled wit
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_DO_NOTHING` - This option lets the fault handler log the Modem fault and return (default).
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM` - This option lets the fault handler schedule a workqueue task to reinitialize the modem and Modem library.
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC` - This option lets the fault handler function :c:func:`nrf_modem_fault_handler` be defined by the application, outside of the Modem library integration layer.
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_LTE_NET_IF` - This is the only option available when the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF` Kconfig option is selected.
+  With this option, modem faults are signaled to the application as fatal network events (``NET_EVENT_CONN_IF_FATAL_ERROR``), to which the application subscribes by calling the :c:func:`net_mgmt_init_event_callback` function.
 
 Implementing a custom fault handler
 ***********************************

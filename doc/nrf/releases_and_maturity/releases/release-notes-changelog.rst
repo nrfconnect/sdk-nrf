@@ -850,16 +850,23 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
+  * Added:
 
-  * Added
-
-    * The Kconfig option  :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_CHUNK_SZ` to process traces in chunks.
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_CHUNK_SZ` Kconfig option to process traces in chunks.
       This can improve the availability of trace memory, and thus reduce the chances of losing traces.
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_LTE_NET_IF` Kconfig option for sending modem faults to the :ref:`nrf_modem_lib_lte_net_if` when it is enabled.
     * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_FAULT_THREAD_STACK_SIZE` Kconfig option to allow the application to set the modem fault thread stack size.
 
   * Deprecated the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`.
   * Fixed an issue with the CFUN hooks when the Modem library is initialized during ``SYS_INIT`` at kernel level and makes calls to the :ref:`nrf_modem_at` interface before the application level initialization is done.
   * Removed the deprecated options ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ASYNC`` and ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC``.
+
+  * :ref:`nrf_modem_lib_lte_net_if`:
+
+    * Added the dependency to the :kconfig:option:`CONFIG_NET_CONNECTION_MANAGER` Kconfig option.
+    * Removed the requirement of IPv4 and IPv6 support for all applications.
+      IPv4 and IPv6 support can be enabled using the :kconfig:option:`CONFIG_NET_IPV4` and :kconfig:option:`CONFIG_NET_IPV6` Kconfig options, respectively.
+    * Increased the required stack size of the :kconfig:option:`NET_CONNECTION_MANAGER_MONITOR_STACK_SIZE` Kconfig option to ``1024``.
 
 * :ref:`lib_location` library:
 
