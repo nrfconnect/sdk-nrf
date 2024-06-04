@@ -810,6 +810,7 @@ Wi-Fi drivers
 -------------
 
 * Removed support for setting RTS threshold through ``wifi_util`` command.
+* Added support for random MAC address generation at boot using the :kconfig:option:`CONFIG_WIFI_RANDOM_MAC_ADDRESS` Kconfig option.
 
 Libraries
 =========
