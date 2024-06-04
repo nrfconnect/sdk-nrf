@@ -1305,8 +1305,8 @@
 .. _`3GPP TS 24.008 Ch. 10.5.7.3`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=667
 .. _`3GPP TS 24.008 Ch. 10.5.7.4a`: https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf#page=668
 .. _`LTE Positioning Protocol (LPP)`: https://www.etsi.org/deliver/etsi_ts/136300_136399/136355/11.01.00_60/ts_136355v110100p.pdf#page=12
-.. _`ETSI TS 103 636-4`: https://www.etsi.org/deliver/etsi_ts/103600_103699/10363604/01.03.01_60/ts_10363604v010301p.pdf
-.. _`ETSI TS 103 636-2`: https://www.etsi.org/deliver/etsi_ts/103600_103699/10363602/01.03.01_60/ts_10363602v010301p.pdf
+.. _`ETSI TS 103 636-2`: https://www.etsi.org/deliver/etsi_ts/103600_103699/10363602/01.05.01_60/ts_10363602v010501p.pdf
+.. _`ETSI TS 103 636-4`: https://www.etsi.org/deliver/etsi_ts/103600_103699/10363604/01.05.01_60/ts_10363604v010501p.pdf
 
 .. ### Source: spdx.dev
 
