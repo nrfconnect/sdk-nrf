@@ -79,12 +79,6 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 		LOG_INF("Directed adv timed out with no connection, reverting to normal adv");
 
 		bt_mgmt_dir_adv_timed_out(0);
-
-		ret = bt_mgmt_adv_start(0, NULL, 0, NULL, 0, true);
-		if (ret) {
-			LOG_ERR("Failed to restart advertising: %d", ret);
-		}
-
 		return;
 	}
 
