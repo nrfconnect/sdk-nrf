@@ -70,6 +70,8 @@ static enum wifi_conn_status wpas_to_wifi_mgmt_conn_status(int status)
 static enum wifi_disconn_reason wpas_to_wifi_mgmt_diconn_status(int status)
 {
 	switch (status) {
+	case WLAN_STATUS_SUCCESS:
+		return WIFI_REASON_DISCONN_SUCCESS;
 	case WLAN_REASON_DEAUTH_LEAVING:
 		return WIFI_REASON_DISCONN_AP_LEAVING;
 	case WLAN_REASON_DISASSOC_DUE_TO_INACTIVITY:
@@ -193,11 +195,55 @@ static int wpa_supp_process_status(struct supp_int_event_data *event_data, char 
 	return ret;
 }
 
+#ifdef CONFIG_WPA_SUPP_AP
+static int config_ap_param_skip_inactivity_poll(struct wpa_supplicant *wpa_s)
+{
+	int i;
+	int ret = -ENOENT;
+
+	if (!wpa_s || !wpa_s->ap_iface || !wpa_s->current_ssid) {
+		ret = -ENODEV;
+		goto out;
+	}
+
+	for (i = 0; i < wpa_s->ap_iface->num_bss; i++) {
+		struct hostapd_data *hapd = NULL;
+		struct hostapd_bss_config *bss_conf = NULL;
+
+		hapd = wpa_s->ap_iface->bss[i];
+		if (!hapd) {
+			continue;
+		}
+		bss_conf = hapd->conf;
+		if (!bss_conf) {
+			continue;
+		}
+
+		if (os_memcmp(bss_conf->ssid.ssid,
+			      wpa_s->current_ssid->ssid,
+			      wpa_s->current_ssid->ssid_len) != 0) {
+			continue;
+		}
+
+		bss_conf->skip_inactivity_poll =
+			WIFI_MGMT_SKIP_INACTIVITY_POLL;
+		/* If at least one BSS is found, return success */
+		ret = 0;
+	}
+out:
+
+	return ret;
+}
+#endif
+
 int send_wifi_mgmt_conn_event(void *ctx, int status_code)
 {
 	struct wpa_supplicant *wpa_s = ctx;
 	int status = wpas_to_wifi_mgmt_conn_status(status_code);
 	enum net_event_wifi_cmd event;
+#ifdef CONFIG_WPA_SUPP_AP
+	int err = -1;
+#endif
 
 	if (!wpa_s || !wpa_s->current_ssid) {
 		return -EINVAL;
@@ -205,6 +251,16 @@ int send_wifi_mgmt_conn_event(void *ctx, int status_code)
 
 	if (wpa_s->current_ssid->mode == WPAS_MODE_AP) {
 		event = NET_EVENT_WIFI_CMD_AP_ENABLE_RESULT;
+#ifdef CONFIG_WPA_SUPP_AP
+		if (status == WLAN_STATUS_SUCCESS) {
+			err = config_ap_param_skip_inactivity_poll(wpa_s);
+			if (err) {
+				wpa_printf(MSG_WARNING,
+					   "Unable to configure skip_inactivity_poll parameter "
+					   "err: %s", strerror(-err));
+			}
+		}
+#endif
 	} else {
 		event = NET_EVENT_WIFI_CMD_CONNECT_RESULT;
 	}

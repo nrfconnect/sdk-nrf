@@ -89,9 +89,15 @@ def expected_metadata(size):
 if __name__ == '__main__':
     comp_data_layout = sys.argv[1]
     bin_dir = sys.argv[2]
-    zip_path = os.path.join(bin_dir, "zephyr", "dfu_application.zip")
+    type = sys.argv[3]
 
-    binary_size = os.path.getsize(os.path.join(bin_dir, "zephyr", "app_update.bin"))
+    if type == "sysbuild":
+        zip_path = os.path.join(bin_dir, "dfu_application.zip")
+        binary_size = os.path.getsize(os.path.join(bin_dir, "metadata_extraction", "zephyr", "zephyr.signed.bin"))
+    else:
+        zip_path = os.path.join(bin_dir, "zephyr", "dfu_application.zip")
+        binary_size = os.path.getsize(os.path.join(bin_dir, "zephyr", "app_update.bin"))
+
     expected = expected_metadata(binary_size)
 
     with ZipFile(zip_path) as zip_file:

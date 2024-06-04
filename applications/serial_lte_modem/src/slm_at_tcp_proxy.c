@@ -9,6 +9,7 @@
 #include <string.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
+#include <zephyr/posix/sys/eventfd.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_tcp_proxy.h"
@@ -37,9 +38,16 @@ enum slm_tcp_role {
 	TCP_ROLE_SERVER
 };
 
+/**@brief Commands conveyed to threads. */
+enum proxy_event {
+	PROXY_CLOSE = 0,
+	PROXY_CLOSE_PEER,
+	PROXY_EVENT_COUNT
+};
+K_MSGQ_DEFINE(proxy_event_queue, sizeof(enum proxy_event), PROXY_EVENT_COUNT, 1);
+
 static struct k_thread tcp_thread;
 static K_THREAD_STACK_DEFINE(tcp_thread_stack, THREAD_STACK_SIZE);
-static bool server_stop_pending;
 
 static struct tcp_proxy {
 	int sock;		/* Socket descriptor. */
@@ -49,6 +57,7 @@ static struct tcp_proxy {
 	enum slm_tcp_role role;	/* Client or Server proxy */
 	int peer_verify;	/* Peer verification level for TLS connection. */
 	bool hostname_verify;	/* Verify hostname against the certificate. */
+	int efd;		/* Event file descriptor for signaling threads. */
 } proxy;
 
 /** forward declaration of thread function **/
@@ -169,11 +178,12 @@ static int do_tcp_server_start(uint16_t port)
 		goto exit_svr;
 	}
 
+	proxy.efd = eventfd(0, 0);
+	proxy.role = TCP_ROLE_SERVER;
 	k_thread_create(&tcp_thread, tcp_thread_stack,
 			K_THREAD_STACK_SIZEOF(tcp_thread_stack),
 			tcpsvr_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
-	proxy.role = TCP_ROLE_SERVER;
 	rsp_send("\r\n#XTCPSVR: %d,\"started\"\r\n", proxy.sock);
 
 	return 0;
@@ -188,32 +198,41 @@ exit_svr:
 	return ret;
 }
 
-static int do_tcp_server_stop(void)
+static int do_tcp_proxy_close(void)
 {
 	int ret;
+	const enum proxy_event event = PROXY_CLOSE;
 
-	if (proxy.sock == INVALID_SOCKET) {
+	if (proxy.efd == INVALID_SOCKET) {
 		return 0;
 	}
-	server_stop_pending = true;
-	if (proxy.sock_peer != INVALID_SOCKET) {
-		(void)close(proxy.sock_peer);
-		proxy.sock_peer = INVALID_SOCKET;
-		rsp_send("\r\n#XTCPSVR: 0,\"disconnected\"\r\n");
-	} else {
-		ret = close(proxy.sock);
-		if (ret < 0) {
-			LOG_WRN("close() failed: %d", -errno);
-			return ret;
-		}
-		proxy.sock = INVALID_SOCKET;
-		proxy.family = AF_UNSPEC;
+	ret = k_msgq_put(&proxy_event_queue, &event, K_NO_WAIT);
+	if (ret) {
+		return ret;
 	}
-	if (k_thread_join(&tcp_thread, K_SECONDS(CONFIG_SLM_TCP_POLL_TIME + 1)) != 0) {
-		LOG_WRN("Wait for thread terminate failed");
+	ret = eventfd_write(proxy.efd, 1);
+	if (ret < 0) {
+		return -errno;
 	}
+	ret = k_thread_join(&tcp_thread, K_SECONDS(CONFIG_SLM_TCP_POLL_TIME));
+	if (ret) {
+		LOG_WRN("Thread terminate failed: %d", ret);
 
-	return 0;
+		/* Attempt to make the thread exit by closing the sockets. */
+		if (proxy.sock != INVALID_SOCKET) {
+			close(proxy.sock);
+			proxy.sock = INVALID_SOCKET;
+		}
+		if (proxy.sock_peer != INVALID_SOCKET) {
+			close(proxy.sock_peer);
+			proxy.sock_peer = INVALID_SOCKET;
+		}
+	}
+	k_msgq_purge(&proxy_event_queue);
+	close(proxy.efd);
+	proxy.efd = INVALID_SOCKET;
+
+	return ret;
 }
 
 static int do_tcp_client_connect(const char *url, uint16_t port)
@@ -293,12 +312,13 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 		goto exit_cli;
 	}
 
+	proxy.efd = eventfd(0, 0);
+	proxy.role = TCP_ROLE_CLIENT;
 	k_thread_create(&tcp_thread, tcp_thread_stack,
 			K_THREAD_STACK_SIZEOF(tcp_thread_stack),
 			tcpcli_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	proxy.role = TCP_ROLE_CLIENT;
 	rsp_send("\r\n#XTCPCLI: %d,\"connected\"\r\n", proxy.sock);
 
 	return 0;
@@ -307,29 +327,6 @@ exit_cli:
 	close(proxy.sock);
 	proxy.sock = INVALID_SOCKET;
 	rsp_send("\r\n#XTCPCLI: %d,\"not connected\"\r\n", ret);
-
-	return ret;
-}
-
-static int do_tcp_client_disconnect(void)
-{
-	int ret = 0;
-
-	if (proxy.sock == INVALID_SOCKET) {
-		return 0;
-	}
-	ret = close(proxy.sock);
-	if (ret < 0) {
-		LOG_WRN("close() failed: %d", -errno);
-		ret = -errno;
-	} else {
-		proxy.sock = INVALID_SOCKET;
-	}
-	if (ret == 0 &&
-	    k_thread_join(&tcp_thread, K_SECONDS(CONFIG_SLM_TCP_POLL_TIME * 2)) != 0) {
-		LOG_WRN("Wait for thread terminate failed");
-	}
-	rsp_send("\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
 
 	return ret;
 }
@@ -394,52 +391,66 @@ static int tcp_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8
 
 	if (op == DATAMODE_SEND) {
 		ret = do_tcp_send_datamode(data, len);
-		LOG_INF("datamode send: %d", ret);
+		LOG_DBG("datamode send: %d", ret);
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("datamode exit");
+		if ((flags & SLM_DATAMODE_FLAGS_EXIT_HANDLER) != 0) {
+			/* Datamode exited unexpectedly. */
+			rsp_send(CONFIG_SLM_DATAMODE_TERMINATOR);
+		}
 	}
 
 	return ret;
 }
 
-/* Server-initiated disconnect */
+/* Handle peer socket closure from the server side.
+ * - Call only from TCP server thread.
+ */
 static void tcpsvr_terminate_connection(int cause)
 {
-	if (in_datamode()) {
-		(void)exit_datamode_handler(cause);
-	}
 	if (proxy.sock_peer != INVALID_SOCKET) {
 		if (close(proxy.sock_peer) < 0) {
-			LOG_WRN("close() error: %d", -errno);
+			LOG_WRN("sock %d close() error: %d", proxy.sock_peer, -errno);
 		}
 		proxy.sock_peer = INVALID_SOCKET;
-		rsp_send("\r\n#XTCPSVR: %d,\"disconnected\"\r\n", cause);
+
+		if (in_datamode()) {
+			exit_datamode_handler(cause);
+		} else {
+			rsp_send("\r\n#XTCPSVR: %d,\"disconnected\"\r\n", cause);
+		}
 	}
 }
 
 /* TCP server thread */
 static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 {
+	enum {
+		SOCK_LISTEN,
+		SOCK_PEER,
+		EVENT_FD,
+		FD_COUNT
+	};
+
 	int ret;
-	struct pollfd fds[2];
+	struct pollfd fds[FD_COUNT];
 
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
-	fds[0].fd = proxy.sock;
-	fds[0].events = POLLIN;
+
+	fds[SOCK_LISTEN].fd = proxy.sock;
+	fds[SOCK_LISTEN].events = POLLIN;
 	/** The field fd contains a file descriptor for an open file.  If this field is negative,
 	 * then the corresponding events field is ignored and the revents field returns zero.
 	 */
-	fds[1].fd = INVALID_SOCKET;
-	fds[1].events = POLLIN;
+	fds[SOCK_PEER].fd = INVALID_SOCKET;
+	fds[SOCK_PEER].events = POLLIN;
+	fds[EVENT_FD].fd = proxy.efd;
+	fds[EVENT_FD].events = POLLIN;
 	while (true) {
-		ret = poll(fds, 2, MSEC_PER_SEC * CONFIG_SLM_TCP_POLL_TIME);
-		if (server_stop_pending) {  /* server wait to stop */
-			ret = 0;
-			break;
-		}
+		ret = poll(fds, ARRAY_SIZE(fds), MSEC_PER_SEC * CONFIG_SLM_TCP_POLL_TIME);
 		if (ret < 0) { /* IO error */
 			LOG_WRN("poll() error: %d", -errno);
 			ret = -EIO;
@@ -448,27 +459,27 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 		if (ret == 0) { /* timeout */
 			continue;
 		}
-		LOG_DBG("fds[0] events 0x%08x", fds[0].revents);
-		LOG_DBG("fds[1] events 0x%08x", fds[1].revents);
+		LOG_DBG("listen events 0x%08x", fds[SOCK_LISTEN].revents);
+		LOG_DBG("peer events 0x%08x", fds[SOCK_PEER].revents);
+		LOG_DBG("efd events 0x%08x", fds[EVENT_FD].revents);
 		/* Listening socket events must be handled first*/
-		if (fds[0].revents) {
-			if ((fds[0].revents & POLLERR) == POLLERR) {
-				LOG_ERR("0: POLLERR");
+		if (fds[SOCK_LISTEN].revents) {
+			if ((fds[SOCK_LISTEN].revents & POLLERR) != 0) {
+				LOG_WRN("SOCK_LISTEN (%d): POLLERR", fds[SOCK_LISTEN].fd);
 				ret = -EIO;
 				break;
 			}
-			if ((fds[0].revents & POLLHUP) == POLLHUP) {
-				LOG_WRN("0: POLLHUP");
+			if ((fds[SOCK_LISTEN].revents & POLLHUP) != 0) {
+				LOG_WRN("SOCK_LISTEN (%d): POLLHUP", fds[SOCK_LISTEN].fd);
 				ret = -ECONNRESET;
 				break;
 			}
-			if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
-				/* server stopped by AT command */
-				LOG_WRN("0: POLLNVAL");
+			if ((fds[SOCK_LISTEN].revents & POLLNVAL) != 0) {
+				LOG_WRN("SOCK_LISTEN (%d): POLLNVAL", fds[SOCK_LISTEN].fd);
 				ret = -ENETDOWN;
 				break;
 			}
-			if ((fds[0].revents & POLLIN) != POLLIN) {
+			if ((fds[SOCK_LISTEN].revents & POLLIN) == 0) {
 				/* Ignore and check whether there are client events */
 				goto client_events;
 			}
@@ -500,28 +511,27 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 				(void)inet_ntop(AF_INET6, &client.sin6_addr, peer_addr,
 					sizeof(peer_addr));
 			}
-			if (fds[1].fd >= 0) {
+			if (fds[SOCK_PEER].fd >= 0) {
 				LOG_WRN("Full. Close connection.");
 				close(ret);
 				goto client_events;
 			}
 			proxy.sock_peer = ret;
-			fds[1].fd = proxy.sock_peer;
+			fds[SOCK_PEER].fd = proxy.sock_peer;
 			rsp_send("\r\n#XTCPSVR: \"%s\",\"connected\"\r\n", peer_addr);
 			LOG_DBG("New connection - %d", proxy.sock_peer);
 		}
 client_events:
 		/* Incoming socket events */
-		if (fds[1].revents) {
+		if (fds[SOCK_PEER].revents) {
 			/* Process POLLIN first to get the data, even if there are errors. */
-			if ((fds[1].revents & POLLIN) == POLLIN) {
-				ret = recv(fds[1].fd, (void *)slm_data_buf,
+			if ((fds[SOCK_PEER].revents & POLLIN) == POLLIN) {
+				ret = recv(fds[SOCK_PEER].fd, (void *)slm_data_buf,
 					   sizeof(slm_data_buf), MSG_DONTWAIT);
 				if (ret < 0 && errno != EAGAIN) {
 					LOG_ERR("recv() error: %d", -errno);
 					tcpsvr_terminate_connection(-errno);
-					fds[1].fd = INVALID_SOCKET;
-					continue;
+					fds[SOCK_PEER].fd = INVALID_SOCKET;
 				}
 				if (ret > 0) {
 					if (!in_datamode()) {
@@ -530,101 +540,148 @@ client_events:
 					data_send(slm_data_buf, ret);
 				}
 			}
-			if ((fds[1].revents & POLLERR) == POLLERR) {
-				LOG_ERR("1: POLLERR");
+			if ((fds[SOCK_PEER].revents & POLLERR) != 0) {
+				LOG_WRN("SOCK_PEER (%d): POLLERR", fds[SOCK_PEER].fd);
 				tcpsvr_terminate_connection(-EIO);
-				fds[1].fd = INVALID_SOCKET;
-				continue;
+				fds[SOCK_PEER].fd = INVALID_SOCKET;
 			}
-			if ((fds[1].revents & POLLHUP) == POLLHUP) {
-				LOG_ERR("1: POLLHUP");
+			if ((fds[SOCK_PEER].revents & POLLHUP) != 0) {
+				LOG_DBG("SOCK_PEER (%d): POLLHUP", fds[SOCK_PEER].fd);
 				tcpsvr_terminate_connection(0);
-				fds[1].fd = INVALID_SOCKET;
-				continue;
+				fds[SOCK_PEER].fd = INVALID_SOCKET;
 			}
-			if ((fds[1].revents & POLLNVAL) == POLLNVAL) {
-				LOG_WRN("1: POLLNVAL");
+			if ((fds[SOCK_PEER].revents & POLLNVAL) != 0) {
+				LOG_WRN("SOCK_PEER (%d): POLLNVAL", fds[SOCK_PEER].fd);
 				tcpsvr_terminate_connection(-EBADF);
-				fds[1].fd = INVALID_SOCKET;
+				fds[SOCK_PEER].fd = INVALID_SOCKET;
 			}
+		}
+		/* Events from AT-commands. */
+		if ((fds[EVENT_FD].revents & POLLIN) != 0) {
+			eventfd_t value;
+
+			ret = eventfd_read(fds[EVENT_FD].fd, &value);
+			if (ret) {
+				LOG_ERR("eventfd_read() failed");
+				break;
+			}
+			enum proxy_event event;
+
+			while ((ret = k_msgq_get(&proxy_event_queue, &event, K_NO_WAIT)) == 0) {
+				if (event == PROXY_CLOSE) {
+					break;
+				} else if (event == PROXY_CLOSE_PEER) {
+					LOG_DBG("Close peer");
+					tcpsvr_terminate_connection(0);
+					fds[SOCK_PEER].fd = INVALID_SOCKET;
+				}
+			}
+			if (!ret && event == PROXY_CLOSE) {
+				LOG_DBG("Close proxy");
+				break;
+			}
+		}
+		if (fds[EVENT_FD].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+			LOG_ERR("efd: unexpected event: %d", fds[EVENT_FD].revents);
+			break;
 		}
 	}
 
 	tcpsvr_terminate_connection(ret);
-	if (proxy.sock != INVALID_SOCKET) {
-		(void)close(proxy.sock);
-		proxy.sock = INVALID_SOCKET;
+	close(proxy.sock);
+	proxy.sock = INVALID_SOCKET;
+
+	if (in_datamode()) {
+		exit_datamode_handler(ret);
+	} else {
+		rsp_send("\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
 	}
-	rsp_send("\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
-	server_stop_pending = false;
 	LOG_INF("TCP server thread terminated");
 }
 
 /* TCP client thread */
 static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 {
+	enum {
+		SOCK,
+		EVENT_FD,
+		FD_COUNT
+	};
+
 	int ret;
-	static struct pollfd fds;
+	struct pollfd fds[FD_COUNT];
 
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
-	fds.fd = proxy.sock;
-	fds.events = POLLIN;
+	fds[SOCK].fd = proxy.sock;
+	fds[SOCK].events = POLLIN;
+	fds[EVENT_FD].fd = proxy.efd;
+	fds[EVENT_FD].events = POLLIN;
 	while (true) {
-		ret = poll(&fds, 1, MSEC_PER_SEC * CONFIG_SLM_TCP_POLL_TIME);
-		if (ret < 0) {  /* IO error */
+		ret = poll(fds, ARRAY_SIZE(fds), MSEC_PER_SEC * CONFIG_SLM_TCP_POLL_TIME);
+		if (ret < 0) {
 			LOG_WRN("poll() error: %d", ret);
 			ret = -EIO;
 			break;
 		}
-		if (ret == 0) {  /* timeout */
+		if (ret == 0) {
+			/* timeout */
 			continue;
 		}
-		LOG_DBG("Poll events 0x%08x", fds.revents);
-		if ((fds.revents & POLLERR) == POLLERR) {
-			LOG_ERR("POLLERR");
+		LOG_DBG("sock events 0x%08x", fds[SOCK].revents);
+		LOG_DBG("efd events 0x%08x", fds[EVENT_FD].revents);
+		if ((fds[SOCK].revents & POLLIN) != 0) {
+			ret = recv(fds[SOCK].fd, (void *)slm_data_buf, sizeof(slm_data_buf),
+				   MSG_DONTWAIT);
+			if (ret < 0 && errno != EAGAIN) {
+				LOG_WRN("recv() error: %d", -errno);
+			} else if (ret > 0) {
+				if (!in_datamode()) {
+					rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
+				}
+				data_send(slm_data_buf, ret);
+			}
+		}
+		if ((fds[SOCK].revents & POLLERR) != 0) {
+			LOG_WRN("SOCK (%d): POLLERR", fds[SOCK].fd);
 			ret = -EIO;
 			break;
 		}
-		if ((fds.revents & POLLNVAL) == POLLNVAL) {
-			/* client disconnected locally by AT command */
-			LOG_WRN("POLLNVAL");
+		if ((fds[SOCK].revents & POLLNVAL) != 0) {
+			LOG_WRN("SOCK (%d): POLLNVAL", fds[SOCK].fd);
 			ret = -ENETDOWN;
 			break;
 		}
-		if ((fds.revents & POLLHUP) == POLLHUP) {
-			/* client disconnected by remote or lose LTE connection */
-			LOG_WRN("POLLHUP");
+		if ((fds[SOCK].revents & POLLHUP) != 0) {
+			/* Lose LTE connection / remote end close */
+			LOG_WRN("SOCK (%d): POLLHUP", fds[SOCK].fd);
 			ret = -ECONNRESET;
 			break;
 		}
-		if ((fds.revents & POLLIN) != POLLIN) {
-			continue;
+		/* Events from AT-commands. */
+		if ((fds[EVENT_FD].revents & POLLIN) != 0) {
+			eventfd_t value;
+
+			/* AT-command event can only close the client. */
+			LOG_DBG("Close proxy");
+			eventfd_read(fds[EVENT_FD].fd, &value);
+			ret = 0;
+			break;
 		}
-		ret = recv(fds.fd, (void *)slm_data_buf, sizeof(slm_data_buf), MSG_DONTWAIT);
-		if (ret < 0 && errno != EAGAIN) {
-			LOG_WRN("recv() error: %d", -errno);
-			continue;
-		}
-		if (ret == 0) {
-			continue;
-		}
-		if (in_datamode()) {
-			data_send(slm_data_buf, ret);
-		} else {
-			rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
-			data_send(slm_data_buf, ret);
+		if (fds[EVENT_FD].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+			LOG_ERR("efd: unexpected event: %d", fds[EVENT_FD].revents);
+			break;
 		}
 	}
 
+	close(proxy.sock);
+	proxy.sock = INVALID_SOCKET;
+
 	if (in_datamode()) {
-		(void)exit_datamode_handler(ret);
-	}
-	if (proxy.sock != INVALID_SOCKET) {
-		(void)close(proxy.sock);
-		proxy.sock = INVALID_SOCKET;
+		exit_datamode_handler(ret);
+	} else {
 		rsp_send("\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
 	}
 
@@ -646,8 +703,8 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type, const struct at_param
 			return err;
 		}
 		if (op == SERVER_START || op == SERVER_START6) {
-			if (proxy.sock != INVALID_SOCKET) {
-				LOG_ERR("Server is running.");
+			if (proxy.sock != INVALID_SOCKET || proxy.efd != INVALID_SOCKET) {
+				LOG_ERR("Proxy is running.");
 				return -EINVAL;
 			}
 			err = at_params_unsigned_short_get(param_list, 2, &port);
@@ -664,7 +721,7 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type, const struct at_param
 			proxy.family = (op == SERVER_START) ? AF_INET : AF_INET6;
 			err = do_tcp_server_start(port);
 		} else if (op == SERVER_STOP) {
-			err = do_tcp_server_stop();
+			err = do_tcp_proxy_close();
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
@@ -704,8 +761,8 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type, const struct at_param
 			char url[SLM_MAX_URL];
 			int size = SLM_MAX_URL;
 
-			if (proxy.sock != INVALID_SOCKET) {
-				LOG_ERR("Client is connected.");
+			if (proxy.sock != INVALID_SOCKET || proxy.efd != INVALID_SOCKET) {
+				LOG_ERR("Proxy is running.");
 				return -EINVAL;
 			}
 			err = util_string_get(param_list, 2, url, &size);
@@ -744,7 +801,7 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type, const struct at_param
 			proxy.family = (op == CLIENT_CONNECT) ? AF_INET : AF_INET6;
 			err = do_tcp_client_connect(url, port);
 		} else if (op == CLIENT_DISCONNECT) {
-			err = do_tcp_client_disconnect();
+			err = do_tcp_proxy_close();
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
@@ -811,11 +868,19 @@ static int handle_at_tcp_hangup(enum at_cmd_type cmd_type, const struct at_param
 		if (err) {
 			return err;
 		}
-		if (handle != proxy.sock_peer) {
+		if (handle != proxy.sock_peer || proxy.efd == INVALID_SOCKET) {
 			return -EINVAL;
 		}
-		tcpsvr_terminate_connection(0);
-		err = 0;
+		const enum proxy_event event = PROXY_CLOSE_PEER;
+
+		err = k_msgq_put(&proxy_event_queue, &event, K_NO_WAIT);
+		if (err) {
+			return err;
+		}
+		err = eventfd_write(proxy.efd, 1);
+		if (err < 0) {
+			err = -errno;
+		}
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
@@ -834,11 +899,12 @@ static int handle_at_tcp_hangup(enum at_cmd_type cmd_type, const struct at_param
  */
 int slm_at_tcp_proxy_init(void)
 {
-	proxy.sock      = INVALID_SOCKET;
-	proxy.family    = AF_UNSPEC;
-	proxy.sock_peer = INVALID_SOCKET;
-	proxy.role      = INVALID_ROLE;
-	proxy.sec_tag   = INVALID_SEC_TAG;
+	proxy.sock	= INVALID_SOCKET;
+	proxy.family	= AF_UNSPEC;
+	proxy.sock_peer	= INVALID_SOCKET;
+	proxy.role	= INVALID_ROLE;
+	proxy.sec_tag	= INVALID_SEC_TAG;
+	proxy.efd	= INVALID_SOCKET;
 
 	return 0;
 }
@@ -847,12 +913,6 @@ int slm_at_tcp_proxy_init(void)
  */
 int slm_at_tcp_proxy_uninit(void)
 {
-	if (proxy.role == TCP_ROLE_CLIENT) {
-		return do_tcp_client_disconnect();
-	}
-	if (proxy.role == TCP_ROLE_SERVER) {
-		return do_tcp_server_stop();
-	}
 
-	return 0;
+	return do_tcp_proxy_close();
 }

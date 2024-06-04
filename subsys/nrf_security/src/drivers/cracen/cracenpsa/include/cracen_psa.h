@@ -205,11 +205,6 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 psa_status_t cracen_key_derivation_input_integer(cracen_key_derivation_operation_t *operation,
 						 psa_key_derivation_step_t step, uint64_t value);
 
-psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *operation,
-					     psa_key_derivation_step_t step,
-					     const psa_key_attributes_t *attributes,
-					     const uint8_t *key_buffer, size_t key_buffer_size);
-
 psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_t *operation,
 						uint8_t *output, size_t output_length);
 

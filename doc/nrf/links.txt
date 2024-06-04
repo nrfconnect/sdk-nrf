@@ -132,7 +132,6 @@
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
 .. _`ZCL Advanced Platform releases`: https://github.com/project-chip/zap/releases
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
-.. _`Kconfig.mcuboot.defaults`: https://github.com/project-chip/connectedhomeip/blob/master/config/nrfconnect/chip-module/Kconfig.mcuboot.defaults
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
 .. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
 .. _`Matter factory data Kconfig options`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CHIP_FACTORY_DATA
@@ -195,43 +194,6 @@
 .. ### Source: github.io
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
-
-.. _`nRF Asset Tracker project`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/project/Index.html
-.. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/aws/GettingStarted/Index.html
-.. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/azure/GettingStarted/Index.html
-.. _`nRF Asset Tracker Memfault integration`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.5.x/docs/memfault/Index.html
-
-.. _`latest release notes for nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect/release_notes/connect/2022.11.140.html
-.. _`nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect
-.. _`Configuring with nRF Kconfig`: https://nrfconnect.github.io/vscode-nrf-connect/guides/work_with_kconfig.html
-.. _`How to create devicetree files`: https://nrfconnect.github.io/vscode-nrf-connect/guides/how_to_create_dt_files.html
-.. _`How to work with Devicetree Visual Editor`: https://nrfconnect.github.io/vscode-nrf-connect/guides/work_with_devicetree_editor.html
-.. _`Devicetree support overview`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html#devicetree-overview
-.. _`Devicetree language support`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html#devicetree-language-support
-.. _`How to work with boards and devices`: https://nrfconnect.github.io/vscode-nrf-connect/guides/bd_work_with_boards.html
-.. _`How to install the extension`:
-.. _`Installing on Linux`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/install.html
-.. _`How to build an application`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/build_app_ncs.html
-.. _`Migrating IDE`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#open-an-existing-application
-.. _`How to change SDK and toolchain versions`: https://nrfconnect.github.io/vscode-nrf-connect/guides/extension_migrate_sdk.html
-.. _`How to flash an application`:
-.. _`How to debug an application`:
-.. _`How to connect to the terminal`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/quick_debug.html
-.. _`Debugging overview`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_concepts.html
-.. _`How to debug`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_use.html
-.. _`How to debug applications for a multi-core System on Chip`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_use.html#how-to-debug-applications-for-a-multi-core-system-on-chip
-.. _`source control with west`: https://nrfconnect.github.io/vscode-nrf-connect/guides/west_about.html
-.. _`west module management`: https://nrfconnect.github.io/vscode-nrf-connect/guides/west_module_management.html
-.. _`Custom launch and debug configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_advanced.html#custom-launch-and-debug-configurations
-.. _`Binding custom tasks to actions`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_bind_tasks.html
-.. _`Application-specific flash options`: https://nrfconnect.github.io/vscode-nrf-connect/guides/bd_work_with_boards.html#how-to-flash-boards
-.. _`CMake build system`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_overview.html#cmake-build-system
-.. _`How to work with build configurations`: https://nrfconnect.github.io/vscode-nrf-connect/guides/build_config.html
-.. _`Details View`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_details.html
-.. _`Memory report`: https://nrfconnect.github.io/vscode-nrf-connect/guides/memory_overview.html
-.. _`Kconfig action in the Actions View`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_actions.html
-.. _`Create a new application`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#create-a-new-application
-.. _`Browse samples`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#browse-samples
 
 .. _`SPAKE2+ Python Tool page`: https://project-chip.github.io/connectedhomeip-doc/scripts/tools/spake2p/README.html
 
@@ -555,6 +517,11 @@
 
 .. _`Nordic Semiconductor TechDocs`: https://docs.nordicsemi.com
 
+.. _`nRF Asset Tracker project`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/index.html
+.. _`Getting started guide for nRF Asset Tracker for AWS`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/aws/GettingStarted/Index.html
+.. _`Getting started guide for nRF Asset Tracker for Azure`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/azure/GettingStarted/Index.html
+.. _`nRF Asset Tracker Memfault integration`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/memfault/Index.html
+
 .. _`nRF Connect Board Configurator`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
 
 .. _`Serial Terminal from nRF Connect for Desktop`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
@@ -564,6 +531,8 @@
 .. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`nRF Connect Bluetooth Low Energy`: https://docs.nordicsemi.com/bundle/nrf-connect-ble/page/index.html
 .. _`Cellular Monitor`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
+.. _`nPM PowerUP`: https://docs.nordicsemi.com/bundle/nan_045/page/APP/nan_045/profiling_npm_powerup.html
+.. _`Quick Start`: https://docs.nordicsemi.com/bundle/nrf-connect-quickstart/page/index.html
 
 .. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
 
@@ -712,18 +681,23 @@
 .. _`Measuring Current on Thingy:91`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/hw_description/hw_power_current_measurement.html
 
 .. _`nPM1300`: https://docs.nordicsemi.com/category/npm1300-category
+.. _`nPM1300 Product Specification`: https://docs.nordicsemi.com/bundle/ps_npm1300/page/keyfeatures_html5.html
+
 .. _`nPM1300 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/intro.html
+.. _`Evaluate nPM1300 using nPM PowerUP`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/npm_powerup.html
+.. _`Use the nPM1300 EK with an nRF5340 DK`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/using_nrf5340_DK.html
+.. _`nPM Fuel Gauge Board`: https://www.nordicsemi.com/Products/Development-hardware/nPM-Fuel-Gauge-board
 
 .. _`AP-Protect for nRF9161`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dif.html#ariaid-title3
 .. _`Debugger access protection for nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/dif.html#ariaid-title2
 .. _`AP-Protect for nRF5340`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/debugandtrace.html#ariaid-title9
 .. _`AP-Protect for nRF52840`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/dif.html#ariaid-title3
-.. _`AP-Protect for nRF52833`: https://infocenter.nordicsemi.com/topic/ps_nrf52833/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52833`: https://docs.nordicsemi.com/bundle/ps_nrf52833/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF52832`: https://docs.nordicsemi.com/bundle/ps_nrf52832/page/dif.html#d913e149
 .. _`AP-Protect for nRF52820`: https://docs.nordicsemi.com/bundle/ps_nrf52820/page/dif.html#ariaid-title3
-.. _`AP-Protect for nRF52811`: https://infocenter.nordicsemi.com/topic/ps_nrf52811/dif.html#concept_udr_mns_1s
-.. _`AP-Protect for nRF52810`: https://infocenter.nordicsemi.com/topic/ps_nrf52810/dif.html#concept_udr_mns_1s
-.. _`AP-Protect for nRF52805`: https://infocenter.nordicsemi.com/topic/ps_nrf52805/dif.html#concept_udr_mns_1s
+.. _`AP-Protect for nRF52811`: https://docs.nordicsemi.com/bundle/ps_nrf52811/page/dif.html#ariaid-title3
+.. _`AP-Protect for nRF52810`: https://docs.nordicsemi.com/bundle/ps_nrf52810/page/dif.html#ariaid-title3
+.. _`AP-Protect for nRF52805`: https://docs.nordicsemi.com/bundle/ps_nrf52805/page/dif.html#ariaid-title3
 
 .. _`Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_operator_certifications.html
 .. _`Modem firmware compatibility matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_modem_fw.html
@@ -765,6 +739,39 @@
 
 .. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://docs.nordicsemi.com/bundle/SA/resource/SA-2023-234-v1_1.pdf
 
+.. _`latest release notes for nRF Connect for Visual Studio Code`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/release_notes/connect/2024.2.214.html
+.. _`nRF Connect for Visual Studio Code`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/index.html
+.. _`Configuring with nRF Kconfig`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/work_with_kconfig.html
+.. _`How to create devicetree files`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/how_to_create_dt_files.html
+.. _`How to work with Devicetree Visual Editor`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/work_with_devicetree_editor.html
+.. _`Devicetree support overview`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/ncs_configure_app.html#devicetree-overview
+.. _`Devicetree language support`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/ncs_configure_app.html#devicetree-language-support
+.. _`How to work with boards and devices`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/bd_work_with_boards.html
+.. _`How to install the extension`:
+.. _`Installing on Linux`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/get_started/install.html
+.. _`How to build an application`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/get_started/build_app_ncs.html
+.. _`Migrating IDE`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#open-an-existing-application
+.. _`How to change SDK and toolchain versions`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/extension_migrate_sdk.html
+.. _`How to flash an application`:
+.. _`How to debug an application`:
+.. _`How to connect to the terminal`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/get_started/quick_debug.html
+.. _`Debugging overview`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_concepts.html
+.. _`How to debug`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_use.html
+.. _`How to debug applications for a multi-core System on Chip`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_use.html#how-to-debug-applications-for-a-multi-core-system-on-chip
+.. _`source control with west`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/west_about.html
+.. _`west module management`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/west_module_management.html
+.. _`Custom launch and debug configurations`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_custom.html
+.. _`Binding custom tasks to actions`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_bind_tasks.html
+.. _`Application-specific flash options`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/bd_work_with_boards.html#how-to-flash-boards
+.. _`CMake build system`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_overview.html#cmake-build-system
+.. _`How to work with build configurations`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_config.html
+.. _`Details View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_details.html
+.. _`Memory report`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/memory_overview.html
+.. _`Kconfig action in the Actions View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_actions.html
+.. _`Create a new application`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#create-a-new-application
+.. _`Browse samples`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#browse-samples
+.. _`nRF Terminal documentation`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_panel.html#nrf-connect-and-nrf-terminal-profiles
+
 .. ### Source: academy.nordicsemi.com
 
 .. _`DevAcademy`:
@@ -800,6 +807,9 @@
 .. ### Source: App stores (play.google.com & apps.apple.com)
 
 .. _`Fast Pair Validator app`: https://play.google.com/store/apps/details?id=com.google.location.nearby.apps.fastpair.validator
+.. _`Find My Device app`: https://play.google.com/store/apps/details?id=com.google.android.apps.adm
+
+.. _`Google Play Services`: https://play.google.com/store/apps/details?id=com.google.android.gms
 
 .. _`nRF Device Manager mobile app for iOS`: https://apps.apple.com/us/app/nrf-connect-device-manager/id1519423539
 .. _`nRF Device Manager mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfconnectdevicemanager
@@ -978,6 +988,13 @@
 
 .. _`SPAKE2+`: https://datatracker.ietf.org/doc/pdf/draft-bar-cfrg-spake2plus-02.pdf
 
+.. _`DULT`: https://datatracker.ietf.org/doc/draft-detecting-unwanted-location-trackers/
+.. _`DULT Accessory Information`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-accessory-information
+.. _`DULT Non-owner controls`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-non-owner-controls
+.. _`DULT Manufacturer Network ID Registry`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-manufacturer-network-id-reg
+.. _`DULT Accessory Category Values table`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#_table-accessory-category-values
+.. _`DULT Sound maker`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-sound-maker
+
 .. ### Source: *.amazon.com
 
 .. _`AWS account`: https://aws.amazon.com/iot/
@@ -1127,6 +1144,7 @@
 .. _`Memfault MCU Guide`: https://docs.memfault.com/docs/mcu/introduction
 .. _`Memfault: Reboot tracking`: https://docs.memfault.com/docs/mcu/reboot-reason-tracking
 .. _`Memfault: Coredumps`: https://docs.memfault.com/docs/mcu/coredumps
+.. _`Memfault Sandbox`: https://mflt.io/demo
 
 .. ### Source: *.nrfcloud.com
 
@@ -1240,6 +1258,10 @@
 .. _`Fast Pair Personalized Name extension`: https://developers.google.com/nearby/fast-pair/specifications/extensions/personalizedname
 .. _`Fast Pair Certification Guidelines for Personalized Name`: https://developers.google.com/nearby/fast-pair/certification-guideline#2_personalized_name
 .. _`Fast Pair Battery Notification extension`: https://developers.google.com/nearby/fast-pair/specifications/extensions/batterynotification
+.. _`Fast Pair Find My Device Network extension`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn
+.. _`Fast Pair FMDN advertising`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#advertised-frames
+.. _`Fast Pair Locator Tag Specific Guidelines`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#locator-tag
+.. _`Fast Pair Unwanted Tracking Prevention Guidelines`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#unwanted-tracking-prevention
 
 .. _`Protocol Buffers`: https://developers.google.com/protocol-buffers
 
@@ -1533,4 +1555,18 @@
 .. _`10.23.3_ec macOS, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-osx.zip
 
 .. _`Git for Windows`: https://git-scm.com/download/win
-.. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html
+
+
+.. _`curl`: https://curl.se/
+
+.. _`nRF54H20 firmware bundle`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.3.3.zip
+
+.. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
+
+.. _`J-Link version 7.94e`: https://www.segger.com/downloads/jlink/
+
+.. _`J-Link version 7.88j`: https://www.segger.com/downloads/jlink/
+
+.. _`nRF54H20 DK getting started guide for the nRF Connect SDK v2.6.99-cs2`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs2/page/nrf/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs.html
+
+.. _`Migration guide for nRF Connect SDK v2.6.99_cs2 for v2.4.99-cs3 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.4.99-cs3_to_2.6.99-cs2.html

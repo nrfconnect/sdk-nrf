@@ -92,6 +92,7 @@ The service also uses `nanopb`_ to convert encoded platform-independent messages
 The device performs actions according to messages it exchanges with a configurator (the peer that sends the message, such as a smartphone running the nRF Wi-Fi Provisioner app listed in :ref:`wifi_provisioning_app`).
 
 .. _wifi_provisioning_message_types:
+.. _ble_wifi_provision_message_types:
 
 Message types
 =============

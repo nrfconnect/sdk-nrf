@@ -149,6 +149,10 @@ static void set_sdu_data_cb(struct net_buf *buf)
 	}
 }
 
+static const struct bt_data ad[] = {
+	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
+};
+
 void bis_transmitter_start(void)
 {
 	int err;
@@ -156,9 +160,16 @@ void bis_transmitter_start(void)
 	struct bt_iso_big *big;
 
 	/* Create a non-connectable non-scannable advertising set */
-	err = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN_NAME, NULL, &adv);
+	err = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN, NULL, &adv);
 	if (err) {
 		LOG_INF("Failed to create advertising set (err %d)", err);
+		return;
+	}
+
+	/* Set the advertising data */
+	err = bt_le_ext_adv_set_data(adv, ad, ARRAY_SIZE(ad), NULL, 0);
+	if (err) {
+		LOG_INF("failed to set advertising data (err %d)", err);
 		return;
 	}
 

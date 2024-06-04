@@ -86,6 +86,13 @@ config LOCATION_METHOD_GNSS_PRIORITIZE_QZSS_ASSISTANCE
 	  needed at the same time. Enabling this option allows A-GNSS data request to be sent also
 	  when only QZSS assistance data (usually ephemerides) is needed.
 
+config LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND
+	bool "Send GNSS coordinates to nRF Cloud"
+	depends on !LOCATION_SERVICE_EXTERNAL
+	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT || NRF_CLOUD_COAP
+	help
+	  Send GNSS coordinates to nRF Cloud.
+
 endif # LOCATION_METHOD_GNSS
 
 if LOCATION_METHOD_WIFI

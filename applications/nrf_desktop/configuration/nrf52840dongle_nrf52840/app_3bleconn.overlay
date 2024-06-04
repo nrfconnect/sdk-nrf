@@ -1,0 +1,117 @@
+/ {
+	chosen {
+		/*
+		 * In some default configurations within the nRF Connect SDK,
+		 * e.g. on nRF52840 and nRF9160, the chosen zephyr,entropy node
+		 * is &cryptocell. This devicetree overlay ensures that default
+		 * is overridden wherever it is set, as this application uses
+		 * the RNG node for entropy exclusively.
+		 */
+		zephyr,entropy = &rng;
+	};
+
+	/* Configure DTS nodes used for USB next HID support. */
+	hid_dev_0: hid_dev_0 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID0";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+	hid_dev_1: hid_dev_1 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID1";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+	hid_dev_2: hid_dev_2 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID2";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+	hid_dev_3: hid_dev_3 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID3";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+	hid_dev_4: hid_dev_4 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID4";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+	hid_dev_5: hid_dev_5 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID5";
+		protocol-code = "none";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
+	};
+
+	pwmleds {
+		red_pwm_led: pwm_led_0 {
+			pwms = <&pwm0 0 PWM_MSEC(1) PWM_POLARITY_INVERTED>;
+		};
+		green_pwm_led: pwm_led_1 {
+			pwms = <&pwm0 1 PWM_MSEC(1) PWM_POLARITY_INVERTED>;
+		};
+		blue_pwm_led: pwm_led_2 {
+			pwms = <&pwm0 2 PWM_MSEC(1) PWM_POLARITY_INVERTED>;
+		};
+	};
+
+	pwmleds1 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led1: led_pwm_4 {
+			status = "okay";
+			pwms = <&pwm1 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			label = "LED System State";
+		};
+	};
+};
+
+&usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+	num-bidir-endpoints = <0>;
+	num-in-endpoints = <7>;
+	num-out-endpoints = <2>;
+	num-isoin-endpoints = <0>;
+	num-isoout-endpoints = <0>;
+};
+
+&pwm0 {
+	status = "okay";
+};
+
+&pwm1 {
+	status = "okay";
+	pinctrl-0 = <&pwm1_default_alt>;
+	pinctrl-1 = <&pwm1_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pinctrl {
+	pwm1_default_alt: pwm1_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 6)>;
+			nordic,invert;
+		};
+	};
+
+	pwm1_sleep_alt: pwm1_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 6)>;
+			low-power-enable;
+		};
+	};
+
+};

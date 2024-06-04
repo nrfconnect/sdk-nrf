@@ -224,11 +224,11 @@ NCSDK-5711: High-throughput transmission can deadlock the receive thread
 .. rst-class:: v1-2-1 v1-2-0
 
 Only secure applications can use Bluetooth LE
-  Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` build target.
+  Bluetooth LE cannot be used in a non-secure application, for example, an application built for the ``nrf5340_dk_nrf5340_cpuappns`` board target.
 
   **Affected platforms:** nRF5340
 
-  **Workaround:** Use the ``nrf5340_dk_nrf5340_cpuapp`` build target instead.
+  **Workaround:** Use the ``nrf5340_dk_nrf5340_cpuapp`` board target instead.
 
 .. rst-class:: v1-2-1 v1-2-0 v1-1-0
 
@@ -616,7 +616,7 @@ KRKNWK-16728: Sleepy device may consume much power when commissioned to a commer
 .. rst-class:: v2-3-0 v2-2-0
 
 KRKNWK-16575: Applications with factory data support do not boot up properly on nRF5340
-  When the Matter sample is built for ``nrf5340dk_nrf5340_cpuapp`` build target with the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option set to ``y``, the application returns prematurely the error code ``200016`` because the factory data partition is not aligned with the :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE` Kconfig option.
+  When the Matter sample is built for ``nrf5340dk_nrf5340_cpuapp`` board target with the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option set to ``y``, the application returns prematurely the error code ``200016`` because the factory data partition is not aligned with the :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE` Kconfig option.
 
   **Affected platforms:** nRF5340
 
@@ -921,6 +921,14 @@ Zigbee
 ======
 
 The issues in this section are related to the :ref:`ug_zigbee` protocol.
+
+
+.. rst-class:: v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
+
+KRKNWK-19026: Wrong RSSI values reported
+  The Zephyr API to get the RSSI value from the radio driver was modified and adaptation is needed in the Zigbee integration.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``7ca42b219d1333b911d7671cf2a714bd93cbac45``).
 
 .. rst-class:: v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
@@ -1300,15 +1308,15 @@ NCSDK-14235: Timestamps that are sent in cloud messages drift over time
 
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-0
 
-CIA-604: ATv2 cannot be built for the ``thingy91_nrf9160_ns`` build target with ``SECURE_BOOT`` enabled
+CIA-604: ATv2 cannot be built for the ``thingy91_nrf9160_ns`` board target with ``SECURE_BOOT`` enabled
   Due to the use of static partitions with the Thingy:91, there is insufficient room in the flash memory to enable both the primary and secondary bootloaders.
 
   **Affected platforms:** Thingy:91
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
-CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with modem traces or Memfault enabled
-  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` for modem traces or :file:`overlay-memfault.conf` for Memfault due to memory constraints.
+CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` board target with modem traces or Memfault enabled
+  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` board target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` for modem traces or :file:`overlay-memfault.conf` for Memfault due to memory constraints.
 
   **Affected platforms:** nRF9160
 
@@ -2073,7 +2081,7 @@ NCSDK-9820: Notification mismatch in :ref:`peripheral_lbs`
 .. rst-class:: v1-8-0
 
 NCSDK-12886: Peripheral UART sample building issue with nRF52811
-  The :ref:`peripheral_uart` sample built for nRF52811 asserts on the nRF52840 DK in rev. 2.1.0 (build target: ``nrf52840dk_nrf52811``).
+  The :ref:`peripheral_uart` sample built for nRF52811 asserts on the nRF52840 DK in rev. 2.1.0 (board target: ``nrf52840dk_nrf52811``).
 
   **Affected platforms:** nRF52840, nRF52811
 
@@ -2340,7 +2348,7 @@ Other samples
 .. rst-class:: v2-3-0
 
 NCSDK-20046: IPC service sample does not work with ``nrf5340dk_nrf5340_cpuapp``
-  The :ref:`ipc_service_sample` sample does not work with the ``nrf5340dk_nrf5340_cpuapp`` :ref:`build target <app_boards_names_zephyr>` due to a misconfiguration.
+  The :ref:`ipc_service_sample` sample does not work with the ``nrf5340dk_nrf5340_cpuapp`` :ref:`board target <app_boards_names_zephyr>` due to a misconfiguration.
   The application core does not log anything, while the network core seems to work and bond, but cannot transfer data.
   When using UART, there is no output visible.
 
@@ -2761,7 +2769,7 @@ NCSDK-11234: Statically defined "pcd_sram" partition might cause ARM usage fault
 .. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-7234: UART output is not received from the network core
-  The UART output is not received from the network core if the application core is programmed and running with a non-secure image (using the ``nrf5340dk_nrf5340_cpuapp_ns`` build target).
+  The UART output is not received from the network core if the application core is programmed and running with a non-secure image (using the ``nrf5340dk_nrf5340_cpuapp_ns`` board target).
 
   **Affected platforms:** nRF5340
 
@@ -3475,6 +3483,11 @@ SoftDevice Controller
 
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
+
+.. rst-class:: v2-6-1 v2-6-0
+
+DRGN-22024: The controller might assert when the peripheral receives a connection update indication.
+  This only occurs when the central uses a wide receive window for the connection update, and both sends at the end of the receive window and sends a lot of data in the connection event with the connection update instant.
 
 .. rst-class:: v2-6-1 v2-6-0
 
@@ -4788,7 +4801,7 @@ NCSDK-8232: Secure Partition Manager and application building together
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0
 
 CIA-248: Samples with default SPM config fails to build for ``thingy91_nrf9160_ns``
-   All samples using the default SPM config fails to build for the ``thingy91_nrf9160_ns``  build target if the sample is not set up with MCUboot.
+   All samples using the default SPM config fails to build for the ``thingy91_nrf9160_ns``  board target if the sample is not set up with MCUboot.
 
    **Affected platforms:** Thingy:91
 

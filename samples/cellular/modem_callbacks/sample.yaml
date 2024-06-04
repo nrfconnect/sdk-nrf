@@ -2,6 +2,7 @@ sample:
   name: modem callbacks
 tests:
   sample.cellular.modem_callbacks:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
@@ -11,4 +12,4 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build
+    tags: ci_build sysbuild

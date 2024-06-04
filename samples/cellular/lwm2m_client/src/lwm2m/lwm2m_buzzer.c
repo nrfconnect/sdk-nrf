@@ -22,7 +22,8 @@ LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 static time_t lwm2m_timestamp;
 
 static int buzzer_state_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
-			   uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+			   uint8_t *data, uint16_t data_len, bool last_block,
+			   size_t total_size, size_t offset)
 {
 	int ret;
 	bool state = *(bool *)data;
@@ -43,7 +44,8 @@ static int buzzer_state_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_i
 }
 
 static int buzzer_intensity_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
-			       uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+			       uint8_t *data, uint16_t data_len, bool last_block,
+			       size_t total_size, size_t offset)
 {
 	int ret;
 	uint8_t intensity = *(double *)data;

@@ -136,6 +136,18 @@
     - nrf9160dk/nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-3813"
 
+- scenarios:
+    - sample.sysbuild.hello_world.nrf5340dk_cpuapp_cpunet
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "Needs https://github.com/nrfconnect/sdk-nrf/pull/13153"
+
+- scenarios:
+    - kernel.timer.timer
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "RAM overflow in NCS specifically - vanilla Zephyr build still fits."
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
@@ -193,3 +205,10 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk/nrf9160/ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-22771"
+
+- scenarios:
+    - sample.net.sockets.http.server
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk/nrf9160/ns
+  comment: "Same reason as in https://nordicsemi.atlassian.net/browse/NCSDK-22771"

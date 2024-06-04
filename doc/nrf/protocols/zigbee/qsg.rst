@@ -120,7 +120,7 @@ To program the samples, complete the following steps:
 
 .. |sample_path_vsc| replace:: :file:`nrf/samples/zigbee/network_coordinator`
 
-.. |vsc_sample_board_target_line| replace:: see the `Requirements`_ section for the list of available build target names.
+.. |vsc_sample_board_target_line| replace:: see the `Requirements`_ section for the list of available board target names.
    For the purpose of this quick start guide, leave the default values for other options.
 
 .. include:: ../../includes/vsc_build_and_run.txt

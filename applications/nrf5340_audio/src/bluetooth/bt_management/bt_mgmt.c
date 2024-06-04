@@ -78,13 +78,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	if (err == BT_HCI_ERR_ADV_TIMEOUT && IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 		LOG_INF("Directed adv timed out with no connection, reverting to normal adv");
 
-		bt_mgmt_dir_adv_timed_out();
-
-		ret = bt_mgmt_adv_start(NULL, 0, NULL, 0, true);
-		if (ret) {
-			LOG_ERR("Failed to restart advertising: %d", ret);
-		}
-
+		bt_mgmt_dir_adv_timed_out(0);
 		return;
 	}
 
@@ -105,7 +99,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 		}
 
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-			ret = bt_mgmt_adv_start(NULL, 0, NULL, 0, true);
+			ret = bt_mgmt_adv_start(0, NULL, 0, NULL, 0, true);
 			if (ret) {
 				LOG_ERR("Failed to restart advertising: %d", ret);
 			}
@@ -167,7 +161,7 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	ERR_CHK(ret);
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		ret = bt_mgmt_adv_start(NULL, 0, NULL, 0, true);
+		ret = bt_mgmt_adv_start(0, NULL, 0, NULL, 0, true);
 		ERR_CHK(ret);
 	}
 

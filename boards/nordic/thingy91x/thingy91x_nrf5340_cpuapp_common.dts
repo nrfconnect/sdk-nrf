@@ -44,6 +44,7 @@
 
 	zephyr,user {
 		button1-gpios = <&gpio1 15 (GPIO_PULL_UP | GPIO_OPEN_DRAIN)>;
+		short-range-rf-fe-enable-gpios = <&gpio0 18 GPIO_ACTIVE_LOW>;
 	};
 
 	/* These aliases are provided for compatibility with samples */
@@ -136,6 +137,10 @@
 zephyr_udc0: &usbd {
 	compatible = "nordic,nrf-usbd";
 	status = "okay";
+
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
 };
 
 / {

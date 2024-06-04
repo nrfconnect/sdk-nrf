@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include <zephyr/cache.h>
 #include <zephyr/kernel.h>
 #include <string.h>
 #include <suit_ipc_streamer.h>
@@ -10,6 +11,12 @@
 
 #define IMG_REQUEST_THREAD_STACK_SIZE 2048
 #define IMG_REQUEST_THREAD_PRIORITY   5
+
+#ifdef CONFIG_DCACHE_LINE_SIZE
+#define CACHE_ALIGNMENT CONFIG_DCACHE_LINE_SIZE
+#else
+#define CACHE_ALIGNMENT 4
+#endif
 
 static K_THREAD_STACK_DEFINE(img_request_thread_stack_area, IMG_REQUEST_THREAD_STACK_SIZE);
 static struct k_work_q img_request_work_q;
@@ -30,7 +37,8 @@ typedef struct {
 typedef struct {
 	buffer_metadata_t buffer_metadata[CONFIG_SUIT_STREAM_IPC_PROVIDER_BUFFERS];
 	uint8_t buffer[CONFIG_SUIT_STREAM_IPC_PROVIDER_BUFFERS]
-		      [CONFIG_SUIT_STREAM_IPC_PROVIDER_BUFFER_SIZE];
+		      [CONFIG_SUIT_STREAM_IPC_PROVIDER_BUFFER_SIZE]
+		__aligned(CACHE_ALIGNMENT);
 } buffer_info_t;
 
 typedef struct {
@@ -162,6 +170,8 @@ static suit_plat_err_t chunk_enqueue(image_request_info_t *ri, buffer_metadata_t
 	suit_plat_err_t err = SUIT_PLAT_SUCCESS;
 
 	while (true) {
+		sys_cache_data_flush_range(buffer_address, bm->chunk_size);
+
 		err = suit_ipc_streamer_chunk_enqueue(ri->stream_session_id, bm->chunk_id,
 						      bm->offset_in_image, buffer_address,
 						      bm->chunk_size, last_chunk);

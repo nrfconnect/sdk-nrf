@@ -33,7 +33,7 @@ if(DEFINED SB_SIGNING_KEY_FILE)
 endif()
 
 # Check if debug sign key should be generated.
-if("${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE}" STREQUAL "")
+if(NOT SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM AND "${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE}" STREQUAL "")
   message(WARNING "
     --------------------------------------------------------------
     --- WARNING: Using generated NSIB public/private key-pair. ---

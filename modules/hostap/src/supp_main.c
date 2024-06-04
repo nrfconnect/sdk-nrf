@@ -88,6 +88,7 @@ static const struct wifi_mgmt_ops wpa_supp_ops = {
 	.ap_enable = z_wpa_supplicant_ap_enable,
 	.ap_disable = z_wpa_supplicant_ap_disable,
 	.ap_sta_disconnect = z_wpa_supplicant_ap_sta_disconnect,
+	.ap_config_params = z_wpa_supplicant_ap_config_params,
 #endif /* CONFIG_AP */
 };
 
@@ -553,6 +554,8 @@ static void z_wpas_start(void)
 					   CONFIG_WPA_SUPP_WQ_PRIORITY,
 					   NULL);
 
+	k_thread_name_set(&z_wpas_wq.thread, "wpa_supplicant_wq");
+
 	os_memset(&params, 0, sizeof(params));
 	params.wpa_debug_level = CONFIG_WPA_SUPP_DEBUG_LEVEL;
 
@@ -622,6 +625,8 @@ static int z_wpas_init(void)
 			(k_thread_entry_t)z_wpas_start,
 			NULL, NULL, NULL,
 			0, 0, K_NO_WAIT);
+
+	k_thread_name_set(&z_wpa_s_tid, "wpa_supplicant_main");
 
 	return 0;
 }

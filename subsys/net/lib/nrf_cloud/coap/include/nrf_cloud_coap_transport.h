@@ -30,12 +30,89 @@ extern "C" {
 enum coap_content_format {
 	dummy
 };
+struct coap_client {};
+struct coap_client_option {};
 #endif
+
+struct nrf_cloud_coap_client {
+	struct k_mutex mutex;
+	struct coap_client cc;
+	int sock;
+	bool initialized;
+	bool authenticated;
+	bool cid_saved;
+	bool paused;
+};
+
+#define NRF_CLOUD_COAP_PROXY_RSC "proxy"
 
 /**
  * @defgroup nrf_cloud_coap_transport nRF CoAP API
  * @{
  */
+
+/**@brief Initialize the provided nrf_cloud_coap_client.
+ *
+ * @param client Client to initialize.
+ *
+ * @return 0 if successful, otherwise a negative error code.
+ */
+int nrf_cloud_coap_transport_init(struct nrf_cloud_coap_client *const client);
+
+/**@brief Connect to the cloud.
+ *
+ * @param client Client to connect.
+
+ * @retval 1 Socket is already open.
+ * @return 0 if successful, otherwise a negative error code.
+ */
+int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client);
+
+/**@brief Disconnect from the cloud.
+ *
+ * @param client Client to disconnect.
+ *
+ * @return 0 if successful, otherwise a negative error code.
+ */
+int nrf_cloud_coap_transport_disconnect(struct nrf_cloud_coap_client *const client);
+
+/**@brief Perform authentication with the cloud.
+ *
+ * @param client Client to authenticate.
+ *
+ * @retval -ENOTCONN Client is not connected.
+ * @return 0 if successful, otherwise a negative error code.
+ */
+int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const client);
+
+/**@brief Pause the CoAP connection.
+ *
+ * @param client Client to pause.
+ *
+ * @return 0 if successful, otherwise a negative error code.
+ */
+int nrf_cloud_coap_transport_pause(struct nrf_cloud_coap_client *const client);
+
+/**@brief Resume a paused CoAP connection.
+ *
+ * @param client Client to resume.
+ *
+ * @return 0 if successful, otherwise a negative error code.
+ */
+int nrf_cloud_coap_transport_resume(struct nrf_cloud_coap_client *const client);
+
+/**@brief Get the CoAP options required to perform a proxy download.
+ *
+ * @param opt_accept	Option to be populated with COAP_OPTION_ACCEPT details.
+ * @param opt_proxy_uri	Option to be populated with COAP_OPTION_PROXY_URI details.
+ * @param host		Download host.
+ * @param path		Download file path.
+ *
+ * @return 0 if successful, otherwise a negative error code.
+ */
+int nrf_cloud_coap_transport_proxy_dl_opts_get(struct coap_client_option *const opt_accept,
+					       struct coap_client_option *const opt_proxy_uri,
+					       char const *const host, char const *const path);
 
 /**@brief Check if device is connected and authorized to use nRF Cloud CoAP.
  *

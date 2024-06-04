@@ -1,6 +1,6 @@
 .. heading
 
-| Hardware platforms | PCA | Board name | Build target |
+| Hardware platforms | PCA | Board name | Board target |
 
 .. nrf52dk_nrf52832
 
@@ -26,7 +26,7 @@
 
 | :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160``    |
 |                                |          |                                      |                          |
-|                                |          |                                      | ``nrf9160dk/nrf9160_ns`` |
+|                                |          |                                      | ``nrf9160dk/nrf9160/ns`` |
 
 .. nrf9160dk_nrf52840
 
@@ -91,6 +91,18 @@
 .. thingy91_nrf9160_ns
 
 | :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91 | ``thingy91/nrf9160/ns`` |
+
+.. thingy91x_nrf9151
+
+| Thingy:91 X | PCA20065 | thingy91x | ``thingy91x/nrf9151`` |
+
+.. thingy91x_nrf9151_ns
+
+| Thingy:91 X | PCA20065 | thingy91x | ``thingy91x/nrf9151/ns`` |
+
+.. thingy91x_nrf5340_cpuapp
+
+| Thingy:91 x | PCA20065 | thingy91x | ``thingy91x/nrf5340/cpuapp`` |
 
 .. nrf52dk_nrf52810
 
@@ -216,7 +228,7 @@
 
 .. nrf54l15pdk_nrf54l15_cpuapp_ns
 
-| :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | PCA10156 | :ref:`nrf54l15pdk_nrf54l15 <zephyr:nrf54l15pdk_nrf54l15>` | ``nrf54l15pdk_nrf54l15_cpuapp_ns`` |
+| :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | PCA10156 | :ref:`nrf54l15pdk_nrf54l15 <zephyr:nrf54l15pdk_nrf54l15>` | ``nrf54l15pdk/nrf54l15/cpuapp/ns`` |
 
 .. nrf54l15pdk@0.3.0_nrf54l15_cpuapp
 

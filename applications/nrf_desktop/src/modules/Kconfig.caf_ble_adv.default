@@ -20,6 +20,7 @@ config DESKTOP_BLE_ADV
 if DESKTOP_BLE_ADV
 
 config CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15
+	depends on CAF_BLE_ADV_PM_EVENTS
 	default y
 	help
 	  nRF Desktop peripherals power down and suspend Bluetooth advertising

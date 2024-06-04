@@ -13,6 +13,7 @@
 #include <modem/at_monitor.h>
 #include <modem/lte_lc.h>
 #include <mock_nrf_modem_at.h>
+#include <nrf_errno.h>
 
 #include "cmock_nrf_modem_at.h"
 
@@ -35,6 +36,11 @@ extern void at_monitor_dispatch(const char *at_notif);
  * we'll call it directly to fake notification of functional modem change
  */
 extern void lte_lc_on_modem_cfun(int mode, void *ctx);
+
+/* sms_ack_resp_handler() is implemented in SMS library and
+ * we'll call it directly to fake response to AT+CNMA=1.
+ */
+extern void sms_ack_resp_handler(const char *resp);
 
 static void helper_sms_data_clear(void)
 {
@@ -423,10 +429,12 @@ void test_send_len3_number10plus(void)
 	/* Receive SMS-STATUS-REPORT */
 	test_sms_data.type = SMS_TYPE_STATUS_REPORT;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	test_sms_header_exists = false;
 	at_monitor_dispatch("+CDS: 24\r\n06550A912143658709122022118314801220221183148000\r\n");
+	k_sleep(K_MSEC(1));
+	sms_ack_resp_handler("OK");
 
 	sms_unreg_helper();
 }
@@ -448,10 +456,12 @@ void test_send_len1_number20plus(void)
 	/* Receive SMS-STATUS-REPORT */
 	test_sms_data.type = SMS_TYPE_STATUS_REPORT;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	test_sms_header_exists = false;
 	at_monitor_dispatch("+CDS: 24\r\n06550A912143658709122022118314801220221183148000\r\n");
+	k_sleep(K_MSEC(1));
+	sms_ack_resp_handler("ERROR");
 
 	sms_unreg_helper();
 }
@@ -806,10 +816,11 @@ void test_recv_len3_number13(void)
 	test_sms_header.time.second = 34;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890123\",22\r\n"
 		"0791534874894320040D91214365870921F300001220900285438003CD771A\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -821,6 +832,7 @@ void test_recv_len3_number13(void)
  * - hexadecimal character in number is decoded into 1
  * - different number in AT command alpha parameter and SMS-DELIVER message
  *   TP-OA field.
+ * - -NRF_EINPROGRESS return value and resending of AT+CNMA=1.
  */
 void test_recv_len1_number9(void)
 {
@@ -840,10 +852,14 @@ void test_recv_len1_number9(void)
 	test_sms_header.time.second = 34;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(
+		sms_ack_resp_handler, "AT+CNMA=1", -NRF_EINPROGRESS);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234B67A9\",20\r\n"
 		"079153487489432004099121436BA7F90000122090028543800131\r\n");
+	k_sleep(K_MSEC(1100));
+	sms_ack_resp_handler("OK");
 
 	sms_unreg_helper();
 }
@@ -871,10 +887,11 @@ void test_recv_len8_number20(void)
 	test_sms_header.time.second = 34;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", -EBUSY);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", -EBUSY);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+12345678901234567890\",30\r\n"
 		"0791534874894320041491214365870921436587090000122090028543800831D98C56B3DD70\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -905,11 +922,12 @@ void test_recv_concat_len291_msgs2(void)
 		"123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123");
 	test_sms_header.concatenated.seq_number = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	sms_callback_called_occurred = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"0791534874894310440A912143658709000012201232054480A00500037E020162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966\r\n");
+	k_sleep(K_MSEC(1));
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
 
 	/* Part 2 */
@@ -918,10 +936,11 @@ void test_recv_concat_len291_msgs2(void)
 		"456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901");
 	test_sms_header.concatenated.seq_number = 2;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_occurred = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"0791534874894320440A912143658709000012201232054480910500037E02026835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031\r\n");
+	k_sleep(K_MSEC(1));
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
 
 	sms_unreg_helper();
@@ -961,11 +980,12 @@ void test_recv_concat_len755_msgs5(void)
 		"abcdefghijklmnopqr");
 	test_sms_header.concatenated.seq_number = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	sms_callback_called_occurred = false;
 	at_monitor_dispatch("+CMT: \"1234567890\",159\r\n"
 		"0791534874894310440A912143658709000012202280655080A0050003800501C2E231B96C3EA3D3EA35BBED7EC3E3F239BD6EBFE3F37A50583C2697CD67745ABD66B7DD6F785C3EA7D7ED777C5E0F0A8BC7E4B2F98C4EABD7ECB6FB0D8FCBE7F4BAFD8ECFEB4161F1985C369FD169F59ADD76BFE171F99C5EB7DFF1793D282C1E93CBE6333AAD5EB3DBEE373C2E9FD3EBF63B3EAF0785C56372D97C46A7D56B76DBFD86C7E5\r\n");
+	k_sleep(K_MSEC(1));
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
 
 	/* Part 4 */
@@ -980,10 +1000,11 @@ void test_recv_concat_len755_msgs5(void)
 		"abcdefghijklmnopqr");
 	test_sms_header.concatenated.seq_number = 4;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_occurred = false;
 	at_monitor_dispatch("+CMT: \"1234567890\",159\r\n"
 		"0791534874894370440A912143658709000012202280656080A0050003800504C2E231B96C3EA3D3EA35BBED7EC3E3F239BD6EBFE3F37A50583C2697CD67745ABD66B7DD6F785C3EA7D7ED777C5E0F0A8BC7E4B2F98C4EABD7ECB6FB0D8FCBE7F4BAFD8ECFEB4161F1985C369FD169F59ADD76BFE171F99C5EB7DFF1793D282C1E93CBE6333AAD5EB3DBEE373C2E9FD3EBF63B3EAF0785C56372D97C46A7D56B76DBFD86C7E5\r\n");
+	k_sleep(K_MSEC(1));
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
 
 	/* Part 2 */
@@ -996,10 +1017,11 @@ void test_recv_concat_len755_msgs5(void)
 		"abcdefghijklmnopqrstuvwxyz abcdefghi");
 	test_sms_header.concatenated.seq_number = 2;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_occurred = false;
 	at_monitor_dispatch("+CMT: \"1234567890\",159\r\n"
 		"0791534874894370440A912143658709000012202280656080A0050003800502E6F4BAFD8ECFEB4161F1985C369FD169F59ADD76BFE171F99C5EB7DFF1793D282C1E93CBE6333AAD5EB3DBEE373C2E9FD3EBF63B3EAF0785C56372D97C46A7D56B76DBFD86C7E5737ADD7EC7E7F5A0B0784C2E9BCFE8B47ACD6EBBDFF0B87C4EAFDBEFF8BC1E14168FC965F3199D56AFD96DF71B1E97CFE975FB1D9FD783C2E231B96C3EA3D3\r\n");
+	k_sleep(K_MSEC(1));
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
 
 	/* Part 3 */
@@ -1012,10 +1034,11 @@ void test_recv_concat_len755_msgs5(void)
 		"abcdefghijklmnopqrstuvwxyz ");
 	test_sms_header.concatenated.seq_number = 3;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_occurred = false;
 	at_monitor_dispatch("+CMT: \"1234567890\",159\r\n"
 		"0791534874894310440A912143658709000012202280656080A0050003800503D46B76DBFD86C7E5737ADD7EC7E7F5A0B0784C2E9BCFE8B47ACD6EBBDFF0B87C4EAFDBEFF8BC1E14168FC965F3199D56AFD96DF71B1E97CFE975FB1D9FD783C2E231B96C3EA3D3EA35BBED7EC3E3F239BD6EBFE3F37A50583C2697CD67745ABD66B7DD6F785C3EA7D7ED777C5E0F0A8BC7E4B2F98C4EABD7ECB6FB0D8FCBE7F4BAFD8ECFEB41\r\n");
+	k_sleep(K_MSEC(1));
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
 
 	/* Part 5 */
@@ -1028,10 +1051,11 @@ void test_recv_concat_len755_msgs5(void)
 		"abcdefghijklmnopqrstuvwxyz");
 	test_sms_header.concatenated.seq_number = 5;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_occurred = false;
 	at_monitor_dispatch("+CMT: \"1234567890\",151\r\n"
 		"0791534874894310440A91214365870900001220228065608096050003800505E6F4BAFD8ECFEB4161F1985C369FD169F59ADD76BFE171F99C5EB7DFF1793D282C1E93CBE6333AAD5EB3DBEE373C2E9FD3EBF63B3EAF0785C56372D97C46A7D56B76DBFD86C7E5737ADD7EC7E7F5A0B0784C2E9BCFE8B47ACD6EBBDFF0B87C4EAFDBEFF8BC1E14168FC965F3199D56AFD96DF71B1E97CFE975FB1D9FD703\r\n");
+	k_sleep(K_MSEC(1));
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
 
 	sms_unreg_helper();
@@ -1056,10 +1080,11 @@ void test_recv_special_characters(void)
 	test_sms_header.time.second = 34;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+123456789\",20\r\n"
 		"079153487489432004099121436587F90000122090028543802F5378799C0EB3416374581E1ED3CBF2B90EB4A1803628D02605DAF0401B1F68F3026D7AA00D10B429BB00\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1094,11 +1119,12 @@ void test_recv_concat_escape_character_last(void)
 		"12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012");
 	test_sms_header.concatenated.seq_number = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	sms_callback_called_occurred = false;
 	at_monitor_dispatch("+CMT: \"1234567890\",159\r\n"
 		"0791534874894370440A912143658709000012202280655080A005000351020162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC936\r\n");
+	k_sleep(K_MSEC(1));
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
 
 	/* Part 2 */
@@ -1106,10 +1132,11 @@ void test_recv_concat_escape_character_last(void)
 	sprintf(test_sms_data.payload, "%c1234567890", 0xA4);
 	test_sms_header.concatenated.seq_number = 2;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_occurred = false;
 	at_monitor_dispatch("+CMT: \"1234567890\",159\r\n"
 		"0791534874894370440A9121436587090000122022806550801305000351020236E5986C46ABD96EB81C0C\r\n");
+	k_sleep(K_MSEC(1));
 	TEST_ASSERT_EQUAL(sms_callback_called_expected, sms_callback_called_occurred);
 
 	sms_unreg_helper();
@@ -1138,10 +1165,11 @@ void test_recv_dcs1111_gsm7bit(void)
 	test_sms_header.time.second = 34;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+12345\",30\r\n"
 		"07915348748943200405912143F500F0122090028543800831D98C56B3DD70\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1169,10 +1197,11 @@ void test_recv_dcs1111_8bit(void)
 	test_sms_header.time.second = 34;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+12345\",30\r\n"
 		"07915348748943200405912143F500F4122090028543800F0102030405060708090A0B0C0D0E0F\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1204,10 +1233,11 @@ void test_recv_port_addr(void)
 	test_sms_header.concatenated.ref_number = 124;
 	test_sms_header.concatenated.seq_number = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"12345678\",22\r\n"
 		"004408812143658700041210032143652b1b0b05040b84000000037c01010102030405060708090A0B0C0D0E0F\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1248,10 +1278,11 @@ void test_recv_empty_sms_text(void)
 	test_sms_header.time.second = 34;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890\",18\r\n"
 		"00040A91214365870900001220900285438000\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1261,10 +1292,11 @@ void test_recv_invalid_hex_characters(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",18\r\n"
 		"00040A91214365870900001220A00285438009123456KLAB\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1277,10 +1309,11 @@ void test_recv_invalid_header_too_short(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",18\r\n"
 		"00040A91214365870900001220A0028543800\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1290,10 +1323,11 @@ void test_recv_fail_number21(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+123456789012345678901\",32\r\n"
 		"0004169121436587092143658709F10000122090028543800831D98C56B3DD70\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1303,11 +1337,12 @@ void test_recv_cmt_erroneous(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	/* Size missing (22\r\n) */
 	at_monitor_dispatch("+CMT: \"+1234567890\","
 		"0791534874894320040A91214365870900001220900285438003CD771A\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1317,9 +1352,10 @@ void test_recv_cmt_empty(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1329,10 +1365,11 @@ void test_recv_fail_invalid_dcs_ucs2(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"004408812143658700081210032143652b1c0b05040b84000000037c0101010203040506070809\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1342,10 +1379,11 @@ void test_recv_fail_invalid_dcs_reserved_value(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"0044088121436587000C1210032143652b1c0b05040b84000000037c0101010203040506070809\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1355,10 +1393,11 @@ void test_recv_fail_invalid_dcs_unsupported_format(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"004408812143658700801210032143652b1c0b05040b84000000037c0101010203040506070809\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1368,10 +1407,11 @@ void test_recv_fail_len161(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00040A912143658709000012201232054480A131D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1385,10 +1425,11 @@ void test_recv_fail_internal_pdu_buffer_too_short(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00040A912143658709000012201232054480A031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E560\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1402,10 +1443,11 @@ void test_recv_fail_internal_payload_buffer_too_short(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"0B912143658709214365870904149121436587092143658709000012201232054480A031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E560313233343536\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1428,10 +1470,11 @@ void test_recv_invalid_udl_shorter_than_ud_7bit(void)
 	test_sms_header.time.second = 44;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00040A9121436587090000122012320544802031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1458,10 +1501,11 @@ void test_recv_invalid_udl_longer_than_ud_7bit_len41(void)
 	test_sms_header.time.second = 44;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00040A9121436587090000122012320544802A31D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1488,10 +1532,11 @@ void test_recv_invalid_udl_longer_than_ud_7bit_len40(void)
 	test_sms_header.time.second = 44;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00040A9121436587090000122012320544802A31D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E560\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1514,10 +1559,11 @@ void test_recv_invalid_udl_longer_than_ud_8bit(void)
 	test_sms_header.time.second = 44;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00040A9121436587090004122012320544800A010203040506070809\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1540,10 +1586,11 @@ void test_recv_invalid_udl_shorter_than_ud_8bit(void)
 	test_sms_header.time.second = 44;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00040A9121436587090004122012320544800A0102030405060708090A0B0C0D0E0F\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1553,10 +1600,11 @@ void test_recv_fail_udhl_longer_than_udh(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00440A912143658709000012201232054480050500037E0201AAAA\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1566,10 +1614,11 @@ void test_recv_fail_udhl_longer_than_ud(void)
 {
 	sms_reg_helper();
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = false;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00440A91214365870900001220123205448004030201\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1597,10 +1646,11 @@ void test_recv_udh_with_datalen0(void)
 	test_sms_header.concatenated.ref_number = 171;
 	test_sms_header.concatenated.seq_number = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00440A91214365870900001220123205448006050003AB0101\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1631,10 +1681,11 @@ void test_recv_udh_with_datalen0_fill_byte(void)
 	test_sms_header.concatenated.ref_number = 171;
 	test_sms_header.concatenated.seq_number = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00440A91214365870900001220123205448007050003AB010100\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1662,10 +1713,11 @@ void test_recv_udh_with_datalen1(void)
 	test_sms_header.concatenated.ref_number = 171;
 	test_sms_header.concatenated.seq_number = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"00440A91214365870900001220123205448008050003AB010162\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1697,10 +1749,11 @@ void test_recv_invalid_udh_too_long_ie(void)
 	test_sms_header.app_port.present = false;
 	test_sms_header.concatenated.present = false;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"12345678\",22\r\n"
 		"004408812143658700041210032143652B1B0A05040B84111100037C010102030405060708090A0B0C0D0E0F\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1741,10 +1794,11 @@ void test_recv_invalid_udh_concat_ignored_portaddr_valid(void)
 
 	test_sms_header.concatenated.present = false;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"12345678\",22\r\n"
 		"004408812143658700041210032143652B2F1E00022A0100032A000200032A020000032A020304021100080511112222220102030405060708090A0B0C0D0E0F\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1785,10 +1839,11 @@ void test_recv_invalid_udh_portaddr_ignored_concat_valid(void)
 	test_sms_header.concatenated.ref_number = 4369;
 	test_sms_header.concatenated.seq_number = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"12345678\",22\r\n"
 		"004408812143658700041210032143652B2C1B01000804111101010400050712345678901234A1061234567890120102030405060708090A0B0C0D0E0F\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1813,10 +1868,11 @@ void test_recv_large_positive_time_zone_offset(void)
 	test_sms_header.time.second = 34;
 	test_sms_header.time.timezone = 55; /* +13:45 */
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890123\",22\r\n"
 		"0791534874894320040D91214365870921F300001220900285435503CD771A\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1841,10 +1897,11 @@ void test_recv_large_negative_time_zone_offset(void)
 	test_sms_header.time.second = 34;
 	test_sms_header.time.timezone = -55; /* -13:45 */
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890123\",22\r\n"
 		"0791534874894320040D91214365870921F300001220900285435D03CD771A\r\n");
+	k_sleep(K_MSEC(1));
 
 	sms_unreg_helper();
 }
@@ -1868,10 +1925,11 @@ void send_basic(void)
 	/* Receive SMS-STATUS-REPORT */
 	test_sms_data.type = SMS_TYPE_STATUS_REPORT;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	test_sms_header_exists = false;
 	at_monitor_dispatch("+CDS: 24\r\n06550A912143658709122022118314801220221183148000\r\n");
+	k_sleep(K_MSEC(1));
 }
 
 /**
@@ -1896,10 +1954,11 @@ void recv_basic(void)
 	test_sms_header.time.second = 34;
 	test_sms_header.time.timezone = 8;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
 		"0791534874894320040A91214365870900001220900285438003CD771A\r\n");
+	k_sleep(K_MSEC(1));
 }
 
 /**

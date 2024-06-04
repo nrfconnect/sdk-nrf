@@ -19,14 +19,14 @@
 #include <helpers/nrfx_gppi.h>
 #include "iso_time_sync.h"
 
-#define GPIOTE_INST NRF_DT_GPIOTE_INST(DT_ALIAS(led0), gpios)
+#define GPIOTE_INST NRF_DT_GPIOTE_INST(DT_ALIAS(led1), gpios)
 #define GPIOTE_NODE DT_NODELABEL(_CONCAT(gpiote, GPIOTE_INST))
 
 BUILD_ASSERT(IS_ENABLED(_CONCAT(CONFIG_, _CONCAT(NRFX_GPIOTE, GPIOTE_INST))),
 	     "NRFX_GPIOTE" STRINGIFY(GPIOTE_INST) " must be enabled in Kconfig");
 
 static const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(GPIOTE_INST);
-static struct gpio_dt_spec led = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios, {0});
+static struct gpio_dt_spec led = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led1), gpios, {0});
 
 static uint8_t previous_led_value;
 

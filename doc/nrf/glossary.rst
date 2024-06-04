@@ -79,9 +79,19 @@ Glossary
       A layer of the Bluetooth LE protocol stack comprised of multiple (non real-time) network and transport protocols enabling applications to communicate with peer devices in a standard and interoperable way.
 
    Board
-      In Zephyr and the |NCS|, the name of a specific supported hardware target.
-      Every board has a software support package in a file system directory.
-      The support package includes a :term:`devicetree <Devicetree>` describing the hardware, :term:`Kconfig files <Kconfig file>` and :term:`fragments <Kconfig fragment>` defining its default software configuration, and may include target-specific source files, documentation, and other metadata.
+      In Zephyr and the |NCS|, a target system with a defined set of devices and capabilities, which can load and execute an application image.
+      A board can contain one or more :term:`System on Chip (SoC)` and follows Zephyr's :ref:`zephyr:hw_support_hierarchy`.
+
+      This hierarchy is reflected in the file structure used to describe the board.
+      The file structure includes :term:`devicetree <Devicetree>` files describing the hardware, :term:`Kconfig files <Kconfig file>` and :term:`fragments <Kconfig fragment>` defining its default software configuration, and may include target-specific source files, documentation, and other metadata.
+
+      The file structure for boards matches the :ref:`zephyr:board_terminology`, which defines the board targets available for the given board.
+      You can choose a board target for your application when you are :ref:`adding or editing a build configuration <building>`.
+
+      For the list of boards supported by the |NCS|, see :ref:`app_boards`.
+
+   Board Information Configuration Registers (BICR)
+      Non-volatile memory (NVM) registers that contain information on how the SoC must interact with other board elements, including the information about the power and clock delivery to the SoC.
 
    Branch
       A line of development composed of a sequence of Git :term:`commits <Commit>`.
@@ -182,6 +192,12 @@ Glossary
 
    Development Kit (DK)
       A hardware development platform used for application development.
+      See :ref:`app_boards_names` for more information.
+
+   Device
+      A piece of hardware that is considered together with the software it is running.
+      For example, this can be a :term:`development kit (DK)` provided by Nordic Semiconductor and programmed with a sample from the |NCS|, a prototyping platform such as Nordic Thingy:53 programmed with the :ref:`Matter weather station <matter_weather_station_app>` application, or the nPM1300 EK connected to a compatible development kit.
+      These can also be third-party development kits compatible with Nordic :term:`boards <Board>` or end-user devices.
 
    Device Firmware Update (DFU)
       A mechanism for upgrading the firmware of a device.

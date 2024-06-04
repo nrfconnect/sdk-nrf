@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf54h20dk_nrf54h20_memory_map.dtsi"
+
+/ {
+	chosen {
+		extmem-device = &mx25uw63;
+		zephyr,code-partition = &companion_partition;
+	};
+};
+
+&cpusec_cpuapp_ipc {
+	status = "okay";
+};
+
+&cpusec_bellboard {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&mx25uw63 {
+	status = "okay";
+};
+
+&uart136 {
+	status = "disabled";
+};
+
+&cpurad_bellboard {
+	status = "disabled";
+};
+
+&pwm120 {
+	status = "disabled";
+};
+
+&cpuapp_cpurad_ipc {
+	status = "disabled";
+};
+
+&prng {
+	status = "disabled";
+};

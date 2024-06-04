@@ -2,6 +2,7 @@ sample:
   name: UDP sample
 tests:
   sample.net.udp:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf9160dk/nrf9160/ns
@@ -15,11 +16,12 @@ tests:
       - nrf9151dk/nrf9151/ns
       - thingy91/nrf9160/ns
       - nrf7002dk/nrf5340/cpuapp/ns
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.net.udp.emulation:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - native_sim
     platform_allow:
       - native_sim
-    tags: ci_build
+    tags: ci_build sysbuild

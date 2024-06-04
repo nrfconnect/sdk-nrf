@@ -64,30 +64,30 @@ If the current sending function succeeds and :ref:`CONFIG_SLM_DATAMODE_URC <CONF
 The ``<size>`` value is a positive integer.
 This Unsolicited Result Code (URC) can also be used to impose flow control on uplink sending.
 
+.. note::
+  If the sending operation fails due to a network problem while in data mode, the SLM application moves to a state where the data received from UART is dropped until the MCU sends the termination command :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>`.
+
 Exiting data mode
 =================
 
-To exit data mode, the MCU sends the termination command set by the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` configuration option over UART.
+To exit the data mode, the MCU sends the termination command set by the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` configuration option over UART.
 
 The pattern string could be sent alone or as an affix to the data.
 The pattern string must be sent in full.
 
-If the current sending function fails, the SLM application exits data mode and returns the error code as ``#XDATAMODE: <error>``.
-The ``<error>`` value is a negative integer.
+When exiting the data mode, the SLM application sends the ``#XDATAMODE`` unsolicited notification.
 
-When exiting data mode, the SLM application sends ``#XDATAMODE: 0`` as an unsolicited notification.
-
-After exiting data mode, the SLM application returns to the AT command mode.
+After exiting the data mode, the SLM application returns to the AT command mode.
 
 .. note::
-  Previously, the SLM application exited data mode automatically in the following scenarios:
+  The SLM application sends the termination string :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` and moves to a state where the data received on the UART is dropped in the following scenarios:
 
-  * The TCP server is stopped.
+  * The TCP server is stopped due to an error.
   * The remote server disconnects the TCP client.
   * The TCP client disconnects from the remote server due to an error.
   * The UDP client disconnects from the remote server due to an error.
 
-  Currently, in these scenarios, the SLM application moves to a state where the data received from UART is dropped until the MCU sends the termination command.
+  For SLM to stop dropping the data received from UART and move to AT-command mode, the MCU needs to send the termination command :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` back to the SLM application.
 
 Triggering the transmission
 ===========================
@@ -214,22 +214,17 @@ Response syntax
 Exit data mode #XDATAMODE
 =========================
 
-When the application exits data mode, it sends the ``#XDATAMODE`` unsolicited notification.
+When the application receives the termination command :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` in data mode, it sends the ``#XDATAMODE`` unsolicited notification.
 
 Unsolicited notification
 ------------------------
 
-The application sends the following unsolicited notification when it exits data mode:
-
 ::
 
-   #XDATAMODE: <size>
-   #XDATAMODE: <error>
-   #XDATAMODE: 0
+   #XDATAMODE: <status>
 
-The ``<size>`` value returns a positive integer indicating the total size of the sending operation in data mode.
-The ``<error>`` value returns a negative integer indicating the error code of the sending operation in data mode.
-The ``0`` value indicates that the SLM application quit data mode and returned to AT command mode.
+The ``<status>`` value ``0`` indicates that the data mode operation was successful.
+A negative value indicates the error code of the failing operation.
 
 Example
 ~~~~~~~
@@ -239,6 +234,5 @@ Example
    AT#XSEND
    OK
    Test TCP datamode
-   #XDATAMODE: 15
    +++
    #XDATAMODE: 0

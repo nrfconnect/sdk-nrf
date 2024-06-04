@@ -22,18 +22,19 @@ The measurement setup consists of:
 
 The leader board is flashed with the regular :ref:`Thread CLI sample <ot_cli_sample>` firmware.
 
-   .. code-block::
+.. code-block::
 
-      cd ncs/nrf/samples/openthread/cli/
-      west build -b nrf52840dk/nrf52840 -S ci -S logging
+   cd ncs/nrf/samples/openthread/cli/
+   west build -b nrf52840dk/nrf52840 -- -Dcli_SNIPPET="ci;logging"
 
 The DUT board is flashed with the :ref:`Thread CLI sample low power mode <ot_cli_sample_low_power>` firmware.
-In the build command below, replace ``build-target`` with the build target name of the DUT.
+In the build command below, replace *board_target* with the board target name of the DUT.
 
-   .. code-block::
+.. parsed-literal::
+   :class: highlight
 
-      cd ncs/nrf/samples/openthread/cli/
-      west build -b build-target -S ci -S low_power
+   cd ncs/nrf/samples/openthread/cli/
+   west build -b *board_target* -- -Dcli_SNIPPET="ci;low_power"
 
 
 After the Thread network is enabled on the leader, the child is configured with the desired parameters.

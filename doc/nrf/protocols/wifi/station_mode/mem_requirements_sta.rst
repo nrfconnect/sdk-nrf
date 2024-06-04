@@ -13,7 +13,7 @@ Footprint values are provided in kilobytes (KB).
 
    .. tab:: nRF52840 DK
 
-      The following table lists memory requirements for sample running on the :ref:`nRF52840 DK <programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`).
+      The following table lists memory requirements for sample running on the :ref:`nRF52840 DK <programming_board_names>` (:ref:`nrf52840dk/nrf52840 <zephyr:nrf52840dk_nrf52840>`).
 
       +--------------------------------------+-------------+-------------------------------------------+-----------------------------+----------------------+---------------------------------+--------------------+----------------------+
       | Sample                               |   Total ROM |   Wi-Fi driver ROM                        |          nRF70 FW patch ROM |   WPA supplicant ROM |   Total RAM (incl. static heap) |   Wi-Fi driver RAM |   WPA supplicant RAM |
@@ -23,7 +23,7 @@ Footprint values are provided in kilobytes (KB).
 
    .. tab:: nRF7002 DK
 
-      The following table lists memory requirements for samples running on the :ref:`nRF7002 DK <programming_board_names>` (:ref:`nrf7002dk_nrf5340_cpuapp <nrf7002dk_nrf5340>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF7002 DK <programming_board_names>` (:ref:`nrf7002dk/nrf5340/cpuapp <nrf7002dk_nrf5340>`).
 
       +-----------------------------------------------+-------------+-------------------------------------------+-------------------------------+----------------------+---------------------------------+--------------------+----------------------+
       | Sample                                        |   Total ROM |   Wi-Fi driver ROM                        |            nRF70 FW patch ROM |   WPA supplicant ROM |   Total RAM (incl. static heap) |   Wi-Fi driver RAM |   WPA supplicant RAM |
@@ -45,4 +45,4 @@ Footprint values are provided in kilobytes (KB).
 
       .. note::
 
-         The footprint of the networking samples for the Zephyr image is derived from the ``_ns`` build.
+         The footprint of the networking samples for the Zephyr image is derived from the board target with :ref:`Cortex-M Security Extensions enabled <app_boards_spe_nspe_cpuapp_ns>` (``*/ns`` :ref:`variant <app_boards_names>`).

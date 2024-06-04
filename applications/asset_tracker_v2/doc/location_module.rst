@@ -72,9 +72,9 @@ The following is an example of the CLI command:
 .. parsed-literal::
    :class: highlight
 
-    west build -p -b *build_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+    west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
 
-Replace the *build_target* with the build target of the DK you are using (see :ref:`asset_tracker_v2_requirements`).
+Replace the *board_target* with the board target of the DK you are using (see :ref:`asset_tracker_v2_requirements`).
 
 Wi-Fi positioning has the following limitations:
 

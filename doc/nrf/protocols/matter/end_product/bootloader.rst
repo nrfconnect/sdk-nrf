@@ -24,7 +24,12 @@ MCUboot minimal configuration
 MCUboot is by default configured to enable debug features, such as logs.
 You can reduce the size of the bootloader image by disabling unnecessary features.
 
-See the `Kconfig.mcuboot.defaults`_ file for the MCUboot minimal configuration used by :ref:`Matter samples <matter_samples>` in the |NCS|.
+See the following files for the MCUboot minimal configuration used by :ref:`Matter samples <matter_samples>` in the |NCS|:
+
+* :file:`prj.conf` file located in each sample's :file:`sysbuild/mcuboot` directory
+* Board files located in each sample's :file:`sysbuild/mcuboot/boards` directory
+* :file:`Kconfig.sysbuild` file located in each sample's directory.
+
 This configuration allows to reduce the flash partition occupied by MCUboot to 24 kB.
 
 .. _ug_matter_device_bootloader_partition_layout:

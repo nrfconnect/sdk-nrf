@@ -9,6 +9,7 @@
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/zbus/zbus.h>
+#include <zephyr/sys/byteorder.h>
 
 #include "nrf5340_audio_common.h"
 #include "nrf5340_audio_dk.h"
@@ -38,6 +39,8 @@ static struct k_thread le_audio_msg_sub_thread_data;
 
 static k_tid_t button_msg_sub_thread_id;
 static k_tid_t le_audio_msg_sub_thread_id;
+
+struct bt_le_ext_adv *ext_adv;
 
 K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
 K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
@@ -78,12 +81,12 @@ static void button_msg_sub_thread(void)
 		switch (msg.button_pin) {
 		case BUTTON_PLAY_PAUSE:
 			if (strm_state == STATE_STREAMING) {
-				ret = broadcast_source_stop();
+				ret = broadcast_source_stop(0);
 				if (ret) {
 					LOG_WRN("Failed to stop broadcaster: %d", ret);
 				}
 			} else if (strm_state == STATE_PAUSED) {
-				ret = broadcast_source_start(NULL);
+				ret = broadcast_source_start(0, ext_adv);
 				if (ret) {
 					LOG_WRN("Failed to start broadcaster: %d", ret);
 				}
@@ -236,7 +239,9 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 	case BT_MGMT_EXT_ADV_WITH_PA_READY:
 		LOG_INF("Ext adv ready");
 
-		ret = broadcast_source_start(msg->ext_adv);
+		ext_adv = msg->ext_adv;
+
+		ret = broadcast_source_start(msg->index, ext_adv);
 		if (ret) {
 			LOG_ERR("Failed to start broadcaster: %d", ret);
 		}
@@ -298,7 +303,7 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 	struct le_audio_encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
 
 	if (strm_state == STATE_STREAMING) {
-		ret = broadcast_source_send(enc_audio);
+		ret = broadcast_source_send(0, enc_audio);
 
 		if (ret != 0 && ret != prev_ret) {
 			if (ret == -ECANCELED) {
@@ -312,11 +317,67 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 	}
 }
 
+#if CONFIG_CUSTOM_BROADCASTER
+/* Example of how to create a custom broadcaster */
+/**
+ * Remember to increase:
+ * CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT
+ * CONFIG_BT_CTLR_ADV_ISO_STREAM_COUNT (set in hci_ipc.conf)
+ * CONFIG_BT_ISO_TX_BUF_COUNT
+ * CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT
+ * CONFIG_BT_ISO_MAX_CHAN
+ */
+#error Feature is incomplete and should only be used as a guideline for now
+static struct bt_bap_lc3_preset lc3_preset_48 = BT_BAP_LC3_BROADCAST_PRESET_48_4_1(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static void broadcast_create(struct broadcast_source_big *broadcast_param)
+{
+	static enum bt_audio_location location[2] = {BT_AUDIO_LOCATION_FRONT_LEFT,
+						     BT_AUDIO_LOCATION_FRONT_RIGHT};
+	static struct subgroup_config subgroups[2];
+
+	subgroups[0].group_lc3_preset = lc3_preset_48;
+	subgroups[0].num_bises = 2;
+	subgroups[0].context = BT_AUDIO_CONTEXT_TYPE_MEDIA;
+	subgroups[0].location = location;
+
+	subgroups[1].group_lc3_preset = lc3_preset_48;
+	subgroups[1].num_bises = 2;
+	subgroups[1].context = BT_AUDIO_CONTEXT_TYPE_MEDIA;
+	subgroups[1].location = location;
+
+	broadcast_param->packing = BT_ISO_PACKING_INTERLEAVED;
+
+	broadcast_param->encryption = false;
+
+	bt_audio_codec_cfg_meta_set_bcast_audio_immediate_rend_flag(
+		&subgroups[0].group_lc3_preset.codec_cfg);
+	bt_audio_codec_cfg_meta_set_bcast_audio_immediate_rend_flag(
+		&subgroups[1].group_lc3_preset.codec_cfg);
+
+	uint8_t spanish_src[3] = "spa";
+	uint8_t english_src[3] = "eng";
+
+	bt_audio_codec_cfg_meta_set_stream_lang(&subgroups[0].group_lc3_preset.codec_cfg,
+						(uint32_t)sys_get_le24(english_src));
+	bt_audio_codec_cfg_meta_set_stream_lang(&subgroups[1].group_lc3_preset.codec_cfg,
+						(uint32_t)sys_get_le24(spanish_src));
+
+	broadcast_param->subgroups = subgroups;
+	broadcast_param->num_subgroups = 2;
+}
+#endif /* CONFIG_CUSTOM_BROADCASTER */
+
 int main(void)
 {
 	int ret;
-	static const struct bt_data *ext_adv;
-	static const struct bt_data *per_adv;
+
+	static struct broadcast_source_big broadcast_param;
+	static const struct bt_data *ext_ad;
+	static const struct bt_data *per_ad;
+	size_t ext_ad_size = 0;
+	size_t per_ad_size = 0;
 
 	LOG_DBG("nRF5340 APP core started");
 
@@ -326,27 +387,29 @@ int main(void)
 	ret = nrf5340_audio_common_init();
 	ERR_CHK(ret);
 
-	size_t ext_adv_size = 0;
-	size_t per_adv_size = 0;
-
 	ret = zbus_subscribers_create();
 	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
 
 	ret = zbus_link_producers_observers();
 	ERR_CHK_MSG(ret, "Failed to link zbus producers and observers");
 
-	ret = broadcast_source_enable();
-	ERR_CHK_MSG(ret, "Failed to enable broadcaster");
+	broadcast_source_default_create(&broadcast_param);
+
+	/* Only one BIG supported at the moment */
+	ret = broadcast_source_enable(&broadcast_param, 1);
+	ERR_CHK_MSG(ret, "Failed to enable broadcaster(s)");
 
 	ret = audio_system_config_set(
 		bt_audio_codec_cfg_freq_to_freq_hz(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE),
 		CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC, VALUE_NOT_SET);
 	ERR_CHK_MSG(ret, "Failed to set sample- and bitrate");
 
-	broadcast_source_adv_get(&ext_adv, &ext_adv_size, &per_adv, &per_adv_size);
+	/* Get advertising set for BIG0 */
+	broadcast_source_adv_get(0, &ext_ad, &ext_ad_size, &per_ad, &per_ad_size);
 
-	ret = bt_mgmt_adv_start(ext_adv, ext_adv_size, per_adv, per_adv_size, false);
-	ERR_CHK_MSG(ret, "Failed to start advertiser");
+	/* Start broadcaster */
+	ret = bt_mgmt_adv_start(0, ext_ad, ext_ad_size, per_ad, per_ad_size, false);
+	ERR_CHK_MSG(ret, "Failed to start first advertiser");
 
 	return 0;
 }

@@ -17,8 +17,8 @@ menuconfig WIFI_NRF700X
 	select EXPERIMENTAL if !SOC_SERIES_NRF53X && !SOC_SERIES_NRF91X
 	help
 	  Nordic Wi-Fi Driver
-if WIFI_NRF700X
 
+if WIFI_NRF700X
 module = WIFI_NRF700X_BUS
 module-dep = LOG
 module-str = Log level for Wi-Fi nRF700x bus layers
@@ -39,14 +39,12 @@ choice NRF700X_OPER_MODES
 
 config NRF700X_SYSTEM_MODE
 	bool "Enable nRF700X system mode"
-	select NET_L2_WIFI_MGMT
 	depends on WPA_SUPP
 	help
 	  Select this option to enable system mode of the nRF700x driver
 
 config NRF700X_SCAN_ONLY
 	bool "Enable nRF700X scan only mode"
-	select NET_L2_WIFI_MGMT
 	help
 	  Select this option to enable scan only mode of the nRF700x driver
 
@@ -62,7 +60,6 @@ config NRF700X_SYSTEM_WITH_RAW_MODES
 endchoice
 
 if NRF700X_SYSTEM_MODE || NRF700X_SYSTEM_WITH_RAW_MODES
-
 config NRF700X_STA_MODE
 	bool "Enable nRF700X STA mode"
 	default y
@@ -145,7 +142,6 @@ config NRF_WIFI_PATCHES_EXT_FLASH_STORE
 endchoice
 
 if NRF_WIFI_PATCHES_EXT_FLASH_STORE
-
 config NRF_WIFI_FW_FLASH_CHUNK_SIZE
 	int "Chunk size for nRF70 FW patches to be read from external flash"
 	default 8192
@@ -209,7 +205,7 @@ config NRF700X_TCP_IP_CHECKSUM_OFFLOAD
 
 config NRF700X_REG_DOMAIN
 	string "The ISO/IEC alpha2 country code for the country in which this device is currently operating. Default 00 (World regulatory)"
-# 00 is used for World regulatory
+	# 00 is used for World regulatory
 	default "00"
 
 # Making calls to RPU from net_mgmt callbacks.
@@ -490,7 +486,6 @@ config NRF700X_RX_WQ_STACK_SIZE
 endif
 
 if NRF_WIFI_LOW_POWER
-
 config NRF700X_RPU_PS_IDLE_TIMEOUT_MS
 	int "RPU power save idle timeout in milliseconds"
 	default 10
@@ -516,7 +511,33 @@ endif
 config WIFI_FIXED_MAC_ADDRESS
 	string "WiFi Fixed MAC address in format XX:XX:XX:XX:XX:XX"
 	help
-		This overrides the MAC address read from OTP. Strictly for testing purposes only.
+	  This overrides the MAC address read from OTP. Strictly for testing purposes only.
+
+choice
+	prompt "Wi-Fi MAC address type"
+	default WIFI_OTP_MAC_ADDRESS if WIFI_FIXED_MAC_ADDRESS = ""
+	default WIFI_FIXED_MAC_ADDRESS_ENABLED if WIFI_FIXED_MAC_ADDRESS != ""
+	help
+	  Select the type of MAC address to be used by the Wi-Fi driver
+
+config WIFI_OTP_MAC_ADDRESS
+	bool "Use MAC address from OTP"
+	help
+	  This option uses the MAC address stored in the OTP memory of the nRF700x.
+
+config WIFI_FIXED_MAC_ADDRESS_ENABLED
+	bool "Enable fixed MAC address"
+	help
+	  Enable fixed MAC address
+
+config WIFI_RANDOM_MAC_ADDRESS
+	bool "Enable random MAC address generation at runtime"
+	depends on ENTROPY_GENERATOR
+	help
+	  This option enables random MAC address generation at runtime.
+	  The random MAC address is generated using the entropy device random generator.
+
+endchoice
 
 config NRF700X_RSSI_STALE_TIMEOUT_MS
 	int "RSSI stale timeout in milliseconds"
@@ -535,7 +556,6 @@ config NRF700X_RSSI_STALE_TIMEOUT_MS
 	  info.
 
 if NETWORKING
-
 # Finetune defaults for certain system components used by the driver
 config HEAP_MEM_POOL_SIZE
 	default 153000
@@ -603,6 +623,7 @@ config NRF_WIFI_IFACE_MTU
 	range 576 2304 if NET_IPV4
 	range 1280 2304 if NET_IPV6
 	default 1500
+
 config WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC
 	bool "Suppress networks with non-individual MAC address as BSSID in the scan results"
 	help
@@ -612,6 +633,7 @@ config WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC
 	  that has globally unique MAC address.
 
 	  So, to save resources, this option drops such networks from the scan results.
+
 config WIFI_NRF700X_SCAN_DISABLE_DFS_CHANNELS
 	bool "Disables DFS channels in scan operation"
 	help
@@ -629,3 +651,30 @@ config NRF_WIFI_AP_DEAD_DETECT_TIMEOUT
 	help
 		The number of seconds after which AP is declared dead if no beacons
 		are received from the AP. Used to detect AP silently going down e.g., power off.
+
+config NRF_WIFI_RPU_RECOVERY
+	bool "Enable RPU recovery mechanism"
+	select EXPERIMENTAL
+	default y
+	help
+		Enable RPU recovery mechanism to recover from RPU (nRF70) hang.
+		This feature performs an interface reset (down and up) which triggers
+		a RPU coldboot. Application's network connection will be lost during
+		the recovery process and it is application's responsibility to
+		re-establish the network connection.
+
+if NRF_WIFI_RPU_RECOVERY
+
+config NRF_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS
+	int "RPU recovery propagation delay in milliseconds"
+	default 10
+	help
+		Propagation delay in milliseconds to wait after RPU is powered down
+		before powering it up. This delay is required to ensure that the recovery
+		is propagted to all the applications and stack and have enough time to
+		clean up the resources.
+
+config NET_MGMT_EVENT_QUEUE_SIZE
+	# Doing interface down and up even with delay puts a lot of events in the queue
+	default 16
+endif

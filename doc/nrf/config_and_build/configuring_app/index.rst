@@ -43,14 +43,14 @@ Just as for creating the application, you can build the application using either
 
             cd nrf/samples/cellular/at_client
 
-      #. Build the application by using the following west command with the *build_target* specified:
+      #. Build the application by using the following west command with the *board_target* specified:
 
          .. parsed-literal::
             :class: highlight
 
-            west build -b *build_target*
+            west build -b *board_target*
 
-         See :ref:`programming_board_names` for more information on the supported boards and build targets.
+         See :ref:`programming_board_names` for more information on the supported boards and board targets.
          The board targets supported for a given application are always listed in its requirements section.
 
          After running the ``west build`` command, the build files can be found in :file:`build/zephyr`.

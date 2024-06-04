@@ -143,6 +143,14 @@ typedef struct {
 	suit_manifest_role_t role;
 } suit_manifest_class_info_t;
 
+/* Component numbers for Secure Domain components */
+typedef enum {
+	/* Secure Domain FW */
+	SUIT_SECDOM_COMPONENT_NUMBER_SDFW = 1,
+	/* Secure Domain Recovery FW */
+	SUIT_SECDOM_COMPONENT_NUMBER_SDFW_RECOVERY = 2,
+} suit_secure_domain_component_number_t;
+
 /**
  * @brief Checks if two suit_uuid_t structures hold the same uuid value
  *

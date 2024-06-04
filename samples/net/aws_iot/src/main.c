@@ -62,12 +62,12 @@ static int app_topics_subscribe(void)
 	static const struct mqtt_topic topic_list[] = {
 		{
 			.topic.utf8 = MY_CUSTOM_TOPIC_1,
-			.topic.size = strlen(MY_CUSTOM_TOPIC_1),
+			.topic.size = sizeof(MY_CUSTOM_TOPIC_1) - 1,
 			.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 		},
 		{
 			.topic.utf8 = MY_CUSTOM_TOPIC_2,
-			.topic.size = strlen(MY_CUSTOM_TOPIC_2),
+			.topic.size = sizeof(MY_CUSTOM_TOPIC_2) - 1,
 			.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 		}
 	};

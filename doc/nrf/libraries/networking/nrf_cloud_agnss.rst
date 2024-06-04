@@ -28,10 +28,10 @@ While ionospheric corrections can also be downloaded from the satellite broadcas
 Configuration
 *************
 
-Configure the following options to enable or disable the use of this library:
+Configure the following Kconfig options to enable or disable the use of this library:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGNSS`
-* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:option:`CONFIG_NRF_CLOUD_REST`
+* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT`, :kconfig:option:`CONFIG_NRF_CLOUD_REST`, or :kconfig:option:`CONFIG_NRF_CLOUD_COAP`
 
 See :ref:`configure_application` for information on how to change configuration options.
 
@@ -44,7 +44,10 @@ A-GNSS data can be requested using one of the following methods:
 * By requesting all the available assistance data.
 
 If :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is enabled, the :c:func:`nrf_cloud_agnss_request` function is used to request by type, and the :c:func:`nrf_cloud_agnss_request_all` function is used to return all available assistance data.
+
 If :kconfig:option:`CONFIG_NRF_CLOUD_REST` is enabled, the :c:func:`nrf_cloud_rest_agnss_data_get` function is used to request A-GNSS data.
+
+If :kconfig:option:`CONFIG_NRF_CLOUD_COAP` is enabled, the :c:func:`nrf_cloud_coap_agnss_data_get` function is used to request A-GNSS data.
 
 When nRF Cloud responds with the requested A-GNSS data, the :c:func:`nrf_cloud_agnss_process` function processes the received data.
 The function parses the data and passes it on to the modem.
@@ -70,7 +73,7 @@ Ephemerides for 32 GPS satellites are two kB, while everything else (almanacs, U
 Ephemerides are only valid for two to four hours.
 To have valid ephemerides at all times, new ephemerides need to be downloaded on average every two hours.
 The cumulative amount of data for ephemerides for a day would then be 24 kB (24 / 2 * 2 kB).
-Of rest of the data types, almanacs are by far the largest.
+Of the rest of the data types, almanacs are by far the largest.
 Almanacs are valid for weeks, so the data usage depends mostly on the need of ephemerides.
 
 .. _agnss_filtered_ephemerides:

@@ -8,8 +8,9 @@ menu "General Kernel Options"
 
 menuconfig NCS_BOOT_BANNER
 	bool "NCS boot banner"
-	depends on BOOT_BANNER
 	default y
+	select PRINTK
+	select EARLY_CONSOLE
 	help
 	  This option provided an enhanced boot banner output that can include application name
 	  and version (if set), NCS version and underlying zephyr version.

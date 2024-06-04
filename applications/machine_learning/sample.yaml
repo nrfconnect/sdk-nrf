@@ -3,6 +3,7 @@ sample:
   description: Machine learning application reference design
 tests:
   applications.machine_learning.zdebug:
+    sysbuild: true
     build_only: true
     platform_allow: >
       nrf52840dk/nrf52840 thingy53/nrf5340/cpuapp thingy53/nrf5340/cpuapp/ns
@@ -12,28 +13,31 @@ tests:
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
       - nrf5340dk/nrf5340/cpuapp
-    tags: ci_build
+    tags: ci_build sysbuild
   applications.machine_learning.zdebug_nus:
+    sysbuild: true
     build_only: true
     platform_allow: nrf52840dk/nrf52840
     integration_platforms:
       - nrf52840dk/nrf52840
-    tags: ci_build
-    extra_args: CONF_FILE=prj_nus.conf
+    tags: ci_build sysbuild
+    extra_args: FILE_SUFFIX=nus
   applications.machine_learning.zdebug_rtt:
+    sysbuild: true
     build_only: true
     platform_allow: thingy53/nrf5340/cpuapp thingy53/nrf5340/cpuapp/ns
     integration_platforms:
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
-    tags: ci_build
-    extra_args: CONF_FILE=prj_rtt.conf
+    tags: ci_build sysbuild
+    extra_args: FILE_SUFFIX=rtt
   applications.machine_learning.zrelease:
+    sysbuild: true
     build_only: true
     platform_allow: nrf52840dk/nrf52840 thingy53/nrf5340/cpuapp thingy53/nrf5340/cpuapp/ns
     integration_platforms:
       - nrf52840dk/nrf52840
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
-    tags: ci_build
-    extra_args: CONF_FILE=prj_release.conf
+    tags: ci_build sysbuild
+    extra_args: FILE_SUFFIX=release

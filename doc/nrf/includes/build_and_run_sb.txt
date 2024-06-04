@@ -5,7 +5,7 @@ To build the sample, you need to add the ``--sysbuild`` argument to the ``west b
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* --sysbuild
+   west build -b *board_target* --sysbuild
 
 This way, code for all the cores will be compiled, and the ``west flash`` command will program them.
 

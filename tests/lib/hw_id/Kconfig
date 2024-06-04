@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "hw_id test config"
+	depends on BOARD_NATIVE_POSIX
+
+config HW_ID_OVERRIDE_FILE
+	string "Override file"
+
+endmenu
+
+source "Kconfig.zephyr"

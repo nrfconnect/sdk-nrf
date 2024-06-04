@@ -188,8 +188,8 @@ Working with nRF91 Series
 
   * New partition layout configuration options for Thingy:91.
     See :ref:`thingy91_partition_layout` for more details.
-  * :ref:`ug_nrf9161` user guide.
-  * A section on :ref:`tfm_enable_share_uart` in :ref:`ug_nrf9160`.
+  * Developing with nRF9161 DK user guide.
+  * A section on :ref:`tfm_enable_share_uart` in the developing with nRF9161 DK user guide.
 
 * Updated:
 

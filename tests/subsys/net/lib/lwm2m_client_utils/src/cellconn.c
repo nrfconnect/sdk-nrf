@@ -62,7 +62,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_disable_radio_period_cb)
 
 	setup();
 
-	rc = set_uri_cb(10, 0, 1, (uint8_t *)&period, sizeof(period), true, sizeof(period));
+	rc = set_uri_cb(10, 0, 1, (uint8_t *)&period, sizeof(period), true, sizeof(period), 0);
 	zassert_equal(rc, 0, "Wrong return value");
 	k_sleep(K_SECONDS(70)); /* Wait for timer */
 }
@@ -74,7 +74,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_psm_time_cb)
 
 	setup();
 
-	rc = set_uri_cb_psm(10, 0, 4, (uint8_t *)&time, sizeof(time), true, sizeof(time));
+	rc = set_uri_cb_psm(10, 0, 4, (uint8_t *)&time, sizeof(time), true, sizeof(time), 0);
 	zassert_equal(rc, 0, "Wrong return value");
 }
 
@@ -85,7 +85,8 @@ ZTEST(lwm2m_client_utils_cellconn, test_active_time_cb)
 
 	setup();
 
-	rc = set_uri_cb_active_time(10, 0, 5, (uint8_t *)&time, sizeof(time), true, sizeof(time));
+	rc = set_uri_cb_active_time(10, 0, 5, (uint8_t *)&time, sizeof(time),
+				    true, sizeof(time), 0);
 	zassert_equal(rc, 0, "Wrong return value");
 }
 
@@ -96,7 +97,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_edrx_update_cb)
 
 	setup();
 
-	rc = set_uri_cb_edrx(10, 0, 8, &data, sizeof(data), true, sizeof(data));
+	rc = set_uri_cb_edrx(10, 0, 8, &data, sizeof(data), true, sizeof(data), 0);
 	zassert_equal(rc, 0, "Wrong return value");
 }
 
@@ -107,7 +108,7 @@ ZTEST(lwm2m_client_utils_cellconn, test_active_psm_update_cb)
 
 	setup();
 
-	rc = set_uri_cb_psm_update(10, 0, 13, &psm, sizeof(psm), true, sizeof(psm));
+	rc = set_uri_cb_psm_update(10, 0, 13, &psm, sizeof(psm), true, sizeof(psm), 0);
 	zassert_equal(rc, 0, "Wrong return value");
 }
 
@@ -118,13 +119,13 @@ ZTEST(lwm2m_client_utils_cellconn, test_rai_update_cb)
 
 	setup();
 
-	rc = set_uri_cb_rai(10, 0, 14, &rai, sizeof(rai), true, sizeof(rai));
+	rc = set_uri_cb_rai(10, 0, 14, &rai, sizeof(rai), true, sizeof(rai), 0);
 	zassert_equal(rc, 0, "Wrong return value");
 	rai = 6;
-	rc = set_uri_cb_rai(10, 0, 14, &rai, sizeof(rai), true, sizeof(rai));
+	rc = set_uri_cb_rai(10, 0, 14, &rai, sizeof(rai), true, sizeof(rai), 0);
 	zassert_equal(rc, -ENOTSUP, "Wrong return value");
 	rai = 7;
-	rc = set_uri_cb_rai(10, 0, 14, &rai, sizeof(rai), true, sizeof(rai));
+	rc = set_uri_cb_rai(10, 0, 14, &rai, sizeof(rai), true, sizeof(rai), 0);
 	zassert_equal(rc, -EINVAL, "Wrong return value");
 }
 

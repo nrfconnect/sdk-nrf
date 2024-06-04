@@ -21,7 +21,14 @@
 #include <mpsl/mpsl_lib.h>
 #endif
 
-#define EMDS_DEV_IRQ 26
+#if defined(CONFIG_SOC_SERIES_NRF52X)
+	#define EMDS_DEV_IRQ SWI1_EGU1_IRQn
+#elif defined(CONFIG_SOC_SERIES_NRF53X)
+	#define EMDS_DEV_IRQ EGU1_IRQn
+#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+	#define EMDS_DEV_IRQ SWI01_IRQn
+#endif
+
 #define EMDS_DEV_PRIO 0
 #define EMDS_ISR_ARG 0
 #define EMDS_IRQ_FLAGS 0
@@ -39,7 +46,6 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 
 static void app_emds_cb(void)
 {
-	printk("SAMPLE HALTED!!!\n");
 	dk_set_leds(DK_LED2_MSK | DK_LED3_MSK | DK_LED4_MSK);
 	k_fatal_halt(K_ERR_CPU_EXCEPTION);
 }

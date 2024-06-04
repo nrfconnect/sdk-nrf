@@ -114,7 +114,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 3ac5008029de16f83d585d2735768ada53c5b05e
+      revision: e2b94fdfa8ffce51e7f6d096c858b71b2d8c1a14
       userdata:
         ncs:
           upstream-url: https://w1.fi/cgit/hostap/
@@ -123,7 +123,7 @@ manifest:
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
-      revision: d649bd1342215e089d4211757186705cda179013
+      revision: 9f91589a5be2b95a77a2b109901aad3298255315
       userdata:
         ncs:
           upstream-url: https://github.com/Wi-FiQuickTrack/Wi-FiQuickTrack-ControlAppC
@@ -131,7 +131,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 650d11c32368d8ddea310fcdf0d52b45d9017f15
+      revision: f1e1675630561a745d28107144e9a863860204cf
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -148,11 +148,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: d7d48b6cd217a1806ef31fb7d00e0dcb9e9e1fb0
+      revision: 589238f61085c510a603245428d136b36110cfb4
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: dd0114796baf44d249764b2f3b9bc3be9c1d01d4
+      revision: 92a5b4ffa527a1d9fb00924c227536e46169bd6e
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -160,7 +160,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: c001002e96e6ddd513486f022faeadfe0b282cdf
+      revision: 0ae05f2c0d51ae0587d606d949fd31429678dc35
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -181,14 +181,14 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: d28f2f4f8e6c3c19256136ee69bf1f6c08ed2a41
+      revision: 1d4fd62bcad0dad2a1e9f3aee27d669c6a2f5a8b
       groups:
         - nrf-802154
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 41dc7d3303c9ca8ae53747c8b9831d749fe8ec58
+      revision: 271c8155593a61a46bc45546f7c5a4dcd3696745
       submodules: true
       groups:
         - dragoon
@@ -203,12 +203,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: 2f8856f408f4c9ae466d33fa7f6230e3bd6f30a8
+      revision: 50a9f476e54f395bac6e7c1ca798fadf1ff95a94
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: 68a3f93bffcd844a90630d4e70f323f327bdf33f
+      revision: 4cd7d61ada6b122c124e08d2111696ba42c8a66c
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -232,17 +232,17 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 0a4d6d34a83eaf46aabc72defe0f2c48acead3bb
+      revision: a57d927b0ace94972a49ea2672c9073b88b86377
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: 1dfb3fa1676c255c9d19a5c159249b5a7e53c476
+      revision: 72e873da8201d8f48e2821ee0ae1b076e081cc5d
       path: modules/lib/suit-generator
     - name: suit-processor
-      revision: 5603911b75f037dc3822fd95542c3435c0bf812d
+      revision: dcb84006795fe99b497e044f3435988d206ac177
       path: modules/lib/suit-processor
 
     # Other third-party repositories.

@@ -2,10 +2,11 @@ sample:
   name: Bluetooth Mesh DFU Target
 tests:
   sample.bluetooth.mesh_dfu_target:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52840dongle/nrf52840
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf52840dongle/nrf52840 nrf54l15pdk/nrf54l15/cpuapp
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build sysbuild

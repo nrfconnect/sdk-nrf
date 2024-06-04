@@ -299,8 +299,10 @@ static void connected_exit(void *o)
 
 /* Construct state table */
 static const struct smf_state state[] = {
-	[MQTT_DISCONNECTED] = SMF_CREATE_STATE(disconnected_entry, disconnected_run, NULL),
-	[MQTT_CONNECTED] = SMF_CREATE_STATE(connected_entry, connected_run, connected_exit),
+	[MQTT_DISCONNECTED] = SMF_CREATE_STATE(disconnected_entry, disconnected_run, NULL,
+					       NULL, NULL),
+	[MQTT_CONNECTED] = SMF_CREATE_STATE(connected_entry, connected_run, connected_exit,
+					    NULL, NULL),
 };
 
 static void transport_task(void)

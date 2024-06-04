@@ -1249,6 +1249,7 @@ static void disconnected_cleanup(uint8_t chan_idx)
 }
 
 static void unicast_discovery_complete_cb(struct bt_conn *conn, int err,
+					  const struct bt_csip_set_coordinator_set_member *member,
 					  const struct bt_csip_set_coordinator_csis_inst *csis_inst)
 {
 	if (err) {

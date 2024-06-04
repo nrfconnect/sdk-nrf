@@ -66,6 +66,12 @@ struct le_audio_encoded_audio {
 	uint8_t num_ch;
 };
 
+struct stream_index {
+	uint8_t level1_idx; /* BIG / CIG */
+	uint8_t level2_idx; /* Subgroups if applicable */
+	uint8_t level3_idx; /* BIS / CIS */
+};
+
 /**
  * @brief	Get the current state of an endpoint.
  *

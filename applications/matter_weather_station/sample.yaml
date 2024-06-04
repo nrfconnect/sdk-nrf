@@ -5,31 +5,53 @@ tests:
   # This configuration is used for performing DFU over BLE between different NCS
   # applications on Thingy53.
   applications.matter_weather_station.debug.no_fd:
+    sysbuild: true
     build_only: true
     platform_allow: thingy53/nrf5340/cpuapp
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
       - thingy53/nrf5340/cpuapp
+    tags: sysbuild
   applications.matter_weather_station.debug:
+    sysbuild: true
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-factory_data.conf
-      PM_STATIC_YML_FILE=${CMAKE_CURRENT_SOURCE_DIR}/pm_static_factory_data.yml
+      FILE_SUFFIX=factory_data
+      SB_CONFIG_MATTER_FACTORY_DATA=y
     platform_allow: thingy53/nrf5340/cpuapp
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
       - thingy53/nrf5340/cpuapp
+    tags: sysbuild
   applications.matter_weather_station.release:
+    sysbuild: true
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-factory_data.conf CONF_FILE=prj_release.conf
-      PM_STATIC_YML_FILE=${CMAKE_CURRENT_SOURCE_DIR}/pm_static_factory_data.yml
+      FILE_SUFFIX=factory_data
+      SB_CONFIG_MATTER_FACTORY_DATA=y
     platform_allow: thingy53/nrf5340/cpuapp
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
       - thingy53/nrf5340/cpuapp
-  applications.matter_weather_station.nrf7002eb:
+    tags: sysbuild
+  applications.matter_weather_station.lto:
+    sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf7002eb CONF_FILE=prj_release.conf
+    extra_args: OVERLAY_CONFIG=overlay-factory_data.conf
+      FILE_SUFFIX=factory_data SB_CONFIG_MATTER_FACTORY_DATA=y
+      CONFIG_LTO=y CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
     platform_allow: thingy53/nrf5340/cpuapp
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
       - thingy53/nrf5340/cpuapp
+    tags: sysbuild
+  applications.matter_weather_station.nrf7002eb:
+    sysbuild: true
+    build_only: true
+    extra_args: matter_weather_station_SHIELD=nrf7002eb FILE_SUFFIX=release
+                SB_CONFIG_WIFI_NRF700X=y
+    platform_allow: thingy53/nrf5340/cpuapp
+    platform_exclude: thingy53/nrf5340/cpuapp/ns
+    integration_platforms:
+      - thingy53/nrf5340/cpuapp
+    tags: sysbuild

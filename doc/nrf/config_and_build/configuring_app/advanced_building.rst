@@ -22,6 +22,15 @@ For example, to turn off optimizations, select :kconfig:option:`CONFIG_NO_OPTIMI
 
 Compiler options not controlled by the Zephyr build system can be controlled through the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option.
 
+.. _common_sample_components:
+
+Common sample components for development
+****************************************
+
+|common_sample_components_desc|
+
+To learn more about how to use the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option, see the respective device guides for :ref:`nRF52 Series <ug_nrf52_developing_ble_fota>` and the :ref:`nRF5340 DK <ug_nrf53_developing_ble_fota>`.
+
 Optional build parameters
 *************************
 
@@ -29,11 +38,10 @@ Here are some of the possible options you can use:
 
 * You can provide :ref:`custom CMake options <cmake_options>` to the build command.
 * You can include the *directory_name* parameter to build from a directory other than the current directory.
-* You can use the *build_target@board_revision* parameter to get extra devicetree overlays with new features available for a board version.
-  The *board_revision* is printed on the label of your DK, just below the PCA number.
-  For example, if you run the west build command with an additional parameter ``@1.0.0`` for nRF9160 build target, it adds the external flash on the nRF9160 DK that was available since :ref:`board version v0.14.0 <nrf9160_board_revisions>`.
+* You can specify a *destination_directory_name* parameter to choose where the build files are generated.
+  If not specified, the build files are automatically generated in :file:`build/zephyr/`.
 * You can :ref:`start menuconfig with the west command <configuration_temporary_change>` to configure your application.
-* You can :ref:`reuse an existing build directory <zephyr:west-building-pristine>` for building another application for another board or build target by passing ``-p=auto`` to ``west build``.
+* You can :ref:`reuse an existing build directory <zephyr:west-building-pristine>` for building another application for another board or board target by passing ``-p=auto`` to ``west build``.
 * You can :ref:`run unit tests with the west command <running_unit_tests>` with the ``-t run`` parameter from the unit test directory.
 
 For more information on other optional build parameters, run the ``west build -h`` help text command.

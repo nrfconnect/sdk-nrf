@@ -1,6 +1,7 @@
 tests:
   net.lib.download_client:
-    tags: fota
+    sysbuild: true
+    tags: fota sysbuild
     platform_allow: native_sim qemu_cortex_m3
     integration_platforms:
       - native_sim

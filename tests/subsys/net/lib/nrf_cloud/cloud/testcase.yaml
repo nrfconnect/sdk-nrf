@@ -1,9 +1,10 @@
 tests:
   net.lib.nrf_cloud.cloud:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160/ns native_posix qemu_cortex_m3
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - native_posix
       - qemu_cortex_m3
-    tags: nrf_cloud_test nrf_cloud_lib
+    tags: nrf_cloud_test nrf_cloud_lib sysbuild
     timeout: 90

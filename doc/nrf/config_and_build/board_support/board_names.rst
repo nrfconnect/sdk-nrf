@@ -8,23 +8,40 @@ Board names
    :local:
    :depth: 2
 
-The following tables list all boards and build targets for Nordic Semiconductor's hardware platforms.
+The following tables list all boards and corresponding board targets for Nordic Semiconductor's hardware platforms.
 
-The build target column uses several entries for multi-core hardware platforms:
+The board targets follow Zephyr's :ref:`zephyr:board_terminology` scheme and are used mostly when :ref:`building`.
+For example, the board target ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` can be read as made of the following elements:
 
-* For core type:
++-------------+----------------+-------------------------+---------------------------------+--------------------------------------------------+
+| nrf54l15pdk |     @0.3.0     |        /nrf54l15        |             /cpuapp             |                                                  |
++=============+================+=========================+=================================+==================================================+
+| Board name  | Board revision | Board qualifier for SoC | Board qualifier for CPU cluster | Board qualifier for variant (empty in this case) |
++-------------+----------------+-------------------------+---------------------------------+--------------------------------------------------+
 
-  * ``cpuapp`` - When you choose this target, you build the application core firmware.
-  * ``cpunet`` - When you choose this target, you build the network core firmware.
+While the board name is always present, other elements, such as the board revision or the board qualifiers, are optional:
 
-* For usage of Cortex-M Security Extensions (CMSE):
+* :ref:`Board revision <zephyr:glossary>` - You can use the *board_name@board_revision* board target to get extra devicetree overlays with new features available for a specific board version.
+  The board version is printed on the label of your DK, just below the PCA number.
+  For example, :ref:`building <building>` for the ``nRF9160dk@1.0.0/nrf9160`` board target adds the external flash on the nRF9160 DK that was available since :ref:`board version v0.14.0 <nrf9160_board_revisions>`.
 
-  * Entries without ``*/ns`` (``cpuapp``) - When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
+* :term:`System on Chip (SoC)` - When you choose a board target with this qualifier, you build for this specific SoC on this board.
+  For example, :ref:`building <building>` for the ``thingy53/nrf5340/cpuapp`` board target builds the application core firmware for the nRF5340 SoC on the Nordic Thingy:53 prototyping platform.
+
+* :ref:`CPU cluster <zephyr:glossary>` - You can use this board qualifier to build for a group of one or more CPU cores, all executing the same image within the same address space and in a symmetrical (SMP) configuration.
+  The CPU cluster board qualifier varies depending on the SoC and SoC Series.
+  For example, :ref:`building <building>` for the ``thingy53/nrf5340/cpunet`` board target builds the network core firmware for Nordic Thingy:53, building for ``nrf54h20dk/nrf54h20/cpuapp`` builds the application core firmware for the nRF54H20 DK, building for ``nrf54h20dk/nrf54h20/cpurad`` builds the radio core firmware for the nRF54H20 DK, and so on.
+  Check the Product Specification of the given SoC for more information about the available CPU clusters.
+
+* :ref:`Variant <zephyr:glossary>` - You can use this board qualifier to build for a particular type or configuration of a build for a combination of SoC and CPU cluster.
+  In the |NCS|, variants are used for indicating the usage of Cortex-M Security Extensions (CMSE):
+
+  * Entries without ``*/ns`` - When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
   * Entries with ``*/ns`` (for example, ``cpuapp/ns``) - When you choose this target, you build the application with CMSE.
     The application core firmware is placed in Non-Secure Processing Environment (NSPE) and uses Secure Processing Environment (SPE) for security features.
     By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
 
-Read more about separation of processing environments on the :ref:`app_boards_spe_nspe` page.
+  Read more about separation of processing environments on the :ref:`app_boards_spe_nspe` page.
 
 .. _app_boards_names_zephyr:
 
@@ -40,7 +57,7 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 .. _table:
 
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
-| Hardware platform | PCA number | Board name                                                        | Build target                          |
+| Hardware platform | PCA number | Board name                                                        | Board targets                         |
 +===================+============+===================================================================+=======================================+
 | nRF9161 DK        | PCA10153   | :ref:`nrf9161dk <zephyr:nrf9161dk_nrf9161>`                       | ``nrf9161dk/nrf9161``                 |
 |                   |            |                                                                   |                                       |
@@ -108,8 +125,8 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 .. note::
    In |NCS| releases before v1.6.1:
 
-   * The build target ``nrf9160dk/nrf9160/ns`` was named ``nrf9160dk_nrf9160ns``.
-   * The build target ``nrf5340dk/nrf5340/cpuapp/ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
+   * The board target ``nrf9160dk/nrf9160/ns`` was named ``nrf9160dk_nrf9160ns``.
+   * The board target ``nrf5340dk/nrf5340/cpuapp/ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
 
 .. _app_boards_names_nrf:
 
@@ -119,7 +136,7 @@ Boards included in sdk-nrf
 The following boards are defined in the :file:`nrf/boards/nordic/` folder.
 
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
-| Hardware platform | PCA number | Board name                                               | Build target                          |
+| Hardware platform | PCA number | Board name                                               | Board targets                         |
 +===================+============+==========================================================+=======================================+
 | nRF Desktop       | PCA20041   | :ref:`nrf52840gmouse <nrf_desktop>`                      | ``nrf52840gmouse/nrf52840``           |
 | Gaming Mouse      |            |                                                          |                                       |
@@ -160,7 +177,7 @@ Shields included in sdk-nrf
 The following shields are defined in the :file:`nrf/boards/shields` folder.
 
 +----------------------------------------------------------+------------+--------------------------------------------------------------------------+---------------------------------------+
-| Hardware platform                                        | PCA number | Board name                                                               | Build target                          |
+| Hardware platform                                        | PCA number | Board name                                                               | Board targets                         |
 +==========================================================+============+==========================================================================+=======================================+
 | nRF7002 :term:`Evaluation Kit (EK)`                      | PCA63556   | :ref:`nrf7002ek <ug_nrf7002ek_gs>`                                       | ``nrf7002ek``                         |
 +----------------------------------------------------------+------------+--------------------------------------------------------------------------+---------------------------------------+

@@ -5,7 +5,6 @@
  */
 
 #include <string.h>
-
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
@@ -14,9 +13,7 @@
 #include <modem/modem_key_mgmt.h>
 
 #define HTTPS_PORT 443
-
 #define HTTPS_HOSTNAME "example.com"
-
 #define TLS_SEC_TAG 42
 
 /* Certificate for `example.com` */
@@ -32,7 +29,9 @@ struct lookup_ciphersuite {
 	bool supported;
 };
 
-/* Taken from the IANA register */
+/* Transport Layer Security (TLS) Parameters taken from the IANA register:
+ * https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml
+ */
 static struct lookup_ciphersuite ciphersuites[] = {
 	{ "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384", 0xC024 },
 	{ "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA", 0xC00A },
@@ -62,7 +61,7 @@ int cert_provision(void)
 
 	/* It may be sufficient for the application to check whether the correct
 	 * certificate is provisioned with a given tag directly using modem_key_mgmt_cmp().
-	 * Here, for the sake of the completeness, we check that a certificate exists
+	 * Here, for the sake of completeness, we check that a certificate exists
 	 * before comparing it with what we expect it to be.
 	 */
 	err = modem_key_mgmt_exists(TLS_SEC_TAG, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exists);
@@ -119,9 +118,7 @@ int tls_setup(int fd)
 		return err;
 	}
 
-	/* Associate the socket with the security tag
-	 * we have provisioned the certificate with.
-	 */
+	/* Associate the socket with the security tag we have provisioned the certificate with */
 	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag, sizeof(tls_sec_tag));
 	if (err) {
 		printk("Failed to setup TLS sec tag, err %d, %s\n", errno, strerror(errno));
@@ -133,6 +130,7 @@ int tls_setup(int fd)
 		printk("Failed to setup TLS hostname, err %d, %s\n", errno, strerror(errno));
 		return err;
 	}
+
 	return 0;
 }
 
@@ -162,11 +160,13 @@ int main(void)
 	}
 
 	printk("Waiting for network.. ");
+
 	err = lte_lc_connect();
 	if (err) {
 		printk("Failed to connect to the LTE network, err %d\n", err);
 		return 0;
 	}
+
 	printk("OK\n");
 
 	err = getaddrinfo(HTTPS_HOSTNAME, NULL, &hints, &res);
@@ -177,7 +177,7 @@ int main(void)
 
 	((struct sockaddr_in *)res->ai_addr)->sin_port = htons(HTTPS_PORT);
 
-	printk("Trying all ciphersuites to find which ones are supported...\n");
+	printk("Trying all ciphersuites to find out which ones are supported...\n");
 
 	for (int i = 0; i < ARRAY_SIZE(ciphersuites); i++) {
 		fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
@@ -205,6 +205,7 @@ int main(void)
 		}
 
 		printk("Connecting to %s... ", HTTPS_HOSTNAME);
+
 		err = connect(fd, res->ai_addr, sizeof(struct sockaddr_in));
 		if (err) {
 			printk("connect() failed, err: %d, %s\n", errno, strerror(errno));

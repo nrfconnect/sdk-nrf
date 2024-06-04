@@ -8,13 +8,18 @@ nRF Cloud
    :depth: 2
 
 The nRF Cloud library enables applications to connect to Nordic Semiconductor's `nRF Cloud`_.
-It abstracts and hides the details of the transport and the encoding scheme that is used for the payload and provides a simplified API interface for sending data from supported sensor types to the cloud.
+It abstracts and hides the details of the transport and the encoding scheme that is used for the payload and provides a simplified API interface for sending data to the cloud.
 The current implementation supports the following technologies:
 
-* GNSS and FLIP sensor data
-* TLS secured MQTT as the communication protocol
-* JSON as the data format
+* GNSS, TEMP, and other application-specific sensor data
+* Cellular and Wi-Fi location data
+* TLS-secured MQTT, TLS-secured REST, or DTLS-secured CoAP as the communication protocol
+* JSON as the data format for MQTT and REST
+* CBOR and JSON as the data format for CoAP
 
+.. note::
+   The remainder of this document describes the nRF Cloud library's MQTT connectivity support.
+   See the :ref:`lib_nrf_cloud_rest` library and the :ref:`lib_nrf_cloud_coap` library for other connectivity options.
 
 .. _lib_nrf_cloud_init:
 
@@ -52,16 +57,18 @@ The API blocks for the duration of the handshake.
 
 The cloud uses the certificates of the device for authentication.
 See :ref:`nrf9160_ug_updating_cloud_certificate` and the :ref:`modem_key_mgmt` library for more information on modem credentials.
-The certificates are generated using the device ID and PIN or HWID.
 The device ID is also the MQTT client ID.
 There are multiple configuration options for the device or client ID.
 See :ref:`configuration_device_id` for more information.
 
-As the next step, the API subscribes to an MQTT topic to start receiving user association requests from the cloud.
+As the next step, the API subscribes to an MQTT topic to start receiving requests from the cloud.
+
+Associating
+***********
+This section applies to devices onboarding using JITP.
 
 Every time nRF Cloud starts a communication session with a device, it verifies whether the device is uniquely associated with a user.
 If not, the user association procedure is triggered.
-When adding the device to an nRF Cloud account, the user must provide the correct device ID and PIN to nRF Cloud.
 
 The following message sequence chart shows the flow of events and the expected application responses to each event during the user association procedure:
 
@@ -99,6 +106,19 @@ When the device is successfully associated with a user on the cloud, subsequent 
 
 After receiving the :c:enumerator:`NRF_CLOUD_EVT_READY` event, the application can start sending sensor data to the cloud.
 
+.. _nrf_cloud_onboarding:
+
+nRF Cloud onboarding options
+============================
+
+You can add a device to an nRF Cloud account in the following three ways:
+
+* Using the :ref:`lib_nrf_provisioning` service and `nRF Cloud Auto-onboarding`_: once the process completes, the device will be listed in your account.
+* Using JITP with factory-installed certificates for Nordic development kits and Thingys: provide the device ID and PIN to nRF Cloud as indicated on the sticker.
+* Using scripted provisioning and onboarding: upload the :file:`onboard.csv` file to nRF Cloud's **Bulk Onboard** screen or use the REST API.
+
+See: the `nRF Cloud Provisioning`_ documentation and the :ref:`nrf_cloud_multi_service_provisioning_onboarding` section of the :ref:`nrf_cloud_multi_service` sample documentation for more information.
+
 .. _configuration_device_id:
 
 Configuration options for device ID
@@ -110,7 +130,9 @@ Configuration options for device ID
   For custom hardware, use a prefix other than ``nrf-`` by modifying :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` - If you enable this option, the ID is automatically generated using the modem's 128-bit internal UUID, which results in a 36 character string of hexadecimal values in the 8-4-4-4-12 UUID format.
-* This option requires modem firmware v1.3.0 or higher.
+
+  * This option requires modem firmware v1.3.0 or higher.
+  * This option is required when using `auto-onboarding <nRF Cloud Auto-onboarding_>`_.
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` - If you enable this option, the ID is set at compile time using the value specified by :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID`.
 
@@ -135,8 +157,10 @@ nRF Cloud FOTA enables the following additional features and libraries:
 * :kconfig:option:`CONFIG_DFU_TARGET` enables :ref:`lib_dfu_target`
 * :kconfig:option:`CONFIG_DOWNLOAD_CLIENT` enables :ref:`lib_download_client`
 * :kconfig:option:`CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT`
+* :kconfig:option:`CONFIG_FOTA_PROGRESS_EVT_INCREMENT`
 * :kconfig:option:`CONFIG_REBOOT`
 * :kconfig:option:`CONFIG_CJSON_LIB`
+* :kconfig:option:`CONFIG_SETTINGS`
 
 For FOTA updates to work, the device must provide the information about the supported FOTA types to nRF Cloud.
 The device passes this information by writing a ``fota_v2`` field containing an array of FOTA types into the ``serviceInfo`` field in the device's shadow.

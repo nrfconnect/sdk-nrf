@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Raw Tx Packet sample"
+
+config PROMISCUOUS_SAMPLE_CONNECTION_TIMEOUT_S
+	int "Wi-Fi connection timeout in seconds"
+	default 30
+
+config PROMISCUOUS_SAMPLE_DHCP_TIMEOUT_S
+	int "DHCP timeout in seconds"
+	default 20
+
+config PROMISCUOUS_SAMPLE_RX_THREAD_STACK_SIZE
+	int "Thread stack size"
+	default 4096
+	help
+	  This option sets the stack size for the threads used in the sample.
+
+config PROMISCUOUS_SAMPLE_STATS_PRINT_TIMEOUT
+	int "Periodic statistics print timeout"
+	default 5
+	help
+	  This option sets the timeout for periodic statistics print in seconds.
+
+config PROMISCUOUS_SAMPLE_RECV_BUFFER_SIZE
+	int "Size of the receive buffer"
+	default 1024
+	help
+	  This option sets the size of the receive buffer in bytes.
+
+endmenu

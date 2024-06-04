@@ -11,6 +11,7 @@
 #include <date_time.h>
 #include <modem/lte_lc.h>
 
+#include "cloud_connection.h"
 #include "location_tracking.h"
 
 LOG_MODULE_REGISTER(location_tracking, CONFIG_MULTI_SERVICE_LOG_LEVEL);
@@ -31,6 +32,12 @@ static void location_event_handler(const struct location_event_data *event_data)
 
 	case LOCATION_EVT_TIMEOUT:
 		LOG_DBG("Location Event: Timed out");
+		if (event_data->method != LOCATION_METHOD_GNSS) {
+			/* GNSS can timeout due to obstructed satellite signals. Other methods
+			 * timeout when there is a communications error with the cloud.
+			 */
+			cloud_transport_error_detected();
+		}
 		break;
 
 	case LOCATION_EVT_ERROR:

@@ -11,6 +11,10 @@
 
 #include <stdlib.h>
 
+#ifdef CONFIG_WIFI_RANDOM_MAC_ADDRESS
+#include <zephyr/random/random.h>
+#endif
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 
@@ -60,6 +64,72 @@ void nrf_wifi_set_iface_event_handler(void *os_vif_ctx,
 out:
 	return;
 }
+
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
+								struct nrf_wifi_vif_ctx_zep,
+								nrf_wifi_rpu_recovery_work);
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return;
+	}
+
+	if (!vif_ctx_zep->zep_net_if_ctx) {
+		LOG_ERR("%s: zep_net_if_ctx is NULL", __func__);
+		return;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return;
+	}
+
+	k_mutex_lock(&rpu_ctx_zep->rpu_lock, K_FOREVER);
+	LOG_DBG("%s: Bringing the interface down", __func__);
+	/* This indirectly does a cold-boot of RPU */
+	net_if_down(vif_ctx_zep->zep_net_if_ctx);
+	k_msleep(CONFIG_NRF_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS);
+	LOG_DBG("%s: Bringing the interface up", __func__);
+	net_if_up(vif_ctx_zep->zep_net_if_ctx);
+	k_mutex_unlock(&rpu_ctx_zep->rpu_lock);
+}
+
+void nrf_wifi_rpu_recovery_cb(void *vif_ctx_handle,
+		void *event_data,
+		unsigned int event_len)
+{
+	struct nrf_wifi_fmac_vif_ctx *vif_ctx = vif_ctx_handle;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!vif_ctx) {
+		LOG_ERR("%s: vif_ctx is NULL",
+			__func__);
+		goto out;
+	}
+
+	fmac_dev_ctx = vif_ctx->fmac_dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	if (!def_dev_ctx) {
+		LOG_ERR("%s: def_dev_ctx is NULL",
+			__func__);
+		goto out;
+	}
+
+	vif_ctx_zep = vif_ctx->os_vif_ctx;
+	(void)event_data;
+
+	k_work_submit(&vif_ctx_zep->nrf_wifi_rpu_recovery_work);
+out:
+	return;
+}
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
 #ifdef CONFIG_NRF700X_DATA_TX
 static void nrf_wifi_net_iface_work_handler(struct k_work *work)
@@ -374,6 +444,11 @@ out:
 }
 #endif /* CONFIG_NRF700X_STA_MODE */
 
+#ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
+BUILD_ASSERT(sizeof(CONFIG_WIFI_FIXED_MAC_ADDRESS) - 1 == ((WIFI_MAC_ADDR_LEN * 2) + 5),
+					"Invalid fixed MAC address length");
+#endif
+
 enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -402,33 +477,41 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
-	if (strlen(CONFIG_WIFI_FIXED_MAC_ADDRESS) > 0) {
-		char fixed_mac_addr[WIFI_MAC_ADDR_LEN];
-		int ret;
+#ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
+	char fixed_mac_addr[WIFI_MAC_ADDR_LEN];
 
-		ret = net_bytes_from_str(fixed_mac_addr,
-				WIFI_MAC_ADDR_LEN,
-				CONFIG_WIFI_FIXED_MAC_ADDRESS);
-		if (ret < 0) {
-			LOG_ERR("%s: Failed to parse MAC address: %s",
-				__func__,
-				CONFIG_WIFI_FIXED_MAC_ADDRESS);
-			goto unlock;
-		}
-
-		memcpy(vif_ctx_zep->mac_addr.addr,
-			fixed_mac_addr,
-			WIFI_MAC_ADDR_LEN);
-	} else {
-		status = nrf_wifi_fmac_otp_mac_addr_get(fmac_dev_ctx,
-					vif_ctx_zep->vif_idx,
-					vif_ctx_zep->mac_addr.addr);
-		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: Fetching of MAC address from OTP failed",
-				__func__);
-			goto unlock;
-		}
+	ret = net_bytes_from_str(fixed_mac_addr,
+			WIFI_MAC_ADDR_LEN,
+			CONFIG_WIFI_FIXED_MAC_ADDRESS);
+	if (ret < 0) {
+		LOG_ERR("%s: Failed to parse MAC address: %s",
+			__func__,
+			CONFIG_WIFI_FIXED_MAC_ADDRESS);
+		goto unlock;
 	}
+
+	memcpy(vif_ctx_zep->mac_addr.addr,
+		fixed_mac_addr,
+		WIFI_MAC_ADDR_LEN);
+#elif CONFIG_WIFI_RANDOM_MAC_ADDRESS
+	char random_mac_addr[WIFI_MAC_ADDR_LEN];
+
+	sys_rand_get(random_mac_addr, WIFI_MAC_ADDR_LEN);
+	random_mac_addr[0] = (random_mac_addr[0] & UNICAST_MASK) | LOCAL_BIT;
+
+	memcpy(vif_ctx_zep->mac_addr.addr,
+		random_mac_addr,
+		WIFI_MAC_ADDR_LEN);
+#elif CONFIG_WIFI_OTP_MAC_ADDRESS
+	status = nrf_wifi_fmac_otp_mac_addr_get(fmac_dev_ctx,
+				vif_ctx_zep->vif_idx,
+				vif_ctx_zep->mac_addr.addr);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: Fetching of MAC address from OTP failed",
+			__func__);
+		goto unlock;
+	}
+#endif
 
 	if (!nrf_wifi_utils_is_mac_addr_valid(fmac_dev_ctx->fpriv->opriv,
 	    vif_ctx_zep->mac_addr.addr)) {
@@ -509,6 +592,11 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 	k_work_init(&vif_ctx_zep->nrf_wifi_net_iface_work,
 		    nrf_wifi_net_iface_work_handler);
 #endif /* CONFIG_NRF700X_DATA_TX */
+
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+	k_work_init(&vif_ctx_zep->nrf_wifi_rpu_recovery_work,
+		    nrf_wifi_rpu_recovery_work_handler);
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
 #if !defined(CONFIG_NRF_WIFI_IF_AUTO_START)
 	net_if_flag_set(iface, NET_IF_NO_AUTO_START);

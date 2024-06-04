@@ -10,6 +10,12 @@ menuconfig NRF5340_AUDIO
 
 if NRF5340_AUDIO
 
+config CUSTOM_BROADCASTER
+	bool "Allow custom broadcasters"
+	default n
+	help
+	  Incomplete feature for now, but will introduce support for multiple BIGs and subgroups.
+
 config AUDIO_DEV
 	int "Select which device type to compile for. 1=HEADSET or 2=GATEWAY"
 	range 1 2

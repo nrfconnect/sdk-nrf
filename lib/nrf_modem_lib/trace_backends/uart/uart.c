@@ -14,6 +14,7 @@ LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
 
 #define UART_DEVICE_NODE DT_CHOSEN(nordic_modem_trace_uart)
 #define TRACE_UART_BAUD_REQUIRED 1000000
+#define CHUNK_SZ CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_CHUNK_SZ
 
 static const struct device *const uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
 
@@ -45,7 +46,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 		k_sem_give(&tx_done_sem);
 		break;
 	case UART_RX_DISABLED:
-		LOG_INF("Disabled UART RX");
+		LOG_DBG("UART RX disabled");
 		break;
 	default:
 		LOG_DBG("Unhandled UART event: %d", evt->type);
@@ -65,13 +66,13 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 	trace_processed_callback = trace_processed_cb;
 
 	if (!device_is_ready(uart_dev)) {
-		printk("UART device not found!");
+		LOG_ERR("UART device not ready");
 		return -ENODEV;
 	}
 
 	err = uart_config_get(uart_dev, &uart_cfg);
 	if (err) {
-		LOG_ERR("UART_config_get failed: %d", err);
+		LOG_ERR("Failed to configure UART, err %d", err);
 		return err;
 	}
 
@@ -83,13 +84,13 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 
 	err = uart_err_check(uart_dev);
 	if (err) {
-		LOG_ERR("UART check failed: %d", err);
+		LOG_ERR("UART check has failed, err %d", err);
 		return -EIO;
 	}
 
 	err = uart_callback_set(uart_dev, uart_callback, NULL);
 	if (err) {
-		LOG_ERR("Cannot set callback: %d", err);
+		LOG_ERR("Cannot set callback, err %d", err);
 		return -EFAULT;
 	}
 
@@ -112,7 +113,7 @@ static int uart_send(const uint8_t *data, size_t len)
 		err = uart_tx(uart_dev, data, len,
 			UART_TX_WAIT_TIME_MS * USEC_PER_MSEC);
 		if (err) {
-			LOG_ERR("uart error: %d", err);
+			LOG_ERR("UART TX failed, err %d", err);
 			return err;
 		}
 
@@ -131,9 +132,7 @@ int trace_backend_write(const void *data, size_t len)
 	int err;
 	int ret;
 
-	/* Split RAM buffer into smaller chunks to be transferred using DMA. */
 	uint8_t *buf = (uint8_t *)data;
-	const size_t MAX_BUF_LEN = (1 << UARTE1_EASYDMA_MAXCNT_SIZE) - 1;
 	size_t remaining_bytes = len;
 
 	if (suspended) {
@@ -143,7 +142,8 @@ int trace_backend_write(const void *data, size_t len)
 	k_sem_take(&tx_sem, K_FOREVER);
 
 	while (remaining_bytes) {
-		size_t transfer_len = MIN(remaining_bytes, MAX_BUF_LEN);
+		/* Split buffer into smaller DMA-able chunks */
+		size_t transfer_len = MIN(remaining_bytes, CHUNK_SZ);
 		size_t idx = len - remaining_bytes;
 
 		ret = uart_send(&buf[idx], transfer_len);
@@ -183,11 +183,11 @@ int trace_backend_suspend(void)
 
 	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
 	if (err) {
-		LOG_ERR("pm_device_action_run() failed (%d)\n", err);
+		LOG_ERR("Backend failed to enter suspended state, err %d\n", err);
 	}
 
 	suspended = true;
-	LOG_DBG("suspended backend");
+	LOG_DBG("Trace backend suspended");
 #endif
 	return 0;
 }
@@ -199,11 +199,11 @@ int trace_backend_resume(void)
 
 	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
 	if (err) {
-		LOG_ERR("pm_device_action_run() failed (%d)\n", err);
+		LOG_ERR("Backend failed to enter active state, err %d\n", err);
 	}
 
 	suspended = false;
-	LOG_DBG("resumed backend");
+	LOG_DBG("Trace backend resumed");
 #endif
 
 	return 0;

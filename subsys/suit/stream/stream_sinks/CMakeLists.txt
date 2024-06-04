@@ -20,6 +20,7 @@ zephyr_library_sources_ifdef(CONFIG_SUIT_STREAM_SINK_RAM src/suit_ram_sink.c)
 zephyr_library_sources_ifdef(CONFIG_SUIT_STREAM_SINK_FLASH src/suit_flash_sink.c)
 zephyr_library_sources_ifdef(CONFIG_SUIT_STREAM_SINK_MEMPTR src/suit_memptr_sink.c)
 zephyr_library_sources_ifdef(CONFIG_SUIT_STREAM_SINK_SDFW src/suit_sdfw_sink.c)
+zephyr_library_sources_ifdef(CONFIG_SUIT_STREAM_SINK_SDFW_RECOVERY src/suit_sdfw_recovery_sink.c)
 zephyr_library_sources_ifdef(CONFIG_SUIT_STREAM_SINK_DIGEST src/suit_digest_sink.c)
 zephyr_library_sources_ifdef(CONFIG_SUIT_STREAM_SINK_EXTMEM src/suit_extmem_sink.c)
 

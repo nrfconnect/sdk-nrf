@@ -69,7 +69,7 @@ See `Testing diagnostic module`_ section for an example.
 Rebooting to bootloader
 =======================
 
-For the ``nrf52840dongle_nrf52840`` build target, the device can reboot to bootloader by triggering a GPIO pin.
+For the ``nrf52840dongle/nrf52840`` board target, the device can reboot to bootloader by triggering a GPIO pin.
 To enable this behavior, enable the :kconfig:option:`CONFIG_OPENTHREAD_PLATFORM_BOOTLOADER_MODE_GPIO` Kconfig option and configure the Devicetree overlay in the :file:`boards/nrf52840dongle_nrf52840.overlay` file.
 For this sample, the ``bootloader-gpios`` property in the ``openthread_config`` node is pre-configured for the **P0.19** pin, which is connected to the **RESET** pin on the nRF52840 Dongle.
 This functionality is not enabled by other commands, such as ``factoryreset``, as they can only trigger a software reset, skipping the bootloader.
@@ -90,6 +90,8 @@ Configuration
 Snippets
 ========
 
+.. |snippet| replace:: :makevar:`cli_SNIPPET`
+
 .. include:: /includes/sample_snippets.txt
 
 The following snippets are available:
@@ -101,6 +103,11 @@ The following snippets are available:
 * ``ci`` - Disables boot banner and shell prompt.
 * ``multiprotocol`` - Enables Bluetooth LE support in this sample.
   Not compatible with the ``tcat`` snippet.
+
+  .. note::
+    When building with the ``multiprotocol`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` board target, set the :makevar:`FILE_SUFFIX` CMake option to ``ble``.
+    See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
+
 * ``tcat`` - Enables support for Thread commissioning over authenticated TLS.
   Not compatible with the ``multiprotocol`` snippet.
   For using TCAT, refer to the :ref:`thread_tcat` page.
@@ -123,7 +130,7 @@ Serial transport
 ================
 
 The Thread CLI sample supports UART and USB CDC ACM as serial transports.
-By default, it uses USB CDC ACM transport for ``nrf52840dongle_nrf52840``, and UART transport for other build targets.
+By default, it uses USB CDC ACM transport for ``nrf52840dongle/nrf52840``, and UART transport for other board targets.
 To switch to USB transport on targets that use UART by default, :ref:`activate the USB snippet <ot_cli_sample_activating_variants>`.
 
 Building and running

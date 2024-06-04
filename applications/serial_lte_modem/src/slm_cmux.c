@@ -17,7 +17,7 @@
 /* This makes use of part of the Zephyr modem subsystem which has a CMUX module. */
 LOG_MODULE_REGISTER(slm_cmux, CONFIG_SLM_LOG_LEVEL);
 
-#define CHANNEL_COUNT (1 + IS_ENABLED(CONFIG_SLM_PPP))
+#define CHANNEL_COUNT (1 + CMUX_EXT_CHANNEL_COUNT)
 
 #define RECV_BUF_LEN SLM_AT_MAX_CMD_LEN
 /* The CMUX module reserves some spare buffer bytes. To achieve a maximum
@@ -58,7 +58,10 @@ static void dlci_pipe_event_handler(struct modem_pipe *pipe,
 	switch (event) {
 	case MODEM_PIPE_EVENT_OPENED:
 	case MODEM_PIPE_EVENT_CLOSED:
-		/* The PPP DLCI events are received here only when PPP isn't started. */
+		/* The events of the DLCIs other than that of the AT channel
+		 * are received here when they haven't been attached to
+		 * by their respective implementations.
+		 */
 		LOG_INF("DLCI %u %s.", dlci->address,
 			(event == MODEM_PIPE_EVENT_OPENED) ? "opened" : "closed");
 		break;
@@ -176,36 +179,43 @@ void slm_cmux_init(void)
 	}
 }
 
+static struct cmux_dlci *cmux_get_dlci(enum cmux_channel channel)
+{
 #if defined(CONFIG_SLM_PPP)
-
-static struct cmux_dlci *cmux_ppp_dlci(void)
-{
-	BUILD_ASSERT(ARRAY_SIZE(cmux.dlcis) == 2);
-	/* The DLCI that is not the AT channel's is PPP's. */
-	return &cmux.dlcis[!cmux.at_channel];
-}
-
-struct modem_pipe *slm_cmux_reserve_ppp_channel(void)
-{
-	/* Return the PPP channel's pipe. PPP will attach to it, after which
-	 * this pipe's events and data will not be received here anymore
-	 * until the pipe is released (below) and we attach back to it.
-	 */
-	return cmux_ppp_dlci()->pipe;
-}
-
-void slm_cmux_release_ppp_channel(void)
-{
-	struct cmux_dlci *ppp_dlci = cmux_ppp_dlci();
-
-#if CONFIG_SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE
-	cmux.at_channel = 0;
+	if (channel == CMUX_PPP_CHANNEL) {
+		/* The first DLCI that is not the AT channel's is PPP's. */
+		return &cmux.dlcis[!cmux.at_channel];
+	}
 #endif
-
-	modem_pipe_attach(ppp_dlci->pipe, dlci_pipe_event_handler, ppp_dlci);
+#if defined(CONFIG_SLM_GNSS_OUTPUT_NMEA_ON_CMUX_CHANNEL)
+	if (channel == CMUX_GNSS_CHANNEL) {
+		/* The last DLCI. */
+		return &cmux.dlcis[CHANNEL_COUNT - 1];
+	}
+#endif
+	assert(false);
 }
 
-#endif /* CONFIG_SLM_PPP */
+struct modem_pipe *slm_cmux_reserve(enum cmux_channel channel)
+{
+	/* Return the channel's pipe. The requesting module may attach to it,
+	 * after which this pipe's events and data won't be received here anymore
+	 * until the channel is released (below) and we attach back to the pipe.
+	 */
+	return cmux_get_dlci(channel)->pipe;
+}
+
+void slm_cmux_release(enum cmux_channel channel)
+{
+	struct cmux_dlci *dlci = cmux_get_dlci(channel);
+
+#if defined(SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE)
+	if (channel == CMUX_PPP_CHANNEL) {
+		cmux.at_channel = 0;
+	}
+#endif
+	modem_pipe_attach(dlci->pipe, dlci_pipe_event_handler, dlci);
+}
 
 static int cmux_start(void)
 {
@@ -280,7 +290,7 @@ static int handle_at_cmux(enum at_cmd_type cmd_type, const struct at_param_list 
 
 	if (param_count == 2) {
 		ret = at_params_unsigned_int_get(param_list, 1, &at_dlci);
-		if (ret || at_dlci < 1 || at_dlci > ARRAY_SIZE(cmux.dlcis)) {
+		if (ret || (at_dlci != 1 && (!IS_ENABLED(CONFIG_SLM_PPP) || at_dlci != 2))) {
 			return -EINVAL;
 		}
 		const unsigned int at_channel = at_dlci - 1;

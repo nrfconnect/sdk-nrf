@@ -67,7 +67,6 @@ static bool is_address_supported(uintptr_t address, struct extmem_capabilities *
 {
 	uintptr_t extmem_area_start = capabilities->base_addr;
 	size_t extmem_area_size = capabilities->capacity;
-	uintptr_t extmem_area_end = extmem_area_start + extmem_area_size;
 
 	return suit_memory_global_address_range_is_in_external_memory(extmem_area_start,
 								      extmem_area_size);

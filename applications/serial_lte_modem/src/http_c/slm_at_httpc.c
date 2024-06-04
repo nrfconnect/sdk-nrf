@@ -508,7 +508,7 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 
 	err = do_http_request();
 	if (err < 0) {
-		(void)exit_datamode_handler(err);
+		exit_datamode_handler(err);
 		LOG_ERR("do_http_request fail:%d", err);
 		/* Disconnect from server */
 		err = do_http_disconnect();

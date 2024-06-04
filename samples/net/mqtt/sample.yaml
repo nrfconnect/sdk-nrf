@@ -2,6 +2,7 @@ sample:
   name: mqtt
 tests:
   sample.net.mqtt:
+    sysbuild: true
     build_only: true
     build_on_all: true
     integration_platforms:
@@ -17,16 +18,18 @@ tests:
       - thingy91/nrf9160/ns
       - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.net.mqtt.nrf70.tls:
+    sysbuild: true
     build_only: true
     build_on_all: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/ns
     platform_allow: nrf7002dk/nrf5340/cpuapp/ns
-    tags: ci_build
+    tags: ci_build sysbuild
     extra_args: EXTRA_CONF_FILE=overlay-tls-nrf70.conf
   sample.net.mqtt.nrf91.tls:
+    sysbuild: true
     build_only: true
     build_on_all: true
     integration_platforms:
@@ -39,11 +42,12 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - thingy91/nrf9160/ns
-    tags: ci_build
+    tags: ci_build sysbuild
     extra_args: EXTRA_CONF_FILE=overlay-tls-nrf91.conf
   sample.net.mqtt.native_sim.tls:
+    sysbuild: true
     build_only: true
     build_on_all: true
     platform_allow: native_sim
-    tags: ci_build
+    tags: ci_build sysbuild
     extra_args: EXTRA_CONF_FILE=overlay-tls-native_sim.conf

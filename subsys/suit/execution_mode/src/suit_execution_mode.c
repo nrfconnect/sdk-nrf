@@ -15,7 +15,7 @@ suit_execution_mode_t suit_execution_mode_get(void)
 
 suit_plat_err_t suit_execution_mode_set(suit_execution_mode_t mode)
 {
-	if ((mode > EXECUTION_MODE_STARTUP) && (mode <= EXECUTION_MODE_FAIL_MPI_UNSUPPORTED)) {
+	if ((mode > EXECUTION_MODE_STARTUP) && (mode <= EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP)) {
 		current_execution_mode = mode;
 
 		return SUIT_PLAT_SUCCESS;

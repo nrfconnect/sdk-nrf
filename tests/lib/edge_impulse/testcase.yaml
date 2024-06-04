@@ -1,5 +1,6 @@
 tests:
   edge_impulse.ei_wrapper:
+    sysbuild: true
     platform_exclude: native_posix qemu_x86
     platform_allow:
       - nrf52dk/nrf52832
@@ -11,5 +12,5 @@ tests:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160/ns
       - qemu_cortex_m3
-    tags: edge_impulse
+    tags: edge_impulse sysbuild
     timeout: 420

@@ -141,7 +141,7 @@ Usage
 To use this library, complete the following steps:
 
 1. Include the :file:`nrf_cloud_log.h` file.
-#. If the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_DIRECT` Kconfig option is enabled, call the :c:func:`nrf_cloud_log_send` function when connected to nRF Cloud using MQTT or :c:func:`nrf_cloud_rest_log_send` when using REST.
+#. If the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_DIRECT` Kconfig option is enabled, call the :c:func:`nrf_cloud_log_send` function when connected to nRF Cloud using MQTT or CoAP, or call :c:func:`nrf_cloud_rest_log_send` when using REST.
 #. If the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_BACKEND` option is enabled, use the normal Zephyr logging macros :c:macro:`LOG_ERR`, :c:macro:`LOG_WRN`, :c:macro:`LOG_INF`, or :c:macro:`LOG_DBG`, as well as the ``_HEXDUMP_ forms``.
 
 Samples using the library

@@ -5,23 +5,21 @@
  */
 
 / {
-	chosen {
-		zephyr,console = &uart30;
-		zephyr,shell-uart = &uart30;
-	};
-
 	aliases {
 		factory-data = &factory_data;
-		factory-data-memory-region = &rram0;
+		factory-data-memory-region = &cpuapp_rram;
+
+		// Use watchdog wdt31 as the application watchdog
+		watchdog0 = &wdt31;
 	};
 };
 
-/delete-node/ &rram0;
+/delete-node/ &cpuapp_rram;
 
 &rram_controller {
 	reg = < 0x5004b000 0x17d000 >;
 
-	rram0: rram@0 {
+	cpuapp_rram: rram@0 {
 		compatible = "soc-nv-flash";
 		erase-block-size = < 0x1000 >;
 		write-block-size = < 0x10 >;
@@ -46,10 +44,6 @@
 	};
 };
 
-&uart30 {
-	status = "okay";
-};
-
-&wdt30 {
+&wdt31 {
 	status = "okay";
 };

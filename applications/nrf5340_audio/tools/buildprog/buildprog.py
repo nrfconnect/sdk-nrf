@@ -102,7 +102,7 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
             release_flag = ""
             dest_folder /= TARGET_DEBUG_FOLDER
         elif build == BuildType.release:
-            release_flag = " -DCONF_FILE=prj_release.conf"
+            release_flag = " -DFILE_SUFFIX=release"
             dest_folder /= TARGET_RELEASE_FOLDER
         else:
             raise Exception("Invalid build type!")
@@ -196,8 +196,8 @@ def __populate_hex_paths(dev, options, child_image):
         Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, child_image, options
     )
 
-    dev.hex_path_app = temp_dest_folder / "zephyr/zephyr.hex"
-    dev.hex_path_net = temp_dest_folder / "hci_ipc/zephyr/zephyr.hex"
+    dev.hex_path_app = temp_dest_folder / "merged.hex"
+    dev.hex_path_net = temp_dest_folder / "merged_CPUNET.hex"
 
 
 def __finish(device_list):

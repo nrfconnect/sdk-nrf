@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SECURE_BOOT_BUILD_S1_VARIANT_IMAGE
+	bool
+	default n
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

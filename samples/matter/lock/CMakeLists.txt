@@ -6,18 +6,9 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-# Set Kconfig root files that will be processed as a first Kconfig for used child images.
-set(mcuboot_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.mcuboot.root")
-set(multiprotocol_rpmsg_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.multiprotocol_rpmsg.root")
-set(hci_ipc_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.hci_ipc.root")
+list(APPEND SNIPPET_ROOT "../common")
 
-# For prj.conf the CONF_FILE is empty. In other cases extract the exact file name from the path string.
-if(CONF_FILE)
-    get_filename_component(CONF_FILE_NAME ${CONF_FILE} NAME CACHE)
-endif()
-
-find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
-
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(matter-lock)
 
 # Enable GNU STD support and initialize the Matter Data Model.
@@ -33,14 +24,23 @@ target_include_directories(app PRIVATE
     src
 )
 
-FILE(GLOB cred_srcs src/credentials/*.cpp)
+SET(access_srcs src/access/access_data_types.cpp
+              src/access/access_manager_credentials.cpp
+              src/access/access_manager_users.cpp
+              src/access/access_manager.cpp
+              src/access/access_storage.cpp
+              )
+
+if(CONFIG_LOCK_SCHEDULES)
+    LIST(APPEND access_srcs src/access/access_manager_schedules.cpp)
+endif()
 
 target_sources(app PRIVATE
     src/app_task.cpp
     src/bolt_lock_manager.cpp
     src/main.cpp
     src/zcl_callbacks.cpp
-    ${cred_srcs}
+    ${access_srcs}
 )
 
 if(CONFIG_THREAD_WIFI_SWITCHING)

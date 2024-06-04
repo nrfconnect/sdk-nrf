@@ -29,8 +29,8 @@ It has the following features:
 * A full-featured Arm Cortex-M33F core with DSP instructions, FPU, and Armv8-M Security Extension, running at up to 128 MHz, referred to as the application core.
 * A secondary Arm Cortex-M33 core, with a reduced feature set, running at a fixed 64 MHz, referred to as the network core.
 
-The ``nrf7002dk/nrf5340/cpuapp`` build target provides support for the application core on the nRF5340 SoC.
-The ``nrf7002dk/nrf5340/cpunet`` build target provides support for the network core on the nRF5340 SoC.
+The ``nrf7002dk/nrf5340/cpuapp`` board target provides support for the application core on the nRF5340 SoC.
+The ``nrf7002dk/nrf5340/cpunet`` board target provides support for the network core on the nRF5340 SoC.
 
 .. figure:: images/nRF70dk.png
    :alt: nRF7002 DK
@@ -300,7 +300,7 @@ Building the firmware with TF-M
 
 If you want to use |NCS| to build the firmware image separated in SPE with TF-M and NSPE, complete the following steps:
 
-1. Build the |NCS| application for the application core using the ``nrf7002dk/nrf5340/cpuapp/ns`` build target.
+1. Build the |NCS| application for the application core using the ``nrf7002dk/nrf5340/cpuapp/ns`` board target.
 
    To invoke the building of TF-M, the |NCS| build system requires the Kconfig option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to be enabled, which is set by default when building |NCS| as an application that supports both NSPE and SPE.
 
@@ -314,12 +314,12 @@ If you want to use |NCS| to build the firmware image separated in SPE with TF-M 
    .. note::
       Depending on the TF-M configuration, an application DTS overlay can be required to adjust the NSPE image flash memory partition and SRAM starting address and sizes.
 
-#. Build the application firmware for the network core using the ``nrf7002dk/nrf5340/cpunet`` build target.
+#. Build the application firmware for the network core using the ``nrf7002dk/nrf5340/cpunet`` board target.
 
 Building application without CMSE
 =================================
 
-Build the |NCS| application as described in :ref:`building`, using the ``nrf7002dk/nrf5340/cpuapp`` build target for the firmware running on the nRF5340 application core and the ``nrf7002dk/nrf5340/cpunet`` build target for the firmware running on the nRF5340 network core.
+Build the |NCS| application as described in :ref:`building`, using the ``nrf7002dk/nrf5340/cpuapp`` board target for the firmware running on the nRF5340 application core and the ``nrf7002dk/nrf5340/cpunet`` board target for the firmware running on the nRF5340 network core.
 
 Programming the firmware to the DK
 ==================================

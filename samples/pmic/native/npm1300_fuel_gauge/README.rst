@@ -7,7 +7,7 @@ nPM1300: Fuel gauge
    :local:
    :depth: 2
 
-The Fuel gauge sample demonstrates how to calculate the battery state of charge using the :ref:`nrfxlib:nrf_fuel_gauge`.
+The Fuel gauge sample demonstrates how to calculate the state of charge of a development kit battery using `nPM1300 <nPM1300 product website_>`_ and the :ref:`nrfxlib:nrf_fuel_gauge`.
 
 Requirements
 ************
@@ -16,15 +16,19 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_.
+The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_ that you need to connect to the development kit as described in `Wiring`_.
 
 Overview
 ********
 
-This sample allows to calculate the state of charge, time to empty and time to full information from a battery connected to the nPM1300 PMIC.
+This sample allows to calculate the state of charge, time to empty, and time to full information from a battery on the development kit connected to the nPM1300 PMIC.
+
+.. _npm1300_fuel_gauge_wiring:
 
 Wiring
 ******
+
+To connect your DK to the nPM1300 EK, complete the following steps:
 
 #. Connect the TWI interface between the chosen DK and the nPM1300 EK as in the following table:
 

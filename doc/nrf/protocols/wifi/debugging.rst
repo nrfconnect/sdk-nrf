@@ -19,7 +19,7 @@ Enable debug features
 
 The nRF Wi-Fi driver, WPA supplicant, and networking stack have debug features that can be enabled to help debug issues.
 
-You can enable debug features by using Zephyr's configuration :ref:`snippets` feature.
+You can enable debug features by using the :ref:`app_build_snippets` feature.
 
 For example, to build the :ref:`wifi_shell_sample` sample for the nRF7002 DK with debugging enabled, run the following commands:
 

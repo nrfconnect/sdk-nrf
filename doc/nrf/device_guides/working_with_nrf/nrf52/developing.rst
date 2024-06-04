@@ -8,7 +8,7 @@ Developing with nRF52 Series
    :local:
    :depth: 2
 
-The |NCS| provides support for developing on all nRF52 Series devices and contains board definitions for all development kits and reference design hardware.
+The |NCS| provides support for developing on all nRF52 Series devices using Bluetooth®, and other supported protocols, and contains board definitions for all development kits and reference design hardware.
 
 See one of the following guides for detailed information about the corresponding nRF52 Series development kit (DK) hardware:
 
@@ -58,6 +58,10 @@ To enable support for FOTA updates, do the following:
    * SMP BT reassembly feature.
    * The :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` Kconfig option automatically extends the Bluetooth buffers, which allows to speed up the FOTA transfer over Bluetooth, but also increases RAM usage.
 
+.. note::
+   The :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option can be used devices to enable MCUmgr to perform firmware over-the-air (FOTA) updates using Bluetooth LE.
+   It can be used along with other samples, and is meant as a demonstration of the default DFU configuration over Bluetooth.
+
 .. fota_upgrades_over_ble_intro_end
 
 .. fota_upgrades_over_ble_mandatory_mcuboot_start
@@ -77,7 +81,7 @@ Here is an example of how you can build for the :ref:`peripheral_lbs` sample:
 .. parsed-literal::
    :class: highlight
 
-    west build -b *build_target* -- -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
+    west build -b *board_target* -- -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
 
 When you connect to the device after the build has completed and the firmware has been programmed to it, the SMP Service is enabled with the ``UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84``.
 If you want to add SMP Service to advertising data, refer to the :zephyr:code-sample:`smp-svr`.
@@ -106,7 +110,7 @@ See how to build the :ref:`peripheral_lbs` sample with MCUboot in the direct-xip
 .. parsed-literal::
    :class: highlight
 
-    west build -b *build_target* -- -Dmcuboot_CONFIG_BOOT_DIRECT_XIP=y -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y -DCONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP=y
+    west build -b *board_target* -- -Dmcuboot_CONFIG_BOOT_DIRECT_XIP=y -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y -DCONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP=y
 
 Optionally, if you want to enable the revert mechanism support, complete the following:
 
@@ -118,7 +122,7 @@ See how to build the :ref:`peripheral_lbs` sample with MCUboot in direct-xip mod
 .. parsed-literal::
    :class: highlight
 
-    west build -b *build_target* -- -Dmcuboot_CONFIG_BOOT_DIRECT_XIP=y -Dmcuboot_CONFIG_BOOT_DIRECT_XIP_REVERT=y -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y -DCONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT=y
+    west build -b *board_target* -- -Dmcuboot_CONFIG_BOOT_DIRECT_XIP=y -Dmcuboot_CONFIG_BOOT_DIRECT_XIP_REVERT=y -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y -DCONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT=y
 
 .. note::
    When building the application for the first time with MCUboot in direct-xip mode and the revert mechanism support, use an additional option ``-DCONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS=\"--confirm\"``.
@@ -170,10 +174,18 @@ To perform a FOTA update, complete the following steps:
    #. Switch to the :guilabel:`Image` tab.
    #. Tap the :guilabel:`SELECT FILE` button and select the :file:`dfu_application.zip` archive.
    #. Tap the :guilabel:`START` button.
+
+      .. note::
+         When performing a FOTA update with the iOS app for samples using random HCI identities, ensure that the :guilabel:`Erase application settings` option is deselected before starting the procedure.
+         Otherwise, the new image will boot with random IDs, causing communication issues between the app and the device.
+
    #. Initiate the DFU process of transferring the image to the device:
 
       * If you are using an Android device, select a mode in the dialog window, and tap the :guilabel:`START` button.
       * If you are using an iOS device, tap the selected mode in the pop-up window.
+
+      .. note::
+         For samples using random HCI identities, the Test and Confirm mode should not be used.
 
    #. Wait for the DFU to finish and then verify that the application works properly.
 
@@ -191,7 +203,7 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
 .. parsed-literal::
    :class: highlight
 
-    west build -b *build_target* -- -DEXTRA_CONF_FILE=overlay-bt.conf
+    west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-bt.conf
     west flash
 
 Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.
@@ -215,6 +227,8 @@ When performing a FOTA update when working with the Bluetooth Mesh protocol, use
 
 * DFU over Bluetooth Mesh using the Zephyr Bluetooth Mesh DFU subsystem.
 * Point-to-point DFU over Bluetooth Low Energy as described in `FOTA over Bluetooth Low Energy`_ above.
+  The Bluetooth Mesh samples use random HCI identities.
+  See the related notes in the `Testing steps`_ section.
 
 For more information about both methods, see :ref:`ug_bt_mesh_fota`.
 
@@ -315,7 +329,7 @@ Complete the following steps to build and program using the |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`nrf/applications/nrf_desktop`
 
-.. |vsc_sample_board_target_line| replace:: see the :ref:`list of supported boards <nrf52_supported_boards>` for the build target corresponding to the nRF52 Series DK you are using
+.. |vsc_sample_board_target_line| replace:: see the :ref:`list of supported boards <nrf52_supported_boards>` for the board target corresponding to the nRF52 Series DK you are using
 
 .. include:: ../../../includes/vsc_build_and_run.txt
 
@@ -358,9 +372,9 @@ To build and program the source code from the command line, complete the followi
    .. parsed-literal::
       :class: highlight
 
-      west build -b *build_target* -d *destination_directory_name*
+      west build -b *board_target* -d *destination_directory_name*
 
-   For the *build_target* parameter, see the :ref:`list of supported boards <nrf52_supported_boards>` for the build target corresponding to the nRF52 Series DK you are using.
+   For the *board_target* parameter, see the :ref:`list of supported boards <nrf52_supported_boards>` for the board target corresponding to the nRF52 Series DK you are using.
 
    .. note::
 

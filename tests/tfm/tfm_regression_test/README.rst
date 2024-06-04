@@ -19,7 +19,7 @@ The tests support the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160_ns
+   :rows: nrf5340dk_nrf5340_cpuapp_ns, nrf9151dk_nrf9151_ns, nrf9160dk_nrf9160_ns, nrf9161dk_nrf9161_ns
 
 Overview
 ********
@@ -47,6 +47,8 @@ Building and running
 .. note::
     For programming, use the :ref:`programming command without --erase <programming_params_no_erase>`.
     Programming with ``--erase`` or ``--recover`` (or similar parameters) will erase the PSA platform security parameters.
+
+Test files can be found under :file:`/modules/tee/tf-m/tf-m-tests/tests_reg` in the |NCS| folder structure.
 
 Output
 ======

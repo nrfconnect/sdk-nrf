@@ -27,8 +27,8 @@ static struct k_thread broadcaster_thread;
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 
 #define BUF_ALLOC_TIMEOUT_MS	       (10)
-#define BROADCAST_PERIODIC_ADV_INT_MIN (32)	/* Periodic ADV min interval = 40ms */
-#define BROADCAST_PERIODIC_ADV_INT_MAX (32)	/* Periodic ADV max interval = 40ms */
+#define BROADCAST_PERIODIC_ADV_INT_MIN (32) /* Periodic ADV min interval = 40ms */
+#define BROADCAST_PERIODIC_ADV_INT_MAX (32) /* Periodic ADV max interval = 40ms */
 #define BROADCAST_PERIODIC_ADV                                                                     \
 	BT_LE_PER_ADV_PARAM(BROADCAST_PERIODIC_ADV_INT_MIN, BROADCAST_PERIODIC_ADV_INT_MAX,        \
 			    BT_LE_PER_ADV_OPT_NONE)
@@ -110,6 +110,10 @@ static struct bt_iso_big *big;
 static uint32_t iso_send_count;
 static uint8_t iso_data[CONFIG_BT_ISO_TX_MTU] = {0};
 
+static const struct bt_data ad[] = {
+	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
+};
+
 static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 {
 	static uint8_t initial_send = 2;
@@ -117,7 +121,10 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 	while (1) {
 		int ret;
 
-		k_sleep(K_USEC(big_create_param.interval));
+		/* Wake up earlier to reduce the time skewing
+		 * Use the ISO interval minus 200 uS to keep the buffer full.
+		 */
+		k_sleep(K_USEC(big_create_param.interval - 200));
 		if (!running) {
 			k_msleep(100);
 			initial_send = 2;
@@ -224,10 +231,17 @@ int iso_broadcast_src_start(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	/* Create a non-connectable non-scannable advertising set */
-	ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN_NAME, NULL, &adv);
+	ret = bt_le_ext_adv_create(BT_LE_EXT_ADV_NCONN, NULL, &adv);
 	if (ret) {
 		LOG_ERR("Failed to create advertising set (ret %d)", ret);
 		return ret;
+	}
+
+	/* Set advertising data to have complete local name set */
+	ret = bt_le_ext_adv_set_data(adv, ad, ARRAY_SIZE(ad), NULL, 0);
+	if (ret) {
+		LOG_ERR("Failed to set advertising data (ret %d)", ret);
+		return 0;
 	}
 
 	/* Set periodic advertising parameters */

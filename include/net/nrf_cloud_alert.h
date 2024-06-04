@@ -68,7 +68,7 @@ struct nrf_cloud_alert_info {
 };
 
 /**
- * @brief Transmit the specified alert to nRF Cloud using MQTT.
+ * @brief Transmit the specified alert to nRF Cloud using MQTT or CoAP.
  *
  * @param[in] type The type of alert.
  * @param[in] value Optional numeric value associated with the alert. If set to

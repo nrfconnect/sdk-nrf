@@ -233,11 +233,5 @@ void memfault_lte_metrics_update(void)
 			LOG_ERR("Failed to set ncs_lte_operator");
 		}
 	}
-
-	/* Reset stats */
-	err = modem_info_connectivity_stats_init();
-	if (err) {
-		LOG_ERR("Failed to reset connectivity stats, err: %d", err);
-	}
 #endif
 }

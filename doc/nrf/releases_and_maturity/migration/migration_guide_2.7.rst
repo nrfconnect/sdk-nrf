@@ -85,6 +85,15 @@ FEM abstraction layer
     The function :c:func:`fem_tx_power_control_set` replaces the function :c:func:`fem_tx_gain_set`.
     The function :c:func:`fem_default_tx_output_power_get` replaces the function :c:func:`fem_default_tx_gain_get`.
 
+Modem library
+-------------
+
+.. toggle::
+
+  * For applications using :ref:`nrf_modem_lib_readme`:
+    The option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR` is now deprecated.
+    Use the option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` instead.
+
 .. _migration_2.7_recommended:
 
 Recommended changes
@@ -95,16 +104,19 @@ The following changes are recommended for your application to work optimally aft
 Samples and applications
 ========================
 
-* For applications using build types (without child images):
+* For applications using build types:
 
   * The :makevar:`CONF_FILE` used for :ref:`app_build_additions_build_types` is now deprecated and is being replaced with the :makevar:`FILE_SUFFIX` variable, inherited from Zephyr.
     You can read more about it in :ref:`app_build_file_suffixes`, :ref:`cmake_options`, and the :ref:`related Zephyr documentation <zephyr:application-file-suffixes>`.
 
     If your application uses build types, it is recommended to update the :file:`sample.yaml` to use the new variable instead of :makevar:`CONF_FILE`.
 
-    .. note::
-        The :ref:`child image Kconfig configuration <ug_multi_image_permanent_changes>` are not yet compatible with :makevar:`FILE_SUFFIX`.
-        Read more about this in the note in :ref:`app_build_file_suffixes`.
+* For applications using child images:
+
+  * With the inheritance of Zephyr's :ref:`zephyr:sysbuild` in the |NCS|, the :ref:`ug_multi_image` are deprecated.
+
+    If your application uses parent and child images, it is recommended to migrate your application to :ref:`zephyr:sysbuild` before the multi-image builds are removed in one of the upcoming |NCS| releases.
+    See the documentation in Zephyr for more information.
 
 Matter
 ------
@@ -116,6 +128,15 @@ Matter
       * All Partition Manager configuration files (:file:`pm_static` files) have been removed from the :file:`configuration` directory.
         Instead, a :file:`pm_static_<BOARD>` file has been created for each target board and placed in the samples' directories.
         Setting the ``PM_STATIC_YML_FILE`` argument in the :file:`CMakeLists.txt` file has been removed, as it is no longer needed.
+      * Configuration files :file:`Kconfig.mcuboot.defaults`, :file:`Kconfig.hci_ipc.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` that stored a default configuration for the child images have been removed.
+        This was done because of the sysbuild integration and child images deprecation.
+
+        The Matter samples and applications have been migrated to use sysbuild, though you can still use the child images.
+        To migrate an application from the previous to the new version and keep using child images, complete the following steps:
+
+        1. Copy the content of the image configuration file :file:`prj.conf` located in the `sysbuild/<image_name>` directory (for example,  :file:`sysbuild/mcuboot`) to the :file:`prj.conf` file located in the :file:`child_image/<image_name>` directory.
+        #. Copy the content of the board configuration file located in the :file:`sysbuild/<image_name>/boards` directory (for example, :file:`sysbuild/mcuboot/boards/nrf52840dk_nrf52840.conf`) to the board file located in the :file:`child_image/<image_name>/boards` directory.
+
 
 Libraries
 =========

@@ -37,6 +37,8 @@ enum suit_orchestrator_state {
 	STATE_POST_INVOKE_RECOVERY,
 	STATE_POST_INSTALL,
 	STATE_ENTER_RECOVERY,
+	STATE_INSTALL_NORDIC_TOP,
+	STATE_POST_INSTALL_NORDIC_TOP,
 };
 
 static suit_plat_err_t storage_emergency_flag_get(bool *flag)
@@ -391,6 +393,24 @@ int suit_orchestrator_init(void)
 			return SUIT_PLAT_ERR_TO_ZEPHYR_ERR(plat_err);
 		}
 
+		plat_err = suit_storage_update_cand_get(&update_regions, &update_regions_len);
+		if ((plat_err == SUIT_PLAT_SUCCESS) && (update_regions_len > 0)) {
+			LOG_WRN("SDFW update provided in a FAILED state");
+
+			mci_err_t mci_err = suit_mci_init();
+
+			if (mci_err != SUIT_PLAT_SUCCESS) {
+				LOG_ERR("Failed to init MCI for SDFW update: %d", mci_err);
+				return SUIT_PLAT_ERR_TO_ZEPHYR_ERR(mci_err);
+			}
+
+			plat_err = suit_execution_mode_set(EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP);
+			if (plat_err != SUIT_PLAT_SUCCESS) {
+				LOG_ERR("Setting SDFW update execution mode failed: %d", plat_err);
+				return SUIT_PLAT_ERR_TO_ZEPHYR_ERR(plat_err);
+			}
+		}
+
 		LOG_WRN("Execution mode in a FAILED state");
 		return SUIT_PLAT_SUCCESS;
 	}
@@ -459,11 +479,15 @@ static int suit_orchestrator_run(void)
 	case EXECUTION_MODE_INSTALL_RECOVERY:
 		state = STATE_INSTALL_RECOVERY;
 		break;
+	case EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP:
+		state = STATE_INSTALL_NORDIC_TOP;
+		break;
 
 	case EXECUTION_MODE_FAIL_NO_MPI:
 	case EXECUTION_MODE_FAIL_MPI_INVALID:
 	case EXECUTION_MODE_FAIL_MPI_INVALID_MISSING:
 	case EXECUTION_MODE_FAIL_MPI_UNSUPPORTED:
+	case EXECUTION_MODE_FAIL_INVOKE_RECOVERY:
 		return -EFAULT;
 
 	case EXECUTION_MODE_STARTUP:
@@ -491,7 +515,7 @@ static int suit_orchestrator_run(void)
 			state = STATE_POST_INSTALL;
 			break;
 
-		case STATE_POST_INSTALL:
+		case STATE_POST_INSTALL: {
 			LOG_INF("Update finished: %d", ret);
 
 			/* TODO: Report update status */
@@ -509,6 +533,33 @@ static int suit_orchestrator_run(void)
 				sys_reboot(SYS_REBOOT_COLD);
 			}
 			return ret;
+		}
+
+		case STATE_INSTALL_NORDIC_TOP:
+			LOG_INF("SDFW update path");
+			ret = update_path();
+			state = STATE_POST_INSTALL_NORDIC_TOP;
+			break;
+
+		case STATE_POST_INSTALL_NORDIC_TOP: {
+			LOG_INF("SDFW update finished: %d", ret);
+
+			/* TODO: Report update status */
+
+			int clear_ret = clear_update_candidate();
+
+			if (clear_ret != 0) {
+				LOG_WRN("Unable to clear update candidate info: %d", clear_ret);
+			}
+
+			if (IS_ENABLED(CONFIG_SUIT_UPDATE_REBOOT_ENABLED)) {
+				LOG_INF("Reboot the system after update: %d", ret);
+				LOG_PANIC();
+
+				sys_reboot(SYS_REBOOT_COLD);
+			}
+			return ret;
+		}
 
 		case STATE_INVOKE:
 			LOG_INF("Boot path");
@@ -523,11 +574,7 @@ static int suit_orchestrator_run(void)
 		case STATE_INVOKE_RECOVERY:
 			LOG_INF("Recovery boot path");
 			ret = boot_path(true);
-			if (ret == 0) {
-				state = STATE_POST_INVOKE_RECOVERY;
-			} else {
-				return ret;
-			}
+			state = STATE_POST_INVOKE_RECOVERY;
 			break;
 
 		case STATE_ENTER_RECOVERY:
@@ -553,9 +600,18 @@ static int suit_orchestrator_run(void)
 			return ret;
 
 		case STATE_POST_INVOKE_RECOVERY:
-			if (suit_execution_mode_set(EXECUTION_MODE_POST_INVOKE_RECOVERY) !=
-			    SUIT_PLAT_SUCCESS) {
-				LOG_WRN("Unable to change execution mode to INVOKE RECOVERY");
+			if (ret == 0) {
+				if (suit_execution_mode_set(EXECUTION_MODE_POST_INVOKE_RECOVERY) !=
+				    SUIT_PLAT_SUCCESS) {
+					LOG_WRN("Unable to change execution mode to INVOKE "
+						"RECOVERY");
+				}
+			} else {
+				if (suit_execution_mode_set(EXECUTION_MODE_FAIL_INVOKE_RECOVERY) !=
+				    SUIT_PLAT_SUCCESS) {
+					LOG_WRN("Unable to change execution mode to FAIL INVOKE "
+						"RECOVERY");
+				}
 			}
 			return ret;
 

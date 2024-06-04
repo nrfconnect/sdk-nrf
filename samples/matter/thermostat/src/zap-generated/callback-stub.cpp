@@ -43,6 +43,9 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::Descriptor::Id:
 		emberAfDescriptorClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::DiagnosticLogs::Id:
+		emberAfDiagnosticLogsClusterInitCallback(endpoint);
+		break;
 	case app::Clusters::GeneralCommissioning::Id:
 		emberAfGeneralCommissioningClusterInitCallback(endpoint);
 		break;
@@ -112,6 +115,11 @@ void __attribute__((weak)) emberAfBindingClusterInitCallback(EndpointId endpoint
 	(void)endpoint;
 }
 void __attribute__((weak)) emberAfDescriptorClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
+void __attribute__((weak)) emberAfDiagnosticLogsClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;

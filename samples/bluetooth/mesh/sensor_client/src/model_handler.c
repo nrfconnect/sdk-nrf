@@ -11,18 +11,36 @@
 
 #define GET_DATA_INTERVAL 60000
 #define GET_DATA_INTERVAL_QUICK 3000
+#define MOTION_TIMEOUT K_SECONDS(60)
+
+static bool is_occupied;
+static struct k_work_delayable motion_timeout_work;
+
+static void motion_timeout(struct k_work *work)
+{
+	is_occupied = false;
+	printk("Area is now vacant.\n");
+}
 
 static void sensor_cli_data_cb(struct bt_mesh_sensor_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
 			       const struct bt_mesh_sensor_type *sensor,
 			       const struct bt_mesh_sensor_value *value)
 {
+	enum bt_mesh_sensor_value_status status;
+
 	if (sensor->id == bt_mesh_sensor_present_dev_op_temp.id) {
 		printk("Chip temperature: %s\n", bt_mesh_sensor_ch_str(value));
 	} else if (sensor->id == bt_mesh_sensor_presence_detected.id) {
 		int64_t presence_detected = 0;
 
-		(void)bt_mesh_sensor_value_to_micro(value, &presence_detected);
+		status = bt_mesh_sensor_value_to_micro(value, &presence_detected);
+		if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+			printk("Warning: unexpected behaviour during conversion of presence "
+			       "detected value (%d)\n",
+			       status);
+			return;
+		}
 		if (!!presence_detected) {
 			printk("Presence detected\n");
 		} else {
@@ -31,9 +49,8 @@ static void sensor_cli_data_cb(struct bt_mesh_sensor_cli *cli,
 	} else if (sensor->id ==
 		   bt_mesh_sensor_time_since_presence_detected.id) {
 		int64_t time_since_presence_detected = 0;
-		enum bt_mesh_sensor_value_status status =
-			bt_mesh_sensor_value_to_micro(value, &time_since_presence_detected);
 
+		status = bt_mesh_sensor_value_to_micro(value, &time_since_presence_detected);
 		if (status == BT_MESH_SENSOR_VALUE_UNKNOWN) {
 			printk("Unknown last presence detected\n");
 		} else if (!time_since_presence_detected) {
@@ -44,6 +61,43 @@ static void sensor_cli_data_cb(struct bt_mesh_sensor_cli *cli,
 		}
 	} else if (sensor->id == bt_mesh_sensor_present_amb_light_level.id) {
 		printk("Ambient light level: %s\n", bt_mesh_sensor_ch_str(value));
+	} else if (sensor->id == bt_mesh_sensor_motion_sensed.id) {
+		int64_t motion_sensed = 0;
+
+		status = bt_mesh_sensor_value_to_micro(value, &motion_sensed);
+		if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+			printk("Warning: unexpected behaviour during conversion of motion sensed "
+			       "value (%d)\n",
+			       status);
+			return;
+		}
+		if (!!motion_sensed) {
+			is_occupied = true;
+			printk("Motion detected (%s %%). Area is occupied.\n",
+			       bt_mesh_sensor_ch_str(value));
+			k_work_cancel_delayable(&motion_timeout_work);
+		} else {
+			if (is_occupied) {
+				printk("No current motion detected. Area is still occupied.\n");
+				k_work_reschedule(&motion_timeout_work, MOTION_TIMEOUT);
+			} else {
+				printk("No motion detected. Area is vacant.\n");
+			}
+		}
+	} else if (sensor->id == bt_mesh_sensor_time_since_motion_sensed.id) {
+		int64_t time_since_motion_sensed = 0;
+
+		status = bt_mesh_sensor_value_to_micro(value, &time_since_motion_sensed);
+		if (status == BT_MESH_SENSOR_VALUE_UNKNOWN) {
+			printk("Unknown last motion sensed\n");
+		} else if (!time_since_motion_sensed) {
+			printk("Motion sensed, or under 1 second since motion sensed\n");
+		} else {
+			printk("%s second(s) since last motion sensed\n",
+			       bt_mesh_sensor_ch_str(value));
+		}
+	} else if (sensor->id == bt_mesh_sensor_people_count.id) {
+		printk("People count is %s\n", bt_mesh_sensor_ch_str(value));
 	}
 }
 
@@ -138,9 +192,24 @@ static void get_data(struct k_work *work)
 		}
 		break;
 	}
+	case (4): {
+		err = bt_mesh_sensor_cli_get(&sensor_cli, NULL,
+					     &bt_mesh_sensor_time_since_motion_sensed, NULL);
+		if (err) {
+			printk("Error getting time since motion detected (%d)\n", err);
+		}
+		break;
+	}
+	case (5): {
+		err = bt_mesh_sensor_cli_get(&sensor_cli, NULL, &bt_mesh_sensor_people_count, NULL);
+		if (err) {
+			printk("Error getting people count (%d)\n", err);
+		}
+		break;
+	}
 	}
 
-	if (sensor_idx % 4) {
+	if (sensor_idx % 6) {
 		k_work_schedule(&get_data_work, K_MSEC(GET_DATA_INTERVAL_QUICK));
 	} else {
 		k_work_schedule(&get_data_work, K_MSEC(GET_DATA_INTERVAL));
@@ -291,6 +360,7 @@ const struct bt_mesh_comp *model_handler_init(void)
 {
 	k_work_init_delayable(&attention_blink_work, attention_blink);
 	k_work_init_delayable(&get_data_work, get_data);
+	k_work_init_delayable(&motion_timeout_work, motion_timeout);
 
 	dk_button_handler_add(&button_handler);
 	k_work_schedule(&get_data_work, K_MSEC(GET_DATA_INTERVAL));

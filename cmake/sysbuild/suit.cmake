@@ -134,6 +134,10 @@ function(suit_register_post_build_commands)
     list(APPEND dependencies "${BINARY_DIR}/zephyr/${BINARY_FILE}.bin")
   endforeach()
 
+  if (SB_CONFIG_SUIT_BUILD_RECOVERY)
+    list(APPEND dependencies recovery)
+  endif()
+
   add_custom_target(
     create_suit_artifacts
     ALL
@@ -165,6 +169,11 @@ function(suit_create_package)
 
   suit_set_absolute_or_relative_path(${SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION} ${PROJECT_BINARY_DIR} INPUT_TEMPLATES_DIRECTORY)
   set(ENVELOPE_SHALL_BE_SIGNED ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
+  if(NOT DEFINED west_realpath)
+    # Twister build - ignore and store in the build folder!
+    set(SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION "./")
+  endif()
+  sysbuild_get(ENVELOPE_SHALL_BE_SIGNED IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_ENVELOPE_SIGN KCONFIG)
   if(NOT DEFINED ENVELOPE_SHALL_BE_SIGNED)
     set(ENVELOPE_SHALL_BE_SIGNED FALSE)
   endif()
@@ -174,14 +183,23 @@ function(suit_create_package)
   )
 
   foreach(image ${IMAGES})
+    unset(target)
     sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
     sysbuild_get(BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+    sysbuild_get(target IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
 
     set(BINARY_FILE "${BINARY_FILE}.bin")
 
     list(APPEND CORE_ARGS
       --core ${image},${SUIT_ROOT_DIRECTORY}${image}.bin,${BINARY_DIR}/zephyr/edt.pickle,${BINARY_DIR}/zephyr/.config
     )
+
+    if(DEFINED target AND NOT target STREQUAL "")
+      list(APPEND CORE_ARGS
+      --core ${target},${SUIT_ROOT_DIRECTORY}${target}.bin,${BINARY_DIR}/zephyr/edt.pickle,${BINARY_DIR}/zephyr/.config
+      )
+      suit_copy_artifact_to_output_directory(${target} ${BINARY_DIR}/zephyr/${BINARY_FILE})
+    endif()
     suit_copy_artifact_to_output_directory(${image} ${BINARY_DIR}/zephyr/${BINARY_FILE})
   endforeach()
 
@@ -193,25 +211,24 @@ function(suit_create_package)
     unset(GENERATE_LOCAL_ENVELOPE)
 
     sysbuild_get(INPUT_ENVELOPE_JINJA_FILE IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TEMPLATE KCONFIG)
+    suit_set_absolute_or_relative_path(${INPUT_ENVELOPE_JINJA_FILE} ${PROJECT_BINARY_DIR} INPUT_ENVELOPE_JINJA_FILE)
     sysbuild_get(target IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
     sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
     sysbuild_get(BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+    if (NOT DEFINED INPUT_ENVELOPE_JINJA_FILE OR INPUT_ENVELOPE_JINJA_FILE STREQUAL "")
+      message(STATUS "DFU: Input SUIT template for ${image} is not defined. Skipping.")
+      continue()
+    endif()
     suit_copy_input_template(${INPUT_TEMPLATES_DIRECTORY} "${INPUT_ENVELOPE_JINJA_FILE}" ENVELOPE_JINJA_FILE)
     if(NOT DEFINED ENVELOPE_JINJA_FILE)
       message(SEND_ERROR "DFU: Creation of SUIT artifacts failed.")
       return()
     endif()
     suit_check_template_digest(${INPUT_TEMPLATES_DIRECTORY} "${INPUT_ENVELOPE_JINJA_FILE}")
-    set(BINARY_FILE "${BINARY_FILE}.bin")
-
-    list(APPEND CORE_ARGS
-      --core ${target},${SUIT_ROOT_DIRECTORY}${target}.bin,${BINARY_DIR}/zephyr/edt.pickle,${BINARY_DIR}/zephyr/.config
-    )
 
     set(ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${target}.yaml)
     set(ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${target}.suit)
 
-    suit_copy_artifact_to_output_directory(${target} ${BINARY_DIR}/zephyr/${BINARY_FILE})
     suit_render_template(${ENVELOPE_JINJA_FILE} ${ENVELOPE_YAML_FILE} "${CORE_ARGS}")
     suit_create_envelope(${ENVELOPE_YAML_FILE} ${ENVELOPE_SUIT_FILE} ${ENVELOPE_SHALL_BE_SIGNED})
     list(APPEND STORAGE_BOOT_ARGS
@@ -220,10 +237,12 @@ function(suit_create_package)
   endforeach()
 
   set(INPUT_ROOT_ENVELOPE_JINJA_FILE ${SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE})
+  suit_set_absolute_or_relative_path(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${PROJECT_BINARY_DIR} INPUT_ROOT_ENVELOPE_JINJA_FILE)
 
   # create root envelope if defined
   if(DEFINED INPUT_ROOT_ENVELOPE_JINJA_FILE AND NOT INPUT_ROOT_ENVELOPE_JINJA_FILE STREQUAL "")
     set(ROOT_NAME ${SB_CONFIG_SUIT_ENVELOPE_ROOT_ARTIFACT_NAME})
+    suit_set_absolute_or_relative_path(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${PROJECT_BINARY_DIR} INPUT_ROOT_ENVELOPE_JINJA_FILE)
     suit_copy_input_template(${INPUT_TEMPLATES_DIRECTORY} "${INPUT_ROOT_ENVELOPE_JINJA_FILE}" ROOT_ENVELOPE_JINJA_FILE)
     suit_check_template_digest(${INPUT_TEMPLATES_DIRECTORY} "${INPUT_ROOT_ENVELOPE_JINJA_FILE}")
     set(ROOT_ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${ROOT_NAME}.yaml)
@@ -236,8 +255,23 @@ function(suit_create_package)
   endif()
 
   sysbuild_get(DEFAULT_BINARY_DIR IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_BINARY_DIR CACHE)
+
+  # Read SUIT storage addresses, set during MPI generation
+  sysbuild_get(SUIT_STORAGE_ADDRESS IMAGE ${DEFAULT_IMAGE} VAR SUIT_STORAGE_ADDRESS CACHE)
+  if (DEFINED SUIT_STORAGE_ADDRESS)
+    list(APPEND STORAGE_BOOT_ARGS --storage-address ${SUIT_STORAGE_ADDRESS})
+  else()
+    message(WARNING "Using default value of the SUIT storage address")
+  endif()
+
   # create all storages in the DEFAULT_IMAGE output directory
-  list(APPEND STORAGE_BOOT_ARGS --storage-output-directory "${DEFAULT_BINARY_DIR}/zephyr" --zephyr-base ${ZEPHYR_BASE} ${CORE_ARGS})
+  list(APPEND STORAGE_BOOT_ARGS
+    --storage-output-directory
+    "${DEFAULT_BINARY_DIR}/zephyr"
+    --zephyr-base ${ZEPHYR_BASE}
+    --config-file "${DEFAULT_BINARY_DIR}/zephyr/.config"
+    ${CORE_ARGS}
+  )
   set_property(
     GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
     COMMAND ${PYTHON_EXECUTABLE}
@@ -268,6 +302,10 @@ function(suit_setup_merge)
     sysbuild_get(IMAGE_BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
     sysbuild_get(IMAGE_BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
     sysbuild_get(IMAGE_TARGET_NAME IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
+    if (NOT DEFINED IMAGE_TARGET_NAME OR IMAGE_TARGET_NAME STREQUAL "")
+      message(STATUS "DFU: Target name for ${image} is not defined. Skipping.")
+      continue()
+    endif()
 
     sysbuild_get(CONFIG_SUIT_ENVELOPE_OUTPUT_ARTIFACT IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_OUTPUT_ARTIFACT KCONFIG)
     sysbuild_get(CONFIG_NRF_REGTOOL_GENERATE_UICR IMAGE ${image} VAR CONFIG_NRF_REGTOOL_GENERATE_UICR KCONFIG)
@@ -275,13 +313,23 @@ function(suit_setup_merge)
 
     set(OUTPUT_HEX_FILE "${IMAGE_BINARY_DIR}/zephyr/${CONFIG_SUIT_ENVELOPE_OUTPUT_ARTIFACT}")
 
-    list(APPEND ARTIFACTS_TO_MERGE ${BINARY_DIR}/zephyr/storage_${IMAGE_TARGET_NAME}.hex)
+    list(APPEND ARTIFACTS_TO_MERGE ${BINARY_DIR}/zephyr/suit_installed_envelopes_${IMAGE_TARGET_NAME}_merged.hex)
     list(APPEND ARTIFACTS_TO_MERGE ${IMAGE_BINARY_DIR}/zephyr/${IMAGE_BINARY_FILE}.hex)
     if(CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE)
       list(APPEND ARTIFACTS_TO_MERGE ${BINARY_DIR}/zephyr/suit_mpi_${IMAGE_TARGET_NAME}_merged.hex)
     endif()
     if(CONFIG_NRF_REGTOOL_GENERATE_UICR)
       list(APPEND ARTIFACTS_TO_MERGE ${IMAGE_BINARY_DIR}/zephyr/uicr.hex)
+    endif()
+
+    if(SB_CONFIG_SUIT_BUILD_RECOVERY)
+      get_property(
+        recovery_artifacts
+        GLOBAL PROPERTY
+        SUIT_RECOVERY_ARTIFACTS_TO_MERGE_${IMAGE_TARGET_NAME}
+      )
+
+      list(APPEND ARTIFACTS_TO_MERGE ${recovery_artifacts})
     endif()
 
     set_property(
@@ -297,6 +345,61 @@ function(suit_setup_merge)
     )
   endforeach()
 endfunction()
+
+# Build recovery image.
+#
+# Usage:
+#   suit_build_recovery()
+#
+function(suit_build_recovery)
+  include(ExternalProject)
+
+  set(sysbuild_root_path "${ZEPHYR_NRF_MODULE_DIR}/../zephyr/share/sysbuild")
+  set(board_target "${SB_CONFIG_BOARD}/${target_soc}/cpuapp")
+
+  # Get class and vendor ID-s to pass to recovery application
+  sysbuild_get(APP_RECOVERY_VENDOR_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_APP_RECOVERY_VENDOR_NAME KCONFIG)
+  sysbuild_get(APP_RECOVERY_CLASS_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME KCONFIG)
+  sysbuild_get(RAD_RECOVERY_VENDOR_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME KCONFIG)
+  sysbuild_get(RAD_RECOVERY_CLASS_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_RAD_RECOVERY_CLASS_NAME KCONFIG)
+
+  ExternalProject_Add(
+    recovery
+    SOURCE_DIR ${sysbuild_root_path}
+    PREFIX ${CMAKE_BINARY_DIR}/recovery
+    INSTALL_COMMAND ""
+    CMAKE_CACHE_ARGS
+      "-DAPP_DIR:PATH=${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery"
+      "-DBOARD:STRING=${board_target}"
+      "-DEXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery.overlay"
+      "-Dhci_ipc_EXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery_hci_ipc.overlay"
+      "-DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE:STRING=\\\"${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery/app_recovery_envelope.yaml.jinja2\\\""
+      "-Dhci_ipc_CONFIG_SUIT_ENVELOPE_TEMPLATE:STRING=\\\"${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery/rad_recovery_envelope.yaml.jinja2\\\""
+      "-DCONFIG_SUIT_MPI_APP_RECOVERY_VENDOR_NAME:STRING=\\\"${APP_RECOVERY_VENDOR_NAME}\\\""
+      "-DCONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME:STRING=\\\"${APP_RECOVERY_CLASS_NAME}\\\""
+      "-DCONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME:STRING=\\\"${RAD_RECOVERY_VENDOR_NAME}\\\""
+      "-DCONFIG_SUIT_MPI_RAD_RECOVERY_CLASS_NAME:STRING=\\\"${RAD_RECOVERY_CLASS_NAME}\\\""
+    BUILD_ALWAYS True
+)
+  ExternalProject_Get_property(recovery BINARY_DIR)
+
+  set_property(
+    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_application
+    ${BINARY_DIR}/recovery/zephyr/suit_installed_envelopes_application_merged.hex)
+  set_property(
+    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_application ${BINARY_DIR}/recovery/zephyr/zephyr.hex)
+
+  set_property(
+    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_radio
+    ${BINARY_DIR}/recovery/zephyr/suit_installed_envelopes_radio_merged.hex)
+  set_property(
+    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_radio ${BINARY_DIR}/hci_ipc/zephyr/zephyr.hex)
+
+endfunction()
+
+if(SB_CONFIG_SUIT_BUILD_RECOVERY)
+  suit_build_recovery()
+endif()
 
 if(SB_CONFIG_SUIT_ENVELOPE)
   suit_create_package()

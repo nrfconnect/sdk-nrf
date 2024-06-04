@@ -105,4 +105,4 @@ This sample uses the following libraries:
 
 * :ref:`lib_hw_unique_key`
 * :ref:`nrf_security`
-* :ref:`Trusted Firmware-M <ug_tfm>`, when using a build target (``*_ns``) with :ref:`Cortex-M Security Extensions enabled <app_boards_spe_nspe_cpuapp_ns>`.
+* :ref:`Trusted Firmware-M <ug_tfm>`, when using a board target with :ref:`Cortex-M Security Extensions enabled <app_boards_spe_nspe_cpuapp_ns>` (``*/ns`` :ref:`variant <app_boards_names>`).

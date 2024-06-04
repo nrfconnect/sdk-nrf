@@ -9,6 +9,7 @@
 #include <string.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
+#include <zephyr/posix/sys/eventfd.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_udp_proxy.h"
@@ -51,10 +52,8 @@ static struct udp_proxy {
 	bool hostname_verify;	/* Verify hostname against the certificate. */
 	int dtls_cid;		/* DTLS connection identifier. */
 	enum slm_udp_role role;	/* Client or Server proxy */
-	union {			/* remote host */
-		struct sockaddr_in remote;   /* IPv4 host */
-		struct sockaddr_in6 remote6; /* IPv6 host */
-	};
+	int efd;		/* Event file descriptor for signaling threads. */
+	struct sockaddr_storage remote; /* remote host */
 } proxy;
 
 /** forward declaration of thread function **/
@@ -122,42 +121,42 @@ static int do_udp_server_start(uint16_t port)
 		return -errno;
 	}
 
+	proxy.efd = eventfd(0, 0);
+	memset(&proxy.remote, 0, sizeof(proxy.remote));
+	proxy.role = UDP_ROLE_SERVER;
 	udp_thread_id = k_thread_create(&udp_thread, udp_thread_stack,
 			K_THREAD_STACK_SIZEOF(udp_thread_stack),
 			udp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	proxy.role = UDP_ROLE_SERVER;
 	rsp_send("\r\n#XUDPSVR: %d,\"started\"\r\n", proxy.sock);
 
 	return 0;
 }
 
-static int do_udp_server_stop(void)
+static int do_udp_proxy_close(void)
 {
 	int ret = 0;
 
-	if (proxy.sock == INVALID_SOCKET) {
+	if (proxy.efd == INVALID_SOCKET) {
 		return 0;
 	}
-	ret = close(proxy.sock);
+	ret = eventfd_write(proxy.efd, 1);
 	if (ret < 0) {
-		LOG_WRN("close() failed: %d", -errno);
-		ret = -errno;
-	} else {
-		proxy.sock = INVALID_SOCKET;
-		if (proxy.family == AF_INET) {
-			memset(&proxy.remote, 0, sizeof(struct sockaddr_in));
-		} else {
-			memset(&proxy.remote6, 0, sizeof(struct sockaddr_in6));
+		return -errno;
+	}
+	ret = k_thread_join(&udp_thread, K_SECONDS(CONFIG_SLM_UDP_POLL_TIME));
+	if (ret) {
+		LOG_WRN("Thread terminate failed: %d", ret);
+
+		/* Attempt to make the thread exit by closing the socket. */
+		if (proxy.sock != INVALID_SOCKET) {
+			close(proxy.sock);
+			proxy.sock = INVALID_SOCKET;
 		}
-		slm_at_udp_proxy_init();
 	}
-	if (ret == 0 &&
-	    k_thread_join(&udp_thread, K_SECONDS(CONFIG_SLM_UDP_POLL_TIME * 2)) != 0) {
-		LOG_WRN("Wait for thread terminate failed");
-	}
-	rsp_send("\r\n#XUDPSVR: %d,\"stopped\"\r\n", ret);
+	close(proxy.efd);
+	proxy.efd = INVALID_SOCKET;
 
 	return ret;
 }
@@ -272,12 +271,13 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 		}
 	}
 
+	proxy.efd = eventfd(0, 0);
+	proxy.role = UDP_ROLE_CLIENT;
 	udp_thread_id = k_thread_create(&udp_thread, udp_thread_stack,
 			K_THREAD_STACK_SIZEOF(udp_thread_stack),
 			udp_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	proxy.role = UDP_ROLE_CLIENT;
 	rsp_send("\r\n#XUDPCLI: %d,\"connected\"\r\n", proxy.sock);
 
 	return 0;
@@ -290,29 +290,6 @@ cli_exit:
 	return ret;
 }
 
-static int do_udp_client_disconnect(void)
-{
-	int ret = 0;
-
-	if (proxy.sock == INVALID_SOCKET) {
-		return 0;
-	}
-	ret = close(proxy.sock);
-	if (ret < 0) {
-		LOG_WRN("close() failed: %d", -errno);
-		ret = -errno;
-	} else {
-		proxy.sock = INVALID_SOCKET;
-	}
-	if (ret == 0 &&
-	    k_thread_join(&udp_thread, K_SECONDS(CONFIG_SLM_UDP_POLL_TIME * 2)) != 0) {
-		LOG_WRN("Wait for thread terminate failed");
-	}
-	rsp_send("\r\n#XUDPCLI: %d,\"disconnected\"\r\n", ret);
-
-	return ret;
-}
-
 static int do_udp_send(const uint8_t *data, int datalen)
 {
 	int ret = 0;
@@ -320,16 +297,9 @@ static int do_udp_send(const uint8_t *data, int datalen)
 
 	while (offset < datalen) {
 		if (proxy.role == UDP_ROLE_SERVER) {
-			/* send to rememberd remote */
-			if (proxy.family == AF_INET) {
-				ret = sendto(proxy.sock, data + offset, datalen - offset, 0,
-					(struct sockaddr *)&(proxy.remote),
-					sizeof(struct sockaddr_in));
-			} else {
-				ret = sendto(proxy.sock, data + offset, datalen - offset, 0,
-					(struct sockaddr *)&(proxy.remote6),
-					sizeof(struct sockaddr_in6));
-			}
+			/* send to remembered remote */
+			ret = sendto(proxy.sock, data + offset, datalen - offset, 0,
+					(struct sockaddr *)&proxy.remote, sizeof(proxy.remote));
 		} else {
 			ret = send(proxy.sock, data + offset, datalen - offset, 0);
 		}
@@ -357,16 +327,9 @@ static int do_udp_send_datamode(const uint8_t *data, int datalen)
 
 	while (offset < datalen) {
 		if (proxy.role == UDP_ROLE_SERVER) {
-			/* send to rememberd remote */
-			if (proxy.family == AF_INET) {
-				ret = sendto(proxy.sock, data + offset, datalen - offset, 0,
-					(struct sockaddr *)&(proxy.remote),
-					sizeof(struct sockaddr_in));
-			} else {
-				ret = sendto(proxy.sock, data + offset, datalen - offset, 0,
-					(struct sockaddr *)&(proxy.remote6),
-					sizeof(struct sockaddr_in6));
-			}
+			/* send to remembered remote */
+			ret = sendto(proxy.sock, data + offset, datalen - offset, 0,
+					(struct sockaddr *)&proxy.remote, sizeof(proxy.remote));
 		} else {
 			ret = send(proxy.sock, data + offset, datalen - offset, 0);
 		}
@@ -383,18 +346,26 @@ static int do_udp_send_datamode(const uint8_t *data, int datalen)
 
 static void udp_thread_func(void *p1, void *p2, void *p3)
 {
+	enum {
+		SOCK,
+		EVENT_FD,
+		FD_COUNT
+	};
+
 	int ret;
-	struct pollfd fds;
+	struct pollfd fds[FD_COUNT];
 
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
-	fds.fd = proxy.sock;
-	fds.events = POLLIN;
+	fds[SOCK].fd = proxy.sock;
+	fds[SOCK].events = POLLIN;
+	fds[EVENT_FD].fd = proxy.efd;
+	fds[EVENT_FD].events = POLLIN;
 
 	do {
-		ret = poll(&fds, 1, MSEC_PER_SEC * CONFIG_SLM_UDP_POLL_TIME);
+		ret = poll(fds, ARRAY_SIZE(fds), MSEC_PER_SEC * CONFIG_SLM_UDP_POLL_TIME);
 		if (ret < 0) {  /* IO error */
 			LOG_WRN("poll() error: %d", ret);
 			continue;
@@ -402,74 +373,68 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 		if (ret == 0) {  /* timeout */
 			continue;
 		}
-		LOG_DBG("Poll events 0x%08x", fds.revents);
-		if ((fds.revents & POLLERR) == POLLERR) {
-			LOG_WRN("POLLERR");
+		LOG_DBG("sock events 0x%08x", fds[SOCK].revents);
+		LOG_DBG("efd events 0x%08x", fds[EVENT_FD].revents);
+		if ((fds[SOCK].revents & POLLIN) != 0) {
+			if (proxy.role == UDP_ROLE_SERVER) {
+				/* Store the remote to send responses with the #XUDPSEND command. */
+				unsigned int size = sizeof(proxy.remote);
+
+				memset(&proxy.remote, 0, sizeof(proxy.remote));
+				ret = recvfrom(proxy.sock, (void *)slm_data_buf,
+					       sizeof(slm_data_buf), MSG_DONTWAIT,
+					       (struct sockaddr *)&proxy.remote, &size);
+			} else {
+				ret = recv(proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf),
+					MSG_DONTWAIT);
+			}
+			if (ret < 0 && errno != EAGAIN) {
+				LOG_WRN("recv() error: %d", -errno);
+			} else if (ret > 0) {
+				if (!in_datamode()) {
+					rsp_send("\r\n#XUDPDATA: %d\r\n", ret);
+				}
+				data_send(slm_data_buf, ret);
+			}
+		}
+		if ((fds[SOCK].revents & POLLERR) != 0) {
+			LOG_WRN("%d : POLLERR", fds[SOCK].fd);
 			ret = -EIO;
 			break;
 		}
-		if ((fds.revents & POLLNVAL) == POLLNVAL) {
-			/* UDP client or server closed */
-			LOG_WRN("POLLNVAL");
+		if ((fds[SOCK].revents & POLLNVAL) != 0) {
+			LOG_WRN("%d : POLLNVAL", fds[SOCK].fd);
 			ret = -ENETDOWN;
 			break;
 		}
-		if ((fds.revents & POLLHUP) == POLLHUP) {
-			/* Lose LTE connection */
-			LOG_WRN("POLLHUP");
+		if ((fds[SOCK].revents & POLLHUP) != 0) {
+			/* Lose LTE connection / remote end close (with DTLS) */
+			LOG_WRN("%d : POLLHUP", fds[SOCK].fd);
 			ret = -ECONNRESET;
 			break;
 		}
-		if ((fds.revents & POLLIN) != POLLIN) {
-			continue;
+		/* Events from AT-commands. */
+		if ((fds[EVENT_FD].revents & POLLIN) != 0) {
+			LOG_DBG("Close proxy");
+			ret = 0;
+			break;
+		}
+		if (fds[EVENT_FD].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+			LOG_ERR("efd: unexpected event: %d", fds[EVENT_FD].revents);
+			break;
 		}
 
-		if (proxy.role == UDP_ROLE_SERVER) {
-			/* remember remote from last recvfrom */
-			if (proxy.family == AF_INET) {
-				int size = sizeof(struct sockaddr_in);
-
-				memset(&proxy.remote, 0, sizeof(struct sockaddr_in));
-				ret = recvfrom(
-					proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf),
-					0, (struct sockaddr *)&(proxy.remote), &size);
-			} else {
-				int size = sizeof(struct sockaddr_in6);
-
-				memset(&proxy.remote6, 0, sizeof(struct sockaddr_in6));
-				ret = recvfrom(
-					proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf),
-					0, (struct sockaddr *)&(proxy.remote6), &size);
-			}
-		} else {
-			ret = recv(proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf), 0);
-		}
-		if (ret < 0) {
-			LOG_WRN("recv() error: %d", -errno);
-			continue;
-		}
-		if (ret == 0) {
-			continue;
-		}
-		if (in_datamode()) {
-			data_send(slm_data_buf, ret);
-		} else {
-			rsp_send("\r\n#XUDPDATA: %d\r\n", ret);
-			data_send(slm_data_buf, ret);
-		}
 	} while (true);
+
+	close(proxy.sock);
+	proxy.sock = INVALID_SOCKET;
 
 	if (in_datamode()) {
 		exit_datamode_handler(ret);
-	}
-	if (proxy.sock != INVALID_SOCKET) {
-		close(proxy.sock);
-		proxy.sock = INVALID_SOCKET;
-		if (proxy.role == UDP_ROLE_CLIENT) {
-			rsp_send("\r\n#XUDPCLI: %d,\"disconnected\"\r\n", ret);
-		} else {
-			rsp_send("\r\n#XUDPSVR: %d,\"stopped\"\r\n", ret);
-		}
+	} else if (proxy.role == UDP_ROLE_CLIENT) {
+		rsp_send("\r\n#XUDPCLI: %d,\"disconnected\"\r\n", ret);
+	} else {
+		rsp_send("\r\n#XUDPSVR: %d,\"stopped\"\r\n", ret);
 	}
 
 	LOG_INF("UDP thread terminated");
@@ -486,9 +451,13 @@ static int udp_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8
 			return -EOVERFLOW;
 		}
 		ret = do_udp_send_datamode(data, len);
-		LOG_INF("datamode send: %d", ret);
+		LOG_DBG("datamode send: %d", ret);
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("datamode exit");
+		if ((flags & SLM_DATAMODE_FLAGS_EXIT_HANDLER) != 0) {
+			/* Datamode exited unexpectedly. */
+			rsp_send(CONFIG_SLM_DATAMODE_TERMINATOR);
+		}
 	}
 
 	return ret;
@@ -529,7 +498,7 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type, const struct at_param
 			proxy.family = (op == SERVER_START) ? AF_INET : AF_INET6;
 			err = do_udp_server_start(port);
 		} else if (op == SERVER_STOP) {
-			err = do_udp_server_stop();
+			err = do_udp_proxy_close();
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
@@ -618,7 +587,7 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type, const struct at_param
 			proxy.family = (op == CLIENT_CONNECT) ? AF_INET : AF_INET6;
 			err = do_udp_client_connect(url, port);
 		} else if (op == CLIENT_DISCONNECT) {
-			err = do_udp_client_disconnect();
+			err = do_udp_proxy_close();
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
@@ -677,8 +646,9 @@ static int handle_at_udp_send(enum at_cmd_type cmd_type, const struct at_param_l
  */
 int slm_at_udp_proxy_init(void)
 {
-	proxy.sock     = INVALID_SOCKET;
-	proxy.sec_tag  = INVALID_SEC_TAG;
+	proxy.sock	= INVALID_SOCKET;
+	proxy.sec_tag	= INVALID_SEC_TAG;
+	proxy.efd	= INVALID_SOCKET;
 
 	return 0;
 }
@@ -687,17 +657,5 @@ int slm_at_udp_proxy_init(void)
  */
 int slm_at_udp_proxy_uninit(void)
 {
-	int ret = 0;
-
-	if (proxy.sock != INVALID_SOCKET) {
-		k_thread_abort(udp_thread_id);
-		ret = close(proxy.sock);
-		if (ret < 0) {
-			LOG_WRN("close() failed: %d", -errno);
-			ret = -errno;
-		}
-		proxy.sock = INVALID_SOCKET;
-	}
-
-	return ret;
+	return do_udp_proxy_close();
 }

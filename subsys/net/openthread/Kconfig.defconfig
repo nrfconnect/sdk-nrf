@@ -34,16 +34,6 @@ endchoice
 if SOC_NRF54H20_CPUAPP
 
 #To be removed
-config ENTROPY_TEST_PRNG
-	bool
-	default y
-
-#To be removed
-config IPC_SERVICE_BACKEND_RPMSG_SHMEM_RESET
-	bool
-	   default y
-
-#To be removed
 config MBOX
 	bool
 	default y
@@ -74,7 +64,7 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 
 config MAIN_STACK_SIZE
 	int
-	default 768 if OPENTHREAD_COPROCESSOR_RCP
+	default 1024 if OPENTHREAD_COPROCESSOR_RCP
 	default 2560
 
 config LOG_BUFFER_SIZE
@@ -108,7 +98,8 @@ config OPENTHREAD_MANUAL_START
 	default y
 
 choice OPENTHREAD_SECURITY
-	default OPENTHREAD_NRF_SECURITY_PSA_CHOICE if SOC_FAMILY_NORDIC_NRF
+	default OPENTHREAD_NRF_SECURITY_PSA_CHOICE if (SOC_FAMILY_NORDIC_NRF && !SOC_NRF54H20_CPUAPP)
+	default OPENTHREAD_NRF_SECURITY_CHOICE if SOC_NRF54H20_CPUAPP
 endchoice
 
 config MBEDTLS_SSL_PROTO_DTLS

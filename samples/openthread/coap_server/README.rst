@@ -64,6 +64,8 @@ Configuration
 Snippets
 ========
 
+.. |snippet| replace:: :makevar:`coap_server_SNIPPET`
+
 .. include:: /includes/sample_snippets.txt
 
 The following snippets are available:

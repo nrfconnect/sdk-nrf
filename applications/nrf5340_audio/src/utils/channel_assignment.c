@@ -35,7 +35,7 @@ void channel_assignment_set(enum audio_channel channel)
 }
 #endif /* CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME */
 
-void channel_assignment_init(void)
+static int channel_assignment_init(void)
 {
 #if CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME
 	channel_value = uicr_channel_get();
@@ -47,4 +47,8 @@ void channel_assignment_init(void)
 #else
 	channel_value = CONFIG_AUDIO_HEADSET_CHANNEL;
 #endif /* CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME */
+
+	return 0;
 }
+
+SYS_INIT(channel_assignment_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

@@ -7,8 +7,13 @@
 #include "nrf54l15pdk_nrf54l15_cpuapp_0_3_0_fixup.dtsi"
 
 /* For nRF54L, watchdog status is disabled by default. Needs to be enabled in DTS overlay. */
-&wdt30 {
+&wdt31 {
 	status = "okay";
+};
+
+/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
+&cpuapp_rram {
+	reg = < 0x0 DT_SIZE_K(1524) >;
 };
 
 / {

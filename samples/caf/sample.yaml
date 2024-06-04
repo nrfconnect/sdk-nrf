@@ -3,9 +3,10 @@ sample:
   name: CAF
 tests:
   sample.caf:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp
-    tags: caf ci_build
+    tags: caf ci_build sysbuild

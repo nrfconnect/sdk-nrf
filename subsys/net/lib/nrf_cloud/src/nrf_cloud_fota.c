@@ -11,6 +11,7 @@
 #include "nrf_cloud_download.h"
 
 #include <zephyr/kernel.h>
+#include <zephyr/spinlock.h>
 #include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -90,6 +91,7 @@ static struct nrf_cloud_fota_job current_fota = {
 	.info = { .type = NRF_CLOUD_FOTA_TYPE__INVALID }
 };
 
+static struct k_spinlock last_job_slock;
 static uint8_t last_job[NRF_CLOUD_FOTA_JOB_ID_SIZE];
 static struct nrf_cloud_settings_fota_job saved_job = {
 	.type = NRF_CLOUD_FOTA_TYPE__INVALID
@@ -103,6 +105,31 @@ static bool reboot_on_init;
  * update to the cloud
  */
 static bool fota_report_ack_pending;
+
+static void update_last_job(char const *const job_id)
+{
+	if ((job_id == NULL) || (job_id[0] == '\0')) {
+		return;
+	}
+
+	K_SPINLOCK(&last_job_slock) {
+		strncpy(last_job, job_id, sizeof(last_job) - 1);
+		last_job[sizeof(last_job) - 1] = '\0';
+	}
+
+	LOG_DBG("Updated last job: %s", job_id);
+}
+
+static bool is_last_job(char const *const job_id)
+{
+	bool match;
+
+	K_SPINLOCK(&last_job_slock) {
+		match = (strncmp(last_job, job_id, sizeof(last_job)) == 0);
+	}
+
+	return match;
+}
 
 static void send_fota_done_event_if_done(void)
 {
@@ -392,6 +419,9 @@ static int publish_validated_job_status(void)
 		ret = publish_job_status(&job);
 		if (ret) {
 			LOG_ERR("Error sending job update: %d", ret);
+		} else {
+			/* Validated status sent to the cloud, update the last job string */
+			update_last_job(job.info.id);
 		}
 	}
 
@@ -1036,7 +1066,7 @@ static int handle_mqtt_evt_publish(const struct mqtt_evt *evt)
 	if (nrf_cloud_fota_job_decode(job_info, ble_id, &input)) {
 		/* Error parsing job, if a job ID exists, reject the job */
 		reject_job = (job_info->id != NULL);
-	} else if (strncmp(last_job, job_info->id, sizeof(last_job)) == 0) {
+	} else if (is_last_job(job_info->id)) {
 		/* Job parsed and already processed */
 		skip = true;
 		LOG_INF("Job %s already completed... skipping", last_job);
@@ -1182,10 +1212,11 @@ int nrf_cloud_fota_mqtt_evt_handler(const struct mqtt_evt *evt)
 		/* Job status updated on the cloud, now process the local saved status */
 		fota_report_ack_pending = false;
 
-		/* If job was updated to terminal status, save job ID and cleanup*/
+		/* If job was updated to terminal status, save job ID and cleanup.
+		 * This was likely due to an error, where no validation was required.
+		 */
 		if (is_job_status_terminal(current_fota.status)) {
-			strncpy(last_job, current_fota.info.id, sizeof(last_job) - 1);
-			last_job[sizeof(last_job) - 1] = '\0';
+			update_last_job(current_fota.info.id);
 			cleanup_job(&current_fota);
 		}
 

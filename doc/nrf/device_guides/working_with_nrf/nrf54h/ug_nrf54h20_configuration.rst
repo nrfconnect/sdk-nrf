@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ug_nrf54h20_configuration:
 
 Configuring the nRF54H20 DK
@@ -18,6 +16,8 @@ However, the multicore nature of the nRF54H20 DK required some changes to the wa
 
 DTS file scheme
 ***************
+
+.. to review
 
 .. note::
    This file scheme is valid only for the nRF54H20 initial limited sampling version of |NCS|.
@@ -38,7 +38,7 @@ The following is the DTS file structure implemented for all the SoCs of the 54H 
     * Product-specific overlays applicable to all cores​
     * Project-wide overlays
 
-The following is the include tree for the Application core of the nRF54H20 (cpuapp):
+The following is the include tree for the Application Core of the nRF54H20 (cpuapp):
 
 .. figure:: images/cpuapp_include_tree.svg
    :alt: nRF54H20 CPUAPP include tree
@@ -48,6 +48,8 @@ The files shown in the figure are currently hosted in the ``ic-next`` repository
 Customizing the DTS configuration
 *********************************
 
+.. to review
+
 The output files created in your application build directory are documented in :ref:`zephyr:devicetree-in-out-files`.
 You can use overlay files to customize this configuration.
 
@@ -56,14 +58,14 @@ To see and test how to use overlays for changing nodes, see the *Lesson 3* of th
 Generated HEX files
 *******************
 
+.. to review
+
 When building an application for the nRF54H20 DK, you are building all domain images at once.
 During this process, the following :file:`zephyr.hex` images are built:
 
-* Application core application
+* Application Core application
 * PPR core application
-* Secure Domain firmware
-* System Controller firmware
-* Radio core firmware
+* Radio Core firmware
 
 Additionally, the following user information configuration registers (UICR) contents (:file:`uicr.hex`) are generated for setup access for domains:
 
@@ -78,11 +80,3 @@ Additionally, the following user information configuration registers (UICR) cont
 All of the HEX files need to be flashed into the device.
 For more information on building images for the nRF54H20 DK, see :ref:`ug_nrf54h20_gs`.
 For additional information on multi-image builds see :ref:`ug_multi_image`.
-
-Other revelant resources
-************************
-
-For more resources, see the following:
-
-* The `nrf-regtool`_ - A script tool that generates files of register content for memory-mapped peripherals in Nordic Semiconductor products.
-* ``Arborist`` - A framework for validating resources reserved through User Information Configuration Register (UICR) configurations.

@@ -79,6 +79,7 @@ static struct bt_conn *device_conn;
 
 static const struct bt_data connectable_ad_data[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
 static const struct bt_data non_connectable_ad_data[] = {
@@ -87,17 +88,18 @@ static const struct bt_data non_connectable_ad_data[] = {
 		      0x17, /* UTF-8 code point for “https:” */
 		      '/', '/', 'w', 'w', 'w', '.',
 		      'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.',
-		      'c', 'o', 'm')
+		      'c', 'o', 'm'),
+	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
 static const struct bt_le_adv_param *connectable_ad_params =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME,
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE,
 			CONNECTABLE_ADV_INTERVAL_MIN,
 			CONNECTABLE_ADV_INTERVAL_MAX,
 			NULL);
 
 static const struct bt_le_adv_param *non_connectable_ad_params =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_USE_NAME,
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE,
 			NON_CONNECTABLE_ADV_INTERVAL_MIN,
 			NON_CONNECTABLE_ADV_INTERVAL_MAX,
 			NULL);

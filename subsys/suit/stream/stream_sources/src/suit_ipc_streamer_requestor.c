@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include <zephyr/cache.h>
 #include <zephyr/kernel.h>
 #include <suit_ipc_streamer.h>
 
@@ -416,6 +417,28 @@ static image_request_state_t *image_request_state_allocate(const uint8_t *resour
 	return irs;
 }
 
+static size_t cache_size_adjust(size_t size)
+{
+	size_t line_size = sys_cache_data_line_size_get();
+
+	if (line_size == 0) {
+		return size;
+	}
+
+	return ROUND_UP(size, line_size);
+}
+
+static bool check_cache_alignment(uintptr_t address)
+{
+	size_t line_size = sys_cache_data_line_size_get();
+
+	if (line_size == 0) {
+		return true;
+	}
+
+	return (address % line_size) == 0;
+}
+
 suit_plat_err_t suit_ipc_streamer_stream(const uint8_t *resource_id, size_t resource_id_length,
 					 struct stream_sink *sink, uint32_t inter_chunk_timeout_ms,
 					 uint32_t requesting_period_ms)
@@ -447,12 +470,22 @@ suit_plat_err_t suit_ipc_streamer_chunk_enqueue(uint32_t stream_session_id, uint
 	suit_plat_err_t err = SUIT_PLAT_SUCCESS;
 
 	if (address != NULL && size != 0) {
+		size_t aligned_size = cache_size_adjust(size);
 
-		/* TODO!!!
-		 * Memory range shall be valid for caller, i.e App Domain, to make sure that
-		 * the data belonging to other domain is not leaked out.
+		if (!check_cache_alignment((uintptr_t)address)) {
+			/* The address is not aligned to cache line size. */
+			err = SUIT_PLAT_ERR_INVAL;
+		}
+
+		int result = sys_cache_data_flush_range(address, aligned_size);
+
+		/*
+		 * EAGAIN means that the cache is not enabled.
+		 * ENOTSUP means there is no cache in the system.
 		 */
-
+		if (result != 0 && result != -EAGAIN && result != -ENOTSUP) {
+			err = SUIT_PLAT_ERR_IO;
+		}
 	} else if (address == NULL && size == 0) {
 
 		/* that combination of partameters is valid, caller may use it to

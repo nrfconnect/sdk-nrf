@@ -2,6 +2,7 @@ sample:
   name: HTTP application update sample
 tests:
   sample.cellular.http_update.application_update:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
@@ -11,8 +12,9 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.cellular.http_update.application_update.lwm2m_carrier:
+    sysbuild: true
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-carrier.conf
     integration_platforms:
@@ -23,4 +25,4 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build
+    tags: ci_build sysbuild

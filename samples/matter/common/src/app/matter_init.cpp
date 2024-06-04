@@ -13,6 +13,10 @@
 #include "persistent_storage/persistent_storage_shell.h"
 #endif
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
+#include "diagnostic/diagnostic_logs_provider.h"
+#endif
+
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
 #endif
@@ -152,6 +156,11 @@ CHIP_ERROR ConfigureThreadRole()
 
 void DoInitChipServer(intptr_t /* unused */)
 {
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
+	/* Initialize Diagnostic Log Provider and try to retrieve retained crash data */
+	Nrf::Matter::DiagnosticLogProvider::GetInstance().Init();
+#endif
+
 	InitGuard guard;
 	LOG_INF("Init CHIP stack");
 

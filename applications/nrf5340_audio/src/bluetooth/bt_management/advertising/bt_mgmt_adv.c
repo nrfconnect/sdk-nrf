@@ -26,15 +26,16 @@ ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 
 static struct k_work adv_work;
 static bool dir_adv_timed_out;
-static struct bt_le_ext_adv *ext_adv;
+static struct bt_le_ext_adv *ext_adv[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
 
-static const struct bt_data *adv_local;
-static size_t adv_local_size;
-static const struct bt_data *per_adv_local;
-static size_t per_adv_local_size;
+static const struct bt_data *adv_local[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
+static size_t adv_local_size[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
+static const struct bt_data *per_adv_local[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
+static size_t per_adv_local_size[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
 
 /* Bonded address queue */
 K_MSGQ_DEFINE(bonds_queue, sizeof(bt_addr_le_t), BONDS_QUEUE_SIZE, 4);
+K_MSGQ_DEFINE(adv_queue, sizeof(uint8_t), CONFIG_BT_EXT_ADV_MAX_ADV_SET, 4);
 
 static struct bt_le_adv_param ext_adv_param = {
 	.id = BT_ID_DEFAULT,
@@ -126,7 +127,7 @@ static bool adv_rpa_expired_cb(struct bt_le_ext_adv *adv)
 
 	LOG_INF("RPA (Resolvable Private Address) expired.");
 
-	ret = bt_le_ext_adv_get_info(ext_adv, &ext_adv_info);
+	ret = bt_le_ext_adv_get_info(adv, &ext_adv_info);
 	ERR_CHK_MSG(ret, "bt_le_ext_adv_get_info failed");
 
 	ret = addr_print(ext_adv_info.addr, NULL);
@@ -144,7 +145,7 @@ static const struct bt_le_ext_adv_cb adv_cb = {
 #endif /* CONFIG_BT_PRIVACY */
 };
 
-static int direct_adv_create(bt_addr_le_t addr)
+static int direct_adv_create(uint8_t ext_adv_index, bt_addr_le_t addr)
 {
 	int ret;
 	struct bt_le_ext_adv_info ext_adv_info;
@@ -154,19 +155,20 @@ static int direct_adv_create(bt_addr_le_t addr)
 	ext_adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
 
 	/* Clear ADV data set before update to direct advertising */
-	ret = bt_le_ext_adv_set_data(ext_adv, NULL, 0, NULL, 0);
+	ret = bt_le_ext_adv_set_data(ext_adv[ext_adv_index], NULL, 0, NULL, 0);
 	if (ret) {
-		LOG_ERR("Failed to clear advertising data. Err: %d", ret);
+		LOG_ERR("Failed to clear advertising data for set %d. Err: %d", ext_adv_index, ret);
 		return ret;
 	}
 
-	ret = bt_le_ext_adv_update_param(ext_adv, &ext_adv_param);
+	ret = bt_le_ext_adv_update_param(ext_adv[ext_adv_index], &ext_adv_param);
 	if (ret) {
-		LOG_ERR("Failed to update ext_adv to direct advertising. Err = %d", ret);
+		LOG_ERR("Failed to update ext_adv set %d to directed advertising. Err = %d",
+			ext_adv_index, ret);
 		return ret;
 	}
 
-	ret = bt_le_ext_adv_get_info(ext_adv, &ext_adv_info);
+	ret = bt_le_ext_adv_get_info(ext_adv[ext_adv_index], &ext_adv_info);
 	if (ret) {
 		return ret;
 	}
@@ -179,38 +181,40 @@ static int direct_adv_create(bt_addr_le_t addr)
 	return 0;
 }
 
-static int extended_adv_create(void)
+static int extended_adv_create(uint8_t ext_adv_index)
 {
 	int ret;
 	struct bt_le_ext_adv_info ext_adv_info;
 
-	if (adv_local == NULL) {
+	if (adv_local[ext_adv_index] == NULL) {
 		LOG_ERR("Adv_local not set");
 		return -ENXIO;
 	}
 
-	ret = bt_le_ext_adv_set_data(ext_adv, adv_local, adv_local_size, NULL, 0);
+	ret = bt_le_ext_adv_set_data(ext_adv[ext_adv_index], adv_local[ext_adv_index],
+				     adv_local_size[ext_adv_index], NULL, 0);
 	if (ret) {
 		LOG_ERR("Failed to set advertising data: %d", ret);
 		return ret;
 	}
 
-	if (per_adv_local != NULL && IS_ENABLED(CONFIG_BT_PER_ADV)) {
+	if (per_adv_local[ext_adv_index] != NULL && IS_ENABLED(CONFIG_BT_PER_ADV)) {
 		/* Set periodic advertising parameters */
-		ret = bt_le_per_adv_set_param(ext_adv, LE_AUDIO_PERIODIC_ADV);
+		ret = bt_le_per_adv_set_param(ext_adv[ext_adv_index], LE_AUDIO_PERIODIC_ADV);
 		if (ret) {
 			LOG_ERR("Failed to set periodic advertising parameters: %d", ret);
 			return ret;
 		}
 
-		ret = bt_le_per_adv_set_data(ext_adv, per_adv_local, per_adv_local_size);
+		ret = bt_le_per_adv_set_data(ext_adv[ext_adv_index], per_adv_local[ext_adv_index],
+					     per_adv_local_size[ext_adv_index]);
 		if (ret) {
 			LOG_ERR("Failed to set periodic advertising data: %d", ret);
 			return ret;
 		}
 	}
 
-	ret = bt_le_ext_adv_get_info(ext_adv, &ext_adv_info);
+	ret = bt_le_ext_adv_get_info(ext_adv[ext_adv_index], &ext_adv_info);
 	if (ret) {
 		return ret;
 	}
@@ -227,6 +231,13 @@ static void advertising_process(struct k_work *work)
 {
 	int ret;
 	struct bt_mgmt_msg msg;
+	uint8_t ext_adv_index;
+
+	ret = k_msgq_get(&adv_queue, &ext_adv_index, K_NO_WAIT);
+	if (ret) {
+		LOG_ERR("No ext_adv_index found");
+		return;
+	}
 
 	k_msgq_purge(&bonds_queue);
 
@@ -247,24 +258,24 @@ static void advertising_process(struct k_work *work)
 	bt_addr_le_t addr;
 
 	if (!k_msgq_get(&bonds_queue, &addr, K_NO_WAIT) && !dir_adv_timed_out) {
-		ret = direct_adv_create(addr);
+		ret = direct_adv_create(ext_adv_index, addr);
 		if (ret) {
 			LOG_WRN("Failed to create direct advertisement: %d", ret);
 			return;
 		}
 
 		ret = bt_le_ext_adv_start(
-			ext_adv,
+			ext_adv[ext_adv_index],
 			BT_LE_EXT_ADV_START_PARAM(BT_GAP_ADV_HIGH_DUTY_CYCLE_MAX_TIMEOUT, 0));
 	} else {
-		ret = extended_adv_create();
+		ret = extended_adv_create(ext_adv_index);
 		if (ret) {
 			LOG_WRN("Failed to create extended advertisement: %d", ret);
 			return;
 		}
 
 		dir_adv_timed_out = false;
-		ret = bt_le_ext_adv_start(ext_adv, BT_LE_EXT_ADV_START_DEFAULT);
+		ret = bt_le_ext_adv_start(ext_adv[ext_adv_index], BT_LE_EXT_ADV_START_DEFAULT);
 	}
 
 	if (ret) {
@@ -272,16 +283,17 @@ static void advertising_process(struct k_work *work)
 		return;
 	}
 
-	if (per_adv_local != NULL && IS_ENABLED(CONFIG_BT_PER_ADV)) {
+	if (per_adv_local[ext_adv_index] != NULL && IS_ENABLED(CONFIG_BT_PER_ADV)) {
 		/* Enable Periodic Advertising */
-		ret = bt_le_per_adv_start(ext_adv);
+		ret = bt_le_per_adv_start(ext_adv[ext_adv_index]);
 		if (ret) {
 			LOG_ERR("Failed to enable periodic advertising: %d", ret);
 			return;
 		}
 
 		msg.event = BT_MGMT_EXT_ADV_WITH_PA_READY;
-		msg.ext_adv = ext_adv;
+		msg.ext_adv = ext_adv[ext_adv_index];
+		msg.index = ext_adv_index;
 
 		ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
 		ERR_CHK(ret);
@@ -291,7 +303,7 @@ static void advertising_process(struct k_work *work)
 	LOG_INF("Advertising successfully started");
 }
 
-void bt_mgmt_dir_adv_timed_out(void)
+void bt_mgmt_dir_adv_timed_out(uint8_t ext_adv_index)
 {
 	int ret;
 
@@ -299,16 +311,17 @@ void bt_mgmt_dir_adv_timed_out(void)
 
 	LOG_DBG("Clearing ext_adv");
 
-	ret = bt_le_ext_adv_delete(ext_adv);
+	ret = bt_le_ext_adv_delete(ext_adv[ext_adv_index]);
 	if (ret) {
 		LOG_ERR("Failed to clear ext_adv");
 	}
 
 	if (IS_ENABLED(CONFIG_BT_FILTER_ACCEPT_LIST)) {
 		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME_FILTER, &adv_cb,
-					   &ext_adv);
+					   &ext_adv[ext_adv_index]);
 	} else {
-		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb, &ext_adv);
+		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb,
+					   &ext_adv[ext_adv_index]);
 	}
 
 	if (ret) {
@@ -317,7 +330,7 @@ void bt_mgmt_dir_adv_timed_out(void)
 	}
 
 	/* Restart normal advertising */
-	ret = bt_mgmt_adv_start(NULL, 0, NULL, 0, true);
+	ret = bt_mgmt_adv_start(ext_adv_index, NULL, 0, NULL, 0, true);
 	if (ret) {
 		LOG_ERR("Unable start advertising: %d", ret);
 		return;
@@ -335,18 +348,23 @@ int bt_mgmt_manufacturer_uuid_populate(struct net_buf_simple *uuid_buf, uint16_t
 	return 0;
 }
 
-int bt_mgmt_adv_start(const struct bt_data *adv, size_t adv_size, const struct bt_data *per_adv,
-		      size_t per_adv_size, bool connectable)
+int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *adv, size_t adv_size,
+		      const struct bt_data *per_adv, size_t per_adv_size, bool connectable)
 {
 	int ret;
 
 	/* Special case for restarting advertising */
 	if (adv == NULL && adv_size == 0 && per_adv == NULL && per_adv_size == 0) {
-		if (adv_local == NULL) {
+		if (adv_local[ext_adv_index] == NULL) {
 			LOG_ERR("No valid advertising data stored");
 			return -ENOENT;
 		}
 
+		ret = k_msgq_put(&adv_queue, &ext_adv_index, K_NO_WAIT);
+		if (ret) {
+			LOG_ERR("No space in the queue for adv_index");
+			return -ENOMEM;
+		}
 		k_work_submit(&adv_work);
 
 		return 0;
@@ -362,25 +380,31 @@ int bt_mgmt_adv_start(const struct bt_data *adv, size_t adv_size, const struct b
 		return -EINVAL;
 	}
 
-	adv_local = adv;
-	adv_local_size = adv_size;
-	per_adv_local = per_adv;
-	per_adv_local_size = per_adv_size;
+	adv_local[ext_adv_index] = adv;
+	adv_local_size[ext_adv_index] = adv_size;
+	per_adv_local[ext_adv_index] = per_adv;
+	per_adv_local_size[ext_adv_index] = per_adv_size;
 
 	if (connectable) {
-		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb, &ext_adv);
+		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb,
+					   &ext_adv[ext_adv_index]);
 		if (ret) {
 			LOG_ERR("Unable to create a connectable extended advertising set: %d", ret);
 			return ret;
 		}
 	} else {
-		ret = bt_le_ext_adv_create(&ext_adv_param, &adv_cb, &ext_adv);
+		ret = bt_le_ext_adv_create(&ext_adv_param, &adv_cb, &ext_adv[ext_adv_index]);
 		if (ret) {
 			LOG_ERR("Unable to create extended advertising set: %d", ret);
 			return ret;
 		}
 	}
 
+	ret = k_msgq_put(&adv_queue, &ext_adv_index, K_NO_WAIT);
+	if (ret) {
+		LOG_ERR("No space in the queue for adv_index");
+		return -ENOMEM;
+	}
 	k_work_submit(&adv_work);
 
 	return 0;

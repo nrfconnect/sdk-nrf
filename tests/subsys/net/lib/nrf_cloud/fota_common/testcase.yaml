@@ -5,8 +5,9 @@ common:
   tags: ci_build nrf_cloud_test nrf_cloud_lib
 tests:
   net.lib.nrf_cloud.fota_common:
+    sysbuild: true
     timeout: 60
-    extra_configs:
+    extra_args:
       # CONFIG_NRF_CLOUD_FOTA and CONFIG_FOTA_DOWNLOAD are implicitly enabled
       # in the prj.conf with CONFIG_NRF_CLOUD_MQTT=y
       - CONFIG_MCUBOOT_IMG_MANAGER=y
@@ -14,7 +15,10 @@ tests:
       - CONFIG_IMG_MANAGER=y
       - CONFIG_STREAM_FLASH_ERASE=y
       - CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE=y
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+    tags: sysbuild
   net.lib.nrf_cloud.fota_common.no_img_mngr:
+    sysbuild: true
     timeout: 60
     extra_configs:
       - CONFIG_NRF_CLOUD_FOTA=n
@@ -23,3 +27,4 @@ tests:
       - CONFIG_MCUBOOT_IMG_MANAGER=n
       - CONFIG_IMG_MANAGER=n
       - CONFIG_STREAM_FLASH_ERASE=n
+    tags: sysbuild

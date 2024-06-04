@@ -20,7 +20,7 @@ void BoltLockManager::Init(StateChangeCallback callback)
 	k_timer_init(&mActuatorTimer, &BoltLockManager::ActuatorTimerEventHandler, nullptr);
 	k_timer_user_data_set(&mActuatorTimer, this);
 
-	PinManager::Instance().Init();
+	AccessMgr::Instance().Init();
 
 	/* Set the default state */
 	Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(IsLocked());
@@ -28,7 +28,7 @@ void BoltLockManager::Init(StateChangeCallback callback)
 
 bool BoltLockManager::GetUser(uint16_t userIndex, EmberAfPluginDoorLockUserInfo &user)
 {
-	return PinManager::Instance().GetUserInfo(userIndex, user);
+	return AccessMgr::Instance().GetUserInfo(userIndex, user);
 }
 
 bool BoltLockManager::SetUser(uint16_t userIndex, FabricIndex creator, FabricIndex modifier, const CharSpan &userName,
@@ -36,36 +36,79 @@ bool BoltLockManager::SetUser(uint16_t userIndex, FabricIndex creator, FabricInd
 			      CredentialRuleEnum credentialRule, const CredentialStruct *credentials,
 			      size_t totalCredentials)
 {
-	return PinManager::Instance().SetUser(userIndex, creator, modifier, userName, uniqueId, userStatus, userType,
+	return AccessMgr::Instance().SetUser(userIndex, creator, modifier, userName, uniqueId, userStatus, userType,
 					      credentialRule, credentials, totalCredentials);
 }
 
 bool BoltLockManager::GetCredential(uint16_t credentialIndex, CredentialTypeEnum credentialType,
 				    EmberAfPluginDoorLockCredentialInfo &credential)
 {
-	return PinManager::Instance().GetCredential(credentialIndex, credentialType, credential);
+	return AccessMgr::Instance().GetCredential(credentialIndex, credentialType, credential);
 }
 
 bool BoltLockManager::SetCredential(uint16_t credentialIndex, FabricIndex creator, FabricIndex modifier,
 				    DlCredentialStatus credentialStatus, CredentialTypeEnum credentialType,
 				    const ByteSpan &secret)
 {
-	return PinManager::Instance().SetCredential(credentialIndex, creator, modifier, credentialStatus,
+	return AccessMgr::Instance().SetCredential(credentialIndex, creator, modifier, credentialStatus,
 						    credentialType, secret);
 }
 
+#ifdef CONFIG_LOCK_SCHEDULES
+
+DlStatus BoltLockManager::GetWeekDaySchedule(uint8_t weekdayIndex, uint16_t userIndex,
+					     EmberAfPluginDoorLockWeekDaySchedule &schedule)
+{
+	return AccessMgr::Instance().GetWeekDaySchedule(weekdayIndex, userIndex, schedule);
+}
+
+DlStatus BoltLockManager::SetWeekDaySchedule(uint8_t weekdayIndex, uint16_t userIndex, DlScheduleStatus status,
+					     DaysMaskMap daysMask, uint8_t startHour, uint8_t startMinute,
+					     uint8_t endHour, uint8_t endMinute)
+{
+	return AccessMgr::Instance().SetWeekDaySchedule(weekdayIndex, userIndex, status, daysMask, startHour,
+							 startMinute, endHour, endMinute);
+}
+
+DlStatus BoltLockManager::GetYearDaySchedule(uint8_t yearDayIndex, uint16_t userIndex,
+					     EmberAfPluginDoorLockYearDaySchedule &schedule)
+{
+	return AccessMgr::Instance().GetYearDaySchedule(yearDayIndex, userIndex, schedule);
+}
+
+DlStatus BoltLockManager::SetYearDaySchedule(uint8_t yeardayIndex, uint16_t userIndex, DlScheduleStatus status,
+					     uint32_t localStartTime, uint32_t localEndTime)
+{
+	return AccessMgr::Instance().SetYearDaySchedule(yeardayIndex, userIndex, status, localStartTime, localEndTime);
+}
+
+DlStatus BoltLockManager::GetHolidaySchedule(uint8_t holidayIndex, EmberAfPluginDoorLockHolidaySchedule &schedule)
+{
+	return AccessMgr::Instance().GetHolidaySchedule(holidayIndex, schedule);
+}
+
+DlStatus BoltLockManager::SetHolidaySchedule(uint8_t holidayIndex, DlScheduleStatus status, uint32_t localStartTime,
+					     uint32_t localEndTime, OperatingModeEnum operatingMode)
+{
+	return AccessMgr::Instance().SetHolidaySchedule(holidayIndex, status, localStartTime, localEndTime,
+							 operatingMode);
+}
+
+#endif /* CONFIG_LOCK_SCHEDULES */
+
+
 bool BoltLockManager::ValidatePIN(const Optional<ByteSpan> &pinCode, OperationErrorEnum &err)
 {
-	return PinManager::Instance().ValidatePIN(pinCode, err);
+	return AccessMgr::Instance().ValidatePIN(pinCode, err);
 }
 
 void BoltLockManager::SetRequirePIN(bool require)
 {
-	return PinManager::Instance().SetRequirePIN(require);
+	return AccessMgr::Instance().SetRequirePIN(require);
 }
 bool BoltLockManager::GetRequirePIN()
 {
-	return PinManager::Instance().GetRequirePIN();
+	return AccessMgr::Instance().GetRequirePIN();
 }
 
 void BoltLockManager::Lock(OperationSource source)

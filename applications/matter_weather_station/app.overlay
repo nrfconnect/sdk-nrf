@@ -24,6 +24,26 @@
 	aliases {
 		buzzer-pwm = &buzzer;
 	};
+
+	sram@2007FF40 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2007FF40 0xC0>;
+		zephyr,memory-region = "CrashLogMem";
+		status = "okay";
+		retainedmem {
+			compatible = "zephyr,retained-ram";
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <1>;
+			crash_retention: retention@0 {
+					compatible = "zephyr,retention";
+					status = "okay";
+					reg = <0x0 0xC0>;
+					prefix = [08 04];
+					checksum = <2>;
+			};
+		};
+	};
 };
 
 /* Set IPC thread priority to the highest value to not collide with other threads. */
@@ -59,4 +79,9 @@
 };
 &pwm2 {
 	status = "disabled";
+};
+
+/* Reduce SRAM0 usage by 192B to account for non-init area */
+&sram0 {
+	reg = <0x20000000 0x7FF40>;
 };

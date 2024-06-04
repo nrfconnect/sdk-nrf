@@ -1,0 +1,9 @@
+1. Set the Thingy:91 SWD selection switch (**SW2**) to **nRF91** or **nRF52** depending on whether you want to program the nRF9160 SiP or the nRF52840 SoC component.
+#. Connect the Thingy:91 to the debug out port on a 10-pin external debug probe, for example, nRF9160 DK (Development Kit), using a 10-pin JTAG cable.
+
+   .. note::
+
+      If you are using nRF9160 DK as the debug probe, make sure that **VDD_IO (SW11)** is set to 1.8 V on the nRF9160 DK.
+
+#. Connect the external debug probe to the PC using a USB cable.
+#. Make sure that the Thingy:91 and the external debug probe are powered on.

@@ -94,6 +94,7 @@ int bt_mgmt_manufacturer_uuid_populate(struct net_buf_simple *uuid_buf, uint16_t
 /**
  * @brief	Create and start advertising for ACL connection.
  *
+ * @param[in]	ext_adv_index	Index of the advertising set to start.
  * @param[in]	ext_adv		The data to be put in the extended advertisement.
  * @param[in]	ext_adv_size	Size of @p ext_adv.
  * @param[in]	per_adv		The data for the periodic advertisement; can be NULL.
@@ -106,7 +107,7 @@ int bt_mgmt_manufacturer_uuid_populate(struct net_buf_simple *uuid_buf, uint16_t
  *
  * @return	0 if success, error otherwise.
  */
-int bt_mgmt_adv_start(const struct bt_data *ext_adv, size_t ext_adv_size,
+int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *ext_adv, size_t ext_adv_size,
 		      const struct bt_data *per_adv, size_t per_adv_size, bool connectable);
 
 /**

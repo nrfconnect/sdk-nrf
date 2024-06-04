@@ -90,14 +90,20 @@ typedef struct {
 
 packet_stats stats = {0};
 
-/* Structure for the MAC header */
+/* Structure for the Frame Control */
 typedef struct {
-	unsigned char frame_control;
-	unsigned char duration[2];
-	unsigned char receiver_addr[6];
-	unsigned char transmitter_addr[6];
-	/* Add more fields based on your actual MAC header structure */
-} mac_header;
+	uint16_t protocolVersion : 2;
+	uint16_t type            : 2;
+	uint16_t subtype         : 4;
+	uint16_t toDS            : 1;
+	uint16_t fromDS          : 1;
+	uint16_t moreFragments   : 1;
+	uint16_t retry           : 1;
+	uint16_t powerManagement : 1;
+	uint16_t moreData        : 1;
+	uint16_t protectedFrame  : 1;
+	uint16_t order           : 1;
+} frame_control;
 
 struct packet_data {
 	int send_sock;
@@ -132,21 +138,6 @@ int init_usb(void)
 }
 #endif
 
-#define PKT_FC_TYPE_MASK 0x0C
-#define PKT_FC_TYPE_SHIFT 2
-#define PKT_FC_SUBTYPE_MASK 0xF0
-#define PKT_FC_SUBTYPE_SHIFT 4
-
-static unsigned char get_frame_type(unsigned char frameControl)
-{
-	return (frameControl & PKT_FC_TYPE_MASK) >> PKT_FC_TYPE_SHIFT;
-}
-
-static unsigned char get_frame_subtype(unsigned char frameControl)
-{
-	return (frameControl & PKT_FC_SUBTYPE_MASK) >> PKT_FC_SUBTYPE_SHIFT;
-}
-
 static void create_rx_thread(void);
 
 K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE,
@@ -156,11 +147,12 @@ K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE,
 /* Function to parse and update statistics for Wi-Fi packets */
 static void parse_and_update_stats(unsigned char *packet, packet_stats *stats)
 {
-	mac_header *mac_hdr = (mac_header *)packet;
+	uint16_t *FrameControlField = (uint16_t *)packet;
+	frame_control *fc = (frame_control *)FrameControlField;
 
 	/* Extract the frame type and subtype from the frame control field */
-	unsigned char frame_type = get_frame_type(mac_hdr->frame_control);
-	unsigned char frame_subtype = get_frame_subtype(mac_hdr->frame_control);
+	unsigned char frame_type = fc->type;
+	unsigned char frame_subtype = fc->subtype;
 
 	/* Update statistics based on the frame type and subtype */
 	switch (frame_type) {

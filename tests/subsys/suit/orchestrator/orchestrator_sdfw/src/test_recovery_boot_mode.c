@@ -161,9 +161,9 @@ ZTEST(orchestrator_recovery_boot_tests, test_no_recovery_envelope)
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
-	/* ... and the execution mode remains unchanged */
-	zassert_equal(EXECUTION_MODE_INVOKE_RECOVERY, suit_execution_mode_get(),
-		      "Execution mode modified");
+	/* ... and the execution mode is set to the FAIL INVOKE RECOVERY */
+	zassert_equal(EXECUTION_MODE_FAIL_INVOKE_RECOVERY, suit_execution_mode_get(),
+		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
 ZTEST(orchestrator_recovery_boot_tests, test_invalid_recovery_envelope)
@@ -194,9 +194,9 @@ ZTEST(orchestrator_recovery_boot_tests, test_invalid_recovery_envelope)
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
-	/* ... and the execution mode remains unchanged */
-	zassert_equal(EXECUTION_MODE_INVOKE_RECOVERY, suit_execution_mode_get(),
-		      "Execution mode modified");
+	/* ... and the execution mode is set to the FAIL INVOKE RECOVERY */
+	zassert_equal(EXECUTION_MODE_FAIL_INVOKE_RECOVERY, suit_execution_mode_get(),
+		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
 ZTEST(orchestrator_recovery_boot_tests, test_valid_recovery_envelope)
@@ -260,9 +260,9 @@ ZTEST(orchestrator_recovery_boot_tests, test_seq_no_validate)
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
-	/* ... and the execution mode remains unchanged */
-	zassert_equal(EXECUTION_MODE_INVOKE_RECOVERY, suit_execution_mode_get(),
-		      "Execution mode modified");
+	/* ... and the execution mode is set to the FAIL INVOKE RECOVERY */
+	zassert_equal(EXECUTION_MODE_FAIL_INVOKE_RECOVERY, suit_execution_mode_get(),
+		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
 ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_fail)
@@ -293,9 +293,9 @@ ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_fail)
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
-	/* ... and the execution mode remains unchanged */
-	zassert_equal(EXECUTION_MODE_INVOKE_RECOVERY, suit_execution_mode_get(),
-		      "Execution mode modified");
+	/* ... and the execution mode is set to the FAIL INVOKE RECOVERY */
+	zassert_equal(EXECUTION_MODE_FAIL_INVOKE_RECOVERY, suit_execution_mode_get(),
+		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
 ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_fail)
@@ -326,9 +326,9 @@ ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_fail)
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
-	/* ... and the execution mode remains unchanged */
-	zassert_equal(EXECUTION_MODE_INVOKE_RECOVERY, suit_execution_mode_get(),
-		      "Execution mode modified");
+	/* ... and the execution mode is set to the FAIL INVOKE RECOVERY */
+	zassert_equal(EXECUTION_MODE_FAIL_INVOKE_RECOVERY, suit_execution_mode_get(),
+		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
 ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_no_invoke)
@@ -359,9 +359,9 @@ ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_no_invoke)
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
-	/* ... and the execution mode remains unchanged */
-	zassert_equal(EXECUTION_MODE_INVOKE_RECOVERY, suit_execution_mode_get(),
-		      "Execution mode modified");
+	/* ... and the execution mode is set to the FAIL INVOKE RECOVERY */
+	zassert_equal(EXECUTION_MODE_FAIL_INVOKE_RECOVERY, suit_execution_mode_get(),
+		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
 ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_invoke_fail)
@@ -392,9 +392,9 @@ ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_invoke_fail)
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
-	/* ... and the execution mode remains unchanged */
-	zassert_equal(EXECUTION_MODE_INVOKE_RECOVERY, suit_execution_mode_get(),
-		      "Execution mode modified");
+	/* ... and the execution mode is set to the FAIL INVOKE RECOVERY */
+	zassert_equal(EXECUTION_MODE_FAIL_INVOKE_RECOVERY, suit_execution_mode_get(),
+		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
 ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_invoke)

@@ -1,5 +1,6 @@
 tests:
   app_event_manager.core:
+    sysbuild: true
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -10,8 +11,9 @@ tests:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160/ns
       - qemu_cortex_m3
-    tags: app_event_manager
+    tags: app_event_manager sysbuild
   app_event_manager.size_enabled:
+    sysbuild: true
     extra_args: OVERLAY_CONFIG=overlay-event_size.conf
     platform_allow:
       - nrf52dk/nrf52832
@@ -23,4 +25,4 @@ tests:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160/ns
       - qemu_cortex_m3
-    tags: app_event_manager
+    tags: app_event_manager sysbuild

@@ -4,10 +4,16 @@ sample:
     TF-M sample demonstrating use of secure peripherals in a secure partition
 common:
   tags: tfm
-  platform_allow: nrf5340dk/nrf5340/cpuapp/ns nrf9160dk/nrf9160/ns
+  platform_allow:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9151dk/nrf9151/ns
+    - nrf9160dk/nrf9160/ns
+    - nrf9161dk/nrf9161/ns
   integration_platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9151dk/nrf9151/ns
     - nrf9160dk/nrf9160/ns
+    - nrf9161dk/nrf9161/ns
   harness: console
   harness_config:
     type: multi_line
@@ -16,4 +22,5 @@ common:
       - "SPP: processing signals: Success"
 tests:
   sample.tfm.secure_peripheral:
-    tags: tfm ci_build
+    sysbuild: true
+    tags: tfm ci_build sysbuild

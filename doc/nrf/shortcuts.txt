@@ -162,7 +162,11 @@
 
 .. |application_sample_definition| replace:: For simplicity, this guide will refer to both :ref:`samples<samples>` and :ref:`applications<applications>` as "applications".
 .. |application_sample_long_path_windows| replace:: On Windows, because of the `Windows path length limitations`_, the build can fail with errors related to permissions or missing files if some paths in the build are too long.
-   To avoid this issue, shorten the build folder name, for example, from ``build_nrf5340dk_nrf5340_cpuapp_ns`` to ``build``, or shorten the path to the build folder in some other way.
+   To avoid this issue, shorten the build folder name, for example to ``build``, or shorten the path to the build folder in some other way.
+
+.. |common_sample_components_desc| replace:: Code found in the :file:`samples/common` are not intended to be used independently, but in addition to other compatible samples for development purposes.
+   For example, the file path :file:`samples/common/mcumgr_bt_ota_dfu` contains the source for the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option.
+   This Kconfig option can be used with specific Nordic Semiconductor devices to enable MCUmgr to perform firmware over-the-air (FOTA) updates using Bluetooth® Low Energy.
 
 .. |NSIB| replace:: nRF Secure Immutable Bootloader
 
@@ -202,6 +206,12 @@
 .. |hex_format| replace:: The certificate is automatically converted to a HEX format in the :file:`CMakeLists.txt` file.
    The generated :file:`.inc` file is then included in the code, where it is provisioned to the modem.
 
-.. |build_target| replace:: Replace the *build_target* with the build target of the nRF91 Series device you are using (see the Requirements section).
+.. |board_target| replace:: Replace the *board_target* with the board target of the nRF91 Series device you are using (see the Requirements section).
 
 .. |thingy52_not_supported_note| replace:: Despite being supported in :ref:`Zephyr <zephyr:thingy52_nrf52832>`, the |NCS| does not support `Nordic Thingy:52`_.
+
+.. |sysbuild_related_deprecation_note| replace:: This feature is deprecated and is being replaced by Zephyr's :ref:`zephyr:sysbuild`.
+   You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
+
+.. |file_suffix_related_deprecation_note| replace:: This feature is deprecated and is being replaced by :ref:`suffix-based configurations <app_build_additions_build_types>`.
+    You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.

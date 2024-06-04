@@ -679,7 +679,7 @@ ZTEST(lwm2m_client_utils_security, test_store_to_flash)
 
 	rc = set_uri_cb(1, 0, 0, CONFIG_LWM2M_CLIENT_UTILS_SERVER,
 			sizeof(CONFIG_LWM2M_CLIENT_UTILS_SERVER), true,
-			sizeof(CONFIG_LWM2M_CLIENT_UTILS_SERVER));
+			sizeof(CONFIG_LWM2M_CLIENT_UTILS_SERVER), 0);
 	zassert_equal(rc, 0, "wrong return value");
 	zassert_equal(settings_save_one_fake.call_count, 1, "Did not store");
 
@@ -731,7 +731,7 @@ ZTEST(lwm2m_client_utils_security, test_bs_X509)
 
 	uint8_t flag = 1;
 
-	rc = set_uri_cb(2, 1, 0, &flag, sizeof(flag), true, sizeof(flag));
+	rc = set_uri_cb(2, 1, 0, &flag, sizeof(flag), true, sizeof(flag), 0);
 	zassert_equal(rc, 0, "wrong return value");
 
 	ctx.sec_obj_inst = 1;
@@ -766,7 +766,7 @@ ZTEST(lwm2m_client_utils_security, test_bs_URI)
 
 	uint8_t flag = 1;
 
-	rc = set_uri_cb(2, 1, 0, &flag, sizeof(flag), true, sizeof(flag));
+	rc = set_uri_cb(2, 1, 0, &flag, sizeof(flag), true, sizeof(flag), 0);
 	zassert_equal(rc, 0, "wrong return value");
 
 	ctx.sec_obj_inst = 1;

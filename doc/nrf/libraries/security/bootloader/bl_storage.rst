@@ -22,7 +22,7 @@ The library has the following functions for either reading or writing, or in som
 * Invalidation tokens, used to revoke public keys.
 * Additional public key metadata.
 
-The library uses either the OTP region of the User information configuration registers (UICR), when present on SoCs like the nRF9160 or nRF5340, or the internal flash memory.
+The library uses either the OTP region of the user information configuration registers (UICR), when present on nRF91 Series or nRF5340 devices, or the internal flash memory.
 When the library uses the internal flash memory, the bootloader blocks the write access before booting the next image.
 
 See :ref:`bootloader_provisioning` for more information about the provisioned data and how the bootloader uses it.

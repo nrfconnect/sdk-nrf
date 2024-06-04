@@ -286,7 +286,7 @@ This is performed by a background thread implemented in the :file:`src/led_contr
 Other threads may request either a temporary or indefinite LED pattern.
 This wakes up the ``led_thread``, which begins animating the requested pattern, sleeping for 100 milliseconds at a time between animation frames, until the requested pattern has completed (if it is temporary), or until a new pattern is requested in its place.
 
-This feature is enabled by default for the *build_target* mentioned in the `Requirements`_ sections.
+This feature is enabled by default for the *board_target* mentioned in the `Requirements`_ sections.
 
 The patterns displayed, the states they describe, and the options required for them to appear are as follows:
 
@@ -402,9 +402,9 @@ For examples, see the related minimal overlays in the :ref:`nrf_cloud_multi_serv
 Customizing GNSS antenna configuration
 ======================================
 
-This sample uses the :ref:`lib_modem_antenna` library, which is enabled by default for the *build_target* mentioned in the `Requirements`_ sections.
+This sample uses the :ref:`lib_modem_antenna` library, which is enabled by default for the *board_target* mentioned in the `Requirements`_ sections.
 
-If you are using a different board or build target, or would like to use a custom or external GNSS antenna, see the :ref:`lib_modem_antenna` library documentation for configuration instructions.
+If you are using a different board or board target, or would like to use a custom or external GNSS antenna, see the :ref:`lib_modem_antenna` library documentation for configuration instructions.
 
 Enable :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` to use an external antenna.
 
@@ -731,9 +731,9 @@ You can build the sample to connect over LTE as follows:
       .. parsed-literal::
          :class: highlight
 
-         west build -p -b *build_target*
+         west build -p -b *board_target*
 
-      |build_target|
+      |board_target|
 
    .. group-tab:: CoAP
 
@@ -742,9 +742,9 @@ You can build the sample to connect over LTE as follows:
       .. parsed-literal::
          :class: highlight
 
-         west build -p -b *build_target* -- -DEXTRA_CONF_FILE="overlay_coap.conf"
+         west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay_coap.conf"
 
-      |build_target|
+      |board_target|
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
 
@@ -800,9 +800,9 @@ This enables the Wi-Fi location tracking method automatically.
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *build_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
+   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
 
-|build_target|
+|board_target|
 
 See also :ref:`the paragraphs on the Wi-Fi location tracking method <nrf_cloud_multi_service_wifi_location_tracking>`.
 
@@ -814,8 +814,8 @@ Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_s
 
 .. _nrf_cloud_multi_service_building_wifi_conn:
 
-Building with experimental support for Wi-Fi connectivity for nRF5340 DK with nRF7002 EK (MQTT only)
-====================================================================================================
+Building with experimental support for Wi-Fi connectivity for nRF5340 DK with nRF7002 EK
+========================================================================================
 
 This sample :ref:`experimentally <software_maturity>` supports connecting to nRF Cloud using Wi-Fi instead of using LTE.
 
@@ -840,17 +840,38 @@ For example, for a device with the device ID ``698d4c11-0ccc-4f04-89cd-6882724e3
 
 .. tabs::
 
-   .. group-tab:: Bash
+   .. group-tab:: MQTT
 
-      .. code-block:: console
+      .. group-tab:: Bash
 
-        west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
+         .. parsed-literal::
+            :class: highlight
 
-   .. group-tab:: PowerShell
+            west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
 
-      .. code-block:: console
+      .. group-tab:: PowerShell
 
-         west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek "-DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf" -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+         .. parsed-literal::
+            :class: highlight
+
+            west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+
+   .. group-tab:: CoAP
+
+      .. group-tab:: Bash
+
+         .. parsed-literal::
+            :class: highlight
+
+            west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_coap_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
+
+      .. group-tab:: PowerShell
+
+         .. parsed-literal::
+            :class: highlight
+
+            west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_coap_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
 
@@ -896,7 +917,7 @@ If you are certain you understand the inherent security risks, you can use this 
          .. parsed-literal::
             :class: highlight
 
-            west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
+            west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
 
       .. group-tab:: PowerShell
 
@@ -999,7 +1020,7 @@ If you have :ref:`enabled support <nrf_cloud_multi_service_building_provisioning
 
 * Using auto-onboarding, the easiest method.
 
-   The nRF Cloud Provisioning Service auto-onboarding is currently compatible with CoAP and REST but not MQTT connectivity to nRF Cloud; for that, use scripted onboarding.
+   The nRF Cloud Provisioning Service auto-onboarding is compatible with CoAP, REST and MQTT connectivity with nRF Cloud.
 
    With this method, use the nRF Connect Serial Terminal program and the nRF Cloud portal.
    The device ID used in nRF Cloud portal requires the UUID format and not the 'nrf-\ *IMEI*\ ' format.
@@ -1089,13 +1110,9 @@ Then, complete the following steps for each device you wish to onboard:
    (Select the protocol (MQTT or CoAP) and connectivity technology (LTE or Wi-Fi) you built the sample for)
 
    .. tabs::
-
       .. group-tab:: MQTT
-
             .. tabs::
-
                .. group-tab:: LTE
-
                   .. parsed-literal::
                      :class: highlight
 
@@ -1108,7 +1125,6 @@ Then, complete the following steps for each device you wish to onboard:
                      See :ref:`configuration_device_id` to use other device ID formats.
 
                .. group-tab:: Wi-Fi
-
                   .. parsed-literal::
                      :class: highlight
 
@@ -1129,11 +1145,8 @@ Then, complete the following steps for each device you wish to onboard:
                   Delete the device private key from your machine after it is installed to the device by this script.
 
       .. group-tab:: CoAP
-
          .. tabs::
-
                .. group-tab:: LTE
-
                   .. parsed-literal::
                      :class: highlight
 
@@ -1146,6 +1159,26 @@ Then, complete the following steps for each device you wish to onboard:
                   .. note::
                      This command assumes you have left the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` option enabled and the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` option set to ``nrf-``.
                      See :ref:`configuration_device_id` to use other device ID formats.
+
+               .. group-tab:: Wi-Fi
+                  .. parsed-literal::
+                     :class: highlight
+
+                     python3 device_credentials_installer.py --ca self\_\ *self_cert_serial*\ \_ca.pem --ca_key self\_\ *self_cert_serial*\ \_prv.pem --id_str "\ *device_id*\ " -s -d --verify --coap --local_cert --cmd_type tls_cred_shell --port *device_port*
+
+                  Where:
+
+                    * *device id* is the (globally unique) ID for your device.
+                      You must use the same device ID that you configured for the sample at build time.
+                      See :ref:`nrf_cloud_multi_service_building_wifi_conn` for details.
+                    * The :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>`.
+                    * *device port* is the serial port your device is attached to.
+
+                  The ``--cmd_type tls_cred_shell`` option indicates that the device is using the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credentials management instead of AT commands.
+
+                  The ``--local_cert`` option indicates that the device private key and certificate should be generated on the host machine, not on-device.
+                  This is necessary because the TLS Credentials Shell does not support CSR generation currently.
+                  Delete the device private key from your machine after it is installed to the device by this script.
 
    This script generates, signs, and installs a device credential for your device.
    The private key for this credential is generated by the device itself, and stored on the modem.

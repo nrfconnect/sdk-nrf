@@ -39,7 +39,7 @@ Requirements
 For this user guide, the following development kit is required:
 
 +------------------------+----------+--------------------------------+-------------------------------+
-| **Hardware platforms** | **PCA**  | **Board name**                 | **Build target**              |
+| **Hardware platforms** | **PCA**  | **Board name**                 | **Board target**              |
 +========================+==========+================================+===============================+
 | nRF54H20 DK            | PCA10175 | ``nrf54h20dk``                 | ``nrf54h20dk/nrf54h20/cpuapp``|
 +------------------------+----------+--------------------------------+-------------------------------+

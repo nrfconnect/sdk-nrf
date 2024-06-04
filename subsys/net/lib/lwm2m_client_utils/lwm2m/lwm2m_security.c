@@ -481,7 +481,7 @@ static void delete_from_storage(uint16_t obj, uint16_t inst, uint16_t res)
 }
 
 static int write_cb_sec(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
-			uint16_t data_len, bool last_block, size_t total_size)
+			uint16_t data_len, bool last_block, size_t total_size, size_t offset)
 {
 	if (loading_in_progress) {
 		return 0;
@@ -496,7 +496,7 @@ static int write_cb_sec(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 }
 
 static int write_cb_srv(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
-			uint16_t data_len, bool last_block, size_t total_size)
+			uint16_t data_len, bool last_block, size_t total_size, size_t offset)
 {
 	if (loading_in_progress) {
 		return 0;
@@ -709,6 +709,17 @@ static int set_socketoptions(struct lwm2m_ctx *ctx)
 			LOG_ERR("Failed to purge DTLS session cache");
 		}
 		purge_sessions = false;
+	}
+
+	if (IS_ENABLED(CONFIG_SOC_NRF9120)) {
+		/* Modem FW 2.0.1 allows keeping the socket open while PDN is down, or modem
+		 * is in flight mode.
+		 */
+		ret = zsock_setsockopt(ctx->sock_fd, SOL_SOCKET, SO_KEEPOPEN, &(int){1},
+				       sizeof(int));
+		if (ret) {
+			LOG_ERR("Failed to set SO_KEEPOPEN: %d", errno);
+		}
 	}
 
 	return lwm2m_set_default_sockopt(ctx);

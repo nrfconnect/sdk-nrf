@@ -1,11 +1,5 @@
 / {
 	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
-};
-
-/ {
-	chosen {
 		/*
 		 * In some default configurations within the nRF Connect SDK,
 		 * e.g. on nRF52840 and nRF9160, the chosen zephyr,entropy node
@@ -14,6 +8,15 @@
 		 * the RNG node for entropy exclusively.
 		 */
 		zephyr,entropy = &rng;
+	};
+
+	/* Configure DTS nodes used for USB next HID support. */
+	hid_dev_0: hid_dev_0 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID0";
+		protocol-code = "mouse";
+		in-polling-rate = <1000>;
+		in-report-size = <64>;
 	};
 
 	pwmleds1 {
@@ -82,10 +85,6 @@
 	status = "okay";
 	pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
 	label = "LED System State";
-};
-
-&qspi {
-	status = "okay";
 };
 
 &pinctrl {

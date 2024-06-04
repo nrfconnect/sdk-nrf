@@ -69,15 +69,12 @@
 #define CRACEN_TLS12_PRF_MAX_LABEL_SIZE 128
 #define CRACEN_TLS12_PRF_MAX_SEED_SIZE	128
 
-/** @brief Magic number to signal that PRNG context is initialized */
-#define CRACEN_PRNG_INITIALIZED (0xA5B4A5B4)
-
 #define CRACEN_PRNG_KEY_SIZE		     (32u)  /* Key size to get 256 bits of security */
 #define CRACEN_PRNG_ENTROPY_SIZE	     (48u)  /* Seed equals key-len + 16 */
 #define CRACEN_PRNG_NONCE_SIZE		     (0u)   /* Not supported for CTR_DRBG */
 #define CRACEN_PRNG_PERSONALIZATION_MAX_SIZE (48u)  /* Max Equal to SEED size */
 #define CRACEN_PRNG_WORKMEM_SIZE	     (176u) /* KeyLen + AES block len + XORBUF_SZ (128) */
-#define CRACEN_PRNG_MAX_REQUEST_SIZE	 (1u << 16) /* Max request. See NIST specification */
+#define CRACEN_PRNG_MAX_REQUEST_SIZE	     (1u << 16) /* Max request. See NIST specification */
 
 #define CRACEN_SPAKE2P_HASH_LEN PSA_HASH_LENGTH(PSA_ALG_SHA_256)
 
@@ -115,6 +112,10 @@ enum cracen_kd_state {
 	/* TLS12 PSK TO MS states: */
 	CRACEN_KD_STATE_TLS12_PSK_TO_MS_INIT = 0x100,
 	CRACEN_KD_STATE_TLS12_PSK_TO_MS_OUTPUT,
+
+	/* TLS12 EC J-PAKE to PMS state: */
+	CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT = 0x200,
+	CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_OUTPUT
 };
 
 /* States to keep track of when the AEAD sxsymcrypt context has been initialized with xxx_create and
@@ -296,10 +297,10 @@ typedef struct cracen_jpake_operation cracen_jpake_operation_t;
 
 /** @brief Structure type for PRNG context */
 struct cracen_prng_context {
-	uint32_t initialized;			/*!< Magic number to ensure PRNG is initialized */
-	struct sitask task;			/*!< DRBG task context. */
-	struct sx_pk_blinder blindgen;		/*!< PK binder countermeasures. */
-	char workmem[CRACEN_PRNG_WORKMEM_SIZE]; /*!< DRBG work memory. */
+	uint8_t key[CRACEN_PRNG_KEY_SIZE];
+	uint8_t V[SX_BLKCIPHER_AES_BLK_SZ];
+	uint64_t reseed_counter;
+	uint32_t initialized;
 };
 typedef struct cracen_prng_context cracen_prng_context_t;
 

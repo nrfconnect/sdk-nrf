@@ -37,11 +37,15 @@ config EMDS_THREAD_PRIORITY
 
 config EMDS_FLASH_TIME_WRITE_ONE_WORD_US
 	int "Time to write one word into flash"
+	default 210 if SOC_FLASH_NRF_RRAM
 	default 41
 	help
 	  Max time to write one word (4 bytes) in flash (in microseconds). This
 	  value is dependent on the chip used, and should be checked against the
 	  chip datasheet.
+	  For RRAM-based flash drivers, data is written in blocks of 32 bytes over
+	  buffered writing. This value is used to calculate the time to write
+	  one 32-byte block.
 
 config EMDS_FLASH_TIME_ENTRY_OVERHEAD_US
 	int "Time to schedule write of one entry"
@@ -51,6 +55,7 @@ config EMDS_FLASH_TIME_ENTRY_OVERHEAD_US
 
 config EMDS_FLASH_TIME_BASE_OVERHEAD_US
 	int "Time to schedule the store process"
+	default 18200 if SETTINGS && SOC_FLASH_NRF_RRAM
 	default 85000 if SETTINGS && !SOC_FLASH_NRF_PARTIAL_ERASE
 	default 9000 if SETTINGS && SOC_FLASH_NRF_PARTIAL_ERASE
 	default 500
@@ -63,6 +68,8 @@ config EMDS_FLASH_TIME_BASE_OVERHEAD_US
 	   worst case scenario, before starting storing entries. This value
 	   is dependent on the chip used, and should be checked against the chip
 	   datasheet.
+	   For RRAM-based flash drivers, the time is defined by the erasing block size.
+	   The default erasing block size is 4096 bytes.
 
 module = EMDS
 module-str = emergency data storage

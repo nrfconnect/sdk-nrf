@@ -267,6 +267,24 @@ static void check_flash_base_at_page_start(const struct device *dev)
 		 "Expected FLASH_BASE to be at a page boundary.");
 }
 
+static void reset_stream_progress(const struct device *dev)
+{
+	int err;
+
+	err = DFU_TARGET_STREAM_INIT(TEST_ID_1, fdev, sbuf, sizeof(sbuf),
+				     FLASH_BASE, 0, NULL);
+	__ASSERT(err == 0, "Unable to initialiae test stream %s: %d", TEST_ID_1, err);
+
+	err = dfu_target_stream_reset();
+	__ASSERT(err == 0, "Unable to reset test stream %s: %d", TEST_ID_1, err);
+
+	err = DFU_TARGET_STREAM_INIT(TEST_ID_2, fdev, sbuf, sizeof(sbuf),
+				     FLASH_BASE, 0, NULL);
+	__ASSERT(err == 0, "Unable to initialiae test stream %s: %d", TEST_ID_2, err);
+
+	err = dfu_target_stream_reset();
+	__ASSERT(err == 0, "Unable to reset test stream %s: %d", TEST_ID_2, err);
+}
 #else
 
 ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
@@ -289,6 +307,8 @@ static void *setup(void)
 	page_size = get_flash_page_size(fdev);
 	__ASSERT(page_size <= BUF_LEN,
 		 "BUF_LEN must be at least one page long");
+
+	reset_stream_progress(fdev);
 #endif
 
 	return NULL;

@@ -56,9 +56,7 @@ config DESKTOP_USB_STACK_NEXT
 	select EXPERIMENTAL
 	select USB_DEVICE_STACK_NEXT
 	help
-	  Use experimental integration of USB next stack. The USB next API is
-	  not yet integrated by the module's implementation. The option only
-	  disables the legacy USB stack and builds with the USB next stack.
+	  Use experimental integration of USB next stack.
 
 config DESKTOP_USB_STACK_LEGACY
 	bool "USB legacy stack"
@@ -142,6 +140,12 @@ endchoice
 endif # DESKTOP_USB_STACK_LEGACY
 
 if DESKTOP_USB_STACK_NEXT
+
+config USBD_HID_IN_BUF_COUNT
+	default 1
+	help
+	  nRF Desktop queues HID reports at the source. There is no need to use
+	  multiple buffers in the IN pool per HID instance.
 
 choice USBD_LOG_LEVEL_CHOICE
 	default USBD_LOG_LEVEL_WRN

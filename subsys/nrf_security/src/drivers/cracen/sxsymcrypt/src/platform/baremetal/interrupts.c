@@ -16,14 +16,16 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/__assert.h>
 #include <silexpk/core.h>
+#include <nrf_security_events.h>
 
-K_EVENT_DEFINE(cracen_irq_event_for_cryptomaster);
-K_EVENT_DEFINE(cracen_irq_event_for_pke);
+
+NRF_SECURITY_EVENT_DEFINE(cracen_irq_event_for_cryptomaster)
+NRF_SECURITY_EVENT_DEFINE(cracen_irq_event_for_pke)
 
 void cracen_interrupts_init(void)
 {
-	k_event_init(&cracen_irq_event_for_cryptomaster);
-	k_event_init(&cracen_irq_event_for_pke);
+	nrf_security_event_init(cracen_irq_event_for_cryptomaster);
+	nrf_security_event_init(cracen_irq_event_for_pke);
 
 	IRQ_CONNECT(CRACEN_IRQn, 0, cracen_isr_handler, NULL, 0);
 }
@@ -51,7 +53,7 @@ void cracen_isr_handler(void *i)
 		nrf_cracen_event_clear(NRF_CRACEN, NRF_CRACEN_EVENT_CRYPTOMASTER);
 
 		/* Signal waiting threads. */
-		k_event_set(&cracen_irq_event_for_cryptomaster, crypto_master_status);
+		nrf_security_event_set(cracen_irq_event_for_cryptomaster, crypto_master_status);
 
 	} else if (nrf_cracen_event_check(NRF_CRACEN, NRF_CRACEN_EVENT_PKE_IKG)) {
 		/* Clear interrupts in PKE. */
@@ -61,41 +63,40 @@ void cracen_isr_handler(void *i)
 		nrf_cracen_event_clear(NRF_CRACEN, NRF_CRACEN_EVENT_PKE_IKG);
 
 		/* Signal waiting threads. */
-		k_event_set(&cracen_irq_event_for_pke, 1);
+		nrf_security_event_set(cracen_irq_event_for_pke, 1);
 	} else {
 		__ASSERT(0, "Unhandled interrupt. ");
 	}
 }
 
-static uint32_t cracen_wait_for_interrupt(struct k_event *event)
+static uint32_t cracen_wait_for_interrupt(nrf_security_event_t event)
 {
-	uint32_t ret = k_event_wait(event, 0xFFFFFFFF /* Wait for any event */,
-				    false,    /* Don't clear the events before waiting */
-				    K_FOREVER /* wait forever */
-	);
+	uint32_t ret = nrf_security_event_wait(event, 0xFFFFFFFF);
 
 	/* sx_hw_reserve, sx_cmdma_release_hw, and sx_pk_acquire_req has
 	 * assured single usage of CRACEN so there should be no race
 	 * condition between reading this event and clearing it.
 	 */
-	k_event_clear(event, 0xFFFFFFFF);
+	nrf_security_event_clear(event, 0xFFFFFFFF);
 
 	return ret;
 }
 
 uint32_t cracen_wait_for_cm_interrupt(void)
 {
+#if !defined(__NRF_TFM__)
 	if (k_is_pre_kernel()) {
 		/* Scheduling is not available pre-kernel. Initialization may
 		 * run PRNG at this point.
 		 */
 		return 0;
 	}
+#endif
 
-	return cracen_wait_for_interrupt(&cracen_irq_event_for_cryptomaster);
+	return cracen_wait_for_interrupt(cracen_irq_event_for_cryptomaster);
 }
 
 uint32_t cracen_wait_for_pke_interrupt(void)
 {
-	return cracen_wait_for_interrupt(&cracen_irq_event_for_pke);
+	return cracen_wait_for_interrupt(cracen_irq_event_for_pke);
 }

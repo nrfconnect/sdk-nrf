@@ -1,6 +1,14 @@
 tests:
-  dfu.pcd:
+  dfu.pcd.sysbuild:
+    sysbuild: true
     platform_allow: nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    tags: pcd
+    tags: pcd sysbuild
+  # Deprecated child and parent build to ensure feature does not break until it is removed
+  dfu.pcd.sysbuild.child_parent:
+    sysbuild: false
+    platform_allow: nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    tags: pcd child_parent deprecated

@@ -181,6 +181,10 @@ config SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE
 
 endif
 
+module = SLM
+module-str = serial modem
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"
 rsource "src/http_c/Kconfig"
@@ -189,9 +193,5 @@ rsource "src/gpio/Kconfig"
 rsource "src/lwm2m_carrier/Kconfig"
 rsource "src/gnss/Kconfig"
 rsource "src/nativetls/Kconfig"
-
-module = SLM
-module-str = serial modem
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endmenu

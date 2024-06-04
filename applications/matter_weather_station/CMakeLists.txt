@@ -6,8 +6,7 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-set(multiprotocol_rpmsg_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.multiprotocol_rpmsg.root")
-set(hci_ipc_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.hci_ipc.root")
+list(APPEND SNIPPET_ROOT "../samples/matter/common")
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 

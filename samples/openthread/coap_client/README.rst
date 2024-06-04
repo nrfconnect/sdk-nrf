@@ -116,6 +116,8 @@ Configuration
 Snippets
 ========
 
+.. |snippet| replace:: :makevar:`coap_client_SNIPPET`
+
 .. include:: /includes/sample_snippets.txt
 
 The following snippets are available:
@@ -125,6 +127,10 @@ The following snippets are available:
 * ``logging`` - Enables logging using RTT.
   For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
 * ``multiprotocol_ble`` - Enables the Multiprotocol Bluetooth LE extension.
+
+  .. note::
+    When building with the ``multiprotocol_ble`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` board target, set the additional :makevar:`FILE_SUFFIX` CMake option to ``ble``.
+    See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
 
 FEM support
 ===========

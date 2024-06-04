@@ -2,7 +2,22 @@
 # will be skipped if quarantine is used. More details here:
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 # To have an empty list use:
+
+
 - scenarios:
-    - None
+    - sample.matter.light_bulb.memory_profiling
   platforms:
-    - all
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-19027"
+
+- scenarios:
+    - sample.nrf54h20dk_nrf7002ek.shell
+  platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+  comment: "Till nRF54H memory layout is revised"
+
+- scenarios:
+    - sample.bluetooth.iso_time_sync
+  platforms:
+    - nrf54l15pdk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/DRGN-22129"

@@ -59,6 +59,7 @@ int nrf_cloud_coap_init(void);
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
  *           defined in zephyr/net/coap.h.
+ * @retval -EACCES if @ref nrf_cloud_coap_init has not been called.
  */
 int nrf_cloud_coap_connect(const char * const app_ver);
 

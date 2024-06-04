@@ -10,6 +10,7 @@ nRF Cloud CoAP
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 It enables applications to communicate with nRF Cloud using the nRF Cloud CoAP service.
 This service uses UDP network packets, encrypted using DTLS, containing compact data encoded using CBOR.
+JSON data encoding is also supported.
 This service is lighter weight than MQTT or REST and consumes less power on the device and uses less data bandwidth.
 
 Overview
@@ -32,7 +33,7 @@ The :c:func:`nrf_cloud_coap_shadow_get` function returns ``0`` whether there is 
 Set the delta parameter to ``true`` to request the delta.
 The underlying CoAP result code 2.05 and an empty payload indicate that there is no delta.
 If there is a pending delta, the function returns result code 2.05 and a payload in JSON format.
-When the delta parameter is set to ``false``, the whole current delta state section is returned and it can be quite large.
+When the delta parameter is set to ``false``, the whole current state section is returned and it can be quite large.
 
 If there is a pending job, the :c:func:`nrf_cloud_coap_fota_job_get` function returns ``0`` and updates the job structure.
 If there is no pending job, the function returns ``-ENOMSG``.
@@ -56,7 +57,7 @@ You must first preprovision the device on nRF Cloud as follows:
 #. Specify the ``--coap`` option to ``device_credentials_installer.py`` to have the proper root CA certificates installed in the device.
 
 Call the :c:func:`nrf_cloud_coap_init` function once to initialize the library.
-Connect the device to LTE before calling the :c:func:`nrf_cloud_coap_connect` function.
+Connect the device to the network before calling the :c:func:`nrf_cloud_coap_connect` function.
 
 Configuration
 *************
@@ -67,19 +68,23 @@ Additionally, the following Kconfig options are available:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME`
 * :kconfig:option:`CONFIG_NRF_CLOUD_COAP_SEC_TAG`
-* :kconfig:option:`CONFIG_NRF_CLOUD_COAP_RESPONSE_TIMEOUT_MS`
+* :kconfig:option:`CONFIG_NRF_CLOUD_COAP_GF_CONF`
 * :kconfig:option:`CONFIG_NRF_CLOUD_COAP_SEND_SSIDS`
 * :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS`
 * :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK`
 * :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM`
 * :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF`
+* :kconfig:option:`CONFIG_COAP_MAX_RETRANSMIT`
+* :kconfig:option:`CONFIG_COAP_INIT_ACK_TIMEOUT_MS`
+* :kconfig:option:`CONFIG_COAP_BACKOFF_PERCENT`
 
 Finally, configure these recommended additional options:
 
 * :kconfig:option:`CONFIG_COAP_CLIENT_BLOCK_SIZE` set to ``1024``.
 * :kconfig:option:`CONFIG_COAP_CLIENT_STACK_SIZE` set to ``6144``.
 * :kconfig:option:`CONFIG_COAP_CLIENT_THREAD_PRIORITY` set to ``0``.
-* :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` set to ``32``.
+* :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` set to ``64``.
+* :kconfig:option:`CONFIG_NRF_CLOUD_COAP_KEEPOPEN` set to ``y`` when using any of the NRF91x1 family of SoCs.
 
 Usage
 *****
@@ -88,10 +93,10 @@ To use this library, complete the following steps:
 
 1. Include the :file:`nrf_cloud_coap.h` file.
 #. Call the :c:func:`nrf_cloud_coap_init` function once to initialize the library.
-#. Connect the device to an LTE network.
+#. Connect the device to the network.
 #. Call the :c:func:`nrf_cloud_coap_connect` function to connect to nRF Cloud and obtain authorization to access services.
 #. Once your device is successfully connected to nRF Cloud, call any of the other functions declared in the header file to access services.
-#. Disconnect from LTE when your device does not need cloud services for a long period (for example, most of a day).
+#. Disconnect from the network when your device does not need cloud services for a long period (for example, most of a day).
 #. Call the :c:func:`nrf_cloud_coap_disconnect` function to close the network socket, which frees resources in the modem.
 
 Samples using the library
@@ -108,12 +113,12 @@ Limitations
 For CoAP-based applications, communications will not be as reliable for all nRF Cloud services as when using MQTT or REST.
 This is a fundamental aspect of the way CoAP works over UDP compared to TCP.
 
-The loss of the LTE connection or closing of the network socket will result in loss of the session information for DTLS inside the modem.
-The device must first call :c:func:`nrf_cloud_coap_disconnect`, and then :c:func:`nrf_cloud_coap_connect` once the LTE connection has been restored.
-This will result in a new full handshake of the DTLS connection and the need to re-establish authentication with the server.
+The loss of the network connection or closing of the network socket will result in loss of the session information for DTLS inside the network stack.
+The ``SO_KEEPOPEN`` socket option, when available and enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_COAP_KEEPOPEN` Kconfig option, keeps the socket open during network connection loss.
+This prevents the loss of session information and eliminates the need to perform a full DTLS handshake.
 
-Due to the same limitations in the modem, a call to :c:func:`nrf_cloud_coap_disconnect` followed by a subsequent call to :c:func:`nrf_cloud_coap_connect` will require a full DTLS handshake and reauthentication.
-This is true whether or not the LTE connection is intact.
+When ``SO_KEEPOPEN`` is not available, and the network connection is lost or the socket is closed, the device must first call :c:func:`nrf_cloud_coap_disconnect`, and then :c:func:`nrf_cloud_coap_connect` once the network connection has been restored.
+This will result in a new full handshake of the DTLS connection and the need to re-establish authentication with the server.
 
 References
 **********

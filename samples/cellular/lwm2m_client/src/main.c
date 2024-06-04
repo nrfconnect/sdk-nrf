@@ -150,7 +150,7 @@ static struct k_work_delayable send_periodical_work;
 static uint8_t send_count = 0;
 
 static int server_send_mute_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
-			uint16_t data_len, bool last_block, size_t total_size)
+			uint16_t data_len, bool last_block, size_t total_size, size_t offset)
 {
 	if (*data) {
 		LOG_INF("Server Muted Send");
@@ -385,7 +385,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_FAILURE:
 		LOG_WRN("Registration failure!");
-		state_trigger_and_unlock(NETWORK_ERROR);
+		state_trigger_and_unlock(CONNECTING);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
@@ -395,7 +395,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_REG_TIMEOUT:
 		LOG_DBG("Registration update failure!");
-		state_trigger_and_unlock(NETWORK_ERROR);
+		state_trigger_and_unlock(CONNECTING);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE:

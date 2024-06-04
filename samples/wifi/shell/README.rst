@@ -37,21 +37,21 @@ Currently, the following configurations are supported:
 * nRF91 Series DK + SPIM
 
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target.
+To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
    west build -b nrf7002dk/nrf5340/cpuapp
 
-To build for the nRF7002 EK with nRF5340 DK, use the ``nrf5340dk/nrf5340/cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
+To build for the nRF7002 EK with nRF5340 DK, use the ``nrf5340dk/nrf5340/cpuapp`` board target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
    west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek
 
-To build with ``raw_tx`` shell support for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` build target and raw TX overlay configuration.
+To build with ``raw_tx`` shell support for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target and raw TX overlay configuration.
 The following is an example of the CLI command:
 
 .. code-block:: console
@@ -62,7 +62,7 @@ The following is an example of the CLI command:
 
    .. group-tab:: nRF9161 DK
 
-      To build for the nRF9161 DK, use the ``nrf9161dk/nrf9161/ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
+      To build for the nRF9161 DK, use the ``nrf9161dk/nrf9161/ns`` board target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
       The following is an example of the CLI command:
 
       .. code-block:: console
@@ -71,7 +71,7 @@ The following is an example of the CLI command:
 
    .. group-tab:: nRF9160 DK
 
-      To build for the nRF9160 DK, use the ``nrf9160dk/nrf9160/ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
+      To build for the nRF9160 DK, use the ``nrf9160dk/nrf9160/ns`` board target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
       The following is an example of the CLI command:
 
     .. code-block:: console

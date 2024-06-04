@@ -27,6 +27,11 @@
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #endif
+#if defined(CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND)
+#include <net/nrf_cloud_codec.h>
+#include <zephyr/sys/timeutil.h>
+#include <time.h>
+#endif
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
@@ -866,6 +871,131 @@ static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pv
 	}
 }
 
+#if defined(CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND)
+
+#if defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_NRF_CLOUD_REST)
+
+static int method_gnss_nrf_cloud_json_send(char *body)
+{
+	int err;
+
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+	struct nrf_cloud_tx_data mqtt_msg = {
+		.data.ptr = body,
+		.data.len = strlen(body),
+		.qos = MQTT_QOS_1_AT_LEAST_ONCE,
+		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
+	};
+
+	err = nrf_cloud_send(&mqtt_msg);
+	if (err) {
+		LOG_ERR("MQTT: location data sending failed: %d", err);
+	}
+#elif defined(CONFIG_NRF_CLOUD_REST)
+#define REST_DETAILS_RX_BUF_SZ 300 /* No payload in a response, "just" headers */
+	static char rx_buf[REST_DETAILS_RX_BUF_SZ];
+	static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
+	static struct nrf_cloud_rest_context rest_ctx = {
+		.connect_socket = -1,
+		.keep_alive = false,
+		.rx_buf = rx_buf,
+		.rx_buf_len = sizeof(rx_buf),
+		.fragment_size = 0
+	};
+
+	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
+	if (err == 0) {
+		err = nrf_cloud_rest_send_device_message(&rest_ctx, device_id, body, false, NULL);
+		if (err) {
+			LOG_ERR("REST: location data sending failed: %d", err);
+		}
+	} else {
+		LOG_ERR("Failed to get device ID, error: %d", err);
+	}
+#endif
+	return err;
+}
+#endif
+
+static void method_gnss_nrf_cloud_pos_send(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
+#define CLOUD_GNSS_HEADING_ACC_LIMIT (float)60.0
+
+	int err = 0;
+	struct nrf_cloud_gnss_data gnss_data = {
+		.type = NRF_CLOUD_GNSS_TYPE_PVT,
+		.pvt = {
+			.lat = pvt_data->latitude,
+			.lon = pvt_data->longitude,
+			.accuracy = pvt_data->accuracy,
+			.alt = pvt_data->altitude,
+			.speed = pvt_data->speed,
+			.heading = pvt_data->heading,
+			.has_alt = 1,
+			.has_speed = pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_VELOCITY_VALID,
+			.has_heading =
+				pvt_data->heading_accuracy < CLOUD_GNSS_HEADING_ACC_LIMIT ? 1 : 0,
+		}
+	};
+	const struct tm time = {
+		.tm_year = pvt_data->datetime.year - 1900,
+		.tm_mon = pvt_data->datetime.month - 1,
+		.tm_mday = pvt_data->datetime.day,
+		.tm_hour = pvt_data->datetime.hour,
+		.tm_min = pvt_data->datetime.minute,
+		.tm_sec = pvt_data->datetime.seconds,
+	};
+
+	gnss_data.ts_ms = timeutil_timegm64(&time) * 1000 + pvt_data->datetime.ms;
+
+#if defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_NRF_CLOUD_REST)
+	char *json_str = NULL;
+	cJSON *gnss_data_obj = NULL;
+
+	gnss_data_obj = cJSON_CreateObject();
+	if (gnss_data_obj == NULL) {
+		LOG_ERR("Failed to encode GNSS position data, out of memory");
+		err = -ENOMEM;
+		goto cleanup;
+	}
+
+	/* Encode the GNSS location data */
+	err = nrf_cloud_gnss_msg_json_encode(&gnss_data, gnss_data_obj);
+	if (err) {
+		LOG_ERR("Failed to encode GNSS data to json");
+		goto cleanup;
+	}
+
+	json_str = cJSON_PrintUnformatted(gnss_data_obj);
+	if (json_str == NULL) {
+		LOG_ERR("Failed to encode GNSS position data, out of memory");
+		err = -ENOMEM;
+		goto cleanup;
+	}
+
+	LOG_DBG("Sending acquired GNSS location to nRF Cloud, body: %s", json_str);
+	method_gnss_nrf_cloud_json_send(json_str);
+
+cleanup:
+	if (gnss_data_obj) {
+		cJSON_Delete(gnss_data_obj);
+	}
+	if (json_str) {
+		cJSON_free(json_str);
+	}
+
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	/* CoAP is handled differently because we are sending CBOR instead of JSON data */
+	LOG_DBG("Sending acquired GNSS location to nRF Cloud with CoAP");
+	err = nrf_cloud_coap_location_send(&gnss_data, true);
+	if (err) {
+		LOG_ERR("CoAP: location data sending failed, %d", err);
+	}
+#endif
+}
+
+#endif
+
 static void method_gnss_pvt_work_fn(struct k_work *item)
 {
 	struct nrf_modem_gnss_pvt_data_frame pvt_data;
@@ -916,6 +1046,9 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 			/* We are done, stop GNSS and publish the fix. */
 			method_gnss_cancel();
 			location_core_event_cb(&location_result);
+#if defined(CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND)
+			method_gnss_nrf_cloud_pos_send(&pvt_data);
+#endif
 		}
 	} else if (gnss_config.visibility_detection) {
 		if (pvt_data.execution_time >= VISIBILITY_DETECTION_EXEC_TIME &&

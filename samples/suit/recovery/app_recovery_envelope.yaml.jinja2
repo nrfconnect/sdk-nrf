@@ -1,0 +1,195 @@
+{%- set component_index = 0 %}
+{%- set component_list = [] %}
+{%- set dependencies_list = [] %}
+{%- set mpi_app_recovery_vendor_name = application['config']['CONFIG_SUIT_MPI_APP_RECOVERY_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_app_recovery_class_name = application['config']['CONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME']|default('nRF54H20_app_recovery') %}
+{%- set mpi_rad_recovery_vendor_name = application['config']['CONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_rad_recovery_class_name = application['config']['CONFIG_SUIT_MPI_RAD_RECOVERY_CLASS_NAME']|default('nRF54H20_rad_recovery') %}
+{%- set sequence_number = sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] %}
+SUIT_Envelope_Tagged:
+  suit-authentication-wrapper:
+    SuitDigest:
+      suit-digest-algorithm-id: cose-alg-sha-256
+  suit-manifest:
+    suit-manifest-version: 1
+    suit-manifest-sequence-number: {{ sequence_number }}
+    suit-common:
+      suit-components:
+      - - CAND_IMG
+        - 0
+      - - CAND_MFST
+        - 0
+      {%- set component_index = 2 %}
+{%- if application is defined %}
+    {%- set app_img_component_index = component_index %}
+    {{- component_list.append( app_img_component_index ) or ""}}
+      - - MEM
+        - {{ application['dt'].label2node['cpu'].unit_addr }}
+        - {{ get_absolute_address(application['dt'].chosen_nodes['zephyr,code-partition']) }}
+        - {{ application['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size }}
+    {%- set component_index = component_index + 1 %}
+{%- endif %}
+{%- if radio is defined %}
+    {%- set rad_instld_mfst_component_index = component_index %}
+    {{- component_list.append( rad_instld_mfst_component_index ) or ""}}
+    {{- dependencies_list.append( rad_instld_mfst_component_index ) or ""}}
+      - - INSTLD_MFST
+        - RFC4122_UUID:
+            namespace: {{ mpi_rad_recovery_vendor_name }}
+            name: {{ mpi_rad_recovery_class_name }}
+    {%- set component_index = component_index + 1 %}
+{%- endif %}
+
+      suit-shared-sequence:
+{%- if radio is defined %}
+      - suit-directive-set-component-index: {{ rad_instld_mfst_component_index }}
+      - suit-directive-override-parameters:
+          suit-parameter-vendor-identifier:
+            RFC4122_UUID: {{ mpi_app_recovery_vendor_name }}
+          suit-parameter-class-identifier:
+            RFC4122_UUID:
+              namespace: {{ mpi_app_recovery_vendor_name }}
+              name: {{ mpi_app_recovery_class_name }}
+{%- endif %}
+{%- if application is defined %}
+      - suit-directive-set-component-index: {{ app_img_component_index }}
+      - suit-directive-override-parameters:
+          suit-parameter-vendor-identifier:
+            RFC4122_UUID: {{ mpi_app_recovery_vendor_name }}
+          suit-parameter-class-identifier:
+            RFC4122_UUID:
+              namespace: {{ mpi_app_recovery_vendor_name }}
+              name: {{ mpi_app_recovery_class_name }}
+          suit-parameter-image-digest:
+            suit-digest-algorithm-id: cose-alg-sha-256
+            suit-digest-bytes:
+              file: {{ application['binary'] }}
+          suit-parameter-image-size:
+            file: {{ application['binary'] }}
+{%- endif %}
+      - suit-directive-set-component-index: [{{ component_list|join(',') }}]
+      - suit-condition-vendor-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-condition-class-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      suit-dependencies:
+        # Key is the index of suit-components that describe the dependency manifest
+        "1": {}
+{%- for component_element in dependencies_list %}
+        "{{ component_element }}": {}
+{%- endfor %}
+
+    suit-validate:
+{% if dependencies_list|length > 0 %}
+    - suit-directive-set-component-index: [{{ dependencies_list|join(',') }}]
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{% endif %}
+{%- if application is defined %}
+    - suit-directive-set-component-index: {{ app_img_component_index }}
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+
+    suit-invoke:
+{% if dependencies_list|length > 0 %}
+    - suit-directive-set-component-index: [{{ dependencies_list|join(',') }}]
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{% endif %}
+{%- if application is defined %}
+    - suit-directive-set-component-index: {{ app_img_component_index }}
+    - suit-directive-invoke:
+      - suit-send-record-failure
+{%- endif %}
+
+    suit-install:
+{%- if radio is defined %}
+    - suit-directive-set-component-index: 1
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ radio['name'] }}'
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            envelope: {{ artifacts_folder ~ radio['name'] }}.suit
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+{%- if application is defined %}
+    - suit-directive-set-component-index: 0
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ application['name'] }}'
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            file: {{ application['binary'] }}
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-set-component-index: {{ app_img_component_index }}
+    - suit-directive-override-parameters:
+        suit-parameter-source-component: 0
+    - suit-directive-copy:
+      - suit-send-record-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+    suit-manifest-component-id:
+    - INSTLD_MFST
+    - RFC4122_UUID:
+        namespace: {{ mpi_app_recovery_vendor_name }}
+        name: {{ mpi_app_recovery_class_name }}
+  suit-integrated-dependencies:
+{%- if radio is defined %}
+    '#{{ radio['name'] }}': {{ artifacts_folder ~ radio['name'] }}.suit
+{%- endif %}
+{%- if application is defined %}
+    '#{{ application['name'] }}': {{ application['binary'] }}
+{%- endif %}

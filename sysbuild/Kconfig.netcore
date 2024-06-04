@@ -10,15 +10,12 @@ config EXTERNAL_CONFIGURED_NETCORE
 
 config SUPPORT_NETCORE
 	bool
-	default y if (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS || BOARD_THINGY53_NRF5340_CPUAPP || BOARD_THINGY53_NRF5340_CPUAPP_NS || BOARD_NRF7002DK_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF5340_CPUAPP_NS || BOARD_NRF54H20DK_NRF54H20_CPUAPP)
+	default y if (SOC_NRF5340_CPUAPP || SOC_NRF54H20_CPUAPP)
 
-config NETCORE_REMOTE_BOARD_NAME
+config NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
 	string
-	default "nrf5340dk/nrf5340/cpunet" if BOARD_NRF5340DK_NRF5340_CPUAPP
-	default "nrf5340dk/nrf5340/cpunet" if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
-	default "thingy53/nrf5340/cpunet"  if BOARD_THINGY53_NRF5340_CPUAPP
-	default "thingy53/nrf5340/cpunet"  if BOARD_THINGY53_NRF5340_CPUAPP_NS
-	default "nrf54h20dk/nrf54h20/cpurad"  if BOARD_NRF54H20DK_NRF54H20_CPUAPP
+	default "cpunet" if SOC_NRF5340_CPUAPP
+	default "cpurad"  if SOC_NRF54H20_CPUAPP
 
 config NETCORE_REMOTE_DOMAIN
 	string
@@ -68,11 +65,11 @@ config NRF_DEFAULT_IPC_RADIO
 
 choice NETCORE
 	prompt "Netcore image"
-	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_HCI_IPC if NRF_DEFAULT_BLUETOOTH && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_IPC_RADIO if NRF_DEFAULT_IPC_RADIO && NETCORE_REMOTE_BOARD_NAME != ""
+	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_NONE
 	depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
 
@@ -111,13 +108,12 @@ config NETCORE_MULTIPROTOCOL_RPMSG
 	  Include multiprotocol_rpmsg as the netcore image to use
 
 config NETCORE_IPC_RADIO
-	bool "ipc_radio [Experimental]"
+	bool "ipc_radio"
 	depends on SUPPORT_NETCORE_IPC_RADIO
-	select EXPERIMENTAL
 	help
 	  Add ipc_radio as a netcore image to use.
-	  The image can be configured as Bluetooth radio,
-	  IEEE 802.15.4 radio or left empty.
+	  The image can be configured as Bluetooth radio
+	  and/or IEEE 802.15.4 radio.
 
 endchoice
 
@@ -168,17 +164,17 @@ config NETCORE_APP_UPDATE
 if NETCORE_IPC_RADIO
 
 config NETCORE_IPC_RADIO_BT_HCI_IPC
-	bool
+	bool "HCI serialization for Bluetooth"
 	help
 	  Use HCI serialization for Bluetooth
 
 config NETCORE_IPC_RADIO_BT_RPC
-	bool
+	bool "nRF RPC serialization for Bluetooth"
 	help
 	  Use nRF RPC serialization for Bluetooth
 
 config NETCORE_IPC_RADIO_IEEE802154
-	bool
+	bool "Spinel serialization for IEEE 802.15.4"
 	help
 	  Use Spinel serialization for IEEE 802.15.4
 

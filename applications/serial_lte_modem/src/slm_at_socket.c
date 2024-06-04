@@ -988,7 +988,7 @@ static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len, ui
 	if (op == DATAMODE_SEND) {
 		if (sock.type == SOCK_DGRAM && (flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
 			LOG_ERR("Datamode buffer overflow");
-			(void)exit_datamode_handler(-EOVERFLOW);
+			exit_datamode_handler(-EOVERFLOW);
 			return -EOVERFLOW;
 		} else {
 			if (strlen(udp_url) > 0) {

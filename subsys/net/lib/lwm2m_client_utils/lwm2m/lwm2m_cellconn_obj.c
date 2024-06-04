@@ -210,7 +210,7 @@ K_TIMER_DEFINE(radio_period_timer, radio_period_timer_fn, NULL);
 
 static int disable_radio_period_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 				   uint8_t *data, uint16_t data_len, bool last_block,
-				   size_t total_size)
+				   size_t total_size, size_t offset)
 {
 	uint16_t period = *(uint16_t *)data;
 
@@ -227,7 +227,8 @@ static int disable_radio_period_cb(uint16_t obj_inst_id, uint16_t res_id, uint16
 }
 
 static int edrx_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
-			  uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+			  uint8_t *data, uint16_t data_len, bool last_block,
+			  size_t total_size, size_t offset)
 {
 	int err;
 	char edrx_param[5] = "";
@@ -361,7 +362,8 @@ static void cache_psm_time_str(int time)
 }
 
 static int active_time_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
-			  uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
+			  uint8_t *data, uint16_t data_len, bool last_block,
+			  size_t total_size, size_t offset)
 {
 	int err;
 	int32_t time = *(int32_t *)data;
@@ -384,7 +386,7 @@ static int active_time_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_in
 }
 
 static int psm_time_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
-		       uint16_t data_len, bool last_block, size_t total_size)
+		       uint16_t data_len, bool last_block, size_t total_size, size_t offset)
 {
 	int err;
 	int32_t time = *(int32_t *)data;
@@ -425,7 +427,7 @@ static uint8_t get_edrx_kconfig(enum lte_lc_lte_mode lte_mode)
 #if defined(CONFIG_LWM2M_CELL_CONN_OBJ_VERSION_1_1)
 static int active_psm_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 				uint8_t *data, uint16_t data_len, bool last_block,
-				size_t total_size)
+				size_t total_size, size_t offset)
 {
 	int err;
 
@@ -460,7 +462,7 @@ static uint8_t get_rai_kconfig(void)
 }
 
 static int rai_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
-			 uint16_t data_len, bool last_block, size_t total_size)
+			 uint16_t data_len, bool last_block, size_t total_size, size_t offset)
 {
 	int err = 0;
 

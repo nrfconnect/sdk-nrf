@@ -17,7 +17,8 @@ FOTA can be used to update the device application, bootloader, and modem.
 The modem can be incrementally updated with a modem delta image.
 If the device has sufficiently large external flash storage, the modem can be entirely updated with a full modem image.
 
-nRF Cloud also helps your devices determine their location using assisted GNSS (A-GNSS) and predicted GPS (P-GPS).
+nRF Cloud also helps your devices determine their locations using GNSS.
+It uses both assisted GNSS (A-GNSS) and predicted GPS (P-GPS).
 It can determine device location from cellular and Wi-Fi network information sent by the device.
 
 Additionally, nRF Cloud allows devices to report data to the cloud for collection and analysis later.
@@ -26,8 +27,9 @@ To read more about nRF Cloud, see the `nRF Cloud`_ website and the `nRF Cloud do
 You can use the services offered by nRF Cloud in the following scenarios:
 
 * Device connected to nRF Cloud over CoAP.
-  The services can be used from the nRF Cloud portal.
-* Device connected to nRF Cloud over MQTT. The services can be used from nRF Cloud.
+  The services can be used from nRF Cloud.
+* Device connected to nRF Cloud over MQTT.
+  The services can be used from nRF Cloud.
 * Device connected to nRF Cloud over MQTT, with a customer-developed website or application that interacts with the `nRF Cloud REST API`_ to display device data and manage it in a customized way.
 * Device connected to nRF Cloud over REST, interacting using the `nRF Cloud REST API`_.
 * Device connected to a customer cloud service in a suitable manner. The services can be used from the customer cloud service that communicates over REST to the nRF Cloud REST API in a proxy configuration.
@@ -43,9 +45,12 @@ When choosing a protocol, consider the following:
 * What are the network data usage requirements for the device?
 * What are the carrier's network settings (NAT timeout, eDRX/PSM) and how will the settings affect device behavior?
 
-MQTT has a higher (data/power) cost to set up a connection.  However, the data size of an MQTT publish event is smaller than a comparable REST transaction.
+MQTT has a higher (data/power) cost to set up a connection than CoAP or REST.
+However, the data size of an MQTT publish event is smaller than a comparable REST transaction.
+The data size of a CoAP transfer can be the smallest of all.
 MQTT may be preferred if a device is able to maintain a connection to the broker and sends/receives data frequently.
 REST may be preferred if a device sends data infrequently or does not need to receive unsolicited data from the cloud.
+CoAP may be preferred if a device sends data infrequently, does not need to receive unsolicited data from the cloud, and must use the least amount of cellular data and the least amount of power.
 
 CoAP overview
 =============
@@ -84,7 +89,7 @@ A device can successfully connect to `nRF Cloud`_ using CoAP or REST if the foll
   The device will be visible in the nRF Cloud portal, including location service data and sensor data, if the public key is also associated with the same nRF Cloud account.
 * The device calls nRF Cloud REST APIs and provides a JSON Web Token (JWT) signed by the private key.
 * The device calls the nRF Cloud CoAP connect function, which generates and sends the JWT automatically.
-  After that, calls to the CoAP service APIs do not transmit the JWT again.
+  After that, calls to the CoAP service APIs do not transmit the JWT again but rely on the DTLS Connection ID to maintain a connection for long periods of time.
 
 A device can successfully connect to `nRF Cloud`_ using MQTT if the following requirements are met:
 
@@ -93,6 +98,15 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
 * The device ID is associated with an nRF Cloud account.
 
 `nRF Cloud`_ supports the following two ways for creating and installing these certificates both in the device and the cloud:
+
+* nRF Cloud provisioning service and library
+
+  See the following for more information:
+
+  * `nRF Cloud Provisioning Service`_
+  * `nRF Cloud Auto-onboarding`_
+  * :ref:`nrf_cloud_multi_service_provisioning_service`
+  * :ref:`lib_nrf_provisioning`
 
 * Just in time provisioning
 
@@ -109,7 +123,7 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
 
 * Preconnect provisioning
 
-  This is required for CoAP connections, and supported by MQTT or REST connections.
+  This is supported by CoAP, MQTT, and REST connections.
 
   1. Run the `device_credentials_installer.py`_ Python script to create and install credentials on the device:
 

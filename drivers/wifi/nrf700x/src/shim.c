@@ -633,11 +633,10 @@ static enum nrf_wifi_status zep_shim_bus_qspi_dev_init(void *os_qspi_dev_ctx)
 	return NRF_WIFI_STATUS_SUCCESS;
 }
 
-static void zep_shim_bus_qspi_dev_deinit(void *os_qspi_dev_ctx)
+static void zep_shim_bus_qspi_dev_deinit(void *priv)
 {
-	struct qspi_dev *dev = NULL;
-
-	dev = os_qspi_dev_ctx;
+	struct zep_shim_bus_qspi_priv *qspi_priv = priv;
+	volatile struct qspi_dev *dev = qspi_priv->qspi_dev;
 
 	dev->deinit();
 }
@@ -645,7 +644,7 @@ static void zep_shim_bus_qspi_dev_deinit(void *os_qspi_dev_ctx)
 static void *zep_shim_bus_qspi_dev_add(void *os_qspi_priv, void *osal_qspi_dev_ctx)
 {
 	struct zep_shim_bus_qspi_priv *zep_qspi_priv = os_qspi_priv;
-	struct qspi_dev *qdev = qspi_dev();
+	struct qspi_dev *dev = qspi_dev();
 	int ret;
 	enum nrf_wifi_status status;
 
@@ -655,7 +654,7 @@ static void *zep_shim_bus_qspi_dev_add(void *os_qspi_priv, void *osal_qspi_dev_c
 		return NULL;
 	}
 
-	status = qdev->init(qspi_defconfig());
+	status = dev->init(qspi_defconfig());
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: QSPI device init failed", __func__);
 		return NULL;
@@ -666,17 +665,18 @@ static void *zep_shim_bus_qspi_dev_add(void *os_qspi_priv, void *osal_qspi_dev_c
 		LOG_ERR("%s: RPU enable failed with error %d", __func__, ret);
 		return NULL;
 	}
-	zep_qspi_priv->qspi_dev = qdev;
+	zep_qspi_priv->qspi_dev = dev;
 	zep_qspi_priv->dev_added = true;
 
 	return zep_qspi_priv;
 }
 
-static void zep_shim_bus_qspi_dev_rem(void *os_qspi_dev_ctx)
+static void zep_shim_bus_qspi_dev_rem(void *priv)
 {
-	struct qspi_dev *dev = NULL;
+	struct zep_shim_bus_qspi_priv *qspi_priv = priv;
+	struct qspi_dev *dev = qspi_priv->qspi_dev;
 
-	dev = os_qspi_dev_ctx;
+	ARG_UNUSED(dev);
 
 	/* TODO: Make qspi_dev a dynamic instance and remove it here */
 	rpu_disable();
@@ -796,11 +796,18 @@ out:
 
 static void zep_shim_bus_qspi_intr_unreg(void *os_qspi_dev_ctx)
 {
+	struct k_work_sync sync;
+	int ret;
+
 	ARG_UNUSED(os_qspi_dev_ctx);
 
-	k_work_cancel_delayable(&intr_priv->work);
+	ret = rpu_irq_remove(&intr_priv->gpio_cb_data);
+	if (ret) {
+		LOG_ERR("%s: rpu_irq_remove failed", __func__);
+		return;
+	}
 
-	rpu_irq_remove(&intr_priv->gpio_cb_data);
+	k_work_cancel_delayable_sync(&intr_priv->work, &sync);
 
 	k_free(intr_priv);
 	intr_priv = NULL;

@@ -37,10 +37,10 @@ function(partition_manager)
   cmake_parse_arguments(PM "" "DOMAIN" "IN_FILES;REGIONS" ${ARGN})
 
   if(DEFINED PM_DOMAIN)
+    string(CONFIGURE "${${image_name}_PM_STATIC_YML_FILE}" user_def_pm_static)
     get_property(image_name GLOBAL PROPERTY DOMAIN_APP_${PM_DOMAIN})
-    set(user_def_pm_static ${${image_name}_PM_STATIC_YML_FILE})
   else()
-    set(user_def_pm_static ${PM_STATIC_YML_FILE})
+    string(CONFIGURE "${PM_STATIC_YML_FILE}" user_def_pm_static)
     get_property(image_name GLOBAL PROPERTY DOMAIN_APP_APP)
   endif()
 
@@ -83,6 +83,21 @@ function(partition_manager)
       place the image correctly in flash.")
   endif()
 
+  if(NOT "${PM_DOMAIN}" STREQUAL "CPUNET" AND NOT static_configuration AND
+     (SB_CONFIG_BOOTLOADER_MCUBOOT OR SB_CONFIG_SECURE_BOOT))
+    message(WARNING "
+      ---------------------------------------------------------------------
+      --- WARNING: Using a bootloader without pm_static.yml.            ---
+      --- There are cases where a deployed product can consist of       ---
+      --- multiple images, and only a subset of these images can be     ---
+      --- upgraded through a firmware update mechanism. In such cases,  ---
+      --- the upgradable images must have partitions that are static    ---
+      --- and are matching the partition map used by the bootloader     ---
+      --- programmed onto the device.                                   ---
+      ---------------------------------------------------------------------
+      \n"
+    )
+  endif()
 
 # We must set this when running for the domain, so how is the domain name partition handled in settings ?
   if("${PM_DOMAIN}" STREQUAL "CPUNET")
@@ -485,10 +500,10 @@ foreach(d APP ${PM_DOMAINS})
   sysbuild_get(${image_name}_CONFIG_PM_SRAM_SIZE IMAGE ${image_name} VAR CONFIG_PM_SRAM_SIZE KCONFIG)
   sysbuild_get(${image_name}_CONFIG_PM_SRAM_BASE IMAGE ${image_name} VAR CONFIG_PM_SRAM_BASE KCONFIG)
 
-  sysbuild_get(${image_name}_CONFIG_SOC_NRF9160 IMAGE ${image_name} VAR CONFIG_SOC_NRF9160 KCONFIG)
+  sysbuild_get(${image_name}_CONFIG_SOC_SERIES_NRF91X IMAGE ${image_name} VAR CONFIG_SOC_SERIES_NRF91X KCONFIG)
   sysbuild_get(${image_name}_CONFIG_SOC_NRF5340_CPUAPP IMAGE ${image_name} VAR CONFIG_SOC_NRF5340_CPUAPP KCONFIG)
 
-  if (${image_name}_CONFIG_SOC_NRF9160)
+  if (${image_name}_CONFIG_SOC_SERIES_NRF91X)
     # See nRF9160 Product Specification, chapter "UICR"
     set(otp_start_addr "0xff8108")
     set(otp_size 756) # 189 * 4
@@ -519,7 +534,7 @@ foreach(d APP ${PM_DOMAINS})
   sysbuild_get(${image_name}_CONFIG_FLASH_SIZE IMAGE ${image_name} VAR CONFIG_FLASH_SIZE KCONFIG)
   math(EXPR flash_size "${${image_name}_CONFIG_FLASH_SIZE} * 1024" OUTPUT_FORMAT HEXADECIMAL)
 
-  if (${image_name}_CONFIG_SOC_NRF9160 OR ${image_name}_CONFIG_SOC_NRF5340_CPUAPP)
+  if (${image_name}_CONFIG_SOC_SERIES_NRF91X OR ${image_name}_CONFIG_SOC_NRF5340_CPUAPP)
     add_region(
       NAME otp
       SIZE ${otp_size}

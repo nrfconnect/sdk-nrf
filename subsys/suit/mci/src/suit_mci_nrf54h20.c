@@ -9,6 +9,7 @@
 #include <suit_execution_mode.h>
 #include <sdfw/lcs.h>
 #include <zephyr/logging/log.h>
+#include <sdfw/arbiter.h>
 
 #define MANIFEST_PUBKEY_NRF_TOP_GEN0	 0x4000BB00
 #define MANIFEST_PUBKEY_SYSCTRL_GEN0	 0x40082100
@@ -146,6 +147,14 @@ mci_err_t suit_mci_independent_update_policy_get(const suit_manifest_class_id_t 
 			*policy = SUIT_INDEPENDENT_UPDATE_DENIED;
 		}
 		break;
+
+	case EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP:
+		/* In this state, only the Nordic top manifest is accepted as an update candidate.*/
+		if (role != SUIT_MANIFEST_SEC_TOP) {
+			*policy = SUIT_INDEPENDENT_UPDATE_DENIED;
+		}
+		break;
+
 	default:
 		break;
 	}
@@ -402,17 +411,43 @@ mci_err_t suit_mci_memory_access_rights_validate(const suit_manifest_class_id_t 
 	case SUIT_MANIFEST_APP_RECOVERY:
 	case SUIT_MANIFEST_APP_LOCAL_1:
 	case SUIT_MANIFEST_APP_LOCAL_2:
-	case SUIT_MANIFEST_APP_LOCAL_3:
-		/* App manifest - TODO - implement checks based on UICR
-		 */
+	case SUIT_MANIFEST_APP_LOCAL_3: {
+		struct arbiter_mem_params_access mem_params = {
+			.allowed_types = ARBITER_MEM_TYPE(RESERVED, FIXED),
+			.access = {
+					.owner = NRF_OWNER_APPLICATION,
+					.permissions = ARBITER_MEM_PERM(READ, SECURE),
+					.address = (uintptr_t)address,
+					.size = mem_size,
+				},
+		};
+
+		if (arbiter_mem_access_check(&mem_params) != ARBITER_STATUS_OK) {
+			return MCI_ERR_NOACCESS;
+		}
+
 		return SUIT_PLAT_SUCCESS;
+	}
 
 	case SUIT_MANIFEST_RAD_RECOVERY:
 	case SUIT_MANIFEST_RAD_LOCAL_1:
-	case SUIT_MANIFEST_RAD_LOCAL_2:
-		/* Rad manifest - TODO - implement checks based on UICR
-		 */
+	case SUIT_MANIFEST_RAD_LOCAL_2: {
+		struct arbiter_mem_params_access mem_params = {
+			.allowed_types = ARBITER_MEM_TYPE(RESERVED, FIXED),
+			.access = {
+					.owner = NRF_OWNER_RADIOCORE,
+					.permissions = ARBITER_MEM_PERM(READ, SECURE),
+					.address = (uintptr_t)address,
+					.size = mem_size,
+				},
+		};
+
+		if (arbiter_mem_access_check(&mem_params) != ARBITER_STATUS_OK) {
+			return MCI_ERR_NOACCESS;
+		}
+
 		return SUIT_PLAT_SUCCESS;
+	}
 
 	default:
 		break;
@@ -612,6 +647,15 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 		      (child_role <= SUIT_MANIFEST_APP_LOCAL_3)) ||
 		     ((child_role >= SUIT_MANIFEST_RAD_LOCAL_1) &&
 		      (child_role <= SUIT_MANIFEST_RAD_LOCAL_2)))) {
+			return SUIT_PLAT_SUCCESS;
+		}
+		break;
+
+	case EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP:
+		/* In this state it is prohibited to process OEM manifests. */
+		if ((parent_role == SUIT_MANIFEST_SEC_TOP) &&
+		    ((child_role == SUIT_MANIFEST_SEC_SYSCTRL) ||
+		     (child_role == SUIT_MANIFEST_SEC_SDFW))) {
 			return SUIT_PLAT_SUCCESS;
 		}
 		break;

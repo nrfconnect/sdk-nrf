@@ -16,10 +16,10 @@ The tests support the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160, nrf52840dk_nrf52840
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf9151dk_nrf9151, nrf9160dk_nrf9160, nrf9161dk_nrf9161
 
 .. note::
-   Nordic Semiconductor devices such as nRF51, nRF52810, or nRF52811 cannot run the full test suite because of limited flash capacity.
+   Nordic Semiconductor devices for nRF51 Series, nRF52810, or nRF52811 cannot run the full test suite because of limited flash capacity.
    A recommended approach in such case is to run subsets of the tests one by one.
 
 Overview
@@ -147,12 +147,7 @@ See :ref:`nrf_security` for additional information about configuring the nRF Sec
 You can use the following configuration files to build the test in a specific setup:
 
 * :file:`overlay-cc3xx.conf` uses hardware acceleration using the Arm CryptoCell accelerator (for cryptography and entropy for random number generation).
-* :file:`overlay-cc3xx-oberon.conf` uses a combination of hardware acceleration, using the Arm CryptoCell, and the Oberon software library, that adds key sizes and algorithms not supported in the CryptoCell.
-  This setup uses hardware acceleration as much as possible.
 * :file:`overlay-oberon.conf` uses only the Oberon software library for all cryptographic operations.
-* :file:`overlay-vanilla.conf` is for software only, except for a hardware-accelerated module to generate entropy for random number generation.
-* :file:`overlay-multi.conf` uses a combination of hardware acceleration, using the Arm CryptoCell, and vanilla Mbed TLS and Oberon software implementations to support functionalities not supported by the CryptoCell.
-  This setup uses hardware acceleration as much as possible.
 
 You can use one of the listed overlay configurations by adding the ``-- -DEXTRA_CONF_FILE=<overlay_config_file>`` flag to your build. Also see :ref:`cmake_options` for instructions on how to add this option.
 

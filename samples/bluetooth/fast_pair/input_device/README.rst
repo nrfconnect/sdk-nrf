@@ -1,15 +1,15 @@
 .. _fast_pair_input_device:
 
-Bluetooth: Fast Pair input device
+Bluetooth Fast Pair: Input device
 #################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Fast Pair input device sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>`.
+This sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>`.
 
-Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth and Bluetooth LE devices with as little user interaction required as possible.
+Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth® and Bluetooth LE devices with as little user interaction required as possible.
 Google also provides additional features built upon the Fast Pair standard.
 For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
 
@@ -174,7 +174,7 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-When building the sample, you can provide the Fast Pair Model ID (:c:macro:`FP_MODEL_ID`) and the Fast Pair Anti-Spoofing Key (:c:macro:`FP_ANTI_SPOOFING_KEY`) as CMake options.
+When building the sample, you can provide the Fast Pair Model ID (``FP_MODEL_ID``) and the Fast Pair Anti-Spoofing Key (``FP_ANTI_SPOOFING_KEY``) as CMake options.
 If the data is not provided, the sample uses the default provisioning data obtained for the *NCS input device* (the input device debug Fast Pair provider).
 See :ref:`ug_bt_fast_pair_provisioning` for detailed guide.
 

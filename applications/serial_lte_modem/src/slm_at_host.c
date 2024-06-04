@@ -29,8 +29,6 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 #define LF		'\n'
 #define HEXDUMP_LIMIT   16
 
-static const char *const slm_quit_str = CONFIG_SLM_DATAMODE_TERMINATOR;
-
 /* Operation mode variables */
 enum slm_operation_mode {
 	SLM_AT_COMMAND_MODE,		/* AT command host or bridge */
@@ -198,7 +196,7 @@ static void raw_send_scheduled(struct k_work *work)
 
 	/* Interpret partial quit_str as data, if we send due to timeout. */
 	if (quit_str_partial_match > 0) {
-		write_data_buf(slm_quit_str, quit_str_partial_match);
+		write_data_buf(CONFIG_SLM_DATAMODE_TERMINATOR, quit_str_partial_match);
 		quit_str_partial_match = 0;
 	}
 
@@ -223,6 +221,7 @@ K_TIMER_DEFINE(inactivity_timer, inactivity_timer_handler, NULL);
 /* Search for quit_str and send data prior to that. Tracks quit_str over several calls. */
 static size_t raw_rx_handler(const uint8_t *buf, const size_t len)
 {
+	const char *const quit_str = CONFIG_SLM_DATAMODE_TERMINATOR;
 	size_t processed;
 	bool quit_str_match = false;
 	bool prev_quit_str_match = false;
@@ -240,9 +239,9 @@ static size_t raw_rx_handler(const uint8_t *buf, const size_t len)
 
 	/* Find quit_str or partial match at the end of the buffer. */
 	for (processed = 0; processed < len && quit_str_match == false; processed++) {
-		if (buf[processed] == slm_quit_str[quit_str_match_count]) {
+		if (buf[processed] == quit_str[quit_str_match_count]) {
 			quit_str_match_count++;
-			if (quit_str_match_count == strlen(slm_quit_str)) {
+			if (quit_str_match_count == strlen(quit_str)) {
 				quit_str_match = true;
 			}
 		} else {
@@ -254,7 +253,7 @@ static size_t raw_rx_handler(const uint8_t *buf, const size_t len)
 
 	if (prev_quit_str_match == false) {
 		/* Write data which was previously interpreted as a possible partial quit_str. */
-		write_data_buf(slm_quit_str, prev_quit_str_match_count);
+		write_data_buf(quit_str, prev_quit_str_match_count);
 
 		/* Write data from buf until the start of the possible (partial) quit_str. */
 		write_data_buf(buf, processed - quit_str_match_count);
@@ -484,6 +483,9 @@ static int slm_at_send_indicate(const uint8_t *data, size_t len,
 	if (k_is_in_isr()) {
 		LOG_ERR("FIXME: Attempt to send AT response (of size %u) in ISR.", len);
 		return -EINTR;
+	} else if (at_backend.send == NULL) {
+		LOG_ERR("Attempt to send via an uninitialized AT backend");
+		return -EFAULT;
 	}
 
 	if (indicate) {
@@ -643,6 +645,7 @@ static size_t cmd_rx_handler(const uint8_t *buf, const size_t len)
 /* Search for quit_str and exit datamode when one is found. */
 static size_t null_handler(const uint8_t *buf, const size_t len)
 {
+	const char *const quit_str = CONFIG_SLM_DATAMODE_TERMINATOR;
 	static size_t dropped_count;
 	static uint8_t match_count;
 
@@ -654,9 +657,9 @@ static size_t null_handler(const uint8_t *buf, const size_t len)
 	}
 
 	for (processed = 0; processed < len && match == false; processed++) {
-		if (buf[processed] == slm_quit_str[match_count]) {
+		if (buf[processed] == quit_str[match_count]) {
 			match_count++;
-			if (match_count == strlen(slm_quit_str)) {
+			if (match_count == strlen(quit_str)) {
 				match = true;
 			}
 		} else {
@@ -666,7 +669,7 @@ static size_t null_handler(const uint8_t *buf, const size_t len)
 	}
 
 	if (match) {
-		dropped_count -= strlen(slm_quit_str);
+		dropped_count -= strlen(quit_str);
 		dropped_count += ring_buf_size_get(&data_rb);
 		LOG_WRN("Terminating datamode, %d dropped", dropped_count);
 		(void)exit_datamode();
@@ -807,15 +810,11 @@ bool exit_datamode_handler(int result)
 
 	if (set_slm_mode(SLM_NULL_MODE)) {
 		if (datamode_handler) {
-			(void)datamode_handler(DATAMODE_EXIT, NULL, 0, SLM_DATAMODE_FLAGS_NONE);
+			datamode_handler(DATAMODE_EXIT, NULL, 0, SLM_DATAMODE_FLAGS_EXIT_HANDLER);
 		}
 		datamode_handler = NULL;
 		datamode_handler_result = result;
 		ret = true;
-
-		/* TODO: Send quit_str or another defined string to indicate that client should
-		 *       exit datamode as there has been failure?
-		 */
 	}
 
 	k_mutex_unlock(&mutex_mode);

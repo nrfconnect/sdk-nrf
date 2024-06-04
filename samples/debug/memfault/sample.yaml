@@ -2,6 +2,7 @@ sample:
   name: Memfault sample
 tests:
   sample.debug.memfault:
+    sysbuild: true
     build_only: true
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
@@ -18,8 +19,9 @@ tests:
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.debug.memfault.etb:
+    sysbuild: true
     build_only: true
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
@@ -35,4 +37,4 @@ tests:
       - nrf9151dk/nrf9151/ns
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
-    tags: ci_build
+    tags: ci_build sysbuild

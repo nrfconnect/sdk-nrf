@@ -13,7 +13,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-  sample.event_manager_proxy.nrf5340dk/nrf5340/cpuapp.icmsg:
+  sample.event_manager_proxy.nrf5340dk_nrf5340_cpuapp.icmsg:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:

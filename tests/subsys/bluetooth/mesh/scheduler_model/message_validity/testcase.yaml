@@ -1,6 +1,7 @@
 tests:
   bluetooth.mesh.scheduler_model.message_validity:
+    sysbuild: true
     platform_allow: native_posix
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build sysbuild
     integration_platforms:
-        - native_posix
+      - native_posix

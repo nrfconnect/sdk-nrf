@@ -1,6 +1,0 @@
-################################################################################
-# Bootloader Configuration
-
-CONFIG_SECURE_BOOT=y
-CONFIG_FW_INFO=y
-CONFIG_FW_INFO_FIRMWARE_VERSION=1

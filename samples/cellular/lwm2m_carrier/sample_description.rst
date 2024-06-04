@@ -125,9 +125,9 @@ To build with a Kconfig overlay, pass it to the build system using the ``EXTRA_C
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DEXTRA_CONF_FILE=overlay-shell.conf
+   west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-shell.conf
 
-|build_target|
+|board_target|
 
 This command builds for your nRF91 Series DK using the configurations found in the :file:`overlay-shell.conf` file, in addition to the configurations found in the :file:`prj.conf` file.
 If some options are defined in both files, the options set in the overlay take precedence.

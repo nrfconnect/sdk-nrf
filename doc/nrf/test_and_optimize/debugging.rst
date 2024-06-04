@@ -106,7 +106,7 @@ If you want to reset the network core while debugging, make sure to first reset 
 Debugging secure and non-secure firmware
 ****************************************
 
-When using a :ref:`build target <app_boards_names>` with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` (``_ns``), by default you can only debug firmware in the non-secure environment of the application core firmware.
+When using a :ref:`board target <app_boards_names>` with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` (``*/ns`` :ref:`variant <app_boards_names>`), by default you can only debug firmware in the non-secure environment of the application core firmware.
 
 To debug firmware running in the secure environment, you need to build Trusted Firmware-M with debug symbols enabled and load the symbols during the debugging session.
 To build Trusted Firmware-M with debug symbols, set the :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_RELWITHDEBINFO` Kconfig option.
@@ -132,6 +132,17 @@ Use the following steps to enable monitor-mode debugging in the |NCS|:
   * For debugging using Ozone, enter ``Exec.Command("SetMonModeDebug = 1");`` in the console.
 
 For more information about monitor-mode debugging, see Zephyr's :ref:`zephyr:debugmon` documentation and SEGGER's `Monitor-mode Debugging <Monitor-mode Debugging_>`_ documentation.
+
+
+Remote debugging using Memfault
+*******************************
+
+The |NCS| provides remote observability support to maintain optimal device performance and reliability in ever-changing device ecosystems.
+As you start to rollout a fleet, you can debug and monitor devices remotely.
+
+This functionality allows you to efficiently collect crash information and get the same data from remote devices as you would when using a debugger.
+
+For more information on enabling remote debugging with the |NCS| see :ref:`ug_memfault`.
 
 .. _debugging_tools:
 

@@ -122,6 +122,61 @@ void emberAfDoorLockClusterInitCallback(EndpointId endpoint)
 	logOnFailure(DoorLock::Attributes::RequirePINforRemoteOperation::Set(endpoint, BoltLockMgr().GetRequirePIN()),
 		     "require PIN code for the remote operation");
 
+#ifdef CONFIG_LOCK_SCHEDULES
+	logOnFailure(DoorLock::Attributes::NumberOfWeekDaySchedulesSupportedPerUser::Set(
+			     endpoint, CONFIG_LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER),
+		     "number of WeekDay schedules per user");
+	logOnFailure(DoorLock::Attributes::NumberOfYearDaySchedulesSupportedPerUser::Set(
+			     endpoint, CONFIG_LOCK_MAX_YEARDAY_SCHEDULES_PER_USER),
+		     "number of YearDay schedules per user");
+	logOnFailure(DoorLock::Attributes::NumberOfHolidaySchedulesSupported::Set(endpoint,
+										  CONFIG_LOCK_MAX_HOLIDAY_SCHEDULES),
+		     "number of holiday schedules");
+#endif /* CONFIG_LOCK_SCHEDULES */
+
 	AppTask::Instance().UpdateClusterState(BoltLockMgr().GetState(),
 					       BoltLockManager::OperationSource::kUnspecified);
 }
+
+#ifdef CONFIG_LOCK_SCHEDULES
+
+DlStatus emberAfPluginDoorLockGetSchedule(chip::EndpointId endpointId, uint8_t weekdayIndex, uint16_t userIndex,
+					  EmberAfPluginDoorLockWeekDaySchedule &schedule)
+{
+	return BoltLockMgr().GetWeekDaySchedule(weekdayIndex, userIndex, schedule);
+}
+
+DlStatus emberAfPluginDoorLockGetSchedule(chip::EndpointId endpointId, uint8_t yearDayIndex, uint16_t userIndex,
+					  EmberAfPluginDoorLockYearDaySchedule &schedule)
+{
+	return BoltLockMgr().GetYearDaySchedule(yearDayIndex, userIndex, schedule);
+}
+
+DlStatus emberAfPluginDoorLockGetSchedule(chip::EndpointId endpointId, uint8_t holidayIndex,
+					  EmberAfPluginDoorLockHolidaySchedule &holidaySchedule)
+{
+	return BoltLockMgr().GetHolidaySchedule(holidayIndex, holidaySchedule);
+}
+
+DlStatus emberAfPluginDoorLockSetSchedule(chip::EndpointId endpointId, uint8_t weekdayIndex, uint16_t userIndex,
+					  DlScheduleStatus status, DaysMaskMap daysMask, uint8_t startHour,
+					  uint8_t startMinute, uint8_t endHour, uint8_t endMinute)
+{
+	return BoltLockMgr().SetWeekDaySchedule(weekdayIndex, userIndex, status, daysMask, startHour, startMinute,
+						endHour, endMinute);
+}
+
+DlStatus emberAfPluginDoorLockSetSchedule(chip::EndpointId endpointId, uint8_t yearDayIndex, uint16_t userIndex,
+					  DlScheduleStatus status, uint32_t localStartTime, uint32_t localEndTime)
+{
+	return BoltLockMgr().SetYearDaySchedule(yearDayIndex, userIndex, status, localStartTime, localEndTime);
+}
+
+DlStatus emberAfPluginDoorLockSetSchedule(chip::EndpointId endpointId, uint8_t holidayIndex, DlScheduleStatus status,
+					  uint32_t localStartTime, uint32_t localEndTime,
+					  OperatingModeEnum operatingMode)
+{
+	return BoltLockMgr().SetHolidaySchedule(holidayIndex, status, localStartTime, localEndTime, operatingMode);
+}
+
+#endif /* CONFIG_LOCK_SCHEDULES */

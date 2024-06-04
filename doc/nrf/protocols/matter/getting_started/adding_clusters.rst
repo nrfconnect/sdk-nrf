@@ -90,18 +90,18 @@ This is a JSON file that contains the data model configuration of clusters, comm
 It is not used directly by Matter applications, but it is used to generate the source files for handling given clusters.
 
 The ZAP file can be edited using `ZCL Advanced Platform`_ (ZAP tool), a third-party tool that is a generic templating engine for applications and libraries based on Zigbee Cluster Library.
-This tool is provided with the Matter repository in the |NCS|.
+
+This guide uses the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool` to install and run the ZAP tool GUI, and generate the data model's C++ source files.
 
 To edit clusters using the ZAP tool, complete the following steps:
 
-1. Complete the installation steps for the ZAP tool listed in :ref:`ug_matter_tools_installing_zap`.
-#. Open the :file:`src/template.zap` for editing by running the following command, where *sample_location* stands for the path where you copied the template sample in the first step of this guide, and *matter_root_location* stands for the path where Matter project is located:
+1. Navigate to your sample directory and run the following command:
 
    .. code-block::
 
-      zap *sample_location*/src/template.zap --zcl *matter_root_location*/src/app/zap-templates/zcl/zcl.json --gen *matter_root_location*/src/app/zap-templates/app-templates.json
+      west zap-gui
 
-   The ZAP tool's Zigbee Cluster Configurator window appears.
+   The ZAP tool's Matter Cluster Configurator window appears.
 
    .. figure:: images/matter_create_accessory_zcl_configurator.png
       :alt: Zigbee Cluster Configurator window in ZAP tool
@@ -151,11 +151,11 @@ To edit clusters using the ZAP tool, complete the following steps:
    #. Go to the Temperature Measurement cluster configuration and make sure that you have the ``MeasuredValue`` attribute enabled.
 
 #. Save the file and exit.
-#. Use the modified ZAP file to generate the C++ code that contains the selected clusters by running the following command, where ``samples/matter/sensor`` stands for the path where you copied the template sample in the first step of this guide:
+#. Use the modified ZAP file to generate the C++ code that contains the selected clusters by running the following command:
 
    .. code-block::
 
-      python ./scripts/tools/zap/generate.py ../../../nrf/samples/matter/sensor/src/template.zap -t src/app/zap-templates/app-templates.json -o ../../../nrf/samples/matter/sensor/src/zap-generated
+      west zap-generate
 
 At this point, new clusters have been added to the Matter device.
 

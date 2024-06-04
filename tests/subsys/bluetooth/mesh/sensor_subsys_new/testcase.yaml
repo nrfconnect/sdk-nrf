@@ -1,7 +1,8 @@
 tests:
   bluetooth.mesh.sensor_subsys_new:
+    sysbuild: true
     platform_allow: native_posix qemu_cortex_m3
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build sysbuild
     integration_platforms:
       - native_posix
       - qemu_cortex_m3

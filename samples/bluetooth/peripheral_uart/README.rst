@@ -100,7 +100,7 @@ To use the library, set the :kconfig:option:`CONFIG_UART_ASYNC_ADAPTER` Kconfig 
 MCUboot with serial recovery of the networking core image
 =========================================================
 
-For the ``nrf5340dk_nrf5340_cpuapp``, it is possible to enable serial recovery of the network core while multi-image update is not enabled in the MCUboot.
+For the ``nrf5340dk/nrf5340/cpuapp``, it is possible to enable serial recovery of the network core while multi-image update is not enabled in the MCUboot.
 See :ref:`peripheral_uart_sample_activating_variants` for details on how to build the sample with this feature using the :file:`nrf5340dk_app_sr_net.conf` and :file:`nrf5340dk_mcuboot_sr_net.conf` files.
 
 User interface
