@@ -24,10 +24,11 @@ config MCS
 
 config TX_POWER
 	int "TX power"
-	range 0 11
-	default 11
+	range 0 13
+	default 13
 	help
-	   Transmission power, see table 6.2.1-3 of ETSI TS 103 636-4.
+	   Transmission power, max 19 dBm due to hardware limitations.
+	   See table 6.2.1-3 of ETSI TS 103 636-4 v1.5.1.
 
 config TX_TRANSMISSIONS
 	int "TX transmissions"
