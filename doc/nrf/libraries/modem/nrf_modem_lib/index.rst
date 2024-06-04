@@ -11,11 +11,12 @@ The integration layer is constituted by the library wrapper and functionalities 
    :glob:
    :caption: Subpages:
 
-   nrf_modem_lib_wrapper.rst
-   nrf_modem_lib_socket_offloading.rst
-   nrf_modem_lib_os_abstraction.rst
-   nrf_modem_lib_pm_integration.rst
-   nrf_modem_lib_trace.rst
-   nrf_modem_lib_fault.rst
+   nrf_modem_lib_wrapper
+   nrf_modem_lib_socket_offloading
+   nrf_modem_lib_os_abstraction
+   nrf_modem_lib_pm_integration
+   nrf_modem_lib_lte_net_if
+   nrf_modem_lib_trace
+   nrf_modem_lib_fault
    nrf_modem_lib_diagnostic
-   nrf_modem_lib_api.rst
+   nrf_modem_lib_api

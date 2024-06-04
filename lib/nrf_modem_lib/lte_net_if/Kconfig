@@ -8,10 +8,11 @@ menuconfig NRF_MODEM_LIB_NET_IF
 	select PDN
 	select PDN_ESM_STRERROR
 	select LTE_LINK_CONTROL
-	depends on NET_SOCKETS_OFFLOAD
+	depends on NRF_MODEM_LIB
+	depends on NET_CONNECTION_MANAGER
+	depends on NET_IPV4 || NET_IPV6
 	depends on !NET_IPV6_NBR_CACHE
 	depends on !NET_IPV6_MLD
-	depends on NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
 	help
 	  Add support for controlling the nRF91 modem using Zephyr networking API.
 
@@ -71,6 +72,10 @@ config NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT
 	help
 	 If this option is set, the LTE iface will disconnect LTE instead of shutting down the
 	 modem when being brought down.
+
+# LTE_NET_IF require a bigger stack than the default
+config NET_CONNECTION_MANAGER_MONITOR_STACK_SIZE
+	default 1024
 
 module = NRF_MODEM_LIB_NET_IF
 module-str = Modem network interface

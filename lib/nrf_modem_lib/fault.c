@@ -60,8 +60,12 @@ void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault)
 	LOG_ERR("Modem has crashed, reason 0x%x, PC: 0x%x",
 		fault->reason, fault->program_counter);
 #endif
+
 #if CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
 	k_sem_give(&fault_sem);
+#elif CONFIG_NRF_MODEM_LIB_ON_FAULT_LTE_NET_IF
+	extern void lte_net_if_modem_fault_handler(void);
+	lte_net_if_modem_fault_handler();
 #endif
 }
 #endif /* not CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC */
