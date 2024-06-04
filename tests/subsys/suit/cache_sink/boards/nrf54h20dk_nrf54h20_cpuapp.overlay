@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* Split DFU partition into a smaller one and DFU caches. */
+/delete-node/ &dfu_partition;
+
 &mram1x {
 	erase-block-size = < 0x10 >;
 	/* Hardcoded inside the soc_flash_nrf_mram.c (MRAM_WORD_SIZE) */
