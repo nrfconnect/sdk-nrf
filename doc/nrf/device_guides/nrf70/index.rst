@@ -59,6 +59,18 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - ``thingy53/nrf5340/cpuapp``
      - | :ref:`Getting started <ug_thingy53_gs>`
        | `User Guide <Nordic Thingy:53 Hardware_>`_
+   * - :ref:`zephyr:nrf54h20dk_nrf54h20`
+     - nRF7002 EB
+     - PCA20053
+     - ``nrf54h20dk/nrf54h20/cpuapp``
+     - | `nRF54H20 Objective Product Specification 0.3.1`_
+       | :ref:`Getting started <ug_nrf54h20_gs>`
+   * - :ref:`zephyr:nrf54l15pdk_nrf54l15`
+     - nRF7002 EB
+     - PCA20053
+     - ``nrf54l15pdk/nrf54l15/cpuapp``
+     - :ref:`Getting started <ug_nrf54l15_gs>`
+
 
 The following nRF70 Series shields are available and defined in the :file:`nrf/boards/shields` folder:
 
@@ -89,6 +101,14 @@ The following nRF70 Series shields are available and defined in the :file:`nrf/b
      - ``nrf7002eb``
      - | :ref:`Development guide <ug_nrf7002eb_gs>`
        | `User Guide <nRF7002 EB User Guide_>`_
+   * - nRF7002 EB for nRF54H20 DK
+     - PCA63561
+     - ``nrf700x_nrf54h20dk``
+     - :ref:`Getting started <ug_nrf7002eb_nrf54h20dk_gs>`
+   * - nRF7002 EB for nRF54L15 PDK
+     - PCA63561
+     - ``nrf700x_nrf54l15pdk``
+     - :ref:`Getting started <ug_nrf7002eb_nrf54l15pdk_gs>`
 
 Applications can be developed on the nRF7002 DK (PCA10143), which includes the nRF7002 companion IC, or on boards compatible with the nRF7002 EK (PCA63556) or the nRF7002 EB (PCA63561).
 
