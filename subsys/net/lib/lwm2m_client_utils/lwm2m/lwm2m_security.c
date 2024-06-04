@@ -711,6 +711,17 @@ static int set_socketoptions(struct lwm2m_ctx *ctx)
 		purge_sessions = false;
 	}
 
+	if (IS_ENABLED(CONFIG_SOC_NRF9120)) {
+		/* Modem FW 2.0.1 allows keeping the socket open while PDN is down, or modem
+		 * is in flight mode.
+		 */
+		ret = zsock_setsockopt(ctx->sock_fd, SOL_SOCKET, SO_KEEPOPEN, &(int){1},
+				       sizeof(int));
+		if (ret) {
+			LOG_ERR("Failed to set SO_KEEPOPEN: %d", errno);
+		}
+	}
+
 	return lwm2m_set_default_sockopt(ctx);
 }
 
