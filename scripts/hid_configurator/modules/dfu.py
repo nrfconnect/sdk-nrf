@@ -337,15 +337,9 @@ class DfuImage:
         try:
             envelope = SuitEnvelope()
             envelope.load(dfu_package)
-            # The SuitEnvelope provides no API to directly access the SUIT manifest sequence number.
-            # Convert the manifest to *.json file to access the data.
-            envelope.dump(temp_json_file)
-            with open(temp_json_file) as f:
-                manifest_json = json.load(f)
-                suit_manifest = manifest_json["SUIT_Envelope_Tagged"]["suit-manifest"]
-                version = suit_manifest["suit-manifest-sequence-number"]
+            version = envelope.sequence_number
         except Exception as e:
-            print("Exception during SUIT file processing")
+            print("Exception during retrieving manifest sequence number")
             print(e)
             return
 
