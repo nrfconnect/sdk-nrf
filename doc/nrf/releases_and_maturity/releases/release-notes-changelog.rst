@@ -206,7 +206,8 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
-|no_changes_yet_note|
+* Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board using :ref:`Shield <ug_nrf7002eb_nrf54h20dk_gs>`.
+* Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board using :ref:`Shield <ug_nrf7002eb_nrf54l15pdk_gs>`.
 
 Applications
 ============
