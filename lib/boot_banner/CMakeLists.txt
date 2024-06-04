@@ -4,6 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if(CONFIG_NCS_BOOT_BANNER)
-  zephyr_sources(banner.c)
-endif()
+zephyr_sources(banner.c)
