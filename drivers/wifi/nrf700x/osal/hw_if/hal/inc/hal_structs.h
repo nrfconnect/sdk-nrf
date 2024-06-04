@@ -235,6 +235,8 @@ struct nrf_wifi_hal_dev_ctx {
 	unsigned int event_data_len;
 	unsigned int event_data_pending;
 	unsigned int event_resubmit;
+	void *recovery_tasklet;
+	void *lock_recovery;
 };
 
 
