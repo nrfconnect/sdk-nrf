@@ -174,8 +174,12 @@ To perform a FOTA update, complete the following steps:
 
 .. fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
 
+.. fota_upgrades_outro_end
+
 FOTA update sample
 ******************
+
+.. fota_upgrades_update_start
 
 The :zephyr:code-sample:`smp-svr` demonstrates how to set up your project to support FOTA updates.
 
@@ -198,7 +202,7 @@ This configuration was carefully selected to achieve the maximum possible throug
 
 Consider using these features in your project to speed up the FOTA update process.
 
-.. fota_upgrades_outro_end
+.. fota_upgrades_update_end
 
 .. _ug_nrf52_developing_fota_in_mesh:
 
@@ -222,7 +226,6 @@ FOTA in Matter
 **************
 
 .. fota_upgrades_matter_start
-
 
 To perform a FOTA upgrade when working with the Matter protocol, use one of the following methods:
 

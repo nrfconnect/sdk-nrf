@@ -1,7 +1,8 @@
 .. _qspi_xip:
+.. _ug_nrf5340_intro_xip:
 
-Configuring external XIP
-########################
+External execute in place (XIP) configuration on the nRF5340 SoC
+################################################################
 
 .. contents::
    :local:
@@ -11,7 +12,12 @@ This guide describes the external execute in place (XIP) support for the nRF5340
 The nRF5340 SoC is equipped with a Quad Serial Peripheral Interface (QSPI) memory interface, which is capable of exposing QSPI flash as memory for the CPU used to fetch and execute the program code.
 The QSPI is available for the application core.
 Therefore, it is possible to relocate a part of the application's code to an external memory.
+The external flash memory supports on-the-fly encryption and decryption.
 NCS supports dividing an application into an internal and external part, along with the MCUboot support.
+
+For more information about QSPI XIP hardware support, the `Execute in place page in the nRF5340 Product Specification`_.
+
+For placing individual source code files into defined memory regions, check the :ref:`zephyr:code_relocation_nocopy` sample in Zephyr.
 
 Enabling configuration options
 ******************************
@@ -341,3 +347,41 @@ The application will fail to boot in the following cases:
 * If one of the updates is not loaded.
 * If a different build is loaded to one of the slots.
 * If one of the loaded updates is corrupt and deleted.
+
+.. _ug_nrf5340_intro_xip_measurements:
+
+Indication of XIP performance
+*****************************
+
+The XIP code execution performance measurement was conducted to evaluate the expected performance in different operating conditions.
+
+The :ref:`nrf_machine_learning_app` application running on the nRF5340 DK was used for the testing.
+This particular application was used because its application design allows to move the Edge Impulse library to external memory.
+There is only one call to the library from the wrapper module, and therefore this call is used to measure the time of execution.
+Additional measurements of the current allowed to compare total energy used.
+
+The following table lists performance numbers that were measured under different operating conditions.
+
+.. note::
+   The numbers in the table refer to current consumed only by the nRF5340 SoC.
+   For complete numbers, you must add the current used by external flash, which varies between manufacturers.
+
+.. _ug_nrf5340_intro_xip_measurements_table:
+
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| CPU frequency   | Memory          | Cache  | QSPI speed   | Mode   | Time [ms] | Current @3.0V [mA] | Current @1.8V [mA] | Total energy @3.0V [µJ]  | Total energy @1.8V [µJ]  |
++=================+=================+========+==============+========+===========+====================+====================+==========================+==========================+
+| 64 MHz          | Internal flash  | Yes    | n/a          | n/a    | 63        | 3.2                | 5.1                | 605                      | 578                      |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 64 MHz          | External flash  | Yes    | 48 MHz       | Quad   | 68.9      | 5.63               | 8.51               | 1164                     | 1055                     |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 64 MHz          | External flash  | Yes    | 24 MHz       | Quad   | 73.7      | 5.58               | 8.44               | 1234                     | 1120                     |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 128 MHz         | Internal flash  | Yes    | n/a          | n/a    | 31        | 7.65               | 12.24              | 711                      | 683                      |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 128 MHz         | External flash  | Yes    | 96 MHz       | Quad   | 34.1      | 8.99               | 14.1               | 920                      | 865                      |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 128 MHz         | External flash  | No     | 96 MHz       | Quad   | 88.5      | 9.15               | 12.95              | 2429                     | 2063                     |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 128 MHz         | External flash  | Yes    | 48 MHz       | Quad   | 36.4      | 8.85               | 13.9               | 966                      | 911                      |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
