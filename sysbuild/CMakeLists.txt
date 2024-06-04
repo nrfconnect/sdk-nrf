@@ -321,7 +321,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
         add_overlay_config(
           mcuboot
-          ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
+          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/mcuboot_external_crypto.conf
           )
       else()
         add_overlay_config(
