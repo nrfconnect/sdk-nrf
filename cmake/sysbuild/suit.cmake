@@ -196,19 +196,18 @@ function(suit_create_package)
 
     if(DEFINED target AND NOT target STREQUAL "")
       list(APPEND CORE_ARGS
-      --core ${target},${SUIT_ROOT_DIRECTORY}${target}.bin,${BINARY_DIR}/zephyr/edt.pickle,${BINARY_DIR}/zephyr/.config
+      --core ${target},${SUIT_ROOT_DIRECTORY}${image}.bin,${BINARY_DIR}/zephyr/edt.pickle,${BINARY_DIR}/zephyr/.config
       )
-      suit_copy_artifact_to_output_directory(${target} ${BINARY_DIR}/zephyr/${BINARY_FILE})
     endif()
     suit_copy_artifact_to_output_directory(${image} ${BINARY_DIR}/zephyr/${BINARY_FILE})
   endforeach()
 
   foreach(image ${IMAGES})
+    unset(GENERATE_LOCAL_ENVELOPE)
     sysbuild_get(GENERATE_LOCAL_ENVELOPE IMAGE ${image} VAR CONFIG_SUIT_LOCAL_ENVELOPE_GENERATE KCONFIG)
     if(NOT DEFINED GENERATE_LOCAL_ENVELOPE)
       continue()
     endif()
-    unset(GENERATE_LOCAL_ENVELOPE)
 
     sysbuild_get(INPUT_ENVELOPE_JINJA_FILE IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TEMPLATE KCONFIG)
     suit_set_absolute_or_relative_path(${INPUT_ENVELOPE_JINJA_FILE} ${PROJECT_BINARY_DIR} INPUT_ENVELOPE_JINJA_FILE)
@@ -293,11 +292,11 @@ function(suit_setup_merge)
   foreach(image ${IMAGES})
     set(ARTIFACTS_TO_MERGE)
 
+    unset(GENERATE_LOCAL_ENVELOPE)
     sysbuild_get(GENERATE_LOCAL_ENVELOPE IMAGE ${image} VAR CONFIG_SUIT_LOCAL_ENVELOPE_GENERATE KCONFIG)
     if(NOT DEFINED GENERATE_LOCAL_ENVELOPE)
       continue()
     endif()
-    unset(GENERATE_LOCAL_ENVELOPE)
 
     sysbuild_get(IMAGE_BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
     sysbuild_get(IMAGE_BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
