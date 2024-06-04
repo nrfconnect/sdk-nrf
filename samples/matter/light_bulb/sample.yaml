@@ -69,10 +69,11 @@ tests:
     platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: sysbuild
   # Sample to execute load tests
-  sample.matter.light_bulb.persistent_subscriptions:
+  sample.matter.light_bulb.memory_profiling.persistent_subscriptions:
     sysbuild: true
     build_only: true
     extra_args: CONFIG_CHIP_PERSISTENT_SUBSCRIPTIONS=y
+      CONFIG_CHIP_MEMORY_PROFILING=y CONFIG_SHELL_MINIMAL=y
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp
     integration_platforms:
@@ -88,16 +89,4 @@ tests:
     platform_allow: nrf7002dk/nrf5340/cpuapp
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
-    tags: sysbuild
-  sample.matter.light_bulb.memory_profiling:
-    sysbuild: true
-    build_only: true
-    extra_args: CONFIG_CHIP_MEMORY_PROFILING=y CONFIG_SHELL_MINIMAL=y
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf7002dk/nrf5340/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
     tags: sysbuild
