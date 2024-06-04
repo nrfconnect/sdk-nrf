@@ -243,6 +243,9 @@ CHIP_ERROR BridgeManager::AddSingleDevice(MatterBridgedDevice *device, BridgedDe
 				mCurrentDynamicEndpointId > endpointId ? mCurrentDynamicEndpointId : endpointId + 1;
 		} else {
 			/* The pair was added to a map, so we have to take care about removing it in case of failure. */
+			if (err == CHIP_ERROR_NO_MEMORY) {
+				LOG_ERR("The device object was not constructed properly due to the lack of memory");
+			}
 			mDevicesMap.Erase(index);
 		}
 
@@ -257,6 +260,9 @@ CHIP_ERROR BridgeManager::AddSingleDevice(MatterBridgedDevice *device, BridgedDe
 						err = CreateEndpoint(index, mCurrentDynamicEndpointId);
 
 						if (err != CHIP_NO_ERROR) {
+							if (err == CHIP_ERROR_NO_MEMORY) {
+								LOG_ERR("The device object was not constructed properly due to the lack of memory");
+							}
 							/* The pair was added to a map, so we have to take care about
 							 * removing it in case of failure. */
 							mDevicesMap.Erase(index);
@@ -297,6 +303,14 @@ CHIP_ERROR BridgeManager::CreateEndpoint(uint8_t index, uint16_t endpointId)
 	}
 
 	auto *storedDevice = mDevicesMap[index].mDevice;
+
+	/* Make sure that data that is going to be wrapped in the Span objects is valid,
+	   otherwise, the Span may make the application abort(). */
+	VerifyOrReturnError(storedDevice, CHIP_ERROR_NO_MEMORY);
+	VerifyOrReturnError(storedDevice->mDataVersion && storedDevice->mDataVersionSize > 0, CHIP_ERROR_NO_MEMORY);
+	VerifyOrReturnError(storedDevice->mDeviceTypeList && storedDevice->mDeviceTypeListSize > 0,
+			    CHIP_ERROR_NO_MEMORY);
+
 	CHIP_ERROR err = emberAfSetDynamicEndpoint(
 		index, endpointId, storedDevice->mEp,
 		Span<DataVersion>(storedDevice->mDataVersion, storedDevice->mDataVersionSize),
@@ -472,9 +486,10 @@ BridgedDeviceDataProvider *BridgeManager::GetProvider(EndpointId endpoint, uint1
 
 } /* namespace Nrf */
 
-Protocols::InteractionModel::Status emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterId clusterId,
-						   const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
-						   uint16_t maxReadLength)
+Protocols::InteractionModel::Status
+emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterId clusterId,
+				     const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
+				     uint16_t maxReadLength)
 {
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 
@@ -486,8 +501,9 @@ Protocols::InteractionModel::Status emberAfExternalAttributeReadCallback(Endpoin
 	}
 }
 
-Protocols::InteractionModel::Status emberAfExternalAttributeWriteCallback(EndpointId endpoint, ClusterId clusterId,
-						    const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer)
+Protocols::InteractionModel::Status
+emberAfExternalAttributeWriteCallback(EndpointId endpoint, ClusterId clusterId,
+				      const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer)
 {
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 
