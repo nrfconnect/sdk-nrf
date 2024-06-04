@@ -94,10 +94,11 @@ void test_get_non_existing(void)
 	size_t psk_len = 0;
 	uint32_t flags = 0;
 	uint8_t channel = 0;
+	uint32_t timeout = 0;
 
 	err = wifi_credentials_get_by_ssid_personal(SSID1, sizeof(SSID1), &security,
 				bssid_buf, ARRAY_SIZE(bssid_buf),
-				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel);
+				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel, &timeout);
 	TEST_ASSERT_EQUAL(-ENOENT, err);
 }
 
@@ -108,7 +109,7 @@ void test_single_no_bssid(void)
 
 	/* set network credentials without BSSID */
 	err = wifi_credentials_set_personal(SSID1, sizeof(SSID1), SECURITY1, NULL, 0,
-					    PSK1, sizeof(PSK1), 0, 0);
+					    PSK1, sizeof(PSK1), 0, 0, 0);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 
 	enum wifi_security_type security = -1;
@@ -117,11 +118,12 @@ void test_single_no_bssid(void)
 	size_t psk_len = 0;
 	uint32_t flags = 0;
 	uint8_t channel = 0;
+	uint32_t timeout = 0;
 
 	/* retrieve network credentials without BSSID */
 	err = wifi_credentials_get_by_ssid_personal(SSID1, sizeof(SSID1), &security,
 				bssid_buf, ARRAY_SIZE(bssid_buf),
-				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel);
+				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel, &timeout);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 	TEST_ASSERT_EQUAL(0, strncmp(PSK1, psk_buf, ARRAY_SIZE(psk_buf)));
 	TEST_ASSERT_EQUAL(0, flags);
@@ -139,7 +141,7 @@ void test_single_with_bssid(void)
 
 	/* set network credentials with BSSID */
 	err = wifi_credentials_set_personal(SSID1, sizeof(SSID1), SECURITY1, BSSID1, 6,
-					    PSK1, sizeof(PSK1), FLAGS1, CHANNEL1);
+					    PSK1, sizeof(PSK1), FLAGS1, CHANNEL1, 0);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 
 	enum wifi_security_type security = -1;
@@ -148,11 +150,12 @@ void test_single_with_bssid(void)
 	size_t psk_len = 0;
 	uint32_t flags = 0;
 	uint8_t channel = 0;
+	uint32_t timeout = 0;
 
 	/* retrieve network credentials with BSSID */
 	err = wifi_credentials_get_by_ssid_personal(SSID1, sizeof(SSID1), &security,
 				bssid_buf, ARRAY_SIZE(bssid_buf),
-				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel);
+				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel, &timeout);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 	TEST_ASSERT_EQUAL(0, strncmp(PSK1, psk_buf, ARRAY_SIZE(psk_buf)));
 	TEST_ASSERT_EQUAL(sizeof(PSK1), psk_len);
@@ -172,7 +175,7 @@ void test_single_without_psk(void)
 
 	/* set network credentials without PSK/BSSID */
 	err = wifi_credentials_set_personal(SSID2, sizeof(SSID2), SECURITY2, NULL, 6,
-					    NULL, 0, FLAGS2, CHANNEL2);
+					    NULL, 0, FLAGS2, CHANNEL2, 0);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 
 	enum wifi_security_type security = -1;
@@ -181,11 +184,13 @@ void test_single_without_psk(void)
 	size_t psk_len = 0;
 	uint32_t flags = 0;
 	uint8_t channel = 0;
+	uint32_t timeout = 0;
 
 	/* retrieve network credentials without PSK/BSSID */
 	err = wifi_credentials_get_by_ssid_personal(SSID2, sizeof(SSID2), &security,
 				bssid_buf, ARRAY_SIZE(bssid_buf),
-				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel);
+				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel,
+				&timeout);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 	TEST_ASSERT_EQUAL(0, psk_len);
 	TEST_ASSERT_EQUAL(0, flags);
@@ -201,7 +206,7 @@ void test_single_without_ssid(void)
 	int err;
 
 	err = wifi_credentials_set_personal("", 0, SECURITY1, BSSID1, 6,
-					    PSK1, sizeof(PSK1), FLAGS1, CHANNEL1);
+					    PSK1, sizeof(PSK1), FLAGS1, CHANNEL1, 0);
 	TEST_ASSERT_EQUAL(-EINVAL, err);
 
 	enum wifi_security_type security = -1;
@@ -210,10 +215,11 @@ void test_single_without_ssid(void)
 	size_t psk_len = 0;
 	uint32_t flags = 0;
 	uint8_t channel = 0;
+	uint32_t timeout = 0;
 
 	err = wifi_credentials_get_by_ssid_personal("", 0, &security,
 				bssid_buf, ARRAY_SIZE(bssid_buf),
-				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel);
+				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel, &timeout);
 	TEST_ASSERT_EQUAL(-EINVAL, err);
 
 	err = wifi_credentials_delete_by_ssid("", 0);
@@ -226,7 +232,7 @@ void test_single_garbled_ssid(void)
 	int err;
 
 	err = wifi_credentials_set_personal(SSID4, sizeof(SSID4), SECURITY4, BSSID4, 6,
-					    PSK4, sizeof(PSK4), FLAGS4, CHANNEL4);
+					    PSK4, sizeof(PSK4), FLAGS4, CHANNEL4, 0);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 
 	enum wifi_security_type security = -1;
@@ -235,10 +241,11 @@ void test_single_garbled_ssid(void)
 	size_t psk_len = 0;
 	uint32_t flags = 0;
 	uint8_t channel = 0;
+	uint32_t timeout = 0;
 
 	err = wifi_credentials_get_by_ssid_personal(SSID4, sizeof(SSID4), &security,
 				bssid_buf, ARRAY_SIZE(bssid_buf),
-				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel);
+				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel, &timeout);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 	TEST_ASSERT_EQUAL(0, strncmp(PSK4, psk_buf, ARRAY_SIZE(psk_buf)));
 	TEST_ASSERT_EQUAL(sizeof(PSK4), psk_len);
@@ -269,11 +276,11 @@ void test_storage_limit(void)
 
 	/* Set two networks */
 	err = wifi_credentials_set_personal(SSID1, sizeof(SSID1), SECURITY1, BSSID1, 6,
-					    PSK1, sizeof(PSK1), FLAGS1, CHANNEL1);
+					    PSK1, sizeof(PSK1), FLAGS1, CHANNEL1, 0);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 
 	err = wifi_credentials_set_personal(SSID2, sizeof(SSID2), SECURITY2, NULL, 6,
-					    NULL, 0, FLAGS2, CHANNEL2);
+					    NULL, 0, FLAGS2, CHANNEL2, 0);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 
 	enum wifi_security_type security = -1;
@@ -282,11 +289,12 @@ void test_storage_limit(void)
 	size_t psk_len = 0;
 	uint32_t flags = 0;
 	uint8_t channel = 0;
+	uint32_t timeout = 0;
 
 	/* Get two networks */
 	err = wifi_credentials_get_by_ssid_personal(SSID1, sizeof(SSID1), &security,
 				bssid_buf, ARRAY_SIZE(bssid_buf),
-				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel);
+				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel, &timeout);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 	TEST_ASSERT_EQUAL(0, strncmp(PSK1, psk_buf, ARRAY_SIZE(psk_buf)));
 	TEST_ASSERT_EQUAL(sizeof(PSK1), psk_len);
@@ -297,7 +305,7 @@ void test_storage_limit(void)
 
 	err = wifi_credentials_get_by_ssid_personal(SSID2, sizeof(SSID2), &security,
 				bssid_buf, ARRAY_SIZE(bssid_buf),
-				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel);
+				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel, &timeout);
 	TEST_ASSERT_EQUAL(SECURITY2, security);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 	TEST_ASSERT_EQUAL(FLAGS2, flags);
@@ -305,18 +313,18 @@ void test_storage_limit(void)
 
 	/* Set third network */
 	err = wifi_credentials_set_personal(SSID3, sizeof(SSID3), SECURITY3, NULL, 6,
-					    PSK3, sizeof(PSK3), FLAGS3, CHANNEL3);
+					    PSK3, sizeof(PSK3), FLAGS3, CHANNEL3, 0);
 	TEST_ASSERT_EQUAL(-ENOBUFS, err);
 
 	/* Not enough space? Delete the first one. */
 	wifi_credentials_delete_by_ssid(SSID1, ARRAY_SIZE(SSID1));
 	err = wifi_credentials_set_personal(SSID3, sizeof(SSID3), SECURITY3, NULL, 6,
-					    PSK3, sizeof(PSK3), FLAGS3, CHANNEL3);
+					    PSK3, sizeof(PSK3), FLAGS3, CHANNEL3, 0);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 
 	err = wifi_credentials_get_by_ssid_personal(SSID3, sizeof(SSID3), &security,
 				bssid_buf, ARRAY_SIZE(bssid_buf),
-				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel);
+				psk_buf, ARRAY_SIZE(psk_buf), &psk_len, &flags, &channel, &timeout);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 	TEST_ASSERT_EQUAL(SECURITY3, security);
 	TEST_ASSERT_EQUAL(sizeof(PSK3), psk_len);
@@ -332,11 +340,11 @@ void test_delete_all_entries(void)
 {
 	/* Set two networks */
 	int err = wifi_credentials_set_personal(SSID1, sizeof(SSID1), SECURITY1, BSSID1, 6,
-						PSK1, sizeof(PSK1), FLAGS1, CHANNEL1);
+						PSK1, sizeof(PSK1), FLAGS1, CHANNEL1, 0);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 
 	err = wifi_credentials_set_personal(SSID2, sizeof(SSID2), SECURITY2, NULL, 6,
-					    NULL, 0, FLAGS2, CHANNEL2);
+					    NULL, 0, FLAGS2, CHANNEL2, 0);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, err);
 
 	/* Delete all networks */
