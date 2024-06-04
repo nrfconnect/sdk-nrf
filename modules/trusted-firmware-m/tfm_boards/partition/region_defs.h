@@ -19,10 +19,6 @@
 #define NS_HEAP_SIZE  (0x00001000)
 #define NS_STACK_SIZE (0x000001E0)
 
-/* Size of nRF SPU (Nordic IDAU) regions */
-#define SPU_FLASH_REGION_SIZE	   (CONFIG_NRF_SPU_FLASH_REGION_SIZE)
-#define SPU_SRAM_REGION_SIZE	   (CONFIG_NRF_SPU_RAM_REGION_SIZE)
-#define SPU_FLASH_REGION_ALIGNMENT (CONFIG_NRF_SPU_FLASH_REGION_ALIGNMENT)
 
 #if !defined(LINK_TO_SECONDARY_PARTITION)
 #ifdef NRF_NS_SECONDARY
@@ -58,6 +54,14 @@
 #endif
 #endif
 
+
+/* In nR53 and nRF91 series the SPU is used to configure S/NS/NSC regions. */
+#if defined(CONFIG_CPU_HAS_NRF_IDAU)
+
+/* These definitions are being used by the spu.c file in the TF-M repo. */
+#define SPU_FLASH_REGION_SIZE     (CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE)
+#define SPU_SRAM_REGION_SIZE      (CONFIG_NRF_TRUSTZONE_RAM_REGION_SIZE)
+
 /* The veneers needs to be placed at the end of the secure image.
  * This is because the NCS sub-region is defined as starting at the highest
  * address of an SPU region and going downwards.
@@ -72,12 +76,14 @@
  * these override the default start and end alignments.
  */
 #define TFM_LINKER_VENEERS_START                                        \
-	(ALIGN(SPU_FLASH_REGION_ALIGNMENT) - TFM_LINKER_VENEERS_SIZE +      \
-	 (. > (ALIGN(SPU_FLASH_REGION_ALIGNMENT) - TFM_LINKER_VENEERS_SIZE) \
-		  ? SPU_FLASH_REGION_ALIGNMENT                                  \
+	(ALIGN(CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE) - TFM_LINKER_VENEERS_SIZE +      \
+	 (. > (ALIGN(CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE) - TFM_LINKER_VENEERS_SIZE) \
+		  ? CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE                                  \
 		  : 0))
 
-#define TFM_LINKER_VENEERS_END ALIGN(SPU_FLASH_REGION_ALIGNMENT)
+#define TFM_LINKER_VENEERS_END ALIGN(CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE)
+
+#endif /* CONFIG_CPU_HAS_NRF_IDAU */
 
 /* Non-secure regions */
 #define NS_CODE_START (PM_APP_OFFSET)
