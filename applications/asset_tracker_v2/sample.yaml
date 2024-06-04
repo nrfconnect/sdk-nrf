@@ -15,6 +15,7 @@ tests:
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
       - native_sim
     tags: ci_build sysbuild
   applications.asset_tracker_v2.nrf_cloud-pgps:

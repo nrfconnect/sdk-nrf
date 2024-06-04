@@ -15,6 +15,7 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
     tags: ci_build sysbuild
   applications.serial_lte_modem.native_tls:
     sysbuild: true
