@@ -75,6 +75,7 @@ config BUILD_OUTPUT_HEX
 	  This will be applied to all target images.
 
 rsource "Kconfig.netcore"
+rsource "Kconfig.pprcore"
 rsource "Kconfig.secureboot"
 rsource "Kconfig.mcuboot"
 rsource "Kconfig.dfu"
