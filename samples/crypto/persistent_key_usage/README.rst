@@ -33,6 +33,10 @@ The sample performs the following operations:
 
 #. Generation of a persistent AES 128-bit key.
 
+#. Removal of the key from RAM.
+
+#. Encryption and decryption of a message using the key.
+
 #. Cleanup.
    The AES key is removed from the PSA crypto keystore.
 
