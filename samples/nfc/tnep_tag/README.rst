@@ -33,17 +33,35 @@ The sample has two TNEP services defined, each of them containing the NDEF text 
 User interface
 **************
 
-LED 1:
-   Lit when the TNEP Tag is initialized.
+.. tabs::
 
-LED 3:
-   Lit when the TNEP service one is selected.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-LED 4:
-   Lit when the TNEP service two is selected.
+      LED 1:
+         Lit when the TNEP Tag is initialized.
 
-Button 1:
-   Press to provide the application data when the application service two is selected.
+      LED 3:
+         Lit when the TNEP service one is selected.
+
+      LED 4:
+         Lit when the TNEP service two is selected.
+
+      Button 1:
+         Press to provide the application data when the application service two is selected.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Lit when the TNEP Tag is initialized.
+
+      LED 2:
+         Lit when the TNEP service one is selected.
+
+      LED 3:
+         Lit when the TNEP service two is selected.
+
+      Button 0:
+         Press to provide the application data when the application service two is selected.
 
 Building and running
 ********************
@@ -61,12 +79,25 @@ Testing
 After programming the sample to your development kit, you can test it with an NFC-A polling device that supports NFC's Tag NDEF Exchange Protocol.
 Complete the following steps:
 
-1. |connect_terminal|
-#. Reset the development kit.
-#. Touch the NFC antenna with the NFC polling device.
-#. Observe the output in the terminal.
-#. If the NFC polling device selects the service two, you have 27 seconds to press **Button 1** to provide application data.
-   If you do not do this, the NFC polling device deselects the service.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. |connect_terminal|
+      #. Reset the development kit.
+      #. Touch the NFC antenna with the NFC polling device.
+      #. Observe the output in the terminal.
+      #. If the NFC polling device selects the service two, you have 27 seconds to press **Button 1** to provide application data.
+         If you do not do this, the NFC polling device deselects the service.
+
+   .. group-tab:: nRF54 DKs
+
+      1. |connect_terminal|
+      #. Reset the development kit.
+      #. Touch the NFC antenna with the NFC polling device.
+      #. Observe the output in the terminal.
+      #. If the NFC polling device selects the service two, you have 27 seconds to press **Button 0** to provide application data.
+         If you do not do this, the NFC polling device deselects the service.
 
 Dependencies
 ************

@@ -77,20 +77,32 @@ You can change the default role by choosing ``CONFIG_NFC_TAG_CH_SELECTOR`` or ``
 .. figure:: images/nfc_negotiated_connection_handover.svg
    :alt: Negotiated Handover
 
-
-
-
 User interface
 **************
 
-Button 4:
-   Removes all bonded devices and terminates current connections.
+.. tabs::
 
-LED 1:
-   Indicates that a Bluetooth connection is established.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-LED 2:
-   Indicates that an NFC field is present.
+      Button 4:
+         Removes all bonded devices and terminates current connections.
+
+      LED 1:
+         Indicates that a Bluetooth connection is established.
+
+      LED 2:
+         Indicates that an NFC field is present.
+
+   .. group-tab:: nRF54 DKs
+
+      Button 3:
+         Removes all bonded devices and terminates current connections.
+
+      LED 0:
+         Indicates that a Bluetooth connection is established.
+
+      LED 1:
+         Indicates that an NFC field is present.
 
 Building and running
 ********************
@@ -107,18 +119,40 @@ After programming the sample to your development kit, complete the following ste
 Testing with NFC Poller Device
 ------------------------------
 
-1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 2** is lit.
-#. Confirm pairing with :guilabel:`Nordic_NFC_pairing` in a pop-up window on the smartphone or tablet and observe that **LED 1** lights up.
-#. Move the smartphone or tablet away from the NFC antenna and observe that **LED 2** turns off.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 2** is lit.
+      #. Confirm pairing with :guilabel:`Nordic_NFC_pairing` in a pop-up window on the smartphone or tablet and observe that **LED 1** lights up.
+      #. Move the smartphone or tablet away from the NFC antenna and observe that **LED 2** turns off.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 1** is lit.
+      #. Confirm pairing with :guilabel:`Nordic_NFC_pairing` in a pop-up window on the smartphone or tablet and observe that **LED 0** lights up.
+      #. Move the smartphone or tablet away from the NFC antenna and observe that **LED 1** turns off.
 
 Testing with NFC TNEP Poller Device
 -----------------------------------
 
-1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`central_nfc_pairing` and observe that **LED 2** is lit.
-#. Observe the output log.
-   The content of the exchanged NDEF messages is printed there.
-#. Check the security level of the paring on the terminal.
-#. Move the NFC antenna away from the NFC Poller Device.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`central_nfc_pairing` and observe that **LED 2** is lit.
+      #. Observe the output log.
+         The content of the exchanged NDEF messages is printed there.
+      #. Check the security level of the paring on the terminal.
+      #. Move the NFC antenna away from the NFC Poller Device.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`central_nfc_pairing` and observe that **LED 1** is lit.
+      #. Observe the output log.
+         The content of the exchanged NDEF messages is printed there.
+      #. Check the security level of the paring on the terminal.
+      #. Move the NFC antenna away from the NFC Poller Device.
 
 Dependencies
 ************

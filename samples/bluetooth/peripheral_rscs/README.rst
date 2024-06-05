@@ -31,11 +31,23 @@ The mobile application on the device can configure sensor parameters using the S
 User interface
 **************
 
-LED 1:
-   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+.. tabs::
 
-LED 2:
-   Lit when connected.
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      LED 1:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+
+      LED 2:
+         Lit when connected.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+
+      LED 1:
+         Lit when connected.
 
 Building and running
 ********************

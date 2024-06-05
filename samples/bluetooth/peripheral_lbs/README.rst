@@ -27,8 +27,19 @@ The `Testing`_ instructions refer to `nRF Connect for Mobile`_, but you can also
 Overview
 ********
 
-When connected, the sample sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
-The mobile application on the device can display the received button state and control the state of **LED 3** on the development kit.
+You can use the sample to transmit the button state from your development kit to another device.
+
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      When connected, the sample sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
+      The mobile application on the device can display the received button state and control the state of **LED 3** on the development kit.
+
+   .. group-tab:: nRF54 DKs
+
+      When connected, the sample sends the state of **Button 0** on the development kit to the connected device, such as a phone or tablet.
+      The mobile application on the device can display the received button state and control the state of **LED 2** on the development kit.
 
 You can also use this sample to control the color of the RGB LED on the nRF52840 Dongle or Thingy:53.
 
@@ -72,17 +83,35 @@ Button 1:
 Development kits
 ================
 
-LED 1:
-   Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds, duty cycle 50%.
+.. tabs::
 
-LED 2:
-   Lit when the development kit is connected.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-LED 3:
-   Lit when the development kit is controlled remotely from the connected device.
+      LED 1:
+         Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds, duty cycle 50%.
 
-Button 1:
-   Send a notification with the button state: "pressed" or "released".
+      LED 2:
+         Lit when the development kit is connected.
+
+      LED 3:
+         Lit when the development kit is controlled remotely from the connected device.
+
+      Button 1:
+         Send a notification with the button state: "pressed" or "released".
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds, duty cycle 50%.
+
+      LED 1:
+         Lit when the development kit is connected.
+
+      LED 2:
+         Lit when the development kit is controlled remotely from the connected device.
+
+      Button 0:
+         Send a notification with the button state: "pressed" or "released".
 
 Building and running
 ********************
@@ -109,36 +138,73 @@ Testing
 
 After programming the sample to your dongle or development kit, test it by performing the following steps:
 
-1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
-#. Power on the development kit or insert your dongle into the USB port.
-#. Connect to the device from the application.
-   The device is advertising as ``Nordic_LBS``.
-   The services of the connected device are shown.
-#. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
-#. Press **Button 1** on the device.
-#. Observe that notifications with the following values are displayed:
+.. tabs::
 
-   * ``Button released`` when **Button 1** is released.
-   * ``Button pressed`` when **Button 1** is pressed.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-#. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
-   Depending on the hardware platform, this produces results described in the table.
+      1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
+      #. Power on the development kit or insert your dongle into the USB port.
+      #. Connect to the device from the application.
+         The device is advertising as ``Nordic_LBS``.
+         The services of the connected device are shown.
+      #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
+      #. Press **Button 1** on the device.
+      #. Observe that notifications with the following values are displayed:
 
-+------------------------+---------+----------------------------------------------+
-| Hardware platform      | Value   | Effect                                       |
-+========================+=========+==============================================+
-| Development kit        | ``OFF`` | Switch the **LED3** off.                     |
-+                        +---------+----------------------------------------------+
-|                        | ``ON``  | Switch the **LED3** on.                      |
-+------------------------+---------+----------------------------------------------+
-| nRF52840 Dongle        | ``OFF`` | Switch the green channel of the RGB LED off. |
-+                        +---------+----------------------------------------------+
-|                        | ``ON``  | Switch the green channel of the RGB LED on.  |
-+------------------------+---------+----------------------------------------------+
-| Thingy:53              | ``OFF`` | Switch the blue channel of the RGB LED off.  |
-+                        +---------+----------------------------------------------+
-|                        | ``ON``  | Switch the blue channel of the RGB LED on.   |
-+------------------------+---------+----------------------------------------------+
+         * ``Button released`` when **Button 1** is released.
+         * ``Button pressed`` when **Button 1** is pressed.
+
+      #. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
+         Depending on the hardware platform, this produces results described in the table.
+
+      +------------------------+---------+----------------------------------------------+
+      | Hardware platform      | Value   | Effect                                       |
+      +========================+=========+==============================================+
+      | Development kit        | ``OFF`` | Switch the **LED 3** off.                    |
+      +                        +---------+----------------------------------------------+
+      |                        | ``ON``  | Switch the **LED 3** on.                     |
+      +------------------------+---------+----------------------------------------------+
+      | nRF52840 Dongle        | ``OFF`` | Switch the green channel of the RGB LED off. |
+      +                        +---------+----------------------------------------------+
+      |                        | ``ON``  | Switch the green channel of the RGB LED on.  |
+      +------------------------+---------+----------------------------------------------+
+      | Thingy:53              | ``OFF`` | Switch the blue channel of the RGB LED off.  |
+      +                        +---------+----------------------------------------------+
+      |                        | ``ON``  | Switch the blue channel of the RGB LED on.   |
+      +------------------------+---------+----------------------------------------------+
+
+   .. group-tab:: nRF54 DKs
+
+      1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
+      #. Power on the development kit or insert your dongle into the USB port.
+      #. Connect to the device from the application.
+         The device is advertising as ``Nordic_LBS``.
+         The services of the connected device are shown.
+      #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
+      #. Press **Button 0** on the device.
+      #. Observe that notifications with the following values are displayed:
+
+         * ``Button released`` when **Button 0** is released.
+         * ``Button pressed`` when **Button 0** is pressed.
+
+      #. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
+         Depending on the hardware platform, this produces results described in the table.
+
+      +------------------------+---------+----------------------------------------------+
+      | Hardware platform      | Value   | Effect                                       |
+      +========================+=========+==============================================+
+      | Development kit        | ``OFF`` | Switch the **LED 2** off.                    |
+      +                        +---------+----------------------------------------------+
+      |                        | ``ON``  | Switch the **LED 2** on.                     |
+      +------------------------+---------+----------------------------------------------+
+      | nRF52840 Dongle        | ``OFF`` | Switch the green channel of the RGB LED off. |
+      +                        +---------+----------------------------------------------+
+      |                        | ``ON``  | Switch the green channel of the RGB LED on.  |
+      +------------------------+---------+----------------------------------------------+
+      | Thingy:53              | ``OFF`` | Switch the blue channel of the RGB LED off.  |
+      +                        +---------+----------------------------------------------+
+      |                        | ``ON``  | Switch the blue channel of the RGB LED on.   |
+      +------------------------+---------+----------------------------------------------+
 
 Dependencies
 ************

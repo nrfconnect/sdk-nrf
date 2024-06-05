@@ -111,17 +111,35 @@ The user interface of the sample depends on the hardware platform you are using.
 Development kits
 ================
 
-LED 1:
-   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+.. tabs::
 
-LED 2:
-   Lit when connected.
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
 
-Button 1:
-   Confirm the passkey value that is printed in the debug logs to pair/bond with the other device.
+      LED 1:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
-Button 2:
-   Reject the passkey value that is printed in the debug logs to prevent pairing/bonding with the other device.
+      LED 2:
+         Lit when connected.
+
+      Button 1:
+         Confirm the passkey value that is printed in the debug logs to pair/bond with the other device.
+
+      Button 2:
+         Reject the passkey value that is printed in the debug logs to prevent pairing/bonding with the other device.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+
+      LED 1:
+         Lit when connected.
+
+      Button 0:
+         Confirm the passkey value that is printed in the debug logs to pair/bond with the other device.
+
+      Button 1:
+         Reject the passkey value that is printed in the debug logs to prevent pairing/bonding with the other device.
 
 Thingy:53
 =========
@@ -190,29 +208,59 @@ Testing
 
 After programming the sample to your development kit, complete the following steps to test it:
 
-1. Connect the device to the computer to access UART 0.
-   If you use a development kit, UART 0 is forwarded as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
-   If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter to it.
-#. |connect_terminal|
-#. Optionally, you can display debug messages. See :ref:`peripheral_uart_debug` for details.
-#. Reset the kit.
-#. Observe that **LED 1** is blinking and that the device is advertising with the device name that is configured in :kconfig:option:`CONFIG_BT_DEVICE_NAME`.
-#. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
-#. Connect to the device using nRF Connect for Mobile.
-   Observe that **LED 2** is lit.
-#. Optionally, pair or bond with the device with MITM protection.
-   This requires using the passkey value displayed in debug messages.
-   See :ref:`peripheral_uart_debug` for details on how to access debug messages.
-   To confirm pairing or bonding, press **Button 1** on the device and accept the passkey value on the smartphone.
-#. In the application, observe that the services are shown in the connected device.
-#. Select the UART RX characteristic value in nRF Connect for Mobile.
-   You can write to the UART RX and get the text displayed on the COM listener.
-#. Type "0123456789" and tap :guilabel:`SEND`.
-   Verify that the text "0123456789" is displayed on the COM listener.
-#. To send data from the device to your phone or tablet, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
-   Observe that a notification is sent to the peer.
-#. Disconnect the device in nRF Connect for Mobile.
-   Observe that **LED 2** turns off.
+.. tabs::
+
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+
+      1. Connect the device to the computer to access UART 0.
+         If you use a development kit, UART 0 is forwarded as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
+         If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter to it.
+      #. |connect_terminal|
+      #. Optionally, you can display debug messages. See :ref:`peripheral_uart_debug` for details.
+      #. Reset the kit.
+      #. Observe that **LED 1** is blinking and that the device is advertising with the device name that is configured in :kconfig:option:`CONFIG_BT_DEVICE_NAME`.
+      #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
+      #. Connect to the device using nRF Connect for Mobile.
+         Observe that **LED 2** is lit.
+      #. Optionally, pair or bond with the device with MITM protection.
+         This requires using the passkey value displayed in debug messages.
+         See :ref:`peripheral_uart_debug` for details on how to access debug messages.
+         To confirm pairing or bonding, press **Button 1** on the device and accept the passkey value on the smartphone.
+      #. In the application, observe that the services are shown in the connected device.
+      #. Select the UART RX characteristic value in nRF Connect for Mobile.
+         You can write to the UART RX and get the text displayed on the COM listener.
+      #. Type "0123456789" and tap :guilabel:`SEND`.
+         Verify that the text "0123456789" is displayed on the COM listener.
+      #. To send data from the device to your phone or tablet, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
+         Observe that a notification is sent to the peer.
+      #. Disconnect the device in nRF Connect for Mobile.
+         Observe that **LED 2** turns off.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Connect the device to the computer to access UART 0.
+         If you use a development kit, UART 0 is forwarded as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
+         If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter to it.
+      #. |connect_terminal|
+      #. Optionally, you can display debug messages. See :ref:`peripheral_uart_debug` for details.
+      #. Reset the kit.
+      #. Observe that **LED 0** is blinking and that the device is advertising with the device name that is configured in :kconfig:option:`CONFIG_BT_DEVICE_NAME`.
+      #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
+      #. Connect to the device using nRF Connect for Mobile.
+         Observe that **LED 1** is lit.
+      #. Optionally, pair or bond with the device with MITM protection.
+         This requires using the passkey value displayed in debug messages.
+         See :ref:`peripheral_uart_debug` for details on how to access debug messages.
+         To confirm pairing or bonding, press **Button 0** on the device and accept the passkey value on the smartphone.
+      #. In the application, observe that the services are shown in the connected device.
+      #. Select the UART RX characteristic value in nRF Connect for Mobile.
+         You can write to the UART RX and get the text displayed on the COM listener.
+      #. Type "0123456789" and tap :guilabel:`SEND`.
+         Verify that the text "0123456789" is displayed on the COM listener.
+      #. To send data from the device to your phone or tablet, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
+         Observe that a notification is sent to the peer.
+      #. Disconnect the device in nRF Connect for Mobile.
+         Observe that **LED 1** turns off.
 
 Dependencies
 ************

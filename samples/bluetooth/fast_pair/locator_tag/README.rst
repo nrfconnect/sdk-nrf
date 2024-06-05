@@ -136,91 +136,188 @@ The user interface of the sample depends on the hardware platform you are using.
 Development kits
 ================
 
-LED 1:
-   Keeps blinking at constant intervals to indicate that firmware is running.
+.. tabs::
 
-LED 2:
-   Indicates that the ringing action is in progress.
-   Depending on the ringing state:
+   .. group-tab:: nRF52 and nRF53 DKs
 
-   * Lit if the device is ringing.
-   * Off if the device is not ringing.
+      LED 1:
+         Keeps blinking at constant intervals to indicate that firmware is running.
 
-LED 3:
-   Depending on the FMDN provisioning state:
+      LED 2:
+         Indicates that the ringing action is in progress.
+         Depending on the ringing state:
 
-   * Lit if the device is provisioned.
-   * Off if the device is not provisioned.
+         * Lit if the device is ringing.
+         * Off if the device is not ringing.
 
-LED 4:
-   Depending on the states of the recovery mode and the identification mode:
+      LED 3:
+         Depending on the FMDN provisioning state:
 
-   * Lit if both modes are active on the device.
-   * Off if both modes are inactive on the device.
-   * Blinks at a 0.5 second interval if the identification mode is active on the device and the recovery mode is inactive on the device.
-   * Blinks at a 1 second interval if the recovery mode is active on the device and the identification mode is inactive on the device.
+         * Lit if the device is provisioned.
+         * Off if the device is not provisioned.
 
-Button 1:
-   Toggles between different modes of the Fast Pair advertising set:
+      LED 4:
+         Depending on the states of the recovery mode and the identification mode:
 
-   * Without an Account Key stored on the device:
+         * Lit if both modes are active on the device.
+         * Off if both modes are inactive on the device.
+         * Blinks at a 0.5 second interval if the identification mode is active on the device and the recovery mode is inactive on the device.
+         * Blinks at a 1 second interval if the recovery mode is active on the device and the identification mode is inactive on the device.
 
-     * Fast Pair advertising disabled.
-     * Fast Pair discoverable advertising (the default after the system bootup).
+      Button 1:
+         Toggles between different modes of the Fast Pair advertising set:
 
-   * With an Account Key stored on the device:
+         * Without an Account Key stored on the device:
 
-     * Fast Pair advertising disabled.
-     * Fast Pair not discoverable advertising (the default after the system bootup).
+           * Fast Pair advertising disabled.
+           * Fast Pair discoverable advertising (the default after the system bootup).
 
-   .. note::
-      The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
-      After the connection, you can still switch the advertising modes, but the switch will come into effect only after disconnection.
+         * With an Account Key stored on the device:
 
-      The sample automatically switches to the following Fast Pair advertising modes under certain conditions:
+           * Fast Pair advertising disabled.
+           * Fast Pair not discoverable advertising (the default after the system bootup).
 
-      * Fast Pair not discoverable advertising - On the Account Key write operation.
-      * Fast Pair advertising disabled:
+         .. note::
 
-        * Right before the factory reset operation.
-          Press **Button 1** to set the device to the Fast Pair discoverable advertising mode after the unprovisioning operation.
-        * After the beacon clock synchronization.
+            The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
+            After the connection, you can still switch the advertising modes, but the switch will come into effect only after disconnection.
 
-Button 2:
-   Stops the ongoing ringing action.
+            The sample automatically switches to the following Fast Pair advertising modes under certain conditions:
 
-Button 3:
-   Decrements the battery level by 10% (the default value in the :ref:`CONFIG_APP_BATTERY_LEVEL_DECREMENT <CONFIG_APP_BATTERY_LEVEL_DECREMENT>` Kconfig option), starting from the full battery level of 100%.
-   In the default sample configuration, with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option enabled, pressing the button when the battery level is lower than the decrement value transitions the device back to the starting point of 100%.
-   You can disable the default :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig setting to transition through the mode in which the battery level indication is not supported (refer to the last point in the list).
-   The battery level is encoded in the FMDN advertising set according to the following rules:
+            * Fast Pair not discoverable advertising - On the Account Key write operation.
+            * Fast Pair advertising disabled:
 
-   * Normal battery level (starting point, as derived from the 100% battery level) - The battery level is higher than 40% and less than or equal to 100%.
-     The lower threshold, 40%, is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR` Kconfig option.
-   * Low battery level - The battery level is higher than 10% and less than or equal to 40%.
-     The lower threshold, 10%, is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR` Kconfig option.
-   * Critically low battery level (battery replacement needed soon) - The battery level is higher than or equal to 0% and less than or equal to 10%.
-   * Battery level indication unsupported - Occurs when the special :c:macro:`BT_FAST_PAIR_FMDN_BATTERY_LEVEL_NONE` value is used.
-     This battery level is unavailable in the default sample configuration.
-     You can disable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option to reach this mode when transitioning from the critically low battery level to the full battery level of 100%.
+               * Right before the factory reset operation.
+                 Press **Button 1** to set the device to the Fast Pair discoverable advertising mode after the unprovisioning operation.
 
-   In the default sample configuration, with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option enabled, the battery level is also encoded in the Battery Level response of the Accessory Non-owner Service (ANOS), which is set according to the following rules:
+               * After the beacon clock synchronization.
 
-   * Full battery level (starting point, as derived from the 100% battery level) - The battery level is higher than 80% and less than or equal to 100%.
-     The lower threshold, 80%, is controlled by the :kconfig:option:`CONFIG_DULT_BATTERY_LEVEL_MEDIUM_THR` Kconfig option.
-   * Medium battery level - The battery level is higher than 40% and less than or equal to 80%.
-     The lower threshold, 40%, is controlled by the :kconfig:option:`CONFIG_DULT_BATTERY_LEVEL_LOW_THR` Kconfig option.
-   * Low battery level - The battery level is higher than 10% and less than or equal to 40%.
-     The lower threshold, 10%, is controlled by the :kconfig:option:`CONFIG_DULT_BATTERY_LEVEL_CRITICAL_THR` Kconfig option.
-   * Critically low battery level (battery replacement needed soon) - The battery level is higher than or equal to 0% and less than or equal to 10%.
+      Button 2:
+         Stops the ongoing ringing action.
 
-Button 4:
-   A short press requests the FMDN subsystem to enable the identification mode for five minutes.
-   This timeout value is defined by the :kconfig:option:`CONFIG_DULT_ID_READ_STATE_TIMEOUT` Kconfig option according to the DULT specification requirements.
+      Button 3:
+         Decrements the battery level by 10% (the default value in the :ref:`CONFIG_APP_BATTERY_LEVEL_DECREMENT <CONFIG_APP_BATTERY_LEVEL_DECREMENT>` Kconfig option), starting from the full battery level of 100%.
+         In the default sample configuration, with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option enabled, pressing the button when the battery level is lower than the decrement value transitions the device back to the starting point of 100%.
+         You can disable the default :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig setting to transition through the mode in which the battery level indication is not supported (refer to the last point in the list).
+         The battery level is encoded in the FMDN advertising set according to the following rules:
 
-   A long press (>3 s) enables the recovery mode for one minute as defined by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY_TIMEOUT` Kconfig option.
+         * Normal battery level (starting point, as derived from the 100% battery level) - The battery level is higher than 40% and less than or equal to 100%.
+           The lower threshold, 40%, is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR` Kconfig option.
+         * Low battery level - The battery level is higher than 10% and less than or equal to 40%.
+           The lower threshold, 10%, is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR` Kconfig option.
+         * Critically low battery level (battery replacement needed soon) - The battery level is higher than or equal to 0% and less than or equal to 10%.
+         * Battery level indication unsupported - Occurs when the special :c:macro:`BT_FAST_PAIR_FMDN_BATTERY_LEVEL_NONE` value is used.
+           This battery level is unavailable in the default sample configuration.
+           You can disable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option to reach this mode when transitioning from the critically low battery level to the full battery level of 100%.
 
-   When pressed during the application bootup, resets the accessory to default factory settings.
+         In the default sample configuration, with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option enabled, the battery level is also encoded in the Battery Level response of the Accessory Non-owner Service (ANOS), which is set according to the following rules:
+
+         * Full battery level (starting point, as derived from the 100% battery level) - The battery level is higher than 80% and less than or equal to 100%.
+           The lower threshold, 80%, is controlled by the :kconfig:option:`CONFIG_DULT_BATTERY_LEVEL_MEDIUM_THR` Kconfig option.
+         * Medium battery level - The battery level is higher than 40% and less than or equal to 80%.
+           The lower threshold, 40%, is controlled by the :kconfig:option:`CONFIG_DULT_BATTERY_LEVEL_LOW_THR` Kconfig option.
+         * Low battery level - The battery level is higher than 10% and less than or equal to 40%.
+           The lower threshold, 10%, is controlled by the :kconfig:option:`CONFIG_DULT_BATTERY_LEVEL_CRITICAL_THR` Kconfig option.
+         * Critically low battery level (battery replacement needed soon) - The battery level is higher than or equal to 0% and less than or equal to 10%.
+
+      Button 4:
+         A short press requests the FMDN subsystem to enable the identification mode for five minutes.
+         This timeout value is defined by the :kconfig:option:`CONFIG_DULT_ID_READ_STATE_TIMEOUT` Kconfig option according to the DULT specification requirements.
+
+         A long press (>3 s) enables the recovery mode for one minute as defined by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY_TIMEOUT` Kconfig option.
+
+         When pressed during the application bootup, resets the accessory to default factory settings.
+
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Keeps blinking at constant intervals to indicate that firmware is running.
+
+      LED 1:
+         Indicates that the ringing action is in progress.
+         Depending on the ringing state:
+
+         * Lit if the device is ringing.
+         * Off if the device is not ringing.
+
+      LED 2:
+         Depending on the FMDN provisioning state:
+
+         * Lit if the device is provisioned.
+         * Off if the device is not provisioned.
+
+      LED 3:
+         Depending on the states of the recovery mode and the identification mode:
+
+         * Lit if both modes are active on the device.
+         * Off if both modes are inactive on the device.
+         * Blinks at a 0.5 second interval if the identification mode is active on the device and the recovery mode is inactive on the device.
+         * Blinks at a 1 second interval if the recovery mode is active on the device and the identification mode is inactive on the device.
+
+      Button 0:
+         Toggles between different modes of the Fast Pair advertising set:
+
+         * Without an Account Key stored on the device:
+
+           * Fast Pair advertising disabled.
+           * Fast Pair discoverable advertising (the default after the system bootup).
+
+         * With an Account Key stored on the device:
+
+           * Fast Pair advertising disabled.
+           * Fast Pair not discoverable advertising (the default after the system bootup).
+
+         .. note::
+
+            The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
+            After the connection, you can still switch the advertising modes, but the switch will come into effect only after disconnection.
+
+            The sample automatically switches to the following Fast Pair advertising modes under certain conditions:
+
+            * Fast Pair not discoverable advertising - On the Account Key write operation.
+            * Fast Pair advertising disabled:
+
+              * Right before the factory reset operation.
+                Press **Button 0** to set the device to the Fast Pair discoverable advertising mode after the unprovisioning operation.
+
+              * After the beacon clock synchronization.
+
+      Button 1:
+         Stops the ongoing ringing action.
+
+      Button 2:
+         Decrements the battery level by 10% (the default value in the :ref:`CONFIG_APP_BATTERY_LEVEL_DECREMENT <CONFIG_APP_BATTERY_LEVEL_DECREMENT>` Kconfig option), starting from the full battery level of 100%.
+         In the default sample configuration, with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option enabled, pressing the button when the battery level is lower than the decrement value transitions the device back to the starting point of 100%.
+         You can disable the default :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig setting to transition through the mode in which the battery level indication is not supported (refer to the last point in the list).
+         The battery level is encoded in the FMDN advertising set according to the following rules:
+
+         * Normal battery level (starting point, as derived from the 100% battery level) - The battery level is higher than 40% and less than or equal to 100%.
+           The lower threshold, 40%, is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR` Kconfig option.
+         * Low battery level - The battery level is higher than 10% and less than or equal to 40%.
+           The lower threshold, 10%, is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR` Kconfig option.
+         * Critically low battery level (battery replacement needed soon) - The battery level is higher than or equal to 0% and less than or equal to 10%.
+         * Battery level indication unsupported - Occurs when the special :c:macro:`BT_FAST_PAIR_FMDN_BATTERY_LEVEL_NONE` value is used.
+           This battery level is unavailable in the default sample configuration.
+           You can disable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option to reach this mode when transitioning from the critically low battery level to the full battery level of 100%.
+
+         In the default sample configuration, with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option enabled, the battery level is also encoded in the Battery Level response of the Accessory Non-owner Service (ANOS), which is set according to the following rules:
+
+         * Full battery level (starting point, as derived from the 100% battery level) - The battery level is higher than 80% and less than or equal to 100%.
+           The lower threshold, 80%, is controlled by the :kconfig:option:`CONFIG_DULT_BATTERY_LEVEL_MEDIUM_THR` Kconfig option.
+         * Medium battery level - The battery level is higher than 40% and less than or equal to 80%.
+           The lower threshold, 40%, is controlled by the :kconfig:option:`CONFIG_DULT_BATTERY_LEVEL_LOW_THR` Kconfig option.
+         * Low battery level - The battery level is higher than 10% and less than or equal to 40%.
+           The lower threshold, 10%, is controlled by the :kconfig:option:`CONFIG_DULT_BATTERY_LEVEL_CRITICAL_THR` Kconfig option.
+         * Critically low battery level (battery replacement needed soon) - The battery level is higher than or equal to 0% and less than or equal to 10%.
+
+      Button 3:
+         A short press requests the FMDN subsystem to enable the identification mode for five minutes.
+         This timeout value is defined by the :kconfig:option:`CONFIG_DULT_ID_READ_STATE_TIMEOUT` Kconfig option according to the DULT specification requirements.
+
+         A long press (>3 s) enables the recovery mode for one minute as defined by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY_TIMEOUT` Kconfig option.
+
+         When pressed during the application bootup, resets the accessory to default factory settings.
 
 Thingy:53
 =========
@@ -375,67 +472,136 @@ Testing
 
 |test_sample|
 
-1. |connect_terminal_specific|
-#. Reset the development kit.
-#. Observe that **LED 1** is blinking to indicate that firmware is running.
-#. Observe that **LED 3** is off, which indicates that the device is not provisioned as an FMDN beacon.
-   The Fast Pair Provider is advertising in the Fast Pair discoverable mode and is ready for the FMDN provisioning.
-#. Move the Android device close to your locator tag device.
-#. Wait for the notification from your Android device about the detected Fast Pair Provider.
+.. tabs::
 
-   .. figure:: /images/bt_fast_pair_locator_tag_discoverable_notification.png
-      :scale: 80 %
-      :alt: Fast Pair discoverable notification with support for the `Find My Device app`_
+   .. group-tab:: nRF52 and nRF53 DKs
 
-#. Initiate the connection and trigger the Fast Pair procedure by tapping the :guilabel:`Connect` button.
-   After the procedure is complete, you will see a pop-up with the Acceptable Use Policy for the `Find My Device app`_.
-#. If you want to start the FMDN provisioning, accept the Acceptable Use Policy by tapping the :guilabel:`Agree and continue` button.
+      1. |connect_terminal_specific|
+      #. Reset the development kit.
+      #. Observe that **LED 1** is blinking to indicate that firmware is running.
+      #. Observe that **LED 3** is off, which indicates that the device is not provisioned as an FMDN beacon.
+         The Fast Pair Provider is advertising in the Fast Pair discoverable mode and is ready for the FMDN provisioning.
+      #. Move the Android device close to your locator tag device.
+      #. Wait for the notification from your Android device about the detected Fast Pair Provider.
 
-   .. figure:: /images/bt_fast_pair_locator_tag_acceptable_use_policy.png
-      :scale: 80 %
-      :alt: The Find My Device Acceptable Use Policy
+         .. figure:: /images/bt_fast_pair_locator_tag_discoverable_notification.png
+            :scale: 80 %
+            :alt: Fast Pair discoverable notification with support for the `Find My Device app`_
 
-#. Wait for the Android device's notification that indicates completion of the provisioning process.
+      #. Initiate the connection and trigger the Fast Pair procedure by tapping the :guilabel:`Connect` button.
+         After the procedure is complete, you will see a pop-up with the Acceptable Use Policy for the `Find My Device app`_.
+      #. If you want to start the FMDN provisioning, accept the Acceptable Use Policy by tapping the :guilabel:`Agree and continue` button.
 
-   .. figure:: /images/bt_fast_pair_locator_tag_provisioning_complete.png
-      :scale: 80 %
-      :alt: Notification about provisioning completion for the `Find My Device app`_
+         .. figure:: /images/bt_fast_pair_locator_tag_acceptable_use_policy.png
+            :scale: 80 %
+            :alt: The Find My Device Acceptable Use Policy
 
-#. Observe that **LED 3** is lit, which indicates that the device is provisioned as an FMDN beacon.
-#. Open the `Find My Device app`_ by tapping the :guilabel:`Open app` button.
-#. In your accessory view, tap the :guilabel:`Find nearby` button.
-#. Observe in the Find nearby view that the grey shape shrinks when you move your Android device further away from your locator tag device.
-   The shape also grows when you move your Android device closer to the locator tag.
-   The closest proximity level is indicated by the device logo displayed inside the grey shape.
+      #. Wait for the Android device's notification that indicates completion of the provisioning process.
 
-   .. figure:: /images/bt_fast_pair_locator_tag_fmd_app_nearby_view.png
-      :scale: 80 %
-      :alt: Find nearby view of the `Find My Device app`_
+         .. figure:: /images/bt_fast_pair_locator_tag_provisioning_complete.png
+            :scale: 80 %
+            :alt: Notification about provisioning completion for the `Find My Device app`_
 
-#. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
-#. Observe that **LED 2** is lit, which indicates that the ringing action is in progress.
-#. Stop the ringing action in one of the following ways:
+      #. Observe that **LED 3** is lit, which indicates that the device is provisioned as an FMDN beacon.
+      #. Open the `Find My Device app`_ by tapping the :guilabel:`Open app` button.
+      #. In your accessory view, tap the :guilabel:`Find nearby` button.
+      #. Observe in the Find nearby view that the grey shape shrinks when you move your Android device further away from your locator tag device.
+         The shape also grows when you move your Android device closer to the locator tag.
+         The closest proximity level is indicated by the device logo displayed inside the grey shape.
 
-   * Press **Button 2** on the locator tag device.
-   * Tap the :guilabel:`Stop sound` button in the `Find My Device app`_.
+         .. figure:: /images/bt_fast_pair_locator_tag_fmd_app_nearby_view.png
+            :scale: 80 %
+            :alt: Find nearby view of the `Find My Device app`_
 
-#. Observe that **LED 2** is off, which indicates that your accessory is no longer ringing.
-#. Press **Button 3** a few times to change the normal (default) battery level to low battery level.
-#. See that the Android notification with the **Device with low battery** label is displayed after a while.
-#. Exit the Find nearby view and return to the main accessory view.
-#. Open **Device details** by tapping the cog icon, located below the map view, next to the accessory name.
-#. Start the unprovisioning operation by tapping the :guilabel:`Remove from Find My Device` button at the bottom of the screen.
-#. Confirm the operation by tapping the :guilabel:`Remove` button in the Remove from Find My Device view.
+      #. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
+      #. Observe that **LED 2** is lit, which indicates that the ringing action is in progress.
+      #. Stop the ringing action in one of the following ways:
 
-   .. figure:: /images/bt_fast_pair_locator_tag_fmd_app_unprovision.png
-      :scale: 80 %
-      :alt: Remove from Find My Device view
+         * Press **Button 2** on the locator tag device.
+         * Tap the :guilabel:`Stop sound` button in the `Find My Device app`_.
 
-#. Reconfirm the procedure by tapping the :guilabel:`Remove` button in the Android pop-up window.
-#. Wait for the unprovisioning operation to complete.
-#. Observe that **LED 3** is off, which indicates that the device is no longer provisioned as an FMDN beacon.
-#. Observe that the Android does not display a notification about the detected Fast Pair Provider, as the locator tag device disables advertising after the unprovisioning operation.
-#. Press **Button 1** if you want to start the Fast Pair discoverable advertising and restart the FMDN provisioning process.
+      #. Observe that **LED 2** is off, which indicates that your accessory is no longer ringing.
+      #. Press **Button 3** a few times to change the normal (default) battery level to low battery level.
+      #. See that the Android notification with the **Device with low battery** label is displayed after a while.
+      #. Exit the Find nearby view and return to the main accessory view.
+      #. Open **Device details** by tapping the cog icon, located below the map view, next to the accessory name.
+      #. Start the unprovisioning operation by tapping the :guilabel:`Remove from Find My Device` button at the bottom of the screen.
+      #. Confirm the operation by tapping the :guilabel:`Remove` button in the Remove from Find My Device view.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_fmd_app_unprovision.png
+            :scale: 80 %
+            :alt: Remove from Find My Device view
+
+      #. Reconfirm the procedure by tapping the :guilabel:`Remove` button in the Android pop-up window.
+      #. Wait for the unprovisioning operation to complete.
+      #. Observe that **LED 3** is off, which indicates that the device is no longer provisioned as an FMDN beacon.
+      #. Observe that the Android does not display a notification about the detected Fast Pair Provider, as the locator tag device disables advertising after the unprovisioning operation.
+      #. Press **Button 1** if you want to start the Fast Pair discoverable advertising and restart the FMDN provisioning process.
+
+   .. group-tab:: nRF54 DKs
+
+      1. |connect_terminal_specific|
+      #. Reset the development kit.
+      #. Observe that **LED 0** is blinking to indicate that firmware is running.
+      #. Observe that **LED 2** is off, which indicates that the device is not provisioned as an FMDN beacon.
+         The Fast Pair Provider is advertising in the Fast Pair discoverable mode and is ready for the FMDN provisioning.
+      #. Move the Android device close to your locator tag device.
+      #. Wait for the notification from your Android device about the detected Fast Pair Provider.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_discoverable_notification.png
+            :scale: 80 %
+            :alt: Fast Pair discoverable notification with support for the `Find My Device app`_
+
+      #. Initiate the connection and trigger the Fast Pair procedure by tapping the :guilabel:`Connect` button.
+         After the procedure is complete, you will see a pop-up with the Acceptable Use Policy for the `Find My Device app`_.
+      #. If you want to start the FMDN provisioning, accept the Acceptable Use Policy by tapping the :guilabel:`Agree and continue` button.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_acceptable_use_policy.png
+            :scale: 80 %
+            :alt: The Find My Device Acceptable Use Policy
+
+      #. Wait for the Android device's notification that indicates completion of the provisioning process.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_provisioning_complete.png
+            :scale: 80 %
+            :alt: Notification about provisioning completion for the `Find My Device app`_
+
+      #. Observe that **LED 2** is lit, which indicates that the device is provisioned as an FMDN beacon.
+      #. Open the `Find My Device app`_ by tapping the :guilabel:`Open app` button.
+      #. In your accessory view, tap the :guilabel:`Find nearby` button.
+      #. Observe in the Find nearby view that the grey shape shrinks when you move your Android device further away from your locator tag device.
+         The shape also grows when you move your Android device closer to the locator tag.
+         The closest proximity level is indicated by the device logo displayed inside the grey shape.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_fmd_app_nearby_view.png
+            :scale: 80 %
+            :alt: Find nearby view of the `Find My Device app`_
+
+      #. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
+      #. Observe that **LED 1** is lit, which indicates that the ringing action is in progress.
+      #. Stop the ringing action in one of the following ways:
+
+         * Press **Button 1** on the locator tag device.
+         * Tap the :guilabel:`Stop sound` button in the `Find My Device app`_.
+
+      #. Observe that **LED 1** is off, which indicates that your accessory is no longer ringing.
+      #. Press **Button 2** a few times to change the normal (default) battery level to low battery level.
+      #. See that the Android notification with the **Device with low battery** label is displayed after a while.
+      #. Exit the Find nearby view and return to the main accessory view.
+      #. Open **Device details** by tapping the cog icon, located below the map view, next to the accessory name.
+      #. Start the unprovisioning operation by tapping the :guilabel:`Remove from Find My Device` button at the bottom of the screen.
+      #. Confirm the operation by tapping the :guilabel:`Remove` button in the Remove from Find My Device view.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_fmd_app_unprovision.png
+            :scale: 80 %
+            :alt: Remove from Find My Device view
+
+      #. Reconfirm the procedure by tapping the :guilabel:`Remove` button in the Android pop-up window.
+      #. Wait for the unprovisioning operation to complete.
+      #. Observe that **LED 2** is off, which indicates that the device is no longer provisioned as an FMDN beacon.
+      #. Observe that the Android does not display a notification about the detected Fast Pair Provider, as the locator tag device disables advertising after the unprovisioning operation.
+      #. Press **Button 0** if you want to start the Fast Pair discoverable advertising and restart the FMDN provisioning process.
+
 
 Clock synchronization
 ---------------------
@@ -445,39 +611,79 @@ The device must be registered to a **different** Google account from the first A
 
 To test this feature, complete the following steps:
 
-1. Go to the :ref:`fast_pair_locator_tag_testing` section and follow the instructions on performing the FMDN provisioning operation.
-#. Observe that **LED 3** is lit, which indicates that the device is provisioned as an FMDN beacon.
-#. Power off the development kit and wait for 24 hours.
-#. Power off the Android device that you used to perform the FMDN provisioning operation.
-#. Power on the development kit.
-#. |connect_terminal_specific|
-#. Use your second Android device configured for a **different** account, and start the `nRF Connect for Mobile`_ application.
-#. Wait for the **SCANNER** tab of the mobile application to populate the scanning list.
-#. Observe that the device advertising the Fast Pair Service UUID (*0xFE2C*) AD type with the Fast Pair Account Data payload is present in the scanning list.
-   This entry indicates that the development kit is in the clock synchronization mode, and it is advertising the Fast Pair not discoverable payload.
+.. tabs::
 
-   .. note::
-      By default, the `nRF Connect for Mobile`_ application filters advertising packets used by ecosystems like Google or Apple.
-      You need to take additional steps to see the Fast Pair advertising on the scanning list:
+   .. group-tab:: nRF52 and nRF53 DKs
 
-         1. In the **SCANNER** tab of the `nRF Connect for Mobile`_ application, tap the :guilabel:`No filter` white bar below the **SCANNER** label.
-         #. In the drop-down menu for the filtering configuration, tap the three-dot icon in the **Exclude** option.
-         #. In the exclude configuration menu, uncheck the **Google** option to remove the filtering for Google-related advertising like the Fast Pair advertising.
-         #. Close the exclude configuration menu and the filtering configuration drop-down.
-         #. Tap the :guilabel:`SCAN` button to restart the scanning activity.
+      1. Go to the :ref:`fast_pair_locator_tag_testing` section and follow the instructions on performing the FMDN provisioning operation.
+      #. Observe that **LED 3** is lit, which indicates that the device is provisioned as an FMDN beacon.
+      #. Power off the development kit and wait for 24 hours.
+      #. Power off the Android device that you used to perform the FMDN provisioning operation.
+      #. Power on the development kit.
+      #. |connect_terminal_specific|
+      #. Use your second Android device configured for a **different** account, and start the `nRF Connect for Mobile`_ application.
+      #. Wait for the **SCANNER** tab of the mobile application to populate the scanning list.
+      #. Observe that the device advertising the Fast Pair Service UUID (*0xFE2C*) AD type with the Fast Pair Account Data payload is present in the scanning list.
+         This entry indicates that the development kit is in the clock synchronization mode, and it is advertising the Fast Pair not discoverable payload.
 
-#. Power on the first Android device that you used to perform the FMDN provisioning operation.
-#. In the terminal, observe the message confirming that your first Android device connected to the development kit and synchronized the clock value::
+         .. note::
+            By default, the `nRF Connect for Mobile`_ application filters advertising packets used by ecosystems like Google or Apple.
+            You need to take additional steps to see the Fast Pair advertising on the scanning list:
 
-      FMDN: clock information synchronized with the authenticated Bluetooth peer
+               1. In the **SCANNER** tab of the `nRF Connect for Mobile`_ application, tap the :guilabel:`No filter` white bar below the **SCANNER** label.
+               #. In the drop-down menu for the filtering configuration, tap the three-dot icon in the **Exclude** option.
+               #. In the exclude configuration menu, uncheck the **Google** option to remove the filtering for Google-related advertising like the Fast Pair advertising.
+               #. Close the exclude configuration menu and the filtering configuration drop-down.
+               #. Tap the :guilabel:`SCAN` button to restart the scanning activity.
 
-#. Go back to your second Android device and refresh the scanning list in the `nRF Connect for Mobile`_ application.
-#. Observe that the entry for the device advertising the Fast Pair Service UUID AD type is no longer present in the scanning list.
-   The missing entry indicates that the development kit is no longer in the clock synchronization mode, and it is not advertising the Fast Pair not discoverable payload.
-#. In your first Android device, open the `Find My Device app`_.
-   Navigate to your accessory view, and tap the :guilabel:`Find nearby` button.
-#. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
-#. Observe that **LED 2** is lit to confirm that the Android device is able to connect to your development kit after a clock synchronization.
+      #. Power on the first Android device that you used to perform the FMDN provisioning operation.
+      #. In the terminal, observe the message confirming that your first Android device connected to the development kit and synchronized the clock value::
+
+            FMDN: clock information synchronized with the authenticated Bluetooth peer
+
+      #. Go back to your second Android device and refresh the scanning list in the `nRF Connect for Mobile`_ application.
+      #. Observe that the entry for the device advertising the Fast Pair Service UUID AD type is no longer present in the scanning list.
+         The missing entry indicates that the development kit is no longer in the clock synchronization mode, and it is not advertising the Fast Pair not discoverable payload.
+      #. In your first Android device, open the `Find My Device app`_.
+         Navigate to your accessory view, and tap the :guilabel:`Find nearby` button.
+      #. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
+      #. Observe that **LED 2** is lit to confirm that the Android device is able to connect to your development kit after a clock synchronization.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Go to the :ref:`fast_pair_locator_tag_testing` section and follow the instructions on performing the FMDN provisioning operation.
+      #. Observe that **LED 2** is lit, which indicates that the device is provisioned as an FMDN beacon.
+      #. Power off the development kit and wait for 24 hours.
+      #. Power off the Android device that you used to perform the FMDN provisioning operation.
+      #. Power on the development kit.
+      #. |connect_terminal_specific|
+      #. Use your second Android device configured for a **different** account, and start the `nRF Connect for Mobile`_ application.
+      #. Wait for the **SCANNER** tab of the mobile application to populate the scanning list.
+      #. Observe that the device advertising the Fast Pair Service UUID (*0xFE2C*) AD type with the Fast Pair Account Data payload is present in the scanning list.
+         This entry indicates that the development kit is in the clock synchronization mode, and it is advertising the Fast Pair not discoverable payload.
+
+         .. note::
+            By default, the `nRF Connect for Mobile`_ application filters advertising packets used by ecosystems like Google or Apple.
+            You need to take additional steps to see the Fast Pair advertising on the scanning list:
+
+               1. In the **SCANNER** tab of the `nRF Connect for Mobile`_ application, tap the :guilabel:`No filter` white bar below the **SCANNER** label.
+               #. In the drop-down menu for the filtering configuration, tap the three-dot icon in the **Exclude** option.
+               #. In the exclude configuration menu, uncheck the **Google** option to remove the filtering for Google-related advertising like the Fast Pair advertising.
+               #. Close the exclude configuration menu and the filtering configuration drop-down.
+               #. Tap the :guilabel:`SCAN` button to restart the scanning activity.
+
+      #. Power on the first Android device that you used to perform the FMDN provisioning operation.
+      #. In the terminal, observe the message confirming that your first Android device connected to the development kit and synchronized the clock value::
+
+            FMDN: clock information synchronized with the authenticated Bluetooth peer
+
+      #. Go back to your second Android device and refresh the scanning list in the `nRF Connect for Mobile`_ application.
+      #. Observe that the entry for the device advertising the Fast Pair Service UUID AD type is no longer present in the scanning list.
+         The missing entry indicates that the development kit is no longer in the clock synchronization mode, and it is not advertising the Fast Pair not discoverable payload.
+      #. In your first Android device, open the `Find My Device app`_.
+         Navigate to your accessory view, and tap the :guilabel:`Find nearby` button.
+      #. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
+      #. Observe that **LED 1** is lit to confirm that the Android device is able to connect to your development kit after a clock synchronization.
 
 Fast Pair Validator app
 -----------------------
@@ -486,43 +692,88 @@ You can test the sample against the Eddystone test suite from the `Fast Pair Val
 
 |test_sample|
 
-1. Open the Fast Pair Validator app on your Android device.
-#. In the app list, tap on the target device model that matches your flashed firmware.
-#. Select the correct test category by tapping the :guilabel:`EDDYSTONE` button.
+.. tabs::
 
-   .. figure:: /images/bt_fast_pair_fpv_app_test_category.png
-      :scale: 80 %
-      :alt: Test category selection in the Fast Pair Validator app
+   .. group-tab:: nRF52 and nRF53 DKs
 
-#. In the Eddystone test view, choose a test case by tapping the :guilabel:`START` button next to it.
+      1. Open the Fast Pair Validator app on your Android device.
+      #. In the app list, tap on the target device model that matches your flashed firmware.
+      #. Select the correct test category by tapping the :guilabel:`EDDYSTONE` button.
 
-   .. figure:: /images/bt_fast_pair_fpv_app_eddystone_category.png
-      :scale: 80 %
-      :alt: Eddystone test suite in the Fast Pair Validator app
+         .. figure:: /images/bt_fast_pair_fpv_app_test_category.png
+            :scale: 80 %
+            :alt: Test category selection in the Fast Pair Validator app
 
-#. In the chosen test view, run the test case by tapping the :guilabel:`TEST` button.
-#. Follow the pop-up instructions during the test execution.
+      #. In the Eddystone test view, choose a test case by tapping the :guilabel:`START` button next to it.
 
-   .. important::
-      Use your locator tag device button interface to comply with the instructions during the test execution:
+         .. figure:: /images/bt_fast_pair_fpv_app_eddystone_category.png
+            :scale: 80 %
+            :alt: Eddystone test suite in the Fast Pair Validator app
 
-      * *Please put the headset into pairing mode* - Ensure that your device advertises in the Fast Pair discoverable mode or switch to this mode by pressing **Button 1**.
-      * *After you close this dialog, as soon as you hear device ringing, press a button on the device to stop ringing* - Stop the ringing action by pressing **Button 2** once the **LED 2** is lit.
-      * *Before you close this dialog, press the button on the device to allow reading its identifier* - Enter the identification mode by shortly pressing **Button 4**.
-        The **LED 4** should start blinking at half-second intervals after the button press.
+      #. In the chosen test view, run the test case by tapping the :guilabel:`TEST` button.
+      #. Follow the pop-up instructions during the test execution.
 
-#. Wait until the test case execution completes.
+         .. important::
+            Use your locator tag device button interface to comply with the instructions during the test execution:
 
-   .. figure:: /images/bt_fast_pair_fpv_app_eddystone_provisioning_test.png
-      :scale: 80 %
-      :alt: Successful execution of the provisioning test case in the Fast Pair Validator app
+            * *Please put the headset into pairing mode* - Ensure that your device advertises in the Fast Pair discoverable mode or switch to this mode by pressing **Button 1**.
+            * *After you close this dialog, as soon as you hear device ringing, press a button on the device to stop ringing* - Stop the ringing action by pressing **Button 2** once the **LED 2** is lit.
+            * *Before you close this dialog, press the button on the device to allow reading its identifier* - Enter the identification mode by shortly pressing **Button 4**.
+              The **LED 4** should start blinking at half-second intervals after the button press.
 
-#. Exit the test case view by tapping on the cross icon in the upper left corner.
-#. Start another test case or exit the Fast Pair Validator app.
+      #. Wait until the test case execution completes.
 
-   .. note::
-      Each test case is concluded with the unprovisioning operation that disables the Fast Pair advertising in the discoverable mode.
-      To set your locator tag device back into the pairing mode, press **Button 1**.
+         .. figure:: /images/bt_fast_pair_fpv_app_eddystone_provisioning_test.png
+            :scale: 80 %
+            :alt: Successful execution of the provisioning test case in the Fast Pair Validator app
+
+      #. Exit the test case view by tapping on the cross icon in the upper left corner.
+      #. Start another test case or exit the Fast Pair Validator app.
+
+         .. note::
+            Each test case is concluded with the unprovisioning operation that disables the Fast Pair advertising in the discoverable mode.
+            To set your locator tag device back into the pairing mode, press **Button 1**.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Open the Fast Pair Validator app on your Android device.
+      #. In the app list, tap on the target device model that matches your flashed firmware.
+      #. Select the correct test category by tapping the :guilabel:`EDDYSTONE` button.
+
+         .. figure:: /images/bt_fast_pair_fpv_app_test_category.png
+            :scale: 80 %
+            :alt: Test category selection in the Fast Pair Validator app
+
+      #. In the Eddystone test view, choose a test case by tapping the :guilabel:`START` button next to it.
+
+         .. figure:: /images/bt_fast_pair_fpv_app_eddystone_category.png
+            :scale: 80 %
+            :alt: Eddystone test suite in the Fast Pair Validator app
+
+      #. In the chosen test view, run the test case by tapping the :guilabel:`TEST` button.
+      #. Follow the pop-up instructions during the test execution.
+
+         .. important::
+            Use your locator tag device button interface to comply with the instructions during the test execution:
+
+            * *Please put the headset into pairing mode* - Ensure that your device advertises in the Fast Pair discoverable mode or switch to this mode by pressing **Button 0**.
+            * *After you close this dialog, as soon as you hear device ringing, press a button on the device to stop ringing* - Stop the ringing action by pressing **Button 1** once the **LED 1** is lit.
+            * *Before you close this dialog, press the button on the device to allow reading its identifier* - Enter the identification mode by shortly pressing **Button 3**.
+              The **LED 3** should start blinking at half-second intervals after the button press.
+
+      #. Wait until the test case execution completes.
+
+         .. figure:: /images/bt_fast_pair_fpv_app_eddystone_provisioning_test.png
+            :scale: 80 %
+            :alt: Successful execution of the provisioning test case in the Fast Pair Validator app
+
+      #. Exit the test case view by tapping on the cross icon in the upper left corner.
+      #. Start another test case or exit the Fast Pair Validator app.
+
+         .. note::
+            Each test case is concluded with the unprovisioning operation that disables the Fast Pair advertising in the discoverable mode.
+            To set your locator tag device back into the pairing mode, press **Button 0**.
+
 
 Dependencies
 ************

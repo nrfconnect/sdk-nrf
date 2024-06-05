@@ -33,9 +33,9 @@ If packets are successfully received from the Transmitter, the LED pattern chang
 User interface
 ***************
 
-LED 1-4:
+All LEDs:
    Indicate that packets are sent or received.
-   The first four packets turn on **LED 1**, **2**, **3**, and **4**.
+   The first four packets turn on the LEDs sequentially.
    The next four packets turn them off again in the same order.
 
 Configuration

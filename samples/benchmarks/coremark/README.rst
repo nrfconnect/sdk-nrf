@@ -35,23 +35,47 @@ User interface
 
 Each target CPU has an assigned button responsible for starting the benchmark and LED that indicates the ``test in progress`` state:
 
-Button 1:
-   Start the benchmark run on the application core.
+.. tabs::
 
-Button 2:
-   Start the benchmark run on the network or radio core.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-Button 3:
-   Start the benchmark run on the PPR core.
+      Button 1:
+         Start the benchmark run on the application core.
 
-LED 1:
-   Indicates ``test in progress`` on the application core.
+      Button 2:
+         Start the benchmark run on the network or radio core.
 
-LED 2:
-   Indicates ``test in progress`` on the network or radio core.
+      Button 3:
+         Start the benchmark run on the PPR core.
 
-LED 3:
-   Indicates ``test in progress`` on the PPR core.
+      LED 1:
+         Indicates ``test in progress`` on the application core.
+
+      LED 2:
+         Indicates ``test in progress`` on the network or radio core.
+
+      LED 3:
+         Indicates ``test in progress`` on the PPR core.
+
+   .. group-tab:: nRF54 DKs
+
+      Button 0:
+         Start the benchmark run on the application core.
+
+      Button 1:
+         Start the benchmark run on the network or radio core.
+
+      Button 2:
+         Start the benchmark run on the PPR core.
+
+      LED 0:
+         Indicates ``test in progress`` on the application core.
+
+      LED 1:
+         Indicates ``test in progress`` on the network or radio core.
+
+      LED 2:
+         Indicates ``test in progress`` on the PPR core.
 
 .. _coremark_configuration:
 

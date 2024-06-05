@@ -32,8 +32,18 @@ The only events handled by the application are the NFC events.
 User interface
 **************
 
-LED 1:
-   Indicates if an NFC field is present.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      LED 1:
+         Indicates if an NFC field is present.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Indicates if an NFC field is present.
+
 
 Building and running
 ********************
@@ -50,9 +60,19 @@ Testing
 
 After programming the sample to your development kit, complete the following steps to test it:
 
-1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 1** is lit.
-#. Observe that the smartphone or tablet displays the encoded text (in the most suitable language).
-#. Move the smartphone or tablet away from the NFC antenna and observe that **LED 1** turns off.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 1** is lit.
+      #. Observe that the smartphone or tablet displays the encoded text (in the most suitable language).
+      #. Move the smartphone or tablet away from the NFC antenna and observe that **LED 1** turns off.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 0** is lit.
+      #. Observe that the smartphone or tablet displays the encoded text (in the most suitable language).
+      #. Move the smartphone or tablet away from the NFC antenna and observe that **LED 0** turns off.
 
 Dependencies
 ************
