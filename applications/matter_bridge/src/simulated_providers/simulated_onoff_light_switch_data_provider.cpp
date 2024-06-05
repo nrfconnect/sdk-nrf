@@ -61,22 +61,28 @@ void ProcessCommand(const EmberBindingTableEntry &aBinding, OperationalDevicePro
 CHIP_ERROR SimulatedOnOffLightSwitchDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
 							      uint8_t *buffer)
 {
-	if (clusterId != Clusters::OnOff::Id) {
+	if (clusterId != Clusters::OnOff::Id && clusterId != Clusters::BridgedDeviceBasicInformation::Id) {
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (attributeId != Clusters::OnOff::Attributes::OnOff::Id) {
+	switch (attributeId) {
+	case Clusters::OnOff::Attributes::OnOff::Id: {
+		bool mOnOff;
+		memcpy(&mOnOff, buffer, sizeof(mOnOff));
+
+		chip::CommandId commandId =
+			mOnOff ? Clusters::OnOff::Commands::On::Id : Clusters::OnOff::Commands::Off::Id;
+
+		if (mInvokeCommandCallback) {
+			mInvokeCommandCallback(*this, Clusters::OnOff::Id, commandId, ProcessCommand);
+		}
+		break;
+	}
+	case Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id:
+		/* Node label is just updated locally and there is no need to propagate the information to the end
+		 * device. */
+		break;
+	default:
 		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 	}
-
-	bool mOnOff;
-	memcpy(&mOnOff, buffer, sizeof(mOnOff));
-
-	chip::CommandId commandId = mOnOff ? Clusters::OnOff::Commands::On::Id : Clusters::OnOff::Commands::Off::Id;
-
-	if (mInvokeCommandCallback) {
-		mInvokeCommandCallback(*this, Clusters::OnOff::Id, commandId, ProcessCommand);
-	}
-
-	return CHIP_NO_ERROR;
 }

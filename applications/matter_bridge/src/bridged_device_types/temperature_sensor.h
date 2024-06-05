@@ -21,9 +21,20 @@ public:
 			      uint16_t maxReadLength) override;
 	CHIP_ERROR HandleReadTemperatureMeasurement(chip::AttributeId attributeId, uint8_t *buffer,
 						    uint16_t maxReadLength);
-	CHIP_ERROR HandleWrite(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override
+	CHIP_ERROR HandleWrite(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
+			       size_t size) override
 	{
-		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
+		if (clusterId != chip::app::Clusters::BridgedDeviceBasicInformation::Id) {
+			return CHIP_ERROR_INVALID_ARGUMENT;
+		}
+
+		switch (attributeId) {
+		case chip::app::Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id:
+			return HandleWriteDeviceBasicInformation(clusterId, attributeId, buffer, size);
+		default:
+			return CHIP_ERROR_INVALID_ARGUMENT;
+		}
+		return CHIP_NO_ERROR;
 	}
 	CHIP_ERROR HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
 					 size_t dataSize) override;

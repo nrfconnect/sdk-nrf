@@ -11,7 +11,8 @@
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/util/attribute-storage.h>
 
-namespace Nrf {
+namespace Nrf
+{
 
 /* Definitions of  helper macros that are used across all bridged device types to create common mandatory clusters in a
  * consistent way. */
@@ -19,13 +20,16 @@ namespace Nrf {
 #define DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs)                                                                 \
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(descriptorAttrs)                                                          \
 	DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::DeviceTypeList::Id, ARRAY,              \
-				  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* device list */            \
+				  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* device list */       \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::ServerList::Id, ARRAY,          \
-					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* server list */    \
+					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* server list  \
+													*/             \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::ClientList::Id, ARRAY,          \
-					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* client list */    \
+					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* client list  \
+													*/             \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::PartsList::Id, ARRAY,           \
-					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* parts list */     \
+					  Nrf::MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* parts list   \
+													*/             \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::FeatureMap::Id, BITMAP32, 4,    \
 					  0), /* feature map */                                                        \
 		DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
@@ -34,7 +38,8 @@ namespace Nrf {
 #define BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs)                                   \
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(bridgedDeviceBasicAttrs)                                                  \
 	DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id,       \
-				  CHAR_STRING, Nrf::MatterBridgedDevice::kNodeLabelSize, 0), /* NodeLabel */                \
+				  CHAR_STRING, Nrf::MatterBridgedDevice::kNodeLabelSize,                               \
+				  ZAP_ATTRIBUTE_MASK(WRITABLE)), /* NodeLabel */                                       \
 		DECLARE_DYNAMIC_ATTRIBUTE(                                                                             \
 			chip::app::Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id, BOOLEAN, 1,     \
 			0), /* Reachable */                                                                            \
@@ -108,11 +113,12 @@ public:
 	virtual uint16_t GetDeviceType() const = 0;
 	virtual CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 				      uint16_t maxReadLength) = 0;
-	virtual CHIP_ERROR HandleWrite(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) = 0;
+	virtual CHIP_ERROR HandleWrite(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
+				       size_t size) = 0;
 	virtual CHIP_ERROR HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
 						 size_t dataSize) = 0;
 
-	virtual void ConfigureIdentifyServer(Identify *identifyServer){};
+	virtual void ConfigureIdentifyServer(Identify *identifyServer) {};
 	CHIP_ERROR CopyAttribute(const void *attribute, size_t attributeSize, void *buffer, uint16_t maxBufferSize);
 	CHIP_ERROR HandleWriteDeviceBasicInformation(chip::ClusterId clusterId, chip::AttributeId attributeId,
 						     void *data, size_t dataSize);
@@ -139,6 +145,7 @@ public:
 
 protected:
 	void SetIsReachable(bool isReachable) { mIsReachable = isReachable; }
+	void SetNodeLabel(void *data, size_t size);
 
 	chip::EndpointId mEndpointId{};
 

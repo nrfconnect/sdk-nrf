@@ -34,7 +34,20 @@ void SimulatedTemperatureSensorDataProvider::NotifyUpdateState(chip::ClusterId c
 CHIP_ERROR SimulatedTemperatureSensorDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
 							       uint8_t *buffer)
 {
-	return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
+	if (clusterId != Clusters::BridgedDeviceBasicInformation::Id) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	switch (attributeId) {
+	case Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id:
+		/* Node label is just updated locally and there is no need to propagate the information to the end
+		 * device. */
+		break;
+	default:
+		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
+	}
+
+	return CHIP_NO_ERROR;
 }
 
 void SimulatedTemperatureSensorDataProvider::TimerTimeoutCallback(k_timer *timer)

@@ -34,8 +34,10 @@ DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::OnOff::Id, BOOLEAN, 1, 0)
 	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::FeatureMap::Id, BITMAP32, 4, 0),
 	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::GlobalSceneControl::Id, BOOLEAN, 1, 0),
 	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::OnTime::Id, INT16U, 2, ZAP_ATTRIBUTE_MASK(WRITABLE)),
-	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::OffWaitTime::Id, INT16U, 2, ZAP_ATTRIBUTE_MASK(WRITABLE)),
-	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::StartUpOnOff::Id, ENUM8, 1, ZAP_ATTRIBUTE_MASK(WRITABLE)),
+	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::OffWaitTime::Id, INT16U, 2,
+				  ZAP_ATTRIBUTE_MASK(WRITABLE)),
+	DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::StartUpOnOff::Id, ENUM8, 1,
+				  ZAP_ATTRIBUTE_MASK(WRITABLE)),
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 constexpr CommandId onOffIncomingCommands[] = {
@@ -167,9 +169,9 @@ CHIP_ERROR OnOffLightDevice::HandleReadGroups(AttributeId attributeId, uint8_t *
 	}
 }
 
-CHIP_ERROR OnOffLightDevice::HandleWrite(ClusterId clusterId, AttributeId attributeId, uint8_t *buffer)
+CHIP_ERROR OnOffLightDevice::HandleWrite(ClusterId clusterId, AttributeId attributeId, uint8_t *buffer, size_t size)
 {
-	if (clusterId != Clusters::OnOff::Id) {
+	if (clusterId != Clusters::OnOff::Id && clusterId != Clusters::BridgedDeviceBasicInformation::Id) {
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -186,6 +188,8 @@ CHIP_ERROR OnOffLightDevice::HandleWrite(ClusterId clusterId, AttributeId attrib
 	case Clusters::OnOff::Attributes::StartUpOnOff::Id:
 		mStartUpOnOff = static_cast<Clusters::OnOff::StartUpOnOffEnum>(*buffer);
 		break;
+	case Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id:
+		return HandleWriteDeviceBasicInformation(clusterId, attributeId, buffer, size);
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}

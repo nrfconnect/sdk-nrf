@@ -33,7 +33,7 @@ void SimulatedGenericSwitchDataProvider::NotifyUpdateState(chip::ClusterId clust
 CHIP_ERROR SimulatedGenericSwitchDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
 							   uint8_t *buffer)
 {
-	if (clusterId != Clusters::Switch::Id) {
+	if (clusterId != Clusters::Switch::Id && clusterId != Clusters::BridgedDeviceBasicInformation::Id) {
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -46,6 +46,10 @@ CHIP_ERROR SimulatedGenericSwitchDataProvider::UpdateState(chip::ClusterId clust
 		NotifyUpdateState(clusterId, attributeId, &mCurrentSwitchPosition, sizeof(mCurrentSwitchPosition));
 		return CHIP_NO_ERROR;
 	}
+	case Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id:
+		/* Node label is just updated locally and there is no need to propagate the information to the end
+		 * device. */
+		break;
 	default:
 		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 	}
