@@ -93,11 +93,23 @@ You can adjust the following parameters:
 User interface
 **************
 
-Button 1:
-   Set the board into a central (tester) role.
+.. tabs::
 
-Button 2:
-   Set the board into a peripheral (peer) role.
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      Button 1:
+         Set the board into a central (tester) role.
+
+      Button 2:
+         Set the board into a peripheral (peer) role.
+
+   .. group-tab:: nRF54 DKs
+
+      Button 0:
+         Set the board into a central (tester) role.
+
+      Button 1:
+         Set the board into a peripheral (peer) role.
 
 Building and running
 ********************
@@ -110,25 +122,51 @@ Testing
 
 After programming the sample to both kits, complete following steps to test it:
 
-1. |connect_terminal_both_ANSI|
-#. Reset both kits.
-#. Press **Button 1** on the first development kit or type ``central`` in the terminal connected to the first kit to set it into the central (tester) role.
-#. Press **Button 2** on the second development kit or type ``peripheral`` in the terminal connected to the second kit to set it into the peripheral (peer) role.
-#. Observe that the kits establish a connection.
-   The tester outputs the following information::
+.. tabs::
 
-      Type 'config' to change the configuration parameters.
-      You can use the Tab key to autocomplete your input.
-      Type 'run' when you are ready to run the test.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-#. Type ``config print`` in the terminal to print the current configuration.
-   Type ``config`` in the terminal to configure the test parameters to your choice.
-   Use the Tab key for auto-completion and to view the options available for a parameter.
-#. Type ``run`` in the terminal to start the test.
-#. Observe the output while the tester sends data to the peer.
-   At the end of the test, both tester and peer display the results of the test.
-#. Repeat the test after changing the parameters.
-   Observe how the throughput changes for different sets of parameters.
+      1. |connect_terminal_both_ANSI|
+      #. Reset both kits.
+      #. Press **Button 1** on the first development kit or type ``central`` in the terminal connected to the first kit to set it into the central (tester) role.
+      #. Press **Button 2** on the second development kit or type ``peripheral`` in the terminal connected to the second kit to set it into the peripheral (peer) role.
+      #. Observe that the kits establish a connection.
+         The tester outputs the following information::
+
+            Type 'config' to change the configuration parameters.
+            You can use the Tab key to autocomplete your input.
+            Type 'run' when you are ready to run the test.
+
+      #. Type ``config print`` in the terminal to print the current configuration.
+         Type ``config`` in the terminal to configure the test parameters to your choice.
+         Use the Tab key for auto-completion and to view the options available for a parameter.
+      #. Type ``run`` in the terminal to start the test.
+      #. Observe the output while the tester sends data to the peer.
+         At the end of the test, both tester and peer display the results of the test.
+      #. Repeat the test after changing the parameters.
+         Observe how the throughput changes for different sets of parameters.
+
+   .. group-tab:: nRF54 DKs
+
+      1. |connect_terminal_both_ANSI|
+      #. Reset both kits.
+      #. Press **Button 0** on the first development kit or type ``central`` in the terminal connected to the first kit to set it into the central (tester) role.
+      #. Press **Button 1** on the second development kit or type ``peripheral`` in the terminal connected to the second kit to set it into the peripheral (peer) role.
+      #. Observe that the kits establish a connection.
+         The tester outputs the following information::
+
+            Type 'config' to change the configuration parameters.
+            You can use the Tab key to autocomplete your input.
+            Type 'run' when you are ready to run the test.
+
+      #. Type ``config print`` in the terminal to print the current configuration.
+         Type ``config`` in the terminal to configure the test parameters to your choice.
+         Use the Tab key for auto-completion and to view the options available for a parameter.
+      #. Type ``run`` in the terminal to start the test.
+      #. Observe the output while the tester sends data to the peer.
+         At the end of the test, both tester and peer display the results of the test.
+      #. Repeat the test after changing the parameters.
+         Observe how the throughput changes for different sets of parameters.
 
 Sample output
 ==============

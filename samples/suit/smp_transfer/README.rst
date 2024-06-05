@@ -51,7 +51,7 @@ Additionally, this sample is an early version and is only meant to showcase the 
 User interface
 **************
 
-LED 1:
+LED 0:
     The number of blinks indicates the application SUIT envelope sequence number.
     The default is set to ``1`` to blink once, indicating "Version 1".
 
@@ -62,7 +62,7 @@ Configuration
 
 The default configuration uses UART with sequence number 1 (shown as Version 1 in the nRF Device Manager app).
 To change the sequence number of the application, configure the ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` Sysbuild Kconfig option.
-This also changes the number of blinks on **LED 1** and sets the :ref:`sequence number <ug_suit_dfu_suit_manifest_elements>` of the :ref:`SUIT envelope <ug_suit_dfu_suit_concepts>`’s manifest.
+This also changes the number of blinks on **LED 0** and sets the :ref:`sequence number <ug_suit_dfu_suit_manifest_elements>` of the :ref:`SUIT envelope <ug_suit_dfu_suit_concepts>`’s manifest.
 
 To use this configuration, build the sample with :ref:`configuration_system_overview_sysbuild` and set the ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` Sysbuild Kconfig option to ``x``, where ``x`` is the version number.
 For example:
@@ -311,7 +311,7 @@ After programming the sample to your development kit and updating the sequence n
 
          You should see that "Version: 2" is now printed in the **Images** section of the mobile app.
 
-         Additional, **LED 1** now flashes twice now to indicate "Version 2" of the firmware.
+         Additional, **LED 0** now flashes twice now to indicate "Version 2" of the firmware.
 
    .. group-tab:: Over UART
 
@@ -374,4 +374,4 @@ After programming the sample to your development kit and updating the sequence n
                hash: 707efbd3e3dfcbda1c0ce72f069a55f35c30836b79ab8132556ed92ce609f943
             Split status: N/A (0)
 
-         You should now see that **LED 1** flashes twice now to indicate "Version 2" of the firmware.
+         You should now see that **LED 0** flashes twice now to indicate "Version 2" of the firmware.

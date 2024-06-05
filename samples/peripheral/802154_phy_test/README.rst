@@ -944,7 +944,7 @@ After programming the sample to your development kit, complete the following ste
       custom changemode *1*
 
 #. On the bottom side of your development kit, locate the table describing the GPIO pin assignment to the LEDs.
-#. Read the numbers of the GPIO pins assigned to LED 1, 2, 3 or 4.
+#. Read the numbers of the GPIO pins assigned to all LEDs.
 
    For example, on the nRF52840DK, the LEDs are controlled by the pins ranging between P0.13 and P0.16.
    The LEDs on nRF5340DK and nRF52840DK are in the ``sink`` configuration.

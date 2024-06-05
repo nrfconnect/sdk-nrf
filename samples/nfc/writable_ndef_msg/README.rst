@@ -36,15 +36,31 @@ Any changes to the NDEF message update the NDEF message file stored in flash mem
 User interface
 **************
 
-LED 1:
-   Indicates if an NFC field is present.
-LED 2:
-   Indicates that the NDEF message was updated.
-LED 4:
-   Indicates that the NDEF message was read.
+.. tabs::
 
-Button 1:
-   Press during startup to restore the default NDEF message.
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      LED 1:
+         Indicates if an NFC field is present.
+      LED 2:
+         Indicates that the NDEF message was updated.
+      LED 4:
+         Indicates that the NDEF message was read.
+
+      Button 1:
+         Press during startup to restore the default NDEF message.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Indicates if an NFC field is present.
+      LED 1:
+         Indicates that the NDEF message was updated.
+      LED 3:
+         Indicates that the NDEF message was read.
+
+      Button 0:
+         Press during startup to restore the default NDEF message.
 
 Building and running
 ********************
@@ -60,11 +76,23 @@ Testing
 
 After programming the sample to your development kit, complete the following steps to test it:
 
-1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 1** and **LED 4** are lit.
-#. Observe that the smartphone or tablet tries to open the URL "http\://www.nordicsemi.com" in a web browser.
-#. Use a proper application (for example, NFC Tools for Android) to overwrite the existing NDEF message with your own message.
-#. Restart your development kit and touch the antenna again.
-   Observe that the new message is displayed.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 1** and **LED 4** are lit.
+      #. Observe that the smartphone or tablet tries to open the URL "http\://www.nordicsemi.com" in a web browser.
+      #. Use a proper application (for example, NFC Tools for Android) to overwrite the existing NDEF message with your own message.
+      #. Restart your development kit and touch the antenna again.
+         Observe that the new message is displayed.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 0** and **LED 3** are lit.
+      #. Observe that the smartphone or tablet tries to open the URL "http\://www.nordicsemi.com" in a web browser.
+      #. Use a proper application (for example, NFC Tools for Android) to overwrite the existing NDEF message with your own message.
+      #. Restart your development kit and touch the antenna again.
+         Observe that the new message is displayed.
 
 Dependencies
 ************

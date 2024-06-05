@@ -32,25 +32,51 @@ It can request the MS to perform certain actions, such as starting playback and 
 User interface
 **************
 
-LED 1:
-   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+.. tabs::
 
-LED 2:
-   Lit when connected.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-Button 1:
-   Enable and disable MS track attributes notification.
+      LED 1:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
-Button 2:
-   Request MS to start or pause playback.
+      LED 2:
+         Lit when connected.
 
-Button 3:
-   Request MS to jump to the next track if it is supported.
-   Otherwise, request MS to turn up the volume.
+      Button 1:
+         Enable and disable MS track attributes notification.
 
-Button 4:
-   Request MS to jump to the previous track if it is supported.
-   Otherwise, request MS to turn down the volume.
+      Button 2:
+         Request MS to start or pause playback.
+
+      Button 3:
+         Request MS to jump to the next track if it is supported.
+         Otherwise, request MS to turn up the volume.
+
+      Button 4:
+         Request MS to jump to the previous track if it is supported.
+         Otherwise, request MS to turn down the volume.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+
+      LED 1:
+         Lit when connected.
+
+      Button 0:
+         Enable and disable MS track attributes notification.
+
+      Button 1:
+         Request MS to start or pause playback.
+
+      Button 2:
+         Request MS to jump to the next track if it is supported.
+         Otherwise, request MS to turn up the volume.
+
+      Button 3:
+         Request MS to jump to the previous track if it is supported.
+         Otherwise, request MS to turn down the volume.
 
 Building and running
 ********************
@@ -69,16 +95,33 @@ After programming the sample to your development kit, you can test it either by 
 Testing with an iOS device
 --------------------------
 
-#. |connect_terminal_specific|
-#. Reset the kit.
-#. Select the device in the iOS :guilabel:`Settings` > :guilabel:`Bluetooth` menu > :guilabel:`Connect`.
-   When requested, proceed with pairing.
-#. Open the :guilabel:`Apple Music` app and bring up a playlist with some songs.
-#. Press **Button 1** to enable song detail updates.
-#. Press **Button 2** to play a song.
-   Press again to pause playback.
-#. Press **Button 3** to jump to the next song.
-#. Press **Button 4** to jump to the previous song.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      #. |connect_terminal_specific|
+      #. Reset the kit.
+      #. Select the device in the iOS :guilabel:`Settings` > :guilabel:`Bluetooth` menu > :guilabel:`Connect`.
+         When requested, proceed with pairing.
+      #. Open the :guilabel:`Apple Music` app and bring up a playlist with some songs.
+      #. Press **Button 1** to enable song detail updates.
+      #. Press **Button 2** to play a song.
+         Press again to pause playback.
+      #. Press **Button 3** to jump to the next song.
+      #. Press **Button 4** to jump to the previous song.
+
+   .. group-tab:: nRF54 DKs
+
+      #. |connect_terminal_specific|
+      #. Reset the kit.
+      #. Select the device in the iOS :guilabel:`Settings` > :guilabel:`Bluetooth` menu > :guilabel:`Connect`.
+         When requested, proceed with pairing.
+      #. Open the :guilabel:`Apple Music` app and bring up a playlist with some songs.
+      #. Press **Button 0** to enable song detail updates.
+      #. Press **Button 1** to play a song.
+         Press again to pause playback.
+      #. Press **Button 2** to jump to the next song.
+      #. Press **Button 3** to jump to the previous song.
 
 Testing with nRF Connect for Desktop
 ------------------------------------
@@ -108,151 +151,307 @@ Testing with nRF Connect for Desktop
 Music setup
 ^^^^^^^^^^^
 
-Complete the following steps to initiate a music player setup:
+.. tabs::
 
-#. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is initiated to ``00 00 01 02``.
-   The following table lists the attributes requested by the MR.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-   +--------------+-------+----------------+
-   | Field        | Value | Interpretation |
-   +==============+=======+================+
-   | Entity ID    | 00    | Player         |
-   +--------------+-------+----------------+
-   | Attribute ID | 00    | Name           |
-   +--------------+-------+----------------+
-   | Attribute ID | 01    | Playback Info  |
-   +--------------+-------+----------------+
-   | Attribute ID | 02    | Volume         |
-   +--------------+-------+----------------+
+      Complete the following steps to initiate a music player setup:
 
-#. Press **Button 1** to enable track attributes notification.
-#. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is updated to ``02 00 01 02 03``.
-   The following table lists the attributes requested by the MR.
+      #. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is initiated to ``00 00 01 02``.
+         The following table lists the attributes requested by the MR.
 
-   +--------------+-------+----------------+
-   | Field        | Value | Interpretation |
-   +==============+=======+================+
-   | Entity ID    | 02    | Track          |
-   +--------------+-------+----------------+
-   | Attribute ID | 00    | Artist         |
-   +--------------+-------+----------------+
-   | Attribute ID | 01    | Album          |
-   +--------------+-------+----------------+
-   | Attribute ID | 02    | Title          |
-   +--------------+-------+----------------+
-   | Attribute ID | 03    | Duration       |
-   +--------------+-------+----------------+
+         +--------------+-------+----------------+
+         | Field        | Value | Interpretation |
+         +==============+=======+================+
+         | Entity ID    | 00    | Player         |
+         +--------------+-------+----------------+
+         | Attribute ID | 00    | Name           |
+         +--------------+-------+----------------+
+         | Attribute ID | 01    | Playback Info  |
+         +--------------+-------+----------------+
+         | Attribute ID | 02    | Volume         |
+         +--------------+-------+----------------+
 
-#. Set the **Apple Remote Command** value to ``00 01 02 03 04 05 06 07 08 09 0A 0B 0C``.
-   It tells the MR the list of commands supported by the MS.
-#. Verify that the UART output is as follows::
+      #. Press **Button 1** to enable track attributes notification.
+      #. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is updated to ``02 00 01 02 03``.
+         The following table lists the attributes requested by the MR.
 
-      AMS RC: 00,01,02,03,04,05,06,07,08,09,0A,0B,0C
+         +--------------+-------+----------------+
+         | Field        | Value | Interpretation |
+         +==============+=======+================+
+         | Entity ID    | 02    | Track          |
+         +--------------+-------+----------------+
+         | Attribute ID | 00    | Artist         |
+         +--------------+-------+----------------+
+         | Attribute ID | 01    | Album          |
+         +--------------+-------+----------------+
+         | Attribute ID | 02    | Title          |
+         +--------------+-------+----------------+
+         | Attribute ID | 03    | Duration       |
+         +--------------+-------+----------------+
 
-#. Set the **Apple Entity Update** value to ``00 01 00 30 2C 30 2E 30 2C 30 2E 30 30 30``.
-#. Verify that the UART output is as follows::
+      #. Set the **Apple Remote Command** value to ``00 01 02 03 04 05 06 07 08 09 0A 0B 0C``.
+         It tells the MR the list of commands supported by the MS.
+      #. Verify that the UART output is as follows::
 
-      AMS EU: 00,01,00 0,0.0,0.000
+            AMS RC: 00,01,02,03,04,05,06,07,08,09,0A,0B,0C
 
-   The following table explains the notification.
+      #. Set the **Apple Entity Update** value to ``00 01 00 30 2C 30 2E 30 2C 30 2E 30 30 30``.
+      #. Verify that the UART output is as follows::
 
-   +--------------+-------------+----------------+
-   | Field        | Value       | Interpretation |
-   +==============+=============+================+
-   | Entity ID    | 00          | Player         |
-   +--------------+-------------+----------------+
-   | Attribute ID | 01          | Playback Info  |
-   +--------------+-------------+----------------+
-   | Flags        | 00          |                |
-   +--------------+-------------+----------------+
-   | Value        | 0,0.0,0.000 | Paused         |
-   +--------------+-------------+----------------+
+            AMS EU: 00,01,00 0,0.0,0.000
 
-#. Set the **Apple Entity Update** value to ``02 03 00 31 32 30 2E 30 30 30``.
-#. Verify that the UART output is as follows::
+         The following table explains the notification.
 
-      AMS EU: 02,03,00 120.000
+         +--------------+-------------+----------------+
+         | Field        | Value       | Interpretation |
+         +==============+=============+================+
+         | Entity ID    | 00          | Player         |
+         +--------------+-------------+----------------+
+         | Attribute ID | 01          | Playback Info  |
+         +--------------+-------------+----------------+
+         | Flags        | 00          |                |
+         +--------------+-------------+----------------+
+         | Value        | 0,0.0,0.000 | Paused         |
+         +--------------+-------------+----------------+
 
-   The following table explains the notification.
+      #. Set the **Apple Entity Update** value to ``02 03 00 31 32 30 2E 30 30 30``.
+      #. Verify that the UART output is as follows::
 
-   +--------------+---------+----------------+
-   | Field        | Value   | Interpretation |
-   +==============+=========+================+
-   | Entity ID    | 02      | Track          |
-   +--------------+---------+----------------+
-   | Attribute ID | 03      | Duration       |
-   +--------------+---------+----------------+
-   | Flags        | 00      |                |
-   +--------------+---------+----------------+
-   | Value        | 120.000 | 120 seconds    |
-   +--------------+---------+----------------+
+            AMS EU: 02,03,00 120.000
 
-#. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 32 20 53 65 72 69 65 73 20 73 6F 6E 67``.
-#. Verify that the UART output is as follows::
+         The following table explains the notification.
 
-      AMS EU: 02,02,00 nRF52 Series song
+         +--------------+---------+----------------+
+         | Field        | Value   | Interpretation |
+         +==============+=========+================+
+         | Entity ID    | 02      | Track          |
+         +--------------+---------+----------------+
+         | Attribute ID | 03      | Duration       |
+         +--------------+---------+----------------+
+         | Flags        | 00      |                |
+         +--------------+---------+----------------+
+         | Value        | 120.000 | 120 seconds    |
+         +--------------+---------+----------------+
 
-   The following table explains the notification.
+      #. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 32 20 53 65 72 69 65 73 20 73 6F 6E 67``.
+      #. Verify that the UART output is as follows::
 
-   +--------------+-------------------+--------------------+
-   | Field        | Value             | Interpretation     |
-   +==============+===================+====================+
-   | Entity ID    | 02                | Track              |
-   +--------------+-------------------+--------------------+
-   | Attribute ID | 02                | Title              |
-   +--------------+-------------------+--------------------+
-   | Flags        | 00                |                    |
-   +--------------+-------------------+--------------------+
-   | Value        | nRF52 Series song | Current song title |
-   +--------------+-------------------+--------------------+
+            AMS EU: 02,02,00 nRF52 Series song
+
+         The following table explains the notification.
+
+         +--------------+-------------------+--------------------+
+         | Field        | Value             | Interpretation     |
+         +==============+===================+====================+
+         | Entity ID    | 02                | Track              |
+         +--------------+-------------------+--------------------+
+         | Attribute ID | 02                | Title              |
+         +--------------+-------------------+--------------------+
+         | Flags        | 00                |                    |
+         +--------------+-------------------+--------------------+
+         | Value        | nRF52 Series song | Current song title |
+         +--------------+-------------------+--------------------+
+
+   .. group-tab:: nRF54 DKs
+
+      Complete the following steps to initiate a music player setup:
+
+      #. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is initiated to ``00 00 01 02``.
+         The following table lists the attributes requested by the MR.
+
+         +--------------+-------+----------------+
+         | Field        | Value | Interpretation |
+         +==============+=======+================+
+         | Entity ID    | 00    | Player         |
+         +--------------+-------+----------------+
+         | Attribute ID | 00    | Name           |
+         +--------------+-------+----------------+
+         | Attribute ID | 01    | Playback Info  |
+         +--------------+-------+----------------+
+         | Attribute ID | 02    | Volume         |
+         +--------------+-------+----------------+
+
+      #. Press **Button 0** to enable track attributes notification.
+      #. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is updated to ``02 00 01 02 03``.
+         The following table lists the attributes requested by the MR.
+
+         +--------------+-------+----------------+
+         | Field        | Value | Interpretation |
+         +==============+=======+================+
+         | Entity ID    | 02    | Track          |
+         +--------------+-------+----------------+
+         | Attribute ID | 00    | Artist         |
+         +--------------+-------+----------------+
+         | Attribute ID | 01    | Album          |
+         +--------------+-------+----------------+
+         | Attribute ID | 02    | Title          |
+         +--------------+-------+----------------+
+         | Attribute ID | 03    | Duration       |
+         +--------------+-------+----------------+
+
+      #. Set the **Apple Remote Command** value to ``00 01 02 03 04 05 06 07 08 09 0A 0B 0C``.
+         It tells the MR the list of commands supported by the MS.
+      #. Verify that the UART output is as follows::
+
+            AMS RC: 00,01,02,03,04,05,06,07,08,09,0A,0B,0C
+
+      #. Set the **Apple Entity Update** value to ``00 01 00 30 2C 30 2E 30 2C 30 2E 30 30 30``.
+      #. Verify that the UART output is as follows::
+
+            AMS EU: 00,01,00 0,0.0,0.000
+
+         The following table explains the notification.
+
+         +--------------+-------------+----------------+
+         | Field        | Value       | Interpretation |
+         +==============+=============+================+
+         | Entity ID    | 00          | Player         |
+         +--------------+-------------+----------------+
+         | Attribute ID | 01          | Playback Info  |
+         +--------------+-------------+----------------+
+         | Flags        | 00          |                |
+         +--------------+-------------+----------------+
+         | Value        | 0,0.0,0.000 | Paused         |
+         +--------------+-------------+----------------+
+
+      #. Set the **Apple Entity Update** value to ``02 03 00 31 32 30 2E 30 30 30``.
+      #. Verify that the UART output is as follows::
+
+            AMS EU: 02,03,00 120.000
+
+         The following table explains the notification.
+
+         +--------------+---------+----------------+
+         | Field        | Value   | Interpretation |
+         +==============+=========+================+
+         | Entity ID    | 02      | Track          |
+         +--------------+---------+----------------+
+         | Attribute ID | 03      | Duration       |
+         +--------------+---------+----------------+
+         | Flags        | 00      |                |
+         +--------------+---------+----------------+
+         | Value        | 120.000 | 120 seconds    |
+         +--------------+---------+----------------+
+
+      #. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 32 20 53 65 72 69 65 73 20 73 6F 6E 67``.
+      #. Verify that the UART output is as follows::
+
+            AMS EU: 02,02,00 nRF52 Series song
+
+         The following table explains the notification.
+
+         +--------------+-------------------+--------------------+
+         | Field        | Value             | Interpretation     |
+         +==============+===================+====================+
+         | Entity ID    | 02                | Track              |
+         +--------------+-------------------+--------------------+
+         | Attribute ID | 02                | Title              |
+         +--------------+-------------------+--------------------+
+         | Flags        | 00                |                    |
+         +--------------+-------------------+--------------------+
+         | Value        | nRF52 Series song | Current song title |
+         +--------------+-------------------+--------------------+
 
 Playback
 ^^^^^^^^
 
 To test an audio playback, complete the following steps:
 
-#. Press **Button 2** to start audio playback.
-#. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``02``.
-#. Set the **Apple Entity Update** value to ``00 01 00 31 2C 31 2E 30 2C 30 2E 30 31 34``.
-#. Verify that the UART output is as follows::
+.. tabs::
 
-      AMS EU: 00,01,00 1,1.0,0.014
+   .. group-tab:: nRF52 and nRF53 DKs
 
-   The following table explains the notification.
+      #. Press **Button 2** to start audio playback.
+      #. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``02``.
+      #. Set the **Apple Entity Update** value to ``00 01 00 31 2C 31 2E 30 2C 30 2E 30 31 34``.
+      #. Verify that the UART output is as follows::
 
-   +--------------+-------------+------------------------+
-   | Field        | Value       | Interpretation         |
-   +==============+=============+========================+
-   | Entity ID    | 00          | Player                 |
-   +--------------+-------------+------------------------+
-   | Attribute ID | 01          | Playback Info          |
-   +--------------+-------------+------------------------+
-   | Flags        | 00          |                        |
-   +--------------+-------------+------------------------+
-   | Value        | 1,1.0,0.014 | Playing at rate 1.0.   |
-   |              |             | Elapsed 0.014 seconds. |
-   +--------------+-------------+------------------------+
+            AMS EU: 00,01,00 1,1.0,0.014
+
+         The following table explains the notification.
+
+         +--------------+-------------+------------------------+
+         | Field        | Value       | Interpretation         |
+         +==============+=============+========================+
+         | Entity ID    | 00          | Player                 |
+         +--------------+-------------+------------------------+
+         | Attribute ID | 01          | Playback Info          |
+         +--------------+-------------+------------------------+
+         | Flags        | 00          |                        |
+         +--------------+-------------+------------------------+
+         | Value        | 1,1.0,0.014 | Playing at rate 1.0.   |
+         |              |             | Elapsed 0.014 seconds. |
+         +--------------+-------------+------------------------+
+
+   .. group-tab:: nRF54 DKs
+
+      #. Press **Button 1** to start audio playback.
+      #. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``02``.
+      #. Set the **Apple Entity Update** value to ``00 01 00 31 2C 31 2E 30 2C 30 2E 30 31 34``.
+      #. Verify that the UART output is as follows::
+
+            AMS EU: 00,01,00 1,1.0,0.014
+
+         The following table explains the notification.
+
+         +--------------+-------------+------------------------+
+         | Field        | Value       | Interpretation         |
+         +==============+=============+========================+
+         | Entity ID    | 00          | Player                 |
+         +--------------+-------------+------------------------+
+         | Attribute ID | 01          | Playback Info          |
+         +--------------+-------------+------------------------+
+         | Flags        | 00          |                        |
+         +--------------+-------------+------------------------+
+         | Value        | 1,1.0,0.014 | Playing at rate 1.0.   |
+         |              |             | Elapsed 0.014 seconds. |
+         +--------------+-------------+------------------------+
 
 Next track
 ^^^^^^^^^^
 
-To test the next track feature, complete the following steps:
+.. tabs::
 
-#. Press **Button 3** to jump to next song.
-#. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``03``.
-#. Set the **Apple Entity Update** value to ``02 03 00 31 38 30 2E 30 30 30``.
-#. Verify that the UART output is as follows::
+   .. group-tab:: nRF52 and nRF53 DKs
 
-      AMS EU: 02,03,00 180.000
+      To test the next track feature, complete the following steps:
 
-   The notification shows the updated song duration.
+      #. Press **Button 3** to jump to next song.
+      #. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``03``.
+      #. Set the **Apple Entity Update** value to ``02 03 00 31 38 30 2E 30 30 30``.
+      #. Verify that the UART output is as follows::
 
-#. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 33 20 53 65 72 69 65 73 20 73 6F 6E 67``.
-#. Verify that the UART output is as follows::
+            AMS EU: 02,03,00 180.000
 
-      AMS EU: 02,02,00 nRF53 Series song
+         The notification shows the updated song duration.
 
-   The notification shows the updated song title.
+      #. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 33 20 53 65 72 69 65 73 20 73 6F 6E 67``.
+      #. Verify that the UART output is as follows::
+
+            AMS EU: 02,02,00 nRF53 Series song
+
+         The notification shows the updated song title.
+
+   .. group-tab:: nRF54 DKs
+
+      To test the next track feature, complete the following steps:
+
+      #. Press **Button 2** to jump to next song.
+      #. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``03``.
+      #. Set the **Apple Entity Update** value to ``02 03 00 31 38 30 2E 30 30 30``.
+      #. Verify that the UART output is as follows::
+
+            AMS EU: 02,03,00 180.000
+
+         The notification shows the updated song duration.
+
+      #. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 33 20 53 65 72 69 65 73 20 73 6F 6E 67``.
+      #. Verify that the UART output is as follows::
+
+            AMS EU: 02,02,00 nRF53 Series song
+
+         The notification shows the updated song title.
 
 Disconnect
 ^^^^^^^^^^

@@ -51,11 +51,24 @@ The sample instantiates the following models:
 Devices are nodes with a provisionee role in a mesh network.
 Provisioning is performed using the `nRF Mesh mobile app`_.
 This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth Mesh model instances in the sample.
-After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, **Button 1** on the Mesh Light Dimmer device can be used to control the configured network nodes' LEDs, while **Button 2** can be used to store and restore scenes on the network nodes.
 
-.. note::
-  When running this sample on the :ref:`zephyr:nrf52840dongle_nrf52840`, the scene selection functionality will not be available as the device only has one button.
-  The single button of the dongle will be used for dimming and the on/off functionality as described for **Button 1** in this documentation.
+.. tabs::
+
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+
+      After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, **Button 1** on the Mesh Light Dimmer device can be used to control the configured network nodes' LEDs, while **Button 2** can be used to store and restore scenes on the network nodes.
+
+      .. note::
+        When running this sample on the :ref:`zephyr:nrf52840dongle_nrf52840`, the scene selection functionality will not be available as the device only has one button.
+        The single button of the dongle will be used for dimming and the on/off functionality as described for **Button 1** in this documentation.
+
+   .. group-tab:: nRF54 DKs
+
+      After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, **Button 0** on the Mesh Light Dimmer device can be used to control the configured network nodes' LEDs, while **Button 1** can be used to store and restore scenes on the network nodes.
+
+      .. note::
+        When running this sample on the :ref:`zephyr:nrf52840dongle_nrf52840`, the scene selection functionality will not be available as the device only has one button.
+        The single button of the dongle will be used for dimming and the on/off functionality as described for **Button 0** in this documentation.
 
 Provisioning
 ============
@@ -102,32 +115,57 @@ The model handling is implemented in :file:`src/model_handler.c`, which uses the
 User interface
 **************
 
-Buttons:
-   Can be used to input the out-of-band (OOB) authentication value during provisioning. All buttons have the same functionality during this procedure.
+.. tabs::
 
-Button 1:
-   On press and release, **Button 1** will publish a Generic OnOff Set message using the configured publication parameters of its model instance, and toggle the LED on/off on a :ref:`mesh light fixture <bluetooth_mesh_light_lc>` device.
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
 
-   On press and hold, **Button 1** will publish a Generic Level move set message using the configured publication parameters of its model instance and will continuously dim the LED lightness state on a :ref:`mesh light fixture <bluetooth_mesh_light_lc>` device. On release, the button publishes another Generic Level move set message with the ``delta`` parameter set to 0 and stops the continuous level change from the previous message.
+      Buttons:
+        Can be used to input the out-of-band (OOB) authentication value during provisioning. All buttons have the same functionality during this procedure.
 
-Button 2:
-   On short press and release, **Button 2** will publish a Scene Restore message using the configured publication parameters of its model instance, and restore the LED state of all the targets to the values stored under the current scene number.
-   Each press of the button will recall the next scene, meaning, the first press will recall scene 2, the next press will recall scene 3, and so on, before wrapping around back to scene 1.
+      Button 1:
+        On press and release, **Button 1** will publish a Generic OnOff Set message using the configured publication parameters of its model instance, and toggle the LED on/off on a :ref:`mesh light fixture <bluetooth_mesh_light_lc>` device.
 
-   On long press and release, **Button 2** will publish a Scene Store message using the configured publication parameters of its model instance, and store the current LED state of all the targets under the scene with the most recently recalled scene number.
+        On press and hold, **Button 1** will publish a Generic Level move set message using the configured publication parameters of its model instance and will continuously dim the LED lightness state on a :ref:`mesh light fixture <bluetooth_mesh_light_lc>` device.
+        On release, the button publishes another Generic Level move set message with the ``delta`` parameter set to 0 and stops the continuous level change from the previous message.
 
-  .. note::
-    On the :ref:`zephyr:nrf52840dongle_nrf52840`, the scene selection functionality will not be available as the device only has one button.
+      Button 2:
+        On short press and release, **Button 2** will publish a Scene Restore message using the configured publication parameters of its model instance, and restore the LED state of all the targets to the values stored under the current scene number.
+        Each press of the button will recall the next scene, meaning, the first press will recall scene 2, the next press will recall scene 3, and so on, before wrapping around back to scene 1.
 
-  .. tip::
-    On Thingy:53, **Button 2** can be accessed by removing the top part of the casing.
+        On long press and release, **Button 2** will publish a Scene Store message using the configured publication parameters of its model instance, and store the current LED state of all the targets under the scene with the most recently recalled scene number.
 
-LEDs:
-   Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
+        .. note::
+          On the :ref:`zephyr:nrf52840dongle_nrf52840`, the scene selection functionality will not be available as the device only has one button.
 
-  .. note::
-    :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
-    Each RGB LED channel is used as separate LED.
+        .. tip::
+          On Thingy:53, **Button 2** can be accessed by removing the top part of the casing.
+
+      LEDs:
+        Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
+
+        .. note::
+          :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
+          Each RGB LED channel is used as separate LED.
+
+   .. group-tab:: nRF54 DKs
+
+      Buttons:
+        Can be used to input the out-of-band (OOB) authentication value during provisioning. All buttons have the same functionality during this procedure.
+
+      Button 1:
+        On press and release, **Button 0** will publish a Generic OnOff Set message using the configured publication parameters of its model instance, and toggle the LED on/off on a :ref:`mesh light fixture <bluetooth_mesh_light_lc>` device.
+
+        On press and hold, **Button 0** will publish a Generic Level move set message using the configured publication parameters of its model instance and will continuously dim the LED lightness state on a :ref:`mesh light fixture <bluetooth_mesh_light_lc>` device.
+        On release, the button publishes another Generic Level move set message with the ``delta`` parameter set to 0 and stops the continuous level change from the previous message.
+
+      Button 2:
+        On short press and release, **Button 1** will publish a Scene Restore message using the configured publication parameters of its model instance, and restore the LED state of all the targets to the values stored under the current scene number.
+        Each press of the button will recall the next scene, meaning, the first press will recall scene 2, the next press will recall scene 3, and so on, before wrapping around back to scene 1.
+
+        On long press and release, **Button 1** will publish a Scene Store message using the configured publication parameters of its model instance, and store the current LED state of all the targets under the scene with the most recently recalled scene number.
+
+      LEDs:
+        Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
 
 Configuration
 *************
@@ -188,10 +226,21 @@ Configure the first element on the target **Mesh Light Fixture** node:
 
 You should now be able to perform the following actions:
 
-* Press and release **Button 1** to see the LED on the target Mesh Light Fixture device toggle on and off.
-* Press and hold **Button 1** to see the light level of the LED on the target Mesh Light Fixture device slowly decrease or increase.
-* Short press and release **Button 2** to rotate through scenes, recalling each of them in turn.
-* Long press and release **Button 2** to store the current LED states as a scene with the current scene number.
+.. tabs::
+
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+
+      * Press and release **Button 1** to see the LED on the target Mesh Light Fixture device toggle on and off.
+      * Press and hold **Button 1** to see the light level of the LED on the target Mesh Light Fixture device slowly decrease or increase.
+      * Short press and release **Button 2** to rotate through scenes, recalling each of them in turn.
+      * Long press and release **Button 2** to store the current LED states as a scene with the current scene number.
+
+   .. group-tab:: nRF54 DKs
+
+      * Press and release **Button 0** to see the LED on the target Mesh Light Fixture device toggle on and off.
+      * Press and hold **Button 0** to see the light level of the LED on the target Mesh Light Fixture device slowly decrease or increase.
+      * Short press and release **Button 1** to rotate through scenes, recalling each of them in turn.
+      * Long press and release **Button 1** to store the current LED states as a scene with the current scene number.
 
 .. note::
   When controlling a Mesh Light Fixture device using the Mesh Light Dimmer device, the Light LC Server control will be temporarily disabled for the Mesh Light Fixture device.

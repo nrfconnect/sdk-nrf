@@ -58,11 +58,23 @@ See the `System OFF mode`_ page in the nRF52840 Product Specification for more i
 User interface
 **************
 
-LED 1:
-   Lit when an NFC field is present within range.
+.. tabs::
 
-LED 2:
-   Lit when the system is on.
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      LED 1:
+         Lit when an NFC field is present within range.
+
+      LED 2:
+         Lit when the system is on.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Lit when an NFC field is present within range.
+
+      LED 1:
+         Lit when the system is on.
 
 Building and running
 ********************
@@ -79,18 +91,37 @@ Testing
 
 After programming the sample to your development kit, complete the following steps to test it:
 
-1. Observe that **LED 2** on the Tag device turns off three seconds after the programming has completed.
-   This indicates that the system is in the System OFF mode.
-#. Make sure that the NFC feature is activated on the smartphone or tablet.
-   Check the device documentation on how to enable the NFC feature.
-#. With the smartphone or tablet, touch the NFC antenna of the NFC Tag device.
-#. Observe that **LED 2** on the Tag device is lit, followed by **LED 1** shortly after that.
-   Also a "Hello World!" notification appears on the smartphone or tablet.
-   The notification text is obtained from NFC.
-#. Move the smartphone or tablet away from the NFC antenna.
-   **LED 1** turns off.
-#. Observe that **LED 2** on the Tag device turns off after three seconds.
-   This indicates that system is in the System OFF mode again.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. Observe that **LED 2** on the Tag device turns off three seconds after the programming has completed.
+         This indicates that the system is in the System OFF mode.
+      #. Make sure that the NFC feature is activated on the smartphone or tablet.
+         Check the device documentation on how to enable the NFC feature.
+      #. With the smartphone or tablet, touch the NFC antenna of the NFC Tag device.
+      #. Observe that **LED 2** on the Tag device is lit, followed by **LED 1** shortly after that.
+         Also a "Hello World!" notification appears on the smartphone or tablet.
+         The notification text is obtained from NFC.
+      #. Move the smartphone or tablet away from the NFC antenna.
+         **LED 1** turns off.
+      #. Observe that **LED 2** on the Tag device turns off after three seconds.
+         This indicates that system is in the System OFF mode again.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Observe that **LED 1** on the Tag device turns off three seconds after the programming has completed.
+         This indicates that the system is in the System OFF mode.
+      #. Make sure that the NFC feature is activated on the smartphone or tablet.
+         Check the device documentation on how to enable the NFC feature.
+      #. With the smartphone or tablet, touch the NFC antenna of the NFC Tag device.
+      #. Observe that **LED 1** on the Tag device is lit, followed by **LED 0** shortly after that.
+         Also a "Hello World!" notification appears on the smartphone or tablet.
+         The notification text is obtained from NFC.
+      #. Move the smartphone or tablet away from the NFC antenna.
+         **LED 0** turns off.
+      #. Observe that **LED 1** on the Tag device turns off after three seconds.
+         This indicates that system is in the System OFF mode again.
 
 Dependencies
 ************

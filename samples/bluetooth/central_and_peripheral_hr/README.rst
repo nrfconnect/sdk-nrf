@@ -54,14 +54,29 @@ It collects data from a remote device with Heart Rate Service that is sending no
 User interface
 **************
 
-LED 1:
-   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+.. tabs::
 
-LED 2:
-   Lit when the development kit is connected as central.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-LED 3:
-  Lit when the development kit is connected as peripheral.
+      LED 1:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+
+      LED 2:
+         Lit when the development kit is connected as central.
+
+      LED 3:
+         Lit when the development kit is connected as peripheral.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+
+      LED 1:
+         Lit when the development kit is connected as central.
+
+      LED 2:
+         Lit when the development kit is connected as peripheral.
 
 Building and running
 ********************
@@ -80,80 +95,164 @@ After programming the sample to your development kit, test it either by connecti
 Testing with other development kits
 -----------------------------------
 
-1. |connect_terminal_specific|
-#. Program the other development kit with the :ref:`zephyr:peripheral_hr` sample and reset it.
-#. Wait until the HRS is detected by the central.
-   Observe that **LED 2** is on.
-#. In the terminal window, check for information similar to the following::
+.. tabs::
 
-        Heart Rate Sensor body location: Chest
-        Heart Rate Measurement notification received:
+   .. group-tab:: nRF52 and nRF53 DKs
 
-            Heart Rate Measurement Value Format: 8 - bit
-            Sensor Contact detected: 1
-            Sensor Contact supported: 1
-            Energy Expended present: 0
-            RR-Intervals present: 0
+      1. |connect_terminal_specific|
+      #. Program the other development kit with the :ref:`zephyr:peripheral_hr` sample and reset it.
+      #. Wait until the HRS is detected by the central.
+         Observe that **LED 2** is on.
+      #. In the terminal window, check for information similar to the following::
 
-            Heart Rate Measurement Value: 134 bpm
+            Heart Rate Sensor body location: Chest
+            Heart Rate Measurement notification received:
 
-   Notifications will be displayed periodically with a frequency determined by the HR server.
+                  Heart Rate Measurement Value Format: 8 - bit
+                  Sensor Contact detected: 1
+                  Sensor Contact supported: 1
+                  Energy Expended present: 0
+                  RR-Intervals present: 0
 
-#. Program another development kit with the :ref:`zephyr:bluetooth_central_hr` sample and reset it.
-#. Wait until central is connected to your development kit.
-   Observe that **LED 3** is lit.
-#. In terminal windows connected to device with the :ref:`zephyr:bluetooth_central_hr` sample, check for information similar to following::
+                  Heart Rate Measurement Value: 134 bpm
 
-        [NOTIFICATION] data 0x20006779 length 2
+         Notifications will be displayed periodically with a frequency determined by the HR server.
 
-The sample works now as relay for the Heart Rate Service.
+      #. Program another development kit with the :ref:`zephyr:bluetooth_central_hr` sample and reset it.
+      #. Wait until central is connected to your development kit.
+         Observe that **LED 3** is lit.
+      #. In terminal windows connected to device with the :ref:`zephyr:bluetooth_central_hr` sample, check for information similar to following::
+
+            [NOTIFICATION] data 0x20006779 length 2
+
+      The sample works now as relay for the Heart Rate Service.
+
+   .. group-tab:: nRF54 DKs
+
+      1. |connect_terminal_specific|
+      #. Program the other development kit with the :ref:`zephyr:peripheral_hr` sample and reset it.
+      #. Wait until the HRS is detected by the central.
+         Observe that **LED 1** is on.
+      #. In the terminal window, check for information similar to the following::
+
+            Heart Rate Sensor body location: Chest
+            Heart Rate Measurement notification received:
+
+                  Heart Rate Measurement Value Format: 8 - bit
+                  Sensor Contact detected: 1
+                  Sensor Contact supported: 1
+                  Energy Expended present: 0
+                  RR-Intervals present: 0
+
+                  Heart Rate Measurement Value: 134 bpm
+
+         Notifications will be displayed periodically with a frequency determined by the HR server.
+
+      #. Program another development kit with the :ref:`zephyr:bluetooth_central_hr` sample and reset it.
+      #. Wait until central is connected to your development kit.
+         Observe that **LED 2** is lit.
+      #. In terminal windows connected to device with the :ref:`zephyr:bluetooth_central_hr` sample, check for information similar to following::
+
+            [NOTIFICATION] data 0x20006779 length 2
+
+      The sample works now as relay for the Heart Rate Service.
 
 Testing with nRF Connect for Desktop
 ------------------------------------
-1. |connect_terminal_specific|
-#. Reset the development kit.
-#. Start `nRF Connect for Desktop`_.
-#. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
-#. Open the **SERVER SETUP** tab.
-#. Click the dongle configuration and select :guilabel:`Load setup`.
-#. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
-#. Click :guilabel:`Apply to device`.
-#. Open the **CONNECTION MAP** tab.
-#. Click the dongle configuration (gear icon) and select :guilabel:`Advertising setup`.
 
-   The current version of nRF Connect can store the advertising setup.
+.. tabs::
 
-#. Click :guilabel:`Load setup`.
-   Load the :file:`hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
-#. Click :guilabel:`Apply` and :guilabel:`Close`.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-#. Click the gear icon to open the Adapter settings and select :guilabel:`Start advertising`.
-#. Wait until the development kit running the Central and Peripheral HRS connects.
-   Observe that **LED 2** is lit.
-#. To explore the Heart Rate Measurement characteristic, complete the following steps:
+      1. |connect_terminal_specific|
+      #. Reset the development kit.
+      #. Start `nRF Connect for Desktop`_.
+      #. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
+      #. Open the **SERVER SETUP** tab.
+      #. Click the dongle configuration and select :guilabel:`Load setup`.
+      #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
+      #. Click :guilabel:`Apply to device`.
+      #. Open the **CONNECTION MAP** tab.
+      #. Click the dongle configuration (gear icon) and select :guilabel:`Advertising setup`.
 
-   a. Write value ``06 80`` and click the :guilabel:`Play` button to send a notification.
-      In the terminal window, check for information similar to the following::
+         The current version of nRF Connect can store the advertising setup.
 
-        Heart Rate Sensor body location: Chest
-        Heart Rate Measurement notification received:
+      #. Click :guilabel:`Load setup`.
+         Load the :file:`hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
+      #. Click :guilabel:`Apply` and :guilabel:`Close`.
+      #. Click the gear icon to open the Adapter settings and select :guilabel:`Start advertising`.
+      #. Wait until the development kit running the Central and Peripheral HRS connects.
+         Observe that **LED 2** is lit.
+      #. To explore the Heart Rate Measurement characteristic, complete the following steps:
 
-            Heart Rate Measurement Value Format: 8 - bit
-            Sensor Contact detected: 1
-            Sensor Contact supported: 1
-            Energy Expended present: 0
-            RR-Intervals present: 0
+         a. Write value ``06 80`` and click the :guilabel:`Play` button to send a notification.
+            In the terminal window, check for information similar to the following::
 
-            Heart Rate Measurement Value: 128 bpm
+               Heart Rate Sensor body location: Chest
+               Heart Rate Measurement notification received:
 
-      The Bluetooth Low Energy app also detects the Central and Peripheral HRS sample Heart Rate Service.
+                     Heart Rate Measurement Value Format: 8 - bit
+                     Sensor Contact detected: 1
+                     Sensor Contact supported: 1
+                     Energy Expended present: 0
+                     RR-Intervals present: 0
 
-   #. Enable the notification for the Heart Rate Measurement characteristic.
-   #. Write again value ``06 80`` and click the :guilabel:`Play` button to send a notification.
+                     Heart Rate Measurement Value: 128 bpm
 
-      The same value appears for the Heart Rate Measurement characteristic.
+            The Bluetooth Low Energy app also detects the Central and Peripheral HRS sample Heart Rate Service.
 
-The sample works now as relay for the Heart Rate Service.
+         #. Enable the notification for the Heart Rate Measurement characteristic.
+         #. Write again value ``06 80`` and click the :guilabel:`Play` button to send a notification.
+
+            The same value appears for the Heart Rate Measurement characteristic.
+
+      The sample works now as relay for the Heart Rate Service.
+
+   .. group-tab:: nRF54 DKs
+
+      1. |connect_terminal_specific|
+      #. Reset the development kit.
+      #. Start `nRF Connect for Desktop`_.
+      #. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
+      #. Open the **SERVER SETUP** tab.
+      #. Click the dongle configuration and select :guilabel:`Load setup`.
+      #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
+      #. Click :guilabel:`Apply to device`.
+      #. Open the **CONNECTION MAP** tab.
+      #. Click the dongle configuration (gear icon) and select :guilabel:`Advertising setup`.
+
+         The current version of nRF Connect can store the advertising setup.
+
+      #. Click :guilabel:`Load setup`.
+         Load the :file:`hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
+      #. Click :guilabel:`Apply` and :guilabel:`Close`.
+      #. Click the gear icon to open the Adapter settings and select :guilabel:`Start advertising`.
+      #. Wait until the development kit running the Central and Peripheral HRS connects.
+         Observe that **LED 1** is lit.
+      #. To explore the Heart Rate Measurement characteristic, complete the following steps:
+
+         a. Write value ``06 80`` and click the :guilabel:`Play` button to send a notification.
+            In the terminal window, check for information similar to the following::
+
+               Heart Rate Sensor body location: Chest
+               Heart Rate Measurement notification received:
+
+                     Heart Rate Measurement Value Format: 8 - bit
+                     Sensor Contact detected: 1
+                     Sensor Contact supported: 1
+                     Energy Expended present: 0
+                     RR-Intervals present: 0
+
+                     Heart Rate Measurement Value: 128 bpm
+
+            The Bluetooth Low Energy app also detects the Central and Peripheral HRS sample Heart Rate Service.
+
+         #. Enable the notification for the Heart Rate Measurement characteristic.
+         #. Write again value ``06 80`` and click the :guilabel:`Play` button to send a notification.
+
+            The same value appears for the Heart Rate Measurement characteristic.
+
+      The sample works now as relay for the Heart Rate Service.
 
 Dependencies
 ************

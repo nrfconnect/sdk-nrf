@@ -35,10 +35,21 @@ The sample demonstrates the following features:
  * How to provide the isochronous data to the controller right before it is sent on-air.
  * How to achieve this for either broadcast (BIS) or over connections (CIS).
 
-This sample configures a single device as a transmitter of its **BUTTON1** state.
-The transmitting and receiving devices toggle **LED1** synchronously with the accuracy of a few microseconds.
-When the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED2** is toggled upon sending or receiving data.
-This allows you to measure the minimal end-to-end latency.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      This sample configures a single device as a transmitter of its **Button 1** state.
+      The transmitting and receiving devices toggle **LED 1** synchronously with the accuracy of a few microseconds.
+      When the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 2** is toggled upon sending or receiving data.
+      This allows you to measure the minimal end-to-end latency.
+
+   .. group-tab:: nRF54 DKs
+
+      This sample configures a single device as a transmitter of its **Button 0** state.
+      The transmitting and receiving devices toggle **LED 0** synchronously with the accuracy of a few microseconds.
+      When the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 1** is toggled upon sending or receiving data.
+      This allows you to measure the minimal end-to-end latency.
 
 .. note::
    This sample requires less hardware resources when it is run on an nRF54L Series device compared to the nRF52 or nRF53 Series devices.
@@ -58,7 +69,7 @@ Check and configure the following Kconfig options:
 .. _CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE:
 
 CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE
-   This configuration option enables immediate toggling of **LED2** when isochronous data is sent or received.
+   This configuration option enables immediate toggling of **LED 2** (nRF52 and nRF53 DKs) or **LED 1** (nRF54 DKs) when isochronous data is sent or received.
    It allows for measurement of the minimum end-to-end latency.
 
 .. _CONFIG_SDU_INTERVAL_US:
@@ -165,36 +176,74 @@ The sample code is divided into multiple source files, which makes it easier to 
 
   When a valid SDU is received, the following operations are performed:
 
-  * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED2** is toggled immediately.
-    You can use this to observe that different receivers may receive the SDU at different points in time.
-  * A timer trigger is configured to toggle **LED1** :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` after the received timestamp.
-    This ensures that all receivers and the transmitter toggle it at the same time.
+.. tabs::
 
-``iso_tx.c``
-  This file handles time-synchronized transmitting of isochronous data on all established streams.
-  Each SDU contains a counter and the current value of **BUTTON1**.
-  The implementation ensures the following:
+   .. group-tab:: nRF52 and nRF53 DKs
 
-  * The SDU is transmitted right before it is supposed to be sent on air.
-    This is achieved by setting up a timer to trigger right before the next TX timestamp.
-  * The SDU is transmitted on all the established isochronous channels with the same timestamp.
-    This ensures that all the receivers can toggle their corresponding LEDs at the same time.
-    The very first SDU is provided without a timestamp, because the timestamp is not known at this point in time.
-  * **LED1** is configured to toggle synchronously with the **LED1** on all the receivers.
-    The toggle time is determined by the TX timestamp and defined relative to the synchronization reference on the receiver.
-  * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED2** is toggled right before sending the SDU.
-    You can use this to observe the end-to-end latency.
+      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 2** is toggled immediately.
+        You can use this to observe that different receivers may receive the SDU at different points in time.
+      * A timer trigger is configured to toggle **LED 1** :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` after the received timestamp.
+        This ensures that all receivers and the transmitter toggle it at the same time.
 
-``timed_led_toggle.c``
-  This file implements timed toggling a LED.
-  The ``GPIOTE`` peripheral is used together with ``PPI`` to achieve accurate timing.
+    ``iso_tx.c``
+      This file handles time-synchronized transmitting of isochronous data on all established streams.
+      Each SDU contains a counter and the current value of **Button 1**.
+      The implementation ensures the following:
 
-``controller_time_<device>.c``
-  The SDU timestamps sent to and received from the controller are based upon the controller clock.
-  These files allow the application to read the current timestamp and set up a PPI trigger at a given point in time.
+      * The SDU is transmitted right before it is supposed to be sent on air.
+        This is achieved by setting up a timer to trigger right before the next TX timestamp.
+      * The SDU is transmitted on all the established isochronous channels with the same timestamp.
+        This ensures that all the receivers can toggle their corresponding LEDs at the same time.
+        The very first SDU is provided without a timestamp, because the timestamp is not known at this point in time.
+      * **LED 1** is configured to toggle synchronously with the **LED 1** on all the receivers.
+        The toggle time is determined by the TX timestamp and defined relative to the synchronization reference on the receiver.
+      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 2** is toggled right before sending the SDU.
+        You can use this to observe the end-to-end latency.
 
-  The implementation for nRF52 and nRF53 Series devices is implemented by shadowing an RTC peripheral combined with a timer peripheral.
-  The implementation for nRF54L Series devices uses the GRTC and is simpler to use.
+    ``timed_led_toggle.c``
+      This file implements timed toggling a LED.
+      The ``GPIOTE`` peripheral is used together with ``PPI`` to achieve accurate timing.
+
+    ``controller_time_<device>.c``
+      The SDU timestamps sent to and received from the controller are based upon the controller clock.
+      These files allow the application to read the current timestamp and set up a PPI trigger at a given point in time.
+
+      The implementation for nRF52 and nRF53 Series devices is implemented by shadowing an RTC peripheral combined with a timer peripheral.
+      The implementation for nRF54L Series devices uses the GRTC and is simpler to use.
+
+   .. group-tab:: nRF54 DKs
+
+      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 1** is toggled immediately.
+        You can use this to observe that different receivers may receive the SDU at different points in time.
+      * A timer trigger is configured to toggle **LED 0** :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` after the received timestamp.
+        This ensures that all receivers and the transmitter toggle it at the same time.
+
+    ``iso_tx.c``
+      This file handles time-synchronized transmitting of isochronous data on all established streams.
+      Each SDU contains a counter and the current value of **Button 0**.
+      The implementation ensures the following:
+
+      * The SDU is transmitted right before it is supposed to be sent on air.
+        This is achieved by setting up a timer to trigger right before the next TX timestamp.
+      * The SDU is transmitted on all the established isochronous channels with the same timestamp.
+        This ensures that all the receivers can toggle their corresponding LEDs at the same time.
+        The very first SDU is provided without a timestamp, because the timestamp is not known at this point in time.
+      * **LED 0** is configured to toggle synchronously with the **LED 0** on all the receivers.
+        The toggle time is determined by the TX timestamp and defined relative to the synchronization reference on the receiver.
+      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 1** is toggled right before sending the SDU.
+        You can use this to observe the end-to-end latency.
+
+    ``timed_led_toggle.c``
+      This file implements timed toggling a LED.
+      The ``GPIOTE`` peripheral is used together with ``PPI`` to achieve accurate timing.
+
+    ``controller_time_<device>.c``
+      The SDU timestamps sent to and received from the controller are based upon the controller clock.
+      These files allow the application to read the current timestamp and set up a PPI trigger at a given point in time.
+
+      The implementation for nRF52 and nRF53 Series devices is implemented by shadowing an RTC peripheral combined with a timer peripheral.
+      The implementation for nRF54L Series devices uses the GRTC and is simpler to use.
+
 
 Building and running
 ********************
@@ -213,39 +262,86 @@ Testing broadcast isochronous streams
 
 After programming the sample to the development kits, perform the following steps to test it:
 
-1. |connect_terminal_specific|
-#. Reset the kits.
-#. Configure one of the devices as an isochronous broadcaster by typing either ``b`` or ``c`` in the terminal emulator.
-#. Configure the number of retransmissions and maximum transport latency.
-#. Observe that the broadcaster starts and begins to transmit SDUs.
-#. On the other terminal(s), type ``r`` to configure the device(s) as receivers of the broadcast isochronous stream.
-#. Select which BIS the receiver should synchronize to.
-#. Observe that the device(s) synchronize to the broadcaster and start receiving isochronous data.
-#. Press **BUTTON1** on the broadcaster.
-#. Observe that **LED1** toggles on both the broadcaster and the receivers.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. |connect_terminal_specific|
+      #. Reset the kits.
+      #. Configure one of the devices as an isochronous broadcaster by typing either ``b`` or ``c`` in the terminal emulator.
+      #. Configure the number of retransmissions and maximum transport latency.
+      #. Observe that the broadcaster starts and begins to transmit SDUs.
+      #. On the other terminal(s), type ``r`` to configure the device(s) as receivers of the broadcast isochronous stream.
+      #. Select which BIS the receiver should synchronize to.
+      #. Observe that the device(s) synchronize to the broadcaster and start receiving isochronous data.
+      #. Press **Button 1** on the broadcaster.
+      #. Observe that **LED 1** toggles on both the broadcaster and the receivers.
+
+   .. group-tab:: nRF54 DKs
+
+      1. |connect_terminal_specific|
+      #. Reset the kits.
+      #. Configure one of the devices as an isochronous broadcaster by typing either ``b`` or ``c`` in the terminal emulator.
+      #. Configure the number of retransmissions and maximum transport latency.
+      #. Observe that the broadcaster starts and begins to transmit SDUs.
+      #. On the other terminal(s), type ``r`` to configure the device(s) as receivers of the broadcast isochronous stream.
+      #. Select which BIS the receiver should synchronize to.
+      #. Observe that the device(s) synchronize to the broadcaster and start receiving isochronous data.
+      #. Press **Button 0** on the broadcaster.
+      #. Observe that **LED 0** toggles on both the broadcaster and the receivers.
 
 Testing connected isochronous streams
 =====================================
 
 After programming the sample to the development kits, perform the following steps to test it:
 
-1. |connect_terminal_specific|
-#. Reset the kits.
-#. Configure one of the devices as a connected isochronous stream central by typing ``c`` in the terminal emulator.
-#. Configure the number of retransmissions and the maximum transport latency.
-#. Select data direction.
-   If the central is configured for transmission, it connects to multiple peripherals.
-#. On the other terminal(s), type ``p`` to configure the device(s) as connected isochronous stream peripheral(s).
-#. Select data direction.
-#. Observe that the peripheral(s) connect to the central and start receiving isochronous data.
-#. Press **BUTTON1** on the central device.
-#. Observe that **LED1** toggles on both the central and peripheral devices.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. |connect_terminal_specific|
+      #. Reset the kits.
+      #. Configure one of the devices as a connected isochronous stream central by typing ``c`` in the terminal emulator.
+      #. Configure the number of retransmissions and the maximum transport latency.
+      #. Select data direction.
+         If the central is configured for transmission, it connects to multiple peripherals.
+
+      #. On the other terminal(s), type ``p`` to configure the device(s) as connected isochronous stream peripheral(s).
+      #. Select data direction.
+      #. Observe that the peripheral(s) connect to the central and start receiving isochronous data.
+      #. Press **Button 1** on the central device.
+      #. Observe that **LED 1** toggles on both the central and peripheral devices.
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. |connect_terminal_specific|
+      #. Reset the kits.
+      #. Configure one of the devices as a connected isochronous stream central by typing ``c`` in the terminal emulator.
+      #. Configure the number of retransmissions and the maximum transport latency.
+      #. Select data direction.
+         If the central is configured for transmission, it connects to multiple peripherals.
+
+      #. On the other terminal(s), type ``p`` to configure the device(s) as connected isochronous stream peripheral(s).
+      #. Select data direction.
+      #. Observe that the peripheral(s) connect to the central and start receiving isochronous data.
+      #. Press **Button 0** on the central device.
+      #. Observe that **LED 0** toggles on both the central and peripheral devices.
+
 
 Observe time-synchronized ISO data processing
 =============================================
 
-When you press **BUTTON1** on the transmitting device, you can observe that **LED1** toggles simultaneously on all devices.
-To observe the accurate toggling, use a logic analyzer or an oscilloscope.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      When you press **Button 1** on the transmitting device, you can observe that **LED 1** toggles simultaneously on all devices.
+      To observe the accurate toggling, use a logic analyzer or an oscilloscope.
+
+   .. group-tab:: nRF54 DKs
+
+      When you press **Button 0** on the transmitting device, you can observe that **LED 0** toggles simultaneously on all devices.
+      To observe the accurate toggling, use a logic analyzer or an oscilloscope.
 
 Sample output
 *************

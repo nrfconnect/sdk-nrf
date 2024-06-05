@@ -43,11 +43,23 @@ After disconnection, the connectable advertising starts again.
 User interface
 **************
 
-LED 1:
-   Blinks with a period of two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
+.. tabs::
 
-LED 2:
-   Lit when the development kit is connected.
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      LED 1:
+         Blinks with a period of two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
+
+      LED 2:
+         Lit when the development kit is connected.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Blinks with a period of two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
+
+      LED 1:
+         Lit when the development kit is connected.
 
 Building and running
 ********************

@@ -95,7 +95,7 @@ User interface
 **************
 
 Development kit buttons:
-      During the provisioning process, the buttons (1 to 4) can be used for OOB input.
+      During the provisioning process, all buttons can be used for OOB input.
       Once the provisioning and configuration are completed, the buttons are not used.
 
 EnOcean buttons:
@@ -103,7 +103,7 @@ EnOcean buttons:
       Pressing and holding the button on the EnOcean switch publishes a Level message using the configured publication parameters of its model instance, and changes the emitted LED light level on the :ref:`mesh light <bluetooth_mesh_light_lc>` device.
 
 LEDs:
-   During the provisioning process, the LEDs (1 to 4) are used to output the OOB actions.
+   During the provisioning process, all LEDs are used to output the OOB actions.
    Once the provisioning and configuration are completed, the LEDs are used to reflect the status of actions, and they show the last known OnOff/Level state of the corresponding button.
    It will not change its emitted LED light level, it will only be on or off.
 

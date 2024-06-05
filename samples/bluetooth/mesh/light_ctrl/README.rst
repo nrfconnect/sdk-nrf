@@ -129,22 +129,38 @@ The model handling is implemented in :file:`src/model_handler.c`, which uses the
 User interface
 **************
 
-Buttons:
-   Can be used to input the out-of-band (OOB) authentication value during provisioning.
-   All buttons have the same functionality during this procedure.
-   If the :ref:`emds_readme` feature is enabled and the provisioning and configuration are complete, **Button 4** can be used to trigger storing for data with emergency data storage and halt the system.
+.. tabs::
 
-LEDs:
-   Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
-   First LED outputs the current light level of the Light Lightness Server in the first element.
-   If the :ref:`emds_readme` feature is enabled and **Button 4** is pressed LEDs 2 to 4 will light up to show that the board is halted.
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
 
-.. note::
-   :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
-   Each RGB LED channel is used as separate LED.
+      Buttons:
+        Can be used to input the out-of-band (OOB) authentication value during provisioning.
+        All buttons have the same functionality during this procedure.
+        If the :ref:`emds_readme` feature is enabled and the provisioning and configuration are complete, **Button 4** can be used to trigger storing for data with emergency data storage and halt the system.
 
-.. note::
-   :ref:`zephyr:thingy53_nrf5340` and the :ref:`zephyr:nrf52840dongle_nrf52840` do not support emergency data storage.
+      LEDs:
+        Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
+        First LED outputs the current light level of the Light Lightness Server in the first element.
+        If the :ref:`emds_readme` feature is enabled and **Button 4** is pressed **LEDs 2** to **LED 4** will light up to show that the board is halted.
+
+      .. note::
+        :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
+        Each RGB LED channel is used as separate LED.
+
+      .. note::
+        :ref:`zephyr:thingy53_nrf5340` and the :ref:`zephyr:nrf52840dongle_nrf52840` do not support emergency data storage.
+
+   .. group-tab:: nRF54 DKs
+
+      Buttons:
+        Can be used to input the out-of-band (OOB) authentication value during provisioning.
+        All buttons have the same functionality during this procedure.
+        If the :ref:`emds_readme` feature is enabled and the provisioning and configuration are complete, **Button 3** can be used to trigger storing for data with emergency data storage and halt the system.
+
+      LEDs:
+        Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
+        First LED outputs the current light level of the Light Lightness Server in the first element.
+        If the :ref:`emds_readme` feature is enabled and **Button 3** is pressed **LEDs 1** to **LED 3** will light up to show that the board is halted.
 
 Configuration
 *************
@@ -197,8 +213,17 @@ Testing
 After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
-When the development kit is started, it will keep its previous Light state as the ``BT_MESH_ON_POWER_UP_RESTORE`` is set for the :ref:`bt_mesh_lightness_srv_readme`.
-When :ref:`emds_readme` is enabled it is important that the **Button 4** is used to store the data before the development kit is halted and then restarted.
+.. tabs::
+
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+
+      When the development kit is started, it will keep its previous Light state as the ``BT_MESH_ON_POWER_UP_RESTORE`` is set for the :ref:`bt_mesh_lightness_srv_readme`.
+      When :ref:`emds_readme` is enabled it is important that the **Button 4** is used to store the data before the development kit is halted and then restarted.
+
+   .. group-tab:: nRF54 DKs
+
+      When the development kit is started, it will keep its previous Light state as the ``BT_MESH_ON_POWER_UP_RESTORE`` is set for the :ref:`bt_mesh_lightness_srv_readme`.
+      When :ref:`emds_readme` is enabled it is important that the **Button 3** is used to store the data before the development kit is halted and then restarted.
 
 Provisioning the device
 -----------------------

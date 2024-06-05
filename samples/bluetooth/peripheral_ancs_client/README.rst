@@ -23,23 +23,47 @@ The sample also requires a device running an ANCS Server to connect with (for ex
 User interface
 **************
 
-LED 1:
-   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+.. tabs::
 
-LED 2:
-   Lit when connected.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-Button 1:
-   Request iOS notification attributes (content) on UART.
+      LED 1:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
 
-Button 2:
-   Request iOS app attributes on UART.
+      LED 2:
+         Lit when connected.
 
-Button 3:
-   Perform a positive action as a response to the last received notification.
+      Button 1:
+         Request iOS notification attributes (content) on UART.
 
-Button 4:
-   Perform a negative action as a response to the last received notification.
+      Button 2:
+         Request iOS app attributes on UART.
+
+      Button 3:
+         Perform a positive action as a response to the last received notification.
+
+      Button 4:
+         Perform a negative action as a response to the last received notification.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+
+      LED 1:
+         Lit when connected.
+
+      Button 0:
+         Request iOS notification attributes (content) on UART.
+
+      Button 1:
+         Request iOS app attributes on UART.
+
+      Button 2:
+         Perform a positive action as a response to the last received notification.
+
+      Button 3:
+         Perform a negative action as a response to the last received notification.
 
 Building and running
 ********************
@@ -58,15 +82,31 @@ After programming the sample to your development kit, you can test it either by 
 Testing with an iOS device
 --------------------------
 
-#. |connect_terminal_specific|
-#. Reset the kit.
-#. Select the device in the iOS settings Bluetooth menu and connect.
-#. Observe that notifications that are displayed in the iOS notification tab also show up on the UART from the sample.
-#. Press **Button 1** to retrieve the notification attributes and observe that you receive, among other information, the app identifier for the last received notification.
-   For example, if you got a notification from the Calendar app and request the app identifier, it is "com.apple.mobilecal".
-#. Press **Button 2** to retrieve the app attributes and observe that you receive the display name for the app identifier from the previous step.
-   For example, requesting the app attributes for "com.apple.mobilecal" yields "Calendar".
-#. If the notification has a flag for a positive or negative action, perform the notification action with **Button 3** or **Button 4**, respectively.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      #. |connect_terminal_specific|
+      #. Reset the kit.
+      #. Select the device in the iOS settings Bluetooth menu and connect.
+      #. Observe that notifications that are displayed in the iOS notification tab also show up on the UART from the sample.
+      #. Press **Button 1** to retrieve the notification attributes and observe that you receive, among other information, the app identifier for the last received notification.
+         For example, if you got a notification from the Calendar app and request the app identifier, it is "com.apple.mobilecal".
+      #. Press **Button 2** to retrieve the app attributes and observe that you receive the display name for the app identifier from the previous step.
+         For example, requesting the app attributes for "com.apple.mobilecal" yields "Calendar".
+      #. If the notification has a flag for a positive or negative action, perform the notification action with **Button 3** or **Button 4**, respectively.
+
+   .. group-tab:: nRF54 DKs
+
+      #. |connect_terminal_specific|
+      #. Reset the kit.
+      #. Select the device in the iOS settings Bluetooth menu and connect.
+      #. Observe that notifications that are displayed in the iOS notification tab also show up on the UART from the sample.
+      #. Press **Button 0** to retrieve the notification attributes and observe that you receive, among other information, the app identifier for the last received notification.
+         For example, if you got a notification from the Calendar app and request the app identifier, it is "com.apple.mobilecal".
+      #. Press **Button 1** to retrieve the app attributes and observe that you receive the display name for the app identifier from the previous step.
+         For example, requesting the app attributes for "com.apple.mobilecal" yields "Calendar".
+      #. If the notification has a flag for a positive or negative action, perform the notification action with **Button 2** or **Button 3**, respectively.
 
 Testing with nRF Connect for Desktop
 ------------------------------------
@@ -144,8 +184,17 @@ The following table shows the format of the message that the application must se
    |                  | 01            | Negative                    |
    +------------------+---------------+-----------------------------+
 
-* Press **Button 3** to perform a positive action and verify that the **Apple Control Point** value is updated to ``02 01 02 03 04 00``.
-* You can also press **Button 4** and observe that the server receives a negative action ``02 01 02 03 04 01``.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      * Press **Button 3** to perform a positive action and verify that the **Apple Control Point** value is updated to ``02 01 02 03 04 00``.
+      * You can also press **Button 4** and observe that the server receives a negative action ``02 01 02 03 04 01``.
+
+   .. group-tab:: nRF54 DKs
+
+      * Press **Button 2** to perform a positive action and verify that the **Apple Control Point** value is updated to ``02 01 02 03 04 00``.
+      * You can also press **Button 3** and observe that the server receives a negative action ``02 01 02 03 04 01``.
 
 Retrieve notification attributes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -200,20 +249,42 @@ The following table shows the format of a response that contains some of the req
    | Data             | 63 6F 6D      | "com"                       |
    +------------------+---------------+-----------------------------+
 
-#. Press **Button 1** to request notification attributes for the iOS notification that was received.
-#. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``00 01 02 03 04 00 01 20 00 02 20 00 03 20 00 04 05 06 07``.
-#. Respond to the request by sending two notification attributes: the title and the message.
-   Set the **Apple Data Source** value in the Server to ``00 01 02 03 04 01 03 00 6E 52 46 03 02 00 35 32``.
-#. The application will print the received data on UART.
-   Verify that the UART output is as follows::
 
-      Title: nRF
-      Message: 52
+.. tabs::
 
-#. Update the **Apple Data Source** value again with the app identifier ``00 03 00 63 6F 6D``.
-#. Verify that the notification is received and the UART output is as follows::
+   .. group-tab:: nRF52 and nRF53 DKs
 
-      App Identifier: com
+      #. Press **Button 1** to request notification attributes for the iOS notification that was received.
+      #. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``00 01 02 03 04 00 01 20 00 02 20 00 03 20 00 04 05 06 07``.
+      #. Respond to the request by sending two notification attributes: the title and the message.
+         Set the **Apple Data Source** value in the Server to ``00 01 02 03 04 01 03 00 6E 52 46 03 02 00 35 32``.
+      #. The application will print the received data on UART.
+         Verify that the UART output is as follows::
+
+            Title: nRF
+            Message: 52
+
+      #. Update the **Apple Data Source** value again with the app identifier ``00 03 00 63 6F 6D``.
+      #. Verify that the notification is received and the UART output is as follows::
+
+            App Identifier: com'
+
+   .. group-tab:: nRF54 DKs
+
+      #. Press **Button 0** to request notification attributes for the iOS notification that was received.
+      #. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``00 01 02 03 04 00 01 20 00 02 20 00 03 20 00 04 05 06 07``.
+      #. Respond to the request by sending two notification attributes: the title and the message.
+         Set the **Apple Data Source** value in the Server to ``00 01 02 03 04 01 03 00 6E 52 46 03 02 00 35 32``.
+      #. The application will print the received data on UART.
+         Verify that the UART output is as follows::
+
+            Title: nRF
+            Message: 52
+
+      #. Update the **Apple Data Source** value again with the app identifier ``00 03 00 63 6F 6D``.
+      #. Verify that the notification is received and the UART output is as follows::
+
+            App Identifier: com
 
 Retrieve app attributes
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -248,13 +319,28 @@ The following table shows the format of a response that contains the requested a
    | Data             | 4D 61 69 6C   | "Mail"             |
    +------------------+---------------+--------------------+
 
-#. Press **Button 2** to request app attributes for the app with the app identifier "com" (the last received app identifier).
-#. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``01 63 6F 6D 00 00``.
-#. Respond to the request by sending the app attribute.
-   Set the **Apple Data Source** value in the Server to ``01 63 6F 6D 00 00 04 00 4D 61 69 6C``.
-#. The application will print the received data on UART. Verify that the UART output is as follows::
 
-      Display Name: Mail
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      #. Press **Button 2** to request app attributes for the app with the app identifier "com" (the last received app identifier).
+      #. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``01 63 6F 6D 00 00``.
+      #. Respond to the request by sending the app attribute.
+         Set the **Apple Data Source** value in the Server to ``01 63 6F 6D 00 00 04 00 4D 61 69 6C``.
+      #. The application will print the received data on UART. Verify that the UART output is as follows::
+
+            Display Name: Mail
+
+   .. group-tab:: nRF54 DKs
+
+      #. Press **Button 1** to request app attributes for the app with the app identifier "com" (the last received app identifier).
+      #. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``01 63 6F 6D 00 00``.
+      #. Respond to the request by sending the app attribute.
+         Set the **Apple Data Source** value in the Server to ``01 63 6F 6D 00 00 04 00 4D 61 69 6C``.
+      #. The application will print the received data on UART. Verify that the UART output is as follows::
+
+            Display Name: Mail
 
 Disconnect
 ^^^^^^^^^^

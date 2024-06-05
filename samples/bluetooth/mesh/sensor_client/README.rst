@@ -95,17 +95,35 @@ Buttons:
 
 Once the provisioning procedure has completed, the buttons will have the following functionality:
 
-Button 1:
-   Sends a get message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
+.. tabs::
 
-Button 2:
-   Sends a set message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, switching between the ranges specified in the :c:var:`temp_ranges` variable.
+   .. group-tab:: nRF21 and nRF52 DKs
 
-Button 3:
-   Sends a get message for a descriptor, requesting information about the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
+      Button 1:
+         Sends a get message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
 
-Button 4:
-   Sends a set message for the :c:var:`bt_mesh_sensor_motion_threshold` setting of the :c:var:`bt_mesh_sensor_presence_detected` sensor, switching between the ranges specified in the :c:var:`presence_motion_threshold` variable.
+      Button 2:
+         Sends a set message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, switching between the ranges specified in the :c:var:`temp_ranges` variable.
+
+      Button 3:
+         Sends a get message for a descriptor, requesting information about the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
+
+      Button 4:
+         Sends a set message for the :c:var:`bt_mesh_sensor_motion_threshold` setting of the :c:var:`bt_mesh_sensor_presence_detected` sensor, switching between the ranges specified in the :c:var:`presence_motion_threshold` variable.
+
+   .. group-tab:: nRF54 DKs
+
+      Button 0:
+         Sends a get message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
+
+      Button 1:
+         Sends a set message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, switching between the ranges specified in the :c:var:`temp_ranges` variable.
+
+      Button 2:
+         Sends a get message for a descriptor, requesting information about the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
+
+      Button 3:
+         Sends a set message for the :c:var:`bt_mesh_sensor_motion_threshold` setting of the :c:var:`bt_mesh_sensor_presence_detected` sensor, switching between the ranges specified in the :c:var:`presence_motion_threshold` variable.
 
 Terminal:
    All sensor values gathered from the server are printed over UART.
