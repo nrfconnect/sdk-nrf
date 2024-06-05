@@ -98,9 +98,11 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
     provision_data = struct.pack('III', s0_address, s1_address,
                                  len(hashes))
 
+    idx = 0
     for mhash in hashes:
-        provision_data += struct.pack('I', 0xFFFFFFFF) # Invalidation token
+        provision_data += struct.pack('I', 0x50FAFFFF | (idx << 24)) # Invalidation token
         provision_data += mhash
+        idx += 1
 
     provision_data = add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_slots)
 
