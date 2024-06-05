@@ -64,7 +64,8 @@ Then run the PSA test suite with the following command, where *board_target* is 
 .. parsed-literal::
    :class: highlight
 
-    west build -b *board_target* nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y -DCONFIG_TFM_PARTITION_INITIAL_ATTESTATION=y -DCONFIG_TFM_NRF_PROVISIONING=y
+    west build -b *board_target* nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y -DCONFIG_TFM_PARTITION_INITIAL_ATTESTATION=y -DCONFIG_TFM_NRF_PROVISIONING=y -DCONFIG_NRF_APPROTECT_LOCK=y -DCONFIG_NRF_SECURE_APPROTECT_LOCK=y
+
 
 Not all test suites are valid on all boards.
 See the :file:`testcase.yaml` file for the list of valid test suites for each board.
