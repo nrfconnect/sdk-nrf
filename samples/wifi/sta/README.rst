@@ -23,6 +23,9 @@ The sample can perform Wi-Fi operations such as connect and disconnect in the 2.
 
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode.
 
+The sample uses the :ref:`wifi_ready` library to check Wi-Fi readiness.
+To use the :ref:`wifi_ready` library, enable the :kconfig:option:`CONFIG_WIFI_READY_EVENT_HANDLING` Kconfig option.
+
 User interface
 **************
 
@@ -105,7 +108,7 @@ Testing
 
 |test_sample|
 
-#. |connect_kit|
+1. |connect_kit|
 #. |connect_terminal|
 
    The sample shows the following output:
@@ -179,6 +182,30 @@ Testing
     [00:00:07.720,245] <inf> sta: MFP: UNKNOWN
     [00:00:07.720,245] <inf> sta: RSSI: -57
     [00:00:07.720,245] <inf> sta: Static IP address:
+
+RPU recovery
+************
+
+The RPU recovery mechanism is used to recover from the RPU (nRF70) hang.
+This feature performs an interface reset (down and up), which triggers an RPU cold boot.
+Application's network connection will be lost during the recovery process, and it is application's responsibility to re-establish the network connection.
+
+Testing
+=======
+
+To test RPU recovery, build the sample with the :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF700X_UTIL` Kconfig options.
+
+Trigger RPU recovery using the following command:
+
+.. code-block:: console
+
+   wifi_util rpu_recovery_test
+
+If RPU recovery is triggered, you should see an output similar to the following:
+
+.. code-block:: console
+
+   RPU recovery triggered
 
 Power management testing
 ************************
