@@ -921,11 +921,17 @@ int nrf_wifi_filter(const struct device *dev,
 		/**
 		 * In case a user sets data + management + ctrl bits
 		 * or all the filter bits. Map it to bit 0 set to
-		 * enable "all" packet filter bit setting
+		 * enable "all" packet filter bit setting.
+		 * In case only filter packet size is configured and filter
+		 * setting is sent as zero, set the filter value to
+		 * previously configured value.
 		 */
 		if (filter->filter == WIFI_MGMT_DATA_CTRL_FILTER_SETTING
 		    || filter->filter == WIFI_ALL_FILTER_SETTING) {
 			filter->filter = 1;
+		} else if (filter->filter == 0) {
+			filter->filter =
+				def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->packet_filter;
 		}
 
 		/**
