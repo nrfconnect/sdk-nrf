@@ -10,7 +10,15 @@
 	chosen {
 		zephyr,sram = &cpuapp_ram0;
 	};
+
+	aliases {
+		/delete-property/ led1;
+		/delete-property/ sw1;
+	};
 };
+
+/delete-node/ &button1;
+/delete-node/ &led1;
 
 &button0 {
 	label = "Push button 0";
