@@ -1,7 +1,7 @@
 .. _ug_nrf54l15_gs:
 
-Getting started with the nRF54L15 PDK
-#####################################
+Getting started with nRF54L15 PDK
+#################################
 
 .. contents::
    :local:
