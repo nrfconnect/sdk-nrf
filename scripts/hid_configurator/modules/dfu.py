@@ -302,34 +302,25 @@ class DfuImage:
                                   dev_bootloader_variant):
         MANIFEST_FILE = "manifest.json"
 
-        with ZipFile(dfu_package, 'r') as zip_file:
-            zip_file.extractall(self.temp_dir.name)
-
         try:
+            with ZipFile(dfu_package, 'r') as zip_file:
+                zip_file.extractall(self.temp_dir.name)
+
             with open(os.path.join(self.temp_dir.name, MANIFEST_FILE)) as f:
                 manifest_str = f.read()
                 manifest = json.loads(manifest_str)
-                bootloader_api = DfuImage._zip_get_bootloader_api(manifest)
+
+            path, bin_ver = DfuImage._zip_parse_dfu_image_bin_path(self.temp_dir.name,
+                                                                   manifest,
+                                                                   dev_fwinfo,
+                                                                   dev_board_name,
+                                                                   dev_bootloader_variant)
+            self.image_bin_path = path
+            self.image_bin_version = bin_ver
+            self.bootloader_variant = dev_bootloader_variant
+
         except Exception:
-            bootloader_api = None
-            manifest = None
-
-        if bootloader_api is not None:
-            assert 'get_dfu_image_version' in bootloader_api
-            assert 'get_dfu_image_bootloader_var' in bootloader_api
-            assert 'get_dfu_image_name' in bootloader_api
-            assert 'is_dfu_file_correct' in bootloader_api
-
-            self.image_bin_path = DfuImage._zip_parse_dfu_image_bin_path(self.temp_dir.name,
-                                                                         manifest,
-                                                                         dev_fwinfo,
-                                                                         dev_board_name,
-                                                                         dev_bootloader_variant,
-                                                                         bootloader_api)
-            if self.image_bin_path is not None:
-                self.bootloader_variant = bootloader_api['get_dfu_image_bootloader_var']()
-                self.image_bin_version = \
-                    bootloader_api['get_dfu_image_version'](self.image_bin_path)
+            print("Parsing zip file failed")
 
     def _initialize_from_suit_file(self, dfu_package):
         try:
@@ -351,7 +342,56 @@ class DfuImage:
         self.image_bin_version = (0, 0, 0, version)
 
     @staticmethod
-    def _zip_get_bootloader_api(manifest_json):
+    def _is_dfu_file_correct(dfu_bin):
+        if dfu_bin is None:
+            return False
+
+        if not os.path.isfile(dfu_bin):
+            return False
+
+        img_length = os.stat(dfu_bin).st_size
+
+        if img_length <= 0:
+            return False
+
+        return True
+
+    @staticmethod
+    def _zip_get_dfu_file_entry_v0(manifest, dfu_slot_id, bootloader_api):
+        file_entry = None
+        dfu_image_name = bootloader_api['get_dfu_image_name'](dfu_slot_id)
+
+        for f in manifest['files']:
+            if f['file'] == dfu_image_name:
+                if file_entry is not None:
+                    print('Error: Multiple matching DFU images found in the archive')
+                    return None
+                else:
+                    file_entry = f
+
+        return file_entry
+
+    @staticmethod
+    def _zip_get_dfu_file_entry_v1(manifest, dfu_slot_id):
+        file_entry = None
+
+        # manifest.json file for MCUboot with swap may not use slot property.
+        if len(manifest['files']) == 1:
+            return manifest['files'][0]
+
+        for f in manifest['files']:
+            if (int(f['image_index']) == 0) and (int(f['slot']) == dfu_slot_id):
+                if file_entry is not None:
+                    print('Error: Multiple matching DFU images found in the archive')
+                    return None
+                else:
+                    file_entry = f
+
+        return file_entry
+
+    @staticmethod
+    def _zip_get_bootloader_name_fallback(manifest_json):
+        print("Determining device bootloader variant relying on manifest.json")
         bootloader_name = None
 
         for f in manifest_json["files"]:
@@ -369,64 +409,82 @@ class DfuImage:
 
             bootloader_name = temp_bootloader_name
 
-        if bootloader_name is not None:
-            print('Update file is for {} bootloader'.format(bootloader_name))
-            return BOOTLOADER_APIS[bootloader_name]
-        else:
-            return None
+        if bootloader_name is None:
+            print("Failed to determine device bootloader variant from manifest.json")
 
-    @staticmethod
-    def _is_dfu_file_correct(dfu_bin):
-        if dfu_bin is None:
-            return False
-
-        if not os.path.isfile(dfu_bin):
-            return False
-
-        img_length = os.stat(dfu_bin).st_size
-
-        if img_length <= 0:
-            return False
-
-        return True
-
-    @staticmethod
-    def _get_config_channel_board_name(board_name):
-        return board_name.split('_')[0]
+        return bootloader_name
 
     @staticmethod
     def _zip_parse_dfu_image_bin_path(dfu_folder, manifest, dev_fwinfo, dev_board_name,
-				      dev_bootloader_variant, bootloader_api):
+				      dev_bootloader_variant):
         flash_area_id = dev_fwinfo.get_flash_area_id()
         if flash_area_id not in (0, 1):
             print('Invalid area ID in FW info')
-            return None
+            return None, None
         dfu_slot_id = 1 - flash_area_id
 
-        dfu_image_name = bootloader_api['get_dfu_image_name'](dfu_slot_id)
-        dfu_bin_path = None
+        if dev_bootloader_variant is None:
+            dev_bootloader_variant = DfuImage._zip_get_bootloader_name_fallback(manifest)
+            if dev_bootloader_variant is None:
+                return None, None
 
-        for f in manifest['files']:
-            if f['file'] != dfu_image_name:
-                continue
+        format_version = manifest['format-version']
 
-            if DfuImage._get_config_channel_board_name(f['board']) != dev_board_name:
-                continue
+        try:
+            bootloader_api = BOOTLOADER_APIS[dev_bootloader_variant]
+        except Exception:
+            print("Device uses an unsupported bootloader {}".format(dev_bootloader_variant))
+            return None, None
 
-            dfu_bin_path = os.path.join(dfu_folder, f['file'])
+        assert 'get_dfu_image_version' in bootloader_api
+        assert 'get_dfu_image_bootloader_var' in bootloader_api
+        assert 'get_dfu_image_name' in bootloader_api
+        assert 'is_dfu_file_correct' in bootloader_api
 
-            if not DfuImage._is_dfu_file_correct(dfu_bin_path):
-                continue
+        try:
+            if format_version == 0:
+                file_entry = DfuImage._zip_get_dfu_file_entry_v0(manifest, dfu_slot_id,
+                                                                 bootloader_api)
+                # Format-version 0 reported combined board and SoC as "board" property
+                zip_board_name = file_entry['board'].split('_')[0]
+            elif format_version == 1:
+                file_entry = DfuImage._zip_get_dfu_file_entry_v1(manifest, dfu_slot_id)
+                zip_board_name = file_entry['board']
+            else:
+                print('Unsupported manifest format-version {}'.format(format_version))
+                return None, None
+        except Exception:
+            if file_entry is None:
+                print('No suitable file entry found')
+            else:
+                print('Cannot parse board name from zip')
+            return None, None
 
-            if not bootloader_api['is_dfu_file_correct'](dfu_bin_path):
-                continue
+        if zip_board_name != dev_board_name:
+            print("Update file is for other board: {}".format(zip_board_name))
+            return None, None
 
-            if (dev_bootloader_variant != bootloader_api['get_dfu_image_bootloader_var']()) and (dev_bootloader_variant is not None):
-                continue
+        VERSION_PREFIX = "version_"
+        version_keys = tuple(filter(lambda x: x.startswith(VERSION_PREFIX), file_entry.keys()))
+        if len(version_keys) != 1:
+            print("Invalid DFU zip manifest: improper version definition count for image")
+            return None, None
 
-            return dfu_bin_path
+        file_entry_bootloader = version_keys[0][len(VERSION_PREFIX):]
+        if file_entry_bootloader != dev_bootloader_variant:
+            print("Update file is for other bootloader: {}".format(file_entry_bootloader))
+            return None, None
 
-        return None
+        dfu_bin_path = os.path.join(dfu_folder, file_entry['file'])
+
+        if not DfuImage._is_dfu_file_correct(dfu_bin_path) or \
+           not bootloader_api['is_dfu_file_correct'](dfu_bin_path):
+            print("Invalid DFU binary file: {}".format(dfu_bin_path))
+            return None, None
+
+        dfu_bin_version = bootloader_api['get_dfu_image_version'](dfu_bin_path)
+
+        return dfu_bin_path, dfu_bin_version
 
     def get_dfu_image_bin_path(self):
         return self.image_bin_path
