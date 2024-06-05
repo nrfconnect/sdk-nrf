@@ -788,6 +788,10 @@ Wi-Fi samples that used :ref:`zephyr:bluetooth-hci-ipc-sample` or :ref:`zephyr:n
 
 * Added the :ref:`wifi_promiscuous_sample` sample that demonstrates how to set Promiscuous mode, establish a connection to an Access Point (AP), analyze incoming Wi-Fi packets, and print packet statistics.
 
+* :ref:`wifi_station_sample` sample:
+
+  * Modified to verify Wi-Fi readiness using the :ref:`wifi_ready` library.
+
 Other samples
 -------------
 
