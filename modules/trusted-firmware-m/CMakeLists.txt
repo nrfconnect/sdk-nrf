@@ -242,6 +242,20 @@ if (CONFIG_TFM_CONN_HANDLE_MAX_NUM)
   )
 endif()
 
+if (CONFIG_NRF_APPROTECT_LOCK)
+  set_property(TARGET zephyr_property_target
+  APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DCONFIG_NRF_APPROTECT_LOCK=ON
+  )
+endif()
+
+if (CONFIG_NRF_SECURE_APPROTECT_LOCK)
+  set_property(TARGET zephyr_property_target
+  APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DCONFIG_NRF_SECURE_APPROTECT_LOCK=ON
+  )
+endif()
+
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/tfm)
 
 # Default values from config_base.h in TF-M.

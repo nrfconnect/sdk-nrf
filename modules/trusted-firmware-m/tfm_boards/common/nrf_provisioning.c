@@ -17,22 +17,11 @@
 #include <identity_key.h>
 #include <tfm_spm_log.h>
 
-static enum tfm_plat_err_t disable_debugging(void)
+static enum tfm_plat_err_t verify_debug_disabled(void)
 {
-	/* Configure the UICR such that upon the next reset, APPROTECT will be enabled */
-	bool approt_writable;
-
-	approt_writable = nrfx_nvmc_word_writable_check((uint32_t)&NRF_UICR_S->APPROTECT,
-							UICR_APPROTECT_PALL_Protected);
-	approt_writable &= nrfx_nvmc_word_writable_check((uint32_t)&NRF_UICR_S->SECUREAPPROTECT,
-							 UICR_SECUREAPPROTECT_PALL_Protected);
-
-	if (approt_writable) {
-		nrfx_nvmc_word_write((uint32_t)&NRF_UICR_S->APPROTECT,
-				     UICR_APPROTECT_PALL_Protected);
-		nrfx_nvmc_word_write((uint32_t)&NRF_UICR_S->SECUREAPPROTECT,
-				     UICR_SECUREAPPROTECT_PALL_Protected);
-	} else {
+	/* Ensures that APPROTECT and SECUREAPPROTECT are enabled upon the next reset */
+	if (NRF_UICR_S->APPROTECT != UICR_APPROTECT_PALL_Protected ||
+	    NRF_UICR_S->SECUREAPPROTECT != UICR_SECUREAPPROTECT_PALL_Protected) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
@@ -82,8 +71,7 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 	 * that secure boot is already enabled at this stage
 	 */
 
-	/* Disable debugging in UICR */
-	if (disable_debugging() != TFM_PLAT_ERR_SUCCESS) {
+	if (verify_debug_disabled() != TFM_PLAT_ERR_SUCCESS) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
