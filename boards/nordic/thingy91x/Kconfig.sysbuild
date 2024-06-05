@@ -39,6 +39,9 @@ config SECURE_BOOT_APPCORE
 config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	default y if BOOTLOADER_MCUBOOT
 
+config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
+	default y if BOOTLOADER_MCUBOOT
+
 config SECURE_BOOT_SIGNING_KEY_FILE
 	default "$(ZEPHYR_NRF_MODULE_DIR)/boards/nordic/thingy91x/nsib_signing_key.pem"
 
