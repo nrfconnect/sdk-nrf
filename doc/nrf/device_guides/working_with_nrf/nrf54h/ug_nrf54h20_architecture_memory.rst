@@ -39,15 +39,15 @@ Local RAM
 
 Local RAM is present in each of local domains
 
-Application Core RAM
+Application core RAM
 --------------------
 
 .. image:: images/nrf54h20_memory_map_app.svg
    :width: 300 px
 
-The Application Core contains 32 KB of local RAM.
-Accessing this memory from the Application Core CPU has minimal latency, but accessing it from any other core adds significant latency.
-Because of this property, the local RAM in the application domain should be used mainly to store data frequently accessed by the Application Core, or to store timing-critical parts of the code executed by Application Core.
+The application core contains 32 KB of local RAM.
+Accessing this memory from the application core CPU has minimal latency, but accessing it from any other core adds significant latency.
+Because of this property, the local RAM in the application domain should be used mainly to store data frequently accessed by the application core, or to store timing-critical parts of the code executed by the application core.
 
 Address range
    0x22000000 - 0x22008000
@@ -56,24 +56,24 @@ Size
    32 KB
 
 Access control
-   Application domain local RAM is accessible by the Application Core.
-   Any core (like FLPR or PPR) or peripheral configured to be owned by Application Core (like UARTE or SAADC) can access this memory as well.
+   Application domain local RAM is accessible by the application core.
+   Any core (like FLPR or PPR) or peripheral configured to be owned by application core (like UARTE or SAADC) can access this memory as well.
    Any core with access to this memory can execute code from it.
 
-   If the TrustZone feature is enabled for Application Core, this memory can be partitioned in one secure and one non-secure region.
+   If the TrustZone feature is enabled for the application core, this memory can be partitioned in one secure and one non-secure region.
    The secure region is accessible only by code executed with the secure attribute, while the non-secure region is accessible by any code.
 
    .. note::
       Code executed by VPRs (like FLPR or PPR) has its secure attribute matching the given VPR security configuration in the SPU.
       Local RAM cannot include a Non-Secure Callable section.
 
-Radio Core RAM
+Radio core RAM
 --------------
 
-The Radio Core contains 96 KB of local RAM.
-Any access to this memory has minimal latency if originated either from Radio Core CPU or from peripherals with EasyDMA located in the Radio Core.
+The radio core contains 96 KB of local RAM.
+Any access to this memory has minimal latency if originated either from radio core CPU or from peripherals with EasyDMA located in the radio core.
 Any access from any other core has a significant latency.
-Because of this property, local RAM in the Radio Core should be used mainly to store data frequently accessed by the Radio Core CPU or the radio protocol frames to be accessed by CCM or RADIO peripherals, or to store timing critical parts of the code executed by the Radio Core CPU.
+Because of this property, local RAM in the radio core should be used mainly to store data frequently accessed by the radio core CPU or the radio protocol frames to be accessed by CCM or RADIO peripherals, or to store timing critical parts of the code executed by the radio core CPU.
 
 Address range
    0x23000000 - 0x23030000
@@ -82,11 +82,11 @@ Size
    192 KB
 
 Access control
-   The Radio Core local RAM is accessible by the Radio Core.
-   Any core (like FLPR or PPR) or peripheral configured to be owned by the Radio Core (like UARTE or SAADC) can access this memory as well.
+   The radio core local RAM is accessible by the radio core.
+   Any core (like FLPR or PPR) or peripheral configured to be owned by the radio core (like UARTE or SAADC) can access this memory as well.
    Any core with access to this memory can execute code from it.
 
-   If the TrustZone feature is enabled for the Radio Core, this memory can be partitioned in one secure and one non-secure region.
+   If the TrustZone feature is enabled for the radio core, this memory can be partitioned in one secure and one non-secure region.
    The secure region is accessible only by code executed with the secure attribute, while the non-secure region is accessible by any code.
 
    .. note::
@@ -98,7 +98,7 @@ BBPROC memory
 
 The Lower 32 KB of local RAM in the Radio Domain is tightly coupled with BBPROC.
 Any access to this memory has minimal latency if originated from BBPROC.
-Any access originated from the Radio Core or from peripherals with EasyDMA located in radio domain have a little greater latency while accessing BBPROC memory.
+Any access originated from the radio core or from peripherals with EasyDMA located in radio domain have a little greater latency while accessing BBPROC memory.
 Access from other domains is possible, but with significant latency.
 
 BBPROC memory is the only memory from which BBPROC can fetch its instructions.
@@ -135,7 +135,7 @@ Access to this memory is relatively fast from all the local domains (like the Ap
 Access to this memory from DMA used by USB has minimal latency.
 
 This memory is intended to store the majority of the data used by local cores (and does not fit in local domains' RAM) including shared memory used for Inter-Processor Communication (IPC) between local cores.
-Buffers for USB data must be stored in this memory part, in the region owned by the core owning USB (usually the Application Core in typical applications).
+Buffers for USB data must be stored in this memory part, in the region owned by the core owning USB (usually the application core in typical applications).
 
 Address range
    0x2F000000 - 0x2F0C0000
@@ -212,8 +212,8 @@ Access control
    Because of this property, the FLPR's owner indirectly obtains access to the entire RAM21 memory region.
    To avoid security risks, all the partitions in RAM21 must be assigned to the FLPR's owner.
    Also, all peripherals with DMA buffers in this memory must be assigned to the FLPR's owner.
-   The FLPR and the fast peripherals are by default owned by the Application Core.
-   This ownership and matching memory access rights can be reassigned to the Radio Core in the UICR.
+   The FLPR and the fast peripherals are by default owned by the application core.
+   This ownership and matching memory access rights can be reassigned to the radio core in the UICR.
 
    The security attribute of memory partitions DMA engines must follow the FLPR security settings.
 
@@ -235,7 +235,7 @@ Size
 Access control
   The PPR and its owner have access to all the partitions assigned to the PPR and its Inter-Processor Communication.
   Each of the memory partition assigned for DMA of the slow peripherals is accessible from the core owning the given set of peripherals.
-  The PPR and the slow peripherals are by default owned by the Application Core.
+  The PPR and the slow peripherals are by default owned by the application core.
   The ownership and matching memory access rights can be customized in UICRs.
 
   The security attribute of memory partitions must follow PPR and DMA engines' security settings.
@@ -255,7 +255,7 @@ The MRAM_10 is a part of the non-volatile memory intended to keep firmware image
 Access to this memory has minimal latency to avoid CPU stalls on instruction fetches.
 This part of the memory is not writable while the main application is running (it is writable only during the Firmware Upgrade procedure) to avoid any latency caused by write operations.
 Apart from executable code images, this part of the memory stores the Secure Information Configuration Registers (SICR) used by the programs running in the Secure Domain Core.
-If code and data for the Application Core do not fit in MRAM_10, it can be partially or fully placed in MRAM_11.
+If code and data for the application core do not fit in MRAM_10, it can be partially or fully placed in MRAM_11.
 
 Address range
    0x0E000000 - 0x0E100000
@@ -264,7 +264,7 @@ Size
    1024 KB
 
 Access control
-   The Application Core and the Radio Core have read and execute access to memory regions assigned to them.
+   The application core and the radio core have read and execute access to memory regions assigned to them.
    If TrustZone is disabled for any of these cores, then the assigned memory region is a single block containing secure code and data.
    If TrustZone is enabled for any of these cores, then the assigned memory region is split in three blocks:
 
@@ -289,7 +289,7 @@ When a core is reading or executing code from MRAM_11, the impact of the additio
 Each of the local cores (Application, Radio, Secure Domain) has an allocated partition in MRAM_11 to store their non-volatile data.
 Each of the cores has full control on the data layout and management in the assigned MRAM partition.
 There is also a Device Firmware Upgrade partition used to store firmware images used during the upgrade procedure.
-If code and data for the Application Core do not fit in MRAM_10, it can be partially or fully placed in MRAM_11.
+If code and data for the application core do not fit in MRAM_10, it can be partially or fully placed in MRAM_11.
 
 .. to review
 
@@ -300,10 +300,10 @@ Size
    1024 KB
 
 Access control
-   The Application Core and the Radio Core have read and write access to their assigned non-volatile data regions.
+   The application core and the radio core have read and write access to their assigned non-volatile data regions.
    The non-volatile data region assigned to the core having TrustZone disabled is marked as Secure, while the non-volatile data region assigned to the core having TrustZone enabled is marked as Non-Secure.
 
-   If code or data for the Application Core is placed in MRAM_11, the Application Core has *read and execute* access to this partition.
+   If code or data for the application core is placed in MRAM_11, the application core has *read and execute* access to this partition.
    This access can be configured as follows:
 
    * Default configuration, in which all the application code and data is placed in MRAM_10.
@@ -315,5 +315,5 @@ Access control
      Because of the continuous memory address range, it is possible to use a single memory region to describe such data block.
 
    The Secure Domain has access to all the parts of MRAM_11.
-   The Application Core has read and write access to the DFU partition.
-   The security configuration of this partition follows the TrustZone configuration of the Application Core (Secure if TrustZone is disabled, or Non-Secure if TrustZone is enabled).
+   The application core has read and write access to the DFU partition.
+   The security configuration of this partition follows the TrustZone configuration of the application core (Secure if TrustZone is disabled, or Non-Secure if TrustZone is enabled).

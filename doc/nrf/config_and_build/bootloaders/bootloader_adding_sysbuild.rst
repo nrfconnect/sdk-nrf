@@ -38,7 +38,7 @@ The following sections describe how to add either |NSIB| or MCUboot as an immuta
 Adding |NSIB| as an immutable bootloader
 ========================================
 
-To build |NSIB| with a Zephyr or |NCS| sample, enable the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` in the application's :file:`sysbuild.conf` file or using the command line:
+To build |NSIB| with a Zephyr or |NCS| sample, enable the ``SB_CONFIG_SECURE_BOOT_APPCORE`` in the application's :file:`sysbuild.conf` file or using the command line:
 
 .. code-block:: console
 
@@ -68,7 +68,7 @@ The following sections describe different configuration options available for |N
 Adding a custom signature key file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To add a signature key file to this bootloader, set the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` option in the application's :file:`sysbuild.conf` file or using the command line:
+To specify a signature key file for this bootloader, set the ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` option in the application's :file:`sysbuild.conf` file or using the command line:
 
 .. tabs::
 
@@ -130,11 +130,11 @@ For example, if a directory named :file:`_keys` located in :file:`/home/user/ncs
 
 .. note::
 
-   The public key string must be a list of files in the following ways:
+   The public key string must contain a list of files where each item can be indicated as follows:
 
-       * The relative path to a file from the application configuration directory (if this is not set, then it will be the same as the application source directory).
-
-       * The absolute path to a file.
+   * Using the relative path to a file from the application configuration directory.
+     When not specified, it is assumed as the default application source directory.
+   * Using the absolute path to a file.
 
    Environment variables (like :envvar:`$HOME`, :envvar:`$PWD`, or :envvar:`$USER`) and the ``~`` character on Unix systems are not expanded when setting an absolute path from a :file:`sysbuild.conf` file but are expanded correctly in key file paths from the command line that are not given as strings.
 
@@ -144,8 +144,8 @@ See :ref:`ug_fw_update_keys` for information on how to generate custom keys for 
 
 Additionally, the |NSIB| supports the following methods for signing images with private keys:
 
-* :ref:`ug_fw_update_keys_openssl` - Uses the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL` Kconfig option.
-* :ref:`Using a custom command <ug_bootloader_adding_sysbuild_immutable_b0_custom_signing>` - Uses the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM` Kconfig option.
+* Uses the ``SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL`` Kconfig option.
+* :ref:`Using a custom command <ug_bootloader_adding_sysbuild_immutable_b0_custom_signing>` - Uses the ``SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM`` Kconfig option.
 
 The OpenSSL method is handled internally by the build system, whereas using custom commands requires more configuration steps.
 
@@ -196,14 +196,13 @@ To use a custom signing command with this bootloader, set the following options 
       Escaped quotations avoid malformed-string warnings from Kconfig.
 
 .. note::
+   The public key string must contain a list of files where each item can be indicated as follows:
 
-   The public key string must be a list of files in the following ways (as mentioned previously in :ref:`ug_bootloader_adding_sysbuild_immutable_keys`):
+   * Using the relative path to a file from the application configuration directory.
+     When not specified, it is assumed as the default application source directory.
+   * Using the absolute path to a file.
 
-       * The relative path to a file from the application configuration directory (if this is not set, then it will be the same as the application source directory).
-
-       * The absolute path to a file.
-
-See :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND` for specifics about what a usable signing command must do.
+See ``SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND`` for specifics about what a usable signing command must do.
 The command string can include its own arguments like a typical terminal command, including arguments specific to the build system:
 
 .. parsed-literal::
@@ -211,20 +210,20 @@ The command string can include its own arguments like a typical terminal command
 
    my_command *[options]* *<args ...>* *<build_system_args ..>*
 
-See the description of :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND` for which arguments can be sent to the build system in this way.
+See the description of ``SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND`` for which arguments can be sent to the build system in this way.
 
 .. note::
 
    Whitespace, hyphens, and other non-alphanumeric characters must be escaped appropriately when setting the string from the command line.
    If the custom signing command uses its own options or arguments, it is recommended to define the string in a :file:`sysbuild.conf` file to avoid tracking backslashes.
-   Like public key paths, environment variables are not expanded when using them in a command string set from one of these files.
+   Like public key paths, environment variables are not expanded when using them in a command string set from the file.
 
 .. _ug_bootloader_adding_sysbuild_immutable_mcuboot:
 
 Adding MCUboot as an immutable bootloader
 =========================================
 
-To build :doc:`MCUboot <mcuboot:index-ncs>` with a Zephyr or |NCS| sample, enable the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` in the application's :file:`sysbuild.conf` file or using the command line:
+To build :doc:`MCUboot <mcuboot:index-ncs>` with a Zephyr or |NCS| sample, enable the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` in the application's :file:`sysbuild.conf` file or using the command line:
 
 .. code-block:: console
 
@@ -243,7 +242,7 @@ The following sections describe different configuration options available for MC
 Adding a custom signature key file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To pass the signature key file into sysbuild by setting :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` option to the selected private key file.
+You can specify the signature key file for this bootloader by setting the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` option to the selected private key file.
 You can set the option in :file:`sysbuild.conf` or using the command line:
 
 .. tabs::
@@ -304,7 +303,7 @@ Adding MCUboot as an upgradable bootloader
 To use MCUboot as an upgradable bootloader to your application, complete the following steps:
 
 1. :ref:`Add nRF Secure Immutable Bootloader as the immutable bootloader <ug_bootloader_adding_sysbuild_immutable_b0>`.
-#. Add MCUboot to the boot chain by including the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` Kconfig option with either the build command or in the application's :file:`sysbuild.conf` file:
+#. Add MCUboot to the boot chain by including the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` Kconfig option with either the build command or in the application's :file:`sysbuild.conf` file:
 
    .. code-block::
 

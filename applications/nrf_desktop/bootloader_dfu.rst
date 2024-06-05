@@ -212,13 +212,13 @@ You can also enable :kconfig:option:`CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_MINIMA
 
 SUIT also has the following options in the sysbuild configuration:
 
-   * :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE` - Required to create the SUIT envelope.
+   * ``SB_CONFIG_SUIT_ENVELOPE`` - Required to create the SUIT envelope.
      Turned on by default on the ``nrf54h20dk`` board.
      The envelope is used directly as a DFU update file by the DFU tools.
-   * :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM` - The nRF Desktop application uses the sequence number to define an application version.
+   * ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` - The nRF Desktop application uses the sequence number to define an application version.
 
 .. note::
-   The :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_SIGN` is disabled, so the generated SUIT envelope is not signed.
+   The ``SB_CONFIG_SUIT_ENVELOPE_SIGN`` is disabled, so the generated SUIT envelope is not signed.
 
 On the ``nrf54h20dk`` board, the dedicated DFU partition called ``dfu_partition`` is defined by default in the DTS.
 The partition is used to store the incoming SUIT envelope with an update candidate.

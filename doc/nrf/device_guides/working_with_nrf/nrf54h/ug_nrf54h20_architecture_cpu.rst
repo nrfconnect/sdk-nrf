@@ -27,25 +27,25 @@ The CPU cores in the nRF54H20 are based on two types of CPU architectures:
   The VPR (pronounced “Viper”) is a small, efficient CPU developed by Nordic Semiconductor.
   It is compatible with the RISC-V instruction set.
 
-Application Core
+Application core
 ****************
 
-The following image shows the Application Core:
+The following image shows the application core:
 
 .. figure:: images/nRF54H20_appcore.svg
-   :alt: Application Core
+   :alt: Application core
 
-   Application Core
+   Application core
 
-The Application Core contains the Arm Cortex-M33 CPU with the highest processing power in the system.
+The application core contains the Arm Cortex-M33 CPU with the highest processing power in the system.
 Its purpose is to run the main application.
 It is also designed to have the highest active power efficiency, meaning it can run computing-intensive operations at an optimal power consumption.
 
 Due to Dynamic Voltage and Frequency Scaling (DVFS) support and power efficiency optimizations, it takes some time for it to start and stop.
-That is why the workloads that require frequent starting and stopping are better suited to run either on the Radio Core or the PPR and FLPR processors.
+That is why the workloads that require frequent starting and stopping are better suited to run either on the radio core or the PPR and FLPR processors.
 
 Moreover, the clock speed of the processor is very high compared to the low-leakage peripherals running at 16 MHz.
-This means that in a code frequently accessing peripheral registers, the Application Core wastes multiple cycles waiting for the peripherals to respond.
+This means that in a code frequently accessing peripheral registers, the application core wastes multiple cycles waiting for the peripherals to respond.
 Code requiring a lot of accesses to low-leakage peripherals in the Global Domain is better suited to run on the PPR processor if efficiency is a key concern.
 
 32 kB of local RAM, which is configured like a Tightly Coupled Memory (TCM) and is accessible single-cycle, is provided.
@@ -56,17 +56,17 @@ This can be used by timing-sensitive code that cannot tolerate variable latency 
    Dynamic switching of voltage and frequency will be enabled at a later date.
    In later versions, developers will be able to select an optimal clock frequency at run time, depending on the task at hand.
 
-Radio Core
+Radio core
 **********
 
-The following image shows the Radio Core:
+The following image shows the radio core:
 
 .. figure:: images/nRF54H20_radiocore.svg
-   :alt: Radio Core
+   :alt: Radio core
 
-   Radio Core
+   Radio core
 
-The Radio Core is intended to run the radio protocol stacks, such as Bluetooth® Low Energy, IEEE 802.15.4, Thread, Enhanced ShockBurst (ESB), or other proprietary protocols.
+The radio core is intended to run the radio protocol stacks, such as Bluetooth® Low Energy, IEEE 802.15.4, Thread, Enhanced ShockBurst (ESB), or other proprietary protocols.
 It is also possible to implement a combination of protocols that use multiprotocol support.
 
 .. note::
@@ -75,18 +75,18 @@ It is also possible to implement a combination of protocols that use multiprotoc
 Any remaining processing power of this core can be used for tasks other than the ones required by the radio protocol stacks.
 
 The main CPU in the Radio Domain is an Arm Cortex-M33 running at a fixed clock speed of 256 MHz and is optimized for quick starts and stops, which are frequent in protocol stack workloads.
-Other workloads with similar characteristics are also well suited for running on the Radio Core.
+Other workloads with similar characteristics are also well suited for running on the radio core.
 
 .. note::
    The protocol stack software may need to run at the highest priority to meet its timing requirements.
    If that is the case, the user code needs to run at lower priority.
 
-The Radio Core has 192 kB of local RAM, making single-cycle memory accesses possible.
+The radio core has 192 kB of local RAM, making single-cycle memory accesses possible.
 
-For performance reasons, the Radio Core includes its own AES-128 hardware accelerator for implementing link-layer encryption.
+For performance reasons, the radio core includes its own AES-128 hardware accelerator for implementing link-layer encryption.
 For asymmetric cryptography, it relies on services provided by the Secure Domain.
 
-The Radio Core is user-programmable, allowing you to modify or add code.
+The radio core is user-programmable, allowing you to modify or add code.
 You can also leave the core running Nordic's default protocol stack software and only engage with its high-level interface.
 
 While the Radio CPU or any peripheral in Radio's local APB2 bus (including the radio) is active, the 32 MHz crystal oscillator is enabled, and the radio itself is clocked from this clock source.
@@ -96,7 +96,7 @@ Global Domain
 
 The Global Domain contains most of the memory and peripherals of the nRF54H20.
 This offers flexibility to assign memory regions and peripherals to different cores.
-If this flexibility is not needed, it is possible to use the |NCS| defaults, where most of the memory and peripherals are assigned to the Application Core.
+If this flexibility is not needed, it is possible to use the |NCS| defaults, where most of the memory and peripherals are assigned to the application core.
 
 The Global Domain includes two sets of power domains:
 
@@ -157,12 +157,12 @@ Cores managed by Nordic Semiconductor
    This means that the components can be modified by Nordic Semiconductor only.
 
 Cores managed by the user and Nordic Semiconductor
-   Firmware for the Radio Core will come as part of the |NCS|.
-   You can either use the default Nordic’s Radio Core firmware, modify it, or provide a custom implementation.
+   Firmware for the radio core will come as part of the |NCS|.
+   You can either use the default Nordic’s radio core firmware, modify it, or provide a custom implementation.
    If you rely on Nordic to provide the firmware, the default correct controller library will be used depending on the short-range protocol selected in the software configuration.
 
 Cores managed by the user
-   Although there are multiple distinctive cores in the system, you will be responsible mostly for preparing the firmware for the Application Core.
+   Although there are multiple distinctive cores in the system, you will be responsible mostly for preparing the firmware for the application core.
    If the application firmware is executed in non-secure mode, the secure firmware (TF-M) is delivered as part of the |NCS|.
 
-   You can choose to move some of the processing from the Application Core to the Peripheral Processor (PPR) or to the Fast Lightweight Processor (FLPR).
+   You can choose to move some of the processing from the application core to the Peripheral Processor (PPR) or to the Fast Lightweight Processor (FLPR).

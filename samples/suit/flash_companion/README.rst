@@ -42,7 +42,7 @@ Configuration
 Setup
 =====
 
-You can build the sample using :ref:`sysbuild <configuration_system_overview_sysbuild>` by enabling the :kconfig:option:`SB_CONFIG_SUIT_BUILD_FLASH_COMPANION` Kconfig option.
+You can build the sample using :ref:`sysbuild <configuration_system_overview_sysbuild>` by enabling the ``SB_CONFIG_SUIT_BUILD_FLASH_COMPANION`` Kconfig option.
 The memory partition from which the firmware will run can be configured by providing a devicetree overlay through sysbuild.
 You should create a dedicated partition in non-volatile memory and override the ``zephyr,code-partition``.
 The memory partition must not be used by any other firmware image.
@@ -71,7 +71,7 @@ Make sure that both the main application and the flash companion support your ta
 
 Perform the following steps in the main application directory:
 
-1. Enable the :kconfig:option:`SB_CONFIG_SUIT_BUILD_FLASH_COMPANION` sysbuild option.
+1. Enable the ``SB_CONFIG_SUIT_BUILD_FLASH_COMPANION`` sysbuild option.
 
 #. Create :file:`sysbuild/flash_companion.overlay` devicetree overlay file and add the following content:
 

@@ -238,7 +238,12 @@ The sysbuild build configuration is generated using the sysbuild's :file:`CMakeL
 .. note::
     In the |NCS|, building with sysbuild is :ref:`enabled by default <sysbuild_enabled_ncs>`.
 
-For more information about sysbuild, see the :ref:`documentation in Zephyr <zephyr:sysbuild>`.
+For more information about sysbuild, see the following pages:
+
+* :ref:`Sysbuild documentation in Zephyr <zephyr:sysbuild>`
+* :ref:`sysbuild_images`
+* :ref:`zephyr_samples_sysbuild`
+* :ref:`sysbuild_forced_options`
 
 .. _app_build_additions:
 
@@ -271,8 +276,10 @@ To disable these warnings, disable the :kconfig:option:`CONFIG_WARN_EXPERIMENTAL
 Sysbuild enabled by default
 ===========================
 
-In the :ref:`nRF repositories <dm_repo_types>`, building an application using the :ref:`standard building procedure <building>` automatically includes :ref:`configuration_system_overview_sysbuild` (the ``--sysbuild`` parameter).
-For this reason, unlike in Zephyr, ``--sysbuild`` does not have to be explicitly mentioned in the command prompt when building the application using the :ref:`dm_code_base`.
+When building :ref:`workspace applications <create_application_types_workspace>` copied from :ref:`nRF repositories <dm_repo_types>`, using the :ref:`standard building procedure <building>` automatically includes :ref:`configuration_system_overview_sysbuild` (the ``--sysbuild`` parameter).
+For this reason, unlike in Zephyr, ``--sysbuild`` does not have to be explicitly mentioned in the command prompt when building the application.
+
+This rule does not apply if you work with out-of-tree :ref:`freestanding applications <create_application_types_freestanding>`, for which you need to manually pass ``--sysbuild`` to build commands in every case.
 
 You can disable building with sysbuild by using the ``--no-sysbuild`` parameter in the build command.
 

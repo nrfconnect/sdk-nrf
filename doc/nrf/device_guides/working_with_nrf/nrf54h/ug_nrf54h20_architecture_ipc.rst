@@ -87,7 +87,7 @@ The following tables show signals received only by specified cores.
       FLPR               13
       =================  ==========
 
-   Radio Core:
+   Radio core:
 
       This assignment applies only when BBPROC owner is set to the Radio.
 
@@ -105,8 +105,8 @@ MAC, Network, Transport
 The layers responsible for maintaining a stable full-duplex stream of data between two cores (MAC, Network, Transport) are implemented in an IPC transport library.
 The default IPC transport library for nRF54H20 is :ref:`ICMsg <zephyr:ipc_service_backend_icmsg>`.
 This lightweight library maintains the connection between a pair of cores for each IPC instance with minimal memory overhead.
-Each IPC instance between the Application Core and the PPR core requires an instance of the ICMsg library.
-Each IPC instance between the Application Core and cores other than PPR (like the Radio Core) requires an instance of the ICBMsg library.
+Each IPC instance between the application core and the PPR core requires an instance of the ICMsg library.
+Each IPC instance between the application core and cores other than PPR (like the radio core) requires an instance of the ICBMsg library.
 
 Each ICMsg library instance requires the following:
 
@@ -172,15 +172,15 @@ The following figures show the IPC connection schemes in the nRF54H20 SoC:
 Radio core
 ==========
 
-The Radio core exposes radio communication services to the Application Core through IPC.
+The Radio core exposes radio communication services to the application core through IPC.
 These services include:
 
    * Bluetooth® (HCI or host API)
    * IEEE 802.15.4 radio driver API
 
-These services are hidden behind Zephyr APIs available in the Application Core, like the Bluetooth host API or the IEEE 802.15.4 driver API.
+These services are hidden behind Zephyr APIs available in the application core, like the Bluetooth host API or the IEEE 802.15.4 driver API.
 All services can be enabled simultaneously using separated endpoints in a shared IPC instance.
-You can implement other services running in the Radio Core and expose them to the Application Core using more endpoints from the shared IPC instance.
+You can implement other services running in the radio core and expose them to the application core using more endpoints from the shared IPC instance.
 
 Secure Domain core
 ==================
@@ -223,4 +223,4 @@ Peripheral Processor (PPR)
 The Peripheral Processor (PPR) exposes IPC communication for its owner to manage its operations.
 The communication details depends on the PPR role in the system.
 
-In the :ref:`nrf_machine_learning_app` application, PPR uses an :ref:`event_manager_proxy` through IPC to extend the Event Manager framework running in the Application Core.
+In the :ref:`nrf_machine_learning_app` application, PPR uses an :ref:`event_manager_proxy` through IPC to extend the Event Manager framework running in the application core.

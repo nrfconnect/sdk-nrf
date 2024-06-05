@@ -95,7 +95,7 @@ Changing the source of manifest templates allows you to create manifest files on
 
 The source of the manifest templates can be configured by setting the following Kconfig options:
 
-* :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE`
+* ``SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE``
 
 * :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE` - For each of the images (application and radio core images)
 

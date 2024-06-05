@@ -215,6 +215,8 @@ You can use the following command:
 
    west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
 
+.. include:: /includes/nRF54H20_erase_UICR.txt
+
 .. note::
    You can also build the sample with the remote IPC Service Shell for the |nRF7002DKnoref| using the ``nrf7002dk/nrf5340/cpunet`` board target in the commands.
 
