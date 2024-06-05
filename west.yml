@@ -239,7 +239,7 @@ manifest:
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: 15711cccd7700652ca3906b86d4d58cfe340e70c
+      revision: 0b06da29af3d4e60e0eb0781f0e2a85ed964f0ee
       path: modules/lib/suit-generator
     - name: suit-processor
       revision: dcb84006795fe99b497e044f3435988d206ac177
