@@ -189,9 +189,10 @@ For example, if you are using an nRF9160 DK version 1.0.1, use the following boa
 ``nrf9160dk@1.0.1/nrf9160/ns``
 
 This sample also supports placement of the MCUboot secondary partition in external flash for the nRF91x1 DKs, and for nRF9160 DK version 0.14.0 and higher.
-To enable this, add the following parameter to your build command:
+To enable this, add the following parameters to your build command:
 
-``-DEXTRA_CONF_FILE=overlay_mcuboot_ext_flash.conf``
+* ``-DEXTRA_CONF_FILE=overlay_mcuboot_ext_flash.conf``
+* ``-DSB_CONF_FILE=sysbuild_ext_flash.conf``
 
 Then specify your development kit version as described earlier.
 
@@ -793,14 +794,14 @@ The device is identified using its UUID rather than its IMEI, since both overlay
 Building with nRF7002 EK Wi-Fi scanning support (for nRF91 Series DK)
 =====================================================================
 
-To build the sample with nRF7002 EK Wi-Fi scanning support, use the ``-DSHIELD=nrf7002ek`` and  ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf`` options.
+To build the sample with nRF7002 EK Wi-Fi scanning support, use the ``-DSHIELD=nrf7002ek``, ``-DSB_CONF_FILE=sysbuild_nrf700x-wifi-scan.conf``, and ``-DEXTRA_CONF_FILE=sysbuild_nrf7002ek-wifi-scan.conf`` options.
 
 This enables the Wi-Fi location tracking method automatically.
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
+   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DSB_CONF_FILE="sysbuild_nrf700x-wifi-scan.conf" -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
 
 |board_target|
 
@@ -832,7 +833,7 @@ See the :file:`src/prj.conf` configuration file and the :file:`overlay_nrf7002ek
 
 This overlay also enables the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credential installation.
 
-If you are certain you understand the risks, you can configure your build to use Wi-Fi connectivity on the nRF5340 DK with the nRF7002 EK shield by using the ``--board nrf5340dk/nrf5340/cpuapp/ns`` target and the ``-DSHIELD=nrf7002ek`` and ``-DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf`` options.
+If you are certain you understand the risks, you can configure your build to use Wi-Fi connectivity on the nRF5340 DK with the nRF7002 EK shield by using the ``--board nrf5340dk/nrf5340/cpuapp/ns`` target and the ``-DSHIELD=nrf7002ek``, ``-DSB_CONF_FILE=sysbuild_nrf700x-wifi-conn.conf``, and ``-DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf`` options.
 
 You must also configure a (globally unique) device ID at build time by enabling the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and setting :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` to the device ID.
 
@@ -842,35 +843,39 @@ For example, for a device with the device ID ``698d4c11-0ccc-4f04-89cd-6882724e3
 
    .. group-tab:: MQTT
 
-      .. group-tab:: Bash
+      .. tabs::
 
-         .. parsed-literal::
-            :class: highlight
+         .. group-tab:: Bash
 
-            west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
+            .. parsed-literal::
+               :class: highlight
 
-      .. group-tab:: PowerShell
+               west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf -DSB_CONF_FILE=sysbuild_nrf700x-wifi-conn.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
 
-         .. parsed-literal::
-            :class: highlight
+         .. group-tab:: PowerShell
 
-            west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+            .. parsed-literal::
+               :class: highlight
+
+               west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_no_lte.conf -DSB_CONF_FILE=sysbuild_nrf700x-wifi-conn.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
 
    .. group-tab:: CoAP
 
-      .. group-tab:: Bash
+      .. tabs::
 
-         .. parsed-literal::
-            :class: highlight
+         .. group-tab:: Bash
 
-            west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_coap_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
+            .. parsed-literal::
+               :class: highlight
 
-      .. group-tab:: PowerShell
+               west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_coap_no_lte.conf -DSB_CONF_FILE=sysbuild_nrf700x-wifi-conn.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
 
-         .. parsed-literal::
-            :class: highlight
+         .. group-tab:: PowerShell
 
-            west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_coap_no_lte.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+            .. parsed-literal::
+               :class: highlight
+
+               west build --board nrf5340dk/nrf5340/cpuapp/ns -p always -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay_nrf7002ek_wifi_coap_no_lte.conf -DSB_CONF_FILE=sysbuild_nrf700x-wifi-conn.conf -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
 
 
 Once the sample is built and flashed, proceed to :ref:`nrf_cloud_multi_service_standard_onboarding` for instructions on how to onboard your device.
