@@ -39,7 +39,7 @@ enum bt_fast_pair_fmdn_ring_src {
 	BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT,
 };
 
-/** Ringing component identifiers */
+/** Ringing component identifiers. */
 enum bt_fast_pair_fmdn_ring_comp {
 	/** Identifier of the right component. */
 	BT_FAST_PAIR_FMDN_RING_COMP_RIGHT = BIT(0),
@@ -63,7 +63,7 @@ enum bt_fast_pair_fmdn_ring_comp {
  */
 #define BT_FAST_PAIR_FMDN_RING_COMP_BM_ALL (0xFF)
 
-/** Ringing volume */
+/** Ringing volume. */
 enum bt_fast_pair_fmdn_ring_volume {
 	/** Default level of the ringing volume. */
 	BT_FAST_PAIR_FMDN_RING_VOLUME_DEFAULT = 0x00,
@@ -99,7 +99,7 @@ enum bt_fast_pair_fmdn_ring_volume {
 #define BT_FAST_PAIR_FMDN_RING_TIMEOUT_MS_TO_DS(_timeout_ms) \
 	((_timeout_ms) / BT_FAST_PAIR_FMDN_RING_MSEC_PER_DSEC)
 
-/** Ringing request parameters */
+/** Ringing request parameters. */
 struct bt_fast_pair_fmdn_ring_req_param {
 	/** Bitmask with the active ringing components that is composed of
 	 *  the @ref bt_fast_pair_fmdn_ring_comp identifiers.
@@ -113,7 +113,7 @@ struct bt_fast_pair_fmdn_ring_req_param {
 	enum bt_fast_pair_fmdn_ring_volume volume;
 };
 
-/** Ringing callback structure */
+/** Ringing callback structure. */
 struct bt_fast_pair_fmdn_ring_cb {
 	/** @brief Request the user to start the ringing action.
 	 *
@@ -233,7 +233,7 @@ struct bt_fast_pair_fmdn_ring_cb {
  */
 int bt_fast_pair_fmdn_ring_cb_register(const struct bt_fast_pair_fmdn_ring_cb *cb);
 
-/** Trigger for the new ringing state */
+/** Trigger for the new ringing state. */
 enum bt_fast_pair_fmdn_ring_trigger {
 	/** Ringing action started. */
 	BT_FAST_PAIR_FMDN_RING_TRIGGER_STARTED = 0x00,
@@ -251,7 +251,7 @@ enum bt_fast_pair_fmdn_ring_trigger {
 	BT_FAST_PAIR_FMDN_RING_TRIGGER_GATT_STOPPED = 0x04,
 };
 
-/** Ringing state parameters */
+/** Ringing state parameters. */
 struct bt_fast_pair_fmdn_ring_state_param {
 	/** Trigger for the new ringing state. */
 	enum bt_fast_pair_fmdn_ring_trigger trigger;
@@ -261,7 +261,7 @@ struct bt_fast_pair_fmdn_ring_state_param {
 	 */
 	uint8_t active_comp_bm;
 
-	/** Ringing timeout in deciseconds
+	/** Ringing timeout in deciseconds.
 	 *  Relevant only for the @ref BT_FAST_PAIR_FMDN_RING_TRIGGER_STARTED trigger
 	 *  Set to zero to preserve the existing timeout.
 	 */
@@ -334,10 +334,10 @@ int bt_fast_pair_fmdn_ring_state_update(
  */
 int bt_fast_pair_fmdn_battery_level_set(uint8_t percentage_level);
 
-/** Helper to declare FMDN advertising parameters inline
+/** Helper to declare FMDN advertising parameters inline.
  *
- * @param _int_min     Minimum advertising interval
- * @param _int_max     Maximum advertising interval
+ * @param _int_min     Minimum advertising interval.
+ * @param _int_max     Maximum advertising interval.
  */
 #define BT_FAST_PAIR_FMDN_ADV_PARAM_INIT(_int_min, _int_max) \
 {                                                            \
@@ -345,7 +345,7 @@ int bt_fast_pair_fmdn_battery_level_set(uint8_t percentage_level);
 	.interval_max = (_int_max),                          \
 }
 
-/** Default value of FMDN advertising parameters */
+/** Default value of FMDN advertising parameters. */
 #define BT_FAST_PAIR_FMDN_ADV_PARAM_DEFAULT                  \
 	((struct bt_fast_pair_fmdn_adv_param[]) {            \
 		BT_FAST_PAIR_FMDN_ADV_PARAM_INIT(            \
@@ -353,7 +353,7 @@ int bt_fast_pair_fmdn_battery_level_set(uint8_t percentage_level);
 			0x0C80  /* 2s max interval */        \
 	)})
 
-/** FMDN advertising parameters */
+/** FMDN advertising parameters. */
 struct bt_fast_pair_fmdn_adv_param {
 	/** Minimum Advertising Interval (N * 0.625 milliseconds).
 	 *  Range: 0x0020 to 0x4000.
@@ -408,7 +408,7 @@ int bt_fast_pair_fmdn_adv_param_set(
  */
 int bt_fast_pair_fmdn_id_set(uint8_t id);
 
-/** Information callback structure */
+/** Information callback structure. */
 struct bt_fast_pair_fmdn_info_cb {
 	/** @brief Indicate that the peer was notified about the clock value.
 	 *
@@ -447,7 +447,7 @@ struct bt_fast_pair_fmdn_info_cb {
 	 */
 	void (*provisioning_state_changed)(bool provisioned);
 
-	/** Internally used field for list handling */
+	/** Internally used field for list handling. */
 	sys_snode_t node;
 };
 
@@ -464,7 +464,7 @@ struct bt_fast_pair_fmdn_info_cb {
  */
 int bt_fast_pair_fmdn_info_cb_register(struct bt_fast_pair_fmdn_info_cb *cb);
 
-/** Read modes */
+/** Read modes. */
 enum bt_fast_pair_fmdn_read_mode {
 	/** EIK recovery read mode. */
 	BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY,
@@ -475,7 +475,7 @@ enum bt_fast_pair_fmdn_read_mode {
 	BT_FAST_PAIR_FMDN_READ_MODE_DULT_ID,
 };
 
-/** Read mode callback structure */
+/** Read mode callback structure. */
 struct bt_fast_pair_fmdn_read_mode_cb {
 	/** @brief Read mode exited.
 	 *
