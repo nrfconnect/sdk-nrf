@@ -566,12 +566,16 @@ int sock_open_and_connect(
 	}
 
 	/* Set port to address info */
-	if (family == AF_INET) {
-		((struct sockaddr_in *)socket_info->addrinfo->ai_addr)->sin_port = htons(port);
-	} else if (family == AF_INET6) {
-		((struct sockaddr_in6 *)socket_info->addrinfo->ai_addr)->sin6_port = htons(port);
-	} else {
-		assert(0);
+	if ((address != NULL) && (strlen(address) != 0)) {
+		if (family == AF_INET) {
+			((struct sockaddr_in *)socket_info->addrinfo->ai_addr)->sin_port =
+				htons(port);
+		} else if (family == AF_INET6) {
+			((struct sockaddr_in6 *)socket_info->addrinfo->ai_addr)->sin6_port =
+				htons(port);
+		} else {
+			assert(0);
+		}
 	}
 
 	/* Create socket */
