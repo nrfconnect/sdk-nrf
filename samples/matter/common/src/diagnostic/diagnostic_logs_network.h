@@ -10,7 +10,7 @@
 #include "diagnostic_logs_retention.h"
 #include <lib/core/CHIPError.h>
 
-class DiagnosticLogsEndUserReader : public Nrf::Matter::DiagnosticLogsIntentIface {
+class DiagnosticLogsNetworkReader : public Nrf::Matter::DiagnosticLogsIntentIface {
 public:
 	CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog) override;
 	CHIP_ERROR FinishLogs() override;
@@ -21,7 +21,7 @@ private:
 	bool mReadInProgress = false;
 };
 
-class DiagnosticLogsEndUser {
+class DiagnosticLogsNetwork {
 public:
 	/**
 	 * @brief Validates the retention RAM content and initializes the module.
@@ -49,16 +49,16 @@ public:
 	 */
 	CHIP_ERROR Clear();
 
-	static DiagnosticLogsEndUser &Instance()
+	static DiagnosticLogsNetwork &Instance()
 	{
-		static DiagnosticLogsEndUser sInstance;
+		static DiagnosticLogsNetwork sInstance;
 		return sInstance;
 	}
 
 private:
-friend class DiagnosticLogsEndUserReader;
+	friend class DiagnosticLogsNetworkReader;
 
-	DiagnosticLogsEndUser() : mDiagnosticLogsRetention(DEVICE_DT_GET(DT_NODELABEL(end_user_logs_retention))) {}
+	DiagnosticLogsNetwork() : mDiagnosticLogsRetention(DEVICE_DT_GET(DT_NODELABEL(network_logs_retention))) {}
 
 	DiagnosticLogsRetention mDiagnosticLogsRetention;
 };

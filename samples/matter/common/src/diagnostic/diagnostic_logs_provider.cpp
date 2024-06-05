@@ -18,6 +18,10 @@
 #include "diagnostic_logs_end_user.h"
 #endif
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+#include "diagnostic_logs_network.h"
+#endif
+
 #include "diagnostic_logs_provider.h"
 
 #include <app/clusters/diagnostic-logs-server/diagnostic-logs-server.h>
@@ -73,6 +77,9 @@ void IntentData::Clear()
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
 		break;
 	case chip::app::Clusters::DiagnosticLogs::IntentEnum::kNetworkDiag:
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+		Platform::Delete(reinterpret_cast<DiagnosticLogsNetworkReader *>(mIntentImpl));
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
 		break;
 	default:
 		break;
@@ -90,6 +97,7 @@ CHIP_ERROR DiagnosticLogProvider::SetIntentImplementation(IntentEnum intent, Int
 		}
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
 		break;
+	case IntentEnum::kEndUserSupport:
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS
 		intentData.mIntentImpl = Platform::New<DiagnosticLogsEndUserReader>();
 		if (!intentData.mIntentImpl) {
@@ -97,7 +105,13 @@ CHIP_ERROR DiagnosticLogProvider::SetIntentImplementation(IntentEnum intent, Int
 		}
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
 		break;
-	case chip::app::Clusters::DiagnosticLogs::IntentEnum::kNetworkDiag:
+	case IntentEnum::kNetworkDiag:
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+		intentData.mIntentImpl = Platform::New<DiagnosticLogsNetworkReader>();
+		if (!intentData.mIntentImpl) {
+			return CHIP_ERROR_NO_MEMORY;
+		}
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
 		break;
 	default:
 		break;
@@ -148,11 +162,15 @@ CHIP_ERROR DiagnosticLogProvider::EndLogCollection(LogSessionHandle sessionHandl
 		break;
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
 	case IntentEnum::kNetworkDiag:
-#ifndef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
-		/* TODO: add support for Network Diagnostics */
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+		if (mIntentMap[sessionHandle].mIntentImpl) {
+			err = mIntentMap[sessionHandle].mIntentImpl->FinishLogs();
+		}
+		break;
+#else
 		err = CHIP_ERROR_NOT_IMPLEMENTED;
 		break;
-#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST */
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
 	case IntentEnum::kCrashLogs:
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
 		if (mIntentMap[sessionHandle].mIntentImpl) {
@@ -194,12 +212,12 @@ CHIP_ERROR DiagnosticLogProvider::CollectLog(LogSessionHandle sessionHandle, Mut
 		return CHIP_ERROR_NOT_IMPLEMENTED;
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
 	case IntentEnum::kNetworkDiag:
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
-		err = GetTestingLogs(mIntentMap[sessionHandle].mIntent, outBuffer, outIsEndOfLog);
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+		err = mIntentMap[sessionHandle].mIntentImpl->GetLogs(outBuffer, outIsEndOfLog);
 		break;
-#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST */
-		/* TODO: add support for Network Diag Intent */
+#else
 		return CHIP_ERROR_NOT_IMPLEMENTED;
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
 	case IntentEnum::kCrashLogs:
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
 		err = mIntentMap[sessionHandle].mIntentImpl->GetLogs(outBuffer, outIsEndOfLog);
@@ -226,12 +244,13 @@ size_t DiagnosticLogProvider::GetSizeForIntent(IntentEnum intent)
 		break;
 	}
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
-	case IntentEnum::kNetworkDiag:
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
-		logSize = GetTestingLogsSize(intent);
-#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST */
-		/* TODO: add support for Network Diag Intent */
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+	case IntentEnum::kNetworkDiag: {
+		Platform::UniquePtr<DiagnosticLogsNetworkReader> userData(Platform::New<DiagnosticLogsNetworkReader>());
+		logSize = userData->GetLogsSize();
 		break;
+	}
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
 	case IntentEnum::kCrashLogs: {
 		Platform::UniquePtr<DiagnosticLogsCrash> crashData(Platform::New<DiagnosticLogsCrash>());
@@ -279,6 +298,10 @@ CHIP_ERROR DiagnosticLogProvider::Init()
 	err = DiagnosticLogsEndUser::Instance().Init();
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+	err = DiagnosticLogsNetwork::Instance().Init();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
+
 	return err;
 }
 
@@ -291,6 +314,10 @@ void DiagnosticLogProvider::ClearLogs()
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS
 	DiagnosticLogsEndUser::Instance().Clear();
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+	DiagnosticLogsNetwork::Instance().Clear();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
 }
 
 void emberAfDiagnosticLogsClusterInitCallback(chip::EndpointId endpoint)
