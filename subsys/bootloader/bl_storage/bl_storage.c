@@ -10,6 +10,7 @@
 #include <nrf.h>
 #include <assert.h>
 #include <nrfx_nvmc.h>
+#include <zephyr/kernel.h>
 
 #define TYPE_COUNTERS 1 /* Type referring to counter collection. */
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
@@ -72,15 +73,39 @@ uint32_t num_public_keys_read(void)
 }
 
 /* Value written to the invalidation token when invalidating an entry. */
-#define INVALID_VAL 0xFFFF0000
+#define INVALID_VAL 0x50FA0000
+#define INVALID_WRITE_VAL 0xFFFF0000
+#define VALID_VAL 0x50FAFFFF
+#define MAX_NUM_PUBLIC_KEYS 16
+#define TOKEN_IDX_OFFSET 24
 
 static bool key_is_valid(uint32_t key_idx)
 {
-	return nrfx_nvmc_uicr_word_read(&BL_STORAGE->key_data[key_idx].valid) != INVALID_VAL;
+	if (key_idx >= num_public_keys_read()) {
+		return false;
+	}
+
+	const uint32_t token = nrfx_nvmc_uicr_word_read(&BL_STORAGE->key_data[key_idx].valid);
+	const uint32_t invalid_val = INVALID_VAL | key_idx << TOKEN_IDX_OFFSET;
+	const uint32_t valid_val = VALID_VAL | key_idx << TOKEN_IDX_OFFSET;
+
+	if (token == invalid_val) {
+		return false;
+	} else if (token == valid_val) {
+		return true;
+	}
+
+	/* Invalid value. */
+	k_panic();
+	return false;
 }
 
 int verify_public_keys(void)
 {
+	if (num_public_keys_read() > MAX_NUM_PUBLIC_KEYS) {
+		return -EINVAL;
+	}
+
 	for (uint32_t n = 0; n < num_public_keys_read(); n++) {
 		if (key_is_valid(n)) {
 			for (uint32_t i = 0; i < SB_PUBLIC_KEY_HASH_LEN / 2; i++) {
@@ -128,9 +153,9 @@ void invalidate_public_key(uint32_t key_idx)
 	const volatile uint32_t *invalidation_token =
 			&BL_STORAGE->key_data[key_idx].valid;
 
-	if (nrfx_nvmc_uicr_word_read(invalidation_token) != INVALID_VAL) {
+	if (key_is_valid(key_idx)) {
 		/* Write if not already written. */
-		nrfx_nvmc_word_write((uint32_t)invalidation_token, INVALID_VAL);
+		nrfx_nvmc_word_write((uint32_t)invalidation_token, INVALID_WRITE_VAL);
 	}
 }
 
