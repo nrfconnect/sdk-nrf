@@ -11,7 +11,8 @@
 using namespace ::chip;
 using namespace ::chip::app;
 
-namespace Nrf {
+namespace Nrf
+{
 
 CHIP_ERROR MatterBridgedDevice::CopyAttribute(const void *attribute, size_t attributeSize, void *buffer,
 					      uint16_t maxBufferSize)
@@ -25,6 +26,13 @@ CHIP_ERROR MatterBridgedDevice::CopyAttribute(const void *attribute, size_t attr
 	return CHIP_NO_ERROR;
 }
 
+void MatterBridgedDevice::SetNodeLabel(void *data, size_t size)
+{
+	/* Clean the buffer and fill it with the new data. */
+	memset(mNodeLabel, 0, sizeof(mNodeLabel));
+	memcpy(mNodeLabel, data, size);
+}
+
 CHIP_ERROR MatterBridgedDevice::HandleWriteDeviceBasicInformation(chip::ClusterId clusterId,
 								  chip::AttributeId attributeId, void *data,
 								  size_t dataSize)
@@ -35,6 +43,10 @@ CHIP_ERROR MatterBridgedDevice::HandleWriteDeviceBasicInformation(chip::ClusterI
 			SetIsReachable(*reinterpret_cast<bool *>(data));
 			return CHIP_NO_ERROR;
 		}
+	case Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id:
+		SetNodeLabel(data, dataSize);
+		return CHIP_NO_ERROR;
+
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}

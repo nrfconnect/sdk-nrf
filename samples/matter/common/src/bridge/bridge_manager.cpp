@@ -413,7 +413,31 @@ CHIP_ERROR BridgeManager::HandleWrite(uint16_t index, ClusterId clusterId,
 		return device->HandleWriteIdentify(attributeMetadata->attributeId, buffer, attributeMetadata->size);
 	}
 
-	CHIP_ERROR err = device->HandleWrite(clusterId, attributeMetadata->attributeId, buffer);
+	uint8_t *data;
+	size_t dataLen;
+
+	/* The buffer content differs depending on the attribute type, so there are some conversions required. */
+	switch (attributeMetadata->attributeType) {
+	case ZCL_OCTET_STRING_ATTRIBUTE_TYPE:
+	case ZCL_CHAR_STRING_ATTRIBUTE_TYPE:
+		/* These are pascal strings that contain length encoded as a first byte of data. */
+		data = buffer + 1;
+		memcpy(&dataLen, buffer, 1);
+		break;
+	case ZCL_LONG_OCTET_STRING_ATTRIBUTE_TYPE:
+	case ZCL_LONG_CHAR_STRING_ATTRIBUTE_TYPE:
+		/* These are pascal long strings that contain length encoded as a first two bytes of data. */
+		data = buffer + 2;
+		memcpy(&dataLen, buffer, 2);
+		break;
+	default:
+		/* Other numerical attribute types are represented in a normal way. */
+		data = buffer;
+		dataLen = attributeMetadata->size;
+		break;
+	}
+
+	CHIP_ERROR err = device->HandleWrite(clusterId, attributeMetadata->attributeId, data, dataLen);
 
 	/* After updating MatterBridgedDevice state, forward request to the non-Matter device. */
 	if (err == CHIP_NO_ERROR) {

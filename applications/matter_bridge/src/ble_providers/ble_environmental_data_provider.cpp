@@ -96,7 +96,20 @@ void BleEnvironmentalDataProvider::NotifyUpdateState(chip::ClusterId clusterId, 
 CHIP_ERROR BleEnvironmentalDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
 						     uint8_t *)
 {
-	return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
+	if (clusterId != Clusters::BridgedDeviceBasicInformation::Id) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	switch (attributeId) {
+	case Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id:
+		/* Node label is just updated locally and there is no need to propagate the information to the end
+		 * device. */
+		break;
+	default:
+		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
+	}
+
+	return CHIP_NO_ERROR;
 }
 
 int BleEnvironmentalDataProvider::ParseDiscoveredData(bt_gatt_dm *discoveredData)
