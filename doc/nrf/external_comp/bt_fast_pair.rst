@@ -432,12 +432,12 @@ To comply with the requirements of the FMDN extension, you must manage the Fast 
 When creating the Fast Pair advertising set with the :c:func:`bt_le_ext_adv_create` function, register the :c:struct:`bt_le_ext_adv_cb` structure with the following callbacks:
 
 * The :c:member:`bt_le_ext_adv_cb.connected` callback to track connections that are part of the application's connection pool (and were not created from the FMDN advertising set).
-* The :c:member:`bt_le_ext_adv_cb.rpa_expired` callback to synchronize the update of the application's advertising sets' payloads together with their respective Resolvable Private Addresses (RPA).
+* The ``bt_le_ext_adv_cb.rpa_expired`` callback to synchronize the update of the application's advertising sets' payloads together with their respective Resolvable Private Addresses (RPA).
 
 .. Important::
    You must manage application advertising sets according to the FMDN provisioning state:
 
-   * For the provisioned device, only update the Fast Pair advertising payload during the :c:member:`bt_le_ext_adv_cb.rpa_expired` callback execution.
+   * For the provisioned device, only update the Fast Pair advertising payload during the ``bt_le_ext_adv_cb.rpa_expired`` callback execution.
      The FMDN extension controls the RPA rotation time in this state, and no other module in your application is allowed to change the rotation time.
    * For the unprovisioned device, control the Fast Pair advertising rotation time using the :c:func:`bt_le_set_rpa_timeout` and :c:func:`bt_le_oob_get_local` functions.
      You must still comply with the requirements of the Fast Pair protocol.
@@ -474,7 +474,7 @@ Battery level indication
 ------------------------
 
 To specify the battery level broadcasted in the FMDN advertising payload, use the :c:func:`bt_fast_pair_fmdn_battery_level_set` function.
-You can update the battery level asynchronously without having to wait on the :c:member:`bt_le_ext_adv_cb.rpa_expired` callback.
+You can update the battery level asynchronously without having to wait on the ``bt_le_ext_adv_cb.rpa_expired`` callback.
 
 The current API accepts the battery level as a percentage value, and ranges from 0% to 100%.
 This percentage value is first translated according to the quantified battery states defined in the FMDN Accessory specification and then encoded in the FMDN advertising set according to the following rules:
@@ -807,8 +807,8 @@ Custom user reset action
 ========================
 
 Use the :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_USER_RESET_ACTION` Kconfig option to enable a custom user reset action that executes together with the factory reset operation.
-To define the custom user reset action, you need to implement the :c:func:`bt_fast_pair_factory_reset_user_action_perform` function in your application code.
-Optionally, you can also define the :c:func:`bt_fast_pair_factory_reset_user_action_prepare` function if you want an earlier notification that the reset operation is due to begin.
+To define the custom user reset action, you need to implement the ``bt_fast_pair_factory_reset_user_action_perform`` function in your application code.
+Optionally, you can also define the ``bt_fast_pair_factory_reset_user_action_prepare`` function if you want an earlier notification that the reset operation is due to begin.
 Both functions are defined as weak no-op functions.
 Ensure that your reset action implementation executes correctly in the following execution contexts:
 
