@@ -37,13 +37,14 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 #define FLASH_PAGE_SIZE_LOG2	12
 #define FLASH_PAGE_SIZE		BIT(FLASH_PAGE_SIZE_LOG2)
 #define FLASH_PAGE_ID(off)	((off) >> FLASH_PAGE_SIZE_LOG2)
-#define FLASH_CLEAN_VAL		UINT32_MAX
 #define FLASH_READ_CHUNK_SIZE	(FLASH_PAGE_SIZE / 8)
 
 #define DFU_TIMEOUT			K_SECONDS(5)
 #define REBOOT_REQUEST_TIMEOUT		K_MSEC(250)
 #define BACKGROUND_FLASH_ERASE_TIMEOUT	K_SECONDS(15)
 #define BACKGROUND_FLASH_STORE_TIMEOUT	K_MSEC(5)
+
+#define ERASED_VAL_32(x) (((x) << 24) | ((x) << 16) | ((x) << 8) | (x))
 
 /* Keep small to avoid blocking the workqueue for long periods of time. */
 #define STORE_CHUNK_SIZE		16 /* bytes */
@@ -118,6 +119,9 @@ static uint32_t img_length;
 
 static uint16_t store_offset;
 static uint16_t sync_offset;
+static uint32_t flash_write_block_size;
+static uint8_t erased_val;
+
 static char sync_buffer[SYNC_BUFFER_SIZE] __aligned(4);
 
 static bool device_in_use;
@@ -186,7 +190,7 @@ static bool is_page_clean(const struct flash_area *fa, off_t off, size_t len)
 		}
 
 		for (size_t j = 0; j < ARRAY_SIZE(buf); j++) {
-			if (buf[j] != FLASH_CLEAN_VAL) {
+			if (buf[j] != ERASED_VAL_32(erased_val)) {
 				return false;
 			}
 		}
@@ -345,10 +349,6 @@ static void complete_dfu_data_store(void)
 
 static void store_dfu_data_chunk(void)
 {
-	/* Some flash may require word alignment. */
-	BUILD_ASSERT((STORE_CHUNK_SIZE % sizeof(uint32_t)) == 0);
-	BUILD_ASSERT((sizeof(sync_buffer) % sizeof(uint32_t)) == 0);
-
 	__ASSERT_NO_MSG(store_offset <= sync_offset);
 	__ASSERT_NO_MSG(flash_area != NULL);
 
@@ -357,10 +357,12 @@ static void store_dfu_data_chunk(void)
 	if (sync_offset - store_offset < store_size) {
 		store_size = sync_offset - store_offset;
 	}
-	if ((store_size > sizeof(uint32_t)) &&
-	    ((store_size % sizeof(uint32_t)) != 0)) {
-		/* Required by some flash drivers. */
-		store_size = (store_size / sizeof(uint32_t)) * sizeof(uint32_t);
+
+	if (store_size % flash_write_block_size != 0) {
+		size_t pad_len = (flash_write_block_size - (store_size % flash_write_block_size));
+
+		memset(&sync_buffer[store_offset + store_size], erased_val, pad_len);
+		store_size += pad_len;
 	}
 
 	LOG_DBG("DFU data store chunk: %" PRIu32, cur_offset + store_offset);
@@ -933,13 +935,31 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
+			int err;
 #if CONFIG_BOOTLOADER_MCUBOOT && !CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
-			int err = boot_write_img_confirmed();
+			err = boot_write_img_confirmed();
 
 			if (err) {
 				LOG_ERR("Cannot confirm a running image");
 			}
 #endif
+
+			err = flash_area_open(DFU_SLOT_ID, &flash_area);
+			if (!err) {
+				flash_write_block_size = flash_area_align(flash_area);
+				erased_val = flash_area_erased_val(flash_area);
+				flash_area_close(flash_area);
+				flash_area = NULL;
+			} else {
+				LOG_ERR("Cannot open flash area (%d)", err);
+				module_set_state(MODULE_STATE_ERROR);
+				return false;
+			}
+
+			/* Some flash may require word alignment. */
+			__ASSERT_NO_MSG((STORE_CHUNK_SIZE % flash_write_block_size) == 0);
+			__ASSERT_NO_MSG((sizeof(sync_buffer) % flash_write_block_size) == 0);
+
 			k_work_init_delayable(&dfu_timeout, dfu_timeout_handler);
 			k_work_init_delayable(&reboot_request, reboot_request_handler);
 			k_work_init_delayable(&background_erase, background_erase_handler);
