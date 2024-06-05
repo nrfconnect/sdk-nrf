@@ -72,11 +72,12 @@ uint32_t num_public_keys_read(void)
 }
 
 /* Value written to the invalidation token when invalidating an entry. */
-#define INVALID_VAL 0xFFFF0000
+#define INVALID_VAL 0x00000000
+#define VALID_VAL 0xFFFFFFFF
 
 static bool key_is_valid(uint32_t key_idx)
 {
-	return nrfx_nvmc_uicr_word_read(&BL_STORAGE->key_data[key_idx].valid) != INVALID_VAL;
+	return nrfx_nvmc_uicr_word_read(&BL_STORAGE->key_data[key_idx].valid) == VALID_VAL;
 }
 
 int verify_public_keys(void)
@@ -128,7 +129,7 @@ void invalidate_public_key(uint32_t key_idx)
 	const volatile uint32_t *invalidation_token =
 			&BL_STORAGE->key_data[key_idx].valid;
 
-	if (nrfx_nvmc_uicr_word_read(invalidation_token) != INVALID_VAL) {
+	if (key_is_valid(key_idx)) {
 		/* Write if not already written. */
 		nrfx_nvmc_word_write((uint32_t)invalidation_token, INVALID_VAL);
 	}
