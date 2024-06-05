@@ -36,6 +36,8 @@ def parse_args():
                         file.''')
     parser.add_argument('--name', required=False, help='Optional name to display to the user to help identify the '
                         'purpose of this update')
+    parser.add_argument('--format-version', required=False, type=int, default=1,
+                        help='The format-version field is used to determine manifest.json format')
     return parser.parse_known_args()
 
 
@@ -47,7 +49,7 @@ if __name__ == '__main__':
     args, info = parse_args()
 
     manifest = {
-        'format-version': 0,
+        'format-version': args.format_version,
         'time': int(time.time()),
         'files': list()
     }
