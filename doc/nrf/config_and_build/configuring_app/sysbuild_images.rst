@@ -3,19 +3,27 @@
 Sysbuild images
 ###############
 
+Sysbuild allows you to add additional images to your builds.
+
 Enabling images
 ===============
 
-Sysbuild allows you to add additional images to a build by modifying the central sysbuild configuration.
+To add an additional image using sysbuild, you must modify the central sysbuild configuration.
 This is typically done in a `sysbuild.conf` file within an application, which is a Kconfig fragment applied to the default sysbuild configuration when a project is configured.
+
+.. note::
+   On the nRF54H20 SoC, do not use any ``SECURE_BOOT`` or ``MCUBOOT`` option.
+   The nRF54H20 SoC boot sequence is based on the Secure Domain, and it cannot be disabled.
+   For more information, see :ref:`ug_nrf54h20_architecture_boot`.
+
 The following sysbuild Kconfig options can be used to enable images in a build:
 
 +-------------------------------------------------+-----------------------------------------------------------------------------------------+
 | Sysbuild Kconfig option                         | Description                                                                             |
 +=================================================+=========================================================================================+
-| :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` | Enable secure boot for application core (or main core if device only has a single core) |
+|               ``SB_CONFIG_SECURE_BOOT_APPCORE`` | Enable secure boot for application core (or main core if device only has a single core).|
 +-------------------------------------------------+-----------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`  | Build MCUboot image                                                                     |
+|               ``SB_CONFIG_BOOTLOADER_MCUBOOT``  | Build MCUboot image.                                                                    |
 +-------------------------------------------------+-----------------------------------------------------------------------------------------+
 
 The following sysbuild Kconfig options are also available for nRF53-based devices.
@@ -24,21 +32,21 @@ These options determine whether the secure boot image is included on the network
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 | Sysbuild Kconfig option                                 | Description                                                                                               |
 +=========================================================+===========================================================================================================+
-| :kconfig:option:`SB_CONFIG_SECURE_BOOT_NETCORE`         | Enable secure boot for network core                                                                       |
+|               ``SB_CONFIG_SECURE_BOOT_NETCORE``         | Enable secure boot for network core.                                                                      |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_EMPTY`               | |NCS| empty network core image :zephyr_file:`samples/nrf5340/empty_net_core`                              |
+|               ``SB_CONFIG_NETCORE_EMPTY``               | |NCS| empty network core image :ref:`nrf5340_empty_net_core`.                                             |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_HCI_IPC`             | Zephyr hci_ipc Bluetooth image :zephyr_file:`samples/bluetooth/hci_ipc`                                   |
+|               ``SB_CONFIG_NETCORE_HCI_IPC``             | Zephyr hci_ipc Bluetooth image :ref:`zephyr:bluetooth-hci-ipc-sample`.                                    |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_RPC_HOST`            | |NCS| rpc_host Bluetooth image :zephyr_file:`samples/bluetooth/rpc_host`                                  |
+|               ``SB_CONFIG_NETCORE_RPC_HOST``            | |NCS| rpc_host Bluetooth image :ref:`ble_rpc_host`.                                                       |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_802154_RPMSG`        | Zephyr 802.15.4 image :zephyr_file:`samples/boards/nrf/ieee802154/802154_rpmsg`                           |
+|               ``SB_CONFIG_NETCORE_802154_RPMSG``        | Zephyr 802.15.4 image :ref:`zephyr:nrf-ieee802154-rpmsg-sample`.                                          |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` | |NCS| multiprotocol_rpmsg Bluetooth and 802.15.4 image :zephyr_file:`samples/nrf5340/multiprotocol_rpmsg` |
+|               ``SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG`` | |NCS| multiprotocol_rpmsg Bluetooth and 802.15.4 image :ref:`multiprotocol-rpmsg-sample`.                 |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO`           | |NCS| ipc_radio image :zephyr_file:`applications/ipc_radio`                                               |
+|               ``SB_CONFIG_NETCORE_IPC_RADIO``           | |NCS| ipc_radio image :ref:`ipc_radio`.                                                                   |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_NONE`                | No network core image                                                                                     |
+|               ``SB_CONFIG_NETCORE_NONE``                | No network core image.                                                                                    |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 
 .. _sysbuild_images_adding_custom_images:
@@ -53,7 +61,10 @@ Custom images can be added directly to a project (or board) or to a Zephyr modul
 Adding to a single project
 --------------------------
 
-Adding an image to a single project requires the `Kconfig.sysbuild` file to include Kconfig options that will be added to the sysbuild configuration (if the image selection is optional, it can be omitted if the image selection is mandatory) and a `sysbuild.cmake` file to incorporate the image into the project.
+To add an image to a single project, you need a ``sysbuild.cmake`` file in the root folder of your project to incorporate the image into the project.
+If the image selection is optional, a ``Kconfig.sysbuild`` file in the root folder of your project is also required to include Kconfig options for the sysbuild configuration.
+If the image selection is mandatory, the ``Kconfig.sysbuild`` file can be omitted.
+
 
 Kconfig.sysbuild:
 
@@ -187,7 +198,7 @@ Then, add this folder to the Zephyr module file:
 .. code-block:: yaml
 
     build:
-      sysbuild-cmake: sysbuild  # Only needed is a sysbuild CMakeLists.txt file is being added
+      sysbuild-cmake: sysbuild  # Only needed if a sysbuild CMakeLists.txt file is being added
       sysbuild-kconfig: sysbuild/Kconfig.sysbuild
 
 The ``CMakeLists.txt`` file is the same as the ``sysbuild.cmake`` file from the previous examples.
@@ -227,3 +238,8 @@ Kconfig.sysbuild:
     endif # !NETCORE_NONE
 
     endmenu
+
+Next steps
+==========
+
+For more information on sysbuild, see :ref:`zephyr:sysbuild`, :ref:`zephyr_samples_sysbuild`, and :ref:`sysbuild_forced_options`.

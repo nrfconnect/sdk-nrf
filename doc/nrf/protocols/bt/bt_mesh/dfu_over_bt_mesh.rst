@@ -198,7 +198,7 @@ Using the DFU metadata extraction script is the most efficient way of generating
 Automated metadata generation
 =============================
 
-By enabling the :kconfig:option:`SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA` option in sysbuild, the metadata will be automatically parsed from the ``.elf`` and ``.config`` files.
+By enabling the ``SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA`` option in sysbuild, the metadata will be automatically parsed from the ``.elf`` and ``.config`` files.
 The parsed data is stored in the :file:`ble_mesh_metadata.json` file.
 The file is placed in the :file:`dfu_application.zip` archive in the build folder of the application.
 Additionally, the metadata string required by the ``mesh models dfu slot add`` command will be printed in the command line window when the application is built::

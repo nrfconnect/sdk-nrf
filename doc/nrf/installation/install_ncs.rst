@@ -293,20 +293,20 @@ For more information about the repository and development model, see the :ref:`d
 
 ..
 
-If you used the default locations, your directory structure now looks similar to this:
+If you used the default locations (:file:`C:\ncs` on Windows, :file:`<home>/ncs` on Linux and MacOS), your directory structure now looks similar to this:
 
 .. code-block:: none
 
-   <home>/
-   ├─── toolchains/
+   ncs
+   ├─── toolchains
    │  └─── <toolchain-installation>
-   └─── <west-workspace>/
-      ├─── .west/
-      ├─── bootloader/
-      ├─── modules/
-      ├─── nrf/
-      ├─── nrfxlib/
-      ├─── zephyr/
+   └─── <west-workspace>
+      ├─── .west
+      ├─── bootloader
+      ├─── modules
+      ├─── nrf
+      ├─── nrfxlib
+      ├─── zephyr
       └─── ...
 
 In this simplified structure preview, *<home>* corresponds to :file:`ncs/` and *<toolchain-installation>* and *<west-workspace>* correspond to the version names you installed.
@@ -601,11 +601,13 @@ To install the |NCS| system-wide, complete the following steps:
 .. _gs_assistant:
 .. _auto_installation_tcm_setup:
 
-Legacy installation with Toolchain Manager
-******************************************
+Installation with Toolchain Manager
+***********************************
 
-.. important::
-     Toolchain Manager installation is recommended for the |NCS| v1.9.x and earlier.
+.. note::
+
+   The Toolchain Manager installation is recommended only when using the nRF54H20 DK with the |NCS| v2.7.0.
+   When using any other DK, the Toolchain Manager installation is recommended for the |NCS| v1.9.x and earlier versions.
 
 .. toggle::
 

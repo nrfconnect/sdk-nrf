@@ -45,10 +45,10 @@ Boot stages
 
 .. to review
 
-The Secure Domain boots the System Controller, the Application Core, and the Radio Core:
+The Secure Domain boots the System Controller, the application core, and the radio core:
 
 * VPRs (PPR, FLPR) are started by their owners when the owners decide.
-* PPR and FLPR are owned by the Application Core in most applications, but any of them can be reassigned to the Radio Core.
+* PPR and FLPR are owned by the application core in most applications, but any of them can be reassigned to the radio core.
 
 See the following overview of the boot sequence, where the left-most block indicates what starts first from when power-on reset is applied.
 

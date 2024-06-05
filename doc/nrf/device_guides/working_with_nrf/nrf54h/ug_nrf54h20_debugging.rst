@@ -39,10 +39,10 @@ To debug single-core applications, you can use the ``west debug`` command to sta
 Debugging multi-core applications
 *********************************
 
-To debug the firmware running also on cores other than the Application Core, you need to set up a separate debug session for each one of the cores you want to debug.
-When debugging another core, the Application Core debug session runs in the background and you can debug both cores if needed.
+To debug the firmware running also on cores other than the application core, you need to set up a separate debug session for each one of the cores you want to debug.
+When debugging another core, the application core debug session runs in the background and you can debug both cores if needed.
 
-If you want to reset the other cores while debugging, make sure to first reset the Application Core and execute the code.
+If you want to reset the other cores while debugging, make sure to first reset the application core and execute the code.
 
 Using GDB as an external debugger
 *********************************
@@ -52,9 +52,9 @@ The DAP is a standard Arm® CoreSight™ serial wire debug port (SWJ-DP) that im
 
 There are several access ports that connect to different parts of the system:
 
-   * AHB-AP 0: Application Core access port ID
-   * AHB-AP 1: Radio core access port ID
-   * AHB-AP 2: Secure domain access port ID
+   * AHB-AP 0: application core access port ID
+   * AHB-AP 1: radio core access port ID
+   * AHB-AP 2: Secure Domain access port ID
    * AHB-AP 3: Auxiliary access port ID
    * CTRL-AP 4: Device level control access port ID
    * APB-AP 5: CoreSight™ subsystem access port ID
@@ -66,7 +66,7 @@ Selecting the core
 
 To debug a specific core using ``JLinkExe`` do the following:
 
-1. Run J-Link on the Application Core::
+1. Run J-Link on the application core::
 
       JLinkExe -USB <SEGGER-ID> -if SWD -Device Cortex-M33
 
@@ -82,7 +82,7 @@ To debug a specific core using ``JLinkExe`` do the following:
    .. note::
       PPR core debugging is not functional in the initial limited sampling.
 
-#. Connect to the Application Core::
+#. Connect to the application core::
 
       exec CORESIGHT_SetIndexAHBAPToUse = <Domain AP index>
       connect

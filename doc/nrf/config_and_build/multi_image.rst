@@ -7,7 +7,7 @@ Multi-image builds using child and parent images
    :local:
    :depth: 2
 
-.. important::
+.. caution::
     |sysbuild_related_deprecation_note|
 
 The firmware programmed to a device can be composed of either one application or several separate images.
