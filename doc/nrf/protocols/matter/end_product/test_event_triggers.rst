@@ -88,7 +88,7 @@ The following table lists the available triggers and their activation codes:
     - ``0xFFFFFFFF40000000`` - ``0xFFFFFFFF40000400``
     - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
   * - Diagnostic Logs Network Data
-    - :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST` = ``y``, and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y``, and enabled ``Diagnostic Logs`` cluster.
+    - Enabled ``Diagnostic Logs`` cluster, and either the snippet `diagnostic-logs` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y`` and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS` = ``y``.
     - Trigger writing a specific amount of ``n`` characters to the network diagnostics logs.
       The amount of characters is determined by the value at the end of the event trigger value.
       The current supported maximum is 1023 bytes for single trigger call, and 4096 bytes of total data written.

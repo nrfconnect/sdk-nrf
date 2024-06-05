@@ -47,6 +47,11 @@ config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS
 	help
 	  Enables support for capturing end user diagnostic logs.
 
+config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+	bool "Network logs support"
+	help
+	  Enables support for capturing network diagnostic logs.
+
 config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
 	bool "Testing module for Diagnostic logs cluster"
 	help
