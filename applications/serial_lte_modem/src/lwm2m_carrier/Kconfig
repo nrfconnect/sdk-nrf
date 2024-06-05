@@ -12,8 +12,8 @@ if SLM_CARRIER
 
 config SLM_CARRIER_APP_DATA_BUFFER_LEN
 	int "Size of the buffer for setting application data"
-	default 768
-	range 128 768
+	default 1016
+	range 120 1016
 	help
 	  Specifies maximum application data size to be set in the App Data Container,
 	  the Binary App Data Container or the Event Log objects.
