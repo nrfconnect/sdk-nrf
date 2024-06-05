@@ -561,6 +561,7 @@ Cellular samples
     * The ability to control the state of the test counter using the config section in the device shadow.
     * Handling of L4 disconnect where CoAP connection is paused and socket is kept open, then resumed when L4 reconnects.
     * Checking in CoAP FOTA and shadow polling threads to improve recovery from communications failures.
+    * Sysbuild overlays for Wi-Fi and external-flash builds.
 
 * :ref:`udp` sample:
 
