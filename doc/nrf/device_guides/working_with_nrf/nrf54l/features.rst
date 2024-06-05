@@ -121,8 +121,8 @@ To compile the SMP server sample for testing secondary image slots on external S
 
    Make sure to use the correct board target depending on your PDK version:
 
-   * For the PDK revision v0.2.1, AB0-ES7, use the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
-   * For the PDK revisions v0.3.0 and v0.7.0, use the ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` board target.
+   * For the PDK revision v0.2.1, AB0-ES7, use the ``nrf54l15pdk@0.2.1/nrf54l15/cpuapp`` board target.
+   * For the PDK revisions v0.3.0 and v0.7.0, use the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
 
 This configuration sets up the secondary image slot on the serial flash memory installed on the nRF54L15 PDK.
 It also enables the relevant SPI and the SPI NOR flash drivers.

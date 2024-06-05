@@ -28,8 +28,8 @@ Hardware
 
       For commands, use the correct board target depending on your PDK version:
 
-      * For the PDK revision v0.2.1, AB0-ES7 (Engineering A), use the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
-      * For the PDK revisions v0.3.0 and v0.7.0 (Engineering A), use the ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` board target.
+      * For the PDK revision v0.2.1, AB0-ES7 (Engineering A), use the ``nrf54l15pdk@0.2.1/nrf54l15/cpuapp`` board target.
+      * For the PDK revisions v0.3.0 and v0.7.0 (Engineering A), use the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
 
 * USB-C cable
 
@@ -57,7 +57,7 @@ Go to the :file:`ncs/v2.6.0/nrf` folder and run the following commands:
    :class: highlight
 
    git fetch
-   git checkout 2.6.99-cs1
+   git checkout v2.6.99-cs1
    west update
 
 .. _ug_nrf54l15_gs_test_sample:
