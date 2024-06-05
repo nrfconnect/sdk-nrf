@@ -88,6 +88,8 @@ tests:
       - CONFIG_TFM_ISOLATION_LEVEL=1
       - CONFIG_TFM_PARTITION_INITIAL_ATTESTATION=y
       - CONFIG_TFM_NRF_PROVISIONING=y
+      - CONFIG_NRF_APPROTECT_LOCK=y
+      - CONFIG_NRF_SECURE_APPROTECT_LOCK=y
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
       nrf9151dk/nrf9151/ns
@@ -105,6 +107,8 @@ tests:
       - CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y
       - CONFIG_TFM_PARTITION_INITIAL_ATTESTATION=y
       - CONFIG_TFM_NRF_PROVISIONING=y
+      - CONFIG_NRF_APPROTECT_LOCK=y
+      - CONFIG_NRF_SECURE_APPROTECT_LOCK=y
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns
       nrf9151dk/nrf9151/ns
