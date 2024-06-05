@@ -68,6 +68,7 @@ function(generate_dfu_zip)
     ${GENZIP_ZIP_NAMES}
     --output ${GENZIP_OUTPUT}
     --name "${APPNAME}"
+    --format-version 1
     ${meta_argument}
     ${GENZIP_SCRIPT_PARAMS}
     "type=${GENZIP_TYPE}"
