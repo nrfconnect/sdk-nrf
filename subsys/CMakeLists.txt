@@ -57,6 +57,7 @@ endif()
 if(CONFIG_FW_INFO OR CONFIG_FW_INFO_API)
   add_subdirectory(fw_info)
 endif()
+add_subdirectory(logging)
 add_subdirectory(shell)
 
 add_subdirectory(debug)
