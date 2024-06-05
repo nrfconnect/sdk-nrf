@@ -262,6 +262,7 @@ Kconfig*                                  @tejlmand
 /subsys/event_manager_proxy/              @rakons
 /subsys/fw_info/                          @hakonfam
 /subsys/gazell/                           @leewkb4567
+/subsys/logging/                          @Damian-Nordic
 /subsys/mpsl/                             @nrfconnect/ncs-dragoon
 /subsys/mpsl/cx/                          @ankuns @martintv
 /subsys/mpsl/fem/                         @ankuns @martintv
