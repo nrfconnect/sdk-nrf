@@ -4,4 +4,39 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Intentionally left empty to overwrite default app.overlay. */
+/ {
+	buttons {
+		compatible = "gpio-keys";
+		button1: button_1 {
+			gpios = < &gpio0 0x9 0x11 >;
+			label = "Push button 1";
+			zephyr,code = < 0x2 >;
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led1: led_1 {
+			gpios = < &gpio9 0x1 0x0 >;
+			label = "Green LED 1";
+		};
+	};
+
+	aliases {
+		button = &button1;
+		led = &led1;
+	};
+ };
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio9 {
+	status = "okay";
+};
+
+&gpiote130 {
+	owned-channels = <6>;
+	status = "okay";
+};
