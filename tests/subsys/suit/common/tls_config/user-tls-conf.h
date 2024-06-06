@@ -131,4 +131,12 @@
 #error "Key ID ranges will not match"
 #endif
 
+/*
+ * Disable use of the i386 assembly code for multiplitcation if address
+ * sanitazers are enabled.
+ */
+#if defined(__i386__) && defined(CONFIG_ASAN)
+#define MULADDC_CANNOT_USE_EBX
+#endif
+
 #endif /* USER_MBEDTLS_CONFIG_H */
