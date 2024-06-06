@@ -199,7 +199,7 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
-    tags: sysbuild
+    tags: ci_build sysbuild
   # Used by QA and also acts as a memory stress test
   sample.nrf7001.superset:
     sysbuild: true
@@ -327,7 +327,7 @@ tests:
     integration_platforms:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf54l15pdk/nrf54l15/cpuapp
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.nrf7002.shell.psa:
     build_only: true
     extra_args: CONFIG_WPA_SUPP_CRYPTO_PSA=y
