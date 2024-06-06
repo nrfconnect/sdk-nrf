@@ -86,6 +86,7 @@ static const struct wifi_mgmt_ops wpa_supp_ops = {
 	.filter = z_wpa_supplicant_filter,
 	.channel = z_wpa_supplicant_channel,
 	.set_rts_threshold = z_wpa_supplicant_set_rts_threshold,
+	.set_bss_max_idle_period = z_wpa_supplicant_set_bss_max_idle_period,
 #ifdef CONFIG_AP
 	.ap_enable = z_wpa_supplicant_ap_enable,
 	.ap_disable = z_wpa_supplicant_ap_disable,
@@ -188,6 +189,7 @@ static int z_wpas_add_interface(const char *ifname)
 
 	wpa_s->conf->filter_ssids = 1;
 	wpa_s->conf->ap_scan = 1;
+	wpa_s->conf->bss_max_idle_period = CONFIG_WIFI_MGMT_BSS_MAX_IDLE_TIME;
 
 	/* Default interface, kick start wpa_supplicant */
 	if (z_wpas_get_iface_count() == 1) {

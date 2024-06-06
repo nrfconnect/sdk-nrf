@@ -152,6 +152,15 @@ int z_wpa_supplicant_channel(const struct device *dev,
 int z_wpa_supplicant_set_rts_threshold(const struct device *dev,
 				       unsigned int rts_threshold);
 
+/** @brief Set Wi-Fi max idle period
+ *
+ * @param dev Wi-Fi interface handle to use
+ * @param bss_max_idle_period Maximum idle period to set
+ * @return 0 for OK; -1 for ERROR
+ */
+int z_wpa_supplicant_set_bss_max_idle_period(const struct device *dev,
+					     unsigned short bss_max_idle_period);
+
 #ifdef CONFIG_AP
 /**
  * @brief Set Wi-Fi AP configuration
