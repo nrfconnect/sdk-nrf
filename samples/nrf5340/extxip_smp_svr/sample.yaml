@@ -10,6 +10,7 @@ common:
       - "<inf> smp_sample: build time:"
 tests:
   sample.mcumgr.smp_svr.ext_xip:
+    sysbuild: false
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp
