@@ -16,7 +16,7 @@
 
 / {
 	/* Disable pwmleds and redefine them to align configuration with CAF LEDs requirements.
-	 * The configuration needs to match the used board revision (v0.3.0).
+	 * The configuration needs to match the used board revision.
 	 */
 	/delete-node/ pwmleds;
 
