@@ -7,6 +7,7 @@
 DT_COMPAT_NORDIC_NRF700X_SPI := nordic,nrf700x-spi
 
 config SHIELD_NRF700X_NRF54H20DK
+	select NRF_WIFI_COMBINED_BUCKEN_IOVDD_GPIO
 	def_bool $(shields_list_contains,nrf700x_nrf54h20dk)
 
 config NRF7002_ON_SPI
