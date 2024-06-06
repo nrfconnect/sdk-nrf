@@ -697,3 +697,10 @@ config NET_MGMT_EVENT_QUEUE_SIZE
 	# Doing interface down and up even with delay puts a lot of events in the queue
 	default 16
 endif
+
+config NRF_WIFI_COMBINED_BUCKEN_IOVDD_GPIO
+	bool
+	help
+	  Enable this option to use a single GPIO to control both buck enable and IOVDD enable,
+	  there will be a internal hardware switch to add delay between the two operations. This
+	  is typically 4ms delay for nRF70.
