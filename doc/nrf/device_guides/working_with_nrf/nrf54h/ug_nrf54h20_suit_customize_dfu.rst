@@ -20,11 +20,11 @@ It consists of two main concepts: the SUIT envelope and the SUIT manifest.
 * The SUIT envelope acts as a secure container for transporting firmware updates, encapsulating the firmware binary and its manifest.
 * The SUIT manifest is a structured file with metadata essential for the update process, including firmware version, size, and hash for integrity verification.
 
-During the first build of the :ref:`nrf54h_suit_sample`, default manifest templates are provided.
-These templates form the basis for generating SUIT envelopes and manifests tailored to specific application requirements.
+Default manifest templates are provided by Nordic and used by default during application build.
+These templates are suitable for simple cases and form the basis for generating SUIT envelopes and manifests tailored to specific application requirements.
 Customization of these templates is crucial for specific use cases and security requirements.
 
-For detailed guidance on customizing these templates, refer to the :ref:`ug_suit_modify_manifest_temps` section.
+For detailed guidance on customizing these templates and creating your own templates, refer to the :ref:`ug_suit_use_own_manifest` section.
 
 .. figure:: images/nrf54h20_suit_dfu_overview.png
    :alt: Overview of the SUIT DFU procedure
@@ -60,127 +60,20 @@ Download instructions are in the README file `here <https://github.com/nrfconnec
 Build system configuration
 **************************
 
-The build system generates SUIT envelopes using predefined manifest templates provided by Nordic Semiconductor.
-These templates, suitable for standard development needs, are automatically placed in the sample directory after the first build.
-Customizing UUIDs in the manifest templates enhances security and is recommended for specific use cases.
-For information about adding custom UUID values, refer to the :ref:`ug_suit_using_manifest_gen` section.
+By default the build system generates SUIT envelopes using predefined manifest templates provided by Nordic Semiconductor.
+These templates can be found in :file:`modules/lib/suit-generator/ncs`, and are suitable for standard development needs.
+.
 
-After the first build of the :ref:`nrf54h_suit_sample`, three additional files are created in the :file:`nrf/samples/suit/smp_transfer` directory (or two levels above the build directory when using the ``west -d`` parameter):
+Three manifests are used in the most common case:
 
-* Root manifest - :file:`root_hierarchical_envelope.yaml.jinja2`
+* Root manifest - :file:`root_with_binary_nordic_top.yaml.jinja2`
 * Application domain manifest - :file:`app_envelope.yaml.jinja2`
 * Radio domain manifest - :file:`rad_envelope.yaml.jinja2`
-
-The destination directory for these :file:`jinja2` file templates can be changed by setting the :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION` Kconfig option.
 
 .. note::
    The radio domain manifest template is available only for the Bluetooth® Low Energy version of the :ref:`nrf54h_suit_sample`, not the UART version.
 
-.. _ug_suit_change_manifest_location:
-
-How to change the location of the manifest templates
-----------------------------------------------------
-
-Let us assume that you would like to store the editable manifest templates in the ``C:\my_templates\`` directory for a Windows machine, or in ``/home/my_user/my_templates`` for Linux.
-
-.. tabs::
-
-   .. group-tab:: Windows
-
-      Enter the following command to change the location where the editable manifest templates are stored:
-
-      .. code-block:: console
-
-         west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="C:/my_templates"
-
-   .. group-tab:: Linux
-
-      Enter the following command to change the location where the editable manifest templates are stored:
-
-      .. code-block:: console
-
-         west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="/home/my_user/my_templates"
-
-The source of the manifest templates can be configured by setting the following Kconfig options:
-
-* :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE`
-
-* :kconfig:option:`CONFIG_SUIT_ENVELOPE_APP_TEMPLATE`
-
-* :kconfig:option:`CONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE`
-
-Changing the source of manifest templates allows you to create manifest files on your own, without relying on the templates provided by Nordic Semiconductor.
-
-.. _ug_suit_use_own_manifest:
-
-How to use your own manifest
-----------------------------
-
-Let us analyze the case where you would like to:
-
-* Use your own created manifest template
-
-* Store editable manifest templates in a custom directory
-
-.. tabs::
-
-    .. group-tab:: Windows
-
-        The provided manifest templates are stored in ``C:\my_default_templates``.
-        Editable manifests should be stored in ``C:\my_templates``.
-
-    .. group-tab:: Linux
-
-        The provided manifest templates are stored in ``/home/my_user/my_default_templates``.
-        Editable manifests should be stored in ``/home/my_user/my_templates``.
-
-The following files should be used to create DFU envelope:
-
-* Root envelope - :file:`root.yaml.jinja2`
-
-* Application domain - :file:`app.yaml.jinja2`
-
-* Radio domain - :file:`radio.yaml.jinja2`
-
-.. figure:: images/nrf54h20_suit_example_update_process.png
-   :alt: Example update process
-
-   Example update process
-
-To build the described example with the provided manifest templates taken from your customized source folder, and to store it in your customized destination folder:
-
-.. tabs::
-
-    .. group-tab:: Windows
-
-        Run the following command:
-
-        .. code-block:: console
-
-            west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="c:/my_templates" -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE="c:/my_default_templates/root.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_APP_TEMPLATE="c:/my_default_templates/app.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE="c:/my_default_templates/radio.yaml.jinja2"
-
-    .. group-tab:: Linux
-
-        Run the following command:
-
-        .. code-block:: console
-
-            west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION="/home/my_user/my_templates" -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE="/home/my_user/my_default_templates/root.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_APP_TEMPLATE="/home/my_user/my_default_templates/app.yaml.jinja2" -DCONFIG_SUIT_ENVELOPE_HCI_RPMSG_SUBIMAGE_TEMPLATE="/home/my_user/my_default_templates/radio.yaml.jinja2"
-
-Editable manifest copied into the sample directory (or in the directory configured using the :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION` Kconfig option) can be modified to edit the contents of the envelopes and modify the DFU process.
-These files will not be overwritten by the build system during the next builds or in consecutive SDK releases.
-
-For more information about the Kconfig options used in this example, see the `SUIT Kconfig options <https://res.developer.nordicsemi.com/ncs/doc/latest/kconfig/index.html#!suit_envelope>`__.
-
-.. _ug_suit_modify_manifest_temps:
-
-Modify the manifest templates
-*****************************
-
-Customizing the manifest templates is recommended, especially the values for ``class-identifier`` and ``vendor-identifier``.
-These templates are rendered to YAML files representing the output binary SUIT envelopes.
-
-The whole process of building a DFU envelope (which contains the manifests) can be summarized with the following diagram:
+The process of building a SUIT envelope (which contains the manifests) can be summarized with the following diagram:
 
 .. figure:: images/nrf54h20_suit_generator_workflow.png
    :alt: Modifying manifest templates workflow
@@ -193,76 +86,89 @@ The provided manifest templates (``.jinja2``) files contain variables (represent
 The component values are filled out automatically by the build system during the manifest rendering.
 
 Variables in the provided templates, like memory ranges and paths to binaries, are filled out by the build system.
-However, values like ``class-identifier`` and ``vendor-identifier`` should be customized manually.
 
-An example of a YAML representation for a basic installation and invoke-process of the application firmware could look like the following:
+.. _ug_suit_use_own_manifest:
+
+How to use your own manifest
+----------------------------
+
+Changing the source of manifest templates allows you to create manifest files on your own, without relying on the templates provided by Nordic Semiconductor.
+
+The source of the manifest templates can be configured by setting the following Kconfig options:
+
+* :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE`
+
+* :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE` - for each of the images (application and radio core images)
+
+One example is demonstrated with the following case:
+
+.. tabs::
+
+    .. group-tab:: Windows
+
+        The provided user-defined manifest templates are stored in ``C:\my_default_templates``.
+
+    .. group-tab:: Linux
+
+        The provided user-defined manifest templates are stored in ``/home/my_user/my_default_templates``.
+
+The following files are used to create the SUIT envelope:
+
+* Root envelope - :file:`root.yaml.jinja2`
+
+* Application domain - :file:`app.yaml.jinja2`
+
+* Radio domain - :file:`radio.yaml.jinja2`
+
+To build the described example with the provided user-defined manifest templates:
+
+.. tabs::
+
+    .. group-tab:: Windows
+
+        Run the following command:
+
+        .. code-block:: console
+
+            west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE=\"c:/my_default_templates/root.yaml.jinja2\" -DCONFIG_SUIT_ENVELOPE_TEMPLATE=\"c:/my_default_templates/app.yaml.jinja2\" -Dhci_ipc_CONFIG_SUIT_ENVELOPE_TEMPLATE=\"c:/my_default_templates/radio.yaml.jinja2\"
+
+    .. group-tab:: Linux
+
+        Run the following command:
+
+        .. code-block:: console
+
+            west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE=\"/home/my_user/my_default_templates/root.yaml.jinja2\" -DCONFIG_SUIT_ENVELOPE_TEMPLATE=\"/home/my_user/my_default_templates/app.yaml.jinja2\" -Dhci_ipc_CONFIG_SUIT_ENVELOPE_TEMPLATE=\"/home/my_user/my_default_templates/radio.yaml.jinja2\"
+
+For more information about the Kconfig options used in this example, see the `SUIT Kconfig options <https://res.developer.nordicsemi.com/ncs/doc/latest/kconfig/index.html#!suit_envelope>`__.
+
+.. _ug_suit_customize_uuids:
+
+Customize Vendor and Class UUIDs
+--------------------------------
+
+Customizing UUIDs used for class and vendor IDs enhances security and is recommended for specific use cases.
+Values for ``class-identifier`` and ``vendor-identifier`` in the manifest are created based on the ``CONFIG_SUIT_MPI_<MANIFEST_ROLE>_VENDOR_NAME`` and ``CONFIG_SUIT_MPI_<MANIFEST_ROLE>_CLASS_NAME`` Kconfig options.
+Specifically, in the basic case:
+
+* :kconfig:option:`CONFIG_SUIT_MPI_ROOT_VENDOR_NAME`
+* :kconfig:option:`CONFIG_SUIT_MPI_ROOT_CLASS_NAME`
+* :kconfig:option:`CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME`
+* :kconfig:option:`CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME`
+* :kconfig:option:`CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME`
+* :kconfig:option:`CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME`
+
+These Kconfigs are used during Manifest Provisioning Information (MPI) generation.
+After the MPI has been flashed, it is read by the Secure Domain Firmware, which can then use it to verify if the UUIDs in a manifest are correct,
+
+As as an example, after adding the following lines to the :file:`prj.conf` file:
 
 .. code-block::
 
-   SUIT_Envelope_Tagged:
-    suit-authentication-wrapper:
-        SuitDigest:
-            suit-digest-algorithm-id: cose-alg-sha-256
-    suit-manifest:
-        suit-manifest-version: 1
-        suit-manifest-sequence-number: 1
-        suit-common:
-            suit-components:
-            - - MEM
-              - 0x02
-              - 0x0E0AA000
-              - 0x0007f800
-            suit-shared-sequence:
-               - suit-directive-override-parameters:
-                   suit-parameter-vendor-identifier:
-                    RFC4122_UUID: nordicsemi.com                     # Vendor identifier value
-                   suit-parameter-class-identifier:
-                    RFC4122_UUID:                                    # Class identifier values
-                        namespace: nordicsemi.com
-                        name: nRF54H20_sample_app
-                   suit-parameter-image-digest:
-                    suit-digest-algorithm-id: cose-alg-sha-256
-                    suit-digest-bytes:
-                        file: ``/path/to/application_fw.bin``
-                   suit-parameter-image-size:
-                    file: ``/path/to/application_fw.bin``
-               - suit-condition-vendor-identifier:
-                 - suit-send-record-success
-                 - suit-send-record-failure
-                 - suit-send-sysinfo-success
-                 - suit-send-sysinfo-failure
-               - suit-condition-class-identifier:
-                 - suit-send-record-success
-                 - suit-send-record-failure
-                 - suit-send-sysinfo-success
-                 - suit-send-sysinfo-failure
-            suit-install:
-            - suit-directive-override-parameters:
-                suit-parameter-uri: '#app'
-            - suit-directive-fetch:
-              - suit-send-record-failure
-    suit-integrated-payloads:
-        '#app': ``/path/to/application_fw.bin``
+   CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME="ACME Corp"
+   CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME="Light bulb"
 
-.. note::
-    Default values of OEM-controlled manifests (related to the application and radio domains) are hardcoded in the SDFW, but you can overwrite these values and this is strongly recommended.
-
-The ``class-identifier`` and ``vendor-identifier`` values in the manifest templates, like :file:`app_envelope_yam.jinja2`, can be modified to suit specific requirements.
-For example, changing these values from `nordicsemi.com` to a custom vendor or class identifier enhances the specificity and security of the DFU process.
-
-Before modification:
-
-.. code-block::
-
-  - suit-directive-override-parameters:
-      suit-parameter-vendor-identifier:
-         RFC4122_UUID: nordicsemi.com         # Original vendor-identifier value
-      suit-parameter-class-identifier:
-         RFC4122_UUID:
-           namespace: nordicsemi.com          # Original class-identifier values
-           name: nRF54H20_sample_app
-
-After modification:
+You will find the following lines in the generated manifest .yaml file :file:`build/DFU/application.yaml`
 
 .. code-block::
 
@@ -273,21 +179,6 @@ After modification:
          RFC4122_UUID:                        # Changed class-identifier values
            namespace: ACME Corp
            name: Light bulb
-
-Python to generate UUIDs
-------------------------
-
-Note that the UUID raw values in the previous example have been calculated using following Python commands:
-
-.. code-block:: python
-
-   from uuid import uuid5
-   vid = uuid5(uuid.NAMESPACE_DNS, 'ACME Corp')
-   print(vid)  # Result being bf42bd2ea9895f22933b352cda1730d3
-   cid = uuid5(vid, 'Light bulb')
-   print(cid)  # Result being e0f94076c46a5a1e80a18d3e674bdfe0
-
-For more information on customizable variables and methods available in the manifest templates, see the :ref:`ug_suit_var_methods_in_manifest` section.
 
 .. _ug_suit_var_methods_in_manifest:
 
@@ -306,7 +197,8 @@ The manifest templates have access to the following:
 
 Some of these values are stored in the Python dictionaries that are named after the target name.
 (Therefore, Python is used within the ``.jinja2`` files to fill in the necessary values in the manifest(s).)
-For example, for the :ref:`nrf54h_suit_sample` there will be two variables available: ``app`` and ``hci_rpmsg_subimage``.
+For example, for the :ref:`nrf54h_suit_sample` there will be two variables available: ``application`` and ``radio``.
+The target names (the names of these variables) can be changed using the :kconfig:option:`CONFIG_SUIT_ENVELOPE_TARGET` Kconfig option for a given image.
 Each variable is a Python dictionary type (``dict``) containing the following keys:
 
 * ``name`` - name of the target
@@ -318,15 +210,15 @@ Each variable is a Python dictionary type (``dict``) containing the following ke
 Additionally, the Python dictionary holds a variable called ``version`` that holds the application version.
 With the Python dictionary you are able to, for example:
 
-* Extract the CPU ID by using ``app['dt'].label2node['cpu'].unit_addr``
+* Extract the CPU ID by using ``application['dt'].label2node['cpu'].unit_addr``
 
-* Obtain the partition address with ``app['dt'].chosen_nodes['zephyr,code-partition']``
+* Obtain the partition address with ``application['dt'].chosen_nodes['zephyr,code-partition']``
 
-* Obtain the size of partition with ``app['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size``
+* Obtain the size of partition with ``application['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size``
 
-* Get the pair of URI name and the binary path by using ``'#{{ app['name'] }}': {{ app['binary'] }}``
+* Get the pair of URI name and the binary path by using ``'#{{ application['name'] }}': {{ application['binary'] }}``
 
-* Get the application version with ``suit-manifest-sequence-number: {{ version }}``
+* Get the application version with ``suit-manifest-sequence-number: {{ sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] }}``
 
 Additionally, the **get_absolute_address** method is available to recalculate the absolute address of the partition.
 With these variables and methods, you can define templates which will next be filled out by the build system and use them to prepare the output binary SUIT envelope.
@@ -337,15 +229,16 @@ The examples below demonstrate the use of these variables and methods.
 Set component definition and memory ranges
 ------------------------------------------
 
-In the :file:`app_envelope_yaml.jinja2` (found `here <https://github.com/nrfconnect/suit-generator/blob/main/ncs/app_envelope.yaml.jinja2>`__), the component definition and memory ranges are filled out by using the ``edtlib`` object like so:
+In :file:`modules/lib/suit-generator/ncs/app_envelope.yaml.jinja2`
+, the component definition and memory ranges are filled out by using the ``edtlib`` (devicetree values) object like so:
 
 .. code-block::
 
     suit-components:
     - - MEM
-    - ``{{ app['dt'].label2node['cpu'].unit_addr }}``
-    - ``{{ get_absolute_address(app['dt'].chosen_nodes['zephyr,code-partition']) }}``
-    - ``{{ app['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size }}``
+    - ``{{ application['dt'].label2node['cpu'].unit_addr }}``
+    - ``{{ get_absolute_address(application['dt'].chosen_nodes['zephyr,code-partition']) }}``
+    - ``{{ application['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size }}``
 
 .. note::
    See the :ref:`ug_suit_dfu_component_def` page for a full list and table of the available customizable components.
@@ -353,19 +246,20 @@ In the :file:`app_envelope_yaml.jinja2` (found `here <https://github.com/nrfconn
 Set integrated payload
 ----------------------
 
-In the :file:`app_envelope_yaml.jinja2` (found `here <https://github.com/nrfconnect/suit-generator/blob/main/ncs/app_envelope.yaml.jinja2>`__, the integrated payload definition is done using the target name and binary location:
+In :file:`modules/lib/suit-generator/ncs/app_envelope.yaml.jinja2`
+, the integrated payload definition is done using the target name and binary location:
 
 .. code-block::
 
     suit-integrated-payloads:
-    ``'#{{ app['name'] }}': {{ app['binary'] }}``
+    ``'#{{ application['name'] }}': {{ application['binary'] }}``
 
 .. _ug_suit_root_manifest_temp:
 
 Root manifest template
 ----------------------
 
-The :file:`root_hierarchical_envelope.yaml.jinja2` (found `here <https://github.com/nrfconnect/suit-generator/blob/main/ncs/root_hierarchical_envelope.yaml.jinja2>`__) contains content that is dynamically created, depending on how many targets are built.
+The file :file:`modules/lib/suit-generator/ncs/root_with_binary_nordic_top.yaml.jinja2` contains content that is dynamically created, depending on how many targets are built.
 The following example only shows a selected portion of the root manifest file.
 For more information, see the file available in the sample and `Jinja <https://jinja.palletsprojects.com/en/3.1.x/>`__ documentation:
 
@@ -386,21 +280,21 @@ For more information, see the file available in the sample and `Jinja <https://j
            suit-digest-algorithm-id: cose-alg-sha-256
       suit-manifest:
          suit-manifest-version: 1
-         suit-manifest-sequence-number: {{ version }}                              # Assign value defined in the `CONFIG_APP_VERSION` Kconfig option.
+         suit-manifest-sequence-number: {{ sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] }}                              # Assign value defined in the `CONFIG_APP_VERSION` Kconfig option.
          suit-common:
             suit-components:
             - - CAND_MFST
             - 0
-   {%- if hci_rpmsg_subimage is defined %}                                         # Add section below only, in case the radio core has been already been built.
+   {%- if radio is defined %}                                         # Add section below only, in case the radio core has been already been built.
       {%- set component_index = component_index + 1 %}                             # Increment `component_index`.
-      {%- set hci_rpmsg_subimage_component_index = component_index %}              # Store the current component index for further use.
-      {{- component_list.append( hci_rpmsg_subimage_component_index ) or ""}}      # Append the current component index to the common list.
+      {%- set radio_component_index = component_index %}              # Store the current component index for further use.
+      {{- component_list.append( radio_component_index ) or ""}}      # Append the current component index to the common list.
         - - INSTLD_MFST
           - RFC4122_UUID:
               namespace: nordicsemi.com
               name: nRF54H20_sample_rad
    {%- endif %}
-   {%- if app is defined %}
+   {%- if application is defined %}
    {%- set component_index = component_index + 1 %}
    {%- set app_component_index = component_index %}
    {{- component_list.append( app_component_index ) or ""}}
@@ -417,27 +311,28 @@ Reference for editing manifest values
 
 Some entries in the YAML file will filled in automatically, (upon first build of the sample) by the build system in the final binary DFU envelope.
 
-+---------------------------------------------------------+------------------------------+------------------------------------------------+
-| Operation                                               | YAML entry                   | Value in the output binary envelope            |
-+=========================================================+==============================+================================================+
-| UUID calculation                                        | RFC4122_UUID:                | ``3f6a3a4dcdfa58c5accef9f584c41124``           |
-|                                                         |    namespace:                |                                                |
-|                                                         |      nordicsemi.com          |                                                |
-|                                                         |    name:                     |                                                |
-|                                                         |      nRF54H20_sample_root    |                                                |
-+---------------------------------------------------------+------------------------------+------------------------------------------------+
-| Digest calculation for provided file                    | suit-digest-bytes:           | ``<digest value created for app.bin content>`` |
-|                                                         |    file: app.bin             |                                                |
-+---------------------------------------------------------+------------------------------+------------------------------------------------+
-| Image size calculation for provided file                | suit-parameter-image-size:   | ``<size calculated for app.bin content>``      |
-|                                                         |    file: app.bin             |                                                |
-+---------------------------------------------------------+------------------------------+------------------------------------------------+
-| Attaching data to the envelope as an integrated payload | suit-integrated-payloads:    | ``<app.bin binary content>``                   |
-|                                                         |    '#application':           |                                                |
-|                                                         |       app.bin                |                                                |
-+---------------------------------------------------------+------------------------------+------------------------------------------------+
++---------------------------------------------------------+------------------------------+--------------------------------------------------------+
+| Operation                                               | YAML entry                   | Value in the output binary envelope                    |
++=========================================================+==============================+========================================================+
+| UUID calculation                                        | RFC4122_UUID:                | ``3f6a3a4dcdfa58c5accef9f584c41124``                   |
+|                                                         |    namespace:                |                                                        |
+|                                                         |      nordicsemi.com          |                                                        |
+|                                                         |    name:                     |                                                        |
+|                                                         |      nRF54H20_sample_root    |                                                        |
++---------------------------------------------------------+------------------------------+--------------------------------------------------------+
+| Digest calculation for provided file                    | suit-digest-bytes:           | ``<digest value created for application.bin content>`` |
+|                                                         |    file: application.bin     |                                                        |
++---------------------------------------------------------+------------------------------+--------------------------------------------------------+
+| Image size calculation for provided file                | suit-parameter-image-size:   | ``<size calculated for application.bin content>``      |
+|                                                         |    file: application.bin     |                                                        |
++---------------------------------------------------------+------------------------------+--------------------------------------------------------+
+| Attaching data to the envelope as an integrated payload | suit-integrated-payloads:    | ``<application.bin binary content>``                   |
+|                                                         |    '#application':           |                                                        |
+|                                                         |       application.bin        |                                                        |
++---------------------------------------------------------+------------------------------+--------------------------------------------------------+
 
-For more information, see the example YAML files available in the `suit-generator repository <https://github.com/nrfconnect/suit-generator/tree/main/examples/input_files>`__.
+For more information, see the example YAML files available in :file:`modules/lib/suit-generator/examples/input_files`
+.
 
 .. _ug_suit_using_manifest_gen:
 
@@ -476,14 +371,14 @@ Executing the Python script from the command line:
 Edit build artifacts
 --------------------
 
-The :ref:`nrf54h_suit_sample` :file:`/build` directory contains several artifacts related to the SUIT process:
+The :ref:`nrf54h_suit_sample` :file:`/build/DFU` directory contains several artifacts related to the SUIT process:
 
-* :file:`./build/hci_rpmsg/zephyr/hci_rpmsg_subimage.yaml`
-* :file:`./build/zephyr/app.yaml`
-* :file:`./build/zephyr/root.yaml`
-* :file:`./build/hci_rpmsg/zephyr/hci_rpmsg_subimage.suit`
-* :file:`./build/zephyr/app.suit`
-* :file:`./build/zephyr/root.suit`
+* :file:`./build/DFU/radio.yaml`
+* :file:`./build/DFU/application.yaml`
+* :file:`./build/DFU/root.yaml`
+* :file:`./build/DFU/radio.suit`
+* :file:`./build/DFU/application.suit`
+* :file:`./build/DFU/root.suit`
 
 These files can be used with the **suit-generator** for various purposes, such as recreating SUIT files, restoring YAML files from a binary SUIT envelope, debugging a SUIT envelope, and converting between different SUIT-related file types.
 
@@ -497,7 +392,7 @@ To recreate SUIT files:
 
 .. code-block::
 
-   suit-generator create --input-file ./build/zephyr/root.yaml --output-file my_new_root.suit
+   suit-generator create --input-file ./build/DFU/root.yaml --output-file my_new_root.suit
 
 Restore YAML files from a binary SUIT envelope
 ----------------------------------------------
@@ -506,7 +401,7 @@ To restore a YAML file from a binary SUIT envelope:
 
 .. code-block::
 
-   suit-generator parse --input-file ./build/zephyr/root.suit --output-file my_new_root.yaml
+   suit-generator parse --input-file ./build/DFU/root.suit --output-file my_new_root.yaml
 
 Debug a SUIT envelope
 ---------------------
@@ -515,14 +410,14 @@ To debug the a SUIT envelope, by printing their parsed content to the ``stdout``
 
 .. code-block::
 
-   suit-generator parse --input-file ./build/zephyr/root.suit
+   suit-generator parse --input-file ./build/DFU/root.suit
 
 .. note::
    The previous command can be extended by parsing the dependent manifests by calling:
 
    .. code-block::
 
-      suit-generator parse --input-file ./build/zephyr/root.suit --parse-hierarchy
+      suit-generator parse --input-file ./build/DFU/root.suit --parse-hierarchy
 
 Convert between file types
 --------------------------
@@ -548,7 +443,7 @@ This entry will be presented, after parsing, as the following:
 Reference for suit-generator
 ****************************
 
-Find more information about the **suit-generator** in the `README.md <https://github.com/nrfconnect/suit-generator/blob/main/README.md>`__ file and its documentation.
+Find more information about the **suit-generator** in :file:`modules/lib/suit-generator/README.md` and its documentation.
 
 To build the **suit-generator** documentation:
 

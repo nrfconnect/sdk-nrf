@@ -36,7 +36,7 @@ These sequences are data structures that can contain directives and conditions.
 Manifest elements
 *****************
 
-``SUIT_Manifest`` contains contains metadata elements and command sequences (a kind of "scripts") within its structure.
+``SUIT_Manifest`` contains metadata elements and command sequences (a kind of "scripts") within its structure.
 These scripts contain the commands that will be executed at certain stages of the update process.
 Additionally, they provide a shortcut when a component's information, or other data, needs to be repeated throughout the manifest.
 
@@ -73,7 +73,7 @@ This element contains two subsections:
    Components are identified by ``SUIT_Component_Identifier``, which is introduced by Nordic Semiconductor's implementation of the SUIT procedure.
    For a list of available components, see the :ref:`ug_nrf54h20_suit_components` page.
 
-* ``suit-shared-sequence`` - a sequence that executes before the other sequences.
+* ``suit-shared-sequence`` - a sequence that executes once before each of the other sequences.
 
    It supports only a few directives and conditions.
 
@@ -91,7 +91,7 @@ SUIT manifest contains the following command sequences:
 
 * ``suit-install`` - installs payloads.
 
-   Typical actions may include: verifying a payload stored in temporary storage, coping a staged payload from temporary storage, and unpacking a payload.
+   Typical actions may include: verifying a payload stored in temporary storage, copying a staged payload from temporary storage, and unpacking a payload.
 
 * ``suit-validate`` - validates that the state of the device is correct and okay for booting.
 
@@ -123,7 +123,8 @@ The SUIT procedure defines the following directives:
 * ``copy`` - transfers the image from the source component to the destination component.
   The source component is provided in the ``override-parameters`` directive.
 
-* ``write`` - works similarly to ``copy``, except that the source image is embedded in the manifest.
+* ``write`` - works similarly to ``copy``, except that the source content is embedded in the manifest.
+  The source content is provided in the ``override-parameters`` directive using the ``content`` parameter.
   This directive is best for small blocks of data due to manifest size limitations.
 
 * ``invoke`` - starts the firmware. (In other words, "boots" the firmware.)
@@ -145,8 +146,8 @@ The SUIT procedure defines the following conditions:
 
    .. note::
 
-      Although not required, it is strongly recommended to change the values for ``class-identifier`` and ``vendor-identifier`` in the provided manifest templates.
-      Read the :ref:`ug_suit_modify_manifest_temps` section of the :ref:`ug_nrf54h20_suit_customize_dfu` user guide for instructions.
+      Although not required, it is strongly recommended to change the default values for ``class-identifier`` and ``vendor-identifier``.
+      Read the :ref:`ug_suit_customize_uuids` section of the :ref:`ug_nrf54h20_suit_customize_dfu` user guide for instructions.
 
 * ``image-match`` -  checks the digest of an image.
   The expected digest and corresponding component are set here.
@@ -158,6 +159,10 @@ The SUIT procedure defines the following conditions:
    It also checks which component, or memory location, is unoccupied so you can download the new image to the unoccupied slot.
    After reboot, the unoccupied component now has the new image, and the active image is not overridden.
    This follows an A/B slot system.
+
+.. caution::
+
+   The ``component-slot`` condition is not supported by Nordic's implementation of SUIT.
 
 * ``check-content`` -  a special case of image matching that matches directly with expected data, not a digest.
   For use with small components where the overhead of digest checking is not wanted. Typically used when you want the manifest to check something other than the firmware.

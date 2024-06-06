@@ -28,6 +28,7 @@ The current available component types are as follows:
 
 * ``CAND_IMG`` - The candidate image component refers to the integrated payload in the candidate envelope or payload in the download cache.
   For example, the ``CAND_IMG`` component allows you to validate the candidate before the installation step is performed.
+  It points to the candidate memory address instead of copying the content to a memory location.
 
   The following example shows the installation procedure, including the checking of the coherency of the image by using the ``CAND_IMG`` component.
   During the installation process, ``directive-fetch`` puts information about the location of the image into component candidate image ``0``.

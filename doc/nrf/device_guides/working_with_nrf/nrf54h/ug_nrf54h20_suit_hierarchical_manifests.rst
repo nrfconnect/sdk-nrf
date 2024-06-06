@@ -8,7 +8,7 @@ Hierarchical manifests
    :depth: 2
 
 The Software Updates for the Internet of Things (SUIT) procedure provides the option to employ a hierarchical manifest system.
-In theory the SUIT SFU procedure could be executed with a single manifest however, this approach could lead to certain limitations.
+The SUIT DFU procedure could be executed with a single manifest; however, this approach would lead to certain limitations as multiple manifests offer more tailored-control of the DFU process.
 Having multiple, unrelated manifest in the system raises the risk of system inconsistency.
 To mitigate this risk, a specific manifest hierarchy has been introduced.
 
@@ -62,7 +62,7 @@ To perform a DFU procedure on the nRF54H20 SoC, you can use manifest templates p
 See the :ref:`ug_nrf54h20_suit_customize_dfu` user guide for instructions and example use cases.
 
 If the manifest templates provided by Nordic Semiconductor do not address your specific needs, you can modify them.
-Read the :ref:`ug_suit_modify_manifest_temps` section of the :ref:`ug_nrf54h20_suit_customize_dfu` user guide for instructions.
+Read the :ref:`ug_suit_use_own_manifest` section of the :ref:`ug_nrf54h20_suit_customize_dfu` user guide for instructions.
 
 Alternatively, you can use the manifest generator (**suit-generator**) to create your own manifests from scratch.
 See the :ref:`ug_suit_use_own_manifest` section of the :ref:`ug_nrf54h20_suit_customize_dfu` user guide for instructions.
