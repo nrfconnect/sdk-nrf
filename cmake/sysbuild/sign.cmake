@@ -49,7 +49,7 @@ function(b0_gen_keys)
         ${PUB_GEN_CMD}
         DEPENDS
         ${SIGNATURE_PRIVATE_KEY_FILE}
-        zephyr/.config
+        ${PROJECT_BINARY_DIR}/.config
         COMMENT
         "Creating public key from private key used for signing"
         WORKING_DIRECTORY
