@@ -10,11 +10,21 @@ config SSF_CLIENT
 	def_bool $(dt_nodelabel_enabled_with_compat,cpusec_cpuapp_ipc,$(DT_COMPAT_ZEPHYR_IPC_ICMSG)) \
 	      || $(dt_nodelabel_enabled_with_compat,cpusec_cpurad_ipc,$(DT_COMPAT_ZEPHYR_IPC_ICMSG))
 
+if SSF_CLIENT
+
+config ZCBOR
+	default y
+
+config ZCBOR_CANONICAL
+	default y
+
+endif
+
 config SDFW_SERVICES_ENABLED
 	bool
 	default y
 	depends on SSF_CLIENT
-	imply ZCBOR
+	depends on ZCBOR
 	help
 	  Enable SDFW Service Framework (SSF)
 

@@ -6,7 +6,7 @@
 
 menuconfig DFU_MULTI_IMAGE
 	bool "Device Firmware Upgrade Multi Image API"
-	select ZCBOR
+	depends on ZCBOR
 
 if DFU_MULTI_IMAGE
 

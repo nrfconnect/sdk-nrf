@@ -5,8 +5,8 @@
 
 menuconfig NRF_CLOUD_COAP
 	bool "nRF Cloud COAP"
+	depends on ZCBOR
 	select CJSON_LIB
-	select ZCBOR
 	select COAP
 	select COAP_EXTENDED_OPTIONS_LEN
 	select COAP_CLIENT

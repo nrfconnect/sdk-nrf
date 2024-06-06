@@ -117,10 +117,10 @@ config DFU_TARGET_SUIT
 	bool "SUIT DFU target support"
 	default y
 	depends on SUIT
+	depends on ZCBOR
+	depends on ZCBOR_CANONICAL
 	imply MPU_ALLOW_FLASH_WRITE
 	select SUIT_UTILS
-	select ZCBOR
-	select ZCBOR_CANONICAL
 	select DFU_TARGET_STREAM
 	help
 	  Enable support for updates using DFU target based on SUIT

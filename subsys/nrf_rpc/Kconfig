@@ -47,8 +47,8 @@ endif # NRF_RPC_IPC_SERVICE
 
 config NRF_RPC_CBOR
 	bool
-	select ZCBOR
-	select ZCBOR_STOP_ON_ERROR
+	depends on ZCBOR
+	depends on ZCBOR_STOP_ON_ERROR
 
 # End of Zephyr port dependencies selection
 

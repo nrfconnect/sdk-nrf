@@ -15,7 +15,7 @@ menuconfig DESKTOP_DFU_MCUMGR_ENABLE
 	select NET_BUF
 	select FLASH
 	select FLASH_MAP
-	select ZCBOR
+	depends on ZCBOR
 	help
 	  This option enables an alternative method of performing DFU using the
 	  MCUmgr module.

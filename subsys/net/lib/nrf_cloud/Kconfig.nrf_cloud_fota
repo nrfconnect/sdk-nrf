@@ -90,8 +90,8 @@ endif # NRF_CLOUD_REST
 
 menuconfig NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
 	bool "Enable full modem FOTA updates"
+	depends on ZCBOR
 	select NRF_MODEM_LIB
-	select ZCBOR
 	select DFU_TARGET
 	select DFU_TARGET_FULL_MODEM
 	select DFU_TARGET_STREAM
