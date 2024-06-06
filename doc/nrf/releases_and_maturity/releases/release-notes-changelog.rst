@@ -911,6 +911,12 @@ Libraries for networking
     * Function :c:func:`wifi_credentials_is_empty` to check if the Wi-Fi credentials storage is empty.
     * New parameter ``channel`` to the structure :c:struct:`wifi_credentials_header` to store the channel information of the Wi-Fi network.
 
+* Added the :ref:`lib_wifi_ready` library that manages Wi-Fi readiness for applications by handling supplicant ready and not ready events.
+
+* :ref:`lib_wifi_ready` library:
+
+  * Notifies applications of Wi-Fi readiness by managing supplicant events, indicating when Wi-Fi is available for use.
+
 * :ref:`lib_nrf_cloud` library:
 
   * Added:
