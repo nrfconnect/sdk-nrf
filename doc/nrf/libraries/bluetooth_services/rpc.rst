@@ -45,7 +45,7 @@ Requirements
 ************
 
 Some configuration options related to Bluetooth Low Energy must be the same on the host and client.
-Set the following options in the same way for the :ref:`ble_rpc_host` and application core:
+Set the following options in the same way for the :ref:`ble_rpc_host` or :ref:`ipc_radio`, and application core:
 
   * :kconfig:option:`CONFIG_BT_CENTRAL`
   * :kconfig:option:`CONFIG_BT_PERIPHERAL`
