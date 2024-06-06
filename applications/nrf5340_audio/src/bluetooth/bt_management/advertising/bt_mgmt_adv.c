@@ -348,6 +348,26 @@ int bt_mgmt_manufacturer_uuid_populate(struct net_buf_simple *uuid_buf, uint16_t
 	return 0;
 }
 
+int bt_mgmt_adv_buffer_put(struct bt_data *const adv_buf, uint32_t *index, size_t adv_buf_vacant,
+			   size_t data_len, uint8_t type, void *data)
+{
+	if (adv_buf == NULL || index == NULL || data_len == 0) {
+		return -EINVAL;
+	}
+
+	/* Check that we have space for data */
+	if (adv_buf_vacant <= *index) {
+		return -ENOMEM;
+	}
+
+	adv_buf[*index].type = type;
+	adv_buf[*index].data_len = data_len;
+	adv_buf[*index].data = data;
+	(*index)++;
+
+	return 0;
+}
+
 int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *adv, size_t adv_size,
 		      const struct bt_data *per_adv, size_t per_adv_size, bool connectable)
 {

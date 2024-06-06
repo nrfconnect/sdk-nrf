@@ -306,25 +306,6 @@ void bt_mgmt_num_conn_get(uint8_t *num_conn)
 	bt_conn_foreach(BT_CONN_TYPE_LE, conn_state_connected_check, (void *)num_conn);
 }
 
-int bt_mgmt_adv_buffer_put(struct bt_data *const adv_buf, int *index, size_t adv_buf_vacant,
-			   size_t data_len, uint8_t type, void *data)
-{
-	if (adv_buf == NULL || index == NULL || data_len == 0) {
-		return -EINVAL;
-	}
-
-	if ((adv_buf_vacant - *index) <= 0) {
-		return -ENOMEM;
-	}
-
-	adv_buf[*index].type = type;
-	adv_buf[*index].data_len = data_len;
-	adv_buf[*index].data = data;
-	(*index)++;
-
-	return 0;
-}
-
 int bt_mgmt_bonding_clear(void)
 {
 	int ret;

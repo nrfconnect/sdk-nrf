@@ -83,7 +83,7 @@ void bt_mgmt_scan_sirk_set(uint8_t const *const sirk);
  *
  * @return	0 if success, error otherwise.
  */
-int bt_mgmt_adv_buffer_put(struct bt_data *const adv_buf, int *index, size_t adv_buf_vacant,
+int bt_mgmt_adv_buffer_put(struct bt_data *const adv_buf, uint32_t *index, size_t adv_buf_vacant,
 			   size_t data_len, uint8_t type, void *data);
 
 /**
