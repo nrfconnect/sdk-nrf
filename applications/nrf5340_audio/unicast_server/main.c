@@ -331,17 +331,21 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 {
 	int ret;
 	const struct bt_mgmt_msg *msg;
+	uint8_t num_conn = 0;
 
 	msg = zbus_chan_const_msg(chan);
+	bt_mgmt_num_conn_get(&num_conn);
 
 	switch (msg->event) {
 	case BT_MGMT_CONNECTED:
-		LOG_INF("Connected");
+		/* NOTE: The string below is used by the Nordic CI system */
+		LOG_INF("Connection event. Num connections: %u", num_conn);
 
 		break;
 
 	case BT_MGMT_DISCONNECTED:
-		LOG_INF("Disconnected");
+		/* NOTE: The string below is used by the Nordic CI system */
+		LOG_INF("Disconnection event. Num connections: %u", num_conn);
 
 		ret = bt_content_ctrl_conn_disconnected(msg->conn);
 		if (ret) {
