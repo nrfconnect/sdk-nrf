@@ -87,8 +87,8 @@ function(b0_sign_image slot)
 
   set(VALIDATION_INFO_MAGIC    "${${slot}_fw_info_magic_common},${${slot}_sb_validation_info_magic},${MAGIC_COMPATIBILITY_VALIDATION_INFO}")
 
-  set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.hex)
-  set(signed_bin ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.bin)
+  set(signed_hex ${CMAKE_BINARY_DIR}/signed_by_b0_${slot}.hex)
+  set(signed_bin ${CMAKE_BINARY_DIR}/signed_by_b0_${slot}.bin)
 
   if(NCS_SYSBUILD_PARTITION_MANAGER)
     # A container can be merged, in which case we should use old style below,

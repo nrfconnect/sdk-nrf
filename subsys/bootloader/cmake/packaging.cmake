@@ -25,17 +25,17 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     get_property(image_name GLOBAL PROPERTY DOMAIN_APP_CPUNET)
     list(APPEND dfu_multi_image_ids 1)
     if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-      list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_${image_name}.bin")
+      list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_${image_name}.bin")
       list(APPEND dfu_multi_image_targets ${image_name}_extra_byproducts ${image_name}_signed_kernel_hex_target ${image_name}_signed_packaged_target)
     else()
-      list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/signed_by_b0_${image_name}.bin")
+      list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/signed_by_b0_${image_name}.bin")
       list(APPEND dfu_multi_image_targets ${image_name}_extra_byproducts ${image_name}_signed_kernel_hex_target)
     endif()
   endif()
 
   if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT)
     list(APPEND dfu_multi_image_ids -2 -1)
-    list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_mcuboot.bin" "${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_s1_image.bin")
+    list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_mcuboot.bin" "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_s1_image.bin")
     list(APPEND dfu_multi_image_targets mcuboot_extra_byproducts mcuboot_signed_kernel_hex_target s1_image_extra_byproducts s1_image_signed_kernel_hex_target mcuboot_signed_packaged_target s1_image_signed_packaged_target)
   endif()
 
@@ -46,7 +46,7 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
       list(APPEND dfu_multi_image_ids 1)
     endif()
 
-    list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/nrf70.signed.bin")
+    list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
     list(APPEND dfu_multi_image_targets nrf70_wifi_fw_patch_target)
   endif()
 
@@ -54,7 +54,7 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     dfu_multi_image_package(dfu_multi_image_pkg
       IMAGE_IDS ${dfu_multi_image_ids}
       IMAGE_PATHS ${dfu_multi_image_paths}
-      OUTPUT ${PROJECT_BINARY_DIR}/dfu_multi_image.bin
+      OUTPUT ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
       DEPENDS ${dfu_multi_image_targets}
       )
   else()
@@ -81,7 +81,7 @@ if(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
     set(firmware_binary "${${DEFAULT_IMAGE}_image_dir}/zephyr/${${DEFAULT_IMAGE}_kernel_name}.signed.bin")
     set(legacy_cmd "--legacy")
   elseif(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
-    set(firmware_binary "${PROJECT_BINARY_DIR}/dfu_multi_image.bin")
+    set(firmware_binary "${CMAKE_BINARY_DIR}/dfu_multi_image.bin")
     set(legacy_cmd)
   else()
     message(WARNING "No Zigbee FOTA image format selected. Please enable either legacy or the multi-image format.")
@@ -99,7 +99,7 @@ if(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
         --zigbee-comment ${CONFIG_ZIGBEE_FOTA_COMMENT}
         --zigbee-ota-min-hw-version ${CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION}
         --zigbee-ota-max-hw-version ${CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION}
-        --out-directory ${PROJECT_BINARY_DIR}
+        --out-directory ${CMAKE_BINARY_DIR}
         ${legacy_cmd}
 
       DEPENDS

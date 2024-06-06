@@ -8,12 +8,12 @@ find_package(Python3 REQUIRED)
 
 function(mesh_dfu_metadata)
   if(SYSBUILD)
-    set(metadata_dir ${PROJECT_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr)
+    set(metadata_dir ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr)
   else()
     set(metadata_dir ${PROJECT_BINARY_DIR})
   endif()
 
-  set(metadata_depends ${PROJECT_BINARY_DIR}/dfu_application.zip)
+  set(metadata_depends ${CMAKE_BINARY_DIR}/dfu_application.zip)
 
   add_custom_command(
     OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip_ble_mesh_metadata.json

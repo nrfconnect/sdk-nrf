@@ -52,7 +52,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   endif()
 
   # Extensionless prefix of any output file.
-  set(output ${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_${application})
+  set(output ${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_${application})
 
   # List of additional build byproducts.
   set(byproducts)
@@ -75,13 +75,13 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
       # Hence, if a programmer is given this hex file, it will flash it
       # to the secondary slot, and upon reboot mcuboot will swap in the
       # contents of the hex file.
-      ${imgtool_sign} ${imgtool_extra} ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.bin ${output}.bin
+      ${imgtool_sign} ${imgtool_extra} ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.bin ${output}.bin
 
       DEPENDS
       ${application}_extra_byproducts
       ${application}_signed_kernel_hex_target
       ${application_image_dir}/zephyr/.config
-      ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.bin
+      ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.bin
       )
   endif()
 
@@ -98,13 +98,13 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
       # Hence, if a programmer is given this hex file, it will flash it
       # to the secondary slot, and upon reboot mcuboot will swap in the
       # contents of the hex file.
-      ${imgtool_sign} ${imgtool_extra} ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.hex ${output}.hex
+      ${imgtool_sign} ${imgtool_extra} ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.hex ${output}.hex
 
       DEPENDS
       ${application}_extra_byproducts
       ${application}_signed_kernel_hex_target
       ${application_image_dir}/zephyr/.config
-      ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.hex
+      ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.hex
       )
   endif()
 
@@ -146,7 +146,7 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
       include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
 
       generate_dfu_zip(
-        OUTPUT ${PROJECT_BINARY_DIR}/dfu_mcuboot.zip
+        OUTPUT ${CMAKE_BINARY_DIR}/dfu_mcuboot.zip
         BIN_FILES ${bin_files}
         TYPE mcuboot
         IMAGE mcuboot

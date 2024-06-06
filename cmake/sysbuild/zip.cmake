@@ -25,11 +25,11 @@ function(dfu_app_zip_package)
           "${app_update_name}slot_index_secondary=2"
           "${app_update_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
          )
-      list(APPEND bin_files "${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin")
+      list(APPEND bin_files "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin")
       list(APPEND zip_names ${app_update_name})
       list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts)
-      set(exclude_files EXCLUDE ${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin)
-      set(include_files INCLUDE ${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin)
+      set(exclude_files EXCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin)
+      set(include_files INCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin)
     else()
       # Application in DirectXIP mode
       set(generate_script_app_params
@@ -43,11 +43,20 @@ function(dfu_app_zip_package)
           "${secondary_app_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
          )
 
-      list(APPEND bin_files "${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin;mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin")
+      list(APPEND bin_files
+           "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+           "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+      )
       list(APPEND zip_names "${app_update_name};${secondary_app_update_name}")
       list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts mcuboot_secondary_app_extra_byproducts)
-      set(exclude_files EXCLUDE ${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin;mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin)
-      set(include_files INCLUDE ${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin;mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin)
+      set(exclude_files EXCLUDE
+          ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+          ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+      )
+      set(include_files INCLUDE
+          ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+          ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+      )
     endif()
   endif()
 
@@ -67,7 +76,7 @@ function(dfu_app_zip_package)
         "${net_update_name}board=${net_core_board}"
         "${net_update_name}soc=${SB_CONFIG_SOC}"
        )
-    list(APPEND bin_files "signed_by_mcuboot_and_b0_${image_name}.bin")
+    list(APPEND bin_files "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_${image_name}.bin")
     list(APPEND zip_names "${net_update_name}")
     list(APPEND signed_targets ${image_name}_extra_byproducts ${image_name}_signed_packaged_target)
   endif()
@@ -99,7 +108,7 @@ function(dfu_app_zip_package)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
 
     generate_dfu_zip(
-      OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip
+      OUTPUT ${CMAKE_BINARY_DIR}/dfu_application.zip
       BIN_FILES ${bin_files}
       ZIP_NAMES ${zip_names}
       TYPE application

@@ -10,8 +10,8 @@ set(s0_name "signed_by_b0_${DEFAULT_IMAGE}.bin")
 set(s1_name signed_by_b0_s1_image.bin)
 
 generate_dfu_zip(
-  OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip
-  BIN_FILES ${PROJECT_BINARY_DIR}/signed_by_b0_${DEFAULT_IMAGE}.bin ${PROJECT_BINARY_DIR}/signed_by_b0_s1_image.bin
+  OUTPUT ${CMAKE_BINARY_DIR}/dfu_application.zip
+  BIN_FILES ${CMAKE_BINARY_DIR}/signed_by_b0_${DEFAULT_IMAGE}.bin ${CMAKE_BINARY_DIR}/signed_by_b0_s1_image.bin
   ZIP_NAMES ${s0_name} ${s1_name}
   TYPE application
   IMAGE ${DEFAULT_IMAGE}
