@@ -138,10 +138,10 @@ Samples and applications
 
 * For applications using child images:
 
-  * With the inheritance of Zephyr's :ref:`zephyr:sysbuild` in the |NCS|, the :ref:`ug_multi_image` are deprecated.
+  * With the inheritance of Zephyr's :ref:`sysbuild in the |NCS| <configuration_system_overview_sysbuild>`, the :ref:`ug_multi_image` are deprecated.
 
-    If your application uses parent and child images, it is recommended to migrate your application to :ref:`zephyr:sysbuild` before the multi-image builds are removed in one of the upcoming |NCS| releases.
-    See the documentation in Zephyr for more information.
+    If your application uses parent and child images, it is recommended to migrate your application to sysbuild before the multi-image builds are removed in one of the upcoming |NCS| releases.
+    See the :ref:`documentation in Zephyr <zephyr:sysbuild>` for more information about sysbuild.
 
 Matter
 ------

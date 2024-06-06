@@ -43,6 +43,10 @@ While the board name is always present, other elements, such as the board revisi
 
   Read more about separation of processing environments on the :ref:`app_boards_spe_nspe` page.
 
+.. important::
+    This board name scheme was introduced in the |NCS| before the v2.7.0 release following changes in Zephyr v3.6.0.
+    Read Zephyr's :ref:`zephyr:hw_model_v2` and refer to `conversion example Pull Request`_ in Zephyr upstream if you have to port a board to the new model.
+
 .. _app_boards_names_zephyr:
 
 Boards included in sdk-zephyr

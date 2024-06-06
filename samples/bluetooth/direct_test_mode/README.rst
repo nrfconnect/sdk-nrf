@@ -374,20 +374,22 @@ Building and running
 Disabling Direction Finding feature
 ===================================
 
-To build the sample without support for the Direction Finding feature, use the following command:
+To build the sample without support for the Direction Finding feature, use the following command for the correct *board_target*:
 
-.. code-block:: console
+.. parsed-literal::
+   :class: highlight
 
-   west build samples/bluetooth/direct_test_mode -b board_name --sysbuild -- -DSB_CONFIG_DTM_NO_DFE=y
+   west build samples/bluetooth/direct_test_mode -b *board_target* -- -DSB_CONFIG_DTM_NO_DFE=y
 
 Experimental HCI interface
 ==========================
 
-To build the sample with an HCI interface, use the following command:
+To build the sample with an HCI interface, use the following command for the correct *board_target*:
 
-.. code-block:: console
+.. parsed-literal::
+   :class: highlight
 
-   west build samples/bluetooth/direct_test_mode -b board_name --sysbuild -- -DFILE_SUFFIX=hci
+   west build samples/bluetooth/direct_test_mode -b *board_target* -- -DFILE_SUFFIX=hci
 
 On the |nRF5340DKnoref|, you can build the sample with HCI interface with the ``remote_hci`` image using the same command.
 
@@ -399,14 +401,14 @@ Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet --sysbuild -- -DFILE_SUFFIX=usb
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb
 
 You can also build this sample with support for the front-end module.
 Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet --sysbuild -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
 
 .. _dtm_testing:
 

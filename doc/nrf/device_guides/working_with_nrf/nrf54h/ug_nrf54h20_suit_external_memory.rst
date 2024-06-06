@@ -56,8 +56,8 @@ To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` arg
    .. note::
       This step is needed only on nRF54H20 DK. Skip this step if you are using different hardware.
 
-#. Enable the :kconfig:option:`SB_CONFIG_SUIT_BUILD_FLASH_COMPANION` Sysbuild Kconfig option, which enables the build of the reference companion image.
-   See the :ref:`suit_flash_companion` user guide for instructions on how to configure the companion image using Sysbuild.
+#. Enable the :kconfig:option:`SB_CONFIG_SUIT_BUILD_FLASH_COMPANION` sysbuild Kconfig option, which enables the build of the reference companion image.
+   See the :ref:`suit_flash_companion` user guide for instructions on how to configure the companion image using sysbuild.
 
 #. Enable the :kconfig:option:`CONFIG_SUIT_STREAM_SOURCE_FLASH` Kconfig option, which enables SUIT processor on the application core to read and parse DFU cache partitions.
 
@@ -129,7 +129,7 @@ To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` arg
       west build -b nrf54h20dk/nrf54h20/cpuapp
       west flash
 
-   The build system will automatically generate a :file:`build/dfu_suit.zip` archive, which contains the SUIT envelope and candidate images.
+   The build system will automatically use :ref:`configuration_system_overview_sysbuild` and generate a :file:`build/dfu_suit.zip` archive, which contains the SUIT envelope and candidate images.
 
 #. Build a new version of the application with the incremented :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM` value.
 

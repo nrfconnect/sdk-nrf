@@ -2,9 +2,9 @@
 
    .. group-tab:: nRF Connect for VS Code
 
-      You need to set up a build configuration before you program a device in the |nRFVSC|.
+      Before you program a device in the |nRFVSC|, you need to set up a build configuration, which is part of :ref:`building`.
 
-      Complete the following steps:
+      Complete the following steps to program the application:
 
       1. Connect the development kit to your PC using a USB cable.
       #. Power on the development kit.
@@ -20,7 +20,7 @@
 
    .. group-tab:: Command line
 
-      Complete the following steps:
+      Complete the following steps to program the application:
 
       1. Connect the development kit to your PC using a USB cable.
       #. Power on the development kit.
@@ -35,6 +35,6 @@
          If the application depends on other flash memory areas (for example, if it uses the :ref:`zephyr:settings_api` partition where bonding information is stored), erasing the full kit before programming ensures that these areas are updated with the new content.
          You can also :ref:`program without erasing <programming_params_no_erase>`.
 
-         The ``west flash`` command automatically resets the kit and starts the application.
+      The ``west flash`` command automatically resets the kit and starts the application.
 
       For more information on programming using the command line, see :ref:`Flashing <zephyr:west-flashing>` in the Zephyr documentation.

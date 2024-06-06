@@ -5,7 +5,7 @@ Build and configuration system
 
 .. contents::
    :local:
-   :depth: 2
+   :depth: 3
 
 The |NCS| build and configuration system is based on the one from Zephyr, with some additions.
 
@@ -222,7 +222,7 @@ To read about each of these stages, see :ref:`zephyr:cmake-details` in the Zephy
 Sysbuild
 ========
 
-The |NCS| supports Zephyr's System Build (Sysbuild).
+The |NCS| supports Zephyr's System Build (sysbuild).
 
 .. ncs-include:: build/sysbuild/index.rst
    :docset: zephyr
@@ -234,6 +234,9 @@ For example, sysbuild-specific Kconfig options are preceded by `SB_` before `CON
 
 Sysbuild is integrated with west.
 The sysbuild build configuration is generated using the sysbuild's :file:`CMakeLists.txt` file (which provides information about each underlying build system and CMake variables) and the sysbuild's Kconfig options (which are gathered in the :file:`sysbuild.conf` file).
+
+.. note::
+    In the |NCS|, building with sysbuild is :ref:`enabled by default <sysbuild_enabled_ncs>`.
 
 For more information about sysbuild, see the :ref:`documentation in Zephyr <zephyr:sysbuild>`.
 
@@ -262,6 +265,16 @@ For example, when building a sample that enables :kconfig:option:`CONFIG_BT_EXT_
    warning: Experimental symbol BT_EXT_ADV is enabled.
 
 To disable these warnings, disable the :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` Kconfig option.
+
+.. _sysbuild_enabled_ncs:
+
+Sysbuild enabled by default
+===========================
+
+In the :ref:`nRF repositories <dm_repo_types>`, building an application using the :ref:`standard building procedure <building>` automatically includes :ref:`configuration_system_overview_sysbuild` (the ``--sysbuild`` parameter).
+For this reason, unlike in Zephyr, ``--sysbuild`` does not have to be explicitly mentioned in the command prompt when building the application using the :ref:`dm_code_base`.
+
+You can disable building with sysbuild by using the ``--no-sysbuild`` parameter in the build command.
 
 .. _app_build_additions_build_types:
 .. _gs_modifying_build_types:

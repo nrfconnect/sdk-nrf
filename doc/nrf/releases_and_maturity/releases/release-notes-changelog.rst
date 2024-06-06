@@ -135,7 +135,7 @@ Matter
 
 * Increased the number of available packet buffers in the Matter stack to avoid packet allocation issues.
 * Removed the :file:`Kconfig.mcuboot.defaults`, :file:`Kconfig.hci_ipc.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` Kconfig files that stored a default configuration for the child images.
-  This was done because of the sysbuild integration and the child images deprecation.
+  This was done because of the :ref:`configuration_system_overview_sysbuild` integration and the child images deprecation.
   The configurations are now applied using the configuration files located in the sample's or application's directory.
 
   To see how to migrate an application from the previous to the current approach, see the :ref:`migration guide <migration_2.7>`.
@@ -305,7 +305,7 @@ nRF Machine Learning (Edge Impulse)
 * Added:
 
   * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` boards.
-  * Support for the :ref:`zephyr:sysbuild`.
+  * Support for :ref:`configuration_system_overview_sysbuild`.
 
 nRF Desktop
 -----------
@@ -410,7 +410,7 @@ Bluetooth samples that used the :ref:`zephyr:bluetooth-hci-ipc-sample` radio cor
   * Added:
 
     * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
-    * Support for the :ref:`zephyr:sysbuild`.
+    * Support for :ref:`configuration_system_overview_sysbuild`.
 
 * :ref:`peripheral_uart` sample:
 

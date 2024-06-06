@@ -164,7 +164,7 @@ SB_CONFIG_APP_CPUPPR_RUN - Enable execution for the PPR core
 
    .. code-block:: console
 
-      west build -b nrf54h20dk/nrf54h20/cpuapp --sysbuild -- -DSB_CONFIG_APP_CPUNET_RUN=n -DSB_CONFIG_APP_CPUPPR_RUN=y -Dcoremark_SNIPPET=nordic-ppr-xip
+      west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_APP_CPUNET_RUN=n -DSB_CONFIG_APP_CPUPPR_RUN=y -Dcoremark_SNIPPET=nordic-ppr-xip
 
 Building and running
 ********************
@@ -173,7 +173,7 @@ When running the benchmark, an extra build flag (:kconfig:option:`CONFIG_COMPILE
 
 .. |sample path| replace:: :file:`samples/benchmarks/coremark`
 
-.. include:: /includes/build_and_run_sb.txt
+.. include:: /includes/build_and_run.txt
 
 After flashing, messages describing the benchmark state will appear in the console.
 

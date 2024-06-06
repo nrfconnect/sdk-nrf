@@ -138,6 +138,8 @@
 
 .. _`CoreMark GitHub`: https://github.com/eembc/coremark
 
+.. _`conversion example Pull Request`: https://github.com/zephyrproject-rtos/example-application/pull/58
+
 .. ### Matter links that need updated SHA per release
 
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/181b0cb/src/controller
@@ -553,8 +555,6 @@
 .. _`Install the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/common/nrf_connect_app_installing.html
 .. _`Using the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/ppk/PPK_user_guide_Running_the_software.html
 .. _`nRF Connect Power Profiler`: https://docs.nordicsemi.com/bundle/nrf-connect-ppk/page/index.html
-
-.. _`sysbuild support`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_overview.html#system-build-sysbuild
 
 .. _`Electrical specification for nRF7002`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/elspec/doc/electrical_specification.html
 

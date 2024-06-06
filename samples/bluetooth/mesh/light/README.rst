@@ -35,7 +35,7 @@ The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobil
 DFU requirements
 ================
 
-The configuration overlay file :file:`overlay-dfu.conf` and the sysbuild configuration file :file:`sysbuild-dfu.conf` enable DFU support in the application, and apply to the following platforms:
+The configuration overlay file :file:`overlay-dfu.conf` and the :ref:`sysbuild <configuration_system_overview_sysbuild>` configuration file :file:`sysbuild-dfu.conf` enable DFU support in the application, and apply to the following platforms:
 
 * nrf52840dk/nrf52840
 * nrf21540dk/nrf52840
@@ -164,7 +164,7 @@ DFU configuration
          This implies that all application DFU images must be compatible with the network core image running on the device.
 
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
-For more information about selecting a sysbuild configuration file, see the Sysbuild Kconfig file section on the :ref:`zephyr:sysbuild` page in the Zephyr documentation.
+For more information about selecting a sysbuild configuration file, see the sysbuild Kconfig file section on the :ref:`zephyr:sysbuild` page in the Zephyr documentation.
 
 FEM support
 ===========
