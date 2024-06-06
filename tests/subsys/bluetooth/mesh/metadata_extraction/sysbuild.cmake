@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-set(script_args ${PROJECT_BINARY_DIR})
+set(script_args ${CMAKE_BINARY_DIR})
 
 if(SB_CONFIG_COMP_DATA_LAYOUT_SINGLE)
   list(PREPEND script_args --single)
