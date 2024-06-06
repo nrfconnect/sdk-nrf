@@ -328,11 +328,11 @@ Troubleshooting
 ***************
 
 If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor`_ documentation to learn how to capture modem traces to debug network traffic in Wireshark.
-Modem traces can be enabled by providing a snippet with the west build command using the ``-S`` argument as shown in the following example for nRF9161 DK:
+Modem traces can be enabled by providing a snippet with the west build command as shown in the following example for nRF9161 DK:
 
 .. code-block:: console
 
-   west build -p -b nrf9161dk/nrf9161/ns -S nrf91-modem-trace-uart
+   west build -p -b nrf9161dk/nrf9161/ns -- -Dhttp_server_SNIPPET="nrf91-modem-trace-uart"
 
 Dependencies
 ************

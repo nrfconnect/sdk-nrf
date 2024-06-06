@@ -43,7 +43,11 @@ Build and configuration system
   * Documentation section about the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>` with a related information in the :ref:`migration guide <migration_2.7_recommended>`.
   * Documentation section about :ref:`app_build_snippets`.
 
-* Updated all board targets for Zephyr's :ref:`Hardware Model v2 <zephyr:hw_model_v2>`, with additional information added on the :ref:`app_boards_names` page.
+* Updated:
+
+  * All board targets for Zephyr's :ref:`Hardware Model v2 <zephyr:hw_model_v2>`, with additional information added on the :ref:`app_boards_names` page.
+  * The use of :ref:`cmake_options` to specify the image when building with :ref:`configuration_system_overview_sysbuild`.
+    If not specified, the option will be added to all images.
 
 Working with nRF91 Series
 =========================
