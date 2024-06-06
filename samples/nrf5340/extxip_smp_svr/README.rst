@@ -43,6 +43,12 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf5340/extxip_smp_svr`
 .. include:: /includes/build_and_run.txt
+Because sysbuild is currently not supported, you must add the ``--no-sysbuild`` argument when building the sample:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* --no-sysbuild
 
 The |NCS| build system generates all essential binaries, including the application for internal and external QSPI flash, the networking stack, and the MCUboot.
 The build process involves signing all the application binaries except for MCUboot which does not require signing in this configuration.

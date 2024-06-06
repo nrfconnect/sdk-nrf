@@ -279,6 +279,11 @@ Similarly, it is possible to relocate certain libraries, for example:
    zephyr_code_relocate(LIBRARY subsys__mgmt__mcumgr__mgmt LOCATION EXTFLASH_TEXT NOCOPY)
    zephyr_code_relocate(LIBRARY subsys__mgmt__mcumgr__mgmt LOCATION RAM_DATA)
 
+Building the project
+********************
+
+You must use child image when building your project, as XIP QSPI does not currently support sysbuild.
+
 Flashing the project
 ********************
 
