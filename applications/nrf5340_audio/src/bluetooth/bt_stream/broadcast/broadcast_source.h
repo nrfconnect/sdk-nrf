@@ -95,7 +95,7 @@ struct broadcast_source_big {
 #endif /* CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE */
 
 /* Size of the Public Broadcast Announcement header, 2-octet Service UUID followed by
- * an octet for the features and an octet for the length of the meta data feild.
+ * an octet for the features and an octet for the length of the meta data field.
  */
 #define BROADCAST_SOURCE_PBA_HEADER_SIZE (BT_UUID_SIZE_16 + (sizeof(uint8_t) * 2))
 

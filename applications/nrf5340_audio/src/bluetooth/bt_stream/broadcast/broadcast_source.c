@@ -55,6 +55,20 @@ static struct bt_bap_lc3_preset lc3_preset = BT_BAP_LC3_BROADCAST_PRESET_NRF5340
 static bool initialized;
 static bool delete_broadcast_src[CONFIG_BT_ISO_MAX_BIG];
 
+static int metadata_u8_add(uint8_t buffer[], uint8_t *index, uint8_t type, uint8_t value)
+{
+	if (buffer == NULL || index == NULL) {
+		return -EINVAL;
+	}
+
+	/* Add length of type and value */
+	buffer[(*index)++] = (sizeof(type) + sizeof(uint8_t));
+	buffer[(*index)++] = type;
+	buffer[(*index)++] = value;
+
+	return 0;
+}
+
 static void le_audio_event_publish(enum le_audio_evt_type event)
 {
 	int ret;
@@ -196,7 +210,7 @@ int broadcast_source_ext_adv_populate(uint8_t big_index,
 {
 	int ret;
 	uint32_t broadcast_id = 0;
-	size_t ext_adv_buf_cnt = 0;
+	uint32_t ext_adv_buf_cnt = 0;
 	size_t brdcst_name_size;
 
 	if (ext_adv_data == NULL || ext_adv_buf == NULL || ext_adv_buf_vacant == 0) {
@@ -254,33 +268,29 @@ int broadcast_source_ext_adv_populate(uint8_t big_index,
 	}
 
 #if (CONFIG_AURACAST)
-	size_t meta_data_buf_cnt = 0;
+	uint8_t meta_data_buf_size = 0;
 
 	sys_put_le16(BT_UUID_PBA_VAL, &ext_adv_data->pba_buf[PBA_UUID_INDEX]);
 	public_broadcast_features_set(&ext_adv_data->pba_buf[PBA_FEATURES_INDEX]);
 
 	/* Metadata */
 	/* Parental rating */
-	ret = bt_mgmt_adv_buffer_put(
-		(struct bt_data *)&ext_adv_data->pba_buf[PBA_METADATA_START_INDEX],
-		&meta_data_buf_cnt, ext_adv_data->pba_metadata_vacant_cnt, sizeof(uint8_t),
-		BT_AUDIO_METADATA_TYPE_PARENTAL_RATING,
-		(void *)CONFIG_BT_AUDIO_BROADCAST_PARENTAL_RATING);
+	ret = metadata_u8_add(&ext_adv_data->pba_buf[PBA_METADATA_START_INDEX], &meta_data_buf_size,
+			      BT_AUDIO_METADATA_TYPE_PARENTAL_RATING,
+			      CONFIG_BT_AUDIO_BROADCAST_PARENTAL_RATING);
 	if (ret) {
 		return ret;
 	}
 
 	/* Active flag */
-	ret = bt_mgmt_adv_buffer_put(
-		(struct bt_data *)&ext_adv_data->pba_buf[PBA_METADATA_START_INDEX],
-		&meta_data_buf_cnt, ext_adv_data->pba_metadata_vacant_cnt, sizeof(uint8_t),
-		BT_AUDIO_METADATA_TYPE_AUDIO_STATE, (void *)BT_AUDIO_ACTIVE_STATE_ENABLED);
+	ret = metadata_u8_add(&ext_adv_data->pba_buf[PBA_METADATA_START_INDEX], &meta_data_buf_size,
+			      BT_AUDIO_METADATA_TYPE_AUDIO_STATE, BT_AUDIO_ACTIVE_STATE_ENABLED);
 	if (ret) {
 		return ret;
 	}
 
 	/* Metadata size */
-	ext_adv_data->pba_buf[PBA_METADATA_SIZE_INDEX] = meta_data_buf_cnt * sizeof(struct bt_data);
+	ext_adv_data->pba_buf[PBA_METADATA_SIZE_INDEX] = meta_data_buf_size;
 
 	/* Add PBA buffer to extended advertising data */
 	ret = bt_mgmt_adv_buffer_put(ext_adv_buf, &ext_adv_buf_cnt, ext_adv_buf_vacant,

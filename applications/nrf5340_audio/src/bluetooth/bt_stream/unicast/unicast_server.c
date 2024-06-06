@@ -547,7 +547,7 @@ int unicast_server_uuid_populate(struct net_buf_simple *uuid_buf)
 int unicast_server_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant)
 {
 	int ret;
-	int adv_buf_cnt = 0;
+	uint32_t adv_buf_cnt = 0;
 
 	ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant,
 				     sizeof(unicast_server_adv_data), BT_DATA_SVC_DATA16,
