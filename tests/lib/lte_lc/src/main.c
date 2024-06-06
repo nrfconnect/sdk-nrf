@@ -96,6 +96,10 @@ void test_parse_cereg(void)
 	char *at_notif_90 = "+CEREG: 90,,\"FFFFFFFF\",,,,,";
 	char *at_notif_wrong = "+CEREG: 10,,\"FFFFFFFF\",,,,,";
 
+	/* Pass NULL parameter to reg_status param and expect the API to succeed. */
+	err = parse_cereg(at_response_0, false, NULL, NULL, NULL, NULL);
+	TEST_ASSERT_EQUAL(0, err);
+
 	/* For CEREG reads, we only check the network status, as that's the only
 	 * functionality that is exposed.
 	 */

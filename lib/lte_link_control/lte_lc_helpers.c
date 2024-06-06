@@ -823,8 +823,8 @@ int parse_cereg(const char *at_response,
 	}
 
 	/* Check PSM parameters only if we are connected */
-	if ((*reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
-	    (*reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+	if ((status != LTE_LC_NW_REG_REGISTERED_HOME) &&
+	    (status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
 		goto clean_exit;
 	}
 
