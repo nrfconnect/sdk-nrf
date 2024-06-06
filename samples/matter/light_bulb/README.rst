@@ -49,7 +49,7 @@ The sample uses buttons to test changing the light bulb and device states, and L
 You can test it in the following ways:
 
 * Standalone, by using a single DK that runs the light bulb application.
-* Remotely over the Thread or Wi-Fi, which requires more devices.
+* Remotely over Thread or Wi-Fi, which requires more devices.
 
 The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device (for remote testing in a network).
 You can enable both methods after :ref:`building and running the sample <matter_light_bulb_sample_remote_control>`.
@@ -196,34 +196,53 @@ To set up an AWS IoT instance and configure the sample, complete the following s
 User interface
 **************
 
-.. include:: ../template/README.rst
-   :start-after: matter_template_nrf54l15_0_3_0_interface_start
-   :end-before: matter_template_nrf54l15_0_3_0_interface_end
+.. tabs::
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_led1_start
-    :end-before: matter_door_lock_sample_led1_end
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
-LED 2:
-    Shows the state of the light bulb.
-    The following states are possible:
+      LED 1:
+         .. include:: /includes/matter_sample_state_led.txt
 
-    * Solid On - The light bulb is on.
-    * Off - The light bulb is off.
+      LED 2:
+         Shows the state of the light bulb.
+         The following states are possible:
 
-    Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
-    The command's argument can be used to specify the duration of the effect.
+         * Solid On - The light bulb is on.
+         * Off - The light bulb is off.
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_button1_start
-    :end-before: matter_door_lock_sample_button1_end
+         Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
+         The command's argument can be used to specify the duration of the effect.
 
-Button 2:
-    * Changes the light bulb state to the opposite one.
+      Button 1:
+         .. include:: /includes/matter_sample_button.txt
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_jlink_start
-    :end-before: matter_door_lock_sample_jlink_end
+      Button 2:
+         Changes the light bulb state to the opposite one.
+
+      .. include:: /includes/matter_segger_usb.txt
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         .. include:: /includes/matter_sample_state_led.txt
+
+      LED 1:
+         Shows the state of the light bulb.
+         The following states are possible:
+
+         * Solid On - The light bulb is on.
+         * Off - The light bulb is off.
+
+         Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
+         The command's argument can be used to specify the duration of the effect.
+
+      Button 0:
+         .. include:: /includes/matter_sample_button.txt
+
+      Button 1:
+         Changes the light bulb state to the opposite one.
+
+      .. include:: /includes/matter_segger_usb.txt
 
 NFC port with antenna attached:
     Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
@@ -257,26 +276,57 @@ Testing basic features
 
 After building the sample and programming it to your development kit, complete the following steps to test its basic features:
 
-#. |connect_kit|
-#. |connect_terminal_ANSI|
-#. Observe that **LED 2** is off.
-#. Press **Button 2** on the light bulb device.
-   The **LED 2** turns on and the following messages appear on the console:
+.. tabs::
 
-   .. code-block:: console
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
-      I: Turn On Action has been initiated
-      I: Turn On Action has been completed
+      #. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. Observe that **LED 2** is off.
+      #. Press **Button 2** on the light bulb device.
+         The **LED 2** turns on and the following messages appear on the console:
 
-#. Press **Button 2** again.
-   The **LED 2** turns off and the following messages appear on the console:
+         .. code-block:: console
 
-   .. code-block:: console
+            I: Turn On Action has been initiated
+            I: Turn On Action has been completed
 
-      I: Turn Off Action has been initiated
-      I: Turn Off Action has been completed
+      #. Press **Button 2** again.
+         The **LED 2** turns off and the following messages appear on the console:
 
-#. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
+         .. code-block:: console
+
+            I: Turn Off Action has been initiated
+            I: Turn Off Action has been completed
+
+      #. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
+
+         The device reboots after all its settings are erased.
+
+   .. group-tab:: nRF54 DKs
+
+      #. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. Observe that **LED 1** is off.
+      #. Press **Button 1** on the light bulb device.
+         The **LED 1** turns on and the following messages appear on the console:
+
+         .. code-block:: console
+
+            I: Turn On Action has been initiated
+            I: Turn On Action has been completed
+
+      #. Press **Button 1** again.
+         The **LED 1** turns off and the following messages appear on the console:
+
+         .. code-block:: console
+
+            I: Turn Off Action has been initiated
+            I: Turn Off Action has been completed
+
+      #. Keep the **Button 0** pressed for more than six seconds to initiate factory reset of the device.
+
+         The device reboots after all its settings are erased.
 
 .. _matter_light_bulb_sample_light_switch_tests:
 
@@ -333,7 +383,7 @@ If you are new to Matter, the recommended approach is to use :ref:`CHIP Tool for
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
 The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (1 hour by default).
-If the Bluetooth LE advertising times out, press **Button 1** to enable it again.
+If the Bluetooth LE advertising times out, enable it again.
 
 Onboarding information
 ++++++++++++++++++++++

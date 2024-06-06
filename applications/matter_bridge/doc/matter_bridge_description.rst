@@ -125,7 +125,7 @@ Remote testing in a network
 By default, the Matter accessory device has no IPv6 network configured.
 To use the device within a Wi-Fi network, you must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller.
 
-The Bluetooth LE advertising starts automatically upon device startup, but only for a predefined period of time (15 minutes by default).
+The Bluetooth LE advertising starts automatically upon device startup, but only for a predefined period of time (1 hour by default).
 If the Bluetooth LE advertising times out, you can re-enable it manually by pressing **Button (SW1)**.
 
 Additionally, the controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
@@ -134,30 +134,11 @@ For details, see the `Testing`_ section.
 User interface
 **************
 
-.. include:: ../../../samples/matter/lock/README.rst
-    :start-after: matter_door_lock_sample_led1_start
-    :end-before: matter_door_lock_sample_led1_end
-
 Button 1:
-    Depending on how long you press the button:
+   .. include:: /includes/matter_sample_button.txt
 
-    * If pressed for less than three seconds:
-
-      * If the device is not provisioned to the Matter network, it initiates the SMP server (Simple Management Protocol) and Bluetooth LE advertising for Matter commissioning.
-        After that, the Device Firmware Update (DFU) over Bluetooth Low Energy can be started.
-        (See `Updating the device firmware`_.)
-        Bluetooth LE advertising makes the device discoverable over Bluetooth LE for the predefined period of time (15 minutes by default).
-
-      * If the device is already provisioned to the Matter network it re-enables the SMP server.
-        After that, the DFU over Bluetooth Low Energy can be started.
-        (See `Updating the device firmware`_.)
-
-    * If pressed for more than three seconds, it initiates the factory reset of the device.
-      Releasing the button within a 3-second window of the initiation cancels the factory reset procedure.
-
-.. include:: ../../../samples/matter/lock/README.rst
-    :start-after: matter_door_lock_sample_led1_start
-    :end-before: matter_door_lock_sample_led1_end
+LED 1:
+   .. include:: /includes/matter_sample_state_led.txt
 
 LED 2:
    If the :ref:`CONFIG_BRIDGED_DEVICE_BT <CONFIG_BRIDGED_DEVICE_BT>` Kconfig option is set to ``y``, shows the current state of Bridge's Bluetooth LE connectivity.
@@ -169,9 +150,7 @@ LED 2:
    * Even Flashing (300 ms on / 300 ms off) - The scan for Bluetooth LE devices is in progress.
    * Fast Even Flashing (100 ms on / 100 ms off) - The Bridge device is connecting to the Bluetooth LE device and waiting for the Bluetooth LE authentication PIN code.
 
-.. include:: ../../../samples/matter/lock/README.rst
-    :start-after: matter_door_lock_sample_jlink_start
-    :end-before: matter_door_lock_sample_jlink_end
+.. include:: /includes/matter_segger_usb.txt
 
 .. _matter_bridge_cli:
 
@@ -968,8 +947,8 @@ For this application, you can use one of the following :ref:`onboarding informat
 
 .. _matter_bridge_app_dfu:
 
-Updating the device firmware
-============================
+Upgrading the device firmware
+=============================
 
 To update the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial in the Matter documentation.
 

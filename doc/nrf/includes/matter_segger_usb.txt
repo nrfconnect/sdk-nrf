@@ -1,0 +1,2 @@
+SEGGER J-Link USB Port:
+   Used for getting logs from the device or for communicating with it through the command-line interface.

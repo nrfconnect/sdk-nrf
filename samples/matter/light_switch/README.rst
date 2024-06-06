@@ -49,7 +49,7 @@ The development kits for this sample offer the following IPv6 network support fo
 Overview
 ********
 
-The sample controls the state of the **LED 2** on connected light bulbs devices.
+The sample controls the state of the state-indication LED on connected light bulbs devices.
 After configuring the light switch sample, the lighting devices get proper `Access Control List`_ from the Matter controller to start receiving commands sent from the light switch.
 Then, the light switch device prepares a new binding table to be able to discover light bulb devices and perform :ref:`matter_light_switch_sample_binding`.
 
@@ -139,39 +139,63 @@ Factory data support
 User interface
 **************
 
-.. include:: ../template/README.rst
-   :start-after: matter_template_nrf54l15_0_3_0_interface_start
-   :end-before: matter_template_nrf54l15_0_3_0_interface_end
+.. tabs::
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_led1_start
-    :end-before: matter_door_lock_sample_led1_end
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
-LED 2:
-   The LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
-   The command's argument can be used to specify the duration of the effect.
+      LED 1:
+         .. include:: /includes/matter_sample_state_led.txt
 
-All LEDs:
-   Blink in unison when the factory reset procedure is initiated.
+      LED 2:
+         The LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
+         The command's argument can be used to specify the duration of the effect.
 
-.. include:: ../lock/README.rst
-   :start-after: matter_door_lock_sample_button1_start
-   :end-before: matter_door_lock_sample_button1_end
+      All LEDs:
+         Blink in unison when the factory reset procedure is initiated.
 
-Button 2:
-   * Controls the light on the bound lighting device.
-     Depending on how long you press the button:
+      Button 1:
+         .. include:: /includes/matter_sample_button.txt
 
-      * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
-      * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
-        The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
+      Button 2:
+         Controls the light on the bound lighting device.
+         Depending on how long you press the button:
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_jlink_start
-    :end-before: matter_door_lock_sample_jlink_end
+         * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
+         * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
+           The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
 
-NFC port with antenna attached:
-   Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
+      .. include:: /includes/matter_segger_usb.txt
+
+      NFC port with antenna attached:
+         Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         .. include:: /includes/matter_sample_state_led.txt
+
+      LED 1:
+         The LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
+         The command's argument can be used to specify the duration of the effect.
+
+      All LEDs:
+         Blink in unison when the factory reset procedure is initiated.
+
+      Button 0:
+         .. include:: /includes/matter_sample_button.txt
+
+      Button 1:
+         Controls the light on the bound lighting device.
+         Depending on how long you press the button:
+
+         * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
+         * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
+           The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 1** is pressed.
+
+      .. include:: /includes/matter_segger_usb.txt
+
+      NFC port with antenna attached:
+         Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
 
 .. _matter_light_switch_sample_ui_matter_cli:
 
@@ -187,7 +211,7 @@ Unicast commands
 You can use the following commands for direct communication with the single lighting device:
 
 switch onoff on
-   This command turns on **LED 2** on the bound lighting device.
+   This command turns on the state-indication LED on the bound lighting device.
    For example:
 
    .. parsed-literal::
@@ -196,7 +220,7 @@ switch onoff on
       uart:~$ matter switch onoff on
 
 switch onoff off
-   This command turns off **LED 2** on the bound lighting device.
+   This command turns off the state-indication LED on the bound lighting device.
    For example:
 
    .. parsed-literal::
@@ -205,7 +229,7 @@ switch onoff off
       uart:~$ matter switch onoff off
 
 switch onoff toggle
-   This command changes the **LED 2** state to the opposite one on the bound lighting device.
+   This command changes the state of the state-indication LED to the opposite state on the bound lighting device.
    For example:
 
    .. parsed-literal::
@@ -219,7 +243,7 @@ Groupcast commands
 You can use the following commands a group of devices that are programmed with the Light Switch Example application by using the Matter CLI:
 
 switch groups onoff on
-   This command turns on **LED 2** on each bound lighting device connected to the same group.
+   This command turns on the state-indication LED on each bound lighting device connected to the same group.
    For example:
 
    .. parsed-literal::
@@ -228,7 +252,7 @@ switch groups onoff on
       uart:~$ matter switch groups onoff on
 
 switch groups onoff off
-   This command turns off **LED 2** on each bound lighting device connected to the same group.
+   This command turns off the state-indication LED on each bound lighting device connected to the same group.
    For example:
 
    .. parsed-literal::
@@ -237,7 +261,7 @@ switch groups onoff off
       uart:~$ matter switch groups onoff off
 
 switch groups onoff toggle
-   This command changes the **LED 2** state to the opposite one on each bound lighting device connected to the same group.
+   This command changes the state of the state-indication LED to the opposite state on each bound lighting device connected to the same group.
    For example:
 
    .. parsed-literal::
@@ -277,53 +301,105 @@ After building this and the :ref:`Matter Light Bulb <matter_light_bulb_sample>` 
    This means that only one uncommissioned device can be powered up before commissioning.
    If both are powered up at the same time, the CHIP Tool can commission a random device and the node ID assignment is also random.
    When one device is commissioned, power up the next device and perform the commissioning.
-   To avoid this unclear situation, you can set up your unique discriminator in :file:`src/chip_project_config.h` file by changing :kconfig:option:`CHIP_DEVICE_CONFIG_USE_TEST_SETUP_DISCRIMINATOR` value.
+
+   To avoid this unclear situation, you can set up your unique discriminator in the :file:`src/chip_project_config.h` file by changing the :kconfig:option:`CHIP_DEVICE_CONFIG_USE_TEST_SETUP_DISCRIMINATOR` value.
    Then build an example and commission with your unique discriminator.
 
 .. matter_light_switch_sample_prepare_to_testing_start
 
-1. |connect_kit|
-#. |connect_terminal_ANSI|
-#. If devices were not erased during the programming, press and hold **Button 1** on each device until the factory reset takes place.
-#. On each device, press **Button 1** to start the Bluetooth LE advertising.
-#. Commission devices to the Matter network.
-   See `Commissioning the device`_ for more information.
-   During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
-   These IDs are going to be used in the next steps (*<light_switch_node_ID>* and *<light_bulb_node_ID>*, respectively).
-#. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb device.
-   Depending on the number of the light bulb devices you are using, use one of the following commands, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning:
+.. tabs::
 
-   * If you are using only one light bulb device, run the following command for the light bulb device:
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
-     .. parsed-literal::
-        :class: highlight
+      1. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. If the devices were not erased during the programming, press and hold **Button 1** on each device until the factory reset takes place.
+      #. On each device, press **Button 1** to start the Bluetooth LE advertising.
+      #. Commission devices to the Matter network.
+         See `Commissioning the device`_ for more information.
 
-        chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 2, "subjects": [<light_switch_node_ID>], "targets": [{"cluster": 6, "endpoint": 1, "deviceType": null}, {"cluster": 8, "endpoint": 1, "deviceType": null}]}]' <light_bulb_node_ID> 0
+         During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
+         These IDs are going to be used in the next steps (*<light_switch_node_ID>* and *<light_bulb_node_ID>*, respectively).
+      #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb device.
+         Depending on the number of the light bulb devices you are using, use one of the following commands, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning:
 
-   * If you are using more than one light bulb device, connect all devices to the multicast group by running the following command for each device, including the light switch:
+         * If you are using only one light bulb device, run the following command for the light bulb device:
 
-     .. parsed-literal::
-        :class: highlight
+           .. parsed-literal::
+              :class: highlight
 
-        chip-tool tests TestGroupDemoConfig --nodeId <node_ID>
+              chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 2, "subjects": [<light_switch_node_ID>], "targets": [{"cluster": 6, "endpoint": 1, "deviceType": null}, {"cluster": 8, "endpoint": 1, "deviceType": null}]}]' <light_bulb_node_ID> 0
 
-     Use the *<node_ID>* values from the commissioning step.
+         * If you are using more than one light bulb device, connect all devices to the multicast group by running the following command for each device, including the light switch:
 
-#. Write a binding table to the light switch to inform the device about all endpoints by running this command (only for light switch):
+           .. parsed-literal::
+              :class: highlight
 
-   * For unicast binding to bind the light switch with only one light Bulb:
+              chip-tool tests TestGroupDemoConfig --nodeId <node_ID>
 
-      .. parsed-literal::
-         :class: highlight
+           Use the *<node_ID>* values from the commissioning step.
 
-         chip-tool binding write binding '[{"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 6}, {"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 8}]' <light switch node id> 1
+      #. Write a binding table to the light switch to inform the device about all endpoints by running this command (only for light switch):
 
-   * For groupcast binding to bind the light switch with multiple light bulbs:
+         * For unicast binding to bind the light switch with only one light Bulb:
 
-      .. parsed-literal::
-         :class: highlight
+            .. parsed-literal::
+               :class: highlight
 
-         chip-tool binding write binding '[{"fabricIndex": 1, "group": 257}]' <light_switch_node_ID> 1
+               chip-tool binding write binding '[{"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 6}, {"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 8}]' <light switch node id> 1
+
+         * For groupcast binding to bind the light switch with multiple light bulbs:
+
+            .. parsed-literal::
+               :class: highlight
+
+               chip-tool binding write binding '[{"fabricIndex": 1, "group": 257}]' <light_switch_node_ID> 1
+
+   .. group-tab:: nRF54 DKs
+
+      1. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. If the devices were not erased during the programming, press and hold **Button 0** on each device until the factory reset takes place.
+      #. On each device, press **Button 0** to start the Bluetooth LE advertising.
+      #. Commission devices to the Matter network.
+         See `Commissioning the device`_ for more information.
+
+         During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
+         These IDs are going to be used in the next steps (*<light_switch_node_ID>* and *<light_bulb_node_ID>*, respectively).
+      #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb device.
+         Depending on the number of the light bulb devices you are using, use one of the following commands, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning:
+
+         * If you are using only one light bulb device, run the following command for the light bulb device:
+
+           .. parsed-literal::
+              :class: highlight
+
+              chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 2, "subjects": [<light_switch_node_ID>], "targets": [{"cluster": 6, "endpoint": 1, "deviceType": null}, {"cluster": 8, "endpoint": 1, "deviceType": null}]}]' <light_bulb_node_ID> 0
+
+         * If you are using more than one light bulb device, connect all devices to the multicast group by running the following command for each device, including the light switch:
+
+           .. parsed-literal::
+              :class: highlight
+
+              chip-tool tests TestGroupDemoConfig --nodeId <node_ID>
+
+           Use the *<node_ID>* values from the commissioning step.
+
+      #. Write a binding table to the light switch to inform the device about all endpoints by running this command (only for light switch):
+
+         * For unicast binding to bind the light switch with only one light Bulb:
+
+            .. parsed-literal::
+               :class: highlight
+
+               chip-tool binding write binding '[{"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 6}, {"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 8}]' <light switch node id> 1
+
+         * For groupcast binding to bind the light switch with multiple light bulbs:
+
+            .. parsed-literal::
+               :class: highlight
+
+               chip-tool binding write binding '[{"fabricIndex": 1, "group": 257}]' <light_switch_node_ID> 1
 
 .. matter_light_switch_sample_prepare_to_testing_end
 
@@ -338,52 +414,99 @@ Testing with bound light bulbs devices
 
 .. matter_light_switch_sample_testing_start
 
-After preparing devices for testing, you can test the communication either of a single light bulb or of a group of light bulbs with the light switch (but not both a single device and a group at the same time).
+After preparing devices for testing, you can test the communication of either a single light bulb or of a group of light bulbs with the light switch (but not both a single device and a group at the same time).
 
-Complete the following steps:
+Complete the following steps using the light switch device:
 
-1. On the light switch device, use :ref:`buttons <matter_light_switch_sample_ui>` to control the bound light bulbs:
+.. tabs::
 
-   #. On the light switch device, press **Button 2** to turn off the **LED 2** located on the bound light bulb device.
-   #. On the light switch device, press **Button 2** to turn on the light again.
-      **LED 2** on the light bulb device turns back on.
-   #. Press **Button 2** and hold it for more than 0.5 seconds to test the dimmer functionality.
-      **LED 2** on the bound light bulb device changes its brightness from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
-#. Using the terminal emulator connected to the light switch, run the following :ref:`Matter CLI commands <matter_light_switch_sample_ui_matter_cli>`:
+      1. On the light switch device, use the :ref:`buttons <matter_light_switch_sample_ui>` to control the bound light bulbs:
 
-   a. Write the following command to turn on **LED 2** located on the bound light bulb devices:
+         a. Press **Button 2** to turn off the state-indication LED located on the bound light bulb device.
+         #. Press **Button 2** to turn the LED on again.
+         #. Press **Button 2** and hold it for more than 0.5 seconds to test the dimmer functionality.
 
-      * For a single bound light bulb:
+            The state-indication LED on the bound light bulb device changes its brightness from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
 
-        .. parsed-literal::
-           :class: highlight
+      #. Using the terminal emulator connected to the light switch, run the following :ref:`Matter CLI commands <matter_light_switch_sample_ui_matter_cli>`:
 
-           matter switch onoff on
+         a. Write the following command to turn on state-indication LED located on the bound light bulb device:
 
-      * For a group of light bulbs:
+            * For a single bound light bulb:
 
-        .. parsed-literal::
-           :class: highlight
+              .. parsed-literal::
+                 :class: highlight
 
-           matter switch groups onoff on
+                 matter switch onoff on
 
-   #. Write the following command to turn on **LED 2** located on the bound light bulb device:
+            * For a group of light bulbs:
 
-      * For a single bound light bulb:
+              .. parsed-literal::
+                 :class: highlight
 
-        .. parsed-literal::
-           :class: highlight
+                 matter switch groups onoff on
 
-           matter switch onoff off
+         #. Write the following command to turn off the state-indication LED located on the bound light bulb device:
 
-      * For a group of light bulbs:
+            * For a single bound light bulb:
 
-        .. parsed-literal::
-           :class: highlight
+              .. parsed-literal::
+                 :class: highlight
 
-           matter switch groups onoff off
+                 matter switch onoff off
 
+            * For a group of light bulbs:
+
+              .. parsed-literal::
+                 :class: highlight
+
+                 matter switch groups onoff off
+
+   .. group-tab:: nRF54 DKs
+
+      1. On the light switch device, use the :ref:`buttons <matter_light_switch_sample_ui>` to control the bound light bulbs:
+
+         #. Press **Button 1** to turn off the state-indication LED located on the bound light bulb device.
+         #. Press **Button 1** to turn the LED on again.
+         #. Press **Button 1** and hold it for more than 0.5 seconds to test the dimmer functionality.
+
+            The state-indication LED on the bound light bulb device changes its brightness from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 1** is pressed.
+
+      #. Using the terminal emulator connected to the light switch, run the following :ref:`Matter CLI commands <matter_light_switch_sample_ui_matter_cli>`:
+
+         a. Write the following command to turn on the state-indication LED located on the bound light bulb device:
+
+            * For a single bound light bulb:
+
+              .. parsed-literal::
+                 :class: highlight
+
+                 matter switch onoff on
+
+            * For a group of light bulbs:
+
+              .. parsed-literal::
+                 :class: highlight
+
+                 matter switch groups onoff on
+
+         #. Write the following command to turn off the state-indication LED located on the bound light bulb device:
+
+            * For a single bound light bulb:
+
+              .. parsed-literal::
+                 :class: highlight
+
+                 matter switch onoff off
+
+            * For a group of light bulbs:
+
+              .. parsed-literal::
+                 :class: highlight
+
+                 matter switch groups onoff off
 
 .. matter_light_switch_sample_testing_end
 
@@ -398,7 +521,7 @@ Commissioning the device
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
 The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (1 hour by default).
-If the Bluetooth LE advertising times out, press **Button 1** to enable it again.
+If the Bluetooth LE advertising times out, enable it again.
 
 Onboarding information
 ----------------------

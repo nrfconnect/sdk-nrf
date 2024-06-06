@@ -349,10 +349,19 @@ Testing the new sensor application
 
 To check if the sensor device is working, complete the following steps:
 
-.. include:: ../../../../../samples/matter/template/README.rst
-   :start-after: matter_template_sample_testing_start
-   :end-before: #. Keep the **Button 1**
+1. |connect_kit|
+#. |connect_terminal_ANSI|
+#. Commission the device into a Matter network by following the guides linked on the :ref:`ug_matter_configuring` page for the Matter controller you want to use.
+   The guides walk you through the following steps:
 
+   * Only if you are configuring Matter over Thread: Configure the Thread Border Router.
+   * Build and install the Matter controller.
+   * Commission the device.
+     You can use the :ref:`matter_template_network_mode_onboarding` listed earlier on this page.
+   * Send Matter commands.
+
+   At the end of this procedure, the LED indicating the state of the Matter device programmed with the sample starts flashing in the Short Flash Off state.
+   This indicates that the device is fully provisioned, but does not yet have full IPv6 network connectivity.
 #. Activate the sensor by running the following command on the On/off cluster with the correct *node_ID* assigned during commissioning:
 
    .. parsed-literal::
