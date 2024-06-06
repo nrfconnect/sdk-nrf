@@ -17,13 +17,10 @@
 
 int net_utils_socket_pdn_id_set(int fd, uint32_t pdn_id)
 {
-	int ret;
+	int err = setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn_id, sizeof(pdn_id));
 
-	ret = setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn_id, sizeof(pdn_id));
-	if (ret < 0) {
-		mosh_error(
-			"Failed to bind socket with PDN ID %d, error: %d, %s",
-			pdn_id, ret, strerror(ret));
+	if (err) {
+		mosh_error("Failed to bind socket with PDN ID %d, errno %d", pdn_id, errno);
 		return -EINVAL;
 	}
 
