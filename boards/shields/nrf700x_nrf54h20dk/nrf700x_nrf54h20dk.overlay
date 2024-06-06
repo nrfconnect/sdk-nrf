@@ -61,7 +61,7 @@
 &mram1x {
 	cpuapp_rx_partitions: cpuapp-rx-partitions {
 		compatible = "nordic,owned-partitions", "fixed-partitions";
-		status = "disabled";
+		status = "okay";
 		perm-read;
 		perm-execute;
 		perm-secure;
