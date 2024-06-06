@@ -76,11 +76,11 @@ static void content_control_msg_sub_thread(void)
 
 		switch (msg.event) {
 		case MEDIA_START:
-			unicast_client_start();
+			unicast_client_start(0);
 			break;
 
 		case MEDIA_STOP:
-			unicast_client_stop();
+			unicast_client_stop(0);
 			break;
 
 		default:
@@ -518,7 +518,7 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 	struct le_audio_encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
 
 	if (strm_state == STATE_STREAMING) {
-		ret = unicast_client_send(enc_audio);
+		ret = unicast_client_send(0, enc_audio);
 
 		if (ret != 0 && ret != prev_ret) {
 			if (ret == -ECANCELED) {
@@ -565,7 +565,7 @@ int main(void)
 	ret = bt_content_ctrl_init();
 	ERR_CHK(ret);
 
-	ret = unicast_client_enable(le_audio_rx_data_handler);
+	ret = unicast_client_enable(0, le_audio_rx_data_handler);
 	ERR_CHK(ret);
 
 	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, CONFIG_BT_DEVICE_NAME,
