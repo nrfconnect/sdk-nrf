@@ -101,7 +101,10 @@ The :file:`zephyr.dts` file contains the entire hardware-related configuration o
 The header file contains the same kind of information, but with defines usable by source code.
 
 For more information, see :ref:`configuring_devicetree` and Zephyr's :ref:`zephyr:dt-guide`.
-In particular, :ref:`zephyr:set-devicetree-overlays` explains how to use devicetree and its overlays to customize an application's devicetree.
+In particular, :ref:`zephyr:set-devicetree-overlays` explains how the base devicetree files are selected.
+
+In the |NCS|, you can use the |nRFVSC| to `create the devicetree files <How to create devicetree files_>`_ and work with them using the dedicated `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_.
+You can also select the devicetree files when :ref:`cmake_options`.
 
 .. _configure_application_sw:
 
@@ -119,7 +122,12 @@ Information from devicetree is available to Kconfig, through the functions defin
 The :file:`.config` file in the :file:`<build_dir>/zephyr/` directory describes most of the software configuration of the constructed binary.
 Some subsystems can use their own configuration files.
 
-For more information, see :ref:`configure_application` and Zephyr's :ref:`zephyr:application-kconfig`.
+For more information, see Zephyr's :ref:`zephyr:application-kconfig`.
+In particular, :ref:`zephyr:initial-conf` explains how the base configuration files are selected.
+
+In the |NCS|, just as in Zephyr, you can :ref:`configure Kconfig temporarily or permanently <configuring_kconfig>`.
+You can also select the Kconfig options and files when :ref:`cmake_options`.
+
 The :ref:`Kconfig Reference <configuration_options>` provides the documentation for each configuration option in the |NCS|.
 
 Memory layout configuration
@@ -221,7 +229,7 @@ The |NCS| supports Zephyr's System Build (Sysbuild).
    :start-after: #######################
    :end-before: Definitions
 
-To distinguish CMake variables and Kconfig options specific to the underlying build systems, sysbuild uses namespacing.
+To distinguish CMake variables and Kconfig options specific to the underlying build systems, :ref:`sysbuild uses namespacing <zephyr:sysbuild_kconfig_namespacing>`.
 For example, sysbuild-specific Kconfig options are preceded by `SB_` before `CONFIG` and application-specific CMake options are preceded by the application name.
 
 Sysbuild is integrated with west.
