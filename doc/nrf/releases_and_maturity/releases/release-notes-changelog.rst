@@ -898,7 +898,10 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-* Added the :ref:`lib_softap_wifi_provision` library.
+* Added:
+
+   * :ref:`lib_softap_wifi_provision` library.
+   * :ref:`lib_wifi_ready` library.
 
 * :ref:`lib_wifi_credentials` library:
 
