@@ -153,6 +153,7 @@ int dfu_target_modem_delta_write(const void *const buf, size_t len)
 			return -ENOMEM;
 		case NRF_MODEM_DELTA_DFU_RECEIVER_BLOCK_TOO_LARGE:
 			return -E2BIG;
+		case NRF_MODEM_DELTA_DFU_INVALID_HEADER_DATA:
 		case NRF_MODEM_DELTA_DFU_INVALID_DATA:
 		case NRF_MODEM_DELTA_DFU_INVALID_UUID:
 			return -EINVAL;
