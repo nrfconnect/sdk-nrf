@@ -5,7 +5,7 @@
 
 
 - scenarios:
-    - sample.matter.light_bulb.memory_profiling
+    - sample.matter.light_bulb.memory_profiling.persistent_subscriptions
   platforms:
     - nrf7002dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-19027"
