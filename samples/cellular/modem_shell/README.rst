@@ -1420,7 +1420,7 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -S nrf91-modem-trace-ext-flash
+   west build -p -b *board_target* -- -Dmodem_shell_SNIPPET="nrf91-modem-trace-ext-flash"
 
 |board_target|
 

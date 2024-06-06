@@ -186,6 +186,9 @@ Snippets
 Snippets are a Zephyr mechanism for defining portable build system overrides that could be applied to any application.
 Read Zephyr's :ref:`zephyr:snippets` documentation for more information.
 
+.. important::
+  When using :ref:`configuration_system_overview_sysbuild`, the snippet is applied to all images, unless the image is specified explicitly (``-D<image_name>_SNIPPET="<your_snippet>"``).
+
 You can set snippets for use with your application when you :ref:`set up your build configuration <building>` by :ref:`providing them as CMake options <cmake_options>`.
 
 Usage of snippets is optional.

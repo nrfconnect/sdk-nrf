@@ -74,21 +74,20 @@ The following table lists the most common ones used in the |NCS|:
      - ``-DEXTRA_DTC_OVERLAY_FILE=<file_name>.overlay``
    * - :makevar:`SHIELD`
      - Select one of the supported :ref:`shields <shield_names_nrf>` for building the firmware.
-     - ``-DSHIELD=<shield>`` (``-Dimage-name_SHIELD`` for images)
+     - ``-DSHIELD=<shield>`` (``-D<image_name>_SHIELD`` for images)
    * - :makevar:`FILE_SUFFIX`
      - | Select one of the available :ref:`suffixed configurations <zephyr:application-file-suffixes>`, if the application or sample supports any.
        | See :ref:`app_build_file_suffixes` for more information about their usage and limitations in the |NCS|.
        | This variable is gradually replacing :makevar:`CONF_FILE`.
-     - ``-DFILE_SUFFIX=<configuration_suffix>`` (``-Dimage-name_FILE_SUFFIX`` for images)
+     - ``-DFILE_SUFFIX=<configuration_suffix>`` (``-D<image_name>_FILE_SUFFIX`` for images)
    * - :makevar:`CONF_FILE`
      - | Select one of the available :ref:`build types <modifying_build_types>`, if the application or sample supports any.
        | This variable is deprecated and is being gradually replaced by :makevar:`FILE_SUFFIX`, but :ref:`still required for some applications <modifying_build_types>`.
      - ``-DCONF_FILE=prj_<build_type_name>.conf``
    * - ``-S`` (west) or :makevar:`SNIPPET` (CMake)
-     - | Select one of the :ref:`zephyr:snippets` to add to the application firmware during the build.
-       | The west argument ``-S`` is more commonly used.
-     - | ``-S <name_of_snippet>``
-       | ``-DSNIPPET=<name_of_snippet>`` (``-Dimage-name_SNIPPET`` for images)
+     - Select one of the :ref:`zephyr:snippets` to add to the application firmware during the build.
+     - | ``-S <name_of_snippet>`` (applies the snippet to all images)
+       | ``-DSNIPPET=<name_of_snippet>`` (``-D<image_name>_SNIPPET=<name_of_snippet>`` for images)
    * - :makevar:`PM_STATIC_YML_FILE`
      - | Select a :ref:`static configuration file <ug_pm_static>` for the Partition Manager script.
        | For applications that *do not* use multiple images, the static configuration can be selected with :makevar:`FILE_SUFFIX` (see above).

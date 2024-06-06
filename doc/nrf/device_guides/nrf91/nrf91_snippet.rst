@@ -35,7 +35,7 @@ To enable modem traces with the flash backend, use the following command:
 .. parsed-literal::
    :class: highlight
 
-   west build --board *board target* -S nrf91-modem-trace-ext-flash
+   west build --board *board target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash"
 
 .. _nrf91_modem_trace_uart_snippet:
 
@@ -55,7 +55,11 @@ To add the modem trace UART snippet when building an application with west, use 
 
 .. code-block:: console
 
-   west build --board <your_board> -S nrf91-modem-trace-uart
+   west build --board <your_board> -- -D<image_name>_SNIPPET="nrf91-modem-trace-uart"
+
+.. note::
+   With Sysbuild, using the ``west build -S`` option applies the snippet to all images.
+   Therefore, use the CMake argument instead, specifying the application image.
 
 With CMake
 ==========
@@ -64,9 +68,9 @@ To add the modem trace UART snippet when building an application with CMake, add
 
 .. code-block:: console
 
-   -DSNIPPET="nrf91-modem-trace-uart" [...]
+   -D<image_name>_SNIPPET="nrf91-modem-trace-uart" [...]
 
-To build with the |nRFVSC|, specify ``-DSNIPPET="nrf91-modem-trace-uart" [...]`` in the **Extra CMake arguments** field.
+To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-uart" [...]`` in the **Extra CMake arguments** field.
 
 See :ref:`cmake_options` for more details.
 
