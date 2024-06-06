@@ -25,6 +25,7 @@ config SDFW_SERVICES_ENABLED
 	default y
 	depends on SSF_CLIENT
 	depends on ZCBOR
+	depends on ZCBOR_CANONICAL
 	help
 	  Enable SDFW Service Framework (SSF)
 
