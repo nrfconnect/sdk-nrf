@@ -119,6 +119,8 @@ Source modules for module_state_event
 * :ref:`nrf_desktop_buttons_sim`
 * :ref:`nrf_desktop_click_detector`
 * :ref:`nrf_desktop_cpu_meas`
+* :ref:`nrf_desktop_dfu`
+* :ref:`nrf_desktop_dfu_mcumgr`
 * :ref:`nrf_desktop_failsafe`
 * :ref:`nrf_desktop_fast_pair_app`
 * :ref:`nrf_desktop_fn_keys`
