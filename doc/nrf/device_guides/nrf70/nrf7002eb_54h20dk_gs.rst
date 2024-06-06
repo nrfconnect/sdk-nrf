@@ -57,7 +57,7 @@ The pin mapping for the nRF54H20 DK is as follows:
 +-----------------------------------+-------------------+-----------------------------------------------+
 
 .. note::
-   Also connect `VIO`=1.8V, `VBAT`=3.6V and `GND`.
+   Connect ``VIO`` to 1.8 V and ``VBAT`` to 3.6 V and ``GND``.
 
 Building and programming
 ************************

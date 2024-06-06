@@ -25,8 +25,8 @@ The Wi-Fi support is experimental and has the following limitations:
 * It only allows Wi-Fi open security
 * It is only suitable for low throughput applications
 
-Pin mapping for nRF54L15PDK
-###########################
+Pin mapping for nRF54L15 PDK
+############################
 
 The pin mapping for the nRF54L15 PDK is as follows:
 
@@ -55,7 +55,7 @@ The pin mapping for the nRF54L15 PDK is as follows:
 +-----------------------------------+-------------------+-----------------------------------------------+
 
 .. note::
-   Also connect `VIO`=1.8V, `VBAT`=3.6V and `GND`.
+   Connect ``VIO`` to 1.8 V and ``VBAT`` to 3.6 V and ``GND``.
 
 Building and programming
 ************************
