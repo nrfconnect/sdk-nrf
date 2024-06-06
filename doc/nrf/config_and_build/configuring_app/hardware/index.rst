@@ -17,6 +17,7 @@ To select them manually, see :ref:`cmake_options`.
 
 The following guides provide information about configuring specific aspects of hardware support related to devicetree.
 Read them together with Zephyr's :ref:`zephyr:hardware_support` and :ref:`zephyr:dt-guide` guides, and the official `Devicetree Specification`_.
+In particular, :ref:`zephyr:set-devicetree-overlays` explains how the base devicetree files are selected.
 
 .. toctree::
    :maxdepth: 1

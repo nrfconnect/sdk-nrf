@@ -57,20 +57,33 @@ The |NCS| uses the same CMake build variables as Zephyr and they are compatible 
 For the complete list of build variables in Zephyr and more information about them, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 The following table lists the most common ones used in the |NCS|:
 
-.. list-table:: Build system variables in the |NCS|
+.. list-table:: Common build system variables in the |NCS|
    :header-rows: 1
 
    * - Variable
      - Purpose
      - CMake argument to use
    * - Name of the Kconfig option
-     - Set the given Kconfig option to a specific value :ref:`for a single build <configuration_temporary_change_single_build>`.
+     - | Set the given Kconfig option to a specific value :ref:`for a single build <configuration_temporary_change_single_build>`.
+       | The Kconfig option name can be subject to :ref:`variable namespacing <zephyr:sysbuild_kconfig_namespacing>` and :ref:`sysbuild Kconfig namespacing <zephyr:sysbuild_kconfig_namespacing>`.
      - ``-D<name_of_Kconfig_option>=<value>``
+   * - :makevar:`CONF_FILE`
+     - | Select the base Kconfig configuration file to be used for your application and override the :ref:`autoselection process <zephyr:initial-conf>`.
+       | This variable has also been used to select one of the available :ref:`build types <modifying_build_types>`, if the application or sample supports any.
+       | Using this variable for build type selection is deprecated and is being gradually replaced by :makevar:`FILE_SUFFIX`, but :ref:`still required for some applications <modifying_build_types>`.
+     - | ``-DCONF_FILE=<file_name>.conf``
+       | ``-DCONF_FILE=prj_<build_type_name>.conf``
+   * - :makevar:`SB_CONF_FILE`
+     - Select the base :ref:`sysbuild <configuration_system_overview_sysbuild>` Kconfig configuration file to be used for your application and override the :ref:`autoselection process <zephyr:initial-conf>`.
+     - ``-DSB_CONF_FILE=<file_name>.conf``
    * - :makevar:`EXTRA_CONF_FILE`
-     - Provide additional :ref:`Kconfig fragment files <configuration_permanent_change>`.
+     - Provide additional :ref:`Kconfig fragment files <configuration_permanent_change>` to be "mixed in" with the base configuration file.
      - ``-DEXTRA_CONF_FILE=<file_name>.conf``
+   * - :makevar:`DTC_OVERLAY_FILE`
+     - Select the base :ref:`devicetree overlay files <configuring_devicetree>` to be used for your application and override the :ref:`autoselection process <zephyr:set-devicetree-overlays>`.
+     - ``-DDTC_OVERLAY_FILE=<file_name>.overlay``
    * - :makevar:`EXTRA_DTC_OVERLAY_FILE`
-     - Provide additional, custom :ref:`devicetree overlay files <configuring_devicetree>`.
+     - Provide additional, custom :ref:`devicetree overlay files <configuring_devicetree>` to be "mixed in" with the base devicetree overlay file.
      - ``-DEXTRA_DTC_OVERLAY_FILE=<file_name>.overlay``
    * - :makevar:`SHIELD`
      - Select one of the supported :ref:`shields <shield_names_nrf>` for building the firmware.
@@ -78,12 +91,8 @@ The following table lists the most common ones used in the |NCS|:
    * - :makevar:`FILE_SUFFIX`
      - | Select one of the available :ref:`suffixed configurations <zephyr:application-file-suffixes>`, if the application or sample supports any.
        | See :ref:`app_build_file_suffixes` for more information about their usage and limitations in the |NCS|.
-       | This variable is gradually replacing :makevar:`CONF_FILE`.
+       | This variable is gradually replacing :makevar:`CONF_FILE` for selecting build types.
      - ``-DFILE_SUFFIX=<configuration_suffix>`` (``-D<image_name>_FILE_SUFFIX`` for images)
-   * - :makevar:`CONF_FILE`
-     - | Select one of the available :ref:`build types <modifying_build_types>`, if the application or sample supports any.
-       | This variable is deprecated and is being gradually replaced by :makevar:`FILE_SUFFIX`, but :ref:`still required for some applications <modifying_build_types>`.
-     - ``-DCONF_FILE=prj_<build_type_name>.conf``
    * - ``-S`` (west) or :makevar:`SNIPPET` (CMake)
      - Select one of the :ref:`zephyr:snippets` to add to the application firmware during the build.
      - | ``-S <name_of_snippet>`` (applies the snippet to all images)
