@@ -157,27 +157,39 @@ Factory data support
 User interface
 **************
 
-.. include:: ../template/README.rst
-   :start-after: matter_template_nrf54l15_0_3_0_interface_start
-   :end-before: matter_template_nrf54l15_0_3_0_interface_end
+.. tabs::
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_led1_start
-    :end-before: matter_door_lock_sample_led1_end
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_button1_start
-    :end-before: matter_door_lock_sample_button1_end
+      LED 1:
+         .. include:: /includes/matter_sample_state_led.txt
 
-Button 2:
-    * Prints the most recent thermostat data to terminal.
+      Button 1:
+         .. include:: /includes/matter_sample_button.txt
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_jlink_start
-    :end-before: matter_door_lock_sample_jlink_end
+      Button 2:
+         Prints the most recent thermostat data to terminal.
 
-NFC port with antenna attached:
-    Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_thermostat_sample_remote_control>`.
+      .. include:: /includes/matter_segger_usb.txt
+
+      NFC port with antenna attached:
+          Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_thermostat_sample_remote_control>`.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         .. include:: /includes/matter_sample_state_led.txt
+
+      Button 0:
+         .. include:: /includes/matter_sample_button.txt
+
+      Button 1:
+         Prints the most recent thermostat data to terminal.
+
+      .. include:: /includes/matter_segger_usb.txt
+
+      NFC port with antenna attached:
+          Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_thermostat_sample_remote_control>`.
 
 Building and running
 ********************
@@ -206,16 +218,33 @@ Testing basic features
 
 After building the sample and programming it to your development kit, complete the following steps to test its basic features:
 
-1. |connect_kit|
-#. |connect_terminal_ANSI|
-#. Observe that the **LED1** starts flashing (short flash on).
-   This means that the sample has automatically started the Bluetooth LE advertising.
-#. Observe the UART terminal.
-   The sample starts automatically printing the simulated temperature data to the terminal with 30-second intervals.
-#. Press **Button 2** to print the most recent temperature data to the terminal.
-#. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
+.. tabs::
 
-The device reboots after all its settings are erased.
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
+
+      1. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. Observe that **LED 1** starts flashing (short flash on).
+         This means that the sample has automatically started the Bluetooth LE advertising.
+      #. Observe the UART terminal.
+         The sample starts automatically printing the simulated temperature data to the terminal with 30-second intervals.
+      #. Press **Button 2** to print the most recent temperature data to the terminal.
+      #. Keep **Button 1** pressed for more than six seconds to initiate factory reset of the device.
+
+         The device reboots after all its settings are erased.
+
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
+
+      1. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. Observe that **LED 0** starts flashing (short flash on).
+         This means that the sample has automatically started the Bluetooth LE advertising.
+      #. Observe the UART terminal.
+         The sample starts automatically printing the simulated temperature data to the terminal with 30-second intervals.
+      #. Press **Button 1** to print the most recent temperature data to the terminal.
+      #. Keep **Button 0** pressed for more than six seconds to initiate factory reset of the device.
+
+         The device reboots after all its settings are erased.
 
 .. _matter_thermostat_sensor_testing:
 
@@ -230,6 +259,7 @@ After building this sample and the :ref:`Matter weather station <matter_weather_
 #. On each device, press the button that starts the Bluetooth LE advertising.
 #. Commission devices to the Matter network.
    See `Commissioning the device`_ for more information.
+
    During the commissioning process, write down the values for the thermostat node ID, the temperature sensor node ID, and the temperature sensor endpoint ID.
    These IDs are going to be used in the next steps (*<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>*, respectively).
 #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the temperature sensor device.
@@ -251,7 +281,7 @@ After building this sample and the :ref:`Matter weather station <matter_weather_
    The thermostat is now able to read the real temperature data from the temperature sensor device.
    The connection is ensured by :ref:`matter_thermostat_sample_binding` to Matter's temperature measurement cluster.
 
-#. Press **Button 2** to print the most recent temperature data from the thermostat device to the UART terminal.
+#. Press the button that prints the most recent temperature data from the thermostat device to the UART terminal.
 
 .. _matter_thermostat_sample_remote_control:
 

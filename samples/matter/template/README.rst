@@ -140,29 +140,28 @@ Factory data support
 User interface
 **************
 
-.. matter_template_nrf54l15_0_3_0_interface_start
+.. tabs::
 
-.. note::
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
-    The nRF54L15 PDK revision v0.3.0 uses a different numbering system for buttons and LEDs compared to previous boards.
-    All numbers start from 0 instead of 1, as was the case previously.
-    This means that **LED1** in this documentation refers to **LED0** on the nRF54L15 PDK board, **LED2** refers to **LED1**, **Button 1** refers to **Button 0**, and so on.
+      LED 1:
+         .. include:: /includes/matter_sample_state_led.txt
 
-    For the nRF54L15 PDK revision v0.2.1, the numbering of buttons and LEDs is the same as on the nRF52840 DK and nRF5340 DK boards.
+      Button 1:
+         .. include:: /includes/matter_sample_button.txt
 
-.. matter_template_nrf54l15_0_3_0_interface_end
+      .. include:: /includes/matter_segger_usb.txt
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_led1_start
-    :end-before: matter_door_lock_sample_led1_end
+   .. group-tab:: nRF54 DKs
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_button1_start
-    :end-before: matter_door_lock_sample_button1_end
+      LED 0:
+         .. include:: /includes/matter_sample_state_led.txt
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_jlink_start
-    :end-before: matter_door_lock_sample_jlink_end
+      Button 0:
+         .. include:: /includes/matter_sample_button.txt
+
+      .. include:: /includes/matter_segger_usb.txt
+
 
 Building and running
 ********************
@@ -180,8 +179,17 @@ See :ref:`cmake_options` for information about how to select a build type.
 Testing
 =======
 
-When you have built the sample and programmed it to your development kit, it automatically starts the Bluetooth LE advertising and the **LED1** starts flashing (Short Flash On).
-At this point, you can press **Button 1** for six seconds to initiate the factory reset of the device.
+.. tabs::
+
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
+
+      When you have built the sample and programmed it to your development kit, it automatically starts the Bluetooth LE advertising and the **LED 1** starts flashing (Short Flash On).
+      At this point, you can press **Button 1** for six seconds to initiate the factory reset of the device.
+
+   .. group-tab:: nRF54 DKs
+
+      When you have built the sample and programmed it to your development kit, it automatically starts the Bluetooth LE advertising and the **LED 0** starts flashing (Short Flash On).
+      At this point, you can press **Button 0** for six seconds to initiate the factory reset of the device.
 
 .. _matter_template_network_testing:
 
@@ -190,22 +198,45 @@ Testing in a network
 
 To test the sample in a Matter-enabled Thread network, complete the following steps:
 
-.. matter_template_sample_testing_start
+.. tabs::
 
-1. |connect_kit|
-#. |connect_terminal_ANSI|
-#. Commission the device into a Matter network by following the guides linked on the :ref:`ug_matter_configuring` page for the Matter controller you want to use.
-   The guides walk you through the following steps:
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
-   * Only if you are configuring Matter over Thread: Configure the Thread Border Router.
-   * Build and install the Matter controller.
-   * Commission the device.
-     You can use the :ref:`matter_template_network_mode_onboarding` listed earlier on this page.
-   * Send Matter commands.
+      1. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. Commission the device into a Matter network by following the guides linked on the :ref:`ug_matter_configuring` page for the Matter controller you want to use.
+         The guides walk you through the following steps:
 
-   At the end of this procedure, **LED 1** of the Matter device programmed with the sample starts flashing in the Short Flash Off state.
-   This indicates that the device is fully provisioned, but does not yet have full IPv6 network connectivity.
-#. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
+         * Only if you are configuring Matter over Thread: Configure the Thread Border Router.
+         * Build and install the Matter controller.
+         * Commission the device.
+           You can use the :ref:`matter_template_network_mode_onboarding` listed earlier on this page.
+         * Send Matter commands.
+
+         At the end of this procedure, **LED 1** of the Matter device programmed with the sample starts flashing in the Short Flash Off state.
+         This indicates that the device is fully provisioned, but does not yet have full IPv6 network connectivity.
+      #. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
+
+         The device reboots after all its settings are erased.
+
+   .. group-tab:: nRF54 DKs
+
+      1. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. Commission the device into a Matter network by following the guides linked on the :ref:`ug_matter_configuring` page for the Matter controller you want to use.
+         The guides walk you through the following steps:
+
+         * Only if you are configuring Matter over Thread: Configure the Thread Border Router.
+         * Build and install the Matter controller.
+         * Commission the device.
+           You can use the :ref:`matter_template_network_mode_onboarding` listed earlier on this page.
+         * Send Matter commands.
+
+         At the end of this procedure, **LED 0** of the Matter device programmed with the sample starts flashing in the Short Flash Off state.
+         This indicates that the device is fully provisioned, but does not yet have full IPv6 network connectivity.
+      #. Keep the **Button 0** pressed for more than six seconds to initiate factory reset of the device.
+
+         The device reboots after all its settings are erased.
 
 The device reboots after all its settings are erased.
 

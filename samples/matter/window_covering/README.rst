@@ -113,60 +113,86 @@ Factory data support
 User interface
 **************
 
-.. include:: ../template/README.rst
-   :start-after: matter_template_nrf54l15_0_3_0_interface_start
-   :end-before: matter_template_nrf54l15_0_3_0_interface_end
+.. tabs::
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_led1_start
-    :end-before: matter_door_lock_sample_led1_end
+   .. group-tab:: nRF52 and nRF53 DKs
 
-LED 2
-    Indicates the lift position of the window cover, which is represented by the brightness of the LED.
-    The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (lifted) and the brightness level set to ``255`` indicates a fully closed window cover (lowered).
+      LED 1:
+         .. include:: /includes/matter_sample_state_led.txt
 
-    Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
-    The command's argument can be used to specify the duration of the effect.
+      LED 2:
+         Indicates the lift position of the window cover, which is represented by the brightness of the LED.
+         The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (lifted) and the brightness level set to ``255`` indicates a fully closed window cover (lowered).
 
-LED 3 (nRF52840 DK and nRF5340 DK)
-    Indicates the tilt position of the window cover, which is represented by the brightness of the LED.
-    The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (tilted to a horizontal position) and the brightness level set to ``255`` indicates a fully closed window cover (tilted to a vertical position).
+         Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
+         The command's argument can be used to specify the duration of the effect.
 
-LED 4 (nRF54L15 PDK)
-    .. note::
-       This is **LED 3** on the board revision v0.3.0.
+      LED 3:
+         Indicates the tilt position of the window cover, which is represented by the brightness of the LED.
+         The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (tilted to a horizontal position) and the brightness level set to ``255`` indicates a fully closed window cover (tilted to a vertical position).
 
-    Indicates the tilt position of the window cover, which is represented by the brightness of the LED.
-    The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (tilted to a horizontal position) and the brightness level set to ``255`` indicates a fully closed window cover (tilted to a vertical position).
+      Button 1:
+         .. include:: /includes/matter_sample_button.txt
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_button1_start
-    :end-before: matter_door_lock_sample_button1_end
+      Button 2:
+         When pressed once and released, it moves the window cover towards the open position by one step.
+         Depending on the movement mode of the cover (see `Overview`_), the button decreases the brightness of either  **LED 2** for the lift mode or **LED 3** for the tilt mode.
 
-Button 2:
-    When pressed once and released, it moves the window cover towards the open position by one step.
-    Depending on the movement mode of the cover (see `Overview`_), the button decreases the brightness of either  **LED 2** for the lift mode or **LED 3** for the tilt mode.
+      Button 3:
+         When pressed once and released, it moves the cover towards the closed position by one step.
+         Depending on the movement mode of the cover (see `Overview`_), the button increases the brightness of either  **LED 2** for the lift mode or **LED 3** for the tilt mode.
 
-Button 3:
-    When pressed once and released, it moves the cover towards the closed position by one step.
-    Depending on the movement mode of the cover (see `Overview`_), the button increases the brightness of either  **LED 2** for the lift mode or **LED 3** for the tilt mode.
+      Button 2 and Button 3:
+         When pressed at the same time, they toggle the cover movement mode between lift and tilt.
+         After each device reset, the mode is set to lift by default.
 
-Button 2 and Button 3:
-    When pressed at the same time, they toggle the cover movement mode between lift and tilt.
-    After each device reset, the mode is set to lift by default.
+      .. include:: /includes/matter_segger_usb.txt
+
+      NFC port with antenna attached:
+         Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_window_cover_sample_remote_control_commissioning>`.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         .. include:: /includes/matter_sample_state_led.txt
+
+      LED 1:
+         Indicates the lift position of the window cover, which is represented by the brightness of the LED.
+         The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (lifted) and the brightness level set to ``255`` indicates a fully closed window cover (lowered).
+
+         Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
+         The command's argument can be used to specify the duration of the effect.
+
+      LED 3:
+         Indicates the tilt position of the window cover, which is represented by the brightness of the LED.
+         The brightness level ranges from ``0`` to ``255``, where the brightness level set to ``0`` (switched off LED) indicates a fully opened window cover (tilted to a horizontal position) and the brightness level set to ``255`` indicates a fully closed window cover (tilted to a vertical position).
+
+      Button 0:
+         .. include:: /includes/matter_sample_button.txt
+
+      Button 1:
+         When pressed once and released, it moves the window cover towards the open position by one step.
+         Depending on the movement mode of the cover (see `Overview`_), the button decreases the brightness of either  **LED 1** for the lift mode or **LED 3** for the tilt mode.
+
+      Button 2:
+         When pressed once and released, it moves the cover towards the closed position by one step.
+         Depending on the movement mode of the cover (see `Overview`_), the button increases the brightness of either  **LED 1** for the lift mode or **LED 3** for the tilt mode.
+
+      Button 1 and Button 2:
+         When pressed at the same time, they toggle the cover movement mode between lift and tilt.
+         After each device reset, the mode is set to lift by default.
+
+      .. include:: /includes/matter_segger_usb.txt
+
+      NFC port with antenna attached:
+         Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_window_cover_sample_remote_control_commissioning>`.
 
 .. note::
-    Completely opening and closing the cover requires 20 button presses (steps).
-    Each step takes approximately 200 ms to simulate the real window cover movement.
-    The cover position and the LED brightness values are stored in non-volatile memory and are restored after every device reset.
-    After the firmware update or factory reset both LEDs are switched off by default, which corresponds to the cover being fully open, both lift-wise and tilt-wise.
+   Completely opening and closing the cover requires 20 button presses (steps).
+   Each step takes approximately 200 ms to simulate the real window cover movement.
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_jlink_start
-    :end-before: matter_door_lock_sample_jlink_end
-
-NFC port with antenna attached:
-    Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_window_cover_sample_remote_control_commissioning>`.
+   The cover position and the LED brightness values are stored in non-volatile memory and are restored after every device reset.
+   After the firmware update or factory reset both LEDs are switched off by default, which corresponds to the cover being fully open, both lift-wise and tilt-wise.
 
 Building and running
 ********************
@@ -186,22 +212,55 @@ Testing
 
 After building the sample and programming it to your development kit, complete the following steps to test its basic features:
 
-#. |connect_kit|
-#. |connect_terminal_ANSI|
-#. Observe that **LED 2** and **LED 3** are turned off, which means that the window cover is fully open.
-   The device starts in the lift movement mode by default.
-#. Press **Button 3** 20 times to fully close the cover in the lift movement mode.
-   **LED 2** lights up and its brightness increases with each button press until it reaches full brightness.
-#. Press **Button 2** 20 times to fully lift the cover up.
-   The brightness of **LED 2** decreases with each button press until the LED turns off.
-#. Press **Button 2** and **Button 3** together to switch into the tilt movement mode.
-#. Press **Button 3** 20 times to fully tilt the cover into the closed position.
-   **LED 3** light up and its brightness increases with each button press until it reaches full brightness.
-#. Press **Button 2** 20 times to fully tilt the cover into the open position.
-   The brightness of **LED 3** decreases with each button press until the LED turns off.
-#. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
+.. tabs::
 
-The device reboots after all its settings are erased.
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      #. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. Observe that **LED 2** and **LED 3** are turned off, which means that the window cover is fully open.
+
+         The device starts in the lift movement mode by default.
+      #. Press **Button 3** 20 times to fully close the cover in the lift movement mode.
+
+         **LED 2** lights up and its brightness increases with each button press until it reaches full brightness.
+      #. Press **Button 2** 20 times to fully lift the cover up.
+
+         The brightness of **LED 2** decreases with each button press until the LED turns off.
+      #. Press **Button 2** and **Button 3** together to switch into the tilt movement mode.
+      #. Press **Button 3** 20 times to fully tilt the cover into the closed position.
+
+         **LED 3** light up and its brightness increases with each button press until it reaches full brightness.
+      #. Press **Button 2** 20 times to fully tilt the cover into the open position.
+
+         The brightness of **LED 3** decreases with each button press until the LED turns off.
+      #. Keep **Button 1** pressed for more than six seconds to initiate factory reset of the device.
+
+         The device reboots after all its settings are erased.
+
+   .. group-tab:: nRF54 DKs
+
+      #. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. Observe that **LED 1** and **LED 3** are turned off, which means that the window cover is fully open.
+
+         The device starts in the lift movement mode by default.
+      #. Press **Button 2** 20 times to fully close the cover in the lift movement mode.
+
+         **LED 1** lights up and its brightness increases with each button press until it reaches full brightness.
+      #. Press **Button 1** 20 times to fully lift the cover up.
+
+         The brightness of **LED 1** decreases with each button press until the LED turns off.
+      #. Press **Button 1** and **Button 2** together to switch into the tilt movement mode.
+      #. Press **Button 2** 20 times to fully tilt the cover into the closed position.
+
+         **LED 3** light up and its brightness increases with each button press until it reaches full brightness.
+      #. Press **Button 1** 20 times to fully tilt the cover into the open position.
+
+         The brightness of **LED 3** decreases with each button press until the LED turns off.
+      #. Keep **Button 0** pressed for more than six seconds to initiate factory reset of the device.
+
+         The device reboots after all its settings are erased.
 
 .. _matter_window_cover_sample_remote_control:
 
@@ -223,7 +282,7 @@ Commissioning the device
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
 The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (1 hour by default).
-If the Bluetooth LE advertising times out, press **Button 1** to enable it again.
+If the Bluetooth LE advertising times out, enable it again.
 
 Onboarding information
 ++++++++++++++++++++++

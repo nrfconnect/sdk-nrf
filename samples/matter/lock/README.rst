@@ -162,6 +162,40 @@ However, you can use the Bluetooth LE service extension regardless of whether th
 
 See `Enabling Matter Bluetooth LE with Nordic UART Service`_ and `Testing door lock using Bluetooth LE with Nordic UART Service`_ for more information about how to configure and test this feature with this sample.
 
+.. _matter_lock_scheduled_timed_access:
+
+Scheduled timed access
+======================
+
+The scheduled timed access feature is an optional Matter lock feature that can be applicable to all available lock users.
+You can use the scheduled timed access feature to allow guest users of the home to access the lock at the specific scheduled times.
+To use this feature, you need to create at least one user on the lock device, and assign credentials.
+For more information about setting user credentials, see the Saving users and credentials on door lock devices section of the :doc:`matter:chip_tool_guide` page in the :doc:`Matter documentation set <matter:index>`, and the :ref:`matter_lock_sample_remote_access_with_pin` section of this sample.
+
+You can schedule the following types of timed access:
+
+   - ``Week-day`` - Restricts access to a specified time window on certain days of the week for a specific user.
+     This schedule grants repeated access each week.
+     When the schedule is cleared, the user is granted unrestricted access.
+
+   - ``Year-day`` - Restricts access to a specified time window on a specific date window.
+     This schedule grants access only once, and does not repeat.
+     When the schedule is cleared, the user is granted unrestricted access.
+
+   - ``Holiday`` - Sets up a holiday operating mode in the lock device.
+     You can choose one of the following operating modes:
+
+     - ``Normal`` - The lock operates normally.
+     - ``Vacation`` - Only remote operations are enabled.
+     - ``Privacy`` - All external interactions with the lock are disabled.
+       Can only be used if the lock is in the locked state.
+       Manually unlocking the lock changes the mode to ``Normal``.
+     - ``NoRemoteLockUnlock`` - All remote operations with the lock are disabled.
+     - ``Passage`` - The lock can be operated without providing a PIN.
+       This option can be used, for example, for employees during working hours.
+
+See the :ref:`matter_lock_enabling_scheduled_timed_access` and :ref:`matter_lock_sample_schedule_testing` sections of this sample for more information.
+
 .. _matter_lock_sample_configuration:
 
 Configuration
@@ -300,66 +334,65 @@ To learn more about factory data, read the :doc:`matter:nrfconnect_factory_data_
 User interface
 **************
 
-.. matter_door_lock_sample_led1_start
+.. tabs::
 
-LED 1:
-    Shows the overall state of the device and its connectivity.
-    The following states are possible:
+   .. group-tab:: nRF52, nRF53, nRF21 and nRF70 DKs
 
-    * Short Flash On (50 ms on/950 ms off) - The device is in the unprovisioned (unpaired) state and is waiting for a commissioning application to connect.
-    * Rapid Even Flashing (100 ms on/100 ms off) - The device is in the unprovisioned state and a commissioning application is connected over Bluetooth LE.
-    * Solid On - The device is fully provisioned.
+      LED 1:
+         .. include:: /includes/matter_sample_state_led.txt
 
-.. matter_door_lock_sample_led1_end
+      LED 2:
+         Shows the state of the lock.
+         The following states are possible:
 
-LED 2:
-    Shows the state of the lock.
-    The following states are possible:
+         * Solid On - The bolt is extended and the door is locked.
+         * Off - The bolt is retracted and the door is unlocked.
+         * Rapid Even Flashing (50 ms on/50 ms off during 2 s) - The simulated bolt is in motion from one position to another.
 
-    * Solid On - The bolt is extended and the door is locked.
-    * Off - The bolt is retracted and the door is unlocked.
-    * Rapid Even Flashing (50 ms on/50 ms off during 2 s) - The simulated bolt is in motion from one position to another.
+         Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
+         The command's argument can be used to specify the duration of the effect.
 
-    Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
-    The command's argument can be used to specify the duration of the effect.
+      Button 1:
+         .. include:: /includes/matter_sample_button.txt
 
-.. matter_door_lock_sample_button1_start
+      Button 2:
+         * Changes the lock state to the opposite one.
 
-Button 1:
-    Depending on how long you press the button:
+      Button 3:
+         * On the nRF5340 DK when using the ``thread_wifi_switched`` build type: If pressed for more than ten seconds, it switches the Matter transport protocol from Thread or Wi-Fi to the other and factory resets the device.
+         * On other platform or build type: Not available.
 
-    * If pressed for less than three seconds:
+      .. include:: /includes/matter_segger_usb.txt
 
-      * If the device is not provisioned to the Matter network, it initiates the SMP server (Simple Management Protocol) and Bluetooth LE advertising for Matter commissioning.
-        After that, the Device Firmware Update (DFU) over Bluetooth Low Energy can be started.
-        (See `Upgrading the device firmware`_.)
-        Bluetooth LE advertising makes the device discoverable over Bluetooth LE for the predefined period of time (1 hour by default).
+      NFC port with antenna attached:
+         Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_lock_sample_remote_control>`.
 
-      * If the device is already provisioned to the Matter network it re-enables the SMP server.
-        After that, the DFU over Bluetooth Low Energy can be started.
-        (See `Upgrading the device firmware`_.)
+   .. group-tab:: nRF54 DKs
 
-    * If pressed for more than three seconds, it initiates the factory reset of the device.
-      Releasing the button within a 3-second window of the initiation cancels the factory reset procedure.
+      LED 0:
+         .. include:: /includes/matter_sample_state_led.txt
 
-.. matter_door_lock_sample_button1_end
+      LED 1:
+         Shows the state of the lock.
+         The following states are possible:
 
-Button 2:
-    * Changes the lock state to the opposite one.
+         * Solid On - The bolt is extended and the door is locked.
+         * Off - The bolt is retracted and the door is unlocked.
+         * Rapid Even Flashing (50 ms on/50 ms off during 2 s) - The simulated bolt is in motion from one position to another.
 
-Button 3:
-    * On the nRF5340 DK when using the ``thread_wifi_switched`` build type: If pressed for more than ten seconds, it switches the Matter transport protocol from Thread or Wi-Fi to the other and factory resets the device.
-    * On other platform or build type: Not available.
+         Additionally, the LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received on the endpoint ``1``.
+         The command's argument can be used to specify the duration of the effect.
 
-.. matter_door_lock_sample_jlink_start
+      Button 0:
+         .. include:: /includes/matter_sample_button.txt
 
-SEGGER J-Link USB port:
-    Used for getting logs from the device or for communicating with it through the command-line interface.
+      Button 1:
+         * Changes the lock state to the opposite one.
 
-.. matter_door_lock_sample_jlink_end
+      .. include:: /includes/matter_segger_usb.txt
 
-NFC port with antenna attached:
-    Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_lock_sample_remote_control>`.
+      NFC port with antenna attached:
+         Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_lock_sample_remote_control>`.
 
 Building and running
 ********************
@@ -381,31 +414,65 @@ Testing
 
 After building the sample and programming it to your development kit, complete the following steps to test its basic features:
 
-#. |connect_kit|
-#. |connect_terminal_ANSI|
-#. Observe that **LED 2** is lit, which means that the door lock is closed.
-#. Press **Button 2** to unlock the door.
-   **LED 2** is blinking while the lock is opening.
-   After approximately two seconds, **LED 2** turns off permanently.
-   The following messages appear on the console:
+.. tabs::
 
-   .. code-block:: console
+   .. group-tab:: nRF52, nRF53, nRF21 and nRF70 DKs
 
-      I: Unlock Action has been initiated
-      I: Unlock Action has been completed
+      #. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. Observe that **LED 2** is lit, which means that the door lock is closed.
+      #. Press **Button 2** to unlock the door.
+         **LED 2** is blinking while the lock is opening.
 
-#. Press **Button 2** one more time to lock the door again.
-   **LED 2** starts blinking and remains turned on.
-   The following messages appear on the console:
+         After approximately two seconds, **LED 2** turns off permanently.
+         The following messages appear on the console:
 
-   .. code-block:: console
+         .. code-block:: console
 
-      I: Lock Action has been initiated
-      I: Lock Action has been completed
+            I: Unlock Action has been initiated
+            I: Unlock Action has been completed
 
-#. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
+      #. Press **Button 2** one more time to lock the door again.
+         **LED 2** starts blinking and remains turned on.
+         The following messages appear on the console:
 
-The device reboots after all its settings are erased.
+         .. code-block:: console
+
+            I: Lock Action has been initiated
+            I: Lock Action has been completed
+
+      #. Keep the **Button 1** pressed for more than six seconds to initiate factory reset of the device.
+
+         The device reboots after all its settings are erased.
+
+   .. group-tab:: nRF54 DKs
+
+      #. |connect_kit|
+      #. |connect_terminal_ANSI|
+      #. Observe that **LED 1** is lit, which means that the door lock is closed.
+      #. Press **Button 1** to unlock the door.
+         **LED 1** is blinking while the lock is opening.
+
+         After approximately two seconds, **LED 1** turns off permanently.
+         The following messages appear on the console:
+
+         .. code-block:: console
+
+            I: Unlock Action has been initiated
+            I: Unlock Action has been completed
+
+      #. Press **Button 1** one more time to lock the door again.
+         **LED 1** starts blinking and remains turned on.
+         The following messages appear on the console:
+
+         .. code-block:: console
+
+            I: Lock Action has been initiated
+            I: Lock Action has been completed
+
+      #. Keep the **Button 0** pressed for more than six seconds to initiate factory reset of the device.
+
+         The device reboots after all its settings are erased.
 
 .. _matter_lock_sample_remote_control:
 
@@ -481,37 +548,10 @@ Upgrading the device firmware
 
 To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
 
-.. _matter_lock_scheduled_timed_access:
+.. _matter_lock_enabling_scheduled_timed_access:
 
-Scheduled timed access
-======================
-
-The scheduled timed access feature is an optional Matter lock feature that can be applicable to all available lock users.
-You can use the scheduled timed access feature to allow guest users of the home to access the lock at the specific scheduled times.
-To use this feature, you need to create at least one user on the lock device, and assign credentials.
-For more information about setting user credentials, see the Saving users and credentials on door lock devices section of the :doc:`matter:chip_tool_guide` page in the :doc:`Matter documentation set <matter:index>`, and the :ref:`matter_lock_sample_remote_access_with_pin` section of this sample.
-
-You can schedule the following types of timed access:
-
-   - ``Week-day`` - Restricts access to a specified time window on certain days of the week for a specific user.
-     This schedule grants repeated access each week.
-     When the schedule is cleared, the user is granted unrestricted access.
-
-   - ``Year-day`` - Restricts access to a specified time window on a specific date window.
-     This schedule grants access only once, and does not repeat.
-     When the schedule is cleared, the user is granted unrestricted access.
-
-   - ``Holiday`` - Sets up a holiday operating mode in the lock device.
-     You can choose one of the following operating modes:
-
-     - ``Normal`` - The lock operates normally.
-     - ``Vacation`` - Only remote operations are enabled.
-     - ``Privacy`` - All external interactions with the lock are disabled.
-       Can only be used if the lock is in the locked state.
-       Manually unlocking the lock changes the mode to ``Normal``.
-     - ``NoRemoteLockUnlock`` - All remote operations with the lock are disabled.
-     - ``Passage`` - The lock can be operated without providing a PIN.
-       This option can be used, for example, for employees during working hours.
+Enabling scheduled timed access
+===============================
 
 To enable the scheduled timed access feature, complete the following steps:
 
@@ -836,7 +876,7 @@ Testing door lock using Bluetooth LE with Nordic UART Service
 
 To test the :ref:`matter_lock_sample_ble_nus` feature, complete the following steps:
 
-#. Install `nRF Toolbox`_ on your Android (Android 11 or newer) or iOS smartphone (iOS 16.1 or newer).
+#. Install `nRF Toolbox`_ on your Android (Android 11 or newer) or iOS (iOS 16.1 or newer) smartphone.
 #. Build the door lock application for Matter over Thread with the :kconfig:option:`CONFIG_CHIP_NUS` set to ``y``.
    For example, if you build from command line for the ``nrf52840dk/nrf52840``, use the following command:
 
@@ -872,7 +912,7 @@ To test the :ref:`matter_lock_sample_ble_nus` feature, complete the following st
    * ``Lock`` as the Command value type ``Text`` and any image.
    * ``Unlock`` as the Command value type ``Text`` and any image.
 
-#. Tap on the generated macros and observe the **LED 2** on the DK.
+#. Tap on the generated macros and to change the lock state.
 
 The Bluetooth LE connection between a phone and the DK will be suspended when the commissioning to the Matter network is in progress or there is an active session of SMP DFU.
 
