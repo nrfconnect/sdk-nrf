@@ -16,7 +16,7 @@ function(provision application prefix_name)
 
   # Build and include hex file containing provisioned data for the bootloader.
   set(PROVISION_HEX_NAME     ${prefix_name}provision.hex)
-  set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
+  set(PROVISION_HEX          ${CMAKE_BINARY_DIR}/${PROVISION_HEX_NAME})
 
   if(CONFIG_SECURE_BOOT)
     if(DEFINED CONFIG_SB_MONOTONIC_COUNTER)
@@ -47,7 +47,12 @@ function(provision application prefix_name)
         --public-key-files "${PUBLIC_KEY_FILES}"
       )
 
-      set(PROVISION_DEPENDS signature_public_key_file_target ${application}_extra_byproducts ${application}/zephyr/.config ${SIGNATURE_PUBLIC_KEY_FILE} zephyr/.config)
+      set(PROVISION_DEPENDS signature_public_key_file_target
+          ${application}_extra_byproducts
+          ${CMAKE_BINARY_DIR}/${application}/zephyr/.config
+          ${SIGNATURE_PUBLIC_KEY_FILE}
+          ${PROJECT_BINARY_DIR}/.config
+      )
     endif()
 
     # Adjustment to be able to load into sysbuild
