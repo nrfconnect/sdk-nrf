@@ -75,22 +75,30 @@ For this quick start guide, we will install the following software:
 Building the SUIT sample
 ************************
 
-Start by building the SUIT sample:
+Start by building the :ref:`nrf54h_suit_sample` sample:
 
 .. code-block:: console
 
    west build -b nrf54h20dk/nrf54h20/cpuapp nrf/samples/suit/smp_transfer
 
-This command builds the SUIT sample for the nRF54H20 SoC.
+This command builds the :ref:`nrf54h_suit_sample` sample for the nRF54H20 SoC.
 
 Modifying class and vendor identifiers
 **************************************
 
-The next step involves customizing identifiers in the manifest:
+Replacing and using the correct class and vendor UUIDs prevents conflicts in the DFU process.
+The UUIDs allow to ensure that the firmware is compatible with a given device.
 
-1. Open the manifest template file located at `nrf/samples/suit/smp_transfer/app_envelope.yaml.jinja2`.
-#. Find the ``class-identifier`` and ``vendor-identifier`` entries in the :file:`.yaml.jinja2` file.
-#. Replace default values with unique identifiers for your application, like so:
+This can be done by changing the class and vendor names using Kconfig options (for example in the :file:`prj.conf` file):
+
+.. code-block::
+
+   CONFIG_SUIT_MPI_ROOT_VENDOR_NAME="ACME Corp"
+   CONFIG_SUIT_MPI_ROOT_CLASS_NAME="Light bulb root"
+   CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME="ACME Corp"
+   CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME="Light bulb"
+
+After rebuiling you will be able to find the following part in the :file:`./build/DFU/application.yaml` file.
 
 .. code-block::
 
@@ -101,9 +109,6 @@ The next step involves customizing identifiers in the manifest:
          RFC4122_UUID:                        # Changed class-identifier values
            namespace: ACME Corp
            name: Light bulb
-
-.. note::
-   Replacing and using the correct UUIDs prevent conflicts in the DFU process.
 
 With the sample built and identifiers customized, your SUIT DFU process is now specifically configured for your nRF54H20 SoC.
 

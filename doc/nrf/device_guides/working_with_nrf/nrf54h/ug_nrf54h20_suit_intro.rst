@@ -134,7 +134,7 @@ These are optional for SUIT envelopes and only necessary if there are dependenci
 SUIT procedure
 **************
 
-The SUIT procedure contains a SUIT envelope.
+The SUIT procedure uses a SUIT envelope.
 This envelope is a container to transport an update package.
 
 An update package contains an authentication wrapper, one root manifest within an envelope, severable elements, one or more payloads as well as integrated dependencies.
