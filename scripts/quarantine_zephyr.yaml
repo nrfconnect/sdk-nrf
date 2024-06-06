@@ -149,6 +149,25 @@
     - nrf52dk/nrf52832
   comment: "RAM overflow in NCS specifically - vanilla Zephyr build still fits."
 
+- scenarios:
+    - drivers.flash.common.default
+  platforms:
+    - nrf54l15pdk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27852"
+
+- scenarios:
+    - buildsystem.kconfig.utf8_in_values
+  platforms:
+    - nrf54l15pdk/nrf54l15/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27853"
+
+- scenarios:
+    - sample.modules.canopennode.no_storage
+  platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27854"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
