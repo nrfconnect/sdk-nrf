@@ -206,14 +206,14 @@ For example, when building on the command line, use the following command:
 
 .. code-block:: console
 
-   west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet --sysbuild -- -DFILE_SUFFIX=usb
+   west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb
 
 You can also build this sample with the remote IPC Service Shell and support for the front-end module.
 You can use the following command:
 
 .. code-block:: console
 
-   west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet --sysbuild -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
+   west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
 
 .. note::
    You can also build the sample with the remote IPC Service Shell for the |nRF7002DKnoref| using the ``nrf7002dk/nrf5340/cpunet`` board target in the commands.

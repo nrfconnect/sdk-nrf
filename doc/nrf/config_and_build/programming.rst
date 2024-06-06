@@ -18,6 +18,9 @@ To program the :ref:`output build files <app_build_output_files>` to your device
 
 .. include:: ../includes/vsc_build_and_run_series.txt
 
+The flash command programs all cores by default, both in the |nRFVSC| and on the command line.
+If you want to program only one selected core, use ``west flash`` on the command line and :ref:`specify the domain <zephyr:west-multi-domain-flashing>`.
+
 .. _programming_hw:
 
 Hardware-specific programming steps
@@ -38,6 +41,8 @@ Optional programming parameters
 *******************************
 
 You can customize the basic ``west flash`` command in a variety of ways.
+The following are most common in the |NCS|.
+For more options, see Zephyr's :ref:`zephyr:west-flashing`.
 
 .. _programming_params_no_erase:
 

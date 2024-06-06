@@ -30,12 +30,14 @@ It is optimized for memory usage and only contains the basic necessary functiona
     This firmware is only able to recover from a situation where the application or radio core are damaged. It does not recover from Nordic Semiconductor-controlled firmware failures.
 
 Configuration
-**************
+*************
 
-As the recovery firmware is a companion image, it  must be compatible with the main application in terms of hardware configuration (especially the memory partitions).
+|config|
+
+As the recovery firmware is a companion image, it must be compatible with the main application in terms of hardware configuration (especially the memory partitions).
 To achieve this, the appropriate devicetree overlay files from the main application must be passed to the recovery application.
 
-To do this, add the :file:`recovery.overlay` and :file:`recovery_hci_ipc.ovelay` files in the main application's Sysbuild directory.
+To do this, add the :file:`recovery.overlay` and :file:`recovery_hci_ipc.ovelay` files in the main application's :ref:`configuration_system_overview_sysbuild` directory.
 The former file will be passed automatically to the recovery application image and the latter to the recovery radio image.
 These devicetree files must define the ``cpuapp_recovery_partition`` and ``cpurad_recovery_partition`` nodes respectively.`
 For an example, see the files in the ``samples/suit/smp_transfer`` sample.
@@ -43,27 +45,33 @@ For an example, see the files in the ``samples/suit/smp_transfer`` sample.
 Building and running
 ********************
 
+.. |sample path| replace:: :file:`samples/suit/recovery`
+
+This sample can be found under |sample path| in the |NCS| folder structure.
+
+Including recovery application image with sysbuild
+==================================================
+
 In standard applications, the recovery firmware is built as part of the main application build.
 
 Apart from creating the mentioned :file:`recovery.overlay` and :file:`recovery_hci_ipc.ovelay` files,
-the ``SB_CONFIG_SUIT_BUILD_RECOVERY`` Sysbuild configuration option must be set in the main application.
+you must set the ``SB_CONFIG_SUIT_BUILD_RECOVERY`` sysbuild configuration option in the main application.
 This will cause the recovery firmware to be built automatically as part of the main application build.
 
-For example, to build the ``smp_transfer`` sample with the recovery firmware, run the following command:
+To build the main application, follow the instructions in :ref:`building` for your preferred building environment.
 
-``west build -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_BUILD_RECOVERY=y``
+.. note::
+    |sysbuild_autoenabled_ncs|
 
-Flashing
-========
+For example, to build the :ref:`Device firmware update on the nRF54H20 SoC <nrf54h_suit_sample>` sample with the recovery firmware on the command line, you can run the following command:
 
-No additional steps are needed to flash the recovery firmware together with the main application firmware, simply run the following:
+.. code-block:: console
 
-.. code-block::
-
-   ``west flash``
-
+   west build -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_BUILD_RECOVERY=y
 
 The recovery firmware will be flashed automatically from the main application directory.
+
+See also :ref:`programming` for programming steps and :ref:`testing` for general information about testing and debugging in the |NCS|.
 
 Testing
 =======

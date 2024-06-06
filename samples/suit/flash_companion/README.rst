@@ -36,8 +36,8 @@ Configuration
 Setup
 =====
 
-You can build the sample using Sysbuild by enabling the :kconfig:option:`SB_CONFIG_SUIT_BUILD_FLASH_COMPANION` Kconfig option.
-The memory partition from which the firmware will run can be configured by providing a devicetree overlay through Sysbuild.
+You can build the sample using :ref:`sysbuild <configuration_system_overview_sysbuild>` by enabling the :kconfig:option:`SB_CONFIG_SUIT_BUILD_FLASH_COMPANION` Kconfig option.
+The memory partition from which the firmware will run can be configured by providing a devicetree overlay through sysbuild.
 You should create a dedicated partition in non-volatile memory and override the ``zephyr,code-partition``.
 The memory partition must not be used by any other firmware image.
 
@@ -52,7 +52,7 @@ Check and configure the following configuration option:
 .. _SB_CONFIG_SUIT_BUILD_FLASH_COMPANION:
 
 SB_CONFIG_SUIT_BUILD_FLASH_COMPANION - Configuration for the firmware
-   This option enables the sample and builds it during the Sysbuild.
+   This option enables the sample and builds it during the sysbuild.
 
 Building and running
 ********************
@@ -63,7 +63,7 @@ Make sure that both the main application and the flash companion support your ta
 
 Perform the following steps in the main application directory:
 
-1. Enable the :kconfig:option:`SB_CONFIG_SUIT_BUILD_FLASH_COMPANION` Sysbuild option.
+1. Enable the :kconfig:option:`SB_CONFIG_SUIT_BUILD_FLASH_COMPANION` sysbuild option.
 
 #. Create :file:`sysbuild/flash_companion.overlay` devicetree overlay file and add the following content:
 
@@ -100,7 +100,7 @@ Perform the following steps in the main application directory:
       west build -b nrf54h20dk/nrf54h20/cpuapp
       west flash
 
-The flash companion sample will be built flashed automatically by Sysbuild.
+The flash companion sample will be built flashed automatically by sysbuild.
 
 Dependencies
 ************

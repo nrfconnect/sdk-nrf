@@ -59,7 +59,7 @@ To add the modem trace UART snippet when building an application with west, use 
    west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-uart"
 
 .. note::
-   With Sysbuild, using the ``west build -S`` option applies the snippet to all images.
+   With :ref:`sysbuild <configuration_system_overview_sysbuild>`, using the ``west build -S`` option applies the snippet to all images.
    Therefore, use the CMake argument instead, specifying the application image.
 
 With CMake

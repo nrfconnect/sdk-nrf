@@ -2218,7 +2218,7 @@ Bluetooth Mesh samples
 NCSDK-26388: Compilation of Mesh Light sample can create an image without MCUboot
   This can happen when compiled with the point-to-point DFU overlay and ``--sysbuild`` option.
 
-  **Workaround:** To get a correct image with MCUboot, do not use the ``--sysbuild`` option.
+  **Workaround:** To get a correct image with MCUboot, :ref:`build the firmware without sysbuild <optional_build_parameters>` using the ``--no-sysbuild`` option.
 
 .. rst-class:: v2-6-1 v2-6-0
 
