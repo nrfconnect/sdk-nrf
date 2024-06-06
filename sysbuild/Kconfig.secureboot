@@ -7,27 +7,26 @@ menu "Secure Bootloader"
 config SECURE_BOOT
 	bool
 	help
-	  This option will be set if the first stage bootloader which
-	  verifies the signature of the app is enabled
+	  This option will be set if the first stage bootloader which verifies the signature of
+	  the app is enabled for one or multiple cores.
 
 config SECURE_BOOT_APPCORE
 	bool "Appcore"
 	select SECURE_BOOT
 	help
-	  Locate first stage bootloader on application core.
+	  Enable first stage bootloader for application core.
 
 config SECURE_BOOT_NETCORE
 	bool "Netcore"
 	depends on SUPPORT_NETCORE
 	select SECURE_BOOT
 	help
-	  Locate first stage bootloader on network core.
+	  Enable first stage bootloader for network core.
 
 if SECURE_BOOT
 
 config SECURE_BOOT_NETWORK_BOARD_TARGET_CPUCLUSTER
 	string
-#	default "cpunet" if SECURE_BOOT_NETCORE && (SOC_NRF5340_CPUAPP)
 	default "cpunet" if SOC_NRF5340_CPUAPP
 	depends on SECURE_BOOT_NETCORE
 	help
