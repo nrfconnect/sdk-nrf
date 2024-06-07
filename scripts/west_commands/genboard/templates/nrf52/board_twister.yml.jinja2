@@ -1,0 +1,15 @@
+{% if ncs_version < hwmv2_since %}
+identifier: {{ board }}
+{% else %}
+identifier: {{ board }}/{{ soc }}
+{% endif %}
+name: {{ board_desc }}
+vendor: {{ vendor }}
+type: mcu
+arch: arm
+ram: {{ target["ram"] }}
+flash: {{ target["flash"] }}
+toolchain:
+  - zephyr
+supported:
+  - gpio

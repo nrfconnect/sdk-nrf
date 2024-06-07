@@ -29,3 +29,8 @@ west-commands:
       - name: suit-manifest
         class: SuitManifest
         help: SUIT manifest utility
+  - file: scripts/west_commands/genboard/ncs_genboard.py
+    commands:
+      - name: ncs-genboard
+        class: NcsGenboard
+        help: generate board skeleton files for any Nordic SoC

@@ -1,0 +1,29 @@
+{% if target['ns'] %}
+/dts-v1/;
+#include <nordic/{{ soc }}ns_{{ variant }}.dtsi>
+#include "{{ board }}-pinctrl.dtsi"
+#include "{{ board }}-partitioning.dtsi"
+
+/ {
+	chosen {
+		zephyr,flash = &flash0;
+		zephyr,sram = &sram0_ns;
+		zephyr,code-partition = &slot0_ns_partition;
+	};
+};
+{% else %}
+/dts-v1/;
+#include <nordic/{{ soc }}_{{ variant }}.dtsi>
+#include "{{ board }}-pinctrl.dtsi"
+#include "{{ board }}-partitioning.dtsi"
+
+/ {
+	chosen {
+		zephyr,sram = &sram0_s;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+		zephyr,sram-secure-partition = &sram0_s;
+		zephyr,sram-non-secure-partition = &sram0_ns;
+	};
+};
+{% endif %}
