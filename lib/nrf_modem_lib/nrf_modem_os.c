@@ -10,7 +10,6 @@
 #include <nrf_modem.h>
 #include <nrf_modem_os.h>
 #include <nrf.h>
-#include <nrfx_ipc.h>
 #include <nrf_errno.h>
 #include <errno.h>
 #include <pm_config.h>
