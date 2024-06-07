@@ -1,0 +1,25 @@
+{% if ncs_version < hwmv2_since %}
+identifier: {{ board }}_{{ target['core'] }}
+{% else %}
+identifier: {{ board }}/nrf5340/{{ target['core'] }}{{ '/ns' if target['ns'] else '' }}
+{% endif %}
+name: {{ board_desc }}
+vendor: {{ vendor }}
+type: mcu
+arch: arm
+{% if target['core'] == 'cpunet' %}
+ram: 64
+flash: 256
+{% else %}
+{% if target['ns'] %}
+ram: 192
+flash: 192
+{% else %}
+ram: 448
+flash: 1024
+{% endif %}
+{% endif %}
+toolchain:
+  - zephyr
+supported:
+  - gpio

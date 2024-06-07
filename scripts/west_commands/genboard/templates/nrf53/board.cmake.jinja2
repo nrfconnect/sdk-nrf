@@ -1,0 +1,33 @@
+{% if ncs_version < hwmv2_since %}
+if(CONFIG_BOARD_{{ board | upper }}_CPUAPP_NS)
+{% else %}
+if(CONFIG_BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS)
+{% endif %}
+  set(TFM_PUBLIC_KEY_FORMAT "full")
+endif()
+
+if(CONFIG_TFM_FLASH_MERGED_BINARY)
+  set_property(TARGET runners_yaml_props_target PROPERTY hex_file "${CMAKE_BINARY_DIR}/tfm_merged.hex")
+endif()
+
+{% if ncs_version < hwmv2_since %}
+if(CONFIG_BOARD_{{ board | upper }}_CPUAPP OR CONFIG_BOARD_{{ board | upper }}_CPUAPP_NS)
+{% else %}
+if(CONFIG_BOARD_{{ board | upper }}_NRF5340_CPUAPP OR CONFIG_BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS)
+{% endif %}
+  board_runner_args(jlink "--device=nrf5340_xxaa_app" "--speed=4000")
+endif()
+
+{% if ncs_version < hwmv2_since %}
+if(CONFIG_BOARD_{{ board | upper }}_CPUNET)
+{% else %}
+if(CONFIG_BOARD_{{ board | upper }}_NRF5340_CPUNET)
+{% endif %}
+  board_runner_args(jlink "--device=nrf5340_xxaa_net" "--speed=4000")
+endif()
+
+include(${ZEPHYR_BASE}/boards/common/nrfjprog.board.cmake)
+{% if ncs_version >= (2, 4, 0) %}
+include(${ZEPHYR_BASE}/boards/common/nrfutil.board.cmake)
+{% endif %}
+include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)

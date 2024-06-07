@@ -1,0 +1,20 @@
+{% if ncs_version < hwmv2_since %}
+if SOC_NRF5340_CPUAPP_QKAA
+
+config BOARD_{{ board | upper }}_CPUAPP
+	bool "{{ board_desc }} (CPUAPP)"
+
+config BOARD_{{ board | upper }}_CPUAPP_NS
+	bool "{{ board_desc }} (CPUAPP Non-Secure)"
+
+endif # SOC_NRF5340_CPUAPP_QKAA
+
+config BOARD_{{ board | upper }}_CPUNET
+	bool "{{ board_desc }} (CPUNET)"
+	depends on SOC_NRF5340_CPUNET_QKAA
+{% else %}
+config BOARD_{{ board | upper }}
+	select SOC_NRF5340_CPUAPP_QKAA if BOARD_{{ board | upper }}_NRF5340_CPUAPP
+	select SOC_NRF5340_CPUAPP_QKAA if BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
+	select SOC_NRF5340_CPUNET_QKAA if BOARD_{{ board | upper }}_NRF5340_CPUNET
+{% endif %}

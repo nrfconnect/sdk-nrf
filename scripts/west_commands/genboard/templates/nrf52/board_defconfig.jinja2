@@ -1,0 +1,12 @@
+{% if ncs_version < hwmv2_since %}
+CONFIG_SOC_SERIES_{{ series | upper }}X=y
+CONFIG_SOC_{{ soc | upper }}_{{ variant | upper }}=y
+CONFIG_BOARD_{{ board | upper }}=y
+
+{% endif %}
+CONFIG_ARM_MPU=y
+CONFIG_HW_STACK_PROTECTION=y
+
+{% if ncs_version <= (2, 6, 0) %}
+CONFIG_PINCTRL=y
+{% endif %}
