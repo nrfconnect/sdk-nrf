@@ -70,4 +70,10 @@ int nrf_wifi_filter(const struct device *dev,
 		    struct wifi_filter_info *filter);
 #endif /* CONFIG_NRF700X_RAW_DATA_RX || CONFIG_NRF700X_PROMISC_DATA_RX */
 
+int nrf_wifi_req_dms(const struct device *dev,
+		     struct wifi_dms_params *dms_params);
+
+void nrf_wifi_event_proc_dms_zep(void *vif_ctx,
+				 struct nrf_wifi_umac_cmd_config_dms *dms_accept_info,
+				 unsigned int event_len);
 #endif /*  __ZEPHYR_WIFI_MGMT_H__ */

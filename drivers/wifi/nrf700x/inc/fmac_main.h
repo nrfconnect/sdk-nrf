@@ -80,6 +80,8 @@ struct nrf_wifi_vif_ctx_zep {
 #endif /* CONFIG_NRF700X_DATA_TX */
 	unsigned long rssi_record_timestamp_us;
 	signed short rssi;
+	unsigned char dms_id_map;
+	unsigned char dms_id_in_progress_map;
 #endif /* CONFIG_NRF700X_STA_MODE */
 };
 

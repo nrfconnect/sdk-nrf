@@ -721,6 +721,7 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 	callbk_fns.event_get_wiphy = nrf_wifi_wpa_supp_event_get_wiphy;
 	callbk_fns.mgmt_rx_callbk_fn = nrf_wifi_wpa_supp_event_mgmt_rx_callbk_fn;
 	callbk_fns.get_conn_info_callbk_fn = nrf_wifi_supp_event_proc_get_conn_info;
+	callbk_fns.dms_callbk_fn = nrf_wifi_event_proc_dms_zep;
 #endif /* CONFIG_NRF700X_STA_MODE */
 
 	rpu_drv_priv_zep.fmac_priv = nrf_wifi_fmac_init(&data_config,
@@ -786,6 +787,7 @@ static struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 	.set_twt = nrf_wifi_set_twt,
 	.reg_domain = nrf_wifi_reg_domain,
 	.get_power_save_config = nrf_wifi_get_power_save_config,
+	.req_dms = nrf_wifi_req_dms,
 #endif /* CONFIG_NRF700X_STA_MODE */
 #ifdef CONFIG_NRF700X_SYSTEM_MODE
 	.mode = nrf_wifi_mode,
