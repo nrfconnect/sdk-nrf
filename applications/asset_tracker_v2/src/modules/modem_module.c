@@ -338,6 +338,8 @@ static void print_carrier_error(const lwm2m_carrier_event_t *evt)
 			"Initialization failure",
 		[LWM2M_CARRIER_ERROR_RUN] =
 			"Configuration failure",
+		[LWM2M_CARRIER_ERROR_CONNECT] =
+			"Connection failure",
 	};
 
 	__ASSERT(PART_OF_ARRAY(strerr, &strerr[err->type]), "Unhandled carrier library error");
