@@ -79,6 +79,8 @@ void print_err(const lwm2m_carrier_event_t *evt)
 			"Initialization failure",
 		[LWM2M_CARRIER_ERROR_RUN] =
 			"Configuration failure",
+		[LWM2M_CARRIER_ERROR_CONNECT] =
+			"Connection failure",
 	};
 
 	__ASSERT(PART_OF_ARRAY(strerr[err->type]),
