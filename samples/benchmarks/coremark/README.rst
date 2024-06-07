@@ -119,8 +119,8 @@ CONFIG_APP_MODE_FLASH_AND_RUN - Start CoreMark sample automatically after flashi
    Otherwise, it will wait for the button press.
 
 .. note::
-   The :kconfig:option:`CONFIG_APP_MODE_FLASH_AND_RUN` Kconfig option is always enabled for the radio core and the PPR core.
-   These cores do not use buttons.
+   The :kconfig:option:`CONFIG_APP_MODE_FLASH_AND_RUN` Kconfig option is always enabled for the PPR core.
+   This core does not use buttons.
 
 .. _SB_CONFIG_APP_CPUNET_RUN:
 
