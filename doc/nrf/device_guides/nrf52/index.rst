@@ -68,5 +68,4 @@ See also :ref:`ug_radio_fem_nrf21540ek` to learn how to use the RF front-end mod
 
    features
    building
-   testing
    fota_update
