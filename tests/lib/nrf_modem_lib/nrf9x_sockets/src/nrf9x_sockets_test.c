@@ -89,7 +89,7 @@ static ssize_t nrf_recvfrom_stub(int zsock_socket, void *buffer, size_t length,
 }
 
 
-void test_nrf91_socket_offload_getaddrinfo_errors(void)
+void test_nrf9x_socket_offload_getaddrinfo_errors(void)
 {
 	int ret;
 	struct zsock_addrinfo *res;
@@ -134,7 +134,7 @@ void test_nrf91_socket_offload_getaddrinfo_errors(void)
 	}
 }
 
-void test_nrf91_socket_offload_getaddrinfo_eai_family(void)
+void test_nrf9x_socket_offload_getaddrinfo_eai_family(void)
 {
 	int ret;
 	struct zsock_addrinfo *res;
@@ -158,7 +158,7 @@ void test_nrf91_socket_offload_getaddrinfo_eai_family(void)
 	TEST_ASSERT_EQUAL(ret, DNS_EAI_FAMILY);
 }
 
-void test_nrf91_socket_offload_getaddrinfo_ipv4_success(void)
+void test_nrf9x_socket_offload_getaddrinfo_ipv4_success(void)
 {
 	int ret;
 	struct zsock_addrinfo *res;
@@ -186,7 +186,7 @@ void test_nrf91_socket_offload_getaddrinfo_ipv4_success(void)
 	TEST_ASSERT_EQUAL(res->ai_protocol, IPPROTO_TCP);
 }
 
-void test_nrf91_socket_offload_getaddrinfo_ipv6_success(void)
+void test_nrf9x_socket_offload_getaddrinfo_ipv6_success(void)
 {
 	int ret;
 	struct zsock_addrinfo *res;
@@ -214,7 +214,7 @@ void test_nrf91_socket_offload_getaddrinfo_ipv6_success(void)
 	TEST_ASSERT_EQUAL(res->ai_protocol, IPPROTO_TCP);
 }
 
-void test_nrf91_socket_offload_close_ebadf(void)
+void test_nrf9x_socket_offload_close_ebadf(void)
 {
 	int ret;
 
@@ -224,7 +224,7 @@ void test_nrf91_socket_offload_close_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
-void test_nrf91_socket_offload_create_close_success(void)
+void test_nrf9x_socket_offload_create_close_success(void)
 {
 	int ret;
 	int fd;
@@ -246,7 +246,7 @@ void test_nrf91_socket_offload_create_close_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_socket_error(void)
+void test_nrf9x_socket_offload_socket_error(void)
 {
 	int fd;
 	int family = AF_INET;
@@ -260,7 +260,7 @@ void test_nrf91_socket_offload_socket_error(void)
 	TEST_ASSERT_EQUAL(fd, -1);
 }
 
-void test_nrf91_socket_create_native_socket_eafnosupport(void)
+void test_nrf9x_socket_create_native_socket_eafnosupport(void)
 {
 	int fd;
 	int family = AF_INET;
@@ -273,7 +273,7 @@ void test_nrf91_socket_create_native_socket_eafnosupport(void)
 	TEST_ASSERT_EQUAL(fd, -1);
 }
 
-void test_nrf91_socket_create_native_socket_tls_eafnosupport(void)
+void test_nrf9x_socket_create_native_socket_tls_eafnosupport(void)
 {
 	int fd;
 	int family = AF_INET6;
@@ -286,7 +286,7 @@ void test_nrf91_socket_create_native_socket_tls_eafnosupport(void)
 	TEST_ASSERT_EQUAL(fd, -1);
 }
 
-void test_nrf91_socket_offload_create_close_proto_zero_success(void)
+void test_nrf9x_socket_offload_create_close_proto_zero_success(void)
 {
 	int ret;
 	int fd;
@@ -307,7 +307,7 @@ void test_nrf91_socket_offload_create_close_proto_zero_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_connect_ebadf(void)
+void test_nrf9x_socket_offload_connect_ebadf(void)
 {
 	int ret;
 	struct sockaddr address = { 0 };
@@ -318,7 +318,7 @@ void test_nrf91_socket_offload_connect_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
-void test_nrf91_socket_offload_connect_ipv4_success(void)
+void test_nrf9x_socket_offload_connect_ipv4_success(void)
 {
 	int ret;
 	int fd;
@@ -351,7 +351,7 @@ void test_nrf91_socket_offload_connect_ipv4_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_connect_ipv6_success(void)
+void test_nrf9x_socket_offload_connect_ipv6_success(void)
 {
 	int ret;
 	int fd;
@@ -384,7 +384,7 @@ void test_nrf91_socket_offload_connect_ipv6_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_connect_non_ip_success(void)
+void test_nrf9x_socket_offload_connect_non_ip_success(void)
 {
 	int ret;
 	int fd;
@@ -418,7 +418,7 @@ void test_nrf91_socket_offload_connect_non_ip_success(void)
  * Still keeping this test since it proves that this case is being handled no matter the
  * Zephyr implementation.
  */
-void test_nrf91_socket_offload_bind_ebadf(void)
+void test_nrf9x_socket_offload_bind_ebadf(void)
 {
 	int ret;
 	struct sockaddr_in address;
@@ -433,7 +433,7 @@ void test_nrf91_socket_offload_bind_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
-void test_nrf91_socket_offload_bind_eafnosupport(void)
+void test_nrf9x_socket_offload_bind_eafnosupport(void)
 {
 	int ret;
 	int fd;
@@ -459,7 +459,7 @@ void test_nrf91_socket_offload_bind_eafnosupport(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_bind_ipv4_success(void)
+void test_nrf9x_socket_offload_bind_ipv4_success(void)
 {
 	int ret;
 	int fd;
@@ -487,7 +487,7 @@ void test_nrf91_socket_offload_bind_ipv4_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_bind_ipv6_success(void)
+void test_nrf9x_socket_offload_bind_ipv6_success(void)
 {
 	int ret;
 	int fd;
@@ -515,7 +515,7 @@ void test_nrf91_socket_offload_bind_ipv6_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_listen_ebadf(void)
+void test_nrf9x_socket_offload_listen_ebadf(void)
 {
 	int ret;
 
@@ -525,7 +525,7 @@ void test_nrf91_socket_offload_listen_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
-void test_nrf91_socket_offload_listen_success(void)
+void test_nrf9x_socket_offload_listen_success(void)
 {
 	int ret;
 	int fd;
@@ -560,7 +560,7 @@ void test_nrf91_socket_offload_listen_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_accept_ebadf(void)
+void test_nrf9x_socket_offload_accept_ebadf(void)
 {
 	int ret;
 	struct sockaddr_in address;
@@ -576,7 +576,7 @@ void test_nrf91_socket_offload_accept_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
-void test_nrf91_socket_offload_accept_addr_null_addrlen_null_error(void)
+void test_nrf9x_socket_offload_accept_addr_null_addrlen_null_error(void)
 {
 	int ret;
 	int fd;
@@ -617,7 +617,7 @@ void test_nrf91_socket_offload_accept_addr_null_addrlen_null_error(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_accept_addr_not_null_addrlen_not_null_enotsup(void)
+void test_nrf9x_socket_offload_accept_addr_not_null_addrlen_not_null_enotsup(void)
 {
 	int ret;
 	int fd;
@@ -668,7 +668,7 @@ void test_nrf91_socket_offload_accept_addr_not_null_addrlen_not_null_enotsup(voi
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_accept_ipv4_success(void)
+void test_nrf9x_socket_offload_accept_ipv4_success(void)
 {
 	int ret;
 	int fd;
@@ -719,7 +719,7 @@ void test_nrf91_socket_offload_accept_ipv4_success(void)
 	z_free_fd(z_fd);
 }
 
-void test_nrf91_socket_offload_accept_ipv6_success(void)
+void test_nrf9x_socket_offload_accept_ipv6_success(void)
 {
 	int ret;
 	int fd;
@@ -770,7 +770,7 @@ void test_nrf91_socket_offload_accept_ipv6_success(void)
 	z_free_fd(z_fd);
 }
 
-void test_nrf91_socket_offload_setsockopt_ebadf(void)
+void test_nrf9x_socket_offload_setsockopt_ebadf(void)
 {
 	int ret;
 
@@ -780,7 +780,7 @@ void test_nrf91_socket_offload_setsockopt_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
-void test_nrf91_socket_offload_setsockopt_bindtodevice_eopnotsup(void)
+void test_nrf9x_socket_offload_setsockopt_bindtodevice_eopnotsup(void)
 {
 	int ret;
 	int fd;
@@ -807,7 +807,7 @@ void test_nrf91_socket_offload_setsockopt_bindtodevice_eopnotsup(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_setsockopt_rcvtimeo_success(void)
+void test_nrf9x_socket_offload_setsockopt_rcvtimeo_success(void)
 {
 	int ret;
 	int fd;
@@ -837,7 +837,7 @@ void test_nrf91_socket_offload_setsockopt_rcvtimeo_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_setsockopt_sndtimeo_success(void)
+void test_nrf9x_socket_offload_setsockopt_sndtimeo_success(void)
 {
 	int ret;
 	int fd;
@@ -868,7 +868,7 @@ void test_nrf91_socket_offload_setsockopt_sndtimeo_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_setsockopt_tls_session_cache_success(void)
+void test_nrf9x_socket_offload_setsockopt_tls_session_cache_success(void)
 {
 	int ret;
 	int fd;
@@ -899,7 +899,7 @@ void test_nrf91_socket_offload_setsockopt_tls_session_cache_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_getsockopt_ebadf(void)
+void test_nrf9x_socket_offload_getsockopt_ebadf(void)
 {
 	int ret;
 
@@ -909,7 +909,7 @@ void test_nrf91_socket_offload_getsockopt_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
-void test_nrf91_socket_offload_getsockopt_rcvtimeo_error(void)
+void test_nrf9x_socket_offload_getsockopt_rcvtimeo_error(void)
 {
 	int ret;
 	int fd;
@@ -942,7 +942,7 @@ void test_nrf91_socket_offload_getsockopt_rcvtimeo_error(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_getsockopt_sndtimeo_error(void)
+void test_nrf9x_socket_offload_getsockopt_sndtimeo_error(void)
 {
 	int ret;
 	int fd;
@@ -975,7 +975,7 @@ void test_nrf91_socket_offload_getsockopt_sndtimeo_error(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_getsockopt_rcvtimeo_success(void)
+void test_nrf9x_socket_offload_getsockopt_rcvtimeo_success(void)
 {
 	int ret;
 	int fd;
@@ -1014,7 +1014,7 @@ void test_nrf91_socket_offload_getsockopt_rcvtimeo_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_getsockopt_sndtimeo_success(void)
+void test_nrf9x_socket_offload_getsockopt_sndtimeo_success(void)
 {
 	int ret;
 	int fd;
@@ -1053,7 +1053,7 @@ void test_nrf91_socket_offload_getsockopt_sndtimeo_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_getsockopt_so_error_success(void)
+void test_nrf9x_socket_offload_getsockopt_so_error_success(void)
 {
 	int ret;
 	int fd;
@@ -1087,7 +1087,7 @@ void test_nrf91_socket_offload_getsockopt_so_error_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_recvfrom_ebadf(void)
+void test_nrf9x_socket_offload_recvfrom_ebadf(void)
 {
 	int ret;
 
@@ -1097,7 +1097,7 @@ void test_nrf91_socket_offload_recvfrom_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
-void test_nrf91_socket_offload_recvfrom_from_null_error(void)
+void test_nrf9x_socket_offload_recvfrom_from_null_error(void)
 {
 	int ret;
 	int fd;
@@ -1137,7 +1137,7 @@ void test_nrf91_socket_offload_recvfrom_from_null_error(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_recvfrom_from_null_success(void)
+void test_nrf9x_socket_offload_recvfrom_from_null_success(void)
 {
 	int ret;
 	int fd;
@@ -1177,7 +1177,7 @@ void test_nrf91_socket_offload_recvfrom_from_null_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_recvfrom_ipv4_success(void)
+void test_nrf9x_socket_offload_recvfrom_ipv4_success(void)
 {
 	int ret;
 	int fd;
@@ -1220,7 +1220,7 @@ void test_nrf91_socket_offload_recvfrom_ipv4_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_recvfrom_ipv6_success(void)
+void test_nrf9x_socket_offload_recvfrom_ipv6_success(void)
 {
 	int ret;
 	int fd;
@@ -1263,7 +1263,7 @@ void test_nrf91_socket_offload_recvfrom_ipv6_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_sendto_ebadf(void)
+void test_nrf9x_socket_offload_sendto_ebadf(void)
 {
 	int ret;
 
@@ -1273,7 +1273,7 @@ void test_nrf91_socket_offload_sendto_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
-void test_nrf91_socket_offload_sendto_to_null_success(void)
+void test_nrf9x_socket_offload_sendto_to_null_success(void)
 {
 	int ret;
 	int fd;
@@ -1311,7 +1311,7 @@ void test_nrf91_socket_offload_sendto_to_null_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_sendto_ipv4_error(void)
+void test_nrf9x_socket_offload_sendto_ipv4_error(void)
 {
 	int ret;
 	int fd;
@@ -1354,7 +1354,7 @@ void test_nrf91_socket_offload_sendto_ipv4_error(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_sendto_ipv4_success(void)
+void test_nrf9x_socket_offload_sendto_ipv4_success(void)
 {
 	int ret;
 	int fd;
@@ -1397,7 +1397,7 @@ void test_nrf91_socket_offload_sendto_ipv4_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_sendto_ipv6_success(void)
+void test_nrf9x_socket_offload_sendto_ipv6_success(void)
 {
 	int ret;
 	int fd;
@@ -1440,7 +1440,7 @@ void test_nrf91_socket_offload_sendto_ipv6_success(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_sendto_not_ipv4_not_ipv6_eafnosupport(void)
+void test_nrf9x_socket_offload_sendto_not_ipv4_not_ipv6_eafnosupport(void)
 {
 	int ret;
 	int fd;
@@ -1475,7 +1475,7 @@ void test_nrf91_socket_offload_sendto_not_ipv4_not_ipv6_eafnosupport(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_sendmsg_ebadf(void)
+void test_nrf9x_socket_offload_sendmsg_ebadf(void)
 {
 	int ret;
 
@@ -1485,7 +1485,7 @@ void test_nrf91_socket_offload_sendmsg_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
-void test_nrf91_socket_offload_sendmsg_msg_null_einval(void)
+void test_nrf9x_socket_offload_sendmsg_msg_null_einval(void)
 {
 	int ret;
 	int fd;
@@ -1517,7 +1517,7 @@ void test_nrf91_socket_offload_sendmsg_msg_null_einval(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_sendmsg_fits_buf(void)
+void test_nrf9x_socket_offload_sendmsg_fits_buf(void)
 {
 	int ret;
 	int fd;
@@ -1564,7 +1564,7 @@ void test_nrf91_socket_offload_sendmsg_fits_buf(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_sendmsg_not_fits_buf(void)
+void test_nrf9x_socket_offload_sendmsg_not_fits_buf(void)
 {
 	int ret;
 	int fd;
@@ -1629,7 +1629,7 @@ void test_nrf91_socket_offload_sendmsg_not_fits_buf(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_fcntl_einval(void)
+void test_nrf9x_socket_offload_fcntl_einval(void)
 {
 	int ret;
 	int fd;
@@ -1661,7 +1661,7 @@ void test_nrf91_socket_offload_fcntl_einval(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_fcntl_f_setfl(void)
+void test_nrf9x_socket_offload_fcntl_f_setfl(void)
 {
 	int ret;
 	int fd;
@@ -1693,7 +1693,7 @@ void test_nrf91_socket_offload_fcntl_f_setfl(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
-void test_nrf91_socket_offload_fcntl_f_getfl(void)
+void test_nrf9x_socket_offload_fcntl_f_getfl(void)
 {
 	int ret;
 	int fd;
@@ -1745,7 +1745,7 @@ static int stub_nrf_setsockopt_pollcb(int fd, int level, int opt, const void *va
 	return 0;
 }
 
-void test_nrf91_socket_offload_poll(void)
+void test_nrf9x_socket_offload_poll(void)
 {
 	int ret;
 	int fd;

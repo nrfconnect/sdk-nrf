@@ -6,7 +6,7 @@ Socket offloading
 Zephyr Socket API offers the :ref:`socket offloading functionality <zephyr:net_socket_offloading>` to redirect or *offload* function calls to BSD socket APIs such as ``socket()`` and ``send()``.
 The integration layer utilizes this functionality to offload the socket API calls to the Modem library and thus eases the task of porting the networking code to the nRF91 Series device by providing a wrapper for Modem library's native socket API such as :c:func:`nrf_socket` and :c:func:`nrf_send`.
 
-The socket offloading functionality in the integration layer is implemented in :file:`nrf/lib/nrf_modem_lib/nrf91_sockets.c`.
+The socket offloading functionality in the integration layer is implemented in :file:`nrf/lib/nrf_modem_lib/nrf9x_sockets.c`.
 
 Modem library socket API sets errnos as defined in the :file:`nrf_errno.h` file.
 The socket offloading support in the integration layer in |NCS| converts those errnos to the errnos that adhere to the selected C library implementation.

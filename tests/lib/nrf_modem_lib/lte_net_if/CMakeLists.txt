@@ -37,7 +37,7 @@ target_sources(app PRIVATE src/main.c)
 # Add UUT
 target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_net_if/lte_net_if.c)
 target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_net_if/lte_ip_addr_helper.c)
-target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf91_sockets.c)
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf9x_sockets.c)
 
 target_include_directories(app PRIVATE
                            ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_net_if

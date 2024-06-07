@@ -162,7 +162,7 @@ iperf_tcp_accept(struct iperf_test * test)
     char    cookie[COOKIE_SIZE];
     socklen_t len;
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-    struct sockaddr_in addr; /* modified due to nrf91_socket_offload_accept() */
+    struct sockaddr_in addr; /* modified due to nrf9x_socket_offload_accept() */
 #else
     struct sockaddr_storage addr;
 #endif

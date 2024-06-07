@@ -440,7 +440,7 @@ static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn)
 }
 
 /* Bind connectity APIs.
- * extern in nrf91_sockets.c
+ * extern in nrf9x_sockets.c
  */
 struct conn_mgr_conn_api lte_net_if_conn_mgr_api = {
 	.init = lte_net_if_init,
