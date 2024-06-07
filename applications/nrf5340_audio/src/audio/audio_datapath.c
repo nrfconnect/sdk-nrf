@@ -1041,6 +1041,16 @@ int audio_datapath_init(void)
 	ctrl_blk.drift_comp.enabled = true;
 	ctrl_blk.pres_comp.enabled = true;
 
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) && (CONFIG_AUDIO_DEV == GATEWAY)) {
+		/* Disable presentation compensation feature for microphone return on gateway,
+		 * since there's only one stream output from gateway for now, so no need to
+		 * qhave presentation compensation.
+		 */
+		ctrl_blk.pres_comp.enabled = false;
+	} else {
+		ctrl_blk.pres_comp.enabled = true;
+	}
+
 	ctrl_blk.pres_comp.pres_delay_us = CONFIG_BT_AUDIO_PRESENTATION_DELAY_US;
 
 	return 0;
