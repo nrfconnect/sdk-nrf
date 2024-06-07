@@ -23,7 +23,6 @@ target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf91_sock
 # manually add Kconfig definitions introduced by NRF_MODEM_LIB and used
 # by the unit under test, but not included since we aren't enabling
 # CONFIG_NRF_MODEM_LIB
-add_compile_definitions(CONFIG_NRF91_SOCKET_BLOCK_LIMIT=2048)
 add_compile_definitions(CONFIG_NRF_MODEM_LIB_SENDMSG_BUF_SIZE=8)
 
 # generate runner for the test
