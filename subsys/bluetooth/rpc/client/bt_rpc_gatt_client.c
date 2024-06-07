@@ -1434,11 +1434,11 @@ static const size_t bt_gatt_subscribe_params_buf_size =
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value_handle) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, ccc_handle) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value) +
-	/* Placeholder for the flags field */
-	2 +
 #if defined(CONFIG_BT_SMP)
-	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, min_security);
-#endif /* defined(CONFIG_BT_SMP) */
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, min_security) +
+#endif
+	/* Placeholder for the flags field */
+	2;
 
 void bt_gatt_subscribe_params_enc(struct nrf_rpc_cbor_ctx *encoder,
 				  const struct bt_gatt_subscribe_params *data)
