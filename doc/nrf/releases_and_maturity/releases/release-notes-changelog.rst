@@ -567,6 +567,10 @@ Modem libraries
   * Added a log warning suggesting a SIM card to be installed if a UICC error is detected by the modem.
   * Fixed a bug causing the cell network to be treated as offline if IPv4 is not assigned.
 
+* :ref:`nrf_modem_lib_readme`:
+
+  * Rename the nRF91 socket offload layer from ``nrf91_sockets`` to ``nrf9x_sockets`` to reflect that the offload layer is not exclusive to the nRF91 Series SiPs.
+
 * :ref:`modem_info_readme` library:
 
   * Fixed a potential issue with scanf in the :c:func:`modem_info_get_current_band` function, which could lead to memory corruption.

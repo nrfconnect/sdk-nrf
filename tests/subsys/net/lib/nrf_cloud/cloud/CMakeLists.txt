@@ -66,7 +66,7 @@ if (CONFIG_NRF_CLOUD_MQTT OR CONFIG_NRF_CLOUD_FOTA OR CONFIG_NRF_MODEM_LIB)
 		# Similarly, these files need to be excluded when NET_SOCKETS_POSIX_NAMES=n
 		set_source_files_properties(
 			${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/sanity.c
-			${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf91_sockets.c
+			${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf9x_sockets.c
 			DIRECTORY ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/
 			PROPERTIES HEADER_FILE_ONLY ON
 		)
