@@ -1,0 +1,11 @@
+identifier: {{ board }}/{{ soc }}/{{ target['core'] }}{{ '/xip' if target['xip'] }}
+name: {{ board_desc }}
+vendor: {{ vendor }}
+arch: {{ target['arch'] }}
+toolchain:
+  - zephyr
+sysbuild: true
+ram: {{ target['ram'] }}
+flash: {{ target['flash'] }}
+supported:
+  - gpio

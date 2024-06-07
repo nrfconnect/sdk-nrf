@@ -1,0 +1,156 @@
+/dts-v1/;
+#include <nordic/{{ soc }}_{{ variant }}.dtsi>
+#include "{{ board }}-pinctrl.dtsi"
+
+/ {
+	model = "{{ board_desc }}";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}";
+
+	chosen {
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+	};
+};
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+{% if soc == "nrf52840" %}
+{% if ncs_version <= (2, 4, 0) %}
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 DT_SIZE_K(412)>;
+		};
+
+		slot1_partition: partition@73000 {
+			label = "image-1";
+			reg = <0x00073000 DT_SIZE_K(412)>;
+		};
+
+		scratch_partition: partition@da000 {
+			label = "image-scratch";
+			reg = <0xda000 DT_SIZE_K(120)>;
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000f8000 DT_SIZE_K(32)>;
+		};
+{% else %}
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 DT_SIZE_K(472)>;
+		};
+
+		slot1_partition: partition@82000 {
+			label = "image-1";
+			reg = <0x00082000 DT_SIZE_K(472)>;
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000f8000 DT_SIZE_K(32)>;
+		};
+{% endif %}
+{% elif soc == "nrf52833" or soc == "nrf52832" %}
+{% if ncs_version <= (2, 4, 0) %}
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 DT_SIZE_K(200)>;
+		};
+
+		slot1_partition: partition@3e000 {
+			label = "image-1";
+			reg = <0x0003e000 DT_SIZE_K(200)>;
+		};
+
+		scratch_partition: partition@70000 {
+			label = "image-scratch";
+			reg = <0x70000 DT_SIZE_K(40)>;
+		};
+
+		storage_partition: partition@7a000 {
+			label = "storage";
+			reg = <0x0007a000 DT_SIZE_K(24)>;
+		};
+{% else %}
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 DT_SIZE_K(220)>;
+		};
+
+		slot1_partition: partition@43000 {
+			label = "image-1";
+			reg = <0x00043000 DT_SIZE_K(220)>;
+		};
+
+		storage_partition: partition@7a000 {
+			label = "storage";
+			reg = <0x0007a000 DT_SIZE_K(24)>;
+		};
+{% endif %}
+{% elif soc == "nrf52820" %}
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 DT_SIZE_K(92)>;
+		};
+
+		slot1_partition: partition@23000 {
+			label = "image-1";
+			reg = <0x00023000 DT_SIZE_K(92)>;
+		};
+
+		storage_partition: partition@3a000 {
+			label = "storage";
+			reg = <0x0003a000 DT_SIZE_K(24)>;
+		};
+{% elif soc == "nrf52811" or soc == "nrf52810" or soc == "nrf52805" %}
+{% if ncs_version <= (2, 4, 0) %}
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 DT_SIZE_K(52)>;
+		};
+
+		slot1_partition: partition@19000 {
+			label = "image-1";
+			reg = <0x0001a000 DT_SIZE_K(52)>;
+		};
+
+		scratch_partition: partition@26000 {
+			label = "image-scratch";
+			reg = <0x26000 DT_SIZE_K(12)>;
+		};
+
+		storage_partition: partition@29000 {
+			label = "storage";
+			reg = <0x00029000 DT_SIZE_K(28)>;
+		};
+{% else %}
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 DT_SIZE_K(56)>;
+		};
+
+		slot1_partition: partition@1a000 {
+			label = "image-1";
+			reg = <0x0001a000 DT_SIZE_K(56)>;
+		};
+
+		storage_partition: partition@28000 {
+			label = "storage";
+			reg = <0x00028000 DT_SIZE_K(32)>;
+		};
+{% endif %}
+
+{% endif %}
+	};
+};

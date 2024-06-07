@@ -1,0 +1,11 @@
+if BOARD_{{ board | upper }}
+
+{% if ncs_version < hwmv2_since %}
+config BOARD
+	default "{{ board }}"
+
+{% endif %}
+config BT_CTLR
+	default BT
+
+endif # BOARD_{{ board | upper }}
