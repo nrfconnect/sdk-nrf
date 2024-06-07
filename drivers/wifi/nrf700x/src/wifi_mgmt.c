@@ -508,20 +508,20 @@ int nrf_wifi_set_twt(const struct device *dev,
 		twt_params->flow_id >= WIFI_MAX_TWT_FLOWS) {
 		LOG_ERR("%s: Invalid flow id: %d",
 			__func__, twt_params->flow_id);
-		twt_params->fail_reason = WIFI_TWT_FAIL_INVALID_FLOW_ID;
+		twt_params->fail_reason = WIFI_FAIL_INVALID_FLOW_ID;
 		goto out;
 	}
 
 	switch (twt_params->operation) {
 	case WIFI_TWT_SETUP:
 		if (vif_ctx_zep->twt_flow_in_progress_map & BIT(twt_params->flow_id)) {
-			twt_params->fail_reason = WIFI_TWT_FAIL_OPERATION_IN_PROGRESS;
+			twt_params->fail_reason = WIFI_FAIL_OPERATION_IN_PROGRESS;
 			goto out;
 		}
 
 		if (twt_params->setup_cmd == WIFI_TWT_SETUP_CMD_REQUEST) {
 			if (vif_ctx_zep->twt_flows_map & BIT(twt_params->flow_id)) {
-				twt_params->fail_reason = WIFI_TWT_FAIL_FLOW_ALREADY_EXISTS;
+				twt_params->fail_reason = WIFI_FAIL_FLOW_ALREADY_EXISTS;
 				goto out;
 			}
 		}
@@ -559,7 +559,7 @@ int nrf_wifi_set_twt(const struct device *dev,
 
 		if (!twt_params->teardown.teardown_all) {
 			if (!(vif_ctx_zep->twt_flows_map & BIT(twt_params->flow_id))) {
-				twt_params->fail_reason = WIFI_TWT_FAIL_INVALID_FLOW_ID;
+				twt_params->fail_reason = WIFI_FAIL_INVALID_FLOW_ID;
 				goto out;
 			}
 			start_flow_id = twt_params->flow_id;
@@ -966,7 +966,6 @@ int nrf_wifi_set_rts_threshold(const struct device *dev,
 
 	if (!dev) {
 		LOG_ERR("%s: dev is NULL", __func__);
-		return ret;
 	}
 
 	vif_ctx_zep = dev->data;
@@ -982,7 +981,6 @@ int nrf_wifi_set_rts_threshold(const struct device *dev,
 		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
 		return ret;
 	}
-
 
 	if (!rpu_ctx_zep->rpu_ctx) {
 		LOG_ERR("%s: RPU context not initialized", __func__);
@@ -1018,4 +1016,178 @@ out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 
 	return ret;
+}
+
+static void nrf_wifi_dms_update_internal_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
+	bool add, unsigned char dmsid)
+{
+	if (add) {
+		vif_ctx_zep->dms_id_map |= BIT(dmsid);
+		vif_ctx_zep->dms_id_in_progress_map &= ~BIT(dmsid);
+	} else {
+		vif_ctx_zep->dms_id_map &= ~BIT(dmsid);
+	}
+}
+
+int nrf_wifi_req_dms(const struct device *dev,
+		     struct wifi_dms_params *dms_params)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_umac_config_dms_info dms_info = {0};
+	int ret = -1;
+
+	if (!dev || !dms_params) {
+		LOG_ERR("%s: dev or dms_params is NULL", __func__);
+		return ret;
+	}
+
+	vif_ctx_zep = dev->data;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
+	switch (dms_params->operation) {
+	case WIFI_DMS_REQ_ADD:
+		if (vif_ctx_zep->dms_id_in_progress_map & BIT(dms_params->dmsid)) {
+			dms_params->fail_reason = WIFI_FAIL_OPERATION_IN_PROGRESS;
+			goto out;
+		}
+
+		if (dms_params->operation == WIFI_DMS_REQ_ADD) {
+			if (vif_ctx_zep->dms_id_map & BIT(dms_params->dmsid)) {
+				dms_params->fail_reason = WIFI_FAIL_FLOW_ALREADY_EXISTS;
+				goto out;
+			}
+		}
+
+		dms_info.req_type = NRF_WIFI_DMS_REQ_ADD;
+	break;
+	case WIFI_DMS_REQ_REMOVE:
+		/* Time being don't check this.
+		 * This needs event from UMAC (currently not-supported)
+		 * Just pass the command to UMAC
+		 */
+		/*
+		if (!(vif_ctx_zep->dms_id_map & BIT(dms_params->dmsid))) {
+			dms_params->fail_reason = WIFI_FAIL_INVALID_DMS_ID;
+			goto out;
+		}*/
+		dms_info.req_type = NRF_WIFI_DMS_REQ_REMOVE;
+		break;
+	case WIFI_DMS_REQ_CHANGE:
+		/* Time being don't check this.
+		 * This needs event from UMAC (currently not-supported)
+		 * Just pass the command to UMAC
+		 */
+		/*
+		if (vif_ctx_zep->dms_id_in_progress_map & BIT(dms_params->dmsid)) {
+			dms_params->fail_reason = WIFI_FAIL_OPERATION_IN_PROGRESS;
+			goto out;
+		}
+		if (!(vif_ctx_zep->dms_id_map & BIT(dms_params->dmsid))) {
+			dms_params->fail_reason = WIFI_FAIL_INVALID_DMS_ID;
+			goto out;
+		}
+		*/
+		dms_info.req_type = NRF_WIFI_DMS_REQ_CHANGE;
+		break;
+	default:
+		LOG_ERR("Unknown DMS operation");
+		status = NRF_WIFI_STATUS_FAIL;
+		goto out;
+	}
+
+	dms_info.dmsid = dms_params->dmsid;
+	dms_info.dialog_token = dms_params->dialog_token;
+	dms_info.up = dms_params->tclas_elem.up;
+	dms_info.tclas_type = dms_params->tclas_elem.classifier_info.type;
+	dms_info.tclas_mask = dms_params->tclas_elem.classifier_info.mask;
+	dms_info.version = dms_params->tclas_elem.classifier_info.param_info.version;
+	dms_info.src_ip_addr = dms_params->tclas_elem.classifier_info.param_info.src_ip_addr;
+	dms_info.src_port = dms_params->tclas_elem.classifier_info.param_info.src_port;
+	dms_info.dest_ip_addr = dms_params->tclas_elem.classifier_info.param_info.dest_ip_addr;
+	dms_info.dest_port = dms_params->tclas_elem.classifier_info.param_info.dest_port;
+	dms_info.dscp = dms_params->tclas_elem.classifier_info.param_info.dscp;
+	dms_info.protocol = dms_params->tclas_elem.classifier_info.param_info.protocol;
+
+	status = nrf_wifi_fmac_req_dms(rpu_ctx_zep->rpu_ctx,
+				       vif_ctx_zep->vif_idx,
+				       &dms_info);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_req_dms %s failed",
+			__func__,
+			(dms_params->operation == WIFI_DMS_REQ_ADD) ? "add" :
+			(dms_params->operation == WIFI_DMS_REQ_REMOVE) ? "remove" : "change");
+		goto out;
+	}
+
+	ret = 0;
+out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+
+	return ret;
+}
+
+void nrf_wifi_event_proc_dms_zep(void *vif_ctx,
+				 struct nrf_wifi_umac_cmd_config_dms *dms_info,
+				 unsigned int event_len)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_dms_params dms_params;
+
+	if (!vif_ctx || !dms_info) {
+		return;
+	}
+
+	vif_ctx_zep = vif_ctx;
+
+	dms_params.dmsid = dms_info->info.dmsid;
+	dms_params.dialog_token = dms_info->info.dialog_token;
+	dms_params.tclas_elem.up = dms_info->info.up;
+	dms_params.tclas_elem.classifier_info.param_info.version = dms_info->info.version;
+	dms_params.tclas_elem.classifier_info.param_info.src_ip_addr = dms_info->info.src_ip_addr;
+	dms_params.tclas_elem.classifier_info.param_info.src_port = dms_info->info.src_port;
+	dms_params.tclas_elem.classifier_info.param_info.dest_ip_addr = dms_info->info.dest_ip_addr;
+	dms_params.tclas_elem.classifier_info.param_info.dest_port = dms_info->info.dest_port;
+	dms_params.tclas_elem.classifier_info.param_info.dscp = dms_info->info.dscp;
+	dms_params.tclas_elem.classifier_info.param_info.protocol = dms_info->info.protocol;
+	dms_params.tclas_elem.classifier_info.type = dms_info->info.tclas_type;
+	dms_params.tclas_elem.classifier_info.mask = dms_info->info.tclas_mask;
+
+	switch(dms_info->event_type) {
+	case NRF_WIFI_DMS_EVENT_ACCEPT:
+		dms_params.operation = WIFI_DMS_REQ_ADD;
+		if (dms_info->dms_resp_status == 0) {
+			nrf_wifi_dms_update_internal_state(vif_ctx_zep, true, dms_params.dmsid);
+		}
+	break;
+	case NRF_WIFI_DMS_EVENT_REJECT:
+	break;
+	case NRF_WIFI_DMS_EVENT_TERMINATE:
+		nrf_wifi_dms_update_internal_state(vif_ctx_zep, false, dms_params.dmsid);
+	break;
+	case NRF_WIFI_DMS_EVENT_INVALID:
+		LOG_ERR("Unknown DMS event received");
+	break;
+	}
+
+	wifi_mgmt_raise_dms_event(vif_ctx_zep->zep_net_if_ctx, &dms_params);
 }

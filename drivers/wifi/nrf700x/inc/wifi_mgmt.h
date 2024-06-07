@@ -72,4 +72,10 @@ int nrf_wifi_filter(const struct device *dev,
 
 int nrf_wifi_set_rts_threshold(const struct device *dev,
 			       unsigned int rts_threshold);
+int nrf_wifi_req_dms(const struct device *dev,
+		     struct wifi_dms_params *dms_params);
+
+void nrf_wifi_event_proc_dms_zep(void *vif_ctx,
+				 struct nrf_wifi_umac_cmd_config_dms *dms_accept_info,
+				 unsigned int event_len);
 #endif /*  __ZEPHYR_WIFI_MGMT_H__ */

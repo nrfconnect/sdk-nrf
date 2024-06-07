@@ -855,6 +855,19 @@ out:
 	return ret;
 }
 
+int z_wpa_supplicant_req_dms(const struct device *dev,
+			     struct wifi_dms_params *params)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->req_dms) {
+		wpa_printf(MSG_ERROR, "Request DMS ops not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->req_dms(dev, params);
+}
+
 #ifdef CONFIG_AP
 int z_wpa_supplicant_ap_enable(const struct device *dev,
 			       struct wifi_connect_req_params *params)

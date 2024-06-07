@@ -87,6 +87,7 @@ static const struct wifi_mgmt_ops wpa_supp_ops = {
 	.channel = z_wpa_supplicant_channel,
 	.set_rts_threshold = z_wpa_supplicant_set_rts_threshold,
 	.set_bss_max_idle_period = z_wpa_supplicant_set_bss_max_idle_period,
+	.req_dms = z_wpa_supplicant_req_dms,
 #ifdef CONFIG_AP
 	.ap_enable = z_wpa_supplicant_ap_enable,
 	.ap_disable = z_wpa_supplicant_ap_disable,
