@@ -651,13 +651,13 @@ See :ref:`cmake_options`.
 
 When building for a board with an additional network core, like the nRF5340, add the ``-DSHIELD`` variable with the *childImageName_* parameter between ``-D`` and ``SHIELD`` to build for the network core.
 In this case, the application core is only responsible for forwarding to the network core the pins needed to control the nRF21540 .
-The application core can be set up to forward the needed pins using the ``-DSHIELD=nrf21540ek_fwd`` setting.
+The application core can be set up to forward the needed pins using the ``-DSHIELD=nrf21540ek`` setting.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf21540ek_fwd -Dmultiprotocol_rpmsg_SHIELD=nrf21540ek
+   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf21540ek -Dmultiprotocol_rpmsg_SHIELD=nrf21540ek
 
 In this command, the *childImageName_* parameter has the ``multiprotocol_rpmsg_`` value and builds a multiprotocol application with support for 802.15.4 and Bluetooth.
 The *childImageName_* parameter can take the following values:
