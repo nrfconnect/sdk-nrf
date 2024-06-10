@@ -1,0 +1,30 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Pin mapping suitable for use nRF2240-EK PCA63564 with
+ * Nordic Interposer Board A PCA64172 v0.2.0.
+ * The nRF2240-EK in SLOT 2 of PCA64172.
+ */
+
+/ {
+	nrf_radio_fem: nrf2240_fem {
+		compatible = "nordic,nrf2240-fem";
+		cs-gpios = <&arduino_header 14 GPIO_ACTIVE_HIGH>;	/* D8 */
+		md-gpios = <&arduino_header 13 GPIO_ACTIVE_HIGH>;	/* D7 */
+		pwrmd-gpios = <&arduino_header 4 GPIO_ACTIVE_HIGH>;	/* A4 */
+		twi-if = <&nrf_radio_fem_twi>;
+	};
+};
+
+fem_twi: &arduino_i2c {
+	status = "okay";
+	compatible = "nordic,nrf-twim";
+
+	nrf_radio_fem_twi: nrf2240_fem_twi@30 {
+		compatible = "nordic,nrf2240-fem-twi";
+		status = "okay";
+		reg = <0x30>;
+	};
+};
