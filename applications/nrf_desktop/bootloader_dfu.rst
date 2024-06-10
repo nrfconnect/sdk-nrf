@@ -162,6 +162,50 @@ For an example of bootloader Kconfig configuration file defined by the applicati
   Both mentioned firmware upgrade methods are not used simultaneously by any of the configurations.
   For example, the ``nrf52840dk/nrf52840`` board in ``prj_mcuboot_smp.conf`` uses only the background DFU and does not enable the serial recovery feature.
 
+.. _nrf_desktop_suit:
+
+Software Update for Internet of Things (SUIT)
+=============================================
+
+SUIT is a metadata format and procedure for performing Device Firmware Update (DFU).
+It allows you to update and boot multiple CPU cores of the supported System on Chip (SoC).
+The SUIT DFU is currently available only for the nRF54H20 SoC.
+The application stores an update image in the dedicated DFU partition and triggers firmware update using the SUIT API.
+The firmware update affects the firmware of both the application and radio cores.
+The update candidates are moved directly to the corresponding image slots.
+
+SUIT can be used for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>` through:
+
+   * The :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
+   * The :ref:`nrf_desktop_dfu_mcumgr`.
+
+For an introduction to SUIT and more detailed information, see the :ref:`ug_nrf54h20_suit_dfu`.
+
+Configuring SUIT
+----------------
+
+To enable SUIT on the supported target, enable the :kconfig:option:`CONFIG_SUIT` Kconfig option in the application configuration.
+This option enables service on application core that communicates with the Secure Domain on which the SUIT is executed.
+You can also enable :kconfig:option:`CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_MINIMAL`, because application core only stores the SUIT envelope to a dedicated partition and then it passes control to the Secure Domain.
+
+SUIT also has the following options in the sysbuild configuration:
+
+   * :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE` - Required to create the SUIT envelope.
+     Turned on by default on the ``nrf54h20dk`` board.
+     The envelope is used directly as a DFU update file by the DFU tools.
+   * :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM` - The nRF Desktop application uses the sequence number to define an application version.
+
+.. note::
+   The :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_SIGN` is disabled, so the generated SUIT envelope is not signed.
+
+On the ``nrf54h20dk`` board, the dedicated DFU partition called ``dfu_partition`` is defined by default in the DTS.
+The partition is used to store the incoming SUIT envelope with an update candidate.
+The application relies on the default memory layout defined by the board.
+
+.. note::
+   The Partition Manager is disabled for the nRF54H Series.
+   The memory layout for these devices is always defined in the DTS.
+
 .. _nrf_desktop_bootloader_background_dfu:
 
 Background Device Firmware Upgrade
@@ -172,6 +216,7 @@ From the application perspective, the update image transfer during the backgroun
 
 * MCUboot
 * Secure Bootloader (B0)
+* SUIT
 
 The firmware update process has the following three stages:
 
@@ -188,7 +233,7 @@ At the end of these three stages, the nRF Desktop application will be rebooted w
   For more details about the DFU procedure over SMP, read the documentation of the following modules:
 
   * :ref:`nrf_desktop_ble_smp` (supported only with MCUboot bootloader)
-  * :ref:`nrf_desktop_dfu_mcumgr` (supported only with MCUboot bootloader)
+  * :ref:`nrf_desktop_dfu_mcumgr`
     The module uses the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods.
     Therefore, this module should be used for configurations that enable multiple DFU transports (for example, if a configuration also enables :ref:`nrf_desktop_dfu`).
 
@@ -207,6 +252,12 @@ Otherwise, the image is always uploaded to the slot 1 and then moved to slot 0 b
 
 .. note::
    Make sure to properly configure the bootloader to ensure that the build system generates the :file:`zephyr/dfu_application.zip` archive containing all of the required update images.
+
+SUIT
+----
+
+The :file:`<build_dir>/DFU/root.suit` SUIT envelope is used in the SUIT DFU procedure.
+The envelope contains both the manifest and the update candidates for the application and radio cores.
 
 Update image transfer
 =====================
@@ -230,7 +281,7 @@ Image transfer over SMP
 The update image can also be transferred in the background through one of the following modules:
 
 * :ref:`nrf_desktop_ble_smp` (supported only with MCUboot bootloader)
-* :ref:`nrf_desktop_dfu_mcumgr` (supported only with MCUboot bootloader)
+* :ref:`nrf_desktop_dfu_mcumgr`
   The module uses the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods.
   Therefore, this module should be used for configurations that enable multiple DFU transports (for example, if a configuration also enables :ref:`nrf_desktop_dfu`).
 
@@ -238,17 +289,45 @@ The `nRF Connect Device Manager`_ application transfers the image update files o
 
 To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the following steps:
 
-.. include:: /device_guides/nrf52/fota_update.rst
-   :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
-   :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
+.. tabs::
 
-.. include:: /device_guides/nrf52/fota_update.rst
-   :start-after: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_start
-   :end-before: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_end
+   .. tab:: MCUboot
 
-.. note::
-   If the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT` Kconfig option is enabled in the application configuration, the device rejects update image upload for the invalid slot.
-   It is recommended to enable the option if the application uses MCUboot in the direct-xip mode.
+      .. include:: /device_guides/nrf52/fota_update.rst
+         :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
+         :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
+
+      .. include:: /device_guides/nrf52/fota_update.rst
+         :start-after: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_start
+         :end-before: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_end
+
+      .. note::
+         When the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT` Kconfig option is enabled in the application configuration, the device rejects the update image upload for the invalid slot.
+         It is recommended to enable the option if the application uses MCUboot in the direct-xip mode.
+
+   .. tab:: SUIT
+
+      1. Generate the SUIT envelope by building your application with the FOTA support over Bluetooth Low Energy.
+         You can find the generated :file:`root.suit` envelope in the :file:`<build_dir>/DFU` directory.
+      #. Download the :file:`root.suit` envelope to your device.
+
+         .. note::
+            `nRF Connect for Desktop`_ does not currently support the FOTA process.
+
+      #. Use the `nRF Connect Device Manager`_ mobile app to update your device with the new firmware.
+
+         a. Ensure that you can access the :file:`root.suit` envelope from your phone or tablet.
+         #. In the mobile app, scan and select the device to update.
+         #. Switch to the :guilabel:`Image` tab and tap on :guilabel:`ADVANCED` in the upper right corner of the app.
+         #. In the **Firmware Upload** section, tap the :guilabel:`SELECT FILE` button and select the :file:`root.suit` envelope.
+         #. Tap the :guilabel:`START` button.
+         #. Wait for the DFU to finish and then verify that the application works properly.
+
+      .. note::
+         Support for SUIT updates is available starting from the following versions of the `nRF Connect Device Manager`_ mobile app:
+
+         * Version ``1.10`` on Android.
+         * Version ``1.6`` on iOS.
 
 Update image verification and application image update
 ======================================================
@@ -266,6 +345,12 @@ After the reboot, the bootloader locates the update image on the update partitio
 The image verification process ensures the integrity of the image and checks if its signature is valid.
 If verification is successful, the bootloader boots the new version of the application.
 Otherwise, the old version is used.
+
+SUIT
+----
+
+For this configuration variant, the :c:func:`suit_trigger_update` function is called to trigger an update.
+Once the update is triggered, the SUIT will install, verify, and boot the new image as specified in the manifest.
 
 .. _nrf_desktop_bootloader_serial_dfu:
 
