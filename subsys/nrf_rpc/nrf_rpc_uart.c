@@ -12,6 +12,7 @@
 #include <sys/_stdint.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/sys/util.h>
+#include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/crc.h>
 
 #include <zephyr/logging/log.h>
@@ -23,6 +24,8 @@ enum {
 	hdlc_char_escape = 0x7d,
 	hdlc_char_delimiter = 0x7e,
 };
+
+#define CRC_SIZE sizeof(uint16_t)
 
 static int hdlc_input_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
 {
@@ -44,6 +47,12 @@ static int hdlc_input_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
 
 	if (uart_tr->hdlc_state == hdlc_state_frame_found) {
 		LOG_HEXDUMP_DBG(uart_tr->frame_buffer, uart_tr->frame_len, "Received frame");
+		if (uart_tr->frame_len > CRC_SIZE) {
+			uart_tr->frame_len -= CRC_SIZE;
+		} else {
+			uart_tr->frame_len = 0;
+			uart_tr->hdlc_state = hdlc_state_unsync;
+		}
 	}
 
 	return 0;
@@ -56,11 +65,27 @@ static void work_handler(struct k_work *work)
 	uint8_t *data;
 	size_t len;
 	int ret;
+	uint16_t crc_received = 0;
+	uint16_t crc_calculated = 0;
+
 	while (!ring_buf_is_empty(&uart_tr->rx_ringbuf)) {
 		len = ring_buf_get_claim(&uart_tr->rx_ringbuf, &data, NRF_RPC_MAX_FRAME_SIZE);
 		for (size_t i = 0; i < len; i++) {
 			if (hdlc_input_byte(uart_tr, data[i]) == 0) {
+
 				if (uart_tr->hdlc_state == hdlc_state_frame_found) {
+					crc_received = sys_get_le16(uart_tr->frame_buffer +
+							      uart_tr->frame_len);
+					crc_calculated = crc16_ccitt(0xffff, uart_tr->frame_buffer,
+								     uart_tr->frame_len);
+					if (crc_calculated != crc_received) {
+						LOG_ERR("Invalid CRC, calculated %x received %x",
+							crc_calculated, crc_received);
+						uart_tr->frame_len = 0;
+						uart_tr->hdlc_state = hdlc_state_unsync;
+						return;
+					}
+
 					uart_tr->receive_callback(transport, uart_tr->frame_buffer,
 								  uart_tr->frame_len,
 								  uart_tr->receive_ctx);
@@ -171,9 +196,22 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 	return 0;
 }
 
+static void send_byte(const struct device *dev, uint8_t byte)
+{
+
+	if (byte == hdlc_char_delimiter || byte == hdlc_char_escape) {
+		uart_poll_out(dev, hdlc_char_escape);
+		byte ^= 0x20;
+	}
+
+	uart_poll_out(dev, byte);
+}
+
 static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t length)
 {
+	uint8_t crc[2];
 	LOG_HEXDUMP_DBG(data, length, "Sending frame");
+	LOG_HEXDUMP_DBG(crc, CRC_SIZE, "frame crc");
 	struct nrf_rpc_uart *uart_tr = transport->ctx;
 
 	k_sem_take(&uart_tr->uart_tx_sem, K_FOREVER);
@@ -181,15 +219,12 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 	uart_poll_out(uart_tr->uart, hdlc_char_delimiter);
 
 	for (size_t i = 0; i < length; i++) {
-		uint8_t byte = data[i];
-
-		if (data[i] == hdlc_char_delimiter || data[i] == hdlc_char_escape) {
-			uart_poll_out(uart_tr->uart, hdlc_char_escape);
-			byte ^= 0x20;
-		}
-
-		uart_poll_out(uart_tr->uart, byte);
+		send_byte(uart_tr->uart, data[i]);
 	}
+
+	sys_put_le16(crc16_ccitt(0xffff, data, length), crc);
+	send_byte(uart_tr->uart, crc[0]);
+	send_byte(uart_tr->uart, crc[1]);
 
 	uart_poll_out(uart_tr->uart, hdlc_char_delimiter);
 
