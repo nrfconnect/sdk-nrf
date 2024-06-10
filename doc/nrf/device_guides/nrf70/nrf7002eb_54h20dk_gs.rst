@@ -24,7 +24,6 @@ Limitations
 The Wi-Fi support is experimental and has the following limitations:
 
 * It only supports STA mode.
-* It only allows Wi-Fi open security.
 * It is only suitable for low-throughput applications.
 
 Pin mapping for nRF54H20 DK
