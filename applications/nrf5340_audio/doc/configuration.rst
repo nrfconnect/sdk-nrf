@@ -71,12 +71,12 @@ Adding FEM support happens when :ref:`nrf53_audio_app_building`.
 You can use one of the following options, depending on how you decide to build the application:
 
 * If you opt for :ref:`nrf53_audio_app_building_script`, add the ``--nrf21540`` to the script's building command.
-* If you opt for :ref:`nrf53_audio_app_building_standard`, add the ``-DSHIELD=nrf21540ek_fwd`` to the ``west build`` command.
+* If you opt for :ref:`nrf53_audio_app_building_standard`, add the ``-DSHIELD=nrf21540ek`` to the ``west build`` command.
   For example:
 
   .. code-block:: console
 
-     west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DSHIELD=nrf21540ek_fwd -DFILE_SUFFIX=release
+     west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DSHIELD=nrf21540ek -DFILE_SUFFIX=release
 
 To set the TX power output, use the ``CONFIG_NRF_21540_MAIN_TX_POWER`` and ``CONFIG_NRF_21540_PRI_ADV_TX_POWER`` Kconfig options.
 
