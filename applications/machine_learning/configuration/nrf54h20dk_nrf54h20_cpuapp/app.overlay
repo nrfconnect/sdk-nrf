@@ -83,3 +83,26 @@ ipc1: &cpuapp_cpuppr_ipc {
 		reg = <0x10800 0x600>;
 	};
 };
+
+/* Expand APP slot partition and remove DFU partition. */
+
+/delete-node/ &cpuapp_slot0_partition;
+/delete-node/ &cpuppr_code_partition;
+/delete-node/ &dfu_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rx_partitions {
+	cpuapp_slot0_partition: partition@a6000 {
+		reg = <0xa6000 DT_SIZE_K(512)>;
+	};
+
+	cpuppr_code_partition: partition@126000 {
+		reg = <0x126000 DT_SIZE_K(64)>;
+	};
+};
+
+&cpuapp_rw_partitions {
+	storage_partition: partition@136000 {
+		reg = < 0x136000 DT_SIZE_K(24) >;
+	};
+};
