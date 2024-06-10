@@ -390,7 +390,7 @@ Test not discoverable advertising by completing `Testing`_ and the following add
       #. Press **Button 2** to increase the audio volume.
       #. Press **Button 4** to decrease the audio volume.
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF54 DKs
 
       #. Disconnect the Android device that was used during the default `Testing`_:
 

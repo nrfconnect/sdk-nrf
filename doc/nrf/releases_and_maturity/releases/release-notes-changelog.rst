@@ -1128,6 +1128,7 @@ Documentation
   * Recommendation for the use of a :file:`VERSION` file for :ref:`ug_fw_update_image_versions_mcuboot` in the :ref:`ug_fw_update_image_versions` user guide.
   * The :ref:`ug_coremark` page.
   * The :ref:`bt_mesh_models_common_blocking_api_rule` section to the :ref:`bt_mesh_models_overview` page.
+  * Steps for nRF54 devices across all supported samples to reflect the new button and LED numbering on the nRF54H20 DK and the nRF54L15 PDK.
 
 * Updated:
 
