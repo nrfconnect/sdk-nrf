@@ -5,78 +5,6 @@
 #
 include(${CMAKE_CURRENT_LIST_DIR}/suit_utilities.cmake)
 
-# Copy input template into destination directory.
-#
-# Usage:
-#   suit_copy_input_templates(<destination_template_directory> <soure_template_path> <output_variable>)
-#
-# Parameters:
-#   'destination_template_directory' - destination directory
-#   'source_template_path' - path to the source template
-#   'output_variable' - variable to store new path to the copied template
-function(suit_copy_input_template destination_template_directory source_template_path output_variable)
-  cmake_path(GET source_template_path FILENAME source_filename)
-  set(destination_template_path "${destination_template_directory}/${source_filename}")
-  if(NOT EXISTS ${source_template_path})
-    message(SEND_ERROR "DFU: Could not find default SUIT template: '${source_template_path}'. Corrupted configuration?")
-    return()
-  endif()
-  if(NOT EXISTS ${destination_template_path})
-    # copy default template and create digest
-    configure_file(${source_template_path} ${destination_template_path} COPYONLY)
-    file(SHA256 ${destination_template_path} checksum_variable)
-    file(WRITE "${destination_template_path}.digest" ${checksum_variable})
-  endif()
-  if(NOT EXISTS "${destination_template_path}.digest")
-    # restore digest removed by user to discard warning about changes in the source template
-    file(SHA256 ${source_template_path} checksum_variable)
-    file(WRITE "${destination_template_path}.digest" ${checksum_variable})
-  endif()
-  cmake_path(GET source_template_path FILENAME copied_filename)
-  set(${output_variable} "${destination_template_directory}/${copied_filename}" PARENT_SCOPE)
-endfunction()
-
-# Check digests for template.
-#
-# Usage:
-#   suit_check_template_digest(<destination_template_directory> <template_path>)
-#
-# Parameters:
-#   'destination_template_directory' - destination directory
-#   'template_path' - path to the source template
-function(suit_check_template_digest destination_template_directory source_template_path)
-    suit_set_absolute_or_relative_path(${source_template_path} ${PROJECT_BINARY_DIR} source_template_path)
-    if(NOT EXISTS ${source_template_path})
-      message(SEND_ERROR "DFU: Could not find default SUIT template: '${source_template_path}'. Corrupted configuration?")
-      return()
-    endif()
-    cmake_path(GET source_template_path FILENAME source_filename)
-    set(input_file "${destination_template_directory}/${source_filename}")
-
-    file(SHA256 ${source_template_path} CHECKSUM_DEFAULT)
-    set(DIGEST_STORAGE "${input_file}.digest")
-    file(STRINGS ${DIGEST_STORAGE} CHECKSUM_STORED)
-    if(NOT ${CHECKSUM_DEFAULT} STREQUAL ${CHECKSUM_STORED})
-      message(SEND_ERROR "DFU: Outdated input SUIT template detected - consider update.\n"
-      "Some changes has been done to the SUIT_ENVELOPE_DEFAULT_TEMPLATE which was used to create your ${input_file}.\n"
-      "Please review these changes and remove ${input_file}.digest file to bypass this error.\n"
-      )
-    endif()
-endfunction()
-
-# Create digest for input file.
-#
-# Usage:
-#   suit_create_digest(<input_file> <output_file>)
-#
-# Parameters:
-#   'input_file' - input file to calculate digest on
-#   'output_file' - output file to store calculated digest
-function(suit_create_digest input_file output_file)
-  file(SHA256 ${input_file} CHECKSUM_VARIABLE)
-  file(WRITE ${output_file} ${CHECKSUM_VARIABLE})
-endfunction()
-
 # Resolve passed absolute or relative path to real path.
 #
 # Usage:
@@ -188,16 +116,10 @@ function(suit_create_package)
   set(SUIT_OUTPUT_ARTIFACTS_TARGETS)
   set(CORE_ARGS)
   set(STORAGE_BOOT_ARGS)
+  sysbuild_get(app_config_dir IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_CONFIG_DIR CACHE)
 
-  suit_set_absolute_or_relative_path(${SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION} ${PROJECT_BINARY_DIR} INPUT_TEMPLATES_DIRECTORY)
-  set(ENVELOPE_SHALL_BE_SIGNED ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
-  if(NOT DEFINED west_realpath)
-    # Twister build - ignore and store in the build folder!
-    set(SB_CONFIG_SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION "./")
-  endif()
-  sysbuild_get(ENVELOPE_SHALL_BE_SIGNED IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_ENVELOPE_SIGN KCONFIG)
-  if(NOT DEFINED ENVELOPE_SHALL_BE_SIGNED)
-    set(ENVELOPE_SHALL_BE_SIGNED FALSE)
+  if(NOT DEFINED SB_CONFIG_SUIT_ENVELOPE_SIGN)
+    set(SB_CONFIG_SUIT_ENVELOPE_SIGN FALSE)
   endif()
 
   list(APPEND CORE_ARGS
@@ -232,7 +154,7 @@ function(suit_create_package)
     endif()
 
     sysbuild_get(INPUT_ENVELOPE_JINJA_FILE IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TEMPLATE KCONFIG)
-    suit_set_absolute_or_relative_path(${INPUT_ENVELOPE_JINJA_FILE} ${PROJECT_BINARY_DIR} INPUT_ENVELOPE_JINJA_FILE)
+    suit_set_absolute_or_relative_path(${INPUT_ENVELOPE_JINJA_FILE} ${app_config_dir} INPUT_ENVELOPE_JINJA_FILE)
     sysbuild_get(target IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
     sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
     sysbuild_get(BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
@@ -240,36 +162,31 @@ function(suit_create_package)
       message(STATUS "DFU: Input SUIT template for ${image} is not defined. Skipping.")
       continue()
     endif()
-    suit_copy_input_template(${INPUT_TEMPLATES_DIRECTORY} "${INPUT_ENVELOPE_JINJA_FILE}" ENVELOPE_JINJA_FILE)
-    if(NOT DEFINED ENVELOPE_JINJA_FILE)
+    if(NOT DEFINED INPUT_ENVELOPE_JINJA_FILE)
       message(SEND_ERROR "DFU: Creation of SUIT artifacts failed.")
       return()
     endif()
-    suit_check_template_digest(${INPUT_TEMPLATES_DIRECTORY} "${INPUT_ENVELOPE_JINJA_FILE}")
 
     set(ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${target}.yaml)
     set(ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${target}.suit)
 
-    suit_render_template(${ENVELOPE_JINJA_FILE} ${ENVELOPE_YAML_FILE} "${CORE_ARGS}")
-    suit_create_envelope(${ENVELOPE_YAML_FILE} ${ENVELOPE_SUIT_FILE} ${ENVELOPE_SHALL_BE_SIGNED})
+    suit_render_template(${INPUT_ENVELOPE_JINJA_FILE} ${ENVELOPE_YAML_FILE} "${CORE_ARGS}")
+    suit_create_envelope(${ENVELOPE_YAML_FILE} ${ENVELOPE_SUIT_FILE} ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
     list(APPEND STORAGE_BOOT_ARGS
       --input-envelope ${ENVELOPE_SUIT_FILE}
     )
   endforeach()
 
   set(INPUT_ROOT_ENVELOPE_JINJA_FILE ${SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE})
-  suit_set_absolute_or_relative_path(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${PROJECT_BINARY_DIR} INPUT_ROOT_ENVELOPE_JINJA_FILE)
 
   # create root envelope if defined
   if(DEFINED INPUT_ROOT_ENVELOPE_JINJA_FILE AND NOT INPUT_ROOT_ENVELOPE_JINJA_FILE STREQUAL "")
     set(ROOT_NAME ${SB_CONFIG_SUIT_ENVELOPE_ROOT_ARTIFACT_NAME})
-    suit_set_absolute_or_relative_path(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${PROJECT_BINARY_DIR} INPUT_ROOT_ENVELOPE_JINJA_FILE)
-    suit_copy_input_template(${INPUT_TEMPLATES_DIRECTORY} "${INPUT_ROOT_ENVELOPE_JINJA_FILE}" ROOT_ENVELOPE_JINJA_FILE)
-    suit_check_template_digest(${INPUT_TEMPLATES_DIRECTORY} "${INPUT_ROOT_ENVELOPE_JINJA_FILE}")
+    suit_set_absolute_or_relative_path(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${app_config_dir} INPUT_ROOT_ENVELOPE_JINJA_FILE)
     set(ROOT_ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${ROOT_NAME}.yaml)
     set(ROOT_ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${ROOT_NAME}.suit)
-    suit_render_template(${ROOT_ENVELOPE_JINJA_FILE} ${ROOT_ENVELOPE_YAML_FILE} "${CORE_ARGS}")
-    suit_create_envelope(${ROOT_ENVELOPE_YAML_FILE} ${ROOT_ENVELOPE_SUIT_FILE} ${ENVELOPE_SHALL_BE_SIGNED})
+    suit_render_template(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${ROOT_ENVELOPE_YAML_FILE} "${CORE_ARGS}")
+    suit_create_envelope(${ROOT_ENVELOPE_YAML_FILE} ${ROOT_ENVELOPE_SUIT_FILE} ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
       list(APPEND STORAGE_BOOT_ARGS
         --input-envelope ${ROOT_ENVELOPE_SUIT_FILE}
       )
