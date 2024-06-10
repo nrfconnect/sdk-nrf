@@ -24,41 +24,134 @@ Syntax
 
 ::
 
-   #XCARRIEREVT: <evt_type>,<info>[,<path>]
-   <data>
+   #XCARRIEREVT: <evt_type>,<param1>[,<param2>[,<param3>]..]
 
-* The ``<evt_type>`` value is an integer indicating the type of the event.
-  It can return the following values:
+The ``<evt_type>`` value is an integer indicating the type of the event, followed by a variable number of parameters depending on the event type.
+These may be the following:
 
-  * ``1`` - Request to set the modem to full functional mode.
-  * ``2`` - Request to set the modem to flight functional mode.
-  * ``3`` - Request to set the modem to minimum functional mode.
-  * ``4`` - Bootstrap sequence complete.
-  * ``5`` - Device registered successfully to the device management servers.
-  * ``6`` - Connection to the server failed.
-  * ``7`` - Firmware update started.
-  * ``8`` - Firmware updated successfully.
-  * ``9`` - Request to perform an application reboot.
-  * ``10`` - Modem domain event received.
-  * ``11`` - Data received through the App Data Container object.
-  * ``12`` - Request to initialize the modem.
-  * ``13`` - Request to shut down the modem.
-  * ``20`` - LwM2M carrier library error occurred.
+* ``#XCARRIEREVT: 1,<status>``
 
-* The ``<info>`` value is an integer providing additional information about the event.
-  It can return the following values:
+  Request to set the modem to full functional mode.
+  ``<status>`` returns two possible values:
 
-  * ``0`` - Success or nothing to report.
-  * *Negative value* - Failure or request to defer an application reboot or modem functional mode change.
-  * *Positive value* - Number of bytes received through the App Data Container object or the Binary App Data Container object.
+  * ``0`` - Request handled successfully.
+  * ``-1`` - Request handling was deferred and must be performed by the application at its earliest convenience.
 
-* The ``<path>`` value is a string only present in an event of type ``11``.
-  It describes the URI path of the resource or the resource instance that received the data.
+* ``#XCARRIEREVT: 2,<status>``
 
-* The ``<data>`` parameter is a string that contains the data received through the App Data Container object or the Binary App Data container object.
+  Request to set the modem to flight functional mode.
+  ``<status>`` returns two possible values:
 
-The events of type ``1``, ``2`` and ``3`` will typically be followed by an error event of type ``20``.
-This indicates to the application that the library is waiting for the appropriate modem functional mode change.
+  * ``0`` - Request handled successfully.
+  * ``-1`` - Request handling was deferred and must be performed by the application at its earliest convenience.
+
+* ``#XCARRIEREVT: 3,<status>``
+
+  Request to set the modem to minimum functional mode.
+  ``<status>`` returns two possible values:
+
+  * ``0`` - Request handled successfully.
+  * ``-1`` - Request handling was deferred and must be performed by the application at its earliest convenience.
+
+* ``#XCARRIEREVT: 4,0``
+
+  Bootstrap sequence complete.
+
+* ``#XCARRIEREVT: 5,0``
+
+  Device registered successfully to the device management servers.
+
+* ``#XCARRIEREVT: 6,0``
+
+  Device deregistered successfully from the device management servers.
+
+* ``#XCARRIEREVT: 7,<reason>,<timeout>``
+
+  Client operation has been deferred.
+
+  ``<reason>`` indicates the reason for the connection deferral and can return the following values:
+
+  * ``0`` - - :c:macro:`LWM2M_CARRIER_DEFERRED_NO_REASON`.
+  * ``1`` - - :c:macro:`LWM2M_CARRIER_DEFERRED_PDN_ACTIVATE`.
+  * ``2`` - - :c:macro:`LWM2M_CARRIER_DEFERRED_BOOTSTRAP_NO_ROUTE`.
+  * ``3`` - - :c:macro:`LWM2M_CARRIER_DEFERRED_BOOTSTRAP_CONNECT`.
+  * ``4`` - - :c:macro:`LWM2M_CARRIER_DEFERRED_BOOTSTRAP_SEQUENCE`.
+  * ``5`` - - :c:macro:`LWM2M_CARRIER_DEFERRED_SERVER_NO_ROUTE`.
+  * ``6`` - - :c:macro:`LWM2M_CARRIER_DEFERRED_SERVER_CONNECT`.
+  * ``7`` - - :c:macro:`LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION`.
+  * ``8`` - - :c:macro:`LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE`.
+  * ``9`` - - :c:macro:`LWM2M_CARRIER_DEFERRED_SIM_MSISDN`.
+
+  ``<timeout>`` indicates the time in seconds before the operation is resumed.
+
+* ``#XCARRIEREVT: 8,0``
+
+  Firmware update started.
+
+* ``#XCARRIEREVT: 9,0``
+
+  Firmware updated successfully.
+
+* ``#XCARRIEREVT: 10,<status>``
+
+  Request to perform an application reboot.
+
+  ``<status>`` returns two possible values:
+
+  * ``0`` - Request handled successfully.
+  * ``-1`` - Request handling was deferred and must be performed by the application at its earliest convenience.
+
+* ``#XCARRIEREVT: 11,0``
+
+  Modem domain event received.
+
+* ``#XCARRIEREVT: 12,<type>,<URI>[,<data_length>\r\n<data>]``
+
+  Operation performed on the Binary App Data Container object (ID:19) or the App Data Container object (ID: 10250).
+
+  ``<type>`` indicates the type of operation performed by the device management server:
+
+  * ``0`` - A write request.
+  * ``1`` - An observation start request.
+  * ``2`` - An observation stop request.
+
+  ``<URI>`` is a plain-text string in double quotes that describes the URI path that was targeted by the operation.
+
+  ``<data_length>`` and ``<data>`` parameters are only applicable to notifications of ``<type>`` 0 (write).
+
+  ``<data_length>`` indicates the length in bytes of ``<data>``.
+
+  ``<data>`` is a hexadecimal string in double quotes that contains the data written by the device management server to the indicated ``<URI>`` path.
+
+* ``#XCARRIEREVT: 13,0``
+
+  Request to initialize the modem.
+
+* ``#XCARRIEREVT: 14,0``
+
+  Request to shut down the modem.
+
+* ``#XCARRIEREVT: 15,0``
+
+  The device error codes have been reset by the server.
+
+* ``#XCARRIEREVT: 20,<type>,<value>``
+
+  LwM2M carrier library error occurred.
+
+  ``<type>`` indicates the type of error and can return the following values:
+
+  * ``0`` - - :c:macro:`LWM2M_CARRIER_ERROR_NO_ERROR`.
+  * ``1`` - - :c:macro:`LWM2M_CARRIER_ERROR_LTE_LINK_UP_FAIL`.
+  * ``2`` - - :c:macro:`LWM2M_CARRIER_ERROR_LTE_LINK_DOWN_FAIL`.
+  * ``3`` - - :c:macro:`LWM2M_CARRIER_ERROR_BOOTSTRAP`.
+  * ``4`` - - :c:macro:`LWM2M_CARRIER_ERROR_FOTA_FAIL`.
+  * ``5`` - - :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION`.
+  * ``6`` - - :c:macro:`LWM2M_CARRIER_ERROR_INIT`.
+  * ``7`` - - :c:macro:`LWM2M_CARRIER_ERROR_RUN`.
+  * ``8`` - - :c:macro:`LWM2M_CARRIER_ERROR_CONNECT`.
+
+  ``<value>`` indicates the error value returned in this event.
 
 LwM2M Carrier library #XCARRIER
 ===============================
@@ -79,10 +172,18 @@ Syntax
 
 The ``<cmd>`` command is a string, and can be used as follows:
 
+* ``AT#XCARRIER="app_data_create",<obj_inst_id>,<res_inst_id>``
+
+  Create an empty resource instance of the Data resource (ID: 0) of the Binary App Data Containet object (ID: 19).
+
+  ``<obj_inst_id>`` indicates the target object instance.
+
+  ``<res_inst_id>`` indicates the target resource instance.
+
 * ``AT#XCARRIER="app_data_set"[,<data>][,<obj_inst_id>,<res_inst_id>]``
 
   Put the value in ``<data>`` into the indicated path.
-  ``<data>`` must be an opaque string in double quotes, unless ``slm_data_mode`` is enabled.
+  ``<data>`` must be a hexadecimal string in double quotes, unless ``slm_data_mode`` is enabled.
 
   * If ``<obj_inst_id>`` and ``<res_inst_id>`` are specified, the data is set in an instance of the Data resource (ID: 0) of the Binary App Data Container object (ID: 19).
     The URI path of the resource instance is indicated as ``/19/<obj_inst_id>/0/<res_inst_id>``.
@@ -107,6 +208,10 @@ The ``<cmd>`` command is a string, and can be used as follows:
   Refer to the ``AT#XCARRIER="power_sources"`` command for information regarding the supported power sources.
   ``<current>`` must be an integer value specified in milliamperes (mA).
 
+* ``AT#XCARRIER="dereg"``
+
+  Request to send a Deregister request to the server.
+
 * ``AT#XCARRIER="error","add|remove",<error>``
 
   Update the Error Code resource (ID: 11) of the Device Object (ID: 3) by adding or removing an individual error.
@@ -126,7 +231,7 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XCARRIER="log_data",<data>``
 
   Put the value in ``<data>`` into the LogData resource (ID: 4014) of the default EventLog object (ID: 20) instance.
-  ``<data>`` must be an opaque string in double quotes.
+  ``<data>`` must be a hexadecimal string in double quotes.
 
 * ``AT#XCARRIER="memory_free","read|write"[,<memory>]``
 
@@ -173,6 +278,11 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XCARRIER="reboot"``
 
   Request to reboot the device.
+  This allows the library to perform any necessary cleanup before the application resets the device.
+
+* ``AT#XCARRIER="regup"``
+
+  Request to send a Register request (or Registration Update, as dictated by the lifetime) to the server.
 
 * ``AT#XCARRIER="send",<obj_id>,<obj_inst_id>,<res_id>[,<res_inst_id>]``
 
@@ -319,10 +429,17 @@ The ``<cmd>`` command is a string, and can be used as follows:
   ``<apn>`` must be a string in double quotes.
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` Kconfig option.
 
+* ``AT#XCARRIERCFG="auto_register"[,<0|1>]``
+
+  Set a flag to automatically register to the device management server when attaching to the network.
+  When this configuration is disabled, the user must trigger the registration manually through the ``AT#XCARRIER="regup"`` command after recovering network coverage.
+  This command accepts two possible input parameters: ``0`` to disable or ``1`` to enable.
+
 * ``AT#XCARRIERCFG="auto_startup"[,<0|1>]``
 
   Set a flag to automatically apply the enabled settings to the LwM2M carrier library configuration and connect to the device management network.
   This command accepts two possible input parameters: ``0`` to disable or ``1`` to enable.
+  This command is not available when the :kconfig:option:`CONFIG_SLM_CARRIER_AUTO_STARTUP` Kconfig option is enabled.
 
 * ``AT#XCARRIERCFG="bootstrap_smartcard"[,<0|1>]``
 
@@ -435,17 +552,13 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XCARRIERCFG="binding"[,<binding>]``
 
   Configure the binding over which the LwM2M carrier library is to connect to the device management network.
-  ``<binding>`` must be a string in double quotes.
-  It accepts the following values:
+  ``<binding>`` must be a string in double quotes. It accepts any combination of the following values:
 
   * ``"U"`` - :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_U`.
   * ``"N"`` - :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_N`.
 
+  Additionally, an empty ``<binding>`` resets the configuration to default setting (factory configuration).
   For details, see the :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE` Kconfig option.
-
-* ``AT#XCARRIERCFG="server_enable"[,<0|1>]``
-
-  Set flag to apply the stored settings to the server Kconfig options (see the :ref:`server_options_lwm2m` section of the library's documentation).
 
 * ``AT#XCARRIERCFG="is_bootstrap"[,<0|1>]``
 

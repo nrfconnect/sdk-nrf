@@ -54,6 +54,9 @@ static void print_err(const lwm2m_carrier_event_t *evt)
 		 "Unhandled liblwm2m_carrier error");
 
 	LOG_ERR("LWM2M_CARRIER_EVENT_ERROR: %s, reason %d", strerr[err->type], err->value);
+
+	rsp_send("\r\n#XCARRIEREVT: %u,%u,%d\r\n",
+		 LWM2M_CARRIER_EVENT_ERROR, err->type, err->value);
 }
 
 static void print_deferred(const lwm2m_carrier_event_t *evt)
@@ -88,6 +91,9 @@ static void print_deferred(const lwm2m_carrier_event_t *evt)
 
 	LOG_INF("LWM2M_CARRIER_EVENT_DEFERRED: reason %s, timeout %d seconds",
 		strdef[def->reason], def->timeout);
+
+	rsp_send("\r\n#XCARRIEREVT: %u,%u,%d\r\n",
+		 LWM2M_CARRIER_EVENT_DEFERRED, def->reason, def->timeout);
 }
 
 static void on_event_app_data(const lwm2m_carrier_event_t *event)
@@ -176,7 +182,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		break;
 	case LWM2M_CARRIER_EVENT_DEFERRED:
 		print_deferred(event);
-		break;
+		return 0;
 	case LWM2M_CARRIER_EVENT_FOTA_START:
 		LOG_DBG("LWM2M_CARRIER_EVENT_FOTA_START");
 		fota_started = true;
@@ -209,7 +215,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		break;
 	case LWM2M_CARRIER_EVENT_ERROR:
 		print_err(event);
-		break;
+		return 0;
 	}
 
 	rsp_send("\r\n#XCARRIEREVT: %d,%d\r\n", event->type, err);
