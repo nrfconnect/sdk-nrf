@@ -406,7 +406,7 @@ Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet --sysbuild -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet --sysbuild -- -Ddirect_test_mode_SHIELD=nrf21540ek -DFILE_SUFFIX=usb
 
 .. _dtm_testing:
 

@@ -31,7 +31,7 @@ tests:
   sample.bluetooth.direct_test_mode.nrf5340_nrf21540:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf21540ek
+    extra_args: direct_test_mode_SHIELD=nrf21540ek remote_shell_SHIELD=nrf21540ek_fwd
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -47,7 +47,9 @@ tests:
   sample.bluetooth.direct_test_mode.nrf5340_nrf21540_usb:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf21540ek FILE_SUFFIX=usb
+    extra_args: direct_test_mode_SHIELD=nrf21540ek
+      remote_shell_SHIELD=nrf21540ek_fwd
+      FILE_SUFFIX=usb
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -55,7 +57,7 @@ tests:
   sample.bluetooth.direct_test_mode.nrf5340_nrf21540.no_automatic_power:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf21540ek
+    extra_args: direct_test_mode_SHIELD=nrf21540ek remote_shell_SHIELD=nrf21540ek_fwd
     extra_configs:
       - CONFIG_DTM_POWER_CONTROL_AUTOMATIC=n
     integration_platforms:
