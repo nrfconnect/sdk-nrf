@@ -237,8 +237,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_get_name_out, BT_GET_NAME_OUT_RPC_CMD,
 #endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) */
 
 #if defined(CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC)
-void bt_get_appearance_rpc_handler(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-				   void *handler_data)
+static void bt_get_appearance_rpc_handler(const struct nrf_rpc_group *group,
+					  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	uint16_t appearance;
 
@@ -259,8 +259,8 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_get_appearance, BT_GET_APPEARANCE_RPC_CMD,
 			 bt_get_appearance_rpc_handler, NULL);
 
-void bt_set_appearance_rpc_handler(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-				   void *handler_data)
+static void bt_set_appearance_rpc_handler(const struct nrf_rpc_group *group,
+					  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	int result;
 	uint16_t appearance;
@@ -440,7 +440,7 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_id_delete, BT_ID_DELETE_RPC_CMD,
 			 bt_id_delete_rpc_handler, NULL);
 
-void bt_data_dec(struct ser_scratchpad *scratchpad, struct bt_data *data)
+static void bt_data_dec(struct ser_scratchpad *scratchpad, struct bt_data *data)
 {
 	struct nrf_rpc_cbor_ctx *ctx = scratchpad->ctx;
 
@@ -449,7 +449,8 @@ void bt_data_dec(struct ser_scratchpad *scratchpad, struct bt_data *data)
 	data->data = ser_decode_buffer_into_scratchpad(scratchpad, NULL);
 }
 
-void bt_le_scan_param_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_scan_param *data)
+#if defined(CONFIG_BT_OBSERVER)
+static void bt_le_scan_param_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_scan_param *data)
 {
 	data->type = ser_decode_uint(ctx);
 	data->options = ser_decode_uint(ctx);
@@ -459,28 +460,25 @@ void bt_le_scan_param_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_scan_param 
 	data->interval_coded = ser_decode_uint(ctx);
 	data->window_coded = ser_decode_uint(ctx);
 }
+#endif /* defined(CONFIG_BT_OBSERVER) */
 
-
-size_t net_buf_simple_sp_size(struct net_buf_simple *data)
+static size_t net_buf_simple_sp_size(struct net_buf_simple *data)
 {
 	return SCRATCHPAD_ALIGN(data->len);
 }
 
-size_t net_buf_simple_buf_size(struct net_buf_simple *data)
+static size_t net_buf_simple_buf_size(struct net_buf_simple *data)
 {
 	return 3 + data->len;
 }
 
-void net_buf_simple_enc(struct nrf_rpc_cbor_ctx *encoder, struct net_buf_simple *data)
+static void net_buf_simple_enc(struct nrf_rpc_cbor_ctx *encoder, struct net_buf_simple *data)
 {
 	ser_encode_buffer(encoder, data->data, data->len);
 }
 
-
-static inline void bt_le_scan_cb_t_callback(const bt_addr_le_t *addr,
-					    int8_t rssi, uint8_t adv_type,
-					    struct net_buf_simple *buf,
-					    uint32_t callback_slot)
+static void bt_le_scan_cb_t_callback(const bt_addr_le_t *addr, int8_t rssi, uint8_t adv_type,
+				     struct net_buf_simple *buf, uint32_t callback_slot)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t scratchpad_size = 0;
@@ -500,10 +498,9 @@ static inline void bt_le_scan_cb_t_callback(const bt_addr_le_t *addr,
 	net_buf_simple_enc(&ctx, buf);
 	ser_encode_callback_call(&ctx, callback_slot);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_SCAN_CB_T_CALLBACK_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_SCAN_CB_T_CALLBACK_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
-
 
 CBKPROXY_HANDLER(bt_le_scan_cb_t_encoder, bt_le_scan_cb_t_callback,
 		 (const bt_addr_le_t *addr, int8_t rssi, uint8_t adv_type,
@@ -511,7 +508,7 @@ CBKPROXY_HANDLER(bt_le_scan_cb_t_encoder, bt_le_scan_cb_t_callback,
 
 #if defined(CONFIG_BT_BROADCASTER)
 
-void bt_le_adv_param_dec(struct ser_scratchpad *scratchpad, struct bt_le_adv_param *data)
+static void bt_le_adv_param_dec(struct ser_scratchpad *scratchpad, struct bt_le_adv_param *data)
 {
 	struct nrf_rpc_cbor_ctx *ctx = scratchpad->ctx;
 
@@ -638,7 +635,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_adv_stop, BT_LE_ADV_STOP_RPC_CMD,
 
 #endif /* defined(CONFIG_BT_BROADCASTER) */
 
-size_t bt_le_oob_buf_size(const struct bt_le_oob *data)
+static size_t bt_le_oob_buf_size(const struct bt_le_oob *data)
 {
 	size_t buffer_size_max = 13;
 
@@ -646,10 +643,9 @@ size_t bt_le_oob_buf_size(const struct bt_le_oob *data)
 	buffer_size_max += 16 * sizeof(uint8_t);
 	buffer_size_max += 16 * sizeof(uint8_t);
 	return buffer_size_max;
-
 }
 
-void bt_le_oob_enc(struct nrf_rpc_cbor_ctx *encoder, const struct bt_le_oob *data)
+static void bt_le_oob_enc(struct nrf_rpc_cbor_ctx *encoder, const struct bt_le_oob *data)
 {
 	ser_encode_buffer(encoder, &data->addr, sizeof(bt_addr_le_t));
 	ser_encode_buffer(encoder, data->le_sc_data.r, 16 * sizeof(uint8_t));
@@ -664,19 +660,19 @@ K_MEM_SLAB_DEFINE(bt_rpc_ext_adv_cb_cache,
 		  sizeof(void *));
 static struct bt_le_ext_adv_cb *ext_adv_cb_cache_map[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
 
-void bt_le_ext_adv_sent_info_enc(struct nrf_rpc_cbor_ctx *encoder,
-	const struct bt_le_ext_adv_sent_info *data)
+static void bt_le_ext_adv_sent_info_enc(struct nrf_rpc_cbor_ctx *encoder,
+					const struct bt_le_ext_adv_sent_info *data)
 {
 	ser_encode_uint(encoder, data->num_sent);
 }
 
-void bt_le_ext_adv_connected_info_enc(struct nrf_rpc_cbor_ctx *encoder,
-				      const struct bt_le_ext_adv_connected_info *data)
+static void bt_le_ext_adv_connected_info_enc(struct nrf_rpc_cbor_ctx *encoder,
+					     const struct bt_le_ext_adv_connected_info *data)
 {
 	bt_rpc_encode_bt_conn(encoder, data->conn);
 }
 
-size_t bt_le_ext_adv_scanned_info_sp_size(const struct bt_le_ext_adv_scanned_info *data)
+static size_t bt_le_ext_adv_scanned_info_sp_size(const struct bt_le_ext_adv_scanned_info *data)
 {
 	size_t scratchpad_size = 0;
 
@@ -685,7 +681,7 @@ size_t bt_le_ext_adv_scanned_info_sp_size(const struct bt_le_ext_adv_scanned_inf
 	return scratchpad_size;
 }
 
-size_t bt_le_ext_adv_scanned_info_buf_size(const struct bt_le_ext_adv_scanned_info *data)
+static size_t bt_le_ext_adv_scanned_info_buf_size(const struct bt_le_ext_adv_scanned_info *data)
 {
 	size_t buffer_size_max = 3;
 
@@ -694,16 +690,15 @@ size_t bt_le_ext_adv_scanned_info_buf_size(const struct bt_le_ext_adv_scanned_in
 	return buffer_size_max;
 }
 
-void bt_le_ext_adv_scanned_info_enc(struct nrf_rpc_cbor_ctx *encoder,
-				    const struct bt_le_ext_adv_scanned_info *data)
+static void bt_le_ext_adv_scanned_info_enc(struct nrf_rpc_cbor_ctx *encoder,
+					   const struct bt_le_ext_adv_scanned_info *data)
 {
 	ser_encode_buffer(encoder, data->addr, sizeof(bt_addr_le_t));
 }
 
-static inline
-void bt_le_ext_adv_cb_sent_callback(struct bt_le_ext_adv *adv,
-				    struct bt_le_ext_adv_sent_info *info,
-				    uint32_t callback_slot)
+static void bt_le_ext_adv_cb_sent_callback(struct bt_le_ext_adv *adv,
+					   struct bt_le_ext_adv_sent_info *info,
+					   uint32_t callback_slot)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 10;
@@ -714,18 +709,17 @@ void bt_le_ext_adv_cb_sent_callback(struct bt_le_ext_adv *adv,
 	bt_le_ext_adv_sent_info_enc(&ctx, info);
 	ser_encode_callback_call(&ctx, callback_slot);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_EXT_ADV_CB_SENT_CALLBACK_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_EXT_ADV_CB_SENT_CALLBACK_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
 CBKPROXY_HANDLER(bt_le_ext_adv_cb_sent_encoder, bt_le_ext_adv_cb_sent_callback,
 		 (struct bt_le_ext_adv *adv, struct bt_le_ext_adv_sent_info *info),
 		 (adv, info));
 
-static inline
-void bt_le_ext_adv_cb_connected_callback(struct bt_le_ext_adv *adv,
-					 struct bt_le_ext_adv_connected_info *info,
-					 uint32_t callback_slot)
+static void bt_le_ext_adv_cb_connected_callback(struct bt_le_ext_adv *adv,
+						struct bt_le_ext_adv_connected_info *info,
+						uint32_t callback_slot)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 11;
@@ -736,8 +730,8 @@ void bt_le_ext_adv_cb_connected_callback(struct bt_le_ext_adv *adv,
 	bt_le_ext_adv_connected_info_enc(&ctx, info);
 	ser_encode_callback_call(&ctx, callback_slot);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_EXT_ADV_CB_CONNECTED_CALLBACK_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_EXT_ADV_CB_CONNECTED_CALLBACK_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
 CBKPROXY_HANDLER(bt_le_ext_adv_cb_connected_encoder,
@@ -745,10 +739,9 @@ CBKPROXY_HANDLER(bt_le_ext_adv_cb_connected_encoder,
 		 (struct bt_le_ext_adv *adv, struct bt_le_ext_adv_connected_info *info),
 		 (adv, info));
 
-static inline
-void bt_le_ext_adv_cb_scanned_callback(struct bt_le_ext_adv *adv,
-				       struct bt_le_ext_adv_scanned_info *info,
-				       uint32_t callback_slot)
+static void bt_le_ext_adv_cb_scanned_callback(struct bt_le_ext_adv *adv,
+					      struct bt_le_ext_adv_scanned_info *info,
+					      uint32_t callback_slot)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t scratchpad_size = 0;
@@ -765,8 +758,8 @@ void bt_le_ext_adv_cb_scanned_callback(struct bt_le_ext_adv *adv,
 	bt_le_ext_adv_scanned_info_enc(&ctx, info);
 	ser_encode_callback_call(&ctx, callback_slot);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_EXT_ADV_CB_SCANNED_CALLBACK_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_EXT_ADV_CB_SCANNED_CALLBACK_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
 CBKPROXY_HANDLER(bt_le_ext_adv_cb_scanned_encoder,
@@ -774,14 +767,13 @@ CBKPROXY_HANDLER(bt_le_ext_adv_cb_scanned_encoder,
 		 (struct bt_le_ext_adv *adv, struct bt_le_ext_adv_scanned_info *info),
 		 (adv, info));
 
-void bt_le_ext_adv_cb_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_ext_adv_cb *data)
+static void bt_le_ext_adv_cb_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_ext_adv_cb *data)
 {
-	data->sent = (bt_le_ext_adv_cb_sent)ser_decode_callback(ctx,
-								 bt_le_ext_adv_cb_sent_encoder);
-	data->connected = (bt_le_ext_adv_cb_connected)ser_decode_callback(ctx,
-								bt_le_ext_adv_cb_connected_encoder);
-	data->scanned = (bt_le_ext_adv_cb_scanned)ser_decode_callback(ctx,
-								bt_le_ext_adv_cb_scanned_encoder);
+	data->sent = (bt_le_ext_adv_cb_sent)ser_decode_callback(ctx, bt_le_ext_adv_cb_sent_encoder);
+	data->connected = (bt_le_ext_adv_cb_connected)ser_decode_callback(
+		ctx, bt_le_ext_adv_cb_connected_encoder);
+	data->scanned = (bt_le_ext_adv_cb_scanned)ser_decode_callback(
+		ctx, bt_le_ext_adv_cb_scanned_encoder);
 }
 
 static void bt_le_ext_adv_create_rpc_handler(const struct nrf_rpc_group *group,
@@ -845,8 +837,8 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_create, BT_LE_EXT_ADV_CREATE_RPC_CMD,
 			 bt_le_ext_adv_create_rpc_handler, NULL);
 
-
-void bt_le_ext_adv_start_param_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_ext_adv_start_param *data)
+static void bt_le_ext_adv_start_param_dec(struct nrf_rpc_cbor_ctx *ctx,
+					  struct bt_le_ext_adv_start_param *data)
 {
 	data->timeout = ser_decode_uint(ctx);
 	data->num_events = ser_decode_uint(ctx);
@@ -1039,7 +1031,7 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_get_index, BT_LE_EXT_ADV_GET_INDEX_RPC_CMD,
 			 bt_le_ext_adv_get_index_rpc_handler, NULL);
 
-void bt_le_ext_adv_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_ext_adv_info *data)
+static void bt_le_ext_adv_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_ext_adv_info *data)
 {
 	data->id = ser_decode_uint(ctx);
 	data->tx_power = ser_decode_int(ctx);
@@ -1154,7 +1146,7 @@ static void bt_le_scan_stop_rpc_handler(const struct nrf_rpc_group *group,
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_scan_stop, BT_LE_SCAN_STOP_RPC_CMD,
 			 bt_le_scan_stop_rpc_handler, NULL);
 
-size_t bt_le_scan_recv_info_sp_size(const struct bt_le_scan_recv_info *data)
+static size_t bt_le_scan_recv_info_sp_size(const struct bt_le_scan_recv_info *data)
 {
 	size_t scratchpad_size = 0;
 
@@ -1163,7 +1155,7 @@ size_t bt_le_scan_recv_info_sp_size(const struct bt_le_scan_recv_info *data)
 	return scratchpad_size;
 }
 
-size_t bt_le_scan_recv_info_buf_size(const struct bt_le_scan_recv_info *data)
+static size_t bt_le_scan_recv_info_buf_size(const struct bt_le_scan_recv_info *data)
 {
 	size_t buffer_size_max = 21;
 
@@ -1172,8 +1164,8 @@ size_t bt_le_scan_recv_info_buf_size(const struct bt_le_scan_recv_info *data)
 	return buffer_size_max;
 }
 
-void bt_le_scan_recv_info_enc(struct nrf_rpc_cbor_ctx *encoder,
-			      const struct bt_le_scan_recv_info *data)
+static void bt_le_scan_recv_info_enc(struct nrf_rpc_cbor_ctx *encoder,
+				     const struct bt_le_scan_recv_info *data)
 {
 	ser_encode_buffer(encoder, data->addr, sizeof(bt_addr_le_t));
 	ser_encode_uint(encoder, data->sid);
@@ -1186,8 +1178,7 @@ void bt_le_scan_recv_info_enc(struct nrf_rpc_cbor_ctx *encoder,
 	ser_encode_uint(encoder, data->secondary_phy);
 }
 
-void bt_le_scan_cb_recv(const struct bt_le_scan_recv_info *info,
-			struct net_buf_simple *buf)
+static void bt_le_scan_cb_recv(const struct bt_le_scan_recv_info *info, struct net_buf_simple *buf)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t scratchpad_size = 0;
@@ -1205,19 +1196,19 @@ void bt_le_scan_cb_recv(const struct bt_le_scan_recv_info *info,
 	bt_le_scan_recv_info_enc(&ctx, info);
 	net_buf_simple_enc(&ctx, buf);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_SCAN_CB_RECV_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_SCAN_CB_RECV_RPC_CMD, &ctx, ser_rsp_decode_void,
+				NULL);
 }
 
-void bt_le_scan_cb_timeout(void)
+static void bt_le_scan_cb_timeout(void)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 0;
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_SCAN_CB_TIMEOUT_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_SCAN_CB_TIMEOUT_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
 static struct bt_le_scan_cb scan_cb = {
@@ -1409,7 +1400,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_unpair, BT_UNPAIR_RPC_CMD,
 #endif /* defined(CONFIG_BT_CONN) */
 
 #if (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP))
-size_t bt_bond_info_buf_size(const struct bt_bond_info *data)
+static size_t bt_bond_info_buf_size(const struct bt_bond_info *data)
 {
 	size_t buffer_size_max = 3;
 
@@ -1423,9 +1414,8 @@ void bt_bond_info_enc(struct nrf_rpc_cbor_ctx *encoder, const struct bt_bond_inf
 	ser_encode_buffer(encoder, &data->addr, sizeof(bt_addr_le_t));
 }
 
-static inline void bt_foreach_bond_cb_callback(const struct bt_bond_info *info,
-					       void *user_data,
-					       uint32_t callback_slot)
+static void bt_foreach_bond_cb_callback(const struct bt_bond_info *info, void *user_data,
+					uint32_t callback_slot)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 8;
@@ -1438,8 +1428,8 @@ static inline void bt_foreach_bond_cb_callback(const struct bt_bond_info *info,
 	ser_encode_uint(&ctx, (uintptr_t)user_data);
 	ser_encode_callback_call(&ctx, callback_slot);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_FOREACH_BOND_CB_CALLBACK_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_FOREACH_BOND_CB_CALLBACK_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
 CBKPROXY_HANDLER(bt_foreach_bond_cb_encoder, bt_foreach_bond_cb_callback,
@@ -1543,7 +1533,7 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_per_adv_list_remove, BT_LE_PER_ADV_LIST_REMOVE_RPC_CMD,
 			 bt_le_per_adv_list_remove_rpc_handler, NULL);
 
-void bt_le_per_adv_param_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_per_adv_param *data)
+static void bt_le_per_adv_param_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_per_adv_param *data)
 {
 	data->interval_min = ser_decode_uint(ctx);
 	data->interval_max = ser_decode_uint(ctx);
@@ -1722,8 +1712,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_per_adv_sync_get_index,
 			 BT_LE_PER_ADV_SYNC_GET_INDEX_RPC_CMD,
 			 bt_le_per_adv_sync_get_index_rpc_handler, NULL);
 
-void bt_le_per_adv_sync_param_dec(struct nrf_rpc_cbor_ctx *ctx,
-				  struct bt_le_per_adv_sync_param *data)
+static void bt_le_per_adv_sync_param_dec(struct nrf_rpc_cbor_ctx *ctx,
+					 struct bt_le_per_adv_sync_param *data)
 {
 	ser_decode_buffer(ctx, &data->addr, sizeof(bt_addr_le_t));
 	data->sid = ser_decode_uint(ctx);
@@ -1901,8 +1891,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_per_adv_sync_transfer_unsubscribe,
 			 BT_LE_PER_ADV_SYNC_TRANSFER_UNSUBSCRIBE_RPC_CMD,
 			 bt_le_per_adv_sync_transfer_unsubscribe_rpc_handler, NULL);
 
-void bt_le_per_adv_sync_transfer_param_dec(struct nrf_rpc_cbor_ctx *ctx,
-					   struct bt_le_per_adv_sync_transfer_param *data)
+static void bt_le_per_adv_sync_transfer_param_dec(struct nrf_rpc_cbor_ctx *ctx,
+						  struct bt_le_per_adv_sync_transfer_param *data)
 {
 	data->skip = ser_decode_uint(ctx);
 	data->timeout = ser_decode_uint(ctx);
@@ -1938,7 +1928,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_per_adv_sync_transfer_subscribe,
 			 bt_le_per_adv_sync_transfer_subscribe_rpc_handler, NULL);
 #endif /* defined(CONFIG_BT_CONN) */
 
-size_t bt_le_per_adv_sync_synced_info_sp_size(const struct bt_le_per_adv_sync_synced_info *data)
+static size_t
+bt_le_per_adv_sync_synced_info_sp_size(const struct bt_le_per_adv_sync_synced_info *data)
 {
 	size_t scratchpad_size = 0;
 
@@ -1947,7 +1938,8 @@ size_t bt_le_per_adv_sync_synced_info_sp_size(const struct bt_le_per_adv_sync_sy
 	return scratchpad_size;
 }
 
-size_t bt_le_per_adv_sync_synced_info_buf_size(const struct bt_le_per_adv_sync_synced_info *data)
+static size_t
+bt_le_per_adv_sync_synced_info_buf_size(const struct bt_le_per_adv_sync_synced_info *data)
 {
 	size_t buffer_size_max = 17;
 
@@ -1956,8 +1948,8 @@ size_t bt_le_per_adv_sync_synced_info_buf_size(const struct bt_le_per_adv_sync_s
 	return buffer_size_max;
 }
 
-void bt_le_per_adv_sync_synced_info_enc(struct nrf_rpc_cbor_ctx *encoder,
-					const struct bt_le_per_adv_sync_synced_info *data)
+static void bt_le_per_adv_sync_synced_info_enc(struct nrf_rpc_cbor_ctx *encoder,
+					       const struct bt_le_per_adv_sync_synced_info *data)
 {
 	ser_encode_buffer(encoder, data->addr, sizeof(bt_addr_le_t));
 	ser_encode_uint(encoder, data->sid);
@@ -1968,8 +1960,8 @@ void bt_le_per_adv_sync_synced_info_enc(struct nrf_rpc_cbor_ctx *encoder,
 	bt_rpc_encode_bt_conn(encoder, data->conn);
 }
 
-void per_adv_sync_cb_synced(struct bt_le_per_adv_sync *sync,
-			    struct bt_le_per_adv_sync_synced_info *info)
+static void per_adv_sync_cb_synced(struct bt_le_per_adv_sync *sync,
+				   struct bt_le_per_adv_sync_synced_info *info)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t scratchpad_size = 0;
@@ -1985,11 +1977,11 @@ void per_adv_sync_cb_synced(struct bt_le_per_adv_sync *sync,
 	ser_encode_uint(&ctx, (uintptr_t)sync);
 	bt_le_per_adv_sync_synced_info_enc(&ctx, info);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, PER_ADV_SYNC_CB_SYNCED_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, PER_ADV_SYNC_CB_SYNCED_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
-size_t bt_le_per_adv_sync_term_info_sp_size(const struct bt_le_per_adv_sync_term_info *data)
+static size_t bt_le_per_adv_sync_term_info_sp_size(const struct bt_le_per_adv_sync_term_info *data)
 {
 	size_t scratchpad_size = 0;
 
@@ -1998,7 +1990,7 @@ size_t bt_le_per_adv_sync_term_info_sp_size(const struct bt_le_per_adv_sync_term
 	return scratchpad_size;
 }
 
-size_t bt_le_per_adv_sync_term_info_buf_size(const struct bt_le_per_adv_sync_term_info *data)
+static size_t bt_le_per_adv_sync_term_info_buf_size(const struct bt_le_per_adv_sync_term_info *data)
 {
 	size_t buffer_size_max = 5;
 
@@ -2007,15 +1999,15 @@ size_t bt_le_per_adv_sync_term_info_buf_size(const struct bt_le_per_adv_sync_ter
 	return buffer_size_max;
 }
 
-void bt_le_per_adv_sync_term_info_enc(struct nrf_rpc_cbor_ctx *encoder,
-				      const struct bt_le_per_adv_sync_term_info *data)
+static void bt_le_per_adv_sync_term_info_enc(struct nrf_rpc_cbor_ctx *encoder,
+					     const struct bt_le_per_adv_sync_term_info *data)
 {
 	ser_encode_buffer(encoder, data->addr, sizeof(bt_addr_le_t));
 	ser_encode_uint(encoder, data->sid);
 }
 
-void per_adv_sync_cb_term(struct bt_le_per_adv_sync *sync,
-			  const struct bt_le_per_adv_sync_term_info *info)
+static void per_adv_sync_cb_term(struct bt_le_per_adv_sync *sync,
+				 const struct bt_le_per_adv_sync_term_info *info)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t scratchpad_size = 0;
@@ -2031,11 +2023,11 @@ void per_adv_sync_cb_term(struct bt_le_per_adv_sync *sync,
 	ser_encode_uint(&ctx, (uintptr_t)sync);
 	bt_le_per_adv_sync_term_info_enc(&ctx, info);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, PER_ADV_SYNC_CB_TERM_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, PER_ADV_SYNC_CB_TERM_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
-size_t bt_le_per_adv_sync_recv_info_sp_size(const struct bt_le_per_adv_sync_recv_info *data)
+static size_t bt_le_per_adv_sync_recv_info_sp_size(const struct bt_le_per_adv_sync_recv_info *data)
 {
 	size_t scratchpad_size = 0;
 
@@ -2044,7 +2036,7 @@ size_t bt_le_per_adv_sync_recv_info_sp_size(const struct bt_le_per_adv_sync_recv
 	return scratchpad_size;
 }
 
-size_t bt_le_per_adv_sync_recv_info_buf_size(const struct bt_le_per_adv_sync_recv_info *data)
+static size_t bt_le_per_adv_sync_recv_info_buf_size(const struct bt_le_per_adv_sync_recv_info *data)
 {
 	size_t buffer_size_max = 11;
 
@@ -2053,8 +2045,8 @@ size_t bt_le_per_adv_sync_recv_info_buf_size(const struct bt_le_per_adv_sync_rec
 	return buffer_size_max;
 }
 
-void bt_le_per_adv_sync_recv_info_enc(struct nrf_rpc_cbor_ctx *encoder,
-				      const struct bt_le_per_adv_sync_recv_info *data)
+static void bt_le_per_adv_sync_recv_info_enc(struct nrf_rpc_cbor_ctx *encoder,
+					     const struct bt_le_per_adv_sync_recv_info *data)
 {
 	ser_encode_buffer(encoder, data->addr, sizeof(bt_addr_le_t));
 	ser_encode_uint(encoder, data->sid);
@@ -2063,9 +2055,9 @@ void bt_le_per_adv_sync_recv_info_enc(struct nrf_rpc_cbor_ctx *encoder,
 	ser_encode_uint(encoder, data->cte_type);
 }
 
-void per_adv_sync_cb_recv(struct bt_le_per_adv_sync *sync,
-			  const struct bt_le_per_adv_sync_recv_info *info,
-			  struct net_buf_simple *buf)
+static void per_adv_sync_cb_recv(struct bt_le_per_adv_sync *sync,
+				 const struct bt_le_per_adv_sync_recv_info *info,
+				 struct net_buf_simple *buf)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t scratchpad_size = 0;
@@ -2084,18 +2076,18 @@ void per_adv_sync_cb_recv(struct bt_le_per_adv_sync *sync,
 	bt_le_per_adv_sync_recv_info_enc(&ctx, info);
 	net_buf_simple_enc(&ctx, buf);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, PER_ADV_SYNC_CB_RECV_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, PER_ADV_SYNC_CB_RECV_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
-void bt_le_per_adv_sync_state_info_enc(struct nrf_rpc_cbor_ctx *encoder,
-				       const struct bt_le_per_adv_sync_state_info *data)
+static void bt_le_per_adv_sync_state_info_enc(struct nrf_rpc_cbor_ctx *encoder,
+					      const struct bt_le_per_adv_sync_state_info *data)
 {
 	ser_encode_bool(encoder, data->recv_enabled);
 }
 
-void per_adv_sync_cb_state_changed(struct bt_le_per_adv_sync *sync,
-				   const struct bt_le_per_adv_sync_state_info *info)
+static void per_adv_sync_cb_state_changed(struct bt_le_per_adv_sync *sync,
+					  const struct bt_le_per_adv_sync_state_info *info)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 6;
@@ -2105,8 +2097,8 @@ void per_adv_sync_cb_state_changed(struct bt_le_per_adv_sync *sync,
 	ser_encode_uint(&ctx, (uintptr_t)sync);
 	bt_le_per_adv_sync_state_info_enc(&ctx, info);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, PER_ADV_SYNC_CB_STATE_CHANGED_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, PER_ADV_SYNC_CB_STATE_CHANGED_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
 static struct bt_le_per_adv_sync_cb per_adv_sync_cb = {

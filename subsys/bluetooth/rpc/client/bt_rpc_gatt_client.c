@@ -716,7 +716,7 @@ int bt_gatt_service_unregister(struct bt_gatt_service *svc)
 }
 #endif /* defined(CONFIG_BT_GATT_DYNAMIC_DB) */
 
-size_t bt_gatt_notify_params_buf_size(const struct bt_gatt_notify_params *data)
+static size_t bt_gatt_notify_params_buf_size(const struct bt_gatt_notify_params *data)
 {
 	size_t buffer_size_max = 23;
 
@@ -727,7 +727,7 @@ size_t bt_gatt_notify_params_buf_size(const struct bt_gatt_notify_params *data)
 	return buffer_size_max;
 }
 
-size_t bt_gatt_notify_params_sp_size(const struct bt_gatt_notify_params *data)
+static size_t bt_gatt_notify_params_sp_size(const struct bt_gatt_notify_params *data)
 {
 	size_t scratchpad_size = 0;
 
@@ -738,8 +738,8 @@ size_t bt_gatt_notify_params_sp_size(const struct bt_gatt_notify_params *data)
 	return scratchpad_size;
 }
 
-void bt_gatt_notify_params_enc(struct nrf_rpc_cbor_ctx *encoder,
-		const struct bt_gatt_notify_params *data)
+static void bt_gatt_notify_params_enc(struct nrf_rpc_cbor_ctx *encoder,
+				      const struct bt_gatt_notify_params *data)
 {
 	bt_rpc_encode_gatt_attr(encoder, data->attr);
 	ser_encode_uint(encoder, data->len);
@@ -799,7 +799,7 @@ int bt_gatt_notify_multiple(struct bt_conn *conn, uint16_t num_params,
 }
 #endif /* CONFIG_BT_GATT_NOTIFY_MULTIPLE */
 
-size_t bt_gatt_indicate_params_sp_size(const struct bt_gatt_indicate_params *data)
+static size_t bt_gatt_indicate_params_sp_size(const struct bt_gatt_indicate_params *data)
 {
 	size_t scratchpad_size = 0;
 
@@ -810,7 +810,7 @@ size_t bt_gatt_indicate_params_sp_size(const struct bt_gatt_indicate_params *dat
 	return scratchpad_size;
 }
 
-size_t bt_gatt_indicate_params_buf_size(const struct bt_gatt_indicate_params *data)
+static size_t bt_gatt_indicate_params_buf_size(const struct bt_gatt_indicate_params *data)
 {
 	size_t buffer_size_max = 15;
 
@@ -820,8 +820,8 @@ size_t bt_gatt_indicate_params_buf_size(const struct bt_gatt_indicate_params *da
 	return buffer_size_max;
 }
 
-void bt_gatt_indicate_params_enc(struct nrf_rpc_cbor_ctx *encoder,
-				 const struct bt_gatt_indicate_params *data)
+static void bt_gatt_indicate_params_enc(struct nrf_rpc_cbor_ctx *encoder,
+					const struct bt_gatt_indicate_params *data)
 {
 	bt_rpc_encode_gatt_attr(encoder, data->attr);
 	ser_encode_uint(encoder, data->len);
@@ -1440,8 +1440,8 @@ static const size_t bt_gatt_subscribe_params_buf_size =
 	/* Placeholder for the flags field */
 	2;
 
-void bt_gatt_subscribe_params_enc(struct nrf_rpc_cbor_ctx *encoder,
-				  const struct bt_gatt_subscribe_params *data)
+static void bt_gatt_subscribe_params_enc(struct nrf_rpc_cbor_ctx *encoder,
+					 const struct bt_gatt_subscribe_params *data)
 {
 	ser_encode_bool(encoder, data->notify != NULL);
 	ser_encode_callback(encoder, data->write);

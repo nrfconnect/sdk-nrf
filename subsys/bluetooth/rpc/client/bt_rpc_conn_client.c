@@ -253,7 +253,7 @@ uint8_t bt_conn_index(const struct bt_conn *conn)
 }
 
 #if defined(CONFIG_BT_USER_PHY_UPDATE)
-void bt_conn_le_phy_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn_le_phy_info *data)
+static void bt_conn_le_phy_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn_le_phy_info *data)
 {
 	data->tx_phy = ser_decode_uint(ctx);
 	data->rx_phy = ser_decode_uint(ctx);
@@ -261,8 +261,8 @@ void bt_conn_le_phy_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn_le_phy
 #endif /* defined(CONFIG_BT_USER_PHY_UPDATE) */
 
 #if defined(CONFIG_BT_USER_DATA_LEN_UPDATE)
-void bt_conn_le_data_len_info_dec(struct nrf_rpc_cbor_ctx *ctx,
-				  struct bt_conn_le_data_len_info *data)
+static void bt_conn_le_data_len_info_dec(struct nrf_rpc_cbor_ctx *ctx,
+					 struct bt_conn_le_data_len_info *data)
 {
 	data->tx_max_len = ser_decode_uint(ctx);
 	data->tx_max_time = ser_decode_uint(ctx);
@@ -271,8 +271,8 @@ void bt_conn_le_data_len_info_dec(struct nrf_rpc_cbor_ctx *ctx,
 }
 #endif /* defined(CONFIG_BT_USER_DATA_LEN_UPDATE) */
 
-void bt_conn_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn *conn,
-		      struct bt_conn_info *info)
+static void bt_conn_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn *conn,
+			     struct bt_conn_info *info)
 {
 	info->type = ser_decode_uint(ctx);
 	info->role = ser_decode_uint(ctx);
@@ -355,8 +355,8 @@ int bt_conn_get_info(const struct bt_conn *conn, struct bt_conn_info *info)
 	return result.result;
 }
 
-void bt_conn_remote_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn *conn,
-			     struct bt_conn_remote_info *remote_info)
+static void bt_conn_remote_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn *conn,
+				    struct bt_conn_remote_info *remote_info)
 {
 	remote_info->type = ser_decode_uint(ctx);
 	remote_info->version = ser_decode_uint(ctx);
@@ -365,8 +365,8 @@ void bt_conn_remote_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn *conn,
 
 	if (remote_info->type == BT_CONN_TYPE_LE && conn != NULL) {
 		LOCK_CONN_INFO();
-		remote_info->le.features = ser_decode_buffer(ctx, &conn->features,
-							     sizeof(conn->features));
+		remote_info->le.features =
+			ser_decode_buffer(ctx, &conn->features, sizeof(conn->features));
 		UNLOCK_CONN_INFO();
 	} else {
 		/* non-LE connection types are not supported. */
@@ -412,7 +412,8 @@ int bt_conn_get_remote_info(struct bt_conn *conn,
 	return result.result;
 }
 
-void bt_le_conn_param_enc(struct nrf_rpc_cbor_ctx *encoder, const struct bt_le_conn_param *data)
+static void bt_le_conn_param_enc(struct nrf_rpc_cbor_ctx *encoder,
+				 const struct bt_le_conn_param *data)
 {
 	ser_encode_uint(encoder, data->interval_min);
 	ser_encode_uint(encoder, data->interval_max);
@@ -420,7 +421,7 @@ void bt_le_conn_param_enc(struct nrf_rpc_cbor_ctx *encoder, const struct bt_le_c
 	ser_encode_uint(encoder, data->timeout);
 }
 
-void bt_le_conn_param_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_conn_param *data)
+static void bt_le_conn_param_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_conn_param *data)
 {
 	data->interval_min = ser_decode_uint(ctx);
 	data->interval_max = ser_decode_uint(ctx);
@@ -447,8 +448,8 @@ int bt_conn_le_param_update(struct bt_conn *conn,
 }
 
 #if defined(CONFIG_BT_USER_DATA_LEN_UPDATE)
-void bt_conn_le_data_len_param_enc(struct nrf_rpc_cbor_ctx *encoder,
-				   const struct bt_conn_le_data_len_param *data)
+static void bt_conn_le_data_len_param_enc(struct nrf_rpc_cbor_ctx *encoder,
+					  const struct bt_conn_le_data_len_param *data)
 {
 	ser_encode_uint(encoder, data->tx_max_len);
 	ser_encode_uint(encoder, data->tx_max_time);
@@ -474,8 +475,8 @@ int bt_conn_le_data_len_update(struct bt_conn *conn,
 #endif /* defined(CONFIG_BT_USER_DATA_LEN_UPDATE) */
 
 #if defined(CONFIG_BT_USER_PHY_UPDATE)
-void bt_conn_le_phy_param_enc(struct nrf_rpc_cbor_ctx *encoder,
-	const struct bt_conn_le_phy_param *data)
+static void bt_conn_le_phy_param_enc(struct nrf_rpc_cbor_ctx *encoder,
+				     const struct bt_conn_le_phy_param *data)
 {
 	ser_encode_uint(encoder, data->options);
 	ser_encode_uint(encoder, data->pref_tx_phy);
@@ -520,8 +521,8 @@ int bt_conn_disconnect(struct bt_conn *conn, uint8_t reason)
 }
 
 #if defined(CONFIG_BT_CENTRAL)
-void bt_conn_le_create_param_enc(struct nrf_rpc_cbor_ctx *encoder,
-				 const struct bt_conn_le_create_param *data)
+static void bt_conn_le_create_param_enc(struct nrf_rpc_cbor_ctx *encoder,
+					const struct bt_conn_le_create_param *data)
 {
 	ser_encode_uint(encoder, data->options);
 	ser_encode_uint(encoder, data->interval);
@@ -1291,14 +1292,14 @@ size_t bt_le_oob_sc_data_buf_size(const struct bt_le_oob_sc_data *data)
 	return buffer_size_max;
 }
 
-void bt_le_oob_sc_data_enc(struct nrf_rpc_cbor_ctx *encoder,
-	const struct bt_le_oob_sc_data *data)
+static void bt_le_oob_sc_data_enc(struct nrf_rpc_cbor_ctx *encoder,
+				  const struct bt_le_oob_sc_data *data)
 {
 	ser_encode_buffer(encoder, data->r, 16 * sizeof(uint8_t));
 	ser_encode_buffer(encoder, data->c, 16 * sizeof(uint8_t));
 }
 
-void bt_le_oob_sc_data_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_oob_sc_data *data)
+static void bt_le_oob_sc_data_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_oob_sc_data *data)
 {
 	ser_decode_buffer(ctx, data->r, 16 * sizeof(uint8_t));
 	ser_decode_buffer(ctx, data->c, 16 * sizeof(uint8_t));
@@ -1409,7 +1410,8 @@ int bt_passkey_set(unsigned int passkey)
 static const struct bt_conn_auth_cb *auth_cb;
 
 #if defined(CONFIG_BT_SMP_APP_PAIRING_ACCEPT)
-void bt_conn_pairing_feat_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn_pairing_feat *data)
+static void bt_conn_pairing_feat_dec(struct nrf_rpc_cbor_ctx *ctx,
+				     struct bt_conn_pairing_feat *data)
 {
 	data->io_capability = ser_decode_uint(ctx);
 	data->oob_data_flag = ser_decode_uint(ctx);
@@ -1628,7 +1630,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_pairing_confirm,
 			 BT_RPC_AUTH_CB_PAIRING_CONFIRM_RPC_CMD,
 			 bt_rpc_auth_cb_pairing_confirm_rpc_handler, NULL);
 
-int bt_conn_auth_cb_register_on_remote(uint16_t flags)
+static int bt_conn_auth_cb_register_on_remote(uint16_t flags)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	int result;
@@ -1638,8 +1640,8 @@ int bt_conn_auth_cb_register_on_remote(uint16_t flags)
 
 	ser_encode_uint(&ctx, flags);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_AUTH_CB_REGISTER_ON_REMOTE_RPC_CMD,
-				&ctx, ser_rsp_decode_i32, &result);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_AUTH_CB_REGISTER_ON_REMOTE_RPC_CMD, &ctx,
+				ser_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1674,8 +1676,9 @@ int bt_conn_auth_cb_register(const struct bt_conn_auth_cb *cb)
 
 sys_slist_t bt_auth_info_cbs = SYS_SLIST_STATIC_INIT(&bt_auth_info_cbs);
 
-void bt_rpc_auth_info_cb_bond_deleted_rpc_handler(const struct nrf_rpc_group *group,
-						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_rpc_auth_info_cb_bond_deleted_rpc_handler(const struct nrf_rpc_group *group,
+							 struct nrf_rpc_cbor_ctx *ctx,
+							 void *handler_data)
 {
 	uint8_t id;
 	bt_addr_le_t peer_data;
@@ -1769,7 +1772,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_info_cb_pairing_failed,
 			 BT_RPC_AUTH_INFO_CB_PAIRING_FAILED_RPC_CMD,
 			 bt_rpc_auth_info_cb_pairing_failed_rpc_handler, NULL);
 
-int bt_conn_auth_info_cb_register_on_remote(uint16_t flags)
+static int bt_conn_auth_info_cb_register_on_remote(uint16_t flags)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	int result;
@@ -1779,8 +1782,8 @@ int bt_conn_auth_info_cb_register_on_remote(uint16_t flags)
 
 	ser_encode_uint(&ctx, flags);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_AUTH_INFO_CB_REGISTER_ON_REMOTE_RPC_CMD,
-				&ctx, ser_rsp_decode_i32, &result);
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_AUTH_INFO_CB_REGISTER_ON_REMOTE_RPC_CMD, &ctx,
+				ser_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1818,7 +1821,7 @@ int bt_conn_auth_info_cb_register(struct bt_conn_auth_info_cb *cb)
 	return res;
 }
 
-int bt_conn_auth_info_cb_unregister_on_remote(void)
+static int bt_conn_auth_info_cb_unregister_on_remote(void)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	int result;
