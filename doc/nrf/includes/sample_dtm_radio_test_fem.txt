@@ -3,7 +3,8 @@ You can add support for the nRF21540 front-end module (FEM) to the sample.
 To add support for the nRF21540 FEM, build the sample for a board containing nRF21540 FEM like :ref:`nrf21540dk/nrf52840 <zephyr:nrf21540dk_nrf52840>` or create a devicetree overlay file describing how FEM is connected to nRF5 SoC in your device.
 
 .. note::
-   If you use the nRF21540 EK, append ``nrf21540ek`` shield to your build command instructing build system to append the appropriate devicetree overlay file.
+   If you use the nRF21540 EK with SoCs of nRF52 family, append ``nrf21540ek`` shield to your build command instructing build system to append the appropriate devicetree overlay file.
+   If you use the nRF21540 EK with nRF5340 SoC, append the ``nrf21540ek_fwd`` shield to your build command for the application core image and the ``nrf21540ek`` shield to the network core image.
    If you use the nRF21540 DK, build your application for the :ref:`nrf21540dk/nrf52840 <zephyr:nrf21540dk_nrf52840>` board target.
    The devicetree for the nRF21540 DK already contains the required FEM configuration, so you do not need to set an additional build option.
 
@@ -11,7 +12,9 @@ For example, to build the sample from the command line for an nRF5340 DK with an
 
 .. code-block:: console
 
-  west build -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek
+  west build -b nrf5340dk/nrf5340/cpunet -- -D<image_name_for_cpunet>_SHIELD=nrf21540ek -D<image_name_for_cpuapp>_SHIELD=nrf21540ek_fwd
+  west build -b nrf5340dk/nrf5340/cpunet -- -Dradio_test_SHIELD=nrf21540ek -Dremote_shell_SHIELD=nrf21540ek_fwd
+  west build -b nrf5340dk/nrf5340/cpunet -- -Ddirect_test_mode_SHIELD=nrf21540ek -Dremote_shell_SHIELD=nrf21540ek_fwd
 
 For more details refer to the following documentation:
 
