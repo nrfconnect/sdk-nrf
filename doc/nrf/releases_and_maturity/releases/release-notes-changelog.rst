@@ -314,6 +314,9 @@ nRF Desktop
   * ``Error while sending report`` log level in :ref:`nrf_desktop_hid_state` from error to warning.
     The log might appear, for example, during the disconnection of a HID transport.
     In that case, it does not denote an actual error.
+  * Updated the number of ATT buffers (:kconfig:option:`CONFIG_BT_ATT_TX_COUNT`) for nRF Desktop peripherals.
+    This adjustment allows peripherals to simultaneously send all supported HID notifications (including HID report pipeline support), the BAS notification, and an ATT response.
+    ATT uses a dedicated net buffer pool.
 
 Thingy:53: Matter weather station
 ---------------------------------
