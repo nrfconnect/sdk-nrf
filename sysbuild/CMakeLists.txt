@@ -271,7 +271,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/bl_override/override_external_mcuboot.conf)
 
         if(NOT SB_CONFIG_MCUBOOT_MODE_SINGLE_APP)
-          add_overlay_config(${DEFAULT_IMAGE} ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/bl_override/override_external_mcuboot.conf)
+          set_config_bool(${DEFAULT_IMAGE} CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK y)
         endif()
       endif()
 
@@ -284,14 +284,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
       set(imgtool_extra " --security-counter ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE}")
 
-      set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=${SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION}\n")
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION y)
       set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS=${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS}\n")
       set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE=${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE}\n")
 
-      add_overlay_config(
-        mcuboot
-        ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/hw_counters.conf
-      )
+      set_config_bool(mcuboot CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION y)
+      set_config_bool(mcuboot CONFIG_SECURE_BOOT_STORAGE y)
+      set_config_bool(mcuboot CONFIG_SECURE_BOOT_CRYPTO y)
     endif()
 
     if(NOT DEFINED mcuboot_BOARD AND DEFINED board_target_secure)
@@ -300,41 +299,41 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
   endif()
 
-  if(SB_CONFIG_SECURE_BOOT)
-    if(NOT SB_CONFIG_SECURE_BOOT_APPCORE AND NOT SB_CONFIG_SECURE_BOOT_NETCORE)
-      # Error out early, this shortcuts to a later error which complains that the secure boot image name is missing
-      message(FATAL_ERROR "Error: No secure boot options have been selected, at least one core must be selected for secure boot to function.")
-    endif()
-
-    if(SB_CONFIG_SECURE_BOOT_APPCORE)
-      if(NOT DEFINED b0_BOARD AND DEFINED board_target_secure)
-        # b0 must run in secure mode on the nRF9160/nRF5340
-        set_target_properties(b0 PROPERTIES BOARD ${board_target_secure})
-
-        if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-          set_target_properties(s1_image PROPERTIES BOARD ${board_target_secure})
-        endif()
-      endif()
+  if(SB_CONFIG_SECURE_BOOT_APPCORE)
+    if(NOT DEFINED b0_BOARD AND DEFINED board_target_secure)
+      # b0 must run in secure mode on the nRF9160/nRF5340
+      set_target_properties(b0 PROPERTIES BOARD ${board_target_secure})
 
       if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-        add_overlay_config(
-          mcuboot
-          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/enable_secure_bootloader.conf
-          )
+        set_target_properties(s1_image PROPERTIES BOARD ${board_target_secure})
+      endif()
+    endif()
 
+    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+      add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/log_minimal.conf)
+      set_config_bool(mcuboot CONFIG_SECURE_BOOT y)
+      set_config_bool(mcuboot CONFIG_FW_INFO y)
+
+      if(SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256)
         add_overlay_config(
           mcuboot
           ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
           )
       else()
-        add_overlay_config(
-          ${DEFAULT_IMAGE}
-          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/enable_secure_bootloader.conf
-          )
+        message(WARNING "MCUboot and secure boot (application core) are enabled but MCUboot signing key type is not set to ECDSA-P256, this is a non-optimal configuration")
       endif()
+    else()
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_SECURE_BOOT y)
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_FW_INFO y)
+    endif()
+  endif()
+
+  if(SB_CONFIG_SECURE_BOOT_NETCORE)
+    if(NOT SB_CONFIG_NETCORE_NONE)
+      set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_SECURE_BOOT y)
     endif()
 
-    if(SB_CONFIG_SECURE_BOOT_NETCORE AND SB_CONFIG_BOOTLOADER_MCUBOOT)
+    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
       if(SB_CONFIG_NETCORE_APP_UPDATE)
         set_config_bool(mcuboot CONFIG_PCD_APP y)
 
@@ -510,35 +509,6 @@ set(NCS_SYSBUILD_PARTITION_MANAGER TRUE)
 list(APPEND CMAKE_MODULE_PATH ${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/modules)
 include(ncs_sysbuild_extensions)
 include(${CMAKE_CURRENT_LIST_DIR}/extensions.cmake)
-
-if(SB_CONFIG_SECURE_BOOT)
-  set(secure_boot_image_dir ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image)
-  if(SB_CONFIG_SECURE_BOOT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE)
-    add_overlay_config(
-      ${SB_CONFIG_NETCORE_IMAGE_NAME}
-      "${secure_boot_image_dir}/secure_boot.conf"
-    )
-
-    add_overlay_config(mcuboot "${ZEPHYR_NRF_MODULE_DIR}/subsys/pcd/pcd.conf")
-  endif()
-
-  if(SB_CONFIG_SECURE_BOOT_APPCORE)
-    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-      add_overlay_config(mcuboot ${secure_boot_image_dir}/multi_image_mcuboot.conf)
-
-      # Include a kconfig file which enables CONFIG_FW_INFO in the image
-      # which is booted by B0.
-      add_overlay_config(mcuboot ${secure_boot_image_dir}/fw_info.conf)
-
-      add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/log_minimal.conf)
-    else()
-      # Include a kconfig file which enables CONFIG_FW_INFO in the image
-      # which is booted by B0.
-      add_overlay_config(${DEFAULT_IMAGE} ${secure_boot_image_dir}/fw_info.conf)
-    endif()
-  endif()
-endif()
-
 include(${CMAKE_CURRENT_LIST_DIR}/netcore.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mcuboot.cmake)
