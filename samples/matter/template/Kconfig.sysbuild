@@ -59,8 +59,8 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 
 if BOARD_NRF54H20DK
 
-config SUIT_ENVELOPE_EDITABLE_TEMPLATES_LOCATION
-	default "../suit_templates/"
+config SUIT_ENVELOPE_ROOT_TEMPLATE
+	default "suit_templates/root_with_binary_nordic_top.yaml.jinja2"
 
 endif
 
