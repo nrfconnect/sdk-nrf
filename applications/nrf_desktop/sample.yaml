@@ -149,7 +149,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     tags: bluetooth ci_build sysbuild
-    extra_args: SHIELD=nrf21540ek_fwd
+    extra_args: SHIELD=nrf21540ek
                 ipc_radio_SHIELD=nrf21540ek
     extra_configs:
       - CONFIG_CAF_BLE_USE_LLPM=n
