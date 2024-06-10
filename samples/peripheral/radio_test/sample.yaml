@@ -50,3 +50,19 @@ tests:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
     tags: ci_build sysbuild
+  sample.peripheral.radio_test.nrf5340_nrf2220:
+    sysbuild: true
+    build_only: true
+    extra_args: radio_test_SHIELD=nrf2220ek remote_shell_SHIELD=nrf2220ek_fwd
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet
+    tags: ci_build sysbuild
+  sample.peripheral.radio_test.nrf5340_nrf2240:
+    sysbuild: true
+    build_only: true
+    extra_args: radio_test_SHIELD=nrf2240ek remote_shell_SHIELD=nrf2240ek_fwd
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet
+    tags: ci_build sysbuild
