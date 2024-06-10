@@ -1033,6 +1033,7 @@ Libraries for networking
   * :c:func:`lwm2m_init_firmware` is deprecated in favour of :c:func:`lwm2m_init_firmware_cb` that allows application to set a callback to receive FOTA events.
   * Fixed an issue where the Location Area Code was not updated when the Connection Monitor object version 1.3 was enabled.
   * Added support for the ``SO_KEEPOPEN`` socket option to keep the socket open even during PDN disconnect and reconnect.
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
