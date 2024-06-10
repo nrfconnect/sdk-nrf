@@ -269,21 +269,37 @@ config NRF700X_PCB_LOSS_2G
 	int "PCB loss for 2.4 GHz band"
 	default 0
 	range 0 4
+	help
+	  Specifies PCB loss from the antenna connector to the RF pin.
+	  The values are in dB scale in steps of 1dB and range of 0-4dB.
+	  The loss is considered in the RX path only.
 
 config NRF700X_PCB_LOSS_5G_BAND1
-	int "PCB loss for 5 GHz band (5150 MHz - 5350 MHz)"
+	int "PCB loss for 5 GHz band (5150 MHz - 5350 MHz, Channel-32 - Channel-68)"
 	default 0
 	range 0 4
+	help
+	  Specifies PCB loss from the antenna connector to the RF pin.
+	  The values are in dB scale in steps of 1dB and range of 0-4dB.
+	  The loss is considered in the RX path only.
 
 config NRF700X_PCB_LOSS_5G_BAND2
-	int "PCB loss for 5 GHz band (5470 MHz - 5730 MHz)"
+	int "PCB loss for 5 GHz band (5470 MHz - 5730 MHz, Channel-96 - Channel-144)"
 	default 0
 	range 0 4
+	help
+	  Specifies PCB loss from the antenna connector to the RF pin.
+	  The values are in dB scale in steps of 1dB and range of 0-4dB.
+	  The loss is considered in the RX path only.
 
 config NRF700X_PCB_LOSS_5G_BAND3
-	int "PCB loss for 5 GHz band (5730 MHz - 5895 MHz)"
+	int "PCB loss for 5 GHz band (5730 MHz - 5895 MHz, Channel-149 - Channel-177)"
 	default 0
 	range 0 4
+	help
+	  Specifies PCB loss from the antenna connector to the RF pin.
+	  The values are in dB scale in steps of 1dB and range of 0-4dB.
+	  The loss is considered in the RX path only.
 
 config NRF700X_ANT_GAIN_2G
 	int "Antenna gain for 2.4 GHz band"
