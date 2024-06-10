@@ -239,10 +239,3 @@
   platforms:
     - nrf54l15pdk/nrf54l15/cpuapp
   comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
-
-- scenarios:
-    - sample.mcumgr.smp_svr.bt.nrf54l15pdk.ext_flash
-    - sample.mcumgr.smp_svr.bt.nrf54l15pdk.ext_flash.pure_dts
-  platforms:
-    - nrf54l15pdk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27817"
