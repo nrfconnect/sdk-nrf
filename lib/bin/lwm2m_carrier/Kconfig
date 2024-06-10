@@ -264,7 +264,7 @@ config LWM2M_CARRIER_DEVICE_MODEL_NUMBER
 
 config LWM2M_CARRIER_DEVICE_TYPE
 	string "Device type"
-	default "Module"
+	default ""
 	help
 	  Set the LwM2M device type (manufacturer-specified string).
 	  Some carriers may override this value.
