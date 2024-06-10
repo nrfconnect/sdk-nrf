@@ -124,9 +124,10 @@ static void on_event_app_data(const lwm2m_carrier_event_t *event)
 			return;
 		}
 
-		rsp_send("\r\n#XCARRIEREVT: %u,%hhu,\"%s\",%d\r\n", event->type, app_data->type,
+		rsp_send("\r\n#XCARRIEREVT: %u,%hhu,\"%s\",%d\r\n\"", event->type, app_data->type,
 			 uri_path, ret);
 		data_send(slm_data_buf, ret);
+		rsp_send("\"");
 	} else {
 		rsp_send("\r\n#XCARRIEREVT: %u,%hhu,\"%s\"\r\n", event->type, app_data->type,
 			 uri_path);
