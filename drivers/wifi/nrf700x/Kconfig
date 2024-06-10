@@ -32,8 +32,8 @@ config WIFI_NRF700X_BUS_LOG_LEVEL
 choice NRF700X_OPER_MODES
 	bool "nRF700x operating modes"
 	default NRF700X_SYSTEM_MODE if WPA_SUPP && !(NRF700X_RAW_DATA_TX || NRF700X_RAW_DATA_RX || NRF700X_PROMISC_DATA_RX)
-	default NRF700X_SCAN_ONLY if !WPA_SUPP
-	default NRF700X_SYSTEM_WITH_RAW_MODES
+	default NRF700X_SYSTEM_WITH_RAW_MODES if (NRF700X_RAW_DATA_TX || NRF700X_RAW_DATA_RX || NRF700X_PROMISC_DATA_RX)
+	default NRF700X_SCAN_ONLY
 	help
 	  Select the operating mode of the nRF700x driver
 
@@ -53,6 +53,7 @@ config NRF700X_RADIO_TEST
 
 config NRF700X_SYSTEM_WITH_RAW_MODES
 	bool "Enable nRF700X system mode with raw modes"
+	# TODO: This dependency need to be removed for Monitor and TX injection only
 	depends on WPA_SUPP
 	help
 	  Select this option to enable system mode of the nRF700x driver with raw modes
@@ -84,6 +85,7 @@ config NRF700X_RAW_DATA_RX
 
 config NRF700X_PROMISC_DATA_RX
 	bool "Enable promiscuous RX sniffer operation in the driver"
+	depends on WPA_SUPP
 	select EXPERIMENTAL
 	select NET_PROMISCUOUS_MODE
 
