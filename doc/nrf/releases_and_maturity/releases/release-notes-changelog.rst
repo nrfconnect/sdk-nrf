@@ -297,6 +297,7 @@ nRF Desktop
   * A warning log for handling ``-EACCES`` error code returned by functions that send GATT notification with HID report in :ref:`nrf_desktop_hids`.
     The error code might be returned if an HID report is sent right after a remote peer unsubscribes.
     The warning log prevents displaying an error log in a use case that does not indicate an error.
+  * Experimental support for the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`) to :ref:`nrf_desktop_usb_state`.
 
 * Updated:
 
