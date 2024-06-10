@@ -8,12 +8,12 @@ menuconfig MATTER
 
 if MATTER
 
-config MATTER_FACTORY_DATA
+config MATTER_FACTORY_DATA_GENERATE
 	bool "Create matter factory data"
 	help
 	  Include matter factory data.
 
-if MATTER_FACTORY_DATA
+if MATTER_FACTORY_DATA_GENERATE
 
 config MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE
 	bool "Merge generated factory data with merged.hex output"
@@ -24,7 +24,7 @@ config MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE
 	  when flashing the firmware using the west tool, includes the factory data
 	  as well.
 
-endif # MATTER_FACTORY_DATA
+endif # MATTER_FACTORY_DATA_GENERATE
 
 config MATTER_OTA
 	bool "Matter OTA Software Update"

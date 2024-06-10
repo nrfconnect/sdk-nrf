@@ -17,7 +17,7 @@ tests:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-factory_data.conf
       FILE_SUFFIX=factory_data
-      SB_CONFIG_MATTER_FACTORY_DATA=y
+      SB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y
     platform_allow: thingy53/nrf5340/cpuapp
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
@@ -28,7 +28,7 @@ tests:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-factory_data.conf CONF_FILE=prj_release.conf
       FILE_SUFFIX=factory_data
-      SB_CONFIG_MATTER_FACTORY_DATA=y
+      SB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y
     platform_allow: thingy53/nrf5340/cpuapp
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
@@ -38,7 +38,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-factory_data.conf
-      FILE_SUFFIX=factory_data SB_CONFIG_MATTER_FACTORY_DATA=y
+      FILE_SUFFIX=factory_data SB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y
       CONFIG_LTO=y CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
     platform_allow: thingy53/nrf5340/cpuapp
     platform_exclude: thingy53/nrf5340/cpuapp/ns
