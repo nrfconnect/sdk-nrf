@@ -63,7 +63,7 @@ tests:
   sample.matter.light_bulb.debug.nrf21540ek_fwd:
     sysbuild: true
     build_only: true
-    extra_args: light_bulb_SHIELD=nrf21540ek_fwd multiprotocol_rpmsg_SHIELD=nrf21540ek
+    extra_args: light_bulb_SHIELD=nrf21540ek multiprotocol_rpmsg_SHIELD=nrf21540ek
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
