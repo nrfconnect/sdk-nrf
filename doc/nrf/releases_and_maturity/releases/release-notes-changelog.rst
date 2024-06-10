@@ -247,6 +247,7 @@ Serial LTE modem
 * Updated:
 
   * AT command parsing to utilize the :ref:`at_cmd_custom_readme` library.
+  * The format of the ``#XCARRIEREVT: 12`` unsolicited notification.
 
 Connectivity Bridge
 -------------------
