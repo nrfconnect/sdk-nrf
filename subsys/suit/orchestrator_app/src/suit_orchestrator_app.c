@@ -205,8 +205,6 @@ int suit_dfu_update_start(void)
 
 	LOG_INF("Reboot the system and trigger the update");
 
-	LOG_PANIC();
-
 #if CONFIG_SUIT_CACHE_RW
 	suit_plat_mreg_t update_candidate[CONFIG_SUIT_CACHE_MAX_CACHES + 1];
 #else
