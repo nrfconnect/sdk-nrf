@@ -121,3 +121,14 @@ Sample mouse or keyboard (``nrf54l15pdk/nrf54l15/cpuapp``, ``nrf54l15pdk@0.3.0/n
       * In debug configurations, logs are provided through the UART.
         For detailed information on working with the nRF54L15 PDK, see the :ref:`ug_nrf54l15_gs` documentation.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+
+Sample mouse (``nrf54h20dk/nrf54h20/cpuapp``)
+      * The configuration uses the nRF54H20 DK.
+      * The build types allow to build the application as a mouse.
+      * Inputs are simulated based on the hardware button presses.
+      * Bluetooth LE and USB High-Speed transports are enabled.
+        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
+        USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
+      * In debug configurations, logs are provided through the UART.
+        For detailed information on working with the nRF54H20 DK, see the :ref:`ug_nrf54h20_gs` documentation.
+      * The configurations use the Software Updates for Internet of Things (SUIT) and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_smp`.
