@@ -22,17 +22,7 @@ extern "C" {
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_COAP)
-#include <zephyr/net/coap_client.h>
-#else
-/* Work around missing Kconfigs upstream in coap_client.h */
-#define coap_client_response_cb_t void *
-enum coap_content_format {
-	dummy
-};
-struct coap_client {};
-struct coap_client_option {};
-#endif
+#include <net/nrf_cloud_coap.h>
 
 struct nrf_cloud_coap_client {
 	struct k_mutex mutex;
