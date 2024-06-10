@@ -23,7 +23,7 @@
 #include <zephyr/settings/settings.h>
 /* Firmware update needs access to internal functions as well */
 #include <lwm2m_engine.h>
-
+#include <zephyr/net/coap.h>
 #include <modem/modem_info.h>
 #include <pm_config.h>
 #include <zephyr/sys/reboot.h>
@@ -670,6 +670,34 @@ static void dfu_target_cb(enum dfu_target_evt_id evt)
 	ARG_UNUSED(evt);
 }
 
+static bool is_duplicate_token(void)
+{
+	static uint8_t prev_token[COAP_TOKEN_MAX_LEN];
+	static uint8_t prev_token_len;
+	struct lwm2m_ctx *ctx;
+	struct lwm2m_message *msg;
+
+	ctx = lwm2m_rd_client_ctx();
+	if (!ctx) {
+		return false;
+	}
+
+	msg = (struct lwm2m_message *) ctx->processed_req;
+	if (!msg) {
+		return false;
+	}
+	if (msg->tkl == 0) {
+		return false;
+	}
+	if (msg->tkl == prev_token_len &&
+	    memcmp(msg->token, prev_token, prev_token_len) == 0) {
+		return true;
+	}
+	memcpy(prev_token, msg->token, msg->tkl);
+	prev_token_len = msg->tkl;
+	return false;
+}
+
 static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 				      uint8_t *data, uint16_t data_len, bool last_block,
 				      size_t total_size, size_t offset)
@@ -688,6 +716,11 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 	if (bytes_downloaded == 0 && offset == 0) {
 		if (ongoing_obj_id != UNUSED_OBJ_ID) {
 			LOG_INF("DFU is allocated already");
+			return -EAGAIN;
+		}
+
+		if (is_duplicate_token()) {
+			LOG_DBG("Duplicate token, don't restart DFU");
 			return -EAGAIN;
 		}
 
