@@ -77,7 +77,7 @@ SUIT_Envelope_Tagged:
     suit-payload-fetch:
     - suit-directive-set-component-index: 2
     - suit-directive-override-parameters:
-        suit-parameter-uri: 'file://{{ application['binary'] }}'
+        suit-parameter-uri: 'file://{{ application['filename'] }}'
     - suit-directive-fetch:
       - suit-send-record-failure
     suit-install:
@@ -111,7 +111,7 @@ SUIT_Envelope_Tagged:
 {%- endif %}
     - suit-directive-set-component-index: 1
     - suit-directive-override-parameters:
-        suit-parameter-uri: 'file://{{ application['binary'] }}'
+        suit-parameter-uri: 'file://{{ application['filename'] }}'
         suit-parameter-image-digest:
           suit-digest-algorithm-id: cose-alg-sha-256
           suit-digest-bytes:
