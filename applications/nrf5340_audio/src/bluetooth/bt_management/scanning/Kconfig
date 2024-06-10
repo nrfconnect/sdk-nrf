@@ -25,11 +25,18 @@ menu "Connection"
 
 config BLE_ACL_CONN_INTERVAL
 	int "Bluetooth LE ACL Connection Interval (x*1.25ms)"
-	default 32
+	default 8
 	help
-	  When the LE Audio Controller Subsystem for nRF53 is used, this
-	  interval should be a multiple of the ISO interval and maximum 4x
-	  larger than the lowest interval.
+	  This interval should be a multiple of the ISO interval used. The recommendation is to
+	  increase the interval to something like BLE_ACL_CONN_INTERVAL_SLOW after the discovery
+	  process is done, to free up time on air.
+
+config BLE_ACL_CONN_INTERVAL_SLOW
+	int "Bluetooth LE ACL Connection Interval (x*1.25ms)"
+	default 72
+	help
+	  This interval should be a multiple of the ISO interval used. 72*1.25=90 which will
+	  suit both 7.5ms and 10ms.
 
 config BLE_ACL_SLAVE_LATENCY
 	int "Bluetooth LE Slave Latency"
