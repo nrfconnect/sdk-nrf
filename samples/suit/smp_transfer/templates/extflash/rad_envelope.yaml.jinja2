@@ -63,13 +63,13 @@ SUIT_Envelope_Tagged:
     suit-payload-fetch:
     - suit-directive-set-component-index: 2
     - suit-directive-override-parameters:
-        suit-parameter-uri: 'file://{{ radio['binary'] }}'
+        suit-parameter-uri: 'file://{{ radio['filename'] }}'
     - suit-directive-fetch:
       - suit-send-record-failure
     suit-install:
     - suit-directive-set-component-index: 1
     - suit-directive-override-parameters:
-        suit-parameter-uri: 'file://{{ radio['binary'] }}'
+        suit-parameter-uri: 'file://{{ radio['filename'] }}'
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-image-match:
