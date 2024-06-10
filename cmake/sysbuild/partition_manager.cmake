@@ -190,6 +190,11 @@ function(partition_manager)
     if(${part} STREQUAL "app")
       if(DEFINED PM_DOMAIN)
         get_property(part GLOBAL PROPERTY DOMAIN_APP_${PM_DOMAIN})
+
+        if(DEFINED ${part}_PM_HEX_FILE)
+          # The main image for this domain has already been pocessed, no need to process it again
+          continue()
+        endif()
       else()
         set(part "${DEFAULT_IMAGE}")
       endif()
