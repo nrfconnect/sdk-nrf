@@ -182,7 +182,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
          Observe that no new notifications are received and the device is advertising.
       #. As bond information is preserved by the Bluetooth Low Energy app, you can immediately reconnect to the device by clicking the :guilabel:`Connect` button again.
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF54 DKs
 
       1. Power on your development kit.
       #. Start `nRF Connect for Desktop`_.
