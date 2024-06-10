@@ -562,6 +562,10 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
+* :ref:`lib_lwm2m_client_utils` library:
+
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+
 * :ref:`lib_nrf_cloud_rest` library:
 
   * Added the function :c:func:`nrf_cloud_rest_shadow_transform_request` to request shadow data using a JSONata expression.
