@@ -112,6 +112,12 @@ config BT_CTLR_DATA_LENGTH_MAX
 	help
 	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
 
+config BT_FAST_PAIR_GATT_SERVICE_MODEL_ID
+	bool "Fast Pair Service's Model ID GATT characteristic"
+	default y if !BT_FAST_PAIR_FMDN
+	help
+	  Add Fast Pair Service's Model ID GATT characteristic.
+
 config BT_FAST_PAIR_GATT_SERVICE_ADDITIONAL_DATA
 	bool
 	help

@@ -13,7 +13,6 @@
 
 #include <bluetooth/services/fast_pair/fast_pair.h>
 #include <bluetooth/services/fast_pair/fmdn.h>
-#include <bluetooth/services/fast_pair/uuid.h>
 
 #include "app_battery.h"
 #include "app_factory_reset.h"
@@ -134,9 +133,6 @@ static bool gatt_read_authorize(struct bt_conn *conn, const struct bt_gatt_attr 
 		BT_UUID_DIS_MANUFACTURER_NAME,
 		BT_UUID_DIS_MODEL_NUMBER,
 		BT_UUID_DIS_FIRMWARE_REVISION,
-
-		/* Fast Pair service characteristics */
-		BT_FAST_PAIR_UUID_MODEL_ID,
 	};
 
 	for (size_t i = 0; i < ARRAY_SIZE(uuid_block_list); i++) {
