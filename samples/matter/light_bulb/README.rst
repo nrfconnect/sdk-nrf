@@ -73,38 +73,40 @@ Configuration
 
 |config|
 
+.. _matter_light_bulb_custom_configs:
 
-.. _matter_light_bulb_build_types:
-
-Matter light bulb build types
-=============================
+Matter light bulb custom configurations
+=======================================
 
 .. matter_light_bulb_sample_configuration_file_types_start
 
-The sample does not use a single :file:`prj.conf` file.
-Configuration files are provided for different build types, and they are located in the sample root directory.
-Before you start testing the application, you can select one of the build types supported by the application.
+.. include:: /includes/sample_custom_config_intro.txt
 
-See :ref:`app_build_additions_build_types` and :ref:`cmake_options` for more information.
+The sample supports the following configurations:
 
-The sample supports the following build types:
-
-.. list-table:: Sample build types
+.. list-table:: Sample configurations
    :widths: auto
    :header-rows: 1
 
-   * - Build type
+   * - Configuration
      - File name
+     - :makevar:`FILE_SUFFIX`
      - Supported board
      - Description
    * - Debug (default)
      - :file:`prj.conf`
+     - No suffix
      - All from `Requirements`_
-     - Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
+     - Debug version of the application.
+
+       Enables additional features for verifying the application behavior, such as logs.
    * - Release
      - :file:`prj_release.conf`
+     - ``release``
      - All from `Requirements`_
-     - Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
+     - Release version of the application.
+
+       Enables only the necessary application functionalities to optimize its performance.
 
 .. matter_light_bulb_sample_configuration_file_types_end
 
@@ -256,11 +258,11 @@ Building and running
 
 See `Configuration`_ for information about building the sample with the DFU support.
 
-Selecting a build type
-======================
+Selecting a custom configuration
+================================
 
-Before you start testing the application, you can select one of the :ref:`matter_light_bulb_build_types`.
-See :ref:`cmake_options` for information about how to select a build type.
+Before you start testing the application, you can select one of the :ref:`matter_light_bulb_custom_configs`.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information how to select a configuration.
 
 Testing
 =======

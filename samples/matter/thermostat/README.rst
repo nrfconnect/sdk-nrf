@@ -103,33 +103,14 @@ Binding
 In this sample, the thermostat device prints simulated temperature data by default and it does not know the remote endpoints of the temperature sensors (on remote nodes).
 Using binding, the thermostat device updates its Binding cluster with all relevant information about the temperature sensor devices, such as their IPv6 address, node ID, and the IDs of the remote endpoints that contain the temperature measurement cluster.
 
-Matter thermostat build types
-=============================
+.. _matter_thermostat_custom_configs:
 
-The sample does not use a single :file:`prj.conf` file.
-Configuration files are provided for different build types, and they are located in the sample root directory.
-Before you start testing the application, you can select one of the build types supported by the application.
+Matter thermostat custom configurations
+=======================================
 
-See :ref:`app_build_additions_build_types` and :ref:`cmake_options` for more information.
-
-The sample supports the following build types:
-
-.. list-table:: Sample build types
-   :widths: auto
-   :header-rows: 1
-
-   * - Build type
-     - File name
-     - Supported board
-     - Description
-   * - Debug (default)
-     - :file:`prj.conf`
-     - All from `Requirements`_
-     - Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
-   * - Release
-     - :file:`prj_release.conf`
-     - All from `Requirements`_
-     - Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
+.. include:: ../light_bulb/README.rst
+    :start-after: matter_light_bulb_sample_configuration_file_types_start
+    :end-before: matter_light_bulb_sample_configuration_file_types_end
 
 Device Firmware Upgrade support
 ===============================
@@ -201,8 +182,8 @@ Building and running
 Selecting a build type
 ======================
 
-Before you start testing the application, you can select one of the `Matter thermostat build types`_, depending on your building method.
-See :ref:`cmake_options` for information about how to select a build type.
+Before you start testing the application, you can select one of the :ref:`matter_thermostat_custom_configs`, depending on your building method.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information how to select a configuration.
 
 .. _matter_thermostat_testing:
 

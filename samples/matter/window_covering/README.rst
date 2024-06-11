@@ -84,8 +84,10 @@ Configuration
 
 |config|
 
-Matter window covering build types
-==================================
+.. _matter_window_cover_custom_configs:
+
+Matter window covering custom configurations
+============================================
 
 .. include:: ../light_bulb/README.rst
     :start-after: matter_light_bulb_sample_configuration_file_types_start
@@ -201,11 +203,11 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-Selecting a build type
-======================
+Selecting a configuration
+=========================
 
-Before you start testing the application, you can select one of the `Matter window covering build types`_.
-See :ref:`cmake_options` for information about how to select a build type.
+Before you start testing the application, you can select one of the :ref:`matter_window_cover_custom_configs`.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information how to select a configuration.
 
 Testing
 =======
