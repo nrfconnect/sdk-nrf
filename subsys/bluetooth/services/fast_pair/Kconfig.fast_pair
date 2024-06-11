@@ -33,6 +33,8 @@ rsource "fp_crypto/Kconfig.fp_crypto"
 rsource "fp_storage/Kconfig.fp_storage"
 rsource "fmdn/Kconfig"
 
+if !BT_FAST_PAIR_FMDN
+
 config BT_DIS
 	default y
 
@@ -45,6 +47,8 @@ config BT_DIS_FW_REV
 config BT_DIS_FW_REV_STR
 	default MCUBOOT_IMGTOOL_SIGN_VERSION if BOOTLOADER_MCUBOOT
 	default "0.0.0+0"
+
+endif # !BT_FAST_PAIR_FMDN
 
 config BT_FAST_PAIR_ACTIVATION
 	bool

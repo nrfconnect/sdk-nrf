@@ -128,11 +128,6 @@ static bool gatt_read_authorize(struct bt_conn *conn, const struct bt_gatt_attr 
 	const struct bt_uuid *uuid_block_list[] = {
 		/* GAP service characteristics */
 		BT_UUID_GAP_DEVICE_NAME,
-
-		/* Device information service characteristics */
-		BT_UUID_DIS_MANUFACTURER_NAME,
-		BT_UUID_DIS_MODEL_NUMBER,
-		BT_UUID_DIS_FIRMWARE_REVISION,
 	};
 
 	for (size_t i = 0; i < ARRAY_SIZE(uuid_block_list); i++) {

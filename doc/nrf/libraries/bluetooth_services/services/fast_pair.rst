@@ -132,6 +132,9 @@ For this reason, the default values of the Kconfig options :kconfig:option:`CONF
 The default value of :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` is set to :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` if :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` is enabled.
 Otherwise, it is set to ``0.0.0+0``.
 
+This requirement does not apply for the locator tag use case as specified in the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation.
+As a result, these Kconfig overrides are not applied when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` Kconfig option is enabled.
+
 MTU configuration
 -----------------
 
