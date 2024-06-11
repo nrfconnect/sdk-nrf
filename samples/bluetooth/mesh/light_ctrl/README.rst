@@ -269,12 +269,6 @@ This sample can be configured to report energy usage sensor data to any device i
 
 The Sensor Server model is now configured and able to receive messages from and send data to the peer Sensor Client.
 
-Configure the Sensor Setup Server model on the **Mesh Light Fixture** node:
-
-* Bind the model to **Application Key 1**. Make sure to bind the same application key to the peer Sensor Client.
-
-The Sensor Setup Server model is now configured and able to receive sensor setting messages from the Sensor Client.
-
 .. _bluetooth_mesh_light_lc_occupancy_mode:
 
 Occupancy mode
