@@ -98,11 +98,13 @@ struct msg_seekers_passkey {
 /* Reference to the Fast Pair information callback structure. */
 static const struct bt_fast_pair_info_cb *fast_pair_info_cb;
 
+#if CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID
 static ssize_t read_model_id(struct bt_conn *conn,
 			     const struct bt_gatt_attr *attr,
 			     void *buf,
 			     uint16_t len,
 			     uint16_t offset);
+#endif /* CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID */
 
 static ssize_t write_key_based_pairing(struct bt_conn *conn,
 				       const struct bt_gatt_attr *attr,
@@ -126,10 +128,12 @@ static ssize_t write_additional_data(struct bt_conn *conn,
 
 BT_GATT_SERVICE_DEFINE(fast_pair_svc,
 BT_GATT_PRIMARY_SERVICE(BT_FAST_PAIR_UUID_FPS),
+#if CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID
 	BT_GATT_CHARACTERISTIC(BT_FAST_PAIR_UUID_MODEL_ID,
 		BT_GATT_CHRC_READ,
 		BT_GATT_PERM_READ,
 		read_model_id, NULL, NULL),
+#endif /* CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID */
 	BT_GATT_CHARACTERISTIC(BT_FAST_PAIR_UUID_KEY_BASED_PAIRING,
 		BT_GATT_CHRC_WRITE | BT_GATT_CHRC_NOTIFY,
 		BT_GATT_PERM_WRITE,
@@ -247,6 +251,7 @@ static int notify_personalized_name(struct bt_conn *conn)
 	return packet_len;
 }
 
+#if CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID
 static ssize_t read_model_id(struct bt_conn *conn,
 			     const struct bt_gatt_attr *attr,
 			     void *buf,
@@ -273,6 +278,7 @@ static ssize_t read_model_id(struct bt_conn *conn,
 
 	return res;
 }
+#endif /* CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID */
 
 static int parse_key_based_pairing_write(const struct bt_conn *conn,
 					 struct msg_kbp_write *parsed_req,
