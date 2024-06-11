@@ -7,27 +7,4 @@
 config NRF_DEFAULT_IPC_RADIO
 	default y
 
-config AUDIO_DFU_EXTERNAL_FLASH
-	bool "Audio Application DFU using external flash"
-	default n
-	help
-	  Use external flash to store the images downloaded during DFU. This requires the external
-	  flash shield with the MX25R6435F on the SPI bus.
-
-choice BOOTLOADER
-	default BOOTLOADER_MCUBOOT if AUDIO_DFU_EXTERNAL_FLASH
-endchoice
-
-config SECURE_BOOT_NETCORE
-	default y if AUDIO_DFU_EXTERNAL_FLASH
-
-config NETCORE_APP_UPDATE
-	default y if AUDIO_DFU_EXTERNAL_FLASH
-
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	default y if AUDIO_DFU_EXTERNAL_FLASH
-
-config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
-	default y if AUDIO_DFU_EXTERNAL_FLASH
-
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

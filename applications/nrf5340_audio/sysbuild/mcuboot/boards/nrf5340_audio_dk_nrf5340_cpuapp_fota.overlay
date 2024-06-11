@@ -1,0 +1,7 @@
+#include "../../../boards/nrf5340_audio_dk_nrf5340_cpuapp_fota.overlay"
+
+/ {
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
