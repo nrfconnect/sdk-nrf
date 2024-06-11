@@ -107,6 +107,7 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
+* :file:`thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
 
