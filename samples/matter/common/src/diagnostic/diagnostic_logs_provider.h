@@ -8,7 +8,8 @@
 
 #include "diagnostic_logs_intent_iface.h"
 
-#if defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS) || defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS)
+#if defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS) ||                                                 \
+	defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS)
 #include "diagnostic_logs_retention.h"
 #endif
 
@@ -147,7 +148,7 @@ private:
 #elif defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS)
 	DiagnosticLogProvider() : mEndUserLogs(DEVICE_DT_GET(DT_NODELABEL(end_user_logs_retention))) {}
 #else
-	DiagnosticLogProvider() {}
+	DiagnosticLogProvider() = default;
 #endif
 
 	CHIP_ERROR SetIntentImplementation(chip::app::Clusters::DiagnosticLogs::IntentEnum intent,

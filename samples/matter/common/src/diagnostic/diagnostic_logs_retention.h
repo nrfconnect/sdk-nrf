@@ -55,6 +55,11 @@ public:
 	uint32_t GetLogsBegin() { return mDataBegin; }
 
 	/**
+	 * @brief Get an offset of the logs end in the buffer.
+	 */
+	uint32_t GetLogsEnd() { return mDataEnd; }
+
+	/**
 	 * @brief Get number of bytes that will wrap around the buffer after saving the given size of data.
 	 *
 	 * @param inputSize size of data to be stored in the buffer
@@ -79,22 +84,14 @@ public:
 	 */
 	uint32_t GetRetentionAddress(uint32_t logsOffset) { return logsOffset + kHeaderSize; }
 
-	/**
-	 * @brief Checks if the given offset matches the logs data end.
-	 *
-	 * @param offset the desired logs offset in the buffer.
-	 *
-	 * @return true if the offset matches the data end, false otherwise.
-	 */
-	bool IsEnd(uint32_t offset) { return offset == mDataEnd; }
-
-	CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog, uint32_t &readOffset,
-			   bool &readInProgress);
+	CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, uint32_t &readOffset, size_t totalSize,
+			   uint32_t dataBegin);
 
 private:
 	const size_t kHeaderSize = sizeof(mCurrentSize) + sizeof(mDataBegin);
 
 	bool mIsInitialized = false;
+	bool mWriteInProgress = false;
 	size_t mCurrentSize = 0;
 	uint32_t mDataBegin = 0;
 	uint32_t mDataEnd = 0;
@@ -135,5 +132,8 @@ public:
 private:
 	uint32_t mReadOffset = 0;
 	bool mReadInProgress = false;
+	size_t mTotalSize = 0;
+	uint32_t mDataBegin = 0;
+	uint32_t mDataEnd = 0;
 	DiagnosticLogsRetention &mDiagnosticLogsRetention;
 };
