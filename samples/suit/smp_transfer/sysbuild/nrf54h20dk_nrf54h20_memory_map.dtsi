@@ -31,6 +31,6 @@
 	};
 
 	cpurad_recovery_partition: partition@8e000 {
-	reg = < 0x8e000 DT_SIZE_K(92) >;
+		reg = < 0x8e000 DT_SIZE_K(92) >;
 	};
 };

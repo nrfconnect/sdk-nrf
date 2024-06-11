@@ -1,5 +1,5 @@
-{%- set mpi_application_vendor_name = application['config']['CONFIG_SUIT_MPI_APPlication_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_application_class_name = application['config']['CONFIG_SUIT_MPI_APPlication_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
+{%- set mpi_application_vendor_name = application['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_application_class_name = application['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
 {%- set sequence_number = sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] %}
 SUIT_Envelope_Tagged:
   suit-authentication-wrapper:
