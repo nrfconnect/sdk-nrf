@@ -19,10 +19,17 @@
 #   'overlay_file' - overlay to be added to  image
 #   'overlay_type' - 'OVERLAY_CONFIG' or 'DTC_OVERLAY_FILE'
 function(add_overlay image overlay_file overlay_type)
-  set(old_overlays ${${image}_${overlay_type}})
+  get_target_property(${image}_MAIN_APP ${image} MAIN_APP)
+  if(${image}_MAIN_APP AND DEFINED ${overlay_type} AND NOT DEFINED ${image}_${overlay_type})
+    set(overlay_var ${overlay_type})
+  else()
+    set(overlay_var ${image}_${overlay_type})
+  endif()
+
+  set(old_overlays ${${overlay_var}})
   string(FIND "${old_overlays}" "${overlay_file}" found)
   if (${found} EQUAL -1)
-    set(${image}_${overlay_type} "${old_overlays};${overlay_file}" CACHE STRING
+    set(${overlay_var} "${old_overlays};${overlay_file}" CACHE STRING
       "Extra config fragments for ${image} image" FORCE
     )
   endif()
