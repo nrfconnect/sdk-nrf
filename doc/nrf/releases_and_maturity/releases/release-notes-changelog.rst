@@ -257,7 +257,13 @@ Connectivity Bridge
 nRF5340 Audio
 -------------
 
-* Added CAP initiator for the Bluetooth LE Audio unicast (CIS) client.
+* Added:
+
+  * CAP initiator for the :ref:`unicast client <nrf53_audio_unicast_client_app>`, including Coordinated Set Identification Profile (CSIP).
+  * Support for any context type, not just media.
+  * Rejection of connection if :ref:`unicast client <nrf53_audio_unicast_client_app>` or :ref:`broadcast source <nrf53_audio_broadcast_source_app>` (or both) tries to use an unsupported sample rate.
+  * Debug prints of discovered endpoints.
+  * Support for multiple :ref:`unicast servers <nrf53_audio_unicast_server_app>` in :ref:`unicast client <nrf53_audio_unicast_client_app>`, regardless of location.
 
 * Removed:
 
@@ -268,6 +274,16 @@ nRF5340 Audio
 * Updated:
 
   * Low latency configuration to be used as default setting for the nRF5340 Audio application.
+  * ACL interval for service discovery to reduce setup time.
+  * Default settings to be lower latency end-to-end.
+  * API for creating a :ref:`broadcast source <nrf53_audio_broadcast_source_app>`, to be more flexible.
+
+* Fixed:
+
+  * Missing data in the advertising packet after the directed advertising has timed out.
+  * Connection procedure so that a central does not try to connect to the same device twice.
+  * PAC record creation in :ref:`unicast server <nrf53_audio_unicast_server_app>` so that it will not expose source records if only the sink direction is supported.
+  * Presentation delay calculation so that it is railed between min and max of the :ref:`unicast server <nrf53_audio_unicast_server_app>`.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
