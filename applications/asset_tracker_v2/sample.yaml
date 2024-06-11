@@ -364,3 +364,18 @@ tests:
                 EXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf;overlay-debug.conf"
                 SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
     tags: ci_build sysbuild
+
+  # Configuration which will be used by the positioning CI integration job to verify PRs
+  applications.asset_tracker_v2.integration_config_positioning:
+    sysbuild: true
+    build_only: true
+    extra_configs:
+      - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
+      - CONFIG_LOCATION_LOG_LEVEL_DBG=y
+      - CONFIG_LOG_BUFFER_SIZE=2048
+    extra_args: asset_tracker_v2_SNIPPET="nrf91-modem-trace-uart"
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+    tags: ci_build sysbuild
