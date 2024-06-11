@@ -30,12 +30,12 @@ The following board targets have support for this snippet:
 * ``nrf9160dk/nrf9160/ns``
 * ``nrf9131ek/nrf9131/ns``
 
-To enable modem traces with the flash backend, use the following command:
+To enable modem traces with the flash backend, use the following command, where *board_target* corresponds to your development kit board target and `<image_name>` to your application image name:
 
 .. parsed-literal::
    :class: highlight
 
-   west build --board *board target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash"
+   west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash"
 
 .. _nrf91_modem_trace_uart_snippet:
 
@@ -51,11 +51,12 @@ This can be done in one of the following ways:
 With west
 =========
 
-To add the modem trace UART snippet when building an application with west, use the following command:
+To add the modem trace UART snippet when building an application with west, use the following command, where *board_target* corresponds to your development kit board target and `<image_name>` to your application image name:
 
-.. code-block:: console
+.. parsed-literal::
+   :class: highlight
 
-   west build --board <your_board> -- -D<image_name>_SNIPPET="nrf91-modem-trace-uart"
+   west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-uart"
 
 .. note::
    With Sysbuild, using the ``west build -S`` option applies the snippet to all images.
@@ -85,4 +86,4 @@ To activate both modem traces and TF-M logs, use the following command:
 .. parsed-literal::
    :class: highlight
 
-   west build --board *board target* -S nrf91-modem-trace-uart -S tfm-enable-share-uart
+   west build --board *board_target* -S nrf91-modem-trace-uart -S tfm-enable-share-uart

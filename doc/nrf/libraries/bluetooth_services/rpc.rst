@@ -89,7 +89,7 @@ Then, you can invoke build command like this:
 .. parsed-literal::
    :class: highlight
 
-   west build -b *board* -- -DEXTRA_CONF_FILE=my_overlay_file.conf
+   west build -b *board_target* -- -DEXTRA_CONF_FILE=my_overlay_file.conf
 
 Configuration
 *************
