@@ -192,7 +192,7 @@ static ssize_t mds_read(struct bt_conn *conn, const struct bt_gatt_attr *attr, v
 	ssize_t ret;
 	enum mds_read_char characteristic = (enum mds_read_char)attr->user_data;
 
-	if (mds_instance.cb->access_enable) {
+	if (mds_instance.cb && mds_instance.cb->access_enable) {
 		if (!mds_instance.cb->access_enable(conn)) {
 			return BT_GATT_ERR(BT_ATT_ERR_READ_NOT_PERMITTED);
 		}
@@ -281,7 +281,7 @@ static ssize_t data_export_write(struct bt_conn *conn, const struct bt_gatt_attr
 		return BT_GATT_ERR(MDS_ATT_ERROR_CLIENT_NOT_SUBSCRIBED);
 	}
 
-	if (mds_instance.cb->access_enable) {
+	if (mds_instance.cb && mds_instance.cb->access_enable) {
 		if (!mds_instance.cb->access_enable(conn)) {
 			return BT_GATT_ERR(BT_ATT_ERR_WRITE_NOT_PERMITTED);
 		}
@@ -342,7 +342,7 @@ static ssize_t data_export_ccc_write(struct bt_conn *conn,
 		return BT_GATT_ERR(MDS_ATT_ERROR_CLIENT_ALREADY_SUBSCRIBED);
 	}
 
-	if (mds_instance.cb->access_enable) {
+	if (mds_instance.cb && mds_instance.cb->access_enable) {
 		if (!mds_instance.cb->access_enable(conn)) {
 			return BT_GATT_ERR(BT_ATT_ERR_WRITE_NOT_PERMITTED);
 		}
