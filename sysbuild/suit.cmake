@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
+# dummy
 
 if(SB_CONFIG_SUIT_BUILD_FLASH_COMPANION)
   # Calculate the network board target
