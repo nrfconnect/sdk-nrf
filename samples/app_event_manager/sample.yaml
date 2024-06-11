@@ -24,6 +24,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
+      - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - qemu_cortex_m3
       - nrf52dk/nrf52832
@@ -32,6 +33,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
+      - nrf54h20dk/nrf54h20/cpuapp
     tags: sysbuild
   sample.app_event_manager_shell:
     sysbuild: true
@@ -44,6 +46,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
+      - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - qemu_cortex_m3
       - nrf52dk/nrf52832
@@ -52,6 +55,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_configs:
       - CONFIG_SHELL=y
     platform_exclude: native_posix
