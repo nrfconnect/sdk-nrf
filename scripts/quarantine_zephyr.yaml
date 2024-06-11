@@ -22,6 +22,10 @@
     - nrf9160dk/nrf9160
     - nrf5340dk/nrf5340/cpuapp
     - nrf5340dk/nrf5340/cpunet
+    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54l15pdk/nrf54l15/cpuapp
+    - nrf54h20dk/nrf54h20/cpuppr
+    - nrf54h20dk/nrf54h20/cpurad
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-21219"
 
 - scenarios:
@@ -167,6 +171,19 @@
     - nrf54h20dk/nrf54h20/cpuppr
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27981"
 
+- scenarios:
+    - sample.net.sockets.big_http_download
+    - sample.net.sockets.big_http_download.ci
+  platforms:
+    - nrf54l15pdk/nrf54l15/cpuapp
+  comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
+
+- scenarios:
+    - sample.net.sockets.http.server
+  platforms:
+    - nrf54h20dk/nrf54h20/cpurad
+  comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
@@ -174,6 +191,7 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk/nrf9160/ns
+    - nrf54l15pdk/nrf54l15/cpuapp
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15508"
 
 - scenarios:
@@ -231,19 +249,6 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk/nrf9160/ns
   comment: "Same reason as in https://nordicsemi.atlassian.net/browse/NCSDK-22771"
-
-- scenarios:
-    - sample.net.sockets.big_http_download
-    - sample.net.sockets.big_http_download.ci
-  platforms:
-    - nrf54l15pdk/nrf54l15/cpuapp
-  comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
-
-- scenarios:
-    - sample.net.sockets.http.server
-  platforms:
-    - nrf54h20dk/nrf54h20/cpurad
-  comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
 
 - scenarios:
     - kernel.condvar
@@ -418,3 +423,17 @@
   platforms:
     - nrf54h20dk/nrf54h20/cpuppr
   comment: "region RAM/FLASH overflowed"
+
+- scenarios:
+    - libraries.libc.newlib_nano.thread_safety.userspace.stress
+    - libraries.libc.newlib.thread_safety.userspace.stress
+  platforms:
+    - nrf54h20dk/nrf54h20/cpurad
+
+- scenarios:
+    - libraries.cmsis_dsp.matrix.unary_f64
+    - libraries.cmsis_dsp.matrix.unary_f64.fpu
+  platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk/nrf54h20/cpurad
+  comment: "Won't be fixed, 'rodata will not fit in region FLASH' - no ticket"
