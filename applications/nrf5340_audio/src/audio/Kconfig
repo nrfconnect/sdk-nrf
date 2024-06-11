@@ -32,6 +32,7 @@ config AUDIO_FRAME_DURATION_US
 
 config AUDIO_MIN_PRES_DLY_US
 	int "The minimum presentation delay"
+	default 5000 if STREAM_BIDIRECTIONAL
 	default 3000
 	help
 	  The minimum allowable presentation delay in microseconds.
