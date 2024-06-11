@@ -4,7 +4,7 @@
  */
 
 / {
-	sram@2003EB40 {
+	cpuapp_sram@2003EB40 {
 		compatible = "zephyr,memory-region", "mmio-sram";
 		reg = <0x2003EB40 0x14C0>;
 		zephyr,memory-region = "DiagnosticLogMem";
@@ -44,7 +44,7 @@
 	};
 };
 
-/* Reduce SRAM0 usage by 5312 B to account for non-init area */
-&sram0 {
+/* Reduce cpuapp_sram usage by 5312 B to account for non-init area */
+&cpuapp_sram {
 	reg = <0x20000000 0x3EB40>;
 };
