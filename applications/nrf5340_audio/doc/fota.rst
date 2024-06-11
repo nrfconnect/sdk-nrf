@@ -20,19 +20,23 @@ See `Requirements for external flash memory DFU`_ in the nRF5340 Audio DK Hardwa
 Configuring FOTA upgrades
 *************************
 
-The nRF5340 Audio application supports two strategies for upgrading the applications on the application and network core: single-image and multi-image.
-You control which of the two strategies is used by setting the Kconfig :kconfig:option:`CONFIG_AUDIO_DFU` to the appropriate setting.
+The nRF5340 Audio applications can be built with a :ref:`FOTA configuration <nrf53_audio_app_building_config_files>` that includes the required features and applications to perform firmware upgrades over Bluetooth LE.
 
-* Single-image upgrade - Uses the internal flash to upgrade either the application core or network core separately.
-  You can select this method by setting :kconfig:option:`CONFIG_AUDIO_DFU` to ``1``.
-* Multi-image upgrade - Uses external flash to upgrade both the application and network core at the same time.
-  You can select this method by setting :kconfig:option:`CONFIG_AUDIO_DFU` to ``2``.
-  See :ref:`multi-image DFU <ug_nrf5340_multi_image_dfu>` for more information about the process.
+The FOTA configuration requires that an external flash be available and that the required DTS overlay files use the external flash shield specified in the `Requirements for FOTA`_ above.
+With the external flash connected, it is possible to upgrade both the application core and the network core at the same time.
+
+See :ref:`multi-image DFU <ug_nrf5340_multi_image_dfu>` for more information about the FOTA process on the nRF5340 SoC.
 
 .. caution::
-   Using the single-image upgrade strategy carries risk of the device being in a state where the application core firmware and network core firmware are no longer compatible, which can result in a bricked device.
+   Using the single-image upgrade strategy carries risk of the device being in a state where the application core firmware and the network core firmware are no longer compatible, which can result in a bricked device.
    For devices where FOTA is the only DFU method available, multi-image upgrades are recommended to ensure compatibility between the cores.
    Make sure to evaluate the risks for your device when selecting the FOTA method.
+
+.. caution::
+   The application is provided with a memory partition configuration in :file:`pm_static_fota.yml`, which is required to perform FOTA using an external flash.
+   The partition configuration is an example that can be changed between versions, and can be incompatible with existing devices.
+   For this reason, always create a partition configuration that suits your application.
+   See :ref:`partition_manager` for more information on how to create a partition configuration.
 
 Updating the SoftDevice
 =======================

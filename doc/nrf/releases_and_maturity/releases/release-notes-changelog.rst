@@ -277,6 +277,8 @@ nRF5340 Audio
   * ACL interval for service discovery to reduce setup time.
   * Default settings to be lower latency end-to-end.
   * API for creating a :ref:`broadcast source <nrf53_audio_broadcast_source_app>`, to be more flexible.
+  * Migrated build system to support :ref:`configuration_system_overview_sysbuild`.
+    This means that the old Kconfig used to enable FOTA updates no longer exists, and the :ref:`file suffix <app_build_file_suffixes>` ``fota`` must be used instead.
 
 * Fixed:
 

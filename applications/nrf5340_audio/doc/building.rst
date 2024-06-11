@@ -71,8 +71,6 @@ The building command for running the script requires providing the following par
 * Core type (``-c`` parameter): ``app``, ``net``, or ``both``
 * Application version (``-b`` parameter): either ``release`` or ``debug``
 * Device type (``-d`` parameter): ``headset``, ``gateway``, or ``both``
-* DFU type (``-m`` parameter): ``internal``, ``external``
-* Network core bootloader minimal size (``-M``)
 
 See the following examples of the parameter usage with the command run from the :file:`buildprog` directory:
 
@@ -190,9 +188,40 @@ Building and programming using command line
 
 You can also build the nRF5340 Audio applications using the standard |NCS| :ref:`build steps <programming_cmd>` for the command line.
 
-.. note::
-   Using this method requires you to build and program each development kit one at a time before moving to the next configuration, which can be time-consuming.
-   :ref:`nrf53_audio_app_building_script` is recommended.
+.. _nrf53_audio_app_building_config_files:
+
+Application configuration files
+===============================
+
+The application uses a :file:`prj.conf` configuration file located in the sample root directory for the default configuration.
+It also provides additional files for different custom configurations.
+When you build the sample, you can select one of these configurations using the :makevar:`FILE_SUFFIX` variable.
+
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
+
+The application supports the following custom configurations:
+
+.. list-table:: Application custom configurations
+   :widths: auto
+   :header-rows: 1
+
+   * - Configuration
+     - File name
+     - FILE_SUFFIX
+     - Description
+   * - Debug (default)
+     - :file:`prj.conf`
+     - No suffix
+     - Debug version of the application. Provides full logging capabilities and debug optimizations to ease development.
+   * - Release
+     - :file:`prj_release.conf`
+     - ``release``
+     - Release version of the application. Disables logging capabilities and disables development features to create a smaller application binary.
+   * - FOTA DFU
+     - :file:`prj_fota.conf`
+     - ``fota``
+     - | Builds the debug version of the application with the features needed to perform DFU over Bluetooth LE, and includes bootloaders so that the applications on both the application core and network core can be updated.
+       | See :ref:`nrf53_audio_app_fota` for more information.
 
 Building the application
 ========================
