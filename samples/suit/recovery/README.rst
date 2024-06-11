@@ -27,7 +27,7 @@ It is optimized for memory usage and only contains the basic necessary functiona
 
 .. caution::
 
-    This firmware is only able to recover from a situation where the application or radio core are damaged it does not recover from Nordic Semiconductor-controlled firmware failures.
+    This firmware is only able to recover from a situation where the application or radio core are damaged. It does not recover from Nordic Semiconductor-controlled firmware failures.
 
 Configuration
 **************
@@ -51,7 +51,7 @@ This will cause the recovery firmware to be built automatically as part of the m
 
 For example, to build the ``smp_transfer`` sample with the recovery firmware, run the following command:
 
-``west build --sysbuild -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_BUILD_RECOVERY=y``
+``west build -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_BUILD_RECOVERY=y``
 
 Flashing
 ========
@@ -60,8 +60,7 @@ No additional steps are needed to flash the recovery firmware together with the 
 
 .. code-block::
 
-
-``west flash``
+   ``west flash``
 
 
 The recovery firmware will be flashed automatically from the main application directory.
