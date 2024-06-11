@@ -237,6 +237,7 @@ Serial LTE modem
   * New behavior for when a connection is closed unexpectedly while SLM is in data mode.
     SLM now sends the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` string when this happens.
   * Sending of GNSS data to carrier library when the library is enabled.
+  * Full data mode support in the ``AT#XCARRIER="app_data_set"`` command.
 
 * Removed:
 
@@ -248,6 +249,7 @@ Serial LTE modem
 
   * AT command parsing to utilize the :ref:`at_cmd_custom_readme` library.
   * The format of the ``#XCARRIEREVT: 12`` unsolicited notification.
+  * The format of the ``AT#XCARRIER="app_data_set"`` command.
 
 Connectivity Bridge
 -------------------

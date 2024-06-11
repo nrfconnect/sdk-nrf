@@ -79,17 +79,15 @@ Syntax
 
 The ``<cmd>`` command is a string, and can be used as follows:
 
-* ``AT#XCARRIER="app_data_set"[,<data>][,<obj_inst_id>,<res_inst_id>]``
+* ``AT#XCARRIER="app_data_set",<uri_path>[,<data>]``
 
   Put the value in ``<data>`` into the indicated path.
-  ``<data>`` must be an opaque string in double quotes, unless ``slm_data_mode`` is enabled.
+  ``<uri_path>`` is a string in double quotes indicating the target URI path. This command currently support two possible URI paths:
 
-  * If ``<obj_inst_id>`` and ``<res_inst_id>`` are specified, the data is set in an instance of the Data resource (ID: 0) of the Binary App Data Container object (ID: 19).
-    The URI path of the resource instance is indicated as ``/19/<obj_inst_id>/0/<res_inst_id>``.
-  * If ``<obj_inst_id>`` and ``<res_inst_id>`` are not present, the data is set in the Uplink Data resource (ID: 0) of the App Data Container object (ID: 10250).
-    The URI path of the resource instance is indicated as ``/10250/0/0``.
-  * If ``<data>`` is not present, SLM enters ``slm_data_mode`` and the data is set in the Uplink Data resource (ID: 0) of the App Data Container object (ID: 10250).
-    The URI path of the resource instance is indicated as ``/10250/0/0``.
+  * ``"/10250/0/0"``, in which case the data is set in the Uplink Data resource (ID: 0) of the App Data Container object (ID: 10250).
+  * ``"/19/<obj_inst_id>/0/<res_inst_id>"``, the data is set in an instance of the Data resource (ID: 0) of the Binary App Data Container object (ID: 19).
+
+  ``<data>`` must be a hexadecimal string in double quotes, unless ``slm_data_mode`` is enabled. If ``<data>`` is not present, SLM enters ``slm_data_mode``
 
 * ``AT#XCARRIER="battery_level",<battery_level>``
 

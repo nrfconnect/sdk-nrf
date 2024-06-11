@@ -20,6 +20,10 @@ LOG_MODULE_REGISTER(slm_carrier, CONFIG_SLM_LOG_LEVEL);
 /* Static variable to report the memory free resource. */
 static int m_mem_free;
 
+/* Static variables to track the application data path being written into. */
+static uint16_t app_data_path[4];
+static uint16_t app_data_path_len;
+
 struct k_work_delayable reconnect_work;
 
 /* Global functions defined in different files. */
@@ -234,13 +238,12 @@ static int carrier_datamode_callback(uint8_t op, const uint8_t *data, int len, u
 		ret = slm_util_atoh(data, len, slm_data_buf, size);
 		if (ret < 0) {
 			LOG_ERR("Failed to decode hex string to hex array");
+			exit_datamode_handler(ret);
 			return ret;
 		}
 
-		uint16_t path[3] = { LWM2M_CARRIER_OBJECT_APP_DATA_CONTAINER, 0, 0 };
-		uint8_t path_len = 3;
-
-		ret = lwm2m_carrier_app_data_set(path, path_len, slm_data_buf, ret);
+		ret = lwm2m_carrier_app_data_set(app_data_path, app_data_path_len, slm_data_buf,
+						 ret);
 		LOG_INF("datamode send: %d", ret);
 		if (ret < 0) {
 			exit_datamode_handler(ret);
@@ -284,19 +287,54 @@ static int do_carrier_appdata_create(enum at_cmd_type, const struct at_param_lis
 	return ret;
 }
 
-/* AT#XCARRIER="app_data_set"[,<data>][,<obj_inst_id>,<res_inst_id>] */
+/* AT#XCARRIER="app_data_set","uri_path"[,<data>] */
 SLM_AT_CMD_CUSTOM(xcarrier_app_data_set, "AT#XCARRIER=\"app_data_set\"", do_carrier_appdata_set);
 static int do_carrier_appdata_set(enum at_cmd_type, const struct at_param_list *param_list,
 				  uint32_t param_count)
 {
-	if (param_count == 2) {
-		/* enter data mode */
-		return enter_datamode(carrier_datamode_callback);
-	} else if ((param_count < 2) || (param_count > 5)) {
+	int ret;
+
+	if ((param_count < 3) || (param_count > 4)) {
 		return -EINVAL;
 	}
 
-	int ret = 0;
+	/* Longest possible URI path indicating a resource. */
+	char uri_path_str[sizeof("/65535/65535/65535/65535")];
+	size_t uri_path_str_len = sizeof(uri_path_str);
+
+	ret = util_string_get(param_list, 2, uri_path_str, &uri_path_str_len);
+	if (ret) {
+		return ret;
+	}
+
+	/* Reset the path length. */
+	app_data_path_len = 0;
+
+	/* Tokenize the path string with '/' as delimiter. */
+	if (uri_path_str[0] == '/' || isdigit((int)uri_path_str[0])) {
+		char *token = strtok(uri_path_str, "/");
+
+		while (token != NULL) {
+			if (app_data_path_len == 4) {
+				break;
+			}
+
+			app_data_path[app_data_path_len++] = atoi(token);
+			token = strtok(NULL, "/");
+		}
+	}
+
+	/* This command is only supported on objects /19 and /10250. */
+	if ((app_data_path_len < 2) ||
+	    ((app_data_path[0] != LWM2M_CARRIER_OBJECT_BINARY_APP_DATA_CONTAINER) &&
+	     (app_data_path[0] != LWM2M_CARRIER_OBJECT_APP_DATA_CONTAINER))) {
+		return -EINVAL;
+	}
+
+	if (param_count == 3) {
+		/* enter data mode */
+		return enter_datamode(carrier_datamode_callback);
+	}
 
 	char data_ascii[CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN] = {0};
 	size_t data_ascii_len = CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN;
@@ -304,64 +342,17 @@ static int do_carrier_appdata_set(enum at_cmd_type, const struct at_param_list *
 	char data_hex[CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN / 2];
 	size_t data_hex_len = CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN / 2;
 
-	if (param_count == 3) {
-		uint16_t path[3] = { LWM2M_CARRIER_OBJECT_APP_DATA_CONTAINER, 0, 0 };
-		uint8_t path_len = 3;
-
-		ret = util_string_get(param_list, 2, data_ascii, &data_ascii_len);
-		if (ret) {
-			return ret;
-		}
-
-		ret = slm_util_atoh(data_ascii, data_ascii_len, data_hex, data_hex_len);
-		if (ret < 0) {
-			LOG_ERR("Failed to decode hex string to hex array");
-			return ret;
-		}
-
-		ret = lwm2m_carrier_app_data_set(path, path_len, data_hex, ret);
-	} else if (param_count == 4 || param_count == 5) {
-		uint8_t *data = NULL;
-		int size = 0;
-
-		uint16_t inst_id;
-		uint16_t res_inst_id;
-
-		ret = at_params_unsigned_short_get(param_list, param_count - 2, &inst_id);
-		if (ret) {
-			return ret;
-		}
-
-		ret = at_params_unsigned_short_get(param_list, param_count - 1,
-						   &res_inst_id);
-		if (ret) {
-			return ret;
-		}
-
-		uint16_t path[4] = { LWM2M_CARRIER_OBJECT_BINARY_APP_DATA_CONTAINER, inst_id, 0,
-				     res_inst_id };
-		uint8_t path_len = 4;
-
-		if (param_count == 5) {
-			ret = util_string_get(param_list, 2, data_ascii, &data_ascii_len);
-			if (ret) {
-				return ret;
-			}
-
-			ret = slm_util_atoh(data_ascii, data_ascii_len, data_hex, data_hex_len);
-			if (ret < 0) {
-				LOG_ERR("Failed to decode hex string to hex array");
-				return ret;
-			}
-
-			data = data_hex;
-			size = ret;
-		}
-
-		ret = lwm2m_carrier_app_data_set(path, path_len, data, size);
+	ret = util_string_get(param_list, 3, data_ascii, &data_ascii_len);
+	if (ret) {
+		return ret;
 	}
 
-	return ret;
+	ret = slm_util_atoh(data_ascii, data_ascii_len, data_hex, data_hex_len);
+	if (ret < 0) {
+		return ret;
+	}
+
+	return lwm2m_carrier_app_data_set(app_data_path, app_data_path_len, data_hex, ret);
 }
 
 /* AT#XCARRIER="battery_level",<battery_level> */
