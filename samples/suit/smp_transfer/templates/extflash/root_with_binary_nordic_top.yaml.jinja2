@@ -1,11 +1,16 @@
 {%- set component_index = 0 %}
 {%- set component_list = [] %}
-{%- set mpi_root_vendor_name = application['config']['CONFIG_SUIT_MPI_ROOT_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_root_class_name = application['config']['CONFIG_SUIT_MPI_ROOT_CLASS_NAME']|default('nRF54H20_sample_root') %}
-{%- set mpi_application_vendor_name = application['config']['CONFIG_SUIT_MPI_APPlication_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_application_class_name = application['config']['CONFIG_SUIT_MPI_APPlication_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
-{%- set mpi_radio_vendor_name = application['config']['CONFIG_SUIT_MPI_RADio_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_radio_class_name = application['config']['CONFIG_SUIT_MPI_RADio_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_rad') %}
+{%- if application is not defined %}
+  {%- set main_config = radio %}
+{%- else %}
+  {%- set main_config = application %}
+{%- endif %}
+{%- set mpi_root_vendor_name = main_config['config']['CONFIG_SUIT_MPI_ROOT_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_root_class_name = main_config['config']['CONFIG_SUIT_MPI_ROOT_CLASS_NAME']|default('nRF54H20_sample_root') %}
+{%- set mpi_application_vendor_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_application_class_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
+{%- set mpi_radio_vendor_name = main_config['config']['CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_radio_class_name = main_config['config']['CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_rad') %}
 {%- set sequence_number = sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] %}
 {%- if 'SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY' in sysbuild['config'] and sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY'] != '' %}
   {%- set nordic_top = True %}
@@ -145,6 +150,57 @@ SUIT_Envelope_Tagged:
 {%- if application is defined %}
     - suit-directive-override-parameters:
         suit-parameter-uri: '#{{ application['name'] }}'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+{%- if radio is defined %}
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ radio['name'] }}'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+{%- if nordic_top %}
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#top'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+
+    suit-candidate-verification:
+    - suit-directive-set-component-index: 0
+{%- if application is defined %}
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ application['name'] }}'
         suit-parameter-image-digest:
           suit-digest-algorithm-id: cose-alg-sha-256
           suit-digest-bytes:
@@ -217,6 +273,7 @@ SUIT_Envelope_Tagged:
       - suit-send-sysinfo-success
       - suit-send-sysinfo-failure
 {%- endif %}
+
     suit-manifest-component-id:
     - INSTLD_MFST
     - RFC4122_UUID:
