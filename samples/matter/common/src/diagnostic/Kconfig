@@ -57,4 +57,13 @@ config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
 	help
 	  Enables testing module for diagnostic logs cluster.
 
+config NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REDIRECT
+	bool "Redirection of logs to the diagnostic logs module"
+	default y if NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS || NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+	depends on LOG_MODE_DEFERRED
+	help
+	  Enable redirection of the logs formed using logger LOG macro to the Matter diagnostic logs module.
+	  This option enables only redirection logs from the "chip" module, as a diagnostic network logs
+	  and from the "app" module, as a diagnostic end user logs.
+
 endif # NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
