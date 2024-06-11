@@ -229,6 +229,70 @@ The following table indicates the software maturity levels of the support for ea
 
   .. sml-table:: wifi
 
+Ecosystem support
+*****************
+
+The following sections contain the tables indicating the software maturity levels of the support for the following ecosystems:
+
+* Google Fast Pair
+
+Google Fast Pair
+================
+
+The following table indicates the software maturity levels of the support for Google Fast Pair use cases integrated in the |NCS|:
+
+.. toggle::
+
+   .. _software_maturity_fast_pair_use_case:
+
+   .. list-table:: Google Fast Pair use case support
+      :header-rows: 1
+      :align: center
+      :widths: auto
+
+      * - Use case
+        - |NCS| sample demonstration
+        - nRF52810
+        - nRF52811
+        - nRF52820
+        - nRF52832
+        - nRF52833
+        - nRF52840
+        - nRF5340
+        - nRF54H20
+        - nRF54L15
+        - nRF9151
+        - nRF9160
+        - nRF9161
+      * - **Input device**
+        - :ref:`fast_pair_input_device`
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+      * - **Locator tag**
+        - :ref:`fast_pair_locator_tag`
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+
 Security Feature Support
 ************************
 
