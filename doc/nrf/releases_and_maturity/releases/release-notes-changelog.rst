@@ -42,6 +42,7 @@ Build and configuration system
 
   * Documentation section about the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>` with a related information in the :ref:`migration guide <migration_2.7_recommended>`.
   * Documentation section about :ref:`app_build_snippets`.
+  * Documentation section about :ref:`configuration_system_overview_sysbuild` and :ref:`sysbuild_enabled_ncs`.
 
 * Updated:
 
@@ -52,40 +53,48 @@ Build and configuration system
 Working with nRF91 Series
 =========================
 
+* Updated the name and the structure of the section, with :ref:`ug_nrf91` as the landing page.
 * Moved :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` to the :ref:`gsg_guides` section.
 
 Working with nRF70 Series
 =========================
 
+* Updated the name and the structure of the section, with :ref:`ug_nrf70` as the landing page.
 * Moved :ref:`ug_nrf7002_gs` to the :ref:`gsg_guides` section.
 
 Working with nRF54L Series
 ==========================
 
 * Added the :ref:`ug_nrf54l15_gs` page.
-* Changed the default value for the Kconfig option :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_ACCURACY` from 500 to 250 if :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is used.
+* Changed the default value for the Kconfig option :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_ACCURACY` from ``500`` to ``250`` if :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is used.
 
 Working with nRF53 Series
 =========================
+
+* Added the :ref:`features_nrf53` page.
+* Updated:
+
+  * The name and the structure of the section, with :ref:`ug_nrf53` as the landing page.
+  * The default value for the Kconfig option :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_ACCURACY` from ``500`` to ``250`` if :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is used.
+  * The nrfjprog commands in :ref:`ug_nrf5340` by replacing them with commands from `nRF Util`_.
 
 * Moved :ref:`ug_nrf5340_gs` to the :ref:`gsg_guides` section.
 
 Working with nRF52 Series
 =========================
 
+* Updated the name and the structure of the section, with :ref:`ug_nrf52` as the landing page.
 * Moved :ref:`ug_nrf52_gs` to the :ref:`gsg_guides` section.
 
-Working with nRF53 Series
-=========================
+Working with PMIC
+=================
 
-* Added the :ref:`features_nrf53` page.
-* Changed the default value for the Kconfig option :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_ACCURACY` from 500 to 250 if :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is used.
-* Replaced nrfjprog commands in :ref:`ug_nrf5340` with commands from `nRF Util`_.
+* Updated the name and the structure of the section, with :ref:`ug_pmic` as the landing page.
 
 Working with RF front-end modules
 =================================
 
-|no_changes_yet_note|
+* Updated the name and the structure of the section, with :ref:`ug_radio_fem` as the landing page.
 
 Security
 ========
