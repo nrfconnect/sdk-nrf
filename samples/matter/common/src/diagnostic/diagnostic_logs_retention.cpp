@@ -5,7 +5,6 @@
  */
 
 #include "diagnostic_logs_retention.h"
-#include "diagnostic_logs_network.h"
 
 #include <lib/support/CodeUtils.h>
 #include <system/SystemError.h>
@@ -159,5 +158,21 @@ CHIP_ERROR DiagnosticLogsRetention::GetLogs(chip::MutableByteSpan &outBuffer, bo
 		outIsEndOfLog = false;
 	}
 
+	return CHIP_NO_ERROR;
+}
+
+size_t DiagnosticLogsRetentionReader::GetLogsSize()
+{
+	return mDiagnosticLogsRetention.GetLogsSize();
+}
+
+CHIP_ERROR DiagnosticLogsRetentionReader::GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog)
+{
+	return mDiagnosticLogsRetention.GetLogs(outBuffer, outIsEndOfLog, mReadOffset, mReadInProgress);
+}
+
+CHIP_ERROR DiagnosticLogsRetentionReader::FinishLogs()
+{
+	/* Do nothing. */
 	return CHIP_NO_ERROR;
 }
