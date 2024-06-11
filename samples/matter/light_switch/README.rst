@@ -108,8 +108,10 @@ Configuration
 
 |config|
 
-Matter light switch build types
-===============================
+.. _matter_light_switch_custom_configs:
+
+Matter light switch custom configurations
+=========================================
 
 .. include:: ../light_bulb/README.rst
     :start-after: matter_light_bulb_sample_configuration_file_types_start
@@ -202,7 +204,7 @@ User interface
 Matter CLI commands
 ===================
 
-If you build the application using the ``debug`` build type, you can use a series of commands to control the light switch device.
+If you build the application with the :ref:`debug configuration <matter_light_switch_custom_configs>`, you can use a series of commands to control the light switch device.
 These commands can be sent to one device (unicast) or a group of devices (groupcast).
 
 Unicast commands
@@ -278,11 +280,11 @@ Building and running
 
 See `Configuration`_ for information about building the sample with the DFU support.
 
-Selecting a build type
-======================
+Selecting a configuration
+=========================
 
-Before you start testing the application, you can select one of the `Matter light switch build types`_.
-See :ref:`cmake_options` for information about how to select a build type.
+Before you start testing the application, you can select one of the :ref:`matter_light_switch_custom_configs`.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information how to select a configuration.
 
 Testing
 *******

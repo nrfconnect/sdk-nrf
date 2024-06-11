@@ -99,8 +99,10 @@ Configuration
 
 |config|
 
-Matter template build types
-===========================
+.. _matter_template_custom_configs:
+
+Matter template custom configurations
+=====================================
 
 .. include:: ../light_bulb/README.rst
     :start-after: matter_light_bulb_sample_configuration_file_types_start
@@ -115,7 +117,7 @@ Device Firmware Upgrade support
 
 Alternatively, for the nRF54L15 PDK, the DFU can be configured to only use the internal MRAM for storage.
 This means that both the currently running firmware and the new firmware to be updated will be stored within the device's internal flash memory.
-This configuration is only available for the ``release`` build variant.
+This configuration is only available for the :ref:`release configuration <matter_template_custom_configs>`.
 
 The following is an example command to build the sample on the nRF54L15 PDK with support for Matter OTA DFU and DFU over Bluetooth® SMP, and using internal MRAM only:
 
@@ -170,11 +172,11 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-Selecting a build type
-======================
+Selecting a configuration
+=========================
 
-Before you start testing the application, you can select one of the `Matter template build types`_.
-See :ref:`cmake_options` for information about how to select a build type.
+Before you start testing the application, you can select one of the :ref:`matter_template_custom_configs`.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information how to select a configuration.
 
 Testing
 =======

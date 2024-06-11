@@ -45,7 +45,7 @@ The development kits for this sample offer the following IPv6 network support fo
 
 * Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, and ``nrf54h20dk/nrf54h20/cpuapp``.
 * Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached (2.4 GHz and 5 GHz), for ``nrf7002dk/nrf5340/cpuapp`` (2.4 GHz and 5 GHz), or for ``nrf7002dk/nrf5340/cpuapp/nrf7001`` (2.4 GHz only).
-* :ref:`Switching between Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached, using the ``thread_wifi_switched`` build type.
+* :ref:`Switching between Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached, using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>`.
 
 Overview
 ********
@@ -99,7 +99,7 @@ The following Kconfig options control the limits of the users and credentials th
 Thread and Wi-Fi switching
 ==========================
 
-When built using the ``thread_wifi_switched`` build type and programmed to the nRF5340 DK with the nRF7002 EK shield attached, the door lock sample supports a feature that allows you to :ref:`switch between Matter over Thread and Matter over Wi-Fi <ug_matter_overview_architecture_integration_designs_switchable>` at runtime.
+When built using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>` and programmed to the nRF5340 DK with the nRF7002 EK shield attached, the door lock sample supports a feature that allows you to :ref:`switch between Matter over Thread and Matter over Wi-Fi <ug_matter_overview_architecture_integration_designs_switchable>` at runtime.
 Due to Matter protocol limitations, a single Matter node can only use one transport protocol at a time.
 
 .. matter_door_lock_sample_thread_wifi_switch_desc_start
@@ -108,14 +108,14 @@ The application is built with support for both Matter over Thread and Matter ove
 The device activates either Thread or Wi-Fi transport protocol on boot, based on a flag stored in the non-volatile memory on the device.
 By default, Matter over Wi-Fi is activated.
 
-You can trigger the switch from one transport protocol to the other using the **Button 3** on the nRF5340 DK.
+You can trigger the switch from one transport protocol to the other using **Button 3** on the nRF5340 DK.
 This toggles the flag stored in the non-volatile memory, and then the device is factory reset and rebooted.
 Because the flag is toggled, the factory reset does not switch the device back to the default transport protocol (Wi-Fi).
 Instead, the factory reset and recommissioning to a Matter fabric allows the device to be provisioned with network credentials for the transport protocol that it was switched to, and to start operating in the selected network.
 
 .. matter_door_lock_sample_thread_wifi_switch_desc_end
 
-See `Matter door lock build types`_, `Selecting a build type`_, and :ref:`matter_lock_sample_switching_thread_wifi` for more information about how to configure and test this feature with this sample.
+See :ref:`matter_lock_sample_custom_configs` and :ref:`matter_lock_sample_switching_thread_wifi` for more information about how to configure and test this feature with this sample.
 
 Wi-Fi firmware on external memory
 ---------------------------------
@@ -203,39 +203,43 @@ Configuration
 
 |config|
 
-.. _matter_lock_sample_configuration_build_types:
+.. _matter_lock_sample_custom_configs:
 
-Matter door lock build types
-============================
+Matter door lock custom configurations
+======================================
 
 .. matter_door_lock_sample_configuration_file_types_start
 
-The sample does not use a single :file:`prj.conf` file.
-Configuration files are provided for different build types, and they are located in the sample root directory.
-Before you start testing the application, you can select one of the build types supported by the application.
+.. include:: /includes/sample_custom_config_intro.txt
 
-See :ref:`app_build_additions_build_types` and :ref:`cmake_options` for more information.
+The sample supports the following configurations:
 
-The sample supports the following build types:
-
-.. list-table:: Sample build types
+.. list-table:: Sample configurations
    :widths: auto
    :header-rows: 1
 
-   * - Build type
+   * - Configuration
      - File name
+     - :makevar:`FILE_SUFFIX`
      - Supported board
      - Description
    * - Debug (default)
      - :file:`prj.conf`
+     - No suffix
      - All from `Requirements`_
-     - Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
+     - Debug version of the application.
+
+       Enables additional features for verifying the application behavior, such as logs.
    * - Release
      - :file:`prj_release.conf`
+     - ``release``
      - All from `Requirements`_
-     - Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
+     - Release version of the application.
+
+       Enables only the necessary application functionalities to optimize its performance.
    * - Switched Thread and Wi-Fi
      - :file:`prj_thread_wifi_switched.conf`
+     - ``thread_wifi_switched``
      - nRF5340 DK with the nRF7002 EK shield attached
      - Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_wifi_thread_switching>` in the field.
 
@@ -302,15 +306,15 @@ You can enable the :ref:`matter_lock_sample_ble_nus` feature by setting the :kco
    Matter commissioning, DFU, and NUS over Bluetooth LE must be run separately.
 
 The door lock's Bluetooth LE service extension with NUS requires a secure connection with a smartphone, which is established using a security PIN code.
-The PIN code is different depending on the build type:
+The PIN code is different depending on the :ref:`configuration <matter_lock_sample_custom_configs>` the sample was built with:
 
-* In the ``debug`` build type, the secure PIN code is generated randomly and printed in the log console in the following way:
+* In the debug configuration, the secure PIN code is generated randomly and printed in the log console in the following way:
 
   .. code-block:: console
 
      PROVIDE THE FOLLOWING CODE IN YOUR MOBILE APP: 165768
 
-* In the ``release`` build type, the secure PIN is set to ``123456`` due to lack of a different way of showing it on nRF boards other than in the log console.
+* In the release configuration, the secure PIN is set to ``123456`` due to lack of a different way of showing it on nRF boards other than in the log console.
 
 See `Testing door lock using Bluetooth LE with Nordic UART Service`_ for more information about how to test this feature.
 
@@ -319,7 +323,7 @@ Factory data support
 
 .. matter_door_lock_sample_factory_data_start
 
-In this sample, the factory data support is enabled by default for all build types except for the target board nRF21540 DK.
+In this sample, the factory data support is enabled by default for all configurations except for the target board nRF21540 DK.
 This means that a new factory data set will be automatically generated when building for the target board.
 
 To disable factory data support, set the following Kconfig options to ``n``:
@@ -359,8 +363,8 @@ User interface
          * Changes the lock state to the opposite one.
 
       Button 3:
-         * On the nRF5340 DK when using the ``thread_wifi_switched`` build type: If pressed for more than ten seconds, it switches the Matter transport protocol from Thread or Wi-Fi to the other and factory resets the device.
-         * On other platform or build type: Not available.
+         * On the nRF5340 DK when using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>`: If pressed for more than ten seconds, it switches the Matter transport protocol from Thread or Wi-Fi to the other and factory resets the device.
+         * On other platform or configuration: Not available.
 
       .. include:: /includes/matter_segger_usb.txt
 
@@ -403,11 +407,11 @@ Building and running
 
 See `Configuration`_ for information about building the sample with the DFU support.
 
-Selecting a build type
-======================
+Selecting a configuration
+=========================
 
-Before you start testing the application, you can select one of the :ref:`matter_lock_sample_configuration_build_types`.
-See :ref:`cmake_options` for information about how to select a build type.
+Before you start testing the application, you can select one of the :ref:`matter_lock_sample_custom_configs`.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information how to select a configuration.
 
 Testing
 =======
@@ -839,11 +843,11 @@ Testing switching between Thread and Wi-Fi
 ==========================================
 
 .. note::
-   You can only test :ref:`matter_lock_sample_wifi_thread_switching` on the nRF5340 DK with the nRF7002 EK shield attached, using the ``thread_wifi_switched`` build type.
+   You can only test :ref:`matter_lock_sample_wifi_thread_switching` on the nRF5340 DK with the nRF7002 EK shield attached, using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>`.
 
 To test this feature, complete the following steps:
 
-#. Build the door lock application using the ``thread_wifi_switched`` build type:
+#. Build the door lock application using the switched Thread and Wi-Fi configuration:
 
    .. code-block:: console
 
@@ -876,6 +880,9 @@ Testing door lock using Bluetooth LE with Nordic UART Service
 
 To test the :ref:`matter_lock_sample_ble_nus` feature, complete the following steps:
 
+.. note::
+   Some of the steps depend on which :ref:`configuration <matter_lock_sample_custom_configs>` the sample was built with.
+
 #. Install `nRF Toolbox`_ on your Android (Android 11 or newer) or iOS (iOS 16.1 or newer) smartphone.
 #. Build the door lock application for Matter over Thread with the :kconfig:option:`CONFIG_CHIP_NUS` set to ``y``.
    For example, if you build from command line for the ``nrf52840dk/nrf52840``, use the following command:
@@ -890,17 +897,17 @@ To test the :ref:`matter_lock_sample_ble_nus` feature, complete the following st
 
       west flash --erase
 
-#. If you built the sample with the ``debug`` build type, connect the board to an UART console to see the log entries from the device.
+#. If you built the sample with the debug configuration, connect the board to an UART console to see the log entries from the device.
 #. Open the nRF Toolbox application on your smartphone.
 #. Select :guilabel:`Universal Asynchronous Receiver/Transmitter UART` from the list in the nRF Toolbox application.
 #. Tap on :guilabel:`Connect`.
    The application connects to the devices connected through UART.
 #. Select :guilabel:`MatterLock_NUS` from the list of available devices.
    The Bluetooth Pairing Request with an input field for passkey appears as a notification (Android) or on the screen (iOS).
-#. Depending on the build type you are using:
+#. Depending on the configuration you are using:
 
-   * For the ``release`` build type: Enter the passkey ``123456``.
-   * For the ``debug`` build type, complete the following steps:
+   * For the release configuration: Enter the passkey ``123456``.
+   * For the debug configuration, complete the following steps:
 
      a. Search the device's logs to find ``PROVIDE THE FOLLOWING CODE IN YOUR MOBILE APP:`` phrase.
      #. Read the randomly generated passkey from the console logs.

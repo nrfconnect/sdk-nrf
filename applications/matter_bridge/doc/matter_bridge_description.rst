@@ -526,35 +526,43 @@ If the bridged device supports also levels higher than the selected minimum, the
 In case the bridged device does not support the minimum required level, the connection will be terminated.
 To select the minimum security level, set the :ref:`CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL <CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL>` Kconfig option to ``2``, ``3`` or ``4``.
 
-.. _matter_bridge_app_build_types:
+.. _matter_bridge_app_custom_configs:
 
-Matter bridge build types
-=========================
+Matter bridge custom configurations
+===================================
 
-The Matter bridge application does not use a single :file:`prj.conf` file.
-Before you start testing the application, you can select one of the build types supported by the application.
-Not every board supports both mentioned build types.
+The Matter bridge application uses a :file:`prj.conf` configuration file located in the application root directory for the default configuration.
+It also provides additional files for different custom configurations.
+When you build the application, you can select one of these configurations using the :makevar:`FILE_SUFFIX` variable.
 
-See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
 
-The application supports the following build types:
 
-.. list-table:: Matter bridge build types
+The application supports the following configurations:
+
+.. list-table:: Matter bridge configurations
    :widths: auto
    :header-rows: 1
 
-   * - Build type
+   * - Configuration
      - File name
+     - :makevar:`FILE_SUFFIX`
      - Supported board
      - Description
    * - Debug (default)
      - :file:`prj.conf`
+     - No suffix
      - All from `Requirements`_
-     - Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs.
+     - Debug version of the application.
+
+       Enables additional features for verifying the application behavior, such as logs.
    * - Release
      - :file:`prj_release.conf`
+     - ``release``
      - All from `Requirements`_
-     - Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
+     - Release version of the application.
+
+       Enables only the necessary application functionalities to optimize its performance.
 
 Building and running
 ********************
@@ -573,11 +581,11 @@ For example:
 
       west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y -DSB_CONFIG_WIFI_NRF700X=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
 
-Selecting a build type
-======================
+Selecting a configuration
+=========================
 
-Before you start testing the application, you can select one of the :ref:`matter_bridge_app_build_types`.
-See :ref:`modifying_build_types` for detailed steps how to select a build type.
+Before you start testing the application, you can select one of the :ref:`matter_bridge_app_custom_configs`.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information how to select a configuration.
 
 .. _matter_bridge_testing:
 
