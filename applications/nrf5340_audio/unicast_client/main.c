@@ -269,19 +269,23 @@ static void le_audio_msg_sub_thread(void)
 			break;
 
 		case LE_AUDIO_EVT_CONFIG_RECEIVED:
-			struct bt_le_conn_param param;
 
-			/* Set the ACL interval up to allow more time for ISO packets */
-			param.interval_min = CONFIG_BLE_ACL_CONN_INTERVAL_SLOW;
-			param.interval_max = CONFIG_BLE_ACL_CONN_INTERVAL_SLOW;
-			param.latency = CONFIG_BLE_ACL_SLAVE_LATENCY;
-			param.timeout = CONFIG_BLE_ACL_SUP_TIMEOUT;
+			/* Only update conn param once */
+			if ((IS_ENABLED(CONFIG_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SINK) ||
+			    (!IS_ENABLED(CONFIG_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SOURCE)) {
+				struct bt_le_conn_param param;
 
-			ret = bt_conn_le_param_update(msg.conn, &param);
-			if (ret) {
-				LOG_WRN("Failed to update conn parameters: %d", ret);
+				/* Set the ACL interval up to allow more time for ISO packets */
+				param.interval_min = CONFIG_BLE_ACL_CONN_INTERVAL_SLOW;
+				param.interval_max = CONFIG_BLE_ACL_CONN_INTERVAL_SLOW;
+				param.latency = CONFIG_BLE_ACL_SLAVE_LATENCY;
+				param.timeout = CONFIG_BLE_ACL_SUP_TIMEOUT;
+
+				ret = bt_conn_le_param_update(msg.conn, &param);
+				if (ret) {
+					LOG_WRN("Failed to update conn parameters: %d", ret);
+				}
 			}
-
 			LOG_DBG("LE audio config received");
 
 			ret = unicast_client_config_get(msg.conn, msg.dir, &bitrate_bps,
