@@ -914,6 +914,11 @@ int nrf_wifi_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 
 	}
 
+	assoc_info.conn_type = NRF_WIFI_CONN_TYPE_OPEN;
+	if (!(params->key_mgmt_suite & WPA_KEY_MGMT_NONE)) {
+		assoc_info.conn_type = NRF_WIFI_CONN_TYPE_SECURE;
+	}
+
 	if (params->wpa_ie) {
 		assoc_info.wpa_ie.ie_len = params->wpa_ie_len;
 		memcpy(assoc_info.wpa_ie.ie, params->wpa_ie, params->wpa_ie_len);
