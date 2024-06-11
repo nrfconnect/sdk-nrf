@@ -668,6 +668,12 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 		goto out;
 	}
 
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("%s: Failed to lock vif_lock", __func__);
+		goto out;
+	}
+
 	if (!rpu_ctx_zep->rpu_ctx) {
 		status = nrf_wifi_fmac_dev_add_zep(&rpu_drv_priv_zep);
 
@@ -777,7 +783,9 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 
 	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_UP;
 
-	return 0;
+	ret = 0;
+
+	goto out;
 del_vif:
 	status = nrf_wifi_fmac_del_vif(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -790,6 +798,7 @@ dev_rem:
 		nrf_wifi_fmac_dev_rem_zep(&rpu_drv_priv_zep);
 	}
 out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
