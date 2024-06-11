@@ -23,7 +23,7 @@ config BT_FAST_PAIR_REQ_PAIRING
 
 config BT_FAST_PAIR_PN
 	bool "Fast Pair Personalized Name extension"
-	default y
+	default y if !BT_FAST_PAIR_FMDN
 	select BT_FAST_PAIR_GATT_SERVICE_ADDITIONAL_DATA
 	select BT_FAST_PAIR_STORAGE_PN
 	help
