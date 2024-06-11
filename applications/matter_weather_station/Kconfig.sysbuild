@@ -6,7 +6,10 @@
 
 #### Radio core
 config NRF_DEFAULT_IPC_RADIO
-	default y
+	default y if !WIFI_NRF700X
+
+config NRF_DEFAULT_BLUETOOTH
+	default y if WIFI_NRF700X
 
 config NETCORE_IPC_RADIO_BT_HCI_IPC
 	default y
