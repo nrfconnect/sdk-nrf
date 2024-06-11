@@ -139,6 +139,9 @@ features:
         - SHIELD_NRF7002EB
         - BOARD_NRF7002DK_NRF5340_CPUAPP
         - BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001
+  fast_pair:
+    Personalized Name extension: BT_FAST_PAIR_PN
+    Find My Device Network extension: BT_FAST_PAIR_FMDN
   trusted_firmware_m:
     Minimal Build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
     Full build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_NOT_SET && NRF_SECURITY
