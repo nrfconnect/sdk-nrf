@@ -27,10 +27,24 @@ features:
     Sidewalk Multi-link + Auto-connect: SIDEWALK && CONFIG_SIDEWALK_SUBGHZ_SUPPORT
     Sidewalk File Transfer (FUOTA): SIDEWALK && SIDEWALK_FILE_TRANSFER
   bluetooth:
-    Bluetooth LE Peripheral/Central: BT_CTLR && (BT_CENTRAL || BT_PERIPHERAL)
+    Bluetooth LE Peripheral: BT_PERIPHERAL
+    Bluetooth LE Central: BT_CENTRAL
+    Bluetooth LE Advertiser: BT_BROADCASTER
+    Bluetooth LE Scanner: BT_BROADCASTER
     LLPM: BT_CTLR_SDC_LLPM
+    LE 2M PHY: BT_CTLR_PHY_2M_SUPPORT
     LE Coded PHY: BT_CTLR_PHY_CODED_SUPPORT
+    LE Power Control Request: BT_TRANSMIT_POWER_CONTROL
+    Periodic Advertising Sync Transfer - Recipient: BT_PER_ADV_SYNC_TRANSFER_RECEIVER
+    Periodic Advertising Sync Transfer - Sender: BT_PER_ADV_SYNC_TRANSFER_SENDER
+    Sleep Clock Accuracy Updates: BT_SCA_UPDATE
+    Periodic Advertising with Responses - Advertiser: BT_PER_ADV_RSP
+    Periodic Advertising with Responses - Scanner: BT_PER_ADV_SYNC_RSP
     Connectionless/Connected CTE Transmitter: BT_CTLR_DF_CTE_TX_SUPPORT
+    Connected Isochronous Stream Peripheral: BT_ISO_PERIPHERAL
+    Connected Isochronous Stream Central: BT_ISO_CENTRAL
+    Isochronous Broadcaster: BT_ISO_BROADCASTER
+    Synchronized Receiver: BT_ISO_SYNC_RECEIVER
   zigbee:
     Zigbee (Sleepy) End Device: ZIGBEE_ROLE_END_DEVICE
     Zigbee Router: CONFIG_ZIGBEE_ROLE_ROUTER
