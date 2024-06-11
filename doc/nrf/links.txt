@@ -1274,6 +1274,7 @@
 .. _`Fast Pair FMDN advertising`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#advertised-frames
 .. _`Fast Pair Locator Tag Specific Guidelines`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#locator-tag
 .. _`Fast Pair Unwanted Tracking Prevention Guidelines`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#unwanted-tracking-prevention
+.. _`Fast Pair Device Feature Requirements for Locator Tags`: https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement/devicefeaturerequirement_locatortags
 
 .. _`Protocol Buffers`: https://developers.google.com/protocol-buffers
 
