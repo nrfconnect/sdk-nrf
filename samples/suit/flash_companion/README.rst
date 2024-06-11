@@ -73,10 +73,10 @@ Perform the following steps in the main application directory:
 
          &cpuapp_rx_partitions {
             cpuapp_slot0_partition: partition@a6000 {
-               reg = <0xa6000 DT_SIZE_K(448)>;
+               reg = <0xa6000 DT_SIZE_K(324)>;
             };
-            companion_partition: partition@116000 {
-               reg = <0x116000 DT_SIZE_K(36)>;
+            companion_partition: partition@f7000 {
+               reg = <0xf7000 DT_SIZE_K(36)>;
             };
          };
 
@@ -97,7 +97,7 @@ Perform the following steps in the main application directory:
 
    .. code-block:: console
 
-      west build -b nrf54h20dk/nrf54h20/cpuapp --sysbuild
+      west build -b nrf54h20dk/nrf54h20/cpuapp
       west flash
 
 The flash companion sample will be built flashed automatically by Sysbuild.
