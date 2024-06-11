@@ -40,7 +40,7 @@ You can compile your application with this feature as follows:
 .. parsed-literal::
    :class: highlight
 
-   west build -b *board* *application* -- \\
+   west build -b *board_target* *application* -- \\
    -DCONFIG_BOOTLOADER_MCUBOOT=y \\
    -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\\"0.1.2\\+3\\" \\
    -Dmcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y \\

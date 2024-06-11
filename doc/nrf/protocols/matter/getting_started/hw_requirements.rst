@@ -589,11 +589,12 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
 ..
 
-You can generate :ref:`Partition Manager's ASCII representation <pm_partition_reports>` of these tables by running the following command for your respective *<board_target>*:
+You can generate :ref:`Partition Manager's ASCII representation <pm_partition_reports>` of these tables by running the following command for your respective *board_target*:
 
-.. code-block:: console
+.. parsed-literal::
+   :class: highlight
 
-   west build -b <board_target> -t partition_manager_report
+   west build -b *board_target* -t partition_manager_report
 
 For example, for the ``nrf7002dk/nrf5340/cpuapp`` board target, the command is as follows:
 

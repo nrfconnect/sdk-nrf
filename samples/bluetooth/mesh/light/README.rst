@@ -137,11 +137,12 @@ DFU configuration
    .. tab:: nRF52840 DK and nRF54L15 PDK
 
       To enable the DFU feature for the nRF52840 and nRF54L15 development kits, set :makevar:`SB_CONF_FILE` to :file:`sysbuild-dfu.conf` and :makevar:`EXTRA_CONF_FILE` to :file:`overlay-dfu.conf` when building the sample.
-      For example, when building from the command line, use the following command:
+      For example, when building from the command line, use the following command, where *board_target* is the target for the development kit for which you are building:
 
-      .. code-block:: console
+      .. parsed-literal::
+         :class: highlight
 
-         west build -b <BOARD> -p -- -DSB_CONF_FILE="sysbuild-dfu.conf" -DEXTRA_CONF_FILE="overlay-dfu.conf"
+         west build -b *board_target* -p -- -DSB_CONF_FILE="sysbuild-dfu.conf" -DEXTRA_CONF_FILE="overlay-dfu.conf"
 
       The configuration overlay file :file:`overlay-dfu.conf` and the sysbuild configuration file :file:`sysbuild-dfu.conf` enable the DFU feature.
       To review the required configuration alterations, open and inspect the two files.
@@ -151,11 +152,12 @@ DFU configuration
       To enable the DFU feature for the nRF5340 development kit, set :makevar:`SB_CONF_FILE` to :file:`sysbuild-dfu.conf` and :makevar:`EXTRA_CONF_FILE` to :file:`overlay-dfu.conf` when building the sample.
       Additionally, you need to set the :makevar:`EXTRA_CONF_FILE` for the ipc_radio network image to :file:`overlay-dfu.conf` as well.
       This is an additional network image specific configuration overlay file, which allocates the necessary resources to enable the DFU feature.
-      For example, when building from the command line, use the following command:
+      For example, when building from the command line, use the following command, where *board_target* is the target for the development kit for which you are building:
 
-      .. code-block:: console
+      .. parsed-literal::
+         :class: highlight
 
-         west build -b <BOARD> -p -- -DSB_CONF_FILE="sysbuild-dfu.conf" -DEXTRA_CONF_FILE="overlay-dfu.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-dfu.conf"
+         west build -b *board_target* -p -- -DSB_CONF_FILE="sysbuild-dfu.conf" -DEXTRA_CONF_FILE="overlay-dfu.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-dfu.conf"
 
       .. note::
          Currently, the nRF5340 development kit only supports DFU for the application core.

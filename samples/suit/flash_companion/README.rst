@@ -97,8 +97,8 @@ Perform the following steps in the main application directory:
 
    .. code-block:: console
 
-      $ west build -b nrf54h20dk/nrf54h20/cpuapp --sysbuild
-      $ west flash
+      west build -b nrf54h20dk/nrf54h20/cpuapp --sysbuild
+      west flash
 
 The flash companion sample will be built flashed automatically by Sysbuild.
 

@@ -457,9 +457,10 @@ LTO is an advanced compilation technique that optimizes across all compiled unit
 See :ref:`cmake_options` for detailed instructions on how to add the ``FILE_SUFFIX=release`` option to your build.
 For example, when building from the command line, you can add it as follows:
 
-.. code-block:: console
+.. parsed-literal::
+   :class: highlight
 
-   west build -b <board_name> -- -DFILE_SUFFIX=release
+   west build -b *board_target* -- -DFILE_SUFFIX=release
 
 .. _fast_pair_locator_tag_testing:
 

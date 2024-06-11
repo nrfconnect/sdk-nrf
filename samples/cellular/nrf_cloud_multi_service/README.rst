@@ -922,14 +922,14 @@ If you are certain you understand the inherent security risks, you can use this 
          .. parsed-literal::
             :class: highlight
 
-            west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
+            west build --board *board_target* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
 
       .. group-tab:: PowerShell
 
          .. parsed-literal::
             :class: highlight
 
-            west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+            west build --board *board_target* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
 
 
 .. _nrf_cloud_multi_service_setup_wifi_cred:

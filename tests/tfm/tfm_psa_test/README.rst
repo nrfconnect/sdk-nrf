@@ -50,19 +50,21 @@ Building and running
     For programming, use the :ref:`programming command without --erase <programming_params_no_erase>`.
     Programming with ``--erase`` or ``--recover`` (or similar parameters) will erase the PSA platform security parameters.
 
-You can indicate the desired test suite by using a configuration flag when building (replace ``<board_target>`` with your board name, for example ``nrf5340dk/nrf5340/cpuapp/ns``):
+You can indicate the desired test suite by using a configuration flag when building (replace *board_target* with your board target name, for example ``nrf5340dk/nrf5340/cpuapp/ns``):
 
-.. code-block:: console
+.. parsed-literal::
+   :class: highlight
 
-    west build -b <board_target> nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_STORAGE=y
+    west build -b *board_target* nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_STORAGE=y
 
 When the test suite :kconfig:option:`CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION` is selected, it is required that the device is provisioned with the PSA root-of-trust security parameters using the :ref:`provisioning image <provisioning_image>` sample.
 To provision the device, build and flash the provisioning image sample.
-Then run the PSA test suite with the following command:
+Then run the PSA test suite with the following command, where *board_target* is your board target name:
 
-.. code-block:: console
+.. parsed-literal::
+   :class: highlight
 
-    west build -b <build_target> nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y -DCONFIG_TFM_PARTITION_INITIAL_ATTESTATION=y -DCONFIG_TFM_NRF_PROVISIONING=y
+    west build -b *board_target* nrf/tests/tfm/tfm_psa_test -- -DCONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y -DCONFIG_TFM_PARTITION_INITIAL_ATTESTATION=y -DCONFIG_TFM_NRF_PROVISIONING=y
 
 Not all test suites are valid on all boards.
 See the :file:`testcase.yaml` file for the list of valid test suites for each board.
