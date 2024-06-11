@@ -63,7 +63,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 40bba7637eb2854d22aa4403baa431d3c16f72fb
+      revision: 41b063f31e3be53d79f5838fb3a5b41a0bfcd157
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -184,6 +184,12 @@ manifest:
       revision: v2.7.0-rc1
       groups:
         - nrf-802154
+    - name: soc-hwmv1
+      repo-path: sdk-soc-hwmv1
+      revision: fe543efbf9eecc5d573a91ac0e69f0b204af7cd3
+      path: modules/soc-hwmv1
+      groups:
+        - soc-hwmv1
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
