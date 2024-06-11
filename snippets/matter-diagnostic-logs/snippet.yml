@@ -6,7 +6,7 @@ boards:
   nrf52840dk/nrf52840:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf52840dk_nrf52840.overlay
-  nrf5340dk/nrf5340_cpuapp:
+  nrf5340dk/nrf5340/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf5340dk_nrf5340_cpuapp.overlay
   nrf7002dk/nrf5340/cpuapp:
