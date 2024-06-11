@@ -6,6 +6,12 @@
 
 #pragma once
 
+#include "diagnostic_logs_intent_iface.h"
+
+#if defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS) || defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS)
+#include "diagnostic_logs_retention.h"
+#endif
+
 #include "util/finite_map.h"
 
 #include <app/clusters/diagnostic-logs-server/DiagnosticLogsProviderDelegate.h>
@@ -13,31 +19,6 @@
 
 namespace Nrf::Matter
 {
-
-class DiagnosticLogsIntentIface {
-public:
-	/**
-	 * @brief Get the captured logs size.
-	 *
-	 * @return size of captured logs in bytes
-	 */
-	virtual size_t GetLogsSize() = 0;
-
-	/**
-	 * @brief Get the captured logs.
-	 *
-	 * @param outBuffer output buffer to store the logs
-	 * @param outIsEndOfLog flag informing whether the stored data is complete log or one of the few chunks
-	 *
-	 * @return size of captured logs in bytes
-	 */
-	virtual CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog) = 0;
-
-	/**
-	 * @brief Finish the log capturing. This method is used to perform potential clean up after session.
-	 */
-	virtual CHIP_ERROR FinishLogs() = 0;
-};
 
 struct IntentData {
 	chip::app::Clusters::DiagnosticLogs::IntentEnum mIntent =
@@ -119,6 +100,22 @@ public:
 
 	void ClearLogs();
 
+	/**
+	 * @brief Push the new log to the logs ring buffer.
+	 *
+	 * If the buffer is full, the new data overrides the oldest one.
+	 * It supports only end user and network intents.
+	 * The crash intent is not supported, as crash logs are added asynchronously if failure occurs and cannot be
+	 * logged using public API.
+	 *
+	 * @param intent the type of pushed log
+	 * @param data address of logs data to be stored in the buffer
+	 * @param size size of data to be stored in the buffer
+	 *
+	 * @return CHIP_NO_ERROR on success, the other error code on failure.
+	 */
+	CHIP_ERROR PushLog(chip::app::Clusters::DiagnosticLogs::IntentEnum intent, const void *data, size_t size);
+
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
 	bool StoreTestingLog(chip::app::Clusters::DiagnosticLogs::IntentEnum intent, char *text, size_t textSize);
 	void ClearTestingBuffer(chip::app::Clusters::DiagnosticLogs::IntentEnum intent);
@@ -138,7 +135,20 @@ private:
 	DiagnosticLogProvider(DiagnosticLogProvider &&) = delete;
 	DiagnosticLogProvider &operator=(DiagnosticLogProvider &&) = delete;
 
-	DiagnosticLogProvider() = default;
+#if defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS) &&                                                  \
+	defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS)
+	DiagnosticLogProvider()
+		: mNetworkLogs(DEVICE_DT_GET(DT_NODELABEL(network_logs_retention))),
+		  mEndUserLogs(DEVICE_DT_GET(DT_NODELABEL(end_user_logs_retention)))
+	{
+	}
+#elif defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS)
+	DiagnosticLogProvider() : mNetworkLogs(DEVICE_DT_GET(DT_NODELABEL(network_logs_retention))) {}
+#elif defined(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS)
+	DiagnosticLogProvider() : mEndUserLogs(DEVICE_DT_GET(DT_NODELABEL(end_user_logs_retention))) {}
+#else
+	DiagnosticLogProvider() {}
+#endif
 
 	CHIP_ERROR SetIntentImplementation(chip::app::Clusters::DiagnosticLogs::IntentEnum intent,
 					   IntentData &intentData);
@@ -159,6 +169,14 @@ private:
 
 	Nrf::FiniteMap<chip::app::Clusters::DiagnosticLogs::LogSessionHandle, IntentData, kMaxLogSessionHandle>
 		mIntentMap;
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+	DiagnosticLogsRetention mNetworkLogs;
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS
+	DiagnosticLogsRetention mEndUserLogs;
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
 };
 
 } /* namespace Nrf::Matter */

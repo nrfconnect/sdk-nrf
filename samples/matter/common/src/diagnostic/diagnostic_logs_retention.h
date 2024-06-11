@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "diagnostic_logs_intent_iface.h"
+
 #include <lib/core/CHIPError.h>
 #include <lib/support/Span.h>
 #include <zephyr/retention/retention.h>
@@ -99,4 +101,39 @@ private:
 	size_t mCapacity = 0;
 
 	const struct device *mPartition;
+};
+
+class DiagnosticLogsRetentionReader : public Nrf::Matter::DiagnosticLogsIntentIface {
+public:
+	DiagnosticLogsRetentionReader(DiagnosticLogsRetention &diagnosticLogsRetention)
+		: mDiagnosticLogsRetention(diagnosticLogsRetention)
+	{
+	}
+
+	/**
+	 * @brief Get the captured logs size.
+	 *
+	 * @return size of captured logs in bytes
+	 */
+	CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog) override;
+
+	/**
+	 * @brief Get the captured logs.
+	 *
+	 * @param outBuffer output buffer to store the logs
+	 * @param outIsEndOfLog flag informing whether the stored data is complete log or one of the few chunks
+	 *
+	 * @return size of captured logs in bytes
+	 */
+	CHIP_ERROR FinishLogs() override;
+
+	/**
+	 * @brief Finish the log capturing. This method is used to perform potential clean up after session.
+	 */
+	size_t GetLogsSize() override;
+
+private:
+	uint32_t mReadOffset = 0;
+	bool mReadInProgress = false;
+	DiagnosticLogsRetention &mDiagnosticLogsRetention;
 };
