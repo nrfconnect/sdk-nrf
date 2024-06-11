@@ -46,7 +46,7 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
       list(APPEND dfu_multi_image_ids 1)
     endif()
 
-    list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/nrf70.signed.hex")
+    list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/nrf70.signed.bin")
     list(APPEND dfu_multi_image_targets nrf70_wifi_fw_patch_target)
   endif()
 
