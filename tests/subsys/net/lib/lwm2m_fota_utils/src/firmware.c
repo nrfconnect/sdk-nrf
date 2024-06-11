@@ -250,6 +250,7 @@ int fota_download_util_image_schedule_stub(enum dfu_target_image_type dfu_target
 static int fota_download_util_image_reset_stub(enum dfu_target_image_type dfu_target_type)
 {
 	target_reset_done = true;
+	target_offset = 0;
 	return 0;
 }
 

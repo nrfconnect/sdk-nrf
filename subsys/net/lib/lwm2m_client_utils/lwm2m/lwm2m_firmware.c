@@ -640,6 +640,7 @@ static int firmware_update_state(uint16_t obj_inst_id, uint16_t res_id, uint16_t
 	if (*data == STATE_IDLE) {
 		/* Cancel Only object is same than ongoing update */
 		if (obj_inst_id == ongoing_obj_id) {
+			client_acknowledge(); /* Erasing might take some time, so acknoledge now.*/
 			ongoing_obj_id = UNUSED_OBJ_ID;
 			fota_download_util_download_cancel();
 			ret = firmware_target_reset(obj_inst_id);
@@ -713,6 +714,11 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 		return -EINVAL;
 	}
 
+	if (offset < bytes_downloaded) {
+		LOG_DBG("Skipping already downloaded bytes");
+		return 0;
+	}
+
 	if (bytes_downloaded == 0 && offset == 0) {
 		if (ongoing_obj_id != UNUSED_OBJ_ID) {
 			LOG_INF("DFU is allocated already");
@@ -740,28 +746,40 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 
 		/* Store Started DFU type */
 		target_image_type_store(obj_inst_id, image_type);
-		ret = dfu_target_init(image_type, 0, total_size, dfu_target_cb);
-		if (ret < 0) {
-			LOG_ERR("Failed to init DFU target, err: %d", ret);
-			goto cleanup;
-		}
+		do {
+			ret = dfu_target_init(image_type, 0, total_size, dfu_target_cb);
+			if (ret < 0) {
+				LOG_ERR("Failed to init DFU target, err: %d", ret);
+				goto cleanup;
+			}
+			/* Check if we need to erase */
+			ret = dfu_target_offset_get(&target_offset);
+			if (ret < 0) {
+				LOG_ERR("Failed to obtain current offset, err: %d", ret);
+				goto cleanup;
+			}
+
+			if (target_offset != 0) {
+				LOG_INF("Erasing target");
+				ret = dfu_target_reset();
+				if (ret < 0) {
+					LOG_ERR("Failed to erase target, err: %d", ret);
+					goto cleanup;
+				}
+			}
+		} while (target_offset != 0);
 
 		LOG_INF("%s firmware download started.",
 			image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ||
 					image_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM ?
 				"Modem" :
 				"Application");
-	}
-
-	if (offset < bytes_downloaded) {
-		LOG_DBG("Skipping already downloaded bytes");
-		return 0;
-	}
-
-	ret = dfu_target_offset_get(&target_offset);
-	if (ret < 0) {
-		LOG_ERR("Failed to obtain current offset, err: %d", ret);
-		goto cleanup;
+	} else {
+		ret = dfu_target_offset_get(&target_offset);
+		if (ret < 0) {
+			LOG_ERR("Failed to obtain current offset, err: %d", ret);
+			goto cleanup;
+		}
 	}
 
 	/* Display a % downloaded or byte progress, if no total size was
