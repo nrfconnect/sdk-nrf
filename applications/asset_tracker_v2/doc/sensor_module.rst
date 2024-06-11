@@ -7,7 +7,7 @@ Sensor module
    :local:
    :depth: 2
 
-The sensor module interacts with external sensors present on the `Thingy:91 <Thingy\:91 product page_>`_.
+The sensor module interacts with external sensors present on the `Thingy:91 <Thingy\:91 product page_>`_ and Thingy:91 X.
 It collects environmental data and detects motion over a set threshold value.
 
 Features
@@ -37,6 +37,8 @@ The following table lists the sensors and sensor data types supported by the mod
 +-------------------------+-----------------+
 
 The module controls and collects data from the sensors by interacting with their :ref:`device drivers <device_model_api>` using :ref:`Zephyr's generic sensor API <sensor_api>`.
+
+Thingy:91 X has a `BME688`_ gas sensor and `ADXL367`_ motion sensor that can be used by the :ref:`asset_tracker_v2_sensor_module` module.
 
 Data sampling
 =============
@@ -95,6 +97,9 @@ The accelerometer changes to active mode when the activity threshold is exceeded
 :kconfig:option:`CONFIG_ADXL372_INACTIVITY_THRESHOLD` for the duration specified in the :kconfig:option:`CONFIG_ADXL372_INACTIVITY_TIME` option.
 
 When an impact has been detected, a :c:enum:`SENSOR_EVT_MOVEMENT_IMPACT_DETECTED` event is sent from the sensor module.
+
+.. note::
+   Impact detection is not implemented for Thingy:91 X.
 
 .. _bosch_software_environmental_cluster_library:
 

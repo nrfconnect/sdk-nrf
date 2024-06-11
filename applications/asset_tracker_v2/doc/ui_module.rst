@@ -7,7 +7,7 @@ User Interface module
    :local:
    :depth: 2
 
-The User Interface module controls and monitors the UI elements on nRF91 Series development kits and Thingy:91.
+The User Interface module controls and monitors the UI elements on nRF91 Series development kits, Thingy:91, and Thingy:91 X.
 
 Features
 ********
@@ -23,7 +23,7 @@ The buttons used by the module and their functionality are listed in the followi
 .. _button_behavior:
 
 +--------+-------------------------------------+------------------------------------+
-| Button | Thingy:91                           | nRF91 Series DK                    |
+| Button | Thingy:91 and Thingy:91 X           | nRF91 Series DK                    |
 +========+=====================================+====================================+
 | 1      | Send a message to the cloud service | Send message to the cloud service. |
 +--------+-------------------------------------+------------------------------------+
@@ -38,29 +38,29 @@ LED indication
 The module supports multiple LED patterns to visualize the operating state of the application.
 The following table describes the supported LED states:
 
-+---------------------------+------------------------------+----------------------------+
-| State                     | Thingy:91 RGB LED            | nRF91 Series DK solid LEDs |
-+===========================+==============================+============================+
-| LTE connection search     | Yellow, blinking             | LED1 blinking              |
-+---------------------------+------------------------------+----------------------------+
-| Location search           | Purple, blinking             | LED2 blinking              |
-+---------------------------+------------------------------+----------------------------+
-| Cloud association         | White, double pulse blinking | LED3 double pulse blinking |
-+---------------------------+------------------------------+----------------------------+
-| Connecting to cloud       | Green, triple pulse blinking | LED3 triple pulse blinking |
-+---------------------------+------------------------------+----------------------------+
-| Publishing data           | Green, blinking              | LED3 blinking              |
-+---------------------------+------------------------------+----------------------------+
-| Active mode               | Light blue, blinking         | LED4 blinking              |
-+---------------------------+------------------------------+----------------------------+
-| Passive mode              | Dark blue, blinking          | LED3 and LED4 blinking     |
-+---------------------------+------------------------------+----------------------------+
-| Error                     | Red, static                  | All 4 LEDs blinking        |
-+---------------------------+------------------------------+----------------------------+
-| FOTA update               | Orange, rapid blinking       | LED1 and LED2 blinking     |
-+---------------------------+------------------------------+----------------------------+
-| Completion of FOTA update | Orange, static               | LED1 and LED2 static       |
-+---------------------------+------------------------------+----------------------------+
++---------------------------+------------------------------------+----------------------------+
+| State                     | Thingy:91 and Thingy:91 X RGB LEDs | nRF91 Series DK solid LEDs |
++===========================+====================================+============================+
+| LTE connection search     | Yellow, blinking                   | LED1 blinking              |
++---------------------------+------------------------------------+----------------------------+
+| Location search           | Purple, blinking                   | LED2 blinking              |
++---------------------------+------------------------------------+----------------------------+
+| Cloud association         | White, double pulse blinking       | LED3 double pulse blinking |
++---------------------------+------------------------------------+----------------------------+
+| Connecting to cloud       | Green, triple pulse blinking       | LED3 triple pulse blinking |
++---------------------------+------------------------------------+----------------------------+
+| Publishing data           | Green, blinking                    | LED3 blinking              |
++---------------------------+------------------------------------+----------------------------+
+| Active mode               | Light blue, blinking               | LED4 blinking              |
++---------------------------+------------------------------------+----------------------------+
+| Passive mode              | Dark blue, blinking                | LED3 and LED4 blinking     |
++---------------------------+------------------------------------+----------------------------+
+| Error                     | Red, static                        | All 4 LEDs blinking        |
++---------------------------+------------------------------------+----------------------------+
+| FOTA update               | Orange, rapid blinking             | LED1 and LED2 blinking     |
++---------------------------+------------------------------------+----------------------------+
+| Completion of FOTA update | Orange, static                     | LED1 and LED2 static       |
++---------------------------+------------------------------------+----------------------------+
 
 .. note::
    The LED pattern that indicates the device mode is visible for a few seconds after an update has been sent to cloud.

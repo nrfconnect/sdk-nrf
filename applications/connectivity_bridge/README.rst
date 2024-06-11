@@ -7,7 +7,7 @@ Connectivity bridge
    :local:
    :depth: 2
 
-The Connectivity bridge application demonstrates the bridge functionality for the Thingy:91 hardware.
+The Connectivity bridge application demonstrates the bridge functionality for the Thingy:91 and Thingy:91 X hardwares.
 
 Additionally, the application also provides an option of adding the Bluetooth® functionality by making use of the :ref:`nus_service_readme`.
 

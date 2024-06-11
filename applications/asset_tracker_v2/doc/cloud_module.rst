@@ -159,7 +159,7 @@ For more information on how to set up a connection and provision certificates to
 
 .. note::
    There are no mandatory configuration settings for the :ref:`lib_nrf_cloud` library.
-   The nRF91 Series DKs and the Thingy:91 come with factory-provisioned certificates required to establish a connection to nRF Cloud.
+   The nRF91 Series DKs, the Thingy:91, and the Thingy:91 X come with factory-provisioned certificates required to establish a connection to nRF Cloud.
    The default configuration of the :ref:`lib_nrf_cloud` library uses the security tag that the nRF Cloud certificates are stored to.
 
 Configurations for AWS IoT library

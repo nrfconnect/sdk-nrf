@@ -59,7 +59,7 @@ To set up a cloud service to work with the application firmware, complete the st
    This value is printed on the development kit.
 
 * nRF Cloud - :ref:`Connecting your device to nRF Cloud <nrf9160_gs_connecting_dk_to_cloud>`.
-  The default configuration of the firmware is to communicate with `nRF Cloud`_ using the factory-provisioned certificates on nRF91 Series DKs and Thingy:91.
+  The default configuration of the firmware is to communicate with `nRF Cloud`_ using the factory-provisioned certificates on nRF91 Series DKs, Thingy:91, and Thingy:91 X.
   This means that no additional configuration of the firmware is needed to connect to nRF Cloud.
   It is recommended to build and run the firmware on the device before completing the steps listed in :ref:`Connecting your device to nRF Cloud <nrf9160_gs_connecting_dk_to_cloud>`.
   See :ref:`Building and running <building_and_running>`.
