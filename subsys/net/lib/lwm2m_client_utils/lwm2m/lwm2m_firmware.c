@@ -845,6 +845,24 @@ cleanup:
 		if (dfu_target_reset() < 0) {
 			LOG_ERR("Failed to reset DFU target");
 		}
+		/* We must return only known values for LwM2M firmware handler. */
+		switch (ret) {
+		case -ENOMEM:
+		case -ENOSPC:
+		case -EFAULT:
+		case -ENOMSG:
+			break;
+		case -EFBIG:
+		case -E2BIG:
+			ret = -ENOSPC;
+			break;
+		case -EINVAL:
+			ret = -ENOMSG;
+			break;
+		default:
+			ret = -EFAULT;
+			break;
+		}
 	}
 
 	return ret;
