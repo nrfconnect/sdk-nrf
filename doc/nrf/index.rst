@@ -4,7 +4,7 @@
 Introduction
 ############
 
-The |NCS| is a modern, unified software development kit for building low-power wireless applications based on the Nordic Semiconductor nRF52, nRF53, nRF70, and nRF91 Series wireless devices.
+The |NCS| is a modern, unified software development kit for building low-power wireless applications based on the Nordic Semiconductor nRF52, nRF53, nRF54, nRF70, and nRF91 Series wireless devices.
 It supports :ref:`Microsoft Windows, Linux, and macOS <requirements>` for development.
 
 The |NCS| has the following distinguishing features:
