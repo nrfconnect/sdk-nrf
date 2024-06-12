@@ -1011,6 +1011,7 @@
 .. _`SPAKE2+`: https://datatracker.ietf.org/doc/pdf/draft-bar-cfrg-spake2plus-02.pdf
 
 .. _`DULT`: https://datatracker.ietf.org/doc/draft-detecting-unwanted-location-trackers/
+.. _`DULT status`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-status-of-this-memo
 .. _`DULT Accessory Information`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-accessory-information
 .. _`DULT Non-owner controls`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-non-owner-controls
 .. _`DULT Manufacturer Network ID Registry`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-manufacturer-network-id-reg

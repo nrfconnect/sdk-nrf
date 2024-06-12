@@ -12,7 +12,11 @@ Following the specification improves the privacy and safety of individuals by pr
 For detailed information about supported functionalities, see the official `DULT`_ documentation.
 
 .. note::
+   The `DULT`_ documentation has the Internet-Draft status, which means it is valid for a maximum of six months and subject to change or obsolescence.
+   For more details, refer to the `DULT status`_ section from the DULT specification.
+
    The DULT support in the |NCS| is :ref:`experimental <software_maturity>`.
+   Breaking updates in the DULT support might be implemented in response to changes in the `DULT`_ specification.
    The optional features are not fully supported.
 
 Integration prerequisites
