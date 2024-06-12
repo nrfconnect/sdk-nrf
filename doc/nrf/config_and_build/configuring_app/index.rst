@@ -76,5 +76,6 @@ Just as for creating the application, you can build the application using either
    kconfig/index
    advanced_building
    output_build_files
+   sysbuild_images
 
 .. |output_files_note| replace:: For more information about files generated as output of the build process, see :ref:`app_build_output_files`.
