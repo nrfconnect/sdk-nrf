@@ -23,7 +23,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 project = "Matter SDK"
 copyright = "2020-2024, Matter Contributors"
 author = "Matter Contributors"
-version = "1.2.0"
+version = "1.3.0"
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
