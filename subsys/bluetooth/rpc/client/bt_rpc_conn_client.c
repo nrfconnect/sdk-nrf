@@ -1139,26 +1139,78 @@ static void bt_conn_cb_register_on_remote(void)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 0;
-	static bool registered;
 
-	if (!registered) {
-		registered = true;
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
-		NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-
-		nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_CB_REGISTER_ON_REMOTE_RPC_CMD,
-					&ctx, ser_rsp_decode_void, NULL);
-	}
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_CB_REGISTER_ON_REMOTE_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
 void bt_conn_cb_register(struct bt_conn_cb *cb)
 {
+	bool first = !first_bt_conn_cb;
+
 	LOCK_CONN_INFO();
 	cb->_next = first_bt_conn_cb;
 	first_bt_conn_cb = cb;
 	UNLOCK_CONN_INFO();
 
-	bt_conn_cb_register_on_remote();
+	if (first) {
+		bt_conn_cb_register_on_remote();
+	}
+}
+
+static int bt_conn_cb_unregister_on_remote(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 0;
+	int result = 0;
+
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_CB_UNREGISTER_ON_REMOTE_RPC_CMD, &ctx,
+				ser_rsp_decode_i32, &result);
+
+	return result;
+}
+
+int bt_conn_cb_unregister(struct bt_conn_cb *cb)
+{
+	struct bt_conn_cb *previous_callback;
+	int err = 0;
+
+	if (first_bt_conn_cb == NULL) {
+		/* No callsback registered */
+		return -ENOENT;
+	}
+
+	LOCK_CONN_INFO();
+	if (first_bt_conn_cb == cb) {
+		first_bt_conn_cb = first_bt_conn_cb->_next;
+		goto unlock;
+	}
+
+	previous_callback = first_bt_conn_cb;
+
+	while (previous_callback->_next) {
+		if (previous_callback->_next == cb) {
+			previous_callback->_next = previous_callback->_next->_next;
+			goto unlock;
+		}
+
+		previous_callback = previous_callback->_next;
+	}
+
+	err = -ENOENT;
+unlock:
+	UNLOCK_CONN_INFO();
+
+	if (err == 0 && first_bt_conn_cb == NULL) {
+		/* No callbacks left, unregister on remote */
+		err = bt_conn_cb_unregister_on_remote();
+	}
+
+	return err;
 }
 
 #if defined(CONFIG_BT_SMP)

@@ -5,27 +5,27 @@ tests:
   applications.protocols_serialization.client.rpc_ble:
     build_only: true
     platform_allow: >
-      nrf52840dk_nrf52840
+      nrf52840dk/nrf52840
     tags: ci_build
     extra_args: >
       SNIPPET="ble"
     integration_platforms:
-      - nrf52840dk_nrf52840
+      - nrf52840dk/nrf52840
   applications.protocols_serialization.client.rpc_ot:
     build_only: true
     platform_allow: >
-      nrf52840dk_nrf52840
+      nrf52840dk/nrf52840
     tags: ci_build
     extra_args: >
       SNIPPET="openthread"
     integration_platforms:
-      - nrf52840dk_nrf52840
+      - nrf52840dk/nrf52840
   applications.protocols_serialization.client.rpc:
     build_only: true
     platform_allow: >
-      nrf52840dk_nrf52840
+      nrf52840dk/nrf52840
     tags: ci_build
     extra_args: >
       SNIPPET="ble;openthread"
     integration_platforms:
-      - nrf52840dk_nrf52840
+      - nrf52840dk/nrf52840

@@ -55,7 +55,7 @@ Complete the following steps to build and flash the client application into an n
 3. Build the client application:
 
    ```
-   ~/ncs/nrf/applications/protocols_serialization/client$ west build -b nrf52840dk_nrf52840 -S "openthread;ble;debug"
+   ~/ncs/nrf/applications/protocols_serialization/client$ west build -b nrf52840dk/nrf52840 -S "openthread;ble;debug"
    ```
 
    Note that you can modify the list of enabled features, which by default includes **ble** support as well as **debug** logs.
@@ -83,7 +83,7 @@ Complete the following steps to build and flash the server application into anot
 3. Build the server application:
 
    ```
-   ~/ncs/nrf/applications/protocols_serialization/server$ west build -b nrf52840dk_nrf52840 -S "openthread;ble;debug"
+   ~/ncs/nrf/applications/protocols_serialization/server$ west build -b nrf52840dk/nrf52840 -S "openthread;ble;debug"
    ```
 
    Note that you can modify the list of enabled features, which by default includes **ble** support as well as **debug** logs.

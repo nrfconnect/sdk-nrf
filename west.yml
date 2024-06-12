@@ -63,7 +63,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 40bba7637eb2854d22aa4403baa431d3c16f72fb
+      revision: protocols_serialization_2
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -146,7 +146,6 @@ manifest:
       repo-path: sdk-oberon-psa-crypto
       revision: e0800ec5283ba89b2619919ef1889d98a9a79132
     - name: nrfxlib
-      remote: damian
       repo-path: sdk-nrfxlib
       path: nrfxlib
       revision: d5c17de4a2edeb6a71e63c551ddd8f47e53905c1
