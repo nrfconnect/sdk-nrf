@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf54h20dk_nrf54h20_cpuapp_common.dtsi"
+
+/ {
+	chosen {
+		extmem-device = &mx25uw63;
+	};
+};
+
+&mx25uw63 {
+	status = "okay";
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		dfu_cache_partition_1: partition@0 {
+			reg = <0x0 DT_SIZE_K(1024)>;
+		};
+	};
+};
