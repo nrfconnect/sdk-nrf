@@ -6,6 +6,6 @@
 
 #include "nrf54h20dk_nrf54h20_memory_map.dtsi"
 
-&uart135 {
-	status = "disabled";
-};
+//&uart135 {
+//	status = "disabled";
+//};

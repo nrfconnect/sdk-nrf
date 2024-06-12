@@ -27,10 +27,10 @@
 	#address-cells = < 0x1 >;
 	#size-cells = < 0x1 >;
 	cpurad_slot0_partition: partition@66000 {
-		reg = < 0x66000 DT_SIZE_K(160) >;
+		reg = < 0x66000 DT_SIZE_K(252) >;
 	};
 
-	cpurad_recovery_partition: partition@8e000 {
-		reg = < 0x8e000 DT_SIZE_K(92) >;
-	};
+//	cpurad_recovery_partition: partition@8e000 {
+//		reg = < 0x8e000 DT_SIZE_K(92) >;
+//	};
 };
