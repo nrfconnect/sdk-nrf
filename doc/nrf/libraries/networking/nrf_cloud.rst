@@ -125,6 +125,7 @@ Configuration options for device ID
 ===================================
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` - If you enable this option, the ID is automatically generated using a prefix and the modem's IMEI (``<prefix><IMEI>``).
+  This is the default.
   You can configure the prefix by using :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
   The default format of the prefix is ``nrf-`` and it is valid only for Nordic devices such as Thingy:91 or an nRF91 Series DK.
   For custom hardware, use a prefix other than ``nrf-`` by modifying :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
@@ -133,6 +134,8 @@ Configuration options for device ID
 
   * This option requires modem firmware v1.3.0 or higher.
   * This option is required when using `auto-onboarding <nRF Cloud Auto-onboarding_>`_.
+  * This option only takes effect if the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option is also enabled.
+    If the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option is not set to ``y``, the default :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` Kconfig option will be selected instead.
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` - If you enable this option, the ID is set at compile time using the value specified by :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID`.
 
