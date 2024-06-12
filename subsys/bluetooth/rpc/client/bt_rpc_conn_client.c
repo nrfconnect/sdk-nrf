@@ -1140,20 +1140,17 @@ static void bt_conn_cb_register_on_remote(void)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 0;
-	static bool registered;
 
-	if (!registered) {
-		registered = true;
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
-		NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-
-		nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_CB_REGISTER_ON_REMOTE_RPC_CMD,
-					&ctx, ser_rsp_decode_void, NULL);
-	}
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_CB_REGISTER_ON_REMOTE_RPC_CMD, &ctx,
+				ser_rsp_decode_void, NULL);
 }
 
 int bt_conn_cb_register(struct bt_conn_cb *cb)
 {
+	bool first = sys_slist_is_empty(&conn_cbs);
+
 	LOCK_CONN_INFO();
 	if (sys_slist_find(&conn_cbs, &cb->_node, NULL)) {
 		return -EEXIST;
@@ -1162,9 +1159,43 @@ int bt_conn_cb_register(struct bt_conn_cb *cb)
 	sys_slist_append(&conn_cbs, &cb->_node);
 	UNLOCK_CONN_INFO();
 
-	bt_conn_cb_register_on_remote();
+	if (first) {
+		bt_conn_cb_register_on_remote();
+	}
 
 	return 0;
+}
+
+static int bt_conn_cb_unregister_on_remote(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 0;
+	int result = 0;
+
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_CB_UNREGISTER_ON_REMOTE_RPC_CMD, &ctx,
+				ser_rsp_decode_i32, &result);
+
+	return result;
+}
+
+int bt_conn_cb_unregister(struct bt_conn_cb *cb)
+{
+	int err = 0;
+
+	LOCK_CONN_INFO();
+	if (!sys_slist_find_and_remove(&conn_cbs, &cb->_node)) {
+		err = -ENOENT;
+	}
+	UNLOCK_CONN_INFO();
+
+	if (err == 0 && sys_slist_is_empty(&conn_cbs)) {
+		/* No callbacks left, unregister on remote */
+		err = bt_conn_cb_unregister_on_remote();
+	}
+
+	return err;
 }
 
 #if defined(CONFIG_BT_SMP)

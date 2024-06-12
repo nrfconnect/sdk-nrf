@@ -940,6 +940,23 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_register_on_remote,
 			 BT_CONN_CB_REGISTER_ON_REMOTE_RPC_CMD,
 			 bt_conn_cb_register_on_remote_rpc_handler, NULL);
 
+static void bt_conn_cb_unregister_on_remote_rpc_handler(const struct nrf_rpc_group *group,
+							struct nrf_rpc_cbor_ctx *ctx,
+							void *handler_data)
+{
+	int result;
+
+	nrf_rpc_cbor_decoding_done(group, ctx);
+
+	result = bt_conn_cb_unregister(&bt_conn_cb_register_data);
+
+	ser_rsp_send_int(group, result);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_unregister_on_remote,
+			 BT_CONN_CB_UNREGISTER_ON_REMOTE_RPC_CMD,
+			 bt_conn_cb_unregister_on_remote_rpc_handler, NULL);
+
 #if defined(CONFIG_BT_SMP)
 static void bt_set_bondable_rpc_handler(const struct nrf_rpc_group *group,
 					struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
