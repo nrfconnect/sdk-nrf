@@ -13,7 +13,6 @@ menuconfig ZIGBEE
 	select NETWORKING
 	select NET_PKT_TXTIME
 	select REBOOT
-	imply MPSL
 	imply ENTROPY_GENERATOR
 	imply POLL
 	imply FLASH
