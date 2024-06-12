@@ -118,7 +118,7 @@ The SUIT procedure defines the following directives:
 
 * ``fetch`` - retrieves the payload from a specified Uniform Resource Identifier (URI) and stores it in the destination component.
   A URI is provided in the ``override-parameters`` directive.
-  The URI may indicate an external source, for example, HTTP or FTP, or the envelope (as a fragment-only reference as defined in `RFC3986 <https://datatracker.ietf.org/doc/html/rfc3986>`__, such as ``"#app_image.bin"``).
+  The URI may indicate an external source, for example, HTTP or FTP, or the envelope (as a fragment-only reference as defined in `RFC 3986 - Uniform Resource Identifier (URI)`_, such as ``"#app_image.bin"``).
 
 * ``copy`` - transfers the image from the source component to the destination component.
   The source component is provided in the ``override-parameters`` directive.
@@ -173,7 +173,7 @@ The SUIT procedure defines the following conditions:
 
 A sample description of ``SUIT_Manifest`` in CDDL is shown below.
 Note that optional elements are preceded by a ``?``.
-For more information about CDDL's syntax, see the IETF's `RFC 8610 <https://datatracker.ietf.org/doc/rfc8610/>`__.
+For more information about CDDL's syntax, see the IETF's `RFC 8610 - Concise Data Definition Language (CDDL)`_.
 
 .. code::
 

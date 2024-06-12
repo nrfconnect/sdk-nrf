@@ -968,6 +968,14 @@
 
 .. _`Windows path length limitations`: https://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
 
+.. ### SUIT
+
+.. _`suit-generator`: https://github.com/nrfconnect/suit-generator
+.. _`SUIT Kconfig options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!SUIT_ENVELOPE
+.. _`Jinja documentation`: https://jinja.palletsprojects.com/en/3.1.x/
+.. _`edtlib`: https://python-devicetree.readthedocs.io/en/latest/edtlib.html
+
+
 .. ### Source: ietf.org
 
 .. _`CoAP response codes`: https://datatracker.ietf.org/doc/html/rfc7252#section-12.1.2
@@ -978,6 +986,8 @@
 .. _`RFC 8610 - Concise Data Definition Language (CDDL)`: https://datatracker.ietf.org/doc/html/rfc8610
 .. _`RFC 8132 - PATCH and FETCH Methods for CoAP`: https://datatracker.ietf.org/doc/html/rfc8132
 .. _`RFC 9146 - Connection Identifier for DTLS 1.2`: https://datatracker.ietf.org/doc/html/rfc9146
+.. _`Diagnostic Notation`: https://www.rfc-editor.org/rfc/rfc8949
+.. _`RFC 3986 - Uniform Resource Identifier (URI)`: https://datatracker.ietf.org/doc/html/rfc3986
 
 .. _`Content-Range requests (IETF RFC 7233)`: https://datatracker.ietf.org/doc/html/rfc7233
 
