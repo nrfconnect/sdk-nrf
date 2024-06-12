@@ -53,7 +53,7 @@ This guide requires the following software:
 * nRF Command Line Tools - Mandatory tools for working with |NCS|.
 * **suit-generator** - A Python package by Nordic Semiconductor for generating SUIT envelopes and manifests.
 
-Download instructions are in the README file `here <https://github.com/nrfconnect/suit-generator>`__.
+Download instructions are in the README file in the `suit-generator`_ repository.
 
 .. _ug_suit_build_system_config:
 
@@ -140,7 +140,7 @@ To build the described example with the provided user-defined manifest templates
 
             west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE=\"/home/my_user/my_default_templates/root.yaml.jinja2\" -DCONFIG_SUIT_ENVELOPE_TEMPLATE=\"/home/my_user/my_default_templates/app.yaml.jinja2\" -Dhci_ipc_CONFIG_SUIT_ENVELOPE_TEMPLATE=\"/home/my_user/my_default_templates/radio.yaml.jinja2\"
 
-For more information about the Kconfig options used in this example, see the `SUIT Kconfig options <https://res.developer.nordicsemi.com/ncs/doc/latest/kconfig/index.html#!suit_envelope>`__.
+For more information about the Kconfig options used in this example, see the `SUIT Kconfig options`_.
 
 .. _ug_suit_customize_uuids:
 
@@ -187,7 +187,7 @@ Variables and methods available in the manifest templates
 
 The manifest templates have access to the following:
 
-* Devicetree values (`edtlib object <https://python-devicetree.readthedocs.io/en/latest/edtlib.html>`__)
+* Devicetree values (`edtlib`_ object)
 
 * Target names
 
@@ -203,7 +203,7 @@ Each variable is a Python dictionary type (``dict``) containing the following ke
 
 * ``name`` - name of the target
 
-* ``dt`` -  Devicetree representation (`edtlib object <https://python-devicetree.readthedocs.io/en/latest/edtlib.html>`__)
+* ``dt`` -  Devicetree representation (`edtlib`_ object)
 
 * ``binary`` - path to the binary, which holds the firmware for the target
 
@@ -261,7 +261,7 @@ Root manifest template
 
 The file :file:`modules/lib/suit-generator/ncs/root_with_binary_nordic_top.yaml.jinja2` contains content that is dynamically created, depending on how many targets are built.
 The following example only shows a selected portion of the root manifest file.
-For more information, see the file available in the sample and `Jinja <https://jinja.palletsprojects.com/en/3.1.x/>`__ documentation:
+For more information, see the file available in the sample and `Jinja documentation`_:
 
 .. code-block::
 
