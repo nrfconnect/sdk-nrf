@@ -230,7 +230,7 @@ function(partition_manager)
       set(${part}_PM_TARGET ${part})
     else()
       if(${part} IN_LIST containers)
-        set_ifndef(${part}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${part}.hex)
+        set_ifndef(${part}_PM_HEX_FILE ${CMAKE_BINARY_DIR}/${part}.hex)
         set_ifndef(${part}_PM_TARGET ${part}_hex)
       endif()
       list(APPEND implicitly_assigned ${part})
@@ -275,11 +275,11 @@ function(partition_manager)
     # And under which circumstances.
     # Add command to merge files.
     add_custom_command(
-      OUTPUT ${PROJECT_BINARY_DIR}/${container}.hex
+      OUTPUT ${CMAKE_BINARY_DIR}/${container}.hex
       COMMAND
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_BASE}/scripts/build/mergehex.py
-      -o ${PROJECT_BINARY_DIR}/${container}.hex
+      -o ${CMAKE_BINARY_DIR}/${container}.hex
       ${${container}overlap_arg}
       ${${container}hex_files}
       DEPENDS
@@ -291,16 +291,16 @@ function(partition_manager)
     add_custom_target(
       ${container}_hex
       ALL DEPENDS
-      ${PROJECT_BINARY_DIR}/${container}.hex
+      ${CMAKE_BINARY_DIR}/${container}.hex
       )
 
     if (DEFINED PM_DOMAIN)
       get_property(image_name GLOBAL PROPERTY DOMAIN_APP_${PM_DOMAIN})
-      update_runner(IMAGE ${image_name} HEX ${PROJECT_BINARY_DIR}/${container}.hex)
+      update_runner(IMAGE ${image_name} HEX ${CMAKE_BINARY_DIR}/${container}.hex)
     endif()
 
     if ("${container}" STREQUAL "merged")
-      update_runner(IMAGE ${DEFAULT_IMAGE} HEX ${PROJECT_BINARY_DIR}/${container}.hex)
+      update_runner(IMAGE ${DEFAULT_IMAGE} HEX ${CMAKE_BINARY_DIR}/${container}.hex)
     endif()
   endforeach()
 
@@ -782,7 +782,7 @@ else()
 # End - Code related to network core update. Multi image updates are part of NCSDK-17807
 
   # Explicitly add the root image domain hex file to the list
-  list(APPEND domain_hex_files ${PROJECT_BINARY_DIR}/${merged}.hex)
+  list(APPEND domain_hex_files ${CMAKE_BINARY_DIR}/${merged}.hex)
   list(APPEND global_hex_depends ${merged}_hex)
 
   # Now all partition manager configuration from all images and domains are
