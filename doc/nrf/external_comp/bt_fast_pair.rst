@@ -843,9 +843,10 @@ Tailoring protocol for specific use case
 ****************************************
 
 The specific use case of the Google Fast Pair application is indicated by the chosen device type in the Google Nearby Devices console (see the :ref:`ug_bt_fast_pair_provisioning_register_device_type` subsection).
-Different use cases may require implementation of additional guidelines for your accessory firmware or specific configuration of your device model in the Google Nearby Devices console.
-These requirements typically help to improve user experience or security properties for the chosen use case.
-To learn more, see the official `Fast Pair`_ documentation.
+In the official `Fast Pair`_ documentation, the `Fast Pair Device Feature Requirements`_ category defines additional requirements for each supported use case, and specifies a list of mandatory, optional, and unsupported Fast Pair features.
+If your product is targeting one of the listed use cases, you must align your accessory firmware to meet these requirements.
+
+To learn about the software maturity levels for Google Fast Pair use cases supported by the |NCS|, see the :ref:`software_maturity_fast_pair_use_case` table.
 
 Locator tag
 ===========
