@@ -18,6 +18,8 @@ For detailed information, see the official `Fast Pair Find My Device Network ext
    The Fast Pair support in the |NCS| is :ref:`experimental <software_maturity>`.
    See :ref:`ug_bt_fast_pair` for details.
 
+This sample follows the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation and uses the Fast Pair configuration for the locator tag use case.
+
 Requirements
 ************
 
