@@ -41,6 +41,9 @@
 .. _`Zephyr issue #27356`: https://github.com/zephyrproject-rtos/zephyr/issues/27356
 .. _`Zephyr issue #38516`: https://github.com/zephyrproject-rtos/zephyr/issues/38516
 .. _`Zephyr SDK`: https://github.com/zephyrproject-rtos/sdk-ng/releases
+.. _`Zephyr issue #51831`: https://github.com/zephyrproject-rtos/zephyr/issues/51831
+.. _`Zephyr pull request #50305`: https://github.com/zephyrproject-rtos/zephyr/pull/50305
+.. _`Zephyr issue #69546`: https://github.com/zephyrproject-rtos/zephyr/issues/69546
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
@@ -57,6 +60,9 @@
 .. _`sdk-nrf`: https://github.com/nrfconnect/sdk-nrf
 .. _`ncs-example-application`: https://github.com/nrfconnect/ncs-example-application
 .. _`manifest group filter`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L42
+.. _`Zephyr commit 8dc3f8`: https://github.com/nrfconnect/sdk-zephyr/commit/8dc3f856229ce083c956aa301c31a23e65bd8cd8
+.. _`hwmv2 conversion script`: https://github.com/nrfconnect/sdk-zephyr/blob/main/scripts/utils/board_v1_to_v2.py
+.. _`ncs-example-application commit f9f2da`: https://github.com/nrfconnect/ncs-example-application/commit/f9f2da24041a7b1923e49893cca912482c138aae
 
 .. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/sdk-nrfxlib
 .. _`sdk-nrfxlib`: https://github.com/nrfconnect/sdk-nrfxlib
