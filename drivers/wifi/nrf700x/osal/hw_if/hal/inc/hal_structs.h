@@ -122,6 +122,9 @@ struct nrf_wifi_hal_priv {
 	enum nrf_wifi_status (*intr_callbk_fn)(void *mac_ctx,
 					       void *event_data,
 					       unsigned int len);
+	enum nrf_wifi_status (*rpu_recovery_callbk_fn)(void *mac_ctx,
+							void *event_data,
+							unsigned int len);
 	struct nrf_wifi_hal_cfg_params cfg_params;
 	unsigned long addr_pktram_base;
 };
@@ -232,6 +235,8 @@ struct nrf_wifi_hal_dev_ctx {
 	unsigned int event_data_len;
 	unsigned int event_data_pending;
 	unsigned int event_resubmit;
+	void *recovery_tasklet;
+	void *lock_recovery;
 };
 
 

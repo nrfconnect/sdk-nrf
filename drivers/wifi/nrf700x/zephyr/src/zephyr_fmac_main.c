@@ -576,6 +576,8 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 		LOG_ERR("%s: nrf_wifi_fmac_dev_init failed\n", __func__);
 		goto out;
 	}
+
+	k_mutex_init(&rpu_ctx_zep->rpu_lock);
 out:
 	return status;
 }
@@ -628,6 +630,9 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 	rx_buf_pools[1].buf_sz = rx2_buf_sz;
 	rx_buf_pools[2].buf_sz = rx3_buf_sz;
 
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+	callbk_fns.rpu_recovery_callbk_fn = nrf_wifi_rpu_recovery_cb;
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 	callbk_fns.scan_start_callbk_fn = nrf_wifi_event_proc_scan_start_zep;
 	callbk_fns.scan_done_callbk_fn = nrf_wifi_event_proc_scan_done_zep;
 #ifdef CONFIG_NET_L2_WIFI_MGMT

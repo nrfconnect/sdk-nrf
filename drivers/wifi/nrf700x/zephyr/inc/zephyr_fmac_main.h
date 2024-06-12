@@ -82,6 +82,9 @@ struct nrf_wifi_vif_ctx_zep {
 	unsigned long rssi_record_timestamp_us;
 	signed short rssi;
 #endif /* CONFIG_NRF700X_STA_MODE */
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+	struct k_work nrf_wifi_rpu_recovery_work;
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 };
 
 struct nrf_wifi_vif_ctx_map {
@@ -105,6 +108,7 @@ struct nrf_wifi_ctx_zep {
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 	unsigned char *extended_capa, *extended_capa_mask;
 	unsigned int extended_capa_len;
+	struct k_mutex rpu_lock;
 };
 
 struct nrf_wifi_drv_priv_zep {
@@ -124,5 +128,8 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 enum nrf_wifi_status nrf_wifi_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
 enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx);
 struct nrf_wifi_vif_ctx_zep *nrf_wifi_get_vif_ctx(struct net_if *iface);
+void nrf_wifi_rpu_recovery_cb(void *vif_ctx,
+		void *event_data,
+		unsigned int event_len);
 
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */
