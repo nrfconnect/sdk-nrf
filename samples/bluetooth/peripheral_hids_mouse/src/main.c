@@ -116,6 +116,8 @@ static struct conn_mode {
 	bool in_boot_mode;
 } conn_mode[CONFIG_BT_HIDS_MAX_CLIENT_COUNT];
 
+static volatile bool is_adv_running;
+
 static struct k_work adv_work;
 
 static struct k_work pairing_work;
@@ -162,14 +164,24 @@ static void advertising_continue(void)
 
 	if (!k_msgq_get(&bonds_queue, &addr, K_NO_WAIT)) {
 		char addr_buf[BT_ADDR_LE_STR_LEN];
+		int err;
+
+		if (is_adv_running) {
+			err = bt_le_adv_stop();
+			if (err) {
+				printk("Advertising failed to stop (err %d)\n", err);
+				return;
+			}
+			is_adv_running = false;
+		}
 
 		adv_param = *BT_LE_ADV_CONN_DIR(&addr);
 		adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
 
-		int err = bt_le_adv_start(&adv_param, NULL, 0, NULL, 0);
+		err = bt_le_adv_start(&adv_param, NULL, 0, NULL, 0);
 
 		if (err) {
-			printk("Directed advertising failed to start\n");
+			printk("Directed advertising failed to start (err %d)\n", err);
 			return;
 		}
 
@@ -179,6 +191,10 @@ static void advertising_continue(void)
 #endif
 	{
 		int err;
+
+		if (is_adv_running) {
+			return;
+		}
 
 		adv_param = *BT_LE_ADV_CONN;
 		adv_param.options |= BT_LE_ADV_OPT_ONE_TIME;
@@ -191,6 +207,8 @@ static void advertising_continue(void)
 
 		printk("Regular advertising started\n");
 	}
+
+	is_adv_running = true;
 }
 
 static void advertising_start(void)
@@ -258,6 +276,8 @@ static bool is_conn_slot_free(void)
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
+
+	is_adv_running = false;
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
