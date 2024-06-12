@@ -21,6 +21,7 @@ static struct k_work adv_work;
 static struct bt_conn *default_conn;
 static struct bt_le_ext_adv *adv_ext;
 static bool initialized;
+static bool initialized;
 
 static void advertising_start(void)
 {
@@ -90,69 +91,69 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data, uint1
 		LOG_WRN("fail. added %d", (count - last_count - 1));
 	} else {
 		counts_success++;
-	}
 
-	last_count = count;
+		last_count = count;
 
-	if ((count % CONFIG_PRINT_CONN_INTERVAL) == 0) {
-		/* NOTE: The string below is used by the Nordic CI system */
-		LOG_INF("RX: Count: %7u, Failed: %6u, Success: %7u", count, counts_fail,
-			counts_success);
-	}
-}
-
-static struct bt_nus_cb nus_cb = {
-	.received = bt_receive_cb,
-};
-
-static struct bt_conn_cb conn_callbacks = {.connected = connected_cb,
-					   .disconnected = disconnected_cb};
-
-static int peripheral_init(void);
-
-static int peripheral_start(void)
-{
-	int ret;
-
-	if (!initialized) {
-		LOG_INF("Peripheral not initialized. Running init");
-		ret = peripheral_init();
-		if (ret) {
-			LOG_ERR("peripheral_init failed");
-			return ret;
+		if ((count % CONFIG_PRINT_CONN_INTERVAL) == 0) {
+			LOG_INF("RX: Count: %7u, Failed: %6u, Success: %7u", count, counts_fail,
+				counts_success);
 		}
 	}
 
-	advertising_start();
+	static struct bt_nus_cb nus_cb = {
+		.received = bt_receive_cb,
+	};
 
-	LOG_INF("Peripheral started");
+	static struct bt_conn_cb conn_callbacks = {.connected = connected_cb,
+						   .disconnected = disconnected_cb};
 
-	return 0;
-}
+	static int peripheral_init(void);
 
-static int peripheral_init(void)
-{
-	int ret;
+	static int peripheral_start(void)
+	{
+		int ret;
 
-	bt_nus_init(&nus_cb);
-	bt_conn_cb_register(&conn_callbacks);
-	k_work_init(&adv_work, advertising_process);
+		if (!initialized) {
+			LOG_INF("Peripheral not initialized. Running init");
+			ret = peripheral_init();
+			if (ret) {
+				LOG_ERR("peripheral_init failed");
+				return ret;
+			}
+		}
 
-	ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, NULL, &adv_ext);
-	if (ret) {
-		LOG_ERR("Failed to create advertising set, %d", ret);
-		return ret;
+		int ret;
+
+		advertising_start();
+
+		LOG_INF("Peripheral started");
+
+		return 0;
 	}
 
-	initialized = true;
-	LOG_INF("Peripheral initialized");
+	static int peripheral_init(void)
+	{
+		int ret;
 
-	return 0;
-}
+		bt_nus_init(&nus_cb);
+		bt_conn_cb_register(&conn_callbacks);
+		k_work_init(&adv_work, advertising_process);
 
-SHELL_STATIC_SUBCMD_SET_CREATE(peripheral_cmd,
-			       SHELL_CMD(init, NULL, "Init peripheral NUS.", peripheral_init),
-			       SHELL_CMD(start, NULL, "Start peripheral NUS.", peripheral_start),
-			       SHELL_SUBCMD_SET_END);
+		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, NULL, &adv_ext);
+		if (ret) {
+			LOG_ERR("Failed to create advertising set, %d", ret);
+			return ret;
+		}
 
-SHELL_CMD_REGISTER(peripheral, &peripheral_cmd, "Peripheral NUS commands", NULL);
+		initialized = true;
+		LOG_INF("Peripheral initialized");
+
+		return 0;
+	}
+
+	SHELL_STATIC_SUBCMD_SET_CREATE(
+		peripheral_cmd, SHELL_CMD(init, NULL, "Init peripheral NUS.", peripheral_init),
+		SHELL_CMD(start, NULL, "Start peripheral NUS.", peripheral_start),
+		SHELL_SUBCMD_SET_END);
+
+	SHELL_CMD_REGISTER(peripheral, &peripheral_cmd, "Peripheral NUS commands", NULL);
