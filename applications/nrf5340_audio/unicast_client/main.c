@@ -269,10 +269,20 @@ static void le_audio_msg_sub_thread(void)
 			break;
 
 		case LE_AUDIO_EVT_CONFIG_RECEIVED:
+			struct bt_conn_info conn_info;
+			uint16_t interval = 0;
+
+			ret = bt_conn_get_info(msg.conn, &conn_info);
+			if (ret) {
+				LOG_ERR("Failed to get conn info");
+			} else {
+				interval = conn_info.le.interval;
+			}
 
 			/* Only update conn param once */
-			if ((IS_ENABLED(CONFIG_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SINK) ||
-			    (!IS_ENABLED(CONFIG_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SOURCE)) {
+			if (((IS_ENABLED(CONFIG_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SINK) ||
+			     (!IS_ENABLED(CONFIG_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SOURCE)) &&
+			    interval != CONFIG_BLE_ACL_CONN_INTERVAL_SLOW) {
 				struct bt_le_conn_param param;
 
 				/* Set the ACL interval up to allow more time for ISO packets */
@@ -286,6 +296,7 @@ static void le_audio_msg_sub_thread(void)
 					LOG_WRN("Failed to update conn parameters: %d", ret);
 				}
 			}
+
 			LOG_DBG("LE audio config received");
 
 			ret = unicast_client_config_get(msg.conn, msg.dir, &bitrate_bps,
