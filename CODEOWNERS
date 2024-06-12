@@ -293,6 +293,7 @@ Kconfig*                                  @tejlmand
 /subsys/net_core_monitor/                 @maje-emb
 /subsys/zigbee/                           @milewr
 /tests/                                   @PerMac @katgiadla
+/tests/benchmarks/multicore/              @carlescufi
 /tests/bluetooth/tester/                  @carlescufi @ludvigsj
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/crypto/                            @stephen-nordic @magnev
