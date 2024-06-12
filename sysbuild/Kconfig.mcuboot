@@ -99,6 +99,7 @@ config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
 	depends on (SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X)
+	depends on !SECURE_BOOT_APPCORE
 	help
 	  This option can be enabled by the application and will ensure
 	  that the MCUBOOT_HW_DOWNGRADE_PREVENTION Kconfig option is
