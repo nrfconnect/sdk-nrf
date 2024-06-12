@@ -188,6 +188,13 @@ Thread
 Zigbee
 ------
 
+* Updated:
+
+  * :ref:`nrfxlib:zboss` to v3.11.4.0 and platform v5.1.5 (``v3.11.4.0+5.1.5``).
+    They contain fixes for infinite boot loop due to ZBOSS NVRAM corruption and other bugs.
+    For details, see :ref:`zboss_changelog`.
+  * :ref:`ZBOSS Network Co-processor Host <ug_zigbee_tools_ncp_host>` package to the new version v2.2.3.
+
 * Fixed an issue with Zigbee FOTA updates failing after a previous attempt was interrupted.
 * Fixed the RSSI level value reported to the MAC layer in the Zigbee stack.
 
