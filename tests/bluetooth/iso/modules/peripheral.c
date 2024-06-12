@@ -20,6 +20,7 @@ LOG_MODULE_REGISTER(peripheral, CONFIG_ACL_TEST_LOG_LEVEL);
 static struct k_work adv_work;
 static struct bt_conn *default_conn;
 static struct bt_le_ext_adv *adv_ext;
+static bool initialized;
 
 static void advertising_start(void)
 {
@@ -84,18 +85,18 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data, uint1
 
 	count = sys_get_le32(data);
 
-	if (last_count) {
-		if (count != (last_count + 1)) {
-			counts_fail++;
-		} else {
-			counts_success++;
-		}
+	if (count != (last_count + 1)) {
+		counts_fail += (count - last_count);
+		LOG_WRN("fail. added %d", (count - last_count - 1));
+	} else {
+		counts_success++;
 	}
 
 	last_count = count;
 
 	if ((count % CONFIG_PRINT_CONN_INTERVAL) == 0) {
-		LOG_INF("ACL RX. Count: %d, Failed: %d, Success: %d", count, counts_fail,
+		/* NOTE: The string below is used by the Nordic CI system */
+		LOG_INF("RX: Count: %7u, Failed: %6u, Success: %7u", count, counts_fail,
 			counts_success);
 	}
 }
@@ -107,9 +108,24 @@ static struct bt_nus_cb nus_cb = {
 static struct bt_conn_cb conn_callbacks = {.connected = connected_cb,
 					   .disconnected = disconnected_cb};
 
+static int peripheral_init(void);
+
 static int peripheral_start(void)
 {
+	int ret;
+
+	if (!initialized) {
+		LOG_INF("Peripheral not initialized. Running init");
+		ret = peripheral_init();
+		if (ret) {
+			LOG_ERR("peripheral_init failed");
+			return ret;
+		}
+	}
+
 	advertising_start();
+
+	LOG_INF("Peripheral started");
 
 	return 0;
 }
@@ -127,6 +143,9 @@ static int peripheral_init(void)
 		LOG_ERR("Failed to create advertising set, %d", ret);
 		return ret;
 	}
+
+	initialized = true;
+	LOG_INF("Peripheral initialized");
 
 	return 0;
 }

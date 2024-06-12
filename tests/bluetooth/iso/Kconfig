@@ -1,8 +1,13 @@
-config PRINT_CONN_INTERVAL
-	int "Print pr X connection interval"
-	default 100
+config PRINT_ISO_INTERVAL
+	int "Print every X ISO interval"
+	default 200
 	help
 	  For each set interval, a summary will be printed and a LED toggled.
+
+config PRINT_CONN_INTERVAL
+	int "Print every X connection interval"
+	default 20
+
 
 config BIS_ISO_CHAN_COUNT_MAX
 	int "Max number of ISO channels"

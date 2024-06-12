@@ -18,16 +18,11 @@
 #include <zephyr/shell/shell.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(broadcast_sink, CONFIG_ISO_TEST_LOG_LEVEL);
+LOG_MODULE_REGISTER(brcast_snk, CONFIG_ISO_TEST_LOG_LEVEL);
 
 #define TIMEOUT_SYNC_CREATE K_SECONDS(10)
 #define NAME_LEN	    30
-
-#define BT_LE_SCAN_CUSTOM                                                                          \
-	BT_LE_SCAN_PARAM(BT_LE_SCAN_TYPE_ACTIVE, BT_LE_SCAN_OPT_NONE, BT_GAP_SCAN_FAST_INTERVAL,   \
-			 BT_GAP_SCAN_FAST_WINDOW)
-
-#define PA_RETRY_COUNT 6
+#define PA_RETRY_COUNT	    6
 
 K_THREAD_STACK_DEFINE(broadcaster_sink_thread_stack, 4096);
 static struct k_thread broadcaster_sink_thread;
@@ -56,6 +51,7 @@ static bool data_cb(struct bt_data *data, void *user_data)
 	switch (data->type) {
 	case BT_DATA_NAME_SHORTENED:
 	case BT_DATA_NAME_COMPLETE:
+	case BT_DATA_BROADCAST_NAME:
 		len = MIN(data->data_len, NAME_LEN - 1);
 		memcpy(name, data->data, len);
 		name[len] = '\0';
@@ -89,6 +85,10 @@ static void scan_recv(const struct bt_le_scan_recv_info *info, struct net_buf_si
 	(void)memset(name, 0, sizeof(name));
 
 	bt_data_parse(buf, data_cb, name);
+
+	if (strcmp(CONFIG_BT_DEVICE_NAME, name) != 0) {
+		return;
+	}
 
 	bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
 	LOG_DBG("[DEVICE]: %s, AD evt type %u, Tx Pwr: %i, RSSI %i %s "
@@ -221,12 +221,12 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 
 	last_count = count;
 
-	if ((count % CONFIG_PRINT_CONN_INTERVAL) == 0) {
+	if ((count % CONFIG_PRINT_ISO_INTERVAL) == 0) {
 		/* NOTE: The string below is used by the Nordic CI system */
-		LOG_INF("RX. Count: %d, Failed: %d, Success: %d", count, counts_fail,
+		LOG_INF("RX: Count: %7u, Failed: %6u, Success: %7u", count, counts_fail,
 			counts_success);
 
-		if ((count / CONFIG_PRINT_CONN_INTERVAL) % 2 == 0) {
+		if ((count / CONFIG_PRINT_ISO_INTERVAL) % 2 == 0) {
 			ret = gpio_pin_set_dt(&led, 1);
 		} else {
 			ret = gpio_pin_set_dt(&led, 0);
@@ -287,9 +287,9 @@ static void broadcaster_sink_trd(void)
 		per_adv_lost = false;
 
 		LOG_INF("Start scanning...");
-		ret = bt_le_scan_start(BT_LE_SCAN_CUSTOM, NULL);
+		ret = bt_le_scan_start(BT_LE_SCAN_PASSIVE_CONTINUOUS, NULL);
 		if (ret) {
-			LOG_ERR("failed (ret %d)", ret);
+			LOG_ERR("Scan start failed (ret %d)", ret);
 			return;
 		}
 
@@ -297,7 +297,7 @@ static void broadcaster_sink_trd(void)
 		per_adv_found = false;
 		ret = k_sem_take(&sem_per_adv, K_FOREVER);
 		if (ret) {
-			LOG_ERR("failed (ret %d)", ret);
+			LOG_ERR("Sem take failed (ret %d)", ret);
 			return;
 		}
 
@@ -306,7 +306,7 @@ static void broadcaster_sink_trd(void)
 		LOG_INF("Stop scanning...");
 		ret = bt_le_scan_stop();
 		if (ret) {
-			LOG_ERR("failed (ret %d)", ret);
+			LOG_ERR("Scan stop failed (ret %d)", ret);
 			return;
 		}
 
@@ -322,19 +322,19 @@ static void broadcaster_sink_trd(void)
 		sem_retry_timeout_ms = per_interval_us * PA_RETRY_COUNT;
 		ret = bt_le_per_adv_sync_create(&sync_create_param, &sync);
 		if (ret) {
-			LOG_ERR("failed (ret %d)", ret);
+			LOG_ERR("Per adv sync create failed (ret %d)", ret);
 			return;
 		}
 
 		LOG_INF("Waiting for periodic sync...");
 		ret = k_sem_take(&sem_per_sync, K_USEC(sem_retry_timeout_ms));
 		if (ret) {
-			LOG_ERR("failed (ret %d)", ret);
+			LOG_ERR("Sem take failed (ret %d)", ret);
 
 			LOG_INF("Deleting Periodic Advertising Sync...");
 			ret = bt_le_per_adv_sync_delete(sync);
 			if (ret) {
-				LOG_ERR("failed (ret %d)", ret);
+				LOG_ERR("Per adv sync delete failed (ret %d)", ret);
 				return;
 			}
 			continue;
@@ -344,7 +344,7 @@ static void broadcaster_sink_trd(void)
 		LOG_INF("Waiting for BIG info...");
 		ret = k_sem_take(&sem_per_big_info, K_USEC(sem_retry_timeout_ms));
 		if (ret) {
-			LOG_ERR("failed (ret %d)", ret);
+			LOG_ERR("Sem take failed (ret %d)", ret);
 
 			if (per_adv_lost) {
 				continue;
@@ -353,7 +353,7 @@ static void broadcaster_sink_trd(void)
 			LOG_INF("Deleting Periodic Advertising Sync...");
 			ret = bt_le_per_adv_sync_delete(sync);
 			if (ret) {
-				LOG_ERR("failed (ret %d)", ret);
+				LOG_ERR("Per adv sync delete failed (ret %d)", ret);
 				return;
 			}
 
@@ -363,10 +363,11 @@ static void broadcaster_sink_trd(void)
 		LOG_INF("Periodic sync established.");
 
 big_sync_create:
+		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF("Create BIG Sync...");
 		ret = bt_iso_big_sync(sync, &big_sync_param, &big);
 		if (ret) {
-			LOG_ERR("failed (ret %d)", ret);
+			LOG_ERR("Big sync failed (ret %d)", ret);
 			return;
 		}
 		LOG_INF("success.");
@@ -385,7 +386,7 @@ big_sync_create:
 			LOG_INF("BIG Sync Terminate...");
 			ret = bt_iso_big_terminate(big);
 			if (ret) {
-				LOG_ERR("failed (ret %d)", ret);
+				LOG_ERR("Big terminate failed (ret %d)", ret);
 				return;
 			}
 
@@ -399,7 +400,7 @@ big_sync_create:
 			LOG_INF("Waiting for BIG sync lost chan %u...", chan);
 			ret = k_sem_take(&sem_big_sync_lost, K_FOREVER);
 			if (ret) {
-				LOG_ERR("failed (ret %d)", ret);
+				LOG_ERR("Sem take failed (ret %d)", ret);
 				return;
 			}
 
@@ -468,12 +469,12 @@ static int argument_check(const struct shell *shell, uint8_t const *const input)
 
 	if (*end != '\0' || (uint8_t *)end == input || (arg_val == 0 && !isdigit(input[0])) ||
 	    arg_val < 0) {
-		shell_error(shell, "Argument must be a positive integer %s", input);
+		LOG_ERR("Argument must be a positive integer %s", input);
 		return -EINVAL;
 	}
 
 	if (running) {
-		shell_error(shell, "Stop sink before changing parameters");
+		LOG_ERR("Stop sink before changing parameters");
 		return -EPERM;
 	}
 
@@ -495,7 +496,7 @@ static int param_set(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (running) {
-		shell_error(shell, "Change sink parameters before starting");
+		LOG_ERR("Change sink parameters before starting");
 		return -EPERM;
 	}
 
@@ -507,16 +508,16 @@ static int param_set(const struct shell *shell, size_t argc, char **argv)
 		case 'n':
 			big_sync_param.num_bis = result;
 			big_sync_param.bis_bitfield = (BIT_MASK(result) << 1);
-			shell_print(shell, "num_bis: %d", big_sync_param.num_bis);
+			LOG_INF("num_bis: %d", big_sync_param.num_bis);
 			break;
 		case ':':
-			shell_error(shell, "Missing option parameter");
+			LOG_ERR("Missing option parameter");
 			break;
 		case '?':
-			shell_error(shell, "Unknown option");
+			LOG_ERR("Unknown option");
 			break;
 		default:
-			shell_error(shell, "Invalid option");
+			LOG_ERR("Invalid option");
 			break;
 		}
 	}
