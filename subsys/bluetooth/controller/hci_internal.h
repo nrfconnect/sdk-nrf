@@ -12,10 +12,14 @@
 #include <stdbool.h>
 #include <sdc_hci_cmd_le.h>
 #include <sdc_hci_cmd_info_params.h>
+#include <zephyr/drivers/bluetooth.h>
 
 #ifndef HCI_INTERNAL_H__
 #define HCI_INTERNAL_H__
 
+struct hci_driver_data {
+	bt_hci_recv_t recv_func;
+};
 
 /** @brief Send an HCI command packet to the SoftDevice Controller.
  *

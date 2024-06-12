@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/entropy.h>
-#include <zephyr/drivers/bluetooth/hci_driver.h>
+#include <zephyr/drivers/bluetooth.h>
 #include <zephyr/bluetooth/controller.h>
 #include <zephyr/bluetooth/hci_vs.h>
 #include <zephyr/bluetooth/buf.h>
@@ -31,6 +31,8 @@
 #include "hci_internal.h"
 #include "ecdh.h"
 #include "radio_nrf5_txp.h"
+
+#define DT_DRV_COMPAT zephyr_bt_hci_ll_sw_split
 
 #define LOG_LEVEL CONFIG_BT_HCI_DRIVER_LOG_LEVEL
 #include "zephyr/logging/log.h"
@@ -363,7 +365,7 @@ static int iso_handle(struct net_buf *acl)
 }
 #endif
 
-static int hci_driver_send(struct net_buf *buf)
+static int hci_driver_send(const struct device *dev, struct net_buf *buf)
 {
 	int err;
 	uint8_t type;
@@ -403,7 +405,7 @@ static int hci_driver_send(struct net_buf *buf)
 	return err;
 }
 
-static void data_packet_process(uint8_t *hci_buf)
+static void data_packet_process(const struct device *dev, uint8_t *hci_buf)
 {
 	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_FOREVER);
 	struct bt_hci_acl_hdr *hdr = (void *)hci_buf;
@@ -426,10 +428,13 @@ static void data_packet_process(uint8_t *hci_buf)
 	       pb, bc, len);
 
 	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
-	bt_recv(data_buf);
+
+	struct hci_driver_data *driver_data = dev->data;
+
+	driver_data->recv_func(dev, data_buf);
 }
 
-static void iso_data_packet_process(uint8_t *hci_buf)
+static void iso_data_packet_process(const struct device *dev, uint8_t *hci_buf)
 {
 	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ISO_IN, K_FOREVER);
 	struct bt_hci_iso_hdr *hdr = (void *)hci_buf;
@@ -438,7 +443,9 @@ static void iso_data_packet_process(uint8_t *hci_buf)
 
 	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
 
-	bt_recv(data_buf);
+	struct hci_driver_data *driver_data = dev->data;
+
+	driver_data->recv_func(dev, data_buf);
 }
 
 static bool event_packet_is_discardable(const uint8_t *hci_buf)
@@ -483,7 +490,7 @@ static bool event_packet_is_discardable(const uint8_t *hci_buf)
 	}
 }
 
-static void event_packet_process(uint8_t *hci_buf)
+static void event_packet_process(const struct device *dev, uint8_t *hci_buf)
 {
 	bool discardable = event_packet_is_discardable(hci_buf);
 	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
@@ -526,10 +533,13 @@ static void event_packet_process(uint8_t *hci_buf)
 	}
 
 	net_buf_add_mem(evt_buf, &hci_buf[0], hdr->len + sizeof(*hdr));
-	bt_recv(evt_buf);
+
+	struct hci_driver_data *driver_data = dev->data;
+
+	driver_data->recv_func(dev, evt_buf);
 }
 
-static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
+static bool fetch_and_process_hci_msg(const struct device *dev, uint8_t *p_hci_buffer)
 {
 	int errcode;
 	sdc_hci_msg_type_t msg_type;
@@ -545,11 +555,11 @@ static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
 	}
 
 	if (msg_type == SDC_HCI_MSG_TYPE_EVT) {
-		event_packet_process(p_hci_buffer);
+		event_packet_process(dev, p_hci_buffer);
 	} else if (msg_type == SDC_HCI_MSG_TYPE_DATA) {
-		data_packet_process(p_hci_buffer);
+		data_packet_process(dev, p_hci_buffer);
 	} else if (msg_type == SDC_HCI_MSG_TYPE_ISO) {
-		iso_data_packet_process(p_hci_buffer);
+		iso_data_packet_process(dev, p_hci_buffer);
 	} else {
 		if (!IS_ENABLED(CONFIG_BT_CTLR_SDC_SILENCE_UNEXPECTED_MSG_TYPE)) {
 			LOG_ERR("Unexpected msg_type: %u. This if-else needs a new branch",
@@ -569,7 +579,9 @@ void hci_driver_receive_process(void)
 	static uint8_t hci_buf[BT_BUF_RX_SIZE];
 #endif
 
-	if (fetch_and_process_hci_msg(&hci_buf[0])) {
+	const struct device *dev = DEVICE_DT_GET(DT_DRV_INST(0));
+
+	if (fetch_and_process_hci_msg(dev, &hci_buf[0])) {
 		/* Let other threads of same priority run in between. */
 		receive_signal_raise();
 	}
@@ -1154,7 +1166,7 @@ static int configure_memory_usage(void)
 	return 0;
 }
 
-static int hci_driver_open(void)
+static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 {
 	LOG_DBG("Open");
 
@@ -1308,10 +1320,14 @@ static int hci_driver_open(void)
 
 	MULTITHREADING_LOCK_RELEASE();
 
+	struct hci_driver_data *driver_data = dev->data;
+
+	driver_data->recv_func = recv_func;
+
 	return 0;
 }
 
-static int hci_driver_close(void)
+static int hci_driver_close(const struct device *dev)
 {
 	int err;
 
@@ -1343,9 +1359,7 @@ static int hci_driver_close(void)
 	return err;
 }
 
-static const struct bt_hci_driver drv = {
-	.name = "SoftDevice Controller",
-	.bus = BT_HCI_DRIVER_BUS_VIRTUAL,
+static const struct bt_hci_driver_api hci_driver_api = {
 	.open = hci_driver_open,
 	.close = hci_driver_close,
 	.send = hci_driver_send,
@@ -1358,11 +1372,9 @@ void bt_ctlr_set_public_addr(const uint8_t *addr)
 	(void)sdc_hci_cmd_vs_zephyr_write_bd_addr(bd_addr);
 }
 
-static int hci_driver_init(void)
+static int hci_driver_init(const struct device *dev)
 {
 	int err = 0;
-
-	bt_hci_driver_register(&drv);
 
 	err = sdc_init(sdc_assertion_handler);
 
@@ -1379,4 +1391,10 @@ static int hci_driver_init(void)
 	return err;
 }
 
-SYS_INIT(hci_driver_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+#define BT_HCI_CONTROLLER_INIT(inst) \
+	static struct hci_driver_data data_##inst; \
+	DEVICE_DT_INST_DEFINE(inst, hci_driver_init, NULL, &data_##inst, NULL, POST_KERNEL, \
+			      CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &hci_driver_api)
+
+/* Only a single instance is supported */
+BT_HCI_CONTROLLER_INIT(0)
