@@ -12,8 +12,8 @@ if SLM_CARRIER
 
 config SLM_CARRIER_APP_DATA_BUFFER_LEN
 	int "Size of the buffer for setting application data in hexadecimal string format"
-	default 1536
-	range 128 1536
+	default 1537
+	range 128 1537
 	help
 	  Specifies maximum application data size (in hexadecimal string format) to be set in the
 	  App Data Container, the Binary App Data Container or the Event Log objects.
