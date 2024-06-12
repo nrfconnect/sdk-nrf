@@ -11,11 +11,14 @@
 
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/buf.h>
-#include <zephyr/drivers/bluetooth/hci_driver.h>
+#include <sdc_hci.h>
+#include "hci_internal.h"
 
 #include <mpsl/mpsl_work.h>
 
 #include "ecdh.h"
+
+#define DT_DRV_COMPAT zephyr_bt_hci_ll_sw_split
 
 #define LOG_LEVEL CONFIG_BT_HCI_DRIVER_LOG_LEVEL
 #include "zephyr/logging/log.h"
@@ -240,7 +243,11 @@ void ecdh_cmd_process(void)
 
 	atomic_set(&cmd, 0);
 	if (buf) {
-		bt_recv(buf);
+
+		const struct device *dev = DEVICE_DT_GET(DT_DRV_INST(0));
+		struct hci_driver_data *driver_data = dev->data;
+
+		driver_data->recv_func(dev, buf);
 	}
 }
 
