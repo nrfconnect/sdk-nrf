@@ -1,9 +1,7 @@
 tests:
   lte_lc.functionality_test:
     sysbuild: true
-    platform_allow: nrf9160dk/nrf9160 qemu_x86 native_posix qemu_cortex_m3
+    platform_allow: native_sim
     integration_platforms:
-      - nrf9160dk/nrf9160
-      - native_posix
-      - qemu_cortex_m3
+      - native_sim
     tags: lte_lc sysbuild
