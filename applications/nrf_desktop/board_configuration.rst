@@ -102,7 +102,7 @@ Sample dongle (``nrf5340dk/nrf5340``)
         Input data comes from Bluetooth and is retransmitted to USB.
       * The configuration with the B0 bootloader is set as default.
 
-Sample mouse or keyboard (``nrf54l15pdk/nrf54l15/cpuapp``, ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp``)
+Sample mouse or keyboard (``nrf54l15pdk/nrf54l15/cpuapp``)
       * The configuration uses the nRF54L15 Preview Development Kit (PDK).
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
