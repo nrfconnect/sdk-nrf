@@ -168,6 +168,12 @@ To support the FMDN extension, set the **Find My Device** feature to **true** fo
 
 For an example that uses the **Find My Device** feature, see the :ref:`fast_pair_locator_tag` sample.
 
+.. note::
+   To test the FMDN extension with the debug (uncertified) device models, you must set up your Android test device.
+   Make sure your phone uses the primary email account that is registered on Google's email allow list for the FMDN feature.
+   To register your development email account, complete Google's device proposal form.
+   You can find the link to the device proposal form in the `Fast Pair Find My Device Network extension`_ specification.
+
 Provisioning registration data onto device
 ==========================================
 
