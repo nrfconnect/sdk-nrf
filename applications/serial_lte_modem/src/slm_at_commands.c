@@ -218,13 +218,8 @@ static int handle_at_reset(enum at_cmd_type cmd_type, const struct at_param_list
 	return 0;
 }
 
-SLM_AT_CMD_CUSTOM(xmodemreset, "AT#XMODEMRESET", handle_at_modemreset);
-static int handle_at_modemreset(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
+static void slm_modemreset(void)
 {
-	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
-		return -EINVAL;
-	}
-
 	/* The modem must be put in minimal function mode before being shut down. */
 	slm_power_off_modem();
 
@@ -253,11 +248,25 @@ out:
 	if (ret) {
 		/* Error; print the step that failed and its error code. */
 		rsp_send("\r\n#XMODEMRESET: %u,%d\r\n", step, ret);
-		return 0;
+	} else {
+		rsp_send("\r\n#XMODEMRESET: 0\r\n");
+	}
+	rsp_send_ok();
+}
+
+SLM_AT_CMD_CUSTOM(xmodemreset, "AT#XMODEMRESET", handle_at_modemreset);
+static int handle_at_modemreset(enum at_cmd_type cmd_type, const struct at_param_list *, uint32_t)
+{
+	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
+		return -EINVAL;
 	}
 
-	rsp_send("\r\n#XMODEMRESET: 0\r\n");
-	return 0;
+	/* Return immediately to allow the custom command handling in libmodem to finish processing,
+	 * before restarting libmodem.
+	 */
+	final_call(slm_modemreset);
+
+	return -SILENT_AT_COMMAND_RET;
 }
 
 SLM_AT_CMD_CUSTOM(xuuid, "AT#XUUID", handle_at_uuid);
