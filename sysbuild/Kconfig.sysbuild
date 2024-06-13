@@ -8,19 +8,8 @@
 
 menuconfig PARTITION_MANAGER
 	bool "Partition Manager"
-	default y if (!BOARD_QEMU_CORTEX_M0 && \
-		      !BOARD_QEMU_CORTEX_M3 && \
-		      !BOARD_NATIVE_POSIX && \
-		      !BOARD_NATIVE_POSIX_NATIVE_64 && \
-		      !BOARD_NATIVE_SIM && \
-		      !BOARD_NATIVE_SIM_NATIVE_64 && \
-		      !BOARD_MPS2 && \
-		      !BOARD_QEMU_X86 && \
-		      !BOARD_QEMU_X86_64 && \
-		      !BOARD_QEMU_X86_TINY && \
-		      !BOARD_NRF52_BSIM && \
-		      !BOARD_NRF5340BSIM && \
-		      !BOARD_NRF54H20DK)
+	default y if SOC_FAMILY_NORDIC_NRF
+	depends on !SOC_SERIES_NRF54HX
 	depends on !EXTERNAL_CONFIGURED_NETCORE
 
 if PARTITION_MANAGER
