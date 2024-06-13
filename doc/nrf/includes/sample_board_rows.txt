@@ -228,7 +228,7 @@
 
 .. nrf54l15pdk_nrf54l15_cpuapp_ns
 
-| :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | PCA10156 | :ref:`nrf54l15pdk_nrf54l15 <zephyr:nrf54l15pdk_nrf54l15>` | ``nrf54l15pdk/nrf54l15/cpuapp/ns`` |
+| :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | PCA10156 | :ref:`nrf54l15pdk <zephyr:nrf54l15pdk_nrf54l15>` | ``nrf54l15pdk/nrf54l15/cpuapp/ns`` |
 
 .. nrf54l15pdk@0.3.0_nrf54l15_cpuapp
 
