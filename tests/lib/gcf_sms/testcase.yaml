@@ -1,7 +1,9 @@
 tests:
   gcf_sms.functionality_test:
     sysbuild: true
-    platform_allow: nrf9160dk/nrf9160/ns
+    platform_allow: nrf9151dk/nrf9151/ns nrf9160dk/nrf9160/ns nrf9161dk/nrf9161/ns
     integration_platforms:
+      - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
     tags: gcf_sms sysbuild ci_tests_lib_gcf_sms

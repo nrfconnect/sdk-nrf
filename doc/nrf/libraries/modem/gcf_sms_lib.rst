@@ -13,6 +13,25 @@ The library implements the following AT commands:
 * ``AT+CPMS``
 * ``AT+CSMS``
 * ``AT+CSCA``
+
+  * Set command: ``+CSCA=<sca>[,<tosca>]``
+
+    * ``<sca>``: string
+    * ``<tosca>``: Type-of-Address octet in integer format, default ``145``.
+
+   .. code-block:: console
+
+      AT+CSCA=""+358501234567""
+      OK"
+
+  * Read command: ``+CSCA?``
+
+    .. code-block:: console
+
+       AT+CSCA?
+       +CSCA: ""+358501234567"",145"
+       OK
+
 * ``AT+CSCS``
 * ``AT+CMGD``
 * ``AT+CMSS``
