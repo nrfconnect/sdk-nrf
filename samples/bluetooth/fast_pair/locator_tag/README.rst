@@ -471,6 +471,10 @@ Testing
    Images in the testing section are generated for the debug device model registered by Nordic Semiconductor in the Google Nearby Console (see :ref:`fast_pair_locator_tag_google_device_model`).
    The debug device model name is covered by asterisks and the default Fast Pair logo is displayed instead of the one specified during the device model registration.
 
+   If the test Android device uses a primary email account that is not on Google's email allow list for the FMDN feature, testing steps will fail at the FMDN provisioning stage for the default debug (uncertified) device model.
+   To be able to test with debug device models, register your development email account by completing Google's device proposal form.
+   You can find the link to the device proposal form in the `Fast Pair Find My Device Network extension`_ specification.
+
 |test_sample|
 
 .. tabs::
