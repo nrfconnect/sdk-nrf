@@ -12,11 +12,7 @@ Google also provides additional features built upon the Fast Pair standard.
 For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
 
 .. note::
-   The Fast Pair support in the |NCS| is :ref:`experimental <software_maturity>`.
-   The implementation is not yet ready for production and extensions are not fully supported.
-
-   The implementation passes tests of `Fast Pair Validator app`_ (beta version).
-   The procedure triggered in Android settings is successful (tested with Android 11).
+   The software maturity level for the Fast Pair support in the |NCS| is indicated at the use case level in the :ref:`software_maturity_fast_pair_use_case` table and at the feature level in the :ref:`software_maturity_fast_pair_feature` table.
 
 Integration prerequisites
 *************************
