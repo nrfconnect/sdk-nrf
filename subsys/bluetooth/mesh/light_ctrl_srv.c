@@ -1970,7 +1970,6 @@ static int light_ctrl_srv_start(const struct bt_mesh_model *model)
 		break;
 	case BT_MESH_ON_POWER_UP_RESTORE:
 		if (is_enabled(srv)) {
-			reg_start(srv);
 			if (atomic_test_bit(&srv->flags, FLAG_ON)) {
 				turn_on(srv, NULL, true);
 			} else {
