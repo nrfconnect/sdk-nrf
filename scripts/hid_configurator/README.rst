@@ -54,10 +54,7 @@ Complete the following steps:
    Use the bundled DLL or build it according to instructions in `HIDAPI library`_.
 
 #. Select the appropriate HIDADPI library version for the used Windows system (either ``x86`` or ``x64``).
-   Copy the :file:`hidapi.dll` file and paste it into either of the following directory:
-
-   * The directory where used Python executable is located.
-   * The :file:`Windows\\System32` directory, for example :file:`C:\\Windows\\System32`.
+   Copy the :file:`hidapi.dll` file and paste it into the directory where the :file:`configurator_cli.py` script is located.
 
 #. Install `pyhidapi Python wrapper`_ and other required libraries with the following command:
 
