@@ -8,6 +8,15 @@ import logging
 import os
 import pprint
 
+if os.name == "nt":
+    try:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        os.add_dll_directory(script_dir)
+    except AttributeError:
+        print('Cannot add directory containing configurator_cli.py script to DLL search path. \
+               Please update to Python 3.8 or newer to allow placing hidapi.dll in the directory \
+               containing configurator_cli.py script')
+
 from NrfHidManager import NrfHidManager
 
 from modules.module_config import MODULE_CONFIG
@@ -186,12 +195,7 @@ def perform_led_stream(dev, args):
 
 
 def parse_arguments():
-    try:
-        parser = argparse.ArgumentParser(allow_abbrev=False)
-    except TypeError:
-        # The allow_abbrev argument was added in Python 3.5.
-        # Skip setting the value if used Python version does not support it.
-        parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
 
     parser.add_argument(dest='device', default=None, nargs='?',
                         help='Device specified by type, board name or HW ID '
