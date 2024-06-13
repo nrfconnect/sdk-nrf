@@ -17,12 +17,13 @@ The application configuration files define both a set of options with which the 
 Include the following files in this directory:
 
 Mandatory configuration files
-    * Application configuration file for the :ref:`debug build type <nrf_desktop_requirements_build_types>` (:file:`prj.conf`).
+    * Application configuration file for the :ref:`debug build type <nrf_desktop_requirements_build_types>`.
     * Configuration files for the selected modules.
 
 Optional configuration files
     * Application configuration files for other build types.
     * Configuration file for the bootloader.
+    * Configuration file for the sysbuild.
     * Memory layout configuration.
     * DTS overlay file.
 
@@ -43,7 +44,7 @@ nRF52840 Gaming Mouse (``nrf52840gmouse``)
         * Bluetooth is configured to use Nordic's SoftDevice link layer.
 
       * The configuration with the B0 bootloader is set as default.
-      * The board supports ``debug`` (:file:`prj_fast_pair.conf`) and ``release`` (:file:`prj_release_fast_pair.conf`) :ref:`nrf_desktop_bluetooth_guide_fast_pair` configurations.
+      * The board supports the ``debug`` (``fast_pair`` file suffix) and ``release`` (``release_fast_pair`` file suffix) configurations for :ref:`nrf_desktop_bluetooth_guide_fast_pair`.
         Both configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and they support the firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
 nRF52832 Desktop Mouse (``nrf52dmouse``) and nRF52810 Desktop Mouse (``nrf52810dmouse``)
@@ -58,7 +59,7 @@ Sample mouse, keyboard or dongle (``nrf52840dk/nrf52840``)
       * The build types allow to build the application as mouse, keyboard or dongle.
       * Inputs are simulated based on the hardware button presses.
       * The configuration with the B0 bootloader is set as default.
-      * The board supports ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (:file:`prj_fast_pair.conf`).
+      * The board supports ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
 Sample dongle (``nrf52833dk/nrf52833``)
@@ -80,7 +81,7 @@ nRF52832 Desktop Keyboard (``nrf52kbd``)
       * The application is configured to act as a keyboard, with the Bluetooth LE transport enabled.
       * Bluetooth is configured to use Nordic Semiconductor's SoftDevice link layer.
       * The preconfigured build types configure the device without the bootloader in debug mode and with B0 bootloader in release mode due to memory size limits.
-      * The board supports ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration (:file:`prj_release_fast_pair.conf`).
+      * The board supports ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration (``release_fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
 nRF52840 USB Dongle (``nrf52840dongle/nrf52840``) and nRF52833 USB Dongle (``nrf52833dongle``)

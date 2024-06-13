@@ -378,11 +378,12 @@ See :ref:`nrf_desktop_porting_guide` for details.
 nRF Desktop build types
 =======================
 
-The nRF Desktop application does not use a single :file:`prj.conf` file.
+The nRF Desktop application uses multiple files to configure each specific build type.
+Those files can be easily identified by their :ref:`zephyr:application-file-suffixes`.
 Before you start testing the application, you can select one of the build types supported by the application.
 Not every board supports all of the mentioned build types.
 
-See :ref:`app_build_additions_build_types` and :ref:`cmake_options` for more information.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
 
 The application supports the following build types:
 
@@ -391,56 +392,56 @@ The application supports the following build types:
    :header-rows: 1
 
    * - Build type
-     - File name
+     - File suffix
      - Supported board target
      - Description
    * - Debug (default)
-     - :file:`prj.conf`
+     - none
      - All from `Requirements`_
      - Debug version of the application; the same as the ``release`` build type, but with debug options enabled.
    * - Release
-     - :file:`prj_release.conf`
+     - ``release``
      - All from `Requirements`_
      - Release version of the application with no debugging features.
    * - Debug Fast Pair
-     - :file:`prj_fast_pair.conf`
+     - ``fast_pair``
      - ``nrf52840dk/nrf52840``, ``nrf52840gmouse/nrf52840``
      - Debug version of the application with `Fast Pair`_ support.
    * - Release Fast Pair
-     - :file:`prj_release_fast_pair.conf`
+     - ``release_fast_pair``
      - ``nrf52kbd/nrf52832``, ``nrf52840gmouse/nrf52840``
      - Release version of the application with `Fast Pair`_ support.
    * - Dongle
-     - :file:`prj_dongle.conf`
+     - ``dongle``
      - ``nrf52840dk/nrf52840``
      - Debug version of the application that lets you generate the application with the dongle role.
    * - Keyboard
-     - :file:`prj_keyboard.conf`
+     - ``keyboard``
      - ``nrf52840dk/nrf52840``
      - Debug version of the application that lets you generate the application with the keyboard role.
    * - MCUboot QSPI
-     - :file:`prj_mcuboot_qspi.conf`
+     - ``mcuboot_qspi``
      - ``nrf52840dk/nrf52840``
      - Debug version of the application that uses MCUboot with the secondary slot in the external QSPI FLASH.
    * - MCUboot SMP
-     - :file:`prj_mcuboot_smp.conf`
+     - ``mcuboot_smp``
      - ``nrf52840dk/nrf52840``, ``nrf52840gmouse/nrf52840``
      - | Debug version of the application that enables MCUmgr with DFU support and offers support for the MCUboot DFU procedure over SMP.
        | See the :ref:`nrf_desktop_bootloader_background_dfu` section for more information.
    * - WWCB
-     - :file:`prj_wwcb.conf`
+     - ``wwcb``
      - ``nrf52840dk/nrf52840``
      - Debug version of the application with the support for the B0 bootloader enabled for `Works With ChromeBook (WWCB)`_.
    * - Triple Bluetooth LE connection
-     - :file:`prj_3bleconn.conf`
+     - ``3bleconn``
      - ``nrf52840dongle/nrf52840``
      - Debug version of the application with the support for up to three simultaneous Bluetooth LE connections.
    * - Quadruple LLPM connection
-     - :file:`prj_4llpmconn.conf`
+     - ``4llpmconn``
      - ``nrf52840dongle/nrf52840``
      - Debug version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
    * - Release quadruple LLPM connection
-     - :file:`prj_release_4llpmconn.conf`
+     - ``release_4llpmconn``
      - ``nrf52840dongle/nrf52840``
      - Release version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
 
@@ -900,7 +901,7 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the :ref:`nrf_desktop_requirements_build_types`, depending on your development kit.
-See :ref:`cmake_options` for information about how to select a build type.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for information about how to select a build type.
 
 .. note::
    If nRF Desktop is built with `Fast Pair`_ support, you must provide Fast Pair Model ID and Anti Spoofing private key as CMake options.
@@ -1009,7 +1010,7 @@ You can use any preferred HID report rate tool.
 Building information
 ~~~~~~~~~~~~~~~~~~~~
 
-Use the :file:`prj_release.conf` configuration for the HID report rate measurement.
+Use the configuration with the ``release`` file suffix for the HID report rate measurement.
 Debug features, such as logging or assertions, decrease the application performance.
 
 Use the nRF Desktop configuration that acts as a HID mouse reference design for the report rate measurement, as the motion data polling is synchronized with sending HID reports.
