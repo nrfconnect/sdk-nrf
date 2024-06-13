@@ -111,6 +111,23 @@ See :ref:`app_build_output_files_suit_dfu` for a full table of SUIT-generated ou
 If you want to make modifications to how the DFU is executed in this sample, you can do so by editing the manifest templates, or generating your own custom manifests.
 See the :ref:`ug_nrf54h20_suit_customize_dfu` user guide for instructions and examples.
 
+External flash support
+======================
+
+You can enable the external flash support by setting the following ``FILE_SUFFIX=extflash`` parameter:
+
+.. code-block:: console
+
+   west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX="extflash"
+
+With this configuration, the sample is configured to use UART as the transport and the external flash is enabled.
+
+To enable both the external flash and the BLE transport, use the following command:
+
+.. code-block:: console
+
+   west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX="extflash" -DOVERLAY_CONFIG="sysbuild/smp_transfer_bt.conf" -DSB_OVERLAY_CONFIG="sysbuild_bt.conf"
+
 Building and running
 ********************
 
