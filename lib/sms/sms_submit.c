@@ -17,6 +17,14 @@
 
 LOG_MODULE_DECLARE(sms, CONFIG_SMS_LOG_LEVEL);
 
+/**
+ * @brief Maximum length of SMS address plus the '+' sign.
+ *
+ * @details SMS_MAX_ADDRESS_LEN_CHARS cannot be used because no computation
+ * is allowed in this define.
+ */
+#define SMS_MAX_ADDRESS_LEN_CHARS_WITH_PLUS_SIGN 21
+
 /** @brief User Data Header size in octets/bytes. */
 #define SMS_UDH_CONCAT_SIZE_OCTETS 6
 
@@ -97,6 +105,102 @@ static int sms_submit_encode_number(
 }
 
 /**
+ * @brief Encode SMS Service Center Address (SCA) field.
+ *
+ * @details SCA field is used in SMS-SUBMIT message. This is specified piece by piece
+ * in the following specifications:
+ *   - 3GPP TS 23.040 chapter 9.1.2.5
+ *   - 3GPP TS 27.005 chapter 3.1 (see <pdu>, <tosca> and <toda>)
+ *   - 3GPP TS 27.005 chapter 3.3.1
+ *   - 3GPP TS 27.005 chapter 4.3
+ *
+ * @param[out] sca_field Buffer for SCA field.
+ *                       Must be at least 23 bytes long to include the following information:
+ *                       - Address/number: 20
+ *                       - Address length: 1
+ *                       - Type of address: 1
+ *                       - NUL termination: 1
+ */
+static void sms_submit_encode_sca(char *sca_field)
+{
+	int ret;
+
+	uint8_t encoded_sca[SMS_MAX_ADDRESS_LEN_CHARS + 1];
+	uint8_t encoded_sca_size;
+	uint8_t encoded_sca_size_octets = 0;
+	/* Make buffer big enough and have few characters extra. Maximum required should be 41:
+	 * - "+CSCA: ": 7
+	 * - Address/number: 20
+	 * - plus sign: 1
+	 * - double quotes for address: 2
+	 * - comma: 1
+	 * - Type of address: 3
+	 * - \r\nOK\r\n: 6
+	 * - NUL termination: 1
+	 */
+	char csca_resp[48] = { 0 };
+	/* +1 for NUL termination and another +1 for potential '+' sign */
+	char sca[SMS_MAX_ADDRESS_LEN_CHARS + 2] = { 0 };
+	/* We use default value of 145 (0x91), which is for international number format.
+	 * 3GPP TS 27.005 chapter 3.1 says as follows about <tosca> which refers to <toda>:
+	 *   "when first character is + (IRA 43) default is 145, otherwise default is 129"
+	 */
+	int tosca = 145;
+	int sca_len = 0;
+
+	ret = nrf_modem_at_cmd(csca_resp, sizeof(csca_resp), "AT+CSCA?");
+	if (ret != 0) {
+		LOG_DBG("Failed to get SMSC address, error: %d", ret);
+		goto no_sca;
+	}
+	ret = sscanf(
+		csca_resp,
+		"+CSCA: "
+		"\"%"STRINGIFY(SMS_MAX_ADDRESS_LEN_CHARS_WITH_PLUS_SIGN)"[+0-9^,]%n\","
+		"%d",
+		sca,
+		&sca_len,
+		&tosca);
+	if (ret < 1) {
+		LOG_DBG("SMSC address not set into +CSCA response (ret=%d): %s",
+			ret, csca_resp);
+		goto no_sca;
+	}
+	LOG_DBG("SMSC address (sscanf ret=%d,sca_len=%d): %s, tosca=%d", ret, sca_len, sca, tosca);
+
+	/* Check that number string was parsed completely, i.e., double quote is next character
+	 * after the parsed number. Otherwise, number might have been too long or had
+	 * non-number characters.
+	 */
+	if (csca_resp[sca_len] != '\"') {
+		LOG_WRN("Too long or non-numbers in SMSC address: %s", csca_resp);
+		goto no_sca;
+	}
+
+	/* Encode SMSC number into format required in SMS header */
+	encoded_sca_size = strlen(sca);
+	ret = sms_submit_encode_number(
+		sca,
+		&encoded_sca_size,
+		encoded_sca,
+		&encoded_sca_size_octets);
+	if (ret) {
+		goto no_sca;
+	}
+
+	/* SMSC address field format is */
+	sprintf(sca_field,
+		"%02X%02X%s",
+		encoded_sca_size_octets + 1,
+		tosca,
+		encoded_sca);
+	return;
+
+no_sca:
+	strcpy(sca_field, "00");
+}
+
+/**
  * @brief Prints error information for positive error codes of @c nrf_modem_at_printf.
  *
  * @param[in] err Error code.
@@ -123,9 +227,11 @@ static void sms_submit_print_error(int err)
 }
 
 /**
- * @brief Create SMS-SUBMIT message as specified in specified in 3GPP TS 23.040 chapter 9.2.2.2.
+ * @brief Create SMS-SUBMIT message as specified in 3GPP TS 23.040 chapter 9.2.2.2.
  *
  * @details Optionally allows adding User-Data-Header.
+ *
+ * For the encoding of the SMS PDU, see <pdu> in 3GPP TS 27.005 chapter 3.1.
  *
  * @param[out] send_buf Output buffer where SMS-SUBMIT message is created. Caller should allocate
  *             enough space. Minimum of 400 bytes is required with maximum message size and if
@@ -138,6 +244,7 @@ static void sms_submit_print_error(int err)
  * @param[in] encoded_data_size_septets Encoded User-Data size in septets.
  * @param[in] message_ref TP-Message-Reference field in SMS-SUBMIT message.
  * @param[in] udh_str User Data Header. Can be set to NULL if not desired.
+ * @param[in] sca_field SMS Service Center address/number field of the CMGS AT command.
  */
 static int sms_submit_encode(
 	char *send_buf,
@@ -148,7 +255,8 @@ static int sms_submit_encode(
 	uint8_t encoded_data_size_octets,
 	uint8_t encoded_data_size_septets,
 	uint8_t message_ref,
-	char *udh_str)
+	char *udh_str,
+	char *sca_field)
 {
 	int err = 0;
 	int msg_size;
@@ -158,6 +266,7 @@ static int sms_submit_encode(
 
 	/* Create and send CMGS AT command */
 	msg_size =
+		/* SMSC address octets are excluded based on 3GPP TS 27.005 chapter 4.3 */
 		2 + /* First header byte and TP-MR fields */
 		1 + /* Length of phone number */
 		1 + /* Phone number Type-of-Address byte */
@@ -174,8 +283,9 @@ static int sms_submit_encode(
 	 * User-Data-Header to be added later
 	 */
 	sprintf(send_buf,
-		"AT+CMGS=%d\r00%02X%02X%02X91%s0000%02X",
+		"AT+CMGS=%d\r%s%02X%02X%02X91%s0000%02X",
 		msg_size,
+		sca_field,
 		sms_submit_header_byte,
 		message_ref,
 		encoded_number_size,
@@ -231,6 +341,7 @@ static int sms_submit_encode(
  * @param[in] encoded_number Number in semi-octet representation for SMS-SUBMIT message.
  * @param[in] encoded_number_size Number of characters in number (encoded_number).
  * @param[in] encoded_number_size_octets Number of octets in number (encoded_number).
+ * @param[in] sca_field SMS Service Center address/number field of the CMGS AT command.
  * @param[in] send_at_cmds Indicates whether parts of the concatenated SMS message are sent.
  * @param[in,out] concat_msg_count Number of message parts required to decode given text.
  *                     If send_at_cmds is true, this is input.
@@ -241,6 +352,7 @@ static int sms_submit_concat(
 	uint8_t *encoded_number,
 	uint8_t encoded_number_size,
 	uint8_t encoded_number_size_octets,
+	char *sca_field,
 	bool send_at_cmds,
 	uint8_t *concat_msg_count)
 {
@@ -295,7 +407,8 @@ static int sms_submit_concat(
 				encoded_data_size_octets - SMS_UDH_CONCAT_SIZE_OCTETS,
 				encoded_data_size_septets,
 				message_ref,
-				udh_str);
+				udh_str,
+				sca_field);
 
 			if (err) {
 				break;
@@ -332,6 +445,7 @@ int sms_submit_send(
 	uint8_t encoded_data_size_octets = 0;
 	uint8_t encoded_data_size_septets = 0;
 	uint8_t concat_msg_count = 0;
+	char sca_field[32] = { 0 };
 
 	if (number == NULL) {
 		LOG_ERR("SMS number not given but NULL");
@@ -374,18 +488,21 @@ int sms_submit_send(
 		size = data_len;
 	}
 
+	/* Encode SCA field */
+	sms_submit_encode_sca(sca_field);
+
 	/* Check if this should be sent as concatenated SMS */
 	if (size < data_len) {
 		LOG_DBG("Entire message doesn't fit into one SMS message. Using concatenated SMS.");
 
 		/* Encode messages to get number of message parts required to send given text */
 		err = sms_submit_concat(data,
-			encoded_number, encoded_number_size, encoded_number_size_octets,
+			encoded_number, encoded_number_size, encoded_number_size_octets, sca_field,
 			false, &concat_msg_count);
 
 		/* Then, encode and send message parts */
 		err = sms_submit_concat(data,
-			encoded_number, encoded_number_size, encoded_number_size_octets,
+			encoded_number, encoded_number_size, encoded_number_size_octets, sca_field,
 			true, &concat_msg_count);
 	} else {
 		/* Single message SMS */
@@ -398,7 +515,8 @@ int sms_submit_send(
 			encoded_data_size_octets,
 			encoded_data_size_septets,
 			0,
-			NULL);
+			NULL,
+			sca_field);
 	}
 
 	return err;
