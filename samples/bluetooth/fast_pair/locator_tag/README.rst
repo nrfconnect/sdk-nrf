@@ -695,6 +695,11 @@ Fast Pair Validator app
 
 You can test the sample against the Eddystone test suite from the `Fast Pair Validator app`_.
 
+.. note::
+   To start testing the FMDN solution with the `Fast Pair Validator app`_, use your project in the Google Nearby Console and the Fast Pair device model that is defined in the scope of your project.
+   The default debug device model from Nordic Semiconductor cannot be used for this purpose.
+   Additionally, you must sign into the `Fast Pair Validator app`_ using an email address associated with your project in the Google Nearby Console.
+
 |test_sample|
 
 .. tabs::
