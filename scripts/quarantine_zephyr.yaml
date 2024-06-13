@@ -239,3 +239,9 @@
   platforms:
     - nrf54l15pdk/nrf54l15/cpuapp
   comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
+
+- scenarios:
+    - sample.net.sockets.http.server
+  platforms:
+    - nrf54h20dk/nrf54h20/cpurad
+  comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
