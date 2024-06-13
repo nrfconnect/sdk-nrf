@@ -12,7 +12,7 @@ It consists of two primary steps:
 #. Testing and booting - the bootloader then tests and boots the new firmware.
 
 .. note::
-  The choice of bootloader affects how firmware updates can be performed.
+  The choice of bootloader affects how firmware updates can be performed (except for the nRF54H20 SoC where only the Software Updates for Internet of Things (SUIT) is supported).
   While bootloader features (such as out-of-the-box support) for various DFU methods may vary, it is recognized that:
 
   * MCUboot and its supporting libraries and middleware are flexible and support various protocols and methods for firmware updates.
@@ -97,6 +97,11 @@ For device-specific guides related to DFU, see the following pages:
   * :ref:`qspi_xip` - For external execute in place (XIP) for the nRF5340 SoC.
 
 * :ref:`ug_nrf70_fw_patch_update` - For nRF70 Series devices.
+
+.. note::
+
+  For the nRF54H20 SoC, see the :ref:`nrf54h_suit_sample` sample to perform a DFU over Bluetooth LE or UART.
+  See the :ref:`ug_nrf54h20_suit_dfu` page and its listed subpages for more information about the SUIT DFU procedure.
 
 See the following user guides for an overview of topics related to general firmware updates with the |NCS|:
 

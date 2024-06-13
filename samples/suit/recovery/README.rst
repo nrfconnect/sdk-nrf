@@ -1,7 +1,7 @@
 .. _suit_recovery:
 
-SUIT recovery application
-#########################
+SUIT: Recovery application
+##########################
 
 .. contents::
    :local:
