@@ -1,7 +1,7 @@
 .. _suit_flash_companion:
 
-SUIT flash companion
-####################
+SUIT: Flash companion
+#####################
 
 .. contents::
    :local:
