@@ -3,9 +3,17 @@ sample:
   description: IPC Service integration and efficiency test
 
 common:
-  build_only: true
   sysbuild: true
   tags: ipc
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "IPC-service .* demo started"
+      - "Δpkt: (?!0)\\d* ((?!0)\\d* B/pkt) | throughput: (?!0)\\d* bit/s"
+      - "Δpkt: (?!0)\\d* ((?!0)\\d* B/pkt) | throughput: (?!0)\\d* bit/s"
+      - "Δpkt: (?!0)\\d* ((?!0)\\d* B/pkt) | throughput: (?!0)\\d* bit/s"
 
 tests:
   sample.ipc.ipc_service.nrf5340dk_rpmsg_default:
