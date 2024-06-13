@@ -233,8 +233,6 @@ int sms_send_text(const char *number, const char *text);
  *
  * This function does not support sending of 8 bit binary data messages or UCS2 encoded text.
  *
- * Concatenated messages are not supported in this function.
- *
  * @param[in] number Recipient number in international format.
  * @param[in] data Data to be sent.
  * @param[in] data_len Data length.
