@@ -72,7 +72,7 @@ PSErrorCode PersistentStorageSecure::_SecureRemove(PersistentStorageNode *node)
 	if (node->GetKey(key)) {
 		bool alreadyInTheMap{ false };
 		psa_storage_uid_t uid = UIDFromString(key, &alreadyInTheMap);
-		if (!alreadyInTheMap) {
+		if (alreadyInTheMap) {
 			psa_status_t status = psa_ps_remove(uid);
 
 			if (status == PSA_SUCCESS) {
