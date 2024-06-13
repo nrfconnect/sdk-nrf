@@ -293,6 +293,96 @@ The following table indicates the software maturity levels of the support for Go
         - --
         - --
 
+The following table indicates the software maturity levels of the support for each Fast Pair feature:
+
+.. toggle::
+
+   .. _software_maturity_fast_pair_feature:
+
+   .. list-table:: Google Fast Pair feature support
+      :header-rows: 1
+      :align: center
+      :widths: auto
+
+      * -
+        - nRF52810
+        - nRF52811
+        - nRF52820
+        - nRF52832
+        - nRF52833
+        - nRF52840
+        - nRF5340
+        - nRF54H20
+        - nRF54L15
+        - nRF9151
+        - nRF9160
+        - nRF9161
+      * - **Initial pairing**
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+      * - **Subsequent pairing**
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+      * - **Battery Notification extension**
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+      * - **Personalized Name extension**
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+      * - **Find My Device Network extension**
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+
 Security Feature Support
 ************************
 
