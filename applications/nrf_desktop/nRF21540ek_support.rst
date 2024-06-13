@@ -30,7 +30,7 @@ For example, you can build the application for ``nrf52840dk/nrf52840`` with ``nr
 
 For the multi-core build, you need to pass the ``SHIELD`` parameter to images built on both application and network core.
 The network core controls the FEM, but the application core needs to forward the needed pins to the network core.
-Use ``hci_ipc_`` as the *childImageName* parameter, because in the nRF Desktop application, network core runs using ``hci_ipc_``.
+Use ``hci_ipc_`` as the *image_name* parameter, because in the nRF Desktop application, network core runs using ``hci_ipc_``.
 The command for ``nrf5340dk/nrf5340/cpuapp`` with ``nrf21540ek`` shield would look as follows:
 
 .. code-block:: console
