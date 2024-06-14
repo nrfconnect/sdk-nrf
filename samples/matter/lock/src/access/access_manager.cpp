@@ -11,7 +11,7 @@
 
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_DECLARE(cr_manager, CONFIG_CHIP_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(cr_manager, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace chip;
 using namespace DoorLockData;
