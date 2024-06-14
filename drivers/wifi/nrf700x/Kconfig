@@ -239,6 +239,7 @@ config NRF700X_ON_SPI
 # Wi-Fi and SR Coexistence Hardware configuration.
 config NRF700X_SR_COEX
 	bool "Enable Wi-Fi and SR coexistence support"
+	select EXPERIMENTAL if OPENTHREAD
 	def_bool $(dt_nodelabel_enabled,nrf_radio_coex)
 
 # GPIO configuration to control SR side RF switch position.
