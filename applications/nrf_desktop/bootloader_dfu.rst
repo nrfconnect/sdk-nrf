@@ -101,6 +101,15 @@ You must also set the MCUboot private key path (``SB_CONFIG_BOOT_SIGNATURE_KEY_F
 The key is used both by the build system (to sign the application update images) and by the bootloader (to verify the application signature using public key derived from the selected private key).
 If this Kconfig option is not overwritten in the sysbuild configuration, debug signature key files located in the MCUboot bootloader repository will be used by default.
 
+To select a specific version of the application, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option in the application configuration.
+If the nRF Desktop application is configured with the MCUboot in the direct-xip mode, the build system builds two application images: one for the primary slot and the other for the secondary slot, named ``mcuboot_secondary_app``.
+You need to update this configuration only in the main application image, as the ``mcuboot_secondary_app`` image mirrors it.
+
+.. note::
+    When the MCUboot bootloader is in the direct-xip mode, the update image must have a higher version number than the application currently running on the device.
+    This ensures that the update image will be booted after a successful DFU image transfer.
+    Otherwise, the update image can be rejected by the bootloader.
+
 The MCUboot bootloader configuration depends on the selected way of performing image upgrade.
 For detailed information about the available MCUboot bootloader modes, see the following sections.
 
