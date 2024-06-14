@@ -789,7 +789,9 @@ Fast Pair GATT Service
 This sample uses the :ref:`bt_fast_pair_readme` and its dependencies and is configured to meet the requirements of the Fast Pair standard together with its FMDN extension.
 For details about integrating Fast Pair in the |NCS|, see :ref:`ug_bt_fast_pair`.
 
-The :ref:`bt_fast_pair_provision_script` is used by the build system to automatically generate the hexadecimal file that contains the Fast Pair Model ID and Anti Spoofing Private Key.
+This sample enables the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option.
+With this option enabled, the build system calls the :ref:`bt_fast_pair_provision_script`, which automatically generates a hexadecimal file containing Fast Pair Model ID and Anti Spoofing Private Key.
+For more details about enabling Fast Pair for your application, see the :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section in the Fast Pair integration guide.
 
 Bluetooth LE advertising data providers
 =======================================
