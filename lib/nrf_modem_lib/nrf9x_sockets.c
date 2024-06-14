@@ -241,6 +241,9 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case SO_IPV6_ECHO_REPLY:
 			*nrf_out_optname = NRF_SO_IPV6_ECHO_REPLY;
 			break;
+		case SO_IPV6_DELAYED_ADDR_REFRESH:
+			*nrf_out_optname = NRF_SO_IPV6_DELAYED_ADDR_REFRESH;
+			break;
 		default:
 			retval = -1;
 			break;
