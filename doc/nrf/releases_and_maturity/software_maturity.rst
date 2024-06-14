@@ -283,9 +283,9 @@ The following table indicates the software maturity levels of the support for Go
         - --
         - --
         - --
-        - Experimental
-        - Experimental
-        - Experimental
+        - Supported
+        - Supported
+        - Supported
         - Experimental
         - --
         - Experimental
@@ -321,9 +321,9 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
-        - Experimental
-        - Experimental
-        - Experimental
+        - Supported
+        - Supported
+        - Supported
         - Experimental
         - --
         - Experimental
@@ -373,9 +373,9 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
-        - Experimental
-        - Experimental
-        - Experimental
+        - Supported
+        - Supported
+        - Supported
         - Experimental
         - --
         - Experimental
