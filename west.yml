@@ -186,7 +186,7 @@ manifest:
         - nrf-802154
     - name: soc-hwmv1
       repo-path: sdk-soc-hwmv1
-      revision: fe543efbf9eecc5d573a91ac0e69f0b204af7cd3
+      revision: be03fefefb06a1681a79f810aef1f795bce3371a
       path: modules/soc-hwmv1
       groups:
         - soc-hwmv1
