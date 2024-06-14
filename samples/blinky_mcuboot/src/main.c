@@ -13,6 +13,18 @@
 /* The devicetree node identifier for the "led0" alias. */
 #define LED1_NODE DT_ALIAS(led1)
 
+#if IS_ENABLED(CONFIG_NCS_INCLUDE_BLINKY_CHILD_IMAGE)
+#pragma message "We have NCS_INCLUDE_BLINKY_CHILD_IMAGE"
+#endif
+
+#if IS_ENABLED(CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE)
+#pragma message "We have NCS_INCLUDE_RPMSG_CHILD_IMAGE"
+#endif
+
+#if IS_ENABLED(CONFIG_NCS_SAMPLE_BLINKY_CHILD_IMAGE)
+#pragma message "We have NCS_SAMPLE_BLINKY_CHILD_IMAGE"
+#endif
+
 /*
  * A build error on this line means your board is unsupported.
  * See the sample documentation for information on how to fix this.
