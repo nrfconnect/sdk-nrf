@@ -38,6 +38,7 @@ config BT_LL_SOFTDEVICE_HEADERS_INCLUDE
 if BT_CTLR
 rsource "controller/Kconfig"
 endif
+rsource "host_extensions/Kconfig"
 
 comment "BLE Libraries"
 rsource "Kconfig.pool"
