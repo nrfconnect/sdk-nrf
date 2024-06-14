@@ -96,6 +96,9 @@ To avoid applying the image immediately and only verify it, set the 4th argument
 
   mesh models dfd start 0 0 0 0
 
+.. note::
+   After a successful firmware distribution, the Firmware Distribution Server need to be set to idle state by issuing the ``mesh models dfd cancel`` shell command, before a new firmware distribution can be initiated.
+
 Firmware distribution
 =====================
 
