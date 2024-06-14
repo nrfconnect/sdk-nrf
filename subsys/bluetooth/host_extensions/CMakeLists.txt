@@ -5,3 +5,4 @@
 #
 
 zephyr_sources(host_extensions.c)
+zephyr_sources_ifdef(CONFIG_BT_CONN_EVT_CB conn_evt_cb.c)
