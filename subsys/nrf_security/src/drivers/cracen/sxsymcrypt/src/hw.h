@@ -14,6 +14,10 @@
 #include <sxsymcrypt/internal.h>
 #include <cracen/interrupts.h>
 
+#ifdef CONFIG_DCACHE
+#include <zephyr/cache.h>
+#endif
+
 #ifndef SX_EXTRA_IN_DESCS
 #define SX_EXTRA_IN_DESCS 0
 #endif
