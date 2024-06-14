@@ -4,7 +4,7 @@ sample:
 tests:
   sample.zigbee.shell:
     build_only: true
-    sysbuild: true
+    sysbuild: false
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
