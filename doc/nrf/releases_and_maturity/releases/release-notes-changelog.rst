@@ -807,6 +807,7 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
+  * Added support for socket option ``SO_IPV6_DELAYED_ADDR_REFRESH``.
   * Updated the RTT trace backend to allocate the RTT channel at boot, instead of when the modem is activated.
   * Rename the nRF91 socket offload layer from ``nrf91_sockets`` to ``nrf9x_sockets`` to reflect that the offload layer is not exclusive to the nRF91 Series SiPs.
 
