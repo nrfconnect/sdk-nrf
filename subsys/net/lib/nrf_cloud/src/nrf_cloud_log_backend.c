@@ -116,8 +116,21 @@ static const char * const filtered_modules[] = {
 static int filtered_ids[ARRAY_SIZE(filtered_modules)];
 
 static K_SEM_DEFINE(ncl_active, 1, 1);
+
 BUILD_ASSERT(CONFIG_NRF_CLOUD_LOG_BUF_SIZE < CONFIG_NRF_CLOUD_LOG_RING_BUF_SIZE,
 	     "Ring buffer size must be larger than log buffer size");
+
+/* CONFIG_LOG_FMT_SECTION_STRIP, if enabled, causes log strings to be removed from the
+ * output image, making the flash used smaller. However, the strings cannot be removed
+ * if text logging is enabled either on the UART or via nRF Cloud, you must set
+ * CONFIG_LOG_FMT_SECTION_STRIP=n. If they are removed when text logging is enabled,
+ * the firmware will crash at runtime.
+ */
+BUILD_ASSERT(!((IS_ENABLED(CONFIG_LOG_BACKEND_UART_OUTPUT_TEXT) ||
+		IS_ENABLED(CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT))
+		&& IS_ENABLED(CONFIG_LOG_FMT_SECTION_STRIP)),
+		"CONFIG_LOG_FMT_SECTION_STRIP is not compatible with text logging.");
+
 LOG_BACKEND_DEFINE(log_nrf_cloud_backend, logger_api, false);
 /* Reduce reported log_buf size by 1 so we can null terminate */
 LOG_OUTPUT_DEFINE(log_nrf_cloud_output, logger_out, log_buf, (sizeof(log_buf) - 1));
@@ -161,7 +174,7 @@ static void logger_init(const struct log_backend *const backend)
 					      Z_LOG_LOCAL_DOMAIN_ID,
 					      sid, 0);
 		if (actual_level != 0) {
-			LOG_WRN("Unable to filter logs for module %d", i);
+			LOG_WRN("Unable to filter logs for module %d: %s", i, filtered_modules[i]);
 		}
 		LOG_DBG("%d. log:%s, srcid:%u, actual_level:%u",
 			i, filtered_modules[i], sid, actual_level);
@@ -226,6 +239,7 @@ static int log_msg_filter(uint32_t src_id, int level)
 			continue;
 		}
 		if (src_id == filtered_ids[i]) {
+			LOG_DBG("Filtered: %s", filtered_modules[i]);
 			return -ENOMSG;
 		}
 	}
@@ -443,7 +457,6 @@ static int logger_out(uint8_t *buf, size_t size, void *ctx)
 	}
 
 	if (k_sem_take(&ncl_active, K_NO_WAIT) < 0) {
-		printk("logger_out: BUSY\n");
 		return 0;
 	}
 
