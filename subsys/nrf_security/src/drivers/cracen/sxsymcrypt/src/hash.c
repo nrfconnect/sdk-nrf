@@ -286,6 +286,10 @@ int sx_hash_status(struct sxhash *c)
 		return r;
 	}
 
+#if CONFIG_DCACHE
+	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
+#endif
+
 	sx_hash_free(c);
 
 	return r;

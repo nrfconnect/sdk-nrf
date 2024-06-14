@@ -21,36 +21,23 @@ void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *d, uint32_t cmd, uint
 	ADD_INDESC_PRIV(*dma, offsetof(struct sx_dmaslot, cfg), sizeof(dma->dmamem.cfg), tag);
 }
 
-static void sx_map_descslist(struct sxdesc *p, struct sxdesc *mappeddesc)
-{
-	struct sxdesc *next;
-	struct sxdesc *s = p;
-
-	mappeddesc++;
-	while (s != DMA_LAST_DESCRIPTOR) {
-		next = s->next;
-		if (s->next != DMA_LAST_DESCRIPTOR) {
-			s->next = mappeddesc++;
-		}
-		s = next;
-	}
-}
-
-static void sx_map_descs(struct sx_dmactl *dma, struct sxdesc *indesc)
-{
-	struct sxdesc *m;
-
-	m = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
-	sx_map_descslist(indesc, m);
-	m = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
-	sx_map_descslist(dma->dmamem.outdescs, m);
-}
-
 void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs)
 {
 	struct sxdesc *m;
 
-	sx_map_descs(dma, indescs);
+#ifdef CONFIG_DCACHE
+	m = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
+	for (; m != DMA_LAST_DESCRIPTOR; m = m->next) {
+		sys_cache_data_flush_and_invd_range(m->addr, m->sz & DMA_SZ_MASK);
+	}
+	m = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
+	for (; m != DMA_LAST_DESCRIPTOR; m = m->next) {
+		sys_cache_data_flush_and_invd_range(m->addr, m->sz & DMA_SZ_MASK);
+	}
+
+	sys_cache_data_flush_range((void *)&dma->dmamem, sizeof(dma->dmamem) + privsz);
+#endif
+
 	m = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
 	sx_wrreg_addr(REG_FETCH_ADDR, m);
 	m = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
