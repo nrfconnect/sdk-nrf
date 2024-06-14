@@ -11,12 +11,13 @@ The nRF91 Series DKs contain additional chips that act as board controllers.
 
 .. _nrf9161_ug_intro:
 
-Board controller on the nRF9161 DK
-**********************************
+Board controller on the nRF91x1 DKs
+***********************************
 
-The nRF9161 DK contains an nRF5340 Interface MCU (IMCU) that acts both as an on-board debugger and board controller.
-The board controller controls signal switches on the nRF9161 DK and can be used to route the nRF9161 SiP pins to different components on the DK, such as pin headers, external memory, a SIM card or eSIM.
-For a complete list of configuration options available, see the `nRF9161 DK board control section in the nRF9161 DK User Guide`_.
+The nRF91x1 DKs (nRF9161 and nRF9151 DKs) contain an nRF5340 Interface MCU (IMCU) that acts both as an on-board debugger and board controller.
+The board controller controls signal switches on the nRF91x1 DKs and can be used to route the nRF91x1 SiPs pins to different components on the DK, such as pin headers, external memory, a SIM card, or eSIM.
+
+The `Board control section in the nRF9161 DK User Guide <nRF9161 DK board control section in the nRF9161 DK User Guide_>`_ has a complete list of configuration options available for the nRF9161 DK.
 
 The nRF5340 IMCU comes preprogrammed with J-Link SEGGER OB and board controller firmware.
 If you want to change the default configuration of the DK, you can use the `nRF Connect Board Configurator`_ app in `nRF Connect for Desktop`_ .

@@ -7,9 +7,9 @@ Device Firmware Updates
 Device Firmware Update (DFU) is the procedure of upgrading the application firmware version on a device.
 It consists of two primary steps:
 
-1. Transferring the new firmware - a new firmware image is transferred to the device's chip.
+1. Transferring the new firmware - A new firmware image is transferred to the device's chip.
 
-#. Testing and booting - the bootloader then tests and boots the new firmware.
+#. Testing and booting - The bootloader then tests and boots the new firmware.
 
 .. note::
   The choice of bootloader affects how firmware updates can be performed (except for the nRF54H20 SoC where only the Software Updates for Internet of Things (SUIT) is supported).
@@ -97,6 +97,8 @@ For device-specific guides related to DFU, see the following pages:
   * :ref:`qspi_xip` - For external execute in place (XIP) for the nRF5340 SoC.
 
 * :ref:`ug_nrf70_fw_patch_update` - For nRF70 Series devices.
+
+* :ref:`nrf91_fota` section of :ref:`ug_nrf91_config_build` - For nRF91 Series devices.
 
 .. note::
 

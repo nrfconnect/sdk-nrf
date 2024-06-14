@@ -33,6 +33,16 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
        | `User Guide <nRF9160 DK Hardware_>`_
      - | `nRF9160 DK product page`_
        | `nRF9160 System in Package (SiP) <nRF9160 product website_>`_
+   * - :ref:`zephyr:nrf9151dk_nrf9151`
+     - PCA10171
+     - ``nrf9151dk/nrf9151``, ``nrf9151dk/nrf9151/ns``
+     - --
+     - | `nRF9151 System in Package (SiP) <nRF9151 product website_>`_
+   * - :ref:`zephyr:nrf9131ek_nrf9131`
+     - PCA10165
+     - ``nrf9131ek/nrf9131``, ``nrf9131ek/nrf9131/ns``
+     - --
+     - | `nRF9131 System in Package (SiP) <nRF9131 product website_>`_
    * - Thingy:91
      - PCA20035
      - ``thingy91/nrf9160``, ``thingy91/nrf9160/ns``
@@ -40,6 +50,11 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
        | `User Guide <Nordic Thingy:91 User Guide_>`_
      - | `Thingy\:91 product page`_
        | `nRF9160 System in Package (SiP) <nRF9160 product website_>`_
+   * - Thingy:91 X
+     - PCA20065
+     - ``thingy91x/nrf9151``, ``thingy91x/nrf9151/ns``
+     - --
+     - | `nRF9151 System in Package (SiP) <nRF9151 product website_>`_
 
 The nRF Connect SDK also offers :ref:`samples <cellular_samples>` dedicated to these devices, as well as compatible :ref:`drivers` and :ref:`libraries`.
 

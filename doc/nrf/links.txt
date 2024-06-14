@@ -418,8 +418,10 @@
 .. _`nRF9160 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download#infotabs
 .. _`SUPL client download`: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF9160-DK/Download#supl-c
 
+.. _`nRF9151 product website`: https://www.nordicsemi.com/Products/nRF9151
 .. _`nRF9161 product website`: https://www.nordicsemi.com/Products/nRF9161
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
+.. _`nRF9131 product website`: https://www.nordicsemi.com/Products/nRF9131
 
 .. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
 .. _`nRF9161 product website (compatible downloads)`: https://www.nordicsemi.com/Products/nRF9161/Download#infotabs
