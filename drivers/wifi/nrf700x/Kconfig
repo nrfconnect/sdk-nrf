@@ -77,11 +77,9 @@ endif # NRF700X_SYSTEM_MODE || NRF700X_SYSTEM_WITH_RAW_MODES
 
 config NRF700X_RAW_DATA_TX
 	bool "Enable RAW TX data path in the driver"
-	select EXPERIMENTAL
 
 config NRF700X_RAW_DATA_RX
 	bool "Enable RAW RX sniffer operation in the driver"
-	select EXPERIMENTAL
 
 config NRF700X_PROMISC_DATA_RX
 	bool "Enable promiscuous RX sniffer operation in the driver"
