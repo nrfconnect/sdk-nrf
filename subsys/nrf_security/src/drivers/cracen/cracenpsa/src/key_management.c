@@ -5,6 +5,7 @@
  */
 
 #include "common.h"
+#include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include "cracen_psa.h"
 #include "platform_keys/platform_keys.h"
@@ -563,13 +564,10 @@ static psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attribu
 			 */
 			if (key_size_bytes == 32) {
 				/* X25519 */
-				workmem[0] &= 248;
-				workmem[31] &= 127;
-				workmem[31] |= 64;
+				decode_scalar_25519(&workmem[0]);
 			} else if (key_size_bytes == 56) {
 				/* X448 */
-				workmem[0] &= 252;  /* clear bits 0 and 1 */
-				workmem[55] |= 128; /* set bit 447 */
+				decode_scalar_448(&workmem[0]);
 			}
 		}
 

@@ -6,6 +6,7 @@
 #include "common.h"
 #include "cracen_psa_cmac_kdf.h"
 #include "cracen_psa_primitives.h"
+#include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>
 #include <psa/crypto.h>
@@ -97,60 +98,6 @@ static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *cur
 	return silex_statuscodes_to_psa(sx_status);
 }
 
-/**
- * @brief Convert a byte array containing a scalar to sx_x25519_op.
- *
- * Loads a byte array (of size 32) and decodes it. This corresponds to the
- * decodeScalar25519 function in RFC 7748.
- */
-static struct sx_x25519_op decode_scalar_25519(const uint8_t *k)
-{
-	struct sx_x25519_op r;
-
-	memcpy(r.bytes, k, CRACEN_X25519_KEY_SIZE_BYTES);
-
-	r.bytes[0] &= 248;
-	r.bytes[31] &= 127;
-	r.bytes[31] |= 64;
-
-	return r;
-}
-
-/**
- * @brief Convert a byte array containing a coordinate to sx_x25519_op.
- *
- * Loads a byte array (of size 32) and decodes it. This corresponds to the
- * decodeUCoordinate (for 255 bits) function in RFC 7748.
- */
-static struct sx_x25519_op decode_coordinate_25519(const uint8_t *k)
-{
-	struct sx_x25519_op r;
-
-	memcpy(r.bytes, k, CRACEN_X25519_KEY_SIZE_BYTES);
-
-	r.bytes[31] &= (1 << 7) - 1;
-
-	return r;
-}
-
-/**
- * @brief Convert a byte array containing a scalar to sx_x448_op.
- *
- * Loads a byte array (of size 56) and decodes it. This corresponds to the
- * decodeScalar448 function in RFC 7748.
- */
-static struct sx_x448_op decode_scalar_448(const uint8_t *k)
-{
-	struct sx_x448_op r;
-
-	memcpy(r.bytes, k, CRACEN_X448_KEY_SIZE_BYTES);
-
-	r.bytes[0] &= 252;
-	r.bytes[55] |= 128;
-
-	return r;
-}
-
 static psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 						    const uint8_t *priv_key, size_t priv_key_size,
 						    const uint8_t *publ_key, size_t publ_key_size,
@@ -169,13 +116,24 @@ static psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *c
 	sx_status = SX_ERR_INVALID_CURVE_PARAM;
 
 	if (curve_op_sz == CRACEN_X25519_KEY_SIZE_BYTES) {
-		struct sx_x25519_op k = decode_scalar_25519(priv_key);
-		struct sx_x25519_op pt = decode_coordinate_25519(publ_key);
+		struct sx_x25519_op k;
+
+		memcpy(k.bytes, priv_key, CRACEN_X25519_KEY_SIZE_BYTES);
+		decode_scalar_25519(k.bytes);
+
+		struct sx_x25519_op pt;
+
+		memcpy(pt.bytes, publ_key, CRACEN_X25519_KEY_SIZE_BYTES);
+		decode_u_coordinate_25519(pt.bytes);
 
 		sx_status = sx_x25519_ptmult(&k, &pt, (struct sx_x25519_op *)output);
 
 	} else if (curve_op_sz == CRACEN_X448_KEY_SIZE_BYTES) {
-		struct sx_x448_op k = decode_scalar_448(priv_key);
+		struct sx_x448_op k;
+
+		memcpy(k.bytes, priv_key, CRACEN_X448_KEY_SIZE_BYTES);
+		decode_scalar_448(k.bytes);
+
 		/* 448 % 8 = 0, so there is no need to decode pt coordinate. */
 		sx_status = sx_x448_ptmult(&k, (struct sx_x448_op *)publ_key,
 					   (struct sx_x448_op *)output);
