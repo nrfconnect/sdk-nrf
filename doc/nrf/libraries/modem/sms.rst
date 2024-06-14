@@ -23,9 +23,9 @@ In addition, AT commands are also used to send SMS messages.
 SMS notifications are received using AT commands, but those are not visible for the users of this module.
 The module automatically acknowledges the SMS messages received on behalf of each listener.
 
-The SMS module reads the SMS service center number using the ``AT+CSCA?`` AT command.
-Most applications do not need to set a custom SMS service center number because the default value is enough.
-However, if your application requires a custom SMS service center number, you can set it using the ``AT+CSCA`` AT command.
+The SMS module reads the SMS service center address, that is, phone number of the SMS service center, using the ``AT+CSCA?`` AT command.
+Most applications do not need to set a custom SMS service center address because the default value is enough.
+However, if your application requires a custom SMS service center address, you can set it using the ``AT+CSCA`` AT command.
 Because ``AT+CSCA`` AT command is not supported by the modem firmware, you can use the :ref:`lib_gcf_sms_readme` library.
 
 Configuration
@@ -37,7 +37,7 @@ Configure the following mandatory Kconfig options when using this library:
 * :kconfig:option:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT` - Sets the maximum number of SMS subscribers.
 
 Check and configure the optional :kconfig:option:`CONFIG_GCF_SMS` Kconfig option when using this library.
-It enables the :ref:`lib_gcf_sms_readme` library for the ``AT+CSCA`` AT command support to allow a custom SMS service center number.
+It enables the :ref:`lib_gcf_sms_readme` library for the ``AT+CSCA`` AT command support to allow a custom SMS service center address.
 
 Limitations
 ***********

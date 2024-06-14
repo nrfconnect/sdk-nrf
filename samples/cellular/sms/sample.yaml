@@ -13,3 +13,19 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     tags: ci_build sysbuild ci_samples_cellular
+  sample.cellular.sms.sca:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    extra_configs:
+      - CONFIG_GCF_SMS=y
+      - CONFIG_SMS_SEND_PHONE_NUMBER=\"123456789\"
+      - CONFIG_SMS_SERVICE_CENTER_NUMBER=\"9876543210\"
+    tags: ci_build sysbuild ci_samples_cellular

@@ -10,6 +10,7 @@
 #include <modem/sms.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
+#include <nrf_modem_at.h>
 
 
 static void sms_callback(struct sms_data *const data, void *context)
@@ -57,6 +58,7 @@ int main(void)
 {
 	int handle = 0;
 	int ret = 0;
+	char response[16];
 
 	printk("\nSMS sample starting\n");
 
@@ -78,21 +80,37 @@ int main(void)
 		return 0;
 	}
 
+	/* Setting SMS service center number if set into the configuration. */
+	if (sizeof(CONFIG_SMS_SERVICE_CENTER_NUMBER) > 1) {
+		int err = nrf_modem_at_cmd(
+				response, sizeof(response),
+				"AT+CSCA=\"%s\",145",
+				CONFIG_SMS_SERVICE_CENTER_NUMBER);
+		if (err) {
+			printk("Setting service center number %s failed, err=%d\n",
+			       CONFIG_SMS_SERVICE_CENTER_NUMBER, err);
+		} else {
+			printk("Setting service center number %s succeeded\n",
+			       CONFIG_SMS_SERVICE_CENTER_NUMBER);
+		}
+
+	}
+
 	printk("SMS sample is ready for receiving messages\n");
 
 	/* Sending is done to the phone number specified in the configuration,
 	 * or if it's left empty, an information text is printed.
 	 */
-	if (strcmp(CONFIG_SMS_SEND_PHONE_NUMBER, "")) {
+	if (sizeof(CONFIG_SMS_SEND_PHONE_NUMBER) > 1) {
 		printk("Sending SMS: number=%s, text=\"SMS sample: testing\"\n",
-			CONFIG_SMS_SEND_PHONE_NUMBER);
+		       CONFIG_SMS_SEND_PHONE_NUMBER);
 		ret = sms_send_text(CONFIG_SMS_SEND_PHONE_NUMBER, "SMS sample: testing");
 		if (ret) {
 			printk("Sending SMS failed with error: %d\n", ret);
 		}
 	} else {
 		printk("\nSMS sending is skipped but receiving will still work.\n"
-			"If you wish to send SMS, please configure CONFIG_SMS_SEND_PHONE_NUMBER\n");
+		       "If you wish to send SMS, please configure CONFIG_SMS_SEND_PHONE_NUMBER\n");
 	}
 
 	/* In our application, we should unregister SMS in some conditions with:

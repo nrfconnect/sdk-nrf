@@ -7,8 +7,18 @@
 menu "SMS Sample Settings"
 
 config SMS_SEND_PHONE_NUMBER
-	string "Phone number, including country code, where the SMS message is sent"
+	string "Phone number to which the SMS message is sent, including the country code."
 	default ""
+	help
+	  Phone number to which the SMS message is sent, including the country code.
+	  If empty, SMS will not be sent at all but the sample waits for received messages.
+
+config SMS_SERVICE_CENTER_NUMBER
+	string "Phone number of the SMS service center, including the country code."
+	default ""
+	help
+	  If empty, SMS will not add the service center number into the SMS PDU,
+	  and the modem/network will use the default values.
 
 endmenu
 

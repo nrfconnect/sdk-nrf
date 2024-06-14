@@ -27,6 +27,8 @@ The sample requires an LTE connection.
 When the sample starts, it sends an SMS if a recipient phone number is set in the configuration.
 The sample then receives all the SMS messages and displays the information about the messages including the text that is sent.
 
+If you need a custom SMS service center number, you can set it through the configuration.
+
 Configuration
 *************
 
@@ -42,6 +44,11 @@ Check and configure the following configuration option for the sample:
 CONFIG_SMS_SEND_PHONE_NUMBER - Configuration for recipient phone number in international format
    The sample configuration is used to set the recipient phone number in international format if you need to send an SMS.
 
+.. _CONFIG_SMS_SERVICE_CENTER_NUMBER:
+
+CONFIG_SMS_SERVICE_CENTER_NUMBER - Configuration for SMS service center number in international format
+   The sample configuration is used to set the SMS service center number in international format if you need to use custom service center number.
+
 Additional configuration
 ========================
 
@@ -53,6 +60,7 @@ Check and configure the following mandatory library options that are used by the
 Check and configure the following optional library options that are used by the sample:
 
 * :kconfig:option:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT`
+* :kconfig:option:`CONFIG_GCF_SMS`
 * :kconfig:option:`CONFIG_LOG`
 * :kconfig:option:`CONFIG_ASSERT`
 * :kconfig:option:`CONFIG_ASSERT_VERBOSE`

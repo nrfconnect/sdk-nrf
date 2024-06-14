@@ -63,7 +63,7 @@ static int sms_submit_encode_number(
 	__ASSERT_NO_MSG(number != NULL);
 
 	if (*number_size == 0) {
-		LOG_ERR("Number not given but zero length");
+		LOG_ERR("Number given but zero length");
 		return -EINVAL;
 	}
 
