@@ -831,6 +831,8 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
+  * Added support for socket option ``SO_IPV6_DELAYED_ADDR_REFRESH``.
+
   * Updated:
 
     * The RTT trace backend to allocate the RTT channel at boot, instead of when the modem is activated.
