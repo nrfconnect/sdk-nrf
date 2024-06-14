@@ -484,6 +484,10 @@ int sx_aead_status(struct sxaead *c)
 		return r;
 	}
 
+#if CONFIG_DCACHE
+	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
+#endif
+
 	if ((!r) && (c->expectedtag != NULL) && (!c->is_in_ctx)) {
 		r = sx_memdiff(c->expectedtag, (const char *)c->extramem, c->tagsz)
 			    ? SX_ERR_INVALID_TAG
