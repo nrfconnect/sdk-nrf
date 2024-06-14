@@ -26,6 +26,7 @@ enum at_sockopt {
 	AT_SO_BINDTOPDN = 40,
 	AT_SO_TCP_SRV_SESSTIMEO = 55,
 	AT_SO_RAI = 61,
+	AT_SO_IPV6_DELAYED_ADDR_REFRESH = 62,
 };
 
 /**
