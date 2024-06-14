@@ -5,7 +5,7 @@
 #
 
 function(b0_gen_keys)
-  set(GENERATED_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
+  set(GENERATED_PATH ${CMAKE_BINARY_DIR}/nrf/subsys/bootloader/generated)
 
   # This is needed for make, ninja is able to resolve and create the path but make
   # is not able to resolve it.
@@ -67,7 +67,7 @@ function(b0_gen_keys)
 endfunction()
 
 function(b0_sign_image slot)
-  set(GENERATED_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
+  set(GENERATED_PATH ${CMAKE_BINARY_DIR}/nrf/subsys/bootloader/generated)
 
   # Get variables for secure boot usage
   sysbuild_get(${slot}_sb_validation_info_version IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_VERSION KCONFIG)
