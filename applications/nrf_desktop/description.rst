@@ -1044,9 +1044,33 @@ See the following list of possible scenarios and best practices:
 * Radio frequency (RF) noise can negatively affect the HID report rate for wireless connections.
   If a HID report fails to be delivered in a given Bluetooth LE LLPM connection event, it is retransmitted in the subsequent connection event, which effectively reduces the report rate.
   By avoiding congested RF channels, the :ref:`nrf_desktop_ble_qos` helps to achieve better connection quality and a higher report rate.
-* For the USB device connected directly, you can configure your preferred USB HID poll interval using the :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` Kconfig option.
-  By default, the :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` Kconfig option is set to ``1`` to request the lowest possible poll interval.
-  Set parameters are not enforced, meaning that the HID host may still eventually use a value greater than the USB polling interval requested by a peripheral.
+* For the USB device connected directly, the applicable options will vary depending on the used USB stack:
+
+  * If you use the USB legacy stack, you can configure your preferred USB HID poll interval using the :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` Kconfig option.
+    By default, the :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` Kconfig option is set to ``1`` to request the lowest possible poll interval.
+  * If you use the USB next stack, you can configure your preferred USB HID polling rate using the ``in-polling-rate`` property of a DTS node compatible with ``zephyr,hid-device``.
+    The lowest polling rate that is supported by the USB High-Speed is 125 µs, which corresponds to 8 kHz report rate.
+    The lowest polling rate supported by devices that do not support USB High-Speed is 1000 µs, which corresponds to 1 kHz report rate.
+
+  Polling parameters are not enforced, meaning that the HID host may still eventually use a value greater than the USB polling parameter requested by a peripheral.
+
+USB High-Speed
+~~~~~~~~~~~~~~
+
+You can use the nRF54H20 DK to evaluate USBHS.
+Use the ``release`` configuration and slightly modify the simulated motion module's configuration to ensure that non-zero motion values are reported in every HID report.
+See an example of the build command:
+
+   .. parsed-literal::
+      :class: highlight
+
+      west build -p -b nrf54h20dk/nrf54h20/cpuapp -- \
+      -DFILE_SUFFIX=release \
+      -DCONFIG_DESKTOP_MOTION_SIMULATED_ENABLE=y \
+      -DCONFIG_DESKTOP_MOTION_SIMULATED_EDGE_TIME=8192 \
+      -DCONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR=5
+
+For information about generating motion data, see the :ref:`nrf_desktop_motion_report_rate` documentation section.
 
 Testing steps
 ~~~~~~~~~~~~~

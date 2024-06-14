@@ -37,6 +37,7 @@ The USB stack is selected by enabling one of the following Kconfig choice option
   The USB legacy stack is used by default.
 * :ref:`CONFIG_DESKTOP_USB_STACK_NEXT <config_desktop_app_options>`
   The option enables USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
+  This is the only USB stack that supports USB High-Speed and the nRF54H20 platform.
 
 .. note::
   The USB next stack integration is :ref:`experimental <software_maturity>`.
@@ -145,6 +146,9 @@ USB HID configuration in USB next stack
 For the USB next stack, the :ref:`CONFIG_DESKTOP_USB_STACK_NEXT <config_desktop_app_options>` selects the :kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT` Kconfig option.
 Every USB HID-class instance is configured through a separate DTS node compatible with ``zephyr,hid-device``.
 The DTS node configures, among others, the used HID boot protocol, the size of the longest HID input report, and the HID polling rate.
+You can configure your preferred USB HID polling rate using the ``in-polling-rate`` property of the DTS node.
+The lowest polling rate that is supported by the USB High-Speed is 125 µs, which corresponds to 8 kHz report rate.
+The lowest polling rate supported by devices that do not support USB High-Speed is 1000 µs, which corresponds to 1 kHz report rate.
 Make sure to update the DTS configuration to match requirements of your application.
 nRF Desktop application defines the USB HID-class instances used by the USB next stack for all of the supported boards and file suffixes.
 See the existing configurations for reference.
@@ -205,3 +209,22 @@ The |usb_state| is a transport for :ref:`nrf_desktop_config_channel` when the ch
 
 The module also handles a HID keyboard LED output report received through USB from the connected host.
 The module sends the report using :c:struct:`hid_report_event`, that is handled either by :ref:`nrf_desktop_hid_state` (for peripheral) or by the :ref:`nrf_desktop_hid_forward` (for dongle).
+
+nRF54H20 support
+================
+
+Due to the characteristics of the nRF54H20 USB Device Controller (UDC), several changes have been made in the USB state module to support the nRF54H20 platform:
+
+* The USB state module creates a separate thread to initialize, enable, and disable the USB stack.
+* The module disables the USB stack when the USB cable is disconnected and enables the stack when the cable is connected.
+
+These changes are applicable to the nRF54H20 platform only.
+They are necessary to ensure proper USB stack operation on the nRF54H20 platform.
+
+The USB stack cannot be initialized from the system workqueue thread, because it causes a deadlock.
+Because of that, a separate thread is used to initialize the USB stack.
+For more details, see the :ref:`CONFIG_DESKTOP_USB_INIT_THREAD <config_desktop_app_options>` Kconfig option.
+The UDC is powered down whenever the USB cable is disconnected, failing to trigger the necessary callbacks to the USB stack.
+It may cause the USB stack to become non-functional.
+The USB stack is disabled upon disconnecting the cable to work around this issue.
+For more details, see the :ref:`CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL <config_desktop_app_options>` Kconfig option.
