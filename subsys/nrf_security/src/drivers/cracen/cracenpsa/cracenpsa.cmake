@@ -14,6 +14,7 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen.c
   ${CMAKE_CURRENT_LIST_DIR}/src/common.c
   ${CMAKE_CURRENT_LIST_DIR}/src/mem_helpers.c
+  ${CMAKE_CURRENT_LIST_DIR}/src/ec_helpers.c
 
   # Note: We always need to have blkcipher.c and ctr_drbg.c since it
   # is used directly by many Cracen drivers.

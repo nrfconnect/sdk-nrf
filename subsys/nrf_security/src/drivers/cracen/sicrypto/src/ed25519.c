@@ -38,6 +38,7 @@
 #include <silexpk/ed25519.h>
 #include <sicrypto/sicrypto.h>
 #include <cracen/statuscodes.h>
+#include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include <sicrypto/ed25519.h>
 #include <sicrypto/hash.h>
@@ -183,9 +184,7 @@ static int ed25519_compute_pubkey(struct sitask *t)
 	/* The secret scalar s is computed in place from the first half of the
 	 * private key digest.
 	 */
-	t->workmem[0] &= ~0x07;			/* clear bits 0, 1 and 2 */
-	t->workmem[SX_ED25519_SZ - 1] &= ~0x80; /* clear bit 255 */
-	t->workmem[SX_ED25519_SZ - 1] |= 0x40;	/* set bit 254 */
+	decode_scalar_25519(t->workmem);
 
 	/* Clear second half of private key digest: sx_async_ed25519_ptmult_go()
 	 * works on an input of SX_ED25519_DGST_SZ bytes.
