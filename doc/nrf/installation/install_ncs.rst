@@ -88,10 +88,13 @@ Depending on your preferred development environment, complete the following step
    .. group-tab:: nRF Connect for Visual Studio Code
 
       1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
-      #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Install Toolchain`.
+      #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage toolchains`.
+         The list of actions appears in the |VSC|'s quick pick.
+      #. Click :guilabel:`Install Toolchain`.
+         The list of available toolchain versions appears in the |VSC|'s quick pick.
       #. Select the toolchain version to install.
          The toolchain version should match the |NCS| version you are going to work with.
-         If you have received a custom URL for installing the toolchain, you can provide it using the :guilabel:`Change Toolchain Index` button in the quick pick's header.
+         If you have received a custom URL for installing the toolchain, you can provide it using the :guilabel:`Change Toolchain Index` button in the quick pick's header (wrench icon).
          The toolchain installation starts in the background, as can be seen in the notification that appears.
 
       When you install the toolchain for the first time, the installed version is automatically selected for your project.
