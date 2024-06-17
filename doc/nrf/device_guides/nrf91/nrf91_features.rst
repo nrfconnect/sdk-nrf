@@ -93,7 +93,7 @@ A delta patch can only update the modem firmware from one specific version to an
 If you need to perform a major version update (for example, v1.2.x to v1.3.x), you need an external flash with a minimum size of 4 MB.
 
 Different versions of the LTE modem firmware are available, and these versions are certified for the mobile network operators having their own certification programs.
-See the `Mobile network operator certifications`_ for more information.
+For more information, see the `nRF9161 Mobile network operator certifications`_ or `nRF9160 Mobile network operator certifications`_, depending on the SiP you are using.
 
 .. note::
 

@@ -9,7 +9,11 @@ LwM2M carrier
 
 Several mobile network carriers specify their own LwM2M device management.
 The LwM2M carrier library facilitates an nRF91 device to connect to the device management servers, regardless of the other actions of the user application.
-For more information, see the list of `applicable carriers <Mobile network operator certifications_>`_, and the :ref:`lwm2m_certification` subpage.
+For more information, see the following pages:
+
+* `nRF9161 Mobile network operator certifications`_
+* `nRF9160 Mobile network operator certifications`_
+* :ref:`lwm2m_certification`
 
 .. important::
 

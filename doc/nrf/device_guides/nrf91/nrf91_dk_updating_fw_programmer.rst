@@ -8,7 +8,7 @@ Updating the DK firmware using Programmer
    :local:
    :depth: 2
 
-Before you begin to update the firmware, download and extract the latest application and modem firmware from the `nRF9160 DK Downloads`_ page.
+Before you begin to update the firmware, download and extract the latest application and modem firmware from the `nRF9161 DK Downloads`_ or `nRF9160 DK Downloads`_ page, depending on the DK you are using.
 
 The downloaded ZIP archive contains the following firmware:
 
