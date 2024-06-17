@@ -19,6 +19,7 @@
 #include <zephyr/logging/log.h>
 
 #include <dfu/suit_dfu.h>
+#include <hal/nrf_gpio.h>
 
 LOG_MODULE_REGISTER(suitfu_mgmt, CONFIG_MGMT_SUITFU_LOG_LEVEL);
 
@@ -49,6 +50,17 @@ struct system_update_work {
 };
 
 struct k_work_q system_update_work_queue;
+
+static void init_leds(void)
+{
+	nrf_gpio_cfg_output((0 << 5) | 6);
+	nrf_gpio_cfg_output((0 << 5) | 7);
+
+	nrf_gpio_pin_toggle((0 << 5) | 6);
+	nrf_gpio_pin_toggle((0 << 5) | 7);
+	nrf_gpio_pin_toggle((0 << 5) | 6);
+	nrf_gpio_pin_toggle((0 << 5) | 7);
+}
 
 static void update_failure(void)
 {
@@ -131,7 +143,9 @@ int suitfu_mgmt_erase_dfu_partition(size_t num_bytes)
 	LOG_INF("Erasing %p - %p (%d bytes)", (void *)DFU_PARTITION_ADDRESS,
 		(void *)((size_t)DFU_PARTITION_ADDRESS + erase_size), erase_size);
 
+nrf_gpio_pin_toggle((0 << 5) | 6);
 	int rc = flash_erase(fdev, DFU_PARTITION_OFFSET, erase_size);
+nrf_gpio_pin_toggle((0 << 5) | 6);
 
 	if (rc < 0) {
 		return MGMT_ERR_EUNKNOWN;
@@ -183,8 +197,10 @@ int suitfu_mgmt_write_dfu_image_data(unsigned int req_offset, const void *addr, 
 		if (buf_fill_level == sizeof(write_buf)) {
 			LOG_DBG("Write continuous %d cache bytes (address: %p)", sizeof(write_buf),
 				(void *)(DFU_PARTITION_OFFSET + offset));
+nrf_gpio_pin_toggle((0 << 5) | 7);
 			err = flash_write(fdev, DFU_PARTITION_OFFSET + offset, write_buf,
 					  sizeof(write_buf));
+nrf_gpio_pin_toggle((0 << 5) | 7);
 
 			buf_fill_level = 0;
 			offset += sizeof(write_buf);
@@ -197,7 +213,9 @@ int suitfu_mgmt_write_dfu_image_data(unsigned int req_offset, const void *addr, 
 
 		LOG_DBG("Write continuous %d image bytes (address: %p)", write_size,
 			(void *)(DFU_PARTITION_OFFSET + offset));
+nrf_gpio_pin_toggle((0 << 5) | 7);
 		err = flash_write(fdev, DFU_PARTITION_OFFSET + offset, addr, write_size);
+nrf_gpio_pin_toggle((0 << 5) | 7);
 
 		size -= write_size;
 		offset += write_size;
@@ -219,8 +237,10 @@ int suitfu_mgmt_write_dfu_image_data(unsigned int req_offset, const void *addr, 
 
 		LOG_DBG("Flush %d bytes (address: %p)", sizeof(write_buf),
 			(void *)(DFU_PARTITION_OFFSET + offset));
+nrf_gpio_pin_toggle((0 << 5) | 7);
 		err = flash_write(fdev, DFU_PARTITION_OFFSET + offset, write_buf,
 				  sizeof(write_buf));
+nrf_gpio_pin_toggle((0 << 5) | 7);
 
 		buf_fill_level = 0;
 		offset += sizeof(write_buf);
@@ -245,6 +265,7 @@ int suitfu_mgmt_init(void)
 	k_work_queue_start(&system_update_work_queue, system_update_stack_area,
 			   K_THREAD_STACK_SIZEOF(system_update_stack_area), K_HIGHEST_THREAD_PRIO,
 			   NULL);
+	init_leds();
 	return suit_dfu_initialize();
 }
 
