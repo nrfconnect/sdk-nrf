@@ -169,6 +169,17 @@ Matter
         This means that the file :file:`pm_static_nrf52840dk_nrf52840_release.yaml` with the exact same contents is not needed anymore.
         The :makevar:`CONF_FILE` argument is deprecated, but if you want to keep using it within your project, you need to create the :file:`pm_static_nrf52840dk_nrf52840_release.yaml` file and copy the content of the :file:`pm_static_nrf52840dk_nrf52840.yaml` file to it.
 
+.. _nrf5340_audio_migration_notes:
+
+nRF5340 Audio applications
+--------------------------
+
+.. toggle::
+
+   * The :ref:`nrf53_audio_app` has removed all references to bt_ll_acs_nrf53 and will now only support the default controller :ref:`ug_ble_controller_softdevice` (:ref:`softdevice_controller_iso`).
+     :ref:`ug_ble_controller_softdevice` is included and built automatically.
+     Make sure to remove references to LE Audio controller for nRF5340 from your application and transition to the new controller.
+
 Libraries
 =========
 
