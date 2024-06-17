@@ -93,6 +93,8 @@ static psa_status_t cracen_update_transcript(cracen_spake2p_operation_t *operati
 {
 	psa_status_t status;
 
+	uint8_t tmp[sizeof(SPAKE2P_POINT_M)];
+
 	/* add prover, verifier, M and N to protocol transcript (TT) */
 	status = cracen_update_hash_with_length(&operation->hash_op, operation->prover,
 						operation->prover_len, 0);
@@ -105,13 +107,16 @@ static psa_status_t cracen_update_transcript(cracen_spake2p_operation_t *operati
 		return status;
 	}
 
-	status = cracen_update_hash_with_length(&operation->hash_op, SPAKE2P_POINT_M,
-						sizeof(SPAKE2P_POINT_M), UNCOMPRESSED_POINT_TYPE);
+	memcpy(tmp, SPAKE2P_POINT_M, sizeof(SPAKE2P_POINT_M));
+	status = cracen_update_hash_with_length(&operation->hash_op, tmp,
+						sizeof(tmp), UNCOMPRESSED_POINT_TYPE);
 	if (status) {
 		return status;
 	}
-	return cracen_update_hash_with_length(&operation->hash_op, SPAKE2P_POINT_N,
-					      sizeof(SPAKE2P_POINT_N), UNCOMPRESSED_POINT_TYPE);
+
+	memcpy(tmp, SPAKE2P_POINT_N, sizeof(SPAKE2P_POINT_N));
+	return cracen_update_hash_with_length(&operation->hash_op, tmp,
+					      sizeof(tmp), UNCOMPRESSED_POINT_TYPE);
 }
 /**
  * @brief Will calculate Z and V.
