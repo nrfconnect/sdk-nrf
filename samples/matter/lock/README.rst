@@ -44,7 +44,7 @@ IPv6 network support
 The development kits for this sample offer the following IPv6 network support for Matter:
 
 * Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, and ``nrf54h20dk/nrf54h20/cpuapp``.
-* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached (2.4 GHz and 5 GHz), for ``nrf7002dk/nrf5340/cpuapp`` (2.4 GHz and 5 GHz), or for ``nrf7002dk/nrf5340/cpuapp/nrf7001`` (2.4 GHz only).
+* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` or ``nrf54h20dk/nrf54h20/cpuapp`` with the ``nrf7002ek`` shield attached, for ``nrf7002dk/nrf5340/cpuapp`` (2.4 GHz and 5 GHz), or for ``nrf7002dk/nrf5340/cpuapp/nrf7001`` (2.4 GHz only).
 * :ref:`Switching between Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached, using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>`.
 
 Overview
@@ -406,6 +406,14 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 See `Configuration`_ for information about building the sample with the DFU support.
+
+.. include:: ../template/README.rst
+    :start-after: matter_template_build_wifi_nrf54h20_start
+    :end-before: matter_template_build_wifi_nrf54h20_end
+
+.. code-block:: console
+
+    west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF700X=y -DCONFIG_CHIP_WIFI=y -Dlock_SHIELD=nrf700x_nrf54h20dk
 
 Selecting a configuration
 =========================
