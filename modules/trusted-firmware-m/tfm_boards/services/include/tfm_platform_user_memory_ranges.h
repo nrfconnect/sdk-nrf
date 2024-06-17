@@ -76,9 +76,27 @@ static const struct tfm_read_service_range ranges[] = {
 #endif
 };
 
+#if defined(NRF_RRAMC_S)
+/**
+ * 0x518 is the offset for the low power configuration, currently not in MDK,
+ * the first two bits control the lower power mode of RRAMC.
+ */
+#define NRF_RRAMC_LOWPOWER_CONFIG_ADDR (NRF_RRAMC_S_BASE + 0x518)
+
+/* Values: 0x0 = Power down mode, 0x1 = Standby mode */
+static const uint32_t rramc_lowpower_config_allowed[] = {0x0, 0x1};
+#endif /* NRF_RRAMC_S */
+
 static const struct tfm_write32_service_address tfm_write32_service_addresses[] = {
+#if defined(NRF_RRAMC_S)
+	{.addr = NRF_RRAMC_LOWPOWER_CONFIG_ADDR,
+	 .mask = 0x3,
+	 .allowed_values = rramc_lowpower_config_allowed,
+	 .allowed_values_array_size = 2 },
+#else
 	/* This is a dummy value because this table cannot be empty */
 	{.addr = 0xFFFFFFFF, .mask = 0x0, .allowed_values = NULL, .allowed_values_array_size = 0},
+#endif
 };
 
 #endif /* TFM_PLATFORM_USER_MEMORY_RANGES_H__ */
