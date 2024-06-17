@@ -310,9 +310,9 @@ function(suit_build_recovery)
       "-DAPP_DIR:PATH=${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery"
       "-DBOARD:STRING=${board_target}"
       "-DEXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery.overlay"
-      "-Dhci_ipc_EXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery_hci_ipc.overlay"
+      "-Dipc_radio_EXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery_ipc_radio.overlay"
       "-DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE:STRING=\\\"${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery/app_recovery_envelope.yaml.jinja2\\\""
-      "-Dhci_ipc_CONFIG_SUIT_ENVELOPE_TEMPLATE:STRING=\\\"${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery/rad_recovery_envelope.yaml.jinja2\\\""
+      "-Dipc_radio_CONFIG_SUIT_ENVELOPE_TEMPLATE:STRING=\\\"${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery/rad_recovery_envelope.yaml.jinja2\\\""
       "-DCONFIG_SUIT_MPI_APP_RECOVERY_VENDOR_NAME:STRING=\\\"${APP_RECOVERY_VENDOR_NAME}\\\""
       "-DCONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME:STRING=\\\"${APP_RECOVERY_CLASS_NAME}\\\""
       "-DCONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME:STRING=\\\"${RAD_RECOVERY_VENDOR_NAME}\\\""
@@ -331,7 +331,7 @@ function(suit_build_recovery)
     GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_radio
     ${BINARY_DIR}/recovery/zephyr/suit_installed_envelopes_radio_merged.hex)
   set_property(
-    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_radio ${BINARY_DIR}/hci_ipc/zephyr/zephyr.hex)
+    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_radio ${BINARY_DIR}/ipc_radio/zephyr/zephyr.hex)
 
 endfunction()
 

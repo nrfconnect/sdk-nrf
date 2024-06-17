@@ -127,7 +127,7 @@ To build the described example with the provided user-defined manifest templates
 
         .. code-block:: console
 
-            west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE=\"c:/my_default_templates/root.yaml.jinja2\" -DCONFIG_SUIT_ENVELOPE_TEMPLATE=\"c:/my_default_templates/app.yaml.jinja2\" -Dhci_ipc_CONFIG_SUIT_ENVELOPE_TEMPLATE=\"c:/my_default_templates/radio.yaml.jinja2\"
+            west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE=\"c:/my_default_templates/root.yaml.jinja2\" -DCONFIG_SUIT_ENVELOPE_TEMPLATE=\"c:/my_default_templates/app.yaml.jinja2\" -Dipc_radio_CONFIG_SUIT_ENVELOPE_TEMPLATE=\"c:/my_default_templates/radio.yaml.jinja2\"
 
     .. group-tab:: Linux
 
@@ -135,7 +135,7 @@ To build the described example with the provided user-defined manifest templates
 
         .. code-block:: console
 
-            west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE=\"/home/my_user/my_default_templates/root.yaml.jinja2\" -DCONFIG_SUIT_ENVELOPE_TEMPLATE=\"/home/my_user/my_default_templates/app.yaml.jinja2\" -Dhci_ipc_CONFIG_SUIT_ENVELOPE_TEMPLATE=\"/home/my_user/my_default_templates/radio.yaml.jinja2\"
+            west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE=\"/home/my_user/my_default_templates/root.yaml.jinja2\" -DCONFIG_SUIT_ENVELOPE_TEMPLATE=\"/home/my_user/my_default_templates/app.yaml.jinja2\" -Dipc_radio_CONFIG_SUIT_ENVELOPE_TEMPLATE=\"/home/my_user/my_default_templates/radio.yaml.jinja2\"
 
 For more information about the Kconfig options used in this example, see the `SUIT Kconfig options`_.
 

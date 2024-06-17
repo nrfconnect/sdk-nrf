@@ -37,7 +37,7 @@ Configuration
 As the recovery firmware is a companion image, it must be compatible with the main application in terms of hardware configuration (especially the memory partitions).
 To achieve this, the appropriate devicetree overlay files from the main application must be passed to the recovery application.
 
-To do this, add the :file:`recovery.overlay` and :file:`recovery_hci_ipc.ovelay` files in the main application's :ref:`configuration_system_overview_sysbuild` directory.
+To do this, add the :file:`recovery.overlay` and :file:`recovery_ipc_radio.ovelay` files in the main application's :ref:`configuration_system_overview_sysbuild` directory.
 The former file will be passed automatically to the recovery application image and the latter to the recovery radio image.
 These devicetree files must define the ``cpuapp_recovery_partition`` and ``cpurad_recovery_partition`` nodes respectively.`
 For an example, see the files in the ``samples/suit/smp_transfer`` sample.
@@ -54,7 +54,7 @@ Including recovery application image with sysbuild
 
 In standard applications, the recovery firmware is built as part of the main application build.
 
-Apart from creating the mentioned :file:`recovery.overlay` and :file:`recovery_hci_ipc.ovelay` files,
+Apart from creating the mentioned :file:`recovery.overlay` and :file:`recovery_ipc_radio.ovelay` files,
 you must set the ``SB_CONFIG_SUIT_BUILD_RECOVERY`` sysbuild configuration option in the main application.
 This will cause the recovery firmware to be built automatically as part of the main application build.
 
