@@ -120,6 +120,16 @@ rsource "Kconfig.template.partition_config"
 rsource "Kconfig.template.partition_region"
 endif
 
+if SOC_NRF54L15_ENGA_CPUFLPR
+config PM_PARTITION_SIZE_VPR_LAUNCHER
+	hex
+	default $(dt_node_reg_addr_hex,/soc/rram-controller@5004b000/rram@165000)
+	help
+	  Memory set aside for the vpr_launcher partition.
+	  Must match the size of the cpuapp_rram partition which is deleted.
+	  This to place the flpr app's code at the address found in the devicetree.
+endif
+
 endmenu # Zephyr subsystem configurations
 menu "NCS subsystem configurations"
 
@@ -205,11 +215,13 @@ config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 config PM_SRAM_BASE
 	hex
 	default $(dt_node_reg_addr_hex,/soc/memory@21000000) if SOC_NRF5340_CPUNET
+	default 0x20000000 if SOC_NRF54L15_ENGA_CPUFLPR  # Because the cpuapp_sram DT node is deleted in nrf54l15_cpuflpr.dtsi
 	default $(dt_node_reg_addr_hex,/soc/memory@20000000)
 
 config PM_SRAM_SIZE
 	hex
 	default $(dt_node_reg_size_hex,/soc/memory@21000000) if SOC_NRF5340_CPUNET
+	default 0x40000 if SOC_NRF54L15_ENGA_CPUFLPR  # Because the cpuapp_rram DT node is deleted in nrf54l15_cpuflpr.dtsi
 	default $(dt_node_reg_size_hex,/soc/memory@20000000)
 
 endmenu # Partition Manager
