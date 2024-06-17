@@ -142,7 +142,13 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To update the OpenThread libraries provided by ``nrfxlib``, invoke ``west build -b nrf52840dk_nrf52840 -t install_openthread_libraries``.
+To update the OpenThread libraries provided by ``nrfxlib``, use the following commands:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf52840dk/nrf52840
+   west build -d build/cli -t install_openthread_libraries
 
 .. _ot_cli_sample_testing:
 
