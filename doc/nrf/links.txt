@@ -412,10 +412,12 @@
 .. _`Nordic nRF9161 DK`:
 .. _`nRF9161 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK
 .. _`nRF9161 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK/Download?lang=en#infotabs
+.. _`nRF9161 DK board controller firmware`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK/Download?lang=en#B73EF1B2F2A34F50A40DC90199A1DAE2
 
 .. _`Nordic nRF9160 DK`:
 .. _`nRF9160 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nrf9160-dk/
 .. _`nRF9160 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download#infotabs
+.. _`nRF9160 DK board controller firmware`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download?lang=en#B460A4E1F91A40B99C6432AD8CEC767C
 .. _`SUPL client download`: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF9160-DK/Download#supl-c
 
 .. _`nRF9151 product website`: https://www.nordicsemi.com/Products/nRF9151
@@ -713,7 +715,8 @@
 .. _`AP-Protect for nRF52810`: https://docs.nordicsemi.com/bundle/ps_nrf52810/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF52805`: https://docs.nordicsemi.com/bundle/ps_nrf52805/page/dif.html#ariaid-title3
 
-.. _`Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_operator_certifications.html
+.. _`nRF9160 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_operator_certifications.html
+.. _`nRF9161 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_operator_certifications.html
 .. _`Modem firmware compatibility matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_modem_fw.html
 
 .. _`Electrical specification of nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/_tmp/alta.nRF9160/autodita/APPLICATION.CURRENT/parameters.frontpage.html
