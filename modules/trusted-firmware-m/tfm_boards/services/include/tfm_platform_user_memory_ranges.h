@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef TFM_READ_RANGES_H__
-#define TFM_READ_RANGES_H__
+#ifndef TFM_PLATFORM_USER_MEMORY_RANGES_H__
+#define TFM_PLATFORM_USER_MEMORY_RANGES_H__
 
 #include <pm_config.h>
 
@@ -76,4 +76,9 @@ static const struct tfm_read_service_range ranges[] = {
 #endif
 };
 
-#endif /* TFM_READ_RANGES_H__ */
+static const struct tfm_write32_service_address tfm_write32_service_addresses[] = {
+	/* This is a dummy value because this table cannot be empty */
+	{.addr = 0xFFFFFFFF, .mask = 0x0, .allowed_values = NULL, .allowed_values_array_size = 0},
+};
+
+#endif /* TFM_PLATFORM_USER_MEMORY_RANGES_H__ */
