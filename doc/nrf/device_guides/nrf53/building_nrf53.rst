@@ -80,7 +80,7 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
 
             1. Open a command prompt in the build folder of the network sample and enter the following command to erase the flash memory of the network core and program the network sample::
 
-                nrfutil device program --firmware zephyr.hex  --options chip_erase_mode=ERASE_ALL --core Network
+                nrfutil device program --firmware zephyr.hex --options chip_erase_mode=ERASE_ALL --core Network
 
             .. note::
                If you cannot locate the build folder of the network sample, look for a folder with one of these names inside the build folder of the application sample:
@@ -92,7 +92,10 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
 
             2. Navigate to the build folder of the application sample and enter the following command to erase the flash memory of the application core and program the application sample::
 
-                nrfutil device program --firmware zephyr/zephyr.hex  --options chip_erase_mode=ERASE_ALL
+                nrfutil device program --firmware zephyr.hex  --options chip_erase_mode=ERASE_ALL
+
+            .. note::
+               The application build folder will be in a sub-directory which is the name of the folder of the application
 
             3. Reset the development kit::
 
@@ -100,9 +103,9 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
 
       See :ref:`readback_protection_error` if you encounter an error.
 
-   .. group-tab:: Multi-image build
+   .. group-tab:: Sysbuild
 
-      To build and program a multi-image HEX file, follow the instructions in :ref:`programming_cmd` for the application core sample.
+      To build and program a sysbuild HEX file, follow the instructions in :ref:`programming_cmd` for the application core sample.
 
       To program the multi-image HEX file, you can use west or nRF Util.
 
@@ -119,9 +122,10 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
 
          .. group-tab:: nRF Util
 
-            Enter the following commands to program multi-image builds for different cores::
+            Enter the following commands to program multiple image builds for different cores::
 
-             nrfutil device program --firmware zephyr/merged_domains.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
+             nrfutil device program --firmware merged_CPUNET.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
+             nrfutil device program --firmware merged.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
 
             .. note::
                The ``--verify`` command confirms that the writing operation has succeeded.
@@ -198,9 +202,9 @@ When you choose ``thingy53/nrf5340/cpuapp`` or ``thingy53/nrf5340/cpuapp/ns`` as
 
 The build process generates firmware in two formats:
 
-* Intel Hex file (:file:`merged_domains.hex`) - Used with an external debug probe.
-  The file contains bootloaders and applications for both cores.
-* Binary files (:file:`app_update.bin`, :file:`net_core_app_update.bin`), containing signed application firmwares for the application and network core, respectively.
+* Intel Hex file (:file:`merged.hex` and :file:`merged_CPUNET.hex`) - Used with an external debug probe.
+  These file contains bootloaders and applications for each core.
+* Binary files (:file:`zephyr.signed.bin`), containing signed application firmwares for the application and network core, respectively.
   For convenience, the binary files are bundled in :file:`dfu_application.zip`, together with a manifest that describes them.
   You can use the binary files or the combined zip archive to update application firmware for both cores, with either MCUboot serial recovery or OTA DFU using Bluetooth LE.
 
