@@ -1,11 +1,14 @@
 .. _ug_nrf5340_multi_image:
 
-Multi-image builds on the nRF5340 DK
-####################################
+Multi-image builds on the nRF5340 DK using child and parent images
+##################################################################
 
 .. contents::
    :local:
    :depth: 2
+
+.. note::
+    |sysbuild_related_deprecation_note|
 
 If a sample consists of several images (in this case, different images for the application core and for the network core), you can build these images separately or combined as a :ref:`multi-image build <ug_multi_image>`, depending on the sample configuration.
 
