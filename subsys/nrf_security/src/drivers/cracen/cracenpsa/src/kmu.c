@@ -235,8 +235,6 @@ static bool can_sign(const psa_key_attributes_t *key_attr)
 
 psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attributes_t *key_attr)
 {
-	memset(key_attr, 0, sizeof(*key_attr));
-
 	if (metadata->metadata_version != 0) {
 		return PSA_ERROR_BAD_STATE;
 	}
