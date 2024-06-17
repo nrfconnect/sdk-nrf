@@ -148,7 +148,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 050b3c9315782f2fef5385e9dcfdab34829e9841
+      revision: 99a747cc9d8aae011c6628c42aecd617b24e638e
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -160,7 +160,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.7.0-rc2
+      revision: bc49aa423928b442643c22326247bd52a6807db8
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
