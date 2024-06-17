@@ -14,7 +14,7 @@ The set of required partitions differs depending on the configuration:
 * There must be one partition for storing :ref:`zephyr:settings_api`.
 * If the bootloader is enabled, it adds more partitions to the set.
 * When using an SoC with multiple cores, the firmware for additional cores adds more partitions to the set.
-  For example, the network core of the nRF53 SoC uses the ``HCI IPC`` firmware image, which allows to use the core for Bluetooth LE communication.
+  For example, the network core of the nRF53 SoC uses the :ref:`ipc_radio` image, which allows to use the core for Bluetooth LE communication.
 
 .. important::
    Before updating the firmware, make sure that the data stored in the settings partition is compatible with the new firmware.
