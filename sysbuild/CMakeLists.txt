@@ -489,6 +489,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       get_property(PM_NRF70_WIFI_FW_OFFSET TARGET partition_manager PROPERTY PM_NRF70_WIFI_FW_OFFSET)
       get_property(PM_NRF70_WIFI_FW_SIZE TARGET partition_manager PROPERTY PM_NRF70_WIFI_FW_SIZE)
     endif()
+
+    # If the network core image is enabled on nRF53, ensure it is flashed before the main application
+    if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE)
+      sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
+    endif()
   endif()
   foreach(image ${IMAGES})
     configure_cache(IMAGE ${image})
