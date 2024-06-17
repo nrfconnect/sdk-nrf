@@ -13,8 +13,8 @@ This guide explains the available option for updating the nRF70 Series firmware 
     External memory refers to the memory that is outside the System-on-Chip (SoC), for example, an external flash memory chip, or an external nonvolatile memory (NVM) chip.
 
 .. note::
-    Currently, you cannot build an example with the both :kconfig:option:`CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE` and :kconfig:option:`CONFIG_XIP_SPLIT_IMAGE` Kconfig options enabled.
-    To enable XIP support use the :kconfig:option:`CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP` Kconfig option instead of the :kconfig:option:`CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option.
+    Currently, you cannot build an example with the both :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` and :kconfig:option:`CONFIG_XIP_SPLIT_IMAGE` Kconfig options enabled.
+    To enable XIP support use the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP` Kconfig option instead of the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option.
 
 Overview
 ========
@@ -35,7 +35,7 @@ To use this feature, ensure that the following prerequisites are met:
 * The external memory has sufficient capacity to accommodate the firmware patches.
   This includes additional space for potential patch upgrades, such as those required for DFU.
   The combined size of all firmware patches should not exceed 128 kB.
-* MCUboot is enabled, and the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option is set to ``y``.
+* MCUboot is enabled, and the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` Kconfig option is set to ``y``.
 
 Supported platforms
 ===================
@@ -163,15 +163,13 @@ To enable the DFU procedure for the nRF70 Series firmware patch, complete the fo
 
 * For the nRF5340 DK without the network core:
 
-    1. Set the :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig option to ``y``.
-    #. Set the :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER`` Kconfig option to ``2``.
-    #. For the MCUBoot child image, set the :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER`` Kconfig option to ``2``.
+    1. Set the :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU` Kconfig option to ``y``.
+    #. Set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option to ``2``.
 
 * For the nRF5340 DK with the network core:
 
     1. Set the :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig option to ``y``.
-    #. Set the :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER`` Kconfig option to ``3``.
-    #. For the MCUBoot child image, set the :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER`` Kconfig option to ``3``.
+    #. Set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option to ``3``.
 
 For example, to build the sample with the DFU procedure for the nRF70 Series firmware patch on the nRF5340 DK platform, which includes the network core image, run the following commands:
 
@@ -181,13 +179,13 @@ For example, to build the sample with the DFU procedure for the nRF70 Series fir
 
         .. code-block:: console
 
-            west build -d nrf5340dk/nrf5340/cpuapp -d -- -DSHIELD=nrf7002ek -DCONFIG_PARTITION_MANAGER_ENABLED=y -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -DCONFIG_UPDATEABLE_IMAGE_NUMBER=3 -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
+            west build -d nrf5340dk/nrf5340/cpuapp -d -- -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -DSB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3
 
    .. group-tab:: CMake
 
         .. code-block:: console
 
-            cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -DSHIELD=nrf7002ek -DCONFIG_PARTITION_MANAGER_ENABLED=y -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -DCONFIG_UPDATEABLE_IMAGE_NUMBER=3 -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3 sample
+            cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -DSB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3 sample
             ninja -C build
 
    .. group-tab:: nRF Connect for VS Code
@@ -198,9 +196,9 @@ For example, to build the sample with the DFU procedure for the nRF70 Series fir
 
         .. code-block:: console
 
-            -- -DSHIELD=nrf7002ek -DCONFIG_PARTITION_MANAGER_ENABLED=y -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -DCONFIG_UPDATEABLE_IMAGE_NUMBER=3 -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
+            -- -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -DSB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3
 
-If you want to use the :ref:`ug_multi_image` feature, you need to set the :kconfig:option:`CONFIG_DFU_MULTI_IMAGE_MAX_IMAGE_COUNT` Kconfig option to one of the following values:
+If you want to use the :ref:`ug_multi_image` feature, you need to set the :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` Kconfig option to ``y``, and must also set the :kconfig:option:`CONFIG_DFU_MULTI_IMAGE_MAX_IMAGE_COUNT` Kconfig option to one of the following values:
 
 * For the nRF5340 DK without the network core: ``2``
 * For the nRF5340 DK with the network core: ``3``
