@@ -5,8 +5,8 @@ top_table:
   Zigbee: ZIGBEE
   Thread: NET_L2_OPENTHREAD
   LTE: LTE_LINK_CONTROL
-  DECT_PHY:
-    rule: NRF_MODEM_LIB
+  DECT NR+ PHY:
+    rule: NRF_MODEM_LINK_BINARY_DECT_PHY
     boards_and_shields:
       - BOARD_NRF9161DK_NRF9161_NS
       - BOARD_NRF9151DK_NRF9151_NS
@@ -36,8 +36,8 @@ features:
     LLPM: BT_CTLR_SDC_LLPM
     LE Coded PHY: BT_CTLR_PHY_CODED_SUPPORT
     Connectionless/Connected CTE Transmitter: BT_CTLR_DF_CTE_TX_SUPPORT
-  DECT_PHY:
-    Immediate operations: NRF_MODEM_LIB
+  DECT NR+ PHY:
+    Immediate operations: NRF_MODEM_LINK_BINARY_DECT_PHY
   zigbee:
     Zigbee (Sleepy) End Device: ZIGBEE_ROLE_END_DEVICE
     Zigbee Router: CONFIG_ZIGBEE_ROLE_ROUTER
@@ -171,4 +171,3 @@ display_names:
   BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001: nRF7002 DK in nRF7001 emulation mode
   BOARD_NRF9161DK_NRF9161_NS: nRF9161
   BOARD_NRF9151DK_NRF9151_NS: nRF9151
-  DECT_PHY: DECT NR+ PHY
