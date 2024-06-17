@@ -1,0 +1,10 @@
+#include <autoconf.h>
+
+vpr_launcher:
+  placement: {before: app}
+  size: CONFIG_PM_PARTITION_SIZE_VPR_LAUNCHER
+
+vpr_launcher_sram:
+  region: sram_primary
+  placement: {before: app}
+  size: 0x28000

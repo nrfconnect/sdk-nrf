@@ -109,6 +109,17 @@ config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 config GETOPT
 	default n
 
+# Temporary hack to be able to build samples and tests on the nRF51L15 FLPR core
+if SOC_NRF54L15_ENGA_CPUFLPR && PARTITION_MANAGER_ENABLED
+config FLASH_BASE_ADDRESS
+	hex
+	default 0x0
+config FLASH_SIZE
+	int
+	default 1524
+endif
+
+
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
 rsource "modules/Kconfig"
