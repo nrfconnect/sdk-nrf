@@ -33,7 +33,7 @@ IPv6 network support
 The development kits for this sample offer the following IPv6 network support for Matter:
 
 * Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, ``nrf54l15pdk/nrf54l15/cpuapp``, and ``nrf54h20dk/nrf54h20/cpuapp``.
-* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached or for ``nrf7002dk/nrf5340/cpuapp``.
+* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` or ``nrf54h20dk/nrf54h20/cpuapp`` with the ``nrf7002ek`` shield attached, or for ``nrf7002dk/nrf5340/cpuapp``.
 
 Overview
 ********
@@ -123,7 +123,7 @@ The following is an example command to build the sample on the nRF54L15 PDK with
 
 .. code-block:: console
 
-    west build -b nrf54l15pdk_nrf54l15_cpuapp -- -DFILE_SUFFIX=release -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DPM_STATIC_YML_FILE=pm_static_nrf54l15pdk_nrf54l15_cpuapp_internal.yml -Dmcuboot_EXTRA_CONF_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15pdk_nrf54l15_cpuapp_internal.conf -Dmcuboot_EXTRA_DTC_OVERLAY_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15pdk_nrf54l15_cpuapp_internal.overlay
+    west build -p -b nrf54l15pdk/nrf54l15/cpuapp -- -DFILE_SUFFIX=release -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DPM_STATIC_YML_FILE=pm_static_nrf54l15pdk_nrf54l15_cpuapp_internal.yml -Dmcuboot_EXTRA_CONF_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15pdk_nrf54l15_cpuapp_internal.conf -Dmcuboot_EXTRA_DTC_OVERLAY_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15pdk_nrf54l15_cpuapp_internal.overlay
 
 Note that in this case, the size of the application partition is half of what it would be when using a configuration with external flash memory support.
 
@@ -171,6 +171,16 @@ Building and running
 .. |sample path| replace:: :file:`samples/matter/template`
 
 .. include:: /includes/build_and_run.txt
+
+.. matter_template_build_wifi_nrf54h20_start
+
+To use nrf54H20 DK with the ``nrf7002ek`` shield attached (2.4 GHz or 5 GHz), follow the :ref:`ug_nrf7002eb_nrf54h20dk_gs` user guide to connect all required pins and then use the following command to build the sample:
+
+.. matter_template_build_wifi_nrf54h20_end
+
+.. code-block:: console
+
+    west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF700X=y -DCONFIG_CHIP_WIFI=y -Dtemplate_SHIELD=nrf700x_nrf54h20dk
 
 Selecting a configuration
 =========================
