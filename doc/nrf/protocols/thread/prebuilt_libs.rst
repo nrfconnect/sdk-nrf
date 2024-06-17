@@ -268,17 +268,18 @@ Installing the libraries with debug symbols can be useful when debugging, but wi
 Updating the libraries without debug symbols
 ============================================
 
-There is a single command to update the libraries without debug symbols.
+There is a set of commands to update the libraries without debug symbols.
 
-* When using the command line, run the command in the project folder.
-* When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
+* When using the command line, run the commands in the project folder.
+* When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the commands there.
 
-Use the following command:
+Use the following commands:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840dk/nrf52840 -t install_openthread_libraries -- -DOPENTHREAD_BUILD_OUTPUT_STRIPPED=y
+   west build -b nrf52840dk/nrf52840 -- -DOPENTHREAD_BUILD_OUTPUT_STRIPPED=y
+   west build -d build/cli -t install_openthread_libraries
 
 This command builds two versions of the libraries, with and without debug symbols, and installs only the version without debug symbols.
 |board_note_for_updating_libs|
@@ -287,17 +288,18 @@ The :kconfig:option:`CONFIG_OPENTHREAD_BUILD_OUTPUT_STRIPPED` Kconfig option wil
 Updating the libraries with debug symbols
 =========================================
 
-There is a single command to update the libraries with debug symbols.
+There is a set of commands to update the libraries with debug symbols.
 
-* When using the command line, run the command in the project folder.
-* When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
+* When using the command line, run the commands in the project folder.
+* When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the commands there.
 
-Use the following command:
+Use the following commands:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840dk/nrf52840 -t install_openthread_libraries
+   west build -b nrf52840dk/nrf52840
+   west build -d build/cli -t install_openthread_libraries
 
 |board_note_for_updating_libs|
 
