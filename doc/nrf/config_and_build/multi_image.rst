@@ -1,7 +1,7 @@
 .. _ug_multi_image:
 
-Multi-image builds
-##################
+Multi-image builds using child and parent images
+################################################
 
 .. contents::
    :local:
