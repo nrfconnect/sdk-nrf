@@ -597,6 +597,8 @@ Cellular samples
     * Checking in CoAP FOTA and shadow polling threads to improve recovery from communications failures.
     * Sysbuild overlays for Wi-Fi and external-flash builds.
 
+  * Updated from newlibc to picolib.
+
 * :ref:`udp` sample:
 
   * Updated the sample to use the :c:macro:`SO_RAI` socket option with values :c:macro:`RAI_LAST` and :c:macro:`RAI_ONGOING` instead of the deprecated socket options :c:macro:`SO_RAI_LAST` and :c:macro:`SO_RAI_ONGOING`.
