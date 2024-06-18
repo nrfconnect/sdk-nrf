@@ -1329,7 +1329,7 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 
 		size_t key_out_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 
-		if (key_out_size < data_size) {
+		if (key_out_size > data_size) {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
 		memcpy(data, kmu_push_area, key_out_size);
