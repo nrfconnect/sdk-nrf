@@ -101,6 +101,7 @@ tests:
       nrf54l15pdk/nrf54l15/cpuapp
     extra_args: >
       cli_SNIPPET="ci;tcat;tcp"
+      FILE_SUFFIX=ble
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
