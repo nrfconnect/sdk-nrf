@@ -8,6 +8,7 @@
 		 * the RNG node for entropy exclusively.
 		 */
 		zephyr,entropy = &rng;
+		ncs,ble-qos-uart = &cdc_acm_uart;
 	};
 
 	/* Configure DTS nodes used for USB next HID support. */
@@ -58,6 +59,10 @@
 	num-out-endpoints = <2>;
 	num-isoin-endpoints = <0>;
 	num-isoout-endpoints = <0>;
+};
+
+&cdc_acm_uart {
+		status = "okay";
 };
 
 &pwm0 {

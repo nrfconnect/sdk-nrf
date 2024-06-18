@@ -32,10 +32,16 @@ The library is linked if :ref:`CONFIG_DESKTOP_BLE_QOS_ENABLE <config_desktop_app
 Enable the module using the :ref:`CONFIG_DESKTOP_BLE_QOS_ENABLE <config_desktop_app_options>` Kconfig option.
 The option selects :kconfig:option:`CONFIG_BT_HCI_VS_EVT_USER`, because the module uses vendor-specific HCI events.
 
-You can use the :ref:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE <config_desktop_app_options>` option to enable real-time QoS information printouts through a UART (e.g. a virtual COM port).
-The chosen UART needs to be specified in devicetree using ``ncs,ble-qos-uart``.
-This option also enables and configures the COM port (USB CDC ACM).
-For this reason, the :kconfig:option:`CONFIG_USB_DEVICE_STACK` must be enabled.
+You can use the :ref:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE <config_desktop_app_options>` Kconfig option to enable real-time QoS information printouts through the USB CDC ACM port.
+The :ref:`CONFIG_DESKTOP_USB_STACK_LEGACY <config_desktop_app_options>` Kconfig option must be enabled and the selected USB CDC ACM instance must be enabled, and specified in devicetree using ``ncs,ble-qos-uart`` DT chosen.
+For an example of configuration that specifies the ``ncs,ble-qos-uart`` DT chosen, see the :file:`configuration/nrf52840dongle_nrf52840/app.overlay` file.
+This option automatically selects other Kconfig options needed to handle stats printouts over the USB CDC ACM port:
+
+* :kconfig:option:`CONFIG_USB_COMPOSITE_DEVICE`
+* :kconfig:option:`CONFIG_USB_CDC_ACM`
+* :kconfig:option:`CONFIG_SERIAL`
+* :kconfig:option:`CONFIG_UART_LINE_CTRL`
+* :kconfig:option:`CONFIG_UART_INTERRUPT_DRIVEN`
 
 The QoS module creates additional thread for processing the QoS algorithm.
 You can define the following options:
