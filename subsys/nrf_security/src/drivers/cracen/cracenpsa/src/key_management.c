@@ -8,6 +8,8 @@
 #include <cracen/mem_helpers.h>
 #include "cracen_psa.h"
 #include "platform_keys/platform_keys.h"
+#include "psa/crypto_extra.h"
+#include "psa/crypto_types.h"
 
 #include <sicrypto/drbghash.h>
 #include <sicrypto/ecc.h>
@@ -913,6 +915,36 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 
 		status = cracen_kmu_get_builtin_key(slot_id, &stored_attributes, key_buffer,
 						    key_buffer_size, key_buffer_length);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		*key_bits = psa_get_key_bits(&stored_attributes);
+
+		return status;
+	}
+#endif
+#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+	if (location == PSA_KEY_LOCATION_CRACEN) {
+		psa_key_lifetime_t lifetime;
+		psa_drv_slot_number_t slot_id;
+		psa_key_attributes_t stored_attributes;
+		psa_status_t status = cracen_platform_keys_provision(attributes, data, data_length);
+
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+		status = cracen_platform_get_key_slot(
+			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &lifetime,
+			&slot_id);
+
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		status = cracen_platform_get_builtin_key(slot_id, &stored_attributes, key_buffer,
+							 key_buffer_size, key_buffer_length);
+
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
