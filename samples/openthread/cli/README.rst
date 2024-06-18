@@ -109,6 +109,11 @@ The following snippets are available:
     See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
 
 * ``tcat`` - Enables support for Thread commissioning over authenticated TLS.
+
+  .. note::
+    When building with the ``tcat`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` board target, set the :makevar:`FILE_SUFFIX` CMake option to ``ble``.
+    See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
+
   Not compatible with the ``multiprotocol`` snippet.
   For using TCAT, refer to the :ref:`thread_tcat` page.
 * ``tcp`` - Enables experimental TCP support in this sample.
