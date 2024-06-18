@@ -156,21 +156,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27852"
 
 - scenarios:
-    - buildsystem.kconfig.utf8_in_values
-  platforms:
-    - nrf54l15pdk/nrf54l15/cpuapp
-    - nrf54h20dk/nrf54h20/cpuapp
-    - nrf54h20dk/nrf54h20/cpurad
-    - nrf54h20dk/nrf54h20/cpuppr
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27853"
-
-- scenarios:
-    - sample.modules.canopennode.no_storage
-  platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27854"
-
-- scenarios:
     - all
   platforms:
     - nrf54l15pdk/nrf54l15/cpuflpr
