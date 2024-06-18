@@ -1018,6 +1018,10 @@ Libraries for networking
     * The function :c:func:`fota_download_b1_file_parse` to parse a bootloader update file path.
     * Experimental support for performing FOTA updates using an external download client with the Kconfig option :kconfig:option:`CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL` and functions :c:func:`fota_download_external_start` and Function :c:func:`fota_download_external_evt_handle`.
 
+* :ref:`lib_nrf_cloud_rest` library:
+
+  * Added the function :c:func:`nrf_cloud_rest_shadow_transform_request` to request shadow data using a JSONata expression.
+
 Libraries for NFC
 -----------------
 
