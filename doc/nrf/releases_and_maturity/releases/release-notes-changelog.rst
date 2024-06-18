@@ -250,6 +250,10 @@ Cellular samples
 
   * Added support for setting the FOTA update check interval using the config section in the shadow.
 
+* :ref:`nrf_cloud_multi_service` sample:
+
+  * Updated Wi-Fi overlays from newlibc to picolib.
+
 Cryptography samples
 --------------------
 
