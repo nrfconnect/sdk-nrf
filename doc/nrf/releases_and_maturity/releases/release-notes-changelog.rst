@@ -596,6 +596,7 @@ Cellular samples
     * Handling of L4 disconnect where CoAP connection is paused and socket is kept open, then resumed when L4 reconnects.
     * Checking in CoAP FOTA and shadow polling threads to improve recovery from communications failures.
     * Sysbuild overlays for Wi-Fi and external-flash builds.
+    * The :kconfig:option:`CONFIG_TEST_COUNTER_MULTIPLIER` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
 
   * Updated from newlibc to picolib.
 
