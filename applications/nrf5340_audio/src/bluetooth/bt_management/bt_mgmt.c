@@ -75,8 +75,12 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (err) {
-		LOG_ERR("ACL connection to addr: %s, conn: %p, failed, error %d", addr,
-			(void *)conn, err);
+		if (err == BT_HCI_ERR_UNKNOWN_CONN_ID) {
+			LOG_WRN("ACL connection to addr: %s timed out, will try again", addr);
+		} else {
+			LOG_ERR("ACL connection to addr: %s, conn: %p, failed, error %d", addr,
+				(void *)conn, err);
+		}
 
 		bt_conn_unref(conn);
 
