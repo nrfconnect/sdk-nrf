@@ -307,6 +307,20 @@ static void monitor_temperature(double temp)
 	}
 }
 
+/** @brief Send an incrementing test counter message to nRF Cloud.
+ * If CONFIG_TEST_COUNTER_MULTIPLIER is greater than 1, the counter will be incremented
+ * that many times in a row, and a separate test counter message will be sent for each increment.
+ */
+static void test_counter_send(void)
+{
+	static int counter;
+
+	for (int i = 0; i < CONFIG_TEST_COUNTER_MULTIPLIER; i++) {
+		LOG_INF("Sent test counter = %d", counter);
+		(void)send_sensor_sample("COUNT", counter++);
+	}
+}
+
 void main_application_thread_fn(void)
 {
 	if (IS_ENABLED(CONFIG_AT_CMD_REQUESTS)) {
@@ -351,7 +365,6 @@ void main_application_thread_fn(void)
 	(void)start_location_tracking(on_location_update,
 					CONFIG_LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS);
 #endif
-	int counter = 0;
 
 	/* Begin sampling sensors. */
 	while (true) {
@@ -376,8 +389,7 @@ void main_application_thread_fn(void)
 		}
 
 		if (test_counter_enable_get()) {
-			LOG_INF("Sent test counter = %d", counter);
-			(void)send_sensor_sample("COUNT", counter++);
+			test_counter_send();
 		}
 
 		/* Wait out any remaining time on the sample interval timer. */

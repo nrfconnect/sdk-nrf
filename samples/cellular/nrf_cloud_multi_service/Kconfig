@@ -218,6 +218,14 @@ config TEST_COUNTER
 	help
 	  When enabled, the test counter configuration setting in the shadow is ignored.
 
+config TEST_COUNTER_MULTIPLIER
+	int "The number of test counter messages sent on each update"
+	default 1
+	range 1 1000
+	help
+	  This is a way to increase the number of device messages sent by the sample.
+	  It is useful for load testing.
+
 config AT_CMD_REQUESTS
 	depends on !NRF_CLOUD_COAP
 	bool "Enables remote execution of AT commands using device messages"

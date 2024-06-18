@@ -263,6 +263,7 @@ Cellular samples
 * :ref:`nrf_cloud_multi_service` sample:
 
   * Updated Wi-Fi overlays from newlibc to picolib.
+  * Added the :kconfig:option:`CONFIG_TEST_COUNTER_MULTIPLIER` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
