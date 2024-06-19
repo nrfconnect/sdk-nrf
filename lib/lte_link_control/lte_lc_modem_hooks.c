@@ -76,6 +76,14 @@ static void on_modem_init(int err, void *ctx)
 		(void)lte_lc_proprietary_psm_req(false);
 	}
 
+	/* Only supported in mfw 2.0.1 and newer.
+	 * Ignore the return value; an error likely means that the feature
+	 * is not supported. This optimization was enabled by default in firmware v2.0.0,
+	 * so that should not be a problem.
+	 */
+	(void)nrf_modem_at_printf("AT%%FEACONF=0,3,%d",
+		IS_ENABLED(CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION));
+
 	err = lte_lc_edrx_req(IS_ENABLED(CONFIG_LTE_EDRX_REQ));
 	if (err) {
 		LOG_ERR("Failed to configure eDRX, err %d", err);
