@@ -105,6 +105,22 @@ Building and running
    If you, as a user, are not permitted to operate on the DECT band or cannot ensure that access rules are met, you must ensure there are no radio emissions from the devices running the sample.
    This can be done with the use of an RF chamber.
 
+   * To build with one of the provided overlays, run the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -p -b *build_target* -- -DEXTRA_CONF_FILE="<your_overlay>"
+
+   * To build with other carrier and transmission power configuration, run the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -p -b *build_target* -- -DCONFIG_CARRIER=<your_carrier> -DCONFIG_TX_POWER=<your_tx_power>
+
+   You can also add your own overlay or the Kconfig options to the project configuration to build with other carrier and transmission power configurations.
+
 Testing
 =======
 
