@@ -21,6 +21,6 @@ set_property(GLOBAL PROPERTY DOMAIN_APP_CPUNET hello_world)
 set(CPUNET_PM_DOMAIN_DYNAMIC_PARTITION hello_world CACHE INTERNAL "")
 
 # Add a dependency so that the remote sample will be built and flashed first
-add_dependencies(pcd hello_world)
+add_dependencies(${DEFAULT_IMAGE} hello_world)
 # Add dependency so that the remote image is flashed first.
-sysbuild_add_dependencies(FLASH pcd hello_world)
+sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} hello_world)
