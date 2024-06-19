@@ -78,5 +78,6 @@ Just as for creating the application, you can build the application using either
    output_build_files
    sysbuild_images
    zephyr_samples_sysbuild
+   sysbuild_forced_options
 
 .. |output_files_note| replace:: For more information about files generated as output of the build process, see :ref:`app_build_output_files`.
