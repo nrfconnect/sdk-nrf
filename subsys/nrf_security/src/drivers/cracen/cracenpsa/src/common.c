@@ -556,6 +556,10 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 		return ret;
 	}
 
+	if (PSA_BYTES_TO_BITS(modulus->sz) > PSA_MAX_KEY_BITS) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
 	/* Import E */
 	ret = cracen_signature_asn1_get_operand(&p, end, exponent);
 	if (ret) {
