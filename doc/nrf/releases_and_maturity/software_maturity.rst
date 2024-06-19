@@ -171,7 +171,7 @@ Protocol support
 The following table indicates the software maturity levels of the support for each :ref:`protocol <protocols>`:
 
 .. sml-table:: top_level
-   :insert-values: [("Bluetooth","nRF54L15","Experimental"), ("Bluetooth Mesh","nRF54L15","-"), ("Matter","nRF54L15","Experimental"), ("Sidewalk","nRF54L15","Experimental"), ("Thread","nRF54L15","Experimental"), ("Wi-Fi","nRF54L15","Experimental")]
+   :insert-values: [("Bluetooth","nRF54H20","Experimental"), ("Matter","nRF54H20","Experimental"), ("Thread","nRF54H20","Experimental"), ("Wi-Fi","nRF54H20","Experimental"),("Bluetooth","nRF54L15","Experimental"), ("Bluetooth Mesh","nRF54L15","Experimental"), ("Matter","nRF54L15","Experimental"), ("Sidewalk","nRF54L15","Experimental"), ("Thread","nRF54L15","Experimental"), ("Wi-Fi","nRF54L15","Experimental")]
 
 Amazon Sidewalk features support
 ********************************
@@ -181,6 +181,7 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: sidewalk
+     :insert-values: [("Sidewalk - OTA DFU over Bluetooth LE","nRF54L15","Experimental"), ("Sidewalk File Transfer (FUOTA)","nRF54L15","Experimental"), ("Sidewalk Multi-link + Auto-connect","nRF54L15","Experimental"), ("Sidewalk on-device certification","nRF54L15","Experimental"),("Sidewalk over BLE","nRF54L15","Experimental"), ("Sidewalk over FSK","nRF54L15","Experimental"), ("Sidewalk over LORA","nRF54L15","Experimental")]
 
 Bluetooth features support
 **************************
@@ -190,6 +191,7 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: bluetooth
+     :insert-values: [("Bluetooth LE Peripheral/Central","nRF54H20","Experimental"), ("Connectionless/Connected CTE Transmitter","nRF54H20","Experimental"), ("LE Coded PHY","nRF54H20","Experimental"), ("LLPM","nRF54H20","Experimental"),("Bluetooth LE Peripheral/Central","nRF54L15","Experimental"), ("Connectionless/Connected CTE Transmitter","nRF54L15","Experimental"), ("LE Coded PHY","nRF54L15","Experimental"), ("LLPM","nRF54L15","Experimental")]
 
 Thread features support
 ***********************
@@ -199,6 +201,7 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: thread
+     :insert-values: [("Thread - Full Thread Device (FTD)","nRF54H20","Experimental"), ("Thread - Minimal Thread Device (MTD)","nRF54H20","Experimental"), ("Thread 1.1","nRF54H20","Experimental"), ("Thread 1.2 - CSL Receiver","nRF54H20","Experimental"),("Thread 1.2 - Core","nRF54H20","Experimental"), ("Thread 1.2 - Link Metrics","nRF54H20","Experimental"), ("Thread 1.3 - Core","nRF54H20","Experimental"), ("Thread FTD + Bluetooth LE multiprotocol","nRF54H20","Experimental"), ("Thread MTD + Bluetooth LE multiprotocol","nRF54H20","Experimental"), ("Thread TCP","nRF54H20","Experimental"), ("Thread - Full Thread Device (FTD)","nRF54L15","Experimental"), ("Thread - Minimal Thread Device (MTD)","nRF54L15","Experimental"), ("Thread 1.1","nRF54L15","Experimental"), ("Thread 1.2 - CSL Receiver","nRF54L15","Experimental"),("Thread 1.2 - Core","nRF54L15","Experimental"), ("Thread 1.2 - Link Metrics","nRF54L15","Experimental"), ("Thread 1.3 - Core","nRF54L15","Experimental"), ("Thread FTD + Bluetooth LE multiprotocol","nRF54L15","Experimental"), ("Thread MTD + Bluetooth LE multiprotocol","nRF54L15","Experimental"), ("Thread Radio Co-Processor (RCP)","nRF54L15","Experimental"), ("Thread TCP","nRF54L15","Experimental")]
 
 .. _software_maturity_protocol_matter:
 
@@ -210,6 +213,7 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: matter
+     :insert-values: [("Matter Intermittently Connected Device","nRF54H20","Experimental"), ("Matter commissioning over Bluetooth LE with NFC onboarding","nRF54H20","Experimental"), ("Matter commissioning over Bluetooth LE with QR code onboarding","nRF54H20","Experimental"), ("Matter commissioning over IP","nRF54H20","Experimental"),("Matter over Thread","nRF54H20","Experimental"), ("Matter - OTA DFU over Bluetooth LE","nRF54L15","Experimental"), ("Matter Intermittently Connected Device","nRF54L15","Experimental"), ("Matter commissioning over Bluetooth LE with NFC onboarding","nRF54L15","Experimental"), ("Matter commissioning over Bluetooth LE with QR code onboarding","nRF54L15","Experimental"),("Matter commissioning over IP","nRF54L15","Experimental"), ("Matter over Thread","nRF54L15","Experimental"), ("OTA DFU over Matter","nRF54L15","Experimental")]
 
 Zigbee feature support
 **********************
@@ -407,6 +411,7 @@ PSA Crypto support
 .. toggle::
 
   .. sml-table:: psa_crypto
+     :insert-values: [("PSA Crypto APIs","nRF54H20","Experimental"), ("PSA Crypto APIs","nRF54L15","Experimental")]
 
 |NSIB|
 ======
@@ -421,6 +426,7 @@ Hardware Unique Key
 .. toggle::
 
   .. sml-table:: hw_unique_key
+     :insert-values: [("Key Derivation from Hardware Unique Key","nRF54L15","Experimental")]
 
 Trusted storage
 ===============
@@ -428,6 +434,7 @@ Trusted storage
 .. toggle::
 
   .. sml-table:: trusted_storage
+     :insert-values: [("Trusted storage implements the PSA Certified Secure Storage APIs without TF-M","nRF54H20","Experimental"), ("Trusted storage implements the PSA Certified Secure Storage APIs without TF-M","nRF54L15","Experimental")]
 
 Power management device support
 *******************************
