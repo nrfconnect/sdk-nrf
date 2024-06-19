@@ -77,113 +77,122 @@ void test_parse_cereg(void)
 {
 	int err;
 	enum lte_lc_nw_reg_status status;
-	enum lte_lc_lte_mode mode;
 	struct lte_lc_cell cell;
-	char *at_response_0 = "+CEREG: 5,0,,,9,0,0,,";
-	char *at_response_1 = "+CEREG: 5,1,\"0A0B\",\"01020304\",9,0,0,\"00100110\",\"01011111\"";
-	char *at_response_2 = "+CEREG: 5,2,\"0A0B\",\"01020304\",9,0,0,\"11100000\",\"11100000\"";
-	char *at_response_3 = "+CEREG: 5,3,\"0A0B\",\"01020304\",9,0,0,,";
-	char *at_response_4 = "+CEREG: 5,4,\"0A0B\",\"FFFFFFFF\",9,0,0,,";
-	char *at_response_5 = "+CEREG: 5,5,\"0A0B\",\"01020304\",9,0,0,\"11100000\",\"11100000\"";
-	char *at_response_90 = "+CEREG: 5,90,,\"FFFFFFFF\",,,,,";
-	char *at_response_wrong = "+CEREG: 5,10,,\"FFFFFFFF\",,,,,";
-	char *at_notif_0 = "+CEREG: 0,\"FFFF\",\"FFFFFFFF\",9,0,0,,";
-	char *at_notif_1 = "+CEREG: 1,\"0A0B\",\"01020304\",9,0,0,\"00100110\",\"01011111\"";
-	char *at_notif_2 = "+CEREG: 2,\"0A0B\",\"01020304\",9,0,0,,";
-	char *at_notif_3 = "+CEREG: 3,\"0A0B\",\"01020304\",9,0,0,,";
-	char *at_notif_4 = "+CEREG: 4,\"FFFF\",\"FFFFFFFF\",9,0,0,,";
-	char *at_notif_5 = "+CEREG: 5,\"0A0B\",\"01020304\",9,0,0,\"11100000\",\"00011111\"";
-	char *at_notif_90 = "+CEREG: 90,,\"FFFFFFFF\",,,,,";
-	char *at_notif_wrong = "+CEREG: 10,,\"FFFFFFFF\",,,,,";
+	enum lte_lc_lte_mode mode;
+	struct lte_lc_psm_cfg psm_cfg;
+	char *at_cereg_0 = "+CEREG: 0";
+	char *at_cereg_1 = "+CEREG: 1,\"0A0B\",\"01020304\",9,,,\"00100110\",\"01011111\"";
+	char *at_cereg_1_no_tau_ext = "+CEREG: 1,\"0A0B\",\"01020304\",9,,,\"01001010\"";
+	char *at_cereg_1_no_tau_ext_no_active_time = "+CEREG: 1,\"0A0B\",\"01020304\",9";
+	char *at_cereg_2 = "+CEREG: 2,\"ABBA\",\"DEADBEEF\",7";
+	char *at_cereg_2_reject_cause = "+CEREG: 2,\"ABBA\",\"DEADBEEF\",7,0,13";
+	char *at_cereg_2_unknown_cause_type = "+CEREG: 2,\"ABBA\",\"DEADBEEF\",7,1,1";
+	char *at_cereg_4 = "+CEREG: 4";
+	char *at_cereg_5 = "+CEREG: 5,\"0A0B\",\"01020304\",9,,,\"11100000\",\"00011111\"";
+	char *at_cereg_90 = "+CEREG: 90";
+	char *at_cereg_invalid = "+CEREG: 10,,,5,,,,";
 
-	/* Pass NULL parameter to reg_status param and expect the API to succeed. */
-	err = parse_cereg(at_response_0, false, NULL, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-
-	/* For CEREG reads, we only check the network status, as that's the only
-	 * functionality that is exposed.
-	 */
-	err = parse_cereg(at_response_0, false, &status, NULL, NULL, NULL);
+	err = parse_cereg(at_cereg_0, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_NOT_REGISTERED, status);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_EUTRAN_ID_INVALID, cell.id);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_TAC_INVALID, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NONE, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_response_1, false, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_1, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_HOME, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, mode);
+	TEST_ASSERT_EQUAL(360, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(1116000, psm_cfg.tau);
 
-	err = parse_cereg(at_response_2, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
-
-	err = parse_cereg(at_response_3, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTRATION_DENIED, status);
-
-	err = parse_cereg(at_response_4, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UNKNOWN, status);
-
-	err = parse_cereg(at_response_5, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_ROAMING, status);
-
-	err = parse_cereg(at_response_90, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UICC_FAIL, status);
-
-	err = parse_cereg(at_response_wrong, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, err, "parse_cereg should have failed");
-
-	/* For CEREG notifications, we test the parser function, which
-	 * implicitly also tests parse_nw_reg_status() for notifications.
-	 */
-	err = parse_cereg(at_notif_0, true, &status, &cell, &mode, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_NOT_REGISTERED, status);
-
-	err = parse_cereg(at_notif_1, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_1_no_tau_ext, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_HOME, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_2, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_1_no_tau_ext_no_active_time, &status, &cell, &mode, &psm_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_HOME, status);
+	TEST_ASSERT_EQUAL(0x01020304, cell.id);
+	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
+
+	err = parse_cereg(at_cereg_2, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
-	TEST_ASSERT_EQUAL(0x01020304, cell.id);
-	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
+	TEST_ASSERT_EQUAL(0xDEADBEEF, cell.id);
+	TEST_ASSERT_EQUAL(0xABBA, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_3, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_2_reject_cause, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTRATION_DENIED, status);
-	TEST_ASSERT_EQUAL(0x01020304, cell.id);
-	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
+	TEST_ASSERT_EQUAL(0xDEADBEEF, cell.id);
+	TEST_ASSERT_EQUAL(0xABBA, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_4, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_2_unknown_cause_type, &status, &cell, &mode, &psm_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
+	TEST_ASSERT_EQUAL(0xDEADBEEF, cell.id);
+	TEST_ASSERT_EQUAL(0xABBA, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
+
+	err = parse_cereg(at_cereg_4, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UNKNOWN, status);
-	TEST_ASSERT_EQUAL(0xFFFFFFFF, cell.id);
-	TEST_ASSERT_EQUAL(0xFFFF, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_EUTRAN_ID_INVALID, cell.id);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_TAC_INVALID, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NONE, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_5, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_5, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_ROAMING, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(18600, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_90, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_90, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UICC_FAIL, status);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_EUTRAN_ID_INVALID, cell.id);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_TAC_INVALID, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NONE, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_wrong, true, &status, &cell, &mode, NULL);
-	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, err, "parse_cereg should have failed");
+	/* The parser does not check registration status or LTE mode values for validity,
+	 * also values not used by the modem are parsed.
+	 */
+	err = parse_cereg(at_cereg_invalid, &status, &cell, &mode, &psm_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(10, status);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_EUTRAN_ID_INVALID, cell.id);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_TAC_INVALID, cell.tac);
+	TEST_ASSERT_EQUAL(5, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 }
 
 void test_parse_xt3412(void)
