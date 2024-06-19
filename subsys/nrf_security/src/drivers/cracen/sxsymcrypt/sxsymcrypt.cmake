@@ -11,7 +11,6 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/keyref.c
   ${CMAKE_CURRENT_LIST_DIR}/src/mac.c
   ${CMAKE_CURRENT_LIST_DIR}/src/sha3.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/sm4.c
   ${CMAKE_CURRENT_LIST_DIR}/src/trng.c
 
   ${CMAKE_CURRENT_LIST_DIR}/src/platform/baremetal/cmdma_hw.c
