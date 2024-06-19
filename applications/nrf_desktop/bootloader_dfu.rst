@@ -90,6 +90,10 @@ The B0 bootloader additionally requires enabling the following options:
     To generate the DFU package, update this configuration only in the main application image.
     The ``s1_image`` image will mirror it automatically.
 
+.. note::
+    To ensure that update image will boot after a successful DFU image transfer, the update image's version number must be higher than the version number of the application image running on device.
+    Otherwise, the update image can be rejected by the bootloader.
+
 .. _nrf_desktop_configuring_mcuboot_bootloader:
 
 Configuring the MCUboot bootloader
