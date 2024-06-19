@@ -256,17 +256,14 @@ static void at_handler_cereg(const char *response)
 
 	static enum lte_lc_nw_reg_status prev_reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
 	static struct lte_lc_cell prev_cell;
-	enum lte_lc_nw_reg_status reg_status = 0;
-	struct lte_lc_cell cell = {0};
+	enum lte_lc_nw_reg_status reg_status;
+	struct lte_lc_cell cell;
 	enum lte_lc_lte_mode lte_mode;
-	struct lte_lc_psm_cfg psm_cfg = {
-		.active_time = -1,
-		.tau = -1
-	};
+	struct lte_lc_psm_cfg psm_cfg;
 
 	LOG_DBG("+CEREG notification: %.*s", strlen(response) - strlen("\r\n"), response);
 
-	err = parse_cereg(response, true, &reg_status, &cell, &lte_mode, &psm_cfg);
+	err = parse_cereg(response, &reg_status, &cell, &lte_mode, &psm_cfg);
 	if (err) {
 		LOG_ERR("Failed to parse notification (error %d): %s",
 			err, response);
