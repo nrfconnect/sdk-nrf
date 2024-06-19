@@ -105,7 +105,7 @@ The models are used for the following purposes:
   The Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
 * The next seven models in the first element are the product of a single instance of the Light Lightness Server.
-  The application implements callbacks for the Light Lightness Server to control the first LED on the device using the PWM (pulse width modulation) driver.
+  The application implements callbacks for the Light Lightness Server to control an LED on the device using the PWM (pulse width modulation) driver.
 * The next two models in the first element are the product of a single instance of the Scene Server.
   The Scene Server allows the device to store and recall scenes.
 * The last two models in the first element are the product of a single instance of the Sensor Server.
@@ -140,7 +140,7 @@ User interface
 
       LEDs:
         Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
-        First LED outputs the current light level of the Light Lightness Server in the first element.
+        **LED 1** outputs the current light level of the Light Lightness Server in the first element.
         If the :ref:`emds_readme` feature is enabled and **Button 4** is pressed **LEDs 2** to **LED 4** will light up to show that the board is halted.
 
       .. note::
@@ -159,7 +159,7 @@ User interface
 
       LEDs:
         Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
-        First LED outputs the current light level of the Light Lightness Server in the first element.
+        **LED 1** outputs the current light level of the Light Lightness Server in the first element.
         If the :ref:`emds_readme` feature is enabled and **Button 3** is pressed **LEDs 1** to **LED 3** will light up to show that the board is halted.
 
 Configuration
@@ -241,7 +241,7 @@ Configure the Generic OnOff Server model on each element on the **Mesh Light Fix
 
 * Bind the model to **Application Key 1**.
 
-  Once the model is bound to the application key, you can control the first LED on the device.
+  Once the model is bound to the application key, you can control the LED on the device.
 * Open the Generic OnOff Server in the second element, then tap :guilabel:`ON` at the bottom of the Generic On Off Controls.
 
 You should now see the following actions:
