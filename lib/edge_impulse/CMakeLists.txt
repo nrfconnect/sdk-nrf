@@ -23,18 +23,31 @@ if(CONFIG_EDGE_IMPULSE_URI STREQUAL "")
   message(FATAL_ERROR "CONFIG_EDGE_IMPULSE_URI must be specified")
 endif()
 
-set(EI_URIx ${CONFIG_EDGE_IMPULSE_URI})
+# Match first and any URI in the middle of input string.
+# URI can be separated by space, new line or hyphen.
+string(REGEX MATCHALL ".+[ \r\n;]" EI_URI_PREPARE_LIST ${CONFIG_EDGE_IMPULSE_URI})
+# Match the last URI in input string
+string(REGEX MATCH "[^ \n\r;].+$" EI_URI_LIST_END ${CONFIG_EDGE_IMPULSE_URI})
 
-string(CONCAT EI_URI ${EI_URIx})
+list(APPEND EI_URI_PREPARE_LIST ${EI_URI_LIST_END})
 
+foreach(EI_URI IN LISTS EI_URI_PREPARE_LIST)
+  # Remove trailing spaces
+  string(STRIP ${EI_URI} EI_URI_STRING)
 
-if(NOT ${EI_URI} MATCHES "^[a-z]+://")
-  string(CONFIGURE ${EI_URI} EI_URI)
-  if(NOT IS_ABSOLUTE ${EI_URI})
-    # Using application source directory as base directory for relative path.
-    set(EI_URI ${APPLICATION_SOURCE_DIR}/${EI_URI})
+  if(NOT ${EI_URI_STRING} MATCHES "^[a-z]+://")
+    string(CONFIGURE ${EI_URI_STRING} EI_URI_STRING)
+    if(NOT IS_ABSOLUTE ${EI_URI_STRING})
+      # Using application source directory as base directory for relative path.
+      set(EI_URI_STRING ${APPLICATION_SOURCE_DIR}/${EI_URI_STRING})
+    endif()
   endif()
-endif()
+
+  list(APPEND EI_URI_LIST ${EI_URI_STRING})
+endforeach()
+
+# Remove duplicated URIs from list
+list(REMOVE_DUPLICATES EI_URI_LIST)
 
 file(GLOB_RECURSE  edge_impulse_all_headers "${EDGE_IMPULSE_SOURCE_DIR}/*.h")
 
@@ -44,7 +57,7 @@ endif()
 
 include(ExternalProject)
 ExternalProject_Add(edge_impulse_project
-    URL              ${EI_URI}
+    URL              ${EI_URI_LIST}
     HTTP_HEADER      "Accept: application/zip"
                      ${EI_API_KEY_HEADER}
     PREFIX           ${EDGE_IMPULSE_DIR}
