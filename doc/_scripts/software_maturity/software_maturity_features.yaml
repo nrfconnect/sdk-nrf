@@ -96,7 +96,7 @@ features:
         - SHIELD_NRF7002EB
         - BOARD_NRF7002DK_NRF5340_CPUAPP
         - BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001
-    Bluetooth LE Co-existence:
+    Bluetooth LE coexistence:
       rule: WIFI_NRF700X && NRF700X_SR_COEX
       boards_and_shields:
         - SHIELD_NRF7002EK
@@ -108,7 +108,7 @@ features:
       rule: WIFI_NRF700X && OPENTHREAD
       boards_and_shields:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
-    SoftAP Mode:
+    SoftAP Mode (for Wi-Fi provisioning):
       rule: WIFI_NRF700X && NRF700X_AP_MODE && WPA_SUPP_AP
       boards_and_shields:
         - SHIELD_NRF7002EK
