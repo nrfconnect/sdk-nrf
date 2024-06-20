@@ -111,8 +111,8 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
             device_flag += " -DCONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE=n"
 
         if options.nrf21540:
-            device_flag += " -DSHIELD=nrf21540ek_fwd"
-            device_flag += " -Dhci_ipc_SHIELD=nrf21540ek"
+            device_flag += " -Dnrf5340_audio_SHIELD=nrf21540ek_fwd"
+            device_flag += " -Dipc_radio_SHIELD=nrf21540ek"
 
         if options.custom_bt_name is not None and options.user_bt_name:
             raise Exception(
