@@ -747,7 +747,7 @@ static void store_state_data(struct bt_mesh_light_ctrl_srv *srv)
 
 }
 
-static void ligth_ctrl_srv_pending_store(const struct bt_mesh_model *model)
+static void light_ctrl_srv_pending_store(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
@@ -2022,7 +2022,7 @@ const struct bt_mesh_model_cb _bt_mesh_light_ctrl_srv_cb = {
 	.reset = light_ctrl_srv_reset,
 	.settings_set = light_ctrl_srv_settings_set,
 #if CONFIG_BT_SETTINGS
-	.pending_store = ligth_ctrl_srv_pending_store,
+	.pending_store = light_ctrl_srv_pending_store,
 #endif
 };
 
