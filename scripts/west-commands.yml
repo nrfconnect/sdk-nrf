@@ -24,3 +24,8 @@ west-commands:
       - name: thingy91x-reset
         class: Thingy91XReset
         help: Reset the Thingy:91 X
+  - file: scripts/west_commands/suit_manifest.py
+    commands:
+      - name: suit-manifest
+        class: SuitManifest
+        help: SUIT manifest utility

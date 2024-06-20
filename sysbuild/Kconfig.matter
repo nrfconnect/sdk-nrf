@@ -37,7 +37,7 @@ config MATTER_OTA_IMAGE_FILE_NAME
 	help
 	  Provides the file name of the generated Matter OTA image in the build directory.
 
-config SUIT_ENVELOPE_ROOT_TEMPLATE
-	default "${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/suit_templates/root_with_binary_nordic_top.yaml.jinja2"
+config SUIT_BASE_MANIFEST_VARIANT
+	default "matter/v1"
 
 endif
