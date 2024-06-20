@@ -133,7 +133,8 @@ static int validate_update_candidate_manifest(uint8_t *manifest_address, size_t 
 	};
 
 	int err = suit_processor_get_manifest_metadata(manifest_address, manifest_size, true,
-						       &manifest_component_id, NULL, NULL, NULL);
+						       &manifest_component_id, NULL, NULL, NULL,
+						       NULL, NULL);
 	if (err != SUIT_SUCCESS) {
 		LOG_ERR("Unable to read update candidate manifest metadata: %d", err);
 		return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
@@ -274,15 +275,19 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 	LOG_DBG("Validated installed root manifest");
 
 	unsigned int seq_num;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	err = suit_processor_get_manifest_metadata(installed_envelope_address,
-						   installed_envelope_size, true, NULL, NULL, NULL,
-						   &seq_num);
+						   installed_envelope_size, true, NULL, version.raw,
+						   &version.len, NULL, NULL, &seq_num);
 	if (err != SUIT_SUCCESS) {
 		LOG_ERR("Failed to read manifest version and digest: %d", err);
 		return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 	}
-	LOG_INF("Booting from manifest version: 0x%x", seq_num);
+	LOG_INF("Booting from manifest version: %d.%d.%d-%d.%d, sequence: 0x%x", version.raw[0],
+		version.raw[1], version.raw[2], -version.raw[3], version.raw[4], seq_num);
 
 	err = suit_process_sequence(installed_envelope_address, installed_envelope_size,
 				    SUIT_SEQ_VALIDATE);

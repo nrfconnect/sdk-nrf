@@ -98,7 +98,7 @@ int suit_plat_authorize_sequence_num(enum suit_command_sequence seq_name,
 	}
 
 	ret = suit_processor_get_manifest_metadata(envelope_addr, envelope_size, false, NULL, NULL,
-						   NULL, &current_seq_num);
+						   NULL, NULL, NULL, &current_seq_num);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Unable to read manifest metadata (ret: %d)", ret);
 		return SUIT_ERR_AUTHENTICATION;
@@ -113,8 +113,8 @@ int suit_plat_authorize_sequence_num(enum suit_command_sequence seq_name,
 		}
 
 		/* It is not allowed to boot from update candidate. */
-		LOG_ERR("Manifest sequence number %d unauthorized to boot (current: %d)",
-			seq_num, current_seq_num);
+		LOG_ERR("Manifest sequence number %d unauthorized to boot (current: %d)", seq_num,
+			current_seq_num);
 		return SUIT_ERR_AUTHENTICATION;
 	}
 
