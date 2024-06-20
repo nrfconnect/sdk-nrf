@@ -353,3 +353,97 @@ The S1 variant is built as a separate image called ``s1_image`` automatically.
 This variant image will use the same application configuration as the base image, with the exception of its placement in memory.
 You only have to modify the version set in the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` Kconfig option.
 To make ``s1_image`` bootable with |NSIB|, the value of :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` for the default image (or MCUboot if using MCUboot as a second-stage bootloader) must be bigger than the one for original image.
+
+Using MCUboot in firmware loader mode
+**************************************
+
+MCUboot supports a firmware loader mode which is supported in sysbuild. This mode allows for a project to consist of an MCUboot image (optionally with serial recovery), a main application which does not support firmware updates, and a secondary application which is dedicated to loading firmware updates. The benefit of this is for having a dedicated application purely for loading firmware updates e.g. over Bluetooth and allowing the size of tha main application to be smaller, helping on devices with limited flash or RAM.
+In order to use this mode, a static partition file must be created for the application to designate the addresses and sizes of the main image and firmware loader applications, the firmware loader partition **must** be named ``firmware_loader``. The following is an example static partition manager file for the nRF53:
+
+.. code-block:: yaml
+
+    app:
+      address: 0x10200
+      region: flash_primary
+      size: 0xdfe00
+    mcuboot:
+      address: 0x0
+      region: flash_primary
+      size: 0x10000
+    mcuboot_pad:
+      address: 0x10000
+      region: flash_primary
+      size: 0x200
+    mcuboot_primary:
+      address: 0x10000
+      orig_span: &id001
+      - mcuboot_pad
+      - app
+      region: flash_primary
+      size: 0xc0000
+      span: *id001
+    mcuboot_primary_app:
+      address: 0x10200
+      orig_span: &id002
+      - app
+      region: flash_primary
+      size: 0xbfe00
+      span: *id002
+    firmware_loader:
+      address: 0xd0200
+      region: flash_primary
+      size: 0x1fe00
+    mcuboot_secondary:
+      address: 0xd0000
+      orig_span: &id003
+      - mcuboot_pad
+      - firmware_loader
+      region: flash_primary
+      size: 0x20000
+      span: *id003
+    mcuboot_secondary_app:
+      address: 0xd0200
+      orig_span: &id004
+      - firmware_loader
+      region: flash_primary
+      size: 0x1fe00
+      span: *id004
+    settings_storage:
+      address: 0xf0000
+      region: flash_primary
+      size: 0x10000
+    pcd_sram:
+      address: 0x20000000
+      size: 0x2000
+      region: sram_primary
+
+The project must also have a ``sysbuild.cmake`` file which includes the firmware loader application in the build, this **must** be named ``firmware_loader``:
+
+.. code-block:: cmake
+
+      ExternalZephyrProject_Add(
+        APPLICATION firmware_loader
+        SOURCE_DIR <path_to_firmware_loader_application>
+      )
+
+There must also be a ``sysbuild.conf`` file which selects the required sysbuild options for enabling MCUboot and selecting the firmware loader mode:
+
+.. code-block:: cfg
+
+    SB_CONFIG_BOOTLOADER_MCUBOOT=y
+    SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER=y
+
+At least one mode must be set in MCUboot for entering the firmware loader application, supported entrance methods include:
+
+* GPIO
+* Boot mode using retention subsystem
+* No valid main application
+* Device reset using dedicated reset pin
+
+For this example, the use of a GPIO when booting will be used. Create a ``sysbuild`` folder and add a ``sysbuild/mcuboot.conf`` Kconfig fragment file to use when building MCUboot with the following:
+
+.. code-block:: cfg
+
+    CONFIG_BOOT_FIRMWARE_LOADER_ENTRANCE_GPIO=y
+
+The project can now be built and flashed and will boot the firmware loader application when the button is held upon device reboot, or the main application will be booted when the device is reset and the button is not held down.
