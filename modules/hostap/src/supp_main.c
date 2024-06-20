@@ -190,6 +190,7 @@ static int z_wpas_add_interface(const char *ifname)
 
 	wpa_s->conf->filter_ssids = 1;
 	wpa_s->conf->ap_scan = 1;
+	wpa_s->conf->sae_pwe = 2;
 	wpa_s->conf->bss_max_idle_period = CONFIG_WIFI_MGMT_BSS_MAX_IDLE_TIME;
 
 	/* Default interface, kick start wpa_supplicant */
