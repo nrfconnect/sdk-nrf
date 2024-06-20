@@ -248,7 +248,7 @@ manifest:
       revision: v2.7.0-rc3
       path: modules/lib/suit-generator
     - name: suit-processor
-      revision: v2.7.0-rc3
+      revision: pull/87/head
       path: modules/lib/suit-processor
 
     # Other third-party repositories.

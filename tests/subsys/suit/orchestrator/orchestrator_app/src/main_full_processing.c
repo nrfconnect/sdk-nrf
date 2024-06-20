@@ -61,6 +61,9 @@ FAKE_VALUE_FUNC(suit_ssf_err_t, suit_get_supported_manifest_roles, suit_manifest
 		size_t *);
 FAKE_VALUE_FUNC(suit_ssf_err_t, suit_get_supported_manifest_info, suit_manifest_role_t,
 		suit_ssf_manifest_class_info_t *);
+FAKE_VALUE_FUNC(suit_ssf_err_t, suit_get_installed_manifest_info, suit_manifest_class_id_t *,
+		unsigned int *, suit_semver_raw_t *, suit_digest_status_t *, int *,
+		suit_plat_mreg_t *);
 
 static const suit_manifest_role_t supported_roles[] = {SUIT_MANIFEST_APP_ROOT,
 						       SUIT_MANIFEST_APP_LOCAL_1};
