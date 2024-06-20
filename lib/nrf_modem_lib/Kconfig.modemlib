@@ -220,10 +220,11 @@ config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
 	  Let the application define the fault handler function.
 
 config NRF_MODEM_LIB_ON_FAULT_LTE_NET_IF
-	bool "Application defined"
+	bool "Raise a fatal connectivity error network event"
 	depends on NRF_MODEM_LIB_NET_IF
 	help
-	  Let the application define the fault handler function.
+	  Pass modem faults to the network interface driver.
+	  The network interface driver will throw a NET_EVENT_CONN_IF_FATAL_ERROR event.
 
 endchoice # NRF_MODEM_LIB_ON_FAULT
 
