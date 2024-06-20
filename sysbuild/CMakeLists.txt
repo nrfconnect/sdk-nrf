@@ -264,11 +264,16 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
     if(SB_CONFIG_PARTITION_MANAGER)
       # Use NCS signing script with support for PM
-# TODO: NCSDK-27560 add firmware loader application signing script support
       set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
 
       if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
         set(mcuboot_secondary_app_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+      elseif(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+        set(firmware_loader_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_firmware_loader.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+
+        set_target_properties(firmware_loader PROPERTIES
+          IMAGE_CONF_SCRIPT ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/image_configurations/firmware_loader_image_default.cmake
+        )
       endif()
 
       if(SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)
@@ -488,6 +493,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
       get_property(PM_NRF70_WIFI_FW_OFFSET TARGET partition_manager PROPERTY PM_NRF70_WIFI_FW_OFFSET)
       get_property(PM_NRF70_WIFI_FW_SIZE TARGET partition_manager PROPERTY PM_NRF70_WIFI_FW_SIZE)
+    endif()
+
+    if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+      get_property(PM_MCUBOOT_SECONDARY_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_ADDRESS)
+      get_property(PM_MCUBOOT_SECONDARY_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_SIZE)
     endif()
 
     # If the network core image is enabled on nRF53, ensure it is flashed before the main application
