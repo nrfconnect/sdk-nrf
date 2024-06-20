@@ -52,8 +52,9 @@ After you upload a new image and reset the development kit, MCUboot attempts to 
 If this image has, in order of precedence, a *major*, *minor*, or *revision* value that is lower than the primary application image, it is considered invalid and the existing primary application boots instead.
 
 .. note::
-   The optional label or build number specified after the ``+`` character is ignored when evaluating the version.
+   By default, the optional label or build number specified after the ``+`` character is ignored when evaluating the version.
    For example, an existing application image with version ``0.1.2+3`` can be overwritten by an uploaded image with ``0.1.2+2``, but not by one with ``0.1.1+2``.
+   Checking against this field can be performed by enabling :kconfig:option:`CONFIG_BOOT_VERSION_CMP_USE_BUILD_NUMBER` in the MCUboot image
 
 .. _ug_fw_update_downgrade_protection_hw:
 .. _bootloader_monotonic_counter:
