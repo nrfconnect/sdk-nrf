@@ -208,6 +208,15 @@ config BT_AUDIO_BITRATE_BROADCAST_SRC
 	help
 	  Bitrate for the broadcast source ISO stream.
 
+config BT_AUDIO_SCAN_DELEGATOR
+	bool "Enable scan delegator"
+	depends on TRANSPORT_BIS
+	default n
+	help
+	  When scan delegator feature is enabled, the broadcast sink will not
+	  search for a predefined broadcast source. Instead, it will wait for a
+	  broadcast assistant to connect and control.
+
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
