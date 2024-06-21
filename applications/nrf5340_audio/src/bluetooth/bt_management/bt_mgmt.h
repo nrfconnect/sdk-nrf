@@ -174,6 +174,18 @@ void bt_mgmt_num_conn_get(uint8_t *num_conn);
 int bt_mgmt_bonding_clear(void);
 
 /**
+ * @brief	Scan delegator feature initialization.
+ */
+void bt_mgmt_scan_delegator_init(void);
+
+/**
+ * @brief	Get the broadcast code.
+ *
+ * @param[out]	broadcast_code	Pointer to the broadcast code.
+ */
+void bt_mgmt_broadcast_code_get(uint8_t *broadcast_code);
+
+/**
  * @brief	Delete a periodic advertisement sync.
  *
  * @param[in]	pa_sync	Pointer to the periodic advertisement sync to delete.

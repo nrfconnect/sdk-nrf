@@ -28,6 +28,8 @@ BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT <= 2,
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
+static uint8_t bis_encryption_key[BT_ISO_BROADCAST_CODE_SIZE] = {0};
+
 struct audio_codec_info {
 	uint8_t id;
 	uint16_t cid;
@@ -392,16 +394,9 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_biginfo *biginfo)
 {
 	int ret;
-	static uint8_t bis_encryption_key[BT_ISO_BROADCAST_CODE_SIZE] = {0};
 	struct bt_bap_stream *audio_streams_p[] = {&audio_streams[active_stream_index]};
 
 	LOG_DBG("Broadcast sink is syncable");
-
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
-		memcpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
-		       MIN(strlen(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
-			   ARRAY_SIZE(bis_encryption_key)));
-	}
 
 	if (active_stream.stream != NULL && active_stream.stream->ep != NULL) {
 		if (active_stream.stream->ep->status.state == BT_BAP_EP_STATE_STREAMING) {
@@ -426,6 +421,12 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_
 
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Syncing to broadcast stream index %d", active_stream_index);
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
+		memcpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
+		       MIN(strlen(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
+			   ARRAY_SIZE(bis_encryption_key)));
+	}
 
 	ret = bt_bap_broadcast_sink_sync(broadcast_sink, bis_index_bitfields[active_stream_index],
 					 audio_streams_p, bis_encryption_key);
@@ -544,6 +545,18 @@ int broadcast_sink_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broa
 	}
 
 	pa_sync_stored = pa_sync;
+
+	return 0;
+}
+
+int broadcast_sink_broadcast_code_set(uint8_t *broadcast_code)
+{
+	if (broadcast_code == NULL) {
+		LOG_ERR("Invalid broadcast code received");
+		return -EINVAL;
+	}
+
+	memcpy(bis_encryption_key, broadcast_code, BT_ISO_BROADCAST_CODE_SIZE);
 
 	return 0;
 }

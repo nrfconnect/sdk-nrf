@@ -33,9 +33,12 @@ struct ble_iso_data {
 	uint32_t recv_frame_ts;
 } __packed;
 
+static uint32_t last_broadcast_id = BRDCAST_ID_NOT_USED;
+
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
 
 ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
+ZBUS_MSG_SUBSCRIBER_DEFINE(bt_mgmt_evt_sub);
 
 ZBUS_CHAN_DECLARE(button_chan);
 ZBUS_CHAN_DECLARE(le_audio_chan);
@@ -46,14 +49,23 @@ ZBUS_OBS_DECLARE(volume_evt_sub);
 
 static struct k_thread button_msg_sub_thread_data;
 static struct k_thread le_audio_msg_sub_thread_data;
+static struct k_thread bt_mgmt_msg_sub_thread_data;
 
 static k_tid_t button_msg_sub_thread_id;
 static k_tid_t le_audio_msg_sub_thread_id;
+static k_tid_t bt_mgmt_msg_sub_thread_id;
 
 K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
 K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(bt_mgmt_msg_sub_thread_stack, CONFIG_BT_MGMT_MSG_SUB_STACK_SIZE);
 
 static enum stream_state strm_state = STATE_PAUSED;
+
+static const struct bt_data ad[] = {
+	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_BASS_VAL)),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_PACS_VAL)),
+};
 
 /* Function for handling all stream state changes */
 static void stream_state_set(enum stream_state stream_state_new)
@@ -266,7 +278,7 @@ static void le_audio_msg_sub_thread(void)
 
 			if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
 				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL,
-							 BRDCAST_ID_NOT_USED);
+							 last_broadcast_id);
 				if (ret) {
 					if (ret == -EALREADY) {
 						break;
@@ -304,6 +316,98 @@ static void le_audio_msg_sub_thread(void)
 }
 
 /**
+ * @brief	Handle bt_mgmt events.
+ */
+static void bt_mgmt_msg_sub_thread(void)
+{
+	int ret;
+	static uint8_t broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE];
+	const struct zbus_channel *chan;
+
+	while (1) {
+		struct bt_mgmt_msg msg;
+
+		ret = zbus_sub_wait_msg(&bt_mgmt_evt_sub, &chan, &msg, K_FOREVER);
+		ERR_CHK(ret);
+
+		switch (msg.event) {
+		case BT_MGMT_CONNECTED:
+			LOG_DBG("Connected");
+			break;
+
+		case BT_MGMT_DISCONNECTED:
+			LOG_DBG("Disconnected");
+			break;
+
+		case BT_MGMT_SECURITY_CHANGED:
+			LOG_DBG("Security changed");
+			break;
+
+		case BT_MGMT_PA_SYNCED:
+			LOG_DBG("PA synced");
+
+			ret = broadcast_sink_pa_sync_set(msg.pa_sync, msg.broadcast_id);
+			if (ret) {
+				last_broadcast_id = BRDCAST_ID_NOT_USED;
+				LOG_WRN("Failed to set PA sync");
+			} else {
+				last_broadcast_id = msg.broadcast_id;
+			}
+
+			break;
+
+		case BT_MGMT_PA_SYNC_LOST:
+			LOG_INF("PA sync lost, reason: %d", msg.pa_sync_term_reason);
+
+			if (IS_ENABLED(CONFIG_BT_OBSERVER) &&
+			    msg.pa_sync_term_reason != BT_HCI_ERR_LOCALHOST_TERM_CONN) {
+				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL,
+							 BRDCAST_ID_NOT_USED);
+				if (ret) {
+					if (ret == -EALREADY) {
+						LOG_ERR("Failed to restart scanning: %d", ret);
+					}
+
+					break;
+				}
+
+				/* NOTE: The string below is used by the Nordic CI system */
+				LOG_INF("Restarted scanning for broadcaster");
+			}
+
+			break;
+
+		case BT_MGMT_BROADCAST_SINK_DISABLE:
+			LOG_DBG("Broadcast sink disabled");
+
+			ret = broadcast_sink_disable();
+			if (ret) {
+				LOG_ERR("Failed to disable the broadcast sink: %d", ret);
+			}
+
+			break;
+
+		case BT_MGMT_BROADCAST_CODE_RECEIVED:
+			LOG_DBG("Broadcast code received");
+
+			bt_mgmt_broadcast_code_get(broadcast_code);
+
+			ret = broadcast_sink_broadcast_code_set(broadcast_code);
+			if (ret) {
+				LOG_ERR("Failed to set broadcast code: %d", ret);
+			}
+
+			break;
+
+		default:
+			LOG_WRN("Unexpected/unhandled bt_mgmt event: %d", msg.event);
+
+			break;
+		}
+	}
+}
+
+/**
  * @brief	Create zbus subscriber threads.
  *
  * @return	0 for success, error otherwise.
@@ -332,65 +436,18 @@ static int zbus_subscribers_create(void)
 		return ret;
 	}
 
+	bt_mgmt_msg_sub_thread_id = k_thread_create(
+		&bt_mgmt_msg_sub_thread_data, bt_mgmt_msg_sub_thread_stack,
+		CONFIG_BT_MGMT_MSG_SUB_STACK_SIZE, (k_thread_entry_t)bt_mgmt_msg_sub_thread, NULL,
+		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BT_MGMT_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	ret = k_thread_name_set(bt_mgmt_msg_sub_thread_id, "BT_MGMT_MSG_SUB");
+	if (ret) {
+		LOG_ERR("Failed to create le_audio_msg thread");
+		return ret;
+	}
+
 	return 0;
 }
-
-/**
- * @brief	Zbus listener to receive events from bt_mgmt.
- *
- * @param[in]	chan	Zbus channel.
- *
- * @note	Will in most cases be called from BT_RX context,
- *		so there should not be too much processing done here.
- */
-static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
-{
-	int ret;
-	const struct bt_mgmt_msg *msg;
-
-	msg = zbus_chan_const_msg(chan);
-
-	switch (msg->event) {
-	case BT_MGMT_PA_SYNCED:
-		LOG_DBG("PA synced");
-
-		ret = broadcast_sink_pa_sync_set(msg->pa_sync, msg->broadcast_id);
-		if (ret) {
-			LOG_WRN("Failed to set PA sync");
-		}
-
-		break;
-
-	case BT_MGMT_PA_SYNC_LOST:
-		LOG_INF("PA sync lost, reason: %d", msg->pa_sync_term_reason);
-
-		if (IS_ENABLED(CONFIG_BT_OBSERVER) &&
-		    msg->pa_sync_term_reason != BT_HCI_ERR_LOCALHOST_TERM_CONN) {
-			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL,
-						 BRDCAST_ID_NOT_USED);
-			if (ret) {
-				if (ret == -EALREADY) {
-					return;
-				}
-
-				LOG_ERR("Failed to restart scanning: %d", ret);
-				break;
-			}
-
-			/* NOTE: The string below is used by the Nordic CI system */
-			LOG_INF("Restarted scanning for broadcaster");
-		}
-
-		break;
-
-	default:
-		LOG_WRN("Unexpected/unhandled bt_mgmt event: %d", msg->event);
-
-		break;
-	}
-}
-
-ZBUS_LISTENER_DEFINE(bt_mgmt_evt_listen, bt_mgmt_evt_handler);
 
 /**
  * @brief	Link zbus producers and observers.
@@ -423,9 +480,9 @@ static int zbus_link_producers_observers(void)
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
-		LOG_ERR("Failed to add bt_mgmt listener");
+		LOG_ERR("Failed to add bt_mgmt sub");
 		return ret;
 	}
 
@@ -476,9 +533,16 @@ int main(void)
 	ret = broadcast_sink_enable(le_audio_rx_data_handler);
 	ERR_CHK_MSG(ret, "Failed to enable broadcast sink");
 
-	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, CONFIG_BT_AUDIO_BROADCAST_NAME,
-				 BRDCAST_ID_NOT_USED);
-	ERR_CHK_MSG(ret, "Failed to start scanning");
+	if (IS_ENABLED(CONFIG_BT_AUDIO_SCAN_DELEGATOR)) {
+		bt_mgmt_scan_delegator_init();
+
+		ret = bt_mgmt_adv_start(0, ad, ARRAY_SIZE(ad), NULL, 0, true);
+		ERR_CHK(ret);
+	} else {
+		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
+					 CONFIG_BT_AUDIO_BROADCAST_NAME, BRDCAST_ID_NOT_USED);
+		ERR_CHK_MSG(ret, "Failed to start scanning");
+	}
 
 	return 0;
 }
