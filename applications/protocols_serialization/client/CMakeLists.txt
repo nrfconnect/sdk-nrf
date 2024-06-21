@@ -16,4 +16,5 @@ target_sources(app PRIVATE
 
 zephyr_library_sources_ifdef(CONFIG_OPENTHREAD_RPC src/ot_shell.c)
 zephyr_library_sources_ifdef(CONFIG_MPSL_CX_SOFTWARE src/coex_shell.c)
+zephyr_library_sources_ifdef(CONFIG_LOG_FORWARDER_RPC src/log_rpc_shell.c)
 # NORDIC SDK APP START
