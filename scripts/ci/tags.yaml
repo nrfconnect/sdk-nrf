@@ -62,11 +62,10 @@ net:
     - zephyr/drivers/ethernet/
     - zephyr/drivers/ieee802154/
     - zephyr/drivers/ptp_clock/
-#    Examples:
-#    - nrf/subsys/net/
-#    - nrf/include/net/
-#    - nrf/drivers/wifi/
-#    - nrf/drivers/net/
+    - nrf/subsys/net/
+    - nrf/include/net/
+    - nrf/drivers/wifi/
+    - nrf/drivers/net/
 
 test_framework:
   files:

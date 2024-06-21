@@ -16,7 +16,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild net
   sample.net.https_client.lte.tfm-mbedtls:
     sysbuild: true
     build_only: true
@@ -28,7 +28,7 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild net
   sample.net.https_client.lte.pdn-ipv4:
     sysbuild: true
     build_only: true
@@ -41,4 +41,4 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild net
