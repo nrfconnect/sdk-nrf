@@ -63,13 +63,11 @@ if(NOT SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM AND "${SB_CONFIG_SECURE_BOOT_SIGNING
     )
   set(SIGN_KEY_FILE_DEPENDS debug_sign_key_target)
 else()
-  # Resolve path relative to the main application's configuration directory.
-  sysbuild_get(app_config_dir IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_CONFIG_DIR CACHE)
-
   if(IS_ABSOLUTE ${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
     set(SIGNATURE_PRIVATE_KEY_FILE ${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
   else()
-    set(SIGNATURE_PRIVATE_KEY_FILE ${app_config_dir}/${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
+    # Resolve path relative to the application configuration directory.
+    set(SIGNATURE_PRIVATE_KEY_FILE ${APPLICATION_CONFIG_DIR}/${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
   endif()
 
   if(NOT EXISTS ${SIGNATURE_PRIVATE_KEY_FILE})
@@ -133,11 +131,11 @@ if("${SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES}" STREQUAL "debug")
   set(PROVISION_KEY_DEPENDS provision_key_target)
 else()
   foreach(key ${PUBLIC_KEY_FILES_LIST})
-    # Resolve path.
     if(IS_ABSOLUTE ${key})
       list(APPEND PUBLIC_KEY_FILES ${key})
     else()
-      list(APPEND PUBLIC_KEY_FILES ${CMAKE_SOURCE_DIR}/${key})
+      # Resolve path relative to the application configuration directory.
+      list(APPEND PUBLIC_KEY_FILES ${APPLICATION_CONFIG_DIR}/${key})
     endif()
   endforeach()
 endif()
