@@ -27,6 +27,9 @@ BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT <= 2,
 
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
+ZBUS_CHAN_DECLARE(bt_mgmt_chan);
+
+static uint8_t bis_encryption_key[BT_ISO_BROADCAST_CODE_SIZE] = {0};
 
 struct audio_codec_info {
 	uint8_t id;
@@ -392,16 +395,9 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_biginfo *biginfo)
 {
 	int ret;
-	static uint8_t bis_encryption_key[BT_ISO_BROADCAST_CODE_SIZE] = {0};
 	struct bt_bap_stream *audio_streams_p[] = {&audio_streams[active_stream_index]};
 
 	LOG_DBG("Broadcast sink is syncable");
-
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
-		memcpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
-		       MIN(strlen(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
-			   ARRAY_SIZE(bis_encryption_key)));
-	}
 
 	if (active_stream.stream != NULL && active_stream.stream->ep != NULL) {
 		if (active_stream.stream->ep->status.state == BT_BAP_EP_STATE_STREAMING) {
@@ -445,6 +441,26 @@ static struct bt_bap_broadcast_sink_cb broadcast_sink_cbs = {
 	.base_recv = base_recv_cb,
 	.syncable = syncable_cb,
 };
+
+static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
+{
+	const struct bt_mgmt_msg *msg;
+
+	msg = zbus_chan_const_msg(chan);
+
+	switch (msg->event) {
+	case BT_MGMT_BROADCAST_CODE_RECEIVED:
+		LOG_DBG("Broadcast code received");
+		LOG_HEXDUMP_DBG("Broadcast code", BT_ISO_BROADCAST_CODE_SIZE, msg->bcode);
+		memcpy(bis_encryption_key, msg->bcode, BT_ISO_BROADCAST_CODE_SIZE);
+		break;
+
+	default:
+		break;
+	}
+}
+
+ZBUS_LISTENER_DEFINE(bt_mgmt_evt_listener, bt_mgmt_evt_handler);
 
 int broadcast_sink_change_active_audio_stream(void)
 {
@@ -661,6 +677,12 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		audio_streams[i].ops = &stream_ops;
+	}
+
+	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listener, ZBUS_ADD_OBS_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("Failed to add bt_mgmt listener");
+		return ret;
 	}
 
 	initialized = true;

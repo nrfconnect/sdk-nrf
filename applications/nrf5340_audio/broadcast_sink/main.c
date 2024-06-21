@@ -351,6 +351,18 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 	msg = zbus_chan_const_msg(chan);
 
 	switch (msg->event) {
+	case BT_MGMT_CONNECTED:
+		LOG_DBG("Connected");
+		break;
+
+	case BT_MGMT_DISCONNECTED:
+		LOG_DBG("Disconnected");
+		break;
+
+	case BT_MGMT_SECURITY_CHANGED:
+		LOG_DBG("Security updated");
+		break;
+
 	case BT_MGMT_PA_SYNCED:
 		LOG_DBG("PA synced");
 
@@ -446,6 +458,11 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 	LOG_WRN("Sending is not possible for broadcast sink");
 }
 
+static const struct bt_data ad[] = {
+	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_BASS_VAL),
+		      BT_UUID_16_ENCODE(BT_UUID_PACS_VAL))};
+
 int main(void)
 {
 	int ret;
@@ -475,6 +492,9 @@ int main(void)
 
 	ret = broadcast_sink_enable(le_audio_rx_data_handler);
 	ERR_CHK_MSG(ret, "Failed to enable broadcast sink");
+
+	ret = bt_mgmt_adv_start(0, ad, ARRAY_SIZE(ad), NULL, 0, true);
+	ERR_CHK(ret);
 
 	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, CONFIG_BT_AUDIO_BROADCAST_NAME,
 				 BRDCAST_ID_NOT_USED);

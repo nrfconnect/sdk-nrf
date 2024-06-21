@@ -58,7 +58,9 @@ enum bt_mgmt_evt_type {
 	BT_MGMT_SECURITY_CHANGED,
 	BT_MGMT_PA_SYNCED,
 	BT_MGMT_PA_SYNC_LOST,
+	BT_MGMT_PA_SYNC_TERM,
 	BT_MGMT_DISCONNECTED,
+	BT_MGMT_BROADCAST_CODE_RECEIVED,
 };
 
 struct bt_mgmt_msg {
@@ -69,6 +71,7 @@ struct bt_mgmt_msg {
 	struct bt_le_per_adv_sync *pa_sync;
 	uint32_t broadcast_id;
 	uint8_t pa_sync_term_reason;
+	uint8_t bcode[BT_ISO_BROADCAST_CODE_SIZE];
 };
 
 enum volume_evt_type {
