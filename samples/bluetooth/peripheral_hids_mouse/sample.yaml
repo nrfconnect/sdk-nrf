@@ -48,4 +48,4 @@ tests:
     platform_allow: nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    tags: sysbuild
+    tags: bluetooth sysbuild
