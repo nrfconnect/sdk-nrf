@@ -10,6 +10,7 @@
 #include <suitfu_mgmt.h>
 #endif /* CONFIG_MGMT_SUITFU */
 #include <zephyr/storage/flash_map.h>
+#include <nrfs_mram.h>
 #include "common.h"
 
 #ifdef CONFIG_SSF_SUIT_SERVICE_ENABLED
@@ -54,6 +55,17 @@ int main(void)
 #endif
 
 	if (IS_ENABLED(CONFIG_MCUMGR_TRANSPORT_BT)) {
+		nrfs_err_t err = nrfs_mram_init(NULL);
+
+		if (err != NRFS_SUCCESS) {
+			printk("Unable to initialize MRAM latency service: %d\r\n", err);
+		} else {
+			err = nrfs_mram_set_latency(MRAM_LATENCY_NOT_ALLOWED, NULL);
+			if (err != NRFS_SUCCESS) {
+				printk("Unable to disable MRAM auto poweroff: %d\r\n", err);
+			}
+		}
+
 		start_smp_bluetooth_adverts();
 	}
 
