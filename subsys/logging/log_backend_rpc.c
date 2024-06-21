@@ -10,78 +10,16 @@
  *
  */
 
-#include <nrf_rpc_cbor.h>
-#include <nrf_rpc/nrf_rpc_uart.h>
+#include "log_rpc_internal.h"
 
-#include <zephyr/device.h>
+#include <nrf_rpc_cbor.h>
+
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_backend.h>
 #include <zephyr/logging/log_backend_std.h>
 #include <zephyr/logging/log_output.h>
 
 #include <string.h>
-
-#ifdef CONFIG_NRF_RPC_IPC_SERVICE
-NRF_RPC_IPC_TRANSPORT(log_rpc_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "log_rpc_ept");
-#elif defined(CONFIG_NRF_RPC_UART_TRANSPORT)
-#define log_rpc_tr NRF_RPC_UART_TRANSPORT(DT_NODELABEL(uart1))
-#endif
-NRF_RPC_GROUP_DEFINE(log_rpc_group, "log", &log_rpc_tr, NULL, NULL, NULL);
-
-enum log_rpc_evt_forwarder {
-	LOG_RPC_EVT_MSG = 0,
-};
-
-enum log_rpc_cmd_backend {
-	LOG_RPC_CMD_GET_CRASH_LOG = 0,
-};
-
-#ifdef CONFIG_LOG_FORWARDER_RPC
-
-LOG_MODULE_REGISTER(rpc);
-
-static void log_rpc_msg_handler(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-				void *handler_data)
-{
-	uint8_t level;
-	struct zcbor_string message;
-	bool decoded_ok;
-
-	decoded_ok = zcbor_uint_decode(ctx->zs, &level, sizeof(level));
-	decoded_ok = decoded_ok && zcbor_bstr_decode(ctx->zs, &message);
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	if (!decoded_ok) {
-		goto out;
-	}
-
-	switch (level) {
-	case LOG_LEVEL_ERR:
-		LOG_ERR("%.*s", message.len, message.value);
-		break;
-	case LOG_LEVEL_WRN:
-		LOG_WRN("%.*s", message.len, message.value);
-		break;
-	case LOG_LEVEL_INF:
-		LOG_INF("%.*s", message.len, message.value);
-		break;
-	case LOG_LEVEL_DBG:
-		LOG_DBG("%.*s", message.len, message.value);
-		break;
-	default:
-		break;
-	}
-
-out:
-	return;
-}
-
-NRF_RPC_CBOR_EVT_DECODER(log_rpc_group, log_rpc_msg_handler, LOG_RPC_EVT_MSG, log_rpc_msg_handler,
-			 NULL);
-
-#endif /* CONFIG_LOG_FORWARDER_RPC */
-
-#ifdef CONFIG_LOG_BACKEND_RPC
 
 /*
  * Drop messages coming from nRF RPC to avoid the avalanche of logs:
@@ -221,5 +159,3 @@ static const struct log_backend_api log_backend_rpc_api = {
 };
 
 LOG_BACKEND_DEFINE(log_backend_rpc, log_backend_rpc_api, true);
-
-#endif /* CONFIG_LOG_BACKEND_RPC */

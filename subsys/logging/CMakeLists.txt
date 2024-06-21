@@ -4,4 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_sources_ifdef(CONFIG_LOG_RPC log_rpc.c)
+if (CONFIG_LOG_FORWARDER_RPC OR CONFIG_LOG_BACKEND_RPC)
+    zephyr_library()
+    zephyr_library_sources_ifdef(CONFIG_LOG_FORWARDER_RPC log_forwarder_rpc.c)
+    zephyr_library_sources_ifdef(CONFIG_LOG_BACKEND_RPC log_backend_rpc.c)
+endif()
