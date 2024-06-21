@@ -37,11 +37,10 @@ struct phy_ctrl_field_common {
 K_SEM_DEFINE(operation_sem, 0, 1);
 
 /* Callback after init operation. */
-static void init(const uint64_t *time, int16_t temp, enum nrf_modem_dect_phy_err err,
-	  const struct nrf_modem_dect_phy_modem_cfg *cfg)
+static void init(const struct nrf_modem_dect_phy_init_event *evt)
 {
-	if (err) {
-		LOG_ERR("Init failed, err %d", err);
+	if (evt->err) {
+		LOG_ERR("PHY initialization failed, err %d", evt->err);
 		exit = true;
 		return;
 	}
@@ -50,10 +49,10 @@ static void init(const uint64_t *time, int16_t temp, enum nrf_modem_dect_phy_err
 }
 
 /* Callback after deinit operation. */
-static void deinit(const uint64_t *time, enum nrf_modem_dect_phy_err err)
+static void deinit(const struct nrf_modem_dect_phy_deinit_event *evt)
 {
-	if (err) {
-		LOG_ERR("Deinit failed, err %d", err);
+	if (evt->err) {
+		LOG_ERR("Deinit failed, err %d", evt->err);
 		return;
 	}
 
@@ -61,79 +60,73 @@ static void deinit(const uint64_t *time, enum nrf_modem_dect_phy_err err)
 }
 
 /* Operation complete notification. */
-static void op_complete(const uint64_t *time, int16_t temperature,
-		 enum nrf_modem_dect_phy_err err, uint32_t handle)
+static void op_complete(const struct nrf_modem_dect_phy_op_complete_event *evt)
 {
-	LOG_DBG("op_complete cb time %"PRIu64" status %d", *time, err);
+	LOG_DBG("Operation 0x%x complete, result 0x%x time %"PRIu64,
+		evt->handle, evt->err, evt->time);
 	k_sem_give(&operation_sem);
 }
 
 /* Callback after receive stop operation. */
-static void rx_stop(const uint64_t *time, enum nrf_modem_dect_phy_err err, uint32_t handle)
+static void cancel(const struct nrf_modem_dect_phy_cancel_event *evt)
 {
-	LOG_DBG("rx_stop cb time %"PRIu64" status %d handle %d", *time, err, handle);
+	LOG_DBG("Operation 0x%x canceled, result 0x%x time %"PRIu64,
+		evt->handle, evt->err, evt->time);
 	k_sem_give(&operation_sem);
 }
 
 /* Physical Control Channel reception notification. */
-static void pcc(
-	const uint64_t *time,
-	const struct nrf_modem_dect_phy_rx_pcc_status *status,
-	const union nrf_modem_dect_phy_hdr *hdr)
+static void pcc(const struct nrf_modem_dect_phy_pcc_event *evt)
 {
-	struct phy_ctrl_field_common *header = (struct phy_ctrl_field_common *)hdr->type_1;
+	struct phy_ctrl_field_common *header = (struct phy_ctrl_field_common *)evt->hdr.type_1;
 
 	LOG_INF("Received header from device ID %d",
 		header->transmitter_id_hi << 8 |  header->transmitter_id_lo);
 }
 
 /* Physical Control Channel CRC error notification. */
-static void pcc_crc_err(const uint64_t *time,
-		 const struct nrf_modem_dect_phy_rx_pcc_crc_failure *crc_failure)
+static void pcc_crc_err(const struct nrf_modem_dect_phy_pcc_crc_failure_event *evt)
 {
-	LOG_DBG("pcc_crc_err cb time %"PRIu64"", *time);
+	LOG_DBG("CRC error on PCC, time %"PRIu64, evt->time);
 }
 
 /* Physical Data Channel reception notification. */
-static void pdc(const uint64_t *time,
-		const struct nrf_modem_dect_phy_rx_pdc_status *status,
-		const void *data, uint32_t len)
+static void pdc(const struct nrf_modem_dect_phy_pdc_event *evt)
 {
 	/* Received RSSI value is in fixed precision format Q14.1 */
 	LOG_INF("Received data (RSSI: %d.%d): %s",
-		(status->rssi_2 / 2), (status->rssi_2 & 0b1) * 5, (char *)data);
+		(evt->rssi_2 / 2), (evt->rssi_2 & 0b1) * 5, (char *)evt->data);
 }
 
 /* Physical Data Channel CRC error notification. */
-static void pdc_crc_err(
-	const uint64_t *time, const struct nrf_modem_dect_phy_rx_pdc_crc_failure *crc_failure)
+static void pdc_crc_err(const struct nrf_modem_dect_phy_pdc_crc_failure_event *evt)
 {
-	LOG_DBG("pdc_crc_err cb time %"PRIu64"", *time);
+	LOG_DBG("CRC error on PDC, time %"PRIu64, evt->time);
 }
 
 /* RSSI measurement result notification. */
-static void rssi(const uint64_t *time, const struct nrf_modem_dect_phy_rssi_meas *status)
+static void rssi(const struct nrf_modem_dect_phy_rssi_event *evt)
 {
-	LOG_DBG("rssi cb time %"PRIu64" carrier %d", *time, status->carrier);
+	LOG_DBG("RSSI measurement, handle 0x%x time %"PRIu64" carrier %d",
+		evt->handle, evt->time, evt->carrier);
 }
 
 /* Callback after link configuration operation. */
-static void link_config(const uint64_t *time, enum nrf_modem_dect_phy_err err)
+static void link_config(const struct nrf_modem_dect_phy_link_config_event *evt)
 {
-	LOG_DBG("link_config cb time %"PRIu64" status %d", *time, err);
+	LOG_DBG("Link configuration, result 0x%x", evt->err);
 }
 
 /* Callback after time query operation. */
-static void time_get(const uint64_t *time, enum nrf_modem_dect_phy_err err)
+static void time_get(const struct nrf_modem_dect_phy_time_get_event *evt)
 {
-	LOG_DBG("time_get cb time %"PRIu64" status %d", *time, err);
+	LOG_DBG("Time query configuration, result 0x%x time %"PRIu64, evt->err, evt->time);
 }
 
 /* Callback after capability get operation. */
-static void capability_get(const uint64_t *time, enum nrf_modem_dect_phy_err err,
-		    const struct nrf_modem_dect_phy_capability *capability)
+static void capability_get(const struct nrf_modem_dect_phy_capability_get_event *evt)
 {
-	LOG_DBG("capability_get cb time %"PRIu64" status %d", *time, err);
+	LOG_DBG("Capability get, result 0x%x time %"PRIu64, evt->err, evt->time);
 }
 
 /* Dect PHY callbacks. */
@@ -141,7 +134,7 @@ static struct nrf_modem_dect_phy_callbacks dect_phy_callbacks = {
 	.init = init,
 	.deinit = deinit,
 	.op_complete = op_complete,
-	.rx_stop = rx_stop,
+	.cancel = cancel,
 	.pcc = pcc,
 	.pcc_crc_err = pcc_crc_err,
 	.pdc = pdc,
