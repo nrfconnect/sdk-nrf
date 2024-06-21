@@ -5,4 +5,4 @@ tests:
     integration_platforms:
       - qemu_cortex_m3
       - native_posix
-    tags: mqtt_helper sysbuild
+    tags: mqtt_helper sysbuild net

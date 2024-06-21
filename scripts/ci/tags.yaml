@@ -68,18 +68,54 @@ bluetooth:
 net:
   files:
     - nrf/samples/net/
+    - nrf/tests/subsys/net/
+    - zephyr/subsys/mgmt/
     - zephyr/subsys/net/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/storage/
     - zephyr/include/zephyr/net/
     - zephyr/drivers/wifi/
     - zephyr/drivers/net/
     - zephyr/drivers/ethernet/
     - zephyr/drivers/ieee802154/
     - zephyr/drivers/ptp_clock/
-#    Examples:
-#    - nrf/subsys/net/
-#    - nrf/include/net/
-#    - nrf/drivers/wifi/
-#    - nrf/drivers/net/
+    - nrf/include/net/
+    - nrf/include/modem/
+    - nrf/drivers/wifi/
+    - nrf/drivers/net/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/at_host/
+    - nrf/lib/at_monitor/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/fprotect/
+    - nrf/lib/hw_id/
+    - nrf/lib/lte_link_control/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/modem_info/
+    - nrf/lib/modem_key_mgmt/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/lib/pdn/
+    - nrf/modules/cjson/
+    - nrf/modules/hostap/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/subsys/dfu/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/net/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - bootloader/mcuboot/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/lib/azure-sdk-for-c/
+    - modules/lib/cjson/
+    - modules/lib/hostap/
+    - modules/lib/zcbor/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_modem/
+    - nrfxlib/nrf_wifi/
 
 mcumgr:
   files:
