@@ -348,8 +348,8 @@ To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the 
       .. note::
          Support for SUIT updates is available starting from the following versions of the `nRF Connect Device Manager`_ mobile app:
 
-         * Version ``1.10`` on Android.
-         * Version ``1.6`` on iOS.
+         * Version ``2.0`` on Android.
+         * Version ``1.7`` on iOS.
 
 Update image verification and application image update
 ======================================================
