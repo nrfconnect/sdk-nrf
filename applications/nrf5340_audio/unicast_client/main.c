@@ -280,8 +280,8 @@ static void le_audio_msg_sub_thread(void)
 			}
 
 			/* Only update conn param once */
-			if (((IS_ENABLED(CONFIG_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SINK) ||
-			     (!IS_ENABLED(CONFIG_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SOURCE)) &&
+			if (((IS_ENABLED(CONFIG_BT_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SINK) ||
+			     (!IS_ENABLED(CONFIG_BT_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SOURCE)) &&
 			    interval != CONFIG_BLE_ACL_CONN_INTERVAL_SLOW) {
 				struct bt_le_conn_param param;
 
