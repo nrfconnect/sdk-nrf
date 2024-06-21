@@ -124,7 +124,14 @@ Gazell
 Matter
 ------
 
-|no_changes_yet_note|
+* Added:
+
+  * The Kconfig options to configure parameters impacting persistent subscriptions re-establishment:
+
+    * :kconfig:option:`CONFIG_CHIP_MAX_ACTIVE_CASE_CLIENTS`
+    * :kconfig:option:`CONFIG_CHIP_MAX_ACTIVE_DEVICES`
+    * :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_MIN_RETRY_INTERVAL`
+    * :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_RETRY_MULTIPLIER`
 
 Matter fork
 +++++++++++
