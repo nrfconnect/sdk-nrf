@@ -22,10 +22,10 @@ The sample supports the following development kit:
 You need the nRF Device Manager app for SUIT update over Bluetooth Low Energy:
 
 * `nRF Device Manager mobile app for Android`_
-  (The minimum required version is v1.9.)
+  (The minimum required version is v2.0.)
 
 * `nRF Device Manager mobile app for iOS`_
-  (The minimum required version is v1.5.)
+  (The minimum required version is v1.7.)
 
 For a SUIT update over UART, you need to install :ref:`zephyr:mcu_mgr`, a tool that can be used to upload SUIT envelopes through the SMP protocol.
 
