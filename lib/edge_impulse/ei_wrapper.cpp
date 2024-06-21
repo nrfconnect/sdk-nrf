@@ -7,6 +7,14 @@
 #include <assert.h>
 #include <math.h>
 #include <ei_run_classifier.h>
+
+#if !CONFIG_ZTEST
+/* Fixes warnings about redefinition of Zephyr ROUND_UP macro. */
+#ifdef ROUND_UP
+#undef ROUND_UP
+#endif
+#endif /* !CONFIG_ZTEST */
+
 #include <ei_wrapper.h>
 
 #include <zephyr/logging/log.h>

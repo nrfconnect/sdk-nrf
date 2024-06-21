@@ -12,8 +12,8 @@ set(EDGE_IMPULSE_BINARY_DIR ${EDGE_IMPULSE_DIR}/src/edge_impulse_project-build)
 set(EDGE_IMPULSE_STAMP_DIR  ${EDGE_IMPULSE_DIR}/src/edge_impulse_project-stamp)
 set(EDGE_IMPULSE_LIBRARY    ${EDGE_IMPULSE_BINARY_DIR}/libedge_impulse.a)
 
-# Override Zephyr's Wdouble-promotion, as Edge Impulse gives warnings.
-zephyr_compile_options(-Wno-double-promotion)
+# Override Zephyr's Wdouble-promotion and unused variable warnings, as Edge Impulse gives warnings.
+zephyr_compile_options(-Wno-double-promotion -Wno-unused)
 
 file(GENERATE OUTPUT ${EDGE_IMPULSE_DIR}/compile_options.$<COMPILE_LANGUAGE>.cmake CONTENT
 "set(EI_$<COMPILE_LANGUAGE>_COMPILE_OPTIONS \"$<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_OPTIONS>\")"
@@ -59,6 +59,7 @@ include(ExternalProject)
 ExternalProject_Add(edge_impulse_project
     URL              ${EI_URI_LIST}
     HTTP_HEADER      "Accept: application/zip"
+    DOWNLOAD_EXTRACT_TIMESTAMP True
                      ${EI_API_KEY_HEADER}
     PREFIX           ${EDGE_IMPULSE_DIR}
     SOURCE_DIR       ${EDGE_IMPULSE_SOURCE_DIR}
