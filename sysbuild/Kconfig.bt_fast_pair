@@ -8,6 +8,6 @@ config BT_FAST_PAIR
 	bool "Bluetooth Fast Pair support"
 	help
 	  Enable this option to generate a Fast Pair provisioning data hex file and enable
-	  Bluetooth Fast Pair support in the main image. Note that `FP_MODEL_ID` and
-	  `FP_ANTI_SPOOFING_KEY` variables must be supplied when configuring the application
-	  for this functionality to be available.
+	  Bluetooth Fast Pair support in the main image. Note that ``FP_MODEL_ID`` and
+	  ``FP_ANTI_SPOOFING_KEY`` variables must be supplied when configuring the application for
+	  this functionality to be available.
