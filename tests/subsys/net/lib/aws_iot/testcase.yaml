@@ -4,4 +4,4 @@ tests:
     platform_allow: native_posix
     integration_platforms:
       - native_posix
-    tags: aws_iot sysbuild
+    tags: aws_iot sysbuild net

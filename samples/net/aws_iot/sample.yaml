@@ -3,7 +3,7 @@ sample:
 tests:
   sample.net.aws_iot:
     sysbuild: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild net
     build_only: true
     build_on_all: true
     integration_platforms:
