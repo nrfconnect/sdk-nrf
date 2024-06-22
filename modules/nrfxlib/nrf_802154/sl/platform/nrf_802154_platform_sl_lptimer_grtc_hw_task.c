@@ -70,6 +70,92 @@
 #error PPIB_G1_HT_CHANNEL is required to be in the [8..15] range
 #endif
 
+/* Ensure something similar to this is present in the DT:
+ * &dppic130 {
+ *	owned-channels = <2>;
+ *	sink-channels = <2>;
+ * };
+ * where 2 corresponds to DPPIC_G1_HT_CHANNEL.
+ */
+#define _HT_DT_CHECK_DPPIC_CHANNEL(node_id, prop, idx) \
+	(DT_PROP_BY_IDX(node_id, prop, idx) == DPPIC_G1_HT_CHANNEL) ||
+
+#define HT_DT_HAS_RESERVED_DPPIC_CHANNEL		\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(dppic130), sink_channels), \
+		    (DT_FOREACH_PROP_ELEM(DT_NODELABEL(dppic130), \
+					  sink_channels, \
+					  _HT_DT_CHECK_DPPIC_CHANNEL) false), \
+		    (false))
+
+BUILD_ASSERT(HT_DT_HAS_RESERVED_DPPIC_CHANNEL,
+	     "The required DPPIC_G1 channel is not reserved");
+
+
+/* Ensure something similar to this is present in the DT:
+ * &dppic132 {
+ *	owned-channels = <2>;
+ *	source-channels = <2>;
+ * where 2 corresponds to DPPIC_G2_HT_CHANNEL.
+ * };
+ */
+#define _HT_DT_CHECK_DPPIC_G2_CHANNEL(node_id, prop, idx) \
+	(DT_PROP_BY_IDX(node_id, prop, idx) == DPPIC_G2_HT_CHANNEL) ||
+
+#define HT_DT_HAS_RESERVED_DPPIC_G2_CHANNEL		\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(dppic132), source_channels), \
+		    (DT_FOREACH_PROP_ELEM(DT_NODELABEL(dppic132), \
+					  source_channels, \
+					  _HT_DT_CHECK_DPPIC_G2_CHANNEL) false), \
+		    (false))
+
+BUILD_ASSERT(HT_DT_HAS_RESERVED_DPPIC_G2_CHANNEL,
+	     "The required DPPIC_G2 channel is not reserved");
+
+/* Ensure something similar to this is present in the DT:
+ * &cpurad_ipct {
+ *	sink-channel-links = <2 13 2>;
+ * };
+ * where first 2 corresponds to IPCT_L_HT_CHANNEL.
+ */
+#define _HT_DT_CHECK_IPCT_L_LINK(node_id, prop, idx) \
+	((DT_PROP_BY_IDX(node_id, prop, idx) == IPCT_L_HT_CHANNEL) && ((idx) % 3 == 0)) ||
+
+#define HT_DT_HAS_RESERVED_IPCT_L_LINK		\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(cpurad_ipct), sink_channel_links), \
+		    (DT_FOREACH_PROP_ELEM(DT_NODELABEL(cpurad_ipct), \
+					  sink_channel_links, \
+					  _HT_DT_CHECK_IPCT_L_LINK) false), \
+		    (false))
+
+/* NOTE: this not verifying the allocation as the device tree property is an
+ * array of triplets that is difficult to separate using macros.
+ */
+BUILD_ASSERT(HT_DT_HAS_RESERVED_IPCT_L_LINK,
+	     "The required IPCT_L link is not reserved");
+
+/* Ensure something similar to this is present in the DT:
+ * &ipct130 {
+ *	source-channel-links = <2 3 2>;
+ * };
+ * where first 2 corresponds to IPCT_G1_HT_CHANNEL.
+ */
+#define _HT_DT_CHECK_IPCT_G1_LINK(node_id, prop, idx) \
+	((DT_PROP_BY_IDX(node_id, prop, idx) == IPCT_G1_HT_CHANNEL) && ((idx) % 3 == 0)) ||
+
+
+#define TS_DT_HAS_RESERVED_IPCT_G1_LINK		\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(ipct130), source_channel_links), \
+		    (DT_FOREACH_PROP_ELEM(DT_NODELABEL(ipct130), \
+					  source_channel_links, \
+					  _HT_DT_CHECK_IPCT_G1_LINK) false), \
+		    (false))
+
+/* NOTE: this not verifying the allocation as the device tree property is an
+ * array of triplets that is difficult to separate using macros.
+ */
+BUILD_ASSERT(TS_DT_HAS_RESERVED_IPCT_G1_LINK,
+	     "The required IPCT_G1 link is not reserved");
+
 void nrf_802154_platform_sl_lptimer_hw_task_cross_domain_connections_setup(uint32_t cc_channel)
 {
 	/* {c} IPCT_radio <-- IPCT_130
