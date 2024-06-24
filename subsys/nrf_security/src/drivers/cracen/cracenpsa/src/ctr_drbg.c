@@ -12,6 +12,7 @@
 #include "common.h"
 #include "cracen_psa.h"
 #include "cracen_psa_primitives.h"
+#include <sxsymcrypt/blkcipher.h>
 #include <cracen/statuscodes.h>
 #include <security/cracen.h>
 #include <sicrypto/sicrypto.h>
@@ -90,24 +91,17 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(sizeof(prng.key)));
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
 
-	struct sxkeyref keyref;
-
-	status = cracen_load_keyref(&attr, prng.key, sizeof(prng.key), &keyref);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-
 	while (temp_length < sizeof(temp)) {
 		si_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
-		size_t outlen;
+		_Static_assert((sizeof(temp) % SX_BLKCIPHER_AES_BLK_SZ) == 0);
 
-		status = cracen_cipher_crypt_ecb(&keyref, prng.V, sizeof(prng.V), temp,
-						 SX_BLKCIPHER_AES_BLK_SZ, &outlen, CRACEN_ENCRYPT,
-						 BA411_AES_COUNTERMEASURES_DISABLE);
+		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
+						 temp + temp_length, SX_BLKCIPHER_AES_BLK_SZ);
+
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		temp_length += outlen;
+		temp_length += SX_BLKCIPHER_AES_BLK_SZ;
 	}
 
 	if (data) {
@@ -169,7 +163,6 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 
 	psa_status_t status = PSA_SUCCESS;
 	size_t len_left = output_size;
-	struct sxkeyref keyref;
 
 	if (output_size > 0 && output == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -212,8 +205,6 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(sizeof(prng.key)));
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
 
-	status = cracen_load_keyref(&attr, prng.key, sizeof(prng.key), &keyref);
-
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -221,12 +212,10 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 	while (len_left > 0) {
 		size_t cur_len = MIN(len_left, SX_BLKCIPHER_AES_BLK_SZ);
 		char temp[SX_BLKCIPHER_AES_BLK_SZ];
-		size_t outlen;
 
 		si_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
-		status = cracen_cipher_crypt_ecb(&keyref, prng.V, sizeof(prng.V), temp,
-						 SX_BLKCIPHER_AES_BLK_SZ, &outlen, CRACEN_ENCRYPT,
-						 BA411_AES_COUNTERMEASURES_DISABLE);
+		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
+						 temp, sizeof(temp));
 
 		if (status != PSA_SUCCESS) {
 			goto exit;

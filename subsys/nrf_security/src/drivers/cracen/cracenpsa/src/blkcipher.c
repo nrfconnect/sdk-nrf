@@ -53,8 +53,7 @@ static psa_status_t cracen_cipher_crypt(cracen_cipher_operation_t *operation,
  */
 psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *input,
 				     size_t input_length, uint8_t *output, size_t output_size,
-				     size_t *output_length, enum cipher_operation dir,
-				     bool aes_countermeasures)
+				     size_t *output_length, enum cipher_operation dir)
 {
 	int sx_status;
 	struct sxblkcipher blkciph;
@@ -70,7 +69,7 @@ psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *
 	*output_length = 0;
 
 	if (dir == CRACEN_ENCRYPT) {
-		sx_status = sx_blkcipher_create_aesecb_enc(&blkciph, key, aes_countermeasures);
+		sx_status = sx_blkcipher_create_aesecb_enc(&blkciph, key);
 	} else {
 		sx_status = sx_blkcipher_create_aesecb_dec(&blkciph, key);
 	}
@@ -124,8 +123,7 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 				return status;
 			}
 			return cracen_cipher_crypt_ecb(&key, input, input_length, output,
-						       output_size, output_length, CRACEN_ENCRYPT,
-						       BA411_AES_COUNTERMEASURES_ENABLE);
+						       output_size, output_length, CRACEN_ENCRYPT);
 		}
 	}
 
@@ -174,8 +172,7 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 				return status;
 			}
 			return cracen_cipher_crypt_ecb(&key, input, input_length, output,
-						       output_size, output_length, CRACEN_DECRYPT,
-						       BA411_AES_COUNTERMEASURES_ENABLE);
+						       output_size, output_length, CRACEN_DECRYPT);
 		}
 	}
 
@@ -462,8 +459,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 					status = cracen_cipher_crypt_ecb(
 						&operation->keyref, operation->unprocessed_input,
 						operation->unprocessed_input_bytes, output,
-						output_size, output_length, operation->dir,
-						BA411_AES_COUNTERMEASURES_ENABLE);
+						output_size, output_length, operation->dir);
 					if (status != PSA_SUCCESS) {
 						return status;
 					}
@@ -474,8 +470,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				if (block_bytes) {
 					status = cracen_cipher_crypt_ecb(
 						&operation->keyref, input, block_bytes, output,
-						output_size, output_length, operation->dir,
-						BA411_AES_COUNTERMEASURES_ENABLE);
+						output_size, output_length, operation->dir);
 					if (status != PSA_SUCCESS) {
 						return status;
 					}
@@ -573,7 +568,7 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 			return cracen_cipher_crypt_ecb(
 				&operation->keyref, operation->unprocessed_input,
 				operation->unprocessed_input_bytes, output, output_size,
-				output_length, operation->dir, BA411_AES_COUNTERMEASURES_ENABLE);
+				output_length, operation->dir);
 		}
 	}
 
