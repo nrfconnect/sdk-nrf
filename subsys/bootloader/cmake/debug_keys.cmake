@@ -22,17 +22,17 @@ if (DEFINED ENV{SB_SIGNING_KEY_FILE} AND NOT SB_SIGNING_KEY_FILE)
   if (NOT EXISTS "$ENV{SB_SIGNING_KEY_FILE}")
     message(FATAL_ERROR "ENV points to non-existing PEM file '$ENV{SB_SIGNING_KEY_FILE}'")
   else()
-    set(SIGNATURE_PRIVATE_KEY_FILE $ENV{SB_SIGNING_KEY_FILE})
+    set(_X_SIGNATURE_PRIVATE_KEY_FILE $ENV{SB_SIGNING_KEY_FILE})
   endif()
 endif()
 
 # Next, check command line arguments
 if (DEFINED SB_SIGNING_KEY_FILE)
-  set(SIGNATURE_PRIVATE_KEY_FILE ${SB_SIGNING_KEY_FILE})
+  set(_X_SIGNATURE_PRIVATE_KEY_FILE ${SB_SIGNING_KEY_FILE})
 endif()
 
 # Check if debug sign key should be generated.
-if( "${CONFIG_SB_SIGNING_KEY_FILE}" STREQUAL "")
+if(("${CONFIG_SB_SIGNING_KEY_FILE}" STREQUAL "") AND NOT DEFINED _X_SIGNATURE_PRIVATE_KEY_FILE)
   message(WARNING "
     --------------------------------------------------------------
     --- WARNING: Using generated NSIB public/private key-pair. ---
@@ -62,12 +62,17 @@ if( "${CONFIG_SB_SIGNING_KEY_FILE}" STREQUAL "")
     )
   set(SIGN_KEY_FILE_DEPENDS debug_sign_key_target)
 else()
+
+  if(NOT DEFINED _X_SIGNATURE_PRIVATE_KEY_FILE)
+    set(_X_SIGNATURE_PRIVATE_KEY_FILE ${CONFIG_SB_SIGNING_KEY_FILE})
+  endif()
+
   # Resolve path.
   if(IS_ABSOLUTE ${CONFIG_SB_SIGNING_KEY_FILE})
-    set(SIGNATURE_PRIVATE_KEY_FILE ${CONFIG_SB_SIGNING_KEY_FILE})
+    set(SIGNATURE_PRIVATE_KEY_FILE ${_X_SIGNATURE_PRIVATE_KEY_FILE})
   else()
     set(SIGNATURE_PRIVATE_KEY_FILE
-      ${APPLICATION_CONFIG_DIR}/${CONFIG_SB_SIGNING_KEY_FILE})
+      ${APPLICATION_CONFIG_DIR}/${_X_SIGNATURE_PRIVATE_KEY_FILE})
   endif()
 
   if (NOT EXISTS ${SIGNATURE_PRIVATE_KEY_FILE})
