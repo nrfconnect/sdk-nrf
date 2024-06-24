@@ -154,3 +154,37 @@ crypto:
     - zephyr/include/drivers/serial/
     - zephyr/modules/mbedtls/
     - modules/crypto/
+
+zigbee:
+  files:
+    - nrf/include/zigbee/
+    - nrf/subsys/zigbee
+    - nrf/subsys/mpsl/
+    - nrf/subsys/ieee802154/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/partition_manager/
+    - nrf/subsys/dfu/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/pcd/
+    - nrf/subsys/bluetooth/controller/
+    - nrf/subsys/bluetooth/services/
+    - nrf/drivers/mpsl/
+    - nrf/dts/bindings/radio_fem/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/modules/mcuboot/
+    - nrf/samples/zigbee/
+    - nrf/tests/subsys/zigbee/
+    - nrf/applications/zigbee_weather_station/
+    - nrf/samples/nrf5340/multiprotocol_rpmsg/
+    - nrfxlib/softdevice_controller/include/
+    - nrfxlib/softdevice_controller/lib/
+    - nrfxlib/mpsl/include/
+    - nrfxlib/mpsl/lib/
+    - nrfxlib/nrf_802154/driver/
+    - nrfxlib/nrf_802154/serialization/
+    - nrfxlib/nrf_802154/sl/
+    - nrfxlib/zboss/
+    - zephyr/subsys/mgmt/mcumgr/
+    - zephyr/subsys/dfu/
+    - zephyr/include/mgmt/mcumgr/
+    - zephyr/include/dfu/
