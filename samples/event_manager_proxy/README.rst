@@ -83,9 +83,11 @@ Complete the following steps to program the sample:
 
    **nRF54H20 DK**
 
+   A snippet for running the PPR core is added automatically to build configuration.
+
    .. code-block:: console
 
-      west build -b nrf54h20dk/nrf54h20/cpuapp -- -Devent_manager_proxy_SNIPPET=nordic-ppr
+      west build -b nrf54h20dk/nrf54h20/cpuapp
 
    or use twister test case:
 
