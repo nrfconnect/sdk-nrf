@@ -24,14 +24,16 @@
  */
 #define CMDMA_INTMASK_EN ((1 << 2) | (1 << 5) | (1 << 4))
 
-
 NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_symmetric);
 
 void sx_hw_reserve(struct sx_dmactl *dma)
 {
 	cracen_acquire();
 	nrf_security_mutex_lock(cracen_mutex_symmetric);
-	dma->hw_acquired = true;
+
+	if (dma) {
+		dma->hw_acquired = true;
+	}
 
 	/* Enable CryptoMaster interrupts. */
 	sx_wrreg(REG_INT_EN, 0);
@@ -44,9 +46,11 @@ void sx_hw_reserve(struct sx_dmactl *dma)
 
 void sx_cmdma_release_hw(struct sx_dmactl *dma)
 {
-	if (dma->hw_acquired) {
+	if (dma == NULL || dma->hw_acquired) {
 		cracen_release();
 		nrf_security_mutex_unlock(cracen_mutex_symmetric);
-		dma->hw_acquired = false;
+		if (dma) {
+			dma->hw_acquired = false;
+		}
 	}
 }
