@@ -188,3 +188,28 @@ zigbee:
     - zephyr/subsys/dfu/
     - zephyr/include/mgmt/mcumgr/
     - zephyr/include/dfu/
+
+openthread:
+  files:
+    - modules/lib/openthread/
+    - zephyr/include/zephyr/net/
+    - zephyr/modules/openthread/
+    - zephyr/modules/mbedtls/
+    - zephyr/subsys/net/
+    - zephyr/subsys/settings/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/ieee802154/
+    - nrf/subsys/net/openthread/
+    - nrf/subsys/net/lib/coap_utils/
+    - nrf/drivers/mpsl/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/entropy/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/samples/openthread/
+    - nrfxlib/mpsl/include/
+    - nrfxlib/mpsl/lib/
+    - nrfxlib/nrf_802154/driver/
+    - nrfxlib/nrf_802154/serialization/
+    - nrfxlib/nrf_802154/sl/
+    - nrfxlib/crypto/
+    - nrfxlib/openthread/
