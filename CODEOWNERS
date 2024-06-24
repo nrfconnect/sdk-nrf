@@ -100,6 +100,7 @@ Kconfig*                                  @tejlmand
 /include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
 /include/dult.h                           @alstrzebonski @kapi-no
+/include/logging/                         @nrfconnect/ncs-protocols-serialization
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
@@ -263,7 +264,7 @@ Kconfig*                                  @tejlmand
 /subsys/event_manager_proxy/              @rakons
 /subsys/fw_info/                          @hakonfam
 /subsys/gazell/                           @leewkb4567
-/subsys/logging/                          @Damian-Nordic
+/subsys/logging/                          @nrfconnect/ncs-protocols-serialization
 /subsys/mpsl/                             @nrfconnect/ncs-dragoon
 /subsys/mpsl/cx/                          @ankuns @martintv
 /subsys/mpsl/fem/                         @ankuns @martintv
