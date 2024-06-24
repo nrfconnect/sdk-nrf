@@ -5,7 +5,7 @@ sample:
 tests:
   sample.rsa.cc3xx:
     sysbuild: true
-    tags: introduction psa cc3xx sysbuild
+    tags: introduction psa cc3xx sysbuild crypto
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns nrf5340dk/nrf5340/cpuapp nrf9160dk/nrf9160/ns
       nrf9160dk/nrf9160 nrf52840dk/nrf52840 nrf9161dk/nrf9161 nrf9161dk/nrf9161/ns
@@ -27,7 +27,7 @@ tests:
       - nrf9151dk/nrf9151/ns
   sample.rsa.cracen:
     sysbuild: true
-    tags: introduction psa cracen sysbuild
+    tags: introduction psa cracen sysbuild crypto
     platform_allow: >
       nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk/nrf54l15/cpuapp/ns
     harness: console
