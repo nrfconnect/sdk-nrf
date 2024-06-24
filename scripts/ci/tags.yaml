@@ -135,3 +135,22 @@ matter:
     - modules/lib/suit-generator/
     - modules/lib/matter/
     - modules/lib/hostap/
+
+crypto:
+  files:
+    - nrf/cmake/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/net/
+    - nrf/subsys/partition_manager/
+    - nrf/subsys/nrf_security/
+    - nrf/modules/cjson/
+    - nrf/include/tfm/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/samples/crypto/
+    - nrf/tests/crypto/
+    - zephyr/drivers/entropy/
+    - zephyr/drivers/serial/
+    - zephyr/include/drivers/serial/
+    - zephyr/modules/mbedtls/
+    - modules/crypto/
