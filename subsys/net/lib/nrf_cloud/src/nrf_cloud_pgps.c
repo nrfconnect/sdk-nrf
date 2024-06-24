@@ -24,6 +24,7 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 
+#include "nrf_cloud_mem.h"
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_pgps_schema_v1.h"
@@ -1732,8 +1733,9 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	state = PGPS_NONE;
 
 	if (!write_buf) {
-		write_buf = k_malloc(flash_page_size);
+		write_buf = nrf_cloud_malloc(flash_page_size);
 		if (!write_buf) {
+			LOG_ERR("Failed to allocate write buffer");
 			return -ENOMEM;
 		}
 #if PGPS_DEBUG
