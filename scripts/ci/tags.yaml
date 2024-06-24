@@ -97,7 +97,17 @@ posix:
   files:
     - zephyr/lib/posix/
 
-# cbprintf:
-#    files:
-#        - zephyr/lib/os/cbprintf*
-#        - zephyr/lib/posix
+tfm:
+  files:
+    - nrf/cmake/
+    - nrf/include/tfm/
+    - nrf/modules/nrfxlib/
+    - nrf/modules/tfm/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/partition_manager/
+    - nrf/subsys/nrf_security/
+    - zephyr/drivers/entropy/
+    - zephyr/modules/trusted-firmware-m/
+    - modules/crypto/
+    - nrfxlib/crypto/

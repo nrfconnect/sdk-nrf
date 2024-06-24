@@ -16,5 +16,5 @@ common:
 tests:
   sample.tfm.psa_template:
     sysbuild: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild tfm
     build_only: true
