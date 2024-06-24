@@ -97,7 +97,12 @@ posix:
   files:
     - zephyr/lib/posix/
 
-# cbprintf:
-#    files:
-#        - zephyr/lib/os/cbprintf*
-#        - zephyr/lib/posix
+wifi:
+  files:
+    - nrf/drivers/wifi/
+    - nrf/modules/hostap/
+    - modules/lib/hostap/
+    - zephyr/subsys/net/l2/wifi/
+    - zephyr/subsys/net/l2/ethernet/
+    - nrfxlib/nrf_wifi/
+    - nrfxlib/crypto/
