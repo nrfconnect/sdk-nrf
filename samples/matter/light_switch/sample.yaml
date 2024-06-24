@@ -12,7 +12,7 @@ tests:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter
   sample.matter.light_switch.release:
     sysbuild: true
     build_only: true
@@ -25,7 +25,7 @@ tests:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter
   sample.matter.light_switch.lto:
     sysbuild: true
     build_only: true
@@ -37,7 +37,7 @@ tests:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter
   # Sample to execute load tests
   sample.matter.light_switch.persistent_subscriptions:
     sysbuild: true
@@ -50,4 +50,4 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter

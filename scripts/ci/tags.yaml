@@ -112,3 +112,43 @@ wifi:
     - zephyr/subsys/net/l2/ethernet/
     - nrfxlib/nrf_wifi/
     - nrfxlib/crypto/
+
+matter:
+  files:
+    - nrf/drivers/mpsl/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/wifi/
+    - nrf/modules/hostap/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/ieee802154/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/partition_manager/
+    - nrf/subsys/dfu/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/pcd/
+    - nrf/subsys/bluetooth/controller/
+    - nrf/subsys/net/openthread/
+    - nrf/subsys/nrf_security/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/modules/mcuboot/
+    - nrf/snippets/matter-diagnostic-logs/
+    - nrf/samples/matter/
+    - nrf/applications/matter_weather_station/
+    - nrf/applications/matter_bridge/
+    - nrfxlib/openthread/
+    - nrfxlib/nrf_802154/driver/
+    - nrfxlib/nrf_802154/serialization/
+    - nrfxlib/nrf_802154/sl/
+    - nrfxlib/nrf_wifi/
+    - nrfxlib/crypto/
+    - zephyr/include/dfu/
+    - zephyr/include/mgmt/mcumgr/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/net/
+    - zephyr/subsys/mgmt/mcumgr/
+    - zephyr/drivers/net/
+    - zephyr/subsys/bluetooth/
+    - modules/lib/suit-generator/
+    - modules/lib/matter/
+    - modules/lib/hostap/
