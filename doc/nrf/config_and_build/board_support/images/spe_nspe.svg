@@ -41,14 +41,14 @@
 						x="8.85" dy="1.2em" class="st3">application)</tspan></text>		</g>
 		<g id="shape3190-8" transform="translate(6.97409,-202.201)">
 			<title>Sheet.3190</title>
-			<desc>Build target: cpuapp</desc>
+			<desc>Board target: cpuapp</desc>
 			<rect x="0" y="203.201" width="158.131" height="26.0948" class="st4"/>
-			<text x="34.59" y="219.25" class="st5">Build target: cpuapp </text>		</g>
+			<text x="32.37" y="219.25" class="st5">Board target: cpuapp </text>		</g>
 		<g id="shape3309-11" transform="translate(225.547,-202.201)">
 			<title>Sheet.3309</title>
-			<desc>Build target: cpuapp_ns</desc>
+			<desc>Board target: cpuapp_ns</desc>
 			<rect x="0" y="203.201" width="158.131" height="26.0948" class="st4"/>
-			<text x="26.53" y="219.25" class="st5">Build target: cpuapp_ns</text>		</g>
+			<text x="24.3" y="219.25" class="st5">Board target: cpuapp_ns</text>		</g>
 		<g id="shape3310-14" transform="translate(8.08661,-34.2075)">
 			<title>Sheet.3310</title>
 			<desc>User application</desc>
