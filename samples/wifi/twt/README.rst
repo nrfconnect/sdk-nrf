@@ -95,6 +95,10 @@ The following is an example of the CLI command:
 
    west build -b nrf7002dk/nrf5340/cpuapp
 
+.. important::
+
+   It is mandatory to set the :kconfig:option:`CONFIG_TRAFFIC_GEN_REMOTE_IPV4_ADDR` Kconfig option to the IPv4 address of the host running the traffic generator server. If this is set incorrectly, the sample may fail to work as expected.
+
 Testing
 =======
 
