@@ -213,3 +213,20 @@ openthread:
     - nrfxlib/nrf_802154/sl/
     - nrfxlib/crypto/
     - nrfxlib/openthread/
+
+tfm:
+  files:
+    - nrf/cmake/
+    - nrf/include/tfm/
+    - nrf/modules/nrfxlib/
+    - nrf/modules/tfm/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/partition_manager/
+    - nrf/subsys/nrf_security/
+    - nrf/samples/tfm/
+    - nrf/tests/tfm/
+    - zephyr/drivers/entropy/
+    - zephyr/modules/trusted-firmware-m/
+    - modules/crypto/
+    - nrfxlib/crypto/
