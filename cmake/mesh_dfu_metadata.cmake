@@ -41,3 +41,7 @@ function(mesh_dfu_metadata)
     COMMAND_EXPAND_LISTS
   )
 endfunction()
+
+if(SYSBUILD)
+  mesh_dfu_metadata()
+endif()
