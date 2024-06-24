@@ -67,6 +67,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <stdint.h>
 struct sxblkcipher;
 
 /** Adds data to be encrypted/decrypted.
@@ -216,6 +217,23 @@ int sx_blkcipher_wait(struct sxblkcipher *c);
  *        first
  */
 int sx_blkcipher_status(struct sxblkcipher *c);
+
+/**
+ * @brief Specialized function to do ECB encryption, to be used for PRNG only.
+ *
+ * @param key[in]           AES key.
+ * @param key_size[in]      AES key size.
+ * @param input[in]         Plaintext input.
+ * @param input_size[in]    Plaintext size.
+ * @param output[out]       Ciphertext output.
+ * @param output_size[in]  Ciphertext output size.
+ *
+ * @return ::SX_OK
+ * @return ::SX_ERR_HW_PROCESSING
+ * @return ::SX_ERR_DMA_FAILED
+ */
+int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_t input_size,
+			    uint8_t *output, size_t output_size);
 
 #ifdef __cplusplus
 }
