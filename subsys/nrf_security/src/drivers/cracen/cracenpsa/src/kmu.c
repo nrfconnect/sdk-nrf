@@ -18,8 +18,12 @@
 #include "common.h"
 #include "kmu.h"
 
-/* NCSDK-25121: Ensure address of this array is at a fixed address. */
-uint8_t kmu_push_area[64] __aligned(16);
+/* The section .nrf_kmu_reserved_push_area is placed at the top RAM address
+ * by the linker scripts. We do that for both the secure and non-secure builds.
+ * Since this buffer is placed on the top of RAM we don't need to have the alignment
+ * attribute anymore.
+ */
+uint8_t kmu_push_area[64] __attribute__((section(".nrf_kmu_reserved_push_area")));
 
 typedef struct kmu_metadata {
 	uint32_t metadata_version: 4;
