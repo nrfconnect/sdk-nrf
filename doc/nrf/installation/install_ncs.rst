@@ -17,7 +17,8 @@ There are different ways to install the |NCS|, depending on your preferred devel
 Regardless of which way you choose, the following steps install the |NCS| source code and the |NCS| :term:`toolchain`.
 This includes everything that is required by Zephyr's :ref:`zephyr:getting_started` together with additional tools and Python dependencies that the |NCS| uses.
 
-Using |VSC| and the |nRFVSC| is also covered in the `Installing nRF Connect SDK and VS Code`_ exercise of the `nRF Connect SDK Fundamentals course`_ on Nordic Developer Academy.
+.. note::
+    Using |VSC| and the |nRFVSC| is also covered in the `Installing nRF Connect SDK and VS Code`_ exercise of the `nRF Connect SDK Fundamentals course`_ on Nordic Developer Academy.
 
 .. rst-class:: numbered-step
 
@@ -76,7 +77,7 @@ Install the |NCS| toolchain
 ***************************
 
 The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds tools and modules required to build |NCS| samples and applications on top of it.
-These include the :ref:`required tools <requirements_toolchain_tools>`, the Python dependencies, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
+These include the :ref:`required tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
 
 When you first install the |NCS|, it is recommended to install the latest released versions of the SDK and the toolchain.
 
@@ -146,6 +147,8 @@ Depending on your preferred development environment, complete the following step
 
       To check the current configuration setting, use the ``nrfutil toolchain-manager config --show`` command.
       To read more about these commands, use the ``nrfutil toolchain-manager --help`` command.
+
+You can check the versions of the required tools and Python dependencies on the :ref:`Requirements reference page <requirements_toolchain>`.
 
 .. _cloning_the_repositories_win:
 .. _cloning_the_repositories:
@@ -328,23 +331,31 @@ Define the required environment variables as follows, depending on your operatin
 
    .. tab:: Windows
 
-      Navigate to the :file:`ncs` directory and run the following command in a terminal window:
+      Complete the following steps:
 
-      .. code-block:: console
+      1. Navigate to the :file:`ncs` directory.
+      #. Open the directory for your |NCS| version.
+      #. Run the following command in a terminal window:
 
-         zephyr/zephyr-env.cmd
+         .. code-block:: console
 
-      If you need to define additional environment variables, create the file :file:`%userprofile%\\zephyrrc.cmd` and add the variables there.
+            zephyr\zephyr-env.cmd
+
+      If you need to define additional environment variables, create the file :file:`%userprofile%/zephyrrc.cmd` and add the variables there.
       This file is loaded automatically when you run the above command.
       See :ref:`Zephyr documentation about using zephyrrc files <zephyr:env_vars_zephyrrc>` for more information.
 
    .. tab:: Linux
 
-      Navigate to the :file:`ncs` directory and run the following command in a terminal window:
+      Complete the following steps:
 
-      .. code-block:: console
+      1. Navigate to the :file:`ncs` directory.
+      #. Open the directory for your |NCS| version.
+      #. Run the following command in a terminal window:
 
-         source zephyr/zephyr-env.sh
+         .. code-block:: console
+
+            source zephyr/zephyr-env.sh
 
       If you need to define additional environment variables, create the file :file:`~/.zephyrrc` and add the variables there.
       This file is loaded automatically when you run the above command.
@@ -352,11 +363,15 @@ Define the required environment variables as follows, depending on your operatin
 
    .. tab:: macOS
 
-      Navigate to the :file:`ncs` directory and run the following command in a terminal window:
+      Complete the following steps:
 
-      .. code-block:: console
+      1. Navigate to the :file:`ncs` directory.
+      #. Open the directory for your |NCS| version.
+      #. Run the following command in a terminal window:
 
-         source zephyr/zephyr-env.sh
+         .. code-block:: console
+
+            source zephyr/zephyr-env.sh
 
       If you need to define additional environment variables, create the file :file:`~/.zephyrrc` and add the variables there.
       This file is loaded automatically when you run the above command.
@@ -648,12 +663,20 @@ Legacy installation with Toolchain Manager
             #. Click the dropdown menu for the installed nRF Connect SDK version.
 
                .. figure:: images/gs-assistant_tm_dropdown.png
-                  :alt: The Toolchain Manager dropdown menu for the installed nRF Connect SDK version, cropped
+                  :alt: The Toolchain Manager dropdown menu for the installed nRF Connect SDK version, on Windows
 
-                  The Toolchain Manager dropdown menu options
+                  The Toolchain Manager dropdown menu options (Windows)
 
-            #. Select :guilabel:`Open command prompt`.
+            #. Select the option to open a terminal window:
+
+               * Windows: :guilabel:`Open command prompt`
+               * Linux and macOS: :guilabel:`Open Terminal`
 
             You can then follow the instructions in :ref:`creating_cmd`.
+
+            .. note::
+                You can use the :guilabel:`Generate environment script` button to create a script that lets you switch between different |NCS| versions.
+                After you create the script, rename it and put it in a directory in your system :envvar:`PATH`.
+                This works the same way as the ``--as-script`` flag for nRF Util's `Toolchain Manager command`_ (``nrfutil toolchain-manager env --as-script``).
 
 .. |install_latest_version| replace:: When you first install the |NCS|, it is recommended to install the latest released versions of the SDK and the toolchain.
