@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "../../nrf5340_audio/src/audio/Kconfig"
+rsource "../../nrf5340_audio/src/bluetooth/Kconfig"
+rsource "../../nrf5340_audio/src/modules/Kconfig"
+rsource "../../nrf5340_audio/src/utils/Kconfig"
+
+#----------------------------------------------------------------------------#
+
+config TRANSPORT_BIS
+	bool "Use BIS (Broadcast Isochronous Stream)"
+
+menu "Logging"
+
+module = MAIN
+module-str = main
+source "subsys/logging/Kconfig.template.log_config"
+
+config PRINT_STACK_USAGE_MS
+	depends on THREAD_ANALYZER && INIT_STACKS
+	int "Print stack usage every x milliseconds"
+	default 5000
+
+endmenu # Log levels
+
+source "Kconfig.zephyr"

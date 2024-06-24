@@ -86,14 +86,6 @@ module = MODULE_POWER
 module-str = module-power
 source "subsys/logging/Kconfig.template.log_config"
 
-module = MODULE_SD_CARD
-module-str = module-sd-card
-source "subsys/logging/Kconfig.template.log_config"
-
-module = MODULE_SD_CARD_PLAYBACK
-module-str = module-sd-card-playback
-source "subsys/logging/Kconfig.template.log_config"
-
 module = MODULE_NRF5340_AUDIO_DK
 module-str = module-nrf5340-audio_dk
 source "subsys/logging/Kconfig.template.log_config"
@@ -157,6 +149,14 @@ config NRF5340_AUDIO_SD_CARD_MODULE
 	help
 	  Include the audio SD card module to support streaming audio files from an SD card.
 
+if NRF5340_AUDIO_SD_CARD_MODULE
+
+module = MODULE_SD_CARD
+module-str = module-sd-card
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF5340_AUDIO_SD_CARD_MODULE
+
 menuconfig SD_CARD_PLAYBACK
 	bool "Enable playback from SD card"
 	depends on NRF5340_AUDIO_SD_CARD_MODULE
@@ -177,6 +177,11 @@ config SD_CARD_PLAYBACK_RING_BUF_SIZE
 config SD_CARD_PLAYBACK_THREAD_PRIORITY
 	int "Priority for the SD card playback thread"
 	default 7
+
+
+module = MODULE_SD_CARD_PLAYBACK
+module-str = module-sd-card-playback
+source "subsys/logging/Kconfig.template.log_config"
 
 endif # SD_CARD_PLAYBACK
 

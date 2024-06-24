@@ -368,6 +368,38 @@ int bt_mgmt_adv_buffer_put(struct bt_data *const adv_buf, uint32_t *index, size_
 	return 0;
 }
 
+int bt_mgmt_per_adv_stop(uint8_t ext_adv_index)
+{
+	int ret;
+
+	ret = bt_le_per_adv_stop(ext_adv[ext_adv_index]);
+	if (ret) {
+		LOG_ERR("Failed to top periodic advertising: %d", ret);
+		return ret;
+	}
+
+	return 0;
+}
+
+int bt_mgmt_ext_adv_stop(uint8_t ext_adv_index)
+{
+	int ret;
+
+	ret = bt_le_ext_adv_stop(ext_adv[ext_adv_index]);
+	if (ret) {
+		LOG_ERR("Failed to stop advertising set: %d", ret);
+		return ret;
+	}
+
+	ret = bt_le_ext_adv_delete(ext_adv[ext_adv_index]);
+	if (ret) {
+		LOG_ERR("Failed to delete advertising set: %d", ret);
+		return ret;
+	}
+
+	return 0;
+}
+
 int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *adv, size_t adv_size,
 		      const struct bt_data *per_adv, size_t per_adv_size, bool connectable)
 {
