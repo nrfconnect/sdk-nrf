@@ -11,7 +11,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter
   applications.matter_bridge.lto:
     sysbuild: true
     build_only: true
@@ -20,7 +20,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter
   applications.matter_bridge.lto.smp_dfu:
     sysbuild: true
     build_only: true
@@ -30,7 +30,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter
   applications.matter_bridge.lto.br_ble:
     sysbuild: true
     build_only: true
@@ -40,7 +40,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter
   applications.matter_bridge.release.br_ble:
     sysbuild: true
     build_only: true
@@ -50,7 +50,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter
   applications.matter_bridge.lto.nrf70ek:
     sysbuild: true
     build_only: true
@@ -61,7 +61,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter
   applications.matter_bridge.lto.memory_profiling:
     sysbuild: true
     build_only: true
@@ -71,4 +71,4 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: sysbuild
+    tags: sysbuild matter
