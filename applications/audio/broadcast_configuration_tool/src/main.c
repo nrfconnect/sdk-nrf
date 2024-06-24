@@ -1,52 +1,29 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-#include "streamctrl.h"
 
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/sys/byteorder.h>
+#include <zephyr/shell/shell.h>
+#include <nrfx_clock.h>
 
 #include "broadcast_source.h"
 #include "zbus_common.h"
-#include "nrf5340_audio_dk.h"
-#include "led.h"
-#include "button_assignments.h"
 #include "macros_common.h"
-#include "audio_system.h"
 #include "bt_mgmt.h"
-#include "fw_info_app.h"
+#include "sd_card.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
-ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
-
-ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
-
-ZBUS_CHAN_DECLARE(button_chan);
-ZBUS_CHAN_DECLARE(le_audio_chan);
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 ZBUS_CHAN_DECLARE(sdu_ref_chan);
 
-ZBUS_OBS_DECLARE(sdu_ref_msg_listen);
-
-static struct k_thread button_msg_sub_thread_data;
-static struct k_thread le_audio_msg_sub_thread_data;
-
-static k_tid_t button_msg_sub_thread_id;
-static k_tid_t le_audio_msg_sub_thread_id;
-
 struct bt_le_ext_adv *ext_adv;
-
-K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
-K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
-
-static enum stream_state strm_state = STATE_PAUSED;
 
 /* Buffer for the UUIDs. */
 #define EXT_ADV_UUID_BUF_SIZE (128)
@@ -63,12 +40,13 @@ static struct bt_data ext_adv_buf[CONFIG_BT_ISO_MAX_BIG][CONFIG_EXT_ADV_BUF_MAX]
 /* Periodic advertising buffer. */
 static struct bt_data per_adv_buf[CONFIG_BT_ISO_MAX_BIG];
 
-#if (CONFIG_AURACAST)
 /* Total size of the PBA buffer includes the 16-bit UUID, 8-bit features and the
  * meta data size.
  */
 #define BROADCAST_SRC_PBA_BUF_SIZE                                                                 \
 	(BROADCAST_SOURCE_PBA_HEADER_SIZE + CONFIG_BT_AUDIO_BROADCAST_PBA_METADATA_SIZE)
+
+#define PRESET_NAME_MAX 8
 
 /* Number of metadata items that can be assigned. */
 #define BROADCAST_SOURCE_PBA_METADATA_VACANT                                                       \
@@ -78,6 +56,58 @@ static struct bt_data per_adv_buf[CONFIG_BT_ISO_MAX_BIG];
  * (any addition to pba_buf requires an increase of this value)
  */
 uint8_t pba_data[CONFIG_BT_ISO_MAX_BIG][BROADCAST_SRC_PBA_BUF_SIZE];
+
+/* The location and context type will be set by further down */
+static struct bt_bap_lc3_preset lc3_preset_8_2_1 =
+	BT_BAP_LC3_BROADCAST_PRESET_8_2_1(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_8_2_2 =
+	BT_BAP_LC3_BROADCAST_PRESET_8_2_2(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_16_2_1 =
+	BT_BAP_LC3_BROADCAST_PRESET_16_2_1(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_16_2_2 =
+	BT_BAP_LC3_BROADCAST_PRESET_16_2_2(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_24_2_1 =
+	BT_BAP_LC3_BROADCAST_PRESET_24_2_1(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_24_2_2 =
+	BT_BAP_LC3_BROADCAST_PRESET_24_2_2(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_32_2_1 =
+	BT_BAP_LC3_BROADCAST_PRESET_32_2_1(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_32_2_2 =
+	BT_BAP_LC3_BROADCAST_PRESET_32_2_2(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_48_2_1 =
+	BT_BAP_LC3_BROADCAST_PRESET_48_2_1(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_48_2_2 =
+	BT_BAP_LC3_BROADCAST_PRESET_48_2_2(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_48_4_1 =
+	BT_BAP_LC3_BROADCAST_PRESET_48_4_1(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_48_4_2 =
+	BT_BAP_LC3_BROADCAST_PRESET_48_4_2(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_48_6_1 =
+	BT_BAP_LC3_BROADCAST_PRESET_48_6_1(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+static struct bt_bap_lc3_preset lc3_preset_48_6_2 =
+	BT_BAP_LC3_BROADCAST_PRESET_48_6_2(BT_AUDIO_LOCATION_MONO_AUDIO, BT_AUDIO_CONTEXT_TYPE_ANY);
+
+struct bap_preset {
+	struct bt_bap_lc3_preset *preset;
+	char name[PRESET_NAME_MAX];
+};
+
+static struct bap_preset bap_presets[] = {
+	{.preset = &lc3_preset_8_2_1, .name = "8_2_1"},
+	{.preset = &lc3_preset_8_2_2, .name = "8_2_2"},
+	{.preset = &lc3_preset_16_2_1, .name = "16_2_1"},
+	{.preset = &lc3_preset_16_2_2, .name = "16_2_2"},
+	{.preset = &lc3_preset_24_2_1, .name = "24_2_1"},
+	{.preset = &lc3_preset_24_2_2, .name = "24_2_2"},
+	{.preset = &lc3_preset_32_2_1, .name = "32_2_1"},
+	{.preset = &lc3_preset_32_2_2, .name = "32_2_2"},
+	{.preset = &lc3_preset_48_2_1, .name = "48_2_1"},
+	{.preset = &lc3_preset_48_2_2, .name = "48_2_2"},
+	{.preset = &lc3_preset_48_4_1, .name = "48_4_1"},
+	{.preset = &lc3_preset_48_4_2, .name = "48_4_2"},
+	{.preset = &lc3_preset_48_6_1, .name = "48_6_1"},
+	{.preset = &lc3_preset_48_6_2, .name = "48_6_2"},
+};
 
 /**
  * @brief	Broadcast source static extended advertising data.
@@ -89,192 +119,12 @@ static struct broadcast_source_ext_adv_data ext_adv_data[] = {
 	{.uuid_buf = &uuid_data2,
 	 .pba_metadata_vacant_cnt = BROADCAST_SOURCE_PBA_METADATA_VACANT,
 	 .pba_buf = pba_data[1]}};
-#else
-/**
- * @brief	Broadcast source static extended advertising data.
- */
-static struct broadcast_source_ext_adv_data ext_adv_data[] = {{.uuid_buf = &uuid_data},
-							      {.uuid_buf = &uuid_data2}};
-#endif /* (CONFIG_AURACAST) */
 
 /**
  * @brief	Broadcast source static periodic advertising data.
  */
 static struct broadcast_source_per_adv_data per_adv_data[] = {{.base_buf = &base_data},
 							      {.base_buf = &base_data2}};
-
-/* Function for handling all stream state changes */
-static void stream_state_set(enum stream_state stream_state_new)
-{
-	strm_state = stream_state_new;
-}
-
-/**
- * @brief	Handle button activity.
- */
-static void button_msg_sub_thread(void)
-{
-	int ret;
-	const struct zbus_channel *chan;
-
-	while (1) {
-		ret = zbus_sub_wait(&button_evt_sub, &chan, K_FOREVER);
-		ERR_CHK(ret);
-
-		struct button_msg msg;
-
-		ret = zbus_chan_read(chan, &msg, ZBUS_READ_TIMEOUT_MS);
-		ERR_CHK(ret);
-
-		LOG_DBG("Got btn evt from queue - id = %d, action = %d", msg.button_pin,
-			msg.button_action);
-
-		if (msg.button_action != BUTTON_PRESS) {
-			LOG_WRN("Unhandled button action");
-			return;
-		}
-
-		switch (msg.button_pin) {
-		case BUTTON_PLAY_PAUSE:
-			if (strm_state == STATE_STREAMING) {
-				ret = broadcast_source_stop(0);
-				if (ret) {
-					LOG_WRN("Failed to stop broadcaster: %d", ret);
-				}
-			} else if (strm_state == STATE_PAUSED) {
-				ret = broadcast_source_start(0, ext_adv);
-				if (ret) {
-					LOG_WRN("Failed to start broadcaster: %d", ret);
-				}
-			} else {
-				LOG_WRN("In invalid state: %d", strm_state);
-			}
-
-			break;
-
-		case BUTTON_4:
-			if (IS_ENABLED(CONFIG_AUDIO_TEST_TONE)) {
-				if (strm_state != STATE_STREAMING) {
-					LOG_WRN("Not in streaming state");
-					break;
-				}
-
-				ret = audio_system_encode_test_tone_step();
-				if (ret) {
-					LOG_WRN("Failed to play test tone, ret: %d", ret);
-				}
-
-				break;
-			}
-
-			break;
-
-		default:
-			LOG_WRN("Unexpected/unhandled button id: %d", msg.button_pin);
-		}
-
-		STACK_USAGE_PRINT("button_msg_thread", &button_msg_sub_thread_data);
-	}
-}
-
-/**
- * @brief	Handle Bluetooth LE audio events.
- */
-static void le_audio_msg_sub_thread(void)
-{
-	int ret;
-	const struct zbus_channel *chan;
-
-	while (1) {
-		struct le_audio_msg msg;
-
-		ret = zbus_sub_wait_msg(&le_audio_evt_sub, &chan, &msg, K_FOREVER);
-		ERR_CHK(ret);
-
-		LOG_DBG("Received event = %d, current state = %d", msg.event, strm_state);
-
-		switch (msg.event) {
-		case LE_AUDIO_EVT_STREAMING:
-			LOG_DBG("LE audio evt streaming");
-
-			audio_system_encoder_start();
-
-			if (strm_state == STATE_STREAMING) {
-				LOG_DBG("Got streaming event in streaming state");
-				break;
-			}
-
-			audio_system_start();
-			stream_state_set(STATE_STREAMING);
-			ret = led_blink(LED_APP_1_BLUE);
-			ERR_CHK(ret);
-
-			break;
-
-		case LE_AUDIO_EVT_NOT_STREAMING:
-			LOG_DBG("LE audio evt not_streaming");
-
-			audio_system_encoder_stop();
-
-			if (strm_state == STATE_PAUSED) {
-				LOG_DBG("Got not_streaming event in paused state");
-				break;
-			}
-
-			stream_state_set(STATE_PAUSED);
-			audio_system_stop();
-			ret = led_on(LED_APP_1_BLUE);
-			ERR_CHK(ret);
-
-			break;
-
-		default:
-			LOG_WRN("Unexpected/unhandled le_audio event: %d", msg.event);
-
-			break;
-		}
-
-		STACK_USAGE_PRINT("le_audio_msg_thread", &le_audio_msg_sub_thread_data);
-	}
-}
-
-/**
- * @brief	Create zbus subscriber threads.
- *
- * @return	0 for success, error otherwise.
- */
-static int zbus_subscribers_create(void)
-{
-	int ret;
-
-	button_msg_sub_thread_id = k_thread_create(
-		&button_msg_sub_thread_data, button_msg_sub_thread_stack,
-		CONFIG_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(button_msg_sub_thread_id, "BUTTON_MSG_SUB");
-	if (ret) {
-		LOG_ERR("Failed to create button_msg thread");
-		return ret;
-	}
-
-	le_audio_msg_sub_thread_id = k_thread_create(
-		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
-		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "LE_AUDIO_MSG_SUB");
-	if (ret) {
-		LOG_ERR("Failed to create le_audio_msg thread");
-		return ret;
-	}
-
-	ret = zbus_chan_add_obs(&sdu_ref_chan, &sdu_ref_msg_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
-		LOG_ERR("Failed to add timestamp listener");
-		return ret;
-	}
-
-	return 0;
-}
 
 /**
  * @brief	Zbus listener to receive events from bt_mgmt.
@@ -293,8 +143,6 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 
 	switch (msg->event) {
 	case BT_MGMT_EXT_ADV_WITH_PA_READY:
-		LOG_INF("Ext adv ready");
-
 		ext_adv = msg->ext_adv;
 
 		ret = broadcast_source_start(msg->index, ext_adv);
@@ -323,18 +171,6 @@ static int zbus_link_producers_observers(void)
 
 	if (!IS_ENABLED(CONFIG_ZBUS)) {
 		return -ENOTSUP;
-	}
-
-	ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
-		LOG_ERR("Failed to add button sub");
-		return ret;
-	}
-
-	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
-		LOG_ERR("Failed to add le_audio sub");
-		return ret;
 	}
 
 	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
@@ -437,62 +273,39 @@ static int per_adv_populate(uint8_t big_index, struct broadcast_source_per_adv_d
 	return 0;
 }
 
-uint8_t stream_state_get(void)
-{
-	return strm_state;
-}
-
-void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
+static void audio_send(void const *const data, size_t size, uint8_t num_ch)
 {
 	int ret;
 	static int prev_ret;
 
 	struct le_audio_encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
 
-	if (strm_state == STATE_STREAMING) {
-		ret = broadcast_source_send(0, 0, enc_audio);
+	ret = broadcast_source_send(0, 0, enc_audio);
 
-		if (ret != 0 && ret != prev_ret) {
-			if (ret == -ECANCELED) {
-				LOG_WRN("Sending operation cancelled");
-			} else {
-				LOG_WRN("Problem with sending LE audio data, ret: %d", ret);
-			}
+	if (ret != 0 && ret != prev_ret) {
+		if (ret == -ECANCELED) {
+			LOG_WRN("Sending operation cancelled");
+		} else {
+			LOG_WRN("Problem with sending LE audio data, ret: %d", ret);
 		}
-
-		prev_ret = ret;
 	}
+
+	prev_ret = ret;
 }
 
-#if CONFIG_CUSTOM_BROADCASTER
-/* Example of how to create a custom broadcaster */
-/**
- * Remember to increase:
- * CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT
- * CONFIG_BT_CTLR_ADV_ISO_STREAM_COUNT (set in hci_ipc.conf)
- * CONFIG_BT_ISO_TX_BUF_COUNT
- * CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT
- * CONFIG_BT_ISO_MAX_CHAN
- */
-#error Feature is incomplete and should only be used as a guideline for now
-static struct bt_bap_lc3_preset lc3_preset_48 = BT_BAP_LC3_BROADCAST_PRESET_48_4_1(
-	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
-
-static void broadcast_create(struct broadcast_source_big *broadcast_param)
+static void broadcast_create(struct broadcast_source_big *broadcast_param,
+			     struct bt_bap_lc3_preset *preset)
 {
 	static enum bt_audio_location location[2] = {BT_AUDIO_LOCATION_FRONT_LEFT,
 						     BT_AUDIO_LOCATION_FRONT_RIGHT};
 	static struct subgroup_config subgroups[2];
 
-	subgroups[0].group_lc3_preset = lc3_preset_48;
-	subgroups[0].num_bises = 2;
-	subgroups[0].context = BT_AUDIO_CONTEXT_TYPE_MEDIA;
-	subgroups[0].location = location;
-
-	subgroups[1].group_lc3_preset = lc3_preset_48;
-	subgroups[1].num_bises = 2;
-	subgroups[1].context = BT_AUDIO_CONTEXT_TYPE_MEDIA;
-	subgroups[1].location = location;
+	for (size_t i = 0; i < ARRAY_SIZE(subgroups); i++) {
+		subgroups[i].group_lc3_preset = *preset;
+		subgroups[i].num_bises = 2;
+		subgroups[i].context = BT_AUDIO_CONTEXT_TYPE_MEDIA;
+		subgroups[i].location = location;
+	}
 
 	broadcast_param->packing = BT_ISO_PACKING_INTERLEAVED;
 
@@ -500,11 +313,9 @@ static void broadcast_create(struct broadcast_source_big *broadcast_param)
 
 	bt_audio_codec_cfg_meta_set_bcast_audio_immediate_rend_flag(
 		&subgroups[0].group_lc3_preset.codec_cfg);
-	bt_audio_codec_cfg_meta_set_bcast_audio_immediate_rend_flag(
-		&subgroups[1].group_lc3_preset.codec_cfg);
 
-	uint8_t spanish_src[3] = "spa";
-	uint8_t english_src[3] = "eng";
+	uint8_t english_src[3] = {'e', 'n', 'g'};
+	uint8_t spanish_src[3] = {'s', 'p', 'a'};
 
 	bt_audio_codec_cfg_meta_set_stream_lang(&subgroups[0].group_lc3_preset.codec_cfg,
 						(uint32_t)sys_get_le24(english_src));
@@ -514,59 +325,166 @@ static void broadcast_create(struct broadcast_source_big *broadcast_param)
 	broadcast_param->subgroups = subgroups;
 	broadcast_param->num_subgroups = 2;
 }
-#endif /* CONFIG_CUSTOM_BROADCASTER */
 
 int main(void)
 {
 	int ret;
-	static struct broadcast_source_big broadcast_param;
 
 	LOG_DBG("Main started");
 
-	size_t ext_adv_buf_cnt = 0;
-	size_t per_adv_buf_cnt = 0;
+	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
+		ret = sd_card_init();
+		if (ret != -ENODEV && ret != 0) {
+			LOG_ERR("Failed to initialize SD card");
+			return ret;
+		}
+	}
 
-	ret = nrf5340_audio_dk_init();
-	ERR_CHK(ret);
-
-	ret = fw_info_app_print();
-	ERR_CHK(ret);
+	ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
+	ret -= NRFX_ERROR_BASE_NUM;
+	if (ret) {
+		return ret;
+	}
 
 	ret = bt_mgmt_init();
 	ERR_CHK(ret);
 
-	ret = audio_system_init();
-	ERR_CHK(ret);
-
-	ret = zbus_subscribers_create();
-	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
-
 	ret = zbus_link_producers_observers();
 	ERR_CHK_MSG(ret, "Failed to link zbus producers and observers");
 
-	broadcast_source_default_create(&broadcast_param);
+	return 0;
+}
 
-	/* Only one BIG supported at the moment */
+static struct bt_bap_lc3_preset *preset_find(const char *name)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(bap_presets); i++) {
+		if (strcmp(bap_presets[i].name, name) == 0) {
+			return bap_presets[i].preset;
+		}
+	}
+
+	return NULL;
+}
+
+static int cmd_list(const struct shell *shell, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	for (size_t i = 0; i < ARRAY_SIZE(bap_presets); i++) {
+		shell_print(shell, "%s", bap_presets[i].name);
+	}
+
+	return 0;
+}
+
+static int cmd_start(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+
+	size_t ext_adv_buf_cnt = 0;
+	size_t per_adv_buf_cnt = 0;
+
+	if (argc < 2) {
+		shell_error(shell, "Usage: bct start <preset>");
+		return -EINVAL;
+	}
+
+	struct bt_bap_lc3_preset *preset = preset_find(argv[1]);
+
+	if (!preset) {
+		shell_error(shell, "Preset not found");
+		return -EINVAL;
+	}
+
+	struct broadcast_source_big broadcast_param;
+
+	broadcast_create(&broadcast_param, preset);
+
 	ret = broadcast_source_enable(&broadcast_param, 1);
-	ERR_CHK_MSG(ret, "Failed to enable broadcaster(s)");
-
-	ret = audio_system_config_set(
-		bt_audio_codec_cfg_freq_to_freq_hz(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE),
-		CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC, VALUE_NOT_SET);
-	ERR_CHK_MSG(ret, "Failed to set sample- and bitrate");
+	if (ret) {
+		shell_error(shell, "Failed to enable broadcaster(s): %d", ret);
+		return ret;
+	}
 
 	/* Get advertising set for BIG0 */
 	ret = ext_adv_populate(0, &ext_adv_data[0], ext_adv_buf[0], ARRAY_SIZE(ext_adv_buf[0]),
 			       &ext_adv_buf_cnt);
-	ERR_CHK(ret);
+	if (ret) {
+		return ret;
+	}
 
 	ret = per_adv_populate(0, &per_adv_data[0], &per_adv_buf[0], 1, &per_adv_buf_cnt);
-	ERR_CHK(ret);
+	if (ret) {
+		return ret;
+	}
 
 	/* Start broadcaster */
 	ret = bt_mgmt_adv_start(0, ext_adv_buf[0], ext_adv_buf_cnt, &per_adv_buf[0],
 				per_adv_buf_cnt, false);
-	ERR_CHK_MSG(ret, "Failed to start first advertiser");
+	if (ret) {
+		shell_error(shell, "Failed to start first advertiser");
+		return ret;
+	}
+
+	shell_print(shell, "Broadcaster started");
+	return 0;
+}
+
+static int cmd_stop(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	for (size_t i = 0; i < CONFIG_BT_ISO_MAX_BIG; i++) {
+		if (!broadcast_source_is_streaming(i)) {
+			continue;
+		}
+
+		ret = broadcast_source_disable(i);
+		if (ret) {
+			shell_error(shell, "Failed to stop broadcaster(s) %d", ret);
+			return ret;
+		}
+
+		ret = bt_mgmt_per_adv_stop(i);
+		if (ret) {
+			shell_error(shell, "Failed to stop periodic advertiser");
+			return ret;
+		}
+
+		ret = bt_mgmt_ext_adv_stop(i);
+		if (ret) {
+			shell_error(shell, "Failed to stop extended advertiser");
+			return ret;
+		}
+
+		net_buf_simple_reset(&base_data);
+		net_buf_simple_reset(&base_data2);
+
+		net_buf_simple_reset(&uuid_data);
+		net_buf_simple_reset(&uuid_data2);
+
+		per_adv_buf[i].data_len = 0;
+		per_adv_buf[i].type = 0;
+
+		for (size_t j = 0; j < ARRAY_SIZE(ext_adv_buf[i]); j++) {
+			ext_adv_buf[i][j].data_len = 0;
+			ext_adv_buf[i][j].type = 0;
+		}
+	}
+
+	shell_print(shell, "Broadcaster stopped");
 
 	return 0;
 }
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	configuration_cmd, SHELL_COND_CMD(CONFIG_SHELL, list, NULL, "List presets", cmd_list),
+	SHELL_COND_CMD(CONFIG_SHELL, start, NULL, "Start broadcaster", cmd_start),
+	SHELL_COND_CMD(CONFIG_SHELL, stop, NULL, "Stop broadcaster", cmd_stop),
+	SHELL_SUBCMD_SET_END);
+
+SHELL_CMD_REGISTER(bct, &configuration_cmd, "Broadcast Configuration Tool", NULL);

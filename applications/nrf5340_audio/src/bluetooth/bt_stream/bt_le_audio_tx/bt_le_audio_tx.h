@@ -66,10 +66,7 @@ int bt_le_audio_tx_stream_sent(struct stream_index stream_idx);
 
 /**
  * @brief	Initializes the TX path for ISO transmission.
- *
- * @retval	-EALREADY	The module has already been initialized.
- * @retval	0		Success.
  */
-int bt_le_audio_tx_init(void);
+void bt_le_audio_tx_init(void);
 
 #endif /* _LE_AUDIO_TX_H_ */

@@ -128,7 +128,7 @@ struct broadcast_source_ext_adv_data {
 };
 
 /**
- * @brief  Periodic advertising data for broadcast source.
+ * @brief	Periodic advertising data for broadcast source.
  */
 struct broadcast_source_per_adv_data {
 	/* Buffer for periodic advertising data */
@@ -136,93 +136,106 @@ struct broadcast_source_per_adv_data {
 };
 
 /**
- * @brief  Populate the extended advertising data buffer.
+ * @brief	Populate the extended advertising data buffer.
  *
- * @param[in]	big_index           Index of the Broadcast Isochronous Group (BIG) to get
- *                                  advertising data for.
- * @param[in]   ext_adv_data        Pointer to the extended advertising buffers.
- * @param[out]  ext_adv_buf         Pointer to the bt_data used for extended advertising.
- * @param[out]  ext_adv_buf_vacant  Pointer to unused size of @p ext_adv_buf.
+ * @param[in]	big_index		Index of the Broadcast Isochronous Group (BIG) to get
+ *					advertising data for.
+ * @param[in]	ext_adv_data		Pointer to the extended advertising buffers.
+ * @param[out]	ext_adv_buf		Pointer to the bt_data used for extended advertising.
+ * @param[out]	ext_adv_buf_vacant	Pointer to unused size of @p ext_adv_buf.
  *
- * @return  Negative values for errors or number of elements added to @p ext_adv_buf.
+ * @return	Negative values for errors or number of elements added to @p ext_adv_buf.
  */
 int broadcast_source_ext_adv_populate(uint8_t big_index,
 				      struct broadcast_source_ext_adv_data *ext_adv_data,
 				      struct bt_data *ext_adv_buf, size_t ext_adv_buf_vacant);
 
 /**
- * @brief  Populate the periodic advertising data buffer.
+ * @brief	Populate the periodic advertising data buffer.
  *
- * @param[in]	big_index           Index of the Broadcast Isochronous Group (BIG) to get
- *                                  advertising data for.
- * @param[in]   per_adv_data        Pointer to a structure of periodic advertising buffers.
- * @param[out]  per_adv_buf         Pointer to the bt_data used for periodic advertising.
- * @param[out]  per_adv_buf_vacant  Pointer to unused size of @p per_adv_buf.
+ * @param[in]	big_index		Index of the Broadcast Isochronous Group (BIG) to get
+ *					advertising data for.
+ * @param[in]	per_adv_data		Pointer to a structure of periodic advertising buffers.
+ * @param[out]	per_adv_buf		Pointer to the bt_data used for periodic advertising.
+ * @param[out]	per_adv_buf_vacant	Pointer to unused size of @p per_adv_buf.
  *
- * @return  Negative values for errors or number of elements added to @p per_adv_buf.
+ * @return	Negative values for errors or number of elements added to @p per_adv_buf.
  */
 int broadcast_source_per_adv_populate(uint8_t big_index,
 				      struct broadcast_source_per_adv_data *per_adv_data,
 				      struct bt_data *per_adv_buf, size_t per_adv_buf_vacant);
 
 /**
- * @brief  Start the Bluetooth LE Audio broadcast (BIS) source.
+ * @brief	Check if the broadcast source is streaming.
  *
- * @param[in]  big_index  Index of the Broadcast Isochronous Group (BIG) to start.
- * @param[in]  ext_adv    Pointer to the extended advertising set; can be NULL if a stream
- *                        is restarted.
+ * @param[in]	big_index	Index of the Broadcast Isochronous Group (BIG) to check.
  *
- * @return  0 for success, error otherwise.
+ * @retval	True	The broadcast source is streaming.
+ * @retval	False	The broadcast source is not streaming.
+ */
+
+bool broadcast_source_is_streaming(uint8_t big_index);
+
+/**
+ * @brief	Start the Bluetooth LE Audio broadcast (BIS) source.
+ *
+ * @param[in]	big_index	Index of the Broadcast Isochronous Group (BIG) to start.
+ * @param[in]	ext_adv		Pointer to the extended advertising set; can be NULL if a stream
+ *				is restarted.
+ *
+ * @return	0 for success, error otherwise.
  */
 int broadcast_source_start(uint8_t big_index, struct bt_le_ext_adv *ext_adv);
 
 /**
- * @brief  Stop the Bluetooth LE Audio broadcast (BIS) source.
+ * @brief	Stop the Bluetooth LE Audio broadcast (BIS) source.
  *
- * @param[in]  big_index  Index of the Broadcast Isochronous Group (BIG) to stop.
+ * @param[in]	big_index	Index of the Broadcast Isochronous Group (BIG) to stop.
  *
- * @return  0 for success, error otherwise.
+ * @return	0 for success, error otherwise.
  */
 int broadcast_source_stop(uint8_t big_index);
 
 /**
- * @brief  Broadcast the Bluetooth LE Audio data.
+ * @brief	Broadcast the Bluetooth LE Audio data.
  *
- * @param[in]  big_index  Index of the Broadcast Isochronous Group (BIG) to broadcast.
- * @param[in]  enc_audio  Encoded audio struct.
+ * @param[in]	big_index	Index of the Broadcast Isochronous Group (BIG) to broadcast.
+ * @param[in]	subgroup_index	Index of the subgroup to broadcast.
+ * @param[in]	enc_audio	Encoded audio struct.
  *
- * @return  0 for success, error otherwise.
+ * @return	0 for success, error otherwise.
  */
-int broadcast_source_send(uint8_t big_index, struct le_audio_encoded_audio enc_audio);
+int broadcast_source_send(uint8_t big_index, uint8_t subgroup_index,
+			  struct le_audio_encoded_audio enc_audio);
 
 /**
- * @brief  Disable the LE Audio broadcast (BIS) source.
+ * @brief	Disable the LE Audio broadcast (BIS) source.
  *
- * @param[in]  big_index  Index of the Broadcast Isochronous Group (BIG) to disable.
+ * @param[in]	big_index  Index of the Broadcast Isochronous Group (BIG) to disable.
  *
- * @return  0 for success, error otherwise.
+ * @return	0 for success, error otherwise.
  */
 int broadcast_source_disable(uint8_t big_index);
 
 /**
- * @brief  Create a set up for a default broadcaster.
+ * @brief	Create a set up for a default broadcaster.
  *
- * @note  This will create the parameters for a simple broadcaster with 1 Broadcast
- *        Isochronous Group (BIG), 1 subgroup, and 2 BISes.
- *        The BISes will be front_left and front_right and language will be set to 'eng'.
+ * @note	This will create the parameters for a simple broadcaster with 1 Broadcast
+ *		Isochronous Group (BIG), 1 subgroup, and 2 BISes.
+ *		The BISes will be front_left and front_right and language will be set to 'eng'.
  *
- * @param[out] broadcast_param  Pointer to populate with parameters for setting up the broadcaster.
+ * @param[out]	broadcast_param	Pointer to populate with parameters for setting up the broadcaster.
  */
 void broadcast_source_default_create(struct broadcast_source_big *broadcast_param);
 
 /**
- * @brief  Enable the LE Audio broadcast (BIS) source.
+ * @brief	Enable the LE Audio broadcast (BIS) source.
  *
- * @param[in]  broadcast_param  Array of create parameters for creating a Broadcast Isochronous
- *                              Group (BIG).
- * @param[in] num_bigs          Number of BIGs to set up.
+ * @param[in]	broadcast_param	Array of create parameters for creating a Broadcast Isochronous
+ *				Group (BIG).
+ * @param[in]	num_bigs	Number of BIGs to set up.
  *
- * @return  0 for success, error otherwise.
+ * @return	0 for success, error otherwise.
  */
 int broadcast_source_enable(struct broadcast_source_big const *const broadcast_param,
 			    uint8_t num_bigs);
