@@ -230,3 +230,22 @@ tfm:
     - zephyr/modules/trusted-firmware-m/
     - modules/crypto/
     - nrfxlib/crypto/
+
+suit:
+  files:
+    - nrf/include/bl*
+    - nrf/include/fprotect.h
+    - nrf/include/dfu/*suit*
+    - nrf/include/sdfw/sdfw_services/
+    - nrf/cmake/
+    - nrf/sysbuild/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/subsys/suit/
+    - nrf/subsys/dfu/
+    - nrf/subsys/nrf_rpc/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/sdfw_services/
+    - nrf/subsys/mgmt/suitfu/
+    - nrf/tests/subsys/suit/
+    - modules/lib/suit-processor/
+    - modules/lib/suit-generator/
