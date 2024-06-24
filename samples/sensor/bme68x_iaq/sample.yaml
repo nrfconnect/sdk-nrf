@@ -10,11 +10,11 @@ tests:
       - thingy91/nrf9160/ns
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
-    platform_allow: >-
-      thingy91/nrf9160
-      thingy91/nrf9160/ns
-      thingy53/nrf5340/cpuapp
-      thingy53/nrf5340/cpuapp/ns
+    platform_allow:
+      - thingy91/nrf9160
+      - thingy91/nrf9160/ns
+      - thingy53/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp/ns
     tags: sensors sysbuild
   sample.sensor.bme68x.polling:
     sysbuild: true
@@ -25,11 +25,11 @@ tests:
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
     extra_args: CONFIG_APP_TRIGGER=n
-    platform_allow: >-
-      thingy91/nrf9160
-      thingy91/nrf9160/ns
-      thingy53/nrf5340/cpuapp
-      thingy53/nrf5340/cpuapp/ns
+    platform_allow:
+      - thingy91/nrf9160
+      - thingy91/nrf9160/ns
+      - thingy53/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp/ns
     tags: sensors sysbuild
     harness: console
     harness_config:
@@ -40,7 +40,10 @@ tests:
   sample.sensor.bme68x.spi:
     sysbuild: true
     depends_on: spi
+    build_only: true
     harness: sensor
-    platform_allow: >-
-      nrf9160dk/nrf9160/ns
+    platform_allow:
+      - nrf9160dk/nrf9160/ns
+    integration_platforms:
+      - nrf9160dk/nrf9160/ns
     tags: sensors sysbuild
