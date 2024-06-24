@@ -4,7 +4,7 @@
 
 menuconfig DFU_ZIP
 	bool "Create DFU zip package"
-	depends on BOOTLOADER_MCUBOOT
+	depends on BOOTLOADER_MCUBOOT || (SECURE_BOOT_APPCORE && SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
 	depends on PARTITION_MANAGER
 	default y
 	help
@@ -17,6 +17,8 @@ config DFU_ZIP_APP
 	default y
 	help
 	  Include application update in DFU zip.
+
+if BOOTLOADER_MCUBOOT
 
 config DFU_ZIP_NET
 	bool "Network core update"
@@ -41,5 +43,7 @@ config DFU_ZIP_BLUETOOTH_MESH_METADATA
 	bool "Bluetooth mesh metadata"
 	help
 	  Includes metadata for bluetooth mesh.
+
+endif # BOOTLOADER_MCUBOOT
 
 endif # DFU_ZIP
