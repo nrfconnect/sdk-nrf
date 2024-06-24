@@ -6,7 +6,7 @@ tests:
   sample.openthread.coap_client:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf21540dk/nrf52840
@@ -20,7 +20,7 @@ tests:
   sample.openthread.coap_client.ftd:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf21540dk/nrf52840
@@ -36,7 +36,7 @@ tests:
   sample.openthread.coap_client.mtd:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf21540dk/nrf52840
@@ -52,7 +52,7 @@ tests:
   sample.openthread.coap_client.mtd.multiprotocol_ble:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf21540dk/nrf52840

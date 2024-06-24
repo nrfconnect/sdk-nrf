@@ -6,7 +6,7 @@ tests:
   sample.openthread.cli:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf52840dongle/nrf52840
@@ -26,7 +26,7 @@ tests:
   sample.openthread.cli.multiprotocol:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf52840dongle/nrf52840
@@ -49,7 +49,7 @@ tests:
   sample.openthread.cli.singleprotocol:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf21540dk/nrf52840
@@ -69,7 +69,7 @@ tests:
   sample.openthread.cli.usb:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf21540dk/nrf52840
@@ -86,7 +86,7 @@ tests:
   sample.openthread.cli.low_power:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf5340dk/nrf5340/cpuapp
@@ -99,7 +99,7 @@ tests:
   sample.nrf_security.openthread.integration:
     sysbuild: true
     build_only: true
-    tags: sysbuild
+    tags: sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf5340dk/nrf5340/cpuapp/ns
@@ -112,7 +112,7 @@ tests:
   sample.openthread.cli.tcat:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild openthread
     platform_allow: >
       nrf52840dk/nrf52840
       nrf21540dk/nrf52840
