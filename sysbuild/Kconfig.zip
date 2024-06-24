@@ -22,7 +22,6 @@ config DFU_ZIP_NET
 	bool "Network core update"
 	depends on SUPPORT_NETCORE
 	depends on !NETCORE_NONE
-	depends on !NETCORE_EMPTY
 	depends on SECURE_BOOT_NETCORE
 	depends on NETCORE_APP_UPDATE
 	default y

@@ -20,7 +20,6 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 	bool "Network core update"
 	depends on SUPPORT_NETCORE
 	depends on !NETCORE_NONE
-	depends on !NETCORE_EMPTY
 	depends on SECURE_BOOT_NETCORE
 
 config DFU_MULTI_IMAGE_PACKAGE_MCUBOOT
