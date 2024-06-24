@@ -65,11 +65,17 @@ Building and running
 
 **nRF5340 DK**
 
-You can build the sample using either the RPMsg or ICMSG backends, as follows:
+You can build the sample using either the RPMsg or ICMSG backend.
+For the default RPMsg backend, use the following command:
 
 .. code-block:: console
 
-   west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_default .
+   west build -p -b nrf5340dk/nrf5340/cpuapp
+
+For the ICMSG backend, use the following command:
+
+.. code-block:: console
+
    west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_default .
 
 A set of overlays is available for the sample to verify the throughput when only one core is sending the data.
@@ -91,17 +97,17 @@ Use these overlays when building the IPC sample to test the following scenarios:
 
 **nRF54H20 DK**
 
-You can build the sample to test IPC between the application and PPR core using the :ref:`zephyr:ipc_service_backend_icmsg` backend, as follows:
+To build the sample to test IPC between the application and radio domains using the default :ref:`zephyr:ipc_service_backend_icbmsg` backend, use the following command:
+
+.. code-block:: console
+
+   west build -p -b nrf54h20dk/nrf54h20/cpuapp
+
+To build the sample to test IPC between the application and PPR core using the :ref:`zephyr:ipc_service_backend_icmsg` backend, use the following command:
 
 .. code-block:: console
 
    west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpuppr_icmsg .
-
-You can build the sample to test IPC between the application and radio domains using the :ref:`zephyr:ipc_service_backend_icbmsg` backend, as follows:
-
-.. code-block:: console
-
-   west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_icmsg .
 
 Testing
 =======

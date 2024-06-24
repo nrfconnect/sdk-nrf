@@ -21,10 +21,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    extra_args:
-      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
-      EXTRA_CONF_FILE=rpmsg.conf
-      remote_EXTRA_CONF_FILE=rpmsg.conf
 
   sample.ipc.ipc_service.nrf5340dk_rpmsg_cpuapp_sending:
     platform_allow:
@@ -35,9 +31,6 @@ tests:
       - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
     extra_args:
       remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
-      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
-      EXTRA_CONF_FILE=rpmsg.conf
-      remote_EXTRA_CONF_FILE=rpmsg.conf
 
   sample.ipc.ipc_service.nrf5340dk_rpmsg_cpunet_sending:
     platform_allow:
@@ -48,9 +41,6 @@ tests:
       - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
     extra_args:
       remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
-      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
-      EXTRA_CONF_FILE=rpmsg.conf
-      remote_EXTRA_CONF_FILE=rpmsg.conf
 
   sample.ipc.ipc_service.nrf5340dk_icmsg_default:
     platform_allow:
@@ -58,11 +48,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
-      EXTRA_CONF_FILE=icmsg.conf
-      DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpuapp_icmsg.overlay
-      remote_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpunet_icmsg.overlay
-      remote_EXTRA_CONF_FILE=icmsg.conf
+      FILE_SUFFIX=icmsg
 
   sample.ipc.ipc_service.nrf5340dk_icmsg_cpuapp_sending:
     platform_allow:
@@ -72,12 +58,8 @@ tests:
     extra_configs:
       - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=35
     extra_args:
+      FILE_SUFFIX=icmsg
       remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
-      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
-      EXTRA_CONF_FILE=icmsg.conf
-      DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpuapp_icmsg.overlay
-      remote_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpunet_icmsg.overlay
-      remote_EXTRA_CONF_FILE=icmsg.conf
 
   sample.ipc.ipc_service.nrf5340dk_icmsg_cpunet_sending:
     platform_allow:
@@ -87,12 +69,14 @@ tests:
     extra_configs:
       - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
     extra_args:
+      FILE_SUFFIX=icmsg
       remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
-      SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
-      EXTRA_CONF_FILE=icmsg.conf
-      DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpuapp_icmsg.overlay
-      remote_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpunet_icmsg.overlay
-      remote_EXTRA_CONF_FILE=icmsg.conf
+
+  sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_icmsg:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpuppr_icmsg:
     platform_allow:
@@ -100,19 +84,5 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr.conf
-      EXTRA_CONF_FILE="icmsg.conf;boards/nrf54h20dk_nrf54h20_cpuapp_cpuppr.conf"
-      DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuapp_cpuppr.overlay
+      FILE_SUFFIX=cpuppr
       ipc_service_SNIPPET=nordic-ppr
-      remote_EXTRA_CONF_FILE="icmsg.conf;boards/nrf54h20dk_nrf54h20_cpuppr_cpuapp.conf"
-      remote_DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuppr_cpuapp.overlay
-
-  sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_icmsg:
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-    extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
-      EXTRA_CONF_FILE="icmsg.conf;boards/nrf54h20dk_nrf54h20_cpuapp_cpurad_icmsg.conf"
-      remote_EXTRA_CONF_FILE="icmsg.conf;boards/nrf54h20dk_nrf54h20_cpurad_cpuapp_icmsg.conf"
