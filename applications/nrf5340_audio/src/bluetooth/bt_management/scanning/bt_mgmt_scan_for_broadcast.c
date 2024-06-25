@@ -255,18 +255,6 @@ static struct bt_le_per_adv_sync_cb sync_callbacks = {
 	.term = pa_sync_terminated_cb,
 };
 
-static void pa_req_work_handler(struct k_work *work)
-{
-	int ret;
-
-	ret = bt_bap_scan_delegator_set_pa_state(req_recv_state->src_id, BT_BAP_PA_STATE_INFO_REQ);
-	if (ret) {
-		LOG_ERR("set PA state to INFO_REQ failed, err = %d", ret);
-	}
-}
-
-K_WORK_DEFINE(pa_req_work, pa_req_work_handler);
-
 static void pa_timer_handler(struct k_work *work)
 {
 	int ret;
@@ -298,12 +286,13 @@ static int pa_sync_past(struct bt_conn *conn, uint16_t pa_interval)
 	param.timeout = interval_to_sync_timeout(pa_interval);
 
 	ret = bt_le_per_adv_sync_transfer_subscribe(conn, &param);
-	if (ret != 0) {
+	if (ret) {
 		LOG_WRN("Could not do PAST subscribe: %d", ret);
-	} else {
-		LOG_DBG("Syncing with PAST: %d", ret);
-		(void)k_work_reschedule(&pa_timer, K_MSEC(param.timeout * 10));
+		return ret;
 	}
+
+	LOG_DBG("Syncing with PAST: %d", ret);
+	(void)k_work_reschedule(&pa_timer, K_MSEC(param.timeout * 10));
 
 	return ret;
 }
@@ -318,7 +307,6 @@ static int pa_sync_req_cb(struct bt_conn *conn,
 
 	if (recv_state->pa_sync_state == BT_BAP_PA_STATE_SYNCED ||
 	    recv_state->pa_sync_state == BT_BAP_PA_STATE_INFO_REQ) {
-		/* Already syncing */
 		LOG_DBG("Already syncing");
 		/* TODO: Terminate existing sync and then sync to new?*/
 		return -EALREADY;
@@ -331,15 +319,18 @@ static int pa_sync_req_cb(struct bt_conn *conn,
 		ret = pa_sync_past(conn, pa_interval);
 		if (ret) {
 			LOG_WRN("Subscribe to PA sync PAST failed, ret = %d", ret);
-		} else {
-			k_work_submit(&pa_req_work);
+			return ret;
 		}
-	} else {
-		/* start scan */
-		ret = 0;
+
+		ret = bt_bap_scan_delegator_set_pa_state(req_recv_state->src_id,
+							 BT_BAP_PA_STATE_INFO_REQ);
+		if (ret) {
+			LOG_WRN("Set PA state to INFO_REQ failed, err = %d", ret);
+			return ret;
+		}
 	}
 
-	return ret;
+	return 0;
 }
 
 static int pa_sync_term_req_cb(struct bt_conn *conn,
@@ -350,9 +341,10 @@ static int pa_sync_term_req_cb(struct bt_conn *conn,
 	ret = broadcast_sink_disable();
 	if (ret) {
 		LOG_WRN("Failed to disable broadcast sink: %d", ret);
+		return ret;
 	}
 
-	return ret;
+	return 0;
 }
 
 static void broadcast_code_cb(struct bt_conn *conn,
