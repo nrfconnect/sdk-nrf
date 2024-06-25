@@ -691,6 +691,20 @@ To test this feature, complete the following steps:
       #. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
       #. Observe that **LED 1** is lit to confirm that the Android device is able to connect to your development kit after a clock synchronization.
 
+Disabling the locator tag
+-------------------------
+
+The following instructions on disabling the locator tag apply to the default debug device model registered for this sample (see the :ref:`fast_pair_locator_tag_google_device_model` section), and are used for demonstration purposes.
+
+To disable the locator tag device, complete the following steps:
+
+1. Find the power switch on the device.
+#. Turn off the locator tag by sliding the switch to the off position.
+#. Observe that the on-device LEDs are turned off.
+
+.. note::
+   Vendor-specific instructions on disabling the unknown trackers are registered on mobile platforms, like Android and iOS, for each device model.
+
 Fast Pair Validator app
 -----------------------
 
