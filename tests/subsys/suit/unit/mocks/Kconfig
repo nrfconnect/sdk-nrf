@@ -84,3 +84,6 @@ config MOCK_SDFW_BUILTIN_KEYS
 
 config MOCK_SUIT_MEMORY_LAYOUT
 	bool "Mock SUIT memory layout module"
+
+config MOCK_SUIT_SERVICE
+	bool "Mock SUIT SSF service"

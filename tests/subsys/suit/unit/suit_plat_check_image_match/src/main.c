@@ -87,7 +87,7 @@ int suit_plat_retrieve_manifest_correct_fake_func(suit_component_t component_han
 
 int suit_processor_get_manifest_metadata_invalid_fake_func(
 	const uint8_t *envelope_str, size_t envelope_len, bool authenticate,
-	struct zcbor_string *manifest_component_id, struct suit_semver *current_version,
+	struct zcbor_string *manifest_component_id, int *version, size_t *version_len,
 	struct zcbor_string *digest, enum suit_cose_alg *alg, unsigned int *seq_num)
 {
 	zassert_equal(TEST_ENVELOPE_ADDRESS, envelope_str, "Invalid envelope_str");
@@ -100,7 +100,7 @@ int suit_processor_get_manifest_metadata_invalid_fake_func(
 
 int suit_processor_get_manifest_metadata_correct_fake_func(
 	const uint8_t *envelope_str, size_t envelope_len, bool authenticate,
-	struct zcbor_string *manifest_component_id, struct suit_semver *current_version,
+	struct zcbor_string *manifest_component_id, int *version, size_t *version_len,
 	struct zcbor_string *digest, enum suit_cose_alg *alg, unsigned int *seq_num)
 {
 	zassert_equal(TEST_ENVELOPE_ADDRESS, envelope_str, "Invalid envelope_str");
