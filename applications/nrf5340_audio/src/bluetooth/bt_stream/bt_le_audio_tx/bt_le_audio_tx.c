@@ -370,7 +370,8 @@ int bt_le_audio_tx_stream_sent(struct stream_index stream_idx)
 int bt_le_audio_tx_init(void)
 {
 	if (initialized) {
-		return -EALREADY;
+		/* If TX is disabled and enabled again this should be called to reset the state */
+		LOG_DBG("Already initialized");
 	}
 
 	for (int i = 0; i < GROUP_MAX; i++) {

@@ -177,7 +177,7 @@ int broadcast_source_per_adv_populate(uint8_t big_index,
 int broadcast_source_start(uint8_t big_index, struct bt_le_ext_adv *ext_adv);
 
 /**
- * @brief  Stop the Bluetooth LE Audio broadcast (BIS) source.
+ * @brief	Stop the Bluetooth LE Audio broadcast (BIS) source.
  *
  * @param[in]  big_index  Index of the Broadcast Isochronous Group (BIG) to stop.
  *
@@ -186,21 +186,23 @@ int broadcast_source_start(uint8_t big_index, struct bt_le_ext_adv *ext_adv);
 int broadcast_source_stop(uint8_t big_index);
 
 /**
- * @brief  Broadcast the Bluetooth LE Audio data.
+ * @brief	Broadcast the Bluetooth LE Audio data.
  *
- * @param[in]  big_index  Index of the Broadcast Isochronous Group (BIG) to broadcast.
- * @param[in]  enc_audio  Encoded audio struct.
+ * @param[in]	big_index	Index of the Broadcast Isochronous Group (BIG) to broadcast.
+ * @param[in]	subgroup_index	Index of the subgroup to broadcast.
+ * @param[in]	enc_audio	Encoded audio struct.
  *
  * @return  0 for success, error otherwise.
  */
-int broadcast_source_send(uint8_t big_index, struct le_audio_encoded_audio enc_audio);
+int broadcast_source_send(uint8_t big_index, uint8_t subgroup_index,
+			  struct le_audio_encoded_audio enc_audio);
 
 /**
- * @brief  Disable the LE Audio broadcast (BIS) source.
+ * @brief	Disable the LE Audio broadcast (BIS) source.
  *
- * @param[in]  big_index  Index of the Broadcast Isochronous Group (BIG) to disable.
+ * @param[in]	big_index  Index of the Broadcast Isochronous Group (BIG) to disable.
  *
- * @return  0 for success, error otherwise.
+ * @return	0 for success, error otherwise.
  */
 int broadcast_source_disable(uint8_t big_index);
 

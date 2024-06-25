@@ -47,6 +47,8 @@ static struct bt_data per_adv_buf[CONFIG_BT_ISO_MAX_BIG];
 #define BROADCAST_SRC_PBA_BUF_SIZE                                                                 \
 	(BROADCAST_SOURCE_PBA_HEADER_SIZE + CONFIG_BT_AUDIO_BROADCAST_PBA_METADATA_SIZE)
 
+#define PRESET_NAME_MAX 8
+
 /* Number of metadata items that can be assigned. */
 #define BROADCAST_SOURCE_PBA_METADATA_VACANT                                                       \
 	(CONFIG_BT_AUDIO_BROADCAST_PBA_METADATA_SIZE / (sizeof(struct bt_data)))
@@ -55,6 +57,70 @@ static struct bt_data per_adv_buf[CONFIG_BT_ISO_MAX_BIG];
  * (any addition to pba_buf requires an increase of this value)
  */
 uint8_t pba_data[CONFIG_BT_ISO_MAX_BIG][BROADCAST_SRC_PBA_BUF_SIZE];
+
+static struct bt_bap_lc3_preset lc3_preset_8_2_1 = BT_BAP_LC3_BROADCAST_PRESET_8_2_1(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_8_2_2 = BT_BAP_LC3_BROADCAST_PRESET_8_2_2(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_16_2_1 = BT_BAP_LC3_BROADCAST_PRESET_16_2_1(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_16_2_2 = BT_BAP_LC3_BROADCAST_PRESET_16_2_2(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_24_2_1 = BT_BAP_LC3_BROADCAST_PRESET_24_2_1(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_24_2_2 = BT_BAP_LC3_BROADCAST_PRESET_24_2_2(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_32_2_1 = BT_BAP_LC3_BROADCAST_PRESET_32_2_1(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_32_2_2 = BT_BAP_LC3_BROADCAST_PRESET_32_2_2(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_48_2_1 = BT_BAP_LC3_BROADCAST_PRESET_48_2_1(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_48_2_2 = BT_BAP_LC3_BROADCAST_PRESET_48_2_2(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_48_4_1 = BT_BAP_LC3_BROADCAST_PRESET_48_4_1(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_48_4_2 = BT_BAP_LC3_BROADCAST_PRESET_48_4_2(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_48_6_1 = BT_BAP_LC3_BROADCAST_PRESET_48_6_1(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+static struct bt_bap_lc3_preset lc3_preset_48_6_2 = BT_BAP_LC3_BROADCAST_PRESET_48_6_2(
+	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+
+struct bap_preset {
+	struct bt_bap_lc3_preset *preset;
+	char name[PRESET_NAME_MAX];
+};
+
+static struct bap_preset bap_presets[] = {
+	{.preset = &lc3_preset_8_2_1, .name = "8_2_1"},
+	{.preset = &lc3_preset_8_2_2, .name = "8_2_2"},
+	{.preset = &lc3_preset_16_2_1, .name = "16_2_1"},
+	{.preset = &lc3_preset_16_2_2, .name = "16_2_2"},
+	{.preset = &lc3_preset_24_2_1, .name = "24_2_1"},
+	{.preset = &lc3_preset_24_2_2, .name = "24_2_2"},
+	{.preset = &lc3_preset_32_2_1, .name = "32_2_1"},
+	{.preset = &lc3_preset_32_2_2, .name = "32_2_2"},
+	{.preset = &lc3_preset_48_2_1, .name = "48_2_1"},
+	{.preset = &lc3_preset_48_2_2, .name = "48_2_2"},
+	{.preset = &lc3_preset_48_4_1, .name = "48_4_1"},
+	{.preset = &lc3_preset_48_4_2, .name = "48_4_2"},
+	{.preset = &lc3_preset_48_6_1, .name = "48_6_1"},
+	{.preset = &lc3_preset_48_6_2, .name = "48_6_2"},
+};
 
 /**
  * @brief	Broadcast source static extended advertising data.
@@ -236,7 +302,7 @@ static void audio_send(void const *const data, size_t size, uint8_t num_ch)
 
 	struct le_audio_encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
 
-	ret = broadcast_source_send(0, enc_audio);
+	ret = broadcast_source_send(0, 0, enc_audio);
 
 	if (ret != 0 && ret != prev_ret) {
 		if (ret == -ECANCELED) {
@@ -249,24 +315,17 @@ static void audio_send(void const *const data, size_t size, uint8_t num_ch)
 	prev_ret = ret;
 }
 
-static struct bt_bap_lc3_preset lc3_preset_48 = BT_BAP_LC3_BROADCAST_PRESET_24_2_1(
-	BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
-
-static void broadcast_create(struct broadcast_source_big *broadcast_param)
+static void broadcast_create(struct broadcast_source_big *broadcast_param,
+			     struct bt_bap_lc3_preset *preset)
 {
 	static enum bt_audio_location location[2] = {BT_AUDIO_LOCATION_FRONT_LEFT,
 						     BT_AUDIO_LOCATION_FRONT_RIGHT};
-	static struct subgroup_config subgroups[2];
+	static struct subgroup_config subgroups[1];
 
-	subgroups[0].group_lc3_preset = lc3_preset_48;
+	subgroups[0].group_lc3_preset = *preset;
 	subgroups[0].num_bises = 2;
 	subgroups[0].context = BT_AUDIO_CONTEXT_TYPE_MEDIA;
 	subgroups[0].location = location;
-
-	subgroups[1].group_lc3_preset = lc3_preset_48;
-	subgroups[1].num_bises = 2;
-	subgroups[1].context = BT_AUDIO_CONTEXT_TYPE_MEDIA;
-	subgroups[1].location = location;
 
 	broadcast_param->packing = BT_ISO_PACKING_INTERLEAVED;
 
@@ -274,16 +333,11 @@ static void broadcast_create(struct broadcast_source_big *broadcast_param)
 
 	bt_audio_codec_cfg_meta_set_bcast_audio_immediate_rend_flag(
 		&subgroups[0].group_lc3_preset.codec_cfg);
-	bt_audio_codec_cfg_meta_set_bcast_audio_immediate_rend_flag(
-		&subgroups[1].group_lc3_preset.codec_cfg);
 
-	uint8_t spanish_src[3] = "spa";
 	uint8_t english_src[3] = "eng";
 
 	bt_audio_codec_cfg_meta_set_stream_lang(&subgroups[0].group_lc3_preset.codec_cfg,
 						(uint32_t)sys_get_le24(english_src));
-	bt_audio_codec_cfg_meta_set_stream_lang(&subgroups[1].group_lc3_preset.codec_cfg,
-						(uint32_t)sys_get_le24(spanish_src));
 
 	broadcast_param->subgroups = subgroups;
 	broadcast_param->num_subgroups = 1;
@@ -292,12 +346,7 @@ static void broadcast_create(struct broadcast_source_big *broadcast_param)
 int main(void)
 {
 	int ret;
-	static struct broadcast_source_big broadcast_param;
-
 	LOG_DBG("Main started");
-
-	size_t ext_adv_buf_cnt = 0;
-	size_t per_adv_buf_cnt = 0;
 
 	ret = sd_card_init();
 	if (ret != -ENODEV && ret != 0) {
@@ -317,53 +366,126 @@ int main(void)
 	ret = zbus_link_producers_observers();
 	ERR_CHK_MSG(ret, "Failed to link zbus producers and observers");
 
-	/* BELOW IS THE CODE FOR BROADCAST SOURCE */
-	broadcast_create(&broadcast_param);
-
-	/* Only one BIG supported at the moment */
-	ret = broadcast_source_enable(&broadcast_param, 1);
-	ERR_CHK_MSG(ret, "Failed to enable broadcaster(s)");
-
-	/* Get advertising set for BIG0 */
-	ret = ext_adv_populate(0, &ext_adv_data[0], ext_adv_buf[0], ARRAY_SIZE(ext_adv_buf[0]),
-			       &ext_adv_buf_cnt);
-	ERR_CHK(ret);
-
-	ret = per_adv_populate(0, &per_adv_data[0], &per_adv_buf[0], 1, &per_adv_buf_cnt);
-	ERR_CHK(ret);
-
-	/* Start broadcaster */
-	ret = bt_mgmt_adv_start(0, ext_adv_buf[0], ext_adv_buf_cnt, &per_adv_buf[0],
-				per_adv_buf_cnt, false);
-	ERR_CHK_MSG(ret, "Failed to start first advertiser");
-
 	return 0;
 }
 
-static int cmd_preset(const struct shell *shell, size_t argc, char **argv)
+static struct bt_bap_lc3_preset *preset_find(const char *name)
 {
-	shell_print(shell, "Preset set");
+	for (size_t i = 0; i < ARRAY_SIZE(bap_presets); i++) {
+		if (strcmp(bap_presets[i].name, name) == 0) {
+			return bap_presets[i].preset;
+		}
+	}
+
+	return NULL;
+}
+
+static int cmd_list(const struct shell *shell, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	for (size_t i = 0; i < ARRAY_SIZE(bap_presets); i++) {
+		shell_print(shell, "%s", bap_presets[i].name);
+	}
 
 	return 0;
 }
 
 static int cmd_start(const struct shell *shell, size_t argc, char **argv)
 {
+	int ret;
+	size_t ext_adv_buf_cnt = 0;
+	size_t per_adv_buf_cnt = 0;
+
+	if (argc < 2) {
+		shell_error(shell, "Usage: bct start <preset>");
+		return -EINVAL;
+	}
+
+	struct bt_bap_lc3_preset *preset = preset_find(argv[1]);
+
+	if (!preset) {
+		shell_error(shell, "Preset not found");
+		return -EINVAL;
+	}
+
+	struct broadcast_source_big broadcast_param;
+
+	broadcast_create(&broadcast_param, preset);
+
+	ret = broadcast_source_enable(&broadcast_param, 1);
+	if (ret) {
+		shell_error(shell, "Failed to enable broadcaster(s): %d", ret);
+		return ret;
+	}
+
+	/* Get advertising set for BIG0 */
+	ret = ext_adv_populate(0, &ext_adv_data[0], ext_adv_buf[0], ARRAY_SIZE(ext_adv_buf[0]),
+			       &ext_adv_buf_cnt);
+	if (ret) {
+		return ret;
+	}
+
+	ret = per_adv_populate(0, &per_adv_data[0], &per_adv_buf[0], 1, &per_adv_buf_cnt);
+	if (ret) {
+		return ret;
+	}
+
+	/* Start broadcaster */
+	ret = bt_mgmt_adv_start(0, ext_adv_buf[0], ext_adv_buf_cnt, &per_adv_buf[0],
+				per_adv_buf_cnt, false);
+	if (ret) {
+		shell_error(shell, "Failed to start first advertiser");
+		return ret;
+	}
+
 	shell_print(shell, "Broadcaster started");
 	return 0;
 }
 
 static int cmd_stop(const struct shell *shell, size_t argc, char **argv)
 {
+	int ret;
+
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	ret = broadcast_source_disable(0);
+	if (ret) {
+		shell_error(shell, "Failed to stop broadcaster(s) %d", ret);
+		return ret;
+	}
+
+	ret = bt_mgmt_adv_stop(0);
+	if (ret) {
+		shell_error(shell, "Failed to stop advertiser");
+		return ret;
+	}
+
+	net_buf_simple_reset(&base_data);
+	net_buf_simple_reset(&base_data2);
+
+	net_buf_simple_reset(&uuid_data);
+	net_buf_simple_reset(&uuid_data2);
+
+	per_adv_buf[0].data_len = 0;
+	per_adv_buf[0].type = 0;
+
+	for (size_t i = 0; i < ARRAY_SIZE(ext_adv_buf[0]); i++) {
+		ext_adv_buf[0][i].data_len = 0;
+		ext_adv_buf[0][i].type = 0;
+	}
+
 	shell_print(shell, "Broadcaster stopped");
 
 	return 0;
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	configuration_cmd, SHELL_COND_CMD(CONFIG_SHELL, preset, NULL, "Set preset", cmd_preset),
+	configuration_cmd, SHELL_COND_CMD(CONFIG_SHELL, list, NULL, "List presets", cmd_list),
 	SHELL_COND_CMD(CONFIG_SHELL, start, NULL, "Start broadcaster", cmd_start),
 	SHELL_COND_CMD(CONFIG_SHELL, stop, NULL, "Stop broadcaster", cmd_stop),
 	SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_REGISTER(main, &configuration_cmd, "Broadcast Configuration Tool", NULL);
+SHELL_CMD_REGISTER(bct, &configuration_cmd, "Broadcast Configuration Tool", NULL);

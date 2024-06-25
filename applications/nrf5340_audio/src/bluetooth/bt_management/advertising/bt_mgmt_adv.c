@@ -355,6 +355,8 @@ int bt_mgmt_adv_buffer_put(struct bt_data *const adv_buf, uint32_t *index, size_
 		return -EINVAL;
 	}
 
+	LOG_WRN("Index: %d, vacant: %d", *index, adv_buf_vacant);
+
 	/* Check that we have space for data */
 	if (adv_buf_vacant <= *index) {
 		return -ENOMEM;
@@ -364,6 +366,31 @@ int bt_mgmt_adv_buffer_put(struct bt_data *const adv_buf, uint32_t *index, size_
 	adv_buf[*index].data_len = data_len;
 	adv_buf[*index].data = data;
 	(*index)++;
+
+	return 0;
+}
+
+int bt_mgmt_adv_stop(uint8_t ext_adv_index)
+{
+	int ret;
+
+	ret = bt_le_ext_adv_stop(ext_adv[ext_adv_index]);
+	if (ret) {
+		LOG_ERR("Failed to stop advertising set: %d", ret);
+		return ret;
+	}
+
+	ret = bt_le_per_adv_stop(ext_adv[ext_adv_index]);
+	if (ret) {
+		LOG_ERR("Failed to top periodic advertising: %d", ret);
+		return ret;
+	}
+
+	ret = bt_le_ext_adv_delete(ext_adv[ext_adv_index]);
+	if (ret) {
+		LOG_ERR("Failed to delete advertising set: %d", ret);
+		return ret;
+	}
 
 	return 0;
 }

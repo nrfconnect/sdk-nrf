@@ -123,7 +123,14 @@ int bt_mgmt_scan_start(uint16_t scan_intvl, uint16_t scan_win, enum bt_mgmt_scan
 int bt_mgmt_manufacturer_uuid_populate(struct net_buf_simple *uuid_buf, uint16_t company_id);
 
 /**
- * @brief	Create and start advertising for ACL connection.
+ * @brief	Stop advertising for an ACL connection.
+ *
+ * @return	0 if success, error otherwise.
+ */
+int bt_mgmt_adv_stop(uint8_t ext_adv_index);
+
+/**
+ * @brief	Create and start advertising for an ACL connection.
  *
  * @param[in]	ext_adv_index	Index of the advertising set to start.
  * @param[in]	ext_adv		The data to be put in the extended advertisement.

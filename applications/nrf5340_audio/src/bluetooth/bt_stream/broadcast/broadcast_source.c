@@ -309,6 +309,8 @@ int broadcast_source_per_adv_populate(uint8_t big_index,
 	int ret;
 	size_t per_adv_buf_cnt = 0;
 
+	LOG_WRN("per_adv_vacant: %d", per_adv_buf_vacant);
+
 	if (big_index >= CONFIG_BT_ISO_MAX_BIG) {
 		LOG_ERR("Trying to populate per adv for BIG %d out of %d", big_index,
 			CONFIG_BT_ISO_MAX_BIG);
@@ -547,7 +549,8 @@ static uint8_t audio_map_location_get(struct bt_bap_stream *bap_stream)
 }
 #endif
 
-int broadcast_source_send(uint8_t big_index, struct le_audio_encoded_audio enc_audio)
+int broadcast_source_send(uint8_t big_index, uint8_t subgroup_index,
+			  struct le_audio_encoded_audio enc_audio)
 {
 	int ret;
 	uint8_t num_active_streams = 0;
@@ -560,30 +563,29 @@ int broadcast_source_send(uint8_t big_index, struct le_audio_encoded_audio enc_a
 	struct le_audio_tx_info
 		tx[CONFIG_BT_ISO_MAX_CHAN * CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
 
-	for (int i = 0; i < CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT; i++) {
-		for (int j = 0; j < ARRAY_SIZE(cap_streams[big_index][i]); j++) {
-			if (!le_audio_ep_state_check(cap_streams[big_index][i][j].bap_stream.ep,
-						     BT_BAP_EP_STATE_STREAMING)) {
-				continue;
-			}
-
-			/* Set cap stream pointer */
-			tx[num_active_streams].cap_stream = &cap_streams[big_index][i][j];
-
-			/* Set index */
-			tx[num_active_streams].idx.lvl1 = big_index;
-			tx[num_active_streams].idx.lvl2 = i;
-			tx[num_active_streams].idx.lvl3 = j;
-
-			/* Set channel location */
-			/* TODO: Use the function below once
-			 * https://github.com/zephyrproject-rtos/zephyr/pull/72908 is merged
-			 */
-			/* tx[num_active_streams].audio_channel = audio_map_location_get(stream);*/
-			tx[num_active_streams].audio_channel = j;
-
-			num_active_streams++;
+	for (int i = 0; i < ARRAY_SIZE(cap_streams[big_index][subgroup_index]); i++) {
+		if (!le_audio_ep_state_check(
+			    cap_streams[big_index][subgroup_index][i].bap_stream.ep,
+			    BT_BAP_EP_STATE_STREAMING)) {
+			continue;
 		}
+
+		/* Set cap stream pointer */
+		tx[num_active_streams].cap_stream = &cap_streams[big_index][subgroup_index][i];
+
+		/* Set index */
+		tx[num_active_streams].idx.lvl1 = big_index;
+		tx[num_active_streams].idx.lvl2 = subgroup_index;
+		tx[num_active_streams].idx.lvl3 = i;
+
+		/* Set channel location */
+		/* TODO: Use the function below once
+		 * https://github.com/zephyrproject-rtos/zephyr/pull/72908 is merged
+		 */
+		/* tx[num_active_streams].audio_channel = audio_map_location_get(stream);*/
+		tx[num_active_streams].audio_channel = i;
+
+		num_active_streams++;
 	}
 
 	if (num_active_streams == 0) {
@@ -618,11 +620,13 @@ int broadcast_source_disable(uint8_t big_index)
 
 		ret = bt_cap_initiator_broadcast_audio_stop(broadcast_sources[big_index]);
 		if (ret) {
+			LOG_WRN("Failed to stop");
 			return ret;
 		}
 	} else if (broadcast_sources[big_index] != NULL) {
 		ret = bt_cap_initiator_broadcast_audio_delete(broadcast_sources[big_index]);
 		if (ret) {
+			LOG_WRN("Failed to delete");
 			return ret;
 		}
 
@@ -705,7 +709,7 @@ int broadcast_source_enable(struct broadcast_source_big const *const broadcast_p
 	}
 
 	ret = bt_le_audio_tx_init();
-	if (ret) {
+	if (ret && ret != -EALREADY) {
 		return ret;
 	}
 
