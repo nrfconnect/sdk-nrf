@@ -7,6 +7,7 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen/lib_kmu.h>
+#include <nrf_security_mutexes.h>
 #include <nrfx.h>
 #include <psa/crypto.h>
 #include <stdint.h>
@@ -17,6 +18,8 @@
 #include "cracen_psa.h"
 #include "common.h"
 #include "kmu.h"
+
+extern nrf_security_mutex_t cracen_mutex_symmetric;
 
 /* The section .nrf_kmu_reserved_push_area is placed at the top RAM address
  * by the linker scripts. We do that for both the secure and non-secure builds.
@@ -215,7 +218,13 @@ int cracen_kmu_prepare_key(const uint8_t *user_data)
 int cracen_kmu_clean_key(const uint8_t *user_data)
 {
 	(void)user_data;
+	/* The kmu_push_area is guarded by the symmetric mutex since it is the most common use case.
+	 * Here the decision was to avoid defining another mutex to handle the push buffer for the rest
+	 * of the use cases.
+	 */
+	nrf_security_mutex_lock(cracen_mutex_symmetric);
 	safe_memzero(kmu_push_area, sizeof(kmu_push_area));
+	nrf_security_mutex_unlock(cracen_mutex_symmetric);
 
 	return SX_OK;
 }
@@ -665,15 +674,21 @@ static psa_status_t push_kmu_key_to_ram(uint8_t *key_buffer, size_t key_buffer_s
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	psa_status_t status = silex_statuscodes_to_psa(cracen_kmu_prepare_key(key_buffer));
+	psa_status_t status;
 
-	if (status) {
-		return status;
+	/* The kmu_push_area is guarded by the symmetric mutex since it is the most common use case.
+	 * Here the decision was to avoid defining another mutex to handle the push buffer for the rest
+	 * of the use cases.
+	 */
+	nrf_security_mutex_lock(cracen_mutex_symmetric);
+	status = silex_statuscodes_to_psa(cracen_kmu_prepare_key(key_buffer));
+	if(status == PSA_SUCCESS) {
+		memcpy(key_buffer, kmu_push_area, key_buffer_size);
+		safe_memzero(kmu_push_area, sizeof(kmu_push_area));
 	}
+	nrf_security_mutex_unlock(cracen_mutex_symmetric);
 
-	memcpy(key_buffer, kmu_push_area, key_buffer_size);
-
-	return PSA_SUCCESS;
+	return status;
 }
 
 psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
