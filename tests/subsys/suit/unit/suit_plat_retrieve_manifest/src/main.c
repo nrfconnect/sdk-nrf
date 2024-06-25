@@ -145,7 +145,7 @@ suit_plat_decode_manifest_class_id_valid_fake_func(struct zcbor_string *componen
 
 static int
 suit_storage_installed_envelope_get_not_found_fake_func(const suit_manifest_class_id_t *id,
-							uint8_t **addr, size_t *size)
+							const uint8_t **addr, size_t *size)
 {
 	zassert_equal(id, TEST_CLASS_ID, "Unexpected manifest class ID value");
 	zassert_not_equal(addr, NULL,
@@ -158,7 +158,7 @@ suit_storage_installed_envelope_get_not_found_fake_func(const suit_manifest_clas
 
 static int
 suit_storage_installed_envelope_get_invalid_address_fake_func(const suit_manifest_class_id_t *id,
-							      uint8_t **addr, size_t *size)
+							      const uint8_t **addr, size_t *size)
 {
 	zassert_equal(id, TEST_CLASS_ID, "Unexpected manifest class ID value");
 	zassert_not_equal(addr, NULL,
@@ -174,7 +174,7 @@ suit_storage_installed_envelope_get_invalid_address_fake_func(const suit_manifes
 
 static int
 suit_storage_installed_envelope_get_invalid_size_fake_func(const suit_manifest_class_id_t *id,
-							   uint8_t **addr, size_t *size)
+							   const uint8_t **addr, size_t *size)
 {
 	zassert_equal(id, TEST_CLASS_ID, "Unexpected manifest class ID value");
 	zassert_not_equal(addr, NULL,
@@ -189,7 +189,7 @@ suit_storage_installed_envelope_get_invalid_size_fake_func(const suit_manifest_c
 }
 
 static int suit_storage_installed_envelope_get_found_fake_func(const suit_manifest_class_id_t *id,
-							       uint8_t **addr, size_t *size)
+							       const uint8_t **addr, size_t *size)
 {
 	zassert_equal(id, TEST_CLASS_ID, "Unexpected manifest class ID value");
 	zassert_not_equal(addr, NULL,
@@ -288,7 +288,7 @@ static int suit_memptr_storage_ptr_get_valid_fake_func(memptr_storage_handle_t h
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_handle_null_args)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* WHEN platform is asked to return manifest and input parameters are invalid */
@@ -326,7 +326,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_handle_null_args)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_handle_invalid)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is invalid. */
@@ -358,7 +358,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_handle_invalid)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_component_unknown)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -394,7 +394,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_unknown)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_component_unsupported)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -430,7 +430,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_unsupported)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_component_mem)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -466,7 +466,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_mem)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_component_cand_img)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -502,7 +502,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_cand_img)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_instld_invalid_class)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -542,7 +542,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_invalid_class)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_not_found)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -586,7 +586,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_not_found)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_address)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -630,7 +630,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_addres
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_size)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -674,7 +674,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_size)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_found)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -720,7 +720,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_found)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_no_data)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -760,7 +760,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_no_data)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_no_ptr)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -804,7 +804,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_no_ptr)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_invalid_addr)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -848,7 +848,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_invalid_addr)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_invalid_size)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -892,7 +892,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_invalid_size)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_valid)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -908,8 +908,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_valid)
 	suit_memptr_storage_ptr_get_fake.custom_fake = suit_memptr_storage_ptr_get_valid_fake_func;
 
 	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, (const uint8_t *)&envelope_str,
-					      &envelope_len);
+	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
 
 	/* THEN manifest is not returned... */
 	zassert_equal(SUIT_SUCCESS, ret, "Invalid manifest retrieved");
@@ -941,7 +940,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_valid)
 
 ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_in_external_memory)
 {
-	uint8_t *envelope_str;
+	const uint8_t *envelope_str;
 	size_t envelope_len;
 
 	/* GIVEN the component handle value is valid. */
@@ -960,8 +959,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_in_external_memo
 	suit_memory_global_address_is_in_external_memory_fake.return_val = true;
 
 	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, (const uint8_t *)&envelope_str,
-					      &envelope_len);
+	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
 
 	/* THEN manifest is not returned... */
 	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
