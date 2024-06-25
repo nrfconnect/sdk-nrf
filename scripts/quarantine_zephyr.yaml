@@ -420,6 +420,7 @@
     - kernel.context
     - shell.min_cmds_all
     - shell.min_colors
+    - drivers.gpio.build
   platforms:
     - nrf54h20dk/nrf54h20/cpuppr
   comment: "region RAM/FLASH overflowed"
