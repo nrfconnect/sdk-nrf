@@ -134,9 +134,6 @@ User interface
 
 The user interface of the sample depends on the hardware platform you are using.
 
-Development kits
-================
-
 .. tabs::
 
    .. group-tab:: nRF52 and nRF53 DKs
@@ -320,69 +317,69 @@ Development kits
 
          When pressed during the application bootup, resets the accessory to default factory settings.
 
-Thingy:53
-=========
 
-RGB LED:
-   Thingy:53 displays the application state in the RGB scale using **LED1**.
-   The **LED1** displays a color sequence with each blink that indicates the overall application state.
+   .. group-tab:: Thingy:53
 
-   Each color of the LED indicates the different application state:
+      RGB LED:
+         Thingy:53 displays the application state in the RGB scale using **LED1**.
+         The **LED1** displays a color sequence with each blink that indicates the overall application state.
 
-   * Green - Indicates that firmware is running.
-   * Blue - Indicates that the device is provisioned.
-   * Yellow - Indicates that the identification mode is active.
-   * Red - Indicates that the recovery mode is active.
-   * White - Indicates that the Fast Pair advertising is active.
+         Each color of the LED indicates the different application state:
 
-Speaker/Buzzer:
-   Produces sound when the ringing action is in progress and to indicate a new button action.
+         * Green - Indicates that firmware is running.
+         * Blue - Indicates that the device is provisioned.
+         * Yellow - Indicates that the identification mode is active.
+         * Red - Indicates that the recovery mode is active.
+         * White - Indicates that the Fast Pair advertising is active.
 
-Button (SW3):
-   When pressed during the application bootup, the accessory is reset to its default factory settings.
+      Speaker/Buzzer:
+         Produces sound when the ringing action is in progress and to indicate a new button action.
 
-   When pressed, stops the ongoing ringing action.
+      Button (SW3):
+         When pressed during the application bootup, the accessory is reset to its default factory settings.
 
-   When released, the action depends on how long the button was held:
+         When pressed, stops the ongoing ringing action.
 
-   * From 1 to 3 seconds (notified by one short beep):
+         When released, the action depends on how long the button was held:
 
-     Toggles between different modes of the Fast Pair advertising set:
+         * From 1 to 3 seconds (notified by one short beep):
 
-     * Without an Account Key stored on the device:
+           Toggles between different modes of the Fast Pair advertising set:
 
-       * Fast Pair advertising disabled.
-       * Fast Pair discoverable advertising (the default after the system bootup).
+           * Without an Account Key stored on the device:
 
-     * With an Account Key stored on the device:
+             * Fast Pair advertising disabled.
+             * Fast Pair discoverable advertising (the default after the system bootup).
 
-       * Fast Pair advertising disabled.
-       * Fast Pair not discoverable advertising (the default after the system bootup).
+           * With an Account Key stored on the device:
 
-     .. note::
-        The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
-        After the connection, you can still switch the advertising modes, but the effect is only after disconnection.
+             * Fast Pair advertising disabled.
+             * Fast Pair not discoverable advertising (the default after the system bootup).
 
-        The sample automatically switches to the following Fast Pair advertising modes under certain conditions:
+           .. note::
+              The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
+              After the connection, you can still switch the advertising modes, but the effect is only after disconnection.
 
-        * Fast Pair not discoverable advertising - On the Account Key write operation.
-        * Fast Pair advertising disabled:
+              The sample automatically switches to the following Fast Pair advertising modes under certain conditions:
 
-          * Right before the factory reset operation.
-          * After the beacon clock synchronization.
+              * Fast Pair not discoverable advertising - On the Account Key write operation.
+              * Fast Pair advertising disabled:
 
-   * From 3 to 5 seconds (notified by two short beeps):
+                * Right before the factory reset operation.
+                * After the beacon clock synchronization.
 
-     Requests the FMDN subsystem to enable the identification mode for five minutes.
-     This timeout value is defined by the :kconfig:option:`CONFIG_DULT_ID_READ_STATE_TIMEOUT` Kconfig option according to the DULT specification requirements.
+         * From 3 to 5 seconds (notified by two short beeps):
 
-   * From 5 to 7 seconds (notified by three short beeps):
+           Requests the FMDN subsystem to enable the identification mode for five minutes.
+           This timeout value is defined by the :kconfig:option:`CONFIG_DULT_ID_READ_STATE_TIMEOUT` Kconfig option according to the DULT specification requirements.
 
-     Enables the recovery mode for one minute as defined by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY_TIMEOUT` Kconfig option.
+         * From 5 to 7 seconds (notified by three short beeps):
 
-   * From 7 seconds or more (notified by one longer beep):
+           Enables the recovery mode for one minute as defined by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY_TIMEOUT` Kconfig option.
 
-     No action - allows to not perform any button operation.
+         * From 7 seconds or more (notified by one longer beep):
+
+           No action - allows to not perform any button operation.
 
 Configuration
 *************
