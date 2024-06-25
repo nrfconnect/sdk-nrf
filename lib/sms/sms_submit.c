@@ -41,6 +41,7 @@ LOG_MODULE_DECLARE(sms, CONFIG_SMS_LOG_LEVEL);
  * @param[out] encoded_number_size_octets Number of octets/bytes in encoded_number.
  *
  * @retval -EINVAL Invalid parameter.
+ * @retval -E2BIG Input number too long.
  * @return Zero on success, otherwise error code.
  */
 static int sms_submit_encode_number(
@@ -54,7 +55,7 @@ static int sms_submit_encode_number(
 	__ASSERT_NO_MSG(number != NULL);
 
 	if (*number_size == 0) {
-		LOG_ERR("SMS number not given but zero length");
+		LOG_ERR("Number not given but zero length");
 		return -EINVAL;
 	}
 
@@ -63,8 +64,15 @@ static int sms_submit_encode_number(
 		 * We are using international number format always anyway.
 		 */
 		number += 1;
-		*number_size = strlen(number);
+		(*number_size)--;
 		LOG_DBG("Ignoring leading '+' in the number");
+	}
+
+	if (*number_size > SMS_MAX_ADDRESS_LEN_CHARS) {
+		LOG_ERR("Number length exceeds limit (%d): %s",
+			SMS_MAX_ADDRESS_LEN_CHARS,
+			number);
+		return -E2BIG;
 	}
 
 	memset(encoded_number, 0, SMS_MAX_ADDRESS_LEN_CHARS + 1);

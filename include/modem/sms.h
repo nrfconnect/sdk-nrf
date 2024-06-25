@@ -52,7 +52,7 @@ enum sms_data_type {
 
 /**
  * @brief Maximum length of SMS address, i.e., phone number, in characters
- * as specified in 3GPP TS 23.040 Section 9.1.2.3.
+ * as specified in 3GPP TS 23.040 Section 9.1.2.5.
  */
 #define SMS_MAX_ADDRESS_LEN_CHARS 20
 
