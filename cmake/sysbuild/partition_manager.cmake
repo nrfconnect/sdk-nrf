@@ -99,8 +99,7 @@ function(partition_manager)
     )
   endif()
 
-# We must set this when running for the domain, so how is the domain name partition handled in settings ?
-  if("${PM_DOMAIN}" STREQUAL "CPUNET")
+  if(NOT "${PM_DOMAIN}" STREQUAL "")
     set(dynamic_partition ${${PM_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION})
     set(
       dynamic_partition_argument
