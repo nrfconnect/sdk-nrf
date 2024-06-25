@@ -116,7 +116,7 @@ If the Model ID and Anti-Spoofing Private Key are not specified, the following d
    * Device Type: Locator Tag
    * Notification Type: Fast Pair
    * Data-Only connection: true
-   * No Personalized Name: false
+   * No Personalized Name: true
    * Find My Device: true
 
 For details, see :ref:`ug_bt_fast_pair_provisioning` in the Fast Pair user guide.
