@@ -1,0 +1,10 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Shrink by 128 KB */
+&cpurad_slot0_partition {
+	reg = <0x66000 DT_SIZE_K(128)>;
+};

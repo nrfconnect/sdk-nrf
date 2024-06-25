@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Delete current ns definition to make space for app */
+/delete-node/ &slot0_ns_partition;
+
+/* Extend by 64 KB */
+&slot0_partition {
+	reg = <0x10000 DT_SIZE_K(388)>;
+};
