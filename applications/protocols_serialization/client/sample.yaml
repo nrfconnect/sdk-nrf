@@ -29,3 +29,5 @@ tests:
       SNIPPET="ble;openthread"
     integration_platforms:
       - nrf52840dk/nrf52840
+        
+
