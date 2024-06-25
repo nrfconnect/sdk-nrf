@@ -74,7 +74,7 @@ To update the modem firmware, complete the following steps.
 
       .. group-tab:: nRF9161 DK
 
-         .. figure:: images/cellularmonitor_selectdevice_nrf9161.png
+         .. figure:: images/programmer_select_device_nrf9161.png
             :alt: Programmer - Select device
 
             Programmer - Select device
