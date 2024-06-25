@@ -651,6 +651,26 @@ void test_send_fail_number_null(void)
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
+/**
+ * Phone number is too long with 21 characters.
+ */
+void test_send_fail_number21(void)
+{
+	int ret = sms_send_text("123456789012345678901", "1");
+
+	TEST_ASSERT_EQUAL(-E2BIG, ret);
+}
+
+/**
+ * Phone number is too long with 21 characters and preceded by '+' sign.
+ */
+void test_send_fail_number21plus(void)
+{
+	int ret = sms_send_text("+123456789012345678901", "1");
+
+	TEST_ASSERT_EQUAL(-E2BIG, ret);
+}
+
 /** Text is NULL. */
 void test_send_fail_text_null(void)
 {
