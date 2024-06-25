@@ -234,11 +234,7 @@ function(add_child_image_from_source)
   elseif (NOT ACI_BOARD)
     # No BOARD is given as argument, this triggers automatic conversion of
     # *.ns board from parent image.
-    if(DEFINED BOARD_REVISION)
-      get_board_without_ns_suffix(${BOARD}@${BOARD_REVISION}${BOARD_QUALIFIERS} ACI_BOARD)
-    else()
-      get_board_without_ns_suffix(${BOARD}${BOARD_QUALIFIERS} ACI_BOARD)
-    endif()
+    get_board_without_ns_suffix(${BOARD}${BOARD_QUALIFIERS} ACI_BOARD)
   endif()
 
   if (NOT ACI_DOMAIN AND DOMAIN)
