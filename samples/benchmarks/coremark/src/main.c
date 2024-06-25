@@ -6,7 +6,6 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/logging/log_ctrl.h>
 #include <zephyr/drivers/gpio.h>
 #include <system_nrf.h>
 
@@ -50,18 +49,10 @@ static const struct gpio_dt_spec status_led;
 static K_SEM_DEFINE(start_coremark, 0, 1);
 static atomic_t coremark_in_progress;
 
-static void flush_log(void)
-{
-	if (IS_ENABLED(CONFIG_LOG_PROCESS_THREAD)) {
-		while (log_data_pending()) {
-			k_sleep(K_MSEC(100));
-		}
-		k_sleep(K_MSEC(100));
-	} else {
-		while (LOG_PROCESS()) {
-		}
-	}
-}
+/* Enforce synchronous logging as the sample doesn't flush logs. */
+BUILD_ASSERT(IS_ENABLED(CONFIG_LOG_MODE_MINIMAL) || IS_ENABLED(CONFIG_LOG_MODE_IMMEDIATE),
+	     "Logs should be processed synchronously to avoid negative impact on the "
+	     "benchamrk performance");
 
 static void button_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
@@ -127,7 +118,6 @@ static int button_init(void)
 int main(void)
 {
 	LOG_INF("CoreMark sample for %s", CONFIG_BOARD_TARGET);
-	flush_log();
 
 	if (IS_ENABLED(CONFIG_APP_MODE_FLASH_AND_RUN)) {
 		(void)atomic_set(&coremark_in_progress, true);
@@ -151,12 +141,10 @@ int main(void)
 			CONFIG_COREMARK_THREADS_NUMBER,
 			CONFIG_COREMARK_DATA_SIZE,
 			CONFIG_COREMARK_ITERATIONS);
-		flush_log();
 
 		LED_ON();
 		coremark_run();
 		LED_OFF();
-		flush_log();
 
 		if (!IS_ENABLED(CONFIG_APP_MODE_FLASH_AND_RUN)) {
 			LOG_INF("CoreMark finished! Push %s to restart ...\n", BUTTON_LABEL);
