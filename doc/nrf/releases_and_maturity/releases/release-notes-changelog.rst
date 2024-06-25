@@ -430,7 +430,9 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`wifi_radio_test` sample:
+
+  * Added capture timeout as a parameter for packet capture.
 
 Other samples
 -------------

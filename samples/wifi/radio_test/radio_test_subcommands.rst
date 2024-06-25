@@ -142,10 +142,15 @@ Wi-Fi radio test subcommands
      - Configuration
      - Configure the location of resource unit (RU) in 20 MHz spectrum.
    * - rx_capture_length
-     - | <val> (Min: 0, Max: 16384)
+     - | <val> Number of ADC samples (Min: 0, Max: 16383)
      - 0
      - Configuration
      - Number of RX samples to be captured.
+   * - rx_capture_timeout
+     - | <val> Timeout period in seconds (Min: 0, Max: 600)
+     - 0
+     - Configuration
+     - Duration of packet detection. If no packets are detected, the command will timeout.
    * - rx_lna_gain
      - | 0 = 24 dB
        | 1 = 18 dB
@@ -201,11 +206,11 @@ Wi-Fi radio test subcommands
      - Enable/Disable packet reception.
    * - rx_cap
      - | 0 = ADC capture
-       | 1 = Static packet capture
-       | 2 = Dynamic packet capture
+       | 1 = Filtered ADC capture
+       | 2 = Packet capture
      - N/A
      - Action
-     - Capture RX ADC samples, static or dynamic packets.
+     - Capture ADC samples at 40 MHz sampling rate, capture filtered ADC samples at 20 MHz sampling rate, or capture packets at 20 MHz sampling rate after valid packet detection.
    * - tx_tone
      - | 0: Disable tone
        | 1: Enable tone
