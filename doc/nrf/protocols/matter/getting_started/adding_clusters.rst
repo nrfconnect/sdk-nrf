@@ -13,6 +13,11 @@ The sensor will periodically generate the simulated temperature sensor value and
 This application will form a Matter device within a Matter network.
 
 .. note::
+   The sensor sample used in this instruction is used here as an example, and does not follow the Matter Device Type Library Specification.
+   When creating an official product, follow the Matter Device Type Library Specification.
+
+
+.. note::
    Make sure you are familiar with Matter in the |NCS| and you have tested some of the available :ref:`matter_samples` before you work with this user guide.
 
 .. _ug_matter_creating_accessory_overview:
@@ -101,6 +106,12 @@ To edit clusters using the ZAP tool, complete the following steps:
 
       west zap-gui
 
+
+   .. note::
+      The ZAP tool UI may vary depending on the ZAP version.
+      The following steps should be considered as guidelines.
+
+
    The ZAP tool's Matter Cluster Configurator window appears.
 
    .. figure:: images/matter_create_accessory_zcl_configurator.png
@@ -120,7 +131,7 @@ To edit clusters using the ZAP tool, complete the following steps:
       Create New Endpoint menu in ZAP tool
 
    The new endpoint is created with both the Descriptor and Identify clusters enabled.
-#. Configure the On/Off cluster required for this endpoint:
+#. Configure the On/Off cluster for this endpoint, as it will be used in this example:
 
    a. In the :guilabel:`Search Clusters` menu, find the On/Off cluster.
    #. Set the :guilabel:`Server` option for the On/Off cluster.
@@ -360,8 +371,8 @@ To check if the sensor device is working, complete the following steps:
      You can use the :ref:`matter_template_network_mode_onboarding` listed earlier on this page.
    * Send Matter commands.
 
-   At the end of this procedure, the LED indicating the state of the Matter device programmed with the sample starts flashing in the Short Flash Off state.
-   This indicates that the device is fully provisioned, but does not yet have full IPv6 network connectivity.
+   At the end of this procedure, the LED indicating the state of the Matter device programmed with the sample starts presenting the Solid On state.
+   This indicates that the device is fully provisioned, and has established a CASE session with the controller.
 #. Activate the sensor by running the following command on the On/off cluster with the correct *node_ID* assigned during commissioning:
 
    .. parsed-literal::
@@ -382,6 +393,8 @@ To check if the sensor device is working, complete the following steps:
       :class: highlight
 
       ./chip-tool onoff off *node_ID* 1
+
+#. Read the measurement after the device has received the turning-off command.
 
 #. Read the measurement again.
    The measurement should not change.
