@@ -39,7 +39,7 @@ ZTEST_SUITE(envelope_decoder, NULL, test_suit_setup, NULL, NULL, NULL);
 ZTEST(envelope_decoder, test_get_manifest_authenticated_metadata)
 {
 	int err = suit_processor_get_manifest_metadata(DFU_PARTITION_ADDRESS, DFU_PARTITION_SIZE,
-						       false, NULL, NULL, NULL, NULL, NULL);
+						       false, NULL, NULL, NULL, NULL, NULL, NULL);
 
 	zassert_equal(err, 0, "Reading authenticated envelope failed (err: %d)", err);
 }
@@ -47,7 +47,7 @@ ZTEST(envelope_decoder, test_get_manifest_authenticated_metadata)
 ZTEST(envelope_decoder, test_get_manifest_unauthenticated_metadata)
 {
 	int err = suit_processor_get_manifest_metadata(DFU_PARTITION_ADDRESS, DFU_PARTITION_SIZE,
-						       true, NULL, NULL, NULL, NULL, NULL);
+						       true, NULL, NULL, NULL, NULL, NULL, NULL);
 
 	zassert_equal(err, 0, "Reading unauthenticated envelope failed (err: %d)", err);
 }
