@@ -195,7 +195,10 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option value in configurations with the Fast Pair support.
+    The value is now aligned with the Fast Pair requirements.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -230,7 +233,10 @@ Bluetooth samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The values for the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option in all configurations, and for the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER_CORRECTION_VAL` Kconfig option in configurations with the Find My Device Network (FMDN) extension support.
+    The values are now aligned with the Fast Pair requirements.
 
 Bluetooth Mesh samples
 ----------------------
