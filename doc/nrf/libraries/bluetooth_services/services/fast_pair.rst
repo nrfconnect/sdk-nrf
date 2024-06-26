@@ -44,6 +44,9 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_REQ_PAIRING` - The option enforces the requirement for Bluetooth pairing and bonding during the `Fast Pair Procedure`_.
   This option is enabled by default.
   See the :ref:`ug_bt_fast_pair_gatt_service_no_ble_pairing` for more details.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` - The option adds support for the Fast Pair Subsequent Pairing feature.
+  This option is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` is enabled.
+  This is done to align default configuration with `Fast Pair Device Feature Requirements for Locator Tags`_ documentation.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_USER_RESET_ACTION` - The option enables user reset action that is executed together with the Fast Pair factory reset operation.
   See the :ref:`ug_bt_fast_pair_factory_reset_custom_user_reset_action` for more details.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX` - The option configures maximum number of stored Account Keys.

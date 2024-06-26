@@ -40,7 +40,9 @@ enum bt_fast_pair_adv_mode {
 
 /** @brief Fast Pair not discoverable advertising type. Used to generate advertising packet. */
 enum bt_fast_pair_not_disc_adv_type {
-	/** Show UI indication. */
+	/** Show UI indication.
+	 *  Used only when the CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING is enabled.
+	 */
 	BT_FAST_PAIR_NOT_DISC_ADV_TYPE_SHOW_UI_IND,
 
 	/** Hide UI indication. */
