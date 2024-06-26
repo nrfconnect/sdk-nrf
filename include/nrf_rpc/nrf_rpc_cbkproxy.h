@@ -6,49 +6,56 @@
 
 /**
  * @file
- * @defgroup bt_rpc_cbkproxy Bluetooth RPC callback proxy API
+ * @defgroup nrf_rpc_cbkproxy NRF RPC callback proxy API
  * @{
- * @brief API for the Bluetooth RPC callback proxy.
+ * @brief API for the NRF RPC callback proxy.
  */
 
 
-#ifndef CBKPROXY_H
-#define CBKPROXY_H
+#ifndef NRF_RPC_CBKPROXY_H
+#define NRF_RPC_CBKPROXY_H
 
 #include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** @brief Creates a handler for output callback proxy.
  *
  * It is a variadic macro that takes following parameters:
  *
- * ''CBKPROXY_HANDLER(handler_name, callback_name, [return_type,]
+ * ''NRF_RPC_CBKPROXY_HANDLER(handler_name, callback_name, [return_type,]
  *                    [handler_parameters, callback_arguments])''
  *
- * @param handler_name  name of the handler function that can ne passed to @ref
- *                      cbkproxy_out_get() function.
- * @param callback_name Callback that will be called by this handler. Best
- *                      approach is to declare it as 'static inline' to make
- *                      sure that handler and callback will be combined into
- *                      one function during the optimization. This callback
- *                      has the same parameters as the original one (provided
- *                      in ''handler_parameters'') with following parameter
- *                      appended to the end: ''uint32_t callback_slot''.
- * @param return_type   Optional return type of the callback. It must be
- *                      convertable to ''uint32_t'' without lost of information.
- *                      If it is ''void'' this macro parameter must be skipped.
- * @param handler_parameters
- *                      List of parameters with its types enclosed in
- *                      parentheses, e.g. ''(uint8_t *buf, size_t len)''.
- *                      This macro parameter is optional and must be skipped
- *                      if callback does not take any parameres.
- * @param callback_arguments
- *                      List of arguments with the same names as in
- *                      ''handler_parameters'' enclosed in parentheses,
- *                      e.g. ''(buf, len)''. This macro parameter is optional
- *                      and must be skipped if callback does not take any
- *                      parameres.
+ * @param ... - variadic number of parameters:
+ *
+ * handler_name - name of the handler function that can be passed to the
+ *  @ref nrf_rpc_cbkproxy_out_get() function.
+ *
+ * callback_name - callback that will be called by this handler. Best
+ * approach is to declare it as 'static inline' to make
+ * sure that handler and callback will be combined into
+ * one function during the optimization. This callback
+ * has the same parameters as the original one (provided
+ * in ''handler_parameters'') with the following parameter
+ * appended to the end: ''uint32_t callback_slot''.
+ *
+ * return_type - optional return type of the callback. It must be
+ * convertible to ''uint32_t'' without a loss of information.
+ * If it is ''void'' this macro parameter must be skipped.
+ *
+ * handler_parameters - list of parameters with its types enclosed in
+ * parentheses, for example, ''(uint8_t *buf, size_t len)''.
+ * This macro parameter is optional and must be skipped
+ * if the callback does not take any parameters.
+ *
+ * callback_arguments - list of arguments with the same names as in
+ * ''handler_parameters'' enclosed in parentheses,
+ * for example, ''(buf, len)''. This macro parameter is optional
+ * and must be skipped if the callback does not take any parameters.
  */
-#define CBKPROXY_HANDLER(...) \
+#define NRF_RPC_CBKPROXY_HANDLER(...) \
 	_CBKPROXY_HANDLER_CAT(_CBKPROXY_HANDLER_, _CBKPROXY_HANDLER_CNT(__VA_ARGS__)) (__VA_ARGS__)
 #define _CBKPROXY_HANDLER_CNT2(a, b, c, d, e, f, ...) f
 #define _CBKPROXY_HANDLER_CNT(...) \
@@ -94,9 +101,9 @@
  * in multiple source files.
  *
  * All parameter must be the same as in related handler defined by
- * the CBKPROXY_HANDLER macro except callback_name which should be skipped in this macro.
+ * the NRF_RPC_CBKPROXY_HANDLER macro except callback_name which should be skipped in this macro.
  */
-#define CBKPROXY_HANDLER_DECL(...) _CBKPROXY_HANDLER_CAT(_CBKPROXY_HANDLER_DECL_, \
+#define NRF_RPC_CBKPROXY_HANDLER_DECL(...) _CBKPROXY_HANDLER_CAT(_CBKPROXY_HANDLER_DECL_, \
 	_CBKPROXY_HANDLER_DECL_CNT(__VA_ARGS__)) (__VA_ARGS__)
 #define _CBKPROXY_HANDLER_DECL_CNT(...) \
 	_CBKPROXY_HANDLER_CNT2(_, __VA_ARGS__, RET_PARAM, VOID_PARAM, RET_VOID, VOID_VOID)
@@ -121,14 +128,14 @@
  *
  * @param index    Slot index.
  * @param handler  Pointer to handler function. The function has to be created
- *                 by the @ref CBKPROXY_HANDLER macro.
+ *                 by the @ref NRF_RPC_CBKPROXY_HANDLER macro.
  * @returns        Pointer to function that calls provided handler using
  *                 provided slot index. The pointer has to be casted to
  *                 the same type as handler. NULL when index is too high or
  *                 the function was called again with the same index, but
  *                 different handler.
  */
-void *cbkproxy_out_get(int index, void *handler);
+void *nrf_rpc_cbkproxy_out_get(int index, void *handler);
 
 /** @brief Sets input callback proxy.
  *
@@ -139,7 +146,7 @@ void *cbkproxy_out_get(int index, void *handler);
  *
  * @returns Slot number or -1 if no more slots are available.
  */
-int cbkproxy_in_set(void *callback);
+int nrf_rpc_cbkproxy_in_set(void *callback);
 
 /** @brief Gets input callback proxy.
  *
@@ -147,6 +154,12 @@ int cbkproxy_in_set(void *callback);
  *
  * @returns Callback function or NULL if slot index is invalid.
  */
-void *cbkproxy_in_get(int index);
+void *nrf_rpc_cbkproxy_in_get(int index);
 
-#endif /* CBKPROXY_H */
+#ifdef __cplusplus
+}
+#endif
+
+/** @} */
+
+#endif /* NRF_RPC_CBKPROXY_H */

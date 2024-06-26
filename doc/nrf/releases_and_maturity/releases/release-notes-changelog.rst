@@ -453,7 +453,7 @@ Libraries for NFC
 nRF RPC libraries
 -----------------
 
-|no_changes_yet_note|
+* Updated the internal Bluetooth serialization API and Bluetooth callback proxy API to become part of the public NRF RPC API.
 
 Other libraries
 ---------------

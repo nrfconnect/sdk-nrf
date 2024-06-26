@@ -9,19 +9,19 @@
 
 #include <zephyr/kernel.h>
 
-#include "cbkproxy.h"
+#include <nrf_rpc/nrf_rpc_cbkproxy.h>
 
 static K_MUTEX_DEFINE(mutex);
 
-#if CONFIG_CBKPROXY_OUT_SLOTS > 0
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS > 0
 
-#if CONFIG_CBKPROXY_OUT_SLOTS > 16383
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS > 16383
 #error "Too many callback proxy output slots"
 #endif
 
 #if __ARM_ARCH != 8 || __ARM_ARCH_ISA_THUMB != 2 || !defined(__GNUC__)
 #error Callback proxy output is implemented only for Cortex-M33 and GCC. \
-	Set CONFIG_CBKPROXY_OUT_SLOTS to 0 to disable them.
+	Set CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS to 0 to disable them.
 #endif
 
 #define TABLE_ENTRY1 \
@@ -43,52 +43,52 @@ static K_MUTEX_DEFINE(mutex);
 #define TABLE_ENTRY4096 TABLE_ENTRY2048 TABLE_ENTRY2048
 #define TABLE_ENTRY8192 TABLE_ENTRY4096 TABLE_ENTRY4096
 
-static void *out_callbacks[CONFIG_CBKPROXY_OUT_SLOTS];
+static void *out_callbacks[CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS];
 
 __attribute__((naked))
 static void callback_jump_table_start(void)
 {
 	__asm volatile (
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(0)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(0)
 		TABLE_ENTRY1
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(1)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(1)
 		TABLE_ENTRY2
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(2)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(2)
 		TABLE_ENTRY4
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(3)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(3)
 		TABLE_ENTRY8
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(4)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(4)
 		TABLE_ENTRY16
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(5)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(5)
 		TABLE_ENTRY32
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(6)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(6)
 		TABLE_ENTRY64
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(7)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(7)
 		TABLE_ENTRY128
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(8)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(8)
 		TABLE_ENTRY256
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(9)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(9)
 		TABLE_ENTRY512
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(10)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(10)
 		TABLE_ENTRY1024
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(11)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(11)
 		TABLE_ENTRY2048
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(12)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(12)
 		TABLE_ENTRY4096
 #endif
-#if CONFIG_CBKPROXY_OUT_SLOTS & BIT(13)
+#if CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS & BIT(13)
 		TABLE_ENTRY8192
 #endif
 		".L%=callback_jump_table_end:\n"
@@ -111,11 +111,11 @@ static void callback_jump_table_start(void)
 	);
 }
 
-void *cbkproxy_out_get(int index, void *handler)
+void *nrf_rpc_cbkproxy_out_get(int index, void *handler)
 {
 	uint32_t addr;
 
-	if (index >= CONFIG_CBKPROXY_OUT_SLOTS || index < 0) {
+	if (index >= CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS || index < 0) {
 		return NULL;
 	} else if (!out_callbacks[index]) {
 		out_callbacks[index] = handler;
@@ -130,23 +130,23 @@ void *cbkproxy_out_get(int index, void *handler)
 }
 
 #else
-void *cbkproxy_out_get(int index, void *handler)
+void *nrf_rpc_cbkproxy_out_get(int index, void *handler)
 {
 	return NULL;
 }
-#endif /* CONFIG_CBKPROXY_OUT_SLOTS > 0 */
+#endif /* CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS > 0 */
 
-#if CONFIG_CBKPROXY_IN_SLOTS > 0
+#if CONFIG_NRF_RPC_CBKPROXY_IN_SLOTS > 0
 static struct
 {
 	intptr_t callback;
 	uint16_t gt;
 	uint16_t lt;
-} in_slots[CONFIG_CBKPROXY_IN_SLOTS];
+} in_slots[CONFIG_NRF_RPC_CBKPROXY_IN_SLOTS];
 
 static uint32_t next_free_in_slot;
 
-int cbkproxy_in_set(void *callback)
+int nrf_rpc_cbkproxy_in_set(void *callback)
 {
 	int index = 0;
 	uint16_t *attach_to = NULL;
@@ -171,7 +171,7 @@ int cbkproxy_in_set(void *callback)
 	}
 
 	if (attach_to) {
-		if (next_free_in_slot >= CONFIG_CBKPROXY_IN_SLOTS) {
+		if (next_free_in_slot >= CONFIG_NRF_RPC_CBKPROXY_IN_SLOTS) {
 			index = -1;
 		} else {
 			index = next_free_in_slot;
@@ -188,7 +188,7 @@ int cbkproxy_in_set(void *callback)
 	return index;
 }
 
-void *cbkproxy_in_get(int index)
+void *nrf_rpc_cbkproxy_in_get(int index)
 {
 	if ((index >= next_free_in_slot) || (index < 0)) {
 		return NULL;
@@ -198,13 +198,13 @@ void *cbkproxy_in_get(int index)
 }
 
 #else
-int cbkproxy_in_set(void *callback)
+int nrf_rpc_cbkproxy_in_set(void *callback)
 {
 	return -1;
 }
 
-void *cbkproxy_in_get(int index)
+void *nrf_rpc_cbkproxy_in_get(int index)
 {
 	return NULL;
 }
-#endif /* CONFIG_CBKPROXY_IN_SLOTS > 0 */
+#endif /* CONFIG_NRF_RPC_CBKPROXY_IN_SLOTS > 0 */
