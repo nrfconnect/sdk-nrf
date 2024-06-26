@@ -23,9 +23,13 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/logging/log.h>
 #include <modem/modem_info.h>
+#include <ncs_version.h>
+#include <ncs_commit.h>
 #include "cJSON_os.h"
 
 LOG_MODULE_REGISTER(nrf_cloud_codec_internal, CONFIG_NRF_CLOUD_LOG_LEVEL);
+
+#define SDK_VERSION NCS_VERSION_STRING "-" NCS_COMMIT_STRING
 
 /** @brief How the control section is handled when either a trimmed shadow
  *  or a delta shadow is received.
@@ -1391,7 +1395,7 @@ static int encode_modem_info_device(struct device_param *device, cJSON *json_obj
 		return -ENOMEM;
 	}
 
-	if (json_add_str_cs(json_obj, "sdkVer", device->app_version)) {
+	if (json_add_str_cs(json_obj, "sdkVer", SDK_VERSION)) {
 		return -ENOMEM;
 	}
 
