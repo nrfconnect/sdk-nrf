@@ -145,7 +145,7 @@ static int nrf_modem_at_scanf_custom_xcband(const char *cmd, const char *fmt, va
 	TEST_ASSERT_EQUAL_STRING("AT%XCBAND", cmd);
 	TEST_ASSERT_EQUAL_STRING("%%XCBAND: %u", fmt);
 
-	uint8_t *val = va_arg(args, uint8_t *);
+	unsigned int *val = va_arg(args, unsigned int *);
 	*val = EXAMPLE_BAND;
 
 	return 1;
@@ -156,7 +156,7 @@ static int nrf_modem_at_scanf_custom_xcband_max_val(const char *cmd, const char 
 	TEST_ASSERT_EQUAL_STRING("AT%XCBAND", cmd);
 	TEST_ASSERT_EQUAL_STRING("%%XCBAND: %u", fmt);
 
-	uint8_t *val = va_arg(args, uint8_t *);
+	unsigned int *val = va_arg(args, unsigned int *);
 	*val = EXAMPLE_BAND_MAX_VAL;
 
 	return 1;
@@ -168,7 +168,7 @@ static int nrf_modem_at_scanf_custom_xcband_unavailable(const char *cmd, const c
 	TEST_ASSERT_EQUAL_STRING("AT%XCBAND", cmd);
 	TEST_ASSERT_EQUAL_STRING("%%XCBAND: %u", fmt);
 
-	uint8_t *val = va_arg(args, uint8_t *);
+	unsigned int *val = va_arg(args, unsigned int *);
 	*val = BAND_UNAVAILABLE;
 
 	return 1;

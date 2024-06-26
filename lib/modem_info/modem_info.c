@@ -940,21 +940,31 @@ int modem_info_get_connectivity_stats(int *tx_kbytes, int *rx_kbytes)
 
 int modem_info_get_current_band(uint8_t *val)
 {
+	int ret;
+	unsigned int band;
+
 	if (val == NULL) {
 		return -EINVAL;
 	}
 
-	int ret = nrf_modem_at_scanf("AT%XCBAND", "%%XCBAND: %u", val);
-
+	ret = nrf_modem_at_scanf("AT%XCBAND", "%%XCBAND: %u", &band);
 	if (ret != 1) {
 		LOG_ERR("Could not get band, error: %d", ret);
 		return map_nrf_modem_at_scanf_error(ret);
 	}
 
-	if (*val == BAND_UNAVAILABLE) {
+	if (band == BAND_UNAVAILABLE) {
 		LOG_WRN("No valid band");
 		return -ENOENT;
 	}
+
+	/* Band is expected to be within range 1–71 */
+	if (band > UINT8_MAX) {
+		LOG_ERR("Band is out of range");
+		return -ERANGE;
+	}
+
+	*val = band;
 
 	return 0;
 }

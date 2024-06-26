@@ -452,6 +452,10 @@ Modem libraries
 
   * Added a log warning suggesting a SIM card to be installed if a UICC error is detected by the modem.
 
+* :ref:`modem_info_readme` library:
+
+  * Fixed a potential issue with scanf in the :c:func:`modem_info_get_current_band` function, which could lead to memory corruption.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
