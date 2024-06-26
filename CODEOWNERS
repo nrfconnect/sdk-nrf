@@ -20,7 +20,7 @@ Kconfig*                                  @nrfconnect/ncs-co-build-system
 /README.rst                               @carlescufi
 /VERSION                                  @nrfconnect/ncs-code-owners
 /west.yml                                 @nrfconnect/ncs-code-owners
-/west-test.yml                            @thst-nordic
+
 
 # Dot folders
 /.github/                                 @nrfconnect/ncs-ci
@@ -221,16 +221,18 @@ Kconfig*                                  @nrfconnect/ncs-co-build-system
 
 # Scripts
 /scripts/                                 @nrfconnect/ncs-code-owners
-/scripts/quarantine*.yaml                 @nrfconnect/ncs-test-leads
-/scripts/hid_configurator/                @MarekPieta
-/scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @grho @shanthanordic @ihansse
-/scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @grho @shanthanordic @ihansse
-/scripts/west_commands/sbom/              @doki-nordic @maje-emb
-/scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
 /scripts/bootloader/                      @hakonfam @sigvartmh
+/scripts/docker/                          @nrfconnect/ncs-ci
+/scripts/hid_configurator/                @MarekPieta
 /scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
+/scripts/quarantine*.yaml                 @nrfconnect/ncs-test-leads
+/scripts/ncs-toolchain-version-minimum.txt @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci 
+/scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
+/scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
+/scripts/west_commands/sbom/              @doki-nordic @maje-emb
+/scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
 
 # Share
 /share/			                  @nrfconnect/ncs-co-build-system
@@ -382,7 +384,8 @@ Kconfig*                                  @nrfconnect/ncs-co-build-system
 /tests/unity/                             @nordic-krch
 
 # CI specific west
-/test-manifests/99-default-test-nrf.yml   @thst-nordic
+/test-manifests/99-default-test-nrf.yml   @nrfconnect/ncs-ci
+/west-test.yml                            @nrfconnect/ncs-ci
 
 # Zephyr module
 /zephyr/                                  @nrfconnect/ncs-co-build-system
