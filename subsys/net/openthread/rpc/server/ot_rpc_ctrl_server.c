@@ -11,6 +11,7 @@
 
 #include <openthread/ip6.h>
 #include <openthread/instance.h>
+#include <openthread/link.h>
 
 #include <zephyr/net/openthread.h>
 
@@ -202,6 +203,26 @@ out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
+
+static void ot_get_extaddr(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			   void *handler_data)
+{
+	const otExtAddress *data;
+	size_t length = sizeof(data->m8);
+	struct nrf_rpc_cbor_ctx rsp_ctx;
+
+	nrf_rpc_cbor_decoding_done(group, ctx);
+
+	openthread_api_mutex_lock(openthread_get_default_context());
+	data = otLinkGetExtendedAddress(openthread_get_default_context()->instance);
+	openthread_api_mutex_unlock(openthread_get_default_context());
+
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, length + 1);
+	zcbor_bstr_encode_ptr(rsp_ctx.zs, data->m8, length);
+	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_get_extaddr, OT_RPC_CMD_IF_EXTADDR, ot_get_extaddr, NULL);
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_ip6_get_unicast_addrs,
 			 OT_RPC_CMD_IP6_GET_UNICAST_ADDRESSES, ot_rpc_cmd_ip6_get_unicast_addrs,
