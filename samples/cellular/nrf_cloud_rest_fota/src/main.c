@@ -15,6 +15,7 @@
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_fota_poll.h>
+#include <net/nrf_cloud_defs.h>
 #include <net/fota_download.h>
 #include <dk_buttons_and_leds.h>
 
@@ -23,6 +24,25 @@ LOG_MODULE_REGISTER(nrf_cloud_rest_fota, CONFIG_NRF_CLOUD_REST_FOTA_SAMPLE_LOG_L
 #define BTN_NUM			CONFIG_REST_FOTA_BUTTON_EVT_NUM
 #define LED_NUM			CONFIG_REST_FOTA_LED_NUM
 #define JITP_REQ_WAIT_SEC	10
+#define REST_FOTA_CFG_INTERVAL	"fotaInterval"
+#define INTERVAL_MINUTES_MAX	10080
+
+/* For simplicity, just build the JSON string here and add the interval with snprintk */
+#define REP_CFG_TMPLT "{\"" NRF_CLOUD_JSON_KEY_REP "\":{" \
+				"\"" NRF_CLOUD_JSON_KEY_CFG "\":{" \
+					"\"" REST_FOTA_CFG_INTERVAL "\":%u}}}"
+
+/* The transform is just a dotted string of the JSON keys */
+#define TRANSFORM_DESIRED_CFG_INTERVAL	NRF_CLOUD_JSON_KEY_STATE "." \
+					NRF_CLOUD_JSON_KEY_DES "." \
+					NRF_CLOUD_JSON_KEY_CFG "." \
+					REST_FOTA_CFG_INTERVAL
+
+/* Size of the template plus three additional chars for the number value */
+#define REP_CFG_BUFF_SZ (sizeof(REP_CFG_TMPLT) + 3)
+
+/* The interval (in minutes) at which to check for FOTA jobs */
+static uint32_t fota_check_rate = CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN;
 
 /* Semaphore to indicate a button has been pressed */
 static K_SEM_DEFINE(button_press_sem, 0, 1);
@@ -242,6 +262,77 @@ static void send_device_status(void)
 	}
 }
 
+static void check_config(void)
+{
+	/* Ensure the reported section gets sent once */
+	static bool reported_sent;
+	static char cfg_buf[REP_CFG_BUFF_SZ];
+	long desired_check_rate = 0;
+	bool update_reported = false;
+	int err;
+
+	err = generate_jwt(&rest_ctx);
+	if (err) {
+		LOG_ERR("Failed to generated JWT; unable to check config");
+		return;
+	}
+
+	/* Check if there is a value in the desired config */
+	err = nrf_cloud_rest_shadow_transform_request(&rest_ctx, device_id,
+						      TRANSFORM_DESIRED_CFG_INTERVAL);
+	if (err) {
+		LOG_ERR("Failed to request desired FOTA interval, error: %u", err);
+	} else if ((rest_ctx.response_len == 0) || !rest_ctx.response) {
+		err = -ENOMSG;
+		LOG_DBG("No desired FOTA interval exists");
+	} else {
+		char *endptr;
+
+		/* Parse the desired interval */
+		desired_check_rate = strtol(rest_ctx.response, &endptr, 10);
+		if ((endptr == rest_ctx.response) || (errno)) {
+			LOG_ERR("Failed to parse desired FOTA interval value");
+			err = -EIO;
+		}
+	}
+
+	if (!err) {
+		/* Validate desired interval */
+		LOG_INF("Desired interval: %ld", desired_check_rate);
+
+		if (desired_check_rate > INTERVAL_MINUTES_MAX) {
+			LOG_INF("Desired interval exceeds max value, setting to %d",
+				INTERVAL_MINUTES_MAX);
+			desired_check_rate = INTERVAL_MINUTES_MAX;
+		} else if (desired_check_rate <= 0) {
+			LOG_INF("Desired interval must be greater than zero, setting to %d",
+				CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN);
+			desired_check_rate = CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN;
+		}
+		/* Use the desired value */
+		fota_check_rate = (uint32_t)desired_check_rate;
+		/* Update the reported value if changed */
+		update_reported = (fota_check_rate != desired_check_rate);
+	}
+
+	if (update_reported || !reported_sent) {
+		/* Format the JSON for the reported config */
+		err = snprintk(cfg_buf, REP_CFG_BUFF_SZ, REP_CFG_TMPLT, fota_check_rate);
+
+		if ((err < 0) || (err >= REP_CFG_BUFF_SZ)) {
+			LOG_ERR("Could not format reported config JSON");
+		} else {
+			/* Update the shadow's reported config with the interval value */
+			err = nrf_cloud_rest_shadow_state_update(&rest_ctx, device_id, cfg_buf);
+			if (!err) {
+				reported_sent = true;
+			} else {
+				LOG_ERR("Failed to update reported config, error: %d", err);
+			}
+		}
+	}
+}
+
 int init(void)
 {
 	int err = init_led();
@@ -437,7 +528,7 @@ int main(void)
 
 	while (1) {
 
-		/* Generate a JWT for each REST call */
+		/* Generate a JWT that will be used for the FOTA-related REST calls */
 		err = generate_jwt(&rest_ctx);
 		if (err) {
 			sample_reboot(FOTA_REBOOT_SYS_ERROR);
@@ -459,13 +550,15 @@ int main(void)
 			break;
 		}
 
+		/* Check the configuration in the shadow to determine the FOTA check interval */
+		check_config();
+
 		/* Wait for the configured duration or a button press */
 		(void)nrf_cloud_rest_disconnect(&rest_ctx);
 
 		LOG_INF("Retrying in %d minute(s) or when button %d is pressed",
-			CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN,
-			CONFIG_REST_FOTA_BUTTON_EVT_NUM);
+			fota_check_rate, CONFIG_REST_FOTA_BUTTON_EVT_NUM);
 
-		(void)k_sem_take(&button_press_sem, K_MINUTES(CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN));
+		(void)k_sem_take(&button_press_sem, K_MINUTES(fota_check_rate));
 	}
 }

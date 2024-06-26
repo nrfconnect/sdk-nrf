@@ -601,6 +601,10 @@ Cellular samples
 
   * Updated the sample to use the :c:macro:`SO_RAI` socket option with values :c:macro:`RAI_LAST` and :c:macro:`RAI_ONGOING` instead of the deprecated socket options :c:macro:`SO_RAI_LAST` and :c:macro:`SO_RAI_ONGOING`.
 
+* :ref:`nrf_cloud_rest_fota` sample:
+
+  * Added support for setting the FOTA update check interval using the config section in the shadow.
+
 Cryptography samples
 --------------------
 

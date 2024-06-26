@@ -62,6 +62,8 @@ Check and configure the following configuration options for the sample:
 
 CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN - Update check rate
    This configuration option defines how often the sample checks for FOTA updates.
+   You can modify this value at runtime by adding or updating the ``"fotaInterval"`` item in the desired config section of the device's shadow.
+   Use the `nRF Cloud`_ portal or the REST API to perform the config update.
 
 .. _CONFIG_REST_FOTA_DL_TIMEOUT_MIN:
 
