@@ -92,8 +92,11 @@ CONFIG_SLM_NATIVE_TLS_CREDENTIAL_BUFFER_COUNT - Number of buffers for loading cr
 
 CONFIG_SLM_EXTERNAL_XTAL - Use external XTAL for UARTE
    This option configures the application to use an external XTAL for UARTE.
-   For the nRF9160 DK, see the `nRF9160 Product Specification`_ (section 6.19 UARTE) for more information.
-   For the nRF9161 DK, see the `nRF9161 Product Specification`_ (section 6.19 UARTE) for more information.
+   For more information, see the UARTE - Universal asynchronous receiver/transmitter with EasyDMA section of the following documentation:
+
+   * `nRF9151 Product Specification`_
+   * `nRF9161 Product Specification`_
+   * `nRF9160 Product Specification`_
 
 .. _CONFIG_SLM_START_SLEEP:
 
@@ -107,9 +110,9 @@ CONFIG_SLM_POWER_PIN - Interface GPIO pin to power off the SiP and exit from sle
    This option specifies which pin to use to power on or off the SiP and make SLM exit idle mode.
    It is set by default as follows:
 
-   * On the nRF9161 DK:
+   * On an nRF91x1 DK:
 
-     * **P0.8** (Button 1 on the nRF9161 DK) is used when UART_0 is used.
+     * **P0.8** (Button 1 on the nRF91x1 DK) is used when UART_0 is used.
      * **P0.31** is used when UART_1 is used.
 
    * On the nRF9160 DK:
@@ -129,9 +132,9 @@ CONFIG_SLM_INDICATE_PIN - Interface GPIO pin to indicate data available or unsol
    This option specifies which pin to use for indicating data available or unsolicited event notifications from the modem.
    It is set by default as follows:
 
-   * On the nRF9161 DK:
+   * On an nRF91x1 DK:
 
-     * **P0.00** (LED 1 on the nRF9161 DK) is used when UART_0 is selected.
+     * **P0.00** (LED 1 on an nRF91x1 DK) is used when UART_0 is selected.
      * **P0.30** is used when UART_2 is selected.
 
    * On the nRF9160 DK:
@@ -332,6 +335,9 @@ The following configuration files are provided:
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for the nRF9160 DK.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk/nrf9160/ns`` board target.
 
+* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file specific for the nRF9151 DK.
+  This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9151dk/nrf9151/ns`` board target.
+
 * :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file specific for the nRF9161 DK.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9161dk/nrf9161/ns`` board target.
 
@@ -434,6 +440,47 @@ See the :ref:`slm_shell_sample` for a sample implementation of such an applicati
 To connect with an external MCU using UART_2, change the configuration files for the default board as follows:
 
 .. tabs::
+
+   .. group-tab:: nRF9151 DK
+
+      * In the :file:`nrf9151dk_nrf9151_ns.conf` file::
+
+          # Use UART_0 (when working with PC terminal)
+          # unmask the following config
+          #CONFIG_UART_0_NRF_HW_ASYNC_TIMER=2
+          #CONFIG_UART_0_NRF_HW_ASYNC=y
+          #CONFIG_SLM_POWER_PIN=8
+          #CONFIG_SLM_INDICATE_PIN=0
+
+          # Use UART_2 (when working with external MCU)
+          # unmask the following config
+          CONFIG_UART_2_NRF_HW_ASYNC_TIMER=2
+          CONFIG_UART_2_NRF_HW_ASYNC=y
+          CONFIG_SLM_POWER_PIN=31
+          CONFIG_SLM_INDICATE_PIN=30
+
+      * In the :file:`nrf9151dk_nrf9151_ns.overlay` file::
+
+          / {
+              chosen {
+                       ncs,slm-uart = &uart2;
+                     }
+            };
+
+          &uart0 {
+             status = "disabled";
+          };
+
+          &uart2 {
+             compatible = "nordic,nrf-uarte";
+             current-speed = <115200>;
+             status = "okay";
+             hw-flow-control;
+
+             pinctrl-0 = <&uart2_default_alt>;
+             pinctrl-1 = <&uart2_sleep_alt>;
+             pinctrl-names = "default", "sleep";
+          };
 
    .. group-tab:: nRF9161 DK
 
@@ -543,7 +590,7 @@ The following table shows how to connect an nRF52 Series development kit to an n
 Use the following UART devices:
 
 * nRF52840 or nRF52832 - UART0
-* nRF9160 or nRF9161 - UART2
+* nRF9160 or nRF91x1 - UART2
 
 Use the following UART configuration:
 

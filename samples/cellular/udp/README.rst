@@ -39,9 +39,12 @@ This is due to the simple UDP/IP behavior demonstrated by the sample, which make
 Measuring current
 =================
 
-For measuring current on an nRF9161 DK, it must first be prepared as described in `Measuring Current on nRF9161 DK`_.
-For measuring current on an nRF9160 DK, see `Measuring Current on nRF9160 DK`_.
-If you are measuring current on a Thingy:91, see `Measuring Current on Thingy:91`_.
+Refer to the following documents for measuring currents:
+
+* nRF9151 DK- `Measuring Current on nRF9151 DK`_
+* nRF9161 DK- `Measuring Current on nRF9161 DK`_
+* nRF9160 DK- `Measuring Current on nRF9160 DK`_
+* Thingy:91- `Measuring Current on Thingy:91`_
 
 Configuration
 *************

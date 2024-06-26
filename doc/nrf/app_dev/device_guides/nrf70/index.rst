@@ -40,6 +40,20 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - | `Product Specification <nRF52840 Product Specification_>`_
        | :ref:`Getting started <ug_nrf52_gs>`
        | `User Guide <nRF52840 DK User Guide_>`_
+   * - :ref:`zephyr:nrf9151dk_nrf9151`
+     - nRF7002 EK
+     - PCA10171
+     - ``nrf9151dk/nrf9151/ns``
+     - | `Product Specification <nRF9151 Product Specification_>`_
+       | :ref:`Getting started <gsg_other>`
+       | `User Guide <nRF9151 DK Hardware_>`_
+   * - :ref:`zephyr:nrf9161dk_nrf9161`
+     - nRF7002 EK
+     - PCA10153
+     - ``nrf9161dk/nrf9161/ns``
+     - | `Product Specification <nRF9161 Product Specification_>`_
+       | :ref:`Getting started <gsg_other>`
+       | `User Guide <nRF9161 DK Hardware_>`_
    * - :ref:`zephyr:nrf9160dk_nrf9160`
      - nRF7002 EK
      - PCA10090
@@ -47,12 +61,6 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - | `Product Specification <nRF9160 Product Specification_>`_
        | :ref:`Getting started <ug_nrf9160_gs>`
        | `User Guide <nRF9160 DK Hardware_>`_
-   * - :ref:`zephyr:nrf9161dk_nrf9161`
-     - nRF7002 EK
-     - PCA10153
-     - ``nrf9161dk/nrf9161/ns``
-     - | `Product Specification <nRF9161 Product Specification_>`_
-       | `User Guide <nRF9161 DK Hardware_>`_
    * - :ref:`zephyr:thingy53_nrf5340`
      - nRF7002 EB
      - PCA20053

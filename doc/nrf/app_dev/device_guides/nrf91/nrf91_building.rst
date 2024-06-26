@@ -61,7 +61,7 @@ To perform a FOTA update, complete the following steps:
 
    .. note::
       This step does not apply for updates of the modem firmware.
-      You can download delta patches and full binaries of the modem firmware from the `nRF9161 product website (compatible downloads)`_ or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
+      You can download delta patches and full binaries of the modem firmware from the `nRF9151 product website (compatible downloads)`_, `nRF9161 product website (compatible downloads)`_, or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
 
    |fota_upgrades_building|
    The :file:`app_update.bin` file must be uploaded to the server.
@@ -85,7 +85,7 @@ Currently, delta modem firmware FOTA files are available in nRF Cloud under :gui
 If you intend to obtain FOTA files from nRF Cloud, see the additional requirements in :ref:`lib_nrf_cloud_fota`.
 
 You can upload custom application binaries to nRF Cloud for application FOTA updates.
-After :ref:`nrf9160_gs_connecting_dk_to_cloud`, you can upload the files to your nRF Cloud account as a bundle after navigating to :guilabel:`Device Management` on the left and clicking :guilabel:`Firmware Updates`.
+After :ref:`connecting the DK to nRF Cloud <nrf9160_gs_connecting_dk_to_cloud>`, you can upload the files to your nRF Cloud account as a bundle after navigating to :guilabel:`Device Management` on the left and clicking :guilabel:`Firmware Updates`.
 
 FOTA updates using other cloud services
 ========================================
