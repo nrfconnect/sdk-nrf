@@ -542,6 +542,11 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 	if (net_buf_simple_max_len(&gatt_write) == FP_CRYPTO_ECDH_PUBLIC_KEY_LEN) {
 		keygen_params.public_key = net_buf_simple_pull_mem(&gatt_write,
 								   FP_CRYPTO_ECDH_PUBLIC_KEY_LEN);
+	} else if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING)) {
+		LOG_WRN("This operation requires support for the subsequent pairing feature."
+			"Enable the CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING Kconfig to support it");
+		res = BT_GATT_ERR(BT_ATT_ERR_NOT_SUPPORTED);
+		goto finish;
 	} else {
 		keygen_params.public_key = NULL;
 	}

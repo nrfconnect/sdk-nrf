@@ -364,6 +364,11 @@ The Fast Pair service implementation provides API to generate the advertising da
 :c:func:`bt_fast_pair_set_pairing_mode`
   This function is used to set the pairing mode before the advertising is started.
 
+.. note::
+   When the :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` Kconfig option is disabled, you cannot use the Fast Pair not discoverable advertising with UI indications (:c:enum:`BT_FAST_PAIR_NOT_DISC_ADV_TYPE_SHOW_UI_IND`).
+   This type of advertising is required for triggering the subsequent pairing.
+   For more details, see the :ref:`ug_bt_fast_pair_gatt_service_subsequent_pairing` section.
+
 Since you control the advertising, make sure to use advertising parameters consistent with the specification.
 The Bluetooth privacy is selected by the Fast Pair service, but you must make sure that the following requirements are met:
 
@@ -588,6 +593,18 @@ In the Fast Pair subsystem disabled state, GATT operations on the Fast Pair serv
 The Fast Pair GATT service modifies default values of related Kconfig options to follow Fast Pair requirements.
 The service also enables the needed functionalities using Kconfig select statement.
 For details, see the :ref:`bt_fast_pair_readme` Bluetooth service documentation in the |NCS|.
+
+.. _ug_bt_fast_pair_gatt_service_subsequent_pairing:
+
+Subsequent pairing
+==================
+
+The Fast Pair specification supports the subsequent pairing feature.
+Subsequent pairing refers to the procedure between a Fast Pair Provider, initially paired with your Google account, and another Fast Pair Seeker logged into the same account.
+
+To support the subsequent pairing feature in the `Fast Pair Procedure`_, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` Kconfig option.
+
+Consequently, the Fast Pair not discoverable advertising with UI indications, which is used to trigger the subsequent pairing UI flow, is only available when the subsequent pairing feature is supported.
 
 .. _ug_bt_fast_pair_gatt_service_no_ble_pairing:
 
