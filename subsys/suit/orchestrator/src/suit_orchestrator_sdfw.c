@@ -20,6 +20,8 @@
 #include "suit_plat_err.h"
 #include <suit_execution_mode.h>
 #include <suit_dfu_cache.h>
+#include <suit_memory_layout.h>
+#include <sdfw/arbiter.h>
 
 LOG_MODULE_REGISTER(suit_orchestrator, CONFIG_SUIT_LOG_LEVEL);
 
@@ -86,6 +88,44 @@ static void leave_emergency_recovery(void)
 	}
 }
 
+static bool is_address_range_allowed_for_update_region(const uint8_t *address, size_t size)
+{
+	/** The update region (update candidate or DFU cache) address is considered valid in three cases:
+	 * 1) address in external flash
+	 * 2) address accessible by application core
+	 * 3) address accessible by radio core
+	 *  
+	 * Other cases can lead to security issues, leading to potential leaks
+	 * of protected data.
+	 */
+	
+	if (suit_memory_global_address_range_is_in_external_memory((uintptr_t) address, size)) {
+		return true;
+	}
+
+	struct arbiter_mem_params_access mem_params = {
+		.allowed_types = ARBITER_MEM_TYPE(RESERVED, FIXED, FREE),
+		.access = {
+				.owner = NRF_OWNER_APPLICATION,
+				.permissions = ARBITER_MEM_PERM(READ, SECURE),
+				.address = (uintptr_t)address,
+				.size = size,
+			},
+	};
+
+	if (arbiter_mem_access_check(&mem_params) == ARBITER_STATUS_OK) {
+		return true;
+	}
+
+	mem_params.access.owner = NRF_OWNER_RADIOCORE;
+
+	if (arbiter_mem_access_check(&mem_params) == ARBITER_STATUS_OK) {
+		return true;
+	}
+
+	return false;
+}
+
 static int validate_update_candidate_address_and_size(const uint8_t *addr, size_t size)
 {
 	if (addr == NULL || addr == (void *)EMPTY_STORAGE_VALUE) {
@@ -96,6 +136,12 @@ static int validate_update_candidate_address_and_size(const uint8_t *addr, size_
 	if (size == 0 || size == EMPTY_STORAGE_VALUE) {
 		LOG_DBG("Invalid update candidate size: %d", size);
 		return -EFAULT;
+	}
+
+	if (!is_address_range_allowed_for_update_region(addr, size))
+	{
+		LOG_ERR("Update candidate outside of allowed memory range");
+		return -EPERM;
 	}
 
 	return 0;
@@ -116,6 +162,14 @@ static int initialize_dfu_cache(const suit_plat_mreg_t *update_regions, size_t u
 	cache.pools_count = update_regions_len - 1;
 
 	for (size_t i = 1; i < update_regions_len; i++) {
+		
+		if (!is_address_range_allowed_for_update_region((uint8_t *)update_regions[i].mem,
+			update_regions[i].size))
+		{
+			LOG_ERR("Cache pool %d outside of allowed memory range", i);
+			return -EPERM;
+		}
+
 		cache.pools[i - 1].address = (uint8_t *)update_regions[i].mem;
 		cache.pools[i - 1].size = update_regions[i].size;
 	}
