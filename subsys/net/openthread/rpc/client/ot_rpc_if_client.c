@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <ot_rpc_ids.h>
@@ -28,6 +28,8 @@ static void decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_c
 
 struct ot_rpc_l2_data {
 };
+
+static uint8_t mac[8];
 
 static enum net_verdict ot_rpc_l2_recv(struct net_if *iface, struct net_pkt *pkt)
 {
@@ -166,10 +168,26 @@ static int ot_rpc_l2_enable(struct net_if *iface, bool state)
 {
 	const size_t cbor_buffer_size = 1;
 	struct nrf_rpc_cbor_ctx ctx;
+	struct zcbor_string zst;
+	int error = 0;
 
 	if (!state) {
 		otRemoveStateChangeCallback(NULL, ot_state_changed_handler, iface);
 	}
+
+	net_if_set_link_addr(iface, mac, 8, NET_LINK_IEEE802154);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
+	nrf_rpc_cbor_cmd_rsp(&ot_group, OT_RPC_CMD_IF_EXTADDR, &ctx);
+
+	if (!zcbor_bstr_decode(ctx.zs, &zst)) {
+		error = -EINVAL;
+		nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+		goto exit;
+	}
+
+	memcpy(mac, zst.value, sizeof(mac) < zst.len ? sizeof(mac) : zst.len);
+	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	zcbor_bool_put(ctx.zs, state);
@@ -180,7 +198,8 @@ static int ot_rpc_l2_enable(struct net_if *iface, bool state)
 		otSetStateChangedCallback(NULL, ot_state_changed_handler, iface);
 	}
 
-	return 0;
+exit:
+	return error;
 }
 
 static enum net_l2_flags ot_rpc_l2_flags(struct net_if *iface)
