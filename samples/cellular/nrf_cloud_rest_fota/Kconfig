@@ -12,6 +12,7 @@ config REST_FOTA_SAMPLE_VERSION
 
 config REST_FOTA_JOB_CHECK_RATE_MIN
 	int "Rate (minutes) at which this sample will check for FOTA updates"
+	range 1 10080
 	default 15
 
 config REST_FOTA_ENABLE_LED

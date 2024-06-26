@@ -233,7 +233,9 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`nrf_cloud_rest_fota` sample:
+
+  * Added support for setting the FOTA update check interval using the config section in the shadow.
 
 Cryptography samples
 --------------------
