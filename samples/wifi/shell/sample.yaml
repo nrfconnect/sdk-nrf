@@ -80,7 +80,7 @@ tests:
   sample.nrf7002.shell.zperf:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-zperf.conf
+    extra_args: EXTRA_CONF_FILE=overlay-zperf.conf
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -88,7 +88,7 @@ tests:
   sample.nrf7001.shell.zperf:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-zperf.conf
+    extra_args: EXTRA_CONF_FILE=overlay-zperf.conf
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
@@ -112,7 +112,7 @@ tests:
   sample.nrf7002.shell.scan_only_7002:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf
+    extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -120,7 +120,7 @@ tests:
   sample.nrf7000.shell.scan_only_91:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
+    extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
@@ -132,14 +132,14 @@ tests:
   sample.nrf7002.shell.scan_only_thingy91x:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf CONFIG_WPA_SUPP=n
+    extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf CONFIG_WPA_SUPP=n
     platform_allow:
       - thingy91x/nrf9151/ns
     tags: ci_build sysbuild
   sample.nrf7002.shell.otbr:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-openthread.conf
+    extra_args: EXTRA_CONF_FILE=overlay-openthread.conf
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -205,7 +205,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-zperf.conf
+      EXTRA_CONF_FILE=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
@@ -220,7 +220,7 @@ tests:
     build_only: true
     extra_args:
       SHIELD=nrf7002ek_nrf7001
-      OVERLAY_CONFIG=overlay-zperf.conf
+      EXTRA_CONF_FILE=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
@@ -234,7 +234,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-zperf.conf
+      EXTRA_CONF_FILE=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
@@ -249,7 +249,7 @@ tests:
     build_only: true
     extra_args:
       SHIELD=nrf7002ek
-      OVERLAY_CONFIG=overlay-zperf.conf
+      EXTRA_CONF_FILE=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
@@ -263,7 +263,7 @@ tests:
     build_only: true
     extra_args:
       SNIPPET=nrf70-debug
-      OVERLAY_CONFIG=overlay-zperf.conf
+      EXTRA_CONF_FILE=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
@@ -275,7 +275,7 @@ tests:
   sample.nrf7002.ap:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-sap.conf
+    extra_args: EXTRA_CONF_FILE=overlay-sap.conf
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -284,7 +284,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-raw-tx.conf
+      EXTRA_CONF_FILE=overlay-raw-tx.conf
       SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
@@ -294,7 +294,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-monitor-mode.conf
+      EXTRA_CONF_FILE=overlay-monitor-mode.conf
       SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
@@ -304,7 +304,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-promiscuous-mode.conf
+      EXTRA_CONF_FILE=overlay-promiscuous-mode.conf
       SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
@@ -314,7 +314,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-promiscuous-mode.conf
+      EXTRA_CONF_FILE=overlay-promiscuous-mode.conf
       SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
