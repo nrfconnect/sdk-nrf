@@ -242,25 +242,25 @@ Testing advanced FOTA
 Complete the following steps to test the advanced FOTA firmware update with the lwM2M client sample and the :file:`/scripts/fota.py` file.
 
 
-   #. Download the latest released modem zip file from `nRF9160 DK Downloads`_ or `nRF9161 DK Downloads`_.
+   #. Download the latest released modem zip file from `nRF9151 DK Downloads`_, `nRF9161 DK Downloads`_ or `nRF9160 DK Downloads`_.
    #. Update the modem firmware using the nRF Programmer app of `nRF Connect for Desktop`_.
    #. Copy the binaries with the following naming format from the zip file to the folder :file:`/nrf/samples/cellular/lwm2m_client`:
 
-   .. tabs::
+      .. tabs::
 
-      .. group-tab:: nRF91x1 DK
+         .. group-tab:: nRF91x1 DK
 
-         * :file:`mfw_nrf91x1_update_from_2.x.x_to_2.x.x-FOTA-TEST.bin`
-         * :file:`mfw_nrf91x1_update_from_2.x.x-FOTA-TEST_to_2.x.x.bin`
+            * :file:`mfw_nrf91x1_update_from_2.x.x_to_2.x.x-FOTA-TEST.bin`
+            * :file:`mfw_nrf91x1_update_from_2.x.x-FOTA-TEST_to_2.x.x.bin`
 
-         where 2.x.x is the latest modem release version.
+            where 2.x.x is the latest modem release version.
 
-      .. group-tab:: nRF9160 DK
+         .. group-tab:: nRF9160 DK
 
-         * :file:`mfw_nrf9160_update_from_1.x.x_to_1.x.x-FOTA-TEST.bin`
-         * :file:`mfw_nrf9160_update_from_1.x.x-FOTA-TEST_to_1.x.x.bin`
+            * :file:`mfw_nrf9160_update_from_1.x.x_to_1.x.x-FOTA-TEST.bin`
+            * :file:`mfw_nrf9160_update_from_1.x.x-FOTA-TEST_to_1.x.x.bin`
 
-         where 1.x.x is the latest modem release version.
+            where 1.x.x is the latest modem release version.
 
    #. To set up the script, you must set the username and password that you used in AVSystem's Coiote Device Management server as the environment variables.
 

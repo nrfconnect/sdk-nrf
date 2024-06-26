@@ -454,6 +454,9 @@
 .. _`nRF9160 DK board controller firmware`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download?lang=en#B460A4E1F91A40B99C6432AD8CEC767C
 .. _`SUPL client download`: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF9160-DK/Download#supl-c
 
+.. _`Nordic nRF9151 DK`:
+.. _`nRF9151 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9151-DK/Download?lang=en#infotabs
+
 .. _`nRF9151 product website`: https://www.nordicsemi.com/Products/nRF9151
 .. _`nRF9161 product website`: https://www.nordicsemi.com/Products/nRF9161
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
@@ -461,9 +464,11 @@
 
 .. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
 .. _`nRF9161 product website (compatible downloads)`: https://www.nordicsemi.com/Products/nRF9161/Download#infotabs
+.. _`nRF9151 product website (compatible downloads)`: https://www.nordicsemi.com/Products/nRF9151/Download#infotabs
 
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
 .. _`nRF9161 Certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications/nRF9161-Global-and-regulatory?lang=en#infotabs
+.. _`nRF9151 Certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications/nRF9151-Global-and-regulatory?lang=en#infotabs
 .. _`nRF91 Series certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications?lang=en#infotabs
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
 .. _`Cellular IoT unique features`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Unique-Features?lang=en#infotabs
@@ -783,6 +788,7 @@
 .. _`GPS interface and antenna`: https://docs.nordicsemi.com/bundle/nwp_033/page/WP/nwp_033/nwp_033_gps.html
 
 .. _`nRF9160 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_ic_revision_overview.html
+.. _`nRF9161 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_ic_revision_overview.html
 
 .. _`SWD Select`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/hw_description/programming_debugging_interface.html
 
@@ -1455,6 +1461,12 @@
 .. _`Wireshark with Lua`: https://wiki.wireshark.org/Lua
 .. _`Wireshark Unix Build setup`: https://www.wireshark.org/docs/wsdg_html_chunked/ChapterSetup.html#ChSetupUNIX
 
+.. ### Source: analog.com
+
+.. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
+.. _`ADXL372`: https://www.analog.com/en/products/adxl372.html#product-overview
+.. _`ADXL367`: https://www.analog.com/en/products/ADXL367.html#product-overview
+
 .. ### Source: other (2 links or less from the same URL)
 
 .. _`Amazon Root CA 1`: https://www.amazontrust.com/repository/AmazonRootCA1.pem
@@ -1464,10 +1476,6 @@
 .. _`MQTT getting started`: https://mqtt.org/getting-started/
 
 .. _`iBasis IoT network coverage`: https://ibasis.com/solutions/iot-connectivity/network-coverage/
-
-.. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
-.. _`ADXL372`: https://www.analog.com/en/products/adxl372.html#product-overview
-.. _`ADXL367`: https://www.analog.com/en/products/ADXL367.html#product-overview
 
 .. _`Kconfig language`: https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html
 
@@ -1592,6 +1600,8 @@
 .. _`Mobile IoT deployment map`: https://www.gsma.com/iot/deployment-map/
 
 .. _`CoreMark®`: https://www.eembc.org/coremark/
+
+.. _`Wireless Logic LTE-M/NB-IoT network coverage`: https://www.wirelesslogic.com/simclaim/nsctrial/
 
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 
