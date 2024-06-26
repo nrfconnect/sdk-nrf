@@ -6,8 +6,12 @@
 
 #include "dfu_over_smp.h"
 
-#if !defined(CONFIG_MCUMGR_TRANSPORT_BT) || !defined(CONFIG_MCUMGR_GRP_IMG) || !defined(CONFIG_MCUMGR_GRP_OS)
-#error "DFUOverSMP requires MCUMGR module configs enabled"
+#if !defined(CONFIG_MCUMGR_TRANSPORT_BT)
+#error "DFU over SMP requires MCUmgr Bluetooth LE module config enabled"
+#endif
+
+#if !defined(CONFIG_SUIT) && (!defined(CONFIG_MCUMGR_GRP_IMG) || !defined(CONFIG_MCUMGR_GRP_OS))
+#error "DFU over SMP requires MCUmgr IMG and OS groups"
 #endif
 
 #include "dfu/ota/ota_util.h"
@@ -16,43 +20,42 @@
 
 #include <lib/support/logging/CHIPLogging.h>
 
+#ifndef CONFIG_SUIT
 #include <zephyr/dfu/mcuboot.h>
+#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
+#endif
+
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>
-#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
 
 using namespace ::chip;
 using namespace ::chip::DeviceLayer;
 
-constexpr uint8_t kAdvertisingPriority = UINT8_MAX;
-constexpr uint32_t kAdvertisingOptions = BT_LE_ADV_OPT_CONNECTABLE;
-constexpr uint16_t kAdvertisingIntervalMin = 400;
-constexpr uint16_t kAdvertisingIntervalMax = 500;
-constexpr uint8_t kAdvertisingFlags = BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR;
+constexpr static uint8_t kAdvertisingPriority = UINT8_MAX;
+constexpr static uint32_t kAdvertisingOptions = BT_LE_ADV_OPT_CONNECTABLE;
+constexpr static uint16_t kAdvertisingIntervalMin = 400;
+constexpr static uint16_t kAdvertisingIntervalMax = 500;
+constexpr static uint8_t kAdvertisingFlags = BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR;
 
 namespace
 {
-enum mgmt_cb_return UploadConfirmHandler(uint32_t event,
-					 enum mgmt_cb_return prev_status,
-					 int32_t *rc, uint16_t *group,
-					 bool *abort_more, void *data,
-					 size_t data_size)
+enum mgmt_cb_return UploadConfirmHandler(uint32_t event, enum mgmt_cb_return prev_status, int32_t *rc, uint16_t *group,
+					 bool *abort_more, void *data, size_t data_size)
 {
+/* Currently img_mgmt hooks are not supported by SUIT */
+#ifndef CONFIG_SUIT
 	const img_mgmt_upload_check &imgData = *static_cast<img_mgmt_upload_check *>(data);
 	IgnoreUnusedVariable(imgData);
 
 	ChipLogProgress(SoftwareUpdate, "DFU over SMP progress: %u/%u B of image %u",
 			static_cast<unsigned>(imgData.req->off), static_cast<unsigned>(imgData.action->size),
 			static_cast<unsigned>(imgData.req->image));
-
+#endif
 	return MGMT_CB_OK;
 }
 
-enum mgmt_cb_return CommandHandler(uint32_t event,
-				   enum mgmt_cb_return prev_status,
-				   int32_t *rc, uint16_t *group,
-				   bool *abort_more, void *data,
-				   size_t data_size)
+enum mgmt_cb_return CommandHandler(uint32_t event, enum mgmt_cb_return prev_status, int32_t *rc, uint16_t *group,
+				   bool *abort_more, void *data, size_t data_size)
 {
 	if (event == MGMT_EVT_OP_CMD_RECV) {
 		Nrf::Matter::GetFlashHandler().DoAction(ExternalFlashManager::Action::WAKE_UP);
@@ -75,7 +78,8 @@ mgmt_callback sCommandCallback = {
 
 } /* namespace */
 
-namespace Nrf {
+namespace Nrf
+{
 
 DFUOverSMP DFUOverSMP::sDFUOverSMP;
 
@@ -106,6 +110,7 @@ void DFUOverSMP::Init()
 
 void DFUOverSMP::ConfirmNewImage()
 {
+#ifndef CONFIG_SUIT
 	/* Check if the image is run in the REVERT mode and eventually */
 	/* confirm it to prevent reverting on the next boot. */
 	VerifyOrReturn(mcuboot_swap_type() == BOOT_SWAP_TYPE_REVERT);
@@ -115,6 +120,7 @@ void DFUOverSMP::ConfirmNewImage()
 	} else {
 		ChipLogProgress(SoftwareUpdate, "New firmware image confirmed");
 	}
+#endif
 }
 
 void DFUOverSMP::StartServer()

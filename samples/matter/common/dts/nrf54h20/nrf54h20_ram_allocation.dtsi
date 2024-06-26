@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * This file contains RAM layout aligned to Matter requirements
+ */
+
+&cpuapp_ram0x_region{
+	status = "okay";
+	reg = <0x2f010000 DT_SIZE_K(512)>;
+	ranges = <0x0 0x2f010000 0x6e000>;
+	cpuapp_data: memory@1000 {
+		reg = <0x1000 DT_SIZE_K(508)>;
+	};
+};
