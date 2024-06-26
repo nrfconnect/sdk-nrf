@@ -1,0 +1,69 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * This file contains memory layout for the Application core aligned to Matter requirements
+ */
+
+/ {
+	aliases {
+		factory-data = &factory_data;
+		factory-data-memory-region = &cpuapp_rw_partitions;
+	};
+};
+
+/* We need to redefine partitions to meet Matter requirements */
+/delete-node/ &cpuapp_rx_partitions;
+/delete-node/ &cpuapp_rw_partitions;
+/delete-node/ &cpurad_rx_partitions;
+/delete-node/ &cpuppr_vpr;
+/delete-node/ &cpuapp_cpuppr_ipc;
+
+&mram1x {
+	erase-block-size = < 0x1000 >;
+	write-block-size = < 0x10 >;
+
+	cpuapp_rx_partitions: cpuapp-rx-partitions {
+		compatible = "nordic,owned-partitions", "fixed-partitions";
+		status = "okay";
+		perm-read;
+		perm-execute;
+		perm-secure;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		companion_partition: partition@98000 {
+			reg = <0x98000 DT_SIZE_K(64)>;
+		};
+
+		cpuapp_slot0_partition: partition@a8000 {
+			reg = <0xa8000 DT_SIZE_K(784)>;
+		};
+	};
+
+	cpuapp_rw_partitions: cpuapp-rw-partitions {
+		compatible = "nordic,owned-partitions", "fixed-partitions";
+		status = "okay";
+		perm-read;
+		perm-write;
+		#address-cells = < 0x1 >;
+		#size-cells = < 0x1 >;
+
+		storage_partition: partition@16C000 {
+			reg = < 0x16C000 DT_SIZE_K(32) >;
+		};
+
+		factory_data: partition@174000 {
+			reg = < 0x174000 DT_SIZE_K(4) >;
+		};
+
+		/* DFU partition to store SUIT manifests and Nordic Firmware update */
+		dfu_partition: partition@175000 {
+			reg = < 0x175000 DT_SIZE_K(464) >;
+		};
+
+	};
+};

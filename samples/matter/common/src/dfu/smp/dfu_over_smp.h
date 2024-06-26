@@ -10,7 +10,8 @@
 
 #include <array>
 
-namespace Nrf {
+namespace Nrf
+{
 
 /**
  * @brief DFU over SMP helper class

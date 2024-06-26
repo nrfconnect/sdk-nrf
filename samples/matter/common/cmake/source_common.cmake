@@ -29,8 +29,10 @@ if(CONFIG_PWM)
 endif()
 
 if(CONFIG_MCUMGR_TRANSPORT_BT)
-    zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/dfu/smp/dfu_over_smp.cpp)
+    if (NOT CONFIG_SUIT)
+        zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+    endif()
 endif()
 
 if(CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS)
