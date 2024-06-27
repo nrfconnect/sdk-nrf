@@ -45,6 +45,8 @@ int broadcast_sink_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broa
 
 /**
  * @brief	Set the broadcast code for the Bluetooth LE Audio broadcast sink.
+ *          The broadcast code length is defined in BT_ISO_BROADCAST_CODE_SIZE,
+ *          which is 16 bytes.
  *
  * @param[in]	broadcast_code	Pointer to the broadcast code.
  *

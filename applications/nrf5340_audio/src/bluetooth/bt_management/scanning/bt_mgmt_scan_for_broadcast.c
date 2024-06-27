@@ -30,6 +30,7 @@ LOG_MODULE_DECLARE(bt_mgmt_scan);
 #define PA_SYNC_SKIP			  2
 /* Similar to retries for connections */
 #define PA_SYNC_INTERVAL_TO_TIMEOUT_RATIO 20
+#define BIS_SYNC_STATE_NOT_SYNCED	  0
 
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 
@@ -41,6 +42,7 @@ static char const *srch_name;
 static uint32_t srch_brdcast_id = BRDCAST_ID_NOT_USED;
 static struct bt_le_per_adv_sync *pa_sync;
 static const struct bt_bap_scan_delegator_recv_state *req_recv_state;
+static uint8_t bt_mgmt_broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE];
 
 struct broadcast_source {
 	char name[BLE_SEARCH_NAME_MAX_LEN];
@@ -277,6 +279,13 @@ static void pa_timer_handler(struct k_work *work)
 
 static K_WORK_DELAYABLE_DEFINE(pa_timer, pa_timer_handler);
 
+/**
+ * @brief	Subscribe to periodic advertising sync transfer (PAST).
+ *
+ * @param[in]	conn	Pointer to the connection object.
+ * @param[in]	pa_interval	Periodic advertising interval.
+ * @return	0 if success, error otherwise.
+ */
 static int pa_sync_past(struct bt_conn *conn, uint16_t pa_interval)
 {
 	int ret;
@@ -337,12 +346,11 @@ static int pa_sync_term_req_cb(struct bt_conn *conn,
 			       const struct bt_bap_scan_delegator_recv_state *recv_state)
 {
 	int ret;
+	struct bt_mgmt_msg msg;
 
-	ret = broadcast_sink_disable();
-	if (ret) {
-		LOG_WRN("Failed to disable broadcast sink: %d", ret);
-		return ret;
-	}
+	msg.event = BT_MGMT_BROADCAST_SINK_DISABLE;
+	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
+	ERR_CHK(ret);
 
 	return 0;
 }
@@ -351,8 +359,15 @@ static void broadcast_code_cb(struct bt_conn *conn,
 			      const struct bt_bap_scan_delegator_recv_state *recv_state,
 			      const uint8_t broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE])
 {
+	int ret;
+	struct bt_mgmt_msg msg;
+
 	LOG_DBG("Broadcast code received for %p", (void *)recv_state);
-	broadcast_sink_broadcast_code_set((uint8_t *)broadcast_code);
+	memcpy(bt_mgmt_broadcast_code, broadcast_code, BT_AUDIO_BROADCAST_CODE_SIZE);
+
+	msg.event = BT_MGMT_BROADCAST_CODE_RECEIVED;
+	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
+	ERR_CHK(ret);
 }
 
 static int bis_sync_req_cb(struct bt_conn *conn,
@@ -360,14 +375,14 @@ static int bis_sync_req_cb(struct bt_conn *conn,
 			   const uint32_t bis_sync_req[CONFIG_BT_BAP_BASS_MAX_SUBGROUPS])
 {
 	int ret;
+	struct bt_mgmt_msg msg;
 
 	/* Only support one BIG now */
-	LOG_DBG("BIS sync request received for %p: 0x%08x\n", (void *)recv_state, bis_sync_req[0]);
-	if (bis_sync_req[0] == 0) {
-		ret = broadcast_sink_disable();
-		if (ret) {
-			LOG_WRN("Failed to disable broadcast sink: %d", ret);
-		}
+	LOG_DBG("BIS sync request received for %p: 0x%08x", (void *)recv_state, bis_sync_req[0]);
+	if (bis_sync_req[0] == BIS_SYNC_STATE_NOT_SYNCED) {
+		msg.event = BT_MGMT_BROADCAST_SINK_DISABLE;
+		ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
+		ERR_CHK(ret);
 	}
 
 	return 0;
@@ -379,6 +394,11 @@ static struct bt_bap_scan_delegator_cb scan_delegator_cbs = {
 	.broadcast_code = broadcast_code_cb,
 	.bis_sync_req = bis_sync_req_cb,
 };
+
+void bt_mgmt_broadcast_code_get(uint8_t *broadcast_code)
+{
+	memcpy(broadcast_code, bt_mgmt_broadcast_code, BT_AUDIO_BROADCAST_CODE_SIZE);
+}
 
 int bt_mgmt_scan_for_broadcast_start(struct bt_le_scan_param *scan_param, char const *const name,
 				     uint32_t brdcast_id)
