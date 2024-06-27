@@ -122,7 +122,6 @@ static int initialize_dfu_cache(const suit_plat_mreg_t *update_regions, size_t u
 	cache.pools_count = update_regions_len - 1;
 
 	for (size_t i = 1; i < update_regions_len; i++) {
-		
 		if (SUIT_PLAT_SUCCESS !=  suit_mci_update_region_address_range_validate(
 			(uint8_t *)update_regions[i].mem, update_regions[i].size, true))
 		{

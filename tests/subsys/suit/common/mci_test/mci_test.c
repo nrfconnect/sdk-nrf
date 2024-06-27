@@ -247,9 +247,13 @@ int suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class_id, u
 	return SUIT_PLAT_SUCCESS;
 }
 
-int suit_mci_processor_start_rights_validate(const suit_manifest_class_id_t *class_id,
-					     int processor_id)
+mci_err_t suit_mci_processor_start_rights_validate(const suit_manifest_class_id_t *class_id,
+						   int processor_id, void *address, size_t size)
 {
+	/* TODO: decide what to do with address and size here (in tests) */
+	(void) address;
+	(void) size;
+	
 	if (NULL == class_id) {
 		return SUIT_PLAT_ERR_INVAL;
 	}
@@ -403,6 +407,13 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 	}
 
 	return MCI_ERR_NOACCESS;
+}
+
+mci_err_t suit_mci_update_region_address_range_validate(const uint8_t *address, size_t size,
+							size_t extmem_allow)
+{
+	/* TODO: implement this function for tests */
+	return SUIT_PLAT_SUCCESS;
 }
 
 int suit_mci_init(void)

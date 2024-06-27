@@ -141,8 +141,9 @@ ZTEST(mci_api_positive_scenarios_tests, test_processor_start_rights_validate)
 	for (int i = 0; i < output_size; ++i) {
 		int processor_id = 0;
 
+		/* TODO: is NULL and 0 for address and size OK here? */
 		rc = suit_mci_processor_start_rights_validate(result_class_info[i].class_id,
-							      processor_id);
+							      processor_id, NULL, 0);
 		zassert_true((rc == MCI_ERR_NOACCESS || rc == SUIT_PLAT_SUCCESS),
 			     "suit_mci_processor_start_rights_validate returned (%d)", rc);
 	}

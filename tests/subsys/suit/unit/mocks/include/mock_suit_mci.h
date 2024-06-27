@@ -35,7 +35,7 @@ FAKE_VALUE_FUNC(int, suit_mci_independent_update_policy_get, const suit_manifest
 FAKE_VALUE_FUNC(int, suit_mci_manifest_class_id_validate, const suit_manifest_class_id_t *);
 FAKE_VALUE_FUNC(int, suit_mci_signing_key_id_validate, const suit_manifest_class_id_t *, uint32_t);
 FAKE_VALUE_FUNC(int, suit_mci_processor_start_rights_validate, const suit_manifest_class_id_t *,
-		int);
+		int, void *, size_t);
 FAKE_VALUE_FUNC(int, suit_mci_memory_access_rights_validate, const suit_manifest_class_id_t *,
 		void *, size_t);
 FAKE_VALUE_FUNC(int, suit_mci_platform_specific_component_rights_validate,

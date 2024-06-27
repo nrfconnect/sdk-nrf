@@ -88,7 +88,7 @@ ZTEST(mci_snity_tests, test_null_pointers)
 	zassert_equal(rc, SUIT_PLAT_ERR_INVAL, "suit_mci_manifest_class_id_validate returned (%d)",
 		      rc);
 
-	rc = suit_mci_processor_start_rights_validate(NULL, processor_id);
+	rc = suit_mci_processor_start_rights_validate(NULL, processor_id, NULL, 0);
 	zassert_equal(rc, SUIT_PLAT_ERR_INVAL,
 		      "suit_mci_processor_start_rights_validate returned (%d)", rc);
 
