@@ -41,6 +41,7 @@ config FPROTECT_BLOCK_SIZE
 	default NRF_MPU_FLASH_REGION_SIZE if HAS_HW_NRF_MPU
 	default NRF_BPROT_FLASH_REGION_SIZE if HAS_HW_NRF_BPROT
 	default NRF_ACL_FLASH_REGION_SIZE if HAS_HW_NRF_ACL
+	default NRF_RRAM_REGION_SIZE_UNIT if SOC_SERIES_NRF54LX && FLASH
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 
 menuconfig FPROTECT
@@ -55,7 +56,6 @@ menuconfig FPROTECT
 if FPROTECT
 config FPROTECT_APP
 	bool "Lock image partition using FPROTECT"
-	depends on PARTITION_MANAGER_ENABLED
 	help
 	  The flash partition which contains the image hex file should never be
 	  written to. Set this option to enable a module which will perform
