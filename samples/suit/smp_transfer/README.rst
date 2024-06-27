@@ -154,16 +154,6 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
             west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
 
-         .. note::
-
-            |application_sample_long_path_windows|
-
-            In this case, you may need to run the following instead:
-
-            .. code-block:: console
-
-               west build -p -b nrf54h20dk/nrf54h20/cpuapp -d C:/ncs-lcs/work-dir -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
-
          The output build files can be found in the :file:`build/DFU` directory, including the :ref:`app_build_output_files_suit_dfu`.
          For more information on the contents of the build directory, see :ref:`zephyr:build-directory-contents` in the Zephyr documentation.
          For more information on the directory contents and structure provided by sysbuild, see :ref:`zephyr:sysbuild` in the Zephyr documentation.
@@ -172,31 +162,11 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
       #. Power on the DK.
       #. Program the sample to the kit (see :ref:`programming_cmd` for instructions).
 
-         .. note::
-
-            |application_sample_long_path_windows|
-
-            In this case, you may need to run the following instead:
-
-            .. code-block:: console
-
-               west flash --erase -d C:/ncs-lcs/work-dir
-
       #. Update the SUIT envelope sequence number, by rebuilding the sample with an updated sequence number:
 
          .. code-block:: console
 
             west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
-
-         .. note::
-
-            |application_sample_long_path_windows|
-
-            In this case, you may need to run the following instead:
-
-            .. code-block:: console
-
-               west build -p -b nrf54h20dk/nrf54h20/cpuapp -d C:/ncs-lcs/work-dir -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
 
          Another :file:`root.suit` file is created after running this command, that contains the updated firmware.
          You must manually transfer this file onto the same mobile device you will use with the nRF Device Manager app.
@@ -210,16 +180,6 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
              west build -p -b nrf54h20dk/nrf54h20/cpuapp
 
-         .. note::
-
-            |application_sample_long_path_windows|
-
-            In this case, you may need to run the following instead:
-
-            .. code-block:: console
-
-               west build -p -b nrf54h20dk/nrf54h20/cpuapp -d C:\ncs-lcs\west_working_dir\build\
-
          If you want to further configure your sample, see :ref:`configure_application` for additional information.
 
          After running the ``west build`` command, the output build files can be found in the :file:`build/dfu` directory.
@@ -231,31 +191,11 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
       #. Power on the DK.
       #. Program the sample to the kit (see :ref:`programming_cmd` for instructions).
 
-         .. note::
-
-            |application_sample_long_path_windows|
-
-            In this case, you may need to run the following instead:
-
-            .. code-block:: console
-
-               west flash --erase -d C:/ncs-lcs/work-dir
-
       #. Update the SUIT envelope sequence number, by rebuilding the sample with an updated sequence number:
 
          .. code-block:: console
 
             west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
-
-         .. note::
-
-            |application_sample_long_path_windows|
-
-            In this case, you may need to run the following instead:
-
-            .. code-block:: console
-
-               west build -p -b nrf54h20dk/nrf54h20/cpuapp -d C:/ncs-lcs/work-dir -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
 
          Another :file:`root.suit` file is created after running this command, that contains the updated firmware.
 
