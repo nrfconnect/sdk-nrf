@@ -288,7 +288,7 @@ After programming the sample to your development kit and updating the sequence n
 
             .. code-block:: console
 
-               mcumgr --conntype serial --connstring "dev=/dev/ttyACM0,baud=115200,mtu=512" image upload root.suit
+               mcumgr --conntype serial --connstring "dev=/dev/ttyACM0,baud=115200" image upload build/DFU/root.suit
 
             You should see an output similar to the following logged on UART:
 
@@ -308,7 +308,7 @@ After programming the sample to your development kit and updating the sequence n
 
          .. code-block:: console
 
-             mcumgr --conntype serial --connstring "dev=/dev/ttyACM0,baud=115200,mtu=512" image list
+             mcumgr --conntype serial --connstring "dev=/dev/ttyACM0,baud=115200" image list
 
 
          You should see an output similar to the following logged on UART:
