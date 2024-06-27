@@ -10,39 +10,8 @@
 #include <suit_platform.h>
 #include <suit_plat_decode_util.h>
 #include <suit_cpu_run.h>
-#include <sdfw/arbiter.h>
-#include <sdfw/sdfw_util.h>
 
 LOG_MODULE_REGISTER(suit_plat_invoke, CONFIG_SUIT_LOG_LEVEL);
-
-static bool is_address_range_executable(uint8_t cpu_id, uint8_t *address, size_t size)
-{
-	nrf_owner_t owner =  0;
-	
-	if (cpu_id == NRF_PROCESSOR_SYSCTRL)
-	{
-		/* arbiter_mem_access_check would always fail for sysctrl, as it only
-		 * handles local domains. */
-		return true;
-	}
-	
-	if (processor_to_owner_id(cpu_id, &owner) != 0)
-	{
-		return false;
-	}
-
-	struct arbiter_mem_params_access mem_params = {
-		.allowed_types = ARBITER_MEM_TYPE(RESERVED, FIXED),
-		.access = {
-				.owner = owner,
-				.permissions = ARBITER_MEM_PERM(READ, EXEC, SECURE),
-				.address = (uintptr_t)address,
-				.size = size,
-			},
-	};
-
-	return (arbiter_mem_access_check(&mem_params) == ARBITER_STATUS_OK);
-}
 
 int suit_plat_check_invoke(suit_component_t image_handle, struct zcbor_string *invoke_args)
 {
@@ -65,11 +34,6 @@ int suit_plat_check_invoke(suit_component_t image_handle, struct zcbor_string *i
 
 	if (suit_plat_decode_component_type(component_id, &component_type) != SUIT_PLAT_SUCCESS) {
 		LOG_ERR("suit_plat_decode_component_type failed");
-		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
-	}
-
-	if (!is_address_range_executable(cpu_id, (uint8_t*) run_address, size)) {
-		LOG_ERR("Component memory is not executable by CPU");
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
 
@@ -107,11 +71,6 @@ int suit_plat_invoke(suit_component_t image_handle, struct zcbor_string *invoke_
 
 	if (suit_plat_decode_component_type(component_id, &component_type) != SUIT_PLAT_SUCCESS) {
 		LOG_ERR("suit_plat_decode_component_type failed");
-		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
-	}
-
-	if (!is_address_range_executable(cpu_id, (uint8_t*) run_address, size)) {
-		LOG_ERR("Component memory is not executable by CPU");
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
 

@@ -46,7 +46,7 @@ int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *clas
 		}
 
 		if (NO_BOOT_CAPABILITY_CPU_ID != cpu_id) {
-			ret = suit_mci_processor_start_rights_validate(class_id, cpu_id);
+			ret = suit_mci_processor_start_rights_validate(class_id, cpu_id, (void*) address, size);
 			if (ret != SUIT_PLAT_SUCCESS) {
 				return SUIT_ERR_UNAUTHORIZED_COMPONENT;
 			}

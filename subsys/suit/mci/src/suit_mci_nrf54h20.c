@@ -314,8 +314,28 @@ mci_err_t suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class
 	return MCI_ERR_WRONGKEYID;
 }
 
+static mci_err_t check_address_range_executable(nrf_owner_t owner, void *address, size_t size)
+{
+	struct arbiter_mem_params_access mem_params = {
+		.allowed_types = ARBITER_MEM_TYPE(RESERVED, FIXED),
+		.access = {
+				.owner = owner,
+				.permissions = ARBITER_MEM_PERM(READ, EXEC, SECURE),
+				.address = (uintptr_t) address,
+				.size = size,
+			},
+	};
+
+	if (arbiter_mem_access_check(&mem_params) != ARBITER_STATUS_OK) {
+		LOG_ERR("Component memory is not executable by CPU");
+		return MCI_ERR_NOACCESS;
+	}
+
+	return SUIT_PLAT_SUCCESS;
+}
+
 mci_err_t suit_mci_processor_start_rights_validate(const suit_manifest_class_id_t *class_id,
-						   int processor_id)
+						   int processor_id, void *address, size_t size)
 {
 	if (class_id == NULL) {
 		return SUIT_PLAT_ERR_INVAL;
@@ -351,7 +371,8 @@ mci_err_t suit_mci_processor_start_rights_validate(const suit_manifest_class_id_
 		/* App manifest */
 		if (processor_id == NRF_PROCESSOR_APPLICATION) {
 			/* Appcore */
-			return SUIT_PLAT_SUCCESS;
+			return check_address_range_executable(NRF_OWNER_APPLICATION,
+							      address, size);
 		}
 		break;
 
@@ -361,7 +382,8 @@ mci_err_t suit_mci_processor_start_rights_validate(const suit_manifest_class_id_
 		/* Rad manifest */
 		if (processor_id == NRF_PROCESSOR_RADIOCORE) {
 			/* Radiocore */
-			return SUIT_PLAT_SUCCESS;
+			return check_address_range_executable(NRF_OWNER_RADIOCORE,
+							      address, size);
 		}
 		break;
 

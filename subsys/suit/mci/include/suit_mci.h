@@ -162,10 +162,12 @@ mci_err_t suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class
 
 /**
  * @brief Verifies if manifest with specific class id is entitled to start (invoke) code on specific
- * processor
+ * processor and on a given memory range
  *
- * @param[in]   class_id	    Manifest class id
+ * @param[in]   class_id	Manifest class id
  * @param[in]   processor_id	Processor id. Refer to Product Specification
+ * @param[in]   address	        Start of the address range with code to be executed
+ * @param[in]   size	        Size of the address range with code to be executed
  *
  * @retval SUIT_PLAT_SUCCESS        on success
  * @retval SUIT_PLAT_ERR_INVAL      invalid parameter, i.e. null pointer
@@ -173,7 +175,7 @@ mci_err_t suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class
  * @retval MCI_ERR_NOACCESS         manifest is not entitled to operate on cpu
  */
 mci_err_t suit_mci_processor_start_rights_validate(const suit_manifest_class_id_t *class_id,
-						   int processor_id);
+						   int processor_id, void *address, size_t size);
 
 /**
  * @brief Verifies if manifest with specific class id is entitled to operate on memory range
