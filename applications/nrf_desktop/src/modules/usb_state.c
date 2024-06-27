@@ -530,9 +530,14 @@ static void usb_wakeup(void)
 {
 	int err = 0;
 
-	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT) && usb_enabled) {
-		__ASSERT_NO_MSG(usbd_ctx);
-		err = usbd_wakeup_request(usbd_ctx);
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT)) {
+		if (usb_enabled) {
+			__ASSERT_NO_MSG(usbd_ctx);
+			err = usbd_wakeup_request(usbd_ctx);
+		} else {
+			/* Skip wakeup request. */
+			return;
+		}
 	} else {
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY));
 		err = usb_wakeup_request();
