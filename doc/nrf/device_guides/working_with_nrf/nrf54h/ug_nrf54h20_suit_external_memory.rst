@@ -129,7 +129,7 @@ To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` arg
       west build -b nrf54h20dk/nrf54h20/cpuapp
       west flash
 
-   The build system will automatically use :ref:`configuration_system_overview_sysbuild` and generate a :file:`build/dfu_suit.zip` archive, which contains the SUIT envelope and candidate images.
+   The build system will automatically use :ref:`configuration_system_overview_sysbuild` and generate a :file:`build/zephyr/dfu_suit.zip` archive, which contains the SUIT envelope and candidate images.
 
 #. Build a new version of the application with the incremented :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM` value.
 
