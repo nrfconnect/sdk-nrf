@@ -262,6 +262,7 @@
   - "subsys/bluetooth/*"
   - "subsys/caf/**/*"
   - "subsys/partition_manager/**/*"
+  - "samples/ipc/**/*"
 
 "CI-desktop-test":
   - "applications/nrf_desktop/**/*"
