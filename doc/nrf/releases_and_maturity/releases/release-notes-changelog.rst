@@ -127,6 +127,12 @@ Matter
     To learn more about the diagnostic logs module, see :ref:`ug_matter_configuration_diagnostic_logs`.
   * :ref:`ug_matter_diagnostic_logs_snippet` to add support for all features of the diagnostic log provider.
   * :ref:`ug_matter_gs_tools_matter_west_commands` to simplify the process of editing the ZAP files and generated the C++ Matter data model files.
+  * The Kconfig options to configure parameters impacting persistent subscriptions re-establishment:
+
+    * :kconfig:option:`CONFIG_CHIP_MAX_ACTIVE_CASE_CLIENTS`
+    * :kconfig:option:`CONFIG_CHIP_MAX_ACTIVE_DEVICES`
+    * :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_MIN_RETRY_INTERVAL`
+    * :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_RETRY_MULTIPLIER`
 
 * Updated:
 
