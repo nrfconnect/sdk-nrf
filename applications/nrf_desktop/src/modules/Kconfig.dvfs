@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_DVFS
+	bool "DVFS module"
+	depends on SOC_NRF54H20_CPUAPP
+	depends on !CAF_BLE_COMMON_EVENTS || (BT_MAX_CONN = 1)
+	default y
+	help
+	  This option enable DVFS module which switches frequency and voltage according
+	  to application needs.
+
+if DESKTOP_DVFS
+
+config DESKTOP_DVFS_RETRY_BUSY_TIMEOUT_MS
+	int "Retry timeout"
+	default 1
+	range 1 10000
+	help
+	  Timeout in milliseconds specifying time after which DVFS module will retry DVFS frequency change.
+	  This timeout is applied in case another DVFS change request is still in progress which causes the current request to fail.
+
+config DESKTOP_DVFS_RETRY_INIT_TIMEOUT_MS
+	int "Retry timeout"
+	default 500
+	range 1 10000
+	help
+	  Timeout in milliseconds specifying time after which DVFS module will retry DVFS frequency change.
+	  This timeout is applied in case DVFS is not yet initialized which causes the current request to fail.
+
+config DESKTOP_DVFS_RETRY_COUNT
+	int "Number of retries"
+	default 5
+	range 1 255
+	help
+	  Number of retries of DVFS frequency change after which DVFS module will report MODULE_STATE_ERROR.
+
+module = DESKTOP_DVFS
+module-str = DVFS
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_DVFS
