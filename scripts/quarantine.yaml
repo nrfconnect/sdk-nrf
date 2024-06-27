@@ -9,21 +9,3 @@
   platforms:
     - nrf7002dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-19027"
-
-- scenarios:
-    - sample.bluetooth.iso_time_sync
-  platforms:
-    - nrf54l15pdk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/DRGN-22129"
-
-- scenarios:
-    - applications.machine_learning.sensor_hub.zdebug.singlecore
-  platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
-  comment: "Temporary to unblock RC1 PRs"
-
-- scenarios:
-    - applications.machine_learning.sensor_hub.zdebug
-  platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
-  comment: "Temporary to unblock RC1 PRs"
