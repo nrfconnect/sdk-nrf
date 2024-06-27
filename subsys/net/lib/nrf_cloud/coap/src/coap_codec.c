@@ -412,10 +412,22 @@ int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const req
 	int cnt;
 
 	memset(&input, 0, sizeof(struct agnss_req));
-	input.agnss_req_eci = request->net_info->current_cell.id;
-	input.agnss_req_mcc = request->net_info->current_cell.mcc;
-	input.agnss_req_mnc = request->net_info->current_cell.mnc;
-	input.agnss_req_tac = request->net_info->current_cell.tac;
+
+	if (request->net_info != NULL) {
+		input.agnss_req_eci = request->net_info->current_cell.id;
+		input.agnss_req_mcc = request->net_info->current_cell.mcc;
+		input.agnss_req_mnc = request->net_info->current_cell.mnc;
+		input.agnss_req_tac = request->net_info->current_cell.tac;
+		if (request->net_info->current_cell.rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP) {
+			input.agnss_req_rsrp.agnss_req_rsrp = request->net_info->current_cell.rsrp;
+			input.agnss_req_rsrp_present = true;
+		}
+	} else {
+		input.agnss_req_eci = LTE_LC_CELL_EUTRAN_ID_INVALID;
+		input.agnss_req_tac = LTE_LC_CELL_TAC_INVALID;
+		LOG_DBG("No net_info provided.");
+	}
+
 	if (request->type == NRF_CLOUD_REST_AGNSS_REQ_CUSTOM) {
 		cnt = nrf_cloud_agnss_type_array_get(request->agnss_req, types, ARRAY_SIZE(types));
 		t->agnss_req_types_int_count = cnt;
@@ -436,10 +448,6 @@ int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const req
 			input.agnss_req_mask_present = true;
 			input.agnss_req_mask.agnss_req_mask = request->mask_angle;
 		}
-	}
-	if (request->net_info->current_cell.rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP) {
-		input.agnss_req_rsrp.agnss_req_rsrp = request->net_info->current_cell.rsrp;
-		input.agnss_req_rsrp_present = true;
 	}
 	ret = cbor_encode_agnss_req(buf, *len, &input, &out_len);
 	if (ret) {
