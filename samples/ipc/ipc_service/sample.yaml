@@ -21,7 +21,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-
   sample.ipc.ipc_service.nrf5340dk_rpmsg_cpuapp_sending:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
@@ -29,9 +28,8 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     extra_configs:
       - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
-    extra_args:
+    extra_args: >
       remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
-
   sample.ipc.ipc_service.nrf5340dk_rpmsg_cpunet_sending:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
@@ -39,17 +37,15 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     extra_configs:
       - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
-    extra_args:
+    extra_args: >
       remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
-
   sample.ipc.ipc_service.nrf5340dk_icmsg_default:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    extra_args:
+    extra_args: >
       FILE_SUFFIX=icmsg
-
   sample.ipc.ipc_service.nrf5340dk_icmsg_cpuapp_sending:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
@@ -57,10 +53,9 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     extra_configs:
       - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=35
-    extra_args:
+    extra_args: >
       FILE_SUFFIX=icmsg
       remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
-
   sample.ipc.ipc_service.nrf5340dk_icmsg_cpunet_sending:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
@@ -68,21 +63,19 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     extra_configs:
       - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
-    extra_args:
+    extra_args: >
       FILE_SUFFIX=icmsg
       remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
-
   sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_icmsg:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
-
   sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpuppr_icmsg:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
-    extra_args:
+    extra_args: >
       FILE_SUFFIX=cpuppr
       ipc_service_SNIPPET=nordic-ppr
