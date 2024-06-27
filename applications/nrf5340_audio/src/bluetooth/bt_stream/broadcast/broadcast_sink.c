@@ -423,6 +423,12 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Syncing to broadcast stream index %d", active_stream_index);
 
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
+		memcpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
+		       MIN(strlen(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
+			   ARRAY_SIZE(bis_encryption_key)));
+	}
+
 	ret = bt_bap_broadcast_sink_sync(broadcast_sink, bis_index_bitfields[active_stream_index],
 					 audio_streams_p, bis_encryption_key);
 
@@ -441,26 +447,6 @@ static struct bt_bap_broadcast_sink_cb broadcast_sink_cbs = {
 	.base_recv = base_recv_cb,
 	.syncable = syncable_cb,
 };
-
-static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
-{
-	const struct bt_mgmt_msg *msg;
-
-	msg = zbus_chan_const_msg(chan);
-
-	switch (msg->event) {
-	case BT_MGMT_BROADCAST_CODE_RECEIVED:
-		LOG_DBG("Broadcast code received");
-		LOG_HEXDUMP_DBG("Broadcast code", BT_ISO_BROADCAST_CODE_SIZE, msg->bcode);
-		memcpy(bis_encryption_key, msg->bcode, BT_ISO_BROADCAST_CODE_SIZE);
-		break;
-
-	default:
-		break;
-	}
-}
-
-ZBUS_LISTENER_DEFINE(bt_mgmt_evt_listener, bt_mgmt_evt_handler);
 
 int broadcast_sink_change_active_audio_stream(void)
 {
@@ -560,6 +546,18 @@ int broadcast_sink_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broa
 	}
 
 	pa_sync_stored = pa_sync;
+
+	return 0;
+}
+
+int broadcast_sink_broadcast_code_set(uint8_t *broadcast_code)
+{
+	if (broadcast_code == NULL) {
+		LOG_ERR("Invalid broadcast code received");
+		return -EINVAL;
+	}
+
+	memcpy(bis_encryption_key, broadcast_code, BT_ISO_BROADCAST_CODE_SIZE);
 
 	return 0;
 }
@@ -677,12 +675,6 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		audio_streams[i].ops = &stream_ops;
-	}
-
-	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listener, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
-		LOG_ERR("Failed to add bt_mgmt listener");
-		return ret;
 	}
 
 	initialized = true;

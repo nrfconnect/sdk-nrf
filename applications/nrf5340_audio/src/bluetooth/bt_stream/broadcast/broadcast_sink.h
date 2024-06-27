@@ -44,6 +44,15 @@ int broadcast_sink_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32
 int broadcast_sink_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broadcast_id);
 
 /**
+ * @brief	Set the broadcast code for the Bluetooth LE Audio broadcast sink.
+ *
+ * @param[in]	broadcast_code	Pointer to the broadcast code.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int broadcast_sink_broadcast_code_set(uint8_t *broadcast_code);
+
+/**
  * @brief	Start the Bluetooth LE Audio broadcast sink.
  *
  * @return	0 for success, error otherwise.

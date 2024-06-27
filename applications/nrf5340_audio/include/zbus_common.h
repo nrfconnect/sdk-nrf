@@ -60,7 +60,6 @@ enum bt_mgmt_evt_type {
 	BT_MGMT_PA_SYNC_LOST,
 	BT_MGMT_PA_SYNC_TERM,
 	BT_MGMT_DISCONNECTED,
-	BT_MGMT_BROADCAST_CODE_RECEIVED,
 };
 
 struct bt_mgmt_msg {

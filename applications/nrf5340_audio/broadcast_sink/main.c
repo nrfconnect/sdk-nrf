@@ -460,8 +460,8 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_BASS_VAL),
-		      BT_UUID_16_ENCODE(BT_UUID_PACS_VAL))};
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_BASS_VAL)),
+};
 
 int main(void)
 {
