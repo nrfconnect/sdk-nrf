@@ -15,6 +15,8 @@ LOG_MODULE_REGISTER(MODULE);
 
 int main(void)
 {
+	LOG_INF("Machine learning: %s started", CONFIG_BOARD_TARGET);
+
 	if (app_event_manager_init()) {
 		LOG_ERR("Application Event Manager initialization failed");
 		__ASSERT_NO_MSG(false);
