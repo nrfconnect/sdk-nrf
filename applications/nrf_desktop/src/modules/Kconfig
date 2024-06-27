@@ -38,5 +38,6 @@ rsource "Kconfig.hotfixes"
 rsource "Kconfig.failsafe"
 rsource "Kconfig.cpu_meas"
 rsource "Kconfig.nrf_profiler_sync"
+rsource "Kconfig.dvfs"
 
 endmenu
