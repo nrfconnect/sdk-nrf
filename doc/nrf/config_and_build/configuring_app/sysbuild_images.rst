@@ -26,17 +26,17 @@ These options determine whether the secure boot image is included on the network
 +=========================================================+===========================================================================================================+
 | :kconfig:option:`SB_CONFIG_SECURE_BOOT_NETCORE`         | Enable secure boot for network core                                                                       |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_EMPTY`               | |NCS| empty network core image :zephyr_file:`samples/nrf5340/empty_net_core`                              |
+| :kconfig:option:`SB_CONFIG_NETCORE_EMPTY`               | |NCS| empty network core image :file:`nrf/samples/nrf5340/empty_net_core`                                 |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 | :kconfig:option:`SB_CONFIG_NETCORE_HCI_IPC`             | Zephyr hci_ipc Bluetooth image :zephyr_file:`samples/bluetooth/hci_ipc`                                   |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_RPC_HOST`            | |NCS| rpc_host Bluetooth image :zephyr_file:`samples/bluetooth/rpc_host`                                  |
+| :kconfig:option:`SB_CONFIG_NETCORE_RPC_HOST`            | |NCS| rpc_host Bluetooth image :file:`nrf/samples/bluetooth/rpc_host`                                     |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 | :kconfig:option:`SB_CONFIG_NETCORE_802154_RPMSG`        | Zephyr 802.15.4 image :zephyr_file:`samples/boards/nrf/ieee802154/802154_rpmsg`                           |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` | |NCS| multiprotocol_rpmsg Bluetooth and 802.15.4 image :zephyr_file:`samples/nrf5340/multiprotocol_rpmsg` |
+| :kconfig:option:`SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG` | |NCS| multiprotocol_rpmsg Bluetooth and 802.15.4 image :file:`nrf/samples/nrf5340/multiprotocol_rpmsg`    |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO`           | |NCS| ipc_radio image :zephyr_file:`applications/ipc_radio`                                               |
+| :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO`           | |NCS| ipc_radio image :file:`nrf/applications/ipc_radio`                                                  |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 | :kconfig:option:`SB_CONFIG_NETCORE_NONE`                | No network core image                                                                                     |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
@@ -187,7 +187,7 @@ Then, add this folder to the Zephyr module file:
 .. code-block:: yaml
 
     build:
-      sysbuild-cmake: sysbuild  # Only needed is a sysbuild CMakeLists.txt file is being added
+      sysbuild-cmake: sysbuild  # Only needed if a sysbuild CMakeLists.txt file is being added
       sysbuild-kconfig: sysbuild/Kconfig.sysbuild
 
 The ``CMakeLists.txt`` file is the same as the ``sysbuild.cmake`` file from the previous examples.
