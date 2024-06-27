@@ -10,6 +10,7 @@
 #include <sdfw/lcs.h>
 #include <zephyr/logging/log.h>
 #include <sdfw/arbiter.h>
+#include <suit_memory_layout.h>
 
 #define MANIFEST_PUBKEY_NRF_TOP_GEN0	 0x4000BB00
 #define MANIFEST_PUBKEY_SYSCTRL_GEN0	 0x40082100
@@ -662,6 +663,45 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 
 	default:
 		break;
+	}
+
+	return MCI_ERR_NOACCESS;
+}
+
+mci_err_t suit_mci_update_region_address_range_validate(const uint8_t *address, size_t size,
+							size_t extmem_allow)
+{
+	/** The update region (update candidate or DFU cache) address is considered valid in three cases:
+	 * 1) address in external flash
+	 * 2) address accessible by application core
+	 * 3) address accessible by radio core
+	 *  
+	 * Other cases can lead to security issues, leading to potential leaks
+	 * of protected data.
+	 */
+	
+	if (extmem_allow && suit_memory_global_address_range_is_in_external_memory((uintptr_t) address, size)) {
+		return SUIT_PLAT_SUCCESS;
+	}
+
+	struct arbiter_mem_params_access mem_params = {
+		.allowed_types = ARBITER_MEM_TYPE(RESERVED, FIXED, FREE),
+		.access = {
+				.owner = NRF_OWNER_APPLICATION,
+				.permissions = ARBITER_MEM_PERM(READ, SECURE),
+				.address = (uintptr_t)address,
+				.size = size,
+			},
+	};
+
+	if (arbiter_mem_access_check(&mem_params) == ARBITER_STATUS_OK) {
+		return SUIT_PLAT_SUCCESS;
+	}
+
+	mem_params.access.owner = NRF_OWNER_RADIOCORE;
+
+	if (arbiter_mem_access_check(&mem_params) == ARBITER_STATUS_OK) {
+		return SUIT_PLAT_SUCCESS;
 	}
 
 	return MCI_ERR_NOACCESS;

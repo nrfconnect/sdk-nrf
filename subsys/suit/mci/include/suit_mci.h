@@ -255,6 +255,20 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 					      const suit_manifest_class_id_t *child_class_id);
 
 /**
+ * @brief Verifies whether the given address range is valid for an update region (update candidate
+ *        or DFU cache)
+ *
+ * @param[in]  address       Start of the address range to check
+ * @param[in]  size          Size of the address range to check
+ * @param[in]  extmem_allow  Allow the region to be in external memory
+ *
+ * @retval SUIT_PLAT_SUCCESS  the region is a valid update region
+ * @retval MCI_ERR_NOACCESS   the region cannot be used as an update region
+ */
+mci_err_t suit_mci_update_region_address_range_validate(const uint8_t *address, size_t size,
+							size_t extmem_allow);
+
+/**
  * @brief Initializes MCI
  *
  * @return SUIT_PLAT_SUCCESS
