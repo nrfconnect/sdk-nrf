@@ -98,8 +98,8 @@ API documentation
 *****************
 
 | Header file: :file:`include/modem/modem_slm.h`
-| Source file: :file:`lib/modem/modem_slm.c`
-| Source file: :file:`lib/modem/modem_slm_monitor.c`
+| Source file: :file:`lib/modem_slm/modem_slm.c`
+| Source file: :file:`lib/modem_slm/modem_slm_monitor.c`
 
 .. doxygengroup:: modem_slm
    :project: nrf

@@ -39,7 +39,7 @@ API documentation
 *****************
 
 | Header file: :file:`include/modem/modem_attest_token.h`
-| Source file: :file:`lib/modem/modem_attest_token.c`
+| Source file: :file:`lib/modem_attest_token/modem_attest_token.c`
 
 .. doxygengroup:: modem_attest_token
    :project: nrf
