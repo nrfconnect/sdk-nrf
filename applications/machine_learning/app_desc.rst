@@ -413,6 +413,10 @@ Building the default configurations requires an Internet connection, because the
 .. include:: /includes/application_build_and_run.txt
 
 nRF54H20 DK
+
+   .. note::
+      This application does not work in the default configuration for the nRF54H20 DK without additional parameters like shields or snippets.
+
   To build the application for the nRF54H20 DK with the sensor sampling done by the Application core (single-core application), run the following command:
 
   .. code-block:: console
