@@ -1307,6 +1307,11 @@ static int encode_modem_info_network(struct network_param *network, cJSON *json_
 		return ret;
 	}
 
+	ret = add_modem_info_data(&network->rsrp, json_obj);
+	if (ret < 0) {
+		return ret;
+	}
+
 	ret = modem_info_name_get(network->cellid_hex.type, data_name);
 	if (ret < 0) {
 		return ret;
