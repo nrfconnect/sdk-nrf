@@ -7,7 +7,7 @@ Transition your development environment to |NCS| v2.7.0 (for v2.4.99-cs3 users)
    :local:
    :depth: 2
 
-This document describes how to transition your development environment for the nRF54H20 DK from |NCS| v2.4.99-cs3 to |NCS| v2.7.0.
+This document describes how to transition your development environment for the nRF54H20 DK from the |NCS| v2.4.99-cs3 to the |NCS| v2.7.0.
 
 The main development environment changes introduced by v2.7.0 for the nRF54H20 DK are the following:
 
