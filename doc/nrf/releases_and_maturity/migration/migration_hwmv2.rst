@@ -22,11 +22,15 @@ The current hardware model adds support for the following features:
 * Support for advanced use cases with :ref:`zephyr:sysbuild`.
 * Removal of all existing arbitrary and inconsistent uses of Kconfig and folder names.
 
-For more information about the rationale, development, and concepts behind the new model, see the `Zephyr original issue <Zephyr issue #51831>`_, the `Zephyr original Pull Request <Zephyr pull request #50305>`_,.
-For the complete set of changes introduced, consult the `hardware model v2 commit <Zephyr commit 8dc3f8>`_.
+For more information about the rationale, development, and concepts behind the new model, see the following links:
+
+* Zephyr original issue: `Zephyr issue #51831`_
+* Zephyr original pull request: `Zephyr pull request #50305`_
+
+For the complete set of changes introduced, consult the hardware model v2 commit: `Zephyr commit 8dc3f8`_.
 
 Some non-critical features, enhancements, and improvements of the new hardware model are still in development.
-Check the `Zephyr hardware model v2 enhancements issue <Zephyr issue #69546>`_ for a complete list.
+Check the Zephyr hardware model v2 enhancements issue (`Zephyr issue #69546`_) for a complete list.
 
 Out-of-tree boards
 ******************
@@ -43,13 +47,13 @@ To convert your board from hardware model v1 to v2, consult the following pages:
 
 * :ref:`zephyr:hw_support_hierarchy` and the subsequent sections to understand the model in detail.
 * :ref:`zephyr:hw_support_hierarchy` and the subsequent sections to understand the hardware model in detail.
-* The `ncs-example-application conversion commit <ncs-example-application commit f9f2da>`_ as an example of how to port a simple board.
-* The `hardware model v2 commit <Zephyr commit 8dc3f8>`_, containing the full conversion of all existing boards from the old to the current model, to use as a complete conversion reference.
+* The *ncs-example-application* conversion commit (`ncs-example-application commit f9f2da`_) as an example of how to port a simple board.
+* The hardware model v2 commit (`Zephyr commit 8dc3f8`_), containing the full conversion of all existing boards from the old to the current model, to use as a complete conversion reference.
 
 Conversion script
 -----------------
 
-There is a `conversion script <hwmv2 conversion script>`_ to help you in the migration process.
+There is a conversion script (`hwmv2 conversion script`_) to help you in the migration process.
 It has built-in help text documenting all the parameters it takes.
 The following example shows an invocation of the script converting a hypothetical out-of-tree board ``plank`` based on the nRF52840 and having ``acme`` as vendor.
 
