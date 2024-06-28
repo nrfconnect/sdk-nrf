@@ -65,7 +65,7 @@ static char stage[NRF_CLOUD_STAGE_ID_MAX_LEN];
 static char tenant[NRF_CLOUD_TENANT_ID_MAX_LEN];
 
 /* Null-terminated MQTT client ID */
-static char *client_id_buf;
+static const char *client_id_ptr;
 
 /* Buffers for keeping the topics for nrf_cloud */
 static char *accepted_topic;
@@ -254,68 +254,28 @@ static bool nrf_cloud_cc_rx_topic_decode(const struct mqtt_topic *topic, enum nc
 /* Function to set/generate the MQTT client ID */
 static int nct_client_id_set(const char * const client_id)
 {
-	int ret;
-	size_t len;
+	int err = 0;
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
-		if (client_id) {
-			len = strlen(client_id);
-		} else {
-			return -EINVAL;
-		}
-	} else {
-		if (client_id) {
+	if (client_id) {
+		if (!IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
 			LOG_WRN("Not configured for runtime client ID, ignoring");
-		}
-		len = nrf_cloud_configured_client_id_length_get();
-	}
-
-	if (!len) {
-		LOG_WRN("Could not determine size of client ID");
-		return -ENOMSG;
-	}
-
-	nrf_cloud_free(client_id_buf);
-	client_id_buf = NULL;
-
-	/* Add one for NULL terminator */
-	++len;
-
-	client_id_buf = nrf_cloud_calloc(len, 1);
-	if (!client_id_buf) {
-		return -ENOMEM;
-	}
-
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
-		strncpy(client_id_buf, client_id, len);
-	} else {
-		ret = nrf_cloud_configured_client_id_get(client_id_buf, len);
-		if (ret) {
-			LOG_ERR("Could not obtain configured client ID, error: %d", ret);
-			return ret;
+		} else {
+			err = nrf_cloud_client_id_runtime_set(client_id);
+			if (err) {
+				LOG_ERR("Failed to set runtime client ID, error: %d", err);
+				return err;
+			}
 		}
 	}
 
-	LOG_DBG("client_id = %s", client_id_buf);
-
-	return 0;
-}
-
-int nct_client_id_get(char *id, size_t id_len)
-{
-	if (!client_id_buf) {
-		return -ENODEV;
-	} else if (!id || !id_len) {
-		return -EINVAL;
+	err = nrf_cloud_client_id_ptr_get(&client_id_ptr);
+	if (err) {
+		LOG_ERR("Failed to get client ID, error %d", err);
+		return err;
 	}
 
-	size_t len = strlen(client_id_buf);
+	LOG_DBG("client_id = %s", client_id_ptr);
 
-	if (id_len <= len) {
-		return -EMSGSIZE;
-	}
-
-	strncpy(id, client_id_buf, id_len);
 	return 0;
 }
 
@@ -376,7 +336,7 @@ static int allocate_and_format_topic(char **topic_buf, const char * const topic_
 {
 	int ret;
 	size_t topic_sz;
-	const size_t client_sz = strlen(client_id_buf);
+	const size_t client_sz = strlen(client_id_ptr);
 
 	topic_sz = client_sz + strlen(topic_template) - 1;
 
@@ -385,7 +345,7 @@ static int allocate_and_format_topic(char **topic_buf, const char * const topic_
 		return -ENOMEM;
 	}
 	ret = snprintk(*topic_buf, topic_sz,
-		       topic_template, client_id_buf);
+		       topic_template, client_id_ptr);
 	if (ret <= 0 || ret >= topic_sz) {
 		nrf_cloud_free(*topic_buf);
 		return -EIO;
@@ -451,9 +411,7 @@ static void nct_topic_lists_populate(void)
 
 static int nct_topics_populate(void)
 {
-	if (!client_id_buf) {
-		return -ENODEV;
-	}
+	__ASSERT_NO_MSG(client_id_ptr != NULL);
 
 	int ret;
 
@@ -672,8 +630,8 @@ int nct_mqtt_connect(void)
 
 		nct.client.broker = (struct sockaddr *)&nct.broker;
 		nct.client.evt_cb = nct_mqtt_evt_handler;
-		nct.client.client_id.utf8 = (uint8_t *)client_id_buf;
-		nct.client.client_id.size = strlen(client_id_buf);
+		nct.client.client_id.utf8 = (uint8_t *)client_id_ptr;
+		nct.client.client_id.size = strlen(client_id_ptr);
 		nct.client.protocol_version = MQTT_VERSION_3_1_1;
 		nct.client.password = NULL;
 		nct.client.user_name = NULL;
@@ -991,9 +949,6 @@ void nct_uninit(void)
 	dc_endpoint_free();
 	nct_reset_topics();
 
-	nrf_cloud_free(client_id_buf);
-	client_id_buf = NULL;
-
 	memset(&nct, 0, sizeof(nct));
 	mqtt_client_initialized = false;
 }
@@ -1196,7 +1151,7 @@ void nct_dc_endpoint_set(const struct nrf_cloud_data *tx_endp,
 		nct.dc_m_endp.size = m_endp->len;
 #if defined(CONFIG_NRF_CLOUD_FOTA)
 		(void)nrf_cloud_fota_endpoint_set_and_report(&nct.client,
-			client_id_buf, &nct.dc_m_endp);
+			client_id_ptr, &nct.dc_m_endp);
 		if (persistent_session) {
 			/* Check for updates since FOTA topics are
 			 * already subscribed to.
