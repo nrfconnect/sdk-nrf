@@ -70,13 +70,13 @@ Applications using the :file:`dfu_application.zip` file
      * Make sure that your DFU host tools support the :file:`dfu_application.zip` file with the new format version (``1``).
        If the tools do not support the new format version and you cannot update them, you can manually align the content of the zip archive generated with format version ``1`` to version ``0``:
 
-     * Build your application in the same configuration with the |NCS| v2.6 release to obtain a reference file :file:`dfu_application.zip` with format version ``0``.
-     * Manually align the content of the :file:`dfu_application.zip` file generated with format version ``1``:
+       * Build your application in the same configuration with the |NCS| v2.6 release to obtain a reference file :file:`dfu_application.zip` with format version ``0``.
+       * Manually align the content of the :file:`dfu_application.zip` file generated with format version ``1``:
 
-       * Align the properties described in the :file:`manifest.json` file.
-         Make sure to update all of the fields that are used by the selected DFU host tool.
-       * Rename the binary files that are included in the zip archive to match the file names used by the updated manifest.
-         The binary file content is interoperable across |NCS| releases.
+         * Align the properties described in the :file:`manifest.json` file.
+           Make sure to update all of the fields that are used by the selected DFU host tool.
+         * Rename the binary files that are included in the zip archive to match the file names used by the updated manifest.
+           The binary file content is interoperable across |NCS| releases.
 
 Devicetree
 ----------
@@ -611,63 +611,3 @@ LwM2M carrier library
 
    * Many event defines have received new values.
      If you are using the values directly in your application, you need to check the events listed in :file:`lwm2m_carrier.h`.
-
-
-Application migration examples
-******************************
-
-The following are examples of the changes that were introduced to certain applications to migrate them to the |NCS| v2.7.0.
-
-CoreMark
-========
-
-Several changes have been made to migrate the :ref:`coremark_sample` sample to the |NCS| v2.7.0:
-
-* The build system has been aligned to the hardware model v2.
-* Because the |NCS| v2.7.0 does not support ARM Coresight System Trace Macrocell (STM) logging for the nRF54 device, STM logging has been removed from the sample.
-  The sample now uses usual UART logging, which allows for sending logs from only one core for each UART instance.
-  The nRF54 device has only two UART instances, so the sample can now be run on two cores at most.
-  The sample is always run on the application core, and depending on configuration, it can be run on either the radio core or the PPR core.
-  See the ``SB_CONFIG_APP_CPUNET_RUN`` and ``SB_CONFIG_APP_CPUPPR_RUN`` Kconfig options for more details.
-* The DTS overlays have been updated:
-
-  * The PPR core memory region no longer needs to be defined in the DTS overlay.
-  * The ``cpuppr`` and ``clic_cpuppr`` nodes no longer needs to be enabled in the application DTS overlay.
-  * The ``ieee802154_app`` and ``rng`` nodes no longer needs to be disabled in the application DTS overlay.
-  * The GPIOTE channels allocation has been aligned to their availability.
-* The :file:`system_nrf.h` library has been included explicitly in the :file:`main.c` file to print the CPU frequency.
-* The ``SB_CONFIG_PARTITION_MANAGER`` Kconfig option has been disabled in the :file:`sysbuild.conf` file to avoid conflicts with the Partition Manager.
-* The :kconfig:option:`CONFIG_APP_MODE_FLASH_AND_RUN` Kconfig option has been made promptless and enabled for the PPR core.
-  Currently, the PPR core does not have access to buttons and thus, the :kconfig:option:`CONFIG_APP_MODE_FLASH_AND_RUN` Kconfig option must be enabled for this core to run the benchmark.
-* The PPR core is now run from PPR TCM (Tightly Coupled Memory) RAM for better CPU performance.
-  This configuration differs from the one in the nRF54 customer sampling release v2.4.99-cs3, where the PPR core is run from MRAM with the execution in place (XIP) method.
-* To make the sample run on the PPR core, pass the ``-DSB_CONFIG_APP_CPUNET_RUN=n -DSB_CONFIG_APP_CPUPPR_RUN=y -Dcoremark_SNIPPET=nordic-ppr`` build-time arguments to the build system.
-  The ``coremark_SNIPPET`` argument is set to make the application core start the PPR core.
-  Alternatively, you can build the sample from the :file:`sample.yaml` file using the following command:
-
-  .. code-block:: console
-
-     west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.benchmark.coremark_ppr .
-
-
-nRF Desktop
-===========
-
-Several changes have been made to migrate the :ref:`nrf_desktop` application to the |NCS| v2.7.0:
-
-* The :ref:`ipc_radio` image is a universal network core image serves are a substitute for the  ``hci_ipc``, :ref:`ble_rpc_host`, and IEEE 802.15.4 remote images from the deprecated ``sdk-nrf-next`` repository.
-  Due to this, the radio core now uses the :ref:`ipc_radio` application from ``sdk-nrf`` instead of the :ref:`zephyr:bluetooth-hci-ipc-sample` sample from ``sdk-zephyr``.
-
-  The radio core image configuration files have been moved from the :file:`configuration/nrf54h20dk_nrf54h20_cpuapp/child_image/hci_rpmsg` directory to the :file:`configuration/nrf54h20dk_nrf54h20_cpurad/images/ipc_radio` directory.
-
-* Due to transition to sysbuild, the configuration enabling the radio core image has been moved from the main application image configuration to the sysbuild configuration.
-* The :file:`dfu_mcumgr_suit.c` module has been merged with :file:`dfu_mcumgr.c`.
-  The ``CONFIG_DESKTOP_DFU_MCUMGR_SUIT_ENABLE`` Kconfig option had been removed and replaced by :ref:`CONFIG_DESKTOP_DFU_BACKEND_SUIT <config_desktop_app_options>`.
-  The :file:`dfu_mcumgr_suit.c` is no longer needed as in |NCS| v2.7 the dfu_mcumgr module can be properly adapted to support the SUIT DFU.
-* The USB High-Speed is supported only in the USB-next stack.
-  New USB-next stack has been integrated into the nRF Desktop application and can be enabled using the :kconfig:option:`CONFIG_DESKTOP_USB_STACK_NEXT` Kconfig option.
-  It is now enabled by default in the nRF54H20 DK configurations.
-  An USB HID-class instance is now configured through a separate DTS node compatible with ``zephyr,hid-device``.
-  See :ref:`nrf_desktop_usb_state` documentation for details related to USB-next stack integration.
-* Aligned flash memory writes in the :ref:`nrf_desktop_dfu` to the flash memory write block size of the non-volatile memory.
-  This is needed because the :ref:`CONFIG_SOC_FLASH_NRF_MRAM_ONE_BYTE_WRITE_ACCESS <config_desktop_app_options>` Kconfig option is no longer available and MRAMC requires writes of the size of the whole MRAM word to the MRAM.
