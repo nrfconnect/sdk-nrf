@@ -414,17 +414,21 @@ int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const req
 	memset(&input, 0, sizeof(struct agnss_req));
 
 	if (request->net_info != NULL) {
-		input.agnss_req_eci = request->net_info->current_cell.id;
-		input.agnss_req_mcc = request->net_info->current_cell.mcc;
-		input.agnss_req_mnc = request->net_info->current_cell.mnc;
-		input.agnss_req_tac = request->net_info->current_cell.tac;
-		if (request->net_info->current_cell.rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP) {
-			input.agnss_req_rsrp.agnss_req_rsrp = request->net_info->current_cell.rsrp;
+		if (request->net_info->current_cell.id != LTE_LC_CELL_EUTRAN_ID_MAX) {
+			input.agnss_req_eci_present = true;
+			input.agnss_req_eci.agnss_req_eci = request->net_info->current_cell.id;
+		}
+		input.agnss_req_mcc_present = true;
+		input.agnss_req_mcc.agnss_req_mcc = request->net_info->current_cell.mcc;
+		input.agnss_req_mnc_present = true;
+		input.agnss_req_mnc.agnss_req_mnc = request->net_info->current_cell.mnc;
+		input.agnss_req_tac_present = true;
+		input.agnss_req_tac.agnss_req_tac = request->net_info->current_cell.tac;
+		if (request->net_info->current_cell.rsrp != LTE_LC_CELL_RSRP_INVALID) {
 			input.agnss_req_rsrp_present = true;
+			input.agnss_req_rsrp.agnss_req_rsrp = request->net_info->current_cell.rsrp;
 		}
 	} else {
-		input.agnss_req_eci = LTE_LC_CELL_EUTRAN_ID_INVALID;
-		input.agnss_req_tac = LTE_LC_CELL_TAC_INVALID;
 		LOG_DBG("No net_info provided.");
 	}
 
