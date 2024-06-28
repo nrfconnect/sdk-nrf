@@ -135,7 +135,7 @@ Matter
 
 * Increased the number of available packet buffers in the Matter stack to avoid packet allocation issues.
 * Removed the :file:`Kconfig.mcuboot.defaults`, :file:`Kconfig.hci_ipc.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` Kconfig files that stored a default configuration for the child images.
-  This was done because of the sysbuild integration and the child images deprecation.
+  This was done because of the :ref:`configuration_system_overview_sysbuild` integration and the child images deprecation.
   The configurations are now applied using the configuration files located in the sample's or application's directory.
 
   To see how to migrate an application from the previous to the current approach, see the :ref:`migration guide <migration_2.7>`.
@@ -182,11 +182,18 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-* Initial experimental support for nRF54L15 for the Thread CLI and Co-processor samples.
+* Initial experimental support for nRF54L15 to the :ref:`ot_cli_sample` and :ref:`ot_coprocessor_sample` samples.
 * Added new :ref:`feature set <thread_ug_feature_sets>` option :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_RCP`.
 
 Zigbee
 ------
+
+* Updated:
+
+  * :ref:`nrfxlib:zboss` to v3.11.4.0 and platform v5.1.5 (``v3.11.4.0+5.1.5``).
+    They contain fixes for infinite boot loop due to ZBOSS NVRAM corruption and other bugs.
+    For details, see :ref:`zboss_changelog`.
+  * :ref:`ZBOSS Network Co-processor Host <ug_zigbee_tools_ncp_host>` package to the new version v2.2.3.
 
 * Fixed an issue with Zigbee FOTA updates failing after a previous attempt was interrupted.
 * Fixed the RSSI level value reported to the MAC layer in the Zigbee stack.
@@ -277,6 +284,8 @@ nRF5340 Audio
   * ACL interval for service discovery to reduce setup time.
   * Default settings to be lower latency end-to-end.
   * API for creating a :ref:`broadcast source <nrf53_audio_broadcast_source_app>`, to be more flexible.
+  * Migrated build system to support :ref:`configuration_system_overview_sysbuild`.
+    This means that the old Kconfig used to enable FOTA updates no longer exists, and the :ref:`file suffix <app_build_file_suffixes>` ``fota`` must be used instead.
 
 * Fixed:
 
@@ -296,7 +305,7 @@ nRF Machine Learning (Edge Impulse)
 * Added:
 
   * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` boards.
-  * Support for the :ref:`zephyr:sysbuild`.
+  * Support for :ref:`configuration_system_overview_sysbuild`.
 
 nRF Desktop
 -----------
@@ -401,7 +410,7 @@ Bluetooth samples that used the :ref:`zephyr:bluetooth-hci-ipc-sample` radio cor
   * Added:
 
     * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` boards.
-    * Support for the :ref:`zephyr:sysbuild`.
+    * Support for :ref:`configuration_system_overview_sysbuild`.
 
 * :ref:`peripheral_uart` sample:
 
@@ -644,7 +653,7 @@ Matter samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`mult
 * Removed:
 
   * The :file:`configuration` directory which contained the Partition Manager configuration file.
-    It has been replaced replace with :file:`pm_static_<BOARD>` Partition Manager configuration files for all required target boards in the samples' directories.
+    It has been replaced with :file:`pm_static_<BOARD>` Partition Manager configuration files for all required target boards in the samples' directories.
   * The :file:`prj_no_dfu.conf` file.
   * Support for the ``no_dfu`` build type for the nRF5350 DK, the nRF52840 DK, and the nRF7002 DK.
 
@@ -784,7 +793,7 @@ Thread samples
 
 Thread samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
 
-* Initial experimental support for nRF54L15 for the Thread CLI and Co-processor samples.
+* Initial experimental support for nRF54L15 to the :ref:`ot_cli_sample` and :ref:`ot_coprocessor_sample` samples.
 * :ref:`ot_coprocessor_sample` sample:
 
   * Changed the default :ref:`feature set <thread_ug_feature_sets>` from Master to RCP.
@@ -1128,6 +1137,7 @@ Documentation
   * Recommendation for the use of a :file:`VERSION` file for :ref:`ug_fw_update_image_versions_mcuboot` in the :ref:`ug_fw_update_image_versions` user guide.
   * The :ref:`ug_coremark` page.
   * The :ref:`bt_mesh_models_common_blocking_api_rule` section to the :ref:`bt_mesh_models_overview` page.
+  * Steps for nRF54 devices across all supported samples to reflect the new button and LED numbering on the nRF54H20 DK and the nRF54L15 PDK.
 
 * Updated:
 

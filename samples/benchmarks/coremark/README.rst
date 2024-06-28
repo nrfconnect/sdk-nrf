@@ -45,17 +45,11 @@ Each target CPU has an assigned button responsible for starting the benchmark an
       Button 2:
          Start the benchmark run on the network or radio core.
 
-      Button 3:
-         Start the benchmark run on the PPR core.
-
       LED 1:
          Indicates ``test in progress`` on the application core.
 
       LED 2:
          Indicates ``test in progress`` on the network or radio core.
-
-      LED 3:
-         Indicates ``test in progress`` on the PPR core.
 
    .. group-tab:: nRF54 DKs
 
@@ -65,17 +59,11 @@ Each target CPU has an assigned button responsible for starting the benchmark an
       Button 1:
          Start the benchmark run on the network or radio core.
 
-      Button 2:
-         Start the benchmark run on the PPR core.
-
       LED 0:
          Indicates ``test in progress`` on the application core.
 
       LED 1:
          Indicates ``test in progress`` on the network or radio core.
-
-      LED 2:
-         Indicates ``test in progress`` on the PPR core.
 
 .. _coremark_configuration:
 
@@ -157,14 +145,14 @@ SB_CONFIG_APP_CPUPPR_RUN - Enable execution for the PPR core
    Enable the benchmark execution also for the PPR core for targets with the nRF54H20 SoCs.
 
 .. note::
-   PPR code is run from MRAM with the execution in place (XIP) method.
-   You must use the ``nordic-ppr-xip`` snippet for the application core to be able to boot the PPR core.
-   Use the build argument ``coremark_SNIPPET=nordic-ppr-xip``.
+   PPR code is run from RAM.
+   You must use the ``nordic-ppr`` snippet for the application core to be able to boot the PPR core.
+   Use the build argument ``coremark_SNIPPET=nordic-ppr``.
    To build the sample with the execution for the PPR core enabled, run the following command:
 
    .. code-block:: console
 
-      west build -b nrf54h20dk/nrf54h20/cpuapp --sysbuild -- -DSB_CONFIG_APP_CPUNET_RUN=n -DSB_CONFIG_APP_CPUPPR_RUN=y -Dcoremark_SNIPPET=nordic-ppr-xip
+      west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_APP_CPUNET_RUN=n -DSB_CONFIG_APP_CPUPPR_RUN=y -Dcoremark_SNIPPET=nordic-ppr
 
 Building and running
 ********************
@@ -173,9 +161,11 @@ When running the benchmark, an extra build flag (:kconfig:option:`CONFIG_COMPILE
 
 .. |sample path| replace:: :file:`samples/benchmarks/coremark`
 
-.. include:: /includes/build_and_run_sb.txt
+.. include:: /includes/build_and_run.txt
 
 After flashing, messages describing the benchmark state will appear in the console.
+
+.. include:: /includes/nRF54H20_erase_UICR.txt
 
 Testing
 =======

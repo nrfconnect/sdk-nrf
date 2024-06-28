@@ -28,7 +28,7 @@ extern "C" {
  * @param params    Subscribe parameters.
  * @param flags_bit Index of bit to set.
  *
- * @return Previos flag value (retrived non-atomically) in case of success or negative value
+ * @return Previous flag value (retrieved non-atomically) in case of success or negative value
  * in case of error.
  */
 int bt_rpc_gatt_subscribe_flag_set(struct bt_gatt_subscribe_params *params, uint32_t flags_bit);
@@ -41,7 +41,7 @@ int bt_rpc_gatt_subscribe_flag_set(struct bt_gatt_subscribe_params *params, uint
  * @param params    Subscribe parameters.
  * @param flags_bit Index of bit to clear.
  *
- * @return Previos flag value (retrived non-atomically) in case of success or negative value
+ * @return Previous flag value (retrieved non-atomically) in case of success or negative value
  * in case of error.
  */
 int bt_rpc_gatt_subscribe_flag_clear(struct bt_gatt_subscribe_params *params, uint32_t flags_bit);

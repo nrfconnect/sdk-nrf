@@ -71,13 +71,13 @@ Adding FEM support happens when :ref:`nrf53_audio_app_building`.
 You can use one of the following options, depending on how you decide to build the application:
 
 * If you opt for :ref:`nrf53_audio_app_building_script`, add the ``--nrf21540`` to the script's building command.
-* If you opt for :ref:`nrf53_audio_app_building_standard`, add the ``-DSHIELD=nrf21540ek_fwd`` to the ``west build`` command.
+* If you opt for :ref:`nrf53_audio_app_building_standard`, add the ``-Dnrf5340_audio_SHIELD=nrf21540ek_fwd -Dipc_radio_SHIELD=nrf21540ek`` to the ``west build`` command.
   For example:
 
   .. code-block:: console
 
-     west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DSHIELD=nrf21540ek_fwd -DFILE_SUFFIX=release
+     west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -Dnrf5340_audio_SHIELD=nrf21540ek_fwd -Dipc_radio_SHIELD=nrf21540ek
 
-To set the TX power output, use the ``CONFIG_NRF_21540_MAIN_TX_POWER`` and ``CONFIG_NRF_21540_PRI_ADV_TX_POWER`` Kconfig options.
+To set the TX power output, use the ``CONFIG_BT_CTLR_TX_PWR_ANTENNA`` and ``CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB`` Kconfig options in :file:`applications/nrf5340_audio/sysbuild/ipc_radio/prj.conf`.
 
 See :ref:`ug_radio_fem` for more information about FEM in the |NCS|.

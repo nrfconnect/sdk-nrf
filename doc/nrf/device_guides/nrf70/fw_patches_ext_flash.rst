@@ -15,7 +15,7 @@ This guide explains the available options for having the nRF70 Series firmware p
 Overview
 ********
 
-By default, the nRF70 Series firmware patches are built as part of the nRF Wi-Fi driver code, residing in on-chip memory.
+By default, the nRF70 Series firmware patches are built as part of sysbuild, residing in on-chip memory.
 The firmware patches include code that is executed on the nRF70 Series device.
 The size of the firmware patches might be considerably large, which limits the amount of on-chip code memory available for the user application.
 In order to increase the amount of on-chip memory available for user applications, the nRF Wi-Fi driver supports the option of using external memory, if that is available.
@@ -56,7 +56,7 @@ Using XIP access
 
 If the application supports XIP from external memory, then the firmware patches can be loaded as part of the nRF Wi-Fi driver code (RODATA) and then relocated to the external memory.
 The nRF Wi-Fi driver accesses the firmware patches using XIP feature and downloads the firmware patches to the nRF70 device.
-To enable this feature, set the :kconfig:option:`CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP` Kconfig option to ``y``.
+To enable this feature, set the ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP`` sysbuild Kconfig option to ``y``.
 Once the build is complete, the feature can be verified by checking the memory regions summary in the build output.
 A new memory region called ``EXTFLASH`` is added to the memory regions summary, and the firmware patches are placed in this region.
 The size of the ``FLASH`` used is reduced by the size of the firmware patches.
@@ -87,7 +87,7 @@ Configuration
 
 The following configuration options are available:
 
-* :kconfig:option:`CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE` - Enables the option to store the firmware patch in external non-XIP memory.
+* ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE`` - Enables the option to store the firmware patch in external non-XIP memory.
 * :kconfig:option:`CONFIG_NRF_WIFI_FW_FLASH_CHUNK_SIZE` - Defines the size of the chunks used to read the firmware patches from the external non-XIP memory.
   The default value is 8192 bytes.
 
@@ -126,7 +126,8 @@ Building
 
 See :ref:`nrf7002dk_nrf5340` for general instructions on building.
 
-Additionally, you must enable either the ``nrf70-fw-patch-ext-flash`` snippet or the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` option.
+Additionally, you can build the sample either with the ``nrf70-fw-patch-ext-flash`` snippet or with Partition Manager (``SB_CONFIG_PARTITION_MANAGER``).
+When using the ``nrf70-fw-patch-ext-flash`` snippet, set ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE``, and disable ``SB_CONFIG_PARTITION_MANAGER``.
 
 For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with the ``nrf70-fw-patch-ext-flash`` snippet enabled, run the following commands.
 
@@ -135,31 +136,31 @@ With west
 
 .. code-block:: console
 
-    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SHIELD=nrf7002ek -Dnrf_wifi_shell_SNIPPET="nrf70-fw-patch-ext-flash"
+    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SHIELD=nrf7002ek -Dnrf_wifi_shell_SNIPPET="nrf70-fw-patch-ext-flash" -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_PARTITION_MANAGER=n
 
 With CMake
 ^^^^^^^^^^
 
 .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dnrf_wifi_shell_SHIELD=nrf7002ek -Dnrf_wifi_shell_SNIPPET="nrf70-fw-patch-ext-flash" samples/wifi/shell
+    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dnrf_wifi_shell_SHIELD=nrf7002ek -Dnrf_wifi_shell_SNIPPET="nrf70-fw-patch-ext-flash" -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_PARTITION_MANAGER=n samples/wifi/shell
     ninja -C build
 
-For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` option enabled, run the following commands:
+For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with partition manager enabled, run the following commands:
 
 With west
 ^^^^^^^^^
 
 .. code-block:: console
 
-    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SHIELD=nrf7002ek -DCONFIG_PARTITION_MANAGER_ENABLED=y -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y
+    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y
 
 With CMake
 ^^^^^^^^^^
 
 .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dnrf_wifi_shell_SHIELD=nrf7002ek -DCONFIG_PARTITION_MANAGER_ENABLED=y -DCONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE=y samples/wifi/shell
+    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dnrf_wifi_shell_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y samples/wifi/shell
     ninja -C build
 
 Programming
@@ -185,7 +186,7 @@ For example, for nrfjprog:
 
 .. code-block:: console
 
-   nrfjprog -f nrf53 -s 0 --program build/zephyr/merged.hex ---sectorerase --qspisectorerase --verify --reset
+   nrfjprog -f nrf53 -s 0 --program build/merged.hex ---sectorerase --qspisectorerase --verify --reset
 
 Updating firmware patches
 =========================

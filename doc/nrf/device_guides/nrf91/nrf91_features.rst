@@ -7,13 +7,24 @@ Features of nRF91 Series
    :local:
    :depth: 2
 
-The nRF91 Series SiPs integrate an application MCU, a full LTE modem, an RF front end, and power management.
+The nRF91 Series SiPs integrate an application MCU, a full LTE modem, an RF front end, and power management capabilities.
+These SiPs are designed to support a wide range of cellular IoT applications and DECT NR+ applications.
 
-* The nRF9160 DK is a hardware development platform used to design and develop application firmware on the nRF9160 LTE Cat-M1 and Cat-NB1 :term:`System in Package (SiP)`.
-* The nRF9161 DK is a hardware development platform used to design and develop application firmware on the nRF9161 :term:`System in Package (SiP)`.
-  The nRF9161 SiP is a low power SiP with integrated DECT NR+ modem and 3GPP Release 14 LTE-M/NB-IoT with GNSS.
-* Nordic Thingy:91 is a battery-operated prototyping platform for cellular IoT systems, designed especially for asset tracking applications and environmental monitoring.
-  Thingy:91 integrates an nRF9160 SiP that supports LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS) and an nRF52840 SoC that supports Bluetooth® Low Energy, Near Field Communication (NFC) and USB.
+Development Kits and Evaluation Kits
+  * nRF9160 DK: A development kit for designing and developing application firmware on the nRF9160 :term:`System in Package (SiP)`, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 13 support.
+  * nRF9161 DK: A development kit for designing and developing application firmware on the nRF9161 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
+  * nRF9151 DK: A development kit for designing and developing application firmware on the nRF9151 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
+  * nRF9131 EK: A single-board evaluation kit for the nRF9131 SiP, designed for DECT NR+ applications.
+
+Prototyping Platforms
+  * Nordic Thingy:91: A battery-operated prototyping platform for cellular IoT systems, suitable for prototyping asset tracking, environmental monitoring and more.
+    Thingy:91 integrates an nRF9160 SiP that supports LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS) and an nRF52840 SoC that supports Bluetooth® Low Energy, Near Field Communication (NFC) and USB.
+  * Nordic Thingy:91 X: An advanced version of the Thingy:91.
+    Thingy:91 X integrates the following components:
+
+    * An nRF9151 SiP with LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS) support.
+    * The nRF7002 companion IC that adds support for low power Wi-Fi®.
+    * An nRF5340 SoC that supports Bluetooth Low Energy, 802.15.4 protocols, and USB.
 
 With built-in GNSS support, these devices are a great choice for asset tracking applications.
 
@@ -82,7 +93,7 @@ A delta patch can only update the modem firmware from one specific version to an
 If you need to perform a major version update (for example, v1.2.x to v1.3.x), you need an external flash with a minimum size of 4 MB.
 
 Different versions of the LTE modem firmware are available, and these versions are certified for the mobile network operators having their own certification programs.
-See the `Mobile network operator certifications`_ for more information.
+For more information, see the `nRF9161 Mobile network operator certifications`_ or `nRF9160 Mobile network operator certifications`_, depending on the SiP you are using.
 
 .. note::
 

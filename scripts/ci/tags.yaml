@@ -39,53 +39,65 @@
 # 1. Avoid putting include/ in entries as any include/ change we want
 #    to get test coverage as broad as possible.
 # 2. Keep tag entries sorted alphabetically
+# 3. The root folder for listed paths here is NCS,
+#    thus files from sdk-nrf starts from nrf, from sdk-zephyr: zephyr,
+#    from sdk-mcuboot: bootloader/mcuboot etc.
+#    Paths should match location after checking out sdk-nrf (+ west update)
 
 bluetooth:
   files:
-    - drivers/bluetooth/
-    - subsys/bluetooth/
-    - subsys/net/l2/bluetooth/
+    - zephyr/drivers/bluetooth/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/net/l2/bluetooth/
+#    Examples:
+#    - nrf/drivers/bluetooth/
+#    - nrf/subsys/bluetooth/
 
 net:
   files:
-    - subsys/net/
-    - include/zephyr/net/
-    - drivers/wifi/
-    - drivers/net/
-    - drivers/ethernet/
-    - drivers/ieee802154/
-    - drivers/ptp_clock/
+    - zephyr/subsys/net/
+    - zephyr/include/zephyr/net/
+    - zephyr/drivers/wifi/
+    - zephyr/drivers/net/
+    - zephyr/drivers/ethernet/
+    - zephyr/drivers/ieee802154/
+    - zephyr/drivers/ptp_clock/
+#    Examples:
+#    - nrf/subsys/net/
+#    - nrf/include/net/
+#    - nrf/drivers/wifi/
+#    - nrf/drivers/net/
 
 test_framework:
   files:
-    - subsys/testsuite/
-    - samples/subsys/testsuite/
-    - tests/subsys/testsuite/
-    - tests/ztest/
+    - zephyr/subsys/testsuite/
+    - zephyr/samples/subsys/testsuite/
+    - zephyr/tests/subsys/testsuite/
+    - zephyr/tests/ztest/
 
 cmsis_dsp:
   files:
-    - modules/Kconfig.cmsis_dsp
+    - zephyr/modules/Kconfig.cmsis_dsp
     # we have no means of telling file changes in a module, so for assume any
     # change to west.yml is updating something we need to re-test for.
-    - west.yml
+    - zephyr/west.yml
 
 mcumgr:
   files:
-    - subsys/mgmt/mcumgr/
-    - tests/subsys/mgmt/mcumgr/
-    - samples/subsys/mgmt/mcumgr/
-    - include/zephyr/mgmt/mcumgr/
+    - zephyr/subsys/mgmt/mcumgr/
+    - zephyr/tests/subsys/mgmt/mcumgr/
+    - zephyr/samples/subsys/mgmt/mcumgr/
+    - zephyr/include/zephyr/mgmt/mcumgr/
 kernel:
   files:
-    - kernel/
-    - arch/
+    - zephyr/kernel/
+    - zephyr/arch/
 
 posix:
   files:
-    - lib/posix/
+    - zephyr/lib/posix/
 
 # cbprintf:
 #    files:
-#        - lib/os/cbprintf*
-#        - lib/posix
+#        - zephyr/lib/os/cbprintf*
+#        - zephyr/lib/posix

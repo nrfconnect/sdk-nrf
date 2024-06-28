@@ -200,7 +200,9 @@ config TFM_ITS_STACK_SIZE
 config TFM_ITS_ENCRYPTED
 	bool
 	prompt "PSA Internal Trusted Storage with encryption"
+	default y if SOC_SERIES_NRF54LX
 	select PSA_ITS_ENCRYPTED
+	select PSA_WANT_GENERATE_RANDOM
 	help
 	  Enables authenticated encryption for PSA Internal Trusted Storage files
 

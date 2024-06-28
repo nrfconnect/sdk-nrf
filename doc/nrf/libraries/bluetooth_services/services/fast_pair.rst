@@ -30,9 +30,13 @@ The Fast Pair service also contains additional GATT characteristics under the fo
 Configuration
 *************
 
-Set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option to enable the service.
+The Fast Pair Service is enabled with :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option set in the main application image.
 
-The following Kconfig options are also available for this service:
+.. note::
+   When building with sysbuild, value of the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option is overwritten by ``SB_CONFIG_BT_FAST_PAIR``.
+   For more details about enabling Fast Pair for your application, see the :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section in the Fast Pair integration guide.
+
+With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the following Kconfig options are available for this service:
 
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID` - The option adds the Model ID characteristic to the Fast Pair GATT service.
   This option is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` is enabled.
@@ -132,6 +136,8 @@ Firmware Revision characteristic
 The Fast Pair specification requires enabling GATT Device Information Service and the Firmware Revision characteristic.
 For this reason, the default values of the Kconfig options :kconfig:option:`CONFIG_BT_DIS` and :kconfig:option:`CONFIG_BT_DIS_FW_REV`, respectively, are set to enabled.
 The default value of :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` is set to :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` if :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` is enabled.
+The option is enforced by sysbuild when ``SB_CONFIG_BOOTLOADER_MCUBOOT`` is enabled.
+
 Otherwise, it is set to ``0.0.0+0``.
 
 This requirement does not apply for the locator tag use case as specified in the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation.

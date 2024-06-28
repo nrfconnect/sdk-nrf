@@ -26,7 +26,7 @@ config DESKTOP_USB_SUBSCRIBER_REPORT_PRIORITY
 	range 1 255
 	help
 	  USB reports subscriber priority. The lower value means the lower
-	  priority in subscribtion to HID reports. By default, the USB uses the highest
+	  priority in subscription to HID reports. By default, the USB uses the highest
 	  possible priority.
 
 config DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
@@ -68,11 +68,11 @@ config DESKTOP_USB_INIT_THREAD_STACK_SIZE
 
 config DESKTOP_USB_INIT_THREAD_PRIORITY
 	int
-	default 0
+	default -1
 
 config DESKTOP_USB_INIT_THREAD_DELAY_MS
 	int
-	default 1
+	default 30
 	help
 	  Due to an issue in the USB stack initialization on the nRF54HX SoC,
 	  the usbd_init() cannot be called too early. The delay is introduced
@@ -177,6 +177,24 @@ config USBD_HID_IN_BUF_COUNT
 	help
 	  nRF Desktop queues HID reports at the source. There is no need to use
 	  multiple buffers in the IN pool per HID instance.
+
+config DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL
+	bool
+	default y if SOC_SERIES_NRF54HX
+	depends on DESKTOP_USB_INIT_THREAD
+	select REBOOT
+	help
+	  Disable USB stack on VBUS removal. This is a workaround for the USB
+	  driver not working correctly on the nRF54HX SoC. After the USB cable
+	  is removed, the USB driver is powered down and doesn't call appropriate
+	  callbacks to the USB stack. It may lead to the USB stack ending in a
+	  broken state. Calling usbd_disable() on VBUS removal workarounds this
+	  issue. When this option is enabled, the usb_init_thread will be used to
+	  call the usbd_enable() and usbd_disable() functions on VBUS events. This
+	  is done because the usbd_enable() function blocks if the USB cable is
+	  not connected. A separate thread allows the application to trigger a
+	  reboot from the workqueue context to prevent blocking the application
+	  forever.
 
 choice USBD_LOG_LEVEL_CHOICE
 	default USBD_LOG_LEVEL_WRN

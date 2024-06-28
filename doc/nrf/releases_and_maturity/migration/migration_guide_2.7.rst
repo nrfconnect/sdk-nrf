@@ -33,17 +33,6 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-* For applications using the :ref:`lib_mqtt_helper` library:
-
-  * The ``CONFIG_MQTT_HELPER_CERTIFICATES_FILE`` is now replaced by :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER`.
-    The new option is a folder path where the certificates are stored.
-    The folder path must be relative to the root of the project.
-
-    If you are using the :ref:`lib_mqtt_helper` library, you must update the Kconfig option to use the new option.
-
-  * When using the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option, the certificate files must be in standard PEM format.
-    This means that the PEM files must not be converted to string format anymore.
-
 Wi-Fi®
 ------
 
@@ -59,29 +48,31 @@ Serial LTE Modem (SLM)
 
 .. toggle::
 
-  * The AT command parsing has been updated to utilize the :ref:`at_cmd_custom_readme` library.
-    If you have introduced custom AT commands to the SLM, you need to update the command parsing to use the new library.
-    See the :ref:`slm_extending` page for more information.
+   The AT command parsing has been updated to utilize the :ref:`at_cmd_custom_readme` library.
+   If you have introduced custom AT commands to the SLM, you need to update the command parsing to use the new library.
+   See the :ref:`slm_extending` page for more information.
 
 Peripheral samples
 ------------------
 
-* :ref:`radio_test` sample:
+.. toggle::
 
-  * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
-    This change applies to the sample built with the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` set to ``n``.
+   * :ref:`radio_test` sample:
+
+     * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
+       This change applies to the sample built with the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` set to ``n``.
 
 Matter
 ------
 
   * With the inheritance of Zephyr's :ref:`zephyr:sysbuild` in the |NCS|, some changes are provided to the Matter samples and applications:
 
-    * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig option is deprecated and you need to use the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option instead to enable or disable creating the factory data set during building a Matter sample.
+    * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig option is deprecated and you need to use the ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` Kconfig option instead to enable or disable creating the factory data set during building a Matter sample.
       To enable factory data support on your device, you still need to set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` to ``y``.
     * Factory data output files are now located in the ``<application_name>/zephyr/`` directory within the build directory.
-    * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option is deprecated in sysbuild and you need to use the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option instead to enable or disable merging the factory data HEX file with the final firmware HEX file.
-    * :kconfig:option:`SB_CONFIG_MATTER_OTA` Kconfig option has been added to enable or disable generating Matter OTA package during the building process.
-    * :kconfig:option:`CONFIG_CHIP_OTA_IMAGE_FILE_NAME` Kconfig option is deprecated and you need to use the :kconfig:option:`SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME` Kconfig option instead to define Matter OTA output filename.
+    * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option is deprecated in sysbuild and you need to use the ``SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE`` Kconfig option instead to enable or disable merging the factory data HEX file with the final firmware HEX file.
+    * ``SB_CONFIG_MATTER_OTA`` Kconfig option has been added to enable or disable generating Matter OTA package during the building process.
+    * :kconfig:option:`CONFIG_CHIP_OTA_IMAGE_FILE_NAME` Kconfig option is deprecated and you need to use the ``SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME`` Kconfig option instead to define Matter OTA output filename.
 
   .. note::
 
@@ -92,23 +83,41 @@ Libraries
 
 This section describes the changes related to libraries.
 
+MQTT helper
+-----------
+
+.. toggle::
+
+   * For applications using the :ref:`lib_mqtt_helper` library:
+
+     * The ``CONFIG_MQTT_HELPER_CERTIFICATES_FILE`` Kconfig option is now replaced by :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER`.
+       The new option is a folder path where the certificates are stored.
+       The folder path must be relative to the root of the project.
+
+       If you are using the :ref:`lib_mqtt_helper` library, you must update the Kconfig option to use the new option.
+
+     * When using the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option, the certificate files must be in standard PEM format.
+       This means that the PEM files must not be converted to string format anymore.
+
 FEM abstraction layer
 ---------------------
 
 .. toggle::
 
-  * For applications using :ref:`fem_al_lib`:
-    The function :c:func:`fem_tx_power_control_set` replaces the function :c:func:`fem_tx_gain_set`.
-    The function :c:func:`fem_default_tx_output_power_get` replaces the function :c:func:`fem_default_tx_gain_get`.
+   * For applications using :ref:`fem_al_lib`:
+
+     * The function :c:func:`fem_tx_power_control_set` replaces the function :c:func:`fem_tx_gain_set`.
+       The function :c:func:`fem_default_tx_output_power_get` replaces the function :c:func:`fem_default_tx_gain_get`.
 
 Modem library
 -------------
 
 .. toggle::
 
-  * For applications using :ref:`nrf_modem_lib_readme`:
-    The option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR` is now deprecated.
-    Use the option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` instead.
+
+   * For applications using :ref:`nrf_modem_lib_readme`:
+     The option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR` is now deprecated.
+     Use the option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` instead.
 
 .. _migration_2.7_recommended:
 
@@ -129,10 +138,10 @@ Samples and applications
 
 * For applications using child images:
 
-  * With the inheritance of Zephyr's :ref:`zephyr:sysbuild` in the |NCS|, the :ref:`ug_multi_image` are deprecated.
+  * With the inheritance of Zephyr's :ref:`sysbuild in the |NCS| <configuration_system_overview_sysbuild>`, the :ref:`ug_multi_image` are deprecated.
 
-    If your application uses parent and child images, it is recommended to migrate your application to :ref:`zephyr:sysbuild` before the multi-image builds are removed in one of the upcoming |NCS| releases.
-    See the documentation in Zephyr for more information.
+    If your application uses parent and child images, it is recommended to migrate your application to sysbuild before the multi-image builds are removed in one of the upcoming |NCS| releases.
+    See the :ref:`documentation in Zephyr <zephyr:sysbuild>` for more information about sysbuild.
 
 Matter
 ------

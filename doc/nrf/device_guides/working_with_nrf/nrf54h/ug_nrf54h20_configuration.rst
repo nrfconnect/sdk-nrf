@@ -38,7 +38,7 @@ The following is the DTS file structure implemented for all the SoCs of the 54H 
     * Product-specific overlays applicable to all cores​
     * Project-wide overlays
 
-The following is the include tree for the Application Core of the nRF54H20 (cpuapp):
+The following is the include tree for the application core of the nRF54H20 (cpuapp):
 
 .. figure:: images/cpuapp_include_tree.svg
    :alt: nRF54H20 CPUAPP include tree
@@ -63,9 +63,9 @@ Generated HEX files
 When building an application for the nRF54H20 DK, you are building all domain images at once.
 During this process, the following :file:`zephyr.hex` images are built:
 
-* Application Core application
+* Application core application
 * PPR core application
-* Radio Core firmware
+* Radio core firmware
 
 Additionally, the following user information configuration registers (UICR) contents (:file:`uicr.hex`) are generated for setup access for domains:
 

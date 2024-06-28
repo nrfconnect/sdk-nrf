@@ -133,19 +133,12 @@ Generate security keys if needed:
     python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k ~/ncs/_keys/mcuboot_priv.pem
     python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k ~/ncs/_keys/nsib_priv.pem
 
-Update the :file:`child_image/mcuboot/prj.conf` file to set the private signing key for MCUboot:
+Update the :file:`sysbuild.conf` file to set the private signing keys for MCUboot and NSIB:
 
 .. code-block:: console
 
-    CONFIG_BOOT_SIGNATURE_KEY_FILE="/home/user/ncs/_keys/mcuboot_priv.pem"
-    CONFIG_BOOT_SIGNATURE_TYPE_RSA=n
-    CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
-
-Update the ``prj.conf`` file to set the private signing key for NSIB:
-
-.. code-block:: console
-
-    CONFIG_SB_SIGNING_KEY_FILE="/home/user/ncs/_keys/nsib_priv.pem"
+    SB_CONFIG_BOOT_SIGNATURE_KEY_FILE="/home/user/ncs/_keys/mcuboot_priv.pem"
+    SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE="/home/user/ncs/_keys/nsib_priv.pem"
 
 See :ref:`ug_fw_update_keys` for more information on how to generate and use keys for a project.
 
@@ -172,7 +165,7 @@ Then upload the new application image to the device.
 
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
-    build_update/zephyr/app_update.bin
+    build_update/tfm_psa_template/zephyr/zephyr.signed.bin
 
 Once the new application image is uploaded, the hash of the image is shown in the image list.
 Flag the image to be tested on next reboot using its hash.
@@ -205,7 +198,7 @@ List the current firmware images and upload a bootloader image that targets the 
 
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
-    build/zephyr/signed_by_mcuboot_and_b0_s1_image_update.bin
+    build/signed_by_mcuboot_and_b0_s1_image.bin
 
 Once the new bootloader image is uploaded, the hash of the image is shown in the image list.
 Flag the image to be tested on next reboot using its hash.

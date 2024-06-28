@@ -168,7 +168,7 @@ Fast Pair
 =========
 
 The nRF Desktop peripheral can be built with Google `Fast Pair`_ support.
-The configurations that enable Fast Pair are set in the :file:`prj_fast_pair.conf` and :file:`prj_release_fast_pair.conf` files.
+The configurations that enable Fast Pair are specified in the files with filenames ending with the ``fast_pair`` and ``release_fast_pair`` suffixes.
 
 .. note::
    The Fast Pair integration in the nRF Desktop is :ref:`experimental <software_maturity>`.
@@ -201,6 +201,8 @@ After a successful erase advertising procedure, the peripheral removes all of th
 
 Apart from that, the following changes are applied in configurations that support Fast Pair:
 
+* The ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option is enabled in the sysbuild configuration.
+  For more details about enabling Fast Pair for your application, see the :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section in the Fast Pair integration guide.
 * The static :ref:`partition_manager` configuration is modified to introduce a dedicated non-volatile memory partition used to store the Fast Pair provisioning data.
 * Bluetooth privacy feature (:kconfig:option:`CONFIG_BT_PRIVACY`) is enabled.
 * The fast and slow advertising intervals defined in the :ref:`nrf_desktop_ble_adv` are aligned with Fast Pair expectations.

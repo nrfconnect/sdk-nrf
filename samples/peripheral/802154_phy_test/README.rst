@@ -951,7 +951,7 @@ After programming the sample to your development kit, complete the following ste
 
 #. To turn the LEDs on, set the respective pin's state to low to let the current flow through the LED, using the ``custom lsetgpio <pin> 0`` command, where ``<pin>`` is the number of the pin assigned for selected LED.
 
-   See the following example for how to light up LED 1 on the nRF5340DK:
+   See the following example for how to light up **LED 1** on the nRF5340 DK:
 
    .. parsed-literal::
       :class: highlight

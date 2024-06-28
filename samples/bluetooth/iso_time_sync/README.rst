@@ -132,53 +132,53 @@ Sample structure
 
 The sample code is divided into multiple source files, which makes it easier to compile in or out certain functionalities.
 
-``main.c``
-  The main entry point of the sample allows you to select the role and parameters to be used.
-
-``bis_transmitter.c``
-  This file implements a device that sets up a BIS transmitter with a configured number of streams.
-  That is:
-
-  1. Configure and start an extended advertiser.
-     The extended advertiser data contains the device name.
-  #. Configure and start a periodic advertiser.
-  #. Configure and start a broadcast isochronous group (BIG).
-
-``bis_receiver.c``
-  This file implements a device that syncs to a BIS broadcaster with a given BIS index.
-
-  1. Scan for extended advertisers containing the device name.
-  #. Synchronize to the corresponding periodic advertiser.
-  #. Synchronize to the selected BIS.
-
-  When the ISO channel is disconnected, it tries to sync to it again.
-
-``cis_central.c``
-  This file implements a device that acts as a CIS central.
-  The central can be configured either as a transmitter or a receiver.
-
-  1. Configure a connected isochronous group (CIG).
-  #. Scan and connect to a device that contains the device name.
-  #. Set up a CIS to the connected device.
-  #. Continue to scanning for more peripherals, if there are more available isochronous streams.
-
-``cis_peripheral.c``
-  This file implements a device that acts as a CIS peripheral.
-  The peripheral can be configured either as a transmitter or a receiver.
-
-  1. Set up an isochronous server so that it can later on accept the setup or a CIS.
-  #. Start advertising its device name.
-  #. Once a device has connected, accept the incoming CIS request.
-
-``iso_rx.c``
-  This file handles receiving of isochronous data.
-  Once an isochronous stream is connected, the isochronous parameters are printed.
-
-  When a valid SDU is received, the following operations are performed:
-
 .. tabs::
 
    .. group-tab:: nRF52 and nRF53 DKs
+
+    ``main.c``
+      The main entry point of the sample allows you to select the role and parameters to be used.
+
+    ``bis_transmitter.c``
+      This file implements a device that sets up a BIS transmitter with a configured number of streams.
+      That is:
+
+      1. Configure and start an extended advertiser.
+         The extended advertiser data contains the device name.
+      #. Configure and start a periodic advertiser.
+      #. Configure and start a broadcast isochronous group (BIG).
+
+    ``bis_receiver.c``
+      This file implements a device that syncs to a BIS broadcaster with a given BIS index.
+
+      1. Scan for extended advertisers containing the device name.
+      #. Synchronize to the corresponding periodic advertiser.
+      #. Synchronize to the selected BIS.
+
+      When the ISO channel is disconnected, it tries to sync to it again.
+
+    ``cis_central.c``
+      This file implements a device that acts as a CIS central.
+      The central can be configured either as a transmitter or a receiver.
+
+      1. Configure a connected isochronous group (CIG).
+      #. Scan and connect to a device that contains the device name.
+      #. Set up a CIS to the connected device.
+      #. Continue to scanning for more peripherals, if there are more available isochronous streams.
+
+    ``cis_peripheral.c``
+      This file implements a device that acts as a CIS peripheral.
+      The peripheral can be configured either as a transmitter or a receiver.
+
+      1. Set up an isochronous server so that it can later on accept the setup or a CIS.
+      #. Start advertising its device name.
+      #. Once a device has connected, accept the incoming CIS request.
+
+    ``iso_rx.c``
+      This file handles receiving of isochronous data.
+      Once an isochronous stream is connected, the isochronous parameters are printed.
+
+      When a valid SDU is received, the following operations are performed:
 
       * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 2** is toggled immediately.
         You can use this to observe that different receivers may receive the SDU at different points in time.
@@ -213,6 +213,50 @@ The sample code is divided into multiple source files, which makes it easier to 
 
    .. group-tab:: nRF54 DKs
 
+    ``main.c``
+      The main entry point of the sample allows you to select the role and parameters to be used.
+
+    ``bis_transmitter.c``
+      This file implements a device that sets up a BIS transmitter with a configured number of streams.
+      That is:
+
+      1. Configure and start an extended advertiser.
+         The extended advertiser data contains the device name.
+      #. Configure and start a periodic advertiser.
+      #. Configure and start a broadcast isochronous group (BIG).
+
+    ``bis_receiver.c``
+      This file implements a device that syncs to a BIS broadcaster with a given BIS index.
+
+      1. Scan for extended advertisers containing the device name.
+      #. Synchronize to the corresponding periodic advertiser.
+      #. Synchronize to the selected BIS.
+
+      When the ISO channel is disconnected, it tries to sync to it again.
+
+    ``cis_central.c``
+      This file implements a device that acts as a CIS central.
+      The central can be configured either as a transmitter or a receiver.
+
+      1. Configure a connected isochronous group (CIG).
+      #. Scan and connect to a device that contains the device name.
+      #. Set up a CIS to the connected device.
+      #. Continue to scanning for more peripherals, if there are more available isochronous streams.
+
+    ``cis_peripheral.c``
+      This file implements a device that acts as a CIS peripheral.
+      The peripheral can be configured either as a transmitter or a receiver.
+
+      1. Set up an isochronous server so that it can later on accept the setup or a CIS.
+      #. Start advertising its device name.
+      #. Once a device has connected, accept the incoming CIS request.
+
+    ``iso_rx.c``
+      This file handles receiving of isochronous data.
+      Once an isochronous stream is connected, the isochronous parameters are printed.
+
+      When a valid SDU is received, the following operations are performed:
+
       * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 1** is toggled immediately.
         You can use this to observe that different receivers may receive the SDU at different points in time.
       * A timer trigger is configured to toggle **LED 0** :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` after the received timestamp.
@@ -243,7 +287,6 @@ The sample code is divided into multiple source files, which makes it easier to 
 
       The implementation for nRF52 and nRF53 Series devices is implemented by shadowing an RTC peripheral combined with a timer peripheral.
       The implementation for nRF54L Series devices uses the GRTC and is simpler to use.
-
 
 Building and running
 ********************
@@ -312,7 +355,7 @@ After programming the sample to the development kits, perform the following step
       #. Press **Button 1** on the central device.
       #. Observe that **LED 1** toggles on both the central and peripheral devices.
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF54 DKs
 
       1. |connect_terminal_specific|
       #. Reset the kits.

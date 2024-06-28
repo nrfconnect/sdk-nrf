@@ -16,23 +16,7 @@ set(PUB_CMD
   ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/keygen.py --public
   )
 
-# Check if PEM file is specified by user, if not, create one.
-
-# First, check environment variables. Only use if not specified in command line.
-if(DEFINED ENV{SB_SIGNING_KEY_FILE} AND NOT SB_SIGNING_KEY_FILE)
-  if(NOT EXISTS "$ENV{SB_SIGNING_KEY_FILE}")
-    message(FATAL_ERROR "ENV points to non-existing PEM file '$ENV{SB_SIGNING_KEY_FILE}'")
-  else()
-    set(SIGNATURE_PRIVATE_KEY_FILE $ENV{SB_SIGNING_KEY_FILE})
-  endif()
-endif()
-
-# Next, check command line arguments
-if(DEFINED SB_SIGNING_KEY_FILE)
-  set(SIGNATURE_PRIVATE_KEY_FILE ${SB_SIGNING_KEY_FILE})
-endif()
-
-# Check if debug sign key should be generated.
+# Check if PEM file is specified by user, if not, create one a debug key
 if(NOT SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM AND "${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE}" STREQUAL "")
   message(WARNING "
     --------------------------------------------------------------
@@ -43,7 +27,7 @@ if(NOT SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM AND "${SB_CONFIG_SECURE_BOOT_SIGNING
     \n"
   )
 
-  set(DEBUG_SIGN_KEY ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem)
+  set(DEBUG_SIGN_KEY ${CMAKE_BINARY_DIR}/GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem)
   set(SIGNATURE_PRIVATE_KEY_FILE ${DEBUG_SIGN_KEY})
   add_custom_command(
     OUTPUT
@@ -63,13 +47,11 @@ if(NOT SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM AND "${SB_CONFIG_SECURE_BOOT_SIGNING
     )
   set(SIGN_KEY_FILE_DEPENDS debug_sign_key_target)
 else()
-  # Resolve path relative to the main application's configuration directory.
-  sysbuild_get(app_config_dir IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_CONFIG_DIR CACHE)
-
   if(IS_ABSOLUTE ${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
     set(SIGNATURE_PRIVATE_KEY_FILE ${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
   else()
-    set(SIGNATURE_PRIVATE_KEY_FILE ${app_config_dir}/${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
+    # Resolve path relative to the application configuration directory.
+    set(SIGNATURE_PRIVATE_KEY_FILE ${APPLICATION_CONFIG_DIR}/${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
   endif()
 
   if(NOT EXISTS ${SIGNATURE_PRIVATE_KEY_FILE})
@@ -90,10 +72,10 @@ if("${SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES}" STREQUAL "debug")
     \n"
     )
 
-  set(debug_public_key_0 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PUBLIC_0.pem)
-  set(debug_private_key_0 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PRIVATE_0.pem)
-  set(debug_public_key_1 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PUBLIC_1.pem)
-  set(debug_private_key_1 ${PROJECT_BINARY_DIR}/GENERATED_NON_SECURE_PRIVATE_1.pem)
+  set(debug_public_key_0 ${CMAKE_BINARY_DIR}/GENERATED_NON_SECURE_PUBLIC_0.pem)
+  set(debug_private_key_0 ${CMAKE_BINARY_DIR}/GENERATED_NON_SECURE_PRIVATE_0.pem)
+  set(debug_public_key_1 ${CMAKE_BINARY_DIR}/GENERATED_NON_SECURE_PUBLIC_1.pem)
+  set(debug_private_key_1 ${CMAKE_BINARY_DIR}/GENERATED_NON_SECURE_PRIVATE_1.pem)
 
   list(APPEND PUBLIC_KEY_FILES ${debug_public_key_0} ${debug_public_key_1})
 
@@ -133,11 +115,11 @@ if("${SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES}" STREQUAL "debug")
   set(PROVISION_KEY_DEPENDS provision_key_target)
 else()
   foreach(key ${PUBLIC_KEY_FILES_LIST})
-    # Resolve path.
     if(IS_ABSOLUTE ${key})
       list(APPEND PUBLIC_KEY_FILES ${key})
     else()
-      list(APPEND PUBLIC_KEY_FILES ${CMAKE_SOURCE_DIR}/${key})
+      # Resolve path relative to the application configuration directory.
+      list(APPEND PUBLIC_KEY_FILES ${APPLICATION_CONFIG_DIR}/${key})
     endif()
   endforeach()
 endif()

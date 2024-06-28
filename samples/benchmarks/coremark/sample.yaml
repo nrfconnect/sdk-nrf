@@ -75,7 +75,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     tags: ci_build sysbuild
     extra_args: EXTRA_CONF_FILE="prj_multiple_threads.conf"
-  sample.benchmark.coremark_ppr_xip:
+  sample.benchmark.coremark_ppr:
     sysbuild: true
     build_only: true
     platform_allow:
@@ -86,4 +86,4 @@ tests:
     extra_args:
       SB_CONFIG_APP_CPUNET_RUN=n
       SB_CONFIG_APP_CPUPPR_RUN=y
-      coremark_SNIPPET=nordic-ppr-xip
+      coremark_SNIPPET=nordic-ppr

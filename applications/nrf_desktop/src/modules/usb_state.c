@@ -11,6 +11,8 @@
 #include <zephyr/types.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/util.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/reboot.h>
 
 #include <zephyr/usb/usbd.h>
 #include <zephyr/usb/usbd_msg.h>
@@ -24,6 +26,7 @@
 #include <caf/events/module_state_event.h>
 
 #include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 
 #include "hid_report_desc.h"
@@ -104,11 +107,24 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_DESKTOP_HID_STATE_ENABLE) ||
 	     (ARRAY_SIZE(usb_hid_device) <= 1));
 
 static struct usbd_context *usbd_ctx;
+static bool usb_enabled;
 
 static struct config_channel_transport cfg_chan_transport;
 
 static struct k_thread usb_init_thread;
 static K_THREAD_STACK_DEFINE(usb_init_thread_stack, CONFIG_DESKTOP_USB_INIT_THREAD_STACK_SIZE);
+
+#define USB_REQ_TIMEOUT_MS	100
+
+/* USB events */
+enum {
+	USB_REQ_ENABLE		= BIT(0),
+	USB_REQ_DISABLE		= BIT(1),
+	USB_RSP_SUCCESS		= BIT(2),
+	USB_RSP_FAIL		= BIT(3),
+};
+
+static K_EVENT_DEFINE(usb_event);
 
 
 static struct usb_hid_device *dev_to_hid(const struct device *dev)
@@ -514,8 +530,14 @@ static void usb_wakeup(void)
 {
 	int err = 0;
 
-	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT) && usbd_ctx) {
-		err = usbd_wakeup_request(usbd_ctx);
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT)) {
+		if (usb_enabled) {
+			__ASSERT_NO_MSG(usbd_ctx);
+			err = usbd_wakeup_request(usbd_ctx);
+		} else {
+			/* Skip wakeup request. */
+			return;
+		}
 	} else {
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY));
 		err = usb_wakeup_request();
@@ -962,6 +984,64 @@ static int usb_init_next_hids_init(void)
 	return err;
 }
 
+static int usb_thread_req_send(bool enable)
+{
+	uint32_t events;
+	int err;
+
+	__ASSERT_NO_MSG(!k_event_test(&usb_event, USB_REQ_ENABLE | USB_REQ_DISABLE));
+
+	LOG_DBG("%sabling USB", enable ? "En" : "Dis");
+	(void) k_event_set(&usb_event, enable ? USB_REQ_ENABLE : USB_REQ_DISABLE);
+	events = k_event_wait(&usb_event,
+			      USB_RSP_SUCCESS | USB_RSP_FAIL,
+			      false,
+			      K_MSEC(USB_REQ_TIMEOUT_MS));
+	(void) k_event_clear(&usb_event, events);
+
+	if (events & USB_RSP_SUCCESS) {
+		LOG_DBG("USB %sabled", enable ? "en" : "dis");
+		usb_enabled = enable;
+		err = 0;
+	} else if (events & USB_RSP_FAIL) {
+		LOG_ERR("Failed to %sable USB", enable ? "en" : "dis");
+		module_set_state(MODULE_STATE_ERROR);
+		err = -EIO;
+	} else {
+		LOG_ERR("Fatal error - USB %sable timeout. Rebooting...", enable ? "en" : "dis");
+		LOG_PANIC();
+		sys_reboot(SYS_REBOOT_WARM);
+		err = -EIO;
+	}
+
+	return err;
+}
+
+static int handle_usbd_state_on_status_change(enum usbd_msg_type type)
+{
+	int err = 0;
+
+	switch (type) {
+	case USBD_MSG_VBUS_READY:
+		if (!usb_enabled) {
+			err = usb_thread_req_send(true);
+		}
+		break;
+
+	case USBD_MSG_VBUS_REMOVED:
+		if (usb_enabled) {
+			err = usb_thread_req_send(false);
+		}
+		break;
+
+	default:
+		/* Ignore */
+		break;
+	}
+
+	return err;
+}
+
 static void usb_init_next_status_cb(struct usbd_context *const usbd,
 				    const struct usbd_msg *const msg)
 {
@@ -969,6 +1049,8 @@ static void usb_init_next_status_cb(struct usbd_context *const usbd,
 	enum usb_state new_state = state;
 
 	LOG_DBG("USBD msg: %s", usbd_msg_type_string(msg->type));
+
+	__ASSERT_NO_MSG(usbd == usbd_ctx);
 
 	switch (msg->type) {
 	case USBD_MSG_VBUS_READY:
@@ -1019,6 +1101,16 @@ static void usb_init_next_status_cb(struct usbd_context *const usbd,
 	default:
 		LOG_ERR("Unexpected USB device message type: %d", msg->type);
 		break;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL)) {
+		int err;
+
+		err = handle_usbd_state_on_status_change(msg->type);
+		if (err) {
+			LOG_ERR("handle_usbd_state_on_status_change failed (err: %d)", err);
+			return;
+		}
 	}
 
 	if (new_state != state) {
@@ -1122,6 +1214,17 @@ static struct usbd_context *usb_init_next_usbd_init(void)
 	USBD_CONFIGURATION_DEFINE(fs_config, attributes, max_power);
 	USBD_CONFIGURATION_DEFINE(hs_config, attributes, max_power);
 
+	if (!usbd_can_detect_vbus(&usbd)) {
+		LOG_ERR("USBD controller cannot detect VBUS state change");
+		return NULL;
+	}
+
+	err = usbd_msg_register_cb(&usbd, usb_init_next_status_cb);
+	if (err) {
+		LOG_ERR("usbd_msg_register_cb failed (err: %d)", err);
+		return NULL;
+	}
+
 	err = usbd_add_descriptor(&usbd, &lang);
 	if (err) {
 		LOG_ERR("usbd_add_descriptor(lang) failed (err: %d)", err);
@@ -1185,10 +1288,11 @@ static int usb_init_next(void)
 		return -ENXIO;
 	}
 
-	err = usbd_msg_register_cb(usbd, usb_init_next_status_cb);
-	if (err) {
-		LOG_ERR("usbd_msg_register_cb failed (err: %d)", err);
-		return err;
+	usbd_ctx = usbd;
+
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL)) {
+		/* Do not enable USBD now. It will be enabled when USB cable will be connected. */
+		return 0;
 	}
 
 	err = usbd_enable(usbd);
@@ -1197,7 +1301,7 @@ static int usb_init_next(void)
 		return err;
 	}
 
-	usbd_ctx = usbd;
+	usb_enabled = true;
 
 	return 0;
 }
@@ -1228,6 +1332,40 @@ static int usb_init(void)
 	return err;
 }
 
+static void wait_for_usb_requests(void)
+{
+	while (true) {
+		uint32_t events;
+		int err;
+
+		events = k_event_wait(&usb_event,
+				      USB_REQ_ENABLE | USB_REQ_DISABLE,
+				      false,
+				      K_FOREVER);
+		(void) k_event_clear(&usb_event, events);
+		__ASSERT_NO_MSG(!(events & USB_REQ_ENABLE) || !(events & USB_REQ_DISABLE));
+
+		__ASSERT_NO_MSG(usbd_ctx);
+		if (events & USB_REQ_ENABLE) {
+			err = usbd_enable(usbd_ctx);
+			if (err) {
+				LOG_ERR("usbd_enable failed (err: %d)", err);
+			}
+		} else if (events & USB_REQ_DISABLE) {
+			err = usbd_disable(usbd_ctx);
+			if (err) {
+				LOG_ERR("usbd_disable failed (err: %d)", err);
+			}
+		} else {
+			__ASSERT_NO_MSG(false);
+			err = -EINVAL;
+		}
+
+		__ASSERT_NO_MSG(!k_event_test(&usb_event, USB_RSP_FAIL | USB_RSP_SUCCESS));
+		(void) k_event_post(&usb_event, err ? USB_RSP_FAIL : USB_RSP_SUCCESS);
+	}
+}
+
 static void usb_init_thread_fn(void *dummy0, void *dummy1, void *dummy2)
 {
 	ARG_UNUSED(dummy0);
@@ -1238,6 +1376,10 @@ static void usb_init_thread_fn(void *dummy0, void *dummy1, void *dummy2)
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
 		module_set_state(MODULE_STATE_READY);
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL)) {
+		wait_for_usb_requests();
 	}
 }
 

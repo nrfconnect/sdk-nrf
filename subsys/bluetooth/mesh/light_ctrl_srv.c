@@ -747,7 +747,7 @@ static void store_state_data(struct bt_mesh_light_ctrl_srv *srv)
 
 }
 
-static void ligth_ctrl_srv_pending_store(const struct bt_mesh_model *model)
+static void light_ctrl_srv_pending_store(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
@@ -1141,6 +1141,28 @@ const struct bt_mesh_model_op _bt_mesh_light_ctrl_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+/* If light is already in `state`, or transitioning to `state`,
+ * update the target level to new value.
+ */
+static void update_lightness_setpoint(struct bt_mesh_light_ctrl_srv *srv,
+			    enum bt_mesh_light_ctrl_srv_state state, uint16_t light_val)
+{
+	srv->cfg.light[state] = light_val;
+
+	if (srv->state != state) {
+		return;
+	}
+
+	/* Check if transition is in progress */
+	if (atomic_test_bit(&srv->flags, FLAG_TRANSITION)) {
+		uint32_t rem_time = remaining_fade_time(srv);
+
+		transition_start(srv, state, rem_time);
+	} else {
+		transition_start(srv, state, 0);
+	}
+}
+
 #ifndef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 #define MICRO_PER_MILLI 1000LL
 #define MICRO_PER_UNIT 1000000LL
@@ -1330,29 +1352,16 @@ static int prop_set(struct net_buf_simple *buf,
 		break; /* Prevent returning -ENOENT */
 	/* Properties are always set in light actual representation: */
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_ON:
-		srv->cfg.light[LIGHT_CTRL_STATE_ON] = from_actual(micro / MICRO_PER_UNIT);
+		update_lightness_setpoint(srv, LIGHT_CTRL_STATE_ON,
+					  from_actual(micro / MICRO_PER_UNIT));
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_PROLONG:
-		srv->cfg.light[LIGHT_CTRL_STATE_PROLONG] = from_actual(micro / MICRO_PER_UNIT);
+		update_lightness_setpoint(srv, LIGHT_CTRL_STATE_PROLONG,
+					  from_actual(micro / MICRO_PER_UNIT));
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_STANDBY:
-		srv->cfg.light[LIGHT_CTRL_STATE_STANDBY] = from_actual(micro / MICRO_PER_UNIT);
-
-		/* If light is already in STANDBY, or transitioning to STANDBY,
-		 * update the target level to new value.
-		 */
-		if (srv->state == LIGHT_CTRL_STATE_STANDBY) {
-			/* Check if transition is in progress */
-			if (atomic_test_bit(&srv->flags, FLAG_TRANSITION)) {
-				uint32_t rem_time = remaining_fade_time(srv);
-
-				transition_start(srv, LIGHT_CTRL_STATE_STANDBY,
-						 rem_time);
-			} else {
-				transition_start(srv, LIGHT_CTRL_STATE_STANDBY,
-						 0);
-			}
-		}
+		update_lightness_setpoint(srv, LIGHT_CTRL_STATE_STANDBY,
+					  from_actual(micro / MICRO_PER_UNIT));
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG:
 		srv->cfg.fade_prolong = micro / MICRO_PER_MILLI;
@@ -1558,29 +1567,13 @@ static int prop_set(struct net_buf_simple *buf,
 		break; /* Prevent returning -ENOENT */
 	/* Properties are always set in light actual representation: */
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_ON:
-		srv->cfg.light[LIGHT_CTRL_STATE_ON] = from_actual(val.val1);
+		update_lightness_setpoint(srv, LIGHT_CTRL_STATE_ON, from_actual(val.val1));
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_PROLONG:
-		srv->cfg.light[LIGHT_CTRL_STATE_PROLONG] = from_actual(val.val1);
+		update_lightness_setpoint(srv, LIGHT_CTRL_STATE_PROLONG, from_actual(val.val1));
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_LIGHTNESS_STANDBY:
-		srv->cfg.light[LIGHT_CTRL_STATE_STANDBY] = from_actual(val.val1);
-
-		/* If light is already in STANDBY, or transitioning to STANDBY,
-		 * update the target level to new value.
-		 */
-		if (srv->state == LIGHT_CTRL_STATE_STANDBY) {
-			/* Check if transition is in progress */
-			if (atomic_test_bit(&srv->flags, FLAG_TRANSITION)) {
-				uint32_t rem_time = remaining_fade_time(srv);
-
-				transition_start(srv, LIGHT_CTRL_STATE_STANDBY,
-						 rem_time);
-			} else {
-				transition_start(srv, LIGHT_CTRL_STATE_STANDBY,
-						 0);
-			}
-		}
+		update_lightness_setpoint(srv, LIGHT_CTRL_STATE_STANDBY, from_actual(val.val1));
 		break;
 	case BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG:
 		srv->cfg.fade_prolong = from_prop_time(&val);
@@ -1803,7 +1796,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 			ctrl_enable(srv);
 		}
 
-		if (!!scene->light && !atomic_test_bit(&srv->flags, FLAG_ON)) {
+		if (!!scene->light) {
 			turn_on(srv, transition, true);
 		} else if (atomic_test_bit(&srv->flags, FLAG_ON)) {
 			transition_start(srv, LIGHT_CTRL_STATE_STANDBY, 0);
@@ -1970,7 +1963,6 @@ static int light_ctrl_srv_start(const struct bt_mesh_model *model)
 		break;
 	case BT_MESH_ON_POWER_UP_RESTORE:
 		if (is_enabled(srv)) {
-			reg_start(srv);
 			if (atomic_test_bit(&srv->flags, FLAG_ON)) {
 				turn_on(srv, NULL, true);
 			} else {
@@ -2023,7 +2015,7 @@ const struct bt_mesh_model_cb _bt_mesh_light_ctrl_srv_cb = {
 	.reset = light_ctrl_srv_reset,
 	.settings_set = light_ctrl_srv_settings_set,
 #if CONFIG_BT_SETTINGS
-	.pending_store = ligth_ctrl_srv_pending_store,
+	.pending_store = light_ctrl_srv_pending_store,
 #endif
 };
 

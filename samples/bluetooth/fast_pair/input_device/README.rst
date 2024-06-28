@@ -14,8 +14,7 @@ Google also provides additional features built upon the Fast Pair standard.
 For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
 
 .. note::
-   The Fast Pair support in the |NCS| is :ref:`experimental <software_maturity>`.
-   See :ref:`ug_bt_fast_pair` for details.
+   The software maturity level for the input device use case is listed in the :ref:`software_maturity_fast_pair_use_case` table.
 
 Requirements
 ************
@@ -390,7 +389,7 @@ Test not discoverable advertising by completing `Testing`_ and the following add
       #. Press **Button 2** to increase the audio volume.
       #. Press **Button 4** to decrease the audio volume.
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF54 DKs
 
       #. Disconnect the Android device that was used during the default `Testing`_:
 
@@ -485,7 +484,9 @@ Fast Pair GATT Service
 This sample uses the :ref:`bt_fast_pair_readme` and its dependencies and is configured to meet the requirements of the Fast Pair standard.
 See :ref:`ug_bt_fast_pair` for details about integrating Fast Pair in the |NCS|.
 
-The :ref:`bt_fast_pair_provision_script` is used by the build system to automatically generate the hexadecimal file that contains Fast Pair Model ID and Anti Spoofing Private Key.
+This sample enables the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option.
+With this option enabled, the build system calls the :ref:`bt_fast_pair_provision_script`, which automatically generates a hexadecimal file containing Fast Pair Model ID and Anti Spoofing Private Key.
+For more details about enabling Fast Pair for your application, see the :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section in the Fast Pair integration guide.
 
 Bluetooth LE advertising data providers
 =======================================

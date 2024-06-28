@@ -5,8 +5,7 @@
 #
 
 menuconfig BT_FAST_PAIR_FMDN
-	bool "Find My Device Network extension for Fast Pair [EXPERIMENTAL]"
-	select EXPERIMENTAL
+	bool "Find My Device Network extension for Fast Pair"
 	select BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY
 	select BT_FAST_PAIR_FMDN_CRYPTO
 	help

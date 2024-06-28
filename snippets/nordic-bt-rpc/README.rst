@@ -3,10 +3,14 @@
 Nordic Bluetooth Low Energy Remote Procedure Call snippet (nordic-bt-rpc)
 #########################################################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Overview
 ********
 
-This snippet allows you to build Bluetooth applications with Bluetooth stack running on a core dedicated for radio communication.
+This snippet allows you to build Bluetooth® applications with Bluetooth stack running on a core dedicated for radio communication.
 For example in the nRF54H20 SoC, it is the radio core.
 The communication between an application and the Bluetooth stack is handled by the Bluetooth RPC library.
 

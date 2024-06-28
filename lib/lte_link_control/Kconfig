@@ -31,6 +31,14 @@ config LTE_LOCK_BAND_MASK
 	  can be omitted. The maximum length is 88 characters.
 endif # LTE_LOCK_BANDS
 
+config LTE_PLMN_SELECTION_OPTIMIZATION
+	bool "PLMN selection optimization"
+	default y
+	help
+	  Enable PLMN selection optimization during initial search.
+	  This optimization typically makes PLMN selection faster, especially for stationary devices.
+	  Refer to the AT%FEACONF command in the AT command manual for more details.
+
 config LTE_LOCK_PLMN
 	bool "Enable LTE PLMN lock"
 	help

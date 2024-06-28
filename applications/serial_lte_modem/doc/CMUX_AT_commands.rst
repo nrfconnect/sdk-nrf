@@ -59,15 +59,15 @@ Syntax
 
 The ``<AT_channel>`` parameter is an integer used to indicate the address of the AT channel.
 The AT channel denotes the CMUX channel where AT data (commands, responses, notifications) is exchanged.
-If specified, it must be 1, unlesss :ref:`PPP <CONFIG_SLM_PPP>` is enabled.
-If PPP is enabled, it can also be 2 (to allocate the first CMUX channel to PPP).
+If specified, it must be ``1``, unless :ref:`PPP <CONFIG_SLM_PPP>` is enabled.
+If PPP is enabled, it can also be ``2`` (to allocate the first CMUX channel to PPP).
 If not specified, the previously used address is used.
-If no address has been previously specified, the default address is 1.
+If no address has been previously specified, the default address is ``1``.
 
 .. note::
 
    If there is more than one CMUX channel (such as when using :ref:`PPP <CONFIG_SLM_PPP>`), the non-AT channels will automatically get assigned to addresses other than the one used for the AT channel.
-   For example, if PPP is enabled and CMUX is started with the ``AT#XCMUX=2`` command, the AT channel will be assigned to address 2 and the PPP channel to address 1.
+   For example, if PPP is enabled and CMUX is started with the ``AT#XCMUX=2`` command, the AT channel will be assigned to address ``2`` and the PPP channel to address ``1``.
 
 An ``OK`` response is sent if the command is accepted, after which CMUX is started.
 This means that after successfully running this command, you must set up the CMUX link and open the channels appropriately.
@@ -99,7 +99,7 @@ Response syntax
    #XCMUX: <AT_channel>,<channel_count>
 
 * The ``<AT_channel>`` parameter indicates the address of the AT channel.
-  It is between 1 and ``<channel_count>``.
+  It is between ``1`` and ``<channel_count>``.
 * The ``<channel_count>`` parameter is the total number of CMUX channels.
   It depends on what features are enabled (for example, :ref:`PPP <CONFIG_SLM_PPP>`).
 

@@ -22,10 +22,10 @@ The sample supports the following development kit:
 You need the nRF Device Manager app for SUIT update over Bluetooth Low Energy:
 
 * `nRF Device Manager mobile app for Android`_
-  (The minimum required version is v1.9.)
+  (The minimum required version is v2.0.)
 
 * `nRF Device Manager mobile app for iOS`_
-  (The minimum required version is v1.5.)
+  (The minimum required version is v1.7.)
 
 For a SUIT update over UART, you need to install :ref:`zephyr:mcu_mgr`, a tool that can be used to upload SUIT envelopes through the SMP protocol.
 
@@ -55,15 +55,15 @@ Configuration
 |config|
 
 The default configuration uses UART with sequence number 1 (shown as Version 1 in the nRF Device Manager app).
-To change the sequence number of the application, configure the ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` Sysbuild Kconfig option.
+To change the sequence number of the application, configure the ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` sysbuild Kconfig option.
 This also changes the number of blinks on **LED 0** and sets the :ref:`sequence number <ug_suit_dfu_suit_manifest_elements>` of the :ref:`SUIT envelope <ug_suit_dfu_suit_concepts>`’s manifest.
 
-To use this configuration, build the sample with :ref:`configuration_system_overview_sysbuild` and set the ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` Sysbuild Kconfig option to ``x``, where ``x`` is the version number.
+To use this configuration, build the sample with :ref:`configuration_system_overview_sysbuild` and set the ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` sysbuild Kconfig option to ``x``, where ``x`` is the version number.
 For example:
 
 .. code-block:: console
 
-   west build -p -b nrf54h20dk/nrf54h20/cpuapp --sysbuild -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+   west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
 
 If you do not specify this configuration, the sample is built with sequence number 1 (shown as Version 1 in the nRF Device Manager app).
 
@@ -84,7 +84,7 @@ Modify partition sizes
 You can also modify the size and location of the partitions.
 This is done by modifying the values for the desired location and size of the partition in the devicetree :file:`.overlay` files.
 
-* To modify the application core’s partition size, modify the values for ``cpuapp_slot0_partition`` defined in the :file:`nrf/samples/suit/smp_transfer/sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi`.
+* To modify the application core's partition size, modify the values for ``cpuapp_slot0_partition`` defined in the :file:`nrf/samples/suit/smp_transfer/sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi`.
 
 * To modify the DFU partition, modify the values for ``dfu_partition`` defined in :file:`samples/suit/smp_transfer/boards/nrf54h20dk_nrf54h20_cpuapp.overlay`.
   This partition is where the update candidate is stored before the update process begins.
@@ -111,13 +111,32 @@ See :ref:`app_build_output_files_suit_dfu` for a full table of SUIT-generated ou
 If you want to make modifications to how the DFU is executed in this sample, you can do so by editing the manifest templates, or generating your own custom manifests.
 See the :ref:`ug_nrf54h20_suit_customize_dfu` user guide for instructions and examples.
 
+External flash support
+======================
+
+You can enable the external flash support by setting the following ``FILE_SUFFIX=extflash`` parameter:
+
+.. code-block:: console
+
+   west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX="extflash"
+
+With this configuration, the sample is configured to use UART as the transport and the external flash is enabled.
+
+To enable both the external flash and the BLE transport, use the following command:
+
+.. code-block:: console
+
+   west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX="extflash" -DOVERLAY_CONFIG="sysbuild/smp_transfer_bt.conf" -DSB_OVERLAY_CONFIG="sysbuild_bt.conf"
+
 Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/suit/smp_transfer`
 
-.. include:: /includes/build_and_run.txt
+This sample can be found under |sample path| in the |NCS| folder structure.
 
+.. note::
+    |sysbuild_autoenabled_ncs|
 
 Building and programming using the command line
 ===============================================
@@ -129,11 +148,11 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
    .. group-tab:: Over Bluetooth Low Energy
 
       1. Open a terminal window in |sample path|.
-      #. Build the sample using the following ``west`` command, with the following Kconfig options set:
+      #. Build the sample using the following command, with the following Kconfig options set:
 
          .. code-block:: console
 
-            west build -p -b nrf54h20dk/nrf54h20/cpuapp --sysbuild -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
+            west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
 
          .. note::
 
@@ -143,11 +162,11 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
             .. code-block:: console
 
-               west build -p -b nrf54h20dk/nrf54h20/cpuapp -d C:/ncs-lcs/work-dir --sysbuild -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
+               west build -p -b nrf54h20dk/nrf54h20/cpuapp -d C:/ncs-lcs/work-dir -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
 
          The output build files can be found in the :file:`build/DFU` directory, including the :ref:`app_build_output_files_suit_dfu`.
          For more information on the contents of the build directory, see :ref:`zephyr:build-directory-contents` in the Zephyr documentation.
-         For more information on the directory contents and structure provided by Sysbuild, see :ref:`zephyr:sysbuild` in the Zephyr documentation.
+         For more information on the directory contents and structure provided by sysbuild, see :ref:`zephyr:sysbuild` in the Zephyr documentation.
 
       #. Connect the DK to your computer using a USB cable.
       #. Power on the DK.
@@ -167,7 +186,7 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
          .. code-block:: console
 
-            west build -p -b nrf54h20dk/nrf54h20/cpuapp --sysbuild -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+            west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
 
          .. note::
 
@@ -177,7 +196,7 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
             .. code-block:: console
 
-               west build -p -b nrf54h20dk/nrf54h20/cpuapp --sysbuild -d C:/ncs-lcs/work-dir -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+               west build -p -b nrf54h20dk/nrf54h20/cpuapp -d C:/ncs-lcs/work-dir -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
 
          Another :file:`root.suit` file is created after running this command, that contains the updated firmware.
          You must manually transfer this file onto the same mobile device you will use with the nRF Device Manager app.
@@ -189,7 +208,7 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
          .. code-block:: console
 
-             west build -p -b nrf54h20dk/nrf54h20/cpuapp --sysbuild
+             west build -p -b nrf54h20dk/nrf54h20/cpuapp
 
          .. note::
 
@@ -199,14 +218,14 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
             .. code-block:: console
 
-               west build -p -b nrf54h20dk/nrf54h20/cpuapp --sysbuild -d C:\ncs-lcs\west_working_dir\build\
+               west build -p -b nrf54h20dk/nrf54h20/cpuapp -d C:\ncs-lcs\west_working_dir\build\
 
          If you want to further configure your sample, see :ref:`configure_application` for additional information.
 
          After running the ``west build`` command, the output build files can be found in the :file:`build/dfu` directory.
          The output build files can be found in the :file:`build/DFU` directory, including the :ref:`app_build_output_files_suit_dfu`.
          For more information on the contents of the build directory, see :ref:`zephyr:build-directory-contents` in the Zephyr documentation.
-         For more information on the directory contents and structure provided by Sysbuild, see :ref:`zephyr:sysbuild` in the Zephyr documentation..
+         For more information on the directory contents and structure provided by sysbuild, see :ref:`zephyr:sysbuild` in the Zephyr documentation..
 
       #. Connect the DK to your computer using a USB cable.
       #. Power on the DK.
@@ -226,7 +245,7 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
          .. code-block:: console
 
-            west build -p -b nrf54h20dk/nrf54h20/cpuapp --sysbuild -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+            west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
 
          .. note::
 
@@ -236,7 +255,7 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
             .. code-block:: console
 
-               west build -p -b nrf54h20dk/nrf54h20/cpuapp -d C:/ncs-lcs/work-dir --sysbuild -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+               west build -p -b nrf54h20dk/nrf54h20/cpuapp -d C:/ncs-lcs/work-dir -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
 
          Another :file:`root.suit` file is created after running this command, that contains the updated firmware.
 

@@ -24,7 +24,7 @@ The sample can perform Wi-Fi operations such as connect and disconnect in the 2.
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode.
 
 The sample uses the :ref:`lib_wifi_ready` library to check Wi-Fi readiness.
-To use the :ref:`lib_wifi_ready` library, enable the :kconfig:option:`CONFIG_WIFI_READY_EVENT_HANDLING` Kconfig option.
+To use the :ref:`lib_wifi_ready` library, enable the :kconfig:option:`CONFIG_WIFI_READY_LIB` Kconfig option.
 
 User interface
 **************
@@ -193,7 +193,7 @@ Application's network connection will be lost during the recovery process, and i
 Testing
 =======
 
-To test RPU recovery, you must build the sample with :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF700X_UTIL` kconfig options.
+To test RPU recovery, you must build the sample with :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF700X_UTIL` Kconfig options.
 
 #. Trigger RPU recovery using the following command:
 
@@ -222,6 +222,8 @@ See :ref:`app_power_opt` for more information on power management testing and us
 Dependencies
 ************
 
-This sample uses the following library:
+This sample uses the following |NCS| libraries:
 
 * :ref:`nrf_security`
+* :ref:`lib_wifi_ready`
+* :ref:`lib_wifi_credentials`

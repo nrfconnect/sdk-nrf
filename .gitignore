@@ -37,3 +37,4 @@ ext/lib/bin/libsupl.zip
 ext/BSEC_*
 
 applications/nrf5340_audio/src/fw_info_app.c
+scripts/hid_configurator/hidapi.dll

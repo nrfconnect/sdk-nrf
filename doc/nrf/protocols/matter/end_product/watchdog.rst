@@ -3,6 +3,10 @@
 Matter watchdog
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 A watchdog is a type of hardware timer responsible for rebooting the device if it does not receive a specific signal within a designated time window.
 This signal is referred to as a *feeding signal*, and sending the signal is referred to as *feeding the watchdog*.
 
@@ -23,7 +27,7 @@ This approach eliminates the need to directly call the ``Feed()`` method in your
 A time window specifies the period within which the feeding signal must be sent to each watchdog channel to reset the timer and prevent the device from rebooting.
 If the feeding signal is sent after the time window has elapsed, it does not prevent the device from rebooting.
 
-To enable the Matter watchdog feature, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` kconfig option to ``y``.
+To enable the Matter watchdog feature, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` Kconfig option to ``y``.
 The feature is enabled by default for the release build type in all Matter samples and applications.
 
 To set the timeout for the watchdog timer, configure the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT` with a value in milliseconds.
@@ -39,7 +43,7 @@ Each Matter watchdog source constructor includes two optional arguments:
 * ``callback`` - A ``FeedingCallback`` implementation that is called periodically at the defined ``feedingInterval``.
 
 After creating a watchdog source, you need to install it in the global watchdog module to assign a watchdog channel.
-To do install it, call the ``InstallSource(WatchdogSource &source)`` function,provide the created source and check that the result of the function is ``true``.
+To do install it, call the ``InstallSource(WatchdogSource &source)`` function, provide the created source and check that the result of the function is ``true``.
 After this, enable the global watchdog by calling the ``Enable()`` function.
 
 This following is an example of creating two watchdog sources, one without and second one with the automatic feeding feature enabled:
@@ -246,7 +250,7 @@ Default Matter watchdog implementation
 
 In the Matter common module, there is a default implementation of two watchdog sources that are automatically created for the release build version of a Matter sample.
 One source is dedicated to monitoring the Main thread, and the other is dedicated to monitoring the Matter thread.
-If at least one of the threads is blocked for a longer time than the value specified in the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT` kconfig option, a reboot will occur.
+If at least one of the threads is blocked for a longer time than the value specified in the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT` Kconfig option, a reboot will occur.
 The ``Nrf::Watchdog::Enable()``, and ``InstallSource(WatchdogSource &source)`` functions are called automatically.
 
-To disable the default Matter watchdog implementation, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT` kconfig option to ``n``.
+To disable the default Matter watchdog implementation, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT` Kconfig option to ``n``.

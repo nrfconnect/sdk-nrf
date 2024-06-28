@@ -100,7 +100,7 @@ Additionally, the following limitations apply on the nRF5340 SoCs:
 * It is required to use external flash to enable the Zigbee FOTA library.
 * By default, only the full upgrades (to both application and network core) are allowed.
   Disable the :kconfig:option:`CONFIG_NRF53_ENFORCE_IMAGE_VERSION_EQUALITY` Kconfig option to build update images without inter-dependencies so that they can be applied independently.
-* It is impossible to enable :kconfig:option:`CONFIG_BOOT_SWAP_USING_MOVE` Kconfig option.
+* It is impossible to enable ``SB_CONFIG_MCUBOOT_MODE_SWAP_WITHOUT_SCRATCH`` Kconfig option.
   As a result, the fallback recovery is not available and any valid upgrade will overwrite the previous image.
   The call to the :c:func:`boot_write_img_confirmed()` will have no effect.
 * The current DFU limitations and dependencies are enforced by the :kconfig:option:`CONFIG_NRF53_MULTI_IMAGE_UPDATE` Kconfig option.

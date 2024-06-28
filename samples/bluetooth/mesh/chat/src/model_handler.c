@@ -425,7 +425,7 @@ const struct bt_mesh_comp *model_handler_init(void)
 	k_work_init_delayable(&attention_blink_work, attention_blink);
 
 	chat_shell = shell_backend_uart_get_ptr();
-	shell_print(chat_shell, ">>> Bluetooth Mesh Chat sample <<<");
+	printk(">>> Bluetooth Mesh Chat sample <<<\n");
 
 	return &comp;
 }

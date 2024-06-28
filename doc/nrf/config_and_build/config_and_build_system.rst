@@ -5,7 +5,7 @@ Build and configuration system
 
 .. contents::
    :local:
-   :depth: 2
+   :depth: 3
 
 The |NCS| build and configuration system is based on the one from Zephyr, with some additions.
 
@@ -101,7 +101,10 @@ The :file:`zephyr.dts` file contains the entire hardware-related configuration o
 The header file contains the same kind of information, but with defines usable by source code.
 
 For more information, see :ref:`configuring_devicetree` and Zephyr's :ref:`zephyr:dt-guide`.
-In particular, :ref:`zephyr:set-devicetree-overlays` explains how to use devicetree and its overlays to customize an application's devicetree.
+In particular, :ref:`zephyr:set-devicetree-overlays` explains how the base devicetree files are selected.
+
+In the |NCS|, you can use the |nRFVSC| to `create the devicetree files <How to create devicetree files_>`_ and work with them using the dedicated `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_.
+You can also select the devicetree files when :ref:`cmake_options`.
 
 .. _configure_application_sw:
 
@@ -119,7 +122,12 @@ Information from devicetree is available to Kconfig, through the functions defin
 The :file:`.config` file in the :file:`<build_dir>/zephyr/` directory describes most of the software configuration of the constructed binary.
 Some subsystems can use their own configuration files.
 
-For more information, see :ref:`configure_application` and Zephyr's :ref:`zephyr:application-kconfig`.
+For more information, see Zephyr's :ref:`zephyr:application-kconfig`.
+In particular, :ref:`zephyr:initial-conf` explains how the base configuration files are selected.
+
+In the |NCS|, just as in Zephyr, you can :ref:`configure Kconfig temporarily or permanently <configuring_kconfig>`.
+You can also select the Kconfig options and files when :ref:`cmake_options`.
+
 The :ref:`Kconfig Reference <configuration_options>` provides the documentation for each configuration option in the |NCS|.
 
 Memory layout configuration
@@ -214,20 +222,28 @@ To read about each of these stages, see :ref:`zephyr:cmake-details` in the Zephy
 Sysbuild
 ========
 
-The |NCS| supports Zephyr's System Build (Sysbuild).
+The |NCS| supports Zephyr's System Build (sysbuild).
 
 .. ncs-include:: build/sysbuild/index.rst
    :docset: zephyr
    :start-after: #######################
    :end-before: Definitions
 
-To distinguish CMake variables and Kconfig options specific to the underlying build systems, sysbuild uses namespacing.
+To distinguish CMake variables and Kconfig options specific to the underlying build systems, :ref:`sysbuild uses namespacing <zephyr:sysbuild_kconfig_namespacing>`.
 For example, sysbuild-specific Kconfig options are preceded by `SB_` before `CONFIG` and application-specific CMake options are preceded by the application name.
 
 Sysbuild is integrated with west.
 The sysbuild build configuration is generated using the sysbuild's :file:`CMakeLists.txt` file (which provides information about each underlying build system and CMake variables) and the sysbuild's Kconfig options (which are gathered in the :file:`sysbuild.conf` file).
 
-For more information about sysbuild, see the :ref:`documentation in Zephyr <zephyr:sysbuild>`.
+.. note::
+    In the |NCS|, building with sysbuild is :ref:`enabled by default <sysbuild_enabled_ncs>`.
+
+For more information about sysbuild, see the following pages:
+
+* :ref:`Sysbuild documentation in Zephyr <zephyr:sysbuild>`
+* :ref:`sysbuild_images`
+* :ref:`zephyr_samples_sysbuild`
+* :ref:`sysbuild_forced_options`
 
 .. _app_build_additions:
 
@@ -254,6 +270,18 @@ For example, when building a sample that enables :kconfig:option:`CONFIG_BT_EXT_
    warning: Experimental symbol BT_EXT_ADV is enabled.
 
 To disable these warnings, disable the :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` Kconfig option.
+
+.. _sysbuild_enabled_ncs:
+
+Sysbuild enabled by default
+===========================
+
+When building :ref:`workspace applications <create_application_types_workspace>` copied from :ref:`nRF repositories <dm_repo_types>`, using the :ref:`standard building procedure <building>` automatically includes :ref:`configuration_system_overview_sysbuild` (the ``--sysbuild`` parameter).
+For this reason, unlike in Zephyr, ``--sysbuild`` does not have to be explicitly mentioned in the command prompt when building the application.
+
+This rule does not apply if you work with out-of-tree :ref:`freestanding applications <create_application_types_freestanding>`, for which you need to manually pass ``--sysbuild`` to build commands in every case.
+
+You can disable building with sysbuild by using the ``--no-sysbuild`` parameter in the build command.
 
 .. _app_build_additions_build_types:
 .. _gs_modifying_build_types:

@@ -24,7 +24,7 @@ Requirements
 The :ref:`CHIP Tool application <ug_matter_gs_tools_chip>` is required to send ``test-event-trigger`` commands to the general diagnostics cluster.
 Ensure that it is installed before initiating Matter testing events.
 
-Your device needs to includes the general diagnostics cluster within its Matter data model database to perform Matter testing events.
+Your device needs to include the general diagnostics cluster within its Matter data model database to perform Matter testing events.
 For guidance on configuring the general diagnostics cluster on your device, refer to the instructions provided on the :ref:`ug_matter_gs_adding_cluster` page.
 
 Activation of test event codes requires the provisioning of an enable key.
@@ -82,8 +82,8 @@ The following table lists the available triggers and their activation codes:
       The value is provided in HEX format.
   * - Diagnostic Logs User Data
     - Enabled ``Diagnostic Logs`` cluster, and either the snippet `diagnostic-logs` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y`` and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS` = ``y``.
-    - Trigger writing a specific amount of ``u`` characters to the user diagnostics logs.
-      The amount of characters is determined by the value at the end of the event trigger value.
+    - Trigger writing a specific number of ``u`` characters to the user diagnostics logs.
+      The number of characters is determined by the value at the end of the event trigger value.
       The current supported maximum is 1023 bytes for single trigger call, and 4096 bytes of total data written.
     - ``0xFFFFFFFF40000000`` - ``0xFFFFFFFF40000400``
     - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
@@ -100,7 +100,7 @@ The following table lists the available triggers and their activation codes:
     - ``0xFFFFFFFF60000000``
     - No additional value supported.
   * - OTA query
-    - :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` = ``y``, and :kconfig:option:`SB_CONFIG_MATTER_OTA` = ``y``.
+    - :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` = ``y``, and ``SB_CONFIG_MATTER_OTA`` = ``y``.
     - Trigger an OTA firmware update.
     - ``0x002a000000000100`` - ``0x01000000000001FF``
     - The range of ``0x00`` - ``0xFF`` is the fabric index value.
@@ -121,14 +121,14 @@ The enable key can be provided either by utilizing the factory data, or directly
 Using factory data
 ==================
 
-You can not set the enable key to a specific value using factory data unless the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option is set to ``y``.
+You cannot set the enable key to a specific value using factory data unless the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option is set to ``y``.
 If it is not set, the default value ``00112233445566778899AABBCCDDEEFF`` will be used.
 For secure operation, you need to ensure that the enable key is unique for all of your devices.
 
-To specify the enable key through the build system, enable the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option by setting it to ``y``.
+To specify the enable key through the build system, enable the ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` Kconfig option by setting it to ``y``.
 Then, set the :kconfig:option:`CONFIG_CHIP_DEVICE_ENABLE_KEY` Kconfig option to a 32-byte hexadecimal string value.
 
-If :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` is set to ``n``, you can follow the :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation to generate the factory data set with the specific enable key value.
+If ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` is set to ``n``, you can follow the :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation to generate the factory data set with the specific enable key value.
 
 If you do not use the |NCS| Matter common module, you need to read the enable key value manually from the factory data set and provide it to the ``TestEventTrigger`` class.
 
@@ -260,7 +260,7 @@ To register a new test event trigger, follow these steps:
 
      /* Remember to check the CHIP_ERROR return code */
 
-   If the returning `CHIP_ERROR` code is equal to `CHIP_ERROR_NO_MEMORY`, you need to increase the :kconfig:option:`NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX` kconfig option to the higher value.
+   If the returning `CHIP_ERROR` code is equal to `CHIP_ERROR_NO_MEMORY`, you need to increase the :kconfig:option:`NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX` Kconfig option to the higher value.
 
    Here's an example to handle the ``0xFFFFFFFF00011234`` activation code, where 1234 is the event trigger value field:
 
@@ -291,7 +291,7 @@ Use the following example as a guide to register an existing event trigger handl
 
   /* Remember to check the CHIP_ERROR return code */
 
-If the returning ``CHIP_ERROR`` code is equal to ``CHIP_ERROR_NO_MEMORY``, you need to increase the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES` kconfig option to the higher value.
+If the returning ``CHIP_ERROR`` code is equal to ``CHIP_ERROR_NO_MEMORY``, you need to increase the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES` Kconfig option to the higher value.
 
 For example, you can register and use the ``OTATestEventTriggerHandler`` handler and trigger pre-defined Matter OTA DFU behaviors using the following code:
 
@@ -305,7 +305,7 @@ Usage
 *****
 
 The Matter test event triggers feature is enabled by default for all Matter samples.
-To disable it, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS` kconfig option to ``n``.
+To disable it, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS` Kconfig option to ``n``.
 
 To trigger a specific event on the device, run the following command:
 

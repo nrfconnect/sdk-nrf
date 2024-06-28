@@ -68,12 +68,12 @@ The sequence number does not have to match the official version number of the so
 
 This element contains two subsections:
 
-* ``suit-components`` - a data field that contains all declared components to be targeted in the manifest.
+* ``suit-components`` - A data field that contains all declared components to be targeted in the manifest.
 
    Components are identified by ``SUIT_Component_Identifier``, which is introduced by Nordic Semiconductor's implementation of the SUIT procedure.
    For a list of available components, see the :ref:`ug_nrf54h20_suit_components` page.
 
-* ``suit-shared-sequence`` - a sequence that executes once before each of the other sequences.
+* ``suit-shared-sequence`` - A sequence that executes once before each of the other sequences.
 
    It supports only a few directives and conditions.
 
@@ -87,23 +87,22 @@ Sequences
 
 SUIT manifest contains the following command sequences:
 
-* ``suit-payload-fetch`` - obtains the needed payloads.
+* ``suit-payload-fetch`` - Obtains the needed payloads.
+* ``suit-install`` - Installs payloads.
+  This command sequence might typically involve the following actions:
 
-* ``suit-install`` - installs payloads.
+  * Verifying a payload stored in temporary storage
+  * Copying a staged payload from temporary storage
+  * Unpacking a payload
 
-   Typical actions may include: verifying a payload stored in temporary storage, copying a staged payload from temporary storage, and unpacking a payload.
+* ``suit-validate`` - Validates that the state of the device is correct and okay for booting.
+  Typically involves image validation.
 
-* ``suit-validate`` - validates that the state of the device is correct and okay for booting.
+* ``suit-load`` - Prepares payload(s) for execution.
+  A typical action of this sequence is to copy an image from the permanent storage into the RAM.
 
-   Typically involves image validation.
-
-* ``suit-load`` - prepares payload(s) for execution.
-
-   A typical action of this sequence is to copy an image from the permanent storage into the RAM.
-
-* ``suit-invoke`` - invokes (boots) image(s).
-
-* ``suit-dependency-resolution`` - prepares the system for the update by identifying and fetching any missing dependency manifests.
+* ``suit-invoke`` - Invokes (boots) image(s).
+* ``suit-dependency-resolution`` - Prepares the system for the update by identifying and fetching any missing dependency manifests.
 
 .. _ug_suit_dfu_suit_directives:
 
@@ -112,27 +111,24 @@ Directives
 
 The SUIT procedure defines the following directives:
 
-* ``set-component-index`` - defines the component(s) to which successive directives and conditions will apply.
-
-* ``override-parameters`` - allows the manifest to configure the behavior of future directives or conditions by changing (as in, setting or modifying) parameters that are read by those directives or conditions.
-
-* ``fetch`` - retrieves the payload from a specified Uniform Resource Identifier (URI) and stores it in the destination component.
+* ``set-component-index`` - Defines the component(s) to which successive directives and conditions will apply.
+* ``override-parameters`` - Allows the manifest to configure the behavior of future directives or conditions by changing (as in, setting or modifying) parameters that are read by those directives or conditions.
+* ``fetch`` - Retrieves the payload from a specified Uniform Resource Identifier (URI) and stores it in the destination component.
   A URI is provided in the ``override-parameters`` directive.
-  The URI may indicate an external source, for example, HTTP or FTP, or the envelope (as a fragment-only reference as defined in `RFC3986 <https://datatracker.ietf.org/doc/html/rfc3986>`__, such as ``"#app_image.bin"``).
-
-* ``copy`` - transfers the image from the source component to the destination component.
+  The URI may indicate an external source, for example, HTTP or FTP, or the envelope (as a fragment-only reference as defined in `RFC 3986 - Uniform Resource Identifier (URI)`_, such as ``"#app_image.bin"``).
+* ``copy`` - Transfers the image from the source component to the destination component.
   The source component is provided in the ``override-parameters`` directive.
 
-* ``write`` - works similarly to ``copy``, except that the source content is embedded in the manifest.
+* ``write`` - Works similarly to ``copy``, except that the source content is embedded in the manifest.
   The source content is provided in the ``override-parameters`` directive using the ``content`` parameter.
   This directive is best for small blocks of data due to manifest size limitations.
 
-* ``invoke`` - starts the firmware. (In other words, "boots" the firmware.)
+* ``invoke`` - Starts the firmware. (In other words, "boots" the firmware.)
 
-* ``try-each`` -  runs multiple ``SUIT_Command_Sequence`` instances, trying each one in succession.
+* ``try-each`` -  Runs multiple ``SUIT_Command_Sequence`` instances, trying each one in succession.
   It stops when one succeeds or continues to the next if one fails, making it valuable for handling alternative scenarios.
 
-* ``run-sequence`` - runs a single ``SUIT_Command_Sequence``.
+* ``run-sequence`` - Runs a single ``SUIT_Command_Sequence``.
 
 .. _ug_suit_dfu_suit_conditions:
 
@@ -149,11 +145,11 @@ The SUIT procedure defines the following conditions:
       Although not required, it is strongly recommended to change the default values for ``class-identifier`` and ``vendor-identifier``.
       Read the :ref:`ug_suit_customize_uuids` section of the :ref:`ug_nrf54h20_suit_customize_dfu` user guide for instructions.
 
-* ``image-match`` -  checks the digest of an image.
+* ``image-match`` -  Checks the digest of an image.
   The expected digest and corresponding component are set here.
   It goes into the component and calculates the digest of the component, then checks it against the expected digest.
 
-* ``component-slot`` - checks which component slot is currently active, if a component consists of multiple slots.
+* ``component-slot`` - Checks which component slot is currently active, if a component consists of multiple slots.
   Slots are alternative locations for a component, where only one is considered "active" at one time.
 
    It also checks which component, or memory location, is unoccupied so you can download the new image to the unoccupied slot.
@@ -162,18 +158,18 @@ The SUIT procedure defines the following conditions:
 
 .. caution::
 
-   The ``component-slot`` condition is not supported by Nordic's implementation of SUIT.
+   The ``component-slot`` condition is not supported by Nordic Semiconductor's implementation of SUIT.
 
-* ``check-content`` -  a special case of image matching that matches directly with expected data, not a digest.
+* ``check-content`` -  A special case of image matching that matches directly with expected data, not a digest.
   For use with small components where the overhead of digest checking is not wanted. Typically used when you want the manifest to check something other than the firmware.
 
-   As opposed to ``image-match``, the specified component is checked against binary data that is embedded in the manifest with what is already installed in another component.
+  As opposed to ``image-match``, the specified component is checked against binary data that is embedded in the manifest with what is already installed in another component.
 
-* ``abort`` - if you want the procedure to fail.
+* ``abort`` - If you want the procedure to fail.
 
 A sample description of ``SUIT_Manifest`` in CDDL is shown below.
 Note that optional elements are preceded by a ``?``.
-For more information about CDDL's syntax, see the IETF's `RFC 8610 <https://datatracker.ietf.org/doc/rfc8610/>`__.
+For more information about CDDL's syntax, see the IETF's `RFC 8610 - Concise Data Definition Language (CDDL)`_.
 
 .. code::
 

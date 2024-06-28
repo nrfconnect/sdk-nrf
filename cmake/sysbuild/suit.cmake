@@ -123,7 +123,7 @@ function(suit_create_package)
   endif()
 
   list(APPEND CORE_ARGS
-    --core sysbuild,,,${CMAKE_BINARY_DIR}/zephyr/.config
+    --core sysbuild,,,${PROJECT_BINARY_DIR}/.config
   )
 
   foreach(image ${IMAGES})

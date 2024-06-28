@@ -170,8 +170,30 @@ Protocol support
 
 The following table indicates the software maturity levels of the support for each :ref:`protocol <protocols>`:
 
-.. sml-table:: top_level
-   :insert-values: [("Bluetooth","nRF54L15","Experimental"), ("Bluetooth Mesh","nRF54L15","-"), ("Matter","nRF54L15","Experimental"), ("Sidewalk","nRF54L15","Experimental"), ("Thread","nRF54L15","Experimental"), ("Wi-Fi","nRF54L15","Experimental")]
++--------------------+-----------+-----------+-----------+-----------+-----------+---------------------+---------------------+--------------+--------------+--------------+---------------------+---------------------+
+|                    | nRF52810  | nRF52811  | nRF52820  | nRF52832  | nRF52833  | nRF52840            | nRF5340             | nRF54H20     | nRF54L15     | nRF9151      | nRF9160             | nRF9161             |
++====================+===========+===========+===========+===========+===========+=====================+=====================+==============+==============+==============+=====================+=====================+
+| **Bluetooth**      | Supported | Supported | Supported | Supported | Supported | Supported           | Supported           | Experimental | Experimental | --           | --                  | --                  |
++--------------------+-----------+-----------+-----------+-----------+-----------+---------------------+---------------------+--------------+--------------+--------------+---------------------+---------------------+
+| **Bluetooth Mesh** | --        | --        | --        | Supported | Supported | Supported           | Supported           | --           | Experimental | --           | --                  | --                  |
++--------------------+-----------+-----------+-----------+-----------+-----------+---------------------+---------------------+--------------+--------------+--------------+---------------------+---------------------+
+| **DECT NR+ PHY**   | --        | --        | --        | --        | --        | --                  | --                  | --           | --           | Experimental | --                  | Experimental        |
++--------------------+-----------+-----------+-----------+-----------+-----------+---------------------+---------------------+--------------+--------------+--------------+---------------------+---------------------+
+| **LTE**            | --        | --        | --        | --        | --        | --                  | --                  | --           | --           | Supported    | Supported           | Supported           |
++--------------------+-----------+-----------+-----------+-----------+-----------+---------------------+---------------------+--------------+--------------+--------------+---------------------+---------------------+
+| **Matter**         | --        | --        | --        | --        | --        | Supported           | Supported           | Experimental | Experimental | --           | --                  | --                  |
++--------------------+-----------+-----------+-----------+-----------+-----------+---------------------+---------------------+--------------+--------------+--------------+---------------------+---------------------+
+| **Sidewalk**       | --        | --        | --        | --        | --        | Supported           | Supported           | --           | Experimental | --           | --                  | --                  |
++--------------------+-----------+-----------+-----------+-----------+-----------+---------------------+---------------------+--------------+--------------+--------------+---------------------+---------------------+
+| **Thread**         | --        | --        | --        | --        | Supported | Supported           | Supported           | Experimental | Experimental | --           | --                  | --                  |
++--------------------+-----------+-----------+-----------+-----------+-----------+---------------------+---------------------+--------------+--------------+--------------+---------------------+---------------------+
+| **Wi-Fi**          | --        | --        | --        | --        | --        | Supported\ :sup:`1` | Supported\ :sup:`2` | Experimental | Experimental | Supported    | Supported\ :sup:`1` | Supported\ :sup:`1` |
++--------------------+-----------+-----------+-----------+-----------+-----------+---------------------+---------------------+--------------+--------------+--------------+---------------------+---------------------+
+| **Zigbee**         | --        | --        | --        | --        | Supported | Supported           | Supported           | --           | --           | --           | --                  | --                  |
++--------------------+-----------+-----------+-----------+-----------+-----------+---------------------+---------------------+--------------+--------------+--------------+---------------------+---------------------+
+
+| [1]: Only with nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
+| [2]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode, nRF7002 EB, nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
 
 Amazon Sidewalk features support
 ********************************
@@ -181,6 +203,7 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: sidewalk
+     :insert-values: [("Sidewalk - OTA DFU over Bluetooth LE","nRF54L15","Experimental"), ("Sidewalk File Transfer (FUOTA)","nRF54L15","Experimental"), ("Sidewalk Multi-link + Auto-connect","nRF54L15","Experimental"), ("Sidewalk on-device certification","nRF54L15","Experimental"),("Sidewalk over BLE","nRF54L15","Experimental"), ("Sidewalk over FSK","nRF54L15","Experimental"), ("Sidewalk over LORA","nRF54L15","Experimental")]
 
 Bluetooth features support
 **************************
@@ -190,6 +213,7 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: bluetooth
+     :insert-values: [("Bluetooth LE Peripheral/Central","nRF54H20","Experimental"), ("Connectionless/Connected CTE Transmitter","nRF54H20","Experimental"), ("LE Coded PHY","nRF54H20","Experimental"), ("LLPM","nRF54H20","Experimental"),("Bluetooth LE Peripheral/Central","nRF54L15","Experimental"), ("Connectionless/Connected CTE Transmitter","nRF54L15","Experimental"), ("LE Coded PHY","nRF54L15","Experimental"), ("LLPM","nRF54L15","Experimental")]
 
 Thread features support
 ***********************
@@ -199,6 +223,7 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: thread
+     :insert-values: [("Thread - Full Thread Device (FTD)","nRF54H20","Experimental"), ("Thread - Minimal Thread Device (MTD)","nRF54H20","Experimental"), ("Thread 1.1","nRF54H20","Experimental"), ("Thread 1.2 - CSL Receiver","nRF54H20","Experimental"),("Thread 1.2 - Core","nRF54H20","Experimental"), ("Thread 1.2 - Link Metrics","nRF54H20","Experimental"), ("Thread 1.3 - Core","nRF54H20","Experimental"), ("Thread FTD + Bluetooth LE multiprotocol","nRF54H20","Experimental"), ("Thread MTD + Bluetooth LE multiprotocol","nRF54H20","Experimental"), ("Thread TCP","nRF54H20","Experimental"), ("Thread - Full Thread Device (FTD)","nRF54L15","Experimental"), ("Thread - Minimal Thread Device (MTD)","nRF54L15","Experimental"), ("Thread 1.1","nRF54L15","Experimental"), ("Thread 1.2 - CSL Receiver","nRF54L15","Experimental"),("Thread 1.2 - Core","nRF54L15","Experimental"), ("Thread 1.2 - Link Metrics","nRF54L15","Experimental"), ("Thread 1.3 - Core","nRF54L15","Experimental"), ("Thread FTD + Bluetooth LE multiprotocol","nRF54L15","Experimental"), ("Thread MTD + Bluetooth LE multiprotocol","nRF54L15","Experimental"), ("Thread Radio Co-Processor (RCP)","nRF54L15","Experimental"), ("Thread TCP","nRF54L15","Experimental")]
 
 .. _software_maturity_protocol_matter:
 
@@ -210,6 +235,7 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
   .. sml-table:: matter
+     :insert-values: [("Matter Intermittently Connected Device","nRF54H20","Experimental"), ("Matter commissioning over Bluetooth LE with NFC onboarding","nRF54H20","Experimental"), ("Matter commissioning over Bluetooth LE with QR code onboarding","nRF54H20","Experimental"), ("Matter commissioning over IP","nRF54H20","Experimental"),("Matter over Thread","nRF54H20","Experimental"), ("Matter - OTA DFU over Bluetooth LE","nRF54L15","Experimental"), ("Matter Intermittently Connected Device","nRF54L15","Experimental"), ("Matter commissioning over Bluetooth LE with NFC onboarding","nRF54L15","Experimental"), ("Matter commissioning over Bluetooth LE with QR code onboarding","nRF54L15","Experimental"),("Matter commissioning over IP","nRF54L15","Experimental"), ("Matter over Thread","nRF54L15","Experimental"), ("OTA DFU over Matter","nRF54L15","Experimental")]
 
 Zigbee feature support
 **********************
@@ -227,7 +253,187 @@ The following table indicates the software maturity levels of the support for ea
 
 .. toggle::
 
-  .. sml-table:: wifi
+   +------------------------------------------+------------+------------+------------+------------+------------+------------------------+------------------------+------------------------+------------------------+-----------+---------------------+---------------------+
+   | Feature                                  | nRF52810   | nRF52811   | nRF52820   | nRF52832   | nRF52833   | nRF52840               | nRF5340                | nRF54H20               | nRF54L15               | nRF9151   | nRF9160             | nRF9161             |
+   +==========================================+============+============+============+============+============+========================+========================+========================+========================+===========+=====================+=====================+
+   | **Bluetooth LE Coexistence**             | --         | --         | --         | --         | --         | Experimental           | Supported\ :sup:`1`    | --                     | --                     | --        | --                  | --                  |
+   +------------------------------------------+------------+------------+------------+------------+------------+------------------------+------------------------+------------------------+------------------------+-----------+---------------------+---------------------+
+   | **Monitor Mode**                         | --         | --         | --         | --         | --         | --                     | Supported\ :sup:`1`    | --                     | --                     | --        | --                  | --                  |
+   +------------------------------------------+------------+------------+------------+------------+------------+------------------------+------------------------+------------------------+------------------------+-----------+---------------------+---------------------+
+   | **Promiscuous Mode**                     | --         | --         | --         | --         | --         | --                     | Experimental\ :sup:`2` | --                     | --                     | --        | --                  | --                  |
+   +------------------------------------------+------------+------------+------------+------------+------------+------------------------+------------------------+------------------------+------------------------+-----------+---------------------+---------------------+
+   | **STA Mode**                             | --         | --         | --         | --         | --         | Experimental\ :sup:`3` | Supported\ :sup:`1`    | Experimental\ :sup:`4` | Experimental\ :sup:`5` | --        | --                  | --                  |
+   +------------------------------------------+------------+------------+------------+------------+------------+------------------------+------------------------+------------------------+------------------------+-----------+---------------------+---------------------+
+   | **Scan only (for location accuracy)**    | --         | --         | --         | --         | --         | Experimental\ :sup:`6` | Supported\ :sup:`7`    | --                     | --                     | Supported | Supported\ :sup:`6` | Supported\ :sup:`6` |
+   +------------------------------------------+------------+------------+------------+------------+------------+------------------------+------------------------+------------------------+------------------------+-----------+---------------------+---------------------+
+   | **SoftAP Mode (for Wi-Fi provisioning)** | --         | --         | --         | --         | --         | --                     | Supported\ :sup:`1`    | --                     | --                     | --        | --                  | --                  |
+   +------------------------------------------+------------+------------+------------+------------+------------+------------------------+------------------------+------------------------+------------------------+-----------+---------------------+---------------------+
+   | **TX injection Mode**                    | --         | --         | --         | --         | --         | --                     | Supported\ :sup:`1`    | --                     | --                     | --        | --                  | --                  |
+   +------------------------------------------+------------+------------+------------+------------+------------+------------------------+------------------------+------------------------+------------------------+-----------+---------------------+---------------------+
+   | **Thread Coexistence**                   | --         | --         | --         | --         | --         | --                     | Experimental           | --                     | --                     | --        | --                  | --                  |
+   +------------------------------------------+------------+------------+------------+------------+------------+------------------------+------------------------+------------------------+------------------------+-----------+---------------------+---------------------+
+
+  | [1]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode, nRF7002 EB, nRF7002 EK or nRF7002 EK in nRF7001 emulation mode
+  | [2]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode or nRF7002 EK
+  | [3]: Only with nRF7002 EK or nRF7002 EK in nRF7001 emulation mode
+  | [4]: Only with nRF700X_nRF54H20DK
+  | [5]: Only with nRF700X_nRF54L15PDK
+  | [6]: Only with nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
+  | [7]: Only with nRF7002 DK, nRF7002 EB, nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
+
+Ecosystem support
+*****************
+
+The following sections contain the tables indicating the software maturity levels of the support for the following ecosystems:
+
+* Google Fast Pair
+
+Google Fast Pair
+================
+
+The following table indicates the software maturity levels of the support for Google Fast Pair use cases integrated in the |NCS|:
+
+.. toggle::
+
+   .. _software_maturity_fast_pair_use_case:
+
+   .. list-table:: Google Fast Pair use case support
+      :header-rows: 1
+      :align: center
+      :widths: auto
+
+      * - Use case
+        - |NCS| sample demonstration
+        - nRF52810
+        - nRF52811
+        - nRF52820
+        - nRF52832
+        - nRF52833
+        - nRF52840
+        - nRF5340
+        - nRF54H20
+        - nRF54L15
+        - nRF9151
+        - nRF9160
+        - nRF9161
+      * - **Input device**
+        - :ref:`fast_pair_input_device`
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+      * - **Locator tag**
+        - :ref:`fast_pair_locator_tag`
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+
+The following table indicates the software maturity levels of the support for each Fast Pair feature:
+
+.. toggle::
+
+   .. _software_maturity_fast_pair_feature:
+
+   .. list-table:: Google Fast Pair feature support
+      :header-rows: 1
+      :align: center
+      :widths: auto
+
+      * -
+        - nRF52810
+        - nRF52811
+        - nRF52820
+        - nRF52832
+        - nRF52833
+        - nRF52840
+        - nRF5340
+        - nRF54H20
+        - nRF54L15
+        - nRF9151
+        - nRF9160
+        - nRF9161
+      * - **Initial pairing**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+      * - **Subsequent pairing**
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+      * - **Battery Notification extension**
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+      * - **Personalized Name extension**
+        - --
+        - --
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+      * - **Find My Device Network extension**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - --
+        - Experimental
+        - --
+        - --
+        - --
 
 Security Feature Support
 ************************
@@ -253,6 +459,7 @@ PSA Crypto support
 .. toggle::
 
   .. sml-table:: psa_crypto
+     :insert-values: [("PSA Crypto APIs","nRF54H20","Experimental"), ("PSA Crypto APIs","nRF54L15","Experimental")]
 
 |NSIB|
 ======
@@ -267,6 +474,7 @@ Hardware Unique Key
 .. toggle::
 
   .. sml-table:: hw_unique_key
+     :insert-values: [("Key Derivation from Hardware Unique Key","nRF54L15","Experimental")]
 
 Trusted storage
 ===============
@@ -274,6 +482,7 @@ Trusted storage
 .. toggle::
 
   .. sml-table:: trusted_storage
+     :insert-values: [("Trusted storage implements the PSA Certified Secure Storage APIs without TF-M","nRF54H20","Experimental"), ("Trusted storage implements the PSA Certified Secure Storage APIs without TF-M","nRF54L15","Experimental")]
 
 Power management device support
 *******************************

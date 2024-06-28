@@ -29,11 +29,17 @@ Software-based downgrade protection
 The |NCS| supports MCUboot's software-based downgrade prevention for application images, using semantic versioning.
 This feature offers protection against any outdated firmware that is uploaded to a device.
 
-To enable this feature, set the MCUboot-specific configuration options ``CONFIG_MCUBOOT_DOWNGRADE_PREVENTION`` and ``CONFIG_BOOT_UPGRADE_ONLY`` for the MCUboot image.
+To enable this feature, set the configuration option :kconfig:option:`CONFIG_MCUBOOT_DOWNGRADE_PREVENTION` for the MCUboot image and ``SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY`` for sysbuild.
 
 .. caution::
-   Enabling ``CONFIG_BOOT_UPGRADE_ONLY`` prevents the fallback recovery of application images.
+   Enabling ``SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY`` prevents the fallback recovery of application images.
    Consult its Kconfig description and the :doc:`MCUboot Design documentation <mcuboot:design>` for more information on how to use it.
+
+   For nRF53 Series devices, this mode is generally the most appropriate for MCUboot.
+   The default mode applies only to the application core and not the network core, potentially resulting in a version mismatch.
+
+   In such cases, the application could roll back to a previous working version, but the network core would remain unchanged, leading to inconsistencies.
+   If the network core remains compatible with a previous version, these issues may go unnoticed for an extended period, making them difficult to debug.
 
 You can compile your application with this feature as follows:
 
@@ -41,10 +47,10 @@ You can compile your application with this feature as follows:
    :class: highlight
 
    west build -b *board_target* *application* -- \\
-   -DCONFIG_BOOTLOADER_MCUBOOT=y \\
+   -DSB_CONFIG_BOOTLOADER_MCUBOOT=y \\
+   -DSB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y \\
    -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\\"0.1.2\\+3\\" \\
-   -Dmcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y \\
-   -Dmcuboot_CONFIG_BOOT_UPGRADE_ONLY=y
+   -Dmcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
 
 |how_to_configure|
 
@@ -52,8 +58,9 @@ After you upload a new image and reset the development kit, MCUboot attempts to 
 If this image has, in order of precedence, a *major*, *minor*, or *revision* value that is lower than the primary application image, it is considered invalid and the existing primary application boots instead.
 
 .. note::
-   The optional label or build number specified after the ``+`` character is ignored when evaluating the version.
+   By default, the optional label or build number specified after the ``+`` character is ignored when evaluating the version.
    For example, an existing application image with version ``0.1.2+3`` can be overwritten by an uploaded image with ``0.1.2+2``, but not by one with ``0.1.1+2``.
+   Checking against this field can be performed by enabling :kconfig:option:`CONFIG_BOOT_VERSION_CMP_USE_BUILD_NUMBER` in the MCUboot image
 
 .. _ug_fw_update_downgrade_protection_hw:
 .. _bootloader_monotonic_counter:
@@ -82,27 +89,23 @@ Downgrade protection using |NSIB|
 
 .. bootloader_monotonic_counter_nsib_start
 
-To enable anti-rollback protection with monotonic counter for |NSIB|, set the following configurations in the application (parent image):
-
-* :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER`
-* :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`
+To enable anti-rollback protection with monotonic counter for |NSIB|, set the following configurations in the ``b0`` image: :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER` and :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`
 
 Special handling is needed when updating the S1 variant of an image when :ref:`ug_bootloader_adding_upgradable`.
 See :ref:`ug_bootloader_adding_presigned_variants` for details.
+See :ref:`zephyr:sysbuild_kconfig_namespacing` for information on how to set options for built images in Sysbuild.
 
 .. bootloader_monotonic_counter_nsib_end
 
-To set options for child images, see the :ref:`ug_multi_image_variables` section.
+To set options for other images, see :ref:`zephyr:sysbuild_kconfig_namespacing`.
 
 .. _ug_fw_update_hw_downgrade_mcuboot:
 
 Downgrade protection using MCUboot
 ==================================
 
-To enable anti-rollback protection with monotonic counter for MCUboot, set the following configurations in the application (parent image):
+To enable anti-rollback protection with monotonic counter for MCUboot, set the following configurations using sysbuild:
 
-* :kconfig:option:`CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`
-* :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS`
-* :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE`
-
-To set options for child images, see the :ref:`ug_multi_image_variables` section.
+* ``SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION``
+* ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS``
+* ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE``

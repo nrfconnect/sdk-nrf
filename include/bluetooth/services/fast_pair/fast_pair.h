@@ -53,7 +53,7 @@ enum bt_fast_pair_not_disc_adv_type {
 /** @brief Fast Pair advertising battery mode. Used to generate advertising packet.
  *
  * Battery data can be included in advertising packet only if the Fast Pair Provider is in Fast Pair
- * not discoverable advertising mode and is in possesion of at least one Account Key. To prevent
+ * not discoverable advertising mode and is in possession of at least one Account Key. To prevent
  * tracking, the Fast Pair Provider should not include battery data in the advertising packet
  * all the time.
  */

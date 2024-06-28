@@ -43,7 +43,7 @@ Supported features
 
 This library supports the following nRF Cloud services:
 
-* `nRF Cloud Location Services`_
+* `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_
 * `nRF Cloud FOTA`_
 * `nRF Cloud Device Messages`_
 * `nRF Cloud Device Shadows`_

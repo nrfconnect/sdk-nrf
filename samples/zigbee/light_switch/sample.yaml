@@ -33,7 +33,7 @@ tests:
       - nrf21540dk/nrf52840
     platform_allow: nrf52840dk/nrf52840 nrf21540dk/nrf52840
     tags: ci_build smoke sysbuild
-  sample.zigbee.light_switch.fota.sysbuild.nrf5340dk:
+  sample.zigbee.light_switch.fota.nrf5340dk:
     sysbuild: true
     build_only: true
     extra_args: >

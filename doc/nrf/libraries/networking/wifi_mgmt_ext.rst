@@ -53,7 +53,7 @@ Limitations
 
 The library has the following limitations:
 
-* It can only be used with Nordic's ``hostap``-based Wi-Fi stack.
+* It can only be used with Nordic Semiconductor's ``hostap``-based Wi-Fi stack.
   The Wi-Fi configuration is highly vendor-specific.
 * The commands ``NET_REQUEST_WIFI_CONNECT`` and ``NET_REQUEST_WIFI_CONNECT_STORED`` clear the list of configured Wi-Fi networks in RAM.
   Automatic connection has to be requested again after directly requesting connection to a specific network.

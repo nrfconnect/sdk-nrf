@@ -79,44 +79,62 @@ choice NETCORE
 config NETCORE_NONE
 	bool "None"
 	help
-	  Do not include a netcore image in the build
+	  Do not include a netcore image in the build.
 
 config NETCORE_EMPTY
 	bool "Empty"
 	help
-	  Include empty image as the netcore image to use
+	  Include empty image as the netcore image to use.
 
 config NETCORE_HCI_IPC
 	bool "hci_ipc"
 	depends on SUPPORT_NETCORE_HCI_IPC
 	help
-	  Include hci_ipc as the netcore image to use
+	  Include hci_ipc as the netcore image to use.
 
 config NETCORE_RPC_HOST
 	bool "rpc_host"
 	depends on SUPPORT_NETCORE_RPC_HOST
 	help
-	  Include rpc_host as the netcore image to use
+	  Include rpc_host as the netcore image to use.
 
 config NETCORE_802154_RPMSG
 	bool "802154_rpmsg"
 	depends on SUPPORT_NETCORE_802154_RPMSG
 	help
-	  Include 802154_rpmsg as the netcore image to use
+	  Include 802154_rpmsg as the netcore image to use.
 
 config NETCORE_MULTIPROTOCOL_RPMSG
 	bool "multiprotocol_rpmsg"
 	depends on SUPPORT_NETCORE_MULTIPROTOCOL_RPMSG
 	help
-	  Include multiprotocol_rpmsg as the netcore image to use
+	  Include multiprotocol_rpmsg as the netcore image to use.
 
-config NETCORE_IPC_RADIO
+menuconfig NETCORE_IPC_RADIO
 	bool "ipc_radio"
 	depends on SUPPORT_NETCORE_IPC_RADIO
 	help
 	  Add ipc_radio as a netcore image to use.
-	  The image can be configured as Bluetooth radio
-	  and/or IEEE 802.15.4 radio.
+	  The image can be configured as Bluetooth radio and/or IEEE 802.15.4 radio.
+
+if NETCORE_IPC_RADIO
+
+config NETCORE_IPC_RADIO_BT_HCI_IPC
+	bool "HCI serialization for Bluetooth"
+	help
+	  Use HCI serialization for Bluetooth.
+
+config NETCORE_IPC_RADIO_BT_RPC
+	bool "nRF RPC serialization for Bluetooth"
+	help
+	  Use nRF RPC serialization for Bluetooth.
+
+config NETCORE_IPC_RADIO_IEEE802154
+	bool "Spinel serialization for IEEE 802.15.4"
+	help
+	  Use Spinel serialization for IEEE 802.15.4.
+
+endif # NETCORE_IPC_RADIO
 
 endchoice
 
@@ -163,25 +181,6 @@ config NETCORE_APP_UPDATE
 	help
 	  Enabling this will add support for network core updates from the application core,
 	  requires b0n for network core and MCUboot for application core.
-
-if NETCORE_IPC_RADIO
-
-config NETCORE_IPC_RADIO_BT_HCI_IPC
-	bool "HCI serialization for Bluetooth"
-	help
-	  Use HCI serialization for Bluetooth
-
-config NETCORE_IPC_RADIO_BT_RPC
-	bool "nRF RPC serialization for Bluetooth"
-	help
-	  Use nRF RPC serialization for Bluetooth
-
-config NETCORE_IPC_RADIO_IEEE802154
-	bool "Spinel serialization for IEEE 802.15.4"
-	help
-	  Use Spinel serialization for IEEE 802.15.4
-
-endif # NETCORE_IPC_RADIO
 
 endif # !NETCORE_NONE
 

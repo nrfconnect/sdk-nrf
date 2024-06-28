@@ -11,10 +11,10 @@ Board names
 The following tables list all boards and corresponding board targets for Nordic Semiconductor's hardware platforms.
 
 The board targets follow Zephyr's :ref:`zephyr:board_terminology` scheme and are used mostly when :ref:`building`.
-For example, the board target ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` can be read as made of the following elements:
+For example, the board target ``nrf54l15pdk@0.2.1/nrf54l15/cpuapp`` can be read as made of the following elements:
 
 +-------------+----------------+-------------------------+---------------------------------+--------------------------------------------------+
-| nrf54l15pdk |     @0.3.0     |        /nrf54l15        |             /cpuapp             |                                                  |
+| nrf54l15pdk |     @0.2.1     |        /nrf54l15        |             /cpuapp             |                                                  |
 +=============+================+=========================+=================================+==================================================+
 | Board name  | Board revision | Board qualifier for SoC | Board qualifier for CPU cluster | Board qualifier for variant (empty in this case) |
 +-------------+----------------+-------------------------+---------------------------------+--------------------------------------------------+
@@ -42,6 +42,10 @@ While the board name is always present, other elements, such as the board revisi
     By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
 
   Read more about separation of processing environments on the :ref:`app_boards_spe_nspe` page.
+
+.. important::
+    This board name scheme was introduced in the |NCS| before the v2.7.0 release following changes in Zephyr v3.6.0.
+    Read Zephyr's :ref:`zephyr:hw_model_v2` and refer to `conversion example Pull Request`_ in Zephyr upstream if you have to port a board to the new model.
 
 .. _app_boards_names_zephyr:
 
@@ -85,7 +89,7 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+
 | nRF54L15 PDK      | PCA10156   | :ref:`nrf54l15pdk <zephyr:nrf54l15pdk_nrf54l15>`                  | ``nrf54l15pdk/nrf54l15/cpuapp``       |
 |                   |            |                                                                   |                                       |
-|                   |            |                                                                   | ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` |
+|                   |            |                                                                   | ``nrf54l15pdk@0.2.1/nrf54l15/cpuapp`` |
 |                   |            |                                                                   |                                       |
 |                   |            |                                                                   | ``nrf54l15pdk/nrf54l15/cpuapp/ns``    |
 +-------------------+------------+-------------------------------------------------------------------+---------------------------------------+

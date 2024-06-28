@@ -3,9 +3,22 @@ sample:
   name: Event Manager proxy sample
 
 common:
-  build_only: true
   sysbuild: true
   tags: ipc ci_build
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: false
+    regex:
+      - "Event Manager Proxy demo started"
+      - "main: Event manager proxy started"
+      - "main: All remotes ready"
+      - "app_event_manager: e:config_event"
+      - "main: Initialization finished successfully"
+      - "app_event_manager: e:measurement_event"
+      - "app_event_manager: e: control_event"
+      - "stats: Control event count:"
+      - "stats: Average value3:"
 
 tests:
   sample.event_manager_proxy:
@@ -25,5 +38,3 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
-    extra_args:
-      event_manager_proxy_SNIPPET=nordic-ppr

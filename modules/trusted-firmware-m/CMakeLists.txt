@@ -231,9 +231,6 @@ set_property(TARGET zephyr_property_target
   APPEND PROPERTY TFM_CMAKE_OPTIONS
     # Pass Zephyr Python to TF-M so both uses identical Python.
     -DPython3_EXECUTABLE=${Python3_EXECUTABLE}
-    # TF-M calls back into nrf_security which loads Zephyr Python lookup
-    # mechanism, thus also set PYTHON_PREFER.
-    -DPYTHON_PREFER=${Python3_EXECUTABLE}
 )
 
 # CONN_HANDLE_MAX_NUM is only needed if IPC mode is used

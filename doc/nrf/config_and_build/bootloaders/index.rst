@@ -65,6 +65,7 @@ See the following user guides to learn more:
 
    bootloader
    bootloader_adding
+   bootloader_adding_sysbuild
    bootloader_testing
    bootloader_external_flash
    bootloader_config

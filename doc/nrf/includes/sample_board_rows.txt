@@ -42,19 +42,19 @@
 
 .. nrf9131ek_nrf9131
 
-| nRF9131 EK | PCA10165 | :ref:`nrf9131ek <zephyr:nrf9131ek_nrf9131>` | ``nrf9131ek/nrf9131``  |
+| :ref:`nRF9131 EK <ug_nrf91>` | PCA10165 | :ref:`nrf9131ek <zephyr:nrf9131ek_nrf9131>` | ``nrf9131ek/nrf9131``  |
 
 .. nrf9131ek_nrf9131_ns
 
-| nRF9131 EK | PCA10165 | :ref:`nrf9131ek <zephyr:nrf9131ek_nrf9131>` | ``nrf9131ek/nrf9131/ns`` |
+| :ref:`nRF9131 EK <ug_nrf91>` | PCA10165 | :ref:`nrf9131ek <zephyr:nrf9131ek_nrf9131>` | ``nrf9131ek/nrf9131/ns`` |
 
 .. nrf9151dk_nrf9151
 
-| nRF9151 DK | PCA10171 | :ref:`nrf9151dk <zephyr:nrf9151dk_nrf9151>` | ``nrf9151dk/nrf9151`` |
+| :ref:`nRF9151 DK <ug_nrf91>` | PCA10171 | :ref:`nrf9151dk <zephyr:nrf9151dk_nrf9151>` | ``nrf9151dk/nrf9151`` |
 
 .. nrf9151dk_nrf9151_ns
 
-| nRF9151 DK | PCA10171 | :ref:`nrf9151dk <zephyr:nrf9151dk_nrf9151>` | ``nrf9151dk/nrf9151/ns`` |
+| :ref:`nRF9151 DK <ug_nrf91>` | PCA10171 | :ref:`nrf9151dk <zephyr:nrf9151dk_nrf9151>` | ``nrf9151dk/nrf9151/ns`` |
 
 .. nrf5340dk_nrf5340_cpuapp
 
@@ -94,15 +94,15 @@
 
 .. thingy91x_nrf9151
 
-| Thingy:91 X | PCA20065 | thingy91x | ``thingy91x/nrf9151`` |
+| :ref:`Thingy:91 X <ug_nrf91>` | PCA20065 | thingy91x | ``thingy91x/nrf9151`` |
 
 .. thingy91x_nrf9151_ns
 
-| Thingy:91 X | PCA20065 | thingy91x | ``thingy91x/nrf9151/ns`` |
+| :ref:`Thingy:91 X <ug_nrf91>` | PCA20065 | thingy91x | ``thingy91x/nrf9151/ns`` |
 
 .. thingy91x_nrf5340_cpuapp
 
-| Thingy:91 x | PCA20065 | thingy91x | ``thingy91x/nrf5340/cpuapp`` |
+| :ref:`Thingy:91 X <ug_nrf91>` | PCA20065 | thingy91x | ``thingy91x/nrf5340/cpuapp`` |
 
 .. nrf52dk_nrf52810
 
@@ -228,7 +228,7 @@
 
 .. nrf54l15pdk_nrf54l15_cpuapp_ns
 
-| :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | PCA10156 | :ref:`nrf54l15pdk_nrf54l15 <zephyr:nrf54l15pdk_nrf54l15>` | ``nrf54l15pdk/nrf54l15/cpuapp/ns`` |
+| :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | PCA10156 | :ref:`nrf54l15pdk <zephyr:nrf54l15pdk_nrf54l15>` | ``nrf54l15pdk/nrf54l15/cpuapp/ns`` |
 
 .. nrf54l15pdk@0.3.0_nrf54l15_cpuapp
 

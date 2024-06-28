@@ -14,7 +14,7 @@ The set of required partitions differs depending on the configuration:
 * There must be one partition for storing :ref:`zephyr:settings_api`.
 * If the bootloader is enabled, it adds more partitions to the set.
 * When using an SoC with multiple cores, the firmware for additional cores adds more partitions to the set.
-  For example, the network core of the nRF53 SoC uses the ``HCI IPC`` firmware image, which allows to use the core for Bluetooth LE communication.
+  For example, the network core of the nRF53 SoC uses the :ref:`ipc_radio` image, which allows to use the core for Bluetooth LE communication.
 
 .. important::
    Before updating the firmware, make sure that the data stored in the settings partition is compatible with the new firmware.
@@ -58,7 +58,7 @@ Memory layout in Partition Manager
 When the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` Kconfig option is enabled, the nRF Desktop application uses the Partition Manager for the memory layout configuration.
 The nRF Desktop configurations use static configurations of partitions to ensure that the partition layout does not change between builds.
 
-Add the :file:`pm_static_${BUILD_TYPE}.yml` file to the project's board configuration directory to define the static Partition Manager configuration for given board and build type.
+Add the :file:`pm_static_${FILE_SUFFIX}.yml` file to the project's board configuration directory to define the static Partition Manager configuration for given board and build type.
 For example, to define the static partition layout for the ``nrf52840dk/nrf52840`` board and ``release`` build type, you would need to add the :file:`pm_static_release.yml` file into the :file:`applicatons/nrf_desktop/configuration/nrf52840dk_nrf52840` directory.
 
 Take into account the following points:
@@ -83,6 +83,7 @@ The Partition Manager supports partitions in external flash.
 Enabling external flash can be useful especially for memory-limited devices.
 For example, the MCUboot can use it as a secondary image partition for the :ref:`background firmware upgrade <nrf_desktop_bootloader_background_dfu>`.
 The MCUboot moves the image data from the secondary image partition to the primary image partition before booting the new firmware.
+To use external flash for the secondary image partition, in addition to defining the proper static Partition Manager configuration, you must enable the ``SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY`` Kconfig option in the sysbuild configuration.
 
 For an example of the nRF Desktop application configuration that uses an external flash, see the ``mcuboot_qspi`` configuration of the nRF52840 Development Kit (DK).
 This configuration uses the ``MX25R64`` external flash that is part of the development kit.

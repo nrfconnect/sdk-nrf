@@ -6,8 +6,8 @@ menuconfig DFU_MULTI_IMAGE_PACKAGE_BUILD
 	bool "Create multi-image DFU"
 	depends on BOOTLOADER_MCUBOOT
 	help
-	  Build DFU Multi Image package that contains a manifest file followed by
-	  selected update images.
+	  Build DFU Multi Image package that contains a manifest file followed by selected update
+	  images.
 
 if DFU_MULTI_IMAGE_PACKAGE_BUILD
 
@@ -20,7 +20,6 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 	bool "Network core update"
 	depends on SUPPORT_NETCORE
 	depends on !NETCORE_NONE
-	depends on !NETCORE_EMPTY
 	depends on SECURE_BOOT_NETCORE
 
 config DFU_MULTI_IMAGE_PACKAGE_MCUBOOT

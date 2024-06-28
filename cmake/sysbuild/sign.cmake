@@ -5,7 +5,7 @@
 #
 
 function(b0_gen_keys)
-  set(GENERATED_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
+  set(GENERATED_PATH ${CMAKE_BINARY_DIR}/nrf/subsys/bootloader/generated)
 
   # This is needed for make, ninja is able to resolve and create the path but make
   # is not able to resolve it.
@@ -49,7 +49,7 @@ function(b0_gen_keys)
         ${PUB_GEN_CMD}
         DEPENDS
         ${SIGNATURE_PRIVATE_KEY_FILE}
-        zephyr/.config
+        ${PROJECT_BINARY_DIR}/.config
         COMMENT
         "Creating public key from private key used for signing"
         WORKING_DIRECTORY
@@ -67,7 +67,7 @@ function(b0_gen_keys)
 endfunction()
 
 function(b0_sign_image slot)
-  set(GENERATED_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
+  set(GENERATED_PATH ${CMAKE_BINARY_DIR}/nrf/subsys/bootloader/generated)
 
   # Get variables for secure boot usage
   sysbuild_get(${slot}_sb_validation_info_version IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_VERSION KCONFIG)
@@ -87,8 +87,8 @@ function(b0_sign_image slot)
 
   set(VALIDATION_INFO_MAGIC    "${${slot}_fw_info_magic_common},${${slot}_sb_validation_info_magic},${MAGIC_COMPATIBILITY_VALIDATION_INFO}")
 
-  set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.hex)
-  set(signed_bin ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.bin)
+  set(signed_hex ${CMAKE_BINARY_DIR}/signed_by_b0_${slot}.hex)
+  set(signed_bin ${CMAKE_BINARY_DIR}/signed_by_b0_${slot}.bin)
 
   if(NCS_SYSBUILD_PARTITION_MANAGER)
     # A container can be merged, in which case we should use old style below,

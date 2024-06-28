@@ -130,6 +130,10 @@ if (CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH)
   ncs_add_partition_manager_config(pm.yml.modem_trace)
 endif()
 
+if (CONFIG_SOC_NRF54L15_ENGA_CPUFLPR)
+  ncs_add_partition_manager_config(pm.yml.vpr_launcher)
+endif()
+
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
 if (SYSBUILD)

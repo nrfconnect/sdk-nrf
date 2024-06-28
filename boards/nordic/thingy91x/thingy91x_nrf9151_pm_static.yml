@@ -91,14 +91,13 @@ mcuboot_secondary:
   size: 0xD0000
   share_size: [mcuboot_primary]
   region: external_flash
-nonsecure_storage:
-  device: GD25LB256E
+fmfu_storage:
   address: 0xD0000
-  size: 0x2000
-  span: [settings_storage]
+  device: GD25LB256E
   region: external_flash
+  size: 0x400000
 settings_storage:
   device: GD25LB256E
-  address: 0xD0000
+  address: 0x4D0000
   size: 0x2000
   region: external_flash

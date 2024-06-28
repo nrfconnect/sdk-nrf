@@ -183,7 +183,7 @@ The update procedure has three sequences:
 
 * ``install`` - the downloaded payloads are copied to their final location.
 
-The following is an example of `Diagnostic Notation <https://www.rfc-editor.org/rfc/rfc8949>`__ (decoded CBOR) that features the update procedure's ``payload-fetch``:
+The following is an example of `Diagnostic Notation`_ (decoded CBOR) that features the update procedure's ``payload-fetch``:
 
 .. code-block::
 

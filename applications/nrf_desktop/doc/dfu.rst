@@ -25,9 +25,15 @@ Module events
 Configuration
 *************
 
-To perform the firmware upgrade, you must enable the bootloader.
-You can use the DFU module with either MCUboot or B0 bootloader.
-For more information on how to enable and configure a bootloader, see the :ref:`nrf_desktop_bootloader` section.
+The module can be used for the following devices:
+
+* nRF52 and nRF53 Series - To perform the firmware upgrade, you must enable the bootloader.
+  You can use the DFU module with either MCUboot or B0 bootloader.
+  For more information on how to enable and configure a bootloader, see the :ref:`nrf_desktop_bootloader` section.
+
+* nRF54H Series - You can use the DFU module for the Software Update for Internet of Things (SUIT) procedure.
+  The DFU module acts as a transport for the SUIT envelope used to update device firmware.
+  For more information on how to enable the SUIT procedure, see the :ref:`nrf_desktop_suit` section.
 
 Enable the DFU module using the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE <config_desktop_app_options>` option.
 It requires the transport option :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>` to be selected, as it uses :ref:`nrf_desktop_config_channel` for the transmission of the update image.
@@ -58,9 +64,7 @@ In that case, the DFU module assumes that the MCUboot direct-xip bootloader simp
 The :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP <config_desktop_app_options>` option is used to inform the DFU module that the device uses the MCUboot bootloader in the direct-xip mode.
 If the option is enabled, the DFU module reports the ``MCUBOOT+XIP`` bootloader name instead of ``MCUBOOT`` to indicate that the bootloader working in the direct-xip mode is used.
 The option depends on enabling the MCUboot bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`) and is enabled by default if the MCUboot direct-xip mode of operations is set (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP`).
-
-.. note::
-   The configured MCUboot bootloader mode needs to be manually aligned for both bootloader and application image.
+See the :ref:`nrf_desktop_bootloader` section for more information on the MCUboot bootloader configuration.
 
 Device identification information
 =================================
@@ -134,6 +138,11 @@ fwinfo
 
    * Version and length of the image.
    * Partition ID of the currently booted image, used to specify the image placement.
+
+   For the nRF54H Series:
+
+   * Reported image size is set to zero.
+   * Root manifest sequence number is reported as the booted image version.
 
 .. _dfu_devinfo:
 
@@ -248,3 +257,14 @@ For example, the memory is not erased right after the Bluetooth connection is es
 .. note::
     The DFU process cannot be started before the entire partition used for storing the update image is erased.
     If the DFU command is rejected, you must wait until the non-volatile memory area used for the update image is erased.
+
+SUIT integration
+================
+
+The module can act as a transport for the SUIT DFU procedure.
+The module receives the SUIT envelope with update image data over the :ref:`nrf_desktop_config_channel` and stores the envelope to a dedicated DFU partition (``dfu_partition`` defined in the DTS).
+
+After a complete transfer, the :ref:`reboot <dfu_reboot>` command triggers a firmware update using the envelope.
+The module calls the :c:func:`suit_trigger_update` function to trigger an update instead of rebooting the device using the :c:func:`sys_reboot` function.
+Triggering an update using the :ref:`reboot <dfu_reboot>` command makes the user experience consistent with nRF52 and nRF53 Series devices.
+For these devices, the :ref:`reboot <dfu_reboot>` command after a complete update image transfer triggers an image update performed by the bootloader.

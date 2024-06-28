@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "diagnostic_logs_intent_iface.h"
+
 #include <lib/core/CHIPError.h>
 #include <lib/support/Span.h>
 #include <zephyr/retention/retention.h>
@@ -53,6 +55,11 @@ public:
 	uint32_t GetLogsBegin() { return mDataBegin; }
 
 	/**
+	 * @brief Get an offset of the logs end in the buffer.
+	 */
+	uint32_t GetLogsEnd() { return mDataEnd; }
+
+	/**
 	 * @brief Get number of bytes that will wrap around the buffer after saving the given size of data.
 	 *
 	 * @param inputSize size of data to be stored in the buffer
@@ -77,26 +84,56 @@ public:
 	 */
 	uint32_t GetRetentionAddress(uint32_t logsOffset) { return logsOffset + kHeaderSize; }
 
-	/**
-	 * @brief Checks if the given offset matches the logs data end.
-	 *
-	 * @param offset the desired logs offset in the buffer.
-	 *
-	 * @return true if the offset matches the data end, false otherwise.
-	 */
-	bool IsEnd(uint32_t offset) { return offset == mDataEnd; }
-
-	CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog, uint32_t &readOffset,
-			   bool &readInProgress);
+	CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, uint32_t &readOffset, size_t totalSize,
+			   uint32_t dataBegin);
 
 private:
 	const size_t kHeaderSize = sizeof(mCurrentSize) + sizeof(mDataBegin);
 
 	bool mIsInitialized = false;
+	bool mWriteInProgress = false;
 	size_t mCurrentSize = 0;
 	uint32_t mDataBegin = 0;
 	uint32_t mDataEnd = 0;
 	size_t mCapacity = 0;
 
 	const struct device *mPartition;
+};
+
+class DiagnosticLogsRetentionReader : public Nrf::Matter::DiagnosticLogsIntentIface {
+public:
+	DiagnosticLogsRetentionReader(DiagnosticLogsRetention &diagnosticLogsRetention)
+		: mDiagnosticLogsRetention(diagnosticLogsRetention)
+	{
+	}
+
+	/**
+	 * @brief Get the captured logs size.
+	 *
+	 * @return size of captured logs in bytes
+	 */
+	CHIP_ERROR GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog) override;
+
+	/**
+	 * @brief Get the captured logs.
+	 *
+	 * @param outBuffer output buffer to store the logs
+	 * @param outIsEndOfLog flag informing whether the stored data is complete log or one of the few chunks
+	 *
+	 * @return size of captured logs in bytes
+	 */
+	CHIP_ERROR FinishLogs() override;
+
+	/**
+	 * @brief Finish the log capturing. This method is used to perform potential clean up after session.
+	 */
+	size_t GetLogsSize() override;
+
+private:
+	uint32_t mReadOffset = 0;
+	bool mReadInProgress = false;
+	size_t mTotalSize = 0;
+	uint32_t mDataBegin = 0;
+	uint32_t mDataEnd = 0;
+	DiagnosticLogsRetention &mDiagnosticLogsRetention;
 };

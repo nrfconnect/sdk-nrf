@@ -100,8 +100,7 @@ BUILD_ASSERT(THREAD_PRIORITY >= CONFIG_BT_HCI_TX_PRIO);
 
 static void ble_qos_thread_fn(void);
 
-static const struct device *const cdc_dev =
-	DEVICE_DT_GET_OR_NULL(DT_CHOSEN(ncs_ble_qos_uart));
+static const struct device *const cdc_dev = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(ncs_ble_qos_uart));
 static uint32_t cdc_dtr;
 
 enum ble_qos_opt {

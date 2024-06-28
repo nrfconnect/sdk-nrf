@@ -18,6 +18,7 @@ SHELL_DEFINE(shell_bt_nus, "bt_nus:~$ ", &shell_transport_bt_nus,
 	     CONFIG_SHELL_BT_NUS_LOG_MESSAGE_QUEUE_TIMEOUT,
 	     SHELL_FLAG_OLF_CRLF);
 
+static K_MUTEX_DEFINE(bt_data_mutex);
 static K_SEM_DEFINE(shell_bt_nus_ready, 0, 1);
 
 static bool is_init;
@@ -43,6 +44,13 @@ static void tx_try(const struct shell_bt_nus *bt_nus)
 	uint32_t size;
 	uint32_t req_len = bt_nus_get_mtu(bt_nus->ctrl_blk->conn);
 
+	int err = k_mutex_lock(&bt_data_mutex, K_FOREVER);
+
+	if (err) {
+		LOG_ERR("Failed to lock mutex, (err: %d)", err);
+		__ASSERT(false, "Cannot lock mutex");
+	}
+
 	size = ring_buf_get_claim(bt_nus->tx_ringbuf, &buf, req_len);
 
 	if (size) {
@@ -61,6 +69,12 @@ static void tx_try(const struct shell_bt_nus *bt_nus)
 		}
 	} else {
 		bt_nus->ctrl_blk->tx_busy = 0;
+	}
+
+	err = k_mutex_unlock(&bt_data_mutex);
+	if (err) {
+		LOG_ERR("Failed to unlock mutex, (err: %d)", err);
+		__ASSERT(false, "Cannot unlock mutex");
 	}
 }
 

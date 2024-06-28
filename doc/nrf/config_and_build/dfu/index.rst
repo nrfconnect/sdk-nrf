@@ -7,12 +7,12 @@ Device Firmware Updates
 Device Firmware Update (DFU) is the procedure of upgrading the application firmware version on a device.
 It consists of two primary steps:
 
-1. Transferring the new firmware - a new firmware image is transferred to the device's chip.
+1. Transferring the new firmware - A new firmware image is transferred to the device's chip.
 
-#. Testing and booting - the bootloader then tests and boots the new firmware.
+#. Testing and booting - The bootloader then tests and boots the new firmware.
 
 .. note::
-  The choice of bootloader affects how firmware updates can be performed.
+  The choice of bootloader affects how firmware updates can be performed (except for the nRF54H20 SoC where only the Software Updates for Internet of Things (SUIT) is supported).
   While bootloader features (such as out-of-the-box support) for various DFU methods may vary, it is recognized that:
 
   * MCUboot and its supporting libraries and middleware are flexible and support various protocols and methods for firmware updates.
@@ -90,13 +90,20 @@ Based on these criteria, the |NCS| offers support for the following DFU alternat
 
 For device-specific guides related to DFU, see the following pages:
 
-* :ref:`Developing with nRF52 Series <ug_nrf52_developing_ble_fota>` - for how to do firmware over-the-air (FOTA) updates with nRF52 Series devices.
+* :ref:`Developing with nRF52 Series <ug_nrf52_developing_ble_fota>` - For how to do firmware over-the-air (FOTA) updates with nRF52 Series devices.
 
-* :ref:`Developing with nRF5340 DK <ug_nrf53_developing_ble_fota>` - for how to do FOTA updates and serial recovery with the nRF5340 SoC.
+* :ref:`Developing with nRF5340 DK <ug_nrf53_developing_ble_fota>` - For how to do FOTA updates and serial recovery with the nRF5340 SoC.
 
-  * :ref:`qspi_xip` - for external execute in place (XIP) for the nRF5340 SoC.
+  * :ref:`qspi_xip` - For external execute in place (XIP) for the nRF5340 SoC.
 
-* :ref:`ug_nrf70_fw_patch_update` - for nRF70 Series devices.
+* :ref:`ug_nrf70_fw_patch_update` - For nRF70 Series devices.
+
+* :ref:`nrf91_fota` section of :ref:`ug_nrf91_config_build` - For nRF91 Series devices.
+
+.. note::
+
+  For the nRF54H20 SoC, see the :ref:`nrf54h_suit_sample` sample to perform a DFU over Bluetooth LE or UART.
+  See the :ref:`ug_nrf54h20_suit_dfu` page and its listed subpages for more information about the SUIT DFU procedure.
 
 See the following user guides for an overview of topics related to general firmware updates with the |NCS|:
 

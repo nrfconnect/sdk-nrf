@@ -15,8 +15,9 @@ Google Fast Pair standard also supports the Find My Device Network (FMDN) extens
 For detailed information, see the official `Fast Pair Find My Device Network extension`_ documentation.
 
 .. note::
-   The Fast Pair support in the |NCS| is :ref:`experimental <software_maturity>`.
-   See :ref:`ug_bt_fast_pair` for details.
+   The software maturity level for the locator tag use case is listed in the :ref:`software_maturity_fast_pair_use_case` table.
+
+This sample follows the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation and uses the Fast Pair configuration for the locator tag use case.
 
 Requirements
 ************
@@ -115,7 +116,7 @@ If the Model ID and Anti-Spoofing Private Key are not specified, the following d
    * Device Type: Locator Tag
    * Notification Type: Fast Pair
    * Data-Only connection: true
-   * No Personalized Name: false
+   * No Personalized Name: true
    * Find My Device: true
 
 For details, see :ref:`ug_bt_fast_pair_provisioning` in the Fast Pair user guide.
@@ -471,6 +472,10 @@ Testing
    Images in the testing section are generated for the debug device model registered by Nordic Semiconductor in the Google Nearby Console (see :ref:`fast_pair_locator_tag_google_device_model`).
    The debug device model name is covered by asterisks and the default Fast Pair logo is displayed instead of the one specified during the device model registration.
 
+   If the test Android device uses a primary email account that is not on Google's email allow list for the FMDN feature, testing steps will fail at the FMDN provisioning stage for the default debug (uncertified) device model.
+   To be able to test with debug device models, register your development email account by completing Google's device proposal form.
+   You can find the link to the device proposal form in the `Fast Pair Find My Device Network extension`_ specification.
+
 |test_sample|
 
 .. tabs::
@@ -686,10 +691,29 @@ To test this feature, complete the following steps:
       #. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
       #. Observe that **LED 1** is lit to confirm that the Android device is able to connect to your development kit after a clock synchronization.
 
+Disabling the locator tag
+-------------------------
+
+The following instructions on disabling the locator tag apply to the default debug device model registered for this sample (see the :ref:`fast_pair_locator_tag_google_device_model` section), and are used for demonstration purposes.
+
+To disable the locator tag device, complete the following steps:
+
+1. Find the power switch on the device.
+#. Turn off the locator tag by sliding the switch to the off position.
+#. Observe that the on-device LEDs are turned off.
+
+.. note::
+   Vendor-specific instructions on disabling the unknown trackers are registered on mobile platforms, like Android and iOS, for each device model.
+
 Fast Pair Validator app
 -----------------------
 
 You can test the sample against the Eddystone test suite from the `Fast Pair Validator app`_.
+
+.. note::
+   To start testing the FMDN solution with the `Fast Pair Validator app`_, use your project in the Google Nearby Console and the Fast Pair device model that is defined in the scope of your project.
+   The default debug device model from Nordic Semiconductor cannot be used for this purpose.
+   Additionally, you must sign into the `Fast Pair Validator app`_ using an email address associated with your project in the Google Nearby Console.
 
 |test_sample|
 
@@ -788,7 +812,9 @@ Fast Pair GATT Service
 This sample uses the :ref:`bt_fast_pair_readme` and its dependencies and is configured to meet the requirements of the Fast Pair standard together with its FMDN extension.
 For details about integrating Fast Pair in the |NCS|, see :ref:`ug_bt_fast_pair`.
 
-The :ref:`bt_fast_pair_provision_script` is used by the build system to automatically generate the hexadecimal file that contains the Fast Pair Model ID and Anti Spoofing Private Key.
+This sample enables the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option.
+With this option enabled, the build system calls the :ref:`bt_fast_pair_provision_script`, which automatically generates a hexadecimal file containing Fast Pair Model ID and Anti Spoofing Private Key.
+For more details about enabling Fast Pair for your application, see the :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section in the Fast Pair integration guide.
 
 Bluetooth LE advertising data providers
 =======================================

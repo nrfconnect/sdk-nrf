@@ -109,6 +109,11 @@ The following snippets are available:
     See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
 
 * ``tcat`` - Enables support for Thread commissioning over authenticated TLS.
+
+  .. note::
+    When building with the ``tcat`` snippet for the ``nrf5340dk/nrf5340/cpuapp`` board target, set the :makevar:`FILE_SUFFIX` CMake option to ``ble``.
+    See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
+
   Not compatible with the ``multiprotocol`` snippet.
   For using TCAT, refer to the :ref:`thread_tcat` page.
 * ``tcp`` - Enables experimental TCP support in this sample.
@@ -142,7 +147,13 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To update the OpenThread libraries provided by ``nrfxlib``, invoke ``west build -b nrf52840dk_nrf52840 -t install_openthread_libraries``.
+To update the OpenThread libraries provided by ``nrfxlib``, use the following commands:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf52840dk/nrf52840
+   west build -d build/cli -t install_openthread_libraries
 
 .. _ot_cli_sample_testing:
 
@@ -565,7 +576,7 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :file:`include/kernel.h`
 
 * :ref:`zephyr:thread_protocol_interface`
 
@@ -575,10 +586,10 @@ The following dependencies are added by the optional multiprotocol Bluetooth® L
 * :ref:`nus_service_readme`
 * Zephyr's :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/gatt.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/uuid.h``
+  * :file:`include/bluetooth/bluetooth.h`
+  * :file:`include/bluetooth/gatt.h`
+  * :file:`include/bluetooth/hci.h`
+  * :file:`include/bluetooth/uuid.h`
 
 In addition, it uses the following secure firmware component:
 

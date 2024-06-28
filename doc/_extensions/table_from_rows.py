@@ -106,6 +106,7 @@ class TableFromRows(SphinxDirective):
         if shields:
             header_lines[0] += ' Shields |'
             for i, target in enumerate(rows_sections):
+                target = target.replace("_", "/")
                 if target in shields:
                     rows[i][0] += f'``{"`` ``".join(shields[target])}``'
                 rows[i][0] += ' |'

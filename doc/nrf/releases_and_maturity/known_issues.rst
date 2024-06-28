@@ -2218,7 +2218,7 @@ Bluetooth Mesh samples
 NCSDK-26388: Compilation of Mesh Light sample can create an image without MCUboot
   This can happen when compiled with the point-to-point DFU overlay and ``--sysbuild`` option.
 
-  **Workaround:** To get a correct image with MCUboot, do not use the ``--sysbuild`` option.
+  **Workaround:** To get a correct image with MCUboot, :ref:`build the firmware without sysbuild <optional_build_parameters>` using the ``--no-sysbuild`` option.
 
 .. rst-class:: v2-6-1 v2-6-0
 
@@ -3524,7 +3524,7 @@ DRGN-21619: The controller might assert if the CIS peripheral stops receiving pa
 .. rst-class:: v2-6-1 v2-6-0
 
 DRGN-21605: Value read by HCI ISO Read TX Timestamp is off by 40 µs
-  The HCI command ``Iso Read Tx Tmestamp`` returns the last assigned sync reference for the ISO TX path and the value might be off by 40 µs.
+  The HCI command ``ISO Read TX Timestamp`` returns the last assigned sync reference for the ISO TX path and the value might be off by 40 µs.
 
 .. rst-class:: v2-6-1 v2-6-0
 

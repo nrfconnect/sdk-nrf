@@ -1,0 +1,117 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* For nRF54L, watchdog status is disabled by default. Needs to be enabled in DTS overlay. */
+&wdt31 {
+	status = "okay";
+};
+
+/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
+&cpuapp_rram {
+	reg = < 0x0 DT_SIZE_K(1524) >;
+};
+
+/ {
+	/* Disable pwmleds and redefine them to align configuration with CAF LEDs requirements.
+	 * The configuration needs to match the used board revision.
+	 */
+	/delete-node/ pwmleds;
+
+	pwmleds0 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led0: led_pwm_0 {
+			status = "okay";
+			pwms = <&pwm20 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+			label = "LED System State";
+		};
+	};
+
+	pwmleds1 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led1: led_pwm_1 {
+			status = "okay";
+			pwms = <&pwm21 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+			label = "LED Conn State";
+		};
+	};
+
+	pwmleds2 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led2: led_pwm_2 {
+			status = "okay";
+			pwms = <&pwm22 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+			label = "LED Num Lock";
+		};
+	};
+};
+
+&pwm20 {
+	status = "okay";
+	pinctrl-0 = <&pwm20_default_alt>;
+	pinctrl-1 = <&pwm20_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm21 {
+	status = "okay";
+	pinctrl-0 = <&pwm21_default_alt>;
+	pinctrl-1 = <&pwm21_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm22 {
+	status = "okay";
+	pinctrl-0 = <&pwm22_default_alt>;
+	pinctrl-1 = <&pwm22_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pinctrl {
+	pwm20_default_alt: pwm20_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 2, 9)>;
+		};
+	};
+
+	pwm20_sleep_alt: pwm20_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 2, 9)>;
+			low-power-enable;
+		};
+	};
+
+	pwm21_default_alt: pwm21_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 10)>;
+		};
+	};
+
+	pwm21_sleep_alt: pwm21_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 10)>;
+			low-power-enable;
+		};
+	};
+
+	pwm22_default_alt: pwm22_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 2, 7)>;
+		};
+	};
+
+	pwm22_sleep_alt: pwm22_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 2, 7)>;
+			low-power-enable;
+		};
+	};
+};

@@ -72,27 +72,47 @@ See :ref:`nrf_desktop_memory_layout` for details.
 Configuring the B0 bootloader
 =============================
 
-To enable the B0 bootloader, select the :kconfig:option:`CONFIG_SECURE_BOOT` Kconfig option in the application configuration.
+To enable the B0 bootloader, select the ``SB_CONFIG_SECURE_BOOT_APPCORE`` Kconfig option in the sysbuild configuration.
+This setting automatically enables the ``SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE`` Kconfig option, which generates application binaries for both slots in non-volatile memory.
 
-The B0 bootloader additionally requires enabling the following options in the application configuration:
+The B0 bootloader additionally requires enabling the following options:
 
-* :kconfig:option:`CONFIG_SB_SIGNING_KEY_FILE` - Required for providing the signature used for image signing and verification.
-* :kconfig:option:`CONFIG_FW_INFO` - Required for the application versioning information.
-* :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` - Enable this option to set the version of the application after you enabled :kconfig:option:`CONFIG_FW_INFO`.
-  The nRF Desktop application with the B0 bootloader configuration builds two application images: one for the S0 slot and the other for the S1 slot.
-  To generate the DFU package, you need to update this configuration only in the main application image as the ``s1_image`` child image mirrors it.
-  You can do that by rebuilding the application from scratch or by changing the configuration of the main image through menuconfig.
-* :kconfig:option:`CONFIG_BUILD_S1_VARIANT` - Required for the build system to be able to construct the application binaries for both application's slots in non-volatile memory.
+* In the sysbuild configuration:
+
+  * ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` - Required for providing the signature key file used by the build system (to sign the application update images) and by the bootloader (to verify the application signature).
+    If this Kconfig option does not specify the signature key file, debug signature key files will be used by default.
+
+* In the application configuration:
+
+  * :kconfig:option:`CONFIG_FW_INFO` - Required for providing information about the application versioning.
+  * :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` - Required for updating the application version.
+    The nRF Desktop application with the B0 bootloader configuration builds two application images: one for the S0 slot and the other for the S1 slot.
+    To generate the DFU package, update this configuration only in the main application image.
+    The ``s1_image`` image will mirror it automatically.
+
+.. note::
+    To ensure that update image will boot after a successful DFU image transfer, the update image's version number must be higher than the version number of the application image running on device.
+    Otherwise, the update image can be rejected by the bootloader.
 
 .. _nrf_desktop_configuring_mcuboot_bootloader:
 
 Configuring the MCUboot bootloader
 ==================================
 
-To enable the MCUboot bootloader, select the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option in the application configuration.
+To enable the MCUboot bootloader, select the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` Kconfig option in the sysbuild configuration.
 
-The MCUboot private key path (:kconfig:option:`CONFIG_BOOT_SIGNATURE_KEY_FILE`) must be set only in the MCUboot bootloader configuration file.
+You must also set the MCUboot private key path (``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE``) in the sysbuild configuration.
 The key is used both by the build system (to sign the application update images) and by the bootloader (to verify the application signature using public key derived from the selected private key).
+If this Kconfig option is not overwritten in the sysbuild configuration, debug signature key files located in the MCUboot bootloader repository will be used by default.
+
+To select a specific version of the application, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option in the application configuration.
+If the nRF Desktop application is configured with the MCUboot in the direct-xip mode, the build system builds two application images: one for the primary slot and the other for the secondary slot, named ``mcuboot_secondary_app``.
+You need to update this configuration only in the main application image, as the ``mcuboot_secondary_app`` image mirrors it.
+
+.. note::
+    When the MCUboot bootloader is in the direct-xip mode, the update image must have a higher version number than the application currently running on the device.
+    This ensures that the update image will be booted after a successful DFU image transfer.
+    Otherwise, the update image can be rejected by the bootloader.
 
 The MCUboot bootloader configuration depends on the selected way of performing image upgrade.
 For detailed information about the available MCUboot bootloader modes, see the following sections.
@@ -116,12 +136,13 @@ Direct-xip mode
 
 The direct-xip mode is used for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.
 In this mode, the MCUboot bootloader boots an image directly from a given slot, so the swap operation is not needed.
-To set the MCUboot mode of operations to the direct-xip mode, make sure to enable the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option in the application configuration.
-This option automatically enables :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` to build application update images for both slots.
+To set the MCUboot mode of operations to the direct-xip mode, enable the ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP`` Kconfig option in the sysbuild configuration.
+This option automatically enables the ``SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT`` Kconfig option, which builds the application update images for both slots.
+The nRF Desktop application configurations do not use the direct-xip mode with the revert mechanism (``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT``).
 
-Enable the ``CONFIG_BOOT_DIRECT_XIP`` Kconfig option in the bootloader configuration to make the MCUboot run the image directly from both image slots.
-The nRF Desktop's bootloader configurations do not enable the revert mechanism (``CONFIG_BOOT_DIRECT_XIP_REVERT``).
-When the direct-xip mode is enabled (the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option is set in the application configuration), the application modules that control the DFU transport do not request firmware upgrades and do not confirm the running image.
+The ``CONFIG_BOOT_DIRECT_XIP`` Kconfig option enables MCUboot to run the image directly from both image slots, and it is automatically applied to the bootloader configuration based on the sysbuild configuration.
+Similarly, the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option, that informs the application about the MCUboot bootloader's mode, is also applied automatically based on the sysbuild configuration.
+When the direct-xip mode is enabled, the application modules that control the DFU transport do not request firmware upgrades or confirm the running image.
 In that scenario, the MCUboot bootloader simply boots the image with the higher image version.
 
 By default, the MCUboot bootloader ignores the build number while comparing image versions.
@@ -137,6 +158,7 @@ Serial recovery mode
 In the :ref:`USB serial recovery <nrf_desktop_bootloader_serial_dfu>` mode, the MCUboot bootloader uses a built-in foreground DFU transport over serial interface through USB.
 The application is not involved in the foreground DFU transport, therefore it can be directly overwritten by the bootloader.
 Because of that, the configuration with the serial recovery mode requires only a single application slot.
+To set the MCUboot mode of operations to single application slot, enable the ``SB_CONFIG_MCUBOOT_MODE_SINGLE_APP`` Kconfig option in the sysbuild configuration.
 
 Enable the USB serial recovery DFU using the following configuration options:
 
@@ -155,12 +177,56 @@ You must select the ``CONFIG_MCUBOOT_INDICATION_LED`` Kconfig option to enable t
 By default, both the GPIO pin and the LED are defined in the board's DTS file.
 See :file:`boards/nordic/nrf52833dongle/nrf52833dongle_nrf52833.dts` for an example of board's DTS file used by the nRF Desktop application.
 
-For an example of bootloader Kconfig configuration file defined by the application, see the MCUboot bootloader ``debug`` configuration defined for nRF52833 dongle (:file:`applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/child_image/mcuboot/prj.conf`).
+For an example of a bootloader Kconfig configuration file defined by the application, see the MCUboot bootloader ``debug`` configuration defined for nRF52833 dongle (:file:`applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/images/mcuboot/prj.conf`).
 
 .. note::
   The nRF Desktop devices use either the serial recovery DFU with a single application slot or the background DFU.
   Both mentioned firmware upgrade methods are not used simultaneously by any of the configurations.
-  For example, the ``nrf52840dk/nrf52840`` board in ``prj_mcuboot_smp.conf`` uses only the background DFU and does not enable the serial recovery feature.
+  For example, the ``nrf52840dk/nrf52840`` board in ``mcuboot_smp`` file suffix uses only the background DFU and does not enable the serial recovery feature.
+
+.. _nrf_desktop_suit:
+
+Software Update for Internet of Things (SUIT)
+=============================================
+
+SUIT is a metadata format and procedure for performing Device Firmware Update (DFU).
+It allows you to update and boot multiple CPU cores of the supported System on Chip (SoC).
+The SUIT DFU is currently available only for the nRF54H20 SoC.
+The application stores an update image in the dedicated DFU partition and triggers firmware update using the SUIT API.
+The firmware update affects the firmware of both the application and radio cores.
+The update candidates are moved directly to the corresponding image slots.
+
+SUIT can be used for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>` through:
+
+   * The :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
+   * The :ref:`nrf_desktop_dfu_mcumgr`.
+
+For an introduction to SUIT and more detailed information, see the :ref:`ug_nrf54h20_suit_dfu`.
+
+Configuring SUIT
+----------------
+
+To enable SUIT on the supported target, enable the :kconfig:option:`CONFIG_SUIT` Kconfig option in the application configuration.
+This option enables service on application core that communicates with the Secure Domain on which the SUIT is executed.
+You can also enable :kconfig:option:`CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_MINIMAL`, because application core only stores the SUIT envelope to a dedicated partition and then it passes control to the Secure Domain.
+
+SUIT also has the following options in the sysbuild configuration:
+
+   * ``SB_CONFIG_SUIT_ENVELOPE`` - Required to create the SUIT envelope.
+     Turned on by default on the ``nrf54h20dk`` board.
+     The envelope is used directly as a DFU update file by the DFU tools.
+   * ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` - The nRF Desktop application uses the sequence number to define an application version.
+
+.. note::
+   The ``SB_CONFIG_SUIT_ENVELOPE_SIGN`` is disabled, so the generated SUIT envelope is not signed.
+
+On the ``nrf54h20dk`` board, the dedicated DFU partition called ``dfu_partition`` is defined by default in the DTS.
+The partition is used to store the incoming SUIT envelope with an update candidate.
+The application relies on the default memory layout defined by the board.
+
+.. note::
+   The Partition Manager is disabled for the nRF54H Series.
+   The memory layout for these devices is always defined in the DTS.
 
 .. _nrf_desktop_bootloader_background_dfu:
 
@@ -172,6 +238,7 @@ From the application perspective, the update image transfer during the backgroun
 
 * MCUboot
 * Secure Bootloader (B0)
+* SUIT
 
 The firmware update process has the following three stages:
 
@@ -188,7 +255,7 @@ At the end of these three stages, the nRF Desktop application will be rebooted w
   For more details about the DFU procedure over SMP, read the documentation of the following modules:
 
   * :ref:`nrf_desktop_ble_smp` (supported only with MCUboot bootloader)
-  * :ref:`nrf_desktop_dfu_mcumgr` (supported only with MCUboot bootloader)
+  * :ref:`nrf_desktop_dfu_mcumgr`
     The module uses the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods.
     Therefore, this module should be used for configurations that enable multiple DFU transports (for example, if a configuration also enables :ref:`nrf_desktop_dfu`).
 
@@ -200,13 +267,19 @@ The update image is generated in the build directory when building the firmware 
 MCUboot and B0 bootloaders
 --------------------------
 
-The :file:`zephyr/dfu_application.zip` file is used by both B0 and MCUboot bootloader for the background DFU through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
+The :file:`<build_dir>/dfu_application.zip` file is used by both B0 and MCUboot bootloader for the background DFU through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
 The package contains firmware images along with additional metadata.
 If the used bootloader boots the application directly from either slot 0 or slot 1, the host script transfers the update image that can be run from the unused slot.
 Otherwise, the image is always uploaded to the slot 1 and then moved to slot 0 by the bootloader before boot.
 
 .. note::
-   Make sure to properly configure the bootloader to ensure that the build system generates the :file:`zephyr/dfu_application.zip` archive containing all of the required update images.
+   Make sure to properly configure the sysbuild to ensure that the build system generates the :file:`<build_dir>/dfu_application.zip` archive containing all of the required update images.
+
+SUIT
+----
+
+The :file:`<build_dir>/DFU/root.suit` SUIT envelope is used in the SUIT DFU procedure.
+The envelope contains both the manifest and the update candidates for the application and radio cores.
 
 Update image transfer
 =====================
@@ -230,7 +303,7 @@ Image transfer over SMP
 The update image can also be transferred in the background through one of the following modules:
 
 * :ref:`nrf_desktop_ble_smp` (supported only with MCUboot bootloader)
-* :ref:`nrf_desktop_dfu_mcumgr` (supported only with MCUboot bootloader)
+* :ref:`nrf_desktop_dfu_mcumgr`
   The module uses the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods.
   Therefore, this module should be used for configurations that enable multiple DFU transports (for example, if a configuration also enables :ref:`nrf_desktop_dfu`).
 
@@ -238,17 +311,45 @@ The `nRF Connect Device Manager`_ application transfers the image update files o
 
 To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the following steps:
 
-.. include:: /device_guides/nrf52/fota_update.rst
-   :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
-   :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
+.. tabs::
 
-.. include:: /device_guides/nrf52/fota_update.rst
-   :start-after: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_start
-   :end-before: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_end
+   .. tab:: MCUboot
 
-.. note::
-   If the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT` Kconfig option is enabled in the application configuration, the device rejects update image upload for the invalid slot.
-   It is recommended to enable the option if the application uses MCUboot in the direct-xip mode.
+      .. include:: /device_guides/nrf52/fota_update.rst
+         :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
+         :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
+
+      .. include:: /device_guides/nrf52/fota_update.rst
+         :start-after: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_start
+         :end-before: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_end
+
+      .. note::
+         When the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT` Kconfig option is enabled in the application configuration, the device rejects the update image upload for the invalid slot.
+         It is recommended to enable the option if the application uses MCUboot in the direct-xip mode.
+
+   .. tab:: SUIT
+
+      1. Generate the SUIT envelope by building your application with the FOTA support over Bluetooth Low Energy.
+         You can find the generated :file:`root.suit` envelope in the :file:`<build_dir>/DFU` directory.
+      #. Download the :file:`root.suit` envelope to your device.
+
+         .. note::
+            `nRF Connect for Desktop`_ does not currently support the FOTA process.
+
+      #. Use the `nRF Connect Device Manager`_ mobile app to update your device with the new firmware.
+
+         a. Ensure that you can access the :file:`root.suit` envelope from your phone or tablet.
+         #. In the mobile app, scan and select the device to update.
+         #. Switch to the :guilabel:`Image` tab and tap on :guilabel:`ADVANCED` in the upper right corner of the app.
+         #. In the **Firmware Upload** section, tap the :guilabel:`SELECT FILE` button and select the :file:`root.suit` envelope.
+         #. Tap the :guilabel:`START` button.
+         #. Wait for the DFU to finish and then verify that the application works properly.
+
+      .. note::
+         Support for SUIT updates is available starting from the following versions of the `nRF Connect Device Manager`_ mobile app:
+
+         * Version ``2.0`` on Android.
+         * Version ``1.7`` on iOS.
 
 Update image verification and application image update
 ======================================================
@@ -267,6 +368,12 @@ The image verification process ensures the integrity of the image and checks if 
 If verification is successful, the bootloader boots the new version of the application.
 Otherwise, the old version is used.
 
+SUIT
+----
+
+For this configuration variant, the :c:func:`suit_trigger_update` function is called to trigger an update.
+Once the update is triggered, the SUIT will install, verify, and boot the new image as specified in the manifest.
+
 .. _nrf_desktop_bootloader_serial_dfu:
 
 Serial recovery DFU
@@ -284,13 +391,13 @@ Once the device enters the serial recovery mode, you can use the :ref:`mcumgr <z
 
 * Query information about the present image.
 * Upload the new image.
-  The :ref:`mcumgr <zephyr:device_mgmt>` uses the :file:`zephyr/app_update.bin` update image file.
+  The :ref:`mcumgr <zephyr:device_mgmt>` uses the :file:`<build_dir>/zephyr/nrf_desktop/zephyr.signed.bin` update image file.
   It is generated by the build system when building the firmware.
 
 For example, the following line starts the upload of the new image to the device:
 
 .. code-block:: console
 
-  mcumgr -t 60 --conntype serial --connstring=/dev/ttyACM0 image upload build-nrf52833dongle/zephyr/app_update.bin
+  mcumgr -t 60 --conntype serial --connstring=/dev/ttyACM0 image upload build-nrf52833dongle/zephyr/nrf_desktop/zephyr.signed.bin
 
 The command assumes that ``/dev/ttyACM0`` serial device is used by the MCUboot bootloader for the serial recovery.

@@ -118,6 +118,14 @@ config BT_CONN_PARAM_UPDATE_TIMEOUT
 	  nRF Desktop peripherals update connection parameters earlier to lower
 	  HID data latency.
 
+config BT_ATT_SENT_CB_AFTER_TX
+	default y
+	help
+	  nRF Desktop peripherals delay ATT sent callback until data
+	  transmission is done by BLE controller. This is needed to ensure low
+	  latency of provided HID data. The ATT sent callback is used by the
+	  application to trigger sending subsequent HID report.
+
 config BT_GATT_CHRC_POOL_SIZE
 	default 7 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
 		      !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)

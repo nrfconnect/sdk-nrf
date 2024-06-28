@@ -371,7 +371,7 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 			LOG_ERR("Error handling shadow delta");
 			return;
 		} else if (err == -EAGAIN) {
-			LOG_ERR("Ignoring delta until accepted shadow is received");
+			LOG_DBG("Ignoring delta until accepted shadow is received");
 			return;
 		}
 

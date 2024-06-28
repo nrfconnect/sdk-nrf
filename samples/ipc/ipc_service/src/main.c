@@ -133,7 +133,7 @@ int main(void)
 		p_payload->cnt++;
 
 
-		/* Quasi minimal busy wait time which allows to continuosly send
+		/* Quasi minimal busy wait time which allows to continuously send
 		 * data without -ENOMEM error code. The purpose is to test max
 		 * throughput. Determined experimentally.
 		 */

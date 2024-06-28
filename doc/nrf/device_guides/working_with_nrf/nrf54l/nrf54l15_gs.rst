@@ -108,7 +108,7 @@ To build and program the sample to the nRF54L15 PDK, complete the following step
 
    .. code-block:: console
 
-      west flash --erase
+      west flash
 
    If you have multiple Nordic Semiconductor devices, make sure that only the nRF54L15 PDK is connected.
 

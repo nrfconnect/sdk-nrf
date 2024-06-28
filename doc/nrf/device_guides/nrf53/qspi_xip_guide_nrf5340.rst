@@ -304,6 +304,7 @@ If you wish to use the :file:`Qspi.ini` file, you will need to manually flash th
 For example, for the :ref:`smp_svr_ext_xip` sample, you need to flash the following files (paths are relative to the build directory):
 
 * :file:`<cpunet_build_subdirectory>/zephyr/merged_CPUNET.hex`
+
   * For Bluetooth stack application the path is :file:`<cpunet_build_subdirectory> hci_ipc`.
 * :file:`mcuboot/zephyr/zephyr.hex`
 * :file:`zephyr/internal_flash_signed.hex`

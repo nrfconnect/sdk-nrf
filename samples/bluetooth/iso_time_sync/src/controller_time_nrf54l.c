@@ -17,18 +17,16 @@ int controller_time_init(void)
 {
 	int ret;
 
-	while (true) {
-		ret = nrfx_grtc_channel_alloc(&grtc_channel);
-		if (ret != NRFX_SUCCESS) {
-			printk("Failed allocating GRTC channel (ret: %d)\n",
-			       ret - NRFX_ERROR_BASE_NUM);
-			return -ENODEV;
-		}
+	ret = nrfx_grtc_channel_alloc(&grtc_channel);
+	if (ret != NRFX_SUCCESS) {
+		printk("Failed allocating GRTC channel (ret: %d)\n",
+		       ret - NRFX_ERROR_BASE_NUM);
+		return -ENODEV;
 	}
 
 	nrf_grtc_sys_counter_compare_event_enable(NRF_GRTC, grtc_channel);
 
-	return -0;
+	return 0;
 }
 
 uint64_t controller_time_us_get(void)

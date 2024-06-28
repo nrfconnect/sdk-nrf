@@ -101,7 +101,7 @@ To reconfigure the sample to use the fetch model, complete the following steps:
 
    #. Add the ``suit-payload-fetch`` sequence to the application manifest:
 
-      .. code-block:: console
+      .. code-block:: yaml
 
          suit-payload-fetch:
          - suit-directive-set-component-index: 2

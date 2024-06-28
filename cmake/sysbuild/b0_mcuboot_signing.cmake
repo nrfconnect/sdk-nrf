@@ -41,12 +41,18 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   string(TOUPPER "${application}" application_uppercase)
   set(imgtool_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE> --pad-header --header-size ${SB_CONFIG_PM_MCUBOOT_PAD})
 
+  if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+    set(imgtool_extra --security-counter ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
+  else()
+    set(imgtool_extra)
+  endif()
+
   if(NOT "${keyfile}" STREQUAL "")
     set(imgtool_extra -k "${keyfile}" ${imgtool_extra})
   endif()
 
   # Extensionless prefix of any output file.
-  set(output ${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_${application})
+  set(output ${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_${application})
 
   # List of additional build byproducts.
   set(byproducts)
@@ -60,46 +66,46 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     list(APPEND bin_files ${output}.bin)
     set(bin_files ${bin_files} PARENT_SCOPE)
 
-      add_custom_command(
-        OUTPUT
-        ${output}.bin # Signed hex with IMAGE_MAGIC located at secondary slot
+    add_custom_command(
+      OUTPUT
+      ${output}.bin # Signed hex with IMAGE_MAGIC located at secondary slot
 
-        COMMAND
-        # Create version of test update which is located at the secondary slot.
-        # Hence, if a programmer is given this hex file, it will flash it
-        # to the secondary slot, and upon reboot mcuboot will swap in the
-        # contents of the hex file.
-        ${imgtool_sign} ${imgtool_extra} ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.bin ${output}.bin
+      COMMAND
+      # Create version of test update which is located at the secondary slot.
+      # Hence, if a programmer is given this hex file, it will flash it
+      # to the secondary slot, and upon reboot mcuboot will swap in the
+      # contents of the hex file.
+      ${imgtool_sign} ${imgtool_extra} ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.bin ${output}.bin
 
-        DEPENDS
-        ${application}_extra_byproducts
-        ${application}_signed_kernel_hex_target
-        ${application_image_dir}/zephyr/.config
-        ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.bin
-        )
+      DEPENDS
+      ${application}_extra_byproducts
+      ${application}_signed_kernel_hex_target
+      ${application_image_dir}/zephyr/.config
+      ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.bin
+      )
   endif()
 
   # Set up .hex outputs.
   if(CONFIG_BUILD_OUTPUT_HEX)
     list(APPEND byproducts ${output}.hex)
 
-      add_custom_command(
-        OUTPUT
-        ${output}.hex # Signed hex with IMAGE_MAGIC located at secondary slot
+    add_custom_command(
+      OUTPUT
+      ${output}.hex # Signed hex with IMAGE_MAGIC located at secondary slot
 
-        COMMAND
-        # Create version of test update which is located at the secondary slot.
-        # Hence, if a programmer is given this hex file, it will flash it
-        # to the secondary slot, and upon reboot mcuboot will swap in the
-        # contents of the hex file.
-        ${imgtool_sign} ${imgtool_extra} ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.hex ${output}.hex
+      COMMAND
+      # Create version of test update which is located at the secondary slot.
+      # Hence, if a programmer is given this hex file, it will flash it
+      # to the secondary slot, and upon reboot mcuboot will swap in the
+      # contents of the hex file.
+      ${imgtool_sign} ${imgtool_extra} ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.hex ${output}.hex
 
-        DEPENDS
-        ${application}_extra_byproducts
-        ${application}_signed_kernel_hex_target
-        ${application_image_dir}/zephyr/.config
-        ${PROJECT_BINARY_DIR}/signed_by_b0_${application}.hex
-        )
+      DEPENDS
+      ${application}_extra_byproducts
+      ${application}_signed_kernel_hex_target
+      ${application_image_dir}/zephyr/.config
+      ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.hex
+      )
   endif()
 
   # Add the west sign calls and their byproducts to the post-processing
@@ -140,7 +146,7 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
       include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
 
       generate_dfu_zip(
-        OUTPUT ${PROJECT_BINARY_DIR}/dfu_mcuboot.zip
+        OUTPUT ${CMAKE_BINARY_DIR}/dfu_mcuboot.zip
         BIN_FILES ${bin_files}
         TYPE mcuboot
         IMAGE mcuboot

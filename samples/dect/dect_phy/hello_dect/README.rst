@@ -9,6 +9,10 @@ nRF91x1: DECT NR+ PHY hello
 
 The DECT NR+ physical layer (PHY) hello sample demonstrates how to set up a simple DECT NR+ application with the DECT PHY firmware.
 
+.. important::
+
+   The sample only showcases the use of the :ref:`nrf_modem_dect_phy` interface of the Modem library and is not a complete standalone application.
+
 Requirements
 ************
 
@@ -87,7 +91,7 @@ CONFIG_RX_PERIOD_S
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/modem_trace_flash`
+.. |sample path| replace:: :file:`samples/dect/dect_phy/hello_dect`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -96,8 +100,26 @@ Building and running
    DECT NR+ operates on free but regulated radio channels.
    The regulations and availability of the channels vary by country and region.
    It is your responsibility to operate the devices according to local regulations, both at the development site and in the device operating regions.
-   If you are in the EU or US, you can use the ``overlay-eu.conf`` and ``overlay-us.conf`` Kconfig overlays, respectively.
-   Otherwise, set the carrier using the :ref:`CONFIG_CARRIER <CONFIG_CARRIER>` Kconfig option, and the transmission power using the :ref:`CONFIG_TX_POWER <CONFIG_TX_POWER>` Kconfig option.
+   If you are in the EU or US with permission to operate on the DECT band and can ensure that access rules are met, you can use the ``overlay-eu.conf`` and ``overlay-us.conf`` Kconfig overlays, respectively.
+   If other configuration is required, set the carrier using the :ref:`CONFIG_CARRIER <CONFIG_CARRIER>` Kconfig option, and the transmission power using the :ref:`CONFIG_TX_POWER <CONFIG_TX_POWER>` Kconfig option.
+   If you, as a user, are not permitted to operate on the DECT band or cannot ensure that access rules are met, you must ensure there are no radio emissions from the devices running the sample.
+   This can be done with the use of an RF chamber.
+
+   * To build with one of the provided overlays, run the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -p -b *build_target* -- -DEXTRA_CONF_FILE="<your_overlay>"
+
+   * To build with other carrier and transmission power configuration, run the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -p -b *build_target* -- -DCONFIG_CARRIER=<your_carrier> -DCONFIG_TX_POWER=<your_tx_power>
+
+   You can also add your own overlay or the Kconfig options to the project configuration to build with other carrier and transmission power configurations.
 
 Testing
 =======

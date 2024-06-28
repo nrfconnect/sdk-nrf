@@ -82,8 +82,8 @@
 .. ### Zigbee & ZBOSS shortcuts
 
 .. |zigbee_version| replace:: Zigbee 3.0
-.. |zboss_version| replace:: 3.11.3.0
-.. |zigbee_ncp_package_version| replace:: 2.2.2
+.. |zboss_version| replace:: 3.11.4.0
+.. |zigbee_ncp_package_version| replace:: 2.2.3
 .. |zigbee_description| replace:: Zigbee is a portable, low-power software networking protocol that provides connectivity over an 802.15.4-based mesh network.
 .. |enable_zigbee_before_testing| replace:: Make sure to configure the Zigbee stack before building and testing this sample.
    See :ref:`ug_zigbee_configuring` for more information.
@@ -212,8 +212,12 @@
 
 .. |sysbuild_related_deprecation_note| replace:: This feature is deprecated and is being replaced by Zephyr's :ref:`zephyr:sysbuild`.
    You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
+   For more information, see :ref:`zephyr:sysbuild`, :ref:`sysbuild_images`, :ref:`zephyr_samples_sysbuild`, and :ref:`sysbuild_forced_options`.
 
-.. |file_suffix_related_deprecation_note| replace:: This feature is deprecated and is being replaced by :ref:`suffix-based configurations <app_build_additions_build_types>`.
+.. |sysbuild_autoenabled_ncs| replace:: When building :ref:`workspace applications <create_application_types_workspace>` copied from :ref:`nRF repositories <dm_repo_types>`, building with sysbuild is :ref:`enabled by default <sysbuild_enabled_ncs>`.
+   If you work with out-of-tree :ref:`freestanding applications <create_application_types_freestanding>`, you need to manually pass ``--sysbuild`` to build commands.
+
+.. |file_suffix_related_deprecation_note| replace:: This feature is deprecated and is being replaced by :ref:`suffix-based configurations <app_build_file_suffixes>`.
     You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
 
 .. |multi_image| replace:: These samples are built for the application core and, by default, include the network core application as child image in a multi-image build (see :ref:`ug_nrf5340_multi_image`).

@@ -14,9 +14,9 @@ This page provides information about the amount of power used by Sleepy End Devi
 Measurements methodology
 ************************
 
-The measurement setup consists of:
+The measurement setup consists of the following:
 
-* An nrf52840dk board used as a Thread leader.
+* An nRF52840 DK board used as a Thread leader.
 * A DUT board used as a Thread child.
 * A `Power Profiler Kit II (PPK2)`_ attached to the DUT according to the instructions in its Quick start guide.
 
@@ -63,7 +63,7 @@ The following tables show the power consumption measured with the configuration 
          +--------------------------+---------------------+--------------------------+
          | Parameter                | nrf52840dk/nrf52840 | nrf5340dk/nrf5340/cpuapp |
          +==========================+=====================+==========================+
-         | Board revision           |              v3.0.1 |                   v2.0.1 |
+         | Board revision           |              v3.0.2 |                   v2.0.2 |
          +--------------------------+---------------------+--------------------------+
          | Supply voltage [V]       |                 3.0 |                      3.0 |
          +--------------------------+---------------------+--------------------------+
@@ -77,11 +77,11 @@ The following tables show the power consumption measured with the configuration 
          +-------------------------------+-----------------------+----------------------------+
          | Parameter                     |   nrf52840dk/nrf52840 |   nrf5340dk/nrf5340/cpuapp |
          +===============================+=======================+============================+
-         | Total charge per minute [μC]  |               1136.00 |                    1203.00 |
+         | Total charge per minute [μC]  |               1135.87 |                    1196.07 |
          +-------------------------------+-----------------------+----------------------------+
-         | Average data poll charge [μC] |                 16.57 |                      17.15 |
+         | Average data poll charge [μC] |                 16.48 |                      17.14 |
          +-------------------------------+-----------------------+----------------------------+
-         | Average sleep current [μA]    |                  2.58 |                       3.15 |
+         | Average sleep current [μA]    |                  2.67 |                       3.00 |
          +-------------------------------+-----------------------+----------------------------+
 
 
@@ -92,7 +92,7 @@ The following tables show the power consumption measured with the configuration 
          +--------------------------------+---------------------+--------------------------+
          | Parameter                      | nrf52840dk/nrf52840 | nrf5340dk/nrf5340/cpuapp |
          +================================+=====================+==========================+
-         | Board revision                 |              v3.0.1 |                   v2.0.1 |
+         | Board revision                 |              v3.0.2 |                   v2.0.2 |
          +--------------------------------+---------------------+--------------------------+
          | Supply voltage [V]             |                 3.0 |                      3.0 |
          +--------------------------------+---------------------+--------------------------+
@@ -112,11 +112,11 @@ The following tables show the power consumption measured with the configuration 
          +---------------------------------+-----------------------+----------------------------+
          | Parameter                       |   nrf52840dk/nrf52840 |   nrf5340dk/nrf5340/cpuapp |
          +=================================+=======================+============================+
-         | Total charge per minute [μC]    |               1042.20 |                    1148.60 |
+         | Total charge per minute [μC]    |               1049.87 |                    1099.53 |
          +---------------------------------+-----------------------+----------------------------+
-         | Average CSL receive charge [μC] |                 13.69 |                      14.23 |
+         | Average CSL receive charge [μC] |                 13.91 |                      14.38 |
          +---------------------------------+-----------------------+----------------------------+
-         | Average data poll charge [μC]   |                 22.32 |                      23.23 |
+         | Average data poll charge [μC]   |                 21.93 |                      22.36 |
          +---------------------------------+-----------------------+----------------------------+
-         | Average sleep current [μA]      |                  2.71 |                       3.14 |
+         | Average sleep current [μA]      |                  2.67 |                       2.97 |
          +---------------------------------+-----------------------+----------------------------+

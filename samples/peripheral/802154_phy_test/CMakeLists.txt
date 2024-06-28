@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-list(APPEND ZEPHYR_EXTRA_MODULES ${CMAKE_CURRENT_SOURCE_DIR}/modules/app_rpc)
+list(APPEND EXTRA_ZEPHYR_MODULES ${CMAKE_CURRENT_SOURCE_DIR}/modules/app_rpc)
 list(APPEND SYSCALL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/modules/app_rpc/zephyr)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})

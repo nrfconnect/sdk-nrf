@@ -262,6 +262,7 @@
   - "subsys/bluetooth/*"
   - "subsys/caf/**/*"
   - "subsys/partition_manager/**/*"
+  - "samples/ipc/**/*"
 
 "CI-desktop-test":
   - "applications/nrf_desktop/**/*"
@@ -543,3 +544,11 @@
   - "samples/suit/**/*"
   - "subsys/mgmt/suitfu/**/*"
   - "tests/subsys/suit/**/*"
+
+"CI-test-low-level":
+  - "include/event_manager_proxy.h"
+  - "subsys/event_manager_proxy/**/*"
+  - "samples/ipc/**/*"
+  - "samples/event_manager_proxy/**/*"
+  - "tests/subsys/event_manager_proxy/**/*"
+  - "tests/benchmarks/multicore/**/*"

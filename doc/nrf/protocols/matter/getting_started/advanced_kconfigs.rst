@@ -30,7 +30,7 @@ You can configure when the device will start advertising and how long it will ad
 * Set :kconfig:option:`CONFIG_CHIP_BLE_EXT_ADVERTISING` to ``y`` to enable Extended Announcement (also called Extended Beaconing), which allows a device to advertise for a duration of more than 15 minutes.
   The advertising duration can be extended to a maximum duration of 48 hours, however the set of advertised data is changed to increase the user privacy.
 * Set :kconfig:option:`CONFIG_CHIP_BLE_ADVERTISING_DURATION` to a value of time in minutes to specify how long the device will advertise Matter service over Bluetooth LE.
-  It can not be set to values higher than 15 minutes unless the Extended Announcement feature is enabled.
+  It cannot be set to values higher than 15 minutes unless the Extended Announcement feature is enabled.
 
 .. _ug_matter_configuring_optional_nfc:
 
@@ -254,6 +254,32 @@ The device sends converted logs to the Matter controller as a response.
 After the crash data is successfully read, it will be removed and further read attempts will notify the user that there is no available data to read.
 To keep the crash log in the memory after reading it, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ` Kconfig option to ``n``.
 
+Network and end user logs
+-------------------------
+
+The diagnostic network and end user logs are saved in the dedicated retained RAM partitions.
+The logs are not removed after reading, but when attempting to write new logs to an already full buffer, the oldest logs are replaced.
+
+The diagnostic network and end user logs are designed to be pushed when requested by the user.
+This can result in the same information being passed by multiple APIs, which is usually not desirable behavior.
+Because of this, for the network and the end user logs the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REDIRECT` Kconfig option is enabled by default.
+
+With the Kconfig option enabled, the redirect functionality takes logs passed to the Zephyr logger and saves them in the retained RAM as Matter diagnostic logs.
+Only the following logs are redirected:
+
+* Logs from the ``chip`` module are redirected into diagnostic network logs.
+* Logs from the ``app`` module are redirected into diagnostic end user logs.
+
+You can disable the redirect functionality by disabling the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REDIRECT` Kconfig option.
+You can then push the network or end user logs using dedicated API in your application, like in the following code snippet:
+
+.. code-block:: C++
+
+   #include "diagnostic_logs_provider.h"
+
+   Nrf::Matter::DiagnosticLogProvider::GetInstance().PushLog(chip::app::Clusters::DiagnosticLogs::IntentEnum::kNetworkDiag, "Example network log", sizeof("Example network log"));
+   Nrf::Matter::DiagnosticLogProvider::GetInstance().PushLog(chip::app::Clusters::DiagnosticLogs::IntentEnum::kEndUserSupport, "Example end user log", sizeof("Example end user log"));
+
 .. _ug_matter_diagnostic_logs_snippet:
 
 Diagnostic logs snippet
@@ -263,6 +289,10 @@ The diagnostic logs snippet enables the set of configurations needed for full Ma
 The configuration set consist of devicetree overlays for each supported target board, and a config file that enables all diagnostic logs features by default.
 The devicetree overlays add new RAM partitions which are configured as retained to keep the log data persistent and survive the device reboot.
 They also reduce the SRAM size according to the size of the retained partition.
+The partition sizes are configured using example values and may not be sufficient for all use cases.
+To change the partition sizes, you need to change the configuration in the devicetree overlay.
+You can, for example, increase the partition sizes to be able to store more logs.
+
 The snippet sets the following kconfig options:
 
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` to ``y``.
@@ -270,6 +300,10 @@ The snippet sets the following kconfig options:
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ` to ``y``.
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS` to ``y``.
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS` to ``y``.
+  * :kconfig:option:`CONFIG_LOG_MODE_DEFERRED` to ``y``.
+  * :kconfig:option:`CONFIG_LOG_RUNTIME_FILTERING` to ``n``.
+
+Deferred logs mode (:kconfig:option:`CONFIG_LOG_MODE_DEFERRED`) is enabled because it is required by the log redirection functionality (:kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REDIRECT`), which is enabled by default for diagnostic network and end user logs.
 
 .. note::
 

@@ -12,7 +12,11 @@ Following the specification improves the privacy and safety of individuals by pr
 For detailed information about supported functionalities, see the official `DULT`_ documentation.
 
 .. note::
+   The `DULT`_ documentation has the Internet-Draft status, which means it is valid for a maximum of six months and subject to change or obsolescence.
+   For more details, refer to the `DULT status`_ section from the DULT specification.
+
    The DULT support in the |NCS| is :ref:`experimental <software_maturity>`.
+   Breaking updates in the DULT support might be implemented in response to changes in the `DULT`_ specification.
    The optional features are not fully supported.
 
 Integration prerequisites
@@ -70,7 +74,7 @@ After registration, you should have the following data:
 * Accessory category - Choose the appropriate category value from the `DULT Accessory Category Values table`_.
 * Network ID - Accessory-locating network ID.
   See the `DULT Manufacturer Network ID Registry`_ from the DULT specification for a list of network IDs.
-* A knowledge on how to construct the Identifier Payload - The accessory-locating network defines its own identifier that allows the network to identify the accessory in case of unwanted tracking, and to share obfuscated accessory owner information with a tracked individual.
+* Knowledge on how to construct the Identifier Payload - The accessory-locating network defines its own identifier that allows the network to identify the accessory in case of unwanted tracking, and to share obfuscated accessory owner information with a tracked individual.
 
 .. rst-class:: numbered-step
 

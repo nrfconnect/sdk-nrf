@@ -123,7 +123,7 @@ int azure_iot_hub_dps_device_id_delete(void);
  *	  After this call, the library is put into an uninitialized state and must be initialized
  *	  again before the next provisioning attempt.
  *
- *  @retval 0 if successul, otherwise a negative error code.
+ *  @retval 0 if successful, otherwise a negative error code.
  *  @retval -EACCES if a DPS request is already in progress.
  *  @retval -EFAULT if there was in issue when erasing an already assigned IoT Hub from flash.
  */

@@ -1,7 +1,11 @@
 .. _ug_bootloader_adding:
 
-Adding a bootloader chain
-#########################
+Adding a bootloader chain using child and parent images
+#######################################################
+
+.. note::
+   This feature is now deprecated.
+   See :ref:`ug_bootloader_adding_sysbuild`.
 
 .. contents::
    :local:

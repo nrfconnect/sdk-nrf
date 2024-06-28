@@ -1,13 +1,13 @@
 .. _ug_multi_image:
 
-Multi-image builds
-##################
+Multi-image builds using child and parent images
+################################################
 
 .. contents::
    :local:
    :depth: 2
 
-.. important::
+.. caution::
     |sysbuild_related_deprecation_note|
 
 The firmware programmed to a device can be composed of either one application or several separate images.

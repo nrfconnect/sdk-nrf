@@ -37,6 +37,7 @@ Syntax
 
     Not supported on the :ref:`Thingy:91 <thingy91_ug_intro>` or nRF9160 DK board revisions older than 0.14.0 as they lack an external flash to store the firmware image.
     See :ref:`nrf9160_board_revisions` for more details.
+    Also, not currently supported on Thingy:91 X.
 
   * ``7`` - Read modem DFU area size and firmware image offset (for modem delta update).
   * ``9`` - Erase modem DFU area (for modem delta update).

@@ -28,9 +28,14 @@ config DESKTOP_BLE_QOS_STACK_SIZE
 	help
 	  Configure base stack size for QoS processing thread.
 
+DT_CHOSEN_NCS_BLE_QOS_UART := ncs,ble-qos-uart
+DT_COMP_ZEPHYR_CDC_ACM_UART := zephyr,cdc-acm-uart
+
 config DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
 	bool "Enable BLE QoS statistics printout"
-	depends on USB_DEVICE_STACK
+	depends on DESKTOP_USB_STACK_LEGACY
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_NCS_BLE_QOS_UART)) && \
+		$(dt_chosen_has_compat,$(DT_CHOSEN_NCS_BLE_QOS_UART),$(DT_COMP_ZEPHYR_CDC_ACM_UART))
 	select USB_COMPOSITE_DEVICE
 	select USB_CDC_ACM
 	select SERIAL

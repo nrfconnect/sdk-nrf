@@ -5,12 +5,13 @@
  */
 
 #include "diagnostic_logs_retention.h"
-#include "diagnostic_logs_network.h"
 
 #include <lib/support/CodeUtils.h>
 #include <system/SystemError.h>
 
 using namespace chip;
+
+K_MUTEX_DEFINE(sWriteMutex);
 
 CHIP_ERROR DiagnosticLogsRetention::Init()
 {
@@ -62,6 +63,9 @@ CHIP_ERROR DiagnosticLogsRetention::PushLog(const void *data, size_t size)
 	VerifyOrReturnError(mIsInitialized, CHIP_ERROR_INCORRECT_STATE);
 	VerifyOrReturnError(size < mCapacity, CHIP_ERROR_BUFFER_TOO_SMALL);
 
+	/* Make sure that no-one will start write operation from different thread in the same time. */
+	k_mutex_lock(&sWriteMutex, K_FOREVER);
+
 	int ret = 0;
 
 	const size_t freeSpace = mCapacity - mCurrentSize;
@@ -107,24 +111,19 @@ CHIP_ERROR DiagnosticLogsRetention::PushLog(const void *data, size_t size)
 	/* Update data description header. */
 	ret = retention_write(mPartition, 0, reinterpret_cast<uint8_t *>(&mCurrentSize), sizeof(mCurrentSize));
 
+	k_mutex_unlock(&sWriteMutex);
+
 	return CHIP_NO_ERROR;
 }
 
-CHIP_ERROR DiagnosticLogsRetention::GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog, uint32_t &readOffset,
-					    bool &readInProgress)
+CHIP_ERROR DiagnosticLogsRetention::GetLogs(chip::MutableByteSpan &outBuffer, uint32_t &readOffset, size_t totalSize,
+					    uint32_t dataBegin)
 {
-	const size_t currentSize = GetLogsSize();
-	const uint32_t dataBegin = GetLogsBegin();
 	int ret = 0;
 
-	if (!readInProgress) {
-		readOffset = dataBegin;
-		readInProgress = true;
-	}
-
 	/* Calculate how many bytes left to be read, considering previous iterations. */
-	const size_t readSize = readOffset >= dataBegin ? currentSize - readOffset + dataBegin :
-							  currentSize - (GetCapacity() - dataBegin + readOffset);
+	const size_t readSize = readOffset >= dataBegin ? totalSize - readOffset + dataBegin :
+							  totalSize - (GetCapacity() - dataBegin + readOffset);
 
 	/* Check if the whole buffer will fit into single chunk or the fragmentation is required. */
 	size_t size = outBuffer.size() > readSize ? readSize : outBuffer.size();
@@ -152,12 +151,40 @@ CHIP_ERROR DiagnosticLogsRetention::GetLogs(chip::MutableByteSpan &outBuffer, bo
 
 	outBuffer.reduce_size(size);
 
-	if (IsEnd(readOffset)) {
-		readInProgress = false;
+	return CHIP_NO_ERROR;
+}
+
+size_t DiagnosticLogsRetentionReader::GetLogsSize()
+{
+	return mDiagnosticLogsRetention.GetLogsSize();
+}
+
+CHIP_ERROR DiagnosticLogsRetentionReader::GetLogs(chip::MutableByteSpan &outBuffer, bool &outIsEndOfLog)
+{
+	CHIP_ERROR err = CHIP_NO_ERROR;
+	if (!mReadInProgress) {
+		/* Remember the data begin, the data end and the size, as these may change if writes will occur during read process. */
+		mTotalSize = mDiagnosticLogsRetention.GetLogsSize();
+		mDataBegin = mDiagnosticLogsRetention.GetLogsBegin();
+		mDataEnd = mDiagnosticLogsRetention.GetLogsEnd();
+		mReadOffset = mDataBegin;
+		mReadInProgress = true;
+	}
+
+	err = mDiagnosticLogsRetention.GetLogs(outBuffer, mReadOffset, mTotalSize, mDataBegin);
+
+	if (mDataEnd == mReadOffset) {
+		mReadInProgress = false;
 		outIsEndOfLog = true;
 	} else {
 		outIsEndOfLog = false;
 	}
 
+	return err;
+}
+
+CHIP_ERROR DiagnosticLogsRetentionReader::FinishLogs()
+{
+	/* Do nothing. */
 	return CHIP_NO_ERROR;
 }

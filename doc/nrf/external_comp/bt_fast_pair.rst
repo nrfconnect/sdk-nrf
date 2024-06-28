@@ -12,11 +12,7 @@ Google also provides additional features built upon the Fast Pair standard.
 For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
 
 .. note::
-   The Fast Pair support in the |NCS| is :ref:`experimental <software_maturity>`.
-   The implementation is not yet ready for production and extensions are not fully supported.
-
-   The implementation passes tests of `Fast Pair Validator app`_ (beta version).
-   The procedure triggered in Android settings is successful (tested with Android 11).
+   The software maturity level for the Fast Pair support in the |NCS| is indicated at the use case level in the :ref:`software_maturity_fast_pair_use_case` table and at the feature level in the :ref:`software_maturity_fast_pair_feature` table.
 
 Integration prerequisites
 *************************
@@ -172,14 +168,20 @@ To support the FMDN extension, set the **Find My Device** feature to **true** fo
 
 For an example that uses the **Find My Device** feature, see the :ref:`fast_pair_locator_tag` sample.
 
+.. note::
+   To test the FMDN extension with the debug (uncertified) device models, you must set up your Android test device.
+   Make sure your phone uses the primary email account that is registered on Google's email allow list for the FMDN feature.
+   To register your development email account, complete Google's device proposal form.
+   You can find the link to the device proposal form in the `Fast Pair Find My Device Network extension`_ specification.
+
 Provisioning registration data onto device
 ==========================================
 
 The Fast Pair standard requires provisioning the device with Model ID and Anti-Spoofing Private Key obtained during device model registration.
 In the |NCS|, the provisioning data is generated as a hexadecimal file using the :ref:`bt_fast_pair_provision_script`.
 
-If Fast Pair is enabled with the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option, the build system automatically calls the Fast Pair provision script and includes the resulting hexadecimal file in the firmware (the :file:`merged.hex` file).
-You must provide the following CMake options:
+When building the Fast Pair in the |NCS|, the build system automatically calls the Fast Pair provision script and includes the resulting hexadecimal file in the firmware (the :file:`merged.hex` file).
+To build an application with the Fast Pair support, include the following additional CMake options:
 
 * ``FP_MODEL_ID`` - Fast Pair Model ID in format ``0xXXXXXX``,
 * ``FP_ANTI_SPOOFING_KEY`` - base64-encoded Fast Pair Anti-Spoofing Private Key.
@@ -189,6 +191,7 @@ The ``bt_fast_pair`` partition address is provided automatically by the build sy
 For example, when building an application with the |nRFVSC|, you need to add the following parameters in the **Extra CMake arguments** field on the **Add Build Configuration view**: ``-DFP_MODEL_ID=0xFFFFFF -DFP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=``.
 Make sure to replace ``0xFFFFFF`` and ``AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=`` with values obtained for your device.
 See :ref:`cmake_options` for more information about defining CMake options.
+See the following sections for information on how to add the Google Fast Pair subsystem to your project.
 
 .. rst-class:: numbered-step
 
@@ -197,7 +200,29 @@ See :ref:`cmake_options` for more information about defining CMake options.
 Performing prerequisite operations
 **********************************
 
-You must enable the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option to support the Google Fast Pair standard in your project.
+To start integrating the Google Fast Pair subsystem in your project, complete the following prerequisite steps:
+
+* :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig`
+* :ref:`ug_bt_fast_pair_prerequisite_ops_api`
+
+The subsequent subsections describe required steps for enabling Fast Pair extensions supported in the |NCS|.
+
+.. _ug_bt_fast_pair_prerequisite_ops_kconfig:
+
+Enabling Fast Pair in Kconfig
+=============================
+
+If you are using the default |NCS| build system configuration with sysbuild and wish to add the Google Fast Pair subsystem to your project, enable the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option.
+If you do not use sysbuild, you must enable :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option at the main application image level.
+
+.. note::
+   Sysbuild sets the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in the main application image based on the value of the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option.
+   Your configuration of the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option at the main application image will be ineffective, as sysbuild overrides it.
+
+.. _ug_bt_fast_pair_prerequisite_ops_api:
+
+Enabling Fast Pair with API
+===========================
 
 An application can communicate with the Fast Pair subsystem using API calls and registered callbacks.
 The Fast Pair subsystem uses the registered callbacks to inform the application about the Fast Pair related events.
@@ -843,9 +868,10 @@ Tailoring protocol for specific use case
 ****************************************
 
 The specific use case of the Google Fast Pair application is indicated by the chosen device type in the Google Nearby Devices console (see the :ref:`ug_bt_fast_pair_provisioning_register_device_type` subsection).
-Different use cases may require implementation of additional guidelines for your accessory firmware or specific configuration of your device model in the Google Nearby Devices console.
-These requirements typically help to improve user experience or security properties for the chosen use case.
-To learn more, see the official `Fast Pair`_ documentation.
+In the official `Fast Pair`_ documentation, the `Fast Pair Device Feature Requirements`_ category defines additional requirements for each supported use case, and specifies a list of mandatory, optional, and unsupported Fast Pair features.
+If your product is targeting one of the listed use cases, you must align your accessory firmware to meet these requirements.
+
+To learn about the software maturity levels for Google Fast Pair use cases supported by the |NCS|, see the :ref:`software_maturity_fast_pair_use_case` table.
 
 Locator tag
 ===========
@@ -854,9 +880,14 @@ Locator tag is a small electronic device that can be attached to an object or a 
 The locator tags can use different wireless technologies like GPS, Bluetooth LE or UWB for location tracking.
 It is even possible to combine multiple technologies in a single product to improve the user experience.
 
-The FMDN Accessory specification lists `Fast Pair Locator Tag Specific Guidelines`_ for the locator tag use case.
+The `Fast Pair Device Feature Requirements for Locator Tags`_ documentation defines the Fast Pair requirements for the locator tag use case.
+If your product is targeting the locator tag use case, you must configure your application according to these requirements.
+Enable the mandatory Fast Pair features and extensions using the appropriate Kconfig options in your application's configuration.
+For the reference configuration of the `Fast Pair Device Feature Requirements for Locator Tags`_  specification, see the :ref:`fast_pair_locator_tag` sample.
+
+The `Fast Pair Device Feature Requirements for Locator Tags`_ documentation refers to the `Fast Pair Locator Tag Specific Guidelines`_ section from the FMDN Accessory specification.
 You must implement the guidelines at application level as they cannot be automatically handled by the Fast Pair subsystem.
-Implement these guidelines in your application if your product is targeting the locator tag use cases.
+Implement these guidelines in your application if your product is targeting the locator tag use case.
 To see how to implement `Fast Pair Locator Tag Specific Guidelines`_ , see the :ref:`fast_pair_locator_tag` sample.
 
 You should declare support for the locator tag use case during the device registration process in the Google Nearby Device console.
@@ -891,7 +922,7 @@ Required scripts
 ****************
 
 The :ref:`bt_fast_pair_provision_script` is required to generate the provisioning data for the device.
-When the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option is enabled, the build system automatically invokes the script during the application build.
+The build system calls it automatically when building with Fast Pair in the |NCS|.
 
 Terms and licensing
 *******************
