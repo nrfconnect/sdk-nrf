@@ -202,4 +202,6 @@ file(COPY ${CMAKE_CURRENT_LIST_DIR}/common
 if((NRF_SOC_VARIANT STREQUAL nrf54l15) OR (target STREQUAL nrf54l15))
   file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_key_ids.h
        DESTINATION ${INSTALL_INTERFACE_INC_DIR})
+  file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_kmu.h
+       DESTINATION ${INSTALL_INTERFACE_INC_DIR})
 endif()
