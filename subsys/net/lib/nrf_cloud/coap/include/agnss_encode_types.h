@@ -40,23 +40,27 @@ struct agnss_req_mask {
 	uint32_t agnss_req_mask;
 };
 
-struct agnss_req_rsrp {
-	int32_t agnss_req_rsrp;
+struct net_info {
+	uint32_t net_info_eci;
+	uint32_t net_info_mcc;
+	uint32_t net_info_mnc;
+	uint32_t net_info_tac;
+	int32_t net_info_rsrp;
+};
+
+struct agnss_req_ni {
+	struct net_info agnss_req_ni;
 };
 
 struct agnss_req {
 	struct agnss_req_types_r agnss_req_types;
 	bool agnss_req_types_present;
-	uint32_t agnss_req_eci;
 	struct agnss_req_filtered agnss_req_filtered;
 	bool agnss_req_filtered_present;
 	struct agnss_req_mask agnss_req_mask;
 	bool agnss_req_mask_present;
-	uint32_t agnss_req_mcc;
-	uint32_t agnss_req_mnc;
-	struct agnss_req_rsrp agnss_req_rsrp;
-	bool agnss_req_rsrp_present;
-	uint32_t agnss_req_tac;
+	struct agnss_req_ni agnss_req_ni;
+	bool agnss_req_ni_present;
 };
 
 #ifdef __cplusplus

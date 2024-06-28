@@ -414,14 +414,14 @@ int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const req
 	memset(&input, 0, sizeof(struct agnss_req));
 
 	if (request->net_info != NULL) {
-		input.agnss_req_eci = request->net_info->current_cell.id;
-		input.agnss_req_mcc = request->net_info->current_cell.mcc;
-		input.agnss_req_mnc = request->net_info->current_cell.mnc;
-		input.agnss_req_tac = request->net_info->current_cell.tac;
-		if (request->net_info->current_cell.rsrp != NRF_CLOUD_LOCATION_CELL_OMIT_RSRP) {
-			input.agnss_req_rsrp.agnss_req_rsrp = request->net_info->current_cell.rsrp;
-			input.agnss_req_rsrp_present = true;
-		}
+		struct net_info *ni = &input.agnss_req_ni.agnss_req_ni;
+
+		ni->net_info_eci = request->net_info->current_cell.id;
+		ni->net_info_mcc = request->net_info->current_cell.mcc;
+		ni->net_info_mnc = request->net_info->current_cell.mnc;
+		ni->net_info_tac = request->net_info->current_cell.tac;
+		ni->net_info_rsrp = request->net_info->current_cell.rsrp;
+		input.agnss_req_ni_present = true;
 	} else {
 		LOG_DBG("No net_info provided.");
 	}
