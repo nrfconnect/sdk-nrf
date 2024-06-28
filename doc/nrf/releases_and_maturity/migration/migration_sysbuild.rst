@@ -570,19 +570,16 @@ They function the same in both systems:
 Building with sysbuild
 ======================
 
-With |NCS| 2.7, building with ``west`` will use sysbuild by default in |NCS| repositories.
-To maintain compatibility with child/parent images, out-of-tree applications will not use sysbuild by default.
-Twister does not inherit this change and will not use sysbuild unless tests are updated.
-Similarly, CMake will not configure projects using sysbuild unless the invocation command is updated.
+Sysbuild needs to be enabled from the command-line when building with ``west build``.
+You can pass the ``--sysbuild`` parameter to the build command or :ref:`configure west to use sysbuild whenever you build <sysbuild_enabled_ncs_configuring>`.
+
+Similarly, you can pass the ``--no-sysbuild`` parameter to the build command to disable sysbuild.
+With these two parameters, which always take precedence over the west configuration, the usage of sysbuild can always be selected from the command line.
 
 .. note::
+    The |NCS| v2.7.0 :ref:`modifies the default behavior <sysbuild_enabled_ncs>` of ``west build``, so that building with west uses sysbuild for :ref:`repository applications <create_application_types_repository>` in the :ref:`SDK repositories <dm_repo_types>`.
 
-    Sysbuild can optionally be set as the default when using west.
-    This means that unless west is ran with ``--no-sysbuild`` then it will always use sysbuild
-
-    .. code-block:: shell
-
-        west config build.sysbuild True
+See the following command patterns for building with sysbuild for different use cases:
 
 .. tabs::
 
