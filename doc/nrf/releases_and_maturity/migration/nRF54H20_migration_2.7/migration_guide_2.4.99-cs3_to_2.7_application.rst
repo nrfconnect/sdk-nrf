@@ -95,13 +95,13 @@ Applications using the :file:`dfu_application.zip` file
      * Make sure that your DFU host tools support the :file:`dfu_application.zip` file with the new format version (``1``).
        If the tools do not support the new format version and you cannot update them, you can manually align the content of the zip archive generated with format version ``1`` to version ``0``:
 
-     * Build your application in the same configuration with the |NCS| v2.6 release to obtain a reference file :file:`dfu_application.zip` with format version ``0``.
-     * Manually align the content of the :file:`dfu_application.zip` file generated with format version ``1``:
+       * Build your application in the same configuration with the |NCS| v2.6 release to obtain a reference file :file:`dfu_application.zip` with format version ``0``.
+       * Manually align the content of the :file:`dfu_application.zip` file generated with format version ``1``:
 
-       * Align the properties described in the :file:`manifest.json` file.
-         Make sure to update all of the fields that are used by the selected DFU host tool.
-       * Rename the binary files that are included in the zip archive to match the file names used by the updated manifest.
-         The binary file content is interoperable across |NCS| releases.
+         * Align the properties described in the :file:`manifest.json` file.
+           Make sure to update all of the fields that are used by the selected DFU host tool.
+         * Rename the binary files that are included in the zip archive to match the file names used by the updated manifest.
+           The binary file content is interoperable across |NCS| releases.
 
 Devicetree
 ----------
@@ -735,7 +735,7 @@ nRF Desktop
 Several changes have been made to migrate the :ref:`nrf_desktop` application to the |NCS| v2.7.0:
 
 * The :ref:`ipc_radio` image is a universal network core image serves are a substitute for the  ``hci_ipc``, :ref:`ble_rpc_host`, and IEEE 802.15.4 remote images from the deprecated ``sdk-nrf-next`` repository.
-  Due to this, the radio core now uses the :ref:`ipc_radio` application from ``sdk-nrf`` instead of the :ref:`zephyr:bluetooth-hci-ipc-sample` sample from ``sdk-zephyr``.
+  Due to this, the radio core now uses the :ref:`ipc_radio` application from ``sdk-nrf`` instead of the ``hci_rpmsg`` sample from ``sdk-zephyr``.
 
   The radio core image configuration files have been moved from the :file:`configuration/nrf54h20dk_nrf54h20_cpuapp/child_image/hci_rpmsg` directory to the :file:`configuration/nrf54h20dk_nrf54h20_cpurad/images/ipc_radio` directory.
 
