@@ -575,7 +575,7 @@ struct nrf_cloud_credentials_status {
 #endif
 /** @brief NMEA data */
 struct nrf_cloud_gnss_nmea {
-	/** NULL-terminated NMEA sentence. Supported types are GPGGA, GPGLL, GPRMC.
+	/** Null-terminated NMEA sentence. Supported types are GPGGA, GPGLL, GPRMC.
 	 * Max string length is NRF_MODEM_GNSS_NMEA_MAX_LEN - 1
 	 */
 	const char *sentence;
@@ -640,7 +640,7 @@ typedef void (*nrf_cloud_event_handler_t)(const struct nrf_cloud_evt *evt);
 struct nrf_cloud_init_param {
 	/** Event handler that is registered with the module. */
 	nrf_cloud_event_handler_t event_handler;
-	/** NULL-terminated MQTT client ID string.
+	/** Null-terminated MQTT client ID string.
 	 * Must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN.
 	 * Must be set if NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
 	 * is enabled; otherwise, NULL.
@@ -822,13 +822,32 @@ int nrf_cloud_modem_fota_completed(const bool fota_success);
 /**
  * @brief Retrieve the current device ID.
  *
- * @param[in,out] id_buf Buffer to receive the device ID.
- * @param[in] id_len     Size of buffer (NRF_CLOUD_CLIENT_ID_MAX_LEN).
+ * @param[in,out] id_buf Buffer to receive the device ID as a null-terminated string.
+ * @param[in] id_buf_sz  Size of buffer, maximum size is NRF_CLOUD_CLIENT_ID_MAX_LEN + 1.
+ *
+ * @retval 0         If successful.
+ * @retval -EMSGSIZE The provided buffer is too small.
+ * @retval -EIO      The client ID could not be initialized.
+ * @retval -ENXIO    The Kconfig option @kconfig{CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME} is enabled
+ *                   but the runtime client ID has not been set.
+ *                   See @ref nrf_cloud_client_id_runtime_set.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_client_id_get(char *id_buf, size_t id_buf_sz);
+
+/**
+ * @brief Set the device ID at runtime.
+ *        Requires @kconfig{CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME} to be enabled.
+ *
+ * @note This function does not perform any management of the device's connection to nRF Cloud.
+ *
+ * @param[in] client_id Null-terminated device ID string.
+ *                      Max string length is NRF_CLOUD_CLIENT_ID_MAX_LEN.
  *
  * @retval 0 If successful.
  * @return A negative value indicates an error.
  */
-int nrf_cloud_client_id_get(char *id_buf, size_t id_len);
+int nrf_cloud_client_id_runtime_set(const char *const client_id);
 
 /**
  * @brief Retrieve the current customer tenant ID.

@@ -408,6 +408,12 @@ Libraries for networking
 
   * Added the function :c:func:`nrf_cloud_rest_shadow_transform_request` to request shadow data using a JSONata expression.
 
+* :ref:`lib_nrf_cloud` library:
+
+  * Added the :c:func:`nrf_cloud_client_id_runtime_set` function to set the device ID string if the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` Kconfig option is enabled.
+
+  * Updated the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` Kconfig option to be available with CoAP and REST.
+
 Libraries for NFC
 -----------------
 

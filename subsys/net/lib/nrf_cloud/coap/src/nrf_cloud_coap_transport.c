@@ -438,8 +438,8 @@ static int client_transfer(enum coap_method method,
 		strncpy(path, resource, MAX_COAP_PATH);
 		path[MAX_COAP_PATH] = '\0';
 	} else {
-		err = snprintf(path, MAX_COAP_PATH, "%s?%s", resource, query);
-		if ((err < 0) || (err >= MAX_COAP_PATH)) {
+		err = snprintf(path, sizeof(path), "%s?%s", resource, query);
+		if ((err <= 0) || (err >= sizeof(path))) {
 			LOG_ERR("Could not format string");
 			err = -ETXTBSY;
 			goto transfer_end;

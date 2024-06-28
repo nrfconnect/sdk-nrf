@@ -23,6 +23,7 @@
 #include "nrf_cloud_coap_transport.h"
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_mem.h"
+#include "nrf_cloud_client_id.h"
 #include "coap_codec.h"
 
 #include <zephyr/logging/log.h>
@@ -58,23 +59,27 @@ static int64_t get_ts(void)
 
 static const char *get_d2c_resource(bool bulk)
 {
-	char id_buf[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
-	static char d2c_bulk_rsc[sizeof(id_buf) + COAP_D2C_RSC_MAX_LEN];
+	static char d2c_bulk_rsc[NRF_CLOUD_CLIENT_ID_MAX_LEN + COAP_D2C_RSC_MAX_LEN + 1];
 
 	if (!bulk) {
 		return COAP_D2C_RSC;
 	}
 
 	if (!d2c_bulk_rsc[0]) {
-		int err = nrf_cloud_client_id_get(id_buf, sizeof(id_buf));
+		const char *id_ptr;
+		int err = nrf_cloud_client_id_ptr_get(&id_ptr);
 
 		if (err) {
-			LOG_ERR("Failed to retrieve the device id: %d", err);
+			LOG_ERR("Failed to retrieve the device ID: %d", err);
 			return NULL;
 		}
 
-		snprintk(d2c_bulk_rsc, sizeof(d2c_bulk_rsc) - 1,
-			 COAP_D2C_BULK_RSC, id_buf);
+		err = snprintk(d2c_bulk_rsc, sizeof(d2c_bulk_rsc), COAP_D2C_BULK_RSC, id_ptr);
+		if ((err <= 0) || (err >= sizeof(d2c_bulk_rsc))) {
+			LOG_ERR("Failed to format d2c resource string");
+			d2c_bulk_rsc[0] = 0;
+			return NULL;
+		}
 	}
 	return d2c_bulk_rsc;
 }

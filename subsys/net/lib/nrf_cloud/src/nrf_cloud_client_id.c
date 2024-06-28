@@ -38,56 +38,24 @@ BUILD_ASSERT(IMEI_CLIENT_ID_LEN <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID)
-BUILD_ASSERT((sizeof(HW_ID_LEN) - 1) <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
+BUILD_ASSERT((HW_ID_LEN - 1) <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
 	"HW_ID_LEN must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN");
 #endif
 
-int nrf_cloud_client_id_get(char *id_buf, size_t id_len)
+/* Semaphore for client ID buffer access */
+static K_SEM_DEFINE(client_id_sem, 1, 1);
+/* Null-terminated nRF Cloud device/client ID string*/
+static char client_id_buf[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
+/* Client ID string length */
+static size_t client_id_len;
+
+static int configured_client_id_init(void)
 {
-	int ret;
-
-#if defined(CONFIG_NRF_CLOUD_MQTT)
-	/* For MQTT, the client ID is allocated and generated when nrf_cloud_init is called,
-	 * so just get a copy.
-	 */
-	ret = nct_client_id_get(id_buf, id_len);
-#else
-	ret = -ENODEV;
-#endif
-
-#if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_COAP)
-	if (ret != 0) {
-		/* For REST and CoAP, the client ID is generated on demand. */
-		ret = nrf_cloud_configured_client_id_get(id_buf, id_len);
-	}
-#endif
-
-	return ret;
-}
-
-size_t nrf_cloud_configured_client_id_length_get(void)
-{
-#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
-	return IMEI_CLIENT_ID_LEN;
-#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
-	return NRF_DEVICE_UUID_STR_LEN;
-#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
-	return (sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1);
-#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID)
-	return HW_ID_LEN - 1;
-#else
-	return 0;
-#endif
-}
-
-int nrf_cloud_configured_client_id_get(char * const buf, const size_t buf_sz)
-{
-	if (!buf || !buf_sz) {
-		return -EINVAL;
-	}
-
 	int err;
 	int print_ret;
+	const size_t buf_sz = sizeof(client_id_buf);
+
+	(void)k_sem_take(&client_id_sem, K_FOREVER);
 
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
 	char imei_buf[CGSN_RESPONSE_LENGTH];
@@ -95,12 +63,12 @@ int nrf_cloud_configured_client_id_get(char * const buf, const size_t buf_sz)
 	err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), "AT+CGSN");
 	if (err) {
 		LOG_ERR("Failed to obtain IMEI, error: %d", err);
-		return err;
+		goto cleanup;
 	}
 
 	imei_buf[NRF_IMEI_LEN] = 0;
 
-	print_ret = snprintk(buf, buf_sz, "%s%.*s",
+	print_ret = snprintk(client_id_buf, buf_sz, "%s%.*s",
 			     CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX,
 			     NRF_IMEI_LEN, imei_buf);
 
@@ -110,10 +78,10 @@ int nrf_cloud_configured_client_id_get(char * const buf, const size_t buf_sz)
 	err = modem_jwt_get_uuids(&dev_id, NULL);
 	if (err) {
 		LOG_ERR("Failed to get device UUID: %d", err);
-		return err;
+		goto cleanup;
 	}
 
-	print_ret = snprintk(buf, buf_sz, "%s", dev_id.str);
+	print_ret = snprintk(client_id_buf, buf_sz, "%s", dev_id.str);
 
 #elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID)
 	char hw_id_buf[HW_ID_LEN];
@@ -121,28 +89,123 @@ int nrf_cloud_configured_client_id_get(char * const buf, const size_t buf_sz)
 	err = hw_id_get(hw_id_buf, ARRAY_SIZE(hw_id_buf));
 	if (err) {
 		LOG_ERR("Failed to obtain hardware ID, error: %d", err);
-		return err;
+		goto cleanup;
 	}
-	print_ret = snprintk(buf, buf_sz, "%s", hw_id_buf);
+	print_ret = snprintk(client_id_buf, buf_sz, "%s", hw_id_buf);
 
 #elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
-	ARG_UNUSED(err);
-	print_ret = snprintk(buf, buf_sz, "%s", CONFIG_NRF_CLOUD_CLIENT_ID);
+	print_ret = snprintk(client_id_buf, buf_sz, "%s", CONFIG_NRF_CLOUD_CLIENT_ID);
 #else
-	ARG_UNUSED(err);
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
 		LOG_WRN("Configured for runtime client ID");
 	} else {
 		LOG_WRN("Unhandled client ID configuration");
 	}
-	return -ENODEV;
+
+	err = -ENODEV;
+	goto cleanup;
 #endif
 
 	if (print_ret <= 0) {
-		return -EIO;
+		err = -EIO;
+		goto cleanup;
 	} else if (print_ret >= buf_sz) {
-		return -EMSGSIZE;
+		err = -EMSGSIZE;
+		goto cleanup;
 	}
 
+	/* On success, set the ID length */
+	client_id_len = print_ret;
+	err = 0;
+
+cleanup:
+	k_sem_give(&client_id_sem);
+
+	return err;
+}
+
+static int client_id_init(void)
+{
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME) && (!client_id_len)) {
+		LOG_ERR("Runtime client ID has not been set");
+		return -ENXIO;
+	}
+
+	if (!client_id_len) {
+		int err = configured_client_id_init();
+
+		if (err) {
+			LOG_ERR("Failed to initialize client ID, error: %d", err);
+			return -EIO;
+		}
+	}
+
+	return 0;
+}
+
+int nrf_cloud_client_id_ptr_get(const char **client_id)
+{
+	if (!client_id) {
+		return -EINVAL;
+	}
+
+	int err = client_id_init();
+
+	if (!err) {
+		*client_id = client_id_buf;
+	}
+
+	return err;
+}
+
+int nrf_cloud_client_id_get(char *id_buf, size_t id_buf_sz)
+{
+	if (!id_buf || (id_buf_sz == 0)) {
+		return -EINVAL;
+	}
+
+	int err = client_id_init();
+
+	if (!err) {
+		(void)k_sem_take(&client_id_sem, K_FOREVER);
+
+		const size_t reqd_sz = client_id_len + 1;
+
+		if (id_buf_sz < reqd_sz) {
+			LOG_ERR("Provided client ID buffer is too small, required size: %d ",
+				reqd_sz);
+			err = -EMSGSIZE;
+		} else {
+			memcpy(id_buf, client_id_buf, reqd_sz);
+		}
+
+		(void)k_sem_give(&client_id_sem);
+	}
+
+	return err;
+}
+
+int nrf_cloud_client_id_runtime_set(const char *const client_id)
+{
+	__ASSERT_NO_MSG(client_id != NULL);
+	__ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME),
+		 "CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME is not enabled");
+
+	size_t len = strlen(client_id);
+
+	if (len > NRF_CLOUD_CLIENT_ID_MAX_LEN) {
+		LOG_ERR("Client ID length %u exceeds max %u", len, NRF_CLOUD_CLIENT_ID_MAX_LEN);
+		return -EINVAL;
+	} else if (len == 0) {
+		LOG_ERR("Invalid client ID; empty string");
+		return -ENODATA;
+	}
+
+	(void)k_sem_take(&client_id_sem, K_FOREVER);
+
+	client_id_len = len;
+	memcpy(client_id_buf, client_id, client_id_len + 1);
+
+	(void)k_sem_give(&client_id_sem);
 	return 0;
 }
