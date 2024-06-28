@@ -56,7 +56,9 @@ Just as for creating the application, you can build the application using either
          The board targets supported for a given application are always listed in its requirements section.
 
          |sysbuild_autoenabled_ncs|
+
          The command can be expanded with :ref:`optional_build_parameters`, such as :ref:`custom CMake options <cmake_options>` or the ``--no-sysbuild`` parameter that disables building with sysbuild.
+         |parameters_override_west_config|
 
        After running the ``west build`` command, the build files can be found in the main build directory or in the application-named sub-directories in the main build directory (or both, depending on your project structure).
        |output_files_note|
