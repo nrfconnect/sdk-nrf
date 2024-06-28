@@ -19,3 +19,7 @@
 ipc0: &cpuapp_cpuppr_ipc {
 	status = "okay";
 };
+
+&uart135 {
+	/delete-property/ hw-flow-control;
+};

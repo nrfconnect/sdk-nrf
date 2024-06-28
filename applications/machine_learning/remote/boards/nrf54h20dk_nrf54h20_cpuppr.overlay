@@ -84,3 +84,7 @@ ipc1: &cpuapp_cpuppr_ipc {
 &cpuapp_bellboard {
 	status = "okay";
 };
+
+&uart135 {
+	/delete-property/ hw-flow-control;
+};
