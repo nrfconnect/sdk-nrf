@@ -47,7 +47,7 @@ To build |NSIB| with a Zephyr or |NCS| sample, enable the ``SB_CONFIG_SECURE_BOO
 |how_to_configure|
 
 Like other images, you can assign image-specific configurations at build time to further customize the bootloader's functionality.
-For details, see :ref:`zephyr:sysbuild` documentation.
+For details, see :ref:`zephyr:sysbuild` documentation in Zephyr.
 
 To ensure that the immutable bootloader occupies as little flash memory as possible, you can also apply the :file:`prj_minimal.conf` configuration:
 
@@ -232,7 +232,7 @@ To build :doc:`MCUboot <mcuboot:index-ncs>` with a Zephyr or |NCS| sample, enabl
 
 |how_to_configure|
 Like other images, you can assign image-specific configurations at build time to further customize the bootloader's functionality.
-For details, see :ref:`zephyr:sysbuild` documentation.
+For details, see :ref:`zephyr:sysbuild` documentation in Zephyr.
 
 Configuring MCUboot as an immutable bootloader
 ----------------------------------------------

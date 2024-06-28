@@ -19,7 +19,7 @@ The current hardware model adds support for the following features:
 * Support for multi-core, multi-architecture Asymmetrical Multi Processing (AMP) SoCs.
 * Support for multi-SoC boards.
 * Support for reusing the SoC and board Kconfig trees outside of the Zephyr and |NCS| build system.
-* Support for advanced use cases with :ref:`zephyr:sysbuild`.
+* Support for advanced use cases with :ref:`configuration_system_overview_sysbuild`.
 * Removal of all existing arbitrary and inconsistent uses of Kconfig and folder names.
 
 For more information about the rationale, development, and concepts behind the new model, see the following links:
