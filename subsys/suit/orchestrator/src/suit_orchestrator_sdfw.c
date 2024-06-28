@@ -20,6 +20,7 @@
 #include "suit_plat_err.h"
 #include <suit_execution_mode.h>
 #include <suit_dfu_cache.h>
+#include <suit_validator.h>
 
 LOG_MODULE_REGISTER(suit_orchestrator, CONFIG_SUIT_LOG_LEVEL);
 
@@ -98,6 +99,11 @@ static int validate_update_candidate_address_and_size(const uint8_t *addr, size_
 		return -EFAULT;
 	}
 
+	if (suit_validator_validate_update_candidate_location(addr, size) != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Invalid update candidate location");
+		return -EACCES;
+	}
+
 	return 0;
 }
 
@@ -116,6 +122,12 @@ static int initialize_dfu_cache(const suit_plat_mreg_t *update_regions, size_t u
 	cache.pools_count = update_regions_len - 1;
 
 	for (size_t i = 1; i < update_regions_len; i++) {
+		if (suit_validator_validate_cache_pool_location(update_regions[i].mem,
+								   update_regions[i].size) !=
+		    SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Invalid cache partition %d location", i);
+			return -EACCES;
+		}
 		cache.pools[i - 1].address = (uint8_t *)update_regions[i].mem;
 		cache.pools[i - 1].size = update_regions[i].size;
 	}
