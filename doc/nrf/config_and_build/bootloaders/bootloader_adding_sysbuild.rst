@@ -46,7 +46,8 @@ To build |NSIB| with a Zephyr or |NCS| sample, enable the ``SB_CONFIG_SECURE_BOO
 
 |how_to_configure|
 
-Like other images, :ref:`image-specific configurations <ug_multi_image_variables>` can be assigned at build time to further customize the bootloader's functionality.
+Like other images, you can assign image-specific configurations at build time to further customize the bootloader's functionality.
+For details, see :ref:`zephyr:sysbuild` documentation.
 
 To ensure that the immutable bootloader occupies as little flash memory as possible, you can also apply the :file:`prj_minimal.conf` configuration:
 
@@ -230,7 +231,8 @@ To build :doc:`MCUboot <mcuboot:index-ncs>` with a Zephyr or |NCS| sample, enabl
    west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- -DSB_CONFIG_BOOTLOADER_MCUBOOT=y
 
 |how_to_configure|
-Like other images, you can assign :ref:`image-specific configurations <ug_multi_image_variables>` at build time to further customize the bootloader's functionality.
+Like other images, you can assign image-specific configurations at build time to further customize the bootloader's functionality.
+For details, see :ref:`zephyr:sysbuild` documentation.
 
 Configuring MCUboot as an immutable bootloader
 ----------------------------------------------
