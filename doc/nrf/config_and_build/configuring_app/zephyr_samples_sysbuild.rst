@@ -7,7 +7,7 @@ With the introduction of sysbuild in |NCS|, images for devices that have multipl
 For applications and samples in the |NCS| repository, this is handled automatically but for samples that are in the ``zephyr`` directory that come from upstream Zephyr, these images must be selected manually when building an image for nRF53 devices.
 
 .. note::
-   As nRF52 is`` a single core device, no additional images are needed for Bluetooth samples.
+   As nRF52 is a single core device, no additional images are needed for Bluetooth samples.
 
 +---------------------------------------------------------+-------------------------------------------+-----------+----------+-----------------------------------------------------------------------------------------------------------------------+
 | Sysbuild Kconfig option                                 | Image                                     | Bluetooth | 802.15.4 | Details                                                                                                               |

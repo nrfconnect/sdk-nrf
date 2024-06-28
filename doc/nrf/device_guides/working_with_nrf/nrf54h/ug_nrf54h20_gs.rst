@@ -170,7 +170,7 @@ Using the nRF54H20 DK with the |NCS| v2.7.0 requires the following:
 
 #. On MacOS and Linux, give ``nrfutil`` execute permissions by typing ``chmod +x nrfutil`` in a terminal or using a file browser.
    This is typically a checkbox found under file properties.
-#. On MacOS, To run the nrfutil executable you need to allow it in the system settings.
+#. On MacOS, to run the nrfutil executable you need to allow it in the system settings.
 #. Verify the version of the nRF Util installation on your machine by running the following command::
 
       nrfutil --version
