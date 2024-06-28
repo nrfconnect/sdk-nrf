@@ -8,4 +8,6 @@ SUIT samples
    :caption: Subpages
    :glob:
 
-   ../../../samples/suit/*/README
+   ../../../samples/suit/smp_transfer/README
+   ../../../samples/suit/flash_companion/README
+   ../../../samples/suit/recovery/README
