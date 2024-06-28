@@ -6,12 +6,13 @@
 
       nrfutil device recover --core Application
 
-   You can then run ``west flash`` to program your application.
+   If your sample also uses the radio core, you must also erase the UICRs for the radio core.
+   To erase the UICR for the radio core, run the following command::
+
+      nrfutil device recover --core Network
+
    For more information on the command, run::
 
       nrfutil device recover --help
 
-If your sample also uses the radio core, you must also erase the UICRs for the radio core.
-To erase the UICR for the radio core, run the following command::
-
-      nrfutil device recover --core Network
+   You can then run ``west flash`` to program your application.

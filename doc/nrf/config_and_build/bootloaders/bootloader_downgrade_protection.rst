@@ -39,7 +39,7 @@ To enable this feature, set the configuration option :kconfig:option:`CONFIG_MCU
    The default mode applies only to the application core and not the network core, potentially resulting in a version mismatch.
 
    In such cases, the application could roll back to a previous working version, but the network core would remain unchanged, leading to inconsistencies.
-   If the network core remains compatible with a previous version, these issues may go unnoticed for an extended period, making them difficult to debug.
+   If the network core remains compatible with an updated version, these issues may go unnoticed for an extended period, making them difficult to debug.
 
 You can compile your application with this feature as follows:
 
