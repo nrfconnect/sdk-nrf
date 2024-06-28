@@ -34,7 +34,7 @@ API documentation
 *****************
 
 | Header file: :file:`include/modem/at_cmd_parser.h`
-| Source file: :file:`lib/at_cmd_parser/src/at_cmd_parser.c`
+| Source file: :file:`lib/at_cmd_parser/at_cmd_parser.c`
 
 .. doxygengroup:: at_cmd_parser
    :project: nrf

@@ -30,4 +30,4 @@ API documentation
 
 The library does not expose any API of its own.
 
-| Source files: :file:`lib/gcf_sms/gcf_sms.c`
+| Source file: :file:`lib/gcf_sms/gcf_sms.c`
