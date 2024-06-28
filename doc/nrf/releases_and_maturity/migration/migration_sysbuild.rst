@@ -20,7 +20,7 @@ This results in the CMake configuration step running more than once, as this inf
 * Sysbuild output files have different names and locations (they are namespaced).
 * Sysbuild introduces support for file suffixes, replacing the deprecated build type used by child/parent images.
 
-The changes needed to convert a child/parent image project to a Sysbuild project depend on the features used.
+The changes needed to convert a child/parent image project to a sysbuild project depend on the features used.
 Review how :ref:`sysbuild` works to understand the basic usage and configuration methods, and how these differ from a child image build, before proceeding with project migration according to the guidelines listed in the following sections.
 
 .. _child_parent_to_sysbuild_migration_sysbuild_configuration_file:
