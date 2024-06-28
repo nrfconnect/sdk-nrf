@@ -131,6 +131,11 @@ BUILD_ASSERT(!((IS_ENABLED(CONFIG_LOG_BACKEND_UART_OUTPUT_TEXT) ||
 		&& IS_ENABLED(CONFIG_LOG_FMT_SECTION_STRIP)),
 		"CONFIG_LOG_FMT_SECTION_STRIP is not compatible with text logging.");
 
+#if defined(CONFIG_NRF_CLOUD_LOG_DICTIONARY_LOGGING_ENABLED)
+BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT),
+	     "nRF Cloud dictionary logging is only available for MQTT");
+#endif
+
 LOG_BACKEND_DEFINE(log_nrf_cloud_backend, logger_api, false);
 /* Reduce reported log_buf size by 1 so we can null terminate */
 LOG_OUTPUT_DEFINE(log_nrf_cloud_output, logger_out, log_buf, (sizeof(log_buf) - 1));
