@@ -7,7 +7,7 @@ Migrate your application for the nRF54H20 DK to |NCS| v2.7.0 (for v2.4.99-cs3 us
    :local:
    :depth: 2
 
-This document describes the changes you should be aware of when migrating your application from |NCS| v2.4.99-cs3 to |NCS| v2.7.0.
+This document describes the changes you should be aware of when migrating your application from the |NCS| v2.4.99-cs3 to the |NCS| v2.7.0.
 
 Overview
 ********
