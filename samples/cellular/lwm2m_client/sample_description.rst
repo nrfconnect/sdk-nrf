@@ -827,7 +827,7 @@ This sample application uses the following |NCS| libraries and drivers:
 * :ref:`lib_lwm2m_client_utils`
 * :ref:`lib_lwm2m_location_assistance`
 * :ref:`modem_info_readme`
-* :ref:`at_cmd_parser_readme`
+* :ref:`at_parser_readme`
 * :ref:`dk_buttons_and_leds_readme`
 * :ref:`lte_lc_readme`
 * :ref:`lib_date_time`
