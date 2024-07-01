@@ -100,11 +100,14 @@ The HID service specification does not require encryption (:kconfig:option:`CONF
 Building and running
 ********************
 
-To build this sample with the :ref:`nrf_rpc_ipc_readme` library on the nRF5340 DK, set the :makevar:`EXTRA_CONF_FILE` option to the :file:`overlay-nrf_rpc.conf` file.
+To build this sample with the :ref:`ble_rpc` library, add the following parameters:
+
+* set the :makevar:`SNIPPET` option to ``nordic-bt-rpc``,
+* set the :makevar:`FILE_SUFFIX` option to ``bt_rpc``.
 
 .. code-block::
 
-   west build -b nrf5340dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-nrf_rpc.conf
+   west build -b board_name -S nordic-bt-rpc -- -DFILE_SUFFIX=bt_rpc
 
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_hids_mouse`
 
