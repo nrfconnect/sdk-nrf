@@ -6,9 +6,10 @@
 
 #include <zephyr/ztest.h>
 #include <zephyr/fff.h>
+#include "audio_module/audio_module.h"
 
 #include "audio_module_test_common.h"
-#include "audio_module/audio_module.h"
+#include "audio_module_test_fakes.h"
 
 const char *TEST_INSTANCE_NAME = "Test instance";
 const char *TEST_STRING = "This is a test string";
@@ -19,6 +20,7 @@ void test_context_set(struct mod_context *ctx, struct mod_config const *const co
 	memcpy(&ctx->test_string, TEST_STRING, sizeof(TEST_STRING));
 	ctx->test_uint32 = TEST_UINT32;
 	memcpy(&ctx->config, config, sizeof(struct mod_config));
+	fake_fifo_counter_reset();
 }
 
 int test_open_function(struct audio_module_handle_private *handle,
@@ -96,8 +98,14 @@ int test_data_process_function(struct audio_module_handle_private *handle,
 	ARG_UNUSED(handle);
 
 	memcpy(audio_data_tx, audio_data_rx, sizeof(struct audio_data));
-	memcpy(audio_data_tx->data, audio_data_rx->data, audio_data_rx->data_size);
-	audio_data_tx->data_size = audio_data_rx->data_size;
+
+	if (audio_data_rx->data != NULL && audio_data_tx->data != NULL) {
+		memcpy(audio_data_tx->data, audio_data_rx->data, audio_data_rx->data_size);
+
+		audio_data_tx->data_size = audio_data_rx->data_size;
+	} else {
+		printk("The input and output data pointers are NULL");
+	}
 
 	return 0;
 }

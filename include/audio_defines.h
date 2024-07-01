@@ -57,7 +57,7 @@ struct audio_metadata {
 	 *     bits_per_sample = 24
 	 *     carrier_size    = 32
 	 */
-	uint8_t carried_bits_pr_sample;
+	uint8_t carried_bits_per_sample;
 
 	/* A 32 bit mask indicating which channel(s)/locations are active within
 	 * the data. A bit set indicates the location is active and

@@ -18,6 +18,7 @@
 #define TEST_CONNECTIONS_NUM	   (5)
 #define TEST_MODULES_NUM	   (TEST_CONNECTIONS_NUM - 1)
 #define TEST_MOD_DATA_SIZE	   (40)
+#define TEST_AUDIO_DATA_ITEMS_NUM  (20)
 
 struct mod_config {
 	int test_int1;
