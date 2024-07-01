@@ -71,6 +71,12 @@ function(partition_manager)
                    "${static_configuration_file}"
     )
     set(static_configuration --static-config ${static_configuration_file})
+
+    # Add a watch on this static PM file for changes so a CMake reconfigure occurs
+    set_property(DIRECTORY APPEND PROPERTY
+                 CMAKE_CONFIGURE_DEPENDS
+                 ${static_configuration_file}
+    )
   endif()
 
   if(NOT "${PM_DOMAIN}" STREQUAL "CPUNET" AND NOT static_configuration AND
