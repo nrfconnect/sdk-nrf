@@ -920,6 +920,8 @@ ci_tests_subsys_audio_module:
   files:
     - nrf/subsys/audio_module/
     - nrf/tests/subsys/audio_module/
+    - nrf/subsys/audio/
+    - nrf/tests/subsys/audio/
 
 ci_tests_subsys_mpsl:
   files:

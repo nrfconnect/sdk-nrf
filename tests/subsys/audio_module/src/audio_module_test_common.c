@@ -105,6 +105,7 @@ int test_data_process_function(struct audio_module_handle_private *handle,
 		audio_data_tx->data_size = audio_data_rx->data_size;
 	} else {
 		printk("The input and output data pointers are NULL");
+		return -1;
 	}
 
 	return 0;
