@@ -128,7 +128,7 @@ The sample can be built for the following configurations:
 
 * Wi-Fi throughput only
 * Bluetooth LE throughput only
-* Concurrent Wi-Fi and Bluetooth LE throughput (with coexistence enabled and disabled mode)
+* Concurrent Wi-Fi and Bluetooth LE throughput (with coexistence enabled and disabled modes)
 
 To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following are examples of the CLI commands:
@@ -149,7 +149,7 @@ Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or con
 
 Use this command for concurrent Wi-Fi and Bluetooth LE throughput with coexistence enabled test.
 
-Change the board target as given below for the nRF7001 DK, nRF7002 EK and nRF7001 EK.
+Change the board target as given below for the nRF7001 DK, nRF7002 EK, and nRF7001 EK.
 
 * Board target for nRF7001 DK:
 
@@ -177,7 +177,7 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
      -DSHIELD=nrf7002ek_nrf7001 -Dipc_radio_SHIELD=nrf7002ek_nrf7001_coex
 
-The generated HEX file to be used is :file:`ble_coex/build/zephyr/merged_domains.hex`.
+The generated HEX file to be used is :file:`ble_coex/build/merged.hex`.
 
 Use the Bluetooth throughput sample from the :file:`nrf/samples/bluetooth/throughput` folder on the peer nRF5340 DK device.
 
@@ -187,7 +187,7 @@ Build for the nRF5340 DK:
 
    west build -p -b nrf5340dk/nrf5340/cpuapp
 
-The generated HEX file to be used is :file:`throughput/build/zephyr/merged_domains.hex`.
+The generated HEX file to be used is :file:`throughput/build/merged.hex`.
 
 Connecting to DKs
 =================
@@ -225,7 +225,7 @@ To program the nRF5340 DK:
 
    .. code-block:: console
 
-      $ west flash --dev-id <device-id> --hex-file build/zephyr/merged_domains.hex
+      $ west flash --dev-id <device-id> --hex-file build/merged.hex
 
 To program the nRF7002 DK:
 
@@ -235,7 +235,7 @@ To program the nRF7002 DK:
 
    .. code-block:: console
 
-      $ west flash --dev-id <device-id> --hex-file build/zephyr/merged_domains.hex
+      $ west flash --dev-id <device-id> --hex-file build/merged.hex
 
 Testing
 =======
@@ -273,9 +273,8 @@ The Bluetooth LE throughput result appears on the minicom terminal connected to 
 Results
 =======
 
-The following tables collect a summary of results obtained when coexistence tests are run for different Wi-Fi operating bands, antenna configurations, and Wi-Fi modes.
-The tests are run with the test setup inside an RF shield box.
-Therefore, the results are representative and might change with adjustments in the test setup.
+The following tables summarize the results obtained from coexistence tests conducted in a clean RF environment for different Wi-Fi operating bands, antenna configurations, and Wi-Fi modes.
+These results are representative and might vary based on the RSSI and the level of external interference.
 
 Wi-Fi in 2.4 GHz
 ----------------
