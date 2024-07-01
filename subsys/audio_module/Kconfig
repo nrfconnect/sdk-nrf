@@ -3,8 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-
-menu "Audio Module"
+menu "Audio Modules"
 
 config AUDIO_MODULE
 	tristate "Enable the audio module"
@@ -20,8 +19,12 @@ config AUDIO_MODULE_NAME_SIZE
 	int "Maximum size for module naming in characters"
 	default 20
 
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
 module = AUDIO_MODULE
 module-str = audio_module
 source "subsys/logging/Kconfig.template.log_config"
 
-endmenu # Audio Module
+endmenu # Log levels
+endmenu # Audio Modules
