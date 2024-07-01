@@ -433,6 +433,7 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_id_delete, BT_ID_DELETE_RPC_CMD, bt_id_delete_rpc_handler,
 			 NULL);
 
+#if defined(CONFIG_BT_BROADCASTER) || defined(CONFIG_BT_EXT_ADV) || defined(CONFIG_BT_PER_ADV)
 static void bt_data_dec(struct nrf_rpc_scratchpad *scratchpad, struct bt_data *data)
 {
 	struct nrf_rpc_cbor_ctx *ctx = scratchpad->ctx;
@@ -441,6 +442,7 @@ static void bt_data_dec(struct nrf_rpc_scratchpad *scratchpad, struct bt_data *d
 	data->data_len = nrf_rpc_decode_uint(ctx);
 	data->data = nrf_rpc_decode_buffer_into_scratchpad(scratchpad, NULL);
 }
+#endif
 
 #if defined(CONFIG_BT_OBSERVER)
 static void bt_le_scan_param_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_le_scan_param *data)
