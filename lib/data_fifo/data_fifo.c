@@ -206,3 +206,13 @@ int data_fifo_init(struct data_fifo *data_fifo)
 
 	return ret;
 }
+
+bool data_fifo_state(struct data_fifo *data_fifo)
+{
+	__ASSERT_NO_MSG(data_fifo != NULL);
+	__ASSERT_NO_MSG(data_fifo->elements_max != 0);
+	__ASSERT_NO_MSG(data_fifo->block_size_max != 0);
+	__ASSERT_NO_MSG((data_fifo->block_size_max % WB_UP(1)) == 0);
+
+	return data_fifo->initialized;
+}
