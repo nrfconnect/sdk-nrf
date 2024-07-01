@@ -73,16 +73,6 @@ function(partition_manager)
     set(static_configuration --static-config ${static_configuration_file})
   endif()
 
-  if (NOT static_configuration AND CONFIG_PM_IMAGE_NOT_BUILT_FROM_SOURCE)
-    message(WARNING
-      "One or more child image is not configured to be built from source. \
-      However, there is no static configuration provided to the \
-      partition manager. Please provide a static configuration as described in \
-      the 'Scripts -> Partition Manager -> Static configuration' chapter in the \
-      documentation. Without this information, the build system is not able to \
-      place the image correctly in flash.")
-  endif()
-
   if(NOT "${PM_DOMAIN}" STREQUAL "CPUNET" AND NOT static_configuration AND
      (SB_CONFIG_BOOTLOADER_MCUBOOT OR SB_CONFIG_SECURE_BOOT))
     message(WARNING "
