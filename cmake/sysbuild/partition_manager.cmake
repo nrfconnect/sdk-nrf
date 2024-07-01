@@ -460,16 +460,17 @@ foreach (image ${IMAGES})
   endif()
 endforeach()
 
-#foreach (image ${IMAGES})
-#    # Re-configure (Re-execute all CMakeLists.txt code) when original
-#    # (not preprocessed) configuration file changes.
-#  #  get_shared(dependencies IMAGE ${image} PROPERTY PM_YML_DEP_FILES)
-#  #  set_property(
-#  #    DIRECTORY APPEND PROPERTY
-#  #    CMAKE_CONFIGURE_DEPENDS
-#  #    ${dependencies}
-#  #    )
-#endforeach()
+foreach (image ${IMAGES})
+  # Re-configure (Re-execute all CMakeLists.txt code) when original
+  # (not preprocessed) configuration file changes.
+  sysbuild_get(${image}_pm_yml_dep_files IMAGE ${image} VAR PM_YML_DEP_FILES CACHE)
+
+  set_property(
+    DIRECTORY APPEND PROPERTY
+    CMAKE_CONFIGURE_DEPENDS
+    ${image}_pm_yml_dep_files
+    )
+endforeach()
 
 list(APPEND input_files  ${${DEFAULT_IMAGE}_binary_dir}/${generated_path}/pm.yml)
 
