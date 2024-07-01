@@ -31,6 +31,21 @@ static void internal_test_remaining_elements(struct data_fifo *data_fifo, uint32
 		      num_locked, line);
 }
 
+ZTEST(suite_data_fifo, test_data_fifo_deinit_ok)
+{
+	DATA_FIFO_DEFINE(data_fifo, 8, 128);
+
+	int ret;
+
+	ret = data_fifo_init(&data_fifo);
+	zassert_equal(ret, 0, "init did not return 0");
+	zassert_equal(data_fifo->initialized, true, "init did not set initialise flag");
+
+	ret = data_fifo_deinit(&data_fifo);
+	zassert_equal(ret, 0, "deinit did not return 0");
+	zassert_equal(data_fifo->initialized, false, "deinit did not reset initialise flag");
+}
+
 ZTEST(suite_data_fifo, test_data_fifo_init_ok)
 {
 	DATA_FIFO_DEFINE(data_fifo, 8, 128);
@@ -61,7 +76,7 @@ ZTEST(suite_data_fifo, test_data_fifo_data_put_get_ok)
 	data_ptr[2] = 0xa3;
 	data_ptr[3] = 0xa4;
 	data_ptr[4] = 0xa5;
-	uint8_t data_1[DATA_SIZE] = { 0xa1, 0xa2, 0xa3, 0xa4, 0xa5 };
+	uint8_t data_1[DATA_SIZE] = {0xa1, 0xa2, 0xa3, 0xa4, 0xa5};
 
 	internal_test_remaining_elements(&data_fifo, 1, 0, __LINE__);
 
@@ -79,7 +94,7 @@ ZTEST(suite_data_fifo, test_data_fifo_data_put_get_ok)
 	data_ptr[3] = 0xb4;
 	data_ptr[4] = 0xb5;
 	data_ptr[5] = 0xb6;
-	uint8_t data_2[DATA_SIZE + 1] = { 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6 };
+	uint8_t data_2[DATA_SIZE + 1] = {0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6};
 
 	internal_test_remaining_elements(&data_fifo, 2, 1, __LINE__);
 

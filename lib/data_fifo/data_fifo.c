@@ -167,6 +167,22 @@ int data_fifo_empty(struct data_fifo *data_fifo)
 	return 0;
 }
 
+int data_fifo_deinit(struct data_fifo *data_fifo)
+{
+	__ASSERT_NO_MSG(data_fifo != NULL);
+	__ASSERT_NO_MSG(data_fifo->initialized);
+	int ret;
+
+	ret = data_fifo_empty(data_fifo);
+	if (ret) {
+		return ret;
+	}
+
+	data_fifo->initialized = false;
+
+	return 0;
+}
+
 int data_fifo_init(struct data_fifo *data_fifo)
 {
 	__ASSERT_NO_MSG(data_fifo != NULL);
