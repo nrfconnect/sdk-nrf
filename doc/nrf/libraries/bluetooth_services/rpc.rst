@@ -81,7 +81,7 @@ Set the following options in the same way for the :ref:`ble_rpc_host` or :ref:`i
   * :kconfig:option:`CONFIG_BT_PER_ADV_SYNC_MAX`
   * :kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE`
   * :kconfig:option:`CONFIG_BT_DEVICE_NAME`
-  * :kconfig:option:`CONFIG_CBKPROXY_OUT_SLOTS` on one core must be equal to :kconfig:option:`CONFIG_CBKPROXY_IN_SLOTS` on the other.
+  * :kconfig:option:`CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS` on one core must be equal to :kconfig:option:`CONFIG_NRF_RPC_CBKPROXY_IN_SLOTS` on the other.
 
 To keep all the above configuration options in sync, create an overlay file that is shared between the application and network core.
 Then, you can invoke build command like this:
@@ -111,8 +111,8 @@ Additionally, you can use the following options:
   * :kconfig:option:`CONFIG_BT_RPC_GATT_SRV_MAX`
   * :kconfig:option:`CONFIG_BT_RPC_GATT_BUFFER_SIZE`
   * :kconfig:option:`CONFIG_BT_RPC_INTERNAL_FUNCTIONS`
-  * :kconfig:option:`CONFIG_CBKPROXY_OUT_SLOTS`
-  * :kconfig:option:`CONFIG_CBKPROXY_IN_SLOTS`
+  * :kconfig:option:`CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS`
+  * :kconfig:option:`CONFIG_NRF_RPC_CBKPROXY_IN_SLOTS`
 
 For more details, see the Kconfig option description.
 

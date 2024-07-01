@@ -5,8 +5,8 @@
  */
 
 #include <string.h>
-#include "cbkproxy.h"
-#include "serialize.h"
+#include <nrf_rpc/nrf_rpc_cbkproxy.h>
+#include <nrf_rpc/nrf_rpc_serialize.h>
 
 static inline bool is_decoder_invalid(const struct nrf_rpc_cbor_ctx *ctx)
 {
@@ -14,7 +14,7 @@ static inline bool is_decoder_invalid(const struct nrf_rpc_cbor_ctx *ctx)
 	return !zcbor_check_error(ctx->zs);
 }
 
-void ser_decoder_invalid(struct nrf_rpc_cbor_ctx *ctx, int err)
+void nrf_rpc_decoder_invalid(struct nrf_rpc_cbor_ctx *ctx, int err)
 {
 	zcbor_error(ctx->zs, err);
 }
@@ -29,12 +29,12 @@ static void set_encoder_invalid(struct nrf_rpc_cbor_ctx *ctx, int err)
 	zcbor_error(ctx->zs, err);
 }
 
-void ser_encoder_invalid(struct nrf_rpc_cbor_ctx *ctx)
+void nrf_rpc_encoder_invalid(struct nrf_rpc_cbor_ctx *ctx)
 {
 	zcbor_error(ctx->zs, ZCBOR_ERR_UNKNOWN);
 }
 
-bool ser_decode_valid(const struct nrf_rpc_cbor_ctx *ctx)
+bool nrf_rpc_decode_valid(const struct nrf_rpc_cbor_ctx *ctx)
 {
 	return !is_decoder_invalid(ctx);
 }
@@ -43,37 +43,37 @@ static void check_final_decode_valid(const struct nrf_rpc_group *group,
 				     const struct nrf_rpc_cbor_ctx *ctx)
 {
 	if (is_decoder_invalid(ctx)) {
-		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group,
-			    NRF_RPC_ID_UNKNOWN, NRF_RPC_PACKET_TYPE_RSP);
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, NRF_RPC_ID_UNKNOWN,
+			    NRF_RPC_PACKET_TYPE_RSP);
 	}
 }
 
-void ser_encode_null(struct nrf_rpc_cbor_ctx *ctx)
+void nrf_rpc_encode_null(struct nrf_rpc_cbor_ctx *ctx)
 {
 	zcbor_nil_put(ctx->zs, NULL);
 }
 
-void ser_encode_undefined(struct nrf_rpc_cbor_ctx *ctx)
+void nrf_rpc_encode_undefined(struct nrf_rpc_cbor_ctx *ctx)
 {
 	zcbor_undefined_put(ctx->zs, NULL);
 }
 
-void ser_encode_bool(struct nrf_rpc_cbor_ctx *ctx, bool value)
+void nrf_rpc_encode_bool(struct nrf_rpc_cbor_ctx *ctx, bool value)
 {
 	zcbor_bool_put(ctx->zs, value);
 }
 
-void ser_encode_uint(struct nrf_rpc_cbor_ctx *ctx, uint32_t value)
+void nrf_rpc_encode_uint(struct nrf_rpc_cbor_ctx *ctx, uint32_t value)
 {
 	zcbor_uint32_put(ctx->zs, value);
 }
 
-void ser_encode_int(struct nrf_rpc_cbor_ctx *ctx, int32_t value)
+void nrf_rpc_encode_int(struct nrf_rpc_cbor_ctx *ctx, int32_t value)
 {
 	zcbor_int32_put(ctx->zs, value);
 }
 
-void ser_encode_str(struct nrf_rpc_cbor_ctx *ctx, const char *value, int len)
+void nrf_rpc_encode_str(struct nrf_rpc_cbor_ctx *ctx, const char *value, int len)
 {
 	if (!value) {
 		zcbor_nil_put(ctx->zs, NULL);
@@ -85,7 +85,7 @@ void ser_encode_str(struct nrf_rpc_cbor_ctx *ctx, const char *value, int len)
 	}
 }
 
-void ser_encode_buffer(struct nrf_rpc_cbor_ctx *ctx, const void *data, size_t size)
+void nrf_rpc_encode_buffer(struct nrf_rpc_cbor_ctx *ctx, const void *data, size_t size)
 {
 	if (!data) {
 		zcbor_nil_put(ctx->zs, NULL);
@@ -94,7 +94,7 @@ void ser_encode_buffer(struct nrf_rpc_cbor_ctx *ctx, const void *data, size_t si
 	}
 }
 
-void ser_encode_callback(struct nrf_rpc_cbor_ctx *ctx, void *callback)
+void nrf_rpc_encode_callback(struct nrf_rpc_cbor_ctx *ctx, void *callback)
 {
 	int slot;
 
@@ -105,7 +105,7 @@ void ser_encode_callback(struct nrf_rpc_cbor_ctx *ctx, void *callback)
 	if (!callback) {
 		zcbor_nil_put(ctx->zs, NULL);
 	} else {
-		slot = cbkproxy_in_set(callback);
+		slot = nrf_rpc_cbkproxy_in_set(callback);
 		if (slot < 0) {
 			set_encoder_invalid(ctx, ZCBOR_ERR_UNKNOWN);
 		} else {
@@ -114,12 +114,12 @@ void ser_encode_callback(struct nrf_rpc_cbor_ctx *ctx, void *callback)
 	}
 }
 
-void ser_decode_skip(struct nrf_rpc_cbor_ctx *ctx)
+void nrf_rpc_decode_skip(struct nrf_rpc_cbor_ctx *ctx)
 {
 	zcbor_any_skip(ctx->zs, NULL);
 }
 
-bool ser_decode_is_null(struct nrf_rpc_cbor_ctx *ctx)
+bool nrf_rpc_decode_is_null(struct nrf_rpc_cbor_ctx *ctx)
 {
 	if (is_encoder_invalid(ctx)) {
 		return false;
@@ -136,7 +136,7 @@ bool ser_decode_is_null(struct nrf_rpc_cbor_ctx *ctx)
 	return false;
 }
 
-bool ser_decode_is_undefined(struct nrf_rpc_cbor_ctx *ctx)
+bool nrf_rpc_decode_is_undefined(struct nrf_rpc_cbor_ctx *ctx)
 {
 	if (is_encoder_invalid(ctx)) {
 		return false;
@@ -153,7 +153,7 @@ bool ser_decode_is_undefined(struct nrf_rpc_cbor_ctx *ctx)
 	return false;
 }
 
-bool ser_decode_bool(struct nrf_rpc_cbor_ctx *ctx)
+bool nrf_rpc_decode_bool(struct nrf_rpc_cbor_ctx *ctx)
 {
 	bool result;
 
@@ -164,7 +164,7 @@ bool ser_decode_bool(struct nrf_rpc_cbor_ctx *ctx)
 	return false;
 }
 
-uint32_t ser_decode_uint(struct nrf_rpc_cbor_ctx *ctx)
+uint32_t nrf_rpc_decode_uint(struct nrf_rpc_cbor_ctx *ctx)
 {
 	uint32_t result;
 
@@ -175,7 +175,7 @@ uint32_t ser_decode_uint(struct nrf_rpc_cbor_ctx *ctx)
 	return 0;
 }
 
-int32_t ser_decode_int(struct nrf_rpc_cbor_ctx *ctx)
+int32_t nrf_rpc_decode_int(struct nrf_rpc_cbor_ctx *ctx)
 {
 	int32_t result;
 
@@ -186,9 +186,9 @@ int32_t ser_decode_int(struct nrf_rpc_cbor_ctx *ctx)
 	return 0;
 }
 
-void *ser_decode_buffer(struct nrf_rpc_cbor_ctx *ctx, void *buffer, size_t buffer_size)
+void *nrf_rpc_decode_buffer(struct nrf_rpc_cbor_ctx *ctx, void *buffer, size_t buffer_size)
 {
-	struct zcbor_string zst = { 0 };
+	struct zcbor_string zst = {0};
 
 	if (is_decoder_invalid(ctx)) {
 		return NULL;
@@ -217,9 +217,9 @@ void *ser_decode_buffer(struct nrf_rpc_cbor_ctx *ctx, void *buffer, size_t buffe
 	return buffer;
 }
 
-const void *ser_decode_buffer_ptr_and_size(struct nrf_rpc_cbor_ctx *ctx, size_t *size)
+const void *nrf_rpc_decode_buffer_ptr_and_size(struct nrf_rpc_cbor_ctx *ctx, size_t *size)
 {
-	struct zcbor_string zst = { 0 };
+	struct zcbor_string zst = {0};
 
 	if (is_decoder_invalid(ctx)) {
 		return NULL;
@@ -243,7 +243,7 @@ const void *ser_decode_buffer_ptr_and_size(struct nrf_rpc_cbor_ctx *ctx, size_t 
 	return zst.value;
 }
 
-char *ser_decode_str(struct nrf_rpc_cbor_ctx *ctx, char *buffer, size_t buffer_size)
+char *nrf_rpc_decode_str(struct nrf_rpc_cbor_ctx *ctx, char *buffer, size_t buffer_size)
 {
 	struct zcbor_string zst;
 
@@ -279,7 +279,7 @@ char *ser_decode_str(struct nrf_rpc_cbor_ctx *ctx, char *buffer, size_t buffer_s
 	return buffer;
 }
 
-char *ser_decode_str_into_scratchpad(struct ser_scratchpad *scratchpad, size_t *len)
+char *nrf_rpc_decode_str_into_scratchpad(struct nrf_rpc_scratchpad *scratchpad, size_t *len)
 {
 	struct nrf_rpc_cbor_ctx *ctx = scratchpad->ctx;
 	struct zcbor_string zst;
@@ -305,7 +305,7 @@ char *ser_decode_str_into_scratchpad(struct ser_scratchpad *scratchpad, size_t *
 	}
 
 	/* Reserve place for string and a string NULL terminator. */
-	result = (char *)ser_scratchpad_add(scratchpad, (zst.len + 1));
+	result = (char *)nrf_rpc_scratchpad_add(scratchpad, (zst.len + 1));
 	if (!result) {
 		err = ZCBOR_ERR_UNKNOWN;
 		goto error_exit;
@@ -322,11 +322,11 @@ char *ser_decode_str_into_scratchpad(struct ser_scratchpad *scratchpad, size_t *
 	return result;
 
 error_exit:
-	ser_decoder_invalid(ctx, err);
+	nrf_rpc_decoder_invalid(ctx, err);
 	return NULL;
 }
 
-void *ser_decode_buffer_into_scratchpad(struct ser_scratchpad *scratchpad, size_t *len)
+void *nrf_rpc_decode_buffer_into_scratchpad(struct nrf_rpc_scratchpad *scratchpad, size_t *len)
 {
 	struct nrf_rpc_cbor_ctx *ctx = scratchpad->ctx;
 	struct zcbor_string zst;
@@ -351,7 +351,7 @@ void *ser_decode_buffer_into_scratchpad(struct ser_scratchpad *scratchpad, size_
 		return NULL;
 	}
 
-	result = (char *)ser_scratchpad_add(scratchpad, zst.len);
+	result = (char *)nrf_rpc_scratchpad_add(scratchpad, zst.len);
 	if (!result) {
 		err = ZCBOR_ERR_UNKNOWN;
 		goto error_exit;
@@ -366,23 +366,23 @@ void *ser_decode_buffer_into_scratchpad(struct ser_scratchpad *scratchpad, size_
 	return result;
 
 error_exit:
-	ser_decoder_invalid(ctx, err);
+	nrf_rpc_decoder_invalid(ctx, err);
 	return NULL;
 }
 
-void *ser_decode_callback_call(struct nrf_rpc_cbor_ctx *ctx)
+void *nrf_rpc_decode_callback_call(struct nrf_rpc_cbor_ctx *ctx)
 {
-	int slot = ser_decode_uint(ctx);
-	void *result = cbkproxy_in_get(slot);
+	int slot = nrf_rpc_decode_uint(ctx);
+	void *result = nrf_rpc_cbkproxy_in_get(slot);
 
 	if (!result) {
-		ser_decoder_invalid(ctx, ZCBOR_ERR_WRONG_TYPE);
+		nrf_rpc_decoder_invalid(ctx, ZCBOR_ERR_WRONG_TYPE);
 	}
 
 	return result;
 }
 
-void *ser_decode_callback(struct nrf_rpc_cbor_ctx *ctx, void *handler)
+void *nrf_rpc_decode_callbackd(struct nrf_rpc_cbor_ctx *ctx, void *handler)
 {
 	int err = ZCBOR_ERR_WRONG_TYPE;
 	int slot;
@@ -406,7 +406,7 @@ void *ser_decode_callback(struct nrf_rpc_cbor_ctx *ctx, void *handler)
 		return NULL;
 	}
 
-	result = cbkproxy_out_get(slot, handler);
+	result = nrf_rpc_cbkproxy_out_get(slot, handler);
 	if (!result) {
 		err = ZCBOR_ERR_UNKNOWN;
 		goto error_exit;
@@ -415,82 +415,83 @@ void *ser_decode_callback(struct nrf_rpc_cbor_ctx *ctx, void *handler)
 	return result;
 
 error_exit:
-	ser_decoder_invalid(ctx, err);
+	nrf_rpc_decoder_invalid(ctx, err);
 	return NULL;
 }
 
-bool ser_decoding_done_and_check(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx)
+bool nrf_rpc_decoding_done_and_check(const struct nrf_rpc_group *group,
+				     struct nrf_rpc_cbor_ctx *ctx)
 {
 	nrf_rpc_cbor_decoding_done(group, ctx);
 	return !is_decoder_invalid(ctx);
 }
 
-void ser_rsp_decode_i32(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-			void *handler_data)
+void nrf_rpc_rsp_decode_i32(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *handler_data)
 {
-	*(int32_t *)handler_data = ser_decode_int(ctx);
+	*(int32_t *)handler_data = nrf_rpc_decode_int(ctx);
 	check_final_decode_valid(group, ctx);
 }
 
-void ser_rsp_decode_bool(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-			 void *handler_data)
+void nrf_rpc_rsp_decode_bool(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			     void *handler_data)
 {
-	*(bool *)handler_data = ser_decode_bool(ctx);
+	*(bool *)handler_data = nrf_rpc_decode_bool(ctx);
 	check_final_decode_valid(group, ctx);
 }
 
-void ser_rsp_decode_u8(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-		       void *handler_data)
+void nrf_rpc_rsp_decode_u8(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			   void *handler_data)
 {
-	*(uint8_t *)handler_data = ser_decode_int(ctx);
+	*(uint8_t *)handler_data = nrf_rpc_decode_int(ctx);
 	check_final_decode_valid(group, ctx);
 }
 
-void ser_rsp_decode_u16(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-			void *handler_data)
+void nrf_rpc_rsp_decode_u16(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *handler_data)
 {
-	*(uint16_t *)handler_data = ser_decode_int(ctx);
+	*(uint16_t *)handler_data = nrf_rpc_decode_int(ctx);
 	check_final_decode_valid(group, ctx);
 }
 
-void ser_rsp_decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-			 void *handler_data)
+void nrf_rpc_rsp_decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			     void *handler_data)
 {
 	ARG_UNUSED(ctx);
 	ARG_UNUSED(handler_data);
 }
 
-void ser_rsp_send_int(const struct nrf_rpc_group *group, int32_t response)
+void nrf_rpc_rsp_send_int(const struct nrf_rpc_group *group, int32_t response)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
 	NRF_RPC_CBOR_ALLOC(group, ctx, 1 + sizeof(int32_t));
-	ser_encode_int(&ctx, response);
+	nrf_rpc_encode_int(&ctx, response);
 
 	nrf_rpc_cbor_rsp_no_err(group, &ctx);
 }
 
-void ser_rsp_send_uint(const struct nrf_rpc_group *group, uint32_t response)
+void nrf_rpc_rsp_send_uint(const struct nrf_rpc_group *group, uint32_t response)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
 	NRF_RPC_CBOR_ALLOC(group, ctx, 1 + sizeof(uint32_t));
-	ser_encode_uint(&ctx, response);
+	nrf_rpc_encode_uint(&ctx, response);
 
 	nrf_rpc_cbor_rsp_no_err(group, &ctx);
 }
 
-void ser_rsp_send_bool(const struct nrf_rpc_group *group, bool response)
+void nrf_rpc_rsp_send_bool(const struct nrf_rpc_group *group, bool response)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
 	NRF_RPC_CBOR_ALLOC(group, ctx, 1);
-	ser_encode_bool(&ctx, response);
+	nrf_rpc_encode_bool(&ctx, response);
 
 	nrf_rpc_cbor_rsp_no_err(group, &ctx);
 }
 
-void ser_rsp_send_void(const struct nrf_rpc_group *group)
+void nrf_rpc_rsp_send_void(const struct nrf_rpc_group *group)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
