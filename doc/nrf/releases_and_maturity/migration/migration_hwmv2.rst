@@ -60,8 +60,8 @@ The following example shows an invocation of the script converting a hypothetica
 .. code-block::
    :class: highlight
 
-   $ cd my-repo
-   $ python ../zephyr/scripts/utils/board_v1_to_v2.py --board-root boards/ -b plank -s nrf52840 -v acme
+   cd my-repo
+   python ../zephyr/scripts/utils/board_v1_to_v2.py --board-root . -b plank -s nrf52840 -g acme -v acme
 
 
 After running this command, the script converts the board from the previous hardware model to the current one, creating a board in the new format in :file:`my-repo/boards/acme/plank`.
