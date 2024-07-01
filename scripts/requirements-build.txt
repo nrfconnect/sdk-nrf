@@ -6,4 +6,4 @@ imagesize>=1.2.0
 intelhex
 pylint
 zcbor~=0.8.0
-nrf-regtool~=5.3.2
+nrf-regtool~=5.4.0
