@@ -666,10 +666,6 @@ In the sysbuild release included in the |NCS| 2.7, the following features of the
 
     As a workaround for this, you can first build a project, then use ``mergehex`` manually to merge the project output HEX file with a previously-generated HEX file in overwrite mode to replace that firmware in the output image.
 
-* Building an image for the nRF5340 network core as the primary image and including an application core image
-
-  Projects should be updated to first build for the application core and then add the network image.
-
 * Moved and confirmed output files when MCUboot is enabled
     These files are not generated when using sysbuild so would need to be manually generated.
 
