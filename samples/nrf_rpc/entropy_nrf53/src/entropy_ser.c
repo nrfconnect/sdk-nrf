@@ -10,7 +10,7 @@
 #include <nrf_rpc/nrf_rpc_ipc.h>
 #include <nrf_rpc_cbor.h>
 
-#include "../../common_ids.h"
+#include "../common_ids.h"
 #include <zcbor_common.h>
 #include <zcbor_decode.h>
 #include <zcbor_encode.h>

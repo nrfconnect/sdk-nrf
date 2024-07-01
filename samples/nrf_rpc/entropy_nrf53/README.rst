@@ -58,10 +58,10 @@ Testing
 
 This sample consists of the following sample applications:
 
-* Application core sample: :file:`entropy_nrf53/cpuapp`
-* Network core sample: :file:`entropy_nrf53/cpunet`
+* Application core sample: :file:`entropy_nrf53`
+* Network core sample: :file:`entropy_nrf53/remote`
 
-Build and program both of these sample applications to the dual core device before testing.
+Build and program the application core sample applications to the dual core device before testing which will automatically include the network core image.
 For details on building samples for a dual core device, see :ref:`ug_nrf5340_building`.
 
 After programming the sample applications to your development kit, complete the following steps to test this sample:
