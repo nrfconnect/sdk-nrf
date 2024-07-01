@@ -88,6 +88,8 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 /include/net/azure_*                      @nrfconnect/ncs-cia @coderbyheart
 /include/net/wifi_credentials.h           @nrfconnect/ncs-cia
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
+/include/audio/                           @nrfconnect/ncs-audio
+/include/audio_module/                    @nrfconnect/ncs-audio
 /include/bluetooth/                       @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
 /include/bluetooth/services/fast_pair/    @nrfconnect/ncs-si-bluebagel
 /include/bluetooth/adv_prov.h             @nrfconnect/ncs-si-bluebagel
@@ -275,6 +277,7 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 
 # Subsystems
 /subsys/                                  @nrfconnect/ncs-code-owners
+/subsys/audio/audio_module_template/      @nrfconnect/ncs-audio
 /subsys/audio_module/                     @nrfconnect/ncs-audio
 /subsys/bluetooth/                        @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
 /subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
@@ -389,6 +392,7 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 /tests/modules/mcuboot/direct_xip/        @nrfconnect/ncs-pluto
 /tests/modules/mcuboot/external_flash/    @nrfconnect/ncs-pluto
 /tests/nrf5340_audio/                     @nrfconnect/ncs-audio @nordic-auko
+/tests/subsys/audio/audio_module_template/ @nrfconnect/ncs-audio
 /tests/subsys/audio_module/               @nrfconnect/ncs-audio
 /tests/subsys/bluetooth/gatt_dm/          @nrfconnect/ncs-si-muffin
 /tests/subsys/bluetooth/mesh/             @nrfconnect/ncs-paladin
