@@ -55,7 +55,9 @@ Conversion script
 
 There is a `conversion script <hwmv2 conversion script_>`_ to help you in the migration process.
 It has built-in help text documenting all the parameters it takes.
+
 The following example shows an invocation of the script converting a hypothetical out-of-tree board ``plank`` based on the nRF52840 and having ``acme`` as vendor.
+The command must be run from the :ref:`toolchain environment <using_toolchain_environment>`.
 
 .. code-block::
    :class: highlight
