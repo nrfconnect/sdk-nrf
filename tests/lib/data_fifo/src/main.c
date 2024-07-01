@@ -31,6 +31,21 @@ static void internal_test_remaining_elements(struct data_fifo *data_fifo, uint32
 		      num_locked, line);
 }
 
+ZTEST(suite_data_fifo, test_data_fifo_deinit_ok)
+{
+	DATA_FIFO_DEFINE(data_fifo, 8, 128);
+
+	int ret;
+
+	ret = data_fifo_init(&data_fifo);
+	zassert_equal(ret, 0, "init did not return 0");
+	zassert_equal(data_fifo.initialized, true, "init did not set initialise flag");
+
+	ret = data_fifo_deinit(&data_fifo);
+	zassert_equal(ret, 0, "deinit did not return 0");
+	zassert_equal(data_fifo.initialized, false, "deinit did not reset initialise flag");
+}
+
 ZTEST(suite_data_fifo, test_data_fifo_init_ok)
 {
 	DATA_FIFO_DEFINE(data_fifo, 8, 128);

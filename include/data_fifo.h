@@ -151,6 +151,18 @@ int data_fifo_num_used_get(struct data_fifo *data_fifo, uint32_t *alloced_num,
 int data_fifo_empty(struct data_fifo *data_fifo);
 
 /**
+ * @brief Deinitialise the data_fifo.
+ *
+ * @note The fifo is emptied first, so it is the users responsibility to release any data items it
+ *       has queued. The internal slab and message buffer are not released.
+ *
+ * @param data_fifo Pointer to the data_fifo structure.
+ *
+ * @retval 0 if success, error otherwise.
+ */
+int data_fifo_deinit(struct data_fifo *data_fifo);
+
+/**
  * @brief Initialise the data_fifo.
  *
  * @param data_fifo Pointer to the data_fifo structure.
