@@ -36,6 +36,7 @@
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf_desktop/                @MarekPieta
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
+/applications/protocols_serialization/    @nrfconnect/ncs-protocols-serialization
 /applications/serial_lte_modem/           @SeppoTakalo @MarkusLassila @rlubos @tomi-font
 /applications/zigbee_weather_station/     @milewr
 # Boards
