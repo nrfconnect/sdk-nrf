@@ -8,15 +8,19 @@
 ; AGNSS Request
 ; ************
 
-agnss_req = {
-	? types => [1*13 int],
+net_info = {
 	eci => uint,
-	? filtered => bool,
-	? mask => uint,
 	mcc => uint,
 	mnc => uint,
-	? rsrp => int,
-	tac => uint
+	tac => uint,
+	rsrp => int
+}
+
+agnss_req = {
+	? types => [1*13 int],
+	? filtered => bool,
+	? mask => uint,
+	? ni => net_info
 }
 
 types = 1
@@ -27,6 +31,7 @@ mcc = 5
 mnc = 6
 rsrp = 7
 tac = 8
+ni = 9
 
 ; ***********************
 ; AGNSS Response is binary

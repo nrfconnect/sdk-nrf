@@ -137,21 +137,21 @@ static bool encode_message_out(zcbor_state_t *state, const struct message_out *i
 		   (zcbor_tstr_encode(state, (&(*input).message_out_appId)))) &&
 		  (((zcbor_uint32_put(state, (2)))) &&
 		   (((*input).message_out_data_choice == message_out_data_tstr_c)
-		    ? ((zcbor_tstr_encode(state, (&(*input).message_out_data_tstr))))
-		    : (((*input).message_out_data_choice == message_out_data_float_c)
-		       ? ((zcbor_float64_encode(
-				 state, (&(*input).message_out_data_float))))
-		       : (((*input).message_out_data_choice ==
-			   message_out_data_int_c)
-			  ? ((zcbor_int32_encode(
-				    state,
-				    (&(*input).message_out_data_int))))
-			  : (((*input).message_out_data_choice ==
-			      message_out_data_pvt_m_c)
-				     ? ((encode_pvt(
-					       state,
-					       (&(*input).message_out_data_pvt_m))))
-				     : false))))) &&
+			    ? ((zcbor_tstr_encode(state, (&(*input).message_out_data_tstr))))
+			    : (((*input).message_out_data_choice == message_out_data_float_c)
+				       ? ((zcbor_float64_encode(
+						 state, (&(*input).message_out_data_float))))
+				       : (((*input).message_out_data_choice ==
+					   message_out_data_int_c)
+						  ? ((zcbor_int32_encode(
+							    state,
+							    (&(*input).message_out_data_int))))
+						  : (((*input).message_out_data_choice ==
+						      message_out_data_pvt_m_c)
+							     ? ((encode_pvt(
+								       state,
+							       (&(*input).message_out_data_pvt_m))))
+							     : false))))) &&
 		  (!(*input).message_out_ts_present ||
 		   encode_repeated_message_out_ts(state, (&(*input).message_out_ts)))) ||
 		 (zcbor_list_map_end_force_encode(state), false)) &&
