@@ -23,6 +23,7 @@ struct modem_delta_header {
 };
 
 static dfu_target_callback_t callback;
+static bool write_initialized;
 
 #define SLEEP_TIME 1
 static int delete_banked_modem_delta_fw(void)
@@ -141,6 +142,7 @@ int dfu_target_modem_delta_write(const void *const buf, size_t len)
 		LOG_ERR("Failed to ready modem for firmware update receival, error %d", err);
 		return -EFAULT;
 	}
+	write_initialized = true;
 
 	err = nrf_modem_delta_dfu_write(buf, len);
 	if (err < 0) {
@@ -185,6 +187,7 @@ int dfu_target_modem_delta_done(bool successful)
 		LOG_ERR("Failed to stop MFU and release resources, error %d", err);
 		return -EFAULT;
 	}
+	write_initialized = false;
 
 	return 0;
 }
@@ -211,5 +214,13 @@ int dfu_target_modem_delta_schedule_update(int img_num)
 
 int dfu_target_modem_delta_reset(void)
 {
+	int err;
+
+	if (write_initialized) {
+		err = dfu_target_modem_delta_done(false);
+		if (err != 0) {
+			return -EFAULT;
+		}
+	}
 	return nrf_modem_delta_dfu_erase();
 }
