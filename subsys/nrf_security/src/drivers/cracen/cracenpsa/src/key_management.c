@@ -665,10 +665,6 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
-		si_status = sx_pk_ik_derive_keys(NULL);
-		if (si_status) {
-			return silex_statuscodes_to_psa(si_status);
-		}
 		priv_key = si_sig_fetch_ikprivkey(sx_curve, *key_buffer);
 		data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
 		pub_key.key.eckey.qx = &data[1];
