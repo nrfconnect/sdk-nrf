@@ -12,6 +12,9 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/sys/util.h>
 
+#include <nrfx.h>
+#include <hal/nrf_mramc.h>
+
 /**
  * PSA Key ID scheme
  *

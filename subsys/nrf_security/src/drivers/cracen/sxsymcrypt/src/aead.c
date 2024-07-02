@@ -30,7 +30,6 @@
 
 static int lenAlenC_aesgcm_ba411(size_t aadsz, size_t datasz, uint8_t *out);
 static int lenAlenC_nop(size_t aadsz, size_t datasz, uint8_t *out);
-extern const struct sx_aead_cmdma_cfg ba419ccmcfg;
 
 static const char zeros[SX_CCM_MAX_TAG_SZ] = {0};
 
@@ -398,8 +397,6 @@ int sx_aead_verify_tag(struct sxaead *c, const char *tagin)
 	if (c->cfg->lenAlenC(c->totalaadsz, c->dataintotalsz, &c->extramem[0])) {
 		ADD_INDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), 16, c->cfg->dmatags->data);
 		c->expectedtag = tagin;
-	} else if (c->cfg == &ba419ccmcfg) {
-		c->expectedtag = tagin;
 	} else {
 		ADD_INDESC(c->dma, tagin, c->tagsz, c->cfg->dmatags->data);
 	}
@@ -483,6 +480,10 @@ int sx_aead_status(struct sxaead *c)
 	if (r == SX_ERR_HW_PROCESSING) {
 		return r;
 	}
+
+#if CONFIG_DCACHE
+	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
+#endif
 
 	if ((!r) && (c->expectedtag != NULL) && (!c->is_in_ctx)) {
 		r = sx_memdiff(c->expectedtag, (const char *)c->extramem, c->tagsz)

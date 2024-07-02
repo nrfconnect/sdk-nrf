@@ -428,10 +428,17 @@ int sx_blkcipher_status(struct sxblkcipher *c)
 	if (!c->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
+
 	r = sx_cmdma_check();
-	if (r != SX_ERR_HW_PROCESSING) {
-		sx_blkcipher_free(c);
+	if (r == SX_ERR_HW_PROCESSING) {
+		return r;
 	}
+
+#if CONFIG_DCACHE
+	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
+#endif
+
+	sx_blkcipher_free(c);
 
 	return r;
 }
