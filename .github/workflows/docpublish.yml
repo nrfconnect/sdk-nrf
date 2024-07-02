@@ -46,18 +46,18 @@ jobs:
 
           # trust server
           mkdir -p ~/.ssh
-          ssh-keyscan upload-v1.zoominsoftware.io >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ vars.NCS_ZOOMIN_SERVER }} >> ~/.ssh/known_hosts
 
           # prepare key
-          echo "${{ secrets.NCS_ZOOMIN_KEY }}" | base64 -d > zoomin_key
+          echo "${{ secrets.NCS_ZOOMIN_KEY }}" > zoomin_key
           chmod 600 zoomin_key
 
           # upload files
           for file in docs/*.zip; do
-            sftp -v -i zoomin_key nordic@upload-v1.zoominsoftware.io <<EOF
-            cd docs-be.nordicsemi.com/sphinx-html/incoming
+          sftp -v -i zoomin_key ${{vars.NCS_ZOOMIN_USER}}@${{ vars.NCS_ZOOMIN_SERVER }} <<EOF
+            cd ${{ vars.NCS_ZOOMIN_DEPLOY_PROD_PATH}}
             put ${file}
-            cd ../../../nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
+            cd ${{ vars.NCS_ZOOMIN_DEPLOY_DEV_PATH}}
             put ${file}
             quit
           EOF
