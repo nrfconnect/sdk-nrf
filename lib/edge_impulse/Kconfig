@@ -7,7 +7,7 @@
 menuconfig EDGE_IMPULSE
 	bool "Enable Edge Impulse"
 	depends on CPP
-	depends on STD_CPP11
+	depends on STD_CPP11 || STD_CPP14 || STD_CPP17
 	depends on !FP16
 	select REQUIRES_FULL_LIBCPP
 	imply FPU
