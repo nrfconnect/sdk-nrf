@@ -92,7 +92,7 @@ The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-slip.conf -DDTC_OVERLAY_FILE=nrf7002_uart_pipe.overlay
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-slip.conf -DEXTRA_DTC_OVERLAY_FILE=nrf7002_uart_pipe.overlay
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
