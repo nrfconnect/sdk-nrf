@@ -28,11 +28,6 @@
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
-/* The following two constants are used in nrfx_glue.h for marking these PPI
- * channels and groups as occupied and thus unavailable to other modules.
- */
-const uint32_t z_mpsl_used_nrf_ppi_channels = MPSL_RESERVED_PPI_CHANNELS;
-const uint32_t z_mpsl_used_nrf_ppi_groups;
 #if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
 static void mpsl_calibration_work_handler(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(calibration_work, mpsl_calibration_work_handler);
