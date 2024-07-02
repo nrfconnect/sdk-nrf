@@ -248,7 +248,7 @@ static psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const 
 	 * adding as many input bytes as needed to get to be block aligned
 	 */
 	input_chunk_length = operation->bytes_left_for_next_block;
-	input_chunk_length += (input_length - input_chunk_length) & ~(block_size - 1);
+	input_chunk_length += ROUND_DOWN((input_length - input_chunk_length), block_size);
 	remaining_bytes = input_length - input_chunk_length;
 
 	/* forward the data to the driver */
