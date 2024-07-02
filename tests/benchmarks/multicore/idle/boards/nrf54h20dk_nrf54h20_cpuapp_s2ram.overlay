@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+       power-states {
+               idle: idle {
+                       compatible = "zephyr,power-state";
+                       power-state-name = "suspend-to-idle";
+                       min-residency-us = <100000>;
+               };
+
+               s2ram: s2ram {
+                       compatible = "zephyr,power-state";
+                       power-state-name = "suspend-to-ram";
+                       min-residency-us = <800000>;
+               };
+       };
+};
+
+&cpu {
+       cpu-power-states = <&idle &s2ram>;
+};
