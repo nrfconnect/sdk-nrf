@@ -30,28 +30,28 @@ config SUPPORT_NETCORE_EMPTY
 
 config SUPPORT_NETCORE_HCI_IPC
 	bool
-	default y
+	default y if (BT && !BT_RPC)
 
 config SUPPORT_NETCORE_RPC_HOST
 	bool
-	default y
+	default y if BT_RPC
 
 config SUPPORT_NETCORE_802154_RPMSG
 	bool
-	default y
+	default y if IEEE802154
 
 config SUPPORT_NETCORE_MULTIPROTOCOL_RPMSG
 	bool
-	default y
+	default y if (BT && !BT_RPC || IEEE802154)
 
 config SUPPORT_NETCORE_IPC_RADIO
 	bool
-	default y
+	default y if (BT || IEEE802154)
 
 config NRF_DEFAULT_EMPTY
 	bool
 
-config NRF_DEFAULT_BLUETOOTH
+config NRF_DEFAULT_HCI_IPC
 	bool
 
 config NRF_DEFAULT_RPC_HOST
@@ -68,7 +68,7 @@ config NRF_DEFAULT_IPC_RADIO
 
 choice NETCORE
 	prompt "Netcore image"
-	default NETCORE_HCI_IPC if NRF_DEFAULT_BLUETOOTH && NETCORE_REMOTE_BOARD_NAME != ""
+	default NETCORE_HCI_IPC if NRF_DEFAULT_HCI_IPC && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_RPC_HOST if NRF_DEFAULT_RPC_HOST && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && NETCORE_REMOTE_BOARD_NAME != ""
@@ -119,20 +119,17 @@ menuconfig NETCORE_IPC_RADIO
 
 if NETCORE_IPC_RADIO
 
-config NETCORE_IPC_RADIO_BT_HCI_IPC
-	bool "HCI serialization for Bluetooth"
+config NETCORE_IPC_RADIO_CUSTOM_CONF
+	bool "Use custom configuration for ipc_radio"
 	help
-	  Use HCI serialization for Bluetooth.
+	  Use custom configuration for ipc_radio.
+	  The ipc_radio will use the applications FILE_SUFFIX variable.
 
-config NETCORE_IPC_RADIO_BT_RPC
-	bool "nRF RPC serialization for Bluetooth"
+config NETCORE_IPC_RADIO_DEBUG
+	bool "Use debug configuration for ipc_radio"
+	depends on !NETCORE_IPC_RADIO_CUSTOM_CONF
 	help
-	  Use nRF RPC serialization for Bluetooth.
-
-config NETCORE_IPC_RADIO_IEEE802154
-	bool "Spinel serialization for IEEE 802.15.4"
-	help
-	  Use Spinel serialization for IEEE 802.15.4.
+	  Use debug configuration for ipc_radio.
 
 endif # NETCORE_IPC_RADIO
 

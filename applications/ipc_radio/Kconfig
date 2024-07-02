@@ -40,10 +40,6 @@ config IPC_RADIO_BT_RPC
 
 endchoice # IPC_RADIO_BT_SER
 
-config BT_MAX_CONN
-	default 4 if IPC_RADIO_802154
-	default 16 if !IPC_RADIO_802154
-
 endif # IPC_RADIO_BT
 
 module = IPC_RADIO

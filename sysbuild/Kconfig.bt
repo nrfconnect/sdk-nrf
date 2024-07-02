@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT
+	bool "Bluetooth"
+	imply NRF_DEFAULT_IPC_RADIO
+	help
+	  This option enables Bluetooth support.
+
+if BT
+
+menuconfig BT_RPC
+	bool "Bluetooth over RPC [EXPERIMENTAL]"
+	depends on (SOC_SERIES_NRF53X || SOC_SERIES_NRF54HX)
+	depends on !IEEE802154
+	select EXPERIMENTAL
+	help
+	  Enables Bluetooth serialization over RPC
+
+if BT_RPC
+
+config BT_RPC_USE_NORDIC_BT_RPC_SNIPPET
+	bool "Use nordic-bt-rpc snippet"
+	depends on NETCORE_IPC_RADIO || NETCORE_RPC_HOST
+	default y
+	help
+	  Use nordic-bt-rpc snippet automatically.
+
+endif # BT_RPC
+
+config BT_FAST_PAIR
+	bool "Bluetooth Fast Pair support"
+	help
+	  Enable this option to generate a Fast Pair provisioning data hex file and enable
+	  Bluetooth Fast Pair support in the main image. Note that ``FP_MODEL_ID`` and
+	  ``FP_ANTI_SPOOFING_KEY`` variables must be supplied when configuring the application for
+	  this functionality to be available.
+
+endif # BT

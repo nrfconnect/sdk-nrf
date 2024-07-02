@@ -2,58 +2,59 @@ sample:
   name: IPC radio firmware
   description: IPC radio firmware application
 tests:
+  applications.ipc_radio:
+    sysbuild: true
+    build_only: true
+    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet nrf54h20dk/nrf54h20/cpurad
+    tags: bluetooth ci_build sysbuild
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+      - thingy53/nrf5340/cpunet
+      - nrf54h20dk/nrf54h20/cpurad
   applications.ipc_radio.hci:
     sysbuild: true
     build_only: true
-    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet nrf54h20dk/nrf54h20/cpurad
     tags: bluetooth ci_build sysbuild
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-bt_hci_ipc.conf
-  applications.ipc_radio.hci.sysbuild:
+      - nrf54h20dk/nrf54h20/cpurad
+    extra_args: FILE_SUFFIX=bt_hci_ipc
+  applications.ipc_radio.hci.debug:
     sysbuild: true
     build_only: true
-    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: bluetooth ci_build
+    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet nrf54h20dk/nrf54h20/cpurad
+    tags: bluetooth ci_build sysbuild
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-bt_hci_ipc.conf
-  applications.ipc_radio.hci.nrf54h.sysbuild:
-    sysbuild: true
-    build_only: true
-    platform_allow: nrf54h20dk/nrf54h20/cpurad
-    tags: bluetooth ci_build
-    integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
-    extra_args: EXTRA_CONF_FILE=overlay-bt_hci_ipc.conf SB_CONFIG_PARTITION_MANAGER=n
+    extra_args: FILE_SUFFIX=bt_hci_ipc_debug
   applications.ipc_radio.rpc:
     sysbuild: true
     build_only: true
-    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet nrf54h20dk/nrf54h20/cpurad
     tags: bluetooth ci_build sysbuild
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-bt_rpc.conf
-  applications.ipc_radio.rpc.sysbuild:
+      - nrf54h20dk/nrf54h20/cpurad
+    extra_args:
+      - FILE_SUFFIX=bt_rpc
+      - SNIPPET=nordic-bt-rpc
+  applications.ipc_radio.rpc.debug:
     sysbuild: true
     build_only: true
-    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: bluetooth ci_build
+    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet nrf54h20dk/nrf54h20/cpurad
+    tags: bluetooth ci_build sysbuild
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-bt_rpc.conf
-  applications.ipc_radio.rpc.nrf54h.sysbuild:
-    sysbuild: true
-    build_only: true
-    platform_allow: nrf54h20dk/nrf54h20/cpurad
-    tags: bluetooth ci_build
-    integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
-    extra_args: EXTRA_CONF_FILE=overlay-bt_rpc.conf SB_CONFIG_PARTITION_MANAGER=n
+    extra_args:
+      - FILE_SUFFIX=bt_rpc_debug
+      - SNIPPET=nordic-bt-rpc
   applications.ipc_radio.802154:
     sysbuild: true
     build_only: true
@@ -62,16 +63,16 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-802154.conf
-  applications.ipc_radio.802154.sysbuild:
+    extra_args: FILE_SUFFIX=802154
+  applications.ipc_radio.802154.debug:
     sysbuild: true
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: ci_build
+    tags: ci_build sysbuild
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE=overlay-802154.conf
+    extra_args: FILE_SUFFIX=802154_debug
   applications.ipc_radio.hci802154:
     sysbuild: true
     build_only: true
@@ -80,13 +81,13 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE="overlay-bt_hci_ipc.conf;overlay-802154.conf"
-  applications.ipc_radio.hci802154.sysbuild:
+    extra_args: FILE_SUFFIX=bt_hci_ipc_802154
+  applications.ipc_radio.hci802154.debug:
     sysbuild: true
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build sysbuild
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    extra_args: EXTRA_CONF_FILE="overlay-bt_hci_ipc.conf;overlay-802154.conf"
+    extra_args: FILE_SUFFIX=bt_hci_ipc_802154_debug

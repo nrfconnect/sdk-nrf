@@ -44,32 +44,30 @@ if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND DEFINED SB_CONFI
       ${SB_CONFIG_NETCORE_IMAGE_NAME} CACHE INTERNAL ""
   )
 
-  # Include ipc_radio overlays if ipc_radio is enabled.
-  if(SB_CONFIG_NETCORE_IPC_RADIO)
-    if(SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC AND SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC)
-      message(FATAL_ERROR "HCI IPC can't be used together with BT RPC as ipc_radio configuration.")
+  # Include ipc_radio FILE_SUFFIX if ipc_radio_FILE_SUFFIX is not specified and the application is not using custom configuration.
+  if(SB_CONFIG_NETCORE_IPC_RADIO AND NOT SB_CONFIG_NETCORE_IPC_RADIO_CUSTOM_CONF)
+    if(SB_CONFIG_BT_RPC AND IEEE802154)
+      message(FATAL_ERROR "Configuration bt_rpc + IEEE802.15.4 is not supported.")
     endif()
 
-    if(SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC)
-      add_overlay_config(
-        ${SB_CONFIG_NETCORE_IMAGE_NAME}
-        ${SB_CONFIG_NETCORE_IMAGE_PATH}/overlay-bt_rpc.conf
-      )
+    set(ipc_radio_suffix "")
+
+    if(SB_CONFIG_BT AND NOT SB_CONFIG_BT_RPC)
+      list(APPEND ipc_radio_suffix "bt_hci_ipc")
+    elseif(SB_CONFIG_BT_RPC)
+      list(APPEND ipc_radio_suffix "bt_rpc")
     endif()
 
-    if(SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC)
-      add_overlay_config(
-        ${SB_CONFIG_NETCORE_IMAGE_NAME}
-        ${SB_CONFIG_NETCORE_IMAGE_PATH}/overlay-bt_hci_ipc.conf
-      )
+    if(SB_CONFIG_IEEE802154)
+      list(APPEND ipc_radio_suffix "802154")
     endif()
 
-    if(SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154)
-      add_overlay_config(
-        ${SB_CONFIG_NETCORE_IMAGE_NAME}
-        ${SB_CONFIG_NETCORE_IMAGE_PATH}/overlay-802154.conf
-      )
+    if(SB_CONFIG_NETCORE_IPC_RADIO_DEBUG)
+     list(APPEND ipc_radio_suffix "debug")
     endif()
+
+    string(REPLACE ";" "_" ipc_radio_suffix "${ipc_radio_suffix}")
+    set(ipc_radio_FILE_SUFFIX ${ipc_radio_suffix} CACHE INTERNAL "")
   endif()
 
   set_property(GLOBAL PROPERTY PM_DOMAINS ${PM_DOMAINS})

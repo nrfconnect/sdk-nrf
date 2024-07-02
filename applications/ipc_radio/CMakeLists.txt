@@ -9,6 +9,10 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(ipc_radio)
 
+if(NOT EXISTS ${APPLICATION_CONFIG_DIR}/prj_${FILE_SUFFIX}.conf)
+  message(WARNING "Current configuration ${FILE_SUFFIX} is not present, defaulting to hci_ipc.")
+endif()
+
 target_include_directories(app PRIVATE ./src)
 
 target_sources_ifdef(CONFIG_IPC_RADIO_802154 app PRIVATE src/802154.c)

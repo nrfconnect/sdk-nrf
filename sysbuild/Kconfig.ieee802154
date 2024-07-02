@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config IEEE802154
+	bool "IEEE 802.15.4"
+	imply NRF_DEFAULT_IPC_RADIO
+	help
+	  This option enables IEEE 802.15.4 support.

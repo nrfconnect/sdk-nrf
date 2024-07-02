@@ -362,6 +362,18 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set_config_bool(mcuboot CONFIG_PCD_APP n)
   endif()
 
+  if(SB_CONFIG_BT)
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_BT y)
+
+    if(SB_CONFIG_BT_RPC_USE_NORDIC_BT_RPC_SNIPPET)
+      if(NOT "nordic-bt-rpc" IN_LIST SNIPPET)
+        set(SNIPPET "nordic-bt-rpc" ${SNIPPET} CACHE STRING "" FORCE)
+      endif()
+    endif()
+  else()
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_BT n)
+  endif()
+
   if(SB_CONFIG_BT_FAST_PAIR)
     set_config_bool(${DEFAULT_IMAGE} CONFIG_BT_FAST_PAIR y)
 
