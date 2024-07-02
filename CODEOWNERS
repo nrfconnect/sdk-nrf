@@ -145,7 +145,7 @@ Kconfig*                                  @tejlmand
 /lib/data_fifo/                           @nrfconnect/ncs-audio
 /lib/pcm_mix/                             @nrfconnect/ncs-audio
 /lib/pcm_stream_channel_modifier/         @nrfconnect/ncs-audio
-/lib/sample_rate_converter/               @andvib @gWacey
+/lib/sample_rate_converter/               @nrfconnect/ncs-audio
 /lib/tone/                                @nrfconnect/ncs-audio
 /modules/                                 @tejlmand
 /modules/hostap/                          @krish2718 @jukkar @rado17 @sachinthegreen @rlubos
@@ -327,7 +327,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/data_fifo/                     @nrfconnect/ncs-audio
 /tests/lib/pcm_mix/                       @nrfconnect/ncs-audio
 /tests/lib/pcm_stream_channel_modifier/   @nrfconnect/ncs-audio
-/tests/lib/sample_rate_converter/         @andvib @gWacey
+/tests/lib/sample_rate_converter/         @nrfconnect/ncs-audio
 /tests/lib/tone/                          @nrfconnect/ncs-audio
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/direct_xip/        @hakonfam
