@@ -4,6 +4,16 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+mainmenu "Protocols serialization client"
+
+config RPC_CRASH_LOG_READ_BUFFER_SIZE
+	int "Crash log read buffer size"
+	depends on LOG_FORWARDER_RPC
+	default 256
+	help
+	  Size of the stack buffer used for reading a single chunk of the crash
+	  log from the server device.
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu

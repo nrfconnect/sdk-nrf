@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	sram@2003FC00 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2003FC00 DT_SIZE_K(1)>;
+		zephyr,memory-region = "RetainedMem";
+		status = "okay";
+
+		retainedmem {
+			compatible = "zephyr,retained-ram";
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			/* This creates a 1kB partition for crash log */
+			crash_log: retention@0 {
+				compatible = "zephyr,retention";
+				status = "okay";
+				reg = <0x0 DT_SIZE_K(1)>;
+
+				/* This is the prefix which must appear at the front of the data */
+				prefix = [ 01 00 00 00  ];
+			};
+		};
+	};
+};
+
+/* Reduce SRAM0 usage by 1KB to account for non-init area */
+&sram0 {
+	reg = <0x20000000 DT_SIZE_K(255)>;
+};

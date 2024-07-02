@@ -211,7 +211,6 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 {
 	uint8_t crc[2];
 	LOG_HEXDUMP_DBG(data, length, "Sending frame");
-	LOG_HEXDUMP_DBG(crc, CRC_SIZE, "frame crc");
 	struct nrf_rpc_uart *uart_tr = transport->ctx;
 
 	k_sem_take(&uart_tr->uart_tx_sem, K_FOREVER);
