@@ -17,6 +17,18 @@
 		compatible = "zephyr,psa-crypto-rng";
 		status = "okay";
 	};
+
+	gpio_toggle_pin_6: gpio-toggle-pin-6 {
+		compatible = "nordic,gpio-pins";
+		gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+
+	gpio_toggle_pin_7: gpio-toggle-pin-7 {
+		compatible = "nordic,gpio-pins";
+		gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
 };
 
 &cpusec_cpuapp_ipc {
