@@ -15,7 +15,6 @@
 #if defined(CONFIG_SLM_NRF_CLOUD)
 
 #include <stdbool.h>
-#include <modem/at_cmd_parser.h>
 
 /* Whether the connection to nRF Cloud is ready. */
 extern bool slm_nrf_cloud_ready;

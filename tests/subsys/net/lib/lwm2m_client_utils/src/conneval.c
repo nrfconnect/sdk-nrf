@@ -47,8 +47,8 @@ static int energy_increased(struct lte_lc_conn_eval_params *params)
 	return 0;
 }
 
-static int at_params_int_get_custom_fake_error(const struct at_param_list *list, size_t index,
-					       int32_t *value)
+static int at_parser_int32_get_custom_fake_error(struct at_parser *parser, size_t index,
+						 int32_t *value)
 {
 	if (counter_int <= 1) {
 		*value = 1;
@@ -60,16 +60,15 @@ static int at_params_int_get_custom_fake_error(const struct at_param_list *list,
 	return 0;
 }
 
-static int at_params_int_get_custom_fake_ok(const struct at_param_list *list, size_t index,
-					    int32_t *value)
+static int at_parser_int32_get_custom_fake_ok(struct at_parser *parser, size_t index,
+					      int32_t *value)
 {
 	*value = 0;
 
 	return 0;
 }
 
-int at_params_unsigned_short_get_changing_energy(const struct at_param_list *list, size_t index,
-						 uint16_t *value)
+int at_parser_uint16_get_changing_energy(struct at_parser *parser, size_t index, uint16_t *value)
 {
 	if (counter_short > 2) {
 		*value = LTE_LC_ENERGY_CONSUMPTION_NORMAL;
@@ -81,16 +80,14 @@ int at_params_unsigned_short_get_changing_energy(const struct at_param_list *lis
 	return 0;
 }
 
-int at_params_unsigned_short_get_normal_energy(const struct at_param_list *list, size_t index,
-					       uint16_t *value)
+int at_parser_uint16_get_normal_energy(struct at_parser *parser, size_t index, uint16_t *value)
 {
 	*value = LTE_LC_ENERGY_CONSUMPTION_NORMAL;
 
 	return 0;
 }
 
-int at_params_unsigned_short_get_increased_energy(const struct at_param_list *list, size_t index,
-						  uint16_t *value)
+int at_parser_uint16_get_increased_energy(struct at_parser *parser, size_t index, uint16_t *value)
 {
 	*value = LTE_LC_ENERGY_CONSUMPTION_INCREASED;
 
@@ -158,9 +155,8 @@ ZTEST(lwm2m_client_utils_conneval, test_max_delay)
 	zassert_equal(rc, 0, "Wrong return value");
 
 	lte_lc_conn_eval_params_get_fake.custom_fake = energy_increased;
-	at_params_int_get_fake.custom_fake = at_params_int_get_custom_fake_ok;
-	at_params_unsigned_short_get_fake.custom_fake =
-		at_params_unsigned_short_get_increased_energy;
+	at_parser_int32_get_fake.custom_fake = at_parser_int32_get_custom_fake_ok;
+	at_parser_uint16_get_fake.custom_fake = at_parser_uint16_get_increased_energy;
 	client_event = LWM2M_RD_CLIENT_EVENT_REG_UPDATE;
 
 	rc = lwm2m_utils_conneval(&ctx, &client_event);
@@ -189,9 +185,8 @@ ZTEST(lwm2m_client_utils_conneval, test_energy_change)
 	zassert_equal(rc, 0, "Wrong return value");
 
 	lte_lc_conn_eval_params_get_fake.custom_fake = energy_increased;
-	at_params_int_get_fake.custom_fake = at_params_int_get_custom_fake_ok;
-	at_params_unsigned_short_get_fake.custom_fake =
-		at_params_unsigned_short_get_changing_energy;
+	at_parser_int32_get_fake.custom_fake = at_parser_int32_get_custom_fake_ok;
+	at_parser_uint16_get_fake.custom_fake = at_parser_uint16_get_changing_energy;
 	client_event = LWM2M_RD_CLIENT_EVENT_REG_UPDATE;
 
 	rc = lwm2m_utils_conneval(&ctx, &client_event);
@@ -221,8 +216,8 @@ ZTEST(lwm2m_client_utils_conneval, test_evaluation_failed)
 	zassert_equal(rc, 0, "Wrong return value");
 
 	lte_lc_conn_eval_params_get_fake.custom_fake = energy_increased;
-	at_params_int_get_fake.custom_fake = at_params_int_get_custom_fake_error;
-	at_params_unsigned_short_get_fake.custom_fake = at_params_unsigned_short_get_normal_energy;
+	at_parser_int32_get_fake.custom_fake = at_parser_int32_get_custom_fake_error;
+	at_parser_uint16_get_fake.custom_fake = at_parser_uint16_get_normal_energy;
 	client_event = LWM2M_RD_CLIENT_EVENT_REG_UPDATE;
 
 	rc = lwm2m_utils_conneval(&ctx, &client_event);
@@ -237,8 +232,8 @@ ZTEST(lwm2m_client_utils_conneval, test_evaluation_failed)
 		      "Incorrect number of lte_lc_conn_eval_params_get() calls");
 	zassert_equal(nrf_modem_at_cmd_async_fake.call_count, 3,
 		      "Incorrect number of nrf_modem_at_cmd_async() calls");
-	zassert_equal(at_params_unsigned_short_get_fake.call_count, 1,
-		      "Incorrect number of at_params_unsigned_short_get() calls");
+	zassert_equal(at_parser_uint16_get_fake.call_count, 1,
+		      "Incorrect number of at_parser_uint16_get() calls");
 }
 
 ZTEST(lwm2m_client_utils_conneval, test_incorrect_event)

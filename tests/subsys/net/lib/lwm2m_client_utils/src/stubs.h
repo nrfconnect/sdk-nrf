@@ -95,14 +95,11 @@ DECLARE_FAKE_VALUE_FUNC(int, net_mgmt_NET_REQUEST_WIFI_SCAN, uint32_t, struct ne
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_conn_eval_params_get, struct lte_lc_conn_eval_params *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_pause);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_resume);
-DECLARE_FAKE_VALUE_FUNC(int, at_parser_max_params_from_str, const char *, char **,
-			struct at_param_list *, size_t);
-DECLARE_FAKE_VALUE_FUNC(int, at_params_int_get, const struct at_param_list *, size_t, int32_t *);
-DECLARE_FAKE_VALUE_FUNC(int, at_params_unsigned_short_get, const struct at_param_list *, size_t,
-			uint16_t *);
+DECLARE_FAKE_VALUE_FUNC(int, at_parser_init, struct at_parser *, const char *);
+DECLARE_FAKE_VALUE_FUNC(int, at_parser_int32_get, struct at_parser *, size_t, int32_t *);
+DECLARE_FAKE_VALUE_FUNC(int, at_parser_uint16_get, struct at_parser *, size_t, uint16_t *);
 DECLARE_FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd_async, nrf_modem_at_resp_handler_t,
 			       const char *, ...);
-DECLARE_FAKE_VALUE_FUNC(int, at_params_list_init, struct at_param_list *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, z_impl_zsock_setsockopt, int, int, int, const void *, socklen_t);
 DECLARE_FAKE_VOID_FUNC(lwm2m_utils_rai_event_cb, struct lwm2m_ctx *, enum lwm2m_rd_client_event *);
 DECLARE_FAKE_VALUE_FUNC(uint8_t, lwm2m_firmware_get_update_state_inst, uint16_t);
@@ -177,11 +174,10 @@ DECLARE_FAKE_VOID_FUNC(boot_write_img_confirmed);
 	FUNC(lte_lc_conn_eval_params_get)               \
 	FUNC(lwm2m_engine_pause)                        \
 	FUNC(lwm2m_engine_resume)                       \
-	FUNC(at_parser_max_params_from_str)             \
-	FUNC(at_params_int_get)                         \
-	FUNC(at_params_unsigned_short_get)              \
+	FUNC(at_parser_init)                            \
+	FUNC(at_parser_int32_get)                       \
+	FUNC(at_parser_uint16_get)                      \
 	FUNC(nrf_modem_at_cmd_async)                    \
-	FUNC(at_params_list_init)                       \
 	FUNC(z_impl_zsock_setsockopt)                   \
 	FUNC(lwm2m_utils_rai_event_cb)                  \
 	FUNC(lwm2m_firmware_get_update_state_inst)	\

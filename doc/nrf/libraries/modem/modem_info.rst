@@ -22,7 +22,7 @@ It issues AT commands to retrieve the following data:
 * The LTE-M, NB-IoT, and GNSS support mode
 * Mobile network time and date
 
-The modem information library uses the :ref:`at_cmd_parser_readme`.
+The modem information library uses the :ref:`at_parser_readme`.
 
 Call :c:func:`modem_info_init` to initialize the library.
 To obtain a data value, call :c:func:`modem_info_string_get` (to retrieve the value as a string) or :c:func:`modem_info_short_get` (to retrieve the value as a short).

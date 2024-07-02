@@ -291,7 +291,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 }
 
 SLM_AT_CMD_CUSTOM(xfota, "AT#XFOTA", handle_at_fota);
-static int handle_at_fota(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_fota(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			  uint32_t param_count)
 {
 	int err = -EINVAL;
@@ -301,8 +301,8 @@ static int handle_at_fota(enum at_cmd_type cmd_type, const struct at_param_list 
 #endif
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(param_list, 1, &op);
+	case AT_PARSER_CMD_TYPE_SET:
+		err = at_parser_num_get(parser, 1, &op);
 		if (err < 0) {
 			return err;
 		}
@@ -321,12 +321,12 @@ static int handle_at_fota(enum at_cmd_type cmd_type, const struct at_param_list 
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 			enum dfu_target_image_type type;
 
-			err = util_string_get(param_list, 2, uri, &size);
+			err = util_string_get(parser, 2, uri, &size);
 			if (err) {
 				return err;
 			}
 			if (param_count > 3) {
-				at_params_unsigned_int_get(param_list, 3, &sec_tag);
+				at_parser_num_get(parser, 3, &sec_tag);
 			}
 			if (op == SLM_FOTA_START_APP) {
 				type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
@@ -356,7 +356,7 @@ static int handle_at_fota(enum at_cmd_type cmd_type, const struct at_param_list 
 				type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
 			}
 			if (param_count > 4) {
-				at_params_unsigned_short_get(param_list, 4, &pdn_id);
+				at_parser_num_get(parser, 4, &pdn_id);
 				err = do_fota_start(op, uri, sec_tag, pdn_id, type);
 			} else {
 				err = do_fota_start(op, uri, sec_tag, 0, type);
@@ -386,7 +386,7 @@ static int handle_at_fota(enum at_cmd_type cmd_type, const struct at_param_list 
 		}
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 #if defined(CONFIG_SLM_FULL_FOTA)
 		rsp_send("\r\n#XFOTA: (%d,%d,%d,%d,%d,%d)[,<file_url>[,<sec_tag>[,<pdn_id>]]]\r\n",
 			SLM_FOTA_STOP, SLM_FOTA_START_APP, SLM_FOTA_START_MFW,

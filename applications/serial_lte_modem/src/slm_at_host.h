@@ -18,7 +18,7 @@
 #include <nrf_modem_at.h>
 #include <modem/at_monitor.h>
 #include <modem/at_cmd_custom.h>
-#include <modem/at_cmd_parser.h>
+#include <modem/at_parser.h>
 #include "slm_defines.h"
 
 /* This delay is necessary to send AT responses at low baud rates. */
@@ -151,18 +151,8 @@ bool in_datamode(void);
  */
 bool exit_datamode_handler(int result);
 
-/**
- * @brief Get parameter list from AT command.
- *
- * @param at_cmd AT command.
- * @param list Pointer to the parameter list.
- *
- * @retval 0 on success. Otherwise, a (negative) error code is returned.
- */
-int slm_get_at_param_list(const char *at_cmd, struct at_param_list **list);
-
 /** @brief SLM AT command callback type. */
-typedef int slm_at_callback(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+typedef int slm_at_callback(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			    uint32_t param_count);
 
 /**
@@ -190,7 +180,7 @@ int slm_at_cb_wrapper(char *buf, size_t len, char *at_cmd, slm_at_callback cb);
  *
  */
 #define SLM_AT_CMD_CUSTOM(entry, _filter, _callback)                                               \
-	static int _callback(enum at_cmd_type cmd_type, const struct at_param_list *list,          \
+	static int _callback(enum at_parser_cmd_type cmd_type, struct at_parser *parser,           \
 			     uint32_t);                                                            \
 	static int _callback##_wrapper_##entry(char *buf, size_t len, char *at_cmd)                \
 	{                                                                                          \

@@ -255,6 +255,7 @@ Serial LTE modem
 
   * AT command parsing to utilize the :ref:`at_cmd_custom_readme` library.
   * The format of the ``#XCARRIEREVT: 12`` unsolicited notification.
+  * AT string parsing to utilize the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
 
 Connectivity Bridge
 -------------------
@@ -558,6 +559,7 @@ Cellular samples
 * :ref:`location_sample` sample:
 
   * Removed ESP8266 Wi-Fi DTC and Kconfig overlay files.
+  * Removed the unused :ref:`at_cmd_parser_readme` library.
 
 * :ref:`modem_shell_application` sample:
 
@@ -567,6 +569,8 @@ Cellular samples
     * Support for Thingy:91 X Wi-Fi scanning.
 
   * Removed ESP8266 Wi-Fi DTC and Kconfig overlay files.
+
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
@@ -600,6 +604,10 @@ Cellular samples
 * :ref:`udp` sample:
 
   * Updated the sample to use the :c:macro:`SO_RAI` socket option with values :c:macro:`RAI_LAST` and :c:macro:`RAI_ONGOING` instead of the deprecated socket options :c:macro:`SO_RAI_LAST` and :c:macro:`SO_RAI_ONGOING`.
+
+* :ref:`fmfu_smp_svr_sample` sample:
+
+  * Removed the unused :ref:`at_cmd_parser_readme` library.
 
 Cryptography samples
 --------------------
@@ -897,6 +905,13 @@ DFU libraries
 Modem libraries
 ---------------
 
+* Added:
+
+   * :ref:`at_parser_readme` library.
+     The :ref:`at_parser_readme` is a library that parses AT command responses, notifications, or events.
+     Compared to the deprecated :ref:`at_cmd_parser_readme` library, it does not allocate memory dynamically and has a smaller footprint.
+     More information on how to transition from the :ref:`at_cmd_parser_readme` library to the :ref:`at_parser_readme` library in the :ref:`migration guide <migration_2.8_recommended>`.
+
 * :ref:`nrf_modem_lib_readme`:
 
   * Added:
@@ -934,6 +949,22 @@ Modem libraries
 
   * Removed ``AT%XRAI`` related deprecated functions ``lte_lc_rai_param_set()`` and ``lte_lc_rai_req()``, and Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ_VALUE`.
     The application uses the Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ` and ``SO_RAI`` socket option instead.
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+
+* :ref:`at_cmd_parser_readme` library:
+
+  * Deprecated:
+    * The :ref:`at_cmd_parser_readme` library in favor of the :ref:`at_parser_readme` library. The :ref:`at_cmd_parser_readme` library will be removed in a future version. More information on how to transition from the :ref:`at_cmd_parser_readme` library to the :ref:`at_parser_readme` library in the :ref:`migration guide <migration_2.8_recommended>`.
+    * The :kconfig:option:`CONFIG_AT_CMD_PARSER`. This option will be removed in a future version.
+  * Renamed the :c:func:`at_parser_cmd_type_get` function to :c:func:`at_parser_at_cmd_type_get` to prevent a name collision.
+
+* :ref:`modem_info_readme` library:
+
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+
+* :ref:`lib_zzhc` library:
+
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
 
 Libraries for networking
 ------------------------
@@ -1002,6 +1033,7 @@ Libraries for networking
   * :c:func:`lwm2m_init_firmware` is deprecated in favour of :c:func:`lwm2m_init_firmware_cb` that allows application to set a callback to receive FOTA events.
   * Fixed an issue where the Location Area Code was not updated when the Connection Monitor object version 1.3 was enabled.
   * Added support for the ``SO_KEEPOPEN`` socket option to keep the socket open even during PDN disconnect and reconnect.
+  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
