@@ -160,6 +160,54 @@ config NET_TCP_ISN_RFC6528
 config WPA_SUPP_CRYPTO_ENTERPRISE
 	bool "Enterprise Crypto support for WiFi"
 	depends on !WPA_SUPP_CRYPTO_NONE
+	select EAP_TLS
+	select EAP_PEAP
+	select EAP_TTLS
+
+config TLS_FUNCS
+	bool "TLS functions"
+	select NEED_TLS_PRF
+#	select NEED_SHA1
+	select NEED_MD5
+
+config NEED_TLS_PRF
+	bool ""
+
+config NEED_SHA1
+	bool ""
+
+config NEED_MD5
+	bool ""
+
+config MS_FUNCS
+	bool ""
+
+config CHAP
+	bool ""
+
+config IEEE8021X_EAPOL
+	bool ""
+	select NEED_EAP_COMMON
+
+config NEED_EAP_COMMON
+	bool ""
+
+config EAP_TLS
+	bool "Enterprise Crypto EAP_TLS support for WiFi"
+	depends on !WPA_SUPP_CRYPTO_NONE
+	select TLS_FUNCS
+
+config EAP_PEAP
+	bool "Enterprise Crypto EAP_PEAP support for WiFi"
+	depends on !WPA_SUPP_CRYPTO_NONE
+	select TLS_FUNCS
+
+config EAP_TTLS
+	bool "Enterprise Crypto EAP_TTLS support for WiFi"
+	depends on !WPA_SUPP_CRYPTO_NONE
+	select TLS_FUNCS
+	select MS_FUNCS
+	select CHAP
 
 config WPA_SUPP_WPA3
 	bool "WPA3 support"
@@ -180,6 +228,7 @@ config WPA_SUPP_P2P
 
 config WPA_SUPP_EAPOL
 	bool "Enable EAPoL supplicant"
+	select IEEE8021X_EAPOL
 
 config WPA_CLI
 	bool "CLI support for wpa_supplicant"
