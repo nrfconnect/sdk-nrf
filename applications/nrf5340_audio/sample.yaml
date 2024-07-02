@@ -1,28 +1,24 @@
 sample:
   name: nRF5340 Audio application
-  description: LE Audio implementation example
+  description: LE Audio and Auracast implementation example
 common:
   integration_platforms:
     - nrf5340_audio_dk/nrf5340/cpuapp
+  platform_allow: nrf5340_audio_dk/nrf5340/cpuapp
+  platform_exclude: nrf5340_audio_dk/nrf5340/cpuapp_ns
+  sysbuild: true
+  build_only: true
+  tags: ci_build sysbuild
 tests:
-  applications.nrf5340_audio.headset:
-    sysbuild: true
-    build_only: true
-    platform_allow: nrf5340_audio_dk/nrf5340/cpuapp
-    platform_exclude: nrf5340_audio_dk/nrf5340/cpuapp_ns
-    tags: ci_build sysbuild
+  applications.nrf5340_audio.default:
+    extra_args: []
+  applications.nrf5340_audio.headset_unicast:
     extra_args: FILE_SUFFIX=release CONFIG_AUDIO_DEV=1
-  applications.nrf5340_audio.gateway:
-    sysbuild: true
-    build_only: true
-    platform_allow: nrf5340_audio_dk/nrf5340/cpuapp
-    platform_exclude: nrf5340_audio_dk/nrf5340/cpuapp_ns
-    tags: ci_build sysbuild
+  applications.nrf5340_audio.gateway_unicast:
     extra_args: FILE_SUFFIX=release CONFIG_AUDIO_DEV=2
-  applications.nrf5340_audio.headset_sd_card_playback:
-    sysbuild: true
-    build_only: true
-    platform_allow: nrf5340_audio_dk/nrf5340/cpuapp
-    platform_exclude: nrf5340_audio_dk/nrf5340/cpuapp_ns
-    tags: ci_build sysbuild
+  applications.nrf5340_audio.headset_broadcast:
+    extra_args: FILE_SUFFIX=release CONFIG_AUDIO_DEV=1 CONFIG_TRANSPORT_BIS=y
+  applications.nrf5340_audio.gateway_broadcast:
+    extra_args: FILE_SUFFIX=release CONFIG_AUDIO_DEV=2 CONFIG_TRANSPORT_BIS=y
+  applications.nrf5340_audio.headset_unicast_sd_card:
     extra_args: FILE_SUFFIX=release CONFIG_AUDIO_DEV=1 CONFIG_SD_CARD_PLAYBACK=y
