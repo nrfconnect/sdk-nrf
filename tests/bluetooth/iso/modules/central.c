@@ -23,7 +23,7 @@ LOG_MODULE_REGISTER(central, CONFIG_ACL_TEST_LOG_LEVEL);
 #define REMOTE_DEVICE_NAME_PEER_LEN (sizeof(REMOTE_DEVICE_NAME_PEER) - 1)
 
 static bool running;
-static uint32_t acl_dummy_data_send_interval_ms = 100;
+static uint32_t acl_dummy_data_send_interval_ms = 1000;
 static uint32_t acl_dummy_data_size = 20;
 struct peer_device {
 	struct bt_conn *conn;
@@ -39,6 +39,8 @@ static struct bt_le_conn_param conn_param = {
 	.latency = 0,	    /* ACL slave latency = 0 */
 	.timeout = 100	    /* ACL supervision timeout = 1000 ms (x 10 ms)*/
 };
+
+static bool initialized;
 
 static int scan_start(void);
 
@@ -79,8 +81,8 @@ static void work_dummy_data_send(struct k_work *work)
 	static uint8_t channel_index;
 	static uint32_t acl_send_count[CONFIG_BT_MAX_CONN];
 
-	struct peer_device *peer = CONTAINER_OF(work, struct peer_device,
-						dummy_data_send_work.work);
+	struct peer_device *peer =
+		CONTAINER_OF(work, struct peer_device, dummy_data_send_work.work);
 
 	ret = channel_index_get(peer->conn, &channel_index);
 	if (ret) {
@@ -94,6 +96,10 @@ static void work_dummy_data_send(struct k_work *work)
 				 acl_dummy_data_size);
 	if (ret) {
 		LOG_WRN("Failed to send, ret = %d", ret);
+	}
+
+	if ((acl_send_count[channel_index] % CONFIG_PRINT_CONN_INTERVAL) == 0) {
+		LOG_INF("TX: Count: %7u", acl_send_count[channel_index]);
 	}
 
 	k_work_reschedule(&remote_peer[channel_index].dummy_data_send_work,
@@ -322,7 +328,9 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	}
 
 	k_work_cancel_delayable(&remote_peer[channel_index].dummy_data_send_work);
-	scan_start();
+	if (running) {
+		scan_start();
+	}
 }
 
 static struct bt_conn_cb conn_callbacks = {
@@ -330,15 +338,28 @@ static struct bt_conn_cb conn_callbacks = {
 	.disconnected = disconnected_cb,
 };
 
+static int central_init(void);
+
 static int central_start(void)
 {
 	int ret;
+
+	if (!initialized) {
+		LOG_INF("Peripheral not initialized. Running init");
+
+		ret = central_init();
+		if (ret) {
+			return ret;
+		}
+	}
 
 	ret = scan_start();
 	if (ret) {
 		return ret;
 	}
 	running = true;
+
+	LOG_INF("Central started");
 
 	return 0;
 }
@@ -347,22 +368,25 @@ static int central_stop(void)
 {
 	int ret;
 
+	ret = bt_le_scan_stop();
+	if (ret && ret != -EALREADY) {
+		LOG_WRN("Stop scan failed: %d", ret);
+	}
+
 	for (int i = 0; i < ARRAY_SIZE(remote_peer); i++) {
 		if (remote_peer[i].conn != NULL) {
+			LOG_WRN("Disconnecting from remote peer %d", i);
 			ret = bt_conn_disconnect(remote_peer[i].conn,
-						 BT_HCI_ERR_LOCALHOST_TERM_CONN);
+						 BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 			if (ret) {
 				LOG_ERR("Disconnected with remote peer failed %d", ret);
 			}
 		}
 	}
 
-	ret = bt_le_scan_stop();
-	if (ret && ret != -EALREADY) {
-		LOG_WRN("Stop scan failed: %d", ret);
-	}
-
 	running = false;
+
+	LOG_INF("Central stopped");
 
 	return 0;
 }
@@ -372,11 +396,10 @@ static int central_print_cfg(const struct shell *shell, size_t argc, char **argv
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	shell_print(shell,
-		    "acl_int_min(x0.625ms) %d\nacl_int_max(x0.625ms) %d\nacl_latency "
-		    "%d\nacl_timeout(x100ms) %d\nacl_payload_size %d\nacl_send_int(ms) %d\n",
-		    conn_param.interval_min, conn_param.interval_max, conn_param.latency,
-		    conn_param.timeout, acl_dummy_data_size, acl_dummy_data_send_interval_ms);
+	LOG_INF("acl_int_min(x0.625ms) %d\nacl_int_max(x0.625ms) %d\nacl_latency "
+		"%d\nacl_timeout(x100ms) %d\nacl_payload_size %d\nacl_send_int(ms) %d\n",
+		conn_param.interval_min, conn_param.interval_max, conn_param.latency,
+		conn_param.timeout, acl_dummy_data_size, acl_dummy_data_send_interval_ms);
 	return 0;
 }
 
@@ -389,6 +412,10 @@ static int central_init(void)
 	for (int i = 0; i < ARRAY_SIZE(remote_peer); i++) {
 		k_work_init_delayable(&remote_peer[i].dummy_data_send_work, work_dummy_data_send);
 	}
+
+	initialized = true;
+
+	LOG_INF("Central initialized");
 
 	return ret;
 }
@@ -410,12 +437,12 @@ static int argument_check(const struct shell *shell, uint8_t const *const input)
 
 	if (*end != '\0' || (uint8_t *)end == input || (arg_val == 0 && !isdigit(input[0])) ||
 	    arg_val < 0) {
-		shell_error(shell, "Argument must be a positive integer %s", input);
+		LOG_ERR("Argument must be a positive integer %s", input);
 		return -EINVAL;
 	}
 
 	if (running) {
-		shell_error(shell, "Arguments can not be changed while running");
+		LOG_ERR("Arguments can not be changed while running");
 		return -EACCES;
 	}
 
@@ -433,7 +460,7 @@ static int param_set(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (running) {
-		shell_error(shell, "Arguments can not be changed while running");
+		LOG_ERR("Arguments can not be changed while running");
 		return -EPERM;
 	}
 
@@ -467,13 +494,13 @@ static int param_set(const struct shell *shell, size_t argc, char **argv)
 			central_print_cfg(shell, 0, NULL);
 			break;
 		case ':':
-			shell_error(shell, "Missing option parameter");
+			LOG_ERR("Missing option parameter");
 			break;
 		case '?':
-			shell_error(shell, "Unknown option: %c", opt);
+			LOG_ERR("Unknown option: %c", opt);
 			break;
 		default:
-			shell_error(shell, "Invalid option: %c", opt);
+			LOG_ERR("Invalid option: %c", opt);
 			break;
 		}
 	}
