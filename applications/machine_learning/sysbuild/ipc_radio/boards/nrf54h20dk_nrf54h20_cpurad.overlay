@@ -14,3 +14,7 @@
 &uart135 {
 	status = "disabled";
 };
+
+&cpurad_dma_region {
+	status = "disabled";
+};
