@@ -62,7 +62,7 @@ endif # SUIT_ENVELOPE
 
 config SUIT_BUILD_RECOVERY
 	bool "Build SUIT recovery firmware"
-	depends on NETCORE_HCI_IPC
+	depends on NETCORE_IPC_RADIO
 	help
 	  Build the recovery firmware, which allows to recover the main application
 	  if the image on the board was damaged.
