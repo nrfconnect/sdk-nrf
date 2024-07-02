@@ -70,6 +70,12 @@ if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND DEFINED SB_CONFI
         ${SB_CONFIG_NETCORE_IMAGE_PATH}/overlay-802154.conf
       )
     endif()
+
+    if(SB_CONFIG_IPC_RADIO_NORDIC_BT_RPC_SNIPPET)
+      if(NOT "nordic-bt-rpc" IN_LIST SNIPPET)
+        set(SNIPPET "nordic-bt-rpc" ${SNIPPET} CACHE STRING "" FORCE)
+      endif()
+    endif()
   endif()
 
   set_property(GLOBAL PROPERTY PM_DOMAINS ${PM_DOMAINS})

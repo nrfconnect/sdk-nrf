@@ -134,6 +134,13 @@ config NETCORE_IPC_RADIO_IEEE802154
 	help
 	  Use Spinel serialization for IEEE 802.15.4.
 
+config IPC_RADIO_NORDIC_BT_RPC_SNIPPET
+	bool "Use nordic-bt-rpc snippet"
+	depends on NETCORE_IPC_RADIO_BT_RPC
+	default y
+	help
+	  Use nordic-bt-rpc snippet automatically.
+
 endif # NETCORE_IPC_RADIO
 
 endchoice
