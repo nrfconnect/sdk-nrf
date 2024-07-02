@@ -405,8 +405,8 @@ static enum nrf_wifi_status hal_rpu_event_get(struct nrf_wifi_hal_dev_ctx *hal_d
 
 		if (!event) {
 			nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
-					      "%s: Unable to alloc HAL msg for event\n",
-					      __func__);
+					      "%s: Unable to alloc HAL msg for event, len %d\n",
+					      __func__, hal_dev_ctx->event_data_len);
 			nrf_wifi_osal_mem_free(hal_dev_ctx->hpriv->opriv,
 					       hal_dev_ctx->event_data);
 			hal_dev_ctx->event_data = NULL;
