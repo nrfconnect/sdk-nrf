@@ -243,39 +243,6 @@ bool response_is_valid(const char *response, size_t response_len,
 	return true;
 }
 
-/* Get network registration status from CEREG response list.
- * Returns the (positive) registration value if it's found, otherwise a negative
- * error code.
- */
-static int get_nw_reg_status(struct at_param_list *list, bool is_notif)
-{
-	int err, reg_status;
-	size_t reg_status_index = is_notif ? AT_CEREG_REG_STATUS_INDEX :
-					     AT_CEREG_READ_REG_STATUS_INDEX;
-
-	err = at_params_int_get(list, reg_status_index, &reg_status);
-	if (err) {
-		return err;
-	}
-
-	/* Check if the parsed value maps to a valid registration status */
-	switch (reg_status) {
-	case LTE_LC_NW_REG_NOT_REGISTERED:
-	case LTE_LC_NW_REG_REGISTERED_HOME:
-	case LTE_LC_NW_REG_SEARCHING:
-	case LTE_LC_NW_REG_REGISTRATION_DENIED:
-	case LTE_LC_NW_REG_UNKNOWN:
-	case LTE_LC_NW_REG_REGISTERED_ROAMING:
-	case LTE_LC_NW_REG_UICC_FAIL:
-		break;
-	default:
-		LOG_ERR("Invalid network registration status: %d", reg_status);
-		return -EINVAL;
-	}
-
-	return reg_status;
-}
-
 int string_to_int(const char *str_buf, int base, int *output)
 {
 	int temp;
@@ -702,18 +669,31 @@ clean_exit:
 }
 
 int parse_cereg(const char *at_response,
-		bool is_notif,
 		enum lte_lc_nw_reg_status *reg_status,
 		struct lte_lc_cell *cell,
 		enum lte_lc_lte_mode *lte_mode,
 		struct lte_lc_psm_cfg *psm_cfg)
 {
-	int err, status;
+	int err, temp;
 	struct at_param_list resp_list;
 	char str_buf[10];
 	char  response_prefix[sizeof(AT_CEREG_RESPONSE_PREFIX)] = {0};
 	size_t response_prefix_len = sizeof(response_prefix);
 	size_t len = sizeof(str_buf) - 1;
+
+	__ASSERT_NO_MSG(reg_status != NULL);
+	__ASSERT_NO_MSG(cell != NULL);
+	__ASSERT_NO_MSG(lte_mode != NULL);
+	__ASSERT_NO_MSG(psm_cfg != NULL);
+
+	/* Initialize all return values. */
+	*reg_status = LTE_LC_NW_REG_UNKNOWN;
+	(void)memset(cell, 0, sizeof(struct lte_lc_cell));
+	cell->id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	cell->tac = LTE_LC_CELL_TAC_INVALID;
+	*lte_mode = LTE_LC_LTE_MODE_NONE;
+	psm_cfg->active_time = -1;
+	psm_cfg->tau = -1;
 
 	err = at_params_list_init(&resp_list, AT_CEREG_PARAMS_COUNT_MAX);
 	if (err) {
@@ -749,31 +729,21 @@ int parse_cereg(const char *at_response,
 	}
 
 	/* Get network registration status */
-	status = get_nw_reg_status(&resp_list, is_notif);
-	if (status < 0) {
-		LOG_ERR("Could not get registration status, error: %d", status);
-		err = status;
+	err = at_params_int_get(&resp_list, AT_CEREG_REG_STATUS_INDEX, &temp);
+	if (err) {
+		LOG_ERR("Could not get registration status, error: %d", err);
 		goto clean_exit;
 	}
 
-	if (reg_status) {
-		*reg_status = status;
+	*reg_status = temp;
+	LOG_DBG("Network registration status: %d", *reg_status);
 
-		LOG_DBG("Network registration status: %d", *reg_status);
-	}
-
-
-	if (cell && (status != LTE_LC_NW_REG_UICC_FAIL) &&
+	if ((*reg_status != LTE_LC_NW_REG_UICC_FAIL) &&
 	    (at_params_valid_count_get(&resp_list) > AT_CEREG_CELL_ID_INDEX)) {
 		/* Parse tracking area code */
-		err = at_params_string_get(
-				&resp_list,
-				is_notif ? AT_CEREG_TAC_INDEX :
-					   AT_CEREG_READ_TAC_INDEX,
-				str_buf, &len);
+		err = at_params_string_get(&resp_list, AT_CEREG_TAC_INDEX, str_buf, &len);
 		if (err) {
 			LOG_DBG("Could not get tracking area code, error: %d", err);
-			cell->tac = LTE_LC_CELL_TAC_INVALID;
 		} else {
 			str_buf[len] = '\0';
 			cell->tac = strtoul(str_buf, NULL, 16);
@@ -782,101 +752,95 @@ int parse_cereg(const char *at_response,
 		/* Parse cell ID */
 		len = sizeof(str_buf) - 1;
 
-		err = at_params_string_get(&resp_list,
-				is_notif ? AT_CEREG_CELL_ID_INDEX :
-					   AT_CEREG_READ_CELL_ID_INDEX,
-				str_buf, &len);
+		err = at_params_string_get(&resp_list, AT_CEREG_CELL_ID_INDEX, str_buf, &len);
 		if (err) {
 			LOG_DBG("Could not get cell ID, error: %d", err);
-			cell->id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 		} else {
 			str_buf[len] = '\0';
 			cell->id = strtoul(str_buf, NULL, 16);
 		}
-	} else if (cell) {
-		cell->tac = LTE_LC_CELL_TAC_INVALID;
-		cell->id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 	}
 
-	if (lte_mode) {
-		int mode;
+	/* Get currently active LTE mode. */
+	err = at_params_int_get(&resp_list, AT_CEREG_ACT_INDEX, &temp);
+	if (err) {
+		LOG_DBG("LTE mode not found, error code: %d", err);
 
-		/* Get currently active LTE mode. */
-		err = at_params_int_get(&resp_list,
-				is_notif ? AT_CEREG_ACT_INDEX :
-					   AT_CEREG_READ_ACT_INDEX,
-				&mode);
-		if (err) {
-			LOG_DBG("LTE mode not found, error code: %d", err);
-			*lte_mode = LTE_LC_LTE_MODE_NONE;
-
-			/* This is not an error that should be returned, as it's
-			 * expected in some situations that LTE mode is not
-			 * available.
-			 */
-			err = 0;
-		} else {
-			*lte_mode = mode;
-
-			LOG_DBG("LTE mode: %d", *lte_mode);
-		}
+		/* This is not an error that should be returned, as it's
+		 * expected in some situations that LTE mode is not available.
+		 */
+		err = 0;
+	} else {
+		*lte_mode = temp;
+		LOG_DBG("LTE mode: %d", *lte_mode);
 	}
+
+#if defined(CONFIG_LOG)
+	int cause_type;
+	int reject_cause;
+
+	/* Log reject cause if present. */
+	err = at_params_int_get(&resp_list, AT_CEREG_CAUSE_TYPE_INDEX, &cause_type);
+	err |= at_params_int_get(&resp_list, AT_CEREG_REJECT_CAUSE_INDEX, &reject_cause);
+	if (!err && cause_type == 0 /* EMM cause */) {
+		LOG_WRN("Registration rejected, EMM cause: %d, Cell ID: %d, Tracking area: %d, "
+				"LTE mode: %d",
+			reject_cause, cell->id, cell->tac, *lte_mode);
+	}
+	/* Absence of reject cause is not considered an error. */
+	err = 0;
+#endif /* CONFIG_LOG */
 
 	/* Check PSM parameters only if we are connected */
-	if ((status != LTE_LC_NW_REG_REGISTERED_HOME) &&
-	    (status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+	if ((*reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
+	    (*reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
 		goto clean_exit;
 	}
 
-	if (psm_cfg != NULL) {
-		char active_time_str[9] = {0};
-		char tau_ext_str[9] = {0};
-		int str_len = 8;
-		int err_active_time;
-		int err_tau;
+	char active_time_str[9] = {0};
+	char tau_ext_str[9] = {0};
+	int str_len = 8;
+	int err_active_time;
+	int err_tau;
 
-		psm_cfg->active_time = -1;
-		psm_cfg->tau = -1;
-
-		/* Get active time */
-		err_active_time = at_params_string_get(
-				&resp_list,
-				is_notif ? AT_CEREG_ACTIVE_TIME_INDEX :
-					   AT_CEREG_READ_ACTIVE_TIME_INDEX,
-				active_time_str, &str_len);
-		if (err_active_time) {
-			LOG_DBG("Active time not found, error: %d", err_active_time);
-		} else {
-			LOG_DBG("Active time: %s", active_time_str);
-		}
-
-		/* Get Periodic-TAU-ext */
-		err_tau = at_params_string_get(
-				&resp_list,
-				is_notif ? AT_CEREG_TAU_INDEX :
-					   AT_CEREG_READ_TAU_INDEX,
-				tau_ext_str, &str_len);
-		if (err_tau) {
-			LOG_DBG("TAU not found, error: %d", err_tau);
-		} else {
-			LOG_DBG("TAU: %s", tau_ext_str);
-		}
-
-		if (err_active_time == 0 && err_tau == 0) {
-			/* Legacy TAU is not requested because we do not get it from CEREG.
-			 * If extended TAU is not set, TAU will be set to inactive so
-			 * caller can then make its conclusions.
-			 */
-			err = parse_psm(active_time_str, tau_ext_str, NULL, psm_cfg);
-			if (err) {
-				LOG_ERR("Failed to parse PSM configuration, error: %d", err);
-			}
-		}
-		/* The notification does not always contain PSM parameters,
-		 * so this is not considered an error
-		 */
-		err = 0;
+	/* Get active time */
+	err_active_time = at_params_string_get(
+			&resp_list,
+			AT_CEREG_ACTIVE_TIME_INDEX,
+			active_time_str,
+			&str_len);
+	if (err_active_time) {
+		LOG_DBG("Active time not found, error: %d", err_active_time);
+	} else {
+		LOG_DBG("Active time: %s", active_time_str);
 	}
+
+	/* Get Periodic-TAU-ext */
+	err_tau = at_params_string_get(
+			&resp_list,
+			AT_CEREG_TAU_INDEX,
+			tau_ext_str,
+			&str_len);
+	if (err_tau) {
+		LOG_DBG("TAU not found, error: %d", err_tau);
+	} else {
+		LOG_DBG("TAU: %s", tau_ext_str);
+	}
+
+	if (err_active_time == 0 && err_tau == 0) {
+		/* Legacy TAU is not requested because we do not get it from CEREG.
+		 * If extended TAU is not set, TAU will be set to inactive so
+		 * caller can then make its conclusions.
+		 */
+		err = parse_psm(active_time_str, tau_ext_str, NULL, psm_cfg);
+		if (err) {
+			LOG_ERR("Failed to parse PSM configuration, error: %d", err);
+		}
+	}
+	/* The notification does not always contain PSM parameters,
+	 * so this is not considered an error
+	 */
+	err = 0;
 
 clean_exit:
 	at_params_list_free(&resp_list);

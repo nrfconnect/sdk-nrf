@@ -21,24 +21,18 @@
 #define AT_CFUN_RESPONSE_PREFIX			"+CFUN"
 #define AT_CFUN_MODE_INDEX			1
 #define AT_CFUN_PARAMS_COUNT			2
-#define AT_CFUN_RESPONSE_MAX_LEN		20
 #define AT_CEREG_5				"AT+CEREG=5"
 #define AT_CEREG_READ				"AT+CEREG?"
 #define AT_CEREG_RESPONSE_PREFIX		"+CEREG"
 #define AT_CEREG_PARAMS_COUNT_MAX		11
 #define AT_CEREG_REG_STATUS_INDEX		1
-#define AT_CEREG_READ_REG_STATUS_INDEX		2
 #define AT_CEREG_TAC_INDEX			2
-#define AT_CEREG_READ_TAC_INDEX			3
 #define AT_CEREG_CELL_ID_INDEX			3
-#define AT_CEREG_READ_CELL_ID_INDEX		4
 #define AT_CEREG_ACT_INDEX			4
-#define AT_CEREG_READ_ACT_INDEX			5
+#define AT_CEREG_CAUSE_TYPE_INDEX		5
+#define AT_CEREG_REJECT_CAUSE_INDEX		6
 #define AT_CEREG_ACTIVE_TIME_INDEX		7
-#define AT_CEREG_READ_ACTIVE_TIME_INDEX		8
 #define AT_CEREG_TAU_INDEX			8
-#define AT_CEREG_READ_TAU_INDEX			9
-#define AT_CEREG_RESPONSE_MAX_LEN		80
 #define AT_XSYSTEMMODE_READ			"AT%XSYSTEMMODE?"
 #define AT_XSYSTEMMODE_RESPONSE_PREFIX		"%XSYSTEMMODE"
 #define AT_XSYSTEMMODE_PROTO			"AT%%XSYSTEMMODE=%d,%d,%d,%d"
@@ -49,7 +43,6 @@
 #define AT_XSYSTEMMODE_READ_GPS_INDEX		3
 #define AT_XSYSTEMMODE_READ_PREFERENCE_INDEX	4
 #define AT_XSYSTEMMODE_PARAMS_COUNT		5
-#define AT_XSYSTEMMODE_RESPONSE_MAX_LEN		30
 
 /* CEDRXS command parameters */
 #define AT_CEDRXS_MODE_INDEX
@@ -120,7 +113,6 @@
 #define AT_CONEVAL_READ				"AT%CONEVAL"
 #define AT_CONEVAL_RESPONSE_PREFIX		"%CONEVAL"
 #define AT_CONEVAL_PREFIX_INDEX			0
-#define AT_CONEVAL_RESPONSE_MAX_LEN		110
 #define AT_CONEVAL_PARAMS_MAX			19
 #define AT_CONEVAL_RESULT_INDEX			1
 #define AT_CONEVAL_RRC_STATE_INDEX		2
@@ -220,21 +212,19 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
  */
 int encode_psm(char *tau_ext_str, char *active_time_str, int rptau, int rat);
 
-/* @brief Parses an CEREG response and returns network registration status,
- *	  cell information, LTE mode and pSM configuration.
+/* @brief Parses a +CEREG notification and returns network registration status,
+ *	  cell information, LTE mode and PSM configuration. The function always
+ *	  initializes the return values. The destination pointers must be non-NULL.
  *
- * @param at_response Pointer to buffer with AT response.
- * @param is_notif The buffer in at_response is a notification.
- * @param reg_status Pointer to where the registration status is stored.
- *		     Can be NULL.
- * @param cell Pointer to cell information struct. Can be NULL.
- * @param lte_mode Pointer to LTE mode struct. Can be NULL.
- * @param psm_cfg Pointer to PSM configuration struct. Can be NULL.
+ * @param[in] at_response AT notification.
+ * @param[out] reg_status Registration status.
+ * @param[out] cell Cell information.
+ * @param[out] lte_mode LTE mode.
+ * @param[out] psm_cfg PSM configuration.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int parse_cereg(const char *at_response,
-		bool is_notif,
 		enum lte_lc_nw_reg_status *reg_status,
 		struct lte_lc_cell *cell,
 		enum lte_lc_lte_mode *lte_mode,
