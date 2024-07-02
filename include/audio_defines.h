@@ -23,6 +23,8 @@ enum audio_channel {
 	AUDIO_CH_NUM,
 };
 
+#define AUDIO_MIC = 0
+
 /**
  * @brief Audio data coding.
  */
