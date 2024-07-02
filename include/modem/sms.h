@@ -52,7 +52,7 @@ enum sms_data_type {
 
 /**
  * @brief Maximum length of SMS address, i.e., phone number, in characters
- * as specified in 3GPP TS 23.040 Section 9.1.2.3.
+ * as specified in 3GPP TS 23.040 Section 9.1.2.5.
  */
 #define SMS_MAX_ADDRESS_LEN_CHARS 20
 
@@ -232,8 +232,6 @@ int sms_send_text(const char *number, const char *text);
  * GSM 7 bit Default Alphabet as specified in 3GPP TS 23.038 Section 6.2.
  *
  * This function does not support sending of 8 bit binary data messages or UCS2 encoded text.
- *
- * Concatenated messages are not supported in this function.
  *
  * @param[in] number Recipient number in international format.
  * @param[in] data Data to be sent.

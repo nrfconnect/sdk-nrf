@@ -41,7 +41,7 @@ static char response[64];
 #define CMD_CSCA_E "AT+CSCA=\"+358501234567\""
 
 #define CMD_CSCA_Q "AT+CSCA?"
-#define RES_CSCA_Q "+CSMS: \"+358501234567\""
+#define RES_CSCA_Q "+CSCA: \"+358501234567\""
 
 #define CMD_CMGD_E_0 "AT+CMGD=0"
 #define CMD_CMGD_E_1 "AT+CMGD=1"

@@ -29,8 +29,8 @@ LOG_MODULE_REGISTER(gcf_sms, CONFIG_GCF_SMS_LOG_LEVEL);
 #define SMS_BUFFER_ARRAY_SIZE (3)
 #define SMS_BUFFER_PDU_SIZE_MAX (352)
 
-/* Max size of Service Center Address. */
-#define SCA_SIZE_MAX (16)
+/* Max size of +CSCA response including Service Center Address. */
+#define CSCA_SIZE_MAX (32)
 
 /* Buffer for SMS messages. */
 struct sms_buffer {
@@ -42,7 +42,7 @@ struct sms_buffer {
 static struct sms_buffer sms_buffers[SMS_BUFFER_ARRAY_SIZE];
 
 /* Buffer for SCA. */
-static char sca_buff[SCA_SIZE_MAX + 1];
+static char sca_buff[CSCA_SIZE_MAX + 1];
 
 /* AT filters
  * Including all commands the filter should check for and the respective
@@ -281,16 +281,24 @@ static int at_cmd_callback_csms(char *buf, size_t len, char *at_cmd)
 
 static int at_cmd_callback_csca(char *buf, size_t len, char *at_cmd)
 {
+	char *csca_data;
+
 	/* Set */
 	if (prefix_match("AT+CSCA=", at_cmd)) {
-		strncpy(sca_buff, &(at_cmd[8]), SCA_SIZE_MAX);
-		sca_buff[sizeof(sca_buff) - 1] = '\0';
+		csca_data = &(at_cmd[8]);
+		if (strlen(csca_data) > CSCA_SIZE_MAX) {
+			LOG_ERR("CSCA data too long (%d) to fit in the buffer (%d)",
+				strlen(csca_data), CSCA_SIZE_MAX);
+			return at_cmd_custom_respond(buf, len, "ERROR\r\n");
+		}
+		sca_buff[0] = '\0';
+		strncat(sca_buff, &(at_cmd[8]), CSCA_SIZE_MAX);
 		return at_cmd_custom_respond(buf, len, "OK\r\n");
 	}
 
 	/* Read */
 	if (prefix_match("AT+CSCA?", at_cmd)) {
-		return at_cmd_custom_respond(buf, len, "+CSMS: %s\r\nOK\r\n", sca_buff);
+		return at_cmd_custom_respond(buf, len, "+CSCA: %s\r\nOK\r\n", sca_buff);
 	}
 
 	return at_cmd_custom_respond(buf, len, "ERROR\r\n");
@@ -455,8 +463,6 @@ static int at_cmd_callback_cmgf(char *buf, size_t len, char *at_cmd)
 {
 	/* Set */
 	if (prefix_match("AT+CMGF=0", at_cmd)) {
-		strncpy(sca_buff, &(at_cmd[8]), SCA_SIZE_MAX);
-		sca_buff[sizeof(sca_buff) - 1] = '\0';
 		return at_cmd_custom_respond(buf, len, "OK\r\n");
 	}
 
