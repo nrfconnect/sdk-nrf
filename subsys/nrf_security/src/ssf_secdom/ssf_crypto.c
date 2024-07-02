@@ -423,32 +423,6 @@ psa_status_t psa_generate_key(const psa_key_attributes_t *attributes, mbedtls_sv
 	return ssf_psa_generate_key(attributes, key);
 }
 
-psa_status_t psa_sign_hash_start(psa_sign_hash_interruptible_operation_t *operation,
-				 mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *hash,
-				 size_t hash_length)
-{
-	return ssf_psa_sign_hash_start(operation, key, alg, hash, hash_length);
-}
-
-psa_status_t psa_sign_hash_abort(psa_sign_hash_interruptible_operation_t *operation)
-{
-	return ssf_psa_sign_hash_abort(operation);
-}
-
-psa_status_t psa_verify_hash_start(psa_verify_hash_interruptible_operation_t *operation,
-				   mbedtls_svc_key_id_t key, psa_algorithm_t alg,
-				   const uint8_t *hash, size_t hash_length,
-				   const uint8_t *signature, size_t signature_length)
-{
-	return ssf_psa_verify_hash_start(operation, key, alg, hash, hash_length, signature,
-					 signature_length);
-}
-
-psa_status_t psa_verify_hash_abort(psa_verify_hash_interruptible_operation_t *operation)
-{
-	return ssf_psa_verify_hash_abort(operation);
-}
-
 psa_status_t psa_pake_setup(psa_pake_operation_t *operation, mbedtls_svc_key_id_t password_key,
 			    const psa_pake_cipher_suite_t *cipher_suite)
 {

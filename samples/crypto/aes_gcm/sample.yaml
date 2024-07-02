@@ -43,6 +43,8 @@ tests:
       nrf54l15pdk/nrf54l15/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp/ns
     harness: console
+    required_snippets:
+      - crypto_service
     harness_config:
       type: multi_line
       regex:

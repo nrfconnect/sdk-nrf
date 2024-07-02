@@ -315,6 +315,10 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
+
+		const uint8_t *curve_pt = sx_pk_generator_point(operation->curve);
+
+		memcpy(generator, curve_pt, CRACEN_P256_POINT_SIZE);
 	} else if (idx == 2) {
 		/* Second round of J-PAKE: Compute G_a, x2s and A. */
 		MAKE_SX_POINT(G4, operation->P[0], CRACEN_P256_POINT_SIZE);
@@ -350,10 +354,9 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 		return status;
 	}
 
-	status = cracen_get_zkp_hash(
-		operation->alg, operation->X[idx], operation->V,
-		idx == 2 ? generator : (uint8_t *)sx_pk_generator_point(operation->curve),
-		operation->user_id, operation->user_id_length, h, sizeof(h), &h_len);
+	status = cracen_get_zkp_hash(operation->alg, operation->X[idx], operation->V, generator,
+				     operation->user_id, operation->user_id_length, h, sizeof(h),
+				     &h_len);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -478,6 +481,10 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 			if (equal) {
 				return PSA_ERROR_INVALID_ARGUMENT;
 			}
+
+			const uint8_t *curve_pt = sx_pk_generator_point(operation->curve);
+
+			memcpy(generator, curve_pt, CRACEN_P256_POINT_SIZE);
 		}
 
 	} else if (idx == 2) {
@@ -496,10 +503,9 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 		return PSA_ERROR_BAD_STATE;
 	}
 
-	status = cracen_get_zkp_hash(
-		operation->alg, operation->P[idx], operation->V,
-		idx == 2 ? generator : (uint8_t *)sx_pk_generator_point(operation->curve),
-		operation->peer_id, operation->peer_id_length, h, sizeof(h), &h_len);
+	status = cracen_get_zkp_hash(operation->alg, operation->P[idx], operation->V, generator,
+				     operation->peer_id, operation->peer_id_length, h, sizeof(h),
+				     &h_len);
 
 	if (status != PSA_SUCCESS) {
 		return status;

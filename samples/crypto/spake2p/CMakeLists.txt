@@ -5,6 +5,10 @@
 #
 cmake_minimum_required(VERSION 3.20.0)
 
+if(NOT crypto_service IN_LIST SNIPPET)
+  set(SNIPPET crypto_service ${SNIPPET} CACHE STRING "" FORCE)
+endif()
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(spake2p)
 

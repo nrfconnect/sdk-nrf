@@ -481,35 +481,6 @@ psa_status_t ssf_psa_generate_random(uint8_t *output, size_t output_size);
 psa_status_t ssf_psa_generate_key(const psa_key_attributes_t *attributes,
 				  mbedtls_svc_key_id_t *key);
 
-/** @brief Execute psa_sign_hash_start over SSF.
- *
- * See psa_sign_hash_start for details.
- */
-psa_status_t ssf_psa_sign_hash_start(psa_sign_hash_interruptible_operation_t *operation,
-				     mbedtls_svc_key_id_t key, psa_algorithm_t alg,
-				     const uint8_t *hash, size_t hash_length);
-
-/** @brief Execute psa_sign_hash_abort over SSF.
- *
- * See psa_sign_hash_abort for details.
- */
-psa_status_t ssf_psa_sign_hash_abort(psa_sign_hash_interruptible_operation_t *operation);
-
-/** @brief Execute psa_verify_hash_start over SSF.
- *
- * See psa_verify_hash_start for details.
- */
-psa_status_t ssf_psa_verify_hash_start(psa_verify_hash_interruptible_operation_t *operation,
-				       mbedtls_svc_key_id_t key, psa_algorithm_t alg,
-				       const uint8_t *hash, size_t hash_length,
-				       const uint8_t *signature, size_t signature_length);
-
-/** @brief Execute psa_verify_hash_abort over SSF.
- *
- * See psa_verify_hash_abort for details.
- */
-psa_status_t ssf_psa_verify_hash_abort(psa_verify_hash_interruptible_operation_t *operation);
-
 /** @brief Execute psa_pake_setup over SSF.
  *
  * See psa_pake_setup for details.
