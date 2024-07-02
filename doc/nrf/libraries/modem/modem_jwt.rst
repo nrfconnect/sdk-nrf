@@ -55,7 +55,7 @@ API documentation
 *****************
 
 | Header file: :file:`include/modem/modem_jwt.h`
-| Source file: :file:`lib/modem/modem_jwt.c`
+| Source file: :file:`lib/modem_jwt/modem_jwt.c`
 
 .. doxygengroup:: modem_jwt
    :project: nrf

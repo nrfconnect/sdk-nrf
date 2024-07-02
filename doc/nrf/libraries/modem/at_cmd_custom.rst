@@ -96,7 +96,7 @@ API documentation
 *****************
 
 | Header file: :file:`include/modem/at_cmd_custom.h`
-| Source file: :file:`lib/at_cmd_custom/src/at_cmd_custom.c`
+| Source file: :file:`lib/at_cmd_custom/at_cmd_custom.c`
 
 .. doxygengroup:: at_cmd_custom
    :project: nrf
