@@ -1,6 +1,6 @@
 # Requirement file for native tools on Darwin 86 and aarch64
 python:
-  version: 3.9.6
+  version: 3.12.4
 git:
   version: 2.37.3
 cmake:
