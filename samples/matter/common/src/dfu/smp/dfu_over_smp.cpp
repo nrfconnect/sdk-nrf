@@ -24,12 +24,6 @@
 using namespace ::chip;
 using namespace ::chip::DeviceLayer;
 
-constexpr uint8_t kAdvertisingPriority = UINT8_MAX;
-constexpr uint32_t kAdvertisingOptions = BT_LE_ADV_OPT_CONNECTABLE;
-constexpr uint16_t kAdvertisingIntervalMin = 400;
-constexpr uint16_t kAdvertisingIntervalMax = 500;
-constexpr uint8_t kAdvertisingFlags = BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR;
-
 namespace
 {
 enum mgmt_cb_return UploadConfirmHandler(uint32_t event,

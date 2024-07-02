@@ -10,7 +10,8 @@
 
 #include <array>
 
-namespace Nrf {
+namespace Nrf
+{
 
 /**
  * @brief DFU over SMP helper class
@@ -23,6 +24,12 @@ namespace Nrf {
  */
 class DFUOverSMP {
 public:
+	constexpr static uint8_t kAdvertisingPriority = UINT8_MAX;
+	constexpr static  uint32_t kAdvertisingOptions = BT_LE_ADV_OPT_CONNECTABLE;
+	constexpr static  uint16_t kAdvertisingIntervalMin = 400;
+	constexpr static  uint16_t kAdvertisingIntervalMax = 500;
+	constexpr static  uint8_t kAdvertisingFlags = BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR;
+
 	/**
 	 * @brief Initialize DFU over SMP utility
 	 *

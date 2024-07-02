@@ -63,13 +63,6 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 endif # SOC_SERIES_NRF53X
 endif # BOOTLOADER_MCUBOOT
 
-if BOARD_NRF54H20DK
-
-config SUIT_ENVELOPE_ROOT_TEMPLATE
-	default "suit_templates/root_with_binary_nordic_top.yaml.jinja2"
-
-endif
-
 #### Enable generating factory data
 config MATTER_FACTORY_DATA_GENERATE
 	default y if !BOARD_NRF21540DK
