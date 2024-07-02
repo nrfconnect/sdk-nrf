@@ -8,6 +8,7 @@
 #include <cracen/mem_helpers.h>
 #include "cracen_psa.h"
 #include "platform_keys/platform_keys.h"
+#include <nrf_security_mutexes.h>
 
 #include <sicrypto/drbghash.h>
 #include <sicrypto/ecc.h>
@@ -34,6 +35,8 @@ enum asn1_tags {
 };
 
 extern const uint8_t cracen_N3072[384];
+
+extern nrf_security_mutex_t cracen_mutex_symmetric;
 
 static psa_status_t check_brainpool_alg_and_key_bits(psa_algorithm_t alg, size_t key_bits)
 {
@@ -926,6 +929,36 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		return status;
 	}
 #endif
+#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+	if (location == PSA_KEY_LOCATION_CRACEN) {
+		psa_key_lifetime_t lifetime;
+		psa_drv_slot_number_t slot_id;
+		psa_key_attributes_t stored_attributes;
+		psa_status_t status = cracen_platform_keys_provision(attributes, data, data_length);
+
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+		status = cracen_platform_get_key_slot(
+			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &lifetime,
+			&slot_id);
+
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		status = cracen_platform_get_builtin_key(slot_id, &stored_attributes, key_buffer,
+							 key_buffer_size, key_buffer_length);
+
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		*key_bits = psa_get_key_bits(&stored_attributes);
+
+		return status;
+	}
+#endif
 
 	if (location != PSA_KEY_LOCATION_LOCAL_STORAGE) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -1312,6 +1345,7 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 			       size_t *data_length)
 {
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+	int status;
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
@@ -1325,21 +1359,27 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 			return PSA_SUCCESS;
 		}
 
-		int status = cracen_kmu_prepare_key(key_buffer);
-
-		if (status != SX_OK) {
-			return silex_statuscodes_to_psa(status);
-		}
-
 		size_t key_out_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 
-		if (key_out_size < data_size) {
+		if (key_out_size > data_size) {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
-		memcpy(data, kmu_push_area, key_out_size);
-		*data_length = key_out_size;
 
-		return PSA_SUCCESS;
+		/* The kmu_push_area is guarded by the symmetric mutex since it is the most common
+		 * use case. Here the decision was to avoid defining another mutex to handle the
+		 * push buffer for the rest of the use cases.
+		 */
+		nrf_security_mutex_lock(cracen_mutex_symmetric);
+		status = cracen_kmu_prepare_key(key_buffer);
+		if (status == SX_OK) {
+			memcpy(data, kmu_push_area, key_out_size);
+			*data_length = key_out_size;
+		}
+
+		(void)cracen_kmu_clean_key(key_buffer);
+		nrf_security_mutex_unlock(cracen_mutex_symmetric);
+
+		return silex_statuscodes_to_psa(status);
 	}
 #endif
 

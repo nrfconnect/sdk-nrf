@@ -48,7 +48,6 @@ enum kmu_metadata_key_usage_scheme {
 	KMU_METADATA_SCHEME_RAW
 };
 
-/* NCSDK-25121: Ensure address of this array is at a fixed address. */
 extern uint8_t kmu_push_area[64];
 
 /**

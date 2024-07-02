@@ -33,7 +33,8 @@
 #define USAGE_PUBKEY	0x21
 #define USAGE_AUTHDEBUG 0x23
 #define USAGE_STMTRACE	0x25
-#define USAGE_COREDUMP	0x25
+#define USAGE_COREDUMP	0x26
+#define USAGE_MANIFEST_PUBKEY_OEM_ROOT 0xBB
 
 #define DOMAIN_NONE	   0x00
 #define DOMAIN_SECURE	   0x01
@@ -198,8 +199,8 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 	return PSA_ERROR_DOES_NOT_EXIST;
 }
 
-psa_status_t cracen_platform_keys_provision(psa_key_attributes_t *attributes, uint8_t *key_buffer,
-					    size_t key_buffer_size)
+psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attributes,
+					    const uint8_t *key_buffer, size_t key_buffer_size)
 {
 	uint32_t key_id = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes));
 	sicr_key key = find_key(key_id);

@@ -15,8 +15,6 @@
 #include <sicrypto/rsaes_pkcs1v15.h>
 #include <silexpk/blinding.h>
 
-#define SI_DMAMEM_MAX_SZ (1024)
-
 static bool is_alg_supported(psa_algorithm_t alg)
 {
 	if (IS_ENABLED(PSA_NEED_CRACEN_RSA_OAEP)) {
