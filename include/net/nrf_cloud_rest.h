@@ -285,6 +285,25 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 	const enum nrf_cloud_fota_status status, const char * const details);
 
 /**
+ * @brief Request shadow data using a JSONata expression.
+ *        For example, to request the reported device info section, the transform would be:
+ *        "state.reported.device.deviceInfo".
+ *
+ * @note Consider the size of the response data when making shadow requests so
+ *       that it does not exceed rx_buf_len in @ref nrf_cloud_rest_context.
+ *
+ * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.
+ * @param[in]     device_id Null-terminated, unique device ID registered with nRF Cloud.
+ * @param         transform The JSONata expression.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ *           See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
+ */
+int nrf_cloud_rest_shadow_transform_request(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, char const *const transform);
+
+/**
  * @brief Updates the device's "state" in the shadow via the UpdateDeviceState endpoint.
  *
  * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.

@@ -601,6 +601,10 @@ Cellular samples
 
   * Updated the sample to use the :c:macro:`SO_RAI` socket option with values :c:macro:`RAI_LAST` and :c:macro:`RAI_ONGOING` instead of the deprecated socket options :c:macro:`SO_RAI_LAST` and :c:macro:`SO_RAI_ONGOING`.
 
+* :ref:`nrf_cloud_rest_fota` sample:
+
+  * Added support for setting the FOTA update check interval using the config section in the shadow.
+
 Cryptography samples
 --------------------
 
@@ -1017,6 +1021,10 @@ Libraries for networking
 
     * The function :c:func:`fota_download_b1_file_parse` to parse a bootloader update file path.
     * Experimental support for performing FOTA updates using an external download client with the Kconfig option :kconfig:option:`CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL` and functions :c:func:`fota_download_external_start` and Function :c:func:`fota_download_external_evt_handle`.
+
+* :ref:`lib_nrf_cloud_rest` library:
+
+  * Added the function :c:func:`nrf_cloud_rest_shadow_transform_request` to request shadow data using a JSONata expression.
 
 Libraries for NFC
 -----------------
