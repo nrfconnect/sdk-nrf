@@ -24,6 +24,18 @@
   - "scripts/requirements*.txt"
   - "scripts/tools-versions-darwin.txt"
 
+"CI-run-docbuild":
+  - "**.rst"
+  - "**/Kconfig"
+  - "**/sample.yaml"
+  - "doc/**"
+  - "applications/**"
+  - "include/**"
+  - "lib/**"
+  - "doc/requirements.txt"
+  - "scripts/tools-versions-*.yml"
+  - "west.yml"
+
 "CI-iot-serial-lte-modem-test":
   - "applications/serial_lte_modem/**/*"
   - "lib/at_cmd_parser/**/*"
