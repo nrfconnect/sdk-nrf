@@ -15,6 +15,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(BH1749_TRIGGER, CONFIG_SENSOR_LOG_LEVEL);
 
+/* Dummy line */
 /* Callback for active sense pin from BH1749 */
 static void bh1749_gpio_callback(const struct device *gpio_dev,
 				 struct gpio_callback *cb,
