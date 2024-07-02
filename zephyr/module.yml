@@ -1,4 +1,6 @@
 build:
+  depends:
+    - hal_nordic
   cmake: .
   kconfig: Kconfig.nrf
   sysbuild-cmake: sysbuild
