@@ -11,7 +11,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/cap.h>
-#include <../subsys/bluetooth/audio/bap_iso.h>
+#include <zephyr/bluetooth/audio/pbp.h>
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 
 #include "bt_mgmt.h"
@@ -41,6 +41,7 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 		 ZBUS_MSG_INIT(0));
 
 static struct bt_cap_broadcast_source *broadcast_sources[CONFIG_BT_ISO_MAX_BIG];
+struct bt_cap_initiator_broadcast_create_param create_param[CONFIG_BT_ISO_MAX_BIG];
 /* Make sure we have statically allocated streams for all potential BISes */
 static struct bt_cap_stream cap_streams[CONFIG_BT_ISO_MAX_BIG]
 				       [CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT]
@@ -80,7 +81,7 @@ static void le_audio_event_publish(enum le_audio_evt_type event)
 static int stream_index_get(struct bt_bap_stream *stream, struct stream_index *idx)
 {
 	for (int i = 0; i < CONFIG_BT_ISO_MAX_BIG; i++) {
-		for (int j = 0; i < CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT; j++) {
+		for (int j = 0; j < CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT; j++) {
 			for (int k = 0; k < ARRAY_SIZE(cap_streams[i][j]); k++) {
 				if (&cap_streams[i][j][k].bap_stream == stream) {
 					idx->lvl1 = i;
@@ -169,26 +170,41 @@ static struct bt_bap_stream_ops stream_ops = {
 };
 
 #if (CONFIG_AURACAST)
-static void public_broadcast_features_set(uint8_t *features)
+static void public_broadcast_features_set(uint8_t *features, uint8_t big_index)
 {
-	int freq = bt_audio_codec_cfg_get_freq(&lc3_preset.codec_cfg);
-
 	if (features == NULL) {
 		LOG_ERR("No pointer to features");
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
-		*features |= 0x01;
+	if (big_index >= ARRAY_SIZE(create_param)) {
+		LOG_ERR("BIG index %d out of range", big_index);
+		return;
 	}
 
-	if (freq == BT_AUDIO_CODEC_CFG_FREQ_16KHZ || freq == BT_AUDIO_CODEC_CFG_FREQ_24KHZ) {
-		*features |= 0x02;
-	} else if (freq == BT_AUDIO_CODEC_CFG_FREQ_48KHZ) {
-		*features |= 0x04;
-	} else {
-		LOG_WRN("%dkHz is not compatible with Auracast, choose 16kHz, 24kHz or 48kHz",
-			freq);
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
+		*features |= BT_PBP_ANNOUNCEMENT_FEATURE_ENCRYPTION;
+	}
+
+	for (uint8_t i = 0; i < create_param->subgroup_count; i++) {
+		int freq = bt_audio_codec_cfg_get_freq(
+			create_param[big_index].subgroup_params[i].codec_cfg);
+
+		if (freq < 0) {
+			LOG_ERR("Unable to get frequency");
+			continue;
+		}
+
+		if (freq == BT_AUDIO_CODEC_CFG_FREQ_16KHZ ||
+		    freq == BT_AUDIO_CODEC_CFG_FREQ_24KHZ) {
+			*features |= BT_PBP_ANNOUNCEMENT_FEATURE_STANDARD_QUALITY;
+		} else if (freq == BT_AUDIO_CODEC_CFG_FREQ_48KHZ) {
+			*features |= BT_PBP_ANNOUNCEMENT_FEATURE_HIGH_QUALITY;
+		} else {
+			LOG_WRN("%dkHz is not compatible with Auracast, choose 16kHz, 24kHz or "
+				"48kHz",
+				freq);
+		}
 	}
 }
 #endif /* (CONFIG_AURACAST) */
@@ -267,7 +283,7 @@ int broadcast_source_ext_adv_populate(uint8_t big_index,
 	uint8_t meta_data_buf_size = 0;
 
 	sys_put_le16(BT_UUID_PBA_VAL, &ext_adv_data->pba_buf[PBA_UUID_INDEX]);
-	public_broadcast_features_set(&ext_adv_data->pba_buf[PBA_FEATURES_INDEX]);
+	public_broadcast_features_set(&ext_adv_data->pba_buf[PBA_FEATURES_INDEX], big_index);
 
 	/* Metadata */
 	/* Parental rating */
@@ -411,7 +427,7 @@ static int create_param_produce(uint8_t big_index,
 						      stream_params[i][j].data_len, loc);
 		}
 
-		subgroup_params[i].stream_count = ARRAY_SIZE(stream_params[i]);
+		subgroup_params[i].stream_count = ext_create_param->subgroups[i].num_bises;
 		subgroup_params[i].stream_params = stream_params[i];
 		subgroup_params[i].codec_cfg =
 			&ext_create_param->subgroups[i].group_lc3_preset.codec_cfg;
@@ -702,56 +718,43 @@ void broadcast_source_default_create(struct broadcast_source_big *broadcast_para
 }
 
 int broadcast_source_enable(struct broadcast_source_big const *const broadcast_param,
-			    uint8_t num_bigs)
+			    uint8_t big_index)
 {
 	int ret;
 
-	struct bt_cap_initiator_broadcast_create_param create_param[CONFIG_BT_ISO_MAX_BIG];
-
-	/* TODO: Remove once multiple BIGs are supported in all parts of the code */
-	if (num_bigs > 1) {
-		LOG_ERR("Only one BIG is supported at the moment");
-		return -EINVAL;
-	}
-
-	if (num_bigs > CONFIG_BT_ISO_MAX_BIG) {
-		LOG_ERR("Trying to set up %d BIGS, but only allocated memory for %d", num_bigs,
+	if (big_index >= CONFIG_BT_ISO_MAX_BIG) {
+		LOG_ERR("Trying to set up %d BIGS, but only allocated memory for %d", big_index,
 			CONFIG_BT_ISO_MAX_BIG);
 		return -EINVAL;
 	}
 
-	if (initialized) {
-		LOG_WRN("Already initialized");
-		return -EALREADY;
+	if (!initialized) {
+		bt_le_audio_tx_init();
 	}
-
-	bt_le_audio_tx_init();
 
 	LOG_INF("Enabling broadcast_source %s", CONFIG_BT_AUDIO_BROADCAST_NAME);
 
-	for (int i = 0; i < num_bigs; i++) {
-		ret = create_param_produce(i, &broadcast_param[i], &create_param[i]);
-		if (ret) {
-			LOG_ERR("Failed to create the create_param: %d", ret);
-			return ret;
-		}
+	ret = create_param_produce(big_index, broadcast_param, &create_param[big_index]);
+	if (ret) {
+		LOG_ERR("Failed to create the create_param: %d", ret);
+		return ret;
+	}
 
-		/* Register callbacks per stream */
-		for (size_t j = 0U; j < create_param[i].subgroup_count; j++) {
-			for (size_t k = 0; k < create_param[i].subgroup_params[j].stream_count;
-			     k++) {
-				bt_cap_stream_ops_register(
-					create_param[i].subgroup_params[j].stream_params[k].stream,
-					&stream_ops);
-			}
+	/* Register callbacks per stream */
+	for (size_t j = 0U; j < create_param[big_index].subgroup_count; j++) {
+		for (size_t k = 0; k < create_param[big_index].subgroup_params[j].stream_count;
+		     k++) {
+			bt_cap_stream_ops_register(
+				create_param[big_index].subgroup_params[j].stream_params[k].stream,
+				&stream_ops);
 		}
+	}
 
-		ret = bt_cap_initiator_broadcast_audio_create(&create_param[i],
-							      &broadcast_sources[i]);
-		if (ret) {
-			LOG_ERR("Failed to create broadcast source, ret: %d", ret);
-			return ret;
-		}
+	ret = bt_cap_initiator_broadcast_audio_create(&create_param[big_index],
+						      &broadcast_sources[big_index]);
+	if (ret) {
+		LOG_ERR("Failed to create broadcast source, ret: %d", ret);
+		return ret;
 	}
 
 	initialized = true;
