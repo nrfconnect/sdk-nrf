@@ -6,16 +6,16 @@
 
 / {
 	chosen {
-		ncs,dtm-uart = &uart0;
+		ncs,dtm-uart = &uart_ipc;
 	};
-};
 
-&uart0 {
-	status = "okay";
-	compatible = "nordic,nrf-ipc-uart";
-	ipc = <&ipc0>;
-	ept-name = "remote shell";
-	current-speed = <19200>;
+	uart_ipc: uart_ipc {
+		status = "okay";
+		compatible = "nordic,nrf-ipc-uart";
+		ipc = <&ipc0>;
+		ept-name = "remote shell";
+		current-speed = <19200>;
+	};
 };
 
 &radio {
