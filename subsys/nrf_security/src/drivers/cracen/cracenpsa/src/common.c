@@ -575,7 +575,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 	return SX_OK;
 }
 
-static int cracen_prepare_ik_key(const uint8_t *user_data)
+int cracen_prepare_ik_key(const uint8_t *user_data)
 {
 #ifdef CONFIG_CRACEN_LOAD_KMU_SEED
 	if (!nrf_cracen_seedram_lock_check(NRF_CRACEN)) {

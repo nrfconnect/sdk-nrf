@@ -166,3 +166,13 @@ psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *
 				     size_t input_length, uint8_t *output, size_t output_size,
 				     size_t *output_length, enum cipher_operation dir,
 				     bool aes_countermeasures);
+
+
+/**
+ * @brief Prepare ik key.
+ *
+ * @param user_data    Owner ID.
+ *
+ * @return sxsymcrypt error code.
+ */
+int cracen_prepare_ik_key(const uint8_t *user_data);
