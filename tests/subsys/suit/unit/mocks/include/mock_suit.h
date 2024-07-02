@@ -15,7 +15,8 @@
 FAKE_VALUE_FUNC(int, suit_processor_init);
 FAKE_VALUE_FUNC(int, suit_process_sequence, const uint8_t *, size_t, enum suit_command_sequence);
 FAKE_VALUE_FUNC(int, suit_processor_get_manifest_metadata, const uint8_t *, size_t, bool,
-		struct zcbor_string *, struct zcbor_string *, enum suit_cose_alg *, unsigned int *);
+		struct zcbor_string *, int *, size_t *, struct zcbor_string *, enum suit_cose_alg *,
+		unsigned int *);
 
 static inline void mock_suit_processor_reset(void)
 {

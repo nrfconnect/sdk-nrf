@@ -24,8 +24,7 @@
 LOG_MODULE_REGISTER(suit_plat_check_image_match, CONFIG_SUIT_LOG_LEVEL);
 
 #ifdef CONFIG_SUIT_STREAM_SINK_DIGEST
-int suit_plat_check_image_match_mem_mapped(suit_component_t component,
-					   enum suit_cose_alg alg_id,
+int suit_plat_check_image_match_mem_mapped(suit_component_t component, enum suit_cose_alg alg_id,
 					   struct zcbor_string *digest)
 {
 	void *impl_data = NULL;
@@ -112,8 +111,8 @@ int suit_plat_check_image_match_mfst(suit_component_t component, enum suit_cose_
 		return ret;
 	}
 
-	ret = suit_processor_get_manifest_metadata(envelope_str, envelope_len, false, NULL,
-						   &manifest_digest, &alg, NULL);
+	ret = suit_processor_get_manifest_metadata(envelope_str, envelope_len, false, NULL, NULL,
+						   NULL, &manifest_digest, &alg, NULL);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Failed to check image digest: unable to read manifest digest (handle: "
 			"%p)\r\n",

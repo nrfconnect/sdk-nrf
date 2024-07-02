@@ -13,6 +13,7 @@ zephyr_library()
 
 zephyr_library_sources(src/suit_plat_components.c)
 zephyr_library_sources(src/suit_plat_commands.c)
+zephyr_library_sources(src/suit_plat_version.c)
 zephyr_library_sources(src/suit_plat_fetch.c)
 zephyr_library_sources(src/suit_plat_retrieve_manifest.c)
 zephyr_library_sources_ifdef(CONFIG_SUIT_CHECK_IMAGE_MATCH src/suit_plat_check_image_match.c)

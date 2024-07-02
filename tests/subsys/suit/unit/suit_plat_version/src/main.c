@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -14,6 +14,10 @@
 #define TEST_ENVELOPE_ADDRESS	   ((uint8_t *)0xabcd)
 #define TEST_ENVELOPE_SIZE	   ((size_t)0xef01)
 #define TEST_MEMPTR_STORAGE_HANDLE ((memptr_storage_handle_t)0x2345)
+#define TEST_MANIFEST_VERSION                                                                      \
+	{                                                                                          \
+		.len = 3, .raw = { 1, 2, 3, 0, 0 }                                                 \
+	}
 
 static void test_before(void *data)
 {
@@ -24,7 +28,7 @@ static void test_before(void *data)
 	FFF_RESET_HISTORY();
 }
 
-ZTEST_SUITE(suit_platform_retrieve_manifest_tests, NULL, NULL, test_before, NULL, NULL);
+ZTEST_SUITE(suit_platform_version_tests, NULL, NULL, test_before, NULL, NULL);
 
 static int
 suit_plat_component_id_get_invalid_component_fake_func(suit_component_t handle,
@@ -286,58 +290,127 @@ static int suit_memptr_storage_ptr_get_valid_fake_func(memptr_storage_handle_t h
 	return SUIT_PLAT_SUCCESS;
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_handle_null_args)
+static int suit_processor_get_manifest_metadata_invalid_manifest_fake_func(
+	const uint8_t *envelope_str, size_t envelope_len, bool authenticate,
+	struct zcbor_string *manifest_component_id, int *version, size_t *version_len,
+	struct zcbor_string *digest, enum suit_cose_alg *alg, unsigned int *seq_num)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	zassert_equal(envelope_str, TEST_ENVELOPE_ADDRESS, "Unexpected envelope address value");
+	zassert_equal(envelope_len, TEST_ENVELOPE_SIZE, "Unexpected envelope length value");
+	zassert_equal(authenticate, false, "Unexpected envelope authentication request value");
+	zassert_equal(manifest_component_id, NULL,
+		      "Unexpected manifest component ID request value");
+	zassert_equal(digest, NULL, "Unexpected manifest digest request value");
+	zassert_equal(alg, NULL, "Unexpected manifest digest algorithm request value");
+	zassert_equal(seq_num, NULL, "Unexpected manifest sequence number request value");
 
-	/* WHEN platform is asked to return manifest and input parameters are invalid */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, NULL, NULL);
+	zassert_not_equal(version, NULL,
+			  "API must provide valid address to get manifest version value");
+	zassert_not_equal(version_len, NULL,
+			  "API must provide valid address to get manifest version length");
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_CRASH, ret, "Invalid manifest retrieved");
+	*version_len = 0;
 
-	/* WHEN platform is asked to return manifest and input parameters are invalid */
-	ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, NULL, &envelope_len);
+	return SUIT_ERR_DECODING;
+}
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_CRASH, ret, "Invalid manifest retrieved");
+static int suit_processor_get_manifest_metadata_unknown_version_fake_func(
+	const uint8_t *envelope_str, size_t envelope_len, bool authenticate,
+	struct zcbor_string *manifest_component_id, int *version, size_t *version_len,
+	struct zcbor_string *digest, enum suit_cose_alg *alg, unsigned int *seq_num)
+{
+	zassert_equal(envelope_str, TEST_ENVELOPE_ADDRESS, "Unexpected envelope address value");
+	zassert_equal(envelope_len, TEST_ENVELOPE_SIZE, "Unexpected envelope length value");
+	zassert_equal(authenticate, false, "Unexpected envelope authentication request value");
+	zassert_equal(manifest_component_id, NULL,
+		      "Unexpected manifest component ID request value");
+	zassert_equal(digest, NULL, "Unexpected manifest digest request value");
+	zassert_equal(alg, NULL, "Unexpected manifest digest algorithm request value");
+	zassert_equal(seq_num, NULL, "Unexpected manifest sequence number request value");
 
-	/* WHEN platform is asked to return manifest and input parameters are invalid */
-	ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, NULL);
+	zassert_not_equal(version, NULL,
+			  "API must provide valid address to get manifest version value");
+	zassert_not_equal(version_len, NULL,
+			  "API must provide valid address to get manifest version length");
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_CRASH, ret, "Invalid manifest retrieved");
+	*version_len = 0;
+
+	return SUIT_SUCCESS;
+}
+
+static int suit_processor_get_manifest_metadata_valid_version_fake_func(
+	const uint8_t *envelope_str, size_t envelope_len, bool authenticate,
+	struct zcbor_string *manifest_component_id, int *version, size_t *version_len,
+	struct zcbor_string *digest, enum suit_cose_alg *alg, unsigned int *seq_num)
+{
+	suit_semver_raw_t sample_version = TEST_MANIFEST_VERSION;
+
+	zassert_equal(envelope_str, TEST_ENVELOPE_ADDRESS, "Unexpected envelope address value");
+	zassert_equal(envelope_len, TEST_ENVELOPE_SIZE, "Unexpected envelope length value");
+	zassert_equal(authenticate, false, "Unexpected envelope authentication request value");
+	zassert_equal(manifest_component_id, NULL,
+		      "Unexpected manifest component ID request value");
+	zassert_equal(digest, NULL, "Unexpected manifest digest request value");
+	zassert_equal(alg, NULL, "Unexpected manifest digest algorithm request value");
+	zassert_equal(seq_num, NULL, "Unexpected manifest sequence number request value");
+
+	zassert_not_equal(version, NULL,
+			  "API must provide valid address to get manifest version value");
+	zassert_not_equal(version_len, NULL,
+			  "API must provide valid address to get manifest version length");
+
+	memcpy(version, sample_version.raw, sizeof(sample_version.raw));
+	*version_len = sample_version.len;
+
+	return SUIT_SUCCESS;
+}
+
+ZTEST(suit_platform_version_tests, test_handle_null_args)
+{
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
+
+	/* WHEN platform is asked to return manifest version and input parameters are invalid */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, NULL, NULL);
+
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_CRASH, ret, "Invalid manifest version retrieved (NULL, NULL)");
+
+	/* WHEN platform is asked to return manifest version and input parameters are invalid */
+	ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, NULL);
+
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_CRASH, ret, "Invalid manifest version retrieved (_, NULL)");
+
+	/* WHEN platform is asked to return manifest version and input parameters are invalid */
+	ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, NULL, &version.len);
+
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_CRASH, ret, "Invalid manifest version retrieved (NULL, _)");
 
 	/* ... and other checks were not performed in any of those scenarios */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 0,
 		      "Incorrect number of suit_plat_component_id_get() calls");
 	zassert_equal(suit_plat_decode_component_type_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_component_type() calls");
-	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
-		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
-	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
-		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_handle_invalid)
+ZTEST(suit_platform_version_tests, test_handle_invalid)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is invalid. */
 	suit_plat_component_id_get_fake.custom_fake =
 		suit_plat_component_id_get_invalid_component_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -346,20 +419,13 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_handle_invalid)
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_component_type_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_component_type() calls");
-	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
-		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
-	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
-		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_component_unknown)
+ZTEST(suit_platform_version_tests, test_component_unknown)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -368,11 +434,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_unknown)
 	suit_plat_decode_component_type_fake.custom_fake =
 		suit_plat_decode_component_type_unknown_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -384,18 +450,15 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_unknown)
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
 	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
 		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_component_unsupported)
+ZTEST(suit_platform_version_tests, test_component_unsupported)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -404,11 +467,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_unsupported)
 	suit_plat_decode_component_type_fake.custom_fake =
 		suit_plat_decode_component_type_unsupported_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -420,18 +483,15 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_unsupported)
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
 	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
 		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_component_mem)
+ZTEST(suit_platform_version_tests, test_component_mem)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -440,10 +500,10 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_mem)
 	suit_plat_decode_component_type_fake.custom_fake =
 		suit_plat_decode_component_type_mem_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
+	/* THEN manifest version is not returned... */
 	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
 
 	/* ... and component ID for given component handle was fetched */
@@ -456,18 +516,15 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_mem)
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
 	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
 		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_component_cand_img)
+ZTEST(suit_platform_version_tests, test_component_cand_img)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -476,11 +533,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_cand_img)
 	suit_plat_decode_component_type_fake.custom_fake =
 		suit_plat_decode_component_type_cand_img_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -492,18 +549,15 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_component_cand_img)
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
 	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
 		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_instld_invalid_class)
+ZTEST(suit_platform_version_tests, test_instld_invalid_class)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -515,11 +569,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_invalid_class)
 	suit_plat_decode_manifest_class_id_fake.custom_fake =
 		suit_plat_decode_manifest_class_id_invalid_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -536,14 +590,13 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_invalid_class)
 		      "Incorrect number of suit_storage_installed_envelope_get() calls");
 	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
 		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_not_found)
+ZTEST(suit_platform_version_tests, test_instld_manifest_not_found)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -558,11 +611,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_not_found)
 	suit_storage_installed_envelope_get_fake.custom_fake =
 		suit_storage_installed_envelope_get_not_found_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -578,16 +631,17 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_not_found)
 		      "Incorrect number of suit_storage_installed_envelope_get() calls");
 
 	/* ... and other checks were not performed */
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 0,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
 	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
 		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_address)
+ZTEST(suit_platform_version_tests, test_instld_manifest_invalid_address)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -602,11 +656,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_addres
 	suit_storage_installed_envelope_get_fake.custom_fake =
 		suit_storage_installed_envelope_get_invalid_address_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -622,16 +676,17 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_addres
 		      "Incorrect number of suit_storage_installed_envelope_get() calls");
 
 	/* ... and other checks were not performed */
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 0,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
 	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
 		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_size)
+ZTEST(suit_platform_version_tests, test_instld_manifest_invalid_size)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -646,11 +701,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_size)
 	suit_storage_installed_envelope_get_fake.custom_fake =
 		suit_storage_installed_envelope_get_invalid_size_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -666,16 +721,17 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_size)
 		      "Incorrect number of suit_storage_installed_envelope_get() calls");
 
 	/* ... and other checks were not performed */
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 0,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
 	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
 		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_found)
+ZTEST(suit_platform_version_tests, test_instld_manifest_invalid_manifest)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -689,14 +745,15 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_found)
 	/* ... and the manifest with given class ID is not found in SUIT storage */
 	suit_storage_installed_envelope_get_fake.custom_fake =
 		suit_storage_installed_envelope_get_found_fake_func;
+	/* ... and the manifest version is not defined */
+	suit_processor_get_manifest_metadata_fake.custom_fake =
+		suit_processor_get_manifest_metadata_invalid_manifest_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_SUCCESS, ret, "Invalid manifest retrieved");
-	zassert_equal(TEST_ENVELOPE_ADDRESS, envelope_str, "Invalid envelope address received");
-	zassert_equal(TEST_ENVELOPE_SIZE, envelope_len, "Invalid envelope size received");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_PARAMETER, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -710,18 +767,123 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_found)
 	/* ... and manifest for given class ID was fetched */
 	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 1,
 		      "Incorrect number of suit_storage_installed_envelope_get() calls");
+	/* ... and manifest was parsed to read the manifest version */
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 1,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
 
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
 		      "Incorrect number of suit_plat_component_impl_data_get() calls");
-	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
-		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_no_data)
+ZTEST(suit_platform_version_tests, test_instld_manifest_unknown_version)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
+
+	/* GIVEN the component handle value is valid. */
+	suit_plat_component_id_get_fake.custom_fake =
+		suit_plat_component_id_get_valid_component_fake_func;
+	/* ... and the component type is installed manifest component */
+	suit_plat_decode_component_type_fake.custom_fake =
+		suit_plat_decode_component_type_instld_fake_func;
+	/* ... and the manifest class ID for given component is valid */
+	suit_plat_decode_manifest_class_id_fake.custom_fake =
+		suit_plat_decode_manifest_class_id_valid_fake_func;
+	/* ... and the manifest with given class ID is not found in SUIT storage */
+	suit_storage_installed_envelope_get_fake.custom_fake =
+		suit_storage_installed_envelope_get_found_fake_func;
+	/* ... and the manifest version is not defined */
+	suit_processor_get_manifest_metadata_fake.custom_fake =
+		suit_processor_get_manifest_metadata_unknown_version_fake_func;
+
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
+
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_FAIL_CONDITION, ret, "Unknown manifest version returned");
+	zassert_equal(version.len, 0, "Invalid manifest version received");
+
+	/* ... and component ID for given component handle was fetched */
+	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
+		      "Incorrect number of suit_plat_component_id_get() calls");
+	/* ... and component type for given component ID was fetched */
+	zassert_equal(suit_plat_decode_component_type_fake.call_count, 1,
+		      "Incorrect number of suit_plat_decode_component_type() calls");
+	/* ... and manifest class ID for given component ID was fetched */
+	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 1,
+		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
+	/* ... and manifest for given class ID was fetched */
+	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 1,
+		      "Incorrect number of suit_storage_installed_envelope_get() calls");
+	/* ... and manifest was parsed to read the manifest version */
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 1,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
+
+	/* ... and other checks were not performed */
+	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
+		      "Incorrect number of suit_plat_component_impl_data_get() calls");
+}
+
+ZTEST(suit_platform_version_tests, test_instld_manifest_valid_version)
+{
+	suit_semver_raw_t test_version = TEST_MANIFEST_VERSION;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
+
+	/* GIVEN the component handle value is valid. */
+	suit_plat_component_id_get_fake.custom_fake =
+		suit_plat_component_id_get_valid_component_fake_func;
+	/* ... and the component type is installed manifest component */
+	suit_plat_decode_component_type_fake.custom_fake =
+		suit_plat_decode_component_type_instld_fake_func;
+	/* ... and the manifest class ID for given component is valid */
+	suit_plat_decode_manifest_class_id_fake.custom_fake =
+		suit_plat_decode_manifest_class_id_valid_fake_func;
+	/* ... and the manifest with given class ID is not found in SUIT storage */
+	suit_storage_installed_envelope_get_fake.custom_fake =
+		suit_storage_installed_envelope_get_found_fake_func;
+	/* ... and the manifest version is defined */
+	suit_processor_get_manifest_metadata_fake.custom_fake =
+		suit_processor_get_manifest_metadata_valid_version_fake_func;
+
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
+
+	/* THEN manifest version is returned... */
+	zassert_equal(SUIT_SUCCESS, ret, "Valid manifest version not returned");
+	zassert_equal(version.len, test_version.len, "Invalid manifest version length received");
+	zassert_mem_equal(version.raw, test_version.raw, sizeof(test_version.raw),
+			  "Invalid manifest version value received");
+
+	/* ... and component ID for given component handle was fetched */
+	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
+		      "Incorrect number of suit_plat_component_id_get() calls");
+	/* ... and component type for given component ID was fetched */
+	zassert_equal(suit_plat_decode_component_type_fake.call_count, 1,
+		      "Incorrect number of suit_plat_decode_component_type() calls");
+	/* ... and manifest class ID for given component ID was fetched */
+	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 1,
+		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
+	/* ... and manifest for given class ID was fetched */
+	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 1,
+		      "Incorrect number of suit_storage_installed_envelope_get() calls");
+	/* ... and manifest was parsed to read the manifest version */
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 1,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
+
+	/* ... and other checks were not performed */
+	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 0,
+		      "Incorrect number of suit_plat_component_impl_data_get() calls");
+}
+
+ZTEST(suit_platform_version_tests, test_cand_manifest_no_data)
+{
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -733,11 +895,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_no_data)
 	suit_plat_component_impl_data_get_fake.custom_fake =
 		suit_plat_component_impl_data_get_no_data_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -752,16 +914,15 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_no_data)
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
 	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 0,
 		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_no_ptr)
+ZTEST(suit_platform_version_tests, test_cand_manifest_no_ptr)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -776,11 +937,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_no_ptr)
 	suit_memptr_storage_ptr_get_fake.custom_fake =
 		suit_memptr_storage_ptr_get_no_data_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -798,14 +959,15 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_no_ptr)
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 0,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_invalid_addr)
+ZTEST(suit_platform_version_tests, test_cand_manifest_invalid_addr)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -820,11 +982,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_invalid_addr)
 	suit_memptr_storage_ptr_get_fake.custom_fake =
 		suit_memptr_storage_ptr_get_invalid_addr_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -842,14 +1004,15 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_invalid_addr)
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 0,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_invalid_size)
+ZTEST(suit_platform_version_tests, test_cand_manifest_invalid_size)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -864,11 +1027,11 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_invalid_size)
 	suit_memptr_storage_ptr_get_fake.custom_fake =
 		suit_memptr_storage_ptr_get_invalid_size_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -886,14 +1049,15 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_invalid_size)
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 0,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_valid)
+ZTEST(suit_platform_version_tests, test_cand_manifest_invalid_manifest)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -906,14 +1070,17 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_valid)
 		suit_plat_component_impl_data_get_data_fake_func;
 	/* ... and there is data in memory pointer storage */
 	suit_memptr_storage_ptr_get_fake.custom_fake = suit_memptr_storage_ptr_get_valid_fake_func;
+	/* ... and the data pointer points to an area in internal memory */
+	suit_memory_global_address_is_in_external_memory_fake.return_val = false;
+	/* ... and the manifest version is not defined */
+	suit_processor_get_manifest_metadata_fake.custom_fake =
+		suit_processor_get_manifest_metadata_invalid_manifest_fake_func;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_SUCCESS, ret, "Invalid manifest retrieved");
-	zassert_equal(TEST_ENVELOPE_ADDRESS, envelope_str, "Invalid envelope address received");
-	zassert_equal(TEST_ENVELOPE_SIZE, envelope_len, "Invalid envelope size received");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_PARAMETER, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -930,18 +1097,20 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_valid)
 	zassert_equal(suit_memory_global_address_is_in_external_memory_fake.call_count, 1,
 		      "Incorrect number of suit_memory_global_address_is_in_external_memory() "
 		      "calls");
+	/* ... and manifest was parsed to read the manifest version */
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 1,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
 
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
 }
 
-ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_in_external_memory)
+ZTEST(suit_platform_version_tests, test_cand_manifest_unknown_version)
 {
-	const uint8_t *envelope_str;
-	size_t envelope_len;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
 
 	/* GIVEN the component handle value is valid. */
 	suit_plat_component_id_get_fake.custom_fake =
@@ -954,15 +1123,125 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_in_external_memo
 		suit_plat_component_impl_data_get_data_fake_func;
 	/* ... and there is data in memory pointer storage */
 	suit_memptr_storage_ptr_get_fake.custom_fake = suit_memptr_storage_ptr_get_valid_fake_func;
+	/* ... and the data pointer points to an area in internal memory */
+	suit_memory_global_address_is_in_external_memory_fake.return_val = false;
+	/* ... and the manifest version is not defined */
+	suit_processor_get_manifest_metadata_fake.custom_fake =
+		suit_processor_get_manifest_metadata_unknown_version_fake_func;
 
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
+
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_FAIL_CONDITION, ret, "Unknown manifest version returned");
+	zassert_equal(version.len, 0, "Invalid manifest version received");
+
+	/* ... and component ID for given component handle was fetched */
+	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
+		      "Incorrect number of suit_plat_component_id_get() calls");
+	/* ... and component type for given component ID was fetched */
+	zassert_equal(suit_plat_decode_component_type_fake.call_count, 1,
+		      "Incorrect number of suit_plat_decode_component_type() calls");
+	/* ... and implementation data for given component handle was fetched */
+	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 1,
+		      "Incorrect number of suit_plat_component_impl_data_get() calls");
+	/* ... and envelope was fetched from the memory pointer storage */
+	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 1,
+		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
+	zassert_equal(suit_memory_global_address_is_in_external_memory_fake.call_count, 1,
+		      "Incorrect number of suit_memory_global_address_is_in_external_memory() "
+		      "calls");
+	/* ... and manifest was parsed to read the manifest version */
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 1,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
+
+	/* ... and other checks were not performed */
+	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
+		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
+}
+
+ZTEST(suit_platform_version_tests, test_cand_manifest_valid_version)
+{
+	suit_semver_raw_t test_version = TEST_MANIFEST_VERSION;
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
+
+	/* GIVEN the component handle value is valid. */
+	suit_plat_component_id_get_fake.custom_fake =
+		suit_plat_component_id_get_valid_component_fake_func;
+	/* ... and the component type is candidate manifest component */
+	suit_plat_decode_component_type_fake.custom_fake =
+		suit_plat_decode_component_type_cand_fake_func;
+	/* ... and there is implementation-specific data */
+	suit_plat_component_impl_data_get_fake.custom_fake =
+		suit_plat_component_impl_data_get_data_fake_func;
+	/* ... and there is data in memory pointer storage */
+	suit_memptr_storage_ptr_get_fake.custom_fake = suit_memptr_storage_ptr_get_valid_fake_func;
+	/* ... and the data pointer points to an area in internal memory */
+	suit_memory_global_address_is_in_external_memory_fake.return_val = false;
+	/* ... and the manifest version is not defined */
+	suit_processor_get_manifest_metadata_fake.custom_fake =
+		suit_processor_get_manifest_metadata_valid_version_fake_func;
+
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
+
+	/* THEN manifest version is returned... */
+	zassert_equal(SUIT_SUCCESS, ret, "Valid manifest version not returned");
+	zassert_equal(version.len, test_version.len, "Invalid manifest version length received");
+	zassert_mem_equal(version.raw, test_version.raw, sizeof(test_version.raw),
+			  "Invalid manifest version value received");
+
+	/* ... and component ID for given component handle was fetched */
+	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
+		      "Incorrect number of suit_plat_component_id_get() calls");
+	/* ... and component type for given component ID was fetched */
+	zassert_equal(suit_plat_decode_component_type_fake.call_count, 1,
+		      "Incorrect number of suit_plat_decode_component_type() calls");
+	/* ... and implementation data for given component handle was fetched */
+	zassert_equal(suit_plat_component_impl_data_get_fake.call_count, 1,
+		      "Incorrect number of suit_plat_component_impl_data_get() calls");
+	/* ... and envelope was fetched from the memory pointer storage */
+	zassert_equal(suit_memptr_storage_ptr_get_fake.call_count, 1,
+		      "Incorrect number of suit_memptr_storage_ptr_get() calls");
+	zassert_equal(suit_memory_global_address_is_in_external_memory_fake.call_count, 1,
+		      "Incorrect number of suit_memory_global_address_is_in_external_memory() "
+		      "calls");
+	/* ... and manifest was parsed to read the manifest version */
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 1,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
+
+	/* ... and other checks were not performed */
+	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
+		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
+}
+
+ZTEST(suit_platform_version_tests, test_cand_manifest_in_external_memory)
+{
+	suit_semver_raw_t version;
+
+	version.len = ARRAY_SIZE(version.raw);
+
+	/* GIVEN the component handle value is valid. */
+	suit_plat_component_id_get_fake.custom_fake =
+		suit_plat_component_id_get_valid_component_fake_func;
+	/* ... and the component type is candidate manifest component */
+	suit_plat_decode_component_type_fake.custom_fake =
+		suit_plat_decode_component_type_cand_fake_func;
+	/* ... and there is implementation-specific data */
+	suit_plat_component_impl_data_get_fake.custom_fake =
+		suit_plat_component_impl_data_get_data_fake_func;
+	/* ... and there is data in memory pointer storage */
+	suit_memptr_storage_ptr_get_fake.custom_fake = suit_memptr_storage_ptr_get_valid_fake_func;
 	/* ... and the data pointer points to an area in external memory */
 	suit_memory_global_address_is_in_external_memory_fake.return_val = true;
 
-	/* WHEN platform is asked to return manifest */
-	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
+	/* WHEN platform is asked to return manifest version */
+	int ret = suit_plat_component_version_get(TEST_COMPONENT_HANDLE, version.raw, &version.len);
 
-	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	/* THEN manifest version is not returned... */
+	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest version retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -983,6 +1262,6 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_cand_manifest_in_external_memo
 	/* ... and other checks were not performed */
 	zassert_equal(suit_plat_decode_manifest_class_id_fake.call_count, 0,
 		      "Incorrect number of suit_plat_decode_manifest_class_id() calls");
-	zassert_equal(suit_storage_installed_envelope_get_fake.call_count, 0,
-		      "Incorrect number of suit_storage_installed_envelope_get() calls");
+	zassert_equal(suit_processor_get_manifest_metadata_fake.call_count, 0,
+		      "Incorrect number of suit_processor_get_manifest_metadata() calls");
 }
