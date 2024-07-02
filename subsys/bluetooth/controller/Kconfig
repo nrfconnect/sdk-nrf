@@ -384,6 +384,7 @@ endif # BT_CTLR_ECDH
 
 config BT_CTLR_SDC_EVENT_TRIGGER
 	bool "Event Trigger"
+	depends on BT_LL_SOFTDEVICE_MULTIROLE || BT_LL_SOFTDEVICE_CENTRAL
 	help
 	  Enable support for the Event Trigger feature.
 	  The event trigger is a proprietary SDC feature which can be used
