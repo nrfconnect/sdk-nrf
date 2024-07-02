@@ -141,3 +141,24 @@ def add_announcement_banner(options: dict) -> None:
 
     options["set_default_announcement"] = True
     options["default_announcement_message"] = msg
+
+def add_svg_font_polyfill(app: Sphinx) -> None:
+    """Add font polyfill script for SVG images.
+
+    Args:
+        app: Sphinx instance.
+    """
+
+    app.add_js_file("js/svg-font-polyfill.js")
+
+
+def add_custom_elements(app: Sphinx, options: dict) -> None:
+    """Add custom elements to the page.
+
+    Args:
+        app: Sphinx instance.
+        options: HTML theme options
+    """
+    add_google_analytics(app, options)
+    add_announcement_banner(options)
+    add_svg_font_polyfill(app)

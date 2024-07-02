@@ -83,5 +83,4 @@ kconfig_generate_db = False
 def setup(app):
     app.add_css_file("css/zephyr.css")
 
-    utils.add_google_analytics(app, html_theme_options)
-    utils.add_announcement_banner(html_theme_options)
+    utils.add_custom_elements(app, html_theme_options)
