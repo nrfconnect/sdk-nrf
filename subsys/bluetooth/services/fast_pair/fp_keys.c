@@ -365,7 +365,7 @@ int fp_keys_store_account_key(const struct bt_conn *conn, const struct fp_accoun
 		LOG_WRN("Received invalid Account Key");
 		return -EINVAL;
 	}
-	err = fp_storage_ak_save(account_key);
+	err = fp_storage_ak_save(account_key, conn);
 	if (!err) {
 		LOG_DBG("Account Key stored");
 	} else {
@@ -526,6 +526,23 @@ static int fp_keys_uninit(void)
 	}
 
 	return 0;
+}
+
+int fp_keys_bond_save(const struct bt_conn *conn)
+{
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+
+	__ASSERT_NO_MSG(is_key_generated(proc->state));
+
+	if (proc->state == FP_STATE_USE_TEMP_KEY) {
+		/* Initial pairing - the Account Key is not written yet. */
+		return fp_storage_ak_bond_save(conn, NULL);
+	} else {
+		/* Subsequent pairing - the Account Key is already known. */
+		return fp_storage_ak_bond_save(conn, (struct fp_account_key *)proc->aes_key);
+	}
 }
 
 FP_ACTIVATION_MODULE_REGISTER(fp_keys, FP_ACTIVATION_INIT_PRIORITY_DEFAULT, fp_keys_init,
