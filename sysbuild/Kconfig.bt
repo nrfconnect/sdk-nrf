@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_USE_NORDIC_BT_RPC_SNIPPET
+	bool "Use nordic-bt-rpc snippet"
+	depends on NETCORE_IPC_RADIO_BT_RPC || NETCORE_RPC_HOST
+	default y
+	help
+	  Use nordic-bt-rpc snippet automatically.

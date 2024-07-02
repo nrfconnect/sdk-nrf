@@ -523,6 +523,12 @@ endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 # Consider if this shoulc come through Sysbuild Kconfig flag.
 set(NCS_SYSBUILD_PARTITION_MANAGER TRUE)
 
+if(SB_CONFIG_BT_USE_NORDIC_BT_RPC_SNIPPET)
+  if(NOT "nordic-bt-rpc" IN_LIST SNIPPET)
+    set(SNIPPET "nordic-bt-rpc" ${SNIPPET} CACHE STRING "" FORCE)
+  endif()
+endif()
+
 list(APPEND CMAKE_MODULE_PATH ${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/modules)
 include(ncs_sysbuild_extensions)
 include(${CMAKE_CURRENT_LIST_DIR}/extensions.cmake)
