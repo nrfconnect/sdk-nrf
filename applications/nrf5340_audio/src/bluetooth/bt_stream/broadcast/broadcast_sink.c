@@ -678,6 +678,11 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_RIGHT);
 	}
 
+	if (ret) {
+		LOG_ERR("Location set failed");
+		return ret;
+	}
+
 	ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
 	if (ret) {
 		LOG_ERR("Supported context set failed. Err: %d", ret);
@@ -687,11 +692,6 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 	ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
 	if (ret) {
 		LOG_ERR("Available context set failed. Err: %d", ret);
-		return ret;
-	}
-
-	if (ret) {
-		LOG_ERR("Location set failed");
 		return ret;
 	}
 
