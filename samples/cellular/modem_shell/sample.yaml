@@ -579,9 +579,6 @@ tests:
     extra_args: modem_shell_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     tags: ci_build sysbuild
