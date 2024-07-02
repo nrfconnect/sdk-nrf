@@ -30,7 +30,7 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_DECLARE(app);
+LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace ::chip;
 using namespace ::chip::DeviceLayer;
@@ -129,6 +129,7 @@ void AppTask::UpdateTemperatureClusterState()
 			/* Read value exceeds permitted limits, so assign invalid value code to it. */
 			newValue = kTemperatureMeasurementAttributeInvalidValue;
 		}
+		LOG_DBG("New temperature measurement %d.%d *C", sTemperature.val1, sTemperature.val2);
 
 		status = Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Set(
 			kTemperatureMeasurementEndpointId, newValue);
@@ -156,6 +157,7 @@ void AppTask::UpdatePressureClusterState()
 			/* Read value exceeds permitted limits, so assign invalid value code to it. */
 			newValue = kPressureMeasurementAttributeInvalidValue;
 		}
+		LOG_DBG("New pressure measurement %d.%d kPa", sPressure.val1, sPressure.val2);
 
 		status = Clusters::PressureMeasurement::Attributes::MeasuredValue::Set(kPressureMeasurementEndpointId,
 										       newValue);
@@ -183,6 +185,7 @@ void AppTask::UpdateRelativeHumidityClusterState()
 			/* Read value exceeds permitted limits, so assign invalid value code to it. */
 			newValue = kHumidityMeasurementAttributeInvalidValue;
 		}
+		LOG_DBG("New humidity measurement %d.%d %%", sHumidity.val1, sHumidity.val2);
 
 		status = Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Set(
 			kHumidityMeasurementEndpointId, newValue);
@@ -387,8 +390,7 @@ CHIP_ERROR AppTask::Init()
 	/* Initialize timers */
 	k_timer_init(
 		&sMeasurementsTimer, [](k_timer *) { Nrf::PostTask([] { MeasurementsTimerHandler(); }); }, nullptr);
-	k_timer_init(
-		&sIdentifyTimer, [](k_timer *) { Nrf::PostTask([] { IdentifyTimerHandler(); }); }, nullptr);
+	k_timer_init(&sIdentifyTimer, [](k_timer *) { Nrf::PostTask([] { IdentifyTimerHandler(); }); }, nullptr);
 	k_timer_start(&sMeasurementsTimer, K_MSEC(kMeasurementsIntervalMs), K_MSEC(kMeasurementsIntervalMs));
 
 	return Nrf::Matter::StartServer();
