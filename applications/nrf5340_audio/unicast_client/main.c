@@ -390,7 +390,7 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 
 		ret = bt_r_and_c_discover(msg->conn);
 		if (ret) {
-			LOG_WRN("Failed to discover rendering services");
+			LOG_WRN("Failed to discover rendering and capture services");
 		}
 
 		if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {

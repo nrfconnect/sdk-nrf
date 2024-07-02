@@ -17,6 +17,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_vol_rend, CONFIG_BT_VOL_LOG_LEVEL);
 
+static uint8_t master_volume = CONFIG_BT_AUDIO_VOL_DEFAULT;
+
 /**
  * @brief	Callback handler for the volume state.
  *
@@ -32,6 +34,7 @@ static void vcs_state_rend_cb_handler(int err, uint8_t volume, uint8_t mute)
 		return;
 	}
 	LOG_INF("Volume = %d, mute state = %d", volume, mute);
+	master_volume = volume;
 
 	/* Send to bt_rend */
 	ret = bt_r_and_c_volume_set(volume, true);
@@ -69,13 +72,20 @@ int bt_vol_rend_set(uint8_t volume)
 
 int bt_vol_rend_up(void)
 {
-	return bt_vcp_vol_rend_unmute_vol_up();
+
+	int vol = master_volume + CONFIG_BT_AUDIO_VOL_STEP_SIZE;
+
+	vol = CLAMP(vol, 0, __UINT8_MAX__);
+	return bt_vcp_vol_rend_set_vol(vol);
 }
 
 int bt_vol_rend_down(void)
 {
 
-	return bt_vcp_vol_rend_unmute_vol_down();
+	int vol = master_volume - CONFIG_BT_AUDIO_VOL_STEP_SIZE;
+
+	vol = CLAMP(vol, 0, __UINT8_MAX__);
+	return bt_vcp_vol_rend_set_vol(vol);
 }
 
 int bt_vol_rend_mute(void)
