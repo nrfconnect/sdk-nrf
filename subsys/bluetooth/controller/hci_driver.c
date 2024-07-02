@@ -860,6 +860,21 @@ static int configure_supported_features(void)
 	}
 #endif
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_SUBRATING)) {
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			err = sdc_support_connection_subrating_central();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			err = sdc_support_connection_subrating_peripheral();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+	}
+
 	return 0;
 }
 
