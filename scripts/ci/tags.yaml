@@ -97,7 +97,70 @@ posix:
   files:
     - zephyr/lib/posix/
 
-# cbprintf:
-#    files:
-#        - zephyr/lib/os/cbprintf*
-#        - zephyr/lib/posix
+cellular:
+  files:
+    - nrf/ext/curl/
+    - nrf/ext/iperf3/
+    - nrf/include/date_time.h
+    - nrf/include/dk_buttons_and_leds.h
+    - nrf/include/modem/at_cmd_parser.h
+    - nrf/include/modem/at_monitor.h
+    - nrf/include/modem/at_params.h
+    - nrf/include/modem/location.h
+    - nrf/include/modem/lte_lc.h
+    - nrf/include/modem/lte_lc*.h
+    - nrf/include/modem/modem_info.h
+    - nrf/include/modem/modem_jwt.h
+    - nrf/include/modem/modem_key_mgmt.h
+    - nrf/include/modem/nrf_modem_lib.h
+    - nrf/include/modem/pdn.h
+    - nrf/include/modem/sms.h
+    - nrf/include/net/download_client.h
+    - nrf/include/net/fota_download.h
+    - nrf/include/net/nrf_cloud.h
+    - nrf/include/net/nrf_cloud_agnss.h
+    - nrf/include/net/nrf_cloud_location.h
+    - nrf/include/net/nrf_cloud_os.h
+    - nrf/include/net/nrf_cloud_pgps.h
+    - nrf/include/net/nrf_cloud_rest.h
+    - nrf/include/net/rest_client.h
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/at_monitor/
+    - nrf/lib/at_shell/
+    - nrf/lib/at_host/
+    - nrf/lib/date_time/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/location/
+    - nrf/lib/lte_link_control/
+    - nrf/lib/modem_info/
+    - nrf/lib/modem_jwt/
+    - nrf/lib/modem_key_mgmt/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/lib/pdn/
+    - nrf/lib/sms/
+    - nrf/lib/supl/
+    - nrf/lib/bin/lwm2m_carrier/
+    - nrf/subsys/net/lib/download_client/
+    - nrf/subsys/net/lib/fota_download/
+    - nrf/subsys/net/lib/nrf_cloud/
+    - nrf/subsys/net/lib/rest_client/
+    - nrf/subsys/net/lib/ftp_client/
+    - nrf/subsys/net/lib/lwm2m_client_utils
+    - nrf/subsys/dfu/dfu_target/
+    - nrf/subsys/dfu/fmfu_fdev/
+    - nrf/subsys/fw_info/
+    - zephyr/include/net/
+    - zephyr/include/posix/
+    - zephyr/include/shell
+    - zephyr/drivers/net/
+    - zephyr/drivers/serial/
+    - zephyr/drivers/wifi/
+    - zephyr/drivers/console/
+    - zephyr/drivers/flash/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/net/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/dfu/boot/
+    - zephyr/subsys/net/
+    - nrfxlib/nrf_modem/
+    - nrfxlib/crypto/nrf_oberon/
