@@ -7,6 +7,7 @@
 #include "matter_init.h"
 
 #include "app/fabric_table_delegate.h"
+#include "app/group_data_provider.h"
 #include "migration/migration_manager.h"
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL
@@ -249,6 +250,15 @@ void DoInitChipServer(intptr_t /* unused */)
 	VerifyOrReturn(sLocalInitData.mServerInitParams, LOG_ERR("No valid server initialization parameters"));
 	sInitResult = sLocalInitData.mServerInitParams->InitializeStaticResourcesBeforeServerInit();
 	VerifyInitResultOrReturn(sInitResult, "InitializeStaticResourcesBeforeServerInit() failed");
+
+	/* Inject Nordic specific group data provider that allows for optimization of factory reset. */
+	Nrf::Matter::GroupDataProviderImpl::Instance().SetStorageDelegate(
+		sLocalInitData.mServerInitParams->persistentStorageDelegate);
+	Nrf::Matter::GroupDataProviderImpl::Instance().SetSessionKeystore(
+		sLocalInitData.mServerInitParams->sessionKeystore);
+	sInitResult = Nrf::Matter::GroupDataProviderImpl::Instance().Init();
+	VerifyInitResultOrReturn(sInitResult, "Initialization of GroupDataProvider failed");
+	sLocalInitData.mServerInitParams->groupDataProvider = &Nrf::Matter::GroupDataProviderImpl::Instance();
 
 	sInitResult = PlatformMgr().AddEventHandler(sLocalInitData.mEventHandler, 0);
 	VerifyInitResultOrReturn(sInitResult, "Cannot register CHIP event handler");

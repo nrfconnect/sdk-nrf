@@ -6,6 +6,7 @@
 
 #include "board.h"
 #include "app/task_executor.h"
+#include "app/group_data_provider.h"
 
 #include <app/server/Server.h>
 #include <platform/CHIPDeviceLayer.h>
@@ -210,6 +211,7 @@ void Board::FunctionTimerEventHandler()
 	} else if (sInstance.mFunction == BoardFunctions::FactoryReset) {
 		/* Actually trigger Factory Reset */
 		sInstance.mFunction = BoardFunctions::None;
+		Matter::GroupDataProviderImpl::Instance().WillBeFactoryReseted();
 		chip::Server::GetInstance().ScheduleFactoryReset();
 	}
 }

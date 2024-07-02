@@ -7,10 +7,11 @@
 #include <app/server/Server.h>
 #include <platform/nrfconnect/Reboot.h>
 
+#include "app/group_data_provider.h"
 #include "app/task_executor.h"
 #include "default_event_triggers.h"
-
 #include "event_triggers.h"
+
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/reboot.h>
 
@@ -60,6 +61,7 @@ void DelayTimerCallback(k_timer *timer)
 
 		switch (ctx->action) {
 		case DelayedAction::FactoryReset:
+			GroupDataProviderImpl::Instance().WillBeFactoryReseted();
 			Server::GetInstance().ScheduleFactoryReset();
 			break;
 #ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_EVENT_TRIGGERS

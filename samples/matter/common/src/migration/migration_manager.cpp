@@ -6,6 +6,8 @@
 
 #include "migration_manager.h"
 
+#include "app/group_data_provider.h"
+
 #include <crypto/OperationalKeystore.h>
 #include <crypto/PersistentStorageOperationalKeystore.h>
 
@@ -36,6 +38,7 @@ namespace Migration
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE
 		if (CHIP_NO_ERROR != err) {
+			GroupDataProviderImpl::Instance().WillBeFactoryReseted();
 			chip::Server::GetInstance().ScheduleFactoryReset();
 			/* Return a success to not block the Matter event Loop and allow to call scheduled factory
 			 * reset. */
