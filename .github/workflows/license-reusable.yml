@@ -43,6 +43,7 @@ jobs:
         git-ref: ${{ github.event.pull_request.head.sha }}
         path: ncs/${{ inputs.path }}
         west-update-args: '-n zephyr bsim'
+        west-token: ${{ secrets.WEST_UPDATE_TOKEN }}
 
     - name: cache-pip
       uses: actions/cache@v3
