@@ -99,9 +99,9 @@ Complete the following steps to provision the certificate:
 
    .. tabs::
 
-      .. group-tab:: nRF9161 DK
+      .. group-tab:: nRF91x1 DK
 
-         .. figure:: images/cellularmonitor_selectdevice_nrf9161.png
+         .. figure:: images/cellularmonitor_selectdevice_nrf9151.png
             :alt: Cellular Monitor - Select device
 
             Cellular Monitor - Select device
@@ -119,9 +119,9 @@ Complete the following steps to provision the certificate:
 
    .. tabs::
 
-      .. group-tab:: nRF9161 DK
+      .. group-tab:: nRF91x1 DK
 
-         .. figure:: images/cellularmonitor_open_serial_terminal_nrf9161.png
+         .. figure:: images/cellularmonitor_open_serial_terminal_nrf9151.png
             :alt: Cellular Monitor - Open Serial Terminal
 
             Cellular Monitor - Open Serial Terminal
@@ -145,9 +145,9 @@ Complete the following steps to provision the certificate:
 
    .. tabs::
 
-      .. group-tab:: nRF9161 DK
+      .. group-tab:: nRF91x1 DK
 
-         .. figure:: images/cellularmonitor_navigationcertificatemanager_nrf9161.png
+         .. figure:: images/cellularmonitor_navigationcertificatemanager_nrf9151.png
             :alt: Cellular Monitor - Certificate Manager
 
             Cellular Monitor - Certificate Manager
@@ -165,7 +165,7 @@ Complete the following steps to provision the certificate:
 #. Click :guilabel:`Update certificate`.
 
    The log message "Certificate update completed" indicates that the certificate was provisioned successfully.
-   If you encounter any errors, switch to the terminal view and check the output of the AT commands that were sent to the nRF9160 DK modem.
+   If you encounter any errors, switch to the terminal view and check the output of the AT commands that were sent to the nRF91 Series modem.
 
    .. note::
 
