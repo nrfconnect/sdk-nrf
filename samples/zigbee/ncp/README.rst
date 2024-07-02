@@ -92,20 +92,25 @@ Communication through USB
 -------------------------
 
 To change the communication channel from the default UART to nRF USB CDC ACM ``cdc_acm_uart0``, use the :file:`prj_usb.conf` configuration file and add the ``-DFILE_SUFFIX=usb`` flag to the build command.
-See :ref:`cmake_options` for instructions on how to add this flag to your build.
-For example, when building from the command line, use the following command:
+When using the nRF52840 Dongle, please add the ``-DFILE_SUFFIX=dongle`` flag to the build command instead.
+See :ref:`cmake_options` for instructions on how to add these flags to your build.
+For example, when building from the command line, use the following commands:
 
 .. code-block:: console
 
    west build samples/zigbee/ncp -b nrf52840dk/nrf52840 -- -DFILE_SUFFIX=usb
+
+.. code-block:: console
+
+   west build samples/zigbee/ncp -b nrf52840dongle/nrf52840 -- -DFILE_SUFFIX=dongle
 
 The USB device VID and PID are configured by the sample's Kconfig file.
 
 .. note::
    USB is used as the default NCP communication channel when using the nRF52840 Dongle.
 
-When you change the communication channel to nRF USB with :file:`prj_usb.conf` and select any of the :file:`<board>_usb.overlay` files, :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` are printed by default using ``uart1``.
-This is configured in the :file:`prj_usb.conf` file with the following settings:
+When you change the communication channel to nRF USB using either :file:`prj_usb.conf` or :file:`prj_dongle.conf` and select any of the :file:`<board>_usb.overlay` or :file:`<board>_dongle.overlay` files, respectively, :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` are printed by default using ``uart1``.
+This is configured in the project file with the following settings:
 
 * :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - To enable binary format.
 * :kconfig:option:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - To select the UART serial over the nRF USB serial.
@@ -129,7 +134,7 @@ Complete the following steps:
 
 #. Create two instances of USB CDC ACM for the application:
 
-   a. Create two entries in the DTS overlay file :file:`<board>_usb.overlay` for the selected board, one for each USB CDC ACM instance.
+   a. Create two entries in the DTS overlay file :file:`<board>_usb.overlay` or :file:`<board>_dongle.overlay` for the selected board, one for each USB CDC ACM instance.
       See :ref:`zephyr:usb_device_cdc_acm` for more information.
    #. Extend the ``zephyr_udc0`` node in the DTS overlay file to also configure the second USB CDC ACM instance ``"cdc_acm_uart1"``:
 
@@ -181,23 +186,16 @@ MCUboot
 When you select `Communication through USB`_, MCUboot is built with support for a single application slot, and it uses the USB DFU class driver to allow uploading of the image over USB.
 
 If you want to use the default UART serial communication channel, set the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option to enable MCUboot.
-To use the same MCUboot configuration as in `Communication through USB`_, you need to provide MCUboot with the Kconfig options included in the :file:`child_image/mcuboot_usb.conf` file.
+To use the same MCUboot configuration as in `Communication through USB`_, you need to provide MCUboot with the Kconfig options included in the :file:`sysbuild/mcuboot_usb.conf` file.
 See :ref:`ug_multi_image_variables` to learn how to set the required options.
 
 MCUboot with the USB DFU requires a larger partition.
-To increase the partition, define the ``PM_STATIC_YML_FILE`` variable that provides the path to the :file:`pm_static.yml` static configuration file in the :file:`configuration` directory for the board target of your choice.
+To increase the partition, define the ``PM_STATIC_YML_FILE`` variable that provides the path to the :file:`pm_static_<board>_<suffix>.yml` static configuration file for the board target of your choice.
+This is done automatically when building the sample with the ``-DFILE_SUFFIX=<suffix>`` flag.
 
 For instructions on how to set these additional options and configuration at build time, see :ref:`cmake_options` and :ref:`configure_application`.
 
-See the following command-line instruction for an example:
-
-.. code-block:: console
-
-   west build samples/zigbee/ncp -b nrf52840dk/nrf52840 -- -DCONFIG_BOOTLOADER_MCUBOOT=y  -Dmcuboot_CONFIG_MULTITHREADING=y -Dmcuboot_CONFIG_BOOT_USB_DFU_WAIT=y -Dmcuboot_CONFIG_SINGLE_APPLICATION_SLOT=y -DPM_STATIC_YML_FILE=samples/zigbee/ncp/configuration/nrf52840dk_nrf52840/pm_static.yml
-
-When building the sample, the build system also generates the signed :file:`app_update.bin` image file in the :file:`build` directory.
-You can use this file to upgrade a device.
-See :ref:`mcuboot_ncs` for more information about this and other automatically generated files.
+See :ref:`mcuboot_ncs` for information about build system automatically generated files.
 
 After every reset, the sample first boots to MCUboot and then, after a couple of seconds, the NCP sample is booted.
 When booted to MCUboot, you can upload the new image with the `dfu-util tool`_.
