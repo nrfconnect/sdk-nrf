@@ -48,10 +48,16 @@ bluetooth:
   files:
     - zephyr/drivers/bluetooth/
     - zephyr/subsys/bluetooth/
-    - zephyr/subsys/net/l2/bluetooth/
-#    Examples:
-#    - nrf/drivers/bluetooth/
-#    - nrf/subsys/bluetooth/
+    - zephyr/include/zephyr/bluetooth/
+    - nrfxlib/softdevice_controller/include/
+    - nrfxlib/softdevice_controller/lib/
+    - nrfxlib/mpsl/include/
+    - nrfxlib/mpsl/lib/
+    - nrf/subsys/bluetooth/
+    - nrf/include/bluetooth/
+    - nrf/subsys/nrf_rpc/
+    - nrf/subsys/mpsl/
+    - nrf/drivers/mpsl/
 
 net:
   files:
