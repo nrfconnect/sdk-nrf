@@ -94,3 +94,19 @@ tests:
     extra_configs:
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
     tags: suit bluetooth
+
+  subsys.suit.smp_transfer.full.extflash.bt.v1:
+    extra_args:
+      - FILE_SUFFIX=extflash
+      - OVERLAY_CONFIG="sysbuild/smp_transfer_bt.conf"
+      - SB_OVERLAY_CONFIG="sysbuild_bt.conf"
+      - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
+    tags: suit bluetooth
+
+  subsys.suit.smp_transfer.full.extflash.bt.v2:
+    extra_args:
+      - FILE_SUFFIX=extflash
+      - OVERLAY_CONFIG="sysbuild/smp_transfer_bt.conf"
+      - SB_OVERLAY_CONFIG="sysbuild_bt.conf"
+      - SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+    tags: suit bluetooth
