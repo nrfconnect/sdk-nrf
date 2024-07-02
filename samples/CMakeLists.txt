@@ -10,6 +10,11 @@ if (CONFIG_SECURE_BOOT)
     # with the update binaries.
     set_shared(IMAGE net_core PROPERTY SOC ${CONFIG_SOC})
     set_shared(IMAGE net_core PROPERTY VERSION ${CONFIG_FW_INFO_FIRMWARE_VERSION})
+    # Use minimal configuration of b0 network core bootloader
+    add_overlay_config(
+      b0n
+      ${CMAKE_CURRENT_LIST_DIR}/nrf5340/netboot/overlay-minimal-size.conf
+      )
     add_child_image(
       NAME b0n
       SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/nrf5340/netboot
