@@ -960,6 +960,8 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE` Kconfig option to control the buffer size used for the anchor names.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION_PARSE_ANCHORS` Kconfig option to control if anchor names are parsed.
     * The :c:func:`nrf_cloud_obj_bool_get` function to get a boolean value from an object.
+    * Experimental support for shadow transform requests over MQTT using the :c:func:`nrf_cloud_shadow_transform_request` function.
+      Functionality is enabled by the Kconfig option :kconfig:option:`CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS`.
 
   * Updated:
 

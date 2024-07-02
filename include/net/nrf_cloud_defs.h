@@ -234,5 +234,10 @@
 #define NRF_CLOUD_JSON_VAL_METHOD_LTE		"LTE"
 #define NRF_CLOUD_JSON_VAL_METHOD_WIFI		"Wi-Fi"
 
+/** Default maximum response length to a shadow transform request */
+#define NRF_CLOUD_TRANSFORM_MAX_RESPONSE_LEN	1792
+#define NRF_CLOUD_TRANSFORM_REQ_LEN_KEY		"l"
+#define NRF_CLOUD_TRANSFORM_REQ_KEY		"t"
+
 /** @} */
 #endif /* NRF_CLOUD_DEFS_H__ */

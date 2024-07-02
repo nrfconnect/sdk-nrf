@@ -7,6 +7,7 @@
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_mem.h"
+#include "nrf_cloud_transport.h"
 #include <zephyr/kernel.h>
 #include <net/nrf_cloud_alert.h>
 #include <net/nrf_cloud_codec.h>
@@ -339,11 +340,7 @@ static int cc_connection_handler(const struct nct_evt *nct_evt)
 static int set_endpoint_data(const struct nrf_cloud_obj_shadow_data *const input)
 {
 	int err;
-	struct nrf_cloud_data rx;
-	struct nrf_cloud_data tx;
-	struct nrf_cloud_data bulk;
-	struct nrf_cloud_data bin;
-	struct nrf_cloud_data endpoint;
+	struct nct_dc_endpoints eps;
 	struct nrf_cloud_obj *desired_obj = NULL;
 
 	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) {
@@ -354,23 +351,27 @@ static int set_endpoint_data(const struct nrf_cloud_obj_shadow_data *const input
 		return -ENOTSUP;
 	}
 
-	err = nrf_cloud_obj_endpoint_decode(desired_obj, &tx, &rx, &bulk, &bin, &endpoint);
+	err = nrf_cloud_obj_endpoint_decode(desired_obj, &eps);
 	if (err) {
 		LOG_ERR("nrf_cloud_obj_endpoint_decode failed %d", err);
 		return err;
 	}
 
 	/* Update to use wildcard topic if necessary */
-	c2d_topic_modified = nrf_cloud_set_wildcard_c2d_topic((char *)rx.ptr, rx.len);
+	c2d_topic_modified = nrf_cloud_set_wildcard_c2d_topic((char *)eps.rx.utf8, eps.rx.size);
 
 	/* Set the endpoint information. */
-	nct_dc_endpoint_set(&tx, &rx, &bulk, &bin, &endpoint);
+	nct_dc_endpoint_set(&eps);
 
 	return 0;
 }
 
 static void shadow_control_process(struct nrf_cloud_obj_shadow_data *const input)
 {
+	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF_RESULT) {
+		return;
+	}
+
 	struct nct_cc_data msg = {
 		.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
 		.message_id = NCT_MSG_ID_STATE_REPORT
@@ -442,6 +443,7 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 	const enum nfsm_state current_state = nfsm_get_current_state();
 	struct nrf_cloud_obj_shadow_accepted shadow_accepted = {0};
 	struct nrf_cloud_obj_shadow_delta shadow_delta = {0};
+	struct nrf_cloud_obj_shadow_transform shadow_tf = {0};
 	struct nrf_cloud_obj_shadow_data shadow_data = {0};
 
 	NRF_CLOUD_OBJ_JSON_DEFINE(shadow_obj);
@@ -479,6 +481,18 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 			shadow_data.delta = &shadow_delta;
 			LOG_DBG("Delta shadow decoded");
 		}
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	} else if (nct_evt->param.cc->opcode == NCT_CC_OPCODE_TRANSFORM) {
+		/* Use the entire shadow object as the transform result */
+		shadow_tf.tf = shadow_obj;
+		nrf_cloud_obj_reset(&shadow_obj);
+		shadow_data.type = NRF_CLOUD_OBJ_SHADOW_TYPE_TF_RESULT;
+		shadow_data.transform = &shadow_tf;
+		LOG_DBG("Transform result received");
+#endif
+	} else {
+		/* TODO: not actually doing anything with data from the rejected topic */
+		err = -ENOMSG;
 	}
 
 	nrf_cloud_obj_free(&shadow_obj);
@@ -500,7 +514,7 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 	}
 
 	/* Process control data */
-	shadow_control_process(&shadow_data);
+	(void)shadow_control_process(&shadow_data);
 
 	/* Check if data should be sent to the application */
 	if (nrf_cloud_shadow_app_send_check(&shadow_data)) {
@@ -518,6 +532,7 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 	/* Free the shadow objects */
 	nrf_cloud_obj_shadow_accepted_free(&shadow_accepted);
 	nrf_cloud_obj_shadow_delta_free(&shadow_delta);
+	nrf_cloud_obj_shadow_transform_free(&shadow_tf);
 
 	if (!accept) {
 		/* The new state is not accepted */

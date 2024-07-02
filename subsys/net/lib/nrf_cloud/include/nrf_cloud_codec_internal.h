@@ -31,6 +31,7 @@
 #include "nrf_cloud_agnss_schema_v1.h"
 #include "nrf_cloud_log_internal.h"
 #include "nrf_cloud_fota.h"
+#include "nrf_cloud_transport.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -105,11 +106,7 @@ int nrf_cloud_shadow_data_encode(const struct nrf_cloud_sensor_data *sensor,
 
 /** @brief Decode data endpoint information. */
 int nrf_cloud_obj_endpoint_decode(const struct nrf_cloud_obj *const desired_obj,
-				  struct nrf_cloud_data *tx_endpoint,
-				  struct nrf_cloud_data *rx_endpoint,
-				  struct nrf_cloud_data *bulk_endpoint,
-				  struct nrf_cloud_data *bin_endpoint,
-				  struct nrf_cloud_data *m_endpoint);
+				  struct nct_dc_endpoints *const eps);
 
 /** @brief Encode state information. */
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
@@ -136,6 +133,9 @@ int nrf_cloud_obj_shadow_delta_decode(struct nrf_cloud_obj *const shadow_obj,
 
 /** @brief Free the delta shadow data. */
 void nrf_cloud_obj_shadow_delta_free(struct nrf_cloud_obj_shadow_delta *const delta);
+
+/** @brief Free the transform result data. */
+void nrf_cloud_obj_shadow_transform_free(struct nrf_cloud_obj_shadow_transform *const tf);
 
 /** @brief Check if the shadow data should be sent to the application. */
 bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const input);

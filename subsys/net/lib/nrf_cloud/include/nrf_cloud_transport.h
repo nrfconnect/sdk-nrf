@@ -8,6 +8,7 @@
 #define NRF_CLOUD_TRANSPORT_H__
 
 #include <stddef.h>
+#include <zephyr/net/mqtt.h>
 #include <net/nrf_cloud.h>
 
 #ifdef __cplusplus
@@ -30,13 +31,18 @@ enum nct_evt_type {
 };
 
 enum nct_cc_opcode {
-	/* State (shadow) request */
-	NCT_CC_OPCODE_GET_REQ,
-	/* Shadow update: accepted (trimmed) */
-	NCT_CC_OPCODE_UPDATE_ACCEPTED,
-	/* Shadow update: rejected */
+	/* NOTE: Explicitly enumerated values are used as an array index */
+	/* State (shadow) request - TX */
+	NCT_CC_OPCODE_GET_REQ = 0,
+	/* Shadow update: accepted (trimmed) - RX/TX */
+	NCT_CC_OPCODE_UPDATE_ACCEPTED = 1,
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	/* Shadow transform - RX/TX */
+	NCT_CC_OPCODE_TRANSFORM = 2,
+#endif
+	/* Shadow update: rejected - RX */
 	NCT_CC_OPCODE_UPDATE_REJECTED,
-	/* Shadow update: delta */
+	/* Shadow update: delta - RX */
 	NCT_CC_OPCODE_UPDATE_DELTA,
 };
 
@@ -62,6 +68,32 @@ struct nct_evt {
 		uint8_t flag;
 	} param;
 	enum nct_evt_type type;
+};
+
+struct nct_cc_endpoints {
+	/* Subscribe */
+	struct mqtt_utf8 accepted;
+	struct mqtt_utf8 rejected;
+	struct mqtt_utf8 delta;
+	struct mqtt_utf8 accepted_tf;
+
+	/* Publish */
+	struct mqtt_utf8 update;
+	struct mqtt_utf8 get;
+	struct mqtt_utf8 get_tf;
+};
+
+struct nct_dc_endpoints {
+	/* Topic prefix */
+	struct mqtt_utf8 base;
+
+	/* Publish */
+	struct mqtt_utf8 tx;
+	struct mqtt_utf8 bulk;
+	struct mqtt_utf8 bin;
+
+	/* Subscribe */
+	struct mqtt_utf8 rx;
 };
 
 int nct_socket_get(void);
@@ -129,20 +161,12 @@ int nct_disconnect(void);
  *
  * @note This routine must be called before @ref nrf_dc_connect.
  */
-void nct_dc_endpoint_set(const struct nrf_cloud_data *tx_endpoint,
-			 const struct nrf_cloud_data *rx_endpoint,
-			 const struct nrf_cloud_data *bulk_endpoint,
-			 const struct nrf_cloud_data *bin_endpoint,
-			 const struct nrf_cloud_data *m_endpoint);
+void nct_dc_endpoint_set(const struct nct_dc_endpoints *const eps);
 
 /**
  * @brief Get the endpoint information.
  */
-void nct_dc_endpoint_get(struct nrf_cloud_data *tx_endpoint,
-			 struct nrf_cloud_data *rx_endpoint,
-			 struct nrf_cloud_data *bulk_endpoint,
-			 struct nrf_cloud_data *bin_endpoint,
-			 struct nrf_cloud_data *m_endpoint);
+void nct_dc_endpoint_get(struct nct_dc_endpoints *const eps);
 
 /** @brief Needed for keep alive. */
 int nct_process(void);

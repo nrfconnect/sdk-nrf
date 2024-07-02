@@ -84,7 +84,6 @@ config NRF_CLOUD_CONNECTION_POLL_THREAD
 	bool "Poll cloud connection in a separate thread"
 	default y
 
-
 if NRF_CLOUD_CONNECTION_POLL_THREAD
 
 config NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE
@@ -101,5 +100,12 @@ config NRF_CLOUD_MQTT_KEEPALIVE
 	  Keep alive time for MQTT connection to nRF Cloud, in seconds. This option overwrites
 	  the CONFIG_MQTT_KEEPALIVE value. Default is set to the maximum specified MQTT keepalive
 	  for nRF Cloud.
+
+config NRF_CLOUD_MQTT_SHADOW_TRANSFORMS
+	select EXPERIMENTAL
+	bool "Enable requesting shadow data using a JSONata expression"
+	help
+	  This feature may not yet be available. Please check the nRF Cloud documentation regarding
+	  MQTT topics to determine if the shadow transform topic is available for use.
 
 endif # NRF_CLOUD_MQTT
