@@ -364,6 +364,11 @@ The Fast Pair service implementation provides API to generate the advertising da
 :c:func:`bt_fast_pair_set_pairing_mode`
   This function is to be used to set pairing mode before the advertising is started.
 
+.. note::
+   When the :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` configuration option is disabled, you cannot use the Fast Pair not discoverable advertising with UI indications (:c:enum:`BT_FAST_PAIR_NOT_DISC_ADV_TYPE_SHOW_UI_IND`).
+   This type of advertising is used to trigger the subsequent pairing.
+   See the following :ref:`ug_bt_fast_pair_gatt_service_subsequent_pairing` section for more details.
+
 Since you control the advertising, make sure to use advertising parameters consistent with the specification.
 The Bluetooth privacy is selected by the Fast Pair service, but you must make sure that the following requirements are met:
 
@@ -588,6 +593,18 @@ In the Fast Pair subsystem disabled state, GATT operations on the Fast Pair serv
 The Fast Pair GATT service modifies default values of related Kconfig options to follow Fast Pair requirements.
 The service also enables the needed functionalities using Kconfig select statement.
 For details, see the :ref:`bt_fast_pair_readme` Bluetooth service documentation in the |NCS|.
+
+.. _ug_bt_fast_pair_gatt_service_subsequent_pairing:
+
+Subsequent Pairing
+==================
+
+The Fast Pair specification supports the Subsequent Pairing feature.
+Subsequent pairing is the later pairing between a Fast Pair Provider that was initial-paired to your Google account and your other Fast Pair Seeker where the same Google Account is logged-in.
+
+You can enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` configuration option to support the Subsequent Pairing feature during the `Fast Pair Procedure`_.
+
+As a consequence, the Fast Pair not discoverable advertising with UI indications is only available when the Subsequent Pairing feature is supported, as this advertising type is used to trigger the subsequent pairing UI flow.
 
 .. _ug_bt_fast_pair_gatt_service_no_ble_pairing:
 

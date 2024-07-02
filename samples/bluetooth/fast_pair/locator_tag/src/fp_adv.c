@@ -115,7 +115,6 @@ static void fp_adv_prov_configure(enum app_fp_adv_mode fp_adv_mode)
 
 	case APP_FP_ADV_MODE_NOT_DISCOVERABLE:
 		bt_le_adv_prov_fast_pair_enable(true);
-		bt_le_adv_prov_fast_pair_show_ui_pairing(false);
 		break;
 
 	default:
