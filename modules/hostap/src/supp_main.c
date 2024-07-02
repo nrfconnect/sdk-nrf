@@ -188,6 +188,7 @@ static int z_wpas_add_interface(const char *ifname)
 
 	wpa_s->conf->filter_ssids = 1;
 	wpa_s->conf->ap_scan = 1;
+	wpa_s->conf->sae_pwe = 2;
 
 	/* Default interface, kick start wpa_supplicant */
 	if (z_wpas_get_iface_count() == 1) {
