@@ -33,20 +33,11 @@ struct test_msg_fifo_queue {
 	void **data[FAKE_FIFO_MSG_QUEUE_SIZE];
 };
 
+/* FIFO "slab" */
 static struct test_slab_queue test_fifo_slab[FAKE_FIFO_NUM];
 
+/* FIFO "message" queue */
 static struct test_msg_fifo_queue test_fifo_msg_queue[FAKE_FIFO_NUM];
-
-void data_fifo_deinit(struct data_fifo *data_fifo)
-{
-	data_fifo->msgq_buffer = (char *)NULL;
-	data_fifo->slab_buffer = (char *)NULL;
-	data_fifo->elements_max = 0;
-	data_fifo->block_size_max = 0;
-	data_fifo->initialized = false;
-
-	fifo_num = 0;
-}
 
 /*
  * Stubs are defined here, so that multiple *.c files can share them
@@ -62,8 +53,10 @@ DEFINE_FAKE_VALUE_FUNC(int, data_fifo_pointer_last_filled_get, struct data_fifo 
 DEFINE_FAKE_VOID_FUNC2(data_fifo_block_free, struct data_fifo *, void *);
 DEFINE_FAKE_VALUE_FUNC(int, data_fifo_num_used_get, struct data_fifo *, uint32_t *, uint32_t *);
 DEFINE_FAKE_VALUE_FUNC(int, data_fifo_empty, struct data_fifo *);
+DEFINE_FAKE_VALUE_FUNC(int, data_fifo_deinit, struct data_fifo *);
 DEFINE_FAKE_VALUE_FUNC(int, data_fifo_init, struct data_fifo *);
 
+/* Custom fakes implementation */
 int fake_data_fifo_pointer_first_vacant_get__succeeds(struct data_fifo *data_fifo, void **data,
 						      k_timeout_t timeout)
 {
@@ -284,6 +277,22 @@ int fake_data_fifo_empty__timeout_fails(struct data_fifo *data_fifo)
 	return -EAGAIN;
 }
 
+int fake_data_fifo_deinit__succeeds(struct data_fifo *data_fifo)
+{
+	fifo_num -= 1;
+
+	data_fifo->initialized = false;
+
+	return 0;
+}
+
+int fake_data_fifo_deinit__fails(struct data_fifo *data_fifo)
+{
+	ARG_UNUSED(data_fifo);
+
+	return -EINVAL;
+}
+
 int fake_data_fifo_init__succeeds(struct data_fifo *data_fifo)
 {
 	struct test_msg_fifo_queue *test_fifo_msg = &test_fifo_msg_queue[fifo_num];
@@ -306,7 +315,7 @@ int fake_data_fifo_init__succeeds(struct data_fifo *data_fifo)
 	test_fifo_slab_data->tail = 0;
 	test_fifo_slab_data->size = FAKE_FIFO_MSG_QUEUE_SIZE;
 
-	for (int i = 0; i < FAKE_FIFO_MSG_QUEUE_SIZE; i++) {
+	for (int i = 0; i < FAKE_FIFO_MSG_QUEUE_SIZE - 1; i++) {
 		if (((test_fifo_slab_data->head + 1) % test_fifo_slab_data->size) ==
 		    test_fifo_slab_data->tail) {
 			return -ENOMSG;

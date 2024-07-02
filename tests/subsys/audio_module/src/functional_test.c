@@ -948,6 +948,18 @@ ZTEST(suite_audio_module_functional, test_data_tx_fnct)
 		test_data[i] = TEST_MOD_DATA_SIZE - i;
 	}
 
+	audio_data.data = NULL;
+	audio_data.data_size = TEST_MOD_DATA_SIZE;
+
+	ret = audio_module_data_tx(&handle, &audio_data, NULL);
+	zassert_equal(ret, 0, "Data TX function did not return successfully: ret %d", ret);
+
+	audio_data.data = &test_data[0];
+	audio_data.data_size = 0;
+
+	ret = audio_module_data_tx(&handle, &audio_data, NULL);
+	zassert_equal(ret, -EINVAL, "Data TX function did not return successfully: ret %d", ret);
+
 	audio_data.data = &test_data[0];
 	audio_data.data_size = TEST_MOD_DATA_SIZE;
 
@@ -1008,6 +1020,18 @@ ZTEST(suite_audio_module_functional, test_data_rx_fnct)
 	for (int i = 0; i < TEST_MOD_DATA_SIZE; i++) {
 		test_data[i] = TEST_MOD_DATA_SIZE - i;
 	}
+
+	audio_data.data = NULL;
+	audio_data.data_size = TEST_MOD_DATA_SIZE;
+
+	ret = audio_module_data_tx(&handle, &audio_data, NULL);
+	zassert_equal(ret, 0, "Data TX function did not return successfully: ret %d", ret);
+
+	audio_data.data = &test_data[0];
+	audio_data.data_size = 0;
+
+	ret = audio_module_data_tx(&handle, &audio_data, NULL);
+	zassert_equal(ret, -EINVAL, "Data TX function did not return successfully: ret %d", ret);
 
 	audio_data_in.data = &test_data[0];
 	audio_data_in.data_size = TEST_MOD_DATA_SIZE;
