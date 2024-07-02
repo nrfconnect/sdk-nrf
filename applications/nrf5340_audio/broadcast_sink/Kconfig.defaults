@@ -50,6 +50,11 @@ config BT_PAC_SNK
 config BT_AUDIO_RX
 	default y
 
+config BT_PER_ADV_SYNC_TRANSFER_RECEIVER
+	default y
+
+config BT_DEVICE_NAME
+	default "NRF5340_BIS_HEADSET"
 
 ## Audio related configs ##
 config AUDIO_MUTE
