@@ -562,3 +562,58 @@ ZTEST(orchestrator_update_tests, test_seq_cand_varification_install)
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
+
+ZTEST(orchestrator_update_tests, test_invalid_update_candidate_address)
+{
+	/* GIVEN update candidate with invalid address... */
+	setup_update_candidate((uint8_t *) 0x00000FF0, 0x50);
+	/* ... and suit orchestrator is initialized... */
+	zassert_equal(0, suit_orchestrator_init(), "Orchestrator not initialized");
+	/* ... and the execution mode is set to install mode */
+	zassert_equal(EXECUTION_MODE_INSTALL, suit_execution_mode_get(),
+		      "Unexpected execution mode before test execution");
+
+	/* WHEN orchestrator is launched */
+	int err = suit_orchestrator_entry();
+
+	/* THEN orchestrator returns error code... */
+	zassert_equal(-EACCES, err, "Unexpected error code");
+	/* ... and the candidate availability flag is cleared */
+	assert_post_install_state();
+}
+
+ZTEST(orchestrator_update_tests, test_invalid_dfu_partition_address)
+{
+	/* GIVEN update candidate with valid address, cache partition with invalid address... */
+	suit_plat_mreg_t update_candidate[2] = {
+		{
+		.mem = manifest_valid_buf,
+		.size = manifest_valid_len,
+		},
+		{
+		.mem = (uint8_t *) 0x00000FF0,
+		.size = 0x50,
+		}
+	};
+
+	setup_erased_flash();
+
+	int err = suit_storage_update_cand_set(update_candidate, ARRAY_SIZE(update_candidate));
+
+	zassert_equal(SUIT_PLAT_SUCCESS, err,
+		      "Unable to set update candidate before test execution");
+
+	/* ... and suit orchestrator is initialized... */
+	zassert_equal(0, suit_orchestrator_init(), "Orchestrator not initialized");
+	/* ... and the execution mode is set to install mode */
+	zassert_equal(EXECUTION_MODE_INSTALL, suit_execution_mode_get(),
+		      "Unexpected execution mode before test execution");
+
+	/* WHEN orchestrator is launched */
+	err = suit_orchestrator_entry();
+
+	/* THEN orchestrator returns error code... */
+	zassert_equal(-EACCES, err, "Unexpected error code");
+	/* ... and the candidate availability flag is cleared */
+	assert_post_install_state();
+}
