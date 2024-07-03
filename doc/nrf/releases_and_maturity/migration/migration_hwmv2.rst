@@ -50,6 +50,10 @@ To convert your board from hardware model v1 to v2, consult the following pages:
 * The `ncs-example-application conversion commit <ncs-example-application commit f9f2da_>`_ as an example of how to port a simple board.
 * The `hardware model v2 commit <Zephyr commit 8dc3f8_>`_, containing the full conversion of all existing boards from the old to the current model, to use as a complete conversion reference.
 
+.. note::
+   Board names must be unique, so you cannot have boards in hardware model v1 and v2 description with the same name.
+   If you decide to create a new board in hardware model v2 instead of converting an existing board, ensure that corresponding board config fragments and devicetree overlays for the new boards are also created and any tests for the board in Kconfig, build system, and source code are correctly updated.
+
 Conversion script
 -----------------
 
@@ -60,15 +64,26 @@ It has built-in help text documenting all the parameters it takes.
    The script may not be able to automatically convert all boards.
    Boards based on multicore SoCs (nRF53) or with non-secure targets (nRF53/nRF91) will need manual changes.
 
-The following example shows an invocation of the script converting a hypothetical out-of-tree board ``plank`` based on the nRF52840 and having ``acme`` as vendor.
+The following example shows an invocation of the script converting a hypothetical out-of-tree board ``plank_nrf52840`` based on the nRF52840 and having ``acme`` as vendor.
 The command must be run from the :ref:`toolchain environment <using_toolchain_environment>`.
 
 .. code-block::
    :class: highlight
 
    cd my-repo
-   python ../zephyr/scripts/utils/board_v1_to_v2.py --board-root . -b plank -s nrf52840 -g acme -v acme
+   python ../zephyr/scripts/utils/board_v1_to_v2.py --board-root . -b plank_nrf52840 -n plank -s nrf52840 -g acme -v acme
 
 
 After running this command, the script converts the board from the previous hardware model to the current one, creating a board in the new format in :file:`my-repo/boards/acme/plank`.
 The script assumes that you have a repository named :file:`my-repo`, having a :file:`boards` folder located at the same level as the :file:`nrf` folder.
+
+The conversion script cannot handle board variants.
+If your board uses variants, such as ``ns`` (non-secure), you must manually define them after running the conversion script.
+
+Verify the changes made by the script and test your board.
+
+When you are satisfied with the new board description, commit the changes to your repository.
+
+.. note::
+   The script will remove the board in hardware model v1 description, because board names must be unique.
+   Also, a given folder can only contain a board in either hardware model v1 or v2 format.
