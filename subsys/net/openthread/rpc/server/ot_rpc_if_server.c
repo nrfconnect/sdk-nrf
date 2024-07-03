@@ -5,6 +5,7 @@
  */
 
 #include <ot_rpc_ids.h>
+#include <ot_rpc_common.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -20,18 +21,9 @@
 
 #include <stdio.h>
 
-NRF_RPC_GROUP_DECLARE(ot_group);
 LOG_MODULE_DECLARE(ot_rpc, LOG_LEVEL_DBG);
 
 struct net_context *recv_net_context;
-
-static void decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-			void *handler_data)
-{
-	ARG_UNUSED(group);
-	ARG_UNUSED(ctx);
-	ARG_UNUSED(handler_data);
-}
 
 static void ot_rpc_if_recv_cb(struct net_context *context, struct net_pkt *pkt,
 			      union net_ip_header *ip_hdr, union net_proto_header *proto_hdr,
@@ -69,7 +61,7 @@ static void ot_rpc_if_recv_cb(struct net_context *context, struct net_pkt *pkt,
 	NET_DBG("Passing Ip6 packet to RPC client");
 
 	encoded_ok = true;
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_RECEIVE, &ctx, decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_RECEIVE, &ctx, ot_rpc_decode_void, NULL);
 
 out:
 	if (!encoded_ok) {
