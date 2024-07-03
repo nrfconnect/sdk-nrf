@@ -16,9 +16,9 @@
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/scan.h>
+#include <bluetooth/hci_vs_sdc.h>
 
 #include <hal/nrf_egu.h>
-#include <sdc_hci_vs.h>
 
 #if defined(DPPIC_PRESENT)
 #define SWI_IRQn EGU0_IRQn
@@ -32,12 +32,6 @@
 #define PPI_CH_ID      15
 
 #define ADVERTISING_UUID128 BT_UUID_128_ENCODE(0x038a803f, 0xf6b3, 0x420b, 0xa95a, 0x10cc7b32b6db)
-
-struct hci_cmd_vs_get_next_conn_event_counter_return {
-	uint8_t status;
-	uint16_t conn_handle;
-	uint16_t next_conn_event_counter;
-} __packed;
 
 static volatile uint8_t timestamp_log_index = NUM_TRIGGERS;
 static uint32_t timestamp_log[NUM_TRIGGERS];
@@ -73,11 +67,9 @@ static void work_handler(struct k_work *w)
 static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
 {
 	int err;
-	struct net_buf *buf;
-	struct net_buf *rsp = NULL;
-	sdc_hci_cmd_vs_get_next_conn_event_counter_t *cmd_get_conn_event_counter;
-	struct hci_cmd_vs_get_next_conn_event_counter_return *cmd_event_counter_return;
-	sdc_hci_cmd_vs_set_conn_event_trigger_t *cmd_set_trigger;
+	sdc_hci_cmd_vs_get_next_conn_event_counter_t cmd_get_conn_event_counter;
+	sdc_hci_cmd_vs_get_next_conn_event_counter_return_t cmd_event_counter_return;
+	sdc_hci_cmd_vs_set_conn_event_trigger_t cmd_set_trigger;
 	uint16_t conn_handle;
 
 	err = bt_hci_get_conn_handle(conn, &conn_handle);
@@ -86,34 +78,14 @@ static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
 		return err;
 	}
 
-	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_GET_NEXT_CONN_EVENT_COUNTER,
-				sizeof(*cmd_get_conn_event_counter));
+	cmd_get_conn_event_counter.conn_handle = conn_handle;
 
-	if (!buf) {
-		printk("Could not allocate command buffer\n");
-		return -ENOMEM;
-	}
-
-	cmd_get_conn_event_counter = net_buf_add(buf, sizeof(*cmd_get_conn_event_counter));
-	cmd_get_conn_event_counter->conn_handle = conn_handle;
-
-	err = bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_GET_NEXT_CONN_EVENT_COUNTER, buf, &rsp);
-
+	err = hci_vs_sdc_get_next_conn_event_counter(&cmd_get_conn_event_counter,
+						     &cmd_event_counter_return);
 	if (err) {
 		printk("Error for command SDC_HCI_OPCODE_CMD_VS_GET_NEXT_CONN_EVENT_COUNTER (%d)\n",
 		       err);
 		return err;
-	}
-
-	cmd_event_counter_return =
-		(struct hci_cmd_vs_get_next_conn_event_counter_return *)rsp->data;
-
-	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_SET_CONN_EVENT_TRIGGER,
-				sizeof(*cmd_set_trigger));
-
-	if (!buf) {
-		printk("Could not allocate command buffer\n");
-		return -ENOMEM;
 	}
 
 	/* Configure event trigger to trigger NRF_EGU_TASK_TRIGGER0
@@ -121,27 +93,26 @@ static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
 	 * This will generate a software interrupt: SWI_IRQn.
 	 */
 
-	cmd_set_trigger = net_buf_add(buf, sizeof(*cmd_set_trigger));
-	cmd_set_trigger->conn_handle = conn_handle;
-	cmd_set_trigger->role = SDC_HCI_VS_CONN_EVENT_TRIGGER_ROLE_CONN;
-	cmd_set_trigger->ppi_ch_id = PPI_CH_ID;
-	cmd_set_trigger->period_in_events = 1;
-	cmd_set_trigger->conn_evt_counter_start =
-		cmd_event_counter_return->next_conn_event_counter + 20;
+	cmd_set_trigger.conn_handle = conn_handle;
+	cmd_set_trigger.role = SDC_HCI_VS_CONN_EVENT_TRIGGER_ROLE_CONN;
+	cmd_set_trigger.ppi_ch_id = PPI_CH_ID;
+	cmd_set_trigger.period_in_events = 1;
+	cmd_set_trigger.conn_evt_counter_start =
+		cmd_event_counter_return.next_conn_event_counter + 20;
 
 	if (enable) {
-		cmd_set_trigger->task_endpoint =
+		cmd_set_trigger.task_endpoint =
 			nrf_egu_task_address_get(NRF_EGU0, NRF_EGU_TASK_TRIGGER0);
 		IRQ_DIRECT_CONNECT(SWI_IRQn, 5, egu0_handler, 0);
 		nrf_egu_int_enable(NRF_EGU0, NRF_EGU_INT_TRIGGERED0);
 		NVIC_EnableIRQ(SWI_IRQn);
 	} else {
-		cmd_set_trigger->task_endpoint = 0;
+		cmd_set_trigger.task_endpoint = 0;
 		nrf_egu_int_disable(NRF_EGU0, NRF_EGU_INT_TRIGGERED0);
 		NVIC_DisableIRQ(SWI_IRQn);
 	}
 
-	err = bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_SET_CONN_EVENT_TRIGGER, buf, NULL);
+	err = hci_vs_sdc_set_conn_event_trigger(&cmd_set_trigger);
 	if (err) {
 		printk("Error for command SDC_HCI_OPCODE_CMD_VS_SET_CONN_EVENT_TRIGGER (%d)\n",
 		       err);
@@ -150,7 +121,6 @@ static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
 
 	printk("Successfully configured connection event trigger\n");
 
-	net_buf_unref(rsp);
 	return 0;
 }
 

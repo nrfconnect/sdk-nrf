@@ -24,7 +24,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/bluetooth/iso.h>
-#include <sdc_hci_vs.h>
+#include <bluetooth/hci_vs_sdc.h>
 #include <sdc_hci.h>
 
 #include "iso_time_sync.h"
@@ -141,10 +141,8 @@ static int iso_tx_time_stamp_get(struct bt_conn *conn, uint32_t *time_stamp)
 {
 	int err;
 	uint16_t conn_handle = 0;
-	struct net_buf *buf;
-	struct net_buf *rsp_buf;
-	sdc_hci_cmd_vs_iso_read_tx_timestamp_t *params;
-	sdc_hci_cmd_vs_iso_read_tx_timestamp_return_t *rsp;
+	sdc_hci_cmd_vs_iso_read_tx_timestamp_t params;
+	sdc_hci_cmd_vs_iso_read_tx_timestamp_return_t rsp;
 
 	err = bt_hci_get_conn_handle(conn, &conn_handle);
 	if (err) {
@@ -152,25 +150,14 @@ static int iso_tx_time_stamp_get(struct bt_conn *conn, uint32_t *time_stamp)
 		return err;
 	}
 
-	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_ISO_READ_TX_TIMESTAMP, sizeof(*params));
-	if (!buf) {
-		printk("Unable to allocate buffer\n");
-		return -ENOMEM;
-	}
+	params.conn_handle = conn_handle;
 
-	params = net_buf_add(buf, sizeof(*params));
-	params->conn_handle = conn_handle;
-
-	err = bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_ISO_READ_TX_TIMESTAMP, buf, &rsp_buf);
+	err = hci_vs_sdc_iso_read_tx_timestamp(&params, &rsp);
 	if (err) {
-		printk("Error while getting ISO Tx timestamp %d\n", err);
 		return err;
 	}
 
-	rsp = (void *)&rsp_buf->data[1];
-	*time_stamp = rsp->tx_time_stamp;
-
-	net_buf_unref(rsp_buf);
+	*time_stamp = rsp.tx_time_stamp;
 
 	return 0;
 }
