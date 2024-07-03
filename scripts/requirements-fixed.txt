@@ -70,7 +70,7 @@ msgpack==1.0.5            # via python-can
 mypy==1.5.1               # via -r zephyr/scripts/requirements-build-test.txt
 mypy-extensions==1.0.0    # via mypy
 natsort==8.4.0            # via pyocd
-nrf-regtool==5.3.2        # via -r nrf/scripts/requirements-build.txt
+nrf-regtool==5.4.0        # via -r nrf/scripts/requirements-build.txt
 nrfcredstore==1.0.0       # via -r nrf/scripts/requirements-extra.txt
 numpy==1.26.4             # via svada
 packaging==24.0           # via -r zephyr/scripts/requirements-base.txt, pkg-about, pytest, python-can, setuptools-scm, west
@@ -127,7 +127,7 @@ tomli==2.0.1              # via mypy, nrf-regtool, pkg-about, pylint, pytest, se
 tomlkit==0.12.1           # via pylint
 typed-ast==1.5.5          # via -r nrf/scripts/requirements-ci.txt
 typing-extensions==4.8.0  # via astroid, mypy, pylint, pyocd, python-can, qrcode, setuptools-scm, svada
-urllib3==2.0.7            # via requests
+urllib3==2.2.2            # via requests
 wcwidth==0.2.6            # via prettytable
 west==1.2.0               # via -r nrf/scripts/requirements-base.txt, -r zephyr/scripts/requirements-base.txt
 wget==3.2                 # via -r nrf/scripts/requirements-ci.txt
