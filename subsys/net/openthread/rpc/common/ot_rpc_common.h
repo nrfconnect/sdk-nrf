@@ -17,6 +17,7 @@ void ot_rpc_decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_c
 			void *handler_data);
 void ot_rpc_decode_dataset_tlvs(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 				void *handler_data);
-void ot_rpc_report_decoding_error(uint8_t cmd_evt_id, void *data);
+/* The function reports about command decoding error (not responses). */
+void ot_rpc_report_decoding_error(uint8_t cmd_evt_id);
 
 #endif /* OT_RPC_COMMON_H_ */
