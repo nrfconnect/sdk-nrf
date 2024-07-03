@@ -32,14 +32,14 @@ void ot_rpc_decode_dataset_tlvs(const struct nrf_rpc_group *group, struct nrf_rp
 	data = nrf_rpc_decode_buffer_ptr_and_size(ctx, &length);
 
 	if (data == NULL) {
-		handler_data = NULL;
+		*(otOperationalDatasetTlvs **)handler_data = NULL;
 	} else {
 		dataset->mLength = length;
 		memcpy(dataset->mTlvs, data, dataset->mLength);
 	}
 }
 
-void ot_rpc_report_decoding_error(uint8_t cmd_evt_id, void *data)
+void ot_rpc_report_decoding_error(uint8_t cmd_evt_id)
 {
 	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group, cmd_evt_id, NRF_RPC_PACKET_TYPE_CMD);
 }
