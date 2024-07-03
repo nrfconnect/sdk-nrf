@@ -17,7 +17,7 @@ menuconfig WIFI_READY_LIB
 if WIFI_READY_LIB
 
 module = WIFI_READY_LIB
-module-str = wifi_ready_event_handling
+module-str = wifi_ready_lib
 source "subsys/logging/Kconfig.template.log_config"
 
 config WIFI_READY_MAX_CALLBACKS
