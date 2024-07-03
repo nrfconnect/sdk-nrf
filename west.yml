@@ -63,7 +63,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 100befc70c74f7ec83dd8ac3171ee18eeddb4dbd
+      revision: v3.6.99-ncs2
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -131,7 +131,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: daf2946a0f07a14b57bd69d29ac4cdde6f810fb7
+      revision: v2.1.0-ncs1
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -140,7 +140,7 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.5.2-ncs2-rc3
+      revision: v3.5.2-ncs2
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
@@ -148,11 +148,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: v2.7.0-rc3
+      revision: v2.7.0
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v2.0.0-ncs2-rc3
+      revision: v2.0.0-ncs2
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -160,7 +160,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.7.0-rc3
+      revision: v2.7.0
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -181,7 +181,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v2.7.0-rc3
+      revision: v2.7.0
       groups:
         - nrf-802154
     - name: soc-hwmv1
@@ -209,12 +209,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: v2.7.0-rc3
+      revision: v2.7.0
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.7.0-rc3
+      revision: v2.7.0
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -245,10 +245,10 @@ manifest:
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: v2.7.0-rc3
+      revision: v2.7.0
       path: modules/lib/suit-generator
     - name: suit-processor
-      revision: v2.7.0-rc3
+      revision: v2.7.0
       path: modules/lib/suit-processor
 
     # Other third-party repositories.
