@@ -16,6 +16,10 @@
 #include <zephyr/bluetooth/hci.h>
 #include <../subsys/bluetooth/host/conn_internal.h>
 
+#if defined(CONFIG_BT_LL_SOFTDEVICE_HEADERS_INCLUDE)
+#include <bluetooth/hci_vs_sdc.h>
+#endif
+
 #if defined(CONFIG_BT_LL_SOFTDEVICE)
 #include <sdc_hci_vs.h>
 #endif /* CONFIG_BT_LL_SOFTDEVICE */
@@ -83,22 +87,13 @@ int bt_conn_set_power_control_request_params(struct bt_conn_set_pcr_params *para
 #if defined(CONFIG_BT_CTLR_ADV_EXT)
 int bt_nrf_host_extension_reduce_initator_aux_channel_priority(bool reduce)
 {
-	sdc_hci_cmd_vs_set_role_priority_t *cmd;
-	struct net_buf *buf;
+	sdc_hci_cmd_vs_set_role_priority_t cmd;
 
-	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_SET_ROLE_PRIORITY, sizeof(*cmd));
-	if (!buf) {
-		return -ENOBUFS;
-	}
+	cmd.handle_type = SDC_HCI_VS_SET_ROLE_PRIORITY_HANDLE_TYPE_INITIATOR_SECONDARY_CHANNEL;
+	cmd.handle = 0x0;
+	cmd.priority = reduce ? 5 : 0xff;
 
-	cmd = net_buf_add(buf, sizeof(*cmd));
-	*cmd = (sdc_hci_cmd_vs_set_role_priority_t) {
-	  .handle_type = SDC_HCI_VS_SET_ROLE_PRIORITY_HANDLE_TYPE_INITIATOR_SECONDARY_CHANNEL,
-	  .handle = 0x0,
-	  .priority = reduce ? 5 : 0xff
-	};
-
-	return bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_SET_ROLE_PRIORITY, buf, NULL);
+	return hci_vs_sdc_set_role_priority(&cmd);
 }
 #endif /* CONFIG_BT_CTLR_ADV_EXT */
 #endif /* CONFIG_BT_LL_SOFTDEVICE */
