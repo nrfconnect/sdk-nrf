@@ -7,7 +7,7 @@
 /** @file
  * @brief SR coexistence sample
  */
-/* TESTING CI-test-all flag */
+/* TESTING CI-test-all flag#2 */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
