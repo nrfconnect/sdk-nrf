@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stdint.h>
+#include <openthread/thread.h>
+
 /** @brief Offsets used to encode otNetifAddress bit-fields.
  */
 enum ot_rpc_netif_address_offsets {
