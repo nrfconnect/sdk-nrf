@@ -5,6 +5,7 @@
  */
 
 #include <ot_rpc_ids.h>
+#include <ot_rpc_common.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -15,16 +16,7 @@
 #include <zephyr/net/net_pkt.h>
 #include <zephyr/net/net_core.h>
 
-NRF_RPC_GROUP_DECLARE(ot_group);
 LOG_MODULE_DECLARE(ot_rpc, LOG_LEVEL_DBG);
-
-static void decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-			void *handler_data)
-{
-	ARG_UNUSED(group);
-	ARG_UNUSED(ctx);
-	ARG_UNUSED(handler_data);
-}
 
 struct ot_rpc_l2_data {
 };
@@ -65,7 +57,7 @@ static int ot_rpc_l2_send(struct net_if *iface, struct net_pkt *pkt)
 	NET_DBG("Sending Ip6 packet to RPC server");
 
 	encoded_ok = true;
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_SEND, &ctx, decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_SEND, &ctx, ot_rpc_decode_void, NULL);
 
 out:
 	if (!encoded_ok) {
@@ -191,7 +183,7 @@ static int ot_rpc_l2_enable(struct net_if *iface, bool state)
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	zcbor_bool_put(ctx.zs, state);
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_ENABLE, &ctx, decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_ENABLE, &ctx, ot_rpc_decode_void, NULL);
 
 	if (state) {
 		update_netif_addrs(iface);

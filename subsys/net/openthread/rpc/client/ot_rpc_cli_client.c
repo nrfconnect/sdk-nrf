@@ -5,6 +5,7 @@
  */
 
 #include <ot_rpc_ids.h>
+#include <ot_rpc_common.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -12,18 +13,8 @@
 
 #include <string.h>
 
-NRF_RPC_GROUP_DECLARE(ot_group);
-
 otCliOutputCallback cli_output_callback;
 void *cli_output_context;
-
-static void decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-			void *handler_data)
-{
-	ARG_UNUSED(group);
-	ARG_UNUSED(ctx);
-	ARG_UNUSED(handler_data);
-}
 
 void otCliInit(otInstance *aInstance, otCliOutputCallback aCallback, void *aContext)
 {
@@ -36,7 +27,7 @@ void otCliInit(otInstance *aInstance, otCliOutputCallback aCallback, void *aCont
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_CLI_INIT, &ctx, decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_CLI_INIT, &ctx, ot_rpc_decode_void, NULL);
 }
 
 void otCliInputLine(char *aBuf)
@@ -48,7 +39,8 @@ void otCliInputLine(char *aBuf)
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	zcbor_tstr_encode_ptr(ctx.zs, aBuf, buffer_len);
 
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_CLI_INPUT_LINE, &ctx, decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_CLI_INPUT_LINE, &ctx, ot_rpc_decode_void,
+				NULL);
 }
 
 static void invoke_cli_output_callback(const char *format, ...)

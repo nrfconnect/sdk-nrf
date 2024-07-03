@@ -5,6 +5,7 @@
  */
 
 #include <ot_rpc_ids.h>
+#include <ot_rpc_common.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -13,16 +14,6 @@
 #include <zephyr/net/openthread.h>
 
 #include <stdio.h>
-
-NRF_RPC_GROUP_DECLARE(ot_group);
-
-static void decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-			void *handler_data)
-{
-	ARG_UNUSED(group);
-	ARG_UNUSED(ctx);
-	ARG_UNUSED(handler_data);
-}
 
 static int ot_cli_output_callback(void *aContext, const char *aFormat, va_list aArguments)
 {
@@ -44,7 +35,7 @@ static int ot_cli_output_callback(void *aContext, const char *aFormat, va_list a
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	zcbor_tstr_encode_ptr(ctx.zs, output_line_buffer, num_written);
 
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_CLI_OUTPUT, &ctx, decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_CLI_OUTPUT, &ctx, ot_rpc_decode_void, NULL);
 
 	return num_written;
 }
