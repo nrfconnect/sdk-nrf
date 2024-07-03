@@ -10,10 +10,10 @@
 #include <zephyr/bluetooth/audio/cap.h>
 #include <zephyr/zbus/zbus.h>
 #include <../subsys/bluetooth/audio/bap_stream.h>
+#include <bluetooth/hci_vs_sdc.h>
 
 #include "zbus_common.h"
 #include "audio_sync_timer.h"
-#include "sdc_hci_vs.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_le_audio_tx, CONFIG_BLE_LOG_LEVEL);
@@ -145,37 +145,21 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct bt_cap
 static int get_tx_sync_sdc(uint16_t iso_conn_handle, struct bt_iso_tx_info *info)
 {
 	int ret;
-	struct net_buf *buf;
-	struct net_buf *rsp;
-	sdc_hci_cmd_vs_iso_read_tx_timestamp_t *cmd_read_tx_timestamp;
+	sdc_hci_cmd_vs_iso_read_tx_timestamp_t cmd_read_tx_timestamp;
+	sdc_hci_cmd_vs_iso_read_tx_timestamp_return_t rsp_params;
 
-	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_ISO_READ_TX_TIMESTAMP,
-				sizeof(*cmd_read_tx_timestamp));
-	if (!buf) {
-		LOG_ERR("Could not allocate command buffer");
-		return -ENOBUFS;
-	}
+	cmd_read_tx_timestamp.conn_handle = iso_conn_handle;
 
-	cmd_read_tx_timestamp = net_buf_add(buf, sizeof(*cmd_read_tx_timestamp));
-	cmd_read_tx_timestamp->conn_handle = iso_conn_handle;
-
-	ret = bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_ISO_READ_TX_TIMESTAMP, buf, &rsp);
+	ret = hci_vs_sdc_iso_read_tx_timestamp(&cmd_read_tx_timestamp, &rsp_params);
 	if (ret) {
 		return ret;
 	}
 
-	if (rsp) {
-		sdc_hci_cmd_vs_iso_read_tx_timestamp_return_t *rsp_params = (void *)&rsp->data[1];
+	info->ts = rsp_params.tx_time_stamp;
+	info->seq_num = rsp_params.packet_sequence_number;
+	info->offset = 0;
 
-		info->ts = rsp_params->tx_time_stamp;
-		info->seq_num = rsp_params->packet_sequence_number;
-		info->offset = 0;
-
-		net_buf_unref(rsp);
-		return 0;
-	}
-
-	return -EINVAL;
+	return 0;
 }
 
 static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_conn_handle)
