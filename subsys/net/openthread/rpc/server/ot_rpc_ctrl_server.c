@@ -6,6 +6,7 @@
 
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
+#include <ot_rpc_common.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -15,8 +16,6 @@
 #include <openthread/thread.h>
 
 #include <zephyr/net/openthread.h>
-
-NRF_RPC_GROUP_DECLARE(ot_group);
 
 /* TODO: move to common */
 typedef struct ot_rpc_callback {
@@ -64,14 +63,6 @@ static ot_rpc_callback_t *ot_rpc_callback_del(uint32_t callback, uint32_t contex
 	}
 
 	return NULL;
-}
-
-static void decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-			void *handler_data)
-{
-	ARG_UNUSED(group);
-	ARG_UNUSED(ctx);
-	ARG_UNUSED(handler_data);
 }
 
 static void ot_rpc_cmd_ip6_get_unicast_addrs(const struct nrf_rpc_group *group,
@@ -157,7 +148,8 @@ static void ot_state_changed_callback(otChangedFlags aFlags, void *aContext)
 	zcbor_uint32_put(ctx.zs, aFlags);
 
 	openthread_api_mutex_unlock(openthread_get_default_context());
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_STATE_CHANGED, &ctx, decode_void, NULL);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_STATE_CHANGED, &ctx, ot_rpc_decode_void,
+				NULL);
 	openthread_api_mutex_lock(openthread_get_default_context());
 }
 

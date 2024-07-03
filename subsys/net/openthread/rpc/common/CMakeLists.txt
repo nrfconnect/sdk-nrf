@@ -8,4 +8,5 @@ zephyr_library()
 
 zephyr_library_sources(
   ot_rpc_group.c
+  ot_rpc_common.c
 )
