@@ -10,6 +10,7 @@
 #include <nrf_rpc_cbor.h>
 
 #include <openthread/ip6.h>
+#include <openthread/link.h>
 
 #include <zephyr/net/net_l2.h>
 #include <zephyr/net/net_if.h>
@@ -20,8 +21,6 @@ LOG_MODULE_DECLARE(ot_rpc, LOG_LEVEL_DBG);
 
 struct ot_rpc_l2_data {
 };
-
-static uint8_t mac[8];
 
 static enum net_verdict ot_rpc_l2_recv(struct net_if *iface, struct net_pkt *pkt)
 {
@@ -160,26 +159,15 @@ static int ot_rpc_l2_enable(struct net_if *iface, bool state)
 {
 	const size_t cbor_buffer_size = 1;
 	struct nrf_rpc_cbor_ctx ctx;
-	struct zcbor_string zst;
 	int error = 0;
+
+	const otExtAddress *mac = otLinkGetExtendedAddress(0);
 
 	if (!state) {
 		otRemoveStateChangeCallback(NULL, ot_state_changed_handler, iface);
 	}
 
-	net_if_set_link_addr(iface, mac, 8, NET_LINK_IEEE802154);
-
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
-	nrf_rpc_cbor_cmd_rsp(&ot_group, OT_RPC_CMD_IF_EXTADDR, &ctx);
-
-	if (!zcbor_bstr_decode(ctx.zs, &zst)) {
-		error = -EINVAL;
-		nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
-		goto exit;
-	}
-
-	memcpy(mac, zst.value, sizeof(mac) < zst.len ? sizeof(mac) : zst.len);
-	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+	net_if_set_link_addr(iface, (uint8_t *)mac->m8, 8, NET_LINK_IEEE802154);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	zcbor_bool_put(ctx.zs, state);
@@ -190,7 +178,6 @@ static int ot_rpc_l2_enable(struct net_if *iface, bool state)
 		otSetStateChangedCallback(NULL, ot_state_changed_handler, iface);
 	}
 
-exit:
 	return error;
 }
 

@@ -11,6 +11,7 @@ zephyr_library_sources(
   ot_rpc_ctrl_server.c
   ot_rpc_if_server.c
   ot_rpc_commissioning_server.c
+  ot_rpc_diag_server.c
 )
 
 zephyr_library_include_directories(
