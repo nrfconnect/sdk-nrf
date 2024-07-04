@@ -573,8 +573,9 @@
 .. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`nRF Connect Bluetooth Low Energy`: https://docs.nordicsemi.com/bundle/nrf-connect-ble/page/index.html
 .. _`Cellular Monitor`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
-.. _`nPM PowerUP`: https://docs.nordicsemi.com/bundle/nan_045/page/APP/nan_045/profiling_npm_powerup.html
+.. _`nPM PowerUP`: https://docs.nordicsemi.com/bundle/nrf-connect-npm/page/index.html
 .. _`Quick Start`: https://docs.nordicsemi.com/bundle/nrf-connect-quickstart/page/index.html
+.. _`RSSI Viewer`: https://docs.nordicsemi.com/bundle/nrf-connect-rssi-viewer/page/index.html
 
 .. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
 
