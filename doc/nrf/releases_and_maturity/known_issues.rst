@@ -3642,6 +3642,13 @@ SoftDevice Controller
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v2-7-0 v2-6-1 v2-6-0
+
+DRGN-22633: The VS Set Connection Event Trigger command does not always trigger the provided task
+  This happens on platforms with DPPI, if the PPI channel ID provided in the command is even-numbered.
+
+  **Workaround:** On platforms with DPPI, provide a PPI channel ID that is odd-numbered.
+
 .. rst-class:: v2-6-1 v2-6-0
 
 DRGN-22024: The controller might assert when the peripheral receives a connection update indication.
