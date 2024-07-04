@@ -148,18 +148,36 @@ static void reconnect_wk(struct k_work *work)
 int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 {
 	int err = 0;
-	static bool fota_started;
 
 	switch (event->type) {
+#if defined(CONFIG_SLM_CARRIER_AUTO_CONTROL)
 	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
 		LOG_DBG("LWM2M_CARRIER_EVENT_LTE_LINK_UP");
-		if (fota_started) {
-			fota_started = false;
-			k_work_reschedule(&reconnect_work, K_MSEC(100));
-		} else {
-			/* AT+CFUN=1 to be issued. */
+		k_work_reschedule(&reconnect_work, SLM_UART_RESPONSE_DELAY);
+		break;
+	case LWM2M_CARRIER_EVENT_LTE_LINK_DOWN:
+		LOG_DBG("LWM2M_CARRIER_EVENT_LTE_LINK_DOWN");
+		err = slm_util_at_printf("AT+CFUN=4");
+		if (err) {
 			err = -1;
 		}
+		break;
+	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF:
+		LOG_DBG("LWM2M_CARRIER_EVENT_LTE_POWER_OFF");
+		err = slm_util_at_printf("AT+CFUN=0");
+		if (err) {
+			err = -1;
+		}
+		break;
+	case LWM2M_CARRIER_EVENT_REBOOT:
+		LOG_DBG("LWM2M_CARRIER_EVENT_REBOOT");
+		/* Return 0 to reboot right after a URC. */
+		break;
+#else
+	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
+		LOG_DBG("LWM2M_CARRIER_EVENT_LTE_LINK_UP");
+		/* AT+CFUN=1 to be issued. */
+		err = -1;
 		break;
 	case LWM2M_CARRIER_EVENT_LTE_LINK_DOWN:
 		LOG_DBG("LWM2M_CARRIER_EVENT_LTE_LINK_DOWN");
@@ -168,9 +186,15 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		break;
 	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF:
 		LOG_DBG("LWM2M_CARRIER_EVENT_LTE_POWER_OFF");
-		/* TODO: defer setting the modem to minimum funtional mode. */
-		err = slm_util_at_printf("AT+CFUN=0");
+		/* AT+CFUN=0 to be issued. */
+		err = -1;
 		break;
+	case LWM2M_CARRIER_EVENT_REBOOT:
+		LOG_DBG("LWM2M_CARRIER_EVENT_REBOOT");
+		/* Return -1 to defer the reboot until the application decides to do so. */
+		err = -1;
+		break;
+#endif /* CONFIG_SLM_CARRIER_AUTO_CONTROL */
 	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
 		LOG_DBG("LWM2M_CARRIER_EVENT_BOOTSTRAPPED");
 		break;
@@ -185,15 +209,9 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		return 0;
 	case LWM2M_CARRIER_EVENT_FOTA_START:
 		LOG_DBG("LWM2M_CARRIER_EVENT_FOTA_START");
-		fota_started = true;
 		break;
 	case LWM2M_CARRIER_EVENT_FOTA_SUCCESS:
 		LOG_DBG("LWM2M_CARRIER_EVENT_FOTA_SUCCESS");
-		break;
-	case LWM2M_CARRIER_EVENT_REBOOT:
-		LOG_DBG("LWM2M_CARRIER_EVENT_REBOOT");
-		/* Return -1 to defer the reboot until the application decides to do so. */
-		err = -1;
 		break;
 	case LWM2M_CARRIER_EVENT_MODEM_DOMAIN:
 		LOG_DBG("LWM2M_CARRIER_EVENT_MODEM_DOMAIN");
@@ -219,6 +237,13 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	}
 
 	rsp_send("\r\n#XCARRIEREVT: %d,%d\r\n", event->type, err);
+
+#if defined(CONFIG_SLM_CARRIER_AUTO_CONTROL)
+	/* Allow time for the URC be flushed before reboot */
+	if (event->type == LWM2M_CARRIER_EVENT_REBOOT && err == 0) {
+		k_sleep(SLM_UART_RESPONSE_DELAY);
+	}
+#endif
 
 	return err;
 }
