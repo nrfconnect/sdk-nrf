@@ -114,10 +114,12 @@ Use the listing search in the following cases:
 * To search for existing designs that can be used in your product.
 * To check if you can add your device model to an existing qualification entry.
 
-Matter certification by inheritance
-***********************************
+Bluetooth QDID inheritance in Matter certification
+**************************************************
 
-Bluetooth QDIDs may be further used to obtain the Matter certification by inheritance.
+When applying for Matter certification, you must present a self-attestation that confirms you have applied for and obtained the certification for the transport platform you are using for your Matter component.
+If your product uses a qualified Bluetooth stack provided as part of the |NCS|, you can inherit this certification from Nordic Semiconductor, provided that you do not introduce any changes to the stack.
+
 See the :ref:`ug_matter_device_certification_reqs_dependent` section for details.
 
 Support
