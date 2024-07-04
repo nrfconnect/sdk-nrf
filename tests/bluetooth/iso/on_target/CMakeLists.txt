@@ -10,9 +10,9 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(broadcaster_and_central)
 
 target_sources(app PRIVATE
-    src/main.c
-    modules/iso_broadcast_src.c
-    modules/iso_broadcast_sink.c
-    modules/central.c
-    modules/peripheral.c)
-zephyr_include_directories(modules)
+    main.c
+    ../modules/iso_broadcast_src.c
+    ../modules/iso_broadcast_sink.c
+    ../modules/acl_central.c
+    ../modules/acl_peripheral.c)
+zephyr_include_directories(../modules)

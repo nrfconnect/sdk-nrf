@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include "acl_central.h"
+
 #include <stdlib.h>
 #include <ctype.h>
 #include <getopt.h>
@@ -34,8 +36,8 @@ static struct bt_nus_client *nus[CONFIG_BT_MAX_CONN];
 static struct bt_nus_client nus_client[CONFIG_BT_MAX_CONN];
 /* Default ACL connection parameter configuration */
 static struct bt_le_conn_param conn_param = {
-	.interval_min = 32, /* ACL interval min = 40 ms (x 1.25 ms) */
-	.interval_max = 32, /* ACL interval max = 40 ms (x 1.25 ms) */
+	.interval_min = 40, /* ACL interval min (x 1.25 ms) */
+	.interval_max = 40, /* ACL interval max (x 1.25 ms) */
 	.latency = 0,	    /* ACL slave latency = 0 */
 	.timeout = 100	    /* ACL supervision timeout = 1000 ms (x 10 ms)*/
 };
@@ -98,8 +100,9 @@ static void work_dummy_data_send(struct k_work *work)
 		LOG_WRN("Failed to send, ret = %d", ret);
 	}
 
-	if ((acl_send_count[channel_index] % CONFIG_PRINT_CONN_INTERVAL) == 0) {
-		LOG_INF("TX: Count: %7u", acl_send_count[channel_index]);
+	if ((acl_send_count[channel_index] % 1) == 0) {
+		LOG_INF("\t ACL TX: Count: %7u ch index: %u", acl_send_count[channel_index],
+			channel_index);
 	}
 
 	k_work_reschedule(&remote_peer[channel_index].dummy_data_send_work,
@@ -338,16 +341,14 @@ static struct bt_conn_cb conn_callbacks = {
 	.disconnected = disconnected_cb,
 };
 
-static int central_init(void);
-
-static int central_start(void)
+int acl_central_start(void)
 {
-	int ret;
+	int ret = 0;
 
 	if (!initialized) {
 		LOG_INF("Peripheral not initialized. Running init");
 
-		ret = central_init();
+		ret = acl_central_init();
 		if (ret) {
 			return ret;
 		}
@@ -364,7 +365,7 @@ static int central_start(void)
 	return 0;
 }
 
-static int central_stop(void)
+int acl_central_stop(void)
 {
 	int ret;
 
@@ -391,19 +392,117 @@ static int central_stop(void)
 	return 0;
 }
 
-static int central_print_cfg(const struct shell *shell, size_t argc, char **argv)
+static int acl_central_print_cfg(const struct shell *shell, size_t argc, char **argv)
 {
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	LOG_INF("acl_int_min(x0.625ms) %d\nacl_int_max(x0.625ms) %d\nacl_latency "
-		"%d\nacl_timeout(x100ms) %d\nacl_payload_size %d\nacl_send_int(ms) %d\n",
+	LOG_INF("\n\tacl_int_min(x0.625ms): %d\n\tacl_int_max(x0.625ms): %d\n\tacl_latency: "
+		"%d\n\tacl_timeout(x100ms): %d\n\tacl_payload_size: %d\n\tacl_send_int(ms): %d\n",
 		conn_param.interval_min, conn_param.interval_max, conn_param.latency,
 		conn_param.timeout, acl_dummy_data_size, acl_dummy_data_send_interval_ms);
 	return 0;
 }
 
-static int central_init(void)
+static int argument_check(const struct shell *shell, uint8_t const *const input)
+{
+	char *end;
+
+	if (running) {
+		LOG_ERR("Arguments can not be changed while running");
+		return -EACCES;
+	}
+
+	int arg_val = strtol(input, &end, 10);
+
+	if (*end != '\0' || (uint8_t *)end == input || (arg_val == 0 && !isdigit(input[0])) ||
+	    arg_val < 0) {
+		LOG_ERR("Argument must be a positive integer %s", input);
+		return -EINVAL;
+	}
+
+	return arg_val;
+}
+
+static int acl_central_int_min_set(const struct shell *shell, size_t argc, char **argv)
+{
+	int arg = argument_check(shell, argv[1]);
+
+	if (arg < 0) {
+		return arg;
+	}
+
+	conn_param.interval_min = arg;
+	acl_central_print_cfg(shell, 0, NULL);
+	return 0;
+}
+
+static int acl_central_int_max_set(const struct shell *shell, size_t argc, char **argv)
+{
+	int arg = argument_check(shell, argv[1]);
+
+	if (arg < 0) {
+		return arg;
+	}
+
+	conn_param.interval_max = arg;
+	acl_central_print_cfg(shell, 0, NULL);
+	return 0;
+}
+
+static int acl_central_latency_set(const struct shell *shell, size_t argc, char **argv)
+{
+	int arg = argument_check(shell, argv[1]);
+
+	if (arg < 0) {
+		return arg;
+	}
+
+	conn_param.latency = arg;
+	acl_central_print_cfg(shell, 0, NULL);
+	return 0;
+}
+
+static int acl_central_timeout_set(const struct shell *shell, size_t argc, char **argv)
+{
+	int arg = argument_check(shell, argv[1]);
+
+	if (arg < 0) {
+		return arg;
+	}
+
+	conn_param.timeout = arg;
+	acl_central_print_cfg(shell, 0, NULL);
+	return 0;
+}
+
+static int acl_central_send_int_set(const struct shell *shell, size_t argc, char **argv)
+{
+	int arg = argument_check(shell, argv[1]);
+
+	if (arg < 0) {
+		return arg;
+	}
+
+	acl_dummy_data_send_interval_ms = arg;
+	acl_central_print_cfg(shell, 0, NULL);
+	return 0;
+}
+
+static int acl_central_payload_size_set(const struct shell *shell, size_t argc, char **argv)
+{
+	int arg = argument_check(shell, argv[1]);
+
+	if (arg < 0) {
+		return arg;
+	}
+
+	acl_dummy_data_size = arg;
+	acl_central_print_cfg(shell, 0, NULL);
+	return 0;
+}
+
+int acl_central_init(void)
 {
 	int ret;
 
@@ -415,105 +514,22 @@ static int central_init(void)
 
 	initialized = true;
 
-	LOG_INF("Central initialized");
+	LOG_INF("ACL Central initialized");
 
 	return ret;
 }
 
-static struct option long_options[] = {{"acl_int_min", required_argument, NULL, 'n'},
-				       {"acl_int_max", required_argument, NULL, 'x'},
-				       {"acl_latency", required_argument, NULL, 's'},
-				       {"acl_timeout", required_argument, NULL, 't'},
-				       {"acl_send_int", required_argument, NULL, 'i'},
-				       {"acl_paylod_size", required_argument, NULL, 'p'},
-				       {0, 0, 0, 0}};
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	central_cmd, SHELL_CMD(init, NULL, "Init central NUS.", acl_central_init),
+	SHELL_CMD(start, NULL, "Start central NUS.", acl_central_start),
+	SHELL_CMD(stop, NULL, "Stop central NUS.", acl_central_stop),
+	SHELL_CMD(cfg, NULL, "Print config.", acl_central_print_cfg),
+	SHELL_CMD_ARG(int_min_set, NULL, "set", acl_central_int_min_set, 2, 0),
+	SHELL_CMD_ARG(int_max_set, NULL, "set", acl_central_int_max_set, 2, 0),
+	SHELL_CMD_ARG(latency_set, NULL, "set", acl_central_latency_set, 2, 0),
+	SHELL_CMD_ARG(timeout_set, NULL, "set", acl_central_timeout_set, 2, 0),
+	SHELL_CMD_ARG(send_int_set, NULL, "set", acl_central_send_int_set, 2, 0),
+	SHELL_CMD_ARG(payload_size_set, NULL, "set", acl_central_payload_size_set, 2, 0),
+	SHELL_SUBCMD_SET_END);
 
-static const char short_options[] = "n:x:s:t:i:p";
-
-static int argument_check(const struct shell *shell, uint8_t const *const input)
-{
-	char *end;
-	int arg_val = strtol(input, &end, 10);
-
-	if (*end != '\0' || (uint8_t *)end == input || (arg_val == 0 && !isdigit(input[0])) ||
-	    arg_val < 0) {
-		LOG_ERR("Argument must be a positive integer %s", input);
-		return -EINVAL;
-	}
-
-	if (running) {
-		LOG_ERR("Arguments can not be changed while running");
-		return -EACCES;
-	}
-
-	return arg_val;
-}
-
-static int param_set(const struct shell *shell, size_t argc, char **argv)
-{
-	int result = argument_check(shell, argv[2]);
-	int long_index = 0;
-	int opt;
-
-	if (result < 0) {
-		return result;
-	}
-
-	if (running) {
-		LOG_ERR("Arguments can not be changed while running");
-		return -EPERM;
-	}
-
-	optreset = 1;
-	optind = 1;
-
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
-		switch (opt) {
-		case 'n':
-			conn_param.interval_min = result;
-			central_print_cfg(shell, 0, NULL);
-			break;
-		case 'x':
-			conn_param.interval_max = result;
-			central_print_cfg(shell, 0, NULL);
-			break;
-		case 's':
-			conn_param.latency = result;
-			central_print_cfg(shell, 0, NULL);
-			break;
-		case 't':
-			conn_param.timeout = result;
-			central_print_cfg(shell, 0, NULL);
-			break;
-		case 'i':
-			acl_dummy_data_send_interval_ms = result;
-			central_print_cfg(shell, 0, NULL);
-			break;
-		case 'p':
-			acl_dummy_data_size = result;
-			central_print_cfg(shell, 0, NULL);
-			break;
-		case ':':
-			LOG_ERR("Missing option parameter");
-			break;
-		case '?':
-			LOG_ERR("Unknown option: %c", opt);
-			break;
-		default:
-			LOG_ERR("Invalid option: %c", opt);
-			break;
-		}
-	}
-
-	return 0;
-}
-
-SHELL_STATIC_SUBCMD_SET_CREATE(central_cmd,
-			       SHELL_CMD(init, NULL, "Init central NUS.", central_init),
-			       SHELL_CMD(start, NULL, "Start central NUS.", central_start),
-			       SHELL_CMD(stop, NULL, "Stop central NUS.", central_stop),
-			       SHELL_CMD(cfg, NULL, "Print config.", central_print_cfg),
-			       SHELL_CMD_ARG(set, NULL, "set", param_set, 3, 0),
-			       SHELL_SUBCMD_SET_END);
-
-SHELL_CMD_REGISTER(central, &central_cmd, "Central NUS commands", NULL);
+SHELL_CMD_REGISTER(acl_central, &central_cmd, "Central NUS commands", NULL);
