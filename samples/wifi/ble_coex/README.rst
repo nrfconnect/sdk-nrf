@@ -8,8 +8,7 @@ Wi-Fi: Bluetooth LE coexistence
    :local:
    :depth: 2
 
-The Bluetooth LE coexistence sample demonstrates coexistence between Wi-Fi® and Bluetooth LE radios in 2.4 GHz frequency.
-The sample documentation includes details of test setup used, build procedure, test procedure and the results obtained when the sample is run on the nRF7002 DK.
+The Bluetooth LE coexistence sample demonstrates coexistence between Wi-Fi® and Bluetooth® LE radios in 2.4 GHz frequency.
 
 Requirements
 ************
@@ -18,10 +17,15 @@ The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
+Running test cases for this sample requires additional software, such as the Wi-Fi **iPerf** application.
+Use iPerf version 2.0.5.
+For more details, see `Network Traffic Generator`_.
+
 Overview
 ********
 
-The sample demonstrates how the coexistence mechanism is implemented and enabled and disabled between Wi-Fi and Bluetooth® LE radios in 2.4 GHz band using Wi-Fi client’s throughput and Bluetooth LE central’s throughput.
+The sample demonstrates how the coexistence mechanism is implemented, and how it can be enabled and disabled between Wi-Fi and Bluetooth LE radios in the 2.4 GHz band.
+This is done by using the throughput of the Wi-Fi client and the Bluetooth LE central.
 
 Test setup
 ==========
@@ -29,38 +33,32 @@ Test setup
 The following figure shows a reference test setup.
 
 .. figure:: /images/wifi_coex.svg
-     :alt: Wi-Fi Coex test setup
+     :alt: Wi-Fi and Bluetooth LE Coex test setup
 
-     Wi-Fi coexistence reference test and evaluation setup
+     Wi-Fi and Bluetooth LE coexistence reference test and evaluation setup
 
 The reference test setup shows the connections between the following devices:
 
 * :term:`Device Under Test (DUT)` (nRF7002 DK on which the coexistence sample runs)
-* Wi-Fi peer device (access point with test PC that runs **iperf**)
+* Wi-Fi peer device (access point with test PC that runs iPerf)
 * Bluetooth LE peer device (nRF5340 DK on which Bluetooth LE throughput sample runs)
 
-This setup is kept in a shielded test enclosure box (for example, a Ramsey box).
 The following table provides more details on the sample or application that runs on DUT and peer devices:
 
 +--------------+----------------+------------------------------------------------------------------------------------+
 | Device       | Application    |                             Details                                                |
 +==============+================+====================================================================================+
-| nRF7002 DK   | Bluetooth LE   | The sample runs Wi-Fi throughputs, Bluetooth LE throughputs                        |
-|              | coex sample    | or a combination of both based on configuration selections in the                  |
-|              |                | :file:`prj.conf` file.                                                             |
+| nRF7002 DK   | Bluetooth LE   | The sample runs Wi-Fi throughput only, Bluetooth LE throughput only,               |
+| (DUT)        | coexistence    | or a combination of both based on configuration selections in the                  |
+|              | sample         | :file:`prj.conf`.                                                                  |
 +--------------+----------------+------------------------------------------------------------------------------------+
-| Test PC      | **iperf**      | Wi-Fi **iperf** UDP server is run on the test PC, and this acts as a peer device to|
-|              | application    | Wi-Fi UDP client that runs on the nRF7002 DK.                                      |
+| Test PC      | iPerf          | Wi-Fi iPerf UDP server is run on the test PC, and this acts as a peer device to    |
+|              | application    | the Wi-Fi UDP client that runs on the nRF7002 DK.                                  |
 +--------------+----------------+------------------------------------------------------------------------------------+
 | nRF5340 DK   | Bluetooth LE   | Bluetooth LE throughput sample is run in peripheral mode on the nRF5340 DK, and    |
-|              | throughput     | this acts as a peer device to Bluetooth LE central that runs on the nRF7002 DK.    |
+| (peer)       | throughput     | this acts as a peer device to Bluetooth LE central that runs on the nRF7002 DK.    |
 |              | sample         |                                                                                    |
 +--------------+----------------+------------------------------------------------------------------------------------+
-
-To trigger concurrent transmissions at RF level on both Wi-Fi and Bluetooth LE, the sample runs traffic on separate threads, one for each.
-The sample uses standard Zephyr threads.
-The threads are configured with non-negative priority (pre-emptible thread).
-For details on threads and scheduling, refer to `Threads`_.
 
 Configuration
 *************
@@ -80,25 +78,23 @@ Additional configuration
 
 To enable different test modes, set up the following configuration parameters in the :file:`prj.conf` file:
 
-* Antenna configuration: Use the :kconfig:option:`CONFIG_COEX_SEP_ANTENNAS` Kconfig option to select the antenna configuration.
-  Set it to ``y`` to enable separate antennas and ``n`` to enable shared antenna.
 * Test modes: Use the following Kconfig options to select the required test case:
 
-  * :kconfig:option:`CONFIG_TEST_TYPE_WLAN_ONLY` for Wi-Fi only test
-  * :kconfig:option:`CONFIG_TEST_TYPE_BLE_ONLY` for Bluetooth LE only test
+  * :kconfig:option:`CONFIG_TEST_TYPE_WLAN_ONLY` for Wi-Fi-only test.
+  * :kconfig:option:`CONFIG_TEST_TYPE_BLE_ONLY` for Bluetooth LE-only test.
   * :kconfig:option:`CONFIG_TEST_TYPE_WLAN_BLE` for concurrent Wi-Fi and Bluetooth LE test.
 
   Based on the required test, set only one of these to ``y``.
 * Test duration: Use the :kconfig:option:`CONFIG_WIFI_TEST_DURATION` Kconfig option to set the duration of the Wi-Fi test and :kconfig:option:`CONFIG_BLE_TEST_DURATION` for the Bluetooth LE test.
   The units are in milliseconds.
-  For example, to set the tests for 20 seconds, set the respective values to ``20000``.
+  For example, to set the test for 20 seconds, set these values to ``20000``.
   For the concurrent Wi-Fi and Bluetooth LE test, make sure that both are set to the same duration to ensure maximum overlap.
 * Bluetooth LE configuration: Set the Bluetooth LE connection interval limits using the :kconfig:option:`CONFIG_INTERVAL_MIN` and :kconfig:option:`CONFIG_INTERVAL_MAX` Kconfig options.
   The units are 1.25 milliseconds.
   For example, ``CONFIG_INTERVAL_MIN=80`` corresponds to an interval of 100 ms (80 x 1.25).
-* Wi-Fi connection: Use the :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR` Kconfig option to establish a connection to a peer host.
 
-You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+* Wi-Fi connection: Configure the following Wi-Fi credentials in the :file:`prj.conf`: appropriately as per the credentials of the access point used for this testing:
+
 
 .. include:: /includes/wifi_credentials_static.txt
 
@@ -107,7 +103,9 @@ You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
-Set up the following configuration parameters in the :file:`prj_nrf5340dk_nrf5340_cpuapp.conf` file:
+* Wi-Fi throughput test: Set the :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR` Kconfig option appropriately as per the Wi-Fi interface IP address of the test PC on which iPerf is run.
+
+Set up the following configuration parameters in the :file:`Kconfig.conf` file of the Bluetooth throughput sample from the :file:`nrf/samples/bluetooth/throughput` folder.
 
 * File or time-based throughput: Use :kconfig:option:`CONFIG_BT_THROUGHPUT_FILE` to select file or time-based throughput test.
   Set it to ``n`` to enable time-based throughput test only when running Bluetooth LE throughput in central role.
@@ -124,7 +122,7 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-The sample can be built for the following configurations:
+You can build the coexistence sample for the following configurations:
 
 * Wi-Fi throughput only
 * Bluetooth LE throughput only
@@ -189,85 +187,102 @@ Build for the nRF5340 DK:
 
 The generated HEX file to be used is :file:`throughput/build/merged.hex`.
 
-Connecting to DKs
-=================
+Testing
+=======
 
-After the DKs are connected to the test PC through USB connectors and powered on, open a suitable terminal, and run the following command:
+|test_sample|
 
-.. code-block:: console
+1. |connect_kit|
+#. |connect_terminal|
 
-   $ nrfjprog --com
-   1050043161         /dev/ttyACM0    VCOM0
-   1050043161         /dev/ttyACM1    VCOM1
-   1050724225         /dev/ttyACM2    VCOM0
-   1050724225         /dev/ttyACM3    VCOM1
-   $
+#. Run the following command to check the available devices:
 
-In this example, ``1050043161`` is the device ID of the nRF5340 DK and ``1050724225`` is device ID of the nRF7002 DK.
+   .. code-block:: console
 
-While connecting to a particular board, use the ttyACMx corresponding to VCOM1.
-In the example, use ttyACM1 to connect to the board with device ID ``1050043161``.
-Similarly, use ttyACM3 to connect to the board with device ID ``1050724225``.
+      nrfjprog --com
 
-.. code-block:: console
+   This command returned the following output in the setup used to run the coexistence tests.
 
-   $ minicom -D /dev/ttyACM1 -b 115200
-   $ minicom -D /dev/ttyACM3 -b 115200
+   .. code-block:: console
+
+      1050043161         /dev/ttyACM0    VCOM0
+      1050043161         /dev/ttyACM1    VCOM1
+      1050724225         /dev/ttyACM2    VCOM0
+      1050724225         /dev/ttyACM3    VCOM1
+
+
+   In this example, ``1050043161`` is the serial number of the nRF5340 DK and ``1050724225`` is the serial number of the nRF7002 DK.
+
+   While connecting to a particular device, use the ``/dev/ttyACM`` corresponding to VCOM1.
+   In the example, use ``/dev/ttyACM1`` to connect to the device with the serial number ``1050043161``.
+   Similarly, use ``/dev/ttyACM3`` to connect to the device with the serial number ``1050724225``.
+
+#. Run the following commands to connect to the desired devices:
+
+   .. code-block:: console
+
+      minicom -D /dev/ttyACM1 -b 115200
+      minicom -D /dev/ttyACM3 -b 115200
 
 Programming DKs
 ===============
 
-To program the nRF5340 DK:
+Complete the following steps to program the DKs:
 
-1. |open_terminal_window_with_environment|
-#. Navigate to :file:`<ncs code>/nrf/samples/bluetooth/throughput/`.
-#. Run the following command:
+.. tabs::
 
-   .. code-block:: console
+   .. group-tab:: nRF5340 DK
 
-      $ west flash --dev-id <device-id> --hex-file build/merged.hex
+      1. |open_terminal_window_with_environment|
+      #. Navigate to the :file:`<ncs code>/nrf/samples/bluetooth/throughput/` folder.
+      #. Run the following command:
 
-To program the nRF7002 DK:
+         .. code-block:: console
 
-1. |open_terminal_window_with_environment|
-#. Navigate to :file:`<ncs code>/nrf/samples/wifi/ble_coex/`.
-#. Run the following command:
+            west flash --dev-id <device-id> --hex-file build/merged.hex
 
-   .. code-block:: console
+   .. group-tab:: nRF7002 DK
 
-      $ west flash --dev-id <device-id> --hex-file build/merged.hex
+      1. |open_terminal_window_with_environment|
+      #. Navigate to the :file:`<ncs code>/nrf/samples/wifi/ble_coex/` folder.
+      #. Run the following command:
 
-Testing
-=======
+         .. code-block:: console
 
-Running coexistence sample test cases require additional software such as the Wi-Fi **iperf** application.
-When the sample runs Wi-Fi UDP throughput in client mode, a peer device runs UDP throughput in server mode using the following command:
+            west flash --dev-id <device-id> --hex-file build/merged.hex
 
-.. code-block:: console
+Test procedure
+==============
 
-   $ iperf -s -i 1 -u
-
-Use **iperf** version 2.0.5.
-For more details, see `Network Traffic Generator`_.
+The following table provides the procedure to run Wi-Fi only, Bluetooth LE-only, and combined throughput.
 
 +---------------+--------------+----------------------------------------------------------------+
 | Test case     | Coexistence  | Test procedure                                                 |
-|               |              |                                                                |
 +===============+==============+================================================================+
-| Wi-Fi only    | NA           | Run Wi-Fi **iperf** in server mode on the test PC.             |
-| throughput    |              | Program the coexistence sample application on the nRF7002 DK.  |
+| Wi-Fi-only    | N.A.         | Run Wi-Fi iPerf in server mode on the test PC.                 |
+| throughput    |              | Build the coexistence sample for Wi-Fi-only throughput and     |
+|               |              | program the application on the nRF7002 DK.                     |
 +---------------+--------------+----------------------------------------------------------------+
-| Bluetooth LE  | NA           | Program Bluetooth LE throughput application on the nRF5340     |
-| only          |              | DK and select role as peripheral.                              |
-| throughput    |              | Program the coexistence sample application on the nRF7002 DK.  |
+| Bluetooth LE  | N.A.         | Program the Bluetooth LE throughput application on the nRF5340 |
+| -only         |              | DK and select role as peripheral.                              |
+| throughput    |              | Build the coexistence sample for Bluetooth LE-only and program |
+|               |              | the application on the nRF7002 DK.                             |
 +---------------+--------------+----------------------------------------------------------------+
-| Wi-Fi and     | Disabled/    | Run Wi-Fi **iperf** in server mode on the test PC.             |
-| Bluetooth LE  | Enabled      | Program Bluetooth LE throughput application on the nRF5340     |
+| Wi-Fi and     | Disabled/    | Run Wi-Fi iPerf in server mode on the test PC.                 |
+| Bluetooth LE  | Enabled      | Program the Bluetooth LE throughput application on the nRF5340 |
 | combined      |              | DK and select role as peripheral.                              |
-| throughput    |              | Program the coexistence sample application on the nRF7002 DK.  |
+| throughput    |              | Build the coexistence sample for concurrent Wi-Fi and Bluetooth|
+|               |              | LE throughput and program the application on the nRF7002 DK.   |
 +---------------+--------------+----------------------------------------------------------------+
 
-The Wi-Fi throughput result appears on the test PC terminal on which **iperf** server is run.
+When the sample is executed, the Wi-Fi UDP throughput operates with the Device Under Test (DUT) in client mode.
+To run the UDP throughput in server mode on the peer device (test PC), use the following command.
+
+.. code-block:: console
+
+   iperf -s -i 1 -u
+
+Observe that the Wi-Fi throughput result appears on the test PC terminal on which iPerf server is run.
 The Bluetooth LE throughput result appears on the minicom terminal connected to the nRF5340 DK.
 
 Results
@@ -276,19 +291,19 @@ Results
 The following tables summarize the results obtained from coexistence tests conducted in a clean RF environment for different Wi-Fi operating bands, antenna configurations, and Wi-Fi modes.
 These results are representative and might vary based on the RSSI and the level of external interference.
 
-Wi-Fi in 2.4 GHz
-----------------
+Wi-Fi (802.11n mode) in 2.4 GHz
+-------------------------------
 
-Separate antennas, Wi-Fi in 802.11n mode:
+Separate antennas:
 
 +------------------------+--------------------+--------------------+
-| Test case              | Wi-Fi UDP Tx       | Bluetooth LE       |
+| Test case              | Wi-Fi UDP TX       | Bluetooth LE       |
 |                        | throughput in Mbps | throughput in kbps |
 +========================+====================+====================+
-| Wi-Fi only,            | 10.2               | N.A                |
-| client (UDP Tx)        |                    |                    |
+| Wi-Fi-only,            | 10.2               | N.A.               |
+| client (UDP TX)        |                    |                    |
 +------------------------+--------------------+--------------------+
-| Bluetooth LE only,     | N.A                | 1107               |
+| Bluetooth LE-only,     | N.A.               | 1107               |
 | central                |                    |                    |
 +------------------------+--------------------+--------------------+
 | Wi-Fi and Bluetooth LE,| 9.9                | 145                |
@@ -298,16 +313,16 @@ Separate antennas, Wi-Fi in 802.11n mode:
 | coexistence enabled    |                    |                    |
 +------------------------+--------------------+--------------------+
 
-Shared antenna, Wi-Fi in 802.11n mode:
+Shared antenna:
 
 +------------------------+--------------------+--------------------+
-| Test case              | Wi-Fi UDP Tx       | Bluetooth LE       |
+| Test case              | Wi-Fi UDP TX       | Bluetooth LE       |
 |                        | throughput in Mbps | throughput in kbps |
 +========================+====================+====================+
-| Wi-Fi only,            | 10.2               | N.A                |
-| client (UDP Tx)        |                    |                    |
+| Wi-Fi-only,            | 10.2               | N.A.               |
+| client (UDP TX)        |                    |                    |
 +------------------------+--------------------+--------------------+
-| Bluetooth LE only,     | N.A                | 1219               |
+| Bluetooth LE-only,     | N.A.               | 1219               |
 | central                |                    |                    |
 +------------------------+--------------------+--------------------+
 | Wi-Fi and Bluetooth LE,| 10.2               | 29                 |
@@ -317,16 +332,19 @@ Shared antenna, Wi-Fi in 802.11n mode:
 | coexistence enabled    |                    |                    |
 +------------------------+--------------------+--------------------+
 
-Separate antennas, Wi-Fi in 802.11b mode:
+Wi-Fi (802.11b mode) in 2.4 GHz
+-------------------------------
+
+Separate antennas:
 
 +------------------------+--------------------+--------------------+
-| Test case              | Wi-Fi UDP Tx       | Bluetooth LE       |
+| Test case              | Wi-Fi UDP TX       | Bluetooth LE       |
 |                        | throughput in Mbps | throughput in kbps |
 +========================+====================+====================+
-| Wi-Fi only,            | 3.5                | N.A                |
-| client (UDP Tx)        |                    |                    |
+| Wi-Fi-only,            | 3.5                | N.A.               |
+| client (UDP TX)        |                    |                    |
 +------------------------+--------------------+--------------------+
-| Bluetooth LE only,     | N.A                | 1042               |
+| Bluetooth LE-only,     | N.A.               | 1042               |
 | central                |                    |                    |
 +------------------------+--------------------+--------------------+
 | Wi-Fi and Bluetooth LE,| 3.3                | 110                |
@@ -336,16 +354,16 @@ Separate antennas, Wi-Fi in 802.11b mode:
 | coexistence enabled    |                    |                    |
 +------------------------+--------------------+--------------------+
 
-Shared antenna, Wi-Fi in 802.11b mode:
+Shared antenna:
 
 +------------------------+--------------------+--------------------+
-| Test case              | Wi-Fi UDP Tx       | Bluetooth LE       |
+| Test case              | Wi-Fi UDP TX       | Bluetooth LE       |
 |                        | throughput in Mbps | throughput in kbps |
 +========================+====================+====================+
-| Wi-Fi only,            | 3.5                | N.A                |
-| client (UDP Tx)        |                    |                    |
+| Wi-Fi-only,            | 3.5                | N.A.               |
+| client (UDP TX)        |                    |                    |
 +------------------------+--------------------+--------------------+
-| Bluetooth LE only,     | N.A                | 1190               |
+| Bluetooth LE-only,     | N.A.               | 1190               |
 | central                |                    |                    |
 +------------------------+--------------------+--------------------+
 | Wi-Fi and Bluetooth LE,| 3.4                | 59                 |
@@ -355,19 +373,19 @@ Shared antenna, Wi-Fi in 802.11b mode:
 | coexistence enabled    |                    |                    |
 +------------------------+--------------------+--------------------+
 
-Wi-Fi in 5 GHz
---------------
+Wi-Fi (802.11n mode) in 5 GHz
+-----------------------------
 
-Separate antennas, Wi-Fi in 802.11n mode:
+Separate antennas:
 
 +------------------------+--------------------+--------------------+
-| Test case              | Wi-Fi UDP Tx       | Bluetooth LE       |
+| Test case              | Wi-Fi UDP TX       | Bluetooth LE       |
 |                        | throughput in Mbps | throughput in kbps |
 +========================+====================+====================+
-| Wi-Fi only,            | 10.2               | N.A                |
-| client (UDP Tx)        |                    |                    |
+| Wi-Fi-only,            | 10.2               | N.A.               |
+| client (UDP TX)        |                    |                    |
 +------------------------+--------------------+--------------------+
-| Bluetooth LE only,     | N.A                | 1139               |
+| Bluetooth LE-only,     | N.A.               | 1139               |
 | central                |                    |                    |
 +------------------------+--------------------+--------------------+
 | Wi-Fi and Bluetooth LE,| 10.2               | 1188               |
@@ -377,16 +395,16 @@ Separate antennas, Wi-Fi in 802.11n mode:
 | coexistence enabled    |                    |                    |
 +------------------------+--------------------+--------------------+
 
-Shared antenna, Wi-Fi in 802.11n mode:
+Shared antenna:
 
 +------------------------+--------------------+--------------------+
-| Test case              | Wi-Fi UDP Tx       | Bluetooth LE       |
+| Test case              | Wi-Fi UDP TX       | Bluetooth LE       |
 |                        | throughput in Mbps | throughput in kbps |
 +========================+====================+====================+
-| Wi-Fi only,            | 10.2               | N.A                |
-| client (UDP Tx)        |                    |                    |
+| Wi-Fi-only,            | 10.2               | N.A.               |
+| client (UDP TX)        |                    |                    |
 +------------------------+--------------------+--------------------+
-| Bluetooth LE only,     | N.A                | 1180               |
+| Bluetooth LE-only,     | N.A.               | 1180               |
 | central                |                    |                    |
 +------------------------+--------------------+--------------------+
 | Wi-Fi and Bluetooth LE,| 10.2               | 1177               |
@@ -401,21 +419,21 @@ Sample output
 
 The following screenshots show coexistence test results obtained for separate antenna configuration with Wi-Fi mode set to 802.11n.
 These tests were run with WLAN connected to an AP in 2.4 GHz band.
-In the images, the top image result shows Wi-Fi throughput that appears on a test PC terminal in which Wi-Fi **iperf** server is run and the bottom image result shows Bluetooth LE throughput that appears on a minicom terminal in which the Bluetooth LE throughput sample is run.
+In the images, the top image result shows Wi-Fi throughput that appears on a test PC terminal in which Wi-Fi iPerf server is run and the bottom image result shows Bluetooth LE throughput that appears on a minicom terminal in which the Bluetooth LE throughput sample is run.
 
 .. figure:: /images/wifi_coex_wlan.png
      :width: 780px
      :align: center
-     :alt: Wi-Fi only throughput
+     :alt: Wi-Fi-only throughput
 
-     Wi-Fi only throughput 10.2 Mbps
+     Wi-Fi-only throughput 10.2 Mbps
 
 .. figure:: /images/wifi_coex_ble.png
      :width: 780px
      :align: center
-     :alt: Bluetooth LE only throughput
+     :alt: Bluetooth LE-only throughput
 
-     Bluetooth LE only throughput: 1107 kbps
+     Bluetooth LE-only throughput: 1107 kbps
 
 .. figure:: /images/wifi_coex_wlan_ble_cd.png
      :width: 780px
@@ -431,7 +449,7 @@ In the images, the top image result shows Wi-Fi throughput that appears on a tes
 
      Wi-Fi and Bluetooth LE throughput, coexistence enabled: Wi-Fi 8.3 Mbps and Bluetooth LE 478 kbps
 
-As is evident from the results of the sample execution, coexistence harmonizes air-time between Wi-Fi and Bluetooth LE rather than resulting in a higher combined throughput.
+The results show that coexistence harmonizes airtime between Wi-Fi and Bluetooth LE rather than resulting in a higher combined throughput.
 This is consistent with the design intent.
 
 Dependencies
