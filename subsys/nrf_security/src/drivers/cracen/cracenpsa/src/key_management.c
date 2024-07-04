@@ -1253,8 +1253,10 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 		psa_set_key_type(attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
 		psa_set_key_bits(attributes, 256);
 		psa_set_key_algorithm(attributes, PSA_ALG_ECDSA(PSA_ALG_SHA_256));
-		psa_set_key_usage_flags(attributes,
-					PSA_KEY_USAGE_SIGN_MESSAGE | PSA_KEY_USAGE_SIGN_HASH);
+		psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_SIGN_MESSAGE |
+							    PSA_KEY_USAGE_SIGN_HASH |
+							    PSA_KEY_USAGE_VERIFY_HASH |
+							    PSA_KEY_USAGE_VERIFY_MESSAGE);
 
 		/* According to the PSA Crypto Driver interface proposed document the driver
 		 * should fill the attributes even if the buffer of the key is too small. So
