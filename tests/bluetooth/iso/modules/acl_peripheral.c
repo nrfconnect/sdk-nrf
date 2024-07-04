@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include "acl_peripheral.h"
+
 #include <zephyr/shell/shell.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
@@ -21,7 +23,8 @@ static struct k_work adv_work;
 static struct bt_conn *default_conn;
 static struct bt_le_ext_adv *adv_ext;
 static bool initialized;
-static bool initialized;
+
+static sim_acl_recv_cb_t sim_acl_recv_cb_local;
 
 static void advertising_start(void)
 {
@@ -88,72 +91,77 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data, uint1
 
 	if (count != (last_count + 1)) {
 		counts_fail += (count - last_count);
-		LOG_WRN("fail. added %d", (count - last_count - 1));
 	} else {
 		counts_success++;
-
-		last_count = count;
-
-		if ((count % CONFIG_PRINT_CONN_INTERVAL) == 0) {
-			LOG_INF("RX: Count: %7u, Failed: %6u, Success: %7u", count, counts_fail,
-				counts_success);
-		}
 	}
 
-	static struct bt_nus_cb nus_cb = {
-		.received = bt_receive_cb,
-	};
+	last_count = count;
 
-	static struct bt_conn_cb conn_callbacks = {.connected = connected_cb,
-						   .disconnected = disconnected_cb};
-
-	static int peripheral_init(void);
-
-	static int peripheral_start(void)
-	{
-		int ret;
-
-		if (!initialized) {
-			LOG_INF("Peripheral not initialized. Running init");
-			ret = peripheral_init();
-			if (ret) {
-				LOG_ERR("peripheral_init failed");
-				return ret;
-			}
-		}
-
-		int ret;
-
-		advertising_start();
-
-		LOG_INF("Peripheral started");
-
-		return 0;
+	if ((last_count % 1) == 0) {
+		LOG_INF("\t ACL RX: Count: %7u, Success: %7u, Failed: %3u", count, counts_success,
+			counts_fail);
 	}
 
-	static int peripheral_init(void)
-	{
-		int ret;
+	if (sim_acl_recv_cb_local != NULL) {
+		sim_acl_recv_cb_local(last_count, counts_fail, counts_success);
+	}
+}
 
-		bt_nus_init(&nus_cb);
-		bt_conn_cb_register(&conn_callbacks);
-		k_work_init(&adv_work, advertising_process);
+static struct bt_nus_cb nus_cb = {
+	.received = bt_receive_cb,
+};
 
-		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, NULL, &adv_ext);
+static struct bt_conn_cb conn_callbacks = {.connected = connected_cb,
+					   .disconnected = disconnected_cb};
+
+static int acl_peripheral_start(void)
+{
+	int ret;
+
+	if (!initialized) {
+		LOG_INF("Peripheral not initialized. Running init");
+		ret = acl_peripheral_init(NULL);
 		if (ret) {
-			LOG_ERR("Failed to create advertising set, %d", ret);
+			LOG_ERR("peripheral_init failed");
 			return ret;
 		}
-
-		initialized = true;
-		LOG_INF("Peripheral initialized");
-
-		return 0;
 	}
 
-	SHELL_STATIC_SUBCMD_SET_CREATE(
-		peripheral_cmd, SHELL_CMD(init, NULL, "Init peripheral NUS.", peripheral_init),
-		SHELL_CMD(start, NULL, "Start peripheral NUS.", peripheral_start),
-		SHELL_SUBCMD_SET_END);
+	advertising_start();
 
-	SHELL_CMD_REGISTER(peripheral, &peripheral_cmd, "Peripheral NUS commands", NULL);
+	LOG_INF("Peripheral started");
+
+	return 0;
+}
+
+int acl_peripheral_init(sim_acl_recv_cb_t sim_acl_recv_cb)
+{
+	int ret;
+
+	if (sim_acl_recv_cb != NULL) {
+		sim_acl_recv_cb_local = sim_acl_recv_cb;
+	}
+
+	bt_nus_init(&nus_cb);
+	bt_conn_cb_register(&conn_callbacks);
+	k_work_init(&adv_work, advertising_process);
+
+	ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, NULL, &adv_ext);
+	if (ret) {
+		LOG_ERR("Failed to create advertising set, %d", ret);
+		return ret;
+	}
+
+	initialized = true;
+	LOG_INF("Peripheral initialized");
+
+	return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(peripheral_cmd,
+			       SHELL_CMD(init, NULL, "Init peripheral NUS.", acl_peripheral_init),
+			       SHELL_CMD(start, NULL, "Start peripheral NUS.",
+					 acl_peripheral_start),
+			       SHELL_SUBCMD_SET_END);
+
+SHELL_CMD_REGISTER(acl_peripheral, &peripheral_cmd, "Peripheral NUS commands", NULL);
