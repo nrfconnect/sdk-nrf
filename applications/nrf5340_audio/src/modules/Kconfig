@@ -157,6 +157,21 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif # NRF5340_AUDIO_SD_CARD_MODULE
 
+config NRF5340_AUDIO_SD_CARD_LC3_FILE
+	bool "SD card LC3 file support"
+	depends on NRF5340_AUDIO_SD_CARD_MODULE
+	default n
+	help
+	  Include support for reading and parsing LC3 files from an SD card.
+
+if NRF5340_AUDIO_SD_CARD_LC3_FILE
+
+module = MODULE_SD_CARD_LC3_FILE
+module-str = module-sd-card-lc3-file
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF5340_AUDIO_SD_CARD_LC3_FILE
+
 menuconfig SD_CARD_PLAYBACK
 	bool "Enable playback from SD card"
 	depends on NRF5340_AUDIO_SD_CARD_MODULE
