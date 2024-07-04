@@ -44,9 +44,9 @@ static struct audio_data audio_data_rx;
 static struct audio_module_parameters mod_parameters;
 
 static struct audio_module_template_configuration configuration = {
-	.rate = 48000, .depth = 12345, .some_text = CONFIG_TEXT};
+	.sample_rate_hz = 48000, .bit_depth = 12345, .some_text = CONFIG_TEXT};
 static struct audio_module_template_configuration reconfiguration = {
-	.rate = 16000, .depth = 54321, .some_text = RECONFIG_TEXT};
+	.sample_rate_hz = 16000, .bit_depth = 54321, .some_text = RECONFIG_TEXT};
 static struct audio_module_template_configuration return_configuration;
 
 static struct audio_module_template_context context = {0};
@@ -94,9 +94,9 @@ ZTEST(suite_audio_module_template, test_module_template)
 			(struct audio_module_template_context *)handle[0].context;
 		struct audio_module_template_configuration *test_config = &ctx->config;
 
-		zassert_equal(test_config->depth, configuration.depth,
+		zassert_equal(test_config->bit_depth, configuration.bit_depth,
 			      "Failed to configure module in the open function");
-		zassert_equal(test_config->rate, configuration.rate,
+		zassert_equal(test_config->sample_rate_hz, configuration.sample_rate_hz,
 			      "Failed to configure module in the open function");
 		zassert_mem_equal(test_config->some_text, configuration.some_text,
 				  sizeof(CONFIG_TEXT),
@@ -126,9 +126,10 @@ ZTEST(suite_audio_module_template, test_module_template)
 		&handle[0], (struct audio_module_configuration *)&return_configuration);
 	zassert_equal(ret, 0, "Configuration get function did not return successfully (0): ret %d",
 		      ret);
-	zassert_equal(return_configuration.depth, configuration.depth,
+	zassert_equal(return_configuration.bit_depth, configuration.bit_depth,
 		      "Failed to get configuration");
-	zassert_equal(return_configuration.rate, configuration.rate, "Failed to get configuration");
+	zassert_equal(return_configuration.sample_rate_hz, configuration.sample_rate_hz,
+		      "Failed to get configuration");
 	zassert_mem_equal(return_configuration.some_text, configuration.some_text,
 			  sizeof(CONFIG_TEXT), "Failed to get configuration");
 
@@ -176,9 +177,10 @@ ZTEST(suite_audio_module_template, test_module_template)
 				ret, 0,
 				"Reconfigure function did not return successfully (0): ret %d",
 				ret);
-			zassert_equal(reconfiguration.depth, reconfiguration.depth,
+			zassert_equal(reconfiguration.bit_depth, reconfiguration.bit_depth,
 				      "Failed to reconfigure module");
-			zassert_equal(reconfiguration.rate, reconfiguration.rate,
+			zassert_equal(reconfiguration.sample_rate_hz,
+				      reconfiguration.sample_rate_hz,
 				      "Failed to reconfigure module");
 			zassert_mem_equal(reconfiguration.some_text, reconfiguration.some_text,
 					  sizeof(RECONFIG_TEXT), "Failed to reconfigure module");

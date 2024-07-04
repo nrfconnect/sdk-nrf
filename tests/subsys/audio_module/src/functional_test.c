@@ -249,6 +249,7 @@ static void test_close(const struct audio_module_functions *test_fnct,
 	handle.context = (struct audio_module_context *)&mod_context;
 
 	/* Fake internal empty data FIFO success */
+	data_fifo_deinit_fake.custom_fake = fake_data_fifo_deinit__succeeds;
 	data_fifo_init_fake.custom_fake = fake_data_fifo_init__succeeds;
 	data_fifo_empty_fake.custom_fake = fake_data_fifo_empty__succeeds;
 
@@ -257,7 +258,7 @@ static void test_close(const struct audio_module_functions *test_fnct,
 		data_fifo_init(&mod_fifo_rx);
 		handle.thread.msg_rx = &mod_fifo_rx;
 
-		empty_call_count++;
+		empty_call_count += 2;
 	} else {
 		handle.thread.msg_rx = NULL;
 	}
@@ -267,7 +268,7 @@ static void test_close(const struct audio_module_functions *test_fnct,
 		data_fifo_init(&mod_fifo_tx);
 		handle.thread.msg_tx = &mod_fifo_tx;
 
-		empty_call_count++;
+		empty_call_count += 2;
 	} else {
 		handle.thread.msg_tx = NULL;
 	}

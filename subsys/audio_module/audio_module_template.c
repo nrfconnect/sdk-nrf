@@ -72,7 +72,8 @@ static int audio_module_template_configuration_set(
 	memcpy(&ctx->config, config, sizeof(struct audio_module_template_configuration));
 
 	LOG_DBG("Set the configuration for %s module: rate = %d  depth = %d  string = %s",
-		hdl->name, ctx->config.rate, ctx->config.depth, ctx->config.some_text);
+		hdl->name, ctx->config.sample_rate_hz, ctx->config.bit_depth,
+		ctx->config.some_text);
 
 	return 0;
 }
@@ -93,7 +94,7 @@ audio_module_template_configuration_get(struct audio_module_handle_private const
 	memcpy(config, &ctx->config, sizeof(struct audio_module_template_configuration));
 
 	LOG_DBG("Get the configuration for %s module: rate = %d  depth = %d  string = %s",
-		hdl->name, config->rate, config->depth, config->some_text);
+		hdl->name, config->sample_rate_hz, config->bit_depth, config->some_text);
 
 	return 0;
 }

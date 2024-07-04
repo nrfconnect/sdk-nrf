@@ -287,15 +287,15 @@ ZTEST(suite_audio_module_bad_param, test_data_rx_null)
 	test_block.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
 
 	ret = audio_module_data_rx(&handle, &test_block, K_NO_WAIT);
-	zassert_equal(ret, -EINVAL, "Data RX function did not return -EINVAL (%d): ret %d", -EINVAL,
-		      ret);
+	zassert_equal(ret, -ECANCELED, "Data RX function did not return -ECANCELED (%d): ret %d",
+		      -ECANCELED, ret);
 
 	test_block.data = &test_data[0];
 	test_block.data_size = 0;
 
 	ret = audio_module_data_rx(&handle, &test_block, K_NO_WAIT);
-	zassert_equal(ret, -EINVAL, "Data RX function did not return -EINVAL (%d): ret %d", -EINVAL,
-		      ret);
+	zassert_equal(ret, -ECANCELED, "Data RX function did not return -ECANCELED (%d): ret %d",
+		      -ECANCELED, ret);
 }
 
 ZTEST(suite_audio_module_bad_param, test_data_tx_rx_bad_state)

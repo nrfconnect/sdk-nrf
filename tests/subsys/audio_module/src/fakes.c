@@ -279,7 +279,13 @@ int fake_data_fifo_empty__timeout_fails(struct data_fifo *data_fifo)
 
 int fake_data_fifo_deinit__succeeds(struct data_fifo *data_fifo)
 {
+	int ret;
 	fifo_num -= 1;
+
+	ret = data_fifo_empty(data_fifo);
+	if (ret) {
+		return ret;
+	}
 
 	data_fifo->initialized = false;
 

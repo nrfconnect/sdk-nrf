@@ -1067,11 +1067,16 @@ int audio_module_data_rx(struct audio_module_handle *handle, struct audio_data *
 		return ret;
 	}
 
+	if (msg_rx == NULL) {
+		LOG_ERR("Failed to retrieve message from %s", handle->name);
+		return -ECANCELED;
+	}
+
 	if (msg_rx->audio_data.data == NULL ||
 	    msg_rx->audio_data.data_size > audio_data->data_size) {
 		LOG_ERR("Data output pointer NULL or not enough room for buffer from module %s",
 			handle->name);
-		ret = -EINVAL;
+		return -ECANCELED;
 	} else {
 		memcpy(&audio_data->meta, &msg_rx->audio_data.meta, sizeof(struct audio_metadata));
 		memcpy((uint8_t *)audio_data->data, (uint8_t *)msg_rx->audio_data.data,

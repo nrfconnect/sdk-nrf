@@ -26,6 +26,8 @@ LOG_MODULE_REGISTER(t2_lc3_decoder, CONFIG_AUDIO_MODULE_LC3_DECODER_LOG_LEVEL);
 /**
  * @brief Interleave a channel into a buffer of N channels of PCM
  *
+ * @note: The interleaver can not be executed inplace (i.e. input != output)
+ *
  * @param[in]	input			Pointer to the single channel input buffer.
  * @param[in]	input_size		Number of bytes in input. Must be divisible by two.
  * @param[in]	channel			Channel to interleave into.
@@ -46,6 +48,11 @@ static int interleave(void const *const input, size_t input_size, uint8_t channe
 	size_t step;
 	char *pointer_input;
 	char *pointer_output;
+
+	if (input == NULL || input_size == 0 || channel == 0 || pcm_bit_depth == 0 ||
+	    output == NULL || output_size == 0 || output_channels == 0) {
+		return -EINVAL;
+	}
 
 	if (output_size < (input_size * output_channels)) {
 		LOG_DBG("Output buffer too small to interleave input into");
