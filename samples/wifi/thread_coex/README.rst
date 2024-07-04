@@ -40,23 +40,23 @@ The reference test setup shows the connections between the following devices:
 
 * :term:`Device Under Test (DUT)` (nRF7002 DK on which the coexistence sample runs)
 * Wi-Fi peer device (access point with test PC that runs **iperf**)
-* Thread peer device (nRF7002 DK on which Thread throughput runs)
+* Thread peer device (nRF7002 DK on which Thread only throughput runs)
 
 The following table provides more details on the sample or application that runs on DUT and peer devices:
 
 +--------------+-------------------+-------------------------------------------------------------------------------------+
 | Device       | Application       |                             Details                                                 |
 +==============+===================+=====================================================================================+
-| nRF7002 DK   | Thread            | The sample runs Wi-Fi throughputs, Thread throughputs, or a combination of both     |
-| (DUT)        | coexistence sample| based on configuration selections in the :file:`prj.conf` file.                     |
+| nRF7002 DK   | Thread            | The sample runs Wi-Fi throughput only, Thread throughput only, or a combination     |
+| (DUT)        | coexistence sample| of both based on configuration selections in the :file:`prj.conf` file.             |
 +--------------+-------------------+-------------------------------------------------------------------------------------+
 | Test PC      | **iperf**         | Wi-Fi **iperf** UDP server is run on the test PC, and this acts as a peer device to |
 |              | application       | the Wi-Fi UDP client.                                                               |
 +--------------+-------------------+-------------------------------------------------------------------------------------+
-| nRF7002 DK   | Thread            | Case 1: Thread UDP throughput is run in server mode on the peer nRF7002 DK device,  |
-| (peer)       | throughput        | and this acts as a peer device to the Thread client that runs on the DUT nRF7002 DK.|
-|              |                   | Case 2: Thread UDP throughput is run in client mode on the peer nRF7002 DK device,  |
-|              |                   | and this acts as a peer device to the Thread server that runs on the DUT nRF7002 DK.|
+| nRF7002 DK   | Thread only       | Case 1: Thread-only UDP throughput is run in server mode on the peer nRF7002 DK     |
+| (peer)       | throughput using  | device if Thread role on DUT is a client.                                           |
+|              | Thread coexistence| Case 2: Thread-only UDP throughput is run in client mode on the peer nRF7002 DK     |
+|              | sample            | device if Thread role on DUT is a server.                                           |
 +--------------+-------------------+-------------------------------------------------------------------------------------+
 
 Configuration
@@ -90,44 +90,39 @@ CONFIG_TEST_TYPE_WLAN_OT
 CONFIG_COEX_TEST_DURATION
    This option sets the Wi-Fi, Thread, or both test duration in milliseconds.
 
-.. _CONFIG_STA_SSID:
+.. _WIFI_CREDENTIALS_STATIC_SSID:
 
-CONFIG_STA_SSID
+WIFI_CREDENTIALS_STATIC_SSID
    This option specifies the SSID of the Wi-Fi access point to connect.
 
-.. _CONFIG_STA_PASSWORD:
+.. _WIFI_CREDENTIALS_STATIC_PASSWORD:
 
-CONFIG_STA_PASSWORD
+WIFI_CREDENTIALS_STATIC_PASSWORD
    This option specifies the Wi-Fi passphrase (WPA2™) or password (WPA3™) to connect.
-
-.. _CONFIG_STA_KEY_MGMT_*:
-
-CONFIG_STA_KEY_MGMT_*
-   These options specify the Wi-Fi key security option.
 
 Additional configuration
 ========================
 
 To enable different test modes, set up the following configuration parameters in the :file:`prj.conf` file:
 
-* Test modes - Use the following Kconfig options to select the required test case:
+* Test modes: Use the following Kconfig options to select the required test case:
 
-  * :ref:`CONFIG_TEST_TYPE_WLAN_ONLY <CONFIG_TEST_TYPE_WLAN_ONLY>` for Wi-Fi-only test.
-  * :ref:`CONFIG_TEST_TYPE_OT_ONLY <CONFIG_TEST_TYPE_OT_ONLY>` for Thread-only test.
-  * :ref:`CONFIG_TEST_TYPE_WLAN_OT <CONFIG_TEST_TYPE_WLAN_OT>` for concurrent Wi-Fi and Thread test.
+  * :kconfig:option:`CONFIG_TEST_TYPE_WLAN_ONLY` for Wi-Fi-only test.
+  * :kconfig:option:`CONFIG_TEST_TYPE_OT_ONLY` for Thread-only test.
+  * :kconfig:option:`CONFIG_TEST_TYPE_WLAN_OT` for concurrent Wi-Fi and Thread test.
 
-* Test duration - Use the :ref:`CONFIG_COEX_TEST_DURATION <CONFIG_COEX_TEST_DURATION>` Kconfig option to set the duration of the Wi-Fi-only test or Thread-only test or both.
+* Test duration: Use the :kconfig:option:`CONFIG_COEX_TEST_DURATION` Kconfig option to set the duration of the Wi-Fi-only test or Thread-only test or both.
   The units are in milliseconds.
   For example, to set the test for 20 seconds, set this value to ``20000``.
 
-* Wi-Fi connection - Set the following options appropriately as per the credentials of the access point used for this testing:
+* Wi-Fi connection: Configure the following Wi-Fi credentials in the :file:`prj.conf`: appropriately as per the credentials of the access point used for this testing:
 
 .. include:: /includes/wifi_credentials_static.txt
 
 .. note::
    ``menuconfig`` can also be used to configure ``Wi-Fi credentials``
 
-* Wi-Fi throughput test - Set the :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR` Kconfig option appropriately as per the IP address of the test PC on which **iperf** is run.
+* Wi-Fi throughput test: Set the :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR` Kconfig option appropriately as per the Wi-Fi interface IP address of the test PC on which **iperf** is run.
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
@@ -184,13 +179,13 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
   .. code-block:: console
 
-     -DSHIELD=nrf7002ek ipc_radio_SHIELD=nrf7002ek_coex
+     -DSHIELD=nrf7002ek -Dipc_radio_SHIELD=nrf7002ek_coex
 
 * For nRF7001 EK:
 
   .. code-block:: console
 
-     -DSHIELD=nrf7002ek_nrf7001 ipc_radio_SHIELD=nrf7002ek_nrf7001_coex
+     -DSHIELD=nrf7002ek_nrf7001 -Dipc_radio_SHIELD=nrf7002ek_nrf7001_coex
 
 * Overlay files
 
@@ -240,7 +235,7 @@ Testing
 
 	   .. code-block:: console
 
-		  $ west flash --dev-id <device-id> --hex-file build/zephyr/merged_domains.hex
+		  $ west flash --dev-id <device-id> --hex-file build/merged.hex
 
 	When the sample runs Wi-Fi UDP throughput in client mode, a peer device (test PC) runs UDP throughput
 	in server mode using the following command:

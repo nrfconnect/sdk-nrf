@@ -21,7 +21,6 @@
 };
 
 /* Place aggregator buffers in PPR memory region. */
-
 &cpuppr_ram3x_region {
 	cpuppr_code_data: memory@0 {
 		reg = <0x0 0xf200>;
@@ -42,6 +41,10 @@
 
 &cpuapp_bellboard {
 	status = "okay";
+};
+
+&uart135 {
+	/delete-property/ hw-flow-control;
 };
 
 ipc0: &cpuapp_cpuppr_ipc {

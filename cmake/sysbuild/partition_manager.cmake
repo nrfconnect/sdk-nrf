@@ -71,16 +71,12 @@ function(partition_manager)
                    "${static_configuration_file}"
     )
     set(static_configuration --static-config ${static_configuration_file})
-  endif()
 
-  if (NOT static_configuration AND CONFIG_PM_IMAGE_NOT_BUILT_FROM_SOURCE)
-    message(WARNING
-      "One or more child image is not configured to be built from source. \
-      However, there is no static configuration provided to the \
-      partition manager. Please provide a static configuration as described in \
-      the 'Scripts -> Partition Manager -> Static configuration' chapter in the \
-      documentation. Without this information, the build system is not able to \
-      place the image correctly in flash.")
+    # Add a watch on this static PM file for changes so a CMake reconfigure occurs
+    set_property(DIRECTORY APPEND PROPERTY
+                 CMAKE_CONFIGURE_DEPENDS
+                 ${static_configuration_file}
+    )
   endif()
 
   if(NOT "${PM_DOMAIN}" STREQUAL "CPUNET" AND NOT static_configuration AND
@@ -464,16 +460,17 @@ foreach (image ${IMAGES})
   endif()
 endforeach()
 
-#foreach (image ${IMAGES})
-#    # Re-configure (Re-execute all CMakeLists.txt code) when original
-#    # (not preprocessed) configuration file changes.
-#  #  get_shared(dependencies IMAGE ${image} PROPERTY PM_YML_DEP_FILES)
-#  #  set_property(
-#  #    DIRECTORY APPEND PROPERTY
-#  #    CMAKE_CONFIGURE_DEPENDS
-#  #    ${dependencies}
-#  #    )
-#endforeach()
+foreach (image ${IMAGES})
+  # Re-configure (Re-execute all CMakeLists.txt code) when original
+  # (not preprocessed) configuration file changes.
+  sysbuild_get(${image}_pm_yml_dep_files IMAGE ${image} VAR PM_YML_DEP_FILES CACHE)
+
+  set_property(
+    DIRECTORY APPEND PROPERTY
+    CMAKE_CONFIGURE_DEPENDS
+    ${image}_pm_yml_dep_files
+    )
+endforeach()
 
 list(APPEND input_files  ${${DEFAULT_IMAGE}_binary_dir}/${generated_path}/pm.yml)
 

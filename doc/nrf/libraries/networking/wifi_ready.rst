@@ -17,7 +17,7 @@ The Wi-Fi ready library informs applications of Wi-Fi readiness by managing supp
 Configuration
 *************
 
-To use this library, enable the :kconfig:option:`CONFIG_WIFI_READY_EVENT_HANDLING` Kconfig option.
+To use this library, enable the :kconfig:option:`CONFIG_WIFI_READY_LIB` Kconfig option.
 
 API documentation
 *****************

@@ -29,8 +29,44 @@ You can read more about each of these files in Zephyr's :ref:`Application Develo
 Application types
 *****************
 
-Based on where the :file:`<app>` directory is located, you will usually work with one of two types of applications in the |NCS|: workspace or freestanding.
+Based on where the :file:`<app>` directory is located, you will usually work with one of the following types of applications in the |NCS|: repository, workspace, or freestanding.
 These types are adopted from :ref:`Zephyr application types <zephyr:zephyr-app-types>`.
+
+.. _create_application_types_repository:
+
+Repository application
+======================
+
+This kind of application is located inside the |NCS| source code (:ref:`SDK repositories <dm_repo_types>`, including downstream forks of upstream projects).
+In the following example, the :ref:`Bluetooth Peripheral UART <peripheral_uart>` sample is an |NCS| repository application and its location in the source code structure serves as the :file:`<app>` directory:
+
+.. code-block:: none
+
+   <home>/
+   ├─── .west/
+   ├─── bootloader/
+   ├─── mbedtls/
+   ├─── modules/
+   ├─── nrf/
+   │    ├─── applications/
+   │    ├─── ...
+   │    └─── samples/
+   │       ├─── ...
+   │       ├─── bluetooth/
+   │       │  ├── ...
+   │       │  └── peripheral_uart/   <--- <app> directory
+   │       └─── ...
+   ├─── nrfxlib/
+   ├─── test/
+   ├─── tools/
+   └─── zephyr/
+
+This type of application uses the default |NCS| settings and configuration, which might differ from the corresponding upstream configuration.
+For example, a notable difference is that when building this type of applications, :ref:`sysbuild is enabled by default <sysbuild_enabled_ncs>`.
+
+This application type is suitable for the following development cases:
+
+* You want to test the solution provided by the |NCS| out-of-the-box.
 
 .. _create_application_types_workspace:
 

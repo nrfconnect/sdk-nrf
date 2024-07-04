@@ -16,6 +16,52 @@ You might also want to switch to a newer release or check out the latest state o
 However, if you work with a specific release of the |NCS|, you do not need to update your repositories, because the release will not change.
 For an overview of changes in the latest releases, see :ref:`release_notes`.
 
+.. _using_toolchain_environment:
+
+Using the correct command line environment
+******************************************
+
+Whenever you update repositories and tools, make sure that you use the command line environment that is configured to work with west and the rest of the nRF Connect Toolchain and nRF Connect SDK environment.
+
+Depending on your preferred development method, you can start the correct CLI toolchain environment the following way:
+
+.. tabs::
+
+   .. group-tab:: nRF Connect for Visual Studio Code
+
+      Start the nRF Connect terminal profile from the :guilabel:`Panel View`.
+      See `the extension documentation <nRF Terminal documentation_>`_ for more information.
+
+      .. note::
+          Repositories and tools can be updated in the |nRFVSC| using GUI.
+          See :ref:`updating_repos` below for details.
+
+   .. group-tab:: Command line
+
+      Use the command for your operating system:
+
+      .. tabs::
+
+         .. tab:: Windows
+
+            .. code-block:: console
+
+               nrfutil toolchain-manager launch --terminal
+
+         .. tab:: Linux
+
+            .. code-block:: console
+
+               nrfutil toolchain-manager launch --shell
+
+         .. tab:: macOS
+
+            .. code-block:: console
+
+               nrfutil toolchain-manager launch --shell
+
+      ..
+
 .. _gs_updating_repos:
 .. _gs_updating_repos_examples:
 .. _updating_repos_examples:

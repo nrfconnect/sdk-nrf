@@ -63,6 +63,10 @@
 .. _`Zephyr commit 8dc3f8`: https://github.com/nrfconnect/sdk-zephyr/commit/8dc3f856229ce083c956aa301c31a23e65bd8cd8
 .. _`hwmv2 conversion script`: https://github.com/nrfconnect/sdk-zephyr/blob/main/scripts/utils/board_v1_to_v2.py
 .. _`ncs-example-application commit f9f2da`: https://github.com/nrfconnect/ncs-example-application/commit/f9f2da24041a7b1923e49893cca912482c138aae
+.. _`sdk-zephyr west build patch`: https://github.com/nrfconnect/sdk-zephyr/blob/1a5d3b4a4ff98a33222856526afdf9c089b96d2b/scripts/west_commands/build.py#L585-L598
+.. _`sdk-nrf PR #15892`: https://github.com/nrfconnect/sdk-nrf/pull/15892
+.. _`sdk-nrf PR #14474`: https://github.com/nrfconnect/sdk-nrf/pull/14474
+.. _`sdk-nrf PR #16242`: https://github.com/nrfconnect/sdk-nrf/pull/16242
 
 .. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/sdk-nrfxlib
 .. _`sdk-nrfxlib`: https://github.com/nrfconnect/sdk-nrfxlib
@@ -148,11 +152,11 @@
 
 .. ### Matter links that need updated SHA per release
 
-.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/181b0cb/src/controller
-.. _`CHIP Certificate Tool source files`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/181b0cb/src/tools
-.. _`Bluetooth LE Arbiter's header file`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/181b0cb/src/platform/Zephyr/BLEAdvertisingArbiter.h
-.. _`LogModule enumeration`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/181b0cb/src/lib/support/logging/Constants.h
-.. _`Matter SDK's Logging header`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/181b0cb/src/lib/support/logging/CHIPLogging.h
+.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/022f2c9/src/controller
+.. _`CHIP Certificate Tool source files`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/022f2c9/src/tools
+.. _`Bluetooth LE Arbiter's header file`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/022f2c9/src/platform/Zephyr/BLEAdvertisingArbiter.h
+.. _`LogModule enumeration`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/022f2c9/src/lib/support/logging/Constants.h
+.. _`Matter SDK's Logging header`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/022f2c9/src/lib/support/logging/CHIPLogging.h
 
 .. _`bt_nus_service.cpp`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus/bt_nus_service.cpp
 .. _`bt_nus_service.h`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus/bt_nus_service.h
@@ -229,9 +233,10 @@
 .. _`nRF Connect SDK v1.0.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.0.0/nrf/index.html
 .. _`nRF Connect SDK v0.4.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/0.4.0/nrf/index.html
 .. _`nRF Connect SDK v0.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/0.3.0/nrf/index.html
-.. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
+.. _`nRF Connect SDK latest documentation`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html
 
 .. _`known issues page on the main branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html
+.. _`known issues for nRF Connect SDK v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-7-0
 .. _`known issues for nRF Connect SDK v2.6.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-6-1
 .. _`known issues for nRF Connect SDK v2.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-6-0
 .. _`known issues for nRF Connect SDK v2.5.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-5-3
@@ -320,6 +325,7 @@
 .. _`nRF socket options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/nrf_modem/doc/sockets.html
 
 .. _`Repositories and revisions for v2.6.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
+.. _`Repositories and revisions for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-2.6.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrf/releases_and_maturity/repository_revisions.html
@@ -344,6 +350,7 @@
 .. _`Repositories and revisions for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrf/introduction.html#repositories_and_revisions
 .. _`Repositories and revisions`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/introduction.html#repositories_and_revisions
 
+.. _`Modem library changelog for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-2.6.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 .. _`Modem library changelog for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -368,6 +375,7 @@
 .. _`Modem library changelog for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 .. _`Modem library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 
+.. _`LwM2M carrier library changelog for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-2.6.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
 .. _`LwM2M carrier library changelog for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
@@ -392,9 +400,25 @@
 .. _`LwM2M carrier library changelog for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
 .. _`LwM2M carrier library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
 
+
+.. _`Migration guide for nRF Connect SDK v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.7.html
 .. _`Migration guide for nRF Connect SDK v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.6.html
 .. _`Migration guide for nRF Connect SDK v2.5.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.5.html
 .. _`Migration guide for nRF Connect SDK v2.0.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_1.x_to_2.x.html
+.. _`Migrating from multi-image builds to sysbuild`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_sysbuild.html
+.. _`Migrating to the current hardware model`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_hwmv2.html
+
+
+.. _`Migration notes for nRF Connect SDK v2.7.0 for nRF54H20 DK users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_nRF54H20_cs_to_2_7.html
+.. _`Transition your development environment to nRF Connect SDK v2.7.0 for v2.4.99-cs3 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/nRF54H20_migration_2.7/transition_guide_2.4.99-cs3_to_2.7_environment.html
+.. _`Update your development environment for nRF Connect SDK v2.7.0 for v2.6.99-cs2 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/nRF54H20_migration_2.7/migration_guide_2.6.99-cs2_to_2_7_environment.html
+.. _`Migrate your application for the nRF54H20 DK to nRF Connect SDK v2.7.0 for v2.6.99-cs2 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/nRF54H20_migration_2.7/migration_guide_2.6.99-cs2_to_2.7_application.html
+.. _`Migrate your application for the nRF54H20 DK to nRF Connect SDK v2.7.0 for v2.4.99-cs3 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/nRF54H20_migration_2.7/migration_guide_2.4.99-cs3_to_2.7_application.html
+
+
+.. _`nRF54H20 DK getting started guide for the nRF Connect SDK v2.6.99-cs2`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs2/page/nrf/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs.html
+
+.. _`Migration guide for nRF Connect SDK v2.6.99_cs2 for v2.4.99-cs3 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.4.99-cs3_to_2.6.99-cs2.html
 
 .. _`Matter weather station application from the v2.1.1`: https://docs.nordicsemi.com/bundle/ncs-2.1.1/page/nrf/applications/matter_weather_station/README.html
 
@@ -410,6 +434,8 @@
 .. _`Run-time Filtering`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html#runtime_filtering
 
 .. _`nRF9160: GPS with SUPL client library`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/samples/nrf9160/gps/README.html
+
+.. _`previous method to define a board (hardware model)`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/zephyr/hardware/porting/board_porting.html
 
 .. ### Source: www.nordicsemi.com
 
@@ -483,8 +509,11 @@
 
 .. _`Nordic third-party modules`: https://www.nordicsemi.com/Nordic-Partners/3rd-party-modules
 
+.. _`contact our sales`: https://www.nordicsemi.com/About-us/Contact-Us#Sales_related_questions
+
 .. #### Source: www.nordicsemi.com/Events/
 
+.. _`nRF Connect SDK v2.7.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v270
 .. _`nRF Connect SDK v2.6.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v260
 .. _`nRF Connect SDK v2.5.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v250
 .. _`nRF Connect SDK v2.4.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v240
@@ -580,7 +609,7 @@
 .. _`nRF9160 SiP pin configuration`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
 .. _`Measuring current on nRF9160 DK`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/hw_measure_current.html
 
-.. _`nRF9160 DK GPS`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/gps.html
+.. _`nRF9160 DK GPS`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
 
 .. _`nWP044 - Best practices for cellular IoT development`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/lte_technology.html
 .. _`Security protocol for cellular IoT`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/security_protocols.html
@@ -724,6 +753,9 @@
 .. _`nRF9160 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_operator_certifications.html
 .. _`nRF9161 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_operator_certifications.html
 .. _`Modem firmware compatibility matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_modem_fw.html
+.. _`Modem firmware compatibility matrix for the nRF9160 DK`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_modem_fw.html
+.. _`Modem firmware compatibility matrix for the nRF9161 DK`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_modem_fw.html
+
 
 .. _`Electrical specification of nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/_tmp/alta.nRF9160/autodita/APPLICATION.CURRENT/parameters.frontpage.html
 
@@ -795,6 +827,7 @@
 .. _`Create a new application`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#create-a-new-application
 .. _`Browse samples`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#browse-samples
 .. _`nRF Terminal documentation`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_panel.html#nrf-connect-and-nrf-terminal-profiles
+.. _`switch to the pre-release version of the extension`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/rel_notes_overview.html#switching-to-a-pre-release-version
 
 .. ### Source: academy.nordicsemi.com
 
@@ -848,6 +881,8 @@
 .. _`nRF Wi-Fi Provisioner mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.wifi.provisioning
 
 .. _`Bluetooth 5.4 DevZone blog`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/whats-new-in-bluetooth-v5-4-an-overview
+
+.. _`What's new in Bluetooth 5.3?`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/bluetooth-5-3
 
 .. _`Certifying a cellular IoT device`: https://blog.nordicsemi.com/getconnected/certifying-a-cellular-iot-device/
 
@@ -1250,6 +1285,8 @@
 .. _`CSA blog post`: https://csa-iot.org/newsroom/matter-1-1-release-enhancements-for-developers-and-devices/
 .. _`Distributed Compliance Ledger`: https://webui.dcl.csa-iot.org/
 
+.. _`Matter 1.3 CSA blog post`: https://csa-iot.org/newsroom/matter-1-3-specification-released/
+
 .. ### Source: Chocolatey
 
 .. _`Install chocolatey`: https://chocolatey.org/install
@@ -1607,7 +1644,3 @@
 .. _`J-Link version 7.94e`: https://www.segger.com/downloads/jlink/
 
 .. _`J-Link version 7.88j`: https://www.segger.com/downloads/jlink/
-
-.. _`nRF54H20 DK getting started guide for the nRF Connect SDK v2.6.99-cs2`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs2/page/nrf/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs.html
-
-.. _`Migration guide for nRF Connect SDK v2.6.99_cs2 for v2.4.99-cs3 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.4.99-cs3_to_2.6.99-cs2.html

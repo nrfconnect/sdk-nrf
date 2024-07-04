@@ -6,11 +6,25 @@ Testing the DFU solution
 You can evaluate the DFU functionality by running the :zephyr:code-sample:`smp-svr` sample for the ``nrf54l15pdk/nrf54l51/cpuapp`` board target, which is available for both Bluetooth® LE and serial channels.
 This allows you to build and test the DFU solutions that are facilitated through integration with child images and the partition manager.
 
-To compile the SMP server sample for testing secondary image slots on external SPI NOR flash, run the following command:
+To compile the SMP server sample for testing secondary image slots on external SPI NOR flash, run the command based on your partitioning method.
 
-.. code-block:: console
+.. tabs::
 
-   west build -b nrf54l15pdk/nrf54l15/cpuapp -d build/smp_svr_54l_3 zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.mcumgr.smp_svr.bt.nrf54l15pdk.ext_flash
+   .. group-tab:: Partition Manager
+
+      To build with the Partition Manager, run the following command:
+
+      .. code-block:: console
+
+         west build -b nrf54l15pdk/nrf54l15/cpuapp -d build/smp_svr_54l zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.mcumgr.smp_svr.bt.nrf54l15pdk.ext_flash
+
+   .. group-tab:: DTS partitioning
+
+      To build with the DTS partitioning, run the following command:
+
+      .. code-block:: console
+
+         west build -b nrf54l15pdk/nrf54l15/cpuapp -d build/smp_svr_54l_d zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.mcumgr.smp_svr.bt.nrf54l15pdk.ext_flash.pure_dts
 
 .. note::
 

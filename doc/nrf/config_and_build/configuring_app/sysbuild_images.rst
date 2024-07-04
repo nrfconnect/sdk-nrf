@@ -3,7 +3,7 @@
 Sysbuild images
 ###############
 
-Sysbuild allows you to add additional images to your builds.
+:ref:`configuration_system_overview_sysbuild` allows you to add additional images to your builds.
 
 Enabling images
 ===============
@@ -242,4 +242,4 @@ Kconfig.sysbuild:
 Next steps
 ==========
 
-For more information on sysbuild, see :ref:`zephyr:sysbuild`, :ref:`zephyr_samples_sysbuild`, and :ref:`sysbuild_forced_options`.
+For more information on sysbuild, see :ref:`sysbuild_forced_options` and :ref:`zephyr_samples_sysbuild` in the |NCS| documentation and :ref:`zephyr:sysbuild` in the Zephyr documentation.

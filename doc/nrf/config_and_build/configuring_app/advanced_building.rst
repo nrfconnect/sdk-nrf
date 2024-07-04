@@ -36,6 +36,8 @@ To learn more about how to use the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_
 Optional build parameters
 *************************
 
+|parameters_override_west_config|
+
 Here are some of the possible options you can use:
 
 * You can provide :ref:`custom CMake options <cmake_options>` to the build command.

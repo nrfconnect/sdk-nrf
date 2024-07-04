@@ -53,6 +53,7 @@ You can provide additional options for building your application to the CMake pr
 These options are specified when CMake is run, thus not during the actual build, but when configuring the build.
 
 The |NCS| uses the same CMake build variables as Zephyr and they are compatible with both CMake and west.
+|parameters_override_west_config|
 
 For the complete list of build variables in Zephyr and more information about them, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 The following table lists the most common ones used in the |NCS|:

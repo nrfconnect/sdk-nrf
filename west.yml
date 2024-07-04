@@ -131,7 +131,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v2.1.0-ncs1-rc3
+      revision: daf2946a0f07a14b57bd69d29ac4cdde6f810fb7
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -186,7 +186,7 @@ manifest:
         - nrf-802154
     - name: soc-hwmv1
       repo-path: sdk-soc-hwmv1
-      revision: 2cd2b4e573f737648e656e313eaf0f350450f274
+      revision: 32b1ee3e4576815bebf9ce3e8d63efe73bd89c62
       path: modules/soc-hwmv1
       groups:
         - soc-hwmv1
@@ -263,7 +263,7 @@ manifest:
       remote: memfault
     - name: ant
       repo-path: sdk-ant
-      revision: 39a2222ad786ee2f069dde41b16c8bbe775d9484
+      revision: 3769e919bde8073cfaff62184b07907b92f906be
       remote: ant-nrfconnect
       groups:
         - ant

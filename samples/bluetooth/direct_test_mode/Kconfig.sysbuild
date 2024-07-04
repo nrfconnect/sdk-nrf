@@ -8,15 +8,11 @@ source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 
 config SUPPORT_APPCORE
 	bool
-	default y if BOARD_NRF5340DK_NRF5340_CPUNET
-
-config APPCORE_REMOTE_BOARD_NAME
-	string
-	default "nrf5340dk/nrf5340/cpuapp" if BOARD_NRF5340DK_NRF5340_CPUNET
+	default y if SOC_NRF5340_CPUNET
 
 choice APPCORE
 	prompt "Appcore image"
-	default APPCORE_REMOTE_HCI if DTM_TRANSPORT_HCI && APPCORE_REMOTE_BOARD_NAME != ""
+	default APPCORE_REMOTE_HCI if DTM_TRANSPORT_HCI
 	default APPCORE_REMOTE_SHELL
 	depends on SUPPORT_APPCORE
 

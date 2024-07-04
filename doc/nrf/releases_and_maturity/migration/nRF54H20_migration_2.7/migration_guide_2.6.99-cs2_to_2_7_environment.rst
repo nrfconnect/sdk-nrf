@@ -1,13 +1,13 @@
 .. _migration_cs2_to_2_7_env:
 
-Update your development environment for |NCS| v2.7.0 (for v2.6.99-cs2 users)
+Migrate your development environment to |NCS| v2.7.0 (for v2.6.99-cs2 users)
 ############################################################################
 
 .. contents::
    :local:
    :depth: 2
 
-This document describes how to update your development environment for the nRF54H20 DK from |NCS| v2.6.99-cs2 to |NCS| v2.7.0.
+This document describes how to update your development environment for the nRF54H20 DK from the |NCS| v2.6.99-cs2 to the |NCS| v2.7.0.
 
 Overview
 ********

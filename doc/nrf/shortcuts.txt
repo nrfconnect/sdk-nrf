@@ -1,8 +1,8 @@
 .. |NCS| replace:: nRF Connect SDK
 
-.. |release| replace:: v2.6.1
-.. |release_tt| replace:: ``v2.6.1``
-.. |release_number_tt| replace:: ``2.6.1``
+.. |release| replace:: v2.7.0
+.. |release_tt| replace:: ``v2.7.0``
+.. |release_number_tt| replace:: ``2.7.0``
 
 .. ### Config shortcuts
 
@@ -214,8 +214,10 @@
    You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
    For more information, see :ref:`zephyr:sysbuild`, :ref:`sysbuild_images`, :ref:`zephyr_samples_sysbuild`, and :ref:`sysbuild_forced_options`.
 
-.. |sysbuild_autoenabled_ncs| replace:: When building :ref:`workspace applications <create_application_types_workspace>` copied from :ref:`nRF repositories <dm_repo_types>`, building with sysbuild is :ref:`enabled by default <sysbuild_enabled_ncs>`.
-   If you work with out-of-tree :ref:`freestanding applications <create_application_types_freestanding>`, you need to manually pass ``--sysbuild`` to build commands.
+.. |sysbuild_autoenabled_ncs| replace:: When building :ref:`repository applications <create_application_types_repository>` in the :ref:`SDK repositories <dm_repo_types>`, building with sysbuild is :ref:`enabled by default <sysbuild_enabled_ncs>`.
+   If you work with out-of-tree :ref:`freestanding applications <create_application_types_freestanding>`, you need to manually pass the ``--sysbuild`` parameter to every build command or :ref:`configure west to always use it <sysbuild_enabled_ncs_configuring>`.
+
+.. |parameters_override_west_config| replace:: The parameters and options passed in the command line always take precedence over ``west config`` settings.
 
 .. |file_suffix_related_deprecation_note| replace:: This feature is deprecated and is being replaced by :ref:`suffix-based configurations <app_build_file_suffixes>`.
     You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
