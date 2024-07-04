@@ -8,4 +8,4 @@ They should not be treated as a reference for general use, as they are designed 
 
 ## Requirements
 
-The tests support the `nrf5340_audio_dk`.
+The tests support the `nrf5340_audio_dk` and 5340 bsim target.
