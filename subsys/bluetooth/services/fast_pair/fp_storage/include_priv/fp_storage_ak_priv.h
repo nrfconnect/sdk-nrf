@@ -46,6 +46,30 @@ extern "C" {
 #define SETTINGS_AK_NAME_MAX_SIZE \
 	(sizeof(SETTINGS_AK_FULL_PREFIX) + SETTINGS_AK_NAME_MAX_SUFFIX_LEN)
 
+/** Settings key name prefix for bond. */
+#define SETTINGS_BOND_INFO_NAME_PREFIX "bond_info"
+
+/** Full settings key name prefix for bond (including subtree name). */
+#define SETTINGS_BOND_INFO_FULL_PREFIX \
+	(SETTINGS_AK_SUBTREE_NAME SETTINGS_NAME_SEPARATOR_STR SETTINGS_BOND_INFO_NAME_PREFIX)
+
+/** Max length of suffix (bond index) in settings key name for bond. */
+#define SETTINGS_BOND_INFO_NAME_MAX_SUFFIX_LEN 2
+
+/** Max length of settings key for bond. */
+#define SETTINGS_BOND_INFO_NAME_MAX_SIZE \
+	(sizeof(SETTINGS_BOND_INFO_FULL_PREFIX) + SETTINGS_BOND_INFO_NAME_MAX_SUFFIX_LEN)
+
+#if CONFIG_BT_FAST_PAIR_STORAGE_AK_BOND && defined(CONFIG_BT_MAX_PAIRED) && \
+	defined(CONFIG_BT_MAX_CONN)
+/** Length of the Fast Pair bonds arrays. */
+#define FP_BONDS_ARRAY_LEN	(CONFIG_BT_MAX_PAIRED + CONFIG_BT_MAX_CONN)
+#else
+/** Length of the Fast Pair bonds arrays. */
+#define FP_BONDS_ARRAY_LEN	(0)
+#endif
+BUILD_ASSERT(FP_BONDS_ARRAY_LEN <= 100, "The array index must fit on 2 digits");
+
 /** Settings key name for Account Key order. */
 #define SETTINGS_AK_ORDER_KEY_NAME "order"
 
