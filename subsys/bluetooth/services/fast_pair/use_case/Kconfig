@@ -30,6 +30,7 @@ config BT_FAST_PAIR_USE_CASE_INPUT_DEVICE
 	select BT_FAST_PAIR_SUBSEQUENT_PAIRING
 	select BT_DIS
 	select BT_DIS_FW_REV
+	imply BT_FAST_PAIR_BOND_MANAGER
 	help
 	  Select the input device Fast Pair use case. Input device is a Human Interface Device
 	  (HID) such as a mouse, keyboard, remote control or a gaming pad that lets the user
@@ -59,6 +60,7 @@ config BT_FAST_PAIR_USE_CASE_MOUSE
 	select BT_FAST_PAIR_SUBSEQUENT_PAIRING
 	select BT_DIS
 	select BT_DIS_FW_REV
+	imply BT_FAST_PAIR_BOND_MANAGER
 	help
 	  Select the mouse Fast Pair use case. Mouse is a Human Interface Device (HID) that lets
 	  the user interact with electronic devices such as a PC. This Kconfig option configures
