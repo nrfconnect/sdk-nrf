@@ -86,9 +86,6 @@ Supported implementations
 
 The following are the implementations supported by the MPSL-provided Bluetooth-only coexistence.
 
-.. note::
-   Do not enable Wi-Fi coexistence on the nRF5340 SoC in conjunction with Coded Phy and FEM, as this can lead to undefined behavior.
-
 .. _ug_radio_mpsl_cx_nrf700x:
 
 nRF70 Series Wi-Fi coexistence
