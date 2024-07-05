@@ -1,3 +1,5 @@
+:orphan:
+
 .. _migration_nrf54h20_to_2.7.99-cs1:
 
 Migration notes for |NCS| v2.7.99-cs1 and the nRF54H20 DK
@@ -58,4 +60,4 @@ nRF54H20 BICR
 
   #. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command::
 
-        nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware <path_to_bicr.hex> --core Secure --serial-number <serialnumber>
+        nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware <path_to_bicr.hex> --core Application --serial-number <serialnumber>

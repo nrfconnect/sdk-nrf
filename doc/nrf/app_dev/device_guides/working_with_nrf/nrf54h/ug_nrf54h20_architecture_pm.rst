@@ -105,7 +105,7 @@ Local Suspend to RAM
 *Local Suspend to RAM* is a sleep state that balances between power consumption and wake-up latency.
 
 This state is available only for DVFS-capable domains.
-Other domains, such as Radio, cannot retain the CPU and local peripherals in the *System ON (All) Idle* state.
+Other domains, such as Radio, can retain the CPU and local peripherals in hardware flip-flops in the *System ON (All) Idle* state.
 
 In this state, the entire local Active Power Domain, including the CPU, is unpowered.
 The state of the CPU and the peripherals powered by the local Active Power Domain is not retained by hardware flip-flops.
