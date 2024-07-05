@@ -5,13 +5,8 @@
 #
 
 function(setup_nrf700x_xip_data)
-  include(${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/dts.cmake)
-
-  get_target_property(qspi_nodelabel devicetree_target "DT_NODELABEL|qspi")
-  get_target_property(qspi_device devicetree_target "DT_REG|${qspi_nodelabel}|ADDR")
-  get_target_property(qspi_modes devicetree_target "DT_PROP|${qspi_nodelabel}|reg-names")
-  list(FIND qspi_modes "qspi_mm" qspi_mm_mode_position)
-  list(GET qspi_device "${qspi_mm_mode_position}" qspi_xip_address)
+  sysbuild_dt_nodelabel(qspi_nodelabel IMAGE ${DEFAULT_IMAGE} NODELABEL "qspi")
+  sysbuild_dt_reg_addr(qspi_xip_address IMAGE ${DEFAULT_IMAGE} PATH "${qspi_nodelabel}" NAME "qspi_mm")
 
   set(OS_AGNOSTIC_BASE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_wifi)
 
