@@ -113,6 +113,12 @@ enum pcd_status pcd_fw_copy_status_get(void);
  */
 const void *pcd_cmd_data_ptr_get(void);
 
+/** @brief Get value of 'len' member of pcd cmd.
+ *
+ * @retval value of 'len' member.
+ */
+const size_t pcd_cmd_data_len_get(void);
+
 /** @brief Perform the DFU image transfer.
  *
  * Use the information in the PCD CMD to load a DFU image to the

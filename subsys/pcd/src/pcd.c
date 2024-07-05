@@ -81,6 +81,11 @@ const void *pcd_cmd_data_ptr_get(void)
 	return cmd->data;
 }
 
+const size_t pcd_cmd_data_len_get(void)
+{
+	return cmd->len;
+}
+
 #ifdef CONFIG_PCD_NET
 #ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
 int pcd_find_fw_version(void)

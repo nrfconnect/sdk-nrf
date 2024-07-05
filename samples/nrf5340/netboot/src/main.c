@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <string.h>
 #include <zephyr/types.h>
 #include <zephyr/sys/printk.h>
 #include <pm_config.h>
@@ -20,6 +21,8 @@ int main(void)
 {
 	int err;
 	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+	uint32_t update_addr = 0;
+	size_t data_len = 0;
 
 	if (!device_is_ready(fdev)) {
 		printk("Flash device not ready\n");
@@ -40,6 +43,8 @@ int main(void)
 	uint32_t s0_addr = s0_address_read();
 	bool valid = false;
 	uint8_t status = pcd_fw_copy_status_get();
+	update_addr = (uint32_t)pcd_cmd_data_ptr_get();
+	data_len = (uint32_t)pcd_cmd_data_len_get();
 
 #ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
 	if (status == PCD_STATUS_READ_VERSION) {
@@ -61,7 +66,6 @@ int main(void)
 		/* First we validate the data where the PCD CMD tells
 		 * us that we can find it.
 		 */
-		uint32_t update_addr = (uint32_t)pcd_cmd_data_ptr_get();
 
 		valid = bl_validate_firmware(s0_addr, update_addr);
 		if (!valid) {
@@ -83,6 +87,7 @@ int main(void)
 		 */
 		valid = bl_validate_firmware(s0_addr, s0_addr);
 		if (valid) {
+			memset((uint32_t *)update_addr, 0, data_len); 
 			pcd_done();
 		} else {
 			printk("Unable to find valid firmware inside %p\n\r",
@@ -106,6 +111,7 @@ int main(void)
 	return 0;
 
 failure:
+	memset((uint32_t *)update_addr, 0, data_len);  
 	pcd_fw_copy_invalidate();
 	return 0;
 }
