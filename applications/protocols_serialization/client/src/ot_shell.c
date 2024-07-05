@@ -59,6 +59,113 @@ static int ot_cli_command_invoke(ot_cli_command_handler_t handler, const struct 
 	return 0;
 }
 
+static void discover_cb(otActiveScanResult *result, void *ctx)
+{
+	const struct shell *sh = (const struct shell *)ctx;
+
+	if (result) {
+		uint64_t ext_addr;
+		uint64_t ext_pan_id;
+
+		memcpy(&ext_addr, result->mExtAddress.m8, OT_EXT_ADDRESS_SIZE);
+		shell_print(sh, "Extended address: 0x%llx", ext_addr);
+
+		shell_print(sh, "Network name: %s", result->mNetworkName.m8);
+
+		memcpy(&ext_pan_id, result->mExtendedPanId.m8, OT_EXT_PAN_ID_SIZE);
+		shell_print(sh, "Extended PanId: 0x%llx", ext_pan_id);
+
+		shell_print(sh, "%s", "Steering Data: ");
+		shell_hexdump(sh, result->mSteeringData.m8, OT_STEERING_DATA_MAX_LENGTH);
+
+		shell_print(sh, "PandId: 0x%4x", result->mPanId);
+		shell_print(sh, "Joiner UDP port: %u", result->mJoinerUdpPort);
+		shell_print(sh, "Channel: %u", result->mChannel);
+		shell_print(sh, "rssi: %i, lqi: %u", result->mRssi, result->mLqi);
+		shell_print(sh, "Version %u", result->mVersion);
+		shell_print(sh, "is native: %s, is joinable: %s, discover: %s",
+			    !!result->mIsNative ? "true" : "false",
+			    !!result->mIsJoinable ? "true" : "false",
+			    !!result->mDiscover ? "true" : "false");
+	} else {
+		shell_print(sh, "%s", "Active scanning didn't find anything");
+	}
+}
+
+static otError ot_cli_command_discover(const struct shell *sh, size_t argc, char *argv[])
+{
+	uint32_t scan_channels;
+	uint16_t pan_id;
+	bool joiner;
+	bool enable_eui64_filtering;
+	int err = 0;
+
+	if (argc <= 1) {
+		shell_print(sh, "%s",
+			    otDatasetIsCommissioned(NULL) ? "already commissioned"
+							  : "not comissioned");
+		return OT_ERROR_NONE;
+	}
+
+	if (argc != 5) {
+		return OT_ERROR_INVALID_COMMAND;
+	}
+
+	scan_channels = shell_strtoul(argv[1], 0, &err);
+	pan_id = shell_strtol(argv[2], 0, &err);
+	joiner = shell_strtobool(argv[3], 0, &err);
+	enable_eui64_filtering = shell_strtobool(argv[4], 0, &err);
+
+	if (err) {
+		shell_warn(sh, "Unable to parse input string arg");
+		return OT_ERROR_INVALID_COMMAND;
+	}
+
+	return otThreadDiscover(NULL, scan_channels, pan_id, joiner, enable_eui64_filtering,
+				discover_cb, (void *)sh);
+}
+
+static otError ot_cli_command_active_tlvs(const struct shell *sh, size_t argc, char *argv[])
+{
+	otOperationalDatasetTlvs dataset;
+	otError error;
+
+	if (argc <= 1) {
+		error = otDatasetGetActiveTlvs(NULL, &dataset);
+
+		if (error == OT_ERROR_NONE) {
+			shell_print(sh, "%s", "Operational Dataset TLVs: ");
+			shell_hexdump(sh, dataset.mTlvs, dataset.mLength);
+		} else {
+			shell_warn(sh, "Operational Dataset TLVs not found err:%i", error);
+		}
+
+		return error;
+	}
+
+	if (argc != 2) {
+		return OT_ERROR_INVALID_COMMAND;
+	}
+
+	dataset.mLength = hex2bin(argv[1], strlen(argv[1]), dataset.mTlvs, sizeof(dataset.mTlvs));
+	error = otDatasetSetActiveTlvs(NULL, &dataset);
+
+	if (error != OT_ERROR_NONE) {
+		shell_warn(sh, "Unable to set Operational Dataset TLVs err:%i", error);
+	}
+
+	return error;
+}
+
+static int cmd_discover(const struct shell *sh, size_t argc, char *argv[])
+{
+	return ot_cli_command_invoke(ot_cli_command_discover, sh, argc, argv);
+}
+
+static int cmd_active_tlvs(const struct shell *sh, size_t argc, char *argv[])
+{
+	return ot_cli_command_invoke(ot_cli_command_active_tlvs, sh, argc, argv);
+}
 static otError ot_cli_command_ifconfig(const struct shell *sh, size_t argc, char *argv[])
 {
 	if (argc <= 1) {
@@ -287,13 +394,16 @@ static int cmd_ot(const struct shell *sh, size_t argc, char *argv[])
 	return 0;
 }
 
-SHELL_STATIC_SUBCMD_SET_CREATE(
-	ot_cmds, SHELL_CMD_ARG(ifconfig, NULL, "Interface management", cmd_ifconfig, 1, 1),
+SHELL_STATIC_SUBCMD_SET_CREATE(ot_cmds,
+	SHELL_CMD_ARG(ifconfig, NULL, "Interface management", cmd_ifconfig, 1, 1),
 	SHELL_CMD_ARG(ipmaddr, NULL, "IPv6 multicast configuration", cmd_ipmaddr, 1, 2),
 	SHELL_CMD_ARG(mode, NULL, "Mode configuration", cmd_mode, 1, 1),
 	SHELL_CMD_ARG(pollperiod, NULL, "Polling configuration", cmd_pollperiod, 1, 1),
 	SHELL_CMD_ARG(state, NULL, "Current role", cmd_state, 1, 0),
-	SHELL_CMD_ARG(thread, NULL, "Role management", cmd_thread, 2, 0), SHELL_SUBCMD_SET_END);
+	SHELL_CMD_ARG(thread, NULL, "Role management", cmd_thread, 2, 0),
+	SHELL_CMD_ARG(discover, NULL, "Thread discovery scan", cmd_discover, 1, 4),
+	SHELL_CMD_ARG(active_tlvs, NULL, "Set active dataset", cmd_active_tlvs, 1, 1),
+	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(ot, &ot_cmds,
 		       "OpenThread subcommands\n"
