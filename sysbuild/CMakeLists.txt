@@ -112,7 +112,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
 
-  if(SB_CONFIG_SOC_SERIES_NRF53X)
+  if(SB_CONFIG_SOC_SERIES_NRF53X OR SB_CONFIG_SOC_SERIES_NRF54LX)
     list(LENGTH split_board_qualifiers target_length)
 
     if("${target_length}" GREATER "3")
@@ -135,7 +135,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   endif()
 
 # TODO: SB_CONFIG_SOC_SERIES_NRF54HX
-# TODO: SB_CONFIG_SOC_SERIES_NRF54LX
 
   if(DEFINED board_qualifiers_secure)
     if(DEFINED BOARD_REVISION)
