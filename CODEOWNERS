@@ -331,6 +331,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/pcm_stream_channel_modifier/   @nrfconnect/ncs-audio
 /tests/lib/sample_rate_converter/         @andvib @gWacey
 /tests/lib/tone/                          @nrfconnect/ncs-audio
+/tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/direct_xip/        @hakonfam
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
@@ -358,6 +359,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/nrf_provisioning/   @SeppoTakalo @juhaylinen
 /tests/subsys/net/lib/wifi_credentials*/  @nrfconnect/ncs-cia
 /tests/subsys/net/lib/mqtt_helper/        @nrfconnect/ncs-cia
+/tests/subsys/net/openthread/rpc/         @nrfconnect/ncs-protocols-serialization
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta

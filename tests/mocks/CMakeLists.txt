@@ -5,3 +5,4 @@
 #
 
 add_subdirectory_ifdef(CONFIG_MOCK_NRF_MODEM_AT nrf_modem_at)
+add_subdirectory_ifdef(CONFIG_MOCK_NRF_RPC nrf_rpc)
