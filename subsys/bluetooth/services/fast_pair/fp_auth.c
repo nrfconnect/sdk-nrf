@@ -15,6 +15,7 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_activation.h"
 #include "fp_auth.h"
 #include "fp_keys.h"
+#include "fp_storage_ak_bond.h"
 
 #define EMPTY_PASSKEY	0xffffffff
 #define USED_PASSKEY	0xfffffffe
@@ -68,15 +69,25 @@ static void clear_conn_context(const struct bt_conn *conn)
 
 static int send_auth_confirm(struct bt_conn *conn)
 {
-	int err = bt_conn_auth_passkey_confirm(conn);
+	int err;
 
-	if (err) {
-		LOG_ERR("Failed to confirm passkey (err: %d)", err);
-	} else {
-		LOG_DBG("Confirmed passkey");
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_BOND_MANAGER)) {
+		/* Saving potential bond. */
+		err = fp_keys_bond_save(conn);
+		if (err) {
+			LOG_ERR("Failed to save potential bond %d", err);
+			return err;
+		}
 	}
 
-	return err;
+	err = bt_conn_auth_passkey_confirm(conn);
+	if (err) {
+		LOG_ERR("Failed to confirm passkey (err: %d)", err);
+		return err;
+	}
+	LOG_DBG("Confirmed passkey");
+
+	return 0;
 }
 
 static int send_auth_cancel(struct bt_conn *conn)
@@ -212,6 +223,18 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 	}
 
 	if (bt_conn_get_security(conn) >= BT_SECURITY_L4) {
+		if (IS_ENABLED(CONFIG_BT_FAST_PAIR_BOND_MANAGER) && bonded) {
+			struct bt_conn_info conn_info;
+			int err;
+
+			err = bt_conn_get_info(conn, &conn_info);
+			if (err) {
+				LOG_ERR("Failed to get local conn info (err %d)", err);
+				return;
+			}
+
+			fp_storage_ak_bond_conn_confirm(conn, conn_info.le.dst);
+		}
 		fp_keys_bt_auth_progress(conn, true);
 	} else {
 		LOG_ERR("Invalid conn security level after pairing: %p", (void *)conn);
