@@ -21,6 +21,8 @@ Compatible versions of modem and application
 
 When you update the application firmware on an nRF91 Series DK, make sure that the modem firmware and application firmware are compatible versions.
 
+.. _build_pgm_nrf9160_board_controller:
+
 Selecting board controller on nRF9160 DK
 ****************************************
 
