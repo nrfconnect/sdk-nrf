@@ -30,6 +30,7 @@ config BT_FAST_PAIR_USE_CASE_INPUT_DEVICE
 	select BT_FAST_PAIR_SUBSEQUENT_PAIRING
 	select BT_DIS
 	select BT_DIS_FW_REV
+	imply BT_FAST_PAIR_BOND_MANAGER
 	help
 	  Select the input device Fast Pair use case. Input device is a Human Interface Device
 	  (HID) such as a mouse, keyboard, remote control or a gaming pad that lets the user
@@ -42,6 +43,7 @@ config BT_FAST_PAIR_USE_CASE_LOCATOR_TAG
 	bool "Locator tag use case"
 	select BT_FAST_PAIR_FMDN
 	select BT_FAST_PAIR_FMDN_DULT
+	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_BOND_MANAGER
 	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_GATT_SERVICE_MODEL_ID
 	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_SUBSEQUENT_PAIRING
 	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_PN
@@ -63,6 +65,7 @@ config BT_FAST_PAIR_USE_CASE_MOUSE
 	select BT_FAST_PAIR_SUBSEQUENT_PAIRING
 	select BT_DIS
 	select BT_DIS_FW_REV
+	imply BT_FAST_PAIR_BOND_MANAGER
 	help
 	  Select the mouse Fast Pair use case. Mouse is a Human Interface Device (HID) that lets
 	  the user interact with electronic devices such as a PC. This Kconfig option configures
@@ -73,6 +76,10 @@ config BT_FAST_PAIR_USE_CASE_MOUSE
 endchoice
 
 # Collection of unsupported Fast Pair features that can be selected by the use case Kconfig.
+config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_BOND_MANAGER
+	bool
+	depends on !BT_FAST_PAIR_BOND_MANAGER
+
 config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_GATT_SERVICE_MODEL_ID
 	bool
 	depends on !BT_FAST_PAIR_GATT_SERVICE_MODEL_ID

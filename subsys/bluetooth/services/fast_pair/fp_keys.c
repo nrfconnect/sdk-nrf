@@ -19,6 +19,7 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_crypto.h"
 #include "fp_common.h"
 #include "fp_storage_ak.h"
+#include "fp_storage_ak_bond.h"
 #include "fp_storage_pn.h"
 
 #define EMPTY_AES_KEY_BYTE	0xff
@@ -370,7 +371,7 @@ int fp_keys_store_account_key(const struct bt_conn *conn, const struct fp_accoun
 		LOG_WRN("Received invalid Account Key");
 		return -EINVAL;
 	}
-	err = fp_storage_ak_save(account_key);
+	err = fp_storage_ak_save(account_key, conn);
 	if (!err) {
 		LOG_DBG("Account Key stored");
 	} else {
@@ -531,6 +532,41 @@ static int fp_keys_uninit(void)
 	}
 
 	return 0;
+}
+
+int fp_keys_bond_save(const struct bt_conn *conn)
+{
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_BOND_MANAGER)) {
+		__ASSERT_NO_MSG(false);
+		return -ENOTSUP;
+	}
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+	struct bt_conn_info conn_info;
+	int err;
+
+	err = bt_conn_get_info(conn, &conn_info);
+	if (err) {
+		LOG_ERR("Failed to get local conn info (err %d)", err);
+		return err;
+	}
+
+	if (proc->state == FP_STATE_USE_TEMP_KEY) {
+		/* Initial pairing - the Account Key is not written yet. */
+		err = fp_storage_ak_bond_conn_create(conn, conn_info.le.dst, NULL);
+	} else if (proc->state == FP_STATE_USE_TEMP_ACCOUNT_KEY) {
+		/* Subsequent pairing - the Account Key is already known. */
+		struct fp_account_key account_key;
+
+		memcpy(account_key.key, proc->aes_key, sizeof(account_key.key));
+		err = fp_storage_ak_bond_conn_create(conn, conn_info.le.dst, &account_key);
+	} else {
+		__ASSERT_NO_MSG(false);
+		err = -EACCES;
+	}
+
+	return err;
 }
 
 FP_ACTIVATION_MODULE_REGISTER(fp_keys, FP_ACTIVATION_INIT_PRIORITY_DEFAULT, fp_keys_init,
