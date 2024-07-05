@@ -1,8 +1,8 @@
 .. |NCS| replace:: nRF Connect SDK
 
-.. |release| replace:: v2.7.0
-.. |release_tt| replace:: ``v2.7.0``
-.. |release_number_tt| replace:: ``2.7.0``
+.. |release| replace:: v2.7.99-cs1
+.. |release_tt| replace:: ``v2.7.99-cs1``
+.. |release_number_tt| replace:: ``2.7.99-cs1``
 
 .. ### Config shortcuts
 
