@@ -543,3 +543,8 @@
   - "samples/suit/**/*"
   - "subsys/mgmt/suitfu/**/*"
   - "tests/subsys/suit/**/*"
+
+"CI-ps-test":
+  - "applications/protocols_serialization/**/*"
+  - "subsys/net/openthread/rpc/**/*"
+  - "subsys/nrf_rpc/**/*"
