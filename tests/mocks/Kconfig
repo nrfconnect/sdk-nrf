@@ -7,5 +7,6 @@
 menu "Mocks"
 
 rsource "nrf_modem_at/Kconfig"
+rsource "nrf_rpc/Kconfig"
 
 endmenu
