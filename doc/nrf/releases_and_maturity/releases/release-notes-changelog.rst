@@ -264,6 +264,11 @@ Cellular samples
 
   * Updated Wi-Fi overlays from newlibc to picolib.
 
+* :ref:`nrf_cloud_rest_device_message` sample:
+
+  * Removed the dictionary-based comments in the :file:`overlay_nrfcloud_logging.conf` file.
+    Dictionary-based logging is not available for the REST protocol at the moment.
+
 Cryptography samples
 --------------------
 
