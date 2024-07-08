@@ -1252,17 +1252,23 @@ void bt_le_per_adv_sync_cb_register_on_remote(void)
 				&ctx, ser_rsp_decode_void, NULL);
 }
 
-void bt_le_per_adv_sync_cb_register(struct bt_le_per_adv_sync_cb *cb)
+int bt_le_per_adv_sync_cb_register(struct bt_le_per_adv_sync_cb *cb)
 {
 	bool register_on_remote;
 
 	register_on_remote = sys_slist_is_empty(&pa_sync_cbs);
+
+	if (sys_slist_find(&pa_sync_cbs, &cb->node, NULL)) {
+		return -EEXIST;
+	}
 
 	sys_slist_append(&pa_sync_cbs, &cb->node);
 
 	if (register_on_remote) {
 		bt_le_per_adv_sync_cb_register_on_remote();
 	}
+
+	return 0;
 }
 
 int bt_le_per_adv_sync_recv_enable(struct bt_le_per_adv_sync *per_adv_sync)
@@ -1752,17 +1758,23 @@ static void bt_le_scan_cb_register_on_remote(void)
 				&ctx, ser_rsp_decode_void, NULL);
 }
 
-void bt_le_scan_cb_register(struct bt_le_scan_cb *cb)
+int bt_le_scan_cb_register(struct bt_le_scan_cb *cb)
 {
 	bool register_on_remote;
 
 	register_on_remote = sys_slist_is_empty(&scan_cbs);
+
+	if (sys_slist_find(&scan_cbs, &cb->node, NULL)) {
+		return -EEXIST;
+	}
 
 	sys_slist_append(&scan_cbs, &cb->node);
 
 	if (register_on_remote) {
 		bt_le_scan_cb_register_on_remote();
 	}
+
+	return 0;
 }
 #endif /* defined(CONFIG_BT_OBSERVER) */
 
