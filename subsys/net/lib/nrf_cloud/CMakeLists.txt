@@ -9,7 +9,8 @@ zephyr_library_sources(
 	src/nrf_cloud_log.c
 	src/nrf_cloud_codec.c
 	src/nrf_cloud_mem.c
-	src/nrf_cloud_client_id.c)
+	src/nrf_cloud_client_id.c
+	src/nrf_cloud_sec_tag.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_ALERT
 	src/nrf_cloud_alert.c)

@@ -33,6 +33,10 @@ config NRF_CLOUD_GATEWAY
 	  Enables functionality in this device to be compatible with
 	  nRF Cloud LTE gateway support.
 
+config NRF_CLOUD_SEC_TAG
+	int "Security tag to use for nRF Cloud connection"
+	default 16842753
+
 if NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
 
 config NRF_CLOUD_HOST_NAME
@@ -40,10 +44,6 @@ config NRF_CLOUD_HOST_NAME
 	default "mqtt.nrfcloud.com"
 	help
 	  Used for MQTT and JITP performed with REST
-
-config NRF_CLOUD_SEC_TAG
-	int "Security tag to use for nRF Cloud connection"
-	default 16842753
 
 config NRF_CLOUD_DEVICE_STATUS_ENCODE_VOLTAGE
 	bool "Include the (battery) voltage when encoding device status"

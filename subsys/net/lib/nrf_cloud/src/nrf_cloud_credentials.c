@@ -71,11 +71,7 @@ static int add_cred(uint32_t sec_tag, int type, const void *cred, const size_t c
 int nrf_cloud_credentials_provision(void)
 {
 	int err = 0;
-	uint32_t sec_tag = CONFIG_NRF_CLOUD_SEC_TAG;
-
-#if defined(CONFIG_NRF_CLOUD_COAP)
-	sec_tag = CONFIG_NRF_CLOUD_COAP_SEC_TAG;
-#endif
+	const uint32_t sec_tag = nrf_cloud_sec_tag_get();
 
 	LOG_WRN("CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES is not secure and should be used only for "
 		"testing purposes");
@@ -192,11 +188,7 @@ int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs)
 
 	memset(cs, 0, sizeof(*cs));
 
-	cs->sec_tag = CONFIG_NRF_CLOUD_SEC_TAG;
-
-#if defined(CONFIG_NRF_CLOUD_COAP)
-	cs->sec_tag = CONFIG_NRF_CLOUD_COAP_SEC_TAG;
-#endif
+	cs->sec_tag = nrf_cloud_sec_tag_get();
 
 	ret = cred_exists(cs->sec_tag, CA_CERT, &exists);
 	if (ret < 0) {

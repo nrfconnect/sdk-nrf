@@ -39,7 +39,6 @@ LOG_MODULE_REGISTER(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 #define PREDICTION_PERIOD		240
 #endif
 #define REPLACEMENT_THRESHOLD		CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
-#define SEC_TAG				CONFIG_NRF_CLOUD_SEC_TAG
 #define FRAGMENT_SIZE			CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE
 #define PREDICTION_MIDPOINT_SHIFT_SEC	(120 * SEC_PER_MIN)
 #define LOCATION_UNC_SEMIMAJOR_K	89U
@@ -915,7 +914,7 @@ int nrf_cloud_pgps_update(struct nrf_cloud_pgps_result *file_location)
 		return err;
 	}
 
-	int sec_tag = SEC_TAG;
+	int sec_tag = nrf_cloud_sec_tag_get();
 
 	if (FORCE_HTTP_DL && (strncmp(file_location->host, "https", 5) == 0)) {
 		memmove(&file_location->host[4],

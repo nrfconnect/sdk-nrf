@@ -180,7 +180,7 @@ static void init_rest_client_request(struct nrf_cloud_rest_context const *const 
 	req->resp_buff		= rest_ctx->rx_buf;
 	req->resp_buff_len	= rest_ctx->rx_buf_len;
 
-	req->sec_tag		= CONFIG_NRF_CLOUD_SEC_TAG;
+	req->sec_tag		= nrf_cloud_sec_tag_get();
 	req->port		= HTTPS_PORT;
 	req->host		= CONFIG_NRF_CLOUD_REST_HOST_NAME;
 	req->tls_peer_verify	= TLS_PEER_VERIFY_REQUIRED;
