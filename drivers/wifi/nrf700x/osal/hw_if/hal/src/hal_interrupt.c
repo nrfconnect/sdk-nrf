@@ -515,7 +515,7 @@ static enum nrf_wifi_status hal_rpu_process_wdog(struct nrf_wifi_hal_dev_ctx *ha
 					hal_dev_ctx->rpu_ps_lock,
 					&flags);
 
-	if (hal_dev_ctx->rpu_ps_state == RPU_PS_STATE_AWAKE) {
+	if (hal_dev_ctx->is_wakup_now_asserted) {
 		nrf_wifi_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
 					       hal_dev_ctx->rpu_ps_lock,
 					       &flags);
