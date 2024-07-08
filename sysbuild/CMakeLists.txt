@@ -281,6 +281,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
       if(SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
         add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/ext_flash_mcuboot_secondary.conf)
+
+        if(SB_CONFIG_SOC_SERIES_NRF53X)
+          add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim.conf)
+        endif()
       endif()
     endif()
 
