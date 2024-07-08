@@ -242,7 +242,11 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 
 	printk("Connected: %s\n", addr);
 
-	bt_conn_get_info(conn, &info);
+	err = bt_conn_get_info(conn, &info);
+	if (err) {
+		printk("Failed to get connection info (err %d)\n", err);
+		return;
+	}
 
 	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		dk_set_led_on(CENTRAL_CON_STATUS_LED);
