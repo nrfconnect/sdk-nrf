@@ -255,6 +255,8 @@ struct nrf_wifi_osal_ops {
 	int (*delay_us)(int usecs);
 	unsigned long (*time_get_curr_us)(void);
 	unsigned int (*time_elapsed_us)(unsigned long start_time_us);
+	unsigned long (*time_get_curr_ms)(void);
+	unsigned int (*time_elapsed_ms)(unsigned long start_time_us);
 
 	void *(*bus_pcie_init)(const char *dev_name,
 			       unsigned int vendor_id,

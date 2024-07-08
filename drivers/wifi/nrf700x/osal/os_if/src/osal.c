@@ -496,6 +496,16 @@ unsigned int nrf_wifi_osal_time_elapsed_us(struct nrf_wifi_osal_priv *opriv,
 	return opriv->ops->time_elapsed_us(start_time_us);
 }
 
+unsigned long nrf_wifi_osal_time_get_curr_ms(struct nrf_wifi_osal_priv *opriv)
+{
+	return opriv->ops->time_get_curr_ms();
+}
+
+unsigned int nrf_wifi_osal_time_elapsed_ms(struct nrf_wifi_osal_priv *opriv,
+					   unsigned long start_time_ms)
+{
+	return opriv->ops->time_elapsed_ms(start_time_ms);
+}
 
 void *nrf_wifi_osal_bus_pcie_init(struct nrf_wifi_osal_priv *opriv,
 				  const char *dev_name,

@@ -497,37 +497,44 @@ out:
 	return num_events;
 }
 
+static inline bool is_rpu_recovery_needed(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
+{
+	unsigned int rpu_sleep_opp_diff_ms = nrf_wifi_osal_time_elapsed_ms(
+		hal_dev_ctx->hpriv->opriv,
+		hal_dev_ctx->last_rpu_sleep_opp_time_ms);
+
+	nrf_wifi_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
+			      "RPU sleep opp diff: %d ms, last RPU sleep opp time: %lu",
+			      rpu_sleep_opp_diff_ms,
+			      hal_dev_ctx->last_rpu_sleep_opp_time_ms);
+
+	if (rpu_sleep_opp_diff_ms >= CONFIG_NRF_WIFI_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS) {
+		return false;
+	}
+
+	return true;
+}
+
 static enum nrf_wifi_status hal_rpu_process_wdog(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 						  bool *do_rpu_recovery)
 {
 	enum nrf_wifi_status nrf_wifi_status = NRF_WIFI_STATUS_FAIL;
 	bool rpu_recovery = false;
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
-	unsigned long flags = 0;
-#endif
 
 	nrf_wifi_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
 			      "Processing watchdog interrupt");
 
-	/* Check if host has asserted WAKEUP_NOW */
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-	nrf_wifi_osal_spinlock_irq_take(hal_dev_ctx->hpriv->opriv,
-					hal_dev_ctx->rpu_ps_lock,
-					&flags);
-
-	if (hal_dev_ctx->is_wakup_now_asserted) {
-		nrf_wifi_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
-					       hal_dev_ctx->rpu_ps_lock,
-					       &flags);
+	/* Check if host has asserted WAKEUP_NOW or if the RPU has been in
+	 * PS_ACTIVE state for more than the timeout period
+	 */
+	if (!is_rpu_recovery_needed(hal_dev_ctx)) {
 		nrf_wifi_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
-				      "Host has asserted WAKEUP_NOW, ignoring watchdog interrupt");
+				      "Host has not given RPU opp to sleep for the timeout period, RPU recovery not needed");
 		goto out;
 	}
 
 	rpu_recovery = true;
-	nrf_wifi_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
-				       hal_dev_ctx->rpu_ps_lock,
-				       &flags);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	if (!rpu_recovery) {
@@ -536,7 +543,7 @@ static enum nrf_wifi_status hal_rpu_process_wdog(struct nrf_wifi_hal_dev_ctx *ha
 	}
 
 	nrf_wifi_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
-			      "Host has not asserted WAKEUP_NOW, start RPU recovery");
+			      "Host has given RPU opp to sleep at least once for the timeout period, , RPU recovery needed");
 out:
 	nrf_wifi_status = NRF_WIFI_STATUS_SUCCESS;
 	*do_rpu_recovery = rpu_recovery;
