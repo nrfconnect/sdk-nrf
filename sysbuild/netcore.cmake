@@ -11,13 +11,7 @@ if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND DEFINED SB_CONFI
   string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
   list(GET split_board_qualifiers 2 target_cpucluster)
-
-  if(DEFINED BOARD_REVISION)
-    set(board_target_netcore "${BOARD}@${BOARD_REVISION}/${target_soc}/${SB_CONFIG_NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER}")
-  else()
-    set(board_target_netcore "${BOARD}/${target_soc}/${SB_CONFIG_NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER}")
-  endif()
-
+  set(board_target_netcore "${BOARD}/${target_soc}/${SB_CONFIG_NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER}")
   set(target_soc)
   set(target_cpucluster)
 
@@ -25,6 +19,7 @@ if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND DEFINED SB_CONFI
     APPLICATION ${SB_CONFIG_NETCORE_IMAGE_NAME}
     SOURCE_DIR ${SB_CONFIG_NETCORE_IMAGE_PATH}
     BOARD ${board_target_netcore}
+    BOARD_REVISION ${BOARD_REVISION}
   )
 
   if(NOT "${SB_CONFIG_NETCORE_IMAGE_DOMAIN}" IN_LIST PM_DOMAINS)
