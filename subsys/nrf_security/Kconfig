@@ -39,7 +39,7 @@ config NRF_SECURITY
 	default y if ENTROPY_PSA_CRYPTO_RNG && SOC_SERIES_NRF54LX
 	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
 	# Generating random requires a CRACEN PSA Crypto driver on nrf54L
-	select PSA_CRYPTO_DRIVER_CRACEN if PSA_WANT_GENERATE_RANDOM && SOC_SERIES_NRF54LX
+	select PSA_CRYPTO_DRIVER_CRACEN if (PSA_WANT_GENERATE_RANDOM && SOC_SERIES_NRF54LX) && !NRF_SECURITY_LEGACY_AND_PSA
 	# NCS does not use TF-M's BL2 bootloader, but uses it's own fork
 	# of MCUBoot instead (CONFIG_BOOTLOADER_MCUBOOT).
 	#
@@ -54,6 +54,9 @@ config NRF_SECURITY_LEGACY_AND_PSA
 	bool
 	default y
 	select EXPERIMENTAL
+	# This configuration will include the CTR_DRBG from CRACEN
+	# which requires EVENTS to be enabled
+	select EVENTS if SOC_SERIES_NRF54LX
 	depends on MBEDTLS_LEGACY_CRYPTO_C && MBEDTLS_PSA_CRYPTO_C
 	# This configuration doesn't affect TF-M builds since the PSA
 	# APIs are provided by TF-M.
@@ -65,7 +68,7 @@ config NRF_SECURITY_LEGACY_AND_PSA
 	# match what we enable in the build_config.h file so if we need to
 	# modify the dependencies here we also need to modify the build_config.h.
 	depends on PSA_CRYPTO_DRIVER_OBERON && !PSA_CRYPTO_DRIVER_CC3XX
-	depends on NRF_CC3XX_PLATFORM
+	depends on NRF_CC3XX_PLATFORM || SOC_SERIES_NRF54LX
 	depends on TRUSTED_STORAGE
 	depends on !BUILD_WITH_TFM
 	help
