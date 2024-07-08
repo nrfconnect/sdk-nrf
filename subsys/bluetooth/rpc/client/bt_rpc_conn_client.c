@@ -703,13 +703,13 @@ uint8_t bt_conn_enc_key_size(const struct bt_conn *conn)
 }
 #endif /* defined(CONFIG_BT_SMP) */
 
-static struct bt_conn_cb *first_bt_conn_cb;
+static sys_slist_t conn_cbs = SYS_SLIST_STATIC_INIT(&conn_cbs);
 
 static void bt_conn_cb_connected_call(struct bt_conn *conn, uint8_t err)
 {
 	struct bt_conn_cb *cb;
 
-	for (cb = first_bt_conn_cb; cb; cb = cb->_next) {
+	SYS_SLIST_FOR_EACH_CONTAINER(&conn_cbs, cb, _node) {
 		if (cb->connected) {
 			cb->connected(conn, err);
 		}
@@ -752,7 +752,7 @@ static void bt_conn_cb_disconnected_call(struct bt_conn *conn, uint8_t reason)
 {
 	struct bt_conn_cb *cb;
 
-	for (cb = first_bt_conn_cb; cb; cb = cb->_next) {
+	SYS_SLIST_FOR_EACH_CONTAINER(&conn_cbs, cb, _node) {
 		if (cb->disconnected) {
 			cb->disconnected(conn, reason);
 		}
@@ -796,7 +796,7 @@ static bool bt_conn_cb_le_param_req_call(struct bt_conn *conn, struct bt_le_conn
 {
 	struct bt_conn_cb *cb;
 
-	for (cb = first_bt_conn_cb; cb; cb = cb->_next) {
+	SYS_SLIST_FOR_EACH_CONTAINER(&conn_cbs, cb, _node) {
 		if (cb->le_param_req) {
 			if (!cb->le_param_req(conn, param)) {
 				return false;
@@ -848,7 +848,7 @@ static void bt_conn_cb_le_param_updated_call(struct bt_conn *conn, uint16_t inte
 {
 	struct bt_conn_cb *cb;
 
-	for (cb = first_bt_conn_cb; cb; cb = cb->_next) {
+	SYS_SLIST_FOR_EACH_CONTAINER(&conn_cbs, cb, _node) {
 		if (cb->le_param_updated) {
 			cb->le_param_updated(conn, interval, latency, timeout);
 		}
@@ -898,7 +898,7 @@ static void bt_conn_cb_identity_resolved_call(struct bt_conn *conn, const bt_add
 {
 	struct bt_conn_cb *cb;
 
-	for (cb = first_bt_conn_cb; cb; cb = cb->_next) {
+	SYS_SLIST_FOR_EACH_CONTAINER(&conn_cbs, cb, _node) {
 		if (cb->identity_resolved) {
 			cb->identity_resolved(conn, rpa, identity);
 		}
@@ -949,7 +949,7 @@ static void bt_conn_cb_security_changed_call(struct bt_conn *conn, bt_security_t
 {
 	struct bt_conn_cb *cb;
 
-	for (cb = first_bt_conn_cb; cb; cb = cb->_next) {
+	SYS_SLIST_FOR_EACH_CONTAINER(&conn_cbs, cb, _node) {
 		if (cb->security_changed) {
 			cb->security_changed(conn, level, err);
 		}
@@ -998,7 +998,7 @@ static void bt_conn_cb_remote_info_available_call(struct bt_conn *conn,
 {
 	struct bt_conn_cb *cb;
 
-	for (cb = first_bt_conn_cb; cb; cb = cb->_next) {
+	SYS_SLIST_FOR_EACH_CONTAINER(&conn_cbs, cb, _node) {
 		if (cb->remote_info_available) {
 			cb->remote_info_available(conn, remote_info);
 		}
@@ -1046,7 +1046,7 @@ static void bt_conn_cb_le_phy_updated_call(struct bt_conn *conn, struct bt_conn_
 {
 	struct bt_conn_cb *cb;
 
-	for (cb = first_bt_conn_cb; cb; cb = cb->_next) {
+	SYS_SLIST_FOR_EACH_CONTAINER(&conn_cbs, cb, _node) {
 		if (cb->le_phy_updated) {
 			cb->le_phy_updated(conn, param);
 		}
@@ -1093,7 +1093,7 @@ static void bt_conn_cb_le_data_len_updated_call(struct bt_conn *conn,
 {
 	struct bt_conn_cb *cb;
 
-	for (cb = first_bt_conn_cb; cb; cb = cb->_next) {
+	SYS_SLIST_FOR_EACH_CONTAINER(&conn_cbs, cb, _node) {
 		if (cb->le_data_len_updated) {
 			cb->le_data_len_updated(conn, info);
 		}
@@ -1151,14 +1151,19 @@ static void bt_conn_cb_register_on_remote(void)
 	}
 }
 
-void bt_conn_cb_register(struct bt_conn_cb *cb)
+int bt_conn_cb_register(struct bt_conn_cb *cb)
 {
 	LOCK_CONN_INFO();
-	cb->_next = first_bt_conn_cb;
-	first_bt_conn_cb = cb;
+	if (sys_slist_find(&conn_cbs, &cb->_node, NULL)) {
+		return -EEXIST;
+	}
+
+	sys_slist_append(&conn_cbs, &cb->_node);
 	UNLOCK_CONN_INFO();
 
 	bt_conn_cb_register_on_remote();
+
+	return 0;
 }
 
 #if defined(CONFIG_BT_SMP)
