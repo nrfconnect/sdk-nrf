@@ -326,7 +326,7 @@ static int update_job_status(struct nrf_cloud_fota_poll_ctx *ctx)
 static int start_download(void)
 {
 	enum dfu_target_image_type img_type;
-	static const int sec_tag = CONFIG_NRF_CLOUD_SEC_TAG;
+	static int sec_tag;
 	int ret = 0;
 
 	/* Start the FOTA download, specifying the job/image type */
@@ -358,6 +358,8 @@ static int start_download(void)
 	}
 
 	LOG_INF("Starting FOTA download of %s/%s", job.host, job.path);
+
+	sec_tag = nrf_cloud_sec_tag_get();
 
 	struct nrf_cloud_download_data dl = {
 		.type = NRF_CLOUD_DL_TYPE_FOTA,

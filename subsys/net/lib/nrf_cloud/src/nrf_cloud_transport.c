@@ -458,14 +458,16 @@ err_cleanup:
 /* Provisions root CA certificate using modem_key_mgmt API */
 static int nct_provision(void)
 {
-	static sec_tag_t sec_tag_list[] = { CONFIG_NRF_CLOUD_SEC_TAG };
+	static sec_tag_t sec_tag;
 	int err = 0;
+
+	sec_tag = nrf_cloud_sec_tag_get();
 
 	nct.tls_config.peer_verify = 2;
 	nct.tls_config.cipher_count = 0;
 	nct.tls_config.cipher_list = NULL;
-	nct.tls_config.sec_tag_count = ARRAY_SIZE(sec_tag_list);
-	nct.tls_config.sec_tag_list = sec_tag_list;
+	nct.tls_config.sec_tag_count = 1;
+	nct.tls_config.sec_tag_list = &sec_tag;
 	nct.tls_config.hostname = NRF_CLOUD_HOSTNAME;
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)

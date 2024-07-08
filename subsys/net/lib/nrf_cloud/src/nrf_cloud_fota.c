@@ -795,7 +795,7 @@ int nrf_cloud_fota_job_start(void)
 static int start_job(struct nrf_cloud_fota_job *const job, const bool send_evt)
 {
 	__ASSERT_NO_MSG(job != NULL);
-	static const int sec_tag = CONFIG_NRF_CLOUD_SEC_TAG;
+	static int sec_tag;
 	int ret = 0;
 
 	enum dfu_target_image_type img_type;
@@ -826,6 +826,8 @@ static int start_job(struct nrf_cloud_fota_job *const job, const bool send_evt)
 		job->error = NRF_CLOUD_FOTA_ERROR_BAD_TYPE;
 		return ret;
 	}
+
+	sec_tag = nrf_cloud_sec_tag_get();
 
 	struct nrf_cloud_download_data dl = {
 		.type = NRF_CLOUD_DL_TYPE_FOTA,

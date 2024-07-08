@@ -1039,6 +1039,27 @@ int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs);
  */
 int nrf_cloud_credentials_configured_check(void);
 
+/**
+ * @brief Set the sec tag used for nRF Cloud credentials.
+ *        The default sec tag value is @kconfig{CONFIG_NRF_CLOUD_COAP_SEC_TAG} or
+ *        @kconfig{CONFIG_NRF_CLOUD_COAP_SEC_TAG} for CoAP.
+ *
+ * @note This API only needs to be called if the default configured sec tag value is no
+ *       longer applicable. This function does not perform any management of the
+ *       device's connection to nRF Cloud.
+ *
+ * @param sec_tag The sec tag.
+ *
+ */
+void nrf_cloud_sec_tag_set(const sec_tag_t sec_tag);
+
+/**
+ * @brief Get the sec tag used for nRF Cloud credentials.
+ *
+ * @return The sec tag.
+ */
+sec_tag_t nrf_cloud_sec_tag_get(void);
+
 /** @} */
 
 #ifdef __cplusplus

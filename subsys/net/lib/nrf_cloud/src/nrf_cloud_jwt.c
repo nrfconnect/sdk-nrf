@@ -470,11 +470,7 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 	const char *id_ptr;
 	struct jwt_data jwt = {
 		.audience = NULL,
-#if defined(CONFIG_NRF_CLOUD_COAP)
-		.sec_tag = CONFIG_NRF_CLOUD_COAP_SEC_TAG,
-#else
-		.sec_tag = CONFIG_NRF_CLOUD_SEC_TAG,
-#endif
+		.sec_tag = nrf_cloud_sec_tag_get(),
 		.key = JWT_KEY_TYPE_CLIENT_PRIV,
 		.alg = JWT_ALG_TYPE_ES256,
 		.jwt_buf = jwt_buf,
