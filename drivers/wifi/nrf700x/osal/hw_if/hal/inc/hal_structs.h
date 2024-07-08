@@ -223,6 +223,7 @@ struct nrf_wifi_hal_dev_ctx {
 	unsigned long addr_rpu_pktram_base_rx_pool[MAX_NUM_OF_RX_QUEUES];
 	unsigned long tx_frame_offset;
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
+	bool is_wakup_now_asserted;
 	enum RPU_PS_STATE rpu_ps_state;
 	void *rpu_ps_timer;
 	void *rpu_ps_lock;
