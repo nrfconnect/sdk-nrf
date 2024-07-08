@@ -82,7 +82,7 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 		    struct bt_le_adv_prov_feedback *fb)
 {
 	static uint8_t buf[ADV_DATA_BUF_SIZE];
-	struct bt_fast_pair_adv_config adv_config;
+	struct bt_fast_pair_adv_config adv_config = { 0 };
 
 	if (!enabled) {
 		return -ENOENT;
