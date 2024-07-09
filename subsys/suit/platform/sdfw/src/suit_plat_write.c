@@ -24,7 +24,8 @@
 
 LOG_MODULE_REGISTER(suit_plat_write, CONFIG_SUIT_LOG_LEVEL);
 
-int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *content)
+int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *content,
+			  struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
@@ -43,6 +44,11 @@ int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *cont
 	    (dst_component_type != SUIT_COMPONENT_TYPE_SOC_SPEC)) {
 		LOG_ERR("Unsupported destination component type");
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+	}
+
+	/* Encryption info is not supported. */
+	if (enc_info != NULL) {
+		return SUIT_ERR_UNSUPPORTED_PARAMETER;
 	}
 
 	/* Select destination */
@@ -66,7 +72,8 @@ int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *cont
 #endif /* CONFIG_SUIT_STREAM */
 }
 
-int suit_plat_write(suit_component_t dst_handle, struct zcbor_string *content)
+int suit_plat_write(suit_component_t dst_handle, struct zcbor_string *content,
+		    struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
@@ -94,6 +101,11 @@ int suit_plat_write(suit_component_t dst_handle, struct zcbor_string *content)
 #ifndef CONFIG_SUIT_STREAM_SOURCE_MEMPTR
 	return SUIT_ERR_UNSUPPORTED_COMMAND;
 #endif /* CONFIG_SUIT_STREAM_SOURCE_MEMPTR */
+
+	/* Encryption info is not supported. */
+	if (enc_info != NULL) {
+		return SUIT_ERR_UNSUPPORTED_PARAMETER;
+	}
 
 	/* Select destination */
 	ret = suit_sink_select(dst_handle, &dst_sink);

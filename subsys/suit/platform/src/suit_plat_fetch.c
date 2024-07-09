@@ -82,11 +82,17 @@ static int verify_and_get_sink(suit_component_t dst_handle, struct stream_sink *
 }
 #endif /* CONFIG_SUIT_STREAM */
 
-int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri)
+int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
+			  struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	struct stream_sink dst_sink = {0};
+
+	/* Encryption info is not supported. */
+	if (enc_info != NULL) {
+		return SUIT_ERR_UNSUPPORTED_PARAMETER;
+	}
 
 	int ret = verify_and_get_sink(dst_handle, &dst_sink, uri, &dst_component_type, false);
 
@@ -105,7 +111,8 @@ int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri)
 	return SUIT_ERR_UNSUPPORTED_COMMAND;
 }
 
-int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri)
+int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
+		    struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink = {0};
@@ -119,6 +126,11 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri)
 		return ret;
 	}
 #endif
+
+	/* Encryption info is not supported. */
+	if (enc_info != NULL) {
+		return SUIT_ERR_UNSUPPORTED_PARAMETER;
+	}
 
 	ret = verify_and_get_sink(dst_handle, &dst_sink, uri, &dst_component_type, true);
 	if (ret != SUIT_SUCCESS) {
@@ -150,7 +162,8 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri)
 #endif /* CONFIG_SUIT_STREAM */
 }
 
-int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_string *payload)
+int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_string *payload,
+				     struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
@@ -172,6 +185,11 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 	return SUIT_ERR_UNSUPPORTED_COMMAND;
 #endif /* CONFIG_SUIT_STREAM_SOURCE_MEMPTR */
 
+	/* Encryption info is not supported. */
+	if (enc_info != NULL) {
+		return SUIT_ERR_UNSUPPORTED_PARAMETER;
+	}
+
 	/* Get dst_sink - final destination sink */
 	ret = suit_sink_select(dst_handle, &dst_sink);
 	if (ret != SUIT_SUCCESS) {
@@ -190,7 +208,8 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 #endif /* CONFIG_SUIT_STREAM */
 }
 
-int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string *payload)
+int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string *payload,
+			       struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
@@ -219,6 +238,11 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 		return ret;
 	}
 #endif
+
+	/* Encryption info is not supported. */
+	if (enc_info != NULL) {
+		return SUIT_ERR_UNSUPPORTED_PARAMETER;
+	}
 
 	/* Get dst_sink - final destination sink */
 	ret = suit_sink_select(dst_handle, &dst_sink);

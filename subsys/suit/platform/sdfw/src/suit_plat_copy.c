@@ -25,7 +25,8 @@
 
 LOG_MODULE_REGISTER(suit_plat_copy, CONFIG_SUIT_LOG_LEVEL);
 
-int suit_plat_check_copy(suit_component_t dst_handle, suit_component_t src_handle)
+int suit_plat_check_copy(suit_component_t dst_handle, suit_component_t src_handle,
+			 struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
@@ -65,12 +66,16 @@ int suit_plat_check_copy(suit_component_t dst_handle, suit_component_t src_handl
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
 
+	/* Encryption info is not supported. */
+	if (enc_info != NULL) {
+		return SUIT_ERR_UNSUPPORTED_PARAMETER;
+	}
+
 	ret = suit_sink_select(dst_handle, &dst_sink);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("suit_sink_select failed - error %i", ret);
 		return ret;
 	}
-
 	/* Here other parts of pipe will be instantiated.
 	 *	Like decryption and/or decompression sinks.
 	 */
@@ -113,7 +118,8 @@ int suit_plat_check_copy(suit_component_t dst_handle, suit_component_t src_handl
 #endif /* CONFIG_SUIT_STREAM */
 }
 
-int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle)
+int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
+		   struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
@@ -151,6 +157,11 @@ int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle)
 	    (src_component_type != SUIT_COMPONENT_TYPE_CAND_IMG)) {
 		LOG_ERR("Unsupported source component type");
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+	}
+
+	/* Encryption info is not supported. */
+	if (enc_info != NULL) {
+		return SUIT_ERR_UNSUPPORTED_PARAMETER;
 	}
 
 	/* Select destination */
