@@ -4,7 +4,7 @@
  */
 
 &uart20 {
-    current-speed = <115200>;
+    current-speed = <1000000>;
     status = "okay";
     hw-flow-control;
 };
