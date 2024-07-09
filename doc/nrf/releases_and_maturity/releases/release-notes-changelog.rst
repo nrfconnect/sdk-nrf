@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ncs_release_notes_changelog:
 
 Changelog for |NCS| v2.7.99
@@ -340,7 +338,9 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`coremark_sample` sample:
+
+  * Updated the logging mode to minimal (:kconfig:option:`CONFIG_LOG_MODE_MINIMAL`) to reduce the sample's memory footprint and ensure no logging interference with the running benchmark.
 
 Drivers
 =======

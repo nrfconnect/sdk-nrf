@@ -202,14 +202,14 @@ The following table lists Matter over Thread certification requirements for when
 +===============================+===========================+=============================+========================================+
 | Matter Certification          | Production                | `Join CSA`_                 | Adopter                                |
 +-------------------------------+---------------------------+-----------------------------+----------------------------------------+
-| Bluetooth QDID                | Production                | `Join Bluetooth SIG`_       | Adopter                                |
+| Bluetooth® QDID               | Production                | `Join Bluetooth SIG`_       | Adopter                                |
 +-------------------------------+---------------------------+-----------------------------+----------------------------------------+
 | Thread Group Certification    | Production                | `Join Thread Group`_        | Implementer                            |
 +-------------------------------+---------------------------+-----------------------------+----------------------------------------+
 
 Bluetooth and Thread certifications can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
 
-You can also find more information about the Thread certification in the :ref:`Thread protocol section <ug_thread_cert>`.
+You can also find more information about the Bluetooth QDID in the :ref:`Bluetooth protocol section <ug_bt_qualification>`, and Thread certification in the :ref:`Thread protocol section <ug_thread_cert>`.
 
 .. _ug_matter_device_certification_reqs_mowifi:
 
@@ -230,6 +230,8 @@ The following table lists Matter over Wi-Fi certification requirements for when 
 
 Bluetooth certification can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
 :ref:`Wi-Fi certification <ug_wifi_certification>` is not yet available for inheritance from Nordic Semiconductor.
+
+You can also find more information about the Bluetooth QDID in the :ref:`Bluetooth protocol section <ug_bt_qualification>`.
 
 .. _ug_matter_device_certification_reqs_dual:
 
@@ -253,22 +255,22 @@ The following table lists certification requirements for products that offer :re
 Bluetooth and Thread certifications can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
 :ref:`Wi-Fi certification <ug_wifi_certification>` is not yet available for inheritance from Nordic Semiconductor.
 
-You can also find more information about the Thread certification in the :ref:`Thread protocol section <ug_thread_cert>`.
+You can also find more information about the Bluetooth QDID in the :ref:`Bluetooth protocol section <ug_bt_qualification>`, and the Thread certification in the :ref:`Thread protocol section <ug_thread_cert>`.
 
 .. _ug_matter_device_certification_reqs_dependent:
 
 Matter dependent certification inheritance
 ==========================================
 
-If your product uses qualified Bluetooth stack or certified Thread libraries (or both) provided as part of the |NCS|, you can *inherit* certification from Nordic Semiconductor, provided that you do not introduce any changes to these stacks.
+If your product uses a qualified Bluetooth stack or certified Thread libraries (or both) provided as part of the |NCS|, you can *inherit* certification from Nordic Semiconductor, provided that you do not introduce any changes to these stacks.
 In practice, this means reusing Nordic Semiconductor's certification identifiers, which were obtained as a result of the official certification procedures.
 
 When reusing Nordic Semiconductor's certification identifiers, you still need to join the SDO and meet its requirements to apply for certification by inheritance.
 For example, if you want to inherit Nordic Semiconductor's certification for Matter over Thread, you still need to join organizations listed in :ref:`ug_matter_device_certification_reqs_mot` and meet the inheritance requirements of each of the SDOs.
 
 .. note::
-      The inheritance procedure differs from SDO to SDO and has different names.
-      For details, contact the appropriate certification body in the SDO.
+   The inheritance procedure differs from SDO to SDO and has different names.
+   For details, contact the appropriate certification body in the SDO.
 
 Certification identifiers
 -------------------------
@@ -292,8 +294,8 @@ Rapid Recertification program
 =============================
 
 .. note::
-      The Rapid Recertification program is currently experimental.
-      You can read more about it in a dedicated document in the `Matter Resource Kit`_.
+   The Rapid Recertification program is currently experimental.
+   You can read more about it in a dedicated document in the `Matter Resource Kit`_.
 
 The Rapid Recertification program lets you perform the product testing using the services of a qualified CSA Member, even your own organization, instead of an ATL.
 This allows for a potentially more streamlined recertification process when you want to certify
