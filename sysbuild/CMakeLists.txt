@@ -155,6 +155,18 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       # Make mcuboot a build only target as the main application will flash this from the
       # merged hex file
       set_target_properties(mcuboot PROPERTIES BUILD_ONLY true)
+
+      if(DEFINED board_qualifiers_secure)
+        # Apply configuration for MCUboot using all available RAM or not
+        if(SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM)
+          set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM y)
+          set_config_bool(mcuboot CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM y)
+          set_config_bool(mcuboot CONFIG_MCUBOOT_NRF_CLEANUP_NONSECURE_RAM y)
+        else()
+          set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM n)
+          set_config_bool(mcuboot CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM n)
+        endif()
+      endif()
     endif()
 
     set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_UPDATEABLE_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES}\n")
