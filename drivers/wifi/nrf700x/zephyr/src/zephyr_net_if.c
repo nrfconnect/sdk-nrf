@@ -688,7 +688,6 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_set_power_save failed\n",
 			__func__);
-		goto out;
 	}
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 #endif /* CONFIG_NRF700X_STA_MODE */
@@ -710,7 +709,6 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_chg_vif_state failed\n",
 			__func__);
-		goto out;
 	}
 
 	status = nrf_wifi_fmac_del_vif(rpu_ctx_zep->rpu_ctx,
@@ -719,7 +717,6 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_del_vif failed\n",
 			__func__);
-		goto out;
 	}
 
 	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_DOWN;
