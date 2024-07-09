@@ -465,6 +465,11 @@ config NRF_WIFI_RPU_MIN_TIME_TO_ENTER_SLEEP_MS
 		Minimum time the host should de-assert WAKEUP_NOW and let RPU enter
 		sleep mode, assuming there is no activity.
 
+config NRF_WIFI_RPU_RECOVERY_DEBUG
+	bool "Enable RPU recovery debug logs"
+	help
+		Enable RPU recovery debug logs to help debug RPU recovery mechanism.
+
 config NET_MGMT_EVENT_QUEUE_SIZE
 	# Doing interface down and up even with delay puts a lot of events in the queue
 	default 16
