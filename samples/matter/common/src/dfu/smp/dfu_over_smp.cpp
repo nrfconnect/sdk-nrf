@@ -17,6 +17,7 @@
 #include "dfu/ota/ota_util.h"
 
 #include <platform/CHIPDeviceLayer.h>
+#include <platform/nrfconnect/DFUSync.h>
 
 #include <lib/support/logging/CHIPLogging.h>
 
@@ -37,15 +38,28 @@ constexpr static uint16_t kAdvertisingIntervalMin = 400;
 constexpr static uint16_t kAdvertisingIntervalMax = 500;
 constexpr static uint8_t kAdvertisingFlags = BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR;
 
+static bool sDfuInProgress = false;
+static uint32_t sDfuSyncMutexId;
+
 namespace
 {
-enum mgmt_cb_return UploadConfirmHandler(uint32_t event, enum mgmt_cb_return prev_status, int32_t *rc, uint16_t *group,
-					 bool *abort_more, void *data, size_t data_size)
+enum mgmt_cb_return UploadConfirmHandler(uint32_t, enum mgmt_cb_return, int32_t *rc, uint16_t *,
+					 bool *, void *data, size_t)
 {
 /* Currently img_mgmt hooks are not supported by SUIT */
 #ifndef CONFIG_SUIT
 	const img_mgmt_upload_check &imgData = *static_cast<img_mgmt_upload_check *>(data);
 	IgnoreUnusedVariable(imgData);
+
+	if (!sDfuInProgress) {
+		if (DFUSync::GetInstance().Take(sDfuSyncMutexId) == CHIP_NO_ERROR) {
+			sDfuInProgress = true;
+		} else {
+			ChipLogError(SoftwareUpdate, "Cannot start DFU over SMP, another DFU in progress.");
+			*rc = MGMT_ERR_EBUSY;
+			return MGMT_CB_ERROR_RC;
+		}
+	}
 
 	ChipLogProgress(SoftwareUpdate, "DFU over SMP progress: %u/%u B of image %u",
 			static_cast<unsigned>(imgData.req->off), static_cast<unsigned>(imgData.action->size),
@@ -54,14 +68,22 @@ enum mgmt_cb_return UploadConfirmHandler(uint32_t event, enum mgmt_cb_return pre
 	return MGMT_CB_OK;
 }
 
-enum mgmt_cb_return CommandHandler(uint32_t event, enum mgmt_cb_return prev_status, int32_t *rc, uint16_t *group,
-				   bool *abort_more, void *data, size_t data_size)
+enum mgmt_cb_return CommandHandler(uint32_t event, enum mgmt_cb_return, int32_t *, uint16_t *,
+				   bool *, void *, size_t)
 {
 	if (event == MGMT_EVT_OP_CMD_RECV) {
 		Nrf::Matter::GetFlashHandler().DoAction(ExternalFlashManager::Action::WAKE_UP);
 	} else if (event == MGMT_EVT_OP_CMD_DONE) {
 		Nrf::Matter::GetFlashHandler().DoAction(ExternalFlashManager::Action::SLEEP);
 	}
+
+	return MGMT_CB_OK;
+}
+
+enum mgmt_cb_return DfuStoppedHandler(uint32_t, enum mgmt_cb_return, int32_t *, uint16_t *,
+				      bool *, void *, size_t)
+{
+	DFUSync::GetInstance().Free(sDfuSyncMutexId);
 
 	return MGMT_CB_OK;
 }
@@ -76,10 +98,19 @@ mgmt_callback sCommandCallback = {
 	.event_id = (MGMT_EVT_OP_CMD_RECV | MGMT_EVT_OP_CMD_DONE),
 };
 
+mgmt_callback sDfuStopped = {
+	.callback = DfuStoppedHandler,
+	.event_id = (MGMT_EVT_OP_IMG_MGMT_DFU_STOPPED | MGMT_EVT_OP_IMG_MGMT_DFU_PENDING),
+};
+
 } /* namespace */
 
 namespace Nrf
 {
+
+BT_CONN_CB_DEFINE(conn_callbacks) = {
+	.disconnected = DFUOverSMP::Disconnected,
+};
 
 DFUOverSMP DFUOverSMP::sDFUOverSMP;
 
@@ -106,6 +137,7 @@ void DFUOverSMP::Init()
 
 	mgmt_callback_register(&sUploadCallback);
 	mgmt_callback_register(&sCommandCallback);
+	mgmt_callback_register(&sDfuStopped);
 }
 
 void DFUOverSMP::ConfirmNewImage()
@@ -134,6 +166,21 @@ void DFUOverSMP::StartServer()
 
 	mIsStarted = true;
 	ChipLogProgress(DeviceLayer, "DFU over SMP started");
+}
+
+void DFUOverSMP::Disconnected(bt_conn *conn, uint8_t reason)
+{
+	bt_conn_info btInfo;
+
+	VerifyOrReturn(sDfuInProgress);
+	VerifyOrReturn(bt_conn_get_info(conn, &btInfo) == 0);
+
+	// Drop all callbacks incoming for the role other than peripheral, required by the Matter accessory
+	VerifyOrReturn(btInfo.role == BT_CONN_ROLE_PERIPHERAL);
+
+	sDfuInProgress = false;
+
+	DFUSync::GetInstance().Free(sDfuSyncMutexId);
 }
 
 } /* namespace Nrf */

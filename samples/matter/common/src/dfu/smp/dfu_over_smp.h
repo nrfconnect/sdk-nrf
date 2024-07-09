@@ -50,6 +50,8 @@ public:
 	 */
 	void StartServer();
 
+	static void Disconnected(bt_conn *conn, uint8_t reason);
+
 private:
 	bool mIsStarted = false;
 	chip::DeviceLayer::BLEAdvertisingArbiter::Request mAdvertisingRequest = {};
