@@ -161,6 +161,8 @@ The following Kconfig options are available:
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
 |               ``SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION``                   | MCUboot version string to use when creating MCUboot update package for application secure boot mode                      |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
+|               ``SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM``                 | Use all available RAM when building TF-M for nRF5340 (see Kconfig text for security implication details)                 |
++---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
 
 Support for unsigned images and image encryption has been added.
 These options generate the respective output files for the main application build.
