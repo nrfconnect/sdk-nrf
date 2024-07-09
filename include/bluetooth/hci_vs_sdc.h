@@ -187,26 +187,6 @@ int hci_vs_sdc_event_length_set(const sdc_hci_cmd_vs_event_length_set_t *params)
 int hci_vs_sdc_periodic_adv_event_length_set(
 	const sdc_hci_cmd_vs_periodic_adv_event_length_set_t *params);
 
-/** @brief Configure Coexistence Scan Request Mode.
- *
- * For the complete API description, see sdc_hci_cmd_vs_coex_scan_mode_config().
- *
- * @param[in]  params Input parameters.
- *
- * @return 0 on success or negative error value on failure.
- */
-int hci_vs_sdc_coex_scan_mode_config(const sdc_hci_cmd_vs_coex_scan_mode_config_t *params);
-
-/** @brief Configure Coexistence Per-Role Priority.
- *
- * For the complete API description, see sdc_hci_cmd_vs_coex_priority_config().
- *
- * @param[in]  params Input parameters.
- *
- * @return 0 on success or negative error value on failure.
- */
-int hci_vs_sdc_coex_priority_config(const sdc_hci_cmd_vs_coex_priority_config_t *params);
-
 /** @brief Set peripheral latency mode.
  *
  * For the complete API description, see sdc_hci_cmd_vs_peripheral_latency_mode_set().

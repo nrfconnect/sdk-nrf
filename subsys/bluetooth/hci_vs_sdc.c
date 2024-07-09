@@ -181,20 +181,6 @@ int hci_vs_sdc_periodic_adv_event_length_set(
 				 sizeof(*params));
 }
 
-int hci_vs_sdc_coex_scan_mode_config(const sdc_hci_cmd_vs_coex_scan_mode_config_t *params)
-{
-	return hci_vs_cmd_no_rsp(SDC_HCI_OPCODE_CMD_VS_COEX_SCAN_MODE_CONFIG,
-				 params,
-				 sizeof(*params));
-}
-
-int hci_vs_sdc_coex_priority_config(const sdc_hci_cmd_vs_coex_priority_config_t *params)
-{
-	return hci_vs_cmd_no_rsp(SDC_HCI_OPCODE_CMD_VS_COEX_PRIORITY_CONFIG,
-				 params,
-				 sizeof(*params));
-}
-
 int hci_vs_sdc_peripheral_latency_mode_set(
 	const sdc_hci_cmd_vs_peripheral_latency_mode_set_t *params)
 {
