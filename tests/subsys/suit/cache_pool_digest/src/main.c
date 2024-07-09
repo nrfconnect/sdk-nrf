@@ -125,7 +125,7 @@ ZTEST(cache_pool_digest_tests, test_cache_get_slot_ok)
 		.len = sizeof(uri),
 	};
 
-	ret = suit_plat_fetch(dst_component, &src_uri);
+	ret = suit_plat_fetch(dst_component, &src_uri, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
 	ret = suit_plat_check_image_match(dst_component, suit_cose_sha256, &exp_digest);
