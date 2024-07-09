@@ -47,6 +47,13 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: FILE_SUFFIX=wwcb
+  applications.nrf_desktop.zdebug_fast_pair.gmouse.uart:
+    platform_allow: nrf54l15pdk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15pdk/nrf54l15/cpuapp
+    extra_args: FILE_SUFFIX=fast_pair
+                FP_MODEL_ID=0x8E717D
+                FP_ANTI_SPOOFING_KEY=dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=
   applications.nrf_desktop.zdebug_fast_pair.gmouse:
     build_only: true
     platform_allow: nrf52840dk/nrf52840 nrf52840gmouse/nrf52840

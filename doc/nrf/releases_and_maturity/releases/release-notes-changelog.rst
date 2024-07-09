@@ -202,10 +202,10 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-* Updated:
+* Added a debug configuration enabling the `Fast Pair`_ feature on the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
 
-  * The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option value in configurations with the Fast Pair support.
-    The value is now aligned with the Fast Pair requirements.
+* Updated the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option value in configurations with the Fast Pair support.
+  The value is now aligned with the Fast Pair requirements.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
