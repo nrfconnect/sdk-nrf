@@ -66,6 +66,13 @@ unsigned long nrf_wifi_hal_buf_map_rx(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 	unsigned long bounce_buf_addr = 0;
 	unsigned long rpu_addr = 0;
 
+	if (!hal_dev_ctx || !hal_dev_ctx->rx_buf_info[pool_id]) {
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				      "%s: Invalid parameters\n",
+				      __func__);
+		goto out;
+	}
+
 	rx_buf_info = &hal_dev_ctx->rx_buf_info[pool_id][buf_id];
 
 	if (rx_buf_info->mapped) {
