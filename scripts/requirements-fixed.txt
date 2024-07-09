@@ -16,7 +16,7 @@ canopen==2.1.0            # via -r zephyr/scripts/requirements-base.txt
 capstone==4.0.2           # via pyocd
 cbor==1.0.0               # via -r zephyr/scripts/requirements-run-test.txt
 cbor2==5.4.6              # via -r bootloader/mcuboot/scripts/requirements.txt, -r nrf/scripts/requirements-build.txt, imgtool, zcbor
-certifi==2023.7.22        # via requests
+certifi==2024.7.4         # via requests
 cffi==1.16.0              # via cmsis-pack-manager, cryptography, milksnake, pygit2, pynacl
 chardet==5.2.0            # via -r nrf/scripts/requirements-ci.txt
 charset-normalizer==3.2.0  # via requests
