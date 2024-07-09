@@ -21,7 +21,14 @@ LOG_MODULE_REGISTER(ot_utils, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/console/console.h>
 #include <zephyr/types.h>
 
+/* #define WAIT_TIME_FOR_OT_CON K_SECONDS(4) */
+/* Note: current value of WAIT_TIME_FOR_OT_CON = 4sec.
+ * Sometimes, starting openthread happening before
+ * the thread join failed.So, increase it to 10sec.
+ */
 #define WAIT_TIME_FOR_OT_CON K_SECONDS(10)
+#define GET_PEER_ADDR_WAIT_TIME 5000
+#define CHECK_OT_ROLE_WAIT_TIME 50
 
 typedef struct peer_address_info {
 	char address_string[OT_IP6_ADDRESS_STRING_SIZE];
@@ -92,17 +99,14 @@ static void ot_joiner_start_handler(otError error, void *context)
 int ot_throughput_client_init(void)
 {
 	otError err = 0;
+	uint32_t ot_role_non_child = 0;
 
 	ot_start_joiner("FEDCBA9876543210");
-	/* k_sleep(K_SECONDS(2)); */
-	/* Note: current value of WAIT_TIME_FOR_OT_CON = 4sec.
-	 * Sometimes, starting openthread happening before
-	 * the thread join failed.So, increase it to 10sec.
-	 */
 	err = k_sem_take(&connected_sem, WAIT_TIME_FOR_OT_CON);
+	struct openthread_context *context = openthread_get_default_context();
 
 	LOG_INF("Starting openthread.");
-	openthread_api_mutex_lock(openthread_get_default_context());
+	openthread_api_mutex_lock(context);
 	/*  ot thread start */
 	err = otThreadSetEnabled(openthread_get_default_instance(), true);
 	if (err != OT_ERROR_NONE) {
@@ -111,18 +115,30 @@ int ot_throughput_client_init(void)
 
 	otDeviceRole current_role =
 		otThreadGetDeviceRole(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	openthread_api_mutex_unlock(context);
+
+	LOG_INF("Current role: %s. Waiting to get child role",
+		otThreadDeviceRoleToString(current_role));
 
 	while (current_role != OT_DEVICE_ROLE_CHILD) {
-		LOG_INF("Current role of Thread device: %s",
-			otThreadDeviceRoleToString(current_role));
-		k_sleep(K_MSEC(1000));
-		openthread_api_mutex_lock(openthread_get_default_context());
+		k_sleep(K_MSEC(CHECK_OT_ROLE_WAIT_TIME));
+		openthread_api_mutex_lock(context);
 		current_role = otThreadGetDeviceRole(openthread_get_default_instance());
-		openthread_api_mutex_unlock(openthread_get_default_context());
+		openthread_api_mutex_unlock(context);
+		/* Avoid infinite waiting if the device role is not child */
+		if (current_role == OT_DEVICE_ROLE_ROUTER) {
+			ot_role_non_child = 1;
+			break;
+		}
 	}
 
-	ot_get_peer_address(5000);
+	if (ot_role_non_child) {
+		LOG_ERR("\nCurrent role of Thread device: %s",
+			otThreadDeviceRoleToString(current_role));
+		LOG_ERR("Current role is not child, exiting the test. Re-run the test\n");
+		return -1;
+	}
+	ot_get_peer_address(GET_PEER_ADDR_WAIT_TIME);
 	if (!peer_address_info.address_found) {
 		LOG_WRN("Peer address not found. Not continuing with zperf test.");
 		return -1;
@@ -289,7 +305,7 @@ void ot_handle_ping_reply(const otPingSenderReply *reply, void *context)
 	char string[OT_IP6_ADDRESS_STRING_SIZE];
 
 	otIp6AddressToString(&add, string, OT_IP6_ADDRESS_STRING_SIZE);
-	LOG_WRN("Reply received from: %s\n", string);
+	LOG_INF("Reply received from: %s\n", string);
 
 	ot_wait4_ping_reply_from_peer = 1;
 
