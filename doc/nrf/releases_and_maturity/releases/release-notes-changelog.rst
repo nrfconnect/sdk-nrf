@@ -38,7 +38,10 @@ IDE and tool support
 Build and configuration system
 ==============================
 
-|no_changes_yet_note|
+* Added the ``SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM`` sysbuild Kconfig option to system to allow utilizing all available RAM when using TF-M on an nRF5340 device.
+
+  .. note::
+     This has security implications and may allow secrets to be leaked to the non-secure application in RAM.
 
 Working with nRF91 Series
 =========================
