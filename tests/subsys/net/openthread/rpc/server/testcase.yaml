@@ -1,0 +1,7 @@
+tests:
+  net.openthread.rpc.server:
+    sysbuild: true
+    platform_allow: native_sim
+    tags: openthread ci_build sysbuild
+    integration_platforms:
+      - native_sim

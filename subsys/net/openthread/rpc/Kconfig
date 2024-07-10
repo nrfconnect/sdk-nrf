@@ -31,7 +31,7 @@ config OPENTHREAD_RPC_CLIENT
 
 config OPENTHREAD_RPC_SERVER
 	bool "OpenThread over RPC server"
-	depends on NET_L2_OPENTHREAD
+	depends on NET_L2_OPENTHREAD || ZTEST
 	help
 	  Enables OpenThread over RPC server role that runs the full OpenThread
 	  stack and exposes OpenThread functions using nRF RPC library to a client
