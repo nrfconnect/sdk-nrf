@@ -19,7 +19,7 @@ def get_available_networks(verify_ssl=False):
         print("Response content might not be a valid protobuf format.")
     return None
 
-def select_network(scan_results):
+def select_network(scan_results, input_ssid=None):
     if not scan_results:
         print("No valid scan results to select from.")
         return None
@@ -38,6 +38,16 @@ def select_network(scan_results):
 
         # Printing all available details for each network
         print(f"{i}: SSID: {ssid}, BSSID: {bssid}, RSSI: {rssi}, Band: {band}, Channel: {channel}, Auth: {auth}")
+
+    if input_ssid:
+        for selected_record in scan_results.results:
+            config = common_pb2.WifiConfig()
+            config.wifi.CopyFrom(selected_record.wifi)
+            if input_ssid == config.wifi.ssid.decode('utf-8'):
+                return selected_record
+            else:
+                continue
+        print("No network with the desired ssid was found.")
 
     choice = int(input("Select the network (number): "))
     return scan_results.results[choice]
@@ -69,19 +79,26 @@ def configure_device(selected_record, passphrase, verify_ssl=False):
 def main():
     parser = argparse.ArgumentParser(description="Configure WiFi device", allow_abbrev=False)
     parser.add_argument("--certificate", help="Path to the server certificate for SSL verification", default=False)
+    parser.add_argument("--ssid", help="network ssid", default=None)
+    parser.add_argument("--passphrase", help="network passphrase", default=None)
     args = parser.parse_args()
 
-    verify_ssl = args.certificate if args.certificate else False
+    verify_ssl = args.certificate
+    input_ssid = args.ssid
+    input_passphrase = args.passphrase
 
     scan_results = get_available_networks(verify_ssl=verify_ssl)
     if scan_results:
-        selected_record = select_network(scan_results)
+        selected_record = select_network(scan_results, input_ssid=input_ssid)
         if selected_record:
-            passphrase = input("Enter the passphrase for the network: ")
-            if passphrase.strip():
-                configure_device(selected_record, passphrase, verify_ssl=verify_ssl)
+            if input_passphrase:
+                configure_device(selected_record, input_passphrase, verify_ssl=verify_ssl)
             else:
-                print("Passphrase is required.")
+                passphrase = input("Enter the passphrase for the network: ")
+                if passphrase.strip():
+                    configure_device(selected_record, passphrase, verify_ssl=verify_ssl)
+                else:
+                    print("Passphrase is required.")
         else:
             print("No network was selected.")
     else:
