@@ -407,7 +407,9 @@ Gazell libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`nrf_modem_lib_lte_net_if` library:
+
+  * Added a log warning suggesting a SIM card to be installed if a UICC error is detected by the modem.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
