@@ -425,7 +425,12 @@ Libraries for networking
 
   * Added the :c:func:`nrf_cloud_client_id_runtime_set` function to set the device ID string if the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` Kconfig option is enabled.
 
-  * Updated the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` Kconfig option to be available with CoAP and REST.
+  * Updated:
+
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` Kconfig option to be available with CoAP and REST.
+    * The JSON string representing longitude in ``PVT`` reports from ``lng`` to ``lon`` to align with nRF Cloud.
+      nRF Cloud still accepts ``lng`` for backward compatibility.
+
 
 Libraries for NFC
 -----------------
