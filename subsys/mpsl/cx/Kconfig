@@ -71,7 +71,7 @@ config MPSL_CX_THREAD
 	  implementation for co-located 2.4 GHz radios.
 
 config MPSL_CX_BT_1WIRE
-	depends on SOC_SERIES_NRF52X
+	depends on SOC_COMPATIBLE_NRF52X
 	select NRFX_GPIOTE
 	select GPIO
 	select NRFX_TIMER1
