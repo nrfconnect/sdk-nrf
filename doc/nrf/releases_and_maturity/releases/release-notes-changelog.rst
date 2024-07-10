@@ -427,6 +427,10 @@ Libraries for networking
 
   * Updated the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` Kconfig option to be available with CoAP and REST.
 
+* :ref:`lib_nrf_cloud_coap` library:
+
+  * Fixed a hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the :c:struct:`nrf_cloud_rest_agnss_request` structure is NULL.
+
 Libraries for NFC
 -----------------
 
