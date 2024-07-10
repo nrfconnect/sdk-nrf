@@ -387,6 +387,24 @@ static int32_t mpsl_lib_init_internal(void)
 		return err;
 	}
 
+#if defined(CONFIG_SOC_COMPATIBLE_NRF52X)
+	/* On initialization, MPSL is given some information about how much time
+	 * it takes to get EVENTS_HFCLKSTARTED. User-configurable registers related to this
+	 * are read here.
+	 */
+	const uint16_t HFXO_POWER_UP_TIME_MAX_US = 310;
+
+#if defined(NRF52820_XXAA) || defined(NRF52833_XXAA) || defined(NRF52840_XXAA)
+	const uint16_t hfxo_debounce_period_us = (NRF_CLOCK->HFXODEBOUNCE & 0xFF) * 16;
+#else
+	/* These chips don't have HFXODEBOUNCE registers; EVENTS_HFCLKSTARTED comes right away.
+	 * The reset value of HFXODEBOUNCE on the chips that do have it is used as a default.
+	 */
+	const uint16_t hfxo_debounce_period_us = 0x10 * 16;
+#endif
+	mpsl_clock_hfclk_latency_set(HFXO_POWER_UP_TIME_MAX_US + hfxo_debounce_period_us);
+#endif
+
 	if (IS_ENABLED(CONFIG_SOC_NRF_FORCE_CONSTLAT)) {
 		mpsl_pan_rfu();
 	}
