@@ -133,6 +133,7 @@ Matter
     * :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_MIN_RETRY_INTERVAL`
     * :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_RETRY_MULTIPLIER`
 
+
 Matter fork
 +++++++++++
 
@@ -185,7 +186,10 @@ IPC radio firmware
 Matter Bridge
 -------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option, which specifies ZAP files location for the application.
+    By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to application's location that contains the ZAP file and :file:`zap-generated` directory.
 
 nRF5340 Audio
 -------------
@@ -213,7 +217,10 @@ Serial LTE modem
 Thingy:53: Matter weather station
 ---------------------------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option, which specifies ZAP files location for the application.
+    By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to application's location that contains the ZAP file and :file:`zap-generated` directory.
 
 Samples
 =======
@@ -292,7 +299,10 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option, which specifies ZAP files location for the sample.
+    By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to sample's location that contains the ZAP file and :file:`zap-generated` directory.
 
 Networking samples
 ------------------
