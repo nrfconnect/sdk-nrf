@@ -474,6 +474,7 @@
 - scenarios:
     - applications.nrf_desktop.zdebug_3bleconn
     - applications.nrf_desktop.zrelease_4llpmconn
+    - applications.nrf_desktop.zrelease.usb_next
   platforms:
     - nrf52840dongle/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
