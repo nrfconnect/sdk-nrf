@@ -103,7 +103,7 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 				   size_t output_size, size_t *output_length)
 {
 	__ASSERT_NO_MSG(iv != NULL);
-	__ASSERT_NO_MSG(input != NULL);
+	__ASSERT_NO_MSG(input != NULL || input_length == 0);
 	__ASSERT_NO_MSG(output != NULL);
 	__ASSERT_NO_MSG(output_length != NULL);
 
@@ -147,7 +147,7 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 				   psa_algorithm_t alg, const uint8_t *input, size_t input_length,
 				   uint8_t *output, size_t output_size, size_t *output_length)
 {
-	__ASSERT_NO_MSG(input != NULL);
+	__ASSERT_NO_MSG(input != NULL || input_length == 0);
 	__ASSERT_NO_MSG(output != NULL);
 	__ASSERT_NO_MSG(output_length != NULL);
 
@@ -395,7 +395,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				  size_t input_length, uint8_t *output, size_t output_size,
 				  size_t *output_length)
 {
-	__ASSERT_NO_MSG(input != NULL);
+	__ASSERT_NO_MSG(input != NULL || input_length == 0);
 	__ASSERT_NO_MSG(output != NULL);
 	__ASSERT_NO_MSG(output_length != NULL);
 
