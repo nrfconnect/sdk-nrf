@@ -21,6 +21,7 @@ include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/source_common.cmake
 
 target_include_directories(app PRIVATE
     src
+    ${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}
 )
 
 target_sources(app PRIVATE
@@ -33,7 +34,7 @@ target_sources(app PRIVATE
 chip_configure_data_model(app
     INCLUDE_SERVER
     BYPASS_IDL
-    GEN_DIR src/zap-generated
-    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/weather-station.zap
+    GEN_DIR ${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/zap-generated
+    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/weather-station.zap
 )
 # NORDIC SDK APP END
