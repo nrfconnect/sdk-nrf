@@ -441,6 +441,10 @@ Libraries for networking
       nRF Cloud still accepts ``lng`` for backward compatibility.
 
 
+* :ref:`lib_nrf_cloud_coap` library:
+
+  * Fixed a hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the :c:struct:`nrf_cloud_rest_agnss_request` structure is NULL.
+
 Libraries for NFC
 -----------------
 
