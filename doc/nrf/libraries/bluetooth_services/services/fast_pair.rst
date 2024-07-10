@@ -39,7 +39,7 @@ The Fast Pair Service is enabled with :kconfig:option:`CONFIG_BT_FAST_PAIR` Kcon
 With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the following Kconfig options are available for this service:
 
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID` - The option adds the Model ID characteristic to the Fast Pair GATT service.
-  This option is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` is enabled.
+  It is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` Kconfig option is enabled.
   This is done to align default configuration with `Fast Pair Device Feature Requirements for Locator Tags`_ documentation.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_REQ_PAIRING` - The option enforces the requirement for Bluetooth pairing and bonding during the `Fast Pair Procedure`_.
   This option is enabled by default.
@@ -51,7 +51,7 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
   The Oberon backend is used by default.
   The Mbed TLS backend uses Mbed TLS crypto APIs that are now considered legacy APIs.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_PN` - The option enables the `Fast Pair Personalized Name extension`_.
-  This option is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` is enabled.
+  It is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` Kconfig option is enabled.
   This is done to align default configuration with `Fast Pair Device Feature Requirements for Locator Tags`_ documentation.
 
   * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_PN_LEN_MAX` - The option specifies the maximum length of a stored Fast Pair Personalized Name.
