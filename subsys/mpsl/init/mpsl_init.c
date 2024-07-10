@@ -15,6 +15,10 @@
 #include <mpsl/mpsl_work.h>
 #include "multithreading_lock.h"
 #include <nrfx.h>
+#if !defined(CONFIG_SOC_SERIES_NRF54HX) && !defined(CONFIG_SOC_SERIES_NRF54LX)
+#include <hal/nrf_timer.h>
+#include <hal/nrf_clock.h>
+#endif
 #if defined(CONFIG_NRFX_DPPI)
 #include <nrfx_dppi.h>
 #endif
@@ -345,6 +349,80 @@ static void mpsl_calibration_work_handler(struct k_work *work)
 }
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
+#if !defined(CONFIG_SOC_SERIES_NRF54HX) && !defined(CONFIG_SOC_SERIES_NRF54LX)
+static uint16_t m_measure_hfxo_time_us(void)
+{
+	bool clock_running_on_boot = false;
+
+	if (nrf_clock_hf_is_running(NRF_CLOCK, NRF_CLOCK_HFCLK_HIGH_ACCURACY)
+		|| nrf_clock_start_task_check(NRF_CLOCK, NRF_CLOCK_DOMAIN_HFCLK)) {
+		clock_running_on_boot = true;
+	}
+
+	/* Make sure the HFCLK is off. */
+	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_HFCLKSTOP);
+
+	nrf_timer_prescaler_set(NRF_TIMER0,
+		NRF_TIMER_PRESCALER_CALCULATE(NRF_TIMER_BASE_FREQUENCY_GET(NRF_TIMER0),
+			1000000));
+
+	nrf_timer_cc_set(NRF_TIMER0, 0, 400);
+	nrf_timer_event_clear(NRF_TIMER0, NRF_TIMER_EVENT_COMPARE0);
+	nrf_timer_task_trigger(NRF_TIMER0, NRF_TIMER_TASK_CLEAR);
+	nrf_timer_task_trigger(NRF_TIMER0, NRF_TIMER_TASK_START);
+
+	while (!nrf_timer_event_check(NRF_TIMER0, NRF_TIMER_EVENT_COMPARE0)) {
+#if defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
+		k_busy_wait(10);
+#endif
+	}
+
+	nrf_clock_event_clear(NRF_CLOCK, NRF_CLOCK_EVENT_HFCLKSTARTED);
+
+	/* Measure how long it takes to get EVENT_HFCLKSTARTED.
+	 * This is larger than what the crystal needs, as it may also include
+	 * debounce periods implemented in hardware, depending on the product.
+	 */
+	nrf_timer_task_trigger(NRF_TIMER0, NRF_TIMER_TASK_CAPTURE0);
+
+	const uint32_t measurement_start = nrf_timer_cc_get(NRF_TIMER0, 0);
+
+	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_HFCLKSTART);
+
+	while (!nrf_clock_event_check(NRF_CLOCK, NRF_CLOCK_EVENT_HFCLKSTARTED)) {
+#if defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
+		k_busy_wait(10);
+#endif
+	}
+
+	nrf_timer_task_trigger(NRF_TIMER0, NRF_TIMER_TASK_CAPTURE0);
+
+	const uint32_t measurement_end = nrf_timer_cc_get(NRF_TIMER0, 0);
+
+#if defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
+	(void)measurement_end;
+	(void)measurement_start;
+	const uint16_t hfxo_time_us = 300;
+#else
+	const uint16_t hfxo_time_us = (uint16_t)(measurement_end - measurement_start);
+#endif
+
+	nrf_clock_event_clear(NRF_CLOCK, NRF_CLOCK_EVENT_HFCLKSTARTED);
+
+	if (!clock_running_on_boot) {
+		nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_HFCLKSTOP);
+	}
+
+	nrf_timer_task_trigger(NRF_TIMER0, NRF_TIMER_TASK_STOP);
+	nrf_timer_task_trigger(NRF_TIMER0, NRF_TIMER_TASK_CLEAR);
+	nrf_timer_cc_set(NRF_TIMER0, 0, 0);
+
+	const uint16_t padding_us = 50;
+
+	return hfxo_time_us + padding_us;
+}
+#endif /* !defined(CONFIG_SOC_SERIES_NRF54HX) && !defined(CONFIG_SOC_SERIES_NRF54LX) */
+
 static int32_t mpsl_lib_init_internal(void)
 {
 	int err = 0;
@@ -388,10 +466,25 @@ static int32_t mpsl_lib_init_internal(void)
 	memset(&clock_cfg, 0, sizeof(clock_cfg));
 #endif
 
+#if !defined(CONFIG_SOC_SERIES_NRF54HX) && !defined(CONFIG_SOC_SERIES_NRF54LX)
+	/* On boot, MPSL is given some information about how much time
+	 * it takes for the high-frequency crystal to ramp up.
+	 */
+	static uint16_t hfxo_power_up_time_us;
+
+	if (!hfxo_power_up_time_us) {
+		hfxo_power_up_time_us = m_measure_hfxo_time_us();
+	}
+#endif
+
 	err = mpsl_init(&clock_cfg, CONFIG_MPSL_LOW_PRIO_IRQN, m_assert_handler);
 	if (err) {
 		return err;
 	}
+
+#if !defined(CONFIG_SOC_SERIES_NRF54HX) && !defined(CONFIG_SOC_SERIES_NRF54LX)
+	mpsl_clock_hfclk_latency_set(hfxo_power_up_time_us);
+#endif
 
 	if (IS_ENABLED(CONFIG_SOC_NRF_FORCE_CONSTLAT)) {
 		mpsl_pan_rfu();
