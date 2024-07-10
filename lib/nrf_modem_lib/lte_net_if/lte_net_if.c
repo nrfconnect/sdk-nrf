@@ -325,6 +325,9 @@ static void lte_reg_handler(const struct lte_lc_evt *const evt)
 			 * an unregistered status).
 			 */
 			break;
+		case LTE_LC_NW_REG_UICC_FAIL:
+			LOG_WRN("The modem reports a UICC failure. Is SIM installed?");
+			__fallthrough;
 		default:
 			LOG_DBG("Not registered to serving cell");
 			/* Mark the serving cell as lost. */
