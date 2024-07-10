@@ -28,29 +28,6 @@ typedef struct mock_nrf_rpc_tr_ctx {
 	struct k_work response_work;
 } mock_nrf_rpc_tr_ctx_t;
 
-/* Asynchronous task to simulate reception of a response packet. */
-static void response_send(struct k_work *work)
-{
-	mock_nrf_rpc_tr_ctx_t *ctx = CONTAINER_OF(work, mock_nrf_rpc_tr_ctx_t, response_work);
-	mock_nrf_rpc_pkt_t *response = ctx->cur_response;
-
-	ctx->receive_cb(ctx->transport, response->data, response->len, ctx->receive_ctx);
-}
-
-static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t receive_cb,
-		void *context)
-{
-	mock_nrf_rpc_tr_ctx_t *ctx = transport->ctx;
-
-	ctx->transport = transport;
-	ctx->receive_cb = receive_cb;
-	ctx->receive_ctx = context;
-
-	k_work_init(&ctx->response_work, response_send);
-
-	return 0;
-}
-
 static void log_payload(const char *caption, const uint8_t *payload, size_t length)
 {
 	char payload_str[32];
@@ -68,6 +45,31 @@ static void log_payload(const char *caption, const uint8_t *payload, size_t leng
 	}
 
 	printk("%s: %s of length %zu\n", caption, payload_str, length);
+}
+
+/* Asynchronous task to simulate reception of a response packet. */
+static void response_send(struct k_work *work)
+{
+	mock_nrf_rpc_tr_ctx_t *ctx = CONTAINER_OF(work, mock_nrf_rpc_tr_ctx_t, response_work);
+	mock_nrf_rpc_pkt_t *response = ctx->cur_response;
+
+	log_payload("Responding with nRF RPC packet", response->data, response->len);
+
+	ctx->receive_cb(ctx->transport, response->data, response->len, ctx->receive_ctx);
+}
+
+static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t receive_cb,
+		void *context)
+{
+	mock_nrf_rpc_tr_ctx_t *ctx = transport->ctx;
+
+	ctx->transport = transport;
+	ctx->receive_cb = receive_cb;
+	ctx->receive_ctx = context;
+
+	k_work_init(&ctx->response_work, response_send);
+
+	return 0;
 }
 
 static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t length)
@@ -157,4 +159,15 @@ void mock_nrf_rpc_tr_expect_reset(void)
 
 	ctx->num_expected = 0;
 	ctx->cur_expected = 0;
+}
+
+void mock_nrf_rpc_tr_receive(mock_nrf_rpc_pkt_t packet)
+{
+	mock_nrf_rpc_tr_ctx_t *ctx = mock_nrf_rpc_tr.ctx;
+
+	zassert_not_null(ctx->receive_cb);
+
+	log_payload("Received nRF RPC packet", packet.data, packet.len);
+
+	ctx->receive_cb(ctx->transport, packet.data, packet.len, ctx->receive_ctx);
 }
