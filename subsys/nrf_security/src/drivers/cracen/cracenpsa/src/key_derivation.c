@@ -282,6 +282,14 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 		return PSA_SUCCESS;
 	}
 
+	if (IS_ENABLED(PSA_NEED_CRACEN_SRP_PASSWORD_HASH) && PSA_ALG_IS_SRP_PASSWORD_HASH(alg)) {
+		if (PSA_ALG_HKDF_GET_HASH(alg) != CRACEN_SRP_HASH_ALG) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		operation->capacity = CRACEN_SRP_HASH_LENGTH;
+		return PSA_SUCCESS;
+	}
+
 	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
 		operation->capacity = PSA_ALG_SP800_108_COUNTER_CMAC_INIT_CAPACITY;
 		operation->state = CRACEN_KD_STATE_CMAC_CTR_INIT;
@@ -599,6 +607,67 @@ cracen_key_derivation_input_bytes_tls12(cracen_key_derivation_operation_t *opera
 	}
 	return PSA_SUCCESS;
 }
+
+static psa_status_t
+cracen_key_derivation_input_bytes_srp(cracen_key_derivation_operation_t *operation,
+				      psa_key_derivation_step_t step, const uint8_t *data,
+				      size_t data_length)
+{
+	psa_status_t status = PSA_ERROR_INVALID_ARGUMENT;
+	size_t output_length = 0;
+
+	/* Each input can only be provided once. */
+	switch (step) {
+	case PSA_KEY_DERIVATION_INPUT_INFO:
+		status = cracen_hash_setup(&operation->hash_op, CRACEN_SRP_HASH_ALG);
+		if (status != PSA_SUCCESS) {
+			break;
+		}
+		/* Add the username */
+		status = cracen_hash_update(&operation->hash_op, data, data_length);
+		break;
+
+	case PSA_KEY_DERIVATION_INPUT_PASSWORD:
+		/* Add the character ':' before the password */
+		status = cracen_hash_update(&operation->hash_op, (const uint8_t *)":", 1);
+		if (status != PSA_SUCCESS) {
+			break;
+		}
+		status = cracen_hash_update(&operation->hash_op, data, data_length);
+		break;
+
+	case PSA_KEY_DERIVATION_INPUT_SALT:
+		if (data_length > 0) {
+			status =
+				cracen_hash_finish(&operation->hash_op, operation->output_block,
+						   sizeof(operation->output_block), &output_length);
+			if (status != PSA_SUCCESS) {
+				break;
+			}
+			status = cracen_hash_setup(&operation->hash_op, CRACEN_SRP_HASH_ALG);
+			if (status != PSA_SUCCESS) {
+				break;
+			}
+			/* Add the salt */
+			status = cracen_hash_update(&operation->hash_op, data, data_length);
+			if (status != PSA_SUCCESS) {
+				break;
+			}
+			/* Finally add the previous hash which is H(username | : | password ) */
+			status = cracen_hash_update(&operation->hash_op, operation->output_block,
+						    output_length);
+		}
+		break;
+	default:
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (status != PSA_SUCCESS) {
+		cracen_hash_abort(&operation->hash_op);
+	}
+	return status;
+}
+
 psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t *operation,
 					       psa_key_derivation_step_t step, const uint8_t *data,
 					       size_t data_length)
@@ -639,6 +708,11 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_PSK_TO_MS) &&
 	    PSA_ALG_IS_TLS12_PSK_TO_MS(operation->alg)) {
 		return cracen_key_derivation_input_bytes_tls12(operation, step, data, data_length);
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_SRP_PASSWORD_HASH) &&
+	    PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) {
+		return cracen_key_derivation_input_bytes_srp(operation, step, data, data_length);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -1137,6 +1211,22 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 		generator = cracen_key_derivation_tls12_prf_generate_block;
 	}
 
+	if (IS_ENABLED(PSA_NEED_CRACEN_SRP_PASSWORD_HASH) &&
+	    PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) {
+		size_t outlen = 0;
+		psa_status_t status =
+			cracen_hash_finish(&operation->hash_op, output, output_length, &outlen);
+		if (status != PSA_SUCCESS) {
+			cracen_hash_abort(&operation->hash_op);
+		}
+
+		if (output_length != outlen) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		return status;
+	}
+
 	if (generator == NULL) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
@@ -1183,6 +1273,9 @@ psa_status_t cracen_key_derivation_abort(cracen_key_derivation_operation_t *oper
 {
 	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF(operation->alg)) {
 		cracen_mac_abort(&operation->mac_op);
+	} else if (IS_ENABLED(PSA_NEED_CRACEN_SRP_PASSWORD_HASH) &&
+		   PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) {
+		cracen_hash_abort(&operation->hash_op);
 	}
 
 	safe_memzero(operation, sizeof(*operation));
