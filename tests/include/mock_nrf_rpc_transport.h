@@ -57,6 +57,12 @@ void mock_nrf_rpc_tr_expect_done(void);
  * @brief Clears the list of expected nRF RPC packets.
  */
 void mock_nrf_rpc_tr_expect_reset(void);
+
+/**
+ * @brief Simulates an nRF RPC packet reception from the remote node.
+ */
+void mock_nrf_rpc_tr_receive(mock_nrf_rpc_pkt_t packet);
+
 /**
  * @}
  */
