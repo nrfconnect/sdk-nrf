@@ -35,7 +35,7 @@
 #error Selected coex node is not compatible with sdc-radio-coex-one-wire.
 #endif
 
-#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF52X)
+#if !IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF52X)
 #error Bluetooth coex is only supported on the nRF52 series
 #endif
 
