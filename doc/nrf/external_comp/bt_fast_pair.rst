@@ -362,7 +362,7 @@ The Fast Pair service implementation provides API to generate the advertising da
   Account Keys are used to generate not discoverable advertising data.
 
 :c:func:`bt_fast_pair_set_pairing_mode`
-  This function is to be used to set pairing mode before the advertising is started.
+  This function is used to set the pairing mode before the advertising is started.
 
 Since you control the advertising, make sure to use advertising parameters consistent with the specification.
 The Bluetooth privacy is selected by the Fast Pair service, but you must make sure that the following requirements are met:
