@@ -218,7 +218,10 @@ struct cracen_key_derivation_operation {
 	uint64_t capacity;
 	uint8_t output_block[MAX_HASH_BLOCK_SIZE];
 	uint8_t output_block_available_bytes;
-	cracen_mac_operation_t mac_op;
+	union{
+		cracen_mac_operation_t mac_op;
+		cracen_hash_operation_t hash_op;
+	};
 	union {
 		struct {
 			uint8_t blk_counter;
