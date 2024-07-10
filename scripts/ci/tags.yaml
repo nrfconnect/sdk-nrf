@@ -58,9 +58,13 @@ bluetooth:
     - nrf/subsys/nrf_rpc/
     - nrf/subsys/mpsl/
     - nrf/drivers/mpsl/
+    - nrf/samples/bluetooth/
+    - nrf/tests/bluetooth/
+    - nrf/tests/subsys/bluetooth/
 
 net:
   files:
+    - nrf/samples/net/
     - zephyr/subsys/net/
     - zephyr/include/zephyr/net/
     - zephyr/drivers/wifi/
@@ -74,39 +78,18 @@ net:
 #    - nrf/drivers/wifi/
 #    - nrf/drivers/net/
 
-test_framework:
-  files:
-    - zephyr/subsys/testsuite/
-    - zephyr/samples/subsys/testsuite/
-    - zephyr/tests/subsys/testsuite/
-    - zephyr/tests/ztest/
-
-cmsis_dsp:
-  files:
-    - zephyr/modules/Kconfig.cmsis_dsp
-    # we have no means of telling file changes in a module, so for assume any
-    # change to west.yml is updating something we need to re-test for.
-    - zephyr/west.yml
-
 mcumgr:
   files:
     - zephyr/subsys/mgmt/mcumgr/
     - zephyr/tests/subsys/mgmt/mcumgr/
     - zephyr/samples/subsys/mgmt/mcumgr/
     - zephyr/include/zephyr/mgmt/mcumgr/
-kernel:
-  files:
-    - zephyr/kernel/
-    - zephyr/arch/
-
-posix:
-  files:
-    - zephyr/lib/posix/
 
 wifi:
   files:
     - nrf/drivers/wifi/
     - nrf/modules/hostap/
+    - nrf/samples/wifi/
     - modules/lib/hostap/
     - zephyr/subsys/net/l2/wifi/
     - zephyr/subsys/net/l2/ethernet/
