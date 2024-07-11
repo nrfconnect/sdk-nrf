@@ -24,6 +24,9 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/net_event.h>
 #include <zephyr/drivers/gpio.h>
 
+#include <net/wifi_mgmt_ext.h>
+#include <net/wifi_ready.h>
+
 #include <qspi_if.h>
 
 #include "net_private.h"
@@ -49,6 +52,11 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 static struct net_mgmt_event_callback net_shell_mgmt_cb;
+
+#ifdef CONFIG_WIFI_READY_LIB
+static K_SEM_DEFINE(wifi_ready_state_changed_sem, 0, 1);
+static bool wifi_ready_status;
+#endif /* CONFIG_WIFI_READY_LIB */
 
 static struct {
 	const struct shell *sh;
@@ -114,7 +122,7 @@ static int cmd_wifi_status(void)
 		       wifi_mode_txt(status.iface_mode));
 		LOG_INF("Link Mode: %s",
 		       wifi_link_mode_txt(status.link_mode));
-		LOG_INF("SSID: %-32s", status.ssid);
+		LOG_INF("SSID: %.32s", status.ssid);
 		LOG_INF("BSSID: %s",
 		       net_sprint_ll_addr_buf(
 				status.bssid, WIFI_MAC_ADDR_LEN,
@@ -207,54 +215,14 @@ static void net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-static int __wifi_args_to_params(struct wifi_connect_req_params *params)
-{
-
-	params->timeout =  CONFIG_STA_CONN_TIMEOUT_SEC * MSEC_PER_SEC;
-
-	if (params->timeout == 0) {
-		params->timeout = SYS_FOREVER_MS;
-	}
-
-	/* Defaults */
-	params->band = WIFI_FREQ_BAND_UNKNOWN;
-	params->channel = WIFI_CHANNEL_ANY;
-	params->security = WIFI_SECURITY_TYPE_NONE;
-	params->mfp = WIFI_MFP_OPTIONAL;
-
-	/* SSID */
-	params->ssid = CONFIG_STA_SAMPLE_SSID;
-	params->ssid_length = strlen(params->ssid);
-
-#if defined(CONFIG_STA_KEY_MGMT_WPA2)
-	params->security = 1;
-#elif defined(CONFIG_STA_KEY_MGMT_WPA2_256)
-	params->security = 2;
-#elif defined(CONFIG_STA_KEY_MGMT_WPA3)
-	params->security = 3;
-#else
-	params->security = 0;
-#endif
-
-#if !defined(CONFIG_STA_KEY_MGMT_NONE)
-	params->psk = CONFIG_STA_SAMPLE_PASSWORD;
-	params->psk_length = strlen(params->psk);
-#endif
-
-	return 0;
-}
-
 static int wifi_connect(void)
 {
-	struct net_if *iface = net_if_get_default();
-	static struct wifi_connect_req_params cnx_params;
+	struct net_if *iface = net_if_get_first_wifi();
 
 	context.connected = false;
 	context.connect_result = false;
-	__wifi_args_to_params(&cnx_params);
 
-	if (net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
-		     &cnx_params, sizeof(struct wifi_connect_req_params))) {
+	if (net_mgmt(NET_REQUEST_WIFI_CONNECT_STORED, iface, NULL, 0)) {
 		LOG_ERR("Connection request failed");
 
 		return -ENOEXEC;
@@ -285,31 +253,13 @@ int bytes_from_str(const char *str, uint8_t *bytes, size_t bytes_len)
 	return 0;
 }
 
-int main(void)
+int start_app(void)
 {
-	memset(&context, 0, sizeof(context));
-
-	net_mgmt_init_event_callback(&wifi_shell_mgmt_cb,
-				     wifi_mgmt_event_handler,
-				     WIFI_SHELL_MGMT_EVENTS);
-
-	net_mgmt_add_event_callback(&wifi_shell_mgmt_cb);
-
-
-	net_mgmt_init_event_callback(&net_shell_mgmt_cb,
-				     net_mgmt_event_handler,
-				     NET_EVENT_IPV4_DHCP_BOUND);
-
-	net_mgmt_add_event_callback(&net_shell_mgmt_cb);
-
-	LOG_INF("Starting %s with CPU frequency: %d MHz", CONFIG_BOARD, SystemCoreClock/MHZ(1));
-	k_sleep(K_SECONDS(1));
-
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 	if (strlen(CONFIG_NRF700X_QSPI_ENCRYPTION_KEY)) {
-		char key[QSPI_KEY_LEN_BYTES];
 		int ret;
+		char key[QSPI_KEY_LEN_BYTES];
 
 		ret = bytes_from_str(CONFIG_NRF700X_QSPI_ENCRYPTION_KEY, key, sizeof(key));
 		if (ret) {
@@ -340,17 +290,134 @@ int main(void)
 		CONFIG_NET_CONFIG_MY_IPV4_GW);
 
 	while (1) {
+#ifdef CONFIG_WIFI_READY_LIB
+		int ret;
+
+		LOG_INF("Waiting for Wi-Fi to be ready");
+		ret = k_sem_take(&wifi_ready_state_changed_sem, K_FOREVER);
+		if (ret) {
+			LOG_ERR("Failed to take semaphore: %d", ret);
+			return ret;
+		}
+
+check_wifi_ready:
+		if (!wifi_ready_status) {
+			LOG_INF("Wi-Fi is not ready");
+			/* Perform any cleanup and stop using Wi-Fi and wait for
+			 * Wi-Fi to be ready
+			 */
+			continue;
+		}
+#endif /* CONFIG_WIFI_READY_LIB */
 		wifi_connect();
 
 		while (!context.connect_result) {
 			cmd_wifi_status();
+#ifdef CONFIG_WIFI_READY_LIB
+			if (!wifi_ready_status) {
+				goto check_wifi_ready;
+			}
+#endif /* CONFIG_WIFI_READY_LIB */
 			k_sleep(K_MSEC(STATUS_POLLING_MS));
 		}
 
 		if (context.connected) {
+			cmd_wifi_status();
+#ifdef CONFIG_WIFI_READY_LIB
+			ret = k_sem_take(&wifi_ready_state_changed_sem, K_FOREVER);
+			if (ret) {
+				LOG_ERR("Failed to take semaphore: %d", ret);
+				return ret;
+			}
+			goto check_wifi_ready;
+#else
 			k_sleep(K_FOREVER);
+#endif /* CONFIG_WIFI_READY_LIB */
 		}
 	}
 
 	return 0;
+}
+
+#ifdef CONFIG_WIFI_READY_LIB
+void start_wifi_thread(void);
+#define THREAD_PRIORITY K_PRIO_COOP(CONFIG_NUM_COOP_PRIORITIES - 1)
+K_THREAD_DEFINE(start_wifi_thread_id, CONFIG_STA_SAMPLE_START_WIFI_THREAD_STACK_SIZE,
+		start_wifi_thread, NULL, NULL, NULL,
+		THREAD_PRIORITY, 0, -1);
+
+void start_wifi_thread(void)
+{
+	start_app();
+}
+
+void wifi_ready_cb(bool wifi_ready)
+{
+	LOG_DBG("Is Wi-Fi ready?: %s", wifi_ready ? "yes" : "no");
+	wifi_ready_status = wifi_ready;
+	k_sem_give(&wifi_ready_state_changed_sem);
+}
+#endif /* CONFIG_WIFI_READY_LIB */
+
+void net_mgmt_callback_init(void)
+{
+	memset(&context, 0, sizeof(context));
+
+	net_mgmt_init_event_callback(&wifi_shell_mgmt_cb,
+				     wifi_mgmt_event_handler,
+				     WIFI_SHELL_MGMT_EVENTS);
+
+	net_mgmt_add_event_callback(&wifi_shell_mgmt_cb);
+
+	net_mgmt_init_event_callback(&net_shell_mgmt_cb,
+				     net_mgmt_event_handler,
+				     NET_EVENT_IPV4_DHCP_BOUND);
+
+	net_mgmt_add_event_callback(&net_shell_mgmt_cb);
+
+	LOG_INF("Starting %s with CPU frequency: %d MHz", CONFIG_BOARD, SystemCoreClock/MHZ(1));
+	k_sleep(K_SECONDS(1));
+}
+
+#ifdef CONFIG_WIFI_READY_LIB
+static int register_wifi_ready(void)
+{
+	int ret = 0;
+	wifi_ready_callback_t cb;
+	struct net_if *iface = net_if_get_first_wifi();
+
+	if (!iface) {
+		LOG_ERR("Failed to get Wi-Fi interface");
+		return -1;
+	}
+
+	cb.wifi_ready_cb = wifi_ready_cb;
+
+	LOG_DBG("Registering Wi-Fi ready callbacks");
+	ret = register_wifi_ready_callback(cb, iface);
+	if (ret) {
+		LOG_ERR("Failed to register Wi-Fi ready callbacks %s", strerror(ret));
+		return ret;
+	}
+
+	return ret;
+}
+#endif /* CONFIG_WIFI_READY_LIB */
+
+int main(void)
+{
+	int ret = 0;
+
+	net_mgmt_callback_init();
+
+#ifdef CONFIG_WIFI_READY_LIB
+	ret = register_wifi_ready();
+	if (ret) {
+		return ret;
+	}
+	k_thread_start(start_wifi_thread_id);
+#else
+	start_app();
+#endif /* CONFIG_WIFI_READY_LIB */
+	return ret;
 }
