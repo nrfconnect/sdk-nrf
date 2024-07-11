@@ -15,6 +15,7 @@
 #include <bluetooth/services/fast_pair/fmdn.h>
 
 #include "app_battery.h"
+#include "app_dfu.h"
 #include "app_factory_reset.h"
 #include "app_fp_adv.h"
 #include "app_ring.h"
@@ -134,9 +135,13 @@ static const struct bt_conn_auth_cb conn_auth_callbacks = {
 	.pairing_accept = pairing_accept,
 };
 
-static bool identifying_info_read_allow(struct bt_conn *conn)
+static bool identifying_info_allow(const struct bt_uuid *uuid)
 {
-	ARG_UNUSED(conn);
+	const struct bt_uuid *uuid_block_list[] = {
+		/* GAP service characteristics */
+		BT_UUID_GAP_DEVICE_NAME,
+	};
+	bool uuid_match = false;
 
 	if (!fmdn_provisioned) {
 		return true;
@@ -146,33 +151,43 @@ static bool identifying_info_read_allow(struct bt_conn *conn)
 		return true;
 	}
 
-	LOG_INF("Rejecting read operation of identifying information");
+	for (size_t i = 0; i < ARRAY_SIZE(uuid_block_list); i++) {
+		if (bt_uuid_cmp(uuid, uuid_block_list[i]) == 0) {
+			uuid_match = true;
+			break;
+		}
+	}
+
+	if (!uuid_match) {
+		return true;
+	}
+
+	LOG_INF("Rejecting operation on the identifying information");
 
 	return false;
 }
 
-static bool gatt_read_authorize(struct bt_conn *conn, const struct bt_gatt_attr *attr)
+static bool gatt_authorize(struct bt_conn *conn, const struct bt_gatt_attr *attr)
 {
-	const struct bt_uuid *uuid_block_list[] = {
-		/* GAP service characteristics */
-		BT_UUID_GAP_DEVICE_NAME,
-	};
+	bool authorized = true;
 
-	for (size_t i = 0; i < ARRAY_SIZE(uuid_block_list); i++) {
-		if (bt_uuid_cmp(attr->uuid, uuid_block_list[i]) == 0) {
-			/* Fast Pair Implementation Guidelines for the locator tag use case:
-			 * The Provider shouldn't expose any identifying information
-			 * in an unauthenticated manner (e.g. names or identifiers).
-			 */
-			return identifying_info_read_allow(conn);
-		}
+	/* Fast Pair Implementation Guidelines for the locator tag use case:
+	 * The Provider shouldn't expose any identifying information
+	 * in an unauthenticated manner (e.g. names or identifiers).
+	 */
+
+	if (IS_ENABLED(CONFIG_APP_DFU)) {
+		authorized = authorized && app_dfu_bt_gatt_operation_allow(attr->uuid);
 	}
 
-	return true;
+	authorized = authorized && identifying_info_allow(attr->uuid);
+
+	return authorized;
 }
 
 static const struct bt_gatt_authorization_cb gatt_authorization_callbacks = {
-	.read_authorize = gatt_read_authorize,
+	.read_authorize = gatt_authorize,
+	.write_authorize = gatt_authorize,
 };
 
 static void fp_account_key_written(struct bt_conn *conn)
@@ -587,6 +602,10 @@ int main(void)
 	int err;
 
 	LOG_INF("Starting Bluetooth Fast Pair locator tag example");
+
+	if (IS_ENABLED(CONFIG_APP_DFU)) {
+		app_dfu_fw_version_log();
+	}
 
 	/* Switch to the cooperative thread context before interaction
 	 * with the Fast Pair and FMDN API.

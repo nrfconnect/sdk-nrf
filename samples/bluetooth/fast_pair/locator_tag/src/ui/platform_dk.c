@@ -18,8 +18,14 @@ LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
 /* Minimum button hold time in milliseconds to trigger the FMDN recovery mode. */
 #define RECOVERY_MODE_BTN_MIN_HOLD_TIME_MS	3000
 
+/* Minimum button hold time in milliseconds to trigger the DFU mode. */
+#define DFU_MODE_BTN_MIN_HOLD_TIME_MS		7000
+
 /* Run status LED blinking interval. */
 #define RUN_LED_BLINK_INTERVAL_MS		1000
+
+/* Run status LED blinking interval in the DFU mode. */
+#define RUN_LED_DFU_BLINK_INTERVAL_MS		250
 
 /* Mode LED blinking interval in recovery mode. */
 #define MODE_LED_RECOVERY_BLINK_INTERVAL_MS	1000
@@ -35,7 +41,7 @@ LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
 
 /* Assignments of the DK LEDs and buttons to different functionalities and modules. */
 
-/* Run status LED. */
+/* Run and DFU mode status LED. */
 #define APP_RUN_STATUS_LED			DK_LED1
 
 /* Ringing status LED. */
@@ -95,6 +101,8 @@ static ATOMIC_DEFINE(ui_state_status, APP_UI_STATE_COUNT);
 
 BUILD_ASSERT(APP_UI_STATE_COUNT <= (sizeof(uint32_t) * __CHAR_BIT__));
 
+BUILD_ASSERT(DFU_MODE_BTN_MIN_HOLD_TIME_MS > RECOVERY_MODE_BTN_MIN_HOLD_TIME_MS);
+
 static void btn_handle(uint32_t button_state, uint32_t has_changed)
 {
 	if (has_changed & APP_MODE_CTLR_BTN) {
@@ -114,7 +122,9 @@ static void btn_handle(uint32_t button_state, uint32_t has_changed)
 			 */
 			if (prev_uptime != 0) {
 				hold_time = (k_uptime_get() - prev_uptime);
-				if (hold_time > RECOVERY_MODE_BTN_MIN_HOLD_TIME_MS) {
+				if (hold_time > DFU_MODE_BTN_MIN_HOLD_TIME_MS) {
+					app_ui_request_broadcast(APP_UI_REQUEST_DFU_MODE_ENTER);
+				} else if (hold_time > RECOVERY_MODE_BTN_MIN_HOLD_TIME_MS) {
 					app_ui_request_broadcast(
 						APP_UI_REQUEST_RECOVERY_MODE_ENTER);
 				} else {
@@ -155,7 +165,10 @@ static void run_led_work_handle(struct k_work *item)
 	static bool run_led_on;
 
 	if (atomic_test_bit(ui_state_status, APP_UI_STATE_APP_RUNNING)) {
-		uint32_t blink_interval_ms = RUN_LED_BLINK_INTERVAL_MS;
+		uint32_t blink_interval_ms = atomic_test_bit(ui_state_status,
+							     APP_UI_STATE_DFU_MODE) ?
+					     RUN_LED_DFU_BLINK_INTERVAL_MS :
+					     RUN_LED_BLINK_INTERVAL_MS;
 
 		run_led_on = !run_led_on;
 		(void) k_work_reschedule_for_queue(&led_workq, dwork, K_MSEC(blink_interval_ms));
