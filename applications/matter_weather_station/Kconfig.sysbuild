@@ -6,16 +6,17 @@
 
 #### Radio core
 config NRF_DEFAULT_IPC_RADIO
-	default y if !WIFI_NRF700X
-
-config NRF_DEFAULT_BLUETOOTH
-	default y if WIFI_NRF700X
-
-config NETCORE_IPC_RADIO_BT_HCI_IPC
 	default y
 
+# Enable IEEE802.15.4 serialization to network core
+# This config automatically pulls in the `overlay-802154.conf` in the ipc_radio image
 config NETCORE_IPC_RADIO_IEEE802154
 	default y if !WIFI_NRF700X
+
+# Enable Bluetooth serialization to network core
+# This config automatically pulls in the `overlay-bt_hci_ipc.conf` in the ipc_radio image
+config NETCORE_IPC_RADIO_BT_HCI_IPC
+	default y
 
 choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT
