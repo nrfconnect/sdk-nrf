@@ -186,4 +186,8 @@ config SUIT_STREAM_IPC_STREAMER_CHUNK_TIMEOUT
 
 endif # SUIT_STREAM_SOURCE_IPC
 
+config SUIT_STREAM_FILTER_DECRYPT
+	bool "Enable support for image decryption"
+	depends on SUIT_CRYPTO
+
 endif # SUIT_STREAM
