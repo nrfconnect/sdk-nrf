@@ -187,9 +187,9 @@ static bool handle_button_event(const struct button_event *event)
 static bool handle_module_state_event(const struct module_state_event *event)
 {
 	/* Replicate the state of buttons module */
-	if (event->module_id == MODULE_ID(buttons)) {
-		module_set_state(event->state);
-	}
+//	if (event->module_id == MODULE_ID(buttons)) {
+//		module_set_state(event->state);
+//	}
 
 	return false;
 }
