@@ -356,7 +356,8 @@ static void scan_fn(struct k_work *work)
 			      (cur_state[i] != 0);
 	}
 
-	if (any_pressed) {
+	/* Workaround GPIO interrupt issues on nRF54H20 PPR. */
+	if (IS_ENABLED(CONFIG_SOC_NRF54H20_CPUPPR)) {
 		/* Schedule next scan */
 		k_work_reschedule(&matrix_scan, K_MSEC(SCAN_INTERVAL));
 	} else {
