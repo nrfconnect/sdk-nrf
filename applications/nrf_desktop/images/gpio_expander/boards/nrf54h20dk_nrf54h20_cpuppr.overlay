@@ -4,11 +4,30 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* Enable IPC. */
 &cpuppr_vevif {
 	status = "okay";
 };
 
+&cpuapp_bellboard {
+	status = "okay";
+};
+
 ipc1: &cpuapp_cpuppr_ipc {
+	status = "okay";
+};
+
+
+/* Enable GPIO support. */
+&gpiote130 {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio9 {
 	status = "okay";
 };
 
@@ -60,19 +79,23 @@ ipc1: &cpuapp_cpuppr_ipc {
 		};
 	};
 
-	hid_dev_0: hid_dev_0 {
-		compatible = "zephyr,hid-device";
-		interface-name = "HID0";
-		protocol-code = "mouse";
-		in-polling-rate = <125>;
-		in-report-size = <64>;
+	/* Define buttons to use them in "buttons_def.h" header file. */
+	buttons {
+		compatible = "gpio-keys";
+		button0: button_0 {
+			gpios = <&gpio0 8 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+		};
+
+		button1: button_1 {
+			gpios = <&gpio0 9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+		};
+
+		button2: button_2 {
+			gpios = <&gpio0 10 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+		};
+
+		button3: button_3 {
+			gpios = <&gpio0 11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+		};
 	};
-};
-
-&cpusec_cpuapp_ipc {
-	status = "okay";
-};
-
-&cpusec_bellboard {
-	status = "okay";
 };

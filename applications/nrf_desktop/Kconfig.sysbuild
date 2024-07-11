@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Add application-specific sysbuild images configuration.
+rsource "images/sysbuild/Kconfig"
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
