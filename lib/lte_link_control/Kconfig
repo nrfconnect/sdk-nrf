@@ -126,6 +126,7 @@ config LTE_PROPRIETARY_PSM_REQ
 
 config LTE_EDRX_REQ
 	bool "Enable eDRX request"
+	select LTE_EXTENDED_FEATURES
 	help
 	  Enable request for use of eDRX using AT+CEDRXS.
 	  For reference, see 3GPP 27.007 Ch. 7.40.
@@ -302,6 +303,7 @@ config LTE_NETWORK_TIMEOUT
 
 config LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS
 	bool "Get notifications prior to Tracking Area Updates"
+	select LTE_EXTENDED_FEATURES
 	help
 	  TAU pre-warning notifications can be used to determine when it is optimal for the
 	  application to send user data. If user data is sent prior to the scheduled TAU, the
@@ -337,6 +339,7 @@ config LTE_NEIGHBOR_CELLS_MAX
 
 config LTE_LC_MODEM_SLEEP_NOTIFICATIONS
 	bool "Modem sleep notifications"
+	select LTE_EXTENDED_FEATURES
 	help
 	  If this option is enabled the application will get notifications when the modem
 	  enters and exits sleep. The application will also get pre-warning notifications
@@ -364,6 +367,12 @@ config LTE_LC_TRACE
 	  from regular link control events in that they only indicate
 	  what has happened and has no associated payload.
 	  It is intended to be used for debugging purposes.
+
+config LTE_EXTENDED_FEATURES
+	bool "Extended features"
+	help
+	  Enables support for extended features, notifications, and events: eDRX,
+	  Periodic TAU Pre-Warning, Neighboring Cell Measurements, Modem Sleep, Modem Domain Events.
 
 module = LTE_LINK_CONTROL
 module-dep = LOG

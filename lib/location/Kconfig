@@ -13,12 +13,14 @@ config LOCATION_METHOD_GNSS
 	bool "Allow GNSS to be used for obtaining the location"
 	depends on NRF_MODEM_LIB
 	depends on LTE_LINK_CONTROL
+	select LTE_EXTENDED_FEATURES
 	default y
 
 config LOCATION_METHOD_CELLULAR
 	bool "Allow cellular positioning to be used for obtaining the location"
 	depends on NRF_MODEM_LIB
 	depends on LTE_LINK_CONTROL
+	select LTE_EXTENDED_FEATURES
 	default y
 
 config LOCATION_METHOD_WIFI

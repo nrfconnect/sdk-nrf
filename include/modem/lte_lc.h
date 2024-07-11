@@ -1521,6 +1521,7 @@ int lte_lc_proprietary_psm_req(bool enable);
  *
  * @retval 0 if successful.
  * @retval -EINVAL if an input parameter was invalid.
+ * @retval -EOPNOTSUPP if \c CONFIG_LTE_EXTENDED_FEATURES is disabled.
  */
 int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
 
@@ -1538,6 +1539,7 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
  *
  * @retval 0 if successful.
  * @retval -EINVAL if an input parameter was invalid.
+ * @retval -EOPNOTSUPP if \c CONFIG_LTE_EXTENDED_FEATURES is disabled.
  */
 int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
 
@@ -1561,6 +1563,7 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
  *
  * @retval 0 if successful.
  * @retval -EFAULT if AT command failed.
+ * @retval -EOPNOTSUPP if \c CONFIG_LTE_EXTENDED_FEATURES is disabled.
  */
 int lte_lc_edrx_req(bool enable);
 
@@ -1573,6 +1576,7 @@ int lte_lc_edrx_req(bool enable);
  * @retval -EINVAL if input argument was invalid.
  * @retval -EFAULT if AT command failed.
  * @retval -EBADMSG if parsing of the AT command response failed.
+ * @retval -EOPNOTSUPP if \c CONFIG_LTE_EXTENDED_FEATURES is disabled.
  */
 int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg);
 
@@ -1664,6 +1668,7 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  * @retval 0 if neighbor cell measurement was successfully initiated.
  * @retval -EFAULT if AT command failed.
  * @retval -EINPROGRESS if a neighbor cell measurement is already in progress.
+ * @retval -EOPNOTSUPP if \c CONFIG_LTE_EXTENDED_FEATURES is disabled.
  */
 int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params);
 
@@ -1672,6 +1677,7 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params);
  *
  * @retval 0 if neighbor cell measurement was cancelled.
  * @retval -EFAULT if AT command failed.
+ * @retval -EOPNOTSUPP if \c CONFIG_LTE_EXTENDED_FEATURES is disabled.
  */
 int lte_lc_neighbor_cell_measurement_cancel(void);
 
@@ -1712,6 +1718,7 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
  *
  * @retval 0 if successful.
  * @retval -EFAULT if AT command failed.
+ * @retval -EOPNOTSUPP if \c CONFIG_LTE_EXTENDED_FEATURES is disabled.
  */
 int lte_lc_modem_events_enable(void);
 
@@ -1720,6 +1727,7 @@ int lte_lc_modem_events_enable(void);
  *
  * @retval 0 if successful.
  * @retval -EFAULT if AT command failed.
+ * @retval -EOPNOTSUPP if \c CONFIG_LTE_EXTENDED_FEATURES is disabled.
  */
 int lte_lc_modem_events_disable(void);
 

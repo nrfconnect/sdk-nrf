@@ -241,11 +241,14 @@ static void lte_lc_edrx_ptw_send_work_fn(struct k_work *work_item)
 
 AT_MONITOR(ltelc_atmon_cereg, "+CEREG", at_handler_cereg);
 AT_MONITOR(ltelc_atmon_cscon, "+CSCON", at_handler_cscon);
+
+#if defined(CONFIG_LTE_EXTENDED_FEATURES)
 AT_MONITOR(ltelc_atmon_cedrxp, "+CEDRXP", at_handler_cedrxp);
 AT_MONITOR(ltelc_atmon_xt3412, "%XT3412", at_handler_xt3412);
 AT_MONITOR(ltelc_atmon_ncellmeas, "%NCELLMEAS", at_handler_ncellmeas);
 AT_MONITOR(ltelc_atmon_xmodemsleep, "%XMODEMSLEEP", at_handler_xmodemsleep);
 AT_MONITOR(ltelc_atmon_mdmev, "%MDMEV", at_handler_mdmev);
+#endif
 
 static void at_handler_cereg(const char *response)
 {
@@ -400,6 +403,7 @@ static void at_handler_cscon(const char *response)
 	event_handler_list_dispatch(&evt);
 }
 
+#if defined(CONFIG_LTE_EXTENDED_FEATURES)
 static void at_handler_cedrxp(const char *response)
 {
 	int err;
@@ -427,7 +431,9 @@ static void at_handler_cedrxp(const char *response)
 
 	event_handler_list_dispatch(&evt);
 }
+#endif
 
+#if defined(CONFIG_LTE_EXTENDED_FEATURES)
 static void at_handler_xt3412(const char *response)
 {
 	int err;
@@ -454,7 +460,9 @@ static void at_handler_xt3412(const char *response)
 
 	event_handler_list_dispatch(&evt);
 }
+#endif
 
+#if defined(CONFIG_LTE_EXTENDED_FEATURES)
 static void at_handler_ncellmeas_gci(const char *response)
 {
 	int err;
@@ -560,7 +568,9 @@ static void at_handler_ncellmeas(const char *response)
 exit:
 	k_sem_give(&ncellmeas_idle_sem);
 }
+#endif
 
+#if defined(CONFIG_LTE_EXTENDED_FEATURES)
 static void at_handler_xmodemsleep(const char *response)
 {
 	int err;
@@ -602,7 +612,9 @@ static void at_handler_xmodemsleep(const char *response)
 
 	event_handler_list_dispatch(&evt);
 }
+#endif
 
+#if defined(CONFIG_LTE_EXTENDED_FEATURES)
 static void at_handler_mdmev(const char *response)
 {
 	int err;
@@ -622,6 +634,7 @@ static void at_handler_mdmev(const char *response)
 
 	event_handler_list_dispatch(&evt);
 }
+#endif
 
 static int enable_notifications(void)
 {
@@ -1075,6 +1088,10 @@ int lte_lc_proprietary_psm_req(bool enable)
 
 int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx)
 {
+	if (!IS_ENABLED(CONFIG_LTE_EXTENDED_FEATURES)) {
+		return -EOPNOTSUPP;
+	}
+
 	char *edrx_value;
 
 	if (mode != LTE_LC_LTE_MODE_LTEM && mode != LTE_LC_LTE_MODE_NBIOT) {
@@ -1104,6 +1121,10 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx)
 
 int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw)
 {
+	if (!IS_ENABLED(CONFIG_LTE_EXTENDED_FEATURES)) {
+		return -EOPNOTSUPP;
+	}
+
 	char *ptw_value;
 
 	if (mode != LTE_LC_LTE_MODE_LTEM && mode != LTE_LC_LTE_MODE_NBIOT) {
@@ -1133,6 +1154,10 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw)
 
 int lte_lc_edrx_req(bool enable)
 {
+	if (!IS_ENABLED(CONFIG_LTE_EXTENDED_FEATURES)) {
+		return -EOPNOTSUPP;
+	}
+
 	int err = 0;
 	int actt[] = {AT_CEDRXS_ACTT_WB, AT_CEDRXS_ACTT_NB};
 
@@ -1181,6 +1206,10 @@ int lte_lc_edrx_req(bool enable)
 
 int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg)
 {
+	if (!IS_ENABLED(CONFIG_LTE_EXTENDED_FEATURES)) {
+		return -EOPNOTSUPP;
+	}
+
 	int err;
 	char response[48];
 	char edrx_value[LTE_LC_EDRX_VALUE_LEN] = {0};
@@ -1220,6 +1249,10 @@ NRF_MODEM_LIB_ON_CFUN(lte_lc_edrx_cfun_hook, lte_lc_edrx_on_modem_cfun, NULL);
 static void lte_lc_edrx_on_modem_cfun(int mode, void *ctx)
 #endif
 {
+	if (!IS_ENABLED(CONFIG_LTE_EXTENDED_FEATURES)) {
+		return;
+	}
+
 	ARG_UNUSED(ctx);
 
 	/* If eDRX is enabled and modem is powered off, subscription of unsolicited eDRX
@@ -1526,6 +1559,10 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)
 
 int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 {
+	if (!IS_ENABLED(CONFIG_LTE_EXTENDED_FEATURES)) {
+		return -EOPNOTSUPP;
+	}
+
 	int err;
 	/* lte_lc defaults for the used params */
 	struct lte_lc_ncellmeas_params used_params = {
@@ -1582,6 +1619,10 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 
 int lte_lc_neighbor_cell_measurement_cancel(void)
 {
+	if (!IS_ENABLED(CONFIG_LTE_EXTENDED_FEATURES)) {
+		return -EOPNOTSUPP;
+	}
+
 	int err = nrf_modem_at_printf(AT_NCELLMEAS_STOP);
 
 	if (err) {
@@ -1692,6 +1733,10 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params)
 
 int lte_lc_modem_events_enable(void)
 {
+	if (!IS_ENABLED(CONFIG_LTE_EXTENDED_FEATURES)) {
+		return -EOPNOTSUPP;
+	}
+
 	/* First try to enable both warning and informational type events, which is only supported
 	 * by modem firmware versions >= 2.0.0.
 	 * If that fails, try to enable the legacy set of events.
@@ -1707,6 +1752,10 @@ int lte_lc_modem_events_enable(void)
 
 int lte_lc_modem_events_disable(void)
 {
+	if (!IS_ENABLED(CONFIG_LTE_EXTENDED_FEATURES)) {
+		return -EOPNOTSUPP;
+	}
+
 	return nrf_modem_at_printf(AT_MDMEV_DISABLE) ? -EFAULT : 0;
 }
 

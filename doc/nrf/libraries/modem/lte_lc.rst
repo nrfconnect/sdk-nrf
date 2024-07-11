@@ -19,6 +19,8 @@ Configuration
 *************
 
 To enable the library, set the Kconfig option :kconfig:option:`CONFIG_LTE_LINK_CONTROL` to ``y`` in the project configuration file :file:`prj.conf`.
+By default the library supports only network registration and connection status functionalities.
+For extended features, set the Kconfig option :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option to ``y`` in the project configuration file :file:`prj.conf`.
 
 Establishing an LTE connection
 ==============================
@@ -103,6 +105,9 @@ The following list mentions some of the information that can be extracted from t
    Some of the functionalities might not be compatible with certain modem firmware versions.
    To check if a desired feature is compatible with a certain modem firmware version, see the AT commands that are documented in the `nRF91x1 AT Commands Reference Guide`_  or `nRF9160 AT Commands Reference Guide`_ depending on the SiP you are using.
 
+.. important::
+   Functionalities like eDRX, periodic TAU pre-warning, neighboring cell measurements, modem sleep, and modem domain events must be enabled via the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option.
+
 .. _lte_lc_power_saving:
 
 Enabling power-saving features
@@ -179,6 +184,7 @@ Modem sleep notifications can be used to schedule processing in the same operati
 
 To enable modem sleep and TAU pre-warning notifications, enable the following options:
 
+* :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES`
 * :kconfig:option:`CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS`
 * :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS`
 

@@ -436,6 +436,22 @@ Gazell libraries
 Modem libraries
 ---------------
 
+* :ref:`lte_lc_readme` library:
+
+  * Added the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option for enabling support for extended features, notifications, and events: eDRX, Periodic TAU Pre-Warning, Neighboring Cell Measurements, Modem Sleep, and Modem Domain Events.
+
+  * Updated:
+
+    * The :ref:`lte_lc_readme` library to support only ``+CEREG`` and ``+CSCON`` features by default. Extended features must be enabled with the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option.
+    * The :c:func:`lte_lc_ptw_set` function to return ``-EOPNOTSUPP`` when the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option is disabled.
+    * The :c:func:`lte_lc_edrx_param_set` function to return ``-EOPNOTSUPP`` when the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option is disabled.
+    * The :c:func:`lte_lc_edrx_req` function to return ``-EOPNOTSUPP`` when the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option is disabled.
+    * The :c:func:`lte_lc_edrx_get` function to return ``-EOPNOTSUPP`` when the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option is disabled.
+    * The :c:func:`lte_lc_neighbor_cell_measurement` function to return ``-EOPNOTSUPP`` when the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option is disabled.
+    * The :c:func:`lte_lc_neighbor_cell_measurement_cancel` function to return ``-EOPNOTSUPP`` when the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option is disabled.
+    * The :c:func:`lte_lc_modem_events_enable` function to return ``-EOPNOTSUPP`` when the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option is disabled.
+    * The :c:func:`lte_lc_modem_events_disable` function to return ``-EOPNOTSUPP`` when the :kconfig:option:`CONFIG_LTE_EXTENDED_FEATURES` Kconfig option is disabled.
+
 * :ref:`nrf_modem_lib_lte_net_if` library:
 
   * Added a log warning suggesting a SIM card to be installed if a UICC error is detected by the modem.
