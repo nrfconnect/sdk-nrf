@@ -12,6 +12,7 @@
 
 #include <suit_dfu_cache_sink.h>
 #include <suit_dfu_cache_streamer.h>
+#include <suit_generic_address_streamer.h>
 
 #ifdef CONFIG_SUIT_STREAM_FETCH_SOURCE_MGR
 #include "suit_fetch_source_streamer.h"
@@ -79,12 +80,21 @@ int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
 
 int suit_plat_fetch_integrated_domain_specific(suit_component_t dst_handle,
 					       suit_component_type_t dst_component_type,
-					       struct stream_sink *dst_sink)
+					       struct stream_sink *dst_sink,
+					       struct zcbor_string *payload)
 {
+	suit_plat_err_t ret = SUIT_PLAT_SUCCESS;
+
 	(void)dst_handle;
 	(void)dst_component_type;
-	(void)dst_sink;
-	return SUIT_SUCCESS;
+
+	if (payload == NULL) {
+		return SUIT_ERR_UNAVAILABLE_PAYLOAD;
+	}
+
+	ret = suit_generic_address_streamer_stream(payload->value, payload->len, dst_sink);
+
+	return suit_plat_err_to_processor_err_convert(ret);
 }
 
 #endif /* CONFIG_SUIT_STREAM */

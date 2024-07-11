@@ -16,7 +16,6 @@
 #ifdef CONFIG_SUIT_STREAM
 #include <suit_sink.h>
 #include <suit_sink_selector.h>
-#include <suit_generic_address_streamer.h>
 #endif /* CONFIG_SUIT_STREAM */
 
 #ifdef CONFIG_SUIT_STREAM_SINK_MEMPTR
@@ -25,6 +24,10 @@
 #ifdef CONFIG_SUIT_CACHE_RW
 #include <suit_dfu_cache_sink.h>
 #endif
+
+#ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
+#include <suit_decrypt_filter.h>
+#endif /* CONFIG_SUIT_STREAM_FILTER_DECRYPT */
 
 #include <stdbool.h>
 #include <suit_platform.h>
@@ -67,12 +70,14 @@ static int verify_and_get_sink(suit_component_t dst_handle, struct stream_sink *
 			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 		}
 
-		ret = suit_dfu_cache_sink_get(sink, number, uri->value, uri->len, write_enabled);
-		if (ret != SUIT_PLAT_SUCCESS) {
+		suit_plat_err_t plat_ret =
+			suit_dfu_cache_sink_get(sink, number, uri->value, uri->len, write_enabled);
+
+		if (plat_ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Getting cache sink failed");
 		}
 
-		return suit_plat_err_to_processor_err_convert(ret);
+		return suit_plat_err_to_processor_err_convert(plat_ret);
 	}
 #else
 	(void)write_enabled;
@@ -88,24 +93,44 @@ int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 #ifdef CONFIG_SUIT_STREAM
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	struct stream_sink dst_sink = {0};
+	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
+	int ret = SUIT_SUCCESS;
 
-	/* Encryption info is not supported. */
-	if (enc_info != NULL) {
-		return SUIT_ERR_UNSUPPORTED_PARAMETER;
-	}
-
-	int ret = verify_and_get_sink(dst_handle, &dst_sink, uri, &dst_component_type, false);
-
+	/*
+	 * Validate streaming operation.
+	 */
+	ret = verify_and_get_sink(dst_handle, &dst_sink, uri, &dst_component_type, false);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Failed to verify component and get end sink");
+		return ret;
 	}
 
-	ret = release_sink(&dst_sink);
-	if (ret != SUIT_PLAT_SUCCESS) {
-		return suit_plat_err_to_processor_err_convert(ret);
+	/*
+	 * Try to Construct the stream.
+	 */
+
+	/* Append decryption filter if encryption info is provided. */
+	if (enc_info != NULL) {
+#ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
+		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
+		if (ret != SUIT_SUCCESS) {
+			LOG_ERR("Selecting decryption filter failed: %i", ret);
+		}
+#else
+		ret = SUIT_ERR_UNSUPPORTED_PARAMETER;
+#endif /* CONFIG_SUIT_STREAM_FILTER_DECRYPT */
 	}
 
-	return SUIT_SUCCESS;
+	/*
+	 * Destroy the stream.
+	 */
+
+	plat_ret = release_sink(&dst_sink);
+	if (ret == SUIT_SUCCESS) {
+		ret = suit_plat_err_to_processor_err_convert(plat_ret);
+	}
+
+	return ret;
 #endif /* CONFIG_SUIT_STREAM */
 
 	return SUIT_ERR_UNSUPPORTED_COMMAND;
@@ -117,20 +142,12 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink = {0};
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
+	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
 
-#if CONFIG_SUIT_DIGEST_CACHE
-	ret = suit_plat_digest_cache_remove_by_handle(dst_handle);
-
-	if (ret != SUIT_SUCCESS) {
-		return ret;
-	}
-#endif
-
-	/* Encryption info is not supported. */
-	if (enc_info != NULL) {
-		return SUIT_ERR_UNSUPPORTED_PARAMETER;
-	}
+	/*
+	 * Validate streaming operation.
+	 */
 
 	ret = verify_and_get_sink(dst_handle, &dst_sink, uri, &dst_component_type, true);
 	if (ret != SUIT_SUCCESS) {
@@ -138,22 +155,56 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 		return ret;
 	}
 
-	/* Here other parts of pipe will be instantiated.
-	 *	Like decryption and/or decompression sinks.
+	/*
+	 * Construct the stream.
 	 */
+
+	/* Append decryption filter if encryption info is provided. */
+	if (enc_info != NULL) {
+#ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
+		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
+		if (ret != SUIT_SUCCESS) {
+			LOG_ERR("Selecting decryption filter failed: %i", ret);
+		}
+#else
+		ret = SUIT_ERR_UNSUPPORTED_PARAMETER;
+#endif /* CONFIG_SUIT_STREAM_FILTER_DECRYPT */
+	}
+
+	/*
+	 * Stream the data.
+	 */
+
+#if CONFIG_SUIT_DIGEST_CACHE
+	/* Invalidate digest cache for the destination component. */
+	ret = suit_plat_digest_cache_remove_by_handle(dst_handle);
+
+	if (ret != SUIT_SUCCESS) {
+		return ret;
+	}
+#endif
+
+	/* Erase the destination memory area. */
 	if (dst_sink.erase != NULL) {
 		ret = dst_sink.erase(dst_sink.ctx);
 		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Sink mem erase failed: %i", ret);
-			return suit_plat_err_to_processor_err_convert(ret);
 		}
 	}
 
-	ret = suit_plat_fetch_domain_specific(dst_handle, dst_component_type, &dst_sink, uri);
-	suit_plat_err_t release_ret = release_sink(&dst_sink);
-
+	/* Start streaming the data. */
 	if (ret == SUIT_SUCCESS) {
-		ret = suit_plat_err_to_processor_err_convert(release_ret);
+		ret = suit_plat_fetch_domain_specific(dst_handle, dst_component_type, &dst_sink,
+						      uri);
+	}
+
+	/*
+	 * Destroy the stream.
+	 */
+
+	plat_ret = release_sink(&dst_sink);
+	if (ret == SUIT_SUCCESS) {
+		ret = suit_plat_err_to_processor_err_convert(plat_ret);
 	}
 
 	return ret;
@@ -168,15 +219,21 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
+	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
+	int ret = SUIT_SUCCESS;
 
-	/* Get component type based on component handle*/
-	int ret = suit_plat_component_type_get(dst_handle, &dst_component_type);
+	/*
+	 * Validate streaming operation.
+	 */
 
+	/* Decode destination component type based on component handle. */
+	ret = suit_plat_component_type_get(dst_handle, &dst_component_type);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Failed to decode component type: %i", ret);
 		return ret;
 	}
 
+	/* Check if destination component is supported by the fetch operation. */
 	if (!suit_plat_fetch_integrated_domain_specific_is_type_supported(dst_component_type)) {
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
@@ -185,24 +242,39 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 	return SUIT_ERR_UNSUPPORTED_COMMAND;
 #endif /* CONFIG_SUIT_STREAM_SOURCE_MEMPTR */
 
-	/* Encryption info is not supported. */
-	if (enc_info != NULL) {
-		return SUIT_ERR_UNSUPPORTED_PARAMETER;
-	}
+	/*
+	 * Try to construct the stream.
+	 */
 
-	/* Get dst_sink - final destination sink */
+	/* Create destination sink. */
 	ret = suit_sink_select(dst_handle, &dst_sink);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Selecting sink failed: %i", ret);
 		return ret;
 	}
 
-	/* Here other parts of pipe will be instantiated.
-	 *	Like decryption and/or decompression sinks.
+	/* Append decryption filter if encryption info is provided. */
+	if (enc_info != NULL) {
+#ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
+		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
+		if (ret != SUIT_SUCCESS) {
+			LOG_ERR("Selecting decryption filter failed: %i", ret);
+		}
+#else
+		ret = SUIT_ERR_UNSUPPORTED_PARAMETER;
+#endif /* CONFIG_SUIT_STREAM_FILTER_DECRYPT */
+	}
+
+	/*
+	 * Destroy the stream.
 	 */
 
-	ret = release_sink(&dst_sink);
-	return suit_plat_err_to_processor_err_convert(ret);
+	plat_ret = release_sink(&dst_sink);
+	if (ret == SUIT_SUCCESS) {
+		ret = suit_plat_err_to_processor_err_convert(plat_ret);
+	}
+
+	return ret;
 #else
 	return SUIT_ERR_UNSUPPORTED_COMMAND;
 #endif /* CONFIG_SUIT_STREAM */
@@ -214,15 +286,21 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
+	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
+	int ret = SUIT_SUCCESS;
 
-	/* Get component type based on component handle*/
-	int ret = suit_plat_component_type_get(dst_handle, &dst_component_type);
+	/*
+	 * Validate streaming operation.
+	 */
 
+	/* Decode destination component type based on component handle. */
+	ret = suit_plat_component_type_get(dst_handle, &dst_component_type);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Failed to decode component type: %i", ret);
 		return ret;
 	}
 
+	/* Check if destination component is supported by the fetch operation. */
 	if (!suit_plat_fetch_integrated_domain_specific_is_type_supported(dst_component_type)) {
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
@@ -231,51 +309,65 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 	return SUIT_ERR_UNSUPPORTED_COMMAND;
 #endif /* CONFIG_SUIT_STREAM_SOURCE_MEMPTR */
 
-#if CONFIG_SUIT_DIGEST_CACHE
-	ret = suit_plat_digest_cache_remove_by_handle(dst_handle);
+	/*
+	 * Construct the stream.
+	 */
 
-	if (ret != SUIT_SUCCESS) {
-		return ret;
-	}
-#endif
-
-	/* Encryption info is not supported. */
-	if (enc_info != NULL) {
-		return SUIT_ERR_UNSUPPORTED_PARAMETER;
-	}
-
-	/* Get dst_sink - final destination sink */
+	/* Create destination sink. */
 	ret = suit_sink_select(dst_handle, &dst_sink);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Selecting sink failed: %i", ret);
 		return ret;
 	}
 
-	/* Here other parts of pipe will be instantiated.
-	 *	Like decryption and/or decompression sinks.
+	/* Append decryption filter if encryption info is provided. */
+	if (enc_info != NULL) {
+#ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
+		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
+		if (ret != SUIT_SUCCESS) {
+			LOG_ERR("Selecting decryption filter failed: %i", ret);
+		}
+#else
+		ret = SUIT_ERR_UNSUPPORTED_PARAMETER;
+#endif /* CONFIG_SUIT_STREAM_FILTER_DECRYPT */
+	}
+
+	/*
+	 * Stream the data.
 	 */
 
-	if (dst_sink.erase != NULL) {
-		ret = dst_sink.erase(dst_sink.ctx);
+#if CONFIG_SUIT_DIGEST_CACHE
+	/* Invalidate digest cache for the destination component. */
+	if (ret == SUIT_SUCCESS) {
+		ret = suit_plat_digest_cache_remove_by_handle(dst_handle);
+		if (ret != SUIT_SUCCESS) {
+			LOG_ERR("Invalidating digest cache failed: %i", ret);
+		}
+	}
+#endif
 
-		if (ret != SUIT_PLAT_SUCCESS) {
-			LOG_ERR("Sink mem erase failed, err code: %d", ret);
-			return suit_plat_err_to_processor_err_convert(ret);
+	/* Erase the destination memory area. */
+	if ((ret == SUIT_SUCCESS) && (dst_sink.erase != NULL)) {
+		plat_ret = dst_sink.erase(dst_sink.ctx);
+		if (plat_ret != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Sink mem erase failed, err code: %d", plat_ret);
+			ret = suit_plat_err_to_processor_err_convert(plat_ret);
 		}
 	}
 
-	ret = suit_generic_address_streamer_stream(payload->value, payload->len, &dst_sink);
-	ret = suit_plat_err_to_processor_err_convert(ret);
-
+	/* Start streaming the data. */
 	if (ret == SUIT_SUCCESS) {
 		ret = suit_plat_fetch_integrated_domain_specific(dst_handle, dst_component_type,
-								 &dst_sink);
+								 &dst_sink, payload);
 	}
 
-	suit_plat_err_t release_ret = release_sink(&dst_sink);
+	/*
+	 * Destroy the stream.
+	 */
 
+	plat_ret = release_sink(&dst_sink);
 	if (ret == SUIT_SUCCESS) {
-		ret = suit_plat_err_to_processor_err_convert(release_ret);
+		ret = suit_plat_err_to_processor_err_convert(plat_ret);
 	}
 
 	return ret;

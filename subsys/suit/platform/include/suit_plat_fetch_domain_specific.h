@@ -40,7 +40,8 @@ int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
  */
 int suit_plat_fetch_integrated_domain_specific(suit_component_t dst_handle,
 					       suit_component_type_t dst_component_type,
-					       struct stream_sink *dst_sink);
+					       struct stream_sink *dst_sink,
+					       struct zcbor_string *payload);
 
 #ifdef __cplusplus
 }

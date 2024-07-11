@@ -48,6 +48,7 @@ zcbor convert \
   -c ${SUIT_PROCESSOR_DIR}/cddl/manifest.cddl \
   -c ${SUIT_PROCESSOR_DIR}/cddl/trust_domains.cddl \
   -c ${SUIT_PROCESSOR_DIR}/cddl/update_management.cddl \
+  -c ${SUIT_PROCESSOR_DIR}/cddl/firmware_encryption.cddl \
   -i ./sample_signed.suit \
   --input-as cbor \
   -t SUIT_Envelope_Tagged \
