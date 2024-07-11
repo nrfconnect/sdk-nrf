@@ -51,7 +51,7 @@ config SUIT_CRYPTO
 	imply PSA_WANT_ECC_TWISTED_EDWARDS_255 if SOC_FAMILY_NORDIC_NRF
 
 
-if MBEDTLS
+if MBEDTLS && SOC_POSIX
 
 # Make sure that PSA API compatibility layer is enabled
 config MBEDTLS_PSA_CRYPTO_C
