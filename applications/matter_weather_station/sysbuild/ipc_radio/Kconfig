@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# NRF_802154_ENCRYPTION is not enabled by default in the `overlay-802154.conf` file
+# that is pulled in by NETCORE_IPC_RADIO_IEEE802154 in application's Kconfig.sysbuild.
+config NRF_802154_ENCRYPTION
+	default y if IPC_RADIO_802154
