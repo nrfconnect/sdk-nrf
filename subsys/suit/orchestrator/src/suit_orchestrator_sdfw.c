@@ -384,6 +384,10 @@ int suit_orchestrator_init(void)
 			LOG_ERR("Failed to load MPI: invalid MPI format (i.e. version, values)");
 			plat_err = suit_execution_mode_set(EXECUTION_MODE_FAIL_MPI_INVALID);
 			break;
+		case SUIT_PLAT_ERR_EXISTS:
+			LOG_ERR("Failed to load MPI: duplicate class IDs found");
+			plat_err = suit_execution_mode_set(EXECUTION_MODE_FAIL_MPI_INVALID);
+			break;
 		case SUIT_PLAT_ERR_UNSUPPORTED:
 			LOG_ERR("Failed to load MPI: unsupported configuration");
 			plat_err = suit_execution_mode_set(EXECUTION_MODE_FAIL_MPI_UNSUPPORTED);
