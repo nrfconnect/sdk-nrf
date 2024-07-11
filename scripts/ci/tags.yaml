@@ -249,3 +249,14 @@ suit:
     - nrf/tests/subsys/suit/
     - modules/lib/suit-processor/
     - modules/lib/suit-generator/
+
+nfc:
+  files:
+    - nrf/subsys/nfc/
+    - nrf/include/nfc/
+    - nrf/lib/st25r3911b/
+    - nrf/samples/nfc/
+    - nrf/samples/bluetooth/peripheral_nfc_pairing/
+    - nrf/samples/bluetooth/central_nfc_pairing/
+    - nrf/samples/bluetooth/peripheral_hids_keyboard/
+    - nrfxlib/nfc/
