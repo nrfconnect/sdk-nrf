@@ -504,12 +504,12 @@ static psa_status_t import_srp_key(const psa_key_attributes_t *attributes, const
 
 	switch (type) {
 	case PSA_KEY_TYPE_SRP_KEY_PAIR(PSA_DH_FAMILY_RFC3526):
-		if (bits != PSA_BYTES_TO_BITS(sizeof(cracen_N3072))) {
+		if (bits != 0 && bits != PSA_BYTES_TO_BITS(sizeof(cracen_N3072))) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		break;
 	case PSA_KEY_TYPE_SRP_PUBLIC_KEY(PSA_DH_FAMILY_RFC3526):
-		if (bits != PSA_BYTES_TO_BITS(sizeof(cracen_N3072))) {
+		if (bits != 0 && bits != PSA_BYTES_TO_BITS(sizeof(cracen_N3072))) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		if (data_length != sizeof(cracen_N3072)) {
@@ -531,7 +531,7 @@ static psa_status_t import_srp_key(const psa_key_attributes_t *attributes, const
 	}
 	memcpy(key_buffer, data, data_length);
 	*key_buffer_length = data_length;
-	*key_bits = bits;
+	*key_bits = CRACEN_SRP_RFC3526_KEY_BITS_SIZE;
 	return PSA_SUCCESS;
 }
 
