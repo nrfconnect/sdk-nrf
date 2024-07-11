@@ -335,7 +335,7 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* Added the :ref:`lib_wifi_ready` library.
 
 Libraries for NFC
 -----------------
