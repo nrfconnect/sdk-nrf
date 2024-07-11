@@ -242,12 +242,47 @@ ZTEST(suit_platform_app_fetch_tests, test_fetch_mem_type)
 		      "Incorrect number of suit_fetch_source_stream() calls");
 }
 
-ZTEST(suit_platform_app_fetch_tests, test_fetch_integrated_domain_specific)
+ZTEST(suit_platform_app_fetch_tests, test_fetch_integrated_domain_specific_no_payload)
 {
 	struct stream_sink dummy_sink = {0};
 
-	/* Simply return success unconditionally */
-	zassert_equal(suit_plat_fetch_integrated_domain_specific(
-			      TEST_COMPONENT_HANDLE, SUIT_COMPONENT_TYPE_CACHE_POOL, &dummy_sink),
-		      SUIT_SUCCESS, "suit_plat_fetch_integrated_domain_specific failed");
+	zassert_equal(suit_plat_fetch_integrated_domain_specific(TEST_COMPONENT_HANDLE,
+								 SUIT_COMPONENT_TYPE_CACHE_POOL,
+								 &dummy_sink, NULL),
+		      SUIT_ERR_UNAVAILABLE_PAYLOAD,
+		      "suit_plat_fetch_integrated_domain_specific did not fail");
+}
+
+ZTEST(suit_platform_app_fetch_tests, test_fetch_integrated_domain_specific_streamer_fail)
+{
+	struct stream_sink dummy_sink = {0};
+	uint8_t dummy_payload[] = {0, 1, 2, 3, 4};
+	struct zcbor_string payload = {
+		.value = dummy_payload,
+		.len = sizeof(dummy_payload),
+	};
+
+	suit_generic_address_streamer_stream_fake.return_val = SUIT_PLAT_ERR_NOT_FOUND;
+
+	zassert_equal(suit_plat_fetch_integrated_domain_specific(TEST_COMPONENT_HANDLE,
+								 SUIT_COMPONENT_TYPE_CACHE_POOL,
+								 &dummy_sink, &payload),
+		      SUIT_ERR_CRASH, "suit_plat_fetch_integrated_domain_specific did not fail");
+}
+
+ZTEST(suit_platform_app_fetch_tests, test_fetch_integrated_domain_specific)
+{
+	struct stream_sink dummy_sink = {0};
+	uint8_t dummy_payload[] = {0, 1, 2, 3, 4};
+	struct zcbor_string payload = {
+		.value = dummy_payload,
+		.len = sizeof(dummy_payload),
+	};
+
+	suit_generic_address_streamer_stream_fake.return_val = SUIT_PLAT_SUCCESS;
+
+	zassert_equal(suit_plat_fetch_integrated_domain_specific(TEST_COMPONENT_HANDLE,
+								 SUIT_COMPONENT_TYPE_CACHE_POOL,
+								 &dummy_sink, &payload),
+		      SUIT_SUCCESS, "suit_plat_fetch_integrated_domain_specific ail");
 }
