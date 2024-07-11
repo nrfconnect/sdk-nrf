@@ -60,6 +60,7 @@ tests:
   sample.matter.lock.no_dfu.no_fd:
     sysbuild: true
     build_only: true
+    extra_args: SB_CONFIG_MATTER_OTA=n
     integration_platforms:
       - nrf21540dk/nrf52840
     platform_allow: >
