@@ -8,32 +8,45 @@ tests:
     integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp
-    tags: ci_build
+    tags: ci_build sysbuild wifi
+  sample.nrf7002.sta.no_wifi_ready:
+    build_only: true
+    extra_args: CONFIG_WIFI_READY_LIB=n
+    integration_platforms:
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf7002dk_nrf5340_cpuapp
+    tags: ci_build sysbuild wifi
+  sample.nrf7001.sta:
+    build_only: true
+    integration_platforms:
+      - nrf7002dk_nrf7001_nrf5340_cpuapp
+    platform_allow: nrf7002dk_nrf7001_nrf5340_cpuapp
+    tags: ci_build sysbuild wifi
+    skip: true
   sample.nrf7002_eks.sta:
     build_only: true
     extra_args: SHIELD=nrf7002ek
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
-    tags: ci_build
-  sample.nrf7000_eks.sta:
-    build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
-    tags: ci_build
+    extra_configs:
+      - CONFIG_NET_TX_STACK_SIZE=3700
+      - CONFIG_NET_RX_STACK_SIZE=3700
+    tags: ci_build sysbuild wifi
   sample.nrf7001_eks.sta:
     build_only: true
     extra_args: SHIELD=nrf7002ek_nrf7001
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
-    tags: ci_build
+    extra_configs:
+      - CONFIG_NET_TX_STACK_SIZE=3700
+      - CONFIG_NET_RX_STACK_SIZE=3700
+    tags: ci_build sysbuild wifi
   sample.nrf7002_eb.thingy53.sta:
     build_only: true
     extra_args: SHIELD=nrf7002eb
     integration_platforms:
       - thingy53_nrf5340_cpuapp
     platform_allow: thingy53_nrf5340_cpuapp
-    tags: ci_build
+    tags: ci_build sysbuild wifi
