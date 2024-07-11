@@ -45,5 +45,6 @@ rsource "wifi_mgmt_ext/Kconfig"
 rsource "mqtt_helper/Kconfig"
 rsource "nrf_provisioning/Kconfig"
 rsource "mcumgr_smp_client/Kconfig"
+rsource "wifi_ready/Kconfig"
 
 endmenu
