@@ -39,6 +39,7 @@ LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
 #define LED_ID_MODE				LED_COLOR_ID_YELLOW
 #define LED_RECOVERY_MODE			LED_COLOR_ID_RED
 #define LED_FP_ADV				LED_COLOR_ID_WHITE
+#define LED_DFU_MODE				LED_COLOR_ID_PURPLE
 
 /* UI state status LEDs handling. */
 #define LED_BLINK_STATE_STATUS_ON_MS		500
@@ -56,7 +57,8 @@ LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
 #define BTN_FP_ADV_MODE_CHANGE_START_MS		1000
 #define BTN_ID_MODE_ENTER_START_MS		3000
 #define BTN_RECOVERY_MODE_ENTER_START_MS	5000
-#define BTN_NOOP_LAST_START_MS			7000
+#define BTN_DFU_MODE_ENTER_START_MS		7000
+#define BTN_NOOP_LAST_START_MS			10000
 
 #define BTN_RELEASE_DEF(_request, _start_ms, _beep_cnt, _beep_duration)			\
 	{										\
@@ -132,6 +134,10 @@ static const struct btn_release btn_release_actions[] = {
 			BTN_RECOVERY_MODE_ENTER_START_MS,
 			3,
 			SPEAKER_BEEP_DURATION_SHORT),
+	BTN_RELEASE_DEF(APP_UI_REQUEST_DFU_MODE_ENTER,
+			BTN_DFU_MODE_ENTER_START_MS,
+			4,
+			SPEAKER_BEEP_DURATION_SHORT),
 	BTN_RELEASE_DEF(APP_UI_REQUEST_COUNT,
 			BTN_NOOP_LAST_START_MS,
 			1,
@@ -147,6 +153,7 @@ static const struct led_state_id_map led_state_id_maps[] = {
 	{.state = APP_UI_STATE_ID_MODE,		.id = LED_ID_MODE},
 	{.state = APP_UI_STATE_RECOVERY_MODE,	.id = LED_RECOVERY_MODE},
 	{.state = APP_UI_STATE_FP_ADV,		.id = LED_FP_ADV},
+	{.state = APP_UI_STATE_DFU_MODE,	.id = LED_DFU_MODE},
 };
 
 static void speaker_beep_play(uint8_t cnt, uint32_t on_ms, uint32_t off_ms)
