@@ -1,14 +1,23 @@
+.. _app_bootloaders:
 .. _ug_nrf54h20_suit_compare_other_dfu:
 
-DFU and bootloader comparison
-#############################
+Bootloaders and DFU
+###################
 
-The Nordic Semiconductor implementation of the :ref:`SUIT procedure <ug_nrf54h20_suit_intro>` is the only supported bootloader and Device Firmware Update (DFU) procedure for the nRF54H Series of System on Chips (SoC).
-It provides a more flexible and tailored DFU experience compared to the MCUboot procedure and |NSIB| to better fit the needs of the SoC's multiple cores and transports.
-See the diagram and comparison table below for further comparison.
+.. contents::
+   :local:
+   :depth: 2
 
-.. figure:: images/nrf54h20_suit_mcuboot_comparison.png
-   :alt: MCUboot and SUIT, and nRF Secure Immutable Bootloader architecture comparison
+Depending on the device, you need to use different bootloader and DFU solutions:
+
+* For the nRF54H Series, use :ref:`Software Updates for Internet of Things (SUIT) <ug_nrf54h20_suit_dfu>`.
+  The :ref:`SUIT procedure <ug_nrf54h20_suit_intro>` is the only supported bootloader and Device Firmware Update (DFU) procedure for this device.
+* For the remaining Nordic Semiconductor devices, use :ref:`MCUboot and nRF Secure Immutable Bootloader (NSIB) <ug_bootloader_mcuboot_nsib>`.
+
+See the following diagram and table for further comparison.
+
+.. figure:: images/bootloader_suit_mcuboot_comparison.png
+   :alt: MCUboot, SUIT, and nRF Secure Immutable Bootloader architecture comparison
 
    MCUboot, SUIT, and |NSIB| architecture comparison
 
@@ -33,3 +42,11 @@ See the diagram and comparison table below for further comparison.
 +--------------------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
 | Flash memory layout      | Specific allocations for primary and secondary slots.                   | Single DFU partition with flexible component slots.                                                               | OTP regions for provisioned data; specific layout for boot and application partitions.    |
 +--------------------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
+
+To learn more, refer to the following documentation pages:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Subpages:
+
+   mcuboot_nsib/bootloader_mcuboot_nsib

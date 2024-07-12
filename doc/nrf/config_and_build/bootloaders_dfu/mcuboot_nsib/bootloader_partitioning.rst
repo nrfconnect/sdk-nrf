@@ -1,12 +1,96 @@
-.. _ug_bootloader_external_flash:
+.. _bootloader_partitioning:
 
-Using external flash memory partitions
-######################################
+Partitioning device memory
+##########################
 
 .. contents::
    :local:
    :depth: 2
 
+Partitioning device memory is a crucial aspect of managing how a device's storage is utilized, especially when dealing with firmware updates and bootloader configurations.
+By default, the Partition Manager in the system dynamically generates a partition map, which is suitable for most applications that do not use Device Firmware Updates (DFU).
+For scenarios involving DFU, read the following sections.
+
+.. _ug_bootloader_flash_static_requirement:
+
+Static partition requirement for DFU
+************************************
+
+If you want to perform DFU, you must :ref:`define a static partition map <ug_pm_static>` to ensure compatibility across different builds.
+The dynamically generated partitions can change between builds.
+This is important also when you use a precompiled HEX file as a child image (sub-image) instead of building it.
+In such cases, the newly generated application images may no longer use a partition map that is compatible with the partition map used by the bootloader.
+As a result, the newly built application image may not be bootable by the bootloader.
+
+.. note::
+   For detailed information about the memory layout used for the build, see the partition configuration in the :file:`partitions.yml` file, located in the build folder directory, or run ``ninja partition_manager_report``.
+   You must enable the Partition Manager to make the :file:`partitions.yml` file and the ``partition_manager_report`` target available.
+
+   The :file:`partitions.yml` file is present also if the Partition Manager generates the partition map dynamically.
+   You can use this file as a base for your static partition map.
+
+The memory partitions that must be defined in the static partition map depend on the selected bootloader chain.
+For details, see :ref:`ug_bootloader_flash`.
+
+.. _ug_bootloader_flash:
+
+Flash memory partitions
+***********************
+
+Each bootloader handles flash memory partitioning differently.
+
+After building the application, you can print a report of how the flash partitioning has been handled for a bootloader, or combination of bootloaders, by using :ref:`pm_partition_reports`.
+
+.. _ug_bootloader_flash_b0:
+
+|NSIB| partitions
+=================
+
+See :ref:`bootloader_flash_layout` for implementation-specific information about this bootloader.
+
+.. _ug_bootloader_flash_mcuboot:
+
+MCUboot partitions
+==================
+
+For most applications, MCUboot requires two image slots:
+
+* The *primary slot*, containing the application that will be booted.
+* The *secondary slot*, where a new application can be stored before it is activated.
+
+It is possible to use only the *primary slot* for MCUboot by using the ``CONFIG_SINGLE_APPLICATION_SLOT`` option.
+This is particularly useful in memory-constrained devices to avoid providing space for two images.
+
+See the *Image Slots* section in the :doc:`MCUboot documentation <mcuboot:design>` for more information.
+
+The |NCS| variant of MCUboot uses the :ref:`partition_manager` to configure the flash memory partitions for these image slots.
+In the default configuration, defined in :file:`bootloader/mcuboot/boot/zephyr/pm.yml`, the partition manager dynamically sets up the partitions as required for MCUboot.
+For example, the partition layout for :file:`zephyr/samples/hello_world` using MCUboot on the ``nrf52840dk`` board would look like the following:
+
+.. code-block:: console
+
+    (0x100000 - 1024.0kB):
+   +-----------------------------------------+
+   | 0x0: mcuboot (0xc000)                   |
+   +---0xc000: mcuboot_primary (0x7a000)-----+
+   | 0xc000: mcuboot_pad (0x200)             |
+   +---0xc200: mcuboot_primary_app (0x79e00)-+
+   | 0xc200: app (0x79e00)                   |
+   | 0x86000: mcuboot_secondary (0x7a000)    |
+   +-----------------------------------------+
+
+You can also store secondary slot images in external flash memory when using MCUboot.
+See :ref:`ug_bootloader_external_flash` for more information.
+
+
+.. _ug_bootloader_external_flash:
+
+Using external flash memory partitions
+**************************************
+
+.. contents::
+   :local:
+   :depth: 2
 
 When using MCUboot, you can store the storage partition for the secondary slot in the external flash memory, using a driver for the external flash memory that supports the following features:
 

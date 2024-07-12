@@ -1,3 +1,4 @@
+.. _bootloader_dfu_image_versions:
 .. _ug_fw_update_image_versions:
 
 Image versions
