@@ -49,6 +49,7 @@ bluetooth:
     - zephyr/drivers/bluetooth/
     - zephyr/subsys/bluetooth/
     - zephyr/include/zephyr/bluetooth/
+    - zephyr/samples/bluetooth/hci_ipc/
     - nrfxlib/softdevice_controller/include/
     - nrfxlib/softdevice_controller/lib/
     - nrfxlib/mpsl/include/
@@ -62,6 +63,7 @@ bluetooth:
     - nrf/tests/bluetooth/
     - nrf/tests/subsys/bluetooth/
     - nrf/applications/nrf_desktop/
+    - nrf/samples/nrf5340/multiprotocol_rpmsg/
 
 net:
   files:
@@ -119,6 +121,7 @@ matter:
     - nrf/samples/matter/
     - nrf/applications/matter_weather_station/
     - nrf/applications/matter_bridge/
+    - nrf/samples/nrf5340/multiprotocol_rpmsg/
     - nrfxlib/openthread/
     - nrfxlib/nrf_802154/driver/
     - nrfxlib/nrf_802154/serialization/
@@ -134,6 +137,7 @@ matter:
     - zephyr/drivers/net/
     - zephyr/subsys/bluetooth/
     - zephyr/soc/nordic/
+    - zephyr/samples/bluetooth/hci_ipc/
     - modules/lib/suit-generator/
     - modules/lib/matter/
     - modules/lib/hostap/
