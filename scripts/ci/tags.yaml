@@ -133,6 +133,7 @@ matter:
     - zephyr/subsys/mgmt/mcumgr/
     - zephyr/drivers/net/
     - zephyr/subsys/bluetooth/
+    - zephyr/soc/nordic/
     - modules/lib/suit-generator/
     - modules/lib/matter/
     - modules/lib/hostap/
@@ -198,6 +199,7 @@ openthread:
     - zephyr/modules/mbedtls/
     - zephyr/subsys/net/
     - zephyr/subsys/settings/
+    - zephyr/soc/nordic/
     - nrf/subsys/mpsl/
     - nrf/subsys/ieee802154/
     - nrf/subsys/net/openthread/
