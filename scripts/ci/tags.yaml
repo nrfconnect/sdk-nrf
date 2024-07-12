@@ -546,3 +546,54 @@ esb:
     - nrf/subsys/mpsl/
     - nrfxlib/crypto/
     - zephyr/soc/nordic/
+
+applications_asset_tracker_v2:
+  files:
+    - nrf/applications/asset_tracker_v2/
+    - nrf/subsys/net/lib/nrf_cloud/
+    - nrf/subsys/net/lib/aws_iot/
+    - nrf/subsys/net/lib/azure_iot_hub/
+    - nrf/subsys/caf/
+    - nrf/subsys/dfu/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/net/
+    - nrf/subsys/nrf_security/
+    - nrf/modules/cjson/
+    - nrf/modules/azure-sdk-for-c/
+    - nrf/modules/memfault-firmware-sdk/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/wifi/
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/at_host/
+    - nrf/lib/at_monitor/
+    - nrf/lib/bin/lwm2m_carrier/
+    - nrf/lib/date_time/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/fprotect/
+    - nrf/lib/hw_id/
+    - nrf/lib/location/
+    - nrf/lib/lte_link_control/
+    - nrf/lib/modem*/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/lib/sms/
+    - nrf/lib/pdn/
+    - nrf/lib/qos/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/lib/azure-sdk-for-c/
+    - modules/lib/cjson/
+    - modules/lib/memfault-firmware-sdk/
+    - modules/lib/zcbor/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_modem/
+    - nrfxlib/nrf_wifi/
+    - zephyr/drivers/flash/
+    - zephyr/drivers/hwinfo/
+    - zephyr/boards/nordic/nrf9160dk/
+    - zephyr/subsys/net/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/tracing/
+    - zephyr/subsys/random/
+    - zephyr/subsys/fs/

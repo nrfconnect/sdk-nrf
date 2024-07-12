@@ -5,4 +5,4 @@ tests:
     integration_platforms:
       - native_sim
       - qemu_cortex_m3
-    tags: nrf_cloud_codec_mocked_cJSON sysbuild
+    tags: nrf_cloud_codec_mocked_cJSON sysbuild applications_asset_tracker_v2
