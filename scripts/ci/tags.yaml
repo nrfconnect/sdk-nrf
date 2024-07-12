@@ -61,6 +61,7 @@ bluetooth:
     - nrf/samples/bluetooth/
     - nrf/tests/bluetooth/
     - nrf/tests/subsys/bluetooth/
+    - nrf/applications/nrf_desktop/
 
 net:
   files:
