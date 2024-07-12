@@ -322,6 +322,8 @@
 .. _`TF-M secure partition integration guide`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_secure_partition_addition.html
 .. _`TF-M ITS`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_its_integration_guide.html
 
+.. _`HCI Events`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/softdevice_controller/doc/api.html#hci_events
+
 .. _`nRF socket options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/nrf_modem/doc/sockets.html
 
 .. _`Repositories and revisions for v2.6.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
