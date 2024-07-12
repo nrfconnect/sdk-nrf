@@ -19,6 +19,12 @@ ipc0: &cpuapp_cpuppr_ipc {
 	status = "okay";
 };
 
+/ {
+	chosen {
+		/delete-property/ zephyr,bt-hci;
+	};
+};
+
 /* UART and RAM3 instance used by PPR should be enabled at build time
  * using nordic-ppr snippet.
  */
