@@ -149,11 +149,11 @@ See :ref:`bootloader_signature_keys_guide` for more information.
 Monotonic counter
 =================
 
-.. include:: ../../doc/nrf/config_and_build/bootloaders/bootloader_downgrade_protection.rst
+.. include:: ../../doc/nrf/config_and_build/bootloaders_dfu/mcuboot_nsib/bootloader_downgrade_protection.rst
    :start-after: bootloader_monotonic_counter_start
    :end-before: bootloader_monotonic_counter_end
 
-.. include:: ../../doc/nrf/config_and_build/bootloaders/bootloader_downgrade_protection.rst
+.. include:: ../../doc/nrf/config_and_build/bootloaders_dfu/mcuboot_nsib/bootloader_downgrade_protection.rst
    :start-after: bootloader_monotonic_counter_nsib_start
    :end-before: bootloader_monotonic_counter_nsib_end
 

@@ -55,7 +55,7 @@ The |NCS| currently supports two implementations:
 
   See the following image for an abstract representation of the memory layout for an application that uses only an immutable bootloader in its boot chain:
 
-  .. figure:: images/bootloader_memory_layout_onestage.svg
+  .. figure:: ../images/bootloader_memory_layout_onestage.svg
      :alt: Memory layout
 
 * The second implementation provides both the first stage in the chain, the immutable bootloader (|NSIB|), and uses :doc:`MCUboot <mcuboot:index-ncs>` as the upgradable second-stage bootloader.
@@ -64,36 +64,13 @@ The |NCS| currently supports two implementations:
 
   See the following image for an abstract representation of the memory layout for an application that uses both an immutable and an upgradable bootloader in its boot chain:
 
-  .. figure:: images/bootloader_memory_layout.svg
+  .. figure:: ../images/bootloader_memory_layout.svg
      :alt: Memory layout
 
 By default, building an application with any bootloader configuration creates a :ref:`multi-image build <ug_multi_image>`, where the :ref:`partition_manager` manages its memory partitions.
 In this case, bootloaders are built as child images.
 When building an application with :ref:`Cortex-M Security Extensions (CMSE) enabled <app_boards_spe_nspe_cpuapp_ns>`, then :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` is built with the image automatically.
 From the bootloader perspective, the TF-M is part of the booted application image.
-
-.. _ug_bootloader_flash_static_requirement:
-
-Static partition requirement for DFU
-====================================
-
-By default, the Partition Manager generates the partition map dynamically.
-As long as you are not using Device Firmware Updates (DFU), you can use the dynamic generation of memory partitions.
-
-However, if you want to perform DFU, you must :ref:`define a static partition map <ug_pm_static>` because the dynamically generated partitions can change between builds.
-This is important also when you use a precompiled HEX file as a child image instead of building it.
-In such cases, the newly generated application images may no longer use a partition map that is compatible with the partition map used by the bootloader.
-As a result, the newly built application image may not be bootable by the bootloader.
-
-.. note::
-   For detailed information about the memory layout used for the build, see the partition configuration in the :file:`partitions.yml` file, located in the build folder directory, or run ``ninja partition_manager_report``.
-   You must enable the Partition Manager to make the :file:`partitions.yml` file and the ``partition_manager_report`` target available.
-
-   The :file:`partitions.yml` file is present also if the Partition Manager generates the partition map dynamically.
-   You can use this file as a base for your static partition map.
-
-The memory partitions that must be defined in the static partition map depend on the selected bootloader chain.
-For details, see :ref:`ug_bootloader_flash`.
 
 .. _immutable_bootloader:
 
@@ -178,53 +155,3 @@ See the :ref:`bootloader_pre_signed_variants` section of the |NSIB| documentatio
 
 When not building firmware update packages, pre-signed variants are not strictly necessary but can be used as a backup mechanism in case the image in the primary slot becomes corrupted, for example from a bit-flip.
 Having both slots programmed allows the immutable bootloader to invalidate the corrupt image and boot into a valid one.
-
-.. _ug_bootloader_flash:
-
-Flash memory partitions
-=======================
-
-Each bootloader handles flash memory partitioning differently.
-
-After building the application, you can print a report of how the flash partitioning has been handled for a bootloader, or combination of bootloaders, by using :ref:`pm_partition_reports`.
-
-.. _ug_bootloader_flash_b0:
-
-|NSIB| partitions
------------------
-
-See :ref:`bootloader_flash_layout` for implementation-specific information about this bootloader.
-
-.. _ug_bootloader_flash_mcuboot:
-
-MCUboot partitions
-------------------
-
-For most applications, MCUboot requires two image slots:
-
-* The *primary slot*, containing the application that will be booted.
-* The *secondary slot*, where a new application can be stored before it is activated.
-
-It is possible to use only the *primary slot* for MCUboot by using the ``CONFIG_SINGLE_APPLICATION_SLOT`` option.
-This is particularly useful in memory-constrained devices to avoid providing space for two images.
-
-See the *Image Slots* section in the :doc:`MCUboot documentation <mcuboot:design>` for more information.
-
-The |NCS| variant of MCUboot uses the :ref:`partition_manager` to configure the flash memory partitions for these image slots.
-In the default configuration, defined in :file:`bootloader/mcuboot/boot/zephyr/pm.yml`, the partition manager dynamically sets up the partitions as required for MCUboot.
-For example, the partition layout for :file:`zephyr/samples/hello_world` using MCUboot on the ``nrf52840dk`` board would look like the following:
-
-.. code-block:: console
-
-    (0x100000 - 1024.0kB):
-   +-----------------------------------------+
-   | 0x0: mcuboot (0xc000)                   |
-   +---0xc000: mcuboot_primary (0x7a000)-----+
-   | 0xc000: mcuboot_pad (0x200)             |
-   +---0xc200: mcuboot_primary_app (0x79e00)-+
-   | 0xc200: app (0x79e00)                   |
-   | 0x86000: mcuboot_secondary (0x7a000)    |
-   +-----------------------------------------+
-
-You can also store secondary slot images in external flash memory when using MCUboot.
-See :ref:`ug_bootloader_external_flash` for more information.

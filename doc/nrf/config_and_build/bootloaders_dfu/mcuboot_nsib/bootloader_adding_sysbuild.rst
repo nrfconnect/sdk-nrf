@@ -1,7 +1,7 @@
 .. _ug_bootloader_adding_sysbuild:
 
-Adding a bootloader chain using sysbuild
-########################################
+Enabling a bootloader chain using sysbuild
+##########################################
 
 .. contents::
    :local:

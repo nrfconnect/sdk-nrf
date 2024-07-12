@@ -30,4 +30,3 @@ For a list of available SUIT samples, see the :ref:`suit_samples` page.
    ug_nrf54h20_suit_external_memory
    ug_nrf54h20_suit_components.rst
    ug_nrf54h20_suit_hierarchical_manifests.rst
-   ug_nrf54h20_suit_compare_other_dfu.rst

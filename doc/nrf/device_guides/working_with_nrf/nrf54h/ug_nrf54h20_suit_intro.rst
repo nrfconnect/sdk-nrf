@@ -29,7 +29,7 @@ The local domain CPU firmware images are validated and started by the Secure Dom
 
 Once the invocation process is complete, the SDFW is still active and may serve specific requests from specified domains.
 Therefore, unlike in MCUboot, the application core and other cores may use the SDFW services.
-(See the :ref:`ug_nrf54h20_suit_compare_other_dfu` page for more details and further comparison of SUIT with other DFU and bootloader procedures.)
+(See the :ref:`app_bootloaders` page for more details and further comparison of SUIT with other DFU and bootloader procedures.)
 The bootloader SDFW image provided by Nordic Semiconductor is offered in binary form.
 Along with this, you can compose a final image with your own application image that is signed by your own keys.
 
