@@ -17,6 +17,8 @@
 #
 # IMAGE: image name identifying the cache to update.
 #
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/extensions.cmake)
+
 function(configure_cache)
   set(single_args IMAGE)
   cmake_parse_arguments(CONFIGURE_CACHE "" "${single_args}" "" ${ARGN})
@@ -499,6 +501,112 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       get_property(main_app GLOBAL PROPERTY DOMAIN_APP_CPUNET)
       ExternalProject_Get_Property(${main_app} BINARY_DIR)
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
+    endif()
+  endif()
+
+  if(NOT SB_CONFIG_PARTITION_MANAGER)
+    # Check if there are extra hex files that should be merged to the output file
+    set(extra_hex_files)
+
+    foreach(image ${IMAGES})
+      sysbuild_get(${image}_EXTRA_FILES_TO_MERGE IMAGE ${image} VAR EXTRA_FILES_TO_MERGE CACHE)
+      list(APPEND extra_hex_files ${${image}_EXTRA_FILES_TO_MERGE})
+    endforeach()
+
+    if(extra_hex_files OR EXTRA_FILES_TO_MERGE_DOMAINS)
+      set(basic_hex_files)
+      set(basic_targets)
+      set(basic_boards)
+
+      if(SB_CONFIG_SOC_SERIES_NRF53X OR SB_CONFIG_SOC_SERIES_NRF54HX)
+        sysbuild_get(default_target_board IMAGE ${DEFAULT_IMAGE} VAR BOARD CACHE)
+        string(REPLACE "/" ";" split_board_qualifiers "${default_target_board}")
+        list(GET split_board_qualifiers 2 default_target_variant)
+        set(default_target_board)
+        set(split_board_qualifiers)
+      endif()
+
+        foreach(image ${IMAGES})
+          set(hex_file)
+          sysbuild_get(hex_file IMAGE ${image} VAR BYPRODUCT_KERNEL_SIGNED_HEX_NAME CACHE)
+
+          if(NOT hex_file)
+            sysbuild_get(hex_file IMAGE ${image} VAR BYPRODUCT_KERNEL_HEX_NAME CACHE)
+          endif()
+
+          if(SB_CONFIG_SOC_SERIES_NRF53X OR SB_CONFIG_SOC_SERIES_NRF54HX)
+            # Check what board targets there are so multiple images can be generated
+            sysbuild_get(${image}_target_board IMAGE ${image} VAR BOARD CACHE)
+            string(REPLACE "/" ";" split_board_qualifiers "${${image}_target_board}")
+            list(GET split_board_qualifiers 2 target_variant)
+
+            if(NOT ${target_variant} IN_LIST basic_boards)
+              list(APPEND basic_boards ${target_variant})
+            endif()
+          endif()
+
+          if((SB_CONFIG_SOC_SERIES_NRF53X OR SB_CONFIG_SOC_SERIES_NRF54HX) AND NOT "${target_variant}" STREQUAL "${default_target_variant}")
+            list(APPEND ${target_variant}_basic_hex_files ${hex_file})
+            list(APPEND ${target_variant}_basic_targets ${image} ${image}_extra_byproducts)
+          else()
+            list(APPEND basic_hex_files ${hex_file})
+            list(APPEND basic_targets ${image} ${image}_extra_byproducts)
+          endif()
+        endforeach()
+
+      # Sysbuild files
+      if(EXTRA_FILES_TO_MERGE_DOMAINS)
+        foreach(domain ${EXTRA_FILES_TO_MERGE_DOMAINS})
+          if(DEFINED ${domain}_EXTRA_FILES_TO_MERGE)
+            if((SB_CONFIG_SOC_SERIES_NRF53X OR SB_CONFIG_SOC_SERIES_NRF54HX) AND NOT "${domain}" STREQUAL "${default_target_variant}")
+              list(APPEND ${domain}_basic_hex_files ${${domain}_EXTRA_FILES_TO_MERGE})
+              list(APPEND ${domain}_basic_targets ${${domain}_EXTRA_FILES_TO_MERGE})
+
+              if(DEFINED ${domain}_EXTRA_FILES_TO_MERGE_DEPENDENCIES)
+                list(APPEND ${domain}_basic_targets ${${domain}_EXTRA_FILES_TO_MERGE_DEPENDENCIES})
+              endif()
+            else()
+              list(APPEND basic_hex_files ${${domain}_EXTRA_FILES_TO_MERGE})
+              list(APPEND basic_targets ${${domain}_EXTRA_FILES_TO_MERGE})
+
+              if(DEFINED ${domain}_EXTRA_FILES_TO_MERGE_DEPENDENCIES)
+                list(APPEND basic_targets ${${domain}_EXTRA_FILES_TO_MERGE_DEPENDENCIES})
+              endif()
+            endif()
+          endif()
+        endforeach()
+      endif()
+
+      foreach(target ${basic_boards})
+        if((SB_CONFIG_SOC_SERIES_NRF53X OR SB_CONFIG_SOC_SERIES_NRF54HX) AND NOT "${target}" STREQUAL "${default_target_variant}")
+          set(final_merged ${CMAKE_BINARY_DIR}/merged_${target}.hex)
+          set(prefix ${target}_)
+        else()
+          set(final_merged ${CMAKE_BINARY_DIR}/merged.hex)
+          set(prefix)
+        endif()
+
+        list(REMOVE_DUPLICATES ${prefix}basic_hex_files)
+        list(REMOVE_DUPLICATES ${prefix}extra_hex_files)
+        list(REMOVE_DUPLICATES ${prefix}basic_targets)
+
+        # Add command to merge files
+        add_custom_command(
+          OUTPUT ${final_merged}
+          COMMAND
+          ${PYTHON_EXECUTABLE}
+          ${ZEPHYR_BASE}/scripts/build/mergehex.py
+            -o ${final_merged}
+          ${${prefix}basic_hex_files}
+          ${${prefix}extra_hex_files}
+          DEPENDS
+          ${${prefix}basic_targets}
+          ${${prefix}basic_hex_files}
+          )
+
+        # Wrapper target for the merge command
+        add_custom_target(${prefix}merged_hex ALL DEPENDS ${final_merged})
+      endforeach()
     endif()
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)

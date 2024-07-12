@@ -476,3 +476,68 @@ function(import_pm_config dotconf_file keys_out)
   endforeach()
   set("${keys_out}" "${keys}" PARENT_SCOPE)
 endfunction()
+
+#
+# Helper macro for adding extra hex files that should be merged into the output sysbuild hex files
+#
+# Sysbuild usage:
+#   ncs_merge_file(FILES <files> DOMAIN <domain> [DEPENDENCIES <dependencies>])
+#
+# Non-sysbuild usage:
+#   ncs_merge_file(FILES <file>)
+#
+function(ncs_merge_file)
+  set(single_args "DOMAIN")
+  set(multi_args  "FILES;DEPENDENCIES")
+  cmake_parse_arguments(MERGE "" "${single_args}" "${multi_args}" ${ARGN})
+
+  check_arguments_required_all("ncs_merge_file" MERGE FILES)
+
+  if("${PROJECT_NAME}" STREQUAL "sysbuild_toplevel")
+    check_arguments_required_all("ncs_merge_file" MERGE DOMAIN)
+
+    if(SB_CONFIG_PARTITION_MANAGER)
+      message(FATAL_ERROR "Cannot use ncs_merge_file() with partition manager enabled")
+    endif()
+  elseif(DEFINED MERGE_DOMAIN)
+    message(FATAL_ERROR "ncs_merge_file() must not include DOMAIN when not called from sysbuild")
+  elseif(DEFINED MERGE_DEPENDENCIES)
+    message(FATAL_ERROR "ncs_merge_file() must not include DEPENDENCIES when not called from sysbuild")
+  elseif(CONFIG_PARTITION_MANAGER_ENABLED)
+    message(FATAL_ERROR "Cannot use ncs_merge_file() with partition manager enabled")
+  endif()
+
+  foreach(file ${MERGE_FILES})
+    get_filename_component(file_path ${file} REALPATH)
+
+    if("${PROJECT_NAME}" STREQUAL "sysbuild_toplevel")
+      list(APPEND ${MERGE_DOMAIN}_EXTRA_FILES_TO_MERGE ${file_path})
+
+      set(${MERGE_DOMAIN}_EXTRA_FILES_TO_MERGE "${${MERGE_DOMAIN}_EXTRA_FILES_TO_MERGE}" CACHE STRING
+        "Extra hex files to merge" FORCE
+      )
+
+      if(NOT ${MERGE_DOMAIN} IN_LIST EXTRA_FILES_TO_MERGE_DOMAINS)
+        list(APPEND EXTRA_FILES_TO_MERGE_DOMAINS ${MERGE_DOMAIN})
+
+        set(EXTRA_FILES_TO_MERGE_DOMAINS "${EXTRA_FILES_TO_MERGE_DOMAINS}" CACHE STRING
+          "Extra hex files to merge domains" FORCE
+        )
+      endif()
+
+      if(NOT ${MERGE_DEPENDENCIES} IN_LIST EXTRA_FILES_TO_MERGE_DEPENDENCIES)
+        list(APPEND EXTRA_FILES_TO_MERGE_DEPENDENCIES ${MERGE_DEPENDENCIES})
+
+        set(EXTRA_FILES_TO_MERGE_DEPENDENCIES "${EXTRA_FILES_TO_MERGE_DEPENDENCIES}" CACHE STRING
+          "Extra hex files to merge dependencies" FORCE
+        )
+      endif()
+    else()
+      list(APPEND EXTRA_FILES_TO_MERGE ${file_path})
+
+      set(EXTRA_FILES_TO_MERGE "${EXTRA_FILES_TO_MERGE}" CACHE STRING
+        "Extra hex files to merge" FORCE
+      )
+    endif()
+  endforeach()
+endfunction()
