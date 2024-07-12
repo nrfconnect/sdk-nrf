@@ -305,7 +305,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     BT_CTLR_PHY_CODED || \
 						     BT_CTLR_ADV_PERIODIC || \
 						     BT_CTLR_DF_CTE_TX || \
-						     MPSL_CX_BT_1WIRE || \
+						     MPSL_CX || \
 						     BT_CTLR_SYNC_PERIODIC || \
 						     BT_CTLR_SCA_UPDATE || \
 						     BT_CTLR_SDC_PAWR_ADV || \
