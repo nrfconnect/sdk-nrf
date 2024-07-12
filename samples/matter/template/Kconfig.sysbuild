@@ -8,10 +8,6 @@
 config NRF_DEFAULT_IPC_RADIO
 	default y
 
-# Use HCI IPC as radio core image for nRF54H20 + nRF7002EK
-config NRF_DEFAULT_BLUETOOTH
-	default y if SOC_SERIES_NRF54HX && WIFI_NRF700X
-
 # Enable IEEE802.15.4 serialization to network core
 # This config automatically pulls in the `overlay-802154.conf` in the ipc_radio image
 config NETCORE_IPC_RADIO_IEEE802154
