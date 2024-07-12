@@ -37,9 +37,9 @@ LOG_MODULE_REGISTER(nrf_cloud_coap, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 #define COAP_SHDW_REP_RSC "state/reported"
 #define COAP_SHDW_DES_RSC "state/desired"
 #define COAP_D2C_RSC "msg/d2c"
-#define COAP_D2C_BULK_RSC "msg/d/%s/d2c/bulk"
-#define COAP_D2C_RSC_MAX_LEN MAX(sizeof(COAP_D2C_RSC), sizeof(COAP_D2C_BULK_RSC))
-#define COAP_D2C_RAW_RSC "/msg/d2c/raw"
+#define COAP_D2C_BULK_RSC COAP_D2C_RSC "/bulk"
+#define COAP_D2C_RAW_RSC COAP_D2C_RSC "/raw"
+#define COAP_D2C_BIN_RSC COAP_D2C_RSC "/bin"
 
 #define MAX_COAP_PAYLOAD_SIZE (CONFIG_COAP_CLIENT_BLOCK_SIZE - \
 			       CONFIG_COAP_CLIENT_MESSAGE_HEADER_SIZE)
@@ -55,33 +55,6 @@ static int64_t get_ts(void)
 		ts = 0;
 	}
 	return ts;
-}
-
-static const char *get_d2c_resource(bool bulk)
-{
-	static char d2c_bulk_rsc[NRF_CLOUD_CLIENT_ID_MAX_LEN + COAP_D2C_RSC_MAX_LEN + 1];
-
-	if (!bulk) {
-		return COAP_D2C_RSC;
-	}
-
-	if (!d2c_bulk_rsc[0]) {
-		const char *id_ptr;
-		int err = nrf_cloud_client_id_ptr_get(&id_ptr);
-
-		if (err) {
-			LOG_ERR("Failed to retrieve the device ID: %d", err);
-			return NULL;
-		}
-
-		err = snprintk(d2c_bulk_rsc, sizeof(d2c_bulk_rsc), COAP_D2C_BULK_RSC, id_ptr);
-		if ((err <= 0) || (err >= sizeof(d2c_bulk_rsc))) {
-			LOG_ERR("Failed to format d2c resource string");
-			d2c_bulk_rsc[0] = 0;
-			return NULL;
-		}
-	}
-	return d2c_bulk_rsc;
 }
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
@@ -262,7 +235,7 @@ int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj, bool confirmable)
 
 	int err = 0;
 	bool enc = false;
-	const char *resource = get_d2c_resource(bulk);
+	const char *resource = bulk ? COAP_D2C_BULK_RSC : COAP_D2C_RSC;
 
 	if (!resource) {
 		return -EINVAL;
@@ -362,7 +335,7 @@ int nrf_cloud_coap_json_message_send(const char *message, bool bulk, bool confir
 		return -EACCES;
 	}
 	size_t len = strlen(message);
-	const char *resource = get_d2c_resource(bulk);
+	const char *resource = bulk ? COAP_D2C_BULK_RSC : COAP_D2C_RSC;
 	int err;
 
 	if (!resource) {
