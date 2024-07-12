@@ -20,6 +20,7 @@
 		zephyr,sram-secure-partition = &sram0_s;
 		zephyr,sram-non-secure-partition = &sram0_ns;
 		zephyr,wifi = &nordic_wlan0;
+		zephyr,bt-hci = &bt_hci_ipc0;
 	};
 
 	nrf70_tx_power_ceiling: nrf70_tx_power_ceiling_node {

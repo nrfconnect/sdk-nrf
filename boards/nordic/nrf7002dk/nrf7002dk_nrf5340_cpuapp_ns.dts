@@ -18,6 +18,7 @@
 		zephyr,code-partition = &slot0_ns_partition;
 		zephyr,entropy = &psa_rng;
 		zephyr,wifi = &nordic_wlan0;
+		zephyr,bt-hci = &bt_hci_ipc0;
 	};
 
 	psa_rng: psa-rng {
