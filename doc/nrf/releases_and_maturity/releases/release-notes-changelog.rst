@@ -489,6 +489,10 @@ Libraries for networking
 
   * Fixed a hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the :c:struct:`nrf_cloud_rest_agnss_request` structure is NULL.
 
+* :ref:`lib_nrf_cloud_coap` library:
+
+  * Updated to use a shorter resource string for the ``d2c/bulk`` resource.
+
 Libraries for NFC
 -----------------
 
