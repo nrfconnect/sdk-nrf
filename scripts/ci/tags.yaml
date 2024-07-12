@@ -260,3 +260,48 @@ nfc:
     - nrf/samples/bluetooth/central_nfc_pairing/
     - nrf/samples/bluetooth/peripheral_hids_keyboard/
     - nrfxlib/nfc/
+
+Sidewalk:
+  files:
+    - nrf/subsys/bootloader/
+    - nrf/subsys/partition_manager/
+    - nrf/subsys/dfu/
+    - nrf/modules/mcuboot/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/pcd/
+    - nrf/subsys/bluetooth/controller/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/mpsl/
+    - nrf/applications/ipc_radio/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/fatal_error/
+    - nrf/lib/fprotect/
+    - zephyr/include/dfu/
+    - zephyr/include/mgmt/mcumgr/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/mgmt/mcumgr/
+    - zephyr/samples/bluetooth/hci_ipc/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/mem_mgmt/
+    - zephyr/subsys/mgmt/
+    - zephyr/subsys/net/
+    - zephyr/subsys/pm/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/usb/
+    - nrfxlib/crypto/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/crypto/tinycrypt/
+    - modules/lib/open-amp/open-amp/
+    - modules/lib/zcbor/
+    - bootloader/mcuboot/
+    - sidewalk/
