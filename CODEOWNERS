@@ -30,6 +30,7 @@
 # Applications
 /applications/asset_tracker_v2/           @nrfconnect/ncs-cia @coderbyheart
 /applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
+/applications/sw_io_devices/              @masz-nordic
 /applications/ipc_radio/                  @dchat-nordic
 /applications/machine_learning/           @pdunaj
 /applications/matter_bridge/              @nrfconnect/ncs-matter
@@ -81,6 +82,7 @@ Kconfig*                                  @tejlmand
 /doc/nrf/protocols/thread/*.rst           @wiba-nordic
 # All subfolders
 /drivers/                                 @anangl
+/drivers/gpio/                            @masz-nordic
 /drivers/serial/                          @nordic-krch @anangl
 /drivers/sensor/bh1749/                   @nrfconnect/ncs-cia
 /drivers/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
@@ -90,6 +92,7 @@ Kconfig*                                  @tejlmand
 /dts/                                     @anangl
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos
+/include/drivers/gpio/                    @masz-nordic
 /include/net/azure_*                      @nrfconnect/ncs-cia @coderbyheart
 /include/net/wifi_credentials.h           @nrfconnect/ncs-cia
 /include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
@@ -237,6 +240,7 @@ Kconfig*                                  @tejlmand
 /scripts/ci/twister_ignore.txt            @nordic-piks @PerMac @katgiadla
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
+/snippets/emulated*/                      @masz-nordic
 /snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
 /snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-cia
 /snippets/nrf91-modem-trace-uart/         @eivindj-nordic
