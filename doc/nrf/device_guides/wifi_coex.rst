@@ -180,7 +180,7 @@ Hardware description
 The generic three wire interface consists of the signals listed in the table below.
 The *Pin* is a generic pin name of a PTA, identified rather by its function.
 The *Direction* is from the point of view of the SoC running the SR protocol.
-The *DT property* is the name of the devicetree node property that configures the connection between the SoC running SR protocol and the nRF70 Series device.
+The *DT property* is the name of the devicetree node property that configures the connection between the SoC running the SR protocol and the Wi-Fi device.
 
 .. table:: Generic three wire coexistence protocol pins
 
@@ -188,7 +188,7 @@ The *DT property* is the name of the devicetree node property that configures th
    Pin           Direction  Description                        DT property
    ============  =========  =================================  ==============
    REQUEST       Out        Request signal                     req-gpios
-   PRIORITY      Out        SR transaction direction TX or RX  pri-dir-gpios
+   PRIORITY      Out        Priority signal                    pri-dir-gpios
    GRANT         In         Grant signal                       grant-gpios
    ============  =========  =================================  ==============
 
@@ -240,7 +240,7 @@ To enable the generic three-wire coexistence, do the following:
 #. Enable the following Kconfig options:
 
    * :kconfig:option:`CONFIG_MPSL_CX`
-   * :kconfig:option:`CONFIG_MPSL_CX_THREAD`
+   * :kconfig:option:`CONFIG_MPSL_CX_3WIRE`
 
 
 .. _ug_radio_mpsl_cx_custom:
@@ -257,7 +257,7 @@ To add a custom coexistence implementation based on the MPSL CX API, complete fo
    See :file:`nrf/dts/bindings/radio_coex/generic-radio-coex-three-wire.yaml` file for an example.
 #. Extend the Kconfig choice :kconfig:option:`CONFIG_MPSL_CX_CHOICE` with a Kconfig option allowing to select the new coex implementation.
 #. Write the implementation for your PTA.
-   See the :file:`nrf/subsys/mpsl/cx/thread/mpsl_cx_thread.c` file for an example.
+   See the :file:`nrf/subsys/mpsl/cx/3wire/mpsl_cx_3wire.c` file for an example.
    Add the C source file(s) with the implementation, which must contain the following parts:
 
    * The implementation of the functions required by the interface structure :c:struct:`mpsl_cx_interface_t`.

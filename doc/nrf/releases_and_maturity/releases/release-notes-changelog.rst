@@ -455,7 +455,7 @@ Modem libraries
 Multiprotocol Service Layer libraries
 -------------------------------------
 
-|no_changes_yet_note|
+* The Kconfig option ``CONFIG_MPSL_CX_THREAD`` has been renamed to :kconfig:option:`CONFIG_MPSL_CX_3WIRE` to better indicate multiprotocol compatibility.
 
 Libraries for networking
 ------------------------

@@ -59,11 +59,10 @@ config MPSL_CX_NRF700X
 	help
 	  Radio Coexistence supporting nRF700x interface.
 
-config MPSL_CX_THREAD
+config MPSL_CX_3WIRE
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
-	depends on !BT
-	bool "Thread Radio Coexistence [EXPERIMENTAL]"
+	bool "3-Wire Radio Coexistence [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
 	  Radio Coexistence interface implementation according to Thread Radio
