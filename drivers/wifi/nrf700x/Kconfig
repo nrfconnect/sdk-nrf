@@ -466,6 +466,22 @@ config NRF_WIFI_RPU_RECOVERY_QUIET_PERIOD_MS
 		Quiet period in milliseconds after RPU recovery is triggered. During
 		this period, no new RPU recovery will be triggered.
 
+config NRF_WIFI_RPU_RECOVERY_MAX_RETRIES
+	int "Maximum number of consecutive RPU recovery retries, 0 to disable"
+	default 0
+	help
+		Maximum number of consecutive RPU recovery retries before giving up
+		and resetting the system. Set to 0 to keep retrying indefinitely.
+
+config NRF_WIFI_RPU_RECOVERY_RETRY_WINDOW_S
+	int "RPU recovery retry window in seconds"
+	default 900
+	help
+		Window in seconds during which the number of consecutive RPU recovery
+		retries are counted. If the number of consecutive RPU recovery retries
+		exceeds NRF_WIFI_RPU_RECOVERY_MAX_RETRIES within this window, the system
+		will be reset.
+
 config NET_MGMT_EVENT_QUEUE_SIZE
 	# Doing interface down and up even with delay puts a lot of events in the queue
 	default 16
