@@ -68,11 +68,13 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
             add_line(f'{name_upper}_NAME', name)
 
             try:
-                for paf in partition['affiliation']:
-                    ptd = affiliations.get(paf)
-                    if not ptd:
-                        affiliations[paf] = list()
+                # To support single item string for affiliation we convert the string into a list.
+                pafs = partition['affiliation']
+                if isinstance(pafs, str):
+                    pafs = [pafs]
 
+                for paf in pafs:
+                    ptd = affiliations.setdefault(paf, list())
                     if ptd not in affiliations[paf]:
                         affiliations[paf].append(name)
 
