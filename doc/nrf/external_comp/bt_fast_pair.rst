@@ -888,7 +888,31 @@ The specific use case of the Google Fast Pair application is indicated by the ch
 In the official `Fast Pair`_ documentation, the `Fast Pair Device Feature Requirements`_ category defines additional requirements for each supported use case, and specifies a list of mandatory, optional, and unsupported Fast Pair features.
 If your product is targeting one of the listed use cases, you must align your accessory firmware to meet these requirements.
 
-To learn about the software maturity levels for Google Fast Pair use cases supported by the |NCS|, see the :ref:`software_maturity_fast_pair_use_case` table.
+Depending on your use case, select an option from the following list that is a part of the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE` Kconfig choice:
+
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` - The unknown use case (the default choice).
+  See the :ref:`ug_bt_fast_pair_use_case_unknown` subsection for more information.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` - The locator tag use case.
+  See the :ref:`ug_bt_fast_pair_use_case_locator_tag` subsection for more information.
+
+The selected Kconfig option configures the Fast Pair features and extensions to satisfy the `Fast Pair Device Feature Requirements`_ for your target use case.
+For certain device types, you may need to implement some of these requirements at the application level.
+In this case, refer to the following subsections describing Fast Pair use cases supported by the |NCS|.
+
+.. note::
+   To learn about the software maturity levels for Google Fast Pair use cases supported by the |NCS|, see the :ref:`software_maturity_fast_pair_use_case` table.
+
+.. _ug_bt_fast_pair_use_case_unknown:
+
+Unknown
+=======
+
+The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` Kconfig option is the default selection for the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE` Kconfig choice option.
+This use case configuration is neutral, which means it does not enable any Fast Pair features and extensions or impose restrictions on Fast Pair Kconfig options.
+You can use the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` Kconfig option to implement use cases that are not yet supported by the |NCS|.
+In this case, you must manually enable the required Fast Pair features and extensions in the application's Kconfig configuration.
+
+.. _ug_bt_fast_pair_use_case_locator_tag:
 
 Locator tag
 ===========
@@ -898,8 +922,8 @@ The locator tags can use different wireless technologies like GPS, Bluetooth LE 
 It is even possible to combine multiple technologies in a single product to improve the user experience.
 
 The `Fast Pair Device Feature Requirements for Locator Tags`_ documentation defines the Fast Pair requirements for the locator tag use case.
-If your product is targeting the locator tag use case, you must configure your application according to these requirements.
-Enable the mandatory Fast Pair features and extensions using the appropriate Kconfig options in your application's configuration.
+If your product is targeting the locator tag use case, you must enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` Kconfig option that automatically selects the appropriate Fast Pair configuration according to the use case requirements.
+This Kconfig option activates the necessary Fast Pair features and extensions while restricting the unsupported ones.
 For the reference configuration of the `Fast Pair Device Feature Requirements for Locator Tags`_  specification, see the :ref:`fast_pair_locator_tag` sample.
 
 The `Fast Pair Device Feature Requirements for Locator Tags`_ documentation refers to the `Fast Pair Locator Tag Specific Guidelines`_ section from the FMDN Accessory specification.
