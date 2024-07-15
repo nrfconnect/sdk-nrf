@@ -785,12 +785,12 @@ enum op_band {
  *  from the AP in power save mode.
  */
 enum data_retrieve_frame {
-    /** Retrieves data from the AP using a PS-Poll frame */
-    PS_POLL_FRAME,
-    /** Retrieves data from the AP using a QoS Null frame */
-    QOS_NULL_FRAME,
-    /** For future implementation. The RPU will decide which frame to use */
-    AUTOMATIC
+	/** Retrieves data from the AP using a PS-Poll frame */
+	PS_POLL_FRAME,
+	/** Retrieves data from the AP using a QoS Null frame */
+	QOS_NULL_FRAME,
+	/** For future implementation. The RPU will decide which frame to use */
+	AUTOMATIC
 };
 
 #define TWT_EXTEND_SP_EDCA  0x1
@@ -839,7 +839,7 @@ struct nrf_wifi_cmd_sys_init {
 	 */
 	unsigned int discon_timeout;
 	/** RPU uses QoS null frame or PS-Poll frame to retrieve buffered frames
-         *  from the AP in power save @ref data_retrieve_frame.
+	 * from the AP in power save @ref data_retrieve_frame.
 	 */
 	unsigned char ps_data_retrieval_mode;
 } __NRF_WIFI_PKD;
