@@ -1413,6 +1413,8 @@ void nrf_wifi_hal_dev_rem(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 				   hal_dev_ctx->recovery_tasklet);
 	nrf_wifi_osal_tasklet_free(hal_dev_ctx->hpriv->opriv,
 				   hal_dev_ctx->recovery_tasklet);
+	nrf_wifi_osal_spinlock_free(hal_dev_ctx->hpriv->opriv,
+					hal_dev_ctx->lock_recovery);
 
 	nrf_wifi_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
 
