@@ -348,3 +348,46 @@ Sidewalk:
     - modules/lib/zcbor/
     - bootloader/mcuboot/
     - sidewalk/
+
+find_my:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/crypto/tinycrypt/
+    - modules/lib/open-amp/
+    - nrf/applications/ipc_radio/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/fatal_error/
+    - nrf/lib/fprotect/
+    - nrf/lib/multithreading_lock/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/dfu/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/nfc/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrfxlib/crypto/
+    - nrfxlib/nfc/
+    - zephyr/soc/nordic/
+    - zephyr/drivers/sensor/adi/adxl362
+    - zephyr/drivers/sensor/bosch/bme680
+    - zephyr/drivers/sensor/bosch/bmi270
+    - zephyr/drivers/sensor/bosch/bmm150
+    - zephyr/drivers/sensor/voltage_divider
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/mem_mgmt/
+    - zephyr/subsys/net/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/usb/device/
+    - find-my/
