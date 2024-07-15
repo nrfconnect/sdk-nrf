@@ -209,7 +209,7 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: v2.7.0
+      revision: c1724a7e36c090504ba881ffc8401394402b20bc
       groups:
         - sidewalk
     - name: find-my
