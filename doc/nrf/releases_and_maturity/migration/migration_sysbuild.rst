@@ -670,21 +670,3 @@ In the sysbuild release included in the |NCS| 2.7, the following features of the
 
 * Moved and confirmed output files when MCUboot is enabled
     These files are not generated when using sysbuild so would need to be manually generated.
-
-* OpenSSL/custom signing for MCUboot images
-    This is not supported out of the box using sysbuild, but a custom signing script can be used which can be generated to use OpenSSL or a custom signing method, see :zephyr_file:`cmake/sysbuild/image_signing.cmake` for how signing is performed in |NCS|, this can be set from a module using the following code as an example:
-
-    .. code-block:: cmake
-
-        function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
-          set(<image>_SIGNING_SCRIPT "${ZEPHYR_MY_CUSTOM_MODULE_MODULE_DIR}/<path_to>/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
-        endfunction()
-
-    This must run after the |NCS| sysbuild cmake code has ran with a dependency, using a :file:`zephyr/module.yml` file similar to:
-
-    .. code-block:: yaml
-
-        build:
-          sysbuild-cmake: sysbuild
-          depends:
-            - hal_nordic
