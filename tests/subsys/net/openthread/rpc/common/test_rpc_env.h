@@ -51,6 +51,8 @@
 #define PORT_1	  0xff01
 #define PORT_2	  0xff02
 #define HOP_LIMIT 64
+#define DNS_NAME                                                                                   \
+	STR_SEQUENCE(63), '.', STR_SEQUENCE(63), '.', STR_SEQUENCE(63), '.', STR_SEQUENCE(63)
 
 #define MADDR_FF02_1  0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01
 #define EXT_ADDR      0x48, INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)
@@ -75,6 +77,7 @@
 #define CBOR_MSG_INFO                                                                              \
 	0x50, ADDR_1, 0x50, ADDR_2, CBOR_UINT16(PORT_1), CBOR_UINT16(PORT_2), CBOR_UINT8(64), 3,   \
 		CBOR_TRUE, CBOR_TRUE, CBOR_TRUE
+#define CBOR_DNS_NAME 0x78, 0xff, DNS_NAME
 #define CBOR_ADDR1 0x50, ADDR_1
 
 #define CBOR_SOC_ADDR CBOR_ADDR1, CBOR_UINT16(1024)
