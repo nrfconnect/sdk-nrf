@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice BT_FAST_PAIR_USE_CASE
+	prompt "Use case selection"
+	default BT_FAST_PAIR_USE_CASE_UNKNOWN
+	help
+	  Select the Fast Pair use case to configure the Fast Pair features and extensions
+	  that satisfy the device feature requirements from the Google Fast Pair specification:
+	  https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement.
+	  The use case selection should match the device type selection for your Fast Pair Model
+	  in the Google Nearby Console.
+
+config BT_FAST_PAIR_USE_CASE_UNKNOWN
+	bool "Unknown use case"
+	help
+	  Select the unknown Fast Pair use case. This use case configuration is neutral and is the
+	  default choice selection. The unknown use case does not enable any Fast Pair features and
+	  extensions or impose restrictions on Fast Pair Kconfig options.
+
+config BT_FAST_PAIR_USE_CASE_LOCATOR_TAG
+	bool "Locator tag use case"
+	select BT_FAST_PAIR_FMDN
+	select BT_FAST_PAIR_FMDN_DULT
+	help
+	  Select the locator tag Fast Pair use case. Locator tag is a small electronic device that
+	  can be attached to an object or a person, and is designed to help locate them in case
+	  they are missing. This Kconfig option configures the Fast Pair features and extensions
+	  to satisfy the locator tag device feature requirements from the Google Fast Pair
+	  specification:
+	  https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement/devicefeaturerequirement_locatortags.
+
+endchoice

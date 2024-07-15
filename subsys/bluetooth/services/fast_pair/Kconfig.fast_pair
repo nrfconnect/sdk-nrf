@@ -12,6 +12,8 @@ menuconfig BT_FAST_PAIR
 
 if BT_FAST_PAIR
 
+rsource "use_case/Kconfig"
+
 config BT_FAST_PAIR_SUBSEQUENT_PAIRING
 	bool "Fast Pair subsequent pairing [EXPERIMENTAL]"
 	default y if !BT_FAST_PAIR_FMDN
