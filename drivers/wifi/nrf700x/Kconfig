@@ -403,3 +403,15 @@ config NRF_WIFI_AP_DEAD_DETECT_TIMEOUT
 	help
 		The number of seconds after which AP is declared dead if no beacons
 		are received from the AP. Used to detect AP silently going down e.g., power off.
+
+choice NRF_WIFI_PS_DATA_RETRIEVAL_MODE
+	prompt "Power save data retrieval mode"
+	default NRF_WIFI_PS_POLL_BASED_RETRIEVAL
+	help
+	  Select the mechanism to retrieve buffered data from AP.
+config NRF_WIFI_PS_POLL_BASED_RETRIEVAL
+	bool "PS-Poll based mechanism to retrieve buffered data from AP"
+config NRF_WIFI_QOS_NULL_BASED_RETRIEVAL
+	bool "QoS null frame based mechanism to retrieve buffered data from AP"
+
+endchoice
