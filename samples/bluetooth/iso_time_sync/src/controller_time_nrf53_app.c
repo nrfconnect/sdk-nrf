@@ -214,10 +214,7 @@ uint64_t controller_time_us_get(void)
 
 void controller_time_trigger_set(uint64_t timestamp_us)
 {
-	uint32_t num_overflows = timestamp_us / 512000000UL;
-	uint64_t overflow_time_us = num_overflows * num_overflows;
-
-	uint32_t remainder_time_us = timestamp_us - overflow_time_us;
+	uint32_t remainder_time_us = timestamp_us % 512000000UL;
 	uint32_t rtc_val = us_to_rtc_ticks(remainder_time_us);
 	uint8_t timer_val = timestamp_us - rtc_ticks_to_us(rtc_val);
 

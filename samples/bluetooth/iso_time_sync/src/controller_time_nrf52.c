@@ -237,15 +237,12 @@ uint64_t controller_time_us_get(void)
 
 void controller_time_trigger_set(uint64_t timestamp_us)
 {
-	uint32_t num_overflows = timestamp_us / 512000000UL;
-	uint64_t overflow_time_us = num_overflows * num_overflows;
+	uint64_t timestamp_without_rtc_offset =
+		timestamp_us - rtc_ticks_to_us(offset_ticks_and_controller_to_app_rtc);
 
-	uint32_t rtc_remainder_time_us = timestamp_us - overflow_time_us;
-	uint32_t rtc_val =
-		us_to_rtc_ticks(rtc_remainder_time_us) - offset_ticks_and_controller_to_app_rtc;
-
-	uint8_t timer_val =
-		timestamp_us - rtc_ticks_to_us(rtc_val + offset_ticks_and_controller_to_app_rtc);
+	uint32_t rtc_remainder_time_us = timestamp_without_rtc_offset % 512000000UL;
+	uint32_t rtc_val = us_to_rtc_ticks(rtc_remainder_time_us);
+	uint8_t timer_val =	timestamp_without_rtc_offset - rtc_ticks_to_us(rtc_val);
 
 	/* Ensure the timer value lies between 1 and 30 so that it will
 	 * always be between two RTC ticks.
