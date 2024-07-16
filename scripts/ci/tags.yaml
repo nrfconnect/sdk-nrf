@@ -597,3 +597,11 @@ applications_asset_tracker_v2:
     - zephyr/subsys/tracing/
     - zephyr/subsys/random/
     - zephyr/subsys/fs/
+
+sample_edge_impulse:
+  files:
+    - nrf/drivers/sensor/sensor_sim/
+    - nrf/lib/edge_impulse/
+    - nrf/lib/wave_gen/
+    - nrf/samples/edge_impulse/
+    - zephyr/soc/nordic/

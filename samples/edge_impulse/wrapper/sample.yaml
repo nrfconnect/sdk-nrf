@@ -32,4 +32,4 @@ tests:
   sample.edge_impulse.wrapper:
     sysbuild: true
     build_only: false
-    tags: sysbuild
+    tags: sysbuild sample_edge_impulse
