@@ -149,51 +149,51 @@ suit_ssf_err_t suit_get_installed_manifest_info(suit_manifest_class_id_t *manife
 		return SUIT_PLAT_ERR_IPC;
 	}
 
-	rsp_data = &rsp.SSF_SUIT_RSP(get_installed_manifest_info);
-	ret = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, ret);
-	if (ret != SUIT_PLAT_SUCCESS) {
-		ssf_client_decode_done(rsp_pkt);
-		return ret;
-	}
+	// rsp_data = &rsp.SSF_SUIT_RSP(get_installed_manifest_info);
+	// ret = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, ret);
+	// if (ret != SUIT_PLAT_SUCCESS) {
+	// 	ssf_client_decode_done(rsp_pkt);
+	// 	return ret;
+	// }
 
-	*seq_num = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, seq_num);
+	// *seq_num = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, seq_num);
 
-	if (version != NULL) {
-		if (rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, semver_int_count) >
-		    ARRAY_SIZE(version->raw)) {
-			ssf_client_decode_done(rsp_pkt);
-			return SUIT_PLAT_ERR_SIZE;
-		}
+	// if (version != NULL) {
+	// 	if (rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, semver_int_count) >
+	// 	    ARRAY_SIZE(version->raw)) {
+	// 		ssf_client_decode_done(rsp_pkt);
+	// 		return SUIT_PLAT_ERR_SIZE;
+	// 	}
 
-		version->len =
-			rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, semver_int_count);
-		for (size_t i = 0; i < version->len; i++) {
-			version->raw[i] = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info,
-								     semver_int)[i];
-		}
-	}
+	// 	version->len =
+	// 		rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, semver_int_count);
+	// 	for (size_t i = 0; i < version->len; i++) {
+	// 		version->raw[i] = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info,
+	// 							     semver_int)[i];
+	// 	}
+	// }
 
-	if (status != NULL) {
-		*status = (suit_digest_status_t)rsp_data->SSF_SUIT_RSP_ARG(
-			get_installed_manifest_info, digest_status);
-	}
+	// if (status != NULL) {
+	// 	*status = (suit_digest_status_t)rsp_data->SSF_SUIT_RSP_ARG(
+	// 		get_installed_manifest_info, digest_status);
+	// }
 
-	if ((alg_id != NULL) && (digest != NULL)) {
-		const size_t manifest_digest_len =
-			rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, digest).len;
-		if (manifest_digest_len > digest->size) {
-			ssf_client_decode_done(rsp_pkt);
-			return SUIT_PLAT_ERR_NOMEM;
-		}
+	// if ((alg_id != NULL) && (digest != NULL)) {
+	// 	const size_t manifest_digest_len =
+	// 		rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, digest).len;
+	// 	if (manifest_digest_len > digest->size) {
+	// 		ssf_client_decode_done(rsp_pkt);
+	// 		return SUIT_PLAT_ERR_NOMEM;
+	// 	}
 
-		*alg_id = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, alg_id);
-		memcpy((uint8_t *)digest->mem,
-		       rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, digest).value,
-		       manifest_digest_len);
-		digest->size = manifest_digest_len;
-	}
+	// 	*alg_id = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, alg_id);
+	// 	memcpy((uint8_t *)digest->mem,
+	// 	       rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, digest).value,
+	// 	       manifest_digest_len);
+	// 	digest->size = manifest_digest_len;
+	// }
 
-	ssf_client_decode_done(rsp_pkt);
+	// ssf_client_decode_done(rsp_pkt);
 	return ret;
 }
 
