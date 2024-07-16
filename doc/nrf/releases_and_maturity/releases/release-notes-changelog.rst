@@ -204,8 +204,13 @@ nRF Desktop
 
 * Added a debug configuration enabling the `Fast Pair`_ feature on the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
 
-* Updated the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option value in configurations with the Fast Pair support.
-  The value is now aligned with the Fast Pair requirements.
+* Updated:
+
+  * The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option value in configurations with the Fast Pair support.
+    The value is now aligned with the Fast Pair requirements.
+  * The :kconfig:option:`CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE` Kconfig option value in the nRF54L15 PDK configurations to ensure short write slots.
+    It prevents timeouts in the MPSL flash synchronization caused by allocating long write slots while maintaining a Bluetooth LE connection with short intervals and no connection latency.
+
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
