@@ -1,0 +1,8 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+// Base path of the following includes points to the nrf/include directory.
+#include <../samples/matter/common/dts/nrf54h20/nrf54h20_cpurad_memory_map.dtsi>
