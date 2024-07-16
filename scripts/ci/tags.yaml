@@ -632,3 +632,15 @@ ci_tests_subsys_bootloader:
     - nrfxlib/crypto/
     - nrfxlib/nrf_modem/
     - zephyr/soc/nordic/
+
+ci_samples_app_event_manager:
+  files:
+    - nrf/samples/app_event_manager/
+    - nrf/subsys/app_event_manager/
+    - nrf/include/app_event_manager.h
+
+ci_tests_subsys_app_event_manager:
+  files:
+    - nrf/tests/subsys/app_event_manager/
+    - nrf/subsys/app_event_manager/
+    - nrf/include/app_event_manager.h
