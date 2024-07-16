@@ -419,7 +419,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include_provision_hex()
   endif()
 
-  if(SB_CONFIG_MATTER_FACTORY_DATA_GENERATE AND SB_CONFIG_PARTITION_MANAGER)
+  if(SB_CONFIG_MATTER_FACTORY_DATA_GENERATE)
     include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data_sysbuild.cmake)
     nrfconnect_generate_factory_data()
   endif()
