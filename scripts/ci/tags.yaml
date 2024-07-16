@@ -516,3 +516,21 @@ peripheral_802154:
     - nrfxlib/nrf_rpc/
     - zephyr/modules/hal_nordic/nrf_802154/
     - zephyr/soc/nordic/
+
+keys:
+  files:
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/lib/fprotect/
+    - nrf/lib/hw_unique_key/
+    - nrf/lib/identity_key/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/samples/keys/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_modem/
+    - zephyr/soc/nordic/
