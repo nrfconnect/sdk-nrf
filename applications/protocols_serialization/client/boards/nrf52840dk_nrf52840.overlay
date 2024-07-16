@@ -3,6 +3,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+ / {
+	chosen {
+		nordic,rpc-uart = &uart1;
+	};
+};
+
 &uart1 {
 	status = "okay";
 	hw-flow-control;

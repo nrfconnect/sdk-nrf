@@ -113,7 +113,16 @@ Therefore, in order to enable the communication between the client and the serve
 
 <img src="resources/uart_wiring.png" alt="image" width="300" height="auto">
 
+The nRF54l15 system-on-chip uses by default `uart21` for RPC and `uart20` is used for shell.
 
+The `uart21` peripheral is configured to use the following pins:
+
+- **P1.10**: RX
+- **P1.11**: TX
+- **P1.12**: RTS (hardware flow control)
+- **P1.13**: CTS (hardware flow control)
+
+<img src="resources/nrf54l_connections.png" alt="image" width="300" height="auto">
 
 ## Testing
 

@@ -18,7 +18,7 @@
 #ifdef CONFIG_NRF_RPC_IPC_SERVICE
 NRF_RPC_IPC_TRANSPORT(ot_rpc_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "ot_rpc_ept");
 #elif defined(CONFIG_NRF_RPC_UART_TRANSPORT)
-#define ot_rpc_tr NRF_RPC_UART_TRANSPORT(DT_NODELABEL(uart1))
+#define ot_rpc_tr NRF_RPC_UART_TRANSPORT(DT_CHOSEN(nordic_rpc_uart))
 #elif defined(CONFIG_MOCK_NRF_RPC_TRANSPORT)
 #define ot_rpc_tr mock_nrf_rpc_tr
 #endif
