@@ -31,6 +31,7 @@ target_sources(app PRIVATE
     src/app_task.cpp
     src/main.cpp
     src/bridge_shell.cpp
+    src/zcl_callbacks.cpp
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_manager.cpp
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/matter_bridged_device.cpp
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_storage_manager.cpp
