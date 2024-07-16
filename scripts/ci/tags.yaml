@@ -534,3 +534,15 @@ keys:
     - nrfxlib/crypto/
     - nrfxlib/nrf_modem/
     - zephyr/soc/nordic/
+
+esb:
+  files:
+    - modules/hal/nordic/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/samples/esb/
+    - nrf/samples/nrf5340/empty_app_core/
+    - nrf/subsys/esb/
+    - nrf/subsys/mpsl/
+    - nrfxlib/crypto/
+    - zephyr/soc/nordic/
