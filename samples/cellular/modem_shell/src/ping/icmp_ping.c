@@ -431,7 +431,7 @@ wait_for_data:
 		ret = setsockopt(fd, SOL_SOCKET, SO_RAI, &rai_option, sizeof(rai_option));
 		if (ret) {
 			ping_error(
-				ping_args, "setsockopt() for SO_RAI_NO_DATA failed with error %d",
+				ping_args, "setsockopt() for RAI_NO_DATA failed with error %d",
 				    errno);
 			goto close_end;
 		}
