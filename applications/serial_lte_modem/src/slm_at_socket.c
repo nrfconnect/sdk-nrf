@@ -354,26 +354,6 @@ static int at_sockopt_to_sockopt(enum at_sockopt at_option, int *level, int *opt
 		*level = SOL_SOCKET;
 		*option = SO_RAI;
 		break;
-	case AT_SO_RAI_NO_DATA:
-		*level = SOL_SOCKET;
-		*option = SO_RAI_NO_DATA;
-		break;
-	case AT_SO_RAI_LAST:
-		*level = SOL_SOCKET;
-		*option = SO_RAI_LAST;
-		break;
-	case AT_SO_RAI_ONE_RESP:
-		*level = SOL_SOCKET;
-		*option = SO_RAI_ONE_RESP;
-		break;
-	case AT_SO_RAI_ONGOING:
-		*level = SOL_SOCKET;
-		*option = SO_RAI_ONGOING;
-		break;
-	case AT_SO_RAI_WAIT_MORE:
-		*level = SOL_SOCKET;
-		*option = SO_RAI_WAIT_MORE;
-		break;
 	case AT_SO_TCP_SRV_SESSTIMEO:
 		*level = IPPROTO_TCP;
 		*option = SO_TCP_SRV_SESSTIMEO;
@@ -404,11 +384,6 @@ static int sockopt_set(enum at_sockopt at_option, int at_value)
 		tmo.tv_sec = at_value;
 		value = &tmo;
 		len = sizeof(tmo);
-	} else if (level == SOL_SOCKET && (option == SO_RAI_LAST || option == SO_RAI_NO_DATA ||
-					   option == SO_RAI_ONE_RESP || option == SO_RAI_ONGOING ||
-					   option == SO_RAI_WAIT_MORE)) {
-		value = NULL;
-		len = 0;
 	}
 
 	ret = setsockopt(sock.fd, level, option, value, len);

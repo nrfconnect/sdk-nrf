@@ -241,6 +241,7 @@ Serial LTE modem
 * Removed:
 
   * Support for the :file:`overlay-native_tls.conf` configuration file with the ``thingy91/nrf9160/ns`` board target.
+  * Support for deprecated RAI socket options ``AT_SO_RAI_LAST``, ``AT_SO_RAI_NO_DATA``, ``AT_SO_RAI_ONE_RESP``, ``AT_SO_RAI_ONGOING``, and ``AT_SO_RAI_WAIT_MORE``.
 
 * Updated:
 
