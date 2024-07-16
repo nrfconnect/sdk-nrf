@@ -290,6 +290,7 @@ suit:
     - nrf/subsys/sdfw_services/
     - nrf/subsys/mgmt/suitfu/
     - nrf/tests/subsys/suit/
+    - nrf/samples/suit/
     - modules/lib/suit-processor/
     - modules/lib/suit-generator/
 
