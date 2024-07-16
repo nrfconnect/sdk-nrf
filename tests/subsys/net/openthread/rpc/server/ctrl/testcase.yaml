@@ -1,5 +1,5 @@
 tests:
-  net.openthread.rpc.server:
+  net.openthread.rpc.server.ctrl:
     sysbuild: true
     platform_allow: native_sim
     tags: openthread ci_build sysbuild
