@@ -64,6 +64,13 @@ bluetooth:
     - nrf/tests/subsys/bluetooth/
     - nrf/applications/nrf_desktop/
     - nrf/samples/nrf5340/multiprotocol_rpmsg/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/crypto/tinycrypt/
+    - nrf/subsys/nrf_security/
+    - nrfxlib/crypto/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/settings/
 
 net:
   files:
