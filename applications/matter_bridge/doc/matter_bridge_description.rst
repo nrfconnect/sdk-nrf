@@ -98,6 +98,9 @@ For example:
 
 For information about how to upgrade the device firmware using a PC or a smartphone, see the :ref:`matter_bridge_app_dfu` section.
 
+.. note::
+    Currently the DFU over Bluetooth LE SMP and Matter OTA are not available for the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
+
 .. _matter_bridge_app_bridged_support:
 
 Bridged device support
@@ -497,6 +500,11 @@ Build the target using the following command in the project directory to enable 
 
    west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
 
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_WIFI_NRF700X=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
+
 .. _matter_bridge_app_bt_security:
 
 Configuring the Bluetooth LE security
@@ -580,6 +588,14 @@ For example:
    .. code-block:: console
 
       west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y -DSB_CONFIG_WIFI_NRF700X=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
+
+
+To use the nRF54H20 DK with the ``nrf7002ek`` shield (2.4 GHz or 5 GHz), follow the :ref:`ug_nrf7002eb_nrf54h20dk_gs` user guide to connect all required pins.
+Once connected, run the following command to build the sample:
+
+   .. code-block:: console
+
+      west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF700X=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk
 
 Selecting a configuration
 =========================
