@@ -197,6 +197,7 @@ Matter Bridge
   * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option, which specifies ZAP files location for the application.
     By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to application's location that contains the ZAP file and :file:`zap-generated` directory.
   * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+  * Optional smart plug device functionality.
 
 nRF5340 Audio
 -------------
