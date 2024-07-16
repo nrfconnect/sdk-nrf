@@ -10,6 +10,12 @@ Bluetooth: Peripheral HIDS mouse
 The Peripheral HIDS mouse sample demonstrates how to use the :ref:`hids_readme` to implement a mouse input device that you can connect to your computer.
 This sample also shows how to perform directed advertising.
 
+.. note::
+   Apart from HID samples, the |NCS| provides a complete reference application design of :term:`Human Interface Device (HID)`.
+   Depending on the configuration, the application can work as a desktop mouse, gaming mouse, keyboard, or connection dongle.
+   It supports connection over Bluetooth® LE, USB, or both.
+   For details, see the :ref:`nrf_desktop` documentation.
+
 Requirements
 ************
 
