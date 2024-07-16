@@ -10,7 +10,7 @@ tests:
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52810
     platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf52dk/nrf52810
-    tags: samples console sysbuild
+    tags: esb samples console sysbuild
   sample.esb.prx.build:
     sysbuild: true
     build_only: true
