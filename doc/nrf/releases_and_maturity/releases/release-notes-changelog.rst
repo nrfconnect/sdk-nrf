@@ -575,6 +575,10 @@ Modem libraries
 
   * Fixed a potential issue with scanf in the :c:func:`modem_info_get_current_band` function, which could lead to memory corruption.
 
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Removed support for deprecated RAI socket options ``SO_RAI_LAST``, ``SO_RAI_NO_DATA``, ``SO_RAI_ONE_RESP``, ``SO_RAI_ONGOING``, and ``SO_RAI_WAIT_MORE``.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
