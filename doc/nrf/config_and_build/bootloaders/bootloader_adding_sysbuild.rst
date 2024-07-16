@@ -358,8 +358,16 @@ To make ``s1_image`` bootable with |NSIB|, the value of :kconfig:option:`CONFIG_
 Using MCUboot in firmware loader mode
 **************************************
 
-MCUboot supports a firmware loader mode which is supported in sysbuild. This mode allows for a project to consist of an MCUboot image (optionally with serial recovery), a main application which does not support firmware updates, and a secondary application which is dedicated to loading firmware updates. The benefit of this is for having a dedicated application purely for loading firmware updates e.g. over Bluetooth and allowing the size of tha main application to be smaller, helping on devices with limited flash or RAM.
-In order to use this mode, a static partition file must be created for the application to designate the addresses and sizes of the main image and firmware loader applications, the firmware loader partition **must** be named ``firmware_loader``. The following is an example static partition manager file for the nRF53:
+MCUboot includes a firmware loader mode supported in sysbuild.
+This mode enables a project configuration that includes MCUboot instance (optionally with serial recovery), a main application not intended for firmware updates, and a secondary application which is dedicated to loading firmware updates.
+The benefit of this configuration is having a dedicated application for loading firmware updates, for example, over Bluetooth.
+This allows the main application to be larger in comparison to any symmetric size dual-bank mode update, which helps on devices with limited flash or RAM.
+
+To use this mode, you must create a static partition file for the application that designates the addresses and sizes of the main image and firmware loader applications.
+Ensure the firmware loader partition is named ``firmware_loader``.
+This partition must be located identically as ``mcuboot_secondary_app`` partition, starting after the image's header offset within ``mcuboot_secondary`` partition.
+
+The following is an example static Partition Manager file for the nRF53 devices:
 
 .. code-block:: yaml
 
