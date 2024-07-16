@@ -6,26 +6,32 @@ tests:
     build_only: true
     platform_allow: >
       nrf52840dk/nrf52840
+      nrf54l15pdk/nrf54l15/cpuapp
     tags: ci_build
     extra_args: >
       SNIPPET="ble"
     integration_platforms:
       - nrf52840dk/nrf52840
+      - nrf54l15pdk/nrf54l15/cpuapp
   applications.protocols_serialization.server.rpc_ot:
     build_only: true
     platform_allow: >
       nrf52840dk/nrf52840
+      nrf54l15pdk/nrf54l15/cpuapp
     tags: ci_build
     extra_args: >
       SNIPPET="openthread"
     integration_platforms:
       - nrf52840dk/nrf52840
+      - nrf54l15pdk/nrf54l15/cpuapp
   applications.protocols_serialization.server.rpc:
     build_only: true
     platform_allow: >
       nrf52840dk/nrf52840
+      nrf54l15pdk/nrf54l15/cpuapp
     tags: ci_build
     extra_args: >
       SNIPPET="ble;openthread"
     integration_platforms:
       - nrf52840dk/nrf52840
+      - nrf54l15pdk/nrf54l15/cpuapp
