@@ -38,16 +38,18 @@ static void ot_cli_lazy_init(const struct shell *sh)
 typedef otError(*ot_cli_command_handler_t)(const struct shell *, size_t argc, char *argv[]);
 
 /*
- * Adapter function for processing OpenThread shell commands, which is convenient to call from
- * a Zephyr shell command handler. It is meant to duplicate the behavior of the internal OT CLI
- * component with regards to printing the command's result.
+ * Invokes the OT shell command handler with the provided arguments. Then prints either
+ * "Done", if the handler returns no error, or an OpenThread error code that the handler
+ * returns.
+ *
+ * This is meant to duplicate the behavior of the OpenThread's CLI subsystem, which prints
+ * the command result in a similar manner.
  */
 static int ot_cli_command_invoke(ot_cli_command_handler_t handler, const struct shell *sh,
 				 size_t argc, char *argv[])
 {
 	otError error;
 
-	ot_cli_lazy_init(sh);
 	error = handler(sh, argc, argv);
 
 	if (error != OT_ERROR_NONE) {
@@ -56,6 +58,46 @@ static int ot_cli_command_invoke(ot_cli_command_handler_t handler, const struct 
 	}
 
 	shell_print(sh, "Done");
+	return 0;
+}
+
+/*
+ * Sends the command to the RCP server as a line of text. The command is then processed by
+ * the RPC server and its result is returned asynchronously using OT CLI output callback.
+ *
+ * This is a fallback function for commands that cannot be processed by the RPC client
+ * because serialization of the underlying OpenThread APIs is not yet implemented.
+ */
+static int ot_cli_command_send(const struct shell *sh, size_t argc, char *argv[])
+{
+	char buffer[CONFIG_SHELL_CMD_BUFF_SIZE];
+	char *ptr = buffer;
+	char *end = buffer + sizeof(buffer);
+
+	ot_cli_lazy_init(sh);
+
+	for (size_t i = 1; i < argc; i++) {
+		int arg_len = snprintk(ptr, end - ptr, "%s", argv[i]);
+
+		if (arg_len < 0) {
+			return arg_len;
+		}
+
+		ptr += arg_len;
+
+		if (ptr >= end) {
+			shell_fprintf(sh, SHELL_WARNING, "OT shell buffer full\n");
+			return -ENOEXEC;
+		}
+
+		if (i + 1 < argc) {
+			*ptr++ = ' ';
+		}
+	}
+
+	*ptr = '\0';
+	otCliInputLine(buffer);
+
 	return 0;
 }
 
@@ -349,6 +391,14 @@ static int cmd_pollperiod(const struct shell *sh, size_t argc, char *argv[])
 
 static int cmd_state(const struct shell *sh, size_t argc, char *argv[])
 {
+	if (argc > 1) {
+		/*
+		 * Serialization of OT APIs for enforcing the role is to be done,
+		 * so send the command to be processed by the RPC server.
+		 */
+		return ot_cli_command_send(sh, argc + 1, argv - 1);
+	}
+
 	return ot_cli_command_invoke(ot_cli_command_state, sh, argc, argv);
 }
 
@@ -357,49 +407,18 @@ static int cmd_thread(const struct shell *sh, size_t argc, char *argv[])
 	return ot_cli_command_invoke(ot_cli_command_thread, sh, argc, argv);
 }
 
-/*
- * Root/fallback command handler for OpenThread shell commands that have not been implemented
- * using the Zephyr shell framework and must be relayed to the internal OpenThread's CLI component.
- */
 static int cmd_ot(const struct shell *sh, size_t argc, char *argv[])
 {
-	char buffer[128];
-	char *ptr = buffer;
-	char *end = buffer + sizeof(buffer);
-
-	ot_cli_lazy_init(sh);
-
-	for (size_t i = 1; i < argc; i++) {
-		int arg_len = snprintk(ptr, end - ptr, "%s", argv[i]);
-
-		if (arg_len < 0) {
-			return arg_len;
-		}
-
-		ptr += arg_len;
-
-		if (ptr >= end) {
-			shell_fprintf(sh, SHELL_WARNING, "OT shell buffer full\n");
-			return -ENOEXEC;
-		}
-
-		if (i + 1 < argc) {
-			*ptr++ = ' ';
-		}
-	}
-
-	*ptr = '\0';
-	otCliInputLine(buffer);
-
-	return 0;
+	return ot_cli_command_send(sh, argc, argv);
 }
 
-SHELL_STATIC_SUBCMD_SET_CREATE(ot_cmds,
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	ot_cmds,
 	SHELL_CMD_ARG(ifconfig, NULL, "Interface management", cmd_ifconfig, 1, 1),
 	SHELL_CMD_ARG(ipmaddr, NULL, "IPv6 multicast configuration", cmd_ipmaddr, 1, 2),
 	SHELL_CMD_ARG(mode, NULL, "Mode configuration", cmd_mode, 1, 1),
 	SHELL_CMD_ARG(pollperiod, NULL, "Polling configuration", cmd_pollperiod, 1, 1),
-	SHELL_CMD_ARG(state, NULL, "Current role", cmd_state, 1, 0),
+	SHELL_CMD_ARG(state, NULL, "Current role", cmd_state, 1, 1),
 	SHELL_CMD_ARG(thread, NULL, "Role management", cmd_thread, 2, 0),
 	SHELL_CMD_ARG(discover, NULL, "Thread discovery scan", cmd_discover, 1, 4),
 	SHELL_CMD_ARG(active_tlvs, NULL, "Set active dataset", cmd_active_tlvs, 1, 1),
