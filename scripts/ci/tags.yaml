@@ -477,3 +477,42 @@ cellular:
     - modules/lib/cjson/
     - modules/lib/hostap/
     - modules/lib/zcbor/
+
+radio_test:
+  files:
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/hal/nordic/
+    - modules/lib/open-amp/open-amp/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/lib/fem_al/
+    - nrf/samples/peripheral/radio_test/
+    - nrf/samples/nrf5340/remote_shell/
+    - nrf/subsys/mpsl/fem/
+    - nrf/subsys/nrf_security/
+    - nrfxlib/crypto/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/ipc/
+
+peripheral_802154:
+  files:
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/hal/nordic/
+    - modules/lib/open-amp/open-amp/
+    - modules/lib/zcbor/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/samples/nrf5340/remote_shell/
+    - nrf/samples/peripheral/802154_phy_test/
+    - nrf/samples/peripheral/802154_sniffer/
+    - nrf/subsys/mpsl/fem/
+    - nrf/subsys/nrf_security/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_802154/
+    - nrfxlib/nrf_rpc/
+    - zephyr/modules/hal_nordic/nrf_802154/
+    - zephyr/soc/nordic/
