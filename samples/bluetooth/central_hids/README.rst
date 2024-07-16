@@ -10,6 +10,12 @@ Bluetooth: Central HIDS
 The Central HIDS sample demonstrates how to use the :ref:`hogp_readme` to interact with a HIDS server.
 Basically, the sample simulates a computer that connects to a mouse or a keyboard.
 
+.. note::
+   Apart from HID samples, the |NCS| provides a complete reference application design of :term:`Human Interface Device (HID)`.
+   Depending on the configuration, the application can work as a desktop mouse, gaming mouse, keyboard, or connection dongle.
+   It supports connection over Bluetooth® LE, USB, or both.
+   For details, see the :ref:`nrf_desktop` documentation.
+
 Requirements
 ************
 

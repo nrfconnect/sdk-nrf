@@ -11,6 +11,12 @@ The Peripheral HIDS keyboard sample demonstrates how to use the :ref:`hids_readm
 
 The sample also shows how to perform LE Secure Connections Out-of-Band pairing using NFC.
 
+.. note::
+   Apart from HID samples, the |NCS| provides a complete reference application design of :term:`Human Interface Device (HID)`.
+   Depending on the configuration, the application can work as a desktop mouse, gaming mouse, keyboard, or connection dongle.
+   It supports connection over Bluetooth® LE, USB, or both.
+   For details, see the :ref:`nrf_desktop` documentation.
+
 Requirements
 ************
 
