@@ -336,7 +336,9 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`802154_sniffer` sample:
+
+  * Increased the number of RX buffers to reduce the chances of frame drops during high traffic periods.
 
 PMIC samples
 ------------
