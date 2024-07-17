@@ -29,6 +29,7 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 		 ZBUS_MSG_INIT(0));
 
 static uint8_t bis_encryption_key[BT_ISO_BROADCAST_CODE_SIZE] = {0};
+static bool broadcast_code_received;
 
 struct audio_codec_info {
 	uint8_t id;
@@ -395,6 +396,7 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_
 {
 	int ret;
 	struct bt_bap_stream *audio_streams_p[] = {&audio_streams[active_stream_index]};
+	static uint32_t prev_broadcast_id;
 
 	LOG_DBG("Broadcast sink is syncable");
 
@@ -426,6 +428,18 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_
 		memcpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
 		       MIN(strlen(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
 			   ARRAY_SIZE(bis_encryption_key)));
+	} else {
+		/* If the biginfo shows the stream is encrypted, then wait until broadcast code is
+		 * received then start to sync. If headset is out of sync but still looking for same
+		 * broadcaster, then the same broadcast code can be used.
+		 */
+		if (!broadcast_code_received && biginfo->encryption == true &&
+		    sink->broadcast_id != prev_broadcast_id) {
+			LOG_WRN("Stream is encrypted, but haven not received broadcast code");
+			return;
+		}
+
+		broadcast_code_received = false;
 	}
 
 	ret = bt_bap_broadcast_sink_sync(broadcast_sink, bis_index_bitfields[active_stream_index],
@@ -435,6 +449,8 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_
 		LOG_WRN("Unable to sync to broadcast source, ret: %d", ret);
 		return;
 	}
+
+	prev_broadcast_id = sink->broadcast_id;
 
 	/* Only a single stream used for now */
 	active_stream.stream = &audio_streams[active_stream_index];
@@ -557,6 +573,7 @@ int broadcast_sink_broadcast_code_set(uint8_t *broadcast_code)
 	}
 
 	memcpy(bis_encryption_key, broadcast_code, BT_ISO_BROADCAST_CODE_SIZE);
+	broadcast_code_received = true;
 
 	return 0;
 }

@@ -401,14 +401,14 @@ static struct bt_bap_scan_delegator_cb scan_delegator_cbs = {
 	.bis_sync_req = bis_sync_req_cb,
 };
 
-void bt_mgmt_broadcast_code_get(uint8_t *broadcast_code)
+void bt_mgmt_broadcast_code_ptr_get(uint8_t **broadcast_code_ptr)
 {
 	if (broadcast_code == NULL) {
 		LOG_ERR("Null pointer given");
 		return;
 	}
 
-	memcpy(broadcast_code, bt_mgmt_broadcast_code, BT_AUDIO_BROADCAST_CODE_SIZE);
+	*broadcast_code = bt_mgmt_broadcast_code;
 }
 
 void bt_mgmt_scan_delegator_init(void)

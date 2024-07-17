@@ -179,11 +179,11 @@ int bt_mgmt_bonding_clear(void);
 void bt_mgmt_scan_delegator_init(void);
 
 /**
- * @brief	Get the broadcast code.
+ * @brief	Get the pointer to broadcast code.
  *
- * @param[out]	broadcast_code	Pointer to the broadcast code.
+ * @param[out]	broadcast_code_ptr	Pointer to the broadcast code.
  */
-void bt_mgmt_broadcast_code_get(uint8_t *broadcast_code);
+void bt_mgmt_broadcast_code_ptr_get(uint8_t **broadcast_code_ptr);
 
 /**
  * @brief	Delete a periodic advertisement sync.
