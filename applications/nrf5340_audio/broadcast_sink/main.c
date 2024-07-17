@@ -321,7 +321,7 @@ static void le_audio_msg_sub_thread(void)
 static void bt_mgmt_msg_sub_thread(void)
 {
 	int ret;
-	static uint8_t broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE];
+	static uint8_t *broadcast_code;
 	const struct zbus_channel *chan;
 
 	while (1) {
@@ -390,7 +390,7 @@ static void bt_mgmt_msg_sub_thread(void)
 		case BT_MGMT_BROADCAST_CODE_RECEIVED:
 			LOG_DBG("Broadcast code received");
 
-			bt_mgmt_broadcast_code_get(broadcast_code);
+			bt_mgmt_broadcast_code_ptr_get(&broadcast_code);
 
 			ret = broadcast_sink_broadcast_code_set(broadcast_code);
 			if (ret) {
