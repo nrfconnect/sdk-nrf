@@ -19,6 +19,14 @@
 #include "common.h"
 #include "kmu.h"
 
+/* Reserved slot, used to record whether provisioning is in progress for a set of slots.
+ * We only use the metadata field, formatted as follows:
+ *      Bits 31-16: Unused
+ *      Bits 15-8:  slot-id
+ *      Bits 7-0:   number of slots
+ */
+#define PROVISIONING_SLOT 250
+
 extern nrf_security_mutex_t cracen_mutex_symmetric;
 
 /* The section .nrf_kmu_reserved_push_area is placed at the top RAM address
@@ -225,7 +233,7 @@ int cracen_kmu_clean_key(const uint8_t *user_data)
 
 /**
  * @brief Checks whether this is the secondary slot. If true, the metadata resides in
- *        on of the previous slots;
+ *        one of the previous slots;
  */
 bool is_secondary_slot(kmu_metadata *metadata)
 {
@@ -238,6 +246,77 @@ static bool can_sign(const psa_key_attributes_t *key_attr)
 {
 	return (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_SIGN_MESSAGE) ||
 	       (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_SIGN_HASH);
+}
+
+/**
+ * @brief Check provisioning state, and delete slots that were not completely provisioned.
+ *
+ * @return psa_status_t
+ */
+static psa_status_t verify_provisioning_state(void)
+{
+	uint32_t data;
+	int st = lib_kmu_read_metadata(PROVISIONING_SLOT, &data);
+
+	if (st == LIB_KMU_SUCCESS) {
+		uint32_t slot_id = data >> 8;
+		uint32_t num_slots = data & 0xff;
+
+		for (uint32_t i = 0; i < num_slots; i++) {
+			st = lib_kmu_revoke_slot(slot_id + i);
+			if (st != LIB_KMU_SUCCESS) {
+				if (!lib_kmu_is_slot_empty(slot_id + i)) {
+					return PSA_ERROR_HARDWARE_FAILURE;
+				}
+			}
+		}
+
+		st = lib_kmu_revoke_slot(PROVISIONING_SLOT);
+		if (st != LIB_KMU_SUCCESS) {
+			return PSA_ERROR_HARDWARE_FAILURE;
+		}
+	}
+
+	/* An error reading metadata means the slot was empty, and there is no ongoing transaction.
+	 */
+	return PSA_SUCCESS;
+}
+
+/**
+ * @brief Set the provisioning state to be in progress for a number of slots.
+ *
+ * @param slot_id
+ * @param num_slots
+ * @return psa_status_t
+ */
+psa_status_t set_provisioning_in_progress(uint32_t slot_id, uint32_t num_slots)
+{
+	struct kmu_src_t kmu_desc = {};
+
+	kmu_desc.metadata = slot_id << 8 | num_slots;
+	kmu_desc.rpolicy = LIB_KMU_REV_POLICY_ROTATING;
+
+	int st = lib_kmu_provision_slot(PROVISIONING_SLOT, &kmu_desc);
+
+	if (st != LIB_KMU_SUCCESS) {
+		return PSA_ERROR_HARDWARE_FAILURE;
+	}
+	return PSA_SUCCESS;
+}
+
+/**
+ * @brief Signals that the provisioning of several key slots are finalized.
+ *
+ * @param slot_id
+ * @param num_slots
+ * @return psa_status_t
+ */
+psa_status_t end_provisioning(uint32_t slot_id, uint32_t num_slots)
+{
+	if (lib_kmu_revoke_slot(PROVISIONING_SLOT) != LIB_KMU_SUCCESS) {
+		return PSA_ERROR_HARDWARE_FAILURE;
+	}
+	return PSA_SUCCESS;
 }
 
 psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attributes_t *key_attr)
@@ -537,7 +616,12 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	uint8_t encrypted_workmem[CRACEN_KMU_SLOT_KEY_SIZE * 4];
 	size_t encrypted_outlen = 0;
 
-	psa_status_t status = convert_from_psa_attributes(key_attr, &metadata);
+	psa_status_t status = verify_provisioning_state();
+
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+	status = convert_from_psa_attributes(key_attr, &metadata);
 
 	if (status) {
 		return status;
@@ -591,6 +675,13 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		}
 	}
 
+	if (num_slots > 1) {
+		status = set_provisioning_in_progress(slot_id, num_slots);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+	}
+
 	struct kmu_src_t kmu_desc = {};
 
 	for (size_t i = 0; i < num_slots; i++) {
@@ -607,19 +698,17 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 
 		if (st) {
 			/* We've already verified that this slot empty, so it should not fail. */
-
-			/* Attempt cleanup. */
-			for (size_t j = 0; j < i; j++) {
-				/* Cleanup will fail if rpolicy is LOCKED or REVOKED.
-				 * But there is nothing we can do to recover.
-				 */
-				(void)lib_kmu_revoke_slot(slot_id + j);
-			}
-
 			status = PSA_ERROR_HARDWARE_FAILURE;
+
+			(void)verify_provisioning_state();
+			break;
 		}
 
 		safe_memzero(&kmu_desc, sizeof(kmu_desc));
+	}
+
+	if (num_slots > 1 && status == PSA_SUCCESS) {
+		status = end_provisioning(slot_id, num_slots);
 	}
 
 exit:
@@ -694,7 +783,11 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 		return PSA_ERROR_DOES_NOT_EXIST;
 	}
 
-	psa_status_t status = PSA_SUCCESS;
+	psa_status_t status = verify_provisioning_state();
+
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
 
 	if (!attributes) {
 		return PSA_ERROR_INVALID_ARGUMENT;
