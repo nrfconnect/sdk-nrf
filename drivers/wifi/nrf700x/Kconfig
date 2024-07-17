@@ -429,6 +429,7 @@ endchoice
 
 config NRF_WIFI_RPU_RECOVERY
 	bool "Enable RPU recovery mechanism"
+	depends on NRF_WIFI_LOW_POWER
 	select EXPERIMENTAL
 	default y
 	help

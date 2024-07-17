@@ -129,8 +129,10 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 enum nrf_wifi_status nrf_wifi_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
 enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx);
 struct nrf_wifi_vif_ctx_zep *nrf_wifi_get_vif_ctx(struct net_if *iface);
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 void nrf_wifi_rpu_recovery_cb(void *vif_ctx,
 		void *event_data,
 		unsigned int event_len);
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */
