@@ -189,5 +189,8 @@ endif # SUIT_STREAM_SOURCE_IPC
 config SUIT_STREAM_FILTER_DECRYPT
 	bool "Enable support for image decryption"
 	depends on SUIT_CRYPTO
+	select PSA_WANT_KEY_TYPE_AES
+	select PSA_WANT_ALG_GCM
+	select PSA_WANT_ALG_ECB_NO_PADDING
 
 endif # SUIT_STREAM
