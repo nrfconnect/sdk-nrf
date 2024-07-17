@@ -7,6 +7,8 @@
 Pre-processing of data before it goes to the output.
 '''
 
+import urllib
+
 from data_structure import Data, License, LicenseExpr
 from license_utils import get_license, get_spdx_license_expr_info, is_spdx_license
 
@@ -96,9 +98,15 @@ def pre_process(data: Data):
     for package in data.packages.values():
         if (package.url is None) or (package.version is None):
             continue
-        if (package.name is None) and ('github.com' in package.url):
-            offs = package.url.find('github.com') + len('github.com') + 1
-            package.name = package.url[offs:]
+        if package.name is None:
+            url = urllib.parse.urlparse(package.url)
+
+            # Without this, urllib will just paste the whole thing into
+            # url.path without removing e.g. `git@`.
+            if url.scheme == '':
+                url = urllib.parse.urlparse(f"https://{package.url}")
+
+            package.name = f"{url.hostname}{url.path}"
             if package.name.endswith('.git'):
                 package.name = package.name[:-4]
         if package.name in package_name_map:
