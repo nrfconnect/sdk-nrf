@@ -551,3 +551,4 @@
   - "samples/event_manager_proxy/**/*"
   - "tests/subsys/event_manager_proxy/**/*"
   - "tests/benchmarks/multicore/**/*"
+  - "tests/drivers/pwm/**/*"
