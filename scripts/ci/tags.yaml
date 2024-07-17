@@ -62,7 +62,6 @@ bluetooth:
     - nrf/samples/bluetooth/
     - nrf/tests/bluetooth/
     - nrf/tests/subsys/bluetooth/
-    - nrf/applications/nrf_desktop/
     - nrf/samples/nrf5340/multiprotocol_rpmsg/
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
@@ -710,4 +709,50 @@ ci_applications_machine_learning:
     - zephyr/subsys/ipc/
     - zephyr/subsys/mgmt/
     - zephyr/subsys/net/
+    - zephyr/subsys/usb/
+
+ci_applications_nrf_desktop:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/
+    - modules/lib/zcbor/
+    - nrf/applications/ipc_radio/
+    - nrf/applications/nrf_desktop/
+    - nrf/boards/
+    - nrf/cmake/
+    - nrf/drivers/mpsl/
+    - nrf/drivers/sensor/paw3212/
+    - nrf/drivers/sensor/pmw3360/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/caf/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/mgmt/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrf/sysbuild/
+    - nrfxlib/crypto/
+    - nrfxlib/mpsl/
+    - nrfxlib/softdevice_controller/
+    - zephyr/boards/nordic/
+    - zephyr/cmake/
+    - zephyr/drivers/usb/
+    - zephyr/drivers/bluetooth/
+    - zephyr/drivers/entropy/
+    - zephyr/drivers/flash/
+    - zephyr/share/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/logging/
+    - zephyr/subsys/mgmt/
+    - zephyr/subsys/net/
+    - zephyr/subsys/pm/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/storage/
     - zephyr/subsys/usb/
