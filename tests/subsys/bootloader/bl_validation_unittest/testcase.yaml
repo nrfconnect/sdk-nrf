@@ -7,4 +7,4 @@ tests:
     integration_platforms:
       - native_posix
       - native_sim
-    tags: b0 bl_validation unittest sysbuild
+    tags: b0 bl_validation unittest sysbuild ci_tests_subsys_bootloader
