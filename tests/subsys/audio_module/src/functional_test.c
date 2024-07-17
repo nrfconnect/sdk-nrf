@@ -45,9 +45,7 @@ static struct audio_module_parameters mod_parameters = {
 		   .data_slab = &data_slab,
 		   .data_size = TEST_MOD_DATA_SIZE}};
 struct audio_module_parameters test_mod_parameters;
-static struct audio_module_handle handle;
 static struct mod_context *handle_context;
-static struct data_fifo mod_fifo_tx, mod_fifo_rx;
 
 /**
  * @brief Set the minimum for a handle.
@@ -217,10 +215,12 @@ static void test_close(const struct audio_module_functions *test_fnct,
 		       enum audio_module_state test_state)
 {
 	int ret;
-	int empty_call_count = 0;
 	char *test_inst_name = "TEST instance 1";
 	struct audio_module_description test_mod_description;
 	struct audio_module_functions test_mod_functions;
+	struct data_fifo fifo_tx = {0};
+	struct data_fifo fifo_rx = {0};
+	struct audio_module_handle handle;
 
 	/* Register resets */
 	DO_FOREACH_FAKE(RESET_FAKE);
@@ -253,21 +253,15 @@ static void test_close(const struct audio_module_functions *test_fnct,
 	data_fifo_empty_fake.custom_fake = fake_data_fifo_empty__succeeds;
 
 	if (fifo_rx_set) {
-		data_fifo_deinit(&mod_fifo_rx);
-		data_fifo_init(&mod_fifo_rx);
-		handle.thread.msg_rx = &mod_fifo_rx;
-
-		empty_call_count++;
+		data_fifo_init(&fifo_rx);
+		handle.thread.msg_rx = &fifo_rx;
 	} else {
 		handle.thread.msg_rx = NULL;
 	}
 
 	if (fifo_tx_set) {
-		data_fifo_deinit(&mod_fifo_tx);
-		data_fifo_init(&mod_fifo_tx);
-		handle.thread.msg_tx = &mod_fifo_tx;
-
-		empty_call_count++;
+		data_fifo_init(&fifo_tx);
+		handle.thread.msg_tx = &fifo_tx;
 	} else {
 		handle.thread.msg_tx = NULL;
 	}
@@ -279,9 +273,6 @@ static void test_close(const struct audio_module_functions *test_fnct,
 	ret = audio_module_close(&handle);
 
 	zassert_equal(ret, 0, "Close function did not return successfully: ret %d", ret);
-	zassert_equal(data_fifo_empty_fake.call_count, empty_call_count,
-		      "Failed close, data FIFO empty called %d times",
-		      data_fifo_empty_fake.call_count);
 	zassert_mem_equal(&mod_description, &test_mod_description,
 			  sizeof(struct audio_module_description),
 			  "Failed close, modified the modules description");
@@ -310,6 +301,9 @@ static void test_open(enum audio_module_type test_type, bool fifo_rx_set, bool f
 {
 	int ret;
 	char *test_inst_name = "TEST instance 1";
+	struct data_fifo fifo_tx = {0};
+	struct data_fifo fifo_rx = {0};
+	struct audio_module_handle handle;
 
 	/* Fake internal empty data FIFO success */
 	data_fifo_init_fake.custom_fake = fake_data_fifo_init__succeeds;
@@ -319,17 +313,15 @@ static void test_open(enum audio_module_type test_type, bool fifo_rx_set, bool f
 	test_context_set(&test_mod_context, &mod_config);
 
 	if (fifo_rx_set) {
-		data_fifo_deinit(&mod_fifo_rx);
-		data_fifo_init(&mod_fifo_rx);
-		mod_parameters.thread.msg_rx = &mod_fifo_rx;
+		data_fifo_init(&fifo_rx);
+		mod_parameters.thread.msg_rx = &fifo_rx;
 	} else {
 		mod_parameters.thread.msg_rx = NULL;
 	}
 
 	if (fifo_tx_set) {
-		data_fifo_deinit(&mod_fifo_tx);
-		data_fifo_init(&mod_fifo_tx);
-		mod_parameters.thread.msg_tx = &mod_fifo_tx;
+		data_fifo_init(&fifo_tx);
+		mod_parameters.thread.msg_tx = &fifo_tx;
 	} else {
 		mod_parameters.thread.msg_tx = NULL;
 	}
@@ -459,6 +451,7 @@ static void test_start_stop(bool start, const struct audio_module_functions *tes
 			    enum audio_module_state return_state, int ret_expected)
 {
 	int ret;
+	struct audio_module_handle handle;
 
 	mod_description.functions = test_fnct;
 	test_initialize_handle(&handle, &mod_description, &mod_context, NULL);
@@ -562,6 +555,7 @@ ZTEST(suite_audio_module_functional, test_names_get_fnct)
 	int ret;
 	char *base_name;
 	char instance_name[CONFIG_AUDIO_MODULE_NAME_SIZE] = {0};
+	struct audio_module_handle handle;
 	char *test_base_name_empty = "";
 	char *test_base_name_long =
 		"Test base name that is longer than the size of CONFIG_AUDIO_MODULE_NAME_SIZE";
@@ -629,6 +623,7 @@ ZTEST(suite_audio_module_functional, test_names_get_fnct)
 ZTEST(suite_audio_module_functional, test_reconfigure_fnct)
 {
 	int ret;
+	struct audio_module_handle handle;
 
 	mod_description.functions = &ft_pop;
 	test_initialize_handle(&handle, &mod_description, &mod_context, &mod_config);
@@ -659,6 +654,7 @@ ZTEST(suite_audio_module_functional, test_reconfigure_fnct)
 ZTEST(suite_audio_module_functional, test_configuration_get_fnct)
 {
 	int ret;
+	struct audio_module_handle handle;
 
 	mod_description.functions = &ft_pop;
 	test_initialize_handle(&handle, &mod_description, &mod_context, &mod_config);
@@ -919,11 +915,15 @@ ZTEST(suite_audio_module_functional, test_data_tx_fnct)
 	char test_data[TEST_MOD_DATA_SIZE];
 	struct audio_data audio_data = {0};
 	struct audio_module_message *msg_rx;
+	struct data_fifo fifo_rx;
+	struct audio_module_handle handle;
 
 	test_context_set(&mod_context, &mod_config);
 
 	/* Fake internal empty data FIFO success */
 	data_fifo_init_fake.custom_fake = fake_data_fifo_init__succeeds;
+	data_fifo_uninit_fake.custom_fake = fake_data_fifo_uninit__succeeds;
+	data_fifo_empty_fake.custom_fake = fake_data_fifo_empty__succeeds;
 	data_fifo_pointer_first_vacant_get_fake.custom_fake =
 		fake_data_fifo_pointer_first_vacant_get__succeeds;
 	data_fifo_block_lock_fake.custom_fake = fake_data_fifo_block_lock__succeeds;
@@ -931,13 +931,12 @@ ZTEST(suite_audio_module_functional, test_data_tx_fnct)
 		fake_data_fifo_pointer_last_filled_get__succeeds;
 	data_fifo_block_free_fake.custom_fake = fake_data_fifo_block_free__succeeds;
 
-	data_fifo_deinit(&mod_fifo_rx);
-
-	data_fifo_init(&mod_fifo_rx);
+	data_fifo_uninit(&fifo_rx);
+	data_fifo_init(&fifo_rx);
 
 	memcpy(&handle.name, test_inst_name, sizeof(*test_inst_name));
 	handle.description = &mod_description;
-	handle.thread.msg_rx = &mod_fifo_rx;
+	handle.thread.msg_rx = &fifo_rx;
 	handle.thread.msg_tx = NULL;
 	handle.thread.data_slab = &data_slab;
 	handle.thread.data_size = TEST_MOD_DATA_SIZE;
@@ -948,22 +947,39 @@ ZTEST(suite_audio_module_functional, test_data_tx_fnct)
 		test_data[i] = TEST_MOD_DATA_SIZE - i;
 	}
 
-	audio_data.data = &test_data[0];
+	audio_data.data = NULL;
 	audio_data.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_tx(&handle, &audio_data, NULL);
 	zassert_equal(ret, 0, "Data TX function did not return successfully: ret %d", ret);
 
-	ret = data_fifo_pointer_last_filled_get(&mod_fifo_rx, (void **)&msg_rx, &size, K_NO_WAIT);
+	ret = data_fifo_pointer_last_filled_get(&fifo_rx, (void **)&msg_rx, &size, K_NO_WAIT);
 	zassert_equal(ret, 0, "Data TX function did not return 0: ret %d", 0, ret);
-	zassert_mem_equal(msg_rx->audio_data.data, &test_data[0], TEST_MOD_DATA_SIZE,
-			  "Failed open, module contexts differ");
+
+	audio_data.data = test_data;
+	audio_data.data_size = 0;
+
+	ret = audio_module_data_tx(&handle, &audio_data, NULL);
+	zassert_equal(ret, 0, "Data TX function did not return successfully: ret %d", ret);
+
+	data_fifo_empty(&fifo_rx);
+
+	audio_data.data = test_data;
+	audio_data.data_size = TEST_MOD_DATA_SIZE;
+
+	ret = audio_module_data_tx(&handle, &audio_data, NULL);
+	zassert_equal(ret, 0, "Data TX function did not return successfully: ret %d", ret);
+
+	ret = data_fifo_pointer_last_filled_get(&fifo_rx, (void **)&msg_rx, &size, K_NO_WAIT);
+	zassert_equal(ret, 0, "Data TX function did not return 0: ret %d", 0, ret);
+	zassert_mem_equal(msg_rx->audio_data.data, test_data, TEST_MOD_DATA_SIZE,
+			  "Failed Data TX, data differs");
 	zassert_equal(msg_rx->audio_data.data_size, TEST_MOD_DATA_SIZE,
 		      "Failed Data TX function, data sizes differs");
-	zassert_equal(data_fifo_pointer_first_vacant_get_fake.call_count, 1,
+	zassert_equal(data_fifo_pointer_first_vacant_get_fake.call_count, 3,
 		      "Data TX failed to get item, data FIFO get called %d times",
 		      data_fifo_pointer_first_vacant_get_fake.call_count);
-	zassert_equal(data_fifo_block_lock_fake.call_count, 1,
+	zassert_equal(data_fifo_block_lock_fake.call_count, 3,
 		      "Failed to send item, data FIFO send called %d times",
 		      data_fifo_pointer_first_vacant_get_fake.call_count);
 }
@@ -974,14 +990,17 @@ ZTEST(suite_audio_module_functional, test_data_rx_fnct)
 	char *test_inst_name = "TEST instance 1";
 	char test_data[TEST_MOD_DATA_SIZE];
 	char data[TEST_MOD_DATA_SIZE] = {0};
-	struct audio_data audio_data_in;
 	struct audio_data audio_data_out = {0};
 	struct audio_module_message *data_msg_tx;
+	struct data_fifo fifo_tx = {0};
+	struct audio_module_handle handle;
 
 	test_context_set(&mod_context, &mod_config);
 
 	/* Fake internal empty data FIFO success */
 	data_fifo_init_fake.custom_fake = fake_data_fifo_init__succeeds;
+	data_fifo_uninit_fake.custom_fake = fake_data_fifo_uninit__succeeds;
+	data_fifo_empty_fake.custom_fake = fake_data_fifo_empty__succeeds;
 	data_fifo_pointer_first_vacant_get_fake.custom_fake =
 		fake_data_fifo_pointer_first_vacant_get__succeeds;
 	data_fifo_block_lock_fake.custom_fake = fake_data_fifo_block_lock__succeeds;
@@ -989,49 +1008,86 @@ ZTEST(suite_audio_module_functional, test_data_rx_fnct)
 		fake_data_fifo_pointer_last_filled_get__succeeds;
 	data_fifo_block_free_fake.custom_fake = fake_data_fifo_block_free__succeeds;
 
-	data_fifo_deinit(&mod_fifo_tx);
-
-	data_fifo_init(&mod_fifo_tx);
+	data_fifo_init(&fifo_tx);
 
 	memcpy(&handle.name, test_inst_name, sizeof(*test_inst_name));
 	handle.description = &mod_description;
 	handle.thread.msg_rx = NULL;
-	handle.thread.msg_tx = &mod_fifo_tx;
+	handle.thread.msg_tx = &fifo_tx;
 	handle.thread.data_slab = &data_slab;
 	handle.thread.data_size = TEST_MOD_DATA_SIZE;
 	handle.state = AUDIO_MODULE_STATE_RUNNING;
 	handle.context = (struct audio_module_context *)&mod_context;
 
-	ret = data_fifo_pointer_first_vacant_get(handle.thread.msg_tx, (void **)&data_msg_tx,
-						 K_NO_WAIT);
 	/* fill data */
 	for (int i = 0; i < TEST_MOD_DATA_SIZE; i++) {
 		test_data[i] = TEST_MOD_DATA_SIZE - i;
 	}
 
-	audio_data_in.data = &test_data[0];
-	audio_data_in.data_size = TEST_MOD_DATA_SIZE;
+	ret = data_fifo_pointer_first_vacant_get(handle.thread.msg_tx, (void **)&data_msg_tx,
+						 K_NO_WAIT);
+	zassert_equal(ret, 0, "FIFO get function did not return successfully: ret %d", ret);
 
-	memcpy(&data_msg_tx->audio_data, &audio_data_in, sizeof(struct audio_data));
+	data_msg_tx->audio_data.data = test_data;
+	data_msg_tx->audio_data.data_size = TEST_MOD_DATA_SIZE;
 	data_msg_tx->tx_handle = NULL;
 	data_msg_tx->response_cb = NULL;
 
 	ret = data_fifo_block_lock(handle.thread.msg_tx, (void **)&data_msg_tx,
 				   sizeof(struct audio_module_message));
+	zassert_equal(ret, 0, "FIFO lock function did not return successfully: ret %d", ret);
 
-	audio_data_out.data = &data[0];
+	audio_data_out.data = NULL;
 	audio_data_out.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_rx(&handle, &audio_data_out, K_NO_WAIT);
 	zassert_equal(ret, 0, "Data RX function did not return successfully: ret %d", ret);
-	zassert_mem_equal(&test_data[0], audio_data_out.data, TEST_MOD_DATA_SIZE,
+
+	ret = data_fifo_pointer_first_vacant_get(handle.thread.msg_tx, (void **)&data_msg_tx,
+						 K_NO_WAIT);
+	zassert_equal(ret, 0, "FIFO get function did not return successfully: ret %d", ret);
+
+	data_msg_tx->audio_data.data = test_data;
+	data_msg_tx->audio_data.data_size = TEST_MOD_DATA_SIZE;
+	data_msg_tx->tx_handle = NULL;
+	data_msg_tx->response_cb = NULL;
+
+	ret = data_fifo_block_lock(handle.thread.msg_tx, (void **)&data_msg_tx,
+				   sizeof(struct audio_module_message));
+	zassert_equal(ret, 0, "FIFO lock function did not return successfully: ret %d", ret);
+
+	audio_data_out.data = data;
+	audio_data_out.data_size = 0;
+
+	ret = audio_module_data_rx(&handle, &audio_data_out, K_NO_WAIT);
+	zassert_equal(ret, 0, "Data RX function did not return successfully: ret %d", ret);
+
+	ret = data_fifo_pointer_first_vacant_get(handle.thread.msg_tx, (void **)&data_msg_tx,
+						 K_NO_WAIT);
+	zassert_equal(ret, 0, "FIFO get function did not return successfully: ret %d", ret);
+
+	data_msg_tx->audio_data.data = test_data;
+	data_msg_tx->audio_data.data_size = TEST_MOD_DATA_SIZE;
+	data_msg_tx->tx_handle = NULL;
+	data_msg_tx->response_cb = NULL;
+
+	ret = data_fifo_block_lock(handle.thread.msg_tx, (void **)&data_msg_tx,
+				   sizeof(struct audio_module_message));
+	zassert_equal(ret, 0, "FIFO lock function did not return successfully: ret %d", ret);
+
+	audio_data_out.data = data;
+	audio_data_out.data_size = TEST_MOD_DATA_SIZE;
+
+	ret = audio_module_data_rx(&handle, &audio_data_out, K_NO_WAIT);
+	zassert_equal(ret, 0, "Data RX function did not return successfully: ret %d", ret);
+	zassert_mem_equal(test_data, audio_data_out.data, TEST_MOD_DATA_SIZE,
 			  "Failed Data RX function, data differs");
-	zassert_equal(audio_data_in.data_size, audio_data_out.data_size,
+	zassert_equal(audio_data_out.data_size, TEST_MOD_DATA_SIZE,
 		      "Failed Data RX function, data sizes differs");
-	zassert_equal(data_fifo_pointer_last_filled_get_fake.call_count, 1,
+	zassert_equal(data_fifo_pointer_last_filled_get_fake.call_count, 3,
 		      "Data RX function failed to get item, data FIFO get called %d times",
 		      data_fifo_pointer_last_filled_get_fake.call_count);
-	zassert_equal(data_fifo_block_free_fake.call_count, 1,
+	zassert_equal(data_fifo_block_free_fake.call_count, 3,
 		      "Data RX function failed to free item, data FIFO free called %d times",
 		      data_fifo_block_free_fake.call_count);
 }

@@ -7,7 +7,7 @@
 #ifndef _COMMON_AUDIO_MODULE_TEST_H_
 #define _COMMON_AUDIO_MODULE_TEST_H_
 
-#include "audio_module/audio_module.h"
+#include "audio_module.h"
 
 #define FAKE_FIFO_MSG_QUEUE_SIZE      (4)
 #define FAKE_FIFO_MSG_QUEUE_DATA_SIZE (sizeof(struct audio_module_message))
@@ -18,6 +18,7 @@
 #define TEST_CONNECTIONS_NUM	   (5)
 #define TEST_MODULES_NUM	   (TEST_CONNECTIONS_NUM - 1)
 #define TEST_MOD_DATA_SIZE	   (40)
+#define TEST_AUDIO_DATA_ITEMS_NUM  (20)
 
 struct mod_config {
 	int test_int1;
