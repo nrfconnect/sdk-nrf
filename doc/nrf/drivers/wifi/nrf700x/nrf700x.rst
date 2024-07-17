@@ -151,4 +151,4 @@ API documentation
 After the nRF Wi-Fi driver has been initialized, the application will see it as an Ethernet interface.
 To use the Ethernet interface, the application can use `Zephyr Network APIs`_.
 
-See the :ref:`nrfxlib:nrf_wifi_api` to learn more about various modes of low-level API.
+See the :ref:`nrfxlib:nrf_wifi_driver` to learn more about various modes of low-level API.
