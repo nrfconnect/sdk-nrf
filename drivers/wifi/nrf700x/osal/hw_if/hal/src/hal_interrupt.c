@@ -497,6 +497,7 @@ out:
 	return num_events;
 }
 
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 static inline bool is_rpu_recovery_needed(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 {
 	unsigned int rpu_sleep_opp_diff_ms = nrf_wifi_osal_time_elapsed_ms(
@@ -513,7 +514,7 @@ static inline bool is_rpu_recovery_needed(struct nrf_wifi_hal_dev_ctx *hal_dev_c
 			      "RPU sleep opp diff: %d ms, last RPU sleep opp time: %lu",
 			      rpu_sleep_opp_diff_ms,
 			      hal_dev_ctx->last_rpu_sleep_opp_time_ms);
-#endif
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG */
 
 	if (rpu_sleep_opp_diff_ms >= CONFIG_NRF_WIFI_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS) {
 		return false;
@@ -521,6 +522,7 @@ static inline bool is_rpu_recovery_needed(struct nrf_wifi_hal_dev_ctx *hal_dev_c
 
 	return true;
 }
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
 static enum nrf_wifi_status hal_rpu_process_wdog(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 						  bool *do_rpu_recovery)
@@ -536,7 +538,7 @@ static enum nrf_wifi_status hal_rpu_process_wdog(struct nrf_wifi_hal_dev_ctx *ha
 			      "Processing watchdog interrupt");
 #endif
 
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	/* Check if host has asserted WAKEUP_NOW or if the RPU has been in
 	 * PS_ACTIVE state for more than the timeout period
 	 */
@@ -547,25 +549,27 @@ static enum nrf_wifi_status hal_rpu_process_wdog(struct nrf_wifi_hal_dev_ctx *ha
 #else
 		nrf_wifi_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
 				      "Host has not given RPU opp to sleep for the timeout period, RPU recovery not needed");
-#endif
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG */
 		goto out;
 	}
 
 	rpu_recovery = true;
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
 	if (!rpu_recovery) {
 		hal_rpu_irq_wdog_rearm(hal_dev_ctx);
 		goto out;
 	}
 
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
 	nrf_wifi_osal_log_info(hal_dev_ctx->hpriv->opriv,
 			      "Host has given RPU opp to sleep at least once for the timeout period, RPU recovery needed");
 #else
 	nrf_wifi_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
 			      "Host has given RPU opp to sleep at least once for the timeout period, RPU recovery needed");
-#endif
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG */
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 out:
 	nrf_wifi_status = NRF_WIFI_STATUS_SUCCESS;
 	*do_rpu_recovery = rpu_recovery;
