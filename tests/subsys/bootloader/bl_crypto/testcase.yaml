@@ -17,7 +17,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
-    tags: b0 sysbuild
+    tags: b0 sysbuild ci_tests_subsys_bootloader
   # Deprecated child and parent build to ensure feature does not break until it is removed
   bootloader.bl_crypto.child_parent:
     sysbuild: false
@@ -37,4 +37,4 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
-    tags: b0 child_parent deprecated
+    tags: b0 child_parent deprecated ci_tests_subsys_bootloader

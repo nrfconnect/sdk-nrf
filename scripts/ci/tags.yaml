@@ -612,3 +612,23 @@ sample_edge_impulse:
     - nrf/lib/wave_gen/
     - nrf/samples/edge_impulse/
     - zephyr/soc/nordic/
+
+ci_tests_subsys_bootloader:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/lib/fprotect/
+    - nrf/lib/hw_unique_key/
+    - nrf/lib/identity_key/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/samples/bootloader/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/nrf_security/
+    - nrf/tests/subsys/bootloader/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_modem/
+    - zephyr/soc/nordic/

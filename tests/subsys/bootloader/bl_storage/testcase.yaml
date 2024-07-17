@@ -11,7 +11,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
-    tags: b0 sysbuild
+    tags: b0 sysbuild ci_tests_subsys_bootloader
     harness: console
     harness_config:
       type: multi_line
