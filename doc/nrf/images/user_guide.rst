@@ -111,7 +111,7 @@ The `uart1` peripheral is configured to use the following pins:
 
 Therefore, in order to enable the communication between the client and the server device, connect the two nRF 52840 DKs using jumper wires according to the following diagram:
 
-<img src="resources/uart_wiring.png" alt="image" width="300" height="auto">
+<img src="resources/ps_nrf52_connections.png" alt="image" width="300" height="auto">
 
 The nRF54l15 system-on-chip uses by default `uart21` for RPC and `uart20` is used for shell.
 
@@ -122,7 +122,7 @@ The `uart21` peripheral is configured to use the following pins:
 - **P1.12**: RTS (hardware flow control)
 - **P1.13**: CTS (hardware flow control)
 
-<img src="resources/nrf54l_connections.png" alt="image" width="300" height="auto">
+<img src="resources/ps_nrf54l_connections.png" alt="image" width="300" height="auto">
 
 ## Testing
 
@@ -158,7 +158,7 @@ Complete the following steps to test Bluetooth LE API serialization:
 
 7. On mobile phone, open `nRF Connect` app and scan for `Nordic_UART_Service` as in the image below:
 
-   <img src="resources/nrf_scan.jpg" alt="image" width="300" height="auto">
+   <img src="resources/ps_nrf_scan.png" alt="image" width="300" height="auto">
 
 8. Tap **CONNECT** button to connect to the client device.
    Observe the following message on the client's console:
@@ -169,7 +169,7 @@ Complete the following steps to test Bluetooth LE API serialization:
 
 9.  Tap the arrow next to the RX characteristic to send data:
 
-   <img src="resources/nrf_send.jpg" alt="image" width="300" height="auto">
+   <img src="resources/ps_nrf_send.png" alt="image" width="300" height="auto">
 
    Observe the following message on the client's console:
 
