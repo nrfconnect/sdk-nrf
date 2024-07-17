@@ -240,6 +240,8 @@ Kconfig*                                  @tejlmand
 /snippets/nrf70-debug/                    @krish2718 @sachinthegreen
 /snippets/nrf70-fw-patch-ext-flash/       @krish2718 @sachinthegreen
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
+/snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
+/snippets/zperf/                          @nrfconnect/ncs-protocols-serialization
 /subsys/audio_module/                     @nrfconnect/ncs-audio
 /subsys/bluetooth/                        @alwa-nordic @jori-nordic @carlescufi @KAGA164
 /subsys/bluetooth/mesh/                   @ludvigsj
