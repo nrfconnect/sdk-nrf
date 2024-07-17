@@ -80,3 +80,7 @@ if(CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS)
         endif()
     endif()
 endif()
+
+if(CONFIG_NCS_SAMPLE_MATTER_TEST_SHELL)
+    target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/test/test_shell.cpp)
+endif()
