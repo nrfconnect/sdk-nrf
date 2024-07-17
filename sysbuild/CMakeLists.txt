@@ -241,16 +241,54 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
     if(SB_CONFIG_PARTITION_MANAGER)
       # Use NCS signing script with support for PM
-      set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+      if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
+        set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
 
-      if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
-        set(mcuboot_secondary_app_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
-      elseif(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
-        set(firmware_loader_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_firmware_loader.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+        if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+          set(mcuboot_secondary_app_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+        endif()
 
-        set_target_properties(firmware_loader PROPERTIES
-          IMAGE_CONF_SCRIPT ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/image_configurations/firmware_loader_image_default.cmake
-        )
+        # Share QSPI XIP MCUboot image number with the default image to allow for signing script
+        # to get the partition manager configuration
+        set(${DEFAULT_IMAGE}_QSPI_XIP_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} CACHE INTERNAL "QSPI XIP image number" FORCE)
+
+        if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+          set(mcuboot_secondary_app_QSPI_XIP_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} CACHE INTERNAL "QSPI XIP image number" FORCE)
+        endif()
+
+        # Flash drivers are mandatory with QSPI XIP split image support
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_FLASH y)
+        set_config_bool(mcuboot CONFIG_FLASH y)
+        set_config_bool(mcuboot CONFIG_MULTITHREADING y)
+        set_config_bool(mcuboot CONFIG_MCUBOOT_VERIFY_IMG_ADDRESS n)
+
+        # Set options on default image to allow QSPI XIP execution
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_XIP y)
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_CODE_DATA_RELOCATION y)
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_HAVE_CUSTOM_LINKER_SCRIPT y)
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_BUILD_NO_GAP_FILL y)
+
+        if(NOT DEFINED SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)
+          # If external driver check Kconfig is enabled then users will need to select their own
+          # Kconfigs (to allow for forked/derivative QSPI NOR drivers), otherwise force enable the
+          # driver for the default image and MCUboot
+          set_config_bool(${DEFAULT_IMAGE} CONFIG_NORDIC_QSPI_NOR y)
+          set_config_bool(${DEFAULT_IMAGE} CONFIG_NORDIC_QSPI_NOR_XIP y)
+          set_config_bool(mcuboot CONFIG_NORDIC_QSPI_NOR y)
+          set_config_bool(mcuboot CONFIG_NORDIC_QSPI_NOR_XIP y)
+        endif()
+      else()
+        set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+
+        if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+          set(mcuboot_secondary_app_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+        elseif(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+          set(firmware_loader_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_firmware_loader.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+
+          set_target_properties(firmware_loader PROPERTIES
+            IMAGE_CONF_SCRIPT ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/image_configurations/firmware_loader_image_default.cmake
+          )
+        endif()
       endif()
 
       if(SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)
@@ -478,7 +516,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     endif()
 
     if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_EMPTY)
-      get_property(PM_MCUBOOT_PRIMARY_1_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_1_SIZE)
+      get_property(PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}_SIZE)
     endif()
 
     if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
@@ -486,7 +524,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       get_property(PM_NRF70_WIFI_FW_SIZE TARGET partition_manager PROPERTY PM_NRF70_WIFI_FW_SIZE)
     endif()
 
-    if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+    if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
+      get_property(PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS)
+      get_property(PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE)
+      get_property(PM_MCUBOOT_SECONDARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS)
+      get_property(PM_MCUBOOT_SECONDARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE)
+    elseif(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
       get_property(PM_MCUBOOT_SECONDARY_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_ADDRESS)
       get_property(PM_MCUBOOT_SECONDARY_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_SIZE)
     endif()
@@ -494,6 +537,18 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     # If the network core image is enabled on nRF53, ensure it is flashed before the main application
     if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE)
       sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
+    endif()
+
+    if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE AND SB_CONFIG_SOC_NRF52840)
+      # Emit a warning to the user to not relocate interrupts as this can brick nRF52840 devices
+      message(WARNING "
+      --------------------------------------------------------------------------------------------
+      --- WARNING: SB_CONFIG_QSPI_XIP_SPLIT_IMAGE is enabled and target device is an nRF52840: ---
+      --- Care must be taken to not relocate any interrupts to the QSPI XIP flash as this can  ---
+      --- cause the SoC to enter an undefined operation state, causing the debug access port   ---
+      --- to become blocked, potentially bricking the device.                                  ---
+      --------------------------------------------------------------------------------------------
+      ")
     endif()
   endif()
   foreach(image ${IMAGES})
