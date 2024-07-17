@@ -90,7 +90,7 @@ int suit_plat_check_copy(suit_component_t dst_handle, suit_component_t src_handl
 	if (enc_info != NULL) {
 #ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
 		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
-		if (ret != SUIT_SUCCESS) {
+		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Selecting decryption filter failed: %i", ret);
 		}
 #else
@@ -192,7 +192,7 @@ int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
 	if (enc_info != NULL) {
 #ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
 		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
-		if (ret != SUIT_SUCCESS) {
+		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Selecting decryption filter failed: %i", ret);
 		}
 #else
