@@ -303,6 +303,7 @@ Kconfig*                                  @tejlmand
 /tests/drivers/fprotect/                  @oyvindronningstad
 /tests/drivers/lpuart/                    @nordic-krch
 /tests/drivers/nrfx_integration_test/     @anangl
+/tests/drivers/pwm/gpio_loopback/         @nrfconnect/ncs-low-level-test
 /tests/lib/at_cmd_parser/                 @rlubos
 /tests/lib/at_cmd_custom/                 @eivindj-nordic
 /tests/lib/date_time/                     @trantanen @tokangas
