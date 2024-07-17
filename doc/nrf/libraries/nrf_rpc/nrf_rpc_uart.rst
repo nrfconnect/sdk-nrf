@@ -8,6 +8,7 @@ nRF RPC UART transport
    :depth: 2
 
 The nRF RPC UART transport allows you to use the :ref:`nrf_rpc` library to execute procedures on a remote processor that is connected with the local processor using the UART interface.
+This transport is used in the :ref:`nrf_rpc_ps_samples` samples.
 
 Frame encoding
 **************
