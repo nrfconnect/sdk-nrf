@@ -3,7 +3,7 @@ sample:
   description: HID device reference design
 common:
   sysbuild: true
-  tags: bluetooth ci_build sysbuild
+  tags: ci_build sysbuild ci_applications_nrf_desktop
   harness: console
   harness_config:
     type: multi_line
