@@ -89,7 +89,12 @@ void timed_led_toggle_trigger_at(uint8_t value, uint32_t timestamp_us)
 	const uint64_t current_time_us = controller_time_us_get();
 	const uint64_t current_time_most_significant_word = current_time_us & 0xFFFFFFFF00000000UL;
 
-	const uint64_t full_timestamp_us = current_time_most_significant_word | timestamp_us;
+	uint64_t full_timestamp_us = current_time_most_significant_word | timestamp_us;
+
+	if (timestamp_us < (current_time_us & UINT32_MAX)) {
+		/* Trigger time is after UINT32 wrap */
+		full_timestamp_us += 0x100000000UL;
+	}
 
 	controller_time_trigger_set(full_timestamp_us);
 
