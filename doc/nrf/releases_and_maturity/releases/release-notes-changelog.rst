@@ -386,7 +386,7 @@ NFC samples
 nRF RPC
 -------
 
-* Added the Protocols serialization client and server samples.
+* Added the :ref:`nrf_rpc_protocols_serialization_client` and the :ref:`nrf_rpc_protocols_serialization_server` samples.
 
 nRF5340 samples
 ---------------

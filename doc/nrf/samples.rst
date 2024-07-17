@@ -49,6 +49,7 @@ If you want to list samples available for one or more specific boards, `use the 
    samples/pmic
    samples/sdfw
    samples/sensor
+   samples/serialization
    samples/suit
    samples/tfm
    samples/thread
