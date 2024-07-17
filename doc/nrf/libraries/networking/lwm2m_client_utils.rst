@@ -31,10 +31,6 @@ Based on the use case, a user application can, and is expected to, define additi
 .. figure:: images/lib_lwm2m_client_utils.svg
       :alt: LwM2M client utils software stack
 
-By default, the library uses LTE-M for connecting and it does not utilize a bootstrap server.
-The library does not use the LwM2M Queue mode either.
-To use NB-IoT, a bootstrap server, or the queue mode, follow the implementation details described in the :ref:`lwm2m_client` sample.
-
 Configuration
 *************
 
@@ -91,8 +87,8 @@ To define custom objects, complete the following steps:
 #. Determine the resource ID for a resource that must be customized.
 #. Form the resource path for the resource in the ``object ID/instance/resource ID`` format.
 #. Create a structure for storing the resource value.
-#. Define a read function that responds to the read requests for the resource value from the server.
-#. Pass the resource information to the LwM2M client utils library to register callbacks for the resource and to publish the sensor data.
+#. Define a read function that updates the resource value.
+#. Pass the resource information to the LwM2M client library to register callbacks for the resource and to publish the sensor data.
 
 The following example describes how you can define an object that follows the Generic Sensor definition from IPSO.
 To enable the support for Generic Sensor, set the Kconfig option :kconfig:option:`CONFIG_LWM2M_IPSO_GENERIC_SENSOR` to ``y``.
@@ -158,56 +154,48 @@ To define an object that follows the Generic Sensor definition, complete the fol
    LwM2M uses resource paths in the ``object ID/instance/resource ID`` format.
    The object ID in the example is ``3300`` and since it is the first instance of the object, the instance value is ``0``.
    Therefore, the full path for the sensor value will be ``3300/0/5700``.
-   You must use this path in the LwM2M client utils library API.
+   You must use this path in the LwM2M client library API.
 
-#. Define a read function that responds to the read requests for the resource value from the server:
+#. Define a read function that updates the resource value:
 
 
    .. code:: c
 
-     static double sensor_value = 1.0;
-
-      static void *read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, size_t *data_len)
+      static void my_sensor_handler(struct work *work)
       {
-         /* Only object instance 0 is currently used */
-         if (obj_inst_id != 0) {
-            *data_len = 0;
-         return NULL;
-         }
+         static double sensor_value = 0.0;
 
          /* Demo: change the sensor value */
          sensor_value += 0.1;
 
          /* Return sensor value for the LwM2M library */
          lwm2m_set_f64(&LWM2M_OBJ(3300, 0, 5700), sensor_value);
-         *data_len = sizeof(sensor_value);
-         return &sensor_value;
+
+         /* Schedule the next update */
+         k_work_schedule(work, K_MINUTES(2));
       }
 
-#. Pass the resource information to the LwM2M client utils library to register callbacks for the resource and to publish the sensor data:
+      static K_WORK_DELAYABLE_DEFINE(my_sensor_work, my_sensor_handler);
+
+#. Pass the resource information to the LwM2M client library and publish the sensor data:
 
    .. _example_callback:
 
    .. code:: c
 
-      int init_resource(void)
+      static int init_my_sensor(void)
       {
          lwm2m_create_obj_inst(&LWM2M_OBJ(3300, 0);
-         lwm2m_register_read_callback(&LWM2M_OBJ(3300, 0, 5700), read_cb);
+         /* Read the value and trigger the worker */
+         my_sensor_handler(&my_sensor_work);
          return 0;
       }
+      LWM2M_APP_INIT(init_my_sensor);
 
-   The above code registers the object instance and passes the resource information to the library to register the read callback.
+   The above code registers the object instance and passes the resource information to the library.
 
 At this stage, the generic sensor is fully functional.
-For defining outputs, the process is very much similar but instead of read callback, write callback is defined.
-
-Registering a read callback is optional and is recommended if you want to read the data directly from a sensor on each read operation.
-If the value of a readable resource is modified on an event, a read callback need not be registered.
-An example is the Push Button object.
-On receipt of an event that is triggered by button press or release, the value is updated through the lwm2m_engine with :c:func:`lwm2m_set_bool`.
-When a read operation is issued by the server, the engine obtains the button value directly from the object's internal data instead of the read callback.
-This causes the internal engine to allocate memory and store all the resources that are defined for the IPSO object ID.
+The process for defining outputs is similar, but instead of updating the value, a write callback is defined.
 
 Extending the library with new object types
 ===========================================
@@ -302,7 +290,7 @@ The following example shows how to create a new object type that follows the IPS
 
    .. code:: c
 
-      int ipso_output_init()
+      static int ipso_output_init(void)
       {
          output_obj.obj_id = IPSO_DIGITAL_OUTPUT_ID;
          output_obj.fields = fields;
@@ -314,6 +302,7 @@ The following example shows how to create a new object type that follows the IPS
          lwm2m_register_post_write_callback(RESOURCE_PATH, on_off_cb);
          return 0;
       }
+      LWM2M_OBJ_INIT(ipso_output_init);
 
    As shown in the above code, the instance is created, and a callback is attached to it.
    The content of the callback is similar as in the :ref:`Generic Sensor example <example_callback>`. Some details are left out in these examples and for more information, see the existing IPSO objects from the LwM2M engine.
