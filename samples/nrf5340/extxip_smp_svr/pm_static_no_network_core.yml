@@ -29,11 +29,26 @@ mcuboot_primary:
   size: 0xd4000
   span: *id001
 mcuboot_primary_1:
-  address: 0x0
-  device: flash_ctrl
-  end_address: 0x40000
-  region: ram_flash
+  address: 0x120000
+  device: external_flash
+  end_address: 0x160000
+  orig_span: &id003
+  - mcuboot_primary_1_pad
+  - mcuboot_primary_1_app
+  region: external_flash
   size: 0x40000
+  span: *id003
+mcuboot_primary_1_pad:
+  address: 0x120000
+  end_address: 0x120200
+  region: external_flash
+  size: 0x200
+mcuboot_primary_1_app:
+  address: 0x120200
+  device: MX25R64
+  end_address: 0x160000
+  region: external_flash
+  size: 0x3FE00
 mcuboot_primary_app:
   address: 0x10200
   end_address: 0xe4000
@@ -60,48 +75,11 @@ EMPTY_1:
   end_address: 0x120000
   region: external_flash
   size: 0xc000
-mcuboot_primary_2:
-  address: 0x120000
-  device: MX25R64
-  end_address: 0x160000
-  orig_span: &id003
-  - mcuboot_primary_2_pad
-  - mcuboot_primary_2_app
-  region: external_flash
-  size: 0x40000
-  span: *id003
-mcuboot_primary_2_pad:
-  address: 0x120000
-  end_address: 0x120200
-  region: external_flash
-  size: 0x200
-mcuboot_primary_2_app:
-  address: 0x120200
-  device: MX25R64
-  end_address: 0x40000
-  region: external_flash
-  size: 0x3FE00
-mcuboot_secondary_2:
-  address: 0x160000
-  device: MX25R64
-  end_address: 0x1a0000
-  region: external_flash
-  size: 0x40000
 otp:
   address: 0xff8100
   end_address: 0xff83fc
   region: otp
   size: 0x2fc
-pcd_sram:
-  address: 0x20000000
-  end_address: 0x20002000
-  region: sram_primary
-  size: 0x2000
-ram_flash:
-  address: 0x40000
-  end_address: 0x40000
-  region: ram_flash
-  size: 0x0
 rpmsg_nrf53_sram:
   address: 0x20070000
   end_address: 0x20080000
@@ -116,7 +94,7 @@ settings_storage:
   region: flash_primary
   size: 0x10000
 sram_primary:
-  address: 0x20002000
+  address: 0x20000000
   end_address: 0x20070000
   region: sram_primary
-  size: 0x6e000
+  size: 0x70000

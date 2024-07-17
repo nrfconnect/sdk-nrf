@@ -43,28 +43,16 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf5340/extxip_smp_svr`
 .. include:: /includes/build_and_run.txt
-Because sysbuild is currently not supported, you must add the ``--no-sysbuild`` argument when building the sample:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *board_target* --no-sysbuild
+   west build -b *board_target*
 
-The |NCS| build system generates all essential binaries, including the application for internal and external QSPI flash, the networking stack, and the MCUboot.
+The |NCS| build system generates all essential binaries, including the application for internal and external QSPI flash, the networking stack, and MCUboot.
 The build process involves signing all the application binaries except for MCUboot which does not require signing in this configuration.
 
 To upload MCUboot and a bundle of images to the nRF5340 SoC, use the ``west flash`` command.
-
-For Thingy:53, however, the QSPI memory requires a dedicated configuration file for flashing.
-In such a case, run the following command instead:
-
-.. code-block:: console
-
-    nrfjprog -f NRF53 --coprocessor CP_NETWORK --sectorerase --program hci_ipc/zephyr/merged_CPUNET.hex --verify
-    nrfjprog -f NRF53 --sectorerase --program mcuboot/zephyr/zephyr.hex --verify
-    nrfjprog -f NRF53 --sectorerase --program zephyr/internal_flash_signed.hex --verify
-    nrfjprog -f NRF53 --qspisectorerase --program zephyr/qspi_flash_signed.hex --qspiini <path_to_sample>/Qspi_thingy53.ini --verify
-    nrfjprog -f NRF53 --reset
 
 Testing
 =======
