@@ -38,6 +38,10 @@
 #include "watchdog/watchdog.h"
 #endif
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_SHELL
+#include "test/test_shell.h"
+#endif
+
 #include <app/InteractionModelEngine.h>
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <app/server/OnboardingCodesUtil.h>
@@ -328,6 +332,10 @@ CHIP_ERROR PrepareServer(const InitData &initData)
 	VerifyInitResultOrReturnError(err, "Platform::MemoryInit() failed");
 	err = PlatformMgr().InitChipStack();
 	VerifyInitResultOrReturnError(err, "PlatformMgr().InitChipStack() failed");
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_SHELL
+	Nrf::RegisterTestCommands();
+#endif
 
 	/* Schedule all CHIP initializations to the CHIP thread for better synchronization. */
 	return PlatformMgr().ScheduleWork(DoInitChipServer, 0);
