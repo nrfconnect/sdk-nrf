@@ -14,6 +14,9 @@ config RPC_CRASH_LOG_READ_BUFFER_SIZE
 	  Size of the stack buffer used for reading a single chunk of the crash
 	  log from the server device.
 
+config BT_CTLR
+	default n
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
