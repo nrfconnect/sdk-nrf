@@ -1469,6 +1469,12 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 
 	for (i = 0; i < def_priv->num_tx_tokens; i++) {
 		if (def_dev_ctx->tx_config.pkt_info_p) {
+			while (nrf_wifi_utils_q_len(fpriv->opriv,
+				   def_dev_ctx->tx_config.pkt_info_p[i].pkt)) {
+				nrf_wifi_osal_nbuf_free(fpriv->opriv,
+					nrf_wifi_utils_q_dequeue(fpriv->opriv,
+						def_dev_ctx->tx_config.pkt_info_p[i].pkt));
+			}
 			nrf_wifi_utils_list_free(fpriv->opriv,
 						 def_dev_ctx->tx_config.pkt_info_p[i].pkt);
 		}
@@ -1479,6 +1485,12 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 
 	for (i = 0; i < NRF_WIFI_FMAC_AC_MAX; i++) {
 		for (j = 0; j < MAX_SW_PEERS; j++) {
+			while (nrf_wifi_utils_q_len(fpriv->opriv,
+				   def_dev_ctx->tx_config.data_pending_txq[j][i])) {
+				nrf_wifi_osal_nbuf_free(fpriv->opriv,
+					nrf_wifi_utils_q_dequeue(fpriv->opriv,
+						def_dev_ctx->tx_config.data_pending_txq[j][i]));
+			}
 			nrf_wifi_utils_q_free(fpriv->opriv,
 					      def_dev_ctx->tx_config.data_pending_txq[j][i]);
 		}
