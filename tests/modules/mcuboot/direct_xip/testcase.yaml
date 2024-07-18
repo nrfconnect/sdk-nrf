@@ -1,7 +1,7 @@
 tests:
   mcuboot.direct_xip:
     sysbuild: true
-    tags: mcuboot direct_xip sysbuild
+    tags: mcuboot direct_xip sysbuild ci_tests_modules_mcuboot
     platform_allow: nrf9160dk/nrf9160 nrf52840dk/nrf52840 nrf52dk/nrf52832
       nrf5340dk/nrf5340/cpuapp
     integration_platforms:
@@ -12,7 +12,7 @@ tests:
   # Deprecated child and parent build to ensure feature does not break until it is removed
   mcuboot.direct_xip.child_parent:
     sysbuild: false
-    tags: mcuboot direct_xip child_parent deprecated
+    tags: mcuboot direct_xip child_parent deprecated ci_tests_modules_mcuboot
     platform_allow: nrf9160dk/nrf9160 nrf52840dk/nrf52840 nrf52dk/nrf52832
       nrf5340dk/nrf5340/cpuapp
     integration_platforms:
