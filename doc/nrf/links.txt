@@ -1441,6 +1441,7 @@
 
 .. _`BME688`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme688/
 .. _`BME680`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme680/
+.. _`BMI270`: https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi270/
 .. _`Bosch BSEC`: https://www.bosch-sensortec.com/software-tools/software/bsec/
 .. _`BSEC license`: https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2023_04/license_terms_bme688_bme680_bsec.pdf
 
