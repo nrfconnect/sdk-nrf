@@ -20,7 +20,7 @@
 #ifdef CONFIG_NRF_RPC_IPC_SERVICE
 NRF_RPC_IPC_TRANSPORT(mpsl_cx_rpc_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "mpsl_cx_rpc_ept");
 #elif defined(CONFIG_NRF_RPC_UART_TRANSPORT)
-#define mpsl_cx_rpc_tr NRF_RPC_UART_TRANSPORT(DT_NODELABEL(uart1))
+#define mpsl_cx_rpc_tr NRF_RPC_UART_TRANSPORT(DT_CHOSEN(nordic_rpc_uart))
 #endif
 NRF_RPC_GROUP_DEFINE(mpsl_cx_rpc_group, "mpsl_cx", &mpsl_cx_rpc_tr, NULL, NULL, NULL);
 
