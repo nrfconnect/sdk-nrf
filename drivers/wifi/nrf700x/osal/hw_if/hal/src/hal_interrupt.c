@@ -623,7 +623,7 @@ enum nrf_wifi_status hal_rpu_irq_process(struct nrf_wifi_hal_dev_ctx *hal_dev_ct
 
 	if (status == NRF_WIFI_STATUS_FAIL) {
 		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: hal_rpu_irq_ack failed\n",
+				      "%s: hal_rpu_irq_ack failed",
 				      __func__);
 		goto out;
 	}
