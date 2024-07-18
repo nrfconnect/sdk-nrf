@@ -84,6 +84,7 @@ psa_status_t silex_statuscodes_to_psa(int ret)
 		return PSA_ERROR_INSUFFICIENT_MEMORY;
 
 	case SX_ERR_INSUFFICIENT_ENTROPY:
+	case SX_ERR_TOO_MANY_ATTEMPTS:
 		return PSA_ERROR_INSUFFICIENT_ENTROPY;
 
 	case SX_ERR_INVALID_CIPHERTEXT:
