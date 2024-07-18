@@ -622,4 +622,4 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Added the :ref:`peripheral_sensor_node_shield` page.

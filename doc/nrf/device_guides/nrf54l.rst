@@ -34,3 +34,4 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    working_with_nrf/nrf54l/features
    working_with_nrf/nrf54l/nrf54l15_gs
    working_with_nrf/nrf54l/testing_dfu
+   working_with_nrf/nrf54l/peripheral_sensor_node_shield
