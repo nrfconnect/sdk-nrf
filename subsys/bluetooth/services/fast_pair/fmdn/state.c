@@ -447,7 +447,20 @@ static bool fmdn_adv_rpa_expired(struct bt_le_ext_adv *adv)
 	bool rotate_rpa;
 	uint16_t next_rpa_timeout;
 
+	BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_RPA_SHARING),
+		     "RPA sharing is not supported when combined with the FMDN extension");
+
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
+	if (!fp_fmdn_state_is_provisioned()) {
+		/* Keep the RPA in the valid state to ensure that the RPA expired callback will be
+		 * received on a forced RPA rotation during the FMDN provisioning operation (and
+		 * just before the start of the FMDN advertising). The RPA expired callback will
+		 * not be received if RPA rotation was previously allowed here in the unprovisioned
+		 * state (no expired callback for RPAs already marked as invalid).
+		 */
+		return false;
+	}
 
 	LOG_DBG("FMDN State: RPA expired");
 
@@ -484,18 +497,20 @@ static bool fmdn_adv_rpa_expired(struct bt_le_ext_adv *adv)
 }
 
 static void fmdn_adv_connected(struct bt_le_ext_adv *adv,
-				 struct bt_le_ext_adv_connected_info *info)
+			       struct bt_le_ext_adv_connected_info *info)
 {
 	int err;
 
-	if (!bt_fast_pair_is_ready()) {
-		return;
-	}
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
 	LOG_DBG("FMDN State: peer connected");
 
 	fmdn_conns[bt_conn_index(info->conn)] = true;
 	fmdn_conn_cnt++;
+
+	if (!fp_fmdn_state_is_provisioned()) {
+		return;
+	}
 
 	if (fmdn_conn_cnt < FMDN_MAX_CONN) {
 		err = fmdn_adv_start();
@@ -609,6 +624,27 @@ static int fmdn_adv_set_rotate(void)
 	return 0;
 }
 
+static int fmdn_adv_set_teardown(void)
+{
+	int err;
+
+	__ASSERT(fmdn_adv_set != NULL,
+		"FMDN State: invalid state of the advertising set");
+
+	err = bt_le_ext_adv_delete(fmdn_adv_set);
+	if (err) {
+		LOG_ERR("FMDN State: bt_le_ext_adv_delete returned error: %d", err);
+		return err;
+	}
+
+	fmdn_adv_set = NULL;
+
+	/* Ensure that advertising would not be restarted when no longer initialized. */
+	(void) k_work_cancel(&fmdn_disconnected_work);
+
+	return 0;
+}
+
 static int fmdn_adv_set_setup(void)
 {
 	int err;
@@ -628,6 +664,19 @@ static int fmdn_adv_set_setup(void)
 				   &fmdn_adv_set);
 	if (err) {
 		LOG_ERR("FMDN State: bt_le_ext_adv_create returned error: %d", err);
+
+		/* Additional context for specific error codes. */
+		if (err == -ENOMEM) {
+			LOG_ERR("FMDN State: bt_le_ext_adv_create returning -ENOMEM (%d) is "
+				"typically caused by incorrect advertising set memory allocation "
+				"or incorrect CONFIG_BT_EXT_ADV_MAX_ADV_SET configuration", err);
+		} else if (err == -EINVAL) {
+			LOG_ERR("FMDN State: bt_le_ext_adv_create returning -EINVAL (%d) is "
+				"typically caused by incorrect advertising parameters "
+				"configuration that is set in the bt_fast_pair_fmdn_adv_param_set "
+				"API function", err);
+		}
+
 		return err;
 	}
 
@@ -635,34 +684,28 @@ static int fmdn_adv_set_setup(void)
 	err = bt_hci_get_adv_handle(fmdn_adv_set, &adv_handle);
 	if (err) {
 		LOG_ERR("FMDN State: bt_hci_get_adv_handle returned error: %d", err);
-	} else {
-		tx_power = fmdn_adv_set_tx_power;
-		err = fmdn_tx_power_set(adv_handle, &tx_power);
-		if (err) {
-			LOG_ERR("FMDN State: fmdn_tx_power_set returned error: %d", err);
-		}
-	}
-
-	return 0;
-}
-
-static int fmdn_adv_set_teardown(void)
-{
-	int err;
-
-	__ASSERT(fmdn_adv_set != NULL,
-		"FMDN State: invalid state of the advertising set");
-
-	err = bt_le_ext_adv_delete(fmdn_adv_set);
-	if (err) {
-		LOG_ERR("bt_le_ext_adv_delete returned error: %d", err);
+		(void) fmdn_adv_set_teardown();
 		return err;
 	}
 
-	fmdn_adv_set = NULL;
+	tx_power = FMDN_TX_POWER;
+	err = fmdn_tx_power_set(adv_handle, &tx_power);
+	if (err) {
+		LOG_ERR("FMDN State: fmdn_tx_power_set returned error: %d", err);
+		(void) fmdn_adv_set_teardown();
+		return err;
+	}
 
-	/* Ensure that advertising would not be restarted when no longer initialized. */
-	(void) k_work_cancel(&fmdn_disconnected_work);
+	if (tx_power != FMDN_TX_POWER) {
+		LOG_WRN("FMDN State: the desired TX power configuration of %d dBm"
+			" is different from the actual TX power of %d dBm"
+			" due to the \"%s\" board limitations",
+			FMDN_TX_POWER, tx_power, CONFIG_BOARD);
+	} else {
+		LOG_DBG("FMDN State: TX power set to %d [dBm]", tx_power);
+	}
+
+	fmdn_adv_set_tx_power = tx_power;
 
 	return 0;
 }
@@ -973,12 +1016,6 @@ static int fmdn_unprovision(void)
 		return err;
 	}
 
-	err = fmdn_adv_set_teardown();
-	if (err) {
-		LOG_ERR("FMDN State: fmdn_adv_set_teardown failed: %d", err);
-		return err;
-	}
-
 	fmdn_utp_mode_state_reset();
 
 	err = fmdn_storage_unprovision();
@@ -1043,12 +1080,6 @@ static int fmdn_new_provision(void)
 	/* Provision operation */
 	fp_fmdn_callbacks_provisioning_state_changed_notify(true);
 
-	err = fmdn_adv_set_setup();
-	if (err) {
-		LOG_ERR("FMDN State: fmdn_adv_set_setup failed: %d", err);
-		return err;
-	}
-
 	err = fmdn_adv_set_rotate();
 	if (err) {
 		LOG_ERR("FMDN State: fmdn_adv_set_rotate failed: %d", err);
@@ -1101,32 +1132,18 @@ int fp_fmdn_state_eik_provision(const uint8_t *eik)
 int bt_fast_pair_fmdn_adv_param_set(
 	const struct bt_fast_pair_fmdn_adv_param *adv_param)
 {
-	int err;
-	struct bt_le_adv_param new_param;
+	int err = 0;
 	bool new_param_valid = true;
 
-	memcpy(&new_param, &fmdn_adv_param, sizeof(new_param));
-	new_param.interval_max = adv_param->interval_max;
-	new_param.interval_min = adv_param->interval_min;
-
-	if (!fmdn_adv_set) {
-		/* Advertising Set is not used: validate parameters. */
-		struct bt_le_ext_adv *test_adv_set = NULL;
-
-		err = bt_le_ext_adv_create(&new_param, NULL, &test_adv_set);
-		if (err) {
-			LOG_ERR("FMDN State: invalid advertising parameters: %d", err);
-			return err;
-		}
-
-		err = bt_le_ext_adv_delete(test_adv_set);
-		if (err) {
-			LOG_ERR("FMDN State: bt_le_ext_adv_delete failed: %d", err);
-		}
-	} else {
+	if (fmdn_adv_set) {
 		/* Advertising Set is used:
 		 * update parameters and restore the advertising state.
 		 */
+		struct bt_le_adv_param new_param;
+
+		memcpy(&new_param, &fmdn_adv_param, sizeof(new_param));
+		new_param.interval_max = adv_param->interval_max;
+		new_param.interval_min = adv_param->interval_min;
 
 		err = fmdn_adv_stop();
 		if (err) {
@@ -1135,11 +1152,19 @@ int bt_fast_pair_fmdn_adv_param_set(
 
 		err = bt_le_ext_adv_update_param(fmdn_adv_set, &new_param);
 		if (err) {
-			LOG_ERR("FMDN State: invalid advertising parameters: %d", err);
+			LOG_ERR("FMDN State: bt_le_ext_adv_update_param returned error: %d", err);
+
+			if (err == -EINVAL) {
+				LOG_ERR("FMDN State: bt_le_ext_adv_update_param returning -EINVAL "
+					"(%d) is typically caused by incorrect advertising "
+					"parameters configuration that is passed to the "
+					"bt_fast_pair_fmdn_adv_param_set API function", err);
+			}
+
 			new_param_valid = false;
 		}
 
-		if (fmdn_conn_cnt < FMDN_MAX_CONN) {
+		if ((fmdn_conn_cnt < FMDN_MAX_CONN) && fp_fmdn_state_is_provisioned()) {
 			int adv_start_err;
 
 			adv_start_err = fmdn_adv_start();
@@ -1152,7 +1177,10 @@ int bt_fast_pair_fmdn_adv_param_set(
 	}
 
 	if (new_param_valid) {
-		/* New advertising parameters accepted. */
+		/* New advertising parameters accepted if the FMDN advertising set is used.
+		 * Otherwise they are scheduled for validation during the bt_fast_pair_enable
+		 * operation (in the fp_fmdn_state_init function).
+		 */
 		fmdn_adv_param.interval_max = adv_param->interval_max;
 		fmdn_adv_param.interval_min = adv_param->interval_min;
 	}
@@ -1172,52 +1200,6 @@ int bt_fast_pair_fmdn_id_set(uint8_t id)
 	fmdn_adv_param.id = id;
 
 	return 0;
-}
-
-static int bt_fast_pair_fmdn_tx_power_verify(void)
-{
-	int err;
-	int del_err;
-	int8_t tx_power;
-	uint8_t adv_handle;
-	struct bt_le_ext_adv *tx_adv_set = NULL;
-
-	err = bt_le_ext_adv_create(&fmdn_adv_param, NULL, &tx_adv_set);
-	if (err) {
-		LOG_ERR("FMDN State: bt_le_ext_adv_create returned error: %d", err);
-		return err;
-	}
-
-	err = bt_hci_get_adv_handle(tx_adv_set, &adv_handle);
-	if (err) {
-		LOG_ERR("FMDN State: bt_hci_get_adv_handle returned error: %d", err);
-		goto finish;
-	}
-
-	tx_power = FMDN_TX_POWER;
-	err = fmdn_tx_power_set(adv_handle, &tx_power);
-	if (err) {
-		LOG_ERR("FMDN State: fmdn_tx_power_set returned error: %d", err);
-		goto finish;
-	}
-
-	if (tx_power != FMDN_TX_POWER) {
-		LOG_WRN("FMDN State: the desired TX power configuration of %d dBm"
-			" is different from the actual TX power of %d dBm"
-			" due to the \"%s\" board limitations",
-			FMDN_TX_POWER, tx_power, CONFIG_BOARD);
-	} else {
-		LOG_DBG("FMDN State: TX power set to %d [dBm]", tx_power);
-	}
-	fmdn_adv_set_tx_power = tx_power;
-
-finish:
-	del_err = bt_le_ext_adv_delete(tx_adv_set);
-	if (del_err) {
-		LOG_ERR("FMDN State: bt_le_ext_adv_delete returned error: %d", del_err);
-	}
-
-	return ((err != 0) ? err : del_err);
 }
 
 static void fmdn_state_battery_level_changed(void)
@@ -1259,15 +1241,11 @@ static void fmdn_post_init_work_handle(struct k_work *work)
 int fp_fmdn_state_init(void)
 {
 	int err;
-	bool is_provisioned;
 
 	if (is_enabled) {
 		LOG_WRN("FMDN State: module already initialized");
 		return 0;
 	}
-
-	/* Check provisioning state. */
-	is_provisioned = fp_fmdn_state_is_provisioned();
 
 	/* Set the default advertising parameters if they are not already set. */
 	if (fmdn_adv_param.interval_min == 0) {
@@ -1281,13 +1259,6 @@ int fp_fmdn_state_init(void)
 		}
 	}
 
-	/* Set the TX power used for FMDN advertising and connections. */
-	err = bt_fast_pair_fmdn_tx_power_verify();
-	if (err) {
-		LOG_ERR("FMDN State: bt_fast_pair_fmdn_tx_power_verify failed: %d", err);
-		return err;
-	}
-
 	/* Subscribe to the battery level changes. */
 	err = fp_fmdn_battery_cb_register(&fmdn_state_battery_cb);
 	if (err) {
@@ -1295,14 +1266,12 @@ int fp_fmdn_state_init(void)
 		return err;
 	}
 
-	/* Create advertising set if beacon is provisioned. */
-	if (is_provisioned) {
-		if (!fmdn_adv_set) {
-			err = fmdn_adv_set_setup();
-			if (err) {
-				LOG_ERR("FMDN State: fmdn_adv_set_setup failed: %d", err);
-				return err;
-			}
+	/* Reserve the FMDN advertising set only in the Fast Pair enabled state. */
+	if (!fmdn_adv_set) {
+		err = fmdn_adv_set_setup();
+		if (err) {
+			LOG_ERR("FMDN State: fmdn_adv_set_setup failed: %d", err);
+			return err;
 		}
 	}
 
@@ -1321,7 +1290,7 @@ int fp_fmdn_state_uninit(void)
 
 	is_enabled = false;
 
-	/* Disable advertising if set is active. */
+	/* Release the FMDN advertising set only in the Fast Pair disabled state. */
 	if (fmdn_adv_set) {
 		err = fmdn_adv_stop();
 		if (err) {
