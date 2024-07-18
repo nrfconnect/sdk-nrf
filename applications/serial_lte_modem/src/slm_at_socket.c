@@ -1583,7 +1583,7 @@ static int handle_at_recvfrom(enum at_cmd_type cmd_type, const struct at_param_l
 
 SLM_AT_CMD_CUSTOM(xgetaddrinfo, "AT#XGETADDRINFO", handle_at_getaddrinfo);
 static int handle_at_getaddrinfo(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
-				 uint32_t)
+				 uint32_t param_count)
 {
 	int err = -EINVAL;
 	char hostname[NI_MAXHOST];
@@ -1599,7 +1599,24 @@ static int handle_at_getaddrinfo(enum at_cmd_type cmd_type, const struct at_para
 		if (err) {
 			return err;
 		}
-		err = getaddrinfo(host, NULL, NULL, &result);
+		if (param_count == 3) {
+			/* DNS query with designated address family */
+			struct addrinfo hints = {
+				.ai_family = AF_UNSPEC
+			};
+			err = at_params_int_get(param_list, 2, &hints.ai_family);
+			if (err) {
+				return err;
+			}
+			if (hints.ai_family < 0  || hints.ai_family > AF_INET6) {
+				return -EINVAL;
+			}
+			err = getaddrinfo(host, NULL, &hints, &result);
+		} else if (param_count == 2) {
+			err = getaddrinfo(host, NULL, NULL, &result);
+		} else {
+			return -EINVAL;
+		}
 		if (err) {
 			rsp_send("\r\n#XGETADDRINFO: \"%s\"\r\n", gai_strerror(err));
 			return err;
