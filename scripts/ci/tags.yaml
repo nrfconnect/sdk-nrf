@@ -669,3 +669,10 @@ ci_tests_modules_mcuboot:
     - nrf/subsys/bootloader/
     - nrf/tests/modules/mcuboot/
     - zephyr/drivers/flash/
+
+ci_tests_subsys_dfu:
+  files:
+    - nrf/subsys/dfu/
+    - nrf/tests/subsys/dfu/
+    - zephyr/drivers/flash/
+    - zephyr/subsys/mgmt/
