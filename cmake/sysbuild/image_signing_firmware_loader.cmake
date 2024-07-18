@@ -118,7 +118,7 @@ function(zephyr_mcuboot_tasks)
 
     list(APPEND byproducts ${output}.bin)
     zephyr_runner_file(bin ${output}.bin)
-    set(BYPRODUCT_KERNEL_SIGNED_BIN_NAME "${output}.signed.bin"
+    set(BYPRODUCT_KERNEL_SIGNED_BIN_NAME "${output}.bin"
         CACHE FILEPATH "Signed kernel bin file" FORCE
     )
 
@@ -141,7 +141,7 @@ function(zephyr_mcuboot_tasks)
       endif()
 
       list(APPEND byproducts ${output}.encrypted.bin)
-      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_BIN_NAME "${output}.signed.encrypted.bin"
+      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_BIN_NAME "${output}.encrypted.bin"
           CACHE FILEPATH "Signed and encrypted kernel bin file" FORCE
       )
 
@@ -178,7 +178,7 @@ function(zephyr_mcuboot_tasks)
     if(NOT "${keyfile_enc}" STREQUAL "")
       set(unconfirmed_args ${input}.hex ${output}.encrypted.hex)
       list(APPEND byproducts ${output}.encrypted.hex)
-      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output}.signed.encrypted.hex"
+      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output}.encrypted.hex"
           CACHE FILEPATH "Signed and encrypted kernel hex file" FORCE
       )
 
