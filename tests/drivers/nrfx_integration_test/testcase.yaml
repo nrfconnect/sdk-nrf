@@ -3,7 +3,7 @@ tests:
     sysbuild: true
     build_only: true
     filter: CONFIG_HAS_NRFX
-    tags: drivers ci_build sysbuild
+    tags: drivers ci_build sysbuild ci_tests_drivers_nrfx_integration_test
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
@@ -28,7 +28,7 @@ tests:
     sysbuild: true
     build_only: true
     filter: CONFIG_HAS_NRFX and CONFIG_BT_LL_SOFTDEVICE
-    tags: drivers ci_build sysbuild
+    tags: drivers ci_build sysbuild ci_tests_drivers_nrfx_integration_test
     extra_configs:
       - CONFIG_NRFX_AND_BT_LL_SOFTDEVICE=y
     platform_allow:
@@ -41,7 +41,7 @@ tests:
     sysbuild: true
     build_only: true
     filter: CONFIG_HAS_NRFX and CONFIG_BT_LL_SW_SPLIT
-    tags: drivers ci_build sysbuild
+    tags: drivers ci_build sysbuild ci_tests_drivers_nrfx_integration_test
     extra_configs:
       - CONFIG_NRFX_AND_BT_LL_SW_SPLIT=y
     platform_allow:
