@@ -644,3 +644,18 @@ ci_tests_subsys_app_event_manager:
     - nrf/tests/subsys/app_event_manager/
     - nrf/subsys/app_event_manager/
     - nrf/include/app_event_manager.h
+
+ci_applications_ipc_radio:
+  files:
+    - nrf/applications/ipc_radio/
+    - nrf/drivers/mpsl/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/ieee802154/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/nrf_rpc/
+    - nrfxlib/nrf_802154/
+    - nrfxlib/nrf_rpc/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/net/
