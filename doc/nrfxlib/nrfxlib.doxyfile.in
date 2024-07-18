@@ -1981,6 +1981,7 @@ PREDEFINED             = "MBEDTLS_CONFIG_FILE=\"@OUTPUT_DIRECTORY@/mbedtls_doxyg
                          "__PACKED_UNION=union" \
                          "__packed=" \
                          "__aligned(x)=" \
+                         "__ALIGN(x)=" \
                          "__printf_like(x, y)=" \
                          "__attribute__(x)=" \
                          "__syscall=" \
