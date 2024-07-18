@@ -676,3 +676,9 @@ ci_tests_subsys_dfu:
     - nrf/tests/subsys/dfu/
     - zephyr/drivers/flash/
     - zephyr/subsys/mgmt/
+
+ci_tests_drivers_nrfx_integration_test:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/drivers/nrfx_integration_test/
+    - zephyr/modules/hal_nordic/
