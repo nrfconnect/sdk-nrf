@@ -936,6 +936,17 @@ enum nrf_wifi_status nrf_wifi_hal_ctrl_cmd_send(struct nrf_wifi_hal_dev_ctx *hal
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
+#ifdef CONFIG_NRF_WIFI_CMD_EVENT_LOG
+	nrf_wifi_osal_log_info(hal_dev_ctx->hpriv->opriv,
+			      "%s: caller %p\n",
+			      __func__,
+			      __builtin_return_address(0));
+#else
+	nrf_wifi_osal_log_dbg(hal_dev_ctx->hpriv->opriv,
+			     "%s: caller %p\n",
+			     __func__,
+			     __builtin_return_address(0));
+#endif
 	nrf_wifi_osal_spinlock_take(hal_dev_ctx->hpriv->opriv,
 				    hal_dev_ctx->lock_hal);
 
