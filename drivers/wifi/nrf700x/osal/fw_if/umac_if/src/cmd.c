@@ -153,6 +153,11 @@ enum nrf_wifi_status umac_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	nrf_wifi_osal_log_dbg(fmac_dev_ctx->fpriv->opriv, "RPU LPM type: %s\n",
 		umac_cmd_data->sys_params.sleep_enable == 2 ? "HW" :
 		umac_cmd_data->sys_params.sleep_enable == 1 ? "SW" : "DISABLED");
+#ifdef CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD
+	umac_cmd_data->mgmt_buff_offload =  1;
+	nrf_wifi_osal_log_info(fmac_dev_ctx->fpriv->opriv,
+			       "Management buffer offload enabled\n");
+#endif /* CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD */
 #ifndef CONFIG_NRF700X_RADIO_TEST
 	nrf_wifi_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 			      umac_cmd_data->rx_buf_pools,

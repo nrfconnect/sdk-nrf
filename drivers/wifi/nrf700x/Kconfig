@@ -427,6 +427,10 @@ config NRF_WIFI_QOS_NULL_BASED_RETRIEVAL
 
 endchoice
 
+config NRF_WIFI_MGMT_BUFF_OFFLOAD
+	bool "Enable management buffer offload"
+	default y
+
 config NRF_WIFI_RPU_RECOVERY
 	bool "Enable RPU recovery mechanism"
 	depends on NRF_WIFI_LOW_POWER

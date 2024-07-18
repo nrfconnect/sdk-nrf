@@ -351,6 +351,9 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 			nrf_wifi_osal_nbuf_free(fmac_dev_ctx->fpriv->opriv,
 						nwb);
+#ifdef CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD
+			goto out;
+#endif /* CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD */
 		} else {
 			nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 					      "%s: Invalid frame type recd %d\n",
