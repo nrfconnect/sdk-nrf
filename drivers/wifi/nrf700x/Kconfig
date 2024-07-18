@@ -439,6 +439,10 @@ config NRF_WIFI_RPU_RECOVERY
 		the recovery process and it is application's responsibility to
 		re-establish the network connection.
 
+config NRF_WIFI_CMD_EVENT_LOG
+	bool "Enable command event logging"
+	help
+		Enable command event logging to help debug Wi-Fi command events.
 if NRF_WIFI_RPU_RECOVERY
 
 config NRF_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS
