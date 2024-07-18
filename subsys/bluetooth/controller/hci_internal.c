@@ -546,7 +546,7 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_transmitter_test_v4 = 1;
 #endif
 
-#if defined(CONFIG_BT_CTLR_SDC_LE_PATH_LOSS_MONITORING)
+#if defined(CONFIG_BT_CTLR_LE_PATH_LOSS_MONITORING)
 	cmds->hci_le_set_path_loss_reporting_parameters = 1;
 	cmds->hci_le_set_path_loss_reporting_enable = 1;
 #endif
@@ -758,7 +758,7 @@ void hci_internal_le_supported_features(
 	features->params.le_power_change_indication = 1;
 #endif
 
-#if defined(CONFIG_BT_CTLR_SDC_LE_PATH_LOSS_MONITORING)
+#if defined(CONFIG_BT_CTLR_LE_PATH_LOSS_MONITORING)
 	features->params.le_path_loss_monitoring = 1;
 #endif
 
@@ -1325,7 +1325,7 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 									  (void *)event_out_params);
 #endif
 
-#if defined(CONFIG_BT_CTLR_SDC_LE_PATH_LOSS_MONITORING)
+#if defined(CONFIG_BT_CTLR_LE_PATH_LOSS_MONITORING)
 	case SDC_HCI_OPCODE_CMD_LE_SET_PATH_LOSS_REPORTING_PARAMS:
 		*param_length_out += sizeof(sdc_hci_cmd_le_set_path_loss_reporting_params_return_t);
 		return sdc_hci_cmd_le_set_path_loss_reporting_params((void *)cmd_params,
