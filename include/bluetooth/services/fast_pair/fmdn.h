@@ -373,6 +373,10 @@ struct bt_fast_pair_fmdn_adv_param {
  *  Fast Pair with the @ref bt_fast_pair_enable API. Otherwise, the default
  *  value @ref BT_FAST_PAIR_FMDN_ADV_PARAM_DEFAULT is used for advertising.
  *
+ *  In the Fast Pair disabled state, advertising parameters are accepted
+ *  without any validation but are subsequently validated during the
+ *  @ref bt_fast_pair_enable API call.
+ *
  *  You can use this function to dynamically update advertising parameters
  *  during an ongoing FMDN advertising.
  *
