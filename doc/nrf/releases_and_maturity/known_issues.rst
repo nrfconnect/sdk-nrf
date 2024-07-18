@@ -2805,6 +2805,27 @@ Build system
 
 The issues in this section are related to :ref:`app_build_system`.
 
+.. rst-class:: v2-7-0
+
+NCSDK-28462: MCUboot signing configuration cannot be updated without pristine build
+  When using :ref:`configuration_system_overview_sysbuild`, the MCUboot signing configuration cannot be updated in an already configured project.
+
+  **Workaround:** Perform a :ref:`pristine build <zephyr:west-building-pristine>` to change any of the MCUboot signing configuration. Do not update it using menuconfig, guiconfig or the nRF Kconfig GUI, and instead :ref:`provide it on the command line <cmake_options>` when configuring the application if it needs setting manually.
+
+.. rst-class:: v2-7-0
+
+NCSDK-28461: Sysbuild partition manager file changes cannot be propagated to builds unless they are pristine
+  When using :ref:`configuration_system_overview_sysbuild` and a :ref:`partition_manager` file, the Partition Manager configuration for things such as MCUboot signing will not be updated if the Partition Manager configuration is changed in an already configured project.
+
+  **Workaround:** Perform a :ref:`pristine build <zephyr:west-building-pristine>` after changing configuration in Partition Manager files.
+
+.. rst-class:: v2-7-0
+
+NCSDK-28451: Sysbuild silently does not use relative path (relative to application config dir) user-specified (PM_STATIC_YML_FILE) static PM files
+  When building an application using :ref:`configuration_system_overview_sysbuild` with a :ref:`static partition file <ug_pm_static_providing>` specified using ``PM_STATIC_YML_FILE`` with a relative path, the relative path will be relative to the sysbuild folder in Zephyr, not to the application configuration directory, and the file will silently be ignored.
+
+  **Workaround:** Use an absolute path when specifying the static partition file and ensure that the output shows the file as being used.
+
 .. rst-class:: v2-7-0 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-20567: When building an application for MCUboot, the build system does not check whether the compiled application is too big for being an update image
