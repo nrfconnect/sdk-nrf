@@ -358,6 +358,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/wifi_credentials*/  @nrfconnect/ncs-cia
 /tests/subsys/net/lib/mqtt_helper/        @nrfconnect/ncs-cia
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
+/tests/subsys/partition_manager/static_pm_file/  @nordicjm @tejlmand
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
 /tests/subsys/sdfw_services/              @anhmolt @hakonfam @jonathannilsen
