@@ -483,6 +483,12 @@ config NRF_WIFI_RPU_RECOVERY_RETRY_WINDOW_S
 		exceeds NRF_WIFI_RPU_RECOVERY_MAX_RETRIES within this window, the system
 		will be reset.
 
+config NRF_WIFI_RPU_RECOVERY_PS_STATE_DEBUG
+	bool "Enable RPU recovery power save state debug logs"
+	help
+		Enable RPU recovery power save state debug logs to help debug RPU recovery mechanism.
+
+
 config NET_MGMT_EVENT_QUEUE_SIZE
 	# Doing interface down and up even with delay puts a lot of events in the queue
 	default 16
