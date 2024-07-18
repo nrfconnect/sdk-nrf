@@ -26,3 +26,10 @@ tests:
       - thingy53/nrf5340/cpuapp
     extra_args:
       - FILE_SUFFIX=no_network_core
+  sample.mcumgr.smp_svr.ext_xip.no_network_core.directxip:
+    platform_allow:
+      - thingy53/nrf5340/cpuapp
+    integration_platforms:
+      - thingy53/nrf5340/cpuapp
+    extra_args:
+      - FILE_SUFFIX=no_network_core_directxip
