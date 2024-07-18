@@ -23,7 +23,7 @@ extern "C" {
 #ifdef CONFIG_NRF_RPC_IPC_SERVICE
 NRF_RPC_IPC_TRANSPORT(log_rpc_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "log_rpc_ept");
 #elif defined(CONFIG_NRF_RPC_UART_TRANSPORT)
-#define log_rpc_tr NRF_RPC_UART_TRANSPORT(DT_NODELABEL(uart1))
+#define log_rpc_tr NRF_RPC_UART_TRANSPORT(DT_CHOSEN(nordic_rpc_uart))
 #endif
 NRF_RPC_GROUP_DEFINE(log_rpc_group, "log", &log_rpc_tr, NULL, NULL, NULL);
 
