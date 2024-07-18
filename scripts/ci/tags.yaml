@@ -659,3 +659,13 @@ ci_applications_ipc_radio:
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/ipc/
     - zephyr/subsys/net/
+
+ci_tests_modules_mcuboot:
+  files:
+    - bootloader/mcuboot/
+    - nrf/modules/mcuboot/
+    - nrf/samples/nrf5340/empty_net_core/
+    - nrf/samples/nrf5340/netboot/
+    - nrf/subsys/bootloader/
+    - nrf/tests/modules/mcuboot/
+    - zephyr/drivers/flash/
