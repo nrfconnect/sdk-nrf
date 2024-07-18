@@ -152,7 +152,7 @@ static void ot_rpc_rsp_send_dataset(otOperationalDatasetTlvs *dataset)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, dataset ? dataset->mLength + 1 : 1);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, dataset ? dataset->mLength + 2 : 1);
 	nrf_rpc_encode_buffer(&ctx, dataset ? dataset->mTlvs : NULL,
 			      dataset ? dataset->mLength : 0);
 	nrf_rpc_cbor_rsp_no_err(&ot_group, &ctx);
