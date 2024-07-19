@@ -399,7 +399,7 @@ find_my:
     - zephyr/subsys/usb/device/
     - find-my/
 
-cellular:
+ci_samples_cellular:
   files:
     - nrf/samples/cellular/
     - nrf/boards/nordic/
