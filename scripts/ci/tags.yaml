@@ -523,7 +523,7 @@ peripheral_802154:
     - zephyr/modules/hal_nordic/nrf_802154/
     - zephyr/soc/nordic/
 
-keys:
+ci_samples_keys:
   files:
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
