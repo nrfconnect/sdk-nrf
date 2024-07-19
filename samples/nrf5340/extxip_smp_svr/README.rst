@@ -7,7 +7,7 @@ nRF5340: SMP Server with external XIP
    :local:
    :depth: 2
 
-This sample demonstrates how to split an application that partially resides on internal flash and Quad Serial Peripheral Interface (QSPI) flash by using the Simple Management Protocol (SMP) server.
+This sample demonstrates how to split an application that partially resides on internal flash and Quad Serial Peripheral Interface (QSPI) flash by using Execute in place (XIP) and the Simple Management Protocol (SMP) server.
 
 Requirements
 ************
