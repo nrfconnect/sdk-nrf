@@ -237,7 +237,7 @@ zigbee:
     - zephyr/include/mgmt/mcumgr/
     - zephyr/include/dfu/
 
-openthread:
+ci_samples_openthread:
   files:
     - modules/lib/openthread/
     - zephyr/include/zephyr/net/
