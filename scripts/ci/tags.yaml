@@ -203,7 +203,7 @@ crypto:
     - zephyr/modules/mbedtls/
     - modules/crypto/
 
-zigbee:
+ci_samples_zigbee: &ci_zigbee
   files:
     - nrf/include/zigbee/
     - nrf/subsys/zigbee
@@ -236,6 +236,8 @@ zigbee:
     - zephyr/subsys/dfu/
     - zephyr/include/mgmt/mcumgr/
     - zephyr/include/dfu/
+
+ci_tests_subsys_zigbee: *ci_zigbee
 
 ci_samples_openthread:
   files:
