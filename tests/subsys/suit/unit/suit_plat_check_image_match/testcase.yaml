@@ -5,3 +5,4 @@ tests:
       suit
       suit_platform
       suit_plat_check_image_match
+      ci_tests_subsys_suit

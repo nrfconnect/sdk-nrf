@@ -6,3 +6,4 @@ tests:
       suit_platform
       suit_plat_app
       suit_plat_retrieve_manifest_domain_specific
+      ci_tests_subsys_suit
