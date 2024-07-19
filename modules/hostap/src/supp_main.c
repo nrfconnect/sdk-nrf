@@ -77,6 +77,7 @@ static const struct wifi_mgmt_ops wpa_supp_ops = {
 	.iface_status = z_wpa_supplicant_status,
 #ifdef CONFIG_NET_STATISTICS_WIFI
 	.get_stats = z_wpa_supplicant_get_stats,
+	.reset_stats = z_wpa_supplicant_reset_stats,
 #endif
 	.set_power_save = z_wpa_supplicant_set_power_save,
 	.set_twt = z_wpa_supplicant_set_twt,
