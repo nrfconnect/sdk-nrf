@@ -501,7 +501,7 @@ radio_test:
     - zephyr/soc/nordic/
     - zephyr/subsys/ipc/
 
-peripheral_802154:
+ci_samples_peripheral_802154:
   files:
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
