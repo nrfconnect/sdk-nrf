@@ -123,13 +123,6 @@ net:
     - nrfxlib/nrf_modem/
     - nrfxlib/nrf_wifi/
 
-mcumgr:
-  files:
-    - zephyr/subsys/mgmt/mcumgr/
-    - zephyr/tests/subsys/mgmt/mcumgr/
-    - zephyr/samples/subsys/mgmt/mcumgr/
-    - zephyr/include/zephyr/mgmt/mcumgr/
-
 ci_samples_wifi:
   files:
     - nrf/drivers/wifi/
