@@ -3,6 +3,6 @@ tests:
     sysbuild: true
     tags: example sysbuild ci_tests_unity
     integration_platforms:
-      - native_posix
+      - native_sim
     platform_allow:
-      - native_posix
+      - native_sim
