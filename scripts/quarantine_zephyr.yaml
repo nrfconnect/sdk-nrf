@@ -61,7 +61,7 @@
     - sample.modules.lvgl.demo_stress
     - sample.modules.lvgl.demo_widgets
   platforms:
-    - native_posix
+    - native_sim
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24924"
 
 - scenarios:
