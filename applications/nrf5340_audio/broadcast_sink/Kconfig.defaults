@@ -61,6 +61,19 @@ config NVS_LOG_LEVEL
 config BT_DEVICE_NAME
 	default "NRF5340_BIS_HEADSET"
 
+## PACS related configs ##
+config BT_PAC_SNK_NOTIFIABLE
+	default y
+
+config BT_PAC_SNK
+	default y
+
+config BT_PAC_SRC_NOTIFIABLE
+	default y
+
+config BT_PAC_SRC
+	default y
+
 ## Audio related configs ##
 config AUDIO_MUTE
 	default n
