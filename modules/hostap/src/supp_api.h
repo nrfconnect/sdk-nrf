@@ -69,6 +69,14 @@ int z_wpa_supplicant_scan(const struct device *dev, struct wifi_scan_params *par
  */
 int z_wpa_supplicant_get_stats(const struct device *dev,
 				struct net_stats_wifi *stats);
+/**
+ * @brief Reset Wi-Fi statistics
+ *
+ * @param dev Wi-Fi interface name to use
+ *
+ * @return 0 for OK; -1 for ERROR
+ */
+int z_wpa_supplicant_reset_stats(const struct device *dev);
 #endif /* CONFIG_NET_STATISTICS_WIFI || __DOXYGEN__ */
 
 /**

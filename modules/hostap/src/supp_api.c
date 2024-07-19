@@ -727,6 +727,18 @@ int z_wpa_supplicant_get_stats(const struct device *dev,
 
 	return wifi_mgmt_api->get_stats(dev, stats);
 }
+
+int z_wpa_supplicant_reset_stats(const struct device *dev)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->reset_stats) {
+		wpa_printf(MSG_ERROR, "Reset stats not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->reset_stats(dev);
+}
 #endif /* CONFIG_NET_STATISTICS_WIFI */
 
 int z_wpa_supplicant_set_power_save(const struct device *dev,
