@@ -517,14 +517,6 @@ config BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT
 
 endif
 
-config BT_CTLR_SDC_LE_PATH_LOSS_MONITORING
-	bool "LE Path Loss Monitoring Feature"
-	depends on BT_CTLR_LE_POWER_CONTROL
-	select EXPERIMENTAL
-	help
-	  Enable support for LE Path Loss Monitoring feature that is defined in the
-	  Bluetooth Core specification, Version 5.4 | Vol 6, Part B, Section 4.6.32.
-
 config BT_CTLR_SDC_SILENCE_UNEXPECTED_MSG_TYPE
 	bool
 	help
