@@ -245,7 +245,9 @@ Kconfig*                                  @tejlmand
 /snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-cia
 /snippets/nrf91-modem-trace-uart/         @eivindj-nordic
 /snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia
-/snippets/nrf70-debug/                    @krish2718 @sachinthegreen
+/snippets/nrf70-driver-verbose-debug/     @krish2718 @sachinthegreen
+/snippets/nrf70-driver-debug/             @krish2718 @sachinthegreen
+/snippets/wpa-supplicant-debug/           @krish2718 @sachinthegreen
 /snippets/nrf70-fw-patch-ext-flash/       @krish2718 @sachinthegreen
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
 /snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization

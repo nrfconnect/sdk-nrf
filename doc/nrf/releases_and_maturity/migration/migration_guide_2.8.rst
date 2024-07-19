@@ -277,3 +277,18 @@ AT command parser
            * `&type` pointer to the returned command type.
            */
           at_parser_cmd_type_get(&at_parser, &type);
+
+Snippets
+========
+
+This section describes the changes related to snippets.
+
+.. toggle::
+
+   The existing snippet ``nrf70-debug`` has been removed and divided into three sub-snippets as below:
+
+   * ``nrf70-driver-debug`` - To enable the nRF70 driver debug logs.
+
+   * ``nrf70-driver-verbose-logs`` - To enable the nRF70 driver, firmware interface, and BUS interface debug logs.
+
+   * ``wpa-supplicant-debug`` - To enable supplicant logs.
