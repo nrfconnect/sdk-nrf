@@ -6,4 +6,4 @@ tests:
       - native_sim
       - qemu_cortex_m3
       - nrf9160dk/nrf9160/ns
-    tags: debug_module sysbuild applications_asset_tracker_v2
+    tags: debug_module sysbuild ci_applications_asset_tracker_v2
