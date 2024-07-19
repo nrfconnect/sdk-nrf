@@ -130,7 +130,7 @@ mcumgr:
     - zephyr/samples/subsys/mgmt/mcumgr/
     - zephyr/include/zephyr/mgmt/mcumgr/
 
-wifi:
+ci_samples_wifi:
   files:
     - nrf/drivers/wifi/
     - nrf/modules/hostap/

@@ -9,7 +9,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   # Disable optional features to reduce memory usage
   sample.nrf7002.shell.disable_adv_features:
     sysbuild: true
@@ -18,14 +18,14 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001.shell:
     sysbuild: true
     build_only: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002_eks.shell:
     sysbuild: true
     build_only: true
@@ -34,7 +34,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
     platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7000_eks.shell:
     sysbuild: true
     build_only: true
@@ -43,7 +43,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
     platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001_eks.shell:
     sysbuild: true
     build_only: true
@@ -52,7 +52,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
     platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002_eks_cpunet.shell:
     sysbuild: true
     build_only: true
@@ -60,7 +60,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7000_eks_cpunet.shell:
     sysbuild: true
     build_only: true
@@ -68,7 +68,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001_eks_cpunet.shell:
     sysbuild: true
     build_only: true
@@ -76,7 +76,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.zperf:
     sysbuild: true
     build_only: true
@@ -84,7 +84,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001.shell.zperf:
     sysbuild: true
     build_only: true
@@ -92,7 +92,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.wpa_cli:
     sysbuild: true
     build_only: true
@@ -100,7 +100,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001.shell.wpa_cli:
     sysbuild: true
     build_only: true
@@ -108,7 +108,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.scan_only_7002:
     sysbuild: true
     build_only: true
@@ -116,7 +116,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7000.shell.scan_only_91:
     sysbuild: true
     build_only: true
@@ -128,14 +128,14 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.scan_only_thingy91x:
     sysbuild: true
     build_only: true
     extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf CONFIG_WPA_SUPP=n
     platform_allow:
       - thingy91x/nrf9151/ns
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.otbr:
     sysbuild: true
     build_only: true
@@ -143,7 +143,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.posix_names:
     sysbuild: true
     build_only: true
@@ -151,7 +151,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002_ns.shell:
     sysbuild: true
     build_only: true
@@ -166,7 +166,7 @@ tests:
     integration_platforms:
       - thingy53/nrf5340/cpuapp
     platform_allow: thingy53/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.qspi.ext_flash_xip:
     sysbuild: true
     build_only: true
@@ -178,7 +178,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
     platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.qspi.ext_flash_store:
     sysbuild: true
     build_only: true
@@ -191,7 +191,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
     platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf54h20dk_nrf7002ek.shell:
     sysbuild: true
     build_only: true
@@ -199,7 +199,7 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   # Used by QA and also acts as a memory stress test
   sample.nrf7001.superset:
     sysbuild: true
@@ -279,7 +279,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.with_overlay_raw_tx_packet:
     sysbuild: true
     build_only: true
@@ -289,7 +289,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.with_overlay_monitor:
     sysbuild: true
     build_only: true
@@ -299,7 +299,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.promiscuous_mode:
     sysbuild: true
     build_only: true
@@ -309,7 +309,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001.promiscuous_mode_7001:
     sysbuild: true
     build_only: true
@@ -319,7 +319,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002eb.nrf54l15pdk.shell:
     sysbuild: true
     build_only: true
@@ -327,11 +327,11 @@ tests:
     integration_platforms:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf54l15pdk/nrf54l15/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.psa:
     build_only: true
     extra_args: CONFIG_WPA_SUPP_CRYPTO_PSA=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild wifi
+    tags: ci_build sysbuild ci_samples_wifi
