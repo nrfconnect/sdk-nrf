@@ -45,3 +45,4 @@ Make sure to consider :ref:`app_bootloaders` and :ref:`app_dfu` already at this 
    multi_image
    building
    output_build_files
+   ../bootloaders_dfu/mcuboot_nsib/qspi_xip_split_image
