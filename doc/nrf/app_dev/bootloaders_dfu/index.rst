@@ -50,3 +50,4 @@ To learn more, refer to the following documentation pages:
    :caption: Subpages:
 
    mcuboot_nsib/bootloader_mcuboot_nsib
+   qspi_xip_split_image
