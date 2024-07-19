@@ -195,21 +195,22 @@ static void on_pdn_activated(void)
 #if CONFIG_NET_IPV4
 	int ret;
 
+	/* If IPv4 is enabled, check whether modem has been assigned an IPv4. */
 	ret = lte_ipv4_addr_add(iface_bound);
+
 	if (ret == -ENODATA) {
 		LOG_WRN("No IPv4 address given by the network");
-		return;
 	} else if (ret) {
 		LOG_ERR("ipv4_addr_add, error: %d", ret);
 		fatal_error_notify_and_disconnect();
 		return;
 	}
 
-	update_has_pdn(true);
-
 #endif /* CONFIG_NET_IPV4 */
 
 	/* IPv6 is updated on a aseparate event */
+
+	update_has_pdn(true);
 }
 
 static void on_pdn_deactivated(void)
@@ -248,8 +249,6 @@ static void on_pdn_ipv6_up(void)
 		fatal_error_notify_and_disconnect();
 		return;
 	}
-
-	update_has_pdn(true);
 }
 
 static void on_pdn_ipv6_down(void)
