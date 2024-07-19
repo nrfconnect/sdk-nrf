@@ -356,6 +356,48 @@ The following Kconfig options are available:
 You must update your applications to select the required Kconfig options at the sysbuild level for applications to work.
 If these options are not set, firmware updates may not work or images may fail to boot.
 
+.. _child_parent_to_sysbuild_migration_qspi_xip:
+
+Support for using QSPI XIP flash split image application code was moved to sysbuild.
+The following Kconfig options are available:
+
++--------------------------------+-----------------------------------------------------------------------------------------------------------+
+| Kconfig option                 | Description                                                                                               |
++================================+===========================================================================================================+
+| ``SB_CONFIG_QSPI_XIP_SUPPORT`` | Enables splitting application into internal flash and external QSPI XIP flash images with MCUboot signing |
++--------------------------------+-----------------------------------------------------------------------------------------------------------+
+
+You must update your applications to select the required Kconfig options at the sysbuild level for applications to work.
+If these options are not set, the QSPI XIP flash code sections will not be generated.
+The MCUboot image number is now dependant upon what images are present in a build, the Kconfig option ``SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`` gives the image number of this section.
+The format for the static partition file has also changed, there must now be a pad section and app section which form the primary section in a span, an example for the :ref:`smp_svr_ext_xip` sample is shown below:
+
+.. code-block:: yaml
+
+    mcuboot_primary_2:
+      address: 0x120000
+      device: MX25R64
+      end_address: 0x160000
+    +  orig_span: &id003
+    +  - mcuboot_primary_2_pad
+    +  - mcuboot_primary_2_app
+      region: external_flash
+      size: 0x40000
+    +  span: *id003
+    +mcuboot_primary_2_pad:
+    +  address: 0x120000
+    +  end_address: 0x120200
+    +  region: external_flash
+    +  size: 0x200
+    +mcuboot_primary_2_app:
+    +  address: 0x120200
+    +  device: MX25R64
+    +  end_address: 0x40000
+    +  region: external_flash
+    +  size: 0x3FE00
+
+Further details about QSPI XIP flash split image are available on :ref:`qspi_xip_split_image`.
+
 .. _child_parent_to_sysbuild_migration_filename_changes:
 
 Filename changes
@@ -544,21 +586,21 @@ In Sysbuild, elements like file suffixes, shields, and snippets without an image
 To apply them to a single image, they must be prefixed with the image name.
 Without doing this, projects with multiple images (for example, those with MCUboot) might fail to build due to invalid configuration for other images.
 
-+-------------------------------+----------------------------------+-----------------------+
-| Configuration parameter       | Child/parent                     | Sysbuild              |
-+===============================+==================================+=======================+
-| ``-DFILE_SUFFIX=...``         | Applies only to main application | Applies to all images |
-+-------------------------------+----------------------------------+-----------------------+
-| ``-D<image>_FILE_SUFFIX=...`` | Applies only to <image>          |Applies only to <image>|
-+-------------------------------+----------------------------------+-----------------------+
-| ``-DSNIPPET=...``             | Applies only to main application | Applies to all images |
-+-------------------------------+----------------------------------+-----------------------+
-| ``-D<image>_SNIPPET=...``     | Applies only to <image>          |Applies only to <image>|
-+-------------------------------+----------------------------------+-----------------------+
-| ``-DSHIELD=...``              | Applies only to main application | Applies to all images |
-+-------------------------------+----------------------------------+-----------------------+
-| ``-D<image>_SHIELD=...``      | Applies only to <image>          |Applies only to <image>|
-+-------------------------------+----------------------------------+-----------------------+
++-------------------------------+----------------------------------+-------------------------+
+| Configuration parameter       | Child/parent                     | Sysbuild                |
++===============================+==================================+=========================+
+| ``-DFILE_SUFFIX=...``         | Applies only to main application | Applies to all images   |
++-------------------------------+----------------------------------+-------------------------+
+| ``-D<image>_FILE_SUFFIX=...`` | Applies only to <image>          | Applies only to <image> |
++-------------------------------+----------------------------------+-------------------------+
+| ``-DSNIPPET=...``             | Applies only to main application | Applies to all images   |
++-------------------------------+----------------------------------+-------------------------+
+| ``-D<image>_SNIPPET=...``     | Applies only to <image>          | Applies only to <image> |
++-------------------------------+----------------------------------+-------------------------+
+| ``-DSHIELD=...``              | Applies only to main application | Applies to all images   |
++-------------------------------+----------------------------------+-------------------------+
+| ``-D<image>_SHIELD=...``      | Applies only to <image>          | Applies only to <image> |
++-------------------------------+----------------------------------+-------------------------+
 
 Configuration values that specify Kconfig fragment or overlay files (for example, ``EXTRA_CONF_FILE`` and ``EXTRA_DTC_OVERLAY_FILE``) cannot be applied globally using either child/parent image or sysbuild.
 They function the same in both systems:
