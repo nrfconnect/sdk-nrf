@@ -300,7 +300,7 @@ suit:
     - modules/lib/suit-processor/
     - modules/lib/suit-generator/
 
-nfc:
+ci_samples_nfc:
   files:
     - nrf/subsys/nfc/
     - nrf/include/nfc/
