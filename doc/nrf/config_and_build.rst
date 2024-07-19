@@ -44,3 +44,4 @@ Make sure to consider :ref:`app_bootloaders` and :ref:`app_dfu` already at this 
    config_and_build/multi_image
    config_and_build/bootloaders/index
    config_and_build/dfu/index
+   config_and_build/qspi_xip_split_image
