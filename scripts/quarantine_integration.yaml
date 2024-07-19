@@ -1415,3 +1415,7 @@
   platforms:
     - thingy53/nrf5340/cpuapp/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
+
+- platforms:
+    - native_posix
+  comment: "native_posix will disabled soon - native_sim platform as default simulator"
