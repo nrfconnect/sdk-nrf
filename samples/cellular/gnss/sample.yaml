@@ -12,7 +12,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
 
   # Following configurations will be used by the positioning CI integration job to verify PRs
   sample.cellular.gnss.integration_config_positioning_agnss_nrfcloud_ltem_pvt:
@@ -37,7 +37,7 @@ tests:
       - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.gnss.integration_config_positioning_agnss_nrfcloud_nbiot_nmea_lte_on:
     sysbuild: true
     build_only: true
@@ -60,7 +60,7 @@ tests:
       - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.gnss.integration_config_positioning_pgps_nrfcloud_ltem_nmea:
     sysbuild: true
     build_only: true
@@ -85,7 +85,7 @@ tests:
       - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.gnss.integration_config_positioning_gnss_ltem_pvt:
     sysbuild: true
     build_only: true
@@ -108,4 +108,4 @@ tests:
       - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular

@@ -12,7 +12,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell_debug:
     sysbuild: true
     build_only: true
@@ -25,7 +25,7 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     extra_args: OVERLAY_CONFIG=overlay-debug.conf
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.cloud_mqtt_only:
     sysbuild: true
     build_only: true
@@ -40,7 +40,7 @@ tests:
     extra_configs:
       - CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND=y
     extra_args: OVERLAY_CONFIG=overlay-cloud_mqtt.conf
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.cloud_mqtt_rest:
     sysbuild: true
     build_only: true
@@ -55,7 +55,7 @@ tests:
     extra_configs:
       - CONFIG_MOSH_CLOUD_MQTT=y
       - CONFIG_MOSH_CLOUD_REST=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.cloud_coap_only:
     sysbuild: true
     build_only: true
@@ -70,7 +70,7 @@ tests:
     extra_configs:
       - CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND=y
     extra_args: OVERLAY_CONFIG=overlay-cloud_coap.conf
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.non_offloading_ip:
     sysbuild: true
     build_only: true
@@ -83,7 +83,7 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     extra_args: OVERLAY_CONFIG=overlay-non-offloading.conf
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.nrf7002ek_wifi:
     sysbuild: true
     build_only: true
@@ -97,7 +97,7 @@ tests:
       - nrf9161dk/nrf9161/ns
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.nrf7000ek_wifi:
     sysbuild: true
     build_only: true
@@ -112,7 +112,7 @@ tests:
     extra_args: SHIELD=nrf7002ek_nrf7000 OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 CONFIG_WPA_SUPP=n SB_CONFIG_WIFI_NRF700X=y
                 SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.nrf7001ek_wifi:
     sysbuild: true
     build_only: true
@@ -126,7 +126,7 @@ tests:
       - nrf9161dk/nrf9161/ns
     extra_args: SHIELD=nrf7002ek_nrf7001 OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.nrf7002ek_wifi-debug:
     sysbuild: true
     build_only: true
@@ -141,7 +141,7 @@ tests:
     extra_args: SHIELD=nrf7002ek
                 OVERLAY_CONFIG="overlay-nrf700x-wifi-scan-only.conf;overlay-debug.conf"
                 SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.app_fota:
     sysbuild: true
     build_only: true
@@ -155,7 +155,7 @@ tests:
       - nrf9161dk/nrf9161/ns
     extra_args: OVERLAY_CONFIG=overlay-app_fota.conf
                 SB_CONFIG_BOOTLOADER_MCUBOOT=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.modem_fota_full.nrf9160:
     sysbuild: true
     build_only: true
@@ -164,7 +164,7 @@ tests:
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     platform_allow: nrf9160dk/nrf9160/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.modem_fota_full.nrf91x1:
     sysbuild: true
     build_only: true
@@ -176,7 +176,7 @@ tests:
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.carrier:
     sysbuild: true
     build_only: true
@@ -189,7 +189,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.lwm2m:
     sysbuild: true
     build_only: true
@@ -204,7 +204,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.lwm2m_bootstrap:
     sysbuild: true
     build_only: true
@@ -219,7 +219,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.lwm2m_pgps:
     sysbuild: true
     build_only: true
@@ -234,7 +234,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.pgps:
     sysbuild: true
     build_only: true
@@ -247,7 +247,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_service_ext:
     sysbuild: true
     build_only: true
@@ -262,7 +262,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_service_ext_pgps_nrf7002ek_wifi:
     sysbuild: true
     build_only: true
@@ -280,7 +280,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.ppp:
     sysbuild: true
     build_only: true
@@ -293,7 +293,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.bt:
     sysbuild: true
     build_only: true
@@ -301,7 +301,7 @@ tests:
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     platform_allow: nrf9160dk/nrf9160/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.rtt:
     sysbuild: true
     build_only: true
@@ -314,7 +314,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.thingy91:
     sysbuild: true
     build_only: true
@@ -324,7 +324,7 @@ tests:
     platform_allow:
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.thingy91x_wifi:
     sysbuild: true
     build_only: true
@@ -335,7 +335,7 @@ tests:
     extra_args: OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 DTC_OVERLAY_FILE=thingy91x_wifi.overlay
                 SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.modem_trace_shell_ext_flash:
     sysbuild: true
     build_only: true
@@ -350,7 +350,7 @@ tests:
     extra_args: modem_shell_SNIPPET="nrf91-modem-trace-ext-flash"
     extra_configs:
       - CONFIG_NRF_MODEM_LIB_SHELL_TRACE=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.modem_trace_ram:
     sysbuild: true
     build_only: true
@@ -363,7 +363,7 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     extra_args: OVERLAY_CONFIG="overlay-modem-trace-ram.conf"
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
 
   # Configurations for different location method combinations
   sample.cellular.modem_shell.location_gnss_wifi_no_cellular:
@@ -383,7 +383,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_wifi_cellular_no_gnss:
     sysbuild: true
     build_only: true
@@ -401,7 +401,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_wifi_no_cellular_no_gnss:
     sysbuild: true
     build_only: true
@@ -419,7 +419,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular:
     sysbuild: true
     build_only: true
@@ -435,7 +435,7 @@ tests:
       - CONFIG_LOCATION_METHOD_GNSS=y
       - CONFIG_LOCATION_METHOD_CELLULAR=n
       - CONFIG_LOCATION_METHOD_WIFI=n
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_cellular_no_wifi_no_gnss:
     sysbuild: true
     build_only: true
@@ -451,7 +451,7 @@ tests:
       - CONFIG_LOCATION_METHOD_GNSS=n
       - CONFIG_LOCATION_METHOD_CELLULAR=y
       - CONFIG_LOCATION_METHOD_WIFI=n
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
 
   # Configurations with location data details and some location method combinations
   sample.cellular.modem_shell.location_gnss_wifi_cellular_details:
@@ -472,7 +472,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular_details:
     sysbuild: true
     build_only: true
@@ -489,7 +489,7 @@ tests:
       - CONFIG_LOCATION_METHOD_GNSS=y
       - CONFIG_LOCATION_METHOD_CELLULAR=n
       - CONFIG_LOCATION_METHOD_WIFI=n
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_wifi_cellular_no_gnss_details:
     sysbuild: true
     build_only: true
@@ -508,7 +508,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_gnss_cellular_no_wifi_details:
     sysbuild: true
     build_only: true
@@ -525,7 +525,7 @@ tests:
       - CONFIG_LOCATION_METHOD_GNSS=y
       - CONFIG_LOCATION_METHOD_CELLULAR=y
       - CONFIG_LOCATION_METHOD_WIFI=n
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
 
   # Configurations with modem UART traces to make sure they fit into image.
   # Basic UART trace configuration is tested in sample.cellular.modem_shell.integration_config.
@@ -541,7 +541,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.non_offloading_ip_modem_uart_trace:
     sysbuild: true
     build_only: true
@@ -556,7 +556,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.thingy91_modem_uart_trace:
     sysbuild: true
     build_only: true
@@ -567,7 +567,7 @@ tests:
     platform_allow:
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
 
   # Configuration which will be used by the CI integration job to verify PRs
   sample.cellular.modem_shell.integration_config:
@@ -581,4 +581,4 @@ tests:
       - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild cellular
+    tags: ci_build sysbuild ci_samples_cellular
