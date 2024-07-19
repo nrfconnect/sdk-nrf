@@ -184,7 +184,7 @@ matter:
     - modules/lib/matter/
     - modules/lib/hostap/
 
-crypto:
+ci_samples_crypto: &ci_crypto
   files:
     - nrf/cmake/
     - nrf/drivers/entropy/
@@ -202,6 +202,8 @@ crypto:
     - zephyr/include/drivers/serial/
     - zephyr/modules/mbedtls/
     - modules/crypto/
+
+ci_tests_crypto: *ci_crypto
 
 ci_samples_zigbee: &ci_zigbee
   files:

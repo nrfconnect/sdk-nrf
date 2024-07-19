@@ -14,7 +14,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
-    tags: crypto ci_build legacy cc3xx_legacy sysbuild crypto
+    tags: crypto ci_build legacy cc3xx_legacy sysbuild ci_tests_crypto
     harness_config:
       type: multi_line
       regex:
@@ -35,7 +35,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
-    tags: crypto ci_build legacy oberon_legacy sysbuild crypto
+    tags: crypto ci_build legacy oberon_legacy sysbuild ci_tests_crypto
     harness_config:
       type: multi_line
       regex:
