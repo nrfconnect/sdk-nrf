@@ -553,7 +553,7 @@ esb:
     - nrfxlib/crypto/
     - zephyr/soc/nordic/
 
-applications_asset_tracker_v2:
+ci_applications_asset_tracker_v2:
   files:
     - nrf/applications/asset_tracker_v2/
     - nrf/subsys/net/lib/nrf_cloud/
