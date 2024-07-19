@@ -4,4 +4,4 @@ tests:
     platform_allow: native_posix
     integration_platforms:
       - native_posix
-    tags: sysbuild net
+    tags: sysbuild ci_tests_subsys_net
