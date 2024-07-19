@@ -3,7 +3,7 @@ sample:
   description: |
     TF-M sample demonstrating use of secure peripherals in a secure partition
 common:
-  tags: tfm
+  tags: tfm ci_samples_tfm
   platform_allow:
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9151dk/nrf9151/ns
@@ -23,4 +23,4 @@ common:
 tests:
   sample.tfm.secure_peripheral:
     sysbuild: true
-    tags: tfm ci_build sysbuild
+    tags: tfm ci_build sysbuild ci_samples_tfm
