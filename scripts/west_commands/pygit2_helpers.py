@@ -230,9 +230,9 @@ def _invert_keys_val_list(kvs: list[tuple[str, list[str]]],
 # Keep its definition sorted alphabetically by key.
 _AREA_TO_SHORTLOG_RES = [
     ('Arches', ['arch(/.*)?', 'arc(/.*)?', 'arm(/.*)?', 'esp32(/.*)?',
-                'imx(/.*)?', 'native(/.*)?', 'native_posix', 'nios2(/.*)?',
-                'posix(/.*)?', 'lpc(/.*)?', 'riscv(32)?(/.*)?', 'soc(/.*)?',
-                'x86(_64)?(/.*)?', 'xtensa(/.*)?']),
+                'imx(/.*)?', 'native(/.*)?', 'native_posix', 'native_sim',
+                'nios2(/.*)?', 'posix(/.*)?', 'lpc(/.*)?', 'riscv(32)?(/.*)?',
+                'soc(/.*)?', 'x86(_64)?(/.*)?', 'xtensa(/.*)?']),
     ('Bluetooth', ['bluetooth', 'bt']),
     ('Boards', ['boards?(/.*)?', 'mimxrt1050_evk']),
     ('Build', ['build', 'c[+][+]', 'clang(/.*)?', 'cmake', 'kconfig',

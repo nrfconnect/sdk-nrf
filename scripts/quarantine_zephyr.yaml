@@ -57,7 +57,6 @@
     - sample.modules.lvgl.demo_widgets
     - sample.smf.smf_calculator
   platforms:
-    - native_posix
     - native_sim
     - native_sim/native/64
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24924"
@@ -426,3 +425,7 @@
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "partition manager configuration need to be fixed/provided"
+
+- platforms:
+    - native_posix
+  comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
