@@ -141,7 +141,7 @@ wifi:
     - nrfxlib/nrf_wifi/
     - nrfxlib/crypto/
 
-matter:
+ci_applications_matter: &ci_matter
   files:
     - nrf/drivers/mpsl/
     - nrf/drivers/hw_cc3xx/
@@ -183,6 +183,8 @@ matter:
     - modules/lib/suit-generator/
     - modules/lib/matter/
     - modules/lib/hostap/
+
+ci_samples_matter: *ci_matter
 
 ci_samples_crypto: &ci_crypto
   files:
