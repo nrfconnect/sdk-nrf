@@ -67,6 +67,7 @@ NRF = [
     ("config_and_build/configuring_app/sysbuild_images", "config_and_build/configuring_app/sysbuild/sysbuild_images"),
     ("config_and_build/configuring_app/sysbuild_forced_options", "config_and_build/configuring_app/sysbuild/sysbuild_forced_options"),
     ("config_and_build/configuring_app/zephyr_samples_sysbuild", "config_and_build/configuring_app/sysbuild/zephyr_samples_sysbuild"),
+    ("config_and_build/configuring_app/advanced_building", "config_and_build/configuring_app/building"),
     ("ug_radio_coex", "device_guides/wifi_coex"),
     ("app_dev/wifi_coex/index", "device_guides/wifi_coex"),
     ("ug_radio_fem", "device_guides/working_with_fem"),
