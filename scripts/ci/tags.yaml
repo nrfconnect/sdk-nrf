@@ -484,7 +484,7 @@ cellular:
     - modules/lib/hostap/
     - modules/lib/zcbor/
 
-radio_test:
+ci_samples_peripheral_radio_test:
   files:
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
