@@ -2,7 +2,7 @@ sample:
   description: Generate and write random keys to the KMU.
   name: Random HW Unique Key
 common:
-  tags: huk keys
+  tags: huk keys ci_samples_keys
   platform_allow:
     - nrf5340dk/nrf5340/cpuapp
     - nrf5340dk/nrf5340/cpuapp/ns
@@ -35,4 +35,4 @@ common:
 tests:
   sample.keys.hw_unique_key:
     sysbuild: true
-    tags: huk ci_build sysbuild keys
+    tags: huk ci_build sysbuild keys ci_samples_keys
