@@ -187,6 +187,8 @@ static psa_status_t check_rsa_key_attributes(const psa_key_attributes_t *attribu
 	}
 
 	switch (key_bits) {
+	case 1024:
+		return PSA_SUCCESS;
 	case 2048:
 		return PSA_SUCCESS;
 	case 3072:
