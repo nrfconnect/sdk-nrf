@@ -17,4 +17,4 @@ tests:
       nrf5340dk/nrf5340/cpuapp
       nrf5340dk/nrf5340/cpuapp/ns
       nrf54l15pdk/nrf54l15/cpuapp
-    tags: ci_build sysbuild nfc
+    tags: ci_build sysbuild ci_samples_nfc
