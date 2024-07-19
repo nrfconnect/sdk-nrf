@@ -280,7 +280,7 @@ tfm:
     - modules/crypto/
     - nrfxlib/crypto/
 
-suit:
+ci_tests_subsys_suit:
   files:
     - nrf/include/bl*
     - nrf/include/fprotect.h
