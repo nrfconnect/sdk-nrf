@@ -604,7 +604,7 @@ int nfc_tnep_initial_msg_encode(struct nfc_ndef_msg_desc *msg,
 		return -EINVAL;
 	}
 
-	if (records && (records_cnt < 1)) {
+	if (!records && (records_cnt > 0)) {
 		return -EINVAL;
 	}
 
