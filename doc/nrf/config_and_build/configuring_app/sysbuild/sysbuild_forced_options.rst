@@ -3,10 +3,12 @@
 Sysbuild forced options
 #######################
 
-Sysbuild controls some Kconfig options in images that are part of a project, this means that these Kconfig options can only be changed from within sysbuild itself and cannot be changed directly in an image (doing so will result in the new value being overwritten with the sysbuild value).
+Sysbuild controls some Kconfig options in images that are part of a project.
+This means that these Kconfig options can only be changed from within sysbuild itself and cannot be changed directly in an image.
+Trying to change them directly in an image will result in the new value being overwritten with the sysbuild value.
 
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+
-| Kconfig                                                                 | Sysbuild Kconfig                                                          | Image(s)                |
+| Kconfig                                                                 | Sysbuild Kconfig                                                          | Images                  |
 +=========================================================================+===========================================================================+=========================+
 | :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED`                      +               ``SB_CONFIG_PARTITION_MANAGER``                             | All                     |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
