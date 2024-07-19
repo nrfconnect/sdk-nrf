@@ -1,7 +1,7 @@
 tests:
   fast_pair.storage.factory_reset.default:
     sysbuild: true
-    platform_exclude: native_posix
+    platform_exclude: native_sim
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -18,16 +18,16 @@ tests:
   fast_pair.storage.factory_reset.no_reboot:
     sysbuild: true
     platform_allow:
-      - native_posix
+      - native_sim
       - nrf52840dk/nrf52840
     integration_platforms:
-      - native_posix
+      - native_sim
       - nrf52840dk/nrf52840
     extra_args: CONFIG_REBOOT=n
     tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.6keys:
     sysbuild: true
-    platform_exclude: native_posix
+    platform_exclude: native_sim
     platform_allow:
       - nrf52840dk/nrf52840
     integration_platforms:
@@ -36,7 +36,7 @@ tests:
     tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.7keys:
     sysbuild: true
-    platform_exclude: native_posix
+    platform_exclude: native_sim
     platform_allow:
       - nrf52840dk/nrf52840
     integration_platforms:
@@ -45,7 +45,7 @@ tests:
     tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.8keys:
     sysbuild: true
-    platform_exclude: native_posix
+    platform_exclude: native_sim
     platform_allow:
       - nrf52840dk/nrf52840
     integration_platforms:
@@ -54,7 +54,7 @@ tests:
     tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.9keys:
     sysbuild: true
-    platform_exclude: native_posix
+    platform_exclude: native_sim
     platform_allow:
       - nrf52840dk/nrf52840
     integration_platforms:
@@ -63,7 +63,7 @@ tests:
     tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.10keys:
     sysbuild: true
-    platform_exclude: native_posix
+    platform_exclude: native_sim
     platform_allow:
       - nrf52840dk/nrf52840
     integration_platforms:
@@ -72,7 +72,7 @@ tests:
     tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.ak_minimal_backend:
     sysbuild: true
-    platform_exclude: native_posix
+    platform_exclude: native_sim
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -90,10 +90,10 @@ tests:
   fast_pair.storage.factory_reset.ak_minimal_backend_no_reboot:
     sysbuild: true
     platform_allow:
-      - native_posix
+      - native_sim
       - nrf52840dk/nrf52840
     integration_platforms:
-      - native_posix
+      - native_sim
       - nrf52840dk/nrf52840
     extra_args: CONFIG_TEST_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY=y CONFIG_REBOOT=n
     tags: sysbuild bluetooth

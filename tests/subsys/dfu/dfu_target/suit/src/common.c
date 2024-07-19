@@ -7,7 +7,7 @@
 #include "common.h"
 
 /* Mocks - ssf services have to be mocked, as real communication with secure domain
- * cannot take place in these tests because native_posix target does not have the secure domain
+ * cannot take place in these tests because native_sim target does not have the secure domain
  * to communicate with, and nRF54H should not reset the device after calling
  * the dfu_target_suit_schedule_update function.
  */

@@ -31,7 +31,7 @@ common:
     - nrf54h20dk/nrf54h20/cpuapp
     - nrf9160dk/nrf9160/ns
     - qemu_cortex_m3
-  platform_exclude: native_posix qemu_x86
+  platform_exclude: native_sim qemu_x86
 tests:
   sample.edge_impulse.wrapper:
     sysbuild: true

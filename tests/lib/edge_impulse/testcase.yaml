@@ -1,7 +1,7 @@
 tests:
   edge_impulse.ei_wrapper:
     sysbuild: true
-    platform_exclude: native_posix qemu_x86
+    platform_exclude: native_sim qemu_x86
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
