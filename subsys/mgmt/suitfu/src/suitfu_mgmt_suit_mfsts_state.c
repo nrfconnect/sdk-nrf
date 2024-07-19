@@ -69,6 +69,7 @@ int suitfu_mgmt_suit_manifests_list(struct smp_streamer *ctx)
 
 	return MGMT_ERR_EOK;
 }
+volatile int arha = 0;
 
 int suitfu_mgmt_suit_manifest_state_read(struct smp_streamer *ctx)
 {
@@ -139,57 +140,60 @@ int suitfu_mgmt_suit_manifest_state_read(struct smp_streamer *ctx)
 	digest.mem = digest_buf;
 	digest.size = sizeof(digest_buf);
 
+	arha = 1;
 	rc = suit_get_installed_manifest_info(&class_info.class_id, &seq_num, &semver_raw,
 					      &digest_status, &digest_alg_id, &digest);
+	
+	// while(true);
 
-	if (rc == SUIT_PLAT_SUCCESS) {
-		zcs.value = digest.mem;
-		zcs.len = digest.size;
+	// if (rc == SUIT_PLAT_SUCCESS) {
+	// 	zcs.value = digest.mem;
+	// 	zcs.len = digest.size;
 
-		ok = zcbor_tstr_put_lit(zse, "digest") && zcbor_bstr_encode(zse, &zcs);
-		if (!ok) {
-			return MGMT_ERR_EMSGSIZE;
-		}
+		// ok = zcbor_tstr_put_lit(zse, "digest") && zcbor_bstr_encode(zse, &zcs);
+		// if (!ok) {
+		// 	return MGMT_ERR_EMSGSIZE;
+		// }
 
-		ok = zcbor_tstr_put_lit(zse, "digest_algorithm") &&
-		     zcbor_int32_put(zse, digest_alg_id);
-		if (!ok) {
-			return MGMT_ERR_EMSGSIZE;
-		}
+		// ok = zcbor_tstr_put_lit(zse, "digest_algorithm") &&
+		//      zcbor_int32_put(zse, digest_alg_id);
+		// if (!ok) {
+		// 	return MGMT_ERR_EMSGSIZE;
+		// }
 
-		ok = zcbor_tstr_put_lit(zse, "signature_check") &&
-		     zcbor_uint32_put(zse, digest_status);
-		if (!ok) {
-			return MGMT_ERR_EMSGSIZE;
-		}
+		// ok = zcbor_tstr_put_lit(zse, "signature_check") &&
+		//      zcbor_uint32_put(zse, digest_status);
+		// if (!ok) {
+		// 	return MGMT_ERR_EMSGSIZE;
+		// }
 
-		ok = zcbor_tstr_put_lit(zse, "sequence_number") && zcbor_uint32_put(zse, seq_num);
-		if (!ok) {
-			return MGMT_ERR_EMSGSIZE;
-		}
+		// ok = zcbor_tstr_put_lit(zse, "sequence_number") && zcbor_uint32_put(zse, seq_num);
+		// if (!ok) {
+		// 	return MGMT_ERR_EMSGSIZE;
+		// }
 
-		if (semver_raw.len > 0 && semver_raw.len <= 5) {
+	// 	if (semver_raw.len > 0 && semver_raw.len <= 5) {
 
-			ok = zcbor_tstr_put_lit(zse, "semantic_version") &&
-			     zcbor_list_start_encode(zse, semver_raw.len);
-			if (!ok) {
-				return MGMT_ERR_EMSGSIZE;
-			}
+	// 		ok = zcbor_tstr_put_lit(zse, "semantic_version") &&
+	// 		     zcbor_list_start_encode(zse, semver_raw.len);
+	// 		if (!ok) {
+	// 			return MGMT_ERR_EMSGSIZE;
+	// 		}
 
-			for (size_t semver_idx = 0; semver_idx < semver_raw.len; semver_idx++) {
+	// 		for (size_t semver_idx = 0; semver_idx < semver_raw.len; semver_idx++) {
 
-				ok = zcbor_int32_put(zse, semver_raw.raw[semver_idx]);
-				if (!ok) {
-					return MGMT_ERR_EMSGSIZE;
-				}
-			}
+	// 			ok = zcbor_int32_put(zse, semver_raw.raw[semver_idx]);
+	// 			if (!ok) {
+	// 				return MGMT_ERR_EMSGSIZE;
+	// 			}
+	// 		}
 
-			ok = zcbor_list_end_encode(zse, semver_raw.len);
-			if (!ok) {
-				return MGMT_ERR_EMSGSIZE;
-			}
-		}
-	}
+	// 		ok = zcbor_list_end_encode(zse, semver_raw.len);
+	// 		if (!ok) {
+	// 			return MGMT_ERR_EMSGSIZE;
+	// 		}
+	// 	}
+	// }
 
 	return MGMT_ERR_EOK;
 }

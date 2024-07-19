@@ -22,23 +22,6 @@
 #define DFU_PARTITION_SIZE    FIXED_PARTITION_SIZE(dfu_partition)
 #define DFU_PARTITION_ADDRESS suit_plat_mem_nvm_ptr_get(DFU_PARTITION_OFFSET)
 
-extern int mcumgr_serial_tx_pkt(const uint8_t *data, int len, mcumgr_serial_tx_cb cb);
-
-static const struct device *const uart_mcumgr_dev =
-	DEVICE_DT_GET(DT_CHOSEN(zephyr_uart_mcumgr));
-
-static int uart_mcumgr_send_raw(const void *data, int len)
-{
-	const uint8_t *u8p;
-
-	u8p = data;
-	while (len--) {
-		uart_poll_out(uart_mcumgr_dev, *u8p++);
-	}
-
-	return 0;
-}
-
 int main(void)
 {
 	int ret = dk_leds_init();
@@ -94,21 +77,22 @@ int main(void)
 	digest.size = sizeof(digest_buf);
 
 	suit_get_supported_manifest_info(role, &class_info);
-	suit_get_installed_manifest_info(&class_info.class_id, &seq_num, &semver_raw,
-					      &digest_status, &digest_alg_id, &digest);
-	// uint8_t *data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
-	// mcumgr_serial_tx_pkt(data, strlen(data), uart_mcumgr_send_raw);
-	// uart_mcumgr_send_raw(data, strlen(data));
-	// uart_mcumgr_send_raw(data, 1);
+	suit_manifest_class_id_t class_id = {
+		.raw = {0xd9, 0x6b, 0x40, 0xb7, 0x09, 0x2b, 0x5c, 0xd1, 0xa5, 0x9f, 0x9a, 0xf8,
+			     0x0c, 0x33, 0x7e, 0xba}
+	};
+
+	suit_get_installed_manifest_info(&class_id, &seq_num, &semver_raw,
+					      &digest_status, &digest_alg_id, &digest);
 
 	while (1) {
-		// for (int i = 0; i < CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM; i++) {
-		// 	dk_set_led_on(DK_LED1);
-		// 	k_msleep(250);
-		// 	dk_set_led_off(DK_LED1);
-		// 	k_msleep(250);
-		// }
+		for (int i = 0; i < CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM; i++) {
+			dk_set_led_on(DK_LED1);
+			k_msleep(250);
+			dk_set_led_off(DK_LED1);
+			k_msleep(250);
+		}
 
 		k_msleep(5000);
 	}
