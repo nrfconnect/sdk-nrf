@@ -71,7 +71,7 @@ bluetooth:
     - zephyr/soc/nordic/
     - zephyr/subsys/settings/
 
-net:
+ci_samples_net: &ci_net
   files:
     - nrf/samples/net/
     - nrf/tests/subsys/net/
@@ -122,6 +122,8 @@ net:
     - nrfxlib/crypto/
     - nrfxlib/nrf_modem/
     - nrfxlib/nrf_wifi/
+
+ci_tests_subsys_net: *ci_net
 
 ci_samples_wifi:
   files:

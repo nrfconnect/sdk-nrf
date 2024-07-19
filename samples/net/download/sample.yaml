@@ -10,7 +10,7 @@ tests:
     platform_allow:
       - nrf9161dk/nrf9161/ns
       - native_sim
-    tags: ci_build sysbuild net
+    tags: ci_build sysbuild ci_samples_net
   sample.net.download_client.ci:
     sysbuild: true
     build_only: true
@@ -29,4 +29,4 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
-    tags: ci_build sysbuild net
+    tags: ci_build sysbuild ci_samples_net
