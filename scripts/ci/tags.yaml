@@ -541,7 +541,7 @@ keys:
     - nrfxlib/nrf_modem/
     - zephyr/soc/nordic/
 
-esb:
+ci_samples_esb:
   files:
     - modules/hal/nordic/
     - nrf/drivers/hw_cc3xx/
