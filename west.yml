@@ -63,7 +63,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 4c996ecd07e576524a98405b2af6c01c56cb83e5
+      revision: c784caa9b325c851e0b964e2c5759b0e75c00c6c
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -238,7 +238,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: a57d927b0ace94972a49ea2672c9073b88b86377
+      revision: 602167f94ad4318a26d73bb7ecb639cbf54df633
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
