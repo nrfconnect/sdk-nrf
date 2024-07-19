@@ -73,6 +73,8 @@ static struct bt_pacs_cap capabilities = {
 	.codec_cap = &codec_cap,
 };
 
+#define AVAILABLE_SINK_CONTEXT (BT_AUDIO_CONTEXT_TYPE_ANY)
+
 static le_audio_receive_cb receive_cb;
 
 static bool init_routine_completed;
@@ -657,6 +659,18 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
 	} else {
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_RIGHT);
+	}
+
+	ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
+	if (ret) {
+		LOG_ERR("Supported context set failed. Err: %d", ret);
+		return ret;
+	}
+
+	ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
+	if (ret) {
+		LOG_ERR("Available context set failed. Err: %d", ret);
+		return ret;
 	}
 
 	if (ret) {

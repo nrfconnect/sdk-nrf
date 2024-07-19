@@ -64,13 +64,16 @@ config BT_MCC_SET_MEDIA_CONTROL_POINT
 	default y
 
 # For fixing compatibility issue with Android 14
+config BT_PAC_SNK
+	default y
+
 config BT_PAC_SNK_NOTIFIABLE
 	default y
 
 config BT_PAC_SRC
 	default y
 
-config BT_PAC_SNK
+config BT_PAC_SRC_NOTIFIABLE
 	default y
 
 config BT_CSIP_SET_MEMBER
