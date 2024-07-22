@@ -326,6 +326,13 @@ int hci_vs_sdc_set_role_priority(const sdc_hci_cmd_vs_set_role_priority_t *param
 				 sizeof(*params));
 }
 
+int hci_vs_sdc_set_event_start_task(const sdc_hci_cmd_vs_set_event_start_task_t *params)
+{
+	return hci_vs_cmd_no_rsp(SDC_HCI_OPCODE_CMD_VS_SET_EVENT_START_TASK,
+				 params,
+				 sizeof(*params));
+}
+
 int hci_vs_sdc_conn_anchor_point_update_event_report_enable(
 	const sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable_t *params)
 {

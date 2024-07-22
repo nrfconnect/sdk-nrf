@@ -392,6 +392,16 @@ int hci_vs_sdc_scan_accept_ext_adv_packets_set(
  */
 int hci_vs_sdc_set_role_priority(const sdc_hci_cmd_vs_set_role_priority_t *params);
 
+/** @brief Set Event Start Task.
+ *
+ * For the complete API description, see sdc_hci_cmd_vs_set_event_start_task().
+ *
+ * @param[in]  params Input parameters.
+ *
+ * @return 0 on success or negative error value on failure.
+ */
+int hci_vs_sdc_set_event_start_task(const sdc_hci_cmd_vs_set_event_start_task_t *params);
+
 /** @brief Connection Anchor_Point Update Event Reports enable.
  *
  * For the complete API description,
