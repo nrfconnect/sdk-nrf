@@ -829,3 +829,8 @@ ci_tests_lib_nrf_fuel_gauge:
   files:
     - nrf/tests/lib/nrf_fuel_gauge/
     - nrfxlib/nrf_fuel_gauge/
+
+ci_tests_lib_at_cmd_parser:
+  files:
+    - nrf/lib/at_cmd_parser/
+    - nrf/tests/lib/at_cmd_parser/
