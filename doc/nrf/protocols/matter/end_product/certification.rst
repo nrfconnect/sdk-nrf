@@ -79,6 +79,10 @@ Testing
 =======
 
 The Matter certification process requires testing before any application for certification is sent.
+The testing process includes specific actions and test scenarios that must be triggered on the device under test.
+Some of these operations must be initiated with the :ref:`test event triggers <ug_matter_test_event_triggers>`, which is a dedicated software component supported by the |NCS| Matter samples.
+This component allows the Matter controller to trigger test actions by interacting with the ``generaldiagnostics`` Matter cluster implemented on the device.
+
 The testing can be performed at an Authorized Test Laboratory (ATL), using a test plan developed by CSA.
 Each ATL has its own submission process, but all require a Declaration of Conformity and a Protocol Implementation Conformance Statement (PICS).
 Both documents confirm that the Matter component you are going to certify is meeting the protocol requirements.
