@@ -47,8 +47,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #define REPORT_TYPE_FEATURE	0x03
 
 #define USB_SUBSCRIBER_PRIORITY      CONFIG_DESKTOP_USB_SUBSCRIBER_REPORT_PRIORITY
-#define USB_SUBSCRIBER_PIPELINE_SIZE 0x01
-#define USB_SUBSCRIBER_REPORT_MAX    0x01
+#define USB_SUBSCRIBER_PIPELINE_SIZE (IS_ENABLED(CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF) ? 2 : 1)
+#define USB_SUBSCRIBER_REPORT_MAX    USB_SUBSCRIBER_PIPELINE_SIZE
 
 /* The definitions are available and used only for USB legacy stack.
  * Define them explicitly if needed to allow compiling code without USB legacy stack.
@@ -77,9 +77,10 @@ struct usb_hid_buf {
 struct usb_hid_device {
 	const struct device *dev;
 	uint32_t report_bm;
-	uint8_t hid_protocol;
 	struct usb_hid_buf report_bufs[USB_SUBSCRIBER_REPORT_MAX];
+	atomic_ptr_t report_sent_on_sof;
 	uint32_t idle_duration[REPORT_ID_COUNT];
+	uint8_t hid_protocol;
 	bool report_enabled[REPORT_ID_COUNT];
 	bool enabled;
 };
@@ -398,6 +399,15 @@ static int set_report(const struct device *dev, uint8_t report_type, uint8_t rep
 	return err;
 }
 
+static void report_sent_sof(struct usb_hid_device *usb_hid)
+{
+	struct hid_report_sent_event *event = atomic_ptr_set(&usb_hid->report_sent_on_sof, NULL);
+
+	if (event) {
+		APP_EVENT_SUBMIT(event);
+	}
+}
+
 static void report_sent(struct usb_hid_device *usb_hid, struct usb_hid_buf *buf, bool error)
 {
 	__ASSERT_NO_MSG(buf);
@@ -410,7 +420,28 @@ static void report_sent(struct usb_hid_device *usb_hid, struct usb_hid_buf *buf,
 	event->report_id = report_id;
 	event->subscriber = usb_hid;
 	event->error = error;
-	APP_EVENT_SUBMIT(event);
+
+	if (!IS_ENABLED(CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF)) {
+		APP_EVENT_SUBMIT(event);
+	} else {
+		if (error) {
+			/* Synchronization to USB SOF is not used on send error. Instantly send
+			 * enqueued report waiting for USB SOF to ensure proper HID report sent
+			 * event order.
+			 */
+			report_sent_sof(usb_hid);
+			APP_EVENT_SUBMIT(event);
+		} else {
+			if (!atomic_ptr_cas(&usb_hid->report_sent_on_sof, NULL, event)) {
+				/* Instantly submit previous event to ensure proper HID report sent
+				 * event order.
+				 */
+				LOG_WRN("Missing USB SOF between HID report sent callbacks");
+				report_sent_sof(usb_hid);
+				(void)atomic_ptr_set(&usb_hid->report_sent_on_sof, event);
+			}
+		}
+	}
 
 	usb_hid_buf_free(buf);
 
@@ -600,6 +631,11 @@ static void update_usb_hid(struct usb_hid_device *usb_hid, bool enabled)
 	}
 
 	usb_hid->enabled = enabled;
+
+	/* Inform about the sent HID report if queued. */
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF) && !enabled) {
+		report_sent_sof(usb_hid);
+	}
 
 	/* USB legacy stack does not notify app about sent report when no longer configured.
 	 * Pending report reset needs to be done after usb_hid->enabled field update to prevent
@@ -909,6 +945,16 @@ static void usb_init_legacy_status_cb(enum usb_dc_status_code cb_status, const u
 		}
 		break;
 
+	case USB_DC_SOF:
+		if (IS_ENABLED(CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF)) {
+			for (size_t i = 0; i < ARRAY_SIZE(usb_hid_device); i++) {
+				struct usb_hid_device *usb_hid = &usb_hid_device[i];
+
+				report_sent_sof(usb_hid);
+			}
+		}
+		/* Fall-through. */
+
 	case USB_DC_SET_HALT:
 	case USB_DC_CLEAR_HALT:
 		/* Ignore */
@@ -1076,6 +1122,11 @@ static void report_sent_cb_next(const struct device *dev)
 	report_sent(usb_hid, buf, error);
 }
 
+static void sof_next(const struct device *dev)
+{
+	report_sent_sof(dev_to_usb_hid(dev));
+}
+
 static int usb_init_next_hid_device_init(struct usb_hid_device *usb_hid_dev, uint32_t report_bm)
 {
 	static const struct hid_device_ops hid_ops = {
@@ -1086,6 +1137,7 @@ static int usb_init_next_hid_device_init(struct usb_hid_device *usb_hid_dev, uin
 		.get_idle = get_idle_next,
 		.set_protocol = protocol_change,
 		.input_report_done = report_sent_cb_next,
+		.sof = sof_next,
 	};
 
 	usb_hid_dev->report_bm = report_bm;
