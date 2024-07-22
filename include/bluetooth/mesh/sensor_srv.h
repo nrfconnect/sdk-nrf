@@ -44,19 +44,35 @@ struct bt_mesh_sensor_srv;
  *  @brief Sensor Server model composition data entry.
  *
  *  @param[in] _srv Pointer to a @ref bt_mesh_sensor_srv instance.
+ *  @param ...      Optional Light Lightness Server metadata if application is
+ *                  compiled with Large Composition Data Server support,
+ *                  otherwise this parameter is ignored.
  */
-#define BT_MESH_MODEL_SENSOR_SRV(_srv)                                         \
-	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SENSOR_SRV, _bt_mesh_sensor_srv_op,  \
-			 &(_srv)->pub,                                         \
+#define BT_MESH_MODEL_SENSOR_SRV(_srv, ...)                                    \
+	BT_MESH_MODEL_METADATA_CB(BT_MESH_MODEL_ID_SENSOR_SRV,                 \
+			 _bt_mesh_sensor_srv_op, &(_srv)->pub,                 \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_sensor_srv,    \
 						 _srv),                        \
-			 &_bt_mesh_sensor_srv_cb),                             \
+			 &_bt_mesh_sensor_srv_cb, __VA_ARGS__),                \
 	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SENSOR_SETUP_SRV,                    \
 			 _bt_mesh_sensor_setup_srv_op,                         \
 			 &(_srv)->setup_pub,                                   \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_sensor_srv,    \
 					      _srv),                           \
 			 &_bt_mesh_sensor_setup_srv_cb)
+
+/** Sensor Properties Metadata ID. */
+#define BT_MESH_SENSOR_PROP_METADATA_ID 0x0001
+
+/**
+ *  Sensor Properties Metadata entry.
+ *
+ *  @param[in] ... list of 16-bit sensor property IDs split by comma.
+ */
+#define BT_MESH_SENSOR_PROP_METADATA(...)                                                          \
+	BT_MESH_MODELS_METADATA_ENTRY(2 * ARRAY_SIZE(((uint16_t[]){__VA_ARGS__})),                 \
+				      BT_MESH_SENSOR_PROP_METADATA_ID,                             \
+				      ((uint16_t[]){__VA_ARGS__}))
 
 /** Sensor server instance. */
 struct bt_mesh_sensor_srv {

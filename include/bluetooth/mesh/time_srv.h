@@ -46,18 +46,45 @@ struct tm;
  * @brief Time Server model composition data entry.
  *
  * @param[in] _srv Pointer to a @ref bt_mesh_time_srv instance.
+ * @param ...	   Optional Time Server metadata if application is
+ *		   compiled with Large Composition Data Server support,
+ *		   otherwise this parameter is ignored.
  */
-#define BT_MESH_MODEL_TIME_SRV(_srv)                                           \
-	BT_MESH_MODEL_CB(                                                      \
+#define BT_MESH_MODEL_TIME_SRV(_srv, ...)                                      \
+	BT_MESH_MODEL_METADATA_CB(                                             \
 		BT_MESH_MODEL_ID_TIME_SRV, _bt_mesh_time_srv_op, &(_srv)->pub, \
 		BT_MESH_MODEL_USER_DATA(struct bt_mesh_time_srv, _srv),        \
-		&_bt_mesh_time_srv_cb),                                        \
+		&_bt_mesh_time_srv_cb, __VA_ARGS__),                           \
 	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_TIME_SETUP_SRV,                      \
 		_bt_mesh_time_setup_srv_op,                                    \
 		&(_srv)->setup_pub,                                            \
 		BT_MESH_MODEL_USER_DATA(                                       \
 		struct bt_mesh_time_srv, _srv),                                \
 		&_bt_mesh_time_setup_srv_cb)
+
+/** Clock Accuracy Metadata ID. */
+#define BT_MESH_CLOCK_ACCURACY_METADATA_ID 0x0007
+
+/** Timekeeping Reserve Metadata ID. */
+#define BT_MESH_TIMEKEEPING_RESERVE_METADATA_ID 0x0008
+
+/**
+ *  Clock Accuracy Metadata entry.
+ *
+ *  @param clock_accuracy 24-bit clock accuracy value.
+ */
+#define BT_MESH_CLOCK_ACCURACY_METADATA(clock_accuracy)                                            \
+	BT_MESH_MODELS_METADATA_ENTRY(3, BT_MESH_CLOCK_ACCURACY_METADATA_ID,                       \
+				      ((uint8_t[]){BT_BYTES_LIST_LE24(clock_accuracy)}))
+
+/**
+ *  Timekeeping Reserve Metadata entry.
+ *
+ *  @param timekeeping_reserve 24-bit timekeeping reserve value.
+ */
+#define BT_MESH_TIMEKEEPING_RESERVE_METADATA(timekeeping_reserve)                                  \
+	BT_MESH_MODELS_METADATA_ENTRY(3, BT_MESH_TIMEKEEPING_RESERVE_METADATA_ID,                  \
+				      ((uint8_t[]){BT_BYTES_LIST_LE24(timekeeping_reserve)}))
 
 /** Time srv update types */
 enum bt_mesh_time_update_types {
