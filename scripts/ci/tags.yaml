@@ -845,3 +845,8 @@ ci_tests_lib_location:
     - nrf/modules/cjson/
     - nrf/tests/lib/location/
     - nrf/tests/mocks/nrf_modem_at/
+
+ci_tests_lib_hw_id:
+  files:
+    - nrf/lib/hw_id
+    - nrf/tests/lib/hw_id
