@@ -66,7 +66,7 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - P0.31
       * - GPIO3
         - P0.22
-        - P0.22
+        - P1.12
         - P1.12
         - P0.10
       * - VDDIO
