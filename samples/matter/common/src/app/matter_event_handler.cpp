@@ -54,21 +54,11 @@ void DefaultEventHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
 		}
 #endif
 		break;
-#if defined(CONFIG_NET_L2_OPENTHREAD)
-	case DeviceEventType::kDnssdInitialized:
 #if CONFIG_CHIP_OTA_REQUESTOR
+	case DeviceEventType::kServerReady:
 		InitBasicOTARequestor();
-#endif /* CONFIG_CHIP_OTA_REQUESTOR */
 		break;
-#elif defined(CONFIG_CHIP_WIFI)
-	case DeviceEventType::kWiFiConnectivityChange:
-#if CONFIG_CHIP_OTA_REQUESTOR
-		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
-			InitBasicOTARequestor();
-		}
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
-#endif /* CONFIG_NET_L2_OPENTHREAD */
-		break;
 	default:
 		break;
 	}
