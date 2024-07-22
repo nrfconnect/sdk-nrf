@@ -697,6 +697,12 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 		case CRACEN_BUILTIN_MEXT_ID:
 			k->cfg = CRACEN_INTERNAL_HW_KEY2_ID;
 			break;
+		case CRACEN_PROTECTED_RAM_AES_KEY0_ID:
+			k->sz = 32;
+			k->key = (uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
+			k->prepare_key = NULL;
+			k->clean_key = NULL;
+			break;
 		default:
 			return PSA_ERROR_INVALID_HANDLE;
 		}
