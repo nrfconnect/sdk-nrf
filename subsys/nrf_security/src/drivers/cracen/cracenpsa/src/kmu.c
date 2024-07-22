@@ -87,6 +87,7 @@ static psa_status_t get_encryption_key(const uint8_t *context, uint8_t *key)
 	psa_status_t status;
 	psa_key_attributes_t mkek_attr = PSA_KEY_ATTRIBUTES_INIT;
 
+	psa_set_key_type(&mkek_attr, PSA_KEY_TYPE_AES);
 	psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(0, CRACEN_BUILTIN_MKEK_ID));
 	psa_set_key_lifetime(&mkek_attr,
 			     PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
