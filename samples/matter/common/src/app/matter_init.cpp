@@ -133,6 +133,7 @@ void FeedFromMatter(Nrf::Watchdog::WatchdogSource *watchdogSource)
 }
 #endif
 
+/* Matter stack design implies different initialization procedure for Thread and Wi-Fi backend. */
 #if defined(CONFIG_NET_L2_OPENTHREAD)
 CHIP_ERROR ConfigureThreadRole()
 {
@@ -151,6 +152,32 @@ CHIP_ERROR ConfigureThreadRole()
 
 	return ConnectivityMgr().SetThreadDeviceType(threadRole);
 }
+
+CHIP_ERROR InitNetworkingStack()
+{
+	CHIP_ERROR error{ CHIP_NO_ERROR };
+
+	error = ThreadStackMgr().InitThreadStack();
+	VerifyOrReturnLogError(error == CHIP_NO_ERROR, error);
+
+	error = ConfigureThreadRole();
+	VerifyOrReturnLogError(error == CHIP_NO_ERROR, error);
+
+	return error;
+}
+
+#elif defined(CONFIG_CHIP_WIFI)
+
+CHIP_ERROR InitNetworkingStack()
+{
+	if (sLocalInitData.mNetworkingInstance) {
+		sLocalInitData.mNetworkingInstance->Init();
+	}
+
+	return CHIP_NO_ERROR;
+}
+#else
+#error "No valid L2 network backend selected");
 #endif /* CONFIG_NET_L2_OPENTHREAD */
 
 #define VerifyInitResultOrReturn(ec, msg)                                                                              \
@@ -183,23 +210,9 @@ void DoInitChipServer(intptr_t /* unused */)
 		VerifyInitResultOrReturn(sInitResult, "Custom pre server initialization failed");
 	}
 
-#if defined(CONFIG_NET_L2_OPENTHREAD)
-	sInitResult = ThreadStackMgr().InitThreadStack();
-	VerifyInitResultOrReturn(sInitResult, "ThreadStackMgr().InitThreadStack() failed");
-
-	sInitResult = ConfigureThreadRole();
-	VerifyInitResultOrReturn(sInitResult, "Cannot configure Thread role");
-
-#elif defined(CONFIG_CHIP_WIFI)
-	if (!sLocalInitData.mNetworkingInstance) {
-		sInitResult = CHIP_ERROR_INTERNAL;
-		VerifyInitResultOrReturn(sInitResult, "No valid commissioning instance");
-	}
-	sLocalInitData.mNetworkingInstance->Init();
-#else
-	sInitResult = CHIP_ERROR_INTERNAL;
-	VerifyInitResultOrReturn(sInitResult, "No valid L2 network backend selected");
-#endif /* CONFIG_NET_L2_OPENTHREAD */
+	/* Initialize L2 networking backend. */
+	sInitResult = InitNetworkingStack();
+	VerifyInitResultOrReturn(sInitResult, "Cannot initialize IPv6 networking stack");
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 	/* OTA image confirmation must be done before the factory data init. */
