@@ -38,139 +38,101 @@ extern const uint8_t cracen_N3072[384];
 
 extern nrf_security_mutex_t cracen_mutex_symmetric;
 
-static psa_status_t check_brainpool_alg_and_key_bits(psa_algorithm_t alg, size_t key_bits)
-{
-	if (!PSA_ALG_IS_ECDSA(alg) && alg != PSA_ALG_ECDH) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
+#define DEFAULT_KEY_SIZE(bits) (bits), PSA_BITS_TO_BYTES(bits), (1 + 2 * PSA_BITS_TO_BYTES(bits))
+static struct {
+	psa_ecc_family_t family;
+	size_t bits;
+	size_t private_key_size_bytes;
+	size_t public_key_size_bytes;
+	bool supported;
+} valid_keys[] = {
+	/* Brainpool */
+	{PSA_ECC_FAMILY_BRAINPOOL_P_R1, DEFAULT_KEY_SIZE(192),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)},
+	{PSA_ECC_FAMILY_BRAINPOOL_P_R1, DEFAULT_KEY_SIZE(224),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)},
+	{PSA_ECC_FAMILY_BRAINPOOL_P_R1, DEFAULT_KEY_SIZE(256),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)},
+	{PSA_ECC_FAMILY_BRAINPOOL_P_R1, DEFAULT_KEY_SIZE(320),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)},
+	{PSA_ECC_FAMILY_BRAINPOOL_P_R1, DEFAULT_KEY_SIZE(384),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)},
+	{PSA_ECC_FAMILY_BRAINPOOL_P_R1, DEFAULT_KEY_SIZE(512),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)},
 
-	switch (key_bits) {
-	case 192:
-	case 224:
-	case 256:
-	case 320:
-	case 384:
-	case 512:
-		return PSA_SUCCESS;
-	default:
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-}
+	/* SECP k1 */
+	{PSA_ECC_FAMILY_SECP_K1, DEFAULT_KEY_SIZE(192),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1)},
+	{PSA_ECC_FAMILY_SECP_K1, DEFAULT_KEY_SIZE(225), false}, /* NCSDK-21311 */
+	{PSA_ECC_FAMILY_SECP_K1, DEFAULT_KEY_SIZE(256),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1)},
 
-static psa_status_t check_secp_k1_alg_and_key_bits(psa_algorithm_t alg, size_t key_bits)
-{
-	if (!PSA_ALG_IS_ECDSA(alg) && alg != PSA_ALG_ECDH) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
+	/* SECP r1 */
+	{PSA_ECC_FAMILY_SECP_R1, DEFAULT_KEY_SIZE(192),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1)},
+	{PSA_ECC_FAMILY_SECP_R1, DEFAULT_KEY_SIZE(224),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1)},
+	{PSA_ECC_FAMILY_SECP_R1, DEFAULT_KEY_SIZE(256),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1)},
+	{PSA_ECC_FAMILY_SECP_R1, DEFAULT_KEY_SIZE(320),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1)},
+	{PSA_ECC_FAMILY_SECP_R1, DEFAULT_KEY_SIZE(384),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1)},
+	{PSA_ECC_FAMILY_SECP_R1, DEFAULT_KEY_SIZE(521),
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1)},
 
-	switch (key_bits) {
-	case 192:
-	case 256:
-		return PSA_SUCCESS;
-	case 225:
-		return PSA_ERROR_NOT_SUPPORTED;
-	default:
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-}
-static psa_status_t check_secp_r1_alg_and_key_bits(psa_algorithm_t alg, size_t key_bits)
-{
-	if (!PSA_ALG_IS_ECDSA(alg) && alg != PSA_ALG_ECDH) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
+	/* Montgomery */
+	{PSA_ECC_FAMILY_MONTGOMERY, 255, 32, 32,
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY)},
+	{PSA_ECC_FAMILY_MONTGOMERY, 448, 56, 56,
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY)},
 
-	switch (key_bits) {
-	case 192:
-	case 224:
-	case 256:
-	case 384:
-	case 521:
-		return PSA_SUCCESS;
-	default:
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-}
-
-static psa_status_t check_montgmr_alg_and_key_bits(psa_algorithm_t alg, size_t key_bits)
-{
-	if (alg != PSA_ALG_ECDH) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-
-	switch (key_bits) {
-	case 255:
-	case 448:
-		return PSA_SUCCESS;
-	default:
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-}
-
-static psa_status_t check_edwards_alg_and_key_bits(psa_algorithm_t alg, size_t key_bits)
-{
-	switch (alg) {
-	case PSA_ALG_PURE_EDDSA:
-		switch (key_bits) {
-		case 255:
-			return PSA_SUCCESS;
-		case 448:
-			return PSA_ERROR_NOT_SUPPORTED;
-		default:
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
-		break;
-	case PSA_ALG_ED25519PH:
-		if (key_bits != 255) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
-		return PSA_ERROR_NOT_SUPPORTED;
-	case PSA_ALG_ED448PH:
-		if (key_bits != 448) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
-		return PSA_ERROR_NOT_SUPPORTED;
-	default:
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-}
+	/* Twisted Edwards */
+	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 255, 32, 32,
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)},
+	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 448, 57, 57, false},
+};
 
 static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attributes,
-					     size_t key_bits)
+					     size_t key_buffer_size, size_t *key_bits)
 {
 	psa_ecc_family_t curve = PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes));
 	psa_algorithm_t key_alg = psa_get_key_algorithm(attributes);
-	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
+	psa_status_t status = PSA_ERROR_INVALID_ARGUMENT;
+	bool is_public_key = PSA_KEY_TYPE_IS_PUBLIC_KEY(psa_get_key_type(attributes));
 
-	switch (curve) {
-	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
-		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)) {
-			status = check_brainpool_alg_and_key_bits(key_alg, key_bits);
+	for (size_t i = 0; i < ARRAY_SIZE(valid_keys); i++) {
+		if (valid_keys[i].family == curve) {
+			size_t valid_key_size = is_public_key
+							? valid_keys[i].public_key_size_bytes
+							: valid_keys[i].private_key_size_bytes;
+
+			if (*key_bits == 0 && valid_key_size == key_buffer_size) {
+				*key_bits = valid_keys[i].bits;
+
+				status = valid_keys[i].supported ? PSA_SUCCESS
+								 : PSA_ERROR_NOT_SUPPORTED;
+				break;
+			}
+
+			if (*key_bits == valid_keys[i].bits) {
+				if (valid_key_size != key_buffer_size) {
+					return PSA_ERROR_INVALID_ARGUMENT;
+				}
+
+				status = valid_keys[i].supported ? PSA_SUCCESS
+								 : PSA_ERROR_NOT_SUPPORTED;
+				break;
+			}
 		}
-		break;
-	case PSA_ECC_FAMILY_SECP_K1:
-		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1)) {
-			status = check_secp_k1_alg_and_key_bits(key_alg, key_bits);
+	}
+
+	if (status == PSA_SUCCESS) {
+		if (curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) {
+			if (key_alg != PSA_ALG_PURE_EDDSA && key_alg != PSA_ALG_ED25519PH) {
+				return PSA_ERROR_INVALID_ARGUMENT;
+			}
 		}
-		break;
-	case PSA_ECC_FAMILY_SECP_R1:
-		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1)) {
-			status = check_secp_r1_alg_and_key_bits(key_alg, key_bits);
-		}
-		break;
-	case PSA_ECC_FAMILY_MONTGOMERY:
-		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY)) {
-			status = check_montgmr_alg_and_key_bits(key_alg, key_bits);
-		}
-		break;
-	case PSA_ECC_FAMILY_TWISTED_EDWARDS:
-		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)) {
-			status = check_edwards_alg_and_key_bits(key_alg, key_bits);
-		}
-		break;
-	default:
-		(void)curve;
-		(void)key_alg;
-		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
 	return status;
@@ -272,13 +234,6 @@ static psa_status_t import_ecc_private_key(const psa_key_attributes_t *attribute
 	size_t key_bits_attr = psa_get_key_bits(attributes);
 	psa_status_t psa_status;
 
-	/* The key bits might not be set, */
-	if (key_bits_attr == 0) {
-		key_bits_attr = PSA_BYTES_TO_BITS(data_length);
-	} else if (data_length != PSA_BITS_TO_BYTES(key_bits_attr)) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-
 	if (data_length > key_buffer_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
@@ -287,7 +242,7 @@ static psa_status_t import_ecc_private_key(const psa_key_attributes_t *attribute
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	psa_status = check_ecc_key_attributes(attributes, key_bits_attr);
+	psa_status = check_ecc_key_attributes(attributes, key_buffer_size, &key_bits_attr);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
@@ -360,15 +315,11 @@ static psa_status_t import_ecc_public_key(const psa_key_attributes_t *attributes
 	psa_algorithm_t key_alg = psa_get_key_algorithm(attributes);
 	psa_status_t psa_status;
 
-	if (key_bits_attr == 0) {
-		key_bits_attr = calc_key_bits_from_pub_key_buffer_size(curve, data_length);
-	}
-
 	if (data_length > key_buffer_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	psa_status = check_ecc_key_attributes(attributes, key_bits_attr);
+	psa_status = check_ecc_key_attributes(attributes, key_buffer_size, &key_bits_attr);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
@@ -565,7 +516,7 @@ static psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attribu
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	psa_status = check_ecc_key_attributes(attributes, key_bits_attr);
+	psa_status = check_ecc_key_attributes(attributes, key_buffer_size, &key_bits_attr);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
@@ -635,11 +586,6 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 	int si_status = 0;
 	const struct sx_pk_ecurve *sx_curve;
 	struct sitask t;
-
-	psa_status = check_ecc_key_attributes(attributes, key_bits_attr);
-	if (psa_status != PSA_SUCCESS) {
-		return psa_status;
-	}
 
 	switch (psa_curve) {
 	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
@@ -805,11 +751,6 @@ static psa_status_t ecc_export_key(const psa_key_attributes_t *attributes,
 				   size_t data_size, size_t *data_length)
 {
 	psa_status_t psa_status;
-
-	psa_status = check_ecc_key_attributes(attributes, psa_get_key_bits(attributes));
-	if (psa_status != PSA_SUCCESS) {
-		return psa_status;
-	}
 
 	if (data_size < key_buffer_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
