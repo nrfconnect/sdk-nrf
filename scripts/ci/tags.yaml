@@ -834,3 +834,14 @@ ci_tests_lib_at_cmd_parser:
   files:
     - nrf/lib/at_cmd_parser/
     - nrf/tests/lib/at_cmd_parser/
+
+ci_tests_lib_location:
+  files:
+    - modules/lib/cjson/
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/at_monitor/
+    - nrf/lib/location/
+    - nrf/lib/lte_link_control/
+    - nrf/modules/cjson/
+    - nrf/tests/lib/location/
+    - nrf/tests/mocks/nrf_modem_at/
