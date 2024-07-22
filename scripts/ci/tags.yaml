@@ -824,3 +824,8 @@ ci_tests_subsys_emds:
     - nrf/subsys/nrf_security/
     - nrf/tests/subsys/emds/
     - zephyr/subsys/bluetooth/
+
+ci_tests_lib_nrf_fuel_gauge:
+  files:
+    - nrf/tests/lib/nrf_fuel_gauge/
+    - nrfxlib/nrf_fuel_gauge/
