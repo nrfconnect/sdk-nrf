@@ -31,7 +31,7 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	help
 	  Place the secondary partition of MCUboot in the external flash instead
 	  of the internal flash. This option should only be enabled by the user
-	  in the parent image.
+	  in sysbuild.
 
 config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 	bool "Override external driver check"
