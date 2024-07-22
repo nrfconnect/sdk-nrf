@@ -1695,9 +1695,14 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 		return sdc_hci_cmd_vs_scan_accept_ext_adv_packets_set(
 			(sdc_hci_cmd_vs_scan_accept_ext_adv_packets_set_t const *)cmd_params);
 #endif
-		case SDC_HCI_OPCODE_CMD_VS_SET_ROLE_PRIORITY:
-			return sdc_hci_cmd_vs_set_role_priority(
-				(sdc_hci_cmd_vs_set_role_priority_t const *) cmd_params);
+	case SDC_HCI_OPCODE_CMD_VS_SET_ROLE_PRIORITY:
+		return sdc_hci_cmd_vs_set_role_priority(
+			(sdc_hci_cmd_vs_set_role_priority_t const *) cmd_params);
+#if defined(CONFIG_BT_CTLR_SDC_CONN_ANCHOR_POINT_REPORT)
+	case SDC_HCI_OPCODE_CMD_VS_CONN_ANCHOR_POINT_UPDATE_EVENT_REPORT_ENABLE:
+		return sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable(
+		(sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable_t const *)cmd_params);
+#endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
 	}

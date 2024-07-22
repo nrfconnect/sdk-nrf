@@ -392,6 +392,18 @@ int hci_vs_sdc_scan_accept_ext_adv_packets_set(
  */
 int hci_vs_sdc_set_role_priority(const sdc_hci_cmd_vs_set_role_priority_t *params);
 
+/** @brief Connection Anchor_Point Update Event Reports enable.
+ *
+ * For the complete API description,
+ * see sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable().
+ *
+ * @param[in]  params Input parameters.
+ *
+ * @return 0 on success or negative error value on failure.
+ */
+int hci_vs_sdc_conn_anchor_point_update_event_report_enable(
+	const sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable_t *params);
+
 #ifdef __cplusplus
 }
 #endif

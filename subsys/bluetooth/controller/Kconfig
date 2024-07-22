@@ -394,6 +394,17 @@ config BT_CTLR_SDC_EVENT_TRIGGER
 	  When used for connections, the connection event trigger can be configured to trigger
 	  every N connection events starting from a given connection event counter.
 
+config BT_CTLR_SDC_CONN_ANCHOR_POINT_REPORT
+	bool "Connection event anchor point reports"
+	depends on BT_CONN
+	help
+	  Enable support for obtaining connection anchor point reports.
+	  This is a proprietary SDC feature which allows the controller
+	  to produce timestamps for ACL connection anchor points.
+	  A new timestamp is generated whenever a connection's anchor point changes.
+	  The reporting is enabled through an HCI command.
+	  See Core_v5.4, Vol 6, Part B, Section 4.5.1.
+
 config BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT
 	int "BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT"
 	depends on BT_CTLR_SYNC_ISO || BT_CTLR_CONN_ISO
