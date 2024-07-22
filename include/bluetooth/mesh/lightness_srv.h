@@ -68,7 +68,6 @@ struct bt_mesh_lightness_srv;
 						 _srv),                        \
 			 &_bt_mesh_lightness_setup_srv_cb)
 
-#ifdef CONFIG_BT_MESH_LARGE_COMP_DATA_SRV
 /** The Light Purpose Metadata ID. */
 #define BT_MESH_LIGHT_PURPOSE_METADATA_ID 0x0002
 
@@ -93,7 +92,6 @@ struct bt_mesh_lightness_srv;
 #define BT_MESH_LIGHT_LIGHTNESS_RANGE_METADATA(range_min, range_max)                               \
 	BT_MESH_MODELS_METADATA_ENTRY(4, BT_MESH_LIGHT_LIGHTNESS_RANGE_METADATA_ID,                \
 				      ((uint16_t[]){(range_min), (range_max)}))
-#endif
 
 /** Collection of handler callbacks for the Light Lightness Server. */
 struct bt_mesh_lightness_srv_handlers {
