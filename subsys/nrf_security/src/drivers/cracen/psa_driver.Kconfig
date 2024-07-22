@@ -1850,9 +1850,10 @@ config PSA_NEED_CRACEN_KMU_DRIVER
 
 config PSA_NEED_CRACEN_PLATFORM_KEYS
 	bool
-	default n
+	default y
 	depends on PSA_WANT_ALG_GCM
 	depends on PSA_WANT_AES_KEY_SIZE_256
+	depends on SOC_NRF54H20_CPUSEC
 
 
 endmenu
