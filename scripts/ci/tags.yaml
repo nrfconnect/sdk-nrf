@@ -810,3 +810,8 @@ ci_tests_subsys_caf:
     - nrf/subsys/app_event_manager/
     - nrf/subsys/caf/
     - nrf/tests/subsys/caf/
+
+ci_tests_subsys_partition_manager:
+  files:
+    - nrf/subsys/partition_manager/
+    - nrf/tests/subsys/partition_manager/
