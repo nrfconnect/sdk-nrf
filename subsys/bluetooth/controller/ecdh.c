@@ -38,7 +38,7 @@ enum {
 
 static atomic_t cmd;
 
-/* based on Core Specification 4.2 Vol 3. Part H 2.3.5.6.1 */
+/* Based on Bluetooth Core Specification, Vol 3. Part H, Section 2.3.5.6.1 */
 static const uint8_t debug_private_key_be[32] = {
 	0x3f, 0x49, 0xf6, 0xd4, 0xa3, 0xc5, 0x5f, 0x38,
 	0x74, 0xc9, 0xb3, 0xe3, 0xd2, 0x10, 0x3f, 0x50,

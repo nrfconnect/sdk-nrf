@@ -68,8 +68,9 @@ struct bt_radio_notification_conn_cb {
  * The Bluetooth specification allows a worst case clock accurary of 500 ppm.
  * That gives a worst case combined clock accurary of 1000 ppm.
  * This results in 1 ms drift per second.
-
- * See Bluetooth Core_v5.4, Vol 6, Part 4.2.4 for more details on clock drift.
+ *
+ * See Bluetooth Core Specification, Vol 6, Part B, Section 4.2.4
+ * for more details on clock drift.
  *
  * @param[in] cb                  The callback structure to be used.
  *                                The memory pointed to needs to be kept alive by the user.

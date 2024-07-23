@@ -199,7 +199,7 @@ int bt_mgmt_pa_sync_delete(struct bt_le_per_adv_sync *pa_sync);
  *
  * @param[in]	conn	Connection to disconnect.
  * @param[in]	reason	Reason code for the disconnection, as specified in
- *			HCI Error Codes, BT Core Spec v5.4 [Vol 1, Part F].
+ *			HCI Error Codes, BT Core Spec [Vol 1, Part F].
  *
  * @return	0 if success, error otherwise.
  */

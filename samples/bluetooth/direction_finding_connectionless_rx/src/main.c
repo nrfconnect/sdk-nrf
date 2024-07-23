@@ -14,7 +14,8 @@
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 #define PEER_NAME_LEN_MAX 30
-/* BT Core 5.3 specification allows controller to wait 6 periodic advertising events for
+/* The Bluetooth Core specification allows controller to wait 6
+ * periodic advertising events for
  * synchronization establishment, hence timeout must be longer than that.
  */
 #define SYNC_CREATE_TIMEOUT_INTERVAL_NUM 7
