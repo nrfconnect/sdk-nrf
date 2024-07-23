@@ -36,6 +36,9 @@ config BT_LL_SOFTDEVICE_HEADERS_INCLUDE
 	help
 	  Include SoftDevice header files provided with the library.
 
+config BT_LL_SOFTDEVICE_HEADERS_INCLUDE_PATH_OVERRIDE
+	bool
+
 if BT_CTLR
 rsource "controller/Kconfig"
 endif
