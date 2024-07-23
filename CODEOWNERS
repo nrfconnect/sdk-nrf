@@ -109,12 +109,12 @@ Kconfig*                                  @tejlmand
 /lib/boot_banner/                         @nordicjm
 /lib/adp536x/                             @nrfconnect/ncs-cia
 /lib/at_cmd_parser/                       @rlubos
-/lib/at_cmd_custom/                       @eivindj-nordic
+/lib/at_cmd_custom/                       @nrfconnect/ncs-modem
 /lib/at_host/                             @rlubos
-/lib/at_monitor/                          @lemrey @rlubos
+/lib/at_monitor/                          @nrfconnect/ncs-modem @rlubos
 /lib/at_shell/                            @nrfconnect/ncs-cia
-/lib/gcf_sms/                             @eivindj-nordic
-/lib/nrf_modem_lib/                       @rlubos @lemrey
+/lib/gcf_sms/                             @nrfconnect/ncs-modem
+/lib/nrf_modem_lib/                       @rlubos @nrfconnect/ncs-modem
 /lib/edge_impulse/                        @pdunaj
 /lib/fem_al/                              @KAGA164
 /lib/fprotect/                            @hakonfam
@@ -122,11 +122,11 @@ Kconfig*                                  @tejlmand
 /lib/location/                            @trantanen @jhirsi @tokangas
 /lib/lte_link_control/                    @tokangas @trantanen @jhirsi
 /lib/modem_antenna/                       @tokangas
-/lib/modem_battery/                       @MirkoCovizzi
+/lib/modem_battery/                       @nrfconnect/ncs-modem
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
-/lib/pdn/                                 @lemrey @rlubos
+/lib/pdn/                                 @nrfconnect/ncs-modem @rlubos
 /lib/ram_pwrdn/                           @MarekPorwisz
 /lib/fatal_error/                         @KAGA164 @nordic-krch
 /lib/sfloat/                              @kapi-no @maje-emb
@@ -155,7 +155,7 @@ Kconfig*                                  @tejlmand
 /modules/trusted-firmware-m/              @frkv @Vge0rge @vili-nordic
 /modules/coremark/                        @zycz
 /samples/                                 @nrfconnect/ncs-test-leads
-/samples/net/                             @nrfconnect/ncs-cia @lemrey
+/samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-modem
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /samples/bluetooth/                       @alwa-nordic @jori-nordic @carlescufi @KAGA164
@@ -179,15 +179,13 @@ Kconfig*                                  @tejlmand
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
 /samples/nrf5340/empty_app_core/          @doki-nordic
-/samples/cellular/                        @rlubos @lemrey
-/samples/cellular/battery/                @MirkoCovizzi
+/samples/cellular/                        @rlubos @nrfconnect/ncs-modem
 /samples/cellular/location/               @trantanen @jhirsi @tokangas
 /samples/cellular/lwm2m_client/           @rlubos @SeppoTakalo @juhaylinen
 /samples/cellular/modem_shell/            @trantanen @jhirsi @tokangas
 /samples/cellular/nidd/                   @stig-bjorlykke
 /samples/cellular/nrf_cloud_*             @plskeggs @jayteemo @glarsennordic
 /samples/cellular/nrf_provisioning/       @SeppoTakalo @juhaylinen
-/samples/cellular/modem_trace_flash/      @eivindj-nordic
 /samples/cellular/slm_shell/              @MarkusLassila @tomi-font
 /samples/cellular/sms/                    @trantanen @tokangas
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @maciejbaczmanski
@@ -234,7 +232,7 @@ Kconfig*                                  @tejlmand
 /share/ncs-package/                       @tejlmand
 /snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
 /snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-cia
-/snippets/nrf91-modem-trace-uart/         @eivindj-nordic
+/snippets/nrf91-modem-trace-uart/         @nrfconnect/ncs-modem
 /snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia
 /snippets/nrf70-debug/                    @krish2718 @sachinthegreen
 /snippets/nrf70-fw-patch-ext-flash/       @krish2718 @sachinthegreen
@@ -304,25 +302,24 @@ Kconfig*                                  @tejlmand
 /tests/drivers/lpuart/                    @nordic-krch
 /tests/drivers/nrfx_integration_test/     @anangl
 /tests/lib/at_cmd_parser/                 @rlubos
-/tests/lib/at_cmd_custom/                 @eivindj-nordic
+/tests/lib/at_cmd_custom/                 @nrfconnect/ncs-modem
 /tests/lib/date_time/                     @trantanen @tokangas
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
 /tests/lib/nrf_fuel_gauge/                @nordic-auko @aasinclair
-/tests/lib/gcf_sms/                       @eivindj-nordic
+/tests/lib/gcf_sms/                       @nrfconnect/ncs-modem
 /tests/lib/hw_unique_key*/                @frkv @Vge0rge @vili-nordic
 /tests/lib/hw_id/                         @nrfconnect/ncs-cia
 /tests/lib/location/                      @trantanen @tokangas
 /tests/lib/lte_lc/                        @trantanen @tokangas
 /tests/lib/lte_lc_api/                    @trantanen @tokangas
 /tests/lib/modem_jwt/                     @SeppoTakalo
-/tests/lib/modem_battery/                 @MirkoCovizzi
+/tests/lib/modem_battery/                 @nrfconnect/ncs-modem
 /tests/lib/modem_info/                    @nrfconnect/ncs-cia
 /tests/lib/qos/                           @nrfconnect/ncs-cia
 /tests/lib/sfloat/                        @kapi-no @maje-emb
 /tests/lib/sms/                           @trantanen @tokangas
-/tests/lib/nrf_modem_lib/                 @lemrey @MirkoCovizzi
-/tests/lib/nrf_modem_lib/nrf91_sockets/   @MirkoCovizzi
-/tests/lib/pdn/                           @lemrey @eivindj-nordic
+/tests/lib/nrf_modem_lib/                 @nrfconnect/ncs-modem
+/tests/lib/pdn/                           @nrfconnect/ncs-modem
 /tests/lib/ram_pwrdn/                     @Damian-Nordic
 /tests/lib/contin_array/                  @nrfconnect/ncs-audio
 /tests/lib/data_fifo/                     @nrfconnect/ncs-audio
