@@ -941,3 +941,9 @@ ci_samples_ipc:
     - nrf/samples/ipc/
     - zephyr/drivers/mbox/
     - zephyr/subsys/ipc/
+
+ci_samples_benchmarks:
+  files:
+    - modules/benchmark/
+    - nrf/modules/coremark/
+    - nrf/samples/benchmarks/
