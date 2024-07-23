@@ -7,7 +7,8 @@ The Matter bridge application can be used to build a :ref:`bridge <ug_matter_ove
 The bridge device allows the use of non-Matter devices in a :ref:`Matter fabric <ug_matter_network_topologies_structure>` by exposing them as Matter endpoints.
 The devices on the non-Matter side of the Matter bridge are called *bridged devices*.
 
-The Matter bridge device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.11ax (Wi-Fi 6) network.
+The Matter bridge device functions as a Matter accessory, allowing it to be paired with and controlled through a Matter network.
+This network can be constructed using either a low-power 802.11ax (Wi-Fi 6) or 802.15.4 (Thread) protocol.
 
 Currently the Matter bridge application supports the following types of *bridged devices*:
 
