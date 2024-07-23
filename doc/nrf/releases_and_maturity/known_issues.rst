@@ -2807,6 +2807,17 @@ The issues in this section are related to :ref:`app_build_system`.
 
 .. rst-class:: v2-7-0
 
+NCSDK-28495: Sysbuild runs CMake code before processing application :file:`sysbuild.cmake`
+  When using a :file:`sysbuild.cmake` file to set configuration for images that have variants, this extra configuration might end up not being applied to the variant image, causing the images to be incompatible.
+
+  **Workaround:** Depending on your configuration:
+
+  * If applying configuration to the default image and building in the direct XIP mode, also apply the configuration to ``mcuboot_secondary_app``.
+  * If applying configuration to MCUboot with application secure boot enabled, also apply the configuration to ``s1_image``.
+  * If applying configuration to the default image with application secure boot enabled and MCUboot disabled, also apply the configuration to ``s1_image``.
+
+.. rst-class:: v2-7-0
+
 NCSDK-28462: MCUboot signing configuration cannot be updated without pristine build
   When using :ref:`configuration_system_overview_sysbuild`, the MCUboot signing configuration cannot be updated in an already configured project.
 
