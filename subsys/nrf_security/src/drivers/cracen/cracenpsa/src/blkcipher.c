@@ -213,19 +213,24 @@ static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *at
 		}
 		break;
 	case PSA_ALG_CBC_NO_PADDING:
-		IF_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES, (is_supported = true));
+		IF_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
 		break;
 	case PSA_ALG_CBC_PKCS7:
-		IF_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES, (is_supported = true));
+		IF_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
 		break;
 	case PSA_ALG_CTR:
-		IF_ENABLED(PSA_NEED_CRACEN_CTR_AES, (is_supported = true));
+		IF_ENABLED(PSA_NEED_CRACEN_CTR_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
 		break;
 	case PSA_ALG_ECB_NO_PADDING:
-		IF_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES, (is_supported = true));
+		IF_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
 		break;
 	case PSA_ALG_OFB:
-		IF_ENABLED(PSA_NEED_CRACEN_OFB_AES, (is_supported = true));
+		IF_ENABLED(PSA_NEED_CRACEN_OFB_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
 		break;
 	default:
 		is_supported = false;
@@ -565,10 +570,10 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 	 */
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
 		if (operation->alg == PSA_ALG_ECB_NO_PADDING) {
-			return cracen_cipher_crypt_ecb(
-				&operation->keyref, operation->unprocessed_input,
-				operation->unprocessed_input_bytes, output, output_size,
-				output_length, operation->dir);
+			return cracen_cipher_crypt_ecb(&operation->keyref,
+						       operation->unprocessed_input,
+						       operation->unprocessed_input_bytes, output,
+						       output_size, output_length, operation->dir);
 		}
 	}
 
