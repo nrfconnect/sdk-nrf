@@ -947,3 +947,21 @@ ci_samples_benchmarks:
     - modules/benchmark/
     - nrf/modules/coremark/
     - nrf/samples/benchmarks/
+
+ci_samples_debug:
+  files:
+    - bootloader/mcuboot/
+    - modules/hal/nordic/nrfx
+    - modules/lib/hostap/
+    - modules/lib/memfault-firmware-sdk/
+    - modules/lib/zcbor/
+    - nrf/drivers/wifi/
+    - nrf/modules/hostap/
+    - nrf/modules/memfault-firmware-sdk/
+    - nrf/samples/debug/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/debug/
+    - nrf/subsys/net/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/debug/
+    - zephyr/subsys/net/
