@@ -878,3 +878,8 @@ ci_tests_subsys_event_manager_proxy:
     - nrf/subsys/event_manager_proxy/
     - nrf/tests/subsys/event_manager_proxy/
     - zephyr/subsys/ipc/ipc_service/
+
+ci_tests_subsys_audio_module:
+  files:
+    - nrf/subsys/audio_module/
+    - nrf/tests/subsys/audio_module/
