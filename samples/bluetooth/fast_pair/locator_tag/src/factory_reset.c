@@ -32,7 +32,6 @@ static void factory_reset_work_handle(struct k_work *w);
 
 static K_WORK_DELAYABLE_DEFINE(factory_reset_work, factory_reset_work_handle);
 static enum app_factory_reset_state factory_reset_state;
-static app_factory_reset_executed_cb user_cb;
 static bool factory_reset_ui_requested;
 
 int bt_fast_pair_factory_reset_user_action_perform(void)
@@ -88,6 +87,24 @@ int bt_fast_pair_factory_reset_user_action_perform(void)
 	return 0;
 }
 
+static void factory_reset_prepare(void)
+{
+	STRUCT_SECTION_FOREACH(app_factory_reset_callbacks, cbs) {
+		if (cbs->prepare) {
+			cbs->prepare();
+		}
+	}
+}
+
+static void factory_reset_executed(void)
+{
+	STRUCT_SECTION_FOREACH(app_factory_reset_callbacks, cbs) {
+		if (cbs->executed) {
+			cbs->executed();
+		}
+	}
+}
+
 static void factory_reset_perform(void)
 {
 	int err;
@@ -102,6 +119,8 @@ static void factory_reset_perform(void)
 	}
 
 	factory_reset_state = APP_FACTORY_RESET_STATE_IN_PROGRESS;
+
+	factory_reset_prepare();
 
 	/* Disable the Fast Pair subsystem if it is active. */
 	if (fast_pair_is_ready) {
@@ -150,12 +169,9 @@ static void factory_reset_perform(void)
 
 	LOG_INF("Reset to factory settings has completed");
 
-	if (user_cb) {
-		user_cb();
-	}
+	factory_reset_executed();
 
 	factory_reset_state = APP_FACTORY_RESET_STATE_IDLE;
-	user_cb = NULL;
 
 finish:
 	if (err) {
@@ -176,8 +192,7 @@ static void factory_reset_request_handle(enum app_ui_request request)
 	}
 }
 
-void app_factory_reset_schedule(k_timeout_t delay,
-				app_factory_reset_executed_cb cb)
+void app_factory_reset_schedule(k_timeout_t delay)
 {
 	if (factory_reset_state != APP_FACTORY_RESET_STATE_IDLE) {
 		LOG_ERR("Factory Reset: rejecting scheduling operation");
@@ -186,7 +201,6 @@ void app_factory_reset_schedule(k_timeout_t delay,
 
 	(void) k_work_schedule(&factory_reset_work, delay);
 	factory_reset_state = APP_FACTORY_RESET_STATE_PENDING;
-	user_cb = cb;
 }
 
 void app_factory_reset_cancel(void)

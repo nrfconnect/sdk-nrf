@@ -74,9 +74,12 @@ static void fmdn_factory_reset_executed(void)
 	factory_reset_executed = true;
 }
 
+APP_FACTORY_RESET_CALLBACKS_REGISTER(factory_reset_cbs, NULL,
+				    fmdn_factory_reset_executed);
+
 static void fmdn_factory_reset_schedule(enum factory_reset_trigger trigger, k_timeout_t delay)
 {
-	app_factory_reset_schedule(delay, fmdn_factory_reset_executed);
+	app_factory_reset_schedule(delay);
 	factory_reset_trigger = trigger;
 }
 
