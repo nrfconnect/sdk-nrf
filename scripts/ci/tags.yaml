@@ -908,3 +908,20 @@ ci_samples_caf_sensor_manager:
     - nrf/subsys/caf/
     - nrf/subsys/event_manager_proxy/
     - zephyr/subsys/ipc/
+
+ci_samples_hw_id:
+  files:
+    - nrf/drivers/entropy/
+    - nrf/lib/hw_id/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/modem_jwt/
+    - nrf/lib/multithreading_lock/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/samples/hw_id/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/mpsl/
+    - nrfxlib/nrf_modem/
+    - zephyr/drivers/bluetooth/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/net/
