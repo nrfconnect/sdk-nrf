@@ -518,6 +518,23 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
     endif()
   endif()
+
+  # Check if variant image variables have been set too late
+  foreach(check_images ${SYSBUILD_NCS_VARIANT_IMAGE_NAMES})
+    get_cmake_property(sysbuild_cache CACHE_VARIABLES)
+    foreach(var_name ${sysbuild_cache})
+      if("${var_name}" MATCHES "^(${check_images}_.*)$")
+        if(NOT "${${var_name}}" STREQUAL "${SYSBUILD_NCS_VARIANT_IMAGE_VAR_${check_images}_${var_name}}")
+          message(WARNING "
+    WARNING: Variable ${var_name} has been set too late.
+    Original used value: ${SYSBUILD_NCS_VARIANT_IMAGE_VAR_${check_images}_${var_name}}
+    Current value: ${${var_name}}
+    This is likely to cause issues with variant image configuration diverging from the base image.
+   ")
+        endif()
+      endif()
+    endforeach()
+  endforeach()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
 # Enable use of partition manager with sysbuild.

@@ -28,12 +28,23 @@ function(ExternalNcsVariantProject_Add)
     BUILD_ONLY true
   )
 
+  # Add duplicate image names for checking if variables have been set too late
+  list(APPEND SYSBUILD_NCS_VARIANT_IMAGE_NAMES "${VBUILD_VARIANT};${VBUILD_APPLICATION}")
+  set(SYSBUILD_NCS_VARIANT_IMAGE_NAMES ${SYSBUILD_NCS_VARIANT_IMAGE_NAMES} PARENT_SCOPE)
+
   get_cmake_property(sysbuild_cache CACHE_VARIABLES)
   foreach(var_name ${sysbuild_cache})
     if("${var_name}" MATCHES "^(${VBUILD_APPLICATION}_.*)$")
       string(LENGTH "${VBUILD_APPLICATION}" tmplen)
       string(SUBSTRING "${var_name}" ${tmplen} -1 tmp)
       set(${VBUILD_VARIANT}${tmp} "${${var_name}}" CACHE UNINITIALIZED "" FORCE)
+
+      # Add duplicate variables so that these can be checked to see if they have been changed
+      # after having been used
+      list(APPEND SYSBUILD_NCS_VARIANT_IMAGE_VAR_${VBUILD_APPLICATION}_${var_name} "${${var_name}}")
+      set(SYSBUILD_NCS_VARIANT_IMAGE_VAR_${VBUILD_APPLICATION}_${var_name} ${SYSBUILD_NCS_VARIANT_IMAGE_VAR_${VBUILD_APPLICATION}_${var_name}} PARENT_SCOPE)
+      list(APPEND SYSBUILD_NCS_VARIANT_IMAGE_VAR_${VBUILD_VARIANT}_${VBUILD_VARIANT}${tmp} "${${var_name}}")
+      set(SYSBUILD_NCS_VARIANT_IMAGE_VAR_${VBUILD_VARIANT}_${VBUILD_VARIANT}${tmp} ${SYSBUILD_NCS_VARIANT_IMAGE_VAR_${VBUILD_VARIANT}${tmp}} PARENT_SCOPE)
     endif()
   endforeach()
 
