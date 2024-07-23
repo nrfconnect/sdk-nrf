@@ -4,4 +4,4 @@ tests:
     platform_allow: native_posix
     integration_platforms:
       - native_posix
-    tags: ssf sysbuild
+    tags: ssf sysbuild ci_tests_subsys_sdfw_services

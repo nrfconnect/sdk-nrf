@@ -865,3 +865,8 @@ ci_tests_subsys_pcd:
   files:
     - nrf/subsys/pcd/
     - nrf/tests/subsys/pcd/
+
+ci_tests_subsys_sdfw_services:
+  files:
+    - nrf/subsys/sdfw_services/
+    - nrf/tests/subsys/sdfw_services/
