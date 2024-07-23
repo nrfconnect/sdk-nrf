@@ -552,3 +552,9 @@
   - "tests/subsys/event_manager_proxy/**/*"
   - "tests/benchmarks/multicore/**/*"
   - "tests/drivers/pwm/**/*"
+
+"CI-ps-test":
+  - "applications/protocols_serialization/**/*"
+  - "samples/nrf_rpc/ps_client/**/*"
+  - "subsys/net/openthread/rpc/**/*"
+  - "subsys/nrf_rpc/**/*"
