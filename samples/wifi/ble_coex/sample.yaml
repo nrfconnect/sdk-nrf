@@ -50,7 +50,7 @@ tests:
                 CONFIG_MPSL_CX=y ipc_radio_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: sysbuild ci_samples_wifi
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002_eb.thingy53.ble_coex:
     sysbuild: true
     build_only: true
