@@ -15,14 +15,25 @@ config _NRF_RPC_DUMMY_SELECT
 	default y
 	select THREAD_CUSTOM_DATA
 
-menuconfig NRF_RPC_IPC_SERVICE
+choice NRF_RPC_TRANSPORT
+	prompt "NRF RPC transport choice"
+	default NRF_RPC_IPC_SERVICE
+
+config NRF_RPC_IPC_SERVICE
 	bool "nRF RPC over IPC Service"
-	default y
 	select IPC_SERVICE
 	select MBOX
 	select EVENTS
 	help
-	  If enabled, selects the IPC Service as a transport layer for nRF PRC.
+	  If enabled, selects the IPC Service as a transport layer for nRF RPC.
+
+config NRF_RPC_UART_TRANSPORT
+	bool "UART transport for nRF RPC"
+	select UART_NRFX
+	select RING_BUFFER
+	select CRC
+
+endchoice
 
 if NRF_RPC_IPC_SERVICE
 
