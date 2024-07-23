@@ -105,12 +105,12 @@ static struct ram_area ram_area_map[] = {
 #endif /* sram0 */
 };
 
-/* In case of tests on native_posix RAM emulation is used and visible below
+/* In case of tests on native_sim RAM emulation is used and visible below
  * mem_for_sim_ram is used as the buffer for emulation. It is here to allow not only
  * write but also read operations with emulated RAM. Address is translated to point to
  * the buffer. Size is taken from dts so it is required that the sram0 node is defined.
  */
-#if (DT_NODE_EXISTS(DT_NODELABEL(sram0))) && defined(CONFIG_BOARD_NATIVE_POSIX)
+#if (DT_NODE_EXISTS(DT_NODELABEL(sram0))) && defined(CONFIG_BOARD_NATIVE_SIM)
 #define SIM_RAM_SIZE DT_REG_SIZE(DT_NODELABEL(sram0))
 #else
 #define SIM_RAM_SIZE 0
@@ -223,7 +223,7 @@ bool suit_memory_global_address_range_is_in_nvm(uintptr_t address, size_t size)
 
 bool suit_memory_global_address_is_in_ram(uintptr_t address)
 {
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_POSIX)) {
+	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
 		return !suit_memory_global_address_is_in_nvm(address);
 	}
 
@@ -232,7 +232,7 @@ bool suit_memory_global_address_is_in_ram(uintptr_t address)
 
 uintptr_t suit_memory_global_address_to_ram_address(uintptr_t address)
 {
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_POSIX) && DT_NODE_EXISTS(DT_NODELABEL(sram0))) {
+	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM) && DT_NODE_EXISTS(DT_NODELABEL(sram0))) {
 		const struct ram_area *area = find_ram_area(address);
 
 		if (area) {
@@ -250,7 +250,7 @@ bool suit_memory_global_address_range_is_in_ram(uintptr_t address, size_t size)
 	/* Zero-sized ranges are treated as if they were one byte in size. */
 	size = MAX(1, size);
 
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_POSIX)) {
+	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
 		return !suit_memory_global_address_range_is_in_nvm(address, size);
 	}
 
