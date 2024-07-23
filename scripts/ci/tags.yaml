@@ -855,3 +855,8 @@ ci_tests_subsys_debug:
   files:
     - nrf/subsys/debug/
     - nrf/tests/subsys/debug/
+
+ci_tests_subsys_nrf_profiler:
+  files:
+    - nrf/subsys/nrf_profiler/
+    - nrf/tests/subsys/nrf_profiler/
