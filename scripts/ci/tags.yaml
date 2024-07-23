@@ -860,3 +860,8 @@ ci_tests_subsys_nrf_profiler:
   files:
     - nrf/subsys/nrf_profiler/
     - nrf/tests/subsys/nrf_profiler/
+
+ci_tests_subsys_pcd:
+  files:
+    - nrf/subsys/pcd/
+    - nrf/tests/subsys/pcd/
