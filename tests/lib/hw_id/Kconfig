@@ -5,7 +5,7 @@
 #
 
 menu "hw_id test config"
-	depends on BOARD_NATIVE_POSIX
+	depends on BOARD_NATIVE_SIM
 
 config HW_ID_OVERRIDE_FILE
 	string "Override file"

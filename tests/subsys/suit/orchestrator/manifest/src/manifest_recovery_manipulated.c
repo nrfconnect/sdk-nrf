@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_BOARD_NATIVE_POSIX)
+#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_BOARD_NATIVE_SIM)
 #include <stdint.h>
 #include <stddef.h>
 
@@ -75,4 +75,4 @@ uint8_t manifest_manipulated_recovery_buf[] = {
 
 size_t manifest_manipulated_recovery_len = sizeof(manifest_manipulated_recovery_buf);
 
-#endif /* CONFIG_SOC_NRF52840 || CONFIG_BOARD_NATIVE_POSIX */
+#endif /* CONFIG_SOC_NRF52840 || CONFIG_BOARD_NATIVE_SIM */
