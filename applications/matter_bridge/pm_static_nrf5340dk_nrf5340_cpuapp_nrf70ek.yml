@@ -45,9 +45,33 @@ mcuboot_secondary_1:
   size: 0x40000
   device: MX25R64
   region: external_flash
-external_flash:
+nrf70_wifi_fw_mcuboot_pad:
   address: 0x12F000
-  size: 0x6D1000
+  size: 0x200
+  device: MX25R64
+  region: external_flash
+nrf70_wifi_fw:
+  address: 0x12F200
+  size: 0x20000
+  device: MX25R64
+  region: external_flash
+mcuboot_primary_2:
+  orig_span: &id003
+  - nrf70_wifi_fw_mcuboot_pad
+  - nrf70_wifi_fw
+  span: *id003
+  address: 0x12F000
+  size: 0x21000
+  device: MX25R64
+  region: external_flash
+mcuboot_secondary_2:
+  address: 0x150000
+  size: 0x21000
+  device: MX25R64
+  region: external_flash
+external_flash:
+  address: 0x171000
+  size: 0x68F000
   device: MX25R64
   region: external_flash
 pcd_sram:

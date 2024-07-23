@@ -433,15 +433,31 @@ CHIP_ERROR BLEConnectivityManager::Init(const bt_uuid **serviceUuids, uint8_t se
 	}
 #endif /* CONFIG_BT_SMP */
 
+	struct bt_le_scan_param scan_param = {
+		.type = BT_LE_SCAN_TYPE_PASSIVE,
+		.options = BT_LE_SCAN_OPT_FILTER_DUPLICATE,
+		.interval = CONFIG_BRIDGE_BT_SCAN_INTERVAL,
+		.window = CONFIG_BRIDGE_BT_SCAN_WINDOW,
+	};
+
+	struct bt_le_conn_param conn_param = {
+		.interval_min = CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MIN,
+		.interval_max = CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MAX,
+		.latency = CONFIG_BRIDGE_BT_CONNECTION_LATENCY,
+		.timeout = CONFIG_BRIDGE_BT_CONNECTION_TIMEOUT,
+	};
+
 	bt_scan_init_param scan_init = {
+		.scan_param = &scan_param,
 		.connect_if_match = 0,
+		.conn_param = &conn_param,
 	};
 
 	bt_scan_init(&scan_init);
 	bt_scan_cb_register(&scan_cb);
 
 	return PrepareFilterForUuid();
-}
+} // namespace Nrf
 
 CHIP_ERROR BLEConnectivityManager::PrepareFilterForUuid()
 {
