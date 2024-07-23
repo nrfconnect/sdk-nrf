@@ -850,3 +850,8 @@ ci_tests_lib_hw_id:
   files:
     - nrf/lib/hw_id
     - nrf/tests/lib/hw_id
+
+ci_tests_subsys_debug:
+  files:
+    - nrf/subsys/debug/
+    - nrf/tests/subsys/debug/
