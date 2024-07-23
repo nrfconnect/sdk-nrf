@@ -313,12 +313,7 @@ psa_status_t cracen_key_derivation_set_capacity(cracen_key_derivation_operation_
 	}
 
 	operation->capacity = capacity;
-	/* The capacity changes when the output bytes are derived, but L must not change, therefore
-	 * saving it separately
-	 */
-	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
-		operation->cmac_ctr.L = uint32_to_be(PSA_BYTES_TO_BITS(operation->capacity));
-	}
+
 	return PSA_SUCCESS;
 }
 
@@ -808,6 +803,11 @@ cracen_key_derivation_cmac_ctr_generate_K_0(cracen_key_derivation_operation_t *o
 {
 	struct sxmac cmac_ctx;
 	int sx_status;
+
+	/* The capacity changes when the output bytes are derived, but L must not change, therefore
+	 * saving it separately
+	 */
+	operation->cmac_ctr.L = uint32_to_be(PSA_BYTES_TO_BITS(operation->capacity));
 
 	sx_status = sx_mac_create_aescmac(&cmac_ctx, &operation->cmac_ctr.keyref);
 	if (sx_status) {
