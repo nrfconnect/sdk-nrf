@@ -60,11 +60,13 @@ config BRIDGE_BT_SCAN_INTERVAL
 
 config BRIDGE_BT_CONNECTION_INTERVAL_MIN
 	int "It is the minimum duration of time requested by central after the peripheral device should wake up to communicate, it is equal BRIDGE_BT_CONNECTION_INTERVAL_MIN*1.25 ms"
+	range 6 3200
 	default 80 if NET_L2_OPENTHREAD # It is necessary to decrease Bluetooth LE activity to leave some radio time to Thread
 	default 24
 
 config BRIDGE_BT_CONNECTION_INTERVAL_MAX
 	int "It is the maximum duration of time requested by central after the peripheral device should wake up to communicate, it is equal BRIDGE_BT_CONNECTION_INTERVAL_MAX*1.25 ms"
+	range 6 3200
 	default 80 if NET_L2_OPENTHREAD # It is necessary to decrease Bluetooth LE activity to leave some radio time to Thread
 	default 40
 
@@ -75,5 +77,9 @@ config BRIDGE_BT_CONNECTION_TIMEOUT
 config BRIDGE_BT_CONNECTION_LATENCY
 	int "It allows the peripheral to skip waking up for a certain number of connection events if it does not have any data to send"
 	default 0
+
+config BRIDGE_FORCE_BT_CONNECTION_PARAMS
+	bool "Determines whether the Matter bridge forces connection parameters or accepts the Bluetooth LE peripheral device selection"
+	default y
 
 endif

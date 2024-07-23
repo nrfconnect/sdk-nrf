@@ -606,6 +606,22 @@ The current maximum number of Bluetooth LE connections that can be selected usin
 
                west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
 
+Configuring Bluetooth LE connection and scan parameters
+-------------------------------------------------------
+
+You can set your own Bluetooth LE connection parameters instead of accepting the default ones requested by the peripheral device.
+You can disable configuring the parameters by setting the :kconfig:option:`CONFIG_BRIDGE_FORCE_BT_CONNECTION_PARAMS` Kconfig option to ``n``.
+
+Use the following Kconfig options to set the desired parameters:
+
+- :kconfig:option:`CONFIG_BRIDGE_BT_SCAN_WINDOW` - The duration a central actively scans for devices within the scan interval.
+- :kconfig:option:`CONFIG_BRIDGE_BT_SCAN_INTERVAL` - Time between consecutive Bluetooth LE scan windows.
+- :kconfig:option:`CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MIN` - The minimum time requested by the central (the bridge) after which the peripheral device should wake up to communicate.
+- :kconfig:option:`CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MAX` - The maximum time requested by the central (the bridge) after which the peripheral device should wake up to communicate.
+- :kconfig:option:`CONFIG_BRIDGE_BT_CONNECTION_TIMEOUT` - The time since the last packet was successfully received until the devices consider the connection lost.
+- :kconfig:option:`CONFIG_BRIDGE_BT_CONNECTION_LATENCY` - Allows the peripheral to skip waking up for a certain number of connection events if it does not have any data to send.
+
+
 .. _matter_bridge_app_bt_security:
 
 Configuring the Bluetooth LE security
@@ -673,7 +689,7 @@ The application supports the following configurations:
 
        Enables only the necessary application functionalities to optimize its performance.
    * - Matter bridge over Wi-Fi with nRF5340 DK and nRF7002 EK
-     - :file:`---`
+     - ---
      - ``nrf70ek``
      - nRF5340 DK with the nRF7002 EK shield attached
      - Debug version of the application with Matter over Wi-Fi enabled.
