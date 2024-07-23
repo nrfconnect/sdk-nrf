@@ -925,3 +925,12 @@ ci_samples_hw_id:
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/ipc/
     - zephyr/subsys/net/
+
+ci_samples_pmic:
+  files:
+    - nrf/samples/pmic/
+    - nrfxlib/nrf_fuel_gauge/
+    - zephyr/drivers/i2c/
+    - zephyr/drivers/mfd/
+    - zephyr/drivers/regulator/
+    - zephyr/drivers/sensor/nordic/npm1300_charger/

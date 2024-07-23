@@ -10,7 +10,7 @@ common:
     - nrf5340dk/nrf5340/cpuapp
     - nrf9160dk/nrf9160
   platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf9160dk/nrf9160
-  tags: pmic
+  tags: pmic ci_samples_pmic
 
 tests:
   samples.npm1300_fuel_gauge:
@@ -30,5 +30,5 @@ tests:
     sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     harness: shield
-    tags: shield sysbuild
+    tags: shield sysbuild ci_samples_pmic
     extra_args: SHIELD=npm1300_ek
