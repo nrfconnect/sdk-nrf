@@ -32,11 +32,54 @@ enum app_fp_adv_mode {
 	APP_FP_ADV_MODE_NOT_DISCOVERABLE,
 };
 
-/** Set the Fast Pair advertising mode.
+/** Fast Pair advertising trigger. */
+struct app_fp_adv_trigger {
+	/* Identifier. */
+	const char *id;
+};
+
+/** Register a trigger for Fast Pair advertising.
  *
- * @param adv_mode Fast Pair advertising mode.
+ *  @param _name Trigger structure name.
+ *  @param _id Trigger identifier.
  */
-void app_fp_adv_mode_set(enum app_fp_adv_mode adv_mode);
+#define APP_FP_ADV_TRIGGER_REGISTER(_name, _id)				\
+	BUILD_ASSERT(_id != NULL);					\
+	static STRUCT_SECTION_ITERABLE(app_fp_adv_trigger, _name) = {	\
+		.id = _id,						\
+	}
+
+/** Request turning on the Fast Pair advertising.
+ *
+ *  The Fast Pair advertising will be turned off only when no
+ *  trigger has requested to keep the Fast Pair advertising on.
+ *
+ *  If the current Fast Pair advertising mode is the same as the requested mode,
+ *  the Fast Pair advertising payload will not be refreshed.
+ *  Use the @ref app_fp_adv_payload_refresh function to manually refresh
+ *  the Fast Pair advertising payload.
+ *
+ *  @param trigger Trigger identifier.
+ *  @param enable true to request to turn on the Fast Pair advertising.
+ *		  false to remove request to turn on the Fast Pair advertising.
+ */
+void app_fp_adv_request(struct app_fp_adv_trigger *trigger, bool enable);
+
+/** Refresh the Fast Pair advertising payload.
+ *
+ *  This function is used to manually trigger the refreshing of the Fast Pair
+ *  advertising data to ensure that the advertising data is up to date.
+ *
+ *  Use with caution, as it updates the Fast Pair advertising payload asynchronously
+ *  to the RPA address rotation and to the update of the FMDN advertising payload.
+ */
+void app_fp_adv_payload_refresh(void);
+
+/** Get the current Fast Pair advertising mode.
+ *
+ *  @return Current Fast Pair advertising mode.
+ */
+enum app_fp_adv_mode app_fp_adv_mode_get(void);
 
 /** Set the suspension mode for the RPA rotations of the Fast Pair advertising set.
  *
@@ -65,23 +108,39 @@ int app_fp_adv_id_set(uint8_t id);
  */
 uint8_t app_fp_adv_id_get(void);
 
-/** Uninitialize the Fast Pair advertising module.
- *
- * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
- */
-int app_fp_adv_uninit(void);
-
 /** Initialize the Fast Pair advertising module.
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
 int app_fp_adv_init(void);
 
-/** Check if the Fast Pair advertising module is initialized.
+/** Enable the Fast Pair advertising module.
  *
- *  @return true when the module is initialized, false otherwise.
+ *  Can be called after the Fast Pair advertising module has been initialized using the
+ *  @ref app_fp_adv_init function.
+ *  Must be called after enabling the Fast Pair subsystem using the @ref bt_fast_pair_enable
+ *  function.
+ *
+ *  @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-bool app_fp_adv_is_init(void);
+int app_fp_adv_enable(void);
+
+/** Disable the Fast Pair advertising module.
+ *
+ *  Can be called after the Fast Pair advertising module has been initialized using the
+ *  @ref app_fp_adv_init function.
+ *  Should be called before disabling the Fast Pair subsystem using the @ref bt_fast_pair_disable
+ *  function.
+ *
+ *  @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int app_fp_adv_disable(void);
+
+/** Check if the Fast Pair advertising module is ready.
+ *
+ *  @return true when the module is ready, false otherwise.
+ */
+bool app_fp_adv_is_ready(void);
 
 #ifdef __cplusplus
 }
