@@ -170,8 +170,7 @@
   - "tests/subsys/bootloader/**/*"
 
 "CI-all-test":
-  - "**/*partition_manager*/**/*"
-  - "**/*partition_manager*"
+  - "subsys/partition_manager/**/*"
 
 "CI-tfm-test":
   - "cmake/*"
