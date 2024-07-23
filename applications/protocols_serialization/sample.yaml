@@ -1,0 +1,37 @@
+sample:
+  name: Protocols serialization server application
+  description: Demonstrates serialization of BLE and OpenThread API using nRF RPC
+tests:
+  applications.protocols_serialization.rpc_ble:
+    build_only: true
+    platform_allow: >
+      nrf52840dk/nrf52840
+      nrf54l15pdk/nrf54l15/cpuapp
+    tags: ci_build
+    extra_args: >
+      SNIPPET="ble"
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15pdk/nrf54l15/cpuapp
+  applications.protocols_serialization.rpc_ot:
+    build_only: true
+    platform_allow: >
+      nrf52840dk/nrf52840
+      nrf54l15pdk/nrf54l15/cpuapp
+    tags: ci_build
+    extra_args: >
+      SNIPPET="openthread"
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15pdk/nrf54l15/cpuapp
+  applications.protocols_serialization.rpc:
+    build_only: true
+    platform_allow: >
+      nrf52840dk/nrf52840
+      nrf54l15pdk/nrf54l15/cpuapp
+    tags: ci_build
+    extra_args: >
+      SNIPPET="ble;openthread;debug;coex;log_rpc"
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15pdk/nrf54l15/cpuapp

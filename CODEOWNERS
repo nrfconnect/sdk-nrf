@@ -37,6 +37,7 @@
 /applications/nrf_desktop/                @MarekPieta
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/audio/                      @nrfconnect/ncs-audio
+/applications/protocols_serialization/    @nrfconnect/ncs-protocols-serialization
 /applications/serial_lte_modem/           @SeppoTakalo @MarkusLassila @rlubos @tomi-font
 /applications/zigbee_weather_station/     @milewr
 # Boards
@@ -193,6 +194,7 @@ Kconfig*                                  @tejlmand
 /samples/cellular/sms/                    @trantanen @tokangas
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @maciejbaczmanski
 /samples/nrf_profiler/                    @pdunaj
+/samples/nrf_rpc/ps_client/               @nrfconnect/ncs-protocols-serialization
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/802154_phy_test/      @ankuns @piotrkoziar
@@ -242,6 +244,8 @@ Kconfig*                                  @tejlmand
 /snippets/nrf70-debug/                    @krish2718 @sachinthegreen
 /snippets/nrf70-fw-patch-ext-flash/       @krish2718 @sachinthegreen
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
+/snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
+/snippets/zperf/                          @nrfconnect/ncs-protocols-serialization
 /subsys/audio_module/                     @nrfconnect/ncs-audio
 /subsys/bluetooth/                        @alwa-nordic @jori-nordic @carlescufi @KAGA164
 /subsys/bluetooth/mesh/                   @ludvigsj
