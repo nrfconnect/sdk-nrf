@@ -965,3 +965,8 @@ ci_samples_debug:
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/debug/
     - zephyr/subsys/net/
+
+ci_samples_gazell:
+  files:
+    - nrf/samples/gazell/
+    - nrf/subsys/gazell/
