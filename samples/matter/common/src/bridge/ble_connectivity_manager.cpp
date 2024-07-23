@@ -23,6 +23,9 @@ BT_SCAN_CB_INIT(scan_cb, Nrf::BLEConnectivityManager::FilterMatch, NULL, NULL, N
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = Nrf::BLEConnectivityManager::ConnectionHandler,
 	.disconnected = Nrf::BLEConnectivityManager::DisconnectionHandler,
+#ifdef CONFIG_BRIDGE_SET_BT_CONNECTION_PARAMS
+	.le_param_req = Nrf::BLEConnectivityManager::ParamChangeRequestHandler,
+#endif /* CONFIG_BRIDGE_SET_BT_CONNECTION_PARAMS */
 #ifdef CONFIG_BT_SMP
 	.security_changed = Nrf::BLEConnectivityManager::SecurityChangedHandler,
 #endif /* CONFIG_BT_SMP */
@@ -211,6 +214,17 @@ void BLEConnectivityManager::DisconnectionHandler(bt_conn *conn, uint8_t reason)
 		}
 	}
 }
+
+#ifdef CONFIG_BRIDGE_SET_BT_CONNECTION_PARAMS
+/* this callback accept or decline conn params requested by peripheral. */
+bool BLEConnectivityManager::ParamChangeRequestHandler(struct bt_conn *conn, struct bt_le_conn_param *param)
+{
+	LOG_ERR("requested param %d", param->interval_max);
+	LOG_ERR("requested param %d", param->interval_min);
+	return (param->interval_max >= CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MAX &&
+		param->interval_min >= CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MIN);
+}
+#endif
 
 #if defined(CONFIG_BT_SMP)
 void BLEConnectivityManager::SecurityChangedHandler(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
@@ -433,7 +447,15 @@ CHIP_ERROR BLEConnectivityManager::Init(const bt_uuid **serviceUuids, uint8_t se
 	}
 #endif /* CONFIG_BT_SMP */
 
+	struct bt_le_scan_param scan_param = {
+		.type = BT_LE_SCAN_TYPE_PASSIVE,
+		.options = BT_LE_SCAN_OPT_FILTER_DUPLICATE,
+		.interval = CONFIG_BRIDGE_BT_SCAN_INTERVAL,
+		.window = CONFIG_BRIDGE_BT_SCAN_WINDOW,
+	};
+
 	bt_scan_init_param scan_init = {
+		.scan_param = &scan_param,
 		.connect_if_match = 0,
 	};
 
@@ -441,7 +463,7 @@ CHIP_ERROR BLEConnectivityManager::Init(const bt_uuid **serviceUuids, uint8_t se
 	bt_scan_cb_register(&scan_cb);
 
 	return PrepareFilterForUuid();
-}
+} // namespace Nrf
 
 CHIP_ERROR BLEConnectivityManager::PrepareFilterForUuid()
 {
@@ -657,18 +679,36 @@ CHIP_ERROR BLEConnectivityManager::Reconnect(BLEBridgedDeviceProvider *provider)
 
 	StopScan();
 
-	bt_conn *conn;
-	bt_le_conn_param *connParams = GetScannedDeviceConnParams(provider->GetBLEBridgedDevice().mAddr);
+	bt_conn *conn{};
+	bt_addr_le_t btAddress = provider->GetBtAddress();
+
+#ifdef CONFIG_BRIDGE_SET_BT_CONNECTION_PARAMS
+	struct bt_le_conn_param connParams = {
+		.interval_min = CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MIN,
+		.interval_max = CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MAX,
+		.latency = CONFIG_BRIDGE_BT_CONNECTION_LATENCY,
+		.timeout = CONFIG_BRIDGE_BT_CONNECTION_TIMEOUT,
+	};
+
+	int err = bt_conn_le_create(&provider->GetBLEBridgedDevice().mAddr, create_param, &connParams, &conn);
+
+	LOG_ERR("conn interval: %d", connParams.interval_max);
+#else
+	bt_le_conn_param *connParams = GetScannedDeviceConnParams(btAddress);
 
 	if (!connParams) {
 		LOG_ERR("Failed to get conn params");
+		RemoveBLEProvider(btAddress);
 		return CHIP_ERROR_INTERNAL;
 	}
 
+	int err = bt_conn_le_create(&provider->GetBLEBridgedDevice().mAddr, create_param, connParams, &conn);
+
+	LOG_ERR("conn interval: %d", connParams->interval_max);
+#endif
+
 	char addrStr[BT_ADDR_LE_STR_LEN];
 	bt_addr_le_to_str(&provider->GetBLEBridgedDevice().mAddr, addrStr, sizeof(addrStr));
-
-	int err = bt_conn_le_create(&provider->GetBLEBridgedDevice().mAddr, create_param, connParams, &conn);
 
 	if (err) {
 		LOG_ERR("Creating reconnection failed (err %d) to %s", err, addrStr);
@@ -703,6 +743,19 @@ CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider, C
 
 	bt_conn *conn{};
 	bt_addr_le_t btAddress = provider->GetBtAddress();
+
+#ifdef CONFIG_BRIDGE_SET_BT_CONNECTION_PARAMS
+	struct bt_le_conn_param connParams = {
+		.interval_min = CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MIN,
+		.interval_max = CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MAX,
+		.latency = CONFIG_BRIDGE_BT_CONNECTION_LATENCY,
+		.timeout = CONFIG_BRIDGE_BT_CONNECTION_TIMEOUT,
+	};
+
+	int err = bt_conn_le_create(&provider->GetBLEBridgedDevice().mAddr, create_param, &connParams, &conn);
+
+	LOG_ERR("conn interval: %d", connParams.interval_max);
+#else
 	bt_le_conn_param *connParams = GetScannedDeviceConnParams(btAddress);
 
 	if (!connParams) {
@@ -712,6 +765,9 @@ CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider, C
 	}
 
 	int err = bt_conn_le_create(&provider->GetBLEBridgedDevice().mAddr, create_param, connParams, &conn);
+
+	LOG_ERR("conn interval: %d", connParams->interval_max);
+#endif
 
 	if (err) {
 		LOG_ERR("Creating connection failed (err %d)", err);
