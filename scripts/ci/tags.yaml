@@ -870,3 +870,11 @@ ci_tests_subsys_sdfw_services:
   files:
     - nrf/subsys/sdfw_services/
     - nrf/tests/subsys/sdfw_services/
+
+ci_tests_subsys_event_manager_proxy:
+  files:
+    - modules/lib/open-amp/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/event_manager_proxy/
+    - nrf/tests/subsys/event_manager_proxy/
+    - zephyr/subsys/ipc/ipc_service/
