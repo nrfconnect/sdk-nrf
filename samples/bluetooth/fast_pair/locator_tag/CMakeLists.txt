@@ -30,6 +30,8 @@ target_sources(app PRIVATE
 
 zephyr_linker_sources(SECTIONS src/factory_reset_callbacks.ld)
 
+zephyr_linker_sources(DATA_SECTIONS src/fp_adv_trigger.ld)
+
 if (NOT CONFIG_BT_FAST_PAIR_FMDN_RING_COMP_NONE)
   target_sources(app PRIVATE src/ring.c)
 endif()
