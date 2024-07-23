@@ -895,3 +895,8 @@ ci_tests_lib_nrf_modem_lib:
     - nrf/tests/lib/nrf_modem_lib/
     - nrf/tests/mocks/nrf_modem_at/
     - zephyr/subsys/net/
+
+ci_tests_lib_edge_impulse:
+  files:
+    - nrf/lib/edge_impulse/
+    - nrf/tests/lib/edge_impulse/
