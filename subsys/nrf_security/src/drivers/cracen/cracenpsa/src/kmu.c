@@ -197,6 +197,7 @@ int cracen_kmu_prepare_key(const uint8_t *user_data)
 			}
 		}
 		return SX_OK;
+#ifdef PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS
 	case KMU_METADATA_SCHEME_ENCRYPTED: {
 		kmu_metadata metadata;
 
@@ -217,6 +218,7 @@ int cracen_kmu_prepare_key(const uint8_t *user_data)
 
 		return SX_OK;
 	}
+#endif /* PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS */
 	default:
 		return SX_ERR_INVALID_KEYREF;
 	}
@@ -707,7 +709,9 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
+#ifdef PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS
 	case KMU_METADATA_SCHEME_ENCRYPTED:
+#endif /* PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS */
 	case KMU_METADATA_SCHEME_RAW:
 		push_address = (uint8_t *)kmu_push_area;
 		if (key_buffer_size != 16 && key_buffer_size != 24 && key_buffer_size != 32) {
@@ -724,6 +728,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+#ifdef PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS
 	if (metadata.key_usage_scheme == KMU_METADATA_SCHEME_ENCRYPTED) {
 		/* Copy key material to workbuffer, zero-pad key and align to key slot size. */
 		memcpy(encrypted_workmem + CRACEN_KMU_SLOT_KEY_SIZE, key_buffer, key_buffer_size);
@@ -738,6 +743,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		key_buffer = encrypted_workmem;
 		key_buffer_size = encrypted_outlen;
 	}
+#endif /* PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS */
 
 	/* Verify that required slots are empty */
 	size_t num_slots = (MAX(encrypted_outlen, key_buffer_size) + CRACEN_KMU_SLOT_KEY_SIZE - 1) /
