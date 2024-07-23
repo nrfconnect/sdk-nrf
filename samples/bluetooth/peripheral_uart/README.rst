@@ -178,8 +178,6 @@ Building and running
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 
-.. _peripheral_uart_sample_activating_variants:
-
 Experimental Bluetooth Low Energy Remote Procedure Call interface
 =================================================================
 
@@ -188,6 +186,8 @@ To build the sample with a :ref:`ble_rpc` interface, use the following command:
 .. code-block:: console
 
    west build samples/bluetooth/peripheral_uart -b board_name --sysbuild -S nordic-bt-rpc -- -DFILE_SUFFIX=bt_rpc
+
+.. _peripheral_uart_sample_activating_variants:
 
 Activating sample extensions
 ============================
