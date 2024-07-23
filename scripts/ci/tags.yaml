@@ -934,3 +934,10 @@ ci_samples_pmic:
     - zephyr/drivers/mfd/
     - zephyr/drivers/regulator/
     - zephyr/drivers/sensor/nordic/npm1300_charger/
+
+ci_samples_ipc:
+  files:
+    - modules/lib/open-amp/
+    - nrf/samples/ipc/
+    - zephyr/drivers/mbox/
+    - zephyr/subsys/ipc/

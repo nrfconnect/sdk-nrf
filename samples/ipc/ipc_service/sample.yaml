@@ -4,7 +4,7 @@ sample:
 
 common:
   sysbuild: true
-  tags: ipc
+  tags: ipc ci_samples_ipc
   harness: console
   harness_config:
     type: multi_line
