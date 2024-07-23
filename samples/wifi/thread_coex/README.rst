@@ -189,8 +189,8 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
 * Overlay files
 
-   * Use the :file:`overlay-ot.conf overlay-wifi-udp-client-thread-udp-client.conf` file to build for both Wi-Fi and Thread in client roles.
-   * Use the :file:`overlay-ot.conf overlay-wifi-udp-client-thread-udp-server.conf` file to build for Wi-Fi in the client role and Thread in the server role.
+   * Use the :file:`overlay-wifi-udp-client-thread-udp-client.conf` file to build for both Wi-Fi and Thread in client roles.
+   * Use the :file:`overlay-wifi-udp-client-thread-udp-server.conf` file to build for Wi-Fi in the client role and Thread in the server role.
 
 The generated HEX file to be used is :file:`thread_coex/build/merged.hex`.
 
