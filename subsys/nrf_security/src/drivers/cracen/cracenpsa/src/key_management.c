@@ -637,11 +637,15 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 		if (key_buffer_size != sizeof(ikg_opaque_key)) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
-		priv_key =
-			si_sig_fetch_ikprivkey(sx_curve, ((ikg_opaque_key *)key_buffer)->owner_id);
-		data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
-		pub_key.key.eckey.qx = &data[1];
-		pub_key.key.eckey.qy = &data[1 + sx_pk_curve_opsize(sx_curve)];
+
+		if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256)) {
+			priv_key = si_sig_fetch_ikprivkey(sx_curve, *key_buffer);
+			data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
+			pub_key.key.eckey.qx = &data[1];
+			pub_key.key.eckey.qy = &data[1 + sx_pk_curve_opsize(sx_curve)];
+		} else {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
 	} else {
 
 		switch (psa_curve) {
