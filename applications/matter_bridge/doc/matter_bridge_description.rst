@@ -532,18 +532,70 @@ Since the Matter stack uses one Bluetooth LE connection for commissioning, the m
 
 Increasing the number of Bluetooth LE connections affects the RAM usage on both the application and network cores.
 The current maximum number of Bluetooth LE connections that can be selected using the default configuration is ``10``.
-You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
-Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
 
-.. parsed-literal::
-   :class: highlight
+.. tabs::
 
-   west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
+   .. group-tab:: nRF53 DKs
 
-.. parsed-literal::
-   :class: highlight
+      .. tabs::
 
-   west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_WIFI_NRF700X=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
+         .. group-tab:: Matter-Bridge over Wi-Fi configuration
+
+            You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
+            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
+
+            .. parsed-literal::
+               :class: highlight
+
+               west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y -DSB_CONFIG_WIFI_NRF700X=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf" -DFILE_SUFFIX=nrf70ek
+
+         .. group-tab:: Matter-Bridge over Thread configuration
+
+            Due to using Thread and BLE protocols,there is an Lack od RAM memory, in this configuration You can't increase the default number of Bluetooth LE connections and additionally there is a need to decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, this will decrease the communication throughput.
+            Build the target using the following command in the project directory to enable a configuration that allow to set the number of Bluetooth LE connections to ``10`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
+
+            .. parsed-literal::
+               :class: highlight
+
+               west build -b nrf5340dk/nrf5340/cpuapp -p -- -DCONFIG_BRIDGED_DEVICE_BT=y
+
+   .. group-tab:: nRF54 DKs
+
+      .. tabs::
+
+         .. group-tab:: Matter-Bridge over Wi-Fi configuration
+
+            You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
+            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
+
+             .. parsed-literal::
+               :class: highlight
+
+               west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_Wi-Fi_NRF700X=y -DCONFIG_CHIP_Wi-Fi=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
+
+         .. group-tab:: Matter-Bridge over Thread configuration
+
+            You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
+            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
+
+             .. parsed-literal::
+               :class: highlight
+
+               west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
+
+   .. group-tab:: nRF70 DKs
+
+      .. tabs::
+
+         .. group-tab:: Matter-Bridge over Wi-Fi configuration
+
+            You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
+            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
+
+             .. parsed-literal::
+               :class: highlight
+
+               west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
 
 .. _matter_bridge_app_bt_security:
 
@@ -604,6 +656,13 @@ The application supports the following configurations:
      - Debug version of the application.
 
        Enables additional features for verifying the application behavior, such as logs.
+   * - Debug
+     - :file:`prj_nrf70ek.conf`
+     - ``nrf70ek``
+     - ``nrf5340dk``
+     - Debug version of the application.
+
+       Enables Matter-Bridge to work with Wi-Fi.
    * - Release
      - :file:`prj_release.conf`
      - ``release``
@@ -627,7 +686,7 @@ For example:
 
    .. code-block:: console
 
-      west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y -DSB_CONFIG_WIFI_NRF700X=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3
+      west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y -DSB_CONFIG_WIFI_NRF700X=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3 -DFILE_SUFFIX=nrf70ek
 
 
 To use the nRF54H20 DK with the ``nrf7002ek`` shield (2.4 GHz or 5 GHz), follow the :ref:`ug_nrf7002eb_nrf54h20dk_gs` user guide to connect all required pins.
@@ -635,7 +694,7 @@ Once connected, run the following command to build the sample:
 
    .. code-block:: console
 
-      west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF700X=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk
+      west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_Wi-Fi_NRF700X=y -DCONFIG_CHIP_Wi-Fi=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk
 
 Selecting a configuration
 =========================
@@ -656,7 +715,7 @@ To enable the Matter smart plug functionality, run the following command:
 
       .. code-block:: console
 
-         west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF700X=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk -DCONFIG_BRIDGED_DEVICE_BT=y -Dmatter_bridge_SNIPPET=onoff_plug
+         west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_Wi-Fi_NRF700X=y -DCONFIG_CHIP_Wi-Fi=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk -DCONFIG_BRIDGED_DEVICE_BT=y -Dmatter_bridge_SNIPPET=onoff_plug
 
    .. group-tab:: nRF70 DKs
 
