@@ -33,4 +33,7 @@ function(ExternalNcsVariantProject_Add)
     -DCONFIG_NCS_IS_VARIANT_IMAGE=y
     -DPRELOAD_BINARY_DIR=${${VBUILD_APPLICATION}_BINARY_DIR}
   )
+
+  # Configure variant image after application so that the configuration is present
+  sysbuild_add_dependencies(CONFIGURE ${VBUILD_VARIANT} ${VBUILD_APPLICATION})
 endfunction()
