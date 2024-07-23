@@ -188,7 +188,7 @@ void cis_central_start(bool do_tx, uint8_t retransmission_number, uint16_t max_t
 		 * connection. The CIS central starts scanning for a new connection only after a
 		 * pending CIS connection has completed. This must be done because the
 		 * LE HCI Create CIS command is disallowed while a CIS connection is
-		 * pending. See Core Specification Version 5.4, Vol 6, Part B, section 7.8.99.
+		 * pending. See Bluetooth Core Specification, Vol 6, Part B, Section 7.8.99.
 		 */
 		iso_tx_init(retransmission_number, &scan_start);
 	} else {

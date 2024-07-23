@@ -120,7 +120,8 @@ static bool check_and_handle_is_host_using_legacy_and_extended_commands(uint8_t 
 	return false;
 #else
 	/* A host is not allowed to use both legacy and extended HCI commands.
-	 * See Core v5.1, Vol2, Part E, 3.1.1 Legacy and extended advertising
+	 * See Bluetooth Core Specification, Vol 2, Part E, Section 3.1.1 -
+	 * Legacy and extended advertising.
 	 */
 	static enum type_of_adv_cmd type_of_adv_cmd_used_since_reset = ADV_COMMAND_TYPE_NONE;
 	enum type_of_adv_cmd type_of_adv_cmd_needed = ADV_COMMAND_TYPE_NONE;

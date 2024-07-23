@@ -64,7 +64,7 @@ LOG_MODULE_REGISTER(mds, CONFIG_BT_MDS_LOG_LEVEL);
 #define STREAM_ENABLED BIT(0)
 
 /* Application error code defined by the MDS.
- * According to BLE Core v5.3 Vol 3, Part F 3.4.1.
+ * According to Bluetooth Core Specification, Vol 3, Part F, Section 3.4.1.
  */
 enum mds_att_error {
 	MDS_ATT_ERROR_CLIENT_ALREADY_SUBSCRIBED = 0x80,
@@ -422,8 +422,8 @@ static size_t chunk_data_length_get(struct bt_conn *conn)
 		return 0;
 	}
 
-	/* According to BLE Core v5.3 Vol 3, Part F 3.4.7.1 maximum supported length of the
-	 * notification is (ATT_MTU - 3).
+	/* According to Bluetooth Core Specification (Vol 3, Part F, Section 3.4.7.1),
+	 * maximum supported length of the notification is (ATT_MTU - 3).
 	 */
 	length -= att_header_length;
 	length -= sizeof(struct mds_data_export_nfy);

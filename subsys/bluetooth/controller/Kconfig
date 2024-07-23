@@ -168,7 +168,7 @@ config BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
 	  When Extended Connection Events are enabled, the controller
 	  will extend the connection event as much as possible, if
 	  - Either of the peers has more data to send.
-	    See also: Core v5.6, Vol 6, Part B, Section 4.5.6.
+	    See also: Bluetooth Core Specification, Vol 6, Part B, Section 4.5.6.
 	  - There are no conflicts with other roles of equal or higher priority.
 
 config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
@@ -403,7 +403,7 @@ config BT_CTLR_SDC_CONN_ANCHOR_POINT_REPORT
 	  to produce timestamps for ACL connection anchor points.
 	  A new timestamp is generated whenever a connection's anchor point changes.
 	  The reporting is enabled through an HCI command.
-	  See Core_v5.4, Vol 6, Part B, Section 4.5.1.
+	  See Bluetooth Core Specification, Vol 6, Part B, Section 4.5.1.
 
 config BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT
 	int "BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT"

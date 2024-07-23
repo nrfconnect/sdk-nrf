@@ -313,7 +313,7 @@ static uint32_t trigger_time_us_get(uint32_t sdu_sync_ref, uint8_t chan_index)
 
 	/* The ISO type determines when to trigger the LED
 	 * because of how the SDU synchronization reference is defined.
-	 * See Core_v5.4, Vol 6, Part G, Section 3.2.
+	 * See Bluetooth Core Specification, Vol 6, Part G, Section 3.2.
 	 */
 
 	if (iso_infos[chan_index].type == BT_ISO_CHAN_TYPE_CONNECTED) {
