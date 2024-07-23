@@ -1164,45 +1164,6 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
-size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes)
-{
-	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
-	    PSA_KEY_LOCATION_CRACEN) {
-		switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
-		case CRACEN_BUILTIN_IDENTITY_KEY_ID:
-			if (psa_get_key_type(attributes) ==
-			    PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
-				return sizeof(ikg_opaque_key);
-			}
-			break;
-		case CRACEN_BUILTIN_MEXT_ID:
-		case CRACEN_BUILTIN_MKEK_ID:
-			if (psa_get_key_type(attributes) == PSA_KEY_TYPE_AES) {
-				return sizeof(ikg_opaque_key);
-			}
-			break;
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-		default:
-			return cracen_platform_keys_get_size(attributes);
-#endif
-		}
-	}
-
-	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
-	    PSA_KEY_LOCATION_CRACEN_KMU) {
-		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
-			if (psa_get_key_type(attributes) ==
-			    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
-				return PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE(
-					psa_get_key_type(attributes), psa_get_key_bits(attributes));
-			}
-			return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
-		} else {
-			return sizeof(kmu_opaque_key_buffer);
-		}
-	}
-	return 0;
-}
 
 psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 				    psa_key_attributes_t *attributes, uint8_t *key_buffer,
