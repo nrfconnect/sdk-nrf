@@ -245,6 +245,9 @@ public:
 	static void DiscoveryNotFound(bt_conn *conn, void *context);
 	static void DiscoveryError(bt_conn *conn, int err, void *context);
 	static int StartGattDiscovery(bt_conn *conn, BLEBridgedDeviceProvider *provider);
+#ifdef CONFIG_BRIDGE_FORCE_BT_CONNECTION_PARAMS
+	static bool ParamChangeRequestHandler(struct bt_conn *conn, struct bt_le_conn_param *param);
+#endif
 
 #ifdef CONFIG_BT_SMP
 	static void SecurityChangedHandler(struct bt_conn *conn, bt_security_t level, enum bt_security_err err);

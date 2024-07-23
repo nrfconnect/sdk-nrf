@@ -23,6 +23,9 @@ BT_SCAN_CB_INIT(scan_cb, Nrf::BLEConnectivityManager::FilterMatch, NULL, NULL, N
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = Nrf::BLEConnectivityManager::ConnectionHandler,
 	.disconnected = Nrf::BLEConnectivityManager::DisconnectionHandler,
+#ifdef CONFIG_BRIDGE_FORCE_BT_CONNECTION_PARAMS
+	.le_param_req = Nrf::BLEConnectivityManager::ParamChangeRequestHandler,
+#endif /* CONFIG_BRIDGE_FORCE_BT_CONNECTION_PARAMS y*/
 #ifdef CONFIG_BT_SMP
 	.security_changed = Nrf::BLEConnectivityManager::SecurityChangedHandler,
 #endif /* CONFIG_BT_SMP */
@@ -211,6 +214,35 @@ void BLEConnectivityManager::DisconnectionHandler(bt_conn *conn, uint8_t reason)
 		}
 	}
 }
+
+#ifdef CONFIG_BRIDGE_FORCE_BT_CONNECTION_PARAMS
+/* It returns true when peripheral device parameters are less demanding then these we want to force */
+bool CheckParamChangeRequest(struct bt_le_conn_param *param)
+{
+	/* It is necessary to decrease Bluetooth LE activity to leave some radio time to Thread */
+	return (param->interval_max >= CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MAX &&
+		param->interval_min >= CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MIN);
+}
+
+void UpdateBtParams(bt_le_conn_param *&connParams)
+{
+	if (!CheckParamChangeRequest(connParams)) {
+		static bt_le_conn_param forcedConnParams = {
+			.interval_min = CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MIN,
+			.interval_max = CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MAX,
+			.latency = CONFIG_BRIDGE_BT_CONNECTION_LATENCY,
+			.timeout = CONFIG_BRIDGE_BT_CONNECTION_TIMEOUT,
+		};
+		connParams = &forcedConnParams;
+	}
+}
+
+/* This callback accepts or declines conn params requested by the peripheral */
+bool BLEConnectivityManager::ParamChangeRequestHandler(struct bt_conn *conn, struct bt_le_conn_param *param)
+{
+	return CheckParamChangeRequest(param);
+}
+#endif
 
 #if defined(CONFIG_BT_SMP)
 void BLEConnectivityManager::SecurityChangedHandler(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
@@ -440,17 +472,9 @@ CHIP_ERROR BLEConnectivityManager::Init(const bt_uuid **serviceUuids, uint8_t se
 		.window = CONFIG_BRIDGE_BT_SCAN_WINDOW,
 	};
 
-	struct bt_le_conn_param conn_param = {
-		.interval_min = CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MIN,
-		.interval_max = CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MAX,
-		.latency = CONFIG_BRIDGE_BT_CONNECTION_LATENCY,
-		.timeout = CONFIG_BRIDGE_BT_CONNECTION_TIMEOUT,
-	};
-
 	bt_scan_init_param scan_init = {
 		.scan_param = &scan_param,
 		.connect_if_match = 0,
-		.conn_param = &conn_param,
 	};
 
 	bt_scan_init(&scan_init);
@@ -673,13 +697,20 @@ CHIP_ERROR BLEConnectivityManager::Reconnect(BLEBridgedDeviceProvider *provider)
 
 	StopScan();
 
-	bt_conn *conn;
-	bt_le_conn_param *connParams = GetScannedDeviceConnParams(provider->GetBLEBridgedDevice().mAddr);
+	bt_conn *conn{};
+	bt_addr_le_t btAddress = provider->GetBtAddress();
+	bt_le_conn_param *connParams = GetScannedDeviceConnParams(btAddress);
 
 	if (!connParams) {
 		LOG_ERR("Failed to get conn params");
 		return CHIP_ERROR_INTERNAL;
 	}
+
+#ifdef CONFIG_BRIDGE_FORCE_BT_CONNECTION_PARAMS
+	if (!CheckParamChangeRequest(connParams)) {
+		UpdateBtParams(connParams);
+	}
+#endif
 
 	char addrStr[BT_ADDR_LE_STR_LEN];
 	bt_addr_le_to_str(&provider->GetBLEBridgedDevice().mAddr, addrStr, sizeof(addrStr));
@@ -726,6 +757,13 @@ CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider, C
 		RemoveBLEProvider(btAddress);
 		return CHIP_ERROR_INTERNAL;
 	}
+
+#ifdef CONFIG_BRIDGE_FORCE_BT_CONNECTION_PARAMS
+
+	if (!CheckParamChangeRequest(connParams)) {
+		UpdateBtParams(connParams);
+	}
+#endif
 
 	int err = bt_conn_le_create(&provider->GetBLEBridgedDevice().mAddr, create_param, connParams, &conn);
 
