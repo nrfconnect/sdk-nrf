@@ -900,3 +900,11 @@ ci_tests_lib_edge_impulse:
   files:
     - nrf/lib/edge_impulse/
     - nrf/tests/lib/edge_impulse/
+
+ci_samples_caf_sensor_manager:
+  files:
+    - nrf/samples/caf_sensor_manager/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/caf/
+    - nrf/subsys/event_manager_proxy/
+    - zephyr/subsys/ipc/
