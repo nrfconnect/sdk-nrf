@@ -465,6 +465,22 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
+function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
+  cmake_parse_arguments(PRE_IMAGE_CMAKE "" "IMAGE" "" ${ARGN})
+
+  get_property(variant_app TARGET ${PRE_IMAGE_CMAKE_IMAGE} PROPERTY NCS_VARIANT_APPLICATION)
+  if(NOT "${variant_app}" STREQUAL "")
+    set(variant_image ${PRE_IMAGE_CMAKE_IMAGE})
+
+    get_cmake_property(sysbuild_cache CACHE_VARIABLES)
+    foreach(var_name ${sysbuild_cache})
+      if("${var_name}" MATCHES "^${variant_app}_(.*)$")
+        set(${variant_image}_${CMAKE_MATCH_1} "${${var_name}}" CACHE UNINITIALIZED "" FORCE)
+      endif()
+    endforeach()
+  endif()
+endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
+
 # Sysbuild function hooks used by nRF Connect SDK
 function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   cmake_parse_arguments(POST_CMAKE "" "" "IMAGES" ${ARGN})
