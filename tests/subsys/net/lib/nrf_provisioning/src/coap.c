@@ -76,7 +76,7 @@ static int modem_key_mgmt_exists_false(nrf_sec_tag_t sec_tag,
 	return 0;
 }
 
-/* Malloc and free are to be used in native_posix environment */
+/* Malloc and free are to be used in native_sim environment */
 void *__wrap_k_malloc(size_t size)
 {
 	return malloc(size);

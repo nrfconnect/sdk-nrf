@@ -6,11 +6,11 @@
 #ifndef UNITY_CONFIG_H__
 #define UNITY_CONFIG_H__
 
-#ifdef CONFIG_BOARD_NATIVE_POSIX
+#ifdef CONFIG_BOARD_NATIVE_SIM
 #define UNITY_SUPPORT_64 1
 #endif
 
-#ifndef CONFIG_BOARD_NATIVE_POSIX
+#ifndef CONFIG_BOARD_NATIVE_SIM
 #include <stddef.h>
 #include <stdio.h>
 #define UNITY_EXCLUDE_SETJMP_H 1

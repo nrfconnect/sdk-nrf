@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_BOARD_NATIVE_POSIX)
+#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_BOARD_NATIVE_SIM)
 #include <suit_types.h>
 
 /** @brief SUIT envelope generated using the manifest/manifest_52.yaml input file.
@@ -70,4 +70,4 @@ uint8_t manifest_buf[] = {
 	0x6A, 0xA9, 0x11, 0xB0, 0xE8, 0x57, 0x8C, 0x92, 0x53, 0x81};
 
 const size_t manifest_len = sizeof(manifest_buf);
-#endif /* CONFIG_SOC_NRF52840 || CONFIG_BOARD_NATIVE_POSIX */
+#endif /* CONFIG_SOC_NRF52840 || CONFIG_BOARD_NATIVE_SIM */

@@ -21,7 +21,7 @@ static uint8_t test_data[] = {0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12
 #elif (DT_NODE_EXISTS(DT_NODELABEL(ram20))) /* nrf54H20, nrf54l15(?) */
 	#define TEST_DST_SPECIAL ((uint8_t *)DT_REG_ADDR(DT_NODELABEL(ram20)))
 #elif (DT_NODE_EXISTS(DT_NODELABEL(sram0)))
-	#if defined(CONFIG_BOARD_NATIVE_POSIX)
+	#if defined(CONFIG_BOARD_NATIVE_SIM)
 		#define TEST_DST ((uint8_t *)DT_REG_ADDR(DT_NODELABEL(sram0)))
 	#else
 		uint8_t test_mem[sizeof(test_data)];

@@ -101,16 +101,16 @@ ZTEST(fota_download_parse_dual_resource_locator_tests, test_single_C)
 
 ZTEST(fota_download_parse_dual_resource_locator_tests, test_ptr_placement)
 {
-	/* This test cannot be executed on native posix as there is
+	/* This test cannot be executed on native sim as there is
 	 * no mechanism in place do deduce if an address maps to non-volatile
 	 * storage or RAM
 	 *
-	 * Recently, this test case was moved to a test suite without native posix support, so
+	 * Recently, this test case was moved to a test suite without native sim support, so
 	 * this skip condition is technically no longer necessary. It remains active in case native
-	 * posix support is ever re-added.
+	 * sim support is ever re-added.
 	 */
 
-	Z_TEST_SKIP_IFDEF(CONFIG_BOARD_NATIVE_POSIX);
+	Z_TEST_SKIP_IFDEF(CONFIG_BOARD_NATIVE_SIM);
 
 	int err;
 	const char *update;
