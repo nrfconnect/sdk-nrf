@@ -888,3 +888,10 @@ ci_tests_subsys_mpsl:
   files:
     - nrf/subsys/mpsl/
     - nrf/tests/subsys/mpsl/
+
+ci_tests_lib_nrf_modem_lib:
+  files:
+    - nrf/lib/nrf_modem_lib/
+    - nrf/tests/lib/nrf_modem_lib/
+    - nrf/tests/mocks/nrf_modem_at/
+    - zephyr/subsys/net/
