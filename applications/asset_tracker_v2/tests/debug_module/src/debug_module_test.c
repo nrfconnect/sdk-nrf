@@ -93,12 +93,12 @@ void setup_debug_module_in_init_state(void)
 	__cmock_watchdog_register_handler_AddCallback(&latch_watchdog_callback);
 	__cmock_module_start_Stub(&module_start_stub);
 
-#if defined(CONFIG_BOARD_NATIVE_POSIX)
+#if defined(CONFIG_BOARD_NATIVE_SIM)
 	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&debug_module_event_memory);
 	__cmock__event_submit_ExpectAnyArgs();
 	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&debug_module_event_memory);
 	__cmock__event_submit_ExpectAnyArgs();
-#endif /* defined(CONFIG_BOARD_NATIVE_POSIX) */
+#endif /* defined(CONFIG_BOARD_NATIVE_SIM) */
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct app_event_header *)app_module_event));
