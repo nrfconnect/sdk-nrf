@@ -20,7 +20,7 @@ tests:
         - "main state:READY"
         - "Send sensor buffer desc address:"
         - "sensor_data_aggregator_release_buffer_event"
-    tags: sysbuild
+    tags: sysbuild ci_samples_caf_sensor_manager
   sample.caf_sensor_manager.nrf52840dk.power_consumption_test:
     sysbuild: true
     build_only: true
@@ -28,7 +28,7 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: CONFIG_SERIAL=n CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_LOG=n
-    tags: sysbuild
+    tags: sysbuild ci_samples_caf_sensor_manager
   sample.caf_sensor_manager.multi_core.power_consumption_test:
     sysbuild: true
     build_only: true
@@ -38,7 +38,7 @@ tests:
     extra_args: >
       CONFIG_SERIAL=n CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_LOG=n remote_CONFIG_SERIAL=n
       remote_CONFIG_CONSOLE=n remote_CONFIG_UART_CONSOLE=n remote_CONFIG_LOG=n
-    tags: sysbuild
+    tags: sysbuild ci_samples_caf_sensor_manager
   sample.caf_sensor_manager.nrf5340dk_singlecore.power_consumption_test:
     sysbuild: true
     build_only: true
@@ -48,7 +48,7 @@ tests:
     extra_args: >
       FILE_SUFFIX=singlecore
       CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_LOG=n
-    tags: sysbuild
+    tags: sysbuild ci_samples_caf_sensor_manager
   sample.caf_sensor_manager.nrf5340dk_singlecore.correctness_test:
     sysbuild: true
     build_only: false
@@ -66,7 +66,7 @@ tests:
         - "main state:READY"
         - "Send sensor buffer desc address:"
         - "sensor_data_aggregator_release_buffer_event"
-    tags: sysbuild
+    tags: sysbuild ci_samples_caf_sensor_manager
   sample.caf_sensor_manager.nrf54h20.multicore:
     build_only: true
     sysbuild: true
@@ -76,6 +76,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       caf_sensor_manager_SNIPPET=nordic-ppr
+    tags: sysbuild ci_samples_caf_sensor_manager
 
   sample.caf_sensor_manager.nrf54h20.singlecore:
     build_only: true
@@ -86,3 +87,4 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       FILE_SUFFIX=singlecore
+    tags: sysbuild ci_samples_caf_sensor_manager
