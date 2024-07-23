@@ -1725,6 +1725,7 @@ config PSA_NEED_CRACEN_CTR_DRBG_DRIVER
 	default y
 	select PSA_ACCEL_GENERATE_RANDOM
 	# Is needed for AES counter measurements
+	depends on PSA_WANT_GENERATE_RANDOM
 	depends on (PSA_WANT_ALG_CTR_DRBG		&& \
 		   PSA_USE_CRACEN_CTR_DRBG_DRIVER)	|| \
 		   PSA_USE_CRACEN_CIPHER_DRIVER   	|| \
