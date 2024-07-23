@@ -97,7 +97,7 @@ Zephyr features only available on Linux
 
   * BlueZ integration
   * net-tools integration
-  * Native Port (native_posix)
+  * Native Port (native_sim)
   * BabbleSim
 
 .. _requirements_toolchain:
