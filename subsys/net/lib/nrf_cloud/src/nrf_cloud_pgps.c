@@ -1670,7 +1670,9 @@ static void end_transfer_handler(int transfer_result)
 	if (transfer_result == 0) {
 		LOG_DBG("Download completed without error.");
 	} else {
-		LOG_ERR("Download failed: %d", transfer_result);
+		if (transfer_result != -ECANCELED) {
+			LOG_ERR("Download failed: %d", transfer_result);
+		}
 		npgps_undo_alloc_block(index.store_block);
 	}
 	nrf_cloud_pgps_finish_update();
