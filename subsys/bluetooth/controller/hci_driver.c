@@ -746,18 +746,6 @@ static int configure_supported_features(void)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CX_ADV_TRY_CONTINUE_ON_DENIAL)) {
-		err = sdc_coex_adv_mode_configure(true);
-		if (err) {
-			return -ENOTSUP;
-		}
-	} else if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CX_ADV_CLOSE_ADV_EVT_ON_DENIAL)) {
-		err = sdc_coex_adv_mode_configure(false);
-		if (err) {
-			return -ENOTSUP;
-		}
-	}
-
 	if (IS_ENABLED(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) && IS_ENABLED(CONFIG_BT_CENTRAL)) {
 		err = sdc_support_le_conn_cte_rsp_central();
 		if (err) {
