@@ -11,7 +11,7 @@
 #include <dk_buttons_and_leds.h>
 
 #include <zephyr/shell/shell.h>
-#include <zephyr/shell/shell_uart.h>
+#include <zephyr/shell/shell_rtt.h>
 
 #include "chat_cli.h"
 #include "model_handler.h"
@@ -424,8 +424,7 @@ const struct bt_mesh_comp *model_handler_init(void)
 {
 	k_work_init_delayable(&attention_blink_work, attention_blink);
 
-	chat_shell = shell_backend_uart_get_ptr();
-	printk(">>> Bluetooth Mesh Chat sample <<<\n");
+	chat_shell = shell_backend_rtt_get_ptr();
 
 	return &comp;
 }

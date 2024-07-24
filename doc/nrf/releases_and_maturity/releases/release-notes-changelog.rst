@@ -257,7 +257,7 @@ Bluetooth Fast Pair samples
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* Updated the Bluetooth Mesh samples that use the shell module to use RTT as a backend instead of UART to avoid conflicts with the boot banner.
 
 Cellular samples
 ----------------

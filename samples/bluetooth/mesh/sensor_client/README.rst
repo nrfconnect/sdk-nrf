@@ -126,7 +126,7 @@ Once the provisioning procedure has completed, the buttons will have the followi
          Sends a set message for the :c:var:`bt_mesh_sensor_motion_threshold` setting of the :c:var:`bt_mesh_sensor_presence_detected` sensor, switching between the ranges specified in the :c:var:`presence_motion_threshold` variable.
 
 Terminal:
-   All sensor values gathered from the server are printed over UART.
+   All sensor values gathered from the server are printed over RTT.
    For more details, see :ref:`testing`.
 
 .. note::
@@ -169,7 +169,7 @@ Testing
 After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
-All sensor values gathered from the server are printed over UART.
+All sensor values gathered from the server are printed over RTT.
 For more details, see :ref:`testing`.
 
 Provisioning the device
@@ -190,7 +190,7 @@ Configure the Sensor Client model on the **Mesh Sensor Observer** node:
 * Set the publication parameters:
 
   * Destination/publish address: Select an existing group or create a new one, but make sure that the Sensor Server subscribes to the same group.
-  * Retransmit count: Set the count to zero (**Disabled**), to avoid duplicate logging in the UART terminal.
+  * Retransmit count: Set the count to zero (**Disabled**), to avoid duplicate logging in the RTT terminal.
 
 * Set the subscription parameters: Select an existing group or create a new one, but make sure that the Sensor Server publishes to the same group.
 

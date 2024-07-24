@@ -216,7 +216,7 @@ In addition, it uses the following Zephyr libraries:
 * :ref:`zephyr:shell_api`:
 
   * :file:`include/shell.h`
-  * :file:`include/shell_uart.h`
+  * :file:`include/shell_rtt.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
