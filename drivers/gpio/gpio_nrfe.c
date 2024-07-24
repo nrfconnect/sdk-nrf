@@ -12,6 +12,7 @@
 
 #include <zephyr/device.h>
 
+#if defined(USE_ICMSG_BACKEND)
 #include <zephyr/ipc/ipc_service.h>
 
 K_SEM_DEFINE(bound_sem, 0, 1);
@@ -23,12 +24,21 @@ static void ep_bound(void *priv)
 
 static struct ipc_ept_cfg ep_cfg = {
 	.cb = {
-			.bound = ep_bound,
-			.received = NULL,
-		},
+		.bound = ep_bound,
+		.received = NULL,
+	},
 };
 
 static struct ipc_ept ep;
+#elif defined(USE_STRUCT_COMMUNICATION)
+#include <zephyr/sys/printk.h>
+#include <zephyr/drivers/mbox.h>
+static const struct mbox_dt_spec tx_channel = MBOX_DT_SPEC_GET(DT_PATH(mbox_consumer), tx);
+static shared_t *tx_data = (shared_t *)((uint8_t *)(DT_REG_ADDR(DT_NODELABEL(sram_tx))));
+#define MAX_MSG_SIZE (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
+#else
+#error "Define communication channel type"
+#endif
 
 struct gpio_nrfe_data {
 	/* gpio_driver_data needs to be first */
@@ -48,12 +58,30 @@ static inline const struct gpio_nrfe_cfg *get_port_cfg(const struct device *port
 
 static int gpio_send(nrfe_gpio_data_packet_t *msg)
 {
-	if (ipc_service_send(&ep, (void *)(&msg), sizeof(nrfe_gpio_data_packet_t))
-		== sizeof(nrfe_gpio_data_packet_t)) {
+#if defined(USE_ICMSG_BACKEND)
+	if (ipc_service_send(&ep, (void *)msg, sizeof(nrfe_gpio_data_packet_t)) ==
+	    sizeof(nrfe_gpio_data_packet_t)) {
 		return 0;
 	} else {
 		return -EIO;
 	}
+#elif defined(USE_STRUCT_COMMUNICATION)
+	printk("Sending opcode: %d, pin %d, port %d, flag: %d\n", msg->opcode, msg->pin, msg->port,
+	       msg->flags);
+	/* Try and get lock */
+	if (atomic_flag_test_and_set(&tx_data->lock)) {
+		/* Return -1 in case lock is not acquired (used by other core)*/
+		return -1;
+	}
+
+	memcpy((void *)&tx_data->data, (void *)msg, sizeof(nrfe_gpio_data_packet_t));
+	tx_data->size = sizeof(nrfe_gpio_data_packet_t);
+
+	/* Release lock */
+	atomic_flag_clear(&tx_data->lock);
+
+	return mbox_send_dt(&tx_channel, NULL);
+#endif
 }
 
 static int gpio_nrfe_pin_configure(const struct device *port, gpio_pin_t pin, gpio_flags_t flags)
@@ -114,6 +142,7 @@ static int gpio_nrfe_port_toggle_bits(const struct device *port, gpio_port_pins_
 
 static int gpio_nrfe_init(const struct device *port)
 {
+#if defined(USE_ICMSG_BACKEND)
 	const struct device *ipc0_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
 	int ret = ipc_service_open_instance(ipc0_instance);
 
@@ -127,7 +156,7 @@ static int gpio_nrfe_init(const struct device *port)
 	}
 
 	k_sem_take(&bound_sem, K_FOREVER);
-
+#endif
 	return 0;
 }
 

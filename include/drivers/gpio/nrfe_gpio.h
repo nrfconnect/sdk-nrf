@@ -32,6 +32,17 @@ typedef struct __packed {
 			 */
 } nrfe_gpio_data_packet_t;
 
+#ifdef USE_STRUCT_COMMUNICATION
+#include <stdatomic.h>
+
+typedef struct __packed {
+	atomic_bool lock;
+	uint32_t size;
+	nrfe_gpio_data_packet_t data;
+} shared_t;
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif
