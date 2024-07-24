@@ -249,6 +249,9 @@ Bluetooth samples
   * The :ref:`ble_radio_notification_conn_cb` sample demonstrating how to use the :ref:`ug_radio_notification_conn_cb` feature.
   * The :ref:`bluetooth_conn_time_synchronization` sample demonstrating microsecond-accurate synchronization of connections that are happening over Bluetooth® Low Energy Asynchronous Connection-oriented Logical transport (ACL).
 
+* :ref:`bluetooth_isochronous_time_synchronization`:
+
+  * Fixed issues related to RTC wrapping that prevented the **LED** to toggle at the correct point in time.
 
 Bluetooth Fast Pair samples
 ---------------------------
