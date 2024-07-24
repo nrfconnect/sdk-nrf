@@ -23,6 +23,9 @@ extern "C" {
 #define REPORT_SIZE_KEYBOARD_KEYS	8 /* bytes */
 #define REPORT_SIZE_KEYBOARD_LEDS	1 /* bytes */
 
+/* nRF Desktop's keyboard keys report uses the same format as boot keyboard reports. */
+#define REPORT_SIZE_KEYBOARD_BOOT	REPORT_SIZE_KEYBOARD_KEYS
+
 /* Report mask marks which bytes should are absolute and should be stored. */
 #define REPORT_MASK_KEYBOARD_KEYS	{} /* Store the whole report */
 
