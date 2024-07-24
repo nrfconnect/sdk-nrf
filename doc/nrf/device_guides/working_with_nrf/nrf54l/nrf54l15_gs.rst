@@ -43,22 +43,8 @@ On your computer, one of the following operating systems:
 * Ubuntu Linux
 
 |supported OS|
-Make sure to install the v2.6.0 of :ref:`the nRF Connect SDK and the nRF Connect SDK toolchain <install_ncs>`.
+Make sure to install :ref:`the nRF Connect SDK and the nRF Connect SDK toolchain <install_ncs>`.
 You also need to install `Git`_ or `Git for Windows`_ (on Linux and Mac, or Windows, respectively).
-
-Downloading the code
-********************
-
-Once you have installed the software, you need to update the code separately to be able to work with the nRF54L15 PDK.
-
-Go to the :file:`ncs/v2.6.0/nrf` folder and run the following commands:
-
-.. parsed-literal::
-   :class: highlight
-
-   git fetch
-   git checkout v2.6.99-cs1
-   west update
 
 .. _ug_nrf54l15_gs_test_sample:
 
