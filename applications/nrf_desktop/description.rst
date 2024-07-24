@@ -925,7 +925,7 @@ See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for information abou
       * Device Name: NCS gaming mouse
       * Model ID: ``0x8E717D``
       * Anti-Spoofing Private Key (base64, uncompressed): ``dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=``
-      * Device Type: Input Device
+      * Device Type: Mouse
       * Notification Type: Fast Pair
       * Data-Only connection: true
       * No Personalized Name: false
