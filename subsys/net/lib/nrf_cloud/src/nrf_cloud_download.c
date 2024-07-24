@@ -102,6 +102,15 @@ static void coap_dl_cb(int16_t result_code, size_t offset, const uint8_t *payloa
 		evt.id = DOWNLOAD_CLIENT_EVT_FRAGMENT;
 		evt.fragment.buf = payload;
 		evt.fragment.len = len;
+	} else if (result_code == -ECANCELED) {
+		LOG_DBG("CoAP request canceled");
+		/* This is not actually an error, just use the error event to indicate that
+		 * the transfer has been canceled
+		 */
+		evt.id = DOWNLOAD_CLIENT_EVT_ERROR;
+		evt.error = ECANCELED;
+		(void)coap_dl_event_send(dl, &evt);
+		return;
 	} else if (result_code != COAP_RESPONSE_CODE_OK) {
 		LOG_ERR("Unexpected CoAP result: %d", result_code);
 		LOG_DBG("CoAP response: %*s", len, payload);
@@ -340,7 +349,7 @@ int nrf_cloud_download_start(struct nrf_cloud_download_data *const dl)
 		ret = dlc_disconnect(&active_dl);
 
 		if (ret) {
-			LOG_ERR("download_client_disconnect() failed, error %d", ret);
+			LOG_ERR("Download disconnect failed, error %d", ret);
 		}
 	}
 

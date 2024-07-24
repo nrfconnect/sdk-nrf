@@ -539,14 +539,17 @@ static int download_client_callback(const struct download_client_evt *event)
 		err = buffer_handler((uint8_t *)event->fragment.buf,
 				     event->fragment.len);
 		if (!err) {
-			return err;
+			return 0;
 		}
 		break;
 	case DOWNLOAD_CLIENT_EVT_DONE:
 		LOG_INF("Download client done");
-		nrf_cloud_download_end();
 		break;
 	case DOWNLOAD_CLIENT_EVT_ERROR: {
+		if ((event->error == ECANCELED) && IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)) {
+			eot_handler(-ECANCELED);
+			return 0;
+		}
 		/* In case of socket errors we can return 0 to retry/continue,
 		 * or non-zero to stop
 		 */
