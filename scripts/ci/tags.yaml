@@ -1096,3 +1096,12 @@ ci_tests_lib_sample_rate_converter:
     - modules/lib/cmsis-dsp/
     - nrf/lib/sample_rate_converter/
     - nrf/tests/lib/sample_rate_converter/
+
+ci_tests_drivers_lpuart:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/drivers/serial/
+    - nrf/subsys/debug/
+    - nrf/tests/drivers/lpuart/
+    - zephyr/boards/nordic/
+    - zephyr/drivers/
