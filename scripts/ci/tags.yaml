@@ -1150,3 +1150,11 @@ ci_tests_benchmarks_multicore:
     - nrf/tests/benchmarks/multicore/
     - zephyr/boards/nordic/
     - zephyr/boards/nordic/
+
+ci_tests_drivers_fprotect:
+  files:
+    - nrf/lib/fprotect/
+    - nrf/samples/bootloader/
+    - nrf/subsys/bootloader/
+    - nrf/tests/drivers/fprotect/
+    - zephyr/subsys/storage/
