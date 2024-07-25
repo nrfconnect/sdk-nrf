@@ -1130,3 +1130,15 @@ ci_tests_modules_lib_zcbor:
   files:
     - modules/lib/zcbor/
     - nrf/tests/modules/lib/zcbor/
+
+ci_samples_suit:
+  files:
+    - modules/crypto/
+    - modules/lib/suit-processor/
+    - modules/lib/zcbor/
+    - nrf/samples/suit/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/mgmt/suitfu/
+    - nrf/subsys/sdfw_services/
+    - nrf/subsys/suit/
+    - zephyr/subsys/bluetooth/
