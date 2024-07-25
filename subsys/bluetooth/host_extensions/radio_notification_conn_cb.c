@@ -8,7 +8,6 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/hci.h>
 #include <bluetooth/radio_notification_cb.h>
-#include <helpers/nrfx_gppi.h>
 #include <bluetooth/hci_vs_sdc.h>
 
 #include <nrfx_egu.h>
@@ -36,7 +35,6 @@ static uint32_t configured_prepare_distance_us;
 static const struct bt_radio_notification_conn_cb *registered_cb;
 
 static struct bt_conn *conn_pointers[CONFIG_BT_MAX_CONN];
-static uint8_t ppi_channels[CONFIG_BT_MAX_CONN];
 static struct k_work_delayable work_queue_items[CONFIG_BT_MAX_CONN];
 
 static uint32_t conn_interval_us_get(const struct bt_conn *conn)
@@ -89,7 +87,7 @@ static void egu_isr_handler(uint8_t event_idx, void *context)
 	k_work_reschedule(&work_queue_items[event_idx], K_USEC(timer_distance_us));
 }
 
-static int setup_connection_event_trigger(struct bt_conn *conn)
+static int setup_event_start_task(struct bt_conn *conn)
 {
 	int err;
 	uint8_t conn_index;
@@ -102,33 +100,14 @@ static int setup_connection_event_trigger(struct bt_conn *conn)
 
 	conn_index = bt_conn_index(conn);
 
-	sdc_hci_cmd_vs_get_next_conn_event_counter_t get_next_conn_event_count_params = {
-		.conn_handle = conn_handle,
-	};
-	sdc_hci_cmd_vs_get_next_conn_event_counter_return_t get_next_conn_event_count_ret_params;
-
-	err = hci_vs_sdc_get_next_conn_event_counter(
-		&get_next_conn_event_count_params, &get_next_conn_event_count_ret_params);
-	if (err) {
-		return err;
-	}
-
-	const sdc_hci_cmd_vs_set_conn_event_trigger_t params = {
-		.conn_handle = conn_handle,
-		.role = SDC_HCI_VS_CONN_EVENT_TRIGGER_ROLE_CONN,
-		.ppi_ch_id = ppi_channels[conn_index],
-		.period_in_events = 1, /* Trigger every connection event. */
-
-		/* The connection event trigger feature requires conn_evt_counter_start
-		 * to be in the future.
-		 */
-		.conn_evt_counter_start =
-			get_next_conn_event_count_ret_params.next_conn_event_counter + 10,
-		.task_endpoint = nrfx_egu_task_address_get(&egu_inst,
+	const sdc_hci_cmd_vs_set_event_start_task_t params = {
+		.handle = conn_handle,
+		.handle_type = SDC_HCI_VS_SET_EVENT_START_TASK_HANDLE_TYPE_CONN,
+		.task_address = nrfx_egu_task_address_get(&egu_inst,
 			nrf_egu_trigger_task_get(conn_index)),
 	};
 
-	return hci_vs_sdc_set_conn_event_trigger(&params);
+	return hci_vs_sdc_set_event_start_task(&params);
 }
 
 static void on_connected(struct bt_conn *conn, uint8_t conn_err)
@@ -145,7 +124,7 @@ static void on_connected(struct bt_conn *conn, uint8_t conn_err)
 
 	conn_pointers[conn_index] = conn;
 
-	setup_connection_event_trigger(conn);
+	setup_event_start_task(conn);
 }
 
 BT_CONN_CB_DEFINE(conn_params_updated_cb) = {
@@ -160,7 +139,6 @@ int bt_radio_notification_conn_cb_register(const struct bt_radio_notification_co
 	}
 
 	for (size_t i = 0; i < CONFIG_BT_MAX_CONN; i++) {
-		__ASSERT_NO_MSG(nrfx_gppi_channel_alloc(&ppi_channels[i]) == NRFX_SUCCESS);
 		nrfx_egu_int_enable(&egu_inst, nrf_egu_channel_int_get(i));
 		k_work_init_delayable(&work_queue_items[i], work_handler);
 	}
