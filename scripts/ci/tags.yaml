@@ -1025,3 +1025,11 @@ ci_tests_lib_contin_array:
   files:
     - nrf/lib/contin_array/
     - nrf/tests/lib/contin_array/
+
+ci_tests_lib_at_cmd_custom:
+  files:
+    - nrf/lib/at_cmd_custom/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/tests/lib/at_cmd_custom/
+    - nrfxlib/nrf_modem/
