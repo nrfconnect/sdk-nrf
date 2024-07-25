@@ -150,19 +150,21 @@ The result should look similar to the following output:
      Connected: CF:99:32:A5:4B:11 (random)
      Scanning started
      Service discovery completed
-     Sent to conn index 0: c_anchor point (time=0, counter=0), c_trigger_time 4198619, value 1
-     Sent to conn index 0: c_anchor point (time=0, counter=0), c_trigger_time 4326732, value 0
-     Sent to conn index 0: c_anchor point (time=0, counter=0), c_trigger_time 4454845, value 1
-     Sent to conn index 0: c_anchor point (time=0, counter=0), c_trigger_time 4582927, value 0
-     Sent to conn index 0: c_anchor point (time=0, counter=0), c_trigger_time 4711101, value 1
-     Device found: FA:BB:79:57:D6:45 (random) (RSSI -42)
-     Connected: FA:BB:79:57:D6:45 (random)
-     Sent to conn index 0: c_anchor point (time=0, counter=0), c_trigger_time 4839336, value 0
+     Sent to conn index 0: c_anchor point (time=21839836, counter=19), c_trigger_time 21880962, value 0
+     Device found: CF:99:32:A5:4B:11 (random) (RSSI -24)
+     Sent to conn index 0: c_anchor point (time=21959836, counter=31), c_trigger_time 22009960, value 1
+     Sent to conn index 0: c_anchor point (time=22089836, counter=44), c_trigger_time 22138897, value 0
+     Connected: CF:99:32:A5:4B:11 (random)
+     Sent to conn index 0: c_anchor point (time=22219836, counter=57), c_trigger_time 22267955, value 1
      Service discovery completed
-     Sent to conn index 0: c_anchor point (time=0, counter=0), c_trigger_time 4967601, value 1
-     Sent to conn index 1: c_anchor point (time=0, counter=0), c_trigger_time 4967601, value 1
-     Sent to conn index 0: c_anchor point (time=0, counter=0), c_trigger_time 5104076, value 0
-     Sent to conn index 1: c_anchor point (time=0, counter=0), c_trigger_time 5104076, value 0
+     Sent to conn index 0: c_anchor point (time=22349836, counter=70), c_trigger_time 22396862, value 0
+     Sent to conn index 1: c_anchor point (time=22347336, counter=16), c_trigger_time 22396862, value 0
+     Sent to conn index 0: c_anchor point (time=22489836, counter=84), c_trigger_time 22534862, value 1
+     Sent to conn index 1: c_anchor point (time=22487336, counter=30), c_trigger_time 22534862, value 1
+     Sent to conn index 0: c_anchor point (time=22629836, counter=98), c_trigger_time 22672893, value 0
+     Sent to conn index 1: c_anchor point (time=22627336, counter=44), c_trigger_time 22672893, value 0
+     Sent to conn index 0: c_anchor point (time=22769836, counter=112), c_trigger_time 22810894, value 1
+     Sent to conn index 1: c_anchor point (time=22767336, counter=58), c_trigger_time 22810894, value 1
 
 * For the Peripherals:
 
@@ -183,20 +185,14 @@ The result should look similar to the following output:
      I: LMP: version 5.4 (0x0d) subver 0x1208
      Advertising started
      Connected: E8:DC:8D:B3:47:69 (random)
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 71124066, value 1
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 71260388, value 0
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 71396496, value 1
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 71532788, value 0
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 71669079, value 1
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 71805371, value 0
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 71941662, value 1
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 72077984, value 0
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 72214428, value 1
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 72350720, value 0
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 72486859, value 1
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 72623303, value 0
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 72759442, value 1
-     Received: c_anchor point (time=0, counter=0), c_trigger_time 72895733, value 0
+     Received: c_anchor point (time=22347336, counter=16), c_trigger_time 22396862, value 0
+     Received: c_anchor point (time=22487336, counter=30), c_trigger_time 22534862, value 1
+     Received: c_anchor point (time=22627336, counter=44), c_trigger_time 22672893, value 0
+     Received: c_anchor point (time=22767336, counter=58), c_trigger_time 22810894, value 1
+     Received: c_anchor point (time=22907336, counter=72), c_trigger_time 22948833, value 0
+     Received: c_anchor point (time=23037336, counter=85), c_trigger_time 23086773, value 1
+     Received: c_anchor point (time=23177336, counter=99), c_trigger_time 23224865, value 0
+     Received: c_anchor point (time=23317336, counter=113), c_trigger_time 23362957, value 1
 
 Dependencies
 ************
