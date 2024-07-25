@@ -431,6 +431,10 @@ Bluetooth libraries and services
 * :ref:`bt_le_adv_prov_readme`:
 
   * Updated the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_SHOW_UI_PAIRING` Kconfig option and the :c:func:`bt_le_adv_prov_fast_pair_show_ui_pairing` function to require the enabling of the :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` Kconfig option.
+  * Added the :c:member:`bt_le_adv_prov_adv_state.adv_handle` field to the :c:struct:`bt_le_adv_prov_adv_state` structure to store the advertising handle.
+    If the :kconfig:option:`CONFIG_BT_EXT_ADV` Kconfig option is enabled, you can use the :c:func:`bt_hci_get_adv_handle` function to obtain the advertising handle for the advertising set that employs :ref:`bt_le_adv_prov_readme`.
+    If the Kconfig option is disabled, the :c:member:`bt_le_adv_prov_adv_state.adv_handle` field must be set to ``0``.
+    This field is currently used by the TX Power provider (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER`).
 
 Common Application Framework
 ----------------------------

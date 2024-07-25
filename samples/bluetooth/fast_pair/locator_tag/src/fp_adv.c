@@ -138,20 +138,16 @@ static int fp_adv_payload_set(bool rpa_rotated, bool new_session)
 	/* Set advertising mode of Fast Pair advertising data provider. */
 	fp_adv_prov_configure(fp_adv_mode);
 
-	state.pairing_mode = fp_adv_is_pairing_mode(fp_adv_mode);
-	state.rpa_rotated = rpa_rotated;
-	state.new_adv_session = new_session;
-
 	err = bt_hci_get_adv_handle(fp_adv_set, &adv_handle);
 	if (err) {
 		LOG_ERR("Fast Pair: cannot get advertising handle (err: %d)", err);
 		return err;
 	}
-	/* The TX power advertising provider reads the power for the first advertising set.
-	 * This logic verifies that the Fast Pair advertising set has the correct index
-	 * and has been created as a first one with the bt_le_ext_adv_create() API.
-	 */
-	__ASSERT(adv_handle == 0, "Fast Pair: invalid advertising handle: 0x%02X", adv_handle);
+
+	state.pairing_mode = fp_adv_is_pairing_mode(fp_adv_mode);
+	state.rpa_rotated = rpa_rotated;
+	state.new_adv_session = new_session;
+	state.adv_handle = adv_handle;
 
 	err = bt_le_adv_prov_get_ad(ad, &ad_len, &state, &fb);
 	if (err) {
