@@ -612,7 +612,7 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-* Added the :ref:`ble_connection_event_trigger` sample for the proprietary Event Trigger feature.
+* Added the :ref:`ble_event_trigger` sample for the proprietary Event Trigger feature.
 * :ref:`ble_throughput` sample:
 
   * Updated by enabling encryption in the sample.

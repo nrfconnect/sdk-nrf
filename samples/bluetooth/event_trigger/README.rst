@@ -1,4 +1,4 @@
-.. _ble_connection_event_trigger:
+.. _ble_event_trigger:
 
 Bluetooth: Event Trigger
 ########################
@@ -25,7 +25,7 @@ Note that the Event Trigger feature involves triggering a (D)PPI task directly f
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/connection_event_trigger`
+.. |sample path| replace:: :file:`samples/bluetooth/event_trigger`
 
 .. include:: /includes/build_and_run.txt
 
@@ -48,7 +48,7 @@ After programming the sample to both development kits, test it by performing the
 
    Each kit outputs the following information::
 
-       Press any key to switch to a 10ms connection interval and set up connection event trigger
+       Press any key to switch to a 10ms connection interval and set up event trigger
 
 #. Press a key in either terminal.
 #. Observe that the link switches from a 100 ms connection interval to a 10 ms connection interval.
@@ -68,7 +68,7 @@ Sample output
 The sample displays the data in the following format::
 
    *** Booting nRF Connect SDK v3.4.99-ncs1-4802-g41e34920abf4 ***
-   Starting Connection Event Trigger Example.
+   Starting Event Trigger Example.
    I: SoftDevice Controller build revision:
    I: ba cb 53 9c e2 c9 de b6 |..S.....
    I: 82 1d 9c b3 eb de c5 1f |........
@@ -84,11 +84,11 @@ The sample displays the data in the following format::
    Advertising successfully started
    Connected: FB:8F:24:2D:84:79 (random)
    Connection established.
-   Press any key to switch to a 10ms connection interval and set up connection event trigger:
-   Successfully configured connection event trigger
+   Press any key to switch to a 10ms connection interval and set up event trigger:
+   Successfully configured event trigger
    Connection parameters updated. New interval: 10 ms
-   Successfully configured connection event trigger
-   Printing connection event trigger log.
+   Successfully configured event trigger
+   Printing event trigger log.
    +-------------+----------------+----------------------------------+
    | Trigger no. | Timestamp (us) | Time since previous trigger (us) |
    |           1 |   199381378 us |                          9979 us |
