@@ -45,8 +45,6 @@ enum state {
 
 #define SUBSCRIBER_COUNT CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT
 
-#define OUTPUT_REPORT_DATA_MAX_LEN (REPORT_SIZE_KEYBOARD_LEDS)
-
 #define OUTPUT_REPORT_STATE_COUNT (ARRAY_SIZE(output_reports))
 
 #define INPUT_REPORT_DATA_COUNT (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) +		\
@@ -117,7 +115,7 @@ struct report_state {
 };
 
 struct output_report_state {
-	uint8_t data[OUTPUT_REPORT_DATA_MAX_LEN];
+	uint8_t data[REPORT_BUFFER_SIZE_OUTPUT_REPORT];
 };
 
 struct subscriber {
@@ -1480,7 +1478,6 @@ static void handle_keyboard_leds_report(struct subscriber *sub,
 					const uint8_t *data, size_t len)
 {
 	BUILD_ASSERT(REPORT_SIZE_KEYBOARD_LEDS == 1);
-	BUILD_ASSERT(REPORT_SIZE_KEYBOARD_LEDS <= OUTPUT_REPORT_DATA_MAX_LEN);
 
 	if (len != REPORT_SIZE_KEYBOARD_LEDS) {
 		LOG_WRN("Improper keyboard LED report size");
