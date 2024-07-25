@@ -1060,3 +1060,9 @@ ci_tests_lib_sms:
     - nrf/tests/lib/sms/
     - nrf/tests/mocks/nrf_modem_at/
     - nrf/tests/unity/
+
+ci_tests_lib_modem_info:
+  files:
+    - nrf/lib/modem_info/
+    - nrf/tests/lib/modem_info/
+    - nrf/tests/unity/
