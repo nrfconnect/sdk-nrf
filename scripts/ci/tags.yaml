@@ -970,3 +970,11 @@ ci_samples_gazell:
   files:
     - nrf/samples/gazell/
     - nrf/subsys/gazell/
+
+ci_tests_lib_hw_unique_key_tfm:
+  files:
+    - mbedtls/
+    - modules/crypto/
+    - modules/tee/tf-m/trusted-firmware-m/
+    - nrf/subsys/nrf_security/
+    - nrf/tests/lib/hw_unique_key_tfm/
