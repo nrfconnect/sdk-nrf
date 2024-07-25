@@ -978,3 +978,12 @@ ci_tests_lib_hw_unique_key_tfm:
     - modules/tee/tf-m/trusted-firmware-m/
     - nrf/subsys/nrf_security/
     - nrf/tests/lib/hw_unique_key_tfm/
+
+ci_tests_lib_hw_unique_key:
+  files:
+    - modules/crypto/
+    - nrf/lib/fprotect/
+    - nrf/lib/hw_unique_key/
+    - nrf/subsys/nrf_security/
+    - nrf/tests/lib/hw_unique_key/
+    - nrfxlib/crypto/
