@@ -1066,3 +1066,12 @@ ci_tests_lib_modem_info:
     - nrf/lib/modem_info/
     - nrf/tests/lib/modem_info/
     - nrf/tests/unity/
+
+ci_tests_lib_gcf_sms:
+  files:
+    - nrf/lib/at_cmd_custom/
+    - nrf/lib/gcf_sms/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/tests/lib/gcf_sms/
+    - nrfxlib/nrf_modem/
