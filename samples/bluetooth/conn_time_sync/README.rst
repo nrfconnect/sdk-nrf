@@ -80,9 +80,9 @@ How accurately the timed activity is triggered.
 
 The worst case offset between the Central trigger and Peripheral trigger occurs when all the components mentioned above drift and jitter in different directions.
 In many cases, the offset will be less.
-See the following equation:
+See the following equations:
 
-.. math::
+.. code-block::
 
    worst_case_offset = drift + clock_jitter + trigger_jitter
    worst_case_offset = (c_sca_ppm + p_sca_ppm) * conn_interval + c_clock_jitter + p_clock_jitter + c_trigger_accuracy + p_trigger_accuracy
