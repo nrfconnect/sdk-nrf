@@ -1007,3 +1007,8 @@ ci_tests_lib_qos:
   files:
     - nrf/lib/qos/
     - nrf/tests/lib/qos/
+
+ci_tests_lib_pcm_mix:
+  files:
+    - nrf/lib/pcm_mix/
+    - nrf/tests/lib/pcm_mix/
