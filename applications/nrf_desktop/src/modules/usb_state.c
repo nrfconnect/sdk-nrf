@@ -260,87 +260,116 @@ static void report_sent(const struct device *dev, bool error)
 	usb_hid->sent_report_id = REPORT_ID_COUNT;
 }
 
-static void send_hid_report(const struct hid_report_event *event)
+static struct usb_hid_device *subscriber_to_usb_hid(const void *subscriber)
 {
-	struct usb_hid_device *usb_hid = NULL;
-
 	for (size_t i = 0; i < ARRAY_SIZE(usb_hid_device); i++) {
-		if (event->subscriber == &usb_hid_device[i]) {
-			usb_hid = &usb_hid_device[i];
-			break;
+		if (subscriber == &usb_hid_device[i]) {
+			return &usb_hid_device[i];
 		}
 	}
 
-	if (!usb_hid) {
-		/* It's not us */
-		return;
+	return NULL;
+}
+
+static bool is_hid_boot_report(uint8_t report_id)
+{
+	return ((report_id == REPORT_ID_BOOT_MOUSE) || (report_id == REPORT_ID_BOOT_KEYBOARD));
+}
+
+static bool is_hid_boot_report_supported(uint8_t report_id)
+{
+	__ASSERT_NO_MSG(is_hid_boot_report(report_id));
+
+	return ((IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) &&
+		 (report_id == REPORT_ID_BOOT_MOUSE)) ||
+		(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) &&
+		 (report_id == REPORT_ID_BOOT_KEYBOARD)));
+}
+
+static bool can_send_hid_report(struct usb_hid_device *usb_hid, uint8_t report_id)
+{
+	if (!usb_hid->enabled) {
+		LOG_WRN("Cannot send report: USB not connected");
+		return false;
 	}
 
-	const uint8_t *report_buffer = event->dyndata.data;
-	size_t report_size = event->dyndata.size;
+	if (usb_hid->hid_protocol == HID_PROTOCOL_BOOT) {
+		if (!is_hid_boot_report(report_id)) {
+			LOG_WRN("Cannot send report: incompatible boot/report mode");
+			return false;
+		}
 
-	__ASSERT_NO_MSG(report_size > 0);
+		if (!is_hid_boot_report_supported(report_id)) {
+			LOG_WRN("Cannot send report: unsupported boot report");
+			return false;
+		}
+	} else {
+		__ASSERT_NO_MSG(usb_hid->hid_protocol == HID_PROTOCOL_REPORT);
 
-	if (!usb_hid->enabled) {
-		/* USB not connected. */
-		usb_hid->sent_report_id = event->dyndata.data[0];
+		if (is_hid_boot_report(report_id)) {
+			LOG_WRN("Cannot send report: incompatible boot/report mode");
+			return false;
+		}
+	}
+
+	return true;
+}
+
+static void send_hid_report(struct usb_hid_device *usb_hid, const uint8_t *buf, size_t size)
+{
+	__ASSERT_NO_MSG(size > 0);
+	uint8_t report_id = buf[0];
+
+	/* Update internal state to indicate that report is being handled. */
+	__ASSERT_NO_MSG(usb_hid->sent_report_id == REPORT_ID_COUNT);
+	usb_hid->sent_report_id = report_id;
+
+	if (!can_send_hid_report(usb_hid, report_id)) {
 		report_sent(usb_hid->dev, true);
 		return;
 	}
 
-	__ASSERT_NO_MSG(usb_hid->sent_report_id == REPORT_ID_COUNT);
-
-	usb_hid->sent_report_id = event->dyndata.data[0];
-	if (usb_hid->hid_protocol != HID_PROTOCOL_REPORT) {
-		if ((report_buffer[0] != REPORT_ID_BOOT_MOUSE) &&
-		    (report_buffer[0] != REPORT_ID_BOOT_KEYBOARD)) {
-			LOG_WRN("Cannot send report: incompatible mode");
-			report_sent(usb_hid->dev, true);
-			return;
-		}
-		if ((IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) &&
-		     (report_buffer[0] == REPORT_ID_BOOT_MOUSE)) ||
-		    (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) &&
-		     (report_buffer[0] == REPORT_ID_BOOT_KEYBOARD))) {
-			/* For boot protocol omit the first byte. */
-			report_buffer++;
-			report_size--;
-			__ASSERT_NO_MSG(report_size > 0);
-		} else {
-			/* Boot protocol is not supported. */
-			report_sent(usb_hid->dev, true);
-			return;
-		}
-	} else {
-		if ((report_buffer[0] == REPORT_ID_BOOT_MOUSE) ||
-		    (report_buffer[0] == REPORT_ID_BOOT_KEYBOARD)) {
-			LOG_WRN("Cannot send report: incompatible mode");
-			report_sent(usb_hid->dev, true);
-			return;
-		}
+	if (is_hid_boot_report(report_id)) {
+		/* Omit report ID for HID boot reports. */
+		buf++;
+		size--;
 	}
 
 	int err = 0;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT)) {
 		/* USB next stack expects buffer alignment. */
-		if (IS_ALIGNED(report_buffer, sizeof(void *))) {
-			err = hid_device_submit_report(usb_hid->dev, report_size, report_buffer);
+		if (IS_ALIGNED(buf, sizeof(void *))) {
+			err = hid_device_submit_report(usb_hid->dev, size, buf);
 		} else {
-			uint8_t temp[report_size] __aligned(sizeof(void *));
+			uint8_t temp[size] __aligned(sizeof(void *));
 
-			memcpy(temp, report_buffer, report_size);
-			err = hid_device_submit_report(usb_hid->dev, report_size, temp);
+			memcpy(temp, buf, size);
+			err = hid_device_submit_report(usb_hid->dev, size, temp);
 		}
 	} else {
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY));
-		err = hid_int_ep_write(usb_hid->dev, report_buffer, report_size, NULL);
+		err = hid_int_ep_write(usb_hid->dev, buf, size, NULL);
 	}
 
 	if (err) {
-		LOG_ERR("Cannot send report (%d)", err);
+		LOG_ERR("Failed to submit report to USB stack (%d)", err);
 		report_sent(usb_hid->dev, true);
 	}
+}
+
+static bool handle_hid_report_event(struct hid_report_event *event)
+{
+	struct usb_hid_device *usb_hid = subscriber_to_usb_hid(event->subscriber);
+	const uint8_t *report_buffer = event->dyndata.data;
+	size_t report_size = event->dyndata.size;
+
+	/* Handle only HID reports intended for USB. */
+	if (usb_hid) {
+		send_hid_report(usb_hid, report_buffer, report_size);
+	}
+
+	return false;
 }
 
 static void broadcast_usb_state(enum usb_state broadcast_state)
@@ -1386,9 +1415,7 @@ static void usb_init_thread_fn(void *dummy0, void *dummy1, void *dummy2)
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_event(aeh)) {
-		send_hid_report(cast_hid_report_event(aeh));
-
-		return false;
+		return handle_hid_report_event(cast_hid_report_event(aeh));
 	}
 
 	if (is_module_state_event(aeh)) {
