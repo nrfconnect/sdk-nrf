@@ -127,7 +127,7 @@ enum {
 static K_EVENT_DEFINE(usb_event);
 
 
-static struct usb_hid_device *dev_to_hid(const struct device *dev)
+static struct usb_hid_device *dev_to_usb_hid(const struct device *dev)
 {
 	struct usb_hid_device *usb_hid = NULL;
 
@@ -138,10 +138,7 @@ static struct usb_hid_device *dev_to_hid(const struct device *dev)
 		}
 	}
 
-	if (usb_hid == NULL) {
-		__ASSERT_NO_MSG(false);
-	}
-
+	__ASSERT_NO_MSG(usb_hid);
 	return usb_hid;
 }
 
@@ -198,7 +195,7 @@ static int set_report(const struct device *dev, uint8_t report_type, uint8_t rep
 
 	case REPORT_TYPE_OUTPUT:
 		if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
-			struct usb_hid_device *usb_hid = dev_to_hid(dev);
+			struct usb_hid_device *usb_hid = dev_to_usb_hid(dev);
 
 			if ((report_id == REPORT_ID_KEYBOARD_LEDS) &&
 			    (usb_hid->hid_protocol == HID_PROTOCOL_REPORT) &&
@@ -243,10 +240,8 @@ static int set_report(const struct device *dev, uint8_t report_type, uint8_t rep
 	return err;
 }
 
-static void report_sent(const struct device *dev, bool error)
+static void report_sent(struct usb_hid_device *usb_hid, bool error)
 {
-	struct usb_hid_device *usb_hid = dev_to_hid(dev);
-
 	__ASSERT_NO_MSG(usb_hid->sent_report_id != REPORT_ID_COUNT);
 
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
@@ -325,7 +320,7 @@ static void send_hid_report(struct usb_hid_device *usb_hid, const uint8_t *buf, 
 	usb_hid->sent_report_id = report_id;
 
 	if (!can_send_hid_report(usb_hid, report_id)) {
-		report_sent(usb_hid->dev, true);
+		report_sent(usb_hid, true);
 		return;
 	}
 
@@ -354,7 +349,7 @@ static void send_hid_report(struct usb_hid_device *usb_hid, const uint8_t *buf, 
 
 	if (err) {
 		LOG_ERR("Failed to submit report to USB stack (%d)", err);
-		report_sent(usb_hid->dev, true);
+		report_sent(usb_hid, true);
 	}
 }
 
@@ -514,7 +509,7 @@ static void update_usb_hid(struct usb_hid_device *usb_hid, bool enabled)
 
 static void protocol_change(const struct device *dev, uint8_t protocol)
 {
-	struct usb_hid_device *usb_hid = dev_to_hid(dev);
+	struct usb_hid_device *usb_hid = dev_to_usb_hid(dev);
 
 	BUILD_ASSERT(!IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY) ||
 		     (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_DISABLED) ==
@@ -619,7 +614,7 @@ static void usb_legacy_reset_pending_report(struct usb_hid_device *usb_hid)
 {
 	if (usb_hid->sent_report_id != REPORT_ID_COUNT) {
 		LOG_WRN("USB clear report notification waiting flag");
-		report_sent(usb_hid->dev, true);
+		report_sent(usb_hid, true);
 	}
 }
 
@@ -713,7 +708,7 @@ static int set_report_legacy(const struct device *dev, struct usb_setup_packet *
 
 static void report_sent_cb_legacy(const struct device *dev)
 {
-	report_sent(dev, false);
+	report_sent(dev_to_usb_hid(dev), false);
 }
 
 static int usb_init_legacy_hid_device_init(struct usb_hid_device *usb_hid_dev,
@@ -910,7 +905,7 @@ static bool is_usb_active_next(void)
 
 static void iface_ready_next(const struct device *dev, const bool ready)
 {
-	struct usb_hid_device *usb_hid = dev_to_hid(dev);
+	struct usb_hid_device *usb_hid = dev_to_usb_hid(dev);
 	bool was_usb_active = is_usb_active_next();
 
 	update_usb_hid(usb_hid, ready);
@@ -949,27 +944,27 @@ static int set_report_next(const struct device *dev, const uint8_t type, const u
 
 static void set_idle_next(const struct device *dev, const uint8_t id, const uint32_t duration)
 {
-	struct usb_hid_device *usb_hid = dev_to_hid(dev);
+	struct usb_hid_device *usb_hid = dev_to_usb_hid(dev);
 
 	usb_hid->idle_duration[id] = duration;
 }
 
 static uint32_t get_idle_next(const struct device *dev, const uint8_t id)
 {
-	struct usb_hid_device *usb_hid = dev_to_hid(dev);
+	struct usb_hid_device *usb_hid = dev_to_usb_hid(dev);
 
 	return usb_hid->idle_duration[id];
 }
 
 static void report_sent_cb_next(const struct device *dev)
 {
-	struct usb_hid_device *usb_hid = dev_to_hid(dev);
+	struct usb_hid_device *usb_hid = dev_to_usb_hid(dev);
 
 	/* USB next stack does not explicitly indicate failed transfers. */
 	if (usb_hid->enabled) {
-		report_sent(dev, false);
+		report_sent(usb_hid, false);
 	} else {
-		report_sent(dev, true);
+		report_sent(usb_hid, true);
 	}
 }
 
