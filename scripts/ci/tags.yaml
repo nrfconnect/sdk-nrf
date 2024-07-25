@@ -1085,3 +1085,8 @@ ci_tests_lib_pdn:
   files:
     - nrf/lib/pdn/
     - nrf/tests/lib/
+
+ci_tests_lib_ram_pwrdn:
+  files:
+    - nrf/lib/ram_pwrdn/
+    - nrf/tests/lib/ram_pwrdn/
