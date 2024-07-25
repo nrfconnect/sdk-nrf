@@ -273,6 +273,7 @@ static int update_undirected_advertising(struct bt_le_adv_param *adv_param)
 	adv_state.in_grace_period = (state == STATE_GRACE_PERIOD);
 	adv_state.new_adv_session = req_new_adv_session;
 	adv_state.rpa_rotated = rpa_rotated;
+	adv_state.adv_handle = 0;
 	req_grace_period_s = 0;
 
 	int err = bt_le_adv_prov_get_ad(ad, &ad_len, &adv_state, &fb);

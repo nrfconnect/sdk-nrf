@@ -79,6 +79,7 @@ static int adv_start_internal(void)
 	state.in_grace_period = false;
 	state.rpa_rotated = true;
 	state.new_adv_session = adv_helper_new_adv_session;
+	state.adv_handle = 0;
 
 	adv_helper_new_adv_session = false;
 
