@@ -1125,3 +1125,8 @@ ci_tests_nrf5340_audio:
     - modules/lib/cmsis-dsp/
     - nrf/tests/nrf5340_audio/
     - nrfxlib/lc3/
+
+ci_tests_modules_lib_zcbor:
+  files:
+    - modules/lib/zcbor/
+    - nrf/tests/modules/lib/zcbor/
