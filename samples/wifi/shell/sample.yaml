@@ -158,7 +158,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/ns
     platform_allow: nrf7002dk/nrf5340/cpuapp/ns
-    tags: sysbuild
+    tags: sysbuild ci_samples_wifi
   sample.nrf7002_eb.thingy53.shell:
     sysbuild: true
     build_only: true
@@ -213,7 +213,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build_superset sysbuild
+    tags: ci_build_superset sysbuild ci_samples_wifi
   # Used by QA and also acts as a memory stress test
   sample.nrf7001_ek.superset:
     sysbuild: true
@@ -228,7 +228,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build_superset sysbuild
+    tags: ci_build_superset sysbuild ci_samples_wifi
   # Used by QA and also acts as a memory stress test
   sample.nrf7002.superset:
     sysbuild: true
@@ -242,7 +242,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build_superset sysbuild
+    tags: ci_build_superset sysbuild ci_samples_wifi
   # Used by QA and also acts as a memory stress test
   sample.nrf7002_ek.superset:
     sysbuild: true
@@ -257,7 +257,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build_superset sysbuild
+    tags: ci_build_superset sysbuild ci_samples_wifi
   sample.nrf7002.superset.debug:
     sysbuild: true
     build_only: true
@@ -271,7 +271,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build_superset sysbuild
+    tags: ci_build_superset sysbuild ci_samples_wifi
   sample.nrf7002.ap:
     sysbuild: true
     build_only: true
