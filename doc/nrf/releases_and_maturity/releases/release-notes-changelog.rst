@@ -342,6 +342,7 @@ Peripheral samples
   * Increased the number of RX buffers to reduce the chances of frame drops during high traffic periods.
   * Disabled the |NCS| boot banner.
   * Added sysbuild configuration for nRF5340.
+  * Fixed the dBm value reported for captured frames.
 
 PMIC samples
 ------------
