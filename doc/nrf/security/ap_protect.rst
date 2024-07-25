@@ -60,17 +60,37 @@ See the related hardware documentation for more information about which implemen
      - Related hardware documentation
      - Additional information
    * - nRF9161
-     -
+     - n/a
      - ✔
      - `AP-Protect for nRF9161`_
      - Also supports Secure AP-Protect (see note below)
+   * - nRF9151
+     - n/a
+     - ✔
+     - *Documentation not yet available*
+     - Also supports Secure AP-Protect (see note below)
+   * - nRF9131
+     - n/a
+     - ✔
+     - *Documentation not yet available*
+     - Also supports Secure AP-Protect (see note below)
    * - nRF9160
      - ✔
-     -
+     - n/a
      - `Debugger access protection for nRF9160`_
      - Also supports Secure AP-Protect (see note below)
+   * - nRF54H20
+     - n/a
+     - n/a
+     - n/a
+     - Uses the :ref:`lifecycle state management <ug_nrf54h20_architecture_lifecycle>` mechanism exclusively
+   * - nRF54L15
+     - n/a
+     - ✔
+     - *Documentation not yet available*
+     - Can also use the lifecycle state management mechanism as an alternative to AP-Protect
    * - nRF5340
-     -
+     - n/a
      - ✔
      - `AP-Protect for nRF5340`_
      - Also supports Secure AP-Protect (see note below)
