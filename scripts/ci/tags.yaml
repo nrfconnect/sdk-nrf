@@ -1012,3 +1012,11 @@ ci_tests_lib_pcm_mix:
   files:
     - nrf/lib/pcm_mix/
     - nrf/tests/lib/pcm_mix/
+
+ci_tests_lib_lte_lc:
+  files:
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/lte_link_control/
+    - nrf/tests/lib/lte_lc/
+    - nrf/tests/lib/lte_lc_api/
+    - nrf/tests/mocks/nrf_modem_at/

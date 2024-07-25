@@ -4,4 +4,4 @@ tests:
     platform_allow: native_sim
     integration_platforms:
       - native_sim
-    tags: lte_lc sysbuild
+    tags: lte_lc sysbuild ci_tests_lib_lte_lc
