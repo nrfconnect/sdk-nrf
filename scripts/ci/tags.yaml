@@ -1033,3 +1033,8 @@ ci_tests_lib_at_cmd_custom:
     - nrf/lib/nrf_modem_lib/
     - nrf/tests/lib/at_cmd_custom/
     - nrfxlib/nrf_modem/
+
+ci_tests_lib_data_fifo:
+  files:
+    - nrf/lib/data_fifo/
+    - nrf/tests/lib/data_fifo/
