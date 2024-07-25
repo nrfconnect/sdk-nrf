@@ -33,9 +33,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
 
 #define PERIPHERAL_ADDRESSES_STORAGE_NAME "paddr"
 
-#define OUTPUT_REPORT_DATA_MAX_LEN \
-	(IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)?(REPORT_SIZE_KEYBOARD_LEDS):(0))
-
 BUILD_ASSERT(CFG_CHAN_MAX_RSP_POLL_CNT <= UCHAR_MAX);
 
 struct enqueued_report {
@@ -55,7 +52,7 @@ struct enqueued_reports {
 
 struct report_data {
 	uint8_t report_id;
-	uint8_t data[OUTPUT_REPORT_DATA_MAX_LEN];
+	uint8_t data[REPORT_BUFFER_SIZE_OUTPUT_REPORT];
 } __packed;
 
 struct subscriber {
