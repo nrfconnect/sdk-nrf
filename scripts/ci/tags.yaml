@@ -1038,3 +1038,9 @@ ci_tests_lib_data_fifo:
   files:
     - nrf/lib/data_fifo/
     - nrf/tests/lib/data_fifo/
+
+ci_tests_lib_tone:
+  files:
+    - modules/lib/cmsis-dsp/
+    - nrf/lib/tone/
+    - nrf/tests/lib/tone/
