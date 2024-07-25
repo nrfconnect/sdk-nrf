@@ -448,6 +448,19 @@ Gazell libraries
 Modem libraries
 ---------------
 
+* :ref:`lte_lc_readme` library:
+
+  * Removed:
+
+    * The :c:func:`lte_lc_init` function.
+      All instances of this function can be removed without any additional actions.
+    * The :c:func:`lte_lc_deinit` function.
+      Use the :c:func:`lte_lc_power_off` function instead.
+    * The :c:func:`lte_lc_init_and_connect` function.
+      Use the :c:func:`lte_lc_connect` function instead.
+    * The :c:func:`lte_lc_init_and_connect_async` function.
+      Use the :c:func:`lte_lc_connect_async` function instead.
+
 * :ref:`nrf_modem_lib_lte_net_if` library:
 
   * Added a log warning suggesting a SIM card to be installed if a UICC error is detected by the modem.
