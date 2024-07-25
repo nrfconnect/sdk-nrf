@@ -2,6 +2,7 @@ common:
   tags:
     - drivers
     - flash
+    - ci_tests_drivers_flash
 tests:
   drivers.flash.flash_rpc:
     platform_allow: nrf5340dk/nrf5340/cpuapp
