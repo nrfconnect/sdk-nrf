@@ -1327,6 +1327,57 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 	return PSA_ERROR_DOES_NOT_EXIST;
 }
 
+psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *source_key,
+			     size_t source_key_length, uint8_t *target_key_buffer,
+			     size_t target_key_buffer_size, size_t *target_key_buffer_length)
+{
+#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+	psa_key_location_t location =
+		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
+
+	/* PSA core only invokes this if source location matches target location.
+	 * Whether copy usage is allowed has been validated at this point.
+	 */
+	if (location != PSA_KEY_LOCATION_CRACEN_KMU) {
+		return PSA_ERROR_DOES_NOT_EXIST;
+	}
+
+	if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+		size_t key_bits;
+
+		return cracen_import_key(attributes, source_key, source_key_length,
+					 target_key_buffer, target_key_buffer_size,
+					 target_key_buffer_length, &key_bits);
+	}
+
+	int status;
+	psa_status_t psa_status;
+	size_t key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
+
+	nrf_security_mutex_lock(cracen_mutex_symmetric);
+	status = cracen_kmu_prepare_key(source_key);
+
+	if (status == SX_OK) {
+		size_t key_bits;
+
+		psa_status = cracen_import_key(attributes, kmu_push_area, key_size,
+					       target_key_buffer, target_key_buffer_size,
+					       target_key_buffer_length, &key_bits);
+	}
+
+	(void)cracen_kmu_clean_key(source_key);
+	nrf_security_mutex_unlock(cracen_mutex_symmetric);
+
+	if (status != SX_OK) {
+		return silex_statuscodes_to_psa(status);
+	}
+
+	return psa_status;
+#endif
+
+	return PSA_ERROR_DOES_NOT_EXIST;
+}
+
 psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 {
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER

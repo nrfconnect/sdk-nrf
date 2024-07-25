@@ -241,6 +241,10 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 			       size_t key_buffer_size, uint8_t *data, size_t data_size,
 			       size_t *data_length);
 
+psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *source_key,
+			     size_t source_key_length, uint8_t *target_key_buffer,
+			     size_t target_key_buffer_size, size_t *target_key_buffer_length);
+
 psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes);
 
 size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes);
