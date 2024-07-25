@@ -1119,3 +1119,9 @@ ci_tests_unity:
     - nrf/tests/unity/
     - ncs/test/cmock/
     - test/cmock/
+
+ci_tests_nrf5340_audio:
+  files:
+    - modules/lib/cmsis-dsp/
+    - nrf/tests/nrf5340_audio/
+    - nrfxlib/lc3/
