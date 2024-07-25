@@ -1080,3 +1080,8 @@ ci_tests_lib_pcm_stream_channel_modifier:
   files:
     - nrf/lib/pcm_stream_channel_modifier/
     - nrf/tests/lib/pcm_stream_channel_modifier/
+
+ci_tests_lib_pdn:
+  files:
+    - nrf/lib/pdn/
+    - nrf/tests/lib/
