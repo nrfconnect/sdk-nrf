@@ -822,11 +822,6 @@ static int feaconf_write(enum feaconf_feat feat, bool state)
 
 /* Public API */
 
-int lte_lc_init(void)
-{
-	return 0;
-}
-
 void lte_lc_register_handler(lte_lc_evt_handler_t handler)
 {
 	if (handler == NULL) {
@@ -853,11 +848,6 @@ int lte_lc_connect(void)
 	return connect_lte(true);
 }
 
-int lte_lc_init_and_connect(void)
-{
-	return connect_lte(true);
-}
-
 int lte_lc_connect_async(lte_lc_evt_handler_t handler)
 {
 	if (handler) {
@@ -868,16 +858,6 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler)
 	}
 
 	return connect_lte(false);
-}
-
-int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler)
-{
-	return lte_lc_connect_async(handler);
-}
-
-int lte_lc_deinit(void)
-{
-	return lte_lc_power_off();
 }
 
 int lte_lc_normal(void)

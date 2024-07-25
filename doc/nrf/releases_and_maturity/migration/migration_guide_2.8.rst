@@ -40,7 +40,17 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+LTE link control library
+------------------------
+
+.. toggle::
+
+   * For applications using :ref:`lte_lc_readme`:
+
+     * Remove all instances of the :c:func:`lte_lc_init` function.
+     * Replace the use of the :c:func:`lte_lc_deinit` function with the :c:func:`lte_lc_power_off` function.
+     * Replace the use of the :c:func:`lte_lc_init_and_connect` function with the :c:func:`lte_lc_connect` function.
+     * Replace the use of the :c:func:`lte_lc_init_and_connect_async` function with the :c:func:`lte_lc_connect_async` function.
 
 .. _migration_2.8_recommended:
 
