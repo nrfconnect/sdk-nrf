@@ -262,6 +262,10 @@ Bluetooth samples
 
   * Fixed issues related to RTC wrapping that prevented the **LED** to toggle at the correct point in time.
 
+* :ref:`ble_event_trigger` sample:
+
+  * Moved to the :file:`samples/bluetooth/event_trigger` folder.
+
 Bluetooth Fast Pair samples
 ---------------------------
 

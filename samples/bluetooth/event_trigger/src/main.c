@@ -29,7 +29,6 @@
 #define NUM_TRIGGERS   (50)
 #define INTERVAL_10MS  (0x8)
 #define INTERVAL_100MS (0x50)
-#define PPI_CH_ID      15
 
 #define ADVERTISING_UUID128 BT_UUID_128_ENCODE(0x038a803f, 0xf6b3, 0x420b, 0xa95a, 0x10cc7b32b6db)
 
@@ -67,9 +66,7 @@ static void work_handler(struct k_work *w)
 static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
 {
 	int err;
-	sdc_hci_cmd_vs_get_next_conn_event_counter_t cmd_get_conn_event_counter;
-	sdc_hci_cmd_vs_get_next_conn_event_counter_return_t cmd_event_counter_return;
-	sdc_hci_cmd_vs_set_conn_event_trigger_t cmd_set_trigger;
+	sdc_hci_cmd_vs_set_event_start_task_t cmd_params;
 	uint16_t conn_handle;
 
 	err = bt_hci_get_conn_handle(conn, &conn_handle);
@@ -78,48 +75,32 @@ static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
 		return err;
 	}
 
-	cmd_get_conn_event_counter.conn_handle = conn_handle;
+	cmd_params.handle_type = SDC_HCI_VS_SET_EVENT_START_TASK_HANDLE_TYPE_CONN;
+	cmd_params.handle = conn_handle;
 
-	err = hci_vs_sdc_get_next_conn_event_counter(&cmd_get_conn_event_counter,
-						     &cmd_event_counter_return);
-	if (err) {
-		printk("Error for command SDC_HCI_OPCODE_CMD_VS_GET_NEXT_CONN_EVENT_COUNTER (%d)\n",
-		       err);
-		return err;
-	}
-
-	/* Configure event trigger to trigger NRF_EGU_TASK_TRIGGER0
-	 * through (D)PPI channel PPI_CH_ID.
-	 * This will generate a software interrupt: SWI_IRQn.
+	/* Configure event task to trigger NRF_EGU_TASK_TRIGGER0.
+	 * This will generate a software interrupt.
 	 */
-
-	cmd_set_trigger.conn_handle = conn_handle;
-	cmd_set_trigger.role = SDC_HCI_VS_CONN_EVENT_TRIGGER_ROLE_CONN;
-	cmd_set_trigger.ppi_ch_id = PPI_CH_ID;
-	cmd_set_trigger.period_in_events = 1;
-	cmd_set_trigger.conn_evt_counter_start =
-		cmd_event_counter_return.next_conn_event_counter + 20;
-
 	if (enable) {
-		cmd_set_trigger.task_endpoint =
+		cmd_params.task_address =
 			nrf_egu_task_address_get(NRF_EGU0, NRF_EGU_TASK_TRIGGER0);
 		IRQ_DIRECT_CONNECT(SWI_IRQn, 5, egu0_handler, 0);
 		nrf_egu_int_enable(NRF_EGU0, NRF_EGU_INT_TRIGGERED0);
 		NVIC_EnableIRQ(SWI_IRQn);
 	} else {
-		cmd_set_trigger.task_endpoint = 0;
+		cmd_params.task_address = 0;
 		nrf_egu_int_disable(NRF_EGU0, NRF_EGU_INT_TRIGGERED0);
 		NVIC_DisableIRQ(SWI_IRQn);
 	}
 
-	err = hci_vs_sdc_set_conn_event_trigger(&cmd_set_trigger);
+	err = hci_vs_sdc_set_event_start_task(&cmd_params);
 	if (err) {
-		printk("Error for command SDC_HCI_OPCODE_CMD_VS_SET_CONN_EVENT_TRIGGER (%d)\n",
+		printk("Error for command hci_vs_sdc_set_event_start_task() (%d)\n",
 		       err);
 		return err;
 	}
 
-	printk("Successfully configured connection event trigger\n");
+	printk("Successfully configured event trigger\n");
 
 	return 0;
 }
@@ -277,7 +258,7 @@ int main(void)
 
 	k_work_init(&work, work_handler);
 	console_init();
-	printk("Starting Connection Event Trigger Example.\n");
+	printk("Starting Event Trigger Example.\n");
 
 	err = bt_enable(NULL);
 	if (err) {
@@ -315,7 +296,7 @@ int main(void)
 
 	for (;;) {
 		printk("Press any key to switch to a 10ms connection interval and set up "
-		       "connection event trigger:\n");
+		       "event trigger:\n");
 
 		(void)console_getchar();
 		printk("\n");
@@ -342,7 +323,7 @@ int main(void)
 			return 0;
 		}
 
-		printk("Printing connection event trigger log.\n"
+		printk("Printing event trigger log.\n"
 		       "+-------------+----------------+----------------------------------+\n"
 		       "| Trigger no. | Timestamp (us) | Time since previous trigger (us) |\n"
 		       "+-------------+----------------+----------------------------------+\n");
