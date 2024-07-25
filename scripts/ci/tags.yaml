@@ -992,3 +992,8 @@ ci_tests_lib_sfloat:
   files:
     - nrf/lib/sfloat/
     - nrf/tests/lib/sfloat/
+
+ci_tests_lib_date_time:
+  files:
+    - nrf/lib/date_time/
+    - nrf/tests/lib/date_time/
