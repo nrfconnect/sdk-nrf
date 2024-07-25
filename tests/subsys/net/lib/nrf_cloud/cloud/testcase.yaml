@@ -6,5 +6,5 @@ tests:
       - nrf9160dk/nrf9160/ns
       - native_posix
       - qemu_cortex_m3
-    tags: nrf_cloud_test nrf_cloud_lib sysbuild
+    tags: nrf_cloud_test nrf_cloud_lib sysbuild ci_tests_subsys_net
     timeout: 90
