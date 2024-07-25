@@ -987,3 +987,8 @@ ci_tests_lib_hw_unique_key:
     - nrf/subsys/nrf_security/
     - nrf/tests/lib/hw_unique_key/
     - nrfxlib/crypto/
+
+ci_tests_lib_sfloat:
+  files:
+    - nrf/lib/sfloat/
+    - nrf/tests/lib/sfloat/
