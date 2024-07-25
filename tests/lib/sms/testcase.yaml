@@ -1,7 +1,7 @@
 tests:
   unity.sms_test:
     sysbuild: true
-    tags: sms sysbuild
+    tags: sms sysbuild ci_tests_lib_sms
     platform_allow: native_posix
     integration_platforms:
       - native_posix
