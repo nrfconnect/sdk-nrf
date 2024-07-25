@@ -1,7 +1,7 @@
 tests:
   modules.lib.zcbor.raw_encode:
     sysbuild: true
-    tags: zcbor sysbuild
+    tags: zcbor sysbuild ci_tests_modules_lib_zcbor
     platform_allow: native_posix
     integration_platforms:
       - native_posix
