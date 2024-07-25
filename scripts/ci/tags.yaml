@@ -1142,3 +1142,11 @@ ci_samples_suit:
     - nrf/subsys/sdfw_services/
     - nrf/subsys/suit/
     - zephyr/subsys/bluetooth/
+
+ci_tests_benchmarks_multicore:
+  files:
+    - modules/hal/nordic/nrfs/
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/benchmarks/multicore/
+    - zephyr/boards/nordic/
+    - zephyr/boards/nordic/

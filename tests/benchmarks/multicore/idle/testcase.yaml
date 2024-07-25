@@ -1,6 +1,6 @@
 common:
   sysbuild: true
-  tags: ci_build
+  tags: ci_build ci_tests_benchmarks_multicore
   harness_config:
     type: multi_line
     ordered: true
