@@ -1,7 +1,7 @@
 tests:
   unity.example_test:
     sysbuild: true
-    tags: example sysbuild
+    tags: example sysbuild ci_tests_unity
     integration_platforms:
       - native_posix
     platform_allow:
