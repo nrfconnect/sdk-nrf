@@ -51,4 +51,4 @@ tests:
       - native_sim
     platform_allow:
       - native_sim
-    tags: ci_build
+    tags: ci_build ci_samples_net
