@@ -1090,3 +1090,9 @@ ci_tests_lib_ram_pwrdn:
   files:
     - nrf/lib/ram_pwrdn/
     - nrf/tests/lib/ram_pwrdn/
+
+ci_tests_lib_sample_rate_converter:
+  files:
+    - modules/lib/cmsis-dsp/
+    - nrf/lib/sample_rate_converter/
+    - nrf/tests/lib/sample_rate_converter/
