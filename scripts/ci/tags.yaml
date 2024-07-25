@@ -1044,3 +1044,9 @@ ci_tests_lib_tone:
     - modules/lib/cmsis-dsp/
     - nrf/lib/tone/
     - nrf/tests/lib/tone/
+
+ci_tests_lib_modem_battery:
+  files:
+    - nrf/lib/modem_battery/
+    - nrf/tests/lib/modem_battery/
+    - nrf/tests/unity/
