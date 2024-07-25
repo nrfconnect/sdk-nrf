@@ -5,4 +5,4 @@ tests:
     integration_platforms:
       - qemu_cortex_m3
       - native_posix
-    tags: qos sysbuild
+    tags: qos sysbuild ci_tests_lib_qos

@@ -1002,3 +1002,8 @@ ci_tests_lib_modem_jwt:
   files:
     - nrf/lib/modem_jwt/
     - nrf/tests/lib/modem_jwt/
+
+ci_tests_lib_qos:
+  files:
+    - nrf/lib/qos/
+    - nrf/tests/lib/qos/
