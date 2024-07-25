@@ -1050,3 +1050,13 @@ ci_tests_lib_modem_battery:
     - nrf/lib/modem_battery/
     - nrf/tests/lib/modem_battery/
     - nrf/tests/unity/
+
+ci_tests_lib_sms:
+  files:
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/at_monitor/
+    - nrf/lib/lte_link_control/
+    - nrf/lib/sms/
+    - nrf/tests/lib/sms/
+    - nrf/tests/mocks/nrf_modem_at/
+    - nrf/tests/unity/
