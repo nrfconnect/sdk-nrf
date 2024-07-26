@@ -774,6 +774,13 @@ static int configure_supported_features(void)
 				return -ENOTSUP;
 			}
 		}
+
+		if (IS_ENABLED(CONFIG_BT_CTLR_LE_PATH_LOSS_MONITORING)) {
+			err = sdc_support_le_path_loss_monitoring();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SCA_UPDATE)) {
