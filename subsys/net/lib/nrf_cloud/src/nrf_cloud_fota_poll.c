@@ -129,13 +129,13 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
 	case FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT:
-		LOG_INF("FOTA download erase ongoing");
+		LOG_DBG("FOTA download erase ongoing");
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
 		LOG_DBG("FOTA download erase done");
 		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
-		LOG_INF("FOTA download error: %d", evt->cause);
+		LOG_ERR("FOTA download error: %d", evt->cause);
 
 		nrf_cloud_download_end();
 		fota_status = NRF_CLOUD_FOTA_FAILED;
@@ -157,13 +157,19 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 		LOG_DBG("FOTA download percent: %d%%", evt->progress);
 		break;
 	case FOTA_DOWNLOAD_EVT_RESUME_OFFSET:
-		/* TODO: for now, just fail the download.
-		 * Unable to resume with CoAP until NRFCDP-423 is complete.
-		 */
-		nrf_cloud_download_end();
-		fota_status = NRF_CLOUD_FOTA_FAILED;
-		fota_status_details = FOTA_STATUS_DETAILS_DL_ERR;
-		k_sem_give(&fota_download_sem);
+		LOG_DBG("FOTA download resume at offset: %u", evt->resume_offset);
+		/* Event is only applicable if CoAP downloads are enabled */
+#if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
+		int err = nrf_cloud_download_coap_offset_resume(evt->resume_offset);
+
+		if (err) {
+			LOG_ERR("Failed to resume download, error: %d", err);
+			nrf_cloud_download_end();
+			fota_status = NRF_CLOUD_FOTA_FAILED;
+			fota_status_details = FOTA_STATUS_DETAILS_DL_ERR;
+			k_sem_give(&fota_download_sem);
+		}
+#endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
 		break;
 	default:
 		break;
