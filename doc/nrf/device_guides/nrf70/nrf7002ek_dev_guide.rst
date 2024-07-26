@@ -34,7 +34,7 @@ For the pin assignment of the interface connectors, see the `nRF7002 companion I
 Building and programming with nRF7002 EK
 ****************************************
 
-To build for the nRF7002 EB, build for the compatible :ref:`board target <app_boards_names>` with the CMake ``SHIELD`` option set to ``nrf7002eb``.
+To build for the nRF7002 EK, build for the compatible :ref:`board target <app_boards_names>` with the CMake ``SHIELD`` option set to ``nrf7002ek``.
 
 To add support for the nRF7002 EK on an application running on a compatible host development board, build for the compatible :ref:`board target <app_boards_names>` and specify the ``SHIELD`` CMake option:
 
