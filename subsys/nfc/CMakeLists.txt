@@ -29,3 +29,5 @@ if (CONFIG_NFC_TNEP_TAG OR
     CONFIG_NFC_TNEP_POLLER)
 	add_subdirectory(tnep)
 endif()
+
+add_subdirectory_ifdef(CONFIG_NFC_RPC rpc)
