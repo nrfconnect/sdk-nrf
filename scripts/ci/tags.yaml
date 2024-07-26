@@ -1203,3 +1203,22 @@ ci_samples_dect:
     - nrf/lib/nrf_modem_lib/
     - nrfxlib/nrf_modem/
     - zephyr/drivers/hwinfo/
+
+ci_samples_sensor:
+  files:
+    - modules/hal/nordic/nrfx/
+    - modules/lib/bme68x/
+    - nrf/drivers/sensor/
+    - nrf/lib/adp536x/
+    - nrf/samples/nrf5340/
+    - nrf/samples/sensor/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/pcd/
+    - zephyr/drivers/flash/
+    - zephyr/drivers/i2c/
+    - zephyr/drivers/regulator/
+    - zephyr/drivers/sensor/
+    - zephyr/drivers/spi/
+    - zephyr/lib/crc/
+    - zephyr/subsys/fs/fcb/
+    - zephyr/subsys/storage/
