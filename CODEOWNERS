@@ -230,6 +230,8 @@ Kconfig*                                  @tejlmand
 /scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
+/scripts/ci/tags.yaml                     @nordic-piks @PerMac @katgiadla
+/scripts/ci/twister_ignore.txt            @nordic-piks @PerMac @katgiadla
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
 /snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
