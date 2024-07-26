@@ -438,7 +438,7 @@ static int client_transfer(enum coap_method method,
 		strncpy(path, resource, MAX_COAP_PATH);
 		path[MAX_COAP_PATH] = '\0';
 	} else {
-		err = snprintf(path, sizeof(path), "%s?%s", resource, query);
+		err = snprintk(path, sizeof(path), "%s?%s", resource, query);
 		if ((err <= 0) || (err >= sizeof(path))) {
 			LOG_ERR("Could not format string");
 			err = -ETXTBSY;
@@ -790,7 +790,7 @@ int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const cl
 
 	err = modem_info_get_fw_version(mfw_string, sizeof(mfw_string));
 	if (!err) {
-		err = snprintf(ver_string, sizeof(ver_string), VER_STRING_FMT,
+		err = snprintk(ver_string, sizeof(ver_string), VER_STRING_FMT,
 			       mfw_string, BUILD_VERSION_STR, CDDL_VERSION);
 		if ((err < 0) || (err >= sizeof(ver_string))) {
 			LOG_ERR("Could not format string");

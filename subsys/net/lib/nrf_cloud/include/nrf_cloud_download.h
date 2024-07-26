@@ -49,6 +49,13 @@ struct nrf_cloud_download_data {
 		/* Download client type data */
 		struct download_client *dlc;
 	};
+
+#if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
+	/* Track the received bytes for CoAP downloads */
+	size_t coap_rcvd_bytes;
+	/* Offset used when resuming a download */
+	size_t resume_offset;
+#endif
 };
 
 /** @brief Start download. Only one download at a time is allowed. FOTA downloads have priority.
@@ -56,6 +63,9 @@ struct nrf_cloud_download_data {
  *         download is stopped.
  */
 int nrf_cloud_download_start(struct nrf_cloud_download_data *const dl);
+
+/** @brief Resume a CoAP download at the provided offset. */
+int nrf_cloud_download_coap_offset_resume(const size_t offset);
 
 /** @brief Reset the active download state. Call when download has ended. */
 void nrf_cloud_download_end(void);
