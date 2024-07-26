@@ -617,7 +617,7 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-|no_changes_yet_note|
+* Added an experimental serialization of NFC tag 2 APIs.
 
 nRF RPC libraries
 -----------------
