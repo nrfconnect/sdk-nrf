@@ -218,6 +218,11 @@ nRF Machine Learning (Edge Impulse)
 
 |no_changes_yet_note|
 
+Protocols serialization
+-----------------------
+
+* Added the Protocols serialization server application.
+
 Serial LTE modem
 ----------------
 
@@ -335,6 +340,11 @@ NFC samples
 -----------
 
 |no_changes_yet_note|
+
+nRF RPC
+-------
+
+* Added the Protocols serialization client sample.
 
 nRF5340 samples
 ---------------
@@ -526,6 +536,10 @@ nRF RPC libraries
 -----------------
 
 * Updated the internal Bluetooth serialization API and Bluetooth callback proxy API to become part of the public NRF RPC API.
+* Added:
+
+  * An experimental serialization of Openthread APIs.
+  * The logging backend that sends logs through nRF RPC events.
 
 Other libraries
 ---------------
