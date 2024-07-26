@@ -2,6 +2,7 @@ common:
   tags:
     - pwm
     - drivers
+    - ci_tests_drivers_pwm
   depends_on: pwm
   filter: dt_compat_enabled("test-pwm-to-gpio-loopback")
   harness: ztest

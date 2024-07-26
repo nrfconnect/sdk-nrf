@@ -1158,3 +1158,11 @@ ci_tests_drivers_fprotect:
     - nrf/subsys/bootloader/
     - nrf/tests/drivers/fprotect/
     - zephyr/subsys/storage/
+
+ci_tests_drivers_pwm:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/drivers/pwm/
+    - zephyr/drivers/gpio/
+    - zephyr/drivers/pwm/
+    - zephyr/soc/nordic/
