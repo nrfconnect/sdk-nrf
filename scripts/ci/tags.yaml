@@ -1182,3 +1182,17 @@ ci_samples_bootloader:
     - nrf/samples/bootloader/
     - nrf/subsys/bootloader/
     - nrf/subsys/fw_info/
+
+ci_samples_sdfw:
+  files:
+    - modules/hal/nordic/nrfs/
+    - modules/hal/nordic/nrfx/
+    - modules/lib/zcbor/
+    - nrf/samples/sdfw/
+    - nrf/subsys/nrf_rpc/
+    - nrf/subsys/sdfw_services/
+    - nrfxlib/nrf_rpc/
+    - zephyr/drivers/mbox/
+    - zephyr/modules/hal_nordic/
+    - zephyr/soc/nordic/nrf54h/
+    - zephyr/subsys/ipc/ipc_service/
