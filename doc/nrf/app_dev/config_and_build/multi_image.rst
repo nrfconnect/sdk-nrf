@@ -339,7 +339,7 @@ For example, in the |NCS| applications and samples that use different :ref:`buil
 
 The listing below describes how to leverage this functionality, where ``ACI_NAME`` is the name of the child image to which the configuration will be applied.
 
-.. literalinclude:: ../../../cmake/multi_image.cmake
+.. literalinclude:: ../../../../cmake/multi_image.cmake
     :language: c
     :start-at: It is possible for a sample to use a custom set of Kconfig fragments for a
     :end-before: set(ACI_CONF_DIR ${config_dir}/child_image)

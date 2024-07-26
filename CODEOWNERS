@@ -62,8 +62,8 @@ Kconfig*                                  @tejlmand
 /doc/**/conf.py                           @carlescufi
 /doc/kconfig/                             @gmarull
 /doc/nrf/                                 @carlescufi
-/doc/nrf/device_guides/working_with_nrf/nrf54h/  @FrancescoSer
-/doc/nrf/device_guides/working_with_nrf/nrf54l/ @annwoj
+/doc/nrf/app_dev/device_guides/working_with_nrf/nrf54h/  @FrancescoSer
+/doc/nrf/app_dev/device_guides/working_with_nrf/nrf54l/ @annwoj
 /doc/nrfx/                                @gmarull
 /doc/matter/                              @gmarull
 /doc/mcuboot/                             @carlescufi
@@ -73,7 +73,7 @@ Kconfig*                                  @tejlmand
 /doc/tags.yml                             @gmarull @umapraseeda @b-gent
 /doc/requirements.txt                     @gmarull
 # General top-level docs
-/doc/nrf/config_and_build/                @greg-fer
+/doc/nrf/app_dev/                         @greg-fer
 /doc/nrf/installation/                    @greg-fer
 /doc/nrf/security/                        @greg-fer
 /doc/nrf/test_and_optimize/               @greg-fer

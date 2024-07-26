@@ -35,7 +35,7 @@ You can build and program separate images or combined images using the |nRFVSC|.
 
       Complete the following steps to build and program a multi-image build to the nRF5340 application core and network core:
 
-	   .. include:: ../../includes/vsc_build_and_run.txt
+	   .. include:: /includes/vsc_build_and_run.txt
 
 Program the sample or application
 ---------------------------------
@@ -245,7 +245,7 @@ Complete the following steps to build and program using the |nRFVSC|:
 
 .. |vsc_sample_board_target_line| replace:: select ``thingy53/nrf5340/cpuapp`` as the board target
 
-.. include:: ../../includes/vsc_build_and_run.txt
+.. include:: /includes/vsc_build_and_run.txt
 
 3. Program the sample or application:
 

@@ -44,10 +44,8 @@ Varied reference designs
 
    gsg_guides
    installation
-   create_application
-   config_and_build
+   app_dev
    test_and_optimize
-   device_guides
    security
    protocols
    applications
