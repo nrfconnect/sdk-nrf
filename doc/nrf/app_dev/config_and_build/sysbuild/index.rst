@@ -10,7 +10,7 @@ The |NCS| supports Zephyr's :ref:`sysbuild (System Build) <configuration_system_
    :start-after: #######################
    :end-before: Definitions
 
-.. include:: /config_and_build/config_and_build_system.rst
+.. include:: /app_dev/config_and_build/config_and_build_system.rst
    :start-after: differently than in Zephyr.
    :end-before: Moreover, this |NCS|
 

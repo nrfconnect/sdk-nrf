@@ -1,7 +1,7 @@
 .. _create_application:
 
-Create an application
-#####################
+Creating an application
+#######################
 
 .. contents::
    :local:

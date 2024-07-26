@@ -50,12 +50,12 @@ Each of these systems comes with a specialized syntax and purpose.
 See the following sections for more information.
 To read more about Zephyr's configuration system and its role in the application development, see :ref:`zephyr:build_overview` and :ref:`zephyr:application` in the Zephyr documentation.
 
-When you :ref:`create_application`, the configuration files for each of these systems are created in the :ref:`application directory <create_application_structure>`: :file:`CMakeLists.txt` for CMake, :file:`app.overlay` for devicetree, :file:`prj.conf` for Kconfig, and :file:`partitions.yml` for Partition Manager (if enabled).
+When you :ref:`create an application <create_application>`, the configuration files for each of these systems are created in the :ref:`application directory <create_application_structure>`: :file:`CMakeLists.txt` for CMake, :file:`app.overlay` for devicetree, :file:`prj.conf` for Kconfig, and :file:`partitions.yml` for Partition Manager (if enabled).
 You can then edit them according to your needs (see :ref:`building`).
 
 When you start building, a CMake build is executed in two stages: configuration phase and building phase.
 
-.. figure:: ../images/ncs-toolchain.svg
+.. figure:: ../../images/ncs-toolchain.svg
    :alt: nRF Connect SDK tools and configuration
 
    |NCS| tools and configuration methods

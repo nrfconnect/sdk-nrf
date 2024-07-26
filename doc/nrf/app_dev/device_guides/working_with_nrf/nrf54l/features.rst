@@ -46,7 +46,7 @@ For available libraries, see :ref:`lib_bluetooth_services` (|NCS|) and :ref:`zep
 Enhanced ShockBurst
 ===================
 
-.. include:: ../../../protocols/esb/index.rst
+.. include:: ../../../../protocols/esb/index.rst
    :start-after: esb_intro_start
    :end-before: esb_intro_end
 
@@ -56,7 +56,7 @@ To start developing, check out the :ref:`esb_ptx` and :ref:`esb_prx` samples.
 Matter
 ======
 
-.. include:: ../../../protocols/matter/index.rst
+.. include:: ../../../../protocols/matter/index.rst
    :start-after: matter_intro_start
    :end-before: matter_intro_end
 
@@ -70,7 +70,7 @@ To start developing, check the :ref:`matter_samples`.
 Thread
 ======
 
-.. include:: ../../../protocols/thread/index.rst
+.. include:: ../../../../protocols/thread/index.rst
    :start-after: thread_intro_start
    :end-before: thread_intro_end
 

@@ -758,8 +758,16 @@ cJSON
 Documentation
 =============
 
-* Added the :ref:`peripheral_sensor_node_shield` page.
-* Separated the instructions about building from :ref:`configure_application` and moved it to a standalone :ref:`building` page.
-* Removed the Advanced building procedures page and moved its contents to the :ref:`building` page.
+* Added:
+
+  * The :ref:`ug_app_dev` section, which includes pages from the :ref:`configuration_and_build` section and from the removed Device configuration guides section.
+  * The :ref:`peripheral_sensor_node_shield` page.
+
 * Restructured the :ref:`app_bootloaders` documentation and combined the DFU and bootloader articles.
   Additionally, created a new bootloader :ref:`bootloader_quick_start`.
+* Separated the instructions about building from :ref:`configure_application` and moved it to a standalone :ref:`building` page.
+
+* Removed:
+
+  * Removed the Device configuration guides section and moved its contents to :ref:`ug_app_dev`.
+  * The Advanced building procedures page and moved its contents to the :ref:`building` page.
