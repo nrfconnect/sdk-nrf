@@ -1196,3 +1196,10 @@ ci_samples_sdfw:
     - zephyr/modules/hal_nordic/
     - zephyr/soc/nordic/nrf54h/
     - zephyr/subsys/ipc/ipc_service/
+
+ci_samples_dect:
+  files:
+    - nrf/samples/dect/dect_phy/
+    - nrf/lib/nrf_modem_lib/
+    - nrfxlib/nrf_modem/
+    - zephyr/drivers/hwinfo/
