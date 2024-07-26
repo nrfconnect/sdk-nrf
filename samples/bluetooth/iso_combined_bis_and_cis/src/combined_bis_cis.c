@@ -105,6 +105,8 @@ static void scan_recv(const struct bt_le_scan_recv_info *info, struct net_buf_si
 
 	if (err) {
 		LOG_ERR("Create conn to %s failed (%d)", name_str, err);
+	} else {
+		bt_conn_unref(conn);
 	}
 }
 
@@ -226,8 +228,6 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	if (err) {
 		LOG_INF("Failed to connect to %s (%u)", addr, err);
 
-		bt_conn_unref(conn);
-
 		scan_start();
 		return;
 	}
@@ -264,8 +264,6 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	LOG_INF("Disconnected: %s (reason 0x%02x)", addr, reason);
-
-	bt_conn_unref(conn);
 
 	scan_start();
 }
