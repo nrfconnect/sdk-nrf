@@ -24,4 +24,4 @@ tests:
       - nrf21540dk/nrf52840
     extra_args:
       - SB_CONFIG_PARTITION_MANAGER=n
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_bootloader

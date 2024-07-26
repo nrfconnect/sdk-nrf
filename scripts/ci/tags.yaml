@@ -1175,3 +1175,10 @@ ci_samples_peripheral_lpuart:
     - zephyr/drivers/serial/
     - zephyr/modules/hal_nordic/
     - zephyr/soc/nordic/
+
+ci_samples_bootloader:
+  files:
+    - nrf/lib/fprotect/
+    - nrf/samples/bootloader/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/fw_info/
