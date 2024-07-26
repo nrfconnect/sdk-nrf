@@ -108,6 +108,8 @@ Here are some of the possible options you can use:
 * You can provide :ref:`custom CMake options <cmake_options>` to the build command.
 * You can pass ``--no-sysbuild`` to ``west build`` to build without :ref:`configuration_system_overview_sysbuild`.
   (In the |NCS|, :ref:`building with sysbuild is enabled by default <sysbuild_enabled_ncs>`.)
+* You can pass ``-v`` to ``west build`` to enable :ref:`zephyr:west-building-verbose`.
+  Pass ``-vvv`` for a more detailed build log, which includes the full commands used by the build system to generate the :ref:`app_build_output_files`.
 * You can include the *directory_name* parameter to build from a directory other than the current directory.
 * You can specify a *destination_directory_name* parameter to choose where the build files are generated.
   If not specified, the build files are automatically generated in :file:`build/zephyr/`.
