@@ -273,32 +273,11 @@ config LTE_RAI_REQ
 	  the RAI socket option (SO_RAI) to inform the modem when no more data is expected
 	  and the RRC connection can be released.
 
-config LTE_NETWORK_USE_FALLBACK
-	bool "Use fallback network mode if selected mode fails [DEPRECATED]"
-	select DEPRECATED
-	help
-	  When enabled, the network mode will be switched to the other
-	  available if the preferred fails to establish connection within
-	  specified timeout.
-	  If LTE-M is selected as the network mode, NB-IoT will be the
-	  fallback mode and vice versa.
-	  Fallback should not be enabled if both LTE-M and NB-IoT are enabled.
-	  Instead, the LTE preference configuration should be used to
-	  instruct the modem on which network to use. This is more efficient
-	  both in terms of time to connection establishment and energy
-	  consumption.
-	  This Kconfig option is deprecated. Use the CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT
-	  or CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS Kconfig option instead.
-	  In addition, you can control the priority between LTE-M and NB-IoT using the
-	  CONFIG_LTE_MODE_PREFERENCE Kconfig option.
-
 config LTE_NETWORK_TIMEOUT
 	int "Time period to attempt establishing connection"
 	default 600
 	help
-	  Time period in seconds to attempt establishing an LTE link, before timing
-	  out. If fallback mode is enabled, the fallback mode will also be
-	  tried for the same period.
+	  Time period in seconds to attempt establishing an LTE link, before timing out.
 
 config LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS
 	bool "Get notifications prior to Tracking Area Updates"

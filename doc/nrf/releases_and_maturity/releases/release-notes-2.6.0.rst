@@ -1101,7 +1101,7 @@ Modem libraries
 
     * The default network mode to :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` from :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_GPS`.
     * The default LTE mode preference to :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO` from :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE_AUTO`.
-    * The :kconfig:option:`CONFIG_LTE_NETWORK_USE_FALLBACK` Kconfig option is deprecated.
+    * The ``CONFIG_LTE_NETWORK_USE_FALLBACK`` Kconfig option is deprecated.
       Use the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT` or :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` Kconfig option instead.
       In addition, you can control the priority between LTE-M and NB-IoT using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
     * The :c:func:`lte_lc_init` function is deprecated.
