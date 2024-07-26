@@ -1222,3 +1222,12 @@ ci_samples_sensor:
     - zephyr/lib/crc/
     - zephyr/subsys/fs/fcb/
     - zephyr/subsys/storage/
+
+ci_samples_nrf_rpc:
+  files:
+    - nrf/samples/nrf_rpc/
+    - nrf/subsys/nrf_rpc/
+    - nrfxlib/nrf_rpc/
+    - zephyr/drivers/entropy/
+    - zephyr/subsys/ipc/ipc_service/
+    - zephyr/subsys/random/
