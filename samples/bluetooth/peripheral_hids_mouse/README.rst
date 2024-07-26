@@ -105,9 +105,10 @@ To build this sample with the :ref:`ble_rpc` library, add the following paramete
 * set the :makevar:`SNIPPET` option to ``nordic-bt-rpc``,
 * set the :makevar:`FILE_SUFFIX` option to ``bt_rpc``.
 
-.. code-block::
+.. parsed-literal::
+   :class: highlight
 
-   west build -b board_name -S nordic-bt-rpc -- -DFILE_SUFFIX=bt_rpc
+   west build -b *board_target* -S nordic-bt-rpc -- -DFILE_SUFFIX=bt_rpc
 
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_hids_mouse`
 
