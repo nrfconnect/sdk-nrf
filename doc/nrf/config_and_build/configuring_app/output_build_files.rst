@@ -20,6 +20,9 @@ Depending on the application and the SoC, you can use one or several images.
 
 The |NCS| build system places output images in the :file:`<build folder>` folder when using sysbuild.
 
+.. note::
+    Pass the :ref:`optional parameter <optional_build_parameters>` ``-vvv`` to ``west build`` to enable a more detailed :ref:`zephyr:west-building-verbose` log, which includes the full commands used by the build system to generate the output build files.
+
 .. _app_build_output_files_common:
 
 Common output build files
