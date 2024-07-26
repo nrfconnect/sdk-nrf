@@ -662,48 +662,6 @@ static int enable_notifications(void)
 	return 0;
 }
 
-static int fallback_system_mode_set(void)
-{
-	int err;
-	enum lte_lc_system_mode fallback_sys_mode;
-
-	switch (lte_lc_sys_mode) {
-	case LTE_LC_SYSTEM_MODE_LTEM:
-		fallback_sys_mode = LTE_LC_SYSTEM_MODE_NBIOT;
-		break;
-
-	case LTE_LC_SYSTEM_MODE_NBIOT:
-		fallback_sys_mode = LTE_LC_SYSTEM_MODE_LTEM;
-		break;
-
-	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
-		fallback_sys_mode = LTE_LC_SYSTEM_MODE_NBIOT_GPS;
-		break;
-
-	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
-		fallback_sys_mode = LTE_LC_SYSTEM_MODE_LTEM_GPS;
-		break;
-
-	default:
-		LOG_WRN("Fallback enabled, but not possible from current system mode %d",
-			lte_lc_sys_mode);
-		return -EINVAL;
-	}
-
-	err = nrf_modem_at_printf("AT%%XSYSTEMMODE=%s,%c",
-				  system_mode_params[fallback_sys_mode],
-				  system_mode_preference[lte_lc_sys_mode_pref]);
-	if (err) {
-		LOG_ERR("Failed to set system mode, error: %d", err);
-		return -EFAULT;
-	}
-
-	LOG_DBG("Trying fallback, system mode set to %d, preference %d",
-		fallback_sys_mode, lte_lc_sys_mode_pref);
-
-	return 0;
-}
-
 static int connect_lte(bool blocking)
 {
 	int err;
@@ -741,25 +699,6 @@ static int connect_lte(bool blocking)
 		goto exit;
 	}
 
-	if (lte_lc_sys_mode != LTE_LC_SYSTEM_MODE_DEFAULT &&
-	    IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK)) {
-		/* Set system mode, because it may have been changed by fallback. */
-		if (original_func_mode != LTE_LC_FUNC_MODE_POWER_OFF &&
-		    original_func_mode != LTE_LC_FUNC_MODE_OFFLINE) {
-			err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
-			if (err) {
-				err = -EFAULT;
-				goto exit;
-			}
-		}
-
-		err = lte_lc_system_mode_set(lte_lc_sys_mode, lte_lc_sys_mode_pref);
-		if (err) {
-			err = -EFAULT;
-			goto exit;
-		}
-	}
-
 	/* Reset the semaphore, it may have already been given by an earlier +CEREG notification. */
 	k_sem_reset(&link);
 
@@ -772,33 +711,6 @@ static int connect_lte(bool blocking)
 	if (err == -EAGAIN) {
 		LOG_INF("Network connection attempt timed out");
 		err = -ETIMEDOUT;
-
-		if (IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK)) {
-			err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
-			if (err) {
-				err = -EFAULT;
-				goto exit;
-			}
-
-			err = fallback_system_mode_set();
-			if (err) {
-				err = -ETIMEDOUT;
-				goto exit;
-			}
-
-			k_sem_reset(&link);
-
-			err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
-			if (err || !blocking) {
-				goto exit;
-			}
-
-			err = k_sem_take(&link, K_SECONDS(CONFIG_LTE_NETWORK_TIMEOUT));
-			if (err == -EAGAIN) {
-				LOG_INF("Network connection attempt timed out");
-				err = -ETIMEDOUT;
-			}
-		}
 	}
 
 exit:

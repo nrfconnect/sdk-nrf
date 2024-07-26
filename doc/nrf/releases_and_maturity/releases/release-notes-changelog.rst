@@ -484,6 +484,9 @@ Modem libraries
       Use the :c:func:`lte_lc_connect` function instead.
     * The :c:func:`lte_lc_init_and_connect_async` function.
       Use the :c:func:`lte_lc_connect_async` function instead.
+    * The ``CONFIG_LTE_NETWORK_USE_FALLBACK`` Kconfig option.
+      Use the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT` or :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` Kconfig option instead.
+      In addition, you can control the priority between LTE-M and NB-IoT using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
 
 * :ref:`nrf_modem_lib_lte_net_if` library:
 
