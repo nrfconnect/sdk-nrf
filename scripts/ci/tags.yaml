@@ -1166,3 +1166,12 @@ ci_tests_drivers_pwm:
     - zephyr/drivers/gpio/
     - zephyr/drivers/pwm/
     - zephyr/soc/nordic/
+
+ci_samples_peripheral_lpuart:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/drivers/serial/
+    - nrf/samples/peripheral/lpuart/
+    - zephyr/drivers/serial/
+    - zephyr/modules/hal_nordic/
+    - zephyr/soc/nordic/
