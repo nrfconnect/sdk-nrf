@@ -308,8 +308,7 @@ Cellular samples
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
-  * Removed the dictionary-based comments in the :file:`overlay_nrfcloud_logging.conf` file.
-    Dictionary-based logging is not available for the REST protocol at the moment.
+  * Added support for dictionary logs using REST.
 
 Cryptography samples
 --------------------
@@ -583,19 +582,19 @@ Libraries for networking
     * The JSON string representing longitude in ``PVT`` reports from ``lng`` to ``lon`` to align with nRF Cloud.
       nRF Cloud still accepts ``lng`` for backward compatibility.
 
-
 * :ref:`lib_nrf_cloud_coap` library:
 
   * Fixed a hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the :c:struct:`nrf_cloud_rest_agnss_request` structure is NULL.
-
-* :ref:`lib_nrf_cloud_coap` library:
-
   * Updated to use a shorter resource string for the ``d2c/bulk`` resource.
 
 * :ref:`lib_lwm2m_client_utils` library:
 
   * Fixed an issue where a failed delta update for the modem would not clear the state and blocks future delta updates.
     This only occurred when an LwM2M Firmware object was used in push mode.
+
+* :ref:`lib_nrf_cloud_log` library:
+
+  * Added support for dictionary logs using REST.
 
 Libraries for NFC
 -----------------
