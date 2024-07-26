@@ -1231,3 +1231,4 @@ ci_samples_nrf_rpc:
     - zephyr/drivers/entropy/
     - zephyr/subsys/ipc/ipc_service/
     - zephyr/subsys/random/
+
