@@ -101,24 +101,48 @@ To learn more about how to use the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_
 Optional build parameters
 =========================
 
+You can customize the basic ``west build`` command in a variety of ways.
+The following table contains some of the commonly used parameters in the |NCS|.
+
+For more options, see Zephyr's :ref:`zephyr:west-building` or run the ``west --help`` and ``west build --help`` commands.
+
 |parameters_override_west_config|
 
-Here are some of the possible options you can use:
+.. list-table:: Optional build parameters (selection)
+   :header-rows: 1
 
-* You can provide :ref:`custom CMake options <cmake_options>` to the build command.
-* You can pass ``--no-sysbuild`` to ``west build`` to build without :ref:`configuration_system_overview_sysbuild`.
-  (In the |NCS|, :ref:`building with sysbuild is enabled by default <sysbuild_enabled_ncs>`.)
-* You can pass ``-v`` to ``west build`` to enable :ref:`zephyr:west-building-verbose`.
-  Pass ``-vvv`` for a more detailed build log, which includes the full commands used by the build system to generate the :ref:`app_build_output_files`.
-* You can include the *directory_name* parameter to build from a directory other than the current directory.
-* You can specify a *destination_directory_name* parameter to choose where the build files are generated.
-  If not specified, the build files are automatically generated in :file:`build/zephyr/`.
-* You can :ref:`start menuconfig with the west command <configuration_temporary_change>` to configure your application.
-* You can :ref:`reuse an existing build directory <zephyr:west-building-pristine>` for building another application for another board or board target by passing ``-p=auto`` to ``west build``.
-* You can :ref:`run unit tests with the west command <running_unit_tests>` with the ``-t run`` parameter from the unit test directory.
-* You can use the ``--domain`` parameter to :ref:`build for a single domain <zephyr:west-multi-domain-builds>`.
-  This parameter can also be used for :ref:`programming <zephyr:west-multi-domain-flashing>` and :ref:`debugging <zephyr:west-multi-domain-debugging>` multiple domains.
-
-For more information on other optional build parameters, run the ``west build -h`` help text command.
+   * - Parameter
+     - Usage
+     - Example
+   * - :ref:`Custom CMake options <cmake_options>`
+     - Provide additional options for building your application to the CMake process.
+     - See the :ref:`dedicated section <cmake_options>`
+   * - ``--no-sysbuild``
+     - Explicitly build without :ref:`configuration_system_overview_sysbuild`.
+       (In the |NCS|, :ref:`building with sysbuild is enabled by default <sysbuild_enabled_ncs>`.)
+     - ``west build -b nrf52840dk/nrf52840 --no-sysbuild``
+   * - ``-vvv``
+     - Enable a detailed :ref:`zephyr:west-building-verbose` log, which includes the full commands used by the build system to generate the :ref:`app_build_output_files`.
+     - ``west build -b nrf52840dk/nrf52840 -vvv``
+   * - *directory_name*
+     - Build from a directory other than the current directory.
+     - ``west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template``
+   * - ``-d``
+     - Specify the build directory where the :ref:`app_build_output_files` are to be placed.
+       If not specified, the build files are automatically generated in :file:`build/zephyr/`.
+     - ``west build -b nrf52840dk/nrf52840 -d local_build``
+   * - ``--domain``
+     - :ref:`Build for a single domain <zephyr:west-multi-domain-builds>` in a multi-domain build.
+       This parameter can also be used for :ref:`programming <zephyr:west-multi-domain-flashing>` and :ref:`debugging <zephyr:west-multi-domain-debugging>` multiple domains.
+     - ``west build -b nrf52840dk/nrf52840 --domain hello_world``
+   * - ``menuconfig``
+     - :ref:`Start menuconfig <configuration_temporary_change>` to configure your application's Kconfig options.
+     - ``west build -t menuconfig``
+   * - ``-p=auto``
+     - :ref:`Reuse an existing build directory <zephyr:west-building-pristine>` for building another application for another board or board target.
+     - ``west build -b nrf52840dk/nrf52840 -p=auto``
+   * - ``test``
+     - :ref:`Run unit tests with the west command <running_unit_tests>` from the unit test directory (with the :file:`testcase.yaml` file).
+     - ``west build -b native_sim -t run``
 
 .. |output_files_note| replace:: For more information about files generated as output of the build process, see :ref:`app_build_output_files`.
