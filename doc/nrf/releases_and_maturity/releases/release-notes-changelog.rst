@@ -375,6 +375,8 @@ Cellular samples
     * Renamed the :file:`overlay_nrf7002ek_wifi_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_mqtt_no_lte.conf`.
     * Renamed the :file:`overlay_nrf7002ek_wifi_coap_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_coap_no_lte.conf`.
 
+  * Fixed an issue where the accepted shadow was not marked as received because the config section did not yet exist in the shadow.
+
 * :ref:`nrf_cloud_rest_device_message` sample:
 
   * Added:
