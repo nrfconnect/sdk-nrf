@@ -13,10 +13,8 @@ from ecdsa import VerifyingKey
 from hashlib import sha256
 import os
 
-# Size of LCS storage and implementation ID in OTP in bytes
-LCS_STATE_SIZE = 0x8
+# Size of implementation ID in OTP in bytes
 IMPLEMENTATION_ID_SIZE = 0x20
-NUM_BYTES_PROVISIONED_ELSEWHERE = LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
 
 # These variable names and values are copied from bl_storage.h and
 # should be kept in sync
@@ -57,7 +55,7 @@ def add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_
     return provision_data
 
 
-def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size, mcuboot_counters_slots):
+def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size, mcuboot_counters_slots, lcs_state_sz):
     # This function generates a .hex file with the provisioned data
     # for the uncommon use-case where MCUBoot is present, but NSIB is
     # not.
@@ -72,7 +70,7 @@ def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size
     # which we set to 0 and which will be used by MCUBoot at runtime
     # to calculate where the counter are located.
 
-    num_bytes_in_lcs = LCS_STATE_SIZE
+    num_bytes_in_lcs = lcs_state_sz
     num_bytes_in_implementation_id = IMPLEMENTATION_ID_SIZE
     num_bytes_in_s0_address = 4
     num_bytes_in_s1_address = 4
@@ -132,6 +130,8 @@ def parse_args():
                         help="The MCUBOOT bootloader is used without the NSIB bootloader. Only the provision address, the MCUBOOT counters and the MCUBOOT counters slots arguments will be used.")
     parser.add_argument('--mcuboot-counters-slots', required=False, type=int, default=0,
                         help='Number of monotonic counter slots for every MCUBOOT counter.')
+    parser.add_argument('--lcs-state-size', required=False, type=lambda x: int(x, 0), default=0x8,
+                        help='Size of life cycle state data structure in bytes.')
     return parser.parse_args()
 
 
@@ -155,6 +155,9 @@ def get_hashes(public_key_files, verify_hashes):
 def main():
     args = parse_args()
 
+    lcs_state_size = args.lcs_state_size
+    num_bytes_provisioned_elsewhere = lcs_state_size + IMPLEMENTATION_ID_SIZE
+
     if not args.mcuboot_only and args.s0_addr is None:
         raise RuntimeError("Either --mcuboot-only or --s0-addr must be specified")
 
@@ -163,7 +166,8 @@ def main():
             provision_address=args.provision_addr,
             output=args.output,
             max_size=args.max_size,
-            mcuboot_counters_slots=args.mcuboot_counters_slots
+            mcuboot_counters_slots=args.mcuboot_counters_slots,
+            lcs_state_sz=lcs_state_size
         )
         return
 
@@ -174,8 +178,8 @@ def main():
     # The LCS and implementation ID is stored in the OTP before the
     # rest of the provisioning data so add it to the given base
     # address
-    provision_address = args.provision_addr + NUM_BYTES_PROVISIONED_ELSEWHERE
-    max_size          = args.max_size       - NUM_BYTES_PROVISIONED_ELSEWHERE
+    provision_address = args.provision_addr + num_bytes_provisioned_elsewhere
+    max_size          = args.max_size       - num_bytes_provisioned_elsewhere
 
     hashes = []
     if args.public_key_files:
