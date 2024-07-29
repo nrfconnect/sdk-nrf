@@ -186,16 +186,13 @@ int shadow_config_accepted_process(struct nrf_cloud_obj *const accepted_obj)
 		return -EINVAL;
 	}
 
+	/* The accepted shadow has been received */
+	accepted_rcvd = true;
+
 	if ((accepted_obj->type != NRF_CLOUD_OBJ_TYPE_JSON) || !accepted_obj->json) {
 		/* No config JSON */
 		return -ENOMSG;
 	}
 
-	int err = process_cfg(accepted_obj);
-
-	if (err == 0) {
-		accepted_rcvd = true;
-	}
-
-	return err;
+	return process_cfg(accepted_obj);
 }
