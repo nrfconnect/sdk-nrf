@@ -407,6 +407,13 @@ Wi-Fi samples
 
 |no_changes_yet_note|
 
+Nordic Immutable Secure Bootloader |NSIB|
+-----------------------------------------
+
+* :ref:`bootloader` Changed allowed firmware info offsets:
+
+  * :ref:`doc_fw_info` Can now be placed at offset 0x600 do note that this offset cannot be used for any applications with |NSIB| compiled before this change.
+
 Other samples
 -------------
 
