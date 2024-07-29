@@ -72,7 +72,11 @@ struct bl_validate_fw_ext_api {
  *
  * @return See @ref set_monotonic_counter.
  */
+#ifdef CONFIG_NRFX_NVMC
 int set_monotonic_version(uint16_t version, uint16_t slot);
+#else
+int set_monotonic_version(uint32_t version, uint16_t slot);
+#endif
 
 /** Write the stored 15-bit version to the 16-bit output parameter 'version_out'.
  *
@@ -81,7 +85,11 @@ int set_monotonic_version(uint16_t version, uint16_t slot);
  * @retval 0       Success
  * @retval -EINVAL Error during reading the version or version is NULL.
  */
+#ifdef CONFIG_NRFX_NVMC
 int get_monotonic_version(uint16_t *version_out);
+#elif defined(CONFIG_NRFX_RRAMC)
+int get_monotonic_version(uint32_t *version_out);
+#endif
 
 /** Write the stored slot to the output parameter 'slot_out'.
  *
@@ -90,7 +98,11 @@ int get_monotonic_version(uint16_t *version_out);
  * @retval 0       Success
  * @retval -EINVAL Error during reading the version or version is NULL.
  */
+#ifdef CONFIG_NRFX_NVMC
 int get_monotonic_slot(uint16_t *slot_out);
+#elif defined(CONFIG_NRFX_RRAMC)
+int get_monotonic_slot(uint32_t *slot_out);
+#endif
 
   /** @} */
 
