@@ -101,8 +101,8 @@
 	status = "okay";
 	reg = <0x2f010000 DT_SIZE_K(436)>;
 	ranges = <0x0 0x2f010000 0x6e000>;
-	cpuapp_data: memory@1000 {
-		reg = <0x1000 DT_SIZE_K(432)>;
+	cpuapp_data: memory@5000 {
+		reg = <0x1000 DT_SIZE_K(416)>;
 	};
 };
 
