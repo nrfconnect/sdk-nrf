@@ -8,14 +8,13 @@
 #include <zephyr/types.h>
 #include <fw_info.h>
 #include <zephyr/kernel.h>
-#include <bl_storage.h>
 
 /* The 15 bit version is encoded into the most significant bits of
  * the 16 bit monotonic_counter, and the 1 bit slot is encoded
  * into the least significant bit.
  */
 
-int set_monotonic_version(uint16_t version, uint16_t slot)
+int set_monotonic_version(counter_t version, uint16_t slot)
 {
 	__ASSERT(version <= 0x7FFF, "version too large.\r\n");
 	__ASSERT(slot <= 1, "Slot must be either 0 or 1.\r\n");
@@ -45,9 +44,9 @@ int set_monotonic_version(uint16_t version, uint16_t slot)
 	return err;
 }
 
-int get_monotonic_version(uint16_t *version_out)
+int get_monotonic_version(counter_t *version_out)
 {
-	uint16_t monotonic_version_and_slot;
+	counter_t monotonic_version_and_slot;
 	int err;
 
 	if (version_out == NULL) {
@@ -56,6 +55,7 @@ int get_monotonic_version(uint16_t *version_out)
 
 	err = get_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_NSIB, &monotonic_version_and_slot);
 	if (err) {
+		printk("Error getting monotonic counter\r\n");
 		return err;
 	}
 
@@ -64,9 +64,9 @@ int get_monotonic_version(uint16_t *version_out)
 	return err;
 }
 
-int get_monotonic_slot(uint16_t *slot_out)
+int get_monotonic_slot(counter_t *slot_out)
 {
-	uint16_t monotonic_version_and_slot;
+	counter_t monotonic_version_and_slot;
 	int err;
 
 	if (slot_out == NULL) {
@@ -338,7 +338,13 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		return false;
 	}
 
+	PRINT("Trying to get Firmware version\n\r");
+
+#ifdef CONFIG_NRFX_NVMC
 	uint16_t stored_version;
+#elif CONFIG_NRFX_RRAMC
+	uint32_t stored_version;
+#endif
 
 	int err = get_monotonic_version(&stored_version);
 
