@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened]
     branches:
       - main
-      - 'v*-branch'
+      - test-gh-action
     paths:
       - 'scripts/requirements*.txt'
 
@@ -81,7 +81,7 @@ jobs:
             mkvirtualenv pip-fixed-venv  > /dev/null 2>&1 || true
             workon pip-fixed-venv  > /dev/null 2>&1
             pip3 install pip-tools > /dev/null 2>&1
-            pip3 install setuptools --upgrade
+            pip3 install setuptools==71.1.0 --upgrade
 
             pip-compile \
                 --build-isolation \
