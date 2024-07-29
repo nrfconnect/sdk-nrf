@@ -227,6 +227,9 @@ elseif (DEFINED CONFIG_SOC_NRF5340_CPUAPP)
   # See nRF5340 Product Specification, chapter Application Core -> ... "UICR"
   set(otp_start_addr "0xff8100")
   set(otp_size 764)  # 191 * 4
+elseif (DEFINED CONFIG_SOC_NRF54L15_ENGA_CPUAPP)
+  set(otp_start_addr "0xffd500")
+  set(otp_size 1276)  # 319 * 4
 endif()
 
 if (DEFINED CONFIG_SOC_SERIES_NRF54LX)
@@ -247,7 +250,7 @@ add_region(
 
 math(EXPR flash_size "${CONFIG_FLASH_SIZE} * 1024" OUTPUT_FORMAT HEXADECIMAL)
 
-if (CONFIG_SOC_SERIES_NRF91X OR CONFIG_SOC_NRF5340_CPUAPP)
+if (CONFIG_SOC_SERIES_NRF91X OR CONFIG_SOC_NRF5340_CPUAPP OR CONFIG_SOC_NRF54L15_ENGA_CPUAPP)
   add_region(
     NAME otp
     SIZE ${otp_size}

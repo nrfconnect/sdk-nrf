@@ -149,7 +149,7 @@ config SB_NUM_VER_COUNTER_SLOTS
 	int "Number of monotonic counter slots used for the firmware version"
 	default 20 if BOOTLOADER_MCUBOOT || MCUBOOT
 	default 240
-	range 2 300 if SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X
+	range 2 300 if SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX
 	range 2 1800 if SOC_SERIES_NRF52X
 	range 2 400 if SOC_SERIES_NRF51X
 	depends on SB_MONOTONIC_COUNTER
@@ -174,10 +174,10 @@ endif # SECURE_BOOT
 
 config PM_PARTITION_SIZE_PROVISION
 	hex
-	default 0x280 if SOC_SERIES_NRF91X || SOC_NRF5340_CPUAPP # Stored in OTP region
+	default 0x280 if SOC_SERIES_NRF91X || SOC_NRF5340_CPUAPP || SOC_NRF54L15_ENGA_CPUAPP # Stored in OTP region
 	default 0x280 if SOC_NRF5340_CPUNET # Second instance stored in internal flash of NET
 	default FPROTECT_BLOCK_SIZE
-	prompt "Flash space reserved for PROVISION" if !(SOC_NRF9160 || SOC_NRF5340_CPUAPP)
+	prompt "Flash space reserved for PROVISION" if !(SOC_NRF9160 || SOC_NRF5340_CPUAPP || SOC_NRF54L15_ENGA_CPUAPP)
 	help
 	  Flash space set aside for the PROVISION partition.
 
