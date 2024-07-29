@@ -507,6 +507,7 @@ foreach(d APP ${PM_DOMAINS})
 
   sysbuild_get(${image_name}_CONFIG_SOC_SERIES_NRF91X IMAGE ${image_name} VAR CONFIG_SOC_SERIES_NRF91X KCONFIG)
   sysbuild_get(${image_name}_CONFIG_SOC_NRF5340_CPUAPP IMAGE ${image_name} VAR CONFIG_SOC_NRF5340_CPUAPP KCONFIG)
+  sysbuild_get(${image_name}_CONFIG_SOC_NRF54L15_ENGA_CPUAPP IMAGE ${image_name} VAR CONFIG_SOC_NRF54L15_ENGA_CPUAPP KCONFIG)
 
   if (${image_name}_CONFIG_SOC_SERIES_NRF91X)
     # See nRF9160 Product Specification, chapter "UICR"
@@ -516,6 +517,9 @@ foreach(d APP ${PM_DOMAINS})
     # See nRF5340 Product Specification, chapter Application Core -> ... "UICR"
     set(otp_start_addr "0xff8100")
     set(otp_size 764)  # 191 * 4
+  elseif (DEFINED ${image_name}_CONFIG_SOC_NRF54L15_ENGA_CPUAPP)
+    set(otp_start_addr "0xffd500")
+    set(otp_size 1276)  # 319 * 4
   endif()
 
   sysbuild_get(${image_name}_CONFIG_SOC_SERIES_NRF54LX IMAGE ${image_name} VAR CONFIG_SOC_SERIES_NRF54LX KCONFIG)
@@ -539,7 +543,7 @@ foreach(d APP ${PM_DOMAINS})
   sysbuild_get(${image_name}_CONFIG_FLASH_SIZE IMAGE ${image_name} VAR CONFIG_FLASH_SIZE KCONFIG)
   math(EXPR flash_size "${${image_name}_CONFIG_FLASH_SIZE} * 1024" OUTPUT_FORMAT HEXADECIMAL)
 
-  if (${image_name}_CONFIG_SOC_SERIES_NRF91X OR ${image_name}_CONFIG_SOC_NRF5340_CPUAPP)
+  if (${image_name}_CONFIG_SOC_SERIES_NRF91X OR ${image_name}_CONFIG_SOC_NRF5340_CPUAPP OR ${image_name}_CONFIG_SOC_NRF54L15_ENGA_CPUAPP)
     add_region(
       NAME otp
       SIZE ${otp_size}
