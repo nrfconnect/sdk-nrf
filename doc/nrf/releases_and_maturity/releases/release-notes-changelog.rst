@@ -527,6 +527,11 @@ Libraries for networking
 
   * Updated to use a shorter resource string for the ``d2c/bulk`` resource.
 
+* :ref:`lib_lwm2m_client_utils` library:
+
+  * Fixed an issue where a failed delta update for the modem would not clear the state and blocks future delta updates.
+    This only occurred when an LwM2M Firmware object was used in push mode.
+
 Libraries for NFC
 -----------------
 
