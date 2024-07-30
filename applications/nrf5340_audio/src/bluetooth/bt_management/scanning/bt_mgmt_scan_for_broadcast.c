@@ -403,12 +403,12 @@ static struct bt_bap_scan_delegator_cb scan_delegator_cbs = {
 
 void bt_mgmt_broadcast_code_ptr_get(uint8_t **broadcast_code_ptr)
 {
-	if (broadcast_code == NULL) {
+	if (broadcast_code_ptr == NULL) {
 		LOG_ERR("Null pointer given");
 		return;
 	}
 
-	*broadcast_code = bt_mgmt_broadcast_code;
+	*broadcast_code_ptr = bt_mgmt_broadcast_code;
 }
 
 void bt_mgmt_scan_delegator_init(void)
