@@ -5,6 +5,7 @@
 #
 
 DT_COMPAT_CX_NRF700X := nordic,nrf700x-coex
+DT_COMPAT_CX_SOFTWARE := nordic,software-coex
 
 config MPSL_CX_ANY_SUPPORT
 	bool
@@ -18,8 +19,15 @@ config MPSL_CX_NRF700X_SUPPORT
 	help
 	  Indicates that the device tree contains a nrf_radio_coex node compatible with "nordic,nrf700x-coex".
 
+config MPSL_CX_SOFTWARE_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_SOFTWARE))
+	help
+	  Indicates that the device tree contains a nrf_radio_coex node compatible with "nordic,software-coex".
+
 config MPSL_CX
 	bool "Radio Coexistence interface support"
+	depends on MPSL_CX_ANY_SUPPORT
 	depends on !(BT_CTLR_PHY_CODED && MPSL_FEM && SOC_SERIES_NRF53X)
 	help
 	  Controls if Radio Coexistence interface is to be configured and enabled
@@ -61,7 +69,6 @@ config MPSL_CX_NRF700X
 config MPSL_CX_3WIRE
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
-	depends on MPSL_CX_ANY_SUPPORT
 	bool "3-Wire Radio Coexistence [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
@@ -71,7 +78,6 @@ config MPSL_CX_3WIRE
 
 config MPSL_CX_BT_1WIRE
 	depends on SOC_COMPATIBLE_NRF52X
-	depends on MPSL_CX_ANY_SUPPORT
 	select NRFX_GPIOTE
 	select GPIO
 	select NRFX_TIMER1
@@ -82,6 +88,7 @@ config MPSL_CX_BT_1WIRE
 
 config MPSL_CX_SOFTWARE
 	bool "Software Coexistence"
+	depends on MPSL_CX_SOFTWARE_SUPPORT
 	# If MPSL is not enabled in the current build, this option implies
 	# the Software Coexistence RPC client role.
 	select MPSL_CX_SOFTWARE_RPC if !MPSL
