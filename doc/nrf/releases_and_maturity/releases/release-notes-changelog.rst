@@ -139,6 +139,9 @@ Matter
     * :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_MIN_RETRY_INTERVAL`
     * :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_RETRY_MULTIPLIER`
 
+  * The :ref:`ug_matter_device_memory_profiling` section to the :ref:`ug_matter_device_optimizing_memory` page.
+    The section contains useful commands for measuring memory and troubleshooting tips.
+
 
 Matter fork
 +++++++++++
