@@ -9,4 +9,4 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp
-    tags: caf ci_build sysbuild
+    tags: caf ci_build sysbuild ci_samples_caf
