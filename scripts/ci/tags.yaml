@@ -1240,3 +1240,27 @@ ci_samples_nrf_rpc:
     - zephyr/drivers/entropy/
     - zephyr/subsys/ipc/ipc_service/
     - zephyr/subsys/random/
+
+ci_applications_protocols_serialization:
+  files:
+    - modules/crypto/
+    - modules/lib/openthread/
+    - nrf/applications/protocols_serialization/
+    - nrf/drivers/mpsl/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/ieee802154/
+    - nrf/subsys/logging/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/net/openthread/
+    - nrf/subsys/nrf_rpc/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/trusted_storage/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_802154/
+    - nrfxlib/nrf_rpc/
+    - zephyr/drivers/ieee802154/
+    - zephyr/modules/openthread/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/net/
+    - zephyr/subsys/retention/
