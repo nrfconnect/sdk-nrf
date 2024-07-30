@@ -1281,3 +1281,9 @@ ci_samples_mpsl:
     - nrf/samples/mpsl/
     - nrf/samples/nrf5340/empty_app_core/
     - nrf/subsys/mpsl/
+
+ci_samples_caf:
+  files:
+    - nrf/samples/caf/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/caf/
