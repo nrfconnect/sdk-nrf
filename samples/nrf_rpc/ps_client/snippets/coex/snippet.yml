@@ -7,3 +7,4 @@
 name: coex
 append:
   EXTRA_CONF_FILE: coex.conf
+  EXTRA_DTC_OVERLAY_FILE: coex.overlay
