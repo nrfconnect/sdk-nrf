@@ -134,6 +134,15 @@ ci_samples_net: &ci_net
 
 ci_tests_subsys_net: *ci_net
 
+ci_tests_subsys_net_openthread:
+  files:
+    - nrf/subsys/net/openthread/
+    - nrf/subsys/nrf_rpc/
+    - nrf/tests/mocks/nrf_rpc/
+    - nrf/tests/subsys/net/openthread/
+    - nrfxlib/nrf_rpc/
+    - zephyr/subsys/net/
+
 ci_samples_wifi:
   files:
     - modules/lib/hostap/
