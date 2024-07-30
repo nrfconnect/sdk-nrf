@@ -99,7 +99,7 @@ Kconfig*                                  @tejlmand
 /include/bluetooth/                       @alwa-nordic @jori-nordic @KAGA164
 /include/bluetooth/services/fast_pair/    @alstrzebonski @MarekPieta @kapi-no
 /include/bluetooth/adv_prov.h             @MarekPieta @kapi-no @KAGA164
-/include/bluetooth/mesh/                  @ludvigsj
+/include/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
@@ -165,7 +165,7 @@ Kconfig*                                  @tejlmand
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /samples/bluetooth/                       @alwa-nordic @jori-nordic @carlescufi @KAGA164
-/samples/bluetooth/mesh/                  @ludvigsj
+/samples/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga-nordic
 /samples/bluetooth/fast_pair/             @alstrzebonski @MarekPieta @kapi-no
@@ -253,7 +253,7 @@ Kconfig*                                  @tejlmand
 /snippets/zperf/                          @nrfconnect/ncs-protocols-serialization
 /subsys/audio_module/                     @nrfconnect/ncs-audio
 /subsys/bluetooth/                        @alwa-nordic @jori-nordic @carlescufi @KAGA164
-/subsys/bluetooth/mesh/                   @ludvigsj
+/subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
 /subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
 /subsys/bluetooth/adv_prov/               @MarekPieta @kapi-no @KAGA164
 /subsys/bluetooth/services/fast_pair/     @alstrzebonski @MarekPieta @kapi-no
@@ -268,7 +268,7 @@ Kconfig*                                  @tejlmand
 /subsys/ieee802154/                       @rlubos @ankuns @piotrkoziar
 /subsys/mgmt/                             @hakonfam @sigvartmh
 /subsys/mgmt/suitfu/                      @tomchy @ahasztag
-/subsys/emds/                             @balaklaka
+/subsys/emds/                             @balaklaka @nrfconnect/ncs-paladin
 /subsys/esb/                              @lemrey
 /subsys/app_event_manager/                @pdunaj
 /subsys/app_event_manager_profiler_tracer/    @pdunaj @MarekPieta
@@ -308,7 +308,7 @@ Kconfig*                                  @tejlmand
 /subsys/zigbee/                           @milewr
 /tests/                                   @PerMac @katgiadla
 /tests/benchmarks/multicore/              @carlescufi
-/tests/bluetooth/tester/                  @carlescufi @ludvigsj
+/tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/crypto/                            @stephen-nordic @magnev
 /tests/drivers/flash_patch/               @oyvindronningstad
@@ -352,15 +352,15 @@ Kconfig*                                  @tejlmand
 /tests/nrf5340_audio/                     @nrfconnect/ncs-audio @nordic-auko
 /tests/subsys/audio_module/               @nrfconnect/ncs-audio
 /tests/subsys/bluetooth/gatt_dm/          @doki-nordic
-/tests/subsys/bluetooth/mesh/             @ludvigsj
-/tests/subsys/bluetooth/enocean/          @ludvigsj
+/tests/subsys/bluetooth/mesh/             @nrfconnect/ncs-paladin
+/tests/subsys/bluetooth/enocean/          @nrfconnect/ncs-paladin
 /tests/subsys/bluetooth/fast_pair/        @alstrzebonski @MarekPieta @kapi-no
 /tests/subsys/bootloader/                 @hakonfam
 /tests/subsys/caf/                        @zycz
 /tests/subsys/debug/cpu_load/             @nordic-krch
 /tests/subsys/dfu/                        @hakonfam @sigvartmh
 /tests/subsys/dfu/dfu_multi_image/        @Damian-Nordic
-/tests/subsys/emds/                       @balaklaka
+/tests/subsys/emds/                       @balaklaka @nrfconnect/ncs-paladin
 /tests/subsys/event_manager_proxy/        @rakons
 /tests/subsys/app_event_manager/          @pdunaj @MarekPieta @rakons
 /tests/subsys/fw_info/                    @oyvindronningstad
