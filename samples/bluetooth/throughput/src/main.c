@@ -183,7 +183,7 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 			return;
 		}
 
-		printk("Connection failed (err 0x%02x)\n", hci_err);
+		printk("Connection failed, err 0x%02x %s\n", hci_err, bt_hci_err_to_str(hci_err));
 		return;
 	}
 
@@ -305,7 +305,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	struct bt_conn_info info = {0};
 	int err;
 
-	printk("Disconnected (reason 0x%02x)\n", reason);
+	printk("Disconnected, reason 0x%02x %s\n", reason, bt_hci_err_to_str(reason));
 
 	test_ready = false;
 	if (default_conn) {
