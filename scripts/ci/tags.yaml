@@ -1264,3 +1264,10 @@ ci_applications_protocols_serialization:
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/net/
     - zephyr/subsys/retention/
+
+ci_samples_mpsl:
+  files:
+    - nrf/drivers/mpsl/
+    - nrf/samples/mpsl/
+    - nrf/samples/nrf5340/empty_app_core/
+    - nrf/subsys/mpsl/
