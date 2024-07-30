@@ -34,7 +34,7 @@ typedef enum {
 	hdlc_state_escape,
 } hdlc_state_t;
 
-typedef struct nrf_rpc_uart {
+struct nrf_rpc_uart {
 	const struct device *uart;
 	nrf_rpc_tr_receive_handler_t receive_callback;
 	void *receive_ctx;
@@ -57,7 +57,7 @@ typedef struct nrf_rpc_uart {
 
 	/* Workqueue for rx*/
 	struct k_work_q rx_workq;
-} nrf_rpc_uart;
+};
 
 /**
  * @brief Returns nRF RPC UART transport object name for the given devicetree node.
@@ -66,14 +66,14 @@ typedef struct nrf_rpc_uart {
  */
 #define NRF_RPC_UART_TRANSPORT(node_id) _CONCAT(nrf_rpc_tr_, DT_DEP_ORD(node_id))
 
+/**
+ * @}
+ */
+
 #define _NRF_RPC_UART_TRANSPORT_DECLARE(node_id)                                                   \
 	extern const struct nrf_rpc_tr NRF_RPC_UART_TRANSPORT(node_id);
 
 DT_FOREACH_STATUS_OKAY(nordic_nrf_uarte, _NRF_RPC_UART_TRANSPORT_DECLARE);
-
-/**
- * @}
- */
 
 #ifdef __cplusplus
 }
