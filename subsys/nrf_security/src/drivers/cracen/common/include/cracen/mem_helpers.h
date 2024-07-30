@@ -43,10 +43,22 @@ bool constant_memcmp_is_zero(const void *s1, size_t n);
 void safe_memset(void *dest, const size_t dest_size, const uint8_t ch, const size_t n);
 
 /*!
- * \brief A meset to zero function that is not optimized out by the compiler.
+ * \brief A memset to zero function that is not optimized out by the compiler.
  *
  * \param[in] dest		Pointer to the memory to set to zero.
  * \param[in] dest_size Size of the memory in bytes.
  *
  */
 void safe_memzero(void *dest, const size_t dest_size);
+
+/*!
+ * \brief Will copy memory, verifying that the source buffer is non-zero.
+ *
+ * \param[in] dest      Pointer to destination memory.
+ * \param[in] dest_size Size of the memory in bytes.
+ * \param[in] src       Pointer to source memory.
+ * \param[in] src_size  Size of the memory in bytes.
+ *
+ * \return true if src buffer is non-zero and fits into the destination.
+ */
+bool memcpy_check_non_zero(void *dest, size_t dest_size, const void *src, size_t src_size);
