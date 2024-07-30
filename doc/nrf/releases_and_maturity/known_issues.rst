@@ -373,6 +373,21 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-7-0 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
+
+KRKNWK-19300: The Matter weather station application has NVS size inconsistent with the settings partition size.
+  The settings partition size for Matter weather station is configured to the value of 64 kB.
+  However, the application cannot use all 64 kB of the settings space, because it depends on the NVS size that is limited by the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option to 32 kB.
+
+  **Affected platforms:** Thingy53
+
+  **Workaround:** Set the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option to ``16`` in the application :file:`prj.conf` file.
+
+  .. caution::
+
+     The workaround can be applied only to a newly programmed or factory reset device.
+     Changing the NVS sectors count for a device that is in-field and already has some data stored in settings may lead to the data corruption and undefined behavior.
+
 .. rst-class:: v2-7-0
 
 KRKNWK-19199: Matter Lock and Matter Template samples cannot be built in the release configuration for the nRF54H20 platform.
