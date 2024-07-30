@@ -354,7 +354,8 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (conn_err) {
-		LOG_INF("Failed to connect to %s (%d)", addr, conn_err);
+		LOG_INF("Failed to connect to %s, 0x%02x %s", addr, conn_err,
+			bt_hci_err_to_str(conn_err));
 
 		if (default_conn == conn) {
 			bt_conn_unref(default_conn);
@@ -400,7 +401,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Disconnected: %s (reason %u)", addr, reason);
+	LOG_INF("Disconnected: %s, reason 0x%02x %s", addr, reason, bt_hci_err_to_str(reason));
 
 	if (default_conn != conn) {
 		return;

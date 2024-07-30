@@ -38,7 +38,7 @@ static const struct bt_data sd[] = {
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
-		LOG_ERR("Connection failed (err %u)", err);
+		LOG_ERR("Connection failed, err 0x%02x %s", err, bt_hci_err_to_str(err));
 		return;
 	}
 
@@ -49,7 +49,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	LOG_INF("Disconnected (reason %u)", reason);
+	LOG_INF("Disconnected, reason 0x%02x %s", reason, bt_hci_err_to_str(reason));
 
 	shell_bt_nus_disable();
 	if (current_conn) {

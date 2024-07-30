@@ -15,6 +15,7 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/hci.h>
 
 #include <nfc_t2t_lib.h>
 
@@ -145,7 +146,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	if (conn_err) {
-		printk("Connection failed (err %u)\n", conn_err);
+		printk("Connection failed, err 0x%02x %s\n", conn_err, bt_hci_err_to_str(conn_err));
 		return;
 	}
 
@@ -159,7 +160,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	printk("Disconnected (reason %u)\n", reason);
+	printk("Disconnected, reason 0x%02x %s\n", reason, bt_hci_err_to_str(reason));
 
 	dk_set_led_off(CON_STATUS_LED);
 
