@@ -18,4 +18,4 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
     platform_exclude: native_posix qemu_x86 qemu_cortex_m3
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_nrf_profiler
