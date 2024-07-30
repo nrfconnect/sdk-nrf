@@ -664,6 +664,7 @@ static int connect_lte(bool blocking)
 {
 	int err;
 	enum lte_lc_func_mode original_func_mode;
+	bool func_mode_changed = false;
 	enum lte_lc_nw_reg_status reg_status;
 	static atomic_t in_progress;
 
@@ -705,6 +706,8 @@ static int connect_lte(bool blocking)
 		goto exit;
 	}
 
+	func_mode_changed = true;
+
 	err = k_sem_take(&link, K_SECONDS(CONFIG_LTE_NETWORK_TIMEOUT));
 	if (err == -EAGAIN) {
 		LOG_INF("Network connection attempt timed out");
@@ -712,7 +715,7 @@ static int connect_lte(bool blocking)
 	}
 
 exit:
-	if (err) {
+	if (err && func_mode_changed) {
 		/* Connecting to LTE network failed, restore original functional mode. */
 		lte_lc_func_mode_set(original_func_mode);
 	}
