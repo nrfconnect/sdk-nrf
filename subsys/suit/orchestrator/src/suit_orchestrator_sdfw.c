@@ -122,9 +122,8 @@ static int initialize_dfu_cache(const suit_plat_mreg_t *update_regions, size_t u
 	cache.pools_count = update_regions_len - 1;
 
 	for (size_t i = 1; i < update_regions_len; i++) {
-		if (suit_validator_validate_cache_pool_location(update_regions[i].mem,
-								   update_regions[i].size) !=
-		    SUIT_PLAT_SUCCESS) {
+		if (suit_validator_validate_cache_pool_location(
+			    update_regions[i].mem, update_regions[i].size) != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Invalid cache partition %d location", i);
 			return -EACCES;
 		}
@@ -281,10 +280,10 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 	err = suit_process_sequence(installed_envelope_address, installed_envelope_size,
 				    SUIT_SEQ_PARSE);
 	if (err != SUIT_SUCCESS) {
-		LOG_ERR("Failed to validate installed root manifest: %d", err);
+		LOG_ERR("Failed to validate installed manifest: %d", err);
 		return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 	}
-	LOG_DBG("Validated installed root manifest");
+	LOG_DBG("Validated installed manifest");
 
 	unsigned int seq_num;
 	suit_semver_raw_t version;
@@ -348,9 +347,20 @@ static int boot_path(bool emergency)
 	}
 
 	for (size_t i = 0; i < class_ids_to_boot_len; i++) {
-		ret = boot_envelope((const suit_manifest_class_id_t *)class_ids_to_boot[i]);
+		const suit_manifest_class_id_t *class_id =
+			(const suit_manifest_class_id_t *)class_ids_to_boot[i];
+
+		ret = boot_envelope(class_id);
 		if (ret != 0) {
-			LOG_ERR("Booting %d manifest failed (%d)", i, ret);
+			LOG_ERR("Booting %d manifest failed (%d):", i, ret);
+			LOG_ERR("\t%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%"
+				"02x%02x",
+				class_id->raw[0], class_id->raw[1], class_id->raw[2],
+				class_id->raw[3], class_id->raw[4], class_id->raw[5],
+				class_id->raw[6], class_id->raw[7], class_id->raw[8],
+				class_id->raw[9], class_id->raw[10], class_id->raw[11],
+				class_id->raw[12], class_id->raw[13], class_id->raw[14],
+				class_id->raw[15]);
 			if (emergency) {
 				/* Conditionally continue booting other envelopes.
 				 * Recovery FW shall discover which parts of the system
@@ -362,6 +372,11 @@ static int boot_path(bool emergency)
 		}
 
 		LOG_DBG("Manifest %d booted", i);
+		LOG_DBG("\t%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+			class_id->raw[0], class_id->raw[1], class_id->raw[2], class_id->raw[3],
+			class_id->raw[4], class_id->raw[5], class_id->raw[6], class_id->raw[7],
+			class_id->raw[8], class_id->raw[9], class_id->raw[10], class_id->raw[11],
+			class_id->raw[12], class_id->raw[13], class_id->raw[14], class_id->raw[15]);
 	}
 
 	return ret;
