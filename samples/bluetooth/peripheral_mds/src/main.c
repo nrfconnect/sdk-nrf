@@ -54,8 +54,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d\n", addr, level,
-			err);
+		printk("Security failed: %s level %u err %d %s\n", addr, level, err,
+		       bt_security_err_to_str(err));
 	}
 
 	if (level >= BT_SECURITY_L2) {
@@ -112,7 +112,8 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
+	printk("Pairing failed conn: %s, reason %d %s\n", addr, reason,
+	       bt_security_err_to_str(reason));
 
 	if (pairing_confirmation_conn) {
 		pairing_confirmation_conn = NULL;

@@ -213,10 +213,10 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 	}
 }
 
-void security_changed(struct bt_conn *conn, bt_security_t level,
-				 enum bt_security_err security_err)
+void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err security_err)
 {
-	printk("Security changed: level %i, err: %i\n", level, security_err);
+	printk("Security changed: level %i, err: %i %s\n", level, security_err,
+	       bt_security_err_to_str(security_err));
 
 	if (security_err != 0) {
 		printk("Failed to encrypt link\n");

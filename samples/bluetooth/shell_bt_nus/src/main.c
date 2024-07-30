@@ -76,8 +76,8 @@ static void __attribute__((unused)) security_changed(struct bt_conn *conn,
 	if (!err) {
 		LOG_INF("Security changed: %s level %u", addr, level);
 	} else {
-		LOG_INF("Security failed: %s level %u err %d", addr, level,
-			err);
+		LOG_INF("Security failed: %s level %u err %d %s", addr, level, err,
+			bt_security_err_to_str(err));
 	}
 }
 
@@ -105,7 +105,8 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
-	LOG_INF("Pairing failed conn: %s, reason %d", log_addr(conn), reason);
+	LOG_INF("Pairing failed conn: %s, reason %d %s", log_addr(conn), reason,
+		bt_security_err_to_str(reason));
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {

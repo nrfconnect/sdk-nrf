@@ -392,10 +392,9 @@ static void test_run(void)
 	}
 }
 
-void security_changed(struct bt_conn *conn, bt_security_t level,
-				 enum bt_security_err err)
+void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
-	printk("Security changed: level %i, err: %i\n", level, err);
+	printk("Security changed: level %i, err: %i %s\n", level, err, bt_security_err_to_str(err));
 
 	if (err != 0) {
 		printk("Failed to encrypt link\n");
