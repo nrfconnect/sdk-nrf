@@ -1234,11 +1234,21 @@ ci_samples_sensor:
 
 ci_samples_nrf_rpc:
   files:
+    - modules/crypto/
+    - modules/lib/open-amp/
     - nrf/samples/nrf_rpc/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/net/openthread/
     - nrf/subsys/nrf_rpc/
+    - nrf/subsys/nrf_security/
+    - nrfxlib/crypto/
     - nrfxlib/nrf_rpc/
     - zephyr/drivers/entropy/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/ipc/
     - zephyr/subsys/ipc/ipc_service/
+    - zephyr/subsys/net/
     - zephyr/subsys/random/
 
 ci_applications_protocols_serialization:
