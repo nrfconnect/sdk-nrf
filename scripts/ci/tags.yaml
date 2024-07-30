@@ -1287,3 +1287,11 @@ ci_samples_caf:
     - nrf/samples/caf/
     - nrf/subsys/app_event_manager/
     - nrf/subsys/caf/
+
+ci_samples_nrf_profiler:
+  files:
+    - nrf/samples/caf/
+    - nrf/samples/nrf_profiler/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/caf/
+    - nrf/subsys/nrf_profiler/
