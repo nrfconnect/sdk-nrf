@@ -1092,7 +1092,7 @@ int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg)
 		return -EBADMSG;
 	}
 
-	lte_lc_edrx_values_store(prev_lte_mode, edrx_value, ptw_value);
+	lte_lc_edrx_values_store(edrx_cfg->mode, edrx_value, ptw_value);
 
 	return 0;
 }
