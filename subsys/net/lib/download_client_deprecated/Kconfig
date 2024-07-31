@@ -7,7 +7,12 @@
 menuconfig  DOWNLOAD_CLIENT
 	bool "Download client"
 
-if DOWNLOAD_CLIENT
+config DOWNLOAD_CLIENT_DEPRECATED_API
+	bool "[DEPRECATED] Use deprecated API"
+	default y
+	select DEPRECATED
+
+if DOWNLOAD_CLIENT_DEPRECATED_API
 
 config DOWNLOAD_CLIENT_BUF_SIZE
 	int "Buffer size (static)"
@@ -155,6 +160,6 @@ if DOWNLOAD_CLIENT_LOG_LEVEL_DBG
 config DOWNLOAD_CLIENT_LOG_HEADERS
 	bool "Log protocol headers to console [Debug]"
 
-endif
+endif # DOWNLOAD_CLIENT_LOG_LEVEL_DBG
 
-endif
+endif # DOWNLOAD_CLIENT_DEPRECATED_API
