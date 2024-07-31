@@ -55,7 +55,7 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 #define NET_BUF_POOL_MAX ((GROUP_MAX) * (SUBGROUP_MAX) * (STREAMS_MAX) * (HCI_ISO_BUF_PER_CHAN))
 
 NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool, NET_BUF_POOL_MAX, BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU),
-			  8, NULL);
+			  CONFIG_BT_CONN_TX_USER_DATA_SIZE, NULL);
 
 struct tx_inf {
 	uint16_t iso_conn_handle;
