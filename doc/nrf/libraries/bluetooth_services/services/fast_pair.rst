@@ -50,9 +50,8 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_USER_RESET_ACTION` - The option enables user reset action that is executed together with the Fast Pair factory reset operation.
   See the :ref:`ug_bt_fast_pair_factory_reset_custom_user_reset_action` for more details.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX` - The option configures maximum number of stored Account Keys.
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT`, :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS`, :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_OBERON`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA` - These options are used to select the cryptographic backend for Fast Pair.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT`, :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_OBERON`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA` - These options are used to select the cryptographic backend for Fast Pair.
   The Oberon backend is used by default.
-  The Mbed TLS backend uses Mbed TLS crypto APIs that are now considered legacy APIs.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_PN` - The option enables the `Fast Pair Personalized Name extension`_.
   It is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` Kconfig option is enabled.
   This is done to align default configuration with `Fast Pair Device Feature Requirements for Locator Tags`_ documentation.
