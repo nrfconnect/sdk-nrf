@@ -19,6 +19,7 @@ To enable Bluetooth LE in your application, you can use the standard HCI-based a
    :caption: Subpages:
 
    bt_solutions.rst
+   bt_stack_arch.rst
    ble/index.rst
    bt_mesh/index.rst
    bt_qualification/index.rst
