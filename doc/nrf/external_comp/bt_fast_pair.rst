@@ -931,10 +931,10 @@ You must implement the guidelines at application level as they cannot be automat
 Implement these guidelines in your application if your product is targeting the locator tag use case.
 To see how to implement `Fast Pair Locator Tag Specific Guidelines`_ , see the :ref:`fast_pair_locator_tag` sample.
 
-You should declare support for the locator tag use case during the device registration process in the Google Nearby Device console.
-To activate the support, populate the **Fast Pair** protocol configuration panel in the following order:
+You must declare support for the locator tag use case when registering your device in the Google Nearby Device console.
+To enable the support, populate the **Fast Pair** protocol configuration panel in the following order:
 
-#. Select :guilabel:`Locator Tag` option in the **Device Type** list.
+#. Select the :guilabel:`Locator Tag` option from the **Device Type** list.
 #. Set the **Find My Device** feature to **true**.
 
 .. note::
