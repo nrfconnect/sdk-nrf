@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 sample:
   name: nPM1300 fuel gauge
-
+#dummy comment 17968
 common:
   integration_platforms:
     - nrf52dk/nrf52832
