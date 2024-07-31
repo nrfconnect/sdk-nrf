@@ -12,6 +12,9 @@
 
 #include "log_rpc_group.h"
 
+#include <logging/log_rpc.h>
+#include <nrf_rpc/nrf_rpc_serialize.h>
+
 #include <nrf_rpc_cbor.h>
 
 #include <zephyr/logging/log.h>
@@ -21,8 +24,6 @@
 #include <zephyr/retention/retention.h>
 
 #include <string.h>
-
-#define CRASH_LOG_DEV DEVICE_DT_GET(DT_NODELABEL(crash_log))
 
 /*
  * Drop messages coming from nRF RPC to avoid the avalanche of logs:
@@ -39,10 +40,23 @@ static const char *const filtered_out_sources[] = {
 
 static bool panic_mode;
 static uint32_t log_format = LOG_OUTPUT_TEXT;
-static uint8_t current_level;
+static enum log_rpc_level current_level;
+static enum log_rpc_level stream_level = LOG_RPC_LEVEL_NONE;
 static uint8_t log_output_buffer[CONFIG_LOG_BACKEND_RPC_BUFFER_SIZE];
 
+/*
+ * Verify that Zephyr logging level can be used as the nRF RPC logging level without translation.
+ */
+BUILD_ASSERT(LOG_LEVEL_NONE == LOG_RPC_LEVEL_NONE, "Logging level value mismatch");
+BUILD_ASSERT(LOG_LEVEL_ERR == LOG_RPC_LEVEL_ERR, "Logging level value mismatch");
+BUILD_ASSERT(LOG_LEVEL_WRN == LOG_RPC_LEVEL_WRN, "Logging level value mismatch");
+BUILD_ASSERT(LOG_LEVEL_INF == LOG_RPC_LEVEL_INF, "Logging level value mismatch");
+BUILD_ASSERT(LOG_LEVEL_DBG == LOG_RPC_LEVEL_DBG, "Logging level value mismatch");
+
 #ifdef CONFIG_LOG_BACKEND_RPC_CRASH_LOG
+
+#define CRASH_LOG_DEV DEVICE_DT_GET(DT_NODELABEL(crash_log))
+
 /* Header for the crash log data stored in the retained RAM partition. */
 typedef struct crash_log_header {
 	size_t size;
@@ -243,6 +257,8 @@ static void process(const struct log_backend *const backend, union log_msg_gener
 	const log_format_func_t log_formatter = log_format_func_t_get(log_format);
 	const char *source_name = log_msg_source_name_get(&msg->log);
 	uint32_t flags = LOG_OUTPUT_FLAG_TIMESTAMP | LOG_OUTPUT_FLAG_FORMAT_TIMESTAMP;
+	enum log_rpc_level level = (enum log_rpc_level)log_msg_get_level(&msg->log);
+	enum log_rpc_level max_level = stream_level;
 
 	/*
 	 * Panic mode: logs are appended to the buffer in retained RAM, so include LF characters.
@@ -264,8 +280,15 @@ static void process(const struct log_backend *const backend, union log_msg_gener
 		}
 	}
 
-	current_level = log_msg_get_level(&msg->log);
-	log_formatter(&log_output_rpc, &msg->log, flags);
+	/*
+	 * The "max_level != LOG_RPC_LEVEL_NONE" condition seems redundant but is neeed because log
+	 * messages can be generated without specifying the level. Such messages should still be
+	 * rejected if the maximum level is LOG_RPC_LEVEL_NONE.
+	 */
+	if (max_level != LOG_RPC_LEVEL_NONE && level <= max_level) {
+		current_level = level;
+		log_formatter(&log_output_rpc, &msg->log, flags);
+	}
 }
 
 static void panic(struct log_backend const *const backend)
@@ -306,3 +329,26 @@ static const struct log_backend_api log_backend_rpc_api = {
 };
 
 LOG_BACKEND_DEFINE(log_backend_rpc, log_backend_rpc_api, true);
+
+static void log_rpc_set_stream_level_handler(const struct nrf_rpc_group *group,
+					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	struct nrf_rpc_cbor_ctx rsp_ctx;
+	enum log_rpc_level level;
+
+	level = (enum log_rpc_level)nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(&log_rpc_group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &log_rpc_group,
+			    LOG_RPC_CMD_SET_STREAM_LEVEL, NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	stream_level = level;
+
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
+	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_stream_level_handler,
+			 LOG_RPC_CMD_SET_STREAM_LEVEL, log_rpc_set_stream_level_handler, NULL);
