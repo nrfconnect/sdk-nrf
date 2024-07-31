@@ -9,7 +9,7 @@
 menuconfig PARTITION_MANAGER
 	bool "Partition Manager"
 	default y if SOC_FAMILY_NORDIC_NRF
-	depends on !SOC_SERIES_NRF54HX
+	depends on !(SOC_SERIES_NRF54HX || SOC_SERIES_NRF92X)
 	depends on !EXTERNAL_CONFIGURED_NETCORE
 
 if PARTITION_MANAGER
