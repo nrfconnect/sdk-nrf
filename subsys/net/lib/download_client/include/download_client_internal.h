@@ -22,6 +22,8 @@ int coap_initiate_retransmission(struct download_client *dl);
 int coap_parse(struct download_client *client, size_t len);
 int coap_request_send(struct download_client *client);
 
-int socket_send(const struct download_client *client, size_t len, int timeout);
+int client_socket_configure_and_connect(struct download_client *dl, int type, uint16_t port);
+int client_socket_send(const struct download_client *client, size_t len, int timeout);
+ssize_t client_socket_recv(struct download_client *dl);
 
 #endif /* DOWNLOAD_CLIENT_INTERNAL_H */
