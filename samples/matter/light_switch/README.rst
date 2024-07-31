@@ -130,10 +130,10 @@ The following snippet is available:
 
 * ``lit_icd`` - Enables experimental LIT ICD support.
 
-  .. note::
-    This snippet requires a custom ZAP configuration, located in the :file:`snippets/lit_icd` directory.
-    Ensure to configure and generate the correct ZAP files if a custom data model is needed.
-    To do this, run the ``west zap-generate`` command and choose the :file:`snippets/lit_icd/light_switch.zap` file.
+  .. |snippet_zap_file| replace:: :file:`snippets/lit_icd/light_switch.zap`
+  .. |snippet_dir| replace:: :file:`snippets/lit_icd`
+
+  .. include:: /includes/matter_snippets_note.txt
 
 FEM support
 ===========
