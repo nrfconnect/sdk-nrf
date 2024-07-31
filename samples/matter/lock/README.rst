@@ -194,7 +194,10 @@ You can schedule the following types of timed access:
      - ``Passage`` - The lock can be operated without providing a PIN.
        This option can be used, for example, for employees during working hours.
 
-See the :ref:`matter_lock_enabling_scheduled_timed_access` and :ref:`matter_lock_sample_schedule_testing` sections of this sample for more information.
+To enable the scheduled timed access feature, use the ``schedules`` snippet.
+See the :ref:`matter_lock_snippets` section of this sample to learn how to enable the snippet.
+
+See the :ref:`matter_lock_sample_schedule_testing` section of this sample for more information about testing the scheduled timed access feature.
 
 .. _matter_lock_sample_configuration:
 
@@ -244,6 +247,24 @@ The sample supports the following configurations:
      - Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_wifi_thread_switching>` in the field.
 
 .. matter_door_lock_sample_configuration_file_types_end
+
+.. _matter_lock_snippets:
+
+Snippets
+========
+
+.. |snippet| replace:: :makevar:`lock_SNIPPET`
+
+.. include:: /includes/sample_snippets.txt
+
+The following snippet is available:
+
+* ``schedules`` - Enables schedule timed access features.
+
+  .. |snippet_zap_file| replace:: :file:`snippets/schedules/lock.zap`
+  .. |snippet_dir| replace:: :file:`snippets/schedules`
+
+  .. include:: /includes/matter_snippets_note.txt
 
 .. _matter_lock_sample_configuration_dfu:
 
@@ -560,123 +581,6 @@ Upgrading the device firmware
 
 To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
 
-.. _matter_lock_enabling_scheduled_timed_access:
-
-Enabling scheduled timed access
-===============================
-
-To enable the scheduled timed access feature, complete the following steps:
-
-1. Enable all needed scheduled timed access types in the ZAP file:
-
-   a. Open the :file:`lock.zap` file using the following west command:
-
-      .. code-block:: console
-
-         west zap-gui
-
-   #. Select the endpoint that contains the Matter Door Lock cluster.
-      By default, this is `Endpoint-1`.
-
-   #. Click the :guilabel:`Configure` symbol for the ``Door Lock`` cluster entry.
-   #. In the **Door Lock** context window, go to the **Attributes** tab and enable all required attributes:
-
-      * ``NumberOfWeekDaySchedulesSupportedPerUser`` for the ``Week-day`` schedule support.
-      * ``NumberOfYearDaySchedulesSupportedPerUser`` for the ``Year-day`` schedule support.
-      * ``NumberOfHolidaySchedulesSupported`` for the ``Holiday`` schedule support.
-
-   #. In the **Door Lock** context window, go to the **Attribute Reporting** page and enable all required attribute reporting entries:
-
-      * ``NumberOfWeekDaySchedulesSupportedPerUser`` for the ``Week-day`` schedule support.
-      * ``NumberOfYearDaySchedulesSupportedPerUser`` for the ``Year-day`` schedule support.
-      * ``NumberOfHolidaySchedulesSupported`` for the ``Holiday`` schedule support.
-
-   #. In the **Door Lock** context window, go to the **Commands** page and enable all required command entries:
-
-      * For the ``Week-day`` schedule support:
-
-        * ``SetWeekDaySchedule``
-        * ``GetWeekDaySchedule``
-        * ``GetWeekDayScheduleResponse``
-        * ``ClearWeekDaySchedule``
-
-      * For the ``Year-day`` schedule support:
-
-         * ``SetYearDaySchedule``
-         * ``GetYearDaySchedule``
-         * ``GetYearDayScheduleResponse``
-         * ``ClearYearDaySchedule``
-
-      * For the ``Holiday`` schedule support:
-
-         * ``SetHolidaySchedule``
-         * ``GetHolidaySchedule``
-         * ``GetHolidayScheduleResponse``
-         * ``ClearHolidaySchedule``
-
-#. In the **Door Lock** context window, go to the **Attributes** tab and set the proper bits for the ``FeatureMap`` attribute:
-
-   * For the ``Week-day`` schedule support set the ``5th`` bit of the feature map bit map.
-   * For the ``Year-day`` schedule support set the ``11th`` bit of the feature map bit map.
-   * For the ``Holiday`` schedule support set the ``12th`` bit of the feature map bit map.
-
-#. Enable Time Synchronization cluster with all needed types in the ZAP file:
-
-   #. In ZAP Tool GUI, select the endpoint 0 and enable the ``Time Synchronization`` cluster, with both server and client roles, for that endpoint.
-
-   #. Click the :guilabel:`Configure` symbol for the ``Time Synchronization`` cluster entry.
-   #. In the **Time Synchronization** context window, go to the **Attributes** tab and enable all required attributes:
-
-      * ``UTCTime``.
-      * ``Granularity``.
-      * ``TimeZone``.
-      * ``DSTOffset``.
-      * ``LocalTime``.
-      * ``TimeZoneDatabase``.
-      * ``TimeZoneListMaxSize``.
-      * ``DSTOffsetListMaxSize``.
-      * ``TrustedTimeSource``.
-
-   #. In the **Time Synchronization** context window, go to the **Attribute Reporting** page and enable all available attribute reporting entries.
-
-   #. In the **Time Synchronization** context window, go to the **Commands** page and enable all required command entries:
-
-      * ``SetUTCTime``.
-      * ``SetTimeZone``.
-      * ``SetTimeZoneResponse``.
-      * ``SetDSTOffset``.
-      * ``SetTrustedTimeSource``.
-
-#. In the **Time Synchronization** context window, go to the **Attributes** tab and set the proper bits for the ``FeatureMap`` attribute:
-
-   * For the ``TimeZone`` support, set the ``0th`` bit of the feature map bit map.
-   * For the ``TimeSyncClient`` support, set the ``3rd`` bit of the feature map bit map.
-
-   As a result, the default decimal value of the ``FeatureMap`` should be `9`.
-
-#. Save the :file:`lock.zap` file, and close ZAP-tool.
-#. Generate new ZAP files with the changes in the Door Lock cluster using the following west command:
-
-   .. code-block:: console
-
-         west zap-generate
-
-#. Enable the Lock Schedules feature in the |NCS| Matter Lock sample by setting the :kconfig:option:`CONFIG_LOCK_SCHEDULES` Kconfig option to ``y``.
-#. Enable the Read Client support in the |NCS| Matter Lock sample by setting the :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option to ``y``.
-#. Use the following Kconfig options to modify the maximum number of specific schedule types:
-
-   - :kconfig:option:`CONFIG_LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER` to define the maximum number of ``Week-day`` schedules for one user.
-   - :kconfig:option:`CONFIG_LOCK_MAX_YEARDAY_SCHEDULES_PER_USER` to define the maximum number of ``Year-day`` schedules for one user.
-   - :kconfig:option:`CONFIG_LOCK_MAX_HOLIDAY_SCHEDULES` to define the maximum number of ``Holiday`` schedules.
-
-To learn more about configuring the Matter clusters, see the :ref:`ug_matter_creating_accessory` user guide.
-
-All scheduled timed access entries are saved to non-volatile memory and loaded automatically after device reboot.
-To disable the feature, you need to revert all changes in the :file:`lock.zap` file, re-generate the ZAP files and set the :kconfig:option:`CONFIG_LOCK_SCHEDULES` Kconfig option to ``n``.
-
-.. note::
-   Adding a single schedule for a user contributes to the settings partition memory occupancy increase.
-
 .. _matter_lock_sample_remote_access_with_pin:
 
 Testing remote access with PIN code credential
@@ -740,6 +644,9 @@ Testing scheduled timed access
 .. note::
    You can test :ref:`matter_lock_scheduled_timed_access` using any Matter compatible controller.
    The following steps use the CHIP Tool controller as an example.
+
+   All scheduled timed access entries are saved to non-volatile memory and loaded automatically after device reboot.
+   Adding a single schedule for a user contributes to the settings partition memory occupancy increase.
 
 After building the sample with the feature enabled and programming it to your development kit, complete the following steps to test scheduled timed access:
 
