@@ -892,8 +892,12 @@ Depending on your use case, select an option from the following list that is a p
 
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` - The unknown use case (the default choice).
   See the :ref:`ug_bt_fast_pair_use_case_unknown` subsection for more information.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE` - The input device use case.
+  See the :ref:`ug_bt_fast_pair_use_case_input_device` subsection for more information.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` - The locator tag use case.
   See the :ref:`ug_bt_fast_pair_use_case_locator_tag` subsection for more information.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` - The mouse use case.
+  See the :ref:`ug_bt_fast_pair_use_case_mouse` subsection for more information.
 
 The selected Kconfig option configures the Fast Pair features and extensions to satisfy the `Fast Pair Device Feature Requirements`_ for your target use case.
 For certain device types, you may need to implement some of these requirements at the application level.
@@ -911,6 +915,20 @@ The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` Kconfig option is the
 This use case configuration is neutral, which means it does not enable any Fast Pair features and extensions or impose restrictions on Fast Pair Kconfig options.
 You can use the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` Kconfig option to implement use cases that are not yet supported by the |NCS|.
 In this case, you must manually enable the required Fast Pair features and extensions in the application's Kconfig configuration.
+
+.. _ug_bt_fast_pair_use_case_input_device:
+
+Input device
+============
+
+Input device is a Human Interface Device (HID) such as a mouse, keyboard, remote control, or gaming pad used to interact with electronic devices such as a PC, TV, or console.
+
+If your product is targeting the input device use case, you must enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE` Kconfig option that automatically selects the appropriate Fast Pair configuration.
+Currently, the Google Fast Pair specification does not define the input device feature requirements.
+For this reason, the Fast Pair feature and extension set is chosen arbitrarily to ensure the best user experience.
+
+You must declare support for the input device use case when registering your device in the Google Nearby Device console.
+To enable the support, select the :guilabel:`Input Device` option from the **Device Type** list in the **Fast Pair** protocol configuration panel.
 
 .. _ug_bt_fast_pair_use_case_locator_tag:
 
@@ -940,6 +958,24 @@ To enable the support, populate the **Fast Pair** protocol configuration panel i
 .. note::
    It is recommended to use the special mode of the ``Fast Pair Procedure`` for the locator tag use case (see :ref:`ug_bt_fast_pair_gatt_service_no_ble_pairing` for more details).
    The Bluetooth bonding information can cause connection establishment issues and delays on some Android devices.
+
+.. _ug_bt_fast_pair_use_case_mouse:
+
+Mouse
+=====
+
+Mouse is a Human Interface Device (HID) used to interact with electronic devices such as a PC.
+This use case is a specific variant of the :ref:`ug_bt_fast_pair_use_case_input_device` and shares many similarities with it.
+
+If your product is targeting the mouse use case, you must enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` Kconfig option that automatically selects the appropriate Fast Pair configuration.
+Currently, the Google Fast Pair specification does not specify the mouse feature requirements.
+For this reason, the Fast Pair feature and extension set is chosen arbitrarily to ensure the best user experience.
+
+You must declare support for the mouse use case when registering your device in the Google Nearby Device console.
+To enable the support, select the :guilabel:`Mouse` option from the **Device Type** list in the **Fast Pair** protocol configuration panel.
+
+.. note::
+   The mouse device type is not supported on Android devices.
 
 Applications and samples
 ************************
