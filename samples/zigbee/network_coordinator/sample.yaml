@@ -1,6 +1,7 @@
 sample:
   description: Zigbee Light control - coordinator sample
   name: Zigbee Network coordinator
+  #dummy comment for NCSDK-17968
 tests:
   sample.zigbee.network_coordinator:
     sysbuild: true
