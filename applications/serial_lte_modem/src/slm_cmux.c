@@ -209,7 +209,7 @@ void slm_cmux_release(enum cmux_channel channel)
 {
 	struct cmux_dlci *dlci = cmux_get_dlci(channel);
 
-#if defined(SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE)
+#if defined(CONFIG_SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE)
 	if (channel == CMUX_PPP_CHANNEL) {
 		cmux.at_channel = 0;
 	}
