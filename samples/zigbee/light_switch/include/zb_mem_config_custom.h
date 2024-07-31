@@ -33,8 +33,16 @@
  * Now if you REALLY know what you do, you can study zb_mem_config_common.h
  * and redefine some configuration parameters, like:
  */
+#if defined(CONFIG_LIGHT_SWITCH_CONFIGURE_TX_POWER) && \
+	defined(CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI)
+#undef ZB_CONFIG_SCHEDULER_Q_SIZE
+#define ZB_CONFIG_SCHEDULER_Q_SIZE 28
+#undef ZB_CONFIG_IOBUF_POOL_SIZE
+#define ZB_CONFIG_IOBUF_POOL_SIZE 42
+#else
 #undef ZB_CONFIG_SCHEDULER_Q_SIZE
 #define ZB_CONFIG_SCHEDULER_Q_SIZE 24
+#endif /* CONFIG_LIGHT_SWITCH_CONFIGURE_TX_POWER && CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI */
 
 /**
  * Increase OTA transfer time by extending the APS duplicate rejection table.

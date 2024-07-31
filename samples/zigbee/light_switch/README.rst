@@ -135,6 +135,17 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
+Configurable transmission power
+===============================
+
+To achieve a lower power consumption of the light switch, you can configure the transmission power using the :kconfig:option:`CONFIG_LIGHT_SWITCH_CONFIGURE_TX_POWER` Kconfig option.
+You can select per-channel transmission power (in dBm) with the :kconfig:option:`CONFIG_LIGHT_SWITCH_TX_POWER` Kconfig option.
+This affects to all frames sent by the device, even in the network scan phase.
+
+When the :kconfig:option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` Kconfig option is set to ``y``, the :kconfig:option:`CONFIG_ZIGBEE_APP_CB_QUEUE_LENGTH` Kconfig option must be increased depending on the channel mask.
+For example, in case 16 channels are active, a proper value for :kconfig:option:`CONFIG_ZIGBEE_APP_CB_QUEUE_LENGTH` would be ``17``.
+Similar consideration applies to the `ZB_CONFIG_IOBUF_POOL_SIZE` and `ZB_CONFIG_SCHEDULER_Q_SIZE` values configured in the :file:`include/zb_mem_config_custom.h` file.
+
 .. _zigbee_light_switch_user_interface:
 
 User interface
