@@ -434,7 +434,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - fast_pair.crypto.mbedtls
     - fast_pair.crypto.oberon
     - fast_pair.crypto.tinycrypt
     - fast_pair.crypto.psa
