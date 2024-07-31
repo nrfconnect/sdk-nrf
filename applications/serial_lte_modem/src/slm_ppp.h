@@ -14,6 +14,6 @@ extern bool slm_fwd_cgev_notifs;
 /** @retval 0 on success. */
 int slm_ppp_init(void);
 
-bool slm_ppp_is_running(void);
+bool slm_ppp_is_stopped(void);
 
 #endif

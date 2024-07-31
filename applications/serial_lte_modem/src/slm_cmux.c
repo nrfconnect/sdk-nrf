@@ -296,8 +296,8 @@ static int handle_at_cmux(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 		const unsigned int at_channel = at_dlci - 1;
 
 #if defined(CONFIG_SLM_PPP)
-		if (slm_ppp_is_running() && at_channel != cmux.at_channel) {
-			/* The AT channel cannot be changed when PPP is running. */
+		if (!slm_ppp_is_stopped() && at_channel != cmux.at_channel) {
+			/* The AT channel cannot be changed when PPP has a channel reserved. */
 			return -ENOTSUP;
 		}
 #endif
