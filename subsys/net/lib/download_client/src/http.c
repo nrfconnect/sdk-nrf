@@ -106,7 +106,7 @@ int http_get_request_send(struct download_client *client)
 		LOG_HEXDUMP_DBG(client->buf, len, "HTTP request");
 	}
 
-	err = socket_send(client, len, 0);
+	err = client_socket_send(client, len, 0);
 	if (err) {
 		LOG_ERR("Failed to send HTTP request, errno %d", errno);
 		return err;
