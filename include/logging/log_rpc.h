@@ -21,6 +21,30 @@ extern "C" {
 #endif
 
 /**
+ * nRF RPC logging level.
+ */
+enum log_rpc_level {
+	LOG_RPC_LEVEL_NONE = 0,
+	LOG_RPC_LEVEL_ERR,
+	LOG_RPC_LEVEL_WRN,
+	LOG_RPC_LEVEL_INF,
+	LOG_RPC_LEVEL_DBG,
+};
+
+/**
+ * Sets the logging stream verbosity level.
+ *
+ * Configures the remote device to only stream log messages whose level is less
+ * than or equal to the specified level.
+ *
+ * @param level		Logging level, see @c log_rpc_level.
+ *
+ * @retval 0		On success.
+ * @retval -errno	On failure.
+ */
+int log_rpc_set_stream_level(enum log_rpc_level level);
+
+/**
  * @brief Retrieves the crash log retained on the remote device.
  *
  * The function issues an nRF RPC command to obtain the last crash log retained
