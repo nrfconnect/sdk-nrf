@@ -398,7 +398,9 @@ Thread samples
 Zigbee samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`zigbee_light_switch_sample` sample:
+
+  * Added the option to configure transmission power.
 
 Wi-Fi samples
 -------------
