@@ -31,9 +31,8 @@ config FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ
 	help
 	  Buffer size must be aligned to the minimal flash write block size
 
-config FOTA_DOWNLOAD_FULL_MODEM_BUF_SZ
-	int "Size of buffer used for flash write operations during full modem updates"
-	depends on DFU_TARGET_FULL_MODEM
+config FOTA_DOWNLOAD_BUF_SZ
+	int "Size of buffer used for download client"
 	default 4096
 	help
 	  Buffer size must be aligned to the minimal flash write block size
@@ -44,12 +43,8 @@ config FOTA_DOWNLOAD_NATIVE_TLS
 	  Enabling this option will configure the socket to be native for TLS
 	  instead of offloading TLS operations to the modem.
 
-config FOTA_DOWNLOAD_FILE_NAME_LENGTH
-	int "Size of buffer used for file name"
-	default 128
-
-config FOTA_DOWNLOAD_HOST_NAME_LENGTH
-	int "Size of buffer used for host name"
+config FOTA_DOWNLOAD_URI_LENGTH
+	int "Size of buffer used for uri"
 	default 128
 
 config FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH

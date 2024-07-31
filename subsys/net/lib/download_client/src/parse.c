@@ -23,28 +23,6 @@ static int swallow(const char **str, const char *swallow)
 	return 0;
 }
 
-int url_parse_proto(const char *url, int *proto, int *type)
-{
-	if (strncmp(url, "https://", 8) == 0) {
-		*proto = IPPROTO_TLS_1_2;
-		*type = SOCK_STREAM;
-	} else if (strncmp(url, "http://", 7) == 0) {
-		*proto = IPPROTO_TCP;
-		*type = SOCK_STREAM;
-	} else if (strncmp(url, "coaps://", 8) == 0) {
-		*proto = IPPROTO_DTLS_1_2;
-		*type = SOCK_DGRAM;
-	} else if (strncmp(url, "coap://", 7) == 0) {
-		*proto = IPPROTO_UDP;
-		*type = SOCK_DGRAM;
-	} else if (strstr(url, "://")) {
-		return -EPROTONOSUPPORT;
-	} else {
-		return -EINVAL;
-	}
-	return 0;
-}
-
 int url_parse_host(const char *url, char *host, size_t len)
 {
 	const char *cur;

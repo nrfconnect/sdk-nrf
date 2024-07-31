@@ -132,10 +132,8 @@ int fota_download_init(fota_download_callback_t client_callback);
  * URI parameters (host and file) are not copied, so pointers must stay valid
  * until download is finished.
  *
- * @param host Name of host to start downloading from. Can include scheme
- *             and port number, for example https://google.com:443
- * @param file Path to the file you wish to download. See fota_download_any()
- *             for details on expected format.
+ * @param uri URI to download from. Must include scheme and can include port number, e.g.
+ *            https://google.com:443/path/to/binary.bin
  * @param sec_tag_list Security tags that you want to use with HTTPS. Pass NULL to disable TLS.
  * @param sec_tag_count Number of TLS security tags in list. Pass 0 to disable TLS.
  * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
@@ -149,7 +147,7 @@ int fota_download_init(fota_download_callback_t client_callback);
  *		     @kconfig{CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX}
  *                   Otherwise, a negative value is returned.
  */
-int fota_download(const char *host, const char *file, const int *sec_tag_list,
+int fota_download(const char *uri, const int *sec_tag_list,
 		  uint8_t sec_tag_count, uint8_t pdn_id, size_t fragment_size,
 		  const enum dfu_target_image_type expected_type);
 
@@ -162,19 +160,18 @@ int fota_download(const char *host, const char *file, const int *sec_tag_list,
  * URI parameters (host and file) are not copied, so pointers must stay valid
  * until download is finished.
  *
- * @param host Name of host to start downloading from. Can include scheme
- *             and port number, e.g. https://google.com:443
- * @param file Path to the file you wish to download. May be either a single
- *              file path, relative to host (for example "path/to/binary.bin"),
- *              or, if bootloader FOTA is enabled, can be two paths (both relative
- *              to host), separated by a space (for example "path/to/s0.bin path/to/s1.bin").
- *              If two paths are provided, the download will be assumed to be a bootloader
- *              download, both paths will be treated as upgradable bootloader slot 0
- *              and slot 1 binaries respectively, and only the binary corresponding to
- *              the currently inactive bootloader slot will be selected and downloaded.
-*               See <a href="https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/config_and_build/bootloaders/bootloader.html">
- *              Secure Bootloader Chain Docs</a> for details regarding the upgradable
- *              bootloader slots.
+ * @param uri  URI to download from. Must include scheme and can include port number, e.g.
+ *             https://google.com:443/path/to/binary.bin
+ *             May be either a single uri, (for example "https://google.com/path/to/binary.bin"),
+ *             or, if bootloader FOTA is enabled, can be two URIs, separated by a space
+ *             (for example "https://google.com/path/to/s0.bin https://google.com/path/to/s1.bin").
+ *             If two URIs are provided, the download will be assumed to be a bootloader
+ *             download, both paths will be treated as upgradable bootloader slot 0
+ *             and slot 1 binaries respectively, and only the binary corresponding to
+ *             the currently inactive bootloader slot will be selected and downloaded.
+*              See <a href="https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/config_and_build/bootloaders/bootloader.html">
+ *             Secure Bootloader Chain Docs</a> for details regarding the upgradable
+ *             bootloader slots.
  * @param sec_tag_list Security tags that you want to use with HTTPS. Pass NULL to disable TLS.
  * @param sec_tag_count Number of TLS security tags in list. Pass 0 to disable TLS.
  * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
@@ -187,7 +184,7 @@ int fota_download(const char *host, const char *file, const int *sec_tag_list,
  *		     @kconfig{CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX}
  *                   Otherwise, a negative value is returned.
  */
-int fota_download_any(const char *host, const char *file, const int *sec_tag_list,
+int fota_download_any(const char *uri, const int *sec_tag_list,
 		      uint8_t sec_tag_count, uint8_t pdn_id, size_t fragment_size);
 
 /**@brief Start downloading the given file of any image type from the given host.
@@ -198,10 +195,7 @@ int fota_download_any(const char *host, const char *file, const int *sec_tag_lis
  * URI parameters (host and file) are not copied, so pointers must stay valid
  * until download is finished.
  *
- * @param host Name of host to start downloading from. Can include scheme
- *             and port number, e.g. https://google.com:443
- * @param file Path to the file you wish to download. See fota_download_any()
- *             for details on expected format.
+ * @param uri Uri to download from. See fota_download_any() for details on expected format.
  * @param sec_tag Security tag you want to use with HTTPS. Pass -1 to disable TLS.
  * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
  * @param fragment_size Fragment size to be used for the download.
@@ -211,7 +205,7 @@ int fota_download_any(const char *host, const char *file, const int *sec_tag_lis
  * @retval -EALREADY If download is already ongoing.
  *                   Otherwise, a negative value is returned.
  */
-int fota_download_start(const char *host, const char *file, int sec_tag,
+int fota_download_start(const char *uri, int sec_tag,
 			uint8_t pdn_id, size_t fragment_size);
 
 /**@brief Download the given file with the specified image type from the given host.
@@ -223,10 +217,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
  * URI parameters (host and file) are not copied, so pointers must stay valid
  * until download is finished.
  *
- * @param host Name of host to start downloading from. Can include scheme
- *             and port number, for example https://google.com:443
- * @param file Path to the file you wish to download. See fota_download_any()
- *             for details on expected format.
+ * @param uri Uri to download from. See fota_download_any() for details on expected format.
  * @param sec_tag Security tag you want to use with HTTPS. Pass -1 to disable TLS.
  * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
  * @param fragment_size Fragment size to be used for the download.
@@ -237,7 +228,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
  * @retval -EALREADY If download is already ongoing.
  *                   Otherwise, a negative value is returned.
  */
-int fota_download_start_with_image_type(const char *host, const char *file,
+int fota_download_start_with_image_type(const char *uri,
 			int sec_tag, uint8_t pdn_id, size_t fragment_size,
 			const enum dfu_target_image_type expected_type);
 

@@ -285,7 +285,7 @@ static int modem_configure_and_connect(void)
 static int update_download(void)
 {
 	int err;
-	const char *file;
+	char uri[CONFIG_FOTA_DOWNLOAD_URI_LENGTH];
 	int sec_tag = SEC_TAG;
 	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
 
@@ -297,9 +297,9 @@ static int update_download(void)
 	}
 
 	if (is_test_firmware()) {
-		file = CONFIG_DOWNLOAD_FILE_FOTA_TEST_TO_BASE;
+		sprintf(uri, "%s/%s", CONFIG_DOWNLOAD_HOST, CONFIG_DOWNLOAD_FILE_FOTA_TEST_TO_BASE);
 	} else {
-		file = CONFIG_DOWNLOAD_FILE_BASE_TO_FOTA_TEST;
+		sprintf(uri, "%s/%s", CONFIG_DOWNLOAD_HOST, CONFIG_DOWNLOAD_FILE_BASE_TO_FOTA_TEST);
 	}
 
 	err = fota_download_init(fota_dl_handler);
@@ -309,10 +309,10 @@ static int update_download(void)
 	}
 
 	/* Functions for getting the host and file */
-	err = fota_download(CONFIG_DOWNLOAD_HOST, file, &sec_tag, sec_tag_count, 0, 0,
+	err = fota_download(uri, &sec_tag, sec_tag_count, 0, 0,
 			    DFU_TARGET_IMAGE_TYPE_MODEM_DELTA);
 	if (err) {
-		printk("fota_download_any() failed, err %d\n", err);
+		printk("fota_download() failed, err %d\n", err);
 		return err;
 	}
 

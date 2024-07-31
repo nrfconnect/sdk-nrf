@@ -123,7 +123,7 @@ int fota_init(void)
 	return fota_download_init(&fota_download_callback);
 }
 
-int fota_start(const char *host, const char *file)
+int fota_start(const char *uri)
 {
-	return fota_download_start(host, file, CONFIG_NRF_CLOUD_SEC_TAG, 0, 0);
+	return fota_download_start(uri, CONFIG_NRF_CLOUD_SEC_TAG, 0, 0);
 }

@@ -419,7 +419,7 @@ void fota_dl_handler(const struct fota_download_evt *evt)
 static int update_download(void)
 {
 	int err;
-	const char *file;
+	char uri[CONFIG_FOTA_DOWNLOAD_URI_LENGTH];
 	int sec_tag = SEC_TAG;
 	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
 	const struct dfu_target_full_modem_params params = {
@@ -452,13 +452,13 @@ static int update_download(void)
 	}
 
 	if (current_version_is_0()) {
-		file = CONFIG_DOWNLOAD_MODEM_1_FILE;
+		sprintf(uri, "%s/%s", CONFIG_DOWNLOAD_HOST, CONFIG_DOWNLOAD_MODEM_1_FILE);
 	} else {
-		file = CONFIG_DOWNLOAD_MODEM_0_FILE;
+		sprintf(uri, "%s/%s", CONFIG_DOWNLOAD_HOST, CONFIG_DOWNLOAD_MODEM_1_FILE);
 	}
 
 	/* Functions for getting the host and file */
-	err = fota_download(CONFIG_DOWNLOAD_HOST, file, &sec_tag, sec_tag_count, 0, 0,
+	err = fota_download(uri, &sec_tag, sec_tag_count, 0, 0,
 			    DFU_TARGET_IMAGE_TYPE_FULL_MODEM);
 	if (err != 0) {
 		printk("fota_download() failed, err %d\n", err);
