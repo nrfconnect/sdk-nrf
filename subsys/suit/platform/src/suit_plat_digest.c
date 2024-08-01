@@ -56,6 +56,7 @@ int suit_plat_check_digest(enum suit_cose_alg alg_id, struct zcbor_string *diges
 	err = digest_sink.write(digest_sink.ctx, (uint8_t *)payload->value, payload->len);
 	if (err != SUIT_PLAT_SUCCESS) {
 		LOG_ERR("Failed to write to stream: %d", err);
+		(void)digest_sink.release(digest_sink.ctx);
 		return suit_plat_err_to_processor_err_convert(err);
 	}
 
