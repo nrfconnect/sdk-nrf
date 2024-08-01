@@ -31,8 +31,8 @@ void bt_le_adv_prov_fast_pair_enable(bool enable);
 
 /** Show/hide UI indication in Fast Pair not discoverable advertising.
  *
- * This API is only available when the CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING Kconfig
- * option is enabled. With this Kconfig option disabled, UI indications are always
+ * This API is only available when the @kconfig{CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING}
+ * Kconfig option is enabled. With this Kconfig option disabled, UI indications are always
  * hidden.
  *
  * This configuration does not affect Fast Pair discoverable advertising.
