@@ -37,7 +37,9 @@ LOG_MODULE_REGISTER(cloud_connection, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 static K_EVENT_DEFINE(cloud_events);
 
 /* Atomic status flag tracking whether an initial association is in progress. */
-atomic_t initial_association;
+static atomic_t initial_association;
+static int reconnect_seconds = CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS;
+static void start_readiness_timeout(int seconds);
 
 /* Helper functions for pending on pendable events. */
 bool await_network_ready(k_timeout_t timeout)
@@ -83,25 +85,35 @@ static bool await_connection_result(k_timeout_t timeout)
 static void ready_timeout_work_fn(struct k_work *work)
 {
 	ARG_UNUSED(work);
-	LOG_INF("nRF Cloud connection did not become ready in time, disconnecting and retrying...");
-	disconnect_cloud();
+	if (!atomic_get(&initial_association) || !IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+		LOG_INF("nRF Cloud connection did not become ready in time, "
+			"disconnecting and retrying...");
+		disconnect_cloud();
+	} else {
+		int err;
+
+		LOG_INF("Checking for association");
+		err = nrf_cloud_check_association();
+		if (err) {
+			LOG_ERR("Association check failed: %d", err);
+		}
+		start_readiness_timeout(CONFIG_CLOUD_ASSOCIATION_TIMEOUT_SECONDS);
+	}
 }
 
 static K_WORK_DELAYABLE_DEFINE(ready_timeout_work, ready_timeout_work_fn);
 
-
 /* Start the readiness timeout if readiness is not already achieved. */
-static void start_readiness_timeout(void)
+static void start_readiness_timeout(int seconds)
 {
 	/* It doesn't make sense to start the readiness timeout if we're already ready. */
-	if (!k_event_test(&cloud_events, CLOUD_READY)) {
+	if (k_event_test(&cloud_events, CLOUD_READY)) {
+		LOG_DBG("Already ready.");
 		return;
 	}
 
-	LOG_DBG("Starting cloud connection readiness timeout for %d seconds",
-		CONFIG_CLOUD_READY_TIMEOUT_SECONDS);
-
-	k_work_reschedule(&ready_timeout_work, K_SECONDS(CONFIG_CLOUD_READY_TIMEOUT_SECONDS));
+	LOG_DBG("Starting cloud connection readiness timeout for %d seconds", seconds);
+	k_work_reschedule(&ready_timeout_work, K_SECONDS(seconds));
 }
 
 static void clear_readiness_timeout(void)
@@ -133,6 +145,7 @@ static void cloud_ready(void)
 
 	/* Notify that the nRF Cloud connection is ready for use. */
 	k_event_post(&cloud_events, CLOUD_READY);
+	LOG_DBG("Setting CLOUD_READY");
 }
 
 /* A callback that the application may register in order to handle custom device messages.
@@ -288,7 +301,7 @@ static bool connect_cloud(void)
 	/* If connection succeeded and we aren't already ready, start the readiness timeout.
 	 * (Readiness check is performed by start_readiness_timeout).
 	 */
-	start_readiness_timeout();
+	start_readiness_timeout(CONFIG_CLOUD_READY_TIMEOUT_SECONDS);
 	return true;
 }
 
@@ -433,6 +446,9 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		 * when devices are first associated with an nRF Cloud account.
 		 */
 		atomic_set(&initial_association, true);
+		LOG_DBG("Clearing CLOUD_READY");
+		k_event_clear(&cloud_events, CLOUD_READY);
+		start_readiness_timeout(CONFIG_CLOUD_ASSOCIATION_TIMEOUT_SECONDS);
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
 		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATED");
@@ -448,6 +464,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 			 * The connection loop will handle reconnection afterwards.
 			 */
 			LOG_INF("Device successfully associated with cloud! Reconnecting");
+			reconnect_seconds = 1;
 			disconnect_cloud();
 		}
 		break;
@@ -456,6 +473,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 
 		/* Handle achievement of readiness */
 		cloud_ready();
+		reconnect_seconds = CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS;
 
 		/* The nRF Cloud library will automatically update the
 		 * device's shadow based on the build configuration.
@@ -668,9 +686,9 @@ void cloud_connection_thread_fn(void)
 			LOG_INF("Disconnected from nRF Cloud");
 		}
 
-		LOG_INF("Retrying in %d seconds...", CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS);
+		LOG_INF("Retrying in %d seconds...", reconnect_seconds);
 
 		/* Wait a bit before trying again. */
-		k_sleep(K_SECONDS(CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS));
+		k_sleep(K_SECONDS(reconnect_seconds));
 	}
 }

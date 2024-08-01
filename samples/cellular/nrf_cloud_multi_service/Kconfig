@@ -24,6 +24,13 @@ config CLOUD_READY_TIMEOUT_SECONDS
 	  If the connection to nRF Cloud does not become ready within this
 	  timeout, the sample will reset its connection and try again.
 
+config CLOUD_ASSOCIATION_TIMEOUT_SECONDS
+	int "Cloud association timeout (seconds)"
+	default 60
+	help
+	  If association with nRF Cloud does not occur within this
+	  timeout, the sample will resubscribe to the delta topic.
+
 config DATE_TIME_ESTABLISHMENT_TIMEOUT_SECONDS
 	int "Modem date and time establishment timeout (seconds)"
 	default 300
