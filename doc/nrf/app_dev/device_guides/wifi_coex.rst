@@ -242,6 +242,77 @@ To enable the generic three-wire coexistence, do the following:
    * :kconfig:option:`CONFIG_MPSL_CX`
    * :kconfig:option:`CONFIG_MPSL_CX_3WIRE`
 
+.. _ug_radio_mpsl_cx_generic_1wire:
+
+Generic one wire coexistence
+============================
+
+Refer to :ref:`ug_radio_coex_mpsl_cx_based` for the general requirements of this implementation.
+
+An example use-case of the generic one wire coexistence interface is to allow a protocol implementation to coexist alongside an LTE device on a separate chip, such as the nRF91 Series SiP.
+
+Hardware description
+--------------------
+
+The generic one wire interface consists of the signals listed in the table below.
+The *Pin* is a generic pin name of a PTA, identified rather by its function.
+The *Direction* is from the point of view of the SoC running the coexistence protocol.
+The *DT property* is the name of the devicetree node property that configures the connection between the SoC running the coexistence protocol and the other device.
+
+.. table:: Generic one wire coexistence protocol pins
+
+   ============  =========  =================================  ==============
+   Pin           Direction  Description                        DT property
+   ============  =========  =================================  ==============
+   GRANT         In         Grant signal                       grant-gpios
+   ============  =========  =================================  ==============
+
+In cases where the GPIO is asserted after the radio activity has begun, the ``GRANT`` signal triggers a software interrupt, which in turn disables the radio.
+No guarantee is made on the latency of this interrupt, but the ISR priority is configurable.
+
+Enabling generic one wire coexistence
+-------------------------------------
+
+To enable the generic one wire coexistence, do the following:
+
+
+1. Add the following node to the devicetree source file:
+
+   .. code-block::
+
+      / {
+            nrf_radio_coex: radio_coex_one_wire {
+               status = "okay";
+               compatible = "generic-radio-coex-one-wire";
+               grant-gpios =   <&gpio0 25 GPIO_ACTIVE_LOW>;
+               concurrency-mode = <0>;
+         };
+      };
+
+   The ``concurrency-mode`` property is optional and can be removed.
+   By default, or when set to 0, the ``GRANT`` signal will prevent both TX and RX.
+   When set to 1, it will only prevent TX.
+
+#. Optionally, if not using the nRF91 Series SiP, the ``GRANT`` signal may be configured active-high using ``GPIO_ACTIVE_HIGH``
+#. Optionally, replace the node name ``radio_coex_one_wire`` with a custom one.
+#. If not already present in the device tree, the GPIOTE interrupt may additionally be configured as follows (the first element is the IRQn, and the second is the priority):
+
+   .. code-block::
+
+      &gpiote {
+        interrupts = < 6 3 >;
+      };
+
+#. Replace the pin number provided for the ``grant-gpios`` property:
+   This is the GPIO characteristic of the device that interfaces with the ``GRANT`` signal of the PTA (RF medium access granted).
+
+   The first element ``&gpio0`` indicates the GPIO port (``port 0`` has been selected in the example shown).
+   The second element is the pin number on that port.
+
+#. Enable the following Kconfig options:
+
+   * :kconfig:option:`CONFIG_MPSL_CX`
+   * :kconfig:option:`CONFIG_MPSL_CX_1WIRE`
 
 .. _ug_radio_mpsl_cx_custom:
 

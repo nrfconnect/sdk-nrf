@@ -2,16 +2,27 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 description: |
-    This is a representation of an external radio coexistence setup that has a
-    one-pin control interface (GRANT).
+  This is a representation of an external radio coexistence setup that has a
+  one-pin control interface (GRANT).
 
 compatible: "generic-radio-coex-one-wire"
 
 include: base.yaml
 
 properties:
-    grant-gpios:
-        type: phandle-array
-        required: true
-        description: |
-            GPIO of the SOC connected to the PTA's GRANT pin.
+  concurrency-mode:
+    type: int
+    required: true
+    description: |
+      Concurrency mode with the external modem supported by 1-wire coexistence.
+      The possible values are:
+      0: 1-wire configuration to allow no concurrency with the external modem
+        when the grant line is asserted.
+      1: 1-wire configuration to allow RX mode concurrency
+        with the external modem when the grant line is asserted.
+
+  grant-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      GPIO of the SOC connected to the PTA's GRANT pin.
