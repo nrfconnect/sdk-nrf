@@ -25,6 +25,14 @@ config REST_DEVICE_MESSAGE_DO_JITP
 	  nRF Cloud, enable this option and press the configured button when
 	  prompted after the sample starts.
 
+config REST_DEVICE_MESSAGE_KEEP_ALIVE
+	bool "Keep connection alive during button handling"
+	default y
+	help
+	  Keep the HTTP connection open after sending the button message so the
+	  direct logging message can reuse it. This reduces data and power
+	  consumption, but is not compatible with the cloud logging backend.
+
 endmenu
 
 menu "Zephyr Kernel"
