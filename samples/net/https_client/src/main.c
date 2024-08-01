@@ -95,11 +95,11 @@ int cert_provision(void)
 		}
 	}
 
-	printk("Provisioning certificate\n");
+	printk("Provisioning certificate to the modem\n");
 
 	/*  Provision certificate to the modem */
 	err = modem_key_mgmt_write(TLS_SEC_TAG, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert,
-				   sizeof(cert) - 1);
+				   sizeof(cert));
 	if (err) {
 		printk("Failed to provision certificate, err %d\n", err);
 		return err;
