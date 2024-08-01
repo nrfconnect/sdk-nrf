@@ -31,42 +31,12 @@ LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 static int handle_disconnect(struct download_client *client);
 static int error_evt_send(const struct download_client *dl, int error);
 
-static bool is_idle(struct download_client *client)
+static bool is_state(struct download_client *client, enum download_client_state state)
 {
 	bool ret;
 
 	k_mutex_lock(&client->mutex, K_FOREVER);
-	ret = client->state == DOWNLOAD_CLIENT_IDLE;
-	k_mutex_unlock(&client->mutex);
-	return ret;
-}
-
-static bool is_connecting(struct download_client *client)
-{
-	bool ret;
-
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	ret = client->state == DOWNLOAD_CLIENT_CONNECTING;
-	k_mutex_unlock(&client->mutex);
-	return ret;
-}
-
-static bool is_downloading(struct download_client *client)
-{
-	bool ret;
-
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	ret = client->state == DOWNLOAD_CLIENT_DOWNLOADING;
-	k_mutex_unlock(&client->mutex);
-	return ret;
-}
-
-static bool is_closing(struct download_client *client)
-{
-	bool ret;
-
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	ret = client->state == DOWNLOAD_CLIENT_CLOSING;
+	ret = client->state == state;
 	k_mutex_unlock(&client->mutex);
 	return ret;
 }
@@ -458,7 +428,7 @@ void download_thread(void *client, void *a, void *b)
 		k_sem_take(&dl->wait_for_download, K_FOREVER);
 
 		/* Connect to the target host */
-		if (is_connecting(dl)) {
+		if (is_state(dl, DOWNLOAD_CLIENT_CONNECTING)) {
 			rc = client_connect(dl);
 
 			if (rc) {
@@ -478,7 +448,7 @@ void download_thread(void *client, void *a, void *b)
 		}
 
 		/* Request loop */
-		while (is_downloading(dl)) {
+		while (is_state(dl, DOWNLOAD_CLIENT_DOWNLOADING)) {
 			if (send_request) {
 				/* Request next fragment */
 				dl->offset = 0;
@@ -535,7 +505,7 @@ void download_thread(void *client, void *a, void *b)
 			}
 		}
 
-		if (is_downloading(dl)) {
+		if (is_state(dl, DOWNLOAD_CLIENT_DOWNLOADING)) {
 			if (dl->close_when_done) {
 				set_state(dl, DOWNLOAD_CLIENT_CLOSING);
 			} else {
@@ -543,7 +513,7 @@ void download_thread(void *client, void *a, void *b)
 			}
 		}
 
-		if (is_closing(dl)) {
+		if (is_state(dl, DOWNLOAD_CLIENT_CLOSING)) {
 			handle_disconnect(dl);
 			LOG_DBG("Connection closed");
 		}
@@ -598,7 +568,7 @@ int download_client_set_host(struct download_client *client, const char *host,
 
 	k_mutex_lock(&client->mutex, K_FOREVER);
 
-	if (!is_idle(client)) {
+	if (!is_state(client, DOWNLOAD_CLIENT_IDLE)) {
 		k_mutex_unlock(&client->mutex);
 		return -EALREADY;
 	}
@@ -612,7 +582,7 @@ int download_client_set_host(struct download_client *client, const char *host,
 
 int download_client_disconnect(struct download_client *const client)
 {
-	if (client == NULL || is_idle(client)) {
+	if (client == NULL || is_state(client, DOWNLOAD_CLIENT_IDLE)) {
 		return -EINVAL;
 	}
 
@@ -636,7 +606,7 @@ int download_client_start(struct download_client *client, const char *file,
 		return -EINVAL;
 	}
 
-	if (!is_idle(client) && !is_finished(client)) {
+	if (!is_state(client, DOWNLOAD_CLIENT_IDLE) && !is_state(dl, DOWNLOAD_CLIENT_FINISHED)) {
 		k_mutex_unlock(&client->mutex);
 		return -EALREADY;
 	}
@@ -646,7 +616,7 @@ int download_client_start(struct download_client *client, const char *file,
 	client->progress = from;
 	client->offset = 0;
 	client->http.has_header = false;
-	if (is_idle(client)) {
+	if (is_state(client, DOWNLOAD_CLIENT_IDLE)) {
 		set_state(client, DOWNLOAD_CLIENT_CONNECTING);
 	} else {
 		set_state(client, DOWNLOAD_CLIENT_DOWNLOADING);

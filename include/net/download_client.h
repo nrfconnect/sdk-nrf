@@ -145,6 +145,17 @@ typedef int (*download_client_callback_t)(
 	const struct download_client_evt *event);
 
 /**
+ * @brief Download client state.
+ */
+enum download_client_state {
+		DOWNLOAD_CLIENT_IDLE,
+		DOWNLOAD_CLIENT_CONNECTING,
+		DOWNLOAD_CLIENT_DOWNLOADING,
+		DOWNLOAD_CLIENT_FINISHED,
+		DOWNLOAD_CLIENT_CLOSING
+};
+
+/**
  * @brief Download client instance.
  */
 struct download_client {
@@ -220,13 +231,7 @@ struct download_client {
 	/** Close the socket when finished. */
 	bool close_when_done;
 
-	enum {
-		DOWNLOAD_CLIENT_IDLE,
-		DOWNLOAD_CLIENT_CONNECTING,
-		DOWNLOAD_CLIENT_DOWNLOADING,
-		DOWNLOAD_CLIENT_FINISHED,
-		DOWNLOAD_CLIENT_CLOSING
-	} state;
+	enum download_client_state state;
 };
 
 /**
