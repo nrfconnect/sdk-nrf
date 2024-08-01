@@ -328,9 +328,15 @@ static uint8_t m_config_clock_source_get(void)
 #endif /* !CONFIG_SOC_SERIES_NRF54HX */
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
+static atomic_t do_calibration;
+
 static void mpsl_calibration_work_handler(struct k_work *work)
 {
 	ARG_UNUSED(work);
+
+	if (!atomic_get(&do_calibration)) {
+		return;
+	}
 
 	mpsl_calibration_timer_handle();
 
@@ -458,6 +464,7 @@ static int mpsl_low_prio_init(void)
 		    mpsl_low_prio_irq_handler, NULL, 0);
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
+	atomic_set(&do_calibration, 1);
 	mpsl_work_schedule(&calibration_work,
 			   K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD));
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
@@ -486,6 +493,10 @@ int32_t mpsl_lib_init(void)
 int32_t mpsl_lib_uninit(void)
 {
 #if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
+#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
+	atomic_set(&do_calibration, 0);
+#endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
+
 	mpsl_lib_irq_disable();
 
 	mpsl_uninit();
