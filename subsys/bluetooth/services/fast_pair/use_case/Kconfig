@@ -10,7 +10,7 @@ choice BT_FAST_PAIR_USE_CASE
 	help
 	  Select the Fast Pair use case to configure the Fast Pair features and extensions
 	  that satisfy the device feature requirements from the Google Fast Pair specification:
-	  https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement.
+	  https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement .
 	  The use case selection should match the device type selection for your Fast Pair Model
 	  in the Google Nearby Console.
 
@@ -48,7 +48,8 @@ config BT_FAST_PAIR_USE_CASE_LOCATOR_TAG
 	  they are missing. This Kconfig option configures the Fast Pair features and extensions
 	  to satisfy the locator tag device feature requirements from the Google Fast Pair
 	  specification:
-	  https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement/devicefeaturerequirement_locatortags.
+	  https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement/devicefeaturerequirement_locatortags
+	  .
 
 config BT_FAST_PAIR_USE_CASE_MOUSE
 	bool "Mouse use case [EXPERIMENTAL]"
