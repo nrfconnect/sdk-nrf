@@ -341,7 +341,7 @@ static void send_message_on_button(void)
 
 	/* Send off a JSON message about the button press */
 	/* This matches the nRF Cloud-defined schema for a "BUTTON" device message */
-	rest_ctx.keep_alive = true;
+	rest_ctx.keep_alive = IS_ENABLED(CONFIG_REST_DEVICE_MESSAGE_KEEP_ALIVE);
 	(void)send_message("{\"appId\":\"BUTTON\", \"messageType\":\"DATA\", \"data\":\"1\"}");
 	rest_ctx.keep_alive = false;
 	(void)nrf_cloud_rest_log_send(&rest_ctx, device_id, LOG_LEVEL_DBG,
