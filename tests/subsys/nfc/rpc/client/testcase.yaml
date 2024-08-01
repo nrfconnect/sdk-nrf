@@ -1,0 +1,7 @@
+tests:
+  nfc.rpc.client:
+    sysbuild: true
+    platform_allow: native_sim
+    tags: nfc ci_build sysbuild
+    integration_platforms:
+      - native_sim
