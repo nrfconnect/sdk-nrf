@@ -142,6 +142,9 @@ To achieve a lower power consumption of the light switch, you can configure the 
 You can select per-channel transmission power (in dBm) with the :kconfig:option:`CONFIG_LIGHT_SWITCH_TX_POWER` Kconfig option.
 This affects to all frames sent by the device, even in the network scan phase.
 
+.. note::
+    The :kconfig:option:`CONFIG_LIGHT_SWITCH_CONFIGURE_TX_POWER` Kconfig option is enabled by default and this sample's transmission power is set to 0 dBm.
+
 When the :kconfig:option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` Kconfig option is set to ``y``, the :kconfig:option:`CONFIG_ZIGBEE_APP_CB_QUEUE_LENGTH` Kconfig option must be increased depending on the channel mask.
 For example, in case 16 channels are active, a proper value for :kconfig:option:`CONFIG_ZIGBEE_APP_CB_QUEUE_LENGTH` would be ``17``.
 Similar consideration applies to the `ZB_CONFIG_IOBUF_POOL_SIZE` and `ZB_CONFIG_SCHEDULER_Q_SIZE` values configured in the :file:`include/zb_mem_config_custom.h` file.
