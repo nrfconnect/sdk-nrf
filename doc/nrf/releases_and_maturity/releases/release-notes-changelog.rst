@@ -588,6 +588,10 @@ Multiprotocol Service Layer libraries
 
   * A 1-wire coexistence implementation which can be enabled using the Kconfig option :kconfig:option:`CONFIG_MPSL_CX_1WIRE`.
 
+* Fixed:
+
+  * An issue where the HFXO would be left on after uninitializing MPSL when the RC oscillator was used as the Low Frequency clock source (DRGN-22809).
+
 Libraries for networking
 ------------------------
 
