@@ -109,6 +109,7 @@ Kconfig*                                  @tejlmand
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
+/include/nrf_compress/                    @nordicjm
 /include/sdfw/                            @anhmolt @hakonfam @jonathannilsen
 /include/shell/                           @nordic-krch
 /lib/bin/                                 @rlubos @lemrey
@@ -263,6 +264,7 @@ Kconfig*                                  @tejlmand
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
 /subsys/bootloader/                       @hakonfam @sigvartmh
 /subsys/caf/                              @pdunaj
+/subsys/nrf_compress/                     @nordicjm
 /subsys/debug/                            @nordic-krch @anangl
 /subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/dfu/dfu_multi_image/              @Damian-Nordic
@@ -314,6 +316,7 @@ Kconfig*                                  @tejlmand
 /tests/benchmarks/multicore/              @carlescufi
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
+/tests/subsys/nrf_compress/               @nordicjm
 /tests/crypto/                            @stephen-nordic @magnev
 /tests/drivers/flash_patch/               @oyvindronningstad
 /tests/drivers/flash/flash_rpc/           @sigvartmh
