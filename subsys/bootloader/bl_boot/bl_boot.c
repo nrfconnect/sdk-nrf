@@ -6,6 +6,7 @@
 
 #include <soc.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/kernel.h>
 #include <pm_config.h>
 #include <fw_info.h>
 #include <fprotect.h>
@@ -67,8 +68,9 @@ extern uint32_t _vector_table_pointer;
 void bl_boot(const struct fw_info *fw_info)
 {
 #if !(defined(CONFIG_SOC_SERIES_NRF91X) \
-      || defined(CONFIG_SOC_NRF5340_CPUNET) \
-      || defined(CONFIG_SOC_NRF5340_CPUAPP))
+	|| defined(CONFIG_SOC_SERIES_NRF54LX) \
+	|| defined(CONFIG_SOC_NRF5340_CPUNET) \
+	|| defined(CONFIG_SOC_NRF5340_CPUAPP))
 	/* Protect bootloader storage data after firmware is validated so
 	 * invalidation of public keys can be written into the page if needed.
 	 * Note that for some devices (for example, nRF9160 and the nRF5340
@@ -77,7 +79,13 @@ void bl_boot(const struct fw_info *fw_info)
 	 * bootloader storage data is locked together with the network core
 	 * application.
 	 */
-	int err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
+	int err = 0;
+
+	if (IS_ENABLED(CONFIG_FPROTECT)) {
+		err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
+	} else {
+		printk("Fprotect disabled. No protection applied.\n\r");
+	}
 
 	if (err) {
 		printk("Failed to protect bootloader storage.\n\r");
