@@ -732,7 +732,7 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* Added a compression/decompression library with support for the LZMA decompression.
 
 Security libraries
 ------------------
