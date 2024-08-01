@@ -22,8 +22,6 @@
 #include <nrfx_gpiote.h>
 #include <mpsl_coex.h>
 
-#define COEX_TIMER NRF_TIMER1
-
 #if DT_NODE_HAS_STATUS(DT_PHANDLE(DT_NODELABEL(radio), coex), okay)
 #define COEX_NODE DT_PHANDLE(DT_NODELABEL(radio), coex)
 #else
