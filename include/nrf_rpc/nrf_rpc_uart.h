@@ -24,41 +24,6 @@ extern "C" {
  * @{
  */
 
-#define NRF_RPC_MAX_FRAME_SIZE	1536
-#define NRF_RPC_RX_RINGBUF_SIZE 2048
-
-typedef enum {
-	hdlc_state_unsync,
-	hdlc_state_frame_start,
-	hdlc_state_frame_found,
-	hdlc_state_escape,
-} hdlc_state_t;
-
-struct nrf_rpc_uart {
-	const struct device *uart;
-	nrf_rpc_tr_receive_handler_t receive_callback;
-	void *receive_ctx;
-	const struct nrf_rpc_tr *transport;
-
-	/* RX buffer populated by UART ISR */
-	uint8_t rx_buffer[NRF_RPC_RX_RINGBUF_SIZE];
-	struct ring_buf rx_ringbuf;
-
-	/* ISR function callback worker */
-	struct k_work cb_work;
-
-	/* HDLC frame parsing state */
-	hdlc_state_t hdlc_state;
-	uint8_t frame_buffer[NRF_RPC_MAX_FRAME_SIZE];
-	size_t frame_len;
-
-	/* UART send semaphore */
-	struct k_sem uart_tx_sem;
-
-	/* Workqueue for rx*/
-	struct k_work_q rx_workq;
-};
-
 /**
  * @brief Returns nRF RPC UART transport object name for the given devicetree node.
  *
