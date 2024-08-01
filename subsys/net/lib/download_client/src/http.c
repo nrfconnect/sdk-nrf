@@ -43,7 +43,7 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
 extern char *strnstr(const char *haystack, const char *needle, size_t haystack_sz);
 
-int http_get_request_send(struct download_client *client)
+int http_get_request_send(struct download_client *dlc)
 {
 	int err;
 	int len;
@@ -51,50 +51,50 @@ int http_get_request_send(struct download_client *client)
 	char host[HOSTNAME_SIZE];
 	char file[FILENAME_SIZE];
 
-	__ASSERT_NO_MSG(client->host);
-	__ASSERT_NO_MSG(client->file);
+	__ASSERT_NO_MSG(dlc->host);
+	__ASSERT_NO_MSG(dlc->file);
 
-	client->http.has_header = false;
+	dlc->http.has_header = false;
 
-	err = url_parse_host(client->host, host, sizeof(host));
+	err = url_parse_host(dlc->host, host, sizeof(host));
 	if (err) {
 		return err;
 	}
 
-	err = url_parse_file(client->file, file, sizeof(file));
+	err = url_parse_file(dlc->file, file, sizeof(file));
 	if (err) {
 		return err;
 	}
 
 	/* Offset of last byte in range (Content-Range) */
-	if (client->config.frag_size_override) {
-		off = client->progress + client->config.frag_size_override - 1;
+	if (dlc->config.frag_size_override) {
+		off = dlc->progress + dlc->config.frag_size_override - 1;
 	} else {
-		off = client->progress +
+		off = dlc->progress +
 			CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE - 1;
 	}
 
-	if (client->file_size != 0) {
+	if (dlc->file_size != 0) {
 		/* Don't request bytes past the end of file */
-		off = MIN(off, client->file_size - 1);
+		off = MIN(off, dlc->file_size - 1);
 	}
 
-	if (client->proto == IPPROTO_TLS_1_2
+	if (dlc->proto == IPPROTO_TLS_1_2
 	   || IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
-		len = snprintf(client->buf,
+		len = snprintf(dlc->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
-			HTTP_GET_RANGE, file, host, client->progress, off);
-		client->http.ranged = true;
-	} else if (client->progress) {
-		len = snprintf(client->buf,
+			HTTP_GET_RANGE, file, host, dlc->progress, off);
+		dlc->http.ranged = true;
+	} else if (dlc->progress) {
+		len = snprintf(dlc->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
-			HTTP_GET_OFFSET, file, host, client->progress);
-		client->http.ranged = false;
+			HTTP_GET_OFFSET, file, host, dlc->progress);
+		dlc->http.ranged = false;
 	} else {
-		len = snprintf(client->buf,
+		len = snprintf(dlc->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
 			HTTP_GET, file, host);
-		client->http.ranged = false;
+		dlc->http.ranged = false;
 	}
 
 	if (len < 0 || len > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
@@ -103,10 +103,10 @@ int http_get_request_send(struct download_client *client)
 	}
 
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(client->buf, len, "HTTP request");
+		LOG_HEXDUMP_DBG(dlc->buf, len, "HTTP request");
 	}
 
-	err = client_socket_send(client, len, 0);
+	err = client_socket_send(dlc, len, 0);
 	if (err) {
 		LOG_ERR("Failed to send HTTP request, errno %d", errno);
 		return err;
@@ -120,35 +120,35 @@ int http_get_request_send(struct download_client *client)
  *  0 if the header has been fully received
  * -errno on error
  */
-static int http_header_parse(struct download_client *client, size_t *hdr_len)
+static int http_header_parse(struct download_client *dlc, size_t *hdr_len)
 {
 	char *p;
 	char *q;
 	unsigned long http_status;
 
-	const unsigned int expected_status = (client->http.ranged || client->progress) ? 206 : 200;
+	const unsigned int expected_status = (dlc->http.ranged || dlc->progress) ? 206 : 200;
 
-	p = strnstr(client->buf, "\r\n\r\n", sizeof(client->buf));
-	if (!p || p > client->buf + client->offset) {
+	p = strnstr(dlc->buf, "\r\n\r\n", sizeof(dlc->buf));
+	if (!p || p > dlc->buf + dlc->offset) {
 		/* Waiting full HTTP header */
 		LOG_DBG("Waiting full header in response");
 		return 1;
 	}
 
 	/* Offset of the end of the HTTP header in the buffer */
-	*hdr_len = p + strlen("\r\n\r\n") - client->buf;
+	*hdr_len = p + strlen("\r\n\r\n") - dlc->buf;
 
 	LOG_DBG("GET header size: %u", *hdr_len);
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(client->buf, *hdr_len, "HTTP response");
+		LOG_HEXDUMP_DBG(dlc->buf, *hdr_len, "HTTP response");
 	}
 
 	for (size_t i = 0; i < *hdr_len; i++) {
-		client->buf[i] = tolower(client->buf[i]);
+		dlc->buf[i] = tolower(dlc->buf[i]);
 	}
 
 	/* Look for the status code just after "http/1.1 " */
-	p = strnstr(client->buf, "http/1.1 ", *hdr_len);
+	p = strnstr(dlc->buf, "http/1.1 ", *hdr_len);
 	if (!p) {
 		LOG_ERR("Server response missing HTTP/1.1");
 		return -EBADMSG;
@@ -185,21 +185,21 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 	/* The file size is returned via "Content-Length" in case of HTTP,
 	 * and via "Content-Range" in case of HTTPS with range requests.
 	 */
-	if (client->file_size == 0) {
-		if (client->http.ranged) {
-			p = strnstr(client->buf, "\r\ncontent-range", *hdr_len);
+	if (dlc->file_size == 0) {
+		if (dlc->http.ranged) {
+			p = strnstr(dlc->buf, "\r\ncontent-range", *hdr_len);
 			if (!p) {
 				LOG_ERR("Server did not send "
 					"\"Content-Range\" in response");
 				return -EBADMSG;
 			}
-			p = strnstr(p, "/", *hdr_len - (p - client->buf));
+			p = strnstr(p, "/", *hdr_len - (p - dlc->buf));
 			if (!p) {
 				LOG_ERR("No file size in response");
 				return -EBADMSG;
 			}
 		} else { /* proto == PROTO_HTTP */
-			p = strnstr(client->buf, "\r\ncontent-length", *hdr_len);
+			p = strnstr(dlc->buf, "\r\ncontent-length", *hdr_len);
 			if (!p) {
 				LOG_WRN("Server did not send "
 					"\"Content-Length\" in response");
@@ -213,20 +213,20 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 			/* Accumulate any eventual progress (starting offset)
 			 * when reading the file size from Content-Length
 			 */
-			client->file_size = client->progress;
+			dlc->file_size = dlc->progress;
 		}
 
-		client->file_size += atoi(p + 1);
-		LOG_DBG("File size = %u", client->file_size);
+		dlc->file_size += atoi(p + 1);
+		LOG_DBG("File size = %u", dlc->file_size);
 	}
 
-	p = strnstr(client->buf, "\r\nconnection: close", *hdr_len);
+	p = strnstr(dlc->buf, "\r\nconnection: close", *hdr_len);
 	if (p) {
 		LOG_WRN("Peer closed connection, will re-connect");
-		client->http.connection_close = true;
+		dlc->http.connection_close = true;
 	}
 
-	client->http.has_header = true;
+	dlc->http.has_header = true;
 
 	return 0;
 }
@@ -236,16 +236,16 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
  *  0 if a whole fragment has been received
  * -errno on error
  */
-int http_parse(struct download_client *client, size_t len)
+int http_parse(struct download_client *dlc, size_t len)
 {
 	int rc;
 	size_t hdr_len;
 
 	/* Accumulate buffer offset */
-	client->offset += len;
+	dlc->offset += len;
 
-	if (!client->http.has_header) {
-		rc = http_header_parse(client, &hdr_len);
+	if (!dlc->http.has_header) {
+		rc = http_header_parse(dlc, &hdr_len);
 		if (rc > 0) {
 			/* Wait for header */
 			return 1;
@@ -255,22 +255,22 @@ int http_parse(struct download_client *client, size_t len)
 			return rc;
 		}
 
-		if (client->offset != hdr_len) {
+		if (dlc->offset != hdr_len) {
 			/* The buffer contains some payload bytes,
 			 * copy them at the beginning of the buffer
 			 * and update the offset.
 			 */
 			LOG_DBG("Copying %u payload bytes",
-				client->offset - hdr_len);
-			memmove(client->buf, client->buf + hdr_len,
-				client->offset - hdr_len);
+				dlc->offset - hdr_len);
+			memmove(dlc->buf, dlc->buf + hdr_len,
+				dlc->offset - hdr_len);
 
-			client->offset -= hdr_len;
+			dlc->offset -= hdr_len;
 		} else {
 			/* Reset the offset.
 			 * The payload is received in an empty buffer.
 			 */
-			client->offset = 0;
+			dlc->offset = 0;
 		}
 	}
 
@@ -281,13 +281,13 @@ int http_parse(struct download_client *client, size_t len)
 	 * `offset` is less than `len` and it represents
 	 * the actual payload bytes.
 	 */
-	client->progress += MIN(client->offset, len);
+	dlc->progress += MIN(dlc->offset, len);
 
 	/* Have we received a whole fragment or the whole file? */
-	if (client->progress != client->file_size) {
-		if (client->http.ranged) {
-			if (client->offset < (client->config.frag_size_override != 0 ?
-						      client->config.frag_size_override :
+	if (dlc->progress != dlc->file_size) {
+		if (dlc->http.ranged) {
+			if (dlc->offset < (dlc->config.frag_size_override != 0 ?
+						      dlc->config.frag_size_override :
 						      CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE)) {
 				/* Ranged query: read until a full fragment */
 				return 1;
