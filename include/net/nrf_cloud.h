@@ -93,6 +93,10 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_READY,
 	/** The device received non-specific data from the cloud. */
 	NRF_CLOUD_EVT_RX_DATA_GENERAL,
+	/** The device received "appID" : "DEVICE", "messageType" : "DISCON",
+	 *  indicating that the device was removed from its nRF Cloud account.
+	 */
+	NRF_CLOUD_EVT_RX_DATA_DISCON,
 	/** The device received location data from the cloud
 	 *  and no response callback was registered.
 	 */
@@ -108,7 +112,7 @@ enum nrf_cloud_evt_type {
 	 */
 	NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED,
 	/** A FOTA update has started.
-	 * This event is only sent if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is enabled.
+	 *  This event is only sent if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is enabled.
 	 */
 	NRF_CLOUD_EVT_FOTA_START,
 	/** The device should be restarted to apply a firmware upgrade */
@@ -120,9 +124,9 @@ enum nrf_cloud_evt_type {
 	 */
 	NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR,
 	/** FOTA update job information has been received.
-	 * When ready, the application should start the job by
-	 * calling @ref nrf_cloud_fota_job_start.
-	 * This event is only sent if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is disabled.
+	 *  When ready, the application should start the job by
+	 *  calling @ref nrf_cloud_fota_job_start.
+	 *  This event is only sent if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is disabled.
 	 */
 	NRF_CLOUD_EVT_FOTA_JOB_AVAILABLE,
 	/** An error occurred. The status field in the event struct will

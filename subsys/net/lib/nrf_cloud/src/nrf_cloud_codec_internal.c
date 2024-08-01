@@ -481,13 +481,16 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 	cJSON *reported_obj = cJSON_AddObjectToObjectCS(state_obj, NRF_CLOUD_JSON_KEY_REP);
 	cJSON *pairing_obj = cJSON_AddObjectToObjectCS(reported_obj, NRF_CLOUD_JSON_KEY_PAIRING);
 	cJSON *connection_obj = cJSON_AddObjectToObjectCS(reported_obj, NRF_CLOUD_JSON_KEY_CONN);
+	static bool disassociated_state_sent;
 
 	if (!pairing_obj || !connection_obj) {
 		cJSON_Delete(root_obj);
 		return -ENOMEM;
 	}
 
-	if (reported_state == STATE_UA_PIN_WAIT) {
+	if ((reported_state == STATE_UA_PIN_WAIT) && !disassociated_state_sent) {
+		disassociated_state_sent = true;
+		LOG_DBG("Clearing state; device is not associated");
 		/* This is a state used during JITP
 		 * or if the user exercises the deprecated DissociateDevice API.
 		 * The device exists in nRF Cloud but is not associated to an account.
@@ -511,6 +514,8 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 		struct nrf_cloud_data tx_endp;
 		struct nrf_cloud_data m_endp;
 		struct nrf_cloud_ctrl_data device_ctrl = {0};
+
+		disassociated_state_sent = false;
 
 		/* Associated */
 		ret += json_add_str_cs(pairing_obj, NRF_CLOUD_JSON_KEY_STATE,
@@ -558,22 +563,20 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 				ret = err;
 			}
 		}
+	} else {
+		goto out;
 	}
 
 	if (ret == 0) {
 		buffer = cJSON_PrintUnformatted(root_obj);
 	}
 
+out:
 	cJSON_Delete(root_obj);
-
-	if (buffer == NULL) {
-		return -ENOMEM;
-	}
-
 	output->ptr = buffer;
-	output->len = strlen(buffer);
+	output->len = (buffer ? strlen(buffer) : 0);
 
-	return 0;
+	return ret;
 }
 
 BUILD_ASSERT(sizeof(NRF_CLOUD_JSON_VAL_TOPIC_C2D) == sizeof(TOPIC_VAL_RCV_WILDCARD),
