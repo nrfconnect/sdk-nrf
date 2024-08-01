@@ -6,6 +6,7 @@
 
 #include <soc.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/kernel.h>
 #include <pm_config.h>
 #include <fw_info.h>
 #include <fprotect.h>
@@ -77,7 +78,13 @@ void bl_boot(const struct fw_info *fw_info)
 	 * bootloader storage data is locked together with the network core
 	 * application.
 	 */
-	int err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
+	int err = 0;
+
+	if (IS_ENABLED(CONFIG_FPROTECT)) {
+		err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
+	} else {
+		printk("Fprotect disabled. No protection applied.\n\r");
+	}
 
 	if (err) {
 		printk("Failed to protect bootloader storage.\n\r");
