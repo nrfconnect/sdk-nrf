@@ -16,7 +16,7 @@ config _NRF_RPC_DUMMY_SELECT
 	select THREAD_CUSTOM_DATA
 
 choice NRF_RPC_TRANSPORT
-	prompt "NRF RPC transport choice"
+	prompt "NRF RPC transport"
 	default NRF_RPC_IPC_SERVICE
 
 config NRF_RPC_IPC_SERVICE
@@ -25,13 +25,15 @@ config NRF_RPC_IPC_SERVICE
 	select MBOX
 	select EVENTS
 	help
-	  If enabled, selects the IPC Service as a transport layer for nRF RPC.
+	  If enabled, selects the IPC Service as a transport layer for the nRF RPC.
 
 config NRF_RPC_UART_TRANSPORT
-	bool "UART transport for nRF RPC"
+	bool "nRF RPC over UART"
 	select UART_NRFX
 	select RING_BUFFER
 	select CRC
+	help
+	  If enabled, selects the UART as a transport layer for the nRF RPC.
 
 endchoice
 
@@ -55,6 +57,34 @@ config NRF_RPC_IPC_SERVICE_BIND_TIMEOUT_MS
 	  the nRF RPC is going to communicate with.
 
 endif # NRF_RPC_IPC_SERVICE
+
+
+menu "nRF RPC over UART configuration"
+	depends on NRF_RPC_UART_TRANSPORT
+
+config NRF_RPC_UART_MAX_PACKET_SIZE
+	int "Maximum packet size"
+	default 1536
+	help
+	  Defines the maximum size of an nRF RPC packet that can be sent or received
+	  using the UART transport.
+
+config NRF_RPC_UART_RX_RINGBUF_SIZE
+	int "RX ring buffer size"
+	default 2048
+	help
+	  Defines the size of the ring buffer used to relay received bytes between
+	  the UART interrupt service routine and the UART transport RX worker thread.
+
+config NRF_RPC_UART_RX_THREAD_STACK_SIZE
+	int "RX thread stack size"
+	default 4096
+	help
+	  Defines the stack size of the UART transport RX worker thread. The worker
+	  thread is responsible for consuming data received over the UART, and
+	  passing decoded nRF RPC packets to the nRF RPC core.
+
+endmenu # "nRF RPC over UART configuration"
 
 config NRF_RPC_CBOR
 	bool
