@@ -8,7 +8,7 @@
 
 #include <nrf_rpc.h>
 
-LOG_MODULE_REGISTER(nrf_rpc_remote, CONFIG_NRF_RPC_REMOTE_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_ps_server, CONFIG_NRF_PS_SERVER_LOG_LEVEL);
 
 static void err_handler(const struct nrf_rpc_err_report *report)
 {
