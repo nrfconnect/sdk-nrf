@@ -225,7 +225,11 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-* Added a debug configuration enabling the `Fast Pair`_ feature on the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
+* Added:
+
+  * A debug configuration enabling the `Fast Pair`_ feature on the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
+  * An application versioning using the :file:`VERSION` file.
+    The versioning is only applied to the application configurations that use the MCUboot bootloader.
 
 * Updated:
 
