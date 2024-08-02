@@ -4,10 +4,30 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "Protocols serialization server"
+
+choice LOG_MODE
+	default LOG_MODE_DEFERRED
+endchoice
+
+config LOG_BUFFER_SIZE
+	default 8192
+
+config LOG_FUNC_NAME_PREFIX_DBG
+	default n
+
+config LOG_BACKEND_RTT
+	default n
+
+config LOG_BACKEND_UART
+	default n
+
+module = NRF_PS_SERVER
+module-str = nrf_ps_server
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu # "Protocols serialization server"
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
-
-module = NRF_RPC_REMOTE
-module-str = nrf_rpc_remote
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

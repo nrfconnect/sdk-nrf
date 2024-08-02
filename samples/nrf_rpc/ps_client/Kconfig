@@ -4,7 +4,14 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-mainmenu "Protocols serialization client"
+menu "Protocols serialization client"
+
+config BT_CTLR
+	default n
+
+choice BT_NUS_LOG_LEVEL_CHOICE
+	default BT_NUS_LOG_LEVEL_DBG if DEBUG
+endchoice
 
 config RPC_CRASH_LOG_READ_BUFFER_SIZE
 	int "Crash log read buffer size"
@@ -14,13 +21,12 @@ config RPC_CRASH_LOG_READ_BUFFER_SIZE
 	  Size of the stack buffer used for reading a single chunk of the crash
 	  log from the server device.
 
-config BT_CTLR
-	default n
+module = NRF_PS_CLIENT
+module-str = nrf_ps_client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu # "Protocols serialization client"
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
-
-module = NRF_PS_CLIENT
-module-str = nrf_ps_client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

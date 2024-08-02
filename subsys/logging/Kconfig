@@ -24,6 +24,7 @@ menuconfig LOG_BACKEND_RPC
 	depends on LOG_MODE_DEFERRED
 	depends on LOG_PROCESS_THREAD
 	depends on !LOG_FORWARDER_RPC
+	select LOG_OUTPUT
 	select LOG_RPC
 	help
 	  Enables Zephyr logging backend that sends log messages as nRF RPC events.
