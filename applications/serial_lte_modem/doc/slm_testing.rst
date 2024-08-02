@@ -563,16 +563,18 @@ You must register the same PSK and PSK identity on the server side.
 TCP server
 ==========
 
-.. |global_private_address| replace:: the nRF91 Series DK must have a global private address.
-   The radio network must be configured to route incoming IP packets to the nRF91 Series DK.
+.. |public_ip_address_req| replace:: the nRF91 Series DK must have a public IP address and the radio network must be configured to route incoming IP packets to the nRF91 Series DK.
+   These depend on the network and SIM card used.
 
-.. |global_private_address_check| replace::    To check if the setup is correct, use the ``AT+CGDCONT?`` command to check if the local IP address allocated by the network is a reserved private address of class A, B, or C (see `Private addresses`_).
-   If it is not, ping your nRF91 Series DK from the destination server.
+.. |public_ip_address_check| replace:: To check your current setup, use the ``AT+CGDCONT?`` command to check if the IP address allocated by the network is a reserved IPv4 private address of class A, B, or C (see `Private addresses`_).
+   If it is, the device is not reachable from the public network with this IPv4 address and you should try with an IPv6 address instead.
+   Generally, IPv6 addresses are more likely to be reachable from the public network.
 
+To act as a TCP server, |public_ip_address_req|
 
-To act as a TCP server, |global_private_address|
+|public_ip_address_check|
 
-|global_private_address_check|
+To test the TCP server functionality, complete the following steps:
 
 1. Create a Python script :file:`client_tcp.py` that acts as a TCP client.
    See the following sample code (make sure to use the correct IP address and port):
@@ -795,9 +797,11 @@ To act as a TCP server, |global_private_address|
 UDP server
 ==========
 
-To act as a UDP server, |global_private_address|
+To act as a UDP server, |public_ip_address_req|
 
-|global_private_address_check|
+|public_ip_address_check|
+
+To test the UDP server functionality, complete the following steps:
 
 1. Create a Python script :file:`client_udp.py` that acts as a UDP client.
    See the following sample code (make sure to use the correct IP addresses and port):
