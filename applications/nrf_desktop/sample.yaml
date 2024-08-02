@@ -217,3 +217,5 @@ tests:
       - nrf52840dk/nrf52840
       - nrf52840dongle/nrf52840
     extra_args: FILE_SUFFIX=release
+    extra_configs:
+      - CONFIG_DESKTOP_USB_STACK_NEXT=y
