@@ -1593,6 +1593,8 @@
 
 .. _`CoreMark®`: https://www.eembc.org/coremark/
 
+.. _`nrf-esl-bluetooth`: https://github.com/NordicPlayground/nrf-esl-bluetooth
+
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 
 .. _`nrf-regtool`: https://github.com/nrfconnect/nrf-regtool/
